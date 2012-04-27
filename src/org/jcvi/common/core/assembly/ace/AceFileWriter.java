@@ -83,24 +83,26 @@ public class AceFileWriter {
                 tagBodyBuilder.append(String.format("COMMENT{%n%sC}%n",comment));            
             }
         }
+        Range range = consensusTag.asRange();
         writeString(String.format("CT{%n%s %s %s %d %d %s%s%n%s}%n", 
                 consensusTag.getId(),
                 consensusTag.getType(),
                 consensusTag.getCreator(),
-                consensusTag.getBegin(),
-                consensusTag.getEnd(),
+                range.getBegin(),
+                range.getEnd(),
                 AceFileUtil.TAG_DATE_TIME_FORMATTER.print(consensusTag.getCreationDate().getTime()),
                 consensusTag.isTransient()?" NoTrans":"",
                         tagBodyBuilder.toString()), out);
         
     }
     public static void writeReadTag(ReadAceTag readTag, OutputStream out) throws IOException {
-        writeString(String.format("RT{%n%s %s %s %d %d %s%n}%n", 
+        Range range = readTag.asRange();
+    	writeString(String.format("RT{%n%s %s %s %d %d %s%n}%n", 
                         readTag.getId(),
                         readTag.getType(),
                         readTag.getCreator(),
-                        readTag.getBegin(),
-                        readTag.getEnd(),
+                        range.getBegin(),
+                        range.getEnd(),
                         AceFileUtil.TAG_DATE_TIME_FORMATTER.print(readTag.getCreationDate().getTime())), out);
         
     }

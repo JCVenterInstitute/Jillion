@@ -25,13 +25,13 @@ package org.jcvi.common.core.assembly.ace;
 
 import java.util.Date;
 
-import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Rangeable;
 
-public abstract class AbstractDefaultPlacedAceTag extends AbstractDefaultAceTag implements PlacedAceTag{
+public abstract class AbstractDefaultPlacedAceTag extends AbstractDefaultAceTag implements RangeableAceTag{
     private final String id;
     
-    private final Placed location;
+    private final Rangeable location;
     private final boolean isTransient;
     
     /**
@@ -43,7 +43,7 @@ public abstract class AbstractDefaultPlacedAceTag extends AbstractDefaultAceTag 
      * @param data
      */
     public AbstractDefaultPlacedAceTag(String id, String type, String creator,
-            Date creationDate, Placed location, String data,boolean isTransient) {
+            Date creationDate, Rangeable location, String data,boolean isTransient) {
         super(type, creator, creationDate, data);
         this.id = id;
         this.location = location;
@@ -58,20 +58,6 @@ public abstract class AbstractDefaultPlacedAceTag extends AbstractDefaultAceTag 
     }
 
 
-    @Override
-    public long getEnd() {
-        return location.getEnd();
-    }
-
-    @Override
-    public long getLength() {
-        return location.getLength();
-    }
-
-    @Override
-    public long getBegin() {
-        return location.getBegin();
-    }
 
     @Override
     public boolean isTransient() {

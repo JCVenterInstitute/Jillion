@@ -23,7 +23,7 @@
  */
 package org.jcvi.assembly.contig;
 
-import org.jcvi.common.core.Placed;
+import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.slice.QualityValueStrategy;
@@ -49,7 +49,7 @@ public class TestDefaultContigQualityClassComputer {
     
     QualityValueStrategy qualityValueStrategy;
     DefaultContigQualityClassComputer  sut;
-    CoverageMap<CoverageRegion<Placed>> coverageMap;
+    CoverageMap<CoverageRegion<Rangeable>> coverageMap;
     QualityDataStore qualityFastaMap;
     NucleotideSequence consensus;
     @Before
@@ -79,7 +79,7 @@ public class TestDefaultContigQualityClassComputer {
     @Test
     public void computeQualityClass() throws DataStoreException{
         final Nucleotide consensusBase = Nucleotide.Adenine;
-        CoverageRegion<Placed> region = createMock(CoverageRegion.class);
+        CoverageRegion<Rangeable> region = createMock(CoverageRegion.class);
         expect(coverageMap.getRegionWhichCovers(index)).andReturn(region);
         
         expect(consensus.get(index)).andReturn(consensusBase);

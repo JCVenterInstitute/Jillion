@@ -33,7 +33,7 @@ import org.jcvi.common.core.Range.CoordinateSystem;
  *
  *
  */
-public final class DirectedRange implements Placed{
+public final class DirectedRange implements Rangeable{
     
         /**
          * Regular expression in the form (left) .. (right).
@@ -208,30 +208,7 @@ public final class DirectedRange implements Placed{
                     + "]";
         }
 
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public long getBegin() {
-            return getRange().getBegin();
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public long getEnd() {
-            return getRange().getEnd();
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public long getLength() {
-            return getRange().getLength();
-        }
-
+       
         /**
         * {@inheritDoc}
         */

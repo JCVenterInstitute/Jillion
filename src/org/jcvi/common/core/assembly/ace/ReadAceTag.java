@@ -28,7 +28,7 @@ package org.jcvi.common.core.assembly.ace;
  * read of a contig in an ace file.
  * @author dkatzel
  */
-public interface ReadAceTag extends PlacedAceTag {
+public interface ReadAceTag extends RangeableAceTag {
 
     /**
      * Get the Id of read

@@ -26,7 +26,7 @@ package org.jcvi.common.core.assembly.util.coverage;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.common.core.Placed;
+import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
@@ -35,24 +35,22 @@ import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
 public class TestDefaultCoverageMapAvgCoverage {
 
-    private static class DefaultCoverageMapTestDouble extends DefaultCoverageMap<Placed,CoverageRegion<Placed>>{
+    private static class DefaultCoverageMapTestDouble extends DefaultCoverageMap<Rangeable,CoverageRegion<Rangeable>>{
 
         public DefaultCoverageMapTestDouble(
-                List<CoverageRegion<Placed>> regions) {
+                List<CoverageRegion<Rangeable>> regions) {
             super(regions);
         }
         
         
     }
-    private static double getAvgCoverageOf(CoverageRegion<Placed>...regions){
+    private static double getAvgCoverageOf(CoverageRegion<Rangeable>...regions){
         return new DefaultCoverageMapTestDouble(Arrays.asList(regions)).getAverageCoverage();
     }
-    private static CoverageRegion<Placed> createCoverageRegion(long start, long end, int depth){
-        CoverageRegion<Placed>  mock = createMock(CoverageRegion.class);
+    private static CoverageRegion<Rangeable> createCoverageRegion(long start, long end, int depth){
+        CoverageRegion<Rangeable>  mock = createMock(CoverageRegion.class);
         expect(mock.getCoverage()).andStubReturn(depth);
-        expect(mock.getBegin()).andStubReturn(start);
-        expect(mock.getEnd()).andStubReturn(end);
-        expect(mock.getLength()).andStubReturn(Range.create(start, end).getLength());
+        expect(mock.asRange()).andStubReturn(Range.create(start, end));
         replay(mock);
         return mock;
     }

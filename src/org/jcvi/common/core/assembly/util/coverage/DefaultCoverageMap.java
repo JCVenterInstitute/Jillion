@@ -167,7 +167,7 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
     public List<T> getRegionsWithin(Range range) {
         List<T> selectedRegions = new ArrayList<T>();
         for(T region : regions){
-            Range regionRange = Range.create(region.getBegin(), region.getEnd());
+            Range regionRange = region.asRange();
             if(regionRange.isSubRangeOf(range)){
                 selectedRegions.add(region);
             }
@@ -179,7 +179,7 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
     public List<T> getRegionsWhichIntersect(Range range) {
         List<T> selectedRegions = new ArrayList<T>();
         for(T region : regions){
-            Range regionRange = Range.create(region.getBegin(), region.getEnd());
+            Range regionRange = region.asRange();
             if(range.endsBefore(regionRange)){
                 break;
             }
@@ -243,7 +243,7 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
         long length=0;
         for(T coverageRegion: regions){
             if(coverageRegion.getCoverage() == coverageDepth){
-                length +=coverageRegion.getLength();
+                length +=coverageRegion.asRange().getLength();
             }
         }
         return length;
@@ -257,7 +257,7 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
         long length=0;
         for(T coverageRegion: regions){
             if(coverageRegion.getCoverage() >= coverageDepth){
-                length +=coverageRegion.getLength();
+                length +=coverageRegion.asRange().getLength();
             }
         }
         return length;
@@ -374,8 +374,8 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
         long total=0;
         long length=0;
         for(T coverageRegion : getRegions()){
-            total += coverageRegion.getLength() * coverageRegion.getCoverage();
-            length += coverageRegion.getLength();
+            total += coverageRegion.asRange().getLength() * coverageRegion.getCoverage();
+            length += coverageRegion.asRange().getLength();
         }
         return ((double)total)/length;
     }
@@ -415,7 +415,7 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
         if(isEmpty()){
             return 0L;
         }
-        return regions.get(regions.size()-1).getEnd()+1;
+        return regions.get(regions.size()-1).asRange().getEnd()+1;
     }
     /**
     * {@inheritDoc}

@@ -89,7 +89,7 @@ import org.jcvi.common.core.util.Caches;
  * @see CoordinateSystem
  * 
  */
-public abstract class Range implements Placed,Iterable<Long>
+public abstract class Range implements Rangeable,Iterable<Long>
 {
 	/**
 	 * 2^8 -1.
@@ -793,7 +793,6 @@ public abstract class Range implements Placed,Iterable<Long>
      * @return The left-hand (starting) coordinate.
      * 
      */
-    @Override
     public abstract long getBegin();
     /**
      * Fetch the first coordinate using the given 
@@ -815,7 +814,6 @@ public abstract class Range implements Placed,Iterable<Long>
      *
      * @return The right-hand (ending) coordinate.
      */
-    @Override
     public abstract long getEnd();
     /**
      * Fetch the right (end) coordinate using the given 
@@ -1137,7 +1135,6 @@ public abstract class Range implements Placed,Iterable<Long>
     }
    
 
-    @Override
     public long getLength() {
     	 return getEnd() - getBegin() + 1;
     }

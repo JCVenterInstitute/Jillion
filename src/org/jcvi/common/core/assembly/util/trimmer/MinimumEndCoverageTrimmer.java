@@ -82,14 +82,14 @@ public class MinimumEndCoverageTrimmer<P extends PlacedRead, C extends Contig<P>
         for(int i=0; i<regions.size(); i++){
             CoverageRegion<P> region = regions.get(i);
             if(meetsTrimmingRequirements(region)){
-                trimLeftIndex=region.getBegin();
+                trimLeftIndex=region.asRange().getBegin();
                 break;
             }
         }
         for(int i=regions.size()-1; i>=0; i--){
             CoverageRegion<P> region = regions.get(i);
             if(meetsTrimmingRequirements(region)){
-                trimRightIndex=region.getEnd();
+                trimRightIndex=region.asRange().getEnd();
                 break;
             }
         }

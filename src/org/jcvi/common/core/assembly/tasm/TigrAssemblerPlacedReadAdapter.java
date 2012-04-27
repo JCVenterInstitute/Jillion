@@ -195,7 +195,13 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
     public Range asRange() {
         return delegatePlacedRead.asRange();
     }
-    /**
+    
+    
+    @Override
+	public Range getContigRange() {
+		return delegatePlacedRead.getContigRange();
+	}
+	/**
     * {@inheritDoc}
     */
     @Override

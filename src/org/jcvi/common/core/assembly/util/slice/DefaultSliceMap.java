@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
@@ -58,9 +59,10 @@ public class DefaultSliceMap extends AbstractSliceMap{
             QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality){
         this.defaultQuality = defaultQuality;
-        this.size = coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).getEnd()+1;
+        this.size = coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).asRange().getEnd()+1;
         for(CoverageRegion<?  extends PlacedRead> region : coverageMap){
-            for(long i=region.getBegin(); i<=region.getEnd(); i++ ){
+        	Range range = region.asRange();
+            for(long i=range.getBegin(); i<=range.getEnd(); i++ ){
                 List<IdedSliceElement> sliceElements = createSliceElementsFor(region, i, qualityDataStore, qualityValueStrategy);
                 sliceMap.put(Long.valueOf(i),new DefaultSlice.Builder()
                                             .addAll(sliceElements)

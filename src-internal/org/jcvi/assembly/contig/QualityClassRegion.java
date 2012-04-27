@@ -23,14 +23,14 @@
  */
 package org.jcvi.assembly.contig;
 
-import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Rangeable;
 import org.jcvi.glyph.qualClass.QualityClass;
 
-public class QualityClassRegion implements Placed{
+public class QualityClassRegion implements Rangeable{
 
     private QualityClass qualityClass;
-    private Placed placed;
+    private Range placed;
     
     public QualityClassRegion(QualityClass qualityClass, Range range){
         if(qualityClass ==null){
@@ -42,20 +42,7 @@ public class QualityClassRegion implements Placed{
         this.qualityClass = qualityClass;
         placed = range;
     }
-    @Override
-    public long getEnd() {
-        return placed.getEnd();
-    }
-
-    @Override
-    public long getLength() {
-        return placed.getLength();
-    }
-
-    @Override
-    public long getBegin() {
-        return placed.getBegin();
-    }
+   
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

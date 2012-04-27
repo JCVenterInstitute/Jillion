@@ -38,8 +38,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
-import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.assembly.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.clc.cas.CasInfo;
 import org.jcvi.common.core.assembly.clc.cas.CasParser;
@@ -201,7 +201,7 @@ public class FilterFastqDataFromCas {
         }
     }
 
-    static class ReadRange implements Placed{
+    static class ReadRange implements Rangeable{
         private final Range range;
         private final String readId;
         
@@ -236,27 +236,7 @@ public class FilterFastqDataFromCas {
         }
 
 
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public long getBegin() {
-            return range.getBegin();
-        }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public long getEnd() {
-            return range.getEnd();
-        }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public long getLength() {
-            return range.getLength();
-        }
+       
         /**
         * {@inheritDoc}
         */

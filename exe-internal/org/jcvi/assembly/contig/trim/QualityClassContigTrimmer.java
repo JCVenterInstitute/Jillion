@@ -46,9 +46,9 @@ import org.jcvi.assembly.contig.QualityClassRegion;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
+import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.ContigDataStore;
@@ -76,10 +76,10 @@ public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>
     private final int maxNumberOf3PrimeBasesToTrim;
     private final Set<QualityClass> qualityClassesToTrim;
 
-    private class PlacedIterable implements Iterable<Long>{
+    private class RangeableIterable implements Iterable<Long>{
 
-        private final Placed placed;
-        public PlacedIterable(Placed placed){
+        private final Rangeable placed;
+        public RangeableIterable(Rangeable placed){
            this.placed = placed;
         }
         
@@ -118,7 +118,7 @@ public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>
        
         for (QualityClassRegion qualityClassRegion : qualityClassContigMap) {
             if (isAQualityClassToTrim(qualityClassRegion.getQualityClass())) {
-                for(Long consensusIndex : new PlacedIterable(qualityClassRegion)){
+                for(Long consensusIndex : new RangeableIterable(qualityClassRegion)){
                     CoverageRegion<R> coverageRegion = coverageMap.getRegionWhichCovers(consensusIndex);
 
                     for (R read : coverageRegion) {

@@ -185,7 +185,7 @@ public final class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRe
     }
     private  CompactedSliceMap(
             M coverageMap, QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
-        int size = (int)coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).getEnd()+1;
+        int size = (int)coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).asRange().getEnd()+1;
         this.slices = new CompactedSlice[size];
         for(CoverageRegion<?  extends PlacedRead> region : coverageMap){
             Map<String,Sequence<PhredQuality>> qualities = new HashMap<String,Sequence<PhredQuality>>(region.getCoverage());
@@ -197,7 +197,8 @@ public final class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRe
                     qualities.put(id,qualityDataStore.get(id));
                 }
             }
-            for(int i=(int)region.getBegin(); i<=region.getEnd(); i++ ){
+            Range range = region.asRange();
+            for(int i=(int)range.getBegin(); i<=range.getEnd(); i++ ){
                 
                 this.slices[i] =createSlice(region, qualities,qualityValueStrategy,i);                
             }

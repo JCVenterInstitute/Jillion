@@ -27,7 +27,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.common.core.Placed;
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageRegion;
 import org.jcvi.common.core.testUtil.TestUtil;
@@ -36,57 +37,49 @@ import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 public class TestDefaultCoverageRegion {
 
-    Placed seq1 = createMock(Placed.class);
-    Placed seq2 = createMock(Placed.class);
+    Range seq1 = createMock(Range.class);
+    Range seq2 = createMock(Range.class);
     int start = 100;
     int length = 200;
     int end = start+length-1;
-    DefaultCoverageRegion<Placed> sut = new DefaultCoverageRegion.Builder<Placed>(start,Arrays.asList(seq1,seq2))
+    DefaultCoverageRegion<Range> sut = new DefaultCoverageRegion.Builder<Range>(start,Arrays.asList(seq1,seq2))
                                         .end(end)
                                         .build();
-    
+    Range range = Range.create(start, end);
     @Test
     public void builder(){
 
-        
-        assertEquals(start, sut.getBegin());
-        assertEquals(end, sut.getEnd());
-        assertEquals(length, sut.getLength());
+        assertEquals(range, sut.asRange());
         assertEquals(Arrays.asList(seq1,seq2), getElements(sut));
         assertEquals(2, sut.getCoverage());
     }
     @Test
     public void add(){
 
-        DefaultCoverageRegion<Placed> region = new DefaultCoverageRegion.Builder<Placed>(start,Arrays.asList(seq1))
+        DefaultCoverageRegion<Range> region = new DefaultCoverageRegion.Builder<Range>(start,Arrays.asList(seq1))
                                     .offer(seq2)
                                     .end(end)
                                         .build();
-        
-        assertEquals(start, region.getBegin());
-        assertEquals(end, region.getEnd());
-        assertEquals(length, region.getLength());
+        assertEquals(range, region.asRange());
         assertEquals(Arrays.asList(seq1,seq2), getElements(region));
         assertEquals(2, region.getCoverage());
     }
     
-    private List<Placed> getElements(CoverageRegion<Placed> region){
-        List<Placed> actual = new ArrayList<Placed>();
-        for(Placed p : region){
+    private List<Range> getElements(CoverageRegion<Range> region){
+        List<Range> actual = new ArrayList<Range>();
+        for(Range p : region){
             actual.add(p);
         }
         return actual;
     }
     @Test
     public void remove(){
-        DefaultCoverageRegion<Placed> region = new DefaultCoverageRegion.Builder<Placed>(start,Arrays.asList(seq1,seq2))
+        DefaultCoverageRegion<Range> region = new DefaultCoverageRegion.Builder<Range>(start,Arrays.asList(seq1,seq2))
                     .end(end)
                     .remove(seq2)
                     .build();
         
-        assertEquals(start, region.getBegin());
-        assertEquals(end, region.getEnd());
-        assertEquals(length, region.getLength());
+        assertEquals(range, region.asRange());
         assertEquals(Arrays.asList(seq1), getElements(region));
         assertEquals(1, region.getCoverage());
     }
@@ -95,7 +88,7 @@ public class TestDefaultCoverageRegion {
     public void endNotSetShouldThowIllegalStateException(){
         
         try{
-            new DefaultCoverageRegion.Builder<Placed>(start,Arrays.asList(seq1,seq2)).build();
+            new DefaultCoverageRegion.Builder<Range>(start,Arrays.asList(seq1,seq2)).build();
             fail("calling build() before end() should throw illegalState Exception");
         }
         catch(IllegalStateException e){
@@ -106,7 +99,7 @@ public class TestDefaultCoverageRegion {
     @Test
     public void nullElementsShouldThrowIllegalArgumentException(){
         try{
-            new DefaultCoverageRegion.Builder<Placed>(start,null);
+            new DefaultCoverageRegion.Builder<Range>(start,null);
             fail("passing in null elements should throw illegalArgumentException");
         }catch(IllegalArgumentException e){
             assertEquals("elements can not be null" , e.getMessage());
@@ -120,7 +113,7 @@ public class TestDefaultCoverageRegion {
     
     @Test
     public void equalsSameRValues(){
-        DefaultCoverageRegion sameValues = new DefaultCoverageRegion.Builder<Placed>(start,Arrays.asList(seq1,seq2))
+        DefaultCoverageRegion sameValues = new DefaultCoverageRegion.Builder<Range>(start,Arrays.asList(seq1,seq2))
                                         .end(end)
                                         .build();
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);
@@ -138,7 +131,7 @@ public class TestDefaultCoverageRegion {
     
     @Test
     public void notEqualsDifferentStart(){
-        DefaultCoverageRegion differentStart = new DefaultCoverageRegion.Builder<Placed>(
+        DefaultCoverageRegion differentStart = new DefaultCoverageRegion.Builder<Range>(
                                     start+1,
                                     Arrays.asList(seq1,seq2))
                                         .end(end+1)
@@ -149,7 +142,7 @@ public class TestDefaultCoverageRegion {
     
     @Test
     public void notEqualsDifferentLength(){
-        DefaultCoverageRegion differentLength = new DefaultCoverageRegion.Builder<Placed>(
+        DefaultCoverageRegion differentLength = new DefaultCoverageRegion.Builder<Range>(
                                     start,
                                     Arrays.asList(seq1,seq2))
                                         .end(end+1)
@@ -159,7 +152,7 @@ public class TestDefaultCoverageRegion {
     }
     @Test
     public void notEqualsDifferentElements(){
-        DefaultCoverageRegion differentElements = new DefaultCoverageRegion.Builder<Placed>(
+        DefaultCoverageRegion differentElements = new DefaultCoverageRegion.Builder<Range>(
                                     start,
                                     Arrays.asList(seq1))
                                         .end(end)
@@ -170,7 +163,7 @@ public class TestDefaultCoverageRegion {
     
     @Test
     public void sameElementsDifferentOrderIsNotEqual(){
-        DefaultCoverageRegion differentElementOrder = new DefaultCoverageRegion.Builder<Placed>(
+        DefaultCoverageRegion differentElementOrder = new DefaultCoverageRegion.Builder<Range>(
                                     start,
                                     Arrays.asList(seq2,seq1))
                                         .end(end)
