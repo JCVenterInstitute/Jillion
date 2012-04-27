@@ -32,7 +32,7 @@ package org.jcvi.common.core;
  *
  *
  */
-public interface Placed{
+public interface Placed extends Rangeable{
     /**
      * Get the start coordinate of this placed object
      * on the placed axis.

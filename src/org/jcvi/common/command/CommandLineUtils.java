@@ -60,6 +60,7 @@ public class CommandLineUtils {
      */
     public static CommandLine parseCommandLine(Options options, String[] args) throws ParseException{
         CommandLineParser parser = new GnuParser();
+        //flag says stop parsing if non-option is encountered
         return parser.parse(options, args);
         
     }

@@ -33,6 +33,7 @@ import java.util.List;
 
 import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.io.IOUtil;
@@ -40,21 +41,21 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 
 
-public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> implements CoverageMap<T> {
+public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>> implements CoverageMap<T> {
 
 
     @SuppressWarnings("unchecked")
-    public static <V extends Placed,T extends CoverageRegion<V>> DefaultCoverageMap<V,T> 
+    public static <V extends Rangeable,T extends CoverageRegion<V>> DefaultCoverageMap<V,T> 
             buildCoverageMap(Collection<V> elements){
         return (DefaultCoverageMap<V,T>)new Builder(elements).build();
     }
     @SuppressWarnings("unchecked")
-    public static <V extends Placed,T extends CoverageRegion<V>> DefaultCoverageMap<V,T> 
+    public static <V extends Rangeable,T extends CoverageRegion<V>> DefaultCoverageMap<V,T> 
             buildCoverageMap(CloseableIterator<V> elements){
         return (DefaultCoverageMap<V,T>)new Builder(elements).build();
     }
     @SuppressWarnings("unchecked")
-    public static <V extends Placed,T extends CoverageRegion<V>> DefaultCoverageMap<V,T> 
+    public static <V extends Rangeable,T extends CoverageRegion<V>> DefaultCoverageMap<V,T> 
             buildCoverageMap(Collection<V> elements, int maxAllowedCoverage){
         return (DefaultCoverageMap<V,T>)new Builder(elements,maxAllowedCoverage).build();
     }
@@ -66,7 +67,7 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
         buildCoverageMap(C contig, int maxAllowedCoverage){
             return (DefaultCoverageMap<PR,T>)new Builder(contig.getReadIterator(),maxAllowedCoverage).build();
     }
-    private static class PlacedStartComparator <T extends Placed> implements Comparator<T>,Serializable {       
+    private static class RangeableStartComparator <T extends Rangeable> implements Comparator<T>,Serializable {       
         /**
          * 
          */
@@ -74,12 +75,12 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
 
         @Override
         public int compare(T o1, T o2) {           
-            return Long.valueOf(o1.getBegin()).compareTo(o2.getBegin());
+            return Long.valueOf(o1.asRange().getBegin()).compareTo(o2.asRange().getBegin());
         }
 
     }
     
-    private static class PlacedEndComparator<T extends Placed> implements Comparator<T>, Serializable {       
+    private static class RangeableEndComparator<T extends Rangeable> implements Comparator<T>, Serializable {       
         /**
          * 
          */
@@ -87,7 +88,7 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
 
         @Override
         public int compare(T o1, T o2) {           
-            return Long.valueOf(o1.getEnd()).compareTo(o2.getEnd());
+            return Long.valueOf(o1.asRange().getEnd()).compareTo(o2.asRange().getEnd());
         }
             
     }
@@ -262,7 +263,7 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
         return length;
     }
     
-    public static  class Builder<P extends Placed> extends AbstractCoverageMapBuilder<P,CoverageRegion<P>>{
+    public static  class Builder<P extends Rangeable> extends AbstractCoverageMapBuilder<P,CoverageRegion<P>>{
         private final List<P> startCoordinateSortedList = new ArrayList<P>();
         private final List<P> endCoordinateSortedList = new ArrayList<P>();
         
@@ -299,8 +300,8 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
             filterAmpliconsWithoutCoordinates(startCoordinateSortedList);
             filterAmpliconsWithoutCoordinates(endCoordinateSortedList);
             Collections.sort(startCoordinateSortedList,
-                    new PlacedStartComparator<P>());
-            Collections.sort(endCoordinateSortedList, new PlacedEndComparator<P>());
+                    new RangeableStartComparator<P>());
+            Collections.sort(endCoordinateSortedList, new RangeableEndComparator<P>());
         }
         /**
          * If there are no coordinates (start or end are null) then we remove them
@@ -311,7 +312,7 @@ public class DefaultCoverageMap<V extends Placed,T extends CoverageRegion<V>> im
         private void filterAmpliconsWithoutCoordinates(Collection<P> amp) {
             for (Iterator<P> it = amp.iterator(); it.hasNext();) {
                 P entry = it.next();
-                if (entry.getLength() == 0) {
+                if (entry.asRange().getLength() == 0) {
                     it.remove();
                 }
             }

@@ -33,6 +33,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.util.CommonUtil;
 
 public final class  DefaultCoverageRegion<T extends Placed> implements CoverageRegion<T> {
@@ -117,7 +118,7 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
 
 
 
-    public static class Builder<T extends Placed> implements CoverageRegionBuilder<T>{
+    public static class Builder<T extends Rangeable> implements CoverageRegionBuilder<T>{
         private final long start;
         private long end;
         private Queue<T> elements;
@@ -157,8 +158,9 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
         }
         public Builder end(long end){
             if(!canSetEndTo(end)){
-                for(Placed element : elements){
-                    System.out.println(element.getBegin() +" , "+ element.getEnd());
+                for(Rangeable element : elements){
+                	Range range = element.asRange();
+                    System.out.println(range.getBegin() +" , "+ range.getEnd());
                 }
                 throw new IllegalArgumentException("end must be >= than "+ (start + 1) + " but was "+ end);
             }
