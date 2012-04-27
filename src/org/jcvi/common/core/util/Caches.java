@@ -485,7 +485,7 @@ public class Caches
          * @param loadFactor
          */
         public SoftReferenceCache(int maxSize) {
-          super(new LinkedHashMap(maxSize, DEFAULT_LOAD_FACTOR), maxSize);
+          super(new LinkedHashMap<K,SoftReference<V>>(maxSize, DEFAULT_LOAD_FACTOR), maxSize);
         }
 
         /**
@@ -514,7 +514,7 @@ public class Caches
          * @param loadFactor
          */
         public SoftReferenceLRUCache(int maxSize) {
-          super(new LRUCache(maxSize, DEFAULT_LOAD_FACTOR), maxSize);
+          super(new LRUCache<K,SoftReference<V>>(maxSize, DEFAULT_LOAD_FACTOR), maxSize);
         }
 
         /**
@@ -543,7 +543,7 @@ public class Caches
          * @param loadFactor
          */
         public WeakReferenceLRUCache(int maxSize) {
-            super(new LRUCache(maxSize, DEFAULT_LOAD_FACTOR), maxSize);
+            super(new LRUCache<K,WeakReference<V>>(maxSize, DEFAULT_LOAD_FACTOR), maxSize);
         }
         
         /**
@@ -571,7 +571,7 @@ public class Caches
          * @param loadFactor
          */
         public WeakReferenceCache(int maxSize) {
-            super(new LinkedHashMap(maxSize, DEFAULT_LOAD_FACTOR), maxSize);
+            super(new LinkedHashMap<K, WeakReference<V>>(maxSize, DEFAULT_LOAD_FACTOR), maxSize);
         }
         
         /**
