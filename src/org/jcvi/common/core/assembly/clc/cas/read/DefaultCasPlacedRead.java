@@ -28,10 +28,8 @@ import java.util.Map;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 
 final class DefaultCasPlacedRead implements CasPlacedRead{
@@ -166,8 +164,12 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
     */
     @Override
     public Range asRange() {
-        return Range.create(getBegin(), getEnd());
+        return getContigRange();
     }
 
+    @Override
+	public Range getContigRange() {
+		return Range.create(getBegin(), getEnd());
+	}
    
 }

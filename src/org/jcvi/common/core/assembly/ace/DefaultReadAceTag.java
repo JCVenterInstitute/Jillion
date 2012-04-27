@@ -25,12 +25,12 @@ package org.jcvi.common.core.assembly.ace;
 
 import java.util.Date;
 
-import org.jcvi.common.core.Placed;
+import org.jcvi.common.core.Rangeable;
 
 public class DefaultReadAceTag extends AbstractDefaultPlacedAceTag implements ReadAceTag{
 
     public DefaultReadAceTag(String id, String type, String creator,
-            Date creationDate, Placed location, boolean isTransient) {
+            Date creationDate, Rangeable location, boolean isTransient) {
         super(id, type, creator, creationDate, location, null, isTransient);
     }
     

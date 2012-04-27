@@ -116,7 +116,7 @@ public final class DefaultUnitigDataStore{
                             validBases.asList(), gapOffsets);
                     
                     currentBuilder.addRead(externalReadId, gappedValidBases,
-                            (int)readRange.getBegin(),readRange.getDirection(),
+                            (int)readRange.asRange().getBegin(),readRange.getDirection(),
                             clearRange, 
                             (int)fullLengthSequence.getLength(),
                             false);

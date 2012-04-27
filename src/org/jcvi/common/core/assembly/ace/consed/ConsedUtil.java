@@ -148,7 +148,7 @@ public class ConsedUtil {
         for(CoverageRegion<AcePlacedReadBuilder> region : coverageMap){
             if(region.getCoverage()>0){
                 
-                final Range contigRange = Range.create(region.getBegin(), region.getEnd());
+                final Range contigRange =region.asRange();
                 coveredRegions.add(contigRange);
             }
         }

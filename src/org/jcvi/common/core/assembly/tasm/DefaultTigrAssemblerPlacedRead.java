@@ -173,7 +173,13 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
     public Range asRange() {
         return delegate.asRange();
     }
-    /**
+    
+    
+    @Override
+	public Range getContigRange() {
+		return delegate.getContigRange();
+	}
+	/**
     * {@inheritDoc}
     */
     @Override

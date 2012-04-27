@@ -149,7 +149,10 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
     public Range asRange() {
         return placedRead.asRange();
     }
-
+    @Override
+	public Range getContigRange() {
+		return placedRead.getContigRange();
+	}
     /**
     * {@inheritDoc}
     */

@@ -11,9 +11,6 @@ public class TestDirectedRange {
 		DirectedRange sut = DirectedRange.create(range, Direction.REVERSE);
 		assertEquals(range, sut.getRange());
 		assertEquals(Direction.REVERSE, sut.getDirection());
-		assertEquals(range.getBegin(), sut.getBegin());
-		assertEquals(range.getEnd(), sut.getEnd());
-		assertEquals(range.getLength(), sut.getLength());
 		assertEquals(range, sut.asRange());
 	}
 	

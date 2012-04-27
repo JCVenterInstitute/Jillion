@@ -27,13 +27,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.jcvi.common.core.Placed;
+import org.jcvi.common.core.Rangeable;
 
 public final class DefaultConsensusAceTag extends AbstractDefaultPlacedAceTag implements ConsensusAceTag{
     private final List<String> comments;
     
     private DefaultConsensusAceTag(String id, String type, String creator,
-            Date creationDate, Placed location, String data, List<String> comments, boolean isTransient) {
+            Date creationDate, Rangeable location, String data, List<String> comments, boolean isTransient) {
         super(id, type, creator, creationDate, location, data, isTransient);
         this.comments = comments;
     }
@@ -78,9 +78,8 @@ public final class DefaultConsensusAceTag extends AbstractDefaultPlacedAceTag im
 
     @Override
     public String toString() {
-        return "DefaultConsensusAceTag [comments=" + comments + ", getEnd()="
-                + getEnd() + ", getId()=" + getId() + ", getStart()="
-                + getBegin() + ", isTransient()=" + isTransient()
+        return "DefaultConsensusAceTag [comments=" + comments + ", range()="
+                + asRange() + ", getId()=" + getId() + ", isTransient()=" + isTransient()
                 + ", getCreationDate()=" + getCreationDate()
                 + ", getCreator()=" + getCreator() + ", getData()=" + getData()
                 + ", getType()=" + getType() + "]";
@@ -93,7 +92,7 @@ public final class DefaultConsensusAceTag extends AbstractDefaultPlacedAceTag im
         private final List<String> comments = new ArrayList<String>();
         private final String id;
         
-        private final Placed location;
+        private final Rangeable location;
         private final boolean isTransient;
         
         private final String type;
@@ -113,7 +112,7 @@ public final class DefaultConsensusAceTag extends AbstractDefaultPlacedAceTag im
          * @param data
          */
         public Builder(String id, String type, String creator,
-                Date creationDate, Placed location, boolean isTransient) {
+                Date creationDate, Rangeable location, boolean isTransient) {
             this.id = id;
             this.location = location;
             this.isTransient = isTransient;

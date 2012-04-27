@@ -102,5 +102,17 @@ public interface PlacedRead extends Read<ReferenceEncodedNucleotideSequence>, Pl
      * @return the full length including bases outside of the valid range; always positive.
      */
     int getUngappedFullLength();
- 
+    /**
+     * Get the location of this read on its contig
+     * as a {@link Range} in gapped contig coordinates.
+     * @return a Range; never null.
+     */
+    Range getContigRange();
+    /**
+     * Delegates to {@link #getContigRange()}
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    Range asRange();
 }

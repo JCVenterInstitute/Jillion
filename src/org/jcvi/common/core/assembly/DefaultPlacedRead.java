@@ -205,10 +205,15 @@ public final class DefaultPlacedRead implements PlacedRead {
     */
     @Override
     public Range asRange() {
-        return Range.create(getBegin(), getEnd());
+        return getContigRange();
     }
     
-    private static class Builder implements PlacedReadBuilder<PlacedRead>{
+    @Override
+	public Range getContigRange() {
+		return Range.create(getBegin(), getEnd());
+	}
+
+	private static class Builder implements PlacedReadBuilder<PlacedRead>{
         private String readId;
         /**
          * Our original encoded sequence.  If we 

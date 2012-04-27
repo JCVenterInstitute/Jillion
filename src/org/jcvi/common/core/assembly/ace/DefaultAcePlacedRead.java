@@ -108,7 +108,10 @@ final class DefaultAcePlacedRead implements AcePlacedRead {
     public long getEnd() {
         return placedRead.getEnd();
     }
-
+    @Override
+	public Range getContigRange() {
+		return placedRead.getContigRange();
+	}
     /**
     * {@inheritDoc}
     */

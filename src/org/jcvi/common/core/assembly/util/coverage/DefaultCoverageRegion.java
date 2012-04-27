@@ -36,7 +36,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.util.CommonUtil;
 
-public final class  DefaultCoverageRegion<T extends Placed> implements CoverageRegion<T> {
+public final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegion<T> {
     private Collection<T> elements;
     private final Range range;
     /**
@@ -54,19 +54,7 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
         return elements.size();
     }
 
-    @Override
-    public long getLength() {
-        return range.getLength();
-    }
-
-    @Override
-    public long getBegin() {
-        return range.getBegin();
-    }
-    @Override
-    public long getEnd() {
-        return range.getEnd();
-    } 
+   
 
     @Override
     public Iterator<T> iterator() {
@@ -76,7 +64,7 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("coverage region : ");
-        builder.append(Range.create(getBegin(), getEnd()));
+        builder.append(range);
         builder.append(" coverage = ");
         builder.append(getCoverage());
         return builder.toString();
@@ -101,8 +89,7 @@ public final class  DefaultCoverageRegion<T extends Placed> implements CoverageR
         DefaultCoverageRegion other = (DefaultCoverageRegion) obj;
         return CommonUtil.similarTo(new ArrayList<T>(elements),
                 new ArrayList<T>(other.elements)) &&
-                CommonUtil.similarTo(range.getLength(), other.getLength()) 
-                && CommonUtil.similarTo(range.getBegin(), other.getBegin());
+                CommonUtil.similarTo(range, other.asRange());
     }
     @Override
     public CoverageRegion<T> shiftLeft(int units) {

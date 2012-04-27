@@ -23,14 +23,15 @@
  */
 package org.jcvi.common.core.assembly.ace;
 
-import org.jcvi.common.core.Placed;
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Rangeable;
 /**
  * {@code PlacedAceTag} is a version of an 
  * {@link AceTag} that maps to a particular location
  * on a genomic element in the assembly.
  * @author dkatzel
  */
-public interface PlacedAceTag extends AceTag, Placed {
+public interface RangeableAceTag extends AceTag, Rangeable {
     /**
      * Get the Id of this tag which can refer to the read or contig
      * this tag references.
@@ -38,20 +39,11 @@ public interface PlacedAceTag extends AceTag, Placed {
      */
     String getId();
     /**
-     * Gapped Start offset.
+     * Gapped Range.
+     * {@inheritDoc}
      */
     @Override
-    long getBegin();
-    /**
-     * Gapped End Offset.
-     */
-    @Override
-    long getEnd();
-    /**
-     * Gapped length.
-     */
-    @Override
-    long getLength();
+    Range asRange();
     /**
      * Should this tag be transferred to new
      * assembly if reassembled?

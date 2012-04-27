@@ -38,9 +38,7 @@ public class TestQualityClassRegion {
     @Test
     public void constructor(){
         assertEquals(qualityClass, sut.getQualityClass());
-        assertEquals(range.getBegin(), sut.getBegin());
-        assertEquals(range.getEnd(), sut.getEnd());
-        assertEquals(range.getLength(), sut.getLength());
+        assertEquals(range, sut.asRange());
     }
     
     @Test

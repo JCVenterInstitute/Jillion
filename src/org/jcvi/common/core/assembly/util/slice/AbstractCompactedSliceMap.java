@@ -19,6 +19,8 @@
 
 package org.jcvi.common.core.assembly.util.slice;
 
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
@@ -33,10 +35,11 @@ public abstract class AbstractCompactedSliceMap implements SliceMap{
 
     protected CompactedSlice[] createSlices(
             CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap) {
-        int size = (int)coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).getEnd()+1;
+        int size = (int)coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).asRange().getEnd()+1;
         CompactedSlice[] slices = new CompactedSlice[size];
         for(CoverageRegion<?  extends PlacedRead> region : coverageMap){
-            for(int i=(int)region.getBegin(); i<=region.getEnd(); i++ ){
+        	Range range = region.asRange();
+            for(int i=(int)range.getBegin(); i<=range.getEnd(); i++ ){
                 slices[i] =createSlice(region, i);                
             }
         }

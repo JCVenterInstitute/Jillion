@@ -30,7 +30,7 @@ import java.util.List;
  * consensus of a contig in an ace file.
  * @author dkatzel
  */
-public interface ConsensusAceTag extends PlacedAceTag {
+public interface ConsensusAceTag extends RangeableAceTag {
     
     /**
      * Get the Id of contig

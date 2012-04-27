@@ -100,7 +100,10 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         return "AcePlacedReadAdapter [placedRead="
                 + placedRead + ", phdInfo=" + phdInfo +  "]";
     }
-
+    @Override
+	public Range getContigRange() {
+		return placedRead.getContigRange();
+	}
     /**
     * {@inheritDoc}
     */
@@ -153,6 +156,7 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         }
         return true;
     }
+	
     
   
     

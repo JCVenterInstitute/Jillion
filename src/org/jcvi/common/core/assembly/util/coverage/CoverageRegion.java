@@ -24,10 +24,9 @@
 package org.jcvi.common.core.assembly.util.coverage;
 
 
-import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Rangeable;
 
-public interface CoverageRegion<T extends Rangeable> extends Placed, Iterable<T> {
+public interface CoverageRegion<T extends Rangeable> extends Rangeable, Iterable<T> {
         /**
          * Get the Coverage depth of this coverage region.
          * should be the same as the number of elements.
