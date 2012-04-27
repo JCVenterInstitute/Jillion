@@ -395,6 +395,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 				boolean reverseComplimented) {
 			if(contigIdToGet.equals(contigId)){
 				visitorBuilder = new IndexedAceFileContig.IndexedContigVisitorBuilder(startOffset-currentLine.length(), aceFile);
+				visitorBuilder.visitLine(currentLine);
 				return visitorBuilder.shouldVisitContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
 			}
 			return false;
