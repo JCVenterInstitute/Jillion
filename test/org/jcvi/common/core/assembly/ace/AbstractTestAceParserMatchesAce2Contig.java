@@ -26,7 +26,9 @@ package org.jcvi.common.core.assembly.ace;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.common.core.assembly.Contig;
@@ -37,27 +39,38 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.junit.After;
 import org.junit.Test;
 
 public abstract class  AbstractTestAceParserMatchesAce2Contig {
-    List<AceContig> actualContigs;
     DefaultContigFileDataStore expectedContigDataStore;
     ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestAceParserMatchesAce2Contig.class);
     private final String pathToAceFile;
     
     private final AceContigDataStore sut;
     
+    private static final List<String> IDS = Arrays.asList(
+			"22934-PB2",
+			"22934-PB1",
+			"22934-PA",
+			"22934-HA",
+			"22934-NP",
+			"22934-NA",
+			"22934-MP",
+			"22934-NS"
+			);
+    
     AbstractTestAceParserMatchesAce2Contig(String aceFile, String contigFile) throws IOException, DataStoreException{
         this.expectedContigDataStore = new DefaultContigFileDataStore(
         		RESOURCES.getFileAsStream(contigFile));
         pathToAceFile = aceFile;
-        this.actualContigs = getContigList(
-        		RESOURCES.getFile(aceFile));  
         sut = createDataStoreFor(RESOURCES.getFile(aceFile));
     }
-    protected abstract List<AceContig> getContigList(File aceFile) throws IOException, DataStoreException;
-    
    
+   @After
+   public void closeDataStore() throws IOException{
+	   sut.close();
+   }
     protected File getAceFile() throws IOException{
     	return RESOURCES.getFile(pathToAceFile);
     }
@@ -68,7 +81,7 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
     
     @Test
     public void numberOfContigs() throws DataStoreException{
-    	assertEquals(actualContigs.size(), sut.getNumberOfRecords());    	
+    	assertEquals(expectedContigDataStore.getNumberOfRecords(), sut.getNumberOfRecords());    	
     }
     
     @Test
@@ -100,5 +113,59 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
     		IOUtil.closeAndIgnoreErrors(iter);
     	}
     }
+    
+    @Test
+    public void get() throws DataStoreException{
+    	
+    	
+    	for(String id : IDS){
+    		Contig<PlacedRead> expected = expectedContigDataStore.get(id);
+    		AceContig actual = sut.get(id);
+    		AceContigTestUtil.assertContigsEqual(expected, actual);
+    	}
+    }
   
+	@Test
+	public void sizeVsIterator() throws IOException, DataStoreException{
+		
+		long size = sut.getNumberOfRecords();
+		long expected = 0;
+		CloseableIterator<AceContig> iter = sut.iterator();
+		try{
+			while(iter.hasNext()){
+				expected++;
+				iter.next();
+			}
+		}finally{
+			IOUtil.closeAndIgnoreErrors(iter);
+		}
+		assertEquals(expected, size);
+	}
+	
+	@Test
+	public void contains() throws DataStoreException, IOException{
+		for(String id : IDS){
+			assertTrue(sut.contains(id));
+		}
+	}
+	
+	@Test
+	public void containsIdNotInDataStoreShouldReturnFalse() throws DataStoreException, FileNotFoundException, IOException{
+		assertFalse(sut.contains("not in datastore"));
+	}
+	
+	@Test
+	public void getVsIterator() throws DataStoreException, IOException{
+		CloseableIterator<AceContig> iter=null;
+		try{
+			iter = sut.iterator();
+			while(iter.hasNext()){
+				AceContig fromIter = iter.next();
+				AceContig fromGet = sut.get(fromIter.getId());
+				AceContigTestUtil.assertContigsEqual(fromIter, fromGet);
+			}
+		}finally{
+			IOUtil.closeAndIgnoreErrors(iter);
+		}
+	}
 }

@@ -25,11 +25,7 @@ package org.jcvi.common.core.assembly.ace;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
-import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigDataStore;
 import org.jcvi.common.core.assembly.ace.DefaultAceFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
@@ -39,23 +35,6 @@ public class TestDefaultAceFileDataStore extends TestAbstractAceParserMatchesAce
     public TestDefaultAceFileDataStore() throws IOException, DataStoreException {
         super();        
     }
-
-    @Override
-    protected List<AceContig> getContigList(File aceFile)
-            throws IOException {
-        AceContigDataStore dataStore= DefaultAceFileDataStore.create(aceFile);
-        try{
-            List<AceContig> contigs = new ArrayList<AceContig>((int)dataStore.getNumberOfRecords());
-        
-            for(Iterator<String> iter = dataStore.idIterator(); iter.hasNext();){
-                String id = iter.next();
-               contigs.add(dataStore.get(id));
-            }
-            return contigs;
-        } catch (DataStoreException e) {
-            throw new RuntimeException("error getting contigs",e);
-        }
-        }
 
 	@Override
 	protected AceContigDataStore createDataStoreFor(File aceFile) throws IOException {
