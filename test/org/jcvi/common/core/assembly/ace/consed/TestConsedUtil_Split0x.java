@@ -293,7 +293,7 @@ public class TestConsedUtil_Split0x {
     private void assertAcePlacedReadsEqual(AcePlacedRead expected,
             AcePlacedRead actual) {
         assertEquals("id",expected.getId(),actual.getId());
-        assertEquals("offset",expected.getBegin(),actual.getBegin());
+        assertEquals("offset",expected.getGappedContigStart(),actual.getGappedContigStart());
         assertEquals("direction",expected.getDirection(),actual.getDirection());
         
         assertEquals("phdInfo",expected.getPhdInfo(),actual.getPhdInfo());

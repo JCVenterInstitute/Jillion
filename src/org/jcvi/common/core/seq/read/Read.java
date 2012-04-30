@@ -48,5 +48,5 @@ public interface Read<T extends NucleotideSequence> {
      * Get the (ungapped) length of this read.
      * @return the length of this read as a long.
      */
-    long getLength();
+    long getGappedLength();
 }

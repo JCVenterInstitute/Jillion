@@ -66,7 +66,7 @@ public class TestDefaultCasPlacedRead extends EasyMockSupport{
     
     @Test
     public void getStart(){
-        assertEquals(startOffset, sut.getBegin());
+        assertEquals(startOffset, sut.getGappedContigStart());
     }
     
     @Test

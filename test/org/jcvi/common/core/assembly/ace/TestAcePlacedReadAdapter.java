@@ -25,7 +25,6 @@ package org.jcvi.common.core.assembly.ace;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 import java.util.Date;
-import java.util.Map;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
@@ -33,7 +32,6 @@ import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.assembly.ace.AcePlacedReadAdapter;
 import org.jcvi.common.core.assembly.ace.DefaultPhdInfo;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 import org.junit.Before;
 import org.junit.Test;
@@ -86,14 +84,7 @@ public class TestAcePlacedReadAdapter {
         assertEquals(direction, sut.getDirection());
         verify(mockPlacedRead);
     }
-    @Test
-    public void getSnps() {
-        Map<Integer,Nucleotide> snpMap = createMock(Map.class);
-        expect(mockPlacedRead.getDifferenceMap()).andReturn(snpMap);
-        replay(mockPlacedRead);
-        assertEquals(snpMap, sut.getDifferenceMap());
-        verify(mockPlacedRead);
-    }
+    
     @Test
     public void getValidRange() {
         Range validRange = Range.create(1,10);
@@ -121,23 +112,23 @@ public class TestAcePlacedReadAdapter {
     @Test
     public void getLength() {
 
-        expect(mockPlacedRead.getLength()).andReturn(validRange.getLength());
+        expect(mockPlacedRead.getGappedLength()).andReturn(validRange.getLength());
         replay(mockPlacedRead);
-        assertEquals(validRange.getLength(), sut.getLength());
+        assertEquals(validRange.getLength(), sut.getGappedLength());
         verify(mockPlacedRead);
     }
     @Test
     public void getEnd() {
-        expect(mockPlacedRead.getEnd()).andReturn(validRange.getEnd());
+        expect(mockPlacedRead.getGappedContigEnd()).andReturn(validRange.getEnd());
         replay(mockPlacedRead);
-        assertEquals(validRange.getEnd(), sut.getEnd());
+        assertEquals(validRange.getEnd(), sut.getGappedContigEnd());
         verify(mockPlacedRead);
     }
     @Test
     public void getStart() {
-        expect(mockPlacedRead.getBegin()).andReturn(validRange.getBegin());
+        expect(mockPlacedRead.getGappedContigStart()).andReturn(validRange.getBegin());
         replay(mockPlacedRead);
-        assertEquals(validRange.getBegin(), sut.getBegin());
+        assertEquals(validRange.getBegin(), sut.getGappedContigStart());
         verify(mockPlacedRead);
     } 
     

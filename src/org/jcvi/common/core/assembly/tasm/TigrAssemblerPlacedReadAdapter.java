@@ -25,7 +25,7 @@ import java.util.Map;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.PlacedRead;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 /**
@@ -59,11 +59,11 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 		
 		//TODO is asm_lend / asm_rend ungapped or gapped?
 		//try ungapped?
-		int asmLend =1+ getNucleotideSequence().getUngappedOffsetFor((int)getBegin());
-		int asmRend =1+ getNucleotideSequence().getUngappedOffsetFor((int)getEnd());
+		int asmLend =1+ getNucleotideSequence().getUngappedOffsetFor((int)getGappedContigStart());
+		int asmRend =1+ getNucleotideSequence().getUngappedOffsetFor((int)getGappedContigEnd());
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_LEFT, ""+asmLend);
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_RIGHT, ""+asmRend);
-		attributes.put(TigrAssemblerReadAttribute.CONTIG_START_OFFSET, ""+(this.getBegin()));
+		attributes.put(TigrAssemblerReadAttribute.CONTIG_START_OFFSET, ""+(this.getGappedContigStart()));
 		attributes.put(TigrAssemblerReadAttribute.GAPPED_SEQUENCE, Nucleotides.asString(this.getNucleotideSequence().asList()));
 		
 		Range validRange = this.getValidRange();
@@ -110,13 +110,12 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 	}
 
 	@Override
+	public Read<ReferenceEncodedNucleotideSequence> getRead() {
+		return delegatePlacedRead.getRead();
+	}
+	@Override
 	public Direction getDirection() {
 		return delegatePlacedRead.getDirection();
-	}
-
-	@Override
-	public Map<Integer, Nucleotide> getDifferenceMap() {
-		return delegatePlacedRead.getDifferenceMap();
 	}
 
 	@Override
@@ -135,18 +134,18 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 	}
 
 	@Override
-	public long getLength() {
-		return delegatePlacedRead.getLength();
+	public long getGappedLength() {
+		return delegatePlacedRead.getGappedLength();
 	}
 
 	@Override
-	public long getEnd() {
-		return delegatePlacedRead.getEnd();
+	public long getGappedContigEnd() {
+		return delegatePlacedRead.getGappedContigEnd();
 	}
 
 	@Override
-	public long getBegin() {
-		return delegatePlacedRead.getBegin();
+	public long getGappedContigStart() {
+		return delegatePlacedRead.getGappedContigStart();
 	}
 
 	/* (non-Javadoc)
@@ -198,8 +197,8 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
     
     
     @Override
-	public Range getContigRange() {
-		return delegatePlacedRead.getContigRange();
+	public Range getGappedContigRange() {
+		return delegatePlacedRead.getGappedContigRange();
 	}
 	/**
     * {@inheritDoc}

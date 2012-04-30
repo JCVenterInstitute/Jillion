@@ -23,13 +23,9 @@
  */
 package org.jcvi.common.core.assembly.clc.cas.read;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 
 final class DefaultCasPlacedRead implements CasPlacedRead{
@@ -65,15 +61,15 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
 
 
     @Override
-    public long getEnd() {
-        return startOffset+getLength()-1;
+    public long getGappedContigEnd() {
+        return startOffset+getGappedLength()-1;
     }
     @Override
-    public long getLength() {
-        return read.getLength();
+    public long getGappedLength() {
+        return read.getGappedLength();
     }
     @Override
-    public long getBegin() {
+    public long getGappedContigStart() {
         return startOffset;
     }
     @Override
@@ -93,31 +89,26 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
     @Override
     public long toGappedValidRangeOffset(long referenceIndex) {
         
-        long validRangeIndex= referenceIndex - getBegin();
+        long validRangeIndex= referenceIndex - getGappedContigStart();
         checkValidRange(validRangeIndex);
         return validRangeIndex;
     }
     @Override
     public long toReferenceOffset(long validRangeIndex) {
         checkValidRange(validRangeIndex);
-        return getBegin() +validRangeIndex;
+        return getGappedContigStart() +validRangeIndex;
     }
     private void checkValidRange(long validRangeIndex) {
         if(validRangeIndex <0){
             throw new IllegalArgumentException("reference index refers to index before valid range");
         }
-        if(validRangeIndex > getLength()-1){
+        if(validRangeIndex > getGappedLength()-1){
             throw new IllegalArgumentException("reference index refers to index after valid range");
         }
     }
     @Override
     public Direction getDirection() {
         return dir;
-    }
-    //TODO fix me we can compute snps by the alignment regions
-    @Override
-    public Map<Integer, Nucleotide> getDifferenceMap() {
-        return Collections.emptyMap();
     }
     @Override
     public Range getValidRange() {
@@ -164,12 +155,20 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
     */
     @Override
     public Range asRange() {
-        return getContigRange();
+        return getGappedContigRange();
     }
 
     @Override
-	public Range getContigRange() {
-		return Range.create(getBegin(), getEnd());
+	public Range getGappedContigRange() {
+		return Range.create(getGappedContigStart(), getGappedContigEnd());
 	}
+
+
+	@Override
+	public Read<ReferenceEncodedNucleotideSequence> getRead() {
+		return read;
+	}
+    
+    
    
 }

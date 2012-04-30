@@ -94,8 +94,8 @@ public class TestCas2Consed3 {
 				assertEquals("read basecalls", expectedRead
 						.getNucleotideSequence().asList(), actualRead
 						.getNucleotideSequence().asList());
-				assertEquals("read offset", expectedRead.getBegin(),
-						actualRead.getBegin());
+				assertEquals("read offset", expectedRead.getGappedContigStart(),
+						actualRead.getGappedContigStart());
 
 				}
 			}finally{

@@ -20,13 +20,13 @@
 package org.jcvi.common.core.assembly.asm;
 
 import java.util.List;
-import java.util.Map;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.assembly.PlacedReadBuilder;
+import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -58,19 +58,16 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
     * {@inheritDoc}
     */
     @Override
-    public Map<Integer, Nucleotide> getDifferenceMap() {
-        return placedRead.getDifferenceMap();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
     public Range getValidRange() {
         return placedRead.getValidRange();
     }
 
-    /**
+    @Override
+	public Read<ReferenceEncodedNucleotideSequence> getRead() {
+		return placedRead.getRead();
+	}
+
+	/**
     * {@inheritDoc}
     */
     @Override
@@ -122,24 +119,24 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
     * {@inheritDoc}
     */
     @Override
-    public long getLength() {
-        return placedRead.getLength();
+    public long getGappedLength() {
+        return placedRead.getGappedLength();
     }
 
     /**
     * {@inheritDoc}
     */
     @Override
-    public long getBegin() {
-        return placedRead.getBegin();
+    public long getGappedContigStart() {
+        return placedRead.getGappedContigStart();
     }
 
     /**
     * {@inheritDoc}
     */
     @Override
-    public long getEnd() {
-        return placedRead.getEnd();
+    public long getGappedContigEnd() {
+        return placedRead.getGappedContigEnd();
     }
 
     /**
@@ -150,8 +147,8 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
         return placedRead.asRange();
     }
     @Override
-	public Range getContigRange() {
-		return placedRead.getContigRange();
+	public Range getGappedContigRange() {
+		return placedRead.getGappedContigRange();
 	}
     /**
     * {@inheritDoc}

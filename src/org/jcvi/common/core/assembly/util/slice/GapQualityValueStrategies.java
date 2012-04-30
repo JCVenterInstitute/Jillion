@@ -125,7 +125,7 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
         if(leftFlankingNonGapIndex <0){
             return getQualityValueIfReadStartsWithGap();
         }
-        if(rightFlankingNonGapIndex> placedRead.getLength()-1){
+        if(rightFlankingNonGapIndex> placedRead.getGappedLength()-1){
             return getQualityValueIfReadEndsWithGap();
         }        
         PhredQuality leftFlankingQuality = getQualityForNonGapBase(placedRead, unComplimentedQualities, leftFlankingNonGapIndex);

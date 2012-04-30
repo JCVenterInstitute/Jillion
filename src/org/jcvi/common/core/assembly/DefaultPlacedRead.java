@@ -24,14 +24,11 @@
 package org.jcvi.common.core.assembly;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -42,11 +39,12 @@ import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence
 
 public final class DefaultPlacedRead implements PlacedRead {
 
-    private final Read<ReferenceEncodedNucleotideSequence> read;
     private final long start;
     private final byte directionOrdinal;
     private final Range validRange;
     private final int ungappedFullLength;
+    private final ReferenceEncodedNucleotideSequence sequence;
+    private final String id;
     
     
     public static PlacedReadBuilder<PlacedRead> createBuilder(NucleotideSequence reference, 
@@ -65,23 +63,21 @@ public final class DefaultPlacedRead implements PlacedRead {
                  clearRange, ungappedFullLength);
     }
     
-    DefaultPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long start, Direction sequenceDirection, int ungappedFullLength, Range validRange){
-        if(read==null){
-            throw new IllegalArgumentException("read can not be null");
-        }
-        this.read = read;
+    DefaultPlacedRead(String id, ReferenceEncodedNucleotideSequence sequence, long start, Direction sequenceDirection, int ungappedFullLength, Range validRange){
+       this.id = id;
+       this.sequence = sequence;
         this.start= start;
         this.directionOrdinal = (byte)sequenceDirection.ordinal();
         this.validRange = validRange;
         this.ungappedFullLength = ungappedFullLength;
     }
     @Override
-    public long getLength() {
-        return read.getLength();
+    public long getGappedLength() {
+        return sequence.getLength();
     }
 
     @Override
-    public long getBegin() {
+    public long getGappedContigStart() {
         return start;
     }
 
@@ -93,15 +89,24 @@ public final class DefaultPlacedRead implements PlacedRead {
         return ungappedFullLength;
     }
     
-    
-    public Read<ReferenceEncodedNucleotideSequence> getRead(){
-        return read;
-    }
     @Override
+    public Read<ReferenceEncodedNucleotideSequence> getRead(){
+        return null;
+    }
+    
+    
+    @Override
+	public String toString() {
+		return "DefaultPlacedRead [start=" + start + ", directionOrdinal="
+				+ directionOrdinal + ", id=" + id + "]";
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + read.hashCode();
+        result = prime * result + id.hashCode();
+        result = prime * result + sequence.hashCode();
         result = prime * result + directionOrdinal;
         result = prime * result + (int) (start ^ (start >>> 32));
         return result;
@@ -115,30 +120,25 @@ public final class DefaultPlacedRead implements PlacedRead {
         if (this == obj){
             return true;
         }
-        if (obj instanceof DefaultPlacedRead){           
-            DefaultPlacedRead other = (DefaultPlacedRead) obj;
-            return read.equals(other.getRead()) && start== other.getBegin() 
-            && getDirection() == other.getDirection();
-        }
-        else if (obj instanceof PlacedRead){           
+        if (obj instanceof PlacedRead){           
         	PlacedRead other = (PlacedRead) obj;
-        	if(read.getId()==null && other.getId() !=null){
+        	if(getId()==null && other.getId() !=null){
         		return false;
         	}
-        	if(!read.getId().equals(other.getId())){
+        	if(!getId().equals(other.getId())){
         		return false;
         	}
-        	if(read.getNucleotideSequence()==null && other.getNucleotideSequence() !=null){
+        	if(getNucleotideSequence()==null && other.getNucleotideSequence() !=null){
         		return false;
         	}
         	if(other.getNucleotideSequence() ==null){
         		return false;
         	}
-        	if(!read.getNucleotideSequence().asList().equals(other.getNucleotideSequence().asList())){
+        	if(!getNucleotideSequence().equals(other.getNucleotideSequence())){
         		return false;
         	}
         	
-            return start== other.getBegin() 
+            return start== other.getGappedContigStart() 
             && getDirection() == other.getDirection();
         }
         return false;
@@ -149,31 +149,23 @@ public final class DefaultPlacedRead implements PlacedRead {
     public Direction getDirection() {
         return Direction.values()[directionOrdinal];
     }
+  
     @Override
-    public String toString() {
-        return "offset = "+ getBegin() + " complemented? "+ getDirection()+"  " + read.toString();
-    }
-    @Override
-    public long getEnd() {
-        return getBegin()+getLength()-1;
+    public long getGappedContigEnd() {
+        return getGappedContigStart()+getGappedLength()-1;
     }
 
     public Map<Integer, Nucleotide> getDifferenceMap(){
-        Map<Integer, Nucleotide> map = new TreeMap<Integer, Nucleotide>();
-        final ReferenceEncodedNucleotideSequence encodedGlyphs = read.getNucleotideSequence();
-        for(Integer offset : encodedGlyphs.getSnpOffsets()){
-            map.put(offset, encodedGlyphs.get(offset));
-        }
-        return Collections.unmodifiableMap(map);
+       return getNucleotideSequence().getDifferenceMap();
         
     }
     @Override
     public ReferenceEncodedNucleotideSequence getNucleotideSequence() {
-        return read.getNucleotideSequence();
+        return sequence;
     }
     @Override
     public String getId() {
-        return read.getId();
+        return id;
     }
     @Override
     public Range getValidRange(){
@@ -182,20 +174,20 @@ public final class DefaultPlacedRead implements PlacedRead {
     @Override
     public long toGappedValidRangeOffset(long referenceIndex) {
         
-        long validRangeIndex= referenceIndex - getBegin();
+        long validRangeIndex= referenceIndex - getGappedContigStart();
         checkValidRange(validRangeIndex);
         return validRangeIndex;
     }
     @Override
     public long toReferenceOffset(long validRangeIndex) {
         checkValidRange(validRangeIndex);
-        return getBegin() +validRangeIndex;
+        return getGappedContigStart() +validRangeIndex;
     }
     private void checkValidRange(long validRangeIndex) {
         if(validRangeIndex <0){
             throw new IllegalArgumentException("reference index refers to index before valid range " + validRangeIndex);
         }
-        if(validRangeIndex > getLength()-1){
+        if(validRangeIndex > getGappedLength()-1){
             throw new IllegalArgumentException("reference index refers to index after valid range");
         }
     }
@@ -205,12 +197,12 @@ public final class DefaultPlacedRead implements PlacedRead {
     */
     @Override
     public Range asRange() {
-        return getContigRange();
+        return getGappedContigRange();
     }
     
     @Override
-	public Range getContigRange() {
-		return Range.create(getBegin(), getEnd());
+	public Range getGappedContigRange() {
+		return Range.create(getGappedContigStart(), getGappedContigEnd());
 	}
 
 	private static class Builder implements PlacedReadBuilder<PlacedRead>{
@@ -339,8 +331,7 @@ public final class DefaultPlacedRead implements PlacedRead {
             ReferenceEncodedNucleotideSequence updatedEncodedBasecalls = new NucleotideSequenceBuilder(currentBasecallsAsString())
             																.setReferenceHint(reference, offset)
             																.buildReferenceEncodedNucleotideSequence();
-            Read<ReferenceEncodedNucleotideSequence> read = new DefaultRead<ReferenceEncodedNucleotideSequence>(readId, updatedEncodedBasecalls);
-            return new DefaultPlacedRead(read, offset, dir, ungappedFullLength,clearRange);
+            return new DefaultPlacedRead(readId, updatedEncodedBasecalls, offset, dir, ungappedFullLength,clearRange);
         }
         /**
         * {@inheritDoc}

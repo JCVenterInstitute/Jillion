@@ -112,7 +112,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
                     getConsensusBuilder().build(), 
                     read.getId(), 
                     read.getNucleotideSequence().toString(), 
-                    (int)read.getBegin(), 
+                    (int)read.getGappedContigStart(), 
                     read.getDirection(), 
                     read.getValidRange(),
                     //TODO need to actually compute ungapped full length here

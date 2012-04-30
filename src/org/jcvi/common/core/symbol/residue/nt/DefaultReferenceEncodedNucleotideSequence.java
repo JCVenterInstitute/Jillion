@@ -29,14 +29,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.ValueSizeStrategy;
 import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.util.iter.ArrayIterator;
 
 final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotideSequence implements ReferenceEncodedNucleotideSequence{
 
@@ -77,24 +80,30 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
     private final byte[] encodedSnpsInfo;
     
    
-
+    
+    
     @Override
-    public List<Integer> getSnpOffsets() {
+	public Map<Integer, Nucleotide> getDifferenceMap() {
     	if(encodedSnpsInfo==null){
-    		return Collections.emptyList();
+    		return Collections.emptyMap();
     	}
         ByteBuffer buf = ByteBuffer.wrap(encodedSnpsInfo);
         ValueSizeStrategy numSnpsSizeStrategy = ValueSizeStrategy.values()[buf.get()];
 		int size = numSnpsSizeStrategy.getNext(buf);
         ValueSizeStrategy snpSizeStrategy = ValueSizeStrategy.values()[buf.get()];
-        List<Integer> snps = new ArrayList<Integer>(size);
-        for(int i=0; i<size; i++){
-            snps.add(snpSizeStrategy.getNext(buf));
+    	BitSet bits = getSnpBitSet(numSnpsSizeStrategy, size, snpSizeStrategy);
+    	Map<Integer, Nucleotide> differenceMap = new HashMap<Integer, Nucleotide>();
+    	for(int i=0; i<size; i++){        	
+            Integer offset = snpSizeStrategy.getNext(buf);
+            differenceMap.put(offset, getSnpValueFrom(bits, i));
+			
         }
-        return snps;
-    }
+		return Collections.unmodifiableMap(differenceMap);
+	}
 
-    public DefaultReferenceEncodedNucleotideSequence(NucleotideSequence reference,
+
+
+	public DefaultReferenceEncodedNucleotideSequence(NucleotideSequence reference,
             String toBeEncoded, int startOffset){
         List<Integer> tempGapList = new ArrayList<Integer>();     
         this.startOffset = startOffset;
@@ -210,11 +219,19 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
 
     @Override
 	public Iterator<Nucleotide> iterator() {
-		return asList().iterator();
+    	Nucleotide[] array = asNucleotideArray();
+    	return new ArrayIterator<Nucleotide>(array);
 	}
 
 	@Override
     public List<Nucleotide> asList() {
+		Nucleotide[] array = asNucleotideArray();
+		return Arrays.asList(array);
+	}
+
+
+
+	private Nucleotide[] asNucleotideArray() {
 		//get the reference bases as an array
 		//we convert to an array since
 		//we need to replace with our SNPs
@@ -234,15 +251,13 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
 	        ValueSizeStrategy numSnpsSizeStrategy = ValueSizeStrategy.values()[buf.get()];
 			int size = numSnpsSizeStrategy.getNext(buf);
 	        ValueSizeStrategy sizeStrategy = ValueSizeStrategy.values()[buf.get()];
-	        int from = numSnpsSizeStrategy.getNumberOfBytesPerValue()+2+size*sizeStrategy.getNumberOfBytesPerValue();
-	        byte[] snpSubArray = Arrays.copyOfRange(encodedSnpsInfo, from, encodedSnpsInfo.length);
-	        BitSet bits = IOUtil.toBitSet(snpSubArray);
+	        BitSet bits = getSnpBitSet(numSnpsSizeStrategy, size, sizeStrategy);
 	        for(int i=0; i<size; i++){        	
 	            int index = sizeStrategy.getNext(buf);
 				array[index]=getSnpValueFrom(bits, i);	            
 	        }
         }
-		return Arrays.asList(array);
+		return array;
 	}
     @Override
     public Nucleotide get(int index) {
@@ -259,9 +274,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
 	        ValueSizeStrategy numSnpsSizeStrategy = ValueSizeStrategy.values()[buf.get()];
 			int size = numSnpsSizeStrategy.getNext(buf);
 	        ValueSizeStrategy sizeStrategy = ValueSizeStrategy.values()[buf.get()];
-	        int from = numSnpsSizeStrategy.getNumberOfBytesPerValue()+2+size*sizeStrategy.getNumberOfBytesPerValue();
-	        byte[] snpSubArray = Arrays.copyOfRange(encodedSnpsInfo, from, encodedSnpsInfo.length);
-	        BitSet bits = IOUtil.toBitSet(snpSubArray);
+	        BitSet bits = getSnpBitSet(numSnpsSizeStrategy, size, sizeStrategy);
 	        for(int i=0; i<size; i++){        	
 	            int nextValue = sizeStrategy.getNext(buf);
 				if(index ==nextValue){            	
@@ -272,6 +285,16 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
         int referenceIndex = index+startOffset;
         return reference.get(referenceIndex);
     }
+
+
+
+	private BitSet getSnpBitSet(ValueSizeStrategy numSnpsSizeStrategy,
+			int size, ValueSizeStrategy sizeStrategy) {
+		int from = numSnpsSizeStrategy.getNumberOfBytesPerValue()+2+size*sizeStrategy.getNumberOfBytesPerValue();
+		byte[] snpSubArray = Arrays.copyOfRange(encodedSnpsInfo, from, encodedSnpsInfo.length);
+		BitSet bits = IOUtil.toBitSet(snpSubArray);
+		return bits;
+	}
 
 	private Nucleotide getSnpValueFrom(BitSet bits, int offset) {
 		int i = offset*BITS_PER_SNP_VALUE;
@@ -366,10 +389,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
         final int prime = 31;
         int result = 1;
         
-        result = prime * result + reference.hashCode();
-        result = prime * result + length;
-        result = prime * result + startOffset;
-        result = prime * result + Arrays.hashCode(encodedSnpsInfo);
+        result = prime * result + toString().hashCode();
         return result;
     }
     @Override
@@ -380,24 +400,12 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof DefaultReferenceEncodedNucleotideSequence)) {
+        if (!(obj instanceof NucleotideSequence)) {
             return false;
         }
-        DefaultReferenceEncodedNucleotideSequence other = (DefaultReferenceEncodedNucleotideSequence) obj;
+        NucleotideSequence other = (NucleotideSequence) obj;
        
-        if(!reference.equals(other.reference)){
-            return false;
-        }
-        if (length != other.length) {
-            return false;
-        }
-        if (startOffset != other.startOffset) {
-            return false;
-        }
-        if (!Arrays.equals(encodedSnpsInfo,other.encodedSnpsInfo)) {
-            return false;
-        }
-        return true;
+       return toString().equals(other.toString());
     }
     
     /**

@@ -104,7 +104,7 @@ public class CtgFileWriter implements Closeable{
     
     private void writePlacedReadHeader(PlacedRead placedRead,NucleotideSequence consensus) throws IOException {
         StringBuilder header = new StringBuilder();
-        header.append(String.format("#%s(%d) [", placedRead.getId(), placedRead.getBegin()));
+        header.append(String.format("#%s(%d) [", placedRead.getId(), placedRead.getGappedContigStart()));
         int validLeft = (int)placedRead.getValidRange().getBegin();
         int validRight = (int)placedRead.getValidRange().getEnd();
         if(placedRead.getDirection() == Direction.REVERSE){
@@ -116,8 +116,8 @@ public class CtgFileWriter implements Closeable{
 
         header.append(String.format("] %d bases, 00000000 checksum. {%d %d} <%d %d>\n",
                 placedRead.getNucleotideSequence().getLength(), validLeft+1, validRight+1, 
-                placedRead.getBegin()+1-consensus.getNumberOfGapsUntil((int) placedRead.getBegin()), 
-                placedRead.getEnd()+1-consensus.getNumberOfGapsUntil((int)placedRead.getEnd())));
+                placedRead.getGappedContigStart()+1-consensus.getNumberOfGapsUntil((int) placedRead.getGappedContigStart()), 
+                placedRead.getGappedContigEnd()+1-consensus.getNumberOfGapsUntil((int)placedRead.getGappedContigEnd())));
         writeToOutputStream(header.toString());
         
     }
@@ -142,11 +142,11 @@ public class CtgFileWriter implements Closeable{
          */
         @Override
         public int compare(PlacedRead o1, PlacedRead o2) {
-            int startComparison = Long.valueOf(o1.getBegin()).compareTo(Long.valueOf(o2.getBegin()));
+            int startComparison = Long.valueOf(o1.getGappedContigStart()).compareTo(Long.valueOf(o2.getGappedContigStart()));
             if(startComparison !=0){
                 return startComparison;
             }
-            int lengthComparison= Long.valueOf(o1.getLength()).compareTo(Long.valueOf(o2.getLength()));
+            int lengthComparison= Long.valueOf(o1.getGappedLength()).compareTo(Long.valueOf(o2.getGappedLength()));
             if(lengthComparison !=0){
                 return lengthComparison;
             }

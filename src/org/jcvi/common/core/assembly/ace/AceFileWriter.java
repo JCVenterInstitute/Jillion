@@ -231,7 +231,7 @@ public class AceFileWriter {
 	            validRange = readValidRange;
 	        }
 	        return new IdAlignedReadInfo(read.getId(), 
-	                (int)(read.getBegin()-validRange.getBegin()+1),dir);
+	                (int)(read.getGappedContigStart()-validRange.getBegin()+1),dir);
 	    }
 	    
 	    

@@ -1,12 +1,12 @@
 package org.jcvi.common.core.symbol.residue.nt;
 
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jcvi.common.core.symbol.residue.nt.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -42,11 +42,11 @@ public class VHTNGS_365 {
 				,
 				0);
 		
-		assertEquals(Arrays.asList(84,133,146), seq.getSnpOffsets());
-		assertEquals(Nucleotide.Unknown, seq.get(84));
-		assertEquals(Nucleotide.Unknown, seq.get(146));
-		assertEquals(Nucleotide.Gap, seq.get(133));
-		
+		Map<Integer,Nucleotide> expectedDifferences = new HashMap<Integer, Nucleotide>();
+		expectedDifferences.put(84, Nucleotide.Unknown);
+		expectedDifferences.put(133, Nucleotide.Gap);
+		expectedDifferences.put(146, Nucleotide.Unknown);
+		assertEquals(expectedDifferences, seq.getDifferenceMap());
 	}
 	
 	@Test
@@ -62,10 +62,11 @@ public class VHTNGS_365 {
 				,
 				0);
 		
-		assertEquals(Arrays.asList(84,133,146), seq.getSnpOffsets());
-		assertEquals(Nucleotide.Unknown, seq.get(84));
-		assertEquals(Nucleotides.parse("R").get(0), seq.get(146));
-		assertEquals(Nucleotide.Gap, seq.get(133));
+		Map<Integer,Nucleotide> expectedDifferences = new HashMap<Integer, Nucleotide>();
+		expectedDifferences.put(84, Nucleotide.Unknown);
+		expectedDifferences.put(133, Nucleotide.Gap);
+		expectedDifferences.put(146, Nucleotide.parse("R"));
+		assertEquals(expectedDifferences, seq.getDifferenceMap());
 		
 	}
 }

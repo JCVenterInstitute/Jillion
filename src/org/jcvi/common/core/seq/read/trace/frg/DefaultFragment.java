@@ -89,7 +89,7 @@ public class DefaultFragment implements Fragment{
 
 
     @Override
-    public long getLength() {
+    public long getGappedLength() {
         return bases.getLength();
     }
     public String getComment() {

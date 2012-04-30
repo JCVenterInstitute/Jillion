@@ -23,13 +23,10 @@
  */
 package org.jcvi.common.core.assembly;
 
-import java.util.Map;
-
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 /**
@@ -43,33 +40,24 @@ import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence
 public interface PlacedRead extends Read<ReferenceEncodedNucleotideSequence>, Rangeable{
 
 	/**
-     * Get the start coordinate of this placed object
-     * on the placed axis.
-     * @return the start as a long.
+     * Get the 0-based, gapped
+     * start coordinate of this read.
+     * @return the start coordinate as a long.
      */
-    long getBegin();
+    long getGappedContigStart();
     /**
-     * Get the end coordinate of this placed object
-     * on the placed axis.
+     * Get the 0-based, gapped
+     * end coordinate of this read.
      * @return the end as a long.
      */
-    long getEnd();
+    long getGappedContigEnd();
     /**
-     * Get the length of this placed object
-     * on the axis.
+     * Get the gapped
+     * length of this read.
      * @return the length of this placed object.
      */
-    long getLength();
-    /**
-     * Get a Mapping of all the offsets (as Integers) 
-     * of this read compared to the contig consensus this read was placed in.
-     * All coordinates are 0-based gapped offset locations in the read coordinate system;
-     * so if a SNP is located in the first base of the read that provides
-     * coverage to this contig then its integer will be zero.
-     * @return a Map of all the SNP locations; will never be null
-     * but may be empty if there are no SNPs for this read.
-     */
-    Map<Integer, Nucleotide> getDifferenceMap();
+    long getGappedLength();
+
     /**
      * Get the valid {@link Range} which is ungapped "good" part of the basecalls.  Depending
      * on what this {@link NucleotideSequence} represents can change the 
@@ -125,12 +113,26 @@ public interface PlacedRead extends Read<ReferenceEncodedNucleotideSequence>, Ra
      * as a {@link Range} in gapped contig coordinates.
      * @return a Range; never null.
      */
-    Range getContigRange();
+    Range getGappedContigRange();
     /**
-     * Delegates to {@link #getContigRange()}
+     * Delegates to {@link #getGappedContigRange()}
      * 
      * {@inheritDoc}
      */
     @Override
     Range asRange();
+    
+    Read<ReferenceEncodedNucleotideSequence> getRead();
+    
+    /**
+     * Get the id of this read.
+     * @return the id as a String; will never be null.
+     */
+    String getId();
+    /**
+     * Get the ungapped {@link NucleotideSequence} of this read.
+     * @return the {@link NucleotideSequence} of this read; will
+     * never be null.
+     */
+    ReferenceEncodedNucleotideSequence getNucleotideSequence();
 }
