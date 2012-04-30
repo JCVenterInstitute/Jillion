@@ -26,24 +26,42 @@ package org.jcvi.common.core.assembly;
 import java.util.Map;
 
 import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 /**
  * A {@code PlacedRead} is a {@link Read}
- * that has been {@link Placed}
+ * that has been placed
  * at a particular location in an assembly.
  * The location is specific to the {@link Contig}
  * this read was placed in.
  * @author dkatzel
  */
-public interface PlacedRead extends Read<ReferenceEncodedNucleotideSequence>, Placed{
+public interface PlacedRead extends Read<ReferenceEncodedNucleotideSequence>, Rangeable{
 
+	/**
+     * Get the start coordinate of this placed object
+     * on the placed axis.
+     * @return the start as a long.
+     */
+    long getBegin();
     /**
-     * Get a Mapping of all the Single Nucleotide Positions (SNP)
+     * Get the end coordinate of this placed object
+     * on the placed axis.
+     * @return the end as a long.
+     */
+    long getEnd();
+    /**
+     * Get the length of this placed object
+     * on the axis.
+     * @return the length of this placed object.
+     */
+    long getLength();
+    /**
+     * Get a Mapping of all the offsets (as Integers) 
      * of this read compared to the contig consensus this read was placed in.
      * All coordinates are 0-based gapped offset locations in the read coordinate system;
      * so if a SNP is located in the first base of the read that provides

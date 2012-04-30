@@ -25,7 +25,6 @@ package org.jcvi.common.core.assembly.util.coverage;
 
 import java.util.Collection;
 
-import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.util.Builder;
 
