@@ -24,13 +24,13 @@
 package org.jcvi.common.core.assembly.ace;
 
 import java.util.List;
-import java.util.Map;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.assembly.PlacedReadBuilder;
+import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -89,28 +89,28 @@ final class DefaultAcePlacedRead implements AcePlacedRead {
     * {@inheritDoc}
     */
     @Override
-    public long getLength() {
-        return placedRead.getLength();
+    public long getGappedLength() {
+        return placedRead.getGappedLength();
     }
 
     /**
     * {@inheritDoc}
     */
     @Override
-    public long getBegin() {
-        return placedRead.getBegin();
+    public long getGappedContigStart() {
+        return placedRead.getGappedContigStart();
     }
 
     /**
     * {@inheritDoc}
     */
     @Override
-    public long getEnd() {
-        return placedRead.getEnd();
+    public long getGappedContigEnd() {
+        return placedRead.getGappedContigEnd();
     }
     @Override
-	public Range getContigRange() {
-		return placedRead.getContigRange();
+	public Range getGappedContigRange() {
+		return placedRead.getGappedContigRange();
 	}
     /**
     * {@inheritDoc}
@@ -118,14 +118,6 @@ final class DefaultAcePlacedRead implements AcePlacedRead {
     @Override
     public Range asRange() {
         return placedRead.asRange();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public Map<Integer, Nucleotide> getDifferenceMap() {
-        return placedRead.getDifferenceMap();
     }
 
     /**
@@ -159,7 +151,10 @@ final class DefaultAcePlacedRead implements AcePlacedRead {
     public long toReferenceOffset(long validRangeIndex) {
         return placedRead.toReferenceOffset(validRangeIndex);
     }
-
+    @Override
+	public Read<ReferenceEncodedNucleotideSequence> getRead() {
+		return placedRead.getRead();
+	}
     /**
     * {@inheritDoc}
     */
@@ -427,4 +422,6 @@ final class DefaultAcePlacedRead implements AcePlacedRead {
                     ));
         }
     }
+
+	
 }

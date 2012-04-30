@@ -23,18 +23,10 @@
  */
 package org.jcvi.common.core.assembly;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.PlacedRead;
-import org.jcvi.common.core.seq.read.Read;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Before;
@@ -47,47 +39,33 @@ public class TestDefaultPlacedRead {
      * 
      */
     private static final int ungappedLength = 500;
-    Read<ReferenceEncodedNucleotideSequence> read;
+    ReferenceEncodedNucleotideSequence sequence;
     Direction dir = Direction.FORWARD;
     long start = 100;
     long length = 200L;
     Range validRange = Range.create(start, length);
     DefaultPlacedRead sut ;
+    		String id = "id";
     @Before
     public void setup(){
-        read = createMock(Read.class);
-        sut = new DefaultPlacedRead(read, start,dir,ungappedLength,validRange);
+        sequence = createMock(ReferenceEncodedNucleotideSequence.class);
+        expect(sequence.getLength()).andStubReturn(length);
+        replay(sequence);
+        sut = new DefaultPlacedRead(id,sequence, start,dir,ungappedLength,validRange);
+    
     }
     @Test
     public void constructor(){
-        String id = "id";
-        
-        ReferenceEncodedNucleotideSequence glyphs = createMock(ReferenceEncodedNucleotideSequence.class);
-   
-        Map<Integer,Nucleotide> snpMap = new HashMap<Integer, Nucleotide>();
-        snpMap.put(Integer.valueOf(1), Nucleotide.Adenine);
-        snpMap.put(Integer.valueOf(3), Nucleotide.Cytosine);
-        snpMap.put(Integer.valueOf(5), Nucleotide.Guanine);
-        
-        List<Integer> snps = new ArrayList<Integer>(snpMap.keySet());
-        for(Entry<Integer,Nucleotide> entry : snpMap.entrySet()){
-            expect(glyphs.get(entry.getKey().intValue())).andReturn(entry.getValue());
-        }
-        expect(read.getId()).andReturn(id);
-        expect(read.getNucleotideSequence()).andStubReturn(glyphs);
-        expect(read.getLength()).andReturn(length).times(2);
-        expect(glyphs.getSnpOffsets()).andReturn(snps);
-        replay(read, glyphs);
+    	
+    	
         assertEquals(dir,sut.getDirection());
-        assertEquals(start, sut.getBegin());
-        assertEquals(read, sut.getRead());
+        assertEquals(start, sut.getGappedContigStart());
         assertEquals(id, sut.getId());
-        assertEquals(glyphs, sut.getNucleotideSequence());
-        assertEquals(length, sut.getLength());
-        assertEquals(start+ length-1 , sut.getEnd());
+        assertEquals(sequence, sut.getNucleotideSequence());
+        assertEquals(length, sut.getGappedLength());
+        assertEquals(start+ length-1 , sut.getGappedContigEnd());
         assertEquals(validRange, sut.getValidRange());
-        assertEquals(snpMap, sut.getDifferenceMap());
-        verify(read, glyphs);        
+        verify(sequence);        
     }
     
     @Test
@@ -105,33 +83,25 @@ public class TestDefaultPlacedRead {
     
     @Test
     public void sameValuesAreEqual(){
-        PlacedRead sameValues =  new DefaultPlacedRead(read, start,dir,500,validRange);
+        PlacedRead sameValues =  new DefaultPlacedRead(id, sequence, start,dir,500,validRange);
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);
     }
     @Test
     public void differentReadIsNotEqual(){
-        Read differentRead = createMock(Read.class);
-        PlacedRead hasDifferentRead =  new DefaultPlacedRead(differentRead, start,dir,500,validRange);
+        ReferenceEncodedNucleotideSequence differentSequence = createMock(ReferenceEncodedNucleotideSequence.class);
+        PlacedRead hasDifferentRead =  new DefaultPlacedRead(id, differentSequence, start,dir,500,validRange);
+        TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasDifferentRead);
+    }
+    @Test
+    public void differentIdIsNotEqual(){
+         PlacedRead hasDifferentRead =  new DefaultPlacedRead("different"+id, sequence, start,dir,500,validRange);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasDifferentRead);
     }
     @Test
     public void differentStartIsNotEqual(){
-        PlacedRead hasDifferentStart =  new DefaultPlacedRead(read, start-1,dir,500,validRange);
+        PlacedRead hasDifferentStart =  new DefaultPlacedRead(id,sequence, start-1,dir,500,validRange);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasDifferentStart);
     }
-    @Test
-    public void nullReadThrowsIllegalArgumentException(){
-        try{
-            new DefaultPlacedRead(null, start,dir,500,validRange);
-            fail("should throw IllegalArgument exception when passed read is null");
-        }catch(IllegalArgumentException e){
-            assertEquals("read can not be null", e.getMessage());
-        }
-    }
     
-    @Test
-    public void testToString(){
-        String expected = "offset = "+ start + " complemented? "+ dir+"  " + read;
-        assertEquals(expected, sut.toString());
-    }
+    
 }

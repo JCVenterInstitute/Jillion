@@ -69,8 +69,8 @@ public class AbacusErrorFinder {
             boolean isAbacusError=true;
             for(String readId : readIds){
                 P read =contig.getRead(readId);              
-                long adjustedStart = Math.max(gappedCandidateRange.getBegin(), read.getBegin());
-                long adjustedEnd = Math.min(gappedCandidateRange.getEnd(), read.getEnd());
+                long adjustedStart = Math.max(gappedCandidateRange.getBegin(), read.getGappedContigStart());
+                long adjustedEnd = Math.min(gappedCandidateRange.getEnd(), read.getGappedContigEnd());
                 boolean spansEntireRegion = (adjustedStart == gappedCandidateRange.getBegin()) && (adjustedEnd == gappedCandidateRange.getEnd());
                 if(spansEntireRegion){
                     Range rangeOfInterest = Range.create(
@@ -128,7 +128,7 @@ public class AbacusErrorFinder {
 	            P placedRead = readIterator.next();
         		List<Range> gaps = new ArrayList<Range>(placedRead.getNucleotideSequence().getNumberOfGaps());
 	            for(Integer gapOffset : placedRead.getNucleotideSequence().getGapOffsets()){
-	                Range buildRange = Range.create(gapOffset.intValue() + placedRead.getBegin());
+	                Range buildRange = Range.create(gapOffset.intValue() + placedRead.getGappedContigStart());
 	                gaps.add(buildRange);
 	            }
 	            List<Range> mergeRanges = Ranges.merge(gaps);

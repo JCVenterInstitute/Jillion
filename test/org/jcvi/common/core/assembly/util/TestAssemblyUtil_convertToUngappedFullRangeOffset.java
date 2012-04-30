@@ -21,6 +21,7 @@ package org.jcvi.common.core.assembly.util;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.easymock.EasyMockSupport;
 import org.jcvi.common.core.Direction;
@@ -192,8 +193,9 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
 			return delegate.iterator();
 		}
 
+
 		@Override
-		public List<Integer> getSnpOffsets() {
+		public Map<Integer, Nucleotide> getDifferenceMap() {
 			throw new UnsupportedOperationException("invalid for adapted sequence");
 		}
     	

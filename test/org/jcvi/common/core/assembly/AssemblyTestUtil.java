@@ -32,8 +32,8 @@ public class AssemblyTestUtil {
     public static void assertPlacedReadCorrect(PlacedRead expected,
             PlacedRead actual) {
         assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getBegin(), actual.getBegin());
-        assertEquals(expected.getLength(), actual.getLength());
+        assertEquals(expected.getGappedContigStart(), actual.getGappedContigStart());
+        assertEquals(expected.getGappedLength(), actual.getGappedLength());
         assertEquals(expected.getDirection(), actual.getDirection());
         final NucleotideSequence expectedEncodedGlyphs = expected.getNucleotideSequence();
         final NucleotideSequence actualEncodedGlyphs = actual.getNucleotideSequence();

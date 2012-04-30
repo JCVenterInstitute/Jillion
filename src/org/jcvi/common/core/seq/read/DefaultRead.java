@@ -43,7 +43,7 @@ public final class DefaultRead<T extends NucleotideSequence> implements Read<T>{
         return id;
     }
     @Override
-    public long getLength() {
+    public long getGappedLength() {
         return sequence.getLength();
     }
     @Override

@@ -81,7 +81,7 @@ public class TestDefaultFragment {
         assertEquals(clearRange, fragment.getVectorClearRange());
         assertEquals(library, fragment.getLibrary());
         assertEquals(comment, fragment.getComment());
-        assertEquals(basesLength, fragment.getLength());
+        assertEquals(basesLength, fragment.getGappedLength());
         assertEquals(libraryId, fragment.getLibraryId());
     }
     @Test

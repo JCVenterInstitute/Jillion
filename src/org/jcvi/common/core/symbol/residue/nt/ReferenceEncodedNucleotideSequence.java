@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.symbol.residue.nt;
 
-import java.util.List;
+import java.util.Map;
 /**
  * {@code ReferenceEncodedNucleotideSequence} encodes
  * a NucleotideSequence by referring to a reference sequence
@@ -41,11 +41,16 @@ import java.util.List;
  *
  */
 public interface ReferenceEncodedNucleotideSequence extends NucleotideSequence{
+    
     /**
-     * Get a list of offsets to all the SNPs
-     * (Single Nucleotide Polymorphism).
-     * @return a List of Integer offsets; may be empty
-     * if there are no SNPs, but will never be null.
+     * Get a Mapping of all the offsets (as Integers) 
+     * of this read compared to the reference.
+     * All coordinates are 0-based gapped offset locations in the read coordinate system;
+     * so if a difference is located in the first base of the read,
+     * then its integer will be zero.
+     * @return a Map of all the differences between
+     * this sequence and its reference; will never be null
+     * but may be empty if there are no differences.
      */
-    List<Integer> getSnpOffsets();
+    Map<Integer, Nucleotide> getDifferenceMap();
 }

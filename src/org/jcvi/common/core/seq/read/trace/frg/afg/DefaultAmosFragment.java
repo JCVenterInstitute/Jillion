@@ -122,7 +122,7 @@ public class DefaultAmosFragment implements AmosFragment{
     * {@inheritDoc}
     */
     @Override
-    public long getLength() {
+    public long getGappedLength() {
         return basecalls.getLength();
     }
 

@@ -24,7 +24,10 @@
 package org.jcvi.common.core.symbol.residue.nt;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.jcvi.common.core.symbol.GlyphCodec;
 import org.jcvi.common.core.symbol.residue.nt.DefaultNucleotideCodec;
@@ -55,13 +58,33 @@ public class TestReferenceEncodedNucleotideSequence {
         assertDecodedCorrectly(offset, sequenceAsString);
     }
     private void assertDecodedCorrectly(int offset, String sequenceAsString) {
-        DefaultReferenceEncodedNucleotideSequence sut = new DefaultReferenceEncodedNucleotideSequence(encodedReference,sequenceAsString, offset);
+        ReferenceEncodedNucleotideSequence sut = new DefaultReferenceEncodedNucleotideSequence(encodedReference,sequenceAsString, offset);
         assertEquals(sequenceAsString.length(), sut.getLength());
         assertEquals(sequenceAsString, Nucleotides.asString(sut.asList()));
         for(int i=0; i< sequenceAsString.length(); i++){
             assertEquals(Nucleotide.parse(sequenceAsString.charAt(i)),
                     sut.get(i));
         }
+        //check for differences
+        Map<Integer,Nucleotide> differences = new HashMap<Integer, Nucleotide>();
+        for(int i=0; i< sequenceAsString.length(); i++){
+        	Nucleotide ref = encodedReference.get(i+offset);
+        	Nucleotide read = sut.get(i);
+        	if(ref!=read){
+        		differences.put(Integer.valueOf(i), read);
+        	}
+        }
+        Map<Integer,Nucleotide> actualDifferences = sut.getDifferenceMap();
+        assertEquals(differences, actualDifferences);
+        
+        //assertIterator
+        Iterator<Nucleotide> actualIter = sut.iterator();
+        int i=0;
+        while(actualIter.hasNext()){
+        	assertEquals(Nucleotide.parse(sequenceAsString.charAt(i)), actualIter.next());
+        	i++;
+        }
+        assertEquals(i,sequenceAsString.length());
     }
     @Test
     public void exactlyTheSame(){

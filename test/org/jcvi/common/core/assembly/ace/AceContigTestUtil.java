@@ -57,9 +57,9 @@ public final class AceContigTestUtil {
     public static  void assertPlacedReadParsedCorrectly(PlacedRead expected,
             PlacedRead actual) {
         assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getBegin(), actual.getBegin());
-        assertEquals(expected.getEnd(), actual.getEnd());
-        assertEquals(expected.getLength(), actual.getLength());
+        assertEquals(expected.getGappedContigStart(), actual.getGappedContigStart());
+        assertEquals(expected.getGappedContigEnd(), actual.getGappedContigEnd());
+        assertEquals(expected.getGappedLength(), actual.getGappedLength());
         assertEquals(expected.getId(),expected.getValidRange(), actual.getValidRange());
         assertEquals(expected.getNucleotideSequence().asList(), actual.getNucleotideSequence().asList());
         

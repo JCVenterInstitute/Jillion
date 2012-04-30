@@ -25,13 +25,12 @@ package org.jcvi.common.core.assembly.ace;
 
 import java.io.File;
 import java.util.Date;
-import java.util.Map;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 
 public class AcePlacedReadAdapter implements AcePlacedRead{
@@ -68,10 +67,6 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         return placedRead.getDirection();
     }
     @Override
-    public Map<Integer, Nucleotide> getDifferenceMap() {
-        return placedRead.getDifferenceMap();
-    }
-    @Override
     public Range getValidRange() {
         return placedRead.getValidRange();
     }
@@ -84,16 +79,16 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         return placedRead.getId();
     }
     @Override
-    public long getLength() {
-        return placedRead.getLength();
+    public long getGappedLength() {
+        return placedRead.getGappedLength();
     }
     @Override
-    public long getEnd() {
-        return placedRead.getEnd();
+    public long getGappedContigEnd() {
+        return placedRead.getGappedContigEnd();
     }
     @Override
-    public long getBegin() {
-        return placedRead.getBegin();
+    public long getGappedContigStart() {
+        return placedRead.getGappedContigStart();
     }
     @Override
     public String toString() {
@@ -101,8 +96,8 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
                 + placedRead + ", phdInfo=" + phdInfo +  "]";
     }
     @Override
-	public Range getContigRange() {
-		return placedRead.getContigRange();
+	public Range getGappedContigRange() {
+		return placedRead.getGappedContigRange();
 	}
     /**
     * {@inheritDoc}
@@ -156,6 +151,10 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         }
         return true;
     }
+	@Override
+	public Read<ReferenceEncodedNucleotideSequence> getRead() {
+		return placedRead.getRead();
+	}
 	
     
   

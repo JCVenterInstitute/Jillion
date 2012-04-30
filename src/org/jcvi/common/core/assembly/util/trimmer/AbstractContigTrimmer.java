@@ -172,7 +172,7 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
      * @return
      */
     private Range computeNewTrimRangeFor(P placedRead) {
-        Range currentValidRange = Range.createOfLength(0,placedRead.getLength());
+        Range currentValidRange = Range.createOfLength(0,placedRead.getGappedLength());
         for(PlacedReadTrimmer<P,C> trimmer : trimmers){
             currentValidRange =trimmer.trimRead(placedRead, currentValidRange);
         }

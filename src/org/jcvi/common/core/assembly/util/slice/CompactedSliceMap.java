@@ -216,7 +216,7 @@ public final class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRe
         CompactedSlice.Builder builder = new CompactedSlice.Builder();
         for (PlacedRead read : region) {
             String id=read.getId();
-            int indexIntoRead = (int) (i - read.getBegin());
+            int indexIntoRead = (int) (i - read.getGappedContigStart());
           //  if()
             Sequence<PhredQuality> fullQualities = qualities.get(id);
             final PhredQuality quality;

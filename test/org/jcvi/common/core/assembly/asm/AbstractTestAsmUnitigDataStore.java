@@ -96,7 +96,7 @@ public abstract class AbstractTestAsmUnitigDataStore extends AbstractTestAsmData
 				NucleotideSequence expectedGappedSequence =new NucleotideSequenceBuilder(
 											actualFragment.getBasecalls())
 											.reverseComplement()
-											.subSequence(AssemblyUtil.reverseComplimentValidRange(expectedValidRange, actualFragment.getLength()))
+											.subSequence(AssemblyUtil.reverseComplimentValidRange(expectedValidRange, actualFragment.getGappedLength()))
 											.insert(115, Nucleotide.Gap)
 											.insert(226, Nucleotide.Gap)
 											.build();

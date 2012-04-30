@@ -157,7 +157,7 @@ public abstract class  AbstractTestFragmentDataStore {
         assertEquals(expectedFragment.getVectorClearRange(), actualFragment.getVectorClearRange());
         assertEquals(library, actualFragment.getLibrary());
         assertEquals(expectedFragment.getComment(), actualFragment.getComment());
-        assertEquals(expectedFragment.getLength(), actualFragment.getLength());
+        assertEquals(expectedFragment.getGappedLength(), actualFragment.getGappedLength());
         assertEquals(expectedFragment.getLibraryId(), actualFragment.getLibraryId());
         
     }

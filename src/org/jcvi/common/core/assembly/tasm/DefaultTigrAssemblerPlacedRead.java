@@ -31,6 +31,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.PlacedRead;
 import org.jcvi.common.core.assembly.PlacedReadBuilder;
+import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -92,18 +93,17 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
     * {@inheritDoc}
     */
     @Override
-    public Map<Integer, Nucleotide> getDifferenceMap() {
-        return delegate.getDifferenceMap();
-    }
-    /**
-    * {@inheritDoc}
-    */
-    @Override
     public Range getValidRange() {
 
         return delegate.getValidRange();
     }
-    /**
+    
+    
+    @Override
+	public Read<ReferenceEncodedNucleotideSequence> getRead() {
+		return delegate.getRead();
+	}
+	/**
     * {@inheritDoc}
     */
     @Override
@@ -149,22 +149,22 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
     * {@inheritDoc}
     */
     @Override
-    public long getLength() {
-        return delegate.getLength();
+    public long getGappedLength() {
+        return delegate.getGappedLength();
     }
     /**
     * {@inheritDoc}
     */
     @Override
-    public long getBegin() {
-        return delegate.getBegin();
+    public long getGappedContigStart() {
+        return delegate.getGappedContigStart();
     }
     /**
     * {@inheritDoc}
     */
     @Override
-    public long getEnd() {
-        return delegate.getEnd();
+    public long getGappedContigEnd() {
+        return delegate.getGappedContigEnd();
     }
     /**
     * {@inheritDoc}
@@ -176,8 +176,8 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
     
     
     @Override
-	public Range getContigRange() {
-		return delegate.getContigRange();
+	public Range getGappedContigRange() {
+		return delegate.getGappedContigRange();
 	}
 	/**
     * {@inheritDoc}
