@@ -49,8 +49,8 @@ public final class ZTRChromatogramBuilder implements Builder<ZTRChromatogram>{
     private final BasicChromatogramBuilder basicBuilder;
     
     
-    public ZTRChromatogramBuilder(){
-        basicBuilder = new BasicChromatogramBuilder();
+    public ZTRChromatogramBuilder(String id){
+        basicBuilder = new BasicChromatogramBuilder(id);
     }
     
     public ZTRChromatogramBuilder(Chromatogram copy){

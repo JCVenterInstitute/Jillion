@@ -51,7 +51,7 @@ public class TestBPOSChunk {
     }
     @Test
     public void valid() throws TraceDecoderException{        
-        ZTRChromatogramBuilder mockStruct = new ZTRChromatogramBuilder();
+        ZTRChromatogramBuilder mockStruct = new ZTRChromatogramBuilder("id");
         sut.parseData(encodedPositions, mockStruct);
         assertArrayEquals(decodedPeaks, mockStruct.peaks());
     }

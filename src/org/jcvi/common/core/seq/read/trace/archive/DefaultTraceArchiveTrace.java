@@ -66,7 +66,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
     }
 
     @Override
-    public NucleotideSequence getBasecalls() {
+    public NucleotideSequence getNucleotideSequence() {
         InputStream in=null;
         NucleotideSequenceFastaDataStore datastore=null;
         NucleotideFastaDataStoreBuilderVisitor visitor= DefaultNucleotideSequenceFastaFileDataStore.createBuilder();

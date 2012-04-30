@@ -110,10 +110,6 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 	}
 
 	@Override
-	public Read<ReferenceEncodedNucleotideSequence> getRead() {
-		return delegatePlacedRead.getRead();
-	}
-	@Override
 	public Direction getDirection() {
 		return delegatePlacedRead.getDirection();
 	}

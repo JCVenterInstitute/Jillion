@@ -38,19 +38,19 @@ import static org.junit.Assert.*;
 public class TestAbiChromatogramTraceParserMatchesZTR {
     private static ResourceFileServer RESOURCES = new ResourceFileServer(TestAbiChromatogramTraceParserMatchesZTR.class);
     BasicChromatogramFile expectedZTR;
-    
+    String id = "id";
     @Before
     public void setup() throws FileNotFoundException, TraceDecoderException, IOException{
-        expectedZTR = new BasicChromatogramFile();
+        expectedZTR = new BasicChromatogramFile(id);
         ZTRChromatogramFileParser.parse(RESOURCES.getFile("files/SDBHD01T00PB1A1672F.ztr"), expectedZTR);
     }
     
     @Test
     public void abiVisitorMatchesZTR() throws FileNotFoundException, TraceDecoderException, IOException{
-        BasicChromatogramFile actualAbi = new BasicChromatogramFile();
+        BasicChromatogramFile actualAbi = new BasicChromatogramFile(id);
         Ab1FileParser.parse(RESOURCES.getFile("files/SDBHD01T00PB1A1672F.ab1"), actualAbi);
 
-        assertEquals(expectedZTR.getBasecalls(), actualAbi.getBasecalls());
+        assertEquals(expectedZTR.getNucleotideSequence(), actualAbi.getNucleotideSequence());
         assertEquals(expectedZTR.getPeaks(), actualAbi.getPeaks());
         assertEquals(expectedZTR.getQualities(), actualAbi.getQualities());
         assertEquals(expectedZTR.getChannelGroup(), actualAbi.getChannelGroup());

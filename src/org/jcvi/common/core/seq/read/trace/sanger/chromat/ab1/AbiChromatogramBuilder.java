@@ -50,9 +50,25 @@ import org.joda.time.LocalTime;
  */
 public class AbiChromatogramBuilder implements AbiChromatogramFileVisitor, org.jcvi.common.core.util.Builder<AbiChromatogram>{
 
-    private final BasicChromatogramBuilder currentBuilder = new BasicChromatogramBuilder();
-    private final BasicChromatogramBuilder originalBuilder = new BasicChromatogramBuilder();
+    private final BasicChromatogramBuilder currentBuilder;
+    private final BasicChromatogramBuilder originalBuilder;
     private List<Nucleotide> channelOrder;
+    private String id;
+    AbiChromatogramBuilder(String id){
+    	currentBuilder = new BasicChromatogramBuilder(id);
+    	originalBuilder = new BasicChromatogramBuilder(id);
+    	this.id = id;
+    }
+    
+    
+    public String id(){
+    	return id;
+    }
+    
+    public AbiChromatogramBuilder id(String id){
+    	this.id = id;
+    	return this;
+    }
     /**
     * {@inheritDoc}
     */
@@ -383,7 +399,7 @@ public class AbiChromatogramBuilder implements AbiChromatogramFileVisitor, org.j
     */
     @Override
     public AbiChromatogram build() {
-        return new AbiChromatogramImp(
+        return new AbiChromatogramImp(id,
                 currentBuilder.build(),
                 this.originalBuilder.build(), 
                 channelOrder);
@@ -394,15 +410,24 @@ public class AbiChromatogramBuilder implements AbiChromatogramFileVisitor, org.j
         private final Chromatogram delegate;
         private final Chromatogram originalChromatogram;
         private final List<Nucleotide> channelOrder;
-        public AbiChromatogramImp(Chromatogram delegate,Chromatogram originalChromatogram, List<Nucleotide> channelOrder) {
-            this.delegate = delegate;
+        private final String id;
+        public AbiChromatogramImp(String id, Chromatogram delegate,Chromatogram originalChromatogram, List<Nucleotide> channelOrder) {
+            this.id = id;
+        	this.delegate = delegate;
             this.originalChromatogram = originalChromatogram;
             this.channelOrder = channelOrder;
         }
         
         
 
-        /**
+        @Override
+		public String getId() {
+			return id;
+		}
+
+
+
+		/**
          * @return the originalChromatogram
          */
         @Override
@@ -458,8 +483,8 @@ public class AbiChromatogramBuilder implements AbiChromatogramFileVisitor, org.j
         * {@inheritDoc}
         */
         @Override
-        public NucleotideSequence getBasecalls() {
-            return delegate.getBasecalls();
+        public NucleotideSequence getNucleotideSequence() {
+            return delegate.getNucleotideSequence();
         }
 
         /**

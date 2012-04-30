@@ -47,7 +47,7 @@ public class TestMixAndMatchChromatogramParsers {
     public void parseZtrAsScfFile() throws IOException, TraceDecoderException{
         File ztrFile = RESOURCES.getFile("ztr/files/GBKAK82TF.ztr");
         ZTRChromatogram ztr = ZTRChromatogramFile.create(ztrFile);
-        SCFChromatogramFileBuilderVisitor visitor = SCFChromatogramFile.createNewBuilderVisitor();
+        SCFChromatogramFileBuilderVisitor visitor = SCFChromatogramFile.createNewBuilderVisitor(ztrFile.getName());
         ZTRChromatogramFileParser.parse(ztrFile, visitor);
         
         assertValuesMatch(visitor.build(), ztr);
@@ -57,7 +57,7 @@ public class TestMixAndMatchChromatogramParsers {
     public void parseScfAsZtrFile() throws IOException, TraceDecoderException{
         File scfFile = RESOURCES.getFile("scf/files/GBKAK82TF.scf");
         SCFChromatogram scf = SCFChromatogramFile.create(scfFile);
-        ZTRChromatogramFileBuilderVisitor visitor = ZTRChromatogramFile.createNewBuilderVisitor();
+        ZTRChromatogramFileBuilderVisitor visitor = ZTRChromatogramFile.createNewBuilderVisitor(scfFile.getName());
         SCFChromatogramFileParser.parse(scfFile, visitor);
         
         assertValuesMatch(scf, visitor.build());
@@ -65,7 +65,7 @@ public class TestMixAndMatchChromatogramParsers {
 
     protected void assertValuesMatch(SCFChromatogram scf,
             ZTRChromatogram ztr) {
-        assertEquals(ztr.getBasecalls(), scf.getBasecalls());
+        assertEquals(ztr.getNucleotideSequence(), scf.getNucleotideSequence());
         assertEquals(ztr.getPeaks(), scf.getPeaks());
         assertEquals(ztr.getQualities(),scf.getQualities());
         assertEquals(ztr.getChannelGroup(), scf.getChannelGroup());

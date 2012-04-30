@@ -34,17 +34,17 @@ import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 public final class AbiChromatogramFile {
 
     public static AbiChromatogram create(File abiFile) throws FileNotFoundException, TraceDecoderException{
-        AbiChromatogramBuilder builder = new AbiChromatogramBuilder();
+        AbiChromatogramBuilder builder = new AbiChromatogramBuilder(abiFile.getName());
         Ab1FileParser.parse(abiFile, builder);        
         return builder.build();
     }
     
-    public static AbiChromatogram create(InputStream abiStream) throws TraceDecoderException{
-        return create(abiStream,true);
+    public static AbiChromatogram create(String id, InputStream abiStream) throws TraceDecoderException{
+        return create(id,abiStream,true);
     }
-    public static AbiChromatogram create(InputStream abiStream, boolean autoClose) throws TraceDecoderException{
+    public static AbiChromatogram create(String id, InputStream abiStream, boolean autoClose) throws TraceDecoderException{
         try{
-            AbiChromatogramBuilder builder = new AbiChromatogramBuilder();
+            AbiChromatogramBuilder builder = new AbiChromatogramBuilder(id);
             Ab1FileParser.parse(abiStream, builder);            
             return builder.build();
         }finally{

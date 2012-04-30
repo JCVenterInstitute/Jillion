@@ -56,6 +56,15 @@ public abstract class AbstractTraceArchiveTrace implements TraceArchiveTrace {
 
     
     @Override
+	public String getId() {
+		try {
+			return getFile().getName();
+		} catch (IOException e) {
+			throw new IllegalStateException("could not get file id",e);
+		}
+	}
+
+	@Override
     public File getFile() throws IOException{
         File f= getFile(TraceInfoField.TRACE_FILE);
         if(!f.exists()){

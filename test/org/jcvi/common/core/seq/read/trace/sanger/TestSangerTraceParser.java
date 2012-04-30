@@ -45,19 +45,19 @@ public class TestSangerTraceParser {
     
     @Test
     public void parseZTR() throws TraceDecoderException, IOException{
-        SangerTrace actual =sut.decode(RESOURCES.getFileAsStream(ZTR_FILE));
+        SangerTrace actual =sut.decode("GBKAK82TF.ztr",RESOURCES.getFileAsStream(ZTR_FILE));
         SangerTrace expected = ZTRChromatogramFile.create(RESOURCES.getFile(ZTR_FILE));
         assertEquals(expected, actual);
     }
     @Test
     public void parseSCF_v3() throws TraceDecoderException, IOException{
-        SangerTrace actual =sut.decode(RESOURCES.getFileAsStream(SCF3_FILE));
+        SangerTrace actual =sut.decode("GBKAK82TF.scf",RESOURCES.getFileAsStream(SCF3_FILE));
         SangerTrace expected = SCFChromatogramFile.create(RESOURCES.getFile(SCF3_FILE));
         assertEquals(expected, actual);
     }
     @Test
     public void parsePhd() throws TraceDecoderException, IOException{
-        SangerTrace actual =sut.decode(RESOURCES.getFileAsStream(PHD_FILE));
+        SangerTrace actual =sut.decode("1095595674585.phd.1",RESOURCES.getFileAsStream(PHD_FILE));
         SangerTrace expected = SinglePhdFile.create(RESOURCES.getFile(PHD_FILE));
         assertEquals(expected, actual);
     }

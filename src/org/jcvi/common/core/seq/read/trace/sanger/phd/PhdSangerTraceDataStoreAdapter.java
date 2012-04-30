@@ -57,7 +57,7 @@ public class PhdSangerTraceDataStoreAdapter<S extends SangerTrace> implements Ph
         try{
             SangerTrace trace = delegate.get(id); 
         return new DefaultPhd(id,
-        		trace.getBasecalls(), trace.getQualities(), trace.getPeaks(),
+        		trace.getNucleotideSequence(), trace.getQualities(), trace.getPeaks(),
                 comments,Collections.<PhdTag>emptyList());
         }catch(Throwable t){            
             throw new RuntimeException(t);

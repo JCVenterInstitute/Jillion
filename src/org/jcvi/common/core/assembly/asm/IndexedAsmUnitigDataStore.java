@@ -429,7 +429,7 @@ public final class IndexedAsmUnitigDataStore implements UnitigDataStore{
             if(currentBuilder!=null){
               //in contig
                 try {
-                    NucleotideSequence fullLengthSequence = frgDataStore.get(externalReadId).getBasecalls();
+                    NucleotideSequence fullLengthSequence = frgDataStore.get(externalReadId).getNucleotideSequence();
                     Range clearRange = readMap.get(externalReadId);
                     if(clearRange==null){
                         throw new IllegalStateException("do not have clear range information for read "+ externalReadId);

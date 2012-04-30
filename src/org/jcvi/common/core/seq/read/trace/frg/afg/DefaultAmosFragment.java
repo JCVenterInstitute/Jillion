@@ -98,14 +98,6 @@ public class DefaultAmosFragment implements AmosFragment{
     * {@inheritDoc}
     */
     @Override
-    public NucleotideSequence getBasecalls() {
-        return basecalls;
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
     public QualitySequence getQualities() {
         return qualities;
     }
@@ -116,14 +108,6 @@ public class DefaultAmosFragment implements AmosFragment{
     @Override
     public NucleotideSequence getNucleotideSequence() {
         return basecalls;
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public long getGappedLength() {
-        return basecalls.getLength();
     }
 
     /**

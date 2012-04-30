@@ -21,7 +21,7 @@ public class TestTraceNucleotideDataStoreAdapter extends EasyMockSupport{
 	@Before
 	public void setup(){
 		Trace mockTrace = createMock(Trace.class);
-		expect(mockTrace.getBasecalls()).andStubReturn(expectedSequence);
+		expect(mockTrace.getNucleotideSequence()).andStubReturn(expectedSequence);
 		
 		Map<String,Trace> map = new HashMap<String, Trace>();
 		map.put(id, mockTrace);

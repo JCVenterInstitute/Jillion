@@ -51,7 +51,7 @@ public class TestBASEChunk {
     @Test
     public void valid() throws TraceDecoderException{
        
-        ZTRChromatogramBuilder builder = new ZTRChromatogramBuilder();
+        ZTRChromatogramBuilder builder = new ZTRChromatogramBuilder("id");
         sut.parseData(encodedBases, builder);        
         assertEquals(decodedBases, builder.basecalls().toString());
     }
@@ -60,7 +60,7 @@ public class TestBASEChunk {
     public void encode() throws TraceEncoderException, TraceDecoderException{
     	ZTRChromatogram mockChromatogram = createMock(ZTRChromatogram.class);
     	NucleotideSequence basecalls = new NucleotideSequenceBuilder(decodedBases).build();
-    	expect(mockChromatogram.getBasecalls()).andReturn(basecalls);
+    	expect(mockChromatogram.getNucleotideSequence()).andReturn(basecalls);
     	
     	replay(mockChromatogram);
     	byte[] actual =sut.encodeChunk(mockChromatogram);

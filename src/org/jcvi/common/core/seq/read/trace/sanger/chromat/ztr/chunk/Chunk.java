@@ -113,7 +113,7 @@ public enum Chunk {
 		@Override
 		public byte[] encodeChunk(Chromatogram ztrChromatogram)
 				throws TraceEncoderException {
-			String basecalls = Nucleotides.asString(ztrChromatogram.getBasecalls().asList());
+			String basecalls = Nucleotides.asString(ztrChromatogram.getNucleotideSequence().asList());
 			
 			ByteBuffer buffer = ByteBuffer.allocate(basecalls.length()+1);
 			buffer.put(PADDING_BYTE);
@@ -396,7 +396,7 @@ public enum Chunk {
 			
 			
 			ChannelGroup channelGroup =ztrChromatogram.getChannelGroup();
-			List<Nucleotide> basecalls =ztrChromatogram.getBasecalls().asList();
+			List<Nucleotide> basecalls =ztrChromatogram.getNucleotideSequence().asList();
 			ByteBuffer calledBaseConfidences = ByteBuffer.allocate(basecalls.size());
 			ByteBuffer otherConfidences = ByteBuffer.allocate(calledBaseConfidences.capacity()*3);
 			for(int i=0; i< basecalls.size();i++){

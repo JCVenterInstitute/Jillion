@@ -53,12 +53,15 @@ public final class ZTRChromatogramFile{
      *
      */
     public static final class ZTRChromatogramFileBuilderVisitor implements ZTRChromatogramFileVisitor, Builder<ZTRChromatogram>{
-        private ZTRChromatogramBuilder builder = new ZTRChromatogramBuilder();
+        private final ZTRChromatogramBuilder builder ;
+        private boolean built;
         
-        private ZTRChromatogramFileBuilderVisitor(){}
+        private ZTRChromatogramFileBuilderVisitor(String id){
+        	builder = new ZTRChromatogramBuilder(id);
+        }
         
         private void checkNotYetBuilt(){
-            if(builder==null){
+            if(built){
                 throw new IllegalStateException("builder already built");
             }
         }
@@ -200,7 +203,7 @@ public final class ZTRChromatogramFile{
         public ZTRChromatogram build() {
             checkNotYetBuilt();
             ZTRChromatogram result= builder.build();
-            builder =null;
+            built =false;
             return result;
         }
 
@@ -216,7 +219,7 @@ public final class ZTRChromatogramFile{
      * @throws TraceDecoderException if the file is not correctly encoded.
      */
     public static ZTRChromatogram create(File ztrFile) throws FileNotFoundException, TraceDecoderException{
-        ZTRChromatogramFileBuilderVisitor visitor = createNewBuilderVisitor();
+        ZTRChromatogramFileBuilderVisitor visitor = createNewBuilderVisitor(ztrFile.getName());
         ZTRChromatogramFileParser.parse(ztrFile, visitor);
         return visitor.build();
     }
@@ -225,15 +228,17 @@ public final class ZTRChromatogramFile{
      * Create a new {@link ZTRChromatogram} instance from the given
      * ZTR encoded InputStream, This method will close the input stream regardless
      * if this method returns or throws an exception.
+     * @param id the id of the chromatogram to be built.
      * @param ztrInputStream the ZTR encoded input stream to parse
      * @return a new {@link ZTRChromatogram} instance containing data
      * from the given ZTR file.
      * @throws FileNotFoundException if the file does not exist
      * @throws TraceDecoderException if the file is not correctly encoded.
+     * @throws NullPointerException if id is null.
      */
-    public static ZTRChromatogram create(InputStream ztrInputStream) throws FileNotFoundException, TraceDecoderException{
+    public static ZTRChromatogram create(String id, InputStream ztrInputStream) throws FileNotFoundException, TraceDecoderException{
         try{
-            ZTRChromatogramFileBuilderVisitor visitor = createNewBuilderVisitor();
+            ZTRChromatogramFileBuilderVisitor visitor = createNewBuilderVisitor(id);
             ZTRChromatogramFileParser.parse(ztrInputStream, visitor);
             return visitor.build();
         }finally{
@@ -247,8 +252,8 @@ public final class ZTRChromatogramFile{
      * @see ZTRChromatogramFileBuilderVisitor
      *
      */
-    public static ZTRChromatogramFileBuilderVisitor createNewBuilderVisitor(){
-        return new ZTRChromatogramFileBuilderVisitor();
+    public static ZTRChromatogramFileBuilderVisitor createNewBuilderVisitor(String id){
+        return new ZTRChromatogramFileBuilderVisitor(id);
     }
     
     

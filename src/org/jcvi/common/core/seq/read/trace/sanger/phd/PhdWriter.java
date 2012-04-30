@@ -78,7 +78,7 @@ public class PhdWriter {
     }
 
     private static String writeCalledInfo( Phd phd){
-        List<Nucleotide> bases = phd.getBasecalls().asList();
+        List<Nucleotide> bases = phd.getNucleotideSequence().asList();
         List<PhredQuality> qualities = phd.getQualities().asList();
         List<ShortSymbol> peaks = phd.getPeaks().getData().asList();
         StringBuilder result = new StringBuilder();

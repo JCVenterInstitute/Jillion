@@ -53,7 +53,7 @@ public class TestSCFChromatogram {
     Confidence mockSubstitutionConfidence= createMock(DefaultConfidence.class);
     PrivateData mockPrivateData = createMock(PrivateData.class);
 
-    BasicChromatogram basicChromatogram = new BasicChromatogram(basecalls, qualities,mockPeaks, mockChannelGroup,
+    BasicChromatogram basicChromatogram = new BasicChromatogram("id",basecalls, qualities,mockPeaks, mockChannelGroup,
             expectedProperties);
 
     SCFChromatogramImpl sut = new SCFChromatogramImpl(basicChromatogram,
@@ -65,7 +65,7 @@ public class TestSCFChromatogram {
 
     @Test
     public void constructor(){
-        assertEquals(basecalls, sut.getBasecalls());
+        assertEquals(basecalls, sut.getNucleotideSequence());
         assertEquals(mockPeaks, sut.getPeaks());
         assertEquals(mockChannelGroup, sut.getChannelGroup());
         assertEquals(expectedProperties, sut.getComments());

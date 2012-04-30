@@ -32,23 +32,23 @@ public class TestAssemblyUtil_reverseComplimentRange {
     private final Range range = Range.create(0, 9);
     @Test
     public void reverseFullRange(){
-        assertEquals(range, AssemblyUtil.reverseComplimentValidRange(range, range.getLength()));
+        assertEquals(range, AssemblyUtil.reverseComplementValidRange(range, range.getLength()));
     }
     
     @Test
     public void reverse(){
         Range expectedRange = Range.create(5,14);
-        assertEquals(expectedRange, AssemblyUtil.reverseComplimentValidRange(range, 15));
+        assertEquals(expectedRange, AssemblyUtil.reverseComplementValidRange(range, 15));
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void fullLengthSmallerThanValidRangeShouldThrowIllegalArgumentException(){
-        AssemblyUtil.reverseComplimentValidRange(range, range.getLength()-1);
+        AssemblyUtil.reverseComplementValidRange(range, range.getLength()-1);
     }
     
     @Test
     public void validRangeInMiddleOfFullRange(){
         Range validRange = Range.create(5,9);
-       assertEquals(Range.create(10,14), AssemblyUtil.reverseComplimentValidRange(validRange, 20));
+       assertEquals(Range.create(10,14), AssemblyUtil.reverseComplementValidRange(validRange, 20));
     }
 }

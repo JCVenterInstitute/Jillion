@@ -62,10 +62,6 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
         return placedRead.getValidRange();
     }
 
-    @Override
-	public Read<ReferenceEncodedNucleotideSequence> getRead() {
-		return placedRead.getRead();
-	}
 
 	/**
     * {@inheritDoc}

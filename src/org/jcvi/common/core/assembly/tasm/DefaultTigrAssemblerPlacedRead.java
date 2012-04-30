@@ -98,11 +98,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         return delegate.getValidRange();
     }
     
-    
-    @Override
-	public Read<ReferenceEncodedNucleotideSequence> getRead() {
-		return delegate.getRead();
-	}
+
 	/**
     * {@inheritDoc}
     */

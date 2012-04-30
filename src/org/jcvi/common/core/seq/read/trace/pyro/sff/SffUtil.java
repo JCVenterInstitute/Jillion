@@ -161,7 +161,7 @@ public final class SffUtil {
     public static Range getTrimRangeFor(Flowgram flowgram){
         Range qualityClip = flowgram.getQualityClip();
         Range adapterClip = flowgram.getAdapterClip();
-        long numberOfBases = flowgram.getBasecalls().getLength();
+        long numberOfBases = flowgram.getNucleotideSequence().getLength();
         long firstBaseOfInsert = Math.max(1,
                         Math.max(qualityClip.getBegin(CoordinateSystem.RESIDUE_BASED), 
                                 adapterClip.getBegin(CoordinateSystem.RESIDUE_BASED)));

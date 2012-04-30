@@ -49,19 +49,20 @@ public class TestBasicChromatogram {
     private static final String PROP_2_KEY = "a different key";
 
     BasicChromatogram sut;
+    String id = "id";
     @Before
     public void setup(){
         expectedProperties = new HashMap<String, String>();
         expectedProperties.put(PROP_1_KEY, "a value");
         expectedProperties.put(PROP_2_KEY, "a different value");
 
-        sut = new BasicChromatogram(basecalls, qualities,mockPeaks, mockChannelGroup,
+        sut = new BasicChromatogram(id,basecalls, qualities,mockPeaks, mockChannelGroup,
                 expectedProperties);
     }
 
     @Test
     public void fullConstructor(){
-        assertEquals(basecalls, sut.getBasecalls());
+        assertEquals(basecalls, sut.getNucleotideSequence());
         assertEquals(mockPeaks, sut.getPeaks());
         assertEquals(mockChannelGroup, sut.getChannelGroup());
         assertEquals(expectedProperties, sut.getComments());
@@ -70,13 +71,13 @@ public class TestBasicChromatogram {
 
     @Test
     public void constructionWithEmptyProperties(){
-        BasicChromatogram emptyProps = new BasicChromatogram(
+        BasicChromatogram emptyProps = new BasicChromatogram( id,
                                                 basecalls,
                                                 qualities,
                                                 mockPeaks,
                                                 mockChannelGroup);
 
-        assertEquals(basecalls, emptyProps.getBasecalls());
+        assertEquals(basecalls, emptyProps.getNucleotideSequence());
         assertEquals(mockPeaks, emptyProps.getPeaks());
         assertEquals(mockChannelGroup, emptyProps.getChannelGroup());
         assertEquals(qualities, sut.getQualities());
@@ -86,7 +87,7 @@ public class TestBasicChromatogram {
     @Test
     public void nullBaseCallsShouldThrowIllegalArugmentException(){
         try{
-            new BasicChromatogram(
+            new BasicChromatogram( id,
                     (NucleotideSequence)null,
                     qualities,
                     mockPeaks,
@@ -100,7 +101,7 @@ public class TestBasicChromatogram {
     @Test
     public void nullPeaksShouldThrowIllegalArugmentException(){
         try{
-            new BasicChromatogram(
+            new BasicChromatogram( id,
                     basecalls,
                     qualities,
                     null,
@@ -114,7 +115,7 @@ public class TestBasicChromatogram {
     @Test
     public void nullChannelGroupShouldThrowIllegalArugmentException(){
         try{
-            new BasicChromatogram(
+            new BasicChromatogram( id,
                     basecalls,
                     qualities,
                     mockPeaks,
@@ -129,7 +130,7 @@ public class TestBasicChromatogram {
     @Test
     public void nullPropertiesShouldThrowIllegalArugmentException(){
         try{
-            new BasicChromatogram(
+            new BasicChromatogram( id,
                     basecalls,
                     qualities,
                     mockPeaks,
@@ -144,7 +145,7 @@ public class TestBasicChromatogram {
     @Test
     public void copyConstructor(){
         BasicChromatogram copy = new BasicChromatogram(sut);
-        assertEquals(basecalls, copy.getBasecalls());
+        assertEquals(basecalls, copy.getNucleotideSequence());
         assertEquals(mockPeaks, copy.getPeaks());
         assertEquals(mockChannelGroup, copy.getChannelGroup());
         assertEquals(expectedProperties, copy.getComments());
@@ -173,7 +174,7 @@ public class TestBasicChromatogram {
     @Test
     public void notEqualsDifferentBasecalls(){
         NucleotideSequence differentBases = createMock(NucleotideSequence.class);
-        BasicChromatogram nullBases = new BasicChromatogram(differentBases, qualities,mockPeaks, mockChannelGroup,
+        BasicChromatogram nullBases = new BasicChromatogram( id,differentBases, qualities,mockPeaks, mockChannelGroup,
                                     expectedProperties);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, nullBases);
     }
@@ -182,7 +183,7 @@ public class TestBasicChromatogram {
     @Test
     public void notEqualsDifferentPeaks(){
         SangerPeak differentPeaks = createMock(SangerPeak.class);
-        BasicChromatogram nullPeaks = new BasicChromatogram(basecalls, qualities,differentPeaks, mockChannelGroup,
+        BasicChromatogram nullPeaks = new BasicChromatogram( id,basecalls, qualities,differentPeaks, mockChannelGroup,
                 expectedProperties);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, nullPeaks);
     }
@@ -191,7 +192,7 @@ public class TestBasicChromatogram {
     @Test
     public void notEqualsDifferentChannelGroup(){
         ChannelGroup differentChannelGroup = createMock(ChannelGroup.class);
-        BasicChromatogram differentChannels = new BasicChromatogram(basecalls, qualities,mockPeaks, differentChannelGroup,
+        BasicChromatogram differentChannels = new BasicChromatogram( id,basecalls, qualities,mockPeaks, differentChannelGroup,
                 expectedProperties);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentChannels);
     }
@@ -201,7 +202,7 @@ public class TestBasicChromatogram {
     public void notEqualsExtraProperties(){
         HashMap<String, String> differentProperties = new HashMap<String,String>(expectedProperties);
         differentProperties.put("extra key", "extra value");
-        BasicChromatogram hasDifferentProperties = new BasicChromatogram(basecalls, qualities,mockPeaks, mockChannelGroup,
+        BasicChromatogram hasDifferentProperties = new BasicChromatogram( id,basecalls, qualities,mockPeaks, mockChannelGroup,
                                         differentProperties);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasDifferentProperties);
     }
@@ -210,7 +211,7 @@ public class TestBasicChromatogram {
         HashMap<String, String> differentProperties = new HashMap<String,String>(expectedProperties);
         
         differentProperties.remove(PROP_1_KEY);
-        BasicChromatogram hasDifferentProperties = new BasicChromatogram(basecalls, qualities,mockPeaks, mockChannelGroup,
+        BasicChromatogram hasDifferentProperties = new BasicChromatogram( id,basecalls, qualities,mockPeaks, mockChannelGroup,
                                         differentProperties);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasDifferentProperties);
     }

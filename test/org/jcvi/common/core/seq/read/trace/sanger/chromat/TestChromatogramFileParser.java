@@ -43,15 +43,14 @@ public class TestChromatogramFileParser {
 	private static final String ZTR_FILE = "ztr/files/GBKAK82TF.ztr";
     private static final String SCF3_FILE = "scf/files/GBKAK82TF.scf";
     private static final String AB1_FILE = "ab1/files/SDBHD01T00PB1A1672F.ab1";
-    
-    
+  
     private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestChromatogramFileParser.class);
     
     @Test
     public void parseZTR() throws TraceDecoderException, IOException{    	
         File ztrFile = RESOURCES.getFile(ZTR_FILE);
         ZTRChromatogram expected = ZTRChromatogramFile.create(ztrFile);
-        ZTRChromatogramFileBuilderVisitor builder = ZTRChromatogramFile.createNewBuilderVisitor();
+        ZTRChromatogramFileBuilderVisitor builder = ZTRChromatogramFile.createNewBuilderVisitor(ztrFile.getName());
         
 		ChromatogramParser.parse(ztrFile,builder);
         assertEquals(expected, builder.build());
@@ -60,7 +59,7 @@ public class TestChromatogramFileParser {
     public void parseSCF3() throws TraceDecoderException, IOException{    	
         File scfFile = RESOURCES.getFile(SCF3_FILE);
         SCFChromatogram expected = SCFChromatogramFile.create(scfFile);
-        SCFChromatogramFileBuilderVisitor visitor = SCFChromatogramFile.createNewBuilderVisitor();
+        SCFChromatogramFileBuilderVisitor visitor = SCFChromatogramFile.createNewBuilderVisitor(scfFile.getName());
         
 		ChromatogramParser.parse(scfFile,visitor);
         assertEquals(expected, visitor.build());
@@ -68,9 +67,9 @@ public class TestChromatogramFileParser {
     @Test
     public void parseAB1() throws TraceDecoderException, IOException{    	
         File ab1File = RESOURCES.getFile(AB1_FILE);
-        BasicChromatogramFile expected = new BasicChromatogramFile();
+        BasicChromatogramFile expected = new BasicChromatogramFile(ab1File.getName());
         Ab1FileParser.parse(ab1File, expected);
-        BasicChromatogramFile actual = new BasicChromatogramFile();
+        BasicChromatogramFile actual = new BasicChromatogramFile(ab1File.getName());
         
 		ChromatogramParser.parse(ab1File,actual);
         assertEquals(expected, actual);
@@ -79,18 +78,20 @@ public class TestChromatogramFileParser {
     
     @Test
     public void parseZTRStream() throws TraceDecoderException, IOException{    	
-        InputStream ztrFile = RESOURCES.getFileAsStream(ZTR_FILE);
-        ZTRChromatogram expected = ZTRChromatogramFile.create(ztrFile);
-        ZTRChromatogramFileBuilderVisitor builder = ZTRChromatogramFile.createNewBuilderVisitor();
+    	File ztrFile = RESOURCES.getFile(ZTR_FILE);
+        InputStream ztrStream = RESOURCES.getFileAsStream(ZTR_FILE);
+        ZTRChromatogram expected = ZTRChromatogramFile.create(ztrFile.getName(),ztrStream);
+        ZTRChromatogramFileBuilderVisitor builder = ZTRChromatogramFile.createNewBuilderVisitor(ztrFile.getName());
         
 		ChromatogramParser.parse(RESOURCES.getFileAsStream(ZTR_FILE),builder);
         assertEquals(expected, builder.build());
     }
     @Test
-    public void parseSCF3Stream() throws TraceDecoderException, IOException{    	
-    	InputStream scfFile = RESOURCES.getFileAsStream(SCF3_FILE);
-        SCFChromatogram expected = SCFChromatogramFile.create(scfFile);
-        SCFChromatogramFileBuilderVisitor visitor = SCFChromatogramFile.createNewBuilderVisitor();
+    public void parseSCF3Stream() throws TraceDecoderException, IOException{  
+    	File scfFile = RESOURCES.getFile(SCF3_FILE);
+    	InputStream scfFileStream = RESOURCES.getFileAsStream(SCF3_FILE);
+        SCFChromatogram expected = SCFChromatogramFile.create(scfFile.getName(),scfFileStream);
+        SCFChromatogramFileBuilderVisitor visitor = SCFChromatogramFile.createNewBuilderVisitor(scfFile.getName());
         
 		ChromatogramParser.parse(RESOURCES.getFileAsStream(SCF3_FILE),visitor);
         assertEquals(expected, visitor.build());
@@ -98,9 +99,9 @@ public class TestChromatogramFileParser {
     @Test
     public void parseAB1Stream() throws TraceDecoderException, IOException{    	
     	InputStream ab1File = RESOURCES.getFileAsStream(AB1_FILE);
-        BasicChromatogramFile expected = new BasicChromatogramFile();
+        BasicChromatogramFile expected = new BasicChromatogramFile("id");
         Ab1FileParser.parse(ab1File, expected);
-        BasicChromatogramFile actual = new BasicChromatogramFile();
+        BasicChromatogramFile actual = new BasicChromatogramFile("id");
         
 		ChromatogramParser.parse(RESOURCES.getFileAsStream(AB1_FILE),actual);
         assertEquals(expected, actual);

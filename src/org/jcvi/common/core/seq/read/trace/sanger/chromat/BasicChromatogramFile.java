@@ -37,12 +37,18 @@ public class BasicChromatogramFile implements Chromatogram, ChromatogramFileVisi
 
     private Chromatogram delegate;
     private BasicChromatogramBuilder builder;
-    public BasicChromatogramFile(){
-        builder = new BasicChromatogramBuilder();
+    public BasicChromatogramFile(String id){
+        builder = new BasicChromatogramBuilder(id);
     }
    
     
-    /**
+    @Override
+	public String getId() {
+		return builder.id();
+	}
+
+
+	/**
     * {@inheritDoc}
     */
     @Override
@@ -161,8 +167,8 @@ public class BasicChromatogramFile implements Chromatogram, ChromatogramFileVisi
     * {@inheritDoc}
     */
     @Override
-    public NucleotideSequence getBasecalls() {
-        return delegate.getBasecalls();
+    public NucleotideSequence getNucleotideSequence() {
+        return delegate.getNucleotideSequence();
     }
 
     /**

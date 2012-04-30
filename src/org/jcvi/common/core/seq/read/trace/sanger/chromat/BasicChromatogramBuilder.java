@@ -59,10 +59,17 @@ public final class BasicChromatogramBuilder {
         private short[] tPositions;
 
         private Map<String,String> properties;
+        
+        private String id;
         /**
          * empty constructor.
          */
-        public BasicChromatogramBuilder(){}
+        public BasicChromatogramBuilder(String id){
+        	if(id ==null){
+        		throw new NullPointerException("id can not be null");
+        	}
+        	this.id=id;
+        }
         /**
          * Builds a builder starting with the following default values.
          * @param basecalls the basecalls may be null.
@@ -71,8 +78,9 @@ public final class BasicChromatogramBuilder {
          *  position and confidence data on all 4 channels can not be null.
          * @param properties the properties may be null.
          */
-        public BasicChromatogramBuilder(NucleotideSequence basecalls, short[] peaks, ChannelGroup channelGroup, Map<String,String> properties){
-            basecalls(basecalls);
+        private BasicChromatogramBuilder(String id, NucleotideSequence basecalls, short[] peaks, ChannelGroup channelGroup, Map<String,String> properties){
+            id(id);
+        	basecalls(basecalls);
             peaks(peaks);
             aConfidence(channelGroup.getAChannel().getConfidence().getData());
             aPositions(channelGroup.getAChannel().getPositions().array());            
@@ -87,11 +95,11 @@ public final class BasicChromatogramBuilder {
         
         
         public BasicChromatogramBuilder(Chromatogram copy){
-       this(copy.getBasecalls(),
-       ShortSymbol.toArray(copy.getPeaks().getData().asList()),
-       copy.getChannelGroup(),
-       copy.getComments()
-       );
+		       this(copy.getId(), copy.getNucleotideSequence(),
+		       ShortSymbol.toArray(copy.getPeaks().getData().asList()),
+		       copy.getChannelGroup(),
+		       copy.getComments()
+		       );
         
         }
         public final short[] peaks() {
@@ -102,7 +110,17 @@ public final class BasicChromatogramBuilder {
             this.peaks = Arrays.copyOf(peaks, peaks.length);
             return this;
         }
-
+        public final String id(){
+        	return id;
+        }
+        
+        public BasicChromatogramBuilder id(String id){
+        	if(id ==null){
+        		throw new NullPointerException("id can not be null");
+        	}
+        	this.id = id;
+        	return this;
+        }
         public final NucleotideSequence basecalls() {
             return basecalls;
         }
@@ -234,7 +252,7 @@ public final class BasicChromatogramBuilder {
                     new Channel(gConfidence(),gPositions()),
                     new Channel(tConfidence(),tPositions()));
             
-            return new BasicChromatogram(
+            return new BasicChromatogram(id,
                     new NucleotideSequenceBuilder(basecalls()).build(),
                     generateQualities(channelGroup),                        
                         new SangerPeak(peaks()),

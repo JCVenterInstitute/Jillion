@@ -45,6 +45,11 @@ public class DefaultFileSangerTrace implements FileSangerTrace {
     }
 
     @Override
+	public String getId() {
+		return trace.getId();
+	}
+
+	@Override
     public File getFile() throws IOException {
         return file;
     }
@@ -60,8 +65,8 @@ public class DefaultFileSangerTrace implements FileSangerTrace {
     }
 
     @Override
-    public NucleotideSequence getBasecalls() {
-        return trace.getBasecalls();
+    public NucleotideSequence getNucleotideSequence() {
+        return trace.getNucleotideSequence();
     }
 
     @Override

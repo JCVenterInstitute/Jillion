@@ -89,7 +89,7 @@ public abstract class AbstractTestSamplesSection {
         expect(mockHeader.getSampleOffset()).andReturn(currentOffset);
         expect(mockHeader.getNumberOfSamples()).andReturn(aSamplesAsBytes.length);
         expect(mockHeader.getVersion()).andStubReturn(version);
-        SCFChromatogramBuilder c = new SCFChromatogramBuilder();
+        SCFChromatogramBuilder c = new SCFChromatogramBuilder("id");
         replay(mockHeader);
         return c;
     }

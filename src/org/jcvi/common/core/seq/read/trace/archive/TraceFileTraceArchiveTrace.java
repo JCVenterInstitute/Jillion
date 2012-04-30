@@ -23,6 +23,8 @@
  */
 package org.jcvi.common.core.seq.read.trace.archive;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.jcvi.common.core.io.IOUtil;
@@ -40,8 +42,9 @@ public class TraceFileTraceArchiveTrace extends AbstractTraceArchiveTrace {
         super(record, rootDirPath);
         InputStream inputStream =null;
         try {
-            inputStream = this.getInputStreamFor(TraceInfoField.TRACE_FILE);
-            trace = SangerTraceParser.INSTANCE.decode(inputStream);
+        	File f =getFile();
+            inputStream = new FileInputStream(f);
+            trace = SangerTraceParser.INSTANCE.decode(f.getName(),inputStream);
         } catch (Exception e) {
            throw new IllegalArgumentException("invalid trace file",e);
         }
@@ -56,8 +59,8 @@ public class TraceFileTraceArchiveTrace extends AbstractTraceArchiveTrace {
     }
 
     @Override
-    public NucleotideSequence getBasecalls() {
-        return trace.getBasecalls();
+    public NucleotideSequence getNucleotideSequence() {
+        return trace.getNucleotideSequence();
     }
 
     @Override

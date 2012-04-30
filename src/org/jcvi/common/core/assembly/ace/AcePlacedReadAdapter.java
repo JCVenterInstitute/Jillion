@@ -151,10 +151,6 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         }
         return true;
     }
-	@Override
-	public Read<ReferenceEncodedNucleotideSequence> getRead() {
-		return placedRead.getRead();
-	}
 	
     
   

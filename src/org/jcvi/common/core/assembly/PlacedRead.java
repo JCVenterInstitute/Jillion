@@ -37,7 +37,7 @@ import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence
  * this read was placed in.
  * @author dkatzel
  */
-public interface PlacedRead extends Read<ReferenceEncodedNucleotideSequence>, Rangeable{
+public interface PlacedRead extends Rangeable{
 
 	/**
      * Get the 0-based, gapped
@@ -121,8 +121,6 @@ public interface PlacedRead extends Read<ReferenceEncodedNucleotideSequence>, Ra
      */
     @Override
     Range asRange();
-    
-    Read<ReferenceEncodedNucleotideSequence> getRead();
     
     /**
      * Get the id of this read.

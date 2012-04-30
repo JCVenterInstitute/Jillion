@@ -53,6 +53,8 @@ public class BasicChromatogram implements Chromatogram {
     private final SangerPeak peaks;
     private final QualitySequence qualities;
 
+    private final String id;
+    
     /**
      * Used to store the TEXT properties of a ZTR file.
      */
@@ -60,28 +62,30 @@ public class BasicChromatogram implements Chromatogram {
 
 
     public BasicChromatogram(Chromatogram c){
-        this(c.getBasecalls(),
+        this(c.getId(),
+        		c.getNucleotideSequence(),
                 c.getQualities(),
                 c.getPeaks(),
                c.getChannelGroup(),
                 c.getComments());
     }
-    public BasicChromatogram(NucleotideSequence basecalls,QualitySequence qualities, SangerPeak peaks,
+    public BasicChromatogram(String id, NucleotideSequence basecalls,QualitySequence qualities, SangerPeak peaks,
             ChannelGroup channelGroup){
-        this(basecalls, qualities, peaks, channelGroup, new HashMap<String,String>());
+        this(id,basecalls, qualities, peaks, channelGroup, new HashMap<String,String>());
     }
-    public BasicChromatogram(String basecalls, byte[] qualities,SangerPeak peaks,
+    public BasicChromatogram(String id, String basecalls, byte[] qualities,SangerPeak peaks,
             ChannelGroup channelGroup,
             Map<String,String> comments){
-        this(new NucleotideSequenceBuilder(basecalls).build(),
+        this(id,new NucleotideSequenceBuilder(basecalls).build(),
                 new EncodedQualitySequence(RUN_LENGTH_CODEC,PhredQuality.valueOf(qualities)),
                 peaks,
                      channelGroup, comments);
     }
-    public BasicChromatogram(NucleotideSequence basecalls, QualitySequence qualities,SangerPeak peaks,
+    public BasicChromatogram(String id, NucleotideSequence basecalls, QualitySequence qualities,SangerPeak peaks,
            ChannelGroup channelGroup,
            Map<String,String> comments){
-        canNotBeNull(basecalls, peaks, channelGroup, comments);
+        canNotBeNull(id,basecalls, peaks, channelGroup, comments);
+        this.id=id;
         this.peaks = peaks;        
         this.properties = comments;
         this.channelGroup =channelGroup;
@@ -98,7 +102,11 @@ public class BasicChromatogram implements Chromatogram {
         
     }
 
-    public NucleotideSequence getBasecalls() {
+    @Override
+	public String getId() {
+		return id;
+	}
+	public NucleotideSequence getNucleotideSequence() {
         return basecalls;
     }
     @Override
@@ -139,7 +147,7 @@ public class BasicChromatogram implements Chromatogram {
         }
         final Chromatogram other = (Chromatogram) obj;
 
-        return CommonUtil.similarTo(getBasecalls(), other.getBasecalls())
+        return CommonUtil.similarTo(getNucleotideSequence(), other.getNucleotideSequence())
         && CommonUtil.similarTo(getPeaks(), other.getPeaks())
         && CommonUtil.similarTo(getChannelGroup(), other.getChannelGroup())
         && CommonUtil.similarTo(getComments(), other.getComments());

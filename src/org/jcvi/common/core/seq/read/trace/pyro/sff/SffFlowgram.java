@@ -130,11 +130,11 @@ final class SffFlowgram implements Flowgram {
      }
 
     @Override
-    public NucleotideSequence getBasecalls() {
-        return basecalls;
-    }
+	public NucleotideSequence getNucleotideSequence() {
+		return basecalls;
+	}
 
-    @Override
+	@Override
     public QualitySequence getQualities() {
         return qualities;
     }
@@ -197,7 +197,7 @@ final class SffFlowgram implements Flowgram {
         
         boolean nonValuesEqual=
         CommonUtil.similarTo(id, other.getId())
-        && CommonUtil.similarTo(basecalls.asList(), other.getBasecalls().asList())
+        && CommonUtil.similarTo(basecalls.asList(), other.getNucleotideSequence().asList())
         && CommonUtil.similarTo(qualities.asList(), other.getQualities().asList())
         && CommonUtil.similarTo(qualitiesClip, other.getQualityClip())
         && CommonUtil.similarTo(adapterClip, other.getAdapterClip())

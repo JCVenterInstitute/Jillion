@@ -102,7 +102,7 @@ public final class DefaultUnitigDataStore{
             if(currentBuilder !=null){
                 //in unitig
                 try {
-                    NucleotideSequence fullLengthSequence = frgDataStore.get(externalReadId).getBasecalls();
+                    NucleotideSequence fullLengthSequence = frgDataStore.get(externalReadId).getNucleotideSequence();
                     Range clearRange = clearRanges.get(externalReadId);
                     if(clearRange==null){
                         throw new IllegalStateException("do not have clear range information for read "+ externalReadId);

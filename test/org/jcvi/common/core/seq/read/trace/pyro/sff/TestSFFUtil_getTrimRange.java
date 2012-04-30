@@ -45,7 +45,7 @@ public class TestSFFUtil_getTrimRange {
         flowgram = createMock(Flowgram.class);
         mockBasecalls = createMock(NucleotideSequence.class);
         expect(mockBasecalls.getLength()).andStubReturn(numberOfBases);
-        expect(flowgram.getBasecalls()).andReturn(mockBasecalls);
+        expect(flowgram.getNucleotideSequence()).andReturn(mockBasecalls);
         replay(mockBasecalls);
     }
     

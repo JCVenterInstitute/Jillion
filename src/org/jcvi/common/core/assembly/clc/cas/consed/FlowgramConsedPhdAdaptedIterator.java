@@ -54,7 +54,7 @@ public class FlowgramConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 		String id = nextFlowgram.getId();
 		Phd phd= ArtificialPhd.createNewbler454Phd(
 				id, 
-				nextFlowgram.getBasecalls(), 
+				nextFlowgram.getNucleotideSequence(), 
 				nextFlowgram.getQualities(),
 				requiredComments);
 		

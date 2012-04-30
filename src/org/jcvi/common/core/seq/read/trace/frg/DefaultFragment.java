@@ -37,7 +37,7 @@ public class DefaultFragment implements Fragment{
     private final String comment;
     private final Library library;
     public DefaultFragment(String id, Trace trace,Range validRange,Range vectorClearRange, Library library,String comment){
-        this(id, trace.getBasecalls(), trace.getQualities(),validRange,vectorClearRange,library,comment);
+        this(id, trace.getNucleotideSequence(), trace.getQualities(),validRange,vectorClearRange,library,comment);
     }
     public DefaultFragment(String id, Trace trace,Range validRange,Range vectorClearRange, Library library){
         this(id, trace,validRange,vectorClearRange,library,null);
@@ -46,7 +46,7 @@ public class DefaultFragment implements Fragment{
         this(id, trace,validRange,validRange,library,null);
     }
     public DefaultFragment(String id, Trace trace,Library library){
-        this(id, trace,Range.createOfLength(0,trace.getBasecalls().getLength()),library);
+        this(id, trace,Range.createOfLength(0,trace.getNucleotideSequence().getLength()),library);
     }
     public DefaultFragment(String id, NucleotideSequence bases,
             QualitySequence qualities,Range validRange,Range vectorClearRange, Library library,String comment){
@@ -60,12 +60,6 @@ public class DefaultFragment implements Fragment{
         this.comment = comment;
         this.library = library;
         this.vectorClearRange = vectorClearRange;
-    }
-
-
-    @Override
-    public NucleotideSequence getBasecalls() {
-        return bases;
     }
 
     @Override
@@ -85,12 +79,6 @@ public class DefaultFragment implements Fragment{
     @Override
     public NucleotideSequence getNucleotideSequence() {
         return bases;
-    }
-
-
-    @Override
-    public long getGappedLength() {
-        return bases.getLength();
     }
     public String getComment() {
         return comment;

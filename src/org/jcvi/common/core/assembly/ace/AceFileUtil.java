@@ -164,7 +164,7 @@ public class AceFileUtil {
                ungappedValidRange.getEnd()+numberOfGaps);
         
         if(dir==Direction.REVERSE){
-            gappedValidRange = AssemblyUtil.reverseComplimentValidRange(gappedValidRange, ungappedFullLength+numberOfGaps);
+            gappedValidRange = AssemblyUtil.reverseComplementValidRange(gappedValidRange, ungappedFullLength+numberOfGaps);
            
         }
         return gappedValidRange;
@@ -175,10 +175,10 @@ public class AceFileUtil {
 		final NucleotideSequence gappedValidBasecalls = nucleotideSequence; 
         final Range ungappedValidRange = placedRead.getValidRange();
         final Direction dir = placedRead.getDirection(); 
-        final NucleotideSequence fullBasecalls = phd.getBasecalls();
+        final NucleotideSequence fullBasecalls = phd.getNucleotideSequence();
         final List<Nucleotide> phdFullBases = fullBasecalls.asList();
         
-        final List<Nucleotide> fullGappedValidRange = AssemblyUtil.buildGappedComplimentedFullRangeBases(placedRead, phdFullBases);
+        final List<Nucleotide> fullGappedValidRange = AssemblyUtil.buildGappedComplementedFullRangeBases(placedRead, phdFullBases);
         final List<PhredQuality> qualities =phd.getQualities().asList();  
         if(qualities.isEmpty()){
             throw new IllegalStateException("empty qualities for read "+ readId);

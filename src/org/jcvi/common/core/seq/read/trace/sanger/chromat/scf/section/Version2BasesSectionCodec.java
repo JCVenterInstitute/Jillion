@@ -97,7 +97,7 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
         final ByteBuffer gConfidence = ByteBuffer.wrap(channelGroup.getGChannel().getConfidence().getData());
         final ByteBuffer tConfidence = ByteBuffer.wrap(channelGroup.getTChannel().getConfidence().getData());
 
-        final Sequence<Nucleotide> basecalls = c.getBasecalls();
+        final Sequence<Nucleotide> basecalls = c.getNucleotideSequence();
         final ByteBuffer substitutionConfidence = getOptionalField(c.getSubstitutionConfidence());
         final ByteBuffer insertionConfidence = getOptionalField(c.getInsertionConfidence());
         final ByteBuffer deletionConfidence = getOptionalField(c.getDeletionConfidence());

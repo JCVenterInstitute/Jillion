@@ -60,7 +60,7 @@ public class TestAssemblyUtil_gappedfullRange {
         expect(mockPlacedRead.getNucleotideSequence()).andReturn(readSequence);
         replay(mockPlacedRead,readSequence);
         List<Nucleotide> actualGappedComplimentedFullRange =
-            AssemblyUtil.buildGappedComplimentedFullRangeBases(mockPlacedRead, ungappedUnComplimentedFullRange);
+            AssemblyUtil.buildGappedComplementedFullRangeBases(mockPlacedRead, ungappedUnComplimentedFullRange);
         
         assertEquals(gappedValidRange, actualGappedComplimentedFullRange);        
     }
@@ -81,7 +81,7 @@ public class TestAssemblyUtil_gappedfullRange {
         expect(mockPlacedRead.getNucleotideSequence()).andReturn(readSequence);
         replay(mockPlacedRead, readSequence);
         List<Nucleotide> actualGappedComplimentedFullRange =
-            AssemblyUtil.buildGappedComplimentedFullRangeBases(mockPlacedRead, ungappedUnComplimentedFullRange);
+            AssemblyUtil.buildGappedComplementedFullRangeBases(mockPlacedRead, ungappedUnComplimentedFullRange);
         
         assertEquals(gappedValidRange, actualGappedComplimentedFullRange);        
     }
@@ -98,7 +98,7 @@ public class TestAssemblyUtil_gappedfullRange {
         expect(mockPlacedRead.getNucleotideSequence()).andReturn(readSequence);
         replay(mockPlacedRead,readSequence);
         List<Nucleotide> actualGappedComplimentedFullRange =
-            AssemblyUtil.buildGappedComplimentedFullRangeBases(mockPlacedRead, ungappedUnComplimentedFullRange);
+            AssemblyUtil.buildGappedComplementedFullRangeBases(mockPlacedRead, ungappedUnComplimentedFullRange);
         
         List<Nucleotide> expectedGappedComplimentedFullRange = Nucleotides.parse("RRACGT-ACGTKKK");
         assertEquals(expectedGappedComplimentedFullRange, actualGappedComplimentedFullRange);      
@@ -115,7 +115,7 @@ public class TestAssemblyUtil_gappedfullRange {
         expect(mockPlacedRead.getNucleotideSequence()).andReturn(readSequence);
         replay(mockPlacedRead,readSequence);
         List<Nucleotide> actualGappedComplimentedFullRange =
-            AssemblyUtil.buildGappedComplimentedFullRangeBases(mockPlacedRead, ungappedUnComplimentedFullRange);
+            AssemblyUtil.buildGappedComplementedFullRangeBases(mockPlacedRead, ungappedUnComplimentedFullRange);
         
         List<Nucleotide> expectedGappedComplimentedFullRange = Nucleotides.parse("MMMACGTACGTYY");
         assertEquals(expectedGappedComplimentedFullRange, actualGappedComplimentedFullRange);      

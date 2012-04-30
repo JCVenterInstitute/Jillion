@@ -50,7 +50,7 @@ public final class TraceNucleotideDataStoreAdapter <T extends Trace> extends Abs
 
     @Override
     protected NucleotideSequence adapt(T delegate) {
-        return delegate.getBasecalls();
+        return delegate.getNucleotideSequence();
     }
 
 }

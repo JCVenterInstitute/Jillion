@@ -23,6 +23,7 @@
  */
 package org.jcvi.common.core.seq.read.trace;
 
+import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**
@@ -33,12 +34,12 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  *
  *
  */
-public interface Trace {
+public interface Trace extends Read<NucleotideSequence>{
     /**
      * Get the basecalls of this trace as a {@link NucleotideSequence}.
      * @return a {@link NucleotideSequence}, should never be null.
      */
-    NucleotideSequence getBasecalls();
+    NucleotideSequence getNucleotideSequence();
     /**
      * Get the quality data of this trace as a {@link QualitySequence}.
      * @return a {@link QualitySequence}, should never be null.

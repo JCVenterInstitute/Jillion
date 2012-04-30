@@ -56,7 +56,7 @@ public class SangerTraceConsedPhdAdaptedIterator implements PhdReadRecordIterato
 		
 			Phd phd= new DefaultPhd(
 					name, 
-					next.getBasecalls(), 
+					next.getNucleotideSequence(), 
 					next.getQualities(),
 					next.getPeaks(),
 					requiredComments);
