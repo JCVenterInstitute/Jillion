@@ -53,14 +53,14 @@ public enum SangerTraceParser {
     	MagicNumberInputStream mIn =null;
         try{
         	mIn= new MagicNumberInputStream(traceFile);
-	        
+	        String id = traceFile.getName();
 	        byte[] magicNumber = mIn.peekMagicNumber();
 	        if(AbiUtil.isABIMagicNumber(magicNumber)){
-	            return AbiChromatogramFile.create(mIn);
+	            return AbiChromatogramFile.create(id,mIn);
 	        }else if(ZTRUtil.isMagicNumber(magicNumber)){
-	        	return ZTRChromatogramFile.create(mIn);
+	        	return ZTRChromatogramFile.create(id,mIn);
 	        }else if(SCFUtils.isMagicNumber(magicNumber)){
-	        	return SCFChromatogramFile.create(mIn);
+	        	return SCFChromatogramFile.create(id,mIn);
 	        }else{
 	        	//not a chromatogram file, try phd
 	        	try{
@@ -75,23 +75,18 @@ public enum SangerTraceParser {
         }finally{
         	IOUtil.closeAndIgnoreErrors(mIn);
         }
-          
-            
-            
-        
     }
-    public SangerTrace decode(InputStream in) throws TraceDecoderException {
+    public SangerTrace decode(String id, InputStream in) throws TraceDecoderException {
     	MagicNumberInputStream mIn =null;
         try{
         	mIn= new MagicNumberInputStream(in);
-	        
 	        byte[] magicNumber = mIn.peekMagicNumber();
 	        if(AbiUtil.isABIMagicNumber(magicNumber)){
-	            return AbiChromatogramFile.create(mIn);
+	            return AbiChromatogramFile.create(id,mIn);
 	        }else if(ZTRUtil.isMagicNumber(magicNumber)){
-	        	return ZTRChromatogramFile.create(mIn);
+	        	return ZTRChromatogramFile.create(id,mIn);
 	        }else if(SCFUtils.isMagicNumber(magicNumber)){
-	        	return SCFChromatogramFile.create(mIn);
+	        	return SCFChromatogramFile.create(id,mIn);
 	        }else{
 	        	//not a chromatogram file, try phd
 	        	return SinglePhdFile.create(mIn);

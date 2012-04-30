@@ -76,7 +76,7 @@ public class DefaultPhd implements Phd {
     }
 
     @Override
-    public NucleotideSequence getBasecalls() {
+    public NucleotideSequence getNucleotideSequence() {
         return basecalls;
     }
 
@@ -119,7 +119,7 @@ public class DefaultPhd implements Phd {
         if(!id.equals(other.getId())){
         	return false;
         }
-       if (!basecalls.asList().equals(other.getBasecalls().asList())){
+       if (!basecalls.asList().equals(other.getNucleotideSequence().asList())){
             return false;
        }
         if (!comments.equals(other.getComments())){

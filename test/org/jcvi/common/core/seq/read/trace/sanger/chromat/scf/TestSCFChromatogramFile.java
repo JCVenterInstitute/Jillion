@@ -63,7 +63,7 @@ public class TestSCFChromatogramFile {
     public void scfWithGaps() throws IOException, TraceDecoderException{
         File scfFile = RESOURCES.getFile("files/containsGaps.scf");
         SCFChromatogram actual = SCFChromatogramFile.create(scfFile);
-        assertEquals(Nucleotides.asString(actual.getBasecalls().asList()), "-----");
+        assertEquals(Nucleotides.asString(actual.getNucleotideSequence().asList()), "-----");
         
     }
 }

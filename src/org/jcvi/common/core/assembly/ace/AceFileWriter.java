@@ -225,7 +225,7 @@ public class AceFileWriter {
 	        Direction dir = read.getDirection();
 	        Range readValidRange = read.getValidRange();
 	        if(dir==Direction.REVERSE){
-	            validRange = AssemblyUtil.reverseComplimentValidRange(readValidRange, ungappedFullLength);
+	            validRange = AssemblyUtil.reverseComplementValidRange(readValidRange, ungappedFullLength);
 	        }
 	        else{
 	            validRange = readValidRange;

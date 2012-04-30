@@ -110,7 +110,7 @@ public class DefaultPhdReadRecord implements PhdReadRecord {
     */
     @Override
     public NucleotideSequence getBasecalls() {
-        return phd.getBasecalls();
+        return phd.getNucleotideSequence();
     }
 
 }

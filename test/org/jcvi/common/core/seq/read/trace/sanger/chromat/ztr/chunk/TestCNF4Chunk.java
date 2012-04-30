@@ -82,7 +82,7 @@ public class TestCNF4Chunk {
     }
     @Test
     public void parse() throws TraceDecoderException{
-        ZTRChromatogramBuilder struct = new ZTRChromatogramBuilder();
+        ZTRChromatogramBuilder struct = new ZTRChromatogramBuilder("id");
         struct.basecalls(new NucleotideSequenceBuilder(bases).build());
         
         sut.parseData(encodedBytes, struct);
@@ -101,7 +101,7 @@ public class TestCNF4Chunk {
     			new Channel(gconf,new short[0]), 
     			new Channel(tconf,new short[0]));
 
-    	expect(chromatogram.getBasecalls()).andReturn(new NucleotideSequenceBuilder(bases).build());
+    	expect(chromatogram.getNucleotideSequence()).andReturn(new NucleotideSequenceBuilder(bases).build());
     	expect(chromatogram.getChannelGroup()).andReturn(channelGroup);
     
     	replay(chromatogram);

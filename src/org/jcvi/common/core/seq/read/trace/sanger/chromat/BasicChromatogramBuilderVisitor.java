@@ -39,8 +39,8 @@ public final class BasicChromatogramBuilderVisitor implements ChromatogramFileVi
 
     private BasicChromatogramBuilder builder;
     
-    public BasicChromatogramBuilderVisitor(){
-        builder = new BasicChromatogramBuilder();
+    public BasicChromatogramBuilderVisitor(String id){
+        builder = new BasicChromatogramBuilder(id);
     }
     public final short[] peaks() {
         return builder.peaks();

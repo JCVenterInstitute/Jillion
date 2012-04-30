@@ -56,7 +56,7 @@ public class TestClipChunk {
     public void validParse() throws TraceDecoderException{
        
         
-        ZTRChromatogramBuilder mockStruct = new ZTRChromatogramBuilder();
+        ZTRChromatogramBuilder mockStruct = new ZTRChromatogramBuilder("id");
         sut.parseData(encodedClip,mockStruct);
         assertEquals(expectedClip, mockStruct.clip());
     }

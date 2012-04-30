@@ -43,10 +43,10 @@ public class TestActualSCFCodec {
     @Test
     public void decodeAndEncodeMatch() throws SCFDecoderException, IOException{
         InputStream in = RESOURCES.getFileAsStream("files/GBKAK82TF.scf");
-        SCFChromatogram decoded = SCFChromatogramFile.create(in);
+        SCFChromatogram decoded = SCFChromatogramFile.create("id",in);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         sut.write(decoded, out);
-        SCFChromatogram decodedAgain = SCFChromatogramFile.create(new ByteArrayInputStream(out.toByteArray()));
+        SCFChromatogram decodedAgain = SCFChromatogramFile.create("id",new ByteArrayInputStream(out.toByteArray()));
 
         assertEquals(decoded, decodedAgain);
         

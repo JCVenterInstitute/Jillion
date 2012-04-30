@@ -150,7 +150,7 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
         bulkPut(buffer,cConfidence, numberOfBases);
         bulkPut(buffer,gConfidence, numberOfBases);
         bulkPut(buffer,tConfidence, numberOfBases);
-        bulkPut(buffer, c.getBasecalls());
+        bulkPut(buffer, c.getNucleotideSequence());
         bulkPutWithPadding(buffer, c.getSubstitutionConfidence(), numberOfBases);
         bulkPutWithPadding(buffer, c.getInsertionConfidence(), numberOfBases);
         bulkPutWithPadding(buffer, c.getDeletionConfidence(), numberOfBases);

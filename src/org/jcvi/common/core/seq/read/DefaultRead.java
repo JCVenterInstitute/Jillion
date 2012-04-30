@@ -43,10 +43,6 @@ public final class DefaultRead<T extends NucleotideSequence> implements Read<T>{
         return id;
     }
     @Override
-    public long getGappedLength() {
-        return sequence.getLength();
-    }
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

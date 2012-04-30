@@ -29,7 +29,6 @@ import java.util.Map;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -87,11 +86,6 @@ public final class DefaultPlacedRead implements PlacedRead {
     @Override
     public int getUngappedFullLength() {
         return ungappedFullLength;
-    }
-    
-    @Override
-    public Read<ReferenceEncodedNucleotideSequence> getRead(){
-        return null;
     }
     
     

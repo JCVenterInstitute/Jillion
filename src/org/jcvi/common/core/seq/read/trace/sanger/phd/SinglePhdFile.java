@@ -126,8 +126,8 @@ public final class SinglePhdFile implements  Phd{
 		return delegatePhd.getNumberOfTracePositions();
 	}
 	@Override
-	public NucleotideSequence getBasecalls() {
-		return delegatePhd.getBasecalls();
+	public NucleotideSequence getNucleotideSequence() {
+		return delegatePhd.getNucleotideSequence();
 	}
 	@Override
 	public QualitySequence getQualities() {

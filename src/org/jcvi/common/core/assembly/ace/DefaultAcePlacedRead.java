@@ -151,10 +151,6 @@ final class DefaultAcePlacedRead implements AcePlacedRead {
     public long toReferenceOffset(long validRangeIndex) {
         return placedRead.toReferenceOffset(validRangeIndex);
     }
-    @Override
-	public Read<ReferenceEncodedNucleotideSequence> getRead() {
-		return placedRead.getRead();
-	}
     /**
     * {@inheritDoc}
     */

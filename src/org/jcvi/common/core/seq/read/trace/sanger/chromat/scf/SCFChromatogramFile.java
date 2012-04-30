@@ -41,6 +41,7 @@ public final class SCFChromatogramFile {
     /**
      * Create a new {@link SCFChromatogram} instance from the given
      * SCF encoded file.
+     * 
      * @param scfFile the SCF encoded file to parse
      * @return a new {@link SCFChromatogram} instance containing data
      * from the given SCF file.
@@ -48,7 +49,7 @@ public final class SCFChromatogramFile {
      * @throws TraceDecoderException if the file is not correctly encoded.
      */
     public static SCFChromatogram create(File scfFile) throws TraceDecoderException, IOException{
-        SCFChromatogramFileBuilderVisitor visitor = createNewBuilderVisitor();
+        SCFChromatogramFileBuilderVisitor visitor = createNewBuilderVisitor(scfFile.getName());
         SCFChromatogramFileParser.parse(scfFile, visitor);
         return visitor.build();
     }
@@ -56,15 +57,16 @@ public final class SCFChromatogramFile {
      * Create a new {@link SCFChromatogram} instance from the given
      * SCF encoded InputStream, This method will close the input stream regardless
      * if this method returns or throws an exception.
+     * @param id the id of the chromatogram to be built.
      * @param scfInputStream the SCF encoded input stream to parse
      * @return a new {@link SCFChromatogram} instance containing data
      * from the given SCF file.
      * @throws FileNotFoundException if the file does not exist
      * @throws TraceDecoderException if the file is not correctly encoded.
      */
-    public static SCFChromatogram create(InputStream scfInputStream) throws TraceDecoderException, IOException{
+    public static SCFChromatogram create(String id, InputStream scfInputStream) throws TraceDecoderException, IOException{
         try{
-            SCFChromatogramFileBuilderVisitor visitor = createNewBuilderVisitor();
+            SCFChromatogramFileBuilderVisitor visitor = createNewBuilderVisitor(id);
             SCFChromatogramFileParser.parse(scfInputStream, visitor);
             return visitor.build();
         }finally{
@@ -74,12 +76,13 @@ public final class SCFChromatogramFile {
     /**
      * Creates a new {@code SCFChromatogramFileBuilderVisitor} instance
      * that will build a SCFChromatogram when visited.
+     * @param id the id of the chromatogram to be built.
      * @author dkatzel
      * @see SCFChromatogramFileBuilderVisitor
      *
      */
-    public static SCFChromatogramFileBuilderVisitor createNewBuilderVisitor(){
-        return new SCFChromatogramFileBuilderVisitor();
+    public static SCFChromatogramFileBuilderVisitor createNewBuilderVisitor(String id){
+        return new SCFChromatogramFileBuilderVisitor(id);
     }
     
     private SCFChromatogramFile(){
@@ -97,12 +100,14 @@ public final class SCFChromatogramFile {
      *
      */
     public static final class SCFChromatogramFileBuilderVisitor implements SCFChromatogramFileVisitor, Builder<SCFChromatogram>{
-        private SCFChromatogramBuilder builder = new SCFChromatogramBuilder();
+        private final SCFChromatogramBuilder builder;
+        private boolean built=false;
+        private SCFChromatogramFileBuilderVisitor(String id){
+        	builder = new SCFChromatogramBuilder(id);
+        }
         
-        private SCFChromatogramFileBuilderVisitor(){}
-        
-        private void checkNotYetBuilt(){
-            if(builder==null){
+        private synchronized void checkNotYetBuilt(){
+            if(built){
                 throw new IllegalStateException("builder already built");
             }
         }
@@ -110,7 +115,7 @@ public final class SCFChromatogramFile {
         * {@inheritDoc}
         */
         @Override
-        public void visitAConfidence(byte[] confidence) {
+        public synchronized void visitAConfidence(byte[] confidence) {
             checkNotYetBuilt();
             builder.aConfidence(confidence);            
         }
@@ -119,7 +124,7 @@ public final class SCFChromatogramFile {
         * {@inheritDoc}
         */
         @Override
-        public void visitCConfidence(byte[] confidence) {
+        public synchronized void visitCConfidence(byte[] confidence) {
             checkNotYetBuilt();
             builder.cConfidence(confidence);            
         }
@@ -128,7 +133,7 @@ public final class SCFChromatogramFile {
         * {@inheritDoc}
         */
         @Override
-        public void visitGConfidence(byte[] confidence) {
+        public synchronized void visitGConfidence(byte[] confidence) {
             checkNotYetBuilt();
             builder.gConfidence(confidence);            
         }
@@ -137,7 +142,7 @@ public final class SCFChromatogramFile {
         * {@inheritDoc}
         */
         @Override
-        public void visitTConfidence(byte[] confidence) {
+        public synchronized void visitTConfidence(byte[] confidence) {
             checkNotYetBuilt();
             builder.tConfidence(confidence);            
         }
@@ -146,24 +151,24 @@ public final class SCFChromatogramFile {
          * {@inheritDoc}
          */
          @Override
-         public void visitNewTrace() { checkNotYetBuilt();}
+         public synchronized void visitNewTrace() { checkNotYetBuilt();}
          /**
          * {@inheritDoc}
          */
          @Override
-         public void visitEndOfTrace() { checkNotYetBuilt();}
+         public synchronized void visitEndOfTrace() { checkNotYetBuilt();}
          
          /**
           * {@inheritDoc}
           */
           @Override
-          public void visitEndOfFile() { checkNotYetBuilt();}
+          public synchronized void visitEndOfFile() { checkNotYetBuilt();}
 
           /**
           * {@inheritDoc}
           */
           @Override
-          public void visitBasecalls(NucleotideSequence basecalls) {
+          public synchronized void visitBasecalls(NucleotideSequence basecalls) {
               checkNotYetBuilt();
               builder.basecalls(basecalls);              
           }
@@ -172,7 +177,7 @@ public final class SCFChromatogramFile {
           * {@inheritDoc}
           */
           @Override
-          public void visitPeaks(short[] peaks) {
+          public synchronized void visitPeaks(short[] peaks) {
               checkNotYetBuilt();
               builder.peaks(peaks);              
           }
@@ -183,7 +188,7 @@ public final class SCFChromatogramFile {
           * {@inheritDoc}
           */
           @Override
-          public void visitComments(Map<String,String> comments) {
+          public synchronized void visitComments(Map<String,String> comments) {
               checkNotYetBuilt();
               builder.properties(comments);              
           }
@@ -192,7 +197,7 @@ public final class SCFChromatogramFile {
           * {@inheritDoc}
           */
           @Override
-          public void visitAPositions(short[] positions) {
+          public synchronized void visitAPositions(short[] positions) {
               checkNotYetBuilt();
               builder.aPositions(positions);              
           }
@@ -201,7 +206,7 @@ public final class SCFChromatogramFile {
           * {@inheritDoc}
           */
           @Override
-          public void visitCPositions(short[] positions) {
+          public synchronized void visitCPositions(short[] positions) {
               checkNotYetBuilt();
              builder.cPositions(positions);              
           }
@@ -210,7 +215,7 @@ public final class SCFChromatogramFile {
           * {@inheritDoc}
           */
           @Override
-          public void visitGPositions(short[] positions) {
+          public synchronized void visitGPositions(short[] positions) {
               checkNotYetBuilt();
               builder.gPositions(positions);              
           }
@@ -219,7 +224,7 @@ public final class SCFChromatogramFile {
           * {@inheritDoc}
           */
           @Override
-          public void visitTPositions(short[] positions) {
+          public synchronized void visitTPositions(short[] positions) {
               checkNotYetBuilt();
               builder.tPositions(positions);              
           }
@@ -228,16 +233,16 @@ public final class SCFChromatogramFile {
         * {@inheritDoc}
         */
         @Override
-        public void visitFile() { checkNotYetBuilt(); }
+        public synchronized void visitFile() { checkNotYetBuilt(); }
 
         /**
         * {@inheritDoc}
         */
         @Override
-        public SCFChromatogram build() {
+        public synchronized SCFChromatogram build() {
             checkNotYetBuilt();
             SCFChromatogram result= builder.build();
-            builder =null;
+            built =true;
             return result;
         }
 
@@ -245,7 +250,7 @@ public final class SCFChromatogramFile {
         * {@inheritDoc}
         */
         @Override
-        public void visitPrivateData(byte[] privateData) {
+        public synchronized void visitPrivateData(byte[] privateData) {
             checkNotYetBuilt();
             builder.privateData(privateData);             
         }
@@ -254,7 +259,7 @@ public final class SCFChromatogramFile {
         * {@inheritDoc}
         */
         @Override
-        public void visitSubstitutionConfidence(byte[] confidence) {
+        public synchronized void visitSubstitutionConfidence(byte[] confidence) {
             checkNotYetBuilt();
             builder.substitutionConfidence(confidence);             
         }
@@ -263,7 +268,7 @@ public final class SCFChromatogramFile {
         * {@inheritDoc}
         */
         @Override
-        public void visitInsertionConfidence(byte[] confidence) {
+        public synchronized void visitInsertionConfidence(byte[] confidence) {
             checkNotYetBuilt();
             builder.insertionConfidence(confidence);
         }
@@ -272,7 +277,7 @@ public final class SCFChromatogramFile {
         * {@inheritDoc}
         */
         @Override
-        public void visitDeletionConfidence(byte[] confidence) {
+        public synchronized void visitDeletionConfidence(byte[] confidence) {
             checkNotYetBuilt();
             builder.deletionConfidence(confidence);
         }

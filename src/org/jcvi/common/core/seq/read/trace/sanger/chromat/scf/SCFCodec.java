@@ -24,12 +24,9 @@
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.read.trace.sanger.SangerTrace;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramWriter;
 
@@ -40,18 +37,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramWriter;
  *
  */
 public interface SCFCodec extends ChromatogramWriter{
-    
-    /**
-     * Decodes the given SCF Data Stream into an {@link SCFChromatogram}.
-     * @param in the {@link InputStream} which has the SCF Data.
-     * @return a {@link SCFChromatogram}.
-     * @throws SCFDecoderException if there are any problems decoding
-     * the SCF Data.
-     */
-    SCFChromatogram decode(InputStream in) throws SCFDecoderException;
-    
-    SangerTrace decode(File sangerTrace) throws TraceDecoderException,
-    FileNotFoundException;
     
     void parse(InputStream in, ChromatogramFileVisitor visitor) throws SCFDecoderException;
     void parse(File scfFile, ChromatogramFileVisitor visitor) throws IOException,SCFDecoderException;

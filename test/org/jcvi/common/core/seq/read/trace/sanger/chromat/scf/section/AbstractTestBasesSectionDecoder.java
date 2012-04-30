@@ -55,6 +55,7 @@ public abstract class AbstractTestBasesSectionDecoder {
     protected AbstractTestBasesSection sut;
     protected Sequence<Nucleotide> bases;
     protected SCFHeader mockHeader;
+    private String id = "id";
     @Before
     public void setupHeader(){
 
@@ -67,7 +68,7 @@ public abstract class AbstractTestBasesSectionDecoder {
 
     @Test
     public void valid() throws SectionDecoderException{
-        SCFChromatogramBuilder c = new SCFChromatogramBuilder();
+        SCFChromatogramBuilder c = new SCFChromatogramBuilder(id);
         int currentOffset =0;
         expect(mockHeader.getBasesOffset()).andReturn(currentOffset);
         expect(mockHeader.getNumberOfBases()).andReturn((int)bases.getLength());
@@ -79,7 +80,7 @@ public abstract class AbstractTestBasesSectionDecoder {
     }
     @Test
     public void validWithSkip() throws Exception{
-        SCFChromatogramBuilder c = new SCFChromatogramBuilder();
+        SCFChromatogramBuilder c = new SCFChromatogramBuilder(id);
         int currentOffset =0;
         int skipDistance =100;
         expect(mockHeader.getBasesOffset()).andReturn(currentOffset+skipDistance);
@@ -95,7 +96,7 @@ public abstract class AbstractTestBasesSectionDecoder {
     @Test
     public void validOptionalConfidenceDataWithSkip() throws Exception{
         sut.addOptionalConfidences();
-        SCFChromatogramBuilder c = new SCFChromatogramBuilder();
+        SCFChromatogramBuilder c = new SCFChromatogramBuilder(id);
         int currentOffset =0;
         int skipDistance =100;
         expect(mockHeader.getBasesOffset()).andReturn(currentOffset+skipDistance);
@@ -111,7 +112,7 @@ public abstract class AbstractTestBasesSectionDecoder {
 
     @Test
     public void readThrowsIOExceptionShouldWrapInSectionParserException() throws Exception{
-        SCFChromatogramBuilder c = new SCFChromatogramBuilder();
+        SCFChromatogramBuilder c = new SCFChromatogramBuilder(id);
         int currentOffset =0;
         expect(mockHeader.getBasesOffset()).andReturn(currentOffset);
         expect(mockHeader.getNumberOfBases()).andReturn((int)bases.getLength());
@@ -134,7 +135,7 @@ public abstract class AbstractTestBasesSectionDecoder {
     @Test
     public void validOptionalConfidences() throws SectionDecoderException{
         sut.addOptionalConfidences();
-        SCFChromatogramBuilder c = new SCFChromatogramBuilder();
+        SCFChromatogramBuilder c = new SCFChromatogramBuilder(id);
         int currentOffset =0;
         expect(mockHeader.getBasesOffset()).andReturn(currentOffset);
         expect(mockHeader.getNumberOfBases()).andReturn((int)bases.getLength());
@@ -148,7 +149,7 @@ public abstract class AbstractTestBasesSectionDecoder {
     public void validNoSubstitutionConfidences() throws SectionDecoderException{
         sut.addOptionalConfidences();
         sut.removeSubstitutionConfidence();
-        SCFChromatogramBuilder c = new SCFChromatogramBuilder();
+        SCFChromatogramBuilder c = new SCFChromatogramBuilder(id);
         int currentOffset =0;
         expect(mockHeader.getBasesOffset()).andReturn(currentOffset);
         expect(mockHeader.getNumberOfBases()).andReturn((int)bases.getLength());
@@ -162,7 +163,7 @@ public abstract class AbstractTestBasesSectionDecoder {
     public void validNoDeletionConfidences() throws SectionDecoderException{
         sut.addOptionalConfidences();
         sut.removeDeletionConfidence();
-        SCFChromatogramBuilder c = new SCFChromatogramBuilder();
+        SCFChromatogramBuilder c = new SCFChromatogramBuilder(id);
         int currentOffset =0;
         expect(mockHeader.getBasesOffset()).andReturn(currentOffset);
         expect(mockHeader.getNumberOfBases()).andReturn((int)bases.getLength());
@@ -176,7 +177,7 @@ public abstract class AbstractTestBasesSectionDecoder {
     public void validNoInsertionConfidences() throws SectionDecoderException{
         sut.addOptionalConfidences();
         sut.removeInsertionConfidence();
-        SCFChromatogramBuilder c = new SCFChromatogramBuilder();
+        SCFChromatogramBuilder c = new SCFChromatogramBuilder(id);
         int currentOffset =0;
         expect(mockHeader.getBasesOffset()).andReturn(currentOffset);
         expect(mockHeader.getNumberOfBases()).andReturn((int)bases.getLength());
@@ -195,7 +196,7 @@ public abstract class AbstractTestBasesSectionDecoder {
         verify(mockHeader);
         SCFChromatogram chromatogram = sut.getChromatogram();
         assertEquals(newOffset-currentOffset-skipDistance, (int)bases.getLength()*12);
-        assertEquals(chromatogram.getBasecalls().asList(), 
+        assertEquals(chromatogram.getNucleotideSequence().asList(), 
                  c.basecalls().asList());
         Sequence<ShortSymbol> encodedPeaks = new EncodedSequence<ShortSymbol>(PEAK_CODEC,PEAKS_FACTORY.getGlyphsFor(c.peaks()));
         assertEquals(chromatogram.getPeaks().getData(),

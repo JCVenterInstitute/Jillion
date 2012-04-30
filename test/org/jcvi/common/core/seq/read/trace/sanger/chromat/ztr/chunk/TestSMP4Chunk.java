@@ -66,7 +66,7 @@ public class TestSMP4Chunk {
     @Test
     public void parse() throws TraceDecoderException{
         
-        ZTRChromatogramBuilder struct = new ZTRChromatogramBuilder();
+        ZTRChromatogramBuilder struct = new ZTRChromatogramBuilder("id");
 
         sut.parseData(encodedBytes, struct);
         assertArrayEquals(struct.aPositions(),aTraces);

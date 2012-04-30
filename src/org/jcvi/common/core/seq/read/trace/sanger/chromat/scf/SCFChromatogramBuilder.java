@@ -51,8 +51,8 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
    
     private final BasicChromatogramBuilder basicBuilder;
 
-    public SCFChromatogramBuilder(){
-        basicBuilder = new BasicChromatogramBuilder();
+    public SCFChromatogramBuilder(String id){
+        basicBuilder = new BasicChromatogramBuilder(id);
     }
     
     public SCFChromatogramBuilder(Chromatogram copy){

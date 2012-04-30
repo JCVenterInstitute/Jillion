@@ -225,7 +225,7 @@ public class ArtificialPhd implements Phd{
     }
 
     @Override
-    public NucleotideSequence getBasecalls() {
+    public NucleotideSequence getNucleotideSequence() {
         return basecalls;
     }
 

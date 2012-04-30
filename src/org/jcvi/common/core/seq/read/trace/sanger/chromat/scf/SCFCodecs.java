@@ -95,10 +95,10 @@ public enum SCFCodecs implements SCFCodec{
      *
     * {@inheritDoc}
      */
-    public SCFChromatogram decode(InputStream in) throws SCFDecoderException{
+    private SCFChromatogram decode(String id, InputStream in) throws SCFDecoderException{
            DataInputStream dataIn = new DataInputStream(in);
            SCFHeader header= headerCodec.decode(dataIn);
-           SCFChromatogramBuilder builder = new SCFChromatogramBuilder();
+           SCFChromatogramBuilder builder = new SCFChromatogramBuilder(id);
            SortedMap<Integer, Section> sectionsByOffset = createSectionsByOffsetMap(header);
            long currentOffset =HEADER_SIZE;
            for(Entry<Integer, Section> entry: sectionsByOffset.entrySet()){
@@ -143,13 +143,13 @@ public enum SCFCodecs implements SCFCodec{
         }
         
     }
-    @Override
+    
     public SangerTrace decode(File sangerTrace) throws TraceDecoderException,
             FileNotFoundException {
         InputStream in = null;
         try{
             in = new FileInputStream(sangerTrace);
-            return decode(in);
+            return decode(sangerTrace.getName(),in);
         }finally{
             IOUtil.closeAndIgnoreErrors(in);
         }

@@ -71,7 +71,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
         NucleotideSequenceBuilder allBasesBuilder = new NucleotideSequenceBuilder(fullRangeSequence.asList(traceTrimRange));
         if(isReversed){
         	allBasesBuilder.reverseComplement();
-            validRangeStart = traceTrimRange ==null?0:AssemblyUtil.reverseComplimentValidRange(traceTrimRange, fullUngappedLength).getBegin();
+            validRangeStart = traceTrimRange ==null?0:AssemblyUtil.reverseComplementValidRange(traceTrimRange, fullUngappedLength).getBegin();
         }
         else{
             validRangeStart = traceTrimRange ==null?0:traceTrimRange.getBegin();
@@ -154,7 +154,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
     public DefaultCasPlacedRead build() {
         Range validRange = Range.createOfLength(0, gappedSequenceBuilder.getLength()-numberOfGaps).shiftRight(validRangeStart);
         if(dir==Direction.REVERSE){
-            validRange = AssemblyUtil.reverseComplimentValidRange(validRange, fullUngappedLength);
+            validRange = AssemblyUtil.reverseComplementValidRange(validRange, fullUngappedLength);
         }
         
         Read<ReferenceEncodedNucleotideSequence> read = new DefaultRead<ReferenceEncodedNucleotideSequence>(readId,

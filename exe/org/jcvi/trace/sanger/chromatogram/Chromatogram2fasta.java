@@ -84,7 +84,7 @@ public class Chromatogram2fasta {
     public void writeChromatogram(String id, Chromatogram chromo) throws IOException{
         //small hit converting all to fastas even if not outputing them all
     	//is worth cleaner code, fix if this becomes a bottleneck.
-    	seqOut.write(new DefaultNucleotideSequenceFastaRecord(id, chromo.getBasecalls())
+    	seqOut.write(new DefaultNucleotideSequenceFastaRecord(id, chromo.getNucleotideSequence())
                              .toString().getBytes());
     	qualOut.write(new DefaultQualityFastaRecord(id, chromo.getQualities())
                              .toString().getBytes());
@@ -157,7 +157,7 @@ public class Chromatogram2fasta {
                 File chromatogramFile = new File(chromatogramFilePath);
                 
                 String id = FileUtil.getBaseName(chromatogramFile);
-                BasicChromatogramBuilderVisitor builder = new BasicChromatogramBuilderVisitor();
+                BasicChromatogramBuilderVisitor builder = new BasicChromatogramBuilderVisitor(id);
                 ChromatogramParser.parse(chromatogramFile, builder);
                 
                 chromo2Fasta.writeChromatogram(id, builder.build());

@@ -281,7 +281,7 @@ public final class ChromatogramXMLSerializer {
                        ChromatogramXMLSerializer.class,
                                      "buildBasicChromatogram",
                                      new Object[]{
-                   Nucleotides.asString(chromatogram.getBasecalls().asList()), 
+                   Nucleotides.asString(chromatogram.getNucleotideSequence().asList()), 
                    new EncodedByteData(PhredQuality.toArray(chromatogram.getQualities().asList())).encodeData(),
                    chromatogram.getPeaks(),
                    chromatogram.getChannelGroup(),
@@ -293,7 +293,7 @@ public final class ChromatogramXMLSerializer {
        public static BasicChromatogram buildBasicChromatogram(String basecalls, String encodedQualities, 
                SangerPeak peaks, ChannelGroup group, Map<String,String> props){
            return new
-                   BasicChromatogram(
+                   BasicChromatogram("id",
                            basecalls,
                            new EncodedByteData(encodedQualities).getData(),
                            peaks,

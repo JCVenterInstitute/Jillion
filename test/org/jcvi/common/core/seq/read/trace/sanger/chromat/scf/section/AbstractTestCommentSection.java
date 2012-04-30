@@ -42,10 +42,11 @@ public class AbstractTestCommentSection {
     SCFChromatogramImpl mockChroma;
     int currentOffset = 0;
     Map<String,String> expectedComments;
+    String id = "id";
     @Before
     public void setup(){
         mockHeader = createMock(SCFHeader.class);
-        chromaStruct = new SCFChromatogramBuilder();
+        chromaStruct = new SCFChromatogramBuilder(id);
         mockChroma = createMock(SCFChromatogramImpl.class);
         expectedComments = new HashMap<String,String>();
         expectedComments.put("key","value");

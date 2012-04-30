@@ -49,7 +49,7 @@ public class TestPrivateDataDecoder {
     @Before
     public void setup(){
         mockHeader = createMock(SCFHeader.class);
-        c = new SCFChromatogramBuilder();
+        c = new SCFChromatogramBuilder("id");
         in = new DataInputStream(new ByteArrayInputStream(data));
     }
 

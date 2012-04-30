@@ -71,7 +71,7 @@ public abstract class AbstractTestAsmUnitigDataStore extends AbstractTestAsmData
 				Fragment actualFragment =frg.get("1099820534711");
 				//manually build gapped valid range and insert the gaps
 				NucleotideSequence expectedGappedSequence =new NucleotideSequenceBuilder(
-											actualFragment.getBasecalls())
+											actualFragment.getNucleotideSequence())
 											.subSequence(expectedValidRange)
 											.insert(82, Nucleotide.Gap)
 											.insert(193, Nucleotide.Gap)
@@ -92,11 +92,13 @@ public abstract class AbstractTestAsmUnitigDataStore extends AbstractTestAsmData
 				Range expectedValidRange = Range.create(CoordinateSystem.SPACE_BASED,27,755);
 				assertEquals(expectedValidRange, read.getValidRange());
 				Fragment actualFragment =frg.get("1100010859106");
+				Range reverseValidRange = AssemblyUtil.reverseComplementValidRange(expectedValidRange, actualFragment.getNucleotideSequence().getUngappedLength());
+				
 				//manually build the reverse complemented gapped valid range and insert the gaps
 				NucleotideSequence expectedGappedSequence =new NucleotideSequenceBuilder(
-											actualFragment.getBasecalls())
+											actualFragment.getNucleotideSequence())
 											.reverseComplement()
-											.subSequence(AssemblyUtil.reverseComplimentValidRange(expectedValidRange, actualFragment.getGappedLength()))
+											.subSequence(reverseValidRange)
 											.insert(115, Nucleotide.Gap)
 											.insert(226, Nucleotide.Gap)
 											.build();

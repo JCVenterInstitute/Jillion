@@ -70,7 +70,7 @@ public class TestSFFFlowgram {
     @Test
     public void constructor(){
         assertEquals(id, sut.getId());
-        assertEquals(basecalls, sut.getBasecalls());
+        assertEquals(basecalls, sut.getNucleotideSequence());
         assertEquals(confidence, sut.getQualities());
         assertEquals(qualitiesClip, sut.getQualityClip());
         assertEquals(adapterClip, sut.getAdapterClip());

@@ -150,14 +150,13 @@ public abstract class  AbstractTestFragmentDataStore {
 
     private void assertValuesCorrect(Fragment expectedFragment, Fragment actualFragment) {
         assertEquals(expectedFragment.getId(), actualFragment.getId());
-        assertEquals(expectedFragment.getBasecalls(), actualFragment.getBasecalls());
+        assertEquals(expectedFragment.getNucleotideSequence(), actualFragment.getNucleotideSequence());
         assertEquals(expectedFragment.getNucleotideSequence(), actualFragment.getNucleotideSequence());
         assertEquals(expectedFragment.getQualities(), actualFragment.getQualities());
         assertEquals(expectedFragment.getValidRange(), actualFragment.getValidRange());
         assertEquals(expectedFragment.getVectorClearRange(), actualFragment.getVectorClearRange());
         assertEquals(library, actualFragment.getLibrary());
         assertEquals(expectedFragment.getComment(), actualFragment.getComment());
-        assertEquals(expectedFragment.getGappedLength(), actualFragment.getGappedLength());
         assertEquals(expectedFragment.getLibraryId(), actualFragment.getLibraryId());
         
     }

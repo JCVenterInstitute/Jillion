@@ -260,7 +260,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         int ungappedClearRight = gappedFullLengthSequence.getUngappedOffsetFor((int)gappedValidRange.getEnd());
         Range ungappedValidRange = Range.create(CoordinateSystem.RESIDUE_BASED, ungappedClearLeft+1, ungappedClearRight+1 );
         if(assembledFrom.getDirection() == Direction.REVERSE){
-            ungappedValidRange = AssemblyUtil.reverseComplimentValidRange(ungappedValidRange, currentReadUngappedFullLength);            
+            ungappedValidRange = AssemblyUtil.reverseComplementValidRange(ungappedValidRange, currentReadUngappedFullLength);            
         }
         currentClearRange = ungappedValidRange;
         

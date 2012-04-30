@@ -81,7 +81,7 @@ public abstract class AbstractTestBasesSection {
                 new Channel(gConfidence,positions),
                 new Channel(tConfidence,positions));
         BasicChromatogram basicChromatogram = new BasicChromatogram(
-                encodedBases,encodedQualities,
+                "id",encodedBases,encodedQualities,
                 new SangerPeak(peaks),channelGroup);
         chromatogram = new SCFChromatogramImpl(basicChromatogram);
 

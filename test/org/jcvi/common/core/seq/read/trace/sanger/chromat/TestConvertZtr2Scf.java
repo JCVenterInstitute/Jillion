@@ -52,13 +52,13 @@ public class TestConvertZtr2Scf {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         scfCodec.write(new SCFChromatogramImpl(decodedZTR), out);
         
-        Chromatogram encodedScf = SCFChromatogramFile.create(new ByteArrayInputStream(out.toByteArray()));
+        Chromatogram encodedScf = SCFChromatogramFile.create("id",new ByteArrayInputStream(out.toByteArray()));
         assertEquals(decodedZTR, encodedScf);
     }
     
     @Test
     public void scfequalsZtr() throws TraceDecoderException, IOException{
-        Chromatogram decodedScf = SCFChromatogramFile.create(
+        Chromatogram decodedScf = SCFChromatogramFile.create("id",
         		RESOURCES.getFileAsStream("scf/files/GBKAK82TF.scf"));
         Chromatogram decodedZTR = ZTRChromatogramFile.create(
                 RESOURCES.getFile("ztr/files/GBKAK82TF.ztr"));
@@ -78,9 +78,9 @@ public class TestConvertZtr2Scf {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         scfCodec.write(new SCFChromatogramImpl(ztr), out);
         
-        Chromatogram encodedScf = SCFChromatogramFile.create(new ByteArrayInputStream(out.toByteArray()));
+        Chromatogram encodedScf = SCFChromatogramFile.create("id",new ByteArrayInputStream(out.toByteArray()));
         
-        int numberOfBases = (int)encodedScf.getBasecalls().getLength();
+        int numberOfBases = (int)encodedScf.getNucleotideSequence().getLength();
         List<PhredQuality> expectedQualities = new ArrayList<PhredQuality>(numberOfBases);
         for(int i=0; i< numberOfBases; i++){
             expectedQualities.add(PhredQuality.valueOf(0));

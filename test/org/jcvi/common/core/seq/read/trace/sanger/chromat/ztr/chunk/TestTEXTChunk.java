@@ -72,7 +72,7 @@ public class TestTEXTChunk {
     @Test
     public void parse() throws TraceDecoderException{
         
-        ZTRChromatogramBuilder struct = new ZTRChromatogramBuilder();
+        ZTRChromatogramBuilder struct = new ZTRChromatogramBuilder("id");
         sut.parseData(encodedBytes, struct);
         assertEquals(struct.properties(), expected);
     }

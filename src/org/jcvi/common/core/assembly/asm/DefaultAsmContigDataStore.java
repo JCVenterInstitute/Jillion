@@ -232,7 +232,7 @@ public final class DefaultAsmContigDataStore implements AsmContigDataStore{
             if(currentBuilder !=null){
                 //in contig
                 try {
-                    NucleotideSequence fullLengthSequence = frgDataStore.get(externalReadId).getBasecalls();
+                    NucleotideSequence fullLengthSequence = frgDataStore.get(externalReadId).getNucleotideSequence();
                     Range clearRange = clearRanges.get(externalReadId);
                     if(clearRange==null){
                         throw new IllegalStateException("do not have clear range information for read "+ externalReadId);

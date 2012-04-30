@@ -66,7 +66,7 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
     }
     @Override
     public long getGappedLength() {
-        return read.getGappedLength();
+        return read.getNucleotideSequence().getLength();
     }
     @Override
     public long getGappedContigStart() {
@@ -161,14 +161,7 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
     @Override
 	public Range getGappedContigRange() {
 		return Range.create(getGappedContigStart(), getGappedContigEnd());
-	}
-
-
-	@Override
-	public Read<ReferenceEncodedNucleotideSequence> getRead() {
-		return read;
-	}
-    
+	}  
     
    
 }

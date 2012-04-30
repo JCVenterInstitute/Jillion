@@ -87,7 +87,7 @@ public abstract class AbstractBasesSectionCodec implements SectionCodec{
     @Override
     public EncodedSection encode(SCFChromatogram c, SCFHeader header)
             throws IOException {
-        final int numberOfBases = (int)c.getBasecalls().getLength();
+        final int numberOfBases = (int)c.getNucleotideSequence().getLength();
         header.setNumberOfBases(numberOfBases);
         ByteBuffer buffer = ByteBuffer.allocate(numberOfBases*12);
         writeBasesDataToBuffer(buffer, c,numberOfBases);

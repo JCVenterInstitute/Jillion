@@ -40,7 +40,7 @@ public class TestIOLibZTRChromatogramWriter {
 		ZTRChromatogram chromatogram = ZTRChromatogramFile.create(RESOURCES.getFile("files/GBKAK82TF.ztr"));
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		IOLibLikeZTRChromatogramWriter.INSTANCE.write(chromatogram, out);
-		ZTRChromatogram reParsed = ZTRChromatogramFile.create(new ByteArrayInputStream(out.toByteArray()));
+		ZTRChromatogram reParsed = ZTRChromatogramFile.create("id",new ByteArrayInputStream(out.toByteArray()));
 		
 		assertEquals(chromatogram, reParsed);
 		
