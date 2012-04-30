@@ -31,7 +31,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.assembly.Contig;

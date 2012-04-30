@@ -24,11 +24,30 @@
 package org.jcvi.common.core.assembly;
 
 import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Rangeable;
 
-public interface PlacedContig extends Placed {
+public interface PlacedContig extends Rangeable {
 
+	/**
+     * Get the start coordinate of this placed object
+     * on the placed axis.
+     * @return the start as a long.
+     */
+    long getBegin();
+    /**
+     * Get the end coordinate of this placed object
+     * on the placed axis.
+     * @return the end as a long.
+     */
+    long getEnd();
+    /**
+     * Get the length of this placed object
+     * on the axis.
+     * @return the length of this placed object.
+     */
+    long getLength();
+    
     String getContigId();
     Direction getDirection();
     

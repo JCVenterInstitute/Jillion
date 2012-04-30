@@ -22,8 +22,8 @@ package org.jcvi.common.core.assembly;
 import java.util.List;
 
 import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -39,7 +39,9 @@ import org.jcvi.common.core.util.Builder;
  *
  *
  */
-public interface PlacedReadBuilder<R extends PlacedRead> extends Placed, Builder<R>{
+public interface PlacedReadBuilder<R extends PlacedRead> extends Rangeable, Builder<R>{
+	
+	
     /**
      * Change the reference that this read aligns to and its new
      * gapped starting offset on this new reference.
@@ -53,8 +55,6 @@ public interface PlacedReadBuilder<R extends PlacedRead> extends Placed, Builder
     PlacedReadBuilder<R> reference(NucleotideSequence reference, int newOffset);
     /**
      * 
-    * {@inheritDoc}
-    * <p/>
     * Get the gapped start offset of this read
      * against the new reference in reference coordinate space.
      */
@@ -154,17 +154,11 @@ public interface PlacedReadBuilder<R extends PlacedRead> extends Placed, Builder
     PlacedReadBuilder<R> reAbacus(Range gappedValidRangeToChange,
             List<Nucleotide> newBasecalls);
     /**
-     * 
-    * {@inheritDoc}
-    * <p/>
     * Get the gapped length of this read that
     * aligns to the reference.
      */
     long getLength();
     /**
-     * 
-    * {@inheritDoc}
-    * <p/>
     * Get the gapped end coordinate of this read that
     * aligns to the reference.
      */

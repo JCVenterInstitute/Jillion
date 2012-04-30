@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
-import org.jcvi.common.core.Placed;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.util.CommonUtil;
