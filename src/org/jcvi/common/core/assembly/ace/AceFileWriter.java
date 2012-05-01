@@ -34,7 +34,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
@@ -220,7 +220,7 @@ public class AceFileWriter {
 	    private final byte dir;
 	    private final int startOffset;
 	    private static final Direction[] DIRECTION_VALUES = Direction.values();
-	    public static IdAlignedReadInfo createFrom(PlacedRead read, long ungappedFullLength){
+	    public static IdAlignedReadInfo createFrom(AssembledRead read, long ungappedFullLength){
 	        final Range validRange;
 	        Direction dir = read.getDirection();
 	        Range readValidRange = read.getValidRange();
@@ -231,7 +231,7 @@ public class AceFileWriter {
 	            validRange = readValidRange;
 	        }
 	        return new IdAlignedReadInfo(read.getId(), 
-	                (int)(read.getGappedContigStart()-validRange.getBegin()+1),dir);
+	                (int)(read.getGappedStartOffset()-validRange.getBegin()+1),dir);
 	    }
 	    
 	    

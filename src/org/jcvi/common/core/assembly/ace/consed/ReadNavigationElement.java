@@ -22,7 +22,7 @@ package org.jcvi.common.core.assembly.ace.consed;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 
 /**
  * {@code ReadNavigationElement} is a {@link NavigationElement}
@@ -65,15 +65,15 @@ public class ReadNavigationElement extends AbstractNavigationElement{
      * PlacedRead, that will navigate to the given GAPPED range.  This
      * is a convenience method that handles converting the gapped
      * range into an ungapped range and reverse complementing required by the consed.
-     * This is the same as {@link #buildReadNavigationElement(PlacedRead, Range, int,String)
+     * This is the same as {@link #buildReadNavigationElement(AssembledRead, Range, int,String)
      * buildReadNavigationElementFrom(read, gappedFeatureValidRange, fullLength,null)}
      * @param read the read to make a {@link ReadNavigationElement}
      * for; cannot be null.
      * @param gappedFeatureRange the gapped feature range coordinates; cannot be null.
      * @return a new ReadNavigationElement.
-     * @see #buildReadNavigationElement(PlacedRead, Range, int,String)
+     * @see #buildReadNavigationElement(AssembledRead, Range, int,String)
      */
-    public ReadNavigationElement buildReadNavigationElement(PlacedRead read, 
+    public ReadNavigationElement buildReadNavigationElement(AssembledRead read, 
             Range gappedFeatureValidRange, 
             int fullLength){
         return buildReadNavigationElement(read, gappedFeatureValidRange, fullLength,null);
@@ -90,7 +90,7 @@ public class ReadNavigationElement extends AbstractNavigationElement{
      * (may be null).
      * @return a new ReadNavigationElement.
      */
-    public ReadNavigationElement buildReadNavigationElement(PlacedRead read, 
+    public ReadNavigationElement buildReadNavigationElement(AssembledRead read, 
             Range gappedFeatureValidRange, 
             int fullLength,
             String comment){

@@ -24,7 +24,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.slice.SliceMap;
 import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
  */
 public abstract class AbstractTestSliceMap {
 
-    protected abstract SliceMap createSliceMapFor(Contig<PlacedRead> contig, QualityDataStore qualityDatastore, QualityValueStrategy qualityValueStrategy);
+    protected abstract SliceMap createSliceMapFor(Contig<AssembledRead> contig, QualityDataStore qualityDatastore, QualityValueStrategy qualityValueStrategy);
     private QualityDataStore qualityDataStore;
     private static final QualitySymbolCodec CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
     @Before
@@ -61,7 +61,7 @@ public abstract class AbstractTestSliceMap {
     }
     @Test
     public void allSlicesSameDepth(){
-        Contig<PlacedRead> contig = new DefaultContig.Builder("contigId", "ACGTACGT")
+        Contig<AssembledRead> contig = new DefaultContig.Builder("contigId", "ACGTACGT")
                                     .addRead("read_0", 0, "ACGTACGT")
                                     .addRead("read_1", 0, "ACGTACGT")
                                     .build();
@@ -86,7 +86,7 @@ public abstract class AbstractTestSliceMap {
     }
     @Test
     public void multipleDepthSlices(){
-        Contig<PlacedRead> contig = new DefaultContig.Builder("contigId", "ACGTACGT")
+        Contig<AssembledRead> contig = new DefaultContig.Builder("contigId", "ACGTACGT")
                                     .addRead("read_0", 0, "ACGTACGT")
                                     .addRead("read_1", 0, "ACGTACGT")
                                     .addRead("read_2", 2,   "GTAC")
@@ -113,7 +113,7 @@ public abstract class AbstractTestSliceMap {
     
     @Test
     public void multipleBasecallsPerSlice(){
-        Contig<PlacedRead> contig = new DefaultContig.Builder("contigId", "ACGTACGT")
+        Contig<AssembledRead> contig = new DefaultContig.Builder("contigId", "ACGTACGT")
                                     .addRead("read_0", 0, "ACGTACGT")
                                     .addRead("read_1", 0, "RCGTACGT")
                                     .addRead("read_2", 2,   "GWAC")
@@ -140,7 +140,7 @@ public abstract class AbstractTestSliceMap {
     
     @Test
     public void gapsInSliceShouldUseLowestFlankingQualityValues(){
-        Contig<PlacedRead> contig = new DefaultContig.Builder("contigId", "ACGTACGT")
+        Contig<AssembledRead> contig = new DefaultContig.Builder("contigId", "ACGTACGT")
                                     .addRead("read_0", 0, "ACGTACGT")
                                     .addRead("read_1", 0, "RCGTA-GT")
                                     .addRead("read_2", 2,   "G-AC")

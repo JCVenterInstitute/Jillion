@@ -24,7 +24,7 @@ import java.util.List;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 
@@ -33,7 +33,7 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
  *
  *
  */
-public class MinimumEndCoverageTrimmer<P extends PlacedRead, C extends Contig<P>> implements PlacedReadTrimmer<P, C>{
+public class MinimumEndCoverageTrimmer<P extends AssembledRead, C extends Contig<P>> implements PlacedReadTrimmer<P, C>{
 
     private final int minimumEndCoverage;    
     private Range trimmedContigRange;

@@ -28,9 +28,9 @@ import java.util.List;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.DefaultPlacedRead;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.PlacedReadBuilder;
-import org.jcvi.common.core.seq.read.Read;
+import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -39,7 +39,7 @@ import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence
 
 final class DefaultAcePlacedRead implements AcePlacedRead {
     private final PhdInfo phdInfo;
-    private final PlacedRead placedRead;
+    private final AssembledRead placedRead;
     
     
     public static AcePlacedReadBuilder createBuilder(NucleotideSequence reference, String readId,NucleotideSequence validBases,
@@ -48,12 +48,16 @@ final class DefaultAcePlacedRead implements AcePlacedRead {
         return new Builder(reference, readId, validBases, 
                 offset, dir, clearRange, phdInfo, ungappedFullLength);
     }
-    private DefaultAcePlacedRead(PlacedRead placedRead, PhdInfo phdInfo) {
+    private DefaultAcePlacedRead(AssembledRead placedRead, PhdInfo phdInfo) {
         this.placedRead = placedRead;
         this.phdInfo =phdInfo;
     }
 
     @Override
+	public ReadInfo getReadInfo() {
+		return placedRead.getReadInfo();
+	}
+	@Override
     public PhdInfo getPhdInfo() {
         return phdInfo;
     }
@@ -97,16 +101,16 @@ final class DefaultAcePlacedRead implements AcePlacedRead {
     * {@inheritDoc}
     */
     @Override
-    public long getGappedContigStart() {
-        return placedRead.getGappedContigStart();
+    public long getGappedStartOffset() {
+        return placedRead.getGappedStartOffset();
     }
 
     /**
     * {@inheritDoc}
     */
     @Override
-    public long getGappedContigEnd() {
-        return placedRead.getGappedContigEnd();
+    public long getGappedEndOffset() {
+        return placedRead.getGappedEndOffset();
     }
     @Override
 	public Range getGappedContigRange() {
@@ -199,7 +203,7 @@ final class DefaultAcePlacedRead implements AcePlacedRead {
 
     private static class Builder implements AcePlacedReadBuilder{
         private PhdInfo phdInfo;        
-        private final PlacedReadBuilder<PlacedRead> delegateBuilder;
+        private final PlacedReadBuilder<AssembledRead> delegateBuilder;
         
         
         public Builder(NucleotideSequence reference, String readId,NucleotideSequence validBases,

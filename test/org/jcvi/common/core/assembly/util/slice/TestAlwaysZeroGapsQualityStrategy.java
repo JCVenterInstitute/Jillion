@@ -24,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
 import org.jcvi.common.core.symbol.EncodedSequence;
 import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
@@ -50,10 +50,10 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
     
     @Test
     public void readEndsWithGapShouldReturnQualityValue0(){
-        Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
+        Contig<AssembledRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
         .addRead("readId", 0, "ACGT-")
         .build();
-        PlacedRead read = contig.getRead("readId");
+        AssembledRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{11,12,13,14}));
         
@@ -62,10 +62,10 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
     
     @Test
     public void readStartsEndsWithGapShouldReturnQualityValue0(){
-        Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
+        Contig<AssembledRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
         .addRead("readId", 0, "-ACGT")
         .build();
-        PlacedRead read = contig.getRead("readId");
+        AssembledRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{11,12,13,14}));
         
@@ -74,10 +74,10 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
     
     @Test
     public void oneGapShouldReturnQualityValue0(){
-        Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
+        Contig<AssembledRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
                                     .addRead("readId", 0, "ACGT-CGT")
                                     .build();
-        PlacedRead read = contig.getRead("readId");
+        AssembledRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{11,12,13,14,15,16,17}));
         
@@ -85,10 +85,10 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
     }
     @Test
     public void oneGapShouldReverseReturnQualityValue0(){
-        Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
+        Contig<AssembledRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
                                     .addRead("readId", 0, "ACGT-CGT", Direction.REVERSE)
                                     .build();
-        PlacedRead read = contig.getRead("readId");
+        AssembledRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{11,12,13,14,15,16,17}));
         
@@ -97,10 +97,10 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
     
     @Test
     public void multiGapShouldReturnQualityValue0(){
-        Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGT-ACGT")
+        Contig<AssembledRead> contig = new DefaultContig.Builder("1234", "ACGT-ACGT")
                                     .addRead("readId", 0, "ACGT--CGT")
                                     .build();
-        PlacedRead read = contig.getRead("readId");
+        AssembledRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{11,12,13,14,15,16}));
         assertEquals(ZERO,sut.getQualityFor(read, qualities, 4));
@@ -108,10 +108,10 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
     }
     @Test
     public void multiGapGapShouldReverseReturnQualityValue0(){
-        Contig<PlacedRead> contig = new DefaultContig.Builder("1234", "ACGT-ACGT")
+        Contig<AssembledRead> contig = new DefaultContig.Builder("1234", "ACGT-ACGT")
                                     .addRead("readId", 0, "ACGT--CGT", Direction.REVERSE)
                                     .build();
-        PlacedRead read = contig.getRead("readId");
+        AssembledRead read = contig.getRead("readId");
         Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
                 PhredQuality.valueOf(new byte[]{11,12,13,14,15,16,17,18}));
         

@@ -170,7 +170,7 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
                     getConsensusBuilder().build(), 
                     read.getId(), 
                     read.getNucleotideSequence().toString(), 
-                    (int)read.getGappedContigStart(), 
+                    (int)read.getGappedStartOffset(), 
                     read.getDirection(), 
                     read.getValidRange(),
                     read.getUngappedFullLength());

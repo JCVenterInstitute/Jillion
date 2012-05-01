@@ -27,7 +27,7 @@ import org.easymock.EasyMockSupport;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -46,7 +46,7 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
     Range validRange = Range.create(2,6);
     @Test
     public void forwardSequenceNoGapsValidLengthIsEntireSequenceShouldReturnSameOffset(){
-        PlacedRead mockRead = new MockPlacedReadBuilder("ACGTACGT",8)
+        AssembledRead mockRead = new MockPlacedReadBuilder("ACGTACGT",8)
                                 .validRange(Range.createOfLength(8))
                                 .build();
         int offset = 4;
@@ -56,7 +56,7 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
     
     @Test
     public void reverseSequenceNoGapsValidLengthIsEntireSequenceShouldReturnSameOffset(){
-        PlacedRead mockRead = new MockPlacedReadBuilder("ACGTACGT",8)
+        AssembledRead mockRead = new MockPlacedReadBuilder("ACGTACGT",8)
                                 .validRange(Range.createOfLength(8))
                                 .direction(Direction.REVERSE)
                                 .build();
@@ -67,7 +67,7 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
     
     @Test
     public void forwardSequenceNoGapsValidRangeIsSubsetOfFullLength(){
-        PlacedRead mockRead = new MockPlacedReadBuilder("GTACG",8)
+        AssembledRead mockRead = new MockPlacedReadBuilder("GTACG",8)
                                 .validRange(validRange)
                                 .build();
         replayAll();
@@ -76,7 +76,7 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
     
     @Test
     public void reverseSequenceNoGapsValidRangeIsSubsetOfFullLength(){
-        PlacedRead mockRead = new MockPlacedReadBuilder("ACGTT",8)
+        AssembledRead mockRead = new MockPlacedReadBuilder("ACGTT",8)
                                 .validRange(validRange)
                                 .direction(Direction.REVERSE)
                                 .build();
@@ -87,7 +87,7 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
     @Test
     public void forwardSequenceOneGapAfterDesiredOffsetShouldReturnSameOffset(){
         
-        PlacedRead mockRead = new MockPlacedReadBuilder("ACGT-G",8)
+        AssembledRead mockRead = new MockPlacedReadBuilder("ACGT-G",8)
                                 .validRange(validRange)
                                 .build();
         replayAll();
@@ -96,7 +96,7 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
     
     @Test
     public void forwardSequenceOneGapBeforeDesiredOffsetShouldReturnOffsetMinusNumGaps(){
-        PlacedRead mockRead = new MockPlacedReadBuilder("ACG-TC",8)
+        AssembledRead mockRead = new MockPlacedReadBuilder("ACG-TC",8)
                                 .validRange(validRange)
                                 .build();
         replayAll();
@@ -104,7 +104,7 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
     }
     @Test
     public void forwardSequencetwoGapBeforeDesiredOffsetShouldReturnOffsetMinusNumGaps(){
-        PlacedRead mockRead = new MockPlacedReadBuilder("ACG--TC",8)
+        AssembledRead mockRead = new MockPlacedReadBuilder("ACG--TC",8)
                                 .validRange(validRange)
                                 .build();
         replayAll();
@@ -113,7 +113,7 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
     
     @Test
     public void reverseSequenceOneGapBeforeDesiredOffsetShouldReturnOffsetMinusNumGaps(){
-        PlacedRead mockRead = new MockPlacedReadBuilder("CGTA-C",8)
+        AssembledRead mockRead = new MockPlacedReadBuilder("CGTA-C",8)
                                 .validRange(validRange)
                                 .direction(Direction.REVERSE)
                                 .build();
@@ -200,8 +200,8 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
 		}
     	
     }
-    private class MockPlacedReadBuilder implements Builder<PlacedRead>{
-        private final PlacedRead mock = createMock(PlacedRead.class);
+    private class MockPlacedReadBuilder implements Builder<AssembledRead>{
+        private final AssembledRead mock = createMock(AssembledRead.class);
         private Direction dir = Direction.FORWARD;
         private final ReferenceEncodedNucleotideSequence seq;
         private Range validRange;
@@ -231,7 +231,7 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
         * {@inheritDoc}
         */
         @Override
-        public PlacedRead build() {
+        public AssembledRead build() {
             assertEquals("ungapped valid sequence is wrong length",validRange.getLength(),
             		seq.getUngappedLength());
             expect(mock.getDirection()).andStubReturn(dir);

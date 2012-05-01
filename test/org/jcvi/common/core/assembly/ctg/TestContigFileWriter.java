@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ctg.CtgFileWriter;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.io.IOUtil;
@@ -57,10 +57,10 @@ public class TestContigFileWriter {
     
     @Test
     public void write() throws IOException{
-    	CloseableIterator<Contig<PlacedRead>> iter = dataStore.iterator();
+    	CloseableIterator<Contig<AssembledRead>> iter = dataStore.iterator();
     	try{
         while(iter.hasNext()){
-        	Contig<PlacedRead> contig = iter.next();
+        	Contig<AssembledRead> contig = iter.next();
             sut.write(contig);
         }
     	}finally{

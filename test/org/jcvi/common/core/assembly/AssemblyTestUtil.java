@@ -29,10 +29,10 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 public class AssemblyTestUtil {
 
-    public static void assertPlacedReadCorrect(PlacedRead expected,
-            PlacedRead actual) {
+    public static void assertPlacedReadCorrect(AssembledRead expected,
+            AssembledRead actual) {
         assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getGappedContigStart(), actual.getGappedContigStart());
+        assertEquals(expected.getGappedStartOffset(), actual.getGappedStartOffset());
         assertEquals(expected.getGappedLength(), actual.getGappedLength());
         assertEquals(expected.getDirection(), actual.getDirection());
         final NucleotideSequence expectedEncodedGlyphs = expected.getNucleotideSequence();

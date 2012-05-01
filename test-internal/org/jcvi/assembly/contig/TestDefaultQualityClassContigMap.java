@@ -23,7 +23,7 @@
  */
 package org.jcvi.assembly.contig;
 
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
@@ -33,10 +33,10 @@ import org.junit.Test;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 public class TestDefaultQualityClassContigMap {
-    CoverageMap<CoverageRegion<PlacedRead>> coverageMap;
+    CoverageMap<CoverageRegion<AssembledRead>> coverageMap;
     NucleotideSequence consensus;
     QualityDataStore qualityFastaMap;
-    QualityClassComputer<PlacedRead> qualityClassComputer;
+    QualityClassComputer<AssembledRead> qualityClassComputer;
    DefaultQualityClassContigMap sut;
    @Before
    public void setup(){

@@ -28,7 +28,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
@@ -44,33 +44,33 @@ public class LargeSliceMap extends AbstractSliceMap{
      */
     public static final int DEFAULT_CACHE_SIZE = 1000;
     
-    private final CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap;
+    private final CoverageMap<? extends CoverageRegion<? extends AssembledRead>> coverageMap;
     private final        DataStore<? extends Sequence<PhredQuality>> qualityDataStore;
     private final        QualityValueStrategy qualityValueStrategy;
     private final Range range;
     private final Map<Long, IdedSlice> cache;
 
-    public static <PR extends PlacedRead,C extends Contig<PR>> LargeSliceMap  createFromContig(C contig,  QualityDataStore qualityDataStore,
+    public static <PR extends AssembledRead,C extends Contig<PR>> LargeSliceMap  createFromContig(C contig,  QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy, int cacheSize){
         CoverageMap<? extends CoverageRegion<PR>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
         return new LargeSliceMap(coverageMap,qualityDataStore,qualityValueStrategy,cacheSize);
     }
-    public static <PR extends PlacedRead,C extends Contig<PR>> LargeSliceMap  createFromContig(C contig,  QualityDataStore qualityDataStore,
+    public static <PR extends AssembledRead,C extends Contig<PR>> LargeSliceMap  createFromContig(C contig,  QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy){
         return createFromContig(contig,qualityDataStore,qualityValueStrategy,DEFAULT_CACHE_SIZE);
     }
     
-    public static <PR extends PlacedRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> LargeSliceMap create(M coverageMap,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy){
+    public static <PR extends AssembledRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> LargeSliceMap create(M coverageMap,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy){
         //compiler complained about types when I tried to delegate to fuller factory method
         //so I need to explicitly create instance here
         return new LargeSliceMap(coverageMap, qualityDataStore, qualityValueStrategy,DEFAULT_CACHE_SIZE);
         
     }
-    public static <PR extends PlacedRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> LargeSliceMap create(
+    public static <PR extends AssembledRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> LargeSliceMap create(
             M coverageMap,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy, int cacheSize){
         return new LargeSliceMap(coverageMap, qualityDataStore, qualityValueStrategy,cacheSize);
     }
-    public LargeSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
+    public LargeSliceMap(CoverageMap<? extends CoverageRegion<? extends AssembledRead>> coverageMap, 
             QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy, Range range, int cacheSize){
         this.coverageMap = coverageMap;
@@ -80,18 +80,18 @@ public class LargeSliceMap extends AbstractSliceMap{
         cache = Caches.createLRUCache(cacheSize);
     }
     
-    public LargeSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
+    public LargeSliceMap(CoverageMap<? extends CoverageRegion<? extends AssembledRead>> coverageMap, 
             QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy, int cacheSize){
         this(coverageMap, qualityDataStore, qualityValueStrategy, 
                 Range.create(0,coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).asRange().getEnd()),cacheSize);
     }
-    public LargeSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
+    public LargeSliceMap(CoverageMap<? extends CoverageRegion<? extends AssembledRead>> coverageMap, 
             QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy, Range range){
         this(coverageMap, qualityDataStore,qualityValueStrategy, range, DEFAULT_CACHE_SIZE);
     }
-    public LargeSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
+    public LargeSliceMap(CoverageMap<? extends CoverageRegion<? extends AssembledRead>> coverageMap, 
             QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy){
         this(coverageMap, qualityDataStore, qualityValueStrategy, 
@@ -107,7 +107,7 @@ public class LargeSliceMap extends AbstractSliceMap{
         if(cache.containsKey(offset)){
             return cache.get(offset);
         }
-        CoverageRegion<? extends PlacedRead> region =coverageMap.getRegionWhichCovers(offset);
+        CoverageRegion<? extends AssembledRead> region =coverageMap.getRegionWhichCovers(offset);
         if(region ==null){
             return null;
         }

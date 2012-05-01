@@ -20,7 +20,7 @@
 package org.jcvi.common.core.assembly.util.trimmer;
 
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 
 
 /**
@@ -32,7 +32,7 @@ import org.jcvi.common.core.assembly.PlacedRead;
  * @param <C> the type of Contig which has placedReads of type P
  *
  */
-public interface ContigTrimmer<P extends PlacedRead, C extends Contig<P>> {
+public interface ContigTrimmer<P extends AssembledRead, C extends Contig<P>> {
     
     /**
      * Trim the given contig which has the given coverage map.  

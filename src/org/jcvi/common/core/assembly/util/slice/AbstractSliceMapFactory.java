@@ -23,12 +23,12 @@
  */
 package org.jcvi.common.core.assembly.util.slice;
 
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 
-public abstract class AbstractSliceMapFactory<P extends PlacedRead, R extends CoverageRegion<P>, M extends CoverageMap<R>> implements SliceMapFactory<P,R,M>{
+public abstract class AbstractSliceMapFactory<P extends AssembledRead, R extends CoverageRegion<P>, M extends CoverageMap<R>> implements SliceMapFactory<P,R,M>{
 
   
 

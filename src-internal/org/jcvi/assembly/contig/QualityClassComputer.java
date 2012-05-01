@@ -23,14 +23,14 @@
  */
 package org.jcvi.assembly.contig;
 
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.glyph.qualClass.QualityClass;
 
-public interface QualityClassComputer<P extends PlacedRead> {
+public interface QualityClassComputer<P extends AssembledRead> {
 
     QualityClass computeQualityClass(CoverageMap<CoverageRegion<P>> coverageMap,
             QualityDataStore qualityDataStore,

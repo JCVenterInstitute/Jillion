@@ -179,7 +179,7 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
         public Builder addRead(AcePlacedRead acePlacedRead) {
          return addRead(acePlacedRead.getId(),
         		 acePlacedRead.getNucleotideSequence(),
-        		 (int)acePlacedRead.getGappedContigStart(),
+        		 (int)acePlacedRead.getGappedStartOffset(),
         		 acePlacedRead.getDirection(),
         		 acePlacedRead.getValidRange(),
         		 acePlacedRead.getPhdInfo(),

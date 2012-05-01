@@ -31,7 +31,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
-public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
+public class DefaultContig<P extends AssembledRead> extends AbstractContig<P>{
 
     
 
@@ -56,7 +56,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
 		return super.hashCode();
 	}
 
-	public static class Builder extends AbstractContigBuilder<PlacedRead, Contig<PlacedRead>>{
+	public static class Builder extends AbstractContigBuilder<AssembledRead, Contig<AssembledRead>>{
         public Builder(String id, String consensus){
            this(id, new NucleotideSequenceBuilder(consensus).build());
         }
@@ -69,7 +69,9 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
         public Builder addRead(String id, int offset,String basecalls, Direction dir){
             int numberOfGaps = computeNumberOfGapsIn(basecalls);
             int ungappedLength = basecalls.length()-numberOfGaps;
-            return addRead(id, offset, Range.createOfLength(0,ungappedLength),basecalls, dir,ungappedLength);
+            return addRead(id, offset, 
+            		Range.createOfLength(0,ungappedLength),basecalls, 
+            		dir,ungappedLength);
         }
         /**
          * @param basecalls
@@ -95,24 +97,24 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
         }
         
        
-        public DefaultContig<PlacedRead> build(){
-            Set<PlacedRead> reads = new LinkedHashSet<PlacedRead>();
-            for(PlacedReadBuilder<PlacedRead> builder : getAllPlacedReadBuilders()){
+        public DefaultContig<AssembledRead> build(){
+            Set<AssembledRead> reads = new LinkedHashSet<AssembledRead>();
+            for(PlacedReadBuilder<AssembledRead> builder : getAllPlacedReadBuilders()){
                 reads.add(builder.build());
             }
-            return new DefaultContig<PlacedRead>(getContigId(), getConsensusBuilder().build(), reads);
+            return new DefaultContig<AssembledRead>(getContigId(), getConsensusBuilder().build(), reads);
         }
         /**
         * {@inheritDoc}
         */
         @Override
-        protected PlacedReadBuilder<PlacedRead> createPlacedReadBuilder(
-                PlacedRead read) {
+        protected PlacedReadBuilder<AssembledRead> createPlacedReadBuilder(
+                AssembledRead read) {
             return DefaultPlacedRead.createBuilder(
                     getConsensusBuilder().build(), 
                     read.getId(), 
                     read.getNucleotideSequence().toString(), 
-                    (int)read.getGappedContigStart(), 
+                    (int)read.getGappedStartOffset(), 
                     read.getDirection(), 
                     read.getValidRange(),
                     //TODO need to actually compute ungapped full length here
@@ -123,7 +125,7 @@ public class DefaultContig<P extends PlacedRead> extends AbstractContig<P>{
         * {@inheritDoc}
         */
         @Override
-        protected PlacedReadBuilder<PlacedRead> createPlacedReadBuilder(
+        protected PlacedReadBuilder<AssembledRead> createPlacedReadBuilder(
                 String id, int offset, Range validRange, String basecalls,
                 Direction dir, int fullUngappedLength) {
             return DefaultPlacedRead.createBuilder(

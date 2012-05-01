@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.AssemblyUtil;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -91,7 +91,7 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
     private static final PhredQuality LOWEST_QUALITY = PhredQuality.valueOf(1);
     
     @Override
-    public PhredQuality getQualityFor(PlacedRead placedRead,
+    public PhredQuality getQualityFor(AssembledRead placedRead,
             Sequence<PhredQuality> fullQualities,
             int gappedReadIndex) {
         if(fullQualities ==null){
@@ -120,7 +120,7 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
             PhredQuality leftFlankingQuality, PhredQuality rightFlankingQuality);
     
     private PhredQuality getQualityValueForGap(int leftFlankingNonGapIndex,
-            int rightFlankingNonGapIndex, PlacedRead placedRead,
+            int rightFlankingNonGapIndex, AssembledRead placedRead,
             List<PhredQuality> unComplimentedQualities,int indexOfGap) {
         if(leftFlankingNonGapIndex <0){
             return getQualityValueIfReadStartsWithGap();
@@ -136,7 +136,7 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
     }
     
 
-    protected PhredQuality getQualityForNonGapBase(PlacedRead placedRead, List<PhredQuality> uncomplementedQualities,
+    protected PhredQuality getQualityForNonGapBase(AssembledRead placedRead, List<PhredQuality> uncomplementedQualities,
             int gappedReadIndexForNonGapBase) {
         try{
             int ungappedFullRangeIndex = AssemblyUtil.convertToUngappedFullRangeOffset(placedRead, uncomplementedQualities.size(),gappedReadIndexForNonGapBase);            

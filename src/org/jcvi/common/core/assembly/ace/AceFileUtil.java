@@ -27,7 +27,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
@@ -169,7 +169,7 @@ public class AceFileUtil {
         }
         return gappedValidRange;
     }
-    public static String createAcePlacedReadRecord(String readId, PlacedRead placedRead, Phd phd, PhdInfo phdInfo){
+    public static String createAcePlacedReadRecord(String readId, AssembledRead placedRead, Phd phd, PhdInfo phdInfo){
         
         NucleotideSequence nucleotideSequence = placedRead.getNucleotideSequence();
 		final NucleotideSequence gappedValidBasecalls = nucleotideSequence; 

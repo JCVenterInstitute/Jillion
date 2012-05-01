@@ -24,7 +24,7 @@
 package org.jcvi.assembly.contig;
 
 import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.slice.QualityValueStrategy;
@@ -36,7 +36,7 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.glyph.qualClass.QualityClass;
 
-public class DefaultContigQualityClassComputer<P extends PlacedRead> implements QualityClassComputer<P>{
+public class DefaultContigQualityClassComputer<P extends AssembledRead> implements QualityClassComputer<P>{
    private final QualityValueStrategy qualityValueStrategy;
    private final PhredQuality qualityThreshold;
     
@@ -83,7 +83,7 @@ public class DefaultContigQualityClassComputer<P extends PlacedRead> implements 
         for(P placedRead : region){
             final QualitySequence qualityRecord = qualityDataStore.get(placedRead.getId());
             if(qualityRecord !=null){
-                int gappedOffset = (int) (index - placedRead.getGappedContigStart());
+                int gappedOffset = (int) (index - placedRead.getGappedStartOffset());
                 NucleotideSequence gappedSequence = placedRead.getNucleotideSequence();
                 final Nucleotide calledBase = gappedSequence.get(gappedOffset);
                 PhredQuality qualityValue =qualityValueStrategy.getQualityFor(placedRead, qualityRecord, gappedOffset);

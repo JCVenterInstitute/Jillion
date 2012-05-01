@@ -20,7 +20,7 @@
 package org.jcvi.common.core.assembly.tasm;
 
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.assembly.tasm.DefaultTigrAssemblerFileContigDataStore;
 import org.jcvi.common.core.assembly.tasm.TigrAssemblerContig;
@@ -52,7 +52,7 @@ public class TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes {
 	    
 	    @Test
 	    public void adaptPB2() throws DataStoreException{
-	    	Contig<PlacedRead> contig =contigDataStore.get("15044");
+	    	Contig<AssembledRead> contig =contigDataStore.get("15044");
 	    	TigrAssemblerContig tasm =tasmDataStore.get("1122071329926");
 	    	
 	    	TigrAssemblerContigAdapter sut = new TigrAssemblerContigAdapter.Builder(contig)

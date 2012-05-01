@@ -40,7 +40,7 @@ import org.jcvi.common.core.util.Builder;
  * @author dkatzel
  *
  */
-public interface ContigBuilder<R extends PlacedRead,C extends Contig<R>> extends Builder<C>{
+public interface ContigBuilder<R extends AssembledRead,C extends Contig<R>> extends Builder<C>{
     /**
      * Change the contig id to the given id.
      * @param contigId the new id this contig should have.
@@ -60,7 +60,7 @@ public interface ContigBuilder<R extends PlacedRead,C extends Contig<R>> extends
      */
     int numberOfReads();
     /**
-     * Add the given {@link PlacedRead} read to this contig with the given values.  This read
+     * Add the given {@link AssembledRead} read to this contig with the given values.  This read
      * can later get modified via the {@link #getPlacedReadBuilder(String)}.
      * @param placedRead the read to add (can not be null).
      * @return this.

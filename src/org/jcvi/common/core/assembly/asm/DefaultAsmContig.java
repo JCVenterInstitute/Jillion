@@ -111,7 +111,7 @@ public final class DefaultAsmContig extends AbstractContig<AsmPlacedRead> implem
                 AsmPlacedRead placedRead) {
             return addRead(placedRead.getId(),
                     placedRead.getNucleotideSequence().toString(),
-                    (int)placedRead.getGappedContigStart(),
+                    (int)placedRead.getGappedStartOffset(),
                     placedRead.getDirection(),
                     placedRead.getValidRange(),
                     placedRead.getUngappedFullLength(),

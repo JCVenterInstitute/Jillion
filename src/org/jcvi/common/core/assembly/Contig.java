@@ -30,11 +30,11 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * A {@code Contig} is a CONTIGuous region of genomic data.
  * Contigs are assembled by overlapping reads to form a consensus.
  * @author dkatzel
- * @param <T> the type of {@link PlacedRead}s which were used to build
+ * @param <T> the type of {@link AssembledRead}s which were used to build
  * this contig.
  *
  */
-public interface Contig<T extends PlacedRead>{
+public interface Contig<T extends AssembledRead>{
     /**
      * Get the id of this contig.
      * @return the Id of this contig as a String; will never be null.
@@ -46,9 +46,9 @@ public interface Contig<T extends PlacedRead>{
      */
     int getNumberOfReads();
     /**
-     * Get the {@link CloseableIterator} of {@link PlacedRead}s
+     * Get the {@link CloseableIterator} of {@link AssembledRead}s
      * that are contained in this contig. 
-     * @return a {@link CloseableIterator}  of {@link PlacedRead}s; will never be null 
+     * @return a {@link CloseableIterator}  of {@link AssembledRead}s; will never be null 
      * but could be empty.
      */
     CloseableIterator<T> getReadIterator();
@@ -63,16 +63,16 @@ public interface Contig<T extends PlacedRead>{
      */
     NucleotideSequence getConsensus();
     /**
-     * Get the {@link PlacedRead} in this contig with the given id.
+     * Get the {@link AssembledRead} in this contig with the given id.
      * @param id the id of the read to get.
-     * @return the {@link PlacedRead} with that id; or {@code null}
+     * @return the {@link AssembledRead} with that id; or {@code null}
      * if no such read exists in this contig.
      * @see #containsRead(String)
      */
     T getRead(String id);
     /**
-     * Does this contig have a {@link PlacedRead} with the given id?
-     * @param readId the id of the {@link PlacedRead} to check for.
+     * Does this contig have a {@link AssembledRead} with the given id?
+     * @param readId the id of the {@link AssembledRead} to check for.
      * @return {@code true} if this contig has a read
      * with the given id; {@code false} otherwise.
      */

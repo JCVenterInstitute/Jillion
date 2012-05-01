@@ -785,7 +785,18 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	//can not instantiate
     }
 
+    
+    @Override
+	public abstract int hashCode();
     /**
+     * Two {@link Range}s are equal
+     * if they have the same begin and end
+     * values.
+     */
+	@Override
+	public abstract boolean equals(Object obj);
+	
+	/**
      * Fetch the first coordinate in this Range. This is the same as 
      * {@link #getBegin(CoordinateSystem)
      * getBegin(ZERO_BASED)}.
@@ -815,6 +826,8 @@ public abstract class Range implements Rangeable,Iterable<Long>
      * @return The right-hand (ending) coordinate.
      */
     public abstract long getEnd();
+    
+    
     /**
      * Fetch the right (end) coordinate using the given 
      * {@link CoordinateSystem}.

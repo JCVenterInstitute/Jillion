@@ -29,7 +29,7 @@ import java.util.List;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
@@ -41,11 +41,11 @@ import static org.junit.Assert.*;
 public class TestAssemblyUtil_gappedfullRange {
 
     List<Nucleotide> gappedValidRange = Nucleotides.parse("ACGT-ACGT");
-    PlacedRead mockPlacedRead;
+    AssembledRead mockPlacedRead;
     
     @Before
     public void setup(){
-        mockPlacedRead = createMock(PlacedRead.class);
+        mockPlacedRead = createMock(AssembledRead.class);
     }
     @Test
     public void entireSequenceIsValid(){

@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.assembly.util.slice;
 
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.datastore.DataStoreException;
@@ -30,7 +30,7 @@ import org.jcvi.common.core.symbol.qual.QualityDataStore;
  *
  *
  */
-public class CompactedSliceMapFactory<P extends PlacedRead, R extends CoverageRegion<P>, M extends CoverageMap<R>> extends AbstractSliceMapFactory<P,R,M>{
+public class CompactedSliceMapFactory<P extends AssembledRead, R extends CoverageRegion<P>, M extends CoverageMap<R>> extends AbstractSliceMapFactory<P,R,M>{
 
     public CompactedSliceMapFactory(QualityValueStrategy qualityValueStrategy) {
         super(qualityValueStrategy);

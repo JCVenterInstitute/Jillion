@@ -77,7 +77,7 @@ public class NewblerMappedAceContigUtil {
         		String id = read.getId();
                 Matcher matcher = ACTUAL_CONSENSUS_ID_PATTERN.matcher(id);
                 if(matcher.matches()){
-                    ranges.put(id,Range.create(read.getGappedContigStart(),read.getGappedContigEnd()));
+                    ranges.put(id,Range.create(read.getGappedStartOffset(),read.getGappedEndOffset()));
                     
                 }
                 else if(!phdDataStore.contains(id)){
@@ -108,9 +108,9 @@ public class NewblerMappedAceContigUtil {
         	while(iter.hasNext()){
         		AcePlacedRead read = iter.next();
         		 Matcher matcher = ACTUAL_CONSENSUS_ID_PATTERN.matcher(id);
-                 Range readRange = Range.create(read.getGappedContigStart(), read.getGappedContigEnd());
+                 Range readRange = Range.create(read.getGappedStartOffset(), read.getGappedEndOffset());
                  if(!matcher.matches() && phdDataStore.contains(read.getId()) && readRange.isSubRangeOf(contigRange) ){
-                     final int newOffset = (int)(read.getGappedContigStart() -consensusRead.getGappedContigStart());
+                     final int newOffset = (int)(read.getGappedStartOffset() -consensusRead.getGappedStartOffset());
                      builder.addRead(read.getId(), 
                              read.getNucleotideSequence(),
                              newOffset,

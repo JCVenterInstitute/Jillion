@@ -39,7 +39,7 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code AssemblyUtil} is a utility class for working
- * with {@link PlacedRead}s and gapped {@link NucleotideSequence}.
+ * with {@link AssembledRead}s and gapped {@link NucleotideSequence}.
  * @author dkatzel
  */
 public final class AssemblyUtil {
@@ -58,7 +58,7 @@ public final class AssemblyUtil {
      * basecalls of the given read.
      * @see #buildGappedComplementedFullRangeBases(NucleotideSequence, Direction, Range, List)
      */
-    public static List<Nucleotide> buildGappedComplementedFullRangeBases(PlacedRead placedRead, List<Nucleotide> ungappedUncomplementedFullRangeBases){
+    public static List<Nucleotide> buildGappedComplementedFullRangeBases(AssembledRead placedRead, List<Nucleotide> ungappedUncomplementedFullRangeBases){
         Direction dir =placedRead.getDirection();
         Range validRange = placedRead.getValidRange();
         if(dir==Direction.REVERSE){
@@ -134,18 +134,18 @@ public final class AssemblyUtil {
      * @param gappedOffset the gapped offset to convert into an ungapped full range offset
      * @return the ungapped full range offset as a positive int.
      */
-    public static  int convertToUngappedFullRangeOffset(PlacedRead placedRead, int ungappedFullLength,int gappedOffset) {
+    public static  int convertToUngappedFullRangeOffset(AssembledRead placedRead, int ungappedFullLength,int gappedOffset) {
         Range validRange = placedRead.getValidRange();
         return convertToUngappedFullRangeOffset(placedRead, ungappedFullLength,
                 gappedOffset, validRange);
     }
-    public static  int convertToUngappedFullRangeOffset(PlacedRead placedRead, int gappedOffset) {
+    public static  int convertToUngappedFullRangeOffset(AssembledRead placedRead, int gappedOffset) {
         Range validRange = placedRead.getValidRange();
         return convertToUngappedFullRangeOffset(placedRead, placedRead.getUngappedFullLength(),
                 gappedOffset, validRange);
     }
     
-    private static int convertToUngappedFullRangeOffset(PlacedRead placedRead,
+    private static int convertToUngappedFullRangeOffset(AssembledRead placedRead,
             int fullLength, int gappedOffset, Range validRange) {
        
         
@@ -227,27 +227,27 @@ public final class AssemblyUtil {
     /**
      * Create a coverage map in <strong>ungapped consensus coordinate space</strong>
      * of the given contig.
-     * @param <PR> the type of {@link PlacedRead}s used in the contig.
+     * @param <PR> the type of {@link AssembledRead}s used in the contig.
      * @param <C> the type of {@link Contig}
      * @param contig the contig to create an ungapped coverage map for.
      * @return a new {@link CoverageMap} but where the coordinates in the coverage map
      * refer to ungapped coordinates instead of gapped coordinates.
      */
-    public static <PR extends PlacedRead,C extends Contig<PR>> CoverageMap<CoverageRegion<PR>> 
+    public static <PR extends AssembledRead,C extends Contig<PR>> CoverageMap<CoverageRegion<PR>> 
     buildUngappedCoverageMap(C contig){
         return buildUngappedCoverageMap(contig.getConsensus(), contig.getReadIterator());
     }
     /**
      * Create a coverage map in <strong>ungapped consensus coordinate space</strong>
      * of the given reads aligned to the given consensus.
-     * @param <PR> the type of {@link PlacedRead} used.
+     * @param <PR> the type of {@link AssembledRead} used.
      * @param consensus the gapped consensus the reads aligned to.
      * @param reads the reads to generate a coverage map for.
      * @return a new {@link CoverageMap} but where the coordinates in the coverage map
      * refer to ungapped coordinates instead of gapped coordinates.
      * 
      */
-    public static <PR extends PlacedRead> CoverageMap<CoverageRegion<PR>> 
+    public static <PR extends AssembledRead> CoverageMap<CoverageRegion<PR>> 
     buildUngappedCoverageMap(NucleotideSequence consensus, CloseableIterator<PR> reads){
         
         CoverageMap<CoverageRegion<PR>> gappedCoverageMap =DefaultCoverageMap.buildCoverageMap(reads);
@@ -255,7 +255,7 @@ public final class AssemblyUtil {
     }
     
     
-    private static <PR extends PlacedRead,C extends Contig<PR>, T extends CoverageRegion<PR>> CoverageMap<CoverageRegion<PR>> createUngappedCoverageMap(
+    private static <PR extends AssembledRead,C extends Contig<PR>, T extends CoverageRegion<PR>> CoverageMap<CoverageRegion<PR>> createUngappedCoverageMap(
             NucleotideSequence consensus, CoverageMap<T> gappedCoverageMap) {
         List<CoverageRegion<PR>> ungappedCoverageRegions = new ArrayList<CoverageRegion<PR>>();
         for(T gappedCoverageRegion : gappedCoverageMap){

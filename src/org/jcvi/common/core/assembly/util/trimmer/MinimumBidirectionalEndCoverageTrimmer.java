@@ -21,7 +21,7 @@ package org.jcvi.common.core.assembly.util.trimmer;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 
 /**
@@ -29,7 +29,7 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
  *
  *
  */
-public class MinimumBidirectionalEndCoverageTrimmer<P extends PlacedRead, C extends Contig<P>> extends MinimumEndCoverageTrimmer<P, C>{
+public class MinimumBidirectionalEndCoverageTrimmer<P extends AssembledRead, C extends Contig<P>> extends MinimumEndCoverageTrimmer<P, C>{
     private final int maxCoverageToConsider;
     /**
      * @param minimumEndCoverage

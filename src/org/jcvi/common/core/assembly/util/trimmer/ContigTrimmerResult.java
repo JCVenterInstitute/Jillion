@@ -1,18 +1,18 @@
 package org.jcvi.common.core.assembly.util.trimmer;
 
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 
-public final class ContigTrimmerResult<P extends PlacedRead, C extends Contig<P>> {
+public final class ContigTrimmerResult<P extends AssembledRead, C extends Contig<P>> {
 
 	
-	public static <P extends PlacedRead, C extends Contig<P>> ContigTrimmerResult<P,C> 
+	public static <P extends AssembledRead, C extends Contig<P>> ContigTrimmerResult<P,C> 
 		createTrimmedResult(C trimmedContig, int numberOfLeftTrimmedBases,
 							int numberOfRightTrimmedBases){
 			return new ContigTrimmerResult<P, C>(trimmedContig, numberOfLeftTrimmedBases, numberOfRightTrimmedBases);
 		}
 	
-	public static <P extends PlacedRead, C extends Contig<P>> ContigTrimmerResult<P,C> 
+	public static <P extends AssembledRead, C extends Contig<P>> ContigTrimmerResult<P,C> 
 	createUntrimmedResult(C untrimmedContig){
 		return new ContigTrimmerResult<P, C>(untrimmedContig,0,0);
 	}

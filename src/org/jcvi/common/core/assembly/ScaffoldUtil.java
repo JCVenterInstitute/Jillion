@@ -29,7 +29,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  */
 public class ScaffoldUtil {
 
-    public static Range convertGappedContigRangeToUngappedScaffoldRange(Contig<? extends PlacedRead> contig, Range gappedContigRange, Scaffold scaffold){
+    public static Range convertGappedContigRangeToUngappedScaffoldRange(Contig<? extends AssembledRead> contig, Range gappedContigRange, Scaffold scaffold){
         NucleotideSequence consensus =contig.getConsensus();
        Range ungappedRange = Range.create(consensus.getUngappedOffsetFor((int)gappedContigRange.getBegin()),
                 consensus.getUngappedOffsetFor((int)gappedContigRange.getEnd())

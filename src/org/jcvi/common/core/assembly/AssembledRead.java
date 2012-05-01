@@ -26,31 +26,30 @@ package org.jcvi.common.core.assembly;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Rangeable;
-import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 /**
- * A {@code PlacedRead} is a {@link Read}
- * that has been placed
- * at a particular location in an assembly.
- * The location is specific to the {@link Contig}
- * this read was placed in.
+ * A {@code AssembledRead} is a read
+ * that has been assembled
+ * and placed at a  particular location in its assembly.
+ * The location is relative to the object
+ * this read has been assembled into (ex {@link Contig} or {@link Scaffold} etc).
  * @author dkatzel
  */
-public interface PlacedRead extends Rangeable{
+public interface AssembledRead extends Rangeable{
 
 	/**
      * Get the 0-based, gapped
      * start coordinate of this read.
      * @return the start coordinate as a long.
      */
-    long getGappedContigStart();
+    long getGappedStartOffset();
     /**
      * Get the 0-based, gapped
      * end coordinate of this read.
      * @return the end as a long.
      */
-    long getGappedContigEnd();
+    long getGappedEndOffset();
     /**
      * Get the gapped
      * length of this read.
@@ -133,4 +132,6 @@ public interface PlacedRead extends Rangeable{
      * never be null.
      */
     ReferenceEncodedNucleotideSequence getNucleotideSequence();
+    
+    ReadInfo getReadInfo();
 }

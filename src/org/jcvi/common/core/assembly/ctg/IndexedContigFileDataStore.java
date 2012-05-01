@@ -31,7 +31,7 @@ import java.io.InputStream;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.ContigDataStore;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
 import org.jcvi.common.core.io.IOUtil;
@@ -49,7 +49,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  *
  *
  */
-public class IndexedContigFileDataStore implements ContigDataStore<PlacedRead, Contig<PlacedRead>>{
+public class IndexedContigFileDataStore implements ContigDataStore<AssembledRead, Contig<AssembledRead>>{
 
     private final File file;
     private final IndexedFileRange mappedRanges;
@@ -72,7 +72,7 @@ public class IndexedContigFileDataStore implements ContigDataStore<PlacedRead, C
     }
 
     @Override
-    public Contig<PlacedRead> get(String contigId)
+    public Contig<AssembledRead> get(String contigId)
             throws DataStoreException {
         Range range = mappedRanges.getRangeFor(contigId);
         InputStream inputStream=null;
@@ -104,16 +104,16 @@ public class IndexedContigFileDataStore implements ContigDataStore<PlacedRead, C
     }
     
     private static class SingleContigFileVisitor extends AbstractContigFileVisitorBuilder{
-        private Contig<PlacedRead> contigToReturn;
+        private Contig<AssembledRead> contigToReturn;
 
         @Override
-        protected synchronized void addContig(Contig<PlacedRead>  contig) {
+        protected synchronized void addContig(Contig<AssembledRead>  contig) {
             if(contigToReturn !=null){
                 throw new IllegalStateException("can not add more than one contig");
             }
             contigToReturn= contig;
         }
-        public Contig<PlacedRead>  getContigToReturn(){
+        public Contig<AssembledRead>  getContigToReturn(){
             return contigToReturn;
         }
 
@@ -153,8 +153,8 @@ public class IndexedContigFileDataStore implements ContigDataStore<PlacedRead, C
 
 
     @Override
-    public CloseableIterator<Contig<PlacedRead>> iterator() {
-        return new DataStoreIterator<Contig<PlacedRead>>(this);
+    public CloseableIterator<Contig<AssembledRead>> iterator() {
+        return new DataStoreIterator<Contig<AssembledRead>>(this);
     }
     /**
     * {@inheritDoc}

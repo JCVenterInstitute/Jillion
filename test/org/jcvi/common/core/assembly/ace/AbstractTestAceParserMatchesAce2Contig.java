@@ -32,7 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
@@ -105,7 +105,7 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
     		while(iter.hasNext()){
     			AceContig actualContig = iter.next();
     			assertTrue(expectedContigDataStore.contains(actualContig.getId()));
-			  Contig<PlacedRead> expectedContig = expectedContigDataStore.get(actualContig.getId());
+			  Contig<AssembledRead> expectedContig = expectedContigDataStore.get(actualContig.getId());
     	      AceContigTestUtil.assertContigsEqual(expectedContig, actualContig);
     	       
     		}
@@ -119,7 +119,7 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
     	
     	
     	for(String id : IDS){
-    		Contig<PlacedRead> expected = expectedContigDataStore.get(id);
+    		Contig<AssembledRead> expected = expectedContigDataStore.get(id);
     		AceContig actual = sut.get(id);
     		AceContigTestUtil.assertContigsEqual(expected, actual);
     	}

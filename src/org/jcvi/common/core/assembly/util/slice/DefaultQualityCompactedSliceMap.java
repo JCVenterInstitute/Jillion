@@ -22,7 +22,7 @@ package org.jcvi.common.core.assembly.util.slice;
 import java.util.Iterator;
 
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
@@ -41,7 +41,7 @@ public class DefaultQualityCompactedSliceMap extends AbstractCompactedSliceMap{
     /**
      * @param coverageMap
      */
-    public <PR extends PlacedRead> DefaultQualityCompactedSliceMap(Contig<PR> contig,
+    public <PR extends AssembledRead> DefaultQualityCompactedSliceMap(Contig<PR> contig,
                     PhredQuality defaultPhredQuality) {
         this.defaultPhredQuality =defaultPhredQuality;
         CoverageMap<CoverageRegion<PR>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
@@ -53,10 +53,10 @@ public class DefaultQualityCompactedSliceMap extends AbstractCompactedSliceMap{
     */
     @Override
     protected CompactedSlice createSlice(
-            CoverageRegion<? extends PlacedRead> region, int i) {
+            CoverageRegion<? extends AssembledRead> region, int i) {
         CompactedSlice.Builder builder= new CompactedSlice.Builder();
-        for(PlacedRead read : region){
-            int indexIntoRead = (int) (i - read.getGappedContigStart());
+        for(AssembledRead read : region){
+            int indexIntoRead = (int) (i - read.getGappedStartOffset());
             builder.addSliceElement(read.getId(),
                     read.getNucleotideSequence().get(indexIntoRead),
                     defaultPhredQuality,

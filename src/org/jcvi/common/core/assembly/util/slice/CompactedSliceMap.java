@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
@@ -44,17 +44,17 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * 
  * 
  */
-public final class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> implements SliceMap {
+public final class CompactedSliceMap<PR extends AssembledRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> implements SliceMap {
     private final CompactedSlice[] slices;
 
-    public static <PR extends PlacedRead, C extends Contig<PR>> CompactedSliceMap create(C contig,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
+    public static <PR extends AssembledRead, C extends Contig<PR>> CompactedSliceMap create(C contig,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
         CoverageMap<CoverageRegion<PR>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
         return new CompactedSliceMap(coverageMap, qualityDataStore, qualityValueStrategy);
     }
-    public static <PR extends PlacedRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> CompactedSliceMap create(M coverageMap,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
+    public static <PR extends AssembledRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> CompactedSliceMap create(M coverageMap,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
         return new CompactedSliceMap(coverageMap, qualityDataStore, qualityValueStrategy);
     }
-    public static <PR extends PlacedRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> CompactedSliceMap create(M coverageMap,PhredQuality defaultQuality) throws DataStoreException{
+    public static <PR extends AssembledRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> CompactedSliceMap create(M coverageMap,PhredQuality defaultQuality) throws DataStoreException{
         return new CompactedSliceMap(coverageMap, new NullQualityDataStore(defaultQuality), new FakeQualityValueStrategy(defaultQuality));
     }
     private static final class NullQualityDataStore implements QualityDataStore{
@@ -177,7 +177,7 @@ public final class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRe
         * {@inheritDoc}
         */
         @Override
-        public PhredQuality getQualityFor(PlacedRead placedRead,
+        public PhredQuality getQualityFor(AssembledRead placedRead,
                 Sequence<PhredQuality> fullQualities, int gappedReadIndex) {
             return defaultQuality;
         }
@@ -187,9 +187,9 @@ public final class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRe
             M coverageMap, QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
         int size = (int)coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).asRange().getEnd()+1;
         this.slices = new CompactedSlice[size];
-        for(CoverageRegion<?  extends PlacedRead> region : coverageMap){
+        for(CoverageRegion<?  extends AssembledRead> region : coverageMap){
             Map<String,Sequence<PhredQuality>> qualities = new HashMap<String,Sequence<PhredQuality>>(region.getCoverage());
-            for(PlacedRead read :region){
+            for(AssembledRead read :region){
                 final String id = read.getId();
                 if(qualityDataStore==null){
                     qualities.put(id,null);
@@ -209,14 +209,14 @@ public final class CompactedSliceMap<PR extends PlacedRead, R extends CoverageRe
      * {@inheritDoc}
      */
     protected CompactedSlice createSlice(
-            CoverageRegion<? extends PlacedRead> region, 
+            CoverageRegion<? extends AssembledRead> region, 
             Map<String,Sequence<PhredQuality>> qualities,
             QualityValueStrategy qualityValueStrategy,
             int i) {
         CompactedSlice.Builder builder = new CompactedSlice.Builder();
-        for (PlacedRead read : region) {
+        for (AssembledRead read : region) {
             String id=read.getId();
-            int indexIntoRead = (int) (i - read.getGappedContigStart());
+            int indexIntoRead = (int) (i - read.getGappedStartOffset());
           //  if()
             Sequence<PhredQuality> fullQualities = qualities.get(id);
             final PhredQuality quality;

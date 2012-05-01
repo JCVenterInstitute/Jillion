@@ -25,7 +25,8 @@ package org.jcvi.common.core.assembly.ace;
 
 import java.util.Date;
 
-public interface PhdInfo {
+
+public interface PhdInfo{
 
     String getTraceName();
     String getPhdName();

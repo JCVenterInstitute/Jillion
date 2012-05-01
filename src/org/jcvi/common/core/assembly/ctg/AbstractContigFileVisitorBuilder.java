@@ -27,7 +27,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
@@ -35,7 +35,7 @@ public abstract class AbstractContigFileVisitorBuilder extends AbstractContigFil
 
     private DefaultContig.Builder currentContigBuilder;
     
-    protected abstract void  addContig(Contig<PlacedRead> contig);
+    protected abstract void  addContig(Contig<AssembledRead> contig);
 
     @Override
     protected void visitRead(String readId, int offset, Range validRange,
