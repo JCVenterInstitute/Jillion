@@ -29,7 +29,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.ContigDataStore;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -37,21 +37,21 @@ public abstract class AbstractTestContigFileDataStore extends TestContigFilePars
 
     @Test
     public void thereAre4Contigs() throws DataStoreException, IOException{
-        ContigDataStore<PlacedRead, Contig<PlacedRead>> dataStore = buildContigFileDataStore(getFile());
+        ContigDataStore<AssembledRead, Contig<AssembledRead>> dataStore = buildContigFileDataStore(getFile());
         assertEquals(4, dataStore.getNumberOfRecords());
     }
     @Override
     protected Contig getContig925From(File file) throws FileNotFoundException {
-        ContigDataStore<PlacedRead, Contig<PlacedRead>> dataStore = buildContigFileDataStore(file);
+        ContigDataStore<AssembledRead, Contig<AssembledRead>> dataStore = buildContigFileDataStore(file);
         return getContig(dataStore, "925");
     }
     @Override
     protected Contig getContig928From(File file) throws Exception{
-        ContigDataStore<PlacedRead, Contig<PlacedRead>> dataStore = buildContigFileDataStore(file);
+        ContigDataStore<AssembledRead, Contig<AssembledRead>> dataStore = buildContigFileDataStore(file);
         return getContig(dataStore, "928");
     }
     private Contig getContig(
-            ContigDataStore<PlacedRead, Contig<PlacedRead>> dataStore, String id) {
+            ContigDataStore<AssembledRead, Contig<AssembledRead>> dataStore, String id) {
         try {
             return dataStore.get(id);
         } catch (DataStoreException e) {
@@ -59,7 +59,7 @@ public abstract class AbstractTestContigFileDataStore extends TestContigFilePars
             throw new RuntimeException("error getting contig "+id,e);
         }
     }
-    protected abstract ContigDataStore<PlacedRead, Contig<PlacedRead>> buildContigFileDataStore(
+    protected abstract ContigDataStore<AssembledRead, Contig<AssembledRead>> buildContigFileDataStore(
             File file) throws FileNotFoundException;
 
 }

@@ -23,13 +23,13 @@
  */
 package org.jcvi.common.core.assembly.ace;
 
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 /**
- * {@code AcePlacedRead} is a {@link PlacedRead} implementation
+ * {@code AcePlacedRead} is a {@link AssembledRead} implementation
  * specific for reads from an ace file.
  * @author dkatzel
  */
-public interface AcePlacedRead extends PlacedRead{
+public interface AcePlacedRead extends AssembledRead{
     /**
      * Get the {@link PhdInfo} associated with this
      * read.

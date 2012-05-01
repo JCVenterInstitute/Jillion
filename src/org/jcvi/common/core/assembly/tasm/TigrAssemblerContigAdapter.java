@@ -25,7 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
@@ -46,7 +46,7 @@ import org.joda.time.format.DateTimeFormatter;
  */
 public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 
-	private final Contig<? extends PlacedRead> delegate;
+	private final Contig<? extends AssembledRead> delegate;
 	private final Map<String, TigrAssemblerPlacedRead> adaptedReads = new LinkedHashMap<String, TigrAssemblerPlacedRead>();
 	private final Map<TigrAssemblerContigAttribute,String> attributes;
 	/**
@@ -55,13 +55,13 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	 * @param optionalAttributes
 	 * @see Builder
 	 */
-	private TigrAssemblerContigAdapter(Contig<? extends PlacedRead> delegate, Map<TigrAssemblerContigAttribute, String> optionalAttributes) {
+	private TigrAssemblerContigAdapter(Contig<? extends AssembledRead> delegate, Map<TigrAssemblerContigAttribute, String> optionalAttributes) {
 		this.delegate = delegate;
-		CloseableIterator<? extends PlacedRead> iter = null;
+		CloseableIterator<? extends AssembledRead> iter = null;
 		try{
 			iter = delegate.getReadIterator();
 			while(iter.hasNext()){
-				PlacedRead read = iter.next();
+				AssembledRead read = iter.next();
 				adaptedReads.put(read.getId(), new TigrAssemblerPlacedReadAdapter(read));
 			}
 		}finally{
@@ -81,7 +81,7 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	 * attributes except for gapped and ungapped consensus.
 	 */
 	private Map<TigrAssemblerContigAttribute,String> createNonConsensusAttributes(
-			Contig<? extends PlacedRead> delegate, Map<TigrAssemblerContigAttribute, String> optionalAttributes) {
+			Contig<? extends AssembledRead> delegate, Map<TigrAssemblerContigAttribute, String> optionalAttributes) {
 		Map<TigrAssemblerContigAttribute,String> map = new EnumMap<TigrAssemblerContigAttribute,String>(TigrAssemblerContigAttribute.class);
 		map.put(TigrAssemblerContigAttribute.ASMBL_ID, delegate.getId());
 		map.put(TigrAssemblerContigAttribute.NUMBER_OF_READS, ""+delegate.getNumberOfReads());
@@ -105,7 +105,7 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		return map;
 	}
 
-	private double computePercentNFor(Contig<? extends PlacedRead> delegate) {
+	private double computePercentNFor(Contig<? extends AssembledRead> delegate) {
 		// TODO is this supposed to be %N in reads or %N in consensus or both?
 		//going with consensus for now since its the assembly table
 		int numberOfNs =0;
@@ -117,7 +117,7 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		return numberOfNs/(double)delegate.getConsensus().getLength();
 	}
 
-	private double computeAvgCoverageFor(Contig<? extends PlacedRead> delegate) {
+	private double computeAvgCoverageFor(Contig<? extends AssembledRead> delegate) {
 		double averageCoverage = DefaultCoverageMap.buildCoverageMap(delegate).getAverageCoverage();
 		return averageCoverage;
 	}
@@ -210,13 +210,13 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		 */
 		private static final DateTimeFormatter EDIT_DATE_FORMATTER =
 			DateTimeFormat.forPattern("MM/dd/yy hh:mm:ss aa");
-		private final Contig<? extends PlacedRead> contig;
+		private final Contig<? extends AssembledRead> contig;
 		private final Map<TigrAssemblerContigAttribute, String> optionalAttributes = new EnumMap<TigrAssemblerContigAttribute, String>(TigrAssemblerContigAttribute.class);
 		/**
 		 * Adapts the given contig object into a TigrAssemblerContig.
 		 * @param contig the contig to adapt.
 		 */
-		public Builder(Contig<? extends PlacedRead> contig) {
+		public Builder(Contig<? extends AssembledRead> contig) {
 			this.contig = contig;
 		}
 		/**

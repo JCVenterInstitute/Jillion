@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 
 
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
@@ -37,15 +37,15 @@ public final class AceContigTestUtil {
    
 
     
-    public static  void assertContigsEqual(Contig<? extends PlacedRead> expected, Contig<? extends PlacedRead> actual) {
+    public static  void assertContigsEqual(Contig<? extends AssembledRead> expected, Contig<? extends AssembledRead> actual) {
         assertEquals(expected.getId(), actual.getId()); 
         assertEquals(expected.getConsensus().asList(), actual.getConsensus().asList());
         assertEquals(expected.getId(),expected.getNumberOfReads(), actual.getNumberOfReads());
-        CloseableIterator<? extends PlacedRead> iter = null;
+        CloseableIterator<? extends AssembledRead> iter = null;
         try{
         	iter = expected.getReadIterator();
         	while(iter.hasNext()){
-        		PlacedRead expectedRead = iter.next();
+        		AssembledRead expectedRead = iter.next();
         		assertPlacedReadParsedCorrectly(expectedRead, actual.getRead(expectedRead.getId()));
         	}
         }finally{
@@ -54,11 +54,11 @@ public final class AceContigTestUtil {
         
     }
 
-    public static  void assertPlacedReadParsedCorrectly(PlacedRead expected,
-            PlacedRead actual) {
+    public static  void assertPlacedReadParsedCorrectly(AssembledRead expected,
+            AssembledRead actual) {
         assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getGappedContigStart(), actual.getGappedContigStart());
-        assertEquals(expected.getGappedContigEnd(), actual.getGappedContigEnd());
+        assertEquals(expected.getGappedStartOffset(), actual.getGappedStartOffset());
+        assertEquals(expected.getGappedEndOffset(), actual.getGappedEndOffset());
         assertEquals(expected.getGappedLength(), actual.getGappedLength());
         assertEquals(expected.getId(),expected.getValidRange(), actual.getValidRange());
         assertEquals(expected.getNucleotideSequence().asList(), actual.getNucleotideSequence().asList());

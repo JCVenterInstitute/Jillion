@@ -19,14 +19,14 @@
 
 package org.jcvi.common.core.assembly.asm;
 
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface AsmPlacedRead extends PlacedRead{
+public interface AsmPlacedRead extends AssembledRead{
     /**
      * Is this read a repeat surrogate
      * unitig which was cautiously placed

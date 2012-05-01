@@ -63,7 +63,10 @@ public class TestAceContigTrimmer {
     		builder = DefaultAceContig.createBuilder(id,consensus);
     	}
     	TestAceBuilder addRead(String readId, String gappedBasecalls,int offset, Direction dir, Range validRange){
-    		builder.addRead(readId, new NucleotideSequenceBuilder(gappedBasecalls).build(),offset,dir,validRange,null,offset+gappedBasecalls.length());
+    		builder.addRead(readId, 
+    				new NucleotideSequenceBuilder(gappedBasecalls).build(),
+    				offset,dir,validRange,null,
+    				(int)(validRange.getEnd()+5));
     		return this;
     	}
     	AceContig build(){

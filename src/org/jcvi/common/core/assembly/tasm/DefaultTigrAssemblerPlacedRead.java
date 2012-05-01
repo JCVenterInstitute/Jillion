@@ -29,8 +29,9 @@ import java.util.Map.Entry;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.DefaultPlacedRead;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.PlacedReadBuilder;
+import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -45,7 +46,7 @@ import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence
 final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
 
     private final Map<TigrAssemblerReadAttribute,String> attributes;
-    private final PlacedRead delegate;
+    private final AssembledRead delegate;
     
     
     public static TigrAssemblerPlacedReadBuilder createBuilder(NucleotideSequence reference, 
@@ -60,7 +61,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
      * @param sequenceDirection
      */
     private DefaultTigrAssemblerPlacedRead(
-            PlacedRead read) {
+            AssembledRead read) {
         this(read, new EnumMap<TigrAssemblerReadAttribute,String>(TigrAssemblerReadAttribute.class));
     }
     /**
@@ -69,7 +70,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
      * @param sequenceDirection
      */
     private DefaultTigrAssemblerPlacedRead(
-            PlacedRead read, Map<TigrAssemblerReadAttribute, String> attributes) {
+            AssembledRead read, Map<TigrAssemblerReadAttribute, String> attributes) {
         this.delegate = read;
         Map<TigrAssemblerReadAttribute, String> map = new EnumMap<TigrAssemblerReadAttribute, String>(attributes);
         this.attributes = Collections.unmodifiableMap(map);
@@ -89,7 +90,13 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
 	public boolean hasAttribute(TigrAssemblerReadAttribute attribute) {
 		return attributes.containsKey(attribute);
 	}
-    /**
+	
+	
+    @Override
+	public ReadInfo getReadInfo() {
+		return delegate.getReadInfo();
+	}
+	/**
     * {@inheritDoc}
     */
     @Override
@@ -152,15 +159,15 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
     * {@inheritDoc}
     */
     @Override
-    public long getGappedContigStart() {
-        return delegate.getGappedContigStart();
+    public long getGappedStartOffset() {
+        return delegate.getGappedStartOffset();
     }
     /**
     * {@inheritDoc}
     */
     @Override
-    public long getGappedContigEnd() {
-        return delegate.getGappedContigEnd();
+    public long getGappedEndOffset() {
+        return delegate.getGappedEndOffset();
     }
     /**
     * {@inheritDoc}
@@ -223,7 +230,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
     private static class Builder implements TigrAssemblerPlacedReadBuilder{
 
         private final Map<TigrAssemblerReadAttribute, String> map =new EnumMap<TigrAssemblerReadAttribute,String>(TigrAssemblerReadAttribute.class);
-        private final PlacedReadBuilder<PlacedRead> delegate;
+        private final PlacedReadBuilder<AssembledRead> delegate;
         
         
         public Builder(NucleotideSequence reference, 

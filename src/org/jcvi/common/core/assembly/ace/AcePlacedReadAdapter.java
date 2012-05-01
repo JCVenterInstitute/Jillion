@@ -28,23 +28,23 @@ import java.util.Date;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
-import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 
 public class AcePlacedReadAdapter implements AcePlacedRead{
 
-    private final PlacedRead placedRead;
+    private final AssembledRead placedRead;
     private final PhdInfo phdInfo;
     /**
      * @param placedRead
      */
-    public AcePlacedReadAdapter(PlacedRead placedRead,Date phdDate, File traceFile) {
+    public AcePlacedReadAdapter(AssembledRead placedRead,Date phdDate, File traceFile) {
       this(placedRead,
     		  ConsedUtil.generatePhdInfoFor(traceFile, placedRead.getId(), phdDate));
     }
-    public AcePlacedReadAdapter(PlacedRead placedRead,PhdInfo info) {
+    public AcePlacedReadAdapter(AssembledRead placedRead,PhdInfo info) {
         this.placedRead = placedRead;
         this.phdInfo= info;
     }
@@ -83,12 +83,12 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         return placedRead.getGappedLength();
     }
     @Override
-    public long getGappedContigEnd() {
-        return placedRead.getGappedContigEnd();
+    public long getGappedEndOffset() {
+        return placedRead.getGappedEndOffset();
     }
     @Override
-    public long getGappedContigStart() {
-        return placedRead.getGappedContigStart();
+    public long getGappedStartOffset() {
+        return placedRead.getGappedStartOffset();
     }
     @Override
     public String toString() {
@@ -151,6 +151,11 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         }
         return true;
     }
+    
+	@Override
+	public ReadInfo getReadInfo() {
+		return placedRead.getReadInfo();
+	}
 	
     
   

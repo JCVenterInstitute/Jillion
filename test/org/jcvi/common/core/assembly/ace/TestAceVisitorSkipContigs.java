@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Collections;
 
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigDataStore;
 import org.jcvi.common.core.assembly.ace.DefaultAceFileDataStore;
@@ -58,7 +58,7 @@ public class TestAceVisitorSkipContigs{
         try{
 	    	 while(iter.hasNext()){
 	        	AceContig aceContig = iter.next();
-	            Contig<PlacedRead> contig = contigDataStore.get(aceContig.getId());
+	            Contig<AssembledRead> contig = contigDataStore.get(aceContig.getId());
 	            AceContigTestUtil.assertContigsEqual(contig, aceContig);
 	    	 }
         }finally{

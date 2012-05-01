@@ -24,9 +24,9 @@ import java.util.List;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.DefaultPlacedRead;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.PlacedReadBuilder;
-import org.jcvi.common.core.seq.read.Read;
+import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -40,7 +40,7 @@ import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence
  */
 public final class DefaultAsmPlacedRead implements AsmPlacedRead{
     private final boolean isSurrogate;
-    private final PlacedRead placedRead;
+    private final AssembledRead placedRead;
     
     public static AsmPlacedReadBuilder createBuilder(NucleotideSequence reference, String readId,String validBases,
             int offset, Direction dir, Range clearRange,
@@ -49,12 +49,17 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
                 offset, dir, clearRange, ungappedFullLength,isSurrogate);
     }
     
-    private DefaultAsmPlacedRead(PlacedRead placedRead, boolean isSurrogate) {
+    private DefaultAsmPlacedRead(AssembledRead placedRead, boolean isSurrogate) {
         this.placedRead = placedRead;
         this.isSurrogate = isSurrogate;
     }
 
-    /**
+    @Override
+	public ReadInfo getReadInfo() {
+		return placedRead.getReadInfo();
+	}
+
+	/**
     * {@inheritDoc}
     */
     @Override
@@ -123,16 +128,16 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
     * {@inheritDoc}
     */
     @Override
-    public long getGappedContigStart() {
-        return placedRead.getGappedContigStart();
+    public long getGappedStartOffset() {
+        return placedRead.getGappedStartOffset();
     }
 
     /**
     * {@inheritDoc}
     */
     @Override
-    public long getGappedContigEnd() {
-        return placedRead.getGappedContigEnd();
+    public long getGappedEndOffset() {
+        return placedRead.getGappedEndOffset();
     }
 
     /**
@@ -197,7 +202,7 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
 
     private static class Builder implements AsmPlacedReadBuilder{
         private boolean isSurrogate=false;        
-        private final PlacedReadBuilder<PlacedRead> delegateBuilder;
+        private final PlacedReadBuilder<AssembledRead> delegateBuilder;
         
         
         public Builder(NucleotideSequence reference, String readId,String validBases,

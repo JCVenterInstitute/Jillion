@@ -23,7 +23,7 @@ import java.util.Collection;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AcePlacedRead;
@@ -204,8 +204,8 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
     		}
     	}
     	
-    	public void add(PlacedRead casPlacedRead){
-    		int startOffset = (int)casPlacedRead.getGappedContigStart();
+    	public void add(AssembledRead casPlacedRead){
+    		int startOffset = (int)casPlacedRead.getGappedStartOffset();
             int i=0;
             for(Nucleotide base : casPlacedRead.getNucleotideSequence().asList()){
                 int index = startOffset+i;

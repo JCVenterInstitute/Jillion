@@ -22,7 +22,7 @@ package org.jcvi.common.core.assembly.ace.consed;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ace.consed.ConsensusNavigationElement;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -40,7 +40,7 @@ public class TestConsensusNavigationElementFactoryMethod {
     NucleotideSequence consensus = new NucleotideSequenceBuilder("ACGT-ACGTACGTACGT-ACGT").build();
     Range ungappedFeatureRange= AssemblyUtil.toUngappedRange(consensus, gappedFeatureRange);
     
-    Contig<PlacedRead> mockContig;
+    Contig<AssembledRead> mockContig;
     String id = "contigId";
     @Before
     public void setup(){

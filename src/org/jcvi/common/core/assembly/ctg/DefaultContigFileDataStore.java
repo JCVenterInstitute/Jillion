@@ -32,14 +32,14 @@ import java.util.TreeMap;
 
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.ContigDataStore;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 
-public class DefaultContigFileDataStore extends AbstractContigFileVisitorBuilder implements ContigDataStore<PlacedRead, Contig<PlacedRead>>{
-    private final Map<String,Contig<PlacedRead>> contigs = new TreeMap<String, Contig<PlacedRead>>();
+public class DefaultContigFileDataStore extends AbstractContigFileVisitorBuilder implements ContigDataStore<AssembledRead, Contig<AssembledRead>>{
+    private final Map<String,Contig<AssembledRead>> contigs = new TreeMap<String, Contig<AssembledRead>>();
 
     private boolean isClosed = false;
 
@@ -61,7 +61,7 @@ public class DefaultContigFileDataStore extends AbstractContigFileVisitorBuilder
         ContigFileParser.parse(inputStream, this);
     }
     @Override
-    protected void addContig(Contig<PlacedRead> contig) {
+    protected void addContig(Contig<AssembledRead> contig) {
         contigs.put(contig.getId(), contig);
         
     }
@@ -88,7 +88,7 @@ public class DefaultContigFileDataStore extends AbstractContigFileVisitorBuilder
 
     
     @Override
-    public Contig<PlacedRead> get(String contigId)
+    public Contig<AssembledRead> get(String contigId)
             throws DataStoreException {
         throwExceptionIfClosed();
         throwExceptionIfNotInitialized();
@@ -119,7 +119,7 @@ public class DefaultContigFileDataStore extends AbstractContigFileVisitorBuilder
         return isClosed;
     }
     @Override
-    public CloseableIterator<Contig<PlacedRead>> iterator() {
-        return new DataStoreIterator<Contig<PlacedRead>>(this);
+    public CloseableIterator<Contig<AssembledRead>> iterator() {
+        return new DataStoreIterator<Contig<AssembledRead>>(this);
     }
 }

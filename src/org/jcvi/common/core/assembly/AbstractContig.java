@@ -32,7 +32,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 
-public abstract class AbstractContig<T extends PlacedRead> implements Contig<T>{
+public abstract class AbstractContig<T extends AssembledRead> implements Contig<T>{
     private NucleotideSequence consensus;
     private String id;
     private Map<String, T> mapById;

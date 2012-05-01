@@ -32,7 +32,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyTestUtil;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultPlacedRead;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
@@ -404,7 +404,7 @@ public abstract class TestContigFileParser {
         "AAGGGCAGCTCTTCGGACCCTGCCAATAAATATTATACAGACTCTCAGAGTTACTATAAT" +
         "ATTGATACT").build();
                         
-    PlacedRead CVGWB15T06B037761RM = DefaultPlacedRead.createBuilder(contigConsensus, "CVGWB15T06B037761RM", 
+    AssembledRead CVGWB15T06B037761RM = DefaultPlacedRead.createBuilder(contigConsensus, "CVGWB15T06B037761RM", 
             "AAGTTTAATACTGATAATAAGGTTATATACACCACAGAAGTGGCTTCAAAGCTTAATTTT" +
             "AAGTTGTGTTGTTTGGCCTTTAAGAATGCTTTACAGACGTTTAATTGGAGTGTTGTGTAC" +
             "AGGGGCTTCTTTCTAGTGGCAACAGTCTTTTTATTATGG-TTTAACTTTTTGTATGCCAA" +
@@ -423,7 +423,7 @@ public abstract class TestContigFileParser {
             .build();
    
     
-    PlacedRead CVGWB47T06D1122735FMB = DefaultPlacedRead.createBuilder(contigConsensus, "CVGWB47T06D1122735FMB",             
+    AssembledRead CVGWB47T06D1122735FMB = DefaultPlacedRead.createBuilder(contigConsensus, "CVGWB47T06D1122735FMB",             
                          "GTACCTATGTAGAAAATAACGGTCACCCGAAATTAGATTGGCTAGACCTTGACCCGCAAT" +
                          "TGTGTAATTCAGGAA-GGATTTCCGCAAAGAGTGGTAACTCTCTCTTTAGGAGTTTCCAT" +
                          "TTTACTGATTTTTACAACTACACAGGAGAAGGCGACCAAATTATATTTTATGAAGGAGTT" +
@@ -434,7 +434,7 @@ public abstract class TestContigFileParser {
                          "TTATTACTATGAGAGTGAGGCTAATTTCACACTACAAGGTTGTGATGAATTTATAGTACC" +
                          "GCTCTGCGTTTTTAATGGCCGTTCCAAGGGCAGCTC"
                          ,
-            20675, Direction.FORWARD,Range.create(40,553),550)
+            20675, Direction.FORWARD,Range.create(40,553),553)
             .build();
     
     

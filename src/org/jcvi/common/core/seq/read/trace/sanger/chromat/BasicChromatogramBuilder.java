@@ -121,7 +121,7 @@ public final class BasicChromatogramBuilder {
         	this.id = id;
         	return this;
         }
-        public final NucleotideSequence basecalls() {
+        public NucleotideSequence basecalls() {
             return basecalls;
         }
 
@@ -130,7 +130,7 @@ public final class BasicChromatogramBuilder {
             return this;
         }
 
-        public final byte[] aConfidence() {
+        public byte[] aConfidence() {
             return Arrays.copyOf(aConfidence, aConfidence.length);
         }
 
@@ -139,86 +139,86 @@ public final class BasicChromatogramBuilder {
             return this;
         }
 
-        public final byte[] cConfidence() {
+        public byte[] cConfidence() {
             return Arrays.copyOf(cConfidence, cConfidence.length);
         }
 
-        public final BasicChromatogramBuilder cConfidence(byte[] confidence) {
+        public BasicChromatogramBuilder cConfidence(byte[] confidence) {
             cConfidence = Arrays.copyOf(confidence, confidence.length);
             return this;
         }
 
-        public final byte[] gConfidence() {
+        public byte[] gConfidence() {
             return Arrays.copyOf(gConfidence, gConfidence.length);
         }
 
-        public final BasicChromatogramBuilder gConfidence(byte[] confidence) {
+        public BasicChromatogramBuilder gConfidence(byte[] confidence) {
             gConfidence = Arrays.copyOf(confidence, confidence.length);
             return this;
         }
 
-        public final byte[] tConfidence() {
+        public byte[] tConfidence() {
             return Arrays.copyOf(tConfidence, tConfidence.length);
         }
 
-        public final BasicChromatogramBuilder tConfidence(byte[] confidence) {
+        public BasicChromatogramBuilder tConfidence(byte[] confidence) {
             tConfidence = Arrays.copyOf(confidence, confidence.length);
             return this;
         }
 
-        public final short[] aPositions() {
+        public short[] aPositions() {
             if(aPositions ==null){
                 return new short[]{};
             }
             return Arrays.copyOf(aPositions, aPositions.length);
         }
 
-        public final BasicChromatogramBuilder aPositions(short[] positions) {
+        public BasicChromatogramBuilder aPositions(short[] positions) {
             aPositions = Arrays.copyOf(positions, positions.length);
             return this;
         }
 
-        public final short[] cPositions() {
+        public short[] cPositions() {
             if(cPositions ==null){
                 return new short[]{};
             }
             return Arrays.copyOf(cPositions, cPositions.length);
         }
 
-        public final BasicChromatogramBuilder cPositions(short[] positions) {
+        public BasicChromatogramBuilder cPositions(short[] positions) {
             cPositions = Arrays.copyOf(positions, positions.length);
             return this;
         }
 
-        public final short[] gPositions() {
+        public short[] gPositions() {
             if(gPositions ==null){
                 return new short[]{};
             }
             return Arrays.copyOf(gPositions, gPositions.length);
         }
 
-        public final BasicChromatogramBuilder gPositions(short[] positions) {
+        public BasicChromatogramBuilder gPositions(short[] positions) {
             gPositions = Arrays.copyOf(positions, positions.length);
             return this;
         }
 
-        public final short[] tPositions() {
+        public short[] tPositions() {
             if(tPositions ==null){
                 return new short[]{};
             }
             return Arrays.copyOf(tPositions, tPositions.length);
         }
 
-        public final BasicChromatogramBuilder tPositions(short[] positions) {
+        public BasicChromatogramBuilder tPositions(short[] positions) {
             tPositions = Arrays.copyOf(positions, positions.length);
             return this;
         }
 
-        public final Map<String,String> properties() {
+        public Map<String,String> properties() {
             return properties ==null? null :new HashMap<String, String>(properties);
         }
 
-        public final BasicChromatogramBuilder properties(Map<String,String> properties) {
+        public BasicChromatogramBuilder properties(Map<String,String> properties) {
             this.properties = new HashMap<String, String>();
             //need to manually add properties because default implementation
             //is to use input as "default" but will return empty map!!!

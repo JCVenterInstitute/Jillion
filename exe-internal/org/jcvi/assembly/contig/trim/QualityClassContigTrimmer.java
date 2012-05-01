@@ -52,7 +52,7 @@ import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.ContigDataStore;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
@@ -70,7 +70,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.glyph.qualClass.QualityClass;
 
-public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>{
+public class QualityClassContigTrimmer<R extends AssembledRead,C extends Contig<R>>{
 
     private final int maxNumberOf5PrimeBasesToTrim;
     private final int maxNumberOf3PrimeBasesToTrim;
@@ -249,26 +249,26 @@ public class QualityClassContigTrimmer<R extends PlacedRead,C extends Contig<R>>
                 qualityClassesToTrim.add(QualityClass.valueOf(Byte.parseByte(qualityClassAsString)));
             }
             ReadTrimMap trimMap = ReadTrimUtil.readReadTrimsFromFile(trimFile);
-            ContigDataStore<PlacedRead, Contig<PlacedRead>> contigDataStore = new DefaultContigFileDataStore(
+            ContigDataStore<AssembledRead, Contig<AssembledRead>> contigDataStore = new DefaultContigFileDataStore(
                     contigFile);
             QualityDataStore qualityFastaMap = 
                 CachedDataStore.create(QualityDataStore.class, 
                         QualityFastaRecordDataStoreAdapter.adapt(new LargeQualityFastaFileDataStore(qualFastaFile)),
                         100);
-            CloseableIterator<Contig<PlacedRead>> iter = contigDataStore.iterator();
+            CloseableIterator<Contig<AssembledRead>> iter = contigDataStore.iterator();
             try{
 	            while(iter.hasNext()) {
-	            	Contig<PlacedRead> contig = iter.next();
+	            	Contig<AssembledRead> contig = iter.next();
 	                QualityClassContigTrimmer trimmer = new QualityClassContigTrimmer(
 	                        fivePrimeMaxBasesToTrim, threePrimeMaxBasesToTrim, qualityClassesToTrim);
 	
-	                List<TrimmedPlacedRead<PlacedRead>> trims = trimmer
-	                        .trim(contig,qualityFastaMap, new DefaultContigQualityClassComputer<PlacedRead>(
+	                List<TrimmedPlacedRead<AssembledRead>> trims = trimmer
+	                        .trim(contig,qualityFastaMap, new DefaultContigQualityClassComputer<AssembledRead>(
 	                                GapQualityValueStrategies.LOWEST_FLANKING, highQualityThreshold));
 	              
-	                List<TrimmedPlacedRead<PlacedRead>> allChangedReads = new ArrayList<TrimmedPlacedRead<PlacedRead>>();
+	                List<TrimmedPlacedRead<AssembledRead>> allChangedReads = new ArrayList<TrimmedPlacedRead<AssembledRead>>();
 	                allChangedReads.addAll(trims);
-	                for (TrimmedPlacedRead<PlacedRead> trim : allChangedReads) {
+	                for (TrimmedPlacedRead<AssembledRead> trim : allChangedReads) {
 	                    // force it to be residue based
 	                    Range newtrimmedRange = trim.getNewTrimRange();
 	                    Range oldTrimmedRange = trim.getRead().getValidRange();

@@ -25,7 +25,7 @@ import java.io.IOException;
 import org.jcvi.assembly.cas.Cas2Consed3;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.ContigDataStore;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigDataStore;
 import org.jcvi.common.core.assembly.ace.AcePlacedRead;
@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
 public class TestCas2Consed3 {
 
 	 private final ResourceFileServer RESOURCES = new ResourceFileServer(TestCas2Consed3.class); 
-	 private ContigDataStore<PlacedRead, Contig<PlacedRead>> expectedDataStore;
+	 private ContigDataStore<AssembledRead, Contig<AssembledRead>> expectedDataStore;
 	   private String prefix = "cas2consed3";
 	 
 	 TemporaryDirectoryFileServer tempDir;
@@ -70,7 +70,7 @@ public class TestCas2Consed3 {
 	        try{
 		        while(iter.hasNext()){
 		        	AceContig contig = iter.next();
-		    	  Contig<PlacedRead> expectedContig= getExpectedContig(contig.getId());
+		    	  Contig<AssembledRead> expectedContig= getExpectedContig(contig.getId());
 		    	  assertEquals("consensus", expectedContig.getConsensus(),
 		    			  contig.getConsensus());
 		    	  assertEquals("# reads", expectedContig.getNumberOfReads(), contig.getNumberOfReads());
@@ -83,19 +83,19 @@ public class TestCas2Consed3 {
 	    }
 
 		private void assertReadsCorrectlyPlaced(AceContig contig,
-				Contig<PlacedRead> expectedContig) {
+				Contig<AssembledRead> expectedContig) {
 			CloseableIterator<AcePlacedRead> iter = null;
 			try{
 				iter = contig.getReadIterator();
 				while(iter.hasNext()){
 					AcePlacedRead actualRead = iter.next();
 				String readId = actualRead.getId();
-				PlacedRead expectedRead = expectedContig.getRead(readId);
+				AssembledRead expectedRead = expectedContig.getRead(readId);
 				assertEquals("read basecalls", expectedRead
 						.getNucleotideSequence().asList(), actualRead
 						.getNucleotideSequence().asList());
-				assertEquals("read offset", expectedRead.getGappedContigStart(),
-						actualRead.getGappedContigStart());
+				assertEquals("read offset", expectedRead.getGappedStartOffset(),
+						actualRead.getGappedStartOffset());
 
 				}
 			}finally{
@@ -108,7 +108,7 @@ public class TestCas2Consed3 {
 	     * to get the corresponding expected flap assembly which
 	     * doesn't do that.
 	     */
-	    private Contig<PlacedRead> getExpectedContig(String actualContigId) throws DataStoreException{
+	    private Contig<AssembledRead> getExpectedContig(String actualContigId) throws DataStoreException{
 	        String IdWithoutCoordinates = actualContigId.replaceAll("_.+", "");
 	        return expectedDataStore.get(IdWithoutCoordinates);
 	    }

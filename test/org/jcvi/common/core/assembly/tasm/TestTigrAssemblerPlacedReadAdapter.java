@@ -25,7 +25,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.DefaultPlacedRead;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.tasm.TigrAssemblerPlacedReadAdapter;
 import org.jcvi.common.core.assembly.tasm.TigrAssemblerReadAttribute;
 import org.jcvi.common.core.seq.read.DefaultRead;
@@ -60,7 +60,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 	
 	@Test
 	public void adaptedReadShouldDelegateAllPlacedReadMethods(){
-		PlacedRead delegate = DefaultPlacedRead.createBuilder(consensus, id, readSequence, offset, 
+		AssembledRead delegate = DefaultPlacedRead.createBuilder(consensus, id, readSequence, offset, 
 		        Direction.FORWARD,validRange, ungappedLength)
 		        .build();
 		TigrAssemblerPlacedReadAdapter sut = new TigrAssemblerPlacedReadAdapter(delegate);
@@ -73,7 +73,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 	}
 	@Test
 	public void reverseReadShouldHaveSwappedSeqLeftandSeqRightAttributes(){
-	    PlacedRead delegate = DefaultPlacedRead.createBuilder(consensus, id, readSequence, offset, 
+	    AssembledRead delegate = DefaultPlacedRead.createBuilder(consensus, id, readSequence, offset, 
                 Direction.REVERSE,validRange, ungappedLength)
                 .build();
 		TigrAssemblerPlacedReadAdapter sut = new TigrAssemblerPlacedReadAdapter(delegate);
@@ -89,21 +89,21 @@ public class TestTigrAssemblerPlacedReadAdapter {
 		assertEquals(id, sut.getId());
 		
 		assertEquals(gappedBasecalls, sut.getNucleotideSequence());
-		assertEquals(offset, sut.getGappedContigStart());
-		assertEquals(offset+gappedBasecalls.getLength()-1, sut.getGappedContigEnd());
+		assertEquals(offset, sut.getGappedStartOffset());
+		assertEquals(offset+gappedBasecalls.getLength()-1, sut.getGappedEndOffset());
 		assertEquals(gappedBasecalls.getLength(),sut.getGappedLength());
 		assertTrue(sut.getNucleotideSequence().getDifferenceMap().isEmpty());
 	}
-	private void assertCommonAttributesCorrect(PlacedRead delegate,
+	private void assertCommonAttributesCorrect(AssembledRead delegate,
 			TigrAssemblerPlacedReadAdapter sut) {
 		assertFalse(sut.hasAttribute(TigrAssemblerReadAttribute.BEST));
 		assertFalse(sut.hasAttribute(TigrAssemblerReadAttribute.COMMENT));
 		assertFalse(sut.hasAttribute(TigrAssemblerReadAttribute.DB));
 		
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.NAME),delegate.getId());
-		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.CONTIG_START_OFFSET),""+delegate.getGappedContigStart());
-		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.CONTIG_LEFT),""+(delegate.getGappedContigStart()));
-		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.CONTIG_RIGHT),""+(delegate.getGappedContigEnd()));
+		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.CONTIG_START_OFFSET),""+delegate.getGappedStartOffset());
+		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.CONTIG_LEFT),""+(delegate.getGappedStartOffset()));
+		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.CONTIG_RIGHT),""+(delegate.getGappedEndOffset()));
 		assertEquals(sut.getAttributeValue(TigrAssemblerReadAttribute.GAPPED_SEQUENCE),
 				Nucleotides.asString(gappedBasecalls.asList()));
 		

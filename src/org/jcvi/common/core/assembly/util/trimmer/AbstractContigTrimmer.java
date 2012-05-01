@@ -25,7 +25,7 @@ import java.util.List;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
@@ -43,7 +43,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  *
  *
  */
-public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Contig<P>> implements ContigTrimmer<P,C> {
+public abstract class AbstractContigTrimmer<P extends AssembledRead, C extends Contig<P>> implements ContigTrimmer<P,C> {
 
     private final List<PlacedReadTrimmer<P,C>> trimmers = new ArrayList<PlacedReadTrimmer<P,C>>();
     
@@ -160,7 +160,7 @@ public abstract class AbstractContigTrimmer<P extends PlacedRead, C extends Cont
 
     /**
      * This trimmer will begin trimming the given contig, any calls
-     * to {@link #trimRead(PlacedRead, long, String, Range)} will be
+     * to {@link #trimRead(AssembledRead, long, String, Range)} will be
      * for reads from this contig until the method {@link #buildNewContig()}.
      * @param contig the original contig that will be trimmed.
      */

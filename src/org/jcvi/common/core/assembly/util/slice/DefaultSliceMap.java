@@ -30,7 +30,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
@@ -39,28 +39,28 @@ import org.jcvi.common.core.symbol.qual.QualityDataStore;
 
 public class DefaultSliceMap extends AbstractSliceMap{
 
-    public static SliceMap create(Contig<? extends PlacedRead> contig, QualityDataStore qualityDataStore,
+    public static SliceMap create(Contig<? extends AssembledRead> contig, QualityDataStore qualityDataStore,
                         QualityValueStrategy qualityValueStrategy){
         return new DefaultSliceMap(DefaultCoverageMap.buildCoverageMap(contig), qualityDataStore, qualityValueStrategy);
     }
     
-    public static <PR extends PlacedRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> DefaultSliceMap create(M coverageMap,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy){
+    public static <PR extends AssembledRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> DefaultSliceMap create(M coverageMap,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy){
         return new DefaultSliceMap(coverageMap, qualityDataStore, qualityValueStrategy);
     }
     private Map<Long, IdedSlice> sliceMap = new HashMap<Long, IdedSlice>();
     private long size;
     protected PhredQuality defaultQuality;
-    public DefaultSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
+    public DefaultSliceMap(CoverageMap<? extends CoverageRegion<? extends AssembledRead>> coverageMap, 
                         QualityDataStore qualityDataStore,
                         QualityValueStrategy qualityValueStrategy){
         this(coverageMap,qualityDataStore, qualityValueStrategy,null);
     }
-    protected DefaultSliceMap(CoverageMap<? extends CoverageRegion<? extends PlacedRead>> coverageMap, 
+    protected DefaultSliceMap(CoverageMap<? extends CoverageRegion<? extends AssembledRead>> coverageMap, 
             QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality){
         this.defaultQuality = defaultQuality;
         this.size = coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).asRange().getEnd()+1;
-        for(CoverageRegion<?  extends PlacedRead> region : coverageMap){
+        for(CoverageRegion<?  extends AssembledRead> region : coverageMap){
         	Range range = region.asRange();
             for(long i=range.getBegin(); i<=range.getEnd(); i++ ){
                 List<IdedSliceElement> sliceElements = createSliceElementsFor(region, i, qualityDataStore, qualityValueStrategy);

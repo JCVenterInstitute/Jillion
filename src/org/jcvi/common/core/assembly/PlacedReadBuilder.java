@@ -31,7 +31,7 @@ import org.jcvi.common.core.util.Builder;
 
 /**
  * {@code PlacedReadBuilder} is a {@link Builder}
- * for {@link PlacedRead}s for a specific contig.
+ * for {@link AssembledRead}s for a specific contig.
  * Methods in this interface can change the bases
  * of this read or shift where on the reference (or contig consensus)
  * this read lands.
@@ -39,7 +39,7 @@ import org.jcvi.common.core.util.Builder;
  *
  *
  */
-public interface PlacedReadBuilder<R extends PlacedRead> extends Rangeable, Builder<R>{
+public interface PlacedReadBuilder<R extends AssembledRead> extends Rangeable, Builder<R>{
 	
 	
     /**

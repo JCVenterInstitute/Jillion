@@ -25,6 +25,8 @@ package org.jcvi.common.core.assembly.clc.cas.read;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.assembly.DefaultReadInfo;
+import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 
@@ -35,6 +37,7 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
     private final long startOffset;
     private final Direction dir;
     private final int ungappedFullLength;
+    private final ReadInfo readInfo;
     public DefaultCasPlacedRead(Read<ReferenceEncodedNucleotideSequence> read, long startOffset,Range validRange, 
             Direction dir, int ungappedFullLength){
         if(read==null){
@@ -51,17 +54,24 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
         this.startOffset = startOffset;
         this.dir= dir;
         this.ungappedFullLength = ungappedFullLength;
+        this.readInfo = new DefaultReadInfo(validRange, ungappedFullLength);
     }
     
     
     @Override
+	public ReadInfo getReadInfo() {
+		return readInfo;
+	}
+
+
+	@Override
     public int getUngappedFullLength() {
         return ungappedFullLength;
     }
 
 
     @Override
-    public long getGappedContigEnd() {
+    public long getGappedEndOffset() {
         return startOffset+getGappedLength()-1;
     }
     @Override
@@ -69,7 +79,7 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
         return read.getNucleotideSequence().getLength();
     }
     @Override
-    public long getGappedContigStart() {
+    public long getGappedStartOffset() {
         return startOffset;
     }
     @Override
@@ -89,14 +99,14 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
     @Override
     public long toGappedValidRangeOffset(long referenceIndex) {
         
-        long validRangeIndex= referenceIndex - getGappedContigStart();
+        long validRangeIndex= referenceIndex - getGappedStartOffset();
         checkValidRange(validRangeIndex);
         return validRangeIndex;
     }
     @Override
     public long toReferenceOffset(long validRangeIndex) {
         checkValidRange(validRangeIndex);
-        return getGappedContigStart() +validRangeIndex;
+        return getGappedStartOffset() +validRangeIndex;
     }
     private void checkValidRange(long validRangeIndex) {
         if(validRangeIndex <0){
@@ -160,7 +170,7 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
 
     @Override
 	public Range getGappedContigRange() {
-		return Range.create(getGappedContigStart(), getGappedContigEnd());
+		return Range.create(getGappedStartOffset(), getGappedEndOffset());
 	}  
     
    

@@ -34,7 +34,7 @@ import java.util.List;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
@@ -58,11 +58,11 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
             buildCoverageMap(Collection<V> elements, int maxAllowedCoverage){
         return (DefaultCoverageMap<V,T>)new Builder(elements,maxAllowedCoverage).build();
     }
-    public static <PR extends PlacedRead,C extends Contig<PR>, T extends CoverageRegion<PR>> DefaultCoverageMap<PR,T> 
+    public static <PR extends AssembledRead,C extends Contig<PR>, T extends CoverageRegion<PR>> DefaultCoverageMap<PR,T> 
         buildCoverageMap(C contig){
             return (DefaultCoverageMap<PR,T>)new Builder(contig.getReadIterator()).build();
     }
-    public static <PR extends PlacedRead,C extends Contig<PR>, T extends CoverageRegion<PR>> DefaultCoverageMap<PR,T>    
+    public static <PR extends AssembledRead,C extends Contig<PR>, T extends CoverageRegion<PR>> DefaultCoverageMap<PR,T>    
         buildCoverageMap(C contig, int maxAllowedCoverage){
             return (DefaultCoverageMap<PR,T>)new Builder(contig.getReadIterator(),maxAllowedCoverage).build();
     }

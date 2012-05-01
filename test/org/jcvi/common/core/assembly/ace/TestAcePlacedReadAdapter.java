@@ -28,7 +28,7 @@ import java.util.Date;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ace.AcePlacedReadAdapter;
 import org.jcvi.common.core.assembly.ace.DefaultPhdInfo;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
@@ -38,7 +38,7 @@ import org.junit.Test;
 
 public class TestAcePlacedReadAdapter {
 
-    PlacedRead mockPlacedRead;
+    AssembledRead mockPlacedRead;
     String id = "readId";
     Date date = new Date(123456789L);
     PhdInfo phdInfo = new DefaultPhdInfo(id, id+".phd.1", date);
@@ -49,7 +49,7 @@ public class TestAcePlacedReadAdapter {
     
     @Before
     public void setup(){
-        mockPlacedRead = createMock(PlacedRead.class);
+        mockPlacedRead = createMock(AssembledRead.class);
         expect(mockPlacedRead.getId()).andReturn(id);
         replay(mockPlacedRead);
         sut = new AcePlacedReadAdapter(mockPlacedRead, date,null);
@@ -119,16 +119,16 @@ public class TestAcePlacedReadAdapter {
     }
     @Test
     public void getEnd() {
-        expect(mockPlacedRead.getGappedContigEnd()).andReturn(validRange.getEnd());
+        expect(mockPlacedRead.getGappedEndOffset()).andReturn(validRange.getEnd());
         replay(mockPlacedRead);
-        assertEquals(validRange.getEnd(), sut.getGappedContigEnd());
+        assertEquals(validRange.getEnd(), sut.getGappedEndOffset());
         verify(mockPlacedRead);
     }
     @Test
     public void getStart() {
-        expect(mockPlacedRead.getGappedContigStart()).andReturn(validRange.getBegin());
+        expect(mockPlacedRead.getGappedStartOffset()).andReturn(validRange.getBegin());
         replay(mockPlacedRead);
-        assertEquals(validRange.getBegin(), sut.getGappedContigStart());
+        assertEquals(validRange.getBegin(), sut.getGappedStartOffset());
         verify(mockPlacedRead);
     } 
     

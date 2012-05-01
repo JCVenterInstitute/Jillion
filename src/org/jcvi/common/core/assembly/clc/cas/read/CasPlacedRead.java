@@ -23,10 +23,10 @@
  */
 package org.jcvi.common.core.assembly.clc.cas.read;
 
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 
 
-public interface CasPlacedRead extends PlacedRead {
+public interface CasPlacedRead extends AssembledRead {
 
     int getUngappedFullLength();
 }

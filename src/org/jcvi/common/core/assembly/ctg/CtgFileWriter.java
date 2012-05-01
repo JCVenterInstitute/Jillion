@@ -34,7 +34,7 @@ import java.util.TreeSet;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
@@ -54,7 +54,7 @@ public class CtgFileWriter implements Closeable{
     public CtgFileWriter(OutputStream out) {
         this.out = out;
     }
-    public <PR extends PlacedRead, C extends Contig<PR>> void write(C contig) throws IOException,
+    public <PR extends AssembledRead, C extends Contig<PR>> void write(C contig) throws IOException,
             UnsupportedEncodingException {
         writeContigHeader(contig);
         writeBases(contig.getConsensus());
@@ -69,14 +69,14 @@ public class CtgFileWriter implements Closeable{
         }finally{
         	IOUtil.closeAndIgnoreErrors(iter);
         }
-        for(PlacedRead placedRead : readsInContig){
+        for(AssembledRead placedRead : readsInContig){
             writePlacedReadHeader(placedRead, contig.getConsensus());
             writeBases(placedRead.getNucleotideSequence());
         }
     }
     
    
-    private void writeContigHeader(Contig<? extends PlacedRead> contig) throws IOException {
+    private void writeContigHeader(Contig<? extends AssembledRead> contig) throws IOException {
         String header = String.format("##%s %d %d bases, 00000000 checksum.\n",
                 contig.getId(), contig.getNumberOfReads(), contig.getConsensus().getLength());
         
@@ -102,9 +102,9 @@ public class CtgFileWriter implements Closeable{
         out.flush();
     }
     
-    private void writePlacedReadHeader(PlacedRead placedRead,NucleotideSequence consensus) throws IOException {
+    private void writePlacedReadHeader(AssembledRead placedRead,NucleotideSequence consensus) throws IOException {
         StringBuilder header = new StringBuilder();
-        header.append(String.format("#%s(%d) [", placedRead.getId(), placedRead.getGappedContigStart()));
+        header.append(String.format("#%s(%d) [", placedRead.getId(), placedRead.getGappedStartOffset()));
         int validLeft = (int)placedRead.getValidRange().getBegin();
         int validRight = (int)placedRead.getValidRange().getEnd();
         if(placedRead.getDirection() == Direction.REVERSE){
@@ -116,13 +116,13 @@ public class CtgFileWriter implements Closeable{
 
         header.append(String.format("] %d bases, 00000000 checksum. {%d %d} <%d %d>\n",
                 placedRead.getNucleotideSequence().getLength(), validLeft+1, validRight+1, 
-                placedRead.getGappedContigStart()+1-consensus.getNumberOfGapsUntil((int) placedRead.getGappedContigStart()), 
-                placedRead.getGappedContigEnd()+1-consensus.getNumberOfGapsUntil((int)placedRead.getGappedContigEnd())));
+                placedRead.getGappedStartOffset()+1-consensus.getNumberOfGapsUntil((int) placedRead.getGappedStartOffset()), 
+                placedRead.getGappedEndOffset()+1-consensus.getNumberOfGapsUntil((int)placedRead.getGappedEndOffset())));
         writeToOutputStream(header.toString());
         
     }
     /**
-     * {@code CtgFormatReadSorter} will sort the {@link PlacedRead}s
+     * {@code CtgFormatReadSorter} will sort the {@link AssembledRead}s
      * by start coordinate.  If multiple reads have the same start coordinate
      * in the contig, then those reads will be sorted by length (smallest first).  If there are still
      * multiple reads that have the same start AND the same length, then those reads
@@ -131,7 +131,7 @@ public class CtgFileWriter implements Closeable{
      *
      *
      */
-    private static enum CtgFormatReadSorter implements Comparator<PlacedRead>, Serializable{
+    private static enum CtgFormatReadSorter implements Comparator<AssembledRead>, Serializable{
         /**
          * Singleton instance.
          */
@@ -141,8 +141,8 @@ public class CtgFileWriter implements Closeable{
          * Sorts PlacedRead by offset then by read length, then by id.
          */
         @Override
-        public int compare(PlacedRead o1, PlacedRead o2) {
-            int startComparison = Long.valueOf(o1.getGappedContigStart()).compareTo(Long.valueOf(o2.getGappedContigStart()));
+        public int compare(AssembledRead o1, AssembledRead o2) {
+            int startComparison = Long.valueOf(o1.getGappedStartOffset()).compareTo(Long.valueOf(o2.getGappedStartOffset()));
             if(startComparison !=0){
                 return startComparison;
             }

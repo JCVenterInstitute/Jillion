@@ -36,7 +36,7 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 
 
-public final class DefaultPlacedRead implements PlacedRead {
+public final class DefaultPlacedRead implements AssembledRead {
 
     private final long start;
     private final byte directionOrdinal;
@@ -44,9 +44,9 @@ public final class DefaultPlacedRead implements PlacedRead {
     private final int ungappedFullLength;
     private final ReferenceEncodedNucleotideSequence sequence;
     private final String id;
+    private final ReadInfo readInfo;
     
-    
-    public static PlacedReadBuilder<PlacedRead> createBuilder(NucleotideSequence reference, 
+    public static PlacedReadBuilder<AssembledRead> createBuilder(NucleotideSequence reference, 
             String readId,NucleotideSequence validBases,
             int offset, Direction dir, Range clearRange,
             int ungappedFullLength){
@@ -54,7 +54,7 @@ public final class DefaultPlacedRead implements PlacedRead {
                 clearRange, ungappedFullLength);
     }
     
-    public static PlacedReadBuilder<PlacedRead> createBuilder(NucleotideSequence reference, 
+    public static PlacedReadBuilder<AssembledRead> createBuilder(NucleotideSequence reference, 
             String readId,String validBases,
             int offset, Direction dir, Range clearRange,
             int ungappedFullLength){
@@ -69,14 +69,22 @@ public final class DefaultPlacedRead implements PlacedRead {
         this.directionOrdinal = (byte)sequenceDirection.ordinal();
         this.validRange = validRange;
         this.ungappedFullLength = ungappedFullLength;
+        this.readInfo = new DefaultReadInfo(validRange, ungappedFullLength);
     }
+    
+    
     @Override
+	public ReadInfo getReadInfo() {
+		return readInfo;
+	}
+
+	@Override
     public long getGappedLength() {
         return sequence.getLength();
     }
 
     @Override
-    public long getGappedContigStart() {
+    public long getGappedStartOffset() {
         return start;
     }
 
@@ -114,8 +122,8 @@ public final class DefaultPlacedRead implements PlacedRead {
         if (this == obj){
             return true;
         }
-        if (obj instanceof PlacedRead){           
-        	PlacedRead other = (PlacedRead) obj;
+        if (obj instanceof AssembledRead){           
+        	AssembledRead other = (AssembledRead) obj;
         	if(getId()==null && other.getId() !=null){
         		return false;
         	}
@@ -132,7 +140,7 @@ public final class DefaultPlacedRead implements PlacedRead {
         		return false;
         	}
         	
-            return start== other.getGappedContigStart() 
+            return start== other.getGappedStartOffset() 
             && getDirection() == other.getDirection();
         }
         return false;
@@ -145,8 +153,8 @@ public final class DefaultPlacedRead implements PlacedRead {
     }
   
     @Override
-    public long getGappedContigEnd() {
-        return getGappedContigStart()+getGappedLength()-1;
+    public long getGappedEndOffset() {
+        return getGappedStartOffset()+getGappedLength()-1;
     }
 
     public Map<Integer, Nucleotide> getDifferenceMap(){
@@ -168,14 +176,14 @@ public final class DefaultPlacedRead implements PlacedRead {
     @Override
     public long toGappedValidRangeOffset(long referenceIndex) {
         
-        long validRangeIndex= referenceIndex - getGappedContigStart();
+        long validRangeIndex= referenceIndex - getGappedStartOffset();
         checkValidRange(validRangeIndex);
         return validRangeIndex;
     }
     @Override
     public long toReferenceOffset(long validRangeIndex) {
         checkValidRange(validRangeIndex);
-        return getGappedContigStart() +validRangeIndex;
+        return getGappedStartOffset() +validRangeIndex;
     }
     private void checkValidRange(long validRangeIndex) {
         if(validRangeIndex <0){
@@ -196,10 +204,10 @@ public final class DefaultPlacedRead implements PlacedRead {
     
     @Override
 	public Range getGappedContigRange() {
-		return Range.create(getGappedContigStart(), getGappedContigEnd());
+		return Range.create(getGappedStartOffset(), getGappedEndOffset());
 	}
 
-	private static class Builder implements PlacedReadBuilder<PlacedRead>{
+	private static class Builder implements PlacedReadBuilder<AssembledRead>{
         private String readId;
         /**
          * Our original encoded sequence.  If we 
@@ -232,6 +240,9 @@ public final class DefaultPlacedRead implements PlacedRead {
             }
             if(offset <0){
                 throw new IllegalArgumentException("read goes before the reference");
+            }
+            if(ungappedFullLength < clearRange.getEnd()){
+            	throw new IllegalArgumentException("clear range extends beyond ungapped full length");
             }
             this.reference = reference;
             this.ungappedFullLength = ungappedFullLength;
@@ -320,7 +331,7 @@ public final class DefaultPlacedRead implements PlacedRead {
         * {@inheritDoc}
         */
         @Override
-        public PlacedRead build(){
+        public AssembledRead build(){
         	
             ReferenceEncodedNucleotideSequence updatedEncodedBasecalls = new NucleotideSequenceBuilder(currentBasecallsAsString())
             																.setReferenceHint(reference, offset)

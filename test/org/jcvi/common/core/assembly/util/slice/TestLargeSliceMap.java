@@ -20,7 +20,7 @@
 package org.jcvi.common.core.assembly.util.slice;
 
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.assembly.util.slice.LargeSliceMap;
 import org.jcvi.common.core.assembly.util.slice.SliceMap;
@@ -37,7 +37,7 @@ public class TestLargeSliceMap extends AbstractTestSliceMap{
     * {@inheritDoc}
     */
     @Override
-    protected SliceMap createSliceMapFor(Contig<PlacedRead> contig,
+    protected SliceMap createSliceMapFor(Contig<AssembledRead> contig,
             QualityDataStore qualityDatastore, QualityValueStrategy qualityValueStrategy) {
         return new LargeSliceMap(DefaultCoverageMap.buildCoverageMap(contig),
                 qualityDatastore, qualityValueStrategy);

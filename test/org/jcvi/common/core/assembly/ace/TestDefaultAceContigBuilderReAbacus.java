@@ -61,15 +61,15 @@ public class TestDefaultAceContigBuilderReAbacus {
         assertEquals("ACGTTACGT", contig.getConsensus().toString());
         AcePlacedRead read1 = contig.getRead("read1");
         assertEquals("GTTACG", read1.getNucleotideSequence().toString());
-        assertEquals(7, read1.getGappedContigEnd());
+        assertEquals(7, read1.getGappedEndOffset());
         
         AcePlacedRead read2 = contig.getRead("read2");
         assertEquals("ACGTTAC", read2.getNucleotideSequence().toString());
-        assertEquals(6, read2.getGappedContigEnd());
+        assertEquals(6, read2.getGappedEndOffset());
         
         AcePlacedRead read3 = contig.getRead("read3");
         assertEquals("TTACGT", read3.getNucleotideSequence().toString());
-        assertEquals(8, read3.getGappedContigEnd());
+        assertEquals(8, read3.getGappedEndOffset());
     }
     
     @Test
@@ -92,20 +92,20 @@ public class TestDefaultAceContigBuilderReAbacus {
         assertEquals("ACGTTACGT", contig.getConsensus().toString());
         AcePlacedRead read1 = contig.getRead("read1");
         assertEquals("GTTACG", read1.getNucleotideSequence().toString());
-        assertEquals(7, read1.getGappedContigEnd());
+        assertEquals(7, read1.getGappedEndOffset());
         
         AcePlacedRead read2 = contig.getRead("read2");
         assertEquals("ACGTTAC", read2.getNucleotideSequence().toString());
-        assertEquals(6, read2.getGappedContigEnd());
+        assertEquals(6, read2.getGappedEndOffset());
         
         AcePlacedRead read3 = contig.getRead("read3");
         assertEquals("TTACGT", read3.getNucleotideSequence().toString());
-        assertEquals(8, read3.getGappedContigEnd());
+        assertEquals(8, read3.getGappedEndOffset());
         
         AcePlacedRead read4 = contig.getRead("read4");
         assertEquals("ACGT", read4.getNucleotideSequence().toString());
-        assertEquals(5, read4.getGappedContigStart());
-        assertEquals(8, read4.getGappedContigEnd());
+        assertEquals(5, read4.getGappedStartOffset());
+        assertEquals(8, read4.getGappedEndOffset());
     }
     
  private static class AceContigBuilderTestDouble implements AceContigBuilder{

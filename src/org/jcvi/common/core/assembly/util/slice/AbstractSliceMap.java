@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
@@ -38,11 +38,11 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 public abstract class  AbstractSliceMap implements SliceMap{
 
     protected List<IdedSliceElement> createSliceElementsFor(
-            CoverageRegion<? extends PlacedRead> region,
+            CoverageRegion<? extends AssembledRead> region,
             long offset, DataStore<? extends Sequence<PhredQuality>> qualityDataStore,
             QualityValueStrategy qualityValueStrategy) {
         List<IdedSliceElement> sliceElements = new ArrayList<IdedSliceElement>(region.getCoverage());
-        for(PlacedRead read : region){
+        for(AssembledRead read : region){
             
             Sequence<PhredQuality> qualities;
             try {
@@ -53,7 +53,7 @@ public abstract class  AbstractSliceMap implements SliceMap{
                 	qualities =qualityDataStore.get(id);
                 }
                 
-                int indexIntoRead = (int) (offset - read.getGappedContigStart());
+                int indexIntoRead = (int) (offset - read.getGappedStartOffset());
                 final IdedSliceElement sliceElement = createSliceElementFor(
                         qualityValueStrategy, indexIntoRead, read,
                          qualities);
@@ -67,7 +67,7 @@ public abstract class  AbstractSliceMap implements SliceMap{
     }
     protected IdedSliceElement createSliceElementFor(
             QualityValueStrategy qualityValueStrategy, int gappedIndex,
-            PlacedRead realRead,
+            AssembledRead realRead,
             final Sequence<PhredQuality> qualities) {
 
         final Nucleotide calledBase = realRead.getNucleotideSequence().get(gappedIndex);

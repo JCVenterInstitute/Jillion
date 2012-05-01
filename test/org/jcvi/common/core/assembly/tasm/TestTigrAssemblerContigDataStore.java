@@ -20,7 +20,7 @@
 package org.jcvi.common.core.assembly.tasm;
 
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.assembly.tasm.DefaultTigrAssemblerFileContigDataStore;
 import org.jcvi.common.core.assembly.tasm.TigrAssemblerContig;
@@ -90,7 +90,7 @@ public class TestTigrAssemblerContigDataStore {
         assertContigDataMatches(contigDataStore.get("27235"), tasmDataStore.get("1122071329934"));
     }
 
-    private void assertContigDataMatches(Contig<PlacedRead> contig, TigrAssemblerContig tasm){
+    private void assertContigDataMatches(Contig<AssembledRead> contig, TigrAssemblerContig tasm){
         assertEquals("consensus",contig.getConsensus(), tasm.getConsensus());
         assertEquals("#reads",contig.getNumberOfReads(), tasm.getNumberOfReads());
         
