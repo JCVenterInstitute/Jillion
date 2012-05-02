@@ -20,8 +20,10 @@
 package org.jcvi.common.core.assembly.ace;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -60,12 +62,56 @@ public class AceFileUtil {
      * and the ace for consed to make the read editable and to see the qualities
      * in the align window.
      */
-    public static final DateFormat CHROMAT_DATE_TIME_FORMATTER = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy");
+    private static final DateFormat CHROMAT_DATE_TIME_FORMATTER = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy");
     /**
      * This is the timestamp format used in some consed 
      * tags.
      */
-    public static final DateFormat TAG_DATE_TIME_FORMATTER = new SimpleDateFormat("yyMMdd:HHmmss");
+    private static final DateFormat TAG_DATE_TIME_FORMATTER = new SimpleDateFormat("yyMMdd:HHmmss");
+    
+    
+    static{
+    	CHROMAT_DATE_TIME_FORMATTER.setLenient(false);
+    	TAG_DATE_TIME_FORMATTER.setLenient(false);
+    }
+    /**
+     * Parse the date of a consed formatted phd date time stamp.
+     * @param text the timestamp as text
+     * @return the equivalent time as a {@link Date}.
+     * @throws ParseException if there is a problem parsing the text.
+     */
+    public static synchronized Date parsePhdDate(String text) throws ParseException{
+    	return CHROMAT_DATE_TIME_FORMATTER.parse(text);
+    }
+    /**
+     * format the given {@link Date} representing
+     * a phd date time stamp into a consed formatted phd time stamp.
+     * @param date the phd date to format.
+     * @return the equivalent time as a String.
+     */
+    public static synchronized String formatPhdDate(Date date){
+    	return CHROMAT_DATE_TIME_FORMATTER.format(date);
+    }
+    
+    /**
+     * Parse the date of a consed formatted tag date time stamp.
+     * @param text the timestamp as text
+     * @return the equivalent time as a {@link Date}.
+     * @throws ParseException if there is a problem parsing the text.
+     */
+    public static synchronized Date parseTagDate(String text) throws ParseException{
+    	return TAG_DATE_TIME_FORMATTER.parse(text);
+    }
+    /**
+     * Format the given {@link Date} representing
+     * a date time stamp for a consed tag
+     * into a consed formatted time stamp.
+     * @param date the date to format.
+     * @return the equivalent time as a String.
+     */
+    public static synchronized String formatTagDate(Date date){
+    	return TAG_DATE_TIME_FORMATTER.format(date);
+    }
     /**
      * Convert a {@link NucleotideSequence} into a string
      * where the gaps are represented by '*'s like ace files require.

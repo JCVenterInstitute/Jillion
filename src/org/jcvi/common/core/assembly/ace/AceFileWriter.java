@@ -67,7 +67,7 @@ public class AceFileWriter {
         writeString(String.format("WA{%n%s %s %s%n%s%n}%n", 
                 wholeAssemblyTag.getType(),
                 wholeAssemblyTag.getCreator(),                
-                AceFileUtil.TAG_DATE_TIME_FORMATTER.format(wholeAssemblyTag.getCreationDate()),
+                AceFileUtil.formatTagDate(wholeAssemblyTag.getCreationDate()),
                 wholeAssemblyTag.getData()), out);
 
         
@@ -90,7 +90,7 @@ public class AceFileWriter {
                 consensusTag.getCreator(),
                 range.getBegin(),
                 range.getEnd(),
-                AceFileUtil.TAG_DATE_TIME_FORMATTER.format(consensusTag.getCreationDate()),
+                AceFileUtil.formatTagDate(consensusTag.getCreationDate()),
                 consensusTag.isTransient()?" NoTrans":"",
                         tagBodyBuilder.toString()), out);
         
@@ -103,7 +103,7 @@ public class AceFileWriter {
                         readTag.getCreator(),
                         range.getBegin(),
                         range.getEnd(),
-                        AceFileUtil.TAG_DATE_TIME_FORMATTER.format(readTag.getCreationDate())), out);
+                        AceFileUtil.formatTagDate(readTag.getCreationDate())), out);
         
     }
     

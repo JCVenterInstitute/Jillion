@@ -342,10 +342,10 @@ public final class AceFileParser {
                     }
                     Date date;
 					try {
-						date = AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.parse(                                                
+						date = AceFileUtil.parsePhdDate(                                                
 						        timeMatcher.group(1));
-					} catch (ParseException e) {
-						throw new IllegalStateException("error parsing chromatogram time stamp",e);
+					} catch (Exception e) {
+						throw new IllegalStateException("error parsing chromatogram time stamp '"+timeMatcher.group(1)+"'",e);
 					}
                     parserState.visitor.visitTraceDescriptionLine(traceName, phdName, date);
                     
@@ -400,7 +400,7 @@ public final class AceFileParser {
                 long gappedEnd = Long.parseLong(readTagMatcher.group(5));
                 Date creationDate;
 				try {
-					creationDate = AceFileUtil.TAG_DATE_TIME_FORMATTER.parse(                                                
+					creationDate = AceFileUtil.parseTagDate(                                                
 					        readTagMatcher.group(6));
 				} catch (ParseException e) {
 					throw new IllegalStateException("error parsing date from read tag", e);
@@ -434,7 +434,7 @@ public final class AceFileParser {
                 String creator = tagMatcher.group(2);
                 Date creationDate;
 				try {
-					creationDate = AceFileUtil.TAG_DATE_TIME_FORMATTER.parse(                                                
+					creationDate = AceFileUtil.parseTagDate(                                                
 					        tagMatcher.group(3));
 				} catch (ParseException e) {
 					throw new IllegalStateException("error parsing date from while assembly tag", e);
@@ -489,7 +489,7 @@ public final class AceFileParser {
                 long gappedEnd = Long.parseLong(tagMatcher.group(5));
                 Date creationDate;
 				try {
-					creationDate = AceFileUtil.TAG_DATE_TIME_FORMATTER.parse(                                                
+					creationDate = AceFileUtil.parseTagDate(                                                
 					        tagMatcher.group(6));
 				} catch (ParseException e) {
 					throw new IllegalStateException("error parsing date from consensus tag", e);
