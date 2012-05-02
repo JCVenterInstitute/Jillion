@@ -10,7 +10,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	TestPrimerDetector.class,
 	TestPrimerDetector_ActualData.class,
 	TestPrimerDetectorInternalPrimerHit.class,
-	TestPrimerTrimmerUtil.class,
 	AllLucyUnitTests.class
 	
 }
