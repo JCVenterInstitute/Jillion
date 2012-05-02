@@ -19,10 +19,10 @@
 
 package org.jcvi.common.core.seq.read.trace.sanger.phd;
 
+import java.util.Date;
 import java.util.Properties;
 
 import org.jcvi.common.core.assembly.ace.AceFileUtil;
-import org.joda.time.DateTime;
 
 /**
  * {@code PhdUtil} is a Utility class for Phred Phd data.
@@ -36,29 +36,29 @@ public class PhdUtil {
      * Phd records must include a date time stamp as a comment,
      * this method will create the correctly formatted Phd {@code TIME}
      * comment.  
-     * @param phdDate the {@link DateTime} to make into a Phd TIME
+     * @param phdDate the {@link Date} to make into a Phd TIME
      * comment.
      * @return a Properties object (not null) that contains
      * a single property, TIME.
      */
-    public static Properties createPhdTimeStampCommentFor(DateTime phdDate){
+    public static Properties createPhdTimeStampCommentFor(Date phdDate){
         Properties comments = new Properties();
-        comments.put("TIME", AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.print(phdDate));        
+        comments.put("TIME", AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.format(phdDate));        
         return comments;
     }
     /**
      * Phd records must include a date time stamp as a comment,
      * this method will create the correctly formatted Phd {@code TIME}
      * comment.  
-     * @param phdDate the {@link DateTime} to make into a Phd TIME
+     * @param phdDate the {@link Date} to make into a Phd TIME
      * comment.
      * @param filename the name of the chromatogram file to link back to.
      * @return a Properties object (not null) that contains
      * a single property, TIME.
      */
-    public static Properties createPhdTimeStampAndChromatFileCommentsFor(DateTime phdDate, String filename){
+    public static Properties createPhdTimeStampAndChromatFileCommentsFor(Date phdDate, String filename){
         Properties comments = new Properties();
-        comments.put("TIME", AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.print(phdDate));    
+        comments.put("TIME", AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.format(phdDate));    
         comments.put("CHROMAT_FILE", filename);  
         return comments;
     }

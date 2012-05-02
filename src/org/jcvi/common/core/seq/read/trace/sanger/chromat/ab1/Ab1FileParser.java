@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -61,8 +63,6 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 /**
  * {@code Ab1FileParser} can parse an
  * Applied BioSystems "ab1" formatted chromatogram
@@ -76,7 +76,7 @@ public final class Ab1FileParser {
 	}
 	
 	private static final byte ZERO_QUALITY = (byte)0;
-	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("EEE dd MMM HH:mm:ss YYYY");
+	private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("EEE dd MMM HH:mm:ss YYYY");
 	/**
 	 * ABI files store both the original and current
 	 * (possibly edited) data.  This is the index
@@ -464,8 +464,8 @@ public final class Ab1FileParser {
             final DateTime startDateTime = startDate.toDateTime(startTime);
             final DateTime endDateTime = endDate.toDateTime(endTime);
             props.put("DATE", String.format("%s to %s",
-            		DATE_FORMATTER.print(startDateTime),
-            		DATE_FORMATTER.print(endDateTime)
+            		DATE_FORMATTER.format(startDateTime.toDate()),
+            		DATE_FORMATTER.format(endDateTime.toDate())
             		));
             props.put("RUND", String.format("%04d%02d%02d.%02d%02d%02d - %04d%02d%02d.%02d%02d%02d",
                     startDateTime.getYear(), startDateTime.getMonthOfYear(), startDateTime.getDayOfMonth(),

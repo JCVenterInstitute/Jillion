@@ -22,6 +22,7 @@ package org.jcvi.common.core.assembly.clc.cas.consed;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Properties;
 
 import org.jcvi.common.core.assembly.ace.PhdInfo;
@@ -35,19 +36,18 @@ import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.joda.time.DateTime;
 
 public class FastaConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 
 	private final CloseableIterator<NucleotideSequenceFastaRecord> fastaIterator;
 	private final Properties requiredComments;
 	private final PhredQuality defaultQualityValue;
-	private final DateTime phdDate;
+	private final Date phdDate;
 	private final File fastaFile;
 	public FastaConsedPhdAdaptedIterator(
 			CloseableIterator<NucleotideSequenceFastaRecord> fastaIterator,
 			File fastaFile,
-			DateTime phdDate,
+			Date phdDate,
 			PhredQuality defaultQualityValue){
 		this.requiredComments = PhdUtil.createPhdTimeStampCommentFor(phdDate);
 		this.fastaIterator = fastaIterator;	

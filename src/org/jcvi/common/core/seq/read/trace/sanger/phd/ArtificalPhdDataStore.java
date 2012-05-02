@@ -25,6 +25,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.phd;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Properties;
 
 import org.jcvi.common.core.datastore.AbstractDataStore;
@@ -36,7 +37,6 @@ import org.jcvi.common.core.seq.read.trace.TraceQualityDataStoreAdapter;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.joda.time.DateTime;
 /**
  * {@code ArtificialPhdDataStore} is a {@link DataStore} of
  * Nucleotide and PhredQuality data that has been adapted to 
@@ -62,7 +62,7 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
      * @return a new {@link PhdDataStore} object;
      * never null.
      */
-    public static <T extends Trace>  PhdDataStore createFromTraceDataStore(DataStore<T> traceDataStore, DateTime phdDate){
+    public static <T extends Trace>  PhdDataStore createFromTraceDataStore(DataStore<T> traceDataStore, Date phdDate){
         return new ArtificalPhdDataStore(TraceNucleotideDataStoreAdapter.adapt(traceDataStore), 
                 TraceQualityDataStoreAdapter.adapt(traceDataStore), phdDate);
     }
@@ -72,7 +72,7 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
      * @param phdDate
      */
     public ArtificalPhdDataStore(DataStore<NucleotideSequence> seqDataStore,
-            DataStore<QualitySequence> qualDataStore, DateTime phdDate) {
+            DataStore<QualitySequence> qualDataStore, Date phdDate) {
         this.seqDataStore = seqDataStore;
         this.qualDataStore = qualDataStore;
         comments.putAll(PhdUtil.createPhdTimeStampCommentFor(phdDate));

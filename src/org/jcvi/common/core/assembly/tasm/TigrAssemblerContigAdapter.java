@@ -19,7 +19,10 @@
 
 package org.jcvi.common.core.assembly.tasm;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -33,9 +36,6 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 /**
  * {@code TigrAssemblerContigAdapter} is an adapter to convert a 
  * {@link Contig} into a {@link TigrAssemblerContig} with all
@@ -208,8 +208,8 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		 * This is the format that dates should be set as Strings
 		 * in the TIGR Project DB database.
 		 */
-		private static final DateTimeFormatter EDIT_DATE_FORMATTER =
-			DateTimeFormat.forPattern("MM/dd/yy hh:mm:ss aa");
+		private static final DateFormat EDIT_DATE_FORMATTER =
+			new SimpleDateFormat("MM/dd/yy hh:mm:ss aa");
 		private final Contig<? extends AssembledRead> contig;
 		private final Map<TigrAssemblerContigAttribute, String> optionalAttributes = new EnumMap<TigrAssemblerContigAttribute, String>(TigrAssemblerContigAttribute.class);
 		/**
@@ -426,13 +426,13 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		 * (by the editPerson)
 		 * @return this.
 		 */
-		public Builder withEditInfo(String editPerson, DateTime editDate){
+		public Builder withEditInfo(String editPerson, Date editDate){
 			if(editPerson ==null || editDate ==null){
 				optionalAttributes.remove(TigrAssemblerContigAttribute.EDIT_PERSON);
 				optionalAttributes.remove(TigrAssemblerContigAttribute.EDIT_DATE);
 			}
 			optionalAttributes.put(TigrAssemblerContigAttribute.EDIT_PERSON,editPerson);
-			optionalAttributes.put(TigrAssemblerContigAttribute.EDIT_DATE,EDIT_DATE_FORMATTER.print(editDate));
+			optionalAttributes.put(TigrAssemblerContigAttribute.EDIT_DATE,EDIT_DATE_FORMATTER.format(editDate));
 			return this;
 		}
 		/**

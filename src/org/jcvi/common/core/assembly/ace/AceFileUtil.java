@@ -19,6 +19,8 @@
 
 package org.jcvi.common.core.assembly.ace;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -33,8 +35,6 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 /**
  * {@code AceFileUtil} is a utility class to perform 
@@ -60,12 +60,12 @@ public class AceFileUtil {
      * and the ace for consed to make the read editable and to see the qualities
      * in the align window.
      */
-    public static final DateTimeFormatter CHROMAT_DATE_TIME_FORMATTER = DateTimeFormat.forPattern("EEE MMM d HH:mm:ss yyyy");
+    public static final DateFormat CHROMAT_DATE_TIME_FORMATTER = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy");
     /**
      * This is the timestamp format used in some consed 
      * tags.
      */
-    public static final DateTimeFormatter TAG_DATE_TIME_FORMATTER = DateTimeFormat.forPattern("YYMMdd:HHmmss");
+    public static final DateFormat TAG_DATE_TIME_FORMATTER = new SimpleDateFormat("yyMMdd:HHmmss");
     /**
      * Convert a {@link NucleotideSequence} into a string
      * where the gaps are represented by '*'s like ace files require.
@@ -142,7 +142,7 @@ public class AceFileUtil {
                 
                 phdInfo.getTraceName(),
                 phdInfo.getPhdName(),
-                AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.print(phdInfo.getPhdDate().getTime())
+                AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.format(phdInfo.getPhdDate())
                 );
     }
     

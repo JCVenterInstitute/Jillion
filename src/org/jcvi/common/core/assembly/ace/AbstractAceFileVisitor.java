@@ -205,7 +205,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
 	        	//no intersection! 
 	        	//I've only seen this on really bad quality
 	        	//////////////////////////////////////////////////////////
-	        	//2012-01-26
+	        	//dkatzel - 2012-01-26
 	        	//email response from David Gordon (author of consed)
 	        	//regarding what to do if these ranges don't overlap
 	        	//From David Gordon:

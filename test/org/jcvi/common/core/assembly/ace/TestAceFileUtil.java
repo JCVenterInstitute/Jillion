@@ -19,8 +19,11 @@
 
 package org.jcvi.common.core.assembly.ace;
 
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
+
 import org.jcvi.common.core.assembly.ace.AceFileUtil;
-import org.joda.time.DateTime;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**
@@ -31,11 +34,13 @@ import static org.junit.Assert.*;
 public class TestAceFileUtil {
 
     @Test
-    public void parseChromatogramMadeAroundMidnight(){
+    public void parseChromatogramMadeAroundMidnight() throws ParseException{
         String dateAsString = "Fri Jan 7 00:40:59 2011";
-        DateTime dt =AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.parseDateTime(dateAsString);
-        assertEquals(0, dt.getHourOfDay());
-        assertEquals(40, dt.getMinuteOfHour());
-        assertEquals(59, dt.getSecondOfMinute());
+        Date date =AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.parse(dateAsString);
+        Calendar calendar =Calendar.getInstance();
+		calendar.setTime(date);
+        assertEquals(0, calendar.get(Calendar.HOUR_OF_DAY));
+        assertEquals(40, calendar.get(Calendar.MINUTE));
+        assertEquals(59, calendar.get(Calendar.SECOND));
     }
 }

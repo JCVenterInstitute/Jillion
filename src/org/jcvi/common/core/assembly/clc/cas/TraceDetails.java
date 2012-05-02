@@ -20,10 +20,10 @@
 package org.jcvi.common.core.assembly.clc.cas;
 
 import java.io.File;
+import java.util.Date;
 
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
+import org.jcvi.common.core.util.DateUtil;
 
 /**
  * @author dkatzel
@@ -33,13 +33,13 @@ import org.joda.time.DateTimeUtils;
 public final class TraceDetails {
     private final boolean hasFastaEdits;
     private final File chromatDir;
-    private final DateTime phdDate;
+    private final Date phdDate;
     private final FastqQualityCodec fastqQualityCodec;
     
     public static class Builder implements org.jcvi.common.core.util.Builder<TraceDetails>{
         private boolean hasFastaEdits=false;
         private File chromatDir;
-        private DateTime phdDate =null;
+        private Date phdDate =null;
         private final FastqQualityCodec fastqQualityCodec;
         public Builder(FastqQualityCodec fastqQualityCodec){
             if(fastqQualityCodec==null){
@@ -53,7 +53,7 @@ public final class TraceDetails {
         @Override
         public TraceDetails build() {
             if(phdDate ==null){
-                phdDate = new DateTime(DateTimeUtils.currentTimeMillis());
+                phdDate = DateUtil.getCurrentDate();
             }
             return new TraceDetails(chromatDir, phdDate, fastqQualityCodec, hasFastaEdits);
         }
@@ -61,7 +61,7 @@ public final class TraceDetails {
             this.hasFastaEdits = hasEdits;
             return this;
         }
-        public Builder phdDate(DateTime phdDate){
+        public Builder phdDate(Date phdDate){
             this.phdDate = phdDate;
             return this;
         }
@@ -70,7 +70,7 @@ public final class TraceDetails {
             return this;
         }
     }
-    private TraceDetails(File chromatDir, DateTime phdDate,
+    private TraceDetails(File chromatDir, Date phdDate,
             FastqQualityCodec fastqQualityCodec, boolean hasFastaEdits) {
         this.chromatDir = chromatDir;
         this.phdDate = phdDate;
@@ -92,7 +92,7 @@ public final class TraceDetails {
     /**
      * @return the phdDate
      */
-    public DateTime getPhdDate() {
+    public Date getPhdDate() {
         return phdDate;
     }
     /**

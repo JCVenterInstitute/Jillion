@@ -21,6 +21,7 @@ package org.jcvi.common.core.assembly.clc.cas.consed;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Properties;
 
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
@@ -36,7 +37,6 @@ import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.joda.time.DateTime;
 
 /**
  * EditedFastaChromatDirPhdAdapterIterator
@@ -60,7 +60,7 @@ public class EditedFastaChromatDirPhdAdapterIterator extends ChromatDirFastaCons
      */
     public EditedFastaChromatDirPhdAdapterIterator(
             CloseableIterator<NucleotideSequenceFastaRecord> fastaIterator,
-            File fastaFile, DateTime phdDate, PhredQuality defaultQualityValue,
+            File fastaFile, Date phdDate, PhredQuality defaultQualityValue,
             File chromatDir) {
         super(fastaIterator, fastaFile, phdDate, defaultQualityValue, chromatDir);
         qualityIterator = createQualityIterator(fastaFile);
