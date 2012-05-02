@@ -20,6 +20,7 @@
 package org.jcvi.common.core.assembly.clc.cas.consed;
 
 import java.io.File;
+import java.util.Date;
 import java.util.Map.Entry;
 import java.util.Properties;
 
@@ -30,7 +31,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.joda.time.DateTime;
 
 /**
  * @author dkatzel
@@ -48,7 +48,7 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends FastaConsedPhdAdapt
      */
     public ChromatDirFastaConsedPhdAdaptedIterator(
             CloseableIterator<NucleotideSequenceFastaRecord> fastaIterator,
-            File fastaFile, DateTime phdDate, PhredQuality defaultQualityValue,
+            File fastaFile, Date phdDate, PhredQuality defaultQualityValue,
             File chromatDir) {
         super(fastaIterator, fastaFile, phdDate, defaultQualityValue);
         this.chromatDir = chromatDir;

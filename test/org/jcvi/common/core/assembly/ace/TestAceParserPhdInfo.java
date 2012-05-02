@@ -26,6 +26,9 @@ package org.jcvi.common.core.assembly.ace;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,15 +41,13 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TestAceParserPhdInfo {
     private static final String ACE_FILE = "files/sample.ace";
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern("EEE MMM dd kk:mm:ss yyyy");
+    private static final DateFormat DATE_TIME_FORMATTER = new SimpleDateFormat("EEE MMM dd kk:mm:ss yyyy");
     private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestAceParserPhdInfo.class);
     private static Contig<AcePlacedRead> actualContig;
     
@@ -57,40 +58,40 @@ public class TestAceParserPhdInfo {
                             .get("Contig1");
     }
     @Before
-    public void setupMap(){
+    public void setupMap() throws ParseException{
         phdInfoMap = new HashMap<String, PhdInfo>();
         phdInfoMap.put("K26-217c", 
                     new DefaultPhdInfo("K26-217c", "K26-217c.phd.1",
-                                DATE_TIME_FORMATTER.parseDateTime(
-                                        "Thu Sep 12 15:42:38 1996").toDate()));
+                                DATE_TIME_FORMATTER.parse(
+                                        "Thu Sep 12 15:42:38 1996")));
         phdInfoMap.put("K26-526t", 
                 new DefaultPhdInfo("K26-526t", "K26-526t.phd.1",
-                            DATE_TIME_FORMATTER.parseDateTime(
-                                    "Thu Sep 12 15:42:33 1996").toDate()));
+                            DATE_TIME_FORMATTER.parse(
+                                    "Thu Sep 12 15:42:33 1996")));
         phdInfoMap.put("K26-961c", 
                 new DefaultPhdInfo("K26-961c", "K26-961c.phd.1",
-                            DATE_TIME_FORMATTER.parseDateTime(
-                                    "Thu Sep 12 15:42:37 1996").toDate()));
+                            DATE_TIME_FORMATTER.parse(
+                                    "Thu Sep 12 15:42:37 1996")));
         phdInfoMap.put("K26-394c", 
                 new DefaultPhdInfo("K26-394c", "K26-394c.phd.1",
-                            DATE_TIME_FORMATTER.parseDateTime(
-                                    "Thu Sep 12 15:42:32 1996").toDate()));
+                            DATE_TIME_FORMATTER.parse(
+                                    "Thu Sep 12 15:42:32 1996")));
         phdInfoMap.put("K26-291s", 
                 new DefaultPhdInfo("K26-291s", "K26-291s.phd.1",
-                            DATE_TIME_FORMATTER.parseDateTime(
-                                    "Thu Sep 12 15:42:31 1996").toDate()));
+                            DATE_TIME_FORMATTER.parse(
+                                    "Thu Sep 12 15:42:31 1996")));
         phdInfoMap.put("K26-822c", 
                 new DefaultPhdInfo("K26-822c", "K26-822c.phd.1",
-                            DATE_TIME_FORMATTER.parseDateTime(
-                                    "Thu Sep 12 15:42:36 1996").toDate()));
+                            DATE_TIME_FORMATTER.parse(
+                                    "Thu Sep 12 15:42:36 1996")));
         phdInfoMap.put("K26-572c", 
                 new DefaultPhdInfo("K26-572c", "K26-572c.phd.1",
-                            DATE_TIME_FORMATTER.parseDateTime(
-                                    "Thu Sep 12 15:42:34 1996").toDate()));
+                            DATE_TIME_FORMATTER.parse(
+                                    "Thu Sep 12 15:42:34 1996")));
         phdInfoMap.put("K26-766c", 
                 new DefaultPhdInfo("K26-766c", "K26-766c.phd.1",
-                            DATE_TIME_FORMATTER.parseDateTime(
-                                    "Thu Sep 12 15:42:35 1996").toDate()));       
+                            DATE_TIME_FORMATTER.parse(
+                                    "Thu Sep 12 15:42:35 1996")));       
     }
     
     @Test

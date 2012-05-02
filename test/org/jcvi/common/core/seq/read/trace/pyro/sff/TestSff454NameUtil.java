@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
  *
  *
  */
-public class TestSffNameUtil {
+public class TestSff454NameUtil {
 
     @Test
     public void isSffRead(){
@@ -65,7 +65,6 @@ public class TestSffNameUtil {
         DateTime expectedDate = new DateTime(2004, 9, 22, 16, 59, 10, 0);
         assertEquals(expectedDate.toDate(), Sff454NameUtil.getDateOfRun("C3U5GWL01CBXT2"));
     }
-    
    
     
     @Test

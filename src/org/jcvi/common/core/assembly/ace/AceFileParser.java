@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.regex.Matcher;
@@ -339,8 +340,13 @@ public final class AceFileParser {
                     if(!timeMatcher.find()){
                         throw new IOException("could not parse phd time stamp from "+ line);
                     }
-                    Date date= AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.parseDateTime(                                                
-                            timeMatcher.group(1)).toDate();
+                    Date date;
+					try {
+						date = AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.parse(                                                
+						        timeMatcher.group(1));
+					} catch (ParseException e) {
+						throw new IllegalStateException("error parsing chromatogram time stamp",e);
+					}
                     parserState.visitor.visitTraceDescriptionLine(traceName, phdName, date);
                     
                 }
@@ -392,8 +398,13 @@ public final class AceFileParser {
                 String creator = readTagMatcher.group(3);
                 long gappedStart = Long.parseLong(readTagMatcher.group(4));
                 long gappedEnd = Long.parseLong(readTagMatcher.group(5));
-                Date creationDate= AceFileUtil.TAG_DATE_TIME_FORMATTER.parseDateTime(                                                
-                        readTagMatcher.group(6)).toDate();
+                Date creationDate;
+				try {
+					creationDate = AceFileUtil.TAG_DATE_TIME_FORMATTER.parse(                                                
+					        readTagMatcher.group(6));
+				} catch (ParseException e) {
+					throw new IllegalStateException("error parsing date from read tag", e);
+				}
                 parserState.visitor.visitReadTag(id, type, creator, gappedStart, gappedEnd, creationDate, true);
                 lineWithCR = parserState.parser.nextLine();
                 parserState.visitor.visitLine(lineWithCR);
@@ -421,8 +432,13 @@ public final class AceFileParser {
                 }
                 String type = tagMatcher.group(1);
                 String creator = tagMatcher.group(2);
-                Date creationDate= AceFileUtil.TAG_DATE_TIME_FORMATTER.parseDateTime(                                                
-                        tagMatcher.group(3)).toDate();
+                Date creationDate;
+				try {
+					creationDate = AceFileUtil.TAG_DATE_TIME_FORMATTER.parse(                                                
+					        tagMatcher.group(3));
+				} catch (ParseException e) {
+					throw new IllegalStateException("error parsing date from while assembly tag", e);
+				}
                                             
                 StringBuilder data = parseWholeAssemblyTagData(parserState);
                 parserState.visitor.visitWholeAssemblyTag(type, creator, creationDate, data.toString());
@@ -471,8 +487,13 @@ public final class AceFileParser {
                 String creator = tagMatcher.group(3);
                 long gappedStart = Long.parseLong(tagMatcher.group(4));
                 long gappedEnd = Long.parseLong(tagMatcher.group(5));
-                Date creationDate= AceFileUtil.TAG_DATE_TIME_FORMATTER.parseDateTime(                                                
-                        tagMatcher.group(6)).toDate();
+                Date creationDate;
+				try {
+					creationDate = AceFileUtil.TAG_DATE_TIME_FORMATTER.parse(                                                
+					        tagMatcher.group(6));
+				} catch (ParseException e) {
+					throw new IllegalStateException("error parsing date from consensus tag", e);
+				}
                 boolean isTransient = tagMatcher.group(7)!=null;
                 
                 parserState.visitor.visitBeginConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);

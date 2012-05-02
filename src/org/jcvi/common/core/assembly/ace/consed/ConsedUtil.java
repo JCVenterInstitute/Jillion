@@ -51,7 +51,7 @@ import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
-import org.joda.time.DateTime;
+
 /**
  * This class contains utility scripts for
  * converting {@link AceContig} data into
@@ -99,10 +99,6 @@ public class ConsedUtil {
      */
     public static String convertContigGapstoAceGaps(String basecallsWithAceGaps) {
         return basecallsWithAceGaps.replace('-', '*');
-    }
-    public static PhdInfo generatePhdInfoFor(File traceFile, String readId,
-			DateTime phdDate){
-    	return generatePhdInfoFor(traceFile, readId, phdDate.toDate());
     }
     public static PhdInfo generatePhdInfoFor(File traceFile, String readId,
 			Date phdDate) {

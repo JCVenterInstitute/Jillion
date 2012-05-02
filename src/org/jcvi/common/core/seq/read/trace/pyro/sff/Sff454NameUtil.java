@@ -20,12 +20,12 @@
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.math.BigInteger;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.joda.time.DateTime;
 
 /**
  * 454 Universal Accession Numbers are generated for each read based on the date
@@ -336,13 +336,14 @@ public final class Sff454NameUtil {
         
         
         BigInteger encode(Date timestampOfRun){
-            DateTime dateTime = new DateTime(timestampOfRun);
-            BigInteger year = BigInteger.valueOf(dateTime.getYear() -2000);
-            BigInteger month = BigInteger.valueOf(dateTime.getMonthOfYear());
-            BigInteger day = BigInteger.valueOf(dateTime.getDayOfMonth());
-            BigInteger hour = BigInteger.valueOf(dateTime.getHourOfDay());
-            BigInteger minute = BigInteger.valueOf(dateTime.getMinuteOfHour());
-            BigInteger second = BigInteger.valueOf(dateTime.getSecondOfMinute());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(timestampOfRun);
+            BigInteger year = BigInteger.valueOf(calendar.get(Calendar.YEAR) -2000);
+            BigInteger month = BigInteger.valueOf(calendar.get(Calendar.MONTH));
+            BigInteger day = BigInteger.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+            BigInteger hour = BigInteger.valueOf(calendar.get(Calendar.HOUR_OF_DAY));
+            BigInteger minute = BigInteger.valueOf(calendar.get(Calendar.MINUTE));
+            BigInteger second = BigInteger.valueOf(calendar.get(Calendar.SECOND));
             
             return YEAR_MASK.multiply(year)
                                 .add(MONTH_MASK.multiply(month))
@@ -372,10 +373,10 @@ public final class Sff454NameUtil {
             current = current.mod(MINUTE_MASK);
             
             BigInteger second = current;
-            
-            return new DateTime(
-                    year.intValue()+2000, month.intValue(), dayOfMonth.intValue(), 
-                    hourOfDay.intValue(), minute.intValue(), second.intValue(),0).toDate();
+            return new GregorianCalendar(
+                    year.intValue()+2000, month.intValue()-1, dayOfMonth.intValue(), 
+                    hourOfDay.intValue(), minute.intValue(), second.intValue())
+            .getTime();
             
         }        
     }
@@ -422,14 +423,13 @@ public final class Sff454NameUtil {
             if(!matcher.matches()){
                 throw new IllegalArgumentException("invalid rigRunName: " + rigRunName);
             }
-            return new DateTime(
+            return new GregorianCalendar(
                     Integer.parseInt(matcher.group(1)), 
                     Integer.parseInt(matcher.group(2)),
                     Integer.parseInt(matcher.group(3)),
                     Integer.parseInt(matcher.group(4)), 
                     Integer.parseInt(matcher.group(5)), 
-                    Integer.parseInt(matcher.group(6))
-                    , 0).toDate();
+                    Integer.parseInt(matcher.group(6))).getTime();
         }
         private char generate454Hash(String rigRunName){
             int hash=0;
