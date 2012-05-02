@@ -43,7 +43,7 @@ public class PhdUtil {
      */
     public static Properties createPhdTimeStampCommentFor(Date phdDate){
         Properties comments = new Properties();
-        comments.put("TIME", AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.format(phdDate));        
+        comments.put("TIME", AceFileUtil.formatPhdDate(phdDate));        
         return comments;
     }
     /**
@@ -58,7 +58,7 @@ public class PhdUtil {
      */
     public static Properties createPhdTimeStampAndChromatFileCommentsFor(Date phdDate, String filename){
         Properties comments = new Properties();
-        comments.put("TIME", AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.format(phdDate));    
+        comments.put("TIME", AceFileUtil.formatPhdDate(phdDate));    
         comments.put("CHROMAT_FILE", filename);  
         return comments;
     }

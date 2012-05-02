@@ -36,7 +36,7 @@ public class TestAceFileUtil {
     @Test
     public void parseChromatogramMadeAroundMidnight() throws ParseException{
         String dateAsString = "Fri Jan 7 00:40:59 2011";
-        Date date =AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.parse(dateAsString);
+        Date date =AceFileUtil.parsePhdDate(dateAsString);
         Calendar calendar =Calendar.getInstance();
 		calendar.setTime(date);
         assertEquals(0, calendar.get(Calendar.HOUR_OF_DAY));
