@@ -19,8 +19,11 @@
 
 package org.jcvi.common.core.seq.trim;
 
+import java.util.List;
+
+import org.jcvi.common.core.DirectedRange;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.trim.DefaultPrimerTrimmer;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -31,24 +34,24 @@ import static org.junit.Assert.*;
  *
  *
  */
-public class TestInternalPrimerHit {
-
-    private final DefaultPrimerTrimmer sut = new DefaultPrimerTrimmer(13, .9f);
-    
-  																																																																																																																																							
+public class TestPrimerDetectorInternalPrimerHit {
+																																																																																																																																					
     private final NucleotideSequence sequence = new NucleotideSequenceBuilder(
             "AGGAAAAATTTTTGATTGGATGTCATCCGACTTTACTTTTCTTGAAGTTCCAGCGCAAAATGCCATAAGCACCACATTCCCATATACTGGAGATCCTCCATACAGCCATGGAACAGGAACAGGATACACCATGGACACAGTTAACAGAACACATCAATATTCAGAAAAGGGGAAATGGACAACAAACTCAGAGACTGGAGCCCCCCAACTTAACCCAATTGATGGACCACTGCCCGAGGACAATGAGCCAAGTGGATATGCACAAACGGACTGTGTCCTTGAAGCAATGGCTTTCCTTGAAGAGTCCCACCCAGGAATCTTTGAAAACTCGTGTCTTGAAACGATGGAAGTTGTCCAACAAACAAGAGTGGACAAGTTGACCCAAGGCCGTCAGACCTATGATTGGACACTAAACAGGAACCAGCCGGCTGCAACTGCATTAGCTAATACTATAGAGGTCTTCAGATCGAACGGTCTGACAGCTAATGAATCAGGGAGACTAATAGATTTTCTCAAGGATGTGATGGAATCAATGGATAAAGAGGAAATGGAAATAACAACACACTTCCAGGTCATAGCTGTTTCCTAAACA").build();
 
     private final NucleotideSequence forwardPrimer = new NucleotideSequenceBuilder("TGTAAAACGACGGCCAGTCRAAAGCAGGCAAACCAT").build();
     private final NucleotideSequence reversePrimer = new NucleotideSequenceBuilder("CAGGAAACAGCTATGACCTGGAARTGYGTTGTKATTTCCATY").build();
 
-
-    @Test
-    public void trim(){
-        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(forwardPrimer, reversePrimer);
     
-        Range expectedRange = Range.create(0, 545);
-        Range actualRange = sut.trim(sequence, datastore);
-        assertEquals(expectedRange, actualRange);
+    @Test
+    public void detect(){
+        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(forwardPrimer, reversePrimer);
+        PrimerDetector detector = new PrimerDetector(13, .9F);
+        
+        Range expectedRange = Range.create(546, 586);
+        List<DirectedRange> actualRanges = detector.detect(sequence, datastore);
+        assertEquals(1, actualRanges.size());
+        assertEquals(expectedRange, actualRanges.get(0).asRange());
+        assertEquals(Direction.REVERSE, actualRanges.get(0).getDirection());
     }
 }
