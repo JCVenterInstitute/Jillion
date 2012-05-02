@@ -19,11 +19,6 @@
 
 package org.jcvi.common.core.assembly.util.trimmer;
 
-import org.jcvi.common.core.seq.trim.TestDefaultPrimerTrimmer;
-import org.jcvi.common.core.seq.trim.TestDefaultPrimerTrimmer_ActualData;
-import org.jcvi.common.core.seq.trim.TestInternalPrimerHit;
-import org.jcvi.common.core.seq.trim.lucy.TestLucyQualityTrimmer;
-import org.jcvi.common.core.seq.trim.lucy.TestLucyTrimDataStore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -35,16 +30,10 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    TestDefaultPrimerTrimmer.class,
-    TestDefaultPrimerTrimmer_ActualData.class,
-    TestInternalPrimerHit.class,
-    TestLucyTrimDataStore.class,
-    
-    TestLucyQualityTrimmer.class,
     TestMinimumEndCoverageTrimmer.class,
     TestMinimumBidirectionalEndCoverageTrimmer.class
 }
 )
-public class AllTrimUnitTests {
+public class AllAssemblyTrimUnitTests {
 
 }

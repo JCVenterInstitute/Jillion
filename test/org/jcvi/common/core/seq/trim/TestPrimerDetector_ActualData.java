@@ -20,13 +20,14 @@
 package org.jcvi.common.core.seq.trim;
 
 import java.io.IOException;
+import java.util.List;
 
+import org.jcvi.common.core.DirectedRange;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordDataStoreAdatper;
-import org.jcvi.common.core.seq.trim.DefaultPrimerTrimmer;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -39,13 +40,11 @@ import static org.junit.Assert.*;
  *
  *
  */
-public class TestDefaultPrimerTrimmer_ActualData {
-    private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestDefaultPrimerTrimmer_ActualData.class);
+public class TestPrimerDetector_ActualData {
+    private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestPrimerDetector_ActualData.class);
     
     private NucleotideDataStore primerDataStore;
     private NucleotideSequence sequence;
-    
-    private final DefaultPrimerTrimmer sut = new DefaultPrimerTrimmer(13, .9f);
     
     @Before
     public void setup() throws IOException, DataStoreException{
@@ -57,14 +56,16 @@ public class TestDefaultPrimerTrimmer_ActualData {
         sequence = DefaultNucleotideSequenceFastaFileDataStore.create(
                                 RESOURCES.getFile("files/fullLength.fasta"))
                         .get("SAJJA07T27G07MP1F").getSequence();
-    }
-    
+    }    
+  
     @Test
-    public void trim(){
-        Range expectedRange = Range.create(CoordinateSystem.RESIDUE_BASED,1,643);
-        Range actualRange = sut.trim(sequence, primerDataStore);
-        assertEquals(expectedRange, actualRange);
+    public void detect(){
+    	PrimerDetector detector = new PrimerDetector(13, .9F);
+    	List<DirectedRange> hits = detector.detect(sequence, primerDataStore);
+    	System.out.println(hits);
+    	assertEquals(1, hits.size());
+    	assertEquals(Range.create(643,680), hits.get(0).asRange());
+    	assertEquals(Direction.REVERSE, hits.get(0).getDirection());
     }
-    
     
 }
