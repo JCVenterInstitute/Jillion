@@ -26,7 +26,7 @@ import java.util.Set;
 import org.jcvi.assembly.cas.FilterFastqDataFromCas.ReadRange;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
@@ -45,7 +45,7 @@ public class TestFilterFastqDataFromCas {
     @Test
     public void tooFewReadsShouldNeedAll(){
         
-        Contig<PlacedRead> contig = new DefaultContig.Builder("contigId", "ACGTACGTACGT")
+        Contig<AssembledRead> contig = new DefaultContig.Builder("contigId", "ACGTACGTACGT")
                                         .addRead("SOLEXA_1", 0, "ACGTACGT")
                                         .addRead("SOLEXA_2", 2,   "GTACGT")
                                         .addRead("SOLEXA_3", 6,   "GTACGT")
@@ -58,7 +58,7 @@ public class TestFilterFastqDataFromCas {
     @Test
     public void oneReadProovidesExtraCoverageOverWholeLengthShouldGetExcluded(){
         
-        Contig<PlacedRead> contig = new DefaultContig.Builder("contigId", "ACGTACGTACGT")
+        Contig<AssembledRead> contig = new DefaultContig.Builder("contigId", "ACGTACGTACGT")
                                         .addRead("SOLEXA_1", 0, "ACGTACGT")
                                         .addRead("SOLEXA_2", 2,   "GTACGT")
                                         .addRead("SOLEXA_3", 6,   "GTACGT")
@@ -77,7 +77,7 @@ public class TestFilterFastqDataFromCas {
     @Test
     public void oneExtraReadOnlyProvidesPartialExtraCoverageShouldNotGetExcluded(){
         
-        Contig<PlacedRead> contig = new DefaultContig.Builder("contigId", "ACGTACGTACGT")
+        Contig<AssembledRead> contig = new DefaultContig.Builder("contigId", "ACGTACGTACGT")
                                         .addRead("SOLEXA_1", 0, "ACGTACGT")
                                         .addRead("SOLEXA_2", 2,   "GTACGT")
                                         .addRead("SOLEXA_3", 6,   "GTACGT")
@@ -96,7 +96,7 @@ public class TestFilterFastqDataFromCas {
     @Test
     public void twoExtraReadsShouldGetExcluded(){
         
-        Contig<PlacedRead> contig = new DefaultContig.Builder("contigId", "ACGTACGTACGT")
+        Contig<AssembledRead> contig = new DefaultContig.Builder("contigId", "ACGTACGTACGT")
                                         .addRead("SOLEXA_1", 0, "ACGTACGT")
                                         .addRead("SOLEXA_2", 2,   "GTACGT")
                                         .addRead("SOLEXA_3", 6,   "GTACGT")
@@ -113,13 +113,13 @@ public class TestFilterFastqDataFromCas {
         assertTrue(actual.contains("SOLEXA_4"));
     }
     
-    private CoverageMap<CoverageRegion<ReadRange>> convertToReadRangeCoverageMap(Contig<? extends PlacedRead> contig){
+    private CoverageMap<CoverageRegion<ReadRange>> convertToReadRangeCoverageMap(Contig<? extends AssembledRead> contig){
         List<ReadRange> readRanges = new ArrayList<ReadRange>();
-        CloseableIterator<? extends PlacedRead> iter = null;
+        CloseableIterator<? extends AssembledRead> iter = null;
         try{
         	iter = contig.getReadIterator();
         	while(iter.hasNext()){
-        		PlacedRead read = iter.next();
+        		AssembledRead read = iter.next();
         		readRanges.add(new ReadRange(read.getId(), read.asRange()));
         	}
         }finally{

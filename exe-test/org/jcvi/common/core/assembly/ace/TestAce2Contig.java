@@ -26,7 +26,7 @@ import java.io.InputStream;
 
 import org.jcvi.assembly.ace.Ace2Contig;
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.PlacedRead;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigDataStore;
 import org.jcvi.common.core.assembly.ace.AcePlacedRead;
@@ -75,7 +75,7 @@ public class TestAce2Contig {
         FileInputStream actualStream = new FileInputStream(actualContigFile);
        IOUtil.closeAndIgnoreErrors(actualStream);
       DefaultContigFileDataStore contigFileDataStore = new DefaultContigFileDataStore(actualContigFile);
-      Contig<PlacedRead> contig = contigFileDataStore.get("Contig1");
+      Contig<AssembledRead> contig = contigFileDataStore.get("Contig1");
       
       AceContigDataStore aceContigDataStore = DefaultAceFileDataStore.create(aceFile);
       AceContig aceContig = aceContigDataStore.get("Contig1");
@@ -85,7 +85,7 @@ public class TestAce2Contig {
     	  iter = aceContig.getReadIterator();
     	  while(iter.hasNext()){
     		  AcePlacedRead expectedRead = iter.next();
-    		  PlacedRead actualRead = contig.getRead(expectedRead.getId());
+    		  AssembledRead actualRead = contig.getRead(expectedRead.getId());
               assertEquals(expectedRead.getNucleotideSequence().asList(),actualRead.getNucleotideSequence().asList());
               assertEquals(expectedRead.asRange(), actualRead.asRange());
     	  }
