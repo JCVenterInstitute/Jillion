@@ -42,7 +42,7 @@ public class FastqConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 	public FastqConsedPhdAdaptedIterator(CloseableIterator<? extends FastqRecord> fastqIterator,  File fastqFile,Date phdDate ){
 		this.requiredComments = PhdUtil.createPhdTimeStampCommentFor(phdDate);
 		this.fastqIterator = fastqIterator;	
-		this.phdDate = phdDate;
+		this.phdDate = new Date(phdDate.getTime());
 		this.fastqFile = fastqFile;
 	}
 	@Override

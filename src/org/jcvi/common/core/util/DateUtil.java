@@ -10,26 +10,26 @@ import java.util.Date;
  */
 public final class DateUtil {
 
-	private static Date specifiedDate=null;
-	
+	private static long specifiedTime;
+	private static boolean useSystemTime=true;
 	private DateUtil(){}
 	
 	public static synchronized Date getCurrentDate(){
-		if(specifiedDate ==null){
+		if(useSystemTime){
 			return new Date();
 		}
-		return new Date(specifiedDate.getTime());
+		return new Date(specifiedTime);
 	}
 	
 	public static synchronized void setCurrentDate(Date date){
 		if(date ==null){
-			specifiedDate =null;
-		}else{
-			specifiedDate = new Date(date.getTime());
+			throw new NullPointerException("specified date can not be null");
 		}
+		useSystemTime=false;
+		specifiedTime = date.getTime();
 	}
 	
 	public static synchronized void restoreDate(){
-		setCurrentDate(null);
+		useSystemTime=true;
 	}
 }

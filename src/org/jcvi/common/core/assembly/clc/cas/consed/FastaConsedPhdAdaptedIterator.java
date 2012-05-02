@@ -53,7 +53,7 @@ public class FastaConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 		this.fastaIterator = fastaIterator;	
 		this.defaultQualityValue = defaultQualityValue;
 		this.fastaFile = fastaFile;
-		this.phdDate = phdDate;
+		this.phdDate = new Date(phdDate.getTime());
 	}
 	@Override
 	public boolean hasNext() {

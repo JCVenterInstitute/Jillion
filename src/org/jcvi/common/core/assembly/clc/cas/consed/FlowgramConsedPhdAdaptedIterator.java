@@ -40,7 +40,7 @@ public class FlowgramConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 	public FlowgramConsedPhdAdaptedIterator(CloseableIterator<? extends Flowgram> flowgramIterator, File sffFile, Date phdDate ){
 		this.requiredComments = PhdUtil.createPhdTimeStampCommentFor(phdDate);
 		this.flowgramIterator = flowgramIterator;	
-		this.phdDate = phdDate;
+		this.phdDate = new Date(phdDate.getTime());
 		this.sffFile = sffFile;
 	}
 	@Override

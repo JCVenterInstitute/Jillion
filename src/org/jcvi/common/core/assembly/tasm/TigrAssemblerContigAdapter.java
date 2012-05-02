@@ -210,6 +210,11 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		 */
 		private static final DateFormat EDIT_DATE_FORMATTER =
 			new SimpleDateFormat("MM/dd/yy hh:mm:ss aa");
+		
+		
+		private synchronized String formatEditDate(Date editDate){
+			return EDIT_DATE_FORMATTER.format(editDate);
+		}
 		private final Contig<? extends AssembledRead> contig;
 		private final Map<TigrAssemblerContigAttribute, String> optionalAttributes = new EnumMap<TigrAssemblerContigAttribute, String>(TigrAssemblerContigAttribute.class);
 		/**
@@ -432,7 +437,7 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 				optionalAttributes.remove(TigrAssemblerContigAttribute.EDIT_DATE);
 			}
 			optionalAttributes.put(TigrAssemblerContigAttribute.EDIT_PERSON,editPerson);
-			optionalAttributes.put(TigrAssemblerContigAttribute.EDIT_DATE,EDIT_DATE_FORMATTER.format(editDate));
+			optionalAttributes.put(TigrAssemblerContigAttribute.EDIT_DATE, formatEditDate(editDate));
 			return this;
 		}
 		/**
