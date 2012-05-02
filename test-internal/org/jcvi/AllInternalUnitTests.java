@@ -45,7 +45,7 @@ import org.junit.runners.Suite.SuiteClasses;
         AllInternalContigUnitTests.class,
         AllInternalAssemblyUnitTests.class,
         AllInternalTraceUnitTests.class,
-        AllAuthUnitTests.class,
+        AllAuthUnitTests.class
     }
     )
 public class AllInternalUnitTests {
