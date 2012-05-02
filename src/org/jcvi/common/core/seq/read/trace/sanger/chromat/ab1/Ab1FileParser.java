@@ -450,7 +450,7 @@ public final class Ab1FileParser {
      * @param props
      * @return
      */
-    private static Map<String,String> addTimeStampComment(
+    private static synchronized Map<String,String> addTimeStampComment(
             GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
             Map<String,String> props) {
         Map<TaggedDataName, List<DateTaggedDataRecord>> dates= groupedDataRecordMap.dateDataRecords;

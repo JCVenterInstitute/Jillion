@@ -188,7 +188,7 @@ public class AceFileUtil {
                 
                 phdInfo.getTraceName(),
                 phdInfo.getPhdName(),
-                AceFileUtil.CHROMAT_DATE_TIME_FORMATTER.format(phdInfo.getPhdDate())
+                formatPhdDate(phdInfo.getPhdDate())
                 );
     }
     

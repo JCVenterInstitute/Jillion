@@ -62,7 +62,7 @@ public final class TraceDetails {
             return this;
         }
         public Builder phdDate(Date phdDate){
-            this.phdDate = phdDate;
+            this.phdDate = new Date(phdDate.getTime());
             return this;
         }
         public Builder chromatDir(File chromatDir){
@@ -93,7 +93,7 @@ public final class TraceDetails {
      * @return the phdDate
      */
     public Date getPhdDate() {
-        return phdDate;
+        return new Date(phdDate.getTime());
     }
     /**
      * @return the fastqQualityCodec
