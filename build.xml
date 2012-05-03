@@ -106,8 +106,6 @@
 					<src path="${exe-internal}"/>
 					<src path="${exe-test}"/>
 					<src path="${integration-test}"/>
-					<src path="${integration-test-internal}"/>		
-					<src path="${primer-design-test}"/>
 			
 	  	</javac>
 		
@@ -118,9 +116,6 @@
 			<fileset dir="${exe-internal}" excludes="**/*.java"/>
 			<fileset dir="${exe-test}" excludes="**/*.java"/>
 			<fileset dir="${integration-test}" excludes="**/*.java"/>
-			<fileset dir="${integration-test-internal}" excludes="**/*.java"/>
-			
-			<fileset dir="${primer-design-test}" excludes="**/*.java"/>
 		</copy>
 
 	 </target>
