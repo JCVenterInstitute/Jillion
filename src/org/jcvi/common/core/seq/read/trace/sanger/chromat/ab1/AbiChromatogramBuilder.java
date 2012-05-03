@@ -26,6 +26,8 @@ import java.util.Map;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.Ab1LocalDate;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.Ab1LocalTime;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.ByteArrayTaggedDataRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.DateTaggedDataRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.FloatArrayTaggedDataRecord;
@@ -40,8 +42,6 @@ import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
 
 /**
  * @author dkatzel
@@ -379,7 +379,7 @@ public class AbiChromatogramBuilder implements AbiChromatogramFileVisitor, org.j
     */
     @Override
     public void visitTaggedDataRecord(TimeTaggedDataRecord record,
-            LocalTime time) {
+            Ab1LocalTime time) {
         // TODO Auto-generated method stub
         
     }
@@ -389,7 +389,7 @@ public class AbiChromatogramBuilder implements AbiChromatogramFileVisitor, org.j
     */
     @Override
     public void visitTaggedDataRecord(DateTaggedDataRecord record,
-            LocalDate date) {
+            Ab1LocalDate date) {
         // TODO Auto-generated method stub
         
     }

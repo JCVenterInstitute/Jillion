@@ -19,9 +19,8 @@
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag;
 
 import java.nio.ByteBuffer;
-import org.joda.time.LocalDate;
 
-public class DefaultDateTaggedDataRecord extends AbstractTaggedDataRecord<DateTaggedDataRecord,LocalDate> implements DateTaggedDataRecord{
+public class DefaultDateTaggedDataRecord extends AbstractTaggedDataRecord<DateTaggedDataRecord,Ab1LocalDate> implements DateTaggedDataRecord{
 
 	public DefaultDateTaggedDataRecord(TaggedDataName name, long number,
 			TaggedDataType dataType, int elementLength, long numberOfElements,
@@ -31,21 +30,21 @@ public class DefaultDateTaggedDataRecord extends AbstractTaggedDataRecord<DateTa
 	}
 
 	@Override
-	protected LocalDate parseDataFrom(byte[] data) {
+	protected Ab1LocalDate parseDataFrom(byte[] data) {
 		ByteBuffer buf = ByteBuffer.wrap(data);
 		short year =buf.getShort();
-		byte month = buf.get();
+		int month = buf.get()-1;
 		byte day = buf.get();
 		
-		return new LocalDate(year, month, day);
+		return new Ab1LocalDate(year, month, day);
 	}
 
     /**
     * {@inheritDoc}
     */
     @Override
-    public Class<LocalDate> getParsedDataType() {
-        return LocalDate.class;
+    public Class<Ab1LocalDate> getParsedDataType() {
+        return Ab1LocalDate.class;
     }
 
     /**

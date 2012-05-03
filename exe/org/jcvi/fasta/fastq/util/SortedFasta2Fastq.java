@@ -56,11 +56,11 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.util.DateUtil;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
 import org.jcvi.common.io.idReader.IdReader;
 import org.jcvi.common.io.idReader.IdReaderException;
 import org.jcvi.common.io.idReader.StringIdParser;
-import org.joda.time.Period;
 
 /**
  * {@code SortedFasta2Fastq} is a another fasta to fastq conversion tool
@@ -326,7 +326,7 @@ public class SortedFasta2Fastq {
             
             writer.close();
             long endTime = System.currentTimeMillis();
-            System.out.println(new Period(endTime - startTime));
+            System.out.println(DateUtil.getElapsedTimeAsString(endTime - startTime));
             
         } catch (ParseException e) {
             printHelp(options);

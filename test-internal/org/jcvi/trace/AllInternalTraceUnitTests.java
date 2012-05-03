@@ -18,7 +18,6 @@
  ******************************************************************************/
 
 package org.jcvi.trace;
-import org.jcvi.trace.sanger.traceFileServer.AllJcviTraceFileServerUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -30,8 +29,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestFakeTigrSeqnameMatedComputeLibraryLetter.class,
         TestFakeTigrSeqnameWellPosition.class,
         TestFakeTigrSeqnameMatedTraceIdGeneratorcomputeTigrSeqnamePrefix.class,
-        
-        AllJcviTraceFileServerUnitTests.class
+
     }
     )
 public class AllInternalTraceUnitTests {

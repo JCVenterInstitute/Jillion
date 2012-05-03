@@ -20,9 +20,8 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag;
 
 import java.nio.ByteBuffer;
 
-import org.joda.time.LocalTime;
 
-public class DefaultTimeTaggedDataRecord extends AbstractTaggedDataRecord<TimeTaggedDataRecord,LocalTime> implements TimeTaggedDataRecord{
+public class DefaultTimeTaggedDataRecord extends AbstractTaggedDataRecord<TimeTaggedDataRecord,Ab1LocalTime> implements TimeTaggedDataRecord{
 
 	public DefaultTimeTaggedDataRecord(TaggedDataName name, long number,
 			TaggedDataType dataType, int elementLength, long numberOfElements,
@@ -32,18 +31,18 @@ public class DefaultTimeTaggedDataRecord extends AbstractTaggedDataRecord<TimeTa
 	}
 
 	@Override
-	protected LocalTime parseDataFrom(byte[] data) {
+	protected Ab1LocalTime parseDataFrom(byte[] data) {
 		ByteBuffer buf = ByteBuffer.wrap(data);
 		
-		return new LocalTime(buf.get(), buf.get(), buf.get());
+		return new Ab1LocalTime(buf.get(), buf.get(), buf.get());
 	}
 
     /**
     * {@inheritDoc}
     */
     @Override
-    public Class<LocalTime> getParsedDataType() {
-        return LocalTime.class;
+    public Class<Ab1LocalTime> getParsedDataType() {
+        return Ab1LocalTime.class;
     }
 
     /**

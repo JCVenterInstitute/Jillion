@@ -9,7 +9,6 @@
 	<property name="src-internal" value ="src-internal"/>
 	<property name="test" value ="test"/>
 	<property name="test-internal" value ="test-internal"/>
-	<property name ="lib" value="lib"/>
 	<property name ="test-lib" value="test-lib"/>
 	<property name ="lib-internal" value="lib-internal"/>
 	<property name ="exe" value="exe"/>
@@ -19,11 +18,8 @@
 	
 	<!-- non-core packages -->
 	
-	<property name ="primer-design-src" value="primerDesign-src"/>
-		<property name ="primer-design-test" value="primerDesign-test"/>
 	
 	<property name ="integration-test" value="integration-test"/>
-		<property name ="integration-test-internal" value="integration-test-internal"/>
 	
 	<property name ="release" value ="release"/>
 	<property name ="scripts" value = "scripts"/>
@@ -84,12 +80,10 @@
 		<pathelement location="${primer-design-src}"/>
     </path>
     <path id="classpath">
-        <fileset dir="${lib}" includes="**/*.jar"/>
     	<fileset dir="${lib-internal}" includes="**/*.jar"/>
     	<fileset dir="${command-lib}" includes="**/*.jar"/>
     </path>
 	<path id ="test.classpath">
-		<fileset dir="${lib}" includes="**/*.jar"/>
 		<fileset dir="${test-lib}" includes="**/*.jar"/>
 		<fileset dir="${lib-internal}" includes="**/*.jar"/>		
 		<fileset dir="${analysis}" includes="**/*.jar"/>
@@ -257,15 +251,7 @@
 		
 		
 		
-		<junit haltonfailure="no" showoutput="yes"	
-			errorproperty="internal-integration.test.failed"
-				failureproperty="internal-integration.test.failed"
-			fork="true">
-								<formatter type="xml"/>
-								
-							  <test name="org.AllInternalIntegrationTests"/>
-								<classpath refid = "test.classpath" />
-							</junit>
+		
 		
 		<junit haltonfailure="no" showoutput="yes"
 			errorproperty="exe.test.failed"
@@ -332,7 +318,7 @@
 		</checkstyle>
 		</target>
 	
-	<target name="testability" depends="jar-src-all">
+	<target name="testability" depends="jar-include-dependencies">
 		<testability filter= "org.jcvi" print ="xml" resultfile="testabilityexplorer.xml">
 
 			<classpath>
@@ -342,11 +328,11 @@
 		    </classpath>
 	   </testability>	   
 	</target>
-	<target name="jar-src-all" description="jar of all source files" depends= "revision, bin">
+	<target name="jar-include-dependencies" description="jar of all class files AND all 3rd party dependent classes" depends= "revision, bin">
 		
-		    <jarjar jarfile="${project-name}-${version}-r${revision}.jar">
+		    <jarjar jarfile="${project-name}-all-${version}-r${revision}.jar">
 		        <fileset dir="${bin}"/>
-		    	<zipfileset src="${lib}/joda-time-2.0.jar"/>
+		    	
 		    	
 		    	
 		    	
@@ -357,6 +343,7 @@
 		    	<zipfileset src="${test-lib}/objenesis-1.2.jar"/>		    	
 		    	<zipfileset src="${test-lib}/cglib-nodep.jar"/>	
 		    	<zipfileset src="${test-lib}/junit-4.8.2.jar"/>
+		    	<zipfileset src="${test-lib}/joda-time-2.0.jar"/>
 		    	
 		    	<zipfileset src="${lib-internal}/EUIDService.jar"/>
 		    	<zipfileset src="${lib-internal}/ChromatogramArchiver_client.jar"/>
@@ -384,7 +371,7 @@
 	</target>
 	
 	<target name = "release" description ="create release folder with all files needed to be released"
-		depends ="jar-src-all">
+		depends ="jar-include-dependencies">
 		<copy todir="${release}">
 					<fileset dir="${scripts}"/>
 		</copy>
