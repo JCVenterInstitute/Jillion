@@ -19,13 +19,12 @@
 
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag;
 
-import org.joda.time.LocalDate;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface DateTaggedDataRecord extends TaggedDataRecord<DateTaggedDataRecord,LocalDate>{
+public interface DateTaggedDataRecord extends TaggedDataRecord<DateTaggedDataRecord,Ab1LocalDate>{
 
 }

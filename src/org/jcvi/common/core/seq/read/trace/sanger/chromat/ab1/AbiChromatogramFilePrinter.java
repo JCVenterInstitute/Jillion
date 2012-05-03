@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.Ab1LocalDate;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.Ab1LocalTime;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.ByteArrayTaggedDataRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.DateTaggedDataRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.FloatArrayTaggedDataRecord;
@@ -35,8 +37,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRate;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRateTaggedDataType;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
 
 public class AbiChromatogramFilePrinter implements AbiChromatogramFileVisitor{
 
@@ -287,7 +287,7 @@ public class AbiChromatogramFilePrinter implements AbiChromatogramFileVisitor{
     */
     @Override
     public void visitTaggedDataRecord(TimeTaggedDataRecord record,
-            LocalTime time) {
+            Ab1LocalTime time) {
         out.println("Time Record = "+ record);
         out.println(time);
         
@@ -297,7 +297,7 @@ public class AbiChromatogramFilePrinter implements AbiChromatogramFileVisitor{
     * {@inheritDoc}
     */
     @Override
-    public void visitTaggedDataRecord(DateTaggedDataRecord record, LocalDate date) {
+    public void visitTaggedDataRecord(DateTaggedDataRecord record, Ab1LocalDate date) {
         out.println("Date Record = "+ record);
         out.println(date);
         

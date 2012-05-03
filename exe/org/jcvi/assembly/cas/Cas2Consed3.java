@@ -28,7 +28,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -84,12 +83,11 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
+import org.jcvi.common.core.util.DateUtil;
 import org.jcvi.common.core.util.MultipleWrapper;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
 import org.jcvi.common.io.fileServer.ReadWriteFileServer;
 import org.jcvi.common.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
-import org.joda.time.DateTimeUtils;
-import org.joda.time.Period;
 
 public class Cas2Consed3 {
 	private final File casFile;
@@ -160,7 +158,7 @@ public class Cas2Consed3 {
         final File phdDir = getPhdDir();
         File logFile = consedOutputDir.createNewFile("cas2consed.log");
         PrintStream logOut = new PrintStream(logFile);
-        long startTime = DateTimeUtils.currentTimeMillis();
+        long startTime = DateUtil.getCurrentDate().getTime();
         
         try{
             ExternalTrimInfo externalTrimInfo = ExternalTrimInfo.create(trimToUntrimmedMap, trimDatastore);
@@ -316,13 +314,13 @@ public class Cas2Consed3 {
              }
              else{
                  AceFileWriter.writeWholeAssemblyTag(new DefaultWholeAssemblyAceTag("phdBall", "consed",
-                         new Date(DateTimeUtils.currentTimeMillis()), "../phdball_dir/"+phdFile.getName()), out);
+                        DateUtil.getCurrentDate(), "../phdball_dir/"+phdFile.getName()), out);
                 
              }
              IOUtil.closeAndIgnoreErrors(out);
-             long endTime = DateTimeUtils.currentTimeMillis();
+             long endTime = DateUtil.getCurrentDate().getTime();
              
-             logOut.printf("took %s%n",new Period(endTime- startTime));
+             logOut.printf("took %s%n", DateUtil.getElapsedTimeAsString(endTime- startTime));
         }catch(IOException e){
             e.printStackTrace(logOut);
             throw e;

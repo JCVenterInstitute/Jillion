@@ -43,7 +43,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestChainedCloseableIterator.class,
         TestMapValueComparator.class,
         
-        TestAbstractBlockingClosableIteratorExceptions.class
+        TestAbstractBlockingClosableIteratorExceptions.class,
+        TestDateUtilElapsedTime.class
     }
     )
 public class AllUtilUnitTests {

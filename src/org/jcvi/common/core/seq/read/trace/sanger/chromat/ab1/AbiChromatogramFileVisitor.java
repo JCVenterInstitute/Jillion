@@ -21,6 +21,8 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1;
 import java.util.List;
 
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.Ab1LocalDate;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.Ab1LocalTime;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.ByteArrayTaggedDataRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.DateTaggedDataRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.FloatArrayTaggedDataRecord;
@@ -33,8 +35,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRate;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRateTaggedDataType;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
 /**
  * {@code AbiChromatogramFileVisitor} is an ABI
  * Chromatogram specific implementation of 
@@ -148,8 +148,8 @@ public interface AbiChromatogramFileVisitor extends ChromatogramFileVisitor{
     
 	void visitTaggedDataRecord(StringTaggedDataRecord record, String data);
 	
-	void visitTaggedDataRecord(TimeTaggedDataRecord record, LocalTime time);
+	void visitTaggedDataRecord(TimeTaggedDataRecord record, Ab1LocalTime time);
     
-    void visitTaggedDataRecord(DateTaggedDataRecord record, LocalDate date);
+    void visitTaggedDataRecord(DateTaggedDataRecord record, Ab1LocalDate date);
     
 }

@@ -29,6 +29,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,6 +40,8 @@ import java.util.Properties;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.Ab1LocalDate;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.Ab1LocalTime;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.AsciiTaggedDataRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.ByteArrayTaggedDataRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.DateTaggedDataRecord;
@@ -60,9 +63,6 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
 /**
  * {@code Ab1FileParser} can parse an
  * Applied BioSystems "ab1" formatted chromatogram
@@ -456,23 +456,27 @@ public final class Ab1FileParser {
         Map<TaggedDataName, List<DateTaggedDataRecord>> dates= groupedDataRecordMap.dateDataRecords;
         Map<TaggedDataName, List<TimeTaggedDataRecord>> times= groupedDataRecordMap.timeDataRecords;
         if(dates.containsKey(TaggedDataName.RUN_DATE) && times.containsKey(TaggedDataName.RUN_TIME)){
-            LocalDate startDate =dates.get(TaggedDataName.RUN_DATE).get(0).parseDataRecordFrom(traceData);
-            LocalDate endDate =dates.get(TaggedDataName.RUN_DATE).get(1).parseDataRecordFrom(traceData);
+        	Ab1LocalDate startDate =dates.get(TaggedDataName.RUN_DATE).get(0).parseDataRecordFrom(traceData);
+        	Ab1LocalDate endDate =dates.get(TaggedDataName.RUN_DATE).get(1).parseDataRecordFrom(traceData);
             
-            LocalTime startTime = times.get(TaggedDataName.RUN_TIME).get(0).parseDataRecordFrom(traceData);
-            LocalTime endTime = times.get(TaggedDataName.RUN_TIME).get(1).parseDataRecordFrom(traceData);
-            final DateTime startDateTime = startDate.toDateTime(startTime);
-            final DateTime endDateTime = endDate.toDateTime(endTime);
+            Ab1LocalTime startTime = times.get(TaggedDataName.RUN_TIME).get(0).parseDataRecordFrom(traceData);
+            Ab1LocalTime endTime = times.get(TaggedDataName.RUN_TIME).get(1).parseDataRecordFrom(traceData);
+            
+            final Date startDateTime = startDate.toDate(startTime);
+            final Date endDateTime = endDate.toDate(endTime);
             props.put("DATE", String.format("%s to %s",
-            		DATE_FORMATTER.format(startDateTime.toDate()),
-            		DATE_FORMATTER.format(endDateTime.toDate())
+            		DATE_FORMATTER.format(startDateTime),
+            		DATE_FORMATTER.format(endDateTime)
             		));
+            
+            
             props.put("RUND", String.format("%04d%02d%02d.%02d%02d%02d - %04d%02d%02d.%02d%02d%02d",
-                    startDateTime.getYear(), startDateTime.getMonthOfYear(), startDateTime.getDayOfMonth(),
-                    startDateTime.getHourOfDay(),startDateTime.getMinuteOfHour(), startDateTime.getSecondOfMinute(),
-                    endDateTime.getYear(), endDateTime.getMonthOfYear(), endDateTime.getDayOfMonth(),
-                    endDateTime.getHourOfDay(),endDateTime.getMinuteOfHour(), endDateTime.getSecondOfMinute()
-                   
+            		startDate.getYear(), startDate.getMonth()+1, startDate.getDay(),
+            		startTime.getHour(), startTime.getMin(), startTime.getSec(),
+            		
+            		endDate.getYear(), endDate.getMonth()+1, endDate.getDay(),
+            		endTime.getHour(), endTime.getMin(), endTime.getSec()
+            		
             ));
         }
         return props;

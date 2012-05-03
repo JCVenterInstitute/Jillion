@@ -21,6 +21,8 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramFile;
@@ -55,8 +57,20 @@ public class TestAbiChromatogramTraceParserMatchesZTR {
         assertEquals(expectedZTR.getQualities(), actualAbi.getQualities());
         assertEquals(expectedZTR.getChannelGroup(), actualAbi.getChannelGroup());
         assertEquals(expectedZTR.getNumberOfTracePositions(), actualAbi.getNumberOfTracePositions());
-        assertEquals(expectedZTR.getComments(), actualAbi.getComments());
+        assertCommentsCorrect(expectedZTR.getComments(), actualAbi.getComments());
     
         
     }
+
+	private void assertCommentsCorrect(Map<String, String> expected,
+			Map<String, String> actual) {
+		assertEquals("num comments",expected.size(), actual.size());
+		for(Entry<String, String> expectedEntry : expected.entrySet()){
+			String key = expectedEntry.getKey();
+			String value = expectedEntry.getValue();
+			assertTrue("missing "+key, actual.containsKey(key));
+			assertEquals("wrong value for "+key, value, actual.get(key));
+		}
+		
+	}
 }
