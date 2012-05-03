@@ -76,7 +76,6 @@
 	<path id="javadoc.sourcepath">
         <pathelement location="${src}"/>
     	<pathelement location="${src-internal}"/>
-		<pathelement location="${primer-design-src}"/>
     </path>
     <path id="classpath">
     	<fileset dir="${command-lib}" includes="**/*.jar"/>
