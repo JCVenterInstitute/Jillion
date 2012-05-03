@@ -10,7 +10,6 @@
 	<property name="test" value ="test"/>
 	<property name="test-internal" value ="test-internal"/>
 	<property name ="test-lib" value="test-lib"/>
-	<property name ="lib-internal" value="lib-internal"/>
 	<property name ="exe" value="exe"/>
 	<property name ="exe-internal" value="exe-internal"/>
 	<property name ="exe-test" value="exe-test"/>
@@ -80,12 +79,10 @@
 		<pathelement location="${primer-design-src}"/>
     </path>
     <path id="classpath">
-    	<fileset dir="${lib-internal}" includes="**/*.jar"/>
     	<fileset dir="${command-lib}" includes="**/*.jar"/>
     </path>
 	<path id ="test.classpath">
-		<fileset dir="${test-lib}" includes="**/*.jar"/>
-		<fileset dir="${lib-internal}" includes="**/*.jar"/>		
+		<fileset dir="${test-lib}" includes="**/*.jar"/>		
 		<fileset dir="${analysis}" includes="**/*.jar"/>
 		<fileset dir="${command-lib}" includes="**/*.jar"/>
 		<pathelement path= "${bin}"/>
@@ -344,9 +341,6 @@
 		    	<zipfileset src="${test-lib}/cglib-nodep.jar"/>	
 		    	<zipfileset src="${test-lib}/junit-4.8.2.jar"/>
 		    	<zipfileset src="${test-lib}/joda-time-2.0.jar"/>
-		    	
-		    	<zipfileset src="${lib-internal}/EUIDService.jar"/>
-		    	<zipfileset src="${lib-internal}/ChromatogramArchiver_client.jar"/>
 		    	
 		    	<manifest>
 		    		<attribute name ="Sealed" value ="true"/>
