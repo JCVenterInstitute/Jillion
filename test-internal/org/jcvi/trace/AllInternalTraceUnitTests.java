@@ -28,7 +28,7 @@ import org.junit.runners.Suite.SuiteClasses;
         
         TestFakeTigrSeqnameMatedComputeLibraryLetter.class,
         TestFakeTigrSeqnameWellPosition.class,
-        TestFakeTigrSeqnameMatedTraceIdGeneratorcomputeTigrSeqnamePrefix.class,
+        TestFakeTigrSeqnameMatedTraceIdGeneratorcomputeTigrSeqnamePrefix.class
 
     }
     )
