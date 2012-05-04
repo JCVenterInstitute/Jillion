@@ -44,18 +44,18 @@ public class DefaultSliceMap extends AbstractSliceMap{
         return new DefaultSliceMap(DefaultCoverageMap.buildCoverageMap(contig), qualityDataStore, qualityValueStrategy);
     }
     
-    public static <PR extends AssembledRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> DefaultSliceMap create(M coverageMap,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy){
+    public static <PR extends AssembledRead> DefaultSliceMap create(CoverageMap<PR> coverageMap,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy){
         return new DefaultSliceMap(coverageMap, qualityDataStore, qualityValueStrategy);
     }
     private Map<Long, IdedSlice> sliceMap = new HashMap<Long, IdedSlice>();
     private long size;
     protected PhredQuality defaultQuality;
-    public DefaultSliceMap(CoverageMap<? extends CoverageRegion<? extends AssembledRead>> coverageMap, 
+    public DefaultSliceMap(CoverageMap<? extends AssembledRead> coverageMap, 
                         QualityDataStore qualityDataStore,
                         QualityValueStrategy qualityValueStrategy){
         this(coverageMap,qualityDataStore, qualityValueStrategy,null);
     }
-    protected DefaultSliceMap(CoverageMap<? extends CoverageRegion<? extends AssembledRead>> coverageMap, 
+    protected DefaultSliceMap(CoverageMap<? extends AssembledRead> coverageMap, 
             QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality){
         this.defaultQuality = defaultQuality;

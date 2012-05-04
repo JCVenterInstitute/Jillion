@@ -25,11 +25,10 @@ package org.jcvi.common.core.assembly.util.slice;
 
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 
-public interface SliceMapFactory<P extends AssembledRead, R extends CoverageRegion<P>, M extends CoverageMap<R>> {
+public interface SliceMapFactory<P extends AssembledRead> {
 
-    SliceMap createNewSliceMap(M coverageMap, 
+    SliceMap createNewSliceMap(CoverageMap<P> coverageMap, 
             QualityDataStore qualityDataStore);
 }

@@ -88,7 +88,7 @@ public class FilterFastqDataFromCas {
             //and we want
             //an even distribution
             Collections.shuffle(readRanges);
-            CoverageMap<CoverageRegion<ReadRange>> coverageMap = DefaultCoverageMap.buildCoverageMap(readRanges, maxSolexaCoverageDepth);
+            CoverageMap<ReadRange> coverageMap = DefaultCoverageMap.buildCoverageMap(readRanges, maxSolexaCoverageDepth);
             Set<String> reads = new TreeSet<String>();
             for(CoverageRegion<ReadRange> region : coverageMap){
                 for(ReadRange readRange : region){
@@ -103,7 +103,7 @@ public class FilterFastqDataFromCas {
     }
 
     static Set<String> getNeededReadsFor(int maxSolexaCoverageDepth,
-            CoverageMap<CoverageRegion<ReadRange>> coverageMap) {
+            CoverageMap<ReadRange> coverageMap) {
         Set<String> neededReads = new TreeSet<String>();
         //first pass find all reads that are needed to meet min coverage levels
         for(CoverageRegion<ReadRange> region : coverageMap){

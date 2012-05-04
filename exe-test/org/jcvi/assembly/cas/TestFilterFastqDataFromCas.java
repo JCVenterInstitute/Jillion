@@ -28,7 +28,6 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.CloseableIterator;
@@ -113,7 +112,7 @@ public class TestFilterFastqDataFromCas {
         assertTrue(actual.contains("SOLEXA_4"));
     }
     
-    private CoverageMap<CoverageRegion<ReadRange>> convertToReadRangeCoverageMap(Contig<? extends AssembledRead> contig){
+    private CoverageMap<ReadRange> convertToReadRangeCoverageMap(Contig<? extends AssembledRead> contig){
         List<ReadRange> readRanges = new ArrayList<ReadRange>();
         CloseableIterator<? extends AssembledRead> iter = null;
         try{

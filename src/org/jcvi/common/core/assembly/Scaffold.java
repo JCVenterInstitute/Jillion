@@ -28,7 +28,6 @@ import java.util.Set;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 /**
  * A scaffold (also known as a super-contig) is a layout
  * of {@link Contig}s placed and oriented together such that 
@@ -68,7 +67,7 @@ public interface Scaffold {
      * be empty if there are no contigs in this scaffold.
      */
     Set<PlacedContig> getPlacedContigs();
-    CoverageMap<CoverageRegion<PlacedContig>> getContigCoverageMap();
+    CoverageMap<PlacedContig> getContigCoverageMap();
     /**
      * Get the number of contigs in this scaffold.
      * @return a positive number.

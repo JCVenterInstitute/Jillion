@@ -8,7 +8,6 @@ package org.jcvi.common.core.assembly.util.slice;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -21,12 +20,12 @@ public class NoQualitySliceMap extends DefaultSliceMap{
     }
     public static final PhredQuality DEFAULT_PHRED_QUALITY = PhredQuality.valueOf(30);
     
-    public NoQualitySliceMap(CoverageMap<? extends CoverageRegion<? extends AssembledRead>> coverageMap, 
+    public NoQualitySliceMap(CoverageMap<? extends AssembledRead> coverageMap, 
                     PhredQuality phredQuality) {
         super(coverageMap, null, null,phredQuality);
     }
     
-    public NoQualitySliceMap(CoverageMap<? extends CoverageRegion<? extends AssembledRead>> coverageMap) {
+    public NoQualitySliceMap(CoverageMap<?  extends AssembledRead> coverageMap) {
         this(coverageMap,DEFAULT_PHRED_QUALITY);
     }
     @Override

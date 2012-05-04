@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageRegion;
 import org.jcvi.common.core.testUtil.TestUtil;
@@ -99,7 +98,7 @@ public class TestDefaultCoverageRegion {
     @Test
     public void nullElementsShouldThrowIllegalArgumentException(){
         try{
-            new DefaultCoverageRegion.Builder<Range>(start,null);
+            new DefaultCoverageRegion.Builder<Range>(start,(Iterable<Range>)null);
             fail("passing in null elements should throw illegalArgumentException");
         }catch(IllegalArgumentException e){
             assertEquals("elements can not be null" , e.getMessage());
@@ -113,7 +112,7 @@ public class TestDefaultCoverageRegion {
     
     @Test
     public void equalsSameRValues(){
-        DefaultCoverageRegion sameValues = new DefaultCoverageRegion.Builder<Range>(start,Arrays.asList(seq1,seq2))
+        DefaultCoverageRegion<Range> sameValues = new DefaultCoverageRegion.Builder<Range>(start,Arrays.asList(seq1,seq2))
                                         .end(end)
                                         .build();
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);
@@ -131,7 +130,7 @@ public class TestDefaultCoverageRegion {
     
     @Test
     public void notEqualsDifferentStart(){
-        DefaultCoverageRegion differentStart = new DefaultCoverageRegion.Builder<Range>(
+        DefaultCoverageRegion<Range> differentStart = new DefaultCoverageRegion.Builder<Range>(
                                     start+1,
                                     Arrays.asList(seq1,seq2))
                                         .end(end+1)
@@ -142,7 +141,7 @@ public class TestDefaultCoverageRegion {
     
     @Test
     public void notEqualsDifferentLength(){
-        DefaultCoverageRegion differentLength = new DefaultCoverageRegion.Builder<Range>(
+        DefaultCoverageRegion<Range> differentLength = new DefaultCoverageRegion.Builder<Range>(
                                     start,
                                     Arrays.asList(seq1,seq2))
                                         .end(end+1)
@@ -152,7 +151,7 @@ public class TestDefaultCoverageRegion {
     }
     @Test
     public void notEqualsDifferentElements(){
-        DefaultCoverageRegion differentElements = new DefaultCoverageRegion.Builder<Range>(
+        DefaultCoverageRegion<Range> differentElements = new DefaultCoverageRegion.Builder<Range>(
                                     start,
                                     Arrays.asList(seq1))
                                         .end(end)
@@ -163,7 +162,7 @@ public class TestDefaultCoverageRegion {
     
     @Test
     public void sameElementsDifferentOrderIsNotEqual(){
-        DefaultCoverageRegion differentElementOrder = new DefaultCoverageRegion.Builder<Range>(
+        DefaultCoverageRegion<Range> differentElementOrder = new DefaultCoverageRegion.Builder<Range>(
                                     start,
                                     Arrays.asList(seq2,seq1))
                                         .end(end)

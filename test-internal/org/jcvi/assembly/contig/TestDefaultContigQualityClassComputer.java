@@ -49,7 +49,7 @@ public class TestDefaultContigQualityClassComputer {
     
     QualityValueStrategy qualityValueStrategy;
     DefaultContigQualityClassComputer  sut;
-    CoverageMap<CoverageRegion<Rangeable>> coverageMap;
+    CoverageMap<Rangeable> coverageMap;
     QualityDataStore qualityFastaMap;
     NucleotideSequence consensus;
     @Before

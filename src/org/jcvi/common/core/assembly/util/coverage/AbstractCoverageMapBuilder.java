@@ -36,7 +36,7 @@ import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.util.Builder;
 
 
-public abstract class AbstractCoverageMapBuilder<P extends Rangeable, R extends CoverageRegion<P>> implements Builder<CoverageMap<R>> {
+public abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builder<CoverageMap<P>> {
 
     private P enteringObject;
     private P leavingObject;
@@ -48,7 +48,7 @@ public abstract class AbstractCoverageMapBuilder<P extends Rangeable, R extends 
     protected abstract Iterator<P> createEnteringIterator();
     protected abstract Iterator<P> createLeavingIterator();
     
-    protected abstract CoverageMap<R> build(List<CoverageRegionBuilder<P>> coverageRegionBuilders);
+    protected abstract CoverageMap<P> build(List<CoverageRegionBuilder<P>> coverageRegionBuilders);
     
     public AbstractCoverageMapBuilder(){
         coveringObjects =  new ArrayDeque<P>();
@@ -59,7 +59,7 @@ public abstract class AbstractCoverageMapBuilder<P extends Rangeable, R extends 
         this.maxAllowedCoverage = maxAllowedCoverage;
     }
     @Override
-    public CoverageMap<R> build() {
+    public CoverageMap<P> build() {
         initialize();
         createListOfRegionBuilders();
         return build(coverageRegionBuilders);

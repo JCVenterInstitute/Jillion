@@ -53,7 +53,7 @@ public class AbacusErrorFinder {
     }
     private <P extends AssembledRead, C extends Contig<P>> List<Range> filterCandidates(C contig,
             List<Range> ungappedCandidateRanges) {
-        CoverageMap<CoverageRegion<P>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
+        CoverageMap<P> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
         NucleotideSequence consensus = contig.getConsensus();
         List<Range> errorRanges = new ArrayList<Range>(ungappedCandidateRanges.size());
         for(Range ungappedCandidateRange : ungappedCandidateRanges){           
@@ -141,7 +141,7 @@ public class AbacusErrorFinder {
         }finally{
         	IOUtil.closeAndIgnoreErrors(readIterator);
         }
-        CoverageMap<CoverageRegion<Range>> clusteredGapCoverage = DefaultCoverageMap.buildCoverageMap(gapRangesPerRead);
+        CoverageMap<Range> clusteredGapCoverage = DefaultCoverageMap.buildCoverageMap(gapRangesPerRead);
     
         List<Range> abacusErrors = new ArrayList<Range>();
        

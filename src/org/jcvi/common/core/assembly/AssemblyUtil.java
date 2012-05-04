@@ -233,7 +233,7 @@ public final class AssemblyUtil {
      * @return a new {@link CoverageMap} but where the coordinates in the coverage map
      * refer to ungapped coordinates instead of gapped coordinates.
      */
-    public static <PR extends AssembledRead,C extends Contig<PR>> CoverageMap<CoverageRegion<PR>> 
+    public static <PR extends AssembledRead,C extends Contig<PR>> CoverageMap<PR> 
     buildUngappedCoverageMap(C contig){
         return buildUngappedCoverageMap(contig.getConsensus(), contig.getReadIterator());
     }
@@ -247,21 +247,21 @@ public final class AssemblyUtil {
      * refer to ungapped coordinates instead of gapped coordinates.
      * 
      */
-    public static <PR extends AssembledRead> CoverageMap<CoverageRegion<PR>> 
+    public static <PR extends AssembledRead> CoverageMap<PR> 
     buildUngappedCoverageMap(NucleotideSequence consensus, CloseableIterator<PR> reads){
         
-        CoverageMap<CoverageRegion<PR>> gappedCoverageMap =DefaultCoverageMap.buildCoverageMap(reads);
+        CoverageMap<PR> gappedCoverageMap =DefaultCoverageMap.buildCoverageMap(reads);
         return createUngappedCoverageMap(consensus, gappedCoverageMap);
     }
     
     
-    private static <PR extends AssembledRead,C extends Contig<PR>, T extends CoverageRegion<PR>> CoverageMap<CoverageRegion<PR>> createUngappedCoverageMap(
-            NucleotideSequence consensus, CoverageMap<T> gappedCoverageMap) {
+    private static <PR extends AssembledRead,C extends Contig<PR>> CoverageMap<PR> createUngappedCoverageMap(
+            NucleotideSequence consensus, CoverageMap<PR> gappedCoverageMap) {
         List<CoverageRegion<PR>> ungappedCoverageRegions = new ArrayList<CoverageRegion<PR>>();
-        for(T gappedCoverageRegion : gappedCoverageMap){
+        for(CoverageRegion<PR> gappedCoverageRegion : gappedCoverageMap){
             Range gappedRange = gappedCoverageRegion.asRange();
             Range ungappedRange = AssemblyUtil.toUngappedRange(consensus,gappedRange);
-            List<PR> reads = new ArrayList<PR>();
+            List<PR> reads = new ArrayList<PR>(gappedCoverageRegion.getCoverage());
             for(PR read : gappedCoverageRegion){
                 reads.add(read);
             }
@@ -272,6 +272,6 @@ public final class AssemblyUtil {
                                 .build());
         }
         
-        return  new DefaultCoverageMap<PR, CoverageRegion<PR>>(ungappedCoverageRegions);
+        return  new DefaultCoverageMap<PR>(ungappedCoverageRegions);
     }
 }

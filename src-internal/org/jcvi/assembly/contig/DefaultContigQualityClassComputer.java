@@ -45,7 +45,7 @@ public class DefaultContigQualityClassComputer<P extends AssembledRead> implemen
         this.qualityThreshold = qualityThreshold;
     }
     @Override
-    public QualityClass computeQualityClass( CoverageMap<CoverageRegion<P>> coverageMap,
+    public QualityClass computeQualityClass( CoverageMap<P> coverageMap,
             QualityDataStore qualityDataStore,
     NucleotideSequence consensus,int index) {
         CoverageRegion<P> region = coverageMap.getRegionWhichCovers(index);
