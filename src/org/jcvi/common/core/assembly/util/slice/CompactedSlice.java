@@ -20,8 +20,6 @@
 package org.jcvi.common.core.assembly.util.slice;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -112,11 +110,10 @@ public final class CompactedSlice implements IdedSlice{
         if(index<0){
             throw new IllegalArgumentException(elementId + " not in slice");
         }
-        ByteBuffer buf = ByteBuffer.wrap(elements);
-        buf.position(index *CompactedSliceElementCodec.SIZE_OF_ENCODED_DATA);
-        byte[] tmp = new byte[CompactedSliceElementCodec.SIZE_OF_ENCODED_DATA];
-        buf.get(tmp);
-        return new CompactedSliceElement(ids.get(index),tmp);
+        int offset = index*2;
+        byte dirAndNuc =elements[offset];
+        byte qual = elements[offset+1];
+        return new CompactedSliceElement(elementId, qual, dirAndNuc);
     }
     
     public static class Builder implements org.jcvi.common.core.util.Builder<CompactedSlice>{
@@ -133,11 +130,10 @@ public final class CompactedSlice implements IdedSlice{
             return this;
         }
         public Builder addSliceElement(String id, Nucleotide base, PhredQuality quality, Direction dir){
-            try {
-                bytes.write(CompactedSliceElementCodec.INSTANCE.compact(base, quality, dir));
-            } catch (IOException e) {
-                throw new IllegalStateException(e);
-            }
+        	CompactedSliceElement compacted = new CompactedSliceElement(id, base, quality, dir);
+            bytes.write(compacted.getEncodedDirAndNucleotide());
+            bytes.write(compacted.getEncodedQuality());
+            
             ids.add(id);
             return this;
         }
