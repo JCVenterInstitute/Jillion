@@ -19,7 +19,6 @@
 
 package org.jcvi.common.core.assembly.util.slice;
 
-import java.util.Arrays;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -32,17 +31,26 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
  */
 public class CompactedSliceElement implements IdedSliceElement{
 
-    private String id;
-    private byte[] encodedData = new byte[2];
-    CompactedSliceElement(String id, byte[] encodedData){
+    private static final Nucleotide[] NUCLEOTIDE_VALUES = Nucleotide.values();
+	private String id;
+    //don't use array since that takes up 12 bytes of memory
+    //to store reference and length
+    private byte quality;
+    private byte dirAndNucleotide;
+    /**
+     * package private constructor used by compactedSlice to build
+     * already encoded elements.
+     * @param id
+     * @param quality
+     * @param encodedDirAndNucleotide
+     */
+    CompactedSliceElement(String id, byte quality, byte encodedDirAndNucleotide){
         if(id ==null){
             throw new NullPointerException("fields can not be null");
         }
-        if(encodedData.length !=2){
-            throw new IllegalArgumentException("invalid encoded data");
-        }
         this.id = id;
-        System.arraycopy(encodedData, 0, this.encodedData, 0, 2);
+        this.quality = quality;
+        this.dirAndNucleotide = encodedDirAndNucleotide;
     }
     public CompactedSliceElement(String id, Nucleotide base, PhredQuality quality,
             Direction direction) {
@@ -50,10 +58,22 @@ public class CompactedSliceElement implements IdedSliceElement{
             throw new NullPointerException("fields can not be null");
         }
         this.id= id;
-        encodedData = CompactedSliceElementCodec.INSTANCE.compact(base, quality, direction);
+        this.quality = quality.getValue().byteValue();
+        this.dirAndNucleotide = base.getOrdinalAsByte();
+        //This will set the ordinal to negative if the 
+        //the direction is reverse for a quick lookup.
+        if(direction == Direction.REVERSE){
+        	dirAndNucleotide = (byte)(dirAndNucleotide | 0x80);
+        }
     }
    
-    /**
+    byte getEncodedDirAndNucleotide() {
+		return dirAndNucleotide;
+	}
+    byte getEncodedQuality() {
+		return quality;
+	}
+	/**
     * {@inheritDoc}
     */
     @Override
@@ -66,7 +86,8 @@ public class CompactedSliceElement implements IdedSliceElement{
     */
     @Override
     public Nucleotide getBase() {
-        return CompactedSliceElementCodec.INSTANCE.getBase(encodedData);
+        int ordinal= dirAndNucleotide & 0xF;
+        return NUCLEOTIDE_VALUES[ordinal];
     }
 
     /**
@@ -74,7 +95,7 @@ public class CompactedSliceElement implements IdedSliceElement{
     */
     @Override
     public PhredQuality getQuality() {
-        return CompactedSliceElementCodec.INSTANCE.getQuality(encodedData);
+        return PhredQuality.valueOf(quality);
     }
 
     /**
@@ -82,18 +103,24 @@ public class CompactedSliceElement implements IdedSliceElement{
     */
     @Override
     public Direction getSequenceDirection() {
-        return CompactedSliceElementCodec.INSTANCE.getSequenceDirection(encodedData);
-    }
+    	if(dirAndNucleotide <0){
+    		return Direction.REVERSE;
+    	}
+    	return Direction.FORWARD;
+   }
+   
+    
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Arrays.hashCode(encodedData);
-        result = prime * result + id.hashCode();
-        return result;
-    }
-    @Override
-    public boolean equals(Object obj) {
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + dirAndNucleotide;
+		result = prime * result + id.hashCode();
+		result = prime * result + quality;
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
