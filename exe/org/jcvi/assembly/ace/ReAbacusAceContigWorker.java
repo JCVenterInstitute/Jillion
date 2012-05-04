@@ -66,7 +66,6 @@ import org.jcvi.common.core.assembly.util.slice.CompactedSlice;
 import org.jcvi.common.core.assembly.util.slice.Slice;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.MostFrequentBasecallConsensusCaller;
-import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
@@ -361,7 +360,7 @@ public class ReAbacusAceContigWorker {
                 List<Range> reversedSortedRanges = new ArrayList<Range>(Ranges.merge(rangesToMerge));
                 Collections.reverse(reversedSortedRanges);
                
-                CoverageMap<CoverageRegion<AcePlacedReadBuilder>> coverageMap = DefaultCoverageMap.buildCoverageMap(contigBuilder.getAllPlacedReadBuilders());
+                CoverageMap<AcePlacedReadBuilder> coverageMap = DefaultCoverageMap.buildCoverageMap(contigBuilder.getAllPlacedReadBuilders());
                 
                 for(Range gappedAbacusProblemRange : reversedSortedRanges){
                     int gappedStart = (int)gappedAbacusProblemRange.getBegin();

@@ -38,7 +38,6 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
 
 public final class DefaultScaffold  implements Scaffold{
@@ -50,7 +49,7 @@ public final class DefaultScaffold  implements Scaffold{
     private final String id;
     private final Set<PlacedContig> placedContigs;
     private final Map<String, PlacedContig> contigbyId;
-    CoverageMap<CoverageRegion<PlacedContig>> contigMap;
+    CoverageMap<PlacedContig> contigMap;
     private final long length;
     
     private  DefaultScaffold(String id, Set<PlacedContig> placedContigs){
@@ -92,7 +91,7 @@ public final class DefaultScaffold  implements Scaffold{
         return placedContigs.size();
     }
     @Override
-    public CoverageMap<CoverageRegion<PlacedContig>> getContigCoverageMap() {
+    public CoverageMap<PlacedContig> getContigCoverageMap() {
         return contigMap;
     }
     /**

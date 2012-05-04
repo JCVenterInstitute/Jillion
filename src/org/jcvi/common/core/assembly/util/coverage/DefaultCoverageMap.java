@@ -40,31 +40,31 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 
 
-public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>> implements CoverageMap<T> {
+public class DefaultCoverageMap<V extends Rangeable> implements CoverageMap<V> {
 
 
     @SuppressWarnings("unchecked")
-    public static <V extends Rangeable,T extends CoverageRegion<V>> DefaultCoverageMap<V,T> 
+    public static <V extends Rangeable> DefaultCoverageMap<V> 
             buildCoverageMap(Collection<V> elements){
-        return (DefaultCoverageMap<V,T>)new Builder(elements).build();
+        return (DefaultCoverageMap<V>)new Builder<V>(elements).build();
     }
     @SuppressWarnings("unchecked")
-    public static <V extends Rangeable,T extends CoverageRegion<V>> DefaultCoverageMap<V,T> 
+    public static <V extends Rangeable,T extends CoverageRegion<V>> DefaultCoverageMap<V> 
             buildCoverageMap(CloseableIterator<V> elements){
-        return (DefaultCoverageMap<V,T>)new Builder(elements).build();
+        return (DefaultCoverageMap<V>)new Builder<V>(elements).build();
     }
     @SuppressWarnings("unchecked")
-    public static <V extends Rangeable,T extends CoverageRegion<V>> DefaultCoverageMap<V,T> 
+    public static <V extends Rangeable,T extends CoverageRegion<V>> DefaultCoverageMap<V> 
             buildCoverageMap(Collection<V> elements, int maxAllowedCoverage){
-        return (DefaultCoverageMap<V,T>)new Builder(elements,maxAllowedCoverage).build();
+        return (DefaultCoverageMap<V>)new Builder<V>(elements,maxAllowedCoverage).build();
     }
-    public static <PR extends AssembledRead,C extends Contig<PR>, T extends CoverageRegion<PR>> DefaultCoverageMap<PR,T> 
+    public static <PR extends AssembledRead,C extends Contig<PR>, T extends CoverageRegion<PR>> CoverageMap<PR> 
         buildCoverageMap(C contig){
-            return (DefaultCoverageMap<PR,T>)new Builder(contig.getReadIterator()).build();
+            return (DefaultCoverageMap<PR>)new Builder<PR>(contig.getReadIterator()).build();
     }
-    public static <PR extends AssembledRead,C extends Contig<PR>, T extends CoverageRegion<PR>> DefaultCoverageMap<PR,T>    
+    public static <PR extends AssembledRead,C extends Contig<PR>, T extends CoverageRegion<PR>> CoverageMap<PR>    
         buildCoverageMap(C contig, int maxAllowedCoverage){
-            return (DefaultCoverageMap<PR,T>)new Builder(contig.getReadIterator(),maxAllowedCoverage).build();
+            return new Builder(contig.getReadIterator(),maxAllowedCoverage).build();
     }
     private static class RangeableStartComparator <T extends Rangeable> implements Comparator<T>,Serializable {       
         /**
@@ -92,7 +92,7 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
             
     }
     
-    private List<T> regions;
+    private List<CoverageRegion<V>> regions;
     private double avgCoverage;
     private boolean avgCoverageSet;
     /**
@@ -100,7 +100,7 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
      * Creates a new <code>AbstractCoverageMap</code>.
      * @param amplicons A {@link Collection} of {@link Coordinated}s.
      */
-    public DefaultCoverageMap(List<T> regions){
+    public DefaultCoverageMap(List<CoverageRegion<V>> regions){
         this.regions = regions;
     }
     @Override
@@ -108,7 +108,7 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
         return regions.size();
     }
     @Override
-    public T getRegion(int i) {
+    public CoverageRegion<V> getRegion(int i) {
         return regions.get(i);
     }
 
@@ -138,7 +138,7 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
       public int hashCode(){
           final int prime = 37;
           int ret = 17;
-          for(T region : regions){
+          for(CoverageRegion<V> region : regions){
               ret = ret*prime + region.hashCode();
           }
           return ret;
@@ -150,7 +150,7 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
     @Override
     public String toString() {
         StringBuffer buf = new StringBuffer();
-        for(T region : regions){
+        for(CoverageRegion<V> region : regions){
             buf.append(region);
             buf.append("\n");
         }
@@ -158,14 +158,14 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
     }
     
     @Override
-    public Iterator<T> iterator() {
+    public Iterator<CoverageRegion<V>> iterator() {
         return regions.iterator();
     }
 
     @Override
-    public List<T> getRegionsWithin(Range range) {
-        List<T> selectedRegions = new ArrayList<T>();
-        for(T region : regions){
+    public List<CoverageRegion<V>> getRegionsWithin(Range range) {
+        List<CoverageRegion<V>> selectedRegions = new ArrayList<CoverageRegion<V>>();
+        for(CoverageRegion<V> region : regions){
             Range regionRange = region.asRange();
             if(regionRange.isSubRangeOf(range)){
                 selectedRegions.add(region);
@@ -175,9 +175,9 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
     }
     
     @Override
-    public List<T> getRegionsWhichIntersect(Range range) {
-        List<T> selectedRegions = new ArrayList<T>();
-        for(T region : regions){
+    public List<CoverageRegion<V>> getRegionsWhichIntersect(Range range) {
+        List<CoverageRegion<V>> selectedRegions = new ArrayList<CoverageRegion<V>>();
+        for(CoverageRegion<V> region : regions){
             Range regionRange = region.asRange();
             if(range.endsBefore(regionRange)){
                 break;
@@ -192,9 +192,9 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
     
 
     @Override
-    public T getRegionWhichCovers(long consensusIndex) {
+    public CoverageRegion<V> getRegionWhichCovers(long consensusIndex) {
         Range range = Range.create(consensusIndex, consensusIndex);
-        final List<T> intersectedRegion = getRegionsWhichIntersect(range);
+        final List<CoverageRegion<V>> intersectedRegion = getRegionsWhichIntersect(range);
         if(intersectedRegion.isEmpty()){
             return null;
         }
@@ -210,9 +210,9 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
     }
 
     @Override
-    public List<T> getRegionsWithCoverage(int coverageDepth) {
-        List<T> regionsWithCoverage = new ArrayList<T>();
-        for(T coverageRegion: regions){
+    public List<CoverageRegion<V>> getRegionsWithCoverage(int coverageDepth) {
+        List<CoverageRegion<V>> regionsWithCoverage = new ArrayList<CoverageRegion<V>>();
+        for(CoverageRegion<V> coverageRegion: regions){
             if(coverageRegion.getCoverage() == coverageDepth){
                 regionsWithCoverage.add(coverageRegion);
             }
@@ -226,7 +226,7 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
     @Override
     public int getNumberOfRegionsWithAtLeastCoverage(int coverageDepth) {
         int i=0;
-        for(T coverageRegion: regions){
+        for(CoverageRegion<V> coverageRegion: regions){
             if(coverageRegion.getCoverage() >= coverageDepth){
                 i++;
             }
@@ -240,7 +240,7 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
     @Override
     public long getLengthOfRegionsWithCoverage(int coverageDepth) {
         long length=0;
-        for(T coverageRegion: regions){
+        for(CoverageRegion<V> coverageRegion: regions){
             if(coverageRegion.getCoverage() == coverageDepth){
                 length +=coverageRegion.asRange().getLength();
             }
@@ -254,7 +254,7 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
     @Override
     public long getLengthOfRegionsWithAtLeastCoverage(int coverageDepth) {
         long length=0;
-        for(T coverageRegion: regions){
+        for(CoverageRegion<V> coverageRegion: regions){
             if(coverageRegion.getCoverage() >= coverageDepth){
                 length +=coverageRegion.asRange().getLength();
             }
@@ -262,7 +262,7 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
         return length;
     }
     
-    public static  class Builder<P extends Rangeable> extends AbstractCoverageMapBuilder<P,CoverageRegion<P>>{
+    public static  class Builder<P extends Rangeable> extends AbstractCoverageMapBuilder<P>{
         private final List<P> startCoordinateSortedList = new ArrayList<P>();
         private final List<P> endCoordinateSortedList = new ArrayList<P>();
         
@@ -333,9 +333,9 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
         }
 
         @Override
-        protected CoverageMap<CoverageRegion<P>> build(
+        protected CoverageMap<P> build(
                 List<CoverageRegionBuilder<P>> coverageRegionBuilders) {
-            return new DefaultCoverageMap<P,CoverageRegion<P>>(
+            return new DefaultCoverageMap<P>(
                     buildAllCoverageRegions(coverageRegionBuilders));
         }
 
@@ -353,7 +353,7 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
 
     
     @Override
-    public List<T> getRegions() {
+    public List<CoverageRegion<V>> getRegions() {
         return Collections.unmodifiableList(regions);
     }
     @Override
@@ -372,7 +372,7 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
         }
         long total=0;
         long length=0;
-        for(T coverageRegion : getRegions()){
+        for(CoverageRegion<V> coverageRegion : getRegions()){
             total += coverageRegion.asRange().getLength() * coverageRegion.getCoverage();
             length += coverageRegion.asRange().getLength();
         }
@@ -380,7 +380,7 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
     }
     @Override
     public int getRegionIndexWhichCovers(long consensusIndex) {
-        T region = getRegionWhichCovers(consensusIndex);
+    	CoverageRegion<V> region = getRegionWhichCovers(consensusIndex);
         
         return regions.indexOf(region);
     }
@@ -390,7 +390,7 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
             return 0;
         }
         int maxCoverage=0;
-        for(T region : regions){
+        for(CoverageRegion<V> region : regions){
             maxCoverage = Math.max(maxCoverage, region.getCoverage());
         }
         return maxCoverage;
@@ -401,7 +401,7 @@ public class DefaultCoverageMap<V extends Rangeable,T extends CoverageRegion<V>>
             return 0;
         }
         int minCoverage=Integer.MAX_VALUE;
-        for(T region : regions){
+        for(CoverageRegion<V> region : regions){
             minCoverage = Math.min(minCoverage, region.getCoverage());
         }
         return minCoverage;

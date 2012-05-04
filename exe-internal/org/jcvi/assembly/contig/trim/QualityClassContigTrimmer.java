@@ -112,7 +112,7 @@ public class QualityClassContigTrimmer<R extends AssembledRead,C extends Contig<
             QualityClassComputer<R> qualityClassComputer) throws DataStoreException {
 
         Map<R, Range> trimmedReads = new HashMap<R, Range>();
-        CoverageMap<CoverageRegion<R>> coverageMap =DefaultCoverageMap.buildCoverageMap(struct);
+        CoverageMap<R> coverageMap =DefaultCoverageMap.buildCoverageMap(struct);
         QualityClassMap qualityClassContigMap =DefaultQualityClassContigMap.create(struct, qualityDataStore, qualityClassComputer);
         
        

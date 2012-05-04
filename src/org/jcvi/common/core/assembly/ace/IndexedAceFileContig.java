@@ -185,7 +185,7 @@ final class IndexedAceFileContig implements AceContig{
 		@Override
 		public AceContig build() {
 			
-			CoverageMap<CoverageRegion<Range>> coverageMap = DefaultCoverageMap.buildCoverageMap(coverageRanges);
+			CoverageMap<Range> coverageMap = DefaultCoverageMap.buildCoverageMap(coverageRanges);
 			int maxCoverage = coverageMap.getMaxCoverage();
 			coverageRanges.clear();
 			return new IndexedAceFileContig(contigId, readInfoMap, readRanges, isComplimented, 

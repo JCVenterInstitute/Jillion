@@ -25,10 +25,9 @@ package org.jcvi.common.core.assembly.util.slice;
 
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 
-public class DefaultSliceMapFactory<P extends AssembledRead, R extends CoverageRegion<P>, M extends CoverageMap<R>> extends AbstractSliceMapFactory<P,R,M>{
+public class DefaultSliceMapFactory<P extends AssembledRead> extends AbstractSliceMapFactory<P>{
 
     public DefaultSliceMapFactory(QualityValueStrategy qualityValueStrategy) {
         super(qualityValueStrategy);
@@ -36,9 +35,9 @@ public class DefaultSliceMapFactory<P extends AssembledRead, R extends CoverageR
 
     @Override
     protected SliceMap createNewSliceMap(
-            M coverageMap,
+    		CoverageMap<P> coverageMap,
                     QualityDataStore qualityDataStore, QualityValueStrategy qualityValueStrategy){
-        return DefaultSliceMap.<P,R,M>create(coverageMap, qualityDataStore, qualityValueStrategy);
+        return DefaultSliceMap.<P>create(coverageMap, qualityDataStore, qualityValueStrategy);
     }
 
 }

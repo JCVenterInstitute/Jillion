@@ -14,7 +14,7 @@ import org.jcvi.common.core.io.IOUtil;
 public final class AgpWriter {
 
 	public static void writeScaffold(Scaffold scaffold, OutputStream out) throws IOException{
-		CoverageMap<CoverageRegion<PlacedContig>> coverageMap =scaffold.getContigCoverageMap();
+		CoverageMap<PlacedContig> coverageMap =scaffold.getContigCoverageMap();
 		String scaffoldId = scaffold.getId();
 		int partNumber =1;
 		for(CoverageRegion<PlacedContig> region : coverageMap){

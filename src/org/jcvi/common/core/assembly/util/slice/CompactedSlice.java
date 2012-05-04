@@ -27,6 +27,7 @@ import java.util.List;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.common.core.util.iter.ArrayIterator;
 
 /**
  * @author dkatzel
@@ -36,7 +37,7 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 public final class CompactedSlice implements IdedSlice{
 
     private final byte[] elements;
-    private final List<String> ids;
+    private final String[] ids;
     
     
     /**
@@ -45,7 +46,7 @@ public final class CompactedSlice implements IdedSlice{
      */
     private CompactedSlice(byte[] elements, List<String> ids) {
         this.elements = elements;
-        this.ids = ids;
+        this.ids = ids.toArray(new String[ids.size()]);
     }
 
     /**
@@ -53,8 +54,9 @@ public final class CompactedSlice implements IdedSlice{
     */
     @Override
     public Iterator<IdedSliceElement> iterator() {
+    	
         return new Iterator<IdedSliceElement>(){
-            Iterator<String> idIter = ids.iterator();
+            Iterator<String> idIter = new ArrayIterator<String>(ids);
             @Override
             public boolean hasNext() {
                 return idIter.hasNext();
@@ -80,7 +82,7 @@ public final class CompactedSlice implements IdedSlice{
     */
     @Override
     public int getCoverageDepth() {
-        return ids.size();
+        return ids.length;
     }
 
     /**
@@ -88,9 +90,25 @@ public final class CompactedSlice implements IdedSlice{
     */
     @Override
     public boolean containsElement(String elementId) {
-        return ids.contains(elementId);
+    	return indexOf(elementId) >=0;
     }
 
+    private int indexOf(String id){
+    	if(id==null){
+    		for(int i=0; i< ids.length; i++){
+        		if(ids[i]==null){
+        			return i;
+        		}
+        	}
+    	}else{
+    		for(int i=0; i< ids.length; i++){
+        		if(id.equals(ids[i])){
+        			return i;
+        		}
+        	}
+    	}
+    	return -1;
+    }
     @Override
     public String toString(){
         StringBuilder builder = new StringBuilder();
@@ -106,7 +124,7 @@ public final class CompactedSlice implements IdedSlice{
     */
     @Override
     public IdedSliceElement getSliceElement(String elementId) {
-        int index= ids.indexOf(elementId);
+        int index= indexOf(elementId);
         if(index<0){
             throw new IllegalArgumentException(elementId + " not in slice");
         }

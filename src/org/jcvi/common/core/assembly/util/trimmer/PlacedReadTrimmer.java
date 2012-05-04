@@ -23,7 +23,6 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 
 /**
  * @author dkatzel
@@ -32,7 +31,7 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
  */
 public interface PlacedReadTrimmer<P extends AssembledRead, C extends Contig<P>> {
 
-    void initializeContig(C contig,CoverageMap<CoverageRegion<P>> coverageMap);
+    void initializeContig(C contig,CoverageMap<P> coverageMap);
     
     void clear();
     

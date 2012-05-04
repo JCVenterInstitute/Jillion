@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -20,7 +19,7 @@ public class TestCoverageRestrictedMap {
 				Range.create(6,10)
 		);
 		
-		CoverageMap<CoverageRegion<Range>> coverageMap = 
+		CoverageMap<Range> coverageMap = 
 							DefaultCoverageMap.buildCoverageMap(ranges, 2);
 		assertEquals(4,coverageMap.getNumberOfRegions());
 		assertEquals(coverageMap.getRegion(0).asRange(), Range.create(0,1));
@@ -41,7 +40,7 @@ public class TestCoverageRestrictedMap {
 				Range.create(6,10)
 		);
 		
-		CoverageMap<CoverageRegion<Range>> coverageMap = 
+		CoverageMap<Range> coverageMap = 
 							DefaultCoverageMap.buildCoverageMap(ranges, 3);
 		assertEquals(4,coverageMap.getNumberOfRegions());
 		assertEquals(coverageMap.getRegion(0).asRange(), Range.create(0,1));
@@ -63,7 +62,7 @@ public class TestCoverageRestrictedMap {
 				Range.create(6,10)
 		);
 		
-		CoverageMap<CoverageRegion<Range>> coverageMap = 
+		CoverageMap<Range> coverageMap = 
 							DefaultCoverageMap.buildCoverageMap(ranges, 2);
 		assertEquals(4,coverageMap.getNumberOfRegions());
 		assertEquals(coverageMap.getRegion(0).asRange(), Range.create(0,1));
@@ -85,7 +84,7 @@ public class TestCoverageRestrictedMap {
 				Range.create(9,10)
 		);
 		
-		CoverageMap<CoverageRegion<Range>> coverageMap = 
+		CoverageMap<Range> coverageMap = 
 							DefaultCoverageMap.buildCoverageMap(ranges, 2);
 		assertEquals(5,coverageMap.getNumberOfRegions());
 		assertEquals(coverageMap.getRegion(0).asRange(), Range.create(0,1));
@@ -111,7 +110,7 @@ public class TestCoverageRestrictedMap {
 				Range.create(10,15)
 		);
 		
-		CoverageMap<CoverageRegion<Range>> coverageMap = 
+		CoverageMap<Range> coverageMap = 
 							DefaultCoverageMap.buildCoverageMap(ranges, 2);
 		assertEquals(6,coverageMap.getNumberOfRegions());
 		assertEquals(coverageMap.getRegion(0).asRange(), Range.create(0,1));
@@ -137,7 +136,7 @@ public class TestCoverageRestrictedMap {
                 Range.create(0,5)
         );
         
-        CoverageMap<CoverageRegion<Range>> coverageMap = 
+        CoverageMap<Range> coverageMap = 
                             DefaultCoverageMap.buildCoverageMap(ranges, 2);
         assertEquals(2,coverageMap.getNumberOfRegions());
         assertEquals(coverageMap.getRegion(0).asRange(), Range.create(0,5));

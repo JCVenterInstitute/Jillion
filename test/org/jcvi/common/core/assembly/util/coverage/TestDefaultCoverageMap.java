@@ -64,7 +64,7 @@ public class TestDefaultCoverageMap {
     @Test
     public void emptyListShouldReturnEmptyCoverageMap(){
         final DefaultCoverageMap.Builder<Range> builder = new DefaultCoverageMap.Builder<Range>(Collections.<Range>emptyList());
-        CoverageMap<CoverageRegion<Range>> map =builder.build();
+        CoverageMap<Range> map =builder.build();
         assertEquals(0, map.getNumberOfRegions());
         assertEquals(0,map.getLength());
         assertTrue(map.isEmpty());
@@ -74,7 +74,7 @@ public class TestDefaultCoverageMap {
         Range read = Range.create(0, 0);
         final DefaultCoverageMap.Builder<Range> builder = 
             new DefaultCoverageMap.Builder<Range>(Arrays.asList(read));
-        CoverageMap<CoverageRegion<Range>> map =builder.build();
+        CoverageMap<Range> map =builder.build();
         assertEquals(1, map.getNumberOfRegions());
         assertEquals(1, map.getLength());
     }
@@ -83,7 +83,7 @@ public class TestDefaultCoverageMap {
 
         final DefaultCoverageMap.Builder<Range> builder = 
             new DefaultCoverageMap.Builder<Range>(Arrays.asList(seq_5_5));
-        CoverageMap<CoverageRegion<Range>> map =builder.build();
+        CoverageMap<Range> map =builder.build();
         assertEquals(0, map.getNumberOfRegions());
         assertEquals(0,map.getLength());
         assertTrue(map.isEmpty());
@@ -94,7 +94,7 @@ public class TestDefaultCoverageMap {
 
         final DefaultCoverageMap.Builder<Range> builder = new DefaultCoverageMap.Builder<Range>(
                 Arrays.asList(seq_0_9));
-        CoverageMap<CoverageRegion<Range>> map =builder.build();
+        CoverageMap<Range> map =builder.build();
         assertEquals(1, map.getNumberOfRegions());
         CoverageRegion<Range> expectedRegion = createCoverageRegion(0,9,seq_0_9 );
         assertEquals(expectedRegion,map.getRegion(0));
@@ -107,7 +107,7 @@ public class TestDefaultCoverageMap {
 
         final DefaultCoverageMap.Builder<Range> builder = new DefaultCoverageMap.Builder<Range>(
                 Arrays.asList(seq_0_9,seq_5_14));
-        CoverageMap<CoverageRegion<Range>> map =builder.build();
+        CoverageMap<Range> map =builder.build();
         assertEquals(3, map.getNumberOfRegions());
         assertEquals(createCoverageRegion(0,4,seq_0_9 ), map.getRegion(0));
         assertEquals(createCoverageRegion(5,9,seq_0_9,seq_5_14 ), map.getRegion(1));
@@ -121,7 +121,7 @@ public class TestDefaultCoverageMap {
 
         final DefaultCoverageMap.Builder<Range> builder = new DefaultCoverageMap.Builder<Range>(
                 Arrays.asList(seq_0_9,seq_5_14,seq_0_12));
-        CoverageMap<CoverageRegion<Range>> map =builder.build();
+        CoverageMap<Range> map =builder.build();
         assertEquals(4, map.getNumberOfRegions());
         assertEquals(createCoverageRegion(0,4,seq_0_9,seq_0_12 ), map.getRegion(0));
         assertEquals(createCoverageRegion(5,9,seq_0_9,seq_0_12,seq_5_14 ), map.getRegion(1));
@@ -136,7 +136,7 @@ public class TestDefaultCoverageMap {
 
         final DefaultCoverageMap.Builder<Range> builder = new DefaultCoverageMap.Builder<Range>(
                 Arrays.asList(seq_0_9,seq_10_12));
-        CoverageMap<CoverageRegion<Range>> map =builder.build();
+        CoverageMap<Range> map =builder.build();
         assertEquals(2, map.getNumberOfRegions());
         assertEquals(createCoverageRegion(0,9,seq_0_9 ), map.getRegion(0));
         assertEquals(createCoverageRegion(10,12,seq_10_12 ), map.getRegion(1));
@@ -149,7 +149,7 @@ public class TestDefaultCoverageMap {
 
         final DefaultCoverageMap.Builder<Range> builder = new DefaultCoverageMap.Builder<Range>(
                 Arrays.asList(seq_0_9,seq_5_14,seq_0_12,seq_10_12,seq_16_20));
-        CoverageMap<CoverageRegion<Range>> map =builder.build();
+        CoverageMap<Range> map =builder.build();
         assertEquals(6, map.getNumberOfRegions());
         assertEquals(createCoverageRegion(0,4,seq_0_9,seq_0_12 ), map.getRegion(0));
         assertEquals(createCoverageRegion(5,9,seq_0_9,seq_0_12,seq_5_14 ), map.getRegion(1));
@@ -167,7 +167,7 @@ public class TestDefaultCoverageMap {
 
         final DefaultCoverageMap.Builder<Range> builder = new DefaultCoverageMap.Builder<Range>(
                 Arrays.asList(seq_0_12,seq_8_12,seq_10_12,seq_11_15));
-        CoverageMap<CoverageRegion<Range>> map =builder.build();
+        CoverageMap<Range> map =builder.build();
         assertEquals(5, map.getNumberOfRegions());
         assertEquals(createCoverageRegion(0,7,seq_0_12 ), map.getRegion(0));
         assertEquals(createCoverageRegion(8,9,seq_0_12,seq_8_12 ), map.getRegion(1));
@@ -183,7 +183,7 @@ public class TestDefaultCoverageMap {
 
         final DefaultCoverageMap.Builder<Range> builder = new DefaultCoverageMap.Builder<Range>(
                 Arrays.asList(seq_0_12,seq_8_12,seq_10_12,seq_11_15,seq_12_18));
-        CoverageMap<CoverageRegion<Range>> map =builder.build();
+        CoverageMap<Range> map =builder.build();
         assertEquals(7, map.getNumberOfRegions());
        
         assertEquals(createCoverageRegion(0,7,seq_0_12 ), map.getRegion(0));
@@ -203,7 +203,7 @@ public class TestDefaultCoverageMap {
 
         final DefaultCoverageMap.Builder<Range> builder = new DefaultCoverageMap.Builder<Range>(
                 Arrays.asList(seq_0_12,seq_11_15,seq_11_18,seq_11_20));
-        CoverageMap<CoverageRegion<Range>> map =builder.build();
+        CoverageMap<Range> map =builder.build();
         assertEquals(5, map.getNumberOfRegions());
         assertEquals(createCoverageRegion(0,10,seq_0_12 ), map.getRegion(0));
         assertEquals(createCoverageRegion(11,12,seq_0_12, seq_11_15,seq_11_18,seq_11_20), map.getRegion(1));
@@ -219,14 +219,14 @@ public class TestDefaultCoverageMap {
     @Test
     public void equalsSameRef(){
 
-        CoverageMap<CoverageRegion<Range>> map= new DefaultCoverageMap.Builder<Range>(
+        CoverageMap<Range> map= new DefaultCoverageMap.Builder<Range>(
                                             Arrays.asList(seq_0_9,seq_5_14)).build();
         TestUtil.assertEqualAndHashcodeSame(map, map);
 
     }
     @Test
     public void iterator(){
-        CoverageMap<CoverageRegion<Range>> map= new DefaultCoverageMap.Builder<Range>(
+        CoverageMap<Range> map= new DefaultCoverageMap.Builder<Range>(
                                             Arrays.asList(seq_0_9,seq_5_14)).build();
         Iterator<CoverageRegion<Range>> iter =map.iterator();
         assertEquals(createCoverageRegion(0,4,seq_0_9 ), iter.next());
@@ -236,31 +236,31 @@ public class TestDefaultCoverageMap {
     }
     @Test
     public void equalsSameVaues(){
-        CoverageMap<CoverageRegion<Range>> map= new DefaultCoverageMap.Builder<Range>(
+        CoverageMap<Range> map= new DefaultCoverageMap.Builder<Range>(
                                             Arrays.asList(seq_0_9,seq_5_14)).build();
-        CoverageMap<CoverageRegion<Range>> sameValues= new DefaultCoverageMap.Builder<Range>(
+        CoverageMap<Range> sameValues= new DefaultCoverageMap.Builder<Range>(
                 Arrays.asList(seq_0_9,seq_5_14)).build();
         TestUtil.assertEqualAndHashcodeSame(map, sameValues);
     }
     @Test
     public void notEqualsNull(){
-        CoverageMap<CoverageRegion<Range>> map= new DefaultCoverageMap.Builder<Range>(
+        CoverageMap<Range> map= new DefaultCoverageMap.Builder<Range>(
                                             Arrays.asList(seq_0_9,seq_5_14)).build();
         assertFalse(map.equals(null));
     }
     
     @Test
     public void notEqualsDifferentClass(){
-        CoverageMap<CoverageRegion<Range>> map= new DefaultCoverageMap.Builder<Range>(
+        CoverageMap<Range> map= new DefaultCoverageMap.Builder<Range>(
                                             Arrays.asList(seq_0_9,seq_5_14)).build();
         assertFalse(map.equals("not a coverage Map"));
     }
     @Test
     public void notEqualsDifferentNumberOfRegions(){
 
-        CoverageMap<CoverageRegion<Range>> map= new DefaultCoverageMap.Builder<Range>(
+        CoverageMap<Range> map= new DefaultCoverageMap.Builder<Range>(
                                             Arrays.asList(seq_0_9,seq_5_14)).build();
-        CoverageMap<CoverageRegion<Range>> differentNumberOfRegions= new DefaultCoverageMap.Builder<Range>(
+        CoverageMap<Range> differentNumberOfRegions= new DefaultCoverageMap.Builder<Range>(
                 Arrays.asList(seq_0_9)).build();
         TestUtil.assertNotEqualAndHashcodeDifferent(map, differentNumberOfRegions);
     }
@@ -269,9 +269,9 @@ public class TestDefaultCoverageMap {
     public void coverageRegionNotEqual(){
         Range differentSequence = Range.create(seq_5_14.getBegin(), seq_5_14.getEnd()+1);
        
-        CoverageMap<CoverageRegion<Range>> map= new DefaultCoverageMap.Builder<Range>(
+        CoverageMap<Range> map= new DefaultCoverageMap.Builder<Range>(
                                             Arrays.asList(seq_0_9,seq_5_14)).build();
-        CoverageMap<CoverageRegion<Range>> differentRegions= new DefaultCoverageMap.Builder<Range>(
+        CoverageMap<Range> differentRegions= new DefaultCoverageMap.Builder<Range>(
                 Arrays.asList(seq_0_9,differentSequence)).build();
         TestUtil.assertNotEqualAndHashcodeDifferent(map, differentRegions);
 
@@ -279,7 +279,7 @@ public class TestDefaultCoverageMap {
     
     @Test
     public void getRegionsWithin(){
-        CoverageMap<CoverageRegion<Range>> map = new DefaultCoverageMap.Builder<Range>(
+        CoverageMap<Range> map = new DefaultCoverageMap.Builder<Range>(
                 Arrays.asList(seq_0_9,seq_5_14,seq_0_12)).build();
         
         List<CoverageRegion<Range>> regions = map.getRegionsWithin(Range.create(5, 12));
@@ -290,7 +290,7 @@ public class TestDefaultCoverageMap {
     
     @Test
     public void getRegionsWhichIntersect(){
-        CoverageMap<CoverageRegion<Range>> map = new DefaultCoverageMap.Builder<Range>(
+        CoverageMap<Range> map = new DefaultCoverageMap.Builder<Range>(
                 Arrays.asList(seq_0_9,seq_5_14,seq_0_12)).build();
         
         List<CoverageRegion<Range>> regions = map.getRegionsWhichIntersect(Range.create(6, 11));

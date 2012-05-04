@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
 public class TestDefaultCoverageMapAvgCoverage {
 
-    private static class DefaultCoverageMapTestDouble extends DefaultCoverageMap<Rangeable,CoverageRegion<Rangeable>>{
+    private static class DefaultCoverageMapTestDouble extends DefaultCoverageMap<Rangeable>{
 
         public DefaultCoverageMapTestDouble(
                 List<CoverageRegion<Rangeable>> regions) {

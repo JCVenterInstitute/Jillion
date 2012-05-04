@@ -29,13 +29,19 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
  *
  *
  */
-public class CompactedSliceElement implements IdedSliceElement{
-
+final class CompactedSliceElement implements IdedSliceElement{
+	
     private static final Nucleotide[] NUCLEOTIDE_VALUES = Nucleotide.values();
 	private String id;
     //don't use array since that takes up 12 bytes of memory
     //to store reference and length
     private byte quality;
+    /**
+     * Since there are only a few nucleotides
+     * we can pack both the direction AND the ordinal
+     * value of the nucleotide in a single byte.
+     * By using the direction as the sign bit. 
+     */
     private byte dirAndNucleotide;
     /**
      * package private constructor used by compactedSlice to build

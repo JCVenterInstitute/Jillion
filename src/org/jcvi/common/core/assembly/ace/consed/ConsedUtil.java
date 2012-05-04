@@ -140,7 +140,7 @@ public class ConsedUtil {
     public static SortedMap<Range,AceContig> split0xContig(AceContigBuilder contigBuilder, boolean adjustIdCoordinates){
         List<Range> coveredRegions = new ArrayList<Range>();
         NucleotideSequence consensus = contigBuilder.getConsensusBuilder().build();
-        CoverageMap<CoverageRegion<AcePlacedReadBuilder>> coverageMap = DefaultCoverageMap.buildCoverageMap(contigBuilder.getAllPlacedReadBuilders());
+        CoverageMap<AcePlacedReadBuilder> coverageMap = DefaultCoverageMap.buildCoverageMap(contigBuilder.getAllPlacedReadBuilders());
         for(CoverageRegion<AcePlacedReadBuilder> region : coverageMap){
             if(region.getCoverage()>0){
                 
@@ -175,7 +175,7 @@ public class ConsedUtil {
         return map;
     }
     private static AceContig createSplitContig(AceContigBuilder builderToSplit,
-            CoverageMap<CoverageRegion<AcePlacedReadBuilder>> coverageMap,
+            CoverageMap<AcePlacedReadBuilder> coverageMap,
             NucleotideSequence consensus, String originalContigId,
             int oldStart, Range contigRange) {
         Set<String> contigReads = new HashSet<String>();

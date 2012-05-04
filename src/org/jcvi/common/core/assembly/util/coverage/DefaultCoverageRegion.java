@@ -33,10 +33,12 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Rangeable;
-import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 
 public final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegion<T> {
-    private Collection<T> elements;
+    private final Collection<T> elements;
     private final Range range;
     /**
      * Build an instance of DefaultCoverageRegion.
@@ -54,11 +56,16 @@ public final class  DefaultCoverageRegion<T extends Rangeable> implements Covera
     }
 
    
-
+    
+    
     @Override
-    public Iterator<T> iterator() {
-        return elements.iterator();
-    }
+	public Iterator<T> iterator() {
+		return elements.iterator();
+	}
+	@Override
+	public CloseableIterator<T> getElementIterator() {
+		return CloseableIteratorAdapter.adapt(elements.iterator());
+	}
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -73,34 +80,65 @@ public final class  DefaultCoverageRegion<T extends Rangeable> implements Covera
         final int prime = 31;
         int result = 1;
         result = prime * result + range.hashCode();
-        result = prime * result + new ArrayList<T>(elements).hashCode();
+        result = prime * result + computeElementHashCode();
 
         return result;
+    }
+    /**
+     * Computes hashcode of collection without
+     * having to worry about implementation
+     * details of how collection is stored.
+     * @return
+     */
+    private int computeElementHashCode(){
+    	int hashCode = 1;
+    	Iterator<T> i = elements.iterator();
+    	while (i.hasNext()) {
+    	    T obj = i.next();
+    	    hashCode = 31*hashCode + (obj==null ? 0 : obj.hashCode());
+    	}
+    	return hashCode;
+    }
+    /**
+     * Iterate thru our elements and the other elements
+     * to see if they match
+     * @param otherRegion
+     * @return
+     */
+    private boolean elementsAreEqual(CoverageRegion<?> otherRegion){
+    	CloseableIterator<?> otherIterator=null, iter=null;
+    	try{
+	    	otherIterator = otherRegion.getElementIterator();
+	    	iter = getElementIterator();
+	    	while(iter.hasNext() && otherIterator.hasNext()){
+	    		if(!iter.next().equals(otherIterator.next())){
+	    			return false;
+	    		}
+	    	}
+	    	if(
+	    			(iter.hasNext() && !otherIterator.hasNext())
+	    			||
+	    			(!iter.hasNext() && otherIterator.hasNext())
+	    			){
+	    		return false;
+	    	}
+	    	return true;
+    	}finally{
+    		IOUtil.closeAndIgnoreErrors(iter, otherIterator);
+    	}
     }
     @Override
     public boolean equals(Object obj) {
         if (this == obj){
             return true;
         }
-        if (!(obj instanceof DefaultCoverageRegion)){
+        if (!(obj instanceof CoverageRegion)){
             return false;
         }
-        DefaultCoverageRegion other = (DefaultCoverageRegion) obj;
-        return CommonUtil.similarTo(new ArrayList<T>(elements),
-                new ArrayList<T>(other.elements)) &&
-                CommonUtil.similarTo(range, other.asRange());
-    }
-    @Override
-    public CoverageRegion<T> shiftLeft(int units) {
-        return new DefaultCoverageRegion<T>(this.range.shiftLeft(units), this.elements);
-    }
-    @Override
-    public CoverageRegion<T> shiftRight(int units) {
-        return new DefaultCoverageRegion<T>(this.range.shiftRight(units), this.elements);
-    }
+        CoverageRegion<?>  other = (CoverageRegion<?> ) obj;
+        return range.equals(other.asRange()) && elementsAreEqual(other);
 
-
-    
+    }   
 
 
 
@@ -116,6 +154,14 @@ public final class  DefaultCoverageRegion<T extends Rangeable> implements Covera
             this(start,elements,null);
         }
         public Builder(long start, Iterable<T> elements, Integer maxAllowedCoverage){
+            this(start,
+            		elements==null?null: elements.iterator(),
+            				maxAllowedCoverage);
+        }
+        public Builder(long start, Iterator<T> elements){
+        	this(start, elements, null);
+        }
+        public Builder(long start, Iterator<T> elements, Integer maxAllowedCoverage){
             if(elements ==null){
                 throw new IllegalArgumentException("elements can not be null");
             }
@@ -125,9 +171,8 @@ public final class  DefaultCoverageRegion<T extends Rangeable> implements Covera
             }else{
                 this.elements = new ArrayBlockingQueue<T>(maxAllowedCoverage);
             }
-            
-            for(T e : elements){
-                this.elements.offer(e);
+            while(elements.hasNext()){
+            	 this.elements.offer(elements.next());
             }
         }
         public long start(){
@@ -142,12 +187,8 @@ public final class  DefaultCoverageRegion<T extends Rangeable> implements Covera
             }
             return end;
         }
-        public Builder end(long end){
+        public Builder<T>  end(long end){
             if(!canSetEndTo(end)){
-                for(Rangeable element : elements){
-                	Range range = element.asRange();
-                    System.out.println(range.getBegin() +" , "+ range.getEnd());
-                }
                 throw new IllegalArgumentException("end must be >= than "+ (start + 1) + " but was "+ end);
             }
             this.end = end;
@@ -157,23 +198,23 @@ public final class  DefaultCoverageRegion<T extends Rangeable> implements Covera
         public List<T> elements(){
             return new ArrayList<T>(elements);
         }
-        public Builder offer(T element){
+        public Builder<T>  offer(T element){
             elements.offer(element);
             return this;
         }
-        public Builder remove(T element){
+        public Builder<T>  remove(T element){
             elements.remove(element);
             return this;
         }
-        public Builder removeAll(Collection<T> elements){
+        public Builder<T> removeAll(Collection<T> elements){
             this.elements.removeAll(elements);
             return this;
         }
-        public DefaultCoverageRegion build(){
+        public DefaultCoverageRegion<T> build(){
             if(!endIsSet){
                 throw new IllegalStateException("end must be set");
             }
-            return new DefaultCoverageRegion(Range.create(start, end), elements);
+            return new DefaultCoverageRegion<T>(Range.create(start, end), elements);
         }
         /**
          * 

@@ -44,17 +44,17 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * 
  * 
  */
-public final class CompactedSliceMap<PR extends AssembledRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> implements SliceMap {
+public final class CompactedSliceMap<PR extends AssembledRead, M extends CoverageMap<PR>> implements SliceMap {
     private final CompactedSlice[] slices;
 
     public static <PR extends AssembledRead, C extends Contig<PR>> CompactedSliceMap create(C contig,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
-        CoverageMap<CoverageRegion<PR>> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
+        CoverageMap<PR> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
         return new CompactedSliceMap(coverageMap, qualityDataStore, qualityValueStrategy);
     }
-    public static <PR extends AssembledRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> CompactedSliceMap create(M coverageMap,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
+    public static <PR extends AssembledRead> CompactedSliceMap create(CoverageMap<PR> coverageMap,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
         return new CompactedSliceMap(coverageMap, qualityDataStore, qualityValueStrategy);
     }
-    public static <PR extends AssembledRead, R extends CoverageRegion<PR>, M extends CoverageMap<R>> CompactedSliceMap create(M coverageMap,PhredQuality defaultQuality) throws DataStoreException{
+    public static <PR extends AssembledRead> CompactedSliceMap create(CoverageMap<PR> coverageMap,PhredQuality defaultQuality) throws DataStoreException{
         return new CompactedSliceMap(coverageMap, new NullQualityDataStore(defaultQuality), new FakeQualityValueStrategy(defaultQuality));
     }
     private static final class NullQualityDataStore implements QualityDataStore{
@@ -187,7 +187,7 @@ public final class CompactedSliceMap<PR extends AssembledRead, R extends Coverag
             M coverageMap, QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
         int size = (int)coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).asRange().getEnd()+1;
         this.slices = new CompactedSlice[size];
-        for(CoverageRegion<?  extends AssembledRead> region : coverageMap){
+        for(CoverageRegion<PR> region : coverageMap){
             Map<String,Sequence<PhredQuality>> qualities = new HashMap<String,Sequence<PhredQuality>>(region.getCoverage());
             for(AssembledRead read :region){
                 final String id = read.getId();
