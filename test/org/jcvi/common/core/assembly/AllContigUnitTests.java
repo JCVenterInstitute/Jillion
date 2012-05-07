@@ -22,7 +22,6 @@ package org.jcvi.common.core.assembly;
 import org.jcvi.common.core.assembly.ace.AllAceUnitTests;
 import org.jcvi.common.core.assembly.asm.AllAsmUnitTests;
 import org.jcvi.common.core.assembly.clc.cas.AllCasUnitTests;
-import org.jcvi.common.core.assembly.contig.celera.AllCeleraUnitTests;
 import org.jcvi.common.core.assembly.ctg.AllCtgUnitTests;
 import org.jcvi.common.core.assembly.tasm.AllTasmUnitTests;
 import org.jcvi.common.core.assembly.util.slice.AllQualityValueStrategyUnitTests;
@@ -40,7 +39,6 @@ import org.junit.runners.Suite.SuiteClasses;
     AllAceUnitTests.class, 
     AllAssemblyTrimUnitTests.class,    
     AllCasUnitTests.class,
-    AllCeleraUnitTests.class,
     AllAsmUnitTests.class,
     AllTasmUnitTests.class
     }
