@@ -135,7 +135,7 @@ public final class  DefaultCoverageRegion<T extends Rangeable> implements Covera
         if (!(obj instanceof CoverageRegion)){
             return false;
         }
-        CoverageRegion<?>  other = (CoverageRegion<?> ) obj;
+        CoverageRegion<?>  other = (CoverageRegion<?>) obj;
         return range.equals(other.asRange()) && elementsAreEqual(other);
 
     }   
