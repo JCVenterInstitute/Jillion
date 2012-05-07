@@ -39,6 +39,7 @@ public final class CompactedSlice implements IdedSlice{
     private final byte[] elements;
     private final String[] ids;
     
+    public static final CompactedSlice EMPTY = new Builder().build();
     
     /**
      * @param elements
@@ -134,7 +135,7 @@ public final class CompactedSlice implements IdedSlice{
         return new CompactedSliceElement(elementId, qual, dirAndNuc);
     }
     
-    public static class Builder implements org.jcvi.common.core.util.Builder<CompactedSlice>{
+    public static final class Builder implements org.jcvi.common.core.util.Builder<CompactedSlice>{
 
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         List<String> ids = new ArrayList<String>();

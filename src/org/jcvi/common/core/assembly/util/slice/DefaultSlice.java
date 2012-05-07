@@ -33,6 +33,8 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 
 public final class DefaultSlice implements IdedSlice{
+	public static final DefaultSlice EMPTY = new Builder().build();
+	
     private final Map<String,IdedSliceElement> elements;
     
     private DefaultSlice(Map<String,IdedSliceElement> elements){

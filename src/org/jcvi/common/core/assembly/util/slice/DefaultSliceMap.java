@@ -23,50 +23,93 @@
  */
 package org.jcvi.common.core.assembly.util.slice;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
-import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.common.core.util.iter.ArrayIterator;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 public class DefaultSliceMap extends AbstractSliceMap{
 
-    public static SliceMap create(Contig<? extends AssembledRead> contig, QualityDataStore qualityDataStore,
-                        QualityValueStrategy qualityValueStrategy){
-        return new DefaultSliceMap(DefaultCoverageMap.buildCoverageMap(contig), qualityDataStore, qualityValueStrategy);
+    public static <R extends AssembledRead, C extends Contig<R>> SliceMap create(C contig, QualityDataStore qualityDataStore,
+                        QualityValueStrategy qualityValueStrategy) throws DataStoreException{
+        return new DefaultSliceMap(contig, qualityDataStore, qualityValueStrategy);
     }
     
     public static <PR extends AssembledRead> DefaultSliceMap create(CoverageMap<PR> coverageMap,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy){
         return new DefaultSliceMap(coverageMap, qualityDataStore, qualityValueStrategy);
     }
-    private Map<Long, IdedSlice> sliceMap = new HashMap<Long, IdedSlice>();
-    private long size;
+
+    private final IdedSlice[] slices;
     protected PhredQuality defaultQuality;
-    public DefaultSliceMap(CoverageMap<? extends AssembledRead> coverageMap, 
+    
+    
+    private DefaultSliceMap(CoverageMap<? extends AssembledRead> coverageMap, 
                         QualityDataStore qualityDataStore,
                         QualityValueStrategy qualityValueStrategy){
         this(coverageMap,qualityDataStore, qualityValueStrategy,null);
     }
+    
+    private <PR extends AssembledRead,C extends Contig<PR>>  DefaultSliceMap(
+            C contig, QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
+    	DefaultSlice.Builder builders[] = new DefaultSlice.Builder[(int)contig.getConsensus().getLength()];
+    	CloseableIterator<PR> readIter = null;
+    	try{
+    		readIter = contig.getReadIterator();
+    		while(readIter.hasNext()){
+    			PR read = readIter.next();
+    			int start = (int)read.getGappedStartOffset();
+    			int i=0;
+    			String id =read.getId();
+    			Direction dir = read.getDirection();
+    			
+    			Sequence<PhredQuality> fullQualities = qualityDataStore.get(id);
+    			for(Nucleotide base : read.getNucleotideSequence()){
+    				PhredQuality quality = qualityValueStrategy.getQualityFor(read, fullQualities, i);
+    				if(builders[start+i] ==null){
+    					builders[start+i] = new DefaultSlice.Builder();
+    				}
+    				builders[start+i].add(id, base, quality, dir);
+    				i++;
+    			}
+    		}
+    		//done building
+    		this.slices = new IdedSlice[builders.length];
+    		for(int i=0; i<slices.length; i++){
+    			if(builders[i] ==null){
+    				slices[i] = DefaultSlice.EMPTY;
+    			}else{
+    				slices[i]= builders[i].build();
+    			}
+    		}
+    	}finally{
+    		IOUtil.closeAndIgnoreErrors(readIter);
+    	}
+    }
     protected DefaultSliceMap(CoverageMap<? extends AssembledRead> coverageMap, 
             QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality){
+    	this.slices = new IdedSlice[(int)(coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).asRange().getEnd()+1)];
         this.defaultQuality = defaultQuality;
-        this.size = coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).asRange().getEnd()+1;
         for(CoverageRegion<?  extends AssembledRead> region : coverageMap){
         	Range range = region.asRange();
             for(long i=range.getBegin(); i<=range.getEnd(); i++ ){
                 List<IdedSliceElement> sliceElements = createSliceElementsFor(region, i, qualityDataStore, qualityValueStrategy);
-                sliceMap.put(Long.valueOf(i),new DefaultSlice.Builder()
+                slices[(int)i] =new DefaultSlice.Builder()
                                             .addAll(sliceElements)
-                                            .build());
+                                            .build();
             
             }
         }
@@ -82,22 +125,22 @@ public class DefaultSliceMap extends AbstractSliceMap{
     }
 
     public DefaultSliceMap(List<IdedSlice> slices){
-        size = slices.size();
-        for(int i=0; i< size; i++){
-            sliceMap.put(Long.valueOf(i), slices.get(i));
+    	this.slices = new IdedSlice[slices.size()];
+        for(int i=0; i< this.slices.length; i++){
+        	this.slices[i] = slices.get(i);
         }
     }
     @Override
     public IdedSlice getSlice(long offset) {
-        return sliceMap.get(Long.valueOf(offset));
+        return slices[(int)offset];
     }
     @Override
     public long getSize() {
-        return size;
+        return slices.length;
     }
     @Override
     public Iterator<IdedSlice> iterator() {
-        return new SliceIterator(sliceMap.keySet().iterator(), this);
+        return new ArrayIterator<IdedSlice>(slices);
     }
 
     
