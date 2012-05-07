@@ -33,7 +33,7 @@ import java.util.Deque;
  *
  *
  */
-public class FIFOQueue<E> extends AbstractFOQueue<E>{
+public final class FIFOQueue<E> extends AbstractFOQueue<E>{
 
     @Override
     protected boolean add(E e, Deque<E> deque) {

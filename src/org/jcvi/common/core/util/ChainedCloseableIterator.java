@@ -39,7 +39,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  *
  *
  */
-public class ChainedCloseableIterator<T> implements CloseableIterator<T>{
+public final class ChainedCloseableIterator<T> implements CloseableIterator<T>{
 
     private final List<CloseableIterator<T>> delegates;
     private final Iterator<T> iterator;
@@ -47,7 +47,6 @@ public class ChainedCloseableIterator<T> implements CloseableIterator<T>{
     /**
      * @param delegates
      */
-    @SuppressWarnings("unchecked")
     public ChainedCloseableIterator(Collection<? extends CloseableIterator<T>> delegates) {
         this.delegates = new ArrayList<CloseableIterator<T>>(delegates);
         this.iterator = ChainedIterator.create(delegates);

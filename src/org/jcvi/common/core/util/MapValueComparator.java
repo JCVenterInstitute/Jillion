@@ -33,7 +33,7 @@ import java.util.TreeMap;
  *
  *
  */
-public final class MapValueComparator<K extends Comparable,V> implements Comparator<K> {
+public final class MapValueComparator<K extends Comparable<? super K>,V> implements Comparator<K> {
 
    
     
@@ -47,7 +47,7 @@ public final class MapValueComparator<K extends Comparable,V> implements Compara
      * @param the {@link Comparator} used to sort the values in this map.
      * @return a sorted map sorted by the values in ascending order; never null.
      */
-    public static <K extends Comparable,V> SortedMap<K,V> sortAscending(Map<K, V> unsorted, Comparator<V> comparator){
+    public static <K extends Comparable<? super K>,V> SortedMap<K,V> sortAscending(Map<K, V> unsorted, Comparator<V> comparator){
         TreeMap<K,V> sorted= new TreeMap<K,V>(MapValueComparator.create(unsorted,comparator,true));
         sorted.putAll(unsorted);
         return Collections.unmodifiableSortedMap(sorted);
@@ -62,7 +62,7 @@ public final class MapValueComparator<K extends Comparable,V> implements Compara
      * @param the {@link Comparator} used to sort the values in this map.
      * @return a sorted map sorted by the values in ascending order; never null.
      */
-    public static <K extends Comparable,V> SortedMap<K,V> sortDescending(Map<K, V> unsorted, Comparator<V> comparator){
+    public static <K extends Comparable<? super K>,V> SortedMap<K,V> sortDescending(Map<K, V> unsorted, Comparator<V> comparator){
         TreeMap<K,V> sorted= new TreeMap<K,V>(MapValueComparator.create(unsorted,comparator,true));
         sorted.putAll(unsorted);
         return Collections.unmodifiableSortedMap(sorted);
@@ -76,7 +76,7 @@ public final class MapValueComparator<K extends Comparable,V> implements Compara
      * @param unsorted the unsorted Map to be sorted.
      * @return a sorted map sorted by the values in ascending order; never null.
      */
-    public static <K extends Comparable,V extends Comparable> SortedMap<K,V> sortAscending(Map<K, V> unsorted){
+    public static <K extends Comparable<? super K>,V extends Comparable<? super V>> SortedMap<K,V> sortAscending(Map<K, V> unsorted){
         TreeMap<K,V> sorted= new TreeMap<K,V>(MapValueComparator.create(unsorted,ComparableComparator.<V>create(),true));
         sorted.putAll(unsorted);
         return Collections.unmodifiableSortedMap(sorted);
@@ -90,7 +90,7 @@ public final class MapValueComparator<K extends Comparable,V> implements Compara
      * @param unsorted the unsorted Map to be sorted.
      * @return a sorted map sorted by the values in descending order; never null.
      */
-    public static <K extends Comparable,V extends Comparable> SortedMap<K,V> sortDescending(Map<K, V> unsorted){
+    public static <K extends Comparable<? super K>,V extends Comparable<? super V>> SortedMap<K,V> sortDescending(Map<K, V> unsorted){
         TreeMap<K,V> sorted= new TreeMap<K,V>(MapValueComparator.create(unsorted,ComparableComparator.<V>create(),false));
         sorted.putAll(unsorted);
         return Collections.unmodifiableSortedMap(sorted);
@@ -104,7 +104,7 @@ public final class MapValueComparator<K extends Comparable,V> implements Compara
      * @param ascending should the sort be ordered in ascending order.
      * @return a new MapValueComparator instance.
      */
-    private static <K extends Comparable,V> MapValueComparator<K,V> create(Map<K, V> map, Comparator<V> comparator,boolean ascending){
+    private static <K extends Comparable<? super K>,V> MapValueComparator<K,V> create(Map<K, V> map, Comparator<V> comparator,boolean ascending){
         return new MapValueComparator<K, V>(map,comparator,ascending);
     }
     private final Map<K, V> map;
@@ -124,7 +124,6 @@ public final class MapValueComparator<K extends Comparable,V> implements Compara
     /**
     * {@inheritDoc}
     */
-    @SuppressWarnings("unchecked")
     @Override
     public int compare(K o1, K o2) {
         if(ascending){

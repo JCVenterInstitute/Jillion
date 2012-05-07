@@ -28,7 +28,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -41,7 +40,6 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.util.ByteBufferInputStream;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.common.core.util.iter.CloseableIterator;
@@ -310,12 +308,8 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
                 throw new DataStoreException(id +" does not exist");
             }
             Range range = recordLocations.getRangeFor(id);
+            in = IOUtil.createInputStreamFromFile(phdBall, range);  
             
-            fileInputStream = new FileInputStream(phdBall);
-            MappedByteBuffer buf =fileInputStream.getChannel().map(
-                    FileChannel.MapMode.READ_ONLY, range.getBegin(), range.getLength());
-            
-            in =new ByteBufferInputStream(buf);
             PhdDataStoreBuilder builder =  DefaultPhdFileDataStore.createBuilder();            
             PhdParser.parsePhd(in, builder);
             dataStore = builder.build();
