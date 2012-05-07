@@ -25,17 +25,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
-import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.util.iter.ArrayIterator;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
@@ -44,12 +46,14 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * 
  * 
  */
-public final class CompactedSliceMap<PR extends AssembledRead, M extends CoverageMap<PR>> implements SliceMap {
+public final class CompactedSliceMap implements SliceMap {
     private final CompactedSlice[] slices;
 
-    public static <PR extends AssembledRead, C extends Contig<PR>> CompactedSliceMap create(C contig,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
-        CoverageMap<PR> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
-        return new CompactedSliceMap(coverageMap, qualityDataStore, qualityValueStrategy);
+    public static <PR extends AssembledRead> CompactedSliceMap create(Contig<PR> contig,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
+        return new CompactedSliceMap(contig, qualityDataStore, qualityValueStrategy);
+    }
+    public static <PR extends AssembledRead> CompactedSliceMap create(Contig<PR> contig, PhredQuality defaultQuality) throws DataStoreException{
+        return new CompactedSliceMap(contig, new NullQualityDataStore(defaultQuality), new FakeQualityValueStrategy(defaultQuality));
     }
     public static <PR extends AssembledRead> CompactedSliceMap create(CoverageMap<PR> coverageMap,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
         return new CompactedSliceMap(coverageMap, qualityDataStore, qualityValueStrategy);
@@ -183,7 +187,7 @@ public final class CompactedSliceMap<PR extends AssembledRead, M extends Coverag
         }
         
     }
-    private  CompactedSliceMap(
+    private <PR extends AssembledRead, M extends CoverageMap<PR>> CompactedSliceMap(
             M coverageMap, QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
         int size = (int)coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).asRange().getEnd()+1;
         this.slices = new CompactedSlice[size];
@@ -205,6 +209,42 @@ public final class CompactedSliceMap<PR extends AssembledRead, M extends Coverag
         }
     }
    
+    private <PR extends AssembledRead, C extends Contig<PR>>  CompactedSliceMap(
+            C contig, QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
+    	CompactedSlice.Builder builders[] = new CompactedSlice.Builder[(int)contig.getConsensus().getLength()];
+    	CloseableIterator<PR> readIter = null;
+    	try{
+    		readIter = contig.getReadIterator();
+    		while(readIter.hasNext()){
+    			PR read = readIter.next();
+    			int start = (int)read.getGappedStartOffset();
+    			int i=0;
+    			String id =read.getId();
+    			Direction dir = read.getDirection();
+    			
+    			Sequence<PhredQuality> fullQualities = qualityDataStore.get(id);
+    			for(Nucleotide base : read.getNucleotideSequence()){
+    				PhredQuality quality = qualityValueStrategy.getQualityFor(read, fullQualities, i);
+    				if(builders[start+i] ==null){
+    					builders[start+i] = new CompactedSlice.Builder();
+    				}
+    				builders[start+i].addSliceElement(id, base, quality, dir);
+    				i++;
+    			}
+    		}
+    		//done building
+    		this.slices = new CompactedSlice[builders.length];
+    		for(int i=0; i<slices.length; i++){
+    			if(builders[i]==null){
+    				slices[i] = CompactedSlice.EMPTY;
+    			}else{
+    				slices[i]= builders[i].build();
+    			}
+    		}
+    	}finally{
+    		IOUtil.closeAndIgnoreErrors(readIter);
+    	}
+    }
     /**
      * {@inheritDoc}
      */

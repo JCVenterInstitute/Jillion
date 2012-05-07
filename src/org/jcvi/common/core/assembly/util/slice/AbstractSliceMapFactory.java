@@ -24,7 +24,9 @@
 package org.jcvi.common.core.assembly.util.slice;
 
 import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 
 public abstract class AbstractSliceMapFactory<P extends AssembledRead> implements SliceMapFactory<P>{
@@ -41,11 +43,20 @@ public abstract class AbstractSliceMapFactory<P extends AssembledRead> implement
     @Override
     public SliceMap createNewSliceMap(
             CoverageMap<P> coverageMap,
-                    QualityDataStore qualityDataStore) {
+                    QualityDataStore qualityDataStore) throws DataStoreException {
         return createNewSliceMap(coverageMap, qualityDataStore, qualityValueStrategy);
     }
-    
+    @Override
+    public SliceMap createNewSliceMap(
+            Contig<P> coverageMap,
+                    QualityDataStore qualityDataStore) throws DataStoreException {
+        return createNewSliceMap(coverageMap, qualityDataStore, qualityValueStrategy);
+    }
     protected abstract  SliceMap createNewSliceMap(
             CoverageMap<P> coverageMap,
-                    QualityDataStore qualityDataStore, QualityValueStrategy qualityValueStrategy);
+                    QualityDataStore qualityDataStore, QualityValueStrategy qualityValueStrategy) throws DataStoreException;
+    
+    protected abstract  SliceMap createNewSliceMap(
+            Contig<P> coverageMap,
+                    QualityDataStore qualityDataStore, QualityValueStrategy qualityValueStrategy) throws DataStoreException;
 }

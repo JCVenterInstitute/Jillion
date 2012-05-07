@@ -20,6 +20,7 @@
 package org.jcvi.common.core.assembly.util.slice;
 
 import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
@@ -45,4 +46,14 @@ public class CompactedSliceMapFactory<P extends AssembledRead> extends AbstractS
         }
     }
 
+    @Override
+    protected  SliceMap createNewSliceMap(
+            Contig<P> contig,
+                    QualityDataStore qualityDataStore, QualityValueStrategy qualityValueStrategy){
+        try {
+            return CompactedSliceMap.<P>create(contig, qualityDataStore, qualityValueStrategy);
+        } catch (DataStoreException e) {
+            throw new IllegalStateException("error creating slice map",e);
+        }
+    }
 }
