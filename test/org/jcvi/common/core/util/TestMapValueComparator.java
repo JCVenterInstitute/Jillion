@@ -76,15 +76,7 @@ public class TestMapValueComparator {
         assertAscending(heights,"Bob","Ernie","Carrol","Dan","Alice");
         assertDescending(heights,"Alice","Dan","Carrol","Ernie","Bob");
     }
-    
-    @Test(expected = NullPointerException.class)
-    public void nullAscendingMapShouldThrowNPE(){
-        MapValueComparator.sortAscending(null);
-    }
-    @Test(expected = NullPointerException.class)
-    public void nullDescendingMapShouldThrowNPE(){
-        MapValueComparator.sortDescending(null);
-    }
+
     
     @Test
     public void emptyUnsortedMapShouldReturnEmptySortedMap(){

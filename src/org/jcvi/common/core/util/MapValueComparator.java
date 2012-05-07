@@ -77,7 +77,10 @@ public final class MapValueComparator<K extends Comparable<? super K>,V> impleme
      * @return a sorted map sorted by the values in ascending order; never null.
      */
     public static <K extends Comparable<? super K>,V extends Comparable<? super V>> SortedMap<K,V> sortAscending(Map<K, V> unsorted){
-        TreeMap<K,V> sorted= new TreeMap<K,V>(MapValueComparator.create(unsorted,ComparableComparator.<V>create(),true));
+    	if(unsorted==null){
+    		throw new NullPointerException("map can not be null");
+    	}
+    	TreeMap<K,V> sorted= new TreeMap<K,V>(MapValueComparator.create(unsorted,ComparableComparator.<V>create(),true));
         sorted.putAll(unsorted);
         return Collections.unmodifiableSortedMap(sorted);
     }
@@ -91,6 +94,9 @@ public final class MapValueComparator<K extends Comparable<? super K>,V> impleme
      * @return a sorted map sorted by the values in descending order; never null.
      */
     public static <K extends Comparable<? super K>,V extends Comparable<? super V>> SortedMap<K,V> sortDescending(Map<K, V> unsorted){
+    	if(unsorted==null){
+    		throw new NullPointerException("map can not be null");
+    	}
         TreeMap<K,V> sorted= new TreeMap<K,V>(MapValueComparator.create(unsorted,ComparableComparator.<V>create(),false));
         sorted.putAll(unsorted);
         return Collections.unmodifiableSortedMap(sorted);
