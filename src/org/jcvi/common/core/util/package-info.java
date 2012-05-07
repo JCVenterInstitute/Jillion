@@ -17,9 +17,8 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /**
- * Contains common Utility classes.  Many of these
+ * Contains common utility classes.  Many of these
  * classes should be included
- * in the Java SDK but for some reason aren't.  Therefore 
- * they had to be written.
+ * in the Java SDK but for some reason aren't.
 */
 package org.jcvi.common.core.util;

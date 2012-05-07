@@ -35,7 +35,7 @@ import java.util.List;
  *
  *
  */
-public class MultipleFileFilter implements FileFilter{
+final class MultipleFileFilter implements FileFilter{
 
     private final List<FileFilter> delegates;
     

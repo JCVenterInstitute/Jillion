@@ -29,7 +29,7 @@ import java.util.Comparator;
  * ordering of the given Comparable.
  * @author dkatzel
  */
-public final class ComparableComparator<T extends Comparable> implements Comparator<T>, Serializable{
+final class ComparableComparator<T extends Comparable<? super T>> implements Comparator<T>, Serializable{
 
     private static final long serialVersionUID = 8748840566214201421L;
 
@@ -38,7 +38,7 @@ public final class ComparableComparator<T extends Comparable> implements Compara
      * @param <T> the Comparable to make a comparator for.
      * @return a new instance of a Comparator of type T.
      */
-    public static <T extends Comparable> ComparableComparator<T> create(){
+    public static <T extends Comparable<? super T>> ComparableComparator<T> create(){
         return new ComparableComparator<T>();
     }
     

@@ -33,7 +33,7 @@ import java.util.Queue;
  *
  *
  */
-public class LIFOQueue<E> extends AbstractFOQueue<E>{
+public final class LIFOQueue<E> extends AbstractFOQueue<E>{
   
 
     @Override
