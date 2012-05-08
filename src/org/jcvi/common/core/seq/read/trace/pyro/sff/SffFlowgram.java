@@ -38,7 +38,7 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.util.ObjectsUtil;
 
 final class SffFlowgram implements Flowgram {
     private final String id;
@@ -112,12 +112,12 @@ final class SffFlowgram implements Flowgram {
 
     private void canNotBeNull(String id,NucleotideSequence basecalls, Sequence<PhredQuality> qualities,
             List<Short> values, Range qualitiesClip, Range adapterClip) {
-        CommonUtil.cannotBeNull(id, "id can not be null");
-        CommonUtil.cannotBeNull(basecalls, "basecalls can not be null");
-        CommonUtil.cannotBeNull(qualities, "qualities can not be null");
-        CommonUtil.cannotBeNull(values, "values can not be null");
-        CommonUtil.cannotBeNull(qualitiesClip, "qualitiesClip can not be null");
-        CommonUtil.cannotBeNull(adapterClip, "adapterClip can not be null");
+        ObjectsUtil.checkNotNull(id, "id can not be null");
+        ObjectsUtil.checkNotNull(basecalls, "basecalls can not be null");
+        ObjectsUtil.checkNotNull(qualities, "qualities can not be null");
+        ObjectsUtil.checkNotNull(values, "values can not be null");
+        ObjectsUtil.checkNotNull(qualitiesClip, "qualitiesClip can not be null");
+        ObjectsUtil.checkNotNull(adapterClip, "adapterClip can not be null");
 
         if(values.isEmpty()){
             throw new IllegalArgumentException("values can not be empty");
@@ -196,12 +196,12 @@ final class SffFlowgram implements Flowgram {
         Flowgram other = (Flowgram) obj;
         
         boolean nonValuesEqual=
-        CommonUtil.similarTo(id, other.getId())
-        && CommonUtil.similarTo(basecalls.asList(), other.getNucleotideSequence().asList())
-        && CommonUtil.similarTo(qualities.asList(), other.getQualities().asList())
-        && CommonUtil.similarTo(qualitiesClip, other.getQualityClip())
-        && CommonUtil.similarTo(adapterClip, other.getAdapterClip())
-        && CommonUtil.similarTo(getNumberOfFlows(), other.getNumberOfFlows());
+        ObjectsUtil.nullSafeEquals(id, other.getId())
+        && ObjectsUtil.nullSafeEquals(basecalls.asList(), other.getNucleotideSequence().asList())
+        && ObjectsUtil.nullSafeEquals(qualities.asList(), other.getQualities().asList())
+        && ObjectsUtil.nullSafeEquals(qualitiesClip, other.getQualityClip())
+        && ObjectsUtil.nullSafeEquals(adapterClip, other.getAdapterClip())
+        && ObjectsUtil.nullSafeEquals(getNumberOfFlows(), other.getNumberOfFlows());
         if(!nonValuesEqual){
         	return false;
         }

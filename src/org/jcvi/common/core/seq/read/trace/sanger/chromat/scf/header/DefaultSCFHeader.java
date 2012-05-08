@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header;
 
-import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.util.ObjectsUtil;
 
 /**
  * <code>DefaultSCFHeader</code> is an object representation of
@@ -221,16 +221,16 @@ public class DefaultSCFHeader implements SCFHeader {
             return false;
         }
         final DefaultSCFHeader other = (DefaultSCFHeader) obj;
-         return CommonUtil.similarTo(getBasesOffset(), other.getBasesOffset())
-             && CommonUtil.similarTo(getCommentOffset(), other.getCommentOffset())
-             && CommonUtil.similarTo(getCommentSize(), other.getCommentSize())
-             && CommonUtil.similarTo(getNumberOfBases(), other.getNumberOfBases())
-             && CommonUtil.similarTo(getNumberOfSamples(), other.getNumberOfSamples())
-             && CommonUtil.similarTo(getPrivateDataOffset(), other.getPrivateDataOffset())
-             && CommonUtil.similarTo(getPrivateDataSize(), other.getPrivateDataSize())
-             && CommonUtil.similarTo(getSampleOffset(), other.getSampleOffset())
-             && CommonUtil.similarTo(getSampleSize(), other.getSampleSize())
-             && CommonUtil.similarTo(getVersion(), other.getVersion());
+         return ObjectsUtil.nullSafeEquals(getBasesOffset(), other.getBasesOffset())
+             && ObjectsUtil.nullSafeEquals(getCommentOffset(), other.getCommentOffset())
+             && ObjectsUtil.nullSafeEquals(getCommentSize(), other.getCommentSize())
+             && ObjectsUtil.nullSafeEquals(getNumberOfBases(), other.getNumberOfBases())
+             && ObjectsUtil.nullSafeEquals(getNumberOfSamples(), other.getNumberOfSamples())
+             && ObjectsUtil.nullSafeEquals(getPrivateDataOffset(), other.getPrivateDataOffset())
+             && ObjectsUtil.nullSafeEquals(getPrivateDataSize(), other.getPrivateDataSize())
+             && ObjectsUtil.nullSafeEquals(getSampleOffset(), other.getSampleOffset())
+             && ObjectsUtil.nullSafeEquals(getSampleSize(), other.getSampleSize())
+             && ObjectsUtil.nullSafeEquals(getVersion(), other.getVersion());
 
     }
 

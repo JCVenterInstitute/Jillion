@@ -27,7 +27,7 @@ import java.math.BigInteger;
 
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.util.ObjectsUtil;
 
 final class DefaultSffCommonHeader implements SffCommonHeader {
 
@@ -126,12 +126,12 @@ final class DefaultSffCommonHeader implements SffCommonHeader {
             return false;
         }
         final DefaultSffCommonHeader other = (DefaultSffCommonHeader) obj;
-        return CommonUtil.similarTo(getFlowSequence(), other.getFlowSequence())
-       && CommonUtil.similarTo(getIndexLength(), other.getIndexLength())
-        && CommonUtil.similarTo(getIndexOffset(), other.getIndexOffset())
-        && CommonUtil.similarTo(getKeySequence(), other.getKeySequence())
-        && CommonUtil.similarTo(getNumberOfFlowsPerRead(), other.getNumberOfFlowsPerRead())
-        && CommonUtil.similarTo(getNumberOfReads(), other.getNumberOfReads());
+        return ObjectsUtil.nullSafeEquals(getFlowSequence(), other.getFlowSequence())
+       && ObjectsUtil.nullSafeEquals(getIndexLength(), other.getIndexLength())
+        && ObjectsUtil.nullSafeEquals(getIndexOffset(), other.getIndexOffset())
+        && ObjectsUtil.nullSafeEquals(getKeySequence(), other.getKeySequence())
+        && ObjectsUtil.nullSafeEquals(getNumberOfFlowsPerRead(), other.getNumberOfFlowsPerRead())
+        && ObjectsUtil.nullSafeEquals(getNumberOfReads(), other.getNumberOfReads());
     }
 
 

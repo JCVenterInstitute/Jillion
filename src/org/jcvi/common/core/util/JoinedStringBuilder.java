@@ -13,11 +13,13 @@ import org.jcvi.common.core.util.iter.ArrayIterable;
  * with other Objects. Objects
  * to be joined use their {@link Object#toString()}
  * method to get their String representation.
+ * <br/>
+ * <strong>This class is not thread-safe.</strong>
  * @author dkatzel
  *
  *
  */
-public class JoinedStringBuilder implements Builder<String>{
+public final class JoinedStringBuilder implements Builder<String>{
     private final Iterable<?> elements;
     private Object glue;
     private Object prefix;

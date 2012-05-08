@@ -24,7 +24,7 @@
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.util.ObjectsUtil;
 
 final class DefaultSffReadHeader implements SffReadHeader {
     private final int numberOfBases;
@@ -97,10 +97,10 @@ final class DefaultSffReadHeader implements SffReadHeader {
             return false;
         }
         final DefaultSffReadHeader other = (DefaultSffReadHeader) obj;
-        return CommonUtil.similarTo(getId(), other.getId())
-        && CommonUtil.similarTo(getNumberOfBases(), other.getNumberOfBases())
-        && CommonUtil.similarTo(getAdapterClip(), other.getAdapterClip())
-        && CommonUtil.similarTo(getQualityClip(), other.getQualityClip());
+        return ObjectsUtil.nullSafeEquals(getId(), other.getId())
+        && ObjectsUtil.nullSafeEquals(getNumberOfBases(), other.getNumberOfBases())
+        && ObjectsUtil.nullSafeEquals(getAdapterClip(), other.getAdapterClip())
+        && ObjectsUtil.nullSafeEquals(getQualityClip(), other.getQualityClip());
 
     }
 

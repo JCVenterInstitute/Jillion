@@ -24,7 +24,7 @@
 package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.util.ObjectsUtil;
 
 public class DefaultChannelGroup implements ChannelGroup {
 
@@ -58,10 +58,10 @@ public class DefaultChannelGroup implements ChannelGroup {
     }
     private void channelsCannotBeNull() {
         String errorMessage = "channels can not be null";
-        CommonUtil.cannotBeNull(aChannel, errorMessage);
-        CommonUtil.cannotBeNull(cChannel, errorMessage);
-        CommonUtil.cannotBeNull(gChannel, errorMessage);
-        CommonUtil.cannotBeNull(tChannel, errorMessage);
+        ObjectsUtil.checkNotNull(aChannel, errorMessage);
+        ObjectsUtil.checkNotNull(cChannel, errorMessage);
+        ObjectsUtil.checkNotNull(gChannel, errorMessage);
+        ObjectsUtil.checkNotNull(tChannel, errorMessage);
     }
     private void positionsMustHaveSameLength() {
         int posLength = aChannel.getPositions().array().length;
@@ -128,10 +128,10 @@ public class DefaultChannelGroup implements ChannelGroup {
             return false;
         }
         final ChannelGroup other = (ChannelGroup) obj;
-        return CommonUtil.similarTo(getAChannel(), other.getAChannel())
-        && CommonUtil.similarTo(getCChannel(), other.getCChannel())
-        && CommonUtil.similarTo(getGChannel(), other.getGChannel())
-        && CommonUtil.similarTo(getTChannel(), other.getTChannel());
+        return ObjectsUtil.nullSafeEquals(getAChannel(), other.getAChannel())
+        && ObjectsUtil.nullSafeEquals(getCChannel(), other.getCChannel())
+        && ObjectsUtil.nullSafeEquals(getGChannel(), other.getGChannel())
+        && ObjectsUtil.nullSafeEquals(getTChannel(), other.getTChannel());
 
     }
     @Override

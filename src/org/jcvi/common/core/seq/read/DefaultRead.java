@@ -24,7 +24,7 @@
 package org.jcvi.common.core.seq.read;
 
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.util.ObjectsUtil;
 
 public final class DefaultRead<T extends NucleotideSequence> implements Read<T>{
     private final String id;
@@ -64,7 +64,7 @@ public final class DefaultRead<T extends NucleotideSequence> implements Read<T>{
             return false;
         }
         Read<?> other = (Read<?>) obj;
-        return CommonUtil.similarTo(id, other.getId());
+        return ObjectsUtil.nullSafeEquals(id, other.getId());
         
     }
     @Override

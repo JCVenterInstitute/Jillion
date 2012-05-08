@@ -25,67 +25,79 @@ package org.jcvi.common.core.util;
 
 
 /**
- * <code>CommonUtil</code> contains common
- * utility functions that can be used by all projects.
+ * <code>ObjectsUtil</code> contains common
+ * utility functions on Objects.
  * @author dkatzel
  *
  *
  */
-public final class CommonUtil {
+public final class ObjectsUtil {
     /**
      * private constructor.
      */
-    private CommonUtil(){}
+    private ObjectsUtil(){}
     /**
-     * Checks to see if the two given objects of the same type are
-     * similar.  Similar is defined as :
+     * Checks to see if the two given objects of the equal
+     * without throwing a NullPointerException
+     * if the given parameters are null.
      * <br/>
+     * The two objects are considered equal:
      * <ol>
-     * <li>if first is <code>null</code>;
-     *  then second must also be <code>null</code>
+     * <li>if a is <code>null</code>;
+     *  then b must also be <code>null</code>
      * </li>
-     * <li>if first and second are both not <code>null</code>, then
-     * <code>first.equals(second)</code> must be <code>true</code>
+     * <li>if a and b are both not <code>null</code>, then
+     * <code>a.equals(b)</code> must be <code>true</code>
      * </ol>
-     * @param <T> The Type.
-     * @param first the first object to compare.
-     * @param second the second object to compare.
+     * @param a the first object to compare.
+     * @param b the second object to compare.
      * @return <code>true</code> if the given objects are similar;
      * <code>false</code> otherwise.
      */
-    public static <T> boolean similarTo(T first, T second){
-        if (first == null) {
-            return second == null;
+    public static boolean nullSafeEquals(Object a, Object b){
+        if (a == null) {
+            return b == null;
         } 
-        return first.equals(second);
+        return a.equals(b);
      
     }
     /**
-     * Checks to see if both parameters are null.
-     * @param first
-     * @param second
-     * @return
+     * Checks to see if all the given
+     * objects are null.
+     * @param objects vararg of objects to check
+     * @return {@code true} if all given objects
+     * are null; {@code false} otherwise.
      */
-    public static boolean bothNull(Object first, Object second){
-        return first == null && second ==null;
+    public static boolean allNull(Object ...objects){
+        for(Object o : objects){
+        	if(o !=null){
+        		return false;
+        	}
+        }
+        return true;
     }
     /**
-     * Checks to see if one and only one of the parameters
-     * is null.
-     * @param first
-     * @param second
-     * @return
+     * Checks to see if all the given
+     * objects are <strong>not</strong> null.
+     * @param objects vararg of objects to check
+     * @return {@code true} if any of the given objects
+     * are null; {@code false} otherwise.
      */
-    public static boolean onlyOneIsNull(Object first, Object second){
-        return (first ==null && second!=null)
-                || (first !=null && second==null);
+    public static boolean noneNull(Object ...objects){
+        for(Object o : objects){
+        	if(o ==null){
+        		return false;
+        	}
+        }
+        return true;
     }
+    
     /**
      * Computes the hashcode of the given object with support for null objects.
      * @param obj (can be null) the object to compute the hashcode for.
      * @return the hashcode of the object; or {@code 0} if obj is null.
      */
-    public static int hashCode(Object obj){
+    public static int nullSafeHashCode(Object obj){
         if(obj ==null){
             return 0;
         }
@@ -94,11 +106,12 @@ public final class CommonUtil {
     /**
      * Checks to make sure the given obj is not null.
      * @param obj the object to check.
-     * @param errorMessage the error message to report if the object  IS null.
+     * @param errorMessage the error message to report if the object  
+     * <strong>is</strong> null.
      * @throws NullPointerException if obj is null, the error message
      * is the given message.
      */
-    public static void cannotBeNull(Object obj, String errorMessage){
+    public static void checkNotNull(Object obj, String errorMessage){
         if(obj ==null){
             throw new NullPointerException(errorMessage);
         }

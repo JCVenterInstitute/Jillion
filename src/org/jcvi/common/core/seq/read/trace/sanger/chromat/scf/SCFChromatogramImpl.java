@@ -26,7 +26,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Confidence;
-import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.util.ObjectsUtil;
 
 public class SCFChromatogramImpl extends BasicChromatogram implements SCFChromatogram {
 
@@ -88,10 +88,10 @@ public class SCFChromatogramImpl extends BasicChromatogram implements SCFChromat
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + CommonUtil.hashCode(deletionConfidence);
-        result = prime * result + CommonUtil.hashCode(insertionConfidence);
-        result = prime * result + CommonUtil.hashCode(privateData);
-        result = prime * result+ CommonUtil.hashCode(substitutionConfidence);
+        result = prime * result + ObjectsUtil.nullSafeHashCode(deletionConfidence);
+        result = prime * result + ObjectsUtil.nullSafeHashCode(insertionConfidence);
+        result = prime * result + ObjectsUtil.nullSafeHashCode(privateData);
+        result = prime * result+ ObjectsUtil.nullSafeHashCode(substitutionConfidence);
         return result;
     }
     /**
@@ -109,10 +109,10 @@ public class SCFChromatogramImpl extends BasicChromatogram implements SCFChromat
             return false;
         }
         final SCFChromatogram other = (SCFChromatogram) obj;
-        return CommonUtil.similarTo(getDeletionConfidence(), other.getDeletionConfidence())
-            && CommonUtil.similarTo(getInsertionConfidence(), other.getInsertionConfidence())
-            && CommonUtil.similarTo(getSubstitutionConfidence(), other.getSubstitutionConfidence())
-             && CommonUtil.similarTo(getPrivateData(), other.getPrivateData());
+        return ObjectsUtil.nullSafeEquals(getDeletionConfidence(), other.getDeletionConfidence())
+            && ObjectsUtil.nullSafeEquals(getInsertionConfidence(), other.getInsertionConfidence())
+            && ObjectsUtil.nullSafeEquals(getSubstitutionConfidence(), other.getSubstitutionConfidence())
+             && ObjectsUtil.nullSafeEquals(getPrivateData(), other.getPrivateData());
 
 
     }

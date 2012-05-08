@@ -27,7 +27,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.trace.Trace;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.util.ObjectsUtil;
 
 public class DefaultFragment implements Fragment{
     private final String id;
@@ -111,7 +111,7 @@ public class DefaultFragment implements Fragment{
             return false;
         }
         DefaultFragment other = (DefaultFragment) obj;
-        return CommonUtil.similarTo(getId(), other.getId());
+        return ObjectsUtil.nullSafeEquals(getId(), other.getId());
     }
 
     

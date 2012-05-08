@@ -31,7 +31,7 @@ import org.jcvi.common.core.symbol.EncodedSequence;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
-import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.util.ObjectsUtil;
 
 
 /**
@@ -88,11 +88,7 @@ public class SangerPeak{
            return false;
        }
        SangerPeak other = (SangerPeak) obj;
-       return CommonUtil.bothNull(getData(), other.getData())  
-                   ||        
-            (!CommonUtil.onlyOneIsNull(getData(), other.getData()) 
-                   && 
-            CommonUtil.similarTo(getData(), other.getData()));
+       return ObjectsUtil.nullSafeEquals(getData(), other.getData());
        
     }
     /* (non-Javadoc)
@@ -102,7 +98,7 @@ public class SangerPeak{
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getData() == null) ? 0 :getData().hashCode());
+        result = prime * result + ObjectsUtil.nullSafeHashCode(getData());
 
         return result;
     }

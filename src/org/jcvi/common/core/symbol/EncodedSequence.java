@@ -30,7 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.util.ObjectsUtil;
 /**
  * {@code EncodedSequence} is a composite object
  * containing a byte representation of data and an {@link GlyphCodec}
@@ -103,7 +103,7 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
             return false;
         }
         EncodedSequence other = (EncodedSequence) obj;
-        return CommonUtil.similarTo(codec, other.codec) &&
+        return ObjectsUtil.nullSafeEquals(codec, other.codec) &&
         Arrays.equals(data, other.data);
        
     }

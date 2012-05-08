@@ -26,7 +26,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 import java.nio.ShortBuffer;
 import java.util.Arrays;
 
-import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.util.ObjectsUtil;
 
 
 /**
@@ -49,11 +49,11 @@ public class Channel{
            return false;
        }
        Channel other = (Channel) obj;
-      return  CommonUtil.similarTo(getConfidence(), other.getConfidence())
+      return  ObjectsUtil.nullSafeEquals(getConfidence(), other.getConfidence())
                && similarPositions(other);
     }
     private boolean similarPositions(Channel other){
-        return !CommonUtil.onlyOneIsNull(getPositions(), other.getPositions())
+        return ObjectsUtil.noneNull(getPositions(), other.getPositions())
         && Arrays.equals(getPositions().array(), other.getPositions().array());
     }
     /* (non-Javadoc)

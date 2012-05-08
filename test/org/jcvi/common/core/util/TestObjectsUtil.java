@@ -23,68 +23,54 @@
  */
 package org.jcvi.common.core.util;
 
-import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.util.ObjectsUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
-public class TestCommonUtil {
+public class TestObjectsUtil {
 
     @Test
     public void bothNullShouldBeSimilar(){
-        assertTrue(CommonUtil.similarTo(null, null));
+        assertTrue(ObjectsUtil.nullSafeEquals(null, null));
     }
     @Test
     public void firstNullSecondNotNullShouldNotBeSimilar(){
-        assertFalse(CommonUtil.similarTo(null, "not null"));
+        assertFalse(ObjectsUtil.nullSafeEquals(null, "not null"));
     }
     @Test
     public void firstAndSecondEqualShouldBeSimilar(){
         String sameObj = "same object";
-        assertTrue(CommonUtil.similarTo(sameObj, sameObj));
+        assertTrue(ObjectsUtil.nullSafeEquals(sameObj, sameObj));
     }
 
     @Test
     public void firstAndSecondNotEqualShouldNotBeSimilar(){
-        assertFalse(CommonUtil.similarTo("an obj", "a diff obj"));
+        assertFalse(ObjectsUtil.nullSafeEquals("an obj", "a diff obj"));
     }
     
     @Test
     public void bothNull(){
-        assertTrue(CommonUtil.bothNull(null, null));
+        assertTrue(ObjectsUtil.allNull(null, null));
     }
     @Test
     public void bothNullFirstIsNotNull(){
-        assertFalse(CommonUtil.bothNull("not null", null));
+        assertFalse(ObjectsUtil.allNull("not null", null));
     }
     @Test
     public void bothNullSecondIsNotNull(){
-        assertFalse(CommonUtil.bothNull(null, "not null"));
+        assertFalse(ObjectsUtil.allNull(null, "not null"));
     }
     
     @Test
     public void bothNullNeitherIsNull(){
-        assertFalse(CommonUtil.bothNull("not null", "not null"));
+        assertFalse(ObjectsUtil.allNull("not null", "not null"));
     }
-    
-    @Test
-    public void onlyOneIsNull(){
-        assertTrue(CommonUtil.onlyOneIsNull(null, "not null"));
-        assertTrue(CommonUtil.onlyOneIsNull("not null", null));
-    }
-    @Test
-    public void onlyOneIsNullBothAreNull(){
-        assertFalse(CommonUtil.onlyOneIsNull(null, null));
-    }
-    
-    @Test
-    public void onlyOneIsNullNeitherIsNull(){
-        assertFalse(CommonUtil.onlyOneIsNull("not null", "not null"));
-    }
+   
     
     @Test
     public void canNotBeNullShouldThowNullPointerIfIsNull(){
         String message = "error message to be thrown";
         try{
-            CommonUtil.cannotBeNull(null, message);
+            ObjectsUtil.checkNotNull(null, message);
             fail("should throw NullPointer if is null");
         }catch(NullPointerException e){
             assertEquals(message, e.getMessage());
@@ -92,7 +78,7 @@ public class TestCommonUtil {
     }
     @Test
     public void canNotBeNull(){
-        CommonUtil.cannotBeNull(new Object(), "message ignored");
+        ObjectsUtil.checkNotNull(new Object(), "message ignored");
       
     }
 }

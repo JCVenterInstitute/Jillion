@@ -27,7 +27,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestCommonUtil.class,
+        TestObjectsUtil.class,
         MathUtilSuite.class,
         TestLRUCache.class,
         TestWeakReferenceLRUCache.class,
