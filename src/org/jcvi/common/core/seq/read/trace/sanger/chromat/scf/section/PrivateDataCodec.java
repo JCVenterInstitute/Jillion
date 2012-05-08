@@ -48,12 +48,12 @@ public class PrivateDataCodec implements SectionCodec{
     public EncodedSection encode(SCFChromatogram c, SCFHeader header)
             throws IOException {
         PrivateData privateData=c.getPrivateData();
-        if(privateData ==null|| privateData.getData()==null){
+        if(privateData ==null|| privateData.getBytes()==null){
             header.setPrivateDataSize(0);
             return new EncodedSection( ByteBuffer.wrap(EMPTY),Section.PRIVATE_DATA);
         }
 
-        final byte[] rawArray = privateData.getData().array();
+        final byte[] rawArray = privateData.getBytes();
         header.setPrivateDataSize(rawArray.length);
         return new EncodedSection( ByteBuffer.wrap(rawArray),
                 Section.PRIVATE_DATA);

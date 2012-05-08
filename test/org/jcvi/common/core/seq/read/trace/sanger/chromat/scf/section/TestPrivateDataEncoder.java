@@ -24,9 +24,9 @@
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.PrivateData;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.PrivateDataImpl;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.EncodedSection;
@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
 public class TestPrivateDataEncoder {
 
     private byte[] data = new byte[]{20,30,40, -20, -67,125};
-    private PrivateData privateData = new PrivateData(data);
+    private PrivateDataImpl privateData = new PrivateDataImpl(data);
     SectionEncoder sut = new PrivateDataCodec();
     SCFHeader mockHeader;
     SCFChromatogram c;
@@ -65,14 +65,10 @@ public class TestPrivateDataEncoder {
         expect(c.getPrivateData()).andStubReturn(null);
         assertEncodedSectionIsEmpty();
     }
-    @Test
-    public void privateDataHasNullBufferShouldEncodeEmptySection() throws IOException{
-        expect(c.getPrivateData()).andStubReturn(new PrivateData((ByteBuffer)null));
-        assertEncodedSectionIsEmpty();
-    }
+   
     @Test
     public void emptyPrivateDataShouldEncodeEmptySection() throws IOException{
-        expect(c.getPrivateData()).andStubReturn(new PrivateData(new byte[0]));
+        expect(c.getPrivateData()).andStubReturn((PrivateData) new PrivateDataImpl(new byte[0]));
         assertEncodedSectionIsEmpty();
     }
     private void assertEncodedSectionIsEmpty() throws IOException {
