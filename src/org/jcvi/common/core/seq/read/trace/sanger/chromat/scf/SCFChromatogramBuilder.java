@@ -63,7 +63,7 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
         substitutionConfidence(copy.getSubstitutionConfidence().getData());
         deletionConfidence(copy.getDeletionConfidence().getData());
         insertionConfidence(copy.getInsertionConfidence().getData());
-        privateData(copy.getPrivateData().getData().array());
+        privateData(copy.getPrivateData().getBytes());
      }
     /**
      * @return the substitutionConfidence
@@ -144,7 +144,7 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
         if(privateData() ==null){
             return null;
         }
-        return new PrivateData(privateData());
+        return new PrivateDataImpl(privateData());
     }
 
     public final short[] peaks() {

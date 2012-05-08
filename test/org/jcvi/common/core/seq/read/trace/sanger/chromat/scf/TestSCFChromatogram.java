@@ -30,7 +30,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Confidence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.DefaultConfidence;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.PrivateData;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramImpl;
 import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -189,7 +188,7 @@ public class TestSCFChromatogram {
 
     @Test
     public void notEqualsDifferentPrivateData(){
-        PrivateData differentPrivateData = createMock(PrivateData.class);
+    	PrivateData differentPrivateData = createMock(PrivateData.class);
         SCFChromatogramImpl hasDifferentPrivateData = new SCFChromatogramImpl(basicChromatogram,
                 mockSubstitutionConfidence,
                 mockInsertionConfidence,

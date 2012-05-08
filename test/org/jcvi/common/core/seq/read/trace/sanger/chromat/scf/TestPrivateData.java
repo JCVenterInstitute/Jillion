@@ -23,20 +23,17 @@
  */
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf;
 
-import java.nio.ByteBuffer;
-
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.PrivateData;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestPrivateData {
     private static final byte[] DIFFERENT_DATA = new byte[]{1,2,3,4,5};
     private static final byte[] DATA = new byte[]{20,30,40, -20, -67,125};
-    private PrivateData sut = new PrivateData(DATA);
+    private PrivateData sut = new PrivateDataImpl(DATA);
 
     @Test
     public void constructor(){
-        assertArrayEquals(DATA, sut.getData().array());
+        assertArrayEquals(DATA, sut.getBytes());
     }
 
     @Test
@@ -46,14 +43,7 @@ public class TestPrivateData {
 
     @Test
     public void equalsSameValues(){
-        PrivateData sameValues = new PrivateData(DATA);
-        TestUtil.assertEqualAndHashcodeSame(sut, sameValues);
-    }
-
-    @Test
-    public void equalsSameArrayDifferentPosition(){
-        PrivateData sameValues = new PrivateData(DATA);
-        sameValues.getData().position(4);
+        PrivateData sameValues = new PrivateDataImpl(DATA);
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);
     }
 
@@ -65,26 +55,17 @@ public class TestPrivateData {
     public void notEqualsNull(){
         assertFalse(sut.equals(null));
     }
-    @Test
-    public void notEqualsPrivateDataIsNull(){
-        PrivateData nullData = new PrivateData((ByteBuffer)null);
-        TestUtil.assertNotEqualAndHashcodeDifferent(sut, nullData);
-    }
+    
     @Test
     public void notEqualsPrivateDataIsEmpty(){
-        PrivateData nullData = new PrivateData(new byte[0]);
+        PrivateData nullData = new PrivateDataImpl(new byte[0]);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, nullData);
     }
     @Test
     public void notEqualsPrivateDataIsDifferent(){
-        PrivateData nullData = new PrivateData(DIFFERENT_DATA);
+        PrivateData nullData = new PrivateDataImpl(DIFFERENT_DATA);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, nullData);
     }
     
-    @Test
-    public void bothPrivateDataIsNullShouldBeEquals(){
-        PrivateData nullData1 = new PrivateData((ByteBuffer)null);
-        PrivateData nullData2 = new PrivateData((ByteBuffer)null);
-        TestUtil.assertEqualAndHashcodeSame(nullData1, nullData2);
-    }
+    
 }

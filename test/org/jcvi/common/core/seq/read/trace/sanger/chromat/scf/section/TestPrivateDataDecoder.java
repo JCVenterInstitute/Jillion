@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.PrivateData;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.PrivateDataImpl;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.PrivateDataCodec;
@@ -41,7 +42,7 @@ import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
 public class TestPrivateDataDecoder {
     private byte[] data = new byte[]{20,30,40, -20, -67,125};
-    private PrivateData expectedPrivateData = new PrivateData(data);
+    private PrivateData expectedPrivateData = new PrivateDataImpl(data);
     SectionDecoder sut = new PrivateDataCodec();
     SCFHeader mockHeader;
     SCFChromatogramBuilder c;
@@ -76,7 +77,7 @@ public class TestPrivateDataDecoder {
         replay(mockHeader);
         long newOffset =sut.decode(inputStream, currentOffset, mockHeader, c);
         assertEquals(newOffset-currentOffset-bytesToSkip, data.length);
-        assertArrayEquals(expectedPrivateData.getData().array(), c.privateData());
+        assertArrayEquals(expectedPrivateData.getBytes(), c.privateData());
         verify(mockHeader);
     }
     @Test
