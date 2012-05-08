@@ -26,7 +26,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.util.ObjectsUtil;
 
 public class PrivateData {
 
@@ -70,10 +70,9 @@ public class PrivateData {
             return false;
         }
         final PrivateData other = (PrivateData) obj;
-        return CommonUtil.bothNull(getData(), other.getData())  
-                ||        
-         (!CommonUtil.onlyOneIsNull(getData(), other.getData()) 
-                && 
+        return ObjectsUtil.allNull(getData(), other.getData())  
+        		|| 
+        		(ObjectsUtil.noneNull(getData(), other.getData()) &&
          Arrays.equals(getData().array(), other.getData().array()));
 
     }

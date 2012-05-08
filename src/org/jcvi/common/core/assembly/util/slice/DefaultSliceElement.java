@@ -26,7 +26,7 @@ package org.jcvi.common.core.assembly.util.slice;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.util.ObjectsUtil;
 
 public class DefaultSliceElement implements IdedSliceElement {
     private final Nucleotide base;
@@ -73,10 +73,10 @@ public class DefaultSliceElement implements IdedSliceElement {
         }
         IdedSliceElement other = (IdedSliceElement) obj;
         return 
-        CommonUtil.similarTo(getId(), other.getId()) &&
-        CommonUtil.similarTo(getBase(), other.getBase()) &&
-        CommonUtil.similarTo(getQuality(), other.getQuality()) &&
-        CommonUtil.similarTo(getSequenceDirection(), other.getSequenceDirection());
+        ObjectsUtil.nullSafeEquals(getId(), other.getId()) &&
+        ObjectsUtil.nullSafeEquals(getBase(), other.getBase()) &&
+        ObjectsUtil.nullSafeEquals(getQuality(), other.getQuality()) &&
+        ObjectsUtil.nullSafeEquals(getSequenceDirection(), other.getSequenceDirection());
        
     }
 

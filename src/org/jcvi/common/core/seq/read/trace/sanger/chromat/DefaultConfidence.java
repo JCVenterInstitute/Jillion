@@ -26,8 +26,6 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import org.jcvi.common.core.util.CommonUtil;
-
 public class DefaultConfidence implements Confidence {
 
     private byte[] data;
@@ -68,11 +66,8 @@ public class DefaultConfidence implements Confidence {
             return false;
         }
         final Confidence other = (Confidence) obj;
-        return CommonUtil.bothNull(getData(), other.getData())  
-                            ||        
-            (!CommonUtil.onlyOneIsNull(getData(), other.getData()) 
-                            && 
-            Arrays.equals(getData(), other.getData()));
+        
+        return  Arrays.equals(data, other.getData());
 
     }
 

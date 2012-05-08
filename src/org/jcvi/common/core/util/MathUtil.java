@@ -31,7 +31,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class MathUtil {
+public final  class MathUtil {
+	private MathUtil(){
+		
+	}
     public static <N extends Number> N minOf(Collection<N> numbers){
         if(numbers.size() ==0){
             throw new IllegalArgumentException("must pass in at least one value");

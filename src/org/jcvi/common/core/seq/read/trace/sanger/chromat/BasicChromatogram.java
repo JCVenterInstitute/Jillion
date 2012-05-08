@@ -33,7 +33,7 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.util.ObjectsUtil;
 
 
 
@@ -147,10 +147,10 @@ public class BasicChromatogram implements Chromatogram {
         }
         final Chromatogram other = (Chromatogram) obj;
 
-        return CommonUtil.similarTo(getNucleotideSequence(), other.getNucleotideSequence())
-        && CommonUtil.similarTo(getPeaks(), other.getPeaks())
-        && CommonUtil.similarTo(getChannelGroup(), other.getChannelGroup())
-        && CommonUtil.similarTo(getComments(), other.getComments());
+        return ObjectsUtil.nullSafeEquals(getNucleotideSequence(), other.getNucleotideSequence())
+        && ObjectsUtil.nullSafeEquals(getPeaks(), other.getPeaks())
+        && ObjectsUtil.nullSafeEquals(getChannelGroup(), other.getChannelGroup())
+        && ObjectsUtil.nullSafeEquals(getComments(), other.getComments());
     }
 
 

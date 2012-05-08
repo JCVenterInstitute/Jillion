@@ -23,7 +23,7 @@ package org.jcvi.common.core.seq.fastx.fasta;
 
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.Symbol;
-import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.util.ObjectsUtil;
 
 
 /**
@@ -157,7 +157,7 @@ public abstract class AbstractFastaRecord<S extends Symbol, T extends Sequence<S
         }
         AbstractFastaRecord<?,?> other = (AbstractFastaRecord<?,?>)obj;
 		return 
-        CommonUtil.similarTo(getSequence(), other.getSequence()) 
-        && CommonUtil.similarTo(getId(), other.getId());
+        ObjectsUtil.nullSafeEquals(getSequence(), other.getSequence()) 
+        && ObjectsUtil.nullSafeEquals(getId(), other.getId());
     }   
 }

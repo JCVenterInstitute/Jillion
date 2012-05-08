@@ -118,7 +118,7 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
     private File nextFile;
     private final File rootDir;
 
-    protected FileIterator(File rootDir,FileFilter fileFilter){
+    private FileIterator(File rootDir,FileFilter fileFilter){
         if(rootDir ==null){
             throw new NullPointerException("rootDir can not be null");
         }

@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.symbol;
 
-import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.util.ObjectsUtil;
 
 public class RunLength<T> {
     private final int length;
@@ -62,7 +62,7 @@ public class RunLength<T> {
             return false;
         }
         RunLength other = (RunLength) obj;
-        return length == other.length && CommonUtil.similarTo(getValue(), other.getValue());
+        return length == other.length && ObjectsUtil.nullSafeEquals(getValue(), other.getValue());
     }
     @Override
     public String toString() {

@@ -31,7 +31,7 @@ import java.io.InputStream;
 
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.util.ObjectsUtil;
 
 public abstract class AbstractTraceArchiveTrace implements TraceArchiveTrace {
 
@@ -98,8 +98,8 @@ public abstract class AbstractTraceArchiveTrace implements TraceArchiveTrace {
             return false;
         }
         AbstractTraceArchiveTrace other = (AbstractTraceArchiveTrace) obj;
-        return CommonUtil.similarTo(getRecord(), other.getRecord()) &&
-        CommonUtil.similarTo(getRootDirPath(), other.getRootDirPath());
+        return ObjectsUtil.nullSafeEquals(getRecord(), other.getRecord()) &&
+        ObjectsUtil.nullSafeEquals(getRootDirPath(), other.getRootDirPath());
     }
 
     @Override

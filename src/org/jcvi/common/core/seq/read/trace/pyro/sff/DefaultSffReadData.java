@@ -27,7 +27,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.CommonUtil;
+import org.jcvi.common.core.util.ObjectsUtil;
 import org.jcvi.common.core.util.MathUtil;
 
 final class DefaultSffReadData implements SffReadData {
@@ -78,10 +78,10 @@ final class DefaultSffReadData implements SffReadData {
 
     private void canNotBeNull(NucleotideSequence basecalls, byte[] indexes, short[] values,
             byte[] qualities) {
-        CommonUtil.cannotBeNull(basecalls, "basecalls can not be null");
-        CommonUtil.cannotBeNull(indexes, "indexes can not be null");
-        CommonUtil.cannotBeNull(values, "flowgram values can not be null");
-        CommonUtil.cannotBeNull(qualities, "qualities can not be null");
+        ObjectsUtil.checkNotNull(basecalls, "basecalls can not be null");
+        ObjectsUtil.checkNotNull(indexes, "indexes can not be null");
+        ObjectsUtil.checkNotNull(values, "flowgram values can not be null");
+        ObjectsUtil.checkNotNull(qualities, "qualities can not be null");
     }
 
     @Override
@@ -133,7 +133,7 @@ final class DefaultSffReadData implements SffReadData {
             return false;
         }
         final DefaultSffReadData other = (DefaultSffReadData) obj;
-        return CommonUtil.similarTo(getBasecalls(), other.getBasecalls())
+        return ObjectsUtil.nullSafeEquals(getBasecalls(), other.getBasecalls())
                 && Arrays.equals(indexes, other.indexes)
                 && Arrays.equals(qualities, other.qualities)
                 && Arrays.equals(values, other.values);
