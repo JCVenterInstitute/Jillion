@@ -24,7 +24,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
 import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.assembly.util.trimmer.MinimumEndCoverageTrimmer;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.CloseableIterator;
@@ -50,7 +50,7 @@ public class TestMinimumEndCoverageTrimmer {
         Contig<AssembledRead> _1xContig = new DefaultContig.Builder("id","ACGTACGT")
                         .addRead("read1", 0, Range.create(0, 7), "ACGTACGT", Direction.FORWARD, 10)
                         .build();
-        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
+        sut.initializeContig(_1xContig, CoverageMapFactory.createGappedCoverageMapFromContig(_1xContig));
         AssembledRead read = _1xContig.getRead("read1");
         Range actualValidRange =sut.trimRead(read, read.getValidRange());
         assertEquals(Range.createEmptyRange(), actualValidRange);
@@ -61,7 +61,7 @@ public class TestMinimumEndCoverageTrimmer {
                         .addRead("read1", 0, Range.create(0, 7), "ACGTACGT", Direction.FORWARD, 10)
                         .addRead("read2", 2, Range.create(0, 5), "GTACGT", Direction.FORWARD, 10)
                         .build();
-        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
+        sut.initializeContig(_1xContig, CoverageMapFactory.createGappedCoverageMapFromContig(_1xContig));
         AssembledRead readToTrim = _1xContig.getRead("read1");
         AssembledRead readThatDoesntGetTrimmed = _1xContig.getRead("read2");
         Range expectedTrimRange = Range.create(2, 7);
@@ -77,7 +77,7 @@ public class TestMinimumEndCoverageTrimmer {
                         .addRead("read1", 0, Range.create(0, 7), "ACGTACGT", Direction.FORWARD, 10)
                         .addRead("read2", 0, Range.create(0, 5), "ACGTAC", Direction.FORWARD, 10)
                         .build();
-        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
+        sut.initializeContig(_1xContig, CoverageMapFactory.createGappedCoverageMapFromContig(_1xContig));
         AssembledRead readToTrim = _1xContig.getRead("read1");
         AssembledRead readThatDoesntGetTrimmed = _1xContig.getRead("read2");
         Range expectedTrimRange = Range.create(0, 5);
@@ -93,7 +93,7 @@ public class TestMinimumEndCoverageTrimmer {
                         .addRead("read1", 0, Range.create(0, 7), "ACGTACGT", Direction.FORWARD, 10)
                         .addRead("read2", 0,  Range.create(0, 7), "ACGTACGT", Direction.FORWARD, 10)
                         .build();
-        sut.initializeContig(_2xContig, DefaultCoverageMap.buildCoverageMap(_2xContig));
+        sut.initializeContig(_2xContig, CoverageMapFactory.createGappedCoverageMapFromContig(_2xContig));
 
         CloseableIterator<AssembledRead> iter = null;
         try{

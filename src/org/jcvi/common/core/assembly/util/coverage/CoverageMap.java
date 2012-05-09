@@ -36,25 +36,10 @@ public interface CoverageMap <T extends Rangeable> extends Iterable<CoverageRegi
     CoverageRegion<T> getRegion(int i);
     List<CoverageRegion<T>> getRegions();
     boolean isEmpty();
-    List<CoverageRegion<T>> getRegionsWithin(Range range);
     List<CoverageRegion<T>> getRegionsWhichIntersect(Range range);
-    List<CoverageRegion<T>> getRegionsWithCoverage(int coverageDepth);
     
     CoverageRegion<T> getRegionWhichCovers(long consensusIndex);
     
-    int getRegionIndexWhichCovers(long consensusIndex);
-    
-    double getAverageCoverage();
-    int getMaxCoverage();
-    int getMinCoverage();
     long getLength();
-    
-    int getNumberOfRegionsWithCoverage(int coverageDepth);
-    
-    int getNumberOfRegionsWithAtLeastCoverage(int coverageDepth);
-    
-    long getLengthOfRegionsWithCoverage(int coverageDepth);
-    
-    long getLengthOfRegionsWithAtLeastCoverage(int coverageDepth);
-
+   
 }

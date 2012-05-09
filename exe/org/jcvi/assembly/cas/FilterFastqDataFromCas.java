@@ -47,7 +47,7 @@ import org.jcvi.common.core.assembly.clc.cas.CasUtil;
 import org.jcvi.common.core.assembly.clc.cas.consed.AbstractAcePlacedReadCasReadVisitor;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
-import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
@@ -88,7 +88,7 @@ public class FilterFastqDataFromCas {
             //and we want
             //an even distribution
             Collections.shuffle(readRanges);
-            CoverageMap<ReadRange> coverageMap = DefaultCoverageMap.buildCoverageMap(readRanges, maxSolexaCoverageDepth);
+            CoverageMap<ReadRange> coverageMap = CoverageMapFactory.create(readRanges, maxSolexaCoverageDepth);
             Set<String> reads = new TreeSet<String>();
             for(CoverageRegion<ReadRange> region : coverageMap){
                 for(ReadRange readRange : region){

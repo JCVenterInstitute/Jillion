@@ -24,8 +24,6 @@ import org.jcvi.common.core.assembly.asm.AllAsmUnitTests;
 import org.jcvi.common.core.assembly.clc.cas.AllCasUnitTests;
 import org.jcvi.common.core.assembly.ctg.AllCtgUnitTests;
 import org.jcvi.common.core.assembly.tasm.AllTasmUnitTests;
-import org.jcvi.common.core.assembly.util.slice.AllQualityValueStrategyUnitTests;
-import org.jcvi.common.core.assembly.util.trimmer.AllAssemblyTrimUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -34,10 +32,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     { 
     TestDefaultPlacedRead.class,
-    AllQualityValueStrategyUnitTests.class,
+   
     AllCtgUnitTests.class,
     AllAceUnitTests.class, 
-    AllAssemblyTrimUnitTests.class,    
     AllCasUnitTests.class,
     AllAsmUnitTests.class,
     AllTasmUnitTests.class

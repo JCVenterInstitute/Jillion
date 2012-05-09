@@ -19,6 +19,9 @@
 
 package org.jcvi.common.core.assembly.util;
 
+import org.jcvi.common.core.assembly.util.coverage.AllCoverageUnitTests;
+import org.jcvi.common.core.assembly.util.slice.AllSliceUnitTests;
+import org.jcvi.common.core.assembly.util.trimmer.AllAssemblyTrimUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -29,7 +32,11 @@ import org.junit.runners.Suite.SuiteClasses;
         TestAssemblyUtil_gappedfullRange.class,
         TestAssemblyUtil_reverseComplimentRange.class,
         TestAssemblyUtil_convertToUngappedRange.class,
-        TestAssemblyUtil_convertToUngappedFullRangeOffset.class
+        TestAssemblyUtil_convertToUngappedFullRangeOffset.class,
+        
+        AllCoverageUnitTests.class,
+        AllSliceUnitTests.class,
+        AllAssemblyTrimUnitTests.class
     }
     )
 public class AllAssemblyUtilUnitTests {

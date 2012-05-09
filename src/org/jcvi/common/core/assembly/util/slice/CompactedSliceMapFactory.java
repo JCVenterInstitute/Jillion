@@ -30,7 +30,7 @@ import org.jcvi.common.core.symbol.qual.QualityDataStore;
  *
  *
  */
-public class CompactedSliceMapFactory<P extends AssembledRead> extends AbstractSliceMapFactory<P>{
+public final class CompactedSliceMapFactory<P extends AssembledRead> extends AbstractSliceMapFactory<P>{
 
     public CompactedSliceMapFactory(QualityValueStrategy qualityValueStrategy) {
         super(qualityValueStrategy);

@@ -36,7 +36,7 @@ import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.util.Builder;
 
 
-public abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builder<CoverageMap<P>> {
+abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builder<CoverageMap<P>> {
 
     private P enteringObject;
     private P leavingObject;

@@ -61,7 +61,7 @@ import org.jcvi.common.core.assembly.ace.consed.ConsensusNavigationElement;
 import org.jcvi.common.core.assembly.ace.consed.ReadNavigationElement;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
-import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.assembly.util.slice.CompactedSlice;
 import org.jcvi.common.core.assembly.util.slice.Slice;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
@@ -360,7 +360,7 @@ public class ReAbacusAceContigWorker {
                 List<Range> reversedSortedRanges = new ArrayList<Range>(Ranges.merge(rangesToMerge));
                 Collections.reverse(reversedSortedRanges);
                
-                CoverageMap<AcePlacedReadBuilder> coverageMap = DefaultCoverageMap.buildCoverageMap(contigBuilder.getAllPlacedReadBuilders());
+                CoverageMap<AcePlacedReadBuilder> coverageMap = CoverageMapFactory.create(contigBuilder.getAllPlacedReadBuilders());
                 
                 for(Range gappedAbacusProblemRange : reversedSortedRanges){
                     int gappedStart = (int)gappedAbacusProblemRange.getBegin();

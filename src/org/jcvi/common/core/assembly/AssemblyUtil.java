@@ -23,20 +23,14 @@
  */
 package org.jcvi.common.core.assembly;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
-import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
-import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageRegion;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
-import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code AssemblyUtil} is a utility class for working
  * with {@link AssembledRead}s and gapped {@link NucleotideSequence}.
@@ -223,55 +217,5 @@ public final class AssemblyUtil {
                 gappedSequence.getUngappedOffsetFor((int)gappedRange.getEnd())
                 );
         
-    }
-    /**
-     * Create a coverage map in <strong>ungapped consensus coordinate space</strong>
-     * of the given contig.
-     * @param <PR> the type of {@link AssembledRead}s used in the contig.
-     * @param <C> the type of {@link Contig}
-     * @param contig the contig to create an ungapped coverage map for.
-     * @return a new {@link CoverageMap} but where the coordinates in the coverage map
-     * refer to ungapped coordinates instead of gapped coordinates.
-     */
-    public static <PR extends AssembledRead,C extends Contig<PR>> CoverageMap<PR> 
-    buildUngappedCoverageMap(C contig){
-        return buildUngappedCoverageMap(contig.getConsensus(), contig.getReadIterator());
-    }
-    /**
-     * Create a coverage map in <strong>ungapped consensus coordinate space</strong>
-     * of the given reads aligned to the given consensus.
-     * @param <PR> the type of {@link AssembledRead} used.
-     * @param consensus the gapped consensus the reads aligned to.
-     * @param reads the reads to generate a coverage map for.
-     * @return a new {@link CoverageMap} but where the coordinates in the coverage map
-     * refer to ungapped coordinates instead of gapped coordinates.
-     * 
-     */
-    public static <PR extends AssembledRead> CoverageMap<PR> 
-    buildUngappedCoverageMap(NucleotideSequence consensus, CloseableIterator<PR> reads){
-        
-        CoverageMap<PR> gappedCoverageMap =DefaultCoverageMap.buildCoverageMap(reads);
-        return createUngappedCoverageMap(consensus, gappedCoverageMap);
-    }
-    
-    
-    private static <PR extends AssembledRead,C extends Contig<PR>> CoverageMap<PR> createUngappedCoverageMap(
-            NucleotideSequence consensus, CoverageMap<PR> gappedCoverageMap) {
-        List<CoverageRegion<PR>> ungappedCoverageRegions = new ArrayList<CoverageRegion<PR>>();
-        for(CoverageRegion<PR> gappedCoverageRegion : gappedCoverageMap){
-            Range gappedRange = gappedCoverageRegion.asRange();
-            Range ungappedRange = AssemblyUtil.toUngappedRange(consensus,gappedRange);
-            List<PR> reads = new ArrayList<PR>(gappedCoverageRegion.getCoverage());
-            for(PR read : gappedCoverageRegion){
-                reads.add(read);
-            }
-            
-            ungappedCoverageRegions.add(
-                    new DefaultCoverageRegion.Builder<PR>(ungappedRange.getBegin(),reads)
-                                .end(ungappedRange.getEnd())
-                                .build());
-        }
-        
-        return  new DefaultCoverageMap<PR>(ungappedCoverageRegions);
     }
 }

@@ -56,7 +56,7 @@ import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
-import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
@@ -112,7 +112,7 @@ public class QualityClassContigTrimmer<R extends AssembledRead,C extends Contig<
             QualityClassComputer<R> qualityClassComputer) throws DataStoreException {
 
         Map<R, Range> trimmedReads = new HashMap<R, Range>();
-        CoverageMap<R> coverageMap =DefaultCoverageMap.buildCoverageMap(struct);
+        CoverageMap<R> coverageMap =CoverageMapFactory.createGappedCoverageMapFromContig(struct);
         QualityClassMap qualityClassContigMap =DefaultQualityClassContigMap.create(struct, qualityDataStore, qualityClassComputer);
         
        

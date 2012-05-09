@@ -26,7 +26,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
 import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.assembly.util.trimmer.MinimumBidirectionalEndCoverageTrimmer;
 import org.jcvi.common.core.assembly.util.trimmer.PlacedReadTrimmer;
 import org.jcvi.common.core.io.IOUtil;
@@ -56,7 +56,7 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
         Contig<AssembledRead> _1xContig = new DefaultContig.Builder("id","ACGTACGT")
                         .addRead("read1", 0, Range.create(0, 7), "ACGTACGT", Direction.FORWARD, 10)
                         .build();
-        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
+        sut.initializeContig(_1xContig, CoverageMapFactory.createGappedCoverageMapFromContig(_1xContig));
         AssembledRead read = _1xContig.getRead("read1");
         Range actualValidRange =sut.trimRead(read, read.getValidRange());
         assertEquals(Range.createEmptyRange(), actualValidRange);
@@ -69,7 +69,7 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
                         .addRead("read2", 2, Range.create(0, 5), "GTACGT", Direction.REVERSE, 10)
                         .addRead("read3", 2, Range.create(0, 5), "GTACGT", Direction.REVERSE, 10)
                         .build();
-        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
+        sut.initializeContig(_1xContig, CoverageMapFactory.createGappedCoverageMapFromContig(_1xContig));
         AssembledRead readToTrim = _1xContig.getRead("read1");
         AssembledRead readThatDoesntGetTrimmed = _1xContig.getRead("read2");
         Range expectedTrimRange = Range.create(2, 7);
@@ -86,7 +86,7 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
                         .addRead("read2", 0,  Range.create(0, 7), "ACGTACGT", Direction.REVERSE, 10)
                         .addRead("read3", 0,  Range.create(0, 7), "ACGTACGT", Direction.REVERSE, 10)
                         .build();
-        sut.initializeContig(_3xBiDirectionalContig, DefaultCoverageMap.buildCoverageMap(_3xBiDirectionalContig));
+        sut.initializeContig(_3xBiDirectionalContig, CoverageMapFactory.createGappedCoverageMapFromContig(_3xBiDirectionalContig));
         
         CloseableIterator<AssembledRead> iter = null;
         try{
@@ -108,7 +108,7 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
                         .addRead("read2", 0, Range.create(0, 7), "ACGTACGT", Direction.FORWARD, 10)
                         .addRead("read3", 2,  Range.create(0, 5), "GTACGT", Direction.REVERSE, 10)
                         .build();
-        sut.initializeContig(_3xBiDirectionalContig, DefaultCoverageMap.buildCoverageMap(_3xBiDirectionalContig));
+        sut.initializeContig(_3xBiDirectionalContig, CoverageMapFactory.createGappedCoverageMapFromContig(_3xBiDirectionalContig));
         
         AssembledRead readToTrim = _3xBiDirectionalContig.getRead("read1");
         Range expectedTrimRange = Range.create(2, 7);
@@ -133,7 +133,7 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
                         .addRead("read2", 0, Range.create(0, 7), "ACGTACGT", Direction.FORWARD, 10)
                         .addRead("read3", 0,  Range.create(0, 5), "ACGTAC", Direction.REVERSE, 10)
                         .build();
-        sut.initializeContig(_3xBiDirectionalContig, DefaultCoverageMap.buildCoverageMap(_3xBiDirectionalContig));
+        sut.initializeContig(_3xBiDirectionalContig, CoverageMapFactory.createGappedCoverageMapFromContig(_3xBiDirectionalContig));
         
         AssembledRead readToTrim = _3xBiDirectionalContig.getRead("read1");
         Range expectedTrimRange = Range.create(0, 5);
@@ -160,7 +160,7 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
                         .addRead("read4", 0,  Range.create(0, 7), "ACGTACGT", Direction.FORWARD, 10)
                         .addRead("read5", 0,  Range.create(0, 7), "ACGTACGT", Direction.FORWARD, 10)
                         .build();
-        sut.initializeContig(_2xBiDirectionalContig, DefaultCoverageMap.buildCoverageMap(_2xBiDirectionalContig));
+        sut.initializeContig(_2xBiDirectionalContig, CoverageMapFactory.createGappedCoverageMapFromContig(_2xBiDirectionalContig));
         CloseableIterator<AssembledRead> iter =null;
         try{
         	iter = _2xBiDirectionalContig.getReadIterator();

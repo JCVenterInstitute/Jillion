@@ -27,7 +27,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
 import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.assembly.util.trimmer.PlacedReadTrimmer;
 import org.jcvi.common.core.assembly.util.trimmer.TestMinimumBidirectionalEndCoverageTrimmer;
 import org.junit.Test;
@@ -53,7 +53,7 @@ public class TestElviraSangerContigEndTrimmer extends TestMinimumBidirectionalEn
        .addRead("read3", 2, Range.create(0, 5), "GTACGT", Direction.REVERSE, 10)
        .build();
        
-        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
+        sut.initializeContig(_1xContig, CoverageMapFactory.createGappedCoverageMapFromContig(_1xContig));
         AssembledRead readToTrim = _1xContig.getRead("IVAAA04T26B11NA512F");
         AssembledRead readThatDoesntGetTrimmed = _1xContig.getRead("read2");
         Range expectedTrimRange = Range.create(2, 7);
@@ -71,7 +71,7 @@ public class TestElviraSangerContigEndTrimmer extends TestMinimumBidirectionalEn
        .addRead("read3", 2, Range.create(0, 5), "GTACGT", Direction.REVERSE, 10)
        .build();
        
-        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
+        sut.initializeContig(_1xContig, CoverageMapFactory.createGappedCoverageMapFromContig(_1xContig));
         AssembledRead readToTrim = _1xContig.getRead("JHVXC05T00NP01F");
         AssembledRead readThatDoesntGetTrimmed = _1xContig.getRead("read2");
         Range expectedTrimRange = Range.create(2, 7);
@@ -90,7 +90,7 @@ public class TestElviraSangerContigEndTrimmer extends TestMinimumBidirectionalEn
        .addRead("read3", 2, Range.create(0, 5), "GTACGT", Direction.REVERSE, 10)
        .build();
        
-        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
+        sut.initializeContig(_1xContig, CoverageMapFactory.createGappedCoverageMapFromContig(_1xContig));
         AssembledRead readToTrim = _1xContig.getRead("IVAAA04T26B11NA512F");
         AssembledRead readThatDoesntGetTrimmed = _1xContig.getRead("read2");
         Range expectedTrimRange = Range.create(2, 7);
@@ -109,7 +109,7 @@ public class TestElviraSangerContigEndTrimmer extends TestMinimumBidirectionalEn
        .addRead("read3", 2, Range.create(0, 5), "GTACGT", Direction.REVERSE, 10)
        .build();
        
-        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
+        sut.initializeContig(_1xContig, CoverageMapFactory.createGappedCoverageMapFromContig(_1xContig));
         AssembledRead readThatDoesntGetTrimmed = _1xContig.getRead("IVAAA04T26B11NA512F");
         final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getValidRange();
         assertEquals("should not trim",readThatDoesntGetTrimmedValidRange, sut.trimRead(readThatDoesntGetTrimmed, readThatDoesntGetTrimmedValidRange));
@@ -125,7 +125,7 @@ public class TestElviraSangerContigEndTrimmer extends TestMinimumBidirectionalEn
        .addRead("read3", 2, Range.create(0, 5), "GTACGT", Direction.REVERSE, 10)
        .build();
        
-        sut.initializeContig(_1xContig, DefaultCoverageMap.buildCoverageMap(_1xContig));
+        sut.initializeContig(_1xContig, CoverageMapFactory.createGappedCoverageMapFromContig(_1xContig));
         AssembledRead readThatDoesntGetTrimmed = _1xContig.getRead("JHVXC05T00NP0334F");
         final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getValidRange();
         assertEquals("should not trim",readThatDoesntGetTrimmedValidRange, sut.trimRead(readThatDoesntGetTrimmed, readThatDoesntGetTrimmedValidRange));
