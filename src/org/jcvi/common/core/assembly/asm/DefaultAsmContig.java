@@ -163,8 +163,9 @@ public final class DefaultAsmContig extends AbstractContig<AsmPlacedRead> implem
         * {@inheritDoc}
         */
         @Override
-        public void removeRead(String readId) {
-            aceReadBuilderMap.remove(readId);            
+        public ContigBuilder<AsmPlacedRead, AsmContig> removeRead(String readId) {
+            aceReadBuilderMap.remove(readId);   
+            return this;
         }
 
         /**

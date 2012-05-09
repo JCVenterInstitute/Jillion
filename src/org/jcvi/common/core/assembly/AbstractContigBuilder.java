@@ -46,7 +46,6 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
             reads.put(id, createPlacedReadBuilder(id,offset,validRange,basecalls,dir,fullUngappedLength));
             return this;
         }
-        
         public  AbstractContigBuilder<P,C>  addRead(P read){
             reads.put(read.getId(),createPlacedReadBuilder(read));
             return this;
@@ -116,9 +115,9 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
         * {@inheritDoc}
         */
         @Override
-        public void removeRead(String readId) {
+        public ContigBuilder<P, C> removeRead(String readId) {
             reads.remove(readId);
-            
+            return this;
         }
         /**
         * {@inheritDoc}

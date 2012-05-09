@@ -146,8 +146,8 @@ public class TestDefaultAceContigBuilderReAbacus {
 	}
 
 	@Override
-	public void removeRead(String readId) {
-		delegate.removeRead(readId);
+	public ContigBuilder<AcePlacedRead, AceContig> removeRead(String readId) {
+		return delegate.removeRead(readId);
 		
 	}
 

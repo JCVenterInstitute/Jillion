@@ -23,7 +23,6 @@
  */
 package org.jcvi.common.core.assembly.util.coverage;
 
-import org.jcvi.common.core.assembly.util.slice.AllSliceUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -35,7 +34,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestDefaultCoverageMap.class,
         TestCoverageRestrictedMap.class,
         TestCoverageMapFactoryUngappedCoverageMaps.class,
-        
+        TestCoverageMapFactoryMaxCoverage.class
     }
     )
 public class AllCoverageUnitTests {
