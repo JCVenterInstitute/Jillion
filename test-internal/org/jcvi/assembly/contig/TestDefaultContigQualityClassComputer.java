@@ -67,10 +67,10 @@ public class TestDefaultContigQualityClassComputer {
         										.build();
         CoverageMap<AssembledRead> coverageMap = CoverageMapFactory.createGappedCoverageMapFromContig(contig);
 
-        replay(coverageMap,qualityFastaMap,consensus);
+        replay(qualityFastaMap,consensus);
         assertEquals(QualityClass.valueOf(0), 
                 sut.computeQualityClass(coverageMap, qualityFastaMap, consensus, index));
-        verify(coverageMap,qualityFastaMap,consensus);
+        verify(qualityFastaMap,consensus);
     }
     
    
