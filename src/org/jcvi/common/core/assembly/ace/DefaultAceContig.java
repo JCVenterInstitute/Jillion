@@ -216,12 +216,12 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
         * {@inheritDoc}
         */
         @Override
-        public void removeRead(String readId) {
+        public Builder removeRead(String readId) {
             if(readId==null){
                 throw new NullPointerException("read id can not be null");
             }
             aceReadBuilderMap.remove(readId);
-            
+            return this;
         }
         
         /**

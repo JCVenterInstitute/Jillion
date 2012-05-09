@@ -136,9 +136,9 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
     * {@inheritDoc}
     */
     @Override
-    public void removeRead(String readId) {
+    public UpdateConsensusAceContigBuilder removeRead(String readId) {
         builder.removeRead(readId);
-        
+        return this;
     }
 
     /**

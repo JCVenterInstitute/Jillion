@@ -28,8 +28,10 @@ import java.util.Set;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 public class DefaultContig<P extends AssembledRead> extends AbstractContig<P>{
 
@@ -60,6 +62,20 @@ public class DefaultContig<P extends AssembledRead> extends AbstractContig<P>{
         public Builder(String id, String consensus){
            this(id, new NucleotideSequenceBuilder(consensus).build());
         }
+        
+        public <R extends AssembledRead, C extends Contig<R>> Builder(C copy){
+            this(copy.getId(), copy.getConsensus());
+            CloseableIterator<R> iter =null;
+            try{
+            	 iter = copy.getReadIterator();
+            	 while(iter.hasNext()){
+            		 R read = iter.next();
+            		 addRead(read);
+            	 }
+            }finally{
+            	IOUtil.closeAndIgnoreErrors(iter);
+            }
+         }
         public Builder(String id, NucleotideSequence consensus){
             super(id,consensus);
         }

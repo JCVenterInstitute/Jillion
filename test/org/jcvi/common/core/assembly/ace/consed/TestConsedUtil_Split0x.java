@@ -108,8 +108,8 @@ public class TestConsedUtil_Split0x {
         * {@inheritDoc}
         */
         @Override
-        public void removeRead(String readId) {
-            builder.removeRead(readId);
+        public ContigBuilder<AcePlacedRead, AceContig> removeRead(String readId) {
+            return builder.removeRead(readId);
         }
 
         /**

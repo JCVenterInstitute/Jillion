@@ -101,8 +101,9 @@ public interface ContigBuilder<R extends AssembledRead,C extends Contig<R>> exte
      * the contig is unchanged.
      * @param readId the read id to remove, can not be null.
      * @throws NullPointerException if readId is null.
+     * @return this
      */
-    void removeRead(String readId);
+    ContigBuilder<R,C> removeRead(String readId);
     
 
     /**
