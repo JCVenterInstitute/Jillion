@@ -25,7 +25,6 @@ package org.jcvi.assembly.contig;
 
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.junit.Before;
@@ -36,7 +35,7 @@ public class TestDefaultQualityClassContigMap {
     CoverageMap<AssembledRead> coverageMap;
     NucleotideSequence consensus;
     QualityDataStore qualityFastaMap;
-    QualityClassComputer<AssembledRead> qualityClassComputer;
+    QualityClassComputer qualityClassComputer;
    DefaultQualityClassContigMap sut;
    @Before
    public void setup(){

@@ -42,7 +42,7 @@ public class MinimumBidirectionalEndCoverageTrimmer<P extends AssembledRead, C e
     @Override
     protected boolean meetsTrimmingRequirements(CoverageRegion<P> region) {
         if(super.meetsTrimmingRequirements(region)){
-            if(region.getCoverage()<=maxCoverageToConsider){
+            if(region.getCoverageDepth()<=maxCoverageToConsider){
                 int forwardCount=0;
                 int reverseCount=0;
                 for(P read : region){

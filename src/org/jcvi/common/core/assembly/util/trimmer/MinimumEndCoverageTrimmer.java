@@ -76,18 +76,17 @@ public class MinimumEndCoverageTrimmer<P extends AssembledRead, C extends Contig
     @Override
     public void initializeContig(C contig,
             CoverageMap<P> coverageMap) {
-        List<CoverageRegion<P>> regions = coverageMap.getRegions();
         long trimLeftIndex=Long.MAX_VALUE;
         long trimRightIndex=Long.MIN_VALUE;
-        for(int i=0; i<regions.size(); i++){
-            CoverageRegion<P> region = regions.get(i);
+        for(int i=0; i<coverageMap.getNumberOfRegions(); i++){
+            CoverageRegion<P> region = coverageMap.getRegion(i);
             if(meetsTrimmingRequirements(region)){
                 trimLeftIndex=region.asRange().getBegin();
                 break;
             }
         }
-        for(int i=regions.size()-1; i>=0; i--){
-            CoverageRegion<P> region = regions.get(i);
+        for(int i=coverageMap.getNumberOfRegions()-1; i>=0; i--){
+            CoverageRegion<P> region = coverageMap.getRegion(i);
             if(meetsTrimmingRequirements(region)){
                 trimRightIndex=region.asRange().getEnd();
                 break;
@@ -105,7 +104,7 @@ public class MinimumEndCoverageTrimmer<P extends AssembledRead, C extends Contig
      * @return
      */
     protected boolean meetsTrimmingRequirements(CoverageRegion<P> region) {
-        return region.getCoverage()>=minimumEndCoverage;
+        return region.getCoverageDepth()>=minimumEndCoverage;
     }
 
     @Override

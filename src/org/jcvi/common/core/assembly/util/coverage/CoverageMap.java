@@ -23,23 +23,25 @@
  */
 package org.jcvi.common.core.assembly.util.coverage;
 
-import java.util.List;
-
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Rangeable;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
-
+/**
+ * A {@code CoverageMap}
+ * @author dkatzel
+ *
+ * @param <T>
+ */
 public interface CoverageMap <T extends Rangeable> extends Iterable<CoverageRegion<T>>{
 
     int getNumberOfRegions();
 
     CoverageRegion<T> getRegion(int i);
-    List<CoverageRegion<T>> getRegions();
-    boolean isEmpty();
-    List<CoverageRegion<T>> getRegionsWhichIntersect(Range range);
     
-    CoverageRegion<T> getRegionWhichCovers(long consensusIndex);
+    boolean isEmpty();
     
     long getLength();
+    
+    CloseableIterator<CoverageRegion<T>> getRegionIterator();
    
 }

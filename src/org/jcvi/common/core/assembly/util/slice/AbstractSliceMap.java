@@ -41,7 +41,7 @@ public abstract class  AbstractSliceMap implements SliceMap{
             CoverageRegion<? extends AssembledRead> region,
             long offset, DataStore<? extends Sequence<PhredQuality>> qualityDataStore,
             QualityValueStrategy qualityValueStrategy) {
-        List<IdedSliceElement> sliceElements = new ArrayList<IdedSliceElement>(region.getCoverage());
+        List<IdedSliceElement> sliceElements = new ArrayList<IdedSliceElement>(region.getCoverageDepth());
         for(AssembledRead read : region){
             
             Sequence<PhredQuality> qualities;

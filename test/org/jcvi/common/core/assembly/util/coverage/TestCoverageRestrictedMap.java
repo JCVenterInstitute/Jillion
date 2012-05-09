@@ -23,13 +23,13 @@ public class TestCoverageRestrictedMap {
 							CoverageMapFactory.create(ranges, 2);
 		assertEquals(4,coverageMap.getNumberOfRegions());
 		assertEquals(coverageMap.getRegion(0).asRange(), Range.create(0,1));
-		assertEquals(1, coverageMap.getRegion(0).getCoverage());
+		assertEquals(1, coverageMap.getRegion(0).getCoverageDepth());
 		assertEquals(coverageMap.getRegion(1).asRange(), Range.create(2,5));
-		assertEquals(2, coverageMap.getRegion(1).getCoverage());
+		assertEquals(2, coverageMap.getRegion(1).getCoverageDepth());
 		assertEquals(coverageMap.getRegion(2).asRange(), Range.create(6,7));
-		assertEquals(2, coverageMap.getRegion(2).getCoverage());
+		assertEquals(2, coverageMap.getRegion(2).getCoverageDepth());
 		assertEquals(coverageMap.getRegion(3).asRange(), Range.create(8,10));
-		assertEquals(1, coverageMap.getRegion(3).getCoverage());
+		assertEquals(1, coverageMap.getRegion(3).getCoverageDepth());
 	}
 	
 	@Test
@@ -44,13 +44,13 @@ public class TestCoverageRestrictedMap {
 							CoverageMapFactory.create(ranges, 3);
 		assertEquals(4,coverageMap.getNumberOfRegions());
 		assertEquals(coverageMap.getRegion(0).asRange(), Range.create(0,1));
-		assertEquals(1, coverageMap.getRegion(0).getCoverage());
+		assertEquals(1, coverageMap.getRegion(0).getCoverageDepth());
 		assertEquals(coverageMap.getRegion(1).asRange(), Range.create(2,5));
-		assertEquals(2, coverageMap.getRegion(1).getCoverage());
+		assertEquals(2, coverageMap.getRegion(1).getCoverageDepth());
 		assertEquals(coverageMap.getRegion(2).asRange(), Range.create(6,7));
-		assertEquals(2, coverageMap.getRegion(2).getCoverage());
+		assertEquals(2, coverageMap.getRegion(2).getCoverageDepth());
 		assertEquals(coverageMap.getRegion(3).asRange(), Range.create(8,10));
-		assertEquals(1, coverageMap.getRegion(3).getCoverage());
+		assertEquals(1, coverageMap.getRegion(3).getCoverageDepth());
 	}
 	
 	@Test
@@ -66,13 +66,13 @@ public class TestCoverageRestrictedMap {
 							CoverageMapFactory.create(ranges, 2);
 		assertEquals(4,coverageMap.getNumberOfRegions());
 		assertEquals(coverageMap.getRegion(0).asRange(), Range.create(0,1));
-		assertEquals(1, coverageMap.getRegion(0).getCoverage());
+		assertEquals(1, coverageMap.getRegion(0).getCoverageDepth());
 		assertEquals(coverageMap.getRegion(1).asRange(), Range.create(2,5));
-		assertEquals(2, coverageMap.getRegion(1).getCoverage());
+		assertEquals(2, coverageMap.getRegion(1).getCoverageDepth());
 		assertEquals(coverageMap.getRegion(2).asRange(), Range.create(6,7));
-		assertEquals(2, coverageMap.getRegion(2).getCoverage());
+		assertEquals(2, coverageMap.getRegion(2).getCoverageDepth());
 		assertEquals(coverageMap.getRegion(3).asRange(), Range.create(8,10));
-		assertEquals(1, coverageMap.getRegion(3).getCoverage());
+		assertEquals(1, coverageMap.getRegion(3).getCoverageDepth());
 	}
 	
 	@Test
@@ -88,15 +88,15 @@ public class TestCoverageRestrictedMap {
 							CoverageMapFactory.create(ranges, 2);
 		assertEquals(5,coverageMap.getNumberOfRegions());
 		assertEquals(coverageMap.getRegion(0).asRange(), Range.create(0,1));
-		assertEquals(1, coverageMap.getRegion(0).getCoverage());
+		assertEquals(1, coverageMap.getRegion(0).getCoverageDepth());
 		assertEquals(coverageMap.getRegion(1).asRange(), Range.create(2,5));
-		assertEquals(2, coverageMap.getRegion(1).getCoverage());
+		assertEquals(2, coverageMap.getRegion(1).getCoverageDepth());
 		assertEquals(coverageMap.getRegion(2).asRange(), Range.create(6,7));
-		assertEquals(1, coverageMap.getRegion(2).getCoverage());
+		assertEquals(1, coverageMap.getRegion(2).getCoverageDepth());
 		assertEquals(coverageMap.getRegion(3).asRange(), Range.create(8,8));
-		assertEquals(0, coverageMap.getRegion(3).getCoverage());
+		assertEquals(0, coverageMap.getRegion(3).getCoverageDepth());
 		assertEquals(coverageMap.getRegion(4).asRange(), Range.create(9,10));
-		assertEquals(1, coverageMap.getRegion(4).getCoverage());
+		assertEquals(1, coverageMap.getRegion(4).getCoverageDepth());
 	}
 	
 	@Test
@@ -114,17 +114,17 @@ public class TestCoverageRestrictedMap {
 							CoverageMapFactory.create(ranges, 2);
 		assertEquals(6,coverageMap.getNumberOfRegions());
 		assertEquals(coverageMap.getRegion(0).asRange(), Range.create(0,1));
-		assertEquals(1, coverageMap.getRegion(0).getCoverage());
+		assertEquals(1, coverageMap.getRegion(0).getCoverageDepth());
 		assertEquals(coverageMap.getRegion(1).asRange(), Range.create(2,5));
-		assertEquals(2, coverageMap.getRegion(1).getCoverage());
+		assertEquals(2, coverageMap.getRegion(1).getCoverageDepth());
 		assertEquals(coverageMap.getRegion(2).asRange(), Range.create(6,7));
-		assertEquals(1, coverageMap.getRegion(2).getCoverage());
+		assertEquals(1, coverageMap.getRegion(2).getCoverageDepth());
 		assertEquals(coverageMap.getRegion(3).asRange(), Range.create(8,8));
-		assertEquals(1, coverageMap.getRegion(3).getCoverage());
+		assertEquals(1, coverageMap.getRegion(3).getCoverageDepth());
 		assertEquals(coverageMap.getRegion(4).asRange(), Range.create(9,10));
-		assertEquals(2, coverageMap.getRegion(4).getCoverage());
+		assertEquals(2, coverageMap.getRegion(4).getCoverageDepth());
 		assertEquals(coverageMap.getRegion(5).asRange(), Range.create(11,15));
-		assertEquals(1, coverageMap.getRegion(5).getCoverage());
+		assertEquals(1, coverageMap.getRegion(5).getCoverageDepth());
 	}
 	
 	@Test
@@ -140,8 +140,8 @@ public class TestCoverageRestrictedMap {
                             CoverageMapFactory.create(ranges, 2);
         assertEquals(2,coverageMap.getNumberOfRegions());
         assertEquals(coverageMap.getRegion(0).asRange(), Range.create(0,5));
-        assertEquals(2, coverageMap.getRegion(0).getCoverage());
+        assertEquals(2, coverageMap.getRegion(0).getCoverageDepth());
         assertEquals(coverageMap.getRegion(1).asRange(), Range.create(6,10));
-        assertEquals(1, coverageMap.getRegion(1).getCoverage());
+        assertEquals(1, coverageMap.getRegion(1).getCoverageDepth());
     }
 }

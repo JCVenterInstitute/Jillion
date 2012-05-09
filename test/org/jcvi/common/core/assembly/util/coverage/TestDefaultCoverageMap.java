@@ -271,7 +271,7 @@ public class TestDefaultCoverageMap {
         CoverageMap<Range> map = CoverageMapFactory.create(
                 Arrays.asList(seq_0_9,seq_5_14,seq_0_12));
         
-        List<CoverageRegion<Range>> regions = map.getRegionsWhichIntersect(Range.create(6, 11));
+        List<CoverageRegion<Range>> regions = CoverageMapUtil.getRegionsWhichIntersect(map, Range.create(6, 11));
         assertEquals(2, regions.size());
         assertEquals(createCoverageRegion(5,9,seq_0_9,seq_0_12,seq_5_14 ), regions.get(0));
         assertEquals(createCoverageRegion(10,12,seq_0_12,seq_5_14 ), regions.get(1));

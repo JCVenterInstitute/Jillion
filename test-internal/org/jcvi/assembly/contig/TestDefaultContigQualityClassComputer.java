@@ -23,14 +23,14 @@
  */
 package org.jcvi.assembly.contig;
 
-import org.jcvi.common.core.Rangeable;
+import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.common.core.assembly.Contig;
+import org.jcvi.common.core.assembly.DefaultContig;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.assembly.util.slice.QualityValueStrategy;
-import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.glyph.qualClass.QualityClass;
 
@@ -49,47 +49,29 @@ public class TestDefaultContigQualityClassComputer {
     
     QualityValueStrategy qualityValueStrategy;
     DefaultContigQualityClassComputer  sut;
-    CoverageMap<Rangeable> coverageMap;
     QualityDataStore qualityFastaMap;
     NucleotideSequence consensus;
     @Before
     public void setup() throws SecurityException{
         qualityValueStrategy = createMock(QualityValueStrategy.class);
 
-        sut = createMockBuilder(DefaultContigQualityClassComputer.class)
-            .withConstructor(qualityValueStrategy,threshold)
-            .addMockedMethod("computeQualityClassFor",QualityDataStore.class,Integer.TYPE, CoverageRegion.class, Nucleotide.class)
-        .createMock();
-                
-        coverageMap = createMock(CoverageMap.class);
+        sut = new DefaultContigQualityClassComputer(qualityValueStrategy,threshold);
         qualityFastaMap = createMock(QualityDataStore.class);
         consensus = createMock(NucleotideSequence.class);
     }
     
     @Test
     public void indexOutsideOfCoverageMapShouldReturnQualityClassZero(){
-        
-        expect(coverageMap.getRegionWhichCovers(index)).andReturn(null);
+        Contig<AssembledRead> contig = new DefaultContig.Builder("Id", "ACGT")
+        										.addRead("read1",0,"ACGT")
+        										.build();
+        CoverageMap<AssembledRead> coverageMap = CoverageMapFactory.createGappedCoverageMapFromContig(contig);
+
         replay(coverageMap,qualityFastaMap,consensus);
         assertEquals(QualityClass.valueOf(0), 
                 sut.computeQualityClass(coverageMap, qualityFastaMap, consensus, index));
         verify(coverageMap,qualityFastaMap,consensus);
     }
     
-    @Test
-    public void computeQualityClass() throws DataStoreException{
-        final Nucleotide consensusBase = Nucleotide.Adenine;
-        CoverageRegion<Rangeable> region = createMock(CoverageRegion.class);
-        expect(coverageMap.getRegionWhichCovers(index)).andReturn(region);
-        
-        expect(consensus.get(index)).andReturn(consensusBase);
-        QualityClass expectedQualityClass = QualityClass.NO_CONFLICT_HIGH_QUAL_BOTH_DIRS;
-        expect(sut.computeQualityClassFor(qualityFastaMap,index,region, consensusBase)).andReturn(expectedQualityClass);
-        
-        replay(sut, coverageMap, qualityFastaMap,consensus, region);
-        assertEquals(expectedQualityClass, sut.computeQualityClass(coverageMap, qualityFastaMap, consensus, index));
-        verify(sut, coverageMap, qualityFastaMap,consensus, region);
-        
-        
-    }
+   
 }

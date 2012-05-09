@@ -26,14 +26,27 @@ package org.jcvi.common.core.assembly.util.coverage;
 
 import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.util.iter.CloseableIterator;
-
+/**
+ * A {@link CoverageRegion} is a contiguious 
+ * portion of a {@link CoverageMap} which 
+ * has exactly the same elements (and therefore
+ * the same depth of coverage). If any elements
+ * stop providing coverage or if new elements start
+ * providing coverage, then there will be multiple
+ * {@link CoverageRegion}s.
+ * @author dkatzel
+ *
+ * @param <T> the type of {@link Rangeable} elements that make up
+ * this coverage region.
+ */
 public interface CoverageRegion<T extends Rangeable> extends Rangeable, Iterable<T> {
     /**
-     * Get the Coverage depth of this coverage region.
-     * should be the same as the number of elements.
-     * @return
+     * Get the coverage depth of this coverage region.
+     * which is the number of elements that make up 
+     * this region.
+     * @return an integer {@code >= 0}.
      */
-    int getCoverage();    
+    int getCoverageDepth();    
     
     CloseableIterator<T> getElementIterator();
 }

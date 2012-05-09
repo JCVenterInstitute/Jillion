@@ -196,7 +196,7 @@ final class IndexedAceFileContig implements AceContig{
 		private int getMaxCoverage(CoverageMap<?> coverageMap){
 			int currentMax = 0;
 			for(CoverageRegion<?> r : coverageMap){
-				Math.max(currentMax, r.getCoverage());
+				Math.max(currentMax, r.getCoverageDepth());
 			}
 			return currentMax;
 		}

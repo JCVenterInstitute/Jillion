@@ -25,7 +25,6 @@ package org.jcvi.common.core.assembly.util.coverage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -131,7 +130,7 @@ public final class CoverageMapFactory {
         for(CoverageRegion<R> gappedCoverageRegion : gappedCoverageMap){
             Range gappedRange = gappedCoverageRegion.asRange();
             Range ungappedRange = AssemblyUtil.toUngappedRange(consensus,gappedRange);
-            List<R> reads = new ArrayList<R>(gappedCoverageRegion.getCoverage());
+            List<R> reads = new ArrayList<R>(gappedCoverageRegion.getCoverageDepth());
             for(R read : gappedCoverageRegion){
                 reads.add(read);
             }
@@ -189,11 +188,11 @@ public final class CoverageMapFactory {
     
     private CoverageMapFactory(){}
     
-    private static class CoverageMapImpl<V extends Rangeable> implements CoverageMap<V>{
+    private static final class CoverageMapImpl<V extends Rangeable> implements CoverageMap<V>{
 	    private CoverageRegion<V>[] regions;
 	    /**
 	     *
-	     * Creates a new <code>AbstractCoverageMap</code>.
+	     * Creates a new <code>CoverageMapImpl</code>.
 	     * @param amplicons A {@link Collection} of {@link Coordinated}s.
 	     */
 	    @SuppressWarnings("unchecked")
@@ -260,40 +259,11 @@ public final class CoverageMapFactory {
 	    
 	    
 	    @Override
-	    public List<CoverageRegion<V>> getRegionsWhichIntersect(Range range) {
-	        List<CoverageRegion<V>> selectedRegions = new ArrayList<CoverageRegion<V>>();
-	        for(CoverageRegion<V> region : regions){
-	            Range regionRange = region.asRange();
-	            if(range.endsBefore(regionRange)){
-	                break;
-	            }
-	            if(regionRange.intersects(range)){
-	                selectedRegions.add(region);
-	            }
-	            
-	        }
-	        return selectedRegions;
-	    }
+		public CloseableIterator<CoverageRegion<V>> getRegionIterator() {
+			return CloseableIteratorAdapter.adapt(iterator());
+		}
+		
 	    
-	
-	    @Override
-	    public CoverageRegion<V> getRegionWhichCovers(long consensusIndex) {
-	        Range range = Range.create(consensusIndex, consensusIndex);
-	        final List<CoverageRegion<V>> intersectedRegion = getRegionsWhichIntersect(range);
-	        if(intersectedRegion.isEmpty()){
-	            return null;
-	        }
-	        return intersectedRegion.get(0);
-	    }
-	    
-	    @Override
-	    public List<CoverageRegion<V>> getRegions() {
-	        return Arrays.asList(regions);
-	    }
-	   
-	   
-	   
-	   
 	    /**
 	    * {@inheritDoc}
 	    */

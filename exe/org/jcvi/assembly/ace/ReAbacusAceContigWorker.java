@@ -60,6 +60,7 @@ import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationVisitor;
 import org.jcvi.common.core.assembly.ace.consed.ConsensusNavigationElement;
 import org.jcvi.common.core.assembly.ace.consed.ReadNavigationElement;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapUtil;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.assembly.util.slice.CompactedSlice;
@@ -371,16 +372,13 @@ public class ReAbacusAceContigWorker {
                             );
                     
                     System.out.println("now working on "+ ungappedProblemRange);
-                  //  System.out.println("gapped abacus problem range = "+ gappedAbacusProblemRange);
-                   // System.out.println(Nucleotides.asString(consensus.asList(gappedAbacusProblemRange)));
-                    Set<String> affectedReads = new LinkedHashSet<String>();
-                    for(CoverageRegion<AcePlacedReadBuilder> regions : coverageMap.getRegionsWhichIntersect(gappedAbacusProblemRange)){
+                  Set<String> affectedReads = new LinkedHashSet<String>();
+                    for(CoverageRegion<AcePlacedReadBuilder> regions : CoverageMapUtil.getRegionsWhichIntersect( coverageMap, gappedAbacusProblemRange)){
                         for(AcePlacedReadBuilder read : regions){
                             affectedReads.add(read.getId());
                         }
                     }
                     
-                 //   System.out.println("affected reads : ");
                     Map<String, NucleotideSequenceFastaRecord> ungappedSequences = new LinkedHashMap<String, NucleotideSequenceFastaRecord>();
                     int maxSeenLength=0;
                     for(String readId : affectedReads){
