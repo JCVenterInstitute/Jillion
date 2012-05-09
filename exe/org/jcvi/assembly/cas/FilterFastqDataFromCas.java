@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -51,6 +50,7 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
  * @author dkatzel
@@ -90,11 +90,19 @@ public class FilterFastqDataFromCas {
             Collections.shuffle(readRanges);
             CoverageMap<ReadRange> coverageMap = CoverageMapFactory.create(readRanges, maxSolexaCoverageDepth);
             Set<String> reads = new TreeSet<String>();
-            for(CoverageRegion<ReadRange> region : coverageMap){
-                for(ReadRange readRange : region){
-                    reads.add(readRange.getReadId());
-                }
+            CloseableIterator<CoverageRegion<ReadRange>> regionIterator = null;
+            try{
+            	regionIterator = coverageMap.getRegionIterator();
+            	while(regionIterator.hasNext()){
+            		CoverageRegion<ReadRange> region = regionIterator.next();
+            		for(ReadRange readRange : region){
+                        reads.add(readRange.getReadId());
+                    }
+            	}
+            }finally{
+            	IOUtil.closeAndIgnoreErrors(regionIterator);
             }
+            
             System.out.printf("filtered reference %d: %d -> %d%n",entry.getKey(), readRanges.size(),reads.size());
             for(String neededRead : reads){
                 out.println(neededRead);
@@ -102,50 +110,7 @@ public class FilterFastqDataFromCas {
         }
     }
 
-    static Set<String> getNeededReadsFor(int maxSolexaCoverageDepth,
-            CoverageMap<ReadRange> coverageMap) {
-        Set<String> neededReads = new TreeSet<String>();
-        //first pass find all reads that are needed to meet min coverage levels
-        for(CoverageRegion<ReadRange> region : coverageMap){
-            int coverageDepth = region.getCoverageDepth();
-            if(coverageDepth <= maxSolexaCoverageDepth){
-                //need all reads at this coverage level
-                for(ReadRange readRange : region){
-                    neededReads.add(readRange.getReadId());
-                }
-            }
-        }
-        //2nd pass find reads that aren't needed
-        for(CoverageRegion<ReadRange> region : coverageMap){
-            int coverageDepth = region.getCoverageDepth();
-            if(coverageDepth > maxSolexaCoverageDepth){                        
-                Set<String> unseenReads = new HashSet<String>(coverageDepth);
-                for(ReadRange readRange : region){
-                    String id = readRange.getReadId();
-                    if(!neededReads.contains(id)){
-                        unseenReads.add(id);
-                    }
-                }
-                int seenReadCount = coverageDepth - unseenReads.size();
-                if(seenReadCount <maxSolexaCoverageDepth){
-                    //we need to keep some
-                    int numToKeep = maxSolexaCoverageDepth -seenReadCount;
-                    int numSaved=0;
-                    for(ReadRange readRange : region){
-                        String id = readRange.getReadId();
-                        if(!neededReads.contains(id)){
-                            neededReads.add(id);
-                            numSaved++;
-                        }
-                        if(numSaved==numToKeep){
-                            break;
-                        }
-                    }                            
-                }
-            }
-        }
-        return neededReads;
-    }
+   
     
     public static void main(String[] args) throws IOException{
         Options options = new Options();
