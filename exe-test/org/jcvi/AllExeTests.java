@@ -20,7 +20,6 @@
 package org.jcvi;
 
 import org.jcvi.assembly.ace.AllAceExeTests;
-import org.jcvi.assembly.cas.TestFilterFastqDataFromCas;
 import org.jcvi.common.core.seq.fastx.fastq.TestRemoveRedundantMatePairs;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.TestChromatogram2Fasta;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.TestChromatogram2FastaMain;
@@ -44,7 +43,6 @@ import org.junit.runners.Suite.SuiteClasses;
    AllAceExeTests.class,
    TestChromatogram2Fasta.class,
    TestChromatogram2FastaMain.class,
-   TestFilterFastqDataFromCas.class,
    TestRemoveRedundantMatePairs.class
 }
 )
