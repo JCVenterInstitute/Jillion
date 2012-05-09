@@ -107,7 +107,7 @@ public class FilterFastqDataFromCas {
         Set<String> neededReads = new TreeSet<String>();
         //first pass find all reads that are needed to meet min coverage levels
         for(CoverageRegion<ReadRange> region : coverageMap){
-            int coverageDepth = region.getCoverage();
+            int coverageDepth = region.getCoverageDepth();
             if(coverageDepth <= maxSolexaCoverageDepth){
                 //need all reads at this coverage level
                 for(ReadRange readRange : region){
@@ -117,7 +117,7 @@ public class FilterFastqDataFromCas {
         }
         //2nd pass find reads that aren't needed
         for(CoverageRegion<ReadRange> region : coverageMap){
-            int coverageDepth = region.getCoverage();
+            int coverageDepth = region.getCoverageDepth();
             if(coverageDepth > maxSolexaCoverageDepth){                        
                 Set<String> unseenReads = new HashSet<String>(coverageDepth);
                 for(ReadRange readRange : region){

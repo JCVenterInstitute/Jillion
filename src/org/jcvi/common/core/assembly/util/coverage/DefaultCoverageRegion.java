@@ -27,7 +27,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -51,7 +50,7 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
         this.range = range;
     }
     @Override
-    public int getCoverage() {
+    public int getCoverageDepth() {
         return elements.size();
     }
 
@@ -72,7 +71,7 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
         builder.append("coverage region : ");
         builder.append(range);
         builder.append(" coverage = ");
-        builder.append(getCoverage());
+        builder.append(getCoverageDepth());
         return builder.toString();
     }
     @Override
@@ -147,7 +146,8 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
         private long end;
         private Queue<T> elements;
         private boolean endIsSet;
-        public final boolean isEndIsSet() {
+        
+        public  boolean isEndIsSet() {
             return endIsSet;
         }
         public Builder(long start, Iterable<T> elements){
@@ -195,9 +195,7 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
             endIsSet=true;
             return this;
         }
-        public List<T> elements(){
-            return new ArrayList<T>(elements);
-        }
+        
         public Builder<T>  offer(T element){
             elements.offer(element);
             return this;

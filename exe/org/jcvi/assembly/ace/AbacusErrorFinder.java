@@ -29,6 +29,7 @@ import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapUtil;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.io.IOUtil;
@@ -61,7 +62,7 @@ public class AbacusErrorFinder {
             int gappedEnd = consensus.getGappedOffsetFor((int)ungappedCandidateRange.getEnd()+1) -1;
             Range gappedCandidateRange = Range.create(gappedStart, gappedEnd);
             Set<String> readIds = new HashSet<String>();
-            for(CoverageRegion<P> region : coverageMap.getRegionsWhichIntersect(gappedCandidateRange)){
+            for(CoverageRegion<P> region : CoverageMapUtil.getRegionsWhichIntersect(coverageMap, gappedCandidateRange)){
                 for(P read : region){
                     readIds.add(read.getId());
                 }
@@ -146,7 +147,7 @@ public class AbacusErrorFinder {
         List<Range> abacusErrors = new ArrayList<Range>();
        
         for(CoverageRegion<Range> gapRegion : clusteredGapCoverage){          
-            if(gapRegion.getCoverage() >0){
+            if(gapRegion.getCoverageDepth() >0){
                 abacusErrors.add(gapRegion.asRange());
             }            
         }

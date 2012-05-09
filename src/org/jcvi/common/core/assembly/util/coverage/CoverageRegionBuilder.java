@@ -28,7 +28,7 @@ import java.util.Collection;
 import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.util.Builder;
 
-public interface CoverageRegionBuilder<P extends Rangeable> extends Builder<CoverageRegion<P>> {
+interface CoverageRegionBuilder<P extends Rangeable> extends Builder<CoverageRegion<P>> {
 
    long start();
     

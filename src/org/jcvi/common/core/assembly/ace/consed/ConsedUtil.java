@@ -46,6 +46,7 @@ import org.jcvi.common.core.assembly.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.ace.DefaultPhdInfo;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapUtil;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.io.FileUtil;
@@ -142,7 +143,7 @@ public class ConsedUtil {
         NucleotideSequence consensus = contigBuilder.getConsensusBuilder().build();
         CoverageMap<AcePlacedReadBuilder> coverageMap = CoverageMapFactory.create(contigBuilder.getAllPlacedReadBuilders());
         for(CoverageRegion<AcePlacedReadBuilder> region : coverageMap){
-            if(region.getCoverage()>0){
+            if(region.getCoverageDepth()>0){
                 
                 final Range contigRange =region.asRange();
                 coveredRegions.add(contigRange);
@@ -180,7 +181,7 @@ public class ConsedUtil {
             int oldStart, Range contigRange) {
         Set<String> contigReads = new HashSet<String>();
         
-        for(CoverageRegion<AcePlacedReadBuilder> region : coverageMap.getRegionsWhichIntersect(contigRange)){
+        for(CoverageRegion<AcePlacedReadBuilder> region : CoverageMapUtil.getRegionsWhichIntersect(coverageMap, contigRange)){
             for(AcePlacedReadBuilder read : region){
                 contigReads.add(read.getId());
             }

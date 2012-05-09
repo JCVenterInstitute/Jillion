@@ -29,9 +29,9 @@ import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.glyph.qualClass.QualityClass;
 
-public interface QualityClassComputer<P extends AssembledRead> {
+public interface QualityClassComputer{
 
-    QualityClass computeQualityClass(CoverageMap<P> coverageMap,
+	<P extends AssembledRead>  QualityClass computeQualityClass(CoverageMap<P> coverageMap,
             QualityDataStore qualityDataStore,
             NucleotideSequence consensus,int index);
 }

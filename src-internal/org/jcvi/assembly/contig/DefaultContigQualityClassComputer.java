@@ -26,6 +26,7 @@ package org.jcvi.assembly.contig;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapUtil;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.slice.QualityValueStrategy;
 import org.jcvi.common.core.datastore.DataStoreException;
@@ -36,7 +37,7 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.glyph.qualClass.QualityClass;
 
-public class DefaultContigQualityClassComputer<P extends AssembledRead> implements QualityClassComputer<P>{
+public class DefaultContigQualityClassComputer implements QualityClassComputer{
    private final QualityValueStrategy qualityValueStrategy;
    private final PhredQuality qualityThreshold;
     
@@ -45,10 +46,10 @@ public class DefaultContigQualityClassComputer<P extends AssembledRead> implemen
         this.qualityThreshold = qualityThreshold;
     }
     @Override
-    public QualityClass computeQualityClass( CoverageMap<P> coverageMap,
+    public <P extends AssembledRead> QualityClass computeQualityClass( CoverageMap<P> coverageMap,
             QualityDataStore qualityDataStore,
     NucleotideSequence consensus,int index) {
-        CoverageRegion<P> region = coverageMap.getRegionWhichCovers(index);
+        CoverageRegion<P> region = CoverageMapUtil.getRegionWhichCovers(coverageMap, index);
         if(region ==null){
             return QualityClass.ZERO_COVERAGE;
         }
@@ -69,14 +70,14 @@ public class DefaultContigQualityClassComputer<P extends AssembledRead> implemen
     public PhredQuality getQualityThreshold() {
         return qualityThreshold;
     }
-    protected QualityClass computeQualityClassFor(
+    protected <P extends AssembledRead> QualityClass computeQualityClassFor(
             QualityDataStore qualityDataStore, int index,
             CoverageRegion<P> region, final Nucleotide consensusBase) throws DataStoreException {
         QualityClass.Builder builder = new QualityClass.Builder(consensusBase,qualityThreshold);
         return computeQualityClassFor(qualityDataStore, index, region,
                 consensusBase, builder);
     }
-    protected QualityClass computeQualityClassFor(
+    protected <P extends AssembledRead> QualityClass computeQualityClassFor(
             QualityDataStore qualityDataStore, int index,
             CoverageRegion<P> region, final Nucleotide consensusBase,
             QualityClass.Builder builder) throws DataStoreException {

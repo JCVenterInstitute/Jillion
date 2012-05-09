@@ -42,11 +42,11 @@ public class DefaultQualityClassContigMap implements QualityClassMap{
     List<QualityClassRegion> qualityClassRegions;
     
     public static <P extends AssembledRead, C extends Contig<P>> QualityClassMap create(C contig,QualityDataStore qualityDataStore, 
-            QualityClassComputer<P> qualityClassComputer){
+            QualityClassComputer qualityClassComputer){
        return create(CoverageMapFactory.createGappedCoverageMapFromContig(contig),contig,qualityDataStore,qualityClassComputer);
     }
     public static <P extends AssembledRead, C extends Contig<P>> QualityClassMap create(CoverageMap<P> coverageMap,C contig,QualityDataStore qualityDataStore, 
-            QualityClassComputer<P> qualityClassComputer){
+            QualityClassComputer qualityClassComputer){
        return new DefaultQualityClassContigMap(coverageMap,contig.getConsensus(),qualityDataStore,qualityClassComputer);
     }
 
@@ -54,7 +54,7 @@ public class DefaultQualityClassContigMap implements QualityClassMap{
                     CoverageMap<P> coverageMap, 
                     NucleotideSequence consensus,
                     QualityDataStore qualityDataStore, 
-                    QualityClassComputer<P> qualityClassComputer){
+                    QualityClassComputer qualityClassComputer){
         qualityClassRegions = new ArrayList<QualityClassRegion>();
         QualityClass qualityClass =null;
         int qualityClassStart=0;

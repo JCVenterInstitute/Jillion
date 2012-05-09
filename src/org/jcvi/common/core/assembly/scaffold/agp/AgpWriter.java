@@ -18,7 +18,7 @@ public final class AgpWriter {
 		String scaffoldId = scaffold.getId();
 		int partNumber =1;
 		for(CoverageRegion<PlacedContig> region : coverageMap){
-			if(region.getCoverage()==0){
+			if(region.getCoverageDepth()==0){
 				writeNs(scaffoldId, partNumber, region.asRange(), out);
 				partNumber++;
 			}else{

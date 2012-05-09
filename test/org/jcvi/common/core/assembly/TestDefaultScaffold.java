@@ -79,7 +79,7 @@ public class TestDefaultScaffold {
     }
     private Range getFirstCoveredRange(DefaultScaffold scaffold) {
 		for(CoverageRegion<?> region :scaffold.getContigCoverageMap()){
-			if(region.getCoverage()>0){
+			if(region.getCoverageDepth()>0){
 				return region.asRange();
 			}
 		}

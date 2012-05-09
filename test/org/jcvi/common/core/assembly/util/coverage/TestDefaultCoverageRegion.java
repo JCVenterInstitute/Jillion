@@ -50,7 +50,7 @@ public class TestDefaultCoverageRegion {
 
         assertEquals(range, sut.asRange());
         assertEquals(Arrays.asList(seq1,seq2), getElements(sut));
-        assertEquals(2, sut.getCoverage());
+        assertEquals(2, sut.getCoverageDepth());
     }
     @Test
     public void add(){
@@ -61,7 +61,7 @@ public class TestDefaultCoverageRegion {
                                         .build();
         assertEquals(range, region.asRange());
         assertEquals(Arrays.asList(seq1,seq2), getElements(region));
-        assertEquals(2, region.getCoverage());
+        assertEquals(2, region.getCoverageDepth());
     }
     
     private List<Range> getElements(CoverageRegion<Range> region){
@@ -80,7 +80,7 @@ public class TestDefaultCoverageRegion {
         
         assertEquals(range, region.asRange());
         assertEquals(Arrays.asList(seq1), getElements(region));
-        assertEquals(1, region.getCoverage());
+        assertEquals(1, region.getCoverageDepth());
     }
     
     @Test

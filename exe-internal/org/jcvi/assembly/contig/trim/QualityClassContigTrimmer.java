@@ -55,6 +55,7 @@ import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapUtil;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
@@ -70,7 +71,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.glyph.qualClass.QualityClass;
 
-public class QualityClassContigTrimmer<R extends AssembledRead,C extends Contig<R>>{
+public class QualityClassContigTrimmer{
 
     private final int maxNumberOf5PrimeBasesToTrim;
     private final int maxNumberOf3PrimeBasesToTrim;
@@ -108,8 +109,8 @@ public class QualityClassContigTrimmer<R extends AssembledRead,C extends Contig<
     }
 
 
-    public List<TrimmedPlacedRead<R>> trim(C struct,QualityDataStore qualityDataStore, 
-            QualityClassComputer<R> qualityClassComputer) throws DataStoreException {
+    public <R extends AssembledRead,C extends Contig<R>> List<TrimmedPlacedRead<R>> trim(C struct,QualityDataStore qualityDataStore, 
+            QualityClassComputer qualityClassComputer) throws DataStoreException {
 
         Map<R, Range> trimmedReads = new HashMap<R, Range>();
         CoverageMap<R> coverageMap =CoverageMapFactory.createGappedCoverageMapFromContig(struct);
@@ -119,7 +120,7 @@ public class QualityClassContigTrimmer<R extends AssembledRead,C extends Contig<
         for (QualityClassRegion qualityClassRegion : qualityClassContigMap) {
             if (isAQualityClassToTrim(qualityClassRegion.getQualityClass())) {
                 for(Long consensusIndex : new RangeableIterable(qualityClassRegion)){
-                    CoverageRegion<R> coverageRegion = coverageMap.getRegionWhichCovers(consensusIndex);
+                    CoverageRegion<R> coverageRegion = CoverageMapUtil.getRegionWhichCovers(coverageMap, consensusIndex);
 
                     for (R read : coverageRegion) {
                         int gappedValidRangeIndex = (int)read.toGappedValidRangeOffset(consensusIndex);
@@ -146,7 +147,7 @@ public class QualityClassContigTrimmer<R extends AssembledRead,C extends Contig<
         return trims;
     }
 
-    private boolean isASnp(R read, int gappedValidRangeIndex) {
+    private <R extends AssembledRead> boolean isASnp(R read, int gappedValidRangeIndex) {
         return read.getNucleotideSequence().getDifferenceMap().containsKey(
                 Integer.valueOf(gappedValidRangeIndex));
     }
@@ -155,7 +156,7 @@ public class QualityClassContigTrimmer<R extends AssembledRead,C extends Contig<
         return qualityClassesToTrim.contains(qualityClass);
     }
 
-    private Range computeNewValidRange(QualityDataStore qualityMap, R read, Range oldValidRange,int gappedValidRangeIndex) throws DataStoreException {
+    private<R extends AssembledRead> Range computeNewValidRange(QualityDataStore qualityMap, R read, Range oldValidRange,int gappedValidRangeIndex) throws DataStoreException {
         final Sequence<PhredQuality> qualityValues = qualityMap.get(read.getId());
 
         int gappedTrimIndex = computeGappedTrimIndex(read,gappedValidRangeIndex);
@@ -180,7 +181,7 @@ public class QualityClassContigTrimmer<R extends AssembledRead,C extends Contig<
         return newValidRange;
     }
 
-    private Range getPreviousValidRange(
+    private <R extends AssembledRead> Range getPreviousValidRange(
             Map<R, Range> trimmedReads,
             R read) {
         Range oldValidRange = read.getValidRange();
@@ -191,7 +192,7 @@ public class QualityClassContigTrimmer<R extends AssembledRead,C extends Contig<
         return oldValidRange;
     }
 
-    private int computeGappedTrimIndex(R read,
+    private <R extends AssembledRead> int computeGappedTrimIndex(R read,
             int gappedValidRangeIndex) {
         int gappedTrimIndex;
         final NucleotideSequence encodedGlyphs = read.getNucleotideSequence();
@@ -263,7 +264,7 @@ public class QualityClassContigTrimmer<R extends AssembledRead,C extends Contig<
 	                        fivePrimeMaxBasesToTrim, threePrimeMaxBasesToTrim, qualityClassesToTrim);
 	
 	                List<TrimmedPlacedRead<AssembledRead>> trims = trimmer
-	                        .trim(contig,qualityFastaMap, new DefaultContigQualityClassComputer<AssembledRead>(
+	                        .trim(contig,qualityFastaMap, new DefaultContigQualityClassComputer(
 	                                GapQualityValueStrategies.LOWEST_FLANKING, highQualityThreshold));
 	              
 	                List<TrimmedPlacedRead<AssembledRead>> allChangedReads = new ArrayList<TrimmedPlacedRead<AssembledRead>>();
