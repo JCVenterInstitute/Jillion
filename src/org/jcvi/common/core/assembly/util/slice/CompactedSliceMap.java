@@ -189,7 +189,7 @@ public final class CompactedSliceMap implements SliceMap {
     }
     private <PR extends AssembledRead, M extends CoverageMap<PR>> CompactedSliceMap(
             M coverageMap, QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
-        int size = (int)coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).asRange().getEnd()+1;
+        int size = (int)coverageMap.getLength();
         this.slices = new CompactedSlice[size];
         for(CoverageRegion<PR> region : coverageMap){
             Map<String,Sequence<PhredQuality>> qualities = new HashMap<String,Sequence<PhredQuality>>(region.getCoverage());

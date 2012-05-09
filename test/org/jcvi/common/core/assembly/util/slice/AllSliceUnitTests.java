@@ -38,7 +38,9 @@ import org.junit.runners.Suite.SuiteClasses;
         TestCompactedSlice.class,
         TestDefaultSliceMap.class,
         TestCompactedSliceMap.class,
+        AllQualityValueStrategyUnitTests.class,
         AllConsensusUnitTests.class
+        
     }
     )
 public class AllSliceUnitTests {

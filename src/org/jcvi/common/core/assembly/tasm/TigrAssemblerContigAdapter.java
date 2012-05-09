@@ -29,7 +29,6 @@ import java.util.Map;
 
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -118,8 +117,19 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	}
 
 	private double computeAvgCoverageFor(Contig<? extends AssembledRead> delegate) {
-		double averageCoverage = DefaultCoverageMap.buildCoverageMap(delegate).getAverageCoverage();
-		return averageCoverage;
+		long ungappedConsensusLength=delegate.getConsensus().getUngappedLength();
+		long bases=0;
+		CloseableIterator<? extends AssembledRead> iter =null;
+		try{
+			iter = delegate.getReadIterator();
+			while(iter.hasNext()){
+				AssembledRead read = iter.next();
+				bases+=read.getNucleotideSequence().getUngappedLength();
+			}
+		}finally{
+			IOUtil.closeAndIgnoreErrors(iter);
+		}		
+		return ((double)bases/ungappedConsensusLength);
 	}
 
 	@Override

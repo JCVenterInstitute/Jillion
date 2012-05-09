@@ -32,7 +32,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.glyph.qualClass.QualityClass;
@@ -43,7 +43,7 @@ public class DefaultQualityClassContigMap implements QualityClassMap{
     
     public static <P extends AssembledRead, C extends Contig<P>> QualityClassMap create(C contig,QualityDataStore qualityDataStore, 
             QualityClassComputer<P> qualityClassComputer){
-       return create(DefaultCoverageMap.buildCoverageMap(contig),contig,qualityDataStore,qualityClassComputer);
+       return create(CoverageMapFactory.createGappedCoverageMapFromContig(contig),contig,qualityDataStore,qualityClassComputer);
     }
     public static <P extends AssembledRead, C extends Contig<P>> QualityClassMap create(CoverageMap<P> coverageMap,C contig,QualityDataStore qualityDataStore, 
             QualityClassComputer<P> qualityClassComputer){

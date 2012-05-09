@@ -37,7 +37,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 
-public final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegion<T> {
+final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegion<T> {
     private final Collection<T> elements;
     private final Range range;
     /**
@@ -142,7 +142,7 @@ public final class  DefaultCoverageRegion<T extends Rangeable> implements Covera
 
 
 
-    public static class Builder<T extends Rangeable> implements CoverageRegionBuilder<T>{
+    static final class Builder<T extends Rangeable> implements CoverageRegionBuilder<T>{
         private final long start;
         private long end;
         private Queue<T> elements;

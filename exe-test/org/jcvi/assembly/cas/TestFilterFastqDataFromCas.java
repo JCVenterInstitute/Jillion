@@ -28,7 +28,7 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.junit.Test;
@@ -124,6 +124,6 @@ public class TestFilterFastqDataFromCas {
         }finally{
         	IOUtil.closeAndIgnoreErrors(iter);
         }
-        return DefaultCoverageMap.buildCoverageMap(readRanges);
+        return CoverageMapFactory.create(readRanges);
     }
 }

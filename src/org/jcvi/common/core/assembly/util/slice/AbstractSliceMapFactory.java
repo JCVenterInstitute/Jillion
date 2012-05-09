@@ -29,7 +29,7 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 
-public abstract class AbstractSliceMapFactory<P extends AssembledRead> implements SliceMapFactory<P>{
+abstract class AbstractSliceMapFactory<P extends AssembledRead> implements SliceMapFactory<P>{
 
   
 

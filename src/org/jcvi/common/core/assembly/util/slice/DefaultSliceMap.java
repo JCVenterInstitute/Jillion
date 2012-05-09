@@ -101,7 +101,7 @@ public class DefaultSliceMap extends AbstractSliceMap{
     protected DefaultSliceMap(CoverageMap<? extends AssembledRead> coverageMap, 
             QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality){
-    	this.slices = new IdedSlice[(int)(coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).asRange().getEnd()+1)];
+    	this.slices = new IdedSlice[(int)(coverageMap.getLength())];
         this.defaultQuality = defaultQuality;
         for(CoverageRegion<?  extends AssembledRead> region : coverageMap){
         	Range range = region.asRange();

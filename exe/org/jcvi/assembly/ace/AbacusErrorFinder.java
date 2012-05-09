@@ -30,7 +30,7 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
-import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -53,7 +53,7 @@ public class AbacusErrorFinder {
     }
     private <P extends AssembledRead, C extends Contig<P>> List<Range> filterCandidates(C contig,
             List<Range> ungappedCandidateRanges) {
-        CoverageMap<P> coverageMap = DefaultCoverageMap.buildCoverageMap(contig);
+        CoverageMap<P> coverageMap = CoverageMapFactory.createGappedCoverageMapFromContig(contig);
         NucleotideSequence consensus = contig.getConsensus();
         List<Range> errorRanges = new ArrayList<Range>(ungappedCandidateRanges.size());
         for(Range ungappedCandidateRange : ungappedCandidateRanges){           
@@ -141,7 +141,7 @@ public class AbacusErrorFinder {
         }finally{
         	IOUtil.closeAndIgnoreErrors(readIterator);
         }
-        CoverageMap<Range> clusteredGapCoverage = DefaultCoverageMap.buildCoverageMap(gapRangesPerRead);
+        CoverageMap<Range> clusteredGapCoverage = CoverageMapFactory.create(gapRangesPerRead);
     
         List<Range> abacusErrors = new ArrayList<Range>();
        

@@ -16,7 +16,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore.ReadVisitorBuilder;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
-import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -185,14 +185,21 @@ final class IndexedAceFileContig implements AceContig{
 		@Override
 		public AceContig build() {
 			
-			CoverageMap<Range> coverageMap = DefaultCoverageMap.buildCoverageMap(coverageRanges);
-			int maxCoverage = coverageMap.getMaxCoverage();
+			CoverageMap<Range> coverageMap = CoverageMapFactory.create(coverageRanges);
+			int maxCoverage = getMaxCoverage(coverageMap);
 			coverageRanges.clear();
 			return new IndexedAceFileContig(contigId, readInfoMap, readRanges, isComplimented, 
 					consensusBuilder.build(), aceFile, 
 					contigStartOffset, maxCoverage);
 		}
 
+		private int getMaxCoverage(CoverageMap<?> coverageMap){
+			int currentMax = 0;
+			for(CoverageRegion<?> r : coverageMap){
+				Math.max(currentMax, r.getCoverage());
+			}
+			return currentMax;
+		}
 		@Override
 		public void visitHeader(int numberOfContigs, int totalNumberOfReads) {
 			

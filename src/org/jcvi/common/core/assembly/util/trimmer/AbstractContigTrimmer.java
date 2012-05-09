@@ -28,7 +28,7 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
-import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -65,7 +65,7 @@ public abstract class AbstractContigTrimmer<P extends AssembledRead, C extends C
 
     @Override
     public ContigTrimmerResult<P,C> trimContig(C contig) throws TrimmerException {
-        return trimContig(contig, DefaultCoverageMap.buildCoverageMap(contig));
+        return trimContig(contig, CoverageMapFactory.createGappedCoverageMapFromContig(contig));
     }
 
     protected ContigTrimmerResult<P,C> trimContig(C contig,CoverageMap<P> coverageMap){
