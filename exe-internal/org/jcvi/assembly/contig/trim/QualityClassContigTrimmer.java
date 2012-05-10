@@ -184,7 +184,7 @@ public class QualityClassContigTrimmer{
     private <R extends AssembledRead> Range getPreviousValidRange(
             Map<R, Range> trimmedReads,
             R read) {
-        Range oldValidRange = read.getValidRange();
+        Range oldValidRange = read.getReadInfo().getValidRange();
 
         if (trimmedReads.containsKey(read)) {
             oldValidRange = trimmedReads.get(read);
@@ -272,7 +272,7 @@ public class QualityClassContigTrimmer{
 	                for (TrimmedPlacedRead<AssembledRead> trim : allChangedReads) {
 	                    // force it to be residue based
 	                    Range newtrimmedRange = trim.getNewTrimRange();
-	                    Range oldTrimmedRange = trim.getRead().getValidRange();
+	                    Range oldTrimmedRange = trim.getRead().getReadInfo().getValidRange();
 	                    String readId = trim.getRead().getId();
 	                    long rightDelta = newtrimmedRange.getEnd(CoordinateSystem.RESIDUE_BASED) - oldTrimmedRange.getEnd(CoordinateSystem.RESIDUE_BASED);
 	                    long displayRight;

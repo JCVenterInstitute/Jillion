@@ -34,7 +34,7 @@ import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 
-public enum QualityClass implements Symbol, Comparable<QualityClass>{
+public enum QualityClass implements Symbol{
 
     
     ZERO_COVERAGE(0),

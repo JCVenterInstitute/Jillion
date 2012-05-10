@@ -54,7 +54,7 @@ public final class AssemblyUtil {
      */
     public static List<Nucleotide> buildGappedComplementedFullRangeBases(AssembledRead placedRead, List<Nucleotide> ungappedUncomplementedFullRangeBases){
         Direction dir =placedRead.getDirection();
-        Range validRange = placedRead.getValidRange();
+        Range validRange = placedRead.getReadInfo().getValidRange();
         if(dir==Direction.REVERSE){
             validRange = AssemblyUtil.reverseComplementValidRange(
                     validRange,
@@ -129,13 +129,13 @@ public final class AssemblyUtil {
      * @return the ungapped full range offset as a positive int.
      */
     public static  int convertToUngappedFullRangeOffset(AssembledRead placedRead, int ungappedFullLength,int gappedOffset) {
-        Range validRange = placedRead.getValidRange();
+        Range validRange = placedRead.getReadInfo().getValidRange();
         return convertToUngappedFullRangeOffset(placedRead, ungappedFullLength,
                 gappedOffset, validRange);
     }
     public static  int convertToUngappedFullRangeOffset(AssembledRead placedRead, int gappedOffset) {
-        Range validRange = placedRead.getValidRange();
-        return convertToUngappedFullRangeOffset(placedRead, placedRead.getUngappedFullLength(),
+        Range validRange = placedRead.getReadInfo().getValidRange();
+        return convertToUngappedFullRangeOffset(placedRead, placedRead.getReadInfo().getUngappedFullLength(),
                 gappedOffset, validRange);
     }
     

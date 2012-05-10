@@ -26,6 +26,8 @@ import org.easymock.EasyMockSupport;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.common.core.assembly.DefaultReadInfo;
+import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -71,9 +73,11 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
         expect(sequence.isGap(gappedReadIndex)).andReturn(false);
         expect(placedRead.getDirection()).andStubReturn(Direction.FORWARD);
         Range validRange = Range.create(10,100);
-        expect(placedRead.getValidRange()).andReturn(validRange);
+        int fullLength = (int)(validRange.getEnd()+validRange.getBegin());
+        ReadInfo readInfo = new DefaultReadInfo(validRange, fullLength);
+        expect(placedRead.getReadInfo()).andStubReturn(readInfo);
         expect(sequence.getUngappedOffsetFor(gappedReadIndex)).andReturn(gappedReadIndex);
-        long fullLength = validRange.getEnd()+validRange.getBegin();
+        
         QualitySequence qualities =new MockQualitySequenceBuilder(fullLength)
                                 .setQuality(fullIndex, expectedQuality)
                                 .build();
@@ -88,14 +92,14 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
         int gappedReadIndex = 12;
         int ungappedReadOffset = gappedReadIndex-2;
         Range validRange = Range.create(10,100);
-        long fullLength=110;
+        int fullLength=110;
         expect(placedRead.getNucleotideSequence()).andReturn(sequence).anyTimes();
         expect(placedRead.getDirection()).andStubReturn(Direction.REVERSE);
         expect(sequence.isGap(gappedReadIndex)).andReturn(false);
         expect(sequence.getUngappedOffsetFor(gappedReadIndex)).andReturn(ungappedReadOffset);
-        
-        expect(placedRead.getValidRange()).andReturn(validRange).anyTimes();
-        
+        ReadInfo readInfo = new DefaultReadInfo(validRange, fullLength);
+        expect(placedRead.getReadInfo()).andStubReturn(readInfo);
+       
         QualitySequence qualities =new MockQualitySequenceBuilder(fullLength)
                                 .setQuality(fullLength-1-((fullLength-1-validRange.getEnd()) +ungappedReadOffset), expectedQuality)
                                 .build();

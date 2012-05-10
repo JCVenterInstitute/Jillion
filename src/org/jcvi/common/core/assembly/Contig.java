@@ -32,7 +32,6 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * @author dkatzel
  * @param <T> the type of {@link AssembledRead}s which were used to build
  * this contig.
- *
  */
 public interface Contig<T extends AssembledRead>{
     /**

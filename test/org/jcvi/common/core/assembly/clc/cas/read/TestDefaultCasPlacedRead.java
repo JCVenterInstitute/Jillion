@@ -52,7 +52,7 @@ public class TestDefaultCasPlacedRead extends EasyMockSupport{
     
     @Test
     public void validRange(){
-        assertEquals(validRange, sut.getValidRange());
+        assertEquals(validRange, sut.getReadInfo().getValidRange());
     }
     @Test
     public void getUngappedFullLength(){

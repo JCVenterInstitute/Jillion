@@ -132,10 +132,10 @@ public class DefaultContig<P extends AssembledRead> extends AbstractContig<P>{
                     read.getNucleotideSequence().toString(), 
                     (int)read.getGappedStartOffset(), 
                     read.getDirection(), 
-                    read.getValidRange(),
+                    read.getReadInfo().getValidRange(),
                     //TODO need to actually compute ungapped full length here
                     //should we pull from frg or db?
-                    (int)read.getValidRange().getEnd());
+                    (int)read.getReadInfo().getValidRange().getEnd());
         }
         /**
         * {@inheritDoc}

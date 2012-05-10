@@ -58,7 +58,7 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
                         .build();
         sut.initializeContig(_1xContig, CoverageMapFactory.createGappedCoverageMapFromContig(_1xContig));
         AssembledRead read = _1xContig.getRead("read1");
-        Range actualValidRange =sut.trimRead(read, read.getValidRange());
+        Range actualValidRange =sut.trimRead(read, read.getReadInfo().getValidRange());
         assertEquals(Range.createEmptyRange(), actualValidRange);
     }
     
@@ -73,9 +73,9 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
         AssembledRead readToTrim = _1xContig.getRead("read1");
         AssembledRead readThatDoesntGetTrimmed = _1xContig.getRead("read2");
         Range expectedTrimRange = Range.create(2, 7);
-        Range actualValidRange =sut.trimRead(readToTrim, readToTrim.getValidRange());
+        Range actualValidRange =sut.trimRead(readToTrim, readToTrim.getReadInfo().getValidRange());
         assertEquals("new trimmed range",expectedTrimRange, actualValidRange);
-        final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getValidRange();
+        final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getReadInfo().getValidRange();
         assertEquals("should not trim",readThatDoesntGetTrimmedValidRange, sut.trimRead(readThatDoesntGetTrimmed, readThatDoesntGetTrimmedValidRange));
     }
     
@@ -93,7 +93,7 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
         	iter = _3xBiDirectionalContig.getReadIterator();
         	while(iter.hasNext()){
         		AssembledRead readThatDoesntGetTrimmed = iter.next();
-        		final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getValidRange();
+        		final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getReadInfo().getValidRange();
                 assertEquals("should not trim",readThatDoesntGetTrimmedValidRange, sut.trimRead(readThatDoesntGetTrimmed, readThatDoesntGetTrimmedValidRange));
            
         	}
@@ -112,17 +112,17 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
         
         AssembledRead readToTrim = _3xBiDirectionalContig.getRead("read1");
         Range expectedTrimRange = Range.create(2, 7);
-        Range actualValidRange =sut.trimRead(readToTrim, readToTrim.getValidRange());
+        Range actualValidRange =sut.trimRead(readToTrim, readToTrim.getReadInfo().getValidRange());
         assertEquals("new trimmed range",expectedTrimRange, actualValidRange);
         
         AssembledRead read2ToTrim = _3xBiDirectionalContig.getRead("read2");
         Range expectedTrimRange2 = Range.create(2, 7);
-        Range actualValidRange2 =sut.trimRead(read2ToTrim, read2ToTrim.getValidRange());
+        Range actualValidRange2 =sut.trimRead(read2ToTrim, read2ToTrim.getReadInfo().getValidRange());
         assertEquals("new trimmed range",expectedTrimRange2, actualValidRange2);
         
         
         AssembledRead readThatDoesntGetTrimmed = _3xBiDirectionalContig.getRead("read3");
-        final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getValidRange();
+        final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getReadInfo().getValidRange();
         assertEquals("should not trim",readThatDoesntGetTrimmedValidRange, sut.trimRead(readThatDoesntGetTrimmed, readThatDoesntGetTrimmedValidRange));
     }
     
@@ -137,17 +137,17 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
         
         AssembledRead readToTrim = _3xBiDirectionalContig.getRead("read1");
         Range expectedTrimRange = Range.create(0, 5);
-        Range actualValidRange =sut.trimRead(readToTrim, readToTrim.getValidRange());
+        Range actualValidRange =sut.trimRead(readToTrim, readToTrim.getReadInfo().getValidRange());
         assertEquals("new trimmed range",expectedTrimRange, actualValidRange);
         
         AssembledRead read2ToTrim = _3xBiDirectionalContig.getRead("read2");
         Range expectedTrimRange2 = Range.create(0, 5);
-        Range actualValidRange2 =sut.trimRead(read2ToTrim, read2ToTrim.getValidRange());
+        Range actualValidRange2 =sut.trimRead(read2ToTrim, read2ToTrim.getReadInfo().getValidRange());
         assertEquals("new trimmed range",expectedTrimRange2, actualValidRange2);
         
         
         AssembledRead readThatDoesntGetTrimmed = _3xBiDirectionalContig.getRead("read3");
-        final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getValidRange();
+        final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getReadInfo().getValidRange();
         assertEquals("should not trim",readThatDoesntGetTrimmedValidRange, sut.trimRead(readThatDoesntGetTrimmed, readThatDoesntGetTrimmedValidRange));
     }
     
@@ -166,7 +166,7 @@ public class TestMinimumBidirectionalEndCoverageTrimmer {
         	iter = _2xBiDirectionalContig.getReadIterator();
         	while(iter.hasNext()){
         		AssembledRead readThatDoesntGetTrimmed = iter.next();
-        		  final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getValidRange();
+        		  final Range readThatDoesntGetTrimmedValidRange = readThatDoesntGetTrimmed.getReadInfo().getValidRange();
                   assertEquals("should not trim",readThatDoesntGetTrimmedValidRange, sut.trimRead(readThatDoesntGetTrimmed, readThatDoesntGetTrimmedValidRange));
              
         	}

@@ -40,8 +40,6 @@ public final class DefaultPlacedRead implements AssembledRead {
 
     private final long start;
     private final byte directionOrdinal;
-    private final Range validRange;
-    private final int ungappedFullLength;
     private final ReferenceEncodedNucleotideSequence sequence;
     private final String id;
     private final ReadInfo readInfo;
@@ -67,8 +65,6 @@ public final class DefaultPlacedRead implements AssembledRead {
        this.sequence = sequence;
         this.start= start;
         this.directionOrdinal = (byte)sequenceDirection.ordinal();
-        this.validRange = validRange;
-        this.ungappedFullLength = ungappedFullLength;
         this.readInfo = new DefaultReadInfo(validRange, ungappedFullLength);
     }
     
@@ -86,14 +82,6 @@ public final class DefaultPlacedRead implements AssembledRead {
     @Override
     public long getGappedStartOffset() {
         return start;
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public int getUngappedFullLength() {
-        return ungappedFullLength;
     }
     
     
@@ -168,10 +156,6 @@ public final class DefaultPlacedRead implements AssembledRead {
     @Override
     public String getId() {
         return id;
-    }
-    @Override
-    public Range getValidRange(){
-        return validRange;
     }
     @Override
     public long toGappedValidRangeOffset(long referenceIndex) {

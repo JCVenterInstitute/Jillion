@@ -67,10 +67,6 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         return placedRead.getDirection();
     }
     @Override
-    public Range getValidRange() {
-        return placedRead.getValidRange();
-    }
-    @Override
     public ReferenceEncodedNucleotideSequence getNucleotideSequence() {
         return placedRead.getNucleotideSequence();
     }
@@ -99,13 +95,6 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
 	public Range getGappedContigRange() {
 		return placedRead.getGappedContigRange();
 	}
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public int getUngappedFullLength() {
-        return placedRead.getUngappedFullLength();
-    }
 
     /**
     * {@inheritDoc}

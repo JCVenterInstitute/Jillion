@@ -59,14 +59,6 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
 		return placedRead.getReadInfo();
 	}
 
-	/**
-    * {@inheritDoc}
-    */
-    @Override
-    public Range getValidRange() {
-        return placedRead.getValidRange();
-    }
-
 
 	/**
     * {@inheritDoc}
@@ -90,14 +82,6 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
     @Override
     public long toReferenceOffset(long gappedValidRangeOffset) {
         return placedRead.toReferenceOffset(gappedValidRangeOffset);
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public int getUngappedFullLength() {
-        return placedRead.getUngappedFullLength();
     }
 
     /**

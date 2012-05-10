@@ -181,9 +181,9 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
         		 acePlacedRead.getNucleotideSequence(),
         		 (int)acePlacedRead.getGappedStartOffset(),
         		 acePlacedRead.getDirection(),
-        		 acePlacedRead.getValidRange(),
+        		 acePlacedRead.getReadInfo().getValidRange(),
         		 acePlacedRead.getPhdInfo(),
-        		 acePlacedRead.getUngappedFullLength());
+        		 acePlacedRead.getReadInfo().getUngappedFullLength());
         }
         
         /**
