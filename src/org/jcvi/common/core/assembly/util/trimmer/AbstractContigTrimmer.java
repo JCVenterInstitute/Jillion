@@ -27,7 +27,6 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -77,7 +76,7 @@ public abstract class AbstractContigTrimmer<P extends AssembledRead, C extends C
         	readIter = contig.getReadIterator();
         	while(readIter.hasNext()){
         		P placedRead = readIter.next();
-	            Range oldValidRange = placedRead.getValidRange();
+	            Range oldValidRange = placedRead.getReadInfo().getValidRange();
 	            
 	            Range newTrimRange = computeNewTrimRangeFor(placedRead);
 	            //skip reads that are completely trimmed

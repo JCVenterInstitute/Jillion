@@ -29,6 +29,8 @@ import java.util.Date;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.common.core.assembly.DefaultReadInfo;
+import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.assembly.ace.AcePlacedReadAdapter;
 import org.jcvi.common.core.assembly.ace.DefaultPhdInfo;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
@@ -46,7 +48,7 @@ public class TestAcePlacedReadAdapter {
     long referenceIndex = 1234;
     long validRangeIndex = 7;
     Range validRange = Range.create(1,10);
-    
+    ReadInfo readInfo = new DefaultReadInfo(validRange, (int)validRange.getLength()+1);
     @Before
     public void setup(){
         mockPlacedRead = createMock(AssembledRead.class);
@@ -54,7 +56,7 @@ public class TestAcePlacedReadAdapter {
         replay(mockPlacedRead);
         sut = new AcePlacedReadAdapter(mockPlacedRead, date,null);
         reset(mockPlacedRead);
-        expect(mockPlacedRead.getUngappedFullLength()).andStubReturn((int)validRange.getLength()+1);
+        expect(mockPlacedRead.getReadInfo()).andStubReturn(readInfo);
     }
     
     @Test
@@ -86,11 +88,9 @@ public class TestAcePlacedReadAdapter {
     }
     
     @Test
-    public void getValidRange() {
-        Range validRange = Range.create(1,10);
-        expect(mockPlacedRead.getValidRange()).andReturn(validRange);
+    public void getReadInfo() {
         replay(mockPlacedRead);
-        assertEquals(validRange, sut.getValidRange());
+        assertEquals(readInfo, sut.getReadInfo());
         verify(mockPlacedRead);
     }
     @Test

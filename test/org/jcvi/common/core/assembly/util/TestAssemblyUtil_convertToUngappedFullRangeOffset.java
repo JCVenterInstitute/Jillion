@@ -28,6 +28,8 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.common.core.assembly.DefaultReadInfo;
+import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -206,6 +208,7 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
         private final ReferenceEncodedNucleotideSequence seq;
         private Range validRange;
         private final int ungappedLength;
+        private final int fullLength;
         public MockPlacedReadBuilder(String validRangeSeq, int fullLength){
         	this.ungappedLength = validRangeSeq.replaceAll("-", "").length();
            
@@ -213,7 +216,7 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
             		new NucleotideSequenceBuilder(validRangeSeq).build());
             		
             assertTrue(fullLength >= ungappedLength);
-            expect(mock.getUngappedFullLength()).andStubReturn(fullLength);
+            this.fullLength = fullLength;
             expect(mock.getNucleotideSequence()).andStubReturn(seq);
         }
         
@@ -223,7 +226,6 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
         }
         MockPlacedReadBuilder validRange(Range r){
             this.validRange = r;
-            expect(mock.getValidRange()).andStubReturn(validRange);
             return this;
         }
         
@@ -234,6 +236,8 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
         public AssembledRead build() {
             assertEquals("ungapped valid sequence is wrong length",validRange.getLength(),
             		seq.getUngappedLength());
+            ReadInfo readInfo = new DefaultReadInfo(validRange, fullLength);
+            expect(mock.getReadInfo()).andStubReturn(readInfo);
             expect(mock.getDirection()).andStubReturn(dir);
             return mock;
         }

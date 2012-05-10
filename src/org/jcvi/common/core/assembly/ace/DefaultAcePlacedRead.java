@@ -62,11 +62,6 @@ final class DefaultAcePlacedRead implements AcePlacedRead {
         return phdInfo;
     }
 
-    @Override
-    public int getUngappedFullLength() {
-        return placedRead.getUngappedFullLength();
-    }
-
 
     @Override
 	public String toString() {
@@ -122,14 +117,6 @@ final class DefaultAcePlacedRead implements AcePlacedRead {
     @Override
     public Range asRange() {
         return placedRead.asRange();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public Range getValidRange() {
-        return placedRead.getValidRange();
     }
 
     /**

@@ -105,8 +105,8 @@ public class CtgFileWriter implements Closeable{
     private void writePlacedReadHeader(AssembledRead placedRead,NucleotideSequence consensus) throws IOException {
         StringBuilder header = new StringBuilder();
         header.append(String.format("#%s(%d) [", placedRead.getId(), placedRead.getGappedStartOffset()));
-        int validLeft = (int)placedRead.getValidRange().getBegin();
-        int validRight = (int)placedRead.getValidRange().getEnd();
+        int validLeft = (int)placedRead.getReadInfo().getValidRange().getBegin();
+        int validRight = (int)placedRead.getReadInfo().getValidRange().getEnd();
         if(placedRead.getDirection() == Direction.REVERSE){
             header.append("RC");
             int temp = validLeft;

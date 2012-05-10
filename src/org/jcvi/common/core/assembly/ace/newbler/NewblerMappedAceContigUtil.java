@@ -115,8 +115,8 @@ public class NewblerMappedAceContigUtil {
                              read.getNucleotideSequence(),
                              newOffset,
                              read.getDirection(),
-                             read.getValidRange(), read.getPhdInfo(),
-                             read.getUngappedFullLength());
+                             read.getReadInfo().getValidRange(), read.getPhdInfo(),
+                             read.getReadInfo().getUngappedFullLength());
                  }
         	}
         	return builder.build();

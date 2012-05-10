@@ -172,8 +172,8 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
                     read.getNucleotideSequence().toString(), 
                     (int)read.getGappedStartOffset(), 
                     read.getDirection(), 
-                    read.getValidRange(),
-                    read.getUngappedFullLength());
+                    read.getReadInfo().getValidRange(),
+                    read.getReadInfo().getUngappedFullLength());
             for(Entry<TigrAssemblerReadAttribute,String> entry : read.getAttributes().entrySet()){
                 builder.addAttribute(entry.getKey(), entry.getValue());
             }

@@ -26,7 +26,6 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ReadInfo;
-import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
 /**
@@ -67,7 +66,7 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_START_OFFSET, ""+(this.getGappedStartOffset()));
 		attributes.put(TigrAssemblerReadAttribute.GAPPED_SEQUENCE, Nucleotides.asString(this.getNucleotideSequence().asList()));
 		
-		Range validRange = this.getValidRange();
+		Range validRange = this.getReadInfo().getValidRange();
 		if(this.getDirection()== Direction.FORWARD){
 			attributes.put(TigrAssemblerReadAttribute.SEQUENCE_LEFT, ""+(validRange.getBegin()+1));
 			attributes.put(TigrAssemblerReadAttribute.SEQUENCE_RIGHT, ""+(validRange.getEnd()+1));
@@ -118,10 +117,6 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 	@Override
 	public ReadInfo getReadInfo() {
 		return delegatePlacedRead.getReadInfo();
-	}
-	@Override
-	public Range getValidRange() {
-		return delegatePlacedRead.getValidRange();
 	}
 
 	@Override
@@ -201,12 +196,5 @@ public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 	public Range getGappedContigRange() {
 		return delegatePlacedRead.getGappedContigRange();
 	}
-	/**
-    * {@inheritDoc}
-    */
-    @Override
-    public int getUngappedFullLength() {
-        return delegatePlacedRead.getUngappedFullLength();
-    }
 
 }

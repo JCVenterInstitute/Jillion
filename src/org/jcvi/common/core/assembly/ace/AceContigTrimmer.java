@@ -104,7 +104,7 @@ public class AceContigTrimmer extends AbstractContigTrimmer<AcePlacedRead, AceCo
             String trimmedBasecalls, Range newValidRange) {
         builder.addRead(placedRead.getId(), new NucleotideSequenceBuilder(trimmedBasecalls).build(), (int)trimmedOffset, 
                 placedRead.getDirection(), newValidRange, placedRead.getPhdInfo(),
-                placedRead.getUngappedFullLength());
+                placedRead.getReadInfo().getUngappedFullLength());
         final Range sequenceRange = Range.createOfLength(trimmedOffset,trimmedBasecalls.length());
         
         if(currentRanges ==null){

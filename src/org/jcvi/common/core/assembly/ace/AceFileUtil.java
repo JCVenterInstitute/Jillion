@@ -219,7 +219,7 @@ public class AceFileUtil {
         
         NucleotideSequence nucleotideSequence = placedRead.getNucleotideSequence();
 		final NucleotideSequence gappedValidBasecalls = nucleotideSequence; 
-        final Range ungappedValidRange = placedRead.getValidRange();
+        final Range ungappedValidRange = placedRead.getReadInfo().getValidRange();
         final Direction dir = placedRead.getDirection(); 
         final NucleotideSequence fullBasecalls = phd.getNucleotideSequence();
         final List<Nucleotide> phdFullBases = fullBasecalls.asList();

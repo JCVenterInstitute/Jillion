@@ -121,10 +121,6 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
         return dir;
     }
     @Override
-    public Range getValidRange() {
-        return validRange;
-    }
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

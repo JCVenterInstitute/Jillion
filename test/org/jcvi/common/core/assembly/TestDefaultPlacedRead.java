@@ -64,7 +64,7 @@ public class TestDefaultPlacedRead {
         assertEquals(sequence, sut.getNucleotideSequence());
         assertEquals(length, sut.getGappedLength());
         assertEquals(start+ length-1 , sut.getGappedEndOffset());
-        assertEquals(validRange, sut.getValidRange());
+        assertEquals(validRange, sut.getReadInfo().getValidRange());
         verify(sequence);        
     }
     

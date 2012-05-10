@@ -113,8 +113,8 @@ public final class DefaultAsmContig extends AbstractContig<AsmPlacedRead> implem
                     placedRead.getNucleotideSequence().toString(),
                     (int)placedRead.getGappedStartOffset(),
                     placedRead.getDirection(),
-                    placedRead.getValidRange(),
-                    placedRead.getUngappedFullLength(),
+                    placedRead.getReadInfo().getValidRange(),
+                    placedRead.getReadInfo().getUngappedFullLength(),
                     placedRead.isRepeatSurrogate());
         }
         

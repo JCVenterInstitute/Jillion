@@ -60,7 +60,7 @@ public final class AceContigTestUtil {
         assertEquals(expected.getGappedStartOffset(), actual.getGappedStartOffset());
         assertEquals(expected.getGappedEndOffset(), actual.getGappedEndOffset());
         assertEquals(expected.getGappedLength(), actual.getGappedLength());
-        assertEquals(expected.getId(),expected.getValidRange(), actual.getValidRange());
+        assertEquals(expected.getId(),expected.getReadInfo().getValidRange(), actual.getReadInfo().getValidRange());
         assertEquals(expected.getNucleotideSequence().asList(), actual.getNucleotideSequence().asList());
         
     }

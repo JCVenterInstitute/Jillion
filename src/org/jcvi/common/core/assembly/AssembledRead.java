@@ -56,19 +56,7 @@ public interface AssembledRead extends Rangeable{
      * @return the length of this placed object.
      */
     long getGappedLength();
-
-    /**
-     * Get the valid {@link Range} which is ungapped "good" part of the basecalls.  Depending
-     * on what this {@link NucleotideSequence} represents can change the 
-     * meaning of valid range some possible meanings include:
-     * <ul>
-     * <li>the high quality region<li>
-     * <li>the region that aligns to a reference</li>
-     * <li>the region used to compute assembly consensus</li>
-     * </ul>
-     * @return
-     */
-    Range getValidRange();
+    
     /**
      * Get the {@link Direction} that this read is relative to the contig
      * this read was placed in. If the read is {@link Direction#REVERSE}
@@ -100,13 +88,7 @@ public interface AssembledRead extends Rangeable{
      * @return the equivalent zero based gapped reference offset as a long.
      */
     long toReferenceOffset(long gappedValidRangeOffset);
-    /**
-     * Get the ungapped full length of this read <strong>including bases outside of the valid range</strong>.
-     * If this read has any portion of the read that was trimmed off because of bad quality, primer/vector sequence
-     * or because it did not fully align to the reference then those portions still counted by this method.
-     * @return the full length including bases outside of the valid range; always positive.
-     */
-    int getUngappedFullLength();
+
     /**
      * Get the location of this read on its contig
      * as a {@link Range} in gapped contig coordinates.

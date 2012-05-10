@@ -144,7 +144,7 @@ public class AceFileWriter {
             String id = assembledFrom.getId();
             final Phd phd = phdDataStore.get(id);
             final AcePlacedRead realPlacedRead = contig.getRead(id);
-             long fullLength = realPlacedRead.getUngappedFullLength();
+             long fullLength = realPlacedRead.getReadInfo().getUngappedFullLength();
             assembledFromBuilder.append(createAssembledFromRecord(realPlacedRead,fullLength));
             placedReadBuilder.append(createPlacedReadRecord(realPlacedRead, phd));
         }
@@ -163,7 +163,7 @@ public class AceFileWriter {
         	iter = contig.getReadIterator();
         	while(iter.hasNext()){
         		AcePlacedRead read = iter.next();
-        		long fullLength =read.getUngappedFullLength();
+        		long fullLength =read.getReadInfo().getUngappedFullLength();
 	            assembledFroms.add(IdAlignedReadInfo.createFrom(read, fullLength));
         	}
         }finally{
@@ -223,7 +223,7 @@ public class AceFileWriter {
 	    public static IdAlignedReadInfo createFrom(AssembledRead read, long ungappedFullLength){
 	        final Range validRange;
 	        Direction dir = read.getDirection();
-	        Range readValidRange = read.getValidRange();
+	        Range readValidRange = read.getReadInfo().getValidRange();
 	        if(dir==Direction.REVERSE){
 	            validRange = AssemblyUtil.reverseComplementValidRange(readValidRange, ungappedFullLength);
 	        }

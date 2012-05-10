@@ -32,7 +32,6 @@ import org.jcvi.common.core.assembly.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.PlacedReadBuilder;
 import org.jcvi.common.core.assembly.ReadInfo;
-import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -95,16 +94,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
     @Override
 	public ReadInfo getReadInfo() {
 		return delegate.getReadInfo();
-	}
-	/**
-    * {@inheritDoc}
-    */
-    @Override
-    public Range getValidRange() {
-
-        return delegate.getValidRange();
-    }
-    
+	}    
 
 	/**
     * {@inheritDoc}
@@ -126,13 +116,6 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
     @Override
     public long toReferenceOffset(long gappedValidRangeOffset) {
         return delegate.toReferenceOffset(gappedValidRangeOffset);
-    }
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public int getUngappedFullLength() {
-        return delegate.getUngappedFullLength();
     }
     /**
     * {@inheritDoc}
