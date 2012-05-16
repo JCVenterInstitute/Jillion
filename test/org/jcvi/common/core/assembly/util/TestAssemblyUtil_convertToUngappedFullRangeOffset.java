@@ -33,7 +33,7 @@ import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
@@ -123,7 +123,7 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
         assertEquals(3, AssemblyUtil.convertToUngappedFullRangeOffset(mockRead,2));
     }
     
-    private static class NucleotideSequenceReferenceEncodedAdapter implements ReferenceEncodedNucleotideSequence{
+    private static class NucleotideSequenceReferenceEncodedAdapter implements ReferenceMappedNucleotideSequence{
     	private final NucleotideSequence delegate;
     	
 		public NucleotideSequenceReferenceEncodedAdapter(NucleotideSequence delegate) {
@@ -200,12 +200,18 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
 		public Map<Integer, Nucleotide> getDifferenceMap() {
 			throw new UnsupportedOperationException("invalid for adapted sequence");
 		}
+
+		@Override
+		public NucleotideSequence getReferenceSequence() {
+			throw new UnsupportedOperationException("invalid for adapted sequence");
+			
+		}
     	
     }
     private class MockPlacedReadBuilder implements Builder<AssembledRead>{
         private final AssembledRead mock = createMock(AssembledRead.class);
         private Direction dir = Direction.FORWARD;
-        private final ReferenceEncodedNucleotideSequence seq;
+        private final ReferenceMappedNucleotideSequence seq;
         private Range validRange;
         private final int ungappedLength;
         private final int fullLength;

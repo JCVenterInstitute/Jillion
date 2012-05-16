@@ -41,12 +41,12 @@ public interface FastqRecord extends FastXRecord<Nucleotide,NucleotideSequence>{
      * if whitespace in ids is not allowed.
      */
     String getId();
-    NucleotideSequence getNucleotides();
+    NucleotideSequence getNucleotideSequence();
     
-    QualitySequence getQualities();
+    QualitySequence getQualitySequence();
     /**
      * 
-    * Delegates to {@link #getNucleotides()}.
+    * Delegates to {@link #getNucleotideSequence()}.
      */
     @Override
     NucleotideSequence getSequence();

@@ -38,7 +38,7 @@ public class FastqQualitiesDataStoreAdapter extends AbstractFastqDataStoreAdapte
 
     @Override
     public QualitySequence get(String id) throws DataStoreException {
-        return getDataStore().get(id).getQualities();
+        return getDataStore().get(id).getQualitySequence();
     }
    
 }

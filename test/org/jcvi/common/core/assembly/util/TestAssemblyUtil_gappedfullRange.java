@@ -35,7 +35,7 @@ import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
-import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 import org.junit.Before;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
@@ -54,7 +54,7 @@ public class TestAssemblyUtil_gappedfullRange {
         
         List<Nucleotide> ungappedUnComplimentedFullRange = Nucleotides.ungap(gappedValidRange);
         Range validRange = Range.create(0, ungappedUnComplimentedFullRange.size()-1);
-        ReferenceEncodedNucleotideSequence readSequence = createMock(ReferenceEncodedNucleotideSequence.class);
+        ReferenceMappedNucleotideSequence readSequence = createMock(ReferenceMappedNucleotideSequence.class);
         expect(readSequence.iterator()).andReturn(gappedValidRange.iterator());
        ReadInfo readInfo = new DefaultReadInfo(validRange, ungappedUnComplimentedFullRange.size());
         expect(mockPlacedRead.getReadInfo()).andStubReturn(readInfo);
@@ -74,7 +74,7 @@ public class TestAssemblyUtil_gappedfullRange {
                                             Nucleotides.ungap(gappedValidRange));
         Range validRange = Range.create(0, ungappedUnComplimentedFullRange.size()-1);
         
-        ReferenceEncodedNucleotideSequence readSequence = createMock(ReferenceEncodedNucleotideSequence.class);
+        ReferenceMappedNucleotideSequence readSequence = createMock(ReferenceMappedNucleotideSequence.class);
         expect(readSequence.iterator()).andReturn(gappedValidRange.iterator());
         ReadInfo readInfo = new DefaultReadInfo(validRange, ungappedUnComplimentedFullRange.size());
         expect(mockPlacedRead.getReadInfo()).andStubReturn(readInfo);
@@ -92,7 +92,7 @@ public class TestAssemblyUtil_gappedfullRange {
     public void hasBeyondValidRange(){
         List<Nucleotide> ungappedUnComplimentedFullRange = Nucleotides.parse("RRACGTACGTKKK");
         Range validRange = Range.create(2, 9);
-        ReferenceEncodedNucleotideSequence readSequence = createMock(ReferenceEncodedNucleotideSequence.class);
+        ReferenceMappedNucleotideSequence readSequence = createMock(ReferenceMappedNucleotideSequence.class);
         expect(readSequence.iterator()).andReturn(new NucleotideSequenceBuilder("ACGT-ACGT").build().iterator());
         
         ReadInfo readInfo = new DefaultReadInfo(validRange, ungappedUnComplimentedFullRange.size());
@@ -110,7 +110,7 @@ public class TestAssemblyUtil_gappedfullRange {
     public void hasBeyondValidRangeAndUngapped(){
         List<Nucleotide> ungappedUnComplimentedFullRange = Nucleotides.parse("RRACGTACGTKKK");
         Range validRange = Range.create(3, 10);
-        ReferenceEncodedNucleotideSequence readSequence = createMock(ReferenceEncodedNucleotideSequence.class);
+        ReferenceMappedNucleotideSequence readSequence = createMock(ReferenceMappedNucleotideSequence.class);
         expect(readSequence.iterator()).andReturn(new NucleotideSequenceBuilder("MACGTACG").build().iterator());
         
         ReadInfo readInfo = new DefaultReadInfo(validRange, ungappedUnComplimentedFullRange.size());

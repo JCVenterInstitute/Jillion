@@ -27,7 +27,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 /**
  * A {@code AssembledRead} is a read
  * that has been assembled
@@ -113,7 +113,7 @@ public interface AssembledRead extends Rangeable{
      * @return the {@link NucleotideSequence} of this read; will
      * never be null.
      */
-    ReferenceEncodedNucleotideSequence getNucleotideSequence();
+    ReferenceMappedNucleotideSequence getNucleotideSequence();
     
     ReadInfo getReadInfo();
 }

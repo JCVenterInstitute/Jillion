@@ -255,6 +255,7 @@ public class ConsedUtil {
     public static File getLatestAceFile(File editDir, final String filenamePrefix){
         int highestAceFileVersion=Integer.MIN_VALUE;
         File highestAceFile=null;
+        try{
         for(File file : editDir.listFiles(new FileFilter() {
             
             @Override
@@ -272,6 +273,9 @@ public class ConsedUtil {
             }
         }
         return highestAceFile;
+        }catch(NullPointerException e){
+        	throw e;
+        }
     }
     public static File getPhdDirFor(File consedDir){
         if(consedDir==null){

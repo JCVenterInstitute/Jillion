@@ -56,8 +56,8 @@ public class FastqConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 		String id = nextFastq.getId();
 		Phd phd = ArtificialPhd.createNewbler454Phd(
 				id, 
-				nextFastq.getNucleotides(), 
-				nextFastq.getQualities(),
+				nextFastq.getNucleotideSequence(), 
+				nextFastq.getQualitySequence(),
 				requiredComments);
 		
 		PhdInfo info = ConsedUtil.generatePhdInfoFor(fastqFile, id, phdDate);

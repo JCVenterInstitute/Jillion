@@ -27,7 +27,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +39,7 @@ public class TestDefaultPlacedRead {
      * 
      */
     private static final int ungappedLength = 500;
-    ReferenceEncodedNucleotideSequence sequence;
+    ReferenceMappedNucleotideSequence sequence;
     Direction dir = Direction.FORWARD;
     long start = 100;
     long length = 200L;
@@ -48,7 +48,7 @@ public class TestDefaultPlacedRead {
     		String id = "id";
     @Before
     public void setup(){
-        sequence = createMock(ReferenceEncodedNucleotideSequence.class);
+        sequence = createMock(ReferenceMappedNucleotideSequence.class);
         expect(sequence.getLength()).andStubReturn(length);
         replay(sequence);
         sut = new DefaultPlacedRead(id,sequence, start,dir,ungappedLength,validRange);
@@ -88,7 +88,7 @@ public class TestDefaultPlacedRead {
     }
     @Test
     public void differentReadIsNotEqual(){
-        ReferenceEncodedNucleotideSequence differentSequence = createMock(ReferenceEncodedNucleotideSequence.class);
+        ReferenceMappedNucleotideSequence differentSequence = createMock(ReferenceMappedNucleotideSequence.class);
         AssembledRead hasDifferentRead =  new DefaultPlacedRead(id, differentSequence, start,dir,500,validRange);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasDifferentRead);
     }

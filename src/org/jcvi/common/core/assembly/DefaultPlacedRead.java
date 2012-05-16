@@ -33,14 +33,14 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
-import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 
 
 public final class DefaultPlacedRead implements AssembledRead {
 
     private final long start;
     private final byte directionOrdinal;
-    private final ReferenceEncodedNucleotideSequence sequence;
+    private final ReferenceMappedNucleotideSequence sequence;
     private final String id;
     private final ReadInfo readInfo;
     
@@ -60,7 +60,7 @@ public final class DefaultPlacedRead implements AssembledRead {
                  clearRange, ungappedFullLength);
     }
     
-    DefaultPlacedRead(String id, ReferenceEncodedNucleotideSequence sequence, long start, Direction sequenceDirection, int ungappedFullLength, Range validRange){
+    DefaultPlacedRead(String id, ReferenceMappedNucleotideSequence sequence, long start, Direction sequenceDirection, int ungappedFullLength, Range validRange){
        this.id = id;
        this.sequence = sequence;
         this.start= start;
@@ -150,7 +150,7 @@ public final class DefaultPlacedRead implements AssembledRead {
         
     }
     @Override
-    public ReferenceEncodedNucleotideSequence getNucleotideSequence() {
+    public ReferenceMappedNucleotideSequence getNucleotideSequence() {
         return sequence;
     }
     @Override
@@ -317,7 +317,7 @@ public final class DefaultPlacedRead implements AssembledRead {
         @Override
         public AssembledRead build(){
         	
-            ReferenceEncodedNucleotideSequence updatedEncodedBasecalls = new NucleotideSequenceBuilder(currentBasecallsAsString())
+            ReferenceMappedNucleotideSequence updatedEncodedBasecalls = new NucleotideSequenceBuilder(currentBasecallsAsString())
             																.setReferenceHint(reference, offset)
             																.buildReferenceEncodedNucleotideSequence();
             return new DefaultPlacedRead(readId, updatedEncodedBasecalls, offset, dir, ungappedFullLength,clearRange);

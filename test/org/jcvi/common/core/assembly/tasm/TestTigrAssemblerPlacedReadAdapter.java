@@ -33,7 +33,7 @@ import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
-import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestTigrAssemblerPlacedReadAdapter {
@@ -46,11 +46,11 @@ public class TestTigrAssemblerPlacedReadAdapter {
 	String readSequence = "ACGT-ACGT";
 	int ungappedLength = 500;
 	NucleotideSequence consensus = new NucleotideSequenceBuilder("NNNNNACGT-ACGT").build();
-	ReferenceEncodedNucleotideSequence gappedBasecalls = new NucleotideSequenceBuilder(readSequence)
+	ReferenceMappedNucleotideSequence gappedBasecalls = new NucleotideSequenceBuilder(readSequence)
 														.setReferenceHint(consensus, 5)
 														.buildReferenceEncodedNucleotideSequence();
 
-	Read<ReferenceEncodedNucleotideSequence> read = new DefaultRead<ReferenceEncodedNucleotideSequence>(id, gappedBasecalls);
+	Read<ReferenceMappedNucleotideSequence> read = new DefaultRead<ReferenceMappedNucleotideSequence>(id, gappedBasecalls);
 	
 	
 	@Test(expected = NullPointerException.class)

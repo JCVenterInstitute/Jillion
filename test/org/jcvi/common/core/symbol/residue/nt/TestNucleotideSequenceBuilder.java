@@ -24,7 +24,7 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
-import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**
@@ -475,7 +475,7 @@ public class TestNucleotideSequenceBuilder {
     	 									.setReferenceHint(reference, 2);
     	 NucleotideSequence builtSequence = sut.build();
 		assertEquals("ACCCG",builtSequence.toString());
-		assertTrue(builtSequence instanceof ReferenceEncodedNucleotideSequence);
+		assertTrue(builtSequence instanceof ReferenceMappedNucleotideSequence);
     }
     @Test
     public void buildSubRangeWithReference(){
@@ -484,7 +484,7 @@ public class TestNucleotideSequenceBuilder {
     	 									.setReferenceHint(reference, 2);
     	 NucleotideSequence builtSequence = sut.build(Range.create(2, 4));
 		assertEquals("CCG",builtSequence.toString());
-		assertTrue(builtSequence instanceof ReferenceEncodedNucleotideSequence);
+		assertTrue(builtSequence instanceof ReferenceMappedNucleotideSequence);
     }
     
     @Test

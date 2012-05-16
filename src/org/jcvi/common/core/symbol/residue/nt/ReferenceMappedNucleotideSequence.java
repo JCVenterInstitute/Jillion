@@ -25,13 +25,18 @@ package org.jcvi.common.core.symbol.residue.nt;
 
 import java.util.Map;
 /**
- * {@code ReferenceEncodedNucleotideSequence} encodes
- * a NucleotideSequence by referring to a reference sequence
- * and only storing the differences (SNPs) between
- * this NucleotideSequence and its reference. Any {@link #get(int)}
- * that refers to a non-SNP
- * gets delegated to the reference.
- * <p>
+ * {@code ReferenceMappedNucleotideSequence} is
+ * a NucleotideSequence that has been mapped
+ * to another reference NucleotideSequence.
+ * This sub-interface of {@link NucleotideSequence}
+ * which has extra methods to get the differences between
+ * the reference and this sequence and the to get the actual 
+ * reference sequence used.
+ * <p/>
+ * It is possible to reduce the memory footprint for
+ * {@link ReferenceMappedNucleotideSequence}s by only
+ * storing these  2 fields.  All other return values from
+ * {@link NucleotideSequence} can be computed.  
  * This should keep the memory footprint
  * quite low since an underlying sequence should map to a reference 
  * with a high identity.  If the reference is the consensus,
@@ -40,7 +45,7 @@ import java.util.Map;
  *
  *
  */
-public interface ReferenceEncodedNucleotideSequence extends NucleotideSequence{
+public interface ReferenceMappedNucleotideSequence extends NucleotideSequence{
     
     /**
      * Get a Mapping of all the offsets (as Integers) 
@@ -53,4 +58,10 @@ public interface ReferenceEncodedNucleotideSequence extends NucleotideSequence{
      * but may be empty if there are no differences.
      */
     Map<Integer, Nucleotide> getDifferenceMap();
+    /**
+     * Get the Reference sequence that this
+     * sequence is mapped to.
+     * @return
+     */
+    NucleotideSequence getReferenceSequence();
 }
