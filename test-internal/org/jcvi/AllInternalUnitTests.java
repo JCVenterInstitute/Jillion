@@ -21,7 +21,6 @@ package org.jcvi;
 
 import org.jcvi.assembly.AllInternalAssemblyUnitTests;
 import org.jcvi.assembly.contig.AllInternalContigUnitTests;
-import org.jcvi.auth.AllAuthUnitTests;
 import org.jcvi.common.internal.TestTigrPositionFileParser;
 import org.jcvi.common.internal.command.grid.TestJcviQueue;
 import org.jcvi.glyph.qualClass.AllQualityClassUnitTests;
@@ -42,8 +41,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestTigrPositionFileParser.class,
         
         AllInternalContigUnitTests.class,
-        AllInternalAssemblyUnitTests.class,
-        AllAuthUnitTests.class
+        AllInternalAssemblyUnitTests.class
     }
     )
 public class AllInternalUnitTests {
