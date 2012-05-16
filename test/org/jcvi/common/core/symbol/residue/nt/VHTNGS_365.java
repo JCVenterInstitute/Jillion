@@ -7,7 +7,7 @@ import org.jcvi.common.core.symbol.residue.nt.DefaultReferenceEncodedNucleotideS
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**
@@ -37,7 +37,7 @@ public class VHTNGS_365 {
 		//read should have snps 
 		//{84=N, 133=-, 146=N}
 		
-		ReferenceEncodedNucleotideSequence seq = new DefaultReferenceEncodedNucleotideSequence(consensus, 
+		ReferenceMappedNucleotideSequence seq = new DefaultReferenceEncodedNucleotideSequence(consensus, 
 				"GGAT-AAC-TAAC-AAAGT-AAATT-CTGTGA-TT-G-AAAAG-A-TGAAT-ACTC-AG-TTTG-AAG-CT-G-TT-GGG-AAAN-A-GTT-CAAC-AA-T-C-T-AGAG-AGAAG--ACT-GG-AAAACTT--AA-T-AAAAAG-NT-GGAA-GAT-GGGTTTCTAGA-TGTATGG-AC"
 				,
 				0);
@@ -57,7 +57,7 @@ public class VHTNGS_365 {
 		//read should have snps 
 		//{84=N, 133=-, 146=R}
 		
-		ReferenceEncodedNucleotideSequence seq = new DefaultReferenceEncodedNucleotideSequence(consensus, 
+		ReferenceMappedNucleotideSequence seq = new DefaultReferenceEncodedNucleotideSequence(consensus, 
 				"GGAT-AAC-TAAC-AAAGT-AAATT-CTGTGA-TT-G-AAAAG-A-TGAAT-ACTC-AG-TTTG-AAG-CT-G-TT-GGG-AAAN-A-GTT-CAAC-AA-T-C-T-AGAG-AGAAG--ACT-GG-AAAACTT--AA-T-AAAAAG-RT-GGAA-GAT-GGGTTTCTAGA-TGTATGG-AC"
 				,
 				0);

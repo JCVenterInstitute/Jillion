@@ -90,21 +90,21 @@ public class DefaultFastqRecord implements FastqRecord {
     }
 
     /**
-     * Delegates to {@link #getNucleotides()}.
-     * @see #getNucleotides()
+     * Delegates to {@link #getNucleotideSequence()}.
+     * @see #getNucleotideSequence()
      */
      @Override
      public NucleotideSequence getSequence() {
-         return getNucleotides();
+         return getNucleotideSequence();
      }
      
     @Override
-    public NucleotideSequence getNucleotides() {
+    public NucleotideSequence getNucleotideSequence() {
         return nucleotides;
     }
 
     @Override
-    public QualitySequence getQualities() {
+    public QualitySequence getQualitySequence() {
         return qualities;
     }
     @Override
@@ -142,10 +142,10 @@ public class DefaultFastqRecord implements FastqRecord {
         if (!id.equals(other.getId())) {
             return false;
         }
-        if (!nucleotides.asList().equals(other.getNucleotides().asList())) {
+        if (!nucleotides.asList().equals(other.getNucleotideSequence().asList())) {
             return false;
         }
-        if (!qualities.asList().equals(other.getQualities().asList())) {
+        if (!qualities.asList().equals(other.getQualitySequence().asList())) {
             return false;
         }
         return true;
@@ -171,12 +171,12 @@ public class DefaultFastqRecord implements FastqRecord {
             builder.append(" ").append(getComment());
         }
         builder.append("\n")
-        .append(getNucleotides()).append("\n")
+        .append(getNucleotideSequence()).append("\n")
         .append("+");
         if(writeIdOnQualityLine){
             builder.append(id);
         }
-        builder.append("\n").append(qualityCodec.encode(getQualities())).append("\n");
+        builder.append("\n").append(qualityCodec.encode(getQualitySequence())).append("\n");
         return builder.toString();
 	}
    

@@ -40,7 +40,7 @@ public class FastqNucleotideDataStoreAdapter extends AbstractFastqDataStoreAdapt
 
     @Override
     public NucleotideSequence get(String id) throws DataStoreException {
-        return getDataStore().get(id).getNucleotides();
+        return getDataStore().get(id).getNucleotideSequence();
     }
    
 }

@@ -31,7 +31,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
-import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 
 public class AcePlacedReadAdapter implements AcePlacedRead{
 
@@ -67,7 +67,7 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         return placedRead.getDirection();
     }
     @Override
-    public ReferenceEncodedNucleotideSequence getNucleotideSequence() {
+    public ReferenceMappedNucleotideSequence getNucleotideSequence() {
         return placedRead.getNucleotideSequence();
     }
     @Override

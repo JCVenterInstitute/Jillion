@@ -24,8 +24,8 @@
 package org.jcvi.common.core.assembly;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -36,13 +36,17 @@ public abstract class AbstractContig<T extends AssembledRead> implements Contig<
     private NucleotideSequence consensus;
     private String id;
     private Map<String, T> mapById;
-    private final int numberOfReads;
-    protected AbstractContig(String id, NucleotideSequence consensus, Set<T> placedReads){
+    protected AbstractContig(String id, NucleotideSequence consensus, Set<T> assembledReads){
+    	if(id==null){
+    		throw new NullPointerException("id can not be null");
+    	}
+    	if(consensus==null){
+    		throw new NullPointerException("consensus can not be null");
+    	}
         this.id = id;
         this.consensus = consensus;
-        this.numberOfReads = placedReads.size();
-        mapById = new LinkedHashMap<String, T>(numberOfReads+1, 1F);
-        for(T r : placedReads){
+        mapById = new LinkedHashMap<String, T>(assembledReads.size()+1, 1F);
+        for(T r : assembledReads){
             mapById.put(r.getId(), r);
         }
        
@@ -60,7 +64,7 @@ public abstract class AbstractContig<T extends AssembledRead> implements Contig<
 
     @Override
     public int getNumberOfReads() {
-        return numberOfReads;
+        return mapById.size();
     }
     @Override
     public T getRead(String id) {
@@ -79,23 +83,17 @@ public abstract class AbstractContig<T extends AssembledRead> implements Contig<
         return mapById.containsKey(placedReadId);
     }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((consensus == null) ? 0 : consensus.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + numberOfReads;
+				+ consensus.hashCode();
+		result = prime * result +  id.hashCode();
+		result = prime * result +  mapById.hashCode();
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -107,27 +105,31 @@ public abstract class AbstractContig<T extends AssembledRead> implements Contig<
 		if (!(obj instanceof Contig)) {
 			return false;
 		}
-		Contig other = (Contig) obj;
+		Contig<?> other = (Contig<?>) obj;
 		
-		if (consensus == null) {
-			if (other.getConsensus()!= null) {
+		if (!id.equals(other.getId())) {
+			return false;
+		}
+		if (!consensus.equals(other.getConsensus())) {
+			return false;
+		}
+		if (getNumberOfReads()!=other.getNumberOfReads()) {
+			return false;
+		}
+		for(Entry<String, T> entry : mapById.entrySet()){
+			String readId = entry.getKey();
+			if(!other.containsRead(readId)){
 				return false;
 			}
-		} else if (!consensus.equals(other.getConsensus())) {
-			return false;
-		}
-		if (id == null) {
-			if (other.getId() != null) {
+			if(!entry.getValue().equals(other.getRead(readId))){
 				return false;
 			}
-		} else if (!id.equals(other.getId())) {
-			return false;
 		}
-		if (numberOfReads != other.getNumberOfReads()) {
-			return false;
-		}
+		
 		return true;
 	}
+
+	
     
     
 }

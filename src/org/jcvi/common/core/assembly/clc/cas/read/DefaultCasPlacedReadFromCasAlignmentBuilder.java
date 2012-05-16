@@ -35,7 +35,7 @@ import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 
 public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<DefaultCasPlacedRead>{
@@ -157,7 +157,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
             validRange = AssemblyUtil.reverseComplementValidRange(validRange, fullUngappedLength);
         }
         
-        Read<ReferenceEncodedNucleotideSequence> read = new DefaultRead<ReferenceEncodedNucleotideSequence>(readId,
+        Read<ReferenceMappedNucleotideSequence> read = new DefaultRead<ReferenceMappedNucleotideSequence>(readId,
         		gappedSequenceBuilder
         		.setReferenceHint(gappedReference, (int)startOffset)
         		.buildReferenceEncodedNucleotideSequence());

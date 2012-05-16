@@ -535,37 +535,37 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         return codecDecider.encodeSequence();
     }
     /**
-     * Return the built {@link NucleotideSequence} as {@link ReferenceEncodedNucleotideSequence} 
+     * Return the built {@link NucleotideSequence} as {@link ReferenceMappedNucleotideSequence} 
      * assuming {@link #setReferenceHint(NucleotideSequence, int)} has been set.
      * This is the same as {@code (ReferenceEncodedNucleotideSequence) build()}
-     * @return the built NucleotideSequence as a {@link ReferenceEncodedNucleotideSequence}.
+     * @return the built NucleotideSequence as a {@link ReferenceMappedNucleotideSequence}.
      * @throws IllegalStateException if a reference
      * has not been provided via the {@link #setReferenceHint(NucleotideSequence, int)}
      */
-    public ReferenceEncodedNucleotideSequence buildReferenceEncodedNucleotideSequence() {    
+    public ReferenceMappedNucleotideSequence buildReferenceEncodedNucleotideSequence() {    
     	if(codecDecider.alignedReference ==null){
     		throw new IllegalStateException("must provide reference");
     	}
-        return (ReferenceEncodedNucleotideSequence)build();
+        return (ReferenceMappedNucleotideSequence)build();
     }
     /**
      * Return the built {@link NucleotideSequence} using only
-     * the given nucleotides as a {@link ReferenceEncodedNucleotideSequence} 
+     * the given nucleotides as a {@link ReferenceMappedNucleotideSequence} 
      * assuming {@link #setReferenceHint(NucleotideSequence, int)} has been set.
      * This is the same as {@code (ReferenceEncodedNucleotideSequence) build(range)}.
      * If the given range is a subrange this will be treated as if 
      * {@link #setReferenceHint(NucleotideSequence, int)} was called using 
      * {@literal gappedStartOffset + range.getstart() }.
      * @param range the range of nucleotides to build (gapped).
-     * @return the built NucleotideSequence as a {@link ReferenceEncodedNucleotideSequence}.
+     * @return the built NucleotideSequence as a {@link ReferenceMappedNucleotideSequence}.
      * @throws IllegalStateException if a reference
      * has not been provided via the {@link #setReferenceHint(NucleotideSequence, int)}
      */
-    public ReferenceEncodedNucleotideSequence buildReferenceEncodedNucleotideSequence(Range range) {    
+    public ReferenceMappedNucleotideSequence buildReferenceEncodedNucleotideSequence(Range range) {    
     	if(codecDecider.alignedReference ==null){
     		throw new IllegalStateException("must provide reference");
     	}
-        return (ReferenceEncodedNucleotideSequence)build(range);
+        return (ReferenceMappedNucleotideSequence)build(range);
     }
     /**
      * Provide another {@link NucleotideSequence} and a start coordinate

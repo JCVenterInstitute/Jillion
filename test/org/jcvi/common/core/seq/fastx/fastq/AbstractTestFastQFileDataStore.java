@@ -158,9 +158,9 @@ public abstract class AbstractTestFastQFileDataStore {
     private void assertFastQRecordsEqual(FastqRecord expected,
             FastqRecord actual) {
         assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getNucleotides().asList(), actual
-                .getNucleotides().asList());
-        assertEquals(expected.getQualities().asList(), actual.getQualities()
+        assertEquals(expected.getNucleotideSequence().asList(), actual
+                .getNucleotideSequence().asList());
+        assertEquals(expected.getQualitySequence().asList(), actual.getQualitySequence()
                 .asList());
         assertTrue(ObjectsUtil.nullSafeEquals(expected.getComment(), actual
                 .getComment()));

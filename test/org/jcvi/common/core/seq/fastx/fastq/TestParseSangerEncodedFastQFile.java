@@ -51,16 +51,16 @@ public class TestParseSangerEncodedFastQFile {
     public void qualityValueStartsWithAmpersand() throws DataStoreException{
         FastqRecord actual = sut.get("SOLEXA1_0007:1:13:1658:1080#GGCTAC/2");
         assertEquals("CGTAGTACGATATACGCGCGTGTGTACTGCTACGTCTCACTTCTTTTTCCCCACGGGATGTTATTTCCCTTTTAAGCTTCCTGTACAGTTTTGCCGGGCT",
-                Nucleotides.asString(actual.getNucleotides().asList()));
+                Nucleotides.asString(actual.getNucleotideSequence().asList()));
         assertEquals(QUALITY_CODEC.decode("@;7C9;A)565A;4..9;2;45,?@###########################################################################").asList(),
-                actual.getQualities().asList());
+                actual.getQualitySequence().asList());
     }
     @Test
     public void normalRecord() throws DataStoreException{
         FastqRecord actual = sut.get("SOLEXA1_0007:2:13:163:254#GATCAG/2");
         assertEquals("CGTAGTACGATATACGCGCGTGTACTGCTACGTCTCACTTTCGCAAGATTGCTCAGCTCATTGATGCTCAATGCTGGGCCATATCTCTTTTCTTTTTTTC",
-                Nucleotides.asString(actual.getNucleotides().asList()));
+                Nucleotides.asString(actual.getNucleotideSequence().asList()));
         assertEquals(QUALITY_CODEC.decode("HHHHGHHEHHHHHE=HAHCEGEGHAG>CHH>EG5@>5*ECE+>AEEECGG72B&A*)569B+03B72>5.A>+*A>E+7A@G<CAD?@############").asList(),
-                actual.getQualities().asList());
+                actual.getQualitySequence().asList());
     }
 }

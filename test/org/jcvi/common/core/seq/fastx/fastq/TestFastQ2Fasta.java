@@ -80,8 +80,8 @@ public class TestFastQ2Fasta {
 	        while(iter.hasNext()){
 	        	FastqRecord fastQRecord = iter.next();
 	            String id = fastQRecord.getId();
-	            assertEquals("qualities",fastQRecord.getQualities().asList(), qualFastaDataStore.get(id).getSequence().asList());
-	            assertEquals("seq",fastQRecord.getNucleotides().asList(), seqFastaDataStore.get(id).getSequence().asList());
+	            assertEquals("qualities",fastQRecord.getQualitySequence().asList(), qualFastaDataStore.get(id).getSequence().asList());
+	            assertEquals("seq",fastQRecord.getNucleotideSequence().asList(), seqFastaDataStore.get(id).getSequence().asList());
 	        }
         }finally{
         	IOUtil.closeAndIgnoreErrors(iter);

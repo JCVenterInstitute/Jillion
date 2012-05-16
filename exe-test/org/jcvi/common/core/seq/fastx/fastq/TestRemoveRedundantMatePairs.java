@@ -121,10 +121,10 @@ public class TestRemoveRedundantMatePairs {
 			out1.write(left.toFormattedString().getBytes(IOUtil.UTF_8));
 			out2.write(right.toFormattedString().getBytes(IOUtil.UTF_8));
 			for(int i=0; i<numDups; i++){
-				FastqRecord newLeft = new DefaultFastqRecord(left.getId()+i, left.getNucleotides(), left.getQualities());
+				FastqRecord newLeft = new DefaultFastqRecord(left.getId()+i, left.getNucleotideSequence(), left.getQualitySequence());
 				out1.write(newLeft.toFormattedString().getBytes(IOUtil.UTF_8));
 				
-				FastqRecord newRight= new DefaultFastqRecord(right.getId()+i, right.getNucleotides(), right.getQualities());
+				FastqRecord newRight= new DefaultFastqRecord(right.getId()+i, right.getNucleotideSequence(), right.getQualitySequence());
 				
 				out2.write(newRight.toFormattedString().getBytes(IOUtil.UTF_8));
 			}
@@ -150,19 +150,19 @@ protected MatePairFiles createCompletelyRedundantUpToNBasesData(int numDups) thr
 			out2.write(right.toFormattedString().getBytes(IOUtil.UTF_8));
 			for(int i=0; i<numDups; i++){
 				FastqRecord newLeft = new DefaultFastqRecord(left.getId()+i, 
-						new NucleotideSequenceBuilder(left.getNucleotides())
+						new NucleotideSequenceBuilder(left.getNucleotideSequence())
 								.subSequence(subRange)
 								.append("NNNNNNNNN")
 								.build(), 
-				left.getQualities());
+				left.getQualitySequence());
 				out1.write(newLeft.toFormattedString().getBytes(IOUtil.UTF_8));
 				
 				FastqRecord newRight= new DefaultFastqRecord(right.getId()+i, 
-						new NucleotideSequenceBuilder(right.getNucleotides())
+						new NucleotideSequenceBuilder(right.getNucleotideSequence())
 							.subSequence(subRange)
 							.append("NNNNNNNNN")
 							.build(), 
-				right.getQualities());
+				right.getQualitySequence());
 				
 				out2.write(newRight.toFormattedString().getBytes(IOUtil.UTF_8));
 		

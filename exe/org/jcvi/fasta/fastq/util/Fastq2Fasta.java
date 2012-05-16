@@ -86,7 +86,7 @@ public class Fastq2Fasta extends AbstractFilteredFastqFileVisitor {
          if(qualOut!=null){
              try {
                  qualOut.write(new DefaultQualityFastaRecord(id, 
-                         fastQ.getQualities()).toString().getBytes());
+                         fastQ.getQualitySequence()).toString().getBytes());
              } catch (IOException e) {
                  throw new RuntimeException("could not write to quality data for "+ id, e);
              }
@@ -94,7 +94,7 @@ public class Fastq2Fasta extends AbstractFilteredFastqFileVisitor {
          if(seqOut!=null){
              try {
                  seqOut.write(new DefaultNucleotideSequenceFastaRecord(
-                         id,fastQ.getComment(),fastQ.getNucleotides()) 
+                         id,fastQ.getComment(),fastQ.getNucleotideSequence()) 
                          .toString().getBytes());
              } catch (IOException e) {
                  throw new RuntimeException("could not write to sequence data for "+ id, e);

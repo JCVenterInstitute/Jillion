@@ -41,7 +41,7 @@ import org.jcvi.common.core.io.ValueSizeStrategy;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.util.iter.ArrayIterator;
 
-final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotideSequence implements ReferenceEncodedNucleotideSequence{
+final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotideSequence implements ReferenceMappedNucleotideSequence{
 
 	private static final int BITS_PER_SNP_VALUE=4;
     private final int length;
@@ -421,5 +421,12 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
      public String toString(){
          return Nucleotides.asString(asList());
      }
+
+
+
+	@Override
+	public NucleotideSequence getReferenceSequence() {
+		return reference;
+	}
 
 }

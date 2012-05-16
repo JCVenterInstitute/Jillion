@@ -31,7 +31,7 @@ import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.ReferenceEncodedNucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,13 +46,13 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
 
     GapQualityValueStrategies sut;
     private AssembledRead placedRead;
-    private ReferenceEncodedNucleotideSequence sequence;
+    private ReferenceMappedNucleotideSequence sequence;
     PhredQuality expectedQuality = PhredQuality.valueOf(42);
     @Before
     public void setup(){
         sut= getGapQualityValueStrategies();
         placedRead= createMock(AssembledRead.class);
-        sequence = createMock(ReferenceEncodedNucleotideSequence.class);
+        sequence = createMock(ReferenceMappedNucleotideSequence.class);
     }
     
     protected abstract GapQualityValueStrategies getGapQualityValueStrategies();

@@ -58,7 +58,7 @@ public class TestReferenceEncodedNucleotideSequence {
         assertDecodedCorrectly(offset, sequenceAsString);
     }
     private void assertDecodedCorrectly(int offset, String sequenceAsString) {
-        ReferenceEncodedNucleotideSequence sut = new DefaultReferenceEncodedNucleotideSequence(encodedReference,sequenceAsString, offset);
+        ReferenceMappedNucleotideSequence sut = new DefaultReferenceEncodedNucleotideSequence(encodedReference,sequenceAsString, offset);
         assertEquals(sequenceAsString.length(), sut.getLength());
         assertEquals(sequenceAsString, Nucleotides.asString(sut.asList()));
         for(int i=0; i< sequenceAsString.length(); i++){
