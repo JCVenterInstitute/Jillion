@@ -20,7 +20,6 @@
 package org.jcvi.assembly;
 
 import org.jcvi.assembly.contig.AllInternalContigUnitTests;
-import org.jcvi.common.core.assembly.util.trimmer.AllInternalTrimmingUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -33,8 +32,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        AllInternalContigUnitTests.class,        
-        AllInternalTrimmingUnitTests.class
+        AllInternalContigUnitTests.class        
     }
     )
 public class AllInternalAssemblyUnitTests {
