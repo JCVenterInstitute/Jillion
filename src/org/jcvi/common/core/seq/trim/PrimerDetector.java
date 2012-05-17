@@ -288,7 +288,7 @@ public class PrimerDetector {
 		return numberOfUngappedMatches/(double)alignment.getAlignmentLength();
 	}
 
-	public final class PrimerHit{
+	public static final class PrimerHit{
     	private final String id;
     	private final DirectedRange directedRange;
     	
