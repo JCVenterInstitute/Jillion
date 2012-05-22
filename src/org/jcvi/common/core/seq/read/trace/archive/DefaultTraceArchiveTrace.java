@@ -53,15 +53,17 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
     public SangerPeak getPeaks() {      
     	PositionFastaDataStore datastore = null;
     	CloseableIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iterator =null;
+    	InputStream in=null;
         try{
-            datastore =DefaultPositionFastaFileDataStore.create(getInputStreamFor(TraceInfoField.PEAK_FILE));
+        	in = getInputStreamFor(TraceInfoField.PEAK_FILE);
+            datastore =DefaultPositionFastaFileDataStore.create(in);
             iterator = datastore.iterator();
 			return new SangerPeak(iterator.next().getSequence().asList());
         } catch (Exception e) {
             throw new IllegalArgumentException("peak file not valid",e);
         }
         finally{
-            IOUtil.closeAndIgnoreErrors(iterator,datastore);
+            IOUtil.closeAndIgnoreErrors(in,iterator,datastore);
         }
     }
 
