@@ -28,7 +28,7 @@ import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 public class FlowgramQualityFastaRecord extends DefaultQualityFastaRecord{
 
     public FlowgramQualityFastaRecord(String id, Flowgram flowgram) {
-        super(id, null,flowgram.getQualities());
+        super(id, null,flowgram.getQualitySequence());
     }
 
 }

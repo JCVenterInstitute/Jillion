@@ -230,7 +230,7 @@ public class ArtificialPhd implements Phd{
     }
 
     @Override
-    public QualitySequence getQualities() {
+    public QualitySequence getQualitySequence() {
         return qualities;
     }
 }

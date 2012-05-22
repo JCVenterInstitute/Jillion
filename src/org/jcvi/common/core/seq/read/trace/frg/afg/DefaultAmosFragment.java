@@ -98,7 +98,7 @@ public class DefaultAmosFragment implements AmosFragment{
     * {@inheritDoc}
     */
     @Override
-    public QualitySequence getQualities() {
+    public QualitySequence getQualitySequence() {
         return qualities;
     }
 

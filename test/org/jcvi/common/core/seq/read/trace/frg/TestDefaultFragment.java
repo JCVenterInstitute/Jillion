@@ -62,7 +62,7 @@ public class TestDefaultFragment {
     public void traceConstructor(){
         Trace trace = createMock(Trace.class);
         expect(trace.getNucleotideSequence()).andReturn(bases);
-        expect(trace.getQualities()).andReturn(qualities);
+        expect(trace.getQualitySequence()).andReturn(qualities);
         replay(trace);
         DefaultFragment traceSut =new DefaultFragment(id,trace, validRange, clearRange,library,comment);
         
@@ -76,7 +76,7 @@ public class TestDefaultFragment {
         assertEquals(id, fragment.getId());
         assertEquals(bases, fragment.getNucleotideSequence());
         assertEquals(bases, fragment.getNucleotideSequence());
-        assertEquals(qualities, fragment.getQualities());
+        assertEquals(qualities, fragment.getQualitySequence());
         assertEquals(validRange, fragment.getValidRange());
         assertEquals(clearRange, fragment.getVectorClearRange());
         assertEquals(library, fragment.getLibrary());

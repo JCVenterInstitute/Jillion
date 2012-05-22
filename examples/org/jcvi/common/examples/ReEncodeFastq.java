@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.datastore.DefaultIncludeDataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
@@ -31,7 +29,10 @@ public class ReEncodeFastq {
 		List<String> idsToInclude = new ArrayList<String>();//put names here
 		
 		FastXFilter filter = new IncludeFastXIdFilter(idsToInclude);
-		
+		//for an example, we will tell the parser that
+		//this fastqFile has sanger encoded quality values
+		//but other factory methods can auto-detect the quality encoding
+		//for us for a minor performance penalty.
 		FastqDataStore datastore = LargeFastqFileDataStore.create(fastqFile, 
 												filter, FastqQualityCodec.SANGER);
 		CloseableIterator<FastqRecord> iter=null;
@@ -39,6 +40,7 @@ public class ReEncodeFastq {
 			iter = datastore.iterator();
 			while(iter.hasNext()){
 				FastqRecord fastq = iter.next();
+				//here we are re-encoding it in illumina format!
 				out.print(fastq.toFormattedString(FastqQualityCodec.ILLUMINA));
 			}
 		}finally{

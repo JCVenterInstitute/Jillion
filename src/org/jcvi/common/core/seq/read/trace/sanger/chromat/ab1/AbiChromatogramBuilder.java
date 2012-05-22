@@ -491,8 +491,8 @@ public class AbiChromatogramBuilder implements AbiChromatogramFileVisitor, org.j
         * {@inheritDoc}
         */
         @Override
-        public QualitySequence getQualities() {
-            return delegate.getQualities();
+        public QualitySequence getQualitySequence() {
+            return delegate.getQualitySequence();
         }
         
     }

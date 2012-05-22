@@ -86,7 +86,7 @@ public class Chromatogram2fasta {
     	//is worth cleaner code, fix if this becomes a bottleneck.
     	seqOut.write(new DefaultNucleotideSequenceFastaRecord(id, chromo.getNucleotideSequence())
                              .toString().getBytes());
-    	qualOut.write(new DefaultQualityFastaRecord(id, chromo.getQualities())
+    	qualOut.write(new DefaultQualityFastaRecord(id, chromo.getQualitySequence())
                              .toString().getBytes());
     	posOut.write(new DefaultPositionSequenceFastaRecord(id, chromo.getPeaks().getData())
                              .toString().getBytes());

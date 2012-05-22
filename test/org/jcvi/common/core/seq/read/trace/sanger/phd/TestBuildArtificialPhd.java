@@ -64,7 +64,7 @@ public class TestBuildArtificialPhd {
         Phd phd = new ArtificialPhd(id,mockBasecalls, mockQualities, numberOfPositionsForEachPeak);
         assertEquals(id, phd.getId());
         assertEquals(mockBasecalls, phd.getNucleotideSequence());
-        assertEquals(mockQualities, phd.getQualities());
+        assertEquals(mockQualities, phd.getQualitySequence());
         Sequence<ShortSymbol> actualPeaks = phd.getPeaks().getData();
         for(int i=0; i< lengthOfBases; i++){
             assertEquals(Short.valueOf((short)(i*numberOfPositionsForEachPeak + numberOfPositionsForEachPeak)), actualPeaks.get(i).getValue());
@@ -84,7 +84,7 @@ public class TestBuildArtificialPhd {
         Phd phd =new ArtificialPhd(id,mockBasecalls, mockQualities, mockProperties, mockTags,numberOfPositionsForEachPeak);
         assertEquals(id, phd.getId());
         assertEquals(mockBasecalls, phd.getNucleotideSequence());
-        assertEquals(mockQualities, phd.getQualities());
+        assertEquals(mockQualities, phd.getQualitySequence());
         Sequence<ShortSymbol> actualPeaks = phd.getPeaks().getData();
         for(int i=0; i< lengthOfBases; i++){
             assertEquals(Short.valueOf((short)(i*numberOfPositionsForEachPeak + numberOfPositionsForEachPeak)), actualPeaks.get(i).getValue());

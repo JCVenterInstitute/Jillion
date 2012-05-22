@@ -81,7 +81,7 @@ public class DefaultPhd implements Phd {
     }
 
     @Override
-    public QualitySequence getQualities() {
+    public QualitySequence getQualitySequence() {
         return qualities;
     }
 
@@ -128,7 +128,7 @@ public class DefaultPhd implements Phd {
         if (!peaks.getData().asList().equals(other.getPeaks().getData().asList())){
             return false;
         }
-        if (!qualities.asList().equals(other.getQualities().asList())){
+        if (!qualities.asList().equals(other.getQualitySequence().asList())){
             return false;
         }
         return true;

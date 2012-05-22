@@ -20,7 +20,7 @@ public class TestTraceQualityDataStoreAdapter extends EasyMockSupport{
 	@Before
 	public void setup(){
 		Trace mockTrace = createMock(Trace.class);
-		expect(mockTrace.getQualities()).andStubReturn(expectedQualities);
+		expect(mockTrace.getQualitySequence()).andStubReturn(expectedQualities);
 		
 		Map<String,Trace> map = new HashMap<String, Trace>();
 		map.put(id, mockTrace);

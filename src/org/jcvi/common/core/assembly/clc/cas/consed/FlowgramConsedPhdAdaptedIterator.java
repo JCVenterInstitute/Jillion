@@ -55,7 +55,7 @@ public class FlowgramConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 		Phd phd= ArtificialPhd.createNewbler454Phd(
 				id, 
 				nextFlowgram.getNucleotideSequence(), 
-				nextFlowgram.getQualities(),
+				nextFlowgram.getQualitySequence(),
 				requiredComments);
 		
 		PhdInfo phdInfo = ConsedUtil.generatePhdInfoFor(sffFile, id, phdDate);

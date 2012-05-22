@@ -44,5 +44,5 @@ public interface Trace extends Read<NucleotideSequence>{
      * Get the quality data of this trace as a {@link QualitySequence}.
      * @return a {@link QualitySequence}, should never be null.
      */
-    QualitySequence getQualities();
+    QualitySequence getQualitySequence();
 }

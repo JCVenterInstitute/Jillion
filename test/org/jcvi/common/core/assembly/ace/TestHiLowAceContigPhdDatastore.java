@@ -102,7 +102,7 @@ public class TestHiLowAceContigPhdDatastore {
                 19);
         Phd actual = sut.get("K26-217c");
         assertEquals(expected.getNucleotideSequence().asList(),actual.getNucleotideSequence().asList());
-        assertEquals(expected.getQualities().asList(),actual.getQualities().asList());
+        assertEquals(expected.getQualitySequence().asList(),actual.getQualitySequence().asList());
     }
 
     
@@ -169,7 +169,7 @@ public class TestHiLowAceContigPhdDatastore {
                 19);
         Phd actual = sut.get(id);
         assertEquals(expected.getNucleotideSequence().asList(),actual.getNucleotideSequence().asList());
-        assertEquals(expected.getQualities().asList(),actual.getQualities().asList());
+        assertEquals(expected.getQualitySequence().asList(),actual.getQualitySequence().asList());
     }
     /**
      * @param expectedQualities

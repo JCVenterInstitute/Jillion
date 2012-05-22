@@ -79,7 +79,7 @@ public class PhdWriter {
 
     private static String writeCalledInfo( Phd phd){
         List<Nucleotide> bases = phd.getNucleotideSequence().asList();
-        List<PhredQuality> qualities = phd.getQualities().asList();
+        List<PhredQuality> qualities = phd.getQualitySequence().asList();
         List<ShortSymbol> peaks = phd.getPeaks().getData().asList();
         StringBuilder result = new StringBuilder();
         for(int i=0;i< bases.size(); i++){

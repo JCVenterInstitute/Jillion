@@ -70,8 +70,8 @@ public class DefaultFileSangerTrace implements FileSangerTrace {
     }
 
     @Override
-    public QualitySequence getQualities() {
-        return trace.getQualities();
+    public QualitySequence getQualitySequence() {
+        return trace.getQualitySequence();
     }
 
 }

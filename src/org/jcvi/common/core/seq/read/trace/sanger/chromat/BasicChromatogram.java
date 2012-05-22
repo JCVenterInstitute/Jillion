@@ -64,7 +64,7 @@ public class BasicChromatogram implements Chromatogram {
     public BasicChromatogram(Chromatogram c){
         this(c.getId(),
         		c.getNucleotideSequence(),
-                c.getQualities(),
+                c.getQualitySequence(),
                 c.getPeaks(),
                c.getChannelGroup(),
                 c.getComments());
@@ -161,7 +161,7 @@ public class BasicChromatogram implements Chromatogram {
         return channelGroup;
     }
     @Override
-    public QualitySequence getQualities() {
+    public QualitySequence getQualitySequence() {
         return qualities;
     }
     @Override

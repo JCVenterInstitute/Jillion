@@ -130,8 +130,8 @@ public final class SinglePhdFile implements  Phd{
 		return delegatePhd.getNucleotideSequence();
 	}
 	@Override
-	public QualitySequence getQualities() {
-		return delegatePhd.getQualities();
+	public QualitySequence getQualitySequence() {
+		return delegatePhd.getQualitySequence();
 	}
 	@Override
 	public String getId() {

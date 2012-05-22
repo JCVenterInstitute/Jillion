@@ -64,8 +64,8 @@ public class TraceFileTraceArchiveTrace extends AbstractTraceArchiveTrace {
     }
 
     @Override
-    public QualitySequence getQualities() {
-        return trace.getQualities();
+    public QualitySequence getQualitySequence() {
+        return trace.getQualitySequence();
     }
 
 }

@@ -86,7 +86,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
     }
 
     @Override
-    public QualitySequence getQualities() {
+    public QualitySequence getQualitySequence() {
         QualitySequenceFastaDataStore datastore =null;
         CloseableIterator<QualitySequenceFastaRecord> iterator =null;
         try{
