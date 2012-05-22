@@ -133,9 +133,7 @@ public class DefaultContig<P extends AssembledRead> extends AbstractContig<P>{
                     (int)read.getGappedStartOffset(), 
                     read.getDirection(), 
                     read.getReadInfo().getValidRange(),
-                    //TODO need to actually compute ungapped full length here
-                    //should we pull from frg or db?
-                    (int)read.getReadInfo().getValidRange().getEnd());
+                    (int)read.getReadInfo().getUngappedFullLength());
         }
         /**
         * {@inheritDoc}
