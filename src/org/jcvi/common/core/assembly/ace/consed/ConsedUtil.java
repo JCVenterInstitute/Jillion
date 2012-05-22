@@ -141,7 +141,7 @@ public class ConsedUtil {
     public static SortedMap<Range,AceContig> split0xContig(AceContigBuilder contigBuilder, boolean adjustIdCoordinates){
         List<Range> coveredRegions = new ArrayList<Range>();
         NucleotideSequence consensus = contigBuilder.getConsensusBuilder().build();
-        CoverageMap<AcePlacedReadBuilder> coverageMap = CoverageMapFactory.create(contigBuilder.getAllPlacedReadBuilders());
+        CoverageMap<AcePlacedReadBuilder> coverageMap = CoverageMapFactory.create(contigBuilder.getAllAssembledReadBuilders());
         for(CoverageRegion<AcePlacedReadBuilder> region : coverageMap){
             if(region.getCoverageDepth()>0){
                 
@@ -194,12 +194,12 @@ public class ConsedUtil {
         AceContigBuilder builder = DefaultAceContig.createBuilder(contigId, contigConsensus);
         
         for(String readId : contigReads){
-            final AcePlacedReadBuilder read = builderToSplit.getPlacedReadBuilder(readId);
+            final AcePlacedReadBuilder read = builderToSplit.getAssembledReadBuilder(readId);
             if(read ==null){
                 throw new NullPointerException("got a null read for id " + readId);
             }
             builder.addRead(readId, 
-                    read.getBasesBuilder().build(), 
+                    read.getNucleotideSequenceBuilder().build(), 
                     (int)(read.getBegin() - contigRange.getBegin()), 
                     read.getDirection(), read.getClearRange(), read.getPhdInfo(),
                     read.getUngappedFullLength());

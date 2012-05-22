@@ -61,7 +61,7 @@ public interface ContigBuilder<R extends AssembledRead,C extends Contig<R>> exte
     int numberOfReads();
     /**
      * Add the given {@link AssembledRead} read to this contig with the given values.  This read
-     * can later get modified via the {@link #getPlacedReadBuilder(String)}.
+     * can later get modified via the {@link #getAssembledReadBuilder(String)}.
      * @param placedRead the read to add (can not be null).
      * @return this.
      * @throws NullPointerException if acePlacedRead is null.
@@ -69,32 +69,32 @@ public interface ContigBuilder<R extends AssembledRead,C extends Contig<R>> exte
     ContigBuilder<R,C> addRead(R placedRead);
     /**
      * Adds all the given reads to this contig.  These reads
-     * can later get modified via the {@link #getPlacedReadBuilder(String)}.
+     * can later get modified via the {@link #getAssembledReadBuilder(String)}.
      * @param reads the reads to add (can not be null).
      * @return this.
      * @throws NullPointerException if reads is null.
      */
     ContigBuilder<R,C> addAllReads(Iterable<R> reads);
     /**
-     * Get a collection of all the {@link PlacedReadBuilder}s that are
+     * Get a collection of all the {@link AssembledReadBuilder}s that are
      * currently associated with this contig.  This collection
      * is backed by the contig builder so any changes to the 
      * returned collection or modifications to any of its 
-     * {@link PlacedReadBuilder}s will modify the contig
+     * {@link AssembledReadBuilder}s will modify the contig
      * as well.
-     * @return a a collection of all the {@link PlacedReadBuilder} that are
+     * @return a a collection of all the {@link AssembledReadBuilder} that are
      * currently associated with this contig; never null.
      */
-    Collection<? extends PlacedReadBuilder<R>> getAllPlacedReadBuilders();
+    Collection<? extends AssembledReadBuilder<R>> getAllAssembledReadBuilders();
     /**
-     * Get the {@link PlacedReadBuilder} for the read in this 
+     * Get the {@link AssembledReadBuilder} for the read in this 
      * contig with the given read id.  Any changes to the returned
      * instance will modify that read in this contig.
      * @param readId the id of the read to get.
-     * @return a {@link PlacedReadBuilder}, will return 
+     * @return a {@link AssembledReadBuilder}, will return 
      * null if no read with that id currently exists for this contig.
      */
-    PlacedReadBuilder<R> getPlacedReadBuilder(String readId);
+    AssembledReadBuilder<R> getAssembledReadBuilder(String readId);
     /**
      * Remove the read with the given read id from this contig.
      * If this contig doesn't have a read with that readId, then

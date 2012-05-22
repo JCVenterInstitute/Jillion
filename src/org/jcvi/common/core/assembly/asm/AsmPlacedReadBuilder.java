@@ -19,14 +19,14 @@
 
 package org.jcvi.common.core.assembly.asm;
 
-import org.jcvi.common.core.assembly.PlacedReadBuilder;
+import org.jcvi.common.core.assembly.AssembledReadBuilder;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface AsmPlacedReadBuilder extends PlacedReadBuilder<AsmPlacedRead>{
+public interface AsmPlacedReadBuilder extends AssembledReadBuilder<AsmPlacedRead>{
 
     boolean isRepeatSurrogate();
     

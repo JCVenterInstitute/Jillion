@@ -25,7 +25,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.assembly.PlacedReadBuilder;
+import org.jcvi.common.core.assembly.AssembledReadBuilder;
 import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -186,7 +186,7 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
 
     private static class Builder implements AsmPlacedReadBuilder{
         private boolean isSurrogate=false;        
-        private final PlacedReadBuilder<AssembledRead> delegateBuilder;
+        private final AssembledReadBuilder<AssembledRead> delegateBuilder;
         
         
         public Builder(NucleotideSequence reference, String readId,String validBases,
@@ -324,8 +324,8 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
         * {@inheritDoc}
         */
         @Override
-        public synchronized NucleotideSequenceBuilder getBasesBuilder() {
-            return delegateBuilder.getBasesBuilder();
+        public synchronized NucleotideSequenceBuilder getNucleotideSequenceBuilder() {
+            return delegateBuilder.getNucleotideSequenceBuilder();
         }
         
         /**

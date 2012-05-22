@@ -411,7 +411,7 @@ public final class Codon
 	 * @return the codonGlyphs
 	 */
 	public List<Nucleotide> getNucleotides() {
-		List<Nucleotide> triplet = new ArrayList(3);
+		List<Nucleotide> triplet = new ArrayList<Nucleotide>(3);
 		for(int i=0; i< 3; i++){
 			triplet.add(codonGlyphs[i]);
 		}

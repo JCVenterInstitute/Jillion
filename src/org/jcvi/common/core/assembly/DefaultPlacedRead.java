@@ -44,7 +44,7 @@ public final class DefaultPlacedRead implements AssembledRead {
     private final String id;
     private final ReadInfo readInfo;
     
-    public static PlacedReadBuilder<AssembledRead> createBuilder(NucleotideSequence reference, 
+    public static AssembledReadBuilder<AssembledRead> createBuilder(NucleotideSequence reference, 
             String readId,NucleotideSequence validBases,
             int offset, Direction dir, Range clearRange,
             int ungappedFullLength){
@@ -52,7 +52,7 @@ public final class DefaultPlacedRead implements AssembledRead {
                 clearRange, ungappedFullLength);
     }
     
-    public static PlacedReadBuilder<AssembledRead> createBuilder(NucleotideSequence reference, 
+    public static AssembledReadBuilder<AssembledRead> createBuilder(NucleotideSequence reference, 
             String readId,String validBases,
             int offset, Direction dir, Range clearRange,
             int ungappedFullLength){
@@ -191,7 +191,7 @@ public final class DefaultPlacedRead implements AssembledRead {
 		return Range.create(getGappedStartOffset(), getGappedEndOffset());
 	}
 
-	private static class Builder implements PlacedReadBuilder<AssembledRead>{
+	private static class Builder implements AssembledReadBuilder<AssembledRead>{
         private String readId;
         /**
          * Our original encoded sequence.  If we 
@@ -334,7 +334,7 @@ public final class DefaultPlacedRead implements AssembledRead {
         */
         @Override
         public Builder reAbacus(Range gappedValidRangeToChange, List<Nucleotide> newBasecalls){
-            List<Nucleotide> oldUngappedBasecalls = getBasesBuilder()
+            List<Nucleotide> oldUngappedBasecalls = getNucleotideSequenceBuilder()
             										.subSequence(gappedValidRangeToChange)
             										.ungap()
             										.asList();
@@ -381,7 +381,7 @@ public final class DefaultPlacedRead implements AssembledRead {
         * {@inheritDoc}
         */
         @Override
-        public synchronized NucleotideSequenceBuilder getBasesBuilder() {
+        public synchronized NucleotideSequenceBuilder getNucleotideSequenceBuilder() {
             if(basesBuilder==null){
                 this.basesBuilder = new NucleotideSequenceBuilder(originalSequence);
                 originalSequence=null;

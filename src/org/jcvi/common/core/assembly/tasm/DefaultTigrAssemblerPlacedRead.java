@@ -30,7 +30,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.assembly.PlacedReadBuilder;
+import org.jcvi.common.core.assembly.AssembledReadBuilder;
 import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -213,7 +213,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
     private static class Builder implements TigrAssemblerPlacedReadBuilder{
 
         private final Map<TigrAssemblerReadAttribute, String> map =new EnumMap<TigrAssemblerReadAttribute,String>(TigrAssemblerReadAttribute.class);
-        private final PlacedReadBuilder<AssembledRead> delegate;
+        private final AssembledReadBuilder<AssembledRead> delegate;
         
         
         public Builder(NucleotideSequence reference, 
@@ -239,7 +239,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         * {@inheritDoc}
         */
         @Override
-        public PlacedReadBuilder<TigrAssemblerPlacedRead> reference(
+        public AssembledReadBuilder<TigrAssemblerPlacedRead> reference(
                 NucleotideSequence reference, int newOffset) {
             delegate.reference(reference, newOffset);
             return this;
@@ -265,7 +265,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         * {@inheritDoc}
         */
         @Override
-        public PlacedReadBuilder<TigrAssemblerPlacedRead> setStartOffset(
+        public AssembledReadBuilder<TigrAssemblerPlacedRead> setStartOffset(
                 int newOffset) {
             delegate.setStartOffset(newOffset);
             return this;
@@ -275,7 +275,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         * {@inheritDoc}
         */
         @Override
-        public PlacedReadBuilder<TigrAssemblerPlacedRead> shiftRight(
+        public AssembledReadBuilder<TigrAssemblerPlacedRead> shiftRight(
                 int numberOfBases) {
             delegate.shiftRight(numberOfBases);
             return this;
@@ -285,7 +285,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         * {@inheritDoc}
         */
         @Override
-        public PlacedReadBuilder<TigrAssemblerPlacedRead> shiftLeft(
+        public AssembledReadBuilder<TigrAssemblerPlacedRead> shiftLeft(
                 int numberOfBases) {
             delegate.shiftLeft(numberOfBases);
             return this;
@@ -327,7 +327,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         * {@inheritDoc}
         */
         @Override
-        public PlacedReadBuilder<TigrAssemblerPlacedRead> reAbacus(
+        public AssembledReadBuilder<TigrAssemblerPlacedRead> reAbacus(
                 Range gappedValidRangeToChange, String newBasecalls) {
             delegate.reAbacus(gappedValidRangeToChange, newBasecalls);
             return this;
@@ -337,7 +337,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         * {@inheritDoc}
         */
         @Override
-        public PlacedReadBuilder<TigrAssemblerPlacedRead> reAbacus(
+        public AssembledReadBuilder<TigrAssemblerPlacedRead> reAbacus(
                 Range gappedValidRangeToChange, List<Nucleotide> newBasecalls) {
             delegate.reAbacus(gappedValidRangeToChange, newBasecalls);
             return this;
@@ -371,8 +371,8 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         * {@inheritDoc}
         */
         @Override
-        public NucleotideSequenceBuilder getBasesBuilder() {
-            return delegate.getBasesBuilder();
+        public NucleotideSequenceBuilder getNucleotideSequenceBuilder() {
+            return delegate.getNucleotideSequenceBuilder();
         }
 
         /**

@@ -68,7 +68,7 @@ public class TestDefaultAcePlacedReadReAbacus {
         assertEquals(dir, sut.getDirection());
         assertEquals(phdInfo, sut.getPhdInfo());
         assertEquals(ungappedFullLength, sut.getUngappedFullLength());
-        assertEquals(originalSequence, sut.getBasesBuilder().build());
+        assertEquals(originalSequence, sut.getNucleotideSequenceBuilder().build());
         assertEquals(validRange, sut.getClearRange());
     }
     
@@ -81,7 +81,7 @@ public class TestDefaultAcePlacedReadReAbacus {
         assertEquals(dir, sut.getDirection());
         assertEquals(phdInfo, sut.getPhdInfo());
         assertEquals(ungappedFullLength, sut.getUngappedFullLength());
-        assertEquals(originalSequence, sut.getBasesBuilder().build());
+        assertEquals(originalSequence, sut.getNucleotideSequenceBuilder().build());
         assertEquals(validRange, sut.getClearRange());
     }
     
@@ -92,7 +92,7 @@ public class TestDefaultAcePlacedReadReAbacus {
         assertEquals(readId, sut.getId());       
         assertEquals(8, sut.getLength());
         assertEquals(originalStartOffset+7, sut.getEnd());
-        assertEquals("ACGTACGT", sut.getBasesBuilder().toString());
+        assertEquals("ACGTACGT", sut.getNucleotideSequenceBuilder().toString());
         assertEquals(validRange, sut.getClearRange());
         
     }

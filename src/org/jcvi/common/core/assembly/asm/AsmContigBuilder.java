@@ -36,7 +36,7 @@ public interface AsmContigBuilder extends ContigBuilder<AsmPlacedRead, AsmContig
     
     /**
      * Add a read to this contig with the given values.  This read
-     * can later get modified via the {@link #getPlacedReadBuilder(String)}.
+     * can later get modified via the {@link #getAssembledReadBuilder(String)}.
      * @param readId the Id this read should have
      * @param validBases the gapped bases of this read that align (however well/badly)
      * to this contig and will be used as underlying sequence data for this contig.

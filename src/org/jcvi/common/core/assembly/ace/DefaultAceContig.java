@@ -77,19 +77,6 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
      * @return a new {@link AceContigBuilder} instance; never null.
      * @throws NullPointerException if contigId or consensus are null.
      */
-    public static AceContigBuilder createBuilder(String contigId, List<Nucleotide> consensus){
-        return new Builder(contigId, consensus);
-    }
-    /**
-     * Create a new {@link AceContigBuilder} for a contig with the given
-     * contig id and starting with the given consensus.  Both the contig id
-     * and the consensus can be changed by calling methods on the returned
-     * builder.
-     * @param contigId the initial contig id to use for this contig (may later be changed)
-     * @param consensus the initial contig consensus for this contig (may be changed later)
-     * @return a new {@link AceContigBuilder} instance; never null.
-     * @throws NullPointerException if contigId or consensus are null.
-     */
     public static AceContigBuilder createBuilder(String contigId, NucleotideSequence consensus){
         return new Builder(contigId, consensus);
     }
@@ -200,14 +187,14 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
         * {@inheritDoc}
         */
     	@Override
-        public Collection<AcePlacedReadBuilder> getAllPlacedReadBuilders(){
+        public Collection<AcePlacedReadBuilder> getAllAssembledReadBuilders(){
     	    return aceReadBuilderMap.values();
     	}
         /**
         * {@inheritDoc}
         */
         @Override
-        public AcePlacedReadBuilder getPlacedReadBuilder(String readId){
+        public AcePlacedReadBuilder getAssembledReadBuilder(String readId){
             return aceReadBuilderMap.get(readId);
         }
         
