@@ -90,7 +90,7 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends FastaConsedPhdAdapt
     protected Phd createPhd(Properties requiredComments, NucleotideSequenceFastaRecord fasta,
             SCFChromatogram chromo) {
         final String id = fasta.getId();
-        return new DefaultPhd(id, chromo.getNucleotideSequence(), chromo.getQualities(), chromo.getPeaks(), requiredComments);
+        return new DefaultPhd(id, chromo.getNucleotideSequence(), chromo.getQualitySequence(), chromo.getPeaks(), requiredComments);
     }
 
 

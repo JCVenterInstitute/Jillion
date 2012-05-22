@@ -37,7 +37,7 @@ public abstract class AbstractFastqFileVisitor implements FastqFileVisitor{
 
     
     public AbstractFastqFileVisitor(){
-        this.qualityCodec = null;
+        this(null);
     }
     public AbstractFastqFileVisitor(FastqQualityCodec qualityCodec){
         this.qualityCodec = qualityCodec;

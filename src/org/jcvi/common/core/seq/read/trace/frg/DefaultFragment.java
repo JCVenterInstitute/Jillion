@@ -37,7 +37,7 @@ public class DefaultFragment implements Fragment{
     private final String comment;
     private final Library library;
     public DefaultFragment(String id, Trace trace,Range validRange,Range vectorClearRange, Library library,String comment){
-        this(id, trace.getNucleotideSequence(), trace.getQualities(),validRange,vectorClearRange,library,comment);
+        this(id, trace.getNucleotideSequence(), trace.getQualitySequence(),validRange,vectorClearRange,library,comment);
     }
     public DefaultFragment(String id, Trace trace,Range validRange,Range vectorClearRange, Library library){
         this(id, trace,validRange,vectorClearRange,library,null);
@@ -63,7 +63,7 @@ public class DefaultFragment implements Fragment{
     }
 
     @Override
-    public QualitySequence getQualities() {
+    public QualitySequence getQualitySequence() {
         return qualities;
     }
     @Override

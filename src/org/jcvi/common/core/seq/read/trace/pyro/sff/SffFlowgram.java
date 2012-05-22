@@ -135,7 +135,7 @@ final class SffFlowgram implements Flowgram {
 	}
 
 	@Override
-    public QualitySequence getQualities() {
+    public QualitySequence getQualitySequence() {
         return qualities;
     }
 
@@ -198,7 +198,7 @@ final class SffFlowgram implements Flowgram {
         boolean nonValuesEqual=
         ObjectsUtil.nullSafeEquals(id, other.getId())
         && ObjectsUtil.nullSafeEquals(basecalls.asList(), other.getNucleotideSequence().asList())
-        && ObjectsUtil.nullSafeEquals(qualities.asList(), other.getQualities().asList())
+        && ObjectsUtil.nullSafeEquals(qualities.asList(), other.getQualitySequence().asList())
         && ObjectsUtil.nullSafeEquals(qualitiesClip, other.getQualityClip())
         && ObjectsUtil.nullSafeEquals(adapterClip, other.getAdapterClip())
         && ObjectsUtil.nullSafeEquals(getNumberOfFlows(), other.getNumberOfFlows());

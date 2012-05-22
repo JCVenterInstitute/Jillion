@@ -175,8 +175,8 @@ public class BasicChromatogramFile implements Chromatogram, ChromatogramFileVisi
     * {@inheritDoc}
     */
     @Override
-    public QualitySequence getQualities() {
-        return delegate.getQualities();
+    public QualitySequence getQualitySequence() {
+        return delegate.getQualitySequence();
     }
 
   

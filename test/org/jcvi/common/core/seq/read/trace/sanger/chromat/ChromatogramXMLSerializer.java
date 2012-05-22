@@ -282,7 +282,7 @@ public final class ChromatogramXMLSerializer {
                                      "buildBasicChromatogram",
                                      new Object[]{
                    Nucleotides.asString(chromatogram.getNucleotideSequence().asList()), 
-                   new EncodedByteData(PhredQuality.toArray(chromatogram.getQualities().asList())).encodeData(),
+                   new EncodedByteData(PhredQuality.toArray(chromatogram.getQualitySequence().asList())).encodeData(),
                    chromatogram.getPeaks(),
                    chromatogram.getChannelGroup(),
                    chromatogram.getComments(),

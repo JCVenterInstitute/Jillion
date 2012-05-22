@@ -225,7 +225,7 @@ public class AceFileUtil {
         final List<Nucleotide> phdFullBases = fullBasecalls.asList();
         
         final List<Nucleotide> fullGappedValidRange = AssemblyUtil.buildGappedComplementedFullRangeBases(placedRead, phdFullBases);
-        final List<PhredQuality> qualities =phd.getQualities().asList();  
+        final List<PhredQuality> qualities =phd.getQualitySequence().asList();  
         if(qualities.isEmpty()){
             throw new IllegalStateException("empty qualities for read "+ readId);
         }

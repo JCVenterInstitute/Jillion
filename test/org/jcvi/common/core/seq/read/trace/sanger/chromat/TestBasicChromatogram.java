@@ -66,7 +66,7 @@ public class TestBasicChromatogram {
         assertEquals(mockPeaks, sut.getPeaks());
         assertEquals(mockChannelGroup, sut.getChannelGroup());
         assertEquals(expectedProperties, sut.getComments());
-        assertEquals(qualities, sut.getQualities());
+        assertEquals(qualities, sut.getQualitySequence());
     }
 
     @Test
@@ -80,7 +80,7 @@ public class TestBasicChromatogram {
         assertEquals(basecalls, emptyProps.getNucleotideSequence());
         assertEquals(mockPeaks, emptyProps.getPeaks());
         assertEquals(mockChannelGroup, emptyProps.getChannelGroup());
-        assertEquals(qualities, sut.getQualities());
+        assertEquals(qualities, sut.getQualitySequence());
         assertEquals(new Properties(), emptyProps.getComments());
     }
     

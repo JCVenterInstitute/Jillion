@@ -45,7 +45,7 @@ public class TestChromatogram2Fasta {
 	public void setup(){
 		chromo = createMock(Chromatogram.class);
 		expect(chromo.getNucleotideSequence()).andStubReturn(new NucleotideSequenceBuilder(basecalls).build());
-		expect(chromo.getQualities()).andStubReturn(new EncodedQualitySequence(
+		expect(chromo.getQualitySequence()).andStubReturn(new EncodedQualitySequence(
 				RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, PhredQuality.valueOf(quals)));
 		expect(chromo.getPeaks()).andStubReturn(new SangerPeak(peaks));
 		replay(chromo);

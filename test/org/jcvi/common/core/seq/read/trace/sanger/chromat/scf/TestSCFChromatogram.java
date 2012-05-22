@@ -72,7 +72,7 @@ public class TestSCFChromatogram {
         assertEquals(mockDeletionConfidence, sut.getDeletionConfidence());
         assertEquals(mockSubstitutionConfidence, sut.getSubstitutionConfidence());
         assertEquals(mockPrivateData, sut.getPrivateData());
-        assertEquals(qualities, sut.getQualities());
+        assertEquals(qualities, sut.getQualitySequence());
     }
 
     @Test

@@ -52,7 +52,7 @@ public final class TraceQualityDataStoreAdapter<T extends Trace> extends Abstrac
 
     @Override
     protected QualitySequence adapt(T delegate) {
-        return delegate.getQualities();
+        return delegate.getQualitySequence();
     }
 
     
