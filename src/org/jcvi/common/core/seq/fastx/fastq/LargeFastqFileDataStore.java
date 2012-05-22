@@ -55,23 +55,85 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
     private volatile boolean closed;
     private final FastXFilter filter;
     /**
-     * Create a new {@link FastqDataStore}
-     * @param fastqFile
-     * @param qualityCodec
-     * @return
-     * @throws FileNotFoundException 
+     * Create a new {@link FastqDataStore} instance for the given
+     * fastqFile which will contain all the
+     * records in the file.  This implementation will try to guess the
+     * quality encoding used in the fastq records.  This should return
+     * the same data store implementation as
+     * {@link #create(File, FastXFilter, FastqQualityCodec) create(fastqFile, null, null)}
+     * @param fastqFile the fastq file to create a {@link FastqDataStore}
+     * for (can not be null, and must exist).
+     * @return a new {@link FastqDataStore} instance, will never be null.
+     * @throws FileNotFoundException if the given Fastq file does not exist.
+     * @throws NullPointerException if fastqFile is null.
+     * @see #create(File, FastXFilter, FastqQualityCodec)
+     */
+    public static FastqDataStore create(File fastqFile) throws FileNotFoundException{
+    	return new LargeFastqFileDataStore(fastqFile, null,null);
+    }
+    /**
+     * Create a new {@link FastqDataStore} instance for the given
+     * fastqFile which will contain all the
+     * records in the file.  This implementation will use the given
+     * {@link FastqQualityCodec} to decode the qualities of the fastq record
+     * (if provided)This should return
+     * the same data store implementation as
+     * {@link #create(File, FastXFilter, FastqQualityCodec) create(fastqFile, qualityCodec, null)}
+     * @param fastqFile the fastq file to create a {@link FastqDataStore}
+     * for (can not be null, and must exist).
+     * @param qualityCodec the {@link FastqQualityCodec} that should be used
+     * to decode the fastq file.  If this value is null, then 
+     * the datastore implementation will try to guess the codec used which might
+     * have a performance penalty associated with it.
+     * @return a new {@link FastqDataStore} instance, will never be null.
+     * @throws FileNotFoundException if the given Fastq file does not exist.
+     * @throws NullPointerException if fastqFile is null.
+     * @see #create(File, FastXFilter, FastqQualityCodec)
      */
     public static FastqDataStore create(File fastqFile, FastqQualityCodec qualityCodec) throws FileNotFoundException{
     	return new LargeFastqFileDataStore(fastqFile, qualityCodec,null);
     }
     /**
-     * Create a new {@link FastqDataStore}
-     * @param fastqFile
-     * @param qualityCodec
-     * @return
-     * @throws FileNotFoundException 
+     * Create a new {@link FastqDataStore} instance for the given
+     * fastqFile which will only contain all the
+     * records in the file that are accepted by the given filter.  
+     * This implementation will try to guess the
+     * quality encoding used in the fastq records.  This should return
+     * the same data store implementation as
+     * {@link #create(File, FastXFilter, FastqQualityCodec) create(fastqFile, filter, null)}
+     * @param fastqFile the fastq file to create a {@link FastqDataStore}
+     * for (can not be null, and must exist).
+     * @param filter the {@link FastXFilter} used to filter out records
+     * from the datastore. If this value is null,
+     * then all records in the file will be included in the datastore.
+     * @return a new {@link FastqDataStore} instance, will never be null.
+     * @throws FileNotFoundException if the given Fastq file does not exist.
+     * @throws NullPointerException if fastqFile is null.
      */
-    public static FastqDataStore create(File fastqFile, FastqQualityCodec qualityCodec, FastXFilter filter) throws FileNotFoundException{
+    public static FastqDataStore create(File fastqFile, FastXFilter filter) throws FileNotFoundException{
+    	return new LargeFastqFileDataStore(fastqFile, null,filter);
+    }
+    /**
+     * Create a new {@link FastqDataStore} instance for the given
+     * fastqFile which will only contain all the
+     * records in the file that are accepted by the given filter.  
+     * This implementation will use the given
+     * {@link FastqQualityCodec} to decode the qualities of the fastq record
+     * (if provided)
+     * @param fastqFile the fastq file to create a {@link FastqDataStore}
+     * for (can not be null, and must exist).
+     * @param filter the {@link FastXFilter} used to filter out records
+     * from the datastore. If this value is null,
+     * then all records in the file will be included in the datastore.
+     * @param qualityCodec the {@link FastqQualityCodec} that should be used
+     * to decode the fastq file.  If this value is null, then 
+     * the datastore implementation will try to guess the codec used which might
+     * have a performance penalty associated with it.
+     * @return a new {@link FastqDataStore} instance, will never be null.
+     * @throws FileNotFoundException if the given Fastq file does not exist.
+     * @throws NullPointerException if fastqFile is null.
+     */
+    public static FastqDataStore create(File fastqFile, FastXFilter filter, FastqQualityCodec qualityCodec) throws FileNotFoundException{
     	return new LargeFastqFileDataStore(fastqFile, qualityCodec,filter);
     }
     /**
@@ -81,9 +143,6 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
     private LargeFastqFileDataStore(File fastQFile, FastqQualityCodec qualityCodec,FastXFilter filter) throws FileNotFoundException {
     	if(fastQFile==null){
     		throw new NullPointerException("fastq file can not be null");
-    	}
-    	if(qualityCodec==null){
-    		throw new NullPointerException("qualityCodec can not be null");
     	}
     	if(!fastQFile.exists()){
     		throw new FileNotFoundException("could not find " + fastQFile.getAbsolutePath());

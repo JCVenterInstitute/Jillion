@@ -33,7 +33,7 @@ public class ReEncodeFastq {
 		FastXFilter filter = new IncludeFastXIdFilter(idsToInclude);
 		
 		FastqDataStore datastore = LargeFastqFileDataStore.create(fastqFile, 
-												FastqQualityCodec.SANGER, filter);
+												filter, FastqQualityCodec.SANGER);
 		CloseableIterator<FastqRecord> iter=null;
 		try{
 			iter = datastore.iterator();

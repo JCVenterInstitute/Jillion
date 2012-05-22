@@ -33,18 +33,30 @@ import org.junit.runners.Suite.SuiteClasses;
         TestSangerFastQQualityCodec.class,
         TestIlluminaFastQQualityCodec.class,
         TestSangerFastQQualityCodecActual.class,
+        TestParseSangerEncodedFastQFile.class,        
+        TestFormattingFastqRecords.class,
+       
         TestDefaultFastQFileDataStore.class,
-        TestLargeFastQFileDataStore.class,
+        TestDefaultMultiLineFastqRecordsInDataStore.class,
+        TestDefaultFastqFileDataStoreGuessCodec.class, 
+        
         TestIndexedFastQFileDataStore.class,
-        TestParseSangerEncodedFastQFile.class,
+        TestDefaultFastqFileDataStoreMultilineGuessCodec.class,
+        TestIndexedFastqFileDataStoreGuessCodec.class,
+        TestIndexedMultilineFastqDataStore.class,
+        
+        TestLargeFastQFileDataStore.class,
+        TestLargeMultilineFastqDataStore.class,
+        TestLargeFastqFileDataStoreGuessCodec.class,
+        TestLargeMultilineFastqFileDataStoreGuessCodec.class,
+        
+       
+        
+        
+        
         AllIlluminaUnitTests.class,
         AllSolexaUnitTests.class,
-        TestFormattingFastqRecords.class,
-        AllFastQUtilUnitTests.class ,
-        
-        TestDefaultMultiLineFastqRecordsInDataStore.class,
-        TestIndexedMultilineFastqDataStore.class,
-        TestLargeMultilineFastqDataStore.class
+        AllFastqUtilUnitTests.class
     }
     )
 public class AllFastqUnitTests {

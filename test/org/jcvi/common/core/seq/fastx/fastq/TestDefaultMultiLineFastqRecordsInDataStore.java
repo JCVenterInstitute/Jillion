@@ -18,7 +18,7 @@ public class TestDefaultMultiLineFastqRecordsInDataStore extends TestAbstractMul
 	protected FastqDataStore createFastqDataStoreFor(File fastq,
 			FastqQualityCodec qualityCodec, FastXFilter filter)
 			throws IOException {
-		return DefaultFastqFileDataStore.create(fastq, qualityCodec, filter);
+		return DefaultFastqFileDataStore.create(fastq, filter, qualityCodec);
 	}
 
 }
