@@ -47,4 +47,51 @@ public final class FastqUtil {
      * then it should match the id of the seq defline.
      */
     public static final Pattern QUAL_DEFLINE_PATTERN = Pattern.compile("^\\+(.+$)?");
+    
+    /**
+     * Attempts to guess the {@link FastqQualityCodec} used to encode
+     * the given qualities.
+     * @param encodedQualities a String of fastq encoded qualities
+     * @return an instance of {@link FastqQualityCodec} which could have been 
+     * used to encode the given qualities (will never be null).
+     * @throws NullPointerException if the given qualities are null.
+     * @throws IllegalArgumentException if the given quality string is empty
+     * or if it contains any characters out of range of any known
+     * quality encoding formats.
+     */
+    public static FastqQualityCodec guessQualityCodecUsed(String encodedQualities){
+    	if(encodedQualities.isEmpty()){
+    		throw new IllegalArgumentException("encoded qualities can not be empty");
+    	}
+    	//sanger uses 33 as an offset so any ascii values around there will 
+    	//automatically be sanger
+    	
+    	//solexa and illumina encoding have offsets of 64 so they look very similar
+    	//except solexa uses a different log scale and can actually have scores as low
+    	//as -5 (ascii value 59) so any values from ascii 59-63 mean solexa
+    	boolean hasSolexaOnlyValues=false;
+    	for(int i=0; i<encodedQualities.length(); i++){
+    		int asciiValue = encodedQualities.charAt(i);
+    		if(asciiValue <33){
+    			throw new IllegalArgumentException(
+    					String.format(
+    							"invalid encoded qualities has out of range ascii value %d : '%s'", 
+    							asciiValue,
+    							encodedQualities));
+    		}
+    		if(asciiValue <59){
+    			return FastqQualityCodec.SANGER;
+    		}
+    		if(asciiValue < 64){
+    			hasSolexaOnlyValues=true;
+    		}
+    	}
+    	//if we get here then we only saw encoded values from ascii 64 +
+    	//assume illumina, solexa scaling is so close at good quality anyway
+    	//that I don't think it matters.
+    	if(hasSolexaOnlyValues){
+    		return FastqQualityCodec.SOLEXA;
+    	}
+    	return FastqQualityCodec.ILLUMINA;
+    }
 }

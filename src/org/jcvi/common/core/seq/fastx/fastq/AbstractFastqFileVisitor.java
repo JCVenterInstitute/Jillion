@@ -36,7 +36,9 @@ public abstract class AbstractFastqFileVisitor implements FastqFileVisitor{
     protected final FastqQualityCodec qualityCodec;
 
     
-   
+    public AbstractFastqFileVisitor(){
+        this.qualityCodec = null;
+    }
     public AbstractFastqFileVisitor(FastqQualityCodec qualityCodec){
         this.qualityCodec = qualityCodec;
     }
@@ -50,15 +52,19 @@ public abstract class AbstractFastqFileVisitor implements FastqFileVisitor{
     
     @Override
     public void visitEncodedQualities(String encodedQualities) {
-        this.qualities = qualityCodec.decode(encodedQualities);
+    	if(qualityCodec ==null){
+    		//guess codec
+    		this.qualities = FastqUtil.guessQualityCodecUsed(encodedQualities)
+    									.decode(encodedQualities);
+    	}else{
+    		this.qualities = qualityCodec.decode(encodedQualities);
+    	}
+        
     }
 
     @Override
     public void visitFile() {       
        
-    }
-    protected FastqQualityCodec getQualityCodec() {
-        return qualityCodec;
     }
     
     @Override

@@ -31,9 +31,10 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestFastQ2Fasta.class
+        TestFastQ2Fasta.class,
+        TestGuessQualityCodec.class
     }
     )
-public class AllFastQUtilUnitTests {
+public class AllFastqUtilUnitTests {
 
 }
