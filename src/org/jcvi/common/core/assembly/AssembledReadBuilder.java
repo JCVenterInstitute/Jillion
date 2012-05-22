@@ -30,7 +30,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
 
 /**
- * {@code PlacedReadBuilder} is a {@link Builder}
+ * {@code AssembledReadBuilder} is a {@link Builder}
  * for {@link AssembledRead}s for a specific contig.
  * Methods in this interface can change the bases
  * of this read or shift where on the reference (or contig consensus)
@@ -39,7 +39,7 @@ import org.jcvi.common.core.util.Builder;
  *
  *
  */
-public interface PlacedReadBuilder<R extends AssembledRead> extends Rangeable, Builder<R>{
+public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable, Builder<R>{
 	
 	
     /**
@@ -52,7 +52,7 @@ public interface PlacedReadBuilder<R extends AssembledRead> extends Rangeable, B
      * @return this.
      * @throws NulPointerException if reference is null.
      */
-    PlacedReadBuilder<R> reference(NucleotideSequence reference, int newOffset);
+    AssembledReadBuilder<R> reference(NucleotideSequence reference, int newOffset);
     /**
      * 
     * Get the gapped start offset of this read
@@ -70,7 +70,7 @@ public interface PlacedReadBuilder<R extends AssembledRead> extends Rangeable, B
      * @param newOffset the new gapped start offset.
      * @return this.
      */
-    PlacedReadBuilder<R> setStartOffset(int newOffset);
+    AssembledReadBuilder<R> setStartOffset(int newOffset);
     /**
      * Change the gapped start offset of this read
      * by shifting it to the right the given number of gapped
@@ -79,7 +79,7 @@ public interface PlacedReadBuilder<R extends AssembledRead> extends Rangeable, B
      * this read should get shifted to the right.
      * @return this.
      */
-    PlacedReadBuilder<R> shiftRight(int numberOfBases);
+    AssembledReadBuilder<R> shiftRight(int numberOfBases);
     /**
      * Change the gapped start offset of this read
      * by shifting it to the left the given number of gapped
@@ -88,7 +88,7 @@ public interface PlacedReadBuilder<R extends AssembledRead> extends Rangeable, B
      * this read should get shifted to the left.
      * @return this.
      */
-    PlacedReadBuilder<R> shiftLeft(int numberOfBases);
+    AssembledReadBuilder<R> shiftLeft(int numberOfBases);
 
     /**
      * @return the clearRange
@@ -109,7 +109,7 @@ public interface PlacedReadBuilder<R extends AssembledRead> extends Rangeable, B
      * 
     * {@inheritDoc}
     * <p/>
-    * Creates a new PlacedRead instance using the current
+    * Creates a new {@link AssembledRead} instance using the current
     * values given to this builder.
      */
     @Override
@@ -132,7 +132,7 @@ public interface PlacedReadBuilder<R extends AssembledRead> extends Rangeable, B
      * @throws IllegalArgumentException if the ungapped version of the newBasecalls 
      * does not match the ungapped version of the bases to be replaced.
      */
-    PlacedReadBuilder<R> reAbacus(Range gappedValidRangeToChange, String newBasecalls);
+    AssembledReadBuilder<R> reAbacus(Range gappedValidRangeToChange, String newBasecalls);
     /**
      * Modify the gapped basecall sequence of this read
      * to change <strong>only the gaps</strong> of the given subsequence.
@@ -151,7 +151,7 @@ public interface PlacedReadBuilder<R extends AssembledRead> extends Rangeable, B
      * @throws IllegalArgumentException if the ungapped version of the newBasecalls 
      * does not match the ungapped version of the bases to be replaced.
      */
-    PlacedReadBuilder<R> reAbacus(Range gappedValidRangeToChange,
+    AssembledReadBuilder<R> reAbacus(Range gappedValidRangeToChange,
             List<Nucleotide> newBasecalls);
     /**
     * Get the gapped length of this read that
@@ -175,7 +175,7 @@ public interface PlacedReadBuilder<R extends AssembledRead> extends Rangeable, B
     /**
      * @return the basesBuilder
      */
-    NucleotideSequenceBuilder getBasesBuilder();
+    NucleotideSequenceBuilder getNucleotideSequenceBuilder();
     /**
      * Get the current gapped bases of this read 
      * as a NucleotideSequence.  This sequence is immutable

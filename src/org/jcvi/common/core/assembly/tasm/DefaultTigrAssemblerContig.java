@@ -33,7 +33,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AbstractContigBuilder;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
-import org.jcvi.common.core.assembly.PlacedReadBuilder;
+import org.jcvi.common.core.assembly.AssembledReadBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 /**
@@ -147,7 +147,7 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
         @Override
         public DefaultTigrAssemblerContig build() {
             Set<TigrAssemblerPlacedRead> reads = new LinkedHashSet<TigrAssemblerPlacedRead>();
-            for(PlacedReadBuilder<TigrAssemblerPlacedRead> builder : getAllPlacedReadBuilders()){
+            for(AssembledReadBuilder<TigrAssemblerPlacedRead> builder : getAllAssembledReadBuilders()){
                ((TigrAssemblerPlacedReadBuilder)builder).addAllAttributes(readAttributeMaps.get(builder.getId()));
                 reads.add(builder.build());
             }

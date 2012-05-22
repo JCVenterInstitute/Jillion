@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.assembly.ace;
 
-import org.jcvi.common.core.assembly.PlacedReadBuilder;
+import org.jcvi.common.core.assembly.AssembledReadBuilder;
 
 import org.jcvi.common.core.util.Builder;
 
@@ -33,7 +33,7 @@ import org.jcvi.common.core.util.Builder;
  *
  *
  */
-public interface AcePlacedReadBuilder extends PlacedReadBuilder<AcePlacedRead>{
+public interface AcePlacedReadBuilder extends AssembledReadBuilder<AcePlacedRead>{
    
 
     /**

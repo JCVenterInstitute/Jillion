@@ -21,14 +21,14 @@ package org.jcvi.common.core.assembly.tasm;
 
 import java.util.Map;
 
-import org.jcvi.common.core.assembly.PlacedReadBuilder;
+import org.jcvi.common.core.assembly.AssembledReadBuilder;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface TigrAssemblerPlacedReadBuilder extends PlacedReadBuilder<TigrAssemblerPlacedRead>{
+public interface TigrAssemblerPlacedReadBuilder extends AssembledReadBuilder<TigrAssemblerPlacedRead>{
 
     TigrAssemblerPlacedReadBuilder addAttribute(TigrAssemblerReadAttribute key, String value);
     

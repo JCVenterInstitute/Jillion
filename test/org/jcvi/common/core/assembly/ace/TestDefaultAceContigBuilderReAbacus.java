@@ -52,9 +52,9 @@ public class TestDefaultAceContigBuilderReAbacus {
         .addRead("read2", "ACGT--T--AC", 0, Direction.FORWARD, Range.create(2,8), read1PhdInfo, 10)
         .addRead("read3",    "T---T-ACGT", 3, Direction.FORWARD, Range.create(2,8), read1PhdInfo, 10);
         
-        sut.getPlacedReadBuilder("read1").reAbacus(Range.create(2,6), "T");
-        sut.getPlacedReadBuilder("read2").reAbacus(Range.create(4,8), "T");
-        sut.getPlacedReadBuilder("read3").reAbacus(Range.create(1,5), "T");
+        sut.getAssembledReadBuilder("read1").reAbacus(Range.create(2,6), "T");
+        sut.getAssembledReadBuilder("read2").reAbacus(Range.create(4,8), "T");
+        sut.getAssembledReadBuilder("read3").reAbacus(Range.create(1,5), "T");
         sut.getConsensusBuilder().delete(Range.create(4,8)).insert(4, "T");
            
         AceContig contig =sut.build();
@@ -82,11 +82,11 @@ public class TestDefaultAceContigBuilderReAbacus {
         .addRead("read3",    "T---T-ACGT", 3, Direction.FORWARD, Range.create(2,8), read1PhdInfo, 10)
         .addRead("read4",           "ACGT", 9, Direction.FORWARD, Range.create(2,4), read1PhdInfo, 10);
         
-        sut.getPlacedReadBuilder("read1").reAbacus(Range.create(2,6), "T");
-        sut.getPlacedReadBuilder("read2").reAbacus(Range.create(4,8), "T");
-        sut.getPlacedReadBuilder("read3").reAbacus(Range.create(1,5), "T");
+        sut.getAssembledReadBuilder("read1").reAbacus(Range.create(2,6), "T");
+        sut.getAssembledReadBuilder("read2").reAbacus(Range.create(4,8), "T");
+        sut.getAssembledReadBuilder("read3").reAbacus(Range.create(1,5), "T");
         sut.getConsensusBuilder().delete(Range.create(4,8)).insert(4, "T");
-        sut.getPlacedReadBuilder("read4").shiftLeft(4);
+        sut.getAssembledReadBuilder("read4").shiftLeft(4);
            
         AceContig contig =sut.build();
         assertEquals("ACGTTACGT", contig.getConsensus().toString());
@@ -174,13 +174,13 @@ public class TestDefaultAceContigBuilderReAbacus {
 		return addRead(readId, new NucleotideSequenceBuilder(validBases).build(), offset, dir, clearRange, phdInfo, ungappedFullLength);
 	}
 	@Override
-	public AcePlacedReadBuilder getPlacedReadBuilder(String readId) {
-		return delegate.getPlacedReadBuilder(readId);
+	public AcePlacedReadBuilder getAssembledReadBuilder(String readId) {
+		return delegate.getAssembledReadBuilder(readId);
 	}
 
 	@Override
-	public Collection<AcePlacedReadBuilder> getAllPlacedReadBuilders() {
-		return delegate.getAllPlacedReadBuilders();
+	public Collection<AcePlacedReadBuilder> getAllAssembledReadBuilders() {
+		return delegate.getAllAssembledReadBuilders();
 	}
 
 	@Override

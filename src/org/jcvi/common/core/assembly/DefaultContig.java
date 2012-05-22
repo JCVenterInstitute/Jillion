@@ -115,7 +115,7 @@ public class DefaultContig<P extends AssembledRead> extends AbstractContig<P>{
        
         public DefaultContig<AssembledRead> build(){
             Set<AssembledRead> reads = new LinkedHashSet<AssembledRead>();
-            for(PlacedReadBuilder<AssembledRead> builder : getAllPlacedReadBuilders()){
+            for(AssembledReadBuilder<AssembledRead> builder : getAllAssembledReadBuilders()){
                 reads.add(builder.build());
             }
             return new DefaultContig<AssembledRead>(getContigId(), getConsensusBuilder().build(), reads);
@@ -124,7 +124,7 @@ public class DefaultContig<P extends AssembledRead> extends AbstractContig<P>{
         * {@inheritDoc}
         */
         @Override
-        protected PlacedReadBuilder<AssembledRead> createPlacedReadBuilder(
+        protected AssembledReadBuilder<AssembledRead> createPlacedReadBuilder(
                 AssembledRead read) {
             return DefaultPlacedRead.createBuilder(
                     getConsensusBuilder().build(), 
@@ -139,7 +139,7 @@ public class DefaultContig<P extends AssembledRead> extends AbstractContig<P>{
         * {@inheritDoc}
         */
         @Override
-        protected PlacedReadBuilder<AssembledRead> createPlacedReadBuilder(
+        protected AssembledReadBuilder<AssembledRead> createPlacedReadBuilder(
                 String id, int offset, Range validRange, String basecalls,
                 Direction dir, int fullUngappedLength) {
             return DefaultPlacedRead.createBuilder(

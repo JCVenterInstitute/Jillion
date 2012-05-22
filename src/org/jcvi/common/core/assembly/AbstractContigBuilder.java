@@ -36,11 +36,11 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 public abstract class AbstractContigBuilder<P extends AssembledRead, C extends Contig<P>> implements ContigBuilder<P,C>{
         private NucleotideSequenceBuilder consensus;
         private String id;
-        private final Map<String, PlacedReadBuilder<P>> reads;
+        private final Map<String, AssembledReadBuilder<P>> reads;
         public AbstractContigBuilder(String id, NucleotideSequence consensus){
             this.id = id;
             this.consensus = new NucleotideSequenceBuilder(consensus);
-            reads = new LinkedHashMap<String,PlacedReadBuilder<P>>();
+            reads = new LinkedHashMap<String,AssembledReadBuilder<P>>();
         }
         public AbstractContigBuilder<P,C> addRead(String id, int offset,Range validRange, String basecalls, Direction dir, int fullUngappedLength){
             reads.put(id, createPlacedReadBuilder(id,offset,validRange,basecalls,dir,fullUngappedLength));
@@ -50,8 +50,8 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
             reads.put(read.getId(),createPlacedReadBuilder(read));
             return this;
         }
-        protected abstract PlacedReadBuilder<P> createPlacedReadBuilder(P read);
-        protected abstract PlacedReadBuilder<P> createPlacedReadBuilder(String id, int offset,Range validRange, String basecalls, Direction dir, int fullUngappedLength);
+        protected abstract AssembledReadBuilder<P> createPlacedReadBuilder(P read);
+        protected abstract AssembledReadBuilder<P> createPlacedReadBuilder(String id, int offset,Range validRange, String basecalls, Direction dir, int fullUngappedLength);
       
        
         public AbstractContigBuilder<P,C> setId(String id){
@@ -101,14 +101,14 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
         * {@inheritDoc}
         */
         @Override
-        public Collection<? extends PlacedReadBuilder<P>> getAllPlacedReadBuilders() {
+        public Collection<? extends AssembledReadBuilder<P>> getAllAssembledReadBuilders() {
             return reads.values();
         }
         /**
         * {@inheritDoc}
         */
         @Override
-        public PlacedReadBuilder<P> getPlacedReadBuilder(String readId) {
+        public AssembledReadBuilder<P> getAssembledReadBuilder(String readId) {
             return reads.get(readId);
         }
         /**

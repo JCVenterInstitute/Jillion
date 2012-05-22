@@ -142,16 +142,16 @@ public class TestConsedUtil_Split0x {
         * {@inheritDoc}
         */
         @Override
-        public AcePlacedReadBuilder getPlacedReadBuilder(String readId) {
-            return builder.getPlacedReadBuilder(readId);
+        public AcePlacedReadBuilder getAssembledReadBuilder(String readId) {
+            return builder.getAssembledReadBuilder(readId);
         }
 
         /**
         * {@inheritDoc}
         */
         @Override
-        public Collection<AcePlacedReadBuilder> getAllPlacedReadBuilders() {
-            return builder.getAllPlacedReadBuilders();
+        public Collection<AcePlacedReadBuilder> getAllAssembledReadBuilders() {
+            return builder.getAllAssembledReadBuilders();
         }
 
         /**

@@ -47,7 +47,7 @@ import org.jcvi.common.core.util.Builder;
 public interface AceContigBuilder extends ContigBuilder<AcePlacedRead,AceContig>{
     /**
      * Add a read to this contig with the given values.  This read
-     * can later get modified via the {@link #getPlacedReadBuilder(String)}.
+     * can later get modified via the {@link #getAssembledReadBuilder(String)}.
      * @param readId the Id this read should have
      * @param validBases the gapped bases of this read that align (however well/badly)
      * to this contig and will be used as underlying sequence data for this contig.
@@ -73,14 +73,14 @@ public interface AceContigBuilder extends ContigBuilder<AcePlacedRead,AceContig>
     * Get the {@link AcePlacedReadBuilder} for the given read id.
      */
     @Override
-    AcePlacedReadBuilder getPlacedReadBuilder(String readId);
+    AcePlacedReadBuilder getAssembledReadBuilder(String readId);
     
     /**
      * 
     * {@inheritDoc}
      */
     @Override
-    Collection<AcePlacedReadBuilder> getAllPlacedReadBuilders();
+    Collection<AcePlacedReadBuilder> getAllAssembledReadBuilders();
 
     /**
      * Set this contig as being complemented.

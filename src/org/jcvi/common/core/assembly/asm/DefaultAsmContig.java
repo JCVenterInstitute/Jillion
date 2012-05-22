@@ -29,7 +29,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AbstractContig;
 import org.jcvi.common.core.assembly.ContigBuilder;
-import org.jcvi.common.core.assembly.PlacedReadBuilder;
+import org.jcvi.common.core.assembly.AssembledReadBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
@@ -146,7 +146,7 @@ public final class DefaultAsmContig extends AbstractContig<AsmPlacedRead> implem
         * {@inheritDoc}
         */
         @Override
-        public Collection<? extends PlacedReadBuilder<AsmPlacedRead>> getAllPlacedReadBuilders() {
+        public Collection<? extends AssembledReadBuilder<AsmPlacedRead>> getAllAssembledReadBuilders() {
            
             return aceReadBuilderMap.values();
         }
@@ -155,7 +155,7 @@ public final class DefaultAsmContig extends AbstractContig<AsmPlacedRead> implem
         * {@inheritDoc}
         */
         @Override
-        public PlacedReadBuilder<AsmPlacedRead> getPlacedReadBuilder(String readId) {
+        public AssembledReadBuilder<AsmPlacedRead> getAssembledReadBuilder(String readId) {
             return aceReadBuilderMap.get(readId);
         }
 
