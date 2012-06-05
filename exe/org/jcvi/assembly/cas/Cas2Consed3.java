@@ -249,7 +249,7 @@ public class Cas2Consed3 {
                  NucleotideSequence fullConsensus =builder.getConsensusBuilder().build();
                  long ungappedLength = fullConsensus.getUngappedLength();
                  long firstReadStart= fullConsensus.getLength();
-                 for(AcePlacedReadBuilder readBuilder : builder.getAllPlacedReadBuilders()){
+                 for(AcePlacedReadBuilder readBuilder : builder.getAllAssembledReadBuilders()){
                      long start =readBuilder.getBegin();
                      if(start < firstReadStart){
                          firstReadStart = start;
