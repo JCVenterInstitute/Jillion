@@ -361,7 +361,7 @@ public class ReAbacusAceContigWorker {
                 List<Range> reversedSortedRanges = new ArrayList<Range>(Ranges.merge(rangesToMerge));
                 Collections.reverse(reversedSortedRanges);
                
-                CoverageMap<AcePlacedReadBuilder> coverageMap = CoverageMapFactory.create(contigBuilder.getAllPlacedReadBuilders());
+                CoverageMap<AcePlacedReadBuilder> coverageMap = CoverageMapFactory.create(contigBuilder.getAllAssembledReadBuilders());
                 
                 for(Range gappedAbacusProblemRange : reversedSortedRanges){
                     int gappedStart = (int)gappedAbacusProblemRange.getBegin();
@@ -382,7 +382,7 @@ public class ReAbacusAceContigWorker {
                     Map<String, NucleotideSequenceFastaRecord> ungappedSequences = new LinkedHashMap<String, NucleotideSequenceFastaRecord>();
                     int maxSeenLength=0;
                     for(String readId : affectedReads){
-                        AcePlacedReadBuilder readBuilder =contigBuilder.getPlacedReadBuilder(readId);
+                        AcePlacedReadBuilder readBuilder =contigBuilder.getAssembledReadBuilder(readId);
                         int flankedStart = Math.max(0,gappedStart);
                         
                         int flankedEnd = Math.min((int)consensus.getLength()-1,gappedEnd);
@@ -396,7 +396,7 @@ public class ReAbacusAceContigWorker {
                             continue;
                         }
                         Range affectedSequenceRange = Range.create(start, end); 
-                        List<Nucleotide> ungappedProblemSequenceRange = readBuilder.getBasesBuilder().asUngappedList(affectedSequenceRange);
+                        List<Nucleotide> ungappedProblemSequenceRange = readBuilder.getNucleotideSequenceBuilder().asUngappedList(affectedSequenceRange);
                         String coment = String.format("%s - %s", affectedSequenceRange.getBegin(), affectedSequenceRange.getEnd());
                         if(ungappedProblemSequenceRange.size()>maxSeenLength){
                             maxSeenLength = ungappedProblemSequenceRange.size();
@@ -462,7 +462,7 @@ public class ReAbacusAceContigWorker {
 	                            String id = gappedFasta.getId();
 	                            NucleotideSequence gappedSequence = gappedFasta.getSequence();
 	                            List<Nucleotide> bases = gappedSequence.asList();
-	                            AcePlacedReadBuilder readBuilder =contigBuilder.getPlacedReadBuilder(id);
+	                            AcePlacedReadBuilder readBuilder =contigBuilder.getAssembledReadBuilder(id);
 	                           
 	                            Range sequenceRange = Range.parseRange(gappedFasta.getComment());
 	                            
@@ -479,7 +479,7 @@ public class ReAbacusAceContigWorker {
 	                                i--;
 	                                currentBase = bases.get(i);
 	                            }     
-	                            NucleotideSequenceBuilder basesBuilder = readBuilder.getBasesBuilder();
+	                            NucleotideSequenceBuilder basesBuilder = readBuilder.getNucleotideSequenceBuilder();
 	                            //remove bases to fix
 	                            basesBuilder.delete(sequenceRange);
 	                            
@@ -526,7 +526,7 @@ public class ReAbacusAceContigWorker {
                        contigConsensusBuilder.delete(gappedAbacusProblemRange);
                         contigConsensusBuilder.insert((int)gappedAbacusProblemRange.getBegin(), updatedConsensus);
                         //update downstream offsets
-                        for(AcePlacedReadBuilder readBuilder : contigBuilder.getAllPlacedReadBuilders()){
+                        for(AcePlacedReadBuilder readBuilder : contigBuilder.getAllAssembledReadBuilders()){
                             
                             long oldStart =readBuilder.getBegin();
                             if(oldStart>gappedAbacusProblemRange.getBegin() && 
