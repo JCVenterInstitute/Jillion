@@ -174,7 +174,7 @@ public final class FastqFileParser {
         
 	}
 	
-	private static class Defline{
+	private static final class Defline{
 		private final String id,comment;
 
 		private Defline(String id, String comment) {
