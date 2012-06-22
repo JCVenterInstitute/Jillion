@@ -40,8 +40,6 @@ public interface CoverageMap <T extends Rangeable> extends Iterable<CoverageRegi
     
     boolean isEmpty();
     
-    long getLength();
-    
     CloseableIterator<CoverageRegion<T>> getRegionIterator();
    
 }

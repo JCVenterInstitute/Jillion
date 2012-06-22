@@ -37,7 +37,9 @@ public class TestCoverageMapFactoryUngappedCoverageMaps {
 		CoverageMap<AssembledRead> gappedCoverageMap = CoverageMapFactory.createGappedCoverageMapFromContig(contig);
 		CoverageMap<AssembledRead> ungappedCoverageMap = CoverageMapFactory.createUngappedCoverageMapFromContig(contig);
 		
-		assertEquals("ungapped length should be less than gapped length",gappedCoverageMap.getLength(), ungappedCoverageMap.getLength()+1);
+		assertEquals("ungapped length should be less than gapped length",
+				CoverageMapUtil.getLastCoveredOffsetIn(gappedCoverageMap), 
+				CoverageMapUtil.getLastCoveredOffsetIn(ungappedCoverageMap)+1);
 		
 		assertEquals("number of regions should be the same", gappedCoverageMap.getNumberOfRegions(), ungappedCoverageMap.getNumberOfRegions());
 		assertEquals(2, ungappedCoverageMap.getNumberOfRegions());

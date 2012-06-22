@@ -263,17 +263,7 @@ public final class CoverageMapFactory {
 			return CloseableIteratorAdapter.adapt(iterator());
 		}
 		
-	    
-	    /**
-	    * {@inheritDoc}
-	    */
-	    @Override
-	    public long getLength() {
-	        if(isEmpty()){
-	            return 0L;
-	        }
-	        return regions[regions.length-1].asRange().getEnd()+1;
-	    }
+	   
 	    /**
 	    * {@inheritDoc}
 	    */
