@@ -149,11 +149,11 @@ public interface AsmVisitor extends TextFileVisitor{
         ;
         private final char code;
         
-        private static final Map<Character,MateStatus> map;
+        private static final Map<Character,MateStatus> MAP;
         static{
-            map = new HashMap<Character,MateStatus>();
+            MAP = new HashMap<Character,MateStatus>();
             for(MateStatus status : values()){
-                map.put(status.code, status);
+                MAP.put(status.code, status);
             }
         }
         private MateStatus(char code) {
@@ -165,10 +165,10 @@ public interface AsmVisitor extends TextFileVisitor{
         }
         public static MateStatus parseMateStatus(char statusCode){
             Character valueOf = Character.valueOf(statusCode);
-            if(!map.containsKey(valueOf)) {
+            if(!MAP.containsKey(valueOf)) {
                throw new IllegalArgumentException("invalid mate status code :"+ statusCode);
             }
-            return map.get(valueOf);
+            return MAP.get(valueOf);
             
         }
     }
@@ -206,11 +206,11 @@ public interface AsmVisitor extends TextFileVisitor{
         ;
         private final char code;
         
-        private static final Map<Character,UnitigStatus> map;
+        private static final Map<Character,UnitigStatus> MAP;
         static{
-            map = new HashMap<Character,UnitigStatus>();
+            MAP = new HashMap<Character,UnitigStatus>();
             for(UnitigStatus status : values()){
-                map.put(status.code, status);
+                MAP.put(status.code, status);
             }
         }
         private UnitigStatus(char code) {
@@ -222,10 +222,10 @@ public interface AsmVisitor extends TextFileVisitor{
         }
         public static UnitigStatus parseUnitigStatus(char statusCode){
             Character valueOf = Character.valueOf(statusCode);
-            if(!map.containsKey(valueOf)) {
+            if(!MAP.containsKey(valueOf)) {
                 throw new IllegalArgumentException("invalid unitig status code :"+ statusCode);
              }
-            return map.get(valueOf);
+            return MAP.get(valueOf);
         }
     }
     
@@ -256,11 +256,11 @@ public interface AsmVisitor extends TextFileVisitor{
         ;
         private final char code;
         
-        private static final Map<Character,LinkOrientation> map;
+        private static final Map<Character,LinkOrientation> MAP;
         static{
-            map = new HashMap<Character,LinkOrientation>();
+            MAP = new HashMap<Character,LinkOrientation>();
             for(LinkOrientation status : values()){
-                map.put(status.code, status);
+                MAP.put(status.code, status);
             }
         }
         private LinkOrientation(char code) {
@@ -272,10 +272,10 @@ public interface AsmVisitor extends TextFileVisitor{
         }
         public static LinkOrientation parseLinkOrientation(char statusCode){
             Character valueOf = Character.valueOf(statusCode);
-            if(!map.containsKey(valueOf)) {
+            if(!MAP.containsKey(valueOf)) {
                throw new IllegalArgumentException("invalid link orientation code :"+ statusCode);
             }
-            return map.get(Character.valueOf(statusCode));
+            return MAP.get(Character.valueOf(statusCode));
         }
     }
     
@@ -316,11 +316,11 @@ public interface AsmVisitor extends TextFileVisitor{
         ;
         private final char code;
         
-        private static final Map<Character,OverlapType> map;
+        private static final Map<Character,OverlapType> MAP;
         static{
-            map = new HashMap<Character,OverlapType>();
+            MAP = new HashMap<Character,OverlapType>();
             for(OverlapType status : values()){
-                map.put(status.code, status);
+                MAP.put(status.code, status);
             }
         }
         private OverlapType(char code) {
@@ -332,10 +332,10 @@ public interface AsmVisitor extends TextFileVisitor{
         }
         public static OverlapType parseOverlapType(char statusCode){
             Character valueOf = Character.valueOf(statusCode);
-            if(!map.containsKey(valueOf)){
+            if(!MAP.containsKey(valueOf)){
                 throw new IllegalArgumentException("invalid overlap code :"+ statusCode);                
             }
-            return map.get(valueOf);
+            return MAP.get(valueOf);
         }
         /**
          * This is the expected number of mate pair
@@ -383,11 +383,11 @@ public interface AsmVisitor extends TextFileVisitor{
         ;
         private final char code;
         
-        private static final Map<Character,OverlapStatus> map;
+        private static final Map<Character,OverlapStatus> MAP;
         static{
-            map = new HashMap<Character,OverlapStatus>();
+            MAP = new HashMap<Character,OverlapStatus>();
             for(OverlapStatus status : values()){
-                map.put(status.code, status);
+                MAP.put(status.code, status);
             }
         }
         private OverlapStatus(char code) {
@@ -399,10 +399,10 @@ public interface AsmVisitor extends TextFileVisitor{
         }
         public static OverlapStatus parseOverlapStatus(char statusCode){            
             Character valueOf = Character.valueOf(statusCode);
-            if(!map.containsKey(valueOf)){
+            if(!MAP.containsKey(valueOf)){
                 throw new IllegalArgumentException("invalid overlap status code :"+ statusCode);
             }
-            return map.get(valueOf);
+            return MAP.get(valueOf);
         }
     }
     
@@ -493,11 +493,12 @@ public interface AsmVisitor extends TextFileVisitor{
         ;
         private final char code;
         
-        private static final Map<Character,UnitigLayoutType> map;
+        private static final Map<Character,UnitigLayoutType> MAP;
+        
         static{
-            map = new HashMap<Character,UnitigLayoutType>();
+            MAP = new HashMap<Character,UnitigLayoutType>();
             for(UnitigLayoutType status : values()){
-                map.put(status.code, status);
+                MAP.put(status.code, status);
             }
         }
         private UnitigLayoutType(char code) {
@@ -509,10 +510,10 @@ public interface AsmVisitor extends TextFileVisitor{
         }
         public static UnitigLayoutType parseUnitigLayoutType(char typeCode){
             Character valueOf = Character.valueOf(typeCode);
-            if(!map.containsKey(valueOf)){
+            if(!MAP.containsKey(valueOf)){
                 throw new IllegalArgumentException("invalid unitg layout type : "+ typeCode);
             }
-            return map.get(valueOf);
+            return MAP.get(valueOf);
         }
     }
     /**
