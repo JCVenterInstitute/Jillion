@@ -30,6 +30,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapUtil;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
@@ -189,7 +190,7 @@ public final class CompactedSliceMap implements SliceMap {
     }
     private <PR extends AssembledRead, M extends CoverageMap<PR>> CompactedSliceMap(
             M coverageMap, QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
-        int size = (int)coverageMap.getLength();
+        int size = (int)CoverageMapUtil.getLastCoveredOffsetIn(coverageMap)+1;
         this.slices = new CompactedSlice[size];
         for(CoverageRegion<PR> region : coverageMap){
             Map<String,Sequence<PhredQuality>> qualities = new HashMap<String,Sequence<PhredQuality>>(region.getCoverageDepth());

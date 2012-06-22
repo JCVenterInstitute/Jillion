@@ -10,6 +10,12 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 
 public final class CoverageMapUtil {
 
+	public static long getLastCoveredOffsetIn(CoverageMap<?> coverageMap){
+	        if(coverageMap.isEmpty()){
+	            return -1L;
+	        }
+	        return coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).asRange().getEnd();
+	}
 	 
     public static <V extends Rangeable> List<CoverageRegion<V>> getRegionsWhichIntersect(CoverageMap<V> coverageMap, Range range) {
         List<CoverageRegion<V>> selectedRegions = new ArrayList<CoverageRegion<V>>();

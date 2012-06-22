@@ -31,6 +31,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapUtil;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
@@ -101,7 +102,8 @@ public class DefaultSliceMap extends AbstractSliceMap{
     protected DefaultSliceMap(CoverageMap<? extends AssembledRead> coverageMap, 
             QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality){
-    	this.slices = new IdedSlice[(int)(coverageMap.getLength())];
+    	int lengthOfMap = (int)CoverageMapUtil.getLastCoveredOffsetIn(coverageMap)+1;
+    	this.slices = new IdedSlice[lengthOfMap];
         this.defaultQuality = defaultQuality;
         for(CoverageRegion<?  extends AssembledRead> region : coverageMap){
         	Range range = region.asRange();
