@@ -32,7 +32,6 @@ import java.util.Map.Entry;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.XMLUtil;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
 
@@ -84,7 +83,7 @@ public class TraceArchiveInfoXMLWriter implements TraceArchiveInfoWriter {
         	iter= info.iterator();
         while(iter.hasNext()){
         	TraceArchiveRecord record = iter.next();
-            writeString(out, String.format("%s\n",XMLUtil.beginTag("trace")));
+            writeString(out, String.format("%s\n",beginTag("trace")));
             /*for(TraceInfoField field : FIELD_ORDER){
                 writeString(out,String.format("%s%s%s\n", 
                         XMLUtil.beginTag(field),record.getAttribute(field),XMLUtil.endTag(field)));
@@ -92,11 +91,11 @@ public class TraceArchiveInfoXMLWriter implements TraceArchiveInfoWriter {
             */
             for(Entry<TraceInfoField,String> entry :record.entrySet()){
                 writeString(out,String.format("%s%s%s\n", 
-                        XMLUtil.beginTag(entry.getKey()),entry.getValue(),XMLUtil.endTag(entry.getKey())));
+                        beginTag(entry.getKey()),entry.getValue(),endTag(entry.getKey())));
             }
             
             writeExtendedData(record);
-            writeString(out, String.format("%s\n",XMLUtil.endTag("trace")));
+            writeString(out, String.format("%s\n",endTag("trace")));
         }
         } catch (DataStoreException e) {
 			throw new IOException("error getting iterator from trace archive datastore",e);
@@ -112,12 +111,12 @@ public class TraceArchiveInfoXMLWriter implements TraceArchiveInfoWriter {
             throws IOException {
         Map<String,String> extendedData = record.getExtendedData();
         if(!extendedData.isEmpty()){
-            writeString(out, String.format("%s\n", XMLUtil.beginTag(TraceInfoField.EXTENDED_DATA)));
+            writeString(out, String.format("%s\n", beginTag(TraceInfoField.EXTENDED_DATA)));
             for(Entry<String,String> extendedEntry : extendedData.entrySet()){
                 writeString(out,String.format("\t<field name='%s'>%s</field>\n", 
                         extendedEntry.getKey(),extendedEntry.getValue()));
             }
-            writeString(out, String.format("%s\n", XMLUtil.endTag(TraceInfoField.EXTENDED_DATA)));
+            writeString(out, String.format("%s\n", endTag(TraceInfoField.EXTENDED_DATA)));
         }
     }
 
@@ -126,5 +125,10 @@ public class TraceArchiveInfoXMLWriter implements TraceArchiveInfoWriter {
         out.close();
 
     }
-
+    private static String beginTag(Object value){
+        return String.format("<%s>", value);
+    }
+    private static String endTag(Object value){
+        return String.format("</%s>", value);
+    }
 }
