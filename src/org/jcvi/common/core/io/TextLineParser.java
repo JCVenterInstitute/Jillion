@@ -81,11 +81,27 @@ public final class TextLineParser implements Closeable{
 		}
 		
 	}
+	/**
+	 * Does the inputStream have another line
+	 * to read.  If there are no more lines to read,
+	 * then {@link #nextLine()} will return {@code null}.
+	 * @return {@code true} if there are more lines to be read;
+	 * {@code false} otherwise.
+	 * @see #nextLine()
+	 */
 	public boolean hasNextLine(){
 		Object next = nextQueue.peek();
 		
 		return next!= endOfFile;
 	}
+	/**
+	 * Get the next line (including end of line characters)
+	 * as a String.
+	 * @return a the next line; or {@code null} if there are no
+	 * more lines.
+	 * @throws IOException if there is a problem reading the next
+	 * line.
+	 */
 	public String nextLine() throws IOException{
 		Object next= nextQueue.poll();
 		if(next == endOfFile){
@@ -94,8 +110,9 @@ public final class TextLineParser implements Closeable{
 		getNextLine();
 		return (String)next;
 	}
-	/* (non-Javadoc)
-	 * @see java.io.Closeable#close()
+	/**
+	 * 
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void close() throws IOException {

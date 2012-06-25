@@ -22,7 +22,12 @@
  * @author dkatzel
  */
 package org.jcvi.common.core.io;
-
+/**
+ * {@code TextFileVisitor} is a {@link FileVisitor}
+ * that visits a text file.
+ * @author dkatzel
+ *
+ */
 public interface TextFileVisitor extends FileVisitor {
     /**
      * Visit a new line.  
