@@ -39,9 +39,6 @@ import org.junit.runners.Suite.SuiteClasses;
        AllPhredQualityTests.class,
        AllNumericGlyphUnitTests.class,
        AllPeaksUnitTests.class,       
-       
-       TestRunLength.class,
-       TestRunLengthEncoder.class,
        AllEnocderUnitTests.class
     }
 )

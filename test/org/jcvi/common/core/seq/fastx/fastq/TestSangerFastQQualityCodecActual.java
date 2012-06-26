@@ -27,8 +27,8 @@ import java.util.List;
 
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.symbol.EncodedSequence;
-import org.jcvi.common.core.symbol.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestSangerFastQQualityCodecActual {

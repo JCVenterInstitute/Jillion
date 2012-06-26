@@ -17,36 +17,36 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Jan 22, 2009
+ * Created on Feb 20, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.symbol;
+package org.jcvi.common.core.util;
 
 
-public class DefaultNumericGlyph implements NumericSymbol{
-    private final Number number;
-    DefaultNumericGlyph(Number number){
-        if(number ==null){
-            throw new IllegalArgumentException("number can not be null");
-        }
-        this.number = number;
+public final class RunLength<T> {
+    private final int length;
+    private final  T value;
+    /**
+     * @param length
+     * @param value
+     */
+    public RunLength(T value,int length) {
+        this.length = length;
+        this.value = value;
     }
-    @Override
-    public Number getValue() {
-        return number;
+    public int getLength() {
+        return length;
     }
-
-
-    @Override
-    public String getName() {
-        return number.toString();
+    public T getValue() {
+        return value;
     }
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Long.valueOf(number.longValue()).hashCode();
+        result = prime * result + length;
+        result = prime * result + ((value == null) ? 0 : value.hashCode());
         return result;
     }
     @Override
@@ -54,17 +54,23 @@ public class DefaultNumericGlyph implements NumericSymbol{
         if (this == obj){
             return true;
         }
-        if (!(obj instanceof DefaultNumericGlyph)){
+        if (obj == null){
             return false;
         }
-        DefaultNumericGlyph other = (DefaultNumericGlyph) obj;
-       return number.longValue()==other.number.longValue();
+        if (!(obj instanceof RunLength)){
+            return false;
+        }
+        RunLength<?> other = (RunLength<?>) obj;
+        return length == other.length && 
+        		ObjectsUtil.nullSafeEquals(getValue(), other.getValue());
     }
     @Override
     public String toString() {
-        return getValue().toString();
+       StringBuilder builder = new StringBuilder();
+       builder.append(value)
+               .append("x ")
+               .append(getLength());
+        return builder.toString();
     }
-    
-    
-    
+
 }

@@ -27,6 +27,7 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;

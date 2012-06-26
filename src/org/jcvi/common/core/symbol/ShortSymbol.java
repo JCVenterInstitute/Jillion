@@ -26,7 +26,7 @@ package org.jcvi.common.core.symbol;
 import java.nio.ShortBuffer;
 import java.util.Collection;
 
-public class ShortSymbol extends DefaultNumericGlyph implements Comparable<ShortSymbol>{
+public class ShortSymbol extends AbstractNumericSymbol implements Comparable<ShortSymbol>{
 
 
     public ShortSymbol(short s){
