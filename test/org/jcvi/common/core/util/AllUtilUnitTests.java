@@ -28,6 +28,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         TestObjectsUtil.class,
+        TestRunLength.class,
         MathUtilSuite.class,
         TestLRUCache.class,
         TestWeakReferenceLRUCache.class,

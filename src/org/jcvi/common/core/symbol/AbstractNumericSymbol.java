@@ -17,47 +17,54 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Feb 23, 2009
+ * Created on Jan 22, 2009
  *
  * @author dkatzel
  */
 package org.jcvi.common.core.symbol;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
-
-public abstract class AbstractByteSymbolCodec<T extends ByteSymbol> implements ByteSymbolCodec<T>{
-
-    protected abstract T getValueOf(byte b);
-    @Override
-    public List<T> decode(byte[] encodedGlyphs) {
-        List<T> glyphs = new ArrayList<T>();
-        ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
-        while(buf.hasRemaining()){
-            glyphs.add(getValueOf(buf.get()));
+public abstract class AbstractNumericSymbol implements NumericSymbol{
+    private final Number number;
+    protected AbstractNumericSymbol(Number number){
+        if(number ==null){
+            throw new IllegalArgumentException("number can not be null");
         }
-        return glyphs;
+        this.number = number;
+    }
+    @Override
+    public Number getValue() {
+        return number;
     }
 
-    @Override
-    public T decode(byte[] encodedGlyphs, int index) {
-        return getValueOf(encodedGlyphs[index]);
-    }
 
     @Override
-    public int decodedLengthOf(byte[] encodedGlyphs) {
-        return encodedGlyphs.length;
+    public String getName() {
+        return number.toString();
     }
-
     @Override
-    public byte[] encode(Collection<T> glyphs) {
-        ByteBuffer buf = ByteBuffer.allocate(glyphs.size());
-        for(ByteSymbol g : glyphs){
-            buf.put(g.getValue().byteValue());
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Long.valueOf(number.longValue()).hashCode();
+        return result;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj){
+            return true;
         }
-        return buf.array();
+        if (!(obj instanceof AbstractNumericSymbol)){
+            return false;
+        }
+        AbstractNumericSymbol other = (AbstractNumericSymbol) obj;
+       return number.longValue()==other.number.longValue();
     }
+    @Override
+    public String toString() {
+        return getValue().toString();
+    }
+    
+    
+    
 }

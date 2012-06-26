@@ -23,12 +23,41 @@
  */
 package org.jcvi.common.core.symbol.qual;
 
-import org.jcvi.common.core.symbol.AbstractByteSymbolCodec;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-public class DefaultEncodedPhredGlyphCodec extends AbstractByteSymbolCodec<PhredQuality> implements QualitySymbolCodec{
+
+public class DefaultEncodedPhredGlyphCodec implements QualitySymbolCodec{
+
 
     @Override
-    protected PhredQuality getValueOf(byte b) {
-        return PhredQuality.valueOf(b);
+    public List<PhredQuality> decode(byte[] encodedGlyphs) {
+        List<PhredQuality> glyphs = new ArrayList<PhredQuality>();
+        ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
+        while(buf.hasRemaining()){
+            glyphs.add(PhredQuality.valueOf(buf.get()));
+        }
+        return glyphs;
+    }
+
+    @Override
+    public PhredQuality decode(byte[] encodedGlyphs, int index) {
+        return PhredQuality.valueOf(encodedGlyphs[index]);
+    }
+
+    @Override
+    public int decodedLengthOf(byte[] encodedGlyphs) {
+        return encodedGlyphs.length;
+    }
+
+    @Override
+    public byte[] encode(Collection<PhredQuality> glyphs) {
+        ByteBuffer buf = ByteBuffer.allocate(glyphs.size());
+        for(PhredQuality g : glyphs){
+            buf.put(g.getValue().byteValue());
+        }
+        return buf.array();
     }
 }

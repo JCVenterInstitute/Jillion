@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jcvi.common.core.symbol.ByteSymbol;
+import org.jcvi.common.core.symbol.AbstractNumericSymbol;
 import org.jcvi.common.core.symbol.Symbol;
 /**
  * {@code PhredQuality} is a {@link Symbol} representation of
@@ -39,7 +39,7 @@ import org.jcvi.common.core.symbol.Symbol;
  *
  *
  */
-public final class PhredQuality extends ByteSymbol<PhredQuality>{
+public final class PhredQuality extends AbstractNumericSymbol implements Comparable<PhredQuality>{
     //127 should be good enough for anybody
     public static final byte MAX_VALUE = Byte.MAX_VALUE;
     public static final byte MIN_VALUE = 0;
@@ -55,7 +55,16 @@ public final class PhredQuality extends ByteSymbol<PhredQuality>{
     }
     
     private PhredQuality(byte b) {
-        super(b);        
+    	super(Byte.valueOf(b));     
+    }
+    
+    @Override
+    public Byte getValue() {
+        return (Byte)super.getValue();
+    }
+    @Override
+    public int compareTo(PhredQuality o) {
+        return getValue().compareTo(o.getValue());
     }
     /**
      * Get the {@link PhredQuality} with the given

@@ -30,11 +30,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-       TestByteGlyph.class,
-       TestByteGlyphFactory.class,
        TestShortGlyph.class,
        TestShortGlyphFactory.class,
-       TestEncodedByteGlyph.class,
        TestEncodedShortGlyph.class,
        TestDefaultShortGlyphCodec.class
     }

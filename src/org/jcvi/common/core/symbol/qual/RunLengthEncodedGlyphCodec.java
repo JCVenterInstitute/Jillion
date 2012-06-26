@@ -21,15 +21,15 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.symbol;
+package org.jcvi.common.core.symbol.qual;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualitySymbolCodec;
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.util.RunLength;
 
 public class RunLengthEncodedGlyphCodec implements QualitySymbolCodec{
     public static final RunLengthEncodedGlyphCodec DEFAULT_INSTANCE = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
@@ -45,7 +45,7 @@ public class RunLengthEncodedGlyphCodec implements QualitySymbolCodec{
         int size = buf.getInt();
         byte guard = buf.get();
        
-        return RunLengthEncoder.decode(decodeUpTo(buf, guard, size-1));
+        return decode(decodeUpTo(buf, guard, size-1));
     }
     private List<RunLength<PhredQuality>> decodeUpTo(ByteBuffer buf, byte guard,int maxIndex) {
         //size of list initialized to 25% of max index
@@ -88,7 +88,7 @@ public class RunLengthEncodedGlyphCodec implements QualitySymbolCodec{
         buf.getInt();
         byte guard = buf.get();
         final List<RunLength<PhredQuality>> list = decodeUpTo(buf, guard, index);
-        final PhredQuality result = RunLengthEncoder.decode(list, index);
+        final PhredQuality result = decode(list, index);
         return result;
     }
 
@@ -101,7 +101,7 @@ public class RunLengthEncodedGlyphCodec implements QualitySymbolCodec{
 
     @Override
     public byte[] encode(Collection<PhredQuality> glyphs) {
-        List<RunLength<PhredQuality>> runLengthList = RunLengthEncoder.encode(glyphs);
+        List<RunLength<PhredQuality>> runLengthList = runLengthEncode(glyphs);
         int size = computeSize(runLengthList);
         ByteBuffer buf = ByteBuffer.allocate(size);
         buf.putInt(glyphs.size());
@@ -170,6 +170,45 @@ public class RunLengthEncodedGlyphCodec implements QualitySymbolCodec{
         return true;
     }
 
-    
+    private static <T> List<RunLength<T>> runLengthEncode(Collection<T> collectionOfElements){
+        List<RunLength<T>> encoding = new ArrayList<RunLength<T>>();
+        List<T> elements = new ArrayList<T>(collectionOfElements);
+        if(elements.isEmpty()){
+            return encoding;
+        }
+        int counter = -1;
+        for(int i =0; i< elements.size()-1; i++){
+            if(!elements.get(i).equals(elements.get(i+1))){
+                encoding.add(new RunLength<T>(elements.get(i), i-counter));
+                counter =i;
+            }
+        }
+        encoding.add(new RunLength<T>(elements.get(elements.size()-1),elements.size()-1-counter));
+        return encoding;
+    }
+    private static <T> T decode(List<RunLength<T>> encoded, int decodedIndex){
+        long previousIndex=-1;
+        final Range target = Range.createOfLength(decodedIndex, 1);
+        for(RunLength<T> runLength : encoded){
+            long currentStartIndex = previousIndex+1;
+            Range range = Range.createOfLength(currentStartIndex, runLength.getLength());
+            
+            if(range.intersects(target)){
+                return runLength.getValue();
+            }
+            previousIndex = range.getEnd();
+        }
+        throw new ArrayIndexOutOfBoundsException(decodedIndex + " last index is "+ previousIndex);
+    }
+    private static <T> List<T> decode(List<RunLength<T>> encoding){
+        List<T> decoded = new ArrayList<T>();
+        for(RunLength<T> runLength : encoding){
+            final T value = runLength.getValue();
+            for(int i=0; i< runLength.getLength(); i++){                
+                decoded.add(value);
+            }
+        }
+        return decoded;
+    }
 
 }
