@@ -28,8 +28,7 @@ import org.junit.runners.Suite.SuiteClasses;
     {
       TestPeaks.class,
       TestPeaksUtil.class,
-      TestTigrPeaksEncoder.class,
-      TestTigrPeaksEncoderCodec.class
+      TestTigrPeaksEncoder.class
     }
     )
 public class AllPeaksUnitTests {

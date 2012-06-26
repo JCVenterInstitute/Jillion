@@ -30,6 +30,7 @@ import org.jcvi.common.core.util.FIFOQueue;
  * will include the end of line characters in the {@link #getNextLine()}
  * methods.  Most JDK classes chop off these characters and the few classes
  * that could could be configured to include these characters are slow.
+ * <p/>This class is not Thread-safe
  * @author dkatzel
  *
  *
