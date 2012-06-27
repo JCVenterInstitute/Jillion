@@ -611,7 +611,9 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     /**
      * Create a new NucleotideSequence instance
      * from containing only current mutable nucleotides
-     * in the given range.
+     * in the given range.  If the range extends beyond the currentl
+     * sequence, then this will build all the bases until the end of
+     * the sequence.
      * @param range the range of nucleotides to build (gapped).
      * @return a new NucleotideSequence never null
      * but may be empty.
