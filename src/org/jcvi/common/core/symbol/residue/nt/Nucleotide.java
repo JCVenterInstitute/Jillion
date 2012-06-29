@@ -297,4 +297,28 @@ public enum Nucleotide implements Residue {
     	return AMBIGUITY_TO_CONSTIUENT.get(this);
     }
     
+    /**
+     * Two {@link Nucleotide}s match if one of the {@link Nucleotide}'s
+     * set of unambiguous bases
+     * is a complete subset of the other.
+     * For example, V (which is A,C or G) would
+     * match A, C, G, M, R, S and N. However, V would not
+     * match W since that could also represent a T.
+     * @param other the other Nucleotide to match.
+     * @return {@code true} if this Nucleotide matches the other given
+     * {@link Nucleotide}; {@code false} otherwise.
+     */
+    public boolean matches(Nucleotide other){
+    	if(other ==null){
+    		throw new NullPointerException("other can not be null");
+    	}
+    	if(this==other){
+    		return true;
+    	}
+
+    	Set<Nucleotide> basesForOther =other.getBasesFor();
+    	Set<Nucleotide> basesForThis =getBasesFor();
+    	return basesForThis.containsAll(basesForOther)
+    			|| basesForOther.containsAll(basesForThis);
+    }
 }
