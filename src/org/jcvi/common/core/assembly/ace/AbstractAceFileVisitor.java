@@ -176,16 +176,20 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         }
         if(qualLeft == -1 && qualRight ==-1){
             skipCurrentRead = true;
-            visitIgnoredRead(currentReadId, "entire read is low quality");
+            visitIgnoredRead(currentReadId, null, "entire read is low quality");
             return;
         }
         if((qualRight-qualLeft) <0){
             //invalid converted ace file? 
             skipCurrentRead = true;
-            visitIgnoredRead(currentReadId, String.format("has a negative valid range %d%n",
+            visitIgnoredRead(currentReadId, null, String.format("has a negative valid range %d%n",
                     (qualRight-qualLeft)));
             return;
         }    
+        AlignedReadInfo assembledFrom =currentAssembledFromMap.get(currentReadId);
+        if(assembledFrom ==null){
+            throw new IllegalStateException("unknown read no AF record for "+ currentReadId);
+        }
         //dkatzel 4/2011 - There have been cases when qual coords and align coords
         //do not match; usually qual is a sub set of align
         //but occasionally, qual goes beyond the align coords.
@@ -227,16 +231,13 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
 	        	//dkatzel -therefore if consed dims the entire read
 	        	//that's enough justification for me to throw the read out
 	        	skipCurrentRead = true;
-	        	visitIgnoredRead(currentReadId,"read does not have a high quality aligned range");
+	        	visitIgnoredRead(currentReadId,assembledFrom.getDirection(), "read does not have a high quality aligned range");
 	        	return;
 	        }
        }catch(Exception e){
     	   throw new RuntimeException("error while generating quality data for "+currentReadId,e);
        }
-        AlignedReadInfo assembledFrom =currentAssembledFromMap.get(currentReadId);
-        if(assembledFrom ==null){
-            throw new IllegalStateException("unknown read no AF record for "+ currentReadId);
-        }
+        
         currentOffset = computeReadOffset(assembledFrom, gappedValidRange.getBegin(CoordinateSystem.RESIDUE_BASED));            
        
         currentFullLengthBases = currentBasecalls.toString();
@@ -276,9 +277,10 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
      * to STDERR; please override this method if you want
      * to do something else.
      * @param readId the id of the read getting ignored.
+     * @param direction the {@link Direction} of this read.
      * @param reason the reason this read is to be ignored.
      */
-    protected void visitIgnoredRead(String readId, String reason){
+    protected void visitIgnoredRead(String readId, Direction direction, String reason){
     	System.err.printf("ignoring read %s because %s%n", readId,reason);
     }
     
