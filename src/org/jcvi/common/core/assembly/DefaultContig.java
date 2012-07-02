@@ -60,7 +60,8 @@ public class DefaultContig<P extends AssembledRead> extends AbstractContig<P>{
 
 	public static class Builder extends AbstractContigBuilder<AssembledRead, Contig<AssembledRead>>{
         public Builder(String id, String consensus){
-           this(id, new NucleotideSequenceBuilder(consensus).build());
+           this(id, new NucleotideSequenceBuilder(consensus)
+           					.build());
         }
         
         public <R extends AssembledRead, C extends Contig<R>> Builder(C copy){

@@ -33,15 +33,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.ValueSizeStrategy;
 import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.residue.AbstractResidueSequence;
 import org.jcvi.common.core.util.iter.ArrayIterator;
 
-final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotideSequence implements ReferenceMappedNucleotideSequence{
+final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSequence<Nucleotide> implements ReferenceMappedNucleotideSequence{
 
 	private static final int BITS_PER_SNP_VALUE=4;
     private final int length;
@@ -109,7 +111,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
         this.startOffset = startOffset;
         this.length = toBeEncoded.length();
         this.reference = reference;
-        TreeMap<Integer, Nucleotide> differentGlyphMap = populateFields(reference, toBeEncoded, startOffset, tempGapList);
+        SortedMap<Integer, Nucleotide> differentGlyphMap = populateFields(reference, toBeEncoded, startOffset, tempGapList);
         
         int numSnps = differentGlyphMap.size();
         if(numSnps >0){
@@ -170,7 +172,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractNucleotide
 	}
 
 
-	private TreeMap<Integer, Nucleotide> populateFields(Sequence<Nucleotide> reference,
+	private SortedMap<Integer, Nucleotide> populateFields(Sequence<Nucleotide> reference,
             String toBeEncoded, int startOffset, List<Integer> tempGapList) {
         handleBeforeReference(startOffset);
         handleAfterReference(reference, toBeEncoded, startOffset);

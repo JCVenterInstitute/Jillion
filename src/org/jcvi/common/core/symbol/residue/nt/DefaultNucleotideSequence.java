@@ -27,6 +27,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jcvi.common.core.symbol.residue.AbstractResidueSequence;
+
 /**
  * {@code DefaultNucleotideSequence} is the default
  * implementation of a {@link NucleotideSequence}.  Internally,
@@ -35,7 +37,7 @@ import java.util.List;
  *
  *
  */
-final class DefaultNucleotideSequence extends AbstractNucleotideSequence{
+final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide> implements NucleotideSequence{
     
    
     

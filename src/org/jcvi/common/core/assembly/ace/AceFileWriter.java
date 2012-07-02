@@ -216,7 +216,8 @@ public class AceFileWriter {
     }
     
     private static final class IdAlignedReadInfo implements Comparable<IdAlignedReadInfo>{
-    	private final String id;
+    	private static final int TO_STRING_BUFFER_SIZE = 30;
+		private final String id;
 	    private final byte dir;
 	    private final int startOffset;
 	    private static final Direction[] DIRECTION_VALUES = Direction.values();
@@ -276,7 +277,7 @@ public class AceFileWriter {
 	    }
 	    @Override
 	    public String toString() {
-	        StringBuilder builder = new StringBuilder();
+	        StringBuilder builder = new StringBuilder(TO_STRING_BUFFER_SIZE);
 	        builder.append(id).append(" ").append(startOffset).append("is complemented? ").append(getDirection() ==Direction.REVERSE);
 	        return builder.toString();
 	    }

@@ -31,7 +31,7 @@ import org.jcvi.common.core.assembly.util.slice.Slice;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 
-import static org.jcvi.common.core.assembly.util.slice.consensus.ConsensusUtil.*;
+import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusUtil;
 /**
  * <code>ConicConsensusCaller</code> calls consensus using
  * the "Conic Ambiguity Model".
@@ -98,7 +98,7 @@ public class ConicConsensusCaller extends AbstractChurchillWatermanConsensusCall
         final Nucleotide maxQualityBase = maxQualityStruct.base;
         basesTowardsAmbiguity.add(maxQualityBase);
        
-        for(Nucleotide base : BASES_TO_CONSIDER){
+        for(Nucleotide base : ConsensusUtil.BASES_TO_CONSIDER){
             if(base !=maxQualityBase ){
                 double tangent = qualityValueSumMap.get(base).doubleValue()/maxQualityStruct.sum;
                 if(tangent < upperlimit && tangent > lowerlimit){
@@ -112,7 +112,7 @@ public class ConicConsensusCaller extends AbstractChurchillWatermanConsensusCall
             Map<Nucleotide, Integer> qualityValueSumMap) {
         int maxQualitySum=0;
         Nucleotide maxQualityBase= Nucleotide.Gap;
-        for(Nucleotide base : BASES_TO_CONSIDER){
+        for(Nucleotide base : ConsensusUtil.BASES_TO_CONSIDER){
             int qualitySum = qualityValueSumMap.get(base);
             if(qualitySum > maxQualitySum){
                 maxQualitySum = qualitySum;

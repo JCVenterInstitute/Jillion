@@ -38,7 +38,13 @@ import org.ggf.drmaa.SessionFactory;
  */
 public final class GridUtils
 {
-    /** The default {@link Session} initializtion contact to use if none is supplied. */
+	/**
+	 * Initial size of String buffer for job info
+	 * message.
+	 */
+    private static final int JOB_INFO_BUFFER_SIZE = 100;
+
+	/** The default {@link Session} initializtion contact to use if none is supplied. */
     private static final String DEFAULT_CONTACT = "";
 
     /** An appropriate {@link SessionFactory} for the environment. */
@@ -151,9 +157,10 @@ public final class GridUtils
             return "job info is null";
         }
 
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(JOB_INFO_BUFFER_SIZE);
         builder.append("Job " + info.getJobId() + " job status is " + GridUtils.getJobStatus(info));
-        builder.append("\nExit status value is: " + (info.hasExited() ? info.getExitStatus() : " not applicable"));
+        builder.append("\nExit status value is: ")
+        .append((info.hasExited() ? info.getExitStatus() : " not applicable"));
 
         // Output usage information
         builder.append("\nJob Usage:");
