@@ -56,6 +56,9 @@ public final class GridUtils
     /** The lock which controls access to the global {@link Session}. */
     private static final Lock SESSION_LOCK = new ReentrantLock();
 
+    private GridUtils(){
+    	//can not instantiate. 
+    }
     /**
      * Fetch the global {@link Session}.  This is a singleton instance, so all calls to this
      * method are guaranteed to return the same reference.

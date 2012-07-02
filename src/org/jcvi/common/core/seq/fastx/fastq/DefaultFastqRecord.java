@@ -169,7 +169,7 @@ public class DefaultFastqRecord implements FastqRecord {
         
         StringBuilder builder = new StringBuilder("@").append(id);
         if(hasComment){
-            builder.append(" ").append(getComment());
+            builder.append(' ').append(getComment());
         }
         builder.append(CR)
         .append(getNucleotideSequence())

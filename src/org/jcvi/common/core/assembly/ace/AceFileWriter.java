@@ -278,7 +278,10 @@ public class AceFileWriter {
 	    @Override
 	    public String toString() {
 	        StringBuilder builder = new StringBuilder(TO_STRING_BUFFER_SIZE);
-	        builder.append(id).append(" ").append(startOffset).append("is complemented? ").append(getDirection() ==Direction.REVERSE);
+	        builder.append(id).append(' ')
+	        		.append(startOffset)
+	        		.append("is complemented? ")
+	        		.append(getDirection() ==Direction.REVERSE);
 	        return builder.toString();
 	    }
 	    /**
