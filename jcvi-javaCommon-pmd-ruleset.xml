@@ -17,7 +17,9 @@ Modification of 'Favorities' with cyclomatic complexity bumped up to 15.
   <rule ref="rulesets/java/braces.xml"/>
 
   <rule ref="rulesets/java/design.xml"/>
-<rule ref="rulesets/java/coupling.xml"/>
+<rule ref="rulesets/java/coupling.xml">
+	<exclude name="LawOfDemeter"/>
+</rule>
   <rule ref="rulesets/java/strings.xml"/>
 
   
