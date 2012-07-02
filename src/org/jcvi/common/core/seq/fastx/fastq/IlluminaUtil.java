@@ -54,11 +54,22 @@ public final class IlluminaUtil {
     public static String getRunId(String illuminaReadId){
         Matcher matcher = CASAVA_1_8_PATTERN.matcher(illuminaReadId);
         if(!matcher.matches()){
-                throw new IllegalArgumentException("is not an illumina read id "+illuminaReadId);
-            
+                throwNotValidReadId(illuminaReadId);            
         }
         return matcher.group(2);
     }
+    /**
+     * Throw an unchecked exception that the given read is is not
+     * a valid illumina id.
+     * @param readId
+     * @return This method will never return since it will
+     * always throw an exception, however we just tell the compiler
+     * that it will return a string so this method can be used
+     * in various places as the last line in a method that needs a return value.
+     */
+	private static String throwNotValidReadId(String readId) {
+		throw new IllegalArgumentException("is not an illumina read id "+readId);
+	}
     /**
      * Gets the unique instrument name from the given read id.
      * @param illuminaReadId the illumina read id to parse.
@@ -73,7 +84,7 @@ public final class IlluminaUtil {
         }
         Matcher matcher = NAME_PATTERN.matcher(illuminaReadId);
         if(!matcher.matches()){
-            throw new IllegalArgumentException("is not an illumina read id "+illuminaReadId);
+            throwNotValidReadId(illuminaReadId);
         }
         return matcher.group(1);
     }
@@ -97,7 +108,8 @@ public final class IlluminaUtil {
         if(casava18Matcher.matches()){
             return getCasava18FlowCellId(casava18Matcher);
         }
-        throw new IllegalArgumentException("is not an illumina read id "+illuminaReadId);
+        return throwNotValidReadId(illuminaReadId);
+        
     }
     
     /**
@@ -126,7 +138,7 @@ public final class IlluminaUtil {
         }
         Matcher matcher = NAME_PATTERN.matcher(illuminaReadId);
         if(!matcher.matches()){
-            throw new IllegalArgumentException("is not an illumina read id "+illuminaReadId);
+            throwNotValidReadId(illuminaReadId);
         }
         return Integer.parseInt(matcher.group(3));
     }
@@ -144,7 +156,7 @@ public final class IlluminaUtil {
         }
         Matcher matcher = NAME_PATTERN.matcher(illuminaReadId);
         if(!matcher.matches()){
-            throw new IllegalArgumentException("is not an illumina read id "+illuminaReadId);
+            throwNotValidReadId(illuminaReadId);
         }
         return Integer.parseInt(matcher.group(4));
     }
@@ -163,7 +175,7 @@ public final class IlluminaUtil {
         }
         Matcher matcher = NAME_PATTERN.matcher(illuminaReadId);
         if(!matcher.matches()){
-            throw new IllegalArgumentException("is not an illumina read id "+illuminaReadId);
+            throwNotValidReadId(illuminaReadId);
         }
         return Integer.parseInt(matcher.group(5));
     }
@@ -183,7 +195,7 @@ public final class IlluminaUtil {
         }
         Matcher matcher = NAME_PATTERN.matcher(illuminaReadId);
         if(!matcher.matches()){
-            throw new IllegalArgumentException("is not an illumina read id "+illuminaReadId);
+            throwNotValidReadId(illuminaReadId);
         }
         return Integer.parseInt(matcher.group(7));
     }

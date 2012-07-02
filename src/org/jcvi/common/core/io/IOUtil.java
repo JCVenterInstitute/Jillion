@@ -544,7 +544,7 @@ public final class IOUtil {
         int padding = maxNumberOfHexChars-hexString.length();
         StringBuilder paddingString = new StringBuilder();
         for(int i=0; i< padding; i++){
-            paddingString.append("0");
+            paddingString.append('0');
         }
         paddingString.append(hexString);
         String asHex = paddingString.toString();

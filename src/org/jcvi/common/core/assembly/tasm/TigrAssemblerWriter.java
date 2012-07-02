@@ -72,7 +72,7 @@ public final class TigrAssemblerWriter {
     			StringBuilder row = new StringBuilder(assemblyTableColumn);
     			int padding = 4-assemblyTableColumn.length()%4;
     			if(padding>0){
-    				row.append("\t");
+    				row.append('\t');
     			}
     				row.append(String.format("%s\n", 
     						contig.getAttributeValue(contigAttribute)));
@@ -93,13 +93,13 @@ public final class TigrAssemblerWriter {
 	    				int padding = 4-assemblyTableColumn.length()%4;
 	    				StringBuilder row = new StringBuilder(assemblyTableColumn);
 	    				if(padding>0){
-	    					row.append("\t");
+	    					row.append('\t');
 	    				}
 	    				if(read.hasAttribute(readAttribute)){
 	    					row.append(String.format("%s\n", 
 	    							read.getAttributeValue(readAttribute)));
 	    				}else{
-	    					row.append("\n");
+	    					row.append('\n');
 	    				}
 	    				
 	    				out.write(row.toString().getBytes(UTF_8));				

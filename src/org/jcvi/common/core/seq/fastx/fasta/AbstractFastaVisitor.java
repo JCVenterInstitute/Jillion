@@ -46,7 +46,7 @@ public abstract class AbstractFastaVisitor implements FastaFileVisitor{
     public void visitBodyLine(String bodyLine) {
     	if(bodyLine !=null){
 	    	currentBody.append(bodyLine)
-	    	.append(" "); //append white space so we separate numeric values
+	    	.append(' '); //append white space so we separate numeric values
     	}
     }
 

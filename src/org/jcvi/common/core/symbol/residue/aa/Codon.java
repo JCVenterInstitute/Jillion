@@ -429,7 +429,7 @@ public final class Codon
         {
             str.append(nucleotide.getCharacter());
         }
-        str.append("]");
+        str.append(']');
         return str.toString();
     }
     /**

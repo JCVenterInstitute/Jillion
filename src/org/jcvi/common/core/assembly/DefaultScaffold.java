@@ -291,7 +291,7 @@ public final class DefaultScaffold  implements Scaffold{
         StringBuilder builder2 = new StringBuilder();
         builder2.append("DefaultScaffold [id=").append(id).append(", length=")
                 .append(length).append(", placedContigs=")
-                .append(placedContigs).append("]");
+                .append(placedContigs).append(']');
         return builder2.toString();
     }
 

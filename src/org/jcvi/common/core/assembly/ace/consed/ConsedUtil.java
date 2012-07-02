@@ -278,27 +278,24 @@ public class ConsedUtil {
         }
     }
     public static File getPhdDirFor(File consedDir){
-        if(consedDir==null){
-            throw new NullPointerException("consedDir can not be null");
-        }
+        verifyNotNull(consedDir);
         return new File(consedDir,"phd_dir");
     }
-    public static File getEditDirFor(File consedDir){
-        if(consedDir==null){
+	private static void verifyNotNull(File consedDir) {
+		if(consedDir==null){
             throw new NullPointerException("consedDir can not be null");
         }
+	}
+    public static File getEditDirFor(File consedDir){
+        verifyNotNull(consedDir);
         return new File(consedDir,"edit_dir");
     }
     public static File getChromatDirFor(File consedDir){
-        if(consedDir==null){
-            throw new NullPointerException("consedDir can not be null");
-        }
+        verifyNotNull(consedDir);
         return new File(consedDir,"chromat_dir");
     }
     public static File getPhdBallDirFor(File consedDir){
-        if(consedDir==null){
-            throw new NullPointerException("consedDir can not be null");
-        }
+        verifyNotNull(consedDir);
         return new File(consedDir,"phdball_dir");
     }
     public static int getAceVersionFor(File consedAceFile){

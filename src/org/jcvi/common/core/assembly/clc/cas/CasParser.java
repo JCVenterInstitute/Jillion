@@ -45,7 +45,6 @@ import org.jcvi.common.core.assembly.clc.cas.align.DefaultCasScoringScheme;
 import org.jcvi.common.core.io.IOUtil;
 
 public final class CasParser {
-    private BigInteger offset;
     private  int numberOfBytesForContigPosition,numberOfBytesForContigNumber;
     private  long numberOfReads;
     private CasScoringScheme scoringScheme;
@@ -125,7 +124,7 @@ public final class CasParser {
             }
             
             visitor.visitFile();
-            offset = CasUtil.readCasUnsignedLong(dataIn);
+            BigInteger offset = CasUtil.readCasUnsignedLong(dataIn);
            IOUtil.blockingSkip(dataIn, offset.longValue()-16);
           
            

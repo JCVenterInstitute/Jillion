@@ -171,6 +171,12 @@ public interface AsmVisitor extends TextFileVisitor{
             return MAP.get(valueOf);
             
         }
+
+		public char getCode() {
+			return code;
+		}
+        
+        
     }
     /**
      * {@code UnitigStatus} represents the unitig's
@@ -227,6 +233,12 @@ public interface AsmVisitor extends TextFileVisitor{
              }
             return MAP.get(valueOf);
         }
+
+		public char getCode() {
+			return code;
+		}
+        
+        
     }
     
     /**
@@ -277,6 +289,12 @@ public interface AsmVisitor extends TextFileVisitor{
             }
             return MAP.get(Character.valueOf(statusCode));
         }
+
+		public char getCode() {
+			return code;
+		}
+        
+        
     }
     
     /**
@@ -350,6 +368,12 @@ public interface AsmVisitor extends TextFileVisitor{
         int getExpectedNumberOfMatePairEvidenceRecords(int numberOfContributingEdges){
             return numberOfContributingEdges-1;
         }
+
+		public char getCode() {
+			return code;
+		}
+        
+        
     }
     
     /**
@@ -404,6 +428,12 @@ public interface AsmVisitor extends TextFileVisitor{
             }
             return MAP.get(valueOf);
         }
+
+		public char getCode() {
+			return code;
+		}
+        
+        
     }
     
     /**
@@ -515,6 +545,12 @@ public interface AsmVisitor extends TextFileVisitor{
             }
             return MAP.get(valueOf);
         }
+
+		public char getCode() {
+			return code;
+		}
+        
+        
     }
     /**
      * Describes statistics about one library as observed 

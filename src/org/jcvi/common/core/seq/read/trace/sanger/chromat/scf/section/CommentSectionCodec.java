@@ -87,9 +87,9 @@ public class CommentSectionCodec implements SectionCodec {
         StringBuilder builder = new StringBuilder();
         for(Entry<String, String> entry :props.entrySet()){
             builder.append(entry.getKey());
-            builder.append("=");
+            builder.append('=');
             builder.append(entry.getValue());
-            builder.append("\n");
+            builder.append('\n');
         }
         builder.append(NULL);
         ByteBuffer buffer = ByteBuffer.wrap(builder.toString().getBytes(IOUtil.UTF_8));
