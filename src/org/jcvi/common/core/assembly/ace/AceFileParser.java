@@ -381,14 +381,15 @@ public final class AceFileParser {
             
             @Override
             ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
-                if(parserState.inAContig && parserState.seenAllExpectedReads()){                    
-                    parserState =parserState.notInAContig();
-                    parserState.visitor.visitEndOfContig();
+                ParserState currentParserState=parserState;
+            	if(currentParserState.inAContig && currentParserState.seenAllExpectedReads()){                    
+                    currentParserState =currentParserState.notInAContig();
+                    currentParserState.visitor.visitEndOfContig();
                 }
                 
                 String lineWithCR;
-                lineWithCR = parserState.parser.nextLine();
-                parserState.visitor.visitLine(lineWithCR);
+                lineWithCR = currentParserState.parser.nextLine();
+                currentParserState.visitor.visitLine(lineWithCR);
                 Matcher readTagMatcher = readTagPattern.matcher(lineWithCR);
                 if(!readTagMatcher.find()){
                     throw new IllegalStateException("expected read tag infomration: " + lineWithCR); 
@@ -405,13 +406,13 @@ public final class AceFileParser {
 				} catch (ParseException e) {
 					throw new IllegalStateException("error parsing date from read tag", e);
 				}
-                parserState.visitor.visitReadTag(id, type, creator, gappedStart, gappedEnd, creationDate, true);
-                lineWithCR = parserState.parser.nextLine();
-                parserState.visitor.visitLine(lineWithCR);
+                currentParserState.visitor.visitReadTag(id, type, creator, gappedStart, gappedEnd, creationDate, true);
+                lineWithCR = currentParserState.parser.nextLine();
+                currentParserState.visitor.visitLine(lineWithCR);
                 if(!lineWithCR.startsWith("}")){
                     throw new IllegalStateException("expected close read tag: " + lineWithCR); 
                 }
-                return parserState;
+                return currentParserState;
             } 
         },
         WHOLE_ASSEMBLY_TAG("^WA\\{"){
@@ -419,13 +420,14 @@ public final class AceFileParser {
             
             @Override
             ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
-                if(parserState.inAContig && parserState.seenAllExpectedReads()){
-                    parserState =parserState.notInAContig();
-                    parserState.visitor.visitEndOfContig();                    
+                ParserState currentParserState = parserState;
+            	if(currentParserState.inAContig && currentParserState.seenAllExpectedReads()){
+                    currentParserState =currentParserState.notInAContig();
+                    currentParserState.visitor.visitEndOfContig();                    
                 }
                 String lineWithCR;
-                lineWithCR = parserState.parser.nextLine();
-                parserState.visitor.visitLine(lineWithCR);
+                lineWithCR = currentParserState.parser.nextLine();
+                currentParserState.visitor.visitLine(lineWithCR);
                 Matcher tagMatcher = wholeAssemblyTagPattern.matcher(lineWithCR);
                 if(!tagMatcher.find()){
                     throw new IllegalStateException("expected whole assembly tag information: " + lineWithCR); 
@@ -440,9 +442,9 @@ public final class AceFileParser {
 					throw new IllegalStateException("error parsing date from while assembly tag", e);
 				}
                                             
-                StringBuilder data = parseWholeAssemblyTagData(parserState);
-                parserState.visitor.visitWholeAssemblyTag(type, creator, creationDate, data.toString());
-                return parserState;
+                StringBuilder data = parseWholeAssemblyTagData(currentParserState);
+                currentParserState.visitor.visitWholeAssemblyTag(type, creator, creationDate, data.toString());
+                return currentParserState;
             }
 
             private StringBuilder parseWholeAssemblyTagData(ParserState struct)
@@ -471,13 +473,14 @@ public final class AceFileParser {
             
             @Override
             ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
-                if(parserState.inAContig && parserState.seenAllExpectedReads()){                    
-                    parserState =parserState.notInAContig();
-                    parserState.visitor.visitEndOfContig();
+                ParserState currentParserState = parserState;
+            	if(currentParserState.inAContig && currentParserState.seenAllExpectedReads()){                    
+                    currentParserState =currentParserState.notInAContig();
+                    currentParserState.visitor.visitEndOfContig();
                 }
                 String lineWithCR;
-                lineWithCR = parserState.parser.nextLine();
-                parserState.visitor.visitLine(lineWithCR);
+                lineWithCR = currentParserState.parser.nextLine();
+                currentParserState.visitor.visitLine(lineWithCR);
                 Matcher tagMatcher = consensusTagPattern.matcher(lineWithCR);
                 if(!tagMatcher.find()){
                     throw new IllegalStateException("expected read tag infomration: " + lineWithCR); 
@@ -496,37 +499,39 @@ public final class AceFileParser {
 				}
                 boolean isTransient = tagMatcher.group(7)!=null;
                 
-                parserState.visitor.visitBeginConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
+                currentParserState.visitor.visitBeginConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
                 
                 
                 boolean doneTag =false;
                 boolean inComment=false;
                 
-                parseConsensusTagData(parserState, doneTag, inComment);
-                parserState.visitor.visitEndConsensusTag();
-                return parserState;
+                parseConsensusTagData(currentParserState, doneTag, inComment);
+                currentParserState.visitor.visitEndConsensusTag();
+                return currentParserState;
             }
 
-            private void parseConsensusTagData(ParserState struct,
-                    boolean doneTag, boolean inComment) throws IOException {
+            private void parseConsensusTagData(ParserState parserState,
+                    boolean pDoneTag, boolean pInComment) throws IOException {
                 String lineWithCR;
                 StringBuilder consensusComment=null;
-                while(!doneTag && struct.parser.hasNextLine()){
-                    lineWithCR = struct.parser.nextLine();
-                    struct.visitor.visitLine(lineWithCR);
+                boolean doneTag = pDoneTag;
+                boolean inComment = pInComment;
+                while(!doneTag && parserState.parser.hasNextLine()){
+                    lineWithCR = parserState.parser.nextLine();
+                    parserState.visitor.visitLine(lineWithCR);
                     if(lineWithCR.startsWith("COMMENT{")){
                         inComment=true;
                         consensusComment = new StringBuilder();
                     }else{
                         if(inComment){
                             if(lineWithCR.startsWith("C}")){                                                            
-                                struct.visitor.visitConsensusTagComment(consensusComment.toString());
+                                parserState.visitor.visitConsensusTagComment(consensusComment.toString());
                                 inComment=false;
                             }else{
                                 consensusComment.append(lineWithCR);
                             }
                         }else if(!lineWithCR.startsWith("}")){
-                            struct.visitor.visitConsensusTagData(lineWithCR);
+                            parserState.visitor.visitConsensusTagData(lineWithCR);
                         }
                         else{
                             doneTag =true;

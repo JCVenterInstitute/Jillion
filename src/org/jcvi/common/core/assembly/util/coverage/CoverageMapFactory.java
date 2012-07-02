@@ -246,7 +246,7 @@ public final class CoverageMapFactory {
 	        StringBuffer buf = new StringBuffer();
 	        for(CoverageRegion<V> region : regions){
 	            buf.append(region);
-	            buf.append("\n");
+	            buf.append('\n');
 	        }
 	        return buf.toString();
 	    }

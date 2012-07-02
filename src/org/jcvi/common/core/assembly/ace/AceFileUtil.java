@@ -150,7 +150,7 @@ public class AceFileUtil {
                  throw new NullPointerException(String.format("%d th basecall is null", i));
              }
              if(base == Nucleotide.Gap){
-                 result.append("*");
+                 result.append('*');
                  numberOfGapsSoFar++;
              }
              else{

@@ -60,9 +60,7 @@ public class ConicConsensusCaller extends AbstractChurchillWatermanConsensusCall
      * on Sanger data.
      */
     public static final double DEFAULT_CONIC_AMBIGUITY_ANGLE = 36.8698977D;
-    
-    private final double effectiveAngle;
-    private final double lowerRadians, upperRadians;
+
     private final double lowerlimit, upperlimit;
     /**
      * Create a new instance using the default amiguity angle.
@@ -74,9 +72,9 @@ public class ConicConsensusCaller extends AbstractChurchillWatermanConsensusCall
     }
     public ConicConsensusCaller(double ambiguityAngle, PhredQuality highQualityThreshold) {
         super(highQualityThreshold);
-        effectiveAngle = computeEffectiveAngle(ambiguityAngle);
-        lowerRadians = computeLowerRadians(effectiveAngle);
-        upperRadians = computeUpperRadians(effectiveAngle);
+        double effectiveAngle = computeEffectiveAngle(ambiguityAngle);
+        double lowerRadians = computeLowerRadians(effectiveAngle);
+        double upperRadians = computeUpperRadians(effectiveAngle);
         lowerlimit = Math.tan(lowerRadians);
         upperlimit = Math.tan(upperRadians);
     }

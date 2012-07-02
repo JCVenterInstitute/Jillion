@@ -50,7 +50,7 @@ public class DefaultQualityFastaRecord extends AbstractFastaRecord<PhredQuality,
                this.appendCarriageReturnAndLineFeed(result);
            }
            else{
-               result.append(" ");
+               result.append(' ');
            }        
        }
        //last value doesn't get a space

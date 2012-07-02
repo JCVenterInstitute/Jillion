@@ -38,7 +38,7 @@ import org.jcvi.common.core.io.ValueSizeStrategy;
  */
 public enum DeltaStrategy {
 	
-	LEVEL_1(1){
+	LEVEL_1{
 		 @Override
 		    protected int computeDelta(int u1, int u2, int u3) {
 		        return u1;
@@ -46,31 +46,27 @@ public enum DeltaStrategy {
 
 		 
 	},
-	LEVEL_2(2){
+	LEVEL_2{
 		@Override
 	    protected int computeDelta(int u1, int u2, int u3) {
 	        return  2*u1 - u2;
 	    }
 	},
-	LEVEL_3(3){
+	LEVEL_3{
 		@Override
 	    protected int computeDelta(int u1, int u2, int u3) {
 	        return 3*u1 - 3*u2 + u3;
 	    }
 		
 	};
-	
-	private final int level;
-	
-	private DeltaStrategy(int level){
-		this.level = level;
-	}
+
 	private static final Map<Integer, DeltaStrategy> MAP;
 	static{
-		MAP = new HashMap<Integer, DeltaStrategy>();
-		for(DeltaStrategy strategy : values()){
-			MAP.put(Integer.valueOf(strategy.level), strategy);
-		}
+		MAP = new HashMap<Integer, DeltaStrategy>(3, 1F);
+		MAP.put(Integer.valueOf(1), LEVEL_1);
+		MAP.put(Integer.valueOf(2), LEVEL_2);
+		MAP.put(Integer.valueOf(3), LEVEL_3);
+		
 	}
 	
 	public static DeltaStrategy getStrategyFor(int level){

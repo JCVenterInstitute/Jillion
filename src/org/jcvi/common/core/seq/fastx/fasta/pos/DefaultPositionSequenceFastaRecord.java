@@ -51,7 +51,7 @@ public class DefaultPositionSequenceFastaRecord <T extends Sequence<ShortSymbol>
                this.appendCarriageReturnAndLineFeed(result);
            }
            else{
-               result.append(" ");
+               result.append(' ');
            }        
        }
        //last value doesn't get a space

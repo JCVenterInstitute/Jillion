@@ -77,22 +77,22 @@ public final class DateUtil {
 		long millisLeft = numberOfMillis;
 		long numDays = millisLeft/DAYS;
 		if(numDays >0){
-			builder.append(numDays).append("D");
+			builder.append(numDays).append('D');
 			millisLeft = millisLeft - numDays*DAYS;
 		}
 		long numHours = millisLeft/HOURS;
 		if(numHours >0){
-			builder.append(numHours).append("H");
+			builder.append(numHours).append('H');
 			millisLeft = millisLeft - numHours*HOURS;
 		}
 		long numMins = millisLeft/MINS;
 		if(numMins >0){
-			builder.append(numMins).append("M");
+			builder.append(numMins).append('M');
 			millisLeft = millisLeft - numMins*MINS;
 		}
 		long numSeconds = millisLeft/SECONDS;
 		if(numSeconds >0){
-			builder.append(numSeconds).append("S");
+			builder.append(numSeconds).append('S');
 			millisLeft = millisLeft - numSeconds*SECONDS;
 		}
 		

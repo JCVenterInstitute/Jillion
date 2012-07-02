@@ -126,7 +126,12 @@ public final class Well implements Comparable<Well>{
         }
         return order.getWell(i, format);
     }
-    /**
+    private static void verifyPositiveIndex(int index) {
+		if(index <0){
+		    throw new IllegalArgumentException("index can not be <0");
+		}
+	}
+	/**
      * A cache of all possible wells we could ever
      * try to create.  This will keep us from
      * needlessly making more instances
@@ -305,9 +310,7 @@ public final class Well implements Comparable<Well>{
 
             @Override
             Well getWell(int index, PlateFormat type) {
-                if(index <0){
-                    throw new IllegalArgumentException("index can not be <0");
-                }
+                verifyPositiveIndex(index);
                 int modIndex = index%type.getNumberOfWells();
                 int column =  (modIndex % type.getNumberOfColumns())+1;
                 char row = (char)( 'A'+(modIndex %type.getNumberOfWells())/ type.getNumberOfColumns());
@@ -327,9 +330,7 @@ public final class Well implements Comparable<Well>{
             }
             @Override
             Well getWell(int index, PlateFormat type) { 
-                if(index <0){
-                    throw new IllegalArgumentException("index can not be <0");
-                }
+                verifyPositiveIndex(index);
                 int modIndex = index%type.getNumberOfWells();
                 char row = (char)( 'A'+(modIndex %type.getNumberOfRows()));
                 int column =  (modIndex / type.getNumberOfRows()) +1;
@@ -386,9 +387,7 @@ public final class Well implements Comparable<Well>{
             }
             @Override
             Well getWell(int index, PlateFormat type) { 
-                if(index <0){
-                    throw new IllegalArgumentException("index can not be <0");
-                }
+                verifyPositiveIndex(index);
                 int modIndex = index%type.getNumberOfWells();
                 int quadrantIndex = modIndex/type.getNumberOfWellsPerQuadrant();
                 int offsetIntoQuadrant = modIndex % type.getNumberOfWellsPerQuadrant();
@@ -419,9 +418,7 @@ public final class Well implements Comparable<Well>{
             }
             @Override
             Well getWell(int index, PlateFormat type) { 
-                if(index <0){
-                    throw new IllegalArgumentException("index can not be <0");
-                }
+                verifyPositiveIndex(index);
                 int modIndex = index%type.getNumberOfWells();
                 int colIndex = modIndex / type.getNumberOfRows();
                 int rowIndex = modIndex%type.getNumberOfRows();
@@ -456,9 +453,7 @@ public final class Well implements Comparable<Well>{
            }
            @Override
            Well getWell(int index, PlateFormat type) { 
-               if(index <0){
-                   throw new IllegalArgumentException("index can not be <0");
-               }
+               verifyPositiveIndex(index);
                if(type != PlateFormat._96){
                    throw new IllegalArgumentException("only 96 well plates supported");
                }

@@ -36,9 +36,7 @@ public final  class MathUtil {
 		
 	}
     public static <N extends Number> N minOf(Collection<N> numbers){
-        if(numbers.size() ==0){
-            throw new IllegalArgumentException("must pass in at least one value");
-        }
+        verifyNotEmpty(numbers);
         Iterator<N> iter = numbers.iterator();
         N currentMin = iter.next();
         while(iter.hasNext()){
@@ -50,13 +48,16 @@ public final  class MathUtil {
 
         return currentMin;
     }
+	private static <N> void verifyNotEmpty(Collection<N> numbers) {
+		if(numbers.size() ==0){
+            throw new IllegalArgumentException("must pass in at least one value");
+        }
+	}
     public static <N extends Number> N minOf(N...numbers){
         return minOf(Arrays.asList(numbers));
     }
     public static <N extends Number> N maxOf(Collection<N> numbers){
-        if(numbers.size() ==0){
-            throw new IllegalArgumentException("must pass in at least one value");
-        }
+    	verifyNotEmpty(numbers);
         Iterator<N> iter = numbers.iterator();
         N currentMax = iter.next();
         while(iter.hasNext()){
@@ -76,9 +77,7 @@ public final  class MathUtil {
         return averageOf(Arrays.asList(values));
     }
     public static  <N extends Number> Double averageOf(Collection<N> values){
-        if(values.size() ==0){
-            throw new IllegalArgumentException("must pass in at least one value");
-        }
+    	verifyNotEmpty(values);
         long sum=0;
         for(N value : values){
             sum += value.longValue();
@@ -126,11 +125,9 @@ public final  class MathUtil {
         return medianOf(Arrays.asList(values));
     }
     public static <N extends Number & Comparable<N>> Long medianOf(Collection<N> values){
-        int size =values.size();
-
-        if(size ==0){
-            throw new IllegalArgumentException("must pass in at least one value");
-        }
+        
+    	verifyNotEmpty(values);
+    	int size =values.size();
         List<N> sorted = new ArrayList<N>(values);
         Collections.sort(sorted);
         if(size %2==0){

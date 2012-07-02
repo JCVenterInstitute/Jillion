@@ -51,7 +51,7 @@ final class NucleotidePairwiseSequenceAlignmentImpl extends AbstractPairwiseSequ
 		builder.append(getSubjectRange());
 		builder.append(", getScore()=");
 		builder.append(getScore());
-		builder.append("]");
+		builder.append(']');
 		return builder.toString();
 	}
 

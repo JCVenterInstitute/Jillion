@@ -73,7 +73,7 @@ public class HttpGetRequestBuilder  {
             throw new NullPointerException("key can not be null");
         }
         if(numberOfProperties ==0){
-            urlBuilder.append("?");
+            urlBuilder.append('?');
         }
         else{
             urlBuilder.append(HttpUtil.VAR_SEPARATOR);

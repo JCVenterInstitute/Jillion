@@ -203,15 +203,15 @@ public final class LargeNucleotideSequenceFastaFileDataStore extends AbstractNuc
             if(!scanner.hasNextLine()){
                 return null;
             }
-            StringBuilder record = new StringBuilder(line).append("\n");
+            StringBuilder record = new StringBuilder(line).append('\n');
             line =scanner.nextLine();
             while(!line.startsWith(">") && scanner.hasNextLine()){
-                record.append(line).append("\n");
+                record.append(line).append('\n');
                 line = scanner.nextLine();
             }
             //add final line if needed
             if(!scanner.hasNextLine()){
-                record.append(line).append("\n");
+                record.append(line).append('\n');
             }
             return new ByteArrayInputStream(record.toString().getBytes(IOUtil.UTF_8));
         }finally{
