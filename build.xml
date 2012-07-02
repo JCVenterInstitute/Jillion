@@ -46,7 +46,7 @@
     </taskdef>
 	
     <taskdef resource="checkstyletask.properties"
-         classpath="${analysis}/checkstyle-all-5.0-beta01.jar"/>
+         classpath="${analysis}/checkstyle-5.5-all.jar"/>
 
     <taskdef name="testability" classname="com.google.ant.TestabilityTask">
         <classpath>
@@ -189,8 +189,9 @@
 	
 
 	<target name="pmd" description ="runs pmd on source code">
-	      <pmd rulesetfiles="jcvi-javaCommon-pmd-ruleset.xml">
-	          <formatter type="xml" toFile="pmd.xml"/>
+	   <pmd rulesetfiles="jcvi-javaCommon-pmd-ruleset.xml">
+
+		<formatter type="xml" toFile="pmd.xml"/>
 	          <fileset dir="${src}">
 	              <include name="**/*.java"/>
 	          </fileset>

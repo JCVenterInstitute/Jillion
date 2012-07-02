@@ -14,7 +14,7 @@
     <property name="allowLegacy" value="false"/>
   </module>
 
-
+ <module name="FileLength" />
   <module name="TreeWalker">
 
     <property name="tabWidth" value="4" />
@@ -24,7 +24,7 @@
     <module name="EmptyBlock"/>
     <module name="EmptyForIteratorPad"/>
     <module name="EqualsHashCode"/>
-    <module name="FileLength" />
+   
 
 
     <!-- module name="IllegalCatch"/ -->
