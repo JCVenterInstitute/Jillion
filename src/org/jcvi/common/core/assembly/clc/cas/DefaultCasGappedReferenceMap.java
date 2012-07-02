@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
@@ -66,7 +67,7 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
             return size;
         }
     }
-    private final Map<Long, TreeMap<Long,Insertion>> gapsByReferenceId = new TreeMap<Long, TreeMap<Long,Insertion>>();
+    private final SortedMap<Long, SortedMap<Long,Insertion>> gapsByReferenceId = new TreeMap<Long, SortedMap<Long,Insertion>>();
    private final CasIdLookup contigNameLookup;
     private final CasNucleotideDataStore referenceNucleotideDataStore;
     private final Map<Long, NucleotideSequence> gappedReferences = new TreeMap<Long, NucleotideSequence>();
@@ -153,7 +154,7 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
         gapsByReferenceId.clear();
     }
     
-    private NucleotideSequence buildGappedReferenceSequence(String contigName, TreeMap<Long, Insertion> insertions) throws DataStoreException{
+    private NucleotideSequence buildGappedReferenceSequence(String contigName, SortedMap<Long, Insertion> insertions) throws DataStoreException{
         if(insertions ==null){
             return new NucleotideSequenceBuilder().build();
         }

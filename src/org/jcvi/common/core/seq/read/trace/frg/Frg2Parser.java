@@ -247,7 +247,8 @@ public class Frg2Parser {
             if(FragmentUtil.endOfMultilineField(line)){
                 break;
             }
-            bases.append(line+FragmentUtil.CR);
+            bases.append(line)
+            .append(FragmentUtil.CR);
         }
         return bases.toString();
     }

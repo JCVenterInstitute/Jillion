@@ -4,6 +4,10 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 final class NucleotidePairwiseSequenceAlignmentImpl extends AbstractPairwiseSequenceAlignment<Nucleotide, NucleotideSequence> implements NucleotidePairwiseSequenceAlignment{
+	/**
+	 * Initial size of String buffer for String created y {@link #toString()}.
+	 */
+	private static final int TO_STRING_BUFFER_SIZE = 300;
 
 	public NucleotidePairwiseSequenceAlignmentImpl(
 			PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> delegate) {
@@ -28,7 +32,7 @@ final class NucleotidePairwiseSequenceAlignmentImpl extends AbstractPairwiseSequ
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		StringBuilder builder = new StringBuilder(TO_STRING_BUFFER_SIZE);
 		builder.append("NucleotidePairwiseSequenceAlignmentImpl [getPercentIdentity()=");
 		builder.append(getPercentIdentity());
 		builder.append(", getAlignmentLength()=");

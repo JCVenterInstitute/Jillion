@@ -16,7 +16,11 @@ Modification of 'Favorities' with cyclomatic complexity bumped up to 15.
 
   <rule ref="rulesets/java/braces.xml"/>
 
-  <rule ref="rulesets/java/design.xml"/>
+  <rule ref="rulesets/java/design.xml">
+  	<exclude name="EmptyMethodInAbstractClassShouldBeAbstract"/>
+  	<exclude name="AvoidSynchronizedAtMethodLevel"/>
+  	<exclude name="AccessorClassGeneration"/>
+  </rule>
 <rule ref="rulesets/java/coupling.xml">
 	<exclude name="LawOfDemeter"/>
 </rule>

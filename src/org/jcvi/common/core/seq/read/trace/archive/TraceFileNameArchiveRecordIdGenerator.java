@@ -31,7 +31,7 @@ public class TraceFileNameArchiveRecordIdGenerator implements
         String fullPathToTraceFile = record.getAttribute(TraceInfoField.TRACE_FILE);
         String[] brokendownPath =fullPathToTraceFile.split("/");
         String traceFileName = brokendownPath[brokendownPath.length-1];
-        final int extensionIndex = traceFileName.lastIndexOf(".");
+        final int extensionIndex = traceFileName.lastIndexOf('.');
         if(extensionIndex ==-1){
             return traceFileName;
         }

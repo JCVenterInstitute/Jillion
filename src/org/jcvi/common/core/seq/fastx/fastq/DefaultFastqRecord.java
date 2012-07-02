@@ -28,7 +28,8 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 public class DefaultFastqRecord implements FastqRecord {
 
-    private final String id;
+    private static final String CR = "\n";
+	private final String id;
     private final String comments;
     private final NucleotideSequence nucleotides;
     private final QualitySequence qualities;
@@ -170,13 +171,15 @@ public class DefaultFastqRecord implements FastqRecord {
         if(hasComment){
             builder.append(" ").append(getComment());
         }
-        builder.append("\n")
-        .append(getNucleotideSequence()).append("\n")
-        .append("+");
+        builder.append(CR)
+        .append(getNucleotideSequence())
+        .append("\n+");
         if(writeIdOnQualityLine){
             builder.append(id);
         }
-        builder.append("\n").append(qualityCodec.encode(getQualitySequence())).append("\n");
+        builder.append(CR)
+        .append(qualityCodec.encode(getQualitySequence()))
+        .append(CR);
         return builder.toString();
 	}
    

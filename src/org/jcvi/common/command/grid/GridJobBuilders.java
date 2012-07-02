@@ -203,32 +203,9 @@ public final class GridJobBuilders {
             return this.command;
         }
 
-
-        protected int preExecution()
-        {
-            // Do nothing by default.
-            return 0;
-        }
-
-        @SuppressWarnings("unused")
-        protected int postScheduling()
-        {
-            // Do nothing by default
-            return 0;
-        }
-
         @Override
         public final Integer call() throws Exception
         {
-            /*
-             * Call the pre-execution hook
-             */
-           
-            int result = this.preExecution();
-
-            if (result != 0){
-                return result;
-            }
 
             /*
              * Run the grid command and wait for it to complete.
@@ -455,7 +432,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> preExecutionHook(PreExecutionHook preExecutionHook){
+            public final GridJobBuilder<J> preExecutionHook(PreExecutionHook preExecutionHook){
                 this.preExecutionHook = preExecutionHook;
                 return this;
             }
@@ -463,7 +440,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> postExecutionHook(PostExecutionHook postExecutionHook){
+            public final GridJobBuilder<J> postExecutionHook(PostExecutionHook postExecutionHook){
                 this.postExecutionHook = postExecutionHook;
                 return this;
             }
@@ -471,7 +448,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> setBinaryMode(boolean mode) {
+            public final GridJobBuilder<J> setBinaryMode(boolean mode) {
                 this.setNativeSpec(NativeSpec.BINARY_MODE, (mode) ? "-b y" : "-b n");
                 return this;
             }
@@ -480,7 +457,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> setProjectCode(String code) {
+            public final GridJobBuilder<J> setProjectCode(String code) {
                 if (code == null) {
                     this.clearNativeSpec(NativeSpec.PROJECT_CODE);
                 } else {
@@ -493,7 +470,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> setQueue(String queueName) {
+            public final GridJobBuilder<J> setQueue(String queueName) {
                 if (queueName == null) {
                     this.clearNativeSpec(NativeSpec.QUEUE);
                 } else {
@@ -506,7 +483,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> setMemory(Integer size, MemoryUnit unit) {
+            public final GridJobBuilder<J> setMemory(Integer size, MemoryUnit unit) {
                 if (size == null || size<1 ) {
                     this.clearNativeSpec(NativeSpec.MEMORY);
                 } else {
@@ -522,7 +499,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> setMinCPUs(Integer minimumCPUs) {
+            public final GridJobBuilder<J> setMinCPUs(Integer minimumCPUs) {
                 if (minimumCPUs == null) {
                     this.clearNativeSpec(NativeSpec.CPUS);
                 } else {
@@ -535,7 +512,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> setArchitecture(String arch) {
+            public final GridJobBuilder<J> setArchitecture(String arch) {
                 if (arch == null) {
                     this.clearNativeSpec(NativeSpec.ARCHITECTURE);
                 } else {
@@ -548,7 +525,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> addEmailRecipient(String emailAddr) {
+            public final GridJobBuilder<J> addEmailRecipient(String emailAddr) {
                 this.emailRecipients.add(emailAddr);
                 return this;
             }
@@ -557,7 +534,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> clearEmailRecipients() {
+            public final  GridJobBuilder<J> clearEmailRecipients() {
                 this.emailRecipients.clear();
                 return this;
             }
@@ -566,7 +543,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> setTimeout(Long seconds) {
+            public final GridJobBuilder<J> setTimeout(Long seconds) {
                 if(seconds ==null){
                     this.timeout = Session.TIMEOUT_WAIT_FOREVER;
                 }else if(seconds <0){
@@ -581,7 +558,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> setTimeoutMinutes(long minutes) {
+            public final GridJobBuilder<J> setTimeoutMinutes(long minutes) {
                 this.setTimeout(minutes * SECONDS_PER_MINUTE);
                 return this;
             }
@@ -590,7 +567,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> copyCurrentEnvironment() {
+            public final GridJobBuilder<J> copyCurrentEnvironment() {
                 this.env.putAll(System.getenv());
                 return this;
             }
@@ -599,7 +576,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> copyCurrentEnvironment(String var) {
+            public final GridJobBuilder<J> copyCurrentEnvironment(String var) {
                 this.setEnvironment(var, System.getenv(var));
                 return this;
             }
@@ -608,7 +585,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> setEnvironment(String var, String val) {
+            public final GridJobBuilder<J> setEnvironment(String var, String val) {
                 if (val == null) {
                     this.env.remove(var);
                 }
@@ -622,7 +599,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> setNativeSpec(String value)
+            public final GridJobBuilder<J> setNativeSpec(String value)
             {
                 if (value != null){
                     this.otherNativeSpecs.add(value);
@@ -634,7 +611,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> clearNativeSpec(String miscSpec)
+            public final GridJobBuilder<J> clearNativeSpec(String miscSpec)
             {
                 this.otherNativeSpecs.remove(miscSpec);
                 return this;
@@ -644,7 +621,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> setName(String jobName)
+            public final GridJobBuilder<J> setName(String jobName)
             {
                 this.jobName = jobName;
                 return this;
@@ -654,7 +631,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> setWorkingDirectory(File workingDirectory)
+            public final GridJobBuilder<J> setWorkingDirectory(File workingDirectory)
             {
                 this.workingDirectory = workingDirectory;
                 return this;
@@ -664,7 +641,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> setInputFile(File inputFile)
+            public final GridJobBuilder<J> setInputFile(File inputFile)
             {
                 this.inputFile = inputFile;
                 return this;
@@ -674,7 +651,7 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> setOutputFile(File outputFile)
+            public final GridJobBuilder<J> setOutputFile(File outputFile)
             {
                 this.outputFile = outputFile;
                 return this;
@@ -684,18 +661,18 @@ public final class GridJobBuilders {
             * {@inheritDoc}
             */
             @Override
-            public GridJobBuilder<J> setErrorFile(File errorFile)
+            public final GridJobBuilder<J> setErrorFile(File errorFile)
             {
                 this.errorFile = errorFile;
                 return this;
             }
 
-            protected GridJobBuilder<J> setNativeSpec(NativeSpec spec, String value) {
+            protected final GridJobBuilder<J> setNativeSpec(NativeSpec spec, String value) {
                 this.nativeSpecs.put(spec,value);
                 return this;
             }
 
-            protected GridJobBuilder<J> clearNativeSpec(NativeSpec spec) {
+            protected final GridJobBuilder<J> clearNativeSpec(NativeSpec spec) {
                 this.nativeSpecs.remove(spec);
                 return this;
             }
