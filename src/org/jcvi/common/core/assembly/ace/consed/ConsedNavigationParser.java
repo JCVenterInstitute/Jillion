@@ -72,15 +72,7 @@ public class ConsedNavigationParser {
                 String title = matcher.group(1);
                 visitor.visitTitle(title);
             }else{
-                if(!inRegion){
-                    if(line.startsWith("BEGIN_REGION")){
-                        inRegion=true;
-                        regionType=null;
-                        id=null;
-                        currentComment=null;
-                    }
-                }else{
-                    //in a region
+                if(inRegion){                
                     if(line.startsWith("TYPE:")){
                         Matcher typeMatcher =TYPE_PATTERN.matcher(line);
                         typeMatcher.find();                        
@@ -124,6 +116,11 @@ public class ConsedNavigationParser {
                             
                         }
                     }
+                }else if(line.startsWith("BEGIN_REGION")){
+                        inRegion=true;
+                        regionType=null;
+                        id=null;
+                        currentComment=null;
                 }
                 
             }

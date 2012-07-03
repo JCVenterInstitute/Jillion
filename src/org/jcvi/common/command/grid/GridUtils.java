@@ -170,12 +170,12 @@ public final class GridUtils
 
         // try to get the map
         Map<String,String> rmap = info.getResourceUsage();
-        if (rmap != null && !rmap.isEmpty()) {
+        if(rmap ==null || rmap.isEmpty()){
+        	builder.append("\n  not available");
+        }else{
             for(Entry<String,String> entry : rmap.entrySet()){
                 builder.append("\n  " + entry.getKey() + "=" + entry.getValue());
             }
-        } else {
-            builder.append("\n  not available");
         }
 
         return builder.toString();

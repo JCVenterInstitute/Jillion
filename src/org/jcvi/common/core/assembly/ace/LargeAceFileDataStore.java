@@ -365,11 +365,11 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 
 		@Override
 		public void visitLine(String line) {
-			if(visitorBuilder!=null){
-				visitorBuilder.visitLine(line);
-			}else{
+			if(visitorBuilder==null){
 				startOffset+=line.length();
 				currentLine = line;
+			}else{				
+				visitorBuilder.visitLine(line);
 			}
 			
 		}

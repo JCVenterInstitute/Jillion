@@ -150,7 +150,9 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
 				ByteBuffer buf, ValueSizeStrategy offsetStrategy) {
 			ValueSizeStrategy sentinelStrategy = ValueSizeStrategy.values()[buf.get()];
             final Iterator<Integer> sentinelIterator;
-            if(sentinelStrategy != ValueSizeStrategy.NONE){
+            if(sentinelStrategy == ValueSizeStrategy.NONE){
+            	sentinelIterator=EmptyIterator.createEmptyIterator();
+            }else{            	
             	//there are gaps
             	int numberOfSentinels = sentinelStrategy.getNext(buf);
             	List<Integer> sentinelOffsets = new ArrayList<Integer>(numberOfSentinels);
@@ -158,15 +160,15 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
             		sentinelOffsets.add(Integer.valueOf(offsetStrategy.getNext(buf)));
             	}
             	sentinelIterator = sentinelOffsets.iterator();
-            }else{
-            	sentinelIterator=EmptyIterator.createEmptyIterator();
             }
 			return sentinelIterator;
 		}
 		
 		protected List<Integer> getSentinelOffsetsFrom(ByteBuffer buf, ValueSizeStrategy offsetStrategy){
 			ValueSizeStrategy sentinelStrategy = ValueSizeStrategy.values()[buf.get()];
-            if(sentinelStrategy != ValueSizeStrategy.NONE){
+            if(sentinelStrategy == ValueSizeStrategy.NONE){
+            	return Collections.<Integer>emptyList();
+            }else{            	
             	//there are gaps
             	int numberOfSentinels = sentinelStrategy.getNext(buf);
             	List<Integer> sentinelOffsets = new ArrayList<Integer>(numberOfSentinels);
@@ -174,8 +176,6 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
             		sentinelOffsets.add(Integer.valueOf(offsetStrategy.getNext(buf)));
             	}
             	return sentinelOffsets;
-            }else{
-            	return Collections.<Integer>emptyList();
             }
 
 		}

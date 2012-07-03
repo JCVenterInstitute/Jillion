@@ -54,13 +54,13 @@ public class RunLengthEncodedGlyphCodec implements QualitySymbolCodec{
         List<RunLength<PhredQuality>> runLengthList = new ArrayList<RunLength<PhredQuality>>(maxIndex/4);
         int lengthDecoded=0;
         while(lengthDecoded<=maxIndex && buf.hasRemaining()){
-            byte value = buf.get();
-            //if not guard, just output token
-            if( value != guard){                                  
-                lengthDecoded += handleSingleToken(value, runLengthList);
+            byte value = buf.get();            
+            if( value == guard){                                  
+            	lengthDecoded += handleRun(buf, guard, runLengthList);
             }
             else{
-                lengthDecoded += handleRun(buf, guard, runLengthList);
+            	//if not guard, just output token
+                lengthDecoded += handleSingleToken(value, runLengthList);
             }
         }
         return runLengthList;
@@ -68,13 +68,14 @@ public class RunLengthEncodedGlyphCodec implements QualitySymbolCodec{
     private int handleRun(ByteBuffer buf, byte guard,
             List<RunLength<PhredQuality>> runLengthList) {
         int count = buf.getShort();
-        if(count !=0){
-            byte repValue = buf.get();                   
-            runLengthList.add(new RunLength<PhredQuality>(PhredQuality.valueOf(repValue),count));
-            return count;
-        }
-            //count is 0 so guard byte must be actual value.
+        if(count ==0){
+        	//count is 0 so guard byte must be actual value.
             return handleSingleToken(guard, runLengthList);
+        }
+        byte repValue = buf.get();                   
+        runLengthList.add(new RunLength<PhredQuality>(PhredQuality.valueOf(repValue),count));
+        return count;
+          
     }
     private int handleSingleToken(byte guard,
             List<RunLength<PhredQuality>> runLengthList) {

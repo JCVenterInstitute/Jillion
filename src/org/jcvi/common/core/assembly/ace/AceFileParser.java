@@ -357,7 +357,9 @@ public final class AceFileParser {
             private String parsePhdName(String line, String traceName) {
                 Matcher phdMatcher = phdFilePattern.matcher(line);
                 String phdName;
-                if(!phdMatcher.find()){
+                if(phdMatcher.find()){
+                	phdName = phdMatcher.group(1);
+                }else{
                     //sff's some times are in the format CHROMAT_FILE: sff:[-f:]<sff file>:<read id>
                     Matcher sffNameMatcher =sffFakeChromatogramPattern.matcher(traceName);
                     if(sffNameMatcher.find()){
@@ -370,8 +372,6 @@ public final class AceFileParser {
                     else{
                         phdName = traceName;
                     }
-                }else{
-                    phdName = phdMatcher.group(1);
                 }
                 return phdName;
             } 
@@ -455,12 +455,11 @@ public final class AceFileParser {
                 while(!doneTag && struct.parser.hasNextLine()){
                     lineWithCR = struct.parser.nextLine();
                     struct.visitor.visitLine(lineWithCR);
-                    if(!lineWithCR.startsWith("}")){
+                    if(lineWithCR.startsWith("}")){
+                    	doneTag =true;
+                    }else{
                         data.append(lineWithCR);
-                    }
-                    else{
-                        doneTag =true;
-                    }
+                    }                    
                 }
                 if(!doneTag){
                     throw new IllegalStateException("unexpected EOF, Whole Assembly Tag not closed!"); 
@@ -530,11 +529,11 @@ public final class AceFileParser {
                             }else{
                                 consensusComment.append(lineWithCR);
                             }
-                        }else if(!lineWithCR.startsWith("}")){
-                            parserState.visitor.visitConsensusTagData(lineWithCR);
+                        }else if(lineWithCR.startsWith("}")){
+                        	 doneTag =true;
                         }
-                        else{
-                            doneTag =true;
+                        else{                           
+                            parserState.visitor.visitConsensusTagData(lineWithCR);
                         }
                     }
                 }
