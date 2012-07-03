@@ -114,7 +114,7 @@ public class PhdDirQualityDataStore implements PhdDataStore{
         try {
             return DefaultPhdFileDataStore.create(phdFile).get(id);
         } catch (FileNotFoundException e) {
-            throw new DataStoreException("could not get phd file for "+id);
+            throw new DataStoreException("could not get phd file for "+id,e);
         }
     }
     /**

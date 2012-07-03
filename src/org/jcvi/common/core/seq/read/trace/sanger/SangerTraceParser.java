@@ -69,7 +69,7 @@ public enum SangerTraceParser {
 	        		throw ioException;
 	        	}catch(Exception e){
 	        		//must not be a valid phd?
-	        		throw new TraceDecoderException("unknown trace format");
+	        		throw new TraceDecoderException("unknown trace format",e);
 	        	}
 	        }
         }finally{

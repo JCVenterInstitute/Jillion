@@ -20,6 +20,7 @@
 package org.jcvi.common.core.assembly.clc.cas.var;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
@@ -67,7 +68,7 @@ public interface Variation extends Comparable<Variation>{
          * not correspond to a known {@link Type}. 
          */
         public static Type getType(String typeName){
-            String upperCase = typeName.toUpperCase();
+            String upperCase = typeName.toUpperCase(Locale.US);
             if("NOCHANGE".equals(upperCase)){
                 return NO_CHANGE;
             }

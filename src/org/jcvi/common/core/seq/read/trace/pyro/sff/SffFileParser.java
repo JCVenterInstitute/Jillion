@@ -113,7 +113,7 @@ public final class SffFileParser {
 		        try {
 		            IOUtil.blockingSkip(dataIn, readDataLength+padding);
 		        } catch (IOException e) {
-		            throw new SffDecoderException("could not skip read data block");
+		            throw new SffDecoderException("could not skip read data block",e);
 		        }
 		    }else{
 		    	//stop

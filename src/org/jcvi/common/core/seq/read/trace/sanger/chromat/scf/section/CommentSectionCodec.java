@@ -54,7 +54,7 @@ public class CommentSectionCodec implements SectionCodec {
             try{
             	IOUtil.blockingRead(in,comments, 0, comments.length);
             }catch(EOFException e){
-            	throw new SectionDecoderException("could not read entire comment section");
+            	throw new SectionDecoderException("could not read entire comment section",e);
             }
             Properties props = new Properties();
             props.load(new InputStreamReader(
@@ -111,7 +111,7 @@ public class CommentSectionCodec implements SectionCodec {
             try{
             	IOUtil.blockingRead(in,comments, 0, comments.length);
             }catch(EOFException e){
-            	throw new SectionDecoderException("could not read entire comment section");
+            	throw new SectionDecoderException("could not read entire comment section",e);
             }
             
             Properties props = new Properties();

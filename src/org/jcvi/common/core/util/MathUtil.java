@@ -49,7 +49,7 @@ public final  class MathUtil {
         return currentMin;
     }
 	private static <N> void verifyNotEmpty(Collection<N> numbers) {
-		if(numbers.size() ==0){
+		if(numbers.isEmpty()){
             throw new IllegalArgumentException("must pass in at least one value");
         }
 	}

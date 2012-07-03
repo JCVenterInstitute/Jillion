@@ -22,6 +22,9 @@
  * @author dkatzel
  */
 package org.jcvi.common.core.seq.read.trace.archive;
+
+import java.util.Locale;
+
 /**
  * All currently supported Fields in a Trace Info XML
  * document.
@@ -504,7 +507,7 @@ public enum TraceInfoField {
      TRACE_DIRECTION;
      
      public static TraceInfoField parseTraceInfoField(String traceInfoField){
-         return TraceInfoField.valueOf(traceInfoField.toUpperCase());
+         return TraceInfoField.valueOf(traceInfoField.toUpperCase(Locale.US));
      }
 
     @Override

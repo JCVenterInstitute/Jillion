@@ -24,6 +24,7 @@
 package org.jcvi.common.core.seq.read.trace.archive;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 /**
  * {@code TraceTypeCode} is all possible
@@ -125,7 +126,7 @@ public enum TraceTypeCode {
      * @throws IllegalArgumentException if no TraceTypeCode could be found.
      */
     public static TraceTypeCode getTraceTypeCodeFor(String traceTypeCode){
-        String code = traceTypeCode.toUpperCase();
+        String code = traceTypeCode.toUpperCase(Locale.US);
         if(!NAME_TO_TRACE_TYPE.containsKey(code)){
             throw new IllegalArgumentException("unknown trace type code "+ traceTypeCode);
         }

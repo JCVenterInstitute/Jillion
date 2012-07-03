@@ -234,7 +234,7 @@ public final class Sff454NameUtil {
 
         @Override
         public String toString() {
-            StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new StringBuilder(30);
             builder.append("Location [x=").append(x).append(", y=").append(y)
                     .append(']');
             return builder.toString();

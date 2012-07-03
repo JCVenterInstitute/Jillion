@@ -286,7 +286,7 @@ public final class IndexedSffFileDataStore{
 	             builder.visitReadData(readData);
 	             return builder.build().get(id);
 			} catch (IOException e) {
-				throw new DataStoreException("error trying to get flowgram "+ id);
+				throw new DataStoreException("error trying to get flowgram "+ id,e);
 			}
 		}
 	
