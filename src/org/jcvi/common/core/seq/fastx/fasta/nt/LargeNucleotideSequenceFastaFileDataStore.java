@@ -161,9 +161,7 @@ public final class LargeNucleotideSequenceFastaFileDataStore extends AbstractNuc
     @Override
     public synchronized CloseableIterator<NucleotideSequenceFastaRecord> iterator() {
         checkNotYetClosed();
-        LargeNucleotideSequenceFastaIterator iter = new LargeNucleotideSequenceFastaIterator(fastaFile);
-        iter.start();
-        return iter;
+        return LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile);
        
     }
     /**

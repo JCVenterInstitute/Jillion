@@ -42,8 +42,11 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
  * @see LargeQualityFastaFileDataStore
  *
  */
-public class DefaultQualityFastaFileDataStore {
+public final class DefaultQualityFastaFileDataStore {
     
+	private DefaultQualityFastaFileDataStore(){
+		//can not instantiate
+	}
     public static QualitySequenceFastaDataStore create(File fastaFile) throws FileNotFoundException{
     	return create(fastaFile,null);
     }

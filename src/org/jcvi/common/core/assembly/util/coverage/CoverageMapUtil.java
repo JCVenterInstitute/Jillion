@@ -10,6 +10,10 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 
 public final class CoverageMapUtil {
 
+	private CoverageMapUtil(){
+		//can not instantiate
+		
+	}
 	public static long getLastCoveredOffsetIn(CoverageMap<?> coverageMap){
 	        if(coverageMap.isEmpty()){
 	            return -1L;

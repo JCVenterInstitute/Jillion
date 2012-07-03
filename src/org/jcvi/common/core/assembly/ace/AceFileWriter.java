@@ -42,8 +42,11 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.CloseableIterator;
-public class AceFileWriter {
+public final class AceFileWriter {
 
+	private AceFileWriter(){
+		//private constructor.
+	}
     private static final String CONTIG_HEADER = "CO %s %d %d %d %s%n";
     private static final Charset UTF_8 = Charset.forName("UTF-8");
 

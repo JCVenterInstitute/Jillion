@@ -41,6 +41,9 @@ public final class TigrAssemblerWriter {
 	private static final byte[] BLANK_LINE = "\n".getBytes(UTF_8);
 	private static final byte[] CONTIG_SEPARATOR = "|\n".getBytes(UTF_8);
 	
+	private TigrAssemblerWriter(){
+		//can not instantiate 
+	}
 	public static void writeContigSeparator(OutputStream out) throws IOException{
 	    out.write(CONTIG_SEPARATOR);
 	}

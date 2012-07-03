@@ -63,6 +63,10 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
  *
  */
 public final class AsmParser {
+	
+	private AsmParser(){
+		//private constructor
+	}
 	/**
 	 * Refactored out split Pattern since String.split() 
 	 * causes a new Pattern to be created and compiled

@@ -24,9 +24,13 @@ package org.jcvi.common.command;
  *
  *
  */
-public class CommandUtils {
+public final class CommandUtils {
+	
+	private CommandUtils(){
+		//private constructor
+	}
 
-    /** An array of characters that should be escapeed in shell strings. */
+    /** An array of characters that should be escaped in shell strings. */
     private static final char[] UNSAFE_CHARS = {'\\', '\''};
 
     /**

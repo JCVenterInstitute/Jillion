@@ -33,8 +33,11 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
 
-public class DefaultPositionFastaFileDataStore{
+public final class DefaultPositionFastaFileDataStore{
 
+	private DefaultPositionFastaFileDataStore(){
+		//can not instantiate.
+	}
 	public static PositionFastaDataStoreBuilderVisitor createBuilder(){
 		return createBuilder(null);
 	}

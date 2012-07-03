@@ -48,6 +48,9 @@ public final class FastqFileParser {
     
 	private static final Pattern CASAVA_1_8_DEFLINE_PATTERN = Pattern.compile("^@(\\S+\\s+\\d:[N|Y]:\\d+:\\S+)\\s*$");
     
+	private FastqFileParser(){
+		//can not instantiate
+	}
 	/**
 	 * Parse the given fastq encoded file and call the appropriate
 	 * visit callbacks from the given visitor.

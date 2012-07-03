@@ -48,6 +48,10 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  *
  */
 public final class IndexedSffFileDataStore{
+	
+	private IndexedSffFileDataStore(){
+		//can not instantiate
+	}
 	/**
 	 * Partially parses the given sff file to get the number of 
 	 * reads in the header and checks to make sure the total number

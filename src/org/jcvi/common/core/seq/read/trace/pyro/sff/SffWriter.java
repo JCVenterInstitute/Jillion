@@ -34,7 +34,11 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  *
  *
  */
-public class SffWriter {
+public final class SffWriter {
+	
+	private SffWriter(){
+		//can not instantaite
+	}
    
     /**
      * Writes the given SffCommonHeader to the given outputStream.

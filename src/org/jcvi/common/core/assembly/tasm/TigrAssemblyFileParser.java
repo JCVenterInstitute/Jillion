@@ -39,13 +39,17 @@ import org.jcvi.common.core.io.IOUtil;
  *
  *
  */
-public class TigrAssemblyFileParser {
+public final class TigrAssemblyFileParser {
     private static final String CR = "\n";
     /**
      * Each contig data is separated by a pipe ('|').
      */
     private static final String END_OF_CONTIG = "|";
     private static final Pattern KEY_VALUE_PATTERN = Pattern.compile("(\\S+)\\s+(\\S+.*$)");
+   
+    private TigrAssemblyFileParser(){
+    	//can not instantiate.
+    }
     /**
      * Parse the given TIGR Assembly file and call the appropriate 
      * visitXXX methods in the given {@link ContigFileVisitor}.

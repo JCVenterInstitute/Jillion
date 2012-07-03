@@ -50,6 +50,10 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
  *
  */
 public final class DefaultPhdFileDataStore{
+	
+	private DefaultPhdFileDataStore(){
+		//can not instantiate
+	}
     /**
      * Create a new {@link PhdDataStore} for the given
      * {@literal phd.ball} file.

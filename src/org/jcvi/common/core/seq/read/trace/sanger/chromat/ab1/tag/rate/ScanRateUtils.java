@@ -24,9 +24,13 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate;
  *
  *
  */
-public class ScanRateUtils {
+public final class ScanRateUtils {
     
     private static final float ONE_THOUSAND = 1000F;
+    
+    private ScanRateUtils(){
+    	//can not instantiate
+    }
     /**
      * Get the Sampling Rate (Hz) that is displayed in the
      * Seq Analysis annotation report.

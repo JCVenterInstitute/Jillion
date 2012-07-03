@@ -35,6 +35,9 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRUtil;
 
 public final class ChromatogramParser {
 
+	private ChromatogramParser(){
+		//can not instantiate
+	}
 	public static void parse(File chromatogramFile, ChromatogramFileVisitor visitor) throws IOException{
 		MagicNumberInputStream mIn =null;
         try{

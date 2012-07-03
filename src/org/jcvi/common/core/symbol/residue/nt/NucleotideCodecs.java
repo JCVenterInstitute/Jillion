@@ -29,6 +29,10 @@ import org.jcvi.common.core.io.IOUtil;
  *
  */
 final class NucleotideCodecs {
+	
+	private NucleotideCodecs(){
+		//can not instantiate
+	}
     /**
      * Get the optimal NucleotideCodec for the given
      * collection of Nucleotides.  This method must 

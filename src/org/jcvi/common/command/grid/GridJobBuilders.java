@@ -44,6 +44,10 @@ import org.jcvi.common.core.util.MapValueComparator;
  * @author dkatzel
  */
 public final class GridJobBuilders {
+	
+	private GridJobBuilders(){
+		//private constructor.
+	}
     /**
      * Create a new GridJobBuilder instance that will make a {@link SimpleGridJob}.
      * @param gridSession the Session to run this job with.

@@ -37,7 +37,11 @@ import org.jcvi.common.core.io.TextLineParser;
  *
  *
  */
-public class ConsedNavigationParser {
+public final class ConsedNavigationParser {
+	
+	private ConsedNavigationParser(){
+		//private constructor
+	}
 
     private static final Pattern TITLE_PATTERN = Pattern.compile("TITLE: (\\.+)\n");
     private static final Pattern TYPE_PATTERN = Pattern.compile("TYPE: (\\S+)\n");

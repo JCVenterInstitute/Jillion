@@ -61,7 +61,11 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
  *
  *
  */
-public class ConsedUtil {
+public final class ConsedUtil {
+	
+	private ConsedUtil(){
+		//private constructor
+	}
     /**
      * 
      */

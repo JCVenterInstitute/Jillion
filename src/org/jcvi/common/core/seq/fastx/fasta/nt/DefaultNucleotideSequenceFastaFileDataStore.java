@@ -42,8 +42,11 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  * @see LargeNucleotideSequenceFastaFileDataStore
  *
  */
-public class DefaultNucleotideSequenceFastaFileDataStore{
+public final class DefaultNucleotideSequenceFastaFileDataStore{
 	
+	private DefaultNucleotideSequenceFastaFileDataStore(){
+		//can not instantiate.
+	}
 	public static NucleotideFastaDataStoreBuilderVisitor createBuilder(){
 		return createBuilder(null);
 	}

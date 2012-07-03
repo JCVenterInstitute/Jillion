@@ -42,6 +42,9 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  */
 public final class ZTRChromatogramFileParser {
    
+	private ZTRChromatogramFileParser(){
+		//can not instantiate
+	}
     /**
      * Parse the given ZTR encoded chromatogram file
      * and call the appropriate visitXXX methods of the given

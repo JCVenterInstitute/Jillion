@@ -33,6 +33,9 @@ import org.jcvi.common.core.assembly.ScaffoldDataStoreBuilder;
 
 public final class DefaultAgpScaffoldDataStore {
     
+	private DefaultAgpScaffoldDataStore(){
+		//private constructor.
+	}
 	public static ScaffoldDataStoreBuilderAgpVisitor createBuilder(){
 		return new Builder();
 	}

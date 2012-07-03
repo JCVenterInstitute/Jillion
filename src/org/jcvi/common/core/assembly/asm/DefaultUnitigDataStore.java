@@ -45,6 +45,9 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  */
 public final class DefaultUnitigDataStore{
 
+	private DefaultUnitigDataStore(){
+		//private constructor.
+	}
     public static UnitigDataStore create(File asmFile, FragmentDataStore frgDataStore) throws IOException{
         UnitigDataStoreBuilder builder = new UnitigDataStoreBuilder(frgDataStore);
         AsmParser.parseAsm(asmFile, builder);

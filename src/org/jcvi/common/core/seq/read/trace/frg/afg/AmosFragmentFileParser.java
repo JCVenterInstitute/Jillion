@@ -47,6 +47,9 @@ public final class AmosFragmentFileParser {
     private static final Pattern VECTOR_CLEAR_RANGE_PATTERN = Pattern.compile("vcr:(\\d+,\\d+)");
     private static final Pattern QUALITY_CLEAR_RANGE_PATTERN = Pattern.compile("qcr:(\\d+,\\d+)");
     
+    private AmosFragmentFileParser(){
+    	//can not instantiate
+    }
     public static void parse(File afgFile, AmosFragmentVisitor visitor) throws FileNotFoundException{
         FileInputStream in = new FileInputStream(afgFile);
         try{
