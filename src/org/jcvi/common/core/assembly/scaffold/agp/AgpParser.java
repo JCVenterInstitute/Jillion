@@ -41,8 +41,11 @@ import org.jcvi.common.core.io.IOUtil;
  *
  *@see <a href="http://www.ncbi.nlm.nih.gov/projects/genome/assembly/agp/AGP_Specification.shtml">NCBI AGP Spec</a>
  */
-public class AgpParser {
+public final class AgpParser {
 
+	private AgpParser(){
+		//private constructor.
+	}
     private static final Pattern CONTIG_PATTERN = Pattern.compile(
             "(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+\\d+\\s+([A,D,F,G,N,O,P,U,W])\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+([+,-])");
 

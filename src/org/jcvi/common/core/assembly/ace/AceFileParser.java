@@ -45,6 +45,10 @@ import org.jcvi.common.core.io.TextLineParser;
  * @see <a href = "http://www.phrap.org/consed/distributions/README.20.0.txt">Consed documentation which contains the ACE FILE FORMAT</a>
  */
 public final class AceFileParser {
+	
+	private AceFileParser(){
+		//private constructor.
+	}
     /**
      * Parse the given aceFile and call the appropriate methods on the given AceFileVisitor.
      * @param aceFile the ace file to parse, can not be null.

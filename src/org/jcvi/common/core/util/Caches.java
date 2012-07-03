@@ -52,7 +52,7 @@ import java.util.Set;
  * @author jsitz@jcvi.org
  * 
  */
-public class Caches
+public final class Caches
 {
     
 
@@ -62,6 +62,9 @@ public class Caches
      */
     public static final int DEFAULT_CAPACITY = 16;
     
+    private Caches(){
+    	//can not instantiate
+    }
     
     /**
      * Creates an LRUCache of default capacity.  Entries are held

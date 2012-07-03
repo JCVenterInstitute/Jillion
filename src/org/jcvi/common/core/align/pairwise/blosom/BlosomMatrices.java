@@ -6,6 +6,9 @@ import org.jcvi.common.core.align.pairwise.PropertyFileAminoAcidScoringMatrix;
 
 public final class BlosomMatrices {
 
+	private BlosomMatrices(){
+		//private constructor.
+	}
 	public static final AminoAcidScoringMatrix getMatrix(int value){
 		String file = String.format("blosom%d.matrix",value);
 		return new PropertyFileAminoAcidScoringMatrix(

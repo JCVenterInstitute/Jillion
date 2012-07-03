@@ -48,7 +48,10 @@ import org.jcvi.common.io.idReader.StringIdParser;
  *
  *
  */
-public class CommandLineUtils {
+public final class CommandLineUtils {
+	private CommandLineUtils(){
+		//private constructor
+	}
     /**
      * Parse the a command line using the given options and the given
      * arguments.

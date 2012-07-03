@@ -26,6 +26,10 @@ public final class FileUtil {
      * and not rely on the OS to tell us which one to use.
      */
     private static final char WINDOWS_SEPARATOR = '\\';
+    
+    private FileUtil(){
+    	//can not instantiate.
+    }
     /**
 	 * Creates a String of the relative path from the given root to the other given file.
 	 * @param root the File to start from.

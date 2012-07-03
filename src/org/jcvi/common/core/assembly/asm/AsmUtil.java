@@ -32,6 +32,10 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
  *
  */
 public final  class AsmUtil {
+	
+	private AsmUtil(){
+		//private constructor.
+	}
 	/**
 	 * Generate a gapped sequence string from the ungapped valid range
 	 * sequence and the list of ASM encoded gap offsets (also known as

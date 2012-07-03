@@ -30,7 +30,11 @@ import org.jcvi.common.core.assembly.ace.AceFileUtil;
  *
  *
  */
-public class PhdUtil {
+public final class PhdUtil {
+	
+	private PhdUtil(){
+		//can not instantiate
+	}
     
     /**
      * Phd records must include a date time stamp as a comment,

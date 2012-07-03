@@ -38,6 +38,9 @@ public final class QualityFastaRecordUtil {
     private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
 
 
+    private QualityFastaRecordUtil(){
+    	//can not instantiate
+    }
     public static QualitySequenceFastaRecord buildFastaRecord(
             String identifier, String comment, CharSequence sequence) {
         List<PhredQuality> qualities = parseQualities(sequence);

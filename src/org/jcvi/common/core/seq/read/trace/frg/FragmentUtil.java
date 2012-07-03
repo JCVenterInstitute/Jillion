@@ -44,7 +44,9 @@ public final class FragmentUtil {
     private static final Pattern FRG_QUALITY_PATTERN = Pattern.compile("qlt:\\s+");
     private static final Pattern FRG_VALID_RANGE_PATTERN = Pattern.compile("clr:(\\d+,\\d+)");
     
-    
+    private FragmentUtil(){
+    	//can not instantiate
+    }
     public static String readRestOfBlock(Scanner scanner,TextFileVisitor visitor){
         StringBuilder sb  = new StringBuilder();
         boolean done = false;

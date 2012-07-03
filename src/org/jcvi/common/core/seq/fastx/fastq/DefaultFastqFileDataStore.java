@@ -42,6 +42,10 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  */
 public final class DefaultFastqFileDataStore{
 	
+	private DefaultFastqFileDataStore(){
+		//can not instantiate
+	}
+	
     /**
      * Create a new {@link FastqFileDataStoreBuilderVisitor} instance
      * that needs to be populated by passing it to either {@link FastqFileParser#parse(File, FastqFileVisitor)}

@@ -39,6 +39,10 @@ public final class IlluminaUtil {
     private static final Pattern CASAVA_1_8_PATTERN = Pattern.compile(
     "^(\\S+):(\\d+):(\\S+):(\\d+):(\\d+)#(\\D+)?(\\d+)?\\/(\\d+)$");
     
+    
+    private IlluminaUtil(){
+    	//can not instantiate
+    }
     public static boolean isIlluminaRead(String readId){
         if(readId == null){
             throw new NullPointerException();

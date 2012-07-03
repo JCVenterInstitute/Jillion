@@ -48,7 +48,7 @@ import org.jcvi.common.core.symbol.IllegalEncodedValueException;
  * @author jsitz
  * @author dkatzel
  */
-public class TigrPeaksEncoder
+public final class TigrPeaksEncoder
 {
     public static final int DECODE_FULL_LENGTH = -1;
     /**
@@ -71,7 +71,9 @@ public class TigrPeaksEncoder
      */
     static final char TERMINATOR_CHAR = '`';
 
-    
+    private TigrPeaksEncoder(){
+    	//can not instantiate
+    }
     /**
      * Uuencodes a single <code>int</code> value.
      * 

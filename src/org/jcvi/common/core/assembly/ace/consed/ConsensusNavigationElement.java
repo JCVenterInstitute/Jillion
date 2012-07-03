@@ -32,7 +32,7 @@ import org.jcvi.common.core.assembly.Contig;
  *
  *
  */
-public class ConsensusNavigationElement extends AbstractNavigationElement{
+public final class ConsensusNavigationElement extends AbstractNavigationElement{
 
     /**
      * Constructs a new {@link ConsensusNavigationElement}.

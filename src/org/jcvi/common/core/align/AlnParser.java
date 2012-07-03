@@ -37,8 +37,11 @@ import org.jcvi.common.core.io.TextLineParser;
  *
  *
  */
-public class AlnParser {
+public final class AlnParser {
 
+	private AlnParser(){
+		//private constructor.
+	}
     /**
      * 
      */

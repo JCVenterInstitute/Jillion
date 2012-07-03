@@ -41,6 +41,10 @@ public class VariationLogFileParser {
     private static final Pattern VARIATION_PATTERN = Pattern.compile("^\\s+(\\d+)\\s+(\\w+)\\s+(\\S)\\s+->\\s+(\\S+)(.+)$");
     
     private static final String CR = "\n";
+    
+    private VariationLogFileParser(){
+    	//private constructor.
+    }
     public static void parseVariationFile(File variationLogFile, VariationLogFileVisitor visitor) throws FileNotFoundException{
         Scanner scanner = new Scanner(variationLogFile, "UTF-8").useDelimiter(CR);
         try{

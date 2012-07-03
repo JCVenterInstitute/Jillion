@@ -33,6 +33,9 @@ import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
  */
 public final class AbiChromatogramFile {
 
+	private AbiChromatogramFile(){
+		//can not instantiate
+	}
     public static AbiChromatogram create(File abiFile) throws FileNotFoundException, TraceDecoderException{
         AbiChromatogramBuilder builder = new AbiChromatogramBuilder(abiFile.getName());
         Ab1FileParser.parse(abiFile, builder);        

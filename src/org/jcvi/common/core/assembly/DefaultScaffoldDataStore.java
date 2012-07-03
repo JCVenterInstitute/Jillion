@@ -13,6 +13,9 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 
 public final class DefaultScaffoldDataStore {
 
+	private DefaultScaffoldDataStore(){
+		//private constructor.
+	}
 	public static ScaffoldDataStoreBuilder createBuilder(){
 		return new DefaultScaffoldDataStoreBuilder();
 	}

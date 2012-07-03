@@ -32,7 +32,7 @@ import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 
-public class PhdWriter {
+public final class PhdWriter {
     private static final String BEGIN_SEQUENCE = "BEGIN_SEQUENCE";
     private static final String BEGIN_COMMENT = "BEGIN_COMMENT";
     private static final String END_SEQUENCE = "END_SEQUENCE";
@@ -41,6 +41,9 @@ public class PhdWriter {
     private static final String BEGIN_DNA = "BEGIN_DNA";
     private static final String END_DNA = "END_DNA";
     
+    private PhdWriter(){
+    	//can not instantiate
+    }
     public static void writePhd(Phd phd, OutputStream out) throws IOException{
         try{
             StringBuilder phdRecord = new StringBuilder();
