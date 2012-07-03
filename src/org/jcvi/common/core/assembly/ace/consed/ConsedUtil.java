@@ -104,7 +104,9 @@ public class ConsedUtil {
     public static PhdInfo generatePhdInfoFor(File traceFile, String readId,
 			Date phdDate) {
 		final String id;
-        if(traceFile !=null){
+        if(traceFile ==null){
+        	id= readId;
+        }else{
             final String extension = FileUtil.getExtension(traceFile.getName());
             if("sff".equals(extension)){        
                 id="sff:"+traceFile.getName()+":"+readId;
@@ -115,8 +117,6 @@ public class ConsedUtil {
             else{
                 id= readId;
             }
-        }else{
-            id= readId;
         }
         return new DefaultPhdInfo(id, readId+".phd.1", phdDate);
 	}

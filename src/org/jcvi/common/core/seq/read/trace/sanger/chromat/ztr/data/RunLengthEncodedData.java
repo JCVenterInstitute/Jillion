@@ -88,21 +88,19 @@ public enum RunLengthEncodedData implements Data {
         List<RunLength<Byte>> runLengthList = new ArrayList<RunLength<Byte>>();
         while(in.hasRemaining()){
             byte value = in.get();
-            //if not guard, just output token
-            if( value != guard){                                  
-                runLengthList.add(new RunLength<Byte>(Byte.valueOf(value),1));
-            }
-            //else it is the guard token
-            else{
+            if( value == guard){          
                 int count = getCount(in);
-                if(count !=0){
+                if(count ==0){
+                	//count is 0 so guard byte must be actual value.
+                    runLengthList.add(new RunLength<Byte>(Byte.valueOf(guard),1));
+                }
+                else{
                     byte repValue = in.get();                   
                     runLengthList.add(new RunLength<Byte>(Byte.valueOf(repValue),count));
                 }
-                else{
-                    //count is 0 so guard byte must be actual value.
-                    runLengthList.add(new RunLength<Byte>(Byte.valueOf(guard),1));
-                }
+            }else{
+            	//not guard, just output token
+                runLengthList.add(new RunLength<Byte>(Byte.valueOf(value),1));
             }
         }
         return runLengthList;

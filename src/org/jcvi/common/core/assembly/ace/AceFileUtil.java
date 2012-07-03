@@ -154,7 +154,9 @@ public class AceFileUtil {
                  numberOfGapsSoFar++;
              }
              else{
-                 if(optionalQualities!=null){
+                 if(optionalQualities==null){
+                	 result.append(base);
+                 }else{                 
                      int offset = i- numberOfGapsSoFar;
                      if(optionalQualities.size()<=offset){
                          throw new IllegalArgumentException(
@@ -167,8 +169,6 @@ public class AceFileUtil {
                      else{
                          result.append(base);
                      }
-                 }else{
-                     result.append(base);
                  }
              }
          }
