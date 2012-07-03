@@ -197,7 +197,7 @@ public final class CoverageMapFactory {
 	     */
 	    @SuppressWarnings("unchecked")
 		private CoverageMapImpl(List<CoverageRegion<V>> regions){
-	        this.regions = regions.toArray(new CoverageRegion[0]);
+	        this.regions = regions.toArray(new CoverageRegion[regions.size()]);
 	    }
 	    @Override
 	    public int getNumberOfRegions() {

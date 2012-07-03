@@ -34,6 +34,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -76,7 +77,7 @@ public final class Ab1FileParser {
 	}
 	
 	private static final byte ZERO_QUALITY = (byte)0;
-	private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("EEE dd MMM HH:mm:ss yyyy");
+	private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("EEE dd MMM HH:mm:ss yyyy", Locale.US);
 	/**
 	 * ABI files store both the original and current
 	 * (possibly edited) data.  This is the index

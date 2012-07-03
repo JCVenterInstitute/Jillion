@@ -86,7 +86,7 @@ public final class MultipleDataStoreWrapper<T, D extends DataStore<T>> implement
     
     private MultipleDataStoreWrapper(Collection<D> delegates){
         
-        if(delegates.size()==0){
+        if(delegates.isEmpty()){
             throw new IllegalArgumentException("must wrap at least one delegate");
         }
         

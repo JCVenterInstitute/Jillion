@@ -306,7 +306,7 @@ public enum HmmModels {
 		for(Gene gene : genes){
 			List<Range> exons = gene.getExons();
 			Iterator<Range> introns = gene.getIntrons().iterator();
-			if(exons.size() ==0){
+			if(exons.isEmpty()){
 				//not sure how a gene can't have any exons
 				//but skip whole gene if it happens...
 				continue;

@@ -239,7 +239,7 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
     }
 
     private void createNewRegionWithEnteringAmplicon() {
-        if (coverageRegionBuilders.size() > 0) {
+        if (!coverageRegionBuilders.isEmpty()) {
             final long endCoordinate = enteringObject.asRange().getBegin() - 1;
             setEndCoordinateOfPreviousRegion(endCoordinate);
         }

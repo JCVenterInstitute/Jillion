@@ -34,7 +34,7 @@ import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
  * @author dkatzel
  *
  */
-public class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
+public final class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
 
 	private final AssembledRead delegatePlacedRead;
 	

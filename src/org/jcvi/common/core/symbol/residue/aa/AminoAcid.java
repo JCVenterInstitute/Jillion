@@ -21,6 +21,7 @@ package org.jcvi.common.core.symbol.residue.aa;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.jcvi.common.core.symbol.Symbol;
@@ -106,7 +107,7 @@ public enum AminoAcid implements Residue{
      * an AminoAcid.
      */
     public static AminoAcid parse(String aminoAcid){
-        AminoAcid result = NAME_MAP.get(aminoAcid.toUpperCase());
+        AminoAcid result = NAME_MAP.get(aminoAcid.toUpperCase(Locale.US));
         if(result ==null){
             throw new IllegalArgumentException(String.format("%s is not a valid Amino Acid", aminoAcid));
         }

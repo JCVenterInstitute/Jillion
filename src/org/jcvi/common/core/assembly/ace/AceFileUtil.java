@@ -62,12 +62,12 @@ public class AceFileUtil {
      * and the ace for consed to make the read editable and to see the qualities
      * in the align window.
      */
-    private static final DateFormat CHROMAT_DATE_TIME_FORMATTER = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy");
+    private static final DateFormat CHROMAT_DATE_TIME_FORMATTER = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy", Locale.US);
     /**
      * This is the timestamp format used in some consed 
      * tags.
      */
-    private static final DateFormat TAG_DATE_TIME_FORMATTER = new SimpleDateFormat("yyMMdd:HHmmss");
+    private static final DateFormat TAG_DATE_TIME_FORMATTER = new SimpleDateFormat("yyMMdd:HHmmss", Locale.US);
     
     
     static{

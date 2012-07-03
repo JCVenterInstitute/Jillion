@@ -67,7 +67,7 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
 	}
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(50);
         builder.append("coverage region : ");
         builder.append(range);
         builder.append(" coverage = ");

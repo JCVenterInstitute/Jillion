@@ -128,7 +128,7 @@ public class DefaultCasAlignment implements CasAlignment {
 
 
 
-    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultCasAlignment>{
+    public static final class Builder implements org.jcvi.common.core.util.Builder<DefaultCasAlignment>{
         private final long contigSequenceId;
         private final long startOfMatch;
         private final boolean readIsReversed;
@@ -166,7 +166,7 @@ public class DefaultCasAlignment implements CasAlignment {
             currentLength=0;
         }
 
-        public synchronized Builder addRegion(CasAlignmentRegionType type, long length){
+        public final synchronized Builder addRegion(CasAlignmentRegionType type, long length){
             if(type== null){
                 throw new IllegalArgumentException("type can not be null");
             }
@@ -184,7 +184,7 @@ public class DefaultCasAlignment implements CasAlignment {
             return this;
         }
         
-        public synchronized Builder addPhaseChange(byte colorSpacePhaseChange){
+        public final synchronized Builder addPhaseChange(byte colorSpacePhaseChange){
             createAndResetCurrentRegion();
             regions.add(new PhaseChangeCasAlignmentRegion(colorSpacePhaseChange));
             return this;
@@ -203,7 +203,7 @@ public class DefaultCasAlignment implements CasAlignment {
         }
 
         @Override
-        public DefaultCasAlignment build() {
+        public final DefaultCasAlignment build() {
             createAndResetCurrentRegion();            
             return new DefaultCasAlignment(contigSequenceId,startOfMatch,readIsReversed, regions);
         }

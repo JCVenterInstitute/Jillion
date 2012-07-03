@@ -288,7 +288,7 @@ public final class DefaultScaffold  implements Scaffold{
     }
     @Override
     public String toString() {
-        StringBuilder builder2 = new StringBuilder();
+        StringBuilder builder2 = new StringBuilder(75);
         builder2.append("DefaultScaffold [id=").append(id).append(", length=")
                 .append(length).append(", placedContigs=")
                 .append(placedContigs).append(']');

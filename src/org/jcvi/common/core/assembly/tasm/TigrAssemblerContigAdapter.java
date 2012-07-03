@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.jcvi.common.core.assembly.Contig;
@@ -219,7 +220,7 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		 * in the TIGR Project DB database.
 		 */
 		private static final DateFormat EDIT_DATE_FORMATTER =
-			new SimpleDateFormat("MM/dd/yy hh:mm:ss aa");
+			new SimpleDateFormat("MM/dd/yy hh:mm:ss aa", Locale.US);
 		
 		
 		private synchronized String formatEditDate(Date editDate){
