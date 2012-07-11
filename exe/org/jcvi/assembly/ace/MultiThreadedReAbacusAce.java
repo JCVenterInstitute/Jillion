@@ -48,7 +48,7 @@ import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitor;
-import org.jcvi.common.core.assembly.ace.AceContigDataStore;
+import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.AceContigDataStoreBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
@@ -148,7 +148,7 @@ public class MultiThreadedReAbacusAce {
             AceFileParser.parse(inputAceFile, 
                     MultipleWrapper.createMultipleWrapper(AceFileVisitor.class, builder,tagWriter));
             
-            AceContigDataStore datastore = builder.build();
+            AceFileContigDataStore datastore = builder.build();
             CloseableIterator<String> idIter = datastore.idIterator();
             List<Future<Void>> futures = new ArrayList<Future<Void>>();
             try{

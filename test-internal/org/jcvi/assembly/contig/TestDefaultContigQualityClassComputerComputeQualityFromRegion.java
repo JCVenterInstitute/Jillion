@@ -38,7 +38,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
-import org.jcvi.common.core.util.iter.EmptyIterator;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.glyph.qualClass.QualityClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -77,7 +77,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
     
     @Test
     public void zeroCoverageRegion() throws DataStoreException{
-        expect(coverageRegion.iterator()).andReturn(EmptyIterator.<AssembledRead>createEmptyIterator());
+        expect(coverageRegion.iterator()).andReturn(IteratorUtil.<AssembledRead>createEmptyIterator());
         replay(qualityFastaMap,coverageRegion,builder);
         assertEquals(expectedQuality,
                 sut.computeQualityClassFor(qualityFastaMap, index, coverageRegion, consensusBase, builder));

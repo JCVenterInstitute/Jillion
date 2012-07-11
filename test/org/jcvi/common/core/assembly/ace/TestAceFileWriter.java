@@ -26,12 +26,11 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.jcvi.common.core.assembly.ace.AceContig;
-import org.jcvi.common.core.assembly.ace.AceContigDataStore;
+import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.AceContigDataStoreBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.ace.AcePlacedRead;
-import org.jcvi.common.core.assembly.ace.DefaultAceAdapterContigFileDataStore;
 import org.jcvi.common.core.assembly.ace.DefaultAceFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
@@ -70,7 +69,7 @@ public class TestAceFileWriter {
         
         PhdDataStore phdDataStore = new ArtificalPhdDataStore(nucleotideDataStore, qualityDataStore, phdDate);
        
-        AceContigDataStore aceDataStore = new DefaultAceAdapterContigFileDataStore(qualityFastaDataStore,phdDate,contigFile);
+        AceFileContigDataStore aceDataStore = new AceAdapterContigFileDataStore(qualityFastaDataStore,phdDate,contigFile);
         
         
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -82,7 +81,7 @@ public class TestAceFileWriter {
         AceContigDataStoreBuilder builder = DefaultAceFileDataStore.createBuilder();
         AceFileParser.parse(new ByteArrayInputStream(out.toByteArray()), builder);
         
-        AceContigDataStore reparsedAceDataStore = builder.build();
+        AceFileContigDataStore reparsedAceDataStore = builder.build();
         assertEquals("# contigs", aceDataStore.getNumberOfRecords(), reparsedAceDataStore.getNumberOfRecords());
         CloseableIterator<AceContig> contigIter = aceDataStore.iterator();
         try{
@@ -113,7 +112,7 @@ public class TestAceFileWriter {
     }
 
 	private void writeAceContigs(PhdDataStore phdDataStore,
-			AceContigDataStore aceDataStore, ByteArrayOutputStream out)
+			AceFileContigDataStore aceDataStore, ByteArrayOutputStream out)
 			throws IOException, DataStoreException {
 		CloseableIterator<AceContig> iter = aceDataStore.iterator();
 		try{
@@ -126,7 +125,7 @@ public class TestAceFileWriter {
 		}
 	}
 
-	private int countNumberOfTotalReads(AceContigDataStore aceDataStore) throws DataStoreException {
+	private int countNumberOfTotalReads(AceFileContigDataStore aceDataStore) throws DataStoreException {
 		int numberOfReads =0;
 		CloseableIterator<AceContig> iter = aceDataStore.iterator();
 		try{

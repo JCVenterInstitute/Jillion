@@ -33,22 +33,13 @@ import java.util.NoSuchElementException;
  *
  *
  */
-public final class EmptyIterator<E> implements Iterator<E> {
+final class EmptyIterator<E> implements Iterator<E> {
     /**
      * Singleton instance of Empty iterator that can be shared 
      * by all.
      */
     @SuppressWarnings("rawtypes")
-	private static final EmptyIterator INSTANCE  = new EmptyIterator();
-    /**
-     * Creates an {@link EmptyIterator} of Type E.
-     * @param <E> the type of element to be iterated over.
-     * @return an instance of EmptyIterator.
-     */
-    @SuppressWarnings("unchecked")
-    public static <E>  EmptyIterator<E> createEmptyIterator(){
-        return INSTANCE;
-    }
+	static final EmptyIterator INSTANCE  = new EmptyIterator();
     /**
      * Private constructor so no one can subclass.
      */

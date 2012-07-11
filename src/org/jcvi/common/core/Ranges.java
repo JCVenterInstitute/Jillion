@@ -23,7 +23,7 @@ public final class Ranges {
      * @return a new list of merged Ranges.
      * @see #merge(List, int)
      */
-    public static List<Range> merge(List<Range> rangesToMerge){
+    public static List<Range> merge(Collection<Range> rangesToMerge){
         return merge(rangesToMerge,0);
     }
     /**
@@ -37,7 +37,7 @@ public final class Ranges {
      * @return a new list of merged Ranges.
      * @throws IllegalArgumentException if clusterDistance <0.
      */
-    public static List<Range> merge(List<Range> rangesToMerge, int maxDistanceBetweenAdjacentRanges){
+    public static List<Range> merge(Collection<Range> rangesToMerge, int maxDistanceBetweenAdjacentRanges){
         if(maxDistanceBetweenAdjacentRanges <0){
             throw new IllegalArgumentException("cluster distance can not be negative");
         }
@@ -58,7 +58,7 @@ public final class Ranges {
      * @return a new list of merged Ranges.
      * @throws IllegalArgumentException if clusterDistance <0.
      */
-    public static List<Range> mergeIntoClusters(List<Range> rangesToMerge, int maxClusterDistance){
+    public static List<Range> mergeIntoClusters(Collection<Range> rangesToMerge, int maxClusterDistance){
         List<Range> tempRanges = merge(rangesToMerge);
         return privateMergeRangesIntoClusters(tempRanges,maxClusterDistance);
 

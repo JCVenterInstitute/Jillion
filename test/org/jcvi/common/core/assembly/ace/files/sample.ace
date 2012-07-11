@@ -403,3 +403,7 @@ Contig853 contigEndPair consed 10 10 091228:121044
 ggcctcgggg
 }
 
+RT{
+djs14_680.s1 matchElsewhereLowQual phrap 904 933 990823:114356
+}
+

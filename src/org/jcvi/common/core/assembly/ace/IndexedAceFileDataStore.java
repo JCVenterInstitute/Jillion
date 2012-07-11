@@ -26,10 +26,14 @@ package org.jcvi.common.core.assembly.ace;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
+import org.jcvi.common.core.assembly.ace.consed.ConsedUtil.ClipPointsType;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -37,9 +41,10 @@ import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 /**
  * {@code IndexedAceFileDataStore} is an implementation of 
- * {@link AceContigDataStore} that only stores an index containing
+ * {@link AceFileContigDataStore} that only stores an index containing
  * byte offsets to the various contigs contained
  * inside the ace file. Furthermore, each {@link AceContig}
  * in this datastore will not store all the underlying read
@@ -53,9 +58,13 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
-public final class IndexedAceFileDataStore implements AceContigDataStore{
+public final class IndexedAceFileDataStore implements AceFileContigDataStore{
     private final IndexedFileRange indexFileRange;
     private final File file;
+    private final long totalNumberOfReads;
+    private final List<WholeAssemblyAceTag> wholeAssemblyTags;
+    private final List<ConsensusAceTag> consensusTags;
+    private final List<ReadAceTag> readTags;
     /**
      * Create a new empty {@link AceContigDataStoreBuilder}
      * that will create an {@link IndexedAceFileDataStore} 
@@ -89,35 +98,55 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         return new IndexedAceFileDataStoreBuilder(aceFile,indexFileRange);
     }
     /**
-     * Create a new {@link AceContigDataStore} instance
+     * Create a new {@link AceFileContigDataStore} instance
      * for the contigs in the given aceFile.
      * @param aceFile the aceFile to parse.
-     * @return a new  a new {@link AceContigDataStore}
+     * @return a new  a new {@link AceFileContigDataStore}
      * that only stores an index containing file offsets to the various contigs contained
      * inside the ace file. 
      * @throws IOException if there is a problem reading the ace file
      * @throws NullPointerException if aceFile is null.
      */
-    public static AceContigDataStore create(File aceFile) throws IOException{
+    public static AceFileContigDataStore create(File aceFile) throws IOException{
         AceContigDataStoreBuilder builder = createBuilder(aceFile);
         AceFileParser.parse(aceFile, builder);
         return builder.build();
     }
-    public static AceContigDataStore create(File aceFile, IndexedFileRange indexFileRange) throws IOException{
+    public static AceFileContigDataStore create(File aceFile, IndexedFileRange indexFileRange) throws IOException{
         AceContigDataStoreBuilder builder = createBuilder(aceFile,indexFileRange);
         AceFileParser.parse(aceFile, builder);
         return builder.build();
     }
     
-    private IndexedAceFileDataStore(File file, IndexedFileRange indexFileRange){
-        this.indexFileRange = indexFileRange;
-        this.file = file;
-    }
-    
-    private IndexedAceFileDataStore(File file){
-        this(file, new DefaultIndexedFileRange());
+    private IndexedAceFileDataStore(File file, IndexedFileRange indexFileRange,
+    		long totalNumberOfReads,
+			List<WholeAssemblyAceTag> wholeAssemblyTags,
+			List<ConsensusAceTag> consensusTags, List<ReadAceTag> readTags) {
+    	this.indexFileRange = indexFileRange;
+    	this.file = file;
+		this.totalNumberOfReads = totalNumberOfReads;
+		this.wholeAssemblyTags = wholeAssemblyTags;
+		this.consensusTags = consensusTags;
+		this.readTags = readTags;
+       
     }
 
+    @Override
+   	public long getNumberOfTotalReads() {
+   		return totalNumberOfReads;
+   	}
+   	@Override
+   	public CloseableIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() {
+   		return CloseableIteratorAdapter.adapt(wholeAssemblyTags.iterator());
+   	}
+   	@Override
+   	public CloseableIterator<ReadAceTag> getReadTagIterator() {
+   		return CloseableIteratorAdapter.adapt(readTags.iterator());
+   	}
+   	@Override
+   	public CloseableIterator<ConsensusAceTag> getConsensusTagIterator() {
+   		return CloseableIteratorAdapter.adapt(consensusTags.iterator());
+   	}
     
     @Override
     public boolean contains(String contigId) throws DataStoreException {
@@ -189,6 +218,16 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         private boolean firstContig=true;
         private String currentContigId;
         private boolean hasTags=false;
+        private long totalNumberOfReads=0L;
+        private final List<WholeAssemblyAceTag> wholeAssemblyTags = new ArrayList<WholeAssemblyAceTag>();
+        private final List<ConsensusAceTag> consensusTags = new ArrayList<ConsensusAceTag>();
+        private final List<ReadAceTag> readTags = new ArrayList<ReadAceTag>();
+        /**
+         * Consensus tags span multiple lines of the ace file so we need to build
+         * up the consensus tags as we parse.
+         */
+        private DefaultConsensusAceTag.Builder consensusTagBuilder;
+        
         public IndexedAceFileDataStoreBuilder(File aceFile){
             if(aceFile==null){
                 throw new NullPointerException("ace file cannot be null");
@@ -216,7 +255,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
             currentContigId = contigId;
             currentStartOffset=currentFileOffset-currentLineLength;
             firstContig=false;
-            return false;
+            return true;
 		}
 
         protected synchronized void visitContig() {
@@ -227,8 +266,10 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         * {@inheritDoc}
         */
         @Override
-        public synchronized AceContigDataStore build() {
-            return new IndexedAceFileDataStore(aceFile, indexFileRange);
+        public synchronized AceFileContigDataStore build() {
+            return new IndexedAceFileDataStore(aceFile, indexFileRange,
+            		totalNumberOfReads,
+            		wholeAssemblyTags,consensusTags,readTags);
         }
         /**
         * {@inheritDoc}
@@ -273,7 +314,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
 		public void visitBeginContig(String contigId, int numberOfBases,
 				int numberOfReads, int numberOfBaseSegments,
 				boolean reverseComplimented) {
-			
+			totalNumberOfReads +=numberOfReads;
 		}
 		/**
         * {@inheritDoc}
@@ -310,6 +351,11 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         @Override
         public void visitQualityLine(int qualLeft, int qualRight,
                 int alignLeft, int alignRight) {
+        	 ClipPointsType clipPointsType = ConsedUtil.ClipPointsType.getType(qualLeft, qualRight, alignLeft, alignRight);
+     		if(clipPointsType !=ClipPointsType.VALID){
+     			//ignore read
+     			totalNumberOfReads--;
+     		}
         }
 
         /**
@@ -335,6 +381,8 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
                 long gappedStart, long gappedEnd, Date creationDate,
                 boolean isTransient) {
             hasTags=true;
+            readTags.add(new DefaultReadAceTag(id, type, creator, creationDate, 
+                    Range.create(gappedStart,gappedEnd), isTransient));
         }
 
         /**
@@ -355,6 +403,9 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
                 String creator, long gappedStart, long gappedEnd,
                 Date creationDate, boolean isTransient) {
             hasTags=true;
+            consensusTagBuilder = new DefaultConsensusAceTag.Builder(id, 
+                    type, creator, creationDate, Range.create(gappedStart, gappedEnd), isTransient);
+
         }
 
         /**
@@ -363,6 +414,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         @Override
         public void visitConsensusTagComment(String comment) {
             hasTags=true;
+            consensusTagBuilder.addComment(comment);
         }
 
         /**
@@ -371,6 +423,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         @Override
         public void visitConsensusTagData(String data) {
             hasTags=true;
+            consensusTagBuilder.appendData(data);
         }
 
         /**
@@ -379,6 +432,7 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         @Override
         public void visitEndConsensusTag() {
             hasTags=true;
+            consensusTags.add(consensusTagBuilder.build());
         }
 
         /**
@@ -388,6 +442,8 @@ public final class IndexedAceFileDataStore implements AceContigDataStore{
         public void visitWholeAssemblyTag(String type, String creator,
                 Date creationDate, String data) {
             hasTags=true;
+            wholeAssemblyTags.add(new DefaultWholeAssemblyAceTag(type, creator, creationDate, data.trim()));
+            
         }
     }
     

@@ -20,6 +20,7 @@
 package org.jcvi.common.core.util;
 
 import org.jcvi.common.core.util.iter.TestAbstractBlockingClosableIteratorExceptions;
+import org.jcvi.common.core.util.iter.TestEmptyIterator;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

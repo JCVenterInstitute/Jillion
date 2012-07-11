@@ -35,7 +35,7 @@ import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.AceContig;
-import org.jcvi.common.core.assembly.ace.AceContigDataStore;
+import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore;
 import org.jcvi.common.core.assembly.ace.LargeAceFileDataStore;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationWriter;
@@ -104,7 +104,7 @@ public class DetectAbacusErrorsContigWorker {
                     : DEFAULT_GAP_PERCENTAGE;
             final AbacusErrorFinder abacusErrorFinder = new AbacusErrorFinder(5,3,percentGap);
             try{
-                AceContigDataStore datastore = LargeAceFileDataStore.create(aceFile);
+                AceFileContigDataStore datastore = LargeAceFileDataStore.create(aceFile);
                 try {
                     findErrorsIn(abacusErrorFinder, datastore.get(contigId), out,consedNavWriter);
                 } catch (IOException e) {

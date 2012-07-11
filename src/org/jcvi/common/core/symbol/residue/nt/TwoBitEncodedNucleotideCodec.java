@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.ValueSizeStrategy;
-import org.jcvi.common.core.util.iter.EmptyIterator;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 
 
 /**
@@ -151,7 +151,7 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
 			ValueSizeStrategy sentinelStrategy = ValueSizeStrategy.values()[buf.get()];
             final Iterator<Integer> sentinelIterator;
             if(sentinelStrategy == ValueSizeStrategy.NONE){
-            	sentinelIterator=EmptyIterator.createEmptyIterator();
+            	sentinelIterator=IteratorUtil.createEmptyIterator();
             }else{            	
             	//there are gaps
             	int numberOfSentinels = sentinelStrategy.getNext(buf);

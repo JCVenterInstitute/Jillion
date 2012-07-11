@@ -401,8 +401,8 @@ public final class AceFileParser {
                 String id = readTagMatcher.group(1);
                 String type = readTagMatcher.group(2);
                 String creator = readTagMatcher.group(3);
-                long gappedStart = Long.parseLong(readTagMatcher.group(4));
-                long gappedEnd = Long.parseLong(readTagMatcher.group(5));
+                long gappedStart = Long.parseLong(readTagMatcher.group(4))-1;
+                long gappedEnd = Long.parseLong(readTagMatcher.group(5))-1;
                 Date creationDate;
 				try {
 					creationDate = AceFileUtil.parseTagDate(                                                

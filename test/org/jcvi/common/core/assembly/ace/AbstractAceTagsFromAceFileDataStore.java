@@ -23,7 +23,10 @@
  */
 package org.jcvi.common.core.assembly.ace;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
@@ -32,15 +35,16 @@ import org.jcvi.common.core.assembly.ace.DefaultAceTagsFromAceFile;
 import org.jcvi.common.core.assembly.ace.DefaultConsensusAceTag;
 import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.ace.WholeAssemblyAceTag;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class TestDefaultAceTagsFromAceFile {
+public abstract class AbstractAceTagsFromAceFileDataStore {
 
-    ResourceFileServer RESOURCES = new ResourceFileServer(TestDefaultAceTagsFromAceFile.class);
+    ResourceFileServer RESOURCES = new ResourceFileServer(AbstractAceTagsFromAceFileDataStore.class);
     String fileName = "files/sample.ace";
     
     WholeAssemblyAceTag expectedWholeAssemblyTag = new DefaultWholeAssemblyAceTag(
@@ -85,23 +89,42 @@ public class TestDefaultAceTagsFromAceFile {
             false)
             .appendData("3\n<-gap\nggcctcgggg\n")
             .build();
-    
-    AceTags sut;
+    ReadAceTag readTag1 = new DefaultReadAceTag("djs14_680.s1", "matchElsewhereLowQual",
+    		"phrap", new DateTime(1999, 8, 23, 11, 43, 56, 0).toDate(), 
+    		Range.create(903,932)
+    		, true);
+
+    AceFileContigDataStore sut;
+    protected abstract AceFileContigDataStore createDataStoreFor(File aceFile) throws IOException;
     @Before
     public void setup() throws IOException{
-        sut = DefaultAceTagsFromAceFile.create(RESOURCES.getFile(fileName));
+        sut = createDataStoreFor(RESOURCES.getFile(fileName));
+    }
+    
+    private <E> List<E> toList(Iterator<E> iter){
+    	List<E> list = new ArrayList<E>();
+    	while(iter.hasNext()){
+    		list.add(iter.next());
+    	}
+    	return list;
     }
     @Test
-    public void wholeAssemblyTag(){
-        List<WholeAssemblyAceTag> tags = sut.getWholeAssemblyTags();
+    public void wholeAssemblyTag() throws DataStoreException{
+        List<WholeAssemblyAceTag> tags = toList(sut.getWholeAssemblyTagIterator());
         assertEquals(1,tags.size());
         final WholeAssemblyAceTag wholeAssemblyAceTag = tags.get(0);
         assertEquals(expectedWholeAssemblyTag, wholeAssemblyAceTag);
     }
-    
     @Test
-    public void consensusTags(){
-        List<ConsensusAceTag> actualTags = sut.getConsensusTags();
+    public void readTag() throws DataStoreException{
+        List<ReadAceTag> tags = toList(sut.getReadTagIterator());
+        assertEquals(1,tags.size());
+        final ReadAceTag readTag = tags.get(0);
+        assertEquals(readTag1, readTag);
+    }
+    @Test
+    public void consensusTags() throws DataStoreException{
+        List<ConsensusAceTag> actualTags = toList(sut.getConsensusTagIterator());
         assertEquals(5, actualTags.size());
         assertEquals(consensusTag0, actualTags.get(0));
         assertEquals(consensusTag1, actualTags.get(1));

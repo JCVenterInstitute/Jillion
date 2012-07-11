@@ -26,7 +26,7 @@ import java.util.Collections;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ace.AceContig;
-import org.jcvi.common.core.assembly.ace.AceContigDataStore;
+import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.DefaultAceFileDataStore;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
@@ -50,7 +50,7 @@ public class TestAceVisitorSkipContigs{
         String contigIdToSkip = "22934-PB1";
         File aceFile = resources.getFile("files/fluSample.ace");
         DataStoreFilter filter = new DefaultExcludeDataStoreFilter(Collections.singleton(contigIdToSkip));
-        AceContigDataStore datastore = DefaultAceFileDataStore.create(aceFile, filter);
+        AceFileContigDataStore datastore = DefaultAceFileDataStore.create(aceFile, filter);
         assertEquals(7, datastore.getNumberOfRecords());
         DefaultContigFileDataStore contigDataStore = new DefaultContigFileDataStore(resources.getFile("files/fluSample.contig"));
         assertEquals(8,contigDataStore.getNumberOfRecords());

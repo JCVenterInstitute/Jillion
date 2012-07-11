@@ -70,6 +70,9 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
     public static HiLowAceContigPhdDatastore create(InputStream aceContigFile) throws IOException{
         return new HiLowAceContigPhdDatastore(aceContigFile,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
     }
+    public static HiLowAceContigPhdDatastore create(InputStream aceContigFile, String contigId) throws IOException{
+        return new HiLowAceContigPhdDatastore(aceContigFile,contigId, DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
+    }
     private HiLowAceContigPhdDatastore(File aceContigFile, final String contigId) throws IOException{
         this(aceContigFile,contigId,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
     }
@@ -89,7 +92,14 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         delegate = new PhdDataStoreAdapter(new SimpleDataStore<Phd>(visitor.getPhds()));
         
     }
-    
+    private HiLowAceContigPhdDatastore(InputStream aceContigFile, String contigId,
+            final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
+        FullLengthPhdParser visitor = new FullLengthPhdParser(contigId,lowQuality,highQuality);
+        
+        AceFileParser.parse(aceContigFile, visitor);
+        delegate = new PhdDataStoreAdapter(new SimpleDataStore<Phd>(visitor.getPhds()));
+        
+    }
     
     public HiLowAceContigPhdDatastore(File aceContigFile, 
             final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{

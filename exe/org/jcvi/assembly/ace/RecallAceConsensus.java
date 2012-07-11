@@ -38,7 +38,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitor;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
-import org.jcvi.common.core.assembly.ace.AceContigDataStore;
+import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.AceContigDataStoreBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
@@ -194,7 +194,7 @@ public class RecallAceConsensus {
             };
             AceFileVisitor aceVisitors = MultipleWrapper.createMultipleWrapper(AceFileVisitor.class, headerVisitor,aceContigDataStoreBuilder);
             AceFileParser.parse(inputAceFile, aceVisitors);
-            AceContigDataStore aceContigDataStore = aceContigDataStoreBuilder.build();
+            AceFileContigDataStore aceContigDataStore = aceContigDataStoreBuilder.build();
             CloseableIterator<AceContig> iter = aceContigDataStore.iterator();
             try{
 	            while(iter.hasNext()){

@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
+import org.jcvi.common.core.assembly.ace.consed.ConsedUtil.ClipPointsType;
 import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.CachedDataStore;
@@ -16,8 +19,9 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 /**
- * {@code LargeAceFileDataStore} is an {@link AceContigDataStore}
+ * {@code LargeAceFileDataStore} is an {@link AceFileContigDataStore}
  * implementation that doesn't store any contig or 
  * read information in memory.
  * This means that each {@link #get(String)} or {@link #contains(String)}
@@ -33,22 +37,28 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * @author dkatzel
  *
  */
-public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> implements AceContigDataStore{
+public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> implements AceFileContigDataStore{
 
 	private final File aceFile;
 	private Long numberOfContigs = null;
+	private Long totalNumberOfReads =null;
+	
+	private List<WholeAssemblyAceTag> wholeAssemblyTags =null;
+    private List<ConsensusAceTag> consensusTags= null;
+    private List<ReadAceTag> readTags=null;
+    
 	private final DataStoreFilter contigIdFilter;
 	
 	/**
 	 * Create a new instance of {@link LargeAceFileDataStore}.
-	 * @param aceFile the ace file to create an {@link AceContigDataStore}
+	 * @param aceFile the ace file to create an {@link AceFileContigDataStore}
 	 * from. (can not be null and must exist)
-	 * @return a new {@link AceContigDataStore}; 
+	 * @return a new {@link AceFileContigDataStore}; 
 	 * will never be null.
 	 * @throws FileNotFoundException if the ace file does not exist.
 	 * @throws NullPointerException if aceFile is null.
 	 */
-	public static AceContigDataStore create(File aceFile) throws FileNotFoundException{
+	public static AceFileContigDataStore create(File aceFile) throws FileNotFoundException{
 		return new LargeAceFileDataStore(aceFile, AcceptingDataStoreFilter.INSTANCE);
 	}
 	/**
@@ -59,18 +69,18 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 	 * {@link #iterator()} and {@link #idIterator()}, return
 	 * {@code false} for {@link #contains(String)}
 	 * and return null for {@link #get(String)}
-	 * @param aceFile the ace file to create an {@link AceContigDataStore}
+	 * @param aceFile the ace file to create an {@link AceFileContigDataStore}
 	 * from. (can not be null and must exist)
 	 * @param contigIdFilter a {@link DataStoreFilter}
 	 * instance if only some contigs from the given
 	 * file should be included in this datastore.
 	 * Calls to {@link #get(String)}
-	 * @return a new {@link AceContigDataStore}; 
+	 * @return a new {@link AceFileContigDataStore}; 
 	 * will never be null.
 	 * @throws FileNotFoundException if the ace file does not exist.
 	 * @throws NullPointerException if aceFile is null.
 	 */
-	public static AceContigDataStore create(File aceFile, DataStoreFilter contigIdFilter) throws FileNotFoundException{
+	public static AceFileContigDataStore create(File aceFile, DataStoreFilter contigIdFilter) throws FileNotFoundException{
 		return new LargeAceFileDataStore(aceFile, contigIdFilter);
 	}
 	
@@ -135,6 +145,61 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 		}
 		return found;
 	}
+	
+	
+	@Override
+	public synchronized CloseableIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator()
+			throws DataStoreException {
+		throwExceptionIfClosed();
+		if( wholeAssemblyTags==null){
+			setTagLists();
+		}
+		return CloseableIteratorAdapter.adapt(wholeAssemblyTags.iterator());
+	}
+	@Override
+	public synchronized CloseableIterator<ReadAceTag> getReadTagIterator()
+			throws DataStoreException {
+		throwExceptionIfClosed();
+		if( readTags==null){
+			setTagLists();
+		}
+		return CloseableIteratorAdapter.adapt(readTags.iterator());
+	}
+	@Override
+	public synchronized CloseableIterator<ConsensusAceTag> getConsensusTagIterator()
+			throws DataStoreException {
+		throwExceptionIfClosed();
+		if( consensusTags==null){
+			setTagLists();
+		}
+		return CloseableIteratorAdapter.adapt(consensusTags.iterator());
+	}
+	private void setTagLists() throws DataStoreException {
+		try {
+			AceTags aceTags = DefaultAceTagsFromAceFile.create(aceFile);
+			wholeAssemblyTags = aceTags.getWholeAssemblyTags();
+			consensusTags = aceTags.getConsensusTags();
+			readTags = aceTags.getReadTags();
+		} catch (IOException e) {
+			throw new DataStoreException("error parsing ace tags from ace file", e);
+		}
+	}
+	@Override
+	public synchronized long getNumberOfTotalReads() throws DataStoreException {
+		throwExceptionIfClosed();
+		if( totalNumberOfReads==null){
+			//haven't parsed total number of reads yet 
+			SizeVisitor visitor = new SizeVisitor();
+			try {
+				AceFileParser.parse(aceFile, visitor);
+			} catch (IOException e) {
+				throw new DataStoreException("error parsing total number of reads",e);
+			}
+			totalNumberOfReads= visitor.getTotalNumberOfReads();
+			numberOfContigs= visitor.getNumberOfContigs();
+		}
+		return totalNumberOfReads;
+	}
 	@Override
 	public synchronized long getNumberOfRecords() throws DataStoreException {
 		throwExceptionIfClosed();
@@ -146,7 +211,8 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 			} catch (IOException e) {
 				throw new DataStoreException("error parsing number of contigs",e);
 			}
-			numberOfContigs= visitor.getSize();
+			totalNumberOfReads= visitor.getTotalNumberOfReads();
+			numberOfContigs= visitor.getNumberOfContigs();
 		}
 		return numberOfContigs;
 	}
@@ -167,11 +233,15 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 
 	private class SizeVisitor implements AceFileVisitor{
 
-		private long size=0;
+		private long size=0L;
+		private long totalNumberOfReads=0L;
 		
-		
-		public long getSize() {
+		public long getNumberOfContigs() {
 			return size;
+		}
+
+		public long getTotalNumberOfReads() {
+			return totalNumberOfReads;
 		}
 
 		@Override
@@ -204,6 +274,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 				boolean reverseComplimented) {
 			if(contigIdFilter.accept(contigId)){
 				size++;
+				totalNumberOfReads+=numberOfReads;
 				return true;
 			}
 			return false;
@@ -245,7 +316,11 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 		@Override
 		public void visitQualityLine(int qualLeft, int qualRight,
 				int alignLeft, int alignRight) {
-			//no-op
+			 ClipPointsType clipPointsType = ConsedUtil.ClipPointsType.getType(qualLeft, qualRight, alignLeft, alignRight);
+	     		if(clipPointsType !=ClipPointsType.VALID){
+	     			//ignore read
+	     			totalNumberOfReads--;
+	     		}
 			
 		}
 

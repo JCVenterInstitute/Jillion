@@ -20,12 +20,25 @@
 package org.jcvi.common.core.assembly.ace;
 
 import org.jcvi.common.core.assembly.ContigDataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface AceContigDataStore extends ContigDataStore<AcePlacedRead,AceContig>{
-
+public interface AceFileContigDataStore extends ContigDataStore<AcePlacedRead,AceContig>{
+	/**
+	 * Get the total number of reads over all the contigs
+	 * in the datastore.
+	 * @return
+	 */
+	long getNumberOfTotalReads() throws DataStoreException;
+	
+	CloseableIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() throws DataStoreException;
+	
+	CloseableIterator<ReadAceTag> getReadTagIterator() throws DataStoreException;
+	
+	CloseableIterator<ConsensusAceTag> getConsensusTagIterator()  throws DataStoreException;
 }

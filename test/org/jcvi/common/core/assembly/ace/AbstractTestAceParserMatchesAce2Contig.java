@@ -47,7 +47,7 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
     ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestAceParserMatchesAce2Contig.class);
     private final String pathToAceFile;
     
-    private final AceContigDataStore sut;
+    private final AceFileContigDataStore sut;
     
     private static final List<String> IDS = Arrays.asList(
 			"22934-PB2",
@@ -77,13 +77,17 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
 
    
 
-    protected abstract AceContigDataStore createDataStoreFor(File aceFile) throws IOException;
+    protected abstract AceFileContigDataStore createDataStoreFor(File aceFile) throws IOException;
     
     @Test
     public void numberOfContigs() throws DataStoreException{
     	assertEquals(expectedContigDataStore.getNumberOfRecords(), sut.getNumberOfRecords());    	
     }
     
+    @Test
+    public void numberOfTotalReads() throws DataStoreException{
+    	assertEquals(543, sut.getNumberOfTotalReads());
+    }
     @Test
     public void idIterator() throws DataStoreException{
     	CloseableIterator<String> ids = null;

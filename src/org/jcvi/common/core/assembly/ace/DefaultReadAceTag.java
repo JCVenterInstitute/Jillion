@@ -33,6 +33,15 @@ public class DefaultReadAceTag extends AbstractDefaultPlacedAceTag implements Re
             Date creationDate, Rangeable location, boolean isTransient) {
         super(id, type, creator, creationDate, location, null, isTransient);
     }
+
+	@Override
+	public String toString() {
+		return "DefaultReadAceTag [getId()=" + getId() + ", getType()="
+				+ getType() + ", getCreator()=" + getCreator()
+				+ ", getCreationDate()=" + getCreationDate() + ", asRange()="
+				+ asRange() + ", getData()=" + getData() + ", isTransient()="
+				+ isTransient() + "]";
+	}
     
     
 

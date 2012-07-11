@@ -220,7 +220,9 @@ public final class DefaultPlacedRead implements AssembledRead {
             this.originalSequence = validBases;
             this.basesBuilder =null;
             if(offset + validBases.getLength() > reference.getLength()){
-                throw new IllegalArgumentException("read goes beyond the reference");
+                throw new IllegalArgumentException(
+                		String.format("read %s , last offset %d goes beyond the reference (length %d)",
+                				readId, offset + validBases.getLength(), reference.getLength()));
             }
             if(offset <0){
                 throw new IllegalArgumentException("read goes before the reference");

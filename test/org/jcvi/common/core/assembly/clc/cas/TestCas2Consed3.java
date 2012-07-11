@@ -27,7 +27,7 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ace.AceContig;
-import org.jcvi.common.core.assembly.ace.AceContigDataStore;
+import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.ace.DefaultAceFileDataStore;
 import org.jcvi.common.core.assembly.clc.cas.UnTrimmedExtensionTrimMap;
@@ -64,7 +64,7 @@ public class TestCas2Consed3 {
 	      cas2consed3.convert(TrimDataStoreUtil.EMPTY_DATASTORE,new UnTrimmedExtensionTrimMap(),FastqQualityCodec.ILLUMINA, false,false,false);
 	      
 	      File aceFile = tempDir.getFile("edit_dir/"+prefix+".ace.1");
-	      AceContigDataStore dataStore = DefaultAceFileDataStore.create(aceFile);
+	      AceFileContigDataStore dataStore = DefaultAceFileDataStore.create(aceFile);
 	      assertEquals("# contigs", expectedDataStore.getNumberOfRecords(), dataStore.getNumberOfRecords());
 	        CloseableIterator<AceContig> iter = dataStore.iterator();
 	        try{

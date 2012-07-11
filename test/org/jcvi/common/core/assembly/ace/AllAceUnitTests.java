@@ -42,7 +42,7 @@ import org.junit.runners.Suite.SuiteClasses;
        TestDefaultAceBestSegmentMap.class,
        TestOntheFlyAceBestSegmentMap.class,
        TestAcePlacedReadAdapter.class,
-       TestDefaultAceTagsFromAceFile.class,
+       
        TestDefaultAceFileDataStore.class,
        TestIndexAceFileOffsets.class,
        TestIndexedAceFileDataStore.class,
@@ -54,6 +54,11 @@ import org.junit.runners.Suite.SuiteClasses;
        TestDefaultAceContigBuilderReAbacus.class,
        TestAceVisitorSkipContigs.class,
        TestAceFileParserWithInvalidGapChar.class,
+       
+       AceTagsFromDefaultAceFileDataStore.class,
+       AceTagsFromIndexedAceFileDataStore.class,
+       AceTagsFromLargeAceFileDataStore.class,
+       
        AllConsedUnitTests.class
     }
 )
