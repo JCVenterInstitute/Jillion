@@ -50,7 +50,35 @@ import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
  *
  */
 public final class DefaultAceFileDataStore implements AceFileContigDataStore{
+	/**
+	 * {@link DataStore} wrapper of our {@link AceContig}s.
+	 */
+	private final DataStore<AceContig> delegate;
+	/**
+	 * The total number of reads in our datastore
+	 * (sum of all the reads in the contigs).
+	 */
+    private final long totalNumberOfReads;
     /**
+     * List of all the {@link WholeAssemblyAceTag}s
+     * in the ace file in the order they are
+     * declared in the file.
+     */
+    private final List<WholeAssemblyAceTag> wholeAssemblyTags;
+    /**
+     * List of all the {@link ConsensusAceTag}s
+     * in the ace file in the order they are
+     * declared in the file.
+     */
+    private final List<ConsensusAceTag> consensusTags;
+    /**
+     * List of all the {@link ReadAceTag}s
+     * in the ace file in the order they are
+     * declared in the file.
+     */
+    private final List<ReadAceTag> readTags;
+	
+	/**
      * Create a new empty AceContigDataStoreBuilder
      * that will need to be populated.
      * @return a new AceContigDataStoreBuilder; never null.
@@ -102,11 +130,7 @@ public final class DefaultAceFileDataStore implements AceFileContigDataStore{
         AceFileParser.parse(aceFile, builder);
         return builder.build();
     }
-    private final DataStore<AceContig> delegate;
-    private final long totalNumberOfReads;
-    private final List<WholeAssemblyAceTag> wholeAssemblyTags;
-    private final List<ConsensusAceTag> consensusTags;
-    private final List<ReadAceTag> readTags;
+   
    
     
     private DefaultAceFileDataStore(DataStore<AceContig> delegate,
