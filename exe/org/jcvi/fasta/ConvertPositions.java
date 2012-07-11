@@ -36,7 +36,7 @@ import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
-import org.jcvi.common.core.assembly.ace.AceContigDataStore;
+import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore;
 import org.jcvi.common.core.assembly.ctg.IndexedContigFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
@@ -123,7 +123,7 @@ public class ConvertPositions {
                 values= datastore.get(id).getConsensus();
             }else{
                 File aceFile = new File(commandLine.getOptionValue("a"));
-                AceContigDataStore datastore =IndexedAceFileDataStore.create(aceFile);
+                AceFileContigDataStore datastore =IndexedAceFileDataStore.create(aceFile);
                 values = datastore.get(id).getConsensus();
             }
             

@@ -35,7 +35,7 @@ import java.util.NoSuchElementException;
 import java.util.Queue;
 
 import org.jcvi.common.core.util.iter.ArrayIterable;
-import org.jcvi.common.core.util.iter.EmptyIterator;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 
 /**
  * {@code FileIterator} is an {@link Iterator} for File objects.
@@ -147,7 +147,7 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
        
         if(listFiles ==null){
             //either no files or no files we have permission to see
-            return EmptyIterator.createEmptyIterator();
+            return IteratorUtil.createEmptyIterator();
         }
         //sort files by name this makes
         //iterating deterministic

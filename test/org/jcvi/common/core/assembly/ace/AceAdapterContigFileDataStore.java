@@ -37,29 +37,32 @@ import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.seq.fastx.FastXRecord;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
-public class DefaultAceAdapterContigFileDataStore extends AbstractAceAdaptedContigFileDataStore implements AceContigDataStore{
+public class AceAdapterContigFileDataStore extends AbstractAceAdaptedContigFileDataStore implements AceFileContigDataStore{
 
     private final Map<String, AceContig> map = new HashMap<String, AceContig>();
     private DataStore<AceContig> dataStore;
+    private long totalNumberOfReads=0L;
     /**
      * @param phdDate
      */
-    public DefaultAceAdapterContigFileDataStore(DataStore<? extends FastXRecord> fullLengthFastXDataStore,Date phdDate) {
+    public AceAdapterContigFileDataStore(DataStore<? extends FastXRecord> fullLengthFastXDataStore,Date phdDate) {
         super(fullLengthFastXDataStore,phdDate);
     }
-    public DefaultAceAdapterContigFileDataStore(DataStore<? extends FastXRecord> fullLengthFastXDataStore, Date phdDate, File contigFile) throws FileNotFoundException{
+    public AceAdapterContigFileDataStore(DataStore<? extends FastXRecord> fullLengthFastXDataStore, Date phdDate, File contigFile) throws FileNotFoundException{
         this(fullLengthFastXDataStore,phdDate);
         ContigFileParser.parse(contigFile, this);
     }
     @Override
     protected void visitAceContig(AceContig aceContig) {
-        map.put(aceContig.getId(), aceContig);        
+        map.put(aceContig.getId(), aceContig);  
+        totalNumberOfReads += aceContig.getNumberOfReads();
     }
 
     @Override
     public void visitEndOfFile() {
         super.visitEndOfFile();
         dataStore = new SimpleDataStore<AceContig>(map);
+        map.clear();
     }
 
     @Override
@@ -99,5 +102,24 @@ public class DefaultAceAdapterContigFileDataStore extends AbstractAceAdaptedCont
     public boolean isClosed() throws DataStoreException {
         return dataStore.isClosed();
     }
+	@Override
+	public long getNumberOfTotalReads() {
+		return totalNumberOfReads;
+	}
+	@Override
+	public CloseableIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public CloseableIterator<ReadAceTag> getReadTagIterator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public CloseableIterator<ConsensusAceTag> getConsensusTagIterator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

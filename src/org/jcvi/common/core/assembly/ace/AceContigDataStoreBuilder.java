@@ -23,13 +23,13 @@ import org.jcvi.common.core.util.Builder;
 
 /**
  * {@code AceContigDataStoreBuilder} will build up an 
- * {@link AceContigDataStore} by visiting
+ * {@link AceFileContigDataStore} by visiting
  * ace files.  Most implementations will only
  * be able to include 1 ace file time.
  * @author dkatzel
  *
  *
  */
-public interface AceContigDataStoreBuilder extends AceFileVisitor, Builder<AceContigDataStore>{
+public interface AceContigDataStoreBuilder extends AceFileVisitor, Builder<AceFileContigDataStore>{
 
 }

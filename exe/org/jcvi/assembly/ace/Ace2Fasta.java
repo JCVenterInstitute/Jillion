@@ -40,7 +40,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
-import org.jcvi.common.core.assembly.ace.AceContigDataStore;
+import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.AceContigDataStoreBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
@@ -122,7 +122,7 @@ public class Ace2Fasta {
            
            
             AceAssembly aceAssembly = new AceAssembly(aceIn);
-            AceContigDataStore contigDataStore = aceAssembly.getContigDataStore();
+            AceFileContigDataStore contigDataStore = aceAssembly.getContigDataStore();
             //consed allows users to rename contigs, but instead of changing
             //the CO record in the ace, the new name is stored as a comment at
             //the end of the file.  contigIdMap parses those comments 
@@ -176,7 +176,7 @@ public class Ace2Fasta {
     }
     
     private static class AceAssembly {
-    	private final AceContigDataStore datastore;
+    	private final AceFileContigDataStore datastore;
     	private final AceTags aceTags;
     	
     	AceAssembly(File aceFile) throws IOException{
@@ -192,7 +192,7 @@ public class Ace2Fasta {
     		
     	}
     	
-    	AceContigDataStore getContigDataStore(){
+    	AceFileContigDataStore getContigDataStore(){
     		return datastore;
     	}
     	

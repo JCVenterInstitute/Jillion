@@ -31,6 +31,8 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
+import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
+import org.jcvi.common.core.assembly.ace.consed.ConsedUtil.ClipPointsType;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 /**
@@ -174,23 +176,31 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         if(currentReadId ==null){
         	throw new IllegalStateException("current read id is null");
         }
-        if(qualLeft == -1 && qualRight ==-1){
-            skipCurrentRead = true;
-            visitIgnoredRead(currentReadId, null, "entire read is low quality");
-            return;
-        }
-        if((qualRight-qualLeft) <0){
-            //invalid converted ace file? 
-            skipCurrentRead = true;
-            visitIgnoredRead(currentReadId, null, String.format("has a negative valid range %d%n",
-                    (qualRight-qualLeft)));
-            return;
-        }    
         AlignedReadInfo assembledFrom =currentAssembledFromMap.get(currentReadId);
         if(assembledFrom ==null){
             throw new IllegalStateException("unknown read no AF record for "+ currentReadId);
         }
-        //dkatzel 4/2011 - There have been cases when qual coords and align coords
+        Direction readDirection = assembledFrom.getDirection();
+        
+        ClipPointsType clipPointsType = ConsedUtil.ClipPointsType.getType(qualLeft, qualRight, alignLeft, alignRight);
+		if(clipPointsType != ClipPointsType.VALID){
+			skipCurrentRead = true;
+			switch(clipPointsType){
+				case NEGATIVE_VALID_RANGE:					
+					 visitIgnoredRead(currentReadId, readDirection, String.format("has a negative valid range %d%n",
+			                    (qualRight-qualLeft)));
+					 break;
+				case ALL_LOW_QUALITY :
+			            visitIgnoredRead(currentReadId, readDirection, "entire read is low quality");
+			            break;
+				case NO_HIGH_QUALITY_ALIGNMENT_INTERSECTION:
+		        	visitIgnoredRead(currentReadId,readDirection, "read does not have a high quality aligned range");
+		        	break;
+	        	default: throw new IllegalStateException("unknown clipPointType "+ clipPointsType);
+			}
+			return;
+		}
+		 //dkatzel 4/2011 - There have been cases when qual coords and align coords
         //do not match; usually qual is a sub set of align
         //but occasionally, qual goes beyond the align coords.
         //I guess this happens in a referenced based alignment for
@@ -202,42 +212,8 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         //to find the region we are interested in
         Range qualityRange = Range.create(CoordinateSystem.RESIDUE_BASED, qualLeft,qualRight);
         Range alignmentRange = Range.create(CoordinateSystem.RESIDUE_BASED, alignLeft,alignRight);
-        Range gappedValidRange;
-        try{
-	        gappedValidRange = qualityRange.intersection(alignmentRange);
-	        if(gappedValidRange.isEmpty()){
-	        	//no intersection! 
-	        	//I've only seen this on really bad quality
-	        	//////////////////////////////////////////////////////////
-	        	//dkatzel - 2012-01-26
-	        	//email response from David Gordon (author of consed)
-	        	//regarding what to do if these ranges don't overlap
-	        	//From David Gordon:
-	        	//the first 2 numbers indicate the high quality segment
-	        	//(roughly corresponding to that above quality 13).
-	        	//The last 2 numbers indicates the portion of the read aligned
-	        	//to the consensus sequence.
-	        	//
-	        	//Hence there is a very short high quality segment 
-	        	//634-649 (only 16 bases).  And the portion of the 
-	        	//read aligned to the consensus is 851-1758 is very low quality.
-	        	//
-	        	//Consed treats these reads like any others.  
-	        	//The "dim" menu on the Aligned Reads Window 
-	        	//indicates what portion of the read to dim.  
-	        	//If you set it on dim both low quality and unaligned, 
-	        	//this entire read would be dimmed.
-	        	/////////////////////////////////////////////////////////
-	        	//dkatzel -therefore if consed dims the entire read
-	        	//that's enough justification for me to throw the read out
-	        	skipCurrentRead = true;
-	        	visitIgnoredRead(currentReadId,assembledFrom.getDirection(), "read does not have a high quality aligned range");
-	        	return;
-	        }
-       }catch(Exception e){
-    	   throw new RuntimeException("error while generating quality data for "+currentReadId,e);
-       }
-        
+        Range gappedValidRange =qualityRange.intersection(alignmentRange);
+     
         currentOffset = computeReadOffset(assembledFrom, gappedValidRange.getBegin(CoordinateSystem.RESIDUE_BASED));            
        
         currentFullLengthBases = currentBasecalls.toString();
@@ -260,12 +236,15 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         int ungappedClearLeft = gappedFullLengthSequence.getUngappedOffsetFor((int)gappedValidRange.getBegin());
         int ungappedClearRight = gappedFullLengthSequence.getUngappedOffsetFor((int)gappedValidRange.getEnd());
         Range ungappedValidRange = Range.create(CoordinateSystem.RESIDUE_BASED, ungappedClearLeft+1, ungappedClearRight+1 );
-        if(assembledFrom.getDirection() == Direction.REVERSE){
+        if(readDirection == Direction.REVERSE){
             ungappedValidRange = AssemblyUtil.reverseComplementValidRange(ungappedValidRange, currentReadUngappedFullLength);            
         }
         currentClearRange = ungappedValidRange;
         
     }
+    
+    
+	
     /**
      * During parsing, it might be determined that the current read
      * getting parsed is invalid for various reasons;

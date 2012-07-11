@@ -26,7 +26,7 @@ package org.jcvi.common.core.assembly.ace;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.assembly.ace.AceContigDataStore;
+import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 
@@ -38,7 +38,7 @@ public class TestIndexedAceFileDataStore extends TestAbstractAceParserMatchesAce
 
 
 	@Override
-	protected AceContigDataStore createDataStoreFor(File aceFile)
+	protected AceFileContigDataStore createDataStoreFor(File aceFile)
 			throws IOException {
 		return IndexedAceFileDataStore.create(aceFile);
 	}

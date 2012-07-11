@@ -50,7 +50,7 @@ public final class AceFileWriter {
     private static final String CONTIG_HEADER = "CO %s %d %d %d %s%n";
     private static final Charset UTF_8 = Charset.forName("UTF-8");
 
-    public static void writeAceFileHeader(int numberOfContigs, int numberOfReads, OutputStream out) throws IOException{
+    public static void writeAceFileHeader(long numberOfContigs, long numberOfReads, OutputStream out) throws IOException{
         writeString(String.format("AS %d %d%n%n", numberOfContigs, numberOfReads), out);
     }
    

@@ -25,7 +25,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
-import org.jcvi.common.core.util.iter.EmptyIterator;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 
 /**
  * @author dkatzel
@@ -41,7 +41,7 @@ public final class TrimDataStoreUtil {
         
         @Override
         public CloseableIterator<Range> iterator() {
-            return CloseableIteratorAdapter.adapt(EmptyIterator.<Range>createEmptyIterator());
+            return CloseableIteratorAdapter.adapt(IteratorUtil.<Range>createEmptyIterator());
         }
         
         @Override
@@ -57,7 +57,7 @@ public final class TrimDataStoreUtil {
         
         @Override
         public CloseableIterator<String> idIterator() throws DataStoreException {
-            return CloseableIteratorAdapter.adapt(EmptyIterator.<String>createEmptyIterator());
+            return CloseableIteratorAdapter.adapt(IteratorUtil.<String>createEmptyIterator());
             
         }
         

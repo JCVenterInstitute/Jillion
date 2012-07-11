@@ -55,7 +55,7 @@ import org.jcvi.common.command.grid.GridJobExecutorService;
 import org.jcvi.common.command.grid.PostExecutionHook;
 import org.jcvi.common.command.grid.SimpleGridJob;
 import org.jcvi.common.command.grid.GridJob.MemoryUnit;
-import org.jcvi.common.core.assembly.ace.AceContigDataStore;
+import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationWriter;
 import org.jcvi.common.core.datastore.DataStoreException;
@@ -165,7 +165,7 @@ public class GridFindAbacusErrorsInAce {
             List<SimpleGridJob> jobs = new ArrayList<SimpleGridJob>();
             File aceFile = new File(commandLine.getOptionValue("a"));
             final DataStoreFilter filter = getDataStoreFilter(commandLine);
-            AceContigDataStore datastore = IndexedAceFileDataStore.create(aceFile);
+            AceFileContigDataStore datastore = IndexedAceFileDataStore.create(aceFile);
             CloseableIterator<String> idIter = datastore.idIterator();
             Set<File> files = new HashSet<File>();
             try{

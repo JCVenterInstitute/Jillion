@@ -21,16 +21,16 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.util;
+package org.jcvi.common.core.util.iter;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.jcvi.common.core.util.iter.EmptyIterator;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestEmptyIterator {
 
-    EmptyIterator<String> sut = EmptyIterator.createEmptyIterator();
+    Iterator<String> sut = IteratorUtil.createEmptyIterator();
     @Test
     public void removeDoesNothing(){
         sut.remove();

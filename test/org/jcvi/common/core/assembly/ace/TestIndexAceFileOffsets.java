@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.ace.AceContigDataStore;
+import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
@@ -89,7 +89,7 @@ public class TestIndexAceFileOffsets {
     public void aceFileThatHasTagsAtEnd() throws IOException, DataStoreException{
         File aceFile = resources.getFile("files/sample.ace");
         IndexedFileRange fileRange = new DefaultIndexedFileRange();
-        AceContigDataStore datastore =IndexedAceFileDataStore.create(aceFile, fileRange);
+        AceFileContigDataStore datastore =IndexedAceFileDataStore.create(aceFile, fileRange);
         datastore.get("Contig1");
         assertEquals(Range.create(8,14667), fileRange.getRangeFor("Contig1"));
     }

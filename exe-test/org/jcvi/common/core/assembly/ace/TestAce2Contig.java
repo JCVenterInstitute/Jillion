@@ -28,7 +28,7 @@ import org.jcvi.assembly.ace.Ace2Contig;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ace.AceContig;
-import org.jcvi.common.core.assembly.ace.AceContigDataStore;
+import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.ace.AllAceUnitTests;
 import org.jcvi.common.core.assembly.ace.DefaultAceFileDataStore;
@@ -77,7 +77,7 @@ public class TestAce2Contig {
       DefaultContigFileDataStore contigFileDataStore = new DefaultContigFileDataStore(actualContigFile);
       Contig<AssembledRead> contig = contigFileDataStore.get("Contig1");
       
-      AceContigDataStore aceContigDataStore = DefaultAceFileDataStore.create(aceFile);
+      AceFileContigDataStore aceContigDataStore = DefaultAceFileDataStore.create(aceFile);
       AceContig aceContig = aceContigDataStore.get("Contig1");
       assertEquals(aceContig.getConsensus().asList(), contig.getConsensus().asList());
       CloseableIterator<AcePlacedRead> iter = null;
