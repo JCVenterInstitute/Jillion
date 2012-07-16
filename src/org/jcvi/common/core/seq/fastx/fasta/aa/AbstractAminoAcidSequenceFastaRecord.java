@@ -60,7 +60,8 @@ public abstract class AbstractAminoAcidSequenceFastaRecord extends AbstractFasta
         //break if there is an extra blank line between records
         //this can happen if the sequence ends at the exact lenght of 1 line
         //(60 characters)
-        if(getLength() >0 && getLength()%60==0){
+        long length = sequence.getLength();
+        if(length >0 && length%60==0){
             return result.substring(0, result.length()-1);
         }
         return result;
