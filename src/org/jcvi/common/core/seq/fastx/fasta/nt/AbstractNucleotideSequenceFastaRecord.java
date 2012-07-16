@@ -66,22 +66,6 @@ public abstract class AbstractNucleotideSequenceFastaRecord extends AbstractFast
         this(identifier, null, sequence);
     }
 
-    /**
-     * Creates a new <code>SequenceFastaRecord</code>.
-     */
-    public AbstractNucleotideSequenceFastaRecord(int identifier, String comments, CharSequence sequence)
-    {
-        this(Integer.toString(identifier), comments, sequence);
-    }
-
-    /**
-     * Creates a new <code>SequenceFastaRecord</code>.
-     */
-    public AbstractNucleotideSequenceFastaRecord(int identifier, CharSequence sequence)
-    {
-        this(Integer.toString(identifier), sequence);
-    }
-
     @Override
     public NucleotideSequence getSequence() 
     {

@@ -46,24 +46,7 @@ public class DefaultNucleotideSequenceFastaRecord extends AbstractNucleotideSequ
     public DefaultNucleotideSequenceFastaRecord(String identifier,  List<Nucleotide> sequence){
         this(identifier, null,sequence);
     }
-    /**
-     * @param identifier
-     * @param sequence
-     */
-    public DefaultNucleotideSequenceFastaRecord(int identifier, CharSequence sequence) {
-        super(identifier, sequence);
-    }
-
-    /**
-     * @param identifier
-     * @param comments
-     * @param sequence
-     */
-    public DefaultNucleotideSequenceFastaRecord(int identifier, String comments,
-            CharSequence sequence) {
-        super(identifier, comments, sequence);
-    }
-
+    
     /**
      * @param identifier
      * @param sequence
