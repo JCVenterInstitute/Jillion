@@ -22,7 +22,7 @@ package org.jcvi.common.core.seq.trim.lucy;
 import java.io.IOException;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.util.trim.TrimDataStore;
+import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
@@ -31,9 +31,9 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  *
  *
  */
-public final class LucyDebugTrimDataStoreAdapter implements TrimDataStore{
+public final class LucyDebugTrimDataStoreAdapter implements TrimPointsDataStore{
 
-    public static TrimDataStore adapt(LucyDebugTrimRecordDataStore datastore){
+    public static TrimPointsDataStore adapt(LucyDebugTrimRecordDataStore datastore){
         return new LucyDebugTrimDataStoreAdapter(datastore);
     }
 

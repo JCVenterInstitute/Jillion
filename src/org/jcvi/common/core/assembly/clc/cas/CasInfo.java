@@ -22,7 +22,7 @@ package org.jcvi.common.core.assembly.clc.cas;
 import java.io.File;
 import java.util.List;
 
-import org.jcvi.common.core.assembly.util.trim.TrimDataStore;
+import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 /**
@@ -32,7 +32,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  */
 public interface CasInfo {
 
-    TrimDataStore getMultiTrimDataStore();
+    TrimPointsDataStore getMultiTrimDataStore();
 
     TraceDetails getTraceDetails();
     

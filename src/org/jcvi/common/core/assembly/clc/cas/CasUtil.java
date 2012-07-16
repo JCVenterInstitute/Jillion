@@ -41,14 +41,13 @@ import org.jcvi.common.core.assembly.clc.cas.read.CasPlacedRead;
 import org.jcvi.common.core.assembly.clc.cas.read.DefaultCasPlacedReadFromCasAlignmentBuilder;
 import org.jcvi.common.core.assembly.clc.cas.read.FastaCasDataStoreFactory;
 import org.jcvi.common.core.assembly.clc.cas.read.ReferenceCasFileNucleotideDataStore;
-import org.jcvi.common.core.assembly.trim.SffTrimDataStoreBuilder;
-import org.jcvi.common.core.assembly.util.trim.TrimDataStore;
+import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.IOUtil.Endian;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileParser;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.MultipleWrapper;
@@ -292,7 +291,7 @@ public final class CasUtil {
     
     private static final class CasInfoImpl implements CasInfo{
 
-        private final TrimDataStore multiTrimDataStore;
+        private final TrimPointsDataStore multiTrimDataStore;
         private final TraceDetails traceDetails;
         private final File workingDirectory;
         private final List<NucleotideSequence> orderedGappedReferences;
@@ -312,7 +311,9 @@ public final class CasUtil {
                     MultipleWrapper.createMultipleWrapper(CasFileVisitor.class,
                     referenceIdLookup,referenceNucleotideDataStore,gappedReferenceMap
                     ));
-            final SffTrimDataStoreBuilder sffTrimDatastoreBuilder = new SffTrimDataStoreBuilder();
+           
+            final List<TrimPointsDataStore> trimDataStores = new ArrayList<TrimPointsDataStore>();
+            trimDataStores.add(externalTrimInfo.getTrimDataStore());
             CasFileVisitor sffTrimDataStoreVisitor  =new AbstractOnePassCasFileVisitor() {
                
                @Override
@@ -327,7 +328,7 @@ public final class CasUtil {
                            String extension =FileUtil.getExtension(readFilename);
                            if("sff".equals(extension)){
                                try {
-                                   SffFileParser.parse(new File(casWorkingDirectory,readFilename), sffTrimDatastoreBuilder);
+                            	   trimDataStores.add(SffUtil.createTrimPointsDataStoreFrom(new File(casWorkingDirectory,readFilename)));
                                } catch (Exception e) {
                                    throw new IllegalStateException("error trying to read sff file " + readFilename,e);
                                } 
@@ -338,7 +339,7 @@ public final class CasUtil {
            };
            CasParser.parseOnlyMetaData(casFile, sffTrimDataStoreVisitor);
            multiTrimDataStore =MultipleDataStoreWrapper.createMultipleDataStoreWrapper(
-                   TrimDataStore.class, externalTrimInfo.getTrimDataStore(), sffTrimDatastoreBuilder.build());
+                   TrimPointsDataStore.class, trimDataStores);
            
            traceDetails = new TraceDetails.Builder(fastqQualityCodec)
                        .chromatDir(chromatDir)
@@ -355,7 +356,7 @@ public final class CasUtil {
          * @return the multiTrimDataStore
          */
         @Override
-        public TrimDataStore getMultiTrimDataStore() {
+        public TrimPointsDataStore getMultiTrimDataStore() {
             return multiTrimDataStore;
         }
         /**

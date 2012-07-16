@@ -30,6 +30,6 @@ import org.jcvi.common.core.datastore.DataStore;
  *
  *
  */
-public interface TrimDataStore extends DataStore<Range>{
+public interface TrimPointsDataStore extends DataStore<Range>{
 
 }

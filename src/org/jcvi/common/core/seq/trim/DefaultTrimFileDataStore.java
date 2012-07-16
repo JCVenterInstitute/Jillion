@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.util.trim.TrimDataStore;
+import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.SimpleDataStore;
@@ -35,13 +35,13 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code DefaultTrimFileDataStore} is a implementation
  * that takes parses a single trim file and wraps it 
- * inside a {@link TrimDataStore}.
+ * inside a {@link TrimPointsDataStore}.
  * 
  * @author dkatzel
  *
  *
  */
-public class DefaultTrimFileDataStore implements TrimDataStore, TrimFileVisitor{
+public class DefaultTrimFileDataStore implements TrimPointsDataStore, TrimFileVisitor{
     /**
      * The actual DataStore we delegate to, will
      * be populated from map.

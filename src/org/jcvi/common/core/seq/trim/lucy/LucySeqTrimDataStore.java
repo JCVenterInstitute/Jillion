@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
-import org.jcvi.common.core.assembly.util.trim.TrimDataStore;
+import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStoreAdatper;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.SimpleDataStore;
@@ -45,9 +45,9 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  *
  *
  */
-public class LucySeqTrimDataStore implements TrimDataStore {
+public class LucySeqTrimDataStore implements TrimPointsDataStore {
 
-    private final TrimDataStore datastore;
+    private final TrimPointsDataStore datastore;
     /**
      * 
      * @param lucySeqFile
