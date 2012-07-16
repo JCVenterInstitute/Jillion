@@ -25,23 +25,28 @@ package org.jcvi.common.core.seq.fastx.fasta.nt;
 
 import java.util.List;
 
-import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 
-public class DefaultNucleotideSequenceFastaRecord extends AbstractNucleotideSequenceFastaRecord{
+public class DefaultNucleotideSequenceFastaRecord extends AbstractFastaRecord<Nucleotide,NucleotideSequence> implements NucleotideSequenceFastaRecord{
 
+	private final NucleotideSequence sequence;
    
-    public DefaultNucleotideSequenceFastaRecord(String identifier, Sequence<Nucleotide> sequence){
-        super(identifier, Nucleotides.asString(sequence.asList()));
+    public DefaultNucleotideSequenceFastaRecord(String identifier, NucleotideSequence sequence){
+        this(identifier, null, sequence);
     }
-    public DefaultNucleotideSequenceFastaRecord(String identifier, String comments, Sequence<Nucleotide> sequence){
-        super(identifier, comments,Nucleotides.asString(sequence.asList()));
+    public DefaultNucleotideSequenceFastaRecord(String identifier, String comments, NucleotideSequence sequence){
+    	 super(identifier, comments);
+         if(sequence ==null){
+         	throw new NullPointerException("sequence can not be null");
+         }
+         this.sequence = sequence;
     }
     public DefaultNucleotideSequenceFastaRecord(String identifier, String comments, List<Nucleotide> sequence){
-        super(identifier, comments,Nucleotides.asString(sequence));
+    	 this(identifier, comments, new NucleotideSequenceBuilder(sequence).build());
     }
     public DefaultNucleotideSequenceFastaRecord(String identifier,  List<Nucleotide> sequence){
         this(identifier, null,sequence);
@@ -52,7 +57,7 @@ public class DefaultNucleotideSequenceFastaRecord extends AbstractNucleotideSequ
      * @param sequence
      */
     public DefaultNucleotideSequenceFastaRecord(String identifier, CharSequence sequence) {
-        super(identifier, sequence);
+        this(identifier, null, sequence);
     }
 
     /**
@@ -62,22 +67,46 @@ public class DefaultNucleotideSequenceFastaRecord extends AbstractNucleotideSequ
      */
     public DefaultNucleotideSequenceFastaRecord(String identifier, String comments,
             CharSequence sequence) {
-        super(identifier, comments, sequence);
+    	super(identifier, comments);
+        String nonWhiteSpaceSequence = sequence.toString().replaceAll("\\s+", "");
+        this.sequence = new NucleotideSequenceBuilder(nonWhiteSpaceSequence).build();
     }
 
     @Override
-    protected CharSequence decodeNucleotides() {
+    public NucleotideSequence getSequence() 
+    {
+        return this.sequence;
+    }
+    
+    
+    @Override
+    protected CharSequence getRecordBody()
+    {
+        String result= this.sequence.toString().replaceAll("(.{60})", "$1"+FastaUtil.LINE_SEPARATOR);
+        //some fasta parsers such as blast's formatdb
+        //break if there is an extra blank line between records
+        //this can happen if the sequence ends at the exact length of 1 line
+        //(60 characters)
+        long length = sequence.getLength();
+        if(length >0 && length%60==0){
+            return result.substring(0, result.length()-1);
+        }
+        return result;
+    }
+    
+    
 
-        
-        return getSequence().toString();
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof NucleotideSequenceFastaRecord)){
+            return false;
+        }
+        return super.equals(obj);
     }
 
     @Override
-    protected NucleotideSequence encodeNucleotides(
-            CharSequence sequence) {
-        return new NucleotideSequenceBuilder(sequence).build();
+    public int hashCode() {
+        return super.hashCode();
     }
-
-
    
 }
