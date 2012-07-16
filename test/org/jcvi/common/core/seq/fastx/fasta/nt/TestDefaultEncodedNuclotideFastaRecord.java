@@ -53,15 +53,7 @@ public class TestDefaultEncodedNuclotideFastaRecord {
         assertEquals(encodedGlyphs, sut.getSequence());
         assertEquals(buildExpectedToString(comment), sut.toString());
     }
-    @Test
-    public void intConstructor(){
-        DefaultNucleotideSequenceFastaRecord fasta = new DefaultNucleotideSequenceFastaRecord(1234,comment, bases);
-        
-        assertEquals(id, fasta.getId());
-        assertEquals(comment, fasta.getComment());
-        assertEquals(encodedGlyphs, fasta.getSequence());
-        assertEquals(buildExpectedToString(comment), fasta.toString());
-    }
+    
     @Test
     public void constructorWithoutComment(){
         DefaultNucleotideSequenceFastaRecord fasta = new DefaultNucleotideSequenceFastaRecord(id, bases);
@@ -71,15 +63,7 @@ public class TestDefaultEncodedNuclotideFastaRecord {
         assertEquals(encodedGlyphs, fasta.getSequence());
         assertEquals(buildExpectedToString(null), fasta.toString());
     }
-    @Test
-    public void intConstructorWithoutComment(){
-        DefaultNucleotideSequenceFastaRecord fasta = new DefaultNucleotideSequenceFastaRecord(1234, bases);
-        
-        assertEquals(id, fasta.getId());
-        assertNull(fasta.getComment());
-        assertEquals(encodedGlyphs, fasta.getSequence());
-        assertEquals(buildExpectedToString(null), fasta.toString());
-    }
+   
     @Test
     public void nullIdThrowsIllegalArgumentException(){
         try{
