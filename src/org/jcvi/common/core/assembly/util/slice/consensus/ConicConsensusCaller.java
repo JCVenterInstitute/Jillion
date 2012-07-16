@@ -31,7 +31,6 @@ import org.jcvi.common.core.assembly.util.slice.Slice;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 
-import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusUtil;
 /**
  * <code>ConicConsensusCaller</code> calls consensus using
  * the "Conic Ambiguity Model".
