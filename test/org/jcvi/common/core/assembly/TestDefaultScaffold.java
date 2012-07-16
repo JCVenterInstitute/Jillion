@@ -41,7 +41,7 @@ import java.util.NoSuchElementException;
 
 public class TestDefaultScaffold {
 
-    DefaultScaffold scaffold;
+    Scaffold scaffold;
     Set<PlacedContig> placedContigs;
 
     long scaffoldLength;
@@ -67,7 +67,7 @@ public class TestDefaultScaffold {
     @Test
     public void shiftingContigsShouldAdjustCoordinatesToStartAtZero(){
     	 ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
-    	 builder.shiftContigs(true);
+    	 builder.shiftContigsToOrigin(true);
     	 for ( PlacedContig contig : placedContigs ) {
     		 builder.add(contig);    
     	 }
@@ -77,7 +77,7 @@ public class TestDefaultScaffold {
     		 assertShiftedCoorrectly(scaffold.getPlacedContig(shiftedContig.getContigId()), shiftedContig,shiftOffset);
     	 }
     }
-    private Range getFirstCoveredRange(DefaultScaffold scaffold) {
+    private Range getFirstCoveredRange(Scaffold scaffold) {
 		for(CoverageRegion<?> region :scaffold.getContigCoverageMap()){
 			if(region.getCoverageDepth()>0){
 				return region.asRange();
@@ -119,7 +119,7 @@ public class TestDefaultScaffold {
     @Test(expected= NoSuchElementException.class)
     public void testUnkonwnContigCoordinateConversionTest() {
         ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
-        DefaultScaffold scaffold = builder.build();
+        Scaffold scaffold = builder.build();
         
         scaffold.convertContigRangeToScaffoldRange("nonexistantContig",Range.create(10,48));
     }
@@ -128,7 +128,7 @@ public class TestDefaultScaffold {
     public void testInvalidContigRangeCoordinateConversionTest() {
         ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
         builder.add("contig1", Range.create(0,100), Direction.FORWARD);
-        DefaultScaffold scaffold = builder.build();
+        Scaffold scaffold = builder.build();
 
         scaffold.convertContigRangeToScaffoldRange("contig1",Range.create(50,150));
     }
@@ -137,7 +137,7 @@ public class TestDefaultScaffold {
     public void testInvalidContigDirectionCoordinateConversionTest() {
         ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
         builder.add("contig1", Range.create(0,100), Direction.UNKNOWN);
-        DefaultScaffold scaffold = builder.build();
+        Scaffold scaffold = builder.build();
 
         scaffold.convertContigRangeToScaffoldRange("contig1",Range.create(20,50));
     }
@@ -146,7 +146,7 @@ public class TestDefaultScaffold {
     public void testInvalidContigDirectionCoordinateConversionTest2() {
         ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
         builder.add("contig1", Range.create(0,100), Direction.NONE);
-        DefaultScaffold scaffold = builder.build();
+        Scaffold scaffold = builder.build();
 
         scaffold.convertContigRangeToScaffoldRange("contig1",Range.create(20,50));
     }
@@ -155,7 +155,7 @@ public class TestDefaultScaffold {
     public void testSingleForwardContigCoordinateConversionTest() {
         ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
         builder.add("contig1", Range.create(37,164), Direction.FORWARD);
-        DefaultScaffold scaffold = builder.build();
+        Scaffold scaffold = builder.build();
 
         Range contigRange = Range.create(10,48);
         Range expectedRange = Range.create(47,85);
@@ -168,7 +168,7 @@ public class TestDefaultScaffold {
     public void testSingleReverseContigCoordinateConversionTest() {
         ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
         builder.add("contig1", Range.create(37,164), Direction.REVERSE);
-        DefaultScaffold scaffold = builder.build();
+        Scaffold scaffold = builder.build();
 
         Range contigRange = Range.create(10,48);
         Range expectedRange = Range.create(116,154);
@@ -182,7 +182,7 @@ public class TestDefaultScaffold {
         ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
         builder.add("contig1", Range.create(37,164), Direction.FORWARD);
         builder.add("contig2", Range.create(293,568), Direction.FORWARD);
-        DefaultScaffold scaffold = builder.build();
+        Scaffold scaffold = builder.build();
 
         Range contigRange = Range.create(31,56);
         Range expectedRange = Range.create(324,349);
@@ -196,7 +196,7 @@ public class TestDefaultScaffold {
         ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
         builder.add("contig1", Range.create(37,164), Direction.FORWARD);
         builder.add("contig2", Range.create(293,568), Direction.REVERSE);
-        DefaultScaffold scaffold = builder.build();
+        Scaffold scaffold = builder.build();
 
         Range contigRange = Range.create(20,35);
         Range expectedRange = Range.create(533,548);
