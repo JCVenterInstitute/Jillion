@@ -22,13 +22,28 @@ package org.jcvi.common.core.assembly.clc.cas.var;
 import org.jcvi.common.core.io.TextFileVisitor;
 
 /**
+ * {@code VariationLogFileVisitor} is a {@link TextFileVisitor}
+ * for visiting CLC variation log files produced by the
+ * {@code find_variations} program.
+ * 
  * @author dkatzel
  *
  *
  */
 public interface VariationLogFileVisitor extends TextFileVisitor{
-
-    boolean visitContig(String id);
-    
+	/**
+	 * Visit a new reference contained in the CLC .cas file.
+	 * @param id the reference id in the input to the assembly.
+	 * @return {@code true} if the variations for this
+	 * reference should be read; {@code false}
+	 * otherwise.
+	 */
+    boolean visitReference(String id);
+    /**
+     * Visit a single {@link Variation} entry
+     * that was found for the current reference 
+     * verses the assembled data.
+     * @param variation the variation found; will never be null.
+     */
     void visitVariation(Variation variation);
 }

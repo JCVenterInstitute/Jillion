@@ -21,6 +21,7 @@ package org.jcvi.common.core.assembly.clc.cas.var;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -31,11 +32,14 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 
 /**
+ * {@code VariationLogFileParser} is a parser for 
+ * CLC variations log file that is produced by the 
+ * {@code find_variations} program.
  * @author dkatzel
  *
  *
  */
-public class VariationLogFileParser {
+public final class VariationLogFileParser {
 
     private static final Pattern CONTIG_PATTERN = Pattern.compile("^(\\S+).*:\\s*$");
     private static final Pattern VARIATION_PATTERN = Pattern.compile("^\\s+(\\d+)\\s+(\\w+)\\s+(\\S)\\s+->\\s+(\\S+)(.+)$");
@@ -45,7 +49,17 @@ public class VariationLogFileParser {
     private VariationLogFileParser(){
     	//private constructor.
     }
-    public static void parseVariationFile(File variationLogFile, VariationLogFileVisitor visitor) throws FileNotFoundException{
+    /**
+     * Parse the given CLC varition file and call the appropriate
+     * visitXXX methods on the given {@link VariationLogFileVisitor}.
+     * @param variationLogFile the variation log vile to parse; can not be null
+     * and must exist.
+     * @param visitor the {@link VariationLogFileVisitor} implementation
+     * to call visitXXX methods on; can not be null.
+     * @throws IOException if there is a problem parsing the file or if the 
+     * file does not exist.
+     */
+    public static void parse(File variationLogFile, VariationLogFileVisitor visitor) throws IOException{
         Scanner scanner = new Scanner(variationLogFile, "UTF-8").useDelimiter(CR);
         try{
             visitor.visitFile();
@@ -57,7 +71,7 @@ public class VariationLogFileParser {
                 
                 if(contigMatcher.find()){
                     String contigId = contigMatcher.group(1);
-                    readVariationsForCurrentContig =visitor.visitContig(contigId);
+                    readVariationsForCurrentContig =visitor.visitReference(contigId);
                 }else if(readVariationsForCurrentContig){
                     Matcher varMatcher = VARIATION_PATTERN.matcher(line);
                     if(varMatcher.find()){

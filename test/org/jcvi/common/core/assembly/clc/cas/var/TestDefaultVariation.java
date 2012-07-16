@@ -49,7 +49,7 @@ public class TestDefaultVariation {
         try{
             new DefaultVariation.Builder(coordinate, 
                     Type.DIFFERENCE, Nucleotide.Adenine, 
-                    null);
+                    (Nucleotide)null);
             fail("should throw NPE if constructor has a null");
         }catch(NullPointerException e){
             assertEquals("consensus can not be null", e.getMessage());
