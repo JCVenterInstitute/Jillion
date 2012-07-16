@@ -58,7 +58,7 @@ public class TestDefaultAceContigBuilderReAbacus {
         sut.getConsensusBuilder().delete(Range.create(4,8)).insert(4, "T");
            
         AceContig contig =sut.build();
-        assertEquals("ACGTTACGT", contig.getConsensus().toString());
+        assertEquals("ACGTTACGT", contig.getConsensusSequence().toString());
         AcePlacedRead read1 = contig.getRead("read1");
         assertEquals("GTTACG", read1.getNucleotideSequence().toString());
         assertEquals(7, read1.getGappedEndOffset());
@@ -89,7 +89,7 @@ public class TestDefaultAceContigBuilderReAbacus {
         sut.getAssembledReadBuilder("read4").shiftLeft(4);
            
         AceContig contig =sut.build();
-        assertEquals("ACGTTACGT", contig.getConsensus().toString());
+        assertEquals("ACGTTACGT", contig.getConsensusSequence().toString());
         AcePlacedRead read1 = contig.getRead("read1");
         assertEquals("GTTACG", read1.getNucleotideSequence().toString());
         assertEquals(7, read1.getGappedEndOffset());

@@ -277,7 +277,7 @@ public class Cas2Consed3 {
                      int numberOfUpstreamNs = (int)(contigRange.getBegin() - previousPseduoMoleculeOffset);
                 	 appendNsIfNeeded(pseduoMoleculeBuilder, numberOfUpstreamNs);
                     
-                     List<Nucleotide> ungappedConsensus = splitContig.getConsensus().asUngappedList();
+                     List<Nucleotide> ungappedConsensus = splitContig.getConsensusSequence().asUngappedList();
                      pseduoMoleculeBuilder.append(ungappedConsensus);
                      
                      

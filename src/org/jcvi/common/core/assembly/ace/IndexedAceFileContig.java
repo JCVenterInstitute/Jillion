@@ -98,7 +98,7 @@ final class IndexedAceFileContig implements AceContig{
 	}
 
 	@Override
-	public NucleotideSequence getConsensus() {
+	public NucleotideSequence getConsensusSequence() {
 		return consensus;
 	}
 

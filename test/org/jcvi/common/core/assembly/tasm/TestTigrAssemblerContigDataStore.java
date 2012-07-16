@@ -91,7 +91,7 @@ public class TestTigrAssemblerContigDataStore {
     }
 
     private void assertContigDataMatches(Contig<AssembledRead> contig, TigrAssemblerContig tasm){
-        assertEquals("consensus",contig.getConsensus(), tasm.getConsensus());
+        assertEquals("consensus",contig.getConsensusSequence(), tasm.getConsensusSequence());
         assertEquals("#reads",contig.getNumberOfReads(), tasm.getNumberOfReads());
         
         TigrAssemblerTestUtil.assertAllReadsCorrectlyPlaced(contig, tasm);

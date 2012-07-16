@@ -103,11 +103,11 @@ public final class CoverageMapFactory {
     public static <R extends AssembledRead,C extends Contig<R>> CoverageMap<R> 
     createUngappedCoverageMapFromContig(C contig){
     	CoverageMap<R> gappedCoverageMap = createGappedCoverageMapFromContig(contig);
-    	if(contig.getConsensus().getNumberOfGaps()==0){
+    	if(contig.getConsensusSequence().getNumberOfGaps()==0){
     		//no gaps so we don't need to recompute anything
     		return gappedCoverageMap;
     	}
-    	return createUngappedCoverageMap(contig.getConsensus(), gappedCoverageMap);
+    	return createUngappedCoverageMap(contig.getConsensusSequence(), gappedCoverageMap);
     }
     /**
      * Create a coverage map in <strong>ungapped consensus coordinate space</strong>

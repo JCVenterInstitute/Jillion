@@ -137,7 +137,9 @@ public abstract class AbstractTigrAssemblerFileContigDataStore extends AbstractD
         */
         @Override
         public void visitEndOfFile() {
-            visitBeginContigBlock();
+        	 if(currentBuilder !=null){
+                 visitContig(currentBuilder.build());
+             }
         }
 
         /**
@@ -190,11 +192,12 @@ public abstract class AbstractTigrAssemblerFileContigDataStore extends AbstractD
         */
         @Override
         public void visitEndReadBlock() {
-            this.currentBuilder.addReadAttributes(currentReadId, currentReadAttributes);
-            this.currentBuilder.addRead(currentReadId, currentOffset, currentValidRange,
-                    currentReadBasecalls, currentDirection,
-                    (int)currentValidRange.getEnd());
-            
+        	if(currentReadId !=null){
+	            this.currentBuilder.addReadAttributes(currentReadId, currentReadAttributes);
+	            this.currentBuilder.addRead(currentReadId, currentOffset, currentValidRange,
+	                    currentReadBasecalls, currentDirection,
+	                    (int)currentValidRange.getEnd());
+        	}
         }
        
 }

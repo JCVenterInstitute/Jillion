@@ -270,7 +270,7 @@ public class TestConsedUtil_Split0x {
     
     private void assertContigsEqual(AceContig expected, AceContig actual){
         assertEquals("id",expected.getId(),actual.getId());
-        assertEquals("consensus", expected.getConsensus().asList(), actual.getConsensus().asList());
+        assertEquals("consensus", expected.getConsensusSequence().asList(), actual.getConsensusSequence().asList());
         assertEquals("numberOfReads", expected.getNumberOfReads(), actual.getNumberOfReads());
         CloseableIterator<AcePlacedRead> iter = null;
         try{

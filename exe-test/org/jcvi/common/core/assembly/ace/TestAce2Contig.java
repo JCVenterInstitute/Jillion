@@ -79,7 +79,7 @@ public class TestAce2Contig {
       
       AceFileContigDataStore aceContigDataStore = DefaultAceFileDataStore.create(aceFile);
       AceContig aceContig = aceContigDataStore.get("Contig1");
-      assertEquals(aceContig.getConsensus().asList(), contig.getConsensus().asList());
+      assertEquals(aceContig.getConsensusSequence().asList(), contig.getConsensusSequence().asList());
       CloseableIterator<AcePlacedRead> iter = null;
       try{
     	  iter = aceContig.getReadIterator();

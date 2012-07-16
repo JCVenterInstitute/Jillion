@@ -55,7 +55,7 @@ public class AbacusErrorFinder {
     private <P extends AssembledRead, C extends Contig<P>> List<Range> filterCandidates(C contig,
             List<Range> ungappedCandidateRanges) {
         CoverageMap<P> coverageMap = CoverageMapFactory.createGappedCoverageMapFromContig(contig);
-        NucleotideSequence consensus = contig.getConsensus();
+        NucleotideSequence consensus = contig.getConsensusSequence();
         List<Range> errorRanges = new ArrayList<Range>(ungappedCandidateRanges.size());
         for(Range ungappedCandidateRange : ungappedCandidateRanges){           
             int gappedStart = consensus.getGappedOffsetFor((int)ungappedCandidateRange.getBegin())+1;
@@ -152,7 +152,7 @@ public class AbacusErrorFinder {
             }            
         }
         
-        List<Range> ungappedCandidateRanges = convertToUngappedRanges(Ranges.merge(abacusErrors,clusterDistance), contig.getConsensus());
+        List<Range> ungappedCandidateRanges = convertToUngappedRanges(Ranges.merge(abacusErrors,clusterDistance), contig.getConsensusSequence());
         return ungappedCandidateRanges;
     }
     

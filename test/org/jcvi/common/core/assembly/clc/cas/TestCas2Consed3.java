@@ -71,8 +71,8 @@ public class TestCas2Consed3 {
 		        while(iter.hasNext()){
 		        	AceContig contig = iter.next();
 		    	  Contig<AssembledRead> expectedContig= getExpectedContig(contig.getId());
-		    	  assertEquals("consensus", expectedContig.getConsensus(),
-		    			  contig.getConsensus());
+		    	  assertEquals("consensus", expectedContig.getConsensusSequence(),
+		    			  contig.getConsensusSequence());
 		    	  assertEquals("# reads", expectedContig.getNumberOfReads(), contig.getNumberOfReads());
 		    	  
 		    	  assertReadsCorrectlyPlaced(contig, expectedContig);

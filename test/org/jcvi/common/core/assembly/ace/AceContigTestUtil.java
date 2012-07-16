@@ -39,7 +39,7 @@ public final class AceContigTestUtil {
     
     public static  void assertContigsEqual(Contig<? extends AssembledRead> expected, Contig<? extends AssembledRead> actual) {
         assertEquals(expected.getId(), actual.getId()); 
-        assertEquals(expected.getConsensus().asList(), actual.getConsensus().asList());
+        assertEquals(expected.getConsensusSequence().asList(), actual.getConsensusSequence().asList());
         assertEquals(expected.getId(),expected.getNumberOfReads(), actual.getNumberOfReads());
         CloseableIterator<? extends AssembledRead> iter = null;
         try{

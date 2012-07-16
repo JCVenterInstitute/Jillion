@@ -479,7 +479,7 @@ public abstract class TestContigFileParser {
         final File file = getFile();
         Contig contig925 = getContig925From(file);
         assertEquals(contig_id, Integer.parseInt(contig925.getId()));
-        assertEquals(contig_length, contig925.getConsensus().getLength());
+        assertEquals(contig_length, contig925.getConsensusSequence().getLength());
         assertEquals(numberOfReads, contig925.getNumberOfReads());
         AssemblyTestUtil.assertPlacedReadCorrect(CVGWB15T06B037761RM, contig925.getRead("CVGWB15T06B037761RM"));
         AssemblyTestUtil.assertPlacedReadCorrect(CVGWB47T06D1122735FMB, contig925.getRead("CVGWB47T06D1122735FMB"));
@@ -489,7 +489,7 @@ public abstract class TestContigFileParser {
     @Test
     public void decodeLastConsensus() throws Exception{
         Contig contig928 = getContig928From(getFile());
-        assertEquals(consensusForContig928, Nucleotides.asString(contig928.getConsensus().asList()));
+        assertEquals(consensusForContig928, Nucleotides.asString(contig928.getConsensusSequence().asList()));
     }
 
     protected abstract Contig getContig928From(File file) throws Exception;

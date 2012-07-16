@@ -53,7 +53,7 @@ public abstract class AbstractContig<T extends AssembledRead> implements Contig<
     }
 
     @Override
-    public NucleotideSequence getConsensus() {
+    public NucleotideSequence getConsensusSequence() {
         return consensus;
     }
 
@@ -110,7 +110,7 @@ public abstract class AbstractContig<T extends AssembledRead> implements Contig<
 		if (!id.equals(other.getId())) {
 			return false;
 		}
-		if (!consensus.equals(other.getConsensus())) {
+		if (!consensus.equals(other.getConsensusSequence())) {
 			return false;
 		}
 		if (getNumberOfReads()!=other.getNumberOfReads()) {

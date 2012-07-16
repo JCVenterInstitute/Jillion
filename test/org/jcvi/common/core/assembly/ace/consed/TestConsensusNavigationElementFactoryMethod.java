@@ -45,7 +45,7 @@ public class TestConsensusNavigationElementFactoryMethod {
     @Before
     public void setup(){
         mockContig = createMock(Contig.class);
-        expect(mockContig.getConsensus()).andStubReturn(consensus);
+        expect(mockContig.getConsensusSequence()).andStubReturn(consensus);
         expect(mockContig.getId()).andStubReturn(id);
         replay(mockContig);
     }

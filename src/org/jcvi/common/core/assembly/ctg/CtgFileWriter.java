@@ -57,7 +57,7 @@ public class CtgFileWriter implements Closeable{
     public <PR extends AssembledRead, C extends Contig<PR>> void write(C contig) throws IOException,
             UnsupportedEncodingException {
         writeContigHeader(contig);
-        writeBases(contig.getConsensus());
+        writeBases(contig.getConsensusSequence());
         Set<PR> readsInContig = new TreeSet<PR>(READ_SORTER);
         CloseableIterator<PR> iter = null;
         try{
@@ -70,7 +70,7 @@ public class CtgFileWriter implements Closeable{
         	IOUtil.closeAndIgnoreErrors(iter);
         }
         for(AssembledRead placedRead : readsInContig){
-            writePlacedReadHeader(placedRead, contig.getConsensus());
+            writePlacedReadHeader(placedRead, contig.getConsensusSequence());
             writeBases(placedRead.getNucleotideSequence());
         }
     }
@@ -78,7 +78,7 @@ public class CtgFileWriter implements Closeable{
    
     private void writeContigHeader(Contig<? extends AssembledRead> contig) throws IOException {
         String header = String.format("##%s %d %d bases, 00000000 checksum.\n",
-                contig.getId(), contig.getNumberOfReads(), contig.getConsensus().getLength());
+                contig.getId(), contig.getNumberOfReads(), contig.getConsensusSequence().getLength());
         
         writeToOutputStream(header);
     }
