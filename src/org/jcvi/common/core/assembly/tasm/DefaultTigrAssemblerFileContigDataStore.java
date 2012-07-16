@@ -51,7 +51,14 @@ public class DefaultTigrAssemblerFileContigDataStore extends AbstractTigrAssembl
         contigs.clear();
 		
 	}
+    
     @Override
+	public synchronized boolean contains(String id) throws DataStoreException {
+		super.contains(id);
+		return contigs.containsKey(id);
+	}
+
+	@Override
     public synchronized TigrAssemblerContig get(String id)
             throws DataStoreException {
         super.get(id);

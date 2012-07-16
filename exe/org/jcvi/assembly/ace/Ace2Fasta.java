@@ -136,7 +136,7 @@ public class Ace2Fasta {
             	if(!filter.accept(contigId)){
             		continue;
             	}
-            	NucleotideSequenceBuilder consensusBuilder = new NucleotideSequenceBuilder(contigDataStore.get(contigId).getConsensus());
+            	NucleotideSequenceBuilder consensusBuilder = new NucleotideSequenceBuilder(contigDataStore.get(contigId).getConsensusSequence());
                
                 if(!gapped){
                 	consensusBuilder.ungap();

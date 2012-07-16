@@ -41,7 +41,7 @@ public class TestDefaultAceContig {
         AceContigBuilder sut =  DefaultAceContig.createBuilder("id",
                 "ACGTACGTACGTACGT");
         AceContig contig =sut.build();
-        NucleotideSequence consensus =contig.getConsensus();
+        NucleotideSequence consensus =contig.getConsensusSequence();
         assertEquals(0, consensus.getLength());
         assertEquals("id",contig.getId());
         assertEquals(0,contig.getNumberOfReads());
@@ -65,7 +65,7 @@ public class TestDefaultAceContig {
                                             "ACGTACGTACGTACGT");
         sut.addRead("read", new NucleotideSequenceBuilder("ACGTACGTACGTACGT").build(), -2, Direction.FORWARD, Range.create(2, 18), null,18);
             AceContig contig =sut.build();
-            NucleotideSequence consensus =contig.getConsensus();
+            NucleotideSequence consensus =contig.getConsensusSequence();
             assertEquals(16, consensus.getLength());
             assertEquals("id",contig.getId());
             assertEquals(1,contig.getNumberOfReads());

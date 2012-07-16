@@ -47,7 +47,7 @@ public class DefaultQualityClassContigMap implements QualityClassMap{
     }
     public static <P extends AssembledRead, C extends Contig<P>> QualityClassMap create(CoverageMap<P> coverageMap,C contig,QualityDataStore qualityDataStore, 
             QualityClassComputer qualityClassComputer){
-       return new DefaultQualityClassContigMap(coverageMap,contig.getConsensus(),qualityDataStore,qualityClassComputer);
+       return new DefaultQualityClassContigMap(coverageMap,contig.getConsensusSequence(),qualityDataStore,qualityClassComputer);
     }
 
     <P extends AssembledRead> DefaultQualityClassContigMap(

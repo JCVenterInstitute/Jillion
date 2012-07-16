@@ -88,7 +88,7 @@ public class TestAceFileWriter {
 	        while(contigIter.hasNext()){
 	        	AceContig expectedContig = contigIter.next();
 	            AceContig actualContig = reparsedAceDataStore.get(expectedContig.getId());            
-	            assertEquals("consensus", expectedContig.getConsensus(), actualContig.getConsensus());
+	            assertEquals("consensus", expectedContig.getConsensusSequence(), actualContig.getConsensusSequence());
 	            assertEquals("# reads", expectedContig.getNumberOfReads(), actualContig.getNumberOfReads());
 	            CloseableIterator<AcePlacedRead> readIter =null;
 	            try{

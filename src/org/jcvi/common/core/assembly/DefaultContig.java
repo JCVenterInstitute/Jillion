@@ -65,7 +65,7 @@ public class DefaultContig<P extends AssembledRead> extends AbstractContig<P>{
         }
         
         public <R extends AssembledRead, C extends Contig<R>> Builder(C copy){
-            this(copy.getId(), copy.getConsensus());
+            this(copy.getId(), copy.getConsensusSequence());
             CloseableIterator<R> iter =null;
             try{
             	 iter = copy.getReadIterator();

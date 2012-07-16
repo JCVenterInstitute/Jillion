@@ -29,7 +29,7 @@ public abstract class AbstractTestAsmContigDataStore extends AbstractTestAsmData
 	
 		assertEquals(1, datastore.getNumberOfRecords());
 		AsmContig contig = datastore.get("7180000000001");
-		NucleotideSequence consensus = contig.getConsensus();
+		NucleotideSequence consensus = contig.getConsensusSequence();
 		assertEquals(1017, consensus.getLength());
 		assertEquals(20, contig.getNumberOfReads());
 		

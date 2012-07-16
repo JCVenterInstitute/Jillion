@@ -125,7 +125,7 @@ public final class AceFileWriter {
     public static void writeAceContig(AceContig contig,
             PhdDataStore phdDataStore, 
             OutputStream out) throws IOException, DataStoreException{
-        final NucleotideSequence consensus = contig.getConsensus();
+        final NucleotideSequence consensus = contig.getConsensusSequence();
         writeAceContigHeader(
                 contig.getId(), 
                 consensus.getLength(),

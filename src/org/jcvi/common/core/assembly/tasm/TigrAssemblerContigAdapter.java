@@ -99,8 +99,8 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	
 	private Map<TigrAssemblerContigAttribute,String> generateConsensusAttributes(){
 		Map<TigrAssemblerContigAttribute,String> map = new EnumMap<TigrAssemblerContigAttribute,String>(TigrAssemblerContigAttribute.class);
-		map.put(TigrAssemblerContigAttribute.UNGAPPED_CONSENSUS, Nucleotides.asString(delegate.getConsensus().asUngappedList()));
-		map.put(TigrAssemblerContigAttribute.GAPPED_CONSENSUS, Nucleotides.asString(delegate.getConsensus().asList()));
+		map.put(TigrAssemblerContigAttribute.UNGAPPED_CONSENSUS, Nucleotides.asString(delegate.getConsensusSequence().asUngappedList()));
+		map.put(TigrAssemblerContigAttribute.GAPPED_CONSENSUS, Nucleotides.asString(delegate.getConsensusSequence().asList()));
 	
 		return map;
 	}
@@ -109,16 +109,16 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		// TODO is this supposed to be %N in reads or %N in consensus or both?
 		//going with consensus for now since its the assembly table
 		int numberOfNs =0;
-		for(Nucleotide g: delegate.getConsensus().asList()){
+		for(Nucleotide g: delegate.getConsensusSequence().asList()){
 			if(g == Nucleotide.Unknown){
 				numberOfNs++;
 			}
 		}
-		return numberOfNs/(double)delegate.getConsensus().getLength();
+		return numberOfNs/(double)delegate.getConsensusSequence().getLength();
 	}
 
 	private double computeAvgCoverageFor(Contig<? extends AssembledRead> delegate) {
-		long ungappedConsensusLength=delegate.getConsensus().getUngappedLength();
+		long ungappedConsensusLength=delegate.getConsensusSequence().getUngappedLength();
 		long bases=0;
 		CloseableIterator<? extends AssembledRead> iter =null;
 		try{
@@ -174,8 +174,8 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	}
 
 	@Override
-	public NucleotideSequence getConsensus() {
-		return delegate.getConsensus();
+	public NucleotideSequence getConsensusSequence() {
+		return delegate.getConsensusSequence();
 	}
 
 	@Override

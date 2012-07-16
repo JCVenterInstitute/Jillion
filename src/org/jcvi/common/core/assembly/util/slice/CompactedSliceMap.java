@@ -212,7 +212,7 @@ public final class CompactedSliceMap implements SliceMap {
    
     private <PR extends AssembledRead, C extends Contig<PR>>  CompactedSliceMap(
             C contig, QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
-    	CompactedSlice.Builder builders[] = new CompactedSlice.Builder[(int)contig.getConsensus().getLength()];
+    	CompactedSlice.Builder builders[] = new CompactedSlice.Builder[(int)contig.getConsensusSequence().getLength()];
     	CloseableIterator<PR> readIter = null;
     	try{
     		readIter = contig.getReadIterator();

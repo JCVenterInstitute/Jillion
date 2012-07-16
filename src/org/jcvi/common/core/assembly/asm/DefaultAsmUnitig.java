@@ -66,8 +66,8 @@ public class DefaultAsmUnitig implements AsmUnitig{
     * {@inheritDoc}
     */
     @Override
-    public NucleotideSequence getConsensus() {
-        return delegate.getConsensus();
+    public NucleotideSequence getConsensusSequence() {
+        return delegate.getConsensusSequence();
     }
 
     /**

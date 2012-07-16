@@ -65,7 +65,7 @@ public class DefaultSliceMap extends AbstractSliceMap{
     
     private <PR extends AssembledRead,C extends Contig<PR>>  DefaultSliceMap(
             C contig, QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
-    	DefaultSlice.Builder builders[] = new DefaultSlice.Builder[(int)contig.getConsensus().getLength()];
+    	DefaultSlice.Builder builders[] = new DefaultSlice.Builder[(int)contig.getConsensusSequence().getLength()];
     	CloseableIterator<PR> readIter = null;
     	try{
     		readIter = contig.getReadIterator();

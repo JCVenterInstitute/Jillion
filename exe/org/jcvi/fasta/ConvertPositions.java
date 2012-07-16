@@ -120,11 +120,11 @@ public class ConvertPositions {
             }else if(commandLine.hasOption("c")){
                 File contigFile = new File(commandLine.getOptionValue("c"));
                 IndexedContigFileDataStore datastore = new IndexedContigFileDataStore(contigFile);
-                values= datastore.get(id).getConsensus();
+                values= datastore.get(id).getConsensusSequence();
             }else{
                 File aceFile = new File(commandLine.getOptionValue("a"));
                 AceFileContigDataStore datastore =IndexedAceFileDataStore.create(aceFile);
-                values = datastore.get(id).getConsensus();
+                values = datastore.get(id).getConsensusSequence();
             }
             
             

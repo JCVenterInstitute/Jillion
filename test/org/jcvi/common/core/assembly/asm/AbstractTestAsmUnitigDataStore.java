@@ -29,7 +29,7 @@ public abstract class AbstractTestAsmUnitigDataStore extends AbstractTestAsmData
 	
 		assertEquals(1, datastore.getNumberOfRecords());
 		AsmUnitig unitig = datastore.get("7180000000000");
-		NucleotideSequence consensus = unitig.getConsensus();
+		NucleotideSequence consensus = unitig.getConsensusSequence();
 		assertEquals(1016, consensus.getLength());
 		assertEquals(20, unitig.getNumberOfReads());
 		
@@ -50,7 +50,7 @@ public abstract class AbstractTestAsmUnitigDataStore extends AbstractTestAsmData
 		"C-GGAAGGAGTGCCTGAGTCTATGAGGGAAGAATATCGGCAGGAACAGCAGAGTGCTGTGGATGTTGACG" + 
 		"ATGGTCATTTTGTCAACATAGAGCTGGAGTAAAAAC";
 		
-		assertEquals(expectedConsensus, unitig.getConsensus().toString());
+		assertEquals(expectedConsensus, unitig.getConsensusSequence().toString());
 		
 	//spot check a few reads
 			verifyAReverseGappedRead(unitig,frgDataStore);

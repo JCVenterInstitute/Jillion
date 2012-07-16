@@ -134,43 +134,43 @@ public final class TigrAssemblyFileParser {
                     }
                 }
             }else{
-                if(isEndOfRecord(line)){
-                    if(inContigRecord){
-                        inContigRecord=false;
-                        visitor.visitNewContig(currentContigId);
-                        visitor.visitConsensusBasecallsLine(currentContigConsensus);
-                        currentContigId=null;
-                        currentContigConsensus =null;
-                        if(isTigrAssemblyVisitor){
-                            ((TigrAssemblyFileVisitor)visitor).visitEndContigBlock();
-                            ((TigrAssemblyFileVisitor)visitor).visitBeginReadBlock();
-                        }
-                    }else{
-                        //end of current read
-                        visitRead(visitor, currentSequenceName,
-                                currentSequenceLeftEnd,
-                                currentSequenceRightEnd, currentOffset,
-                                currentBases);
-                        if(isTigrAssemblyVisitor){
-                            ((TigrAssemblyFileVisitor)visitor).visitEndReadBlock();
-                            ((TigrAssemblyFileVisitor)visitor).visitBeginReadBlock();
-                        }                      
-                        //reset current read data
-                        currentSequenceName=null;
-                        currentSequenceLeftEnd=-1;
-                        currentSequenceRightEnd=-1;
-                        currentOffset=0;
-                        currentBases=null;
+            	if(inContigRecord){
+                    inContigRecord=false;
+                    visitor.visitNewContig(currentContigId);
+                    visitor.visitConsensusBasecallsLine(currentContigConsensus);
+                    currentContigId=null;
+                    currentContigConsensus =null;
+                    if(isTigrAssemblyVisitor){
+                        ((TigrAssemblyFileVisitor)visitor).visitEndContigBlock();
+                        ((TigrAssemblyFileVisitor)visitor).visitBeginReadBlock();
                     }
+            	}
+                if(isEndOfRecord(line)){                    
+                    //end of current read
+                    visitRead(visitor, currentSequenceName,
+                            currentSequenceLeftEnd,
+                            currentSequenceRightEnd, currentOffset,
+                            currentBases);
+                    if(isTigrAssemblyVisitor){
+                        ((TigrAssemblyFileVisitor)visitor).visitEndReadBlock();
+                        ((TigrAssemblyFileVisitor)visitor).visitBeginReadBlock();
+                    }                      
+                    //reset current read data
+                    currentSequenceName=null;
+                    currentSequenceLeftEnd=-1;
+                    currentSequenceRightEnd=-1;
+                    currentOffset=0;
+                    currentBases=null;
                 }else if(isEndOfContig(line)){
-                        visitRead(visitor, currentSequenceName,
-                                currentSequenceLeftEnd,
-                                currentSequenceRightEnd, currentOffset,
-                                currentBases);
-                    
+                		if(currentSequenceName !=null){
+                			visitRead(visitor, currentSequenceName,
+                                    currentSequenceLeftEnd,
+                                    currentSequenceRightEnd, currentOffset,
+                                    currentBases);
+                		}
                         inContigRecord=true;
                         if(isTigrAssemblyVisitor){         
-                            ((TigrAssemblyFileVisitor)visitor).visitEndReadBlock();
+                        	((TigrAssemblyFileVisitor)visitor).visitEndReadBlock();
                             ((TigrAssemblyFileVisitor)visitor).visitBeginContigBlock();
                         }
                         //reset current read data
@@ -183,17 +183,24 @@ public final class TigrAssemblyFileParser {
                 
             }
         }
+        if(currentSequenceName==null){
+             visitor.visitNewContig(currentContigId);
+             visitor.visitConsensusBasecallsLine(currentContigConsensus);
+        	//no reads for this contig
+        	if(isTigrAssemblyVisitor){
+                ((TigrAssemblyFileVisitor)visitor).visitEndContigBlock();
+            }
+        }else{
         //visit last read if there is any data left
-        if(currentSequenceName!=null){
             visitRead(visitor, currentSequenceName,
                     currentSequenceLeftEnd,
                     currentSequenceRightEnd, currentOffset,
                     currentBases);
-           
+            if(isTigrAssemblyVisitor){
+                ((TigrAssemblyFileVisitor)visitor).visitEndReadBlock();
+            }
         }
-        if(isTigrAssemblyVisitor){
-            ((TigrAssemblyFileVisitor)visitor).visitEndReadBlock();
-        }
+       
         visitor.visitEndOfFile();
     }
     private static void visitRead(ContigFileVisitor visitor,

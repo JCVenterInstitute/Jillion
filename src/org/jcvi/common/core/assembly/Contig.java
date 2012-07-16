@@ -60,7 +60,7 @@ public interface Contig<T extends AssembledRead>{
      * never be null.
      * @see ConsensusCaller
      */
-    NucleotideSequence getConsensus();
+    NucleotideSequence getConsensusSequence();
     /**
      * Get the {@link AssembledRead} in this contig with the given id.
      * @param id the id of the read to get.
