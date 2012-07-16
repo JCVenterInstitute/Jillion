@@ -40,19 +40,32 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
-
+/**
+ * {@code DefaultScaffold} is a {@link Scaffold}
+ * implementation that stores all {@link PlacedContig}s
+ * data internally in various {@link Map}s and {@link Set}s.
+ * @author dkatzel
+ *
+ */
 public final class DefaultScaffold  implements Scaffold{
 	
-	public static ScaffoldBuilder createBuilder(String id){
-		return new Builder(id);
-	}
+	
 	
     private final String id;
     private final SortedSet<PlacedContig> placedContigs;
     private final Map<String, PlacedContig> contigbyId;
     CoverageMap<PlacedContig> contigMap;
     private final long length;
-    
+    /**
+     * Create a new {@link ScaffoldBuilder} instance.  
+     * This instance will not yet have any contigs.
+     * @param id the id of the Scaffold to be built.
+     * This will be the value returned by {@link Scaffold#getId()}.
+     * @return a new empty {@link ScaffoldBuilder}; never null.
+     */
+    public static ScaffoldBuilder createBuilder(String id){
+		return new Builder(id);
+	}
     private  DefaultScaffold(String id, SortedSet<PlacedContig> placedContigs){
         this.id = id;
         this.placedContigs= placedContigs;
