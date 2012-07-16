@@ -20,6 +20,7 @@
 package org.jcvi.common.core.assembly.clc.cas.var;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -169,6 +170,11 @@ public class DefaultVariation implements Variation{
         
         public Builder(long coordinate, Type type,
                 Nucleotide reference,
+                Nucleotide consensus ){
+        	this(coordinate, type, reference, Collections.singletonList(consensus));
+        }
+        public Builder(long coordinate, Type type,
+                Nucleotide reference,
                 List<Nucleotide> consensus ){
             if(consensus ==null){
                 throw new NullPointerException("consensus can not be null");
@@ -185,12 +191,19 @@ public class DefaultVariation implements Variation{
             if(coordinate <0){
                 throw new IllegalArgumentException("coordinate can not be <0");
             }
+            for(Nucleotide c : consensus){
+            	if(c ==null){
+            		  throw new NullPointerException("consensus can not be null");
+            	}
+            }
             this.consensus = consensus;
             this.coordinate = coordinate;
             this.reference = reference;
             this.type = type;
         }
-        
+        public Builder addHistogramRecord(Nucleotide base, int count){
+        	return addHistogramRecord(Collections.singletonList(base), count);
+        }
         public Builder addHistogramRecord(List<Nucleotide> base, int count){
             histogram.put(base, count);
             return this;

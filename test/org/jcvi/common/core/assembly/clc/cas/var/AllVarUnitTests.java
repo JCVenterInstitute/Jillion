@@ -32,7 +32,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         TestDefaultVariation.class,
-        TestVariationType.class
+        TestVariationType.class,
+        TestDefaultReferenceVariationsDataStore.class
     }
     )
 public class AllVarUnitTests {
