@@ -152,7 +152,8 @@ public final class IOUtil {
      * in preference over {@link File#mkdirs()} since that method returns a boolean
      * result to indicate success or failure instead of 
      * throwing an exception.
-     * @param dir the directory to be created; if dir is null
+     * @param dir the directory to be created; if dir is null or if it already
+     * exists,
      * then this method does not do anything.
      * @throws IOException if there is a problem making the directories.
      */
