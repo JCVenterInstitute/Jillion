@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.jcvi.common.core.Direction;
@@ -47,14 +48,14 @@ public final class DefaultScaffold  implements Scaffold{
 	}
 	
     private final String id;
-    private final Set<PlacedContig> placedContigs;
+    SortedSet<PlacedContig> placedContigs = new TreeSet<PlacedContig>(new PlacedContigComparator());
     private final Map<String, PlacedContig> contigbyId;
     CoverageMap<PlacedContig> contigMap;
     private final long length;
     
     private  DefaultScaffold(String id, Set<PlacedContig> placedContigs){
         this.id = id;
-        this.placedContigs = placedContigs;
+        this.placedContigs.addAll(placedContigs);
         contigbyId = new HashMap<String, PlacedContig>();
         for(PlacedContig contig : placedContigs){
             contigbyId.put(contig.getContigId(), contig);
@@ -220,17 +221,29 @@ public final class DefaultScaffold  implements Scaffold{
     private static final class Builder implements ScaffoldBuilder{
       
 		private final String id;
-        private Set<PlacedContig> contigs;
+        private SortedSet<PlacedContig> contigs;
         private boolean shiftContigs=false;
+        private boolean built=false;
+        
         private Builder(String id){
             this.id =id;
             contigs = new TreeSet<PlacedContig>( new PlacedContigComparator());
+        }
+        
+        private synchronized void throwErrorIfBuilt(){
+        	if(built){
+        		throw new IllegalStateException("already built");
+        	}
         }
         /**
 		 * {@inheritDoc}
 		 */
         @Override
-		public Builder add(PlacedContig placedContig){
+		public synchronized Builder add(PlacedContig placedContig){
+        	throwErrorIfBuilt();
+        	if(placedContig ==null){
+        		throw new NullPointerException("placed contig can not be null");
+        	}
             contigs.add(placedContig);
             return this;
         }
@@ -238,21 +251,22 @@ public final class DefaultScaffold  implements Scaffold{
 		 * {@inheritDoc}
 		 */
         @Override
-		public Builder add(String contigId, Range contigRange, Direction contigDirection){
+		public synchronized Builder add(String contigId, Range contigRange, Direction contigDirection){
            return add(new DefaultPlacedContig(contigId, contigRange,contigDirection));
         }
         /**
 		 * {@inheritDoc}
 		 */
         @Override
-		public Builder add(String contigId, Range contigRange){
+		public synchronized Builder add(String contigId, Range contigRange){
             return add(contigId, contigRange, Direction.FORWARD);
         }
         /**
 		 * {@inheritDoc}
 		 */
         @Override
-		public ScaffoldBuilder shiftContigs(boolean shiftContigs){
+		public synchronized ScaffoldBuilder shiftContigsToOrigin(boolean shiftContigs){
+        	throwErrorIfBuilt();
             this.shiftContigs = shiftContigs;
             return this;
         }
@@ -260,10 +274,11 @@ public final class DefaultScaffold  implements Scaffold{
 		 * {@inheritDoc}
 		 */
         @Override
-		public DefaultScaffold build(){
+		public synchronized DefaultScaffold build(){
+        	throwErrorIfBuilt();
             if(shiftContigs && !contigs.isEmpty()){
-                Set<PlacedContig> shiftedContigs = new TreeSet<PlacedContig>(new PlacedContigComparator());
-                PlacedContig firstContig = contigs.iterator().next();
+                SortedSet<PlacedContig> shiftedContigs = new TreeSet<PlacedContig>(new PlacedContigComparator());
+                PlacedContig firstContig = contigs.first();
                 long shiftOffset = firstContig.getBegin();
                 for(PlacedContig contig : contigs){
                     shiftedContigs.add(
@@ -273,7 +288,10 @@ public final class DefaultScaffold  implements Scaffold{
                 }
                 contigs = shiftedContigs;
             }
-            return new DefaultScaffold(id, contigs);
+            DefaultScaffold ret= new DefaultScaffold(id, contigs);
+            contigs.clear();
+            built=true;
+            return ret;
         }
         
     }
