@@ -48,14 +48,14 @@ public final class DefaultScaffold  implements Scaffold{
 	}
 	
     private final String id;
-    SortedSet<PlacedContig> placedContigs = new TreeSet<PlacedContig>(new PlacedContigComparator());
+    private final SortedSet<PlacedContig> placedContigs;
     private final Map<String, PlacedContig> contigbyId;
     CoverageMap<PlacedContig> contigMap;
     private final long length;
     
-    private  DefaultScaffold(String id, Set<PlacedContig> placedContigs){
+    private  DefaultScaffold(String id, SortedSet<PlacedContig> placedContigs){
         this.id = id;
-        this.placedContigs.addAll(placedContigs);
+        this.placedContigs= placedContigs;
         contigbyId = new HashMap<String, PlacedContig>();
         for(PlacedContig contig : placedContigs){
             contigbyId.put(contig.getContigId(), contig);
@@ -288,10 +288,8 @@ public final class DefaultScaffold  implements Scaffold{
                 }
                 contigs = shiftedContigs;
             }
-            DefaultScaffold ret= new DefaultScaffold(id, contigs);
-            contigs.clear();
             built=true;
-            return ret;
+            return new DefaultScaffold(id, contigs);
         }
         
     }
