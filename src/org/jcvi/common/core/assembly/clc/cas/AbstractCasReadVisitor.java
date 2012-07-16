@@ -26,7 +26,7 @@ import java.util.List;
 
 import org.jcvi.common.core.assembly.clc.cas.align.CasScoringScheme;
 import org.jcvi.common.core.assembly.clc.cas.read.CasPlacedRead;
-import org.jcvi.common.core.assembly.util.trim.TrimDataStore;
+import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -45,12 +45,12 @@ public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends Abstr
     private final CasTrimMap trimMap;
     private CloseableIterator<R> readIterator;
     private final List<NucleotideSequence> orderedGappedReferences;
-    private final TrimDataStore validRangeDataStore;
+    private final TrimPointsDataStore validRangeDataStore;
     private final List<CloseableIterator<R>> iterators = new ArrayList<CloseableIterator<R>>();
     private final TraceDetails traceDetails;
     private AbstractCasReadVisitor(File workingDir, CasTrimMap trimMap,
             List<NucleotideSequence> orderedGappedReferences,
-            TrimDataStore validRangeDataStore,
+            TrimPointsDataStore validRangeDataStore,
             TraceDetails traceDetails) {
         this.traceDetails = traceDetails;
         this.workingDir = workingDir;
@@ -72,7 +72,7 @@ public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends Abstr
     /**
      * @return the validRangeDataStore
      */
-    public TrimDataStore getValidRangeDataStore() {
+    public TrimPointsDataStore getValidRangeDataStore() {
         return validRangeDataStore;
     }
     public abstract CloseableIterator<R>  createFastqIterator(File illuminaFile, TraceDetails traceDetails) throws DataStoreException;

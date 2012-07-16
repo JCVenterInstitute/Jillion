@@ -66,7 +66,7 @@ import org.jcvi.common.core.assembly.clc.cas.UpdateConsensusAceContigBuilder;
 import org.jcvi.common.core.assembly.clc.cas.consed.AbstractAcePlacedReadCasReadVisitor;
 import org.jcvi.common.core.assembly.scaffold.agp.AgpWriter;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConicConsensusCaller;
-import org.jcvi.common.core.assembly.util.trim.TrimDataStore;
+import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStoreUtil;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
 import org.jcvi.common.core.io.FileUtil;
@@ -143,7 +143,7 @@ public class Cas2Consed3 {
         }
         return chromatDir;
     }
-	public void convert(TrimDataStore trimDatastore,CasTrimMap trimToUntrimmedMap ,
+	public void convert(TrimPointsDataStore trimDatastore,CasTrimMap trimToUntrimmedMap ,
 			FastqQualityCodec fastqQualityCodec, 
 			final boolean useConic,
 			final boolean createPseduoMoleculeFasta,
@@ -464,7 +464,7 @@ public class Cas2Consed3 {
 	                    DirectoryFileServer.createReadWriteDirectoryFileServer(commandLine.getOptionValue("o"));
 	            
 	            String prefix = commandLine.hasOption("prefix")? commandLine.getOptionValue("prefix"): DEFAULT_PREFIX;
-	            TrimDataStore trimDatastore;
+	            TrimPointsDataStore trimDatastore;
 	            CasTrimMap trimToUntrimmedMap;
 	            if(commandLine.hasOption("has_untrimmed")){
 	                TrimPointsDataStoreExtensionBuilder trimDataStoreBuilder = new TrimPointsDataStoreExtensionBuilder(casFile.getParentFile());
@@ -540,10 +540,10 @@ public class Cas2Consed3 {
 	 *
 	 *
 	 */
-	private static class TrimPointsDataStoreExtensionBuilder extends AbstractCasFileVisitor implements Builder<TrimDataStore>{
+	private static class TrimPointsDataStoreExtensionBuilder extends AbstractCasFileVisitor implements Builder<TrimPointsDataStore>{
 
 	    private final File workingDir;
-	    private List<TrimDataStore> delegates = new ArrayList<TrimDataStore>();
+	    private List<TrimPointsDataStore> delegates = new ArrayList<TrimPointsDataStore>();
 	    
         public TrimPointsDataStoreExtensionBuilder(File workingDir) {
             this.workingDir = workingDir;
@@ -580,11 +580,11 @@ public class Cas2Consed3 {
         * {@inheritDoc}
         */
         @Override
-        public TrimDataStore build() {
+        public TrimPointsDataStore build() {
         	if(delegates.isEmpty()){
         		return TrimDataStoreUtil.EMPTY_DATASTORE;
         	}
-            TrimDataStore datastore= MultipleDataStoreWrapper.createMultipleDataStoreWrapper(TrimDataStore.class, delegates);
+            TrimPointsDataStore datastore= MultipleDataStoreWrapper.createMultipleDataStoreWrapper(TrimPointsDataStore.class, delegates);
             delegates = null;
             return datastore;
         }

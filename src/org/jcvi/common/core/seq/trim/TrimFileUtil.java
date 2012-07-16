@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
-import org.jcvi.common.core.assembly.util.trim.TrimDataStore;
+import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
@@ -104,27 +104,27 @@ public final class TrimFileUtil {
         
     }
     /**
-     * Write the trim data contained in the given {@link TrimDataStore} to the given
+     * Write the trim data contained in the given {@link TrimPointsDataStore} to the given
      * trim file, overwriting any data previously contained in the file.
      * <p>
-     * This is the same as {@link #writeTrimFile(TrimDataStore, File, boolean)
+     * This is the same as {@link #writeTrimFile(TrimPointsDataStore, File, boolean)
      * writeTrimFile(datastore, trimFile,false)}.
-     * @param datastore the {@link TrimDataStore} containing the data to write.
+     * @param datastore the {@link TrimPointsDataStore} containing the data to write.
      * @param trimFile the {@link File} to write the data to.
      * @throws DataStoreException if there is a problem getting the trim 
      * data from the datastore.
      * @throws IOException if there is a problem writing trim information 
      * to the File.
      * @throws NullPointerException if datastore or out are null.
-     * @see #writeTrimFile(TrimDataStore, File, boolean)
+     * @see #writeTrimFile(TrimPointsDataStore, File, boolean)
      */
-    public static void writeTrimFile(TrimDataStore datastore, File trimFile) throws DataStoreException, IOException{
+    public static void writeTrimFile(TrimPointsDataStore datastore, File trimFile) throws DataStoreException, IOException{
         writeTrimFile(datastore, trimFile,false);
     }
     /**
-     * Write the trim data contained in the given {@link TrimDataStore} to the given
+     * Write the trim data contained in the given {@link TrimPointsDataStore} to the given
      * trim file.
-     * @param datastore the {@link TrimDataStore} containing the data to write.
+     * @param datastore the {@link TrimPointsDataStore} containing the data to write.
      * @param trimFile the {@link File} to write the data to.
      * @param append {@code true} if the data should be appended to the file;
      * {@code false} if the data should overwrite the given file.
@@ -134,7 +134,7 @@ public final class TrimFileUtil {
      * to the File.
      * @throws NullPointerException if datastore or out are null.
      */
-    public static void writeTrimFile(TrimDataStore datastore, File trimFile, boolean append) throws DataStoreException, IOException{
+    public static void writeTrimFile(TrimPointsDataStore datastore, File trimFile, boolean append) throws DataStoreException, IOException{
         OutputStream out = new FileOutputStream(trimFile, append);
         try{
             writeTrimFile(datastore, out);
@@ -144,9 +144,9 @@ public final class TrimFileUtil {
         
     }
     /**
-     * Write the trim data contained in the given {@link TrimDataStore} to the given
+     * Write the trim data contained in the given {@link TrimPointsDataStore} to the given
      * {@link OutputStream}.
-     * @param datastore the {@link TrimDataStore} containing the data to write.
+     * @param datastore the {@link TrimPointsDataStore} containing the data to write.
      * @param out the OutputStream to write the trim data to.
      * @throws DataStoreException if there is a problem getting the trim 
      * data from the datastore.
@@ -154,7 +154,7 @@ public final class TrimFileUtil {
      * to the {@link OutputStream}.
      * @throws NullPointerException if datastore or out are null.
      */
-    public static void writeTrimFile(TrimDataStore datastore, OutputStream out) throws DataStoreException, IOException{
+    public static void writeTrimFile(TrimPointsDataStore datastore, OutputStream out) throws DataStoreException, IOException{
         Iterator<String> iter = datastore.idIterator();
         while(iter.hasNext()){
             final String id = iter.next();

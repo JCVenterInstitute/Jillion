@@ -29,20 +29,20 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code TrimDataStoreAdatper} wraps
  * a {@link DataStore} of {@link Range}s around a   
- * {@link TrimDataStore}.
+ * {@link TrimPointsDataStore}.
  * wrapper
  * @author dkatzel
  *
  *
  */
-public final class TrimDataStoreAdatper implements TrimDataStore{
+public final class TrimDataStoreAdatper implements TrimPointsDataStore{
 
     private final DataStore<Range> delegate;
     /**
      * Adapt the given {@link DataStore} of {@link Range}s
-     * into a {@link TrimDataStore}.
+     * into a {@link TrimPointsDataStore}.
      * @param toBeAdapted the datastore to be adapted into a TrimDataStore.
-     * @return a new {@link TrimDataStore} which wraps the given
+     * @return a new {@link TrimPointsDataStore} which wraps the given
      * {@link DataStore}
      * @throws NullPointerException if the given datastore is null.
      */
@@ -51,9 +51,9 @@ public final class TrimDataStoreAdatper implements TrimDataStore{
     }
     /**
      * Adapt the given {@link DataStore} of {@link Range}s
-     * into a {@link TrimDataStore}.
+     * into a {@link TrimPointsDataStore}.
      * @param delegate the datastore to be adapted into a TrimDataStore.
-     * @return a new {@link TrimDataStore} which wraps the given
+     * @return a new {@link TrimPointsDataStore} which wraps the given
      * {@link DataStore}
      * @throws NullPointerException if the given datastore is null.
      */

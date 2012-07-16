@@ -23,16 +23,24 @@
  */
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
+import org.jcvi.common.core.assembly.util.trim.TrimDataStoreAdatper;
+import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
+import org.jcvi.common.core.datastore.SimpleDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.util.Builder;
 
 /**
  * Utility class for working with sff
@@ -187,7 +195,75 @@ public final class SffUtil {
     
     
     
-  
+    /**
+     * Create a new {@link TrimPointsDataStore} which contains
+     * trim points of all the reads contained in the given sff file.
+     * Each read's trim points will be the clip points set in the sff file.
+     * @param sffFile the sffFile to parse.
+     * @return a new {@link TrimPointsDataStore}; never null but could be empty
+     * if there are no reads in the given sff file.
+     * @throws IOException if there is a problem parsing the file.
+     */
+    public static TrimPointsDataStore createTrimPointsDataStoreFrom(File sffFile) throws IOException{
+    	SffTrimDataStoreBuilder builder = new SffTrimDataStoreBuilder();
+    	SffFileParser.parse(sffFile, builder);
+    	return builder.build();
+    }
     
-    
+    private static final class SffTrimDataStoreBuilder implements SffFileVisitor, Builder<TrimPointsDataStore>{
+
+        private final Map<String, Range> trimRanges = new LinkedHashMap<String, Range>();
+       
+       
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitEndOfFile() {
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitFile() {
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {
+            return CommonHeaderReturnCode.PARSE_READS;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public ReadDataReturnCode visitReadData(SffReadData readData) {
+            return ReadDataReturnCode.PARSE_NEXT_READ;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
+            trimRanges.put(readHeader.getId(), SffUtil.getTrimRangeFor(readHeader));
+            return ReadHeaderReturnCode.SKIP_CURRENT_READ;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public TrimPointsDataStore build() {
+            return TrimDataStoreAdatper.adapt(new SimpleDataStore<Range>(trimRanges));
+        }
+
+    }
 }

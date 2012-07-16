@@ -34,10 +34,10 @@ import org.jcvi.common.core.util.iter.IteratorUtil;
  */
 public final class TrimDataStoreUtil {
     /**
-     * Returns an {@link TrimDataStore} that
+     * Returns an {@link TrimPointsDataStore} that
      * contains no data.
      */
-    public static final TrimDataStore EMPTY_DATASTORE = new TrimDataStore() {
+    public static final TrimPointsDataStore EMPTY_DATASTORE = new TrimPointsDataStore() {
         
         @Override
         public CloseableIterator<Range> iterator() {
