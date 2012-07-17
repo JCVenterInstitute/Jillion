@@ -59,7 +59,7 @@ public class AbstractLargeFastaRecordIterator<S extends Symbol, T extends Sequen
 
             @Override
             protected boolean visitFastaRecord(F fastaRecord) {
-                blockingPut(fastaRecord);
+				blockingPut(fastaRecord);
                 return !AbstractLargeFastaRecordIterator.this.isClosed();
             }
         };

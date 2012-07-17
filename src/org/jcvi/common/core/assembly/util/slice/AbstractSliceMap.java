@@ -59,7 +59,7 @@ public abstract class  AbstractSliceMap implements SliceMap{
                          qualities);
                 sliceElements.add(sliceElement);
             } catch (DataStoreException e) {
-               //not found ignore?
+               throw new RuntimeException("error getting quality data for "+ read,e);
             }
 
         }
