@@ -83,19 +83,18 @@ public class TraceArchiveInfoXMLWriter implements TraceArchiveInfoWriter {
         	iter= info.iterator();
         while(iter.hasNext()){
         	TraceArchiveRecord record = iter.next();
-            writeString(out, String.format("%s%n",beginTag("trace")));
+            writeString(out, beginTag("trace"));
             /*for(TraceInfoField field : FIELD_ORDER){
                 writeString(out,String.format("%s%s%s\n", 
                         XMLUtil.beginTag(field),record.getAttribute(field),XMLUtil.endTag(field)));
             }
             */
             for(Entry<TraceInfoField,String> entry :record.entrySet()){
-                writeString(out,String.format("%s%s%s%n", 
-                        beginTag(entry.getKey()),entry.getValue(),endTag(entry.getKey())));
+                writeString(out,beginAndEndTag(entry.getKey(), entry.getValue()));
             }
             
             writeExtendedData(record);
-            writeString(out, String.format("%s%n",endTag("trace")));
+            writeString(out, endTag("trace"));
         }
         } catch (DataStoreException e) {
 			throw new IOException("error getting iterator from trace archive datastore",e);
@@ -111,12 +110,12 @@ public class TraceArchiveInfoXMLWriter implements TraceArchiveInfoWriter {
             throws IOException {
         Map<String,String> extendedData = record.getExtendedData();
         if(!extendedData.isEmpty()){
-            writeString(out, String.format("%s%n", beginTag(TraceInfoField.EXTENDED_DATA)));
+            writeString(out, beginTag(TraceInfoField.EXTENDED_DATA));
             for(Entry<String,String> extendedEntry : extendedData.entrySet()){
                 writeString(out,String.format("\t<field name='%s'>%s</field>%n", 
                         extendedEntry.getKey(),extendedEntry.getValue()));
             }
-            writeString(out, String.format("%s%n", endTag(TraceInfoField.EXTENDED_DATA)));
+            writeString(out,endTag(TraceInfoField.EXTENDED_DATA));
         }
     }
 
@@ -125,10 +124,13 @@ public class TraceArchiveInfoXMLWriter implements TraceArchiveInfoWriter {
         out.close();
 
     }
+    private static String beginAndEndTag(Object key, Object value){
+        return String.format("<%s>%s</%s>%n", key,value,key);
+    }
     private static String beginTag(Object value){
-        return String.format("<%s>", value);
+        return String.format("<%s>%n", value);
     }
     private static String endTag(Object value){
-        return String.format("</%s>", value);
+        return String.format("</%s>%n", value);
     }
 }
