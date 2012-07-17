@@ -392,17 +392,17 @@ public class GridReAbacusAce {
             try {
                 for(Future<?> future : executor.invokeAll(jobs)){
                     try {
-                     future.get();
-                 } catch (ExecutionException e) {
+                    	future.get();
+                    } catch (ExecutionException e) {
                      e.printStackTrace();
                      //TODO should we shutdown now and set some
                      //kind of flag saying we errored out so we don't
                      //delete temp files?
-                 }
+                    }
                 }
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
         }
          
