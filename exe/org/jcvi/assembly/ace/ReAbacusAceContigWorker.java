@@ -112,8 +112,9 @@ public class ReAbacusAceContigWorker {
      *  so let's hard code a value that should be "good enough for anyone"
      * @return
      * @throws IOException
+     * @throws InterruptedException 
      */
-    private static int muscle(File inputFasta, File outfile, int maxMem) throws IOException{
+    private static int muscle(File inputFasta, File outfile, int maxMem) throws IOException, InterruptedException{
         Command muscle = new Command(MUSCLE);
         muscle.setOption("-in", inputFasta.getAbsolutePath());
         muscle.setOption("-out", outfile.getAbsolutePath());
@@ -137,16 +138,18 @@ public class ReAbacusAceContigWorker {
           while ((line = stdOutStream.readLine()) != null) {
               stdErr.append(line).append("\n");
           }
-          
-          try {
+          	try{
             int returnCode= process.waitFor();
             if(returnCode !=0){
                 System.err.print(stdErr.toString());
             }
             return returnCode;
-          }catch (InterruptedException e) {
-              throw new IOException("interrupted", e);
-          }
+          	}catch(InterruptedException e){
+          		//we've been interrupted, kill process
+          		//then rethrow
+          		process.destroy();
+          		throw e;
+          	}
         }finally{
             IOUtil.closeAndIgnoreErrors(stdOutStream);
         }
