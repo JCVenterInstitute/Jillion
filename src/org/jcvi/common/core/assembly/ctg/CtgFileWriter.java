@@ -77,7 +77,7 @@ public class CtgFileWriter implements Closeable{
     
    
     private void writeContigHeader(Contig<? extends AssembledRead> contig) throws IOException {
-        String header = String.format("##%s %d %d bases, 00000000 checksum.\n",
+        String header = String.format("##%s %d %d bases%n",
                 contig.getId(), contig.getNumberOfReads(), contig.getConsensusSequence().getLength());
         
         writeToOutputStream(header);
@@ -114,7 +114,7 @@ public class CtgFileWriter implements Closeable{
             validRight = temp;
         }
 
-        header.append(String.format("] %d bases, 00000000 checksum. {%d %d} <%d %d>\n",
+        header.append(String.format("] %d bases {%d %d} <%d %d>%n",
                 placedRead.getNucleotideSequence().getLength(), validLeft+1, validRight+1, 
                 placedRead.getGappedStartOffset()+1-consensus.getNumberOfGapsUntil((int) placedRead.getGappedStartOffset()), 
                 placedRead.getGappedEndOffset()+1-consensus.getNumberOfGapsUntil((int)placedRead.getGappedEndOffset())));

@@ -83,19 +83,19 @@ public class TraceArchiveInfoXMLWriter implements TraceArchiveInfoWriter {
         	iter= info.iterator();
         while(iter.hasNext()){
         	TraceArchiveRecord record = iter.next();
-            writeString(out, String.format("%s\n",beginTag("trace")));
+            writeString(out, String.format("%s%n",beginTag("trace")));
             /*for(TraceInfoField field : FIELD_ORDER){
                 writeString(out,String.format("%s%s%s\n", 
                         XMLUtil.beginTag(field),record.getAttribute(field),XMLUtil.endTag(field)));
             }
             */
             for(Entry<TraceInfoField,String> entry :record.entrySet()){
-                writeString(out,String.format("%s%s%s\n", 
+                writeString(out,String.format("%s%s%s%n", 
                         beginTag(entry.getKey()),entry.getValue(),endTag(entry.getKey())));
             }
             
             writeExtendedData(record);
-            writeString(out, String.format("%s\n",endTag("trace")));
+            writeString(out, String.format("%s%n",endTag("trace")));
         }
         } catch (DataStoreException e) {
 			throw new IOException("error getting iterator from trace archive datastore",e);
@@ -111,12 +111,12 @@ public class TraceArchiveInfoXMLWriter implements TraceArchiveInfoWriter {
             throws IOException {
         Map<String,String> extendedData = record.getExtendedData();
         if(!extendedData.isEmpty()){
-            writeString(out, String.format("%s\n", beginTag(TraceInfoField.EXTENDED_DATA)));
+            writeString(out, String.format("%s%n", beginTag(TraceInfoField.EXTENDED_DATA)));
             for(Entry<String,String> extendedEntry : extendedData.entrySet()){
-                writeString(out,String.format("\t<field name='%s'>%s</field>\n", 
+                writeString(out,String.format("\t<field name='%s'>%s</field>%n", 
                         extendedEntry.getKey(),extendedEntry.getValue()));
             }
-            writeString(out, String.format("%s\n", endTag(TraceInfoField.EXTENDED_DATA)));
+            writeString(out, String.format("%s%n", endTag(TraceInfoField.EXTENDED_DATA)));
         }
     }
 

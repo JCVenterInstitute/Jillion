@@ -40,7 +40,7 @@ public final class TigrAssemblerWriter {
     private static final Charset UTF_8 = Charset.forName("UTF-8");
 	private static final byte[] BLANK_LINE = "\n".getBytes(UTF_8);
 	private static final byte[] CONTIG_SEPARATOR = "|\n".getBytes(UTF_8);
-	
+	private static final String EOL = "\n";
 	private TigrAssemblerWriter(){
 		//can not instantiate 
 	}
@@ -77,8 +77,9 @@ public final class TigrAssemblerWriter {
     			if(padding>0){
     				row.append('\t');
     			}
-    				row.append(String.format("%s\n", 
-    						contig.getAttributeValue(contigAttribute)));
+    				row.append(String.format("%s%s", 
+    						contig.getAttributeValue(contigAttribute),
+    						EOL));
 				out.write(row.toString().getBytes(UTF_8));
 			}
 			
@@ -99,10 +100,11 @@ public final class TigrAssemblerWriter {
 	    					row.append('\t');
 	    				}
 	    				if(read.hasAttribute(readAttribute)){
-	    					row.append(String.format("%s\n", 
-	    							read.getAttributeValue(readAttribute)));
+	    					row.append(String.format("%s%s", 
+	    							read.getAttributeValue(readAttribute),
+	    							EOL));
 	    				}else{
-	    					row.append('\n');
+	    					row.append(EOL);
 	    				}
 	    				
 	    				out.write(row.toString().getBytes(UTF_8));				
