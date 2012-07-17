@@ -125,12 +125,8 @@ public class Frg2Writer {
         }
        
         executor.shutdown();
-        try {
-            executor.awaitTermination(10, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        executor.awaitTermination(10, TimeUnit.MINUTES);
+        
         appendTempFile(tempDir.getFile("tmp.lib"), out);
         appendTempFile(tempDir.getFile("tmp.frag"), out);
         appendTempFile(tempDir.getFile("tmp.link"), out);

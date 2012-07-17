@@ -361,7 +361,8 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
                     throw new IOException("error creating symlink: exit code: "+exitCode);
                 }
             } catch (InterruptedException e) {
-                //ignore...?
+            	//re-interrupt current thread
+                Thread.currentThread().interrupt();
             }                       
         }
 
