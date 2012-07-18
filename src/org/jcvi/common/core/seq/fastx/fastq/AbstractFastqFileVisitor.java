@@ -35,11 +35,10 @@ public abstract class AbstractFastqFileVisitor implements FastqFileVisitor{
     private QualitySequence qualities;
     protected final FastqQualityCodec qualityCodec;
 
-    
-    public AbstractFastqFileVisitor(){
-        this(null);
-    }
     public AbstractFastqFileVisitor(FastqQualityCodec qualityCodec){
+    	if(qualityCodec ==null){
+    		throw new NullPointerException("quality codec can not be null");
+    	}
         this.qualityCodec = qualityCodec;
     }
     @Override
@@ -52,14 +51,7 @@ public abstract class AbstractFastqFileVisitor implements FastqFileVisitor{
     
     @Override
     public void visitEncodedQualities(String encodedQualities) {
-    	if(qualityCodec ==null){
-    		//guess codec
-    		this.qualities = FastqUtil.guessQualityCodecUsed(encodedQualities)
-    									.decode(encodedQualities);
-    	}else{
-    		this.qualities = qualityCodec.decode(encodedQualities);
-    	}
-        
+    	this.qualities = qualityCodec.decode(encodedQualities);        
     }
 
     @Override

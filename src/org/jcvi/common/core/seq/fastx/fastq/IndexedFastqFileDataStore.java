@@ -48,14 +48,6 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
     public static FastqFileDataStoreBuilderVisitor createBuilder(File file,FastqQualityCodec qualityCodec){
     	return new IndexedFastqFileDataStoreBuilderVisitor(new DefaultIndexedFileRange(), qualityCodec, file, AcceptingFastXFilter.INSTANCE);
     }
-    public static FastqFileDataStoreBuilderVisitor createBuilder(File file){
-    	return createBuilder(file,null);
-    }
-    public static FastqDataStore create(File file) throws IOException{
-    	FastqFileDataStoreBuilderVisitor builderVisitor = createBuilder(file);
-    	FastqFileParser.parse(file, builderVisitor);
-    	return builderVisitor.build();
-    }
     public static FastqDataStore create(File file,FastqQualityCodec qualityCodec) throws IOException{
     	FastqFileDataStoreBuilderVisitor builderVisitor = createBuilder(file, qualityCodec);
     	FastqFileParser.parse(file, builderVisitor);
@@ -156,6 +148,10 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
 		private IndexedFastqFileDataStoreBuilderVisitor(
 				IndexedFileRange indexFileRange,
 				FastqQualityCodec qualityCodec, File file, FastXFilter filter) {
+			
+			if(qualityCodec ==null){
+				throw new NullPointerException("quality codec can not be null");
+			}
 			this.indexFileRange = indexFileRange;
 			this.qualityCodec = qualityCodec;
 			this.file = file;

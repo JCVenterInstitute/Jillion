@@ -1,5 +1,7 @@
 package org.jcvi.common.core.seq.fastx.fastq;
 
+import static org.junit.Assert.assertSame;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -10,15 +12,18 @@ public class TestDefaultFastqFileDataStoreMultilineGuessCodec extends TestAbstra
 	@Override
 	protected FastqDataStore createFastqDataStoreFor(File fastq,
 			FastqQualityCodec qualityCodec) throws IOException {
-
-		return DefaultFastqFileDataStore.create(fastq);
+		FastqQualityCodec codec = FastqUtil.guessQualityCodecUsed(fastq);
+    	assertSame(codec ,qualityCodec);
+		return DefaultFastqFileDataStore.create(fastq,codec);
 	}
 
 	@Override
 	protected FastqDataStore createFastqDataStoreFor(File fastq,
 			FastqQualityCodec qualityCodec, FastXFilter filter)
 			throws IOException {
-		return DefaultFastqFileDataStore.create(fastq, filter, null);
+		FastqQualityCodec codec = FastqUtil.guessQualityCodecUsed(fastq);
+    	assertSame(codec ,qualityCodec);
+		return DefaultFastqFileDataStore.create(fastq, filter, codec);
 	}
 
 }

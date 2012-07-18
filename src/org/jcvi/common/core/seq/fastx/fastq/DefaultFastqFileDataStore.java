@@ -45,21 +45,7 @@ public final class DefaultFastqFileDataStore{
 	private DefaultFastqFileDataStore(){
 		//can not instantiate
 	}
-	
-    /**
-     * Create a new {@link FastqFileDataStoreBuilderVisitor} instance
-     * that needs to be populated by passing it to either {@link FastqFileParser#parse(File, FastqFileVisitor)}
-     * or {@link FastqFileParser#parse(InputStream, FastqFileVisitor)}.
-     * This implementation will try to guess the
-    * quality encoding used in the fastq records.  This should return
-    * the same data store implementation as
-    * {@link #createBuilder(FastXFilter, FastqQualityCodec) create(null,AcceptingFastXFilter.INSTANCE)}.
-     * @return a new {@link FastqFileDataStoreBuilderVisitor} instance;
-     * never null.
-     */
-    public static FastqFileDataStoreBuilderVisitor createBuilder(){
- 	   return createBuilder(AcceptingFastXFilter.INSTANCE, null);
-    }
+
    /**
     * Create a new {@link FastqFileDataStoreBuilderVisitor} instance
     * that needs to be populated by passing it to either {@link FastqFileParser#parse(File, FastqFileVisitor)}
@@ -100,45 +86,7 @@ public final class DefaultFastqFileDataStore{
    public static FastqFileDataStoreBuilderVisitor createBuilder(FastXFilter filter, FastqQualityCodec qualityCodec){
 	   return new DefaultFastqFileDataStoreBuilderVisitor(filter, qualityCodec);
    }
-   
-   /**
-	 * Create a new {@link FastqFileDataStoreBuilderVisitor} instance that needs
-	 * to be populated by passing it to either
-	 * {@link FastqFileParser#parse(File, FastqFileVisitor)} or
-	 * {@link FastqFileParser#parse(InputStream, FastqFileVisitor)}.
-	 * This implementation  will try to guess the codec used
-	 *            which might have a performance penalty associated with it.
-	 * 
-	 * @param filter
-	 *            an instance of {@link FastXFilter} that can be used to filter
-	 *            out some {@link FastqRecord}s from the datastore; can not be
-	 *            null
-	 * @return a new {@link FastqFileDataStoreBuilderVisitor} instance; never
-	 *         null.
-	 * @throws NullPointerException
-	 *             if either filter or qualityCodec is null.
-	 */
-  public static FastqFileDataStoreBuilderVisitor createBuilder(FastXFilter filter){
-	   return new DefaultFastqFileDataStoreBuilderVisitor(filter, null);
-  }
-   /**
-    * Create a new {@link FastqDataStore} instance
-    * for all the {@link FastqRecord}s that are contained
-    * in the given fastq file. This implementation will try to guess the
-     * quality encoding used in the fastq records.  This should return
-     * the same data store implementation as
-     * {@link #create(File, FastqQualityCodec) create(fastqFile, null)}
-    * @param fastqFile the fastq file to parse, must exist
-    * and can not be null.
-    * @return a new {@link FastqDataStore} instance.
-    * @throws IOException if there is a problem parsing the fastq file.
-    * @throws NullPointerException if fastqFile is null.
-    */
-   public static FastqDataStore create(File fastqFile) throws IOException{
-	   FastqFileDataStoreBuilderVisitor builderVisitor = createBuilder();
-	   FastqFileParser.parse(fastqFile, builderVisitor);
-	   return builderVisitor.build();
-   }
+
 
 	/**
 	 * Create a new {@link FastqDataStore} instance for all the
@@ -164,36 +112,7 @@ public final class DefaultFastqFileDataStore{
 	   FastqFileParser.parse(fastqFile, builderVisitor);
 	   return builderVisitor.build();
    }
-   /**
-	 * Create a new {@link FastqDataStore} instance for the {@link FastqRecord}s
-	 * that are accepted by the given {@link FastXFilter} that are contained in
-	 * the given fastq file. Any records that are not accepted by the filter
-	 * will not be included in the returned {@link FastqDataStore}. All of those
-	 * records must have their qualities encoded a manner that can be parsed by
-	 * the given {@link FastqQualityCodec} (if provided).
-	 * 
-	 * @param fastqFile
-	 *            the fastq file to parse, must exist and can not be null.
-	 * @param filter
-	 *            an instance of {@link FastXFilter} that can be used to filter
-	 *            out some {@link FastqRecord}s from the datastore.
-	 * @param qualityCodec
-	 *            the {@link FastqQualityCodec} needed to parse the encoded
-	 *            quality values in each record. If this value is null, then the
-	 *            datastore implementation will try to guess the codec used
-	 *            which might have a performance penalty associated with it.
-	 * @return a new {@link FastqDataStore} instance containing only those
-	 *         records that pass the filter.
-	 * @throws IOException
-	 *             if thre is a problem parsing the fastq file.
-	 * @throws NullPointerException
-	 *             if either fastqFile or filter is null.
-	 */
-  public static FastqDataStore create(File fastqFile, FastXFilter filter) throws IOException{
-	   FastqFileDataStoreBuilderVisitor builderVisitor = createBuilder(filter);
-	   FastqFileParser.parse(fastqFile, builderVisitor);
-	   return builderVisitor.build();
-  }
+
 	/**
 	 * Create a new {@link FastqDataStore} instance for the {@link FastqRecord}s
 	 * that are accepted by the given {@link FastXFilter} that are contained in
@@ -308,7 +227,10 @@ public final class DefaultFastqFileDataStore{
     	 */
 		private DefaultFastqFileDataStoreBuilderVisitor(FastXFilter filter, FastqQualityCodec qualityCodec) {
 			if(filter==null){
-				throw new NullPointerException("filter codec can not be null");
+				throw new NullPointerException("filter can not be null");
+			}
+			if(qualityCodec==null){
+				throw new NullPointerException("qualityCodec codec can not be null");
 			}
 			this.filter = filter;
 			this.qualityCodec = qualityCodec;
@@ -367,11 +289,7 @@ public final class DefaultFastqFileDataStore{
 
 		@Override
 		public void visitEncodedQualities(String encodedQualities) {
-			if(qualityCodec ==null){
-				currentQualitySequence = FastqUtil.guessQualityCodecUsed(encodedQualities).decode(encodedQualities);
-			}else{
-				currentQualitySequence = qualityCodec.decode(encodedQualities);
-			}
+			currentQualitySequence = qualityCodec.decode(encodedQualities);
 			
 		}
     	

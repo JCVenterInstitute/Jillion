@@ -54,23 +54,7 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
     private Long size=null;
     private volatile boolean closed;
     private final FastXFilter filter;
-    /**
-     * Create a new {@link FastqDataStore} instance for the given
-     * fastqFile which will contain all the
-     * records in the file.  This implementation will try to guess the
-     * quality encoding used in the fastq records.  This should return
-     * the same data store implementation as
-     * {@link #create(File, FastXFilter, FastqQualityCodec) create(fastqFile, null, null)}
-     * @param fastqFile the fastq file to create a {@link FastqDataStore}
-     * for (can not be null, and must exist).
-     * @return a new {@link FastqDataStore} instance, will never be null.
-     * @throws FileNotFoundException if the given Fastq file does not exist.
-     * @throws NullPointerException if fastqFile is null.
-     * @see #create(File, FastXFilter, FastqQualityCodec)
-     */
-    public static FastqDataStore create(File fastqFile) throws FileNotFoundException{
-    	return new LargeFastqFileDataStore(fastqFile, null,null);
-    }
+    
     /**
      * Create a new {@link FastqDataStore} instance for the given
      * fastqFile which will contain all the
@@ -92,26 +76,6 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
      */
     public static FastqDataStore create(File fastqFile, FastqQualityCodec qualityCodec) throws FileNotFoundException{
     	return new LargeFastqFileDataStore(fastqFile, qualityCodec,null);
-    }
-    /**
-     * Create a new {@link FastqDataStore} instance for the given
-     * fastqFile which will only contain all the
-     * records in the file that are accepted by the given filter.  
-     * This implementation will try to guess the
-     * quality encoding used in the fastq records.  This should return
-     * the same data store implementation as
-     * {@link #create(File, FastXFilter, FastqQualityCodec) create(fastqFile, filter, null)}
-     * @param fastqFile the fastq file to create a {@link FastqDataStore}
-     * for (can not be null, and must exist).
-     * @param filter the {@link FastXFilter} used to filter out records
-     * from the datastore. If this value is null,
-     * then all records in the file will be included in the datastore.
-     * @return a new {@link FastqDataStore} instance, will never be null.
-     * @throws FileNotFoundException if the given Fastq file does not exist.
-     * @throws NullPointerException if fastqFile is null.
-     */
-    public static FastqDataStore create(File fastqFile, FastXFilter filter) throws FileNotFoundException{
-    	return new LargeFastqFileDataStore(fastqFile, null,filter);
     }
     /**
      * Create a new {@link FastqDataStore} instance for the given

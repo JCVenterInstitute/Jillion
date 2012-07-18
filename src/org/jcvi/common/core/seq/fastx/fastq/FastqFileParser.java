@@ -138,9 +138,9 @@ public final class FastqFileParser {
 	private static long parseSequence(FastqFileVisitor visitor,
 			TextLineParser parser, boolean visitBody) throws IOException {
 		boolean inBasecallBlock;
-		//default to 100 bp since most sequences are only that much anyway
+		//default to 200 bp since most sequences are only that much anyway
         //builder will grow if we get too big
-        NucleotideSequenceBuilder sequenceBuilder = new NucleotideSequenceBuilder(100);
+        NucleotideSequenceBuilder sequenceBuilder = new NucleotideSequenceBuilder(200);
         String line = parser.nextLine();
     	visitor.visitLine(line);
     	sequenceBuilder.append(line.trim());
@@ -162,9 +162,9 @@ public final class FastqFileParser {
 	
 	private static void parseQualities(FastqFileVisitor visitor,
 			TextLineParser parser, long expectedQualities, boolean visitBody) throws IOException {
-		//default to 100 bp since most sequences are only that much anyway
+		//default to 200 bp since most sequences are only that much anyway
         //builder will grow if we get too big
-        StringBuilder sequenceBuilder = new StringBuilder(100);
+        StringBuilder sequenceBuilder = new StringBuilder(200);
        
     	while(sequenceBuilder.length() < expectedQualities){
     		String line = parser.nextLine();
