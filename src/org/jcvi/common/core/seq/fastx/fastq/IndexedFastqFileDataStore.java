@@ -211,12 +211,14 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
 		@Override
 		public void visitEndOfFile() {
 			checkNotFinished();
-			
+			finishedVisitingFile=true;
 		}
 
 		@Override
 		public FastqDataStore build() {
-			checkNotFinished();
+			if(!finishedVisitingFile){
+				throw new IllegalStateException("not yet finished visiting file");
+			}
 			return new IndexedFastqFileDataStore(file, qualityCodec, indexFileRange);
 		}
     	
