@@ -212,9 +212,13 @@ public final class FastqUtil {
 			return EndOfBodyReturnCode.STOP_PARSING;
 		}
 		@Override
-		public void visitLine(String line) {}
+		public void visitLine(String line) {
+			//no-op
+		}
 		@Override
-		public void visitFile() {}
+		public void visitFile() {
+			//no-op
+		}
 		@Override
 		public void visitEndOfFile() {
 			if(numberOfRecordsVisited==0){
@@ -247,6 +251,8 @@ public final class FastqUtil {
 								break;
                 case SOLEXA : numSolexa++;
 								break;
+				default:
+					throw new IllegalArgumentException("unknown codec: "+ codec);
             }
             numberOfRecordsVisited++;
 		}
