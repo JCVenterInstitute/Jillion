@@ -90,8 +90,9 @@ public class FastQFile {
             System.exit(0);
         }
         try {
-            CommandLine commandLine = CommandLineUtils.parseCommandLine(options, 
-                    Arrays.copyOf(args, args.length-1));
+            String[] argumentsOnly = Arrays.copyOf(args, args.length-1);
+			CommandLine commandLine = CommandLineUtils.parseCommandLine(options, 
+                    argumentsOnly);
             if(commandLine.hasOption("h")){
                 printHelp(options);
                 System.exit(0);
