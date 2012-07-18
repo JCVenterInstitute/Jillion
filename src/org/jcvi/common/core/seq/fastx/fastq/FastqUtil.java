@@ -44,7 +44,6 @@ public final class FastqUtil {
 	 */
     public static final int DEFAULT_NUMBER_OF_READS_TO_VISIT = 1000;
 
-	private FastqUtil(){}
     /**
      * This is the {@link Pattern} to parse
      * the sequence record defline of a FASTQ record.
@@ -61,6 +60,11 @@ public final class FastqUtil {
      * then it should match the id of the seq defline.
      */
     public static final Pattern QUAL_DEFLINE_PATTERN = Pattern.compile("^\\+(.+$)?");
+    
+
+	private FastqUtil(){
+		//can not instantiate
+	}
     
     /**
      * Attempts to guess the {@link FastqQualityCodec} used to encode
@@ -196,11 +200,13 @@ public final class FastqUtil {
     	private int numIllumina=0;
     	private int numSolexa=0;
     	
-    	private FastqQualityCodecDetectorVisitor(int maxNumberOfRecordsToVisit) {
+    	
+		private FastqQualityCodec detectedCodec=null;
+		
+		
+		private FastqQualityCodecDetectorVisitor(int maxNumberOfRecordsToVisit) {
 			this.maxNumberOfRecordsToVisit = maxNumberOfRecordsToVisit;
 		}
-		private FastqQualityCodec detectedCodec=null;
-    	
 		public FastqQualityCodec getDetectedCodec() {
 			return detectedCodec;
 		}
