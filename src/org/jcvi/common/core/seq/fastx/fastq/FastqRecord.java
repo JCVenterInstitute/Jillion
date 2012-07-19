@@ -27,7 +27,12 @@ import org.jcvi.common.core.seq.fastx.FastXRecord;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-
+/**
+ * {@code FastqRecord} is an object representation 
+ * of a read from a fastq encoded file.
+ * @author dkatzel
+ *
+ */
 public interface FastqRecord extends FastXRecord<Nucleotide,NucleotideSequence>{
     
 	/**
