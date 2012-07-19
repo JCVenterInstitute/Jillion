@@ -39,9 +39,10 @@ import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code LargeFastqFileDataStore} is a {@link FastqDataStore} implementation
- * to be used a very large FastQ Files.  No data contained in this
+ * to be used a very large Fastq Files.  No data contained in this
  * fastq file is stored in memory except it's size (which is lazy loaded).
- * This means that each get() or contain() requires re-parsing the fastq file
+ * This means that each call to {@link FastqDataStore#get(String)}
+ * or {@link FastqDataStore#contains(String)} requires re-parsing the fastq file
  * which can take some time.  It is recommended that instances of 
  * {@link LargeFastqFileDataStore} are wrapped by {@link CachedDataStore}
  * @author dkatzel
