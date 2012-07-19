@@ -31,8 +31,14 @@ import java.util.Map;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
-
-public final class DefaultFastqDataStore implements FastqDataStore {
+/**
+ * {@code DefaultFastqDataStore} is a {@link FastqDataStore}
+ * implementation that stores all {@link FastqRecord}s
+ * in a Map.
+ * @author dkatzel
+ *
+ */
+final class DefaultFastqDataStore implements FastqDataStore {
 
     private final Map<String, FastqRecord> map;
     private boolean closed = false;

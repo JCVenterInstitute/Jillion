@@ -43,6 +43,14 @@ public final class IlluminaUtil {
     private IlluminaUtil(){
     	//can not instantiate
     }
+    /**
+     * Tests to see if the given read id matches the 
+     * illumina naming patterns.
+     * @param readId the read id to check.
+     * @return {@code true} if the read id is matches
+     * a valid illumina read pattern;
+     * {@code false} otherwise.
+     */
     public static boolean isIlluminaRead(String readId){
         if(readId == null){
             throw new NullPointerException();
@@ -54,7 +62,14 @@ public final class IlluminaUtil {
         
         return CASAVA_1_8_PATTERN.matcher(readId).matches();
     }
-    
+    /**
+     * Gets the run id from the given read id.
+     * @param illuminaReadId the illumina read id to parse.
+     * @return the run id as a String.
+     * @throws IllegalArgumentException if the given read id is not a valid
+     * Illumina Read ID.
+     * @throws NullPointerException if the given id is null.
+     */
     public static String getRunId(String illuminaReadId){
         Matcher matcher = CASAVA_1_8_PATTERN.matcher(illuminaReadId);
         if(!matcher.matches()){

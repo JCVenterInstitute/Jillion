@@ -318,7 +318,7 @@ public class SortedFasta2Fastq {
                    }
                  //here we have a valid seq and qual
                    FastqRecord fastq = new DefaultFastqRecord(seqFasta.getId(), 
-                           seqFasta.getSequence(), qualityFasta.getSequence(),null);
+                           seqFasta.getSequence(), qualityFasta.getSequence());
 
                    writer.print(fastq.toFormattedString(fastqQualityCodec));
                }
