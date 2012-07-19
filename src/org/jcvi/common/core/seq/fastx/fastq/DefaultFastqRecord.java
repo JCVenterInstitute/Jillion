@@ -25,7 +25,13 @@ package org.jcvi.common.core.seq.fastx.fastq;
 
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-
+/**
+ * {@code DefaultFastqRecord} is an implementation 
+ * of {@link FastqRecord} that stores all the data of this
+ * record into memory.
+ * @author dkatzel
+ *
+ */
 public class DefaultFastqRecord implements FastqRecord {
 
     private static final String CR = "\n";
@@ -79,31 +85,43 @@ public class DefaultFastqRecord implements FastqRecord {
         this.qualities = qualities;
         this.comments = comments;
     }
-
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public String getComment() {
         return comments;
     }
-
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public String getId() {
         return id;
     }
 
     /**
-     * Delegates to {@link #getNucleotideSequence()}.
-     * @see #getNucleotideSequence()
+     * 
+     * {@inheritDoc}
      */
      @Override
      public NucleotideSequence getSequence() {
          return getNucleotideSequence();
      }
-     
+     /**
+      * 
+      * {@inheritDoc}
+      */
     @Override
     public NucleotideSequence getNucleotideSequence() {
         return nucleotides;
     }
-
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public QualitySequence getQualitySequence() {
         return qualities;

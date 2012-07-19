@@ -70,7 +70,10 @@ public final class FastqFileParser {
     }
 	/**
 	 * Parse the given fastq encoded {@link InputStream} and call the appropriate
-	 * visit callbacks from the given visitor.
+	 * visit callbacks from the given visitor. The given input stream
+	 * may not be closed after parsing has finished (or if parsing
+	 * is interrupted by a thrown exception) so it is up
+	 * to the client to make sure to close the stream.
 	 * @param fastqStream the fastq encoded {@link InputStream} to parse; can not be null.
 	 * @param visitor the {@link FastqFileVisitor} to call
 	 * the visit methods on; can not be null.

@@ -35,28 +35,134 @@ import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
+ * {@code IndexedFastqFileDataStore} is an implementation of 
+ * {@link FastqDataStore} that only stores an index containing
+ * file offsets to the various {@link FastqRecord}s contained
+ * inside the fastq file.  This implementation provides random access
+ * to large files taking up much memory.  The downside is each fastq record
+ * must be seeked to and then re-parsed each time and the fastq file must exist and not
+ * get altered during the entire lifetime of this object.
  * @author dkatzel
- *
- *
  */
 public final class IndexedFastqFileDataStore implements FastqDataStore{
 
     private final IndexedFileRange indexFileRange;
     private final FastqQualityCodec qualityCodec;
     private final File file;
-    
+    /**
+	 * Creates a new {@link FastqFileDataStoreBuilderVisitor}
+	 * instance that will build an {@link IndexedFastqFileDataStore}
+	 * using the given fastq file.  In order to build a {@link FastqDataStore},
+	 * the returned instance must be passed to the fastq parser and once
+	 * the entire fastq file has been visited, the {@link FastqDataStore}
+	 * can be built using the {@link FastqFileDataStoreBuilderVisitor#build()}
+	 * method like this:
+	 * <pre>
+	 * FastqFileDataStoreBuilderVisitor builder = createBuilder(fastqFile, qualityCodec);
+	 * FastqFileParser.parse(fastqFile, builder);
+	 * FastqDataStore datastore = builder.build();
+	 * </pre>
+	 * This implementation of {@link FastqFileDataStoreBuilderVisitor}
+	 * can only be used to parse a single fastq file (the one given)
+	 * This builder visitor will construct the datastore based
+	 * on various visitXXX methods in the {@link FastqFileVisitor}
+	 * interface.  In this case, the indexed implementation will combine
+	 * callbacks for parts of each fastq record along with the 
+	 * corresponding calls to {@link FastqFileVisitor#visitLine(String)} 
+	 * to compute the file offsets for each record.
+	 * @param file the fastq to create an {@link FastqFileDataStoreBuilderVisitor}
+	 * for using an indexed implementation.
+	 * @param qualityCodec the {@link FastqQualityCodec} that should
+	 * be used to decode the encoded qualities of each record in the file.
+	 * @return a new instance of {@link FastqFileDataStoreBuilderVisitor};
+	 * never null.
+	 * @throws FileNotFoundException if the input fasta file does not exist.
+	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
+	 */
     public static FastqFileDataStoreBuilderVisitor createBuilder(File file,FastqQualityCodec qualityCodec){
     	return new IndexedFastqFileDataStoreBuilderVisitor(new DefaultIndexedFileRange(), qualityCodec, file, AcceptingFastXFilter.INSTANCE);
     }
+    /**
+	 * Creates a new {@link IndexedFastqFileDataStore}
+	 * instance using the given fastqFile which uses has its quality
+	 * values encoded in a manner that can be decoded by the given
+	 * {@link FastqQualityCodec}.
+	 * @param file the fastq file to create an {@link IndexedFastqFileDataStore}
+	 * for.
+	 * @param qualityCodec the {@link FastqQualityCodec} that should
+	 * be used to decode the encoded qualities of each record in the file.
+	 * @return a new instance of {@link FastqDataStore};
+	 * never null.
+	 * @throws IOException if the input fastq file does not exist or 
+	 * if there is a problem parsing the file.
+	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
+	 */
     public static FastqDataStore create(File file,FastqQualityCodec qualityCodec) throws IOException{
     	FastqFileDataStoreBuilderVisitor builderVisitor = createBuilder(file, qualityCodec);
     	FastqFileParser.parse(file, builderVisitor);
     	return builderVisitor.build();
     }
-    
+    /**
+   	 * Creates a new {@link FastqFileDataStoreBuilderVisitor}
+   	 * instance that will build an {@link IndexedFastqFileDataStore}
+   	 * using the given fastq file which only contains the records
+   	 * in the file that are accepted by the given filter.  In order to build a {@link FastqDataStore},
+   	 * the returned instance must be passed to the fastq parser and once
+   	 * the entire fastq file has been visited, the {@link FastqDataStore}
+   	 * can be built using the {@link FastqFileDataStoreBuilderVisitor#build()}
+   	 * method like this:
+   	 * <pre>
+   	 * FastqFileDataStoreBuilderVisitor builder = createBuilder(fastqFile, qualityCodec, filter);
+   	 * FastqFileParser.parse(fastqFile, builder);
+   	 * FastqDataStore datastore = builder.build();
+   	 * </pre>
+   	 * This implementation of {@link FastqFileDataStoreBuilderVisitor}
+   	 * can only be used to parse a single fastq file (the one given)
+   	 * This builder visitor will construct the datastore based
+   	 * on various visitXXX methods in the {@link FastqFileVisitor}
+   	 * interface.  In this case, the indexed implementation will combine
+   	 * callbacks for parts of each fastq record along with the 
+   	 * corresponding calls to {@link FastqFileVisitor#visitLine(String)} 
+   	 * to compute the file offsets for each record.
+   	 * @param file the fastq to create an {@link FastqFileDataStoreBuilderVisitor}
+   	 * for using an indexed implementation.
+   	 * @param qualityCodec the {@link FastqQualityCodec} that should
+	 * be used to decode the encoded qualities of each record in the file.
+   	 * @param filter a {@link FastXFilter} that will be used
+	 * to filter out some (possibly all or none) of the records from
+	 * the fastq file so they will not be included in the {@link FastqDataStore}.
+	 * Only records which cause {@link FastXFilter#accept(String, String)}
+	 * to return {@code true} will be added to this datastore.
+   	 * @return a new instance of {@link FastqFileDataStoreBuilderVisitor};
+   	 * never null.
+   	 * @throws FileNotFoundException if the input fasta file does not exist.
+   	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
+   	 */
     public static FastqFileDataStoreBuilderVisitor createBuilder(File file,FastqQualityCodec qualityCodec, FastXFilter filter){
     	return new IndexedFastqFileDataStoreBuilderVisitor(new DefaultIndexedFileRange(), qualityCodec, file, filter);
     }
+    
+    /**
+   	 * Creates a new {@link IndexedFastqFileDataStore}
+   	 * instance using the given fastqFile which uses has its quality
+   	 * values encoded in a manner that can be decoded by the given
+   	 * {@link FastqQualityCodec} which only contains the records
+   	 * in the file that are accepted by the given filter.
+   	 * @param file the fastq file to create an {@link IndexedFastqFileDataStore}
+   	 * for.
+   	 * @param qualityCodec the {@link FastqQualityCodec} that should
+	 * be used to decode the encoded qualities of each record in the file.
+	 * @param filter a {@link FastXFilter} that will be used
+	 * to filter out some (possibly all or none) of the records from
+	 * the fastq file so they will not be included in the {@link FastqDataStore}.
+	 * Only records which cause {@link FastXFilter#accept(String, String)}
+	 * to return {@code true} will be added to this datastore.
+   	 * @return a new instance of {@link FastqDataStore};
+   	 * never null.
+   	 * @throws IOException if the input fastq file does not exist or 
+   	 * if there is a problem parsing the file.
+   	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
+   	 */
     public static FastqDataStore create(File file,FastqQualityCodec qualityCodec,FastXFilter filter) throws IOException{
     	FastqFileDataStoreBuilderVisitor builderVisitor = createBuilder(file, qualityCodec,filter);
     	FastqFileParser.parse(file, builderVisitor);

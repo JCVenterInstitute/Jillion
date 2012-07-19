@@ -19,14 +19,16 @@
 
 package org.jcvi.fasta.fastq.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStore;
@@ -34,12 +36,17 @@ import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqFileDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
+import org.jcvi.common.core.testUtil.TestUtil;
+import org.jcvi.common.core.testUtil.TestUtil.TriedToExitException;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.common.io.idReader.IdReaderException;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
 
 /**
  * @author dkatzel
@@ -47,9 +54,14 @@ import org.junit.rules.TemporaryFolder;
  *
  */
 public class TestFastQ2FastaEnd2End {
-
+	private static SecurityManager previousManager=null;
+	private static PrintStream OLD_STDOUT=null;
+	private static PrintStream OLD_STDERR=null;
+	
      private final ResourceFileServer RESOURCES = new ResourceFileServer(TestFastQ2FastaEnd2End.class);
-     
+     private ByteArrayOutputStream stdOutBytes;
+ 	private ByteArrayOutputStream stdErrBytes;
+ 	
      String id = "SOLEXA1:4:1:12:1692#0/1";
      String otherId = "SOLEXA1:4:1:12:1489#0/1";
      File ids;
@@ -59,6 +71,21 @@ public class TestFastQ2FastaEnd2End {
      @Rule
      public TemporaryFolder folder = new TemporaryFolder();
      
+     @BeforeClass
+ 	public static void turnOffSystemExitAndRedirectStdOutAndErr(){
+ 		previousManager = System.getSecurityManager();
+ 		System.setSecurityManager(TestUtil.NON_EXITABLE_MANAGER);
+ 		
+ 		OLD_STDOUT =System.out;
+ 		OLD_STDERR =System.err;
+ 	}
+ 	
+ 	@AfterClass
+ 	public static void restoreSecurityManagerStdOutAndErr(){
+ 		System.setSecurityManager(previousManager);
+ 		System.setOut(OLD_STDOUT);
+ 		System.setErr(OLD_STDERR);
+ 	}
      @Before
      public void setup() throws IOException{
          seqOutputFile = folder.newFile("outputFile.fasta");
@@ -68,6 +95,11 @@ public class TestFastQ2FastaEnd2End {
          writer.println(id);
          writer.close();
          fastQFile = RESOURCES.getFile("files/example.fastq");
+         
+         stdOutBytes = new ByteArrayOutputStream();
+ 		stdErrBytes = new ByteArrayOutputStream();
+ 		System.setOut(new PrintStream(stdOutBytes));
+ 		System.setErr(new PrintStream(stdErrBytes));
      }
      @Test
      public void ifNoFiltersThenIncludeAllIds() throws IOException, IdReaderException, DataStoreException{
@@ -110,7 +142,20 @@ public class TestFastQ2FastaEnd2End {
         assertEquals(originalDataStore.get(otherId).getQualitySequence().asList(),filteredQualityDataStore.get(otherId).getSequence().asList());
   
      }
-    
+     @Test
+     public void noWritersSpecifiedShouldThrowError() throws IOException, IdReaderException, DataStoreException{
+        File sangerFastQFile = RESOURCES.getFile("files/sanger.fastq");
+        try{
+	        Fastq2Fasta.main(new String[]{
+	                "-sanger",
+	                sangerFastQFile.getAbsolutePath()});
+	        fail("should exit");
+        }catch(TriedToExitException expected){
+        	assertEquals(1, expected.getExitCode());
+        	String stdErrMessage = new String(stdErrBytes.toByteArray(), IOUtil.UTF_8).trim();
+    		assertEquals(stdErrMessage,"must specify at least either -s or -q");
+        }
+     }
      @Test
      public void includeOnlyIdsThatAreSpecified() throws IOException, IdReaderException, DataStoreException{
          
@@ -130,6 +175,39 @@ public class TestFastQ2FastaEnd2End {
          assertEquals(originalDataStore.get(id).getQualitySequence().asList(),filteredQualityDataStore.get(id).getSequence().asList());
          
      }
+     
+     @Test
+     public void onlywriteOutSeqIfOnlyUseSOption() throws IOException, IdReaderException, DataStoreException{
+         
+         FastqDataStore originalDataStore = DefaultFastqFileDataStore.create(fastQFile, FastqQualityCodec.ILLUMINA);
+         Fastq2Fasta.main(new String[]{"-i",ids.getAbsolutePath(),
+                 "-s", seqOutputFile.getAbsolutePath(),
+                 fastQFile.getAbsolutePath()});
+         NucleotideSequenceFastaDataStore filteredSeqDataStore = DefaultNucleotideSequenceFastaFileDataStore.create(seqOutputFile);
+         assertEquals(0L, qualOutputFile.length());
+         assertEquals(1, filteredSeqDataStore.getNumberOfRecords());
+         assertFalse(filteredSeqDataStore.contains(otherId));
+
+         assertEquals(originalDataStore.get(id).getNucleotideSequence().asList(),filteredSeqDataStore.get(id).getSequence().asList());
+         
+     }
+     
+     @Test
+     public void onlywriteOutQualIfOnlyUseQOption() throws IOException, IdReaderException, DataStoreException{
+         
+         FastqDataStore originalDataStore = DefaultFastqFileDataStore.create(fastQFile, FastqQualityCodec.ILLUMINA);
+         Fastq2Fasta.main(new String[]{"-i",ids.getAbsolutePath(),
+                 "-q", qualOutputFile.getAbsolutePath(),
+                 fastQFile.getAbsolutePath()});
+         QualitySequenceFastaDataStore filteredQualityDataStore = DefaultQualityFastaFileDataStore.create(qualOutputFile);
+         assertEquals(0L, seqOutputFile.length());
+         assertEquals(1, filteredQualityDataStore.getNumberOfRecords());
+
+         assertFalse(filteredQualityDataStore.contains(otherId));
+         assertEquals(originalDataStore.get(id).getQualitySequence().asList(),filteredQualityDataStore.get(id).getSequence().asList());
+         
+     }
+     
      @Test
      public void excludeIdsThatAreSpecified() throws IOException, IdReaderException, DataStoreException{
          File fastQFile = RESOURCES.getFile("files/example.fastq");

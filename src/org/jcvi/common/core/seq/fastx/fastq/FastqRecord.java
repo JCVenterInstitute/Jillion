@@ -41,8 +41,23 @@ public interface FastqRecord extends FastXRecord<Nucleotide,NucleotideSequence>{
      * if whitespace in ids is not allowed.
      */
     String getId();
+    /**
+     * Gets the {@link NucleotideSequence} of this record.
+     * The nucleotide sequence should be the same
+     * length as the {@link QualitySequence} returned by
+     * {@link #getQualitySequence()}.
+     * @return a {@link NucleotideSequence} instance;
+     * never null.
+     */
     NucleotideSequence getNucleotideSequence();
-    
+    /**
+     * Gets the {@link QualitySequence} of this record.
+     * The quality sequence should be the same
+     * length as the {@link NucleotideSequence} returned by
+     * {@link #getNucleotideSequence()}.
+     * @return a {@link QualitySequence} instance;
+     * never null.
+     */
     QualitySequence getQualitySequence();
     /**
      * 

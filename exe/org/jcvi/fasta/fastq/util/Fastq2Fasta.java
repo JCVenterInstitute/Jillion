@@ -31,11 +31,11 @@ import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
@@ -43,10 +43,10 @@ import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaRecord;
-import org.jcvi.common.core.seq.fastx.fastq.AbstractFilteredFastqFileVisitor;
-import org.jcvi.common.core.seq.fastx.fastq.FastqFileParser;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
+import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
+import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
 import org.jcvi.common.io.idReader.IdReader;
 import org.jcvi.common.io.idReader.IdReaderException;
@@ -59,57 +59,17 @@ import org.jcvi.common.io.idReader.StringIdParser;
  *
  *
  */
-public class Fastq2Fasta extends AbstractFilteredFastqFileVisitor {
-    private final OutputStream seqOut;
-    private final OutputStream qualOut;
+public class Fastq2Fasta {
+   
     
-    /**
-     * @param filter
-     * @param out
-     */
-    public Fastq2Fasta(FastXFilter filter, FastqQualityCodec qualityCodec,OutputStream seqOut,OutputStream qualOut) {
-       super(filter, qualityCodec);
-       
-        this.seqOut = seqOut;
-        this.qualOut = qualOut;
-        if(seqOut==null && qualOut==null){
-            throw new IllegalArgumentException("must write at least seq or qual data");
-        }
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-     @Override
-     protected EndOfBodyReturnCode visitFastQRecord(FastqRecord fastQ) {
-         String id = fastQ.getId();
-         if(qualOut!=null){
-             try {
-                 qualOut.write(new DefaultQualityFastaRecord(id, 
-                         fastQ.getQualitySequence()).toString().getBytes());
-             } catch (IOException e) {
-                 throw new RuntimeException("could not write to quality data for "+ id, e);
-             }
-         }
-         if(seqOut!=null){
-             try {
-                 seqOut.write(new DefaultNucleotideSequenceFastaRecord(
-                         id,fastQ.getComment(),fastQ.getNucleotideSequence()) 
-                         .toString().getBytes());
-             } catch (IOException e) {
-                 throw new RuntimeException("could not write to sequence data for "+ id, e);
-             }
-         }
-         return EndOfBodyReturnCode.KEEP_PARSING;
-         
-     }
-    
+   
     /**
      * @param args
      * @throws FileNotFoundException 
      * @throws IdReaderException 
+     * @throws DataStoreException 
      */
-    public static void main(String[] args) throws IOException, IdReaderException {
+    public static void main(String[] args) throws IOException, IdReaderException, DataStoreException {
         
         Options options = new Options();
         options.addOption(new CommandLineOptionBuilder("s", 
@@ -124,15 +84,13 @@ public class Fastq2Fasta extends AbstractFilteredFastqFileVisitor {
                         "input fastq file is encoded as a SANGER fastq file (default is ILLUMINA 1.3+)")
                     .isFlag(true)
                        .build());
-        OptionGroup group = new OptionGroup();
         options.addOption(CommandLineUtils.createHelpOption());
         
-        group.addOption(new CommandLineOptionBuilder("i", "include file of ids to include")
+        options.addOption(new CommandLineOptionBuilder("i", "include file of ids to include")
                             .build());
-        group.addOption(new CommandLineOptionBuilder("e", "exclude file of ids to exclude")
+        options.addOption(new CommandLineOptionBuilder("e", "exclude file of ids to exclude")
                             .build());
-        
-        options.addOptionGroup(group);
+
         OutputStream seqOut =null;
         OutputStream qualOut =null;
         if(args.length ==1 && args[0].endsWith("-h")){
@@ -185,13 +143,39 @@ public class Fastq2Fasta extends AbstractFilteredFastqFileVisitor {
             }else{
                 fastqQualityCodec = FastqQualityCodec.ILLUMINA;
             }
-            Fastq2Fasta fastq2Fasta = new Fastq2Fasta(filter, fastqQualityCodec, seqOut, qualOut);
             
-            FastqFileParser.parse(fastQFile, fastq2Fasta);
+            CloseableIterator<FastqRecord> iter=null;
+            try{
+            	iter = LargeFastqFileDataStore.create(fastQFile, filter, fastqQualityCodec)
+            								.iterator();
+            	while(iter.hasNext()){
+            		FastqRecord fastQ = iter.next();
+            		 String id = fastQ.getId();
+                     if(qualOut!=null){
+                         try {
+                             qualOut.write(new DefaultQualityFastaRecord(id, 
+                                     fastQ.getQualitySequence()).toString().getBytes());
+                         } catch (IOException e) {
+                             throw new IOException("could not write to quality data for "+ id, e);
+                         }
+                     }
+                     if(seqOut!=null){
+                         try {
+                             seqOut.write(new DefaultNucleotideSequenceFastaRecord(
+                                     id,fastQ.getComment(),fastQ.getNucleotideSequence()) 
+                                     .toString().getBytes());
+                         } catch (IOException e) {
+                             throw new IOException("could not write to sequence data for "+ id, e);
+                         }
+                     }
+            	}
+            }finally{
+            	IOUtil.closeAndIgnoreErrors(iter,seqOut,qualOut);
+            }
             
             
         } catch (ParseException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
             printHelp(options);
             System.exit(1);
         }
