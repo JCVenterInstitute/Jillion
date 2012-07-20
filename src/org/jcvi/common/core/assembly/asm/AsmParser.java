@@ -120,16 +120,16 @@ public final class AsmParser {
          * Describes a group of mate pairs that belong to the same library.
          */
         MODIFIED_DISTANCE_MESSAGE("MDI") {
-            private final Pattern REF_ID_PATTERN = Pattern.compile("ref:\\((\\S+),(\\d+)\\)");
+            private final Pattern refIdPattern = Pattern.compile("ref:\\((\\S+),(\\d+)\\)");
             /**
              * min can be set to a negative value
              */
-            private final Pattern MIN_PATTERN = Pattern.compile("min:(-?\\d+)");
-            private final Pattern MAX_PATTERN = Pattern.compile("max:(\\d+)");
-            private final Pattern HISTOGRAM_BUCKET_PATTERN = Pattern.compile("buc:(\\d+)");
+            private final Pattern minPattern = Pattern.compile("min:(-?\\d+)");
+            private final Pattern maxPattern = Pattern.compile("max:(\\d+)");
+            private final Pattern histogramBucketPattern = Pattern.compile("buc:(\\d+)");
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor) throws IOException {
-                IdTuple idTuple = parseIds(parserState, visitor, REF_ID_PATTERN);
+                IdTuple idTuple = parseIds(parserState, visitor, refIdPattern);
                 float mean = parseMean(parserState, visitor);                
                 float stdDev = parseStdDev(parserState, visitor);                
                 int min=parseMin(parserState, visitor);
@@ -163,7 +163,7 @@ public final class AsmParser {
             private int parseMin(ParserState parserState, AsmVisitor visitor) throws IOException {
                 String minLine = parserState.getNextLine();
                 visitor.visitLine(minLine);
-                Matcher meanMatcher = MIN_PATTERN.matcher(minLine);
+                Matcher meanMatcher = minPattern.matcher(minLine);
                 if(!meanMatcher.find()){
                     throw new IOException("invalid asm file: could not parse MDI min distance: "+minLine);
                 }
@@ -172,7 +172,7 @@ public final class AsmParser {
             private int parseMax(ParserState parserState, AsmVisitor visitor) throws IOException {
                 String maxLine = parserState.getNextLine();
                 visitor.visitLine(maxLine);
-                Matcher meanMatcher = MAX_PATTERN.matcher(maxLine);
+                Matcher meanMatcher = maxPattern.matcher(maxLine);
                 if(!meanMatcher.find()){
                     throw new IOException("invalid asm file: could not parse MDI max distance: "+maxLine);
                 }
@@ -182,7 +182,7 @@ public final class AsmParser {
             private List<Integer> parseHistogram(ParserState parserState, AsmVisitor visitor) throws IOException {
                 String histLine =parserState.getNextLine();
                 visitor.visitLine(histLine);
-                Matcher bucketMatcher = HISTOGRAM_BUCKET_PATTERN.matcher(histLine);
+                Matcher bucketMatcher = histogramBucketPattern.matcher(histLine);
                 if(!bucketMatcher.find()){
                     throw new IOException("invalid asm file: could not parse MDI number of histogram buckets: "+histLine);
                 }
@@ -205,8 +205,8 @@ public final class AsmParser {
         },
         FRAGMENT("AFG"){
              
-            private final Pattern IS_SINGLETON_PATTERN = Pattern.compile("cha:(\\d+)");
-            private final Pattern CLEAR_RANGE_PATTERN = Pattern.compile("clr:(\\d+,\\d+)");
+            private final Pattern isSingletonPattern = Pattern.compile("cha:(\\d+)");
+            private final Pattern clearRangePattern = Pattern.compile("clr:(\\d+,\\d+)");
             
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor)
@@ -242,7 +242,7 @@ public final class AsmParser {
                     AsmVisitor visitor) throws IOException {
                 String line = parserState.getNextLine();
                 visitor.visitLine(line);
-                Matcher matcher = CLEAR_RANGE_PATTERN.matcher(line);
+                Matcher matcher = clearRangePattern.matcher(line);
                 if(!matcher.find()){
                     throw new IOException("invalid asm file: could not parse AFG clear range: "+line);
                 }
@@ -257,7 +257,7 @@ public final class AsmParser {
                     AsmVisitor visitor) throws IOException {
                 String line = parserState.getNextLine();
                 visitor.visitLine(line);
-                Matcher matcher = IS_SINGLETON_PATTERN.matcher(line);
+                Matcher matcher = isSingletonPattern.matcher(line);
                 if(!matcher.find()){
                     throw new IOException("invalid asm file: could not parse AFG singlton status: "+line);
                 }
@@ -266,7 +266,7 @@ public final class AsmParser {
             
         },
         MATE_PAIR("AMP"){
-            private final Pattern FRG_ID_PATTERN = Pattern.compile("frg:(\\S+)");
+            private final Pattern frgIdPattern = Pattern.compile("frg:(\\S+)");
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor)
                     throws IOException {
@@ -281,7 +281,7 @@ public final class AsmParser {
                     AsmVisitor visitor) throws IOException {
                 String line = parserState.getNextLine();
                 visitor.visitLine(line);
-                Matcher matcher = FRG_ID_PATTERN.matcher(line);
+                Matcher matcher = frgIdPattern.matcher(line);
                 if(!matcher.find()){
                     throw new IOException("error reading frg id :"+ line);
                 }
@@ -397,10 +397,10 @@ public final class AsmParser {
             
         },
         READ_MAPPING("MPS"){
-            private final Pattern TYPE_PATTERN = Pattern.compile("typ:(\\S)");
-            private final Pattern READ_ID_PATTERN = Pattern.compile("mid:(\\S+)");
-            private final Pattern RANGE_PATTERN = Pattern.compile("pos:(\\d+,\\d+)");
-            private final Pattern NUM_OFFSETS_PATTERN = Pattern.compile("dln:(\\d+)");
+            private final Pattern typePattern = Pattern.compile("typ:(\\S)");
+            private final Pattern readIdPattern = Pattern.compile("mid:(\\S+)");
+            private final Pattern rangePattern = Pattern.compile("pos:(\\d+,\\d+)");
+            private final Pattern numOffsetsPattern = Pattern.compile("dln:(\\d+)");
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor)
                     throws IOException {
@@ -432,7 +432,7 @@ public final class AsmParser {
                 }
             }
             private DirectedRange parseDirectedRange(String line) throws IOException {
-                Matcher matcher = RANGE_PATTERN.matcher(line);
+                Matcher matcher = rangePattern.matcher(line);
                 if(!matcher.find()){
                     throw new IOException("error reading read-to-unitig placed range:"+ line);
                 }
@@ -442,7 +442,7 @@ public final class AsmParser {
                     AsmVisitor visitor) throws IOException {
                 String lengthLine = parserState.getNextLine();
                 visitor.visitLine(lengthLine);
-                Matcher matcher = NUM_OFFSETS_PATTERN.matcher(lengthLine);
+                Matcher matcher = numOffsetsPattern.matcher(lengthLine);
                 if(!matcher.find()){
                     throw new IOException("error reading read-to-unitig delta encoding length:"+ lengthLine);
                 }
@@ -471,7 +471,7 @@ public final class AsmParser {
                     AsmVisitor visitor) throws IOException {
                 String line = parserState.getNextLine();
                 visitor.visitLine(line);
-                Matcher matcher = READ_ID_PATTERN.matcher(line);
+                Matcher matcher = readIdPattern.matcher(line);
                 if(!matcher.find()){
                     throw new IOException("error reading read-to-unitig read id:"+ line);
                 }
@@ -481,7 +481,7 @@ public final class AsmParser {
                     AsmVisitor visitor) throws IOException {
                 String line = parserState.getNextLine();
                 visitor.visitLine(line);
-                Matcher matcher = TYPE_PATTERN.matcher(line);
+                Matcher matcher = typePattern.matcher(line);
                 if(!matcher.find()){
                     throw new IOException("error reading read-to-unitig mapping type:"+ line);
                 }
@@ -490,7 +490,7 @@ public final class AsmParser {
             
         },
         UNITIG_LINK("ULK"){
-            private final Pattern UNITIG_ID_PATTERN = Pattern.compile("ut\\d:(\\S+)");
+            private final Pattern unitigIdPattern = Pattern.compile("ut\\d:(\\S+)");
             
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor) throws IOException{
@@ -500,7 +500,7 @@ public final class AsmParser {
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor, boolean shouldParse)
                     throws IOException {
-                parseLinkMessage(parserState, visitor, shouldParse, UNITIG_ID_PATTERN);
+                parseLinkMessage(parserState, visitor, shouldParse, unitigIdPattern);
             }
             @Override
             protected void visitLink(AsmVisitor visitor, String unitig1,
@@ -516,7 +516,7 @@ public final class AsmParser {
             
         },
         CONTIG("CCO"){
-            private final Pattern DEGENERATE_PATTERN = Pattern.compile("pla:(\\S)");
+            private final Pattern degeneratePattern = Pattern.compile("pla:(\\S)");
             
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor)
@@ -594,7 +594,7 @@ public final class AsmParser {
                     AsmVisitor visitor) throws IOException {
                 String line = parserState.getNextLine();
                 visitor.visitLine(line);
-                Matcher matcher = DEGENERATE_PATTERN.matcher(line);
+                Matcher matcher = degeneratePattern.matcher(line);
                 if(!matcher.find()){
                     throw new IOException("error reading contig placement status (degenerate flag):"+ line);
                 }
@@ -605,10 +605,10 @@ public final class AsmParser {
             
         },
         UNITIG_MAPPING("UPS"){
-            private final Pattern TYPE_PATTERN = Pattern.compile("typ:(\\S)");
-            private final Pattern ID_PATTERN = Pattern.compile("lid:(\\S+)");
-            private final Pattern RANGE_PATTERN = Pattern.compile("pos:(\\d+,\\d+)");
-            private final Pattern NUM_OFFSETS_PATTERN = Pattern.compile("dln:(\\d+)");
+            private final Pattern typePattern = Pattern.compile("typ:(\\S)");
+            private final Pattern idPattern = Pattern.compile("lid:(\\S+)");
+            private final Pattern rangePattern = Pattern.compile("pos:(\\d+,\\d+)");
+            private final Pattern numOffsetsPattern = Pattern.compile("dln:(\\d+)");
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor)
                     throws IOException {
@@ -645,7 +645,7 @@ public final class AsmParser {
                 }
             }
             private DirectedRange parseDirectedRange(String line) throws IOException {
-                Matcher matcher = RANGE_PATTERN.matcher(line);
+                Matcher matcher = rangePattern.matcher(line);
                 if(!matcher.find()){
                     throw new IOException("error reading read-to-unitig placed range:"+ line);
                 }
@@ -655,7 +655,7 @@ public final class AsmParser {
                     AsmVisitor visitor) throws IOException {
                 String lengthLine = parserState.getNextLine();
                 visitor.visitLine(lengthLine);
-                Matcher matcher = NUM_OFFSETS_PATTERN.matcher(lengthLine);
+                Matcher matcher = numOffsetsPattern.matcher(lengthLine);
                 if(!matcher.find()){
                     throw new IOException("error reading read-to-unitig delta encoding length:"+ lengthLine);
                 }
@@ -683,7 +683,7 @@ public final class AsmParser {
                     AsmVisitor visitor) throws IOException {
                 String line = parserState.getNextLine();
                 visitor.visitLine(line);
-                Matcher matcher = ID_PATTERN.matcher(line);
+                Matcher matcher = idPattern.matcher(line);
                 if(!matcher.find()){
                     throw new IOException("error reading read-to-unitig read id:"+ line);
                 }
@@ -693,7 +693,7 @@ public final class AsmParser {
                     AsmVisitor visitor) throws IOException {
                 String line = parserState.getNextLine();
                 visitor.visitLine(line);
-                Matcher matcher = TYPE_PATTERN.matcher(line);
+                Matcher matcher = typePattern.matcher(line);
                 if(!matcher.find()){
                     throw new IOException("error reading unitig-to-contig mapping type:"+ line);
                 }
@@ -702,10 +702,10 @@ public final class AsmParser {
             
         },
         VARIANT("VAR"){
-            final Pattern POSITION_PATTERN = Pattern.compile("pos:(\\d+,\\d+)");
-            final Pattern ANCHOR_PATTERN = Pattern.compile("anc:(\\d+)");
-            final Pattern VARIANT_ID_PATTERN = Pattern.compile("vid:(\\d+)");
-            final Pattern PHASE_PATTERN = Pattern.compile("pid:(\\S+)");
+            final Pattern positionPattern = Pattern.compile("pos:(\\d+,\\d+)");
+            final Pattern anchorPattern = Pattern.compile("anc:(\\d+)");
+            final Pattern variantIdPattern = Pattern.compile("vid:(\\d+)");
+            final Pattern phasePattern = Pattern.compile("pid:(\\S+)");
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor)
                     throws IOException {
@@ -798,7 +798,7 @@ public final class AsmParser {
                     AsmVisitor visitor) throws IOException {
                 String line = parserState.getNextLine();
                 visitor.visitLine(line);
-                Matcher matcher = POSITION_PATTERN.matcher(line);
+                Matcher matcher = positionPattern.matcher(line);
                 if(!matcher.find()){
                     throw new IOException("error reading variant record position:"+ line);
                 }
@@ -808,7 +808,7 @@ public final class AsmParser {
                     AsmVisitor visitor) throws IOException {
                 String line = parserState.getNextLine();
                 visitor.visitLine(line);
-                Matcher matcher = ANCHOR_PATTERN.matcher(line);
+                Matcher matcher = anchorPattern.matcher(line);
                 if(!matcher.find()){
                     throw new IOException("error reading variant anchor size:"+ line);
                 }
@@ -818,7 +818,7 @@ public final class AsmParser {
                     AsmVisitor visitor) throws IOException {
                 String line = parserState.getNextLine();
                 visitor.visitLine(line);
-                Matcher matcher = VARIANT_ID_PATTERN.matcher(line);
+                Matcher matcher = variantIdPattern.matcher(line);
                 if(!matcher.find()){
                     throw new IOException("error reading variant id"+ line);
                 }
@@ -828,7 +828,7 @@ public final class AsmParser {
                     AsmVisitor visitor) throws IOException {
                 String line = parserState.getNextLine();
                 visitor.visitLine(line);
-                Matcher matcher = PHASE_PATTERN.matcher(line);
+                Matcher matcher = phasePattern.matcher(line);
                 if(!matcher.find()){
                     throw new IOException("error reading variant id"+ line);
                 }
@@ -860,7 +860,7 @@ public final class AsmParser {
             
         },
         SCAFFOLD_LINK("SLK"){
-            private final Pattern SCAFFOLD_ID_PATTERN = Pattern.compile("sc\\d:(\\S+)");
+            private final Pattern scaffoldIdPattern = Pattern.compile("sc\\d:(\\S+)");
             
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor) throws IOException{
@@ -870,7 +870,7 @@ public final class AsmParser {
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor, boolean shouldParse)
                     throws IOException {
-                parseLinkMessage(parserState, visitor, shouldParse, SCAFFOLD_ID_PATTERN);
+                parseLinkMessage(parserState, visitor, shouldParse, scaffoldIdPattern);
             }
             @Override
             protected void visitLink(AsmVisitor visitor, String id1,
@@ -890,8 +890,8 @@ public final class AsmParser {
          * on the number of contigs in the scaffold.
          */
         SCAFFOLD("SCF"){
-            final Pattern NUM_PAIRS_PATTERN = Pattern.compile("noc:(\\d+)");
-            final Pattern CONTIG_ID_PATTERN = Pattern.compile("ct\\d:(\\S+)");
+            final Pattern numPairsPattern = Pattern.compile("noc:(\\d+)");
+            final Pattern contigIdPattern = Pattern.compile("ct\\d:(\\S+)");
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor)
                     throws IOException {
@@ -957,7 +957,7 @@ public final class AsmParser {
                     AsmVisitor visitor) throws IOException {
                 String line = parserState.getNextLine();
                 visitor.visitLine(line);
-                Matcher matcher = NUM_PAIRS_PATTERN.matcher(line);
+                Matcher matcher = numPairsPattern.matcher(line);
                 if(!matcher.find()){
                     throw new IOException("error parsing number of contig pairs : "+ line);
                 }
@@ -968,7 +968,7 @@ public final class AsmParser {
                     AsmVisitor visitor) throws IOException{
                 String line = parserState.getNextLine();
                 visitor.visitLine(line);
-                Matcher matcher = CONTIG_ID_PATTERN.matcher(line);
+                Matcher matcher = contigIdPattern.matcher(line);
                 if(!matcher.find()){
                     throw new IOException("error contig id :"+ line);
                 }
@@ -1003,14 +1003,14 @@ public final class AsmParser {
         static final Pattern NUM_READS_PATTERN = Pattern.compile("n\\S\\S:(\\d+)");
         
         
-        final Pattern LINK_ORIENTATION_PATTERN = Pattern.compile("ori:(\\S)");
-        final Pattern OVERLAP_TYPE_PATTERN = Pattern.compile("ovt:(\\S)");
+        final Pattern linkOrientationPattern = Pattern.compile("ori:(\\S)");
+        final Pattern overlapTypePattern = Pattern.compile("ovt:(\\S)");
         
-        final Pattern CHIMERA_FLAG_PATTERN = Pattern.compile("ipc:(\\d)");
-        final Pattern NUM_EDGES_PATTERN = Pattern.compile("num:(\\d+)");
+        final Pattern chimeraFlagPattern = Pattern.compile("ipc:(\\d)");
+        final Pattern numEdgesPattern = Pattern.compile("num:(\\d+)");
         
-        final Pattern LINK_STATUS_PATTERN = Pattern.compile("sta:(\\S)");
-        final Pattern JUMP_LIST_PATTERN = Pattern.compile("(\\S+),(\\S+),(\\S)");
+        final Pattern linkStatusPattern = Pattern.compile("sta:(\\S)");
+        final Pattern jumpListPattern = Pattern.compile("(\\S+),(\\S+),(\\S)");
         
         
         private static final String END_MESSAGE = "}";
@@ -1203,7 +1203,7 @@ public final class AsmParser {
             for(int i=0; i<expectedNumberOfMatePairEvidenceRecords; i++){
                 String line = parserState.getNextLine();
                 visitor.visitLine(line);
-                Matcher matcher = JUMP_LIST_PATTERN.matcher(line);
+                Matcher matcher = jumpListPattern.matcher(line);
                 if(!matcher.find()){
                     throw new IOException("invalid jump list record: "+ line);
                 }
@@ -1216,7 +1216,7 @@ public final class AsmParser {
                 AsmVisitor visitor) throws IOException {
             String line = parserState.getNextLine();
             visitor.visitLine(line); 
-            Matcher matcher = LINK_STATUS_PATTERN.matcher(line);
+            Matcher matcher = linkStatusPattern.matcher(line);
             if(!matcher.find()){
                 throw new IOException("error overlap status"+ line);
             }
@@ -1227,7 +1227,7 @@ public final class AsmParser {
                 AsmVisitor visitor) throws IOException {
             String line = parserState.getNextLine();
             visitor.visitLine(line); 
-            Matcher matcher = NUM_EDGES_PATTERN.matcher(line);
+            Matcher matcher = numEdgesPattern.matcher(line);
             if(!matcher.find()){
                 throw new IOException("error reading # of edges"+ line);
             }
@@ -1267,7 +1267,7 @@ public final class AsmParser {
                 AsmVisitor visitor) throws IOException {
             String line = parserState.getNextLine();
             visitor.visitLine(line);
-            Matcher matcher = CHIMERA_FLAG_PATTERN.matcher(line);
+            Matcher matcher = chimeraFlagPattern.matcher(line);
             if(!matcher.find()){
                 throw new IOException("error reading is possible chimera message"+ line);
             }
@@ -1279,7 +1279,7 @@ public final class AsmParser {
                 AsmVisitor visitor) throws IOException {
             String line = parserState.getNextLine();
             visitor.visitLine(line);
-            Matcher matcher = LINK_ORIENTATION_PATTERN.matcher(line);
+            Matcher matcher = linkOrientationPattern.matcher(line);
             if(!matcher.find()){
                 throw new IOException("error reading link orientation message"+ line);
             }
@@ -1290,7 +1290,7 @@ public final class AsmParser {
                 AsmVisitor visitor) throws IOException {
             String line = parserState.getNextLine();
             visitor.visitLine(line);
-            Matcher matcher = OVERLAP_TYPE_PATTERN.matcher(line);
+            Matcher matcher = overlapTypePattern.matcher(line);
             if(!matcher.find()){
                 throw new IOException("error reading overlap type message"+ line);
             }
