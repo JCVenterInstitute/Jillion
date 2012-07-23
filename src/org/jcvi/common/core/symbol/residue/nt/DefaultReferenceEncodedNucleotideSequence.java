@@ -294,8 +294,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 			int size, ValueSizeStrategy sizeStrategy) {
 		int from = numSnpsSizeStrategy.getNumberOfBytesPerValue()+2+size*sizeStrategy.getNumberOfBytesPerValue();
 		byte[] snpSubArray = Arrays.copyOfRange(encodedSnpsInfo, from, encodedSnpsInfo.length);
-		BitSet bits = IOUtil.toBitSet(snpSubArray);
-		return bits;
+		return IOUtil.toBitSet(snpSubArray);
 	}
 
 	private Nucleotide getSnpValueFrom(BitSet bits, int offset) {

@@ -322,8 +322,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		int deleteLength = (maxEnd-start+1)*NUM_BITS_PER_VALUE;
 		int bitOffsetOfEnd = bitOffsetOfStart+deleteLength;
 		
-		Range bitRange = Range.create(bitOffsetOfStart,bitOffsetOfEnd);
-		return bitRange;
+		return Range.create(bitOffsetOfStart,bitOffsetOfEnd);
 	}
 	private void assertStartCoordinateIsValid(int start) {
 		if(start<0){
@@ -684,8 +683,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		int bit2 =bits.get(bitStartOffset+1)?1:0; 
 		int bit1 =bits.get(bitStartOffset+2)?1:0; 
 		int bit0 =bits.get(bitStartOffset+3)?1:0;
-		int ordinal = (bit3 <<3 ) | (bit2 <<2 ) | (bit1 <<1 ) | bit0;
-		return (byte) ordinal;
+		return (byte)((bit3 <<3 ) | (bit2 <<2 ) | (bit1 <<1 ) | bit0);
 	}
 	private byte getNucleotideOrdinalFor(int bitStartOffset) {
 		return getNucleotideOrdinalFor(bits, bitStartOffset);

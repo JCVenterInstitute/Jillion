@@ -210,8 +210,7 @@ public final class ConsedUtil {
                     read.getDirection(), read.getClearRange(), read.getPhdInfo(),
                     read.getUngappedFullLength());
         }
-        AceContig splitContig = builder.build();
-        return splitContig;
+        return builder.build();
     }
     /**
      * Checks to see if the given {@link ConsensusAceTag} is denotes

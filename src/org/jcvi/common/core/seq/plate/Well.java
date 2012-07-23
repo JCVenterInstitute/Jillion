@@ -366,8 +366,7 @@ public final class Well implements Comparable<Well>{
                 return type.getNumberOfWellsPerQuadrant()*quadrantIndex+offsetIntoQuadrant;
             }
             private int computeNumberOfFilledRows(PlateFormat type, int row) {
-                int fullRows = row>1 ? (row/2) * type.getNumberOfColumns()/2 : 0;
-                return fullRows;
+                return row>1 ? (row/2) * type.getNumberOfColumns()/2 : 0;
             }
             private int computeQuadrantIndex(int column, int row) {
                 final int block;

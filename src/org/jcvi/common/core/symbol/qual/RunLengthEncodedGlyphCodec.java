@@ -89,15 +89,13 @@ public class RunLengthEncodedGlyphCodec implements QualitySymbolCodec{
         buf.getInt();
         byte guard = buf.get();
         final List<RunLength<PhredQuality>> list = decodeUpTo(buf, guard, index);
-        final PhredQuality result = decode(list, index);
-        return result;
+        return decode(list, index);
     }
 
     @Override
     public int decodedLengthOf(byte[] encodedGlyphs) {
         ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
-        int size= buf.getInt();
-        return size;
+        return buf.getInt();
     }
 
     @Override

@@ -79,8 +79,7 @@ public final class CommandUtils {
     {
         try
         {
-            final int result = proc.waitFor();
-            return result;
+            return proc.waitFor();
         }catch (final InterruptedException e){
 
             //We've been interrupted by another local thread.  This is handled

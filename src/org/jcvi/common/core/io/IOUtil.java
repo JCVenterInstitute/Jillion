@@ -548,8 +548,7 @@ public final class IOUtil {
             paddingString.append('0');
         }
         paddingString.append(hexString);
-        String asHex = paddingString.toString();
-        return asHex;
+        return paddingString.toString();
     }
     
     public static InputStream createInputStreamFromFile(File file,Range range)throws IOException {
@@ -564,8 +563,7 @@ public final class IOUtil {
                 throw new IOException("could not read any bytes from file");
             }
             
-            final ByteArrayInputStream inputStream = new ByteArrayInputStream(buf.array());
-            return inputStream;
+            return new ByteArrayInputStream(buf.array());
         
        }finally{
            IOUtil.closeAndIgnoreErrors(fileInputStream,fastaFileChannel);

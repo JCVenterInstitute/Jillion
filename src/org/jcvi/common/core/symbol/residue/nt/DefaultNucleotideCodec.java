@@ -141,15 +141,13 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
         if(encodedIndex >= encodedGlyphs.length){
             throw new ArrayIndexOutOfBoundsException("index "+index + " corresponds to encodedIndex "+encodedIndex + "  encodedglyph length is "+encodedGlyphs.length);
         }
-        final byte getByteForGlyph = encodedGlyphs[encodedIndex];
-        return getByteForGlyph;
+        return  encodedGlyphs[encodedIndex];
     }
     private int computeEncodedIndexForGlyph(int index) {
         if(index<0){
             throw new ArrayIndexOutOfBoundsException("index can not be negative: "+index);
         }
-        final int encodedIndexForGlyph = HEADER_LENGTH+index/2;
-        return encodedIndexForGlyph;
+        return HEADER_LENGTH+index/2;
     }
 
     @Override
@@ -217,8 +215,7 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
         }
     }
     private int computeEncodedSize(final int size) {
-        int encodedSize = HEADER_LENGTH + size/2 + (isEven(size)?0:1);
-        return encodedSize;
+        return HEADER_LENGTH + size/2 + (isEven(size)?0:1);
     }
     private boolean isEven(final int size) {
         return size%2==0;
