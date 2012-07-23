@@ -7,13 +7,16 @@ import org.jcvi.common.core.symbol.residue.Residue;
 
 public final class PairwiseSequenceAlignmentWrapper<R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>> implements PairwiseSequenceAlignment<R, S>{
 	
+	
+	private final A delegate;
+	private final float score;
+	
+	
 	public static <R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>> 
 	PairwiseSequenceAlignment<R, S> wrap(A alignment, float score){
 		return new PairwiseSequenceAlignmentWrapper<R,S,A>(alignment, score);
 	}
 	
-	private final A delegate;
-	private final float score;
 	
 	
 	private PairwiseSequenceAlignmentWrapper(

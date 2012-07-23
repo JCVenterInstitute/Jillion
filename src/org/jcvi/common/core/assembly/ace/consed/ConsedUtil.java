@@ -35,7 +35,6 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.Range.CoordinateSystem;
@@ -65,9 +64,7 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
  */
 public final class ConsedUtil {
 	
-	private ConsedUtil(){
-		//private constructor
-	}
+	
     /**
      * 
      */
@@ -85,6 +82,9 @@ public final class ConsedUtil {
     
     private static final Pattern ACE_CONTIG_ID_PATTERN = Pattern.compile("(\\S+)_(\\d+)_\\d+");
     
+    private ConsedUtil(){
+		//private constructor
+	}
     /**
      * Convert a string of basecalls with '*' to 
      * represent gaps (which is what consed uses) with '-' instead. 

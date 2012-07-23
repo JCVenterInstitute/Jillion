@@ -46,9 +46,7 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
  *
  */
 public final class AceFileUtil {
-	private AceFileUtil(){
-		//private constructor.
-	}
+	
     /**
      * This is the default value in consed that is used to distinguish
      * between high and low quality basecalls.  In consed
@@ -77,6 +75,10 @@ public final class AceFileUtil {
     	CHROMAT_DATE_TIME_FORMATTER.setLenient(false);
     	TAG_DATE_TIME_FORMATTER.setLenient(false);
     }
+    
+    private AceFileUtil(){
+		//private constructor.
+	}
     /**
      * Parse the date of a consed formatted phd date time stamp.
      * @param text the timestamp as text

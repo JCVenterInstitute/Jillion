@@ -36,6 +36,10 @@ import org.jcvi.common.core.util.Builder;
 public final class BlastScaffoldBuilder implements BlastVisitor, Builder<Scaffold>{
     
     
+    
+    private final ScaffoldBuilder scaffoldBuilder;
+    private final String subjectId;
+
     public static Scaffold createFromTabularBlastOutput(File tabularBlast, String referenceId) throws IOException{
         BlastScaffoldBuilder builder = new BlastScaffoldBuilder(referenceId);
         TabularBlastParser.parse(tabularBlast, builder);
@@ -46,9 +50,7 @@ public final class BlastScaffoldBuilder implements BlastVisitor, Builder<Scaffol
         XmlBlastParser.parse(xmlBlast, builder);
         return builder.build();
     }
-    private final ScaffoldBuilder scaffoldBuilder;
-    private final String subjectId;
-
+    
     private BlastScaffoldBuilder(String subjectId) {
         this.subjectId = subjectId;
         this.scaffoldBuilder = DefaultScaffold.createBuilder(subjectId);

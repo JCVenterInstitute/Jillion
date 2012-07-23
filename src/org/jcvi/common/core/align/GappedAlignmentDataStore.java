@@ -42,12 +42,14 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  */
 public final class GappedAlignmentDataStore implements NucleotideDataStore{
 
+	 private final NucleotideDataStore delegate;
+	 
     public static GappedAlignmentDataStore createFromAlnFile(File alnFile) throws IOException{
         GappedAlignmentDataStoreBuilder builder = new GappedAlignmentDataStoreBuilder();
         AlnParser.parse(alnFile, builder);
         return builder.build();
     }
-    private final NucleotideDataStore delegate;
+   
 
     private GappedAlignmentDataStore(NucleotideDataStore delegate) {
         this.delegate = delegate;

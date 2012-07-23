@@ -104,6 +104,28 @@ public abstract class Range implements Rangeable,Iterable<Long>
 	 */
 	private static final long UNSIGNED_INT_MAX = 4294967295L;
 	
+    
+
+    /**
+     * Regular expression in the form (left) .. (right).
+     */
+    private static Pattern DOT_PATTERN = Pattern.compile("(\\d+)\\s*\\.\\.\\s*(\\d+)");
+    /**
+     * Regular expression in the form (left) - (right).
+     */
+    private static Pattern DASH_PATTERN = Pattern.compile("(\\d+)\\s*-\\s*(\\d+)");
+    /**
+     * Regular expression in the form (left) , (right).
+     */
+    private static Pattern COMMA_PATTERN = Pattern.compile("(\\d+)\\s*,\\s*(\\d+)");
+    /**
+     * Cache of previously built ranges.  
+     * This cache uses  {@link SoftReference}s
+     * so memory can be reclaimed if needed.
+     */
+    private static final Map<String, Range> CACHE;
+    
+    
     /**
      * {@code Comparators} is an enum of common Range
      * {@link Comparator} implementations.
@@ -356,25 +378,7 @@ public abstract class Range implements Rangeable,Iterable<Long>
         }
 
     }
-
-    /**
-     * Regular expression in the form (left) .. (right).
-     */
-    private static Pattern DOT_PATTERN = Pattern.compile("(\\d+)\\s*\\.\\.\\s*(\\d+)");
-    /**
-     * Regular expression in the form (left) - (right).
-     */
-    private static Pattern DASH_PATTERN = Pattern.compile("(\\d+)\\s*-\\s*(\\d+)");
-    /**
-     * Regular expression in the form (left) , (right).
-     */
-    private static Pattern COMMA_PATTERN = Pattern.compile("(\\d+)\\s*,\\s*(\\d+)");
-    /**
-     * Cache of previously built ranges.  
-     * This cache uses  {@link SoftReference}s
-     * so memory can be reclaimed if needed.
-     */
-    private static final Map<String, Range> CACHE;
+    
     /**
      * Initialize cache with a soft reference cache that will grow as needed.
      */
