@@ -67,6 +67,11 @@ public interface Scaffold {
      * be empty if there are no contigs in this scaffold.
      */
     Set<PlacedContig> getPlacedContigs();
+    /**
+     * Get the {@link CoverageMap} of the {@link PlacedContig}s
+     * in this scaffold.
+     * @return a {@link CoverageMap}; never null.
+     */
     CoverageMap<PlacedContig> getContigCoverageMap();
     /**
      * Get the number of contigs in this scaffold.

@@ -28,7 +28,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.assembly.DefaultReadInfo;
+import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -242,7 +242,7 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
         public AssembledRead build() {
             assertEquals("ungapped valid sequence is wrong length",validRange.getLength(),
             		seq.getUngappedLength());
-            ReadInfo readInfo = new DefaultReadInfo(validRange, fullLength);
+            ReadInfo readInfo = new ReadInfo(validRange, fullLength);
             expect(mock.getReadInfo()).andStubReturn(readInfo);
             expect(mock.getDirection()).andStubReturn(dir);
             return mock;

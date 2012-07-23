@@ -25,7 +25,6 @@ package org.jcvi.common.core.assembly.clc.cas.read;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.DefaultReadInfo;
 import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
@@ -33,10 +32,8 @@ import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 final class DefaultCasPlacedRead implements CasPlacedRead{
 
     private final Read<ReferenceMappedNucleotideSequence> read;
-    private final Range validRange;
     private final long startOffset;
     private final Direction dir;
-    private final int ungappedFullLength;
     private final ReadInfo readInfo;
     public DefaultCasPlacedRead(Read<ReferenceMappedNucleotideSequence> read, long startOffset,Range validRange, 
             Direction dir, int ungappedFullLength){
@@ -50,11 +47,9 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
             throw new NullPointerException("direction can not be null");
         }
         this.read= read;
-        this.validRange = validRange;
         this.startOffset = startOffset;
         this.dir= dir;
-        this.ungappedFullLength = ungappedFullLength;
-        this.readInfo = new DefaultReadInfo(validRange, ungappedFullLength);
+        this.readInfo = new ReadInfo(validRange, ungappedFullLength);
     }
     
     
@@ -66,7 +61,7 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
 
 	@Override
     public int getUngappedFullLength() {
-        return ungappedFullLength;
+        return readInfo.getUngappedFullLength();
     }
 
 
@@ -93,7 +88,7 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
     @Override
     public String toString() {
         return "DefaultCasPlacedRead [startOffset=" + startOffset
-                + ", validRange=" + validRange + ", dir=" + dir + ", read="
+                + ", readInfo=" + readInfo + ", dir=" + dir + ", read="
                 + read + "]";
     }
     @Override
@@ -121,39 +116,43 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
         return dir;
     }
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((read == null) ? 0 : read.hashCode());
-        result = prime * result + (int) (startOffset ^ (startOffset >>> 32));
-        return result;
-    }
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result +  dir.hashCode();
+		result = prime * result +  read.hashCode();
+		result = prime * result
+				+ readInfo.hashCode();
+		result = prime * result + (int) (startOffset ^ (startOffset >>> 32));
+		return result;
+	}
+    
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj){
-            return true;
-        }
-        if (obj == null){
-            return false;
-        }
-        if (!(obj instanceof DefaultCasPlacedRead)){
-            return false;            
-        }
-        DefaultCasPlacedRead other = (DefaultCasPlacedRead) obj;
-        if (!read.equals(other.read)){
-            return false;
-        }
-        if (startOffset != other.startOffset){
-            return false;
-        }
-        if (dir != other.dir){
-            return false;
-        }
-        if (!validRange.equals(other.validRange)){
-            return false;
-        }
-        return true;
-    }
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof DefaultCasPlacedRead)) {
+			return false;
+		}
+		DefaultCasPlacedRead other = (DefaultCasPlacedRead) obj;
+		if (dir != other.dir) {
+			return false;
+		}
+		if (!read.equals(other.read)) {
+			return false;
+		}
+		if (!readInfo.equals(other.readInfo)) {
+			return false;
+		}
+		if (startOffset != other.startOffset) {
+			return false;
+		}
+		return true;
+	}
 
 
     /**
