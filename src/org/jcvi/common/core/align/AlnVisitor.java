@@ -28,6 +28,18 @@ import org.jcvi.common.core.io.TextFileVisitor;
  * interface for visiting clustal .aln
  * multiple sequence alignment formatted
  * files.
+ * <p/>
+ * Usually .aln files group an alignment
+     * into blocks of 60 residues and all the
+     * reads that align to those 60 residues will be listed
+     * consecutively.  (If the reads are long enough,
+     * if it likely that they will also be listed in the next
+     * group of 60 residues with alignments for the next 60 residues.)
+     * After this method is called, there will be several consecutive calls
+     * to {@link #visitAlignedSegment(String, String)}, one for each aligned 
+     * read in the group. After the aligned Segments, a single call
+     * to {@link #visitConservationInfo(List)} will describe the the 
+     * conservation of this group followd by {@link #visitEndGroup()}.
  * @author dkatzel
  *
  *
@@ -64,11 +76,35 @@ public interface AlnVisitor extends TextFileVisitor{
         NOT_CONSERVED
         ;
     }
+    /**
+     * A new group of aligned reads is about to be
+     * visited.  
+     */
     void visitBeginGroup();
-    
+    /**
+     * End of the current  group of aligned reads is about to be
+     * visited.  If there are more groups, then the next method to be
+     * visited will be {@link #visitBeginGroup()}
+     * or {@link #visitEndOfFile()} if the file has been
+     * completely parsed.
+     */
     void visitEndGroup();
-    
+    /**
+     * Visit a single read in the current aligned group.
+     * @param id the id of this read.
+     * @param gappedAlignment the gapped alignment of this read
+     * in this read group.  Usually groups are only about 60 residues long
+     * so if this read is longer than that, then only a partial alignment
+     * will be presented. (Longer reads will span multiple groups).
+     */
     void visitAlignedSegment(String id, String gappedAlignment);
-    
+    /**
+     * Visit a description of the conservation of the residues
+     * in the current group.
+     * @param conservationInfos a List of {@link ConservationInfo}; 
+     * will never be null.
+     * there will be one record in the list for each residue in the group.
+     * the ith record in the list corresponds to the ith residue in the group.
+     */
     void visitConservationInfo(List<ConservationInfo> conservationInfos);
 }

@@ -33,6 +33,10 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
 
 /**
+ * {@code AlnParser} is a utility class that can 
+ * parse .aln alignment files like those
+ * created by clustal.
+ * 
  * @author dkatzel
  *
  *
@@ -48,6 +52,18 @@ public final class AlnParser {
     private static final String REGEX = "^([^*\\s]+)\\s+([\\-ACGTNVHDBWMRSYK]+)";
     private static final Pattern ALIGNMENT_PATTERN = Pattern.compile(REGEX);
     private static final Pattern CONSERVATION_PATTERN = Pattern.compile("\\s+([-:\\. \\*]+)$");
+    
+    /**
+     * Parse the given aln file and call the appropriate
+     * visitXXX method call backs on the given {@link AlnVisitor}.
+     * @param alnFile the aln file to parse; this file
+     * can not be null and must exist. 
+     * @param visitor an instance of {@link AlnVisitor};
+     * can not be null.
+     * @throws IOException if there is a problem
+     * parsing the .aln file.
+     * @throws NullPointerException if any input parameters are null.
+     */
     public static void parse(File alnFile, AlnVisitor visitor) throws IOException{
         InputStream in = null;
         in = new FileInputStream(alnFile);
@@ -57,6 +73,20 @@ public final class AlnParser {
             IOUtil.closeAndIgnoreErrors(in);
         }
     }
+    /**
+     * Parse the given {@link InputStream} as an aln file and call the appropriate
+     * visitXXX method call backs on the given {@link AlnVisitor}.Please note
+     * that this method might leave the inputstream open and so it 
+     * is the client's responsibility to close the stream when
+     * done parsing.
+     * @param alnStream an {@link InputStream} containing
+     *  aln formatted data to be parsed; can not be null.
+     * @param visitor an instance of {@link AlnVisitor};
+     * can not be null.
+     * @throws IOException if there is a problem
+     * parsing the .aln data.
+     * @throws NullPointerException if any input parameters are null.
+     */
     public static void parse(InputStream alnStream, AlnVisitor visitor) throws IOException{
         TextLineParser parser = new TextLineParser(alnStream);
         boolean inGroup=false;
