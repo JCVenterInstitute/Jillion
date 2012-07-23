@@ -16,13 +16,13 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+/*
+ * Created on Jun 26, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.common.core.seq.read.trace.archive2;
 
-package org.jcvi.common.core.seq.read.trace;
-
-import org.jcvi.common.core.seq.read.trace.archive2.AllTraceArchive2UnitTests;
-import org.jcvi.common.core.seq.read.trace.frg.AllFrgUnitTests;
-import org.jcvi.common.core.seq.read.trace.pyro.All454UnitTests;
-import org.jcvi.common.core.seq.read.trace.sanger.AllSangerTraceUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -30,17 +30,11 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-    	TestDefaultTraceFileNameIdGeneratorStripExtension.class,
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
+        TestDefaultTraceArchiveRecord.class,
+        TestDefaultTraceArchiveRecordBuilder.class,
 
-        All454UnitTests.class,
-        AllSangerTraceUnitTests.class,
-        AllFrgUnitTests.class  ,
-        AllTraceArchive2UnitTests.class
-   
     }
     )
-public class AllTraceUnitTests {
+public class AllTraceArchive2UnitTests {
 
 }
