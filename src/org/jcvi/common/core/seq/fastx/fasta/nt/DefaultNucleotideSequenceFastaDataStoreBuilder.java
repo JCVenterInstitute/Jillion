@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code DefaultNucleotideFastaDataStoreBuilder} is a {@link NucleotideSequenceFastaDataStoreBuilder}
@@ -37,7 +37,7 @@ public final class DefaultNucleotideSequenceFastaDataStoreBuilder implements Nuc
 	private static final class NucleotideFastaDataStoreImpl implements NucleotideSequenceFastaDataStore{
 		private final DataStore<NucleotideSequenceFastaRecord> delegate;
 		private NucleotideFastaDataStoreImpl(Map<String, NucleotideSequenceFastaRecord> map){
-			delegate = new SimpleDataStore<NucleotideSequenceFastaRecord>(map);
+			delegate = MapDataStoreAdapter.adapt(map);
 		}
 		@Override
 		public CloseableIterator<String> idIterator() throws DataStoreException {

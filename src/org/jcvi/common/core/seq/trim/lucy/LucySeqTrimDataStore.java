@@ -30,7 +30,7 @@ import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStoreAdatper;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
@@ -73,7 +73,7 @@ public class LucySeqTrimDataStore implements TrimPointsDataStore {
             }
         };
         FastaFileParser.parse(lucySeqFile, visitor);
-        datastore = TrimDataStoreAdatper.adapt(new SimpleDataStore<Range>(map));
+        datastore = TrimDataStoreAdatper.adapt(MapDataStoreAdapter.adapt(map));
     }
     /**
      * {@inheritDoc}

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code DefaultQualityFastaDataStoreBuilder} is a {@link QualitySequenceFastaDataStoreBuilder}
@@ -37,7 +37,7 @@ public class DefaultQualityFastaDataStoreBuilder implements QualitySequenceFasta
 	private static class DefaultQualityFastaDataStoreImpl implements QualitySequenceFastaDataStore{
 		private final DataStore<QualitySequenceFastaRecord> delegate;
 		public DefaultQualityFastaDataStoreImpl(Map<String, QualitySequenceFastaRecord> map){
-			delegate = new SimpleDataStore<QualitySequenceFastaRecord>(map);
+			delegate = MapDataStoreAdapter.adapt(map);
 		}
 		@Override
 		public CloseableIterator<String> idIterator() throws DataStoreException {

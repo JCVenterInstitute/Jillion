@@ -29,7 +29,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
 /**
@@ -76,7 +76,7 @@ public class DefaultTrimFileDataStore implements TrimPointsDataStore, TrimFileVi
     */
     @Override
     public synchronized void visitEndOfFile() {
-        delegate = new SimpleDataStore<Range>(map);
+        delegate = MapDataStoreAdapter.adapt(map);
         map.clear();
     }
 

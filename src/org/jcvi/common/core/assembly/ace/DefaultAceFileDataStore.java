@@ -36,7 +36,7 @@ import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
-import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 /**
@@ -258,7 +258,7 @@ public final class DefaultAceFileDataStore implements AceFileContigDataStore{
         */
         @Override
         public AceFileContigDataStore build() {
-        	AceFileContigDataStore datastore= new DefaultAceFileDataStore(new SimpleDataStore<AceContig>(contigMap),
+        	AceFileContigDataStore datastore= new DefaultAceFileDataStore(MapDataStoreAdapter.adapt(contigMap),
         			totalNumberOfReads,
         			wholeAssemblyTags,
         			consensusTags,

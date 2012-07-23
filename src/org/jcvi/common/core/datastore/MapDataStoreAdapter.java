@@ -26,15 +26,45 @@ package org.jcvi.common.core.datastore;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
-
-public class SimpleDataStore<T> extends AbstractDataStore<T> {
+/**
+ * {@code MapDataStoreAdapter} is a utility class
+ * that can adapt a {@code Map<String,T>} into a {@code DataStore<T>}.
+ * 
+ * @author dkatzel
+ *
+ * @param <T> the type of values returned by the datastore.
+ */
+public final class MapDataStoreAdapter<T> extends AbstractDataStore<T> {
 
     private final Map<String, T> map = new LinkedHashMap<String, T>();
-    public SimpleDataStore(Map<String, T> map){
-        this.map.putAll(map);
+    /**
+     * Create a new DataStore instance using the data of the given map.
+     * the entries in the given map are copied into a new private map so any future
+     * manipulations to the input map will not affect the returned DataStore.
+     * @param map the map to adapt into a datastore.
+     * @return a new DataStore instance.
+     * @throws NullPointerException if map is null, or if any keys or values in the map
+     * are null.
+     */
+    public static <T> DataStore<T> adapt(Map<String, T> map){
+    	return new MapDataStoreAdapter<T>(map);
+    }
+    private MapDataStoreAdapter(Map<String, T> map){
+    	for(Entry<String, T> entry : map.entrySet()){
+    		String key = entry.getKey();
+    		if(key==null){
+    			throw new NullPointerException("null keys not allowed");
+    		}
+    		T value = entry.getValue();
+    		if(value==null){
+    			throw new NullPointerException("null values not allowed");
+    		}
+    		this.map.put(key, value);
+    	}
     }
     @Override
     public synchronized boolean contains(String id) throws DataStoreException {

@@ -26,7 +26,19 @@ package org.jcvi.common.core.datastore;
 import java.io.IOException;
 
 import org.jcvi.common.core.util.iter.CloseableIterator;
-
+/**
+ * {@code AbstractDataStore} is an abstract implementation
+ * of {@link DataStore} that handles closing
+ * the datastore for its concrete subclasses.
+ * Any subclass of {@link AbstractDataStore}
+ * needs have its overriding methods marked as synchronized
+ * and call to 
+ * super in order to check if the datastore is already
+ * closed.
+ * @author dkatzel
+ *
+ * @param <T>
+ */
 public abstract class  AbstractDataStore<T> implements DataStore<T>{
     private boolean isClosed;
     

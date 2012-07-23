@@ -31,7 +31,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
@@ -56,7 +56,7 @@ public class LucyDebugFileDataStore implements LucyDebugTrimRecordDataStore{
                 LucyDebugTrimRecord record = createRecordFrom(line);
                 recordMap.put(record.getId(), record);
             }
-            datastore = new SimpleDataStore<LucyDebugTrimRecord>(recordMap);
+            datastore = MapDataStoreAdapter.adapt(recordMap);
         }finally{
             reader.close();
         }

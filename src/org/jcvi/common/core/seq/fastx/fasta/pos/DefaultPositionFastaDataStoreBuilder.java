@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.util.iter.CloseableIterator;
@@ -39,7 +39,7 @@ public final class DefaultPositionFastaDataStoreBuilder implements PositionFasta
 	private static final class PositionFastaDataStoreImpl implements PositionFastaDataStore{
 		private final DataStore<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> delegate;
 		private PositionFastaDataStoreImpl(Map<String, PositionSequenceFastaRecord<Sequence<ShortSymbol>>> map){
-			delegate = new SimpleDataStore<PositionSequenceFastaRecord<Sequence<ShortSymbol>>>(map);
+			delegate = MapDataStoreAdapter.adapt(map);
 		}
 		@Override
 		public CloseableIterator<String> idIterator() throws DataStoreException {

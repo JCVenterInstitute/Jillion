@@ -30,7 +30,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -45,7 +45,7 @@ public class TestSimpleDataStore {
     private DataStore<Integer> sut;
     @Before
     public void setup(){
-        sut = new SimpleDataStore<Integer>(MAP);
+        sut = MapDataStoreAdapter.adapt(MAP);
     }
     
     @Test

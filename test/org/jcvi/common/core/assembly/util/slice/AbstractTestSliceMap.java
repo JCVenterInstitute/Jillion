@@ -26,7 +26,7 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.slice.SliceMap;
-import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
@@ -57,7 +57,7 @@ public abstract class AbstractTestSliceMap {
         qualities.put("read_2", new EncodedQualitySequence(CODEC, 
                 PhredQuality.valueOf(new byte[]{15,16,17,18})));
         qualityDataStore = new QualityDataStoreAdapter(
-                            new SimpleDataStore<QualitySequence>(qualities));
+        		MapDataStoreAdapter.adapt(qualities));
     }
     @Test
     public void allSlicesSameDepth(){
