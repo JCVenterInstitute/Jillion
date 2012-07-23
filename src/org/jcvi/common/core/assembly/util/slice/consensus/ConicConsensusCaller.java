@@ -48,7 +48,19 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
  *
  */
 public class ConicConsensusCaller extends AbstractChurchillWatermanConsensusCaller{
+    
+	/**
+	 * The lower limit (in radians) of the angle
+	 * that is allowed to be considered towards the consensus.
+	 */
+    private final double lowerlimit;
     /**
+	 * The upper limit (in radians) of the angle
+	 * that is allowed to be considered towards the consensus.
+	 */
+    private final double upperlimit;
+    
+	/**
      * Under the conic model, all slices are ambiguous 
      * at 45 degree angle.
      */
@@ -60,7 +72,6 @@ public class ConicConsensusCaller extends AbstractChurchillWatermanConsensusCall
      */
     public static final double DEFAULT_CONIC_AMBIGUITY_ANGLE = 36.8698977D;
 
-    private final double lowerlimit, upperlimit;
     /**
      * Create a new instance using the default amiguity angle.
      * @param highQualityThreshold
@@ -130,7 +141,7 @@ public class ConicConsensusCaller extends AbstractChurchillWatermanConsensusCall
 
     @Override
     protected Nucleotide getConsensus(
-            ConsensusProbabilities normalizedErrorProbabilityStruct, Slice slice) {
+            ConsensusProbabilities normalizedErrorProbabilityStruct, Slice<?> slice) {
        
         Map<Nucleotide, Integer> qualityValueSumMap = generateQualityValueSumMap(slice);        
         MaxQualityStruct maxQualityStruct = createMaxQualityStruct(qualityValueSumMap);

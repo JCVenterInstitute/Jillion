@@ -43,7 +43,10 @@ import org.jcvi.common.core.util.iter.ArrayIterator;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
 public class DefaultSliceMap extends AbstractSliceMap{
-
+	
+	private final IdedSlice[] slices;
+    protected PhredQuality defaultQuality;
+	    
     public static <R extends AssembledRead, C extends Contig<R>> SliceMap create(C contig, QualityDataStore qualityDataStore,
                         QualityValueStrategy qualityValueStrategy) throws DataStoreException{
         return new DefaultSliceMap(contig, qualityDataStore, qualityValueStrategy);
@@ -53,8 +56,7 @@ public class DefaultSliceMap extends AbstractSliceMap{
         return new DefaultSliceMap(coverageMap, qualityDataStore, qualityValueStrategy);
     }
 
-    private final IdedSlice[] slices;
-    protected PhredQuality defaultQuality;
+   
     
     
     private DefaultSliceMap(CoverageMap<? extends AssembledRead> coverageMap, 

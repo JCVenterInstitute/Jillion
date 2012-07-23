@@ -35,7 +35,9 @@ import java.util.TreeMap;
  */
 public final class MapValueComparator<K extends Comparable<? super K>,V> implements Comparator<K> {
 
-   
+	private final Map<K, V> map;
+	private final boolean ascending;
+	private final Comparator<V> valueComparator;
     
     /**
      * Create an unmodifiable {@link SortedMap} that is sorted by value in ascending 
@@ -113,9 +115,7 @@ public final class MapValueComparator<K extends Comparable<? super K>,V> impleme
     private static <K extends Comparable<? super K>,V> MapValueComparator<K,V> create(Map<K, V> map, Comparator<V> comparator,boolean ascending){
         return new MapValueComparator<K, V>(map,comparator,ascending);
     }
-    private final Map<K, V> map;
-    private final boolean ascending;
-    private final Comparator<V> valueComparator;
+   
     private MapValueComparator(Map<K, V> map,Comparator<V> valueComparator,boolean ascending) {
         if(map ==null){
             throw new NullPointerException("map can not be null");

@@ -29,13 +29,17 @@ import org.jcvi.common.core.io.IOUtil;
  */
 public final class AbiUtil {
 
-	private AbiUtil(){}
+
 	/**
 	 * The magic number of an Ab1 file.
 	 */
 	private static final byte[] MAGIC_NUMBER = new byte[]{(char)'A',(char)'B',(char)'I',(char)'F'};
     
 	public static final int HEADER_SIZE = 30;
+	
+	private AbiUtil(){
+		//can not instantiate
+	}
 	public static String parseASCIIStringFrom(byte[] data){
 		return new String(data,IOUtil.UTF_8);
 	}

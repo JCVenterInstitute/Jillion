@@ -34,6 +34,9 @@ import java.util.TreeMap;
 public final class AnsiFont implements AnsiAttribute{
     
     private static final Map<Integer, AnsiFont> FONTS;
+    
+    private final EscapeCode escapeCode;
+    
     static{
         FONTS = new TreeMap<Integer, AnsiFont>();
         for(int i=0; i<10; i++){
@@ -61,7 +64,7 @@ public final class AnsiFont implements AnsiAttribute{
         }
         return FONTS.get(Integer.valueOf(n));
     }
-    private final EscapeCode escapeCode;
+   
     
     private AnsiFont(int code){
         escapeCode = new EscapeCode(code);

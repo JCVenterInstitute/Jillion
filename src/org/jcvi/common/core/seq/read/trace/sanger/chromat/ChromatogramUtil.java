@@ -49,8 +49,11 @@ import org.jcvi.common.core.util.Builder;
  */
 public  final class ChromatogramUtil {
     
-    private ChromatogramUtil(){}
+    
     private static final short[] FALSE_WAVEFORM = {21, 74, 202, 441, 769, 1073, 1200, 1073, 769, 441, 202, 74, 21 };
+    private ChromatogramUtil(){
+    	//can not instantiate
+    }
     /**
      * {@code FakeChannelGroupBuilder} is a {@link Builder} that can build
      * a new {@link ChannelGroup} instance which contains

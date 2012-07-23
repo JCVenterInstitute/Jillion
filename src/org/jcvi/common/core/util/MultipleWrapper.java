@@ -38,14 +38,17 @@ import org.jcvi.common.core.util.iter.ArrayIterable;
  * @author dkatzel
  */
 public final class  MultipleWrapper<T> implements InvocationHandler{
-    /**
+    
+	private final ReturnPolicy policy;
+    private final List<T> delegates = new ArrayList<T>();
+	/**
      * Since methods can only return a single
      * return value, only one of the wrapped
      * methods can be returned to the caller (even though
      * they will all be called).
      * @author dkatzel
      */
-    public enum ReturnPolicy{
+    public static enum ReturnPolicy{
         /**
          * Return the first wrapped instance.
          */
@@ -100,8 +103,7 @@ public final class  MultipleWrapper<T> implements InvocationHandler{
     public static <T,I extends T> T createMultipleWrapper(Class<T> classType,ReturnPolicy policy,I... delegates){
        return createMultipleWrapper(classType,policy,new ArrayIterable<T>(delegates));
     }
-    private final ReturnPolicy policy;
-    private final List<T> delegates = new ArrayList<T>();
+    
     
     private MultipleWrapper(ReturnPolicy policy,Iterable<? extends T> delegates){
         if(policy==null){

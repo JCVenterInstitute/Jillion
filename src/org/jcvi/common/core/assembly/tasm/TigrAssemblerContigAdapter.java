@@ -223,9 +223,7 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 			new SimpleDateFormat("MM/dd/yy hh:mm:ss aa", Locale.US);
 		
 		
-		private synchronized String formatEditDate(Date editDate){
-			return EDIT_DATE_FORMATTER.format(editDate);
-		}
+		
 		private final Contig<? extends AssembledRead> contig;
 		private final Map<TigrAssemblerContigAttribute, String> optionalAttributes = new EnumMap<TigrAssemblerContigAttribute, String>(TigrAssemblerContigAttribute.class);
 		/**
@@ -234,6 +232,10 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		 */
 		public Builder(Contig<? extends AssembledRead> contig) {
 			this.contig = contig;
+		}
+		
+		private synchronized String formatEditDate(Date editDate){
+			return EDIT_DATE_FORMATTER.format(editDate);
 		}
 		/**
 		 * Sets the {@link TigrAssemblerContigAttribute#TYPE}

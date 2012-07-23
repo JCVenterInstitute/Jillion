@@ -27,6 +27,9 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  */
 public final class IndexedQualityFastaFileDataStore implements QualitySequenceFastaDataStore{
 
+	private final IndexedFileRange index;
+	private final File fastaFile;
+	
 	/**
 	 * Creates a new {@link IndexedQualityFastaFileDataStore}
 	 * instance using the given fastaFile.
@@ -60,8 +63,6 @@ public final class IndexedQualityFastaFileDataStore implements QualitySequenceFa
 	public static QualityFastaDataStoreBuilderVisitor createBuilder(File fastaFile){
 		return new IndexedQualityFastaDataStoreBuilderVisitor(fastaFile);
 	}
-	private final IndexedFileRange index;
-	private final File fastaFile;
 	
 	private IndexedQualityFastaFileDataStore(IndexedFileRange index, File fastaFile){
 		this.index = index;

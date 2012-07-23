@@ -47,6 +47,10 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
     public static final String DEFAULT_TEMP_FILE_NAME = "temp";
     
     /**
+     * This is the root of our File Server.
+     */
+    private final File rootDir;
+    /**
      * Factory method to create a Directory File Server.
      * @param rootDir the root directory of this file server (can not be null). 
      * If the rootDir does not exist, it will be created.
@@ -211,10 +215,7 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
         return rootDir;
     }
     
-    /**
-     * This is the root of our File Server.
-     */
-    private final File rootDir;
+    
     
     protected DirectoryFileServer(File rootDir){
         if(rootDir == null){

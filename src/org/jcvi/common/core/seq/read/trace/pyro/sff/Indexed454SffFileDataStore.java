@@ -39,6 +39,16 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  */
 final class Indexed454SffFileDataStore implements FlowgramDataStore{
 	
+	private final File sffFile;
+	private SffCommonHeader commonHeader;
+	/**
+	 * It appears that 454 will
+	 * only make an index if the file size <4GB
+	 * so we can use unsigned ints to save memory
+	 * in the index.
+	 */
+	private Map<String, Integer> map;
+	private boolean isClosed=false;
 	/**
 	 * Try to create a {@link FlowgramDataStore} by only parsing
 	 * the 454 index at the end of the sff file.
@@ -60,16 +70,7 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 		}
 		return new Indexed454SffFileDataStore(visitor);
 	}
-	private final File sffFile;
-	private SffCommonHeader commonHeader;
-	/**
-	 * It appears that 454 will
-	 * only make an index if the file size <4GB
-	 * so we can use unsigned ints to save memory
-	 * in the index.
-	 */
-	private Map<String, Integer> map;
-	private boolean isClosed=false;
+
 	
 	
 	private Indexed454SffFileDataStore(ManifestCreatorVisitor visitor){

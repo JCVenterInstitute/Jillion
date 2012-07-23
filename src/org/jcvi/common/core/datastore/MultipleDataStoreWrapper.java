@@ -50,6 +50,8 @@ public final class MultipleDataStoreWrapper<T, D extends DataStore<T>> implement
      */
     private static final Class<?>[] GET_PARAMETERS = new Class[]{String.class};
     
+    private final List<D> delegates = new ArrayList<D>();
+    
     /**
      * Create a dynamic proxy to wrap the given delegate {@link DataStore} instances.
      * @param <T> the interface Type of objects in the DataStores.
@@ -82,7 +84,7 @@ public final class MultipleDataStoreWrapper<T, D extends DataStore<T>> implement
                 new MultipleDataStoreWrapper<T,D>(delegates));
     }
     
-    private final List<D> delegates = new ArrayList<D>();
+   
     
     private MultipleDataStoreWrapper(Collection<D> delegates){
         

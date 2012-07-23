@@ -39,7 +39,7 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
  */
 public final class Codon
 {
-    public enum Frame{
+    public static enum Frame{
         ZERO(0),
         ONE(1),
         TWO(2);

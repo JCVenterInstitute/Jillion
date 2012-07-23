@@ -64,15 +64,18 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
  */
 public final class AsmParser {
 	
-	private AsmParser(){
-		//private constructor
-	}
+	
 	/**
 	 * Refactored out split Pattern since String.split() 
 	 * causes a new Pattern to be created and compiled
 	 * for each call.  This is a minor cpu optimization.
 	 */
 	private static final Pattern SPLIT_ON_SLASH = Pattern.compile("/");
+	
+	private AsmParser(){
+		//private constructor
+	}
+	
     public static void parseAsm(File asmFile, AsmVisitor visitor) throws IOException{
         InputStream in =null;
         try{

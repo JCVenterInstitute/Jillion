@@ -44,6 +44,18 @@ import org.jcvi.common.core.util.iter.IteratorUtil;
  *
  */
 public abstract class FileIterator implements Iterator<File>, Iterable<File>{
+	
+	private static final FileFilter  NON_DIRECTORY_FILTER = new NonDirectoryFileFilter();
+    private static final FileFilter  NON_HIDDEN_FILTER = new NonHiddenFileFilter();
+    private static final FileFilter  NULL_FILTER = new NullFileFilter();
+    private static final FileNameComparator FILE_NAME_SORTER = new FileNameComparator();
+    
+   
+    private Iterator<File> fileIterator;
+    private final FileFilter fileFilter;
+    private File nextFile;
+    private final File rootDir;
+    
     /**
      * Create a new {@link FileIteratorBuilder} instance that will create
      * a file iterator that will recursively iterate files in a depth
@@ -107,16 +119,7 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
             return true;
         }
     }
-    private static final FileFilter  NON_DIRECTORY_FILTER = new NonDirectoryFileFilter();
-    private static final FileFilter  NON_HIDDEN_FILTER = new NonHiddenFileFilter();
-    private static final FileFilter  NULL_FILTER = new NullFileFilter();
-    private static final FileNameComparator FILE_NAME_SORTER = new FileNameComparator();
     
-   
-    private Iterator<File> fileIterator;
-    private final FileFilter fileFilter;
-    private File nextFile;
-    private final File rootDir;
 
     private FileIterator(File rootDir,FileFilter fileFilter){
         if(rootDir ==null){
@@ -212,6 +215,11 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
      *
      */
     private abstract static class RecursiveFileIterator extends FileIterator{
+    	
+    	 private static final DirectoryFileFilter  DIRECTORY_FILTER = new DirectoryFileFilter();
+         
+         private Queue<File> dirIterator;
+         
         /**
          * A FileFilter that only accepts files that ARE 
          * directories.
@@ -224,9 +232,7 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
             }
         }
         
-        private static final DirectoryFileFilter  DIRECTORY_FILTER = new DirectoryFileFilter();
        
-        private Queue<File> dirIterator;
         protected RecursiveFileIterator(File rootDir,FileFilter fileFilter) {
             super(rootDir,fileFilter);
         }

@@ -43,12 +43,13 @@ import org.jcvi.common.core.io.IOUtil;
  */
 public final class AgpParser {
 
-	private AgpParser(){
-		//private constructor.
-	}
+	
     private static final Pattern CONTIG_PATTERN = Pattern.compile(
             "(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+\\d+\\s+([A,D,F,G,N,O,P,U,W])\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+([+,-])");
 
+    private AgpParser(){
+		//private constructor.
+	}
     public static void parseAgpFile(File agpFile, AgpFileVisitor visitor) throws FileNotFoundException {
         parseAgpFile(agpFile,visitor,Range.CoordinateSystem.RESIDUE_BASED);
     }
