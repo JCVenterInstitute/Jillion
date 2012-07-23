@@ -99,7 +99,7 @@ public final class GridJobBuilders {
         protected JobTemplate jobTemplate;
 
         private List<String> jobIDList=Collections.emptyList();
-        private Map<String,JobInfo> jobInfoMap = new ConcurrentHashMap<String, JobInfo>();
+        private final Map<String,JobInfo> jobInfoMap = new ConcurrentHashMap<String, JobInfo>();
 
         private final PostExecutionHook postExecutionHook;
         private final PreExecutionHook preExecutionHook;

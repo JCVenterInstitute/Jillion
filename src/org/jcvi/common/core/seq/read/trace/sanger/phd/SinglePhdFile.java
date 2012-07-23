@@ -43,10 +43,10 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 public final class SinglePhdFile implements  Phd{
     private static final ShortGlyphFactory PEAK_FACTORY = ShortGlyphFactory.getInstance();
-    private NucleotideSequenceBuilder bases = new NucleotideSequenceBuilder();
-    private List<PhredQuality> qualities = new ArrayList<PhredQuality>();
-    private List<ShortSymbol> positions = new ArrayList<ShortSymbol>();
-    private List<PhdTag> tags = new ArrayList<PhdTag>();
+    private final NucleotideSequenceBuilder bases = new NucleotideSequenceBuilder();
+    private final List<PhredQuality> qualities = new ArrayList<PhredQuality>();
+    private final List<ShortSymbol> positions = new ArrayList<ShortSymbol>();
+    private final List<PhdTag> tags = new ArrayList<PhdTag>();
     private Properties comments=null;
     private String id=null;
     private boolean inTag =false;

@@ -361,7 +361,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
      * @author dkatzel
      */
     private class IndexedIterator implements CloseableIterator<Phd>{
-        private LargePhdIterator iterator = LargePhdIterator.createNewIterator(phdBall);
+        private final LargePhdIterator iterator = LargePhdIterator.createNewIterator(phdBall);
         private final Object endOfIterator= new Object();
         private Object next;
         

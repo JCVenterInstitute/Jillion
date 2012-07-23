@@ -28,17 +28,19 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 public class PrimerDetector {
 	
 	
-    private static final ScoringMatrix<Nucleotide> MATRIX = new DefaultNucleotideScoringMatrix.Builder(0)
-    										.setMatch(4)
-    										.ambiguityScore(2)
-    										.build();
-
+   
     
     private final int minLength;
     private final double minPercentIdentity;
     private final boolean alsoCheckReverseCompliment;
     private final Integer maxNumMismatches;
     private int gapOpenPenalty=-200;
+    
+    private static final ScoringMatrix<Nucleotide> MATRIX = new DefaultNucleotideScoringMatrix.Builder(0)
+	.setMatch(4)
+	.ambiguityScore(2)
+	.build();
+
     /**
      * @param minLength
      * @param minPercentIdentity

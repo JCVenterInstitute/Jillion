@@ -365,8 +365,8 @@ public final class LucyLikeQualityTrimmer {
         public static final double DEFAULT_MAX_AVG_ERROR = 0.025D;
         public static final double DEFAULT_ERROR_AT_ENDS = 0.02D;
         
-        private int minGoodLength;
-        private Window bracketWindow;
+        private final int minGoodLength;
+        private final Window bracketWindow;
         private double maxAvgError;
         private double maxErrorAtEnds;
         

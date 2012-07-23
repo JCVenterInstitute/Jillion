@@ -66,7 +66,7 @@ public final class DefaultAsmContig extends AbstractContig<AsmPlacedRead> implem
 
     private static class DefaultAsmContigBuilder implements AsmContigBuilder{
 
-        private NucleotideSequence fullConsensus;
+        private final NucleotideSequence fullConsensus;
         private final NucleotideSequenceBuilder mutableConsensus;
         private String contigId;
         private final Map<String, AsmPlacedReadBuilder>aceReadBuilderMap = new HashMap<String, AsmPlacedReadBuilder>();

@@ -26,8 +26,8 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section;
 import java.nio.ByteBuffer;
 
 public class EncodedSection {
-    private ByteBuffer data;
-    private Section section;
+    private final ByteBuffer data;
+    private final Section section;
     /**
      * @param data
      * @param section

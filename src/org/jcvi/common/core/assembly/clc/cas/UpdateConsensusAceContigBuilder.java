@@ -195,7 +195,7 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
     }
     
     private static final class VariantCounts{
-    	private Histogram[] histograms;
+    	private final Histogram[] histograms;
     	
     	VariantCounts(int consensusLength){
     		histograms = new Histogram[consensusLength];

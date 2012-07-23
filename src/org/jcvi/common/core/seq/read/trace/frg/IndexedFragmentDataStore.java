@@ -259,7 +259,7 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
         private String mateId=null;
         
         
-        private String fragmentIdToGetMateOf;
+        private final String fragmentIdToGetMateOf;
         
         public SingleLinkVisitor(String fragmentIdToGetMateOf){
             this.fragmentIdToGetMateOf = fragmentIdToGetMateOf;

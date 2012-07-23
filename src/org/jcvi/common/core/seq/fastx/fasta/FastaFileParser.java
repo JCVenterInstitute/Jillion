@@ -123,7 +123,9 @@ public final class FastaFileParser {
         public boolean keepParsing(){
         	return keepParsing && !done;
         }
-        
+        public void stopParsing(){
+        	keepParsing=false;
+        }
         
         public boolean skipCurrentRecord() {
 			return skipCurrentRecord;
@@ -182,10 +184,10 @@ public final class FastaFileParser {
                 	if(ret == EndOfBodyReturnCode.KEEP_PARSING){
                 		parserState.keepParsing = true;
                 	}else{
-                		parserState.keepParsing = false;
+                		parserState.stopParsing();
                 	}
                 }
-                if(parserState.keepParsing){
+                if(parserState.keepParsing()){
 	                visitor.visitLine(lineWithCR);
 	                Matcher matcher = DEFLINE_LINE_PATTERN.matcher(lineWithoutCR);
 	                if(!matcher.find()){
@@ -202,7 +204,7 @@ public final class FastaFileParser {
 	                	parserState.skipCurrentRecord=true;
 	                	parserState.keepParsing=true;
 	                }else if(visitDefline == DeflineReturnCode.STOP_PARSING){
-	                	parserState.keepParsing=false;
+	                	parserState.stopParsing();
 	                }else{
 	                	parserState.skipCurrentRecord=false;
 	                	parserState.keepParsing=true;

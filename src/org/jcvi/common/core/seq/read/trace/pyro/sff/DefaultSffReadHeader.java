@@ -106,10 +106,10 @@ final class DefaultSffReadHeader implements SffReadHeader {
 
 
     public static class Builder implements org.jcvi.common.core.util.Builder<DefaultSffReadHeader>{
-        private  int numberOfBases;
+        private  final int numberOfBases;
         private  Range qualityClip;
-        private  Range adapterClip;
-        private  String name;
+        private  final Range adapterClip;
+        private  final String name;
         
         public Builder(SffReadHeader header){
             this.numberOfBases = header.getNumberOfBases();

@@ -257,7 +257,15 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
 
 
 
-        /**
+        @Override
+		public AssembledReadBuilder<AsmPlacedRead> setClearRange(
+				Range updatedClearRange) {
+        	delegateBuilder.setClearRange(updatedClearRange);
+			return this;
+		}
+
+
+		/**
         * {@inheritDoc}
         */
         @Override

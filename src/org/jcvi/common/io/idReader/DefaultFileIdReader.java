@@ -99,8 +99,8 @@ public class DefaultFileIdReader<T> implements IdReader<T> {
     }
     
     private static class FileIdIterator<T> implements CloseableIterator<T>{
-        private Scanner scanner;
-        private IdParser<T> idParser;
+        private final Scanner scanner;
+        private final IdParser<T> idParser;
         private String nextValidString;
         boolean needToLookAhead =true;
         boolean hasNext;

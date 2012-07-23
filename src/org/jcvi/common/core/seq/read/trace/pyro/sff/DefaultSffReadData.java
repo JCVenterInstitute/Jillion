@@ -32,10 +32,10 @@ import org.jcvi.common.core.util.MathUtil;
 
 final class DefaultSffReadData implements SffReadData {
 
-    private NucleotideSequence basecalls;
-    private byte[] indexes;
-    private short[] values;
-    private byte[] qualities;
+    private final NucleotideSequence basecalls;
+    private final byte[] indexes;
+    private final short[] values;
+    private final byte[] qualities;
 
 
     /**

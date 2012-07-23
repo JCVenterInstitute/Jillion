@@ -33,9 +33,9 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
 
 public abstract class AbstractContig<T extends AssembledRead> implements Contig<T>{
-    private NucleotideSequence consensus;
-    private String id;
-    private Map<String, T> mapById;
+    private final NucleotideSequence consensus;
+    private final String id;
+    private final Map<String, T> mapById;
     protected AbstractContig(String id, NucleotideSequence consensus, Set<T> assembledReads){
     	if(id==null){
     		throw new NullPointerException("id can not be null");

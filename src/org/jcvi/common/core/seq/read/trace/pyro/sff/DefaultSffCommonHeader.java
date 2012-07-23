@@ -153,9 +153,22 @@ final class DefaultSffCommonHeader implements SffCommonHeader {
         private int numberOfFlowsPerRead;
         private NucleotideSequence flow;
         private NucleotideSequence keySequence;
-        
-        public Builder(){}
-        
+        /**
+         * Creates a new Builder instance 
+         * where all the fields need to be set.
+         */
+        public Builder(){
+        	//creates an empty builder 
+        }
+        /**
+         * Creates a new Builder instance
+         * that initially contains
+         * the same values as the fields
+         * in the given copy.
+         * @param copy the SffCommonHeader to copy;
+         * can not be null.
+         * @throws NullPointerException if copy is null.
+         */
         public Builder(SffCommonHeader copy){
             indexOffset = copy.getIndexOffset();
             indexLength = copy.getIndexLength();

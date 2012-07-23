@@ -192,7 +192,7 @@ public final class DefaultPlacedRead implements AssembledRead {
 	}
 
 	private static class Builder implements AssembledReadBuilder<AssembledRead>{
-        private String readId;
+        private final String readId;
         /**
          * Our original encoded sequence.  If we 
          * edit the basecalls, this will get set to null
@@ -292,7 +292,17 @@ public final class DefaultPlacedRead implements AssembledRead {
             return clearRange;
         }
 
-
+        /**
+         * {@inheritDoc}
+         */
+         @Override
+         public Builder setClearRange(Range clearRange) {
+        	 if(clearRange ==null){
+        		 throw new NullPointerException("clear range can not be null");
+        	 }
+             this.clearRange = clearRange;
+             return this;
+         }
 
         /**
         * {@inheritDoc}

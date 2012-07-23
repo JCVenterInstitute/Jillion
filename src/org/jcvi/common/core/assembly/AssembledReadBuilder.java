@@ -95,7 +95,7 @@ public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable
      */
     Range getClearRange();
 
-
+    AssembledReadBuilder<R> setClearRange(Range updatedClearRange);
     /**
      * Get the {@link Direction} of this read.
      * @return the {@link Direction} will never be null.

@@ -99,8 +99,8 @@ import org.jcvi.common.core.io.IOUtil;
  */
 public abstract class AbstractBlockingCloseableIterator<T> implements CloseableIterator<T>{
 
-	private Object endOfFileToken = new Object();
-    private BlockingQueue<Object> queue = new LinkedBlockingQueue<Object>(1);
+	private final Object endOfFileToken = new Object();
+    private final BlockingQueue<Object> queue = new LinkedBlockingQueue<Object>(1);
     private Object nextRecord=null;
     private volatile boolean isClosed=false;
     

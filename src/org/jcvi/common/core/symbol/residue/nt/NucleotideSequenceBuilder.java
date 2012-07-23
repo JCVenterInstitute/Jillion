@@ -59,7 +59,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * build our immutable NucleotideSequence
      * via  {@link #build()}.
      */
-    private CodecDecider codecDecider = new CodecDecider();
+    private final CodecDecider codecDecider = new CodecDecider();
     /**
      * Points to the next bit that will
      * be set if we append to our {@link BitSet}.
@@ -542,7 +542,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * has not been provided via the {@link #setReferenceHint(NucleotideSequence, int)}
      */
     public ReferenceMappedNucleotideSequence buildReferenceEncodedNucleotideSequence() {    
-    	if(codecDecider.alignedReference ==null){
+    	if(!codecDecider.hasAlignedReference()){
     		throw new IllegalStateException("must provide reference");
     	}
         return (ReferenceMappedNucleotideSequence)build();
@@ -561,7 +561,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * has not been provided via the {@link #setReferenceHint(NucleotideSequence, int)}
      */
     public ReferenceMappedNucleotideSequence buildReferenceEncodedNucleotideSequence(Range range) {    
-    	if(codecDecider.alignedReference ==null){
+    	if(!codecDecider.hasAlignedReference()){
     		throw new IllegalStateException("must provide reference");
     	}
         return (ReferenceMappedNucleotideSequence)build(range);
@@ -604,7 +604,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws IllegalArgumentException if gappedStartOffset is <0 or beyond the reference.
      */
     public NucleotideSequenceBuilder setReferenceHint(NucleotideSequence referenceSequence, int gappedStartOffset){
-    	codecDecider.alignedReference = new AlignedReference(referenceSequence, gappedStartOffset);
+    	codecDecider.alignedReference(new AlignedReference(referenceSequence, gappedStartOffset));
     	return this;
     }
     /**
@@ -622,7 +622,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         int numberOfDeletedBits = (int)bitRange.getLength()-1;
 		BitSet subBits = bits.get((int)bitRange.getBegin(), (int)bitRange.getEnd()+1);
 		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(subBits,numberOfDeletedBits);
-		if(codecDecider.alignedReference !=null){
+		if(codecDecider.hasAlignedReference()){
 			builder.setReferenceHint(codecDecider.alignedReference.reference, codecDecider.alignedReference.offset+ (int)range.getBegin());
 		}
 		return builder.build();
@@ -839,13 +839,19 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         private AlignedReference alignedReference=null;
         
         NucleotideSequence encodeSequence(){
-        	if(alignedReference !=null){
+        	if(hasAlignedReference()){
         		return new DefaultReferenceEncodedNucleotideSequence(
         				alignedReference.reference, NucleotideSequenceBuilder.this.toString(), alignedReference.offset);
         	}
         	return DefaultNucleotideSequence.create(asList(),codecDecider.getOptimalCodec());
         }
+        void alignedReference(AlignedReference ref){
+        	this.alignedReference = ref;
+        }
         
+        boolean hasAlignedReference(){
+        	return alignedReference!=null;
+        }
         NucleotideCodec getOptimalCodec() {
         	
             if(numberOfAmbiguities>0 || (numberOfGaps>0 && numberOfNs >0)){

@@ -39,7 +39,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 
 public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePassCasFileVisitor implements CasNucleotideDataStore {
 
-    private List<NucleotideDataStore> nucleotideDataStores = new ArrayList<NucleotideDataStore>();
+    private final List<NucleotideDataStore> nucleotideDataStores = new ArrayList<NucleotideDataStore>();
     
     private final CasDataStoreFactory casDataStoreFactory;
     private DataStore<NucleotideSequence> delegate;
