@@ -124,8 +124,7 @@ public final class ContigFileParser  {
     }
 
     private static String parseContigId(Matcher newContigMatcher) {
-        final String contigId = newContigMatcher.group(1);
-        return contigId;
+        return newContigMatcher.group(1);
     }
 
     private static void fireVisitNewRead(Matcher newSequenceMatcher,  ContigFileVisitor visitor) {

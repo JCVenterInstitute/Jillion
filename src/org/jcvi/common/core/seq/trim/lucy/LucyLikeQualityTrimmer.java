@@ -117,8 +117,7 @@ public final class LucyLikeQualityTrimmer {
             largestRanges.add(findLargestRangeThatPassesTotalAvgErrorRate(candidateErrorRates, candidateCleanRange));
         }
         
-        Range largestRange= getLargestRangeFrom(largestRanges);
-        return largestRange;
+        return getLargestRangeFrom(largestRanges);
     }
 
 

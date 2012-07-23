@@ -69,8 +69,7 @@ public final class Distance {
                 mean, stdDev);
     }
     private static float calculateDelta(float stdDev) {
-        float delta = CA_GATEKEEPER_STDDEV_LIMIT*stdDev;
-        return delta;
+        return  CA_GATEKEEPER_STDDEV_LIMIT*stdDev;
     }
     /**
      * Build a new {@link Distance} based on the given min and max values.

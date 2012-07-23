@@ -220,7 +220,7 @@ public final class AceFileUtil {
         }
         return gappedValidRange;
     }
-    public static String createAcePlacedReadRecord(String readId, AssembledRead placedRead, Phd phd, PhdInfo phdInfo){
+    public static synchronized String createAcePlacedReadRecord(String readId, AssembledRead placedRead, Phd phd, PhdInfo phdInfo){
         
         NucleotideSequence nucleotideSequence = placedRead.getNucleotideSequence();
 		final NucleotideSequence gappedValidBasecalls = nucleotideSequence; 

@@ -73,8 +73,7 @@ public abstract class AbstractCasDataStoreFactory implements CasDataStoreFactory
         }else{
             dataStoreFile = new File(workingDir, pathToDataStore);
         }
-        File trimmedDataStore = trimMap.getUntrimmedFileFor(dataStoreFile);
-        return trimmedDataStore;
+        return trimMap.getUntrimmedFileFor(dataStoreFile);
     }
 
     /**

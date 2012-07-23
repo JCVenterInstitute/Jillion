@@ -132,9 +132,8 @@ public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends Abstr
     
     private File getTrimmedFileFor(String pathToDataStore) throws FileNotFoundException {
             final File dataStoreFile = CasUtil.getFileFor(workingDir, pathToDataStore);
-            File trimmedDataStore = trimMap.getUntrimmedFileFor(dataStoreFile);
-            return trimmedDataStore;
-        }
+            return trimMap.getUntrimmedFileFor(dataStoreFile);
+    }
     
 
     @Override

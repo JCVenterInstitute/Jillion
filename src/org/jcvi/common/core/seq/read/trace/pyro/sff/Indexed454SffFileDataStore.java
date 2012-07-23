@@ -278,8 +278,10 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 		}
 
 		private long convertFromBase255(byte[] values){
-			long sum= IOUtil.toUnsignedByte(values[0]) + POW_1*IOUtil.toUnsignedByte(values[1])+ POW_2*IOUtil.toUnsignedByte(values[2]) + POW_3*IOUtil.toUnsignedByte(values[3]);
-			return sum;
+			return IOUtil.toUnsignedByte(values[0]) 
+					+ POW_1	* IOUtil.toUnsignedByte(values[1]) 
+					+ POW_2	* IOUtil.toUnsignedByte(values[2])
+					+ POW_3	* IOUtil.toUnsignedByte(values[3]);
 		}
 		private void populateOffsetMap(InputStream in) throws IOException {
 			map = new HashMap<String, Integer>((int)commonHeader.getNumberOfReads()+1, 1F);
