@@ -836,7 +836,7 @@ public final class AsmParser {
             }
         },
         CONTIG_LINK("CLK"){
-            private final Pattern CONTIG_ID_PATTERN = Pattern.compile("co\\d:(\\S+)");
+            private final Pattern contigIdPattern = Pattern.compile("co\\d:(\\S+)");
             
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor) throws IOException{
@@ -846,7 +846,7 @@ public final class AsmParser {
             @Override
             protected void handle(ParserState parserState, AsmVisitor visitor, boolean shouldParse)
                     throws IOException {
-                parseLinkMessage(parserState, visitor, shouldParse, CONTIG_ID_PATTERN);
+                parseLinkMessage(parserState, visitor, shouldParse, contigIdPattern);
             }
             @Override
             protected void visitLink(AsmVisitor visitor, String id1,
