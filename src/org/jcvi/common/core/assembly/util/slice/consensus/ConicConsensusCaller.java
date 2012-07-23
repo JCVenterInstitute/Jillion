@@ -131,12 +131,15 @@ public class ConicConsensusCaller extends AbstractChurchillWatermanConsensusCall
     }
 
     private static class MaxQualityStruct{
+    	
+		private final int sum;
+		private final Nucleotide base;
+         
         public MaxQualityStruct(Nucleotide base, int sum) {
             this.base = base;
             this.sum = sum;
         }
-        private final int sum;
-        private final Nucleotide base;
+       
     }
 
     @Override
