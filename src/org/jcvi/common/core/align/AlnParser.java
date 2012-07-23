@@ -43,9 +43,7 @@ import org.jcvi.common.core.io.TextLineParser;
  */
 public final class AlnParser {
 
-	private AlnParser(){
-		//private constructor.
-	}
+	
     /**
      * 
      */
@@ -53,6 +51,9 @@ public final class AlnParser {
     private static final Pattern ALIGNMENT_PATTERN = Pattern.compile(REGEX);
     private static final Pattern CONSERVATION_PATTERN = Pattern.compile("\\s+([-:\\. \\*]+)$");
     
+    private AlnParser(){
+		//private constructor.
+	}
     /**
      * Parse the given aln file and call the appropriate
      * visitXXX method call backs on the given {@link AlnVisitor}.
