@@ -28,15 +28,9 @@ public class TraceEncoderException extends IOException {
 	 */
 	private static final long serialVersionUID = 7796781674291231608L;
 
-	public TraceEncoderException() {
-	}
 
 	public TraceEncoderException(String message) {
 		super(message);
-	}
-
-	public TraceEncoderException(Throwable cause) {
-		super(cause);
 	}
 
 	public TraceEncoderException(String message, Throwable cause) {
