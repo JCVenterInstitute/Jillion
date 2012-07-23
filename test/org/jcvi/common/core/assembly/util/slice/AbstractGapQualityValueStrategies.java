@@ -26,7 +26,7 @@ import org.easymock.EasyMockSupport;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.assembly.DefaultReadInfo;
+import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -74,7 +74,7 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
         expect(placedRead.getDirection()).andStubReturn(Direction.FORWARD);
         Range validRange = Range.create(10,100);
         int fullLength = (int)(validRange.getEnd()+validRange.getBegin());
-        ReadInfo readInfo = new DefaultReadInfo(validRange, fullLength);
+        ReadInfo readInfo = new ReadInfo(validRange, fullLength);
         expect(placedRead.getReadInfo()).andStubReturn(readInfo);
         expect(sequence.getUngappedOffsetFor(gappedReadIndex)).andReturn(gappedReadIndex);
         
@@ -97,7 +97,7 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
         expect(placedRead.getDirection()).andStubReturn(Direction.REVERSE);
         expect(sequence.isGap(gappedReadIndex)).andReturn(false);
         expect(sequence.getUngappedOffsetFor(gappedReadIndex)).andReturn(ungappedReadOffset);
-        ReadInfo readInfo = new DefaultReadInfo(validRange, fullLength);
+        ReadInfo readInfo = new ReadInfo(validRange, fullLength);
         expect(placedRead.getReadInfo()).andStubReturn(readInfo);
        
         QualitySequence qualities =new MockQualitySequenceBuilder(fullLength)

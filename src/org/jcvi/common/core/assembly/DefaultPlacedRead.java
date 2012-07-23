@@ -65,7 +65,7 @@ public final class DefaultPlacedRead implements AssembledRead {
        this.sequence = sequence;
         this.start= start;
         this.directionOrdinal = (byte)sequenceDirection.ordinal();
-        this.readInfo = new DefaultReadInfo(validRange, ungappedFullLength);
+        this.readInfo = new ReadInfo(validRange, ungappedFullLength);
     }
     
     

@@ -30,7 +30,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.assembly.DefaultReadInfo;
+import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -56,7 +56,7 @@ public class TestAssemblyUtil_gappedfullRange {
         Range validRange = Range.create(0, ungappedUnComplimentedFullRange.size()-1);
         ReferenceMappedNucleotideSequence readSequence = createMock(ReferenceMappedNucleotideSequence.class);
         expect(readSequence.iterator()).andReturn(gappedValidRange.iterator());
-       ReadInfo readInfo = new DefaultReadInfo(validRange, ungappedUnComplimentedFullRange.size());
+       ReadInfo readInfo = new ReadInfo(validRange, ungappedUnComplimentedFullRange.size());
         expect(mockPlacedRead.getReadInfo()).andStubReturn(readInfo);
         expect(mockPlacedRead.getDirection()).andStubReturn(Direction.FORWARD);
         expect(mockPlacedRead.getNucleotideSequence()).andReturn(readSequence);
@@ -76,7 +76,7 @@ public class TestAssemblyUtil_gappedfullRange {
         
         ReferenceMappedNucleotideSequence readSequence = createMock(ReferenceMappedNucleotideSequence.class);
         expect(readSequence.iterator()).andReturn(gappedValidRange.iterator());
-        ReadInfo readInfo = new DefaultReadInfo(validRange, ungappedUnComplimentedFullRange.size());
+        ReadInfo readInfo = new ReadInfo(validRange, ungappedUnComplimentedFullRange.size());
         expect(mockPlacedRead.getReadInfo()).andStubReturn(readInfo);
 
         expect(mockPlacedRead.getDirection()).andStubReturn(Direction.REVERSE);
@@ -95,7 +95,7 @@ public class TestAssemblyUtil_gappedfullRange {
         ReferenceMappedNucleotideSequence readSequence = createMock(ReferenceMappedNucleotideSequence.class);
         expect(readSequence.iterator()).andReturn(new NucleotideSequenceBuilder("ACGT-ACGT").build().iterator());
         
-        ReadInfo readInfo = new DefaultReadInfo(validRange, ungappedUnComplimentedFullRange.size());
+        ReadInfo readInfo = new ReadInfo(validRange, ungappedUnComplimentedFullRange.size());
         expect(mockPlacedRead.getReadInfo()).andStubReturn(readInfo);
         expect(mockPlacedRead.getDirection()).andStubReturn(Direction.FORWARD);
         expect(mockPlacedRead.getNucleotideSequence()).andReturn(readSequence);
@@ -113,7 +113,7 @@ public class TestAssemblyUtil_gappedfullRange {
         ReferenceMappedNucleotideSequence readSequence = createMock(ReferenceMappedNucleotideSequence.class);
         expect(readSequence.iterator()).andReturn(new NucleotideSequenceBuilder("MACGTACG").build().iterator());
         
-        ReadInfo readInfo = new DefaultReadInfo(validRange, ungappedUnComplimentedFullRange.size());
+        ReadInfo readInfo = new ReadInfo(validRange, ungappedUnComplimentedFullRange.size());
         expect(mockPlacedRead.getReadInfo()).andStubReturn(readInfo);
         expect(mockPlacedRead.getDirection()).andStubReturn(Direction.REVERSE);
         expect(mockPlacedRead.getNucleotideSequence()).andReturn(readSequence);

@@ -29,7 +29,7 @@ import java.util.Date;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.assembly.DefaultReadInfo;
+import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.assembly.ace.AcePlacedReadAdapter;
 import org.jcvi.common.core.assembly.ace.DefaultPhdInfo;
@@ -48,7 +48,7 @@ public class TestAcePlacedReadAdapter {
     long referenceIndex = 1234;
     long validRangeIndex = 7;
     Range validRange = Range.create(1,10);
-    ReadInfo readInfo = new DefaultReadInfo(validRange, (int)validRange.getLength()+1);
+    ReadInfo readInfo = new ReadInfo(validRange, (int)validRange.getLength()+1);
     @Before
     public void setup(){
         mockPlacedRead = createMock(AssembledRead.class);
