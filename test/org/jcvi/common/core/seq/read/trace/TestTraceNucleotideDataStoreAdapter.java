@@ -7,7 +7,7 @@ import java.util.Map;
 import org.easymock.EasyMockSupport;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +25,7 @@ public class TestTraceNucleotideDataStoreAdapter extends EasyMockSupport{
 		
 		Map<String,Trace> map = new HashMap<String, Trace>();
 		map.put(id, mockTrace);
-		DataStore<Trace> datastore = new SimpleDataStore<Trace>(map);
+		DataStore<Trace> datastore = MapDataStoreAdapter.adapt(map);
 		
 		sut = TraceNucleotideDataStoreAdapter.adapt(datastore);
 		

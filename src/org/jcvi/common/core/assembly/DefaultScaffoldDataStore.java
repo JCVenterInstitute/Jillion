@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
 public final class DefaultScaffoldDataStore {
@@ -60,7 +60,7 @@ public final class DefaultScaffoldDataStore {
 		private final DataStore<Scaffold> delegate;
 		
 		public ScaffoldDataStoreImpl(Map<String, Scaffold> scaffolds){
-			delegate = new SimpleDataStore<Scaffold>(scaffolds);
+			delegate = MapDataStoreAdapter.adapt(scaffolds);
 		}
 
 		@Override

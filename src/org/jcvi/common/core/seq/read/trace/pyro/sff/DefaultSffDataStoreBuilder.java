@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStoreBuilder;
@@ -23,7 +23,7 @@ public final class DefaultSffDataStoreBuilder implements FlowgramDataStoreBuilde
 	
 	@Override
 	public FlowgramDataStore build() {
-		return new DefaultSffDataStoreImpl(new SimpleDataStore<Flowgram>(map));
+		return new DefaultSffDataStoreImpl(MapDataStoreAdapter.adapt(map));
 	}
 
 	@Override

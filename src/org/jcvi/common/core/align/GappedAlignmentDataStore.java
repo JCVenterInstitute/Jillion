@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStoreAdapter;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -127,7 +127,7 @@ public final class GappedAlignmentDataStore implements NucleotideDataStore{
             builders.clear();
             return new GappedAlignmentDataStore(
                     new NucleotideDataStoreAdapter(
-                            new SimpleDataStore<NucleotideSequence>(map)));
+                    		MapDataStoreAdapter.adapt(map)));
         }
 
         /**

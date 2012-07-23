@@ -35,7 +35,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStoreAdatper;
 import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
-import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -262,7 +262,7 @@ public final class SffUtil {
         */
         @Override
         public TrimPointsDataStore build() {
-            return TrimDataStoreAdatper.adapt(new SimpleDataStore<Range>(trimRanges));
+            return TrimDataStoreAdatper.adapt(MapDataStoreAdapter.adapt(trimRanges));
         }
 
     }

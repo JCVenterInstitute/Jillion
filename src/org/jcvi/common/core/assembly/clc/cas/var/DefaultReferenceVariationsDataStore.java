@@ -9,7 +9,7 @@ import java.util.TreeMap;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 /**
  * {@code DefaultReferenceVariationsDataStore} is an 
@@ -87,7 +87,7 @@ public final class DefaultReferenceVariationsDataStore implements ReferenceVaria
 	    
 	    @Override
 		public ReferenceVariationsDataStore build() {
-			return new DefaultReferenceVariationsDataStore(new SimpleDataStore<ReferenceVariations>(map));
+			return new DefaultReferenceVariationsDataStore(MapDataStoreAdapter.adapt(map));
 		}
 
 		/**

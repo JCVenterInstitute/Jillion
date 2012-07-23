@@ -34,7 +34,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.pos.PositionDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.pos.PositionDataStoreAdapter;
@@ -71,7 +71,7 @@ public class TigrPositionsFileParser {
                 map.put(id, encodedPositions);
             }
         }
-        return new PositionDataStoreAdapter(new SimpleDataStore<Sequence<ShortSymbol>>(map));
+        return new PositionDataStoreAdapter(MapDataStoreAdapter.adapt(map));
         
     }
     private static EncodedShortSymbol convertToGlyphs(String positionsAsHex) {

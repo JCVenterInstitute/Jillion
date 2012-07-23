@@ -32,7 +32,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.SimpleDataStore;
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
@@ -81,7 +81,7 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         FullLengthPhdParser visitor = new FullLengthPhdParser(contigId, lowQuality,highQuality);
         
         AceFileParser.parse(aceContigFile, visitor);
-        delegate = new PhdDataStoreAdapter(new SimpleDataStore<Phd>(visitor.getPhds()));
+        delegate = new PhdDataStoreAdapter(MapDataStoreAdapter.adapt(visitor.getPhds()));
         
     }
     private HiLowAceContigPhdDatastore(InputStream aceContigFile,
@@ -89,7 +89,7 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         FullLengthPhdParser visitor = new FullLengthPhdParser(lowQuality,highQuality);
         
         AceFileParser.parse(aceContigFile, visitor);
-        delegate = new PhdDataStoreAdapter(new SimpleDataStore<Phd>(visitor.getPhds()));
+        delegate = new PhdDataStoreAdapter(MapDataStoreAdapter.adapt(visitor.getPhds()));
         
     }
     private HiLowAceContigPhdDatastore(InputStream aceContigFile, String contigId,
@@ -97,7 +97,7 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         FullLengthPhdParser visitor = new FullLengthPhdParser(contigId,lowQuality,highQuality);
         
         AceFileParser.parse(aceContigFile, visitor);
-        delegate = new PhdDataStoreAdapter(new SimpleDataStore<Phd>(visitor.getPhds()));
+        delegate = new PhdDataStoreAdapter(MapDataStoreAdapter.adapt(visitor.getPhds()));
         
     }
     
@@ -106,7 +106,7 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         FullLengthPhdParser visitor = new FullLengthPhdParser(lowQuality,highQuality);
         
         AceFileParser.parse(aceContigFile, visitor);
-        delegate = new PhdDataStoreAdapter(new SimpleDataStore<Phd>(visitor.getPhds()));
+        delegate = new PhdDataStoreAdapter(MapDataStoreAdapter.adapt(visitor.getPhds()));
         
     }
 
