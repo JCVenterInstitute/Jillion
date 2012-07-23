@@ -26,13 +26,14 @@ package org.jcvi.common.command;
  */
 public final class CommandUtils {
 	
-	private CommandUtils(){
-		//private constructor
-	}
+	
 
     /** An array of characters that should be escaped in shell strings. */
     private static final char[] UNSAFE_CHARS = {'\\', '\''};
-
+    
+    private CommandUtils(){
+		//private constructor
+	}
     /**
      * Produces a quoted and escaped version of a string for .  This ensures the string will be
      * treated as a single element by shell command parsers, regardless of the inclusion of

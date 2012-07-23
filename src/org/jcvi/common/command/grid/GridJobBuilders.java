@@ -79,24 +79,7 @@ public final class GridJobBuilders {
      * @author jsitz@jcvi.org
      */
      private abstract static class AbstractGridJob implements GridJob {
-         /**
-          * Native Spec options to potentially
-          * alter which machines on the grid
-          * can run this job.
-          * @author dkatzel
-          *
-          *
-          */
-        protected enum NativeSpec
-        {
-            BINARY_MODE,
-            QUEUE,
-            ARCHITECTURE,
-            PROJECT_CODE,
-            MEMORY,
-            CPUS,
-            MAX_RUNNING_TASKS
-        }
+        
 
         private final Session gridSession;
         protected Command command;
@@ -122,7 +105,25 @@ public final class GridJobBuilders {
         private final PreExecutionHook preExecutionHook;
         
         protected boolean waiting = false;
-
+        /**
+         * Native Spec options to potentially
+         * alter which machines on the grid
+         * can run this job.
+         * @author dkatzel
+         *
+         *
+         */
+       protected enum NativeSpec
+       {
+           BINARY_MODE,
+           QUEUE,
+           ARCHITECTURE,
+           PROJECT_CODE,
+           MEMORY,
+           CPUS,
+           MAX_RUNNING_TASKS
+       }
+       
         protected AbstractGridJob(Session gridSession,
                               Command command,
                               Map<NativeSpec, String> nativeSpecs,

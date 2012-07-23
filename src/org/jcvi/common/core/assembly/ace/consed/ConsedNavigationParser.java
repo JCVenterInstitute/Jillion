@@ -39,9 +39,7 @@ import org.jcvi.common.core.io.TextLineParser;
  */
 public final class ConsedNavigationParser {
 	
-	private ConsedNavigationParser(){
-		//private constructor
-	}
+	
 
     private static final Pattern TITLE_PATTERN = Pattern.compile("TITLE: (\\.+)\n");
     private static final Pattern TYPE_PATTERN = Pattern.compile("TYPE: (\\S+)\n");
@@ -51,6 +49,10 @@ public final class ConsedNavigationParser {
     private static final Pattern READ_POSITION_PATTERN = Pattern.compile("UNPADDED_READ_POS: (\\d+) (\\d+)\n");
     private static final Pattern CONSENSUS_POSITION_PATTERN = Pattern.compile("UNPADDED_CONS_POS: (\\d+) (\\d+)\n");
    
+    private ConsedNavigationParser(){
+		//private constructor
+	}
+    
     public static void parse(File navFile, ConsedNavigationVisitor visitor) throws IOException{
         InputStream in =null;
         try{

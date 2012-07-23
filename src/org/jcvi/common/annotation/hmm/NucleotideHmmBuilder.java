@@ -164,6 +164,14 @@ public class NucleotideHmmBuilder implements Builder<Hmm<Nucleotide>>{
 	}
 	
 	private static class NucleotideHmmStateBuilder implements Builder<NucleotideHmmState>{
+		
+		/**
+		 * {@value}
+		 */
+		private static final double EPSILON = 0.00000001; 
+		private static final double LOWER_FUZZY_1 = (double)1 - EPSILON;
+		private static final double UPPER_FUZZY_1 = (double)1 +EPSILON;
+		
 		private final Map<Nucleotide, Double> probabilities;
 		private final int index;
 		public NucleotideHmmStateBuilder(int index){
@@ -197,12 +205,7 @@ public class NucleotideHmmBuilder implements Builder<Hmm<Nucleotide>>{
 			}
 			return new NucleotideHmmState(index,probabilities);
 		}
-		/**
-		 * {@value}
-		 */
-		private static final double EPSILON = 0.00000001; 
-		private static final double LOWER_FUZZY_1 = (double)1 - EPSILON;
-		private static final double UPPER_FUZZY_1 = (double)1 +EPSILON;
+		
 	}
 	
 	private static final class NucleotideHmm implements Hmm<Nucleotide>{

@@ -33,12 +33,6 @@ public final class HspBuilder implements org.jcvi.common.core.util.Builder<Hsp>{
 
     private static final double ONE_HUNDRED = 100.0D;
 
-	public static HspBuilder create(String queryId){
-        return new HspBuilder(queryId);
-    }
-    public static HspBuilder copy(Hsp copy){
-        return new HspBuilder(copy);
-    }
 
         private String queryId;
         private String subjectId;
@@ -47,6 +41,15 @@ public final class HspBuilder implements org.jcvi.common.core.util.Builder<Hsp>{
         private DirectedRange queryRange, subjectRange;
         private Integer numGapsOpenings ,numMismatches,alignmentLength;
         private NucleotideSequence queryAlignment, subjectAlignment;
+        
+        
+
+    	public static HspBuilder create(String queryId){
+            return new HspBuilder(queryId);
+        }
+        public static HspBuilder copy(Hsp copy){
+            return new HspBuilder(copy);
+        }
         
         private HspBuilder(Hsp copy) {
            

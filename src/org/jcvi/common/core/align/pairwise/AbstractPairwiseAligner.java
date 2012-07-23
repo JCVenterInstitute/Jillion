@@ -23,6 +23,37 @@ import org.jcvi.common.core.symbol.residue.Residue;
  * @param <P> the {@link PairwiseSequenceAlignment} type returned by this aligner.
  */
 abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>, P extends PairwiseSequenceAlignment<R, S>> {
+	
+	/**
+	 * The matrix which stores all of our traceback
+	 * values. 
+	 */
+	private final byte[][] traceback;
+	/**
+	 * The match scores of the current row computed so far
+	 * and the full previous row.
+	 */
+	private final float[][] scoreCache;
+	/**
+	 * {@link BitSet} to keep track of if at our
+	 * current position we are in a vertical gap.
+	 * This is used to compute affine gap
+	 * penalties if our scoring changes
+	 * if we are already inside of a gap
+	 * or not.  
+	 * </p>
+	 * {@link BitSet} is used
+	 * to save memory over a {@literal boolean[]}
+	 * since BitSets actually take up 1 bit
+	 * per element vs 1 byte per element in a {@literal boolean[]}.
+	 */
+	private final BitSet[] inAVerticalGapCache;
+	/**
+	 * The final alignment produced.
+	 */
+	private final P alignment;
+	private final ResiduePairwiseStrategy<R,S,A,P> pairwiseStrategy;
+	
 	/**
 	 * The direction to traverse to the next
 	 * cell in the traceback matrix.  The traceback
@@ -73,35 +104,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	private static final int CURRENT_ROW=1;
 	
 	
-	/**
-	 * The matrix which stores all of our traceback
-	 * values. 
-	 */
-	private final byte[][] traceback;
-	/**
-	 * The match scores of the current row computed so far
-	 * and the full previous row.
-	 */
-	private final float[][] scoreCache;
-	/**
-	 * {@link BitSet} to keep track of if at our
-	 * current position we are in a vertical gap.
-	 * This is used to compute affine gap
-	 * penalties if our scoring changes
-	 * if we are already inside of a gap
-	 * or not.  
-	 * </p>
-	 * {@link BitSet} is used
-	 * to save memory over a {@literal boolean[]}
-	 * since BitSets actually take up 1 bit
-	 * per element vs 1 byte per element in a {@literal boolean[]}.
-	 */
-	private final BitSet[] inAVerticalGapCache;
-	/**
-	 * The final alignment produced.
-	 */
-	private final P alignment;
-	private final ResiduePairwiseStrategy<R,S,A,P> pairwiseStrategy;
+	
 	
 	protected AbstractPairwiseAligner(Sequence<R> query, Sequence<R> subject,
 			ScoringMatrix<R> matrix, float openGapPenalty, float extendGapPenalty,
