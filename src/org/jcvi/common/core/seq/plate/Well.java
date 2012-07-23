@@ -47,11 +47,11 @@ public final class Well implements Comparable<Well>{
     /**
      * the row of this well.
      */
-    private char row;
+    private final char row;
     /**
      * the column of this well.
      */
-    private byte column;
+    private final byte column;
     /**
      * Create a Well.getWell instance for the given well name
      * as a string.

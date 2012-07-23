@@ -211,8 +211,7 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
         if(rootDirPath ==null){
             throw new NullPointerException("rootDirPath can not be null");
         }
-        File rootDir = new File(rootDirPath);
-        return rootDir;
+        return new File(rootDirPath);
     }
     
     
