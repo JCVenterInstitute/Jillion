@@ -33,11 +33,13 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  */
 public final class LucyDebugTrimDataStoreAdapter implements TrimPointsDataStore{
 
+	 private final LucyDebugTrimRecordDataStore delegate;
+	 
     public static TrimPointsDataStore adapt(LucyDebugTrimRecordDataStore datastore){
         return new LucyDebugTrimDataStoreAdapter(datastore);
     }
 
-    private final LucyDebugTrimRecordDataStore delegate;
+   
 
     /**
      * @param delegate

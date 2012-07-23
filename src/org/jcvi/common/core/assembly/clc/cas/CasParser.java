@@ -45,6 +45,19 @@ import org.jcvi.common.core.assembly.clc.cas.align.DefaultCasScoringScheme;
 import org.jcvi.common.core.io.IOUtil;
 
 public final class CasParser {
+	
+	
+	private static final byte[] CAS_MAGIC_NUMBER = new byte[]{
+        (byte)0x43,
+        (byte)0x4c,
+        (byte)0x43,
+        (byte)0x80,
+        (byte)0x00,
+        (byte)0x00,
+        (byte)0x00,
+        (byte)0x01,
+    };
+	
     private  int numberOfBytesForContigPosition,numberOfBytesForContigNumber;
     private  long numberOfReads;
     private CasScoringScheme scoringScheme;
@@ -203,16 +216,7 @@ public final class CasParser {
         }
         
     }
-    private static final byte[] CAS_MAGIC_NUMBER = new byte[]{
-        (byte)0x43,
-        (byte)0x4c,
-        (byte)0x43,
-        (byte)0x80,
-        (byte)0x00,
-        (byte)0x00,
-        (byte)0x00,
-        (byte)0x01,
-    };
+    
     /**
      * 
      * @param file

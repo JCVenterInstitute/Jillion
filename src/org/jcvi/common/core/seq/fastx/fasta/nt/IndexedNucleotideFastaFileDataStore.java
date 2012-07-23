@@ -26,6 +26,10 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * @author dkatzel
  */
 public final class IndexedNucleotideFastaFileDataStore implements NucleotideSequenceFastaDataStore{
+	
+	private final IndexedFileRange index;
+	private final File fastaFile;
+	
 	/**
 	 * Creates a new {@link IndexedNucleotideFastaFileDataStore}
 	 * instance using the given fastaFile.
@@ -66,24 +70,8 @@ public final class IndexedNucleotideFastaFileDataStore implements NucleotideSequ
 		return new IndexedNucleotideFastaDataStoreBuilderVisitor(fastaFile);
 	}
 	
-	private static final class IndexedNucleotideFastaDataStoreBuilderVisitor 
-					extends AbstractIndexedFastaDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>
-							implements	NucleotideFastaDataStoreBuilderVisitor{
-
-		private IndexedNucleotideFastaDataStoreBuilderVisitor(File fastaFile){
-			super(fastaFile);
-		}
-		@Override
-		protected NucleotideSequenceFastaDataStore createDataStore(
-				IndexedFileRange index, File fastaFile) {
-			return new IndexedNucleotideFastaFileDataStore(index, fastaFile);
-		}
-
-		
-	}
-
-	private final IndexedFileRange index;
-	private final File fastaFile;
+	
+	
 	
 	private IndexedNucleotideFastaFileDataStore(IndexedFileRange index, File fastaFile){
 		this.index = index;
@@ -137,4 +125,23 @@ public final class IndexedNucleotideFastaFileDataStore implements NucleotideSequ
 	public CloseableIterator<NucleotideSequenceFastaRecord> iterator() {
 		return LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile);
 	}
+	
+	private static final class IndexedNucleotideFastaDataStoreBuilderVisitor
+			extends
+			AbstractIndexedFastaDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>
+			implements NucleotideFastaDataStoreBuilderVisitor {
+
+		private IndexedNucleotideFastaDataStoreBuilderVisitor(File fastaFile) {
+			super(fastaFile);
+		}
+
+		@Override
+		protected NucleotideSequenceFastaDataStore createDataStore(
+				IndexedFileRange index, File fastaFile) {
+			return new IndexedNucleotideFastaFileDataStore(index, fastaFile);
+		}
+
+
+}
+
 }

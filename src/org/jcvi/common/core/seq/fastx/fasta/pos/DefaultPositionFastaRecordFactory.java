@@ -35,27 +35,14 @@ import org.jcvi.common.core.symbol.ShortSymbol;
 
 final class DefaultPositionFastaRecordFactory implements PositionFastaRecordFactory{
  private static final DefaultPositionFastaRecordFactory INSTANCE = new DefaultPositionFastaRecordFactory();
-    
+ private static final ShortGlyphFactory GLYPH_FACTORY  = ShortGlyphFactory.getInstance();
+ 
     private DefaultPositionFastaRecordFactory(){}
     
     public static DefaultPositionFastaRecordFactory getInstance(){
         return INSTANCE;
     }
-    @Override
-    public PositionSequenceFastaRecord<Sequence<ShortSymbol>> createFastaRecord(
-            String id, String comments, String recordBody) {
-        return buildFastaRecord(id, comments, recordBody);
-        
-    }
-
-    @Override
-    public PositionSequenceFastaRecord<Sequence<ShortSymbol>> createFastaRecord(
-            String id, String recordBody) {
-        return createFastaRecord(id, null,recordBody);
-    }
     
-    private static final ShortGlyphFactory GLYPH_FACTORY  = ShortGlyphFactory.getInstance();
-
     private static PositionSequenceFastaRecord<Sequence<ShortSymbol>> buildFastaRecord(
             String identifier, String comment, CharSequence sequence) {
         List<ShortSymbol> positions = parsePositions(sequence);
@@ -71,4 +58,21 @@ final class DefaultPositionFastaRecordFactory implements PositionFastaRecordFact
         }
         return result;
     }
+    
+    @Override
+    public PositionSequenceFastaRecord<Sequence<ShortSymbol>> createFastaRecord(
+            String id, String comments, String recordBody) {
+        return buildFastaRecord(id, comments, recordBody);
+        
+    }
+
+    @Override
+    public PositionSequenceFastaRecord<Sequence<ShortSymbol>> createFastaRecord(
+            String id, String recordBody) {
+        return createFastaRecord(id, null,recordBody);
+    }
+    
+   
+
+   
 }

@@ -36,7 +36,8 @@ import org.jcvi.common.core.util.ObjectsUtil;
  *
  */
 public class Channel{
-
+	 private Confidence confidence;
+	    private ShortBuffer positions;
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
@@ -68,8 +69,7 @@ public class Channel{
 
         return result;
     }
-    private Confidence confidence;
-    private ShortBuffer positions;
+   
     /**
      * Default constructor, sets confidence and positions to <code>null</code>.
      */

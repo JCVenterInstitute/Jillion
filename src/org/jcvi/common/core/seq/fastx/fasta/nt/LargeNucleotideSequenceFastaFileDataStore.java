@@ -49,7 +49,13 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * @author dkatzel
  */
 public final class LargeNucleotideSequenceFastaFileDataStore extends AbstractNucleotideFastaFileDataStore{
-	/**
+	
+	
+	private static final Pattern NEXT_ID_PATTERN = Pattern.compile("^>(\\S+)");
+    private final File fastaFile;
+
+    private Long size;
+    /**
      * Construct a {@link LargeNucleotideSequenceFastaFileDataStore}
      * for the given Fasta file.
      * @param fastaFile the Fasta File to use, can not be null.
@@ -59,12 +65,6 @@ public final class LargeNucleotideSequenceFastaFileDataStore extends AbstractNuc
 	public static NucleotideSequenceFastaDataStore create(File fastaFile){
 		return new LargeNucleotideSequenceFastaFileDataStore(fastaFile, DefaultNucleotideSequenceFastaRecordFactory.getInstance());
 	}
-	
-	private static final Pattern NEXT_ID_PATTERN = Pattern.compile("^>(\\S+)");
-    private final File fastaFile;
-
-    private Long size;
-    
    
     /**
      * Construct a {@link LargeNucleotideSequenceFastaFileDataStore}

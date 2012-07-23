@@ -39,10 +39,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.Section;
  */
 public final class SCFUtils {
 
-    /**
-     * private constructor so no one can create it.
-     */
-    private SCFUtils(){}
+    
     /**
      * This is the size in bytes of the SCF Header
      * as defined in the SCF File Format Specification.
@@ -65,7 +62,12 @@ public final class SCFUtils {
      * The actual values are ASCII for <code>.scf</code>.
      */
     private static final byte[] MAGIC_NUMBER = new byte[]{0x2E,0x73,0x63,0x66};
-
+    /**
+     * private constructor so no one can create it.
+     */
+    private SCFUtils(){
+    	//can not instantiate
+    }
     /**
      * Get the magic number that all SCF encoded
      * files need to have in its header

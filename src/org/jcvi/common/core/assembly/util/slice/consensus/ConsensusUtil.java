@@ -30,13 +30,15 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 
 public final class ConsensusUtil {
     
-    private ConsensusUtil(){
-        throw new RuntimeException("should never be instantiated");
-    }
+    
     /**
      * These are the only bases that should be used
      * to consider consensus.
      */
     public static final List<Nucleotide> BASES_TO_CONSIDER = Nucleotides.parse("ACGT-");
+    
+    private ConsensusUtil(){
+        throw new RuntimeException("should never be instantiated");
+    }
     
 }

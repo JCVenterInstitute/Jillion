@@ -27,66 +27,7 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  */
 public class PrimerDetector {
 	
-	public static PrimerDetector create(int minLength, int maxAllowedMismatches){
-		return new PrimerDetector(minLength, maxAllowedMismatches, true, -200);
-	}
-    private static final NucleotidePairwiseSequenceAlignment NULL_ALIGNMENT_OBJECT = new NucleotidePairwiseSequenceAlignment(){
-
-		@Override
-		public float getScore() {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		@Override
-		public double getPercentIdentity() {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		@Override
-		public int getAlignmentLength() {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		@Override
-		public int getNumberOfMismatches() {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		@Override
-		public int getNumberOfGapOpenings() {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		@Override
-		public NucleotideSequence getGappedQueryAlignment() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public NucleotideSequence getGappedSubjectAlignment() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public DirectedRange getQueryRange() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public DirectedRange getSubjectRange() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-    	
-    };
+	
     private static final ScoringMatrix<Nucleotide> MATRIX = new DefaultNucleotideScoringMatrix.Builder(0)
     										.setMatch(4)
     										.ambiguityScore(2)
@@ -310,7 +251,66 @@ public class PrimerDetector {
 			return "PrimerHit [id=" + id + ", directedRange=" + directedRange
 					+ "]";
 		}
-    	
-    	
     }
+	
+	public static PrimerDetector create(int minLength, int maxAllowedMismatches){
+		return new PrimerDetector(minLength, maxAllowedMismatches, true, -200);
+	}
+    private static final NucleotidePairwiseSequenceAlignment NULL_ALIGNMENT_OBJECT = new NucleotidePairwiseSequenceAlignment(){
+
+		@Override
+		public float getScore() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public double getPercentIdentity() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int getAlignmentLength() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int getNumberOfMismatches() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int getNumberOfGapOpenings() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public NucleotideSequence getGappedQueryAlignment() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public NucleotideSequence getGappedSubjectAlignment() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public DirectedRange getQueryRange() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public DirectedRange getSubjectRange() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+    	
+    };
 }

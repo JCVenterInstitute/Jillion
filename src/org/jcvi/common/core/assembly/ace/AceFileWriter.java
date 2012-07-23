@@ -44,12 +44,14 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 public final class AceFileWriter {
 
-	private AceFileWriter(){
-		//private constructor.
-	}
+	
     private static final String CONTIG_HEADER = "CO %s %d %d %d %s%n";
     private static final Charset UTF_8 = Charset.forName("UTF-8");
-
+    
+    
+    private AceFileWriter(){
+		//private constructor.
+	}
     public static void writeAceFileHeader(long numberOfContigs, long numberOfReads, OutputStream out) throws IOException{
         writeString(String.format("AS %d %d%n%n", numberOfContigs, numberOfReads), out);
     }

@@ -34,6 +34,24 @@ import java.util.regex.Pattern;
 public final class Well implements Comparable<Well>{
     
     private static final Pattern WELL_NAME_PATTERN = Pattern.compile("([A-P])(\\d+)");
+    
+    /**
+     * A cache of all possible wells we could ever
+     * try to create.  This will keep us from
+     * needlessly making more instances
+     * than we need.
+     * The Well is queried and populated by 
+     * {@link #getWell(char, int)}.
+     */
+    private static final Well[][] CACHE = new Well[16][24];
+    /**
+     * the row of this well.
+     */
+    private char row;
+    /**
+     * the column of this well.
+     */
+    private byte column;
     /**
      * Create a Well.getWell instance for the given well name
      * as a string.
@@ -131,23 +149,7 @@ public final class Well implements Comparable<Well>{
 		    throw new IllegalArgumentException("index can not be <0");
 		}
 	}
-	/**
-     * A cache of all possible wells we could ever
-     * try to create.  This will keep us from
-     * needlessly making more instances
-     * than we need.
-     * The Well is queried and populated by 
-     * {@link #getWell(char, int)}.
-     */
-    private static final Well[][] CACHE = new Well[16][24];
-    /**
-     * the row of this well.
-     */
-    private char row;
-    /**
-     * the column of this well.
-     */
-    private byte column;
+	
     /**
      * Constructor.
      * @param row the row of this well

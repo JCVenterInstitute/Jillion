@@ -32,12 +32,7 @@ import java.util.Arrays;
  *
  */
 public final class ZTRUtil {
-    /**
-     * private construtor so
-     * no one can create one.
-     *
-     */
-    private ZTRUtil(){}
+    
     /**
      * ZTR magic number to let us know that 
      * this is a valid ztr file.
@@ -45,6 +40,14 @@ public final class ZTRUtil {
     private static final byte[] ZTR_MAGIC_NUMBER = 
         new byte[]{(byte)0xAE,(byte)0x5A,(byte)0x54,(byte)0x52,
                 (byte)0x0D,(byte)0x0A,(byte)0x1A,(byte)0x0A,};
+    /**
+     * private construtor so
+     * no one can create one.
+     *
+     */
+    private ZTRUtil(){
+    	//can not instantiate
+    }
     
     public static final byte[] getMagicNumber(){
         byte[] ret = new byte[ZTR_MAGIC_NUMBER.length];

@@ -33,6 +33,8 @@ import java.util.NoSuchElementException;
  */
 public final class CloseableIteratorAdapter<T> implements CloseableIterator<T>{
 
+	private final Iterator<T> iterator;
+	private boolean isClosed = false;
     /**
      * Adapt the given (non-null) {@link Iterator} instance
      * into a {@link CloseableIterator}.
@@ -44,8 +46,7 @@ public final class CloseableIteratorAdapter<T> implements CloseableIterator<T>{
     public static <T> CloseableIteratorAdapter<T> adapt(Iterator<T> iterator){
         return new CloseableIteratorAdapter<T>(iterator);
     }
-    private final Iterator<T> iterator;
-    private boolean isClosed=false;
+   
     /**
      * @param iterator
      */

@@ -33,6 +33,8 @@ import java.util.regex.Pattern;
  *
  */
 public final class SignalStrength {
+	 private final int aSignal,cSignal,gSignal,tSignal;
+	 
     /**
      * The comment key in a chromtogram file which contains the signal strength data.
      */
@@ -81,7 +83,7 @@ public final class SignalStrength {
         }
         return parseSignalStrength(comments.get(SIGNAL_STRENGTH_COMMENT_NAME));
     }
-    private final int aSignal,cSignal,gSignal,tSignal;
+   
 
     private SignalStrength(int aSignal, int cSignal, int gSignal, int tSignal) {
         this.aSignal = aSignal;

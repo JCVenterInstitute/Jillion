@@ -52,6 +52,18 @@ public final class HttpMultipartFormStream
     private static final String SEPARATOR_PAD = "--------------------------";
     
     private static final Random RANDOM_GENERATOR =new Random();
+    
+    /** The character encoding to use for text elements in the request body. */
+    private static final Charset ASCII = Charset.forName("ASCII");
+
+    /** The standard line termination sequence. */
+    private static final byte[] CRLF =  {0x0D, 0x0A };
+
+    /** The {@link OutputStream} to write the data to. */
+    private final OutputStream out;
+    
+    /** The separator string to place between parts. */
+    private final String separator;
     /**
      * Generates a multi-part separator string.  This string consists of the
      * {@link #SEPARATOR_PAD} followed by a string of random characters.  This
@@ -64,17 +76,7 @@ public final class HttpMultipartFormStream
         return HttpMultipartFormStream.SEPARATOR_PAD + RANDOM_GENERATOR.nextLong();
     }
 
-    /** The character encoding to use for text elements in the request body. */
-    private static final Charset ASCII = Charset.forName("ASCII");
-
-    /** The standard line termination sequence. */
-    private static final byte[] CRLF =  {0x0D, 0x0A };
-
-    /** The {@link OutputStream} to write the data to. */
-    private final OutputStream out;
-    
-    /** The separator string to place between parts. */
-    private final String separator;
+   
 
     /**
      * Creates a new <code>HttpMultipartFormStream</code> attached to the ouput

@@ -73,8 +73,7 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
  */
 public final class Ab1FileParser {
 
-	private Ab1FileParser() {
-	}
+	
 	
 	private static final byte ZERO_QUALITY = (byte)0;
 	private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("EEE dd MMM HH:mm:ss yyyy", Locale.US);
@@ -93,6 +92,9 @@ public final class Ab1FileParser {
 	 */
 	private static final int CURRENT_VERSION =1;
 	
+	private Ab1FileParser() {
+		//can not instantiate
+	}
 	/**
 	 * Parse the given Applied BioSystems 
 	 * "ab1" formatted chromatogram file

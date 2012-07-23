@@ -17,7 +17,9 @@ import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 
 public final class DefaultAminoAcidSequenceFastaDataStore implements AminoAcidSequenceFastaDataStore{
-
+	
+	private final DataStore<AminoAcidSequenceFastaRecord> delegate;
+	
 	
 	public static AminoAcidSequenceFastaDataStore create(File fastaFile) throws FileNotFoundException{
 		AminoAcidSequenceFastaDataStoreBuilderVisitor builder = createBuilder();
@@ -28,35 +30,6 @@ public final class DefaultAminoAcidSequenceFastaDataStore implements AminoAcidSe
 	public static AminoAcidSequenceFastaDataStoreBuilderVisitor createBuilder(){
 		return new DefaultAminoAcidSequenceFastaDataStoreBuilder();
 	}
-	
-	
-	
-	
-	private static final class DefaultAminoAcidSequenceFastaDataStoreBuilder extends AbstractFastaVisitor implements AminoAcidSequenceFastaDataStoreBuilderVisitor{
-		private final Map<String, AminoAcidSequenceFastaRecord> fastaRecords = new LinkedHashMap<String, AminoAcidSequenceFastaRecord>();
-		@Override
-		public FastaDataStoreBuilder<AminoAcid, AminoAcidSequence, AminoAcidSequenceFastaRecord, AminoAcidSequenceFastaDataStore> addFastaRecord(
-				AminoAcidSequenceFastaRecord fastaRecord) {
-			fastaRecords.put(fastaRecord.getId(), fastaRecord);
-			return this;
-		}
-
-		@Override
-		public AminoAcidSequenceFastaDataStore build() {
-			return new DefaultAminoAcidSequenceFastaDataStore(MapDataStoreAdapter.adapt(fastaRecords));
-		}
-
-
-		@Override
-		public boolean visitRecord(String id, String comment, String entireBody) {
-			addFastaRecord(new DefaultAminoAcidSequenceFastaRecord(id, comment, entireBody.replaceAll("\\s+", "")));
-			return true;
-		}
-
-		
-	}
-	private final DataStore<AminoAcidSequenceFastaRecord> delegate;
-	
 	private DefaultAminoAcidSequenceFastaDataStore(DataStore<AminoAcidSequenceFastaRecord> delegate){
 		this.delegate = delegate;
 	}
@@ -98,6 +71,28 @@ public final class DefaultAminoAcidSequenceFastaDataStore implements AminoAcidSe
 		return delegate.iterator();
 	}
 	
-	
+	private static final class DefaultAminoAcidSequenceFastaDataStoreBuilder extends AbstractFastaVisitor implements AminoAcidSequenceFastaDataStoreBuilderVisitor{
+		private final Map<String, AminoAcidSequenceFastaRecord> fastaRecords = new LinkedHashMap<String, AminoAcidSequenceFastaRecord>();
+		@Override
+		public FastaDataStoreBuilder<AminoAcid, AminoAcidSequence, AminoAcidSequenceFastaRecord, AminoAcidSequenceFastaDataStore> addFastaRecord(
+				AminoAcidSequenceFastaRecord fastaRecord) {
+			fastaRecords.put(fastaRecord.getId(), fastaRecord);
+			return this;
+		}
+
+		@Override
+		public AminoAcidSequenceFastaDataStore build() {
+			return new DefaultAminoAcidSequenceFastaDataStore(MapDataStoreAdapter.adapt(fastaRecords));
+		}
+
+
+		@Override
+		public boolean visitRecord(String id, String comment, String entireBody) {
+			addFastaRecord(new DefaultAminoAcidSequenceFastaRecord(id, comment, entireBody.replaceAll("\\s+", "")));
+			return true;
+		}
+
+		
+	}
 	
 }

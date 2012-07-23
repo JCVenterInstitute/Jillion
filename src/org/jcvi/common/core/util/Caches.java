@@ -327,7 +327,6 @@ public final class Caches
      */
     private abstract static class AbstractReferencedLRUCache<K,V,R extends Reference<V>> extends AbstractMap<K,V>{
         
-        protected abstract R createReferenceFor(V value,final ReferenceQueue<V> referenceQueue);
         
         private final Map<K, R> cache;
         private final ReferenceQueue<V> referenceQueue = new ReferenceQueue<V>();
@@ -340,6 +339,7 @@ public final class Caches
             cache = map;
             referenceKeyMap = new HashMap<Reference<? extends V>, K>(size+1, DEFAULT_LOAD_FACTOR);
         }
+        protected abstract R createReferenceFor(V value,final ReferenceQueue<V> referenceQueue);
         
         /**
          * Remove any entries in the 

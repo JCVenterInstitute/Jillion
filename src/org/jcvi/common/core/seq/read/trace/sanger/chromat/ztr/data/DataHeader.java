@@ -28,7 +28,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data;
  */
 public final class DataHeader {
 
-    private DataHeader(){}
+    
     /**
      * Data header value specifying that this data block will not be encoded (raw).
      */
@@ -73,5 +73,9 @@ public final class DataHeader {
      * using a computing most frequent follow symbol table.
      */
     public static final Byte FOLLOW_DATA_ENCODED = Byte.valueOf((byte)72);
+    
+    private DataHeader(){
+    	//can not instantiate
+    }
     
 }

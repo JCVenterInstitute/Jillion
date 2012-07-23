@@ -36,7 +36,7 @@ import java.nio.charset.Charset;
  */
 public final class HttpUtil {
 
-    private HttpUtil(){}
+   
     
     /** The default character encoding for text data */
     public static final Charset ASCII = Charset.forName("ASCII");
@@ -55,6 +55,11 @@ public final class HttpUtil {
      * use for SSL Authentication.
      */
     public static final String SSL_TRUSTSTORE_PROPERTY_KEY = "javax.net.ssl.trustStore";
+    
+    
+    private HttpUtil(){
+    	//can not instantiate
+    }
     
     /**
      * Writes the given string as a URL encoded string.

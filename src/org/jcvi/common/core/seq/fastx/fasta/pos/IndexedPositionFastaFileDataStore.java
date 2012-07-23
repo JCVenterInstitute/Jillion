@@ -26,6 +26,10 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  * @author dkatzel
  */
 public final class IndexedPositionFastaFileDataStore implements PositionFastaDataStore{
+	
+	private final IndexedFileRange index;
+	private final File fastaFile;
+	
 	/**
 	 * Creates a new {@link IndexedPositionFastaFileDataStore}
 	 * instance using the given fastaFile.
@@ -59,8 +63,7 @@ public final class IndexedPositionFastaFileDataStore implements PositionFastaDat
 	public static PositionFastaDataStoreBuilderVisitor createBuilder(File fastaFile){
 		return new IndexedPositionFastaDataStoreBuilderVisitor(fastaFile);
 	}
-	private final IndexedFileRange index;
-	private final File fastaFile;
+	
 	
 	private IndexedPositionFastaFileDataStore(IndexedFileRange index, File fastaFile){
 		this.index = index;

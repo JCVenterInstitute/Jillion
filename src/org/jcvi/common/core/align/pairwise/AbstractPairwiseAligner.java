@@ -53,6 +53,15 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	 */
 	private final P alignment;
 	private final ResiduePairwiseStrategy<R,S,A,P> pairwiseStrategy;
+	/**
+	 * The previous row in our cache.
+	 */
+	private static final int PREVIOUS_ROW=0;
+	/**
+	 * The current row in our cache.
+	 */
+	private static final int CURRENT_ROW=1;
+	
 	
 	/**
 	 * The direction to traverse to the next
@@ -94,15 +103,6 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		 */
 		DIAGNOL;
 	}
-	/**
-	 * The previous row in our cache.
-	 */
-	private static final int PREVIOUS_ROW=0;
-	/**
-	 * The current row in our cache.
-	 */
-	private static final int CURRENT_ROW=1;
-	
 	
 	
 	

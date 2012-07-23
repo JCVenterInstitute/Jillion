@@ -52,25 +52,15 @@ import org.jcvi.common.core.util.MathUtil;
  */
 public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor implements CasGappedReferenceMap{
 
-    static class Insertion{
-        private long size=0;
-        
-        public  Insertion(long initialSize){
-            this.size = initialSize;
-        }
-        public void updateSize(long newSize){
-            if(newSize > size){
-                this.size = newSize;
-            }
-        }
-        public long getSize(){
-            return size;
-        }
-    }
+   
     private final SortedMap<Long, SortedMap<Long,Insertion>> gapsByReferenceId = new TreeMap<Long, SortedMap<Long,Insertion>>();
    private final CasIdLookup contigNameLookup;
     private final CasNucleotideDataStore referenceNucleotideDataStore;
     private final Map<Long, NucleotideSequence> gappedReferences = new TreeMap<Long, NucleotideSequence>();
+    
+    
+    
+    
     /**
      * @param casDataStoreFactory
      */
@@ -205,6 +195,20 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
     	return Collections.unmodifiableList(list);
     }
     
-   
+    static class Insertion{
+        private long size=0;
+        
+        public  Insertion(long initialSize){
+            this.size = initialSize;
+        }
+        public void updateSize(long newSize){
+            if(newSize > size){
+                this.size = newSize;
+            }
+        }
+        public long getSize(){
+            return size;
+        }
+    }
 
 }
