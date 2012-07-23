@@ -32,17 +32,17 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 final class CompactedSliceElement implements IdedSliceElement{
 	
     private static final Nucleotide[] NUCLEOTIDE_VALUES = Nucleotide.values();
-	private String id;
+	private final String id;
     //don't use array since that takes up 12 bytes of memory
     //to store reference and length
-    private byte quality;
+    private final byte quality;
     /**
      * Since there are only a few nucleotides
      * we can pack both the direction AND the ordinal
      * value of the nucleotide in a single byte.
      * By using the direction as the sign bit. 
      */
-    private byte dirAndNucleotide;
+    private final byte dirAndNucleotide;
     /**
      * package private constructor used by compactedSlice to build
      * already encoded elements.
@@ -65,11 +65,12 @@ final class CompactedSliceElement implements IdedSliceElement{
         }
         this.id= id;
         this.quality = quality.getValue().byteValue();
-        this.dirAndNucleotide = base.getOrdinalAsByte();
-        //This will set the ordinal to negative if the 
-        //the direction is reverse for a quick lookup.
-        if(direction == Direction.REVERSE){
-        	dirAndNucleotide = (byte)(dirAndNucleotide | 0x80);
+        if(direction == Direction.FORWARD){
+        	this.dirAndNucleotide = base.getOrdinalAsByte();
+        }else{        
+        	//This will set the ordinal to negative if the 
+        	//the direction is reverse for a quick lookup.
+        	dirAndNucleotide = (byte)(base.getOrdinalAsByte() | 0x80);
         }
     }
    

@@ -31,9 +31,9 @@ package org.jcvi.common.io.ansi;
 final class EscapeCode {
 
     /** The ANSI control index. */
-    private byte code;
+    private final byte code;
     /** The full ANSI control string for this attribute. */
-    private String controlCode;
+    private final String controlCode;
     
     /**
      * Creates a new <code>ANSIColor</code>.

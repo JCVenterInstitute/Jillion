@@ -123,7 +123,7 @@ public final class ZipFileDataStore implements ZipDataStore{
     }
     
     private static final class EntryNameIterator implements CloseableIterator<String>{
-        private Enumeration<? extends ZipEntry> entryEnumerator;
+        private final Enumeration<? extends ZipEntry> entryEnumerator;
         private EntryNameIterator(Enumeration<? extends ZipEntry> entryEnumerator){
             this.entryEnumerator = entryEnumerator;
         }

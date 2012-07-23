@@ -231,7 +231,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 		
 	}
 
-	private class SizeVisitor implements AceFileVisitor{
+	private final class SizeVisitor implements AceFileVisitor{
 
 		private long size=0L;
 		private long totalNumberOfReads=0L;
@@ -391,7 +391,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
      * to iterate over the entire file in 1 pass.
      * @author dkatzel
      */
-    private class AceFileDataStoreIterator extends AbstractBlockingCloseableIterator<AceContig>{
+    private final class AceFileDataStoreIterator extends AbstractBlockingCloseableIterator<AceContig>{
 
         /**
         * {@inheritDoc}
@@ -593,7 +593,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
     
     	
     
-    private class IdVisitor extends AbstractBlockingCloseableIterator<String>{
+    private final class IdVisitor extends AbstractBlockingCloseableIterator<String>{
 
         /**
         * {@inheritDoc}

@@ -189,7 +189,7 @@ public final class CoverageMapFactory {
     private CoverageMapFactory(){}
     
     private static final class CoverageMapImpl<V extends Rangeable> implements CoverageMap<V>{
-	    private CoverageRegion<V>[] regions;
+	    private final CoverageRegion<V>[] regions;
 	    /**
 	     *
 	     * Creates a new <code>CoverageMapImpl</code>.

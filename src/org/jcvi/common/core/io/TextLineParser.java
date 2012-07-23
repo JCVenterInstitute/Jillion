@@ -39,8 +39,8 @@ public final class TextLineParser implements Closeable{
 
 	private int endOfLine;
 	private InputStream in;
-	private Object endOfFile = new Object();
-	private FIFOQueue<Object> nextQueue = new FIFOQueue<Object>();
+	private final Object endOfFile = new Object();
+	private final FIFOQueue<Object> nextQueue = new FIFOQueue<Object>();
 	boolean doneFile = false;
 	public TextLineParser(InputStream in) throws IOException{
 		this(in,'\n');

@@ -47,9 +47,9 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
 final class IndexedAceFileContig implements AceContig{
 
 	private final String contigId;
-	private Map<String, AlignedReadInfo> readInfoMap;
-	private IndexedFileRange readOffsetRanges;
-	private boolean isComplimented;
+	private final Map<String, AlignedReadInfo> readInfoMap;
+	private final IndexedFileRange readOffsetRanges;
+	private final boolean isComplimented;
 	private final NucleotideSequence consensus;
 	private final File aceFile;
 	private final long contigStartFileOffset;
@@ -157,8 +157,8 @@ final class IndexedAceFileContig implements AceContig{
 		private NucleotideSequenceBuilder consensusBuilder;
 		private boolean readingConsensus=true;
 		private String currentReadId;
-		private long contigStartOffset=0;
-		private List<Range> coverageRanges = new ArrayList<Range>();
+		private final long contigStartOffset;
+		private final List<Range> coverageRanges = new ArrayList<Range>();
 		private long currentReadStart;
 		public IndexedContigVisitorBuilder(long startOffset, File aceFile) {
 			this.currentOffset = startOffset;

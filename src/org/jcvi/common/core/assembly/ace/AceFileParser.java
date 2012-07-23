@@ -127,10 +127,10 @@ public final class AceFileParser {
         final boolean isFirstContigInFile;
         final AceFileVisitor visitor;
         final TextLineParser parser;
-        private boolean stopParsing;
-        private boolean parseCurrentContig;
-        private boolean inAContig;
-        private int expectedNumberOfReads;
+        private final boolean stopParsing;
+        private final boolean parseCurrentContig;
+        private final boolean inAContig;
+        private final int expectedNumberOfReads;
         private int numberOfReadsSeen;
         
         ParserState(AceFileVisitor visitor,

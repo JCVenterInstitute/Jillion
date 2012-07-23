@@ -99,7 +99,7 @@ public final class DefaultAceTagsFromAceFile {
         * up the consensus tags as we parse.
         */
        private DefaultConsensusAceTag.Builder consensusTagBuilder;
-       private AceTagsBuilder aceTagsBuilder = DefaultAceTags.createBuilder();
+       private final AceTagsBuilder aceTagsBuilder = DefaultAceTags.createBuilder();
        
     /**
     * {@inheritDoc}

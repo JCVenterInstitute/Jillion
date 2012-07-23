@@ -34,7 +34,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
  *
  */
 public abstract class AbstractContigBuilder<P extends AssembledRead, C extends Contig<P>> implements ContigBuilder<P,C>{
-        private NucleotideSequenceBuilder consensus;
+        private final NucleotideSequenceBuilder consensus;
         private String id;
         private final Map<String, AssembledReadBuilder<P>> reads;
         public AbstractContigBuilder(String id, NucleotideSequence consensus){

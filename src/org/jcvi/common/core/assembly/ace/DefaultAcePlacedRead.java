@@ -189,7 +189,7 @@ final class DefaultAcePlacedRead implements AcePlacedRead {
 
 
     private static class Builder implements AcePlacedReadBuilder{
-        private PhdInfo phdInfo;        
+        private final PhdInfo phdInfo;        
         private final AssembledReadBuilder<AssembledRead> delegateBuilder;
         
         
@@ -234,7 +234,15 @@ final class DefaultAcePlacedRead implements AcePlacedRead {
             return this;
         }
         
-        /**
+        @Override
+		public AssembledReadBuilder<AcePlacedRead> setClearRange(
+				Range updatedClearRange) {
+			delegateBuilder.setClearRange(updatedClearRange);
+			return this;
+		}
+
+
+		/**
         * {@inheritDoc}
         */
         @Override

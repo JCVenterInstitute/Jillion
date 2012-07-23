@@ -113,8 +113,8 @@ public final class DefaultZTRChromatogramWriter implements ZTRChromatogramWriter
 	}
 
 	private static final class DataEncoder{
-		private Data data;
-		private byte optionalParameter;
+		private final Data data;
+		private final byte optionalParameter;
 		
 		private DataEncoder(Data data) {
 			this(data,(byte)0);
@@ -134,9 +134,9 @@ public final class DefaultZTRChromatogramWriter implements ZTRChromatogramWriter
 	}
 	
 	private static final class ChunkEncoder{
-		private ChunkType type;
-		private Chunk chunk;
-		private List<DataEncoder> dataEncoders;
+		private final ChunkType type;
+		private final Chunk chunk;
+		private final List<DataEncoder> dataEncoders;
 		
 		private ChunkEncoder(ChunkType type, Chunk chunk,
 				List<DataEncoder> dataEncoders) {

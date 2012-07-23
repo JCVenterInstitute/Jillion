@@ -28,10 +28,10 @@ import org.jcvi.common.core.util.ObjectsUtil;
 
 public class DefaultChannelGroup implements ChannelGroup {
 
-    private Channel aChannel;
-    private Channel cChannel;
-    private Channel gChannel;
-    private Channel tChannel;
+    private final Channel aChannel;
+    private final Channel cChannel;
+    private final Channel gChannel;
+    private final Channel tChannel;
 
 
     /**

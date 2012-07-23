@@ -40,7 +40,7 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
 
     private P enteringObject;
     private P leavingObject;
-    private Queue<P> coveringObjects;
+    private final Queue<P> coveringObjects;
     private Iterator<P> enteringIterator;
     private Iterator<P> leavingIterator;
     private List<CoverageRegionBuilder<P>> coverageRegionBuilders;

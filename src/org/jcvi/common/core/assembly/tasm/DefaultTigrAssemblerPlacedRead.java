@@ -299,7 +299,14 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
             return delegate.getClearRange();
         }
 
-        /**
+        @Override
+		public AssembledReadBuilder<TigrAssemblerPlacedRead> setClearRange(
+				Range updatedClearRange) {
+        	delegate.setClearRange(updatedClearRange);
+			return this;
+		}
+
+		/**
         * {@inheritDoc}
         */
         @Override
