@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.fastx.fasta.qual;
 
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaRecord;
 import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -32,7 +32,6 @@ import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
 public class TestQualityFastaRecord {
 
     private String id = "identifier";
@@ -86,7 +85,12 @@ public class TestQualityFastaRecord {
     }
     @Test
     public void notEqualsNotAQualityFasta(){
-        assertFalse(sut.equals(createMock(DefaultNucleotideSequenceFastaRecord.class)));
+        assertFalse(sut.equals("something completely different"));
+    }
+    @Test
+    public void differrentFastaRecordShouldNotBeEqual(){
+    	NucleotideSequenceFastaRecord seq = new NucleotideSequenceFastaRecord(id, "ACGTACGT");
+        assertFalse(sut.equals(seq));
     }
     @Test
     public void equalsDifferentComment(){

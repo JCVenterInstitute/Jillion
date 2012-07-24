@@ -33,8 +33,9 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nt.AbstractNucleotideFastaVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 /**
  * {@code ConvertGappedFasta2UngappedFasta} converts a gapped
@@ -71,10 +72,13 @@ public class ConvertGappedFasta2UngappedFasta {
                 @Override
                 protected boolean visitFastaRecord(
                         NucleotideSequenceFastaRecord fastaRecord) {
-                    NucleotideSequenceFastaRecord ungapped =
-                        new DefaultNucleotideSequenceFastaRecord(fastaRecord.getId(), fastaRecord.getComment(),
-                                fastaRecord.getSequence().asUngappedList());
-                    output.print(ungapped);
+                	NucleotideSequence ungappedSequence = new NucleotideSequenceBuilder(fastaRecord.getSequence())
+                										.ungap()
+                										.build();
+                    NucleotideSequenceFastaRecord ungappedFasta =
+                        new NucleotideSequenceFastaRecord(fastaRecord.getId(), fastaRecord.getComment(),
+                        		ungappedSequence);
+                    output.print(ungappedFasta);
                     return true;
                     
                 }

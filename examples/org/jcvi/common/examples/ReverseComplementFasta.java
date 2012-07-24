@@ -8,7 +8,7 @@ import java.util.TreeSet;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nt.IndexedNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.LargeNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
@@ -34,7 +34,7 @@ public class ReverseComplementFasta {
 															.reverseComplement()
 															.build();
 				
-				NucleotideSequenceFastaRecord reverseRecord = new DefaultNucleotideSequenceFastaRecord(
+				NucleotideSequenceFastaRecord reverseRecord = new NucleotideSequenceFastaRecord(
 														record.getId(), 
 														record.getComment()
 														,reverseSequence); 			

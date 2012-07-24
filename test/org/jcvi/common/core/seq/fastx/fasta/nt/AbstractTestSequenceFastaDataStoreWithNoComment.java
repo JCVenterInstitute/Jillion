@@ -27,7 +27,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 
@@ -35,7 +35,7 @@ public  abstract class AbstractTestSequenceFastaDataStoreWithNoComment {
     static final String FASTA_FILE_PATH = "files/noComment.fasta";
     ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestSequenceFastaMapWithNoComment.class);
     
-DefaultNucleotideSequenceFastaRecord hrv_61 = new DefaultNucleotideSequenceFastaRecord("hrv-61",null,
+NucleotideSequenceFastaRecord hrv_61 = new NucleotideSequenceFastaRecord("hrv-61",null,
         "TTAAAACTGGGTCTGGGTTGCTCCCACCCAGACCACCCATGTGGTGTTGTACACTGTTAT" +
         "TCCGGTAACTTTGTACGCCAGTTTTGAACTCCCCTACCCCTTTTGTAACTTAGAAGCTAA" +
         "ACACATCGACCAATAGCAGGCAATCACCCAGATTGCTTATGGTCAAGTACTTCTGTTTCC" +

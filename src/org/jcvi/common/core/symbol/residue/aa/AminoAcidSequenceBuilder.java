@@ -185,6 +185,12 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 	}
 
 	@Override
+	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> copy() {
+		return new AminoAcidSequenceBuilder(builder.toString());
+		
+	}
+
+	@Override
 	public List<AminoAcid> asList() {
 		return AminoAcids.parse(builder.toString());
 	}

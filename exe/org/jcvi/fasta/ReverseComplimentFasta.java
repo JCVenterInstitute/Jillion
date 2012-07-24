@@ -24,7 +24,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -36,9 +35,9 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nt.AbstractNucleotideFastaVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 /**
@@ -78,14 +77,14 @@ public class ReverseComplimentFasta {
                 @Override
                 protected boolean visitFastaRecord(
                         NucleotideSequenceFastaRecord fastaRecord) {
-                    List<Nucleotide> revcomplement = new NucleotideSequenceBuilder(fastaRecord.getSequence())
+                	NucleotideSequence revComplement = new NucleotideSequenceBuilder(fastaRecord.getSequence())
                     									.reverseComplement()
-                    									.asList();
+                    									.build();
                     try {
-                        out.write(new DefaultNucleotideSequenceFastaRecord(
+                        out.write(new NucleotideSequenceFastaRecord(
                                 fastaRecord.getId(),
                                 fastaRecord.getComment(),
-                                revcomplement).toString().getBytes());
+                                revComplement).toString().getBytes());
                     } catch (IOException e) {
                        throw new IllegalStateException("error writing to output fasta",e);
                     }

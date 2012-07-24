@@ -24,12 +24,11 @@
 package org.jcvi.common.core.seq.fastx.fasta.pos;
 
 import static org.junit.Assert.*;
-import static org.easymock.EasyMock.createMock;
 
 import java.util.List;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.pos.DefaultPositionSequenceFastaRecord;
 import org.jcvi.common.core.symbol.DefaultShortGlyphCodec;
 import org.jcvi.common.core.symbol.EncodedSequence;
@@ -113,8 +112,13 @@ public class TestPositionFastaRecord {
         assertFalse(sut.equals(null));
     }
     @Test
-    public void notEqualsNotAQualityFasta(){
-        assertFalse(sut.equals(createMock(DefaultNucleotideSequenceFastaRecord.class)));
+    public void notEqualsNotAPositionFasta(){
+        assertFalse(sut.equals("something completely different"));
+    }
+    @Test
+    public void differrentFastaRecordShouldNotBeEqual(){
+    	NucleotideSequenceFastaRecord seq = new NucleotideSequenceFastaRecord(id, "ACGTACGT");
+        assertFalse(sut.equals(seq));
     }
     @Test
     public void equalsDifferentComment(){

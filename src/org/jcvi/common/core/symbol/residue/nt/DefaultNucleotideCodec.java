@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.symbol.GlyphCodec;
 /**
@@ -72,7 +73,11 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
      */
     private static final int BITS_PER_GLYPH = 4;
     
+    private static final Nucleotide[] ORDINAL_VALUES = Nucleotide.values();
+    
     private final int singleGlyphEncodedSize = computeEncodedSize(1);
+    
+    
     /**
      * populate the maps.
      * Each byte key has been specially assigned so
@@ -112,14 +117,17 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
         List<Nucleotide> result = new ArrayList<Nucleotide>(length);
         
         for(int i=HEADER_LENGTH; i<encodedGlyphs.length-1; i++){
-            result.addAll(decodeNext2Values(encodedGlyphs[i]));
+            byte[] values =decodeNext2Values(encodedGlyphs[i]);
+            result.add(ORDINAL_VALUES[values[0]]);
+            result.add(ORDINAL_VALUES[values[1]]);
         }
         if(length>0){
+        	byte[] values =decodeNext2Values(encodedGlyphs[encodedGlyphs.length-1]);             
             if(isEven(length)){
-                result.addAll(decodeNext2Values(encodedGlyphs[encodedGlyphs.length-1]));
-            }
-            else{
-                result.add(decodeLastValues(encodedGlyphs[encodedGlyphs.length-1]));
+                result.add(ORDINAL_VALUES[values[0]]);
+                result.add(ORDINAL_VALUES[values[1]]);
+            }else{
+                result.add(ORDINAL_VALUES[values[0]]);
             }
         }
         return result;
@@ -130,11 +138,11 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
         return decode(getByteForGlyph, isEven(index));
     }
     private Nucleotide decode(final byte getByteForGlyph, boolean isFirstNibble) {
-        List<Nucleotide> values = decodeNext2Values(getByteForGlyph);
+        byte[] next2 = decodeNext2Values(getByteForGlyph);
         if(isFirstNibble){
-            return values.get(0);
+            return ORDINAL_VALUES[next2[0]];
         }
-        return values.get(1);
+        return ORDINAL_VALUES[next2[1]];
     }
     private byte getEncodedByteForGlyph(byte[] encodedGlyphs, int index) {
         final int encodedIndex = computeEncodedIndexForGlyph(index);
@@ -229,10 +237,10 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
         byte low = GLYPH_TO_BYTE_MAP.get(glyphs.next());
         result.put((byte) ((hi<<BITS_PER_GLYPH | low) &0xFF));
     }
-    private List<Nucleotide> decodeNext2Values(byte b) {
+    private byte[] decodeNext2Values(byte b) {
         byte hi = (byte)(b>>>BITS_PER_GLYPH &0x0F);
         byte low = (byte)(b & 0x0F);
-       return Arrays.asList(BYTE_TO_GLYPH_MAP.get(hi),BYTE_TO_GLYPH_MAP.get(low));
+       return new byte[]{BYTE_TO_GLYPH_MAP.get(hi).getOrdinalAsByte(),BYTE_TO_GLYPH_MAP.get(low).getOrdinalAsByte()};
     }
     private Nucleotide decodeLastValues(byte b) {
         byte hi = (byte)(b>>>BITS_PER_GLYPH &0x0F);
@@ -338,4 +346,54 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
         }
         return numberOfGaps;
     }
+	@Override
+	public Iterator<Nucleotide> iterator(byte[] encodedGlyphs) {		
+		return new IteratorImpl(encodedGlyphs);
+	}
+	
+	private class IteratorImpl implements Iterator<Nucleotide>{
+		private final byte[] encodedData;
+		private final int length;
+		private int currentOffset=0;
+		private byte[] currentDecodedBytes;
+		public IteratorImpl(byte[] encodedData) {
+			this.encodedData = encodedData;
+			this.length = decodedLengthOf(encodedData);
+			if(hasNext()){
+				byte encodedByte = encodedData[computeEncodedIndexForGlyph(0)];
+				currentDecodedBytes = decodeNext2Values(encodedByte);
+			}
+		}
+
+		@Override
+		public boolean hasNext() {
+			return currentOffset <length;
+		}
+
+		@Override
+		public Nucleotide next() {
+			if(!hasNext()){
+				throw new NoSuchElementException("no more elements");
+			}
+			final Nucleotide ret;
+			if(isEven(currentOffset)){
+				ret= ORDINAL_VALUES[currentDecodedBytes[0]];
+			}else{
+				ret = ORDINAL_VALUES[currentDecodedBytes[1]];
+			}
+			currentOffset++;
+			if(isEven(currentOffset) && hasNext()){
+				byte encodedByte = encodedData[computeEncodedIndexForGlyph(currentOffset)];
+				currentDecodedBytes = decodeNext2Values(encodedByte);
+			}
+			return ret;
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException("can not modify immutable sequence");
+			
+		}
+		
+	}
 }

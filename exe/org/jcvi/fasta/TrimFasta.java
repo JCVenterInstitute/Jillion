@@ -39,9 +39,9 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nt.AbstractNucleotideFastaVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 /**
  * @author dkatzel
@@ -104,10 +104,12 @@ public class TrimFasta {
                                                     untrimmedLength -1 -(r==null?0:r));
                     
                     try {
-                        out.write(new DefaultNucleotideSequenceFastaRecord(
+                    	NucleotideSequence trimmedSequence = new NucleotideSequenceBuilder(basecalls)
+                    										.build(trimRange);
+                        out.write(new NucleotideSequenceFastaRecord(
                                 fastaRecord.getId(),
                                 fastaRecord.getComment(),
-                                basecalls.asList(trimRange))
+                                trimmedSequence)
                                     .toString().getBytes());
                     } catch (IOException e) {
                        throw new IllegalStateException("error writing to output fasta",e);

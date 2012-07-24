@@ -236,8 +236,12 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * are independent of each other.
      */
 	ResidueSequenceBuilder<R,S> subSequence(Range range);
-
-    
+	/**
+	 * Create a new deep copy instance of the Builder.
+	 * Any downstream modifications to either this Builder or the returned one
+     * are independent of each other.
+	 */
+	ResidueSequenceBuilder<R,S> copy();
     /**
      * Get the entire current residue sequence as a list
      * of Nucleotide objects.

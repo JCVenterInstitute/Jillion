@@ -31,18 +31,24 @@ import org.jcvi.common.core.symbol.residue.AbstractResidueSequence;
 
 /**
  * {@code DefaultNucleotideSequence} is the default
- * implementation of a {@link NucleotideSequence}.  Internally,
- * each {@link Nucleotide} is encoded as 2 bits.
+ * implementation of a {@link NucleotideSequence}.  
+ * Depending on the {@link NucleotideCodec} used,
+ * the nucleotides can be encoded as 4 bits, 2 bits
+ * or some other efficient manner.
  * @author dkatzel
  *
  *
  */
 final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide> implements NucleotideSequence{
-    
-   
-    
-    private final NucleotideEncodedSequence encodedBasecalls;
 
+    /**
+     * {@link NucleotideCodec} used to decode the data.
+     */
+    private final NucleotideCodec codec;
+    /**
+     * Our data.
+     */
+    private final byte[] data;
     
    
     
@@ -77,7 +83,8 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
     }
     
     private DefaultNucleotideSequence(Collection<Nucleotide> nucleotides,NucleotideCodec codec ){
-        this.encodedBasecalls = new NucleotideEncodedSequence(codec,nucleotides);
+        this.codec =codec;
+        this.data = codec.encode(nucleotides);
    
     }
     
@@ -88,26 +95,26 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
     
     @Override
     public List<Integer> getGapOffsets() {
-        return encodedBasecalls.getGapOffsets();
+    	return codec.getGapOffsets(data);
     }
 
     @Override
     public List<Nucleotide> asList() {
-        return encodedBasecalls.asList();
+    	return codec.decode(data);
     }
 
     @Override
-    public Nucleotide get(int index) {       
-        return encodedBasecalls.get(index);
+    public Nucleotide get(int index) {     
+    	return codec.decode(data, index);
     }
 
     @Override
     public long getLength() {
-        return encodedBasecalls.getLength();
+    	return codec.decodedLengthOf(data);
     }
     @Override
     public boolean isGap(int index) {
-        return encodedBasecalls.isGap(index);
+    	return codec.isGap(data, index);
     }
     @Override
     public int hashCode() {
@@ -138,12 +145,12 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
     */
     @Override
     public int getNumberOfGaps() {
-        return encodedBasecalls.getNumberOfGaps();
+    	return codec.getNumberOfGaps(data);
     }
 	@Override
 	public Iterator<Nucleotide> iterator() {
-		return encodedBasecalls.iterator();
+		return codec.iterator(data);
 	}
 
-    
+	
 }

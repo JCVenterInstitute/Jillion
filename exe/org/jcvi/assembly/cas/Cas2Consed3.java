@@ -71,7 +71,7 @@ import org.jcvi.common.core.assembly.util.trim.TrimDataStoreUtil;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.IndexedPhdFileDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
@@ -276,14 +276,15 @@ public class Cas2Consed3 {
                      
                      int numberOfUpstreamNs = (int)(contigRange.getBegin() - previousPseduoMoleculeOffset);
                 	 appendNsIfNeeded(pseduoMoleculeBuilder, numberOfUpstreamNs);
-                    
-                     List<Nucleotide> ungappedConsensus = splitContig.getConsensusSequence().asUngappedList();
+                	 NucleotideSequence ungappedConsensus = new NucleotideSequenceBuilder(splitContig.getConsensusSequence())
+                	 											.ungap()
+                	 											.build();
                      pseduoMoleculeBuilder.append(ungappedConsensus);
                      
                      
                      
 					consensusOut.print(
-                             new DefaultNucleotideSequenceFastaRecord(
+                             new NucleotideSequenceFastaRecord(
                                      splitContig.getId(), 
                                      ungappedConsensus)
                              .toFormattedString());
@@ -293,7 +294,7 @@ public class Cas2Consed3 {
                  int numberOfDownstreamNs = (int)(ungappedLength-1 - previousPseduoMoleculeOffset);
                  appendNsIfNeeded(pseduoMoleculeBuilder, numberOfDownstreamNs);
                  if(createPseduoMoleculeFasta){
-                	 pseduoMoleculeOut.print(new DefaultNucleotideSequenceFastaRecord(
+                	 pseduoMoleculeOut.print(new NucleotideSequenceFastaRecord(
                 			 referenceId,
                 			 pseduoMoleculeBuilder.build()));
                  }
