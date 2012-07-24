@@ -23,11 +23,12 @@
  */
 package org.jcvi.common.core.symbol.residue.nt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.symbol.residue.nt.DefaultNucleotideCodec;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
@@ -97,4 +98,29 @@ public class TestDefaultNucleotideGlyphCodec {
          byte[] actual =sut.encode(nucleotides);
          sut.decode(actual, -1);
     }
+    
+    @Test
+    public void evenIterator(){
+		assertIterateCorrectly(evenBases);
+    }
+    @Test
+    public void oddIterator(){
+		assertIterateCorrectly(oddBases);
+    }
+	public void assertIterateCorrectly(List<Nucleotide> bases) {
+		Iterator<Nucleotide> expected = bases.iterator();
+    	byte[] encoded = sut.encode(bases);
+    	Iterator<Nucleotide> actual = sut.iterator(encoded);
+    	while(expected.hasNext()){
+    		assertTrue(actual.hasNext());
+    		assertEquals(expected.next(), actual.next());
+    	}
+    	assertFalse(actual.hasNext());
+    	try{
+			actual.next();
+			fail("should throw NoSuchElementException when done iterating");
+		}catch(NoSuchElementException e){
+			//expected
+		}
+	}
 }

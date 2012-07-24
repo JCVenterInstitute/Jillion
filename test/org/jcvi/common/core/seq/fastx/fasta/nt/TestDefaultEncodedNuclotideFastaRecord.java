@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaRecord;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -45,7 +45,7 @@ public class TestDefaultEncodedNuclotideFastaRecord {
     List<Nucleotide> glyphs = Nucleotides.parse(bases);
     NucleotideSequence encodedGlyphs = new NucleotideSequenceBuilder(glyphs).build();
 
-    DefaultNucleotideSequenceFastaRecord sut = new DefaultNucleotideSequenceFastaRecord(id, comment, bases);
+    NucleotideSequenceFastaRecord sut = new NucleotideSequenceFastaRecord(id, comment, bases);
     @Test
     public void constructor(){
         assertEquals(id, sut.getId());
@@ -56,7 +56,7 @@ public class TestDefaultEncodedNuclotideFastaRecord {
     
     @Test
     public void constructorWithoutComment(){
-        DefaultNucleotideSequenceFastaRecord fasta = new DefaultNucleotideSequenceFastaRecord(id, bases);
+        NucleotideSequenceFastaRecord fasta = new NucleotideSequenceFastaRecord(id, bases);
         
         assertEquals(id, fasta.getId());
         assertNull(fasta.getComment());
@@ -67,7 +67,7 @@ public class TestDefaultEncodedNuclotideFastaRecord {
     @Test
     public void nullIdThrowsIllegalArgumentException(){
         try{
-            new DefaultNucleotideSequenceFastaRecord(null, bases);
+            new NucleotideSequenceFastaRecord(null, bases);
             fail("null id should throw IllegalArgumentException");
         }catch(IllegalArgumentException e){
             assertEquals("identifier can not be null", e.getMessage());
@@ -80,19 +80,19 @@ public class TestDefaultEncodedNuclotideFastaRecord {
     }
     @Test
     public void equalsSameValues(){
-        DefaultNucleotideSequenceFastaRecord sameValues = new DefaultNucleotideSequenceFastaRecord(id, 
+        NucleotideSequenceFastaRecord sameValues = new NucleotideSequenceFastaRecord(id, 
                 comment, bases);
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);        
     }
     @Test
     public void equalsDifferentComment(){
-        DefaultNucleotideSequenceFastaRecord sameValues = new DefaultNucleotideSequenceFastaRecord(id, 
+        NucleotideSequenceFastaRecord sameValues = new NucleotideSequenceFastaRecord(id, 
                 null, bases);
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);        
     }
     @Test
     public void notEqualsDifferentBases(){
-        DefaultNucleotideSequenceFastaRecord differentBasesAndChecksum = new DefaultNucleotideSequenceFastaRecord(id, 
+        NucleotideSequenceFastaRecord differentBasesAndChecksum = new NucleotideSequenceFastaRecord(id, 
                 comment, bases.substring(2));
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentBasesAndChecksum);        
     }
@@ -129,7 +129,7 @@ public class TestDefaultEncodedNuclotideFastaRecord {
         char[] bases = new char[60];
         Arrays.fill(bases, 'A');
         String sixtyBases= new String(bases);
-        DefaultNucleotideSequenceFastaRecord record = new DefaultNucleotideSequenceFastaRecord(id, 
+        NucleotideSequenceFastaRecord record = new NucleotideSequenceFastaRecord(id, 
                 null, sixtyBases);
         String expectedStringRecord = ">"+id+"\n"+sixtyBases+"\n";
         assertEquals(expectedStringRecord, record.toString());

@@ -21,7 +21,9 @@ package org.jcvi.common.core.symbol.residue.nt;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.symbol.residue.nt.NoAmbiguitiesEncodedNucleotideCodec;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
@@ -181,4 +183,43 @@ public class TestNoAmbiguitiesEncodedNucleotideCodec {
          byte[] actual =sut.encode(nucleotides);
          sut.decode(actual, -1);
     }
+    
+    @Test
+    public void iterator(){
+    	List<Nucleotide> list = Nucleotides.parse("ACG-ACGT");
+		assertIterateCorrectly(list);
+    }
+    @Test
+    public void iteratorLastByteHasOnly1Base(){
+    	List<Nucleotide> list = Nucleotides.parse("ACG-ACGTC");
+		assertIterateCorrectly(list);
+    }
+    @Test
+    public void iteratorLastByteHasOnly2Bases(){
+    	List<Nucleotide> list = Nucleotides.parse("ACGT-CGTCA");
+		assertIterateCorrectly(list);
+    }
+    @Test
+    public void iteratorLastByteHasOnly3Bases(){
+    	List<Nucleotide> list = Nucleotides.parse("ACGT-CGTCAG");
+		assertIterateCorrectly(list);
+    }
+    
+
+	public void assertIterateCorrectly(List<Nucleotide> list) {
+		Iterator<Nucleotide> expected = list.iterator();
+		byte[] bytes =sut.encode(list);
+		Iterator<Nucleotide> actual = sut.iterator(bytes);
+		while(expected.hasNext()){
+			assertTrue(actual.hasNext());
+			assertEquals(expected.next(), actual.next());
+		}
+		assertFalse(actual.hasNext());
+		try{
+			actual.next();
+			fail("should throw NoSuchElementException when done iterating");
+		}catch(NoSuchElementException e){
+			//expected
+		}
+	}
 }

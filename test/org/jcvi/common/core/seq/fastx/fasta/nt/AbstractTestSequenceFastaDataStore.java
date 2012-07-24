@@ -29,7 +29,7 @@ import java.util.Iterator;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.util.iter.CloseableIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -39,7 +39,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
 
     protected static final String FASTA_FILE_PATH = "files/19150.fasta";
    
-    DefaultNucleotideSequenceFastaRecord contig_1 = new DefaultNucleotideSequenceFastaRecord("1", "47 2313 bases, 00000000 checksum.",
+    NucleotideSequenceFastaRecord contig_1 = new NucleotideSequenceFastaRecord("1", "47 2313 bases, 00000000 checksum.",
             "AACCATTTGAATGGATGTCAATCCGACTTTACTTTTCTTGAAAGTTCCAGYGCAAAATGC"+
             "CATAAGCACCACATTCCCATACACTGGAGATCCTCCATACAGCCATGGAACGGGAACAGG"+
             "ATACACCATGGACACAGTCAACAGAACACATCAATATTCAGAAAAGGGGAAATGGACAAC"+
@@ -81,7 +81,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
             "ATAGTGAATTTAGCTTGTCCTTCATGAAA"
     );
     
-    DefaultNucleotideSequenceFastaRecord contig_5 = new DefaultNucleotideSequenceFastaRecord("5", "19 995 bases, 00000000 checksum.",
+    NucleotideSequenceFastaRecord contig_5 = new NucleotideSequenceFastaRecord("5", "19 995 bases, 00000000 checksum.",
             "ATGTTTAAAGATGAGTCTTCTAACCGAGGTCGAAACGTACGTTCTCTCTATCATCCCATC" +
             "AGGCCCCCTCAAAGCCGAGATCGCGCAGAGACTTGAAGATGTTTTTGCAGGGAAGAACAC" +
             "AGATCTTGAGGCACTCATGGAATGGCTAAAGACAAGACCAATCCTGTCACCTCTGACTAA" +
@@ -100,7 +100,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
             "TGCCTAAGTCTATGAGGGAGGAATATCGGCAGGAACAGCAGAGCGCTGTGGATGTTGACG" +
             "ATGGTCATTTTGTCAACATAGAGCTGGAGTAAA"
     );
-    DefaultNucleotideSequenceFastaRecord contig_9 = new DefaultNucleotideSequenceFastaRecord("9", "48 2311 bases, 00000000 checksum.",
+    NucleotideSequenceFastaRecord contig_9 = new NucleotideSequenceFastaRecord("9", "48 2311 bases, 00000000 checksum.",
             "AATATATTCAATATGGAGAGAATAAAAGAACTGAGAGATCTAATGTCACAGTCTCGCACC" +
             "CGCGAGATACTMACCAAAACCACTGTGGACCACATGGCCATAATCAAAAAATACACATCA" +
             "GGAAGGCAAGAGAAGAACCCCGCACTTAGAATGAAGTGGATGATGGCAATGAAATATCCA" +

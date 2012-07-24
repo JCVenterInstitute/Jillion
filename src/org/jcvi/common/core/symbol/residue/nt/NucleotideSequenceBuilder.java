@@ -698,7 +698,14 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		return new NucleotideSequenceBuilder(subBits, endOffsetBit - startOffsetBit);
 
 	}
-
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	public NucleotideSequenceBuilder copy(){
+		BitSet copyOfBits = bits.get(0,tail-1);
+		return new NucleotideSequenceBuilder(copyOfBits, tail);
+	}
     
     /**
      * Get the entire current nucleotide sequence as a list

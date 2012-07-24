@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.ValueSizeStrategy;
@@ -211,9 +212,6 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
         	}
         	ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
             ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
-			//need to read next offset (length)
-            //to advance pointer in buffer even though we don't care
-            //about value
             int length=offsetStrategy.getNext(buf);
             if(index >=length){
             	throw new IndexOutOfBoundsException(String.format("offset %d is >= length (%d)", index,length));
@@ -404,5 +402,53 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
             ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
             return ValueSizeStrategy.values()[buf.get()].getNext(buf);
         }
+		@Override
+		public Iterator<Nucleotide> iterator(byte[] encodedData) {
+			return new IteratorImpl(encodedData);
+		}
+		
+		private final class IteratorImpl implements Iterator<Nucleotide>{
+			private final int length;
+			private final Iterator<Integer> sentinelIterator;
+			private final BitSet bits;
+			private Integer nextSentinel;
+			private int currentOffset=0;
+			
+			public IteratorImpl(byte[] encodedGlyphs){
+				ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
+				ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
+	            this.length =offsetStrategy.getNext(buf);
+	            this.sentinelIterator = parseSentinelOffsetsIteratorFrom(buf,offsetStrategy);
+	            this.bits =IOUtil.toBitSet(buf);
+	            this.nextSentinel = getNextSentinel(sentinelIterator);	           
+			}
+			@Override
+			public boolean hasNext() {
+				return currentOffset<length;
+			}
+
+			@Override
+			public Nucleotide next() {
+				if(!hasNext()){
+					throw new NoSuchElementException("no more elements");
+				}
+				if(nextSentinel !=null && nextSentinel.intValue() == currentOffset){
+            		nextSentinel = getNextSentinel(sentinelIterator);
+            		currentOffset++;
+            		return sententialBase;
+				}
+				Nucleotide next= getNucletotide(bits, currentOffset);
+				currentOffset++;
+				return next;
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException("can not modify immutable sequence");
+				
+				
+			}
+			
+		}
         
 }

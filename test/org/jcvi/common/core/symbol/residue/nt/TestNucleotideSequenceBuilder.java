@@ -510,4 +510,22 @@ public class TestNucleotideSequenceBuilder {
     	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("A-ATG-G");
     	assertEquals(Nucleotides.parse("ATGG"),sut.asUngappedList(Range.create(2,6)));
     }
+    
+    @Test
+    public void copyCopiesFullSequence(){
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("A-ATG-G");
+    	NucleotideSequenceBuilder copy = sut.copy();
+    	assertEquals("A-ATG-G", copy.toString());
+    }
+    
+    @Test
+    public void changesToCopyDontAffectOriginal(){
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("A-ATG-G");
+    	NucleotideSequenceBuilder copy = sut.copy();
+    	
+    	copy.ungap();
+    	sut.append("TTG");
+    	assertEquals("A-ATG-GTTG", sut.toString());
+    	assertEquals("AATGG", copy.toString());
+    }
 }
