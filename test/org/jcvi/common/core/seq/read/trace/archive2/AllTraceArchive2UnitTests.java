@@ -31,7 +31,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         TestDefaultTraceArchiveRecord.class,
-        TestDefaultTraceArchiveRecordBuilder.class,
+        TestDefaultTraceArchiveRecordBuilder.class
 
     }
     )
