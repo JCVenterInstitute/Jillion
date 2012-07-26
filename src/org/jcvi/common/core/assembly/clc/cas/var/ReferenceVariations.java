@@ -1,6 +1,6 @@
 package org.jcvi.common.core.assembly.clc.cas.var;
 
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code ReferenceVariations} is an object representation
  * of all the {@link Variation}s found by the {@code find_variations}
@@ -15,12 +15,12 @@ public interface ReferenceVariations {
 	 */
 	String getReferenceId();
 	/**
-	 * Get a {@link CloseableIterator}
+	 * Get a {@link StreamingIterator}
 	 * of all the {@link Variation}s found for this
 	 * assembly compared to the reference.
-	 * @return a new {@link CloseableIterator}; never
+	 * @return a new {@link StreamingIterator}; never
 	 * null but may contain no elements. if no variations 
 	 * were found.
 	 */
-	CloseableIterator<Variation> getVariationIterator();
+	StreamingIterator<Variation> getVariationIterator();
 }

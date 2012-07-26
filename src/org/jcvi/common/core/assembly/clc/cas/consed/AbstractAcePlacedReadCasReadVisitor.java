@@ -36,7 +36,7 @@ import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileIterator;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel
@@ -55,7 +55,7 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
      * @throws DataStoreException 
     */
     @Override
-    public CloseableIterator<PhdReadRecord> createFastqIterator(
+    public StreamingIterator<PhdReadRecord> createFastqIterator(
             File illuminaFile, TraceDetails traceDetails) throws DataStoreException {
         FastqDataStore datastore;
 		try {
@@ -73,7 +73,7 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<PhdReadRecord> createSffIterator(File sffFile,
+    public StreamingIterator<PhdReadRecord> createSffIterator(File sffFile,
             TraceDetails traceDetails) throws DataStoreException{
         return new FlowgramConsedPhdAdaptedIterator(
                 SffFileIterator.createNewIteratorFor(sffFile),
@@ -85,7 +85,7 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<PhdReadRecord> createFastaIterator(File fastaFile,
+    public StreamingIterator<PhdReadRecord> createFastaIterator(File fastaFile,
             TraceDetails traceDetails) throws DataStoreException{
         return new FastaConsedPhdAdaptedIterator(
                 LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile),
@@ -97,7 +97,7 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<PhdReadRecord> createChromatogramIterator(
+    public StreamingIterator<PhdReadRecord> createChromatogramIterator(
             File chromatogramFile, TraceDetails traceDetails) throws DataStoreException{
         if(traceDetails.hasFastaEdits()){
             return new EditedFastaChromatDirPhdAdapterIterator(

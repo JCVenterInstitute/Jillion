@@ -19,8 +19,8 @@
 
 package org.jcvi.common.core.assembly.clc.cas.consed;
 
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
-public interface PhdReadRecordIterator extends CloseableIterator<PhdReadRecord>{
+public interface PhdReadRecordIterator extends StreamingIterator<PhdReadRecord>{
 
 }

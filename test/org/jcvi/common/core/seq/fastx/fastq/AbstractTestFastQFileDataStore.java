@@ -39,7 +39,7 @@ import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.ObjectsUtil;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;
@@ -115,7 +115,7 @@ public abstract class AbstractTestFastQFileDataStore {
     }
     @Test
     public void closingIdIteratorEarlyShouldHaltIterating() throws DataStoreException, IOException{
-        CloseableIterator<String> iter = sut.idIterator();
+        StreamingIterator<String> iter = sut.idIterator();
         iter.next();
         iter.close();
         assertFalse(iter.hasNext());
@@ -142,7 +142,7 @@ public abstract class AbstractTestFastQFileDataStore {
     
     @Test
     public void closingIteratorEarlyShouldStopIterating() throws IOException, DataStoreException{
-        CloseableIterator<FastqRecord> iter = sut.iterator();
+        StreamingIterator<FastqRecord> iter = sut.iterator();
         assertTrue(iter.hasNext());
         assertFastQRecordsEqual(solexa_1489, iter.next());
         assertTrue(iter.hasNext());

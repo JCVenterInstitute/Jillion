@@ -17,7 +17,7 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code PrimerDetector} scans a {@link NucleotideSequence}
  * against a {@link NucleotideDataStore} of primer/vector sequences
@@ -68,7 +68,7 @@ public class PrimerDetector {
     public List<DirectedRange> detect(NucleotideSequence sequence,
             NucleotideDataStore primersDataStore) {
         List<DirectedRange> ranges = new ArrayList<DirectedRange>();
-        CloseableIterator<NucleotideSequence> iter =null; 
+        StreamingIterator<NucleotideSequence> iter =null; 
         try{
         	iter =primersDataStore.iterator();
         while(iter.hasNext()){
@@ -143,7 +143,7 @@ public class PrimerDetector {
     public List<PrimerHit> detect(NucleotideSequence sequence,
             NucleotideSequenceFastaDataStore primersDataStore) {
         List<PrimerHit> hits = new ArrayList<PrimerHit>();
-        CloseableIterator<NucleotideSequenceFastaRecord> iter =null; 
+        StreamingIterator<NucleotideSequenceFastaRecord> iter =null; 
         try{
         	iter =primersDataStore.iterator();
         while(iter.hasNext()){

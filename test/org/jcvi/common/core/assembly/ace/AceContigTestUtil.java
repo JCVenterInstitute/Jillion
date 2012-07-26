@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel
@@ -41,7 +41,7 @@ public final class AceContigTestUtil {
         assertEquals(expected.getId(), actual.getId()); 
         assertEquals(expected.getConsensusSequence().asList(), actual.getConsensusSequence().asList());
         assertEquals(expected.getId(),expected.getNumberOfReads(), actual.getNumberOfReads());
-        CloseableIterator<? extends AssembledRead> iter = null;
+        StreamingIterator<? extends AssembledRead> iter = null;
         try{
         	iter = expected.getReadIterator();
         	while(iter.hasNext()){

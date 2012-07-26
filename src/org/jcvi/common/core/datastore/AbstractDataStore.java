@@ -25,7 +25,7 @@ package org.jcvi.common.core.datastore;
 
 import java.io.IOException;
 
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code AbstractDataStore} is an abstract implementation
  * of {@link DataStore} that handles closing
@@ -69,7 +69,7 @@ public abstract class  AbstractDataStore<T> implements DataStore<T>{
     }
     
     @Override
-    public synchronized CloseableIterator<T> iterator() {
+    public synchronized StreamingIterator<T> iterator() {
         return new DataStoreIterator<T>(this);
     }
 
@@ -86,7 +86,7 @@ public abstract class  AbstractDataStore<T> implements DataStore<T>{
     }
 
     @Override
-    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+    public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
         throwExceptionIfClosed();
         return null;
     }

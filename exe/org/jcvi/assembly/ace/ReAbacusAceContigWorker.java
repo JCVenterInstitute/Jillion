@@ -78,7 +78,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel
@@ -461,7 +461,7 @@ public class ReAbacusAceContigWorker {
                         for(int i=0; i< sliceBuilders.length; i++){
                             sliceBuilders[i]= new CompactedSlice.Builder();
                         }
-                        CloseableIterator<NucleotideSequenceFastaRecord> iter = gappedFastaDataStore.iterator();
+                        StreamingIterator<NucleotideSequenceFastaRecord> iter = gappedFastaDataStore.iterator();
                         try{
 	                		while(iter.hasNext()){
 	                			NucleotideSequenceFastaRecord gappedFasta = iter.next();

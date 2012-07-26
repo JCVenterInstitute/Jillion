@@ -28,8 +28,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 /**
  * {@code MapDataStoreAdapter} is a utility class
  * that can adapt a {@code Map<String,T>} into a {@code DataStore<T>}.
@@ -77,9 +77,9 @@ public final class MapDataStoreAdapter<T> extends AbstractDataStore<T> {
         return map.get(id);
     }
     @Override
-    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+    public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
         super.idIterator();
-        return CloseableIteratorAdapter.adapt(map.keySet().iterator());
+        return StreamingIteratorAdapter.adapt(map.keySet().iterator());
     }
     @Override
     public synchronized long getNumberOfRecords() throws DataStoreException {

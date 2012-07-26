@@ -31,7 +31,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public class DefaultContig<P extends AssembledRead> extends AbstractContig<P>{
 
@@ -66,7 +66,7 @@ public class DefaultContig<P extends AssembledRead> extends AbstractContig<P>{
         
         public <R extends AssembledRead, C extends Contig<R>> Builder(C copy){
             this(copy.getId(), copy.getConsensusSequence());
-            CloseableIterator<R> iter =null;
+            StreamingIterator<R> iter =null;
             try{
             	 iter = copy.getReadIterator();
             	 while(iter.hasNext()){

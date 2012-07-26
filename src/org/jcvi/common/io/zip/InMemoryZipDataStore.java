@@ -40,8 +40,8 @@ import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 /**
  * An {@code InMemoryZipDataStore} is a {@link ZipDataStore} implementation
  * that unzips the given zipped data and stores it in a Map with ByteBuffer
@@ -145,9 +145,9 @@ public final class InMemoryZipDataStore extends AbstractDataStore<InputStream> i
      * {@inheritDoc}
      */
     @Override
-    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+    public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
         super.idIterator();
-        return CloseableIteratorAdapter.adapt(contents.keySet().iterator());
+        return StreamingIteratorAdapter.adapt(contents.keySet().iterator());
     }
     /**
      * 

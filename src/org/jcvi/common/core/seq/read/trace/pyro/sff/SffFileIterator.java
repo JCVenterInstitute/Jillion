@@ -27,10 +27,10 @@ import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor.CommonHeaderR
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor.ReadDataReturnCode;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor.ReadHeaderReturnCode;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
- * {@code SffFileIterator} is a {@link CloseableIterator}
+ * {@code SffFileIterator} is a {@link StreamingIterator}
  * that can iterate over {@link Flowgram}s contained
  * in a sff file.
  * @author dkatzel

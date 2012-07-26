@@ -24,7 +24,7 @@ import java.io.IOException;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel
@@ -51,7 +51,7 @@ public final class LucyDebugTrimDataStoreAdapter implements TrimPointsDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> idIterator() throws DataStoreException {
+    public StreamingIterator<String> idIterator() throws DataStoreException {
         return delegate.idIterator();
     }
 
@@ -101,9 +101,9 @@ public final class LucyDebugTrimDataStoreAdapter implements TrimPointsDataStore{
      * @throws DataStoreException 
     */
     @Override
-    public CloseableIterator<Range> iterator() throws DataStoreException {
-        return new CloseableIterator<Range>() {
-            CloseableIterator<LucyDebugTrimRecord> iter= delegate.iterator();
+    public StreamingIterator<Range> iterator() throws DataStoreException {
+        return new StreamingIterator<Range>() {
+            StreamingIterator<LucyDebugTrimRecord> iter= delegate.iterator();
 
             @Override
             public void remove() {

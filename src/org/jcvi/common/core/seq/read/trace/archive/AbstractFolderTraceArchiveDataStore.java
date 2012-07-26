@@ -27,7 +27,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public abstract class AbstractFolderTraceArchiveDataStore implements TraceArchiveDataStore<TraceArchiveTrace> {
 
@@ -80,14 +80,14 @@ public abstract class AbstractFolderTraceArchiveDataStore implements TraceArchiv
 
 
     @Override
-    public CloseableIterator<String> idIterator() throws DataStoreException {
+    public StreamingIterator<String> idIterator() throws DataStoreException {
         return traceArchiveInfo.idIterator();
     }
     
     
 
     @Override
-    public CloseableIterator<TraceArchiveTrace> iterator() {
+    public StreamingIterator<TraceArchiveTrace> iterator() {
         return new DataStoreIterator<TraceArchiveTrace>(this);
     }
 

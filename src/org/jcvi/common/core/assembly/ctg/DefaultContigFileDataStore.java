@@ -35,8 +35,8 @@ import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 
 public class DefaultContigFileDataStore extends AbstractContigFileVisitorBuilder implements ContigDataStore<AssembledRead, Contig<AssembledRead>>{
     private final Map<String,Contig<AssembledRead>> contigs = new TreeMap<String, Contig<AssembledRead>>();
@@ -103,8 +103,8 @@ public class DefaultContigFileDataStore extends AbstractContigFileVisitorBuilder
 
 
     @Override
-    public CloseableIterator<String> idIterator() {
-        return CloseableIteratorAdapter.adapt(contigs.keySet().iterator());
+    public StreamingIterator<String> idIterator() {
+        return StreamingIteratorAdapter.adapt(contigs.keySet().iterator());
     }
 
 
@@ -119,7 +119,7 @@ public class DefaultContigFileDataStore extends AbstractContigFileVisitorBuilder
         return isClosed;
     }
     @Override
-    public CloseableIterator<Contig<AssembledRead>> iterator() {
+    public StreamingIterator<Contig<AssembledRead>> iterator() {
         return new DataStoreIterator<Contig<AssembledRead>>(this);
     }
 }

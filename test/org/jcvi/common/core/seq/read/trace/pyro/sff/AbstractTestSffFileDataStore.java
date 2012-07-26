@@ -32,7 +32,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -127,7 +127,7 @@ public abstract class AbstractTestSffFileDataStore extends TestReadExampleSffFil
     
     @Test
     public void closeIteratorEarly() throws IOException, DataStoreException{
-        CloseableIterator<Flowgram> iter = dataStore.iterator();
+        StreamingIterator<Flowgram> iter = dataStore.iterator();
         assertTrue(iter.hasNext());
         iter.next();
         iter.close();

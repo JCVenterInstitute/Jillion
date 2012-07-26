@@ -35,7 +35,7 @@ import org.jcvi.common.core.assembly.ace.DefaultAceFileDataStore;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Rule;
@@ -80,7 +80,7 @@ public class TestAce2Contig {
       AceFileContigDataStore aceContigDataStore = DefaultAceFileDataStore.create(aceFile);
       AceContig aceContig = aceContigDataStore.get("Contig1");
       assertEquals(aceContig.getConsensusSequence().asList(), contig.getConsensusSequence().asList());
-      CloseableIterator<AcePlacedRead> iter = null;
+      StreamingIterator<AcePlacedRead> iter = null;
       try{
     	  iter = aceContig.getReadIterator();
     	  while(iter.hasNext()){

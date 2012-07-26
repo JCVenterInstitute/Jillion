@@ -35,7 +35,7 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel
@@ -122,7 +122,7 @@ public class AbacusErrorFinder {
     private <P extends AssembledRead, C extends Contig<P>> List<Range> getUngappedCandidateRanges(C contig) {
         
         List<Range> gapRangesPerRead = new ArrayList<Range>(contig.getNumberOfReads());
-        CloseableIterator<P> readIterator = null;
+        StreamingIterator<P> readIterator = null;
         try{
         	readIterator = contig.getReadIterator();
         	while(readIterator.hasNext()){         

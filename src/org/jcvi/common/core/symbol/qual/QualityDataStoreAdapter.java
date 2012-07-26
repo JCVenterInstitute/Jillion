@@ -29,7 +29,7 @@ import java.io.IOException;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * A <code>QualityDataStoreAdapter</code> adapts the heavily parameterized
@@ -77,7 +77,7 @@ public class QualityDataStoreAdapter implements QualityDataStore
      * @see org.jcvi.datastore.DataStore#getIds()
      */
     @Override
-    public CloseableIterator<String> idIterator() throws DataStoreException
+    public StreamingIterator<String> idIterator() throws DataStoreException
     {
         return datastore.idIterator();
     }
@@ -104,7 +104,7 @@ public class QualityDataStoreAdapter implements QualityDataStore
      * @see java.lang.Iterable#iterator()
      */
     @Override
-    public CloseableIterator<QualitySequence> iterator() throws DataStoreException
+    public StreamingIterator<QualitySequence> iterator() throws DataStoreException
     {
         return this.datastore.iterator();
     }

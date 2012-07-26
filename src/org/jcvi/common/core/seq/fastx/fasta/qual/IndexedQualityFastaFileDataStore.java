@@ -14,7 +14,7 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.util.IndexedFileRange;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code IndexedQualityFastaFileDataStore} is an implementation of 
  * {@link QualitySequenceFastaDataStore} that only stores an index containing
@@ -69,7 +69,7 @@ public final class IndexedQualityFastaFileDataStore implements QualitySequenceFa
 		this.fastaFile = fastaFile;
 	}
 	@Override
-	public CloseableIterator<String> idIterator() throws DataStoreException {
+	public StreamingIterator<String> idIterator() throws DataStoreException {
 		return index.getIds();
 	}
 
@@ -113,7 +113,7 @@ public final class IndexedQualityFastaFileDataStore implements QualitySequenceFa
 	}
 
 	@Override
-	public CloseableIterator<QualitySequenceFastaRecord> iterator() {
+	public StreamingIterator<QualitySequenceFastaRecord> iterator() {
 		return LargeQualityFastaIterator.createNewIteratorFor(fastaFile);
 	}
 	

@@ -42,7 +42,7 @@ import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
     
@@ -52,7 +52,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
     @Override
     public SangerPeak getPeaks() {      
     	PositionFastaDataStore datastore = null;
-    	CloseableIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iterator =null;
+    	StreamingIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iterator =null;
     	InputStream in=null;
         try{
         	in = getInputStreamFor(TraceInfoField.PEAK_FILE);
@@ -72,7 +72,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
         InputStream in=null;
         NucleotideSequenceFastaDataStore datastore=null;
         NucleotideFastaDataStoreBuilderVisitor visitor= DefaultNucleotideSequenceFastaFileDataStore.createBuilder();
-        CloseableIterator<NucleotideSequenceFastaRecord> iterator=null;
+        StreamingIterator<NucleotideSequenceFastaRecord> iterator=null;
         try{
             in = getInputStreamFor(TraceInfoField.BASE_FILE);
             FastaFileParser.parse(in, visitor);
@@ -90,7 +90,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
     @Override
     public QualitySequence getQualitySequence() {
         QualitySequenceFastaDataStore datastore =null;
-        CloseableIterator<QualitySequenceFastaRecord> iterator =null;
+        StreamingIterator<QualitySequenceFastaRecord> iterator =null;
         try{
         	datastore = DefaultQualityFastaFileDataStore.create(getInputStreamFor(TraceInfoField.QUAL_FILE));           
             iterator = datastore.iterator();

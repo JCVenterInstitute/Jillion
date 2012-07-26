@@ -28,7 +28,7 @@ import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqUtil;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
 import org.jcvi.common.core.util.JoinedStringBuilder;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
 import org.jcvi.common.io.idReader.FirstWordStringIdParser;
 import org.jcvi.common.io.idReader.IdReader;
@@ -102,7 +102,7 @@ public class FastqFile2 {
             if(commandLine.hasOption("q")){
             	//re-encode qualities
             	FastqQualityCodec reEncodedQualityCodec = parseQualityCodec(commandLine.getOptionValue("q"));
-            	 CloseableIterator<FastqRecord> iter=null;
+            	 StreamingIterator<FastqRecord> iter=null;
                  try{
                  	iter = LargeFastqFileDataStore.create(fastQFile,filter,qualityCodec).iterator();
                  	while(iter.hasNext()){

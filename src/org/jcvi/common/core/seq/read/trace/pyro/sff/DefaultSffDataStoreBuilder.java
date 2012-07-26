@@ -10,7 +10,7 @@ import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStoreBuilder;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public final class DefaultSffDataStoreBuilder implements FlowgramDataStoreBuilder{
 
@@ -41,7 +41,7 @@ public final class DefaultSffDataStoreBuilder implements FlowgramDataStoreBuilde
 		}
 
 		@Override
-		public CloseableIterator<String> idIterator() throws DataStoreException {
+		public StreamingIterator<String> idIterator() throws DataStoreException {
 			return delegate.idIterator();
 		}
 
@@ -72,7 +72,7 @@ public final class DefaultSffDataStoreBuilder implements FlowgramDataStoreBuilde
 		}
 
 		@Override
-		public CloseableIterator<Flowgram> iterator() throws DataStoreException {
+		public StreamingIterator<Flowgram> iterator() throws DataStoreException {
 			return delegate.iterator();
 		}
 		

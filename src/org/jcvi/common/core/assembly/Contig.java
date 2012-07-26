@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly;
 
 import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * A {@code Contig} is a CONTIGuous region of genomic data.
  * Contigs are assembled by overlapping reads to form a consensus.
@@ -45,12 +45,12 @@ public interface Contig<T extends AssembledRead>{
      */
     int getNumberOfReads();
     /**
-     * Get the {@link CloseableIterator} of {@link AssembledRead}s
+     * Get the {@link StreamingIterator} of {@link AssembledRead}s
      * that are contained in this contig. 
-     * @return a {@link CloseableIterator}  of {@link AssembledRead}s; will never be null 
+     * @return a {@link StreamingIterator}  of {@link AssembledRead}s; will never be null 
      * but could be empty.
      */
-    CloseableIterator<T> getReadIterator();
+    StreamingIterator<T> getReadIterator();
     /**
      * Get the consensus sequence of this contig.  The Consensus
      * is determined by the underlying reads that make up this contig.  Different

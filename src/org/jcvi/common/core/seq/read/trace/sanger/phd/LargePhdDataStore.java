@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code LargePhdDataStore} is a {@link PhdDataStore} implementation
  * to be used a very large phd files or phdballs.  No data contained in this
@@ -67,7 +67,7 @@ public final class LargePhdDataStore implements PhdDataStore{
     @Override
     public synchronized boolean contains(String id) throws DataStoreException {
         checkIfClosed();
-        CloseableIterator<Phd> iter = iterator();
+        StreamingIterator<Phd> iter = iterator();
         while(iter.hasNext()){
             Phd phd = iter.next();
             if(phd.getId().equals(id)){
@@ -81,7 +81,7 @@ public final class LargePhdDataStore implements PhdDataStore{
     @Override
     public synchronized Phd get(String id) throws DataStoreException {
         checkIfClosed();
-        CloseableIterator<Phd> iter = iterator();
+        StreamingIterator<Phd> iter = iterator();
         while(iter.hasNext()){
             Phd phd = iter.next();
             if(phd.getId().equals(id)){
@@ -94,7 +94,7 @@ public final class LargePhdDataStore implements PhdDataStore{
     }
 
     @Override
-    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+    public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
         checkIfClosed();
         return new PhdIdIterator();
        
@@ -105,7 +105,7 @@ public final class LargePhdDataStore implements PhdDataStore{
         checkIfClosed();
         if(size ==null){
             long count=0;
-            CloseableIterator<Phd> iter = iterator();
+            StreamingIterator<Phd> iter = iterator();
             while(iter.hasNext()){
                 count++;
                 iter.next();
@@ -122,15 +122,15 @@ public final class LargePhdDataStore implements PhdDataStore{
     }
 
     @Override
-    public synchronized CloseableIterator<Phd> iterator() {
+    public synchronized StreamingIterator<Phd> iterator() {
         checkIfClosed();
         return LargePhdIterator.createNewIterator(phdFile);
     }
 
     
-    private final class PhdIdIterator implements CloseableIterator<String>{
+    private final class PhdIdIterator implements StreamingIterator<String>{
 
-        private final CloseableIterator<Phd> phdIter;
+        private final StreamingIterator<Phd> phdIter;
         
         private PhdIdIterator(){
             phdIter = iterator();

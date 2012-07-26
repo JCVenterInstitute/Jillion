@@ -38,7 +38,7 @@ import org.jcvi.common.core.seq.read.trace.frg.FragmentDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel
@@ -106,7 +106,7 @@ public final class DefaultAsmContigDataStore implements AsmContigDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> idIterator() throws DataStoreException {
+    public StreamingIterator<String> idIterator() throws DataStoreException {
         return delegate.idIterator();
     }
 
@@ -156,7 +156,7 @@ public final class DefaultAsmContigDataStore implements AsmContigDataStore{
      * @throws DataStoreException 
     */
     @Override
-    public CloseableIterator<AsmContig> iterator() throws DataStoreException {
+    public StreamingIterator<AsmContig> iterator() throws DataStoreException {
         return delegate.iterator();
     }
     

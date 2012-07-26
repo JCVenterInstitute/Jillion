@@ -25,30 +25,35 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * {@code CloseableIterator} is an
- * {@link Iterator} that also
- * implements {@link Closeable}.
+ * {@code StreamingIterator} is an
+ * {@link Iterator} 
+ * that might not have its next element
+ * loaded into memory.  {@link #StreamingIterator}s
+ * are useful when iterating over elements that are 
+ * resource intensive so that only as few as the
+ * current element need to actually be loaded into memory
+ * at one time.  {@link #StreamingIterator}s are
+ * often used to iterate over records stored in files.
  * Client code must explicitly 
- * close this iterator when done iterating
+ * {@link #close()} this iterator when done iterating
  * (preferably in a try-finally block) so
  * that any resources used by this iterator
- * can be cleaned up.
- * Closing a CloseableIterator before it has
+ * can be cleaned up.  Not completely iterating over all the objects in this iterator
+ * <strong>and</strong> not calling {@link #close()} could in some implementations 
+ * cause memory leaks,
+ * deadlocks and/or permanently blocked background threads.
+ * Closing a {@link #StreamingIterator} before it has
  * finished iterating over all the records
  * will cause {@link #hasNext()}
  * to return {@code false} and {@link #next()}
  * to throw a {@link NoSuchElementException} as if this iterator
  * has finished iterating.
- * <p/>
- * Not completely iterating over all the objects in this iterator
- * <strong>and</strong> not calling {@link #close()} could in some implementations 
- * cause memory leaks,
- * deadlocks and/or permanently blocked threads.
+ * 
  * @author dkatzel
  *
  *
  */
-public interface CloseableIterator<T> extends Closeable, Iterator<T>{
+public interface StreamingIterator<T> extends Closeable, Iterator<T>{
 	/**
 	 * Does this iterator have any elements left
 	 * to iterate.

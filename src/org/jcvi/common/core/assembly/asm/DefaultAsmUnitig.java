@@ -23,7 +23,7 @@ import java.util.Set;
 
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel
@@ -58,7 +58,7 @@ public class DefaultAsmUnitig implements AsmUnitig{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<AsmPlacedRead> getReadIterator() {
+    public StreamingIterator<AsmPlacedRead> getReadIterator() {
         return delegate.getReadIterator();
     }
 

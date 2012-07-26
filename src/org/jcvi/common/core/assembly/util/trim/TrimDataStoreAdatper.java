@@ -24,7 +24,7 @@ import java.io.IOException;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * {@code TrimDataStoreAdatper} wraps
@@ -84,7 +84,7 @@ public final class TrimDataStoreAdatper implements TrimPointsDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> idIterator() throws DataStoreException {
+    public StreamingIterator<String> idIterator() throws DataStoreException {
         return delegate.idIterator();
     }
 
@@ -110,7 +110,7 @@ public final class TrimDataStoreAdatper implements TrimPointsDataStore{
      * @throws DataStoreException 
     */
     @Override
-    public CloseableIterator<Range> iterator() throws DataStoreException {
+    public StreamingIterator<Range> iterator() throws DataStoreException {
         return delegate.iterator();
     }
     /**

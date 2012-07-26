@@ -37,7 +37,7 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel
@@ -131,7 +131,7 @@ public class DefaultPrimerTrimmer implements PrimerTrimmer{
     public Range trim(NucleotideSequence sequence,
             NucleotideDataStore primersToTrimAgainst) {
         List<Range> ranges = new ArrayList<Range>();
-        CloseableIterator<NucleotideSequence> iter =null; 
+        StreamingIterator<NucleotideSequence> iter =null; 
         try{
         	iter =primersToTrimAgainst.iterator();
         while(iter.hasNext()){

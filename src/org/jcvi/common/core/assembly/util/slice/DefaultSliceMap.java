@@ -40,7 +40,7 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.util.iter.ArrayIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public class DefaultSliceMap extends AbstractSliceMap{
 	
@@ -68,7 +68,7 @@ public class DefaultSliceMap extends AbstractSliceMap{
     private <PR extends AssembledRead,C extends Contig<PR>>  DefaultSliceMap(
             C contig, QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
     	DefaultSlice.Builder builders[] = new DefaultSlice.Builder[(int)contig.getConsensusSequence().getLength()];
-    	CloseableIterator<PR> readIter = null;
+    	StreamingIterator<PR> readIter = null;
     	try{
     		readIter = contig.getReadIterator();
     		while(readIter.hasNext()){

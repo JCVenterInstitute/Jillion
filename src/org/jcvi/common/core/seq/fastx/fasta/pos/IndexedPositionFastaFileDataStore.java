@@ -14,7 +14,7 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.util.IndexedFileRange;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code IndexedPositionFastaFileDataStore} is an implementation of 
  * {@link PositionFastaDataStore} that only stores an index containing
@@ -70,7 +70,7 @@ public final class IndexedPositionFastaFileDataStore implements PositionFastaDat
 		this.fastaFile = fastaFile;
 	}
 	@Override
-	public CloseableIterator<String> idIterator() throws DataStoreException {
+	public StreamingIterator<String> idIterator() throws DataStoreException {
 		return index.getIds();
 	}
 
@@ -114,7 +114,7 @@ public final class IndexedPositionFastaFileDataStore implements PositionFastaDat
 	}
 
 	@Override
-	public CloseableIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iterator() {
+	public StreamingIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iterator() {
 		return LargePositionFastaRecordIterator.createNewIteratorFor(fastaFile);
 	}
 	

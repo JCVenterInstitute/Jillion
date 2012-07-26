@@ -36,7 +36,7 @@ import org.jcvi.common.core.seq.read.trace.TraceNucleotideDataStoreAdapter;
 import org.jcvi.common.core.seq.read.trace.TraceQualityDataStoreAdapter;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code ArtificialPhdDataStore} is a {@link DataStore} of
  * Nucleotide and PhredQuality data that has been adapted to 
@@ -102,7 +102,7 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
     }
 
     @Override
-    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+    public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
         super.idIterator();
         return seqDataStore.idIterator();
     }

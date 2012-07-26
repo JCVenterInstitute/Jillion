@@ -39,8 +39,8 @@ import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.ArrayIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 
 /**
  * {@code CoverageMapFactory} is a factory class
@@ -259,8 +259,8 @@ public final class CoverageMapFactory {
 	    
 	    
 	    @Override
-		public CloseableIterator<CoverageRegion<V>> getRegionIterator() {
-			return CloseableIteratorAdapter.adapt(iterator());
+		public StreamingIterator<CoverageRegion<V>> getRegionIterator() {
+			return StreamingIteratorAdapter.adapt(iterator());
 		}
 		
 	   
@@ -287,17 +287,17 @@ public final class CoverageMapFactory {
             
         }
         
-        public Builder(CloseableIterator<P> elements, int maxAllowedCoverage){
+        public Builder(StreamingIterator<P> elements, int maxAllowedCoverage){
             super(maxAllowedCoverage);
             initialize(elements);
         }
-        public Builder(CloseableIterator<P> elements) {
+        public Builder(StreamingIterator<P> elements) {
             initialize(elements);
         }
         private final void initialize(Collection<P> collection){
-        	initialize(CloseableIteratorAdapter.adapt(collection.iterator()));
+        	initialize(StreamingIteratorAdapter.adapt(collection.iterator()));
         }
-        private final void initialize(CloseableIterator<P> elements){
+        private final void initialize(StreamingIterator<P> elements){
         	try{
         		while(elements.hasNext()){
         			P element = elements.next();

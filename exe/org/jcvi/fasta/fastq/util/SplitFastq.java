@@ -36,7 +36,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
 import org.jcvi.common.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 
@@ -93,7 +93,7 @@ public class SplitFastq {
             ReadWriteDirectoryFileServer outputDir = DirectoryFileServer.createReadWriteDirectoryFileServer(commandLine.getOptionValue("o"));
             List<PrintWriter> writers = createWriters(outputDir, fastqFile, n);
             
-            CloseableIterator<FastqRecord> iterator= LargeFastqFileDataStore.create(fastqFile, fastqQualityCodec).iterator();
+            StreamingIterator<FastqRecord> iterator= LargeFastqFileDataStore.create(fastqFile, fastqQualityCodec).iterator();
             int counter=0;
             try{
                 while(iterator.hasNext()){

@@ -39,7 +39,7 @@ import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.junit.Test;
 /**
  * @author dkatzel
@@ -272,7 +272,7 @@ public class TestConsedUtil_Split0x {
         assertEquals("id",expected.getId(),actual.getId());
         assertEquals("consensus", expected.getConsensusSequence().asList(), actual.getConsensusSequence().asList());
         assertEquals("numberOfReads", expected.getNumberOfReads(), actual.getNumberOfReads());
-        CloseableIterator<AcePlacedRead> iter = null;
+        StreamingIterator<AcePlacedRead> iter = null;
         try{
         	iter = expected.getReadIterator();
         	while(iter.hasNext()){

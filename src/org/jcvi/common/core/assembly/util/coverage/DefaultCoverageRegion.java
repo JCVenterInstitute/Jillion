@@ -33,8 +33,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 
 final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegion<T> {
     private final Collection<T> elements;
@@ -62,8 +62,8 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
 		return elements.iterator();
 	}
 	@Override
-	public CloseableIterator<T> getElementIterator() {
-		return CloseableIteratorAdapter.adapt(elements.iterator());
+	public StreamingIterator<T> getElementIterator() {
+		return StreamingIteratorAdapter.adapt(elements.iterator());
 	}
     @Override
     public String toString() {
@@ -105,7 +105,7 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
      * @return
      */
     private boolean elementsAreEqual(CoverageRegion<?> otherRegion){
-    	CloseableIterator<?> otherIterator=null, iter=null;
+    	StreamingIterator<?> otherIterator=null, iter=null;
     	try{
 	    	otherIterator = otherRegion.getElementIterator();
 	    	iter = getElementIterator();

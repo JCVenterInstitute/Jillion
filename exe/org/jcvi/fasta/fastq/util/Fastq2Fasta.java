@@ -46,7 +46,7 @@ import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
 import org.jcvi.common.io.idReader.IdReader;
 import org.jcvi.common.io.idReader.IdReaderException;
@@ -144,7 +144,7 @@ public class Fastq2Fasta {
                 fastqQualityCodec = FastqQualityCodec.ILLUMINA;
             }
             
-            CloseableIterator<FastqRecord> iter=null;
+            StreamingIterator<FastqRecord> iter=null;
             try{
             	iter = LargeFastqFileDataStore.create(fastQFile, filter, fastqQualityCodec)
             								.iterator();

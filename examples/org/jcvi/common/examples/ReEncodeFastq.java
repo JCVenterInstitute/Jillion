@@ -14,7 +14,7 @@ import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public class ReEncodeFastq {
 
@@ -35,7 +35,7 @@ public class ReEncodeFastq {
 		//for us for a minor performance penalty.
 		FastqDataStore datastore = LargeFastqFileDataStore.create(fastqFile, 
 												filter, FastqQualityCodec.SANGER);
-		CloseableIterator<FastqRecord> iter=null;
+		StreamingIterator<FastqRecord> iter=null;
 		try{
 			iter = datastore.iterator();
 			while(iter.hasNext()){

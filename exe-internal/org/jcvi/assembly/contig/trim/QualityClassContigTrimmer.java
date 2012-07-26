@@ -68,7 +68,7 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.glyph.qualClass.QualityClass;
 
 public class QualityClassContigTrimmer{
@@ -256,7 +256,7 @@ public class QualityClassContigTrimmer{
                 CachedDataStore.create(QualityDataStore.class, 
                         QualityFastaRecordDataStoreAdapter.adapt(new LargeQualityFastaFileDataStore(qualFastaFile)),
                         100);
-            CloseableIterator<Contig<AssembledRead>> iter = contigDataStore.iterator();
+            StreamingIterator<Contig<AssembledRead>> iter = contigDataStore.iterator();
             try{
 	            while(iter.hasNext()) {
 	            	Contig<AssembledRead> contig = iter.next();

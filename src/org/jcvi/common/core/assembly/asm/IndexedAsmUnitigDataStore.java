@@ -40,7 +40,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * {@code IndexedAsmContigDataStore} is an {@link AsmContigDataStore}
@@ -146,7 +146,7 @@ public final class IndexedAsmUnitigDataStore implements UnitigDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> idIterator() throws DataStoreException {
+    public StreamingIterator<String> idIterator() throws DataStoreException {
         return fileRange.getIds();
     }
 
@@ -222,7 +222,7 @@ public final class IndexedAsmUnitigDataStore implements UnitigDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<AsmUnitig> iterator() {
+    public StreamingIterator<AsmUnitig> iterator() {
 
         try {
             return new AsmUnitigIterator(idIterator());
@@ -231,10 +231,10 @@ public final class IndexedAsmUnitigDataStore implements UnitigDataStore{
         }
     }
     
-    private class AsmUnitigIterator implements CloseableIterator<AsmUnitig>{
-        private final CloseableIterator<String> idIterator;
+    private class AsmUnitigIterator implements StreamingIterator<AsmUnitig>{
+        private final StreamingIterator<String> idIterator;
         
-        public AsmUnitigIterator(CloseableIterator<String> idIterator){
+        public AsmUnitigIterator(StreamingIterator<String> idIterator){
             this.idIterator = idIterator;
         }
 

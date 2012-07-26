@@ -28,7 +28,7 @@ import java.io.IOException;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public abstract class AbstractTraceDataStoreAdapter<D extends Trace, T> implements DataStore<T> {
 
@@ -60,7 +60,7 @@ public abstract class AbstractTraceDataStoreAdapter<D extends Trace, T> implemen
     }
 
     @Override
-    public final CloseableIterator<String> idIterator() throws DataStoreException {
+    public final StreamingIterator<String> idIterator() throws DataStoreException {
         return delegate.idIterator();
     }
 
@@ -81,7 +81,7 @@ public abstract class AbstractTraceDataStoreAdapter<D extends Trace, T> implemen
         return delegate.isClosed();
     }
     @Override
-    public final CloseableIterator<T> iterator() {
+    public final StreamingIterator<T> iterator() {
         return new DataStoreIterator<T>(this);
     }
 }

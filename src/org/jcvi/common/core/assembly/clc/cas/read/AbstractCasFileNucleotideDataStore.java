@@ -35,7 +35,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePassCasFileVisitor implements CasNucleotideDataStore {
 
@@ -109,7 +109,7 @@ public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePass
     }
 
     @Override
-    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+    public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
         checkIsInitialized();
         return delegate.idIterator();
     }
@@ -121,7 +121,7 @@ public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePass
     }
 
     @Override
-    public synchronized CloseableIterator<NucleotideSequence> iterator() throws DataStoreException {
+    public synchronized StreamingIterator<NucleotideSequence> iterator() throws DataStoreException {
         checkIsInitialized();
         return delegate.iterator();
     }

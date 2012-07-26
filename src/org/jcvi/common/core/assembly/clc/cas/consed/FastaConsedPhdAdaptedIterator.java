@@ -35,17 +35,17 @@ import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public class FastaConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 
-	private final CloseableIterator<NucleotideSequenceFastaRecord> fastaIterator;
+	private final StreamingIterator<NucleotideSequenceFastaRecord> fastaIterator;
 	private final Properties requiredComments;
 	private final PhredQuality defaultQualityValue;
 	private final Date phdDate;
 	private final File fastaFile;
 	public FastaConsedPhdAdaptedIterator(
-			CloseableIterator<NucleotideSequenceFastaRecord> fastaIterator,
+			StreamingIterator<NucleotideSequenceFastaRecord> fastaIterator,
 			File fastaFile,
 			Date phdDate,
 			PhredQuality defaultQualityValue){

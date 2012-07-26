@@ -29,7 +29,7 @@ import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhdFileDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel
@@ -89,7 +89,7 @@ public class PhdDirQualityDataStore implements PhdDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> idIterator() throws DataStoreException {
+    public StreamingIterator<String> idIterator() throws DataStoreException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -161,7 +161,7 @@ public class PhdDirQualityDataStore implements PhdDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<Phd> iterator() {
+    public StreamingIterator<Phd> iterator() {
         // TODO Auto-generated method stub
         return null;
     }

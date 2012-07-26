@@ -36,7 +36,7 @@ import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code LargeFastqFileDataStore} is a {@link FastqDataStore} implementation
  * to be used a very large Fastq Files.  No data contained in this
@@ -140,7 +140,7 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
         if(!filter.accept(id)){
         	return false;
         }
-        CloseableIterator<FastqRecord> iter =null;        
+        StreamingIterator<FastqRecord> iter =null;        
         try{
         	iter= iterator();
         	while(iter.hasNext()){
@@ -168,7 +168,7 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
         if(!filter.accept(id)){
         	return null;
         }
-        CloseableIterator<FastqRecord> iter =null;
+        StreamingIterator<FastqRecord> iter =null;
         try{
         	iter= iterator();
         	while(iter.hasNext()){
@@ -185,7 +185,7 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
     }
 
     @Override
-    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+    public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
         throwExceptionIfClosed();
         return new FastqIdIterator();        
     }
@@ -195,7 +195,7 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
         throwExceptionIfClosed();
         if(size ==null){
             long count=0;
-            CloseableIterator<FastqRecord> iter = iterator();
+            StreamingIterator<FastqRecord> iter = iterator();
             while(iter.hasNext()){
                 count++;
                 iter.next();
@@ -206,7 +206,7 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
     }
     
     @Override
-    public synchronized CloseableIterator<FastqRecord> iterator() {
+    public synchronized StreamingIterator<FastqRecord> iterator() {
         throwExceptionIfClosed();
         LargeFastqFileIterator iter = new LargeFastqFileIterator(filter);
     	iter.start();
@@ -216,8 +216,8 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
     }
     
     
-    private final class FastqIdIterator implements CloseableIterator<String>{
-        private final CloseableIterator<FastqRecord> iter;
+    private final class FastqIdIterator implements StreamingIterator<String>{
+        private final StreamingIterator<FastqRecord> iter;
         private FastqIdIterator(){
                 iter = iterator();
         }
@@ -259,7 +259,7 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
      *
      *
      */
-    private final class LargeFastqFileIterator extends AbstractBlockingCloseableIterator<FastqRecord> implements CloseableIterator<FastqRecord>{
+    private final class LargeFastqFileIterator extends AbstractBlockingCloseableIterator<FastqRecord> implements StreamingIterator<FastqRecord>{
 
     	private final FastXFilter filter;
     	

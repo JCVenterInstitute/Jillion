@@ -31,8 +31,8 @@ import java.util.Iterator;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -95,8 +95,8 @@ public class TestMultipleDataStoreWrapper {
     
     @Test
     public void iteratorShouldIterateOverAll() throws DataStoreException{
-        CloseableIterator<String> iter1 = CloseableIteratorAdapter.adapt(Arrays.asList("one","two").iterator());
-        CloseableIterator<String> iter2 = CloseableIteratorAdapter.adapt(Arrays.asList("three","four").iterator());
+        StreamingIterator<String> iter1 = StreamingIteratorAdapter.adapt(Arrays.asList("one","two").iterator());
+        StreamingIterator<String> iter2 = StreamingIteratorAdapter.adapt(Arrays.asList("three","four").iterator());
         
         Iterator<String> expectedIterator = Arrays.asList("one","two","three","four").iterator();
         expect(datastore1.iterator()).andReturn(iter1);
@@ -112,14 +112,14 @@ public class TestMultipleDataStoreWrapper {
     
     @Test
     public void closingIteratorShouldCloseAllIterators() throws IOException, DataStoreException{
-        CloseableIterator<String> iter1 = createMock(CloseableIterator.class);
-        CloseableIterator<String> iter2 = createMock(CloseableIterator.class);
+        StreamingIterator<String> iter1 = createMock(StreamingIterator.class);
+        StreamingIterator<String> iter2 = createMock(StreamingIterator.class);
         iter1.close();
         iter2.close();
         expect(datastore1.iterator()).andReturn(iter1);
         expect(datastore2.iterator()).andReturn(iter2);
         replay(datastore1, datastore2,iter1,iter2);
-        CloseableIterator<String> actualIterator = sut.iterator();
+        StreamingIterator<String> actualIterator = sut.iterator();
         actualIterator.close();       
         verify(datastore1, datastore2,iter1,iter2);
     }

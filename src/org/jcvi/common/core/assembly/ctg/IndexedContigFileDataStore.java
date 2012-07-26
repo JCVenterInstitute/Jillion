@@ -37,7 +37,7 @@ import org.jcvi.common.core.datastore.DataStoreIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code IndexedContigFileDataStore} is an implementation of 
  * {@link ContigDataStore} that only stores an index containing
@@ -95,7 +95,7 @@ public class IndexedContigFileDataStore implements ContigDataStore<AssembledRead
     }
     
     @Override
-    public CloseableIterator<String> idIterator() {
+    public StreamingIterator<String> idIterator() {
         return mappedRanges.getIds();
     }
     @Override
@@ -153,7 +153,7 @@ public class IndexedContigFileDataStore implements ContigDataStore<AssembledRead
 
 
     @Override
-    public CloseableIterator<Contig<AssembledRead>> iterator() {
+    public StreamingIterator<Contig<AssembledRead>> iterator() {
         return new DataStoreIterator<Contig<AssembledRead>>(this);
     }
     /**

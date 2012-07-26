@@ -38,7 +38,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code IndexedFragmentDataStore} is an implementation of 
  * {@link FragmentDataStore} that only stores an index containing
@@ -139,7 +139,7 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
     
 
     @Override
-    public CloseableIterator<String> idIterator() {
+    public StreamingIterator<String> idIterator() {
         throwErrorIfClosed();
         return fragmentInfoIndexFileRange.getIds();
     }
@@ -161,7 +161,7 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<Fragment> iterator() {
+    public StreamingIterator<Fragment> iterator() {
         FrgIterator iter= new FrgIterator();
         iter.start();
         return iter;

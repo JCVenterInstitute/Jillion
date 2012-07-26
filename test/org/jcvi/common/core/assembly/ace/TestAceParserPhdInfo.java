@@ -39,7 +39,7 @@ import org.jcvi.common.core.assembly.ace.DefaultPhdInfo;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -96,7 +96,7 @@ public class TestAceParserPhdInfo {
     
     @Test
     public void assertPhdInfosCorrect(){
-    	CloseableIterator<AcePlacedRead> iter=null;
+    	StreamingIterator<AcePlacedRead> iter=null;
     	try{
     		iter = actualContig.getReadIterator();
     		while(iter.hasNext()){

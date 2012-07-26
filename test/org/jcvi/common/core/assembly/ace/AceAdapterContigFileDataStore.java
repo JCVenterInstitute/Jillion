@@ -35,7 +35,7 @@ import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.seq.fastx.FastXRecord;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public class AceAdapterContigFileDataStore extends AbstractAceAdaptedContigFileDataStore implements AceFileContigDataStore{
 
@@ -76,7 +76,7 @@ public class AceAdapterContigFileDataStore extends AbstractAceAdaptedContigFileD
     }
 
     @Override
-    public CloseableIterator<String> idIterator() throws DataStoreException {
+    public StreamingIterator<String> idIterator() throws DataStoreException {
         return dataStore.idIterator();
     }
 
@@ -92,7 +92,7 @@ public class AceAdapterContigFileDataStore extends AbstractAceAdaptedContigFileD
     }
 
     @Override
-    public CloseableIterator<AceContig> iterator() throws DataStoreException {
+    public StreamingIterator<AceContig> iterator() throws DataStoreException {
         return dataStore.iterator();
     }
     /**
@@ -107,17 +107,17 @@ public class AceAdapterContigFileDataStore extends AbstractAceAdaptedContigFileD
 		return totalNumberOfReads;
 	}
 	@Override
-	public CloseableIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() {
+	public StreamingIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	@Override
-	public CloseableIterator<ReadAceTag> getReadTagIterator() {
+	public StreamingIterator<ReadAceTag> getReadTagIterator() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	@Override
-	public CloseableIterator<ConsensusAceTag> getConsensusTagIterator() {
+	public StreamingIterator<ConsensusAceTag> getConsensusTagIterator() {
 		// TODO Auto-generated method stub
 		return null;
 	}

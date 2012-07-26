@@ -30,7 +30,7 @@ import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * {@code DefaultTrimFileDataStore} is a implementation
@@ -111,7 +111,7 @@ public class DefaultTrimFileDataStore implements TrimPointsDataStore, TrimFileVi
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> idIterator() throws DataStoreException {
+    public StreamingIterator<String> idIterator() throws DataStoreException {
         return delegate.idIterator();
     }
 
@@ -137,7 +137,7 @@ public class DefaultTrimFileDataStore implements TrimPointsDataStore, TrimFileVi
      * @throws DataStoreException 
     */
     @Override
-    public CloseableIterator<Range> iterator() throws DataStoreException {
+    public StreamingIterator<Range> iterator() throws DataStoreException {
         return delegate.iterator();
     }
     /**

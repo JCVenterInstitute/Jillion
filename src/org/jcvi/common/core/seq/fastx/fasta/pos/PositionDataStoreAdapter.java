@@ -25,7 +25,7 @@ import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel
@@ -46,7 +46,7 @@ public final class PositionDataStoreAdapter implements PositionDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> idIterator() throws DataStoreException {
+    public StreamingIterator<String> idIterator() throws DataStoreException {
         return datastore.idIterator();
     }
 
@@ -96,7 +96,7 @@ public final class PositionDataStoreAdapter implements PositionDataStore{
      * @throws DataStoreException 
     */
     @Override
-    public CloseableIterator<Sequence<ShortSymbol>> iterator() throws DataStoreException {
+    public StreamingIterator<Sequence<ShortSymbol>> iterator() throws DataStoreException {
         return datastore.iterator();
     }
 

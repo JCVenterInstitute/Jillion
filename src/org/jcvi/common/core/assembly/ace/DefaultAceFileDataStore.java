@@ -37,8 +37,8 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 /**
  * {@code DefaultAceFileDataStore} is a AceContigDataStore
  * implementation that stores all the {@link AceContig}s
@@ -147,7 +147,7 @@ public final class DefaultAceFileDataStore implements AceFileContigDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> idIterator() throws DataStoreException {
+    public StreamingIterator<String> idIterator() throws DataStoreException {
         return delegate.idIterator();
     }
     /**
@@ -191,7 +191,7 @@ public final class DefaultAceFileDataStore implements AceFileContigDataStore{
      * @throws DataStoreException 
     */
     @Override
-    public CloseableIterator<AceContig> iterator() throws DataStoreException {
+    public StreamingIterator<AceContig> iterator() throws DataStoreException {
         return delegate.iterator();
     }
 
@@ -200,16 +200,16 @@ public final class DefaultAceFileDataStore implements AceFileContigDataStore{
 		return totalNumberOfReads;
 	}
 	@Override
-	public CloseableIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() {
-		return CloseableIteratorAdapter.adapt(wholeAssemblyTags.iterator());
+	public StreamingIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() {
+		return StreamingIteratorAdapter.adapt(wholeAssemblyTags.iterator());
 	}
 	@Override
-	public CloseableIterator<ReadAceTag> getReadTagIterator() {
-		return CloseableIteratorAdapter.adapt(readTags.iterator());
+	public StreamingIterator<ReadAceTag> getReadTagIterator() {
+		return StreamingIteratorAdapter.adapt(readTags.iterator());
 	}
 	@Override
-	public CloseableIterator<ConsensusAceTag> getConsensusTagIterator() {
-		return CloseableIteratorAdapter.adapt(consensusTags.iterator());
+	public StreamingIterator<ConsensusAceTag> getConsensusTagIterator() {
+		return StreamingIteratorAdapter.adapt(consensusTags.iterator());
 	}
 
 	private static class DefaultAceFileDataStoreBuilder extends AbstractAceContigBuilder implements AceContigDataStoreBuilder{

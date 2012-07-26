@@ -43,7 +43,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificalPhdDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -83,14 +83,14 @@ public class TestAceFileWriter {
         
         AceFileContigDataStore reparsedAceDataStore = builder.build();
         assertEquals("# contigs", aceDataStore.getNumberOfRecords(), reparsedAceDataStore.getNumberOfRecords());
-        CloseableIterator<AceContig> contigIter = aceDataStore.iterator();
+        StreamingIterator<AceContig> contigIter = aceDataStore.iterator();
         try{
 	        while(contigIter.hasNext()){
 	        	AceContig expectedContig = contigIter.next();
 	            AceContig actualContig = reparsedAceDataStore.get(expectedContig.getId());            
 	            assertEquals("consensus", expectedContig.getConsensusSequence(), actualContig.getConsensusSequence());
 	            assertEquals("# reads", expectedContig.getNumberOfReads(), actualContig.getNumberOfReads());
-	            CloseableIterator<AcePlacedRead> readIter =null;
+	            StreamingIterator<AcePlacedRead> readIter =null;
 	            try{
 	            	readIter = expectedContig.getReadIterator();
 	            	while(readIter.hasNext()){
@@ -114,7 +114,7 @@ public class TestAceFileWriter {
 	private void writeAceContigs(PhdDataStore phdDataStore,
 			AceFileContigDataStore aceDataStore, ByteArrayOutputStream out)
 			throws IOException, DataStoreException {
-		CloseableIterator<AceContig> iter = aceDataStore.iterator();
+		StreamingIterator<AceContig> iter = aceDataStore.iterator();
 		try{
 			  while(iter.hasNext()){
 		        	AceContig contig = iter.next();
@@ -127,7 +127,7 @@ public class TestAceFileWriter {
 
 	private int countNumberOfTotalReads(AceFileContigDataStore aceDataStore) throws DataStoreException {
 		int numberOfReads =0;
-		CloseableIterator<AceContig> iter = aceDataStore.iterator();
+		StreamingIterator<AceContig> iter = aceDataStore.iterator();
 		try{
 	        while(iter.hasNext()){
 	        	AceContig contig = iter.next();

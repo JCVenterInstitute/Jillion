@@ -41,8 +41,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestStringUtilities.class,
         TestMultipleWrapper.class,
         TestChainedIterator.class,
-        TestCloseableIteratorAdapter.class,
-        TestChainedCloseableIterator.class,
+        TestStreamingAdapter.class,
+        TestStreamingIterator.class,
         TestMapValueComparator.class,
         
         TestAbstractBlockingClosableIteratorExceptions.class,

@@ -26,8 +26,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 
 /**
  * {@code DefaultTigrAssemblerFileContigDataStore} is an implemenation
@@ -65,14 +65,14 @@ public class DefaultTigrAssemblerFileContigDataStore extends AbstractTigrAssembl
         return contigs.get(id);
     }
     @Override
-    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+    public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
         super.idIterator();
-        return CloseableIteratorAdapter.adapt(contigs.keySet().iterator());
+        return StreamingIteratorAdapter.adapt(contigs.keySet().iterator());
     }
     @Override
-    public synchronized CloseableIterator<TigrAssemblerContig> iterator() {
+    public synchronized StreamingIterator<TigrAssemblerContig> iterator() {
         super.iterator();
-        return CloseableIteratorAdapter.adapt(contigs.values().iterator());
+        return StreamingIteratorAdapter.adapt(contigs.values().iterator());
     }
     @Override
     public synchronized long getNumberOfRecords() throws DataStoreException {

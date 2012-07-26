@@ -36,7 +36,7 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * EditedFastaChromatDirPhdAdapterIterator
@@ -46,8 +46,8 @@ import org.jcvi.common.core.util.iter.CloseableIterator;
  */
 public class EditedFastaChromatDirPhdAdapterIterator extends ChromatDirFastaConsedPhdAdaptedIterator{
 
-    private final CloseableIterator<QualitySequenceFastaRecord> qualityIterator;
-    private final CloseableIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> positionIterator;
+    private final StreamingIterator<QualitySequenceFastaRecord> qualityIterator;
+    private final StreamingIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> positionIterator;
     
     private QualitySequenceFastaRecord currentQualityFasta;
     private SangerPeak currentPeaks;
@@ -59,7 +59,7 @@ public class EditedFastaChromatDirPhdAdapterIterator extends ChromatDirFastaCons
      * @param chromatDir
      */
     public EditedFastaChromatDirPhdAdapterIterator(
-            CloseableIterator<NucleotideSequenceFastaRecord> fastaIterator,
+            StreamingIterator<NucleotideSequenceFastaRecord> fastaIterator,
             File fastaFile, Date phdDate, PhredQuality defaultQualityValue,
             File chromatDir) {
         super(fastaIterator, fastaFile, phdDate, defaultQualityValue, chromatDir);
@@ -71,7 +71,7 @@ public class EditedFastaChromatDirPhdAdapterIterator extends ChromatDirFastaCons
      * @param fastaFile
      * @return
      */
-    private CloseableIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> createPositionIterator(
+    private StreamingIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> createPositionIterator(
             File fastaFile) {
         File posFile = getFileLike(fastaFile,"pos");
         if(!posFile.exists()){
@@ -79,7 +79,7 @@ public class EditedFastaChromatDirPhdAdapterIterator extends ChromatDirFastaCons
         }
         return LargePositionFastaRecordIterator.createNewIteratorFor(posFile);
     }
-    private CloseableIterator<QualitySequenceFastaRecord> createQualityIterator(
+    private StreamingIterator<QualitySequenceFastaRecord> createQualityIterator(
             File fastaFile) {
         File qualityFile = getFileLike(fastaFile,"qual");
         if(!qualityFile.exists()){

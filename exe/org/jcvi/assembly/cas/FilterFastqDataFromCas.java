@@ -50,7 +50,7 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel
@@ -90,7 +90,7 @@ public class FilterFastqDataFromCas {
             Collections.shuffle(readRanges);
             CoverageMap<ReadRange> coverageMap = CoverageMapFactory.create(readRanges, maxSolexaCoverageDepth);
             Set<String> reads = new TreeSet<String>();
-            CloseableIterator<CoverageRegion<ReadRange>> regionIterator = null;
+            StreamingIterator<CoverageRegion<ReadRange>> regionIterator = null;
             try{
             	regionIterator = coverageMap.getRegionIterator();
             	while(regionIterator.hasNext()){

@@ -37,7 +37,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
 import org.jcvi.common.core.seq.fastx.fasta.LargeFastaIdIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code LargeNucleotideSequenceFastaFileDataStore} is an implementation
  * of {@link NucleotideSequenceFastaDataStore} which does not
@@ -129,7 +129,7 @@ public final class LargeNucleotideSequenceFastaFileDataStore extends AbstractNuc
     }
 
     @Override
-    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+    public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
         checkNotYetClosed();
         return LargeFastaIdIterator.createNewIteratorFor(fastaFile);
         
@@ -159,7 +159,7 @@ public final class LargeNucleotideSequenceFastaFileDataStore extends AbstractNuc
     }
 
     @Override
-    public synchronized CloseableIterator<NucleotideSequenceFastaRecord> iterator() {
+    public synchronized StreamingIterator<NucleotideSequenceFastaRecord> iterator() {
         checkNotYetClosed();
         return LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile);
        

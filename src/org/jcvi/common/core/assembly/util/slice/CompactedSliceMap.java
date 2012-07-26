@@ -40,7 +40,7 @@ import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.util.iter.ArrayIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel
@@ -110,7 +110,7 @@ public final class CompactedSliceMap implements SliceMap {
         * {@inheritDoc}
         */
         @Override
-        public CloseableIterator<String> idIterator() throws DataStoreException {
+        public StreamingIterator<String> idIterator() throws DataStoreException {
             // TODO Auto-generated method stub
             return null;
         }
@@ -164,7 +164,7 @@ public final class CompactedSliceMap implements SliceMap {
         * {@inheritDoc}
         */
         @Override
-        public CloseableIterator<QualitySequence> iterator() {
+        public StreamingIterator<QualitySequence> iterator() {
             // TODO Auto-generated method stub
             return null;
         }
@@ -213,7 +213,7 @@ public final class CompactedSliceMap implements SliceMap {
     private <PR extends AssembledRead, C extends Contig<PR>>  CompactedSliceMap(
             C contig, QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
     	CompactedSlice.Builder builders[] = new CompactedSlice.Builder[(int)contig.getConsensusSequence().getLength()];
-    	CloseableIterator<PR> readIter = null;
+    	StreamingIterator<PR> readIter = null;
     	try{
     		readIter = contig.getReadIterator();
     		while(readIter.hasNext()){

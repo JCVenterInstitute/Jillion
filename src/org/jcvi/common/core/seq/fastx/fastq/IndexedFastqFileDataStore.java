@@ -32,7 +32,7 @@ import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * {@code IndexedFastqFileDataStore} is an implementation of 
@@ -180,7 +180,7 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
    
    
     @Override
-    public CloseableIterator<String> idIterator() throws DataStoreException {
+    public StreamingIterator<String> idIterator() throws DataStoreException {
         return indexFileRange.getIds();
     }
     @Override
@@ -218,7 +218,7 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
         
     }
     @Override
-    public CloseableIterator<FastqRecord> iterator() throws DataStoreException {
+    public StreamingIterator<FastqRecord> iterator() throws DataStoreException {
     	try {
 			return LargeFastqFileDataStore.create(file, qualityCodec)
 					.iterator();
