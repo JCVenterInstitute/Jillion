@@ -22,6 +22,7 @@ package org.jcvi.common.core.symbol.residue.nt;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * {@code Nucleotides} is a helper class
@@ -31,6 +32,13 @@ import java.util.List;
  *
  */
 public final class Nucleotides {
+	/**
+	 * Pattern to detect whitespace, used in removing whitespace from strings.
+	 * This has been refactored out because calling
+	 * {@link String#replaceAll(String, String)}
+	 * recompiles the pattern for every invocation.
+	 */
+	private static Pattern WHITESPACE = Pattern.compile("\\s+");
     /**
      * Can not instantiate.
      */
@@ -108,14 +116,11 @@ public final class Nucleotides {
      *
      */
     public static List<Nucleotide> parse(CharSequence nucleotides){
-        String trimmed = nucleotides.toString().trim();
+        String trimmed = WHITESPACE.matcher(nucleotides).replaceAll("");
         List<Nucleotide> result = new ArrayList<Nucleotide>(trimmed.length());
         try{
             for(int i=0; i<trimmed.length(); i++){            
-                char charAt = trimmed.charAt(i);
-                if(!Character.isWhitespace(charAt)){
-                    result.add(Nucleotide.parse(charAt));
-                }
+                result.add(Nucleotide.parse(trimmed.charAt(i)));
             }
             return result;
         }catch(IllegalArgumentException e){

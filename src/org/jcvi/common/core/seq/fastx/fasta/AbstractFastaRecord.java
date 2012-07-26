@@ -55,30 +55,6 @@ public abstract class AbstractFastaRecord<S extends Symbol, T extends Sequence<S
     }
 
     /**
-     * Creates a new <code>SequenceFastaRecord</code>.
-     */
-    public AbstractFastaRecord(String identifier)
-    {
-        this(identifier, null);
-    }
-
-    /**
-     * Creates a new <code>SequenceFastaRecord</code>.
-     */
-    public AbstractFastaRecord(int identifier, String comments)
-    {
-        this(Integer.toString(identifier), comments);
-    }
-
-    /**
-     * Creates a new <code>SequenceFastaRecord</code>.
-     */
-    public AbstractFastaRecord(int identifier)
-    {
-        this(Integer.toString(identifier));
-    }
-
-    /**
      * @return A <code>String</code>.
      */
     public String getId()
