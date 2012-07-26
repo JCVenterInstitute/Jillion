@@ -103,7 +103,7 @@ public final class FragmentUtil {
             }
             bases.append(line);
         }
-       return new NucleotideSequenceBuilder(bases).build();
+       return new NucleotideSequenceBuilder(bases.toString()).build();
     }
     
     
