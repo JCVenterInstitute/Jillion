@@ -121,8 +121,11 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @param sequence the initial nucleotide sequence.
      * @throws NullPointerException if sequence is null.
      */
-    public NucleotideSequenceBuilder(CharSequence sequence){
-        this(Nucleotides.parse(sequence));        
+    public NucleotideSequenceBuilder(String sequence){
+    	NewValues newValues = new NewValues(sequence);
+        this.bits = newValues.getBits();
+        this.codecDecider.increment(newValues);
+        this.tail = newValues.getLength()*NUM_BITS_PER_VALUE;  
     }
 
 	
@@ -203,7 +206,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws NullPointerException if sequence is null.
      */
     public NucleotideSequenceBuilder append(String sequence){
-        return append(Nucleotides.parse(sequence));
+        return append(new NewValues(sequence));
     }
     /**
      * Inserts the given sequence to the builder's mutable sequence
@@ -219,7 +222,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws IllegalArgumentException if offset is invalid.
      */
     public NucleotideSequenceBuilder insert(int offset, String sequence){
-        return insert(offset, Nucleotides.parse(sequence));
+    	 assertInsertionParametersValid(offset, sequence);
+    	return insert(offset, new NewValues(sequence));
     }
     private void assertNotNull(Object sequence) {
         if(sequence ==null){
@@ -394,17 +398,21 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws IllegalArgumentException if offset <0 or > current sequence length.
      */
     public NucleotideSequenceBuilder insert(int offset, Iterable<Nucleotide> sequence){
-        assertNotNull(sequence);
+        assertInsertionParametersValid(offset, sequence);   
+        NewValues newValues = new NewValues(sequence);
+        return insert(offset, newValues);
+    }
+	private void assertInsertionParametersValid(int offset,
+			Object sequence) {
+		assertNotNull(sequence);
         if(offset<0){
             throw new IllegalArgumentException("offset can not have negatives coordinates: "+ offset);
         }
         if(offset> getLength()){
             throw new IllegalArgumentException(
                     String.format("offset can not start beyond current length (%d) : %d", getLength(),offset));
-        }   
-        NewValues newValues = new NewValues(sequence);
-        return insert(offset, newValues);
-    }
+        }
+	}
 	private NucleotideSequenceBuilder insert(int offset, NewValues newValues) {
 		BitSet insertedBits = newValues.getBits();
         int numberOfInsertedBits = newValues.getLength()*NUM_BITS_PER_VALUE;
@@ -1004,28 +1012,43 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	public NewValues(Nucleotide nucleotide){
     		this(Arrays.asList(nucleotide));
     	}
+    	public NewValues(String sequence){
+    		bits = new BitSet();
+            int offset=0;
+    		for(int i=0; i<sequence.length(); i++){
+    			char c = sequence.charAt(i);
+    			if(!Character.isWhitespace(c)){
+    				Nucleotide n = Nucleotide.parse(c);
+    				handle(n, offset);
+                	offset+=NUM_BITS_PER_VALUE;
+    			}
+    		}
+    	}
     	public NewValues(Iterable<Nucleotide> nucleotides){
     		bits = new BitSet();
             int offset=0;
             for(Nucleotide n : nucleotides){
-            	byte value=n.getOrdinalAsByte();
-            	
-            	if((value & 0x1) !=0){
-            		bits.set(offset+3);
-            	}
-            	if((value & 0x2) !=0){
-            		bits.set(offset+2);
-            	}
-            	if((value & 0x4) !=0){
-            		bits.set(offset+1);
-            	}
-            	if((value & 0x8) !=0){
-            		bits.set(offset);
-            	}
-            	offset+=NUM_BITS_PER_VALUE;
-            	handleOrdinal(value);
+            	handle(n, offset);
+            	offset+=NUM_BITS_PER_VALUE;            	
             }
     	}
+		private void handle(Nucleotide n, int offset) {
+			byte value=n.getOrdinalAsByte();
+			
+			if((value & 0x1) !=0){
+				bits.set(offset+3);
+			}
+			if((value & 0x2) !=0){
+				bits.set(offset+2);
+			}
+			if((value & 0x4) !=0){
+				bits.set(offset+1);
+			}
+			if((value & 0x8) !=0){
+				bits.set(offset);
+			}
+			handleOrdinal(value);
+		}
 
 		private void handleOrdinal(byte ordinal) {
 			length++;
