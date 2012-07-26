@@ -43,7 +43,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * {@code HiLowAceContigPhdDatastore} is a PhdDataStore
@@ -114,7 +114,7 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> idIterator() throws DataStoreException {
+    public StreamingIterator<String> idIterator() throws DataStoreException {
         return delegate.idIterator();
     }
 
@@ -163,7 +163,7 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
      * @throws DataStoreException 
     */
     @Override
-    public CloseableIterator<Phd> iterator() throws DataStoreException {
+    public StreamingIterator<Phd> iterator() throws DataStoreException {
         return delegate.iterator();
     }
     

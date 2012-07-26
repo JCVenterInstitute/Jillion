@@ -32,7 +32,7 @@ import java.util.Map.Entry;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 
 public class TraceArchiveInfoXMLWriter implements TraceArchiveInfoWriter {
@@ -78,7 +78,7 @@ public class TraceArchiveInfoXMLWriter implements TraceArchiveInfoWriter {
     @Override
     public void write(TraceArchiveInfo info) throws IOException {
         writeString(out, BEGIN_XML);
-        CloseableIterator<TraceArchiveRecord> iter =null;
+        StreamingIterator<TraceArchiveRecord> iter =null;
         try{
         	iter= info.iterator();
         while(iter.hasNext()){

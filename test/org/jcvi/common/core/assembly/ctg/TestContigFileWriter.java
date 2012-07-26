@@ -32,7 +32,7 @@ import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ctg.CtgFileWriter;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -57,7 +57,7 @@ public class TestContigFileWriter {
     
     @Test
     public void write() throws IOException{
-    	CloseableIterator<Contig<AssembledRead>> iter = dataStore.iterator();
+    	StreamingIterator<Contig<AssembledRead>> iter = dataStore.iterator();
     	try{
         while(iter.hasNext()){
         	Contig<AssembledRead> contig = iter.next();

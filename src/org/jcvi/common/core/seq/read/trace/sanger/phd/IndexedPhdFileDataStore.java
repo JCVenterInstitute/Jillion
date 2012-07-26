@@ -42,7 +42,7 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code IndexedPhdFileDataStore} is an implementation of 
  * {@link PhdDataStore} that only stores an index containing
@@ -327,7 +327,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
     }
 
     @Override
-    public CloseableIterator<String> idIterator() throws DataStoreException {
+    public StreamingIterator<String> idIterator() throws DataStoreException {
         return recordLocations.getIds();
     }
 
@@ -351,7 +351,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<Phd> iterator() {
+    public StreamingIterator<Phd> iterator() {
         return new IndexedIterator();
     }
     /**
@@ -360,7 +360,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
      * index.
      * @author dkatzel
      */
-    private class IndexedIterator implements CloseableIterator<Phd>{
+    private class IndexedIterator implements StreamingIterator<Phd>{
         private final LargePhdIterator iterator = LargePhdIterator.createNewIterator(phdBall);
         private final Object endOfIterator= new Object();
         private Object next;

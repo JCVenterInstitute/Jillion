@@ -24,33 +24,33 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * {@code CloseableIteratorAdapter} is an adapter
+ * {@code StreamingIteratorAdapter} is an adapter
  * that will adapt an {@link Iterator} instance
- * into a {@link CloseableIterator}.
+ * into a {@link StreamingIterator}.
  * @author dkatzel
  *
  *
  */
-public final class CloseableIteratorAdapter<T> implements CloseableIterator<T>{
+public final class StreamingIteratorAdapter<T> implements StreamingIterator<T>{
 
 	private final Iterator<T> iterator;
 	private boolean isClosed = false;
     /**
      * Adapt the given (non-null) {@link Iterator} instance
-     * into a {@link CloseableIterator}.
+     * into a {@link StreamingIterator}.
      * @param <T> the type of elements the iterator iterates over.
      * @param iterator the iterator to adapt into a CloseableIterator.
-     * @return a new {@link CloseableIterator}
+     * @return a new {@link StreamingIterator}
      * @throws NullPointerException if iterator is {@code null}.
      */
-    public static <T> CloseableIteratorAdapter<T> adapt(Iterator<T> iterator){
-        return new CloseableIteratorAdapter<T>(iterator);
+    public static <T> StreamingIteratorAdapter<T> adapt(Iterator<T> iterator){
+        return new StreamingIteratorAdapter<T>(iterator);
     }
    
     /**
      * @param iterator
      */
-    private CloseableIteratorAdapter(Iterator<T> iterator) {
+    private StreamingIteratorAdapter(Iterator<T> iterator) {
     	if(iterator ==null){
     		throw new NullPointerException("iterator can not be null");
     	}
@@ -59,7 +59,7 @@ public final class CloseableIteratorAdapter<T> implements CloseableIterator<T>{
 
     /**
     * Close this iterator.  If the adapted
-    * iterator happens to be a {@link CloseableIterator}
+    * iterator happens to be a {@link StreamingIterator}
     * before adaption, then its {@link #close()}
     * method will be called too.  This will
     * force this iterator's {@link #hasNext()}
@@ -74,8 +74,8 @@ public final class CloseableIteratorAdapter<T> implements CloseableIterator<T>{
         if(isClosed){
         	return ; //no-op
         }
-        if(iterator instanceof CloseableIterator){
-            ((CloseableIterator<T>)iterator).close();
+        if(iterator instanceof StreamingIterator){
+            ((StreamingIterator<T>)iterator).close();
         }
         isClosed=true;
     }

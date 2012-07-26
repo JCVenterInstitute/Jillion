@@ -14,7 +14,7 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.IndexedFileRange;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code IndexedNucleotideFastaFileDataStore} is an implementation of 
  * {@link NucleotideSequenceFastaDataStore} that only stores an index containing
@@ -78,7 +78,7 @@ public final class IndexedNucleotideFastaFileDataStore implements NucleotideSequ
 		this.fastaFile = fastaFile;
 	}
 	@Override
-	public CloseableIterator<String> idIterator() throws DataStoreException {
+	public StreamingIterator<String> idIterator() throws DataStoreException {
 		return index.getIds();
 	}
 
@@ -122,7 +122,7 @@ public final class IndexedNucleotideFastaFileDataStore implements NucleotideSequ
 	}
 
 	@Override
-	public CloseableIterator<NucleotideSequenceFastaRecord> iterator() {
+	public StreamingIterator<NucleotideSequenceFastaRecord> iterator() {
 		return LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile);
 	}
 	

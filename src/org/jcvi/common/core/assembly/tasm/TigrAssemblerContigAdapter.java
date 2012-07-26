@@ -34,8 +34,8 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 /**
  * {@code TigrAssemblerContigAdapter} is an adapter to convert a 
  * {@link Contig} into a {@link TigrAssemblerContig} with all
@@ -57,7 +57,7 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	 */
 	private TigrAssemblerContigAdapter(Contig<? extends AssembledRead> delegate, Map<TigrAssemblerContigAttribute, String> optionalAttributes) {
 		this.delegate = delegate;
-		CloseableIterator<? extends AssembledRead> iter = null;
+		StreamingIterator<? extends AssembledRead> iter = null;
 		try{
 			iter = delegate.getReadIterator();
 			while(iter.hasNext()){
@@ -120,7 +120,7 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	private double computeAvgCoverageFor(Contig<? extends AssembledRead> delegate) {
 		long ungappedConsensusLength=delegate.getConsensusSequence().getUngappedLength();
 		long bases=0;
-		CloseableIterator<? extends AssembledRead> iter =null;
+		StreamingIterator<? extends AssembledRead> iter =null;
 		try{
 			iter = delegate.getReadIterator();
 			while(iter.hasNext()){
@@ -195,9 +195,9 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	}
 
 	@Override
-	public CloseableIterator<TigrAssemblerPlacedRead> getReadIterator() {
+	public StreamingIterator<TigrAssemblerPlacedRead> getReadIterator() {
 
-		return CloseableIteratorAdapter.adapt(adaptedReads.values().iterator());
+		return StreamingIteratorAdapter.adapt(adaptedReads.values().iterator());
 	}
 
 	

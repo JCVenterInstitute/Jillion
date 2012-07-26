@@ -14,7 +14,7 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public final class DefaultAminoAcidSequenceFastaDataStore implements AminoAcidSequenceFastaDataStore{
 	
@@ -35,7 +35,7 @@ public final class DefaultAminoAcidSequenceFastaDataStore implements AminoAcidSe
 	}
 
 	@Override
-	public CloseableIterator<String> idIterator() throws DataStoreException {
+	public StreamingIterator<String> idIterator() throws DataStoreException {
 		return delegate.idIterator();
 	}
 
@@ -67,7 +67,7 @@ public final class DefaultAminoAcidSequenceFastaDataStore implements AminoAcidSe
 	}
 
 	@Override
-	public CloseableIterator<AminoAcidSequenceFastaRecord> iterator() throws DataStoreException {
+	public StreamingIterator<AminoAcidSequenceFastaRecord> iterator() throws DataStoreException {
 		return delegate.iterator();
 	}
 	

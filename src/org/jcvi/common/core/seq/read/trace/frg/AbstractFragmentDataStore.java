@@ -29,7 +29,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public abstract class AbstractFragmentDataStore implements Frg2Visitor, FragmentDataStore{
 
@@ -90,7 +90,7 @@ public abstract class AbstractFragmentDataStore implements Frg2Visitor, Fragment
         
     }
     @Override
-    public CloseableIterator<Fragment> iterator() {
+    public StreamingIterator<Fragment> iterator() {
         throwErrorIfClosed();
         return new DataStoreIterator<Fragment>(this);
     }

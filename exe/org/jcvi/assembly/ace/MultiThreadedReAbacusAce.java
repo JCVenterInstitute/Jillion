@@ -73,7 +73,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.common.core.util.MultipleWrapper;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel
@@ -149,7 +149,7 @@ public class MultiThreadedReAbacusAce {
                     MultipleWrapper.createMultipleWrapper(AceFileVisitor.class, builder,tagWriter));
             
             AceFileContigDataStore datastore = builder.build();
-            CloseableIterator<String> idIter = datastore.idIterator();
+            StreamingIterator<String> idIter = datastore.idIterator();
             List<Future<Void>> futures = new ArrayList<Future<Void>>();
             try{
 	            while(idIter.hasNext()){
@@ -183,7 +183,7 @@ public class MultiThreadedReAbacusAce {
             if(!success){
                 System.err.println("failed to complete reabacus process check error logs for details");                
             }else{
-                CloseableIterator<String> contigIdIter = datastore.idIterator();
+                StreamingIterator<String> contigIdIter = datastore.idIterator();
                 while(contigIdIter.hasNext()){
                     String contigId = contigIdIter.next();
                     File tempFile = new File(outputAceFile.getParentFile(), outputAceFile.getName()+".contig"+contigId);

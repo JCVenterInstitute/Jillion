@@ -37,7 +37,7 @@ import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.After;
 import org.junit.Test;
@@ -90,7 +90,7 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
     }
     @Test
     public void idIterator() throws DataStoreException{
-    	CloseableIterator<String> ids = null;
+    	StreamingIterator<String> ids = null;
     	try{
     		ids =sut.idIterator();  	
     		while(ids.hasNext()){
@@ -103,7 +103,7 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
     
     @Test
     public void iterator() throws DataStoreException{
-    	CloseableIterator<AceContig> iter = null;
+    	StreamingIterator<AceContig> iter = null;
     	try{
     		iter =sut.iterator();  	
     		while(iter.hasNext()){
@@ -134,7 +134,7 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
 		
 		long size = sut.getNumberOfRecords();
 		long expected = 0;
-		CloseableIterator<AceContig> iter = sut.iterator();
+		StreamingIterator<AceContig> iter = sut.iterator();
 		try{
 			while(iter.hasNext()){
 				expected++;
@@ -160,7 +160,7 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
 	
 	@Test
 	public void getVsIterator() throws DataStoreException, IOException{
-		CloseableIterator<AceContig> iter=null;
+		StreamingIterator<AceContig> iter=null;
 		try{
 			iter = sut.iterator();
 			while(iter.hasNext()){

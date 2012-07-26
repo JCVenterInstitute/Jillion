@@ -5,14 +5,14 @@ import static org.junit.Assert.assertEquals;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public final class TigrAssemblerTestUtil {
 
 	private TigrAssemblerTestUtil(){}
 	
 	public static void assertAllReadsCorrectlyPlaced(Contig<AssembledRead> expected, TigrAssemblerContig actual){
-		CloseableIterator<? extends AssembledRead> iter=null;
+		StreamingIterator<? extends AssembledRead> iter=null;
 		try{
 			iter = expected.getReadIterator();
 			while(iter.hasNext()){

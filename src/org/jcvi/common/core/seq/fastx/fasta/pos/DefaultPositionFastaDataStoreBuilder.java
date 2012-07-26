@@ -9,7 +9,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code DefaultPositionFastaDataStoreBuilder} is a {@link PositionFastaDataStoreBuilder}
  * that stores all {@link PositionSequenceFastaRecord} added to it via the {@link #addFastaRecord(PositionSequenceFastaRecord)}
@@ -42,7 +42,7 @@ public final class DefaultPositionFastaDataStoreBuilder implements PositionFasta
 			delegate = MapDataStoreAdapter.adapt(map);
 		}
 		@Override
-		public CloseableIterator<String> idIterator() throws DataStoreException {
+		public StreamingIterator<String> idIterator() throws DataStoreException {
 			return delegate.idIterator();
 		}
 
@@ -74,7 +74,7 @@ public final class DefaultPositionFastaDataStoreBuilder implements PositionFasta
 		}
 
 		@Override
-		public CloseableIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iterator() throws DataStoreException {
+		public StreamingIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iterator() throws DataStoreException {
 			return delegate.iterator();
 		}
 		

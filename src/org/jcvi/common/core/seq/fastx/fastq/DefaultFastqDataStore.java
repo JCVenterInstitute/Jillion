@@ -29,8 +29,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 /**
  * {@code DefaultFastqDataStore} is a {@link FastqDataStore}
  * implementation that stores all {@link FastqRecord}s
@@ -74,9 +74,9 @@ final class DefaultFastqDataStore implements FastqDataStore {
     }
 
     @Override
-    public CloseableIterator<String> idIterator() throws DataStoreException {
+    public StreamingIterator<String> idIterator() throws DataStoreException {
         checkNotClosed();
-        return CloseableIteratorAdapter.adapt(map.keySet().iterator());
+        return StreamingIteratorAdapter.adapt(map.keySet().iterator());
     }
 
     @Override
@@ -87,13 +87,13 @@ final class DefaultFastqDataStore implements FastqDataStore {
     }
 
     @Override
-    public CloseableIterator<FastqRecord> iterator() {
+    public StreamingIterator<FastqRecord> iterator() {
         try {
             checkNotClosed();
         } catch (DataStoreException e) {
             throw new IllegalStateException("could not create iterator", e);
         }
-        return CloseableIteratorAdapter.adapt(map.values().iterator());
+        return StreamingIteratorAdapter.adapt(map.values().iterator());
     }
     
     public static class Builder implements org.jcvi.common.core.util.Builder<DefaultFastqDataStore>{

@@ -28,7 +28,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 
 /**
@@ -77,7 +77,7 @@ public class NucleotideDataStoreAdapter implements NucleotideDataStore
      * @see org.jcvi.datastore.DataStore#getIds()
      */
     @Override
-    public CloseableIterator<String> idIterator() throws DataStoreException
+    public StreamingIterator<String> idIterator() throws DataStoreException
     {
         return datastore.idIterator();
     }
@@ -104,7 +104,7 @@ public class NucleotideDataStoreAdapter implements NucleotideDataStore
      * @see java.lang.Iterable#iterator()
      */
     @Override
-    public CloseableIterator<NucleotideSequence> iterator() throws DataStoreException
+    public StreamingIterator<NucleotideSequence> iterator() throws DataStoreException
     {
         return this.datastore.iterator();
     }

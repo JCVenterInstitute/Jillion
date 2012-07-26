@@ -64,7 +64,7 @@ import org.jcvi.common.core.datastore.DefaultExcludeDataStoreFilter;
 import org.jcvi.common.core.datastore.DefaultIncludeDataStoreFilter;
 import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
 import org.jcvi.common.io.idReader.IdReader;
 import org.jcvi.common.io.idReader.IdReaderException;
@@ -166,7 +166,7 @@ public class GridFindAbacusErrorsInAce {
             File aceFile = new File(commandLine.getOptionValue("a"));
             final DataStoreFilter filter = getDataStoreFilter(commandLine);
             AceFileContigDataStore datastore = IndexedAceFileDataStore.create(aceFile);
-            CloseableIterator<String> idIter = datastore.idIterator();
+            StreamingIterator<String> idIter = datastore.idIterator();
             Set<File> files = new HashSet<File>();
             try{
             while(idIter.hasNext()){

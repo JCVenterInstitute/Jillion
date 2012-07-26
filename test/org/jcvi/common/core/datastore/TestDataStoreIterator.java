@@ -31,18 +31,18 @@ import java.util.NoSuchElementException;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.junit.Before;
 import org.junit.Test;
 public class TestDataStoreIterator {
     private DataStore<Object> mockDataStore;
-    private CloseableIterator<String> mockIterator;
+    private StreamingIterator<String> mockIterator;
     
     private DataStoreIterator<Object> sut;
     @Before
     public void setup() throws DataStoreException{
         mockDataStore = createMock(DataStore.class);
-        mockIterator = createMock(CloseableIterator.class);
+        mockIterator = createMock(StreamingIterator.class);
         expect(mockDataStore.idIterator()).andReturn(mockIterator);
         replay(mockDataStore);
         sut = new DataStoreIterator<Object>(mockDataStore);

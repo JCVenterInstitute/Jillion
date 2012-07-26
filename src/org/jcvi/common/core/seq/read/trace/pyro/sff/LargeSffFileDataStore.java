@@ -36,7 +36,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code LargeSffFileDataStore} is a {@link FlowgramDataStore}
  * implementation that doesn't store any read information in memory.
@@ -114,7 +114,7 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
     }
 
     @Override
-    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+    public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
         super.idIterator();
         return new SffIdIterator(SffFileIterator.createNewIteratorFor(sffFile));
         
@@ -145,23 +145,23 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
 		
 	}
 	@Override
-    public synchronized CloseableIterator<Flowgram> iterator() {
+    public synchronized StreamingIterator<Flowgram> iterator() {
         super.iterator();
       return SffFileIterator.createNewIteratorFor(sffFile);
     }
     /**
-     * {@code SffIdIterator} is a {@link CloseableIterator}
+     * {@code SffIdIterator} is a {@link StreamingIterator}
      * that wraps the Iterator of Flowgrams and returns just
      * the id of each record when {@link Iterator#next()}
      * is called.
      * @author dkatzel
      *
      */
-    private static final class SffIdIterator implements CloseableIterator<String>{
+    private static final class SffIdIterator implements StreamingIterator<String>{
         
-        private final CloseableIterator<Flowgram> iter;
+        private final StreamingIterator<Flowgram> iter;
        
-        SffIdIterator(CloseableIterator<Flowgram> iter){
+        SffIdIterator(StreamingIterator<Flowgram> iter){
         	this.iter= iter;
         }
         

@@ -34,7 +34,7 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code DefaultFileIdReader}
  * is an {@link IdReader}
@@ -85,7 +85,7 @@ public class DefaultFileIdReader<T> implements IdReader<T> {
         }
     }
     @Override
-    public CloseableIterator<T> getIds() throws IdReaderException{
+    public StreamingIterator<T> getIds() throws IdReaderException{
         try {
             return new FileIdIterator<T>(new FileInputStream(file), idParser);
         } catch (FileNotFoundException e) {
@@ -98,7 +98,7 @@ public class DefaultFileIdReader<T> implements IdReader<T> {
         
     }
     
-    private static class FileIdIterator<T> implements CloseableIterator<T>{
+    private static class FileIdIterator<T> implements StreamingIterator<T>{
         private final Scanner scanner;
         private final IdParser<T> idParser;
         private String nextValidString;

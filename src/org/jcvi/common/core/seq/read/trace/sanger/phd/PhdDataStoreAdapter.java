@@ -23,7 +23,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code PhdDataStoreAdapter} wraps a {@link DataStore}
  * of {@link Phd}s to match the interface of a
@@ -42,7 +42,7 @@ public class PhdDataStoreAdapter implements PhdDataStore{
 
 
 	@Override
-	public CloseableIterator<String> idIterator() throws DataStoreException {
+	public StreamingIterator<String> idIterator() throws DataStoreException {
 		return delegate.idIterator();
 	}
 
@@ -70,7 +70,7 @@ public class PhdDataStoreAdapter implements PhdDataStore{
 	}
 
 	@Override
-	public CloseableIterator<Phd> iterator() throws DataStoreException {
+	public StreamingIterator<Phd> iterator() throws DataStoreException {
 		return delegate.iterator();
 	}
 

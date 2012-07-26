@@ -26,29 +26,29 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
- * {@code ChainedCloseableIterator}
- * is a CloseableIterator that chains
- * multiple {@link CloseableIterator}s
+ * {@code ChainedStreamingIterator}
+ * is a {@link StreamingIterator} that chains
+ * multiple {@link StreamingIterator}s
  * together similar to {@link ChainedIterator}
- * but for {@link CloseableIterator}s
+ * but for {@link StreamingIterator}s
  * 
  * @author dkatzel
  *
  *
  */
-public final class ChainedCloseableIterator<T> implements CloseableIterator<T>{
+public final class ChainedStreamingIterator<T> implements StreamingIterator<T>{
 
-    private final List<CloseableIterator<T>> delegates;
+    private final List<StreamingIterator<T>> delegates;
     private final Iterator<T> iterator;
     
     /**
      * @param delegates
      */
-    public ChainedCloseableIterator(Collection<? extends CloseableIterator<T>> delegates) {
-        this.delegates = new ArrayList<CloseableIterator<T>>(delegates);
+    public ChainedStreamingIterator(Collection<? extends StreamingIterator<T>> delegates) {
+        this.delegates = new ArrayList<StreamingIterator<T>>(delegates);
         this.iterator = ChainedIterator.create(delegates);
     }
 
@@ -58,7 +58,7 @@ public final class ChainedCloseableIterator<T> implements CloseableIterator<T>{
     */
     @Override
     public void close() throws IOException {
-      for(CloseableIterator<T> delegate : delegates){
+      for(StreamingIterator<T> delegate : delegates){
             IOUtil.closeAndIgnoreErrors(delegate);
         }
     }

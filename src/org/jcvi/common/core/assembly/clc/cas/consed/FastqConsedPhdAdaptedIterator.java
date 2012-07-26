@@ -30,16 +30,16 @@ import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdUtil;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 
 public class FastqConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 
-	private final CloseableIterator<? extends FastqRecord> fastqIterator;
+	private final StreamingIterator<? extends FastqRecord> fastqIterator;
 	private final Properties requiredComments;
 	private final Date phdDate;
 	private final File fastqFile;
-	public FastqConsedPhdAdaptedIterator(CloseableIterator<? extends FastqRecord> fastqIterator,  File fastqFile,Date phdDate ){
+	public FastqConsedPhdAdaptedIterator(StreamingIterator<? extends FastqRecord> fastqIterator,  File fastqFile,Date phdDate ){
 		this.requiredComments = PhdUtil.createPhdTimeStampCommentFor(phdDate);
 		this.fastqIterator = fastqIterator;	
 		this.phdDate = new Date(phdDate.getTime());

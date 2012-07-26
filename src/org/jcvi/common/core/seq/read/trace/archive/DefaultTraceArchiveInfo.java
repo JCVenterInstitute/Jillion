@@ -29,8 +29,8 @@ import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 
 public class DefaultTraceArchiveInfo<T extends TraceArchiveRecord> implements TraceArchiveInfo{
     private final Map<String, T> map;
@@ -52,8 +52,8 @@ public class DefaultTraceArchiveInfo<T extends TraceArchiveRecord> implements Tr
     }
 
     @Override
-    public CloseableIterator<String> idIterator() {
-        return CloseableIteratorAdapter.adapt(map.keySet().iterator());
+    public StreamingIterator<String> idIterator() {
+        return StreamingIteratorAdapter.adapt(map.keySet().iterator());
     }
 
     @Override
@@ -68,7 +68,7 @@ public class DefaultTraceArchiveInfo<T extends TraceArchiveRecord> implements Tr
     }
 
     @Override
-    public CloseableIterator<TraceArchiveRecord> iterator() {
+    public StreamingIterator<TraceArchiveRecord> iterator() {
         return new DataStoreIterator<TraceArchiveRecord>(this);
     }
     /**

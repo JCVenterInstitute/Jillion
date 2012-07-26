@@ -31,7 +31,7 @@ import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -172,7 +172,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
     public void closingIdIteratorShouldStopIteration() throws IOException, DataStoreException{
         
         DataStore<NucleotideSequenceFastaRecord> sut = parseFile(getFile());
-        CloseableIterator<String> iter = sut.idIterator();
+        StreamingIterator<String> iter = sut.idIterator();
         assertTrue(iter.hasNext());
         iter.next();
         iter.next();
@@ -196,7 +196,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
     public void closingFileRecordIteratorShouldStopIteration() throws IOException, DataStoreException{
         
         DataStore<NucleotideSequenceFastaRecord> sut = parseFile(getFile());
-        CloseableIterator<NucleotideSequenceFastaRecord> iter = sut.iterator();
+        StreamingIterator<NucleotideSequenceFastaRecord> iter = sut.iterator();
         assertTrue(iter.hasNext());
         iter.next();
         iter.next();

@@ -37,7 +37,7 @@ import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileVisitor{
 
@@ -201,7 +201,7 @@ public abstract class AbstractPhdFileDataStore implements PhdDataStore, PhdFileV
 
 
     @Override
-    public CloseableIterator<Phd> iterator() {
+    public StreamingIterator<Phd> iterator() {
         return new DataStoreIterator<Phd>(this);
     }
 

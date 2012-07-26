@@ -10,7 +10,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.IndexedNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public class SortFasta {
 
@@ -25,7 +25,7 @@ public class SortFasta {
 		
 		NucleotideSequenceFastaDataStore dataStore = IndexedNucleotideFastaFileDataStore.create(inputFasta);
 		SortedSet<String> sortedIds = new TreeSet<String>();
-		CloseableIterator<String> iter=null;
+		StreamingIterator<String> iter=null;
 		try {
 			iter =dataStore.idIterator();
 			while(iter.hasNext()){

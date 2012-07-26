@@ -41,7 +41,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 public final class AceFileWriter {
 
 	
@@ -163,7 +163,7 @@ public final class AceFileWriter {
     private static List<IdAlignedReadInfo> getSortedAssembledFromsFor(
             Contig<AcePlacedRead> contig){
         List<IdAlignedReadInfo> assembledFroms = new ArrayList<IdAlignedReadInfo>(contig.getNumberOfReads());
-        CloseableIterator<AcePlacedRead> iter = null;
+        StreamingIterator<AcePlacedRead> iter = null;
         try{
         	iter = contig.getReadIterator();
         	while(iter.hasNext()){

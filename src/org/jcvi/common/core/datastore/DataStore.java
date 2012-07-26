@@ -25,27 +25,29 @@ package org.jcvi.common.core.datastore;
 
 import java.io.Closeable;
 
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
- * A {@code DataStore} is an interface for fetching records by
+ * A {@code DataStore} is an interface which represents a 
+ * repository of entity records.  Usually, those
+ * records are fetched by
  * an id.  How the data in the datastore is stored is implementation
- * dependent so clients don't have to know how that data is stored.
+ * dependent.
  * @author dkatzel
  *
  *
  */
 public interface DataStore<T> extends Closeable{
 	 /**
-     * Create a new {@link CloseableIterator}
+     * Create a new {@link StreamingIterator}
      * which will iterate over the ids 
      * of all the records
      * in this datastore.
-     * @return a new {@link CloseableIterator}
+     * @return a new {@link StreamingIterator}
      * instance; never null.
      * @throws DataStoreException if there is a 
      * problem creating this iterator.
      */
-    CloseableIterator<String> idIterator() throws DataStoreException;
+    StreamingIterator<String> idIterator() throws DataStoreException;
     /**
      * Get the record in this {@link DataStore} with the given id.
      * @param id the id of the object to fetch.
@@ -78,14 +80,14 @@ public interface DataStore<T> extends Closeable{
      */
     boolean isClosed() throws DataStoreException;
     /**
-     * Create a new {@link CloseableIterator}
+     * Create a new {@link StreamingIterator}
      * which will iterate over all the records
      * in this {@link DataStore}.
-     * @return a new {@link CloseableIterator}
+     * @return a new {@link StreamingIterator}
      * instance; never null.
      * @throws DataStoreException if there is a 
      * problem creating this iterator.
      */
-    CloseableIterator<T> iterator() throws DataStoreException;
+    StreamingIterator<T> iterator() throws DataStoreException;
     
 }

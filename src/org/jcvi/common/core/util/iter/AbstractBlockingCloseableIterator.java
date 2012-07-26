@@ -30,7 +30,7 @@ import org.jcvi.common.core.io.IOUtil;
 
 /**
  * {@code AbstractBlockingCloseableIterator}
- * is a {@link CloseableIterator} that is
+ * is a {@link StreamingIterator} that is
  * meant be used with a iterate over a large computationally intensive
  * or memory intensive process.  Only 1 record (the next record
  * to be returned by {@link Iterator#next()}) will be referenced by this class.
@@ -97,7 +97,7 @@ import org.jcvi.common.core.io.IOUtil;
  *
  * @param <T> the type of elements being iterated over.
  */
-public abstract class AbstractBlockingCloseableIterator<T> implements CloseableIterator<T>{
+public abstract class AbstractBlockingCloseableIterator<T> implements StreamingIterator<T>{
 
 	private final Object endOfFileToken = new Object();
     private final BlockingQueue<Object> queue = new LinkedBlockingQueue<Object>(1);
@@ -206,7 +206,7 @@ public abstract class AbstractBlockingCloseableIterator<T> implements CloseableI
 	 * Safety-net to close the iterator
 	 * in case it hasn't been closed already.
 	 * Client code should always explicitly
-	 * close a {@link CloseableIterator}
+	 * close a {@link StreamingIterator}
 	 * but this finalizer is used just in case.
 	 * This method can not be relied upon 
 	 * since an object is not guaranteed to 

@@ -21,14 +21,14 @@ public final class IteratorUtil {
     }
     
     /**
-     * Creates an {@link CloseableIterator} of Type E
+     * Creates an {@link StreamingIterator} of Type E
      * that does not have any elements.
      * @param <E> the type of element to be iterated over.
-     * @return an instance of {@link CloseableIterator};
+     * @return an instance of {@link StreamingIterator};
      * never null.
      */
     @SuppressWarnings("unchecked")
-    public static <E>  CloseableIterator<E> createEmptyCloseableIterator(){
-        return CloseableIteratorAdapter.adapt(EmptyIterator.INSTANCE);
+    public static <E>  StreamingIterator<E> createEmptyCloseableIterator(){
+        return StreamingIteratorAdapter.adapt(EmptyIterator.INSTANCE);
     }
 }

@@ -26,7 +26,7 @@ import java.util.Iterator;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code TigrAssemblerWriter} writes out TIGR Assembler
  * formated files (.tasm).  This assembly format 
@@ -87,7 +87,7 @@ public final class TigrAssemblerWriter {
 		if(contig.getNumberOfReads()>0){
     		out.write(BLANK_LINE);
     		
-    		CloseableIterator<TigrAssemblerPlacedRead> placedReadIterator=null;
+    		StreamingIterator<TigrAssemblerPlacedRead> placedReadIterator=null;
     		try{
 	    		placedReadIterator= contig.getReadIterator();
 	    		while(placedReadIterator.hasNext()){

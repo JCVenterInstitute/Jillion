@@ -39,7 +39,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code CtgFileWriter} will write out {@link Contig}
  * objects in ctg format.
@@ -59,7 +59,7 @@ public class CtgFileWriter implements Closeable{
         writeContigHeader(contig);
         writeBases(contig.getConsensusSequence());
         Set<PR> readsInContig = new TreeSet<PR>(READ_SORTER);
-        CloseableIterator<PR> iter = null;
+        StreamingIterator<PR> iter = null;
         try{
         	iter = contig.getReadIterator();
         	while(iter.hasNext()){

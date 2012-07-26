@@ -30,7 +30,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.Symbol;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code FastaRecordDataStoreAdapter} adapts a {@link DataStore} of {@link FastaRecord}s
  * into a {@link DataStore} of the value returned by {@link FastaRecord#getSequence()}.
@@ -66,7 +66,7 @@ public class FastaRecordDataStoreAdapter<S extends Symbol,T extends Sequence<S>,
     }
 
     @Override
-    public CloseableIterator<String> idIterator() throws DataStoreException {
+    public StreamingIterator<String> idIterator() throws DataStoreException {
         return delegate.idIterator();
     }
 
@@ -82,7 +82,7 @@ public class FastaRecordDataStoreAdapter<S extends Symbol,T extends Sequence<S>,
     }
 
     @Override
-    public CloseableIterator<T> iterator() {
+    public StreamingIterator<T> iterator() {
         return new DataStoreIterator<T>(this);
     }
     /**

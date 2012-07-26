@@ -34,7 +34,7 @@ import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * {@code LucyTrimDataStore} is a TrimDataStore
@@ -79,7 +79,7 @@ public class LucySeqTrimDataStore implements TrimPointsDataStore {
      * {@inheritDoc}
      */
     @Override
-    public CloseableIterator<String> idIterator() throws DataStoreException {
+    public StreamingIterator<String> idIterator() throws DataStoreException {
         return datastore.idIterator();
     }
 
@@ -129,7 +129,7 @@ public class LucySeqTrimDataStore implements TrimPointsDataStore {
      * @throws DataStoreException 
      */
     @Override
-    public CloseableIterator<Range> iterator() throws DataStoreException {
+    public StreamingIterator<Range> iterator() throws DataStoreException {
         return datastore.iterator();
     }
 

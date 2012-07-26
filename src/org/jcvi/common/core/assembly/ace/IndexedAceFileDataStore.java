@@ -40,8 +40,8 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 /**
  * {@code IndexedAceFileDataStore} is an implementation of 
  * {@link AceFileContigDataStore} that only stores an index containing
@@ -136,16 +136,16 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
    		return totalNumberOfReads;
    	}
    	@Override
-   	public CloseableIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() {
-   		return CloseableIteratorAdapter.adapt(wholeAssemblyTags.iterator());
+   	public StreamingIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() {
+   		return StreamingIteratorAdapter.adapt(wholeAssemblyTags.iterator());
    	}
    	@Override
-   	public CloseableIterator<ReadAceTag> getReadTagIterator() {
-   		return CloseableIteratorAdapter.adapt(readTags.iterator());
+   	public StreamingIterator<ReadAceTag> getReadTagIterator() {
+   		return StreamingIteratorAdapter.adapt(readTags.iterator());
    	}
    	@Override
-   	public CloseableIterator<ConsensusAceTag> getConsensusTagIterator() {
-   		return CloseableIteratorAdapter.adapt(consensusTags.iterator());
+   	public StreamingIterator<ConsensusAceTag> getConsensusTagIterator() {
+   		return StreamingIteratorAdapter.adapt(consensusTags.iterator());
    	}
     
     @Override
@@ -170,7 +170,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
     }
 
     @Override
-    public CloseableIterator<String> idIterator() {
+    public StreamingIterator<String> idIterator() {
         return indexFileRange.getIds();
     }
 
@@ -187,7 +187,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
 
 
     @Override
-    public CloseableIterator<AceContig> iterator() {
+    public StreamingIterator<AceContig> iterator() {
         return new IndexedContigIterator(idIterator());
     }
     /**
@@ -483,11 +483,11 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
 	}
 
     
-    private final class IndexedContigIterator implements CloseableIterator<AceContig>{
+    private final class IndexedContigIterator implements StreamingIterator<AceContig>{
 
-    	private final CloseableIterator<String> idIterator;
+    	private final StreamingIterator<String> idIterator;
     	
-		public IndexedContigIterator(CloseableIterator<String> idIterator) {
+		public IndexedContigIterator(StreamingIterator<String> idIterator) {
 			this.idIterator = idIterator;
 		}
 

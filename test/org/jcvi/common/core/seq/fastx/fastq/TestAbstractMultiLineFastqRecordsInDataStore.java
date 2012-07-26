@@ -9,7 +9,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 
@@ -55,8 +55,8 @@ public abstract class TestAbstractMultiLineFastqRecordsInDataStore {
 		assertEquals(singleDataStore.getNumberOfRecords(), 
 				multilineDataStore.getNumberOfRecords());
 		
-		CloseableIterator<FastqRecord> singleIter=null;
-		CloseableIterator<FastqRecord> multiIter=null;
+		StreamingIterator<FastqRecord> singleIter=null;
+		StreamingIterator<FastqRecord> multiIter=null;
 		try{
 			singleIter = singleDataStore.iterator();
 			multiIter = multilineDataStore.iterator();

@@ -36,7 +36,7 @@ import org.jcvi.common.core.assembly.util.trim.TrimDataStoreUtil;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.common.io.fileServer.DirectoryFileServer.TemporaryDirectoryFileServer;
@@ -66,7 +66,7 @@ public class TestCas2Consed3 {
 	      File aceFile = tempDir.getFile("edit_dir/"+prefix+".ace.1");
 	      AceFileContigDataStore dataStore = DefaultAceFileDataStore.create(aceFile);
 	      assertEquals("# contigs", expectedDataStore.getNumberOfRecords(), dataStore.getNumberOfRecords());
-	        CloseableIterator<AceContig> iter = dataStore.iterator();
+	        StreamingIterator<AceContig> iter = dataStore.iterator();
 	        try{
 		        while(iter.hasNext()){
 		        	AceContig contig = iter.next();
@@ -84,7 +84,7 @@ public class TestCas2Consed3 {
 
 		private void assertReadsCorrectlyPlaced(AceContig contig,
 				Contig<AssembledRead> expectedContig) {
-			CloseableIterator<AcePlacedRead> iter = null;
+			StreamingIterator<AcePlacedRead> iter = null;
 			try{
 				iter = contig.getReadIterator();
 				while(iter.hasNext()){

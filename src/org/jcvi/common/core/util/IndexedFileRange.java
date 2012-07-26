@@ -24,7 +24,7 @@
 package org.jcvi.common.core.util;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public interface IndexedFileRange {
 
@@ -35,5 +35,5 @@ public interface IndexedFileRange {
     boolean isClosed();
     void close();
     int size();
-    CloseableIterator<String> getIds();
+    StreamingIterator<String> getIds();
 }

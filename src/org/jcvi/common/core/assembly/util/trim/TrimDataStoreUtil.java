@@ -23,8 +23,8 @@ import java.io.IOException;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 import org.jcvi.common.core.util.iter.IteratorUtil;
 
 /**
@@ -40,8 +40,8 @@ public final class TrimDataStoreUtil {
     public static final TrimPointsDataStore EMPTY_DATASTORE = new TrimPointsDataStore() {
         
         @Override
-        public CloseableIterator<Range> iterator() {
-            return CloseableIteratorAdapter.adapt(IteratorUtil.<Range>createEmptyIterator());
+        public StreamingIterator<Range> iterator() {
+            return StreamingIteratorAdapter.adapt(IteratorUtil.<Range>createEmptyIterator());
         }
         
         @Override
@@ -56,8 +56,8 @@ public final class TrimDataStoreUtil {
         }
         
         @Override
-        public CloseableIterator<String> idIterator() throws DataStoreException {
-            return CloseableIteratorAdapter.adapt(IteratorUtil.<String>createEmptyIterator());
+        public StreamingIterator<String> idIterator() throws DataStoreException {
+            return StreamingIteratorAdapter.adapt(IteratorUtil.<String>createEmptyIterator());
             
         }
         

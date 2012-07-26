@@ -27,8 +27,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 
 public class DefaultIndexedFileRange implements IndexedFileRange{
 
@@ -78,9 +78,9 @@ public class DefaultIndexedFileRange implements IndexedFileRange{
         return closed;
     }
     @Override
-    public CloseableIterator<String> getIds() {
+    public StreamingIterator<String> getIds() {
         checkIfClosed();
-        return CloseableIteratorAdapter.adapt(ranges.keySet().iterator());
+        return StreamingIteratorAdapter.adapt(ranges.keySet().iterator());
     }
 
     @Override

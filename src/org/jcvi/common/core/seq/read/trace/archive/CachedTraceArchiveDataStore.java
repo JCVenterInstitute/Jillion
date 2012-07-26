@@ -28,7 +28,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.util.Caches;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code CachedTraceArchiveDataStore} is a {@link TraceArchiveDataStore}
  * implementation which cache's {@link TraceArchiveTrace} records
@@ -82,12 +82,12 @@ public class CachedTraceArchiveDataStore implements TraceArchiveDataStore<TraceA
     }
 
     @Override
-    public CloseableIterator<TraceArchiveTrace> iterator() throws DataStoreException {
+    public StreamingIterator<TraceArchiveTrace> iterator() throws DataStoreException {
         return traceArchiveDataStore.iterator();
     }
 
     @Override
-    public CloseableIterator<String> idIterator() throws DataStoreException {
+    public StreamingIterator<String> idIterator() throws DataStoreException {
         return traceArchiveDataStore.idIterator();
     }
 

@@ -10,7 +10,7 @@ import java.util.TreeMap;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code DefaultReferenceVariationsDataStore} is an 
  * implementation of {@link ReferenceVariationsDataStore}
@@ -44,7 +44,7 @@ public final class DefaultReferenceVariationsDataStore implements ReferenceVaria
 	}
 
 	@Override
-	public CloseableIterator<String> idIterator() throws DataStoreException {
+	public StreamingIterator<String> idIterator() throws DataStoreException {
 		return delegate.idIterator();
 	}
 
@@ -69,7 +69,7 @@ public final class DefaultReferenceVariationsDataStore implements ReferenceVaria
 	}
 
 	@Override
-	public CloseableIterator<ReferenceVariations> iterator()
+	public StreamingIterator<ReferenceVariations> iterator()
 			throws DataStoreException {
 		return delegate.iterator();
 	}

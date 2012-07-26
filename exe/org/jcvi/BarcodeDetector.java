@@ -25,7 +25,7 @@ import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public class BarcodeDetector {
 
@@ -53,7 +53,7 @@ public class BarcodeDetector {
 		
 		Map<String, Set<String>> multiMatchReads = new TreeMap<String, Set<String>>();
 		int sequencesSeen =0;
-		CloseableIterator<FastqRecord> fastqIterator= null;
+		StreamingIterator<FastqRecord> fastqIterator= null;
 		try{
 			fastqIterator = LargeFastqFileDataStore.create(fastq, FastqQualityCodec.SANGER)
 											.iterator();
@@ -63,7 +63,7 @@ public class BarcodeDetector {
 				FastqRecord fastqRecord = fastqIterator.next();
 				List<String> matchedBarcodes = new ArrayList<String>();
 				List<PairwiseSequenceAlignment<Nucleotide, NucleotideSequence>> validAlignments=new ArrayList<PairwiseSequenceAlignment<Nucleotide, NucleotideSequence>>();
-				CloseableIterator<NucleotideSequenceFastaRecord> barcodeIterator = barcodes.iterator();
+				StreamingIterator<NucleotideSequenceFastaRecord> barcodeIterator = barcodes.iterator();
 				try{
 					while(barcodeIterator.hasNext()){
 						NucleotideSequenceFastaRecord barcode = barcodeIterator.next();

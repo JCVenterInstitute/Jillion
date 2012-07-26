@@ -30,8 +30,8 @@ import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.ChainedCloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.ChainedStreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 
 /**
@@ -43,10 +43,10 @@ public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends Abstr
 
     private final File workingDir;
     private final CasTrimMap trimMap;
-    private CloseableIterator<R> readIterator;
+    private StreamingIterator<R> readIterator;
     private final List<NucleotideSequence> orderedGappedReferences;
     private final TrimPointsDataStore validRangeDataStore;
-    private final List<CloseableIterator<R>> iterators = new ArrayList<CloseableIterator<R>>();
+    private final List<StreamingIterator<R>> iterators = new ArrayList<StreamingIterator<R>>();
     private final TraceDetails traceDetails;
     private AbstractCasReadVisitor(File workingDir, CasTrimMap trimMap,
             List<NucleotideSequence> orderedGappedReferences,
@@ -75,13 +75,13 @@ public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends Abstr
     public TrimPointsDataStore getValidRangeDataStore() {
         return validRangeDataStore;
     }
-    public abstract CloseableIterator<R>  createFastqIterator(File illuminaFile, TraceDetails traceDetails) throws DataStoreException;
+    public abstract StreamingIterator<R>  createFastqIterator(File illuminaFile, TraceDetails traceDetails) throws DataStoreException;
     
-    public abstract CloseableIterator<R>  createSffIterator(File sffFile, TraceDetails traceDetails) throws DataStoreException;
+    public abstract StreamingIterator<R>  createSffIterator(File sffFile, TraceDetails traceDetails) throws DataStoreException;
     
-    public abstract CloseableIterator<R>  createFastaIterator(File fastaFile, TraceDetails traceDetails) throws DataStoreException;
+    public abstract StreamingIterator<R>  createFastaIterator(File fastaFile, TraceDetails traceDetails) throws DataStoreException;
     
-    public abstract CloseableIterator<R>  createChromatogramIterator(File chromatogramFile, TraceDetails traceDetails) throws DataStoreException;
+    public abstract StreamingIterator<R>  createChromatogramIterator(File chromatogramFile, TraceDetails traceDetails) throws DataStoreException;
     
     @Override
     public final synchronized void visitReadFileInfo(CasFileInfo readFileInfo) {
@@ -92,7 +92,7 @@ public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends Abstr
         
     }
     
-    private CloseableIterator<R> createIteratorFor(String filename){
+    private StreamingIterator<R> createIteratorFor(String filename){
     	 File file;
          try {
              file = getTrimmedFileFor(filename);
@@ -117,7 +117,7 @@ public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends Abstr
 	            }
          }catch(Exception e){
          	//close any blocking iterators
-         	for(CloseableIterator<R> iter : iterators){
+         	for(StreamingIterator<R> iter : iterators){
          		IOUtil.closeAndIgnoreErrors(iter);
          	}
          	throw new RuntimeException(e);
@@ -126,7 +126,7 @@ public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends Abstr
       @Override
     public final synchronized void visitScoringScheme(CasScoringScheme scheme) {
         super.visitScoringScheme(scheme);
-        readIterator = new ChainedCloseableIterator<R>(iterators);
+        readIterator = new ChainedStreamingIterator<R>(iterators);
     }
 
     

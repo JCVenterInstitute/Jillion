@@ -9,7 +9,7 @@ import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public final class DefaultScaffoldDataStore {
 
@@ -64,7 +64,7 @@ public final class DefaultScaffoldDataStore {
 		}
 
 		@Override
-		public CloseableIterator<String> idIterator() throws DataStoreException {
+		public StreamingIterator<String> idIterator() throws DataStoreException {
 			return delegate.idIterator();
 		}
 
@@ -95,7 +95,7 @@ public final class DefaultScaffoldDataStore {
 		}
 
 		@Override
-		public CloseableIterator<Scaffold> iterator() throws DataStoreException {
+		public StreamingIterator<Scaffold> iterator() throws DataStoreException {
 			return delegate.iterator();
 		}
 		

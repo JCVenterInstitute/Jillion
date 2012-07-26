@@ -32,7 +32,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.LargeFastaIdIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code LargeQualityFastaFileDataStore} is an implementation
  * of {@link AbstractQualityFastaFileDataStore} which does not
@@ -82,7 +82,7 @@ public final class LargeQualityFastaFileDataStore extends AbstractQualityFastaFi
 
     @Override
     public boolean contains(String id) throws DataStoreException {
-    	CloseableIterator<String> iter =idIterator();
+    	StreamingIterator<String> iter =idIterator();
     	while(iter.hasNext()){
     		String nextId = iter.next();
     		if(nextId.equals(id)){
@@ -96,7 +96,7 @@ public final class LargeQualityFastaFileDataStore extends AbstractQualityFastaFi
     @Override
     public synchronized QualitySequenceFastaRecord get(String id)
             throws DataStoreException {
-    	CloseableIterator<QualitySequenceFastaRecord> iter =iterator();
+    	StreamingIterator<QualitySequenceFastaRecord> iter =iterator();
     	while(iter.hasNext()){
     		QualitySequenceFastaRecord fasta = iter.next();
     		if(fasta.getId().equals(id)){
@@ -109,7 +109,7 @@ public final class LargeQualityFastaFileDataStore extends AbstractQualityFastaFi
     }
 
     @Override
-    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+    public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
         checkNotYetClosed();
         return LargeFastaIdIterator.createNewIteratorFor(fastaFile);
 
@@ -158,7 +158,7 @@ public final class LargeQualityFastaFileDataStore extends AbstractQualityFastaFi
     }
 
     @Override
-    public synchronized CloseableIterator<QualitySequenceFastaRecord> iterator() {
+    public synchronized StreamingIterator<QualitySequenceFastaRecord> iterator() {
         checkNotYetClosed();
         LargeQualityFastaIterator iter = new LargeQualityFastaIterator(fastaFile);
             iter.start();

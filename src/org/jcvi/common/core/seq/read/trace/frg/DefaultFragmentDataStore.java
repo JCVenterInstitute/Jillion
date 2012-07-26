@@ -32,8 +32,8 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 
 public class DefaultFragmentDataStore extends AbstractFragmentDataStore{
     
@@ -114,9 +114,9 @@ public class DefaultFragmentDataStore extends AbstractFragmentDataStore{
     }
 
     @Override
-    public CloseableIterator<String> idIterator() {
+    public StreamingIterator<String> idIterator() {
         throwErrorIfClosed();
-        return CloseableIteratorAdapter.adapt(fragments.keySet().iterator());
+        return StreamingIteratorAdapter.adapt(fragments.keySet().iterator());
     }
 
     @Override

@@ -25,7 +25,7 @@ import org.jcvi.common.core.util.Caches;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code IndexedAceFileContig} is an {@link AceContig}
  * that doesn't store all the data of this contig
@@ -82,7 +82,7 @@ final class IndexedAceFileContig implements AceContig{
 	}
 
 	@Override
-	public CloseableIterator<AcePlacedRead> getReadIterator() {
+	public StreamingIterator<AcePlacedRead> getReadIterator() {
 		InputStream in = null;
 		try{
 			in = new FileInputStream(aceFile);

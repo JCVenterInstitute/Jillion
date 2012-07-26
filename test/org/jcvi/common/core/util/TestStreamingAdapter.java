@@ -20,53 +20,50 @@
 package org.jcvi.common.core.util;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.jcvi.common.core.util.ChainedCloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-public class TestChainedCloseableIterator {
+public class TestStreamingAdapter {
 
-	private CloseableIterator<String> sut;
-	
 	List<String> stooges = Arrays.asList("larry","moe","curly");
-	List<String> stooges2 = Arrays.asList("shemp","curly-joe","joe besser");
+	private StreamingIterator<String> sut;
 	@Before
 	public void setup(){
-		sut = new ChainedCloseableIterator<String>(Arrays.asList(
-				CloseableIteratorAdapter.adapt(stooges.iterator()),
-				CloseableIteratorAdapter.adapt(stooges2.iterator())
-		));
+		sut = StreamingIteratorAdapter.adapt(stooges.iterator());
+		
 	}
-	
 	@Test
-	public void whenFirstIteratorFinishedShouldStartIteratingSecond(){
-		List<String> expected = new ArrayList<String>();
-		expected.addAll(stooges);
-		expected.addAll(stooges2);
+	public void adaptedIteratorShouldIterateCorrectly(){
 		assertTrue(sut.hasNext());
-		for(int i=0; i< expected.size(); i++){
-			assertEquals(expected.get(i), sut.next());
+		for(int i=0; i< stooges.size(); i++){
+			assertEquals(stooges.get(i),sut.next());
 		}
-		assertFalse(sut.hasNext());
-	}
-	@Test
-	public void closingIteratorShouldMakeIteratorAppearFinished() throws IOException{
-		sut.next(); //larry
-		sut.next(); //moe
-		sut.close(); //close before we get to curly AND 2nd iterator
 		assertFalse(sut.hasNext());
 		try{
 			sut.next();
 			fail("should throw NoSuchElementException when no more elements");
 		}catch(NoSuchElementException expected){
 			
+		}
+	}
+	
+	@Test
+	public void closingIteratorShouldMakeIteratorAppearFinished() throws IOException{
+		sut.next(); //larry
+		sut.next(); //moe
+		sut.close(); //close before we get to curly
+		assertFalse(sut.hasNext());
+		try{
+			sut.next();
+			fail("should throw NoSuchElementException when no more elements");
+		}catch(NoSuchElementException expected){
+			assertEquals("iterator has been closed", expected.getMessage());
 		}
 	}
 	@Test

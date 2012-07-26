@@ -68,7 +68,7 @@ import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.MultipleWrapper;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel
@@ -195,7 +195,7 @@ public class RecallAceConsensus {
             AceFileVisitor aceVisitors = MultipleWrapper.createMultipleWrapper(AceFileVisitor.class, headerVisitor,aceContigDataStoreBuilder);
             AceFileParser.parse(inputAceFile, aceVisitors);
             AceFileContigDataStore aceContigDataStore = aceContigDataStoreBuilder.build();
-            CloseableIterator<AceContig> iter = aceContigDataStore.iterator();
+            StreamingIterator<AceContig> iter = aceContigDataStore.iterator();
             try{
 	            while(iter.hasNext()){
 	            	AceContig contig = iter.next();
@@ -220,7 +220,7 @@ public class RecallAceConsensus {
 	                }
 	                final NucleotideSequence gappedRecalledConsensus = recalledConsensusBuilder.build();
 	                AceContigBuilder builder = DefaultAceContig.createBuilder(contig.getId(), gappedRecalledConsensus);
-	                CloseableIterator<AcePlacedRead> readIter = null;
+	                StreamingIterator<AcePlacedRead> readIter = null;
 	                try{
 	                	readIter = contig.getReadIterator();
 	                	while(readIter.hasNext()){

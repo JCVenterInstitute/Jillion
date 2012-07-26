@@ -9,7 +9,7 @@ import org.jcvi.common.core.assembly.clc.cas.var.Variation.Type;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -32,7 +32,7 @@ public class TestDefaultReferenceVariationsDataStore {
 	public void idIterator() throws DataStoreException{
 		Iterator<String> expectedIter = Arrays.asList("HA","MP","NA","NP","NS","PA","PB1","PB2").iterator();
 	
-		CloseableIterator<String> actual = sut.idIterator();
+		StreamingIterator<String> actual = sut.idIterator();
 		while(expectedIter.hasNext()){
 			assertEquals(expectedIter.next(), actual.next());
 		}
@@ -43,7 +43,7 @@ public class TestDefaultReferenceVariationsDataStore {
 		ReferenceVariations rv = sut.get("NA");
 		assertEquals("NA",rv.getReferenceId());
 		
-		CloseableIterator<Variation> iter = rv.getVariationIterator();
+		StreamingIterator<Variation> iter = rv.getVariationIterator();
 		assertFalse(iter.hasNext());
 	}
 	
@@ -52,7 +52,7 @@ public class TestDefaultReferenceVariationsDataStore {
 		ReferenceVariations rv = sut.get("PA");
 		assertEquals("PA",rv.getReferenceId());
 		
-		CloseableIterator<Variation> iter = rv.getVariationIterator();
+		StreamingIterator<Variation> iter = rv.getVariationIterator();
 		assertTrue(iter.hasNext());
 		Variation variation = iter.next();
 		assertEquals(new DefaultVariation.Builder(2205, Type.DELETION, Nucleotide.Guanine, Nucleotide.Gap)
@@ -73,7 +73,7 @@ public class TestDefaultReferenceVariationsDataStore {
 		ReferenceVariations rv = sut.get("NP");
 		assertEquals("NP",rv.getReferenceId());
 		
-		CloseableIterator<Variation> iter = rv.getVariationIterator();
+		StreamingIterator<Variation> iter = rv.getVariationIterator();
 		assertTrue(iter.hasNext());
 		assertEquals(new DefaultVariation.Builder(55, Type.NO_CHANGE, Nucleotide.Gap, Nucleotide.Gap)
 						.addHistogramRecord(Nucleotides.parse("GG"), 4)

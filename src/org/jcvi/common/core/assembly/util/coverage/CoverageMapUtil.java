@@ -6,7 +6,7 @@ import java.util.List;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public final class CoverageMapUtil {
 
@@ -23,7 +23,7 @@ public final class CoverageMapUtil {
 	 
     public static <V extends Rangeable> List<CoverageRegion<V>> getRegionsWhichIntersect(CoverageMap<V> coverageMap, Range range) {
         List<CoverageRegion<V>> selectedRegions = new ArrayList<CoverageRegion<V>>();
-        CloseableIterator<CoverageRegion<V>> iter =null;
+        StreamingIterator<CoverageRegion<V>> iter =null;
         try{
         	iter = coverageMap.getRegionIterator();
         	boolean done=false;

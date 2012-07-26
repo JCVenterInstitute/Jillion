@@ -34,8 +34,8 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 
 /**
  * @author dkatzel
@@ -68,9 +68,9 @@ public class DefaultAmosFragmentFileDataStore extends AbstractDataStore<AmosFrag
     }
 
     @Override
-    public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+    public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
         super.idIterator();
-        return CloseableIteratorAdapter.adapt(map.keySet().iterator());
+        return StreamingIteratorAdapter.adapt(map.keySet().iterator());
     }
 
   

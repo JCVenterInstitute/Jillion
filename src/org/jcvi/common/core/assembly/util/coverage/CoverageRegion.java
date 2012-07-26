@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly.util.coverage;
 
 
 import org.jcvi.common.core.Rangeable;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * A {@link CoverageRegion} is a contiguious 
  * portion of a {@link CoverageMap} which 
@@ -48,5 +48,5 @@ public interface CoverageRegion<T extends Rangeable> extends Rangeable, Iterable
      */
     int getCoverageDepth();    
     
-    CloseableIterator<T> getElementIterator();
+    StreamingIterator<T> getElementIterator();
 }

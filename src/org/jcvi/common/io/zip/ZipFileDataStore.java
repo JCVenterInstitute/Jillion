@@ -32,7 +32,7 @@ import java.util.zip.ZipFile;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * {@code ZipFileDataStore} is an implementation
@@ -102,7 +102,7 @@ public final class ZipFileDataStore implements ZipDataStore{
     }
 
     @Override
-    public CloseableIterator<String> idIterator() {
+    public StreamingIterator<String> idIterator() {
         return new EntryNameIterator(zipfile.entries());
     }
 
@@ -118,11 +118,11 @@ public final class ZipFileDataStore implements ZipDataStore{
     }
 
     @Override
-    public CloseableIterator<InputStream> iterator() {
+    public StreamingIterator<InputStream> iterator() {
         return new DataStoreIterator<InputStream>(this);
     }
     
-    private static final class EntryNameIterator implements CloseableIterator<String>{
+    private static final class EntryNameIterator implements StreamingIterator<String>{
         private final Enumeration<? extends ZipEntry> entryEnumerator;
         private EntryNameIterator(Enumeration<? extends ZipEntry> entryEnumerator){
             this.entryEnumerator = entryEnumerator;

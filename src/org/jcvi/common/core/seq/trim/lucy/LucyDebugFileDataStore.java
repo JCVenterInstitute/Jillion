@@ -33,7 +33,7 @@ import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel
@@ -97,7 +97,7 @@ public class LucyDebugFileDataStore implements LucyDebugTrimRecordDataStore{
     * {@inheritDoc}
     */
     @Override
-    public CloseableIterator<String> idIterator() throws DataStoreException {
+    public StreamingIterator<String> idIterator() throws DataStoreException {
         return datastore.idIterator();
     }
     /**
@@ -141,7 +141,7 @@ public class LucyDebugFileDataStore implements LucyDebugTrimRecordDataStore{
      * @throws DataStoreException 
     */
     @Override
-    public CloseableIterator<LucyDebugTrimRecord> iterator() throws DataStoreException {
+    public StreamingIterator<LucyDebugTrimRecord> iterator() throws DataStoreException {
         return datastore.iterator();
     }
 }

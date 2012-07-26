@@ -8,7 +8,7 @@ import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -48,7 +48,7 @@ public class TestCoverageMapFactoryUngappedCoverageMaps {
 		assertEquals(Range.create(4,6), coverageRegion.asRange());
 		assertEquals(2, coverageRegion.getCoverageDepth());
 		List<String> actualReads = new ArrayList<String>();
-		CloseableIterator<AssembledRead> readIter = null;
+		StreamingIterator<AssembledRead> readIter = null;
 		try{
 			readIter = coverageRegion.getElementIterator();
 			coverageRegion.getElementIterator();

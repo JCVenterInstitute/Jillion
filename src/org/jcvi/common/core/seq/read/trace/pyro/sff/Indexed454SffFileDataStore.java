@@ -16,7 +16,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * 454 includes an optional index at the 
  * end of their {@literal .sff} files that contains
@@ -79,7 +79,7 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 		this.commonHeader = visitor.commonHeader;
 	}
 	@Override
-	public CloseableIterator<String> idIterator() throws DataStoreException {
+	public StreamingIterator<String> idIterator() throws DataStoreException {
 		throwErrorIfClosed();
 		try {
 			//use large sffFileDataStore 
@@ -151,7 +151,7 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 	}
 
 	@Override
-	public CloseableIterator<Flowgram> iterator() throws DataStoreException {
+	public StreamingIterator<Flowgram> iterator() throws DataStoreException {
 		throwErrorIfClosed();
 		try {
 			return LargeSffFileDataStore.create(sffFile).iterator();

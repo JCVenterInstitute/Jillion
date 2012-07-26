@@ -36,7 +36,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel
@@ -147,7 +147,7 @@ public final class DefaultUnitigDataStore{
             * {@inheritDoc}
             */
             @Override
-            public CloseableIterator<String> idIterator() throws DataStoreException {
+            public StreamingIterator<String> idIterator() throws DataStoreException {
                 return delegate.idIterator();
             }
 
@@ -197,7 +197,7 @@ public final class DefaultUnitigDataStore{
              * @throws DataStoreException 
             */
             @Override
-            public CloseableIterator<AsmUnitig> iterator() throws DataStoreException {
+            public StreamingIterator<AsmUnitig> iterator() throws DataStoreException {
                 return delegate.iterator();
             }
             

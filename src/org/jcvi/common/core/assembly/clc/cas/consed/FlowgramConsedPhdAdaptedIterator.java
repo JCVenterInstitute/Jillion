@@ -30,14 +30,14 @@ import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdUtil;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public class FlowgramConsedPhdAdaptedIterator implements PhdReadRecordIterator{
-	private final CloseableIterator<? extends Flowgram> flowgramIterator;
+	private final StreamingIterator<? extends Flowgram> flowgramIterator;
 	private final Properties requiredComments;
 	private final Date phdDate;
 	private final File sffFile;
-	public FlowgramConsedPhdAdaptedIterator(CloseableIterator<? extends Flowgram> flowgramIterator, File sffFile, Date phdDate ){
+	public FlowgramConsedPhdAdaptedIterator(StreamingIterator<? extends Flowgram> flowgramIterator, File sffFile, Date phdDate ){
 		this.requiredComments = PhdUtil.createPhdTimeStampCommentFor(phdDate);
 		this.flowgramIterator = flowgramIterator;	
 		this.phdDate = new Date(phdDate.getTime());

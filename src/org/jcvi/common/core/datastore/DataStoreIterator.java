@@ -25,10 +25,10 @@ package org.jcvi.common.core.datastore;
 
 import java.io.IOException;
 
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
-public final class DataStoreIterator<T> implements CloseableIterator<T>{
-    private final CloseableIterator<String> ids; 
+public final class DataStoreIterator<T> implements StreamingIterator<T>{
+    private final StreamingIterator<String> ids; 
     private final DataStore<T> dataStore;
     public DataStoreIterator(DataStore<T> dataStore){
         this.dataStore =  dataStore;

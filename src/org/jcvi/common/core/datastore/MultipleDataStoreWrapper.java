@@ -33,9 +33,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.common.core.util.ChainedCloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.ChainedStreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 /**
  * {@code MultipleDataStoreWrapper} is a special proxy to wrap
  * several DataStore instances behind a single iterface.  This
@@ -169,17 +169,17 @@ public final class MultipleDataStoreWrapper<T, D extends DataStore<T>> implement
         
     }
     private Object handleIterator(Method method, Object[] args) throws Throwable{
-        List<CloseableIterator<T>> iterators = new ArrayList<CloseableIterator<T>>();
+        List<StreamingIterator<T>> iterators = new ArrayList<StreamingIterator<T>>();
         for(D delegate : delegates){
             @SuppressWarnings("unchecked")
             final Iterator<T> delegateIterator = (Iterator<T>)method.invoke(delegate, args);
-            if(delegateIterator instanceof CloseableIterator){
-                iterators.add((CloseableIterator<T>)delegateIterator);
+            if(delegateIterator instanceof StreamingIterator){
+                iterators.add((StreamingIterator<T>)delegateIterator);
             }else{
-                iterators.add(CloseableIteratorAdapter.adapt(delegateIterator));
+                iterators.add(StreamingIteratorAdapter.adapt(delegateIterator));
             }
         }
-        return new ChainedCloseableIterator<T>(iterators);
+        return new ChainedStreamingIterator<T>(iterators);
     }
     private Object handleIntSumMethod(Method method, Object[] args) throws Throwable {
         int sum=0;

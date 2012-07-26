@@ -21,7 +21,7 @@ package org.jcvi.common.core.assembly.ace;
 
 import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * {@code AceFileContigDataStore} is a {@link ContigDataStore}
@@ -48,27 +48,27 @@ public interface AceFileContigDataStore extends ContigDataStore<AcePlacedRead,Ac
 	 */
 	long getNumberOfTotalReads() throws DataStoreException;
 	 /**
-     * Get a new instance of a {@link CloseableIterator}
+     * Get a new instance of a {@link StreamingIterator}
      * of all the {@link WholeAssemblyAceTag}s
      * in the ace file in the order they are
      * declared in the file.
-     * @return a new {@link CloseableIterator}; never null.
+     * @return a new {@link StreamingIterator}; never null.
      */
-	CloseableIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() throws DataStoreException;
+	StreamingIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() throws DataStoreException;
 	/**
-     * Get a new instance of a {@link CloseableIterator}
+     * Get a new instance of a {@link StreamingIterator}
      * of all the {@link ReadAceTag}s
      * in the ace file in the order they are
      * declared in the file.
-     * @return a new {@link CloseableIterator}; never null.
+     * @return a new {@link StreamingIterator}; never null.
      */
-	CloseableIterator<ReadAceTag> getReadTagIterator() throws DataStoreException;
+	StreamingIterator<ReadAceTag> getReadTagIterator() throws DataStoreException;
 	/**
-     * Get a new instance of a {@link CloseableIterator}
+     * Get a new instance of a {@link StreamingIterator}
      * of all the {@link ConsensusAceTag}s
      * in the ace file in the order they are
      * declared in the file.
-     * @return a new {@link CloseableIterator}; never null.
+     * @return a new {@link StreamingIterator}; never null.
      */
-	CloseableIterator<ConsensusAceTag> getConsensusTagIterator()  throws DataStoreException;
+	StreamingIterator<ConsensusAceTag> getConsensusTagIterator()  throws DataStoreException;
 }

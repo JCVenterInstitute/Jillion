@@ -31,7 +31,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.LargeFastaIdIterator;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * {@code LargePositionFastaFileDataStore} is an implementation
@@ -78,7 +78,7 @@ public final class LargePositionFastaFileDataStore extends AbstractPositionFasta
 	}
 	@Override
 	public boolean contains(String id) throws DataStoreException {
-		CloseableIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iter =iterator();
+		StreamingIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iter =iterator();
 		while(iter.hasNext()){
 			PositionSequenceFastaRecord<Sequence<ShortSymbol>> fasta = iter.next();
 			if(fasta.getId().equals(id)){
@@ -94,7 +94,7 @@ public final class LargePositionFastaFileDataStore extends AbstractPositionFasta
 	public synchronized PositionSequenceFastaRecord<Sequence<ShortSymbol>> get(String id)
 	        throws DataStoreException {
 		
-		CloseableIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iter =iterator();
+		StreamingIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iter =iterator();
 		while(iter.hasNext()){
 			PositionSequenceFastaRecord<Sequence<ShortSymbol>> fasta = iter.next();
 			if(fasta.getId().equals(id)){
@@ -108,7 +108,7 @@ public final class LargePositionFastaFileDataStore extends AbstractPositionFasta
 	}
 	
 	@Override
-	public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+	public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
 	    checkNotYetClosed();
 	    return  LargeFastaIdIterator.createNewIteratorFor(fastaFile);
 	}
@@ -117,7 +117,7 @@ public final class LargePositionFastaFileDataStore extends AbstractPositionFasta
 	public synchronized long getNumberOfRecords() throws DataStoreException {
 	    checkNotYetClosed();
 	    if(size ==null){
-	    	CloseableIterator<String> ids = idIterator();
+	    	StreamingIterator<String> ids = idIterator();
 	    	long count=0;
 	    	while(ids.hasNext()){
 	    		ids.next();
@@ -131,7 +131,7 @@ public final class LargePositionFastaFileDataStore extends AbstractPositionFasta
 	
 	
 	@Override
-	public synchronized CloseableIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iterator() {
+	public synchronized StreamingIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iterator() {
 	    checkNotYetClosed();
 	    LargePositionFastaRecordIterator iter= new LargePositionFastaRecordIterator(fastaFile);
 	        iter.start();

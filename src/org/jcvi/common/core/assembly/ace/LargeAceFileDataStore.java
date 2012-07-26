@@ -18,8 +18,8 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 /**
  * {@code LargeAceFileDataStore} is an {@link AceFileContigDataStore}
  * implementation that doesn't store any contig or 
@@ -100,7 +100,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 		this.contigIdFilter = contigIdFilter;
 	}
 	@Override
-	public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+	public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
 		throwExceptionIfClosed();
 		IdVisitor ids = new IdVisitor();
 		ids.start();
@@ -131,7 +131,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 			throw new DataStoreException(String.format("contig id %s not allowed by filter", id));
 		}
 		boolean found = false;
-		CloseableIterator<String> ids = idIterator();
+		StreamingIterator<String> ids = idIterator();
 		try{
 			while(ids.hasNext()){
 				String nextId = ids.next();
@@ -148,31 +148,31 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 	
 	
 	@Override
-	public synchronized CloseableIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator()
+	public synchronized StreamingIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator()
 			throws DataStoreException {
 		throwExceptionIfClosed();
 		if( wholeAssemblyTags==null){
 			setTagLists();
 		}
-		return CloseableIteratorAdapter.adapt(wholeAssemblyTags.iterator());
+		return StreamingIteratorAdapter.adapt(wholeAssemblyTags.iterator());
 	}
 	@Override
-	public synchronized CloseableIterator<ReadAceTag> getReadTagIterator()
+	public synchronized StreamingIterator<ReadAceTag> getReadTagIterator()
 			throws DataStoreException {
 		throwExceptionIfClosed();
 		if( readTags==null){
 			setTagLists();
 		}
-		return CloseableIteratorAdapter.adapt(readTags.iterator());
+		return StreamingIteratorAdapter.adapt(readTags.iterator());
 	}
 	@Override
-	public synchronized CloseableIterator<ConsensusAceTag> getConsensusTagIterator()
+	public synchronized StreamingIterator<ConsensusAceTag> getConsensusTagIterator()
 			throws DataStoreException {
 		throwExceptionIfClosed();
 		if( consensusTags==null){
 			setTagLists();
 		}
-		return CloseableIteratorAdapter.adapt(consensusTags.iterator());
+		return StreamingIteratorAdapter.adapt(consensusTags.iterator());
 	}
 	private void setTagLists() throws DataStoreException {
 		try {
@@ -218,7 +218,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 	}
 	
 	@Override
-	public synchronized CloseableIterator<AceContig> iterator() {
+	public synchronized StreamingIterator<AceContig> iterator() {
 		throwExceptionIfClosed();
 		AceFileDataStoreIterator iter= new AceFileDataStoreIterator();
 	    iter.start();
@@ -386,7 +386,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 
 	}
 	/**
-     * Special implementation of a {@link CloseableIterator}
+     * Special implementation of a {@link StreamingIterator}
      * that directly parses the ace file.  This allows us
      * to iterate over the entire file in 1 pass.
      * @author dkatzel

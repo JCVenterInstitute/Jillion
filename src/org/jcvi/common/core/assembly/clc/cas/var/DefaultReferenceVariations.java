@@ -2,8 +2,8 @@ package org.jcvi.common.core.assembly.clc.cas.var;
 
 import java.util.SortedMap;
 
-import org.jcvi.common.core.util.iter.CloseableIterator;
-import org.jcvi.common.core.util.iter.CloseableIteratorAdapter;
+import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 
 public class DefaultReferenceVariations implements ReferenceVariations{
 
@@ -19,8 +19,8 @@ public class DefaultReferenceVariations implements ReferenceVariations{
 		return referenceId;
 	}
 	@Override
-	public CloseableIterator<Variation> getVariationIterator() {
-		return CloseableIteratorAdapter.adapt(map.values().iterator());
+	public StreamingIterator<Variation> getVariationIterator() {
+		return StreamingIteratorAdapter.adapt(map.values().iterator());
 	}
 	
 	

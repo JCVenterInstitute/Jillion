@@ -15,7 +15,7 @@ import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public class ReverseComplementFasta {
 
@@ -25,7 +25,7 @@ public class ReverseComplementFasta {
 		
 		NucleotideSequenceFastaDataStore dataStore = LargeNucleotideSequenceFastaFileDataStore.create(inputFasta);
 		PrintWriter out = new PrintWriter(reverseComplimentOutputFasta);
-		CloseableIterator<NucleotideSequenceFastaRecord> iter=null;
+		StreamingIterator<NucleotideSequenceFastaRecord> iter=null;
 		try {
 			iter =dataStore.iterator();
 			while(iter.hasNext()){

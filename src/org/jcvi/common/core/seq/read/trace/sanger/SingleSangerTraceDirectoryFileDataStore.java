@@ -26,7 +26,7 @@ import java.util.Iterator;
 import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.util.FileIterator;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
 
 /**
@@ -98,9 +98,9 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
       * {@inheritDoc}
       */
       @Override
-      public synchronized CloseableIterator<String> idIterator() throws DataStoreException {
+      public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
           super.idIterator();
-          return new CloseableIterator<String>(){
+          return new StreamingIterator<String>(){
               Iterator<File> iter = FileIterator.createNonRecursiveFileIteratorBuilder(
                       fileServer.getRootDir())
                       .build();

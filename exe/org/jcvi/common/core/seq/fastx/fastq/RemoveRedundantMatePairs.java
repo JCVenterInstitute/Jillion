@@ -37,7 +37,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel
@@ -94,8 +94,8 @@ public class RemoveRedundantMatePairs {
             
             int comparisonRangeLength = Integer.parseInt(commandLine.getOptionValue("n"));
             Range comparisonRange=Range.createOfLength(comparisonRangeLength);
-            CloseableIterator<FastqRecord> mate1Iterator=null;
-            CloseableIterator<FastqRecord> mate2Iterator  =null;
+            StreamingIterator<FastqRecord> mate1Iterator=null;
+            StreamingIterator<FastqRecord> mate2Iterator  =null;
             File outputDir = new File(commandLine.getOptionValue("o"));
             outputDir.mkdirs();
             String prefix = commandLine.getOptionValue("prefix");
@@ -182,9 +182,9 @@ public class RemoveRedundantMatePairs {
 		}
     	
     }
-    private static final class MatePairIterator implements CloseableIterator<MatePair>{
-    	private final CloseableIterator<FastqRecord> mate1Iterator;
-    	private final CloseableIterator<FastqRecord> mate2Iterator;
+    private static final class MatePairIterator implements StreamingIterator<MatePair>{
+    	private final StreamingIterator<FastqRecord> mate1Iterator;
+    	private final StreamingIterator<FastqRecord> mate2Iterator;
     	private long recordCounter=0L;
     	public MatePairIterator(File fastq1, File fastq2, FastqQualityCodec qualityCodec) throws FileNotFoundException, DataStoreException{
     		mate1Iterator = LargeFastqFileDataStore.create(fastq1, qualityCodec).iterator();

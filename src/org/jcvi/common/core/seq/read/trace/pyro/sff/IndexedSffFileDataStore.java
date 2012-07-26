@@ -14,7 +14,7 @@ import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
-import org.jcvi.common.core.util.iter.CloseableIterator;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code IndexedSffFileDataStore} is an implementation 
  * of {@link FlowgramDataStore} that only stores an index containing
@@ -265,7 +265,7 @@ public final class IndexedSffFileDataStore{
 		}
 	
 		@Override
-		public CloseableIterator<String> idIterator() throws DataStoreException {
+		public StreamingIterator<String> idIterator() throws DataStoreException {
 			try {
 				return LargeSffFileDataStore.create(sffFile).idIterator();
 			} catch (IOException e) {
@@ -316,7 +316,7 @@ public final class IndexedSffFileDataStore{
 		}
 	
 		@Override
-		public CloseableIterator<Flowgram> iterator() throws DataStoreException {
+		public StreamingIterator<Flowgram> iterator() throws DataStoreException {
 			try {
 				return LargeSffFileDataStore.create(sffFile).iterator();
 			} catch (IOException e) {
