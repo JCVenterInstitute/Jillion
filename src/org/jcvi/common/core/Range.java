@@ -103,8 +103,10 @@ public abstract class Range implements Rangeable,Iterable<Long>
 	 * 2^32 -1.
 	 */
 	private static final long UNSIGNED_INT_MAX = 4294967295L;
-	
-    
+	/**
+	 * Initial size of our cache of ranges {@link #CACHE}.
+	 */
+    private static final int INITIAL_CACHE_SIZE = 1024;
 
     /**
      * Regular expression in the form (left) .. (right).
@@ -383,7 +385,7 @@ public abstract class Range implements Rangeable,Iterable<Long>
      * Initialize cache with a soft reference cache that will grow as needed.
      */
     static{
-         CACHE = Caches.<String, Range>createSoftReferencedValueCache();
+         CACHE = Caches.<String, Range>createSoftReferencedValueCache(INITIAL_CACHE_SIZE);
     }
     /**
      * Factory method to get a {@link Range} object in
