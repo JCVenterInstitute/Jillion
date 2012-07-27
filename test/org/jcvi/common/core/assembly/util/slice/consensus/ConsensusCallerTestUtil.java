@@ -39,7 +39,6 @@ import org.jcvi.common.core.assembly.util.slice.SliceElement;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusResult;
 import org.jcvi.common.core.assembly.util.slice.consensus.DefaultConsensusResult;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.jcvi.common.core.util.MapValueComparator;
 
 import static org.jcvi.common.core.Direction.FORWARD;
@@ -643,7 +642,7 @@ public static Map<List<IdedSlice>, List<ConsensusResult>> generateMostCommonBase
     			continue;
     		}
     		Map<Nucleotide, Integer> histogram = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
-    		for(Nucleotide bases : Nucleotides.parse("ACGT-")){
+    		for(Nucleotide bases : ConsensusUtil.BASES_TO_CONSIDER){
     			histogram.put(bases, Integer.valueOf(0));
     		}
     		for(IdedSliceElement e : s){

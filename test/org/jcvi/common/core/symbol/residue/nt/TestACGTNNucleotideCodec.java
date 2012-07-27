@@ -33,7 +33,6 @@ import java.util.NoSuchElementException;
 import org.jcvi.common.core.symbol.residue.nt.ACGTNNucloetideCodec;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideCodec;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.junit.Test;
 
 /**
@@ -54,7 +53,7 @@ public class TestACGTNNucleotideCodec {
     
     @Test
     public void encode(){
-        List<Nucleotide> nucleotides = Nucleotides.parse("ACGTACGT");
+        List<Nucleotide> nucleotides = new NucleotideSequenceBuilder("ACGTACGT").asList();
         byte[] actual =sut.encode(nucleotides);
         assertEquals(nucleotides,sut.decode(actual));
         assertDecodeByIndexIsCorrect(nucleotides, actual);        
@@ -62,7 +61,7 @@ public class TestACGTNNucleotideCodec {
     
     @Test
     public void lastByteHasOnly1Base(){
-        List<Nucleotide> nucleotides = Nucleotides.parse("ACGTACGTC");
+        List<Nucleotide> nucleotides = new NucleotideSequenceBuilder("ACGTACGTC").asList();
         byte[] actual =sut.encode(nucleotides);
         assertEquals(nucleotides,sut.decode(actual));
         assertDecodeByIndexIsCorrect(nucleotides, actual);
@@ -70,14 +69,14 @@ public class TestACGTNNucleotideCodec {
     
     @Test
     public void lastByteHasOnly2Bases(){
-        List<Nucleotide> nucleotides = Nucleotides.parse("ACGTACGTCA");
+        List<Nucleotide> nucleotides = new NucleotideSequenceBuilder("ACGTACGTCA").asList();
         byte[] actual =sut.encode(nucleotides);
         assertEquals(nucleotides,sut.decode(actual));
         assertDecodeByIndexIsCorrect(nucleotides, actual);
     }
     @Test
     public void lastByteHasOnly3Bases(){
-        List<Nucleotide> nucleotides = Nucleotides.parse("ACGTACGTCAG");
+        List<Nucleotide> nucleotides = new NucleotideSequenceBuilder("ACGTACGTCAG").asList();
         byte[] actual =sut.encode(nucleotides);
         assertEquals(nucleotides,sut.decode(actual));
         assertDecodeByIndexIsCorrect(nucleotides, actual);
@@ -98,21 +97,21 @@ public class TestACGTNNucleotideCodec {
     
     @Test(expected = IllegalArgumentException.class)
     public void hasAmbiguityShouldThrowIllegalArgumentException(){
-        sut.encode(Nucleotides.parse("ACGTWACGT"));
+        sut.encode(new NucleotideSequenceBuilder("ACGTWACGT").asList());
     }
     
     
     //////////////////////
     @Test
     public void encodeWithOneN(){
-        List<Nucleotide> nucleotides = Nucleotides.parse("ACGTNACGT");
+        List<Nucleotide> nucleotides = new NucleotideSequenceBuilder("ACGTNACGT").asList();
         byte[] actual =sut.encode(nucleotides);
         assertEquals(nucleotides,sut.decode(actual));
         assertDecodeByIndexIsCorrect(nucleotides, actual);        
     }
     @Test
     public void encodeWithTwoNs(){
-        List<Nucleotide> nucleotides = Nucleotides.parse("ACGTNACNGT");
+        List<Nucleotide> nucleotides = new NucleotideSequenceBuilder("ACGTNACNGT").asList();
         byte[] actual =sut.encode(nucleotides);
         assertEquals(nucleotides,sut.decode(actual));
         assertDecodeByIndexIsCorrect(nucleotides, actual);        
@@ -122,7 +121,7 @@ public class TestACGTNNucleotideCodec {
      */
     @Test
     public void encodeWithFourNs(){
-        List<Nucleotide> nucleotides = Nucleotides.parse("ACGTNCGTANGTACNTACGNACGT");
+        List<Nucleotide> nucleotides = new NucleotideSequenceBuilder("ACGTNCGTANGTACNTACGNACGT").asList();
         byte[] actual =sut.encode(nucleotides);
         assertEquals(nucleotides,sut.decode(actual));
         assertDecodeByIndexIsCorrect(nucleotides, actual);        
@@ -130,7 +129,7 @@ public class TestACGTNNucleotideCodec {
     
     @Test
     public void encodeWithTwoConsecutiveNs(){
-        List<Nucleotide> nucleotides = Nucleotides.parse("ACGTNNACNGT");
+        List<Nucleotide> nucleotides = new NucleotideSequenceBuilder("ACGTNNACNGT").asList();
         byte[] actual =sut.encode(nucleotides);
         assertEquals(nucleotides,sut.decode(actual));
         assertDecodeByIndexIsCorrect(nucleotides, actual);        
@@ -171,13 +170,13 @@ public class TestACGTNNucleotideCodec {
     
     @Test(expected = IndexOutOfBoundsException.class)
     public void getBeyondLengthShouldThrowException(){
-    	 List<Nucleotide> nucleotides = Nucleotides.parse("ACGTACGT");
+    	 List<Nucleotide> nucleotides = new NucleotideSequenceBuilder("ACGTACGT").asList();
          byte[] actual =sut.encode(nucleotides);
          sut.decode(actual, 10);
     }
     @Test(expected = IndexOutOfBoundsException.class)
     public void negativeOffsetShouldThrowException(){
-    	 List<Nucleotide> nucleotides = Nucleotides.parse("ACGTACGT");
+    	 List<Nucleotide> nucleotides = new NucleotideSequenceBuilder("ACGTACGT").asList();
          byte[] actual =sut.encode(nucleotides);
          sut.decode(actual, -1);
     }
@@ -185,22 +184,22 @@ public class TestACGTNNucleotideCodec {
     
     @Test
     public void iterator(){
-    	List<Nucleotide> list = Nucleotides.parse("ACGNACGT");
+    	List<Nucleotide> list = new NucleotideSequenceBuilder("ACGNACGT").asList();
 		assertIterateCorrectly(list);
     }
     @Test
     public void iteratorLastByteHasOnly1Base(){
-    	List<Nucleotide> list = Nucleotides.parse("ACGNACGTC");
+    	List<Nucleotide> list = new NucleotideSequenceBuilder("ACGNACGTC").asList();
 		assertIterateCorrectly(list);
     }
     @Test
     public void iteratorLastByteHasOnly2Bases(){
-    	List<Nucleotide> list = Nucleotides.parse("ACGTNCGTCA");
+    	List<Nucleotide> list = new NucleotideSequenceBuilder("ACGTNCGTCA").asList();
 		assertIterateCorrectly(list);
     }
     @Test
     public void iteratorLastByteHasOnly3Bases(){
-    	List<Nucleotide> list = Nucleotides.parse("ACGTNCGTCAG");
+    	List<Nucleotide> list = new NucleotideSequenceBuilder("ACGTNCGTCAG").asList();
 		assertIterateCorrectly(list);
     }
     

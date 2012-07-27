@@ -118,6 +118,9 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     /**
      * Creates a new NucleotideSequenceBuilder instance
      * which currently contains the given sequence.
+     *  Any whitespace in the input string will be ignored.
+     *  This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
      * @param sequence the initial nucleotide sequence.
      * @throws NullPointerException if sequence is null.
      */
@@ -201,6 +204,9 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     /**
      * Appends the given sequence to the end
      * of the builder's mutable sequence.
+     * Any whitespace in the input string will be ignored.
+     *  This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
      * @param sequence the nucleotide sequence to be appended
      * to the end our builder.
      * @throws NullPointerException if sequence is null.
@@ -214,6 +220,9 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * downstream of this offset before this insert method
      * was executed, then those nucleotides will be shifted by n
      * bases where n is the length of the given sequence to insert.
+     * Any whitespace in the input string will be ignored.
+     *  This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
      * @param offset the GAPPED offset into this mutable sequence
      * to begin insertion.
      * @param sequence the nucleotide sequence to be 
@@ -732,13 +741,24 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         return asUngappedList(Range.createOfLength(getLength()));
     }
     /**
-     * Get the current Nucleotides as a String
-     * this will return the same string 
-     * as Nucleotides.asString(this.asList()))
+     * Get the current Nucleotides sequence as 
+     * one long String without any whitespace.
+     * For example:
+     * <pre>
+     *  new NucleotideSequenceBuilder("ACGT")
+     *  .append("-TAG")
+     *  .toString();
+     * </pre>
+     * will return "ACGT-TAG".
      */
     @Override
     public String toString(){
-        return Nucleotides.asString(asList());
+    	StringBuilder builder = new StringBuilder(codecDecider.getCurrentLength());
+    	for(int i=0; i<tail; i+=NUM_BITS_PER_VALUE){
+        	Nucleotide base = getNucleotideFor(i);
+        	builder.append(base);
+        }
+        return builder.toString();
     }
     /**
      * Reverse complement all the nucleotides currently in this builder.

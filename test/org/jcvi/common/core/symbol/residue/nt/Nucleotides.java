@@ -20,7 +20,6 @@
 package org.jcvi.common.core.symbol.residue.nt;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -31,7 +30,7 @@ import java.util.regex.Pattern;
  * @author dkatzel
  *
  */
-public final class Nucleotides {
+final class Nucleotides {
 	/**
 	 * Pattern to detect whitespace, used in removing whitespace from strings.
 	 * This has been refactored out because calling
@@ -71,33 +70,5 @@ public final class Nucleotides {
         }
         
     }
-    /**
-     * Convert the given {@link Iterable} of nucleotides
-     * into a String which represents the same
-     * nucleotide sequence.
-     * @param nucleotides the nucleotides to convert to a string
-     * @return a new String, will never be null.
-     * @throws NullPointerException if nucleotides is null.
-     */
-    public static String asString(Iterable<Nucleotide> nucleotides){
-        StringBuilder result = new StringBuilder();
-        for(Nucleotide g: nucleotides){
-            result.append(g.toString());
-        }
-        return result.toString();
-    }
-    
-    /**
-     * Given the input List of {@link Nucleotide}s
-     * return the reverse complement as a new List.
-     * @param nucleotides the {@link Nucleotide}s to reverse complement.
-     * @return the reverse complement of the given List as a new List.
-     */
-    public static List<Nucleotide> reverseComplement(List<Nucleotide> nucleotides) {
-        List<Nucleotide> reversed = new ArrayList<Nucleotide>(nucleotides.size());
-        for(int i=nucleotides.size()-1; i>=0; i--){
-            reversed.add(nucleotides.get(i).complement());
-        }
-        return reversed;
-     }
+   
 }

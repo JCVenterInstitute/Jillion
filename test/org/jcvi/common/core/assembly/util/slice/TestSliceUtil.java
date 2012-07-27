@@ -32,7 +32,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.util.slice.DefaultSlice;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 public final class TestSliceUtil {
     private TestSliceUtil(){}
@@ -53,7 +53,7 @@ public final class TestSliceUtil {
     }
     public static IdedSlice createSliceFrom(String nucleotides, byte[] qualities, List<Direction> directions){
         
-        return createSliceFrom(Nucleotides.parse(nucleotides),
+        return createSliceFrom(new NucleotideSequenceBuilder(nucleotides).asList(),
                 PhredQuality.valueOf(qualities), directions);
     }
     

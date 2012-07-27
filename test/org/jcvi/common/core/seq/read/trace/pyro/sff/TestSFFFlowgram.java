@@ -32,8 +32,9 @@ import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFlowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffUtil;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,9 +50,10 @@ public class TestSFFFlowgram {
     NucleotideSequence basecalls = createMock(NucleotideSequence.class);
     String id = "readId";
     SffFlowgram sut;
+    List<Nucleotide> acgt = new NucleotideSequenceBuilder("ACGT").asList();
     @Before
     public void setup(){
-        expect(basecalls.asList()).andStubReturn(Nucleotides.parse("ACGT"));
+        expect(basecalls.asList()).andStubReturn(acgt);
         expect(confidence.asList()).andStubReturn(PhredQuality.valueOf(new byte[]{20,15,30,15}));
         
         replay(basecalls,confidence);

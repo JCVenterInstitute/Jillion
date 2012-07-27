@@ -25,11 +25,9 @@ package org.jcvi.common.core.symbol.residue.nt;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -37,7 +35,7 @@ import org.junit.runners.Parameterized.Parameters;
 import static org.junit.Assert.*;
 import static org.jcvi.common.core.symbol.residue.nt.Nucleotide.*;
 @RunWith(Parameterized.class)
-public class TestNucleotideGlyph {
+public class TestNucleotide {
     private Nucleotide glyph,reverseGlyph;
     @Parameters
     public static Collection<?> data(){
@@ -59,7 +57,7 @@ public class TestNucleotideGlyph {
 
     }
 
-    public TestNucleotideGlyph(Nucleotide glyph,Nucleotide reverseGlyph){
+    public TestNucleotide(Nucleotide glyph,Nucleotide reverseGlyph){
         this.glyph = glyph;
         this.reverseGlyph = reverseGlyph;
     }
@@ -88,13 +86,7 @@ public class TestNucleotideGlyph {
         return expectedIsAmbiguity;
     }
     
-    @Test
-    public void reverseComplimentList(){
-        List<Nucleotide> forward = Arrays.asList(Adenine,Cytosine,Guanine, Thymine, Gap,Cytosine);
-        List<Nucleotide> expectedReversed = Arrays.asList(Guanine, Gap, Adenine,Cytosine,Guanine, Thymine);
-        
-        assertEquals(expectedReversed, Nucleotides.reverseComplement(forward));
-    }
+   
 
 
 }
