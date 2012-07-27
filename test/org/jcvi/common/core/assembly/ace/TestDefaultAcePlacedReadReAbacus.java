@@ -19,18 +19,21 @@
 
 package org.jcvi.common.core.assembly.ace;
 
-import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.AcePlacedReadBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultAcePlacedRead;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -87,7 +90,7 @@ public class TestDefaultAcePlacedReadReAbacus {
     
     @Test
     public void reAbacus(){
-        sut.reAbacus(Range.create(3,9), Nucleotides.parse("TACGT"));
+        sut.reAbacus(Range.create(3,9), parse("TACGT"));
         
         assertEquals(readId, sut.getId());       
         assertEquals(8, sut.getLength());
@@ -99,11 +102,25 @@ public class TestDefaultAcePlacedReadReAbacus {
     @Test
     public void reAbacusDifferentNonGapBasesShouldThrowException(){
         try{
-            sut.reAbacus(Range.create(3,9), Nucleotides.parse("TRCGT"));
+            sut.reAbacus(Range.create(3,9), parse("TRCGT"));
             fail("should throw Exception");
         }catch(IllegalArgumentException expected){
             assertEquals("reAbacusing must retain same ungapped basecalls! 'TACGT' vs 'TRCGT'",
                     expected.getMessage());
         }
+    }
+    
+    static List<Nucleotide> parse(String nucleotides){
+        String trimmed = nucleotides.replaceAll("\\s+","");
+        List<Nucleotide> result = new ArrayList<Nucleotide>(trimmed.length());
+        try{
+            for(int i=0; i<trimmed.length(); i++){            
+                result.add(Nucleotide.parse(trimmed.charAt(i)));
+            }
+            return result;
+        }catch(IllegalArgumentException e){
+            throw new IllegalArgumentException("could not parse "+ nucleotides,e);
+        }
+        
     }
 }

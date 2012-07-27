@@ -50,7 +50,6 @@ import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 
 
 

@@ -24,28 +24,32 @@
 package org.jcvi.common.core.seq.fastx.fasta.nt;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaRecord;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
 public class TestDefaultEncodedNuclotideFastaRecord {
 
-    private String id = "1234";
-    private String comment = "comment";
-    String bases = "ACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGT-N";
-    List<Nucleotide> glyphs = Nucleotides.parse(bases);
-    NucleotideSequence encodedGlyphs = new NucleotideSequenceBuilder(glyphs).build();
+    private final String id = "1234";
+    private final String comment = "comment";
+    private final String bases = "ACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGT-N";
+    private final  NucleotideSequence encodedGlyphs;
 
-    NucleotideSequenceFastaRecord sut = new NucleotideSequenceFastaRecord(id, comment, bases);
+    private final NucleotideSequenceFastaRecord sut;
+    
+    public TestDefaultEncodedNuclotideFastaRecord(){
+    	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(bases);
+        encodedGlyphs = builder.build();
+
+        sut = new NucleotideSequenceFastaRecord(id, comment, bases);
+    }
+    
     @Test
     public void constructor(){
         assertEquals(id, sut.getId());

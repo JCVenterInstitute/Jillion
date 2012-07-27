@@ -32,7 +32,6 @@ import org.jcvi.common.core.seq.read.DefaultRead;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 import org.junit.Test;
 import static org.junit.Assert.*;

@@ -420,7 +420,12 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
     
      @Override
      public String toString(){
-         return Nucleotides.asString(asList());
+    	 Nucleotide[] array = asNucleotideArray();
+    	 StringBuilder builder = new StringBuilder(array.length);
+    	 for(int i=0; i< array.length; i++){
+    		 builder.append(array[i]);
+    	 }
+         return builder.toString();
      }
 
 

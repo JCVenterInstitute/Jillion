@@ -30,7 +30,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhdFileDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdParser;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdTag;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.jcvi.common.io.fileServer.FileServer;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;

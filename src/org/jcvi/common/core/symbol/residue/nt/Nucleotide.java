@@ -164,7 +164,8 @@ public enum Nucleotide implements Residue {
      * one character long, only the first character will be considered.
      * For example,
      * {@link #parse(String) parse("A")} will return
-     * {@link #Adenine}.
+     * {@link #Adenine}. This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
      * @param base the nucleotide as a String of length 1.
      * @return a {@link Nucleotide} equivalent.
      * @throws IllegalArgumentException if the given
@@ -177,7 +178,8 @@ public enum Nucleotide implements Residue {
      * Get the {@link Nucleotide} for the given
      * character representation.  For example,
      * {@link #parse(char) parse('A')} will return
-     * {@link #Adenine}.
+     * {@link #Adenine}.  This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
      * @param base the nucleotide as a character.
      * @return a {@link Nucleotide} equivalent.
      * @throws IllegalArgumentException if the given

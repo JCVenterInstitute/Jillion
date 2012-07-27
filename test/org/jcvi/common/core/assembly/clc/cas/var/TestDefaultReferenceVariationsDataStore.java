@@ -8,7 +8,6 @@ import java.util.Iterator;
 import org.jcvi.common.core.assembly.clc.cas.var.Variation.Type;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
@@ -76,14 +75,15 @@ public class TestDefaultReferenceVariationsDataStore {
 		StreamingIterator<Variation> iter = rv.getVariationIterator();
 		assertTrue(iter.hasNext());
 		assertEquals(new DefaultVariation.Builder(55, Type.NO_CHANGE, Nucleotide.Gap, Nucleotide.Gap)
-						.addHistogramRecord(Nucleotides.parse("GG"), 4)
+						.addHistogramRecord(Arrays.asList(Nucleotide.parse("G"),
+															Nucleotide.parse("G")), 4)
 						.addHistogramRecord(Nucleotide.Gap, 12)
 						.build(),
 						
 						iter.next());
 		
 		assertEquals(new DefaultVariation.Builder(60, Type.NO_CHANGE, Nucleotide.Gap, Nucleotide.Gap)
-						.addHistogramRecord(Nucleotides.parse("G"), 4)
+						.addHistogramRecord(Arrays.asList(Nucleotide.parse("G")), 4)
 						.addHistogramRecord(Nucleotide.Gap, 12)
 						.build(),
 						

@@ -283,7 +283,7 @@ public final class Caches
     }
     
     private static <K,V> Map<K,V> createNonLRUMap(int maxSize){
-    	return new LinkedHashMap<K, V>(MapUtil.computeMinHashMapSizeWithoutRehashing(maxSize));
+    	return new LinkedHashMap<K, V>(maxSize);
     }
     /**
      * This uses the Java-native implementation of

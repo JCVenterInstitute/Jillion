@@ -35,7 +35,6 @@ import org.jcvi.common.core.assembly.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;

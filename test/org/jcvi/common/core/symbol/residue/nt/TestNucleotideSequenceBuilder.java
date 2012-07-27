@@ -62,7 +62,7 @@ public class TestNucleotideSequenceBuilder {
     }
     private void assertBuiltSequenceEquals(String expected,NucleotideSequenceBuilder builder){
         assertEquals(expected.length(), builder.getLength());
-        assertEquals(expected, Nucleotides.asString(builder.build()));
+        assertEquals(expected, builder.build().toString());
     }
     private NucleotideSequence createSequence(String seq){
        return  new NucleotideSequenceBuilder(seq).build();
@@ -290,6 +290,19 @@ public class TestNucleotideSequenceBuilder {
             .ungap() //TCAACGTTCGAGGGGG
             .reverseComplement(); //CCCCCTCGAACGTTGA
         assertBuiltSequenceEquals("CCCCCTCGAACGTTGA",sut);
+    }
+    
+    @Test
+    public void testToString(){
+    	  NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+          sut.append("TCGA") //ACGTTCGA
+              .prepend("TCGAN-") //TCGAN-ACGTTCGA
+              .insert(5,"AAAAA")//TCGANAAAAA-ACGTTCGA
+              .delete(Range.create(2,8)) //TCA-ACGTTCGA
+              .append("GGGGG") //TCA-ACGTTCGAGGGGG
+              .ungap() //TCAACGTTCGAGGGGG
+              .reverseComplement(); //CCCCCTCGAACGTTGA
+          assertEquals("CCCCCTCGAACGTTGA",sut.toString());
     }
     
     @Test

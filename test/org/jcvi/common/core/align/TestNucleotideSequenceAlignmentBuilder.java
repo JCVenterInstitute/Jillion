@@ -1,7 +1,7 @@
 package org.jcvi.common.core.align;
 
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -50,11 +50,11 @@ public class TestNucleotideSequenceAlignmentBuilder {
 	
 	@Test
 	public void manymatchesAndMismatches(){
-		sut.addMatches(Nucleotides.parse("ACGT"));
+		sut.addMatches(new NucleotideSequenceBuilder("ACGT").asList());
 		
 		sut.addMismatch(Nucleotide.Guanine,Nucleotide.Adenine);
 		sut.addMismatch(Nucleotide.Thymine,Nucleotide.Adenine);
-		sut.addMatches(Nucleotides.parse("ACGT"));
+		sut.addMatches(new NucleotideSequenceBuilder("ACGT").asList());
 		
 		NucleotideSequenceAlignment alignment = sut.build();
 		assertEquals(10, alignment.getAlignmentLength());
@@ -67,11 +67,11 @@ public class TestNucleotideSequenceAlignmentBuilder {
 	
 	@Test
 	public void manymatchesAndMismatchesAndGap(){
-		sut.addMatches(Nucleotides.parse("ACGT"));
+		sut.addMatches(new NucleotideSequenceBuilder("ACGT").asList());
 		
 		sut.addMismatch(Nucleotide.Guanine,Nucleotide.Adenine);
 		sut.addGap(Nucleotide.Thymine,Nucleotide.Gap);
-		sut.addMatches(Nucleotides.parse("ACGT"));
+		sut.addMatches(new NucleotideSequenceBuilder("ACGT").asList());
 		
 		NucleotideSequenceAlignment alignment = sut.build();
 		assertEquals(10, alignment.getAlignmentLength());
@@ -85,11 +85,11 @@ public class TestNucleotideSequenceAlignmentBuilder {
 	@Test
 	public void buildFromTraceback(){
 		sut = new NucleotideSequenceAlignmentBuilder(true);
-		sut.addMatches(Nucleotides.parse("ACGT"));
+		sut.addMatches(new NucleotideSequenceBuilder("ACGT").asList());
 		
 		sut.addMismatch(Nucleotide.Guanine,Nucleotide.Adenine);
 		sut.addGap(Nucleotide.Thymine,Nucleotide.Gap);
-		sut.addMatches(Nucleotides.parse("ACGT"));
+		sut.addMatches(new NucleotideSequenceBuilder("ACGT").asList());
 
 		NucleotideSequenceAlignment alignment = sut.build();
 		assertEquals(10, alignment.getAlignmentLength());
