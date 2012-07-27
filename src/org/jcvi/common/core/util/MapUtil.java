@@ -14,7 +14,7 @@ public final class MapUtil {
 		//can not instantiate
 	}
 	/**
-	 * Computes the smallest possible initial
+	 * Computes the smallest possible 
 	 * size of a {@link HashMap} using the default
 	 * load factor that will not cause the map to 
 	 * perform an expensive rehashing operation (which also

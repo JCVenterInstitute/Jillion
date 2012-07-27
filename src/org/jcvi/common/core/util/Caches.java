@@ -302,15 +302,15 @@ public final class Caches
             private static final long serialVersionUID = -9015747210650112857L;
         private final int maxAllowedSize;
     
-        protected LRUCache(int capacity, float loadFactor)
+        protected LRUCache(int maxAllowedSize, float loadFactor)
         {
-            super(capacity, loadFactor, true);
-            this.maxAllowedSize = capacity;
+            super(MapUtil.computeMinHashMapSizeWithoutRehashing(maxAllowedSize), loadFactor, true);
+            this.maxAllowedSize = maxAllowedSize;
         }
     
-        protected LRUCache(int capacity)
+        protected LRUCache(int maxAllowedSize)
         {
-            this(capacity, Caches.DEFAULT_LOAD_FACTOR);
+            this(maxAllowedSize, Caches.DEFAULT_LOAD_FACTOR);
         }
     
         
@@ -524,7 +524,7 @@ public final class Caches
         public SoftReferenceLRUCache(int maxSize) {
           super(
         		  new LRUCache<K,SoftReference<V>>(
-        				  MapUtil.computeMinHashMapSizeWithoutRehashing(maxSize), 
+        				  maxSize, 
         				  DEFAULT_LOAD_FACTOR), 
 				  maxSize);
         }
