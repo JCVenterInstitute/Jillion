@@ -20,7 +20,6 @@
 package org.jcvi.common.core.assembly.clc.cas.var;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
@@ -29,7 +28,7 @@ import java.util.regex.Pattern;
 
 import org.jcvi.common.core.assembly.clc.cas.var.Variation.Type;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 /**
  * {@code VariationLogFileParser} is a parser for 
@@ -78,12 +77,11 @@ public final class VariationLogFileParser {
                         long coordinate = Long.parseLong(varMatcher.group(1));
                         Type type = Type.getType(varMatcher.group(2));
                         Nucleotide ref = Nucleotide.parse(varMatcher.group(3));
-                        List<Nucleotide> consensus = Nucleotides.parse(varMatcher.group(4));
-                        DefaultVariation.Builder variationBuilder = new DefaultVariation.Builder(coordinate, type,ref,consensus);
+                        DefaultVariation.Builder variationBuilder = new DefaultVariation.Builder(coordinate, type,ref,varMatcher.group(4));
                         final String group = varMatcher.group(5);
                         Scanner histogramScanner = new Scanner(group);
                         while(histogramScanner.hasNext()){
-                            List<Nucleotide> bases = Nucleotides.parse(histogramScanner.next().replaceAll(":",""));
+                            List<Nucleotide> bases = new NucleotideSequenceBuilder(histogramScanner.next().replaceAll(":","")).asList();
                             int count = histogramScanner.nextInt();
                             variationBuilder.addHistogramRecord(bases,count);
                         }

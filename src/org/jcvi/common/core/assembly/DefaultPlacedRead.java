@@ -32,7 +32,6 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 
 
@@ -339,7 +338,7 @@ public final class DefaultPlacedRead implements AssembledRead {
         */
         @Override
         public Builder reAbacus(Range gappedValidRangeToChange, String newBasecalls){
-            return reAbacus(gappedValidRangeToChange, Nucleotides.parse(newBasecalls));
+            return reAbacus(gappedValidRangeToChange, new NucleotideSequenceBuilder(newBasecalls).asList());
         }
         /**
         * {@inheritDoc}

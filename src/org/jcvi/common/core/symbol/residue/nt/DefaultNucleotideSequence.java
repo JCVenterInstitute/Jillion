@@ -50,14 +50,7 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
      */
     private final byte[] data;
     
-   
-    
-    public static NucleotideSequence create(CharSequence nucleotides){
-        return new DefaultNucleotideSequence(nucleotides.toString());
-    }
-    public static NucleotideSequence create(char[] nucleotides){
-        return new DefaultNucleotideSequence(new String(nucleotides));
-    }
+
     
     public static NucleotideSequence create(Collection<Nucleotide> nucleotides){
         return new DefaultNucleotideSequence(nucleotides);
@@ -86,10 +79,6 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
         this.codec =codec;
         this.data = codec.encode(nucleotides);
    
-    }
-    
-    private DefaultNucleotideSequence(String basecalls){
-        this(Nucleotides.parse(basecalls));
     }
 
     

@@ -63,7 +63,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRateU
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 /**
  * {@code Ab1FileParser} can parse an
  * Applied BioSystems "ab1" formatted chromatogram
@@ -627,7 +626,7 @@ public final class Ab1FileParser {
 	private static List<Nucleotide> parseChannelOrder(GroupedTaggedRecords dataRecordMap ){
 		AsciiTaggedDataRecord order = dataRecordMap.asciiDataRecords.get(TaggedDataName.FILTER_WHEEL_ORDER).get(0);
 		
-		return Nucleotides.parse(order.parseDataRecordFrom(null));
+		return new NucleotideSequenceBuilder(order.parseDataRecordFrom(null)).asList();
 
 	}
 

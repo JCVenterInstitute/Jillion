@@ -1,14 +1,16 @@
 package org.jcvi.common.core.align.pairwise;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 public final class DefaultNucleotideScoringMatrix implements NucleotideScoringMatrix{
 
 	private final float[][] matrix;
-	
+	private static final List<Nucleotide> ACGT = new NucleotideSequenceBuilder("ACGT")
+													.asList();
 	
 	private DefaultNucleotideScoringMatrix(float[][] matrix) {
 		this.matrix = matrix;
@@ -44,7 +46,7 @@ public final class DefaultNucleotideScoringMatrix implements NucleotideScoringMa
 			return this;
 		}
 		public Builder ambiguityScore(float ambiguityScore){
-			for(Nucleotide g : Nucleotides.parse("ACGT")){
+			for(Nucleotide g : ACGT){
 				for(Nucleotide ambiguity : g.getAllPossibleAmbiguities()){
 					set(g,ambiguity, ambiguityScore);
 				}

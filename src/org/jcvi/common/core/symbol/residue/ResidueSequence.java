@@ -87,11 +87,7 @@ public interface ResidueSequence<R extends Residue> extends Sequence<R> {
     /**
      * Two {@link ResidueSequence}s are equal
      * if they contain the same residues 
-     * in the same order.  This should
-     * return the same value 
-     * (but possibly a more optimized computation)
-     * as {@code this.asList().equals(o.asList())};
-     * <p/>
+     * in the same order. 
      * {@inheritDoc}
      */
     @Override

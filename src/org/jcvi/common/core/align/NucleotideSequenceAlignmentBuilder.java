@@ -4,7 +4,6 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 
 public class NucleotideSequenceAlignmentBuilder extends AbstractSequenceAlignmentBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment, NucleotideSequenceBuilder>{
 
@@ -104,6 +103,7 @@ public class NucleotideSequenceAlignmentBuilder extends AbstractSequenceAlignmen
 
 	@Override
 	protected Iterable<Nucleotide> parse(String sequence) {
-		return Nucleotides.parse(sequence);
+		return new NucleotideSequenceBuilder(sequence)
+					.asList();
 	}
 }

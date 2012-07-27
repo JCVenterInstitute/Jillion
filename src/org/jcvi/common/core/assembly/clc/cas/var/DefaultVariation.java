@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 /**
  * {@code DefaultVariation} is a default implementation 
@@ -37,11 +37,13 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
  */
 public class DefaultVariation implements Variation{
 
+	private static final List<Nucleotide> ACGTN_GAP = new NucleotideSequenceBuilder("ACGTN-").asList();
     private final long coordinate;
     private final List<Nucleotide> consensus;
     private final Nucleotide reference;
     private final Type type;
     private final Map<List<Nucleotide>, Integer> histogram;
+    
     
     
     /**
@@ -153,7 +155,7 @@ public class DefaultVariation implements Variation{
     @Override
     public String toString(){
         StringBuilder variationList = new StringBuilder();
-        for(Nucleotide base : Nucleotides.parse("ACGTN-")){
+        for(Nucleotide base : ACGTN_GAP){
             final List<Nucleotide> asList = Arrays.asList(base);
             if(histogram.containsKey(asList)){
                 variationList.append(String.format("\t%s: %d", base, histogram.get(asList)));
@@ -173,7 +175,13 @@ public class DefaultVariation implements Variation{
                 Nucleotide consensus ){
         	this(coordinate, type, reference, Collections.singletonList(consensus));
         }
+        
         public Builder(long coordinate, Type type,
+                Nucleotide reference,
+                String consensus ){
+        	this(coordinate, type, reference, new NucleotideSequenceBuilder(consensus).asList());
+        }
+        private Builder(long coordinate, Type type,
                 Nucleotide reference,
                 List<Nucleotide> consensus ){
             if(consensus ==null){

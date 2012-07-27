@@ -30,7 +30,6 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 /**
  * {@code AssemblyUtil} is a utility class for working
  * with {@link AssembledRead}s and gapped {@link NucleotideSequence}.
@@ -55,22 +54,19 @@ public final class AssemblyUtil {
     public static List<Nucleotide> buildGappedComplementedFullRangeBases(AssembledRead placedRead, List<Nucleotide> ungappedUncomplementedFullRangeBases){
         Direction dir =placedRead.getDirection();
         Range validRange = placedRead.getReadInfo().getValidRange();
-        List<Nucleotide> ungappedFullRangeComplimented;
+        NucleotideSequenceBuilder ungappedFullRangeComplimentedBuilder = new NucleotideSequenceBuilder(ungappedUncomplementedFullRangeBases);
         if(dir==Direction.REVERSE){
             validRange = AssemblyUtil.reverseComplementValidRange(
                     validRange,
                     ungappedUncomplementedFullRangeBases.size());
-            ungappedFullRangeComplimented = Nucleotides.reverseComplement(ungappedUncomplementedFullRangeBases);
+            ungappedFullRangeComplimentedBuilder.reverseComplement();
             
-        }else{
-            ungappedFullRangeComplimented = ungappedUncomplementedFullRangeBases;
         }
-        NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(ungappedFullRangeComplimented.size());
-        builder.append(ungappedFullRangeComplimented.subList(0,(int) validRange.getBegin()));
+        NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder((int)ungappedFullRangeComplimentedBuilder.getLength());
+        builder.append(ungappedFullRangeComplimentedBuilder.subSequence(Range.createOfLength(validRange.getBegin())));
         //need to use read's sequence since that might be gapped
         builder.append(placedRead.getNucleotideSequence());
-        builder.append(ungappedFullRangeComplimented.subList((int)validRange.getEnd()+1,ungappedFullRangeComplimented.size()));
-       
+        builder.append(ungappedFullRangeComplimentedBuilder.subSequence(Range.create(validRange.getEnd()+1, ungappedFullRangeComplimentedBuilder.getLength() -1)));
      
         return builder.asList();
     }
