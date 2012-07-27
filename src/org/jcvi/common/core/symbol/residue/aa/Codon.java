@@ -296,10 +296,10 @@ public final class Codon
        return getCodonsFor(basecalls,Frame.ZERO);
     }
     public static List<Codon> getCodonsFor(NucleotideSequence basecalls, Frame frame){
-        NucleotideSequence ungapped = new NucleotideSequenceBuilder(basecalls)
+        String ungappedString = new NucleotideSequenceBuilder(basecalls)
         								.ungap()
-        								.build();
-    	return getCodonsFor(ungapped,frame);
+        								.toString();
+    	return getCodonsFor(ungappedString,frame);
      }
     public static Codon getCodonFor(Nucleotide base1, Nucleotide base2, Nucleotide base3){
         return getCodonFor(Arrays.asList(base1,base2,base3));
