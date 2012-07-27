@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.symbol.residue.Residue;
+import org.jcvi.common.core.util.MapUtil;
 
 /**
  * {@code AminoAcid} is a {@link Symbol} representation 
@@ -69,7 +70,8 @@ public enum AminoAcid implements Residue{
     
     private static final Map<String, AminoAcid> NAME_MAP;
     static{
-        NAME_MAP = new HashMap<String, AminoAcid>(60,1F);
+    	int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(AminoAcid.values().length *3);
+        NAME_MAP = new HashMap<String, AminoAcid>(mapSize);
         
         for(AminoAcid aa : AminoAcid.values()){
             NAME_MAP.put(aa.getName().toUpperCase(), aa);

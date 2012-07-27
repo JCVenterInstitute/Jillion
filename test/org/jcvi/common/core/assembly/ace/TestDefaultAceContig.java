@@ -69,6 +69,6 @@ public class TestDefaultAceContig {
             assertEquals(16, consensus.getLength());
             assertEquals("id",contig.getId());
             assertEquals(1,contig.getNumberOfReads());
-            assertEquals("ACGTACGTACGTACGT", Nucleotides.asString(contig.getRead("read").getNucleotideSequence().asList()));
+            assertEquals("ACGTACGTACGTACGT", contig.getRead("read").getNucleotideSequence().toString());
     }
 }

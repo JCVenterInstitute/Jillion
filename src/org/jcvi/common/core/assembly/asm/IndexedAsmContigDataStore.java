@@ -39,6 +39,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
+import org.jcvi.common.core.util.MapUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
@@ -514,7 +515,8 @@ public final class IndexedAsmContigDataStore implements AsmContigDataStore{
                 QualitySequence consensusQualities, int numberOfReads,
                 int numberOfUnitigs, int numberOfVariants) {
             if(externalId.equals(contigId)){
-                map = new HashMap<String, Range>(numberOfReads+1, 1F);
+            	int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads);
+                map = new HashMap<String, Range>(mapSize);
                 inContigWeCareAbout=true;
                 return EnumSet.of(NestedContigMessageTypes.READ_MAPPING);
             }

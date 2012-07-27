@@ -407,6 +407,16 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
 			return new IteratorImpl(encodedData);
 		}
 		
+		@Override
+		public String toString(byte[] encodedData) {
+			Iterator<Nucleotide> iter = iterator(encodedData);
+			StringBuilder builder = new StringBuilder(decodedLengthOf(encodedData));
+			while(iter.hasNext()){
+				builder.append(iter.next());
+			}
+			return builder.toString();
+		}
+
 		private final class IteratorImpl implements Iterator<Nucleotide>{
 			private final int length;
 			private final Iterator<Integer> sentinelIterator;

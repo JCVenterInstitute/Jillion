@@ -43,6 +43,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.util.MapUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
@@ -196,7 +197,8 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         public synchronized void visitHeader(int numberOfContigs,
                 int totalNumberOfReads) {
             if(contigId==null){
-                phds = new HashMap<String, Phd>(totalNumberOfReads+1, 1F);
+            	int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(totalNumberOfReads);
+                phds = new HashMap<String, Phd>(mapSize);
                 contigOfInterest=true;
             }
             super.visitHeader(numberOfContigs, totalNumberOfReads);
@@ -234,7 +236,8 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         	if(contigId !=null){
                 contigOfInterest =aceContigId.equals(contigId);
                 if(contigOfInterest){
-                    phds = new HashMap<String, Phd>(numberOfReads+1, 1F);                    
+                	int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads);
+                    phds = new HashMap<String, Phd>(mapSize);                    
                 }
                 return contigOfInterest;
             }

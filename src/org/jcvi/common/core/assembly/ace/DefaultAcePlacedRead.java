@@ -412,8 +412,8 @@ final class DefaultAcePlacedRead implements AcePlacedRead {
 
         public IllegalReAbacus(List<Nucleotide> oldUngappedBasecalls, List<Nucleotide> newUngappedBasecalls){
             super(String.format("reAbacusing must retain same ungapped basecalls! '%s' vs '%s'", 
-                    Nucleotides.asString(oldUngappedBasecalls),
-                    Nucleotides.asString(newUngappedBasecalls)
+                    new NucleotideSequenceBuilder(oldUngappedBasecalls).toString(),
+                    new NucleotideSequenceBuilder(newUngappedBasecalls).toString()
                     ));
         }
     }

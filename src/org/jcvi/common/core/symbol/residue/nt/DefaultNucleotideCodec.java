@@ -25,7 +25,6 @@ package org.jcvi.common.core.symbol.residue.nt;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -351,6 +350,35 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
 		return new IteratorImpl(encodedGlyphs);
 	}
 	
+	@Override
+	public String toString(byte[] encodedData) {
+		
+		int length = decodedLengthOf(encodedData);
+		if(length==0){
+			return "";
+		}
+		int currentOffset=0;
+		StringBuilder builder = new StringBuilder(length);
+		byte encodedByte;
+		byte[] currentDecodedBytes ;
+		while(currentOffset < length-2){
+			encodedByte = encodedData[computeEncodedIndexForGlyph(currentOffset)];
+			currentDecodedBytes = decodeNext2Values(encodedByte);
+			builder.append(ORDINAL_VALUES[currentDecodedBytes[0]]);
+			builder.append(ORDINAL_VALUES[currentDecodedBytes[1]]);
+			currentOffset+=2;
+		}
+		encodedByte = encodedData[computeEncodedIndexForGlyph(currentOffset)];
+		currentDecodedBytes = decodeNext2Values(encodedByte);
+		builder.append(ORDINAL_VALUES[currentDecodedBytes[0]]);
+		if(isEven(length)){
+			builder.append(ORDINAL_VALUES[currentDecodedBytes[1]]);
+		}else{
+			
+		}
+		return builder.toString();
+	}
+
 	private class IteratorImpl implements Iterator<Nucleotide>{
 		private final byte[] encodedData;
 		private final int length;

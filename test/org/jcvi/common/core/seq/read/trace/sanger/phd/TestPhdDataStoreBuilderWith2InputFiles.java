@@ -24,7 +24,6 @@ import java.io.IOException;
 
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -51,13 +50,13 @@ public class TestPhdDataStoreBuilderWith2InputFiles extends AbstractTestPhd{
         assertEquals(
                 "TCAGCGCGTAGTCGACGCAGCTGTCGTGTGCAGCAAAAGCAGGTAGATATTGAAAGATGAGTCTTCTAACCGAGGTCGAAACGTACGTTCTCTCTATCGTCCCGTCAGGCCCCCTCCAAGACCGCGATCGCGCAGAGACTTGTAAGAATGTGTTTGTCAGGGAAAAACGAAACCGACTCTTGTAGGCGGCTCATGGAAGTAGGGTCCGTAAAAGAACAAGAACCAACTCCTCGTTCACCTCCTGACTAAGGGGTAAGTTTTAGGTTAGTTTGTTGGTTCTACGCTCACCGTCGCCACGTGAGCGAGGACGTGCGACGCGTAGGTAACGGCCGTTTGTTCCGAAAACTAAGCCCGTTAACTTAGGGAAGTAGGGGTAGGTCCAACCAACATGGACGAGAGCGGTCGAACTACGTACAACGAAGGACTTAAAAGGGTAAAAGTAAACAATTACCTACTAGGGGCGGAAAAGAAGGTGGCGACCTACCTAGTTAAGTTTACTAACCTAGGTTGGCACTTAGTCACGCTGCGACTGGGTCCGTCCTATGTTACAACAGGAGTAGGGACGGTGTGACCACTGAGTAGGCGATTGGTCCCGAACGACGGACAGCGTGCGTACG" 
                 , 
-                Nucleotides.asString(realPhd.getNucleotideSequence().asList()));
+                realPhd.getNucleotideSequence().toString());
     }
 
     protected void phdRecordMatchesExpected(Phd actual) {
         assertEquals(expectedQualities, actual.getQualitySequence().asList());        
         assertEquals(expectedPositions, actual.getPeaks().getData().asList());      
-        assertEquals(expectedBasecalls, Nucleotides.asString(actual.getNucleotideSequence().asList()));
+        assertEquals(expectedBasecalls, actual.getNucleotideSequence().toString());
         assertEquals(expectedProperties, actual.getComments());
     }
     

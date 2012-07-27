@@ -107,4 +107,13 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
      * @return
      */
     Iterator<Nucleotide> iterator(byte[] encodedData);
+    /**
+     * Convert the encoded bytes into a String
+     * of Nucleotides.
+     * @param encodedData the byte array of encoded
+     * nucleotide sequence data.
+     * @return a new String that represents the 
+     * same Nucleotide sequence; will never be null.
+     */
+    String toString(byte[] encodedData);
 }

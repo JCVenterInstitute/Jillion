@@ -16,6 +16,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
+import org.jcvi.common.core.util.MapUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * 454 includes an optional index at the 
@@ -284,7 +285,8 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 					+ POW_3	* IOUtil.toUnsignedByte(values[3]);
 		}
 		private void populateOffsetMap(InputStream in) throws IOException {
-			map = new HashMap<String, Integer>((int)commonHeader.getNumberOfReads()+1, 1F);
+			int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(commonHeader.getNumberOfReads());
+			map = new HashMap<String, Integer>(mapSize);
 			for(long i =0; i< commonHeader.getNumberOfReads(); i++){
 				String id = parseNextId(in);
 				if(id ==null){

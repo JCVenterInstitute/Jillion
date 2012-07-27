@@ -281,6 +281,10 @@ public final class Caches
     public static <K,V> Map<K,V> createWeakReferencedValueCache(int maxSize){
         return new WeakReferenceCache<K,V>(maxSize);
     }
+    
+    private static <K,V> Map<K,V> createNonLRUMap(int maxSize){
+    	return new LinkedHashMap<K, V>(MapUtil.computeMinHashMapSizeWithoutRehashing(maxSize));
+    }
     /**
      * This uses the Java-native implementation of
     * a {@link LinkedHashMap} with last-access ordering and capacity limitation
@@ -296,12 +300,12 @@ public final class Caches
     private static final class LRUCache<K,V> extends LinkedHashMap<K, V>{
  
             private static final long serialVersionUID = -9015747210650112857L;
-        private final int capacity;
+        private final int maxAllowedSize;
     
         protected LRUCache(int capacity, float loadFactor)
         {
-            super(capacity+1, loadFactor, true);
-            this.capacity = capacity;
+            super(capacity, loadFactor, true);
+            this.maxAllowedSize = capacity;
         }
     
         protected LRUCache(int capacity)
@@ -313,7 +317,7 @@ public final class Caches
         @Override
         protected boolean removeEldestEntry(Entry<K, V> eldest)
         {
-            return this.size() > this.capacity;
+            return this.size() > this.maxAllowedSize;
         }
     
     }
@@ -332,12 +336,13 @@ public final class Caches
         private final ReferenceQueue<V> referenceQueue = new ReferenceQueue<V>();
         private final Map<Reference<? extends V>, K> referenceKeyMap;
         /**
-         * @param capacity
+         * @param maxAllowedSize
          * @param loadFactor
          */
-        AbstractReferencedLRUCache(Map<K,R> map, int size) {
+        AbstractReferencedLRUCache(Map<K,R> map, int maxAllowedSize) {
             cache = map;
-            referenceKeyMap = new HashMap<Reference<? extends V>, K>(size+1, DEFAULT_LOAD_FACTOR);
+            int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(maxAllowedSize);
+            referenceKeyMap = new HashMap<Reference<? extends V>, K>(mapSize);
         }
         protected abstract R createReferenceFor(V value,final ReferenceQueue<V> referenceQueue);
         
@@ -484,11 +489,11 @@ public final class Caches
        
        
         /**
-         * @param capacity
+         * @param maxAllowedSize
          * @param loadFactor
          */
         public SoftReferenceCache(int maxSize) {
-          super(new LinkedHashMap<K,SoftReference<V>>(maxSize, DEFAULT_LOAD_FACTOR), maxSize);
+        	super(Caches.<K,SoftReference<V>>createNonLRUMap(maxSize), maxSize);
         }
 
         /**
@@ -513,11 +518,15 @@ public final class Caches
        
        
         /**
-         * @param capacity
+         * @param maxAllowedSize
          * @param loadFactor
          */
         public SoftReferenceLRUCache(int maxSize) {
-          super(new LRUCache<K,SoftReference<V>>(maxSize, DEFAULT_LOAD_FACTOR), maxSize);
+          super(
+        		  new LRUCache<K,SoftReference<V>>(
+        				  MapUtil.computeMinHashMapSizeWithoutRehashing(maxSize), 
+        				  DEFAULT_LOAD_FACTOR), 
+				  maxSize);
         }
 
         /**
@@ -542,7 +551,7 @@ public final class Caches
         
         
         /**
-         * @param capacity
+         * @param maxAllowedSize
          * @param loadFactor
          */
         public WeakReferenceLRUCache(int maxSize) {
@@ -570,11 +579,11 @@ public final class Caches
         
         
         /**
-         * @param capacity
+         * @param maxAllowedSize
          * @param loadFactor
          */
         public WeakReferenceCache(int maxSize) {
-            super(new LinkedHashMap<K, WeakReference<V>>(maxSize, DEFAULT_LOAD_FACTOR), maxSize);
+        	super(Caches.<K,WeakReference<V>>createNonLRUMap(maxSize), maxSize);
         }
         
         /**

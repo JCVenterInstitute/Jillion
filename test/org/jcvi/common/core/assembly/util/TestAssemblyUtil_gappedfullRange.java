@@ -24,6 +24,7 @@
 package org.jcvi.common.core.assembly.util;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.common.core.Direction;
@@ -44,7 +45,24 @@ public class TestAssemblyUtil_gappedfullRange {
 
     List<Nucleotide> gappedValidRange = Nucleotides.parse("ACGT-ACGT");
     AssembledRead mockPlacedRead;
-    
+    /**
+     * Creates a new list of {@link Nucleotide}s which is the
+     * same as the input list except all the {@link Nucleotide#Gap}
+     * objects have been removed.
+     * @param gapped a List of nucleotides which may contain gaps.
+     * @return a new list of {@link Nucleotide}s which may be empty
+     * but will never be null.
+     * @throws NullPointerException if gapped is null.
+     */
+    private static List<Nucleotide> ungap(List<Nucleotide> gapped){
+        List<Nucleotide> ungapped = new ArrayList<Nucleotide>(gapped.size());
+        for(Nucleotide possibleGap : gapped){
+            if(!possibleGap.isGap()){
+                ungapped.add(possibleGap);
+            }
+        }
+        return ungapped;
+    }
     @Before
     public void setup(){
         mockPlacedRead = createMock(AssembledRead.class);
@@ -52,7 +70,7 @@ public class TestAssemblyUtil_gappedfullRange {
     @Test
     public void entireSequenceIsValid(){
         
-        List<Nucleotide> ungappedUnComplimentedFullRange = Nucleotides.ungap(gappedValidRange);
+        List<Nucleotide> ungappedUnComplimentedFullRange = ungap(gappedValidRange);
         Range validRange = Range.create(0, ungappedUnComplimentedFullRange.size()-1);
         ReferenceMappedNucleotideSequence readSequence = createMock(ReferenceMappedNucleotideSequence.class);
         expect(readSequence.iterator()).andReturn(gappedValidRange.iterator());
@@ -71,7 +89,7 @@ public class TestAssemblyUtil_gappedfullRange {
     public void entireSequenceIsValidButComplimented(){
         
         List<Nucleotide> ungappedUnComplimentedFullRange = Nucleotides.reverseComplement(
-                                            Nucleotides.ungap(gappedValidRange));
+                                            ungap(gappedValidRange));
         Range validRange = Range.create(0, ungappedUnComplimentedFullRange.size()-1);
         
         ReferenceMappedNucleotideSequence readSequence = createMock(ReferenceMappedNucleotideSequence.class);

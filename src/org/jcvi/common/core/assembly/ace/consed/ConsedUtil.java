@@ -52,6 +52,7 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 
 /**
@@ -192,7 +193,9 @@ public final class ConsedUtil {
                 contigReads.add(read.getId());
             }
         }
-        String contigConsensus =Nucleotides.asString(consensus.asList(contigRange));
+        String contigConsensus =new NucleotideSequenceBuilder(consensus)
+        							.subSequence(contigRange)
+        							.toString();
         //id is now <original_id>_<ungapped 1-based start>_<ungapped 1-based end>
         String contigId = String.format("%s_%d_%d",originalContigId, 
                 oldStart + consensus.getUngappedOffsetFor((int) contigRange.getBegin()),
