@@ -44,7 +44,6 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.qual.TigrQualitiesEncodedGyphCodec;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
 import org.jcvi.common.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 

@@ -27,18 +27,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AbstractContig;
-import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 /**
  * {@code DefaultAceContig} is the default implementation of {@link AceContig}.
  * @author dkatzel
@@ -104,14 +100,10 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
         private boolean complemented=false;
         public Builder(String contigId, String fullConsensus){
            this(contigId,                   
-                    Nucleotides.parse(ConsedUtil.convertAceGapsToContigGaps(fullConsensus))
+        		   new NucleotideSequenceBuilder(fullConsensus).build()
             );
         }
-        public Builder(String contigId, List<Nucleotide> fullConsensus){
-            this(contigId,
-            		new NucleotideSequenceBuilder(fullConsensus).build()
-             );
-         }
+       
         public Builder(String contigId, NucleotideSequence fullConsensus){
             if(contigId ==null){
                 throw new NullPointerException("contig id can not be null");
