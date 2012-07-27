@@ -138,7 +138,7 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
     }
     @Override
     public String toString() {
-        return Nucleotides.asString(asList());
+        return codec.toString(data);
     }
     /**
     * {@inheritDoc}

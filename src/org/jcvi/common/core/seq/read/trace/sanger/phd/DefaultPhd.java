@@ -136,7 +136,7 @@ public class DefaultPhd implements Phd {
 
     @Override
     public String toString() {
-        return Nucleotides.asString(basecalls.asList());
+        return basecalls.toString();
     }
 
     @Override

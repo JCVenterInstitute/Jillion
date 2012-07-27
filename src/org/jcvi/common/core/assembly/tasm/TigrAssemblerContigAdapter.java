@@ -33,7 +33,7 @@ import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 /**
@@ -99,9 +99,12 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	
 	private Map<TigrAssemblerContigAttribute,String> generateConsensusAttributes(){
 		Map<TigrAssemblerContigAttribute,String> map = new EnumMap<TigrAssemblerContigAttribute,String>(TigrAssemblerContigAttribute.class);
-		map.put(TigrAssemblerContigAttribute.UNGAPPED_CONSENSUS, Nucleotides.asString(delegate.getConsensusSequence().asUngappedList()));
-		map.put(TigrAssemblerContigAttribute.GAPPED_CONSENSUS, Nucleotides.asString(delegate.getConsensusSequence().asList()));
+		map.put(TigrAssemblerContigAttribute.GAPPED_CONSENSUS, delegate.getConsensusSequence().toString());
 	
+		map.put(TigrAssemblerContigAttribute.UNGAPPED_CONSENSUS, new NucleotideSequenceBuilder(delegate.getConsensusSequence())
+																	.ungap()
+																	.toString());
+		
 		return map;
 	}
 

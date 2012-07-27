@@ -123,4 +123,15 @@ public class TestDefaultNucleotideGlyphCodec {
 			//expected
 		}
 	}
+	
+	@Test
+	public void evenToString(){
+		byte[] encodedBytes = sut.encode(evenBases);
+		assertEquals("ACGTACGTWS-NACGT", sut.toString(encodedBytes).toString());
+	}
+	@Test
+	public void oddToString(){
+		byte[] encodedBytes = sut.encode(oddBases);
+		assertEquals("ACGTACGTWS-NACGTA", sut.toString(encodedBytes).toString());
+	}
 }

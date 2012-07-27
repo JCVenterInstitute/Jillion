@@ -26,7 +26,6 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ReadInfo;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 /**
  * {@code TigrAssemblerPlacedReadAdapter} is a Adapter which allows
@@ -64,7 +63,7 @@ public final class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlaced
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_LEFT, ""+asmLend);
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_RIGHT, ""+asmRend);
 		attributes.put(TigrAssemblerReadAttribute.CONTIG_START_OFFSET, ""+(this.getGappedStartOffset()));
-		attributes.put(TigrAssemblerReadAttribute.GAPPED_SEQUENCE, Nucleotides.asString(this.getNucleotideSequence().asList()));
+		attributes.put(TigrAssemblerReadAttribute.GAPPED_SEQUENCE, this.getNucleotideSequence().toString());
 		
 		Range validRange = this.getReadInfo().getValidRange();
 		if(this.getDirection()== Direction.FORWARD){

@@ -29,7 +29,6 @@ import org.jcvi.common.core.symbol.residue.aa.Codon;
 import org.jcvi.common.core.symbol.residue.aa.Codon.Frame;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -63,7 +62,7 @@ public class TestCodonCreationMethods {
             Codon expectedCodon) {
         this.triplet = triplet;
         this.expectedCodon = expectedCodon;
-        this.tripletBases = Nucleotides.asString(triplet);
+        this.tripletBases = new NucleotideSequenceBuilder(triplet).toString();
     }
     
     @Test

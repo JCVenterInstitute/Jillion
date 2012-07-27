@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.io.ValueSizeStrategy;
+import org.jcvi.common.core.util.MapUtil;
 /**
  * There are several different possible Delta strategies
  * that can be used to compute the delta between 2 consecutive
@@ -62,7 +63,8 @@ public enum DeltaStrategy {
 
 	private static final Map<Integer, DeltaStrategy> MAP;
 	static{
-		MAP = new HashMap<Integer, DeltaStrategy>(3, 1F);
+		int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(DeltaStrategy.values().length);
+		MAP = new HashMap<Integer, DeltaStrategy>(mapSize);
 		MAP.put(Integer.valueOf(1), LEVEL_1);
 		MAP.put(Integer.valueOf(2), LEVEL_2);
 		MAP.put(Integer.valueOf(3), LEVEL_3);

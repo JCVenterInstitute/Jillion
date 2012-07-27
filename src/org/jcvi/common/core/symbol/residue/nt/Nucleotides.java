@@ -46,63 +46,6 @@ public final class Nucleotides {
         throw new IllegalStateException("not allowed to instantiate");
     }
     /**
-     * Creates a new list of {@link Nucleotide}s which is the
-     * same as the input list except all the {@link Nucleotide#Gap}
-     * objects have been removed.
-     * @param gapped a List of nucleotides which may contain gaps.
-     * @return a new list of {@link Nucleotide}s which may be empty
-     * but will never be null.
-     * @throws NullPointerException if gapped is null.
-     */
-    public static List<Nucleotide> ungap(List<Nucleotide> gapped){
-        List<Nucleotide> ungapped = new ArrayList<Nucleotide>(gapped.size());
-        for(Nucleotide possibleGap : gapped){
-            if(!possibleGap.isGap()){
-                ungapped.add(possibleGap);
-            }
-        }
-        return ungapped;
-    }
-    /**
-     * Parse the given char array containing
-     * nucleotides and return an equivalent List
-     * of {@link Nucleotide}s.
-     * @param array the char array to parse, may have
-     * leading and/or trailing whitespace.
-     * @return a new List will never be null.
-     * @throws NullPointerException if nucleotides is null.
-     * @throws IllegalArgumentException if there is a
-     * character in the nucleotides aside from leading or trailing 
-     * whitespace that can not be parsed into a Nucleotide.     *
-     */
-    public static List<Nucleotide> parse(char[] array){
-       return parse(new String(array));
-    }
-    /**
-     * Parse the given Collection of Characters containing
-     * nucleotides and return an equivalent List
-     * of {@link Nucleotide}s.  Any whitespace characters
-     * will be ignored.
-     * @param chars the collection of characters to parse, may have
-     * whitespace which will be ignored.
-     * @return a new List will never be null.
-     * @throws NullPointerException if nucleotides is null.
-     * @throws IllegalArgumentException if there is a
-     * character in the nucleotides aside from 
-     * whitespace that can not be parsed into a Nucleotide.
-     *
-     */
-    public static List<Nucleotide> parse(Collection<Character> chars) {
-        List<Nucleotide> result = new ArrayList<Nucleotide>(chars.size());        
-        for(Character c: chars){
-            if(!Character.isWhitespace(c)){
-                result.add(Nucleotide.parse(c));
-            }
-            
-        }
-        return  result;
-    }
-    /**
      * Parse the given {@link CharSequence} containing
      * nucleotides and return an equivalent List
      * of {@link Nucleotide}s.

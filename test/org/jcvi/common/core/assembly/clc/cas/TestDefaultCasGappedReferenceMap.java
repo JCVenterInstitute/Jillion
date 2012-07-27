@@ -142,7 +142,7 @@ public class TestDefaultCasGappedReferenceMap {
         }
         sut.visitEndOfFile();
         assertEquals("GTTC-AAATTG",
-                Nucleotides.asString(sut.getGappedReferenceFor(referenceId).asList()));
+        		sut.getGappedReferenceFor(referenceId).toString());
         verify(referenceNucleotideDataStore, contigNameLookup);        
     }
     @Test
@@ -161,7 +161,7 @@ public class TestDefaultCasGappedReferenceMap {
         }
         sut.visitEndOfFile();
         assertEquals("GTTC-AAATTG",
-                Nucleotides.asString(sut.getGappedReferenceFor(referenceId).asList()));
+                sut.getGappedReferenceFor(referenceId).toString());
         verify(referenceNucleotideDataStore, contigNameLookup);        
     }
     @Test
@@ -182,7 +182,7 @@ public class TestDefaultCasGappedReferenceMap {
         }
         sut.visitEndOfFile();
         assertEquals("GTTC-AAATTG",
-                Nucleotides.asString(sut.getGappedReferenceFor(referenceId).asList()));
+        		sut.getGappedReferenceFor(referenceId).toString());
         verify(referenceNucleotideDataStore, contigNameLookup);        
     }
     @Test
@@ -203,7 +203,7 @@ public class TestDefaultCasGappedReferenceMap {
         }
         sut.visitEndOfFile();
         assertEquals("GTTC-AAA-TTG",
-                Nucleotides.asString(sut.getGappedReferenceFor(referenceId).asList()));
+        		sut.getGappedReferenceFor(referenceId).toString());
         verify(referenceNucleotideDataStore, contigNameLookup);        
     }
     @Test
@@ -224,7 +224,7 @@ public class TestDefaultCasGappedReferenceMap {
         }
         sut.visitEndOfFile();
         assertEquals("GTTC--AAATTG",
-                Nucleotides.asString(sut.getGappedReferenceFor(referenceId).asList()));
+        		sut.getGappedReferenceFor(referenceId).toString());
         verify(referenceNucleotideDataStore, contigNameLookup);        
     }
 }

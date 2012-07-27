@@ -28,7 +28,9 @@ import java.util.Map.Entry;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
+import org.jcvi.common.core.util.MapUtil;
 
 /**
  * A <code>Codon</code> represents a triplet of {@link Nucleotide}s which specify an 
@@ -49,7 +51,8 @@ public final class Codon
     private static final Map<String, AminoAcid> AMINO_ACID_MAP;
     
     static{
-        AMINO_ACID_MAP = new HashMap<String, AminoAcid>(176, 1F);
+        int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(175);
+		AMINO_ACID_MAP = new HashMap<String, AminoAcid>(mapSize);
         
         AMINO_ACID_MAP.put("TTC", AminoAcid.Phenylalanine);
         AMINO_ACID_MAP.put("TTT", AminoAcid.Phenylalanine);
@@ -254,7 +257,7 @@ public final class Codon
         AMINO_ACID_MAP.put("GGB", AminoAcid.Glycine);
         AMINO_ACID_MAP.put("GGN", AminoAcid.Glycine);
         
-        CODON_MAP = new HashMap<List<Nucleotide>, Codon>(AMINO_ACID_MAP.size(), 1F);
+        CODON_MAP = new HashMap<List<Nucleotide>, Codon>(mapSize);
         for(Entry<String, AminoAcid> entry : AMINO_ACID_MAP.entrySet()){
             List<Nucleotide> codon = Nucleotides.parse(entry.getKey());
             CODON_MAP.put(codon, new Codon(codon.get(0),codon.get(1),codon.get(2), 
@@ -293,8 +296,10 @@ public final class Codon
        return getCodonsFor(basecalls,Frame.ZERO);
     }
     public static List<Codon> getCodonsFor(NucleotideSequence basecalls, Frame frame){
-        return getCodonsFor(Nucleotides.asString(
-                Nucleotides.ungap(basecalls.asList())),frame);
+        NucleotideSequence ungapped = new NucleotideSequenceBuilder(basecalls)
+        								.ungap()
+        								.build();
+    	return getCodonsFor(ungapped,frame);
      }
     public static Codon getCodonFor(Nucleotide base1, Nucleotide base2, Nucleotide base3){
         return getCodonFor(Arrays.asList(base1,base2,base3));

@@ -9,6 +9,7 @@ import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+import org.jcvi.common.core.util.MapUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public final class DefaultScaffoldDataStore {
@@ -25,7 +26,8 @@ public final class DefaultScaffoldDataStore {
 		
 		@Override
 		public synchronized ScaffoldDataStore build() {
-			Map<String, Scaffold> scaffolds = new HashMap<String, Scaffold>(builders.size()+1, 1F);
+			int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(builders.size());
+			Map<String, Scaffold> scaffolds = new HashMap<String, Scaffold>(mapSize);
 			for(Entry<String, ScaffoldBuilder> entry : builders.entrySet()){
 				scaffolds.put(entry.getKey(), entry.getValue().build());
 			}

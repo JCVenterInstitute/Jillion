@@ -59,10 +59,10 @@ public class TestCodon {
         for(int i=0; i<aminoAcids.length(); i++){
             final char aminoAbbreviation = aminoAcids.charAt(i);
             AminoAcid aa = aminoAbbreviation !='*'? AminoAcid.parse(aminoAbbreviation): null;
-            List<Nucleotide> codon = Nucleotides.parse(
-                                            Arrays.asList(base1.charAt(i),
-                                                            base2.charAt(i),
-                                                            base3.charAt(i)));
+            List<Nucleotide> codon = 
+                                            Arrays.asList(Nucleotide.parse(base1.charAt(i)),
+                                            		Nucleotide.parse(base2.charAt(i)),
+                                            		Nucleotide.parse(base3.charAt(i)));
             boolean isStartCodon = codon.equals(EXPECTED_START_CODON);
            
             Codon sut = Codon.getCodonFor(codon);

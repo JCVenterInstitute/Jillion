@@ -30,7 +30,6 @@ import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 
 /**
@@ -417,8 +416,8 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
 
         public IllegalReAbacus(List<Nucleotide> oldUngappedBasecalls, List<Nucleotide> newUngappedBasecalls){
             super(String.format("reAbacusing must retain same ungapped basecalls! '%s' vs '%s'", 
-                    Nucleotides.asString(oldUngappedBasecalls),
-                    Nucleotides.asString(newUngappedBasecalls)
+                    new NucleotideSequenceBuilder(oldUngappedBasecalls).toString(),
+                    new NucleotideSequenceBuilder(newUngappedBasecalls).toString()
                     ));
         }
     }
