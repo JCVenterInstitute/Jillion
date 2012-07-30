@@ -21,6 +21,7 @@ package org.jcvi.common.core.symbol.residue.aa;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -315,7 +316,7 @@ public final class Codon
         return getCodonByOffset(triplet,0);
     }
     public static Codon getCodonFor(NucleotideSequence triplet){
-        return getCodonByOffset(triplet.asList(Range.createOfLength(0, 3)), 0);
+        return getCodonByOffset(triplet, 0);
     }
     
     public static Codon getCodonByOffset(String basecalls, int offset){
@@ -331,7 +332,12 @@ public final class Codon
         if(basecalls.getLength()<offset+3){
             throw new IllegalArgumentException("must have at least 3 nucleotides after given offset "+ (basecalls.getLength()-(offset+3)));
         }
-        return CODON_MAP.get(basecalls.asList(Range.createOfLength(offset, 3)));
+        List<Nucleotide> list = new ArrayList<Nucleotide>(3);
+        Iterator<Nucleotide> iter = basecalls.iterator();
+        list.add(iter.next());
+        list.add(iter.next());
+        list.add(iter.next());
+        return CODON_MAP.get(list);
     }
     public static Codon getCodonByOffset(List<Nucleotide> bases, int offset){
         if(offset<0){

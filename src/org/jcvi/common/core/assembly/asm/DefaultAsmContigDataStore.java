@@ -238,13 +238,14 @@ public final class DefaultAsmContigDataStore implements AsmContigDataStore{
                         throw new IllegalStateException("do not have clear range information for read "+ externalReadId);
                     }
                    
-                    NucleotideSequenceBuilder validBases = new NucleotideSequenceBuilder(fullLengthSequence.asList(clearRange));
+                    NucleotideSequenceBuilder validBases = new NucleotideSequenceBuilder(fullLengthSequence)
+                    											.trim(clearRange);
                     if(readRange.getDirection() == Direction.REVERSE){
                         validBases.reverseComplement();
                     }
-                    String gappedValidBases = AsmUtil.computeGappedSequence(
-                            validBases.asList(), gapOffsets);
-                    currentBuilder.addRead(externalReadId, gappedValidBases,
+                    validBases = AsmUtil.computeGappedSequence(
+                            validBases, gapOffsets);
+                    currentBuilder.addRead(externalReadId, validBases.toString(),
                             (int)readRange.asRange().getBegin(),readRange.getDirection(),
                             clearRange, 
                             (int)fullLengthSequence.getLength(),

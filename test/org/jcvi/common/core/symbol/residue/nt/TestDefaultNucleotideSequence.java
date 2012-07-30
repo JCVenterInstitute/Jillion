@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -94,6 +95,19 @@ public class TestDefaultNucleotideSequence {
     public void iterator(){
         Iterator<Nucleotide> expected = Nucleotides.parse(gappedBasecalls).iterator();
         Iterator<Nucleotide> actual = sut.iterator();
+        assertTrue(actual.hasNext());
+        while(actual.hasNext()){
+            assertEquals(expected.next(), actual.next());
+        }
+        assertFalse(expected.hasNext());
+    }
+    
+    @Test
+    public void rangedIterator(){
+        Iterator<Nucleotide> expected = Nucleotides.parse(gappedBasecalls)
+        								.subList(5, 11)
+        								.iterator();
+        Iterator<Nucleotide> actual = sut.iterator(Range.create(5,10));
         assertTrue(actual.hasNext());
         while(actual.hasNext()){
             assertEquals(expected.next(), actual.next());

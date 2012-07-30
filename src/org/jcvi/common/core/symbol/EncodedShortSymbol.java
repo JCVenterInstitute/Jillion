@@ -83,13 +83,31 @@ public class EncodedShortSymbol implements Sequence<ShortSymbol>{
      public Iterator<ShortSymbol> iterator() {
          return new ShortSequenceIterator();
      }
-     
+     /**
+      * {@inheritDoc}
+      */
+      @Override
+      public Iterator<ShortSymbol> iterator(Range range) {
+          return new ShortSequenceIterator(range);
+      }
      private class ShortSequenceIterator implements Iterator<ShortSymbol>{
          private int i=0;
-
+         private final long length;
+         
+         ShortSequenceIterator(){
+        	 this.i=0;
+        	 this.length = getLength();
+         }
+         ShortSequenceIterator(Range range){
+        	 if(range.isSubRangeOf(Range.createOfLength(getLength()))){
+        		 throw new IndexOutOfBoundsException("range "+ range + " is out of bounds of sequence "+ Range.createOfLength(getLength()));
+        	 }
+        	 this.i=(int)range.getBegin();
+        	 this.length = range.getLength();
+         }
          @Override
          public boolean hasNext() {
-             return i< getLength();
+             return i< length;
          }
          @Override
          public ShortSymbol next() {

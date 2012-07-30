@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -506,14 +507,19 @@ public class ReAbacusAceContigWorker {
 	                                //have been originally placed incorrectly
 	                                readBuilder.setStartOffset(gappedStart+numberOfLeadingGaps);
 	                            }
-	                            List<Nucleotide> rangeOfBasesThatContributeToConsensus = gappedSequence.asList(fixedBasesRange);
-	                            basesBuilder.insert((int)sequenceRange.getBegin(), rangeOfBasesThatContributeToConsensus);
-	                        
-	                             for(int index=0; index<rangeOfBasesThatContributeToConsensus.size() && index+numberOfLeadingGaps < sliceBuilders.length; index++){
-	                                int sliceIndex = index+numberOfLeadingGaps;                               
-	                                sliceBuilders[sliceIndex].addSliceElement(id, rangeOfBasesThatContributeToConsensus.get(index), 
-	                                        PhredQuality.valueOf(15), readBuilder.getDirection());
+	                            NucleotideSequence fixedSequence = new NucleotideSequenceBuilder(gappedSequence)
+	                            										.trim(fixedBasesRange)
+	                            										.build();
+	                            basesBuilder.insert((int)sequenceRange.getBegin(), fixedSequence);
+	                            Iterator<Nucleotide> fixedIter = fixedSequence.iterator();
+	                            int index=0;	                            
+	                            while(fixedIter.hasNext() && index+numberOfLeadingGaps < sliceBuilders.length){
+	                            	int sliceIndex = index+numberOfLeadingGaps;                               
+	                                sliceBuilders[sliceIndex].addSliceElement(id, fixedIter.next(), 
+		                                        PhredQuality.valueOf(15), readBuilder.getDirection());
+	                                index++;
 	                            }
+	                           
 	                        }
 	                    }finally{
 	                    	IOUtil.closeAndIgnoreErrors(iter);

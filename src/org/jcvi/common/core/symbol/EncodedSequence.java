@@ -138,6 +138,16 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
     public Iterator<T> iterator() {
         return asList().iterator();
     }
+    /**
+     * Default iterator returns the iterator from
+     * the result of {@link #asList(Range)}.  This method
+     * should be overridden if a more efficient 
+     * iterator could be generated.
+     */
+	@Override
+	public Iterator<T> iterator(Range range) {
+		return asList(range).iterator();
+	}
     
 
 

@@ -23,6 +23,7 @@
  */
 package org.jcvi.common.core.symbol;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
@@ -73,5 +74,16 @@ public interface Sequence<T extends Symbol> extends Iterable<T>{
      * @return
      */
     List<T> asList(Range range);
-
+    /**
+     * Create a new {@link Iterator}
+     * which only iterates over the specified
+     * Range of elements in this sequence.
+     * @param range the range to iterate over.
+     * @return a new {@link Iterator}; will never
+     * be null.
+     * @throws NullPointerException if range is null.
+     * @throws IndexOutOfBoundsException if Range contains
+     * values outside of the possible sequence offsets.
+     */
+    Iterator<T> iterator(Range range);
 }

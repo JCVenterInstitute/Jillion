@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nt.DefaultNucleotideCodec;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
@@ -107,16 +108,24 @@ public class TestDefaultNucleotideGlyphCodec {
     public void oddIterator(){
 		assertIterateCorrectly(oddBases);
     }
-	public void assertIterateCorrectly(List<Nucleotide> bases) {
-		Iterator<Nucleotide> expected = bases.iterator();
-    	byte[] encoded = sut.encode(bases);
-    	Iterator<Nucleotide> actual = sut.iterator(encoded);
-    	while(expected.hasNext()){
-    		assertTrue(actual.hasNext());
-    		assertEquals(expected.next(), actual.next());
-    	}
-    	assertFalse(actual.hasNext());
-    	try{
+    
+    private void assertIterateCorrectly(List<Nucleotide> list){
+    	assertIterateCorrectly(list, Range.createOfLength(list.size()));
+    }
+	private void assertIterateCorrectly(List<Nucleotide> list, Range range) {
+		Iterator<Nucleotide> expected = list.iterator();
+		byte[] bytes =sut.encode(list);
+		Iterator<Nucleotide> actual = sut.iterator(bytes, range);
+		for(int i=0; i<range.getBegin(); i++){
+			expected.next();
+		}
+		for(int i=0; i<range.getLength(); i++){
+			assertTrue(expected.hasNext());
+			assertTrue(actual.hasNext());
+			assertEquals(expected.next(), actual.next());
+		}
+		assertFalse(actual.hasNext());
+		try{
 			actual.next();
 			fail("should throw NoSuchElementException when done iterating");
 		}catch(NoSuchElementException e){
@@ -134,4 +143,14 @@ public class TestDefaultNucleotideGlyphCodec {
 		byte[] encodedBytes = sut.encode(oddBases);
 		assertEquals("ACGTACGTWS-NACGTA", sut.toString(encodedBytes).toString());
 	}
+	
+	@Test
+    public void evenRangedIterator(){
+		assertIterateCorrectly(evenBases, Range.create(10,12));
+    }
+    @Test
+    public void oddRangedIterator(){
+		assertIterateCorrectly(oddBases,Range.create(10,16));
+    }
+    
 }

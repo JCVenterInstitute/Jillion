@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.AbstractResidueSequence;
 
 /**
@@ -139,6 +140,10 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 	@Override
 	public Iterator<Nucleotide> iterator() {
 		return codec.iterator(data);
+	}
+	@Override
+	public Iterator<Nucleotide> iterator(Range range) {
+		return codec.iterator(data,range);
 	}
 
 	

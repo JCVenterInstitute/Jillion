@@ -134,6 +134,11 @@ public class EncodedQualitySequence implements QualitySequence{
         //only have 1 decode cycle
         return delegate.iterator();
     }
+
+	@Override
+	public Iterator<PhredQuality> iterator(Range range) {
+		return delegate.iterator(range);
+	}
     
     
 

@@ -10,6 +10,8 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.aa.Codon;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 /**
  * {@code HmmModels} contain HMM models
  * with differing numbers of states.  The higher the number
@@ -30,29 +32,29 @@ public enum HmmModels {
 	 */
 	H3{	
 		@Override
-		protected int[] visitOnlyExon(List<Nucleotide> exonBases){
+		protected int[] visitOnlyExon(NucleotideSequence exonBases){
 			return visitExon(exonBases);
 		}
 		@Override
-		protected int[] visitInitialExon(List<Nucleotide> exonBases) {
+		protected int[] visitInitialExon(NucleotideSequence exonBases) {
 			return visitExon(exonBases);
 		}
 		@Override
-		protected int[] visitMiddleExon(List<Nucleotide> exonBases) {
+		protected int[] visitMiddleExon(NucleotideSequence exonBases) {
 			return visitExon(exonBases);
 		}
 		@Override
-		protected int[] visitFinalExon(List<Nucleotide> exonBases) {
+		protected int[] visitFinalExon(NucleotideSequence exonBases) {
 			return visitExon(exonBases);
 		}
-		private int[] visitExon(List<Nucleotide> exonBases) {
-			int[] array = new int[exonBases.size()];
+		private int[] visitExon(NucleotideSequence exonBases) {
+			int[] array = new int[(int)exonBases.getLength()];
 			Arrays.fill(array, 2);
 			return array;
 		}
 		@Override
-		protected int[] visitIntron(List<Nucleotide> intronBases) {
-			int[] array = new int[intronBases.size()];
+		protected int[] visitIntron(NucleotideSequence intronBases) {
+			int[] array = new int[(int)intronBases.getLength()];
 			Arrays.fill(array, 3);
 			return array;
 		}
@@ -68,32 +70,33 @@ public enum HmmModels {
 		 */
 		private int numberOfBasesInExonSoFar=0;
 
-		protected int[] visitOnlyExon(List<Nucleotide> exonBases){
+		protected int[] visitOnlyExon(NucleotideSequence exonBases){
 			return visitExon(exonBases);
 		}
-		protected int[] visitInitialExon(List<Nucleotide> exonBases) {
-			return visitExon(exonBases);
-		}
-		@Override
-		protected int[] visitMiddleExon(List<Nucleotide> exonBases) {
+		protected int[] visitInitialExon(NucleotideSequence exonBases) {
 			return visitExon(exonBases);
 		}
 		@Override
-		protected int[] visitFinalExon(List<Nucleotide> exonBases) {
+		protected int[] visitMiddleExon(NucleotideSequence exonBases) {
+			return visitExon(exonBases);
+		}
+		@Override
+		protected int[] visitFinalExon(NucleotideSequence exonBases) {
 			return visitExon(exonBases);
 		}
 		
-		private int[] visitExon(List<Nucleotide> exonBases) {
-			int[] array = new int[exonBases.size()];
-			for(int i=0; i<exonBases.size(); i++){
+		private int[] visitExon(NucleotideSequence exonBases) {
+			int length = (int)exonBases.getLength();
+			int[] array = new int[length];
+			for(int i=0; i<length; i++){
 				array[i] = 2 + numberOfBasesInExonSoFar%3;
 				numberOfBasesInExonSoFar++;
 			}
 			return array;
 		}
 		@Override
-		protected int[] visitIntron(List<Nucleotide> intronBases) {
-			int[] array = new int[intronBases.size()];
+		protected int[] visitIntron(NucleotideSequence intronBases) {
+			int[] array = new int[(int)intronBases.getLength()];
 			Arrays.fill(array, 5);
 			return array;
 		}
@@ -115,21 +118,22 @@ public enum HmmModels {
 		private int numberOfBasesInExonSoFar=0;
 		
 		@Override
-		protected int[] visitOnlyExon(List<Nucleotide> exonBases) {
-			int[] array = new int[exonBases.size()];
+		protected int[] visitOnlyExon(NucleotideSequence exonBases) {
+			int exonLength = (int)exonBases.getLength();
+			int[] array = new int[exonLength];
 			//start codon
-			for(int i=0; i<exonBases.size() && i<3; i++){
+			for(int i=0; i<exonLength && i<3; i++){
 				array[i] = i+2;
 			}
-			for(int i=3; i<exonBases.size()-3; i++){
+			for(int i=3; i<exonLength-3; i++){
 				array[i] = 5 + i%3;
 			}
 			labelStopCodon(exonBases, array);
 			
 			return array;
 		}
-		private void labelStopCodon(List<Nucleotide> exonBases, int[] array) {
-			int stopCodonOffset=exonBases.size()-3;
+		private void labelStopCodon(NucleotideSequence exonBases, int[] array) {
+			int stopCodonOffset=(int)exonBases.getLength()-3;
 			Codon stopCodon = Codon.getCodonByOffset(exonBases, stopCodonOffset);
 			if(!stopCodon.isStopCodon()){
 				throw new IllegalStateException("invalid stop codon :" + stopCodon);
@@ -149,18 +153,20 @@ public enum HmmModels {
 			}
 		}
 		@Override
-		protected  int[] visitMiddleExon(List<Nucleotide> exonBases) {
-			int[] array = new int[exonBases.size()];
-			for(int i=0; i<exonBases.size(); i++){
+		protected  int[] visitMiddleExon(NucleotideSequence exonBases) {
+			int exonLength = (int) exonBases.getLength();
+			int[] array = new int[exonLength];
+			for(int i=0; i<exonLength; i++){
 				array[i] = 5 + numberOfBasesInExonSoFar%3;
 				numberOfBasesInExonSoFar++;
 			}			
 			return array;
 		}
 		@Override
-		protected int[] visitFinalExon(List<Nucleotide> exonBases) {
-			int[] array = new int[exonBases.size()];
-			for(int i=0; i<exonBases.size()-3; i++){
+		protected int[] visitFinalExon(NucleotideSequence exonBases) {
+			int exonLength = (int) exonBases.getLength();
+			int[] array = new int[exonLength];
+			for(int i=0; i<exonLength-3; i++){
 				array[i] = 5 + numberOfBasesInExonSoFar%3;
 				numberOfBasesInExonSoFar++;
 			}
@@ -168,22 +174,24 @@ public enum HmmModels {
 			return array;
 		}
 		@Override
-		protected int[] visitInitialExon(List<Nucleotide> exonBases) {
-			int[] array = new int[exonBases.size()];
+		protected int[] visitInitialExon(NucleotideSequence exonBases) {
+			int exonLength = (int) exonBases.getLength();
+			int[] array = new int[exonLength];
 			//start codon
-			for(int i=0; i<exonBases.size() && i<3; i++){
+			for(int i=0; i<exonLength && i<3; i++){
 				array[i] = i+2;
 			}
 			numberOfBasesInExonSoFar=0;
-			for(int i=3; i<exonBases.size(); i++){
+			for(int i=3; i<exonLength; i++){
 				array[i] = 5 + numberOfBasesInExonSoFar%3;
 				numberOfBasesInExonSoFar++;
 			}
 			return array;
 		}
 		@Override
-		protected int[] visitIntron(List<Nucleotide> intronBases) {
-			int[] array = new int[intronBases.size()];
+		protected int[] visitIntron(NucleotideSequence intronBases) {
+			int intronLength = (int) intronBases.getLength();
+			int[] array = new int[intronLength];
 			//each phase has it's own intron sub-model
 			//of 5 states each
 			//use exonPhase -1 so that when we get back
@@ -199,15 +207,18 @@ public enum HmmModels {
 			//first bases are GT
 			if(intronBases.get(0)!= Nucleotide.Guanine 
 					|| intronBases.get(1)!= Nucleotide.Thymine ){
-				throw new IllegalStateException("intron must start with 'GT' : "+ intronBases.subList(0, 2));
+				throw new IllegalStateException("intron must start with 'GT' : "+ 
+					intronBases.get(0)+ intronBases.get(1));
 			}
 			array[0] = 13+phaseShift;
 			array[1] = 14+phaseShift;
 			//last bases are AG
-			int size = intronBases.size();
+			int size = intronLength;
 			if(intronBases.get(size-2)!= Nucleotide.Adenine 
 					|| intronBases.get(size-1)!= Nucleotide.Guanine ){
-				throw new IllegalStateException("intron must start with 'AG' : "+ intronBases.subList(0, 2));
+				throw new IllegalStateException("intron must start with 'AG' : "+ 
+						intronBases.get(size-2)+
+						intronBases.get(size-1));
 			}
 			array[array.length-2] = 16+phaseShift;
 			array[array.length-1] = 17+phaseShift;
@@ -225,7 +236,7 @@ public enum HmmModels {
 	 * index in the array should correspond to the ith index
 	 * in the List of exonBases.  Will never be null.
 	 */
-	protected abstract int[] visitOnlyExon(List<Nucleotide> exonBases);
+	protected abstract int[] visitOnlyExon(NucleotideSequence exonBases);
 	/**
 	 * Visit the first exon of a gene that will contain multiple exons.
 	 * This exon should start with a start codon but will not end 
@@ -235,7 +246,7 @@ public enum HmmModels {
 	 * index in the array should correspond to the ith index
 	 * in the List of exonBases.  Will never be null.
 	 */
-	protected abstract int[] visitInitialExon(List<Nucleotide> exonBases);	
+	protected abstract int[] visitInitialExon(NucleotideSequence exonBases);	
 	/**
 	 * Visit the an internal exon of a gene that contains multiple exons.
 	 * This exon should neither start with a start codon nor end 
@@ -245,7 +256,7 @@ public enum HmmModels {
 	 * index in the array should correspond to the ith index
 	 * in the List of exonBases.  Will never be null.
 	 */
-	protected abstract  int[] visitMiddleExon(List<Nucleotide> exonBases);
+	protected abstract  int[] visitMiddleExon(NucleotideSequence exonBases);
 	/**
 	 * Visit the last exon of a gene that contains multiple exons.
 	 * This exon will not start with a start codon but will end 
@@ -255,7 +266,7 @@ public enum HmmModels {
 	 * index in the array should correspond to the ith index
 	 * in the List of exonBases.  Will never be null.
 	 */
-	protected abstract int[] visitFinalExon(List<Nucleotide> exonBases);
+	protected abstract int[] visitFinalExon(NucleotideSequence exonBases);
 	/**
 	 * Visit an intron.
 	 * This intron should start with a start donor site (GT) and end 
@@ -265,7 +276,7 @@ public enum HmmModels {
 	 * index in the array should correspond to the ith index
 	 * in the List of intronBases.  Will never be null.
 	 */
-	protected abstract  int[] visitIntron(List<Nucleotide> intronBases);
+	protected abstract  int[] visitIntron(NucleotideSequence intronBases);
 	
 	/**
 	 * Compute the {@link LabeledSequence} including initial and final states q0
@@ -279,7 +290,7 @@ public enum HmmModels {
 	 * and ending in the terminal state 0.
 	 */
 	public final LabeledSequence computeLabeledSequence(
-								Sequence<Nucleotide> sequence, List<Gene> genes){
+								NucleotideSequence sequence, List<Gene> genes){
 	    int[] labels = labelSequence(sequence, genes);
 	    List<Integer> path = new ArrayList<Integer>(labels.length+2);
 	    path.add(Integer.valueOf(0)); //initial state
@@ -297,7 +308,7 @@ public enum HmmModels {
 	 * @param genes
 	 * @return
 	 */
-	final int[] labelSequence(Sequence<Nucleotide> sequence, List<Gene> genes){
+	final int[] labelSequence(NucleotideSequence sequence, List<Gene> genes){
 		List<Nucleotide> sequenceAsList = sequence.asList();
 		int[] labels = new int[sequenceAsList.size()];
 		//initialize to intergenic state
@@ -333,33 +344,43 @@ public enum HmmModels {
 		return labels;
 	}
 
-	private int[] handleFinalExon(Sequence<Nucleotide> sequence, int[] labels, Range finalExon) {
-		int[] finalExonStates = visitFinalExon(sequence.asList(finalExon));
+	private int[] handleFinalExon(NucleotideSequence sequence, int[] labels, Range finalExon) {
+		int[] finalExonStates = visitFinalExon(new NucleotideSequenceBuilder(sequence)
+														.trim(finalExon)
+														.build());
 		System.arraycopy(finalExonStates, 0, labels, (int)finalExon.getBegin(), finalExonStates.length);
 		return labels;
 	}
 
-	private int[] handleMiddleExon(Sequence<Nucleotide> sequence, int[] labels, Range middleExon) {
-		int[] middleExonStates = visitMiddleExon(sequence.asList(middleExon));
+	private int[] handleMiddleExon(NucleotideSequence sequence, int[] labels, Range middleExon) {
+		int[] middleExonStates = visitMiddleExon(new NucleotideSequenceBuilder(sequence)
+													.trim(middleExon)
+													.build());
 		System.arraycopy(middleExonStates, 0, labels, (int)middleExon.getBegin(), middleExonStates.length);
 		return labels;
 	}
 
-	private int[] handleInitialExon(Sequence<Nucleotide> sequence, int[] labels, Range initialExon) {
-		int[] exonStates = visitInitialExon(sequence.asList(initialExon));
+	private int[] handleInitialExon(NucleotideSequence sequence, int[] labels, Range initialExon) {
+		int[] exonStates = visitInitialExon(new NucleotideSequenceBuilder(sequence)
+											.trim(initialExon)
+											.build());
 		System.arraycopy(exonStates, 0, labels, (int)initialExon.getBegin(), exonStates.length);
 		return labels;
 	}
 
-	private int[] handleIntron(Sequence<Nucleotide> sequence, int[] labels,	Range intron) {
-		int[] intronStates = visitIntron(sequence.asList(intron));
+	private int[] handleIntron(NucleotideSequence sequence, int[] labels,	Range intron) {
+		int[] intronStates = visitIntron(new NucleotideSequenceBuilder(sequence)
+										.trim(intron)
+										.build());
 		System.arraycopy(intronStates, 0, labels, (int)intron.getBegin(), intronStates.length);
 		return labels;
 	}
 
-	private int[] handleSingleExon(Sequence<Nucleotide> sequence, int[] labels,
+	private int[] handleSingleExon(NucleotideSequence sequence, int[] labels,
 			Range exon) {
-		int[] exonStates = visitOnlyExon(sequence.asList(exon));
+		int[] exonStates = visitOnlyExon(new NucleotideSequenceBuilder(sequence)
+										.trim(exon)
+										.build());
 		System.arraycopy(exonStates, 0, labels, (int)exon.getBegin(), exonStates.length);
 		return labels;
 	}

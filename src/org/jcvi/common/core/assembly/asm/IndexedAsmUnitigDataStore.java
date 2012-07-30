@@ -440,9 +440,9 @@ public final class IndexedAsmUnitigDataStore implements UnitigDataStore{
                     if(readRange.getDirection() == Direction.REVERSE){
                         validBases.reverseComplement();
                     }
-                    String gappedValidBases = AsmUtil.computeGappedSequence(
-                            validBases.asList(), gapOffsets);
-                    currentBuilder.addRead(externalReadId, gappedValidBases,
+                    validBases= AsmUtil.computeGappedSequence(
+                            validBases, gapOffsets);
+                    currentBuilder.addRead(externalReadId, validBases.toString(),
                             (int)readRange.asRange().getBegin(),readRange.getDirection(),
                             clearRange, 
                             (int)fullLengthSequence.getLength(),

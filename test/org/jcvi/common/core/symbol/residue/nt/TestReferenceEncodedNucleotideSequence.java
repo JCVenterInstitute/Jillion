@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.GlyphCodec;
 import org.jcvi.common.core.symbol.residue.nt.DefaultNucleotideCodec;
 import org.jcvi.common.core.symbol.residue.nt.DefaultReferenceEncodedNucleotideSequence;
@@ -100,6 +101,18 @@ public class TestReferenceEncodedNucleotideSequence {
         	i++;
         }
         assertEquals(i,sequenceAsString.length());
+        
+        //ranged iterator
+        Range range = Range.create(sut.getLength()/4, sut.getLength()/2);
+        Iterator<Nucleotide> actualRangedIterator = sut.iterator(range);
+        int rangedOffset=(int)range.getBegin();
+        while(actualRangedIterator.hasNext()){
+        	assertEquals(Nucleotide.parse(sequenceAsString.charAt(rangedOffset)), actualRangedIterator.next());
+        	rangedOffset++;
+        }
+        assertEquals(rangedOffset,range.getEnd()+1);
+        
+        
     }
     @Test
     public void exactlyTheSame(){
@@ -170,6 +183,5 @@ public class TestReferenceEncodedNucleotideSequence {
         assertEquals(sequence,asString(actual.asList()));
         assertEquals(sequence, actual.toString());
     }
-    
     
 }

@@ -22,6 +22,7 @@ package org.jcvi.common.core.symbol.residue.nt;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.GlyphCodec;
 
 /**
@@ -107,6 +108,19 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
      * @return
      */
     Iterator<Nucleotide> iterator(byte[] encodedData);
+    
+    /**
+     * Create a new {@link Iterator}
+     * which only iterates over the specified
+     * Range of elements in this sequence.
+     * @param range the range to iterate over.
+     * @return a new {@link Iterator}; will never
+     * be null.
+     * @throws NullPointerException if range is null.
+     * @throws IndexOutOfBoundsException if Range contains
+     * values outside of the possible sequence offsets.
+     */
+    Iterator<Nucleotide> iterator(byte[] encodedData, Range range);
     /**
      * Convert the encoded bytes into a String
      * of Nucleotides.

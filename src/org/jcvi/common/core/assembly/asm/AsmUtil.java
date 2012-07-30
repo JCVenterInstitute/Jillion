@@ -37,22 +37,21 @@ public final  class AsmUtil {
 		//private constructor.
 	}
 	/**
-	 * Generate a gapped sequence string from the ungapped valid range
-	 * sequence and the list of ASM encoded gap offsets (also known as
-	 * ASM del encoding).
-	 * @param ungappedSequence a List of {@link Nucleotide}s of the ungapped
+	 * Add gaps to the given
+	 * {@link NucleotideSequenceBuilder} which 
+	 * represents an ASM read's ungapped valid range sequence.
+	 * @param ungappedSequence a {@link NucleotideSequenceBuilder} of the ungapped
 	 * valid range sequence to be gapped; this sequence should already
 	 * be complemented into the correct orientation.
 	 * @param asmEncodedGaps the List of Integers of the ASM del encoded
 	 * gaps.
-	 * @return a new String representing the gapped sequence.
+	 * @return a new the same NucleotideSequenceBuilder
+	 * that was passed in.
 	 */
-    public static String computeGappedSequence(List<Nucleotide> ungappedSequence, List<Integer> asmEncodedGaps){
-        NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(ungappedSequence);
+    public static NucleotideSequenceBuilder computeGappedSequence(NucleotideSequenceBuilder ungappedSequenceBuilder, List<Integer> asmEncodedGaps){
         for(Integer offset : asmEncodedGaps){
-            builder.insert(offset.intValue(), Nucleotide.Gap);
+        	ungappedSequenceBuilder.insert(offset.intValue(), Nucleotide.Gap);
         }
-        
-        return builder.toString();
+        return ungappedSequenceBuilder;
     }
 }

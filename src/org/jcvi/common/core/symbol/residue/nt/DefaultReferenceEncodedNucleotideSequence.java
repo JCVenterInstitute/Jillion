@@ -226,12 +226,31 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 	}
 
 	@Override
+	public Iterator<Nucleotide> iterator(Range range) {
+		// TODO optimize by making sub-arrays
+		Nucleotide[] array = asNucleotideArray();
+    	return new ArrayIterator<Nucleotide>(Arrays.copyOfRange(array, (int)range.getBegin(), (int)range.getEnd()+1));
+	}
+
+
+
+	@Override
     public List<Nucleotide> asList() {
 		Nucleotide[] array = asNucleotideArray();
 		return Arrays.asList(array);
 	}
 
 
+	private Nucleotide[] createReferenceArray(Range range){
+		Nucleotide[] array = new Nucleotide[(int)range.getLength()];
+		Iterator<Nucleotide> iter = reference.iterator(range);
+		int i=0;
+		while(iter.hasNext()){
+			array[i] = iter.next();
+			i++;
+		}
+		return array;
+	}
 
 	private Nucleotide[] asNucleotideArray() {
 		//get the reference bases as an array
@@ -244,7 +263,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 		//list.add(offset, snp);
 		//list.remove(offset+1);
 		//without resizing list everytime.
-		Nucleotide[] array= reference.asList(Range.createOfLength(startOffset,length)).toArray(new Nucleotide[0]);
+		Nucleotide[] array= createReferenceArray(Range.createOfLength(startOffset,length));
 		if(encodedSnpsInfo !=null){
 			//pull out all of our SNP data at the same
 			//time and 

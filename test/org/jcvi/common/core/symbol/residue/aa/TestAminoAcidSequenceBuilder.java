@@ -88,11 +88,35 @@ public class TestAminoAcidSequenceBuilder {
 		assertEquals(5, sut.getLength());
 		assertEquals(5, sut.getUngappedLength());
 		assertTrue(sut.getGapOffsets().isEmpty());
-		assertEquals(sut.asList(), sut.asUngappedList());
 		assertEquals(4, sut.getGappedOffsetFor(4));
 		assertEquals(4, sut.getUngappedOffsetFor(4));
 	}
-	
+	@Test
+	public void ungapWhenNoGapsExistShouldDoNothing(){
+		AminoAcidSequence sut = new AminoAcidSequenceBuilder("IKFTW")
+								.ungap()
+								.build();
+		assertTrue((sut instanceof UngappedAminoAcidSequence));
+		assertEquals(0, sut.getNumberOfGaps());
+		assertEquals(5, sut.getLength());
+		assertEquals(5, sut.getUngappedLength());
+		assertTrue(sut.getGapOffsets().isEmpty());
+		assertEquals(4, sut.getGappedOffsetFor(4));
+		assertEquals(4, sut.getUngappedOffsetFor(4));
+	}
+	@Test
+	public void ungap(){
+		AminoAcidSequence sut = new AminoAcidSequenceBuilder("IKF-TW")
+									.ungap()
+									.build();
+		assertTrue((sut instanceof UngappedAminoAcidSequence));
+		assertEquals(0, sut.getNumberOfGaps());
+		assertEquals(5, sut.getLength());
+		assertEquals(5, sut.getUngappedLength());
+		assertTrue(sut.getGapOffsets().isEmpty());
+		assertEquals(4, sut.getGappedOffsetFor(4));
+		assertEquals(4, sut.getUngappedOffsetFor(4));
+	}
 	@Test
 	public void gapsInSequence(){
 		AminoAcidSequence sut = new AminoAcidSequenceBuilder("IKF-TW")
@@ -102,7 +126,6 @@ public class TestAminoAcidSequenceBuilder {
 		assertEquals(6, sut.getLength());
 		assertEquals(5, sut.getUngappedLength());
 		assertEquals(Arrays.asList(3),sut.getGapOffsets());
-		assertEquals(AminoAcids.parse("IKFTW"), sut.asUngappedList());
 		
 		assertEquals("before gap",2, sut.getGappedOffsetFor(2));
 		assertEquals("after gap",4, sut.getGappedOffsetFor(3));

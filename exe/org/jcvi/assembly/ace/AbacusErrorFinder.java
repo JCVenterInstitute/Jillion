@@ -35,6 +35,7 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
@@ -78,7 +79,9 @@ public class AbacusErrorFinder {
                             read.toGappedValidRangeOffset(adjustedStart),
                             read.toGappedValidRangeOffset(adjustedEnd));
                    double numGaps=0;
-                    for(Nucleotide n :read.getNucleotideSequence().asList(rangeOfInterest)){
+                    for(Nucleotide n :new NucleotideSequenceBuilder(read.getNucleotideSequence())
+                    						.trim(rangeOfInterest)
+                    						.build()){
                         if(n.isGap()){
                             numGaps++;
                         }
