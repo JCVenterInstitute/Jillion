@@ -452,11 +452,11 @@ public class TestNucleotideSequenceBuilder {
                          .build().toString());
     }
     @Test
-    public void trimAndAppend(){
-    	 assertEquals("CGR",
+    public void trimAndAppendSeesDownstreamChangesAndChangesCodecAccordinly(){
+    	 assertEquals("CGR-NA",
                  new NucleotideSequenceBuilder("ACGT")
     	 					.trim(Range.create(1,2))
-    	 					.append("R")
+    	 					.append("R-NA")
                          .build().toString());
     }
     @Test

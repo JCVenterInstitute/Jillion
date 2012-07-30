@@ -555,7 +555,13 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     */
     @Override
     public NucleotideSequence build() {    
-        return codecDecider.encodeSequence();
+    	
+        	if(codecDecider.hasAlignedReference()){
+        		return new DefaultReferenceEncodedNucleotideSequence(
+        				codecDecider.alignedReference.reference, toString(), codecDecider.alignedReference.offset);
+        	}
+        	return DefaultNucleotideSequence.create(asList(),codecDecider.getOptimalCodec());
+
     }
     /**
      * Return the built {@link NucleotideSequence} as {@link ReferenceMappedNucleotideSequence} 
@@ -890,7 +896,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * {@link NucleotideCodec} to use.
      * @author dkatzel
      */
-    private class CodecDecider{
+    private static class CodecDecider{
         private int numberOfGaps=0;
         private int numberOfAmbiguities=0;
         private int numberOfNs=0;
@@ -913,13 +919,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         	
         }
         
-        NucleotideSequence encodeSequence(){
-        	if(hasAlignedReference()){
-        		return new DefaultReferenceEncodedNucleotideSequence(
-        				alignedReference.reference, NucleotideSequenceBuilder.this.toString(), alignedReference.offset);
-        	}
-        	return DefaultNucleotideSequence.create(asList(),codecDecider.getOptimalCodec());
-        }
+        
         void alignedReference(AlignedReference ref){
         	this.alignedReference = ref;
         }
