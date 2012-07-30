@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.ValueSizeStrategy;
 import org.jcvi.common.core.util.iter.IteratorUtil;
@@ -408,6 +409,10 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
 		}
 		
 		@Override
+		public Iterator<Nucleotide> iterator(byte[] encodedData, Range range) {
+			return new IteratorImpl(encodedData, range);
+		}
+		@Override
 		public String toString(byte[] encodedData) {
 			Iterator<Nucleotide> iter = iterator(encodedData);
 			StringBuilder builder = new StringBuilder(decodedLengthOf(encodedData));
@@ -431,6 +436,24 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
 	            this.sentinelIterator = parseSentinelOffsetsIteratorFrom(buf,offsetStrategy);
 	            this.bits =IOUtil.toBitSet(buf);
 	            this.nextSentinel = getNextSentinel(sentinelIterator);	           
+			}
+			
+			public IteratorImpl(byte[] encodedGlyphs, Range range){
+				ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
+				ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
+	            int sequenceLength =offsetStrategy.getNext(buf);
+	            if(range.getBegin()<0 || range.getEnd()>=sequenceLength){
+					throw new IndexOutOfBoundsException("range "+range +" is out of range of sequence which is only "+ Range.createOfLength(sequenceLength));
+				}
+	            this.length = (int)range.getEnd()+1;
+	            this.sentinelIterator = parseSentinelOffsetsIteratorFrom(buf,offsetStrategy);
+	            this.nextSentinel = getNextSentinel(sentinelIterator);
+	            currentOffset = (int)range.getBegin();
+	            while(nextSentinel!=null && nextSentinel.intValue() < currentOffset){
+	            	this.nextSentinel = getNextSentinel(sentinelIterator);
+	            }
+	            this.bits =IOUtil.toBitSet(buf);
+	           	           
 			}
 			@Override
 			public boolean hasNext() {

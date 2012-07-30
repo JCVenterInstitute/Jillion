@@ -94,8 +94,6 @@ public class RemoveRedundantMatePairs {
             
             int comparisonRangeLength = Integer.parseInt(commandLine.getOptionValue("n"));
             Range comparisonRange=Range.createOfLength(comparisonRangeLength);
-            StreamingIterator<FastqRecord> mate1Iterator=null;
-            StreamingIterator<FastqRecord> mate2Iterator  =null;
             File outputDir = new File(commandLine.getOptionValue("o"));
             outputDir.mkdirs();
             String prefix = commandLine.getOptionValue("prefix");
@@ -176,8 +174,8 @@ public class RemoveRedundantMatePairs {
     	
 		public NucleotideSequence getConcatenatedSequence(Range subRangePerMate){
 			NucleotideSequenceBuilder builder =new NucleotideSequenceBuilder((int)subRangePerMate.getLength()*2);
-            builder.append(forward.getSequence().asList(subRangePerMate));
-            builder.append(reverse.getSequence().asList(subRangePerMate));
+            builder.append(new NucleotideSequenceBuilder(forward.getSequence()).trim(subRangePerMate));
+            builder.append(new NucleotideSequenceBuilder(reverse.getSequence()).trim(subRangePerMate));
             return builder.build();
 		}
     	

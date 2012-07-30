@@ -27,7 +27,6 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.pos.DefaultPositionSequenceFastaRecord;
 import org.jcvi.common.core.symbol.DefaultShortGlyphCodec;
@@ -135,8 +134,9 @@ public class TestPositionFastaRecord {
     
     @Test
     public void notEqualsDifferentSequence(){
+    	
     	Sequence<ShortSymbol> differentSequence = new EncodedSequence<ShortSymbol>(CODEC,
-    			encodedPositions.asList(Range.create(0,5)));
+    			ShortGlyphFactory.getInstance().getGlyphsFor(new short[]{1, 10,21,31,42}));
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, new DefaultPositionSequenceFastaRecord<Sequence<ShortSymbol>>(
                 id,comment,differentSequence));
     }

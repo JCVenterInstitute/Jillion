@@ -64,15 +64,7 @@ public abstract class AbstractResidueSequence<R extends Residue> implements Resi
         return result;
     }
 
-    @Override
-    public List<R> asUngappedList() {
-        List<R> withoutGaps = asList();
-        final List<Integer> gapIndexes = getGapOffsets();
-        for(int i= gapIndexes.size()-1; i>=0; i--){
-            withoutGaps.remove(gapIndexes.get(i).intValue());
-        }
-        return withoutGaps;
-    }
+   
     /**
     * {@inheritDoc}
     */

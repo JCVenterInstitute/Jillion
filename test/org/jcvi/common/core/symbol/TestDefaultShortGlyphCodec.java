@@ -24,6 +24,7 @@
 package org.jcvi.common.core.symbol;
 
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.BeforeClass;
@@ -71,6 +72,7 @@ public class TestDefaultShortGlyphCodec {
         for(int i=0; i<decodedShorts.length; i++){
             assertEquals( decodedGlyphs.get(i).getValue(), sut.decode(encodedShortsAsByteArray, i).getValue());
         }
-        
     }
+    
+  
 }

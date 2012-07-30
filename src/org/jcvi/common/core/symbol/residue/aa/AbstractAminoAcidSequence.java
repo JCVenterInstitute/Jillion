@@ -52,6 +52,14 @@ public abstract class AbstractAminoAcidSequence extends AbstractResidueSequence<
     public Iterator<AminoAcid> iterator() {
         return encodedAminoAcids.iterator();
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     public Iterator<AminoAcid> iterator(Range range) {
+         return encodedAminoAcids.iterator(range);
+     }
 	@Override
 	public List<Integer> getGapOffsets() {
 		List<AminoAcid> aas = asList();

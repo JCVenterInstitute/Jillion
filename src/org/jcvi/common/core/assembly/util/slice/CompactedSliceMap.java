@@ -103,6 +103,12 @@ public final class CompactedSliceMap implements SliceMap {
                     // TODO Auto-generated method stub
                     return null;
                 }
+
+				@Override
+				public Iterator<PhredQuality> iterator(Range range) {
+					// TODO Auto-generated method stub
+					return null;
+				}
                 
             };
         }

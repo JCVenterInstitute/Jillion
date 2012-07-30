@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.GlyphCodec;
 /**
  * <code>DefaultNucleotideGlyphCodec</code> is the implementation
@@ -241,10 +242,7 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
         byte low = (byte)(b & 0x0F);
        return new byte[]{BYTE_TO_GLYPH_MAP.get(hi).getOrdinalAsByte(),BYTE_TO_GLYPH_MAP.get(low).getOrdinalAsByte()};
     }
-    private Nucleotide decodeLastValues(byte b) {
-        byte hi = (byte)(b>>>BITS_PER_GLYPH &0x0F);
-       return BYTE_TO_GLYPH_MAP.get(hi);
-    }
+    
     @Override
     public int decodedLengthOf(byte[] encodedGlyphs) {
         ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
@@ -351,6 +349,10 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
 	}
 	
 	@Override
+	public Iterator<Nucleotide> iterator(byte[] encodedData, Range range) {
+		return new IteratorImpl(encodedData, range);
+	}
+	@Override
 	public String toString(byte[] encodedData) {
 		
 		int length = decodedLengthOf(encodedData);
@@ -384,6 +386,20 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
 		private final int length;
 		private int currentOffset=0;
 		private byte[] currentDecodedBytes;
+		
+		public IteratorImpl(byte[] encodedData, Range range) {
+			this.encodedData = encodedData;
+			int seqLength = decodedLengthOf(encodedData);
+			if(range.getBegin()<0 || range.getEnd()>=seqLength){
+				throw new IndexOutOfBoundsException("range "+range +" is out of range of sequence which is only "+ Range.createOfLength(seqLength));
+			}
+			currentOffset = (int)range.getBegin();
+			length = (int)range.getEnd()+1;
+			if(hasNext()){
+				byte encodedByte = encodedData[computeEncodedIndexForGlyph(currentOffset)];
+				currentDecodedBytes = decodeNext2Values(encodedByte);
+			}
+		}
 		public IteratorImpl(byte[] encodedData) {
 			this.encodedData = encodedData;
 			this.length = decodedLengthOf(encodedData);

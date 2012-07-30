@@ -43,13 +43,6 @@ public interface ResidueSequence<R extends Residue> extends Sequence<R> {
      */
     long getUngappedLength();
     /**
-     * Decode only the ungapped bases and return them as a List of
-     * {@link Nucleotide}s.
-     * @return a List of {@link Nucleotide}s containing only the 
-     * ungapped bases.
-     */
-    List<R> asUngappedList();
-    /**
      * Get the number of gaps in the valid range until AND INCLUDING the given
      * gapped index.
      * @param gappedOffset the index to count the number of gaps until.

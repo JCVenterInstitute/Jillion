@@ -46,10 +46,6 @@ class UngappedAminoAcidSequence extends CompactAminoAcidSequence{
 		return 0;
 	}
 
-	@Override
-	public List<AminoAcid> asUngappedList() {
-		return asList();
-	}
 
 	@Override
 	public int getUngappedOffsetFor(int gappedIndex) {

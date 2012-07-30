@@ -115,10 +115,9 @@ public final class DefaultUnitigDataStore{
                     if(readRange.getDirection() == Direction.REVERSE){
                         validBases.reverseComplement();
                     }
-                    String gappedValidBases = AsmUtil.computeGappedSequence(
-                            validBases.asList(), gapOffsets);
+                    validBases = AsmUtil.computeGappedSequence(validBases, gapOffsets);
                     
-                    currentBuilder.addRead(externalReadId, gappedValidBases,
+                    currentBuilder.addRead(externalReadId, validBases.toString(),
                             (int)readRange.asRange().getBegin(),readRange.getDirection(),
                             clearRange, 
                             (int)fullLengthSequence.getLength(),

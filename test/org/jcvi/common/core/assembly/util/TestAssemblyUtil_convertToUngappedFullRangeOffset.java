@@ -29,7 +29,6 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ReadInfo;
-import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -150,10 +149,7 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
 			return delegate.getUngappedLength();
 		}
 
-		@Override
-		public List<Nucleotide> asUngappedList() {
-			return delegate.asUngappedList();
-		}
+		
 
 		@Override
 		public int getNumberOfGapsUntil(int gappedOffset) {
@@ -195,6 +191,11 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
 			return delegate.iterator();
 		}
 
+
+		@Override
+		public Iterator<Nucleotide> iterator(Range range) {
+			return delegate.iterator(range);
+		}
 
 		@Override
 		public Map<Integer, Nucleotide> getDifferenceMap() {

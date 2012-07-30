@@ -68,7 +68,11 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
         this.startOffset = startOffset;
         this.referenceOffset = startOffset;
         this.fullUngappedLength = fullRangeSequence.getUngappedLength();
-        NucleotideSequenceBuilder allBasesBuilder = new NucleotideSequenceBuilder(fullRangeSequence.asList(traceTrimRange));
+        NucleotideSequenceBuilder allBasesBuilder = new NucleotideSequenceBuilder(fullRangeSequence);
+        if(traceTrimRange!=null){
+        	allBasesBuilder.trim(traceTrimRange);
+        }
+        													
         if(isReversed){
         	allBasesBuilder.reverseComplement();
             validRangeStart = traceTrimRange ==null?0:AssemblyUtil.reverseComplementValidRange(traceTrimRange, fullUngappedLength).getBegin();

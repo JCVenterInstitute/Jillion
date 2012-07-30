@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nt.NoAmbiguitiesEncodedNucleotideCodec;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideCodec;
@@ -205,12 +206,18 @@ public class TestNoAmbiguitiesEncodedNucleotideCodec {
 		assertIterateCorrectly(list);
     }
     
-
-	public void assertIterateCorrectly(List<Nucleotide> list) {
+    private void assertIterateCorrectly(List<Nucleotide> list){
+    	assertIterateCorrectly(list, Range.createOfLength(list.size()));
+    }
+	private void assertIterateCorrectly(List<Nucleotide> list, Range range) {
 		Iterator<Nucleotide> expected = list.iterator();
 		byte[] bytes =sut.encode(list);
-		Iterator<Nucleotide> actual = sut.iterator(bytes);
-		while(expected.hasNext()){
+		Iterator<Nucleotide> actual = sut.iterator(bytes, range);
+		for(int i=0; i<range.getBegin(); i++){
+			expected.next();
+		}
+		for(int i=0; i<range.getLength(); i++){
+			assertTrue(expected.hasNext());
 			assertTrue(actual.hasNext());
 			assertEquals(expected.next(), actual.next());
 		}
@@ -222,4 +229,26 @@ public class TestNoAmbiguitiesEncodedNucleotideCodec {
 			//expected
 		}
 	}
+	
+	
+	@Test
+    public void rangedIterator(){
+    	List<Nucleotide> list = Nucleotides.parse("ACG-ACGT");
+		assertIterateCorrectly(list, Range.create(3,6));
+    }
+    @Test
+    public void rangedIteratorLastByteHasOnly1Base(){
+    	List<Nucleotide> list = Nucleotides.parse("ACG-ACGTC");
+		assertIterateCorrectly(list, Range.create(3,7));
+    }
+    @Test
+    public void rangedIteratorLastByteHasOnly2Bases(){
+    	List<Nucleotide> list = Nucleotides.parse("ACGT-CGTCA");
+		assertIterateCorrectly(list, Range.create(3,7));
+    }
+    @Test
+    public void rangedIteratorLastByteHasOnly3Bases(){
+    	List<Nucleotide> list = Nucleotides.parse("ACGT-CGTCAG");
+		assertIterateCorrectly(list, Range.create(3,8));
+    }
 }
