@@ -219,7 +219,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         currentFullLengthBases = currentBasecalls.toString();
         NucleotideSequence gappedFullLengthSequence = currentBasecalls.build();
       //this will set currentValidBasecalls to only be the valid range
-        currentValidBases =  currentBasecalls.subSequence(gappedValidRange)
+        currentValidBases =  currentBasecalls.copy().trim(gappedValidRange)
         						.build();
         final int numberOfFullLengthGaps = gappedFullLengthSequence.getNumberOfGaps();
         currentReadUngappedFullLength = currentReadGappedFullLength - numberOfFullLengthGaps;

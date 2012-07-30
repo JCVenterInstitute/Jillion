@@ -399,7 +399,8 @@ public class ReAbacusAceContigWorker {
                         }
                         Range affectedSequenceRange = Range.create(start, end); 
                         NucleotideSequence ungappedProblemSequence = readBuilder.getNucleotideSequenceBuilder()
-									                        		.subSequence(affectedSequenceRange)
+                        											.copy()
+									                        		.trim(affectedSequenceRange)
 									                        		.ungap()
 									                        		.build();
        

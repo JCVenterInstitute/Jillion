@@ -24,7 +24,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ShortBuffer;
-import java.util.List;
+import java.util.Iterator;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.MagicNumberInputStream;
@@ -100,43 +100,47 @@ public  final class ChromatogramUtil {
         
         @Override
         public ChannelGroup build() {
-            List<Nucleotide> bases = basecalls.asList();
+        	int sequenceLength = (int)basecalls.getLength();
             // build bogus confidence arrays
             //automatically filled with 0s
-            byte[] aConfidence = new byte[bases.size()];
-            byte[] cConfidence = new byte[bases.size()];
-            byte[] gConfidence = new byte[bases.size()];
-            byte[] tConfidence = new byte[bases.size()];
+            byte[] aConfidence = new byte[sequenceLength];
+            byte[] cConfidence = new byte[sequenceLength];
+            byte[] gConfidence = new byte[sequenceLength];
+            byte[] tConfidence = new byte[sequenceLength];
             
             // build bogus signal waveforms
             //automatically filled with 0s
-            short[] aSignal = new short[(FALSE_WAVEFORM.length-1)*(bases.size()+1)];
-            short[] cSignal = new short[(FALSE_WAVEFORM.length-1)*(bases.size()+1)];
-            short[] tSignal = new short[(FALSE_WAVEFORM.length-1)*(bases.size()+1)];
-            short[] gSignal = new short[(FALSE_WAVEFORM.length-1)*(bases.size()+1)];
+            short[] aSignal = new short[(FALSE_WAVEFORM.length-1)*(sequenceLength+1)];
+            short[] cSignal = new short[(FALSE_WAVEFORM.length-1)*(sequenceLength+1)];
+            short[] tSignal = new short[(FALSE_WAVEFORM.length-1)*(sequenceLength+1)];
+            short[] gSignal = new short[(FALSE_WAVEFORM.length-1)*(sequenceLength+1)];
             
-            short[] peakLocations = ShortSymbol.toArray(peaks.getData().asList());
-            byte[] qualityValues =PhredQuality.toArray(this.qualities.asList());
-            for(int i=0; i<peakLocations.length; i++){
-                Nucleotide basecall = bases.get(i);
-                short peakLocation = peakLocations[i];
-                byte qualityValue = qualityValues[i];
+            Iterator<Nucleotide> seqIterator = basecalls.iterator();
+            Iterator<ShortSymbol> peakIterator = peaks.getData().iterator();
+            Iterator<PhredQuality> qualIterator = qualities.iterator();
+            int i=0;
+            while(seqIterator.hasNext()){
+            	Nucleotide basecall = seqIterator.next();
+                short peakLocation = peakIterator.next().getValue().shortValue();
+                byte qualityValue = qualIterator.next().getQualityScore();
                 switch (basecall) {
-                    case Adenine:
-                        createFakeChannelDataFor(aConfidence, qualityValue, i, aSignal, peakLocation);
-                        break;
-                    case Cytosine:  
-                        createFakeChannelDataFor(cConfidence, qualityValue, i, cSignal, peakLocation);
-                        break;
-                    case Guanine:
-                        createFakeChannelDataFor(gConfidence, qualityValue, i, gSignal, peakLocation);   
-                        break;
-                        //anything else is T
-                    default:
-                        createFakeChannelDataFor(tConfidence, qualityValue, i, tSignal, peakLocation);   
-                        break;
+	                case Adenine:
+	                    createFakeChannelDataFor(aConfidence, qualityValue, i, aSignal, peakLocation);
+	                    break;
+	                case Cytosine:  
+	                    createFakeChannelDataFor(cConfidence, qualityValue, i, cSignal, peakLocation);
+	                    break;
+	                case Guanine:
+	                    createFakeChannelDataFor(gConfidence, qualityValue, i, gSignal, peakLocation);   
+	                    break;
+	                    //anything else is T
+	                default:
+	                    createFakeChannelDataFor(tConfidence, qualityValue, i, tSignal, peakLocation);   
+	                    break;
                 }
+                i++;
             }
+            
             return new DefaultChannelGroup(
                     new Channel(aConfidence,aSignal),
                     new Channel(cConfidence,cSignal),

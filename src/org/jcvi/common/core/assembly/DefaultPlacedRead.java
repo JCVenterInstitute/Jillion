@@ -346,7 +346,8 @@ public final class DefaultPlacedRead implements AssembledRead {
         @Override
         public Builder reAbacus(Range gappedValidRangeToChange, List<Nucleotide> newBasecalls){
             List<Nucleotide> oldUngappedBasecalls = getNucleotideSequenceBuilder()
-            										.subSequence(gappedValidRangeToChange)
+            										.copy()
+            										.trim(gappedValidRangeToChange)
             										.ungap()
             										.asList();
             List<Nucleotide> newUngappedBasecalls = new ArrayList<Nucleotide>(newBasecalls.size());

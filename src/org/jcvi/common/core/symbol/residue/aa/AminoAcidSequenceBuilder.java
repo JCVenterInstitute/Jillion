@@ -178,10 +178,11 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 		return AminoAcids.parse(builder.substring((int)range.getBegin(), (int)range.getEnd()+1));
 	}
 
+
 	@Override
-	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> subSequence(
-			Range range) {
-		return new AminoAcidSequenceBuilder(builder.subSequence((int)range.getBegin(), (int)range.getEnd()+1));
+	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> trim(Range range) {
+		this.builder = new StringBuilder(builder.subSequence((int)range.getBegin(), (int)range.getEnd()+1));
+		return this;
 	}
 
 	@Override

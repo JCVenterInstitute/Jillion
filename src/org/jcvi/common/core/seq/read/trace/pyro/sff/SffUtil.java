@@ -26,7 +26,6 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -135,7 +134,12 @@ public final class SffUtil {
          }
         return 8- remainder;
     }
-
+     /**
+      * Convert the given encoded flowgram value 
+      * into the intensity value
+      * @param encodedValue
+      * @return
+      */
     public static float convertFlowgramValue(short encodedValue){
          return encodedValue / ONE_HUNDRED;
     }
@@ -153,12 +157,12 @@ public final class SffUtil {
         
     }
     
-    public static int numberOfIntensities(List<Nucleotide> glyphs){
+    public static int numberOfIntensities(Iterable<Nucleotide> sequence){
         int count=0;
         Nucleotide currentBase= null;
-        for(Nucleotide glyph : glyphs){
-            if(currentBase != glyph){
-                currentBase =glyph;
+        for(Nucleotide n : sequence){
+            if(currentBase != n){
+                currentBase =n;
                 count++;
             }
         }

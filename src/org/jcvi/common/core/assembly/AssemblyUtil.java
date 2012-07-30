@@ -63,10 +63,10 @@ public final class AssemblyUtil {
             
         }
         NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder((int)ungappedFullRangeComplimentedBuilder.getLength());
-        builder.append(ungappedFullRangeComplimentedBuilder.subSequence(Range.createOfLength(validRange.getBegin())));
+        builder.append(ungappedFullRangeComplimentedBuilder.copy().trim(Range.createOfLength(validRange.getBegin())));
         //need to use read's sequence since that might be gapped
         builder.append(placedRead.getNucleotideSequence());
-        builder.append(ungappedFullRangeComplimentedBuilder.subSequence(Range.create(validRange.getEnd()+1, ungappedFullRangeComplimentedBuilder.getLength() -1)));
+        builder.append(ungappedFullRangeComplimentedBuilder.copy().trim(Range.create(validRange.getEnd()+1, ungappedFullRangeComplimentedBuilder.getLength() -1)));
      
         return builder.asList();
     }

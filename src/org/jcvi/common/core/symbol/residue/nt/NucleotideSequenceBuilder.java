@@ -59,7 +59,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * build our immutable NucleotideSequence
      * via  {@link #build()}.
      */
-    private final CodecDecider codecDecider = new CodecDecider();
+    private CodecDecider codecDecider;
     /**
      * Points to the next bit that will
      * be set if we append to our {@link BitSet}.
@@ -87,6 +87,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      */
     public NucleotideSequenceBuilder(){
         bits = new BitSet();
+        codecDecider = new CodecDecider();
     }
     /**
      * Creates a new NucleotideSequenceBuilder instance
@@ -101,6 +102,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             throw new IllegalArgumentException("initial capacity must be >=1");
         }
         bits = new BitSet(initialCapacity*NUM_BITS_PER_VALUE);
+        codecDecider = new CodecDecider();
     }
     /**
      * Creates a new NucleotideSequenceBuilder instance
@@ -112,7 +114,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         assertNotNull(sequence);
         NewValues newValues = new NewValues(sequence);
         this.bits = newValues.getBits();
-        this.codecDecider.increment(newValues);
+        codecDecider = new CodecDecider(newValues);
         this.tail = newValues.getLength()*NUM_BITS_PER_VALUE;
     }
     /**
@@ -127,7 +129,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     public NucleotideSequenceBuilder(String sequence){
     	NewValues newValues = new NewValues(sequence);
         this.bits = newValues.getBits();
-        this.codecDecider.increment(newValues);
+        codecDecider = new CodecDecider(newValues);
         this.tail = newValues.getLength()*NUM_BITS_PER_VALUE;  
     }
 
@@ -138,7 +140,13 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     private NucleotideSequenceBuilder(BitSet subBits, int numberOfBitsUsed) {
     	NewValues newValues = new NewValues(subBits,numberOfBitsUsed);
         this.bits = newValues.getBits();
-        this.codecDecider.increment(newValues);
+        this.codecDecider = new CodecDecider(newValues);
+        this.tail = numberOfBitsUsed;
+	}
+    private NucleotideSequenceBuilder(BitSet subBits, int numberOfBitsUsed, CodecDecider codecDecider) {
+    	NewValues newValues = new NewValues(subBits,numberOfBitsUsed);
+        this.bits = newValues.getBits();
+        this.codecDecider = codecDecider.copy();
         this.tail = numberOfBitsUsed;
 	}
 	/**
@@ -644,6 +652,32 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		}
 		return builder.build();
     }
+    
+    /**
+     * {@inheritDoc}
+     * 
+     * If a previous reference hint is provided
+     * via {@link #setReferenceHint(NucleotideSequence, int)},
+     * then the reference coordinates will be automatically
+     * adjusted to compensate for the new trimmed sequence.
+     * 
+     * @param range the range of nucleotides to keep (gapped).
+     * @return this.
+     */
+    @Override
+    public NucleotideSequenceBuilder trim(Range range){
+    	Range bitRange = convertBaseRangeIntoBitRange(range);
+        int numberOfBitsUsed = (int)bitRange.getLength()-1;
+		BitSet subBits = bits.get((int)bitRange.getBegin(), (int)bitRange.getEnd()+1);
+		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(subBits,numberOfBitsUsed);
+		if(codecDecider.hasAlignedReference()){
+			builder.setReferenceHint(codecDecider.alignedReference.reference, codecDecider.alignedReference.offset+ (int)range.getBegin());
+		}
+		this.bits = subBits;
+        this.codecDecider = builder.codecDecider;
+        this.tail = numberOfBitsUsed;
+		return this;
+    }
     /**
      * Get a sublist of the current nucleotide sequence as a list
      * of Nucleotide objects.
@@ -705,23 +739,14 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 	private byte getNucleotideOrdinalFor(int bitStartOffset) {
 		return getNucleotideOrdinalFor(bits, bitStartOffset);
 	}
-    /**
-     * {@inheritDoc}
-     */
-	public NucleotideSequenceBuilder subSequence(Range range) {
-		int startOffsetBit = (int)range.getBegin()*NUM_BITS_PER_VALUE;
-		int endOffsetBit = (int)range.getEnd()*NUM_BITS_PER_VALUE+NUM_BITS_PER_VALUE;
-		BitSet subBits = bits.get(startOffsetBit, endOffsetBit);
-		return new NucleotideSequenceBuilder(subBits, endOffsetBit - startOffsetBit);
-
-	}
+    
 	/**
 	 * 
 	 * {@inheritDoc}
 	 */
 	public NucleotideSequenceBuilder copy(){
-		BitSet copyOfBits = bits.get(0,tail-1);
-		return new NucleotideSequenceBuilder(copyOfBits, tail);
+		BitSet copyOfBits = bits.get(0,tail-1);		
+		return new NucleotideSequenceBuilder(copyOfBits, tail,codecDecider);
 	}
     
     /**
@@ -872,6 +897,22 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         private int numberOfNs=0;
         private int currentLength=0;
         private AlignedReference alignedReference=null;
+        CodecDecider(){
+        	//needs to be initialized
+        }
+        CodecDecider(NewValues newValues){
+        	increment(newValues);
+        }
+        CodecDecider copy(){
+        	CodecDecider copy = new CodecDecider();
+        	copy.numberOfAmbiguities = numberOfAmbiguities;
+        	copy.numberOfGaps = numberOfGaps;
+        	copy.currentLength= currentLength;
+        	copy.numberOfNs = numberOfNs;
+        	copy.alignedReference = alignedReference;
+        	return copy;
+        	
+        }
         
         NucleotideSequence encodeSequence(){
         	if(hasAlignedReference()){
