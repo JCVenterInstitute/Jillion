@@ -452,6 +452,14 @@ public class TestNucleotideSequenceBuilder {
                          .build().toString());
     }
     @Test
+    public void trimAndAppend(){
+    	 assertEquals("CGR",
+                 new NucleotideSequenceBuilder("ACGT")
+    	 					.trim(Range.create(1,2))
+    	 					.append("R")
+                         .build().toString());
+    }
+    @Test
     public void trimReturnsSameReference(){
     	NucleotideSequenceBuilder untrimmed =  new NucleotideSequenceBuilder("ACGT");
     	NucleotideSequenceBuilder trimmed = untrimmed.trim(Range.create(1,2));

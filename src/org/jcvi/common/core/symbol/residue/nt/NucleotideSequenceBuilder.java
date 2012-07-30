@@ -327,7 +327,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         }
         if(!range.isEmpty()){
             Range bitRange = convertBaseRangeIntoBitRange(range);
-            int numberOfDeletedBits = (int)bitRange.getLength()-1;
+            int numberOfDeletedBits = (int)bitRange.getLength();
 			BitSet subBits = bits.get((int)bitRange.getBegin(), (int)bitRange.getEnd()+1);
 			NewValues newValues = new NewValues(subBits, numberOfDeletedBits);
             delete(bitRange, numberOfDeletedBits, newValues);
@@ -340,8 +340,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		assertStartCoordinateIsValid(start);   
 		int bitOffsetOfStart = start*NUM_BITS_PER_VALUE;
 		int maxEnd = Math.min((tail-1)/NUM_BITS_PER_VALUE, (int)range.getEnd());
-		int deleteLength = (maxEnd-start+1)*NUM_BITS_PER_VALUE;
-		int bitOffsetOfEnd = bitOffsetOfStart+deleteLength;
+		int bitOffsetOfEnd = maxEnd * NUM_BITS_PER_VALUE+3;
 		
 		return Range.create(bitOffsetOfStart,bitOffsetOfEnd);
 	}
@@ -363,7 +362,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 				shrunkBits.set(i);
 			}
 		}
-		for(int i=(int)bitRange.getEnd(), j=0; i<tail; i++, j++){
+		for(int i=(int)bitRange.getEnd()+1, j=0; i<tail; i++, j++){
 			if(bits.get(i)){
 				shrunkBits.set(bitOffsetOfStart + j);
 			}
@@ -667,7 +666,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     @Override
     public NucleotideSequenceBuilder trim(Range range){
     	Range bitRange = convertBaseRangeIntoBitRange(range);
-        int numberOfBitsUsed = (int)bitRange.getLength()-1;
+        int numberOfBitsUsed = (int)bitRange.getLength();
 		BitSet subBits = bits.get((int)bitRange.getBegin(), (int)bitRange.getEnd()+1);
 		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(subBits,numberOfBitsUsed);
 		if(codecDecider.hasAlignedReference()){
@@ -745,7 +744,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 	 * {@inheritDoc}
 	 */
 	public NucleotideSequenceBuilder copy(){
-		BitSet copyOfBits = bits.get(0,tail-1);		
+		BitSet copyOfBits = bits.get(0,tail);		
 		return new NucleotideSequenceBuilder(copyOfBits, tail,codecDecider);
 	}
     
