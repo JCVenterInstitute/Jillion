@@ -151,7 +151,7 @@ protected MatePairFiles createCompletelyRedundantUpToNBasesData(int numDups) thr
 			for(int i=0; i<numDups; i++){
 				FastqRecord newLeft = new DefaultFastqRecord(left.getId()+i, 
 						new NucleotideSequenceBuilder(left.getNucleotideSequence())
-								.subSequence(subRange)
+								.trim(subRange)
 								.append("NNNNNNNNN")
 								.build(), 
 				left.getQualitySequence());
@@ -159,7 +159,7 @@ protected MatePairFiles createCompletelyRedundantUpToNBasesData(int numDups) thr
 				
 				FastqRecord newRight= new DefaultFastqRecord(right.getId()+i, 
 						new NucleotideSequenceBuilder(right.getNucleotideSequence())
-							.subSequence(subRange)
+							.trim(subRange)
 							.append("NNNNNNNNN")
 							.build(), 
 				right.getQualitySequence());

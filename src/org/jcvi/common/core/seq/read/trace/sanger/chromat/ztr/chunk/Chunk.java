@@ -395,18 +395,21 @@ public enum Chunk {
 			
 			
 			ChannelGroup channelGroup =ztrChromatogram.getChannelGroup();
-			List<Nucleotide> basecalls =ztrChromatogram.getNucleotideSequence().asList();
-			ByteBuffer calledBaseConfidences = ByteBuffer.allocate(basecalls.size());
-			ByteBuffer otherConfidences = ByteBuffer.allocate(calledBaseConfidences.capacity()*3);
-			for(int i=0; i< basecalls.size();i++){
-				Nucleotide base = basecalls.get(i);
+			NucleotideSequence nucleotideSequence = ztrChromatogram.getNucleotideSequence();
+			int sequenceLength = (int)nucleotideSequence.getLength();
+			ByteBuffer calledBaseConfidences = ByteBuffer.allocate(sequenceLength);
+			ByteBuffer otherConfidences = ByteBuffer.allocate(sequenceLength*3);
+			int i=0;
+			for(Nucleotide base : nucleotideSequence){
 				calledBaseConfidences.put(channelGroup.getChannel(base).getConfidence().getData()[i]);
 				
 				for(Nucleotide other: getOtherChannelsThan(base)){
 					otherConfidences.put(channelGroup.getChannel(other).getConfidence().getData()[i]);
 				}
+				i++;
 			}
-			ByteBuffer result = ByteBuffer.allocate(basecalls.size()*4+1);
+			
+			ByteBuffer result = ByteBuffer.allocate(sequenceLength*4+1);
 			result.put(PADDING_BYTE);
 			result.put(calledBaseConfidences.array());
 			result.put(otherConfidences.array());

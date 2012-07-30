@@ -192,9 +192,9 @@ public final class ConsedUtil {
                 contigReads.add(read.getId());
             }
         }
-        String contigConsensus =new NucleotideSequenceBuilder(consensus)
-        							.subSequence(contigRange)
-        							.toString();
+        NucleotideSequence contigConsensus =new NucleotideSequenceBuilder(consensus)
+        							.trim(contigRange)
+        							.build();
         //id is now <original_id>_<ungapped 1-based start>_<ungapped 1-based end>
         String contigId = String.format("%s_%d_%d",originalContigId, 
                 oldStart + consensus.getUngappedOffsetFor((int) contigRange.getBegin()),

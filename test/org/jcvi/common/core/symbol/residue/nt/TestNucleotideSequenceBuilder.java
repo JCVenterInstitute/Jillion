@@ -445,6 +445,19 @@ public class TestNucleotideSequenceBuilder {
     }
     
     @Test
+    public void trim(){
+    	 assertEquals("CG",
+                 new NucleotideSequenceBuilder("ACGT")
+    	 					.trim(Range.create(1,2))
+                         .build().toString());
+    }
+    @Test
+    public void trimReturnsSameReference(){
+    	NucleotideSequenceBuilder untrimmed =  new NucleotideSequenceBuilder("ACGT");
+    	NucleotideSequenceBuilder trimmed = untrimmed.trim(Range.create(1,2));
+    	assertSame(untrimmed, trimmed);
+    }
+    @Test
     public void toStringShouldReturnSequenceAsString(){
         assertEquals("ACGT",
                 new NucleotideSequenceBuilder("ACGT")
@@ -500,6 +513,17 @@ public class TestNucleotideSequenceBuilder {
 		assertTrue(builtSequence instanceof ReferenceMappedNucleotideSequence);
     }
     
+    
+    @Test
+    public void trimWithReference(){
+    	NucleotideSequence reference = new NucleotideSequenceBuilder( "AAACCCGGGTTT").build();
+   	 	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder(  "ACCCG")
+   	 									.setReferenceHint(reference, 2)
+   	 									.trim(Range.create(2, 4));
+   	 	NucleotideSequence builtSequence = sut.build();
+		assertEquals("CCG",builtSequence.toString());
+		assertTrue(builtSequence instanceof ReferenceMappedNucleotideSequence);
+    }
     @Test
     public void asUngappedListWithNoGaps(){
     	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("AATGG");
@@ -541,4 +565,6 @@ public class TestNucleotideSequenceBuilder {
     	assertEquals("A-ATG-GTTG", sut.toString());
     	assertEquals("AATGG", copy.toString());
     }
+    
+    
 }

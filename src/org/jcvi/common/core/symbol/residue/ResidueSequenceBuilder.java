@@ -228,14 +228,20 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * sequence.
      */
     List<R> asList(Range range);
-    /**
-     * Create a new Builder instance using sub sequence
-     * from this Builder.  The returned instance is a deep
-     * copy of the relevant portions of this Builder so any downstream
-     * modifications to either this Builder or the returned one
-     * are independent of each other.
+   
+	
+	
+	/**
+     * Modify the current sequence to keep only that the sub sequence
+     * within the given Range.  
+     * If the range extends beyond the current
+     * sequence, then this will keep all the residues until the end of
+     * the sequence. 
+     * 
+     * @param range the range of residues to keep (gapped).
+     * @return this.
      */
-	ResidueSequenceBuilder<R,S> subSequence(Range range);
+	ResidueSequenceBuilder<R,S> trim(Range range);
 	/**
 	 * Create a new deep copy instance of the Builder.
 	 * Any downstream modifications to either this Builder or the returned one

@@ -72,7 +72,7 @@ public abstract class AbstractTestAsmUnitigDataStore extends AbstractTestAsmData
 				//manually build gapped valid range and insert the gaps
 				NucleotideSequence expectedGappedSequence =new NucleotideSequenceBuilder(
 											actualFragment.getNucleotideSequence())
-											.subSequence(expectedValidRange)
+											.trim(expectedValidRange)
 											.insert(82, Nucleotide.Gap)
 											.insert(193, Nucleotide.Gap)
 											.insert(771, Nucleotide.Gap)
@@ -98,7 +98,7 @@ public abstract class AbstractTestAsmUnitigDataStore extends AbstractTestAsmData
 				NucleotideSequence expectedGappedSequence =new NucleotideSequenceBuilder(
 											actualFragment.getNucleotideSequence())
 											.reverseComplement()
-											.subSequence(reverseValidRange)
+											.trim(reverseValidRange)
 											.insert(115, Nucleotide.Gap)
 											.insert(226, Nucleotide.Gap)
 											.build();
