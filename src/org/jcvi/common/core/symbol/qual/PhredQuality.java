@@ -44,6 +44,14 @@ public final class PhredQuality implements Symbol, Comparable<PhredQuality>{
     public static final byte MIN_VALUE = 0;
     private static final double TEN = 10D;
     private static final Map<Byte, PhredQuality> CACHE;
+    
+    /**
+     * Our quality value.
+     */
+    private final byte value;
+    /**
+     * Initialize the cache for flyweight pattern.
+     */
     static{
         CACHE = new HashMap<Byte, PhredQuality>();
         //need to add the negative check since max ++ will
@@ -52,9 +60,6 @@ public final class PhredQuality implements Symbol, Comparable<PhredQuality>{
             CACHE.put(Byte.valueOf(b), new PhredQuality(b));
         }
     }
-    
-    private final byte value;
-    
     private PhredQuality(byte b) {
     	this.value = b;
     }
