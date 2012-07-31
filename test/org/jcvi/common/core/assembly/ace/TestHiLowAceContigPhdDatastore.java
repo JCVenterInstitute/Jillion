@@ -98,7 +98,7 @@ public class TestHiLowAceContigPhdDatastore {
                 "ccttttttgggccccgggaaccttttttaaaaaatgggggattgggcccc" +
                 "cttggcccccctc").build(),
                 
-                new EncodedQualitySequence(new DefaultEncodedPhredGlyphCodec(), expectedQualities),
+                new EncodedQualitySequence(DefaultEncodedPhredGlyphCodec.INSTANCE, expectedQualities),
                 19);
         Phd actual = sut.get("K26-217c");
         assertEquals(expected.getNucleotideSequence().asList(),actual.getNucleotideSequence().asList());
@@ -164,7 +164,7 @@ public class TestHiLowAceContigPhdDatastore {
         Phd expected = new ArtificialPhd(id,
                 
                 reverseComplimented,
-                new EncodedQualitySequence(new DefaultEncodedPhredGlyphCodec(), 
+                new EncodedQualitySequence(DefaultEncodedPhredGlyphCodec.INSTANCE, 
                         expectedQualities),
                 19);
         Phd actual = sut.get(id);

@@ -67,13 +67,7 @@ public interface Sequence<T extends Symbol> extends Iterable<T>{
     
     @Override
     boolean equals(Object obj);
-    /**
-     * Get only the {@link Symbol}s for the given range
-     * @param range the range to trim against, if null, then decode
-     * all {@link Symbol}s (the same as {@link #asList()}).
-     * @return
-     */
-    List<T> asList(Range range);
+
     /**
      * Create a new {@link Iterator}
      * which only iterates over the specified

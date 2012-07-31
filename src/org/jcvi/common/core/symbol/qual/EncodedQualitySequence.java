@@ -82,14 +82,6 @@ public class EncodedQualitySequence implements QualitySequence{
     * {@inheritDoc}
     */
     @Override
-    public List<PhredQuality> asList(Range range) {
-        return delegate.asList(range);
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -138,6 +130,10 @@ public class EncodedQualitySequence implements QualitySequence{
 	@Override
 	public Iterator<PhredQuality> iterator(Range range) {
 		return delegate.iterator(range);
+	}
+
+	EncodedSequence<PhredQuality> getDelegate() {
+		return delegate;
 	}
     
     

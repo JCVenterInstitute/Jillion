@@ -34,7 +34,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestPhredQualityStaticMethods.class,
         TestPhredQuality.class,
         TestTigrQualitiesEncoder.class,
-        TestTigrQualitiesEncoderCodec.class
+        TestTigrQualitiesEncoderCodec.class,
+        TestQualitySequenceBuilder.class
     }
     )
 public class AllPhredQualityTests {

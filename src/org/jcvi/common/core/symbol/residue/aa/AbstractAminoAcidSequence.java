@@ -24,17 +24,6 @@ public abstract class AbstractAminoAcidSequence extends AbstractResidueSequence<
 		return encodedAminoAcids.asList();
 	}
 
-	@Override
-	public List<AminoAcid> asList(Range range) {
-        if (range == null){
-            return asList();
-        }
-        List<AminoAcid> result = new ArrayList<AminoAcid>((int)range.getLength());
-        for (long index : range){
-            result.add(get((int)index));
-        }
-        return result;
-	}
 
 	@Override
 	public AminoAcid get(int index) {

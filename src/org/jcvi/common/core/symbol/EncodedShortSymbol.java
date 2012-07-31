@@ -24,7 +24,6 @@
 package org.jcvi.common.core.symbol;
 
 import java.nio.ShortBuffer;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -64,17 +63,7 @@ public class EncodedShortSymbol implements Sequence<ShortSymbol>{
     public long getLength() {
         return data.length;
     }
-    @Override
-    public List<ShortSymbol> asList(Range range) {
-        if(range==null){
-            return asList();
-        }
-        List<ShortSymbol> result = new ArrayList<ShortSymbol>();
-        for(long index : range){
-            result.add(get((int)index));
-        }
-        return result;
-    }
+   
 
     /**
      * {@inheritDoc}

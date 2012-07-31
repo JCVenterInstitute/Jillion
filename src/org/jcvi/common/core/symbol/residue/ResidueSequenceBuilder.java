@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.util.Builder;
+import org.jcvi.common.core.symbol.SequenceBuilder;
 
-public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>> extends Builder<S> {
+public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>> extends SequenceBuilder<R,S> {
 
 	 /**
      * Appends the given residue to the end
@@ -15,6 +15,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * to the end our builder.
      * @throws NullPointerException if base is null.
      */
+	@Override
     ResidueSequenceBuilder<R,S> append(R residue);
     /**
      * Appends the given sequence to the end
@@ -65,8 +66,9 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * Get the current length of the mutable
      * sequence. 
      * @return the current length
-     * of the nucleotide sequence.
+     * of the residue sequence.
      */
+    @Override
     long getLength();
     
     /**
@@ -85,6 +87,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @throws NullPointerException if replacement is null.
      * @throws IllegalArgumentException if offset is invalid.
      */
+    @Override
     ResidueSequenceBuilder<R,S> replace(int offset, R replacement);
     /**
      * Deletes the nucleotides from the given range of this 
@@ -99,8 +102,12 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @throws IllegalArgumentException if range's start is negative
      * or greater than this residue sequence's current length.
      */
+    @Override
     ResidueSequenceBuilder<R,S> delete(Range range);
-    
+    /**
+     * Get the number of gaps currently in this sequence.
+     * @return the number of gaps; will always be >= 0.
+     */
     int getNumGaps();
     
     
@@ -168,6 +175,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @throws NullPointerException if base is null.
      * @throws IllegalArgumentException if offset <0 or > current sequence length.
      */
+    @Override
     ResidueSequenceBuilder<R,S> insert(int offset, R base);
     /**
      * Inserts the given sequence the beginning
@@ -241,12 +249,14 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @param range the range of residues to keep (gapped).
      * @return this.
      */
+    @Override
 	ResidueSequenceBuilder<R,S> trim(Range range);
 	/**
 	 * Create a new deep copy instance of the Builder.
 	 * Any downstream modifications to either this Builder or the returned one
      * are independent of each other.
 	 */
+    @Override
 	ResidueSequenceBuilder<R,S> copy();
     /**
      * Get the entire current residue sequence as a list
@@ -273,6 +283,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * sequence would be "GGAA".
      * @return this.
      */
+    @Override
     ResidueSequenceBuilder<R,S> reverse();
     /**
      * Remove all gaps currently present in this builder.

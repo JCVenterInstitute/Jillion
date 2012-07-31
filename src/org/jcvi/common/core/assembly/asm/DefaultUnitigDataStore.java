@@ -111,7 +111,8 @@ public final class DefaultUnitigDataStore{
                         throw new IllegalStateException("do not have clear range information for read "+ externalReadId);
                     }
                    
-                    NucleotideSequenceBuilder validBases = new NucleotideSequenceBuilder(fullLengthSequence.asList(clearRange));
+                    NucleotideSequenceBuilder validBases = new NucleotideSequenceBuilder(fullLengthSequence)
+                    											.trim(clearRange);
                     if(readRange.getDirection() == Direction.REVERSE){
                         validBases.reverseComplement();
                     }
