@@ -32,7 +32,10 @@ import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 /**
  * {@code AbstractPhdFileVisitor} is a {@link PhdFileVisitor}
@@ -50,7 +53,7 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
 
     private static final ShortGlyphFactory PEAK_FACTORY = ShortGlyphFactory.getInstance();
     private NucleotideSequenceBuilder currentBases = new NucleotideSequenceBuilder();
-    private List<PhredQuality> currentQualities = new ArrayList<PhredQuality>();
+    private QualitySequenceBuilder currentQualities = new QualitySequenceBuilder();
     private List<ShortSymbol> currentPositions = new ArrayList<ShortSymbol>();
     private List<PhdTag> tags = new ArrayList<PhdTag>();
     private Properties currentComments;
@@ -97,8 +100,8 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
      * otherwise.
      */
     protected abstract boolean visitPhd(String id,
-            List<Nucleotide> bases,
-            List<PhredQuality> qualities,
+            NucleotideSequence bases,
+            QualitySequence qualities,
             List<ShortSymbol> positions, 
             Properties comments,
             List<PhdTag> tags);
@@ -107,13 +110,13 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
     public synchronized void visitBasecall(Nucleotide base, PhredQuality quality,
             int tracePosition) {
         currentBases.append(base);
-       currentQualities.add(quality);
+       currentQualities.append(quality);
        currentPositions.add(PEAK_FACTORY.getGlyphFor(tracePosition));            
     }
 
     private void resetCurrentValues(){
         currentBases= new NucleotideSequenceBuilder();
-        currentQualities= new ArrayList<PhredQuality>();
+        currentQualities= new QualitySequenceBuilder();
         currentPositions= new ArrayList<ShortSymbol>();
         tags = new ArrayList<PhdTag>();
     }
@@ -168,7 +171,7 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
     public synchronized boolean visitEndPhd() {
         boolean keepParsing=true;
         if(filter.accept(currentId)){
-            keepParsing= visitPhd(currentId, currentBases.asList(), currentQualities, currentPositions, currentComments,tags);
+            keepParsing= visitPhd(currentId, currentBases.build(), currentQualities.build(), currentPositions, currentComments,tags);
         }
         resetCurrentValues();
         return keepParsing;

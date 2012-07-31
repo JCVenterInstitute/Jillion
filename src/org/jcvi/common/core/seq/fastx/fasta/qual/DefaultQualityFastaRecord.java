@@ -45,7 +45,7 @@ public class DefaultQualityFastaRecord extends AbstractFastaRecord<PhredQuality,
         
        final List<PhredQuality> decodedQualities = qualities.asList();
        for(int i=1; i<decodedQualities.size(); i++){
-           result.append(String.format("%02d", decodedQualities.get(i-1).getValue()));
+           result.append(String.format("%02d", decodedQualities.get(i-1).getQualityScore()));
            if(i%17 == 0){
                this.appendCarriageReturnAndLineFeed(result);
            }
@@ -54,7 +54,7 @@ public class DefaultQualityFastaRecord extends AbstractFastaRecord<PhredQuality,
            }        
        }
        //last value doesn't get a space
-       result.append(String.format("%02d", decodedQualities.get(decodedQualities.size()-1).getValue()));
+       result.append(String.format("%02d", decodedQualities.get(decodedQualities.size()-1).getQualityScore()));
        return result.toString();
     }
 

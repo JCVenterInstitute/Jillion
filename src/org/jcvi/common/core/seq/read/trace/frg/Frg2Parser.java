@@ -37,14 +37,13 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
 import org.jcvi.common.core.seq.read.trace.frg.Frg2Visitor.FrgAction;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 public class Frg2Parser {
-    private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
-
+    
     private static final Pattern ACC_ID_PATTERN = Pattern.compile("acc:(\\S+)");
     private static final Pattern LKG_FRG_ID_PATTERN = Pattern.compile("frg:(\\d+)");
     private static final Pattern ACTION_PATTERN = Pattern.compile("act:([A|M|I|D])\\s+");
@@ -269,9 +268,12 @@ public class Frg2Parser {
     
    
     private QualitySequence parseEncodedQualitiesFrom(String frg) {
-       
-        return  new EncodedQualitySequence(RUN_LENGTH_CODEC,
-                FragmentUtil.parseEncodedQualitiesFrom(frg));        
+    	List<PhredQuality> list = FragmentUtil.parseEncodedQualitiesFrom(frg);
+        QualitySequenceBuilder builder = new QualitySequenceBuilder(list.size());
+        for(PhredQuality q : list){
+        	builder.append(q);
+        }
+        return  builder.build();        
     }
     
     protected String parseIdFrom(String frg) {

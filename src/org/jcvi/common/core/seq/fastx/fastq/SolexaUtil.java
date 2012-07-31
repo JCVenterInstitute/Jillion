@@ -104,7 +104,7 @@ public final class SolexaUtil {
      */
     private static int privateConvertPhredQualityToSolexaQuality(PhredQuality phredQuality){
         
-        final byte qualityValue = phredQuality.getValue().byteValue();
+        final byte qualityValue = phredQuality.getQualityScore();
         if(qualityValue ==0){
             return -5;
         }

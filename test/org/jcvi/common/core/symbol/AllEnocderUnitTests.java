@@ -30,7 +30,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestRunLengthEncodedGlyphCodec.class,
         TestIllegalEncodedValueException.class,        
         TestShortGlyphDeltaEncoderWhenEncoding.class,
         TestShortGlyphDeltaEncoderWhenDecoding.class

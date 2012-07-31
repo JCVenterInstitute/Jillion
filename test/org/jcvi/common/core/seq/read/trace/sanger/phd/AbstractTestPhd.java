@@ -28,7 +28,8 @@ import java.util.Properties;
 
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.ShortGlyphFactory;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 
@@ -56,7 +57,7 @@ public abstract class AbstractTestPhd {
                      11628 ,11642 ,11654 ,11665 ,11678 ,11699 ,11709 ,11728 ,11739 ,11750 ,11761 ,11772 ,11793 ,11802 ,11815 ,11828 ,11836 ,11850 ,11862 ,11880 ,11892 ,11912 ,11921 ,11931 ,11944 ,11959 ,11968 ,11985 ,11994 ,12011 ,12027 ,12034 ,12056 ,12070 ,12074 ,12098 ,12108 ,12113 ,12135 ,12142 ,12155 ,12168 ,12186 ,12199 ,12211 ,12226 ,12240 ,12253 ,12269 ,12273 ,12295 ,12309 ,12325 ,12336 ,12347 ,12367 ,12374 ,12389 ,12409 ,12415 ,
                      12423 ,12435 ,12452 ,12460 ,12475});
      
-    protected List<PhredQuality> expectedQualities = PhredQuality.valueOf(
+    protected QualitySequence expectedQualities = new QualitySequenceBuilder(
              new byte[]{
                      9 , 7 , 8 , 6 , 9 , 9 , 9 , 11 , 9 , 9 , 9 , 10 , 6 , 6 , 9 , 6 , 6 , 6 , 8 , 10 , 9 , 7 , 19 , 20 , 19 , 19 , 21 , 27 , 34 , 23 , 23 , 26 , 17 , 17 , 16 , 28 , 22 , 24 , 22 , 34 , 31 , 31 , 32 , 31 , 36 , 36 , 38 , 38 , 44 , 36 , 24 , 25 , 25 , 30 , 35 , 24 , 36 , 29 , 29 , 35 , 
                      19 , 18 , 24 , 16 , 19 , 16 , 19 , 41 , 36 , 29 , 29 , 27 , 34 , 21 , 31 , 22 , 32 , 34 , 32 , 44 , 47 , 44 , 40 , 40 , 40 , 44 , 44 , 34 , 31 , 26 , 26 , 34 , 34 , 44 , 41 , 36 , 35 , 35 , 42 , 40 , 44 , 40 , 40 , 33 , 40 , 33 , 45 , 44 , 45 , 40 , 40 , 40 , 44 , 47 , 49 , 49 , 47 , 47 , 41 , 41 , 
@@ -76,7 +77,7 @@ public abstract class AbstractTestPhd {
                      16 , 10 , 12 , 16 , 14 , 12 , 16 , 16 , 11 , 10 , 9 , 19 , 19 , 13 , 12 , 9 , 10 , 13 , 13 , 12 , 11 , 10 , 9 , 10 , 10 , 15 , 16 , 9 , 9 , 10 , 13 , 10 , 9 , 10 , 9 , 9 , 13 , 10 , 10 , 12 , 10 , 9 , 7 , 10 , 10 , 14 , 10 , 9 , 9 , 13 , 18 , 18 , 9 , 12 , 15 , 11 , 10 , 9 , 13 , 16 , 
                      17 , 18 , 11 , 9 , 9 , 9 , 11 , 11 , 14 , 10 , 10 , 9 , 9 , 13 , 16 , 20 , 14 , 13 , 12 , 11 , 11 , 11 , 18 , 12 , 13 , 12 , 10 , 11 , 10 , 9 , 9 , 9 , 9 , 9 , 9 , 9 , 9 , 10 , 9 , 11 , 10 , 11 , 9 , 9 , 9 , 6 , 9 , 9 , 9 , 9 , 9 , 9 , 10 , 9 , 10 , 9 , 10 , 10 , 10 , 13 , 
                      10 , 10 , 9 , 10 , 10 }
-             );
+             ).build();
     protected Properties expectedProperties;
     
     protected static final ResourceFileServer RESOURCE = new ResourceFileServer(AbstractTestPhd.class);

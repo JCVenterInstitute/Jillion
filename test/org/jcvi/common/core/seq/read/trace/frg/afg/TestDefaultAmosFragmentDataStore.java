@@ -25,8 +25,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.frg.afg.AmosFragment;
 import org.jcvi.common.core.seq.read.trace.frg.afg.DefaultAmosFragment;
 import org.jcvi.common.core.seq.read.trace.frg.afg.DefaultAmosFragmentFileDataStore;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.qual.TigrQualitiesEncodedGyphCodec;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -60,8 +59,7 @@ public class TestDefaultAmosFragmentDataStore {
 "actgaaatggctcgaattccatcttgttatacaaaattgtgggatcctgtgaccattgaattttcacagt" +
 "ttcccaatttctgatgatccactgataagtattgaccaacactgactcaggaccattgatctcccacatc" +
 "actggtt").build(),
-new EncodedQualitySequence(
-        RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, 
+new QualitySequenceBuilder( 
         QUALITY_CODEC.decode(
         ("66667778<<<>A>>>F>@AA>>><<GFEAA@ACAAAHLCSSMSSRR\\\\\\SSSSS\\____]V]\\SKC=>7"+
         "99999==AICKXXWWLXXX_YVVXXXXNMJJPPVVRMMHE@=999>DPTXPXLERM\\XXYYV\\]\\V\\___"+
@@ -74,7 +72,7 @@ new EncodedQualitySequence(
         "XX]_\\\\\\VVV_____\\T__]\\XV\\_YV\\]KJ=@WW__Y_aa__Y_Y_aa\\V\\\\\\\\_____T__Y______"+
         "aa____\\__aa_______V__]]\\\\\\]_\\\\\\X\\\\\\\\\\]\\\\_V\\]XX]XXWDDDKAA99D99KHSJNQQQS"+
         "\\\\F@977").getBytes())
-        ), 
+        ).build(), 
 
 Range.create(17,678), Range.create(0,678), Range.create(17,678));
     @Before

@@ -85,7 +85,7 @@ public abstract class AbstractChurchillWatermanConsensusCaller extends AbstractC
             //special case if we only have matches, then sum slice qualities
             int sum =0;
             for(SliceElement element : slice){
-                sum += element.getQuality().getValue();
+                sum += element.getQuality().getQualityScore();
             }
             return sum;
         }
@@ -164,7 +164,7 @@ public abstract class AbstractChurchillWatermanConsensusCaller extends AbstractC
     }
     
     private boolean underThreshold(double errorProbability){
-        return PhredQuality.computeQualityScore(errorProbability) < getHighQualityThreshold().getValue();
+        return PhredQuality.computeQualityScore(errorProbability) < getHighQualityThreshold().getQualityScore();
      }
     /**
      * Sorts {@link ConsensusProbabilities} by comparing the 

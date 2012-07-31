@@ -33,7 +33,7 @@ import org.jcvi.common.core.symbol.EncodedSequence;
  * interface.
  * @author dkatzel
  */
-public class EncodedQualitySequence implements QualitySequence{
+final class EncodedQualitySequence implements QualitySequence{
 
     private final EncodedSequence<PhredQuality>  delegate;
     /**

@@ -29,10 +29,9 @@ import java.util.Map;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
@@ -104,7 +103,7 @@ public class DefaultAmosFragmentFileDataStore extends AbstractDataStore<AmosFrag
     */
     @Override
     public void visitQualities(List<PhredQuality> qualities) {
-        this.currentQualities = new EncodedQualitySequence(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,qualities);
+        this.currentQualities = new QualitySequenceBuilder(qualities).build();
         
     }
 

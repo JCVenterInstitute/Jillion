@@ -27,10 +27,8 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 import java.util.HashMap;
 import java.util.Map;
 import org.jcvi.common.core.symbol.pos.SangerPeak;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.ObjectsUtil;
@@ -46,8 +44,7 @@ import org.jcvi.common.core.util.ObjectsUtil;
  *
  */
 public class BasicChromatogram implements Chromatogram {
-    private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
-
+   
     private final ChannelGroup channelGroup;
     private final NucleotideSequence basecalls;
     private final SangerPeak peaks;
@@ -77,7 +74,7 @@ public class BasicChromatogram implements Chromatogram {
             ChannelGroup channelGroup,
             Map<String,String> comments){
         this(id,new NucleotideSequenceBuilder(basecalls).build(),
-                new EncodedQualitySequence(RUN_LENGTH_CODEC,PhredQuality.valueOf(qualities)),
+        		 new QualitySequenceBuilder(qualities).build(),
                 peaks,
                      channelGroup, comments);
     }

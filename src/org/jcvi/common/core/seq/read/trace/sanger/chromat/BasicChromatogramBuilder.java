@@ -23,26 +23,21 @@
  */
 package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.pos.SangerPeak;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 public final class BasicChromatogramBuilder {
-    private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
-
+    
     private static final byte[] EMPTY_BYTE_ARRAY = new byte[]{};
         private short[] peaks;
         private NucleotideSequence basecalls;
@@ -230,8 +225,7 @@ public final class BasicChromatogramBuilder {
 
         private QualitySequence generateQualities(ChannelGroup channelGroup) {
         	int length = (int)basecalls.getLength();
-            List<PhredQuality> qualities = new ArrayList<PhredQuality>(length);
-            
+            byte[] qualities = new byte[length];
             
             for(int i=0; i< length; i++){
                 Nucleotide base = basecalls.get(i);
@@ -240,9 +234,9 @@ public final class BasicChromatogramBuilder {
                 if(i == data.length){
                     break;
                 }
-                qualities.add(PhredQuality.valueOf(data[i]));
+                qualities[i]=data[i];
             }
-            return new EncodedQualitySequence(RUN_LENGTH_CODEC,qualities);
+            return  new QualitySequenceBuilder(qualities).build();
         }
         
         public Chromatogram build() {

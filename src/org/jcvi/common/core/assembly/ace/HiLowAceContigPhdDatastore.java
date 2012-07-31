@@ -22,10 +22,7 @@ package org.jcvi.common.core.assembly.ace;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.jcvi.common.core.Direction;
@@ -37,10 +34,8 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStoreAdapter;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.MapUtil;
@@ -176,18 +171,18 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
      */
     private static final class FullLengthPhdParser extends AbstractAceFileVisitor {
         private boolean contigOfInterest=false;
-        private List<PhredQuality> currentHiLowQualities;
+        private QualitySequenceBuilder currentHiLowQualities;
         private Map<String, Phd> phds=null;
         private final String contigId;
-        private final PhredQuality lowQuality;
-        private final PhredQuality highQuality;
+        private final byte lowQuality;
+        private final byte highQuality;
         private FullLengthPhdParser(final PhredQuality lowQuality, final PhredQuality highQuality) {
             this(null,lowQuality,highQuality);
         }
         private FullLengthPhdParser(String contigId,final PhredQuality lowQuality, final PhredQuality highQuality) {
             this.contigId = contigId;
-            this.lowQuality = lowQuality;
-            this.highQuality = highQuality;
+            this.lowQuality = lowQuality.getQualityScore();
+            this.highQuality = highQuality.getQualityScore();
         }
 
         /**
@@ -252,7 +247,7 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         public synchronized void visitReadHeader(String readId,
                 int gappedLength) {
             if(contigOfInterest){
-                currentHiLowQualities = new ArrayList<PhredQuality>(gappedLength);
+                currentHiLowQualities = new QualitySequenceBuilder(gappedLength);
             }
             super.visitReadHeader(readId, gappedLength);
         }
@@ -262,27 +257,24 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         @Override
         public synchronized void visitBasesLine(String bases) {
             if(contigOfInterest && currentHiLowQualities !=null){
-                currentHiLowQualities.addAll(parseQualities(bases.trim()));
+            	addQualitiesToBuilder(bases.trim());               
             }
             super.visitBasesLine(bases);
         }
 
-        private List<PhredQuality> parseQualities(String bases){
-            List<PhredQuality> qualities = new ArrayList<PhredQuality>(bases.length());
-            String gappedBases =ConsedUtil.convertAceGapsToContigGaps(bases);
-            char[] chars = gappedBases.toCharArray();
+        private void addQualitiesToBuilder(String bases){
+        	
+            String ungappedGappedBases =ConsedUtil.convertAceGapsToContigGaps(bases).replaceAll("-", "");
+            char[] chars = ungappedGappedBases.toCharArray();
+            byte[] qualities = new byte[chars.length];
             for(int i=0; i<chars.length; i++){
-                if(chars[i] =='-'){
-                    continue;
-                }
-                
                 if(Character.isUpperCase(chars[i])){
-                    qualities.add(highQuality);
+                    qualities[i]=highQuality;
                 }else{
-                    qualities.add(lowQuality);
+                	qualities[i]=lowQuality;
                 }
             }
-            return qualities;
+            currentHiLowQualities.append(qualities);
         }
         /**
          * If this is a read we care about, get the full length
@@ -299,17 +291,12 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
                 									.ungap();
                
                 if(dir==Direction.REVERSE){
-                    Collections.reverse(currentHiLowQualities);
+                   currentHiLowQualities.reverse();
                     builder.reverseComplement();
                 }
-                QualitySequence qualities = new EncodedQualitySequence(
-                                            RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                                            currentHiLowQualities); 
-                
-                 
-                 Phd phd = new ArtificialPhd(readId, 
+                Phd phd = new ArtificialPhd(readId, 
                 		 builder.build(),
-                                     qualities,19);
+                		 currentHiLowQualities.build(),19);
                  phds.put(readId,phd);
                  currentHiLowQualities=null;
             }

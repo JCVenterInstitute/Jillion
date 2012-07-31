@@ -21,13 +21,13 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.symbol;
+package org.jcvi.common.core.symbol.qual;
 
 import java.nio.ByteBuffer;
 import java.util.List;
 
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.RunLengthEncodedQualityCodec;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -35,7 +35,7 @@ public class TestRunLengthEncodedGlyphCodec {
 
     static private byte guard = Byte.valueOf((byte)70);
     
-    RunLengthEncodedGlyphCodec sut = new RunLengthEncodedGlyphCodec(guard);
+    RunLengthEncodedQualityCodec sut = new RunLengthEncodedQualityCodec(guard);
     
     static List<PhredQuality> decodedValues = PhredQuality.valueOf(
             new byte[]{10,20,30,40,40,40,40,40,40,50,6,guard,12,15,guard,guard,30});

@@ -54,7 +54,7 @@ public class TestPhdDataStoreBuilderWith2InputFiles extends AbstractTestPhd{
     }
 
     protected void phdRecordMatchesExpected(Phd actual) {
-        assertEquals(expectedQualities, actual.getQualitySequence().asList());        
+        assertEquals(expectedQualities, actual.getQualitySequence());        
         assertEquals(expectedPositions, actual.getPeaks().getData().asList());      
         assertEquals(expectedBasecalls, actual.getNucleotideSequence().toString());
         assertEquals(expectedProperties, actual.getComments());

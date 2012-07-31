@@ -38,23 +38,19 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public abstract class AbstractTestQualityFastaDataStore {
 
     private static final String QUAL_FILE_PATH = "files/19150.qual";
-    private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
-
+    
     
     DefaultQualityFastaRecord JGBAA02T21A12PB1A1F = 
             new DefaultQualityFastaRecord(
                     "JGBAA02T21A12PB1A1F",null,
-                    new EncodedQualitySequence(RUN_LENGTH_CODEC,
-                            PhredQuality.valueOf(
+                   new QualitySequenceBuilder(
                                     new byte[]{
                                             7, 7, 6, 6, 6, 7, 7, 7, 8, 8, 13, 12, 14, 8, 8, 11, 12,
                                             12, 14, 14, 19, 19, 19, 19, 21, 19, 17, 25, 30, 23, 23, 21, 23, 23,
@@ -94,14 +90,13 @@ public abstract class AbstractTestQualityFastaDataStore {
                                             34, 44, 38, 36, 29, 27, 19, 19, 29, 28, 28, 26, 26, 21, 19, 45, 45,
                                             47, 36, 36, 36, 32, 28, 26, 16, 12, 9, 6, 7, 8, 7, 11, 12, 14,
                                             10, 10, 6, 6, 6, 6, 6, 9
-                                    })));
+                                    }).build());
     
     
     DefaultQualityFastaRecord JGBAA07T21D08MP605F = 
         new DefaultQualityFastaRecord(
                 "JGBAA07T21D08MP605F",null,
-                new EncodedQualitySequence(RUN_LENGTH_CODEC,
-                        PhredQuality.valueOf(
+                new QualitySequenceBuilder(
                                 new byte[]{
                                         6,9,6,6,6,6,9,6,6,10,8,8,8,6,7,8,12,
                                         12,14,12,12,9,9,12,13,13,13,13,13,13,12,21,31,30,
@@ -129,14 +124,13 @@ public abstract class AbstractTestQualityFastaDataStore {
                                         45,45,45,38,40,40,38,45,36,32,35,40,40,38,45,40,40,
                                         32,27,27,20,18,32,30,34,40,12,8,9,6,6,6,6,8,
                                         11,19,12,7,7,6,6,6
-                                })));
+                                }).build());
     
     
     DefaultQualityFastaRecord JGBAA01T21H05PB2A2341BRB = 
         new DefaultQualityFastaRecord(
                 "JGBAA01T21H05PB2A2341BRB",null,
-                new EncodedQualitySequence(RUN_LENGTH_CODEC,
-                        PhredQuality.valueOf(
+                new QualitySequenceBuilder(
                                 new byte[]{
                                         6, 6, 6, 6, 7, 7, 7, 8, 12, 12, 12, 14, 17, 14, 14, 14, 22,
                                         14, 16, 17, 17, 14, 14, 14, 12, 12, 23, 22, 21, 17, 17, 16, 17, 19,
@@ -180,7 +174,7 @@ public abstract class AbstractTestQualityFastaDataStore {
                                         44, 44, 44, 44, 45, 44, 44, 47, 38, 44, 45, 40, 40, 45, 40, 40, 39,
                                         20, 20, 20, 27, 17, 17, 9, 9, 20, 9, 9, 27, 24, 35, 26, 30, 33,
                                         33, 33, 35, 44, 44, 22, 16, 9, 7, 7
-                                })));
+                                }).build());
     ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestQualityFastaDataStore.class);
     @Test
     public void parseFile() throws IOException, DataStoreException{
