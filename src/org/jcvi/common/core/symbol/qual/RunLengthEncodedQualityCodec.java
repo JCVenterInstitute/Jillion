@@ -32,13 +32,23 @@ import java.util.List;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.util.RunLength;
-
-public class RunLengthEncodedGlyphCodec implements QualitySymbolCodec{
-    public static final RunLengthEncodedGlyphCodec DEFAULT_INSTANCE = new RunLengthEncodedGlyphCodec(Byte.MIN_VALUE);
+/**
+ * {@code RunLengthEncodedQualityCodec} is a {@link QualitySymbolCodec}
+ * that encodes {@link PhredQuality} values in a run-length encoding.
+ * Since reads often have clusters of basecalls with the same quality value
+ * encoding them in a run-length format could have significant memory savings.
+ * @author dkatzel
+ *
+ */
+final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
+	/**
+	 * Singleton instance.
+	 */
+    public static final RunLengthEncodedQualityCodec INSTANCE = new RunLengthEncodedQualityCodec(Byte.MIN_VALUE);
     
     private final byte guard;
 
-    public RunLengthEncodedGlyphCodec( byte guard){
+    RunLengthEncodedQualityCodec( byte guard){
         this.guard = guard;
     }
     @Override
@@ -108,7 +118,7 @@ public class RunLengthEncodedGlyphCodec implements QualitySymbolCodec{
         buf.putInt(glyphs.size());
         buf.put(guard);
         for(RunLength<PhredQuality> runLength : runLengthList){
-            if(runLength.getValue().getValue().byteValue() == guard){
+            if(runLength.getValue().getQualityScore() == guard){
                 
                 for(int repeatCount = 0; repeatCount<runLength.getLength(); repeatCount++){
                     buf.put(guard);
@@ -118,12 +128,12 @@ public class RunLengthEncodedGlyphCodec implements QualitySymbolCodec{
             }
             else{
                 if(runLength.getLength() ==1){
-                    buf.put(runLength.getValue().getValue().byteValue());
+                    buf.put(runLength.getValue().getQualityScore());
                 }
                 else{
                     buf.put(guard);
                     buf.putShort((short)runLength.getLength());
-                    buf.put(runLength.getValue().getValue().byteValue());
+                    buf.put(runLength.getValue().getQualityScore());
                 }
             }
         }
@@ -135,7 +145,7 @@ public class RunLengthEncodedGlyphCodec implements QualitySymbolCodec{
         int singletons=0;
         int nonSingletons=0;
         for(RunLength<PhredQuality> runLength : runLengthList){
-            if(runLength.getValue().getValue().byteValue() == guard){
+            if(runLength.getValue().getQualityScore() == guard){
                 numGuards+=runLength.getLength();
             }
             else if(runLength.getLength() ==1){
@@ -161,10 +171,10 @@ public class RunLengthEncodedGlyphCodec implements QualitySymbolCodec{
         if (this == obj){
             return true;
         }
-        if (!(obj instanceof RunLengthEncodedGlyphCodec)){
+        if (!(obj instanceof RunLengthEncodedQualityCodec)){
             return false;
         }
-        RunLengthEncodedGlyphCodec other = (RunLengthEncodedGlyphCodec) obj;
+        RunLengthEncodedQualityCodec other = (RunLengthEncodedQualityCodec) obj;
         if (guard != other.guard){
             return false;
         }

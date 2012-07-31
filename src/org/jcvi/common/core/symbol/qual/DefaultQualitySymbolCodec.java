@@ -28,8 +28,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-
-public enum DefaultEncodedPhredGlyphCodec implements QualitySymbolCodec{
+/**
+ * {@code DefaultQualitySymbolCodec} stores 
+ * all the quality values in a byte array
+ * one byte per quality value.
+ * @author dkatzel
+ *
+ */
+enum DefaultQualitySymbolCodec implements QualitySymbolCodec{
 
 	INSTANCE
 	;
@@ -58,7 +64,7 @@ public enum DefaultEncodedPhredGlyphCodec implements QualitySymbolCodec{
     public byte[] encode(Collection<PhredQuality> glyphs) {
         ByteBuffer buf = ByteBuffer.allocate(glyphs.size());
         for(PhredQuality g : glyphs){
-            buf.put(g.getValue().byteValue());
+            buf.put(g.getQualityScore());
         }
         return buf.array();
     }

@@ -26,6 +26,6 @@ import org.jcvi.common.core.symbol.GlyphCodec;
  *
  *
  */
-public interface QualitySymbolCodec extends GlyphCodec<PhredQuality>{
+interface QualitySymbolCodec extends GlyphCodec<PhredQuality>{
 
 }

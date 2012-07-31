@@ -9,8 +9,7 @@ import java.util.Arrays;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.symbol.qual.DefaultEncodedPhredGlyphCodec;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,14 +27,12 @@ public class TestRemoveRedundantMatePairs {
 		left = new DefaultFastqRecord("id", 
 				new NucleotideSequenceBuilder()
 		.append("ACGTACGTACGTACGTACGT").build(), 
-		new EncodedQualitySequence(DefaultEncodedPhredGlyphCodec.INSTANCE,
-				qualities));
+		new QualitySequenceBuilder(qualities).build());
 		
 		right = new DefaultFastqRecord("id", 
 				new NucleotideSequenceBuilder()
 		.append("AAAAAAAAAAATTTTTTTTT").build(), 
-		new EncodedQualitySequence(DefaultEncodedPhredGlyphCodec.INSTANCE,
-				qualities));
+		new QualitySequenceBuilder(qualities).build());
 	}
 
 	@Rule

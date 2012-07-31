@@ -100,7 +100,7 @@ public class DefaultSliceElement implements IdedSliceElement {
         return String.format("name %s %s (%d) %s",
                 getId(),
                 base.getName(),
-                quality.getValue(),
+                quality.getQualityScore(),
                 direction);
         
     }

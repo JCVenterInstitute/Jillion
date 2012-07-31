@@ -30,9 +30,8 @@ import java.util.List;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFlowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffUtil;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.testUtil.TestUtil;
@@ -40,24 +39,18 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
-public class TestSFFFlowgram {
+public class TestSffFlowgram {
 
     Range qualitiesClip = Range.create(10,90);
     Range adapterClip= Range.create(5,95);
-    QualitySequence confidence = createMock(QualitySequence.class);
+    QualitySequence confidence =  new QualitySequenceBuilder(new byte[]{20,15,30,15}).build();
     List<Short> values = convertIntoList(new short[]{202, 310,1,232,7});
-    NucleotideSequence basecalls = createMock(NucleotideSequence.class);
+    NucleotideSequence basecalls = new NucleotideSequenceBuilder("ACGT").build();
     String id = "readId";
     SffFlowgram sut;
-    List<Nucleotide> acgt = new NucleotideSequenceBuilder("ACGT").asList();
     @Before
     public void setup(){
-        expect(basecalls.asList()).andStubReturn(acgt);
-        expect(confidence.asList()).andStubReturn(PhredQuality.valueOf(new byte[]{20,15,30,15}));
-        
-        replay(basecalls,confidence);
-        sut = new SffFlowgram(id,basecalls,confidence,values,qualitiesClip, adapterClip);
+         sut = new SffFlowgram(id,basecalls,confidence,values,qualitiesClip, adapterClip);
         
     }
 

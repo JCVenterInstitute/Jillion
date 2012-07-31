@@ -23,21 +23,16 @@
  */
 package org.jcvi.common.core.seq.fastx.fastq;
 
-import java.util.List;
-
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
-import org.jcvi.common.core.symbol.EncodedSequence;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestSangerFastQQualityCodecActual {
 
-    private static final RunLengthEncodedGlyphCodec QUALITY_CODEC = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
-    FastqQualityCodec sut = FastqQualityCodec.SANGER;
+     FastqQualityCodec sut = FastqQualityCodec.SANGER;
     String encodedqualities = "I9IG9IC";
-    List<PhredQuality> qualities = PhredQuality.valueOf(
-            new byte[]{40,24,40,38,24,40,34});
+    byte[] qualities = 
+            new byte[]{40,24,40,38,24,40,34};
     @Test
     public void decode(){       
         assertEquals(qualities, sut.decode(encodedqualities).asList());
@@ -45,6 +40,6 @@ public class TestSangerFastQQualityCodecActual {
     @Test
     public void encode(){       
         assertEquals(encodedqualities, sut.encode(
-                new EncodedSequence<PhredQuality>(QUALITY_CODEC, qualities)));
+        		 new QualitySequenceBuilder(qualities).build()));
     }
 }

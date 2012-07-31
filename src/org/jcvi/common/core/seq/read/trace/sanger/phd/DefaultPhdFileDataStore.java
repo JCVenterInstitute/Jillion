@@ -34,12 +34,8 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.pos.SangerPeak;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualitySymbolCodec;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**
  * {@code DefaultPhdFileDataStore} is a {@link PhdDataStore}
  * implementation that will store all {@link Phd} records
@@ -118,7 +114,6 @@ public final class DefaultPhdFileDataStore{
      *
      */
     private static final class DefaultPhdDataStoreBuilder extends AbstractPhdDataStoreBuilder{
-        private static final QualitySymbolCodec QUALITY_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
         //linked map to preserve iteration order
         private final Map<String, Phd> map = new LinkedHashMap<String, Phd>();
       
@@ -140,12 +135,13 @@ public final class DefaultPhdFileDataStore{
         * {@inheritDoc}
         */
         @Override
-        protected boolean visitPhd(String id, List<Nucleotide> bases,
-                List<PhredQuality> qualities, List<ShortSymbol> positions,
+        protected boolean visitPhd(String id, NucleotideSequence bases,
+                QualitySequence qualities, List<ShortSymbol> positions,
                 Properties comments, List<PhdTag> tags) {
+        	
             map.put(id, new DefaultPhd(id,
-                    new NucleotideSequenceBuilder(bases).build(),
-                    new EncodedQualitySequence(QUALITY_CODEC, qualities),
+                   bases,
+                    qualities,
                     new SangerPeak(positions),
                     comments,
                     tags));

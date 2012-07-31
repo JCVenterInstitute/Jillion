@@ -29,23 +29,25 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 
 public final class QualityFastaRecordUtil {
     private static final Pattern ID_LINE_PATTERN = Pattern.compile("^>(\\S+).*");
-    private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
-
+   
 
     private QualityFastaRecordUtil(){
     	//can not instantiate
     }
     public static QualitySequenceFastaRecord buildFastaRecord(
             String identifier, String comment, CharSequence sequence) {
-        List<PhredQuality> qualities = parseQualities(sequence);
-        return new DefaultQualityFastaRecord(identifier, comment, 
-                new EncodedQualitySequence(RUN_LENGTH_CODEC,qualities));
+    	Scanner scanner = new Scanner(sequence.toString());
+    	QualitySequenceBuilder builder = new QualitySequenceBuilder();
+    	while(scanner.hasNextByte()){
+    		builder.append(scanner.nextByte());
+    	}
+    	scanner.close();
+    	return new DefaultQualityFastaRecord(identifier, comment, builder.build());
     }
 
     public static List<PhredQuality> parseQualities(CharSequence sequence) {
@@ -54,6 +56,7 @@ public final class QualityFastaRecordUtil {
         while(scanner.hasNextByte()){
             result.add(PhredQuality.valueOf(scanner.nextByte()));
         }
+        scanner.close();
         return result;
     }
 

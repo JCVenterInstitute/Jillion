@@ -61,6 +61,18 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	 * @param qualitySequence the initial quality sequence
 	 * @throws NullPointerException if qualitySequence is null.
 	 */
+	public QualitySequenceBuilder(Iterable<PhredQuality> qualitySequence){
+		this();
+		for(PhredQuality q: qualitySequence){
+			append(q);
+		}
+	}
+	/**
+	 * Creates a new builder whose initial sequence
+	 * is set to the given {@link QualitySequence}.
+	 * @param qualitySequence the initial quality sequence
+	 * @throws NullPointerException if qualitySequence is null.
+	 */
 	public QualitySequenceBuilder(QualitySequence qualitySequence){
 		this.builder = new StringBuilder(encode(qualitySequence));
 	}
@@ -72,7 +84,7 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 		this.builder = new StringBuilder(copy.builder.toString());
 	}
 	private char encode(PhredQuality q){
-		return (char)q.getValue().byteValue();
+		return (char)q.getQualityScore();
 	}
 	private char encode(byte q){
 		return (char)q;
@@ -237,13 +249,13 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	@Override
 	public QualitySequence build() {
 		List<PhredQuality> asQualities = asQualities();
-		byte[] runLengthEncoded = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE.encode(asQualities);
+		byte[] runLengthEncoded = RunLengthEncodedQualityCodec.INSTANCE.encode(asQualities);
 		if(runLengthEncoded.length < builder.length()){
 			return new EncodedQualitySequence(
-					RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, 
+					RunLengthEncodedQualityCodec.INSTANCE, 
 					runLengthEncoded);
 		}
-		return new EncodedQualitySequence(DefaultEncodedPhredGlyphCodec.INSTANCE, asArray());
+		return new EncodedQualitySequence(DefaultQualitySymbolCodec.INSTANCE, asArray());
 	}
 	private byte[] asArray(){
 		int length= builder.length();

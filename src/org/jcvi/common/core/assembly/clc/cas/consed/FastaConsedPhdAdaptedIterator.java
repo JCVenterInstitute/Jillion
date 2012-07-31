@@ -31,17 +31,16 @@ import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdUtil;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public class FastaConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 
 	private final StreamingIterator<NucleotideSequenceFastaRecord> fastaIterator;
 	private final Properties requiredComments;
-	private final PhredQuality defaultQualityValue;
+	private final byte defaultQualityValue;
 	private final Date phdDate;
 	private final File fastaFile;
 	public FastaConsedPhdAdaptedIterator(
@@ -51,7 +50,7 @@ public class FastaConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 			PhredQuality defaultQualityValue){
 		this.requiredComments = PhdUtil.createPhdTimeStampCommentFor(phdDate);
 		this.fastaIterator = fastaIterator;	
-		this.defaultQualityValue = defaultQualityValue;
+		this.defaultQualityValue = defaultQualityValue.getQualityScore();
 		this.fastaFile = fastaFile;
 		this.phdDate = new Date(phdDate.getTime());
 	}
@@ -93,13 +92,9 @@ public class FastaConsedPhdAdaptedIterator implements PhdReadRecordIterator{
     protected QualitySequence getQualitiesFor(
             NucleotideSequenceFastaRecord nextFasta) {
         int numberOfQualities =(int) nextFasta.getSequence().getLength();
-		PhredQuality[] qualities = new PhredQuality[numberOfQualities];
+		byte[] qualities = new byte[numberOfQualities];
 		Arrays.fill(qualities, defaultQualityValue);
-		
-		EncodedQualitySequence qualities2 = new EncodedQualitySequence(
-				RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE, 
-				Arrays.asList(qualities));
-        return qualities2;
+        return new QualitySequenceBuilder(qualities).build();
     }
 
 	@Override

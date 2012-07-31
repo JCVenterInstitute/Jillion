@@ -91,7 +91,7 @@ public abstract class AbstractConsensusCaller implements ConsensusCaller{
             final Integer previousSum = qualityValueSumMap.get(basecall);
             //ignore not ACGT-?
             if(previousSum!=null){
-                qualityValueSumMap.put(basecall, Integer.valueOf(previousSum + sliceElement.getQuality().getValue()));
+                qualityValueSumMap.put(basecall, Integer.valueOf(previousSum + sliceElement.getQuality().getQualityScore()));
             }
             
         }

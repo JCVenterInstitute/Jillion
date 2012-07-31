@@ -26,11 +26,9 @@ package org.jcvi.common.core.seq.fastx.fastq;
 import java.nio.ByteBuffer;
 
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualitySymbolCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
 /**
  * {@code FastqQualityCodec} is a can encode and decode
  * The different ways a FASTQ file can be encode
@@ -51,7 +49,7 @@ public enum FastqQualityCodec {
 
 		    @Override
 		    protected char encode(PhredQuality quality) {
-		        return (char)(quality.getValue().intValue()+64);
+		        return (char)(quality.getQualityScore()+64);
 		    }
 	},
 	/**
@@ -65,7 +63,7 @@ public enum FastqQualityCodec {
 
 		    @Override
 		    protected char encode(PhredQuality quality) {
-		        return (char)(quality.getValue().intValue()+33);
+		        return (char)(quality.getQualityScore()+33);
 		    }
 	},
 	/**
@@ -89,8 +87,7 @@ public enum FastqQualityCodec {
 		    }
 	}
 	;
-	private final QualitySymbolCodec qualityCodec = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
-	
+
 	/**
 	 * Decode the given FASTQ quality encoded String
 	 * into the equivalent Encoded Qualities.
@@ -101,11 +98,10 @@ public enum FastqQualityCodec {
     public QualitySequence decode(String fastqQualities) {
         ByteBuffer buffer = ByteBuffer.allocate(fastqQualities.length());
         for(int i=0; i<fastqQualities.length(); i++){
-            buffer.put(decode(fastqQualities.charAt(i)).getValue());
+            buffer.put(decode(fastqQualities.charAt(i)).getQualityScore());
         }
-        return new EncodedQualitySequence(
-                                    qualityCodec,
-                                    PhredQuality.valueOf(buffer.array()));
+        return new QualitySequenceBuilder(buffer.array())
+        		.build();
     }
 
     /**

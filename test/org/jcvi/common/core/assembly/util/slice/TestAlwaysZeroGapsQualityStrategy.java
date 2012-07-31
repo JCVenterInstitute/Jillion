@@ -26,10 +26,9 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
-import org.jcvi.common.core.symbol.EncodedSequence;
-import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.junit.Test;
 
 /**
@@ -54,8 +53,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
         .addRead("readId", 0, "ACGT-")
         .build();
         AssembledRead read = contig.getRead("readId");
-        Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{11,12,13,14}));
+        QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{11,12,13,14}).build();
         
         assertEquals(ZERO,sut.getQualityFor(read, qualities, 4));
     }
@@ -66,8 +64,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
         .addRead("readId", 0, "-ACGT")
         .build();
         AssembledRead read = contig.getRead("readId");
-        Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{11,12,13,14}));
+        QualitySequence qualities = new QualitySequenceBuilder(new byte[]{11,12,13,14}).build();
         
         assertEquals(ZERO,sut.getQualityFor(read, qualities, 0));
     }
@@ -78,8 +75,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
                                     .addRead("readId", 0, "ACGT-CGT")
                                     .build();
         AssembledRead read = contig.getRead("readId");
-        Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{11,12,13,14,15,16,17}));
+        QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{11,12,13,14,15,16,17}).build();
         
         assertEquals(ZERO,sut.getQualityFor(read, qualities, 4));
     }
@@ -89,8 +85,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
                                     .addRead("readId", 0, "ACGT-CGT", Direction.REVERSE)
                                     .build();
         AssembledRead read = contig.getRead("readId");
-        Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{11,12,13,14,15,16,17}));
+        QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{11,12,13,14,15,16,17}).build();
         
         assertEquals(ZERO,sut.getQualityFor(read, qualities, 4));
     }
@@ -101,8 +96,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
                                     .addRead("readId", 0, "ACGT--CGT")
                                     .build();
         AssembledRead read = contig.getRead("readId");
-        Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{11,12,13,14,15,16}));
+        QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{11,12,13,14,15,16}).build();
         assertEquals(ZERO,sut.getQualityFor(read, qualities, 4));
         assertEquals(ZERO,sut.getQualityFor(read, qualities, 5));
     }
@@ -112,8 +106,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
                                     .addRead("readId", 0, "ACGT--CGT", Direction.REVERSE)
                                     .build();
         AssembledRead read = contig.getRead("readId");
-        Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{11,12,13,14,15,16,17,18}));
+        QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{11,12,13,14,15,16,17,18}).build();
         
         assertEquals(ZERO,sut.getQualityFor(read, qualities, 4));
         assertEquals(ZERO,sut.getQualityFor(read, qualities, 5));

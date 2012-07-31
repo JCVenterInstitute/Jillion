@@ -40,10 +40,8 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.AbstractBasesSectionCodec;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.pos.SangerPeak;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -51,14 +49,12 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 public abstract class AbstractTestBasesSection {
     protected static final String DECODED_BASES = "ACGTACGT";
-    private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
-
+    
     protected NucleotideSequence encodedBases = new NucleotideSequenceBuilder(DECODED_BASES).build();
     protected SCFHeader mockHeader;
     protected SCFChromatogramImpl chromatogram;
     protected byte[] calledConfidence = new byte[]{40,40,40,40,63,38,38,38};
-    protected QualitySequence encodedQualities = new EncodedQualitySequence(RUN_LENGTH_CODEC, 
-            PhredQuality.valueOf(calledConfidence));
+    protected QualitySequence encodedQualities =  new QualitySequenceBuilder(calledConfidence).build();
     protected byte[] aConfidence = new byte[]{40,3,4,2,38,0,2,1};
     protected byte[] cConfidence = new byte[]{0,40,3,4,2,38,0,2};
     protected byte[] gConfidence = new byte[]{1,1,40,3,4,2,38,0};

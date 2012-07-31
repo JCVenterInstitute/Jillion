@@ -26,12 +26,8 @@ import java.util.Properties;
 
 import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.pos.SangerPeak;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualitySymbolCodec;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 
 /**
@@ -43,7 +39,6 @@ import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
  *
  */
 public final class LargePhdIterator extends AbstractBlockingCloseableIterator<Phd>{
-    private static final QualitySymbolCodec QUALITY_CODEC = RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE;
     private final File phdFile;
         
     
@@ -66,18 +61,19 @@ public final class LargePhdIterator extends AbstractBlockingCloseableIterator<Ph
         PhdFileVisitor visitor = new AbstractPhdFileVisitor() {
             
             @Override
-            protected boolean visitPhd(String id, List<Nucleotide> bases,
-                    List<PhredQuality> qualities, List<ShortSymbol> positions,
-                    Properties comments, List<PhdTag> tags) {
-                Phd phd = new DefaultPhd(id,
-                		new NucleotideSequenceBuilder(bases).build(),
-                        new EncodedQualitySequence(QUALITY_CODEC, qualities),
-                        new SangerPeak(positions),
-                        comments,
-                        tags);
-                blockingPut(phd);
-                return !LargePhdIterator.this.isClosed();                
-            }
+			protected boolean visitPhd(String id, NucleotideSequence bases,
+					QualitySequence qualities, List<ShortSymbol> positions,
+					Properties comments, List<PhdTag> tags) {
+            	 Phd phd = new DefaultPhd(id,
+                 		bases,
+                         qualities,
+                         new SangerPeak(positions),
+                         comments,
+                         tags);
+                 blockingPut(phd);
+                 return !LargePhdIterator.this.isClosed();  
+			}
+
        
             
         };

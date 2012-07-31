@@ -30,9 +30,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.trace.frg.Frg2Parser;
 import org.jcvi.common.core.seq.read.trace.frg.Frg2Visitor;
 import org.jcvi.common.core.seq.read.trace.frg.Frg2Visitor.FrgAction;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.qual.TigrQualitiesEncodedGyphCodec;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -43,8 +41,7 @@ public class TestFrg2Parser {
 
     private static final String FILE = "files/example.frg2";
     private static final TigrQualitiesEncodedGyphCodec QUALITY_CODEC = TigrQualitiesEncodedGyphCodec.getINSTANCE();
-    private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
-
+    
     private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestFrg2Parser.class);
     
     
@@ -76,7 +73,7 @@ public class TestFrg2Parser {
 "GGACCTGAGGAGAGCACCAACAAGATCAGACGANNA" 
 ).build(), 
 
-new EncodedQualitySequence(RUN_LENGTH_CODEC,
+new QualitySequenceBuilder(
         QUALITY_CODEC.decode(
                 (
                         "555566;;;666;;<<<;;<<?CDDDB?<??<<<AADDHHHPVSUUKKG;98:<<>>=???B=;;=>@CDDB?BEDDDIKDVVVKKDDDDDKKKSNNQXP"+
@@ -88,7 +85,7 @@ new EncodedQualitySequence(RUN_LENGTH_CODEC,
                                 "YYOOOOOO[[[[^^^^^^^^^^VVVQQPSPKKMEDD>DDJDGJEEGJJIDDEEEECAAHFGGJJJJLPLL<<;<<HE@::88786666667866667966"+
                                 "6666877778744696657544466664546699877766667667<<766766778888866666789988868666886666666866677787778<"+
                                 "9:99:8876666678776667666669987575005"
-                ).getBytes()))
+                ).getBytes())).build()
         , clearRangeFor678, clearRangeFor678,
         "#  Not a comment; this is annotation about where the fragment came from\n");
         
@@ -102,7 +99,7 @@ new EncodedQualitySequence(RUN_LENGTH_CODEC,
 					"GCGAGATGCTCCTCCAGCTGCGCCACCAGCTGTGCCCGGTGCGCCAGGTCCGACTCCAGCGCCCGGATCTTGGAGCCCAGCTCGCCGATCTGCGGCGTGG" +
 					"AGCCGTGGGTTGGTTGCGCGGTCCTCAGGGTCCCGTGGGGGTGATCAGTTGCATACCCGTGGGGATGCCATGGGGGATGGCGCAGGGTTCGACCGTGTGG" +
 					"AGGGCGGGCGCAGAACCAGGGCGCAGGCACTAAGGCGCGCGCATCATGGGN").build(),
-		new EncodedQualitySequence(RUN_LENGTH_CODEC,
+		 new QualitySequenceBuilder(
 		        QUALITY_CODEC.decode((
 		                "6689;;6687;>BG>?<??;:9??>NL?;::?9><??<??<::???G@C>888;;AGGGHKKKKKKHHKKKKPCCCCCASK=C=??COM[[bQS]bbbUU"+
 		                "UbbbbbGGCCCCCCFLCFKKFFMSSSbbVVVVKGGGGGOOOOOMUUVVIIIIGGMMMKIKLULIKLbGGLLKKMMMUUUVSVSKKMVVNNNNNNNNSKKG"+
@@ -112,7 +109,7 @@ new EncodedQualitySequence(RUN_LENGTH_CODEC,
 		                "EEEEEEEEIFHD==?BBDGNOUOVKEAAADDDDEEGGFJIGGJHJGJKMLMJHHKKKNOLVJGB=>@@@>EEEIBIIJMGG><778>ADFJJLLGCCA@>"+
 		                ">==BDGGGG??B===@A>==@??<<<<<<<;999;;BBBBBBBBGB=4440"
 		
-		).getBytes())),
+		).getBytes())).build(),
 		clearRangeFor061,clearRangeFor061,"");
 		
 		mockVisitor.visitLink(FrgAction.ADD, Arrays.asList("334370061","334369678"));

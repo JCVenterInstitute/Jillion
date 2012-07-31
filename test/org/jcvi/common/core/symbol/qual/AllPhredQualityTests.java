@@ -33,6 +33,7 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         TestPhredQualityStaticMethods.class,
         TestPhredQuality.class,
+        TestRunLengthEncodedGlyphCodec.class,
         TestTigrQualitiesEncoder.class,
         TestTigrQualitiesEncoderCodec.class,
         TestQualitySequenceBuilder.class

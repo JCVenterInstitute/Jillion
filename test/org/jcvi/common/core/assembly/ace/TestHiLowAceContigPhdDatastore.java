@@ -21,17 +21,13 @@ package org.jcvi.common.core.assembly.ace;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Arrays;
 
 import org.jcvi.common.core.assembly.ace.HiLowAceContigPhdDatastore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
-import org.jcvi.common.core.symbol.qual.DefaultEncodedPhredGlyphCodec;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -60,7 +56,7 @@ public class TestHiLowAceContigPhdDatastore {
     }
     @Test
     public void forwardRead() throws DataStoreException{
-        List<PhredQuality> expectedQualities = new ArrayList<PhredQuality>();
+        QualitySequenceBuilder expectedQualities = new QualitySequenceBuilder();
         addLowQualities(expectedQualities,4);
         addHighQuality(expectedQualities);
         addLowQualities(expectedQualities,"gtgagatcatcctga".length());
@@ -98,7 +94,7 @@ public class TestHiLowAceContigPhdDatastore {
                 "ccttttttgggccccgggaaccttttttaaaaaatgggggattgggcccc" +
                 "cttggcccccctc").build(),
                 
-                new EncodedQualitySequence(DefaultEncodedPhredGlyphCodec.INSTANCE, expectedQualities),
+                expectedQualities.build(),
                 19);
         Phd actual = sut.get("K26-217c");
         assertEquals(expected.getNucleotideSequence().asList(),actual.getNucleotideSequence().asList());
@@ -128,7 +124,7 @@ public class TestHiLowAceContigPhdDatastore {
         											.reverseComplement()
         											.build();
     
-        List<PhredQuality> expectedQualities = new ArrayList<PhredQuality>();
+        QualitySequenceBuilder expectedQualities = new QualitySequenceBuilder();
         addLowQualities(expectedQualities, "gaataattggaatcacggcaaaaatttggggacaaatattatttccaaaattcccccagcaatcacacaggccctcaagcccatcaactcggtcattcaccgattttcctaaatcaagggtattagcttgctgggcttacacctaacatacacagcatgctcaatgaga".length());
         addHighQuality(expectedQualities);
         addLowQualities(expectedQualities, "caatacgagctgtgtggagcacaggaagggga".length());
@@ -159,37 +155,31 @@ public class TestHiLowAceContigPhdDatastore {
         addHighQuality(expectedQualities);
         addLowQualities(expectedQualities, "ccggaaccacacg".length());
         
-        
-        Collections.reverse(expectedQualities);
+        expectedQualities.reverse();
         Phd expected = new ArtificialPhd(id,
                 
-                reverseComplimented,
-                new EncodedQualitySequence(DefaultEncodedPhredGlyphCodec.INSTANCE, 
-                        expectedQualities),
+                reverseComplimented,expectedQualities.build(),
                 19);
         Phd actual = sut.get(id);
         assertEquals(expected.getNucleotideSequence().asList(),actual.getNucleotideSequence().asList());
         assertEquals(expected.getQualitySequence().asList(),actual.getQualitySequence().asList());
     }
-    /**
-     * @param expectedQualities
-     * @param i
-     */
-    private void addLowQualities(List<PhredQuality> expectedQualities, int numberOfQualities) {
-        for(int i=0; i<numberOfQualities; i++){
-            expectedQualities.add(HiLowAceContigPhdDatastore.DEFAULT_LOW_QUALITY);
-        }        
+
+    private void addLowQualities(QualitySequenceBuilder builder, int numberOfQualities) {
+    	byte[] array = new byte[numberOfQualities];
+    	Arrays.fill(array, HiLowAceContigPhdDatastore.DEFAULT_LOW_QUALITY.getQualityScore());
+        builder.append(array);       
     }
-    private void addLowQuality(List<PhredQuality> expectedQualities){
-        addLowQualities(expectedQualities,1);
+    private void addLowQuality(QualitySequenceBuilder builder){
+       builder.append(HiLowAceContigPhdDatastore.DEFAULT_LOW_QUALITY.getQualityScore());
     }
-    private void addHighQualities(List<PhredQuality> expectedQualities, int numberOfQualities) {
-        for(int i=0; i<numberOfQualities; i++){
-            expectedQualities.add(HiLowAceContigPhdDatastore.DEFAULT_HIGH_QUALITY);
-        }
+    private void addHighQualities(QualitySequenceBuilder builder, int numberOfQualities) {
+    	byte[] array = new byte[numberOfQualities];
+    	Arrays.fill(array, HiLowAceContigPhdDatastore.DEFAULT_HIGH_QUALITY.getQualityScore());
+        builder.append(array); 
     }
     
-    private void addHighQuality(List<PhredQuality> expectedQualities){
-        addHighQualities(expectedQualities,1);
+    private void addHighQuality(QualitySequenceBuilder builder){
+    	builder.append(HiLowAceContigPhdDatastore.DEFAULT_HIGH_QUALITY.getQualityScore());
     }
 }

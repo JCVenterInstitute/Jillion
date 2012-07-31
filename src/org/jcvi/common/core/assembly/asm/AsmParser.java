@@ -42,10 +42,8 @@ import org.jcvi.common.core.Range.CoordinateSystem;
 import static org.jcvi.common.core.assembly.asm.AsmVisitor.*;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
@@ -1163,8 +1161,7 @@ public final class AsmParser {
                         getMessageCode(),
                         length,offset));
             }
-            return new EncodedQualitySequence(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                    PhredQuality.valueOf(qualities));
+            return new QualitySequenceBuilder(qualities).build();
         }
         NucleotideSequence parseConsensus(ParserState parserState,
                 AsmVisitor visitor, int expectedLength) throws IOException {

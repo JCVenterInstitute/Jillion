@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jcvi.common.core.symbol.AbstractNumericSymbol;
 import org.jcvi.common.core.symbol.Symbol;
 /**
  * {@code PhredQuality} is a {@link Symbol} representation of
@@ -39,7 +38,7 @@ import org.jcvi.common.core.symbol.Symbol;
  *
  *
  */
-public final class PhredQuality extends AbstractNumericSymbol implements Comparable<PhredQuality>{
+public final class PhredQuality implements Symbol, Comparable<PhredQuality>{
     //127 should be good enough for anybody
     public static final byte MAX_VALUE = Byte.MAX_VALUE;
     public static final byte MIN_VALUE = 0;
@@ -54,17 +53,15 @@ public final class PhredQuality extends AbstractNumericSymbol implements Compara
         }
     }
     
+    private final byte value;
+    
     private PhredQuality(byte b) {
-    	super(Byte.valueOf(b));     
+    	this.value = b;
     }
     
     @Override
-    public Byte getValue() {
-        return (Byte)super.getValue();
-    }
-    @Override
     public int compareTo(PhredQuality o) {
-        return getValue().compareTo(o.getValue());
+        return value - o.value;
     }
     /**
      * Get the {@link PhredQuality} with the given
@@ -101,7 +98,7 @@ public final class PhredQuality extends AbstractNumericSymbol implements Compara
      * @return {@literal 10^(-q/10)}
      */
     public double getErrorProbability(){
-        return Math.pow(TEN, this.getValue()/-TEN);       
+        return Math.pow(TEN, value/-TEN);       
     }
     /**
      * Get this {@link PhredQuality}'s 
@@ -109,7 +106,7 @@ public final class PhredQuality extends AbstractNumericSymbol implements Compara
      * @return a positive byte value.
      */
     public byte getQualityScore(){
-        return getValue().byteValue();
+        return value;
     }
     /**
      * Get the corresponding {@link PhredQuality} instance
@@ -157,7 +154,7 @@ public final class PhredQuality extends AbstractNumericSymbol implements Compara
     public static byte[] toArray(Collection<PhredQuality> qualities){
         ByteBuffer buf = ByteBuffer.allocate(qualities.size());
         for(PhredQuality quality : qualities){
-            buf.put(quality.getValue());
+            buf.put(quality.value);
         }
         return buf.array();
     }
@@ -165,8 +162,13 @@ public final class PhredQuality extends AbstractNumericSymbol implements Compara
 
     @Override
     public String toString() {        
-        return String.format("Q%02d",this.getValue());
+        return String.format("Q%02d",value);
     }
+
+	@Override
+	public String getName() {
+		return Byte.toString(value);
+	}
     
     
     

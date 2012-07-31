@@ -64,7 +64,7 @@ final class CompactedSliceElement implements IdedSliceElement{
             throw new NullPointerException("fields can not be null");
         }
         this.id= id;
-        this.quality = quality.getValue().byteValue();
+        this.quality = quality.getQualityScore();
         if(direction == Direction.FORWARD){
         	this.dirAndNucleotide = base.getOrdinalAsByte();
         }else{        

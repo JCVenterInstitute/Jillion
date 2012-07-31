@@ -25,10 +25,8 @@ package org.jcvi.common.core.seq.fastx.fasta.qual;
 
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaRecord;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -36,11 +34,10 @@ public class TestQualityFastaRecord {
 
     private String id = "identifier";
     private String comment = "comment";
-    private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
-
+ 
     byte[] bytes = new byte[]{10,20,70,50,60,2,55,1,2,3,4,5,6,7,8,9,10,10,20,30,12,11,2,5};
    
-    private QualitySequence encodedBytes = new EncodedQualitySequence(RUN_LENGTH_CODEC,PhredQuality.valueOf(bytes));
+    private QualitySequence encodedBytes = new QualitySequenceBuilder(bytes).build();
     DefaultQualityFastaRecord sut = new DefaultQualityFastaRecord(id,comment,encodedBytes);
     
     @Test
@@ -108,7 +105,7 @@ public class TestQualityFastaRecord {
     @Test
     public void notEqualsDifferentSequence(){
         DefaultQualityFastaRecord differentId = new DefaultQualityFastaRecord(
-                "different"+id,comment,new EncodedQualitySequence(RUN_LENGTH_CODEC,PhredQuality.valueOf(new byte[]{1,2,3,4,5})));
+                "different"+id,comment,new QualitySequenceBuilder(new byte[]{1,2,3,4,5}).build());
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentId);
     }
     

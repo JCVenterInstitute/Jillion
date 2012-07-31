@@ -34,9 +34,7 @@ import org.jcvi.common.core.seq.read.trace.frg.AbstractFragmentDataStore;
 import org.jcvi.common.core.seq.read.trace.frg.DefaultFragment;
 import org.jcvi.common.core.seq.read.trace.frg.Fragment;
 import org.jcvi.common.core.seq.read.trace.frg.Frg2Parser;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.qual.TigrQualitiesEncodedGyphCodec;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -47,8 +45,7 @@ public abstract class  AbstractTestFragmentDataStore {
     private static final String FILE = "files/example.frg2";
     
     private static final TigrQualitiesEncodedGyphCodec QUALITY_CODEC = TigrQualitiesEncodedGyphCodec.getINSTANCE();
-    private static final RunLengthEncodedGlyphCodec RUN_LENGTH_CODEC = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
-
+    
     Library library = new DefaultLibrary(".",Distance.buildDistance(5821F, 1513F), MateOrientation.INNIE);
     final Range clearRangeFor678 = Range.create(0,835);
     final Range clearRangeFor061 = Range.create(0,650);
@@ -65,7 +62,7 @@ public abstract class  AbstractTestFragmentDataStore {
                             "GTGTGCGTGCGTGTGTGTGCGTGTGCGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGCGTGAGACGGAAAGAGCCAAG" +
                             "AAGAGCGCGAACTAAAGGAACAACATGGAAATAGGCGCGGCACCAAAGGTGAACCCTGGGCAACCCCATGGAATCCACAGGGAATCCCGTGTAAACCAAG" +
                             "GGACCTGAGGAGAGCACCAACAAGATCAGACGANNA").build(), 
-            new EncodedQualitySequence(RUN_LENGTH_CODEC,
+            new QualitySequenceBuilder(
                     QUALITY_CODEC.decode(
                             (
                                     "555566;;;666;;<<<;;<<?CDDDB?<??<<<AADDHHHPVSUUKKG;98:<<>>=???B=;;=>@CDDB?BEDDDIKDVVVKKDDDDDKKKSNNQXP"+
@@ -77,7 +74,7 @@ public abstract class  AbstractTestFragmentDataStore {
                                 "YYOOOOOO[[[[^^^^^^^^^^VVVQQPSPKKMEDD>DDJDGJEEGJJIDDEEEECAAHFGGJJJJLPLL<<;<<HE@::88786666667866667966"+
                                 "6666877778744696657544466664546699877766667667<<766766778888866666789988868666886666666866677787778<"+
                                 "9:99:8876666678776667666669987575005"
-                            ).getBytes())),
+                            ).getBytes())).build(),
 
             clearRangeFor678, clearRangeFor678,library,"#  Not a comment; this is annotation about where the fragment came from\n"
         );
@@ -91,7 +88,7 @@ public abstract class  AbstractTestFragmentDataStore {
                             "GCGAGATGCTCCTCCAGCTGCGCCACCAGCTGTGCCCGGTGCGCCAGGTCCGACTCCAGCGCCCGGATCTTGGAGCCCAGCTCGCCGATCTGCGGCGTGG" +
                             "AGCCGTGGGTTGGTTGCGCGGTCCTCAGGGTCCCGTGGGGGTGATCAGTTGCATACCCGTGGGGATGCCATGGGGGATGGCGCAGGGTTCGACCGTGTGG" +
                             "AGGGCGGGCGCAGAACCAGGGCGCAGGCACTAAGGCGCGCGCATCATGGGN").build(), 
-            new EncodedQualitySequence(RUN_LENGTH_CODEC,
+            new QualitySequenceBuilder(
                     QUALITY_CODEC.decode(
                             (
                                     "6689;;6687;>BG>?<??;:9??>NL?;::?9><??<??<::???G@C>888;;AGGGHKKKKKKHHKKKKPCCCCCASK=C=??COM[[bQS]bbbUU"+
@@ -101,7 +98,7 @@ public abstract class  AbstractTestFragmentDataStore {
                                     "VVPOOSUSUUV[[WSSSNSKQJGGEEEGGNGJHQMOOUUUUUQUUNSVSKPKKKVVSQQVVV\\XXSSRXVbbVVV\\bVSSVSSSUUVUUVVUUUPOOKGE"+
                                     "EEEEEEEEIFHD==?BBDGNOUOVKEAAADDDDEEGGFJIGGJHJGJKMLMJHHKKKNOLVJGB=>@@@>EEEIBIIJMGG><778>ADFJJLLGCCA@>"+
                                     ">==BDGGGG??B===@A>==@??<<<<<<<;999;;BBBBBBBBGB=4440"
-                            ).getBytes())),
+                            ).getBytes())).build(),
 
                             clearRangeFor061, clearRangeFor061,library,""
         );

@@ -35,9 +35,7 @@ import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffFileDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFlowgram;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
@@ -55,16 +53,11 @@ public class TestFlowIndexOverflow{
     private static final String FILE = "files/indexOverflow.sff";
     
     private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestFlowIndexOverflow.class);
-    
-    
-   private static final RunLengthEncodedGlyphCodec runLengthQualityCodec = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
-    short[] encodedValues = new short[]{213,0,2, 97, 120};
-    
+   
     private final SffFlowgram FCPRO0N01A48YO = new SffFlowgram("FCPRO0N01A48YO",
     		new NucleotideSequenceBuilder(
                       "TCAGCGATACACATAGCGCGTACATCCACATCGTGGCGTCTCAAGGCACACAGGGGGATAGGN").build(),
-                      new EncodedQualitySequence(runLengthQualityCodec,
-                              PhredQuality.valueOf(new byte[]{36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,38,36,38,38,38,37,36,36,34,33,33,31,36,36,31,31,31,31,31,31,23,23,23,23,31,36,37,35,31,26,20,20,35,35,35,36,36,36,36,36,0})),
+                      new QualitySequenceBuilder(new byte[]{36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,38,36,38,38,38,37,36,36,34,33,33,31,36,36,31,31,31,31,31,31,23,23,23,23,31,36,37,35,31,26,20,20,35,35,35,36,36,36,36,36,0}).build(),
                         Arrays.<Short>asList((short)101,(short)101,(short)102,(short)103,(short)106,(short)109,(short)87,(short)106, (short) 103,(short)102,(short)103,(short)99,(short)101,(short)98,(short)101,(short)96,(short)95,(short)103, (short)114,(short)106,(short)103,(short)105,(short)96,(short)100,(short)94,(short)188,(short)101, (short)95,(short) 110,(short)110,(short)123,(short)66,(short)95,(short)194,(short)86,(short)113,(short)68,(short)73,(short)110, (short)121,(short)237,(short)240,(short)84,(short)96,(short)80,(short)102,(short)109,(short)56,(short)484,(short)102,(short)110,(short)103,(short)222,(short) 8),
                         Range.create(CoordinateSystem.RESIDUE_BASED, 25,62),
                 Range.create(CoordinateSystem.RESIDUE_BASED,0,0)

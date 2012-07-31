@@ -32,10 +32,9 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.qual.EncodedQualitySequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.ObjectsUtil;
@@ -52,8 +51,7 @@ final class SffFlowgram implements Flowgram {
         return new SffFlowgram(
                 readHeader.getId(),
                 new NucleotideSequenceBuilder(readData.getBasecalls()).build(),
-                        new EncodedQualitySequence(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                                PhredQuality.valueOf(readData.getQualities())),
+                new QualitySequenceBuilder(readData.getQualities()).build(),
                 computeValues(readData),
                 readHeader.getQualityClip(),
                 readHeader.getAdapterClip());

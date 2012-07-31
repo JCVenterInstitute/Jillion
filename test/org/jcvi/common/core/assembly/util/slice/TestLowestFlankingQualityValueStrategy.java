@@ -28,10 +28,9 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
-import org.jcvi.common.core.symbol.EncodedSequence;
-import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.RunLengthEncodedGlyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityValueStrategies{
@@ -45,8 +44,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         .addRead("readId", 0, "ACGT-")
         .build();
         AssembledRead read = contig.getRead("readId");
-        Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{11,12,13,14}));
+        QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{11,12,13,14}).build();
         
         assertEquals(PhredQuality.valueOf(1),sut.getQualityFor(read, qualities, 4));
     }
@@ -57,8 +55,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         .addRead("readId", 0, "-ACGT")
         .build();
         AssembledRead read = contig.getRead("readId");
-        Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{11,12,13,14}));
+        QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{11,12,13,14}).build();
         
         assertEquals(PhredQuality.valueOf(1),sut.getQualityFor(read, qualities, 0));
     }
@@ -77,8 +74,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
                                     .addRead("readId", 0, "ACGT-CGT")
                                     .build();
         AssembledRead read = contig.getRead("readId");
-        Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{0,0,0,16,16,0,0,0}));
+        QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{0,0,0,16,16,0,0,0}).build();
         
         assertEquals(qualities.get(3),sut.getQualityFor(read, qualities, 4));
     }
@@ -89,8 +85,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
                                     .addRead("readId", 0, "ACGT-CGT")
                                     .build();
         AssembledRead read = contig.getRead("readId");
-        Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{0,0,0,14,16,0,0,0}));
+        QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{0,0,0,14,16,0,0,0}).build();
         
         assertEquals(qualities.get(3),sut.getQualityFor(read, qualities, 4));
     }
@@ -100,8 +95,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
                                     .addRead("readId", 0, "ACGT-CGT",Direction.REVERSE)
                                     .build();
         AssembledRead read = contig.getRead("readId");
-        Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{0,0,0,0,14,16,0,0}));
+        QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{0,0,0,0,14,16,0,0}).build();
         
         assertEquals(qualities.get(2),sut.getQualityFor(read, qualities, 4));
     }
@@ -111,8 +105,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
                                     .addRead("readId", 0, "ACGT-CGT")
                                     .build();
         AssembledRead read = contig.getRead("readId");
-        Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{0,0,0,14,11,0,0,0}));
+        QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{0,0,0,14,11,0,0,0}).build();
         
         assertEquals(qualities.get(4),sut.getQualityFor(read, qualities, 4));
     }
@@ -122,8 +115,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
                                     .addRead("readId", 0, "ACGT-CGT",Direction.REVERSE)
                                     .build();
         AssembledRead read = contig.getRead("readId");
-        Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{0,0,14,11,0,0,0}));
+        QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{0,0,14,11,0,0,0}).build();
         
         assertEquals(qualities.get(3),sut.getQualityFor(read, qualities, 4));
     }
@@ -133,8 +125,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
                                     .addRead("readId", 0, "ACGT--CGT")
                                     .build();
         AssembledRead read = contig.getRead("readId");
-        Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{0,0,0,14,11,0,0,0}));
+        QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{0,0,0,14,11,0,0,0}).build();
         
         assertEquals(qualities.get(4),sut.getQualityFor(read, qualities, 4));
         assertEquals(qualities.get(4),sut.getQualityFor(read, qualities, 5));
@@ -145,8 +136,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
                                     .addRead("readId", 0, "ACGT--CGT")
                                     .build();
         AssembledRead read = contig.getRead("readId");
-        Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{0,0,0,14,16,0,0,0}));
+        QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{0,0,0,14,16,0,0,0}).build();
         
         assertEquals(qualities.get(3),sut.getQualityFor(read, qualities, 4));
         assertEquals(qualities.get(3),sut.getQualityFor(read, qualities, 5));
@@ -159,8 +149,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
                                     .addRead("readId", 0, "ACGT--CGT", Direction.REVERSE)
                                     .build();
         AssembledRead read = contig.getRead("readId");
-        Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{0,0,14,11,0,0,0}));
+        QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{0,0,14,11,0,0,0}).build();
         
         assertEquals(qualities.get(3),sut.getQualityFor(read, qualities, 4));
         assertEquals(qualities.get(3),sut.getQualityFor(read, qualities, 5));
@@ -171,8 +160,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
                                     .addRead("readId", 0, "ACGT--CGT",Direction.REVERSE)
                                     .build();
         AssembledRead read = contig.getRead("readId");
-        Sequence<PhredQuality> qualities = new EncodedSequence<PhredQuality>(RunLengthEncodedGlyphCodec.DEFAULT_INSTANCE,
-                PhredQuality.valueOf(new byte[]{0,0,14,16,0,0,0}));
+        QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{0,0,14,16,0,0,0}).build();
         
         assertEquals(qualities.get(2),sut.getQualityFor(read, qualities, 4));
         assertEquals(qualities.get(2),sut.getQualityFor(read, qualities, 5));
