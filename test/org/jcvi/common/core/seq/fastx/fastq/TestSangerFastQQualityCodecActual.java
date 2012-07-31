@@ -24,6 +24,7 @@
 package org.jcvi.common.core.seq.fastx.fastq;
 
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -33,13 +34,15 @@ public class TestSangerFastQQualityCodecActual {
     String encodedqualities = "I9IG9IC";
     byte[] qualities = 
             new byte[]{40,24,40,38,24,40,34};
+    QualitySequence qualitySequence = new QualitySequenceBuilder(qualities).build();
+	
     @Test
     public void decode(){       
-        assertEquals(qualities, sut.decode(encodedqualities).asList());
+        assertEquals(qualitySequence, sut.decode(encodedqualities));
     }
     @Test
     public void encode(){       
         assertEquals(encodedqualities, sut.encode(
-        		 new QualitySequenceBuilder(qualities).build()));
+        		 qualitySequence));
     }
 }
