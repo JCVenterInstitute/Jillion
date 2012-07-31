@@ -26,13 +26,15 @@ package org.jcvi.common.core.symbol.qual;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.util.RunLength;
 
 public class RunLengthEncodedGlyphCodec implements QualitySymbolCodec{
-    public static final RunLengthEncodedGlyphCodec DEFAULT_INSTANCE = new RunLengthEncodedGlyphCodec(PhredQuality.MAX_VALUE);
+    public static final RunLengthEncodedGlyphCodec DEFAULT_INSTANCE = new RunLengthEncodedGlyphCodec(Byte.MIN_VALUE);
     
     private final byte guard;
 
@@ -97,7 +99,7 @@ public class RunLengthEncodedGlyphCodec implements QualitySymbolCodec{
         ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
         return buf.getInt();
     }
-
+    
     @Override
     public byte[] encode(Collection<PhredQuality> glyphs) {
         List<RunLength<PhredQuality>> runLengthList = runLengthEncode(glyphs);
@@ -168,23 +170,29 @@ public class RunLengthEncodedGlyphCodec implements QualitySymbolCodec{
         }
         return true;
     }
-
-    private static <T> List<RunLength<T>> runLengthEncode(Collection<T> collectionOfElements){
-        List<RunLength<T>> encoding = new ArrayList<RunLength<T>>();
-        List<T> elements = new ArrayList<T>(collectionOfElements);
-        if(elements.isEmpty()){
-            return encoding;
-        }
-        int counter = -1;
-        for(int i =0; i< elements.size()-1; i++){
-            if(!elements.get(i).equals(elements.get(i+1))){
-                encoding.add(new RunLength<T>(elements.get(i), i-counter));
-                counter =i;
-            }
-        }
-        encoding.add(new RunLength<T>(elements.get(elements.size()-1),elements.size()-1-counter));
-        return encoding;
+    private static <T> List<RunLength<T>> runLengthEncode(Iterable<T> elements){
+    	Iterator<T> iter = elements.iterator();
+    	if(!iter.hasNext()){
+    		return Collections.emptyList();
+    	}
+    	List<RunLength<T>> encoding = new ArrayList<RunLength<T>>();
+    	T currentElement=iter.next();
+    	int runLength=1;
+    	while(iter.hasNext()){
+    		T nextElement = iter.next();
+    		if(currentElement.equals(nextElement)){
+    			runLength++;
+    		}else{
+    			encoding.add(new RunLength<T>(currentElement, runLength));
+    			runLength=1;
+    			currentElement=nextElement;
+    		}
+    	}
+    	encoding.add(new RunLength<T>(currentElement, runLength));
+    	
+    	return encoding;
     }
+   
     private static <T> T decode(List<RunLength<T>> encoded, int decodedIndex){
         long previousIndex=-1;
         final Range target = Range.createOfLength(decodedIndex, 1);

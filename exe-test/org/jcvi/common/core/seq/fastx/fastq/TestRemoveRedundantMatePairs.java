@@ -28,13 +28,13 @@ public class TestRemoveRedundantMatePairs {
 		left = new DefaultFastqRecord("id", 
 				new NucleotideSequenceBuilder()
 		.append("ACGTACGTACGTACGTACGT").build(), 
-		new EncodedQualitySequence(new DefaultEncodedPhredGlyphCodec(),
+		new EncodedQualitySequence(DefaultEncodedPhredGlyphCodec.INSTANCE,
 				qualities));
 		
 		right = new DefaultFastqRecord("id", 
 				new NucleotideSequenceBuilder()
 		.append("AAAAAAAAAAATTTTTTTTT").build(), 
-		new EncodedQualitySequence(new DefaultEncodedPhredGlyphCodec(),
+		new EncodedQualitySequence(DefaultEncodedPhredGlyphCodec.INSTANCE,
 				qualities));
 	}
 

@@ -45,12 +45,7 @@ public abstract class AbstractTestAminoAcidSequence {
 		assertEquals(aminoAcids.size(), sut.getLength());
 	}
 	
-	@Test
-	public void decodeWithRangeShouldOnlyDecodeSubrange(){
-		Range range = Range.create(2, 5);
-		List<AminoAcid> expected = aminoAcids.subList(2, 6);
-		assertEquals(expected, sut.asList(range));
-	}
+	
 	
 	@Test
 	public void singleBase(){

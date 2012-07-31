@@ -29,9 +29,11 @@ import java.util.Collection;
 import java.util.List;
 
 
-public class DefaultEncodedPhredGlyphCodec implements QualitySymbolCodec{
+public enum DefaultEncodedPhredGlyphCodec implements QualitySymbolCodec{
 
-
+	INSTANCE
+	;
+	
     @Override
     public List<PhredQuality> decode(byte[] encodedGlyphs) {
         List<PhredQuality> glyphs = new ArrayList<PhredQuality>();

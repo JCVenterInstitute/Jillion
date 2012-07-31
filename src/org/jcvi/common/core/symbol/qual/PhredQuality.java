@@ -116,6 +116,7 @@ public final class PhredQuality extends AbstractNumericSymbol implements Compara
      * with the given quality score.
      * @param qualityScore the quality score
      * @return
+     * @throws IllegalArgumentException if qualityScore < 0 or > {@link Byte#MAX_VALUE}.
      */
     public static PhredQuality valueOf(int qualityScore){
        return valueOf((byte)qualityScore);
@@ -138,6 +139,7 @@ public final class PhredQuality extends AbstractNumericSymbol implements Compara
      * 
      * @param bytes
      * @return
+     * @throws IllegalArgumentException if  any of the qualityScores are < 0 or > {@link Byte#MAX_VALUE}.
      */
     public static List<PhredQuality> valueOf(byte[] bytes){
         List<PhredQuality> list = new ArrayList<PhredQuality>(bytes.length);

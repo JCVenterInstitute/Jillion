@@ -43,26 +43,6 @@ public abstract class AbstractResidueSequence<R extends Residue> implements Resi
     }
 
    
-    /**
-     * Default implementation gets the {@link Residue}s
-     * to put in the returned list by successive calls
-     * to {@link #get(int)} for all the desired offsets
-     * in the given range.  This method should be overridden
-     * if many {@link #get(int)} calls is not an efficient way to pull out the data.
-     * </p>
-     * {@inheritDoc}
-     */
-    @Override
-    public List<R> asList(Range range) {
-        if(range==null){
-            return asList();
-        }
-        List<R> result = new ArrayList<R>();
-        for(long i = range.getBegin(); i<= range.getEnd(); i++){
-        	result.add(get((int)i));
-        }
-        return result;
-    }
 
    
     /**

@@ -89,14 +89,6 @@ public final class CompactedSliceMap implements SliceMap {
                     return 0;
                 }
 
-                /**
-                * {@inheritDoc}
-                */
-                @Override
-                public List<PhredQuality> asList(Range range) {
-                    // TODO Auto-generated method stub
-                    return null;
-                }
 
                 @Override
                 public Iterator<PhredQuality> iterator() {

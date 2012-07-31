@@ -23,14 +23,13 @@
  */
 package org.jcvi.common.core.symbol;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.util.ObjectsUtil;
 /**
  * {@code EncodedSequence} is a composite object
  * containing a byte representation of data and an {@link GlyphCodec}
@@ -63,7 +62,7 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
         return data;
     }
     
-    protected GlyphCodec<T> getCodec(){
+    public GlyphCodec<T> getCodec(){
         return codec;
     }
     /**
@@ -103,27 +102,14 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
             return false;
         }
         EncodedSequence other = (EncodedSequence) obj;
-        return ObjectsUtil.nullSafeEquals(codec, other.codec) &&
-        Arrays.equals(data, other.data);
+        return toString().equals(other.toString());
        
     }
     @Override
     public T get(int index) {
         return codec.decode(data, index);
     }
-    @Override
-    public List<T> asList(Range range) {
-        if(range ==null){
-            return asList();
-        }
-        List<T> result = new ArrayList<T>();
-        if(range.isSubRangeOf(Range.createOfLength(0, getLength()))){
-            for(long index : range){
-                result.add(get((int)index));
-            }
-        }
-        return result;
-    }
+   
     @Override
     public String toString() {
         return asList().toString();
@@ -136,19 +122,63 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
     */
     @Override
     public Iterator<T> iterator() {
-        return asList().iterator();
+        return new RangedIterator();
     }
     /**
-     * Default iterator returns the iterator from
-     * the result of {@link #asList(Range)}.  This method
+     * Default iterator iterates
+     * over the objects in this sequence using
+     * {@link #get(int)}. This method
      * should be overridden if a more efficient 
      * iterator could be generated.
+     * {@inheritDoc}
      */
 	@Override
 	public Iterator<T> iterator(Range range) {
-		return asList(range).iterator();
+		if(range ==null){
+			return iterator();
+		}
+		return new RangedIterator(range);
 	}
     
+	private final class RangedIterator implements Iterator<T>{
+		private int currentOffset;
+		private final int stop;
+		
+		public RangedIterator(){
+			currentOffset=0;
+			stop = (int)getLength();
+		}
+		public RangedIterator(Range r){
+			Range maxRange = Range.createOfLength(getLength());
+			if(!r.isSubRangeOf(maxRange)){
+				throw new IndexOutOfBoundsException(
+						String.format("range %s contains offsets that are out of bounds of %s", r, maxRange));
+			}
+			currentOffset=(int)r.getBegin();
+			stop = (int)(r.getEnd()+1);
+		}
+		@Override
+		public boolean hasNext() {
+			return currentOffset<stop;
+		}
+
+		@Override
+		public T next() {
+			if(!hasNext()){
+				throw new NoSuchElementException();
+			}
+			T next = get(currentOffset);
+			currentOffset++;
+			return next;
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException("can not remove from immutable sequence");
+			
+		}
+		
+	}
 
 
 }

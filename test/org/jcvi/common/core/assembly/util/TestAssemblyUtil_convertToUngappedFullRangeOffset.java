@@ -181,10 +181,6 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
 			return delegate.getLength();
 		}
 
-		@Override
-		public List<Nucleotide> asList(Range range) {
-			return delegate.asList(range);
-		}
 
 		@Override
 		public Iterator<Nucleotide> iterator() {
