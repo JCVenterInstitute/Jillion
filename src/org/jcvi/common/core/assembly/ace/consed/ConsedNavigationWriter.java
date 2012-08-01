@@ -73,7 +73,7 @@ public final class ConsedNavigationWriter implements Closeable{
             throw new NullPointerException("output stream can not be null");
         }
         if(title!=null){
-            out.write(String.format("TITLE: %s%n",title).getBytes(UTF_8));
+            out.write((String.format("TITLE: %s",title)+"\n").getBytes(UTF_8));
         }
         
         this.out= out;
@@ -87,13 +87,13 @@ public final class ConsedNavigationWriter implements Closeable{
     public void writeNavigationElement(ReadNavigationElement element) throws IOException{
         
         StringBuilder builder = new StringBuilder("BEGIN_REGION\n");
-        builder.append(String.format("TYPE: %s%n",element.getType()));
-        builder.append(String.format("READ: %s%n",element.getTargetId()));
+        builder.append(String.format("TYPE: %s\n",element.getType()));
+        builder.append(String.format("READ: %s\n",element.getTargetId()));
         Range range = element.getUngappedPositionRange();
-        builder.append(String.format("UNPADDED_READ_POS: %d %d%n",range.getBegin(CoordinateSystem.RESIDUE_BASED), range.getEnd(CoordinateSystem.RESIDUE_BASED)));
+        builder.append(String.format("UNPADDED_READ_POS: %d %d\n",range.getBegin(CoordinateSystem.RESIDUE_BASED), range.getEnd(CoordinateSystem.RESIDUE_BASED)));
         String comment = element.getComment();
         //consed requires a comment line even if it is empty
-        builder.append(String.format("COMMENT: %s%n",comment==null? "": comment));
+        builder.append(String.format("COMMENT: %s\n",comment==null? "": comment));
         builder.append("END_REGION\n");
         out.write(builder.toString().getBytes(UTF_8));
     }
@@ -101,13 +101,13 @@ public final class ConsedNavigationWriter implements Closeable{
     public void writeNavigationElement(ConsensusNavigationElement element) throws IOException{
         
         StringBuilder builder = new StringBuilder("BEGIN_REGION\n");
-        builder.append(String.format("TYPE: %s%n",element.getType()));
-        builder.append(String.format("CONTIG: %s%n",element.getTargetId()));
+        builder.append(String.format("TYPE: %s\n",element.getType()));
+        builder.append(String.format("CONTIG: %s\n",element.getTargetId()));
         Range range = element.getUngappedPositionRange();
-        builder.append(String.format("UNPADDED_CONS_POS: %d %d%n",range.getBegin(CoordinateSystem.RESIDUE_BASED), range.getEnd(CoordinateSystem.RESIDUE_BASED)));
+        builder.append(String.format("UNPADDED_CONS_POS: %d %d\n",range.getBegin(CoordinateSystem.RESIDUE_BASED), range.getEnd(CoordinateSystem.RESIDUE_BASED)));
         String comment = element.getComment();
         //consed requires a comment line even if it is empty
-        builder.append(String.format("COMMENT: %s%n",comment==null? "": comment));
+        builder.append(String.format("COMMENT: %s\n",comment==null? "": comment));
        
         builder.append("END_REGION\n");
         
