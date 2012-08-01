@@ -26,9 +26,10 @@ import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordDataStoreAdatper;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStoreAdapter;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
@@ -50,9 +51,9 @@ public class TestPrimerDetector_ActualData {
     public void setup() throws IOException, DataStoreException{
         primerDataStore = 
         
-            NucleotideSequenceFastaRecordDataStoreAdatper.adapt(
+        		new NucleotideDataStoreAdapter(FastaRecordDataStoreAdapter.adapt(
                     DefaultNucleotideSequenceFastaFileDataStore.create(
-                        RESOURCES.getFile("files/primers.fasta")));
+                        RESOURCES.getFile("files/primers.fasta"))));
         sequence = DefaultNucleotideSequenceFastaFileDataStore.create(
                                 RESOURCES.getFile("files/fullLength.fasta"))
                         .get("SAJJA07T27G07MP1F").getSequence();

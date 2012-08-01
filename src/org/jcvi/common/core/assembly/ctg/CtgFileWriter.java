@@ -77,10 +77,10 @@ public class CtgFileWriter implements Closeable{
     
    
     private void writeContigHeader(Contig<? extends AssembledRead> contig) throws IOException {
-        String header = String.format("##%s %d %d bases%n",
+        String header = String.format("##%s %d %d bases",
                 contig.getId(), contig.getNumberOfReads(), contig.getConsensusSequence().getLength());
         
-        writeToOutputStream(header);
+        writeToOutputStream(header+"\n");
     }
 
     private void writeBases(Sequence<Nucleotide> consensus) throws UnsupportedEncodingException, IOException {
@@ -114,10 +114,11 @@ public class CtgFileWriter implements Closeable{
             validRight = temp;
         }
 
-        header.append(String.format("] %d bases {%d %d} <%d %d>%n",
+        header.append(String.format("] %d bases {%d %d} <%d %d>",
                 placedRead.getNucleotideSequence().getLength(), validLeft+1, validRight+1, 
                 placedRead.getGappedStartOffset()+1-consensus.getNumberOfGapsUntil((int) placedRead.getGappedStartOffset()), 
                 placedRead.getGappedEndOffset()+1-consensus.getNumberOfGapsUntil((int)placedRead.getGappedEndOffset())));
+        header.append("\n");
         writeToOutputStream(header.toString());
         
     }
