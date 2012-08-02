@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.SequenceBuilder;
+import org.jcvi.common.core.util.GrowableByteArray;
 /**
  * {@code QualitySequenceBuilder} is a 
  * is a way to
@@ -25,8 +26,8 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	 * grow to handle larger reads.
 	 */
 	private static final int DEFAULT_CAPACITY = 200;
-	//TODO replace StringBuilder with byte array	
-	private StringBuilder builder;
+	
+	private GrowableByteArray builder;
 	/**
 	 * Create a new empty builder with the default
 	 * capacity.
@@ -41,7 +42,7 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	 * is <0.
 	 */
 	public QualitySequenceBuilder(int initialCapacity){
-		this.builder = new StringBuilder(initialCapacity);
+		this.builder = new GrowableByteArray(initialCapacity);
 	}
 	/**
 	 * Create a builder and set the initial
@@ -52,8 +53,7 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	 * of 40.)
 	 */
 	public QualitySequenceBuilder(byte[] initialqualities){
-		this.builder = new StringBuilder(initialqualities.length);
-		append(initialqualities);
+		this.builder = new GrowableByteArray(initialqualities);
 	}
 	/**
 	 * Creates a new builder whose initial sequence
@@ -74,36 +74,29 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	 * @throws NullPointerException if qualitySequence is null.
 	 */
 	public QualitySequenceBuilder(QualitySequence qualitySequence){
-		this.builder = new StringBuilder(encode(qualitySequence));
+		this.builder = new GrowableByteArray(encode(qualitySequence));
 	}
 	/**
 	 * internal copy constructor used by {@link #copy()}.
 	 * @param copy
 	 */
 	private QualitySequenceBuilder(QualitySequenceBuilder copy){
-		this.builder = new StringBuilder(copy.builder.toString());
+		this.builder = copy.builder.copy();
 	}
-	private char encode(PhredQuality q){
-		return (char)q.getQualityScore();
+	private byte encode(PhredQuality q){
+		return q.getQualityScore();
 	}
-	private char encode(byte q){
-		return (char)q;
-	}
-	private String encode(QualitySequence sequence){
-		StringBuilder b = new StringBuilder((int)sequence.getLength());
+
+	private byte[] encode(QualitySequence sequence){
+		byte[] b = new byte[(int)sequence.getLength()];
+		int i=0;
 		for(PhredQuality q : sequence){
-			b.append(encode(q));
+			b[i]=encode(q);
+			i++;
 		}
-		return b.toString();
+		return b;
 	}
-	private String encode(byte[] qualities){
-		StringBuilder b = new StringBuilder(qualities.length);
-		for(int i=0; i<qualities.length; i++){
-			b.append(encode(qualities[i]));
-		}
-		
-		return b.toString();
-	}
+	
 	/**
 	 * 
 	 * {@inheritDoc}
@@ -150,7 +143,7 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	 */
 	public QualitySequenceBuilder append(
 			byte[] qualityScores) {
-		builder.append(encode(qualityScores));
+		builder.append(qualityScores);
 		return this;
 	}
 
@@ -164,19 +157,19 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 
 	@Override
 	public long getLength() {
-		return builder.length();
+		return builder.getCurrentLength();
 	}
 
 	@Override
 	public QualitySequenceBuilder replace(int offset,
 			PhredQuality replacement) {
-		this.builder.replace(offset, offset+1, Character.toString(encode(replacement)));
+		this.builder.replace(offset,encode(replacement));
 		return this;
 	}
 
 	@Override
 	public QualitySequenceBuilder delete(Range range) {
-		builder.delete((int)range.getBegin(), (int)range.getEnd()+1);
+		builder.remove(range);
 		return this;
 	}
 
@@ -233,7 +226,7 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	public QualitySequenceBuilder insert(int offset,
 			byte[] qualityScores) {
 		assertInsertOffsetValid(offset);
-		builder.insert(offset, encode(qualityScores));
+		builder.insert(offset, qualityScores);
 		return this;
 	}
 	private void assertInsertOffsetValid(int offset) {
@@ -250,33 +243,29 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	public QualitySequence build() {
 		List<PhredQuality> asQualities = asQualities();
 		byte[] runLengthEncoded = RunLengthEncodedQualityCodec.INSTANCE.encode(asQualities);
-		if(runLengthEncoded.length < builder.length()){
+		if(runLengthEncoded.length < builder.getCurrentLength()){
 			return new EncodedQualitySequence(
 					RunLengthEncodedQualityCodec.INSTANCE, 
 					runLengthEncoded);
 		}
-		return new EncodedQualitySequence(DefaultQualitySymbolCodec.INSTANCE, asArray());
+		return new EncodedQualitySequence(DefaultQualitySymbolCodec.INSTANCE, builder.toArray());
 	}
-	private byte[] asArray(){
-		int length= builder.length();
-		byte[] array = new byte[length];
-		for(int i=0;i<length;i++){
-			array[i]= (byte)builder.charAt(i);
-		}
-		return array;
-	}
+	
 	private List<PhredQuality> asQualities(){
-		int length= builder.length();
+		int length= builder.getCurrentLength();
 		List<PhredQuality> qualities = new ArrayList<PhredQuality>(length);
 		for(int i=0;i<length;i++){
-			qualities.add(PhredQuality.valueOf(builder.charAt(i)));
+			qualities.add(PhredQuality.valueOf(builder.get(i)));
 		}
 		return qualities;
 	}
 
 	@Override
 	public QualitySequenceBuilder trim(Range range) {
-		this.builder = new StringBuilder(builder.subSequence((int)range.getBegin(), (int)range.getEnd()+1));
+		Range right = Range.create(range.getEnd()+1, builder.getCurrentLength()-1);
+		Range left = Range.create(0,range.getBegin()-1);
+		builder.remove(right);
+		builder.remove(left);
 		return this;
 	}
 
@@ -288,7 +277,7 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 
 	@Override
 	public QualitySequenceBuilder reverse() {
-		builder = builder.reverse();
+		builder.reverse();
 		return this;
 	}
 	/**

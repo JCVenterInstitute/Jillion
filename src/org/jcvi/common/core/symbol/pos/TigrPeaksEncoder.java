@@ -113,7 +113,7 @@ public final class TigrPeaksEncoder
      */
     public static String encode(short[] positions)
     {
-        final StringBuilder encoded = new StringBuilder();
+        final StringBuilder encoded = new StringBuilder(positions.length);
         
         short last = 0;
         for (short current : positions)
@@ -158,7 +158,7 @@ public final class TigrPeaksEncoder
          * string length cannot be longer than the number of positions and that
          * the difference is not excessive.
          * 
-         * dkatzel - made allocation remaining() -1 because we dont want to count the
+         * dkatzel - made allocation remaining() -1 because we don't want to count the
          * terminator
          */
         final ShortBuffer decoded = ShortBuffer.allocate(encoded.remaining()-1);

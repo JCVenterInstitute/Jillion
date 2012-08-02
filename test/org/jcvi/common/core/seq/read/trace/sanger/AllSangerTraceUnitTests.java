@@ -33,6 +33,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
+    	TestPosition.class,
+    	TestDefaultPositionCodec.class,
         AllPhdUnitTests.class,
         AllChromatogramUnitTests.class,
         TestSangerTraceParser.class,
