@@ -1,23 +1,26 @@
 package org.jcvi.common.core.symbol.residue.aa;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.ResidueSequenceBuilder;
+import org.jcvi.common.core.util.GrowableByteArray;
 
 public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<AminoAcid,AminoAcidSequence>{
-
-	private StringBuilder builder;
+	private static final int DEFAULT_CAPACITY = 20;
+	private GrowableByteArray builder;
 	private int numberOfGaps=0;
 	public AminoAcidSequenceBuilder(){
-		builder = new StringBuilder();
+		builder = new GrowableByteArray(DEFAULT_CAPACITY);
 	}
 	
 	public AminoAcidSequenceBuilder(int initialCapacity){
-		builder = new StringBuilder(initialCapacity);
+		builder = new GrowableByteArray(initialCapacity);
 	}
 	public AminoAcidSequenceBuilder(CharSequence sequence){
-		builder = new StringBuilder(sequence.length());
+		builder = new GrowableByteArray(sequence.length());
 		append(AminoAcids.parse(sequence.toString()));
 	}
 	@Override
@@ -26,10 +29,11 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 		if(residue==AminoAcid.Gap){
 			numberOfGaps++;
 		}
-		builder.append(residue.asChar());
+		builder.append(residue.getOrdinalAsByte());
 		return this;
 	}
 
+	
 	@Override
 	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> append(
 			Iterable<AminoAcid> sequence) {
@@ -54,36 +58,38 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 	@Override
 	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> insert(
 			int offset, String sequence) {
-		StringBuilder tempBuilder = new StringBuilder();
-		for(AminoAcid aa :AminoAcids.parse(sequence)){
+		List<AminoAcid> list = AminoAcids.parse(sequence);
+		byte[] array = new byte[list.size()];
+		int i=0;
+		for(AminoAcid aa :list){
 			if(aa == AminoAcid.Gap){
 				numberOfGaps++;
 			}
-			tempBuilder.append(aa.asChar());
+			array[i]=(aa.getOrdinalAsByte());
 		}		
-		builder.insert(offset, tempBuilder.toString());
+		builder.insert(offset, array);
 		return this;
 	}
 
 	@Override
 	public long getLength() {
-		return builder.length();
+		return builder.getCurrentLength();
 	}
 	@Override
 	public long getUngappedLength() {
-		return builder.length() - numberOfGaps;
+		return builder.getCurrentLength() - numberOfGaps;
 	}
 	
 	@Override
 	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> replace(
 			int offset, AminoAcid replacement) {
-		if(AminoAcid.parse(builder.charAt(offset)) == AminoAcid.Gap){
+		if(AminoAcid.values()[builder.get(offset)] == AminoAcid.Gap){
 			numberOfGaps--;			
 		}
 		if(replacement == AminoAcid.Gap){
 			numberOfGaps++;
 		}
-		builder.replace(offset, offset+1, replacement.toString());
+		builder.replace(offset, replacement.getOrdinalAsByte());
 		return this;
 	}
 
@@ -95,7 +101,7 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 				numberOfGaps --;
 			}
 		}
-		builder.delete((int)range.getBegin(), (int)range.getEnd()+1);
+		builder.remove(range);
 		return this;
 	}
 
@@ -113,14 +119,14 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 	@Override
 	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> insert(
 			int offset, Iterable<AminoAcid> sequence) {
-		StringBuilder tempBuilder = new StringBuilder();
+		GrowableByteArray temp = new GrowableByteArray(DEFAULT_CAPACITY);
 		for(AminoAcid aa :sequence){
 			if(aa == AminoAcid.Gap){
 				numberOfGaps++;
 			}
-			tempBuilder.append(aa.asChar());
+			temp.append(aa.getOrdinalAsByte());
 		}		
-		builder.insert(offset, tempBuilder.toString());
+		builder.insert(offset, temp);
 		return this;
 	}
 
@@ -137,7 +143,7 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 		if(base == AminoAcid.Gap){
 			numberOfGaps++;
 		}
-		builder.insert(offset, base.asChar());
+		builder.insert(offset, base.getOrdinalAsByte());
 		return this;
 	}
 
@@ -155,33 +161,64 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 
 	@Override
 	public AminoAcidSequence build() {
-		if(numberOfGaps>0){
-			return new CompactAminoAcidSequence(builder.toString());
-		}
-		return new UngappedAminoAcidSequence(builder.toString());
+		return build(builder.toArray());
 	}
 
 	@Override
 	public AminoAcidSequence build(Range range) {
-		return build(builder.substring((int)range.getBegin(), (int)range.getEnd()+1));
+		byte[] temp = trimBytes(range);
+		return build(temp);
 	}
 
-	private AminoAcidSequence build(String seqToBuild){
-		if(numberOfGaps>0 && seqToBuild.indexOf('-')>0){
-			return new CompactAminoAcidSequence(seqToBuild);
+	private byte[] trimBytes(Range range) {
+		byte[] fullArray =builder.toArray();
+		byte[] temp = new byte[(int)range.getLength()];
+		System.arraycopy(fullArray, (int)range.getBegin(), temp, 0, temp.length);
+		return temp;
+	}
+	private List<AminoAcid> convertFromBytes(byte[] array){
+		List<AminoAcid> aas = new ArrayList<AminoAcid>(array.length);
+		for(int i=0; i<array.length; i++){
+			aas.add(AminoAcid.values()[array[i]]);
+		}
+		return aas;
+	}
+	private AminoAcidSequence build(byte[] seqToBuild){
+		List<AminoAcid> asList = convertFromBytes(seqToBuild);
+		if(numberOfGaps>0 && hasGaps(asList)){
+			return new CompactAminoAcidSequence(asList);
 		}
 		//no gaps
-		return new UngappedAminoAcidSequence(seqToBuild);
+		
+		return new UngappedAminoAcidSequence(asList);
 	}
+	private boolean hasGaps(List<AminoAcid> asList) {
+		for(AminoAcid aa : asList){
+			if(aa == AminoAcid.Gap){
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public List<AminoAcid> asList(Range range) {
-		return AminoAcids.parse(builder.substring((int)range.getBegin(), (int)range.getEnd()+1));
+		AminoAcidSequence s = build();
+		List<AminoAcid> list = new ArrayList<AminoAcid>((int)range.getLength());
+		Iterator<AminoAcid> iter = s.iterator(range);
+		while(iter.hasNext()){
+			list.add(iter.next());
+		}
+		return list;
 	}
 
 
 	@Override
 	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> trim(Range range) {
-		this.builder = new StringBuilder(builder.subSequence((int)range.getBegin(), (int)range.getEnd()+1));
+		byte[] temp = trimBytes(range);
+		AminoAcidSequence seq =build(temp);
+		this.builder = new GrowableByteArray(temp);
+		this.numberOfGaps =seq.getNumberOfGaps();
 		return this;
 	}
 
@@ -204,14 +241,15 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 
 	@Override
 	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> ungap() {
-		numberOfGaps=0;
-		StringBuilder newBuilder = new StringBuilder(builder.length());
-		for(AminoAcid aa : asList()){
-			if(aa != AminoAcid.Gap){
-				newBuilder.append(aa.toString());
+
+		AminoAcidSequence list = build(builder.toArray());
+		if(list.getNumberOfGaps() !=0){
+			List<Integer> gapOffsets =list.getGapOffsets();
+			for(int i=gapOffsets.size()-1; i>=0; i--){
+				builder.remove(i);
 			}
 		}
-		this.builder = newBuilder;
+		numberOfGaps=0;
 		return this;
 	}
 

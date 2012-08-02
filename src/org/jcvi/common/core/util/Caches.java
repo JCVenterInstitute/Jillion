@@ -162,8 +162,8 @@ public final class Caches
     }
    
     /**
-     * Creates an LRUCache where the VALUES in the map
-     * are each wrapped with a {@link SoftReference}.  The size 
+     * Creates an Map using the given capacity where the VALUES in the map
+     * are each wrapped with a {@link SoftReference}. The size 
      * of this map <strong>CAN GROW</strong> if more
      * entries are inserted.  Entries can
      * be removed by 2 different ways:
@@ -175,12 +175,12 @@ public final class Caches
      * </ol> 
      * @param <K> the (strongly reference) key type
      * @param <V> the softly referenced value type
-     * @param maxSize the max size of this cache before it should start removing
-     * the least recently used.
-     * @return a new Map instance with default capacity
+     * @param initialCapacity the initialCapacity of this cache which is used
+     * to calculate when the map should grow and be re-hashed.
+     * @return a new Map instance with the given capacity.
      */
-    public static <K,V> Map<K,V> createSoftReferencedValueCache(int maxSize){
-        return new SoftReferenceCache<K, V>(maxSize);
+    public static <K,V> Map<K,V> createSoftReferencedValueCache(int initialCapacity){
+        return new SoftReferenceCache<K, V>(initialCapacity);
     }
     
     /**
@@ -329,19 +329,19 @@ public final class Caches
      *
      *
      */
-    private abstract static class AbstractReferencedLRUCache<K,V,R extends Reference<V>> extends AbstractMap<K,V>{
+    private abstract static class AbstractReferencedCache<K,V,R extends Reference<V>> extends AbstractMap<K,V>{
         
         
         private final Map<K, R> cache;
         private final ReferenceQueue<V> referenceQueue = new ReferenceQueue<V>();
         private final Map<Reference<? extends V>, K> referenceKeyMap;
         /**
-         * @param maxAllowedSize
+         * @param initialCapacity
          * @param loadFactor
          */
-        AbstractReferencedLRUCache(Map<K,R> map, int maxAllowedSize) {
+        AbstractReferencedCache(Map<K,R> map, int initialCapacity) {
             cache = map;
-            int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(maxAllowedSize);
+            int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(initialCapacity);
             referenceKeyMap = new HashMap<Reference<? extends V>, K>(mapSize);
         }
         protected abstract R createReferenceFor(V value,final ReferenceQueue<V> referenceQueue);
@@ -485,15 +485,15 @@ public final class Caches
      * @see SoftReference
      *
      */
-    private static class SoftReferenceCache<K,V> extends AbstractReferencedLRUCache<K,V, SoftReference<V>>{
+    private static class SoftReferenceCache<K,V> extends AbstractReferencedCache<K,V, SoftReference<V>>{
        
        
         /**
          * @param maxAllowedSize
          * @param loadFactor
          */
-        public SoftReferenceCache(int maxSize) {
-        	super(Caches.<K,SoftReference<V>>createNonLRUMap(maxSize), maxSize);
+        public SoftReferenceCache(int initialCapacity) {
+        	super(Caches.<K,SoftReference<V>>createNonLRUMap(initialCapacity), initialCapacity);
         }
 
         /**
@@ -514,7 +514,7 @@ public final class Caches
      * @see SoftReference
      *
      */
-    private static class SoftReferenceLRUCache<K,V> extends AbstractReferencedLRUCache<K,V, SoftReference<V>>{
+    private static class SoftReferenceLRUCache<K,V> extends AbstractReferencedCache<K,V, SoftReference<V>>{
        
        
         /**
@@ -547,7 +547,7 @@ public final class Caches
      * @see WeakReference
      *
      */
-    private static class WeakReferenceLRUCache<K,V> extends AbstractReferencedLRUCache<K,V, WeakReference<V>>{
+    private static class WeakReferenceLRUCache<K,V> extends AbstractReferencedCache<K,V, WeakReference<V>>{
         
         
         /**
@@ -575,7 +575,7 @@ public final class Caches
      * @see WeakReference
      *
      */
-    private static class WeakReferenceCache<K,V> extends AbstractReferencedLRUCache<K,V, WeakReference<V>>{
+    private static class WeakReferenceCache<K,V> extends AbstractReferencedCache<K,V, WeakReference<V>>{
         
         
         /**
