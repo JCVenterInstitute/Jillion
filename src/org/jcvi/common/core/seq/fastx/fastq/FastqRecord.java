@@ -24,6 +24,7 @@
 package org.jcvi.common.core.seq.fastx.fastq;
 
 import org.jcvi.common.core.seq.fastx.FastXRecord;
+import org.jcvi.common.core.seq.read.trace.Trace;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -33,7 +34,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  * @author dkatzel
  *
  */
-public interface FastqRecord extends FastXRecord<Nucleotide,NucleotideSequence>{
+public interface FastqRecord extends FastXRecord<Nucleotide,NucleotideSequence>, Trace{
     
 	/**
      * 
@@ -45,6 +46,7 @@ public interface FastqRecord extends FastXRecord<Nucleotide,NucleotideSequence>{
      * This can cause problems with downstream software
      * if whitespace in ids is not allowed.
      */
+	@Override
     String getId();
     /**
      * Gets the {@link NucleotideSequence} of this record.
@@ -54,6 +56,7 @@ public interface FastqRecord extends FastXRecord<Nucleotide,NucleotideSequence>{
      * @return a {@link NucleotideSequence} instance;
      * never null.
      */
+	@Override
     NucleotideSequence getNucleotideSequence();
     /**
      * Gets the {@link QualitySequence} of this record.
@@ -63,6 +66,7 @@ public interface FastqRecord extends FastXRecord<Nucleotide,NucleotideSequence>{
      * @return a {@link QualitySequence} instance;
      * never null.
      */
+	@Override
     QualitySequence getQualitySequence();
     /**
      * 
