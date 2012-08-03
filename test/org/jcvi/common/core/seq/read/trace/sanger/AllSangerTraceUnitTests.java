@@ -35,6 +35,7 @@ import org.junit.runners.Suite.SuiteClasses;
     {
     	TestPosition.class,
     	TestDefaultPositionCodec.class,
+    	TestPositionSequenceBuilder.class,
         AllPhdUnitTests.class,
         AllChromatogramUnitTests.class,
         TestSangerTraceParser.class,
