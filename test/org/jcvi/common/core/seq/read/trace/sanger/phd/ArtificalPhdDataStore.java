@@ -49,23 +49,7 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
     private final DataStore<NucleotideSequence> seqDataStore;
     private final DataStore<QualitySequence> qualDataStore;
     private final Properties comments = new Properties();
-    
-    /**
-     * Create a new PhdDataStore from a DataStore of {@link Trace}
-     * objects.  The Trace's nucleotide and quality sequences
-     * will be used in the Phd objects but trace positions will be artificially
-     * created. 
-     * @param <T>  the Trace type.
-     * @param traceDataStore the Datastore of traces to wrap.
-     * @param phdDate the date for the phd records to be included
-     * in a comment in the phd records (required for consed).
-     * @return a new {@link PhdDataStore} object;
-     * never null.
-     */
-    public static <T extends Trace>  PhdDataStore createFromTraceDataStore(DataStore<T> traceDataStore, Date phdDate){
-        return new ArtificalPhdDataStore(TraceNucleotideDataStoreAdapter.adapt(traceDataStore), 
-                TraceQualityDataStoreAdapter.adapt(traceDataStore), phdDate);
-    }
+
     /**
      * @param seqDataStore
      * @param qualDataStore

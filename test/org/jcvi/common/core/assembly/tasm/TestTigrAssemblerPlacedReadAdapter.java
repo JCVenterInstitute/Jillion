@@ -28,8 +28,6 @@ import org.jcvi.common.core.assembly.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.tasm.TigrAssemblerPlacedReadAdapter;
 import org.jcvi.common.core.assembly.tasm.TigrAssemblerReadAttribute;
-import org.jcvi.common.core.seq.read.DefaultRead;
-import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
@@ -49,7 +47,6 @@ public class TestTigrAssemblerPlacedReadAdapter {
 														.setReferenceHint(consensus, 5)
 														.buildReferenceEncodedNucleotideSequence();
 
-	Read<ReferenceMappedNucleotideSequence> read = new DefaultRead<ReferenceMappedNucleotideSequence>(id, gappedBasecalls);
 	
 	
 	@Test(expected = NullPointerException.class)

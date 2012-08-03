@@ -20,16 +20,14 @@
 package org.jcvi.common.core.seq.read.trace.frg.afg;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.seq.read.trace.Trace;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface AmosFragment extends Trace, Read<NucleotideSequence>{
+public interface AmosFragment extends Trace{
 
     String getId();
     int getIndex();

@@ -26,6 +26,7 @@ package org.jcvi.common.core.assembly;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Rangeable;
+import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 /**
@@ -36,7 +37,7 @@ import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
  * this read has been assembled into (ex {@link Contig} or {@link Scaffold} etc).
  * @author dkatzel
  */
-public interface AssembledRead extends Rangeable{
+public interface AssembledRead extends Rangeable, Read{
 
 	/**
      * Get the 0-based, gapped
@@ -107,12 +108,14 @@ public interface AssembledRead extends Rangeable{
      * Get the id of this read.
      * @return the id as a String; will never be null.
      */
+    @Override
     String getId();
     /**
      * Get the ungapped {@link NucleotideSequence} of this read.
      * @return the {@link NucleotideSequence} of this read; will
      * never be null.
      */
+    @Override
     ReferenceMappedNucleotideSequence getNucleotideSequence();
     
     ReadInfo getReadInfo();

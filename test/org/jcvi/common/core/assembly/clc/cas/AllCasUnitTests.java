@@ -24,7 +24,6 @@
 package org.jcvi.common.core.assembly.clc.cas;
 
 import org.jcvi.common.core.assembly.clc.cas.align.AllCasAlignmentUnitTests;
-import org.jcvi.common.core.assembly.clc.cas.read.AllCasReadUnitTests;
 import org.jcvi.common.core.assembly.clc.cas.var.AllVarUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -39,7 +38,6 @@ import org.junit.runners.Suite.SuiteClasses;
         TestDefaultCasGappedReferenceMap.class,
         AllCasAlignmentUnitTests.class,
         AllVarUnitTests.class,
-        AllCasReadUnitTests.class,
         TestCas2Consed3.class
     }
     )

@@ -25,21 +25,15 @@ package org.jcvi.common.core.seq.read.trace;
 
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**
- * A {@code Trace} is genomic data that has
- * both a {@link NucleotideSequence}
- * and a {@link QualitySequence}.
+ * A {@code Trace} is {@link Read}
+ * that also has an associated
+ *  {@link QualitySequence}.
  * @author dkatzel
  *
  *
  */
-public interface Trace extends Read<NucleotideSequence>{
-    /**
-     * Get the basecalls of this trace as a {@link NucleotideSequence}.
-     * @return a {@link NucleotideSequence}, should never be null.
-     */
-    NucleotideSequence getNucleotideSequence();
+public interface Trace extends Read{
     /**
      * Get the quality data of this trace as a {@link QualitySequence}.
      * @return a {@link QualitySequence}, should never be null.

@@ -26,22 +26,22 @@ package org.jcvi.common.core.seq.read;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 /**
- * {@code Read} is the abstraction of an raw (usually ungapped)
- * nucleotide sequence.
+ * {@code Read} is the abstraction of a piece of
+ * genomic sequence data that has been
+ * sequenced on some kind of sequencing machine.
  * @author dkatzel
- * @param <T> the type of {@link NucleotideSequence}.
  *
  */
-public interface Read<T extends NucleotideSequence> {
+public interface Read {
     /**
      * Get the id of this read.
      * @return the id as a String; will never be null.
      */
     String getId();
     /**
-     * Get the ungapped {@link NucleotideSequence} of this read.
+     * Get the {@link NucleotideSequence} of this read.
      * @return the {@link NucleotideSequence} of this read; will
      * never be null.
      */
-    T getNucleotideSequence();
+    NucleotideSequence getNucleotideSequence();
 }
