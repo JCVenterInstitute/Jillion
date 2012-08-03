@@ -24,11 +24,9 @@
 package org.jcvi.common.core.seq.read.trace.frg;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.seq.read.trace.Trace;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
-public interface Fragment extends Trace, Read<NucleotideSequence>{
+public interface Fragment extends Trace{
 
     String getId();
     Range getValidRange();

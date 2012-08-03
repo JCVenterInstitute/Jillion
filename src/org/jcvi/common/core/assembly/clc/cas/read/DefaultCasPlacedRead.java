@@ -26,19 +26,22 @@ package org.jcvi.common.core.assembly.clc.cas.read;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ReadInfo;
-import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 
 final class DefaultCasPlacedRead implements CasPlacedRead{
 
-    private final Read<ReferenceMappedNucleotideSequence> read;
     private final long startOffset;
     private final Direction dir;
     private final ReadInfo readInfo;
-    public DefaultCasPlacedRead(Read<ReferenceMappedNucleotideSequence> read, long startOffset,Range validRange, 
+    private final ReferenceMappedNucleotideSequence sequence;
+    private final String id;
+    public DefaultCasPlacedRead(String id, ReferenceMappedNucleotideSequence sequence, long startOffset,Range validRange, 
             Direction dir, int ungappedFullLength){
-        if(read==null){
-            throw new NullPointerException("read can not be null");
+        if(id==null){
+            throw new NullPointerException("id can not be null");
+        }
+        if(sequence==null){
+            throw new NullPointerException("sequence can not be null");
         }
         if(validRange ==null){
             throw new NullPointerException("validRange can not be null");
@@ -46,7 +49,8 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
         if(dir ==null){
             throw new NullPointerException("direction can not be null");
         }
-        this.read= read;
+        this.id= id;
+        this.sequence = sequence;
         this.startOffset = startOffset;
         this.dir= dir;
         this.readInfo = new ReadInfo(validRange, ungappedFullLength);
@@ -71,7 +75,7 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
     }
     @Override
     public long getGappedLength() {
-        return read.getNucleotideSequence().getLength();
+        return sequence.getLength();
     }
     @Override
     public long getGappedStartOffset() {
@@ -79,18 +83,13 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
     }
     @Override
     public ReferenceMappedNucleotideSequence getNucleotideSequence() {
-        return read.getNucleotideSequence();
+        return sequence;
     }
     @Override
     public String getId() {
-        return read.getId();
+        return id;
     }
-    @Override
-    public String toString() {
-        return "DefaultCasPlacedRead [startOffset=" + startOffset
-                + ", readInfo=" + readInfo + ", dir=" + dir + ", read="
-                + read + "]";
-    }
+    
     @Override
     public long toGappedValidRangeOffset(long referenceIndex) {
         
@@ -115,19 +114,47 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
     public Direction getDirection() {
         return dir;
     }
+   
+
+
+    /**
+    * {@inheritDoc}
+    */
     @Override
+    public Range asRange() {
+        return getGappedContigRange();
+    }
+
+    @Override
+	public Range getGappedContigRange() {
+		return Range.create(getGappedStartOffset(), getGappedEndOffset());
+	}
+
+
+	@Override
+	public String toString() {
+		return "DefaultCasPlacedRead [id=" + id + ", startOffset="
+				+ startOffset + ", dir=" + dir + ", readInfo=" + readInfo
+				+ ", sequence=" + sequence + "]";
+	}
+
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result +  dir.hashCode();
-		result = prime * result +  read.hashCode();
+		result = prime * result + ((dir == null) ? 0 : dir.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
-				+ readInfo.hashCode();
+				+ ((readInfo == null) ? 0 : readInfo.hashCode());
+		result = prime * result
+				+ ((sequence == null) ? 0 : sequence.hashCode());
 		result = prime * result + (int) (startOffset ^ (startOffset >>> 32));
 		return result;
 	}
-    
-    @Override
+
+
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -142,31 +169,33 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
 		if (dir != other.dir) {
 			return false;
 		}
-		if (!read.equals(other.read)) {
+		if (id == null) {
+			if (other.id != null) {
+				return false;
+			}
+		} else if (!id.equals(other.id)) {
 			return false;
 		}
-		if (!readInfo.equals(other.readInfo)) {
+		if (readInfo == null) {
+			if (other.readInfo != null) {
+				return false;
+			}
+		} else if (!readInfo.equals(other.readInfo)) {
+			return false;
+		}
+		if (sequence == null) {
+			if (other.sequence != null) {
+				return false;
+			}
+		} else if (!sequence.equals(other.sequence)) {
 			return false;
 		}
 		if (startOffset != other.startOffset) {
 			return false;
 		}
 		return true;
-	}
-
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public Range asRange() {
-        return getGappedContigRange();
-    }
-
-    @Override
-	public Range getGappedContigRange() {
-		return Range.create(getGappedStartOffset(), getGappedEndOffset());
 	}  
+    
     
    
 }

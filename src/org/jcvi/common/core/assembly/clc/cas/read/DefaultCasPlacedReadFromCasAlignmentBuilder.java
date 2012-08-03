@@ -30,8 +30,6 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentRegion;
 import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentRegionType;
-import org.jcvi.common.core.seq.read.DefaultRead;
-import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -161,11 +159,11 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
             validRange = AssemblyUtil.reverseComplementValidRange(validRange, fullUngappedLength);
         }
         
-        Read<ReferenceMappedNucleotideSequence> read = new DefaultRead<ReferenceMappedNucleotideSequence>(readId,
-        		gappedSequenceBuilder
-        		.setReferenceHint(gappedReference, (int)startOffset)
-        		.buildReferenceEncodedNucleotideSequence());
-        return new DefaultCasPlacedRead(read, startOffset, validRange, dir,(int)fullUngappedLength);
+        ReferenceMappedNucleotideSequence sequence = gappedSequenceBuilder
+									.setReferenceHint(gappedReference, (int)startOffset)
+									.buildReferenceEncodedNucleotideSequence();
+        
+        return new DefaultCasPlacedRead(readId, sequence, startOffset, validRange, dir,(int)fullUngappedLength);
     }
 
 }

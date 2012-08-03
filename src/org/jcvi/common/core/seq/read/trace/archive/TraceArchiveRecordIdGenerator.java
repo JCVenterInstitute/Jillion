@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.seq.read.trace.archive;
 
-import org.jcvi.common.core.seq.read.trace.TraceIdGenerator;
 
-public interface TraceArchiveRecordIdGenerator extends TraceIdGenerator<TraceArchiveRecord, String> {
+public interface TraceArchiveRecordIdGenerator{
 
+	String generateIdFor(TraceArchiveRecord input);
 }
