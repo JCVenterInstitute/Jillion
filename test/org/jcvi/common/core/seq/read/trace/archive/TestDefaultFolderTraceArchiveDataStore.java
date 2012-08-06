@@ -64,8 +64,8 @@ public class TestDefaultFolderTraceArchiveDataStore {
        
     }
     private static void assertTraceArchiveTraceValuesEqual(TraceArchiveTrace expected, TraceArchiveTrace actual){
-        assertEquals(expected.getNucleotideSequence().asList(), actual.getNucleotideSequence().asList());
-        assertEquals(expected.getQualitySequence().asList(), actual.getQualitySequence().asList());
+        assertEquals(expected.getNucleotideSequence(), actual.getNucleotideSequence());
+        assertEquals(expected.getQualitySequence(), actual.getQualitySequence());
         assertEquals(expected.getPositionSequence(), actual.getPositionSequence());
     }
     @Test

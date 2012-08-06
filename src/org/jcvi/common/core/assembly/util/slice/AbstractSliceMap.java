@@ -29,22 +29,22 @@ import java.util.List;
 
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
-import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 
 public abstract class  AbstractSliceMap implements SliceMap{
 
     protected List<IdedSliceElement> createSliceElementsFor(
             CoverageRegion<? extends AssembledRead> region,
-            long offset, DataStore<? extends Sequence<PhredQuality>> qualityDataStore,
+            long offset, QualityDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy) {
         List<IdedSliceElement> sliceElements = new ArrayList<IdedSliceElement>(region.getCoverageDepth());
         for(AssembledRead read : region){
             
-            Sequence<PhredQuality> qualities;
+            QualitySequence qualities;
             try {
                 final String id = read.getId();
                 
@@ -68,7 +68,7 @@ public abstract class  AbstractSliceMap implements SliceMap{
     protected IdedSliceElement createSliceElementFor(
             QualityValueStrategy qualityValueStrategy, int gappedIndex,
             AssembledRead realRead,
-            final Sequence<PhredQuality> qualities) {
+            final QualitySequence qualities) {
 
         final Nucleotide calledBase = realRead.getNucleotideSequence().get(gappedIndex);
         try{

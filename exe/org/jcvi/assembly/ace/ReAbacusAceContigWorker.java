@@ -469,16 +469,17 @@ public class ReAbacusAceContigWorker {
 	                			NucleotideSequenceFastaRecord gappedFasta = iter.next();
 	                            String id = gappedFasta.getId();
 	                            NucleotideSequence gappedSequence = gappedFasta.getSequence();
-	                            List<Nucleotide> bases = gappedSequence.asList();
 	                            AcePlacedReadBuilder readBuilder =contigBuilder.getAssembledReadBuilder(id);
 	                           
 	                            Range sequenceRange = Range.parseRange(gappedFasta.getComment());
 	                            
-	                            Range newGappedRange = Range.create(0,bases.size()-1);
+	                            Range newGappedRange = Range.createOfLength(gappedSequence.getLength());
 	                            //will be 0 unless we are in the beginning of a read
 	                            //which will change this number later
 	                            int numberOfLeadingGaps=0;
-	                            
+	                            int offsetOfLastNonGappedBase =gappedSequence.getGappedOffsetFor((int)gappedSequence.getUngappedLength()-1);
+	                            long numberOfTrailingGaps = gappedSequence.getLength() - 1-offsetOfLastNonGappedBase;
+	                            /*
 	                            int i=bases.size()-1;
 	                            Nucleotide currentBase = bases.get(i);
 	                            int numberOfTrailingGaps = 0;
@@ -487,6 +488,7 @@ public class ReAbacusAceContigWorker {
 	                                i--;
 	                                currentBase = bases.get(i);
 	                            }     
+	                            */
 	                            NucleotideSequenceBuilder basesBuilder = readBuilder.getNucleotideSequenceBuilder();
 	                            //remove bases to fix
 	                            basesBuilder.delete(sequenceRange);

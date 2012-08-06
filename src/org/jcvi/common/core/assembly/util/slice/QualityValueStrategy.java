@@ -24,11 +24,11 @@
 package org.jcvi.common.core.assembly.util.slice;
 
 import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 
 public interface QualityValueStrategy {
 
-    PhredQuality getQualityFor(AssembledRead placedRead, Sequence<PhredQuality> fullQualities,
+    PhredQuality getQualityFor(AssembledRead placedRead, QualitySequence fullQualities,
             int gappedReadIndex);
 }

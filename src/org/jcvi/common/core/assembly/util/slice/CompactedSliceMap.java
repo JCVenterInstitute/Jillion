@@ -34,7 +34,6 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageMapUtil;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -181,7 +180,7 @@ public final class CompactedSliceMap implements SliceMap {
         */
         @Override
         public PhredQuality getQualityFor(AssembledRead placedRead,
-                Sequence<PhredQuality> fullQualities, int gappedReadIndex) {
+        		QualitySequence fullQualities, int gappedReadIndex) {
             return defaultQuality;
         }
         
@@ -191,7 +190,7 @@ public final class CompactedSliceMap implements SliceMap {
         int size = (int)CoverageMapUtil.getLastCoveredOffsetIn(coverageMap)+1;
         this.slices = new CompactedSlice[size];
         for(CoverageRegion<PR> region : coverageMap){
-            Map<String,Sequence<PhredQuality>> qualities = new HashMap<String,Sequence<PhredQuality>>(region.getCoverageDepth());
+            Map<String,QualitySequence> qualities = new HashMap<String,QualitySequence>(region.getCoverageDepth());
             for(AssembledRead read :region){
                 final String id = read.getId();
                 if(qualityDataStore==null){
@@ -221,7 +220,7 @@ public final class CompactedSliceMap implements SliceMap {
     			String id =read.getId();
     			Direction dir = read.getDirection();
     			
-    			Sequence<PhredQuality> fullQualities = qualityDataStore.get(id);
+    			QualitySequence fullQualities = qualityDataStore.get(id);
     			for(Nucleotide base : read.getNucleotideSequence()){
     				PhredQuality quality = qualityValueStrategy.getQualityFor(read, fullQualities, i);
     				if(builders[start+i] ==null){
@@ -249,15 +248,14 @@ public final class CompactedSliceMap implements SliceMap {
      */
     protected CompactedSlice createSlice(
             CoverageRegion<? extends AssembledRead> region, 
-            Map<String,Sequence<PhredQuality>> qualities,
+            Map<String,QualitySequence> qualities,
             QualityValueStrategy qualityValueStrategy,
             int i) {
         CompactedSlice.Builder builder = new CompactedSlice.Builder();
         for (AssembledRead read : region) {
             String id=read.getId();
             int indexIntoRead = (int) (i - read.getGappedStartOffset());
-          //  if()
-            Sequence<PhredQuality> fullQualities = qualities.get(id);
+            QualitySequence fullQualities = qualities.get(id);
             final PhredQuality quality;
             if(fullQualities==null){
                 quality = PhredQuality.valueOf(30);

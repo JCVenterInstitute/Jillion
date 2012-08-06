@@ -22,8 +22,8 @@ package org.jcvi.common.core.assembly.ace;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -34,6 +34,8 @@ import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
@@ -125,7 +127,7 @@ public final class AceFileUtil {
      * @throws NullPointerException if basecalls are null.
      */
     public static String convertToAcePaddedBasecalls(NucleotideSequence basecalls){
-        return convertToAcePaddedBasecalls(basecalls.asList(),null);
+        return convertToAcePaddedBasecalls(basecalls,null);
      }
     /**
      * Convert a {@link List} of {@link Nucleotides} into a string
@@ -144,29 +146,23 @@ public final class AceFileUtil {
      * @throws IllegalArgumentException if optionalQualities is provided but does not have 
      * enough ungapped qualities to cover all the ungapped basecalls in the input list.
      */
-     public static String convertToAcePaddedBasecalls(List<Nucleotide> basecalls,List<PhredQuality> optionalQualities){
-         StringBuilder result = new StringBuilder();
-         int numberOfGapsSoFar=0;
-         
-         for(int i=0; i< basecalls.size(); i++){
-             Nucleotide base = basecalls.get(i);
-             if(base ==null){
-                 throw new NullPointerException(String.format("%d th basecall is null", i));
-             }
+     public static String convertToAcePaddedBasecalls(NucleotideSequence basecalls,QualitySequence optionalQualities){
+         long length = basecalls.getLength();
+		StringBuilder result = new StringBuilder((int)length);
+		Iterator<PhredQuality> qualityIterator = optionalQualities ==null?null : optionalQualities.iterator();
+         for(Nucleotide base : basecalls){
              if(base == Nucleotide.Gap){
                  result.append('*');
-                 numberOfGapsSoFar++;
              }
              else{
                  if(optionalQualities==null){
                 	 result.append(base);
                  }else{                 
-                     int offset = i- numberOfGapsSoFar;
-                     if(optionalQualities.size()<=offset){
+                     if(!qualityIterator.hasNext()){
                          throw new IllegalArgumentException(
-                                 String.format("not enough ungapped qualities for input basecalls found only %d qualities",offset));
+                                 String.format("not enough ungapped qualities for input basecalls found only %d qualities",optionalQualities.getLength()));
                      }
-                     PhredQuality quality =optionalQualities.get(offset);
+                     PhredQuality quality =qualityIterator.next();
                      if(quality.compareTo(ACE_DEFAULT_HIGH_QUALITY_THRESHOLD)<0){
                          result.append(base.toString().toLowerCase(Locale.ENGLISH));
                      }
@@ -178,7 +174,7 @@ public final class AceFileUtil {
          }
          
          String consedBasecalls= result.toString().replaceAll("(.{50})", "$1"+String.format("%n"));
-         if(basecalls.size() %50 ==0){
+         if(length %50 ==0){
              //if the last line is full, then we will have an extra %n
              //so strip it off
              return consedBasecalls.substring(0,consedBasecalls.length()-1);
@@ -226,20 +222,21 @@ public final class AceFileUtil {
         final Range ungappedValidRange = placedRead.getReadInfo().getValidRange();
         final Direction dir = placedRead.getDirection(); 
         final NucleotideSequence fullBasecalls = phd.getNucleotideSequence();
-        final List<Nucleotide> phdFullBases = fullBasecalls.asList();
         
-        final List<Nucleotide> fullGappedValidRange = AssemblyUtil.buildGappedComplementedFullRangeBases(placedRead, phdFullBases);
-        final List<PhredQuality> qualities =phd.getQualitySequence().asList();  
-        if(qualities.isEmpty()){
-            throw new IllegalStateException("empty qualities for read "+ readId);
+        final NucleotideSequence fullGappedValidRange = AssemblyUtil.buildGappedComplementedFullRangeBases(placedRead, fullBasecalls);
+        final QualitySequence qualities;
+        if(dir ==Direction.REVERSE){
+        	qualities = new QualitySequenceBuilder(phd.getQualitySequence())
+        						.reverse()
+        						.build();
+        }else{
+        	qualities = phd.getQualitySequence();
         }
-        if(dir == Direction.REVERSE){
-            Collections.reverse(qualities);            
-        }
+        
         StringBuilder readRecord = new StringBuilder();
         readRecord.append(String.format("RD %s %d 0 0%n",
                                             readId,
-                                            fullGappedValidRange.size()));
+                                            fullGappedValidRange.getLength()));
         
         
         readRecord.append(String.format("%s%n%n",
