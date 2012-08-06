@@ -26,11 +26,10 @@ package org.jcvi.common.core.seq.read.trace.sanger.phd;
 import java.util.List;
 import java.util.Properties;
 
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdTag;
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.junit.Before;
@@ -65,9 +64,11 @@ public class TestBuildArtificialPhd {
         assertEquals(id, phd.getId());
         assertEquals(mockBasecalls, phd.getNucleotideSequence());
         assertEquals(mockQualities, phd.getQualitySequence());
-        Sequence<ShortSymbol> actualPeaks = phd.getPeaks().getData();
+        PositionSequence actualPeaks = phd.getPositionSequence();
         for(int i=0; i< lengthOfBases; i++){
-            assertEquals(Short.valueOf((short)(i*numberOfPositionsForEachPeak + numberOfPositionsForEachPeak)), actualPeaks.get(i).getValue());
+            assertEquals(
+            		i*numberOfPositionsForEachPeak + numberOfPositionsForEachPeak,
+            		actualPeaks.get(i).getValue());
         }
         assertCommentsAndTagsAreEmpty(phd);
         verify(mockBasecalls, mockQualities);
@@ -85,9 +86,10 @@ public class TestBuildArtificialPhd {
         assertEquals(id, phd.getId());
         assertEquals(mockBasecalls, phd.getNucleotideSequence());
         assertEquals(mockQualities, phd.getQualitySequence());
-        Sequence<ShortSymbol> actualPeaks = phd.getPeaks().getData();
+        PositionSequence actualPeaks = phd.getPositionSequence();
         for(int i=0; i< lengthOfBases; i++){
-            assertEquals(Short.valueOf((short)(i*numberOfPositionsForEachPeak + numberOfPositionsForEachPeak)), actualPeaks.get(i).getValue());
+            assertEquals(i*numberOfPositionsForEachPeak + numberOfPositionsForEachPeak
+            		, actualPeaks.get(i).getValue());
         }
         assertEquals(mockProperties, phd.getComments());
         assertEquals(mockTags, phd.getTags());

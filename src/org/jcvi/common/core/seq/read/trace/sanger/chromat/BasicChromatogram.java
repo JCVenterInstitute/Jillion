@@ -26,7 +26,8 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.jcvi.common.core.symbol.pos.SangerPeak;
+
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -47,9 +48,9 @@ public class BasicChromatogram implements Chromatogram {
    
     private final ChannelGroup channelGroup;
     private final NucleotideSequence basecalls;
-    private final SangerPeak peaks;
     private final QualitySequence qualities;
-
+    private final PositionSequence positions;
+    
     private final String id;
     
     /**
@@ -62,15 +63,15 @@ public class BasicChromatogram implements Chromatogram {
         this(c.getId(),
         		c.getNucleotideSequence(),
                 c.getQualitySequence(),
-                c.getPeaks(),
+                c.getPositionSequence(),
                c.getChannelGroup(),
                 c.getComments());
     }
-    public BasicChromatogram(String id, NucleotideSequence basecalls,QualitySequence qualities, SangerPeak peaks,
+    public BasicChromatogram(String id, NucleotideSequence basecalls,QualitySequence qualities, PositionSequence peaks,
             ChannelGroup channelGroup){
         this(id,basecalls, qualities, peaks, channelGroup, new HashMap<String,String>());
     }
-    public BasicChromatogram(String id, String basecalls, byte[] qualities,SangerPeak peaks,
+    public BasicChromatogram(String id, String basecalls, byte[] qualities,PositionSequence peaks,
             ChannelGroup channelGroup,
             Map<String,String> comments){
         this(id,new NucleotideSequenceBuilder(basecalls).build(),
@@ -78,12 +79,13 @@ public class BasicChromatogram implements Chromatogram {
                 peaks,
                      channelGroup, comments);
     }
-    public BasicChromatogram(String id, NucleotideSequence basecalls, QualitySequence qualities,SangerPeak peaks,
+    public BasicChromatogram(String id, NucleotideSequence basecalls, 
+    		QualitySequence qualities,PositionSequence peaks,
            ChannelGroup channelGroup,
            Map<String,String> comments){
         canNotBeNull(id,basecalls, peaks, channelGroup, comments);
         this.id=id;
-        this.peaks = peaks;        
+        this.positions = peaks;        
         this.properties = comments;
         this.channelGroup =channelGroup;
         this.basecalls = basecalls;
@@ -106,12 +108,12 @@ public class BasicChromatogram implements Chromatogram {
 	public NucleotideSequence getNucleotideSequence() {
         return basecalls;
     }
-    @Override
-    public SangerPeak getPeaks() {
-        return peaks;
-    }
 
-    public Map<String,String> getComments() {
+    @Override
+	public PositionSequence getPositionSequence() {
+		return positions;
+	}
+	public Map<String,String> getComments() {
         return properties;
     }
 
@@ -129,7 +131,7 @@ public class BasicChromatogram implements Chromatogram {
         int result = 1;
         result = prime * result + getChannelGroup().hashCode();
         result = prime * result +  basecalls.hashCode();
-        result = prime * result +  peaks.hashCode();
+        result = prime * result +  positions.hashCode();
         result = prime * result +  properties.hashCode();
         return result;
     }
@@ -145,7 +147,7 @@ public class BasicChromatogram implements Chromatogram {
         final Chromatogram other = (Chromatogram) obj;
 
         return ObjectsUtil.nullSafeEquals(getNucleotideSequence(), other.getNucleotideSequence())
-        && ObjectsUtil.nullSafeEquals(getPeaks(), other.getPeaks())
+        && ObjectsUtil.nullSafeEquals(getPositionSequence(), other.getPositionSequence())
         && ObjectsUtil.nullSafeEquals(getChannelGroup(), other.getChannelGroup())
         && ObjectsUtil.nullSafeEquals(getComments(), other.getComments());
     }
@@ -163,7 +165,7 @@ public class BasicChromatogram implements Chromatogram {
     }
     @Override
     public int getNumberOfTracePositions() {
-        return getChannelGroup().getAChannel().getPositions().array().length;
+		return (int)getChannelGroup().getAChannel().getPositions().getLength();
     }
 
 

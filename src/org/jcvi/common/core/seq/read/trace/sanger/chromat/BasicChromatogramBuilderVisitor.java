@@ -21,6 +21,7 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 
 import java.util.Map;
 
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 
@@ -41,9 +42,6 @@ public final class BasicChromatogramBuilderVisitor implements ChromatogramFileVi
     
     public BasicChromatogramBuilderVisitor(String id){
         builder = new BasicChromatogramBuilder(id);
-    }
-    public final short[] peaks() {
-        return builder.peaks();
     }
     
     private void checkNotYetBuilt(){
@@ -119,7 +117,7 @@ public final class BasicChromatogramBuilderVisitor implements ChromatogramFileVi
       @Override
       public void visitPeaks(short[] peaks) {
           checkNotYetBuilt();
-          builder.peaks(peaks);              
+          builder.peaks(new PositionSequenceBuilder(peaks).build());              
       }
 
      

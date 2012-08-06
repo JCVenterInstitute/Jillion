@@ -25,8 +25,6 @@ package org.jcvi.common.core.seq.read.trace.sanger;
 
 import java.io.File;
 import java.io.IOException;
-
-import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
@@ -59,12 +57,13 @@ public class DefaultFileSangerTrace implements FileSangerTrace {
         return trace.getNumberOfTracePositions();
     }
 
+    
     @Override
-    public SangerPeak getPeaks() {
-        return trace.getPeaks();
-    }
+	public PositionSequence getPositionSequence() {
+		return trace.getPositionSequence();
+	}
 
-    @Override
+	@Override
     public NucleotideSequence getNucleotideSequence() {
         return trace.getNucleotideSequence();
     }

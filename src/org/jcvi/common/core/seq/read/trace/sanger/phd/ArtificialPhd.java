@@ -23,21 +23,17 @@
  */
 package org.jcvi.common.core.seq.read.trace.sanger.phd;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.symbol.ShortGlyphFactory;
-import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 public class ArtificialPhd implements Phd{
-
-    private static final ShortGlyphFactory PEAK_FACTORY = ShortGlyphFactory.getInstance();
     /**
      * The Position of the first peak in a Newbler created
      * fake 454 phd record.
@@ -53,7 +49,7 @@ public class ArtificialPhd implements Phd{
     private final QualitySequence qualities;
    private final Properties comments;
    private final List<PhdTag> tags;
-   private SangerPeak fakePositions=null;
+   private PositionSequence fakePositions=null;
    private final int numberOfPositionsForEachPeak;
    private final int numberOfBases;
    private final int positionOfFirstPeak;
@@ -212,14 +208,14 @@ public class ArtificialPhd implements Phd{
     }
 
     @Override
-    public synchronized SangerPeak getPeaks() {
+    public synchronized PositionSequence getPositionSequence() {
         if(fakePositions ==null){
-            List<ShortSymbol> fakePositions = new ArrayList<ShortSymbol>(numberOfBases);
+        	PositionSequenceBuilder builder = new PositionSequenceBuilder(numberOfBases);
             
             for(int i=0; i< numberOfBases; i++){
-                fakePositions.add(PEAK_FACTORY.getGlyphFor(i * numberOfPositionsForEachPeak +positionOfFirstPeak ));
+               builder.append(i * numberOfPositionsForEachPeak +positionOfFirstPeak );
             }
-            this.fakePositions = new SangerPeak(fakePositions);
+            this.fakePositions = builder.build();
         }
         return fakePositions;
     }

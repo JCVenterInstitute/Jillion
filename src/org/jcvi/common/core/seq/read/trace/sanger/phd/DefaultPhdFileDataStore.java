@@ -32,8 +32,7 @@ import java.util.Properties;
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
-import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.symbol.pos.SangerPeak;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**
@@ -136,13 +135,13 @@ public final class DefaultPhdFileDataStore{
         */
         @Override
         protected boolean visitPhd(String id, NucleotideSequence bases,
-                QualitySequence qualities, List<ShortSymbol> positions,
+                QualitySequence qualities, PositionSequence positions,
                 Properties comments, List<PhdTag> tags) {
         	
             map.put(id, new DefaultPhd(id,
                    bases,
                     qualities,
-                    new SangerPeak(positions),
+                    positions,
                     comments,
                     tags));
             

@@ -26,11 +26,12 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.ShortBuffer;
 import java.util.Arrays;
 import java.util.Collections;
 
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.read.trace.sanger.Position;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
@@ -114,39 +115,32 @@ public abstract class AbstractSampleSectionCodec implements SectionCodec{
 
     private int getMaxPositionsValue(SCFChromatogram c) {
        ChannelGroup group= c.getChannelGroup();
-        ShortBuffer aPositions =group.getAChannel().getPositions();
-        ShortBuffer cPositions =group.getCChannel().getPositions();
-        ShortBuffer gPositions =group.getGChannel().getPositions();
-        ShortBuffer tPositions =group.getTChannel().getPositions();
-        //rewind all buffers
-        aPositions.rewind();
-        cPositions.rewind();
-        gPositions.rewind();
-        tPositions.rewind();
+        PositionSequence aPositions =group.getAChannel().getPositions();
+        PositionSequence cPositions =group.getCChannel().getPositions();
+        PositionSequence gPositions =group.getGChannel().getPositions();
+        PositionSequence tPositions =group.getTChannel().getPositions();       
         int max =Collections.max(Arrays.asList(
                     getMaxValueFor(aPositions),
                     getMaxValueFor(cPositions),
                     getMaxValueFor(gPositions),
                     getMaxValueFor(tPositions)
-                    ));
-        //rewind all buffers
-        aPositions.rewind();
-        cPositions.rewind();
-        gPositions.rewind();
-        tPositions.rewind();
+                    ));       
         return max;
     }
-
-    private int getMaxValueFor(ShortBuffer buffer) {
+    private int getMaxValueFor(PositionSequence positions) {
         int currentMax = Integer.MIN_VALUE;
-        while(buffer.hasRemaining()){
-            short value = buffer.get();
+        for(Position position : positions){        	
+            int value = position.getValue();
+            if(value > Short.MAX_VALUE){
+            	System.out.println("here");
+            }
             if(value > currentMax){
                 currentMax = value;
             }
         }
         return currentMax;
     }
+   
 
     @Override
     public EncodedSection encode(SCFChromatogram c, SCFHeader header)
@@ -154,12 +148,12 @@ public abstract class AbstractSampleSectionCodec implements SectionCodec{
 
         PositionStrategy positionStrategy =getPositionStrategyFor(c);
         final ChannelGroup channelGroup = c.getChannelGroup();
-        ShortBuffer aPositions =channelGroup.getAChannel().getPositions();
-        ShortBuffer cPositions =channelGroup.getCChannel().getPositions();
-        ShortBuffer gPositions =channelGroup.getGChannel().getPositions();
-        ShortBuffer tPositions =channelGroup.getTChannel().getPositions();
+        PositionSequence aPositions =channelGroup.getAChannel().getPositions();
+        PositionSequence cPositions =channelGroup.getCChannel().getPositions();
+        PositionSequence gPositions =channelGroup.getGChannel().getPositions();
+        PositionSequence tPositions =channelGroup.getTChannel().getPositions();
         byte sampleSize =positionStrategy.getSampleSize();
-        final int numberOfSamples = aPositions.limit();
+        final int numberOfSamples = (int)aPositions.getLength();
 
         final int bufferLength = numberOfSamples*4*sampleSize;
 
@@ -174,7 +168,7 @@ public abstract class AbstractSampleSectionCodec implements SectionCodec{
     }
 
     protected abstract void writePositionsToBuffer(PositionStrategy positionStrategy,
-            ShortBuffer aPositions, ShortBuffer cPositions,
-            ShortBuffer gPositions, ShortBuffer tPositions, ByteBuffer buffer);
+    		PositionSequence aPositions, PositionSequence cPositions,
+    		PositionSequence gPositions, PositionSequence tPositions, ByteBuffer buffer);
 
 }

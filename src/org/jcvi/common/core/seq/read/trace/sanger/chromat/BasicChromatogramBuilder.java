@@ -28,18 +28,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.symbol.pos.SangerPeak;
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.read.trace.sanger.Position;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 public final class BasicChromatogramBuilder {
     
     private static final byte[] EMPTY_BYTE_ARRAY = new byte[]{};
-        private short[] peaks;
+        private PositionSequence peaks;
         private NucleotideSequence basecalls;
         //default to empty confidences (which may happen if read is really
         //trashy
@@ -73,36 +74,59 @@ public final class BasicChromatogramBuilder {
          *  position and confidence data on all 4 channels can not be null.
          * @param properties the properties may be null.
          */
-        private BasicChromatogramBuilder(String id, NucleotideSequence basecalls, short[] peaks, ChannelGroup channelGroup, Map<String,String> properties){
+        private BasicChromatogramBuilder(String id, NucleotideSequence basecalls,
+        		PositionSequence peaks, ChannelGroup channelGroup, Map<String,String> properties){
             id(id);
         	basecalls(basecalls);
             peaks(peaks);
-            aConfidence(channelGroup.getAChannel().getConfidence().getData());
-            aPositions(channelGroup.getAChannel().getPositions().array());            
-            cConfidence(channelGroup.getCChannel().getConfidence().getData());
-            cPositions(channelGroup.getCChannel().getPositions().array());
-            gConfidence(channelGroup.getGChannel().getConfidence().getData());
-            gPositions(channelGroup.getGChannel().getPositions().array());
-            tConfidence(channelGroup.getTChannel().getConfidence().getData());
-            tPositions(channelGroup.getTChannel().getPositions().array());
+            channelGroup(channelGroup);           
             properties(properties);
         }
         
+        private void channelGroup(ChannelGroup channelGroup){
+        	 aConfidence(toByteArray(channelGroup.getAChannel().getConfidence()));
+             aPositions(toShortArray(channelGroup.getAChannel().getPositions()));            
+             cConfidence(toByteArray(channelGroup.getCChannel().getConfidence()));
+             cPositions(toShortArray(channelGroup.getCChannel().getPositions()));
+             gConfidence(toByteArray(channelGroup.getGChannel().getConfidence()));
+             gPositions(toShortArray(channelGroup.getGChannel().getPositions()));
+             tConfidence(toByteArray(channelGroup.getTChannel().getConfidence()));
+             tPositions(toShortArray(channelGroup.getTChannel().getPositions()));
+        }
+        private byte[] toByteArray(QualitySequence sequence){
+        	byte[] array = new byte[(int)sequence.getLength()];
+        	int i=0;
+        	for(PhredQuality q : sequence){
+        		array[i]=q.getQualityScore();
+        		i++;
+        	}
+        	return array;
+        }
+        
+        private short[] toShortArray(PositionSequence sequence){
+        	short[] array = new short[(int)sequence.getLength()];
+        	int i=0;
+        	for(Position pos : sequence){
+        		array[i]=IOUtil.toSignedShort(pos.getValue());
+        		i++;
+        	}
+        	return array;
+        }
         
         public BasicChromatogramBuilder(Chromatogram copy){
 		       this(copy.getId(), copy.getNucleotideSequence(),
-		       ShortSymbol.toArray(copy.getPeaks().getData().asList()),
+		       copy.getPositionSequence(),
 		       copy.getChannelGroup(),
 		       copy.getComments()
 		       );
         
         }
-        public final short[] peaks() {
-            return Arrays.copyOf(peaks, peaks.length);
+        public final PositionSequence peaks() {
+            return peaks;
         }
 
-        public final BasicChromatogramBuilder peaks(short[] peaks) {
-            this.peaks = Arrays.copyOf(peaks, peaks.length);
+        public final BasicChromatogramBuilder peaks(PositionSequence peaks) {
+            this.peaks = peaks;
             return this;
         }
         public final String id(){
@@ -225,18 +249,18 @@ public final class BasicChromatogramBuilder {
 
         private QualitySequence generateQualities(ChannelGroup channelGroup) {
         	int length = (int)basecalls.getLength();
-            byte[] qualities = new byte[length];
-            
-            for(int i=0; i< length; i++){
-                Nucleotide base = basecalls.get(i);
-                final byte[] data = channelGroup.getChannel(base).getConfidence().getData();
-                //only read as many qualities as we have...
-                if(i == data.length){
-                    break;
+            QualitySequenceBuilder builder = new QualitySequenceBuilder(length);
+            int i=0;
+            for(Nucleotide base : basecalls){
+            	QualitySequence qualitySequence = channelGroup.getChannel(base).getConfidence();
+            	//only read as many qualities as we have...
+                if(i == qualitySequence.getLength()){
+                	break;
                 }
-                qualities[i]=data[i];
-            }
-            return  new QualitySequenceBuilder(qualities).build();
+                builder.append(qualitySequence.get(i));
+                i++;
+            }            
+            return  builder.build();
         }
         
         public Chromatogram build() {
@@ -247,10 +271,10 @@ public final class BasicChromatogramBuilder {
                     new Channel(tConfidence(),tPositions()));
             
             return new BasicChromatogram(id,
-                    new NucleotideSequenceBuilder(basecalls()).build(),
+                    basecalls(),
                     generateQualities(channelGroup),                        
-                        new SangerPeak(peaks()),
-                                                channelGroup,
-                                                properties());
+                        peaks(),
+                    channelGroup,
+                    properties());
         }
 }

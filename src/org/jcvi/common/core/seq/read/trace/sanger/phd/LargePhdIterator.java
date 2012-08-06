@@ -24,8 +24,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Properties;
 
-import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.symbol.pos.SangerPeak;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
@@ -62,12 +61,12 @@ public final class LargePhdIterator extends AbstractBlockingCloseableIterator<Ph
             
             @Override
 			protected boolean visitPhd(String id, NucleotideSequence bases,
-					QualitySequence qualities, List<ShortSymbol> positions,
+					QualitySequence qualities, PositionSequence positions,
 					Properties comments, List<PhdTag> tags) {
             	 Phd phd = new DefaultPhd(id,
                  		bases,
                          qualities,
-                         new SangerPeak(positions),
+                         positions,
                          comments,
                          tags);
                  blockingPut(phd);

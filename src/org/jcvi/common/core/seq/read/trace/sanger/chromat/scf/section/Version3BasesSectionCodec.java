@@ -29,14 +29,16 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.read.trace.sanger.Position;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Confidence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFileVisitor;
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortSymbol;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -141,15 +143,11 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
     protected void writeBasesDataToBuffer(ByteBuffer buffer, SCFChromatogram c,
             int numberOfBases) {
         final ChannelGroup channelGroup = c.getChannelGroup();
-        final ByteBuffer aConfidence = ByteBuffer.wrap(channelGroup.getAChannel().getConfidence().getData());
-        final ByteBuffer cConfidence = ByteBuffer.wrap(channelGroup.getCChannel().getConfidence().getData());
-        final ByteBuffer gConfidence = ByteBuffer.wrap(channelGroup.getGChannel().getConfidence().getData());
-        final ByteBuffer tConfidence = ByteBuffer.wrap(channelGroup.getTChannel().getConfidence().getData());
-        bulkPutPeaks(buffer, c.getPeaks().getData());
-        bulkPut(buffer,aConfidence, numberOfBases);
-        bulkPut(buffer,cConfidence, numberOfBases);
-        bulkPut(buffer,gConfidence, numberOfBases);
-        bulkPut(buffer,tConfidence, numberOfBases);
+        bulkPutPeaks(buffer, c.getPositionSequence());
+        bulkPut(buffer,channelGroup.getAChannel().getConfidence(), numberOfBases);
+        bulkPut(buffer,channelGroup.getCChannel().getConfidence(), numberOfBases);
+        bulkPut(buffer,channelGroup.getGChannel().getConfidence(), numberOfBases);
+        bulkPut(buffer,channelGroup.getTChannel().getConfidence(), numberOfBases);
         bulkPut(buffer, c.getNucleotideSequence());
         bulkPutWithPadding(buffer, c.getSubstitutionConfidence(), numberOfBases);
         bulkPutWithPadding(buffer, c.getInsertionConfidence(), numberOfBases);
@@ -158,16 +156,16 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
     }
 
     private void bulkPut(ByteBuffer buffer,
-            Sequence<Nucleotide> basecalls) {
-       for(Nucleotide glyph : basecalls.asList()){
+            NucleotideSequence basecalls) {
+       for(Nucleotide glyph : basecalls){
            buffer.put((byte)glyph.getCharacter().charValue());
        }
         
     }
     private void bulkPutPeaks(ByteBuffer buffer,
-            Sequence<ShortSymbol> peaks) {
-       for(ShortSymbol glyph : peaks.asList()){
-           buffer.putInt(glyph.getValue().intValue());
+            PositionSequence peaks) {
+       for(Position glyph : peaks){
+           buffer.putInt(glyph.getValue());
        }
         
     }
@@ -184,7 +182,15 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
         }
 
     }
-    
+    private void bulkPut(ByteBuffer buffer, QualitySequence qualities, int expectedSize){
+    	for(PhredQuality qual : qualities){
+    		buffer.put(qual.getQualityScore());
+    	}
+    	int padding = expectedSize - (int)qualities.getLength();
+    	for(int i=0; i<padding; i++){
+    		 buffer.put((byte)0);
+    	}
+    }
     private void bulkPut(ByteBuffer buffer, ByteBuffer data, int expectedSize) {
         buffer.put(data);
         //padd with 0s

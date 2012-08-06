@@ -29,8 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortSymbol;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.util.ObjectsUtil;
 
 public abstract class AbstractTraceArchiveTrace implements TraceArchiveTrace {
@@ -104,7 +103,7 @@ public abstract class AbstractTraceArchiveTrace implements TraceArchiveTrace {
 
     @Override
     public int getNumberOfTracePositions() {
-        Sequence<ShortSymbol> encodedPeaks= getPeaks().getData();        
+        PositionSequence encodedPeaks= getPositionSequence();        
         int lastIndex= (int)encodedPeaks.getLength() -1;
         return encodedPeaks.get(lastIndex).getValue();
     }

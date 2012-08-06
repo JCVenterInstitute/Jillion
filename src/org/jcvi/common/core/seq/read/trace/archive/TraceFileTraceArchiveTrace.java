@@ -28,9 +28,9 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.read.trace.sanger.SangerTrace;
 import org.jcvi.common.core.seq.read.trace.sanger.SangerTraceParser;
-import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
@@ -53,12 +53,16 @@ public class TraceFileTraceArchiveTrace extends AbstractTraceArchiveTrace {
         }
     }
 
-    @Override
-    public SangerPeak getPeaks() {
-        return trace.getPeaks();
-    }
+    
 
     @Override
+	public PositionSequence getPositionSequence() {
+		return trace.getPositionSequence();
+	}
+
+
+
+	@Override
     public NucleotideSequence getNucleotideSequence() {
         return trace.getNucleotideSequence();
     }

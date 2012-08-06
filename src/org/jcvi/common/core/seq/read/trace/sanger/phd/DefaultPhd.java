@@ -27,9 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.symbol.pos.SangerPeak;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
@@ -38,13 +36,13 @@ public class DefaultPhd implements Phd {
     private final String id;
     private final NucleotideSequence basecalls;
     private final QualitySequence qualities;
-    private final SangerPeak peaks;
+    private final PositionSequence peaks;
     private final Properties comments;
     private final List<PhdTag> tags;
     
     public DefaultPhd(String id, NucleotideSequence basecalls,
             QualitySequence qualities,
-            SangerPeak peaks, Properties comments,
+            PositionSequence peaks, Properties comments,
             List<PhdTag> tags){
     	this.id = id;
         this.basecalls = basecalls;
@@ -55,12 +53,12 @@ public class DefaultPhd implements Phd {
     }
     public DefaultPhd(String id, NucleotideSequence basecalls,
             QualitySequence qualities,
-            SangerPeak peaks,Properties comments){
+            PositionSequence peaks,Properties comments){
         this(id,basecalls, qualities, peaks, comments,Collections.<PhdTag>emptyList());
     }
     public DefaultPhd(String id, NucleotideSequence basecalls,
             QualitySequence qualities,
-            SangerPeak peaks){
+            PositionSequence peaks){
         this(id,basecalls, qualities, peaks, new Properties());
     }
     
@@ -69,12 +67,13 @@ public class DefaultPhd implements Phd {
         return comments;
     }
 
-    @Override
-    public SangerPeak getPeaks() {
-        return peaks;
-    }
+    
 
     @Override
+	public PositionSequence getPositionSequence() {
+		return peaks;
+	}
+	@Override
     public NucleotideSequence getNucleotideSequence() {
         return basecalls;
     }
@@ -124,7 +123,7 @@ public class DefaultPhd implements Phd {
         if (!comments.equals(other.getComments())){
             return false;
         }
-        if (!peaks.getData().asList().equals(other.getPeaks().getData().asList())){
+        if (!peaks.equals(other.getPositionSequence())){
             return false;
         }
         if (!qualities.asList().equals(other.getQualitySequence().asList())){
@@ -140,9 +139,8 @@ public class DefaultPhd implements Phd {
 
     @Override
     public int getNumberOfTracePositions() {
-        Sequence<ShortSymbol> encodedPeaks= peaks.getData();        
-        int lastIndex= (int)encodedPeaks.getLength() -1;
-        return encodedPeaks.get(lastIndex).getValue();
+    	int length = (int)peaks.getLength();
+    	return peaks.get(length-1).getValue();        
     }
 
     @Override

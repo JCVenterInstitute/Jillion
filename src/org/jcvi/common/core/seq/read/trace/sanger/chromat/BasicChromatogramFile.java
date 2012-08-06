@@ -20,7 +20,8 @@
 package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 import java.util.Map;
 
-import org.jcvi.common.core.symbol.pos.SangerPeak;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
@@ -80,7 +81,7 @@ public class BasicChromatogramFile implements Chromatogram, ChromatogramFileVisi
     */
     @Override
     public void visitPeaks(short[] peaks) {
-        builder.peaks(peaks);
+        builder.peaks(new PositionSequenceBuilder(peaks).build());
         
     }
 
@@ -147,13 +148,7 @@ public class BasicChromatogramFile implements Chromatogram, ChromatogramFileVisi
         return delegate.getComments();
     }
 
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public SangerPeak getPeaks() {
-        return delegate.getPeaks();
-    }
+   
 
     /**
     * {@inheritDoc}
@@ -223,7 +218,10 @@ public class BasicChromatogramFile implements Chromatogram, ChromatogramFileVisi
     public boolean equals(Object obj) {
         return delegate.equals(obj);
     }
-
+    @Override
+	public PositionSequence getPositionSequence() {
+		return delegate.getPositionSequence();
+	}
 
     /**
     * {@inheritDoc}
@@ -241,4 +239,7 @@ public class BasicChromatogramFile implements Chromatogram, ChromatogramFileVisi
     public void visitEndOfTrace() {
         
     }
+
+
+	
 }

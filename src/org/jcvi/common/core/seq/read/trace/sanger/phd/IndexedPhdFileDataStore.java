@@ -37,7 +37,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.symbol.ShortSymbol;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
@@ -270,7 +270,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
         
         @Override
         protected synchronized boolean visitPhd(String id, NucleotideSequence bases,
-                QualitySequence qualities, List<ShortSymbol> positions,
+                QualitySequence qualities, PositionSequence positions,
                 Properties comments, List<PhdTag> tags) {
             long endOfOldRecord = currentOffset-currentLineLength-1;
             recordLocations.put(id, Range.create(currentStartOffset,endOfOldRecord));

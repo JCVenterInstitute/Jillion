@@ -27,6 +27,8 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr;
 import java.util.Map;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -86,12 +88,12 @@ public final class ZTRChromatogramBuilder implements Builder<ZTRChromatogram>{
                 clip());
     }
     
-    public final short[] peaks() {
+    public final PositionSequence peaks() {
         return basicBuilder.peaks();
     }
 
     public ZTRChromatogramBuilder peaks(short[] peaks) {
-        basicBuilder.peaks(peaks);
+        basicBuilder.peaks(new PositionSequenceBuilder(peaks).build());
         return this;
     }
 

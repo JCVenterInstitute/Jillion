@@ -27,6 +27,9 @@ import java.nio.ShortBuffer;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.read.trace.sanger.Position;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.Section;
 
 /**
@@ -131,7 +134,14 @@ public final class SCFUtils {
         //reset position to beginning.
          return (ShortBuffer)buffer.rewind();
     }
-
+    public static ShortBuffer deltaDeltaEncode(PositionSequence original){
+    	ShortBuffer buffer = ShortBuffer.allocate((int)original.getLength());
+    	for(Position pos : original){
+    		buffer.put(IOUtil.toSignedShort(pos.getValue()));
+    	}
+    	buffer.rewind();
+    	return  deltaDeltaEncode(buffer);
+    }
     public static short[] deltaDeltaEncode(short[] original){
         return deltaDeltaEncode(ShortBuffer.wrap(original)).array();
     }

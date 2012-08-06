@@ -27,7 +27,9 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
+import java.util.Iterator;
 
+import org.jcvi.common.core.seq.read.trace.sanger.Position;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Confidence;
@@ -35,8 +37,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFileVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortSymbol;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
@@ -90,29 +91,32 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
 
     protected void writeBasesDataToBuffer(ByteBuffer buffer, SCFChromatogram c, int numberOfBases) {
         
-        Sequence<ShortSymbol> peaks = c.getPeaks().getData();
+     
+        Iterator<Position> peaks = c.getPositionSequence().iterator();
         final ChannelGroup channelGroup = c.getChannelGroup();
-        final ByteBuffer aConfidence = ByteBuffer.wrap(channelGroup.getAChannel().getConfidence().getData());
-        final ByteBuffer cConfidence = ByteBuffer.wrap(channelGroup.getCChannel().getConfidence().getData());
-        final ByteBuffer gConfidence = ByteBuffer.wrap(channelGroup.getGChannel().getConfidence().getData());
-        final ByteBuffer tConfidence = ByteBuffer.wrap(channelGroup.getTChannel().getConfidence().getData());
-
-        final Sequence<Nucleotide> basecalls = c.getNucleotideSequence();
+        
+        Iterator<PhredQuality> aQualities = channelGroup.getAChannel().getConfidence().iterator();
+        Iterator<PhredQuality> cQualities = channelGroup.getCChannel().getConfidence().iterator();
+        Iterator<PhredQuality> gQualities = channelGroup.getGChannel().getConfidence().iterator();
+        Iterator<PhredQuality> tQualities = channelGroup.getTChannel().getConfidence().iterator();
+      
+        Iterator<Nucleotide> bases = c.getNucleotideSequence().iterator();
+        
         final ByteBuffer substitutionConfidence = getOptionalField(c.getSubstitutionConfidence());
         final ByteBuffer insertionConfidence = getOptionalField(c.getInsertionConfidence());
         final ByteBuffer deletionConfidence = getOptionalField(c.getDeletionConfidence());
-
-        for(int i=0; i<numberOfBases; i++){
-           buffer.putInt(peaks.get(i).getValue().intValue());
-           buffer.put(aConfidence.get());
-           buffer.put(cConfidence.get());
-           buffer.put(gConfidence.get());
-           buffer.put(tConfidence.get());
-           buffer.put((byte)basecalls.get(i).getCharacter().charValue());
-           handleOptionalField(buffer, substitutionConfidence);
-           handleOptionalField(buffer, insertionConfidence);
-           handleOptionalField(buffer, deletionConfidence);
-        }       
+        while(bases.hasNext()){
+        	buffer.putInt(peaks.next().getValue());
+        	buffer.put(aQualities.next().getQualityScore());
+        	buffer.put(cQualities.next().getQualityScore());
+        	buffer.put(gQualities.next().getQualityScore());
+        	buffer.put(tQualities.next().getQualityScore());
+        	buffer.put((byte)bases.next().getCharacter().charValue());
+			handleOptionalField(buffer, substitutionConfidence);
+			handleOptionalField(buffer, insertionConfidence);
+			handleOptionalField(buffer, deletionConfidence);
+        }
+             
        
     }
 
