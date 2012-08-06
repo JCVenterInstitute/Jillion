@@ -24,9 +24,11 @@
 package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 
 
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Channel;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.DefaultChannelGroup;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -104,8 +106,8 @@ public class TestChannelGroup {
     @Test
     public void AConfidenceDifferentLengthShouldThrowIllegalArgumentException(){
         try{
-            Channel differentConfidenceLength = new Channel(differentLengthQualities,
-                                        aChannel.getPositions().array());
+            Channel differentConfidenceLength = new Channel(new QualitySequenceBuilder(differentLengthQualities).build(),
+                                        aChannel.getPositions());
             new DefaultChannelGroup(differentConfidenceLength, cChannel, gChannel, tChannel);
             fail("should throw IllegalArgumentException when a channel confidence is different length");
         }
@@ -117,8 +119,9 @@ public class TestChannelGroup {
     @Test
     public void CConfidenceDifferentLengthShouldThrowIllegalArgumentException(){
         try{
-            Channel differentConfidenceLength = new Channel(differentLengthQualities,
-                                        aChannel.getPositions().array());
+            Channel differentConfidenceLength = new Channel(
+            		new QualitySequenceBuilder(differentLengthQualities).build(),
+                                        aChannel.getPositions());
             new DefaultChannelGroup(aChannel, differentConfidenceLength, gChannel, tChannel);
             fail("should throw IllegalArgumentException when a channel confidence is different length");
         }
@@ -130,8 +133,8 @@ public class TestChannelGroup {
     @Test
     public void GConfidenceDifferentLengthShouldThrowIllegalArgumentException(){
         try{
-            Channel differentConfidenceLength = new Channel(differentLengthQualities,
-                                        aChannel.getPositions().array());
+            Channel differentConfidenceLength = new Channel(new QualitySequenceBuilder(differentLengthQualities).build(),
+                                        aChannel.getPositions());
             new DefaultChannelGroup(aChannel, cChannel, differentConfidenceLength, tChannel);
             fail("should throw IllegalArgumentException when a channel confidence is different length");
         }
@@ -143,8 +146,8 @@ public class TestChannelGroup {
     @Test
     public void TConfidenceDifferentLengthShouldThrowIllegalArgumentException(){
         try{
-            Channel differentConfidenceLength = new Channel(differentLengthQualities,
-                                        aChannel.getPositions().array());
+            Channel differentConfidenceLength = new Channel(new QualitySequenceBuilder(differentLengthQualities).build(),
+                                        aChannel.getPositions());
             new DefaultChannelGroup(aChannel, cChannel, gChannel, differentConfidenceLength);
             fail("should throw IllegalArgumentException when a channel confidence is different length");
         }
@@ -155,8 +158,8 @@ public class TestChannelGroup {
     @Test
     public void APositionDifferentLengthShouldThrowIllegalArgumentException(){
         try{
-            Channel differentConfidenceLength = new Channel(aChannel.getConfidence().getData(),
-                                                differentLengthPositions);
+            Channel differentConfidenceLength = new Channel(aChannel.getConfidence(),
+                                                new PositionSequenceBuilder(differentLengthPositions).build());
             new DefaultChannelGroup(differentConfidenceLength, cChannel, gChannel, tChannel);
             fail("should throw IllegalArgumentException when a channel position is different length");
         }
@@ -167,8 +170,8 @@ public class TestChannelGroup {
     @Test
     public void CPositionDifferentLengthShouldThrowIllegalArgumentException(){
         try{
-            Channel differentConfidenceLength = new Channel(aChannel.getConfidence().getData(),
-                                                differentLengthPositions);
+            Channel differentConfidenceLength = new Channel(aChannel.getConfidence(),
+            		 new PositionSequenceBuilder(differentLengthPositions).build());
             new DefaultChannelGroup(aChannel,differentConfidenceLength, gChannel, tChannel);
             fail("should throw IllegalArgumentException when a channel position is different length");
         }
@@ -180,8 +183,8 @@ public class TestChannelGroup {
     @Test
     public void GPositionDifferentLengthShouldThrowIllegalArgumentException(){
         try{
-            Channel differentConfidenceLength = new Channel(aChannel.getConfidence().getData(),
-                                                differentLengthPositions);
+            Channel differentConfidenceLength = new Channel(aChannel.getConfidence(),
+            		 new PositionSequenceBuilder(differentLengthPositions).build());
             new DefaultChannelGroup(aChannel,gChannel,differentConfidenceLength, tChannel);
             fail("should throw IllegalArgumentException when a channel position is different length");
         }
@@ -194,8 +197,8 @@ public class TestChannelGroup {
     @Test
     public void TPositionDifferentLengthShouldThrowIllegalArgumentException(){
         try{
-            Channel differentConfidenceLength = new Channel(aChannel.getConfidence().getData(),
-                                                differentLengthPositions);
+            Channel differentConfidenceLength = new Channel(aChannel.getConfidence(),
+            		 new PositionSequenceBuilder(differentLengthPositions).build());
             new DefaultChannelGroup(aChannel, cChannel, gChannel, differentConfidenceLength);
             fail("should throw IllegalArgumentException when a channel position is different length");
         }

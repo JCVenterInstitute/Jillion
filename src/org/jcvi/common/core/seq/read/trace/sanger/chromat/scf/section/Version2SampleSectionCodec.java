@@ -26,8 +26,11 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.ShortBuffer;
+import java.util.Iterator;
 
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.read.trace.sanger.Position;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.pos.PositionStrategy;
 
 
@@ -40,20 +43,25 @@ public class Version2SampleSectionCodec extends AbstractSampleSectionCodec {
 
     }
 
-
     @Override
     protected void writePositionsToBuffer(PositionStrategy positionStrategy,
-            ShortBuffer aPositions, ShortBuffer cPositions,
-            ShortBuffer gPositions, ShortBuffer tPositions, ByteBuffer buffer)
+            PositionSequence aPositions, PositionSequence cPositions,
+            PositionSequence gPositions, PositionSequence tPositions, ByteBuffer buffer)
             {
-        //all positions should have same length
-        while(aPositions.hasRemaining()){
-            positionStrategy.setPosition(aPositions.get(), buffer);
-            positionStrategy.setPosition(cPositions.get(), buffer);
-            positionStrategy.setPosition(gPositions.get(), buffer);
-            positionStrategy.setPosition(tPositions.get(), buffer);
-        }
+    	Iterator<Position> aIterator = aPositions.iterator();
+    	Iterator<Position> cIterator = cPositions.iterator();
+    	Iterator<Position> gIterator = gPositions.iterator();
+    	Iterator<Position> tIterator = tPositions.iterator();
+    	while(aIterator.hasNext()){
+    		  positionStrategy.setPosition(IOUtil.toSignedShort(aIterator.next().getValue()), buffer);
+    		  positionStrategy.setPosition(IOUtil.toSignedShort(cIterator.next().getValue()), buffer);
+    		  positionStrategy.setPosition(IOUtil.toSignedShort(gIterator.next().getValue()), buffer);
+    		  positionStrategy.setPosition(IOUtil.toSignedShort(tIterator.next().getValue()), buffer);
+             
+    	}
+       
     }
+   
 
 
     /**

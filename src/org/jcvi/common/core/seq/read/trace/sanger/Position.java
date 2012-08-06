@@ -29,6 +29,11 @@ public final class Position implements Symbol{
 		return newPosition;
 	}
 	
+	@Override
+	public String toString() {
+		return Integer.toString(value);
+	}
+
 	private Position(int value) {
 		this.value = value;
 	}

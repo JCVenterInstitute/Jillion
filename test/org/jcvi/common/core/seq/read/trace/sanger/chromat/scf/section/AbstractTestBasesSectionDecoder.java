@@ -33,24 +33,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Confidence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.DefaultConfidence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.SectionDecoderException;
-import org.jcvi.common.core.symbol.DefaultShortGlyphCodec;
-import org.jcvi.common.core.symbol.EncodedSequence;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.symbol.ShortGlyphFactory;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.junit.Before;
 import org.junit.Test;
 
 public abstract class AbstractTestBasesSectionDecoder {
-    private static ShortGlyphFactory PEAKS_FACTORY = ShortGlyphFactory.getInstance();
-    private static DefaultShortGlyphCodec PEAK_CODEC = DefaultShortGlyphCodec.getInstance();
    
     protected AbstractTestBasesSection sut;
     protected Sequence<Nucleotide> bases;
@@ -187,7 +184,6 @@ public abstract class AbstractTestBasesSectionDecoder {
          verifyParser(c, currentOffset, in, 0);
     }
 
-
     private void verifyParser(SCFChromatogramBuilder c, long currentOffset,
             DataInputStream in, long skipDistance)
             throws SectionDecoderException {
@@ -198,18 +194,18 @@ public abstract class AbstractTestBasesSectionDecoder {
         assertEquals(newOffset-currentOffset-skipDistance, (int)bases.getLength()*12);
         assertEquals(chromatogram.getNucleotideSequence().asList(), 
                  c.basecalls().asList());
-        Sequence<ShortSymbol> encodedPeaks = new EncodedSequence<ShortSymbol>(PEAK_CODEC,PEAKS_FACTORY.getGlyphsFor(c.peaks()));
-        assertEquals(chromatogram.getPeaks().getData(),
+        PositionSequence encodedPeaks = new PositionSequenceBuilder(c.peaks()).build();
+        assertEquals(chromatogram.getPositionSequence(),
                 encodedPeaks);
         
-        assertArrayEquals(chromatogram.getChannelGroup().getAChannel().getConfidence().getData(),
-                c.aConfidence());
-        assertArrayEquals(chromatogram.getChannelGroup().getCChannel().getConfidence().getData(),
-                c.cConfidence());
-        assertArrayEquals(chromatogram.getChannelGroup().getGChannel().getConfidence().getData(),
-                c.gConfidence());
-        assertArrayEquals(chromatogram.getChannelGroup().getTChannel().getConfidence().getData(),
-               c.tConfidence());
+        assertEquals(chromatogram.getChannelGroup().getAChannel().getConfidence(),
+                new QualitySequenceBuilder(c.aConfidence()).build());
+        assertEquals(chromatogram.getChannelGroup().getCChannel().getConfidence(),
+        		new QualitySequenceBuilder(c.cConfidence()).build());
+        assertEquals(chromatogram.getChannelGroup().getGChannel().getConfidence(),
+        new QualitySequenceBuilder(c.gConfidence()).build());
+        assertEquals(chromatogram.getChannelGroup().getTChannel().getConfidence(),
+        		new QualitySequenceBuilder(c.tConfidence()).build());
 
         assertOptionalConfidenceEqual(chromatogram.getSubstitutionConfidence(),
                 new DefaultConfidence(c.substitutionConfidence()));

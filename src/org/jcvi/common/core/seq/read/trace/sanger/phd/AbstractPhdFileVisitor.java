@@ -29,8 +29,8 @@ import java.util.Properties;
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
-import org.jcvi.common.core.symbol.ShortGlyphFactory;
-import org.jcvi.common.core.symbol.ShortSymbol;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
@@ -42,19 +42,18 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
  * implementation that will keep track of all
  * the data associated with the current {@link Phd}
  * record being visited.  Once an entire Phd record
- * has been visited, this class with make a call to {@link #visitPhd(String, List, List, List, Properties, List)}.
+ * has been visited, this class with make a call to {@link #visitPhd(String, List, List, PositionSequence, Properties, List)}.
  * 
- * @see #visitPhd(String, List, List, List, Properties, List)
+ * @see #visitPhd(String, List, List, PositionSequence, Properties, List)
  * @author dkatzel
  *
  *
  */
 public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
 
-    private static final ShortGlyphFactory PEAK_FACTORY = ShortGlyphFactory.getInstance();
     private NucleotideSequenceBuilder currentBases = new NucleotideSequenceBuilder();
     private QualitySequenceBuilder currentQualities = new QualitySequenceBuilder();
-    private List<ShortSymbol> currentPositions = new ArrayList<ShortSymbol>();
+    private PositionSequenceBuilder currentPositions = new PositionSequenceBuilder();
     private List<PhdTag> tags = new ArrayList<PhdTag>();
     private Properties currentComments;
     private String currentId; 
@@ -73,7 +72,7 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
     /**
      * Create a new AbstractPhdFileVisitor with the given filter.  Any
      * phd records that are not accepted by this filter will not get
-     * the {@link #visitPhd(String, List, List, List, Properties, List)}
+     * the {@link #visitPhd(String, List, List, PositionSequence, Properties, List)}
      * method called on it.
      * @param filter the DataStoreFilter to use; can not be null.
      * @throws NullPointerException if filter is null.
@@ -102,7 +101,7 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
     protected abstract boolean visitPhd(String id,
             NucleotideSequence bases,
             QualitySequence qualities,
-            List<ShortSymbol> positions, 
+            PositionSequence positions, 
             Properties comments,
             List<PhdTag> tags);
     
@@ -111,13 +110,13 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
             int tracePosition) {
         currentBases.append(base);
        currentQualities.append(quality);
-       currentPositions.add(PEAK_FACTORY.getGlyphFor(tracePosition));            
+       currentPositions.append(tracePosition);            
     }
 
     private void resetCurrentValues(){
         currentBases= new NucleotideSequenceBuilder();
         currentQualities= new QualitySequenceBuilder();
-        currentPositions= new ArrayList<ShortSymbol>();
+        currentPositions= new PositionSequenceBuilder();
         tags = new ArrayList<PhdTag>();
     }
 
@@ -171,7 +170,10 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
     public synchronized boolean visitEndPhd() {
         boolean keepParsing=true;
         if(filter.accept(currentId)){
-            keepParsing= visitPhd(currentId, currentBases.build(), currentQualities.build(), currentPositions, currentComments,tags);
+            keepParsing= visitPhd(currentId, 
+            		currentBases.build(), 
+            		currentQualities.build(), 
+            		currentPositions.build(), currentComments,tags);
         }
         resetCurrentValues();
         return keepParsing;

@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Channel;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
@@ -39,7 +40,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramImp
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.AbstractBasesSectionCodec;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
@@ -78,7 +78,8 @@ public abstract class AbstractTestBasesSection {
                 new Channel(tConfidence,positions));
         BasicChromatogram basicChromatogram = new BasicChromatogram(
                 "id",encodedBases,encodedQualities,
-                new SangerPeak(peaks),channelGroup);
+                new PositionSequenceBuilder(peaks).build(),
+                channelGroup);
         chromatogram = new SCFChromatogramImpl(basicChromatogram);
 
         sut = createAbstractBasesSectionHandler();

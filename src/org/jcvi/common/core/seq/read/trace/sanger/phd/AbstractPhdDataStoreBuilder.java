@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 
 
 /**
@@ -44,7 +45,7 @@ abstract class AbstractPhdDataStoreBuilder extends AbstractPhdFileVisitor implem
     /**
      * Create a new AbstractPhdDataStoreBuilder with the given filter.  Any
      * phd records that are not accepted by this filter will not get
-     * the {@link #visitPhd(String, List, List, List, Properties, List)}
+     * the {@link #visitPhd(String, List, List, PositionSequence, Properties, List)}
      * method called on it.
      * @param filter the DataStoreFilter to use; can not be null.
      * @throws NullPointerException if filter is null.

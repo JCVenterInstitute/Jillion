@@ -27,9 +27,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
-import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.testUtil.TestUtil;
@@ -41,7 +41,7 @@ import static org.easymock.EasyMock.*;
 public class TestBasicChromatogram {
     
     ChannelGroup mockChannelGroup = createMock(ChannelGroup.class);
-    SangerPeak mockPeaks= createMock(SangerPeak.class);
+    PositionSequence mockPeaks= createMock(PositionSequence.class);
     NucleotideSequence basecalls = createMock(NucleotideSequence.class);
     QualitySequence qualities = createMock(QualitySequence.class);
     Map<String,String> expectedProperties;
@@ -63,7 +63,7 @@ public class TestBasicChromatogram {
     @Test
     public void fullConstructor(){
         assertEquals(basecalls, sut.getNucleotideSequence());
-        assertEquals(mockPeaks, sut.getPeaks());
+        assertEquals(mockPeaks, sut.getPositionSequence());
         assertEquals(mockChannelGroup, sut.getChannelGroup());
         assertEquals(expectedProperties, sut.getComments());
         assertEquals(qualities, sut.getQualitySequence());
@@ -78,7 +78,7 @@ public class TestBasicChromatogram {
                                                 mockChannelGroup);
 
         assertEquals(basecalls, emptyProps.getNucleotideSequence());
-        assertEquals(mockPeaks, emptyProps.getPeaks());
+        assertEquals(mockPeaks, emptyProps.getPositionSequence());
         assertEquals(mockChannelGroup, emptyProps.getChannelGroup());
         assertEquals(qualities, sut.getQualitySequence());
         assertEquals(new Properties(), emptyProps.getComments());
@@ -146,7 +146,7 @@ public class TestBasicChromatogram {
     public void copyConstructor(){
         BasicChromatogram copy = new BasicChromatogram(sut);
         assertEquals(basecalls, copy.getNucleotideSequence());
-        assertEquals(mockPeaks, copy.getPeaks());
+        assertEquals(mockPeaks, copy.getPositionSequence());
         assertEquals(mockChannelGroup, copy.getChannelGroup());
         assertEquals(expectedProperties, copy.getComments());
     }
@@ -182,7 +182,7 @@ public class TestBasicChromatogram {
     
     @Test
     public void notEqualsDifferentPeaks(){
-        SangerPeak differentPeaks = createMock(SangerPeak.class);
+        PositionSequence differentPeaks = createMock(PositionSequence.class);
         BasicChromatogram nullPeaks = new BasicChromatogram( id,basecalls, qualities,differentPeaks, mockChannelGroup,
                 expectedProperties);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, nullPeaks);

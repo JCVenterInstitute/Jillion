@@ -26,6 +26,8 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Confidence;
@@ -147,12 +149,12 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
         return new PrivateDataImpl(privateData());
     }
 
-    public final short[] peaks() {
+    public final PositionSequence peaks() {
         return basicBuilder.peaks();
     }
 
     public SCFChromatogramBuilder peaks(short[] peaks) {
-        basicBuilder.peaks(peaks);
+        basicBuilder.peaks(new PositionSequenceBuilder(peaks).build());
         return this;
     }
 

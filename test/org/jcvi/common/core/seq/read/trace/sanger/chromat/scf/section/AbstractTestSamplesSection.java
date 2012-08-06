@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
 
 public abstract class AbstractTestSamplesSection {
-    protected  short[] aSamplesAsShorts = new short[]{200,-199,0,0};
+    protected  short[] aSamplesAsShorts = new short[]{200,300,0,0};
     protected short[] aSamplesAsBytes = new short[]{13,14,15,16};
     protected short[] cSamples = new short[]{0,10,30,50};
     protected short[] gSamples = new short[]{50,40,30,50};

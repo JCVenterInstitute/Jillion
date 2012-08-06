@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
@@ -38,7 +40,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.TimeTaggedData
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.UserDefinedTaggedDataRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRate;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.tag.rate.ScanRateTaggedDataType;
-import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -164,7 +165,7 @@ public class AbiChromatogramBuilder implements AbiChromatogramFileVisitor, org.j
     */
     @Override
     public void visitPeaks(short[] peaks) {
-        currentBuilder.peaks(peaks);        
+        currentBuilder.peaks(new PositionSequenceBuilder(peaks).build());        
     }
 
     /**
@@ -260,7 +261,7 @@ public class AbiChromatogramBuilder implements AbiChromatogramFileVisitor, org.j
     */
     @Override
     public void visitOriginalPeaks(short[] originalPeaks) {
-        originalBuilder.peaks(originalPeaks);        
+        originalBuilder.peaks(new PositionSequenceBuilder(originalPeaks).build());        
     }
 
     /**
@@ -467,14 +468,6 @@ public class AbiChromatogramBuilder implements AbiChromatogramFileVisitor, org.j
         * {@inheritDoc}
         */
         @Override
-        public SangerPeak getPeaks() {
-            return delegate.getPeaks();
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
         public int getNumberOfTracePositions() {
             return delegate.getNumberOfTracePositions();
         }
@@ -494,6 +487,11 @@ public class AbiChromatogramBuilder implements AbiChromatogramFileVisitor, org.j
         public QualitySequence getQualitySequence() {
             return delegate.getQualitySequence();
         }
+
+		@Override
+		public PositionSequence getPositionSequence() {
+			return delegate.getPositionSequence();
+		}
         
     }
 }

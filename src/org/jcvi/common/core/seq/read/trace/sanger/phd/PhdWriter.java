@@ -25,10 +25,10 @@ package org.jcvi.common.core.seq.read.trace.sanger.phd;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.symbol.ShortSymbol;
+import org.jcvi.common.core.seq.read.trace.sanger.Position;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 
@@ -81,16 +81,20 @@ public final class PhdWriter {
     }
 
     private static String writeCalledInfo( Phd phd){
-        List<Nucleotide> bases = phd.getNucleotideSequence().asList();
-        List<PhredQuality> qualities = phd.getQualitySequence().asList();
-        List<ShortSymbol> peaks = phd.getPeaks().getData().asList();
+       
+        Iterator<Nucleotide> basesIter = phd.getNucleotideSequence().iterator();
+        Iterator<PhredQuality> qualIter = phd.getQualitySequence().iterator();
+        Iterator<Position> posIter = phd.getPositionSequence().iterator();
+        
+        
         StringBuilder result = new StringBuilder();
-        for(int i=0;i< bases.size(); i++){
-            result.append(String.format("%s %d %d%n",
-                                            bases.get(i), 
-                                            qualities.get(i).getQualityScore(),
-                                            peaks.get(i).getValue()));
+        while(basesIter.hasNext()){
+        	result.append(String.format("%s %d %d%n",
+        			basesIter.next(), 
+                    qualIter.next().getQualityScore(),
+                    posIter.next().getValue()));
         }
+       
         
         return result.toString();
         

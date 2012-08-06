@@ -30,9 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.symbol.ShortGlyphFactory;
-import org.jcvi.common.core.symbol.pos.SangerPeak;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
@@ -41,10 +40,10 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 public final class SinglePhdFile implements  Phd{
-    private static final ShortGlyphFactory PEAK_FACTORY = ShortGlyphFactory.getInstance();
     private final NucleotideSequenceBuilder bases = new NucleotideSequenceBuilder();
-    private final List<PhredQuality> qualities = new ArrayList<PhredQuality>();
-    private final List<ShortSymbol> positions = new ArrayList<ShortSymbol>();
+    private final QualitySequenceBuilder qualities = new QualitySequenceBuilder();
+    private final PositionSequenceBuilder positions = new PositionSequenceBuilder();
+    
     private final List<PhdTag> tags = new ArrayList<PhdTag>();
     private Properties comments=null;
     private String id=null;
@@ -64,9 +63,9 @@ public final class SinglePhdFile implements  Phd{
     	
 		this.delegatePhd = new DefaultPhd(id, 
 				bases.build(),
-				 new QualitySequenceBuilder(qualities).build(),
-					
-					new SangerPeak(positions),comments,
+				 qualities.build(),					
+					positions.build(),
+					comments,
 					tags);
 	}
     private SinglePhdFile(InputStream singlePhdStream) {
@@ -74,9 +73,9 @@ public final class SinglePhdFile implements  Phd{
     	
 		this.delegatePhd = new DefaultPhd(id, 
 				bases.build(),
-				 new QualitySequenceBuilder(qualities).build(),
-					
-					new SangerPeak(positions),comments,
+				 qualities.build(),
+				 positions.build(),
+				 	comments,
 					tags);
 	}
 
@@ -112,9 +111,10 @@ public final class SinglePhdFile implements  Phd{
 		return true;
 	}
 	
+	
 	@Override
-	public SangerPeak getPeaks() {
-		return delegatePhd.getPeaks();
+	public PositionSequence getPositionSequence() {
+		return delegatePhd.getPositionSequence();
 	}
 	@Override
 	public int getNumberOfTracePositions() {
@@ -176,8 +176,8 @@ public final class SinglePhdFile implements  Phd{
 	    public synchronized void visitBasecall(Nucleotide base, PhredQuality quality,
 	            int tracePosition) {
 	       bases.append(base);
-	       qualities.add(quality);
-	       positions.add(PEAK_FACTORY.getGlyphFor(tracePosition));            
+	       qualities.append(quality);
+	       positions.append(tracePosition);            
 	    }
 	    @Override
 	    public synchronized void visitBeginDna() {

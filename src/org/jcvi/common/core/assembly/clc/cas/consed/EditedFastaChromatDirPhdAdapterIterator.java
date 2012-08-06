@@ -24,18 +24,21 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Properties;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.pos.LargePositionFastaRecordIterator;
 import org.jcvi.common.core.seq.fastx.fasta.pos.PositionSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.LargeQualityFastaIterator;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
@@ -49,8 +52,8 @@ public class EditedFastaChromatDirPhdAdapterIterator extends ChromatDirFastaCons
     private final StreamingIterator<QualitySequenceFastaRecord> qualityIterator;
     private final StreamingIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> positionIterator;
     
-    private QualitySequenceFastaRecord currentQualityFasta;
-    private SangerPeak currentPeaks;
+    private QualitySequence currentQualitySequence;
+    private PositionSequence currentPositions;
     /**
      * @param fastaIterator
      * @param fastaFile
@@ -100,14 +103,19 @@ public class EditedFastaChromatDirPhdAdapterIterator extends ChromatDirFastaCons
     protected Phd createPhd(Properties requiredComments, NucleotideSequenceFastaRecord fasta,
             SCFChromatogram chromo) {
         final String id = fasta.getId();
-        return new DefaultPhd(id, fasta.getSequence(), currentQualityFasta.getSequence(), 
-                currentPeaks, requiredComments);
+        return new DefaultPhd(id, fasta.getSequence(), currentQualitySequence, 
+        		currentPositions, requiredComments);
     }
 
     @Override
     public PhdReadRecord next() {
-        currentQualityFasta = qualityIterator.next();
-        currentPeaks = new SangerPeak(positionIterator.next().getSequence());
+        currentQualitySequence = qualityIterator.next().getSequence();
+        Sequence<ShortSymbol> sequence = positionIterator.next().getSequence();
+        PositionSequenceBuilder builder = new PositionSequenceBuilder((int)sequence.getLength());
+        for(ShortSymbol s : sequence){
+        	builder.append(IOUtil.toUnsignedShort(s.getValue().shortValue()));
+        }
+        currentPositions = builder.build();
         return super.next();
     }
     @Override

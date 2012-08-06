@@ -37,9 +37,10 @@ import org.jcvi.common.core.seq.fastx.fasta.pos.PositionSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.ShortSymbol;
-import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -49,8 +50,10 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
     public DefaultTraceArchiveTrace(TraceArchiveRecord record,String rootDirPath){
         super(record, rootDirPath);
     }
+    
+    
     @Override
-    public SangerPeak getPeaks() {      
+	public PositionSequence getPositionSequence() {
     	PositionFastaDataStore datastore = null;
     	StreamingIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iterator =null;
     	InputStream in=null;
@@ -58,14 +61,21 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
         	in = getInputStreamFor(TraceInfoField.PEAK_FILE);
             datastore =DefaultPositionFastaFileDataStore.create(in);
             iterator = datastore.iterator();
-			return new SangerPeak(iterator.next().getSequence().asList());
+			Sequence<ShortSymbol> sangerPeaks = iterator.next().getSequence();
+			PositionSequenceBuilder builder = new PositionSequenceBuilder((int)sangerPeaks.getLength());
+			for(ShortSymbol s : sangerPeaks){
+				builder.append(IOUtil.toSignedShort(s.getValue().intValue()));
+			}
+			return builder.build();
         } catch (Exception e) {
             throw new IllegalArgumentException("peak file not valid",e);
         }
         finally{
             IOUtil.closeAndIgnoreErrors(in,iterator,datastore);
         }
-    }
+	}
+
+
 
     @Override
     public NucleotideSequence getNucleotideSequence() {

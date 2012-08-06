@@ -66,7 +66,7 @@ public class TestMixAndMatchChromatogramParsers {
     protected void assertValuesMatch(SCFChromatogram scf,
             ZTRChromatogram ztr) {
         assertEquals(ztr.getNucleotideSequence(), scf.getNucleotideSequence());
-        assertEquals(ztr.getPeaks(), scf.getPeaks());
+        assertEquals(ztr.getPositionSequence(), scf.getPositionSequence());
         assertEquals(ztr.getQualitySequence(),scf.getQualitySequence());
         assertEquals(ztr.getChannelGroup(), scf.getChannelGroup());
         assertEquals(ztr.getNumberOfTracePositions(),scf.getNumberOfTracePositions());

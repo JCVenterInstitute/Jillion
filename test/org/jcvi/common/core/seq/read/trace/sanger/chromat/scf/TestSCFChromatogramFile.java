@@ -65,4 +65,6 @@ public class TestSCFChromatogramFile {
         assertEquals(actual.getNucleotideSequence().toString(), "-----");
         
     }
+    
+   
 }

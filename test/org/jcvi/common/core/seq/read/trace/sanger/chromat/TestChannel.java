@@ -23,55 +23,42 @@
  */
 package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
 
-import java.nio.ShortBuffer;
-
+import org.jcvi.common.core.seq.read.trace.sanger.Position;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Channel;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 
 public class TestChannel {
 
     private short[] positions = new short[]{13,14,15,18,20,15,11,4,0};
-    private short[] differentPositions = new short[]{20,15,11,4,0,13,14,15,18};
 
-    Confidence confidence = createMock(DefaultConfidence.class);
-    Channel sut = new Channel(confidence, ShortBuffer.wrap(positions));
+    private byte[] qualities = new byte[]{10,12,14,15,20,20,20,20,20};
+    QualitySequence qualitySequence = new QualitySequenceBuilder(qualities).build();
+    PositionSequence positionSequence = new PositionSequenceBuilder(positions).build();
+    Channel sut = new Channel(qualities, positions);
 
-    @Test
-    public void defaultConstructor(){
-        Channel defaultContructor = new Channel();
-        assertNull(defaultContructor.getConfidence());
-        assertNull(defaultContructor.getPositions());
-    }
-    @Test
-    public void constructor(){
-        assertEquals(confidence, sut.getConfidence());
-        assertArrayEquals(positions, sut.getPositions().array());
-    }
 
     @Test
     public void arrayConstructor(){
-        byte[] conf = new byte[]{20,30};
-        Channel arrayContructor = new Channel(conf, positions);
-        assertArrayEquals(conf, arrayContructor.getConfidence().getData());
-        assertArrayEquals(positions, arrayContructor.getPositions().array());
+        assertEquals(qualitySequence, sut.getConfidence());
+        assertEquals(positionSequence, sut.getPositions());
     }
 
     @Test
-    public void setPositions(){
-        Channel channel = new Channel();
-        channel.setPositions(ShortBuffer.wrap(positions));
-        assertArrayEquals(positions, channel.getPositions().array());
+    public void sequenceConstructor(){
+    	 Channel channel = new Channel(qualitySequence, positionSequence);
+    	 assertEquals(qualitySequence, channel.getConfidence());
+         assertEquals(positionSequence, channel.getPositions());
     }
 
-    @Test
-    public void setConfidence(){
-        Channel channel = new Channel();
-        channel.setConfidence(confidence);
-        assertEquals(confidence, channel.getConfidence());
-    }
+
+   
     @Test
     public void equalsSameRef(){
         TestUtil.assertEqualAndHashcodeSame(sut, sut);
@@ -86,29 +73,48 @@ public class TestChannel {
     }
     @Test
     public void equalsSameValues(){
-        Channel sameValues = new Channel(confidence, ShortBuffer.wrap(positions));
+        Channel sameValues = new Channel(
+        		new QualitySequenceBuilder(qualitySequence).build(), 
+        		new PositionSequenceBuilder(positions).build());
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);
     }
 
     @Test
     public void notEqualsDifferentConfidence(){
-        Confidence differentConfidence = createMock(DefaultConfidence.class);
-        Channel hasDifferentConfidence = new Channel(differentConfidence, ShortBuffer.wrap(positions));
+        Channel hasDifferentConfidence = new Channel(
+        		new QualitySequenceBuilder(qualitySequence)
+        				.replace(2, PhredQuality.valueOf(99))
+        				.build(),
+        		 positionSequence);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasDifferentConfidence);
     }
     @Test
-    public void notEqualsNullConfidence(){
-        Channel hasNullConfidence = new Channel(null, ShortBuffer.wrap(positions));
-        TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasNullConfidence);
-    }
-    @Test
     public void notEqualsDifferentPositions(){
-        Channel hasDifferentPositions = new Channel(confidence, ShortBuffer.wrap(differentPositions));
-        TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasDifferentPositions);
+        Channel hasDifferentConfidence = new Channel(
+        		qualitySequence,
+        		
+        		new PositionSequenceBuilder(positionSequence)
+        		.replace(3, Position.valueOf(Short.MAX_VALUE))
+        		.build());
+        TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasDifferentConfidence);
     }
-    @Test
-    public void notEqualsNullPositions(){
-        Channel hasNullPositions = new Channel(confidence, null);
-        TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasNullPositions);
+    @Test(expected = NullPointerException.class)
+    public void nullQualitySequenceShouldthrowNPE(){
+        new Channel(null, positionSequence);
     }
+    @Test(expected = NullPointerException.class)
+    public void nullPositionSequenceShouldthrowNPE(){
+        new Channel(qualitySequence, null);
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void nullQualityArrayShouldthrowNPE(){
+        new Channel(null, positions);
+    }
+    @Test(expected = NullPointerException.class)
+    public void nullPositionArrayShouldthrowNPE(){
+        new Channel(qualities, null);
+    }
+   
+   
 }

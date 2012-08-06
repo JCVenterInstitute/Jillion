@@ -35,8 +35,8 @@ import org.jcvi.common.core.symbol.pos.SangerPeak;
  *
  */
 public interface SangerTrace extends Trace {
-
-    SangerPeak getPeaks();
+    
+    PositionSequence getPositionSequence();
     /**
      * Get the number of actual trace scan positions
      * in the trace file.  Most Sanger Trace files

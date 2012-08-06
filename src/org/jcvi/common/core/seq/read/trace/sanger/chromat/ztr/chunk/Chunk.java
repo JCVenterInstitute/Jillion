@@ -48,6 +48,8 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.TraceEncoderException;
+import org.jcvi.common.core.seq.read.trace.sanger.Position;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
@@ -58,7 +60,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.Data;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.DataFactory;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.data.RawData;
-import org.jcvi.common.core.symbol.ShortSymbol;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -170,12 +171,12 @@ public enum Chunk {
 		@Override
 		public byte[] encodeChunk(Chromatogram ztrChromatogram)
 				throws TraceEncoderException {
-			short[] peaks =ShortSymbol.toArray(ztrChromatogram.getPeaks().getData().asList());
-			ByteBuffer buffer = ByteBuffer.allocate(peaks.length*4+4);
+			PositionSequence peaks = ztrChromatogram.getPositionSequence();
+			ByteBuffer buffer = ByteBuffer.allocate((int)peaks.getLength()*4+4);
 			//raw byte + 3 pads
 			buffer.putInt(0);
-			for(int i=0; i< peaks.length; i++){
-				buffer.putInt(peaks[i]);
+			for(Position peak : peaks){
+				buffer.putInt(peak.getValue());
 			}
 			return buffer.array();
 		}
@@ -401,10 +402,10 @@ public enum Chunk {
 			ByteBuffer otherConfidences = ByteBuffer.allocate(sequenceLength*3);
 			int i=0;
 			for(Nucleotide base : nucleotideSequence){
-				calledBaseConfidences.put(channelGroup.getChannel(base).getConfidence().getData()[i]);
+				calledBaseConfidences.put(channelGroup.getChannel(base).getConfidence().get(i).getQualityScore());
 				
 				for(Nucleotide other: getOtherChannelsThan(base)){
-					otherConfidences.put(channelGroup.getChannel(other).getConfidence().getData()[i]);
+					otherConfidences.put(channelGroup.getChannel(other).getConfidence().get(i).getQualityScore());
 				}
 				i++;
 			}
@@ -500,26 +501,23 @@ public enum Chunk {
 				throws TraceEncoderException {
 			int numTracePositions = ztrChromatogram.getNumberOfTracePositions();
 			ChannelGroup channelGroup = ztrChromatogram.getChannelGroup();
-			short[] aConfidence= channelGroup.getAChannel().getPositions().array();
-			short[] cConfidence= channelGroup.getCChannel().getPositions().array();
-			short[] gConfidence= channelGroup.getGChannel().getPositions().array();
-			short[] tConfidence= channelGroup.getTChannel().getPositions().array();
 			
 			ByteBuffer result = ByteBuffer.allocate(8 *numTracePositions+2);
 			//first 2 bytes are padding
 			result.putShort(PADDING_BYTE);
-				for(int i=0; i< numTracePositions; i++){
-					result.putShort(aConfidence[i]);
+				for(Position pos : channelGroup.getAChannel().getPositions()){
+					result.putShort(IOUtil.toSignedShort(pos.getValue()));
 				}
-				for(int i=0; i< numTracePositions; i++){
-					result.putShort(cConfidence[i]);
+				for(Position pos : channelGroup.getCChannel().getPositions()){
+					result.putShort(IOUtil.toSignedShort(pos.getValue()));
 				}
-				for(int i=0; i< numTracePositions; i++){
-					result.putShort(gConfidence[i]);
+				for(Position pos : channelGroup.getGChannel().getPositions()){
+					result.putShort(IOUtil.toSignedShort(pos.getValue()));
 				}
-				for(int i=0; i< numTracePositions; i++){
-					result.putShort(tConfidence[i]);
+				for(Position pos : channelGroup.getTChannel().getPositions()){
+					result.putShort(IOUtil.toSignedShort(pos.getValue()));
 				}
+				
 			return result.array();
 		}
         

@@ -23,9 +23,11 @@
  */
 package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 
-import java.nio.ShortBuffer;
-import java.util.Arrays;
 
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceBuilder;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.util.ObjectsUtil;
 
 
@@ -36,8 +38,8 @@ import org.jcvi.common.core.util.ObjectsUtil;
  *
  */
 public class Channel{
-	 private Confidence confidence;
-	    private ShortBuffer positions;
+	 private final QualitySequence confidence;
+	    private final PositionSequence positions;
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
@@ -51,12 +53,9 @@ public class Channel{
        }
        Channel other = (Channel) obj;
       return  ObjectsUtil.nullSafeEquals(getConfidence(), other.getConfidence())
-               && similarPositions(other);
+               && ObjectsUtil.nullSafeEquals(getPositions(), other.getPositions());
     }
-    private boolean similarPositions(Channel other){
-        return ObjectsUtil.noneNull(getPositions(), other.getPositions())
-        && Arrays.equals(getPositions().array(), other.getPositions().array());
-    }
+    
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
@@ -65,18 +64,10 @@ public class Channel{
         final int prime = 31;
         int result = 1;
         result = prime * result + (getConfidence() == null? 0: getConfidence().hashCode());
-        result = prime * result + ((getPositions() == null) ? 0 :Arrays.hashCode(getPositions().array()));
+        result = prime * result + ((getPositions() == null) ? 0 :getPositions().hashCode());
 
         return result;
     }
-   
-    /**
-     * Default constructor, sets confidence and positions to <code>null</code>.
-     */
-    public Channel() {
-        super();
-    }
-
 
 
     /**
@@ -91,7 +82,8 @@ public class Channel{
      * @param positions
      */
     public Channel(byte[] confidence, short[] positions){
-        this(new DefaultConfidence(confidence), ShortBuffer.wrap(positions));
+        this(new QualitySequenceBuilder(confidence).build(),
+        		new PositionSequenceBuilder(positions).build());
     }
     /**
      * Constructs a newly allocated {@link Channel} with the provided
@@ -99,7 +91,13 @@ public class Channel{
      * @param confidence
      * @param positions
      */
-    public Channel(Confidence confidence, ShortBuffer positions) {
+    public Channel(QualitySequence confidence, PositionSequence positions) {
+    	if(confidence ==null){
+    		throw new NullPointerException("qualities can not be null");
+    	}
+    	if(positions ==null){
+    		throw new NullPointerException("positions can not be null");
+    	}
         this.confidence = confidence;
         this.positions = positions;
     }
@@ -107,29 +105,15 @@ public class Channel{
      * Retrieves the phred Confidence values.
      * @return the confidence
      */
-    public Confidence getConfidence() {
+    public QualitySequence getConfidence() {
         return confidence;
-    }
-    /**
-     * Sets the phred Confidence values.
-     * @param confidence the confidence to set
-     */
-    public void setConfidence(Confidence confidence) {
-        this.confidence = confidence;
     }
     /**
      * Retrieves the trace sample position data.
      * @return the positions
      */
-    public ShortBuffer getPositions() {
+    public PositionSequence getPositions() {
         return positions;
-    }
-    /**
-     * Sets the trace sample position data.
-     * @param positions the positions to set
-     */
-    public void setPositions(ShortBuffer positions) {
-        this.positions = positions;
     }
 
 

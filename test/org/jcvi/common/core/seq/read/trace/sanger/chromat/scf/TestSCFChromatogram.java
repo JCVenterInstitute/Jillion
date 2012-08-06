@@ -26,12 +26,12 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Confidence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.DefaultConfidence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramImpl;
-import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.testUtil.TestUtil;
@@ -43,7 +43,7 @@ public class TestSCFChromatogram {
 
 
     ChannelGroup mockChannelGroup = createMock(ChannelGroup.class);
-    SangerPeak mockPeaks= createMock(SangerPeak.class);
+    PositionSequence mockPeaks= createMock(PositionSequence.class);
     NucleotideSequence basecalls = createMock(NucleotideSequence.class);
     QualitySequence qualities = createMock(QualitySequence.class);
     Map<String,String> expectedProperties = new HashMap<String, String>();
@@ -65,7 +65,7 @@ public class TestSCFChromatogram {
     @Test
     public void constructor(){
         assertEquals(basecalls, sut.getNucleotideSequence());
-        assertEquals(mockPeaks, sut.getPeaks());
+        assertEquals(mockPeaks, sut.getPositionSequence());
         assertEquals(mockChannelGroup, sut.getChannelGroup());
         assertEquals(expectedProperties, sut.getComments());
         assertEquals(mockInsertionConfidence,sut.getInsertionConfidence());

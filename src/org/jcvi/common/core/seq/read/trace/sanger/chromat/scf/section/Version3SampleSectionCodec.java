@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFUtils;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.pos.PositionStrategy;
 /**
@@ -70,8 +71,8 @@ public class Version3SampleSectionCodec extends AbstractSampleSectionCodec{
     }
     @Override
     protected void writePositionsToBuffer(PositionStrategy positionStrategy,
-            ShortBuffer aPositions, ShortBuffer cPositions,
-            ShortBuffer gPositions, ShortBuffer tPositions, ByteBuffer buffer)
+    		PositionSequence aPositions, PositionSequence cPositions,
+    		PositionSequence gPositions, PositionSequence tPositions, ByteBuffer buffer)
             {
         bulkPut(positionStrategy, SCFUtils.deltaDeltaEncode(aPositions), buffer);
         bulkPut(positionStrategy, SCFUtils.deltaDeltaEncode(cPositions), buffer);
