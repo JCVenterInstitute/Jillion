@@ -29,7 +29,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhdFileDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdParser;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdWriter;
-import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -46,7 +45,7 @@ public class TestPhdWriter extends AbstractTestPhd{
         		id,
         		new NucleotideSequenceBuilder(expectedBasecalls).build(), 
         		expectedQualities, 
-                new SangerPeak(expectedPositions),
+                expectedPositions,
                 expectedProperties);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PhdWriter.writePhd(phd, out);

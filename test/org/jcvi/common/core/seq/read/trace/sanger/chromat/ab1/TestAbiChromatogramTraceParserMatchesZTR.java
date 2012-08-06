@@ -53,7 +53,7 @@ public class TestAbiChromatogramTraceParserMatchesZTR {
         Ab1FileParser.parse(RESOURCES.getFile("files/SDBHD01T00PB1A1672F.ab1"), actualAbi);
 
         assertEquals(expectedZTR.getNucleotideSequence(), actualAbi.getNucleotideSequence());
-        assertEquals(expectedZTR.getPeaks(), actualAbi.getPeaks());
+        assertEquals(expectedZTR.getPositionSequence(), actualAbi.getPositionSequence());
         assertEquals(expectedZTR.getQualitySequence(), actualAbi.getQualitySequence());
         assertEquals(expectedZTR.getChannelGroup(), actualAbi.getChannelGroup());
         assertEquals(expectedZTR.getNumberOfTracePositions(), actualAbi.getNumberOfTracePositions());

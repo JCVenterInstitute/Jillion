@@ -27,10 +27,10 @@ import java.nio.ByteBuffer;
 
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.TraceEncoderException;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.chunk.Chunk;
-import org.jcvi.common.core.symbol.pos.SangerPeak;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -53,13 +53,13 @@ public class TestBPOSChunk {
     public void valid() throws TraceDecoderException{        
         ZTRChromatogramBuilder mockStruct = new ZTRChromatogramBuilder("id");
         sut.parseData(encodedPositions, mockStruct);
-        assertArrayEquals(decodedPeaks, mockStruct.peaks());
+        assertEquals(new PositionSequenceBuilder(decodedPeaks).build(), mockStruct.peaks());
     }
     
     @Test
     public void encode() throws TraceEncoderException{
     	ZTRChromatogram chromatogram = createMock(ZTRChromatogram.class);
-    	expect(chromatogram.getPeaks()).andReturn(new SangerPeak(decodedPeaks));
+    	expect(chromatogram.getPositionSequence()).andReturn(new PositionSequenceBuilder(decodedPeaks).build());
     	replay(chromatogram);
     	byte[] actual =sut.encodeChunk(chromatogram);
     	assertArrayEquals(encodedPositions, actual);
