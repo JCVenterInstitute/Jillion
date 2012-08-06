@@ -35,9 +35,9 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageMapUtil;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.util.iter.ArrayIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -78,7 +78,7 @@ public class DefaultSliceMap extends AbstractSliceMap{
     			String id =read.getId();
     			Direction dir = read.getDirection();
     			
-    			Sequence<PhredQuality> fullQualities = qualityDataStore.get(id);
+    			QualitySequence fullQualities = qualityDataStore.get(id);
     			for(Nucleotide base : read.getNucleotideSequence()){
     				PhredQuality quality = qualityValueStrategy.getQualityFor(read, fullQualities, i);
     				if(builders[start+i] ==null){

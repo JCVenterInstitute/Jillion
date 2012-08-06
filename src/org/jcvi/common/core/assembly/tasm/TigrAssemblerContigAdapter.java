@@ -112,7 +112,7 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		// TODO is this supposed to be %N in reads or %N in consensus or both?
 		//going with consensus for now since its the assembly table
 		int numberOfNs =0;
-		for(Nucleotide g: delegate.getConsensusSequence().asList()){
+		for(Nucleotide g: delegate.getConsensusSequence()){
 			if(g == Nucleotide.Unknown){
 				numberOfNs++;
 			}

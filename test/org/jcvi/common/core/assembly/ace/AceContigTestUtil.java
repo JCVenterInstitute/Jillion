@@ -39,7 +39,7 @@ public final class AceContigTestUtil {
     
     public static  void assertContigsEqual(Contig<? extends AssembledRead> expected, Contig<? extends AssembledRead> actual) {
         assertEquals(expected.getId(), actual.getId()); 
-        assertEquals(expected.getConsensusSequence().asList(), actual.getConsensusSequence().asList());
+        assertEquals(expected.getConsensusSequence(), actual.getConsensusSequence());
         assertEquals(expected.getId(),expected.getNumberOfReads(), actual.getNumberOfReads());
         StreamingIterator<? extends AssembledRead> iter = null;
         try{
@@ -61,7 +61,7 @@ public final class AceContigTestUtil {
         assertEquals(expected.getId(), expected.getGappedEndOffset(), actual.getGappedEndOffset());
         assertEquals(expected.getId(), expected.getGappedLength(), actual.getGappedLength());
         assertEquals(expected.getId(), expected.getReadInfo().getValidRange(), actual.getReadInfo().getValidRange());
-        assertEquals(expected.getId(), expected.getNucleotideSequence().asList(), actual.getNucleotideSequence().asList());
+        assertEquals(expected.getId(), expected.getNucleotideSequence(), actual.getNucleotideSequence());
         
     }
 }

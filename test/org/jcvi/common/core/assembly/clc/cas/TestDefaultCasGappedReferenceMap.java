@@ -76,7 +76,7 @@ public class TestDefaultCasGappedReferenceMap {
             sut.visitMatch(match);
         }
         sut.visitEndOfFile();
-        assertEquals(referenceCalls.asList(),sut.getGappedReferenceFor(referenceId).asList());
+        assertEquals(referenceCalls,sut.getGappedReferenceFor(referenceId));
         verify(referenceNucleotideDataStore, contigNameLookup);        
     }
     
@@ -109,7 +109,7 @@ public class TestDefaultCasGappedReferenceMap {
             sut.visitMatch(match);
         }
         sut.visitEndOfFile();
-        assertEquals(referenceCalls.asList(),sut.getGappedReferenceFor(referenceId).asList());
+        assertEquals(referenceCalls,sut.getGappedReferenceFor(referenceId));
         verify(referenceNucleotideDataStore, contigNameLookup);        
     }
     @Test
@@ -125,7 +125,7 @@ public class TestDefaultCasGappedReferenceMap {
             sut.visitMatch(match);
         }
         sut.visitEndOfFile();
-        assertEquals(referenceCalls.asList(),sut.getGappedReferenceFor(referenceId).asList());
+        assertEquals(referenceCalls,sut.getGappedReferenceFor(referenceId));
         verify(referenceNucleotideDataStore, contigNameLookup);        
     }
     @Test

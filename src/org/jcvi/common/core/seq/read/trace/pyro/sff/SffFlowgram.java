@@ -168,9 +168,9 @@ final class SffFlowgram implements Flowgram {
         final int prime = 31;
         int result = 1;
         result = prime * result + id.hashCode();
-        result = prime * result + basecalls.asList().hashCode();
+        result = prime * result + basecalls.hashCode();
         result = prime * result + Arrays.hashCode(values);
-        result = prime * result + qualities.asList().hashCode();
+        result = prime * result + qualities.hashCode();
         result = prime * result + qualitiesClip.hashCode();
         result = prime * result + adapterClip.hashCode();
         
@@ -195,8 +195,8 @@ final class SffFlowgram implements Flowgram {
         
         boolean nonValuesEqual=
         ObjectsUtil.nullSafeEquals(id, other.getId())
-        && ObjectsUtil.nullSafeEquals(basecalls.asList(), other.getNucleotideSequence().asList())
-        && ObjectsUtil.nullSafeEquals(qualities.asList(), other.getQualitySequence().asList())
+        && ObjectsUtil.nullSafeEquals(basecalls, other.getNucleotideSequence())
+        && ObjectsUtil.nullSafeEquals(qualities, other.getQualitySequence())
         && ObjectsUtil.nullSafeEquals(qualitiesClip, other.getQualityClip())
         && ObjectsUtil.nullSafeEquals(adapterClip, other.getAdapterClip())
         && ObjectsUtil.nullSafeEquals(getNumberOfFlows(), other.getNumberOfFlows());

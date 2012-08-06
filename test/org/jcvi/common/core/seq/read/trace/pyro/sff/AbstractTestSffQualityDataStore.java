@@ -56,8 +56,8 @@ public abstract class AbstractTestSffQualityDataStore extends AbstractTestExampl
         while(ids.hasNext()){
             String id = ids.next();
             assertEquals(
-                    dataStore.get(id).getQualitySequence().asList(),
-                    sut.get(id).asList());
+                    dataStore.get(id).getQualitySequence(),
+                    sut.get(id));
         }
     }
 }

@@ -309,8 +309,7 @@ public enum HmmModels {
 	 * @return
 	 */
 	final int[] labelSequence(NucleotideSequence sequence, List<Gene> genes){
-		List<Nucleotide> sequenceAsList = sequence.asList();
-		int[] labels = new int[sequenceAsList.size()];
+		int[] labels = new int[(int)sequence.getLength()];
 		//initialize to intergenic state
 		Arrays.fill(labels, 1);
 		

@@ -85,7 +85,7 @@ public class CtgFileWriter implements Closeable{
 
     private void writeBases(Sequence<Nucleotide> consensus) throws UnsupportedEncodingException, IOException {
         StringBuilder asString = new StringBuilder();
-        for(Nucleotide glyph : consensus.asList()){
+        for(Nucleotide glyph : consensus){
             asString.append(glyph);
         }
         

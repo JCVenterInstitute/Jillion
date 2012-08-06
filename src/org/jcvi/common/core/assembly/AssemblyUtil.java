@@ -51,14 +51,14 @@ public final class AssemblyUtil {
      * basecalls of the given read.
      * @see #buildGappedComplementedFullRangeBases(NucleotideSequence, Direction, Range, List)
      */
-    public static List<Nucleotide> buildGappedComplementedFullRangeBases(AssembledRead placedRead, List<Nucleotide> ungappedUncomplementedFullRangeBases){
+    public static NucleotideSequence buildGappedComplementedFullRangeBases(AssembledRead placedRead, NucleotideSequence ungappedUncomplementedFullRangeBases){
         Direction dir =placedRead.getDirection();
         Range validRange = placedRead.getReadInfo().getValidRange();
         NucleotideSequenceBuilder ungappedFullRangeComplimentedBuilder = new NucleotideSequenceBuilder(ungappedUncomplementedFullRangeBases);
         if(dir==Direction.REVERSE){
             validRange = AssemblyUtil.reverseComplementValidRange(
                     validRange,
-                    ungappedUncomplementedFullRangeBases.size());
+                    ungappedUncomplementedFullRangeBases.getLength());
             ungappedFullRangeComplimentedBuilder.reverseComplement();
             
         }
@@ -68,7 +68,7 @@ public final class AssemblyUtil {
         builder.append(placedRead.getNucleotideSequence());
         builder.append(ungappedFullRangeComplimentedBuilder.copy().trim(Range.create(validRange.getEnd()+1, ungappedFullRangeComplimentedBuilder.getLength() -1)));
      
-        return builder.asList();
+        return builder.build();
     }
     
     

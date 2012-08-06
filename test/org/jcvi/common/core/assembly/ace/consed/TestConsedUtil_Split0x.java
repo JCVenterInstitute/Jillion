@@ -270,7 +270,7 @@ public class TestConsedUtil_Split0x {
     
     private void assertContigsEqual(AceContig expected, AceContig actual){
         assertEquals("id",expected.getId(),actual.getId());
-        assertEquals("consensus", expected.getConsensusSequence().asList(), actual.getConsensusSequence().asList());
+        assertEquals("consensus", expected.getConsensusSequence(), actual.getConsensusSequence());
         assertEquals("numberOfReads", expected.getNumberOfReads(), actual.getNumberOfReads());
         StreamingIterator<AcePlacedRead> iter = null;
         try{
@@ -297,7 +297,7 @@ public class TestConsedUtil_Split0x {
         assertEquals("direction",expected.getDirection(),actual.getDirection());
         
         assertEquals("phdInfo",expected.getPhdInfo(),actual.getPhdInfo());
-        assertEquals("basecalls",expected.getNucleotideSequence().asList(),actual.getNucleotideSequence().asList());
+        assertEquals("basecalls",expected.getNucleotideSequence(),actual.getNucleotideSequence());
         assertEquals("validRange",expected.getReadInfo().getValidRange(),actual.getReadInfo().getValidRange());
     }
 }

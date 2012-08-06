@@ -50,6 +50,6 @@ public class TestNucleotideDataStoreFastaAdatper extends AbstractTestSequenceFas
         		RESOURCES.getFile(FASTA_FILE_PATH))));
     
         assertEquals(
-                sut.get("hrv-61").asList(), hrv_61.getSequence().asList());
+                sut.get("hrv-61"), hrv_61.getSequence());
     }
 }

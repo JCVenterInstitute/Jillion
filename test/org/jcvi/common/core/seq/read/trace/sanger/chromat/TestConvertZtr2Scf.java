@@ -26,8 +26,6 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
@@ -36,7 +34,8 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramImp
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFCodecs;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramFile;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -81,11 +80,9 @@ public class TestConvertZtr2Scf {
         Chromatogram encodedScf = SCFChromatogramFile.create("id",new ByteArrayInputStream(out.toByteArray()));
         
         int numberOfBases = (int)encodedScf.getNucleotideSequence().getLength();
-        List<PhredQuality> expectedQualities = new ArrayList<PhredQuality>(numberOfBases);
-        for(int i=0; i< numberOfBases; i++){
-            expectedQualities.add(PhredQuality.valueOf(0));
-        }
-        assertEquals(expectedQualities,encodedScf.getQualitySequence().asList());
+        QualitySequence expectedQualities = new QualitySequenceBuilder(new byte[numberOfBases]).build();
+        
+        assertEquals(expectedQualities,encodedScf.getQualitySequence());
     }
     
     

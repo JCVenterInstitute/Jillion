@@ -97,8 +97,8 @@ public class TestHiLowAceContigPhdDatastore {
                 expectedQualities.build(),
                 19);
         Phd actual = sut.get("K26-217c");
-        assertEquals(expected.getNucleotideSequence().asList(),actual.getNucleotideSequence().asList());
-        assertEquals(expected.getQualitySequence().asList(),actual.getQualitySequence().asList());
+        assertEquals(expected.getNucleotideSequence(),actual.getNucleotideSequence());
+        assertEquals(expected.getQualitySequence(),actual.getQualitySequence());
     }
 
     
@@ -161,8 +161,8 @@ public class TestHiLowAceContigPhdDatastore {
                 reverseComplimented,expectedQualities.build(),
                 19);
         Phd actual = sut.get(id);
-        assertEquals(expected.getNucleotideSequence().asList(),actual.getNucleotideSequence().asList());
-        assertEquals(expected.getQualitySequence().asList(),actual.getQualitySequence().asList());
+        assertEquals(expected.getNucleotideSequence(),actual.getNucleotideSequence());
+        assertEquals(expected.getQualitySequence(),actual.getQualitySequence());
     }
 
     private void addLowQualities(QualitySequenceBuilder builder, int numberOfQualities) {
