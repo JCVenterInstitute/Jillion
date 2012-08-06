@@ -35,7 +35,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Channel;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.DefaultChannelGroup;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.DefaultConfidence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramImpl;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.AbstractBasesSectionCodec;
@@ -128,31 +127,31 @@ public abstract class AbstractTestBasesSection {
     protected void addOptionalConfidences(){
 
         chromatogram = new SCFChromatogramImpl(chromatogram,
-                                        new DefaultConfidence(subsitutionConfidence),
-                                        new DefaultConfidence(insertionConfidence),
-                                        new DefaultConfidence(deletionConfidence),null
+                                        new QualitySequenceBuilder(subsitutionConfidence).build(),
+                                        new QualitySequenceBuilder(insertionConfidence).build(),
+                                        new QualitySequenceBuilder(deletionConfidence).build(),null
                                         );
     }
     protected void removeSubstitutionConfidence() {
         chromatogram = new SCFChromatogramImpl(chromatogram,
                 null,
-                new DefaultConfidence(insertionConfidence),
-                new DefaultConfidence(deletionConfidence),null
+                new QualitySequenceBuilder(insertionConfidence).build(),
+                new QualitySequenceBuilder(deletionConfidence).build(),null
                 );
 
     }
     protected void removeInsertionConfidence() {
         chromatogram = new SCFChromatogramImpl(chromatogram,
-                new DefaultConfidence(subsitutionConfidence),
+                new QualitySequenceBuilder(subsitutionConfidence).build(),
                 null,
-                new DefaultConfidence(deletionConfidence),null
+                new QualitySequenceBuilder(deletionConfidence).build(),null
                 );
 
     }
     protected void removeDeletionConfidence() {
         chromatogram = new SCFChromatogramImpl(chromatogram,
-                new DefaultConfidence(subsitutionConfidence),
-                new DefaultConfidence(insertionConfidence),
+                new QualitySequenceBuilder(subsitutionConfidence).build(),
+                new QualitySequenceBuilder(insertionConfidence).build(),
                 null,null
                 );
 

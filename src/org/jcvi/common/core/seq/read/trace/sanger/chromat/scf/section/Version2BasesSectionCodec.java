@@ -32,12 +32,12 @@ import java.util.Iterator;
 import org.jcvi.common.core.seq.read.trace.sanger.Position;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.Confidence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFileVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
@@ -120,13 +120,15 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
        
     }
 
-    private ByteBuffer getOptionalField(Confidence confidence){
+    private ByteBuffer getOptionalField(QualitySequence confidence){
         
         if(confidence !=null){
-            final byte[] data = confidence.getData();
-            if(data != null && data.length !=0){
-                return ByteBuffer.wrap(data);
-            }
+        	ByteBuffer buf = ByteBuffer.allocate((int)confidence.getLength());
+        	for(PhredQuality qual : confidence){
+        		buf.put(qual.getQualityScore());
+        	}
+        	buf.rewind();     
+        	return buf;
         }
         return ByteBuffer.allocate(0);
         

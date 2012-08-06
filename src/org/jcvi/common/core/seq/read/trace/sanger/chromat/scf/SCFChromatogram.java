@@ -24,7 +24,7 @@
 package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf;
 
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.Confidence;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 /**
  * <code>SCFChromatogram</code> is a SCF specific implementation
  * of {@link Chromatogram}.  SCF Chromatograms have additional
@@ -43,8 +43,38 @@ public interface SCFChromatogram extends Chromatogram{
      * is no {@link PrivateData}.
      */
     PrivateData getPrivateData();
-    Confidence getSubstitutionConfidence();
-    Confidence getInsertionConfidence();
-    Confidence getDeletionConfidence();
+    /**
+     * This is a {@link QualitySequence} describing
+     * the confidence level that each basecall is 
+     * a substitution.  This sequence is optional
+     * in the SCF spec.  If this data does 
+     * not exist for the given chromatogram,
+     * then this value will be null.
+     * @return a {@link QualitySequence}; or
+     * null if no data exists. 
+     */
+    QualitySequence getSubstitutionConfidence();
+    /**
+     * This is a {@link QualitySequence} describing
+     * the confidence level that each basecall is 
+     * an insertion.  This sequence is optional
+     * in the SCF spec.  If this data does 
+     * not exist for the given chromatogram,
+     * then this value will be null.
+     * @return a {@link QualitySequence}; or
+     * null if no data exists. 
+     */
+    QualitySequence getInsertionConfidence();
+    /**
+     * This is a {@link QualitySequence} describing
+     * the confidence level that each basecall is 
+     * a deletion.  This sequence is optional
+     * in the SCF spec.  If this data does 
+     * not exist for the given chromatogram,
+     * then this value will be null.
+     * @return a {@link QualitySequence}; or
+     * null if no data exists. 
+     */
+    QualitySequence getDeletionConfidence();
 
 }

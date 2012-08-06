@@ -29,8 +29,6 @@ import java.util.Map;
 import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.Confidence;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.DefaultConfidence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramImpl;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -47,9 +45,9 @@ public class TestSCFChromatogram {
     NucleotideSequence basecalls = createMock(NucleotideSequence.class);
     QualitySequence qualities = createMock(QualitySequence.class);
     Map<String,String> expectedProperties = new HashMap<String, String>();
-    Confidence mockInsertionConfidence= createMock(DefaultConfidence.class);
-    Confidence mockDeletionConfidence= createMock(DefaultConfidence.class);
-    Confidence mockSubstitutionConfidence= createMock(DefaultConfidence.class);
+    QualitySequence mockInsertionConfidence= createMock(QualitySequence.class);
+    QualitySequence mockDeletionConfidence= createMock(QualitySequence.class);
+    QualitySequence mockSubstitutionConfidence= createMock(QualitySequence.class);
     PrivateData mockPrivateData = createMock(PrivateData.class);
 
     BasicChromatogram basicChromatogram = new BasicChromatogram("id",basecalls, qualities,mockPeaks, mockChannelGroup,
@@ -119,7 +117,7 @@ public class TestSCFChromatogram {
 
     @Test
     public void notEqualsDifferentSubstitution(){
-        Confidence differentSub = createMock(DefaultConfidence.class);
+    	QualitySequence differentSub = createMock(QualitySequence.class);
         SCFChromatogramImpl hasDifferentSubstitution = new SCFChromatogramImpl(basicChromatogram,
                 differentSub,
                 mockInsertionConfidence,
@@ -142,7 +140,7 @@ public class TestSCFChromatogram {
 
     @Test
     public void notEqualsDifferentInsertion(){
-        Confidence differentInsertion = createMock(DefaultConfidence.class);
+    	QualitySequence differentInsertion = createMock(QualitySequence.class);
         SCFChromatogramImpl hasDifferentInsertion = new SCFChromatogramImpl(basicChromatogram,
                 mockSubstitutionConfidence,
                 differentInsertion,
@@ -165,7 +163,7 @@ public class TestSCFChromatogram {
 
     @Test
     public void notEqualsDifferentDeletion(){
-        Confidence differentDeletion = createMock(DefaultConfidence.class);
+    	QualitySequence differentDeletion = createMock(QualitySequence.class);
         SCFChromatogramImpl hasDifferentDeletion = new SCFChromatogramImpl(basicChromatogram,
                 mockSubstitutionConfidence,
                 mockInsertionConfidence,
