@@ -25,24 +25,24 @@ package org.jcvi.common.core.seq.read.trace.sanger.chromat.scf;
 
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.Confidence;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.util.ObjectsUtil;
 
 public class SCFChromatogramImpl extends BasicChromatogram implements SCFChromatogram {
 
     private PrivateData privateData;
 
-    private Confidence substitutionConfidence;
-    private Confidence insertionConfidence;
-    private Confidence deletionConfidence;
+    private QualitySequence substitutionConfidence;
+    private QualitySequence insertionConfidence;
+    private QualitySequence deletionConfidence;
 
     public SCFChromatogramImpl(Chromatogram c){
         this(c,null,null,null,null);
     }
     public SCFChromatogramImpl(Chromatogram c,
-            Confidence subtitutionConfidence,
-            Confidence insertionConfidence,
-            Confidence deletConfidence,
+    		QualitySequence subtitutionConfidence,
+    		QualitySequence insertionConfidence,
+    		QualitySequence deletConfidence,
             PrivateData privateData
             ) {
         super(c);
@@ -56,6 +56,7 @@ public class SCFChromatogramImpl extends BasicChromatogram implements SCFChromat
     /**
      * @return the privateData
      */
+    @Override
     public PrivateData getPrivateData() {
         return privateData;
     }
@@ -63,21 +64,24 @@ public class SCFChromatogramImpl extends BasicChromatogram implements SCFChromat
     /**
      * @return the substitutionConfidence
      */
-    public Confidence getSubstitutionConfidence() {
+    @Override
+    public QualitySequence getSubstitutionConfidence() {
         return substitutionConfidence;
     }
 
     /**
      * @return the insertionConfidence
      */
-    public Confidence getInsertionConfidence() {
+    @Override
+    public QualitySequence getInsertionConfidence() {
         return insertionConfidence;
     }
 
     /**
      * @return the deletionConfidence
      */
-    public Confidence getDeletionConfidence() {
+    @Override
+    public QualitySequence getDeletionConfidence() {
         return deletionConfidence;
     }
 

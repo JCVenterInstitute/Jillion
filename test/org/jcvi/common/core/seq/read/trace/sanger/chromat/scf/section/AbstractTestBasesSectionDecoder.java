@@ -35,8 +35,6 @@ import java.nio.ByteBuffer;
 
 import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceBuilder;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.Confidence;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.DefaultConfidence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.header.SCFHeader;
@@ -44,6 +42,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.section.SectionDec
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.common.core.util.ObjectsUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -207,27 +206,17 @@ public abstract class AbstractTestBasesSectionDecoder {
         assertEquals(chromatogram.getChannelGroup().getTChannel().getConfidence(),
         		new QualitySequenceBuilder(c.tConfidence()).build());
 
-        assertOptionalConfidenceEqual(chromatogram.getSubstitutionConfidence(),
-                new DefaultConfidence(c.substitutionConfidence()));
-        assertOptionalConfidenceEqual(chromatogram.getInsertionConfidence(),
-                new DefaultConfidence(c.insertionConfidence()));
-        assertOptionalConfidenceEqual(chromatogram.getDeletionConfidence(),
-                new DefaultConfidence(c.deletionConfidence()));
+        ObjectsUtil.nullSafeEquals(chromatogram.getSubstitutionConfidence(),
+                c.substitutionConfidence());
+        ObjectsUtil.nullSafeEquals(chromatogram.getInsertionConfidence(),
+                c.insertionConfidence());
+        ObjectsUtil.nullSafeEquals(chromatogram.getDeletionConfidence(),
+                c.deletionConfidence());
     }
     private DataInputStream createInputStreamFrom(
             final ByteBuffer expectedRequiredExpectedEncodedBases) {
         return new DataInputStream(new ByteArrayInputStream(expectedRequiredExpectedEncodedBases.array()));
     }
 
-    private void assertOptionalConfidenceEqual(
-            Confidence expected,
-            Confidence actual) {
-        if(expected !=null){
-            assertArrayEquals(expected.getData(), actual.getData());
-        }
-        else{
-            assertArrayEquals(sut.EMPTY_CONFIDENCE, actual.getData());
-        }
-
-    }
+   
 }

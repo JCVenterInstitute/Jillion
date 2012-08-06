@@ -33,7 +33,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.Position;
 import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFileVisitor;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.Confidence;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFileVisitor;
@@ -171,9 +170,16 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
     }
 
     private void bulkPutWithPadding(ByteBuffer buffer,
-            Confidence optionalConfidence, int numberOfBases) {
-        if(optionalConfidence!=null && optionalConfidence.getData()!=null && optionalConfidence.getData().length>0){
-            bulkPut(buffer, ByteBuffer.wrap(optionalConfidence.getData()),numberOfBases);
+            QualitySequence optionalConfidence, int numberOfBases) {
+        if(optionalConfidence!=null && optionalConfidence.getLength()>0){
+        	int length = (int)optionalConfidence.getLength();
+        	for(PhredQuality qual : optionalConfidence){
+        		buffer.put(qual.getQualityScore());
+        	}
+        	int padding = numberOfBases - length;
+        	for(int i=0; i<padding; i++){
+        		buffer.put((byte)0);
+        	}
         }
         else{
             for(int i=0; i< numberOfBases; i++){
@@ -191,14 +197,7 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
     		 buffer.put((byte)0);
     	}
     }
-    private void bulkPut(ByteBuffer buffer, ByteBuffer data, int expectedSize) {
-        buffer.put(data);
-        //padd with 0s
-        for(int i=data.position(); i<expectedSize; i++){
-            buffer.put((byte)0);
-        }
-        data.rewind();
-    }
+   
 
     
 

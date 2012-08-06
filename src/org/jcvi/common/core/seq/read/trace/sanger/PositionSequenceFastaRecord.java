@@ -2,8 +2,6 @@ package org.jcvi.common.core.seq.read.trace.sanger;
 
 
 import org.jcvi.common.core.seq.fastx.FastXRecord;
-import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
 import org.jcvi.common.core.util.ObjectsUtil;
 
@@ -101,10 +99,10 @@ public final class PositionSequenceFastaRecord implements FastXRecord<Position, 
         if (this == obj){
             return true;
         }
-        if (!(obj instanceof FastaRecord)){
+        if (!(obj instanceof PositionSequenceFastaRecord)){
             return false;
         }
-        AbstractFastaRecord<?,?> other = (AbstractFastaRecord<?,?>)obj;
+        PositionSequenceFastaRecord other = (PositionSequenceFastaRecord)obj;
 		return 
         ObjectsUtil.nullSafeEquals(getSequence(), other.getSequence()) 
         && ObjectsUtil.nullSafeEquals(getId(), other.getId());

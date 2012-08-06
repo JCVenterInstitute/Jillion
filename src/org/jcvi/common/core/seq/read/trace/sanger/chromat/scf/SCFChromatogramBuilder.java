@@ -30,8 +30,8 @@ import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.Confidence;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.DefaultConfidence;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 
@@ -45,9 +45,9 @@ import org.jcvi.common.core.util.Builder;
 public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
 
     
-    private byte[] substitutionConfidence;
-    private byte[] insertionConfidence;
-    private byte[] deletionConfidence;
+    private QualitySequence substitutionConfidence;
+    private QualitySequence insertionConfidence;
+    private QualitySequence deletionConfidence;
 
     private byte[] privateData;
    
@@ -62,53 +62,56 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
     }
     public SCFChromatogramBuilder(SCFChromatogram copy){
         this((Chromatogram)copy);
-        substitutionConfidence(copy.getSubstitutionConfidence().getData());
-        deletionConfidence(copy.getDeletionConfidence().getData());
-        insertionConfidence(copy.getInsertionConfidence().getData());
+        this.substitutionConfidence =copy.getSubstitutionConfidence();
+        this.deletionConfidence =copy.getDeletionConfidence();
+        this.insertionConfidence =copy.getInsertionConfidence();
         privateData(copy.getPrivateData().getBytes());
      }
     /**
      * @return the substitutionConfidence
      */
-    public byte[] substitutionConfidence() {
-        return substitutionConfidence==null?null:Arrays.copyOf(substitutionConfidence, substitutionConfidence.length);
+    public QualitySequence substitutionConfidence() {
+        return substitutionConfidence;
     }
 
     /**
      * @param substitutionConfidence the substitutionConfidence to set
      */
     public SCFChromatogramBuilder substitutionConfidence(byte[] substitutionConfidence) {
-        this.substitutionConfidence = substitutionConfidence ==null?null:Arrays.copyOf(substitutionConfidence, substitutionConfidence.length);
+        this.substitutionConfidence = substitutionConfidence ==null?null:
+        	new QualitySequenceBuilder(substitutionConfidence).build();
         return this;
     }
 
     /**
      * @return the insertionConfidence
      */
-    public byte[] insertionConfidence() {
-        return insertionConfidence==null?null:Arrays.copyOf(insertionConfidence, insertionConfidence.length);
+    public QualitySequence insertionConfidence() {
+        return insertionConfidence;
     }
 
     /**
      * @param insertionConfidence the insertionConfidence to set
      */
     public SCFChromatogramBuilder insertionConfidence(byte[] insertionConfidence) {
-        this.insertionConfidence = insertionConfidence ==null?null:Arrays.copyOf(insertionConfidence, insertionConfidence.length);
+        this.insertionConfidence = insertionConfidence ==null?null:
+        	new QualitySequenceBuilder(insertionConfidence).build();
         return this;
     }
 
     /**
      * @return the deletionConfidence
      */
-    public byte[] deletionConfidence() {
-        return deletionConfidence==null?null:Arrays.copyOf(deletionConfidence, deletionConfidence.length);
+    public QualitySequence deletionConfidence() {
+        return deletionConfidence;
     }
 
     /**
      * @param deletionConfidence the deletionConfidence to set
      */
     public SCFChromatogramBuilder deletionConfidence(byte[] deletionConfidence) {
-        this.deletionConfidence = deletionConfidence ==null?null:Arrays.copyOf(deletionConfidence, deletionConfidence.length);
+        this.deletionConfidence = deletionConfidence ==null?null:
+        	new QualitySequenceBuilder(deletionConfidence).build();
         
         return this;
     }
@@ -131,17 +134,12 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
     public SCFChromatogram build() {
         Chromatogram basicChromo = basicBuilder.build();
         return new SCFChromatogramImpl(basicChromo,
-                createOptionalConfidence(substitutionConfidence()),
-                createOptionalConfidence(insertionConfidence()),
-                createOptionalConfidence(deletionConfidence()),
+                substitutionConfidence(),
+                insertionConfidence(),
+                deletionConfidence(),
                 createPrivateData());
     }
-    private Confidence createOptionalConfidence(byte[] confidence){
-        if(confidence ==null){
-            return null;
-        }
-        return new DefaultConfidence(confidence);
-    }
+   
     private PrivateData createPrivateData() {
         if(privateData() ==null){
             return null;
