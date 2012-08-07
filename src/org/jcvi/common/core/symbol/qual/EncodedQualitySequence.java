@@ -54,13 +54,6 @@ final class EncodedQualitySequence implements QualitySequence{
         delegate = new EncodedSequence<PhredQuality>(codec, glyphsToEncode);
     }
 
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public List<PhredQuality> asList() {
-        return delegate.asList();
-    }
 
     /**
     * {@inheritDoc}

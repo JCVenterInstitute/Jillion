@@ -233,14 +233,15 @@ public final class Ab1FileParser {
 		ByteBuffer gQualities = ByteBuffer.allocate(size);
 		ByteBuffer tQualities = ByteBuffer.allocate(size);
 		
-		populateQualities(basecalls.asList(), qualities, aQualities, cQualities, gQualities, tQualities);
+		populateQualities(basecalls, qualities, aQualities, cQualities, gQualities, tQualities);
 		return new byte[][]{aQualities.array(),cQualities.array(),gQualities.array(),tQualities.array()};
 	}
-    private static void populateQualities(List<Nucleotide> basecalls,
+    private static void populateQualities(NucleotideSequence basecalls,
             byte[] qualities, ByteBuffer aQualities, ByteBuffer cQualities,
             ByteBuffer gQualities, ByteBuffer tQualities) {
+    	Iterator<Nucleotide> basecallIterator = basecalls.iterator();
         for(int i=0; i<qualities.length; i++){
-			populateQualities(aQualities, cQualities, gQualities, tQualities, basecalls.get(i), qualities[i]);
+			populateQualities(aQualities, cQualities, gQualities, tQualities, basecallIterator.next(), qualities[i]);
 		}
     }
     private static void populateQualities(ByteBuffer aQualities, ByteBuffer cQualities,

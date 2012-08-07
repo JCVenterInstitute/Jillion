@@ -213,8 +213,8 @@ public class TestTigrPositionFileParser {
     @Test
     public void parse() throws IOException, DataStoreException{
         PositionDataStore actualMap = TigrPositionsFileParser.getPeakMap(RESOURCES.getFileAsStream(pathToPosfile));
-        assertEquals(IWKNA07T07A12MP1027R.asList(), actualMap.get("IWKNA07T07A12MP1027R").asList());
-        assertEquals(IWKNA07T08G07MP461F.asList(), actualMap.get("IWKNA07T08G07MP461F").asList());
+        assertEquals(IWKNA07T07A12MP1027R, actualMap.get("IWKNA07T07A12MP1027R"));
+        assertEquals(IWKNA07T08G07MP461F, actualMap.get("IWKNA07T08G07MP461F"));
         
     }
 }

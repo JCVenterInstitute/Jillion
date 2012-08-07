@@ -36,22 +36,25 @@ public abstract class AbstractTestAminoAcidSequence {
 		sut = encode(aminoAcids);
 	}
 	protected abstract AminoAcidSequence encode(List<AminoAcid> aminoAcids);
-	@Test
-	public void decode(){
-		assertEquals(aminoAcids,sut.asList());
-	}
+	
 	@Test
 	public void length(){
 		assertEquals(aminoAcids.size(), sut.getLength());
 	}
 	
-	
+	@Test
+	public void decode(){
+		for(int i=0; i<aminoAcids.size(); i++){
+			assertEquals(aminoAcids.get(i),sut.get(i));
+		}
+	}
 	
 	@Test
 	public void singleBase(){
 		List<AminoAcid> expected = AminoAcids.parse("L");
 		AminoAcidSequence seq = encode(expected);
-		assertEquals(expected, seq.asList());
+		assertEquals(1, seq.getLength());
+		assertEquals(expected.get(0),seq.get(0));
 	}
 	
 	@Test

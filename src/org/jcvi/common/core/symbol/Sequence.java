@@ -39,12 +39,7 @@ import org.jcvi.common.core.Range;
  *
  */
 public interface Sequence<T extends Symbol> extends Iterable<T>{
-    /**
-     * Get all the {@link Symbol}s as
-     * a List.
-     * @return a List of {@link Symbol}s.
-     */
-    List<T> asList();
+   
     /**
      * Gets the specific {@link Symbol} at the specified index.
      * this should return the same {@link Symbol} as

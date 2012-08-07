@@ -19,6 +19,7 @@
 
 package org.jcvi.common.core.symbol.residue.nt;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -42,10 +43,17 @@ public class TestDefaultNucleotideSequence {
     NucleotideSequence sut = new NucleotideSequenceBuilder(gappedBasecalls)
     								.build();
     
+    private List<Nucleotide> asList(NucleotideSequence seq){
+    	List<Nucleotide> list = new ArrayList<Nucleotide>((int)seq.getLength());
+    	for(Nucleotide n : seq){
+    		list.add(n);
+    	}
+    	return list;
+    }
     @Test
     public void decode(){
         List<Nucleotide> expected = Nucleotides.parse(gappedBasecalls);
-        assertEquals(expected, sut.asList());
+        assertEquals(expected, asList(sut));
     }
     
     @Test

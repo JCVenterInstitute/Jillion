@@ -93,7 +93,7 @@ public class DefaultPhd implements Phd {
         int result = 1;
         result = prime * result + id.hashCode();
         result = prime * result
-                + basecalls.asList().hashCode();
+                + basecalls.hashCode();
         result = prime * result
                 + comments.hashCode();
         result = prime * result + peaks.hashCode();
@@ -117,7 +117,7 @@ public class DefaultPhd implements Phd {
         if(!id.equals(other.getId())){
         	return false;
         }
-       if (!basecalls.asList().equals(other.getNucleotideSequence().asList())){
+       if (!basecalls.equals(other.getNucleotideSequence())){
             return false;
        }
         if (!comments.equals(other.getComments())){
@@ -126,7 +126,7 @@ public class DefaultPhd implements Phd {
         if (!peaks.equals(other.getPositionSequence())){
             return false;
         }
-        if (!qualities.asList().equals(other.getQualitySequence().asList())){
+        if (!qualities.equals(other.getQualitySequence())){
             return false;
         }
         return true;

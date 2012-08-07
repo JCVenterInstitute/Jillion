@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.fastx.fasta.qual;
 
-import java.util.List;
+import java.util.Iterator;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecord;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -41,21 +41,23 @@ public class DefaultQualityFastaRecord extends AbstractFastaRecord<PhredQuality,
     }
     @Override
     protected CharSequence getRecordBody() {
-        StringBuilder result = new StringBuilder();
-        
-       final List<PhredQuality> decodedQualities = qualities.asList();
-       for(int i=1; i<decodedQualities.size(); i++){
-           result.append(String.format("%02d", decodedQualities.get(i-1).getQualityScore()));
-           if(i%17 == 0){
-               this.appendCarriageReturnAndLineFeed(result);
-           }
-           else{
-               result.append(' ');
-           }        
-       }
-       //last value doesn't get a space
-       result.append(String.format("%02d", decodedQualities.get(decodedQualities.size()-1).getQualityScore()));
-       return result.toString();
+        int length = (int)qualities.getLength();
+		StringBuilder result = new StringBuilder(3*length);
+		Iterator<PhredQuality> iter = qualities.iterator();
+        int i=1;
+        while(iter.hasNext()){
+        	result.append(String.format("%02d", iter.next().getQualityScore()));
+        	if(iter.hasNext()){
+        		if(i%17 == 0){
+                    this.appendCarriageReturnAndLineFeed(result);
+                }
+                else{
+                    result.append(' ');
+                }   
+        	}
+        	i++;
+        }
+        return result.toString();     
     }
 
     @Override

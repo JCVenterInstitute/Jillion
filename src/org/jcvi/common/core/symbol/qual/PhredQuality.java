@@ -163,7 +163,20 @@ public final class PhredQuality implements Symbol, Comparable<PhredQuality>{
         }
         return buf.array();
     }
-    
+    /**
+     * Create an array of bytes which correspond to the 
+     * input {@link QualitySequence}.
+     * @param qualities a {@link QualitySequence}.
+     * @return a new byte array, never null.
+     * @throws NullPointerException if qualities are null
+     */
+    public static byte[] toArray(QualitySequence qualities){
+        ByteBuffer buf = ByteBuffer.allocate((int)qualities.getLength());
+        for(PhredQuality quality : qualities){
+            buf.put(quality.value);
+        }
+        return buf.array();
+    }
 
     @Override
     public String toString() {        

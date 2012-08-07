@@ -24,6 +24,7 @@
 package org.jcvi.common.core.symbol;
 
 import java.nio.ShortBuffer;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -48,11 +49,7 @@ public class EncodedShortSymbol implements Sequence<ShortSymbol>{
         return buffer.array();
     }
     
-    
-    @Override
-    public List<ShortSymbol> asList() {
-         return FACTORY.getGlyphsFor(data);
-    }
+   
 
     @Override
     public ShortSymbol get(int index) {
@@ -65,7 +62,31 @@ public class EncodedShortSymbol implements Sequence<ShortSymbol>{
     }
    
 
-    /**
+    @Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(data);
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof EncodedShortSymbol)) {
+			return false;
+		}
+		EncodedShortSymbol other = (EncodedShortSymbol) obj;
+		if (!Arrays.equals(data, other.data)) {
+			return false;
+		}
+		return true;
+	}
+	/**
      * {@inheritDoc}
      */
      @Override

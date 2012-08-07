@@ -12,7 +12,6 @@ public class TestAminoAcidSequenceBuilder {
 	@Test
 	public void emptyConstructorShouldStartHaveNoResidues(){
 		AminoAcidSequenceBuilder sut = new AminoAcidSequenceBuilder();
-		assertTrue(sut.build().asList().isEmpty());
 		assertEquals(0, sut.getNumGaps());
 		assertEquals(0L, sut.getLength());
 	}

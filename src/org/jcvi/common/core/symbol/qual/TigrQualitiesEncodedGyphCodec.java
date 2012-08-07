@@ -59,4 +59,7 @@ public final class TigrQualitiesEncodedGyphCodec implements GlyphCodec<PhredQual
         return TigrQualitiesEncoder.encode(PhredQuality.toArray(glyphs)).getBytes(IOUtil.UTF_8);
     }
 
+    public byte[] encode(QualitySequence glyphs) {
+        return TigrQualitiesEncoder.encode(PhredQuality.toArray(glyphs)).getBytes(IOUtil.UTF_8);
+    }
 }

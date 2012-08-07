@@ -37,8 +37,10 @@ public class TestEncodedShortGlyph {
     EncodedShortSymbol sut = new EncodedShortSymbol(glyphs);
     
     @Test
-    public void decode(){
-        assertEquals(glyphs, sut.asList());
+    public void get(){
+    	for(int i=0; i<glyphs.size(); i++){
+    		assertEquals(glyphs.get(i),sut.get(i));
+    	}
     }
     @Test
     public void length(){

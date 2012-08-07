@@ -48,6 +48,13 @@ public class ShortSymbol extends AbstractNumericSymbol implements Comparable<Sho
     public int hashCode() {
         return super.hashCode();
     }
+    public static short[] toArray(Sequence<ShortSymbol> shorts){
+    	 ShortBuffer buf = ShortBuffer.allocate((int)shorts.getLength());
+         for(ShortSymbol aShort : shorts){
+             buf.put(aShort.getValue());
+         }
+         return buf.array();
+    }
     public static short[] toArray(Collection<ShortSymbol> shorts){
         ShortBuffer buf = ShortBuffer.allocate(shorts.size());
         for(ShortSymbol aShort : shorts){
