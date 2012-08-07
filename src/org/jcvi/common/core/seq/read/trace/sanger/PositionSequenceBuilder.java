@@ -1,6 +1,5 @@
 package org.jcvi.common.core.seq.read.trace.sanger;
 
-import java.nio.ByteBuffer;
 import java.util.Iterator;
 
 import org.jcvi.common.core.Range;
@@ -79,12 +78,7 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
 	}
 	@Override
 	public PositionSequence build() {
-		//need to convert short[] into 
-		//a byte[] for codec, use ByteBuffers to do this.
-		short[] shorts = builder.toArray();
-		ByteBuffer buffer =ByteBuffer.allocate(shorts.length*2);
-		buffer.asShortBuffer().put(shorts);
-		return new EncodedPositionSequence(DefaultPositionCodec.INSTANCE, buffer.array());
+		return new DefaultPositionSequence(builder.toArray());
 	}
 	/**
 	 * 
