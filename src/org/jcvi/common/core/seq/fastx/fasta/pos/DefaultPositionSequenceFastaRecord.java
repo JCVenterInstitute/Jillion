@@ -48,7 +48,7 @@ public class DefaultPositionSequenceFastaRecord <T extends Sequence<ShortSymbol>
        Iterator<ShortSymbol> iter = positions.iterator();
        int i=1;
        while(iter.hasNext()){
-    	   result.append(String.format("%04d", iter.next().getValue().shortValue()));
+    	   result.append(String.format("%04d", iter.next().getValue()));
     	   if(iter.hasNext()){
     		   if(i%12 == 0){
                    this.appendCarriageReturnAndLineFeed(result);
