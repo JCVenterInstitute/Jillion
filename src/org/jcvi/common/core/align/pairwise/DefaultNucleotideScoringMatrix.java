@@ -4,13 +4,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 public final class DefaultNucleotideScoringMatrix implements NucleotideScoringMatrix{
 
 	private final float[][] matrix;
-	private static final List<Nucleotide> ACGT = new NucleotideSequenceBuilder("ACGT")
-													.asList();
+	private static final List<Nucleotide> ACGT = Arrays.asList(Nucleotide.Adenine,
+																Nucleotide.Cytosine,
+																Nucleotide.Guanine,
+																Nucleotide.Thymine);
 	
 	private DefaultNucleotideScoringMatrix(float[][] matrix) {
 		this.matrix = matrix;

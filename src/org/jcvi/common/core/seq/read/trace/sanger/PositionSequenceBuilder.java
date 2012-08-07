@@ -1,6 +1,7 @@
 package org.jcvi.common.core.seq.read.trace.sanger;
 
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
@@ -288,6 +289,34 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
      */
 	public PositionSequenceBuilder prepend(PositionSequence sequence){
 		return insert(0,sequence);
+	}
+	
+	@Override
+	public Iterator<Position> iterator() {
+		return new IteratorImpl();
+	}
+
+	private class IteratorImpl implements Iterator<Position>{
+		private int currentOffset=0;
+
+		@Override
+		public boolean hasNext() {
+			return currentOffset<builder.getCurrentLength();
+		}
+
+		@Override
+		public Position next() {
+			Position next = Position.valueOf(IOUtil.toUnsignedShort(builder.get(currentOffset)));
+			currentOffset++;
+			return next;
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+			
+		}
+		
 	}
 
 }

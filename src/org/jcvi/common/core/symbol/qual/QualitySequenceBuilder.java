@@ -2,6 +2,7 @@ package org.jcvi.common.core.symbol.qual;
 
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
@@ -336,5 +337,33 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
      */
 	public QualitySequenceBuilder prepend(QualitySequence sequence){
 		return insert(0,sequence);
+	}
+	
+	@Override
+	public Iterator<PhredQuality> iterator() {
+		return new IteratorImpl();
+	}
+
+	private class IteratorImpl implements Iterator<PhredQuality>{
+		private int currentOffset=0;
+
+		@Override
+		public boolean hasNext() {
+			return currentOffset<builder.getCurrentLength();
+		}
+
+		@Override
+		public PhredQuality next() {
+			PhredQuality next = PhredQuality.valueOf(builder.get(currentOffset));
+			currentOffset++;
+			return next;
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+			
+		}
+		
 	}
 }

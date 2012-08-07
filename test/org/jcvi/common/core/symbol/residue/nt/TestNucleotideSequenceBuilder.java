@@ -23,8 +23,8 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
+import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**
@@ -507,17 +507,7 @@ public class TestNucleotideSequenceBuilder {
     }
    
     
-    @Test
-    public void asUngappedListSubrangeWithNoGaps(){
-    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("AATGG");
-    	assertEquals(Nucleotides.parse("TG"),sut.asUngappedList(Range.create(2,3)));
-    }
     
-    @Test
-    public void asUngappedListSubrangeWithGaps(){
-    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("A-ATG-G");
-    	assertEquals(Nucleotides.parse("ATGG"),sut.asUngappedList(Range.create(2,6)));
-    }
     
     @Test
     public void copyCopiesFullSequence(){
@@ -537,5 +527,41 @@ public class TestNucleotideSequenceBuilder {
     	assertEquals("AATGG", copy.toString());
     }
     
+    @Test
+    public void sameRefShouldBeEqual(){
+    	 NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+    	 TestUtil.assertEqualAndHashcodeSame(sut,sut);
+    }
+    @Test
+    public void sameValuesShouldBeEqual(){
+    	 NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+    	 TestUtil.assertEqualAndHashcodeSame(sut,sut.copy());
+    }
     
+    @Test
+    public void differentValuesBeyondTailShouldStillBeEqual(){
+    	 NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+    	 NucleotideSequenceBuilder other = sut.copy();
+    	 
+    	 sut.append(Nucleotide.Gap);
+    	 other.append(Nucleotide.Cytosine);
+    	 
+    	 sut.delete(Range.create(4));
+    	 other.delete(Range.create(4));
+    	 TestUtil.assertEqualAndHashcodeSame(sut,other);
+    }
+    @Test
+    public void differentValuesShouldNotBeEqual(){
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+   	 	TestUtil.assertNotEqualAndHashcodeDifferent(sut,
+   	 									sut.copy()
+   	 									.replace(1,Nucleotide.Gap));
+    }
+    @Test
+    public void builderWithOtherSequenceAsPrefixShouldNotBeEqual(){
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+   	 	TestUtil.assertNotEqualAndHashcodeDifferent(sut,
+   	 									sut.copy()
+   	 									.append(Nucleotide.Gap));
+    }
 }

@@ -1,12 +1,14 @@
 package org.jcvi.common.core.symbol;
 
 
+import java.util.Iterator;
+
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.Residue;
 import org.jcvi.common.core.symbol.residue.ResidueSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
 
-public interface SequenceBuilder <T extends Symbol, S extends Sequence<T>> extends Builder<S> {
+public interface SequenceBuilder <T extends Symbol, S extends Sequence<T>> extends Builder<S> , Iterable<T> {
 	/**
      * Appends the given symbol to the end
      * of the builder's mutable sequence.
@@ -117,4 +119,15 @@ public interface SequenceBuilder <T extends Symbol, S extends Sequence<T>> exten
      * @return this.
      */
     SequenceBuilder<T,S> reverse();
+    /**
+     * Creates an {@link Iterator}
+     * which iterates over the current sequence.
+     * Any changes to this {@link SequenceBuilder}
+     * between creating this iterator and
+     * actually iterating over the elements
+     * might not be seen by this iterator.
+     * {@inheritDoc}
+     */
+    @Override
+    Iterator<T> iterator();
 }

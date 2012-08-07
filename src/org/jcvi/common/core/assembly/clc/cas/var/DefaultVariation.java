@@ -19,6 +19,7 @@
 
 package org.jcvi.common.core.assembly.clc.cas.var;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,7 +38,12 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
  */
 public class DefaultVariation implements Variation{
 
-	private static final List<Nucleotide> ACGTN_GAP = new NucleotideSequenceBuilder("ACGTN-").asList();
+	private static final List<Nucleotide> ACGTN_GAP = Arrays.asList(Nucleotide.Adenine,
+														Nucleotide.Cytosine,
+														Nucleotide.Guanine,
+														Nucleotide.Thymine,
+														Nucleotide.Unknown,
+														Nucleotide.Gap);
     private final long coordinate;
     private final List<Nucleotide> consensus;
     private final Nucleotide reference;
@@ -179,7 +185,15 @@ public class DefaultVariation implements Variation{
         public Builder(long coordinate, Type type,
                 Nucleotide reference,
                 String consensus ){
-        	this(coordinate, type, reference, new NucleotideSequenceBuilder(consensus).asList());
+        	this(coordinate, type, reference, asList(new NucleotideSequenceBuilder(consensus)));
+        }
+        
+        private static List<Nucleotide> asList(NucleotideSequenceBuilder builder){
+        	List<Nucleotide> list = new ArrayList<Nucleotide>((int)builder.getLength());
+        	for(Nucleotide n : builder){
+        		list.add(n);
+        	}
+        	return list;
         }
         private Builder(long coordinate, Type type,
                 Nucleotide reference,
@@ -211,6 +225,9 @@ public class DefaultVariation implements Variation{
         }
         public Builder addHistogramRecord(Nucleotide base, int count){
         	return addHistogramRecord(Collections.singletonList(base), count);
+        }
+        public Builder addHistogramRecord(String base, int count){
+        	return addHistogramRecord(asList(new NucleotideSequenceBuilder(base)), count);
         }
         public Builder addHistogramRecord(List<Nucleotide> base, int count){
             histogram.put(base, count);

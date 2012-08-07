@@ -50,11 +50,11 @@ public class TestNucleotideSequenceAlignmentBuilder {
 	
 	@Test
 	public void manymatchesAndMismatches(){
-		sut.addMatches(new NucleotideSequenceBuilder("ACGT").asList());
+		sut.addMatches(new NucleotideSequenceBuilder("ACGT").build());
 		
 		sut.addMismatch(Nucleotide.Guanine,Nucleotide.Adenine);
 		sut.addMismatch(Nucleotide.Thymine,Nucleotide.Adenine);
-		sut.addMatches(new NucleotideSequenceBuilder("ACGT").asList());
+		sut.addMatches(new NucleotideSequenceBuilder("ACGT").build());
 		
 		NucleotideSequenceAlignment alignment = sut.build();
 		assertEquals(10, alignment.getAlignmentLength());
@@ -67,11 +67,11 @@ public class TestNucleotideSequenceAlignmentBuilder {
 	
 	@Test
 	public void manymatchesAndMismatchesAndGap(){
-		sut.addMatches(new NucleotideSequenceBuilder("ACGT").asList());
+		sut.addMatches(new NucleotideSequenceBuilder("ACGT").build());
 		
 		sut.addMismatch(Nucleotide.Guanine,Nucleotide.Adenine);
 		sut.addGap(Nucleotide.Thymine,Nucleotide.Gap);
-		sut.addMatches(new NucleotideSequenceBuilder("ACGT").asList());
+		sut.addMatches(new NucleotideSequenceBuilder("ACGT").build());
 		
 		NucleotideSequenceAlignment alignment = sut.build();
 		assertEquals(10, alignment.getAlignmentLength());
@@ -85,11 +85,11 @@ public class TestNucleotideSequenceAlignmentBuilder {
 	@Test
 	public void buildFromTraceback(){
 		sut = new NucleotideSequenceAlignmentBuilder(true);
-		sut.addMatches(new NucleotideSequenceBuilder("ACGT").asList());
+		sut.addMatches(new NucleotideSequenceBuilder("ACGT").build());
 		
 		sut.addMismatch(Nucleotide.Guanine,Nucleotide.Adenine);
 		sut.addGap(Nucleotide.Thymine,Nucleotide.Gap);
-		sut.addMatches(new NucleotideSequenceBuilder("ACGT").asList());
+		sut.addMatches(new NucleotideSequenceBuilder("ACGT").build());
 
 		NucleotideSequenceAlignment alignment = sut.build();
 		assertEquals(10, alignment.getAlignmentLength());

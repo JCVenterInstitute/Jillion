@@ -23,10 +23,10 @@
  */
 package org.jcvi.common.core.assembly.util.slice.consensus;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 public final class ConsensusUtil {
     
@@ -35,7 +35,11 @@ public final class ConsensusUtil {
      * These are the only bases that should be used
      * to consider consensus.
      */
-    public static final List<Nucleotide> BASES_TO_CONSIDER = new NucleotideSequenceBuilder("ACGT-").asList();
+    public static final List<Nucleotide> BASES_TO_CONSIDER = Arrays.asList(Nucleotide.Adenine,
+																Nucleotide.Cytosine,
+																Nucleotide.Guanine,
+																Nucleotide.Thymine,
+																Nucleotide.Gap);
     
     private ConsensusUtil(){
         throw new RuntimeException("should never be instantiated");

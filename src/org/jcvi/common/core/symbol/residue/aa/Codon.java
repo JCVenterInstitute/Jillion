@@ -47,6 +47,12 @@ public final class Codon
     private static final Map<List<Nucleotide>, Codon> CODON_MAP;
     
     private static final Map<String, AminoAcid> AMINO_ACID_MAP;
+    /** An array of three glyphs representing the codon. */
+    private final Nucleotide[] codonGlyphs;
+    /**
+     * The AminoAcid this Codon translates into.
+     */
+    private final AminoAcid aminoAcid;
     
     static{
         int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(175);
@@ -257,7 +263,7 @@ public final class Codon
         
         CODON_MAP = new HashMap<List<Nucleotide>, Codon>(mapSize);
         for(Entry<String, AminoAcid> entry : AMINO_ACID_MAP.entrySet()){
-            List<Nucleotide> codon = new NucleotideSequenceBuilder(entry.getKey()).asList();
+            List<Nucleotide> codon = asList(new NucleotideSequenceBuilder(entry.getKey()));
             CODON_MAP.put(codon, new Codon(codon.get(0),codon.get(1),codon.get(2), 
                     entry.getValue()));
         }
@@ -270,13 +276,15 @@ public final class Codon
                 Codon.getCodonFor("TGA"),
                 Codon.getCodonFor("TRA"));
     }
-    /** An array of three glyphs representing the codon. */
-    private final Nucleotide[] codonGlyphs;
-    /**
-     * The AminoAcid this Codon translates into.
-     */
-    private final AminoAcid aminoAcid;
     
+    private static List<Nucleotide> asList(NucleotideSequenceBuilder builder){
+    	List<Nucleotide> list = new ArrayList<Nucleotide>((int)builder.getLength());
+    	for(Nucleotide n : builder){
+    		list.add(n);
+    	}
+    	return list;
+    }
+   
     protected static final Map<List<Nucleotide>, Codon> getCodonMap() {
         return CODON_MAP;
     }
@@ -310,7 +318,7 @@ public final class Codon
         if(triplet.length() !=3){
             throw new IllegalArgumentException("triplet must have 3 bases");
         }
-        return getCodonFor(new NucleotideSequenceBuilder(triplet.substring(0, 3)).asList());
+        return getCodonFor(asList(new NucleotideSequenceBuilder(triplet.substring(0, 3))));
     }
     public static Codon getCodonFor(List<Nucleotide> triplet){
         return getCodonByOffset(triplet,0);
@@ -322,7 +330,7 @@ public final class Codon
     public static Codon getCodonByOffset(String basecalls, int offset){
         final String triplet = basecalls.substring(offset,offset+3);
         return getCodonByOffset(
-                new NucleotideSequenceBuilder(triplet).asList(),
+                asList(new NucleotideSequenceBuilder(triplet)),
                 0);
     }
     public static Codon getCodonByOffset(NucleotideSequence basecalls, int offset){
