@@ -56,10 +56,11 @@ public class TestNoAmbiguitiesEncodedNucleotideCodec {
     public void encode(){
         List<Nucleotide> nucleotides = Nucleotides.parse("ACGTACGT");
         byte[] actual =sut.encode(nucleotides);
-        assertEquals(nucleotides,sut.decode(actual));
+        
         assertDecodeByIndexIsCorrect(nucleotides, actual);        
     }
     private void assertDecodeByIndexIsCorrect(List<Nucleotide> expected, byte[] actual){
+    	assertEquals(expected.size(), sut.decodedLengthOf(actual));
        for(int i=0; i<expected.size(); i++){
            Nucleotide actualBase = sut.decode(actual, i);
            assertEquals("" +i,expected.get(i),actualBase);
@@ -69,7 +70,7 @@ public class TestNoAmbiguitiesEncodedNucleotideCodec {
     public void lastByteHasOnly1Base(){
         List<Nucleotide> nucleotides = Nucleotides.parse("ACGTACGTC");
         byte[] actual =sut.encode(nucleotides);
-        assertEquals(nucleotides,sut.decode(actual));
+        
         assertDecodeByIndexIsCorrect(nucleotides, actual);
     }
     
@@ -77,14 +78,14 @@ public class TestNoAmbiguitiesEncodedNucleotideCodec {
     public void lastByteHasOnly2Bases(){
         List<Nucleotide> nucleotides = Nucleotides.parse("ACGTACGTCA");
         byte[] actual =sut.encode(nucleotides);
-        assertEquals(nucleotides,sut.decode(actual));
+        
         assertDecodeByIndexIsCorrect(nucleotides, actual);
     }
     @Test
     public void lastByteHasOnly3Bases(){
         List<Nucleotide> nucleotides = Nucleotides.parse("ACGTACGTCAG");
         byte[] actual =sut.encode(nucleotides);
-        assertEquals(nucleotides,sut.decode(actual));
+        
         assertDecodeByIndexIsCorrect(nucleotides, actual);
     }
     
@@ -92,7 +93,6 @@ public class TestNoAmbiguitiesEncodedNucleotideCodec {
     public void oneBase(){        
         byte[] actual =sut.encode(Nucleotide.Cytosine);
         List<Nucleotide> nucleotides = Arrays.asList(Nucleotide.Cytosine);
-        assertEquals(nucleotides ,sut.decode(actual));
         assertDecodeByIndexIsCorrect(nucleotides, actual);
     }
     
@@ -110,14 +110,14 @@ public class TestNoAmbiguitiesEncodedNucleotideCodec {
     public void encodeWithOneGap(){
         List<Nucleotide> nucleotides = Nucleotides.parse("ACGT-ACGT");
         byte[] actual =sut.encode(nucleotides);
-        assertEquals(nucleotides,sut.decode(actual));
+        
         assertDecodeByIndexIsCorrect(nucleotides, actual);        
     }
     @Test
     public void encodeWithTwoGaps(){
         List<Nucleotide> nucleotides = Nucleotides.parse("ACGT-AC-GT");
         byte[] actual =sut.encode(nucleotides);
-        assertEquals(nucleotides,sut.decode(actual));
+        
         assertDecodeByIndexIsCorrect(nucleotides, actual);        
     }
     /**
@@ -127,7 +127,7 @@ public class TestNoAmbiguitiesEncodedNucleotideCodec {
     public void encodeWithFourGaps(){
         List<Nucleotide> nucleotides = Nucleotides.parse("ACGT-CGTA-GTAC-TACG-ACGT");
         byte[] actual =sut.encode(nucleotides);
-        assertEquals(nucleotides,sut.decode(actual));
+        
         assertDecodeByIndexIsCorrect(nucleotides, actual);        
     }
     
@@ -135,7 +135,7 @@ public class TestNoAmbiguitiesEncodedNucleotideCodec {
     public void encodeWithTwoConsecutiveGaps(){
         List<Nucleotide> nucleotides = Nucleotides.parse("ACGT--AC-GT");
         byte[] actual =sut.encode(nucleotides);
-        assertEquals(nucleotides,sut.decode(actual));
+        
         assertDecodeByIndexIsCorrect(nucleotides, actual);        
     }
     
@@ -152,7 +152,6 @@ public class TestNoAmbiguitiesEncodedNucleotideCodec {
         }
         
         byte[] actual =sut.encode(longBases);
-        assertEquals(longBases,sut.decode(actual));
         assertDecodeByIndexIsCorrect(longBases, actual);    
     }
     @Test
@@ -168,7 +167,6 @@ public class TestNoAmbiguitiesEncodedNucleotideCodec {
         }
         
         byte[] actual =sut.encode(longBases);
-        assertEquals(longBases,sut.decode(actual));
         assertDecodeByIndexIsCorrect(longBases, actual);    
     }
     

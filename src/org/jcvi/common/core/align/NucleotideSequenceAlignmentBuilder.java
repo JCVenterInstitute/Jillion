@@ -104,6 +104,6 @@ public class NucleotideSequenceAlignmentBuilder extends AbstractSequenceAlignmen
 	@Override
 	protected Iterable<Nucleotide> parse(String sequence) {
 		return new NucleotideSequenceBuilder(sequence)
-					.asList();
+					.build();
 	}
 }

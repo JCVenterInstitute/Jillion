@@ -21,14 +21,12 @@ package org.jcvi.common.core.assembly.clc.cas.var;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.assembly.clc.cas.var.Variation.Type;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 /**
  * {@code VariationLogFileParser} is a parser for 
@@ -81,7 +79,7 @@ public final class VariationLogFileParser {
                         final String group = varMatcher.group(5);
                         Scanner histogramScanner = new Scanner(group);
                         while(histogramScanner.hasNext()){
-                            List<Nucleotide> bases = new NucleotideSequenceBuilder(histogramScanner.next().replaceAll(":","")).asList();
+                            String bases = histogramScanner.next().replaceAll(":","");
                             int count = histogramScanner.nextInt();
                             variationBuilder.addHistogramRecord(bases,count);
                         }

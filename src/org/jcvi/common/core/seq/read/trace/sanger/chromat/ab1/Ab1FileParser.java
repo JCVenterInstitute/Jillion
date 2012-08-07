@@ -627,10 +627,16 @@ public final class Ab1FileParser {
 	private static List<Nucleotide> parseChannelOrder(GroupedTaggedRecords dataRecordMap ){
 		AsciiTaggedDataRecord order = dataRecordMap.asciiDataRecords.get(TaggedDataName.FILTER_WHEEL_ORDER).get(0);
 		
-		return new NucleotideSequenceBuilder(order.parseDataRecordFrom(null)).asList();
+		return asList(new NucleotideSequenceBuilder(order.parseDataRecordFrom(null)));
 
 	}
-
+	private static List<Nucleotide> asList(NucleotideSequenceBuilder builder){
+    	List<Nucleotide> list = new ArrayList<Nucleotide>((int)builder.getLength());
+    	for(Nucleotide n : builder){
+    		list.add(n);
+    	}
+    	return list;
+    }
 	private static GroupedTaggedRecords parseTaggedDataRecords(
 			InputStream in,
 			long numberOfTaggedRecords,

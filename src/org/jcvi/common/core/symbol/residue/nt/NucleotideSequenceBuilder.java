@@ -564,10 +564,12 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 			return new DefaultNucleotideSequence(optimalCodec, encodedBytes);
 
     }
-    private Iterator<Nucleotide> iterator() {
+    @Override
+    public Iterator<Nucleotide> iterator() {
     	return new Iterator<Nucleotide>(){
             private final int end = codecDecider.currentLength*NUM_BITS_PER_VALUE-1;
             private int currentOffset=0;
+            private final BitSet bits = NucleotideSequenceBuilder.this.bits.get(0,tail);
 			@Override
 			public boolean hasNext() {
 				return currentOffset<end;
@@ -577,7 +579,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 				if(!hasNext()){
 					throw new NoSuchElementException();
 				}
-				Nucleotide next = getNucleotideFor(currentOffset);
+				Nucleotide next = NUCLEOTIDE_VALUES[getNucleotideOrdinalFor(bits,currentOffset)];
 				currentOffset+= NUM_BITS_PER_VALUE;
 				return next;
 			}
@@ -704,18 +706,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	return asList(range,true);
     }
     
-    /**
-     * Get a sublist of the current <strong>ungapped</strong> nucleotide sequence as a list
-     * of Nucleotide objects.
-     * @param range the  range of the sublist to generate.
-     * @return a new List of Nucleotides.
-     * @throws NullPointerException if range is null.
-     * @throws IllegalArgumentException if range is not a sublist of the current
-     * sequence.
-     */
-    public List<Nucleotide> asUngappedList(Range range){
-        return asList(range,false);
-    }
+    
 	private List<Nucleotide> asList(Range range, boolean includeGaps) {
 		if(range==null){
             throw new NullPointerException("range can not be null");
@@ -771,15 +762,46 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     public List<Nucleotide> asList(){
         return asList(Range.createOfLength(getLength()));
     }
-    /**
-     * Get the entire current <strong>ungapped</strong> nucleotide sequence as a list
-     * of Nucleotide objects.
-     * @return a new List of Nucleotides.
-     */
-    public List<Nucleotide> asUngappedList(){
-        return asUngappedList(Range.createOfLength(getLength()));
-    }
-    /**
+    
+   
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + bits.get(0, tail).hashCode();
+		return result;
+	}
+	/**
+	 * Two {@link NucleotideSequenceBuilder}s are equal
+	 * if they currently both contain
+	 * the exact same Nucleotide sequence.
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof NucleotideSequenceBuilder)) {
+			return false;
+		}
+		NucleotideSequenceBuilder other = (NucleotideSequenceBuilder) obj;
+		if(tail !=other.tail){
+			return false;
+		}
+		BitSet ourPopulatedBits =bits.get(0, tail);
+		BitSet otherPopulatedBits =other.bits.get(0, other.tail);
+		if (!ourPopulatedBits.equals(otherPopulatedBits)) {
+			return false;
+		}
+		return true;
+	}
+	
+	
+	/**
      * Get the current Nucleotides sequence as 
      * one long String without any whitespace.
      * For example:

@@ -53,10 +53,16 @@ public final class TestSliceUtil {
     }
     public static IdedSlice createSliceFrom(String nucleotides, byte[] qualities, List<Direction> directions){
         
-        return createSliceFrom(new NucleotideSequenceBuilder(nucleotides).asList(),
+        return createSliceFrom(asList(new NucleotideSequenceBuilder(nucleotides)),
                 PhredQuality.valueOf(qualities), directions);
     }
-    
+    private static List<Nucleotide> asList(NucleotideSequenceBuilder builder){
+    	List<Nucleotide> list = new ArrayList<Nucleotide>((int)builder.getLength());
+    	for(Nucleotide n : builder){
+    		list.add(n);
+    	}
+    	return list;
+    }
     public static List<IdedSlice> createSlicesFrom(List<String> nucleotides, byte[][] qualities, List<Direction> directions){
         List<IdedSlice> slices = new ArrayList<IdedSlice>();
         for(int j=0; j< nucleotides.get(0).length(); j++){

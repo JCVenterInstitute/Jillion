@@ -459,7 +459,7 @@ public final class DefaultPlacedRead implements AssembledRead {
                 if (other.basesBuilder != null) {
                     return false;
                 }
-            } else if (!basesBuilder.asList().equals(other.basesBuilder.asList())) {
+            } else if (!basesBuilder.equals(other.basesBuilder)) {
                 return false;
             }
             if (offset != other.offset) {

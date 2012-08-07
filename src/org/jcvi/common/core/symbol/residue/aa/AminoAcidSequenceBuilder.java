@@ -9,6 +9,7 @@ import org.jcvi.common.core.symbol.residue.ResidueSequenceBuilder;
 import org.jcvi.common.core.util.GrowableByteArray;
 
 public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<AminoAcid,AminoAcidSequence>{
+	private static final AminoAcid[] AMINO_ACID_VALUES = AminoAcid.values();
 	private static final int DEFAULT_CAPACITY = 20;
 	private GrowableByteArray builder;
 	private int numberOfGaps=0;
@@ -84,7 +85,7 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 	@Override
 	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> replace(
 			int offset, AminoAcid replacement) {
-		if(AminoAcid.values()[builder.get(offset)] == AminoAcid.Gap){
+		if(AMINO_ACID_VALUES[builder.get(offset)] == AminoAcid.Gap){
 			numberOfGaps--;			
 		}
 		if(replacement == AminoAcid.Gap){
@@ -180,7 +181,7 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 	private List<AminoAcid> convertFromBytes(byte[] array){
 		List<AminoAcid> aas = new ArrayList<AminoAcid>(array.length);
 		for(int i=0; i<array.length; i++){
-			aas.add(AminoAcid.values()[array[i]]);
+			aas.add(AMINO_ACID_VALUES[array[i]]);
 		}
 		return aas;
 	}
@@ -258,4 +259,31 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 		return builder.toString();
 	}
 
+	@Override
+	public Iterator<AminoAcid> iterator() {
+		return new IteratorImpl();
+	}
+
+	private class IteratorImpl implements Iterator<AminoAcid>{
+		private int currentOffset=0;
+
+		@Override
+		public boolean hasNext() {
+			return currentOffset<builder.getCurrentLength();
+		}
+
+		@Override
+		public AminoAcid next() {
+			AminoAcid next = AMINO_ACID_VALUES[builder.get(currentOffset)];
+			currentOffset++;
+			return next;
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+			
+		}
+		
+	}
 }
