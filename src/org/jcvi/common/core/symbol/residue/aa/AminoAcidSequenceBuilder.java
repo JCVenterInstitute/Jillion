@@ -43,10 +43,11 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 		return this;
 	}
 
-	@Override
-	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> append(
-			ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> otherBuilder) {
-		return append(otherBuilder.asList());
+
+	public AminoAcidSequenceBuilder append(
+			AminoAcidSequenceBuilder otherBuilder) {
+		builder.append(otherBuilder.builder.toArray());
+		return this;
 	}
 
 	@Override
@@ -228,7 +229,6 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 		
 	}
 
-	@Override
 	public List<AminoAcid> asList() {
 		return AminoAcids.parse(builder.toString());
 	}

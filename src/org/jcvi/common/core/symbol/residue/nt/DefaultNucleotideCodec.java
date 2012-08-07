@@ -26,7 +26,6 @@ package org.jcvi.common.core.symbol.residue.nt;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -157,13 +156,18 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
         }
         return HEADER_LENGTH+index/2;
     }
-
+    @Override
+    public byte[] encode(int numberOfNucleotides,Iterator<Nucleotide> nucleotides) {        
+        int encodedSize = computeEncodedSize(numberOfNucleotides);
+        return encodeGlyphs(nucleotides, numberOfNucleotides, encodedSize);
+        
+    }
     @Override
     public byte[] encode(Collection<Nucleotide> glyphs) {
         final int unEncodedSize = glyphs.size();
         
         int encodedSize = computeEncodedSize(unEncodedSize);
-        return encodeGlyphs(glyphs, unEncodedSize, encodedSize);
+        return encodeGlyphs(glyphs.iterator(), unEncodedSize, encodedSize);
         
     }
     /**
@@ -179,11 +183,10 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
         return result.array();
         
     }
-    private byte[] encodeGlyphs(Collection<Nucleotide> glyphs,
+    private byte[] encodeGlyphs(Iterator<Nucleotide> iterator,
             final int unEncodedSize, int encodedSize) {
         ByteBuffer result = ByteBuffer.allocate(encodedSize);
         result.putInt(unEncodedSize);
-        Iterator<Nucleotide> iterator = glyphs.iterator();
         encodeAllButTheLastByte(iterator, unEncodedSize, result);
         encodeFinalByte(iterator, unEncodedSize, result);
         return result.array();
@@ -254,24 +257,32 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
     */
     @Override
     public List<Integer> getGapOffsets(byte[] encodedGlyphs) {
-        List<Nucleotide> gapped =decode(encodedGlyphs);
-        return getGapOffsets(gapped);
+    	Iterator<Nucleotide> iter = iterator(encodedGlyphs);
+    	List<Integer> gaps = new ArrayList<Integer>();
+    	int i=0;
+    	while(iter.hasNext()){
+    		if(iter.next() == Nucleotide.Gap){
+    			gaps.add(Integer.valueOf(i));
+    		}
+    		i++;
+    	}
+        return gaps;
     }
-    private List<Integer> getGapOffsets(List<Nucleotide> gapped) {
-        List<Integer> result = new ArrayList<Integer>();
-        for(int i=0; i<gapped.size(); i++){
-            if(gapped.get(i)==Nucleotide.Gap){
-                result.add(Integer.valueOf(i));
-            }
-        }       
-        return result;
-    }
+ 
     /**
     * {@inheritDoc}
     */
     @Override
     public int getNumberOfGaps(byte[] encodedGlyphs) {
-        return getGapOffsets(encodedGlyphs).size();
+    	Iterator<Nucleotide> iter = iterator(encodedGlyphs);
+    	
+    	int numGaps=0;
+    	while(iter.hasNext()){
+    		if(iter.next() == Nucleotide.Gap){
+    			numGaps++;
+    		}
+    	}
+    	return numGaps;
     }
     /**
     * {@inheritDoc}
@@ -285,22 +296,9 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
     */
     @Override
     public long getUngappedLength(byte[] encodedGlyphs) {
-        List<Nucleotide> gapped =decode(encodedGlyphs);
-        return gapped.size() -getGapOffsets(gapped).size();
+      return decodedLengthOf(encodedGlyphs) - getNumberOfGaps(encodedGlyphs);
     }
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public List<Nucleotide> asUngappedList(byte[] encodedGlyphs) {
-        List<Nucleotide> gapped =decode(encodedGlyphs);
-        List<Integer> gapOffsets = getGapOffsets(gapped);
-        Collections.reverse(gapOffsets);
-        for(Integer offset : gapOffsets){
-            gapped.remove(offset.intValue());
-        }
-        return gapped;
-    }
+   
    
   
     /**
@@ -315,20 +313,18 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
     */
     @Override
     public int getGappedOffsetFor(byte[] encodedGlyphs, int ungappedOffset) {
-       /*
-        *  int[] gaps =getGapOffsetsFrom(encodedGlyphs);
-        int currentOffset=ungappedOffset;
-        for(int i=0; i<gaps.length && gaps[i]>currentOffset; i++){
-            currentOffset++;
-        }
-        return currentOffset;
-        */
-        List<Integer> gaps = getGapOffsets(encodedGlyphs);
-        int currentOffset=ungappedOffset;
-        for(int i=0; i<gaps.size() && gaps.get(i).intValue()>currentOffset; i++){
-            currentOffset++;
-        }
-        return currentOffset;
+      
+    	int currentGappedOffset=0;
+    	int currentUngappedOffset=0;
+    	Iterator<Nucleotide> iter = iterator(encodedGlyphs);
+    	while(iter.hasNext() && ungappedOffset<currentUngappedOffset){
+    		if(iter.next()!=Nucleotide.Gap){
+    			currentUngappedOffset++;
+    		}
+    		currentGappedOffset++;
+    	}
+        
+        return currentGappedOffset;
     }
     /**
     * {@inheritDoc}

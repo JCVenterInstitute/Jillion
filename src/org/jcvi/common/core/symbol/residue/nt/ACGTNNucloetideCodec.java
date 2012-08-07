@@ -76,14 +76,6 @@ final class ACGTNNucloetideCodec extends TwoBitEncodedNucleotideCodec{
     * {@inheritDoc}
     */
     @Override
-    public List<Nucleotide> asUngappedList(byte[] encodedGlyphs) {
-        return decode(encodedGlyphs);
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
     public int getNumberOfGapsUntil(byte[] encodedGlyphs, int gappedOffset) {
         return 0;
     }

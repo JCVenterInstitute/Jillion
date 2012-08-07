@@ -53,34 +53,22 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
     
 
     
-    public static NucleotideSequence create(Collection<Nucleotide> nucleotides){
-        return new DefaultNucleotideSequence(nucleotides);
-    }
-    public static DefaultNucleotideSequence createACGTN(Collection<Nucleotide> nucleotides){
-        return new DefaultNucleotideSequence(nucleotides, ACGTNNucloetideCodec.INSTANCE);
-    }
-    public static DefaultNucleotideSequence createNoAmbiguities(Collection<Nucleotide> nucleotides){
-        return new DefaultNucleotideSequence(nucleotides, NoAmbiguitiesEncodedNucleotideCodec.INSTANCE);
-    }
-    public static NucleotideSequence createGappy(Collection<Nucleotide> nucleotides){
-        return new DefaultNucleotideSequence(nucleotides, DefaultNucleotideCodec.INSTANCE);
-    }
+   
+    
     static NucleotideSequence create(Collection<Nucleotide> nucleotides,NucleotideCodec codec){
         if(codec ==null){
             throw new NullPointerException("codec can not be null");
         }
-        return new DefaultNucleotideSequence(nucleotides, codec);
+        return new DefaultNucleotideSequence(codec, codec.encode(nucleotides));
     }
-    private DefaultNucleotideSequence(Collection<Nucleotide> nucleotides){
-        this(nucleotides,NucleotideCodecs.getNucleotideCodecFor(nucleotides));
    
-    }
     
-    private DefaultNucleotideSequence(Collection<Nucleotide> nucleotides,NucleotideCodec codec ){
-        this.codec =codec;
-        this.data = codec.encode(nucleotides);
-   
-    }
+    DefaultNucleotideSequence(NucleotideCodec codec, byte[] data) {
+		this.codec = codec;
+		this.data = data;
+	}
+
+
 
     
     @Override
@@ -119,7 +107,17 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
             return false;
         }
         NucleotideSequence other = (NucleotideSequence) obj;
-       return toString().equals(other.toString());
+        if(getLength() != other.getLength()){
+        	return false;
+        }
+       Iterator<Nucleotide> iter = iterator();
+       Iterator<Nucleotide> otherIter = other.iterator();
+       while(iter.hasNext()){
+    	   if(!iter.next().equals(otherIter.next())){
+    		   return false;
+    	   }
+       }
+       return true;
     }
     @Override
     public String toString() {

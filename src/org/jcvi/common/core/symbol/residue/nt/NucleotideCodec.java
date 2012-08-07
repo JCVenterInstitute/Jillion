@@ -32,6 +32,7 @@ import org.jcvi.common.core.symbol.GlyphCodec;
  */
 interface NucleotideCodec extends GlyphCodec<Nucleotide>{
 
+    byte[] encode(int numberOfNucleotides,Iterator<Nucleotide> nucleotides);
     /**
      * Get a List of all the offsets into this
      * sequence which are gaps.  This list SHOULD be
@@ -58,13 +59,6 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
      * @return the number of non gaps as a long.
      */
     long getUngappedLength(byte[] encodedData);
-    /**
-     * Decode only the ungapped bases and return them as a List of
-     * {@link Nucleotide}s.
-     * @return a List of {@link Nucleotide}s containing only the 
-     * ungapped bases.
-     */
-    List<Nucleotide> asUngappedList(byte[] encodedData);
     /**
      * Compute the number of gaps in the valid range until AND INCLUDING the given
      * gapped index.

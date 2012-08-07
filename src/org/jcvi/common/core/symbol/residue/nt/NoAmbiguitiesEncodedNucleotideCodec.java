@@ -99,15 +99,7 @@ final class NoAmbiguitiesEncodedNucleotideCodec extends TwoBitEncodedNucleotideC
         int numGaps= sentinelStrategy.getNext(buf);
         return length-numGaps;
     }
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public List<Nucleotide> asUngappedList(byte[] encodedGlyphs) {
-        return populateNucleotideSequenceBuilderFrom(encodedGlyphs)
-        		.ungap()
-        		.asList();
-    }
+   
     /**
     * {@inheritDoc}
     */

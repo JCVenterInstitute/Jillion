@@ -26,17 +26,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      */
     ResidueSequenceBuilder<R,S>  append(Iterable<R> sequence);
     
-    /**
-     * Appends the current contents of the given {@link ResidueSequenceBuilder} to the end
-     * of the builder's mutable sequence.  Any further modifications to the passed in builder
-     * will not be reflected in this builder.  This is an equivalent but more efficient way operation
-     * as {@code this.append(otherBuilder.build())}
-     * 
-     * @param otherBuilder the {@link ResidueSequenceBuilder} whose current
-     * nucleotides are to be appended.
-     * @throws NullPointerException if otherBuilder is null.
-     */
-    ResidueSequenceBuilder<R,S>  append(ResidueSequenceBuilder<R,S>  otherBuilder);
+    
     
    
     /**
@@ -258,12 +248,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
 	 */
     @Override
 	ResidueSequenceBuilder<R,S> copy();
-    /**
-     * Get the entire current residue sequence as a list
-     * of Nucleotide objects.
-     * @return a new List of Residues.
-     */
-    List<R> asList();
+
     
     /**
      * Get the current Residues as a String.
