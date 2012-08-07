@@ -94,7 +94,7 @@ public class DefaultPositionSequence implements PositionSequence{
 		@Override
 		public Position next() {
 			if(!hasNext()){
-				throw new NoSuchElementException(String.format("offset = %d"));
+				throw new NoSuchElementException(String.format("offset = %d",offset));
 			}
 			Position next = get(offset);
 			offset++;
