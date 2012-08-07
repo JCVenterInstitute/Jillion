@@ -1,9 +1,7 @@
 package org.jcvi.common.core.symbol.qual;
 
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.SequenceBuilder;
