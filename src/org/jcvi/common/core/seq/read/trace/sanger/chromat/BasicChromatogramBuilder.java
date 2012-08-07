@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.read.trace.sanger.Position;
 import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -84,14 +82,14 @@ public final class BasicChromatogramBuilder {
         }
         
         private void channelGroup(ChannelGroup channelGroup){
-        	 aConfidence(toByteArray(channelGroup.getAChannel().getConfidence()));
-             aPositions(toShortArray(channelGroup.getAChannel().getPositions()));            
-             cConfidence(toByteArray(channelGroup.getCChannel().getConfidence()));
-             cPositions(toShortArray(channelGroup.getCChannel().getPositions()));
-             gConfidence(toByteArray(channelGroup.getGChannel().getConfidence()));
-             gPositions(toShortArray(channelGroup.getGChannel().getPositions()));
-             tConfidence(toByteArray(channelGroup.getTChannel().getConfidence()));
-             tPositions(toShortArray(channelGroup.getTChannel().getPositions()));
+        	 aConfidence =toByteArray(channelGroup.getAChannel().getConfidence());
+             aPositions =channelGroup.getAChannel().getPositions().toArray();            
+             cConfidence= toByteArray(channelGroup.getCChannel().getConfidence());
+             cPositions = channelGroup.getCChannel().getPositions().toArray();
+             gConfidence = toByteArray(channelGroup.getGChannel().getConfidence());
+             gPositions = channelGroup.getGChannel().getPositions().toArray();
+             tConfidence =toByteArray(channelGroup.getTChannel().getConfidence());
+             tPositions = channelGroup.getTChannel().getPositions().toArray();
         }
         private byte[] toByteArray(QualitySequence sequence){
         	byte[] array = new byte[(int)sequence.getLength()];
@@ -103,15 +101,7 @@ public final class BasicChromatogramBuilder {
         	return array;
         }
         
-        private short[] toShortArray(PositionSequence sequence){
-        	short[] array = new short[(int)sequence.getLength()];
-        	int i=0;
-        	for(Position pos : sequence){
-        		array[i]=IOUtil.toSignedShort(pos.getValue());
-        		i++;
-        	}
-        	return array;
-        }
+       
         
         public BasicChromatogramBuilder(Chromatogram copy){
 		       this(copy.getId(), copy.getNucleotideSequence(),

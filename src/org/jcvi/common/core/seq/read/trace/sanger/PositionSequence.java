@@ -4,4 +4,5 @@ import org.jcvi.common.core.symbol.Sequence;
 
 public interface PositionSequence extends Sequence<Position>{
 
+	short[] toArray();
 }

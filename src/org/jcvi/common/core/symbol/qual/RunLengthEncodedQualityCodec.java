@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.util.RunLength;
 /**
  * {@code RunLengthEncodedQualityCodec} is a {@link QualitySymbolCodec}
@@ -58,6 +57,32 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
         byte guard = buf.get();
        
         return decode(decodeUpTo(buf, guard, size-1));
+    }
+    
+    public PhredQuality get(ByteBuffer buf, byte guard,  int index){
+    	int currentOffset=0;
+		while(buf.hasRemaining()){
+            byte runLengthCode = buf.get(); 
+            byte currentValue;
+            if( runLengthCode == guard){                                  
+            	int count = buf.getShort();            	 
+            	if(count==0){
+            		currentOffset++;
+            		currentValue = guard;
+            	}else{
+            		currentValue = buf.get();  
+            		currentOffset+=count;
+            	}
+            }
+            else{
+            	currentOffset++;
+            	currentValue = runLengthCode;
+            }
+            if(currentOffset>index){
+            	return PhredQuality.valueOf(currentValue);
+            }
+    	}
+		throw new IllegalStateException("could not find index "+index);
     }
     private List<RunLength<PhredQuality>> decodeUpTo(ByteBuffer buf, byte guard,int maxIndex) {
         //size of list initialized to 25% of max index
@@ -97,11 +122,18 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
 
     @Override
     public PhredQuality decode(byte[] encodedGlyphs, int index) {
+    	 if(index <0){
+         	throw new IllegalArgumentException("can not have negative length");
+         }
         ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
-        buf.getInt();
+        int length=buf.getInt();       
+        if(index >=length){
+        	throw new IllegalArgumentException("can not have index beyond length");
+        }
         byte guard = buf.get();
-        final List<RunLength<PhredQuality>> list = decodeUpTo(buf, guard, index);
-        return decode(list, index);
+       // final List<RunLength<PhredQuality>> list = decodeUpTo(buf, guard, index);
+      //  return decode(list, index);
+        return get(buf,guard,index);
     }
 
     @Override
@@ -116,6 +148,36 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
         int size = computeSize(runLengthList);
         ByteBuffer buf = ByteBuffer.allocate(size);
         buf.putInt(glyphs.size());
+        buf.put(guard);
+        for(RunLength<PhredQuality> runLength : runLengthList){
+            if(runLength.getValue().getQualityScore() == guard){
+                
+                for(int repeatCount = 0; repeatCount<runLength.getLength(); repeatCount++){
+                    buf.put(guard);
+                    buf.putShort((byte)0);
+                }
+               
+            }
+            else{
+                if(runLength.getLength() ==1){
+                    buf.put(runLength.getValue().getQualityScore());
+                }
+                else{
+                    buf.put(guard);
+                    buf.putShort((short)runLength.getLength());
+                    buf.put(runLength.getValue().getQualityScore());
+                }
+            }
+        }
+        return buf.array();
+    }
+    
+
+    public byte[] encode(Iterable<PhredQuality> qualityIterable, int numberOfQualities) {
+        List<RunLength<PhredQuality>> runLengthList = runLengthEncode(qualityIterable);
+        int size = computeSize(runLengthList);
+        ByteBuffer buf = ByteBuffer.allocate(size);
+        buf.putInt(numberOfQualities);
         buf.put(guard);
         for(RunLength<PhredQuality> runLength : runLengthList){
             if(runLength.getValue().getQualityScore() == guard){
@@ -203,20 +265,7 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
     	return encoding;
     }
    
-    private static <T> T decode(List<RunLength<T>> encoded, int decodedIndex){
-        long previousIndex=-1;
-        final Range target = Range.createOfLength(decodedIndex, 1);
-        for(RunLength<T> runLength : encoded){
-            long currentStartIndex = previousIndex+1;
-            Range range = Range.createOfLength(currentStartIndex, runLength.getLength());
-            
-            if(range.intersects(target)){
-                return runLength.getValue();
-            }
-            previousIndex = range.getEnd();
-        }
-        throw new ArrayIndexOutOfBoundsException(decodedIndex + " last index is "+ previousIndex);
-    }
+    
     private static <T> List<T> decode(List<RunLength<T>> encoding){
         List<T> decoded = new ArrayList<T>();
         for(RunLength<T> runLength : encoding){
