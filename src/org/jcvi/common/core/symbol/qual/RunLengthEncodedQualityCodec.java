@@ -59,7 +59,7 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
         return decode(decodeUpTo(buf, guard, size-1));
     }
     
-    public PhredQuality get(ByteBuffer buf, byte guard,  int index){
+    private PhredQuality get(ByteBuffer buf, byte guard,  int index){
     	int currentOffset=0;
 		while(buf.hasRemaining()){
             byte runLengthCode = buf.get(); 
@@ -82,6 +82,9 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
             	return PhredQuality.valueOf(currentValue);
             }
     	}
+		//should not happen, any method that calls this
+		//should have done bounds checking but this
+		//is required to get it to compile.
 		throw new IllegalStateException("could not find index "+index);
     }
     private List<RunLength<PhredQuality>> decodeUpTo(ByteBuffer buf, byte guard,int maxIndex) {
@@ -131,8 +134,6 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
         	throw new IllegalArgumentException("can not have index beyond length");
         }
         byte guard = buf.get();
-       // final List<RunLength<PhredQuality>> list = decodeUpTo(buf, guard, index);
-      //  return decode(list, index);
         return get(buf,guard,index);
     }
 
