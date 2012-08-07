@@ -173,10 +173,17 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
         return buf.array();
     }
     
-
+    public byte[] encode(byte[] qualities){
+    	 List<RunLength<PhredQuality>> runLengthList = runLengthEncode(qualities);
+         return createEncodedByteArray(qualities.length, runLengthList);
+    }
     public byte[] encode(Iterable<PhredQuality> qualityIterable, int numberOfQualities) {
         List<RunLength<PhredQuality>> runLengthList = runLengthEncode(qualityIterable);
-        int size = computeSize(runLengthList);
+        return createEncodedByteArray(numberOfQualities, runLengthList);
+    }
+	private byte[] createEncodedByteArray(int numberOfQualities,
+			List<RunLength<PhredQuality>> runLengthList) {
+		int size = computeSize(runLengthList);
         ByteBuffer buf = ByteBuffer.allocate(size);
         buf.putInt(numberOfQualities);
         buf.put(guard);
@@ -201,7 +208,7 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
             }
         }
         return buf.array();
-    }
+	}
 
     private int computeSize(List<RunLength<PhredQuality>> runLengthList) {
         int numGuards=0;
@@ -243,6 +250,32 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
         }
         return true;
     }
+    private static List<RunLength<PhredQuality>> runLengthEncode(byte[] qualities){
+    	int currentOffset=0;
+
+    	if(qualities.length==0){
+    		return Collections.emptyList();
+    	}
+    	List<RunLength<PhredQuality>> encoding = new ArrayList<RunLength<PhredQuality>>();
+    	byte currentElement=qualities[currentOffset];
+    	int runLength=1;
+    	currentOffset++;
+    	while(currentOffset< qualities.length){
+    		byte nextElement = qualities[currentOffset];
+    		if(currentElement ==nextElement){
+    			runLength++;
+    		}else{
+    			encoding.add(new RunLength<PhredQuality>(PhredQuality.valueOf(currentElement), runLength));
+    			runLength=1;
+    			currentElement=nextElement;
+    		}
+    		currentOffset++;
+    	}
+    	encoding.add(new RunLength<PhredQuality>(PhredQuality.valueOf(currentElement), runLength));
+    	
+    	return encoding;
+    }
+    
     private static <T> List<RunLength<T>> runLengthEncode(Iterable<T> elements){
     	Iterator<T> iter = elements.iterator();
     	if(!iter.hasNext()){
