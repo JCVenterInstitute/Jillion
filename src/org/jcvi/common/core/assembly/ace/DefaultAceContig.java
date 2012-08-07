@@ -278,7 +278,10 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
             contigRight = Math.min(contigRight,(int)mutableConsensus.getLength()-1);
             //here only include the gapped valid range consensus bases
             //throw away the rest            
-            NucleotideSequence validConsensus = mutableConsensus.build(Range.create(contigLeft, contigRight));
+            NucleotideSequence validConsensus = mutableConsensus
+            		.copy()
+            		.trim(Range.create(contigLeft, contigRight))
+            		.build();
             for(AcePlacedReadBuilder aceReadBuilder : aceReadBuilderMap.values()){
                 int newOffset = (int)aceReadBuilder.getBegin() - contigLeft;
                 aceReadBuilder.reference(validConsensus,newOffset);

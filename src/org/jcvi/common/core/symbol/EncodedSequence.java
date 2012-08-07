@@ -26,7 +26,6 @@ package org.jcvi.common.core.symbol;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.Range;
@@ -74,10 +73,7 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
         //defensive copy
         this.data = Arrays.copyOf(data, data.length);
     }
-
-    public List<T> asList(){
-        return codec.decode(data);
-    }
+    @Override
     public long getLength(){
         return codec.decodedLengthOf(data);
     }
@@ -135,11 +131,13 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
     	return builder.toString();
     }
     /**
-    * Default iterator returns the iterator from
-    * the result of {@link #asList()}.  This method
-    * should be overridden if a more efficient 
-    * iterator could be generated.
-    */
+     * Default iterator iterates
+     * over the objects in this sequence using
+     * {@link #get(int)}. This method
+     * should be overridden if a more efficient 
+     * iterator could be generated.
+     * {@inheritDoc}
+     */
     @Override
     public Iterator<T> iterator() {
         return new RangedIterator();

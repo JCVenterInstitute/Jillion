@@ -105,7 +105,8 @@ public class TrimFasta {
                     
                     try {
                     	NucleotideSequence trimmedSequence = new NucleotideSequenceBuilder(basecalls)
-                    										.build(trimRange);
+                    										.trim(trimRange)
+                    										.build();
                         out.write(new NucleotideSequenceFastaRecord(
                                 fastaRecord.getId(),
                                 fastaRecord.getComment(),

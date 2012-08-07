@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.ResidueSequenceBuilder;
@@ -197,14 +199,10 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws NullPointerException if otherBuilder is null.
      * @throws IllegalArgumentException if otherBuilder is not a NucleotideSequenceBuilder.
      */
-    public NucleotideSequenceBuilder append(ResidueSequenceBuilder<Nucleotide, NucleotideSequence> otherBuilder){
+    public NucleotideSequenceBuilder append(NucleotideSequenceBuilder otherBuilder){
         
-    	assertNotNull(otherBuilder);
-    	if(!(otherBuilder instanceof NucleotideSequenceBuilder)){
-        	throw new IllegalArgumentException("other builder must be NucleotideSequenceBuilder");
-        }
-    	NucleotideSequenceBuilder otherSequenceBuilder = (NucleotideSequenceBuilder)otherBuilder;
-    	NewValues newValues = new NewValues(otherSequenceBuilder.bits, otherSequenceBuilder.tail);
+    	assertNotNull(otherBuilder);    	
+    	NewValues newValues = new NewValues(otherBuilder.bits, otherBuilder.tail);
         return append(newValues);
     }
    
@@ -560,10 +558,38 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         		return new DefaultReferenceEncodedNucleotideSequence(
         				codecDecider.alignedReference.reference, toString(), codecDecider.alignedReference.offset);
         	}
-        	return DefaultNucleotideSequence.create(asList(),codecDecider.getOptimalCodec());
+        	
+        	NucleotideCodec optimalCodec = codecDecider.getOptimalCodec();
+        	byte[] encodedBytes =optimalCodec.encode(codecDecider.currentLength, iterator());
+			return new DefaultNucleotideSequence(optimalCodec, encodedBytes);
 
     }
-    /**
+    private Iterator<Nucleotide> iterator() {
+    	return new Iterator<Nucleotide>(){
+            private final int end = codecDecider.currentLength*NUM_BITS_PER_VALUE-1;
+            private int currentOffset=0;
+			@Override
+			public boolean hasNext() {
+				return currentOffset<end;
+			}
+			@Override
+			public Nucleotide next() {
+				if(!hasNext()){
+					throw new NoSuchElementException();
+				}
+				Nucleotide next = getNucleotideFor(currentOffset);
+				currentOffset+= NUM_BITS_PER_VALUE;
+				return next;
+			}
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+				
+			}
+    	};
+    	
+	}
+	/**
      * Return the built {@link NucleotideSequence} as {@link ReferenceMappedNucleotideSequence} 
      * assuming {@link #setReferenceHint(NucleotideSequence, int)} has been set.
      * This is the same as {@code (ReferenceEncodedNucleotideSequence) build()}
@@ -577,30 +603,12 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	}
         return (ReferenceMappedNucleotideSequence)build();
     }
-    /**
-     * Return the built {@link NucleotideSequence} using only
-     * the given nucleotides as a {@link ReferenceMappedNucleotideSequence} 
-     * assuming {@link #setReferenceHint(NucleotideSequence, int)} has been set.
-     * This is the same as {@code (ReferenceEncodedNucleotideSequence) build(range)}.
-     * If the given range is a subrange this will be treated as if 
-     * {@link #setReferenceHint(NucleotideSequence, int)} was called using 
-     * {@literal gappedStartOffset + range.getstart() }.
-     * @param range the range of nucleotides to build (gapped).
-     * @return the built NucleotideSequence as a {@link ReferenceMappedNucleotideSequence}.
-     * @throws IllegalStateException if a reference
-     * has not been provided via the {@link #setReferenceHint(NucleotideSequence, int)}
-     */
-    public ReferenceMappedNucleotideSequence buildReferenceEncodedNucleotideSequence(Range range) {    
-    	if(!codecDecider.hasAlignedReference()){
-    		throw new IllegalStateException("must provide reference");
-    	}
-        return (ReferenceMappedNucleotideSequence)build(range);
-    }
+   
     /**
      * Provide another {@link NucleotideSequence} and a start coordinate
      * that can be used as a reference alignment for this sequence to be built.
      * This information may or may not be actually used during {@link #build()}
-     * or {@link #build(Range)} to construct a more memory efficient
+     *  to construct a more memory efficient
      * {@link NucleotideSequence} implementation.  The given sequence and start coordinate
      * provided should be the coordinates used in the final fully built sequence.
      * <br/>
@@ -754,6 +762,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		return new NucleotideSequenceBuilder(copyOfBits, tail,codecDecider);
 	}
     
+   
     /**
      * Get the entire current nucleotide sequence as a list
      * of Nucleotide objects.

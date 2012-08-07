@@ -437,12 +437,7 @@ public class TestNucleotideSequenceBuilder {
        new NucleotideSequenceBuilder("ACGT")
                         .replace(4, Nucleotide.Cytosine);
     }
-    @Test
-    public void buildSubRange(){
-        assertEquals("CG",
-                new NucleotideSequenceBuilder("ACGT")
-                        .build(Range.create(1,2)).toString());
-    }
+   
     
     @Test
     public void trim(){
@@ -472,34 +467,20 @@ public class TestNucleotideSequenceBuilder {
                     .toString());
     }
     
-    @Test
-    public void asList(){
-        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
-        assertEquals(Nucleotides.parse("ACGT"),sut.asList());
-    }
-    @Test(expected = NullPointerException.class)
-    public void asListRangeIsNullShouldThrowNullPointerException(){
-        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
-        sut.asList(null);
-    }
     
-    @Test(expected = IllegalArgumentException.class)
-    public void asListRangeIsNotSubrangeOfSequenceShouldThrowException(){
-        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
-        sut.asList(Range.create(20,100));
-    }
+   
     
     @Test
     public void reverseEvenNumberOfBases(){
     	 NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("AAGG");
     	 sut.reverse();
-    	 assertEquals(Nucleotides.parse("GGAA"),sut.asList());
+    	 assertEquals("GGAA",sut.build().toString());
     }
     @Test
     public void reverseOddNumberOfBases(){
     	 NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("AATGG");
     	 sut.reverse();
-    	 assertEquals(Nucleotides.parse("GGTAA"),sut.asList());
+    	 assertEquals("GGTAA",sut.build().toString());
     }
     
     @Test
@@ -511,15 +492,7 @@ public class TestNucleotideSequenceBuilder {
 		assertEquals("ACCCG",builtSequence.toString());
 		assertTrue(builtSequence instanceof ReferenceMappedNucleotideSequence);
     }
-    @Test
-    public void buildSubRangeWithReference(){
-    	 NucleotideSequence reference = new NucleotideSequenceBuilder( "AAACCCGGGTTT").build();
-    	 NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder(  "ACCCG")
-    	 									.setReferenceHint(reference, 2);
-    	 NucleotideSequence builtSequence = sut.build(Range.create(2, 4));
-		assertEquals("CCG",builtSequence.toString());
-		assertTrue(builtSequence instanceof ReferenceMappedNucleotideSequence);
-    }
+   
     
     
     @Test
@@ -532,17 +505,7 @@ public class TestNucleotideSequenceBuilder {
 		assertEquals("CCG",builtSequence.toString());
 		assertTrue(builtSequence instanceof ReferenceMappedNucleotideSequence);
     }
-    @Test
-    public void asUngappedListWithNoGaps(){
-    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("AATGG");
-    	assertEquals(Nucleotides.parse("AATGG"),sut.asUngappedList());
-    }
-    
-    @Test
-    public void asUngappedListWithGaps(){
-    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("A-ATG-G");
-    	assertEquals(Nucleotides.parse("AATGG"),sut.asUngappedList());
-    }
+   
     
     @Test
     public void asUngappedListSubrangeWithNoGaps(){

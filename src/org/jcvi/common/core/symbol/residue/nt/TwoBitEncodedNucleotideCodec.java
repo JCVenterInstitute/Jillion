@@ -254,9 +254,14 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
        
 
         @Override
+		public byte[] encode(int numberOfNucleotides,
+				Iterator<Nucleotide> nucleotides) {
+        	 return encodeNucleotides(nucleotides, numberOfNucleotides);
+		}
+		@Override
         public byte[] encode(Collection<Nucleotide> glyphs) {
             final int unEncodedSize = glyphs.size();
-            return encodeNucleotides(glyphs, unEncodedSize);
+            return encodeNucleotides(glyphs.iterator(), unEncodedSize);
             
         }
         /**
@@ -266,7 +271,7 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
          */
         @Override
         public byte[] encode(Nucleotide glyph) {
-            return encodeNucleotides(Arrays.asList(glyph),1);
+            return encodeNucleotides(Arrays.asList(glyph).iterator(),1);
             
         }
         
@@ -280,11 +285,10 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
 					numBasesSizeStrategy, numberOfSentinelValues,
 					sentinelSizeStrategy);
         }
-        private byte[] encodeNucleotides(Collection<Nucleotide> glyphs,
+        private byte[] encodeNucleotides(Iterator<Nucleotide> iterator,
                 final int unEncodedSize) {
             int encodedBasesSize = computeHeaderlessEncodedSize(unEncodedSize);
             ByteBuffer encodedBases = ByteBuffer.allocate(encodedBasesSize);
-            Iterator<Nucleotide> iterator = glyphs.iterator();
             List<Integer> sentinels = encodeAll(iterator, unEncodedSize, encodedBases);
             encodedBases.flip();
             ValueSizeStrategy numBasesSizeStrategy = ValueSizeStrategy.getStrategyFor(unEncodedSize);

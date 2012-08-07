@@ -35,7 +35,7 @@ import org.jcvi.common.core.symbol.residue.nt.DefaultNucleotideCodec;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.junit.Test;
-public class TestDefaultNucleotideGlyphCodec {
+public class TestDefaultNucleotideCodec {
     List<Nucleotide> evenBases = Nucleotides.parse("ACGTACGTWS-NACGT");
     List<Nucleotide> oddBases =  Nucleotides.parse("ACGTACGTWS-NACGTA");
     
