@@ -6,7 +6,6 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.SequenceBuilder;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.util.GrowableShortArray;
 
 public final class PositionSequenceBuilder implements SequenceBuilder<Position, PositionSequence>{
@@ -49,9 +48,9 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
 	
 	/**
 	 * Creates a new builder whose initial sequence
-	 * is set to the given {@link QualitySequence}.
-	 * @param qualitySequence the initial quality sequence
-	 * @throws NullPointerException if qualitySequence is null.
+	 * is set to the given {@link PositionSequence}.
+	 * @param positionSequence the initial position sequence
+	 * @throws NullPointerException if positionSequence is null.
 	 */
 	public PositionSequenceBuilder(PositionSequence positionSequence){
 		this.builder = new GrowableShortArray(positionSequence.toArray());
@@ -74,15 +73,15 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
 	/**
 	 * 
 	 * {@inheritDoc}
-	 * @param quality a single {@link PhredQuality}
+	 * @param position a single {@link PhredQuality}
 	 * to be appended to the end of the current sequence
 	 * (can not be null).
 	 * 
 	 */
 	@Override
 	public PositionSequenceBuilder append(
-			Position quality) {
-		builder.append(encode(quality));
+			Position position) {
+		builder.append(encode(position));
 		return this;
 	}
 	/**
@@ -110,7 +109,7 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
 	 * @param positionValues a short array representing position values
 	 * (can not be null).
 	 * @return this
-	 * @throws NullPointerException if qualityScores is null.
+	 * @throws NullPointerException if positionScores is null.
 	 */
 	public PositionSequenceBuilder append(
 			short[] positionValues) {
@@ -151,15 +150,15 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
 		return this;
 	}
 	/**
-	 * Inserts the {@link QualitySequence} 
+	 * Inserts the {@link PositionSequence} 
 	 * at the specified sequence offset.  The entire
 	 * sequence will be added to the builder.
 	 * @param offset the offset into the builder to insert
-	 * the quality array.
-	 * @param sequence the {@link QualitySequence} to insert
+	 * the position array.
+	 * @param sequence the {@link PositionSequence} to insert
 	 * (can not be null).
 	 * @return this
-	 * @throws NullPointerException if qualityScores is null.
+	 * @throws NullPointerException if positionScores is null.
 	 * @throws IndexOutOfBoundsException if offset is less than 0 
 	 * or greater than the current length of the sequence.
 	 */
@@ -171,13 +170,13 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
 
 	@Override
 	public PositionSequenceBuilder insert(int offset,
-			Position qualityScore) {
+			Position positionScore) {
 		assertInsertOffsetValid(offset);
-		builder.insert(offset, encode(qualityScore));
+		builder.insert(offset, encode(positionScore));
 		return this;
 	}
 	/**
-	 * Inserts the given quality values represented
+	 * Inserts the given position values represented
 	 * by the given byte array to the current sequence starting
 	 * at the specified sequence offset.  The entire
 	 * array will be added to the builder.  (If an element in the array
@@ -186,11 +185,11 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
 	 * of 40).
 	 * to this sequence. 
 	 * @param offset the offset into the builder to insert
-	 * the quality array.
-	 * @param positionValues a byte array representing quality scores
+	 * the position array.
+	 * @param positionValues a byte array representing position scores
 	 * (can not be null).
 	 * @return this
-	 * @throws NullPointerException if qualityScores is null.
+	 * @throws NullPointerException if positionScores is null.
 	 * @throws IndexOutOfBoundsException if offset is less than 0 
 	 * or greater than the current length of the sequence.
 	 */
@@ -235,7 +234,7 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
      * of this builder's mutable sequence.
      * This is the same as calling 
      * {@link #insert(int, Position) insert(0,Position.valueOf(positionValue))}
-     * @param positionValue the quality value to
+     * @param positionValue the position value to
      * be inserted at the beginning of the sequence.
      * @return this.
      */
@@ -244,8 +243,8 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
 	}
 	
 	
-	public PositionSequenceBuilder prepend(short[] qualityScores){
-		return insert(0,qualityScores);
+	public PositionSequenceBuilder prepend(short[] positionValues){
+		return insert(0,positionValues);
 	}
 	/**
      * Inserts the given PositionSequenceBuilder's current
