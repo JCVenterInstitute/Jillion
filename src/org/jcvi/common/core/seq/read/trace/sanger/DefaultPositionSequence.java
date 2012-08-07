@@ -1,5 +1,6 @@
 package org.jcvi.common.core.seq.read.trace.sanger;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -12,6 +13,12 @@ public class DefaultPositionSequence implements PositionSequence{
 	
 	DefaultPositionSequence(short[] data) {
 		this.data = data;
+	}
+
+	@Override
+	public short[] toArray() {
+		//defensive copy
+		return Arrays.copyOf(data, data.length);
 	}
 
 	@Override
@@ -32,6 +39,32 @@ public class DefaultPositionSequence implements PositionSequence{
 	@Override
 	public Iterator<Position> iterator() {
 		return new IteratorImpl();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(data);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof DefaultPositionSequence)) {
+			return false;
+		}
+		DefaultPositionSequence other = (DefaultPositionSequence) obj;
+		if (!Arrays.equals(data, other.data)) {
+			return false;
+		}
+		return true;
 	}
 
 	private class IteratorImpl implements Iterator<Position>{
@@ -72,7 +105,6 @@ public class DefaultPositionSequence implements PositionSequence{
 			throw new UnsupportedOperationException();
 			
 		}
-		
 		
 		
 	}

@@ -92,7 +92,7 @@ public class TestRunLengthEncodedGlyphCodec {
     @Test
     public void decodeIndex(){
         for(int i=0; i< decodedValues.size(); i++){
-            assertEquals(decodedValues.get(i), sut.decode(expected, i));
+            assertEquals(Integer.toString(i),decodedValues.get(i), sut.decode(expected, i));
         }
     }
 }

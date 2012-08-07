@@ -242,24 +242,16 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	 */
 	@Override
 	public QualitySequence build() {
-		List<PhredQuality> asQualities = asQualities();
-		byte[] runLengthEncoded = RunLengthEncodedQualityCodec.INSTANCE.encode(asQualities);
+		byte[] runLengthEncoded = RunLengthEncodedQualityCodec.INSTANCE.encode(this, builder.getCurrentLength());
 		if(runLengthEncoded.length < builder.getCurrentLength()){
 			return new EncodedQualitySequence(
 					RunLengthEncodedQualityCodec.INSTANCE, 
 					runLengthEncoded);
 		}
+		
 		return new EncodedQualitySequence(DefaultQualitySymbolCodec.INSTANCE, builder.toArray());
 	}
 	
-	private List<PhredQuality> asQualities(){
-		int length= builder.getCurrentLength();
-		List<PhredQuality> qualities = new ArrayList<PhredQuality>(length);
-		for(int i=0;i<length;i++){
-			qualities.add(PhredQuality.valueOf(builder.get(i)));
-		}
-		return qualities;
-	}
 
 	@Override
 	public QualitySequenceBuilder trim(Range range) {

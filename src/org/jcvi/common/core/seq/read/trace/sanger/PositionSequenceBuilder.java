@@ -54,7 +54,7 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
 	 * @throws NullPointerException if qualitySequence is null.
 	 */
 	public PositionSequenceBuilder(PositionSequence positionSequence){
-		this.builder = new GrowableShortArray(encode(positionSequence));
+		this.builder = new GrowableShortArray(positionSequence.toArray());
 	}
 	/**
 	 * internal copy constructor used by {@link #copy()}.
@@ -67,15 +67,6 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
 		return IOUtil.toSignedShort(q.getValue());
 	}
 
-	private short[] encode(PositionSequence sequence){
-		short[] b = new short[(int)sequence.getLength()];
-		int i=0;
-		for(Position q : sequence){
-			b[i]=encode(q);
-			i++;
-		}
-		return b;
-	}
 	@Override
 	public PositionSequence build() {
 		return new DefaultPositionSequence(builder.toArray());
@@ -129,7 +120,7 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
 
 	public PositionSequenceBuilder append(
 			PositionSequence sequence) {
-		builder.append(encode(sequence));
+		builder.append(sequence.toArray());
 		return this;
 	}
 
@@ -174,7 +165,7 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
 	 */
 	public PositionSequenceBuilder insert(int offset,
 			PositionSequence sequence) {
-		builder.insert(offset, encode(sequence));
+		builder.insert(offset, sequence.toArray());
 		return this;
 	}
 
