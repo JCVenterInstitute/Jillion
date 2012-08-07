@@ -171,7 +171,7 @@ public class Frg2Writer {
                library.getId(),
                writeSourceComment(frag),
                frag.getNucleotideSequence().toString(),
-               new String(QUALITY_CODEC.encode(frag.getQualitySequence().asList()),IOUtil.UTF_8),
+               new String(QUALITY_CODEC.encode(frag.getQualitySequence()),IOUtil.UTF_8),
                vectorClearRange.getBegin(CoordinateSystem.SPACE_BASED),vectorClearRange.getEnd(CoordinateSystem.SPACE_BASED),
                clearRange.getBegin(CoordinateSystem.SPACE_BASED),clearRange.getEnd(CoordinateSystem.SPACE_BASED)
                ).getBytes(IOUtil.UTF_8));

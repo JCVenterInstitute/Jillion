@@ -21,13 +21,6 @@ final class EncodedPositionSequence implements PositionSequence{
     }
 
 
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public List<Position> asList() {
-        return delegate.asList();
-    }
 
     /**
     * {@inheritDoc}

@@ -19,11 +19,7 @@ public abstract class AbstractAminoAcidSequence extends AbstractResidueSequence<
 		this.encodedAminoAcids = new EncodedSequence<AminoAcid>(codec,glyphs);
 	}
 	
-	@Override
-	public List<AminoAcid> asList() {
-		return encodedAminoAcids.asList();
-	}
-
+	
 
 	@Override
 	public AminoAcid get(int index) {
@@ -51,30 +47,32 @@ public abstract class AbstractAminoAcidSequence extends AbstractResidueSequence<
      }
 	@Override
 	public List<Integer> getGapOffsets() {
-		List<AminoAcid> aas = asList();
+		Iterator<AminoAcid> iter = iterator();
+		int i=0;
 		List<Integer> gapOffsets = new ArrayList<Integer>();
-		for(int i=0; i< aas.size(); i++){
-			if(aas.get(i) == AminoAcid.Gap){
+		while(iter.hasNext()){
+			if(iter.next() ==AminoAcid.Gap){
 				gapOffsets.add(Integer.valueOf(i));
 			}
-		}
+			i++;
+		}		
 		return gapOffsets;
 	}
 	@Override
 	public int getNumberOfGaps() {
-		List<AminoAcid> aas = asList();
+		Iterator<AminoAcid> iter = iterator();
 		int count=0;
-		for(int i=0; i< aas.size(); i++){
-			if(aas.get(i) == AminoAcid.Gap){
+		
+		while(iter.hasNext()){
+			if(iter.next() ==AminoAcid.Gap){
 				count++;
-			}
-		}
-		return count;
+			}			
+		}		
+		return count;		
 	}
 	@Override
 	public boolean isGap(int gappedOffset) {
-		List<AminoAcid> aas = asList();
-		return aas.get(gappedOffset) ==AminoAcid.Gap;
+		return encodedAminoAcids.get(gappedOffset) == AminoAcid.Gap;		
 	}
 
 	@Override

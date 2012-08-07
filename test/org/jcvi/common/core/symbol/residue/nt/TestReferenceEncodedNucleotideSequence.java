@@ -57,25 +57,10 @@ public class TestReferenceEncodedNucleotideSequence {
         String sequenceAsString = "CGTACGTWCGT";
         assertDecodedCorrectly(offset, sequenceAsString);
     }
-    /**
-     * Convert the given {@link Iterable} of nucleotides
-     * into a String which represents the same
-     * nucleotide sequence.
-     * @param nucleotides the nucleotides to convert to a string
-     * @return a new String, will never be null.
-     * @throws NullPointerException if nucleotides is null.
-     */
-    private static String asString(Iterable<Nucleotide> nucleotides){
-        StringBuilder result = new StringBuilder();
-        for(Nucleotide g: nucleotides){
-            result.append(g.toString());
-        }
-        return result.toString();
-    }
+  
     private void assertDecodedCorrectly(int offset, String sequenceAsString) {
         ReferenceMappedNucleotideSequence sut = new DefaultReferenceEncodedNucleotideSequence(encodedReference,sequenceAsString, offset);
         assertEquals(sequenceAsString.length(), sut.getLength());
-        assertEquals(sequenceAsString, asString(sut.asList()));
         assertEquals(sequenceAsString, sut.toString());
         for(int i=0; i< sequenceAsString.length(); i++){
             assertEquals(Nucleotide.parse(sequenceAsString.charAt(i)),
@@ -180,7 +165,6 @@ public class TestReferenceEncodedNucleotideSequence {
         assertEquals(expectedGapIndexes.size(), actual.getNumberOfGaps());
        
         assertEquals(sequence.length(), actual.getLength());
-        assertEquals(sequence,asString(actual.asList()));
         assertEquals(sequence, actual.toString());
     }
     

@@ -7,11 +7,6 @@ import org.jcvi.common.core.Range;
 
 public class DefaultPositionSequence implements PositionSequence{
 
-	@Override
-	public List<Position> asList() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public Position get(int index) {

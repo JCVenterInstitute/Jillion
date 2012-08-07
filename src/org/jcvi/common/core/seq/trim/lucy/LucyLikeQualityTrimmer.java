@@ -129,7 +129,7 @@ public final class LucyLikeQualityTrimmer {
 
     private List<Double> convertToErrorRates(Sequence<PhredQuality> qualities){
         List<Double> errorRates = new ArrayList<Double>((int)qualities.getLength());
-        for(PhredQuality quality : qualities.asList()){
+        for(PhredQuality quality : qualities){
             errorRates.add(quality.getErrorProbability());
         }
         return errorRates;

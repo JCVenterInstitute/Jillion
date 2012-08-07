@@ -234,12 +234,6 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 
 
 
-	@Override
-    public List<Nucleotide> asList() {
-		Nucleotide[] array = asNucleotideArray();
-		return Arrays.asList(array);
-	}
-
 
 	private Nucleotide[] createReferenceArray(Range range){
 		Nucleotide[] array = new Nucleotide[(int)range.getLength()];

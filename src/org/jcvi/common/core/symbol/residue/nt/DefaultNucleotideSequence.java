@@ -89,11 +89,6 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
     }
 
     @Override
-    public List<Nucleotide> asList() {
-    	return codec.decode(data);
-    }
-
-    @Override
     public Nucleotide get(int index) {     
     	return codec.decode(data, index);
     }

@@ -65,11 +65,7 @@ public final class CompactedSliceMap implements SliceMap {
         final QualitySequence fakeQualities;
         public NullQualityDataStore(final PhredQuality defaultQuality){
             fakeQualities = new QualitySequence(){
-                @Override
-                public List<PhredQuality> asList() {
-                    // TODO Auto-generated method stub
-                    return null;
-                }
+             
 
                 /**
                 * {@inheritDoc}

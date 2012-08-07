@@ -25,6 +25,7 @@ package org.jcvi.common.core.seq.fastx.fasta.pos;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
@@ -52,6 +53,15 @@ public class TestPositionFastaRecord {
     
     DefaultPositionSequenceFastaRecord<Sequence<ShortSymbol>> sut = new DefaultPositionSequenceFastaRecord<Sequence<ShortSymbol>>(id,comment, encodedPositions);
     
+    private List<ShortSymbol> asList(Sequence<ShortSymbol> seq){
+    	int length = (int)seq.getLength();
+		List<ShortSymbol> list = new ArrayList<ShortSymbol>(length);
+    	for(int i=0; i<length; i++){
+    		list.add(seq.get(i));
+    	}
+    	return list;
+    }
+    
     private String buildExpectedRecord(DefaultPositionSequenceFastaRecord<Sequence<ShortSymbol>> fasta){
         StringBuilder builder= new StringBuilder();
         builder.append(">")
@@ -61,7 +71,7 @@ public class TestPositionFastaRecord {
                     .append(fasta.getComment());
         }
         appendCarriageReturn(builder);
-        List<ShortSymbol> pos = fasta.getSequence().asList();
+        List<ShortSymbol> pos = asList(fasta.getSequence());
         for(int i=1; i<pos.size(); i++){
             
             builder.append(String.format("%04d", pos.get(i-1).getValue()));

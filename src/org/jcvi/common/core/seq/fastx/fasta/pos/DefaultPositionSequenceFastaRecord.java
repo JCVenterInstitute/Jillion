@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.fastx.fasta.pos;
 
-import java.util.List;
+import java.util.Iterator;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecord;
 import org.jcvi.common.core.symbol.Sequence;
@@ -42,20 +42,23 @@ public class DefaultPositionSequenceFastaRecord <T extends Sequence<ShortSymbol>
     }
     @Override
     protected CharSequence getRecordBody() {
-        StringBuilder result = new StringBuilder();
-        
-       final List<ShortSymbol> decodedPositions = positions.asList();
-       for(int i=1; i<decodedPositions.size(); i++){
-           result.append(String.format("%04d", decodedPositions.get(i-1).getValue()));
-           if(i%12 == 0){
-               this.appendCarriageReturnAndLineFeed(result);
-           }
-           else{
-               result.append(' ');
-           }        
-       }
-       //last value doesn't get a space
-       result.append(String.format("%04d", decodedPositions.get(decodedPositions.size()-1).getValue()));
+    	 int length = (int)positions.getLength();
+        StringBuilder result = new StringBuilder(5*length);
+
+       Iterator<ShortSymbol> iter = positions.iterator();
+       int i=1;
+       while(iter.hasNext()){
+    	   result.append(String.format("%04d", iter.next().getValue().shortValue()));
+    	   if(iter.hasNext()){
+    		   if(i%12 == 0){
+                   this.appendCarriageReturnAndLineFeed(result);
+               }
+               else{
+                   result.append(' ');
+               }    		   
+    	   }    	   
+    	   i++;
+       }       
        return result.toString();
     }
 

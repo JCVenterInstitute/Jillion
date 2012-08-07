@@ -98,12 +98,24 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
         if (obj == null){
             return false;
         }
-        if (!(obj instanceof EncodedSequence)){
+        if (!(obj instanceof Sequence)){
             return false;
         }
-        EncodedSequence other = (EncodedSequence) obj;
-        return toString().equals(other.toString());
-       
+        Sequence other = (Sequence) obj;
+        Iterator<T> ourIter = iterator();
+        Iterator<?> otherIter = other.iterator();
+        while(ourIter.hasNext()){
+        	if(!otherIter.hasNext()){
+        		return false;
+        	}
+        	if(!ourIter.next().equals(otherIter.next())){
+        		return false;
+        	}
+        }
+        if(otherIter.hasNext()){
+        	return false;
+        }
+        return true;
     }
     @Override
     public T get(int index) {
@@ -112,7 +124,15 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
    
     @Override
     public String toString() {
-        return asList().toString();
+    	Iterator<T> iter = iterator();
+    	StringBuilder builder = new StringBuilder((int)getLength()*5);
+    	while(iter.hasNext()){
+    		if(builder.length()>0){
+    			builder.append(" ,");
+    		}
+    		builder.append(iter.next());
+    	}
+    	return builder.toString();
     }
     /**
     * Default iterator returns the iterator from
