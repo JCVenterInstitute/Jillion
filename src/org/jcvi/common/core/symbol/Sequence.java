@@ -24,7 +24,6 @@
 package org.jcvi.common.core.symbol;
 
 import java.util.Iterator;
-import java.util.List;
 
 import org.jcvi.common.core.Range;
 /**
@@ -42,24 +41,26 @@ public interface Sequence<T extends Symbol> extends Iterable<T>{
    
     /**
      * Gets the specific {@link Symbol} at the specified index.
-     * this should return the same {@link Symbol} as
-     * {@code decode().get(index)} but hopefully
-     * in a more efficient manner.
      * @param index the index of the {@link Symbol} to get.
-     * @return the {@link Symbol} at the specified index.
+     * @return the {@link Symbol} at the specified index;
+     * will never be null.
      */
     T get(int index);
     /**
-     * Get the number of {@link Symbol}s that are encoded.
-     * This should return the same value as
-     * {@code decode().size()}.
+     * Get the number of {@link Symbol}s that are in
+     * this sequence.
      * @return the length, will never
      * be less than {@code 0}.
      */
     long getLength();
     @Override
     int hashCode();
-    
+    /**
+     * Two sequences should be equal
+     * if they are both the same
+     * length and contain the same 
+     * {@link Symbol}s in the same order.
+     */
     @Override
     boolean equals(Object obj);
 
