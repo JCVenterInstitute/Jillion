@@ -366,4 +366,16 @@
 		</copy>
 		<copy file="${project-name}-${version}-r${revision}.jar" todir="${release}"></copy>
 	</target>
+	
+	<target name="jdepend" description= "runs JDepend on source" depends = "internal.source.only.bin">
+
+	  <jdepend  format="xml" outputfile="jdepend-report.xml">
+	      <exclude name="java.*"/>
+	      <exclude name="javax.*"/>
+	  		<classespath>
+	  	        <pathelement location="${bin}"/>
+	  	    </classespath>
+	  	
+	  </jdepend>
+	</target>
 </project>
