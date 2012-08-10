@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.symbol.qual;
+package org.jcvi.common.tigr;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;

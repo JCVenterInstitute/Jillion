@@ -31,8 +31,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         TestIllegalEncodedValueException.class,        
-        TestShortGlyphDeltaEncoderWhenEncoding.class,
-        TestShortGlyphDeltaEncoderWhenDecoding.class
     }
     )
 public class AllEnocderUnitTests {

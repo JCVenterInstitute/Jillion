@@ -19,7 +19,7 @@
 /**
  * 
  */
-package org.jcvi.common.core.symbol.pos;
+package org.jcvi.common.tigr;
 
 import java.nio.CharBuffer;
 import java.nio.ShortBuffer;

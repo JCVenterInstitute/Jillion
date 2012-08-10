@@ -24,7 +24,6 @@
 package org.jcvi.common.core.symbol;
 
 
-import org.jcvi.common.core.symbol.pos.AllPeaksUnitTests;
 import org.jcvi.common.core.symbol.qual.AllPhredQualityTests;
 import org.jcvi.common.core.symbol.residue.AllResidueUnitTests;
 import org.junit.runner.RunWith;
@@ -37,8 +36,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
         AllResidueUnitTests.class,
        AllPhredQualityTests.class,
-       AllNumericGlyphUnitTests.class,
-       AllPeaksUnitTests.class,       
+       AllNumericGlyphUnitTests.class,      
        AllEnocderUnitTests.class
     }
 )

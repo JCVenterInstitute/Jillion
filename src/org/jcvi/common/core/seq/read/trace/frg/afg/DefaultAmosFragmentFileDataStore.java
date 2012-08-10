@@ -23,15 +23,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
@@ -102,8 +99,8 @@ public class DefaultAmosFragmentFileDataStore extends AbstractDataStore<AmosFrag
     * {@inheritDoc}
     */
     @Override
-    public void visitQualities(List<PhredQuality> qualities) {
-        this.currentQualities = new QualitySequenceBuilder(qualities).build();
+    public void visitQualities(QualitySequence qualities) {
+        this.currentQualities = qualities;
         
     }
 

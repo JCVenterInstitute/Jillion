@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.GlyphCodec;
+import org.jcvi.common.tigr.TigrQualitiesEncoder;
 
 public final class TigrQualitiesEncodedGyphCodec implements GlyphCodec<PhredQuality>{
 
