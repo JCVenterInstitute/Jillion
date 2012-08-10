@@ -19,16 +19,14 @@
 
 package org.jcvi.common.core.seq.read.trace.frg;
 
-import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextFileVisitor;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.TigrQualitiesEncodedGyphCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
@@ -39,10 +37,12 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
  */
 public final class FragmentUtil {
     public static final String CR = "\n";
-    private static final TigrQualitiesEncodedGyphCodec QUALITY_CODEC = TigrQualitiesEncodedGyphCodec.getINSTANCE();
     private static final Pattern FRG_BASES_PATTERN = Pattern.compile("seq:\\s+");
     private static final Pattern FRG_QUALITY_PATTERN = Pattern.compile("qlt:\\s+");
     private static final Pattern FRG_VALID_RANGE_PATTERN = Pattern.compile("clr:(\\d+,\\d+)");
+    
+    /** ASCII code for zero. */
+    public static final int ENCODING_ORIGIN = 0x30;
     
     private FragmentUtil(){
     	//can not instantiate
@@ -61,20 +61,25 @@ public final class FragmentUtil {
         return sb.toString();
     }
     
-    public static  List<PhredQuality> parseEncodedQualitiesFrom(String frg) {
-        Scanner scanner = new Scanner(frg);
-        scanner.findWithinHorizon(FRG_QUALITY_PATTERN, 0);
-        StringBuilder encodedQualities = new StringBuilder();
-        while(scanner.hasNextLine()){
-            String line = scanner.nextLine();
-            if(endOfMultilineField(line)){
-                break;
-            }
-            encodedQualities.append(line);
-        }
-        return  
-               QUALITY_CODEC.decode(encodedQualities.toString().getBytes(IOUtil.UTF_8));        
+    public static  QualitySequence parseEncodedQualitySequence(String frg){
+    	 Scanner scanner = new Scanner(frg);
+         scanner.findWithinHorizon(FRG_QUALITY_PATTERN, 0);
+         StringBuilder encodedQualities = new StringBuilder();
+         while(scanner.hasNextLine()){
+             String line = scanner.nextLine();
+             if(endOfMultilineField(line)){
+                 break;
+             }
+             encodedQualities.append(line);
+         }
+         scanner.close();
+    	QualitySequenceBuilder builder = new QualitySequenceBuilder(encodedQualities.length());
+    	for(int i=0; i< encodedQualities.length(); i++){
+    		builder.append(encodedQualities.charAt(i) - ENCODING_ORIGIN);
+    	}
+    	return builder.build();
     }
+   
     public static  boolean endOfMultilineField(String line) {
         return line.contains(".");
     }

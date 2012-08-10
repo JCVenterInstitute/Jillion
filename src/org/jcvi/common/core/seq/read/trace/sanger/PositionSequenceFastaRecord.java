@@ -104,8 +104,9 @@ public final class PositionSequenceFastaRecord implements FastXRecord<Position, 
         }
         PositionSequenceFastaRecord other = (PositionSequenceFastaRecord)obj;
 		return 
-        ObjectsUtil.nullSafeEquals(getSequence(), other.getSequence()) 
-        && ObjectsUtil.nullSafeEquals(getId(), other.getId());
+        
+        ObjectsUtil.nullSafeEquals(getId(), other.getId()) &&
+        ObjectsUtil.nullSafeEquals(getSequence(), other.getSequence());
     }   
 
     protected CharSequence getRecordBody() {

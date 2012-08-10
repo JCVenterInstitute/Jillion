@@ -221,7 +221,7 @@ public class Frg2Parser {
         }
         else{
             NucleotideSequence bases = FragmentUtil.parseBasesFrom(frg);
-            QualitySequence qualities = parseEncodedQualitiesFrom(frg);
+            QualitySequence qualities = FragmentUtil.parseEncodedQualitySequence(frg);
             Range validRange =  FragmentUtil.parseValidRangeFrom(frg);
             Range vectorClearRange = parseVectorClearRangeFrom(frg);
             if(vectorClearRange == null && validRange !=null){
@@ -267,14 +267,7 @@ public class Frg2Parser {
     }
     
    
-    private QualitySequence parseEncodedQualitiesFrom(String frg) {
-    	List<PhredQuality> list = FragmentUtil.parseEncodedQualitiesFrom(frg);
-        QualitySequenceBuilder builder = new QualitySequenceBuilder(list.size());
-        for(PhredQuality q : list){
-        	builder.append(q);
-        }
-        return  builder.build();        
-    }
+   
     
     protected String parseIdFrom(String frg) {
        

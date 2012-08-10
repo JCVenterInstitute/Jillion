@@ -24,12 +24,11 @@
 package org.jcvi.common.core.seq.read.trace.sanger;
 
 import org.jcvi.common.core.seq.read.trace.Trace;
-import org.jcvi.common.core.symbol.pos.SangerPeak;
 /**
  * A {@code SangerTrace} is a Trace
  * that was created via Sanger
  * sequencing and therefore has 
- * accompanying {@link SangerPeak}.
+ * accompanying {@link PositionSequence}.
  * @author dkatzel
  *
  *

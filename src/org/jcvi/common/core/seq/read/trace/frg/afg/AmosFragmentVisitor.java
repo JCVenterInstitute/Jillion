@@ -19,11 +19,9 @@
 
 package org.jcvi.common.core.seq.read.trace.frg.afg;
 
-import java.util.List;
-
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.TextFileVisitor;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 /**
@@ -37,7 +35,7 @@ public interface AmosFragmentVisitor extends TextFileVisitor{
     
     void visitBasecalls(NucleotideSequence basecalls);
     
-    void visitQualities(List<PhredQuality> qualities);
+    void visitQualities(QualitySequence qualities);
     
     void visitClearRange(Range clearRange);
     

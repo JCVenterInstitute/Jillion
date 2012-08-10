@@ -24,7 +24,7 @@ import java.util.Arrays;
 import static org.junit.Assert.*;
 
 import org.jcvi.common.core.symbol.IllegalEncodedValueException;
-import org.jcvi.common.core.symbol.qual.TigrQualitiesEncoder;
+import org.jcvi.common.tigr.TigrQualitiesEncoder;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
 

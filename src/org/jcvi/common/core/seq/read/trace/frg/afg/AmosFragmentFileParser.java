@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,7 +30,6 @@ import java.util.regex.Pattern;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.frg.FragmentUtil;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 /**
@@ -88,8 +86,7 @@ public final class AmosFragmentFileParser {
         if(visitor.visitRead(index, id)){
             NucleotideSequence bases = FragmentUtil.parseBasesFrom(block);
             visitor.visitBasecalls(bases);
-            List<PhredQuality> qualities = FragmentUtil.parseEncodedQualitiesFrom(block);
-            visitor.visitQualities(qualities);
+            visitor.visitQualities(FragmentUtil.parseEncodedQualitySequence(block));
             Range validRange =  FragmentUtil.parseValidRangeFrom(block);
             Range vectorClearRange = parseVectorClearRangeFrom(block);
             Range qualityClearRange = parseQualityClearRangeFrom(block);
