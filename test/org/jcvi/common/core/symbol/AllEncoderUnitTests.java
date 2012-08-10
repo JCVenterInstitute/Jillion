@@ -30,9 +30,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestIllegalEncodedValueException.class,        
+        TestIllegalEncodedValueException.class        
     }
     )
-public class AllEnocderUnitTests {
+public class AllEncoderUnitTests {
 
 }
