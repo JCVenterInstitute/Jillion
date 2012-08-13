@@ -23,7 +23,6 @@
  */
 package org.jcvi.common.core.seq.read.trace.frg;
 
-import org.jcvi.common.core.seq.read.trace.frg.afg.AllAfgUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -37,8 +36,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestDefaultFragment.class,
         TestFrg2Parser.class,
         TestDefaultFragmentDataStore.class,
-        TestIndexedFragmentDataStore.class,
-        AllAfgUnitTests.class
+        TestIndexedFragmentDataStore.class
     }
     )
 public class AllFrgUnitTests {
