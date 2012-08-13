@@ -29,7 +29,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
 
 /**
  * {@code AbstractQualityFastaFileDataStore} is an implementation
- * of {@link AbstractFastaFileDataStore} for {@code  FastaRecord<EncodedGlyphs<PhredQuality>>}s.
+ * of {@link AbstractFastaFileDataStore} for {@code  QualitySequenceFastaRecord}s.
  * @author dkatzel
  *
  *
