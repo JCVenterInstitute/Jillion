@@ -3,6 +3,7 @@ package org.jcvi.common.core.seq.read.trace.sanger;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -25,10 +26,17 @@ public class DefaultPositionFastaFileDataStore implements PositionSequenceFastaD
 		FastaFileParser.parse(positionFastaFile, builder);
 		return new DefaultPositionFastaFileDataStore(MapDataStoreAdapter.adapt(builder.fastas));
 	}
+	public static PositionSequenceFastaDataStore create(InputStream positionFastaInputStream, FastXFilter filter) throws FileNotFoundException{
+		PositionFastaFileVisitor builder = new PositionFastaFileVisitor(filter);
+		FastaFileParser.parse(positionFastaInputStream, builder);
+		return new DefaultPositionFastaFileDataStore(MapDataStoreAdapter.adapt(builder.fastas));
+	}
 	public static PositionSequenceFastaDataStore create(File positionFastaFile) throws FileNotFoundException{
 		return create(positionFastaFile, AcceptingFastXFilter.INSTANCE);
 	}
-	
+	public static PositionSequenceFastaDataStore create(InputStream positionFastaInputStream) throws FileNotFoundException{
+		return create(positionFastaInputStream, AcceptingFastXFilter.INSTANCE);
+	}
 	private DefaultPositionFastaFileDataStore(
 			DataStore<PositionSequenceFastaRecord> delegate) {
 		this.delegate = delegate;

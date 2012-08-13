@@ -99,14 +99,7 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     @Override
     public StreamingIterator<PhdReadRecord> createChromatogramIterator(
             File chromatogramFile, TraceDetails traceDetails) throws DataStoreException{
-        if(traceDetails.hasFastaEdits()){
-            return new EditedFastaChromatDirPhdAdapterIterator(
-                    LargeNucleotideSequenceFastaIterator.createNewIteratorFor(chromatogramFile),
-                    chromatogramFile, 
-                    traceDetails.getPhdDate(), 
-                    PhredQuality.valueOf(30), 
-                    traceDetails.getChromatDir());
-        }
+        
         return new ChromatDirFastaConsedPhdAdaptedIterator(
                 LargeNucleotideSequenceFastaIterator.createNewIteratorFor(chromatogramFile),
                 chromatogramFile,

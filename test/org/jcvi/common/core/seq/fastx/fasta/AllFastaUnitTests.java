@@ -24,7 +24,6 @@
 package org.jcvi.common.core.seq.fastx.fasta;
 
 import org.jcvi.common.core.seq.fastx.fasta.nt.AllNucleotideSequenceFastaTests;
-import org.jcvi.common.core.seq.fastx.fasta.pos.AllFastaPositionTests;
 import org.jcvi.common.core.seq.fastx.fasta.qual.AllFastaQualityTests;
 
 import org.junit.runner.RunWith;
@@ -36,8 +35,7 @@ import org.junit.runners.Suite.SuiteClasses;
     {
     	TestFastaUtil_parseDefLine.class,
         TestFastaParser.class,
-        
-        AllFastaPositionTests.class,
+
         AllFastaQualityTests.class,
         AllNucleotideSequenceFastaTests.class
         
