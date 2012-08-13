@@ -35,7 +35,7 @@ import org.jcvi.common.core.seq.fastx.fasta.LargeFastaIdIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code LargeQualityFastaFileDataStore} is an implementation
- * of {@link AbstractQualityFastaFileDataStore} which does not
+ * of {@link QualitySequenceFastaDataStore} which does not
  * store any Fasta record data 
  * in memory except it's size (which is lazy loaded).
  * This means that each get() or contain() requires re-parsing the fastq file
@@ -45,7 +45,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  *
  */
-public final class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileDataStore implements QualitySequenceFastaDataStore{
+public final class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileDataStore{
    private final File fastaFile;
 
     private Long size;
