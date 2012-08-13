@@ -396,6 +396,10 @@ public abstract class DirectoryFileServer extends AbstractFileServer implements 
             tempFile.deleteOnExit();
             return tempFile;
         }
+        /**
+         * Recursively deletes all files in this directory
+         * {@inheritDoc}
+         */
         @Override
         public synchronized void close() throws IOException {
             super.close();
