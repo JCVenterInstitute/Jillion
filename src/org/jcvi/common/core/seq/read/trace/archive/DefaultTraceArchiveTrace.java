@@ -31,16 +31,12 @@ import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFil
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideFastaDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.pos.DefaultPositionFastaFileDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.pos.PositionFastaDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.pos.PositionSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
+import org.jcvi.common.core.seq.read.trace.sanger.DefaultPositionFastaFileDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
-import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceBuilder;
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.ShortSymbol;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceFastaDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -54,24 +50,18 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
     
     @Override
 	public PositionSequence getPositionSequence() {
-    	PositionFastaDataStore datastore = null;
-    	StreamingIterator<PositionSequenceFastaRecord<Sequence<ShortSymbol>>> iterator =null;
+    	PositionSequenceFastaDataStore datastore = null;
     	InputStream in=null;
         try{
         	in = getInputStreamFor(TraceInfoField.PEAK_FILE);
             datastore =DefaultPositionFastaFileDataStore.create(in);
-            iterator = datastore.iterator();
-			Sequence<ShortSymbol> sangerPeaks = iterator.next().getSequence();
-			PositionSequenceBuilder builder = new PositionSequenceBuilder((int)sangerPeaks.getLength());
-			for(ShortSymbol s : sangerPeaks){
-				builder.append(IOUtil.toSignedShort(s.getValue().intValue()));
-			}
-			return builder.build();
+            return datastore.get(getId()).getSequence();
+           
         } catch (Exception e) {
             throw new IllegalArgumentException("peak file not valid",e);
         }
         finally{
-            IOUtil.closeAndIgnoreErrors(in,iterator,datastore);
+            IOUtil.closeAndIgnoreErrors(in,datastore);
         }
 	}
 
