@@ -37,6 +37,7 @@ import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.DefaultPositionFastaFileDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceFastaDataStore;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceFastaRecord;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -55,7 +56,13 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
         try{
         	in = getInputStreamFor(TraceInfoField.PEAK_FILE);
             datastore =DefaultPositionFastaFileDataStore.create(in);
-            return datastore.get(getId()).getSequence();
+            StreamingIterator<PositionSequenceFastaRecord> iter=null;
+            try{
+            	iter = datastore.iterator();
+            	return iter.next().getSequence();
+            }finally{
+            	 IOUtil.closeAndIgnoreErrors(iter);
+            }
            
         } catch (Exception e) {
             throw new IllegalArgumentException("peak file not valid",e);
