@@ -86,7 +86,7 @@ public class PrimerDetector {
 							reversePrimer,sequence,
                 			 MATRIX, gapOpenPenalty, -1);
                 }else{
-                    reverseAlignment = NULL_ALIGNMENT_OBJECT;
+                    reverseAlignment = NullAlignment.INSTANCE;
                 }
                 if(maxNumMismatches ==null){
 	                if(forwardAlignment.getPercentIdentity() > minPercentIdentity || reverseAlignment.getPercentIdentity() > minPercentIdentity){
@@ -162,7 +162,7 @@ public class PrimerDetector {
 							reversePrimer,sequence,
                 			 MATRIX, gapOpenPenalty, -1);
                 }else{
-                    reverseAlignment = NULL_ALIGNMENT_OBJECT;
+                    reverseAlignment = NullAlignment.INSTANCE;
                 }
                 if(maxNumMismatches ==null){
                 	
@@ -252,8 +252,17 @@ public class PrimerDetector {
 	public static PrimerDetector create(int minLength, int maxAllowedMismatches){
 		return new PrimerDetector(minLength, maxAllowedMismatches, true, -200);
 	}
-    private static final NucleotidePairwiseSequenceAlignment NULL_ALIGNMENT_OBJECT = new NucleotidePairwiseSequenceAlignment(){
+	/**
+	 * {@code NullAlignment} is a Null Object singleton
+	 * implementation of a {@link NucleotidePairwiseSequenceAlignment}
+	 * when we want to represent that no alignment exist.
+	 * @author dkatzel
+	 *
+	 */
+    private enum  NullAlignment implements NucleotidePairwiseSequenceAlignment{
 
+    	INSTANCE
+    	;
 		@Override
 		public float getScore() {
 			return 0;
