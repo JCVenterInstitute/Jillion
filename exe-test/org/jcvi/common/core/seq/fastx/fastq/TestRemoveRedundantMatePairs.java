@@ -24,12 +24,12 @@ public class TestRemoveRedundantMatePairs {
 	public TestRemoveRedundantMatePairs(){
 		byte[] qualities = new byte[20];
 		Arrays.fill(qualities, (byte)20);
-		left = new DefaultFastqRecord("id", 
+		left = FastqRecordFactory.create("id", 
 				new NucleotideSequenceBuilder()
 		.append("ACGTACGTACGTACGTACGT").build(), 
 		new QualitySequenceBuilder(qualities).build());
 		
-		right = new DefaultFastqRecord("id", 
+		right = FastqRecordFactory.create("id", 
 				new NucleotideSequenceBuilder()
 		.append("AAAAAAAAAAATTTTTTTTT").build(), 
 		new QualitySequenceBuilder(qualities).build());
@@ -118,10 +118,10 @@ public class TestRemoveRedundantMatePairs {
 			out1.write(left.toFormattedString().getBytes(IOUtil.UTF_8));
 			out2.write(right.toFormattedString().getBytes(IOUtil.UTF_8));
 			for(int i=0; i<numDups; i++){
-				FastqRecord newLeft = new DefaultFastqRecord(left.getId()+i, left.getNucleotideSequence(), left.getQualitySequence());
+				FastqRecord newLeft = FastqRecordFactory.create(left.getId()+i, left.getNucleotideSequence(), left.getQualitySequence());
 				out1.write(newLeft.toFormattedString().getBytes(IOUtil.UTF_8));
 				
-				FastqRecord newRight= new DefaultFastqRecord(right.getId()+i, right.getNucleotideSequence(), right.getQualitySequence());
+				FastqRecord newRight= FastqRecordFactory.create(right.getId()+i, right.getNucleotideSequence(), right.getQualitySequence());
 				
 				out2.write(newRight.toFormattedString().getBytes(IOUtil.UTF_8));
 			}
@@ -146,7 +146,7 @@ protected MatePairFiles createCompletelyRedundantUpToNBasesData(int numDups) thr
 			out1.write(left.toFormattedString().getBytes(IOUtil.UTF_8));
 			out2.write(right.toFormattedString().getBytes(IOUtil.UTF_8));
 			for(int i=0; i<numDups; i++){
-				FastqRecord newLeft = new DefaultFastqRecord(left.getId()+i, 
+				FastqRecord newLeft = FastqRecordFactory.create(left.getId()+i, 
 						new NucleotideSequenceBuilder(left.getNucleotideSequence())
 								.trim(subRange)
 								.append("NNNNNNNNN")
@@ -154,7 +154,7 @@ protected MatePairFiles createCompletelyRedundantUpToNBasesData(int numDups) thr
 				left.getQualitySequence());
 				out1.write(newLeft.toFormattedString().getBytes(IOUtil.UTF_8));
 				
-				FastqRecord newRight= new DefaultFastqRecord(right.getId()+i, 
+				FastqRecord newRight= FastqRecordFactory.create(right.getId()+i, 
 						new NucleotideSequenceBuilder(right.getNucleotideSequence())
 							.trim(subRange)
 							.append("NNNNNNNNN")
