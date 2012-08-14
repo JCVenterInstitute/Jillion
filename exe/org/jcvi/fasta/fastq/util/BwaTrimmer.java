@@ -14,10 +14,10 @@ import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecordFactory;
 import org.jcvi.common.core.seq.fastx.fastq.FastqUtil;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -95,13 +95,14 @@ public class BwaTrimmer {
 				if(trimRange.getLength() < minLength){					
 					continue;
 				}
-				FastqRecord trimmedSequence = new DefaultFastqRecord(next.getId(),
+				FastqRecord trimmedSequence = FastqRecordFactory.create(next.getId(),
 						new NucleotideSequenceBuilder(next.getNucleotideSequence())
 							.trim(trimRange)
 							.build(),
 						new QualitySequenceBuilder(next.getQualitySequence())
 							.trim(trimRange)
-							.build());
+							.build(),
+							next.getComment());
 				
 				out.print(trimmedSequence.toFormattedString(FastqQualityCodec.SANGER));
 
