@@ -19,7 +19,7 @@
 
 package org.jcvi.assembly.trim;
 
-import org.jcvi.common.core.seq.trim.lucy.LucyLikeQualityTrimmer;
+import org.jcvi.common.core.symbol.qual.trim.LucyLikeQualityTrimmer;
 
 
 /**

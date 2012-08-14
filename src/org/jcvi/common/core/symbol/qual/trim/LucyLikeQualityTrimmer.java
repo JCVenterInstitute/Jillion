@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.seq.trim.lucy;
+package org.jcvi.common.core.symbol.qual.trim;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,8 +30,8 @@ import java.util.TreeSet;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.Ranges;
-import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 
 
 
@@ -69,7 +69,7 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
  *
  * @see <a href ="http://www.ncbi.nlm.nih.gov/pubmed/11751217">Chou HH, Holmes MH. DNA sequence quality trimming and vector removal. Bioinformatics. 2001;17:1093-1104. doi: 10.1093/bioinformatics/17.12.1093.<a>
  */
-public final class LucyLikeQualityTrimmer {
+public final class LucyLikeQualityTrimmer  implements QualityTrimmer{
     private static final int SIZE_OF_ENDS =2;
     private final int minGoodLength;
     private final Window bracketWindow;
@@ -96,8 +96,8 @@ public final class LucyLikeQualityTrimmer {
         this.maxErrorAtEnds = maxErrorAtEnds;
     }
     
-    
-    public Range trim(Sequence<PhredQuality> qualities){
+    @Override
+    public Range trim(QualitySequence qualities){
         List<Double> errorRates = convertToErrorRates(qualities);
         Range bracketedRegion = findBracketedRegion(errorRates);
         Range largestRange = findLargestCleanRangeFrom(bracketedRegion, errorRates);
@@ -127,7 +127,7 @@ public final class LucyLikeQualityTrimmer {
     }
 
 
-    private List<Double> convertToErrorRates(Sequence<PhredQuality> qualities){
+    private List<Double> convertToErrorRates(QualitySequence qualities){
         List<Double> errorRates = new ArrayList<Double>((int)qualities.getLength());
         for(PhredQuality quality : qualities){
             errorRates.add(quality.getErrorProbability());
