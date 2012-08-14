@@ -6,10 +6,10 @@ import java.io.IOException;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecordFactory;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
@@ -42,7 +42,7 @@ public class TestBwaQualityTrimmer {
 				FastqRecord input = inputIterator.next();
 				Range trimmedRange = sut.trim(input.getQualitySequence());
 				if(trimmedRange.getLength() >=64){
-					FastqRecord trimmedSequence = new DefaultFastqRecord(input.getId(),
+					FastqRecord trimmedSequence = FastqRecordFactory.create(input.getId(),
 							new NucleotideSequenceBuilder(input.getNucleotideSequence())
 								.trim(trimmedRange)
 								.build(),

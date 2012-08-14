@@ -250,7 +250,7 @@ public final class DefaultFastqFileDataStore{
 
 		@Override
 		public EndOfBodyReturnCode visitEndOfBody() {
-			builder.put(new DefaultFastqRecord(currentId, currentNucleotideSequence, currentQualitySequence, currentComment));
+			builder.put(FastqRecordFactory.create(currentId, currentNucleotideSequence, currentQualitySequence, currentComment));
 			currentId =null;
 			currentNucleotideSequence =null;
 			currentQualitySequence=null;
