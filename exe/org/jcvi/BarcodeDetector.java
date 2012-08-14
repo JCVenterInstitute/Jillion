@@ -69,7 +69,7 @@ public class BarcodeDetector {
 						NucleotideSequenceFastaRecord barcode = barcodeIterator.next();
 						NucleotideSequence barcodeSequence = barcode.getSequence();
 						PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> alignment =NucleotideSmithWatermanAligner.align(barcodeSequence, 
-																	fastqRecord.getSequence(), matrix, -2, 0);
+																	fastqRecord.getNucleotideSequence(), matrix, -2, 0);
 						
 						if(alignment.getAlignmentLength() == barcodeSequence.getLength() 
 								&& alignment.getNumberOfMismatches() <=2 && alignment.getPercentIdentity() > .9F){

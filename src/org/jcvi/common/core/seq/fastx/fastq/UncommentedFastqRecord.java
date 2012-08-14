@@ -2,7 +2,13 @@ package org.jcvi.common.core.seq.fastx.fastq;
 
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-
+/**
+ * {@link FastqRecord} implementation that doesn't
+ * have a comment (so {@link #getComment()} returns null).
+ * This saves us 8 bytes per record.
+ * @author dkatzel
+ *
+ */
 class UncommentedFastqRecord implements FastqRecord{
 	 private static final String CR = "\n";
 		private final String id;
@@ -55,14 +61,7 @@ class UncommentedFastqRecord implements FastqRecord{
 	        return id;
 	    }
 
-	    /**
-	     * 
-	     * {@inheritDoc}
-	     */
-	     @Override
-	     public NucleotideSequence getSequence() {
-	         return getNucleotideSequence();
-	     }
+	   
 	     /**
 	      * 
 	      * {@inheritDoc}

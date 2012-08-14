@@ -174,8 +174,8 @@ public class RemoveRedundantMatePairs {
     	
 		public NucleotideSequence getConcatenatedSequence(Range subRangePerMate){
 			NucleotideSequenceBuilder builder =new NucleotideSequenceBuilder((int)subRangePerMate.getLength()*2);
-            builder.append(new NucleotideSequenceBuilder(forward.getSequence()).trim(subRangePerMate));
-            builder.append(new NucleotideSequenceBuilder(reverse.getSequence()).trim(subRangePerMate));
+            builder.append(new NucleotideSequenceBuilder(forward.getNucleotideSequence()).trim(subRangePerMate));
+            builder.append(new NucleotideSequenceBuilder(reverse.getNucleotideSequence()).trim(subRangePerMate));
             return builder.build();
 		}
     	
