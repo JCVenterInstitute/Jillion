@@ -44,12 +44,11 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualityFastaRecordUtil;
-import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecordFactory;
 import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -317,7 +316,7 @@ public class SortedFasta2Fastq {
                        
                    }
                  //here we have a valid seq and qual
-                   FastqRecord fastq = new DefaultFastqRecord(seqFasta.getId(), 
+                   FastqRecord fastq = FastqRecordFactory.create(seqFasta.getId(), 
                            seqFasta.getSequence(), qualityFasta.getSequence());
 
                    writer.print(fastq.toFormattedString(fastqQualityCodec));
