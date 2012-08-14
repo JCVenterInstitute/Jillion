@@ -304,7 +304,7 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
             	    }
             	    @Override
             	    public FastXFileVisitor.EndOfBodyReturnCode visitEndOfBody() {
-            	    	 FastqRecord record = new DefaultFastqRecord(currentId,nucleotides, qualities,currentComment);
+            	    	 FastqRecord record = FastqRecordFactory.create(currentId,nucleotides, qualities,currentComment);
                	         blockingPut(record);
                	         return LargeFastqFileIterator.this.isClosed() ? FastXFileVisitor.EndOfBodyReturnCode.STOP_PARSING : FastXFileVisitor.EndOfBodyReturnCode.KEEP_PARSING;
                	  

@@ -34,7 +34,6 @@ import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -50,13 +49,13 @@ public abstract class AbstractTestFastQFileDataStore {
     String file = "files/example.fastq";
     ResourceFileServer resources = new ResourceFileServer(
             TestDefaultFastQFileDataStore.class);
-    DefaultFastqRecord solexa_1489 = new DefaultFastqRecord(
+    FastqRecord solexa_1489 = FastqRecordFactory.create(
             "SOLEXA1:4:1:12:1489#0/1",
             new NucleotideSequenceBuilder("TATTTAAAATCTAATANGTCTTGATTTGAAATTGAAAGAGCAAAAATCTGATTGATTTTATTGAAGAATAATTTGATTTAATATATTCTTAAGTCTGTTT").build(),
             QUALITY_CODEC
                     .decode("abaab]_]aaa`bbabB`Wb__aa\\_]W]a`^[`\\T`aZa_aa`WXa``]_`[`^a^^[`^][a^Raaa\\V\\OQ]aYQ^aa^\\`GRTDP`^T^Lb^aR`S"));
 
-    DefaultFastqRecord solexa_1692 = new DefaultFastqRecord(
+    FastqRecord solexa_1692 = FastqRecordFactory.create(
             "SOLEXA1:4:1:12:1692#0/1",
             new NucleotideSequenceBuilder("ACGCCTGCGTTATGGTNTAACAGGCATTCCGCCCCAGACAAACTCCCCCCCTAACCATGTCTTTCGCAAAAATCAGTCAATAAATGACCTTAACTTTAGA").build(),
             QUALITY_CODEC
