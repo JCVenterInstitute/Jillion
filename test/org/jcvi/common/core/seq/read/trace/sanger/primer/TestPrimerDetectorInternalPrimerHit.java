@@ -17,13 +17,14 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.seq.trim;
+package org.jcvi.common.core.seq.read.trace.sanger.primer;
 
 import java.util.List;
 
 import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.seq.read.trace.sanger.primer.PrimerDetector;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;

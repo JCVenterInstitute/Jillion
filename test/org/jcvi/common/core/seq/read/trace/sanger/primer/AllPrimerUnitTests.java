@@ -1,4 +1,4 @@
-package org.jcvi.common.core.seq.trim;
+package org.jcvi.common.core.seq.read.trace.sanger.primer;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -12,6 +12,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	
 }
 )
-public class AllTrimUnitTests {
+public class AllPrimerUnitTests {
 
 }

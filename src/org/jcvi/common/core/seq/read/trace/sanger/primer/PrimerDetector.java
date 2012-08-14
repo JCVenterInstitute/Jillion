@@ -1,4 +1,4 @@
-package org.jcvi.common.core.seq.trim;
+package org.jcvi.common.core.seq.read.trace.sanger.primer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -223,13 +223,7 @@ public class PrimerDetector {
         }
     }
 
-    private double computeUngappedPercentMatch(
-			NucleotidePairwiseSequenceAlignment alignment) {
-		int numberOfGaps=alignment.getGappedSubjectAlignment().getNumberOfGaps();
-		int numberOfUngappedMatches = alignment.getAlignmentLength() - alignment.getNumberOfMismatches() - numberOfGaps;
-		
-		return numberOfUngappedMatches/(double)alignment.getAlignmentLength();
-	}
+   
 
 	public static final class PrimerHit{
     	private final String id;
@@ -262,55 +256,46 @@ public class PrimerDetector {
 
 		@Override
 		public float getScore() {
-			// TODO Auto-generated method stub
 			return 0;
 		}
 
 		@Override
 		public double getPercentIdentity() {
-			// TODO Auto-generated method stub
 			return 0;
 		}
 
 		@Override
 		public int getAlignmentLength() {
-			// TODO Auto-generated method stub
 			return 0;
 		}
 
 		@Override
 		public int getNumberOfMismatches() {
-			// TODO Auto-generated method stub
 			return 0;
 		}
 
 		@Override
 		public int getNumberOfGapOpenings() {
-			// TODO Auto-generated method stub
 			return 0;
 		}
 
 		@Override
 		public NucleotideSequence getGappedQueryAlignment() {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public NucleotideSequence getGappedSubjectAlignment() {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public DirectedRange getQueryRange() {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public DirectedRange getSubjectRange() {
-			// TODO Auto-generated method stub
 			return null;
 		}
     	
