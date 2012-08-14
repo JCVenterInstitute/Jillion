@@ -23,10 +23,8 @@
  */
 package org.jcvi.common.core.seq.fastx.fastq;
 
-import org.jcvi.common.core.seq.fastx.FastXRecord;
 import org.jcvi.common.core.seq.read.trace.Trace;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**
  * {@code FastqRecord} is an object representation 
@@ -34,7 +32,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  * @author dkatzel
  *
  */
-public interface FastqRecord extends FastXRecord<Nucleotide,NucleotideSequence>, Trace{
+public interface FastqRecord extends Trace{
     
 	/**
      * 
@@ -68,12 +66,13 @@ public interface FastqRecord extends FastXRecord<Nucleotide,NucleotideSequence>,
      */
 	@Override
     QualitySequence getQualitySequence();
+
     /**
-     * 
-    * Delegates to {@link #getNucleotideSequence()}.
+     * Get the comment (if any) associated with this record.
+     * @return A <code>String</code> of the comment
+     * or {@code null} if there is no comment.
      */
-    @Override
-    NucleotideSequence getSequence();
+    String getComment();
     /**
      * Convenience method to format {@link FastqRecord}
      * using SANGER quality encoding and without
