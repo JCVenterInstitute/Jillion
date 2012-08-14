@@ -5,6 +5,9 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 public final class FastqRecordFactory {
 
+	private FastqRecordFactory(){
+		//can not instantiate
+	}
 	public static FastqRecord create(String id, NucleotideSequence basecalls, QualitySequence qualities){
 		return new UncommentedFastqRecord(id, basecalls, qualities);
 	}
