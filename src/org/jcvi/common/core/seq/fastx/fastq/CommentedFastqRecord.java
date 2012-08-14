@@ -15,6 +15,18 @@ class CommentedFastqRecord extends UncommentedFastqRecord{
 	public String getComment() {
 		return comment;
 	}
+	@Override
+	public int hashCode() {
+		// superclass already uses getComment()
+		//so we can just delegate to super
+		return super.hashCode();
+	}
+	@Override
+	public boolean equals(Object obj) {
+		// superclass already uses getComment()
+		//so we can just delegate to super
+		return super.equals(obj);
+	}
 	
 	
 
