@@ -19,6 +19,7 @@
 
 package org.jcvi.common.core.symbol.qual;
 
+import org.jcvi.common.core.symbol.qual.trim.AllQualityTrimmerTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -36,7 +37,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestRunLengthEncodedGlyphCodec.class,
         TestTigrQualitiesEncoder.class,
         TestTigrQualitiesEncoderCodec.class,
-        TestQualitySequenceBuilder.class
+        TestQualitySequenceBuilder.class,
+        AllQualityTrimmerTests.class
     }
     )
 public class AllPhredQualityTests {
