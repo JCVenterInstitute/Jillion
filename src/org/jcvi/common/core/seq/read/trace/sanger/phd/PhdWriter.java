@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.Position;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
@@ -62,45 +63,50 @@ public final class PhdWriter {
         
     }
 
-    private static String createTags(Phd phd) {
+    private static StringBuilder createTags(Phd phd) {
         StringBuilder tags = new StringBuilder();
         for(PhdTag tag : phd.getTags()){
             tags.append(String.format("%s{%n%s%n}%n",tag.getTagName(), tag.getTagValue()));
         }
-        return tags.toString();
+        return tags;
         
         
     }
 
-    private static String writeDnaSection(Phd phd) {
+    private static StringBuilder writeDnaSection(Phd phd) {
         StringBuilder dna = new StringBuilder();
         dna.append(String.format("%s%n",BEGIN_DNA));
         dna.append(writeCalledInfo(phd));
         dna.append(String.format("%s%n",END_DNA));   
-        return dna.toString();
+        return dna;
     }
 
-    private static String writeCalledInfo( Phd phd){
+    private static StringBuilder writeCalledInfo( Phd phd){
        
         Iterator<Nucleotide> basesIter = phd.getNucleotideSequence().iterator();
         Iterator<PhredQuality> qualIter = phd.getQualitySequence().iterator();
-        Iterator<Position> posIter = phd.getPositionSequence().iterator();
+        //optimization to convert to array instead 
+        //of iterating over Position objects
+        //this way we get primitives.
+        short[] positions = phd.getPositionSequence().toArray();
         
         
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(positions.length *10);
+        int i=0;
         while(basesIter.hasNext()){
         	result.append(String.format("%s %d %d%n",
         			basesIter.next(), 
                     qualIter.next().getQualityScore(),
-                    posIter.next().getValue()));
+                    IOUtil.toUnsignedShort(positions[i])));
+        	i++;
         }
        
         
-        return result.toString();
+        return result;
         
     }
 
-    private static String createComments(Phd phd) {
+    private static StringBuilder createComments(Phd phd) {
         StringBuilder comments = new StringBuilder();
         
         comments.append( BEGIN_COMMENT+"\n");
@@ -111,7 +117,7 @@ public final class PhdWriter {
         comments.append(String.format("%n"));
         comments.append(END_COMMENT+"\n");
         comments.append(String.format("%n"));
-        return comments.toString();
+        return comments;
     }
 
 

@@ -19,7 +19,7 @@ public final class Position implements Symbol{
 		if(value <0){
 			throw new IllegalArgumentException("position value can not be negative");
 		}
-		Integer key = Integer.valueOf(value);
+		/*Integer key = Integer.valueOf(value);
 		Position ret = CACHE.get(key);
 		if(ret !=null){
 			return ret;
@@ -27,6 +27,8 @@ public final class Position implements Symbol{
 		Position newPosition = new Position(value);
 		CACHE.put(key, newPosition);
 		return newPosition;
+		*/
+		return  new Position(value);
 	}
 	
 	@Override

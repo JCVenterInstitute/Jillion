@@ -27,7 +27,6 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
-import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -353,11 +352,16 @@ public final class IOUtil {
         }
         return array;
     }
-    public static short[] readShortArray(InputStream in, int expectedLength) throws IOException {
-        short[] array = new short[expectedLength];
-        DataInputStream dataStream = new DataInputStream(in);
-        for(int i=0; i<expectedLength; i++){
-            array[i]=dataStream.readShort();
+    public static short[] readShortArray(InputStream in, int numberOfShortsToRead) throws IOException {
+        short[] array = new short[numberOfShortsToRead];
+        for(int i=0; i<numberOfShortsToRead; i++){
+        	//borrowed from DataInputStream#readShort()
+        	int ch1 = in.read();
+            int ch2 = in.read();
+            if ((ch1 | ch2) < 0){
+                throw new EOFException();
+            }
+            array[i]= (short)((ch1 << 8) + (ch2 << 0));
         }
         return array;
     }

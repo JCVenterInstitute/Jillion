@@ -215,8 +215,8 @@ public class TestQualitySequenceBuilder {
 		Arrays.fill(array, (byte)20);
 		sut.append(array);
 		assertEquals(500, sut.getLength());
-		EncodedQualitySequence seq =(EncodedQualitySequence)sut.build();
-		assertTrue(seq.getDelegate().getCodec() instanceof RunLengthEncodedQualityCodec);
+		QualitySequence seq =sut.build();
+		assertTrue(seq instanceof RunLengthEncodedQualitySequence);
 	}
 	
 	@Test

@@ -57,7 +57,7 @@ public final class TextLineParser implements Closeable{
 		if(doneFile){
 			return;
 		}
-		StringBuilder builder = new StringBuilder();
+		StringBuilder builder = new StringBuilder(200);
 		
 		int value;
 		value = in.read();

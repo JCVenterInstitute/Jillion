@@ -32,7 +32,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  */
 public interface CasInfo {
 
-    TrimPointsDataStore getMultiTrimDataStore();
+    TrimPointsDataStore getTrimDataStore();
 
     TraceDetails getTraceDetails();
     
