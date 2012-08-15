@@ -330,7 +330,7 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
         return decoded;
     }
 
-    private final class RunLengthIterator implements Iterator<PhredQuality>{
+    private final static class RunLengthIterator implements Iterator<PhredQuality>{
 		private long currentOffset;
 		private final ByteBuffer buf;
 		private final byte guard;
