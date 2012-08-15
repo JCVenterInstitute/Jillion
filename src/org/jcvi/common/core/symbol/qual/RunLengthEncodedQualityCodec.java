@@ -29,7 +29,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.util.RunLength;
 /**
  * {@code RunLengthEncodedQualityCodec} is a {@link QualitySymbolCodec}
@@ -58,6 +60,23 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
        
         return decode(decodeUpTo(buf, guard, size-1));
     }
+    
+    public Iterator<PhredQuality> iterator(byte[] encodedData){
+    	  ByteBuffer buf = ByteBuffer.wrap(encodedData);
+          int size = buf.getInt();
+          byte guard = buf.get();
+          return new RunLengthIterator(buf, guard, size);
+    }
+    public Iterator<PhredQuality> iterator(byte[] encodedData, Range r){
+  	  ByteBuffer buf = ByteBuffer.wrap(encodedData);
+        int size = buf.getInt();
+        if(r.getEnd()> size-1){
+        	throw new IndexOutOfBoundsException(
+        			String.format("can not iterate over %s when sequence is only %d long", r, size));
+        }
+        byte guard = buf.get();
+        return new RunLengthIterator(buf, guard, r.getEnd()+1, r.getBegin());
+  }
     
     private PhredQuality get(ByteBuffer buf, byte guard,  int index){
     	int currentOffset=0;
@@ -311,4 +330,69 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
         return decoded;
     }
 
+    private final class RunLengthIterator implements Iterator<PhredQuality>{
+		private long currentOffset;
+		private final ByteBuffer buf;
+		private final byte guard;
+		private final long length;
+		private PhredQuality currentQuality;
+		private int currentRunEndOffset;
+		
+		RunLengthIterator(ByteBuffer buf, byte guard, long length){
+			this(buf,guard,length,0L);
+		}
+		RunLengthIterator(ByteBuffer buf, byte guard, long length, long startOffset){
+			this.buf = buf;
+			this.guard =guard;
+			currentOffset=startOffset;
+			this.length = length;
+			populateCurrentRun();
+			while(currentOffset>=currentRunEndOffset){
+				populateCurrentRun();
+			}
+		}
+		@Override
+		public boolean hasNext() {
+			return currentOffset<length;
+		}
+
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+			
+		}
+
+		@Override
+		public PhredQuality next() {
+			if(!hasNext()){
+				throw new NoSuchElementException("offset = "+currentOffset);
+			}
+			if(currentOffset>=currentRunEndOffset){
+				populateCurrentRun();
+			}
+			currentOffset++;
+			return currentQuality;
+		}
+		
+		private void populateCurrentRun(){
+			byte runLengthCode = buf.get(); 
+            byte currentValue;
+            if( runLengthCode == guard){                                  
+            	int count = buf.getShort();            	 
+            	if(count==0){
+            		currentRunEndOffset++;
+            		currentValue = guard;
+            	}else{
+            		currentValue = buf.get();  
+            		currentRunEndOffset+=count;
+            	}
+            }
+            else{
+            	currentRunEndOffset++;
+            	currentValue = runLengthCode;
+            }
+            currentQuality = PhredQuality.valueOf(currentValue);
+		}
+	}
 }

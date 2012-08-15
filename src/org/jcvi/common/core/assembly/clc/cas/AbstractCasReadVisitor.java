@@ -62,7 +62,7 @@ public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends Abstr
         this(casInfo.getCasWorkingDirectory(),
                 casInfo.getCasTrimMap(),
                 casInfo.getOrderedGappedReferenceList(),
-                casInfo.getMultiTrimDataStore(),
+                casInfo.getTrimDataStore(),
                 casInfo.getTraceDetails());
     }
     protected final NucleotideSequence getGappedReference(int index){

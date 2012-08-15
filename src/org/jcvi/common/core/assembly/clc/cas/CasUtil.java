@@ -356,7 +356,7 @@ public final class CasUtil {
          * @return the multiTrimDataStore
          */
         @Override
-        public TrimPointsDataStore getMultiTrimDataStore() {
+        public TrimPointsDataStore getTrimDataStore() {
             return multiTrimDataStore;
         }
         /**

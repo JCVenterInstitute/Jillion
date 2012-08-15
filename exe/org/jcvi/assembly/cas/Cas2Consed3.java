@@ -19,9 +19,9 @@
 
 package org.jcvi.assembly.cas;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +33,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -41,6 +43,7 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.DefaultScaffold;
 import org.jcvi.common.core.assembly.ScaffoldBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
@@ -68,23 +71,27 @@ import org.jcvi.common.core.assembly.scaffold.agp.AgpWriter;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConicConsensusCaller;
 import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStoreUtil;
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.io.TextLineParser;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.IndexedPhdFileDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdWriter;
-import org.jcvi.common.core.seq.trim.DefaultTrimFileDataStore;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.DateUtil;
+import org.jcvi.common.core.util.MapUtil;
 import org.jcvi.common.core.util.MultipleWrapper;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
 import org.jcvi.common.io.fileServer.ReadWriteFileServer;
 import org.jcvi.common.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
@@ -563,15 +570,15 @@ public class Cas2Consed3 {
                     File file = CasUtil.getFileFor(workingDir, filePath);
                     File trimpoints = new File(file.getParentFile(), file.getName()+".trimpoints");
                     if(trimpoints.exists()){
-                        delegates.add(new DefaultTrimFileDataStore(trimpoints));
+                        delegates.add(new TrimPointsFileTrimDataStore(trimpoints));
                     }else{
                         //legacy cas2consed 1 named file with capital P
                         File trimPoints = new File(file.getParentFile(), file.getName()+".trimPoints");
                         if(trimPoints.exists()){
-                            delegates.add(new DefaultTrimFileDataStore(trimpoints));
+                            delegates.add(new TrimPointsFileTrimDataStore(trimpoints));
                         }
                     }
-                } catch (FileNotFoundException e) {
+                } catch (IOException e) {
                     throw new IllegalStateException("error reading input file data",e);
                 }
             }
@@ -590,5 +597,96 @@ public class Cas2Consed3 {
             return datastore;
         }
 	    
+	}
+	
+	private static class TrimPointsFileTrimDataStore implements TrimPointsDataStore{
+		
+		 /**
+	     * The Trim format used by sfffile is {@code <read_id>\t<clear_left>\t<clear_right>\n}
+	     * the trim points are 1-based (residue).
+	     */
+	    private static final Pattern TRIM_PATTERN = Pattern.compile("^(\\S+)\\s+(\\d+)\\s+(\\d+)\\s*$");
+	    
+		private final DataStore<Range> delegate;
+		
+		public TrimPointsFileTrimDataStore(File trimpointsFile) throws IOException{
+			 TextLineParser scanner = null;
+			 int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(countNumberOfLines(trimpointsFile));
+			 Map<String,Range> map = new HashMap<String, Range>(capacity);
+		     InputStream in = new FileInputStream(trimpointsFile);   
+			try {
+				scanner = new TextLineParser(in);
+				while (scanner.hasNextLine()) {
+					String line = scanner.nextLine();
+					Matcher matcher = TRIM_PATTERN.matcher(line);
+					if (matcher.matches()) {
+						String id = matcher.group(1);
+						Range validRange = Range.create(
+								CoordinateSystem.RESIDUE_BASED,
+								Integer.parseInt(matcher.group(2)),
+								Integer.parseInt(matcher.group(3)));
+						map.put(id, validRange);
+					}
+				}
+			} catch (IOException e) {
+				throw new IllegalStateException("error reading file", e);
+			} finally {
+				IOUtil.closeAndIgnoreErrors(in, scanner);
+			}
+			delegate = MapDataStoreAdapter.adapt(map);
+		}
+		private long countNumberOfLines(File trimpointsFile) throws IOException {
+			InputStream is = new BufferedInputStream(new FileInputStream(trimpointsFile));
+		    try {
+		        byte[] c = new byte[1024];
+		        int count = 0;
+		        int readChars = 0;
+		        while ((readChars = is.read(c)) != -1) {
+		            for (int i = 0; i < readChars; ++i) {
+		                if (c[i] == '\n')
+		                    count++;
+		            }
+		        }
+		        return count;
+		    } finally {
+		        is.close();
+		    }
+		}
+		@Override
+		public StreamingIterator<String> idIterator() throws DataStoreException {
+			return delegate.idIterator();
+		}
+
+		@Override
+		public Range get(String id) throws DataStoreException {
+			return delegate.get(id);
+		}
+
+		@Override
+		public boolean contains(String id) throws DataStoreException {
+			return delegate.contains(id);
+		}
+
+		@Override
+		public long getNumberOfRecords() throws DataStoreException {
+			return delegate.getNumberOfRecords();
+		}
+
+		@Override
+		public boolean isClosed() throws DataStoreException {
+			return delegate.isClosed();
+		}
+
+		@Override
+		public StreamingIterator<Range> iterator() throws DataStoreException {
+			return delegate.iterator();
+		}
+
+		@Override
+		public void close() throws IOException {
+			delegate.close();
+			
+		}
+		
 	}
 }

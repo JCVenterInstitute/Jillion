@@ -43,7 +43,7 @@ public final class PhredQuality implements Symbol, Comparable<PhredQuality>{
     public static final byte MAX_VALUE = Byte.MAX_VALUE;
     public static final byte MIN_VALUE = 0;
     private static final double TEN = 10D;
-    private static final Map<Byte, PhredQuality> CACHE;
+    private static final PhredQuality[] CACHE;
     
     /**
      * Our quality value.
@@ -53,11 +53,11 @@ public final class PhredQuality implements Symbol, Comparable<PhredQuality>{
      * Initialize the cache for flyweight pattern.
      */
     static{
-        CACHE = new HashMap<Byte, PhredQuality>();
+        CACHE = new PhredQuality[MAX_VALUE+1];
         //need to add the negative check since max ++ will
         //overflow into negative values of b
         for(byte b=MIN_VALUE; b>=MIN_VALUE && b<=MAX_VALUE; b++){
-            CACHE.put(Byte.valueOf(b), new PhredQuality(b));
+            CACHE[b] =new PhredQuality(b);
         }
     }
     private PhredQuality(byte b) {
@@ -121,22 +121,12 @@ public final class PhredQuality implements Symbol, Comparable<PhredQuality>{
      * @throws IllegalArgumentException if qualityScore < 0 or > {@link Byte#MAX_VALUE}.
      */
     public static PhredQuality valueOf(int qualityScore){
-       return valueOf((byte)qualityScore);
+    	 if(qualityScore < MIN_VALUE || qualityScore > MAX_VALUE){
+             throw new IllegalArgumentException("qualityScore of our range "+qualityScore);
+         }
+         return CACHE[qualityScore];
     }
-    /**
-     * Get the {@link PhredQuality} instance with the
-     * given qualityScore.
-     * @param qualityScore the quality score that the PhredQuality
-     * instance should have.
-     * @return a {@link PhredQuality}, never null.
-     * @throws IllegalArgumentException if qualityScore < 0 or > {@link Byte#MAX_VALUE}.
-     */
-    public static PhredQuality valueOf(byte qualityScore){
-        if(qualityScore < MIN_VALUE || qualityScore > MAX_VALUE){
-            throw new IllegalArgumentException("qualityScore of our range "+qualityScore);
-        }
-        return CACHE.get(Byte.valueOf(qualityScore));
-    }
+   
     /**
      * 
      * @param bytes
