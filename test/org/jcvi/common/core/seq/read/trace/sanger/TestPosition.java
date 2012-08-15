@@ -17,8 +17,8 @@ public class TestPosition {
 	
 	@Test
 	public void flyweightReusesSameValues(){
-		Position a = Position.valueOf(1234);
-		Position b = Position.valueOf(1234);
+		Position a = Position.valueOf(123);
+		Position b = Position.valueOf(123);
 		assertSame(a,b);
 	}
 	

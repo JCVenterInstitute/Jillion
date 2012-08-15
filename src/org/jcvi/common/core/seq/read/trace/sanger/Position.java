@@ -1,33 +1,27 @@
 package org.jcvi.common.core.seq.read.trace.sanger;
 
-import java.util.Map;
-
 import org.jcvi.common.core.symbol.Symbol;
-import org.jcvi.common.core.util.Caches;
 
 public final class Position implements Symbol{
 	private static final int INITIAL_CACHE_SIZE = 1024;
-	private static final Map<Integer, Position> CACHE;
+	private static final Position[] CACHE;
 
 	private final int value;
 	
 	static{
-		CACHE = Caches.createSoftReferencedValueCache(INITIAL_CACHE_SIZE);
+		CACHE = new Position[INITIAL_CACHE_SIZE];
+		for(int i=0; i< INITIAL_CACHE_SIZE; i++){
+			CACHE[i] = new Position(i);
+		}
 	}
 	
-	public static synchronized Position valueOf(int value){
+	public static Position valueOf(int value){
 		if(value <0){
 			throw new IllegalArgumentException("position value can not be negative");
 		}
-		/*Integer key = Integer.valueOf(value);
-		Position ret = CACHE.get(key);
-		if(ret !=null){
-			return ret;
+		if(value < CACHE.length){
+			return CACHE[value];
 		}
-		Position newPosition = new Position(value);
-		CACHE.put(key, newPosition);
-		return newPosition;
-		*/
 		return  new Position(value);
 	}
 	
