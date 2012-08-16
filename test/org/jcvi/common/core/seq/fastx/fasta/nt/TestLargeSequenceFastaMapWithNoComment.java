@@ -28,12 +28,12 @@ import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.LargeNucleotideSequenceFastaFileDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
 
 public class TestLargeSequenceFastaMapWithNoComment extends AbstractTestSequenceFastaMapWithNoComment{
 
     @Override
-    protected DataStore<NucleotideSequenceFastaRecord> buildMap(
+    protected DataStore<DefaultNucleotideSequenceFastaRecord> buildMap(
             File file) throws IOException {
         return LargeNucleotideSequenceFastaFileDataStore.create(file);
     }

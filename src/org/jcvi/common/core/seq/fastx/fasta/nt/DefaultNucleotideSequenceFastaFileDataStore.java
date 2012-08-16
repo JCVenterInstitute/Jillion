@@ -77,11 +77,11 @@ public final class DefaultNucleotideSequenceFastaFileDataStore{
 	}
     
 
-    private static class NucleotideFastaDataStoreBuilderVisitorImpl extends AbstractFastaFileDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>implements NucleotideFastaDataStoreBuilderVisitor{
+    private static class NucleotideFastaDataStoreBuilderVisitorImpl extends AbstractFastaFileDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, DefaultNucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>implements NucleotideFastaDataStoreBuilderVisitor{
 
 		@Override
 		public NucleotideFastaDataStoreBuilderVisitor addFastaRecord(
-				NucleotideSequenceFastaRecord fastaRecord) {
+				DefaultNucleotideSequenceFastaRecord fastaRecord) {
 			super.addFastaRecord(fastaRecord);
 			return this;
 		}
@@ -94,7 +94,7 @@ public final class DefaultNucleotideSequenceFastaFileDataStore{
 		}
 
 		@Override
-		protected NucleotideSequenceFastaRecord createFastaRecord(String id,
+		protected DefaultNucleotideSequenceFastaRecord createFastaRecord(String id,
 				String comment, String entireBody) {
 			return DefaultNucleotideSequenceFastaRecordFactory.getInstance().createFastaRecord(id, comment, entireBody);
 		}

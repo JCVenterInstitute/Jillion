@@ -29,12 +29,12 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 /**
  * {@code AbstractNucleotideFastaFileDataStore} is an implementation
- * of {@link AbstractFastaFileDataStore} for {@link NucleotideSequenceFastaRecord}s.
+ * of {@link AbstractFastaFileDataStore} for {@link DefaultNucleotideSequenceFastaRecord}s.
  * @author dkatzel
  *
  *
  */
-abstract class AbstractNucleotideFastaFileDataStore extends AbstractFastaFileDataStore<Nucleotide, NucleotideSequence,NucleotideSequenceFastaRecord> implements NucleotideSequenceFastaDataStore{
+abstract class AbstractNucleotideFastaFileDataStore extends AbstractFastaFileDataStore<Nucleotide, NucleotideSequence,DefaultNucleotideSequenceFastaRecord> implements NucleotideSequenceFastaDataStore{
 
     private final NucleotideSequenceFastaRecordFactory fastaRecordFactory;
 

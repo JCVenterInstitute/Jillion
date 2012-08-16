@@ -70,7 +70,7 @@ import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.MostFrequentBasecallConsensusCaller;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -382,7 +382,7 @@ public class ReAbacusAceContigWorker {
                         }
                     }
                     
-                    Map<String, NucleotideSequenceFastaRecord> ungappedSequences = new LinkedHashMap<String, NucleotideSequenceFastaRecord>();
+                    Map<String, DefaultNucleotideSequenceFastaRecord> ungappedSequences = new LinkedHashMap<String, DefaultNucleotideSequenceFastaRecord>();
                     int maxSeenLength=0;
                     for(String readId : affectedReads){
                         AcePlacedReadBuilder readBuilder =contigBuilder.getAssembledReadBuilder(readId);
@@ -410,7 +410,7 @@ public class ReAbacusAceContigWorker {
                             maxSeenLength = (int)ungappedProblemSequence.getLength();
                         }
                         
-                        NucleotideSequenceFastaRecord fasta = new NucleotideSequenceFastaRecord(readId, coment,ungappedProblemSequence);
+                        DefaultNucleotideSequenceFastaRecord fasta = new DefaultNucleotideSequenceFastaRecord(readId, coment,ungappedProblemSequence);
                         ungappedSequences.put(readId, fasta);
                     }
                     
@@ -428,7 +428,7 @@ public class ReAbacusAceContigWorker {
                         throw new IllegalStateException(e);
                     }
                     System.out.println("writing fasta file");
-                    for(NucleotideSequenceFastaRecord fasta : ungappedSequences.values()){
+                    for(DefaultNucleotideSequenceFastaRecord fasta : ungappedSequences.values()){
                         if(fasta.getSequence().getLength() < maxSeenLength){
                             int numberOfGapsToAdd = (int)(maxSeenLength -fasta.getSequence().getLength());
                             char[] gaps = new char[numberOfGapsToAdd];
@@ -442,7 +442,7 @@ public class ReAbacusAceContigWorker {
                             }else{
                                 newSequenceBuilder.append(new String(gaps));
                             }
-                            writer.print(new NucleotideSequenceFastaRecord(fasta.getId(), fasta.getComment(),newSequenceBuilder.build()));
+                            writer.print(new DefaultNucleotideSequenceFastaRecord(fasta.getId(), fasta.getComment(),newSequenceBuilder.build()));
                         }else{
                             writer.print(fasta.toString());
                         }
@@ -463,10 +463,10 @@ public class ReAbacusAceContigWorker {
                         for(int i=0; i< sliceBuilders.length; i++){
                             sliceBuilders[i]= new CompactedSlice.Builder();
                         }
-                        StreamingIterator<NucleotideSequenceFastaRecord> iter = gappedFastaDataStore.iterator();
+                        StreamingIterator<DefaultNucleotideSequenceFastaRecord> iter = gappedFastaDataStore.iterator();
                         try{
 	                		while(iter.hasNext()){
-	                			NucleotideSequenceFastaRecord gappedFasta = iter.next();
+	                			DefaultNucleotideSequenceFastaRecord gappedFasta = iter.next();
 	                            String id = gappedFasta.getId();
 	                            NucleotideSequence gappedSequence = gappedFasta.getSequence();
 	                            AcePlacedReadBuilder readBuilder =contigBuilder.getAssembledReadBuilder(id);

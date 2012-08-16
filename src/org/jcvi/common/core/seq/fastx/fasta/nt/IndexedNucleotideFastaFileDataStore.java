@@ -50,7 +50,7 @@ public final class IndexedNucleotideFastaFileDataStore implements NucleotideSequ
 	 * instance that will build an {@link IndexedNucleotideFastaFileDataStore}
 	 * using the given fastaFile.  This implementation of {@link NucleotideFastaDataStoreBuilderVisitor}
 	 * can only be used to parse a single fasta file (the one given) and does not support
-	 * {@link NucleotideFastaDataStoreBuilderVisitor#addFastaRecord(NucleotideSequenceFastaRecord)}.
+	 * {@link NucleotideFastaDataStoreBuilderVisitor#addFastaRecord(DefaultNucleotideSequenceFastaRecord)}.
 	 * This builder visitor can only build the datastore via the visitXXX methods in the {@link FastaFileVisitor}
 	 * interface.
 	 * @param fastaFile the fasta to create an {@link IndexedNucleotideFastaFileDataStore}
@@ -83,7 +83,7 @@ public final class IndexedNucleotideFastaFileDataStore implements NucleotideSequ
 	}
 
 	@Override
-	public NucleotideSequenceFastaRecord get(String id)
+	public DefaultNucleotideSequenceFastaRecord get(String id)
 			throws DataStoreException {
 		if(!contains(id)){
 			return null;
@@ -122,13 +122,13 @@ public final class IndexedNucleotideFastaFileDataStore implements NucleotideSequ
 	}
 
 	@Override
-	public StreamingIterator<NucleotideSequenceFastaRecord> iterator() {
+	public StreamingIterator<DefaultNucleotideSequenceFastaRecord> iterator() {
 		return LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile);
 	}
 	
 	private static final class IndexedNucleotideFastaDataStoreBuilderVisitor
 			extends
-			AbstractIndexedFastaDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>
+			AbstractIndexedFastaDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, DefaultNucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>
 			implements NucleotideFastaDataStoreBuilderVisitor {
 
 		private IndexedNucleotideFastaDataStoreBuilderVisitor(File fastaFile) {

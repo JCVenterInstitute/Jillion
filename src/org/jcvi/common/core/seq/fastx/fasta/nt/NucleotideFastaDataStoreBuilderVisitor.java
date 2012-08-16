@@ -11,13 +11,13 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  * {@link NucleotideSequenceFastaDataStoreBuilder} that also implements
  * {@link FastaFileVisitor}.  This allows {@link NucleotideSequenceFastaDataStore}s
  * to be built by either manually adding records via
- * {@link #addFastaRecord(NucleotideSequenceFastaRecord)}
+ * {@link #addFastaRecord(DefaultNucleotideSequenceFastaRecord)}
  * or by passing an instance of this class to {@link FastaFileParser}'s parse methods
  * to add all the fasta records from  a fasta file.  Some implementations
  * may be able to add fasta records from multiple fasta files.
  * @author dkatzel
  *
  */
-public interface NucleotideFastaDataStoreBuilderVisitor extends FastaFileDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>{
+public interface NucleotideFastaDataStoreBuilderVisitor extends FastaFileDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, DefaultNucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>{
 
 }

@@ -103,7 +103,7 @@ public final class LargeNucleotideSequenceFastaFileDataStore extends AbstractNuc
     }
 
     @Override
-    public synchronized NucleotideSequenceFastaRecord get(String id)
+    public synchronized DefaultNucleotideSequenceFastaRecord get(String id)
             throws DataStoreException {
         checkNotYetClosed();
         InputStream in=null;
@@ -159,7 +159,7 @@ public final class LargeNucleotideSequenceFastaFileDataStore extends AbstractNuc
     }
 
     @Override
-    public synchronized StreamingIterator<NucleotideSequenceFastaRecord> iterator() {
+    public synchronized StreamingIterator<DefaultNucleotideSequenceFastaRecord> iterator() {
         checkNotYetClosed();
         return LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile);
        

@@ -30,6 +30,6 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  *
  *
  */
-public interface NucleotideSequenceFastaDataStore extends FastaDataStore<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord>{
+public interface NucleotideSequenceFastaDataStore extends FastaDataStore<Nucleotide, NucleotideSequence, DefaultNucleotideSequenceFastaRecord>{
 
 }

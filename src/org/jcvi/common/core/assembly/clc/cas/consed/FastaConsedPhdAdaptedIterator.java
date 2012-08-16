@@ -27,7 +27,7 @@ import java.util.Properties;
 
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdUtil;
@@ -38,13 +38,13 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public class FastaConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 
-	private final StreamingIterator<NucleotideSequenceFastaRecord> fastaIterator;
+	private final StreamingIterator<DefaultNucleotideSequenceFastaRecord> fastaIterator;
 	private final Properties requiredComments;
 	private final byte defaultQualityValue;
 	private final Date phdDate;
 	private final File fastaFile;
 	public FastaConsedPhdAdaptedIterator(
-			StreamingIterator<NucleotideSequenceFastaRecord> fastaIterator,
+			StreamingIterator<DefaultNucleotideSequenceFastaRecord> fastaIterator,
 			File fastaFile,
 			Date phdDate,
 			PhredQuality defaultQualityValue){
@@ -61,7 +61,7 @@ public class FastaConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 
 	@Override
 	public PhdReadRecord next() {
-		NucleotideSequenceFastaRecord nextFasta = fastaIterator.next();
+		DefaultNucleotideSequenceFastaRecord nextFasta = fastaIterator.next();
 		String id = nextFasta.getId();
 		Properties comments = createAdditionalCommentsFor(id,requiredComments);
 		Phd phd =createPhdRecordFor(nextFasta, comments);
@@ -85,7 +85,7 @@ public class FastaConsedPhdAdaptedIterator implements PhdReadRecordIterator{
             Properties preExistingComments) {
         return preExistingComments;
     }
-    protected Phd createPhdRecordFor(NucleotideSequenceFastaRecord nextFasta, Properties requiredComments ){
+    protected Phd createPhdRecordFor(DefaultNucleotideSequenceFastaRecord nextFasta, Properties requiredComments ){
 	    String id = nextFasta.getId();
         QualitySequence qualities = getQualitiesFor(nextFasta);
         return ArtificialPhd.createNewbler454Phd(
@@ -96,7 +96,7 @@ public class FastaConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 	}
 	
     protected QualitySequence getQualitiesFor(
-            NucleotideSequenceFastaRecord nextFasta) {
+            DefaultNucleotideSequenceFastaRecord nextFasta) {
         int numberOfQualities =(int) nextFasta.getSequence().getLength();
 		byte[] qualities = new byte[numberOfQualities];
 		Arrays.fill(qualities, defaultQualityValue);

@@ -30,7 +30,7 @@ import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStoreAdapter;
 import org.junit.Test;
@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
 public class TestNucleotideDataStoreFastaAdatper extends AbstractTestSequenceFastaDataStoreWithNoComment{
 
     @Override
-    protected DataStore<NucleotideSequenceFastaRecord> buildMap(
+    protected DataStore<DefaultNucleotideSequenceFastaRecord> buildMap(
             File file) throws IOException {
         return DefaultNucleotideSequenceFastaFileDataStore.create(file);
     }

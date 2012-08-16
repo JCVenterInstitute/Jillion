@@ -39,7 +39,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nt.AbstractNucleotideFastaVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
@@ -94,7 +94,7 @@ public class TrimFasta {
 
                 @Override
                 protected boolean visitFastaRecord(
-                        NucleotideSequenceFastaRecord fastaRecord) {
+                        DefaultNucleotideSequenceFastaRecord fastaRecord) {
                     String id = fastaRecord.getId();
                     final NucleotideSequence basecalls = fastaRecord.getSequence();
                     long untrimmedLength = basecalls.getLength();
@@ -107,7 +107,7 @@ public class TrimFasta {
                     	NucleotideSequence trimmedSequence = new NucleotideSequenceBuilder(basecalls)
                     										.trim(trimRange)
                     										.build();
-                        out.write(new NucleotideSequenceFastaRecord(
+                        out.write(new DefaultNucleotideSequenceFastaRecord(
                                 fastaRecord.getId(),
                                 fastaRecord.getComment(),
                                 trimmedSequence)
