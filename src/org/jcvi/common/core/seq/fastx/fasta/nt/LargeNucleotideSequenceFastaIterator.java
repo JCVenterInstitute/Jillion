@@ -30,7 +30,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  *
  *
  */
-public final class LargeNucleotideSequenceFastaIterator extends AbstractLargeFastaRecordIterator<Nucleotide,NucleotideSequence, NucleotideSequenceFastaRecord>{
+public final class LargeNucleotideSequenceFastaIterator extends AbstractLargeFastaRecordIterator<Nucleotide,NucleotideSequence, DefaultNucleotideSequenceFastaRecord>{
 
 	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(File fastaFile){
 		 LargeNucleotideSequenceFastaIterator iter = new LargeNucleotideSequenceFastaIterator(fastaFile);

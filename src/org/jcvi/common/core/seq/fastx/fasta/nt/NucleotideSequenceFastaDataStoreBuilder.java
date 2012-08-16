@@ -9,12 +9,12 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  * @author dkatzel
  *
  */
-public interface NucleotideSequenceFastaDataStoreBuilder extends FastaDataStoreBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>{
+public interface NucleotideSequenceFastaDataStoreBuilder extends FastaDataStoreBuilder<Nucleotide, NucleotideSequence, DefaultNucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>{
 	/**
-	 * Adds the given {@link NucleotideSequenceFastaRecord} to this builder.
+	 * Adds the given {@link DefaultNucleotideSequenceFastaRecord} to this builder.
 	 * <p/>
 	 * {@inheritDoc}
 	 */
 	@Override
-	NucleotideSequenceFastaDataStoreBuilder addFastaRecord(NucleotideSequenceFastaRecord fastaRecord);
+	NucleotideSequenceFastaDataStoreBuilder addFastaRecord(DefaultNucleotideSequenceFastaRecord fastaRecord);
 }

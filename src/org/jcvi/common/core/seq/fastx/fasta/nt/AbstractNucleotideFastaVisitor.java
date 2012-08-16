@@ -28,7 +28,7 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 
-public abstract class AbstractNucleotideFastaVisitor extends AbstractFastaRecordVisitor<Nucleotide,NucleotideSequence, NucleotideSequenceFastaRecord>{
+public abstract class AbstractNucleotideFastaVisitor extends AbstractFastaRecordVisitor<Nucleotide,NucleotideSequence, DefaultNucleotideSequenceFastaRecord>{
 
     public AbstractNucleotideFastaVisitor(){
         this(DefaultNucleotideSequenceFastaRecordFactory.getInstance());

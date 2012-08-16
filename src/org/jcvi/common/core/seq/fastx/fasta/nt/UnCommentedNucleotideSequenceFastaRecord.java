@@ -1,26 +1,3 @@
-/*******************************************************************************
- * Copyright 2010 J. Craig Venter Institute
- * 
- * 	This file is part of JCVI Java Common
- * 
- *     JCVI Java Common is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- * 
- *     JCVI Java Common is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- * 
- *     You should have received a copy of the GNU General Public License
- *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
- ******************************************************************************/
-/*
- * Created on Jan 21, 2009
- *
- * @author dkatzel
- */
 package org.jcvi.common.core.seq.fastx.fasta.nt;
 
 import java.util.regex.Pattern;
@@ -29,7 +6,6 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.ObjectsUtil;
 /**
  * {@code NucleotideSequenceFastaRecord} is an implementation
@@ -37,7 +13,7 @@ import org.jcvi.common.core.util.ObjectsUtil;
  * @author dkatzel
  *
  */
-public final class NucleotideSequenceFastaRecord implements FastaRecord<Nucleotide,NucleotideSequence>{
+class UnCommentedNucleotideSequenceFastaRecord implements FastaRecord<Nucleotide,NucleotideSequence>{
 
 	private static final int NUMBER_OF_BASES_PER_LINE = 60;
 	private static final Pattern LINE_SPLITTER_PATTERN = Pattern.compile(String.format("(.{%s})", NUMBER_OF_BASES_PER_LINE));
@@ -45,17 +21,12 @@ public final class NucleotideSequenceFastaRecord implements FastaRecord<Nucleoti
 	
 	private final NucleotideSequence sequence;
 	private final String id;
-	private final String comments;
-	
-    public NucleotideSequenceFastaRecord(String id, NucleotideSequence sequence){
-        this(id, null, sequence);
-    }
-    public NucleotideSequenceFastaRecord(String id, String comments, NucleotideSequence sequence){
+
+    public UnCommentedNucleotideSequenceFastaRecord(String id, NucleotideSequence sequence){
     	if(id == null){
             throw new IllegalArgumentException("identifier can not be null");
         }
         this.id = id;
-        this.comments = comments;
          if(sequence ==null){
          	throw new NullPointerException("sequence can not be null");
          }
@@ -63,23 +34,7 @@ public final class NucleotideSequenceFastaRecord implements FastaRecord<Nucleoti
     }
    
     
-    /**
-     * @param id
-     * @param sequence
-     */
-    public NucleotideSequenceFastaRecord(String id, String sequence) {
-        this(id, null, sequence);
-    }
 
-    /**
-     * @param id
-     * @param comments
-     * @param sequence
-     */
-    public NucleotideSequenceFastaRecord(String id, String comments,
-            String sequence) {
-    	this(id, comments, new NucleotideSequenceBuilder(sequence).build());
-    }
     /**
      * @return A <code>String</code>.
      */
@@ -93,7 +48,7 @@ public final class NucleotideSequenceFastaRecord implements FastaRecord<Nucleoti
      */
     public String getComment()
     {
-        return this.comments;
+        return null;
     }
     @Override
     public NucleotideSequence getSequence() 
@@ -119,9 +74,9 @@ public final class NucleotideSequenceFastaRecord implements FastaRecord<Nucleoti
     private int computeFormattedBufferSize() {
     	//2 extra bytes for '>' and '\n'
 		int size = 2 + id.length();
-		if(comments!=null){
+		if(getComment()!=null){
 			//extra byte for the space
-			size +=1 + comments.length();
+			size +=1 + getComment().length();
 		}
 		int seqLength=(int)sequence.getLength();
 		int numberOfLines = seqLength/NUMBER_OF_BASES_PER_LINE +1;
@@ -170,10 +125,10 @@ public final class NucleotideSequenceFastaRecord implements FastaRecord<Nucleoti
         if (this == obj){
             return true;
         }
-        if (!(obj instanceof NucleotideSequenceFastaRecord)){
+        if (!(obj instanceof DefaultNucleotideSequenceFastaRecord)){
             return false;
         }
-        NucleotideSequenceFastaRecord other = (NucleotideSequenceFastaRecord)obj;
+        DefaultNucleotideSequenceFastaRecord other = (DefaultNucleotideSequenceFastaRecord)obj;
 		return 
         ObjectsUtil.nullSafeEquals(getSequence(), other.getSequence()) 
         && ObjectsUtil.nullSafeEquals(getId(), other.getId());

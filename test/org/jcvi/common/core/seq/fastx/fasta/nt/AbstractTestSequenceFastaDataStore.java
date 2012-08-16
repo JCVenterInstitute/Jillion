@@ -29,8 +29,8 @@ import java.util.Iterator;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
@@ -39,7 +39,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
 
     protected static final String FASTA_FILE_PATH = "files/19150.fasta";
    
-    NucleotideSequenceFastaRecord contig_1 = new NucleotideSequenceFastaRecord("1", "47 2313 bases, 00000000 checksum.",
+    DefaultNucleotideSequenceFastaRecord contig_1 = new DefaultNucleotideSequenceFastaRecord("1", "47 2313 bases, 00000000 checksum.",
             "AACCATTTGAATGGATGTCAATCCGACTTTACTTTTCTTGAAAGTTCCAGYGCAAAATGC"+
             "CATAAGCACCACATTCCCATACACTGGAGATCCTCCATACAGCCATGGAACGGGAACAGG"+
             "ATACACCATGGACACAGTCAACAGAACACATCAATATTCAGAAAAGGGGAAATGGACAAC"+
@@ -81,7 +81,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
             "ATAGTGAATTTAGCTTGTCCTTCATGAAA"
     );
     
-    NucleotideSequenceFastaRecord contig_5 = new NucleotideSequenceFastaRecord("5", "19 995 bases, 00000000 checksum.",
+    DefaultNucleotideSequenceFastaRecord contig_5 = new DefaultNucleotideSequenceFastaRecord("5", "19 995 bases, 00000000 checksum.",
             "ATGTTTAAAGATGAGTCTTCTAACCGAGGTCGAAACGTACGTTCTCTCTATCATCCCATC" +
             "AGGCCCCCTCAAAGCCGAGATCGCGCAGAGACTTGAAGATGTTTTTGCAGGGAAGAACAC" +
             "AGATCTTGAGGCACTCATGGAATGGCTAAAGACAAGACCAATCCTGTCACCTCTGACTAA" +
@@ -100,7 +100,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
             "TGCCTAAGTCTATGAGGGAGGAATATCGGCAGGAACAGCAGAGCGCTGTGGATGTTGACG" +
             "ATGGTCATTTTGTCAACATAGAGCTGGAGTAAA"
     );
-    NucleotideSequenceFastaRecord contig_9 = new NucleotideSequenceFastaRecord("9", "48 2311 bases, 00000000 checksum.",
+    DefaultNucleotideSequenceFastaRecord contig_9 = new DefaultNucleotideSequenceFastaRecord("9", "48 2311 bases, 00000000 checksum.",
             "AATATATTCAATATGGAGAGAATAAAAGAACTGAGAGATCTAATGTCACAGTCTCGCACC" +
             "CGCGAGATACTMACCAAAACCACTGTGGACCACATGGCCATAATCAAAAAATACACATCA" +
             "GGAAGGCAAGAGAAGAACCCCGCACTTAGAATGAAGTGGATGATGGCAATGAAATATCCA" +
@@ -150,7 +150,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
     @Test
     public void parseFileGet() throws IOException, DataStoreException{
         
-        DataStore<NucleotideSequenceFastaRecord> sut = parseFile(getFile());
+        DataStore<DefaultNucleotideSequenceFastaRecord> sut = parseFile(getFile());
         assertEquals(9, sut.getNumberOfRecords());
         assertEquals(contig_1, sut.get("1"));
         assertEquals(contig_5, sut.get("5"));
@@ -160,7 +160,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
     @Test
     public void parseIdIterator() throws IOException, DataStoreException{
         
-        DataStore<NucleotideSequenceFastaRecord> sut = parseFile(getFile());
+        DataStore<DefaultNucleotideSequenceFastaRecord> sut = parseFile(getFile());
         Iterator<String> iter = sut.idIterator();
         assertTrue(iter.hasNext());
         for(int i=1; i<=9; i++){
@@ -171,7 +171,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
     @Test
     public void closingIdIteratorShouldStopIteration() throws IOException, DataStoreException{
         
-        DataStore<NucleotideSequenceFastaRecord> sut = parseFile(getFile());
+        DataStore<DefaultNucleotideSequenceFastaRecord> sut = parseFile(getFile());
         StreamingIterator<String> iter = sut.idIterator();
         assertTrue(iter.hasNext());
         iter.next();
@@ -183,11 +183,11 @@ public abstract class AbstractTestSequenceFastaDataStore {
     @Test
     public void parseFileRecordIterator() throws IOException, DataStoreException{
         
-        DataStore<NucleotideSequenceFastaRecord> sut = parseFile(getFile());
-        Iterator<NucleotideSequenceFastaRecord> iter = sut.iterator();
+        DataStore<DefaultNucleotideSequenceFastaRecord> sut = parseFile(getFile());
+        Iterator<DefaultNucleotideSequenceFastaRecord> iter = sut.iterator();
         assertTrue(iter.hasNext());
         for(int i=1; i<=9; i++){
-            final NucleotideSequenceFastaRecord next = iter.next();
+            final DefaultNucleotideSequenceFastaRecord next = iter.next();
             assertEquals(""+i, next.getId());
         }
         assertFalse(iter.hasNext());
@@ -195,15 +195,15 @@ public abstract class AbstractTestSequenceFastaDataStore {
     @Test
     public void closingFileRecordIteratorShouldStopIteration() throws IOException, DataStoreException{
         
-        DataStore<NucleotideSequenceFastaRecord> sut = parseFile(getFile());
-        StreamingIterator<NucleotideSequenceFastaRecord> iter = sut.iterator();
+        DataStore<DefaultNucleotideSequenceFastaRecord> sut = parseFile(getFile());
+        StreamingIterator<DefaultNucleotideSequenceFastaRecord> iter = sut.iterator();
         assertTrue(iter.hasNext());
         iter.next();
         iter.next();
         iter.close();
         assertFalse(iter.hasNext());
     }
-    protected abstract DataStore<NucleotideSequenceFastaRecord> parseFile(File file) throws IOException;
+    protected abstract DataStore<DefaultNucleotideSequenceFastaRecord> parseFile(File file) throws IOException;
     
    
     
