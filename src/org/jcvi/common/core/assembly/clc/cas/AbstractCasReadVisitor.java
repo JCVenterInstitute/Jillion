@@ -29,6 +29,7 @@ import org.jcvi.common.core.assembly.clc.cas.read.CasPlacedRead;
 import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.ChainedStreamingIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -39,7 +40,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  *
  */
-public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends AbstractOnePassCasFileVisitor {
+public abstract class AbstractCasReadVisitor<R extends Read> extends AbstractOnePassCasFileVisitor {
 
     private final File workingDir;
     private final CasTrimMap trimMap;
@@ -154,7 +155,7 @@ public abstract class AbstractCasReadVisitor<R extends ReadRecord> extends Abstr
                 int casReferenceId = (int)match.getChosenAlignment().contigSequenceId();
                 NucleotideSequence gappedReference =orderedGappedReferences.get(casReferenceId);
                 CasPlacedRead placedRead = CasUtil.createCasPlacedRead(match, recordId, 
-                        readRecord.getBasecalls(), 
+                        readRecord.getNucleotideSequence(), 
                         validRangeDataStore.get(recordId), gappedReference);
                 visitMatch(match, readRecord, placedRead);              
             }else{

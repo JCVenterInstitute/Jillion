@@ -71,9 +71,15 @@ public class FastaConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 	}
 	
 	/**
+     * Add any additional comments if needed.
+     * By default this method does not add
+     * any more comments.  Subclasses
+     * may override this method to add new values.
      * @param id the id of this sequence
      * @param preExistingComments comments that already exist
-     * @return
+     * @return a {@link Properties} object which contains
+     * any pre-existing comments and any new ones;
+     * can not be null.
      */
     protected Properties createAdditionalCommentsFor(String id,
             Properties preExistingComments) {

@@ -25,7 +25,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogram;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFile;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
@@ -54,7 +54,9 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends FastaConsedPhdAdapt
         this.chromatDir = chromatDir;
     }
     
-    
+    /**
+     * Adds the property "CHROMAT_FILE" with the value of the read id.
+     */
     @Override
     protected Properties createAdditionalCommentsFor(String id,
             Properties preExistingComments) {
@@ -73,22 +75,41 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends FastaConsedPhdAdapt
     @Override
     protected Phd createPhdRecordFor(NucleotideSequenceFastaRecord fasta,
             Properties requiredComments) {
-        final String id = fasta.getId();
-        File chromatFile = new File(chromatDir,id);
-        if(chromatFile.exists()){
-            try {
-                SCFChromatogram chromo = SCFChromatogramFile.create(chromatFile);                
-                return createPhd(requiredComments, fasta, chromo);
-            } catch (Exception e) {
-                throw new IllegalStateException("error parsing chromatogram for "+ id,e);
-            } 
+    	Chromatogram chromo = tryToParseFromChromatDir(fasta.getId());
+        if(chromo !=null){
+        	 return createPhd(requiredComments, fasta, chromo);
         }
         return super.createPhdRecordFor(fasta, requiredComments);
 
     }
 
+    /**
+     * Look for an parse an scf chromatogram with the given
+     * id.  The file to be parsed will be named
+     * id only without any file extensions and must be in SCF format (since 
+     * this is what consed expects).
+     * @param id the id to look for in the chromat directory.
+     * @return a {@link Chromatogram} object if parsing
+     * is a success; or null if no chromatogram is found.
+     * @throws IllegalStateException if there is a problem 
+     * parsing chromatogram file.
+     */
+	protected Chromatogram tryToParseFromChromatDir(
+			String id) {
+        File chromatFile = new File(chromatDir,id);
+        if(chromatFile.exists()){
+            try {
+            	return SCFChromatogramFile.create(chromatFile);                
+               
+            } catch (Exception e) {
+                throw new IllegalStateException("error parsing chromatogram for "+ id,e);
+            } 
+        }
+		return null;
+	}
+
     protected Phd createPhd(Properties requiredComments, NucleotideSequenceFastaRecord fasta,
-            SCFChromatogram chromo) {
+            Chromatogram chromo) {
         final String id = fasta.getId();
         return new DefaultPhd(id, chromo.getNucleotideSequence(), chromo.getQualitySequence(), chromo.getPositionSequence(), requiredComments);
     }
