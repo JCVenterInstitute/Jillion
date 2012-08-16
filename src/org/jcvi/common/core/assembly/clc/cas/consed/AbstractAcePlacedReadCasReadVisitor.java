@@ -57,16 +57,16 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     @Override
     public StreamingIterator<PhdReadRecord> createFastqIterator(
             File illuminaFile, TraceDetails traceDetails) throws DataStoreException {
-        FastqDataStore datastore;
 		try {
-			datastore = LargeFastqFileDataStore.create(illuminaFile, traceDetails.getFastqQualityCodec());
+			FastqDataStore datastore = LargeFastqFileDataStore.create(illuminaFile, traceDetails.getFastqQualityCodec());
+			return new FastqConsedPhdAdaptedIterator( 
+	        		datastore.iterator(),
+	                illuminaFile, 
+	                traceDetails.getPhdDate());
 		} catch (FileNotFoundException e) {
 			throw new IllegalStateException("fastq file no longer exists! : "+ illuminaFile.getAbsolutePath());
 		}
-		return new FastqConsedPhdAdaptedIterator( 
-        		datastore.iterator(),
-                illuminaFile, 
-                traceDetails.getPhdDate());
+		
     }
 
     /**

@@ -229,4 +229,78 @@ public class ArtificialPhd implements Phd{
     public QualitySequence getQualitySequence() {
         return qualities;
     }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((basecalls == null) ? 0 : basecalls.hashCode());
+		result = prime * result
+				+ ((comments == null) ? 0 : comments.hashCode());
+		result = prime * result
+				+ ((fakePositions == null) ? 0 : fakePositions.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result
+				+ ((qualities == null) ? 0 : qualities.hashCode());
+		result = prime * result + ((tags == null) ? 0 : tags.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof ArtificialPhd)) {
+			return false;
+		}
+		ArtificialPhd other = (ArtificialPhd) obj;
+		if (basecalls == null) {
+			if (other.basecalls != null) {
+				return false;
+			}
+		} else if (!basecalls.equals(other.basecalls)) {
+			return false;
+		}
+		if (comments == null) {
+			if (other.comments != null) {
+				return false;
+			}
+		} else if (!comments.equals(other.comments)) {
+			return false;
+		}
+		if (fakePositions == null) {
+			if (other.fakePositions != null) {
+				return false;
+			}
+		} else if (!fakePositions.equals(other.fakePositions)) {
+			return false;
+		}
+		if (id == null) {
+			if (other.id != null) {
+				return false;
+			}
+		} else if (!id.equals(other.id)) {
+			return false;
+		}
+		if (qualities == null) {
+			if (other.qualities != null) {
+				return false;
+			}
+		} else if (!qualities.equals(other.qualities)) {
+			return false;
+		}
+		if (tags == null) {
+			if (other.tags != null) {
+				return false;
+			}
+		} else if (!tags.equals(other.tags)) {
+			return false;
+		}
+		return true;
+	}
+    
+    
 }

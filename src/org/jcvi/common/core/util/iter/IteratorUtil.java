@@ -28,7 +28,7 @@ public final class IteratorUtil {
      * never null.
      */
     @SuppressWarnings("unchecked")
-    public static <E>  StreamingIterator<E> createEmptyCloseableIterator(){
+    public static <E>  StreamingIterator<E> createEmptyStreamingIterator(){
         return StreamingIteratorAdapter.adapt(EmptyIterator.INSTANCE);
     }
 }
