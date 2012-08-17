@@ -32,7 +32,7 @@ import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory2;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaRecord;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceFastaRecord;
@@ -84,7 +84,7 @@ public class Chromatogram2fasta {
     public void writeChromatogram(String id, Chromatogram chromo) throws IOException{
         //small hit converting all to fastas even if not outputing them all
     	//is worth cleaner code, fix if this becomes a bottleneck.
-    	seqOut.write(new DefaultNucleotideSequenceFastaRecord(id, chromo.getNucleotideSequence())
+    	seqOut.write(NucleotideSequenceFastaRecordFactory2.create(id, chromo.getNucleotideSequence())
                              .toString().getBytes());
     	qualOut.write(new DefaultQualityFastaRecord(id, chromo.getQualitySequence())
                              .toString().getBytes());

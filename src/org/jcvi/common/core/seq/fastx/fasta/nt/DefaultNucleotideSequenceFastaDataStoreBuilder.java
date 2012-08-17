@@ -10,7 +10,7 @@ import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code DefaultNucleotideFastaDataStoreBuilder} is a {@link NucleotideSequenceFastaDataStoreBuilder}
- * that stores all {@link DefaultNucleotideSequenceFastaRecord} added to it via the {@link #addFastaRecord(DefaultNucleotideSequenceFastaRecord)}
+ * that stores all {@link NucleotideSequenceFastaRecord} added to it via the {@link #addFastaRecord(NucleotideSequenceFastaRecord)}
  * in  a Map.  All fastas are stored in memory so if too many records are added, this object could
  * take up considerable memory and could cause an {@link OutOfMemoryError}.
  * @author dkatzel
@@ -18,7 +18,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  */
 public final class DefaultNucleotideSequenceFastaDataStoreBuilder implements NucleotideSequenceFastaDataStoreBuilder{
 
-	private final Map<String, DefaultNucleotideSequenceFastaRecord> map = new LinkedHashMap<String, DefaultNucleotideSequenceFastaRecord>();
+	private final Map<String, NucleotideSequenceFastaRecord> map = new LinkedHashMap<String, NucleotideSequenceFastaRecord>();
 	@Override
 	public NucleotideSequenceFastaDataStore build() {
 		return new NucleotideFastaDataStoreImpl(map);
@@ -26,7 +26,7 @@ public final class DefaultNucleotideSequenceFastaDataStoreBuilder implements Nuc
 
 	@Override
 	public DefaultNucleotideSequenceFastaDataStoreBuilder addFastaRecord(
-			DefaultNucleotideSequenceFastaRecord fastaRecord) {
+			NucleotideSequenceFastaRecord fastaRecord) {
 		if(fastaRecord ==null){
 			throw new NullPointerException("fasta record can not be null");
 		}
@@ -35,8 +35,8 @@ public final class DefaultNucleotideSequenceFastaDataStoreBuilder implements Nuc
 	}
 	
 	private static final class NucleotideFastaDataStoreImpl implements NucleotideSequenceFastaDataStore{
-		private final DataStore<DefaultNucleotideSequenceFastaRecord> delegate;
-		private NucleotideFastaDataStoreImpl(Map<String, DefaultNucleotideSequenceFastaRecord> map){
+		private final DataStore<NucleotideSequenceFastaRecord> delegate;
+		private NucleotideFastaDataStoreImpl(Map<String, NucleotideSequenceFastaRecord> map){
 			delegate = MapDataStoreAdapter.adapt(map);
 		}
 		@Override
@@ -45,7 +45,7 @@ public final class DefaultNucleotideSequenceFastaDataStoreBuilder implements Nuc
 		}
 
 		@Override
-		public DefaultNucleotideSequenceFastaRecord get(String id)
+		public NucleotideSequenceFastaRecord get(String id)
 				throws DataStoreException {
 			return delegate.get(id);
 		}
@@ -72,7 +72,7 @@ public final class DefaultNucleotideSequenceFastaDataStoreBuilder implements Nuc
 		}
 
 		@Override
-		public StreamingIterator<DefaultNucleotideSequenceFastaRecord> iterator() throws DataStoreException {
+		public StreamingIterator<NucleotideSequenceFastaRecord> iterator() throws DataStoreException {
 			return delegate.iterator();
 		}
 		

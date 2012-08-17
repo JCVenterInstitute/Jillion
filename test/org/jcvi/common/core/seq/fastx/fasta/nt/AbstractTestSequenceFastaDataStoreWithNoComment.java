@@ -27,16 +27,15 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 
 public  abstract class AbstractTestSequenceFastaDataStoreWithNoComment {
     static final String FASTA_FILE_PATH = "files/noComment.fasta";
     ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestSequenceFastaMapWithNoComment.class);
     
-DefaultNucleotideSequenceFastaRecord hrv_61 = new DefaultNucleotideSequenceFastaRecord("hrv-61",null,
-        "TTAAAACTGGGTCTGGGTTGCTCCCACCCAGACCACCCATGTGGTGTTGTACACTGTTAT" +
+    NucleotideSequenceFastaRecord hrv_61 = NucleotideSequenceFastaRecordFactory2.create("hrv-61",
+        new NucleotideSequenceBuilder("TTAAAACTGGGTCTGGGTTGCTCCCACCCAGACCACCCATGTGGTGTTGTACACTGTTAT" +
         "TCCGGTAACTTTGTACGCCAGTTTTGAACTCCCCTACCCCTTTTGTAACTTAGAAGCTAA" +
         "ACACATCGACCAATAGCAGGCAATCACCCAGATTGCTTATGGTCAAGTACTTCTGTTTCC" +
         "CCGGTCTCCTCTGATATGCTCTACCAGGGCAAAAACAGAGTAGATCGTTATCCGCAAGAT" +
@@ -154,9 +153,9 @@ DefaultNucleotideSequenceFastaRecord hrv_61 = new DefaultNucleotideSequenceFasta
         "GAAATACATGAATCAATTAGGTGGACTAAGAAGCCCTCACAAATGCAGGAACACGTACTA" +
         "TCCTTGTGTCACTTAATGTGGCATAATGGCCGGGATGTGTATAAAGAATTCGAAAGGAAA" +
         "ATACGCAGTGTTAGCGCTGGACGTGCACTGTATATTCCTCCTTACGATCTCCTGTTGCAT" +
-        "GAGTGGTATGAAAAATTTTAATATATAGAAATAATAAACAATTAGTTTCTTAGTTTTAT" );
+        "GAGTGGTATGAAAAATTTTAATATATAGAAATAATAAACAATTAGTTTCTTAGTTTTAT" ).build());
 
 
 
-protected abstract DataStore<DefaultNucleotideSequenceFastaRecord> buildMap(File file) throws IOException;
+protected abstract DataStore<NucleotideSequenceFastaRecord> buildMap(File file) throws IOException;
 }

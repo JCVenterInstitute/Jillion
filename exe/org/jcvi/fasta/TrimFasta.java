@@ -36,10 +36,10 @@ import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.nt.AbstractNucleotideFastaVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory2;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
@@ -90,27 +90,23 @@ public class TrimFasta {
             final Map<String, Integer> rightTrimPoints = parseTrimPoints(rightTrimFile);
             
             final OutputStream out = new FileOutputStream(outputFile);
-            FastaFileVisitor visitor = new AbstractNucleotideFastaVisitor() {
-
-                @Override
-                protected boolean visitFastaRecord(
-                        DefaultNucleotideSequenceFastaRecord fastaRecord) {
-                    String id = fastaRecord.getId();
-                    final NucleotideSequence basecalls = fastaRecord.getSequence();
-                    long untrimmedLength = basecalls.getLength();
+            FastaFileVisitor visitor = new AbstractFastaVisitor() {
+				
+				@Override
+				protected boolean visitRecord(String id, String comment, String entireBody) {
+					NucleotideSequenceBuilder builder =new NucleotideSequenceBuilder(entireBody);
+                    long untrimmedLength = builder.getLength();
                     Integer l = leftTrimPoints.get(id);
                     Integer r = rightTrimPoints.get(id);
                     Range trimRange = Range.create(l ==null? 0:l, 
                                                     untrimmedLength -1 -(r==null?0:r));
                     
                     try {
-                    	NucleotideSequence trimmedSequence = new NucleotideSequenceBuilder(basecalls)
+                    	NucleotideSequence trimmedSequence = builder
                     										.trim(trimRange)
                     										.build();
-                        out.write(new DefaultNucleotideSequenceFastaRecord(
-                                fastaRecord.getId(),
-                                fastaRecord.getComment(),
-                                trimmedSequence)
+                        out.write(
+                        		NucleotideSequenceFastaRecordFactory2.create(id, trimmedSequence, comment)
                                     .toString().getBytes());
                     } catch (IOException e) {
                        throw new IllegalStateException("error writing to output fasta",e);

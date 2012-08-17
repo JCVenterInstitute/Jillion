@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFile;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhd;
@@ -47,7 +47,7 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends FastaConsedPhdAdapt
      * @param defaultQualityValue
      */
     public ChromatDirFastaConsedPhdAdaptedIterator(
-            StreamingIterator<DefaultNucleotideSequenceFastaRecord> fastaIterator,
+            StreamingIterator<NucleotideSequenceFastaRecord> fastaIterator,
             File fastaFile, Date phdDate, PhredQuality defaultQualityValue,
             File chromatDir) {
         super(fastaIterator, fastaFile, phdDate, defaultQualityValue);
@@ -73,7 +73,7 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends FastaConsedPhdAdapt
 
 
     @Override
-    protected Phd createPhdRecordFor(DefaultNucleotideSequenceFastaRecord fasta,
+    protected Phd createPhdRecordFor(NucleotideSequenceFastaRecord fasta,
             Properties requiredComments) {
     	Chromatogram chromo = tryToParseFromChromatDir(fasta.getId());
         if(chromo !=null){
@@ -108,7 +108,7 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends FastaConsedPhdAdapt
 		return null;
 	}
 
-    protected Phd createPhd(Properties requiredComments, DefaultNucleotideSequenceFastaRecord fasta,
+    protected Phd createPhd(Properties requiredComments, NucleotideSequenceFastaRecord fasta,
             Chromatogram chromo) {
         final String id = fasta.getId();
         return new DefaultPhd(id, chromo.getNucleotideSequence(), chromo.getQualitySequence(), chromo.getPositionSequence(), requiredComments);

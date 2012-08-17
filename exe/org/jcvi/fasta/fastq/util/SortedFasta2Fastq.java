@@ -43,7 +43,8 @@ import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory2;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualityFastaRecordUtil;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
@@ -55,6 +56,7 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.DateUtil;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
 import org.jcvi.common.io.idReader.IdReader;
@@ -81,7 +83,7 @@ public class SortedFasta2Fastq {
      * This is our end of file token which tell us we are
      * done parsing by the time we get to this object in our seq queue.
      */
-    private static final DefaultNucleotideSequenceFastaRecord SEQ_END_OF_FILE = new DefaultNucleotideSequenceFastaRecord("NULL", null, "A");
+    private static final NucleotideSequenceFastaRecord SEQ_END_OF_FILE = NucleotideSequenceFastaRecordFactory2.create("NULL", new NucleotideSequenceBuilder("A").build());
     
     private static final int DEFAULT_QUEUE_SIZE = 1000;
     
@@ -162,14 +164,14 @@ public class SortedFasta2Fastq {
         }
     }
     
-    private static class SequenceBlockedFastaVisitor extends BlockedFastaVisitor<Nucleotide, NucleotideSequence, DefaultNucleotideSequenceFastaRecord>{
+    private static class SequenceBlockedFastaVisitor extends BlockedFastaVisitor<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord>{
         
     /**
          * @param file
          * @param queue
          */
         public SequenceBlockedFastaVisitor(File file,
-                BlockingQueue<DefaultNucleotideSequenceFastaRecord> queue,FastXFilter filter) {
+                BlockingQueue<NucleotideSequenceFastaRecord> queue,FastXFilter filter) {
             super(file, queue, filter);
         }
         @Override
@@ -179,7 +181,7 @@ public class SortedFasta2Fastq {
                 public boolean visitRecord(String id, String comment, String entireBody) {
                     if(getFilter().accept(id)){
                         try {
-                            getQueue().put(new DefaultNucleotideSequenceFastaRecord(id, comment, entireBody));
+                            getQueue().put(NucleotideSequenceFastaRecordFactory2.create(id, new NucleotideSequenceBuilder(entireBody).build(), comment));
                         } catch (InterruptedException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
@@ -282,7 +284,7 @@ public class SortedFasta2Fastq {
             final FastqQualityCodec fastqQualityCodec = useSanger? FastqQualityCodec.SANGER: FastqQualityCodec.ILLUMINA;
         
             final BlockingQueue<QualitySequenceFastaRecord> qualityQueue = new ArrayBlockingQueue<QualitySequenceFastaRecord>(bufferSize);
-            final BlockingQueue<DefaultNucleotideSequenceFastaRecord> sequenceQueue = new ArrayBlockingQueue<DefaultNucleotideSequenceFastaRecord>(bufferSize);
+            final BlockingQueue<NucleotideSequenceFastaRecord> sequenceQueue = new ArrayBlockingQueue<NucleotideSequenceFastaRecord>(bufferSize);
             
             final PrintWriter writer = new PrintWriter(commandLine.getOptionValue("o"));
             boolean done = false;
@@ -296,7 +298,7 @@ public class SortedFasta2Fastq {
            seqVisitor.start();
            while(!done){
                QualitySequenceFastaRecord qualityFasta =qualityQueue.take();
-               DefaultNucleotideSequenceFastaRecord seqFasta = sequenceQueue.take();
+               NucleotideSequenceFastaRecord seqFasta = sequenceQueue.take();
                if(qualityFasta == QUALITY_END_OF_FILE){
                    if(seqFasta == SEQ_END_OF_FILE){
                        done = true;

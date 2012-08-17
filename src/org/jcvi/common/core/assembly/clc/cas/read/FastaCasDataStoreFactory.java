@@ -47,27 +47,16 @@ public class FastaCasDataStoreFactory extends AbstractCasDataStoreFactory
         {
 
     private final int cacheSize;
-    /**
-     * Create a FastaCasDataStoreFactory with the given cacheSize.
-     * @param cacheSize the max number of fasta records to store in memory. 
-     */
-    public FastaCasDataStoreFactory(int cacheSize){
-        this(EmptyCasTrimMap.getInstance(),cacheSize);
-    }
-    public FastaCasDataStoreFactory(File workingDir,int cacheSize){
-        this(workingDir,EmptyCasTrimMap.getInstance(),cacheSize);
-    }
+
     /**
      * Create a FastaCasDataStoreFactory which will automatically
      * trim any records with the given {@link CasTrimMap} and using
      * the given cacheSize.
+     * @param workingDir the casWorkingDirectory that all files are relative to.
      * @param trimToUntrimmedMap a non-null CasTrimMap which may trim any
      * records parsed.
      * @param cacheSize the max number of (trimmed) fasta records to store in memory. 
      */
-    public FastaCasDataStoreFactory(CasTrimMap trimToUntrimmedMap,int cacheSize){
-        this(null, trimToUntrimmedMap, cacheSize);
-    }
     public FastaCasDataStoreFactory(File workingDir,CasTrimMap trimToUntrimmedMap,int cacheSize){
         super(workingDir,trimToUntrimmedMap);
         this.cacheSize = cacheSize;

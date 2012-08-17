@@ -2,18 +2,18 @@ package org.jcvi.common.core.seq.fastx.fasta.nt;
 
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.ObjectsUtil;
 /**
- * {@code NucleotideSequenceFastaRecord} is an implementation
- * of {@link FastaRecord} whose sequences are {@link NucleotideSequence}s.
+ * {@code UnCommentedNucleotideSequenceFastaRecord} is an implementation
+ * of {@link NucleotideSequenceFastaRecord} that saves
+ * memory by not having a reference to a comment.
+ * All calls to {@link #getComment()} will return null.
  * @author dkatzel
  *
  */
-class UnCommentedNucleotideSequenceFastaRecord implements FastaRecord<Nucleotide,NucleotideSequence>{
+class UnCommentedNucleotideSequenceFastaRecord implements NucleotideSequenceFastaRecord{
 
 	private static final int NUMBER_OF_BASES_PER_LINE = 60;
 	private static final Pattern LINE_SPLITTER_PATTERN = Pattern.compile(String.format("(.{%s})", NUMBER_OF_BASES_PER_LINE));
@@ -42,10 +42,10 @@ class UnCommentedNucleotideSequenceFastaRecord implements FastaRecord<Nucleotide
     {
         return this.id;
     }
-
     /**
-     * @return A <code>String</code>.
+     *{@inheritDoc}.
      */
+    @Override
     public String getComment()
     {
         return null;
@@ -125,10 +125,10 @@ class UnCommentedNucleotideSequenceFastaRecord implements FastaRecord<Nucleotide
         if (this == obj){
             return true;
         }
-        if (!(obj instanceof DefaultNucleotideSequenceFastaRecord)){
+        if (!(obj instanceof NucleotideSequenceFastaRecord)){
             return false;
         }
-        DefaultNucleotideSequenceFastaRecord other = (DefaultNucleotideSequenceFastaRecord)obj;
+        NucleotideSequenceFastaRecord other = (NucleotideSequenceFastaRecord)obj;
 		return 
         ObjectsUtil.nullSafeEquals(getSequence(), other.getSequence()) 
         && ObjectsUtil.nullSafeEquals(getId(), other.getId());

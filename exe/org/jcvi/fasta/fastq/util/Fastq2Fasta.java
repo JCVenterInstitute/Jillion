@@ -41,7 +41,7 @@ import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory2;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
@@ -161,8 +161,8 @@ public class Fastq2Fasta {
                      }
                      if(seqOut!=null){
                          try {
-                             seqOut.write(new DefaultNucleotideSequenceFastaRecord(
-                                     id,fastQ.getComment(),fastQ.getNucleotideSequence()) 
+                             seqOut.write(NucleotideSequenceFastaRecordFactory2.create(
+                                     id,fastQ.getNucleotideSequence(),fastQ.getComment()) 
                                      .toString().getBytes());
                          } catch (IOException e) {
                              throw new IOException("could not write to sequence data for "+ id, e);

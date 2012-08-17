@@ -33,7 +33,7 @@ import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRec
 public class TestLargeNucleotideFastaFileDataStore  extends AbstractTestSequenceFastaDataStore {
 
     @Override
-    protected DataStore<DefaultNucleotideSequenceFastaRecord> parseFile(File file)
+    protected DataStore<NucleotideSequenceFastaRecord> parseFile(File file)
             throws IOException {
         return LargeNucleotideSequenceFastaFileDataStore.create(file);
     }

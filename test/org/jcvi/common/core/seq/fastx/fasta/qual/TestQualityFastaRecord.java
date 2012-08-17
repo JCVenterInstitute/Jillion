@@ -23,10 +23,12 @@
  */
 package org.jcvi.common.core.seq.fastx.fasta.qual;
 
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory2;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaRecord;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -86,7 +88,7 @@ public class TestQualityFastaRecord {
     }
     @Test
     public void differrentFastaRecordShouldNotBeEqual(){
-    	DefaultNucleotideSequenceFastaRecord seq = new DefaultNucleotideSequenceFastaRecord(id, "ACGTACGT");
+    	NucleotideSequenceFastaRecord seq = NucleotideSequenceFastaRecordFactory2.create(id, new NucleotideSequenceBuilder("ACGTACGT").build());
         assertFalse(sut.equals(seq));
     }
     @Test

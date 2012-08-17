@@ -83,7 +83,7 @@ public final class IndexedNucleotideFastaFileDataStore implements NucleotideSequ
 	}
 
 	@Override
-	public DefaultNucleotideSequenceFastaRecord get(String id)
+	public NucleotideSequenceFastaRecord get(String id)
 			throws DataStoreException {
 		if(!contains(id)){
 			return null;
@@ -122,13 +122,13 @@ public final class IndexedNucleotideFastaFileDataStore implements NucleotideSequ
 	}
 
 	@Override
-	public StreamingIterator<DefaultNucleotideSequenceFastaRecord> iterator() {
+	public StreamingIterator<NucleotideSequenceFastaRecord> iterator() {
 		return LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile);
 	}
 	
 	private static final class IndexedNucleotideFastaDataStoreBuilderVisitor
 			extends
-			AbstractIndexedFastaDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, DefaultNucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>
+			AbstractIndexedFastaDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>
 			implements NucleotideFastaDataStoreBuilderVisitor {
 
 		private IndexedNucleotideFastaDataStoreBuilderVisitor(File fastaFile) {

@@ -12,7 +12,7 @@ import org.jcvi.common.core.align.pairwise.ScoringMatrix;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -143,11 +143,11 @@ public class PrimerDetector {
     public List<PrimerHit> detect(NucleotideSequence sequence,
             NucleotideSequenceFastaDataStore primersDataStore) {
         List<PrimerHit> hits = new ArrayList<PrimerHit>();
-        StreamingIterator<DefaultNucleotideSequenceFastaRecord> iter =null; 
+        StreamingIterator<NucleotideSequenceFastaRecord> iter =null; 
         try{
         	iter =primersDataStore.iterator();
         while(iter.hasNext()){
-        	DefaultNucleotideSequenceFastaRecord fasta = iter.next();
+        	NucleotideSequenceFastaRecord fasta = iter.next();
         	NucleotideSequence primer = fasta.getSequence();
             if(primer.getLength()>=minLength){
             	NucleotidePairwiseSequenceAlignment forwardAlignment = NucleotideSmithWatermanAligner.align(primer, sequence, 

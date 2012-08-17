@@ -34,13 +34,13 @@ final class DefaultNucleotideSequenceFastaRecordFactory implements NucleotideSeq
         return INSTANCE;
     }
     @Override
-    public DefaultNucleotideSequenceFastaRecord createFastaRecord(
+    public NucleotideSequenceFastaRecord createFastaRecord(
             String id, String comments, String recordBody) {
         return new DefaultNucleotideSequenceFastaRecord(id,comments, recordBody.replace("\\s+", ""));
     }
 
     @Override
-    public DefaultNucleotideSequenceFastaRecord createFastaRecord(
+    public NucleotideSequenceFastaRecord createFastaRecord(
             String id, String recordBody) {
         return createFastaRecord(id, null,recordBody);
     }
