@@ -9,7 +9,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.LargeNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory2;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -31,7 +31,7 @@ public class ReverseComplementFasta {
 															.reverseComplement()
 															.build();
 				
-				NucleotideSequenceFastaRecord reverseRecord = NucleotideSequenceFastaRecordFactory2.create(
+				NucleotideSequenceFastaRecord reverseRecord = NucleotideSequenceFastaRecordFactory.create(
 														record.getId(), 
 														reverseSequence,
 														record.getComment()); 			

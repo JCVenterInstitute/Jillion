@@ -34,7 +34,7 @@ import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory2;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
@@ -76,7 +76,7 @@ public class ConvertGappedFasta2UngappedFasta {
 											.ungap()
 											.build();
 					NucleotideSequenceFastaRecord ungappedFasta =
-								NucleotideSequenceFastaRecordFactory2.create(id, ungappedSequence, comment);
+								NucleotideSequenceFastaRecordFactory.create(id, ungappedSequence, comment);
 					output.print(ungappedFasta);
 					return true;
 				}

@@ -72,7 +72,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory2;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
@@ -411,7 +411,7 @@ public class ReAbacusAceContigWorker {
                             maxSeenLength = (int)ungappedProblemSequence.getLength();
                         }
                         
-                        NucleotideSequenceFastaRecord fasta = NucleotideSequenceFastaRecordFactory2.create(readId, ungappedProblemSequence,comment);
+                        NucleotideSequenceFastaRecord fasta = NucleotideSequenceFastaRecordFactory.create(readId, ungappedProblemSequence,comment);
                         ungappedSequences.put(readId, fasta);
                     }
                     
@@ -443,7 +443,7 @@ public class ReAbacusAceContigWorker {
                             }else{
                                 newSequenceBuilder.append(new String(gaps));
                             }
-                            writer.print(NucleotideSequenceFastaRecordFactory2.create(fasta.getId(), newSequenceBuilder.build(), fasta.getComment()));
+                            writer.print(NucleotideSequenceFastaRecordFactory.create(fasta.getId(), newSequenceBuilder.build(), fasta.getComment()));
                         }else{
                             writer.print(fasta.toString());
                         }

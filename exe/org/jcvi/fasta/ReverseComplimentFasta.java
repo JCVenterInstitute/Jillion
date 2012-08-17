@@ -34,7 +34,7 @@ import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory2;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
@@ -78,7 +78,7 @@ public class ReverseComplimentFasta {
                     									.reverseComplement()
                     									.build();
                 	NucleotideSequenceFastaRecord fasta =
-							NucleotideSequenceFastaRecordFactory2.create(id, revComplement, comment);
+							NucleotideSequenceFastaRecordFactory.create(id, revComplement, comment);
                     out.print(fasta);
                     return true;
                 }

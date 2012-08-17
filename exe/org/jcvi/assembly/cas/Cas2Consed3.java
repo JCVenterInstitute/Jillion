@@ -78,7 +78,7 @@ import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory2;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.IndexedPhdFileDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
@@ -291,7 +291,7 @@ public class Cas2Consed3 {
                      
                      
 					consensusOut.print(
-							NucleotideSequenceFastaRecordFactory2.create(
+							NucleotideSequenceFastaRecordFactory.create(
                                      splitContig.getId(), 
                                      ungappedConsensus)
                              .toFormattedString());
@@ -301,7 +301,7 @@ public class Cas2Consed3 {
                  int numberOfDownstreamNs = (int)(ungappedLength-1 - previousPseduoMoleculeOffset);
                  appendNsIfNeeded(pseduoMoleculeBuilder, numberOfDownstreamNs);
                  if(createPseduoMoleculeFasta){
-                	 pseduoMoleculeOut.print(NucleotideSequenceFastaRecordFactory2.create(
+                	 pseduoMoleculeOut.print(NucleotideSequenceFastaRecordFactory.create(
                 			 referenceId,
                 			 pseduoMoleculeBuilder.build()));
                  }
