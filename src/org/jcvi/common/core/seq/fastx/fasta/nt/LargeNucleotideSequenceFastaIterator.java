@@ -56,7 +56,7 @@ public final class LargeNucleotideSequenceFastaIterator extends AbstractBlocking
 				
 				@Override
 				protected boolean visitRecord(String id, String comment, String entireBody) {
-					NucleotideSequenceFastaRecord fastaRecord = NucleotideSequenceFastaRecordFactory2.create(id, new NucleotideSequenceBuilder(entireBody).build(),comment);
+					NucleotideSequenceFastaRecord fastaRecord = NucleotideSequenceFastaRecordFactory.create(id, new NucleotideSequenceBuilder(entireBody).build(),comment);
 					blockingPut(fastaRecord);
 	                return !LargeNucleotideSequenceFastaIterator.this.isClosed();
 				}

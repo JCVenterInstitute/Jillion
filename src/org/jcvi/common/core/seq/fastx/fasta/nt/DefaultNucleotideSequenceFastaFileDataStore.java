@@ -98,7 +98,7 @@ public final class DefaultNucleotideSequenceFastaFileDataStore{
 		protected NucleotideSequenceFastaRecord createFastaRecord(String id,
 				String comment, String entireBody) {
 			NucleotideSequence seq = new NucleotideSequenceBuilder(entireBody).build();
-			return NucleotideSequenceFastaRecordFactory2.create(id, seq,comment);
+			return NucleotideSequenceFastaRecordFactory.create(id, seq,comment);
 		}
     	
     }
