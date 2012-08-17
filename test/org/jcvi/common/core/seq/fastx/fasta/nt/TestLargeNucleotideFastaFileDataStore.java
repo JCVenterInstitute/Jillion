@@ -28,7 +28,6 @@ import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.LargeNucleotideSequenceFastaFileDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
 
 public class TestLargeNucleotideFastaFileDataStore  extends AbstractTestSequenceFastaDataStore {
 
