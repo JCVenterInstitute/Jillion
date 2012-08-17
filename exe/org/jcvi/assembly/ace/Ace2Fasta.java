@@ -57,7 +57,7 @@ import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory2;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.MultipleWrapper;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
@@ -147,7 +147,7 @@ public class Ace2Fasta {
                                     : contigId;
                
                 String comment = aceIn.getName()+" (whole contig)";
-                NucleotideSequenceFastaRecord fasta = NucleotideSequenceFastaRecordFactory2.create(
+                NucleotideSequenceFastaRecord fasta = NucleotideSequenceFastaRecordFactory.create(
                                                                 id,                                                                
                                                                 consensusBuilder.build(),
                                                                 comment);
