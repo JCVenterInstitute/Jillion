@@ -70,7 +70,6 @@ import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.MostFrequentBasecallConsensusCaller;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory2;
@@ -444,7 +443,7 @@ public class ReAbacusAceContigWorker {
                             }else{
                                 newSequenceBuilder.append(new String(gaps));
                             }
-                            writer.print(new DefaultNucleotideSequenceFastaRecord(fasta.getId(), fasta.getComment(),newSequenceBuilder.build()));
+                            writer.print(NucleotideSequenceFastaRecordFactory2.create(fasta.getId(), newSequenceBuilder.build(), fasta.getComment()));
                         }else{
                             writer.print(fasta.toString());
                         }

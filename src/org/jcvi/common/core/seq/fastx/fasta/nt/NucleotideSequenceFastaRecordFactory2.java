@@ -2,7 +2,7 @@ package org.jcvi.common.core.seq.fastx.fasta.nt;
 
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
-public class NucleotideSequenceFastaRecordFactory2 {
+public final class NucleotideSequenceFastaRecordFactory2 {
 
 	private NucleotideSequenceFastaRecordFactory2(){
 		//can not instantiate
