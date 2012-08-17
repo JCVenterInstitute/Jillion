@@ -30,11 +30,11 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**
  * {@code NucleotideFastaRecordFactory} is an implementation 
  * of {@link FastaRecordFactory} that makes 
- * {@link DefaultNucleotideSequenceFastaRecord}s.
+ * {@link NucleotideSequenceFastaRecord}s.
  * @author dkatzel
  *
  *
  */
-interface NucleotideSequenceFastaRecordFactory extends FastaRecordFactory<Nucleotide, NucleotideSequence,DefaultNucleotideSequenceFastaRecord>{
+interface NucleotideSequenceFastaRecordFactory extends FastaRecordFactory<Nucleotide, NucleotideSequence,NucleotideSequenceFastaRecord>{
 
 }

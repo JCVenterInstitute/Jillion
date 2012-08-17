@@ -26,6 +26,7 @@ package org.jcvi.common.core.seq.fastx.fasta.nt;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -48,13 +49,14 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * in {@link CachedDataStore}.
  * @author dkatzel
  */
-public final class LargeNucleotideSequenceFastaFileDataStore extends AbstractNucleotideFastaFileDataStore{
+public final class LargeNucleotideSequenceFastaFileDataStore implements NucleotideSequenceFastaDataStore{
 	
 	
 	private static final Pattern NEXT_ID_PATTERN = Pattern.compile("^>(\\S+)");
     private final File fastaFile;
 
     private Long size;
+    private boolean closed=false;
     /**
      * Construct a {@link LargeNucleotideSequenceFastaFileDataStore}
      * for the given Fasta file.
@@ -63,30 +65,36 @@ public final class LargeNucleotideSequenceFastaFileDataStore extends AbstractNuc
      * @throws NullPointerException if fastaFile is null.
      */
 	public static NucleotideSequenceFastaDataStore create(File fastaFile){
-		return new LargeNucleotideSequenceFastaFileDataStore(fastaFile, DefaultNucleotideSequenceFastaRecordFactory.getInstance());
+		return new LargeNucleotideSequenceFastaFileDataStore(fastaFile);
 	}
    
     /**
      * Construct a {@link LargeNucleotideSequenceFastaFileDataStore}
-     * for the given Fasta file and the given {@link NucleotideSequenceFastaRecordFactory}.
      * @param fastaFile the Fasta File to use, can not be null.
-     * @param fastaRecordFactory the NucleotideFastaRecordFactory implementation to use.
      * @throws NullPointerException if fastaFile is null.
      */
-    private LargeNucleotideSequenceFastaFileDataStore(File fastaFile,
-            NucleotideSequenceFastaRecordFactory fastaRecordFactory) {
-        super(fastaRecordFactory);
+    private LargeNucleotideSequenceFastaFileDataStore(File fastaFile) {
         if(fastaFile ==null){
             throw new NullPointerException("fasta file can not be null");
         }
         this.fastaFile = fastaFile;
     }
     
-    
+    private synchronized void checkNotYetClosed(){
+        if(closed){
+            throw new IllegalStateException("already closed");
+        }
+    }
     @Override
-	public EndOfBodyReturnCode visitEndOfBody() {
-		return EndOfBodyReturnCode.KEEP_PARSING;
-	}
+    public  synchronized void close() throws IOException {
+        closed=true;
+        
+    }
+
+    @Override
+    public  synchronized boolean isClosed() throws DataStoreException {
+        return closed;
+    }
 
     @Override
     public boolean contains(String id) throws DataStoreException {
@@ -103,7 +111,7 @@ public final class LargeNucleotideSequenceFastaFileDataStore extends AbstractNuc
     }
 
     @Override
-    public synchronized DefaultNucleotideSequenceFastaRecord get(String id)
+    public synchronized NucleotideSequenceFastaRecord get(String id)
             throws DataStoreException {
         checkNotYetClosed();
         InputStream in=null;
@@ -159,7 +167,7 @@ public final class LargeNucleotideSequenceFastaFileDataStore extends AbstractNuc
     }
 
     @Override
-    public synchronized StreamingIterator<DefaultNucleotideSequenceFastaRecord> iterator() {
+    public synchronized StreamingIterator<NucleotideSequenceFastaRecord> iterator() {
         checkNotYetClosed();
         return LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile);
        

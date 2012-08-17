@@ -19,7 +19,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
@@ -63,10 +63,10 @@ public class BarcodeDetector {
 				FastqRecord fastqRecord = fastqIterator.next();
 				List<String> matchedBarcodes = new ArrayList<String>();
 				List<PairwiseSequenceAlignment<Nucleotide, NucleotideSequence>> validAlignments=new ArrayList<PairwiseSequenceAlignment<Nucleotide, NucleotideSequence>>();
-				StreamingIterator<DefaultNucleotideSequenceFastaRecord> barcodeIterator = barcodes.iterator();
+				StreamingIterator<NucleotideSequenceFastaRecord> barcodeIterator = barcodes.iterator();
 				try{
 					while(barcodeIterator.hasNext()){
-						DefaultNucleotideSequenceFastaRecord barcode = barcodeIterator.next();
+						NucleotideSequenceFastaRecord barcode = barcodeIterator.next();
 						NucleotideSequence barcodeSequence = barcode.getSequence();
 						PairwiseSequenceAlignment<Nucleotide, NucleotideSequence> alignment =NucleotideSmithWatermanAligner.align(barcodeSequence, 
 																	fastqRecord.getNucleotideSequence(), matrix, -2, 0);

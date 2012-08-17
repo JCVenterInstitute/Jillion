@@ -10,7 +10,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory2;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -26,11 +27,11 @@ public class TestFastaConsedPhdAdaptedIterator extends AbstractTestPhdAdaptedIte
 	private final Date phdDate = DateUtil.getCurrentDate();
 	private final byte defaultQualityValue = 20;
 	
-	private FastaConsedPhdAdaptedIterator createSUT(StreamingIterator<DefaultNucleotideSequenceFastaRecord> iter){
+	private FastaConsedPhdAdaptedIterator createSUT(StreamingIterator<NucleotideSequenceFastaRecord> iter){
 		return new FastaConsedPhdAdaptedIterator(iter, fastaFile, phdDate,PhredQuality.valueOf(defaultQualityValue));
 	}
 
-	private PhdReadRecord createExpectedPhdReadRecord(DefaultNucleotideSequenceFastaRecord fastaRecord){
+	private PhdReadRecord createExpectedPhdReadRecord(NucleotideSequenceFastaRecord fastaRecord){
 		byte[] quals = new byte[(int)fastaRecord.getSequence().getLength()];
 		Arrays.fill(quals, defaultQualityValue);
 		return createExpectedPhdReadRecord(fastaFile, fastaRecord.getId(), 
@@ -38,12 +39,12 @@ public class TestFastaConsedPhdAdaptedIterator extends AbstractTestPhdAdaptedIte
 				new QualitySequenceBuilder(quals).build(), phdDate);
 	}
 	
-	private DefaultNucleotideSequenceFastaRecord createFasta(String id, String basecalls){
-		return new DefaultNucleotideSequenceFastaRecord(id, new NucleotideSequenceBuilder(basecalls).build());
+	private NucleotideSequenceFastaRecord createFasta(String id, String basecalls){
+		return NucleotideSequenceFastaRecordFactory2.create(id, new NucleotideSequenceBuilder(basecalls).build());
 	}
 	@Test
 	public void noReadsShouldMakeEmptyIterator(){
-		StreamingIterator<DefaultNucleotideSequenceFastaRecord> iter = IteratorUtil.createEmptyStreamingIterator();
+		StreamingIterator<NucleotideSequenceFastaRecord> iter = IteratorUtil.createEmptyStreamingIterator();
 		FastaConsedPhdAdaptedIterator sut = createSUT(iter);
 		assertFalse(sut.hasNext());
 		throwsExceptionWhenNoMoreElements(sut);
@@ -51,10 +52,10 @@ public class TestFastaConsedPhdAdaptedIterator extends AbstractTestPhdAdaptedIte
 	
 	@Test
 	public void oneRead(){
-		DefaultNucleotideSequenceFastaRecord fasta = createFasta("read1", "ACGT");
+		NucleotideSequenceFastaRecord fasta = createFasta("read1", "ACGT");
 		PhdReadRecord read1 = createExpectedPhdReadRecord(fasta);
 		
-		StreamingIterator<DefaultNucleotideSequenceFastaRecord> iter = StreamingIteratorAdapter.adapt(Arrays.asList(fasta).iterator());
+		StreamingIterator<NucleotideSequenceFastaRecord> iter = StreamingIteratorAdapter.adapt(Arrays.asList(fasta).iterator());
 		FastaConsedPhdAdaptedIterator sut = createSUT(iter);
 		assertTrue(sut.hasNext());
 		assertEquals(read1, sut.next());
@@ -64,11 +65,11 @@ public class TestFastaConsedPhdAdaptedIterator extends AbstractTestPhdAdaptedIte
 	}
 	@Test
 	public void twoReads(){
-		DefaultNucleotideSequenceFastaRecord fasta1 = createFasta("read1", "ACGT");
-		DefaultNucleotideSequenceFastaRecord fasta2 = createFasta("read2", "AAAA");
+		NucleotideSequenceFastaRecord fasta1 = createFasta("read1", "ACGT");
+		NucleotideSequenceFastaRecord fasta2 = createFasta("read2", "AAAA");
 		PhdReadRecord read1 = createExpectedPhdReadRecord(fasta1);
 		PhdReadRecord read2 = createExpectedPhdReadRecord(fasta2);
-		StreamingIterator<DefaultNucleotideSequenceFastaRecord> iter = StreamingIteratorAdapter.adapt(
+		StreamingIterator<NucleotideSequenceFastaRecord> iter = StreamingIteratorAdapter.adapt(
 										Arrays.asList(fasta1, 
 												fasta2)
 												.iterator());
@@ -84,10 +85,10 @@ public class TestFastaConsedPhdAdaptedIterator extends AbstractTestPhdAdaptedIte
 	
 	@Test
 	public void close() throws IOException{
-		DefaultNucleotideSequenceFastaRecord fasta1 = createFasta("read1", "ACGT");
-		DefaultNucleotideSequenceFastaRecord fasta2 = createFasta("read2", "AAAA");
+		NucleotideSequenceFastaRecord fasta1 = createFasta("read1", "ACGT");
+		NucleotideSequenceFastaRecord fasta2 = createFasta("read2", "AAAA");
 		PhdReadRecord read1 = createExpectedPhdReadRecord(fasta1);
-		StreamingIterator<DefaultNucleotideSequenceFastaRecord> iter = StreamingIteratorAdapter.adapt(
+		StreamingIterator<NucleotideSequenceFastaRecord> iter = StreamingIteratorAdapter.adapt(
 										Arrays.asList(fasta1, 
 												fasta2)
 												.iterator());
@@ -102,8 +103,8 @@ public class TestFastaConsedPhdAdaptedIterator extends AbstractTestPhdAdaptedIte
 	
 	@Test
 	public void removeShouldThrowException(){
-		DefaultNucleotideSequenceFastaRecord fastq = createFasta("read1", "ACGT");		
-		StreamingIterator<DefaultNucleotideSequenceFastaRecord> iter = StreamingIteratorAdapter.adapt(Arrays.asList(fastq).iterator());
+		NucleotideSequenceFastaRecord fastq = createFasta("read1", "ACGT");		
+		StreamingIterator<NucleotideSequenceFastaRecord> iter = StreamingIteratorAdapter.adapt(Arrays.asList(fastq).iterator());
 		FastaConsedPhdAdaptedIterator sut = createSUT(iter);
 		assertTrue(sut.hasNext());
 		try{

@@ -63,7 +63,8 @@ public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePass
         }
     }
     
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public synchronized void visitEndOfFile() {
         super.visitEndOfFile();
         delegate =  

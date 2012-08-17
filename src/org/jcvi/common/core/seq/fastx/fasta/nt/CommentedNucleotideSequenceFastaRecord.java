@@ -2,7 +2,7 @@ package org.jcvi.common.core.seq.fastx.fasta.nt;
 
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
-public class CommentedNucleotideSequenceFastaRecord extends UnCommentedNucleotideSequenceFastaRecord{
+class CommentedNucleotideSequenceFastaRecord extends UnCommentedNucleotideSequenceFastaRecord{
 
 	private final String comment;
 	public CommentedNucleotideSequenceFastaRecord(String id,

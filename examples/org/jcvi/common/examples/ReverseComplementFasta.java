@@ -3,16 +3,13 @@ package org.jcvi.common.examples;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.nt.IndexedNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.LargeNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory2;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -25,19 +22,19 @@ public class ReverseComplementFasta {
 		
 		NucleotideSequenceFastaDataStore dataStore = LargeNucleotideSequenceFastaFileDataStore.create(inputFasta);
 		PrintWriter out = new PrintWriter(reverseComplimentOutputFasta);
-		StreamingIterator<DefaultNucleotideSequenceFastaRecord> iter=null;
+		StreamingIterator<NucleotideSequenceFastaRecord> iter=null;
 		try {
 			iter =dataStore.iterator();
 			while(iter.hasNext()){
-				DefaultNucleotideSequenceFastaRecord record =iter.next();
+				NucleotideSequenceFastaRecord record =iter.next();
 				NucleotideSequence reverseSequence = new NucleotideSequenceBuilder(record.getSequence())
 															.reverseComplement()
 															.build();
 				
-				DefaultNucleotideSequenceFastaRecord reverseRecord = new DefaultNucleotideSequenceFastaRecord(
+				NucleotideSequenceFastaRecord reverseRecord = NucleotideSequenceFastaRecordFactory2.create(
 														record.getId(), 
-														record.getComment()
-														,reverseSequence); 			
+														reverseSequence,
+														record.getComment()); 			
 				//formattedString contains newline already
 				//so use .print() instead of .println()
 				out.print(reverseRecord.toFormattedString());

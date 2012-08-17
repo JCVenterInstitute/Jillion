@@ -21,9 +21,7 @@ package org.jcvi.fasta;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.PrintWriter;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -32,11 +30,11 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.nt.AbstractNucleotideFastaVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory2;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
@@ -71,23 +69,17 @@ public class ReverseComplimentFasta {
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
             File fastaFile = new File(commandLine.getOptionValue("fasta"));
             File outputFile = new File(commandLine.getOptionValue("o"));
-            final OutputStream out = new FileOutputStream(outputFile);
-            FastaFileVisitor visitor = new AbstractNucleotideFastaVisitor() {
-                
-                @Override
-                protected boolean visitFastaRecord(
-                        DefaultNucleotideSequenceFastaRecord fastaRecord) {
-                	NucleotideSequence revComplement = new NucleotideSequenceBuilder(fastaRecord.getSequence())
+            final PrintWriter out = new PrintWriter(outputFile);
+            FastaFileVisitor visitor = new AbstractFastaVisitor() {
+				
+				@Override
+				protected boolean visitRecord(String id, String comment, String entireBody) {
+                	NucleotideSequence revComplement = new NucleotideSequenceBuilder(entireBody)
                     									.reverseComplement()
                     									.build();
-                    try {
-                        out.write(new DefaultNucleotideSequenceFastaRecord(
-                                fastaRecord.getId(),
-                                fastaRecord.getComment(),
-                                revComplement).toString().getBytes());
-                    } catch (IOException e) {
-                       throw new IllegalStateException("error writing to output fasta",e);
-                    }
+                	NucleotideSequenceFastaRecord fasta =
+							NucleotideSequenceFastaRecordFactory2.create(id, revComplement, comment);
+                    out.print(fasta);
                     return true;
                 }
             };

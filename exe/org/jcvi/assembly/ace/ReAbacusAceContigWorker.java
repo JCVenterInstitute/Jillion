@@ -72,6 +72,8 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory2;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
@@ -382,7 +384,7 @@ public class ReAbacusAceContigWorker {
                         }
                     }
                     
-                    Map<String, DefaultNucleotideSequenceFastaRecord> ungappedSequences = new LinkedHashMap<String, DefaultNucleotideSequenceFastaRecord>();
+                    Map<String, NucleotideSequenceFastaRecord> ungappedSequences = new LinkedHashMap<String, NucleotideSequenceFastaRecord>();
                     int maxSeenLength=0;
                     for(String readId : affectedReads){
                         AcePlacedReadBuilder readBuilder =contigBuilder.getAssembledReadBuilder(readId);
@@ -405,12 +407,12 @@ public class ReAbacusAceContigWorker {
 									                        		.ungap()
 									                        		.build();
        
-                        String coment = String.format("%s - %s", affectedSequenceRange.getBegin(), affectedSequenceRange.getEnd());
+                        String comment = String.format("%s - %s", affectedSequenceRange.getBegin(), affectedSequenceRange.getEnd());
                         if(ungappedProblemSequence.getLength()>maxSeenLength){
                             maxSeenLength = (int)ungappedProblemSequence.getLength();
                         }
                         
-                        DefaultNucleotideSequenceFastaRecord fasta = new DefaultNucleotideSequenceFastaRecord(readId, coment,ungappedProblemSequence);
+                        NucleotideSequenceFastaRecord fasta = NucleotideSequenceFastaRecordFactory2.create(readId, ungappedProblemSequence,comment);
                         ungappedSequences.put(readId, fasta);
                     }
                     
@@ -428,7 +430,7 @@ public class ReAbacusAceContigWorker {
                         throw new IllegalStateException(e);
                     }
                     System.out.println("writing fasta file");
-                    for(DefaultNucleotideSequenceFastaRecord fasta : ungappedSequences.values()){
+                    for(NucleotideSequenceFastaRecord fasta : ungappedSequences.values()){
                         if(fasta.getSequence().getLength() < maxSeenLength){
                             int numberOfGapsToAdd = (int)(maxSeenLength -fasta.getSequence().getLength());
                             char[] gaps = new char[numberOfGapsToAdd];
@@ -463,10 +465,10 @@ public class ReAbacusAceContigWorker {
                         for(int i=0; i< sliceBuilders.length; i++){
                             sliceBuilders[i]= new CompactedSlice.Builder();
                         }
-                        StreamingIterator<DefaultNucleotideSequenceFastaRecord> iter = gappedFastaDataStore.iterator();
+                        StreamingIterator<NucleotideSequenceFastaRecord> iter = gappedFastaDataStore.iterator();
                         try{
 	                		while(iter.hasNext()){
-	                			DefaultNucleotideSequenceFastaRecord gappedFasta = iter.next();
+	                			NucleotideSequenceFastaRecord gappedFasta = iter.next();
 	                            String id = gappedFasta.getId();
 	                            NucleotideSequence gappedSequence = gappedFasta.getSequence();
 	                            AcePlacedReadBuilder readBuilder =contigBuilder.getAssembledReadBuilder(id);

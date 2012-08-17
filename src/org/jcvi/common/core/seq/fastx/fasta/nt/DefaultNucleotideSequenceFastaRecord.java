@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.ObjectsUtil;
@@ -37,7 +36,7 @@ import org.jcvi.common.core.util.ObjectsUtil;
  * @author dkatzel
  *
  */
-public final class DefaultNucleotideSequenceFastaRecord implements FastaRecord<Nucleotide,NucleotideSequence>{
+public final class DefaultNucleotideSequenceFastaRecord implements NucleotideSequenceFastaRecord{
 
 	private static final int NUMBER_OF_BASES_PER_LINE = 60;
 	private static final Pattern LINE_SPLITTER_PATTERN = Pattern.compile(String.format("(.{%s})", NUMBER_OF_BASES_PER_LINE));

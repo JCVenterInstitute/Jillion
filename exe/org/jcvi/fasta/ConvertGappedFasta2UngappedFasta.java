@@ -30,10 +30,11 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.nt.AbstractNucleotideFastaVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory2;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
@@ -67,24 +68,21 @@ public class ConvertGappedFasta2UngappedFasta {
             File fastaFile = new File(commandLine.getOptionValue("i"));
             File outputFile = new File(commandLine.getOptionValue("o"));
             final PrintWriter output = new PrintWriter(outputFile);
-            FastaFileVisitor visitor = new AbstractNucleotideFastaVisitor() {
+            FastaFileVisitor visitor = new AbstractFastaVisitor() {
+				
+				@Override
+				protected boolean visitRecord(String id, String comment, String entireBody) {
+											NucleotideSequence ungappedSequence = new NucleotideSequenceBuilder(entireBody)
+											.ungap()
+											.build();
+					NucleotideSequenceFastaRecord ungappedFasta =
+								NucleotideSequenceFastaRecordFactory2.create(id, ungappedSequence, comment);
+					output.print(ungappedFasta);
+					return true;
+				}
+			};
 
-                @Override
-                protected boolean visitFastaRecord(
-                        DefaultNucleotideSequenceFastaRecord fastaRecord) {
-                	NucleotideSequence ungappedSequence = new NucleotideSequenceBuilder(fastaRecord.getSequence())
-                										.ungap()
-                										.build();
-                    DefaultNucleotideSequenceFastaRecord ungappedFasta =
-                        new DefaultNucleotideSequenceFastaRecord(fastaRecord.getId(), fastaRecord.getComment(),
-                        		ungappedSequence);
-                    output.print(ungappedFasta);
-                    return true;
-                    
-                }
-                
-                
-            };
+             
             FastaFileParser.parse(fastaFile, visitor);
             IOUtil.closeAndIgnoreErrors(output);
         } catch (ParseException e) {
