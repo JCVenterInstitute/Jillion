@@ -34,7 +34,7 @@ public  abstract class AbstractTestSequenceFastaDataStoreWithNoComment {
     static final String FASTA_FILE_PATH = "files/noComment.fasta";
     ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestSequenceFastaMapWithNoComment.class);
     
-    NucleotideSequenceFastaRecord hrv_61 = NucleotideSequenceFastaRecordFactory2.create("hrv-61",
+    NucleotideSequenceFastaRecord hrv_61 = NucleotideSequenceFastaRecordFactory.create("hrv-61",
         new NucleotideSequenceBuilder("TTAAAACTGGGTCTGGGTTGCTCCCACCCAGACCACCCATGTGGTGTTGTACACTGTTAT" +
         "TCCGGTAACTTTGTACGCCAGTTTTGAACTCCCCTACCCCTTTTGTAACTTAGAAGCTAA" +
         "ACACATCGACCAATAGCAGGCAATCACCCAGATTGCTTATGGTCAAGTACTTCTGTTTCC" +

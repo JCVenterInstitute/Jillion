@@ -1,40 +1,47 @@
-/*******************************************************************************
- * Copyright 2010 J. Craig Venter Institute
- * 
- * 	This file is part of JCVI Java Common
- * 
- *     JCVI Java Common is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- * 
- *     JCVI Java Common is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- * 
- *     You should have received a copy of the GNU General Public License
- *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
- ******************************************************************************/
-/*
- * Created on Jan 26, 2010
- *
- * @author dkatzel
- */
 package org.jcvi.common.core.seq.fastx.fasta.nt;
 
-import org.jcvi.common.core.seq.fastx.fasta.FastaRecordFactory;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-
 /**
- * {@code NucleotideFastaRecordFactory} is an implementation 
- * of {@link FastaRecordFactory} that makes 
- * {@link NucleotideSequenceFastaRecord}s.
+ * {@code NucleotideSequenceFastaRecordFactory} is a factory class
+ * that makes instances of {@link NucleotideSequenceFastaRecord}s.
+ * Depending on the different parameters, the factory might
+ * choose to return different implementations.
  * @author dkatzel
  *
- *
  */
-interface NucleotideSequenceFastaRecordFactory extends FastaRecordFactory<Nucleotide, NucleotideSequence,NucleotideSequenceFastaRecord>{
+public final class NucleotideSequenceFastaRecordFactory {
 
+	private NucleotideSequenceFastaRecordFactory(){
+		//can not instantiate
+	}
+	/**
+	 * Create a new {@link NucleotideSequenceFastaRecord}
+	 * instance that has the given id and sequence and
+	 * has no comment.  The returning instance's 
+	 * {@link NucleotideSequenceFastaRecord#getComment()}
+	 * will return null.
+	 * @param id the id of the fasta record can not be null.
+	 * @param sequence the sequence of the fasta record; can not be null.
+	 * @return a new instance, will never be null.
+	 * @throws NullPointerException if either id or sequence are null.
+	 */
+	public static NucleotideSequenceFastaRecord create(String id, NucleotideSequence sequence){
+		return new UnCommentedNucleotideSequenceFastaRecord(id, sequence);
+	}
+	/**
+	 * Create a new {@link NucleotideSequenceFastaRecord}
+	 * instance that has the given id, sequence and comment.
+	 * @param id the id of the fasta record can not be null.
+	 * @param sequence the sequence of the fasta record; can not be null.
+	 * @param comment the comment to this fasta record, may be null 
+	 * if no comment exists.
+	 * @return a new instance, will never be null.
+	 * @throws NullPointerException if either id or sequence are null.
+	 */
+	public static NucleotideSequenceFastaRecord create(String id, NucleotideSequence sequence, String comment){
+		if(comment==null){
+			return create(id,sequence);
+		}
+		return new CommentedNucleotideSequenceFastaRecord(id, sequence,comment);
+	}
 }

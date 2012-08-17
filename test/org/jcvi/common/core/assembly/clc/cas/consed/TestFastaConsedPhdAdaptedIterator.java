@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory2;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -40,7 +40,7 @@ public class TestFastaConsedPhdAdaptedIterator extends AbstractTestPhdAdaptedIte
 	}
 	
 	private NucleotideSequenceFastaRecord createFasta(String id, String basecalls){
-		return NucleotideSequenceFastaRecordFactory2.create(id, new NucleotideSequenceBuilder(basecalls).build());
+		return NucleotideSequenceFastaRecordFactory.create(id, new NucleotideSequenceBuilder(basecalls).build());
 	}
 	@Test
 	public void noReadsShouldMakeEmptyIterator(){

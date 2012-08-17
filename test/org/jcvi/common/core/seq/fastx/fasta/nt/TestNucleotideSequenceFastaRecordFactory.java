@@ -44,7 +44,7 @@ public class TestNucleotideSequenceFastaRecordFactory {
     
     public TestNucleotideSequenceFastaRecordFactory(){
 
-        sut = NucleotideSequenceFastaRecordFactory2.create(id,  encodedGlyphs,comment);
+        sut = NucleotideSequenceFastaRecordFactory.create(id,  encodedGlyphs,comment);
     }
     
     @Test
@@ -57,7 +57,7 @@ public class TestNucleotideSequenceFastaRecordFactory {
     
     @Test
     public void withoutComment(){
-        NucleotideSequenceFastaRecord fasta = NucleotideSequenceFastaRecordFactory2.create(id, encodedGlyphs);
+        NucleotideSequenceFastaRecord fasta = NucleotideSequenceFastaRecordFactory.create(id, encodedGlyphs);
         
         assertEquals(id, fasta.getId());
         assertNull(fasta.getComment());
@@ -68,7 +68,7 @@ public class TestNucleotideSequenceFastaRecordFactory {
     @Test
     public void nullIdThrowsIllegalArgumentException(){
         try{
-        	NucleotideSequenceFastaRecordFactory2.create(null, encodedGlyphs);
+        	NucleotideSequenceFastaRecordFactory.create(null, encodedGlyphs);
             fail("null id should throw IllegalArgumentException");
         }catch(IllegalArgumentException e){
             assertEquals("identifier can not be null", e.getMessage());
@@ -81,25 +81,25 @@ public class TestNucleotideSequenceFastaRecordFactory {
     }
     @Test
     public void equalsSameValues(){
-        NucleotideSequenceFastaRecord sameValues = NucleotideSequenceFastaRecordFactory2.create(id, 
+        NucleotideSequenceFastaRecord sameValues = NucleotideSequenceFastaRecordFactory.create(id, 
                 encodedGlyphs,comment);
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);        
     }
     @Test
     public void equalsDifferentComment(){
-        NucleotideSequenceFastaRecord sameValues =NucleotideSequenceFastaRecordFactory2.create(id, 
+        NucleotideSequenceFastaRecord sameValues =NucleotideSequenceFastaRecordFactory.create(id, 
                 encodedGlyphs,"diff"+comment);
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);        
     }
     @Test
     public void equalsNoComment(){
-        NucleotideSequenceFastaRecord sameValues =NucleotideSequenceFastaRecordFactory2.create(id, 
+        NucleotideSequenceFastaRecord sameValues =NucleotideSequenceFastaRecordFactory.create(id, 
                 encodedGlyphs);
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);        
     }
     @Test
     public void notEqualsDifferentBases(){
-        NucleotideSequenceFastaRecord differentBasesAndChecksum = NucleotideSequenceFastaRecordFactory2.create(id, 
+        NucleotideSequenceFastaRecord differentBasesAndChecksum = NucleotideSequenceFastaRecordFactory.create(id, 
                 new NucleotideSequenceBuilder(bases.substring(2)).build(),comment);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentBasesAndChecksum);        
     }
@@ -136,7 +136,7 @@ public class TestNucleotideSequenceFastaRecordFactory {
         char[] bases = new char[60];
         Arrays.fill(bases, 'A');
         String sixtyBases= new String(bases);
-        NucleotideSequenceFastaRecord record = NucleotideSequenceFastaRecordFactory2.create(id, 
+        NucleotideSequenceFastaRecord record = NucleotideSequenceFastaRecordFactory.create(id, 
                 new NucleotideSequenceBuilder(sixtyBases).build());
         String expectedStringRecord = ">"+id+"\n"+sixtyBases+"\n";
         assertEquals(expectedStringRecord, record.toString());

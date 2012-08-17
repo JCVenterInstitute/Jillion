@@ -24,12 +24,12 @@ class UnCommentedNucleotideSequenceFastaRecord implements NucleotideSequenceFast
 
     public UnCommentedNucleotideSequenceFastaRecord(String id, NucleotideSequence sequence){
     	if(id == null){
-            throw new IllegalArgumentException("identifier can not be null");
-        }
-        this.id = id;
+            throw new NullPointerException("identifier can not be null");
+        }        
          if(sequence ==null){
          	throw new NullPointerException("sequence can not be null");
          }
+         this.id = id;
          this.sequence = sequence;
     }
    
