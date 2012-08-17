@@ -66,11 +66,11 @@ public class TestNucleotideSequenceFastaRecordFactory {
     }
    
     @Test
-    public void nullIdThrowsIllegalArgumentException(){
+    public void nullIdThrowsNullPointerException(){
         try{
         	NucleotideSequenceFastaRecordFactory.create(null, encodedGlyphs);
             fail("null id should throw IllegalArgumentException");
-        }catch(IllegalArgumentException e){
+        }catch(NullPointerException e){
             assertEquals("identifier can not be null", e.getMessage());
         }
     }
