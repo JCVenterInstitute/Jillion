@@ -20,30 +20,52 @@
 package org.jcvi.common.core.seq.fastx.fasta.nt;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
-import org.jcvi.common.core.seq.fastx.fasta.AbstractLargeFastaRecordIterator;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 
 /**
  * @author dkatzel
  *
  *
  */
-public final class LargeNucleotideSequenceFastaIterator extends AbstractLargeFastaRecordIterator<Nucleotide,NucleotideSequence, NucleotideSequenceFastaRecord>{
+public final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingCloseableIterator<NucleotideSequenceFastaRecord>{
 
+	private final File fastaFile;
+	
 	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(File fastaFile){
 		 LargeNucleotideSequenceFastaIterator iter = new LargeNucleotideSequenceFastaIterator(fastaFile);
 				                                iter.start();			
 	    	
 	    	return iter;
 	    }
-    /**
-     * @param fastaFile
-     * @param recordFactory
-     */
-    private LargeNucleotideSequenceFastaIterator(File fastaFile) {
-        super(fastaFile, DefaultNucleotideSequenceFastaRecordFactory.getInstance());
-    }
-
+	 
+	 private LargeNucleotideSequenceFastaIterator(File fastaFile){
+		 this.fastaFile = fastaFile;
+	 }
+	 /**
+	    * {@inheritDoc}
+	    */
+	    @Override
+	    protected void backgroundThreadRunMethod() {
+	        FastaFileVisitor visitor = new AbstractFastaVisitor() {
+				
+				@Override
+				protected boolean visitRecord(String id, String comment, String entireBody) {
+					NucleotideSequenceFastaRecord fastaRecord = NucleotideSequenceFastaRecordFactory2.create(id, new NucleotideSequenceBuilder(entireBody).build(),comment);
+					blockingPut(fastaRecord);
+	                return !LargeNucleotideSequenceFastaIterator.this.isClosed();
+				}
+			};
+	        try {
+	            FastaFileParser.parse(fastaFile, visitor);
+	        } catch (FileNotFoundException e) {
+	            throw new RuntimeException("fasta file does not exist",e);
+	        }
+	        
+	    }
 }
