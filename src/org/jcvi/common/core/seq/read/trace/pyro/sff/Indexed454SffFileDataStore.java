@@ -147,7 +147,7 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 	}
 
 	@Override
-	public synchronized boolean isClosed() throws DataStoreException {
+	public synchronized boolean isClosed(){
 		return isClosed;
 	}
 

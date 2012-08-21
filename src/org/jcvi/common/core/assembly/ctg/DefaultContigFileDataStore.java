@@ -115,7 +115,7 @@ public class DefaultContigFileDataStore extends AbstractContigFileVisitorBuilder
 
 
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed(){
         return isClosed;
     }
     @Override

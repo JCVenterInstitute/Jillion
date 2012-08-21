@@ -205,7 +205,7 @@ public final class IndexedAsmContigDataStore implements AsmContigDataStore{
     * {@inheritDoc}
     */
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed() {
         return fileRange.isClosed();
     }
 

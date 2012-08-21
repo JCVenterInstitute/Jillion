@@ -92,7 +92,7 @@ public final class LargeNucleotideSequenceFastaFileDataStore implements Nucleoti
     }
 
     @Override
-    public  synchronized boolean isClosed() throws DataStoreException {
+    public  synchronized boolean isClosed() {
         return closed;
     }
 

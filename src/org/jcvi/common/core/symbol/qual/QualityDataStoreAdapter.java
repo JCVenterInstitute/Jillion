@@ -113,7 +113,7 @@ public class QualityDataStoreAdapter implements QualityDataStore
     * {@inheritDoc}
     */
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed() {
         return datastore.isClosed();
     }
 }

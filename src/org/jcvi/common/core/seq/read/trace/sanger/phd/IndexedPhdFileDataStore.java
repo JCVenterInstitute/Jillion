@@ -344,7 +344,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
     * {@inheritDoc}
     */
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed() {
         return recordLocations.isClosed();
     }
     /**

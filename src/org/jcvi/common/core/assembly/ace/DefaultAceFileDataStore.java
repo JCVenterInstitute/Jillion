@@ -175,7 +175,7 @@ public final class DefaultAceFileDataStore implements AceFileContigDataStore{
     * {@inheritDoc}
     */
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed() {
         return delegate.isClosed();
     }
     /**

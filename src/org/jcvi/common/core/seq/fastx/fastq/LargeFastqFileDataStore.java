@@ -130,7 +130,7 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
      * {@inheritDoc}
      */
      @Override
-     public synchronized boolean isClosed() throws DataStoreException {
+     public synchronized boolean isClosed() {
          return closed;
      }
     

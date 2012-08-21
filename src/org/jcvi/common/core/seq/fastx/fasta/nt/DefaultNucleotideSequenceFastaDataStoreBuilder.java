@@ -61,7 +61,7 @@ public final class DefaultNucleotideSequenceFastaDataStoreBuilder implements Nuc
 		}
 
 		@Override
-		public boolean isClosed() throws DataStoreException {
+		public boolean isClosed() {
 			return delegate.isClosed();
 		}
 

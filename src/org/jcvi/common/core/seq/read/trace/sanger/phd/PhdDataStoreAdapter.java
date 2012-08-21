@@ -65,7 +65,7 @@ public class PhdDataStoreAdapter implements PhdDataStore{
 
 
 	@Override
-	public boolean isClosed() throws DataStoreException {
+	public boolean isClosed() {
 		return delegate.isClosed();
 	}
 

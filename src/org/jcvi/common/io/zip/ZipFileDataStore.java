@@ -156,7 +156,7 @@ public final class ZipFileDataStore implements ZipDataStore{
     * {@inheritDoc}
     */
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed(){
         return isClosed;
     }
 }

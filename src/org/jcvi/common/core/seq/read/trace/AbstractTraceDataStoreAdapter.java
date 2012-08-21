@@ -77,7 +77,7 @@ abstract class AbstractTraceDataStoreAdapter<D extends Trace, T> implements Data
     
 
     @Override
-    public final boolean isClosed() throws DataStoreException {
+    public final boolean isClosed(){
         return delegate.isClosed();
     }
     @Override

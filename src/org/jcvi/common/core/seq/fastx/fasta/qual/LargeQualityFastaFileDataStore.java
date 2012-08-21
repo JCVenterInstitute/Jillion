@@ -25,13 +25,13 @@ package org.jcvi.common.core.seq.fastx.fasta.qual;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
-import org.jcvi.common.core.seq.fastx.fasta.LargeFastaIdIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code LargeQualityFastaFileDataStore} is an implementation
@@ -45,43 +45,42 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  *
  */
-public final class LargeQualityFastaFileDataStore extends AbstractQualityFastaFileDataStore{
-   private final File fastaFile;
+public final class LargeQualityFastaFileDataStore implements QualitySequenceFastaDataStore{
+   public static final class DataStoreClosedException extends RuntimeException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4092998958360325365L;
+
+	public DataStoreClosedException(String message) {
+		super(message);		
+	}
+	   
+	}
+
+
+private final File fastaFile;
+   volatile boolean closed;
     private Long size;
     /**
      * Construct a {@link LargeQualityFastaFileDataStore}
-     * for the given Fasta file and the given {@link QualityFastaRecordFactory}.
+     * for the given Fasta file.
      * @param fastaFile the Fasta File to use, can not be null.
-     * @param fastaRecordFactory the QualityFastaRecordFactory implementation to use.
      * @throws NullPointerException if fastaFile is null.
      */
-    public LargeQualityFastaFileDataStore(File fastaFile,
-            QualityFastaRecordFactory fastaRecordFactory) {
-        super(fastaRecordFactory);
+    public LargeQualityFastaFileDataStore(File fastaFile) {
         if(fastaFile ==null){
             throw new NullPointerException("fasta file can not be null");
         }
         this.fastaFile = fastaFile;
     }
-    /**
-     * Convenience constructor using the {@link DefaultQualityFastaRecordFactory}.
-     * This call is the same as {@link #LargeQualityFastaFileDataStore(File,QualityFastaRecordFactory)
-     * new LargeQualityFastaFileDataStore(fastaFile,DefaultQualityFastaRecordFactory.getInstance());}
-     * @see LargeQualityFastaFileDataStore#LargeQualityFastaFileDataStore(File, QualityFastaRecordFactory)
-     */
-    public LargeQualityFastaFileDataStore(File fastaFile) {
-        super();
-        this.fastaFile = fastaFile;
-    }
+  
     
-    @Override
-	public EndOfBodyReturnCode visitEndOfBody() {
-		return EndOfBodyReturnCode.KEEP_PARSING;
-	}
 
     @Override
     public boolean contains(String id) throws DataStoreException {
+    	checkNotYetClosed();
     	StreamingIterator<String> iter =idIterator();
     	while(iter.hasNext()){
     		String nextId = iter.next();
@@ -94,8 +93,9 @@ public final class LargeQualityFastaFileDataStore extends AbstractQualityFastaFi
     }
 
     @Override
-    public synchronized QualitySequenceFastaRecord get(String id)
+    public QualitySequenceFastaRecord get(String id)
             throws DataStoreException {
+    	checkNotYetClosed();
     	StreamingIterator<QualitySequenceFastaRecord> iter =iterator();
     	while(iter.hasNext()){
     		QualitySequenceFastaRecord fasta = iter.next();
@@ -111,11 +111,37 @@ public final class LargeQualityFastaFileDataStore extends AbstractQualityFastaFi
     @Override
     public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
         checkNotYetClosed();
-        return LargeFastaIdIterator.createNewIteratorFor(fastaFile);
+        QualitySequenceFastaDataStoreIdIteratorImpl iter= new QualitySequenceFastaDataStoreIdIteratorImpl(this,fastaFile);
+        iter.start();
+        return iter;
 
     }
 
-    @Override
+    private void checkNotYetClosed() {
+    	if(closed){
+            throw new IllegalStateException("already closed");
+        }
+		
+	}
+
+
+
+	@Override
+	public boolean isClosed(){
+		return closed;
+	}
+
+
+
+	@Override
+	public void close() throws IOException {
+		closed=true;
+		
+	}
+
+
+
+	@Override
     public synchronized long getNumberOfRecords() throws DataStoreException {
         checkNotYetClosed();
             if(size ==null){
@@ -160,11 +186,9 @@ public final class LargeQualityFastaFileDataStore extends AbstractQualityFastaFi
     @Override
     public synchronized StreamingIterator<QualitySequenceFastaRecord> iterator() {
         checkNotYetClosed();
-        LargeQualityFastaIterator iter = new LargeQualityFastaIterator(fastaFile);
-            iter.start();
+        QualitySequenceFastaDataStoreIteratorImpl iter = new QualitySequenceFastaDataStoreIteratorImpl(this,fastaFile);
+        iter.start();
         
         return iter;
     }
-
-  
 }

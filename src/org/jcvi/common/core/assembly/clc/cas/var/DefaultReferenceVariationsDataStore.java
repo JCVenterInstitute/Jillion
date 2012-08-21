@@ -64,7 +64,7 @@ public final class DefaultReferenceVariationsDataStore implements ReferenceVaria
 	}
 
 	@Override
-	public boolean isClosed() throws DataStoreException {
+	public boolean isClosed(){
 		return delegate.isClosed();
 	}
 

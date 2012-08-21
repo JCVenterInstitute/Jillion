@@ -194,7 +194,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
     * {@inheritDoc}
     */
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed() {
         return indexFileRange.isClosed();
     }
     
