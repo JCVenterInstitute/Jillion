@@ -28,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 /**
@@ -38,8 +39,9 @@ import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
  *
  * @param <T> the type of values returned by the datastore.
  */
-public final class MapDataStoreAdapter<T> extends AbstractDataStore<T> {
-
+public final class MapDataStoreAdapter<T> implements DataStore<T> {
+	private volatile boolean isClosed;
+    
     private final Map<String, T> map = new LinkedHashMap<String, T>();
     /**
      * Create a new DataStore instance using the data of the given map.
@@ -67,31 +69,128 @@ public final class MapDataStoreAdapter<T> extends AbstractDataStore<T> {
     	}
     }
     @Override
-    public synchronized boolean contains(String id) throws DataStoreException {
-        super.contains(id);
+    public boolean contains(String id) throws DataStoreException {
+    	throwExceptionIfClosed();
         return map.containsKey(id);
     }
     @Override
-    public synchronized T get(String id) throws DataStoreException {
-        super.get(id);
+    public T get(String id) throws DataStoreException {
+    	throwExceptionIfClosed();
         return map.get(id);
     }
     @Override
-    public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
-        super.idIterator();
-        return StreamingIteratorAdapter.adapt(map.keySet().iterator());
+    public StreamingIterator<String> idIterator() throws DataStoreException {
+    	throwExceptionIfClosed();
+        return new StreamingIdIteratorImpl();
     }
     @Override
-    public synchronized long getNumberOfRecords() throws DataStoreException {
-        super.getNumberOfRecords();
+    public long getNumberOfRecords() throws DataStoreException {
+    	throwExceptionIfClosed();
         return map.size();
     }
+	
+	 
+	    protected final void throwExceptionIfClosed() {
+	        if(isClosed){
+	            throw new IllegalStateException("DataStore is closed");
+	        }
+	    }
+
+	    @Override
+	    public final void close() throws IOException {
+	        isClosed = true;
+	    }
+
+	    public final boolean isClosed() {
+	        return isClosed;
+	    }
+	
 	@Override
-	protected void handleClose() throws IOException {
-		 map.clear();
-		
+	public StreamingIterator<T> iterator() {
+		throwExceptionIfClosed();
+		return new StreamingIteratorImpl();
 	}
 
-    
+
+	private class StreamingIteratorImpl implements StreamingIterator<T>{
+
+    	private final StreamingIterator<T> delegate;
+    	
+    	public StreamingIteratorImpl(){
+    		this.delegate = StreamingIteratorAdapter.adapt(map.values().iterator());
+    	}
+		@Override
+		public boolean hasNext() {
+			boolean delegateHasNext = delegate.hasNext();
+			if(MapDataStoreAdapter.this.isClosed() && delegateHasNext){
+				IOUtil.closeAndIgnoreErrors(this);
+				throw new IllegalStateException("datastore has been closed");
+			}
+			return delegateHasNext;
+		}
+
+		@Override
+		public void close() throws IOException {
+			delegate.close();
+			
+		}
+
+		@Override
+		public T next() {
+			T next = delegate.next();
+			if(MapDataStoreAdapter.this.isClosed()){
+				IOUtil.closeAndIgnoreErrors(this);
+				throw new IllegalStateException("datastore has been closed");
+			}
+			return next;
+		}
+
+		@Override
+		public void remove() {
+			delegate.remove();
+			
+		}
+    	
+    }
+	 private class StreamingIdIteratorImpl implements StreamingIterator<String>{
+
+	    	private final StreamingIterator<String> delegate;
+	    	
+	    	public StreamingIdIteratorImpl(){
+	    		this.delegate = StreamingIteratorAdapter.adapt(map.keySet().iterator());
+	    	}
+			@Override
+			public boolean hasNext() {
+				boolean delegateHasNext = delegate.hasNext();
+				if(MapDataStoreAdapter.this.isClosed() && delegateHasNext){
+					IOUtil.closeAndIgnoreErrors(this);
+					throw new IllegalStateException("datastore has been closed");
+				}
+				return delegateHasNext;
+			}
+
+			@Override
+			public void close() throws IOException {
+				delegate.close();
+				
+			}
+
+			@Override
+			public String next() {
+				String next = delegate.next();
+				if(MapDataStoreAdapter.this.isClosed()){
+					IOUtil.closeAndIgnoreErrors(this);
+					throw new IllegalStateException("datastore has been closed");
+				}
+				return next;
+			}
+
+			@Override
+			public void remove() {
+				delegate.remove();
+				
+			}
+	    	
+	    }
     
 }

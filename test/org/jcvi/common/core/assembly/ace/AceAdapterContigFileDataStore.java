@@ -99,7 +99,7 @@ public class AceAdapterContigFileDataStore extends AbstractAceAdaptedContigFileD
     * {@inheritDoc}
     */
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed() {
         return dataStore.isClosed();
     }
 	@Override

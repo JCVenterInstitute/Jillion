@@ -40,9 +40,9 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * @param <T>
  */
 public abstract class  AbstractDataStore<T> implements DataStore<T>{
-    private boolean isClosed;
+    private volatile boolean isClosed;
     
-    protected final synchronized void throwExceptionIfClosed() {
+    protected final void throwExceptionIfClosed() {
         if(isClosed){
             throw new IllegalStateException("DataStore is closed");
         }
@@ -64,35 +64,35 @@ public abstract class  AbstractDataStore<T> implements DataStore<T>{
         isClosed = true;
     }
 
-    public final synchronized boolean isClosed() {
+    public final boolean isClosed() {
         return isClosed;
     }
     
     @Override
-    public synchronized StreamingIterator<T> iterator() {
+    public StreamingIterator<T> iterator() {
         return new DataStoreIterator<T>(this);
     }
 
     @Override
-    public synchronized boolean contains(String id) throws DataStoreException {
+    public boolean contains(String id) throws DataStoreException {
         throwExceptionIfClosed();
         return false;
     }
 
     @Override
-    public synchronized T get(String id) throws DataStoreException {
+    public T get(String id) throws DataStoreException {
         throwExceptionIfClosed();
         return null;
     }
 
     @Override
-    public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
+    public StreamingIterator<String> idIterator() throws DataStoreException {
         throwExceptionIfClosed();
         return null;
     }
 
     @Override
-    public synchronized long getNumberOfRecords() throws DataStoreException {
+    public long getNumberOfRecords() throws DataStoreException {
         throwExceptionIfClosed();
         return 0;
     }

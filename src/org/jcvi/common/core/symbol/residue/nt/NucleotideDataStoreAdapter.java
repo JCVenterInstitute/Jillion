@@ -113,7 +113,7 @@ public class NucleotideDataStoreAdapter implements NucleotideDataStore
     * {@inheritDoc}
     */
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed() {
         return datastore.isClosed();
     }
 }

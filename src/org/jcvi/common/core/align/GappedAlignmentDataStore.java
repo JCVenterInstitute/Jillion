@@ -91,7 +91,7 @@ public final class GappedAlignmentDataStore implements NucleotideDataStore{
     * {@inheritDoc}
     */
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed(){
         return delegate.isClosed();
     }
 

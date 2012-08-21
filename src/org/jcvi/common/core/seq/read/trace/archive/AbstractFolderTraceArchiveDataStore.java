@@ -43,7 +43,7 @@ public abstract class AbstractFolderTraceArchiveDataStore implements TraceArchiv
     }
 
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed() {
         return traceArchiveInfo.isClosed();
     }
 

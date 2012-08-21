@@ -52,7 +52,7 @@ public abstract class AbstractFastaFileDataStore<S extends Symbol, T extends Seq
     }
 
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed() {
         return closed;
     }
 

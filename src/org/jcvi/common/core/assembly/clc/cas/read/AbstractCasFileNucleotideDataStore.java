@@ -83,7 +83,7 @@ public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePass
     
 
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed() {
         return delegate.isClosed();
     }
 

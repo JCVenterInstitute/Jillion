@@ -95,7 +95,7 @@ public class CachedTraceArchiveDataStore implements TraceArchiveDataStore<TraceA
     * {@inheritDoc}
     */
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed() {
         return traceArchiveDataStore.isClosed();
     }
 

@@ -102,7 +102,7 @@ public final class IndexedQualityFastaFileDataStore implements QualitySequenceFa
 	}
 
 	@Override
-	public boolean isClosed() throws DataStoreException {
+	public boolean isClosed(){
 		return index.isClosed();
 	}
 
@@ -114,7 +114,9 @@ public final class IndexedQualityFastaFileDataStore implements QualitySequenceFa
 
 	@Override
 	public StreamingIterator<QualitySequenceFastaRecord> iterator() {
-		return LargeQualityFastaIterator.createNewIteratorFor(fastaFile);
+		QualitySequenceFastaDataStoreIteratorImpl iter= new QualitySequenceFastaDataStoreIteratorImpl(this,fastaFile);
+		iter.start();
+		return iter;
 	}
 	
 	private static final class IndexedQualityFastaDataStoreBuilderVisitor 

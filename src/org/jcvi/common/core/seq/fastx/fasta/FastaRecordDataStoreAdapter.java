@@ -89,7 +89,7 @@ public class FastaRecordDataStoreAdapter<S extends Symbol,T extends Sequence<S>,
     * {@inheritDoc}
     */
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed(){
         return delegate.isClosed();
     }
     

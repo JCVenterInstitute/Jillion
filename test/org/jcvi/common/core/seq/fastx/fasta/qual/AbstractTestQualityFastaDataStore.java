@@ -29,16 +29,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -47,9 +47,9 @@ public abstract class AbstractTestQualityFastaDataStore {
     private static final String QUAL_FILE_PATH = "files/19150.qual";
     
     
-    DefaultQualityFastaRecord JGBAA02T21A12PB1A1F = 
-            new DefaultQualityFastaRecord(
-                    "JGBAA02T21A12PB1A1F",null,
+    QualitySequenceFastaRecord JGBAA02T21A12PB1A1F = 
+    		QualitySequenceFastaRecordFactory.create(
+                    "JGBAA02T21A12PB1A1F",
                    new QualitySequenceBuilder(
                                     new byte[]{
                                             7, 7, 6, 6, 6, 7, 7, 7, 8, 8, 13, 12, 14, 8, 8, 11, 12,
@@ -93,9 +93,9 @@ public abstract class AbstractTestQualityFastaDataStore {
                                     }).build());
     
     
-    DefaultQualityFastaRecord JGBAA07T21D08MP605F = 
-        new DefaultQualityFastaRecord(
-                "JGBAA07T21D08MP605F",null,
+    QualitySequenceFastaRecord JGBAA07T21D08MP605F = 
+    		QualitySequenceFastaRecordFactory.create(
+                "JGBAA07T21D08MP605F",
                 new QualitySequenceBuilder(
                                 new byte[]{
                                         6,9,6,6,6,6,9,6,6,10,8,8,8,6,7,8,12,
@@ -127,9 +127,9 @@ public abstract class AbstractTestQualityFastaDataStore {
                                 }).build());
     
     
-    DefaultQualityFastaRecord JGBAA01T21H05PB2A2341BRB = 
-        new DefaultQualityFastaRecord(
-                "JGBAA01T21H05PB2A2341BRB",null,
+    QualitySequenceFastaRecord JGBAA01T21H05PB2A2341BRB = 
+        QualitySequenceFastaRecordFactory.create(
+                "JGBAA01T21H05PB2A2341BRB",
                 new QualitySequenceBuilder(
                                 new byte[]{
                                         6, 6, 6, 6, 7, 7, 7, 8, 12, 12, 12, 14, 17, 14, 14, 14, 22,
@@ -179,7 +179,7 @@ public abstract class AbstractTestQualityFastaDataStore {
     @Test
     public void parseFile() throws IOException, DataStoreException{
     	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
-        DataStore<QualitySequenceFastaRecord> sut = createDataStore(qualFile);
+    	QualitySequenceFastaDataStore sut = createDataStore(qualFile);
         assertEquals(321, sut.getNumberOfRecords());
         assertEquals(JGBAA02T21A12PB1A1F, sut.get("JGBAA02T21A12PB1A1F"));
         assertEquals(JGBAA07T21D08MP605F, sut.get("JGBAA07T21D08MP605F"));
@@ -189,7 +189,7 @@ public abstract class AbstractTestQualityFastaDataStore {
     protected abstract QualitySequenceFastaDataStore createDataStore(File file) throws IOException;
     
     @Test
-    public void getIds() throws IOException, DataStoreException{
+    public void idIterator() throws IOException, DataStoreException{
     	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
 		QualitySequenceFastaDataStore sut = createDataStore(qualFile);
     	Iterator<String> expectedIdsIter = createExpectedIdsFrom(qualFile);
@@ -223,6 +223,115 @@ public abstract class AbstractTestQualityFastaDataStore {
     	assertTrue(hasJGBAA02T21A12PB1A1F);
     	assertTrue(hasJGBAA07T21D08MP605F);
     	assertTrue(hasJGBAA01T21H05PB2A2341BRB);
+    }
+    @Test
+    public void closingDataStoreAfterIteratingShouldActLikeNoMoreElements() throws IOException, DataStoreException{
+    	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
+    	QualitySequenceFastaDataStore sut = createDataStore(qualFile);
+    	StreamingIterator<QualitySequenceFastaRecord> iter = null;
+    	try{
+	    	iter =sut.iterator();
+	    	while(iter.hasNext()){
+	    		iter.next();
+	    	}
+	    	sut.close();
+	    	assertFalse(iter.hasNext());
+	    	try{
+	    		iter.next();
+	    		fail("should throw NoSuchElementException");
+	    	}catch(NoSuchElementException expected){
+	    		//expected
+	    	}
+    	}finally{
+    		IOUtil.closeAndIgnoreErrors(iter);
+    	}
+    }
+    @Test
+    public void closingDataStoreDuringIterationShouldThrowExceptionOnHasNext() throws IOException, DataStoreException{
+    	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
+    	QualitySequenceFastaDataStore sut = createDataStore(qualFile);
+    	StreamingIterator<QualitySequenceFastaRecord> iter = null;
+    	try{
+	    	iter =sut.iterator();
+	    	
+	    	assertTrue(iter.hasNext());
+	    	assertNotNull(iter.next());
+	    	sut.close();
+	    	try{
+	    		iter.hasNext();
+	    		fail("hasNext() should throw exception if datastore is closed");
+	    	}catch(Exception e){
+	    		assertTrue(e.getMessage().contains("datastore has been closed"));
+	    	}
+	    	
+    	}finally{
+    		IOUtil.closeAndIgnoreErrors(iter);
+    	}
+    }
+    @Test
+    public void closingDataStoreDuringIterationShouldThrowExceptionOnNext() throws IOException, DataStoreException{
+    	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
+    	QualitySequenceFastaDataStore sut = createDataStore(qualFile);
+    	StreamingIterator<QualitySequenceFastaRecord> iter = null;
+    	try{
+	    	iter =sut.iterator();
+	    	
+	    	assertTrue(iter.hasNext());
+	    	assertNotNull(iter.next());
+	    	sut.close();
+	    	
+	    	try{
+	    		iter.next();
+	    		fail("next() should throw exception if datastore is closed");
+	    	}catch(Exception e){
+	    		assertTrue(e.getMessage().contains("datastore has been closed"));
+	    	}
+    	}finally{
+    		IOUtil.closeAndIgnoreErrors(iter);
+    	}
+    }
+    @Test
+    public void closingIdIteratorDuringIterationShouldThrowExceptionOnNext() throws IOException, DataStoreException{
+    	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
+		QualitySequenceFastaDataStore sut = createDataStore(qualFile);
+    	StreamingIterator<String> iter = null;
+    	try{
+	    	iter =sut.idIterator();
+	    	assertTrue(iter.hasNext());
+	    	assertNotNull(iter.next());
+	    	sut.close();
+	    	try{
+	    		iter.next();
+	    		fail("next() should throw exception if datastore is closed");
+	    	}catch(Exception e){
+	    		assertTrue(e.getMessage().contains("closed"));
+	    	}
+    	}finally{
+    		IOUtil.closeAndIgnoreErrors(iter);
+    	}
+    }
+    
+    @Test
+    public void closingIdIteratorDuringIterationShouldThrowExceptionOnHasNext() throws IOException, DataStoreException{
+    	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
+		QualitySequenceFastaDataStore sut = createDataStore(qualFile);
+    	StreamingIterator<String> iter = null;
+    	try{
+	    	iter =sut.idIterator();
+	    	assertTrue(iter.hasNext());
+	    	assertNotNull(iter.next());
+	    	sut.close();
+	    	
+	    	try{
+	    		iter.hasNext();
+	    		fail("hasNext() should throw exception if datastore is closed");
+	    	}catch(Exception e){
+	    		assertTrue(e.getMessage().contains("closed"));
+	    	}
+	    	
+    	}finally{
+    		IOUtil.closeAndIgnoreErrors(iter);
+    	}
     }
     @Test
     public void close() throws IOException, DataStoreException{

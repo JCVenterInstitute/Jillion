@@ -160,7 +160,7 @@ public class IndexedContigFileDataStore implements ContigDataStore<AssembledRead
     * {@inheritDoc}
     */
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed() {
         return mappedRanges.isClosed();
     }
     

@@ -206,7 +206,7 @@ public final class IndexedAsmUnitigDataStore implements UnitigDataStore{
     * {@inheritDoc}
     */
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed() {
         return fileRange.isClosed();
     }
 

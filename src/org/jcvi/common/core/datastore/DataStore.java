@@ -78,7 +78,7 @@ public interface DataStore<T> extends Closeable{
      * @return {@code true} if this {@link DataStore} is
      * closed; {@code false} otherwise.
      */
-    boolean isClosed() throws DataStoreException;
+    boolean isClosed();
     /**
      * Create a new {@link StreamingIterator}
      * which will iterate over all the records

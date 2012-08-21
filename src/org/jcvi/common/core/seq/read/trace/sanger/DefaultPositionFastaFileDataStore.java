@@ -63,7 +63,7 @@ public class DefaultPositionFastaFileDataStore implements PositionSequenceFastaD
 	}
 
 	@Override
-	public boolean isClosed() throws DataStoreException {
+	public boolean isClosed() {
 		return delegate.isClosed();
 	}
 

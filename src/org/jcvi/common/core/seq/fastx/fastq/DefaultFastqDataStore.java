@@ -137,7 +137,7 @@ final class DefaultFastqDataStore implements FastqDataStore {
     * {@inheritDoc}
     */
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed() {
         return closed;
     }
 

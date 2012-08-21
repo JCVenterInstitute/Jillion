@@ -305,7 +305,7 @@ public final class IndexedSffFileDataStore{
 		}
 	
 		@Override
-		public boolean isClosed() throws DataStoreException {
+		public boolean isClosed() {
 			return fileRanges.isClosed();
 		}
 	

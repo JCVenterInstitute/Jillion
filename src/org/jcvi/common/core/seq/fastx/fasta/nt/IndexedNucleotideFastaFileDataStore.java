@@ -111,7 +111,7 @@ public final class IndexedNucleotideFastaFileDataStore implements NucleotideSequ
 	}
 
 	@Override
-	public boolean isClosed() throws DataStoreException {
+	public boolean isClosed(){
 		return index.isClosed();
 	}
 

@@ -72,7 +72,7 @@ public final class TrimDataStoreUtil {
         }
 
         @Override
-        public boolean isClosed() throws DataStoreException {
+        public boolean isClosed() {
             //always open
             return true;
         }

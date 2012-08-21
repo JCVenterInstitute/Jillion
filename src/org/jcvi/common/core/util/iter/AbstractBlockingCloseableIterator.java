@@ -243,7 +243,28 @@ public abstract class AbstractBlockingCloseableIterator<T> implements StreamingI
 	         if(!isClosed && uncaughtException !=null){
                 throw uncaughtException;
              }
-	         return !isClosed && nextRecord !=endOfFileToken;
+	         
+	         boolean hasNext= !isClosed && nextRecord !=endOfFileToken;
+	         if(hasNext){
+	        	 hasNextCallback();
+	         }
+	         return hasNext;
+	     }
+	     /**
+	      * This callback method is called from inside
+	      * the {@link #hasNext()} and {@link #next()}
+	      * methods.  This method can be used
+	      * to do implementation specific 
+	      * state modifications or state
+	      * validation.
+	      * For example, a subclass might want 
+	      * to force this iterator
+	      * to close under certain conditions.
+	      *  
+	      * 
+	      */
+	     protected void hasNextCallback(){
+	    	 //no-op
 	     }
 	     
 	     /**

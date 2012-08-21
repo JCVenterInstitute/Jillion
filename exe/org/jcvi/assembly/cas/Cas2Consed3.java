@@ -673,7 +673,7 @@ public class Cas2Consed3 {
 		}
 
 		@Override
-		public boolean isClosed() throws DataStoreException {
+		public boolean isClosed(){
 			return delegate.isClosed();
 		}
 

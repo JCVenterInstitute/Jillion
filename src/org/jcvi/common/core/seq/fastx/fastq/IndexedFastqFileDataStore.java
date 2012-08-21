@@ -232,7 +232,7 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
     * {@inheritDoc}
     */
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed() {
         return indexFileRange.isClosed();
     }
     /**

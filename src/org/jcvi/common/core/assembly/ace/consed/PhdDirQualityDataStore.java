@@ -143,7 +143,7 @@ public class PhdDirQualityDataStore implements PhdDataStore{
     * {@inheritDoc}
     */
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed() {
         // TODO Auto-generated method stub
         return false;
     }

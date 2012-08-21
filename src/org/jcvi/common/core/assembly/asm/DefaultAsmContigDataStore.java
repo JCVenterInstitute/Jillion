@@ -138,7 +138,7 @@ public final class DefaultAsmContigDataStore implements AsmContigDataStore{
     * {@inheritDoc}
     */
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed(){
         return delegate.isClosed();
     }
 

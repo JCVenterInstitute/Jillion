@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 
 public final class QualityFastaRecordUtil {
@@ -40,15 +41,20 @@ public final class QualityFastaRecordUtil {
     	//can not instantiate
     }
     public static QualitySequenceFastaRecord buildFastaRecord(
-            String identifier, String comment, CharSequence sequence) {
-    	Scanner scanner = new Scanner(sequence.toString());
+            String identifier, String comment, String sequence) {
+    	QualitySequence qualitySequence = parseQualitySequence(sequence);
+		return new DefaultQualityFastaRecord(identifier, comment, qualitySequence);
+    }
+	public static QualitySequence parseQualitySequence(String sequence) {
+		Scanner scanner = new Scanner(sequence);
     	QualitySequenceBuilder builder = new QualitySequenceBuilder();
     	while(scanner.hasNextByte()){
     		builder.append(scanner.nextByte());
     	}
     	scanner.close();
-    	return new DefaultQualityFastaRecord(identifier, comment, builder.build());
-    }
+    	QualitySequence qualitySequence = builder.build();
+		return qualitySequence;
+	}
 
     public static List<PhredQuality> parseQualities(CharSequence sequence) {
         Scanner scanner = new Scanner(sequence.toString());

@@ -117,7 +117,7 @@ public final class TrimDataStoreAdatper implements TrimPointsDataStore{
     * {@inheritDoc}
     */
     @Override
-    public boolean isClosed() throws DataStoreException {
+    public boolean isClosed(){
         return delegate.isClosed();
     }
 
