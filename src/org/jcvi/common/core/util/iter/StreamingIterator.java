@@ -48,7 +48,12 @@ import java.util.NoSuchElementException;
  * to return {@code false} and {@link #next()}
  * to throw a {@link NoSuchElementException} as if this iterator
  * has finished iterating.
- * 
+ * <p/>
+ * <strong>NOTE:</strong> some implementations
+ * might throw unchecked exceptions in
+ * {@link #hasNext()} or {@link #next()}
+ * if there are problems fetching the next element
+ * to be iterated.
  * @author dkatzel
  *
  *
@@ -60,6 +65,12 @@ public interface StreamingIterator<T> extends Closeable, Iterator<T>{
 	 * @returns {@code false} if this iterator
 	 * has been closed or if there are no more
 	 * elements left to iterate.
+	 * @throws RuntimeException (unchecked)
+	 * if the iterator has not
+	 * yet been explicitly closed
+	 * and 
+	 * there is a problem determining
+	 * if there is a next element.
 	 */
 	@Override
     boolean hasNext();
@@ -83,9 +94,18 @@ public interface StreamingIterator<T> extends Closeable, Iterator<T>{
     @Override
     void close() throws IOException;
     /**
+     * Returns the next element in the iterator.
      * @throws NoSuchElementException if
      * this iterator has been closed; or if there are 
      * no more elements to iterate over.
+     * @throws RuntimeException (unchecked)
+	 * if the iterator has not
+	 * yet been explicitly closed
+	 * and either
+	 * there is a problem determining
+	 * if there is a next element
+	 * or there is a problem
+	 * fetching/creating the next element to return.
      */
     @Override
     T next();
