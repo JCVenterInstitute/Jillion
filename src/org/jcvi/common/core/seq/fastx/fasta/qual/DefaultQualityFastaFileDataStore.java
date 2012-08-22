@@ -84,9 +84,7 @@ public final class DefaultQualityFastaFileDataStore {
 		@Override
 		protected QualitySequenceFastaRecord createFastaRecord(String id,
 				String comment, String entireBody) {
-			return QualitySequenceFastaRecordFactory.create(id, 
-					QualityFastaRecordUtil.parseQualitySequence(entireBody),
-					comment);
+			return QualitySequenceFastaRecordFactory.create(id, entireBody, comment);
 		}
     	
     }

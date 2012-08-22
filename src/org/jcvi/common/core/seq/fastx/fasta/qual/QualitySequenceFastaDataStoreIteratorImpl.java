@@ -39,9 +39,8 @@ class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingCloseabl
 					if(parentDatastore.isClosed()){
 						throw new DataStoreClosedException("backing datastore has been closed");
 					}
-					QualitySequenceFastaRecord record = QualitySequenceFastaRecordFactory.create(id, 
-							QualityFastaRecordUtil.parseQualitySequence(entireBody), 
-							comment);
+					QualitySequenceFastaRecord record = 
+							QualitySequenceFastaRecordFactory.create(id, entireBody, comment);
 					blockingPut(record);
 					return !parentDatastore.isClosed();
 				}
