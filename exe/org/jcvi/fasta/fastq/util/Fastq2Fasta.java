@@ -42,7 +42,7 @@ import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory;
-import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecordFactory;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
@@ -153,7 +153,7 @@ public class Fastq2Fasta {
             		 String id = fastQ.getId();
                      if(qualOut!=null){
                          try {
-                             qualOut.write(new DefaultQualityFastaRecord(id, 
+                             qualOut.write(QualitySequenceFastaRecordFactory.create(id, 
                                      fastQ.getQualitySequence()).toString().getBytes());
                          } catch (IOException e) {
                              throw new IOException("could not write to quality data for "+ id, e);

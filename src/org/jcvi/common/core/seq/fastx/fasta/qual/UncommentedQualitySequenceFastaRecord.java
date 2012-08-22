@@ -11,7 +11,13 @@ class UncommentedQualitySequenceFastaRecord implements QualitySequenceFastaRecor
 	private final QualitySequence qualities;
 
     public UncommentedQualitySequenceFastaRecord(String id, QualitySequence qualities){
-        this.id=id;
+        if(id==null){
+        	throw new NullPointerException("id can not be null");
+        }
+        if(qualities==null){
+        	throw new NullPointerException("qualities can not be null");
+        }
+    	this.id=id;
         this.qualities = qualities;
         
     }

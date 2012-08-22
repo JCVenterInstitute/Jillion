@@ -13,6 +13,16 @@ class CommentedQualitySequenceFastaRecord extends UncommentedQualitySequenceFast
 	public String getComment() {
 		return comment;
 	}
+	@Override
+	public int hashCode() {
+		// delegates to uncommented since comments don't count
+		return super.hashCode();
+	}
+	@Override
+	public boolean equals(Object obj) {
+		// delegates to uncommented since comments don't count
+		return super.equals(obj);
+	}
 
 	
 	

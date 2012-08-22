@@ -26,7 +26,7 @@ package org.jcvi.common.core.seq.fastx.fasta.nt;
 import java.util.Arrays;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
-import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.testUtil.TestUtil;
@@ -110,7 +110,7 @@ public class TestNucleotideSequenceFastaRecordFactory {
     }
     @Test
     public void notEqualsNotANucleotideFasta(){
-        assertFalse(sut.equals(createMock(DefaultQualityFastaRecord.class)));
+        assertFalse(sut.equals(createMock(QualitySequenceFastaRecord.class)));
     }
     
     
