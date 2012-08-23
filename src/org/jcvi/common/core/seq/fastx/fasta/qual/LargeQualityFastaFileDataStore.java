@@ -46,21 +46,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  */
 public final class LargeQualityFastaFileDataStore implements QualitySequenceFastaDataStore{
-   public static final class DataStoreClosedException extends RuntimeException {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4092998958360325365L;
-
-	public DataStoreClosedException(String message) {
-		super(message);		
-	}
-	   
-	}
-
-
-private final File fastaFile;
+   private final File fastaFile;
    volatile boolean closed;
     private Long size;
     /**

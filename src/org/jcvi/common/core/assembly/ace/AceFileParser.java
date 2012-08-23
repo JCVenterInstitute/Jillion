@@ -158,7 +158,7 @@ public final class AceFileParser {
          */
         public ParserState parseNextSection() throws IOException {
             String lineWithCR = parser.nextLine();           
-            visitor.visitLine(lineWithCR);
+
             return SectionHandler.handleSection(lineWithCR, this);
         }
         ParserState(AceFileVisitor visitor, boolean isFirstContigInFile,
@@ -225,7 +225,8 @@ public final class AceFileParser {
         ACE_HEADER("^AS\\s+(\\d+)\\s+(\\d+)"){
             @Override
             ParserState handle(Matcher headerMatcher, ParserState struct, String line) {
-                
+            	//parse current line
+            	struct.visitor.visitLine(line);
                 int numberOfContigs = Integer.parseInt(headerMatcher.group(1));
                 int totalNumberOfReads = Integer.parseInt(headerMatcher.group(2));
                 struct.visitor.visitHeader(numberOfContigs, totalNumberOfReads);
@@ -235,6 +236,8 @@ public final class AceFileParser {
         CONSENSUS_QUALITIES("^BQ\\s*"){
             @Override
             ParserState handle(Matcher matcher, ParserState parserState, String line) {
+            	//parse current line
+            	parserState.visitor.visitLine(line);
                 if(parserState.parseCurrentContig()){
                     parserState.visitor.visitConsensusQualities();
                 }
@@ -248,6 +251,8 @@ public final class AceFileParser {
         BASECALLS("^([\\-*a-zA-Z]+)\\s*$"){
             @Override
             ParserState handle(Matcher basecallMatcher, ParserState parserState, String line) {
+            	//parse current line
+            	parserState.visitor.visitLine(line);
                 if(line.indexOf('-') !=-1){
                     //contains a gap as a '-' instead of a '*'
                     throw new IllegalStateException("invalid ace file: found '-' used as a gap instead of '*' : "+line);
@@ -265,6 +270,9 @@ public final class AceFileParser {
                 if(!struct.isFirstContigInFile && !ret.visitor.visitEndOfContig()){
                     ret= ret.stopParsing();
                 }
+                //delayed visiting current line so we can tell
+                //visitor we have reached the end of a contig.
+            	struct.visitor.visitLine(line);
                 String contigId = contigMatcher.group(1);
                 int numberOfBases = Integer.parseInt(contigMatcher.group(2));
                 int numberOfReads = Integer.parseInt(contigMatcher.group(3));
@@ -285,6 +293,8 @@ public final class AceFileParser {
         ASSEMBLED_FROM("^AF\\s+(\\S+)\\s+([U|C])\\s+(-?\\d+)"){
             @Override
             ParserState handle(Matcher assembledFromMatcher, ParserState parserState, String line) {
+            	//parse current line
+            	parserState.visitor.visitLine(line);
                 if(parserState.parseCurrentContig()){
                     String name = assembledFromMatcher.group(1);
                     final String group = assembledFromMatcher.group(2);
@@ -298,6 +308,8 @@ public final class AceFileParser {
         READ_HEADER("^RD\\s+(\\S+)\\s+(\\d+)"){
             @Override
             ParserState handle(Matcher readMatcher, ParserState parserState, String line) {
+            	//parse current line
+            	parserState.visitor.visitLine(line);
                 if(parserState.parseCurrentContig()){
                     String readId = readMatcher.group(1);
                     int fullLength = Integer.parseInt(readMatcher.group(2));
@@ -309,6 +321,8 @@ public final class AceFileParser {
         READ_QUALITY("^QA\\s+(-?\\d+)\\s+(-?\\d+)\\s+(\\d+)\\s+(\\d+)"){
             @Override
             ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) {
+            	//parse current line
+            	parserState.visitor.visitLine(line);
                 if(parserState.parseCurrentContig()){
                     int clearLeft = Integer.parseInt(qualityMatcher.group(1));
                     int clearRight = Integer.parseInt(qualityMatcher.group(2));
@@ -329,6 +343,8 @@ public final class AceFileParser {
              
             @Override
             ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
+            	//parse current line
+            	parserState.visitor.visitLine(line);
                 if(parserState.parseCurrentContig()){
                     Matcher chromatogramMatcher = chromatFilePattern.matcher(line);
                     if(!chromatogramMatcher.find()){
@@ -382,6 +398,8 @@ public final class AceFileParser {
             
             @Override
             ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
+            	//parse current line
+            	parserState.visitor.visitLine(line);
                 ParserState currentParserState=parserState;
             	if(currentParserState.inAContig && currentParserState.seenAllExpectedReads()){                    
                     currentParserState =currentParserState.notInAContig();
@@ -421,13 +439,17 @@ public final class AceFileParser {
             
             @Override
             ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
+            	
                 ParserState currentParserState = parserState;
             	if(currentParserState.inAContig && currentParserState.seenAllExpectedReads()){
                     currentParserState =currentParserState.notInAContig();
                     currentParserState.visitor.visitEndOfContig();                    
                 }
-                String lineWithCR;
-                lineWithCR = currentParserState.parser.nextLine();
+            	//delay calling visit current line
+            	//until after we have determined we are 
+            	//out of the current contig
+            	parserState.visitor.visitLine(line);
+                String lineWithCR= currentParserState.parser.nextLine();
                 currentParserState.visitor.visitLine(lineWithCR);
                 Matcher tagMatcher = wholeAssemblyTagPattern.matcher(lineWithCR);
                 if(!tagMatcher.find()){
@@ -473,6 +495,8 @@ public final class AceFileParser {
             
             @Override
             ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
+            	//parse current line
+            	parserState.visitor.visitLine(line);
                 ParserState currentParserState = parserState;
             	if(currentParserState.inAContig && currentParserState.seenAllExpectedReads()){                    
                     currentParserState =currentParserState.notInAContig();
@@ -516,6 +540,7 @@ public final class AceFileParser {
                 StringBuilder consensusComment=null;
                 boolean doneTag = pDoneTag;
                 boolean inComment = pInComment;
+                
                 while(!doneTag && parserState.parser.hasNextLine()){
                     lineWithCR = parserState.parser.nextLine();
                     parserState.visitor.visitLine(lineWithCR);
@@ -545,9 +570,11 @@ public final class AceFileParser {
         },
         IGNORE{
             @Override
-            ParserState handle(Matcher matcher, ParserState struct,
+            ParserState handle(Matcher matcher, ParserState parserState,
                     String line) throws IOException {
-                return struct;
+            	//just visit the current line
+                parserState.visitor.visitLine(line);
+                return parserState;
             }
         }
         ;

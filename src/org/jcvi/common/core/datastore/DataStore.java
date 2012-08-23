@@ -41,7 +41,15 @@ public interface DataStore<T> extends Closeable{
      * Create a new {@link StreamingIterator}
      * which will iterate over the ids 
      * of all the records
-     * in this datastore.
+     * in this datastore. The {@link StreamingIterator}
+     * is only valid while this {@link DataStore} is open.
+     * If the {@link StreamingIterator} is still
+     * not finished iterating 
+     * when this datastore is closed via {@link #close()},
+     * then any calls to {@link StreamingIterator#hasNext()}
+     * or {@link StreamingIterator#next()} will throw 
+     * {@link DataStoreClosedException}.
+     * 
      * @return a new {@link StreamingIterator}
      * instance; never null.
      * @throws DataStoreException if there is a 
@@ -83,6 +91,14 @@ public interface DataStore<T> extends Closeable{
      * Create a new {@link StreamingIterator}
      * which will iterate over all the records
      * in this {@link DataStore}.
+     * The {@link StreamingIterator}
+     * is only valid while this {@link DataStore} is open.
+     * If the {@link StreamingIterator} is still
+     * not finished iterating 
+     * when this datastore is closed via {@link #close()},
+     * then any calls to {@link StreamingIterator#hasNext()}
+     * or {@link StreamingIterator#next()} will throw 
+     * {@link DataStoreClosedException}.
      * @return a new {@link StreamingIterator}
      * instance; never null.
      * @throws DataStoreException if there is a 

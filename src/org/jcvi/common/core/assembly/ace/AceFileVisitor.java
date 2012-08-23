@@ -162,6 +162,10 @@ public interface AceFileVisitor extends TextFileVisitor{
     void visitReadTag(String id, String type, String creator, long gappedStart, long gappedEnd, Date creationDate, boolean isTransient);
     /**
      * The current contig being visited contains no more data.
+     * This method will be called as soon as it is determined
+     * that there is no more data for the current contig
+     * and <strong>before</strong> the next line is visited
+     * via the {@link #visitLine(String)}.
      * @return {@code true} if the ace file should keep parsing;
      * {@code false} otherwise.
      */

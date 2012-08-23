@@ -3,11 +3,12 @@ package org.jcvi.common.core.seq.fastx.fasta.qual;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreClosedException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.qual.LargeQualityFastaFileDataStore.DataStoreClosedException;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 
 class QualitySequenceFastaDataStoreIdIteratorImpl extends AbstractBlockingCloseableIterator<String>{
@@ -29,7 +30,11 @@ class QualitySequenceFastaDataStoreIdIteratorImpl extends AbstractBlockingClosea
 	    @Override
 	    protected void backgroundThreadRunMethod() {
 	        FastaFileVisitor visitor = new AbstractFastaVisitor(){
-
+	        	 /**
+	    	     * @throws DataStoreClosedException if 
+	    	     * this {@link DataStore} which backs
+	    	     * this iterator is closed.
+	    	     */
 				@Override
 				protected boolean visitRecord(String id, String comment,
 						String entireBody) {
@@ -53,7 +58,11 @@ class QualitySequenceFastaDataStoreIdIteratorImpl extends AbstractBlockingClosea
 	
 
 	    }
-
+	    /**
+	     * @throws DataStoreClosedException if 
+	     * this {@link DataStore} which backs
+	     * this iterator is closed.
+	     */
 	@Override
 	protected void hasNextCallback() {
 		//if our datastore is closed then 

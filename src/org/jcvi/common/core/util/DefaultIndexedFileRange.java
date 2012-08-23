@@ -91,11 +91,6 @@ public class DefaultIndexedFileRange implements IndexedFileRange{
         return ranges.size();
     }
 
-    @Override
-    public void remove(String id) {
-        checkIfClosed();
-        ranges.remove(id);
-    }
     
     private class StreamingIteratorImpl implements StreamingIterator<String>{
 

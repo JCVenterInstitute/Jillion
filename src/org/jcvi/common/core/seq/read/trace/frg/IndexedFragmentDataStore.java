@@ -93,11 +93,27 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
             updateRangeStartPosition();
         }
         else if (this.isDelete(action)){
-            fragmentInfoIndexFileRange.remove(fragmentId);
+        	handleDelete(fragmentId);
         }
         
     }
 
+    private void handleDelete(String frgId){
+    	/*
+    	 * Delete no longer supported:
+    	 * From email from Brian Walenz 2012-08-22
+    	 * 
+    	 * We can still delete reads from the store, 
+    	 * but there are simpler methods than the D action.  
+    	 * If the D action is still coded, it is essentially dead.
+    	 * 
+    	 * The only use case I can think of would be to delete bad
+    	 * reads in a partially completed assembly.  
+    	 * Advanced usage, and not that common.
+    	 */
+    	
+    	
+    }
     @Override
     public void visitLibrary(FrgAction action, String id,
             MateOrientation orientation, Distance distance) {
@@ -208,7 +224,7 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
         }
         else if (this.isDelete(action)){
             for(String fragmentId: fragIds){
-                mateInfoIndexFileRange.remove(fragmentId);
+            	handleDelete(fragmentId);
             }
         }
         

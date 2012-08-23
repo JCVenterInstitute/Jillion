@@ -215,9 +215,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         private long currentStartOffset;
         private int currentLineLength;
         private long currentFileOffset;
-        private boolean firstContig=true;
         private String currentContigId;
-        private boolean hasTags=false;
         private long totalNumberOfReads=0L;
         private final List<WholeAssemblyAceTag> wholeAssemblyTags = new ArrayList<WholeAssemblyAceTag>();
         private final List<ConsensusAceTag> consensusTags = new ArrayList<ConsensusAceTag>();
@@ -249,19 +247,10 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
 		public synchronized boolean shouldVisitContig(String contigId, int numberOfBases,
 				int numberOfReads, int numberOfBaseSegments,
 				boolean reverseComplimented) {
-        	if(!firstContig){                
-                visitContig();
-            }
             currentContigId = contigId;
             currentStartOffset=currentFileOffset-currentLineLength;
-            firstContig=false;
             return true;
 		}
-
-        protected synchronized void visitContig() {
-            indexFileRange.put(currentContigId, Range.create(currentStartOffset, 
-                    currentFileOffset-currentLineLength-1));
-        }
         /**
         * {@inheritDoc}
         */
@@ -284,15 +273,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         */
         @Override
         public synchronized void visitEndOfFile() {
-            if(!hasTags){
-                Range range = indexFileRange.getRangeFor(currentContigId);
-                if(range ==null){
-                    throw new IllegalStateException("in complete ace file.  Did not finish reading "+ currentContigId);
-                   // indexFileRange.put(currentContigId, Range.create(currentStartOffset, 
-                   //         currentFileOffset-currentLineLength-1));
-                }
-                indexFileRange.put(currentContigId, range.grow(0, currentLineLength));
-            }
+            //no-op
         }
 
         /**
@@ -380,7 +361,6 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         public void visitReadTag(String id, String type, String creator,
                 long gappedStart, long gappedEnd, Date creationDate,
                 boolean isTransient) {
-            hasTags=true;
             readTags.add(new DefaultReadAceTag(id, type, creator, creationDate, 
                     Range.create(gappedStart,gappedEnd), isTransient));
         }
@@ -390,8 +370,9 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         */
         @Override
         public synchronized boolean visitEndOfContig() {    
-
-            visitContig();
+        	//
+        	indexFileRange.put(currentContigId, Range.create(currentStartOffset, 
+                    currentFileOffset-1));
             return true;
         }
 
@@ -402,7 +383,6 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         public void visitBeginConsensusTag(String id, String type,
                 String creator, long gappedStart, long gappedEnd,
                 Date creationDate, boolean isTransient) {
-            hasTags=true;
             consensusTagBuilder = new DefaultConsensusAceTag.Builder(id, 
                     type, creator, creationDate, Range.create(gappedStart, gappedEnd), isTransient);
 
@@ -413,7 +393,6 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         */
         @Override
         public void visitConsensusTagComment(String comment) {
-            hasTags=true;
             consensusTagBuilder.addComment(comment);
         }
 
@@ -422,7 +401,6 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         */
         @Override
         public void visitConsensusTagData(String data) {
-            hasTags=true;
             consensusTagBuilder.appendData(data);
         }
 
@@ -431,7 +409,6 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         */
         @Override
         public void visitEndConsensusTag() {
-            hasTags=true;
             consensusTags.add(consensusTagBuilder.build());
         }
 
@@ -441,7 +418,6 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         @Override
         public void visitWholeAssemblyTag(String type, String creator,
                 Date creationDate, String data) {
-            hasTags=true;
             wholeAssemblyTags.add(new DefaultWholeAssemblyAceTag(type, creator, creationDate, data.trim()));
             
         }
@@ -520,6 +496,10 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
 		}
 
     }
+
+	Range getIndexRangeFor(String id) {
+		return indexFileRange.getRangeFor(id);
+	}
    
   
 }
