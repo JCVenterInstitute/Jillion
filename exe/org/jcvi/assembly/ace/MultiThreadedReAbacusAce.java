@@ -51,6 +51,7 @@ import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitor;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.AceContigDataStoreBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
+import org.jcvi.common.core.assembly.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
 import org.jcvi.common.core.assembly.ace.DefaultConsensusAceTag;
@@ -70,8 +71,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.DefaultIndexedFileRange;
-import org.jcvi.common.core.util.IndexedFileRange;
+import org.jcvi.common.core.util.MultipleWrapper;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
@@ -145,7 +145,8 @@ public class MultiThreadedReAbacusAce {
             
             ReAbacusAceFileVisitor visitor = new ReAbacusAceFileVisitor(builder, abacusErrorMap.keySet(), outputAceFile.getParentFile(), outputAceFile.getName());
             
-            AceFileParser.parse(inputAceFile, visitor);
+            AceFileParser.parse(inputAceFile,
+            		MultipleWrapper.createMultipleWrapper(AceFileVisitor.class, visitor,tagWriter));
             //datastore should now only contain what needs to be reabacused
             AceFileContigDataStore datastore = builder.build();
             StreamingIterator<String> idIter = datastore.idIterator();
