@@ -36,7 +36,7 @@ public class TestAceFileParserWithInvalidGapChar {
 
     @Test
     public void basecallInReadContainDashInsteadOfStar() throws IOException{
-        String problemLine = "agccgaaggagg*ttttggaaacaccaaggg-g*ggtcagaccccaacgc";
+        String problemLine = "agccgaaggagg*ttttggaaacaccaaggg-g*ggtcagaccccaacgc\n";
         ResourceFileServer resources = new ResourceFileServer(TestAceFileParserWithInvalidGapChar.class);
         AceFileVisitor mockVisitor = createNiceMock(AceFileVisitor.class);
         replay(mockVisitor);
