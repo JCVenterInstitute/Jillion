@@ -30,6 +30,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -46,16 +47,17 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.Command;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.assembly.ace.AbstractAceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
+import org.jcvi.common.core.assembly.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.ace.AcePlacedReadBuilder;
 import org.jcvi.common.core.assembly.ace.HiLowAceContigPhdDatastore;
-import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationParser;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationVisitor;
 import org.jcvi.common.core.assembly.ace.consed.ConsensusNavigationElement;
@@ -78,8 +80,6 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.util.DefaultIndexedFileRange;
-import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
@@ -221,15 +221,8 @@ public class ReAbacusAceContigWorker {
             }else{
                 //just stream contig?
                 //use index to get file offset then just stream those bytes.
-                IndexedFileRange contigOffsets = new DefaultIndexedFileRange();
-                //populate offsets
-                IndexedAceFileDataStore.create(inputAceFile, contigOffsets);
-                Range fileRange =contigOffsets.getRangeFor(contigId);
-                if(fileRange ==null){
-                    throw new NullPointerException(String.format("could not find file range for contig %s", contigId));
-                }
-                InputStream inputStream = IOUtil.createInputStreamFromFile(inputAceFile,fileRange);
-                IOUtil.copy(inputStream, out);
+            	CopyAceContigVisitor visitor = new CopyAceContigVisitor(out,contigId);
+                AceFileParser.parse(inputAceFile, visitor);
             }
         }catch(ParseException e){
             System.err.println(e.getMessage());
@@ -613,4 +606,141 @@ public class ReAbacusAceContigWorker {
         }
         return new File(props.get("muscle").toString());
      }
+    
+    private static class CopyAceContigVisitor implements AceFileVisitor{
+    	private final OutputStream out;
+    	private final String contigId;
+    	private boolean streamCurrentContig=false;
+    	
+		public CopyAceContigVisitor(OutputStream out, String contigId) {
+			this.out = out;
+			this.contigId = contigId;
+		}
+		@Override
+		public void visitLine(String line) {
+			if(streamCurrentContig){
+				try {
+					out.write(line.getBytes(IOUtil.UTF_8));
+				} catch (IOException e) {
+					throw new IllegalStateException("error copying contig line",e);
+				}
+			}
+			
+		}
+		@Override
+		public void visitFile() {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void visitEndOfFile() {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void visitHeader(int numberOfContigs, int totalNumberOfReads) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public boolean shouldVisitContig(String contigId, int numberOfBases,
+				int numberOfReads, int numberOfBaseSegments,
+				boolean isComplemented) {
+			streamCurrentContig = this.contigId.equals(contigId);
+			return false;
+		}
+		@Override
+		public void visitBeginContig(String contigId, int numberOfBases,
+				int numberOfReads, int numberOfBaseSegments,
+				boolean reverseComplemented) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void visitConsensusQualities() {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void visitAssembledFromLine(String readId, Direction dir,
+				int gappedStartOffset) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void visitBaseSegment(Range gappedConsensusRange, String readId) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void visitReadHeader(String readId, int gappedLength) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void visitQualityLine(int qualLeft, int qualRight,
+				int alignLeft, int alignRight) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void visitTraceDescriptionLine(String traceName, String phdName,
+				Date date) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void visitBasesLine(String mixedCaseBasecalls) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void visitReadTag(String id, String type, String creator,
+				long gappedStart, long gappedEnd, Date creationDate,
+				boolean isTransient) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public boolean visitEndOfContig() {
+			try {
+				out.flush();
+			} catch (IOException e) {
+				throw new IllegalStateException("error flushing output buffer",e);
+			}
+			//this will stop parsing as soon as we are done writing the contig
+			//we care about.
+			return !streamCurrentContig;
+		}
+		@Override
+		public void visitBeginConsensusTag(String id, String type,
+				String creator, long gappedStart, long gappedEnd,
+				Date creationDate, boolean isTransient) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void visitConsensusTagComment(String comment) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void visitConsensusTagData(String data) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void visitEndConsensusTag() {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void visitWholeAssemblyTag(String type, String creator,
+				Date creationDate, String data) {
+			// TODO Auto-generated method stub
+			
+		}
+    	
+    	
+    }
 }

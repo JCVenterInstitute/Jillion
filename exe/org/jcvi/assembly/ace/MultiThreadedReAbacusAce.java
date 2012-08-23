@@ -51,7 +51,6 @@ import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitor;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.AceContigDataStoreBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
-import org.jcvi.common.core.assembly.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
 import org.jcvi.common.core.assembly.ace.DefaultConsensusAceTag;
@@ -59,6 +58,7 @@ import org.jcvi.common.core.assembly.ace.DefaultReadAceTag;
 import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.ace.HiLowAceContigPhdDatastore;
 import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore;
+import org.jcvi.common.core.assembly.ace.LargeAceFileDataStore;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.ace.ReadAceTag;
 import org.jcvi.common.core.assembly.ace.WholeAssemblyAceTag;
@@ -72,7 +72,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
-import org.jcvi.common.core.util.MultipleWrapper;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
@@ -82,7 +81,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  */
 public class MultiThreadedReAbacusAce {
     private static final int DEFAULT_FLANK_LENGTH = 20;
-
+    static final int MUSCLE_MAX_MEM_DEFAULT = 2000;
     /**
      * @param args
      * @throws IOException 
@@ -105,7 +104,7 @@ public class MultiThreadedReAbacusAce {
         .longName("out")
         .build());
         options.addOption(new CommandLineOptionBuilder("muscle_max_mem", "number of MBs max that muscle is allowed " +
-                "to allocate to perform abacus re-alignments default: "+ReAbacusAceContigWorker.MUSCLE_MAX_MEM_DEFAULT)
+                "to allocate to perform abacus re-alignments default: "+MUSCLE_MAX_MEM_DEFAULT)
         .build());
         
         options.addOption(new CommandLineOptionBuilder("flank", "number of bases on each side of the problem regions to include in the reabacus.  " +
@@ -136,35 +135,33 @@ public class MultiThreadedReAbacusAce {
                     
             int maxMuscleMem = commandLine.hasOption("muscle_max_mem")? 
                     Integer.parseInt(commandLine.getOptionValue("muscle_max_mem"))
-                    : ReAbacusAceContigWorker.MUSCLE_MAX_MEM_DEFAULT;  
+                    : MUSCLE_MAX_MEM_DEFAULT;  
             int numberOfThreads = Integer.parseInt(commandLine.getOptionValue("num_threads"));
             
             ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
-            IndexedFileRange contigOffsets = new DefaultIndexedFileRange();
             TagWriter tagWriter = new TagWriter(out);
             //populate offsets
-            AceContigDataStoreBuilder builder =IndexedAceFileDataStore.createBuilder(inputAceFile, contigOffsets);
+            AceContigDataStoreBuilder builder =IndexedAceFileDataStore.createBuilder(inputAceFile);
             
-            AceFileParser.parse(inputAceFile, 
-                    MultipleWrapper.createMultipleWrapper(AceFileVisitor.class, builder,tagWriter));
+            ReAbacusAceFileVisitor visitor = new ReAbacusAceFileVisitor(builder, abacusErrorMap.keySet(), outputAceFile.getParentFile(), outputAceFile.getName());
             
+            AceFileParser.parse(inputAceFile, visitor);
+            //datastore should now only contain what needs to be reabacused
             AceFileContigDataStore datastore = builder.build();
             StreamingIterator<String> idIter = datastore.idIterator();
             List<Future<Void>> futures = new ArrayList<Future<Void>>();
-            try{
+            try{            	
 	            while(idIter.hasNext()){
 	                String contigId = idIter.next();
 	                File tempOutputFile = new File(outputAceFile.getParentFile(), outputAceFile.getName()+".contig"+contigId);
 	                if(abacusErrorMap.containsKey(contigId)){
 	                    Callable<Void> callable = new SingleContigReAbacusWorker(inputAceFile, abacusErrorMap, contigId, tempOutputFile, numberOfFlankingBases,maxMuscleMem);
 	                    futures.add(executor.submit(callable));
-	                }else{
-	                    Callable<Void> callable = new StreamContigWorker(inputAceFile, contigOffsets.getRangeFor(contigId), tempOutputFile);
-	                    futures.add(executor.submit(callable));
 	                }
 	            }
+	            
             }finally{
-            	IOUtil.closeAndIgnoreErrors(idIter);
+            	IOUtil.closeAndIgnoreErrors(idIter,datastore);
             }
             boolean success=true;
             for(Future<Void> future : futures){
@@ -183,7 +180,10 @@ public class MultiThreadedReAbacusAce {
             if(!success){
                 System.err.println("failed to complete reabacus process check error logs for details");                
             }else{
-                StreamingIterator<String> contigIdIter = datastore.idIterator();
+            	//datastore now only contains what was re-abacused
+            	//so we need to create a new datastore to get the ids of all the contigs
+            	//in the same order as the original ace
+                StreamingIterator<String> contigIdIter = LargeAceFileDataStore.create(inputAceFile).idIterator();
                 while(contigIdIter.hasNext()){
                     String contigId = contigIdIter.next();
                     File tempFile = new File(outputAceFile.getParentFile(), outputAceFile.getName()+".contig"+contigId);
