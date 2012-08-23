@@ -2,6 +2,7 @@ package org.jcvi.assembly.ace;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.Set;
@@ -20,7 +21,7 @@ class ReAbacusAceFileVisitor implements AceFileVisitor{
 	
 	private boolean streamThruCurrentContig=false;
 	private PrintWriter currentWriter;
-	
+	private String currentLine;
 	public ReAbacusAceFileVisitor(
 			AceContigDataStoreBuilder reAbacusDataStoreBuilder,
 			Set<String> idsToReAbacus,
@@ -39,7 +40,7 @@ class ReAbacusAceFileVisitor implements AceFileVisitor{
 		if(streamThruCurrentContig){
 			currentWriter.print(line);
 		}
-		
+		currentLine=line;
 	}
 
 	@Override
@@ -64,12 +65,14 @@ class ReAbacusAceFileVisitor implements AceFileVisitor{
 	public boolean shouldVisitContig(String contigId, int numberOfBases,
 			int numberOfReads, int numberOfBaseSegments, boolean isComplemented) {
 		streamThruCurrentContig = !idsToReAbacus.contains(contigId);
+		
 		if(streamThruCurrentContig){
 			File tempFile = new File(tempOutputDir, tempFilePrefix+".contig"+contigId);
 			try {
 				currentWriter = new PrintWriter(tempFile);
-			} catch (FileNotFoundException e) {
-				throw new IllegalStateException("error creating temp file");
+				currentWriter.print(currentLine);
+			} catch (IOException e) {
+				throw new IllegalStateException("error writing temp file");
 			}
 			return false;
 		}
@@ -149,6 +152,7 @@ class ReAbacusAceFileVisitor implements AceFileVisitor{
 			currentWriter.close();
 		}
 		reAbacusDataStoreBuilder.visitEndOfContig();
+		
 		return true;
 	}
 

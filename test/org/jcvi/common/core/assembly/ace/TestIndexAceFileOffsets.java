@@ -23,11 +23,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.util.DefaultIndexedFileRange;
-import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -40,57 +37,52 @@ import static org.junit.Assert.*;
 public class TestIndexAceFileOffsets {
 
     private static ResourceFileServer resources = new ResourceFileServer(TestIndexAceFileOffsets.class);
-    
-    
-    private static IndexedFileRange sut;
-    
+    private static IndexedAceFileDataStore sut;
     @BeforeClass
     public static void setup() throws IOException{
-        sut = new DefaultIndexedFileRange(8);
         File aceFile = resources.getFile("files/fluSample.ace");
-        IndexedAceFileDataStore.create(aceFile, sut);
+        sut =(IndexedAceFileDataStore)IndexedAceFileDataStore.create(aceFile);
     }
     
     @Test
     public void firstContig(){
-        assertEquals(Range.create(21,45890), sut.getRangeFor("22934-PB2"));
+        assertEquals(Range.create(21,45890), sut.getIndexRangeFor("22934-PB2"));
     }
     
     @Test
     public void middleContigPB1(){
-        assertEquals(Range.create(45891,77407), sut.getRangeFor("22934-PB1"));
+        assertEquals(Range.create(45891,77407), sut.getIndexRangeFor("22934-PB1"));
     }
     @Test
     public void middleContigPA(){
-        assertEquals(Range.create(77408,97284), sut.getRangeFor("22934-PA"));
+        assertEquals(Range.create(77408,97284), sut.getIndexRangeFor("22934-PA"));
     }
     @Test
     public void middleContigHA(){
-        assertEquals(Range.create(97285,148972), sut.getRangeFor("22934-HA"));
+        assertEquals(Range.create(97285,148972), sut.getIndexRangeFor("22934-HA"));
     }
     @Test
     public void middleContigNP(){
-        assertEquals(Range.create(148973,175349), sut.getRangeFor("22934-NP"));
+        assertEquals(Range.create(148973,175349), sut.getIndexRangeFor("22934-NP"));
     }
     @Test
     public void middleContigNA(){
-        assertEquals(Range.create(175350,226494), sut.getRangeFor("22934-NA"));
+        assertEquals(Range.create(175350,226494), sut.getIndexRangeFor("22934-NA"));
     }
     @Test
     public void middleContigMP(){
-        assertEquals(Range.create(226495,272700), sut.getRangeFor("22934-MP"));
+        assertEquals(Range.create(226495,272700), sut.getIndexRangeFor("22934-MP"));
     }
     @Test
     public void lastContigThatIsEndOfFile(){
-        assertEquals(Range.create(272701,313955), sut.getRangeFor("22934-NS"));
+        assertEquals(Range.create(272701,313955), sut.getIndexRangeFor("22934-NS"));
     }
     
     @Test
     public void aceFileThatHasTagsAtEnd() throws IOException, DataStoreException{
         File aceFile = resources.getFile("files/sample.ace");
-        IndexedFileRange fileRange = new DefaultIndexedFileRange();
-        AceFileContigDataStore datastore =IndexedAceFileDataStore.create(aceFile, fileRange);
+        IndexedAceFileDataStore datastore =(IndexedAceFileDataStore) IndexedAceFileDataStore.create(aceFile);
         datastore.get("Contig1");
-        assertEquals(Range.create(8,14667), fileRange.getRangeFor("Contig1"));
+        assertEquals(Range.create(8,14667), datastore.getIndexRangeFor("Contig1"));
     }
 }
