@@ -159,10 +159,7 @@ public final class AceFileParser {
         public ParserState parseNextSection() throws IOException {
             String lineWithCR = parser.nextLine();           
             visitor.visitLine(lineWithCR);
-            String line = lineWithCR.endsWith("\n")
-                        ? lineWithCR.substring(0, lineWithCR.length()-1)
-                        : lineWithCR; 
-            return SectionHandler.handleSection(line, this);
+            return SectionHandler.handleSection(lineWithCR, this);
         }
         ParserState(AceFileVisitor visitor, boolean isFirstContigInFile,
                TextLineParser parser, boolean stopParsing, boolean parseCurrentContig, boolean inAContig,
