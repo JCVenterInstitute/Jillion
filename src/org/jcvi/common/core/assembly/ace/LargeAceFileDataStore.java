@@ -10,11 +10,11 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil.ClipPointsType;
-import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
@@ -37,7 +37,7 @@ import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
  * @author dkatzel
  *
  */
-public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> implements AceFileContigDataStore{
+public final class LargeAceFileDataStore implements AceFileContigDataStore{
 
 	private final File aceFile;
 	private Long numberOfContigs = null;
@@ -48,7 +48,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
     private List<ReadAceTag> readTags=null;
     
 	private final DataStoreFilter contigIdFilter;
-	
+	 private volatile boolean isClosed;
 	/**
 	 * Create a new instance of {@link LargeAceFileDataStore}.
 	 * @param aceFile the ace file to create an {@link AceFileContigDataStore}
@@ -99,15 +99,32 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 		this.aceFile = aceFile;
 		this.contigIdFilter = contigIdFilter;
 	}
+	
+	
+	    
+    protected final void throwExceptionIfClosed() {
+        if(isClosed){
+            throw new IllegalStateException("DataStore is closed");
+        }
+    }
+    
+    @Override
+    public final void close() throws IOException {	    	
+        isClosed = true;
+    }
+    @Override
+    public final boolean isClosed() {
+        return isClosed;
+    }
 	@Override
 	public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
 		throwExceptionIfClosed();
 		IdVisitor ids = new IdVisitor();
 		ids.start();
-		return ids;
+		return DataStoreStreamingIterator.create(this, ids);
 	}
 	@Override
-	public synchronized AceContig get(String id) throws DataStoreException {
+	public AceContig get(String id) throws DataStoreException {
 		throwExceptionIfClosed();
 		if(!contigIdFilter.accept(id)){
 			throw new DataStoreException(String.format("contig id %s not allowed by filter", id));
@@ -122,7 +139,7 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 		return visitor.build();
 	}
 	@Override
-	public synchronized boolean contains(String id) throws DataStoreException {
+	public boolean contains(String id) throws DataStoreException {		
 		if(id ==null){
 			throw new NullPointerException("id can not be null");
 		}
@@ -218,18 +235,13 @@ public final class LargeAceFileDataStore extends AbstractDataStore<AceContig> im
 	}
 	
 	@Override
-	public synchronized StreamingIterator<AceContig> iterator() {
+	public StreamingIterator<AceContig> iterator() {
 		throwExceptionIfClosed();
 		AceFileDataStoreIterator iter= new AceFileDataStoreIterator();
 	    iter.start();
-	    return iter;
+	    return DataStoreStreamingIterator.create(this, iter);
 	}
 	
-	@Override
-	protected void handleClose() throws IOException {
-		//no-op
-		
-	}
 
 	private final class SizeVisitor implements AceFileVisitor{
 
