@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
 import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
@@ -162,9 +163,7 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
     }
     @Override
     public synchronized FastqRecord get(String id) throws DataStoreException {
-        if(closed){
-            throw new DataStoreException("datastore is closed");
-        }
+    	 throwExceptionIfClosed();
         if(!filter.accept(id)){
         	return null;
         }
@@ -187,7 +186,7 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
     @Override
     public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
         throwExceptionIfClosed();
-        return new FastqIdIterator();        
+        return DataStoreStreamingIterator.create(this,new FastqIdIterator());        
     }
 
     @Override
@@ -211,7 +210,7 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
         LargeFastqFileIterator iter = new LargeFastqFileIterator(filter);
     	iter.start();
     	
-    	return iter;
+    	return DataStoreStreamingIterator.create(this,iter);
   
     }
     

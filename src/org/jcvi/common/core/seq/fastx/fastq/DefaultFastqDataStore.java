@@ -29,8 +29,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 /**
  * {@code DefaultFastqDataStore} is a {@link FastqDataStore}
  * implementation that stores all {@link FastqRecord}s
@@ -41,11 +41,11 @@ import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 final class DefaultFastqDataStore implements FastqDataStore {
 
     private final Map<String, FastqRecord> map;
-    private boolean closed = false;
+    private volatile boolean closed = false;
 
-    private void checkNotClosed() throws DataStoreException{
+    private void checkNotClosed(){
         if(closed){
-            throw new DataStoreException("can not access closed dataStore");
+            throw new IllegalStateException("can not access closed dataStore");
         }
     }
     /**
@@ -76,7 +76,7 @@ final class DefaultFastqDataStore implements FastqDataStore {
     @Override
     public StreamingIterator<String> idIterator() throws DataStoreException {
         checkNotClosed();
-        return StreamingIteratorAdapter.adapt(map.keySet().iterator());
+        return DataStoreStreamingIterator.create(this,map.keySet().iterator());
     }
 
     @Override
@@ -88,12 +88,8 @@ final class DefaultFastqDataStore implements FastqDataStore {
 
     @Override
     public StreamingIterator<FastqRecord> iterator() {
-        try {
-            checkNotClosed();
-        } catch (DataStoreException e) {
-            throw new IllegalStateException("could not create iterator", e);
-        }
-        return StreamingIteratorAdapter.adapt(map.values().iterator());
+        checkNotClosed();
+        return DataStoreStreamingIterator.create(this,map.values().iterator());
     }
     
     public static class Builder implements org.jcvi.common.core.util.Builder<DefaultFastqDataStore>{

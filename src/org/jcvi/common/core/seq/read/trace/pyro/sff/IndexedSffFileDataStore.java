@@ -5,15 +5,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
-import org.jcvi.common.core.util.DefaultIndexedFileRange;
-import org.jcvi.common.core.util.IndexedFileRange;
+import org.jcvi.common.core.util.MapUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code IndexedSffFileDataStore} is an implementation 
@@ -181,7 +183,7 @@ public final class IndexedSffFileDataStore{
 	 private int numberOfFlowsPerRead=0;
 	  private long currentOffset;
 	  
-	  private IndexedFileRange indexRanges;
+	  private Map<String,Range> indexRanges;
 	  private int encodedReadLength=0;
 	  private String currentReadId;
 	  private final File sffFile;
@@ -211,7 +213,8 @@ public final class IndexedSffFileDataStore{
 		if(commonHeader.getNumberOfReads() > Integer.MAX_VALUE){
 			throw new IllegalArgumentException("too many reads in sff file to index > Integer.MAX_VALUE");
 		}
-		indexRanges = new DefaultIndexedFileRange((int)commonHeader.getNumberOfReads());
+		int mapCapacity = MapUtil.computeMinHashMapSizeWithoutRehashing(commonHeader.getNumberOfReads());
+		indexRanges = new LinkedHashMap<String, Range>(mapCapacity);
 		currentOffset +=SffWriter.getNumberOfBytesFor(commonHeader);
 		
 		return CommonHeaderReturnCode.PARSE_READS;
@@ -253,21 +256,31 @@ public final class IndexedSffFileDataStore{
 		private static final SffReadHeaderDecoder READ_HEADER_CODEC =DefaultSffReadHeaderDecoder.INSTANCE;
 		private static final SffReadDataDecoder READ_DATA_CODEC =DefaultSffReadDataDecoder.INSTANCE;
 		    
-		private final IndexedFileRange fileRanges;
+		private final Map<String,Range> fileRanges;
 		private final int numberOfFlowsPerRead;
 		private final File sffFile;
+		private volatile boolean closed;
 		
 		private FullPassIndexedSffFileDataStore(File sffFile,  int numberOfFlowsPerRead,
-				IndexedFileRange fileRanges) {
+				Map<String,Range> fileRanges) {
 			this.sffFile = sffFile;
 			this.numberOfFlowsPerRead = numberOfFlowsPerRead;
 			this.fileRanges = fileRanges;
 		}
 	
+		private void checkNotClosed(){
+			if(closed){
+				throw new IllegalStateException("datastore is closed");
+			}
+		}
 		@Override
 		public StreamingIterator<String> idIterator() throws DataStoreException {
+			checkNotClosed();
 			try {
-				return LargeSffFileDataStore.create(sffFile).idIterator();
+				StreamingIterator<String> iter= LargeSffFileDataStore.create(sffFile).idIterator();
+				//iter doesn't have the same lifecylce as this datastore
+				//so we need to wrap it again
+				return DataStoreStreamingIterator.create(this, iter);
 			} catch (IOException e) {
 				throw new DataStoreException("error creating id iterator",e);
 			}
@@ -275,11 +288,11 @@ public final class IndexedSffFileDataStore{
 	
 		@Override
 		public Flowgram get(String id) throws DataStoreException {
-			
+			checkNotClosed();
 			SffFileVisitorDataStoreBuilder builder = DefaultSffFileDataStore.createVisitorBuilder();
 			builder.visitFile();
 			try {
-				InputStream in = IOUtil.createInputStreamFromFile(sffFile, fileRanges.getRangeFor(id));
+				InputStream in = IOUtil.createInputStreamFromFile(sffFile, fileRanges.get(id));
 				 DataInputStream dataIn = new DataInputStream(in);
 				 SffReadHeader readHeader = READ_HEADER_CODEC.decodeReadHeader(dataIn);
 				 final int numberOfBases = readHeader.getNumberOfBases();
@@ -296,29 +309,35 @@ public final class IndexedSffFileDataStore{
 	
 		@Override
 		public boolean contains(String id) throws DataStoreException {
-			return fileRanges.contains(id);
+			checkNotClosed();
+			return fileRanges.containsKey(id);
 		}
 	
 		@Override
 		public long getNumberOfRecords() throws DataStoreException {
+			checkNotClosed();
 			return fileRanges.size();
 		}
 	
 		@Override
 		public boolean isClosed() {
-			return fileRanges.isClosed();
+			return closed;
 		}
 	
 		@Override
 		public void close() throws IOException {
-			fileRanges.close();
+			closed=true;
 			
 		}
 	
 		@Override
 		public StreamingIterator<Flowgram> iterator() throws DataStoreException {
+			checkNotClosed();
 			try {
-				return LargeSffFileDataStore.create(sffFile).iterator();
+				StreamingIterator<Flowgram> iter= LargeSffFileDataStore.create(sffFile).iterator();
+				//iter doesn't have the same lifecylce as this datastore
+				//so we need to wrap it again
+				return DataStoreStreamingIterator.create(this, iter);
 			} catch (IOException e) {
 				throw new DataStoreException("error creating iterator",e);
 			}

@@ -28,15 +28,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.DefaultIndexedFileRange;
-import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
@@ -52,11 +53,12 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  */
 public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
 
-    private final IndexedFileRange fragmentInfoIndexFileRange, mateInfoIndexFileRange;
+    private final Map<String,Range> fragmentInfoIndexFileRange, mateInfoIndexFileRange;
     private final File fragFile;
     private final Frg2Parser parser;
     private int currentStart=0;
     private int currentPosition=-1;
+    private volatile boolean closed;
     
     public static FragmentDataStore create(File frgFile) throws FileNotFoundException{
         Frg2Parser parserInstance = new Frg2Parser();
@@ -72,14 +74,27 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
        
     }
     
-    public IndexedFragmentDataStore(File file, IndexedFileRange fragmentInfoIndexFileRange, IndexedFileRange mateInfoIndexFileRange, Frg2Parser parser){
+    public IndexedFragmentDataStore(File file, Map<String,Range> fragmentInfoIndexFileRange, Map<String,Range> mateInfoIndexFileRange, Frg2Parser parser){
         this.fragmentInfoIndexFileRange = fragmentInfoIndexFileRange;
         this.mateInfoIndexFileRange = mateInfoIndexFileRange;
         this.parser = parser;
         this.fragFile = file;
     }
     public IndexedFragmentDataStore(File file, Frg2Parser parser){
-        this(file, new DefaultIndexedFileRange(), new DefaultIndexedFileRange(),parser);
+        this(file, new LinkedHashMap<String,Range>(), new LinkedHashMap<String,Range>(),parser);
+    }
+    
+    @Override
+    public boolean isClosed() {
+        return closed;
+    }
+
+    
+    protected void throwErrorIfClosed() {
+        if(isClosed()){
+            throw new IllegalStateException("datastore is closed");
+        }
+        
     }
     @Override
     public void visitFragment(FrgAction action, String fragmentId,
@@ -134,13 +149,13 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
     @Override
     public boolean contains(String fragmentId) throws DataStoreException {
         throwErrorIfClosed();
-        return fragmentInfoIndexFileRange.contains(fragmentId);
+        return fragmentInfoIndexFileRange.containsKey(fragmentId);
     }
 
     @Override
     public Fragment get(String id) throws DataStoreException {
         throwErrorIfClosed();
-        Range range =fragmentInfoIndexFileRange.getRangeFor(id);
+        Range range =fragmentInfoIndexFileRange.get(id);
         InputStream in;
         try {
             in = IOUtil.createInputStreamFromFile(fragFile, range);
@@ -157,7 +172,7 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
     @Override
     public StreamingIterator<String> idIterator() {
         throwErrorIfClosed();
-        return fragmentInfoIndexFileRange.getIds();
+        return DataStoreStreamingIterator.create(this, fragmentInfoIndexFileRange.keySet().iterator());
     }
 
     @Override
@@ -169,7 +184,7 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
     @Override
     public void close() throws IOException {
         super.close();
-        fragmentInfoIndexFileRange.close();
+        closed =true;
         
     }
 
@@ -180,7 +195,7 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
     public StreamingIterator<Fragment> iterator() {
         FrgIterator iter= new FrgIterator();
         iter.start();
-        return iter;
+        return DataStoreStreamingIterator.create(this, iter);
     }
 
     @Override
@@ -206,7 +221,7 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
         }
     }
     private String getMateIdOf(final String fragId) throws IOException {
-        Range range = mateInfoIndexFileRange.getRangeFor(fragId);
+        Range range = mateInfoIndexFileRange.get(fragId);
         InputStream in = IOUtil.createInputStreamFromFile(fragFile, range);
         SingleLinkVisitor singleLinkVisitor = new SingleLinkVisitor(fragId);
         parser.parse(in, singleLinkVisitor);
@@ -340,7 +355,7 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
                         String libraryId, NucleotideSequence bases,
                         QualitySequence qualities, Range validRange,
                         Range vectorClearRange, String source) {
-                    if(fragmentInfoIndexFileRange.contains(fragmentId)){
+                    if(fragmentInfoIndexFileRange.containsKey(fragmentId)){
                         //only add frgs we care about
                         try {
                             Library library = getLibrary(libraryId);
