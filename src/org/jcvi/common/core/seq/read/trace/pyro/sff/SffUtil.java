@@ -25,6 +25,9 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -32,8 +35,8 @@ import java.util.regex.Pattern;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
-import org.jcvi.common.core.assembly.util.trim.TrimDataStoreAdatper;
 import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
+import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
@@ -266,7 +269,16 @@ public final class SffUtil {
         */
         @Override
         public TrimPointsDataStore build() {
-            return TrimDataStoreAdatper.adapt(MapDataStoreAdapter.adapt(trimRanges));
+        	final DataStore<Range> datastore= MapDataStoreAdapter.adapt(trimRanges);
+        	InvocationHandler handler = new InvocationHandler() {
+				
+				@Override
+				public Object invoke(Object proxy, Method method, Object[] args)
+						throws Throwable {
+					return method.invoke(datastore, args);
+				}
+			};
+			return (TrimPointsDataStore) Proxy.newProxyInstance(datastore.getClass().getClassLoader(), new Class<?>[]{TrimPointsDataStore.class}, handler);
         }
 
     }

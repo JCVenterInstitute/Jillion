@@ -357,7 +357,7 @@ public final class IndexedAsmUnitigDataStore implements UnitigDataStore{
         * {@inheritDoc}
         */
         @Override
-        public boolean visitUnitig(String externalId, long internalId,
+        public synchronized boolean visitUnitig(String externalId, long internalId,
                 float aStat, float measureOfPolymorphism, UnitigStatus status,
                 NucleotideSequence consensusSequence,
                 QualitySequence consensusQualities, int numberOfReads) {

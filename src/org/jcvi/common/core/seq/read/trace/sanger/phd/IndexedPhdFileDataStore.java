@@ -433,4 +433,42 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
         
     }
 
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (closed ? 1231 : 1237);
+		result = prime * result + phdBall.hashCode();
+		result = prime * result
+				+ recordLocations.hashCode();
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof IndexedPhdFileDataStore)) {
+			return false;
+		}
+		IndexedPhdFileDataStore other = (IndexedPhdFileDataStore) obj;
+		if (closed != other.closed) {
+			return false;
+		}
+		if (!phdBall.equals(other.phdBall)) {
+			return false;
+		}
+		if (!recordLocations.equals(other.recordLocations)) {
+			return false;
+		}
+		return true;
+	}
+    
+    
+
 }
