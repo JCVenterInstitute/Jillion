@@ -22,8 +22,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.Caches;
-import org.jcvi.common.core.util.DefaultIndexedFileRange;
-import org.jcvi.common.core.util.IndexedFileRange;
+import org.jcvi.common.core.util.MapUtil;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
@@ -48,7 +47,7 @@ final class IndexedAceFileContig implements AceContig{
 
 	private final String contigId;
 	private final Map<String, AlignedReadInfo> readInfoMap;
-	private final IndexedFileRange readOffsetRanges;
+	private final Map<String,Range> readOffsetRanges;
 	private final boolean isComplimented;
 	private final NucleotideSequence consensus;
 	private final File aceFile;
@@ -57,7 +56,7 @@ final class IndexedAceFileContig implements AceContig{
 	
 	private IndexedAceFileContig(String contigId,
 			Map<String, AlignedReadInfo> readInfoMap,
-			IndexedFileRange readOffsetRanges, boolean isComplimented,
+			Map<String,Range> readOffsetRanges, boolean isComplimented,
 			NucleotideSequence consensus, File aceFile,
 			long contigStartFileOffset,
 			int maxCoverage) {
@@ -113,7 +112,7 @@ final class IndexedAceFileContig implements AceContig{
 		}
 		InputStream in = null;
 		try{
-			Range offsetRange = readOffsetRanges.getRangeFor(id);
+			Range offsetRange = readOffsetRanges.get(id);
 			in = IOUtil.createInputStreamFromFile(aceFile, offsetRange);
 			ReadVisitorBuilder builder = new ReadVisitorBuilder(consensus);
 			builder.visitBeginContig(contigId, 0, 0, 0, isComplimented);
@@ -148,7 +147,7 @@ final class IndexedAceFileContig implements AceContig{
 	static final class IndexedContigVisitorBuilder implements AceFileVisitor, Builder<AceContig>{
 		
 		private long currentOffset=0;
-		private IndexedFileRange readRanges;
+		private Map<String,Range> readRanges;
 		private final File aceFile;
 		private String currentLine;
 		private String contigId;
@@ -210,9 +209,10 @@ final class IndexedAceFileContig implements AceContig{
 				int numberOfBases, int numberOfReads,
 				int numberOfBaseSegments, boolean reverseComplimented) {
 			this.contigId =contigId;
-			readRanges = new DefaultIndexedFileRange(numberOfReads);
+			int mapCapacity = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads);
+			readRanges = new LinkedHashMap<String, Range>(mapCapacity);
 			isComplimented = reverseComplimented;
-			readInfoMap = new LinkedHashMap<String, AlignedReadInfo>(numberOfReads+1, 1F);
+			readInfoMap = new LinkedHashMap<String, AlignedReadInfo>(mapCapacity);
 			consensusBuilder = new NucleotideSequenceBuilder();
 			return true;
 		}

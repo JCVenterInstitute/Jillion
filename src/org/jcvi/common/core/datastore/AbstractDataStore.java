@@ -63,7 +63,7 @@ public abstract class  AbstractDataStore<T> implements DataStore<T>{
     	}
         isClosed = true;
     }
-
+    @Override
     public final boolean isClosed() {
         return isClosed;
     }
