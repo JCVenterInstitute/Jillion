@@ -34,6 +34,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.common.core.datastore.DataStoreClosedException;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
@@ -260,8 +261,8 @@ public abstract class AbstractTestQualityFastaDataStore {
 	    	try{
 	    		iter.hasNext();
 	    		fail("hasNext() should throw exception if datastore is closed");
-	    	}catch(Exception e){
-	    		assertTrue(e.getMessage().contains("datastore has been closed"));
+	    	}catch(DataStoreClosedException expected){
+	    		//expected
 	    	}
 	    	
     	}finally{
@@ -283,8 +284,8 @@ public abstract class AbstractTestQualityFastaDataStore {
 	    	try{
 	    		iter.next();
 	    		fail("next() should throw exception if datastore is closed");
-	    	}catch(Exception e){
-	    		assertTrue(e.getMessage().contains("datastore has been closed"));
+	    	}catch(DataStoreClosedException expected){
+	    		//expected
 	    	}
     	}finally{
     		IOUtil.closeAndIgnoreErrors(iter);
@@ -303,8 +304,8 @@ public abstract class AbstractTestQualityFastaDataStore {
 	    	try{
 	    		iter.next();
 	    		fail("next() should throw exception if datastore is closed");
-	    	}catch(Exception e){
-	    		assertTrue(e.getMessage().contains("closed"));
+	    	}catch(DataStoreClosedException expected){
+	    		//expected
 	    	}
     	}finally{
     		IOUtil.closeAndIgnoreErrors(iter);
@@ -325,8 +326,8 @@ public abstract class AbstractTestQualityFastaDataStore {
 	    	try{
 	    		iter.hasNext();
 	    		fail("hasNext() should throw exception if datastore is closed");
-	    	}catch(Exception e){
-	    		assertTrue(e.getMessage().contains("closed"));
+	    	}catch(DataStoreClosedException expected){
+	    		//expected
 	    	}
 	    	
     	}finally{

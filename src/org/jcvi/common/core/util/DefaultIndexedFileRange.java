@@ -23,12 +23,10 @@
  */
 package org.jcvi.common.core.util;
 
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 
@@ -82,7 +80,7 @@ public class DefaultIndexedFileRange implements IndexedFileRange{
     @Override
     public StreamingIterator<String> getIds() {
         checkIfClosed();
-        return new StreamingIteratorImpl();
+        return StreamingIteratorAdapter.adapt(ranges.keySet().iterator());
     }
 
     @Override
@@ -92,46 +90,7 @@ public class DefaultIndexedFileRange implements IndexedFileRange{
     }
 
     
-    private class StreamingIteratorImpl implements StreamingIterator<String>{
-
-    	private final StreamingIterator<String> delegate;
-    	
-    	public StreamingIteratorImpl(){
-    		this.delegate = StreamingIteratorAdapter.adapt(ranges.keySet().iterator());
-    	}
-		@Override
-		public boolean hasNext() {
-			boolean delegateHasNext = delegate.hasNext();
-			if(DefaultIndexedFileRange.this.isClosed() && delegateHasNext){
-				IOUtil.closeAndIgnoreErrors(this);
-				throw new IllegalStateException("IndexedFileRange is closed");
-			}
-			return delegateHasNext;
-		}
-
-		@Override
-		public void close() throws IOException {
-			delegate.close();
-			
-		}
-
-		@Override
-		public String next() {
-			String next = delegate.next();
-			if(DefaultIndexedFileRange.this.isClosed()){
-				IOUtil.closeAndIgnoreErrors(this);
-				throw new IllegalStateException("IndexedFileRange is closed");
-			}
-			return next;
-		}
-
-		@Override
-		public void remove() {
-			delegate.remove();
-			
-		}
-    	
-    }
+    
     
 
 }

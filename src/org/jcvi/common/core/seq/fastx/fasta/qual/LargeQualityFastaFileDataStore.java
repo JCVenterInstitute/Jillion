@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
@@ -97,9 +98,9 @@ public final class LargeQualityFastaFileDataStore implements QualitySequenceFast
     @Override
     public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
         checkNotYetClosed();
-        QualitySequenceFastaDataStoreIdIteratorImpl iter= new QualitySequenceFastaDataStoreIdIteratorImpl(this,fastaFile);
+        QualitySequenceFastaDataStoreIdIteratorImpl iter= new QualitySequenceFastaDataStoreIdIteratorImpl(fastaFile);
         iter.start();
-        return iter;
+        return DataStoreStreamingIterator.create(this,iter);
 
     }
 
@@ -172,9 +173,9 @@ public final class LargeQualityFastaFileDataStore implements QualitySequenceFast
     @Override
     public synchronized StreamingIterator<QualitySequenceFastaRecord> iterator() {
         checkNotYetClosed();
-        QualitySequenceFastaDataStoreIteratorImpl iter = new QualitySequenceFastaDataStoreIteratorImpl(this,fastaFile);
+        QualitySequenceFastaDataStoreIteratorImpl iter = new QualitySequenceFastaDataStoreIteratorImpl(fastaFile);
         iter.start();
         
-        return iter;
+        return DataStoreStreamingIterator.create(this,iter);
     }
 }
