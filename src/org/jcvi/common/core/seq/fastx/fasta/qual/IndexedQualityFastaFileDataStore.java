@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractIndexedFastaDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
@@ -13,7 +16,6 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code IndexedQualityFastaFileDataStore} is an implementation of 
@@ -27,9 +29,9 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  */
 public final class IndexedQualityFastaFileDataStore implements QualitySequenceFastaDataStore{
 
-	private final IndexedFileRange index;
+	private final Map<String,Range> index;
 	private final File fastaFile;
-	
+	private volatile boolean isClosed;
 	/**
 	 * Creates a new {@link IndexedQualityFastaFileDataStore}
 	 * instance using the given fastaFile.
@@ -64,24 +66,32 @@ public final class IndexedQualityFastaFileDataStore implements QualitySequenceFa
 		return new IndexedQualityFastaDataStoreBuilderVisitor(fastaFile);
 	}
 	
-	private IndexedQualityFastaFileDataStore(IndexedFileRange index, File fastaFile){
+	private IndexedQualityFastaFileDataStore(Map<String,Range> index,File fastaFile){
 		this.index = index;
 		this.fastaFile = fastaFile;
 	}
+	
+	private void throwExceptionIfClosed(){
+		if(isClosed){
+			throw new IllegalStateException("datastore is closed");
+		}
+	}
 	@Override
 	public StreamingIterator<String> idIterator() throws DataStoreException {
-		return index.getIds();
+		throwExceptionIfClosed();
+		return DataStoreStreamingIterator.create(this,index.keySet().iterator());
 	}
 
 	@Override
 	public QualitySequenceFastaRecord get(String id)
 			throws DataStoreException {
-		if(!contains(id)){
+		throwExceptionIfClosed();
+		if(!index.containsKey(id)){
 			return null;
 		}
 		InputStream in = null;
 		try{
-			in = IOUtil.createInputStreamFromFile(fastaFile, index.getRangeFor(id));
+			in = IOUtil.createInputStreamFromFile(fastaFile, index.get(id));
 			QualitySequenceFastaDataStore datastore = DefaultQualityFastaFileDataStore.create(in);
 			return datastore.get(id);
 		} catch (IOException e) {
@@ -93,30 +103,32 @@ public final class IndexedQualityFastaFileDataStore implements QualitySequenceFa
 
 	@Override
 	public boolean contains(String id) throws DataStoreException {
-		return index.contains(id);
+		throwExceptionIfClosed();
+		return index.containsKey(id);
 	}
 
 	@Override
 	public long getNumberOfRecords() throws DataStoreException {
+		throwExceptionIfClosed();
 		return index.size();
 	}
 
 	@Override
 	public boolean isClosed(){
-		return index.isClosed();
+		return isClosed;
 	}
 
 	@Override
 	public void close() throws IOException {
-		index.close();
+		isClosed =true;
 		
 	}
 
 	@Override
 	public StreamingIterator<QualitySequenceFastaRecord> iterator() {
-		QualitySequenceFastaDataStoreIteratorImpl iter= new QualitySequenceFastaDataStoreIteratorImpl(this,fastaFile);
+		QualitySequenceFastaDataStoreIteratorImpl iter= new QualitySequenceFastaDataStoreIteratorImpl(fastaFile);
 		iter.start();
-		return iter;
+		return DataStoreStreamingIterator.create(this,iter);
 	}
 	
 	private static final class IndexedQualityFastaDataStoreBuilderVisitor 
@@ -128,7 +140,7 @@ public final class IndexedQualityFastaFileDataStore implements QualitySequenceFa
 			}
 			@Override
 			protected QualitySequenceFastaDataStore createDataStore(
-				IndexedFileRange index, File fastaFile) {
+				Map<String,Range> index, File fastaFile) {
 				return new IndexedQualityFastaFileDataStore(index, fastaFile);
 			}
 

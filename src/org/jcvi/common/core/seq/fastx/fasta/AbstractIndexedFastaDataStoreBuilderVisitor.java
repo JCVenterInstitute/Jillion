@@ -1,12 +1,13 @@
 package org.jcvi.common.core.seq.fastx.fasta;
 
 import java.io.File;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.Symbol;
-import org.jcvi.common.core.util.DefaultIndexedFileRange;
 import org.jcvi.common.core.util.IndexedFileRange;
 /**
  * {@code AbstractIndexedFastaDataStoreBuilderVisitor} is an
@@ -25,7 +26,7 @@ import org.jcvi.common.core.util.IndexedFileRange;
  * @param <D> the {@link DataStore} type to build.
  */
 public abstract class AbstractIndexedFastaDataStoreBuilderVisitor<S extends Symbol, T extends Sequence<S>, F extends FastaRecord<S, T>, D extends DataStore<F>> extends AbstractFastaVisitor implements FastaFileDataStoreBuilderVisitor<S,T,F,D>{
-	private final IndexedFileRange index = new DefaultIndexedFileRange();
+	private final Map<String,Range> index = new LinkedHashMap<String, Range>();
 	private long currentStartOffset=0;
 	private long currentOffset=0;
 	private long currentLineLength=0;
@@ -50,7 +51,7 @@ public abstract class AbstractIndexedFastaDataStoreBuilderVisitor<S extends Symb
 	 * @param fastaFile
 	 * @return a new datastore, never null.
 	 */
-	protected abstract D createDataStore(IndexedFileRange index, File fastaFile);
+	protected abstract D createDataStore(Map<String,Range> index, File fastaFile);
 	@Override
 	public synchronized D build() {
 		if(built){
@@ -96,7 +97,7 @@ public abstract class AbstractIndexedFastaDataStoreBuilderVisitor<S extends Symb
 			//be missing the last line (since we chop it off
 			//assuming it's the start of the next record
 			//this code will add that line back on.
-			Range updatedRange = index.getRangeFor(lastId).grow(0, currentLineLength-1);
+			Range updatedRange = index.get(lastId).grow(0, currentLineLength-1);
 			index.put(lastId, updatedRange);
 		}
 		

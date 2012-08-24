@@ -54,6 +54,7 @@ public interface DataStore<T> extends Closeable{
      * instance; never null.
      * @throws DataStoreException if there is a 
      * problem creating this iterator.
+     * @throws IllegalStateException if this datastore is closed.
      */
     StreamingIterator<String> idIterator() throws DataStoreException;
     /**
@@ -71,6 +72,7 @@ public interface DataStore<T> extends Closeable{
      * otherwise.
      * @throws DataStoreException if there is a problem fetching the
      * data from this Datastore.
+     * @throws IllegalStateException if this datastore is closed.
      */
     boolean contains(String id) throws DataStoreException;
     /**
@@ -78,6 +80,7 @@ public interface DataStore<T> extends Closeable{
      * @return the number of objects in this DataStore.
      * @throws DataStoreException if there is a problem fetching the
      * data from this Datastore.
+     * @throws IllegalStateException if this datastore is closed.
      */
     long getNumberOfRecords() throws DataStoreException;
     /**
@@ -103,6 +106,7 @@ public interface DataStore<T> extends Closeable{
      * instance; never null.
      * @throws DataStoreException if there is a 
      * problem creating this iterator.
+     * @throws IllegalStateException if this datastore is closed.
      */
     StreamingIterator<T> iterator() throws DataStoreException;
     
