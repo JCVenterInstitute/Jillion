@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,13 +33,12 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.asm.AsmVisitor.NestedContigMessageTypes;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.frg.FragmentDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.util.DefaultIndexedFileRange;
-import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.common.core.util.MapUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
@@ -53,18 +53,19 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  */
 public final class IndexedAsmContigDataStore implements AsmContigDataStore{
     private final File asmFile;
-    private final IndexedFileRange fileRange;
+    private final Map<String,Range> fileRange;
     private final FragmentDataStore frgDataStore;
     private final Range afgRange;
+    private volatile boolean closed;
     
     public static AsmContigDataStoreBuilder createBuilder(File asmFile, FragmentDataStore frgDataStore){
-        return new IndexedAsmContigDataStoreBuilder(asmFile,frgDataStore,IncludeType.ALL, new DefaultIndexedFileRange());
+        return new IndexedAsmContigDataStoreBuilder(asmFile,frgDataStore,IncludeType.ALL, new LinkedHashMap<String,Range>());
     }
     public static AsmContigDataStoreBuilder createDegenerateBuilder(File asmFile,FragmentDataStore frgDataStore){
-        return new IndexedAsmContigDataStoreBuilder(asmFile,frgDataStore,IncludeType.DEGENERATE_ONLY,new DefaultIndexedFileRange());
+        return new IndexedAsmContigDataStoreBuilder(asmFile,frgDataStore,IncludeType.DEGENERATE_ONLY,new LinkedHashMap<String,Range>());
     }
     public static AsmContigDataStoreBuilder createPlacedBuilder(File asmFile,FragmentDataStore frgDataStore){
-        return new IndexedAsmContigDataStoreBuilder(asmFile,frgDataStore,IncludeType.PLACED,new DefaultIndexedFileRange());
+        return new IndexedAsmContigDataStoreBuilder(asmFile,frgDataStore,IncludeType.PLACED,new LinkedHashMap<String,Range>());
     }
     /**
      * Create an {@link AsmContigDataStore} of all the contigs for the given
@@ -76,7 +77,7 @@ public final class IndexedAsmContigDataStore implements AsmContigDataStore{
      * @throws IOException if there was a problem parsing the asm file.
      */
     public static AsmContigDataStore createDataStore(File asmFile, FragmentDataStore frgDataStore) throws IOException{
-        AsmContigDataStoreBuilder builder =  new IndexedAsmContigDataStoreBuilder(asmFile,frgDataStore,IncludeType.ALL,new DefaultIndexedFileRange());
+        AsmContigDataStoreBuilder builder =  new IndexedAsmContigDataStoreBuilder(asmFile,frgDataStore,IncludeType.ALL,new LinkedHashMap<String,Range>());
         AsmParser.parseAsm(asmFile, builder);
         return builder.build();
     }
@@ -91,7 +92,7 @@ public final class IndexedAsmContigDataStore implements AsmContigDataStore{
      * @throws IOException if there was a problem parsing the asm file.
      */
     public static AsmContigDataStore createDegenerateDataStore(File asmFile, FragmentDataStore frgDataStore) throws IOException{
-        AsmContigDataStoreBuilder builder =  new IndexedAsmContigDataStoreBuilder(asmFile,frgDataStore,IncludeType.DEGENERATE_ONLY,new DefaultIndexedFileRange());
+        AsmContigDataStoreBuilder builder =  new IndexedAsmContigDataStoreBuilder(asmFile,frgDataStore,IncludeType.DEGENERATE_ONLY,new LinkedHashMap<String,Range>());
         AsmParser.parseAsm(asmFile, builder);
         return builder.build();
     }
@@ -106,7 +107,7 @@ public final class IndexedAsmContigDataStore implements AsmContigDataStore{
      * @throws IOException if there was a problem parsing the asm file.
      */
     public static AsmContigDataStore createPlacedDataStore(File asmFile, FragmentDataStore frgDataStore) throws IOException{
-        AsmContigDataStoreBuilder builder =  new IndexedAsmContigDataStoreBuilder(asmFile,frgDataStore,IncludeType.PLACED,new DefaultIndexedFileRange());
+        AsmContigDataStoreBuilder builder =  new IndexedAsmContigDataStoreBuilder(asmFile,frgDataStore,IncludeType.PLACED,new LinkedHashMap<String,Range>());
         AsmParser.parseAsm(asmFile, builder);
         return builder.build();
     }
@@ -135,7 +136,7 @@ public final class IndexedAsmContigDataStore implements AsmContigDataStore{
         
         abstract boolean include(boolean isDegenerate);
     }
-    private IndexedAsmContigDataStore(File asmFile, IndexedFileRange fileRange,  Range afgRange, FragmentDataStore frgDataStore) {
+    private IndexedAsmContigDataStore(File asmFile, Map<String,Range> fileRange,  Range afgRange, FragmentDataStore frgDataStore) {
         this.asmFile = asmFile;
         this.fileRange = fileRange;
         this.frgDataStore = frgDataStore;
@@ -147,7 +148,8 @@ public final class IndexedAsmContigDataStore implements AsmContigDataStore{
     */
     @Override
     public StreamingIterator<String> idIterator() throws DataStoreException {
-        return fileRange.getIds();
+    	throwExceptionIfClosed();
+        return DataStoreStreamingIterator.create(this,fileRange.keySet().iterator());
     }
 
     /**
@@ -155,7 +157,11 @@ public final class IndexedAsmContigDataStore implements AsmContigDataStore{
     */
     @Override
     public AsmContig get(String contigId) throws DataStoreException {
-        Range contigRange = fileRange.getRangeFor(contigId);
+    	throwExceptionIfClosed();
+        Range contigRange = fileRange.get(contigId);
+        if(contigRange==null){
+        	throw new DataStoreException(contigId+" does not exist");
+        }
         try{
             //To save memory we only want to store clear ranges 
             //of only the reads in the contig we are asked to get.
@@ -190,7 +196,8 @@ public final class IndexedAsmContigDataStore implements AsmContigDataStore{
     */
     @Override
     public boolean contains(String id) throws DataStoreException {
-        return fileRange.contains(id);
+    	throwExceptionIfClosed();
+        return fileRange.containsKey(id);
     }
 
     /**
@@ -198,6 +205,7 @@ public final class IndexedAsmContigDataStore implements AsmContigDataStore{
     */
     @Override
     public long getNumberOfRecords() throws DataStoreException {
+    	throwExceptionIfClosed();
         return fileRange.size();
     }
 
@@ -206,7 +214,7 @@ public final class IndexedAsmContigDataStore implements AsmContigDataStore{
     */
     @Override
     public boolean isClosed() {
-        return fileRange.isClosed();
+        return closed;
     }
 
     /**
@@ -214,18 +222,22 @@ public final class IndexedAsmContigDataStore implements AsmContigDataStore{
     */
     @Override
     public void close() throws IOException {
-        fileRange.close();
+    	closed=true;
         
     }
-
+    private void throwExceptionIfClosed(){
+    	if(closed){
+    		throw new IllegalStateException("datastore is closed");
+    	}
+    }
     /**
     * {@inheritDoc}
     */
     @Override
     public StreamingIterator<AsmContig> iterator() {
-
+    	throwExceptionIfClosed();
         try {
-            return new AsmContigIterator(idIterator());
+            return DataStoreStreamingIterator.create(this,new AsmContigIterator(idIterator()));
         } catch (DataStoreException e) {
             throw new IllegalStateException("could not create iterator",e);
         }
@@ -283,14 +295,14 @@ public final class IndexedAsmContigDataStore implements AsmContigDataStore{
     private static class IndexedAsmContigDataStoreBuilder extends AbstractAsmVisitor implements AsmContigDataStoreBuilder{
         private final FragmentDataStore frgDataStore;
         private final IncludeType includeType;
-        private final IndexedFileRange fileRange;
+        private final Map<String,Range> fileRange;
         private long currentFileOffset;
         private String currentContigId;
         private final File asmFile;
         private Long startAFG=null;
         private Long endAFG=null;
         private Long startCurrentContigOffset=null;
-        public IndexedAsmContigDataStoreBuilder(File asmFile,FragmentDataStore frgDataStore, IncludeType includeType, IndexedFileRange fileRange) {
+        public IndexedAsmContigDataStoreBuilder(File asmFile,FragmentDataStore frgDataStore, IncludeType includeType, Map<String,Range> fileRange) {
             this.includeType = includeType;
             this.frgDataStore = frgDataStore;
             this.fileRange = fileRange;

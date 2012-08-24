@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
@@ -34,9 +36,8 @@ import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
+import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.DefaultIndexedFileRange;
-import org.jcvi.common.core.util.IndexedFileRange;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code IndexedContigFileDataStore} is an implementation of 
@@ -52,7 +53,8 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
 public class IndexedContigFileDataStore implements ContigDataStore<AssembledRead, Contig<AssembledRead>>{
 
     private final File file;
-    private final IndexedFileRange mappedRanges;
+    private final Map<String, Range> mappedRanges;
+    private volatile boolean closed;
     /**
      * Construct an new instance of IndexedContigFileDataStore and create
      * the internal index.
@@ -61,20 +63,31 @@ public class IndexedContigFileDataStore implements ContigDataStore<AssembledRead
      */
     public IndexedContigFileDataStore(File file) throws FileNotFoundException{
         this.file = file;
-        this.mappedRanges = new DefaultIndexedFileRange();
+        this.mappedRanges = new LinkedHashMap<String, Range>();
         ContigFileParser.parse(file,
                                         new IndexedContigFileVisitor(mappedRanges));
         
     }
+    
+    private void throwExceptionIfClosed(){
+    	if(closed){
+    		throw new IllegalStateException("datastore is closed");
+    	}
+    }
     @Override
     public boolean contains(String contigId) throws DataStoreException {
-        return mappedRanges.contains(contigId);
+    	throwExceptionIfClosed();
+        return mappedRanges.containsKey(contigId);
     }
 
     @Override
     public Contig<AssembledRead> get(String contigId)
             throws DataStoreException {
-        Range range = mappedRanges.getRangeFor(contigId);
+    	throwExceptionIfClosed();
+        Range range = mappedRanges.get(contigId);
+        if(range==null){
+        	throw new DataStoreException(contigId + " does not exist");
+        }
         InputStream inputStream=null;
         try {
             SingleContigFileVisitor visitor = new SingleContigFileVisitor();
@@ -91,15 +104,17 @@ public class IndexedContigFileDataStore implements ContigDataStore<AssembledRead
 
     @Override
     public void close() throws IOException {
-        mappedRanges.close();        
+        closed=true;       
     }
     
     @Override
     public StreamingIterator<String> idIterator() {
-        return mappedRanges.getIds();
+    	throwExceptionIfClosed();
+        return DataStoreStreamingIterator.create(this,mappedRanges.keySet().iterator());
     }
     @Override
     public long getNumberOfRecords() {
+    	throwExceptionIfClosed();
         return mappedRanges.size();
     }
     
@@ -125,9 +140,9 @@ public class IndexedContigFileDataStore implements ContigDataStore<AssembledRead
         private int sizeOfCurrentContig;
         private int currentStartOffset;
         private int currentLineLength;
-        private final IndexedFileRange mappedRanges;
+        private final Map<String, Range> mappedRanges;
         
-        IndexedContigFileVisitor(IndexedFileRange mappedRanges){
+        IndexedContigFileVisitor(Map<String, Range> mappedRanges){
             resetCurrentContigSize(0);
             this.mappedRanges = mappedRanges;
         }
@@ -142,7 +157,7 @@ public class IndexedContigFileDataStore implements ContigDataStore<AssembledRead
         }
 
         @Override
-        protected void addContig(Contig contig) {
+        protected void addContig(Contig<AssembledRead> contig) {
             int actualLengthOfContig = sizeOfCurrentContig-currentLineLength;
             mappedRanges.put(contig.getId(), Range.createOfLength(currentStartOffset, actualLengthOfContig));
             currentStartOffset+=actualLengthOfContig;
@@ -154,6 +169,7 @@ public class IndexedContigFileDataStore implements ContigDataStore<AssembledRead
 
     @Override
     public StreamingIterator<Contig<AssembledRead>> iterator() {
+    	throwExceptionIfClosed();
         return new DataStoreIterator<Contig<AssembledRead>>(this);
     }
     /**
@@ -161,7 +177,7 @@ public class IndexedContigFileDataStore implements ContigDataStore<AssembledRead
     */
     @Override
     public boolean isClosed() {
-        return mappedRanges.isClosed();
+        return closed;
     }
     
 }

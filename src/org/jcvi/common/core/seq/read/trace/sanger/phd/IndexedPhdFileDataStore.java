@@ -29,19 +29,21 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.DefaultIndexedFileRange;
-import org.jcvi.common.core.util.IndexedFileRange;
+import org.jcvi.common.core.util.MapUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code IndexedPhdFileDataStore} is an implementation of 
@@ -56,8 +58,9 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  */
 public final class IndexedPhdFileDataStore implements PhdDataStore{
-    private final IndexedFileRange recordLocations;   
+    private final Map<String, Range> recordLocations;   
     private final File phdBall;
+    private volatile boolean closed;
     /**
      * Create a new {@link PhdDataStoreBuilder} for the given
      * {@literal phd.ball} file.  The returned builder
@@ -209,13 +212,13 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
         return builder.build();
     }
     
-    private IndexedPhdFileDataStore(File phdBall,IndexedFileRange recordLocations){
+    private IndexedPhdFileDataStore(File phdBall,Map<String,Range> recordLocations){
         this.recordLocations = recordLocations;
         this.phdBall = phdBall;        
     }
     
     private static final class IndexedPhdDataStoreBuilder extends AbstractPhdDataStoreBuilder{
-        private final IndexedFileRange recordLocations;
+        private final Map<String,Range> recordLocations;
         private long currentStartOffset=0;
         private long currentOffset=currentStartOffset;
         private final File phdBall;
@@ -226,27 +229,26 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
         private IndexedPhdDataStoreBuilder(File phdBall) {   
             super();
             this.phdBall = phdBall;
-            this.recordLocations = new DefaultIndexedFileRange();
+            this.recordLocations = new LinkedHashMap<String, Range>();
             
         }
         private IndexedPhdDataStoreBuilder(File phdBall, int initialSizeOfIndex){
             super();
-            if(initialSizeOfIndex<1){
-                throw new IllegalArgumentException("intialSize can not be null");
-            }
+            int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(initialSizeOfIndex);
             this.phdBall = phdBall;
-            this.recordLocations = new DefaultIndexedFileRange(initialSizeOfIndex);
+            this.recordLocations = new LinkedHashMap<String, Range>(capacity);
         }
         private IndexedPhdDataStoreBuilder(File phdBall,DataStoreFilter filter) {
             super(filter);
             this.phdBall = phdBall;
-            this.recordLocations = new DefaultIndexedFileRange();
+            this.recordLocations = new LinkedHashMap<String, Range>();
         }
         
         private IndexedPhdDataStoreBuilder(File phdBall,DataStoreFilter filter, int initialSizeOfIndex){
             super(filter);
             this.phdBall = phdBall;
-            this.recordLocations = new DefaultIndexedFileRange(initialSizeOfIndex);
+            int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(initialSizeOfIndex);
+            this.recordLocations = new LinkedHashMap<String, Range>(capacity);
         }
 
         /**
@@ -293,21 +295,22 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
 
     @Override
     public boolean contains(String id) throws DataStoreException {
-        return recordLocations.contains(id);
+    	throwExceptionIfClosed();
+        return recordLocations.containsKey(id);
     }
 
     @Override
     public Phd get(String id) throws DataStoreException {
-        
+    	throwExceptionIfClosed();
         FileChannel fastaFileChannel=null;
         PhdDataStore dataStore=null;
         InputStream in=null;
         FileInputStream fileInputStream=null;
         try{
-            if(!recordLocations.contains(id)){
-                throw new DataStoreException(id +" does not exist");
+            Range range = recordLocations.get(id);
+            if(range ==null){
+            	 throw new DataStoreException(id +" does not exist");
             }
-            Range range = recordLocations.getRangeFor(id);
             in = IOUtil.createInputStreamFromFile(phdBall, range);  
             
             PhdDataStoreBuilder builder =  DefaultPhdFileDataStore.createBuilder();            
@@ -326,33 +329,41 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
         }
     }
 
+    private void throwExceptionIfClosed(){
+    	if(closed){
+    		throw new IllegalStateException("datastore is closed");
+    	}
+    }
     @Override
     public StreamingIterator<String> idIterator() throws DataStoreException {
-        return recordLocations.getIds();
+    	throwExceptionIfClosed();
+        return DataStoreStreamingIterator.create(this,recordLocations.keySet().iterator());
     }
 
     @Override
     public long getNumberOfRecords() throws DataStoreException {
+    	throwExceptionIfClosed();
         return recordLocations.size();
     }
 
     @Override
     public synchronized void close() throws IOException {        
-        recordLocations.close();        
+        closed=true;      
     }
     /**
     * {@inheritDoc}
     */
     @Override
     public boolean isClosed() {
-        return recordLocations.isClosed();
+        return closed;
     }
     /**
     * {@inheritDoc}
     */
     @Override
     public StreamingIterator<Phd> iterator() {
-        return new IndexedIterator();
+    	throwExceptionIfClosed();
+        return DataStoreStreamingIterator.create(this,new IndexedIterator());
     }
     /**
      * Wrapper around {@link LargePhdIterator} to filter
@@ -374,7 +385,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
                 //need to check if this phd
                 //is in our records (if not, then we skip it)
                 Phd nextCandidate =iterator.next();
-                if(recordLocations.contains(nextCandidate.getId())){
+                if(recordLocations.containsKey(nextCandidate.getId())){
                     newNext=nextCandidate;
                 }
             }

@@ -8,7 +8,6 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.Symbol;
-import org.jcvi.common.core.util.IndexedFileRange;
 /**
  * {@code AbstractIndexedFastaDataStoreBuilderVisitor} is an
  * abstract implementation of {@link FastaFileDataStoreBuilderVisitor}
@@ -16,7 +15,7 @@ import org.jcvi.common.core.util.IndexedFileRange;
  * in the input fasta file.  This allows creation of {@link FastaDataStore}s
  * with many fasta files to have random access to its members without
  * taking up a large memory footprint.  Implementations of this 
- * class only need to implement {@link #createDataStore(IndexedFileRange, File)}
+ * class only need to implement {@link #createDataStore(Map, File)}
  * and add any additional type specific interfaces to its signature.
  * @author dkatzel
  *
