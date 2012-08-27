@@ -59,7 +59,7 @@ final class EncodedQualitySequence implements QualitySequence{
     * {@inheritDoc}
     */
     @Override
-    public PhredQuality get(int index) {
+    public PhredQuality get(long index) {
         return delegate.get(index);
     }
 

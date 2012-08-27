@@ -82,11 +82,11 @@ public enum CompactAminoAcidSequenceCodec implements GlyphCodec<AminoAcid> {
 	}
 
 	@Override
-	public AminoAcid decode(byte[] encodedGlyphs, int index) {
+	public AminoAcid decode(byte[] encodedGlyphs, long index) {
 		byte[] tmp = Arrays.copyOfRange(encodedGlyphs, 4, encodedGlyphs.length);
 		
 		BitSet bits = IOUtil.toBitSet(tmp);
-		int bitOffset = BITS_PER_AA *index;
+		int bitOffset = BITS_PER_AA *(int)index;
 		BitSet subSet = bits.get(bitOffset, bitOffset+BITS_PER_AA);
 		return getAminoAcidFor(subSet);
 	}

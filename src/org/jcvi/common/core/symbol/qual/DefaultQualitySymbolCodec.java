@@ -51,8 +51,8 @@ enum DefaultQualitySymbolCodec implements QualitySymbolCodec{
     }
 
     @Override
-    public PhredQuality decode(byte[] encodedGlyphs, int index) {
-        return PhredQuality.valueOf(encodedGlyphs[index]);
+    public PhredQuality decode(byte[] encodedGlyphs, long index) {
+        return PhredQuality.valueOf(encodedGlyphs[(int)index]);
     }
 
     @Override

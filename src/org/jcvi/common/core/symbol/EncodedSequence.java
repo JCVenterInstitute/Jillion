@@ -114,7 +114,7 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
         return true;
     }
     @Override
-    public T get(int index) {
+    public T get(long index) {
         return codec.decode(data, index);
     }
    
@@ -133,7 +133,7 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
     /**
      * Default iterator iterates
      * over the objects in this sequence using
-     * {@link #get(int)}. This method
+     * {@link #get(long)}. This method
      * should be overridden if a more efficient 
      * iterator could be generated.
      * {@inheritDoc}
@@ -145,7 +145,7 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
     /**
      * Default iterator iterates
      * over the objects in this sequence using
-     * {@link #get(int)}. This method
+     * {@link #get(long)}. This method
      * should be overridden if a more efficient 
      * iterator could be generated.
      * {@inheritDoc}

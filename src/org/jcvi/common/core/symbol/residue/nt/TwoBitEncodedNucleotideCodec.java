@@ -207,7 +207,7 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
         
        
         @Override
-        public Nucleotide decode(byte[] encodedGlyphs, int index){
+        public Nucleotide decode(byte[] encodedGlyphs, long index){
         	if(index <0){
         		throw new IndexOutOfBoundsException(String.format("offset %d can not be negative ", index));
         	}
@@ -217,15 +217,15 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
             if(index >=length){
             	throw new IndexOutOfBoundsException(String.format("offset %d is >= length (%d)", index,length));
             }
-            if(isSentinelOffset(buf,offsetStrategy,index)){
+            if(isSentinelOffset(buf,offsetStrategy,(int)index)){
             	return sententialBase;
             }
             int currentPosition =buf.position();
-            int bytesToSkip = index/4;
+            int bytesToSkip = (int)(index/4);
             buf.position(currentPosition+ bytesToSkip);
             
             BitSet bits =IOUtil.toBitSet(buf.get());
-            int offsetIntoBitSet = index%4;
+            int offsetIntoBitSet = (int)(index%4);
             return getNucletotide(bits, offsetIntoBitSet);
         
         }

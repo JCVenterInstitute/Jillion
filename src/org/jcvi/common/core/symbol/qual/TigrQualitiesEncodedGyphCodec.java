@@ -46,8 +46,8 @@ public final class TigrQualitiesEncodedGyphCodec implements GlyphCodec<PhredQual
     }
 
     @Override
-    public PhredQuality decode(byte[] encodedGlyphs, int index) {
-        return PhredQuality.valueOf(TigrQualitiesEncoder.decode((char)encodedGlyphs[index]));
+    public PhredQuality decode(byte[] encodedGlyphs, long index) {
+        return PhredQuality.valueOf(TigrQualitiesEncoder.decode((char)encodedGlyphs[(int)index]));
     }
 
     @Override

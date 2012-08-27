@@ -64,7 +64,7 @@ public interface GlyphCodec<T extends Symbol> {
      * @throws IndexOutOfBoundsException if index is out of bounds
      * of the index.
      */
-    T decode(byte[] encodedGlyphs, int index);
+    T decode(byte[] encodedGlyphs, long index);
     /**
      * Get the number of glyphs
      * represented by the encoded byte

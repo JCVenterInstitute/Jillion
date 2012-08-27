@@ -49,8 +49,8 @@ enum DefaultPositionCodec implements GlyphCodec<Position>{
     }
 
     @Override
-    public Position decode(byte[] encodedGlyphs, int index) {
-        int indexIntoShortAray = index*2;
+    public Position decode(byte[] encodedGlyphs, long index) {
+        int indexIntoShortAray = (int)(index*2);
         final int hi = encodedGlyphs[indexIntoShortAray]<<8;
         final byte low = encodedGlyphs[indexIntoShortAray+1];
         int value = hi | (low & 0xFF);

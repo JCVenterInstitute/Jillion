@@ -13,7 +13,7 @@ class RunLengthEncodedQualitySequence implements QualitySequence{
 	}
 
 	@Override
-	public PhredQuality get(int index) {
+	public PhredQuality get(long index) {
 		return RunLengthEncodedQualityCodec.INSTANCE.decode(encodedData, index);
 	}
 

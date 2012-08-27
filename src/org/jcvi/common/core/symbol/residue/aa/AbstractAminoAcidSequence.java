@@ -22,7 +22,7 @@ public abstract class AbstractAminoAcidSequence extends AbstractResidueSequence<
 	
 
 	@Override
-	public AminoAcid get(int index) {
+	public AminoAcid get(long index) {
 		return encodedAminoAcids.get(index);
 	}
 

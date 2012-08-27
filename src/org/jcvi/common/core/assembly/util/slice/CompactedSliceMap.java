@@ -71,7 +71,7 @@ public final class CompactedSliceMap implements SliceMap {
                 * {@inheritDoc}
                 */
                 @Override
-                public PhredQuality get(int index) {
+                public PhredQuality get(long index) {
                     return defaultQuality;
                 }
 

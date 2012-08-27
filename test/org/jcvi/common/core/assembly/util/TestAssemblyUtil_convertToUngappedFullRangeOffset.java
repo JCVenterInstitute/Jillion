@@ -168,7 +168,7 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
 
 
 		@Override
-		public Nucleotide get(int index) {
+		public Nucleotide get(long index) {
 			return delegate.get(index);
 		}
 
