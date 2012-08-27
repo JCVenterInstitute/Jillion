@@ -48,7 +48,6 @@ import java.sql.Statement;
 import java.util.BitSet;
 import java.util.Scanner;
 
-import org.jcvi.common.core.Range;
 /**
  * {@code IOUtil} is a collection of static utility
  * methods that make working
@@ -555,13 +554,13 @@ public final class IOUtil {
         return paddingString.toString();
     }
     
-    public static InputStream createInputStreamFromFile(File file,Range range)throws IOException {
+    public static InputStream createInputStreamFromFile(File file,int startOffset, int length)throws IOException {
         final FileInputStream fileInputStream = new FileInputStream(file);
         FileChannel fastaFileChannel=null;
        try{
             fastaFileChannel =fileInputStream.getChannel();
-            ByteBuffer buf= ByteBuffer.allocate((int)range.getLength());
-            fastaFileChannel.position((int)range.getBegin());
+            ByteBuffer buf= ByteBuffer.allocate(length);
+            fastaFileChannel.position(startOffset);
             int bytesRead =fastaFileChannel.read(buf);
             if(bytesRead <0){
                 throw new IOException("could not read any bytes from file");

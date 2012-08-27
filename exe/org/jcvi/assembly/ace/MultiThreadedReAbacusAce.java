@@ -242,7 +242,7 @@ public class MultiThreadedReAbacusAce {
         @Override
         public Void call() throws Exception {
             OutputStream out = new FileOutputStream(outFile);
-            InputStream inputStream = IOUtil.createInputStreamFromFile(inputAceFile,range);
+            InputStream inputStream = IOUtil.createInputStreamFromFile(inputAceFile,(int)range.getBegin(), (int)range.getLength());
             IOUtil.copy(inputStream, out);
             IOUtil.closeAndIgnoreErrors(inputStream,out);
             return null;
