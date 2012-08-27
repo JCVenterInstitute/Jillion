@@ -91,7 +91,7 @@ public class IndexedContigFileDataStore implements ContigDataStore<AssembledRead
         InputStream inputStream=null;
         try {
             SingleContigFileVisitor visitor = new SingleContigFileVisitor();
-            inputStream = IOUtil.createInputStreamFromFile(file,range);
+            inputStream = IOUtil.createInputStreamFromFile(file,(int)range.getBegin(), (int)range.getLength());
             ContigFileParser.parse(inputStream,visitor);
             return visitor.getContigToReturn();
         } catch (Exception e) {

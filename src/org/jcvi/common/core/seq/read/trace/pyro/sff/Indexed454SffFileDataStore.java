@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
@@ -224,10 +223,10 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 
 		private void tryToParseManifest(SffCommonHeader commonHeader,
 				BigInteger offsetToIndex) {
-			long indexLength =commonHeader.getIndexLength();
+			int indexLength =(int)commonHeader.getIndexLength();
 			InputStream in=null;
 			try {
-				in = IOUtil.createInputStreamFromFile(sffFile, Range.createOfLength(offsetToIndex.longValue(),indexLength));
+				in = IOUtil.createInputStreamFromFile(sffFile, offsetToIndex.intValue(),indexLength);
 				
 			    //pseudocode:
 				//skip xml manifest if present

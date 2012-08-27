@@ -94,7 +94,8 @@ public final class IndexedNucleotideFastaFileDataStore implements NucleotideSequ
 		}
 		InputStream in = null;
 		try{
-			in = IOUtil.createInputStreamFromFile(fastaFile, index.get(id));
+			Range range = index.get(id);
+			in = IOUtil.createInputStreamFromFile(fastaFile, (int)range.getBegin(), (int)range.getLength());
 			NucleotideSequenceFastaDataStore datastore = DefaultNucleotideSequenceFastaFileDataStore.create(in);
 			return datastore.get(id);
 		} catch (IOException e) {

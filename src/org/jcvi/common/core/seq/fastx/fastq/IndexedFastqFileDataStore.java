@@ -195,7 +195,7 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
         }
         InputStream in =null;
         try {
-            in = IOUtil.createInputStreamFromFile(file,range);
+            in = IOUtil.createInputStreamFromFile(file,(int)range.getBegin(), (int)range.getLength());
             FastqDataStore datastore = DefaultFastqFileDataStore.create(in, qualityCodec);
             return datastore.get(id);
         } catch (IOException e) {

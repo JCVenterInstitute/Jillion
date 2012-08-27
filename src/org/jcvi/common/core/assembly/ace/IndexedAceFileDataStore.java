@@ -155,7 +155,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         InputStream inputStream=null;
         try {
         	IndexedAceFileContig.IndexedContigVisitorBuilder visitorBuilder = new IndexedAceFileContig.IndexedContigVisitorBuilder(range.getBegin(), file);
-            inputStream = IOUtil.createInputStreamFromFile(file,range);
+            inputStream = IOUtil.createInputStreamFromFile(file,(int)range.getBegin(), (int)range.getLength());
             AceFileParser.parse(inputStream, visitorBuilder);
             return visitorBuilder.build();
         } catch (Exception e) {

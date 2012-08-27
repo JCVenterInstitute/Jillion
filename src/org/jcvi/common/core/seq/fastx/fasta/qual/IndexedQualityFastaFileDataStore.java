@@ -91,7 +91,8 @@ public final class IndexedQualityFastaFileDataStore implements QualitySequenceFa
 		}
 		InputStream in = null;
 		try{
-			in = IOUtil.createInputStreamFromFile(fastaFile, index.get(id));
+			Range range = index.get(id);
+			in = IOUtil.createInputStreamFromFile(fastaFile, (int)range.getBegin(), (int)range.getLength());
 			QualitySequenceFastaDataStore datastore = DefaultQualityFastaFileDataStore.create(in);
 			return datastore.get(id);
 		} catch (IOException e) {

@@ -311,7 +311,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
             if(range ==null){
             	 throw new DataStoreException(id +" does not exist");
             }
-            in = IOUtil.createInputStreamFromFile(phdBall, range);  
+            in = IOUtil.createInputStreamFromFile(phdBall, (int)range.getBegin(), (int)range.getLength());  
             
             PhdDataStoreBuilder builder =  DefaultPhdFileDataStore.createBuilder();            
             PhdParser.parsePhd(in, builder);

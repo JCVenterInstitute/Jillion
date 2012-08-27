@@ -171,8 +171,8 @@ public final class IndexedAsmContigDataStore implements AsmContigDataStore{
             //   and store only the ones we need for this contig.
             //3. Second Pass - reparse the contig and consult 
             //   frg datastore and clear ranges to actually build contig
-            InputStream afgStream = IOUtil.createInputStreamFromFile(asmFile,afgRange);        
-            InputStream firstPassContigStream = IOUtil.createInputStreamFromFile(asmFile,contigRange);
+            InputStream afgStream = IOUtil.createInputStreamFromFile(asmFile, (int)afgRange.getBegin(), (int)afgRange.getLength());        
+            InputStream firstPassContigStream = IOUtil.createInputStreamFromFile(asmFile,(int)contigRange.getBegin(), (int)contigRange.getLength());
             
             ReadMapVisitor readMapVisitor = new ReadMapVisitor(contigId);
             AsmParser.parseAsm(firstPassContigStream, readMapVisitor);
@@ -182,7 +182,7 @@ public final class IndexedAsmContigDataStore implements AsmContigDataStore{
             Map<String,Range> readMap =readMapVisitor.getReadMap();
             SingleContigVisitor contigVisitor = new SingleContigVisitor(contigId, readMap, frgDataStore);
             AsmParser.parseAsm(afgStream, contigVisitor);
-            InputStream secondPassContigStream =IOUtil.createInputStreamFromFile(asmFile,contigRange);
+            InputStream secondPassContigStream =IOUtil.createInputStreamFromFile(asmFile,(int)contigRange.getBegin(), (int)contigRange.getLength());
             AsmParser.parseAsm(secondPassContigStream, contigVisitor);
             return contigVisitor.getContig();
         }catch(IOException e){

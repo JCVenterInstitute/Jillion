@@ -292,7 +292,8 @@ public final class IndexedSffFileDataStore{
 			SffFileVisitorDataStoreBuilder builder = DefaultSffFileDataStore.createVisitorBuilder();
 			builder.visitFile();
 			try {
-				InputStream in = IOUtil.createInputStreamFromFile(sffFile, fileRanges.get(id));
+				Range range = fileRanges.get(id);
+				InputStream in = IOUtil.createInputStreamFromFile(sffFile, (int)range.getBegin(), (int)range.getLength());
 				 DataInputStream dataIn = new DataInputStream(in);
 				 SffReadHeader readHeader = READ_HEADER_CODEC.decodeReadHeader(dataIn);
 				 final int numberOfBases = readHeader.getNumberOfBases();

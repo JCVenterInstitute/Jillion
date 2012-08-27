@@ -158,7 +158,7 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
         Range range =fragmentInfoIndexFileRange.get(id);
         InputStream in;
         try {
-            in = IOUtil.createInputStreamFromFile(fragFile, range);
+            in = IOUtil.createInputStreamFromFile(fragFile, (int)range.getBegin(), (int)range.getLength());
            
             final SingleFragVisitor singleFragVisitor = new SingleFragVisitor();
             parser.parse(in, singleFragVisitor);
@@ -222,7 +222,7 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
     }
     private String getMateIdOf(final String fragId) throws IOException {
         Range range = mateInfoIndexFileRange.get(fragId);
-        InputStream in = IOUtil.createInputStreamFromFile(fragFile, range);
+        InputStream in = IOUtil.createInputStreamFromFile(fragFile, (int)range.getBegin(), (int)range.getLength());
         SingleLinkVisitor singleLinkVisitor = new SingleLinkVisitor(fragId);
         parser.parse(in, singleLinkVisitor);
         return singleLinkVisitor.getMateId();
