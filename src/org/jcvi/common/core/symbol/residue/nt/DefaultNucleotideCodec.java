@@ -132,7 +132,7 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
         return result;
     }
     @Override
-    public Nucleotide decode(byte[] encodedGlyphs, int index){
+    public Nucleotide decode(byte[] encodedGlyphs, long index){
         final byte getByteForGlyph = getEncodedByteForGlyph(encodedGlyphs,index);
         return decode(getByteForGlyph, isEven(index));
     }
@@ -143,18 +143,18 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
         }
         return ORDINAL_VALUES[next2[1]];
     }
-    private byte getEncodedByteForGlyph(byte[] encodedGlyphs, int index) {
+    private byte getEncodedByteForGlyph(byte[] encodedGlyphs, long index) {
         final int encodedIndex = computeEncodedIndexForGlyph(index);
         if(encodedIndex >= encodedGlyphs.length){
             throw new ArrayIndexOutOfBoundsException("index "+index + " corresponds to encodedIndex "+encodedIndex + "  encodedglyph length is "+encodedGlyphs.length);
         }
         return  encodedGlyphs[encodedIndex];
     }
-    private int computeEncodedIndexForGlyph(int index) {
+    private int computeEncodedIndexForGlyph(long index) {
         if(index<0){
             throw new ArrayIndexOutOfBoundsException("index can not be negative: "+index);
         }
-        return HEADER_LENGTH+index/2;
+        return (int)(HEADER_LENGTH+index/2);
     }
     @Override
     public byte[] encode(int numberOfNucleotides,Iterator<Nucleotide> nucleotides) {        
@@ -228,7 +228,7 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
     private int computeEncodedSize(final int size) {
         return HEADER_LENGTH + size/2 + (isEven(size)?0:1);
     }
-    private boolean isEven(final int size) {
+    private boolean isEven(final long size) {
         return size%2==0;
     }
     private void encodeLastValue(Nucleotide glyph, ByteBuffer result) {

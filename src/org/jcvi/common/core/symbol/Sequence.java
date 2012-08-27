@@ -45,7 +45,7 @@ public interface Sequence<T extends Symbol> extends Iterable<T>{
      * @return the {@link Symbol} at the specified index;
      * will never be null.
      */
-    T get(int index);
+    T get(long index);
     /**
      * Get the number of {@link Symbol}s that are in
      * this sequence.

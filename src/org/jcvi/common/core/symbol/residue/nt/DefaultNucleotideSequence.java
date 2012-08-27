@@ -77,7 +77,7 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
     }
 
     @Override
-    public Nucleotide get(int index) {     
+    public Nucleotide get(long index) {     
     	return codec.decode(data, index);
     }
 

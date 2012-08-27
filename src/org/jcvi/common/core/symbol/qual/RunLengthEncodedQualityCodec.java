@@ -78,7 +78,7 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
         return new RunLengthIterator(buf, guard, r.getEnd()+1, r.getBegin());
   }
     
-    private PhredQuality get(ByteBuffer buf, byte guard,  int index){
+    private PhredQuality get(ByteBuffer buf, byte guard,  long index){
     	int currentOffset=0;
 		while(buf.hasRemaining()){
             byte runLengthCode = buf.get(); 
@@ -143,7 +143,7 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
     }
 
     @Override
-    public PhredQuality decode(byte[] encodedGlyphs, int index) {
+    public PhredQuality decode(byte[] encodedGlyphs, long index) {
     	 if(index <0){
          	throw new IllegalArgumentException("can not have negative length");
          }

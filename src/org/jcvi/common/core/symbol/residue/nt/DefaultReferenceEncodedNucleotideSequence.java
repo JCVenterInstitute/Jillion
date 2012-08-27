@@ -275,7 +275,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 		return array;
 	}
     @Override
-    public Nucleotide get(int index) {
+    public Nucleotide get(long index) {
         if(index <0 || index >= length){
             throw new IndexOutOfBoundsException("invalid offset " +index);
         }
@@ -297,7 +297,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 	            }
 	        }
         }
-        int referenceIndex = index+startOffset;
+        long referenceIndex = index+startOffset;
         return reference.get(referenceIndex);
     }
 
