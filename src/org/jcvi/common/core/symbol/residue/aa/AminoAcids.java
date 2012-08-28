@@ -25,7 +25,10 @@ public final class AminoAcids {
 	public static List<AminoAcid> parse(String aminoAcids){
 		List<AminoAcid> result = new ArrayList<AminoAcid>(aminoAcids.length());
         for(int i=0; i<aminoAcids.length(); i++){
-            result.add(AminoAcid.parse(aminoAcids.charAt(i)));
+            char charAt = aminoAcids.charAt(i);
+            if(!Character.isWhitespace(charAt)){
+            	result.add(AminoAcid.parse(charAt));
+            }
         }
         return result;
 	}

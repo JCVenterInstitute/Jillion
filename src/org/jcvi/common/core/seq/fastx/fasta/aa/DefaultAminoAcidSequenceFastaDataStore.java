@@ -14,6 +14,7 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
+import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public final class DefaultAminoAcidSequenceFastaDataStore implements AminoAcidSequenceFastaDataStore{
@@ -88,7 +89,8 @@ public final class DefaultAminoAcidSequenceFastaDataStore implements AminoAcidSe
 
 		@Override
 		public boolean visitRecord(String id, String comment, String entireBody) {
-			addFastaRecord(new DefaultAminoAcidSequenceFastaRecord(id, comment, entireBody.replaceAll("\\s+", "")));
+			//addFastaRecord(new DefaultAminoAcidSequenceFastaRecord(id, comment, entireBody.replaceAll("\\s+", "")));
+			addFastaRecord(AminoAcidSequenceFastaRecordFactory.create(id, new AminoAcidSequenceBuilder(entireBody).build(), comment));
 			return true;
 		}
 
