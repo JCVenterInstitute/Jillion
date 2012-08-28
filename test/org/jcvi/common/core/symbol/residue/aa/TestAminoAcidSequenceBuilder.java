@@ -152,4 +152,12 @@ public class TestAminoAcidSequenceBuilder {
 		assertEquals("IKFTWTW", AminoAcids.asString(builder2.build()));
 		assertEquals("IKFTW", AminoAcids.asString(builder1.build()));
 	}
+	
+	@Test
+	public void parsingStringShouldRemoveWhitespace(){
+		AminoAcidSequence seq = new AminoAcidSequenceBuilder("IKF TW\nMKAIL")
+								.append("SED DEH\n")
+								.build();
+		assertEquals("IKFTWMKAILSEDDEH", AminoAcids.asString(seq));
+	}
 }
