@@ -8,7 +8,11 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
     	TestUnCommentedAminoAcidSequenceFastaRecord.class,
-    	TestCommentedAminoAcidSequenceFastaRecord.class
+    	TestCommentedAminoAcidSequenceFastaRecord.class,
+    	
+    	TestDefaultAminoAcidSequenceFastaDataStore.class,
+    	TestLargeAminoAcidSequenceFastaFileDataStore.class,
+    	TestIndexedAminoAcidSequenceFastaFileDataStore.class
     }
     )
 public class AllAminoAcidSequenceFastaRecordUnitTests {
