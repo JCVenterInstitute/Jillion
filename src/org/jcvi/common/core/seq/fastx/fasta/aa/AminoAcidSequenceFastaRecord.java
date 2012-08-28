@@ -5,11 +5,11 @@ import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 
 /**
- * {@code PeptideSequenceFastaRecord} is an interface for {@link FastaRecord} objects
- * using the AminoAcid encoded glyphs.
+ * {@code AminoAcidSequenceFastaRecord} is an interface for {@link FastaRecord} objects
+ * using the {@link AminoAcidSequence}.
 
  * @author naxelrod
- *
+ * @author dkatzel
  */
 public interface AminoAcidSequenceFastaRecord extends FastaRecord<AminoAcid,AminoAcidSequence> {
 
