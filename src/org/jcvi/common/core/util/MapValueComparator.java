@@ -55,7 +55,7 @@ public final class MapValueComparator<K extends Comparable<? super K>,V> impleme
         return Collections.unmodifiableSortedMap(sorted);
     }
     /**
-     * Create an unmodifiable {@link SortedMap} that is sorted by value in ascending 
+     * Create an unmodifiable {@link SortedMap} that is sorted by value in descending 
      * order.  If there are duplicate values, then their sort order will be determined
      * by comparing the keys to each other also in ascending order.
      * @param <K> The Comparable type of Key contained in the map.
@@ -65,7 +65,7 @@ public final class MapValueComparator<K extends Comparable<? super K>,V> impleme
      * @return a sorted map sorted by the values in ascending order; never null.
      */
     public static <K extends Comparable<? super K>,V> SortedMap<K,V> sortDescending(Map<K, V> unsorted, Comparator<V> comparator){
-        TreeMap<K,V> sorted= new TreeMap<K,V>(MapValueComparator.create(unsorted,comparator,true));
+        TreeMap<K,V> sorted= new TreeMap<K,V>(MapValueComparator.create(unsorted,comparator,false));
         sorted.putAll(unsorted);
         return Collections.unmodifiableSortedMap(sorted);
     }
