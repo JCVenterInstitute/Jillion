@@ -20,6 +20,7 @@
 package org.jcvi.common.core.util;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -35,20 +36,57 @@ import static org.junit.Assert.*;
  */
 public class TestMapValueComparator {
 
+	private final Comparator<Integer> comparator = new Comparator<Integer>() {
+
+		@Override
+		public int compare(Integer o1, Integer o2) {
+			return o1.intValue() - o2.intValue();
+		}
+     				
+     };
+    Map<String, Integer> weights = new HashMap<String, Integer>();
+ 
+    
+    public TestMapValueComparator(){
+    	   weights.put("Moe", 123);
+    	    weights.put("Curly",300);
+    	    weights.put("Larry",150);
+    }
     @Test
-    public void sortByValues(){
-        Map<String, Integer> weights = new HashMap<String, Integer>();
-        weights.put("Moe", 123);
-        weights.put("Curly",300);
-        weights.put("Larry",150);
+    public void sortByValuesAscending(){
         
         assertAscending(weights,"Moe","Larry","Curly");
-        assertDescending(weights,"Curly","Larry","Moe");
         
     }
-    private void assertAscending(Map<String, Integer> unsorted, String...expectedOrder){
+    @Test
+    public void sortByValuesDescending(){
+        assertDescending(weights,"Curly","Larry","Moe");        
+    }
+    @Test
+    public void sortByValuesDescendingUsingCustomComparator(){
+        assertDescendingUsingCustomComparator(weights,"Curly","Larry","Moe");        
+    }
+    @Test
+    public void sortByValuesAscendingUsingCustomComparator(){
+        
+        assertAscendingUsingCustomComparator(weights,"Moe","Larry","Curly");
+        
+    }
+    private void assertDescendingUsingCustomComparator(
+			Map<String, Integer> unsorted, String ...expectedOrder) {
+    	 Set<String> expected = createExpectedOrder(expectedOrder);
+         Map<String, Integer> sorted = MapValueComparator.sortDescending(unsorted, comparator);
+         assertEquals("descending",expected, sorted.keySet());
+		
+	}
+	private void assertAscending(Map<String, Integer> unsorted, String...expectedOrder){
         Set<String> expected = createExpectedOrder(expectedOrder);
         Map<String, Integer> sorted = MapValueComparator.sortAscending(unsorted);
+        assertEquals("ascending",expected, sorted.keySet());
+    }
+	private void assertAscendingUsingCustomComparator(Map<String, Integer> unsorted, String...expectedOrder){
+        Set<String> expected = createExpectedOrder(expectedOrder);
+        Map<String, Integer> sorted = MapValueComparator.sortAscending(unsorted,comparator);
         assertEquals("ascending",expected, sorted.keySet());
     }
     private void assertDescending(Map<String, Integer> unsorted, String...expectedOrder){
