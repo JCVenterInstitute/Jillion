@@ -1,27 +1,4 @@
-/*******************************************************************************
- * Copyright 2010 J. Craig Venter Institute
- * 
- * 	This file is part of JCVI Java Common
- * 
- *     JCVI Java Common is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- * 
- *     JCVI Java Common is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- * 
- *     You should have received a copy of the GNU General Public License
- *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
- ******************************************************************************/
-/*
- * Created on Jan 11, 2010
- *
- * @author dkatzel
- */
-package org.jcvi.common.core.seq.fastx.fasta.nt;
+package org.jcvi.common.core.seq.fastx.fasta.aa;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -40,9 +17,10 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
 import org.jcvi.common.core.seq.fastx.fasta.LargeFastaIdIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
+
 /**
- * {@code LargeNucleotideSequenceFastaFileDataStore} is an implementation
- * of {@link NucleotideSequenceFastaDataStore} which does not
+ * {@code LargeAminoAcidSequenceFastaFileDataStore} is an implementation
+ * of {@link AminoAcidSequenceFastaDataStore} which does not
  * store any Fasta record data 
  * in memory except it's size (which is lazy loaded).
  * This means that each get() or contain() requires re-parsing the fasta file
@@ -50,7 +28,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * in {@link CachedDataStore}.
  * @author dkatzel
  */
-public final class LargeNucleotideSequenceFastaFileDataStore implements NucleotideSequenceFastaDataStore{
+public final class LargeAminoAcidSequenceFastaFileDataStore implements AminoAcidSequenceFastaDataStore{
 	
 	
 	private static final Pattern NEXT_ID_PATTERN = Pattern.compile("^>(\\S+)");
@@ -59,22 +37,21 @@ public final class LargeNucleotideSequenceFastaFileDataStore implements Nucleoti
     private Long size;
     private volatile boolean closed=false;
     /**
-     * Construct a {@link LargeNucleotideSequenceFastaFileDataStore}
+     * Construct a {@link LargeAminoAcidSequenceFastaFileDataStore}
      * for the given Fasta file.
      * @param fastaFile the Fasta File to use, can not be null.
-     * @param fastaRecordFactory the NucleotideFastaRecordFactory implementation to use.
      * @throws NullPointerException if fastaFile is null.
      */
-	public static NucleotideSequenceFastaDataStore create(File fastaFile){
-		return new LargeNucleotideSequenceFastaFileDataStore(fastaFile);
+	public static AminoAcidSequenceFastaDataStore create(File fastaFile){
+		return new LargeAminoAcidSequenceFastaFileDataStore(fastaFile);
 	}
    
     /**
-     * Construct a {@link LargeNucleotideSequenceFastaFileDataStore}
+     * Construct a {@link LargeAminoAcidSequenceFastaFileDataStore}
      * @param fastaFile the Fasta File to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-    private LargeNucleotideSequenceFastaFileDataStore(File fastaFile) {
+    private LargeAminoAcidSequenceFastaFileDataStore(File fastaFile) {
         if(fastaFile ==null){
             throw new NullPointerException("fasta file can not be null");
         }
@@ -112,11 +89,11 @@ public final class LargeNucleotideSequenceFastaFileDataStore implements Nucleoti
     }
 
     @Override
-    public NucleotideSequenceFastaRecord get(String id)
+    public AminoAcidSequenceFastaRecord get(String id)
             throws DataStoreException {
         checkNotYetClosed();
         InputStream in=null;
-        NucleotideSequenceFastaDataStore datastore=null;
+        AminoAcidSequenceFastaDataStore datastore=null;
         try {
             in = getRecordFor(id);
         
@@ -124,7 +101,7 @@ public final class LargeNucleotideSequenceFastaFileDataStore implements Nucleoti
                 return null;
             }
       
-            NucleotideFastaDataStoreBuilderVisitor builder= DefaultNucleotideSequenceFastaFileDataStore.createBuilder();
+            AminoAcidSequenceFastaDataStoreBuilderVisitor builder= DefaultAminoAcidSequenceFastaDataStore.createBuilder();
             FastaFileParser.parse(in, builder);
             datastore = builder.build();
             return datastore.get(id);
@@ -168,9 +145,9 @@ public final class LargeNucleotideSequenceFastaFileDataStore implements Nucleoti
     }
 
     @Override
-    public StreamingIterator<NucleotideSequenceFastaRecord> iterator() {
+    public StreamingIterator<AminoAcidSequenceFastaRecord> iterator() {
         checkNotYetClosed();
-        return DataStoreStreamingIterator.create(this,LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile));
+        return DataStoreStreamingIterator.create(this,LargeAminoAcidSequenceFastaIterator.createNewIteratorFor(fastaFile));
        
     }
     /**
@@ -229,3 +206,4 @@ public final class LargeNucleotideSequenceFastaFileDataStore implements Nucleoti
 
    
 }
+
