@@ -108,4 +108,24 @@ public interface FastqRecord extends Trace{
      * @throws NullPointerException if qualityCodec is null.
      */
     String toFormattedString(FastqQualityCodec qualityCodec, boolean writeIdOnQualityLine);
+    /**
+     * The HashCode of a {@link FastqRecord} is computed using
+     * the id, {@link NucleotideSequence} and {@link QualitySequence}
+     * values.
+     * @return an int.
+     */
+    @Override
+    int hashCode();
+    /**
+     * Two {@link FastqRecord}s are equal
+     * if and only if they have equal
+     * ids, {@link NucleotideSequence}s
+     * and {@link QualitySequence}s.
+     * Any comments returned by {@link #getComment()}
+     * are ignored for equality testing.
+     * @param obj
+     * @return
+     */
+    @Override
+    boolean equals(Object obj);
 }

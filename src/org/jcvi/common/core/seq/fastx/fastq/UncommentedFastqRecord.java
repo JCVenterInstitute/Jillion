@@ -84,8 +84,6 @@ class UncommentedFastqRecord implements FastqRecord{
 	        int result = 1;	        
 	        result = prime * result + id.hashCode();
 	        result = prime * result
-	                + getComment()==null? 0: getComment().hashCode();
-	        result = prime * result
 	                + nucleotides.hashCode();
 	        result = prime * result
 	                + qualities.hashCode();
@@ -102,14 +100,7 @@ class UncommentedFastqRecord implements FastqRecord{
 	        if (!(obj instanceof FastqRecord)) {
 	            return false;
 	        }
-	        FastqRecord other = (FastqRecord) obj;
-	        if (getComment() == null) {
-	            if (other.getComment() != null) {
-	                return false;
-	            }
-	        } else if (!getComment().equals(other.getComment())) {
-	            return false;
-	        }
+	        FastqRecord other = (FastqRecord) obj;	       
 	        if (!id.equals(other.getId())) {
 	            return false;
 	        }

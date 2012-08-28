@@ -50,7 +50,19 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
      * Our data.
      */
     private final byte[] data;
-    
+    /**
+     * Our HashCode value,
+     * This value is lazy loaded
+     * so we only have 
+     * to compute the hashcode value
+     * once.
+     * 
+     * We can afford to store it because
+     * the Java memory model will padd out
+     * the bytes anyway so we don't
+     * take up any extra memory.
+     */
+    private int hash;
 
     
    
@@ -91,12 +103,18 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
     }
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime
-                * result
-                + toString().hashCode();
-        return result;
+		long length = getLength();
+		if(hash==0 && length >0){
+	        final int prime = 31;
+	        int result = 1;
+	        Iterator<Nucleotide> iter = iterator();
+	        while(iter.hasNext()){
+	        	result = prime * result + iter.next().hashCode();
+	        }
+	        hash= result;
+		}
+	    return hash;
+        
     }
     @Override
     public boolean equals(Object obj) {
