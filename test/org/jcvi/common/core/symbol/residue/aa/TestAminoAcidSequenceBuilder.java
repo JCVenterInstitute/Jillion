@@ -133,4 +133,23 @@ public class TestAminoAcidSequenceBuilder {
 		assertEquals("on gap", 2, sut.getUngappedOffsetFor(3));
 		assertEquals("after gap", 4, sut.getUngappedOffsetFor(5));
 	}
+	
+	@Test
+	public void ModificationsToOriginalDoNotAffectCopy(){
+		AminoAcidSequenceBuilder builder1 =new AminoAcidSequenceBuilder("IKFTW");
+		AminoAcidSequenceBuilder builder2 = builder1.copy();
+		
+		builder1.append("TW");
+		assertEquals("IKFTWTW", AminoAcids.asString(builder1.build()));
+		assertEquals("IKFTW", AminoAcids.asString(builder2.build()));
+	}
+	@Test
+	public void ModificationsToCopyDoNotAffectOriginal(){
+		AminoAcidSequenceBuilder builder1 =new AminoAcidSequenceBuilder("IKFTW");
+		AminoAcidSequenceBuilder builder2 = builder1.copy();
+		
+		builder2.append("TW");
+		assertEquals("IKFTWTW", AminoAcids.asString(builder2.build()));
+		assertEquals("IKFTW", AminoAcids.asString(builder1.build()));
+	}
 }
