@@ -24,6 +24,13 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 		builder = new GrowableByteArray(sequence.length());
 		append(AminoAcids.parse(sequence.toString()));
 	}
+	public AminoAcidSequenceBuilder(AminoAcidSequence sequence){
+		builder = new GrowableByteArray((int)sequence.getLength());
+		append(sequence);
+	}
+	private AminoAcidSequenceBuilder(AminoAcidSequenceBuilder copy){
+		builder = copy.builder.copy();
+	}
 	@Override
 	public AminoAcidSequenceBuilder append(
 			AminoAcid residue) {
@@ -36,7 +43,7 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 
 	
 	@Override
-	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> append(
+	public AminoAcidSequenceBuilder append(
 			Iterable<AminoAcid> sequence) {
 		for(AminoAcid aa : sequence){
 			append(aa);
@@ -52,13 +59,13 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 	}
 
 	@Override
-	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> append(
+	public AminoAcidSequenceBuilder append(
 			String sequence) {
 		return append(AminoAcids.parse(sequence));
 	}
 
 	@Override
-	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> insert(
+	public AminoAcidSequenceBuilder insert(
 			int offset, String sequence) {
 		List<AminoAcid> list = AminoAcids.parse(sequence);
 		byte[] array = new byte[list.size()];
@@ -83,7 +90,7 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 	}
 	
 	@Override
-	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> replace(
+	public AminoAcidSequenceBuilder replace(
 			int offset, AminoAcid replacement) {
 		if(AMINO_ACID_VALUES[builder.get(offset)] == AminoAcid.Gap){
 			numberOfGaps--;			
@@ -96,7 +103,7 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 	}
 
 	@Override
-	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> delete(
+	public AminoAcidSequenceBuilder delete(
 			Range range) {
 		for(AminoAcid aa : asList(range)){
 			if(aa == AminoAcid.Gap){
@@ -113,13 +120,13 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 	}
 
 	@Override
-	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> prepend(
+	public AminoAcidSequenceBuilder prepend(
 			String sequence) {			
 		return insert(0, sequence);
 	}
 
 	@Override
-	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> insert(
+	public AminoAcidSequenceBuilder insert(
 			int offset, Iterable<AminoAcid> sequence) {
 		GrowableByteArray temp = new GrowableByteArray(DEFAULT_CAPACITY);
 		for(AminoAcid aa :sequence){
@@ -133,14 +140,14 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 	}
 
 	@Override
-	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> insert(
+	public AminoAcidSequenceBuilder insert(
 			int offset,
 			ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> otherBuilder) {
 		return insert(offset,otherBuilder.toString());
 	}
 
 	@Override
-	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> insert(
+	public AminoAcidSequenceBuilder insert(
 			int offset, AminoAcid base) {
 		if(base == AminoAcid.Gap){
 			numberOfGaps++;
@@ -150,13 +157,13 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 	}
 
 	@Override
-	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> prepend(
+	public AminoAcidSequenceBuilder prepend(
 			Iterable<AminoAcid> sequence) {
 		return insert(0, sequence);
 	}
 
 	@Override
-	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> prepend(
+	public AminoAcidSequenceBuilder prepend(
 			ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> otherBuilder) {
 		return prepend(otherBuilder.toString());
 	}
@@ -216,7 +223,7 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 
 
 	@Override
-	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> trim(Range range) {
+	public AminoAcidSequenceBuilder trim(Range range) {
 		byte[] temp = trimBytes(range);
 		AminoAcidSequence seq =build(temp);
 		this.builder = new GrowableByteArray(temp);
@@ -225,23 +232,19 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 	}
 
 	@Override
-	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> copy() {
-		return new AminoAcidSequenceBuilder(builder.toString());
+	public AminoAcidSequenceBuilder copy() {
+		return new AminoAcidSequenceBuilder(this);
 		
 	}
 
-	public List<AminoAcid> asList() {
-		return AminoAcids.parse(builder.toString());
-	}
-
 	@Override
-	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> reverse() {
+	public AminoAcidSequenceBuilder reverse() {
 		builder.reverse();
 		return this;
 	}
 
 	@Override
-	public ResidueSequenceBuilder<AminoAcid, AminoAcidSequence> ungap() {
+	public AminoAcidSequenceBuilder ungap() {
 
 		AminoAcidSequence list = build(builder.toArray());
 		if(list.getNumberOfGaps() !=0){
