@@ -1,9 +1,5 @@
 package org.jcvi.common.core.symbol.residue;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jcvi.common.core.Range;
 /**
  * {@code AbstractResidueSequence} is an abstract implementation of 
  * {@link ResidueSequence} that implements some of the common methods
