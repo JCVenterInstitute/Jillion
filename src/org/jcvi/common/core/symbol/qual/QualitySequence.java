@@ -20,6 +20,8 @@
 package org.jcvi.common.core.symbol.qual;
 
 import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 /**
  * {@code QualitySequence} is a marker interface
@@ -31,4 +33,19 @@ import org.jcvi.common.core.symbol.Sequence;
  */
 public interface QualitySequence extends Sequence<PhredQuality>{
 
+	/**
+     * Two {@link NucleotideSequence}s are equal
+     * if they contain the same {@link Nucleotide}s 
+     * in the same order.
+     * <p/>
+     * {@inheritDoc}
+     */
+    @Override
+    boolean equals(Object o);
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    int hashCode();
 }

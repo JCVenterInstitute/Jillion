@@ -86,8 +86,10 @@ public interface ResidueSequence<R extends Residue> extends Sequence<R> {
     @Override
     boolean equals(Object o);
     /**
-     * 
-     * {@inheritDoc}
+     * The HashCode of a {@link ResidueSequence}
+     * is computed by summing the hashcodes
+     * of the residues of this sequence
+     * in sequential order. 
      */
     @Override
     int hashCode();

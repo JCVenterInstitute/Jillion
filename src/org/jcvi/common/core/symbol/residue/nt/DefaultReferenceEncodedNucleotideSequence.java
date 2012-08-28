@@ -80,8 +80,19 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
      *  <ul/>
      */
     private final byte[] encodedSnpsInfo;
-    
-   
+    /**
+     * Our HashCode value,
+     * This value is lazy loaded
+     * so we only have 
+     * to compute the hashcode value
+     * once.
+     * 
+     * We can afford to store it because
+     * the Java memory model will padd out
+     * the bytes anyway so we don't
+     * take up any extra memory.
+     */
+    private int hash;
     
     
     @Override
@@ -398,28 +409,40 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 		return gaps;
 	}
 
-    @Override
+	@Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        
-        result = prime * result + toString().hashCode();
-        return result;
+		long length = getLength();
+		if(hash==0 && length >0){
+	        final int prime = 31;
+	        int result = 1;
+	        Iterator<Nucleotide> iter = iterator();
+	        while(iter.hasNext()){
+	        	result = prime * result + iter.next().hashCode();
+	        }
+	        hash= result;
+		}
+	    return hash;
     }
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
+    	 if (this == obj){
+             return true;
+         }
+         if (!(obj instanceof NucleotideSequence)){
+             return false;
+         }
+         NucleotideSequence other = (NucleotideSequence) obj;
+         if(getLength() != other.getLength()){
+         	return false;
+         }
+        Iterator<Nucleotide> iter = iterator();
+        Iterator<Nucleotide> otherIter = other.iterator();
+        while(iter.hasNext()){
+     	   if(!iter.next().equals(otherIter.next())){
+     		   return false;
+     	   }
         }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof NucleotideSequence)) {
-            return false;
-        }
-        NucleotideSequence other = (NucleotideSequence) obj;
-       
-       return toString().equals(other.toString());
+        return true;
     }
     
     /**
