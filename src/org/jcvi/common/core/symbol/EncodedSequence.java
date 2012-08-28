@@ -46,6 +46,8 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
      * Our data.
      */
     private byte[] data;
+    
+    private int hash;
     /**
      * Convenience constructor.  This is
      * the same as calling 
@@ -79,40 +81,45 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + codec.hashCode();
-        result = prime * result + Arrays.hashCode(data);
-        return result;
-    }
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj){
-            return true;
-        }
-        if (obj == null){
-            return false;
-        }
-        if (!(obj instanceof Sequence)){
-            return false;
-        }
-        Sequence other = (Sequence) obj;
-        Iterator<T> ourIter = iterator();
-        Iterator<?> otherIter = other.iterator();
-        while(ourIter.hasNext()){
-        	if(!otherIter.hasNext()){
-        		return false;
-        	}
-        	if(!ourIter.next().equals(otherIter.next())){
-        		return false;
-        	}
-        }
-        if(otherIter.hasNext()){
-        	return false;
-        }
-        return true;
-    }
+	public int hashCode() {
+		long length = getLength();
+		if(hash==0 && length >0){
+	        final int prime = 31;
+	        int result = 1;
+	        Iterator<T> iter = iterator();
+	        while(iter.hasNext()){
+	        	result = prime * result + iter.next().hashCode();
+	        }
+	        hash= result;
+		}
+	    return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Sequence)) {
+			return false;
+		}
+		Sequence<?> other = (Sequence<?>) obj;
+		if(getLength() !=other.getLength()){
+			return false;
+		}
+		Iterator<T> iter = iterator();
+		Iterator<?> otherIter = other.iterator();
+		while(iter.hasNext()){
+			if(!iter.next().equals(otherIter.next())){
+				return false;
+			}
+		}
+		return true;
+	}
+
     @Override
     public T get(long index) {
         return codec.decode(data, index);

@@ -21,7 +21,6 @@ package org.jcvi.common.core.symbol.qual;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.EncodedSequence;
@@ -76,11 +75,7 @@ final class EncodedQualitySequence implements QualitySequence{
     */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((delegate == null) ? 0 : delegate.hashCode());
-        return result;
+       return delegate.hashCode();
     }
 
     /**
@@ -91,21 +86,10 @@ final class EncodedQualitySequence implements QualitySequence{
         if (this == obj){
             return true;
         }
-        if (obj == null){
-            return false;
+        if (!(obj instanceof QualitySequence)){
+        	return false;
         }
-        if (getClass() != obj.getClass()){
-            return false;
-        }
-        EncodedQualitySequence other = (EncodedQualitySequence) obj;
-        if (delegate == null) {
-            if (other.delegate != null){
-                return false;
-            }
-        } else if (!delegate.equals(other.delegate)){
-            return false;            
-        }
-        return true;
+        return delegate.equals(obj);
     }
 
     /**
@@ -113,22 +97,13 @@ final class EncodedQualitySequence implements QualitySequence{
     */
     @Override
     public Iterator<PhredQuality> iterator() {
-        //decode whole thing since that is 
-        //probably better for most quality encodings
-        //such as run length encoding so we 
-        //only have 1 decode cycle
         return delegate.iterator();
     }
 
 	@Override
 	public Iterator<PhredQuality> iterator(Range range) {
 		return delegate.iterator(range);
-	}
-
-	EncodedSequence<PhredQuality> getDelegate() {
-		return delegate;
-	}
-    
+	}   
     
 
 }
