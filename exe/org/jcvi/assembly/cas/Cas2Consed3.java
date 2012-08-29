@@ -78,7 +78,8 @@ import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory;
+import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.IndexedPhdFileDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
@@ -232,12 +233,14 @@ public class Cas2Consed3 {
              File tempAce = new File(editDir, "temp.ace");
              File consensusFile = consedOutputDir.createNewFile(prefix+ ".ace.1.consensus.fasta");
              OutputStream tempOut = new FileOutputStream(tempAce);
-             PrintStream consensusOut = new PrintStream(consensusFile);
-             final PrintStream pseduoMoleculeOut;
+             NucleotideSequenceFastaRecordWriter consensusOut = new DefaultNucleotideSequenceFastaRecordWriter.Builder(consensusFile)
+             																.build();
+             final NucleotideSequenceFastaRecordWriter pseduoMoleculeOut;
              final PrintStream agpOut;
              if(createPseduoMoleculeFasta){
             	 File pseduomoleculeFile = consedOutputDir.createNewFile(prefix+ ".ace.1.pseduomolecule.fasta");
-            	 pseduoMoleculeOut = new PrintStream(pseduomoleculeFile);
+            	 pseduoMoleculeOut = new DefaultNucleotideSequenceFastaRecordWriter.Builder(pseduomoleculeFile)
+            	 								.build();
             	 
              }else{
             	 pseduoMoleculeOut=null;            	
@@ -290,20 +293,16 @@ public class Cas2Consed3 {
                      
                      
                      
-					consensusOut.print(
-							NucleotideSequenceFastaRecordFactory.create(
-                                     splitContig.getId(), 
-                                     ungappedConsensus)
-                             .toFormattedString());
+					consensusOut.write(splitContig.getId(), ungappedConsensus);
                      AceFileWriter.writeAceContig(splitContig, phdDataStore, tempOut);
                      previousPseduoMoleculeOffset = contigRange.getEnd();
                  }
                  int numberOfDownstreamNs = (int)(ungappedLength-1 - previousPseduoMoleculeOffset);
                  appendNsIfNeeded(pseduoMoleculeBuilder, numberOfDownstreamNs);
                  if(createPseduoMoleculeFasta){
-                	 pseduoMoleculeOut.print(NucleotideSequenceFastaRecordFactory.create(
+                	 pseduoMoleculeOut.write(
                 			 referenceId,
-                			 pseduoMoleculeBuilder.build()));
+                			 pseduoMoleculeBuilder.build());
                  }
                  if(createAgp){
                 	 AgpWriter.writeScaffold(scaffoldBuilder.build(), agpOut);

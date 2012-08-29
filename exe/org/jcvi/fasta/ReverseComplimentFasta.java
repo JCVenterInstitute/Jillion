@@ -21,7 +21,7 @@ package org.jcvi.fasta;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.io.IOException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -33,8 +33,8 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory;
+import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
@@ -69,7 +69,7 @@ public class ReverseComplimentFasta {
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
             File fastaFile = new File(commandLine.getOptionValue("fasta"));
             File outputFile = new File(commandLine.getOptionValue("o"));
-            final PrintWriter out = new PrintWriter(outputFile);
+            final NucleotideSequenceFastaRecordWriter writer = new DefaultNucleotideSequenceFastaRecordWriter.Builder(outputFile).build();
             FastaFileVisitor visitor = new AbstractFastaVisitor() {
 				
 				@Override
@@ -77,14 +77,16 @@ public class ReverseComplimentFasta {
                 	NucleotideSequence revComplement = new NucleotideSequenceBuilder(entireBody)
                     									.reverseComplement()
                     									.build();
-                	NucleotideSequenceFastaRecord fasta =
-							NucleotideSequenceFastaRecordFactory.create(id, revComplement, comment);
-                    out.print(fasta);
+                	try {
+						writer.write(id,revComplement,comment);
+					} catch (IOException e) {
+						throw new IllegalStateException(e);
+					}
                     return true;
                 }
             };
             FastaFileParser.parse(fastaFile, visitor);
-            IOUtil.closeAndIgnoreErrors(out);
+            IOUtil.closeAndIgnoreErrors(writer);
             
         } catch (ParseException e) {
             e.printStackTrace();
