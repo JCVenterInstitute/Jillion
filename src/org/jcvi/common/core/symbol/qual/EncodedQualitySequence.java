@@ -20,10 +20,8 @@
 package org.jcvi.common.core.symbol.qual;
 
 import java.util.Collection;
-import java.util.Iterator;
-
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.EncodedSequence;
+import org.jcvi.common.core.symbol.GlyphCodec;
 
 /**
  * {@code DefaultEncodedQualitySequence} 
@@ -32,53 +30,21 @@ import org.jcvi.common.core.symbol.EncodedSequence;
  * interface.
  * @author dkatzel
  */
-final class EncodedQualitySequence implements QualitySequence{
+final class EncodedQualitySequence extends EncodedSequence<PhredQuality> implements QualitySequence{
 
-    private final EncodedSequence<PhredQuality>  delegate;
-    /**
-     * @param codec
-     * @param data
-     */
-    public EncodedQualitySequence(QualitySymbolCodec codec,
-            byte[] data) {
-        delegate = new EncodedSequence<PhredQuality>(codec, data);
-    }
+   
+   
 
-    /**
-     * @param codec
-     * @param glyphsToEncode
-     */
-    public EncodedQualitySequence(QualitySymbolCodec codec,
-            Collection<PhredQuality> glyphsToEncode) {
-        delegate = new EncodedSequence<PhredQuality>(codec, glyphsToEncode);
-    }
+	public EncodedQualitySequence(GlyphCodec<PhredQuality> codec, byte[] data) {
+		super(codec, data);
+	}
 
+	public EncodedQualitySequence(GlyphCodec<PhredQuality> codec,
+			Collection<PhredQuality> glyphsToEncode) {
+		super(codec, glyphsToEncode);
+	}
 
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public PhredQuality get(long index) {
-        return delegate.get(index);
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public long getLength() {
-        return delegate.getLength();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public int hashCode() {
-       return delegate.hashCode();
-    }
-
-    /**
+	/**
     * {@inheritDoc}
     */
     @Override
@@ -89,21 +55,6 @@ final class EncodedQualitySequence implements QualitySequence{
         if (!(obj instanceof QualitySequence)){
         	return false;
         }
-        return delegate.equals(obj);
+        return super.equals(obj);
     }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public Iterator<PhredQuality> iterator() {
-        return delegate.iterator();
-    }
-
-	@Override
-	public Iterator<PhredQuality> iterator(Range range) {
-		return delegate.iterator(range);
-	}   
-    
-
 }
