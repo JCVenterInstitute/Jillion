@@ -103,6 +103,6 @@ public class TestAminoAcid {
    }
    @Test
    public void abbreviation(){
-       assertEquals(abbreviation, expectedAminoAcid.getAbbreviation().toString());
+       assertEquals(abbreviation, expectedAminoAcid.getCharacter().toString());
    }
 }

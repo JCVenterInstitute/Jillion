@@ -17,7 +17,7 @@ public final class DefaultNucleotideSequenceFastaRecordWriter extends DefaultRes
 		super(out, numberOfResiduesPerLine, charSet);
 	}
 
-	public static class Builder extends DefaultResidueSequenceFastaRecordWriter.AbstractBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord,NucleotideSequenceFastaRecordWriter> {
+	public static class Builder extends DefaultResidueSequenceFastaRecordWriter.AbstractResidueBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord,NucleotideSequenceFastaRecordWriter> {
 		/**
 		 * Create a new Builder that will use
 		 * the given {@link OutputStream} to write

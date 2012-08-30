@@ -20,6 +20,7 @@
 package org.jcvi.common.core.symbol.residue;
 
 import org.jcvi.common.core.symbol.Symbol;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 
 /**
  * @author dkatzel
@@ -29,4 +30,13 @@ import org.jcvi.common.core.symbol.Symbol;
 public interface Residue extends Symbol{
 
 	byte getOrdinalAsByte();
+	
+	 /**
+     * Return the Character equivalent of this
+     * {@link Nucleotide}.  For example
+     * calling this method for {@link #Adenine}
+     * will return 'A'.
+     * @return the Character equivalent of this.
+     */
+    public Character getCharacter();
 }

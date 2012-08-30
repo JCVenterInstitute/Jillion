@@ -143,6 +143,7 @@ public enum Nucleotide implements Residue {
      * will return 'A'.
      * @return the Character equivalent of this.
      */
+    @Override
     public Character getCharacter() {
         return c;
     }

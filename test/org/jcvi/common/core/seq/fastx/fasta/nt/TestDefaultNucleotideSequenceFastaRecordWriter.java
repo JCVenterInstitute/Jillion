@@ -30,13 +30,13 @@ public class TestDefaultNucleotideSequenceFastaRecordWriter {
 	public void negativeBasesPerLineShouldthrowIllegalArgumentException(){
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		new DefaultNucleotideSequenceFastaRecordWriter.Builder(out)
-			.residuesPerLine(-1);
+			.numberPerLine(-1);
 	}
 	@Test(expected = IllegalArgumentException.class)
 	public void zeroBasesPerLineShouldthrowIllegalArgumentException(){
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		new DefaultNucleotideSequenceFastaRecordWriter.Builder(out)
-			.residuesPerLine(0);
+			.numberPerLine(0);
 	}
 	@Test
 	public void writeFastasWithDefaultOptions() throws IOException{
@@ -57,7 +57,7 @@ public class TestDefaultNucleotideSequenceFastaRecordWriter {
 	public void multiLineFastas() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		NucleotideSequenceFastaRecordWriter sut = new DefaultNucleotideSequenceFastaRecordWriter.Builder(out)
-								.residuesPerLine(5)											
+								.numberPerLine(5)											
 								.build();
 		
 		
@@ -76,7 +76,7 @@ public class TestDefaultNucleotideSequenceFastaRecordWriter {
 	public void sequenceEndsAtEndOfLineExactly() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		NucleotideSequenceFastaRecordWriter sut = new DefaultNucleotideSequenceFastaRecordWriter.Builder(out)
-								.residuesPerLine(4)											
+								.numberPerLine(4)											
 								.build();
 		
 		
@@ -97,7 +97,7 @@ public class TestDefaultNucleotideSequenceFastaRecordWriter {
 		Charset charSet = Charset.forName("UTF-16");
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		NucleotideSequenceFastaRecordWriter sut = new DefaultNucleotideSequenceFastaRecordWriter.Builder(out)
-								.residuesPerLine(5)	
+								.numberPerLine(5)	
 								.charset(charSet)
 								.build();
 		
