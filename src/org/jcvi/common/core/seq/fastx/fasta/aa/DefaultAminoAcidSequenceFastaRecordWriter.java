@@ -16,7 +16,7 @@ public final class DefaultAminoAcidSequenceFastaRecordWriter extends DefaultResi
 		super(out, numberOfResiduesPerLine, charSet);
 	}
 
-	public static class Builder extends DefaultResidueSequenceFastaRecordWriter.AbstractBuilder<AminoAcid, AminoAcidSequence, AminoAcidSequenceFastaRecord,AminoAcidSequenceFastaRecordWriter> {
+	public static class Builder extends DefaultResidueSequenceFastaRecordWriter.AbstractResidueBuilder<AminoAcid, AminoAcidSequence, AminoAcidSequenceFastaRecord,AminoAcidSequenceFastaRecordWriter> {
 		/**
 		 * Create a new Builder that will use
 		 * the given {@link OutputStream} to write

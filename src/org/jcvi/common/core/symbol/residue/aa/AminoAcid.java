@@ -76,7 +76,7 @@ public enum AminoAcid implements Residue{
         for(AminoAcid aa : AminoAcid.values()){
             NAME_MAP.put(aa.getName().toUpperCase(), aa);
             NAME_MAP.put(aa.get3LetterAbbreviation().toUpperCase(), aa);
-            NAME_MAP.put(aa.getAbbreviation().toString().toUpperCase(), aa);
+            NAME_MAP.put(aa.getCharacter().toString().toUpperCase(), aa);
         }
     }
     private AminoAcid(String name, String threeLetterAbbreviation, Character abbreviation){
@@ -131,7 +131,7 @@ public enum AminoAcid implements Residue{
      */
     @Override
     public String toString() {
-        return getAbbreviation().toString();
+        return getCharacter().toString();
     }
     
     /**
@@ -140,7 +140,8 @@ public enum AminoAcid implements Residue{
      * @return the 1 letter abbreviation for this Amino Acid
      * as a Character (not null).
      */
-    public Character getAbbreviation() {
+    @Override
+    public Character getCharacter() {
         return abbreviation;
     }
     /**
@@ -154,7 +155,7 @@ public enum AminoAcid implements Residue{
     public static String convertToString(List<AminoAcid> glyphs){
     	StringBuilder result = new StringBuilder();
     	for(AminoAcid g: glyphs){
-     		result.append(g.getAbbreviation());
+     		result.append(g.getCharacter());
     	}
     	return result.toString();
     }
