@@ -12,7 +12,9 @@ import org.junit.runners.Suite.SuiteClasses;
     	
     	TestDefaultAminoAcidSequenceFastaDataStore.class,
     	TestLargeAminoAcidSequenceFastaFileDataStore.class,
-    	TestIndexedAminoAcidSequenceFastaFileDataStore.class
+    	TestIndexedAminoAcidSequenceFastaFileDataStore.class,
+    	
+    	TestDefaultAminoAcidSequenceFastaRecordWriter.class
     }
     )
 public class AllAminoAcidSequenceFastaRecordUnitTests {
