@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -29,22 +30,19 @@ public class TestDefaultNucleotideSequenceFastaRecordWriter {
 	public void negativeBasesPerLineShouldthrowIllegalArgumentException(){
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		new DefaultNucleotideSequenceFastaRecordWriter.Builder(out)
-			.basesPerLine(-1);
+			.residuesPerLine(-1);
 	}
 	@Test(expected = IllegalArgumentException.class)
 	public void zeroBasesPerLineShouldthrowIllegalArgumentException(){
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		new DefaultNucleotideSequenceFastaRecordWriter.Builder(out)
-			.basesPerLine(0);
+			.residuesPerLine(0);
 	}
 	@Test
 	public void writeFastasWithDefaultOptions() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		NucleotideSequenceFastaRecordWriter sut = new DefaultNucleotideSequenceFastaRecordWriter.Builder(out)
 													.build();
-		
-		
-		
 		sut.write(record1);		
 		sut.write(record2);
 		sut.close();
@@ -59,7 +57,7 @@ public class TestDefaultNucleotideSequenceFastaRecordWriter {
 	public void multiLineFastas() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		NucleotideSequenceFastaRecordWriter sut = new DefaultNucleotideSequenceFastaRecordWriter.Builder(out)
-								.basesPerLine(5)											
+								.residuesPerLine(5)											
 								.build();
 		
 		
@@ -78,7 +76,7 @@ public class TestDefaultNucleotideSequenceFastaRecordWriter {
 	public void sequenceEndsAtEndOfLineExactly() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		NucleotideSequenceFastaRecordWriter sut = new DefaultNucleotideSequenceFastaRecordWriter.Builder(out)
-								.basesPerLine(4)											
+								.residuesPerLine(4)											
 								.build();
 		
 		
@@ -92,5 +90,28 @@ public class TestDefaultNucleotideSequenceFastaRecordWriter {
 							">id_2\n"+
 							"AAAA\nCCCC\nGGGG\nTTTT\n";
 		assertEquals(expected, new String(out.toByteArray(), IOUtil.UTF_8));
+	}
+	
+	@Test
+	public void differentCharSet() throws IOException{
+		Charset charSet = Charset.forName("UTF-16");
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		NucleotideSequenceFastaRecordWriter sut = new DefaultNucleotideSequenceFastaRecordWriter.Builder(out)
+								.residuesPerLine(5)	
+								.charset(charSet)
+								.build();
+		
+		
+		
+		sut.write(record1);		
+		sut.write(record2);
+		sut.close();
+		
+		String expected = ">id_1 a comment\n"+
+							"ACGTA\nCGT\n"+
+							">id_2\n"+
+							"AAAAC\nCCCGG\nGGTTT\nT\n";
+		byte[] expectedBytes = expected.getBytes(charSet);
+		assertArrayEquals(expectedBytes, out.toByteArray());
 	}
 }

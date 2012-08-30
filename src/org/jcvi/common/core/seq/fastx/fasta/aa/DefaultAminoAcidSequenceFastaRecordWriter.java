@@ -1,5 +1,4 @@
-package org.jcvi.common.core.seq.fastx.fasta.nt;
-
+package org.jcvi.common.core.seq.fastx.fasta.aa;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,17 +6,17 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 import org.jcvi.common.core.seq.fastx.fasta.DefaultResidueSequenceFastaRecordWriter;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
+import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 
-public final class DefaultNucleotideSequenceFastaRecordWriter extends DefaultResidueSequenceFastaRecordWriter<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord> implements NucleotideSequenceFastaRecordWriter{
+public final class DefaultAminoAcidSequenceFastaRecordWriter extends DefaultResidueSequenceFastaRecordWriter<AminoAcid, AminoAcidSequence, AminoAcidSequenceFastaRecord> implements AminoAcidSequenceFastaRecordWriter{
 
-	private DefaultNucleotideSequenceFastaRecordWriter(OutputStream out,
+	private DefaultAminoAcidSequenceFastaRecordWriter(OutputStream out,
 			int numberOfResiduesPerLine, Charset charSet) {
 		super(out, numberOfResiduesPerLine, charSet);
 	}
 
-	public static class Builder extends DefaultResidueSequenceFastaRecordWriter.AbstractBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord,NucleotideSequenceFastaRecordWriter> {
+	public static class Builder extends DefaultResidueSequenceFastaRecordWriter.AbstractBuilder<AminoAcid, AminoAcidSequence, AminoAcidSequenceFastaRecord,AminoAcidSequenceFastaRecordWriter> {
 		/**
 		 * Create a new Builder that will use
 		 * the given {@link OutputStream} to write
@@ -48,9 +47,9 @@ public final class DefaultNucleotideSequenceFastaRecordWriter extends DefaultRes
 		}
 
 		@Override
-		protected NucleotideSequenceFastaRecordWriter create(
+		protected AminoAcidSequenceFastaRecordWriter create(
 				OutputStream out, int numberOfResiduesPerLine, Charset charSet) {
-			return new DefaultNucleotideSequenceFastaRecordWriter(out, numberOfResiduesPerLine, charSet);
+			return new DefaultAminoAcidSequenceFastaRecordWriter(out, numberOfResiduesPerLine, charSet);
 		}
 		
 	}
