@@ -1,8 +1,9 @@
 package org.jcvi.common.core.seq.fastx.fasta.nt;
 
-import java.io.Closeable;
 import java.io.IOException;
 
+import org.jcvi.common.core.seq.fastx.fasta.FastaRecordWriter;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**
  * {@code NucleotideSequenceFastaRecordWriter} is a interface
@@ -11,7 +12,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  * @author dkatzel
  *
  */
-public interface NucleotideSequenceFastaRecordWriter extends Closeable{
+public interface NucleotideSequenceFastaRecordWriter extends FastaRecordWriter<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord>{
 	/**
 	 * Write the given {@link NucleotideSequenceFastaRecord}
 	 * (including the optionalComment if there is one).
