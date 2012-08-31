@@ -57,14 +57,7 @@
     <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask"
         classpath="${analysis}/jarjar-1.0rc8.jar"/>
 
-    <typedef resource="com/googlecode/svntask/svntask.xml">
-            <classpath>
-                    <fileset dir="${analysis}/svn">
-                            <include name="svnkit-1.3.2.6267.jar" />
-                            <include name="svntask-1.0.7.jar" />
-                    </fileset>
-            </classpath>
-    </typedef>
+   
 	        
 	<taskdef name="javancss"
             classname="javancss.JavancssAntTask">
@@ -90,7 +83,13 @@
 	
 	<target name="revision" 
 		description = "sets the property 'revision' to the svn revision can be later used with ${revision}">
-			<svn>
+		<!-- svntask.xml  now in root dir of svntask.dkatzel.svn1.7.jar --> 
+		<typedef resource="svntask.xml">
+		            <classpath>
+		                    <fileset dir="${analysis}/svn"/>
+		            </classpath>
+		    </typedef>	
+		<svn>
 				<info path="." revisionProperty="revision" />
 			</svn>
 		</target>
@@ -359,14 +358,50 @@
 
 	</target>
 	
-	<target name = "release" description ="create release folder with all files needed to be released"
-		depends ="jar-include-dependencies">
-		<copy todir="${release}">
-					<fileset dir="${scripts}"/>
-		</copy>
-		<copy file="${project-name}-${version}-r${revision}.jar" todir="${release}"></copy>
+	<target name="jar-module-core" description="jar of all core classes" depends= "revision, source.only.bin">
+		
+		    <jar jarfile="${project-name}-module-core-${version}-r${revision}.jar">
+		        <fileset dir="${bin}/org/jcvi/common/core"/>	
+		    	<manifest>
+		    		<attribute name ="Sealed" value ="true"/>
+		    	</manifest>
+		    </jar>
+	</target>
+	<target name="jar-module-annotation" description="jar of all annotation classes (experimental)" depends= "revision, source.only.bin">
+		
+		    <jar jarfile="${project-name}-module-annotation-${version}-r${revision}.jar">
+		        <fileset dir="${bin}/org/jcvi/common/annotation"/>	
+		    	<manifest>
+		    		<attribute name ="Sealed" value ="true"/>
+		    	</manifest>
+		    </jar>
+	</target>
+	<target name="jar-module-net" description="jar of all net related classes" depends= "revision, source.only.bin">
+			
+		    <jar jarfile="${project-name}-module-annotation-${version}-r${revision}.jar">
+		        <fileset dir="${bin}/org/jcvi/common/net"/>	
+		    	<manifest>
+		    		<attribute name ="Sealed" value ="true"/>
+		    	</manifest>
+		    </jar>
+	</target>
+	<target name="jar-module-io" description="jar of all non-core I/O classes" depends= "revision, source.only.bin">
+				
+		    <jar jarfile="${project-name}-module-annotation-${version}-r${revision}.jar">
+		        <fileset dir="${bin}/org/jcvi/common/io"/>	
+		    	<manifest>
+		    		<attribute name ="Sealed" value ="true"/>
+		    	</manifest>
+		    </jar>
 	</target>
 	
+	<target name ="release" description = "creates jars for all modules" depends = "unit.tests, 
+		jar-module-core,
+		jar-module-net,
+		jar-module-io,
+		jar-module-annotation"
+	/>
+
 	<target name="jdepend" description= "runs JDepend on source" depends = "internal.source.only.bin">
 
 	  <jdepend  format="xml" outputfile="jdepend-report.xml">
