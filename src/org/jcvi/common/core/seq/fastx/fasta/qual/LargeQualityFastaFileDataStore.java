@@ -50,6 +50,10 @@ public final class LargeQualityFastaFileDataStore implements QualitySequenceFast
    private final File fastaFile;
    volatile boolean closed;
     private Long size;
+    
+    public static QualitySequenceFastaDataStore create(File fastaFile){
+    	return new LargeQualityFastaFileDataStore(fastaFile);
+    }
     /**
      * Construct a {@link LargeQualityFastaFileDataStore}
      * for the given Fasta file.

@@ -82,7 +82,7 @@ public  abstract class AbstractFastaRecordWriter<S extends Symbol, T extends Seq
 		Iterator<S> iter = sequence.iterator();
         
         if(iter.hasNext()){
-        	record.append(iter.next());
+        	record.append(getStringRepresentationFor(iter.next()));
         }
         int count=1;
         while(iter.hasNext()){
