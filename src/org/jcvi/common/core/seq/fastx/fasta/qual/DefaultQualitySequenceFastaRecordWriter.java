@@ -19,7 +19,7 @@ public final class DefaultQualitySequenceFastaRecordWriter extends AbstractFasta
 
 	@Override
 	protected String getStringRepresentationFor(PhredQuality symbol) {
-		return String.format("02d", symbol.getQualityScore());
+		return String.format("%02d", symbol.getQualityScore());
 	}
 
 	@Override

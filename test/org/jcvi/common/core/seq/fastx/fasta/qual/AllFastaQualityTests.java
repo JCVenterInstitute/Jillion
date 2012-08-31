@@ -34,8 +34,9 @@ import org.junit.runners.Suite.SuiteClasses;
         TestQualitySequenceFastaRecordFactory.class,
         TestDefaultQualityFastaDataStore.class,
         TestLargeQualityFastaDataStore.class,
-        TestIndexedQualityFastaFileDataStore.class
+        TestIndexedQualityFastaFileDataStore.class,
         
+        TestDefaultQualitySequenceFastaRecordWriter.class
     }
     )
 public class AllFastaQualityTests {
