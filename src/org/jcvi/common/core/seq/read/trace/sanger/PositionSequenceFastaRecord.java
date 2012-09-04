@@ -1,12 +1,12 @@
 package org.jcvi.common.core.seq.read.trace.sanger;
 
 
-import org.jcvi.common.core.seq.fastx.FastXRecord;
+import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
 import org.jcvi.common.core.util.ObjectsUtil;
 
 
-public final class PositionSequenceFastaRecord implements FastXRecord<Position, PositionSequence>{
+public final class PositionSequenceFastaRecord implements FastaRecord<Position, PositionSequence>{
 	
 	private final String identifier;
 	private final String comments;
@@ -43,7 +43,7 @@ public final class PositionSequenceFastaRecord implements FastXRecord<Position, 
         return this.comments;
     }
   
-    public String toFormattedString()
+    private String toFormattedString()
     {
         final StringBuilder record = new StringBuilder();
         

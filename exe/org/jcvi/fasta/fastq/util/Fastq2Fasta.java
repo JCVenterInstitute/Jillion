@@ -21,9 +21,7 @@ package org.jcvi.fasta.fastq.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,8 +39,10 @@ import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory;
-import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecordFactory;
+import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualitySequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
@@ -91,8 +91,8 @@ public class Fastq2Fasta {
         options.addOption(new CommandLineOptionBuilder("e", "exclude file of ids to exclude")
                             .build());
 
-        OutputStream seqOut =null;
-        OutputStream qualOut =null;
+        NucleotideSequenceFastaRecordWriter seqOut =null;
+        QualitySequenceFastaRecordWriter qualOut =null;
         if(args.length ==1 && args[0].endsWith("-h")){
             printHelp(options);
             System.exit(0);
@@ -112,10 +112,10 @@ public class Fastq2Fasta {
                     Arrays.copyOf(args, args.length-1));
             
             if(commandLine.hasOption("s")){
-                seqOut = new FileOutputStream(commandLine.getOptionValue("s"));
+                seqOut = new DefaultNucleotideSequenceFastaRecordWriter.Builder(new File(commandLine.getOptionValue("s"))).build();
             }
             if(commandLine.hasOption("q")){
-                qualOut = new FileOutputStream(commandLine.getOptionValue("q"));
+                qualOut = new DefaultQualitySequenceFastaRecordWriter.Builder(new File(commandLine.getOptionValue("q"))).build();
             }
             if(seqOut ==null && qualOut ==null){
                 throw new ParseException("must specify at least either -s or -q");
@@ -153,17 +153,14 @@ public class Fastq2Fasta {
             		 String id = fastQ.getId();
                      if(qualOut!=null){
                          try {
-                             qualOut.write(QualitySequenceFastaRecordFactory.create(id, 
-                                     fastQ.getQualitySequence()).toString().getBytes());
+                             qualOut.write(id, fastQ.getQualitySequence());
                          } catch (IOException e) {
                              throw new IOException("could not write to quality data for "+ id, e);
                          }
                      }
                      if(seqOut!=null){
                          try {
-                             seqOut.write(NucleotideSequenceFastaRecordFactory.create(
-                                     id,fastQ.getNucleotideSequence(),fastQ.getComment()) 
-                                     .toString().getBytes());
+                             seqOut.write(id,fastQ.getNucleotideSequence(),fastQ.getComment());
                          } catch (IOException e) {
                              throw new IOException("could not write to sequence data for "+ id, e);
                          }

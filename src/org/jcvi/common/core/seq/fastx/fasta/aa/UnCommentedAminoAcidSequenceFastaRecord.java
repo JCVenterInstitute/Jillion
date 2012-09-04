@@ -55,7 +55,7 @@ class UnCommentedAminoAcidSequenceFastaRecord implements AminoAcidSequenceFastaR
     {
         return this.sequence;
     }
-    public final String toFormattedString()
+    private final String toFormattedString()
     {
     	int bufferSize = computeFormattedBufferSize();
         final StringBuilder record = new StringBuilder(bufferSize);

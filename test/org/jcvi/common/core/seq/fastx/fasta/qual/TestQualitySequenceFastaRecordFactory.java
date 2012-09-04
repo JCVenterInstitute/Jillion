@@ -72,22 +72,8 @@ public class TestQualitySequenceFastaRecordFactory {
         assertNull(noComment.getComment());
         assertEquals(qualities, noComment.getSequence());        
     }
-    @Test
-    public void getFormattedString(){
-    	final String expectedRecord = buildExpectedRecord();
-        assertEquals(expectedRecord, sut.toFormattedString());
-    }
-    private String buildExpectedRecord(){
-        StringBuilder builder= new StringBuilder();
-        builder.append(">")
-                    .append(id)
-                    .append(" ")
-                    .append(comment);
-        appendCarriageReturn(builder);
-        builder.append(convertQualitiesToFormattedString());
-        appendCarriageReturn(builder);
-        return builder.toString();
-    }
+   
+   
 	private StringBuilder convertQualitiesToFormattedString() {
 		StringBuilder builder = new StringBuilder(bytes.length*3);
 		for(int i=1; i<bytes.length; i++){

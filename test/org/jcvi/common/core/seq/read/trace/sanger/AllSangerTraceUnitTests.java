@@ -37,6 +37,8 @@ import org.junit.runners.Suite.SuiteClasses;
     	TestDefaultPositionCodec.class,
     	TestPositionSequenceBuilder.class,
     	TestDefaultPositionFastaFileDataStore.class,
+    	TestDefaultPositionSequenceFastaRecordWriter.class,
+    	
         AllPhdUnitTests.class,
         AllChromatogramUnitTests.class,
         TestSangerTraceParser.class,

@@ -41,7 +41,7 @@ class UncommentedQualitySequenceFastaRecord implements QualitySequenceFastaRecor
 	}
 
 
-	public String toFormattedString()
+	private String toFormattedString()
     {
         final StringBuilder record = new StringBuilder();
         

@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -72,9 +71,11 @@ import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.MostFrequentBasecallConsensusCaller;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
@@ -408,13 +409,14 @@ public class ReAbacusAceContigWorker {
                         ungappedSequences.put(readId, fasta);
                     }
                     
-                    PrintWriter writer;
+                    NucleotideSequenceFastaRecordWriter writer;
                     File ungappedFasta;
                     File gappedFastaFile;
                     try {
                         String tempSuffix = String.format("%s.fasta",contigId);
                         ungappedFasta = File.createTempFile("abacusFixerInput", tempSuffix);
-                        writer = new PrintWriter(ungappedFasta);
+                        writer = new DefaultNucleotideSequenceFastaRecordWriter.Builder(ungappedFasta)
+                        			.build();
                         gappedFastaFile = File.createTempFile("abacusFixerMuscleOutput", tempSuffix);
                         ungappedFasta.deleteOnExit();
                         gappedFastaFile.deleteOnExit();
@@ -422,6 +424,7 @@ public class ReAbacusAceContigWorker {
                         throw new IllegalStateException(e);
                     }
                     System.out.println("writing fasta file");
+                    try{
                     for(NucleotideSequenceFastaRecord fasta : ungappedSequences.values()){
                         if(fasta.getSequence().getLength() < maxSeenLength){
                             int numberOfGapsToAdd = (int)(maxSeenLength -fasta.getSequence().getLength());
@@ -436,13 +439,16 @@ public class ReAbacusAceContigWorker {
                             }else{
                                 newSequenceBuilder.append(new String(gaps));
                             }
-                            writer.print(NucleotideSequenceFastaRecordFactory.create(fasta.getId(), newSequenceBuilder.build(), fasta.getComment()));
+                            writer.write(fasta.getId(), newSequenceBuilder.build(), fasta.getComment());
                         }else{
-                            writer.print(fasta.toString());
+                            writer.write(fasta);
                         }
                     }
-                    writer.close();
-                    
+                    } catch (IOException e) {
+						throw new IllegalStateException("error writing out fastas to align",e);
+					}finally{
+                    	IOUtil.closeAndIgnoreErrors(writer);
+                    }
                     
                     try {
                         System.out.println("running muscle... for " + ungappedProblemRange);
