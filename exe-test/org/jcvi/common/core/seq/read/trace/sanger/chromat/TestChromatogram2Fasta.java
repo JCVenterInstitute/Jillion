@@ -55,6 +55,7 @@ public class TestChromatogram2Fasta {
 		
 		Chromatogram2fasta sut = new Chromatogram2fasta(seqOut, qualOut, posOut);
 		sut.writeChromatogram(id, chromo);
+		sut.close();
 		assertEquals(">id\n"+basecalls+"\n", new String(seqOut.toByteArray()));
 		assertEquals(">id\n20 20 30 15\n", new String(qualOut.toByteArray()));
 		assertEquals(">id\n0012 0024 0036 0048\n", new String(posOut.toByteArray()));
@@ -65,6 +66,7 @@ public class TestChromatogram2Fasta {
 		
 		Chromatogram2fasta sut = new Chromatogram2fasta(seqOut, null, null);
 		sut.writeChromatogram(id, chromo);
+		sut.close();
 		assertEquals(">id\n"+basecalls+"\n", new String(seqOut.toByteArray()));
 	}
 	@Test
@@ -73,6 +75,7 @@ public class TestChromatogram2Fasta {
 		
 		Chromatogram2fasta sut = new Chromatogram2fasta(null, qualOut, null);
 		sut.writeChromatogram(id, chromo);
+		sut.close();
 		assertEquals(">id\n20 20 30 15\n", new String(qualOut.toByteArray()));
 	}
 	@Test
@@ -81,6 +84,7 @@ public class TestChromatogram2Fasta {
 		
 		Chromatogram2fasta sut = new Chromatogram2fasta(null, null, posOut);
 		sut.writeChromatogram(id, chromo);
+		sut.close();
 		assertEquals(">id\n0012 0024 0036 0048\n", new String(posOut.toByteArray()));
 	}
 	@Test(expected = NullPointerException.class)
