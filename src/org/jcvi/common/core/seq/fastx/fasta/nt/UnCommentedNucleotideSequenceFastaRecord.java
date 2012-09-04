@@ -55,7 +55,7 @@ class UnCommentedNucleotideSequenceFastaRecord implements NucleotideSequenceFast
     {
         return this.sequence;
     }
-    public String toFormattedString()
+    private String toFormattedString()
     {
     	int bufferSize = computeFormattedBufferSize();
         final StringBuilder record = new StringBuilder(bufferSize);

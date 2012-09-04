@@ -32,10 +32,13 @@ import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory;
-import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecordFactory;
+import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualitySequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceFastaRecord;
+import org.jcvi.common.core.seq.read.trace.sanger.DefaultPositionSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramBuilderVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramParser;
@@ -57,17 +60,10 @@ public class Chromatogram2fasta {
 
     public static final String DEFAULT_FASTA_PREFIX = "chromatogram2fasta";
     
-    private static class NULLOutputStream extends OutputStream{
-
-		@Override
-		public void write(int b) throws IOException {
-			//no-op
-		}
-    }
-    
-    private static final NULLOutputStream NULL_OUTPUTSTREAM= new NULLOutputStream();
-    
-    private final OutputStream seqOut, posOut, qualOut;
+   
+    private final NucleotideSequenceFastaRecordWriter seqOut;
+    private final PositionSequenceFastaRecordWriter posOut;
+    private final QualitySequenceFastaRecordWriter qualOut;
     
     
     
@@ -76,20 +72,21 @@ public class Chromatogram2fasta {
     	if(seqOut ==null && qualOut ==null && posOut==null){
     		throw new NullPointerException("must have at least 1 non-null outputStream");
     	}
-		this.seqOut = seqOut==null? NULL_OUTPUTSTREAM : seqOut;
-		this.posOut = posOut==null? NULL_OUTPUTSTREAM : posOut;
-		this.qualOut = qualOut==null? NULL_OUTPUTSTREAM :qualOut ;
+		this.seqOut = seqOut==null? null : new DefaultNucleotideSequenceFastaRecordWriter.Builder(seqOut).build();
+		this.posOut = posOut==null? null :new DefaultPositionSequenceFastaRecordWriter.Builder(posOut).build();
+		this.qualOut = qualOut==null? null :new DefaultQualitySequenceFastaRecordWriter.Builder(qualOut).build();
 	}
 
     public void writeChromatogram(String id, Chromatogram chromo) throws IOException{
-        //small hit converting all to fastas even if not outputing them all
-    	//is worth cleaner code, fix if this becomes a bottleneck.
-    	seqOut.write(NucleotideSequenceFastaRecordFactory.create(id, chromo.getNucleotideSequence())
-                             .toString().getBytes());
-    	qualOut.write(QualitySequenceFastaRecordFactory.create(id, chromo.getQualitySequence())
-                             .toString().getBytes());
-    	posOut.write(new PositionSequenceFastaRecord(id, chromo.getPositionSequence())
-                             .toString().getBytes());
+    	if(seqOut !=null){
+    		seqOut.write(id, chromo.getNucleotideSequence());
+    	}
+    	if(qualOut !=null){
+    		qualOut.write(id, chromo.getQualitySequence());
+    	}
+    	if(posOut !=null){
+    		posOut.write(id, chromo.getPositionSequence());
+    	}
     }
 
 	/**

@@ -23,9 +23,7 @@
  */
 package org.jcvi.common.core.seq.fastx.fasta.nt;
 
-import java.util.Arrays;
 
-import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -52,7 +50,6 @@ public class TestNucleotideSequenceFastaRecordFactory {
         assertEquals(id, sut.getId());
         assertEquals(comment, sut.getComment());
         assertEquals(encodedGlyphs, sut.getSequence());
-        assertEquals(buildExpectedToString(comment), sut.toString());
     }
     
     @Test
@@ -62,7 +59,6 @@ public class TestNucleotideSequenceFastaRecordFactory {
         assertEquals(id, fasta.getId());
         assertNull(fasta.getComment());
         assertEquals(encodedGlyphs, fasta.getSequence());
-        assertEquals(buildExpectedToString(null), fasta.toString());
     }
    
     @Test
@@ -113,33 +109,5 @@ public class TestNucleotideSequenceFastaRecordFactory {
         assertFalse(sut.equals(createMock(QualitySequenceFastaRecord.class)));
     }
     
-    
-    private String buildExpectedToString(String comment){
-        StringBuilder builder = new StringBuilder();
-        builder.append(">")
-            .append(id);
-        if(comment !=null){
-            builder.append(' ').append(comment);
-        }
-        builder.append(FastaUtil.LINE_SEPARATOR);
-        builder.append(formatBasecalls());
-        builder.append(FastaUtil.LINE_SEPARATOR);
-        return builder.toString();
-    }
 
-    private String formatBasecalls() {
-        return bases.replaceAll("(.{60})", "$1"+FastaUtil.LINE_SEPARATOR);
-    }
-    
-    @Test
-    public void whenFastaSequenceEndsAtEndOfLineShouldNotMakeAdditionalBlankLine(){
-        char[] bases = new char[60];
-        Arrays.fill(bases, 'A');
-        String sixtyBases= new String(bases);
-        NucleotideSequenceFastaRecord record = NucleotideSequenceFastaRecordFactory.create(id, 
-                new NucleotideSequenceBuilder(sixtyBases).build());
-        String expectedStringRecord = ">"+id+"\n"+sixtyBases+"\n";
-        assertEquals(expectedStringRecord, record.toString());
-        
-    }
 }

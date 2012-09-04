@@ -21,9 +21,7 @@ package org.jcvi.fasta;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -39,7 +37,9 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
+import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
@@ -89,7 +89,8 @@ public class TrimFasta {
             final Map<String, Integer> leftTrimPoints = parseTrimPoints(leftTrimFile);
             final Map<String, Integer> rightTrimPoints = parseTrimPoints(rightTrimFile);
             
-            final OutputStream out = new FileOutputStream(outputFile);
+            final NucleotideSequenceFastaRecordWriter writer = new DefaultNucleotideSequenceFastaRecordWriter.Builder(outputFile)
+            													.build();
             FastaFileVisitor visitor = new AbstractFastaVisitor() {
 				
 				@Override
@@ -105,9 +106,7 @@ public class TrimFasta {
                     	NucleotideSequence trimmedSequence = builder
                     										.trim(trimRange)
                     										.build();
-                        out.write(
-                        		NucleotideSequenceFastaRecordFactory.create(id, trimmedSequence, comment)
-                                    .toString().getBytes());
+                        writer.write(id, trimmedSequence, comment);
                     } catch (IOException e) {
                        throw new IllegalStateException("error writing to output fasta",e);
                     }
@@ -116,7 +115,7 @@ public class TrimFasta {
             };
              
             FastaFileParser.parse(fastaFile, visitor);
-            IOUtil.closeAndIgnoreErrors(out);
+            IOUtil.closeAndIgnoreErrors(writer);
             
         } catch (ParseException e) {
             e.printStackTrace();
