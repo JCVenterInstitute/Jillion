@@ -19,6 +19,7 @@
 
 package org.jcvi.trace.sanger.chromatogram;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -56,7 +57,7 @@ import org.jcvi.common.io.idReader.StringIdParser;
  *
  *
  */
-public class Chromatogram2fasta {
+public class Chromatogram2fasta implements Closeable{
 
     public static final String DEFAULT_FASTA_PREFIX = "chromatogram2fasta";
     
@@ -88,6 +89,13 @@ public class Chromatogram2fasta {
     		posOut.write(id, chromo.getPositionSequence());
     	}
     }
+
+    
+	@Override
+	public void close() throws IOException {
+		IOUtil.closeAndIgnoreErrors(seqOut, qualOut,posOut);
+		
+	}
 
 	/**
      * Executable to convert group of chromatogram files into multi fastas.
@@ -161,9 +169,7 @@ public class Chromatogram2fasta {
                
             }
         }finally{
-            IOUtil.closeAndIgnoreErrors(seqOut);
-            IOUtil.closeAndIgnoreErrors(qualOut);
-            IOUtil.closeAndIgnoreErrors(posOut);
+            IOUtil.closeAndIgnoreErrors(chromo2Fasta);
         }
     } catch (ParseException e) {
         System.err.println(e.getMessage());
