@@ -2,7 +2,6 @@ package org.jcvi.common.core.seq.read.trace.sanger;
 
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
 import org.jcvi.common.core.util.ObjectsUtil;
 
 
@@ -43,45 +42,13 @@ public final class PositionSequenceFastaRecord implements FastaRecord<Position, 
         return this.comments;
     }
   
-    private String toFormattedString()
-    {
-        final StringBuilder record = new StringBuilder();
-        
-        record.append(this.getRecordHeader());
-        appendCarriageReturnAndLineFeed(record)
-        .append(this.getRecordBody());
-        appendCarriageReturnAndLineFeed(record);
-        
-        return record.toString();
-    }
+   
     
-    protected CharSequence getRecordHeader()
-    {
-        final StringBuilder result = new StringBuilder();
-        result.append(FastaUtil.HEADER_PREFIX).append(
-                this.getId());
-        if (this.getComment() != null) {
-            result.append(' ').append(this.getComment());
-        }
-        return result;
-    }
-    
-    protected StringBuilder appendCarriageReturnAndLineFeed(StringBuilder s){
-        return s.append(FastaUtil.LINE_SEPARATOR);
-        
-    }
-    
-    /**
-     * 
-    * Gets the entire formatted fasta record as a String,
-    * same as {@link #toFormattedString()}.
-    * @see #toFormattedString()
-     */
     @Override
-    public String toString()
-    {
-        return this.toFormattedString();
-    }
+	public String toString() {
+		return "PositionSequenceFastaRecord [identifier=" + identifier
+				+ ", comments=" + comments + ", positions=" + positions + "]";
+	}
     
     @Override
     public int hashCode()
@@ -109,23 +76,7 @@ public final class PositionSequenceFastaRecord implements FastaRecord<Position, 
         ObjectsUtil.nullSafeEquals(getSequence(), other.getSequence());
     }   
 
-    protected CharSequence getRecordBody() {
-    	int numPositions = (int)positions.getLength();
-    	int numberOfLines = numPositions/12 +1;
-        StringBuilder result = new StringBuilder(5*(int)positions.getLength()+numberOfLines);
-       int i=1;
-       for(Position pos : positions){
-    	   result.append(String.format("%04d", pos.getValue()));
-    	   if(i%12 == 0){
-               this.appendCarriageReturnAndLineFeed(result);
-           }
-           else{
-               result.append(' ');
-           }   
-       }
-       //last value doesn't get a space       
-       return result.substring(0, result.length()-1);
-    }
+   
 
    
     @Override
