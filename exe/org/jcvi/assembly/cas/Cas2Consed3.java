@@ -53,11 +53,8 @@ import org.jcvi.common.core.assembly.ace.AcePlacedReadBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.clc.cas.AbstractCasFileVisitor;
-import org.jcvi.common.core.assembly.clc.cas.AbstractOnePassCasFileVisitor;
 import org.jcvi.common.core.assembly.clc.cas.CasFileInfo;
-import org.jcvi.common.core.assembly.clc.cas.CasFileVisitor;
 import org.jcvi.common.core.assembly.clc.cas.CasInfo;
-import org.jcvi.common.core.assembly.clc.cas.CasMatch;
 import org.jcvi.common.core.assembly.clc.cas.CasParser;
 import org.jcvi.common.core.assembly.clc.cas.CasTrimMap;
 import org.jcvi.common.core.assembly.clc.cas.CasUtil;
@@ -91,10 +88,8 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.DateUtil;
 import org.jcvi.common.core.util.MapUtil;
-import org.jcvi.common.core.util.MultipleWrapper;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
-import org.jcvi.common.io.fileServer.ReadWriteFileServer;
 import org.jcvi.common.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 
 public class Cas2Consed3 {
@@ -156,7 +151,6 @@ public class Cas2Consed3 {
 			final boolean useConic,
 			final boolean createPseduoMoleculeFasta,
 			final boolean createAgp) throws IOException{
-	    final File casWorkingDirectory = casFile.getParentFile();
 	    final File editDir =getEditDir();
 	    File chromatDir = consedOutputDir.contains("chromat_dir")?
 	                            getChromatDir():
@@ -180,9 +174,8 @@ public class Cas2Consed3 {
             
             final File phdFile = new File(phdBallDir, "phd.ball.1");
             final OutputStream phdOut = new FileOutputStream(phdFile);
-            final ConsedDirTraceFolderCreator numberOfReadsVisitor = new ConsedDirTraceFolderCreator(casWorkingDirectory,trimToUntrimmedMap,consedOutputDir);
             
-            
+            final PhdDataStore phdDataStore;
             
               try{
                   
@@ -217,17 +210,51 @@ public class Cas2Consed3 {
                             builders.get(refKey).addRead(acePlacedRead);
                             
                         }
+                        @Override
+                        public void handleReadFileInfo(CasFileInfo readFileInfo) {
+                            for(String filename :readFileInfo.getFileNames()){
+                                File file = getUntrimmedFileFor(filename);
+                                ReadFileType readType = ReadFileType.getTypeFromFile(filename);
+                                try{
+                                    switch(readType){
+                                        case  FASTQ: createSymlinkFor("solexa_dir",file);
+                                                        break;
+                                        case  SFF: createSymlinkFor("sff_dir",file);
+                                                        break;
+                                        default: //no-op
+                                    }
+                                }catch(IOException e){
+                                    throw new IllegalStateException("error creating consed dirs",e);
+                                }
+                            }
+                        }
+                        private File getUntrimmedFileFor(String pathToDataStore) {
+                            File dataStoreFile = new File(casInfo.getCasWorkingDirectory(), pathToDataStore);
+                            
+                            File trimmedDataStore = casInfo.getCasTrimMap().getUntrimmedFileFor(dataStoreFile);
+                            return trimmedDataStore;
+                        }
                         
+                        private void createFolderIfDoesNotYetExist(String path) throws IOException{
+                            if(!consedOutputDir.contains(path)){
+                                consedOutputDir.createNewDir(path);
+                            }
+                        }
+                        
+                        private void createSymlinkFor(String dirName, File fileToSymlink) throws IOException{
+                            createFolderIfDoesNotYetExist(dirName);
+                            consedOutputDir.createNewSymLink(
+                                    fileToSymlink.getCanonicalPath(), dirName+"/"+fileToSymlink.getName()); 
+                        }
                 };
-                 CasParser.parseCas(casFile, 
-                         MultipleWrapper.createMultipleWrapper(CasFileVisitor.class,
-                         visitor, numberOfReadsVisitor));
+                 CasParser.parseCas(casFile, visitor);
+                 //here we are done building
+                 phdDataStore = IndexedPhdFileDataStore.create(phdFile, (int)visitor.getReadCounter());
+              
             }finally{
                 IOUtil.closeAndIgnoreErrors(phdOut);
             }
-             //here we are done building
-             PhdDataStore phdDataStore = IndexedPhdFileDataStore.create(phdFile, (int)numberOfReadsVisitor.getReadCounter());
-          
+            
              long numberOfContigs=0;
              long numberOfReads =0;
              File tempAce = new File(editDir, "temp.ace");
@@ -353,63 +380,7 @@ public class Cas2Consed3 {
 	
 	
 	
-	private static class ConsedDirTraceFolderCreator extends AbstractOnePassCasFileVisitor{
-	    private final CasTrimMap trimToUntrimmedMap;
-	    private final File workingDir;
-	    private final ReadWriteFileServer consedOutputDir;
-		/**
-         * @param trimToUntrimmedMap
-         */
-        public ConsedDirTraceFolderCreator(File workingDir,CasTrimMap trimToUntrimmedMap,
-                ReadWriteFileServer consedOutputDir) {
-            this.trimToUntrimmedMap = trimToUntrimmedMap;
-            this.workingDir = workingDir;
-            this.consedOutputDir = consedOutputDir;
-        }
 
-        @Override
-		protected void visitMatch(CasMatch match, long readCounter) {
-			//no-op
-			
-		}
-
-        @Override
-        public synchronized void visitReadFileInfo(CasFileInfo readFileInfo) {
-            super.visitReadFileInfo(readFileInfo);
-            for(String filename :readFileInfo.getFileNames()){
-                File file = getTrimmedFileFor(filename);
-                ReadFileType readType = ReadFileType.getTypeFromFile(filename);
-                try{
-                    switch(readType){
-                        case  FASTQ: createSymlinkFor("solexa_dir",file);
-                                        break;
-                        case  SFF: createSymlinkFor("sff_dir",file);
-                                        break;
-                        default: //no-op
-                    }
-                }catch(IOException e){
-                    throw new IllegalStateException("error creating consed dirs",e);
-                }
-            }
-        }
-        private File getTrimmedFileFor(String pathToDataStore) {
-            File dataStoreFile = new File(workingDir, pathToDataStore);
-            File trimmedDataStore = trimToUntrimmedMap.getUntrimmedFileFor(dataStoreFile);
-            return trimmedDataStore;
-        }
-        
-        private void createFolderIfDoesNotYetExist(String path) throws IOException{
-            if(!consedOutputDir.contains(path)){
-                consedOutputDir.createNewDir(path);
-            }
-        }
-        
-        private void createSymlinkFor(String dirName, File fileToSymlink) throws IOException{
-            createFolderIfDoesNotYetExist(dirName);
-            consedOutputDir.createNewSymLink(
-                    fileToSymlink.getCanonicalPath(), dirName+"/"+fileToSymlink.getName()); 
-        }
-  }
 	 public static final String DEFAULT_PREFIX = "cas2consed";
 	 
 	public static void main(String[] args) throws IOException{
