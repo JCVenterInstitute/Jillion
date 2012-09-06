@@ -33,20 +33,14 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitor;
+
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
-import org.jcvi.common.core.assembly.ace.AceContigDataStoreBuilder;
-import org.jcvi.common.core.assembly.ace.AceFileParser;
-import org.jcvi.common.core.assembly.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore;
-import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.ace.consed.PhdDirQualityDataStore;
 import org.jcvi.common.core.assembly.util.slice.CompactedSliceMap;
@@ -67,7 +61,6 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.util.MultipleWrapper;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
@@ -162,39 +155,10 @@ public class RecallAceConsensus {
             PhdDataStore masterPhdDataStore= MultipleDataStoreWrapper.createMultipleDataStoreWrapper(PhdDataStore.class, phdDataStore,phdballDataStore);
             QualityDataStore qualityDataStore = TraceQualityDataStoreAdapter.adapt(masterPhdDataStore); 
             ConsensusCaller consensusCaller = createConsensusCaller(RecallType.parse(commandLine.getOptionValue("recall_with")), PhredQuality.valueOf(30));
-            AceContigDataStoreBuilder aceContigDataStoreBuilder = IndexedAceFileDataStore.createBuilder(inputAceFile);
-            AceFileVisitor headerVisitor = new AbstractAceFileVisitor() {
-                
-                /**
-                * {@inheritDoc}
-                */
-                @Override
-                public synchronized void visitHeader(int numberOfContigs,
-                        int totalNumberOfReads) {
-                    try {
-                        AceFileWriter.writeAceFileHeader(numberOfContigs, totalNumberOfReads, out);
-                    } catch (IOException e) {
-                        throw new IllegalStateException("error writing to outputfile");
-                    }
-                }
-
-                @Override
-                protected void visitNewContig(String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean complemented) {
-                    // no-op
-                    
-                }
-                
-                @Override
-                protected void visitAceRead(String readId, NucleotideSequence validBasecalls,
-                        int offset, Direction dir, Range validRange,
-                        PhdInfo phdInfo, int ungappedFullLength) {
-                    // no-op
-                    
-                }
-            };
-            AceFileVisitor aceVisitors = MultipleWrapper.createMultipleWrapper(AceFileVisitor.class, headerVisitor,aceContigDataStoreBuilder);
-            AceFileParser.parse(inputAceFile, aceVisitors);
-            AceFileContigDataStore aceContigDataStore = aceContigDataStoreBuilder.build();
+           
+            AceFileContigDataStore aceContigDataStore = IndexedAceFileDataStore.create(inputAceFile);
+            AceFileWriter.writeAceFileHeader(aceContigDataStore.getNumberOfRecords(), aceContigDataStore.getNumberOfTotalReads(), out);
+            
             StreamingIterator<AceContig> iter = aceContigDataStore.iterator();
             try{
 	            while(iter.hasNext()){

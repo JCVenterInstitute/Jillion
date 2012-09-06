@@ -87,12 +87,15 @@ public abstract class AbstractCasReadVisitor<R extends Read> extends AbstractOne
     @Override
     public final synchronized void visitReadFileInfo(CasFileInfo readFileInfo) {
         super.visitReadFileInfo(readFileInfo);
+        handleReadFileInfo(readFileInfo);
         for(String filename :readFileInfo.getFileNames()){
             iterators.add(createIteratorFor(filename));           
         }
         
     }
-    
+    protected void handleReadFileInfo(CasFileInfo readFileInfo){
+    	//no-op
+    }
     private StreamingIterator<R> createIteratorFor(String filename){
     	 File file;
          try {
