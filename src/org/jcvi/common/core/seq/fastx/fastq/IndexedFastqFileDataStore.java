@@ -50,6 +50,7 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
     private final Map<String, Range> indexFileRange;
     private final FastqQualityCodec qualityCodec;
     private final File file;
+    private final FastXFilter filter;
     private volatile boolean closed;
     /**
 	 * Creates a new {@link FastqFileDataStoreBuilderVisitor}
@@ -82,7 +83,7 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
 	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
 	 */
     public static FastqFileDataStoreBuilderVisitor createBuilder(File file,FastqQualityCodec qualityCodec){
-    	return new IndexedFastqFileDataStoreBuilderVisitor(new LinkedHashMap<String, Range>(), qualityCodec, file, AcceptingFastXFilter.INSTANCE);
+    	return new IndexedFastqFileDataStoreBuilderVisitor(qualityCodec, file, AcceptingFastXFilter.INSTANCE);
     }
     /**
 	 * Creates a new {@link IndexedFastqFileDataStore}
@@ -141,7 +142,7 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
    	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
    	 */
     public static FastqFileDataStoreBuilderVisitor createBuilder(File file,FastqQualityCodec qualityCodec, FastXFilter filter){
-    	return new IndexedFastqFileDataStoreBuilderVisitor(new LinkedHashMap<String, Range>(), qualityCodec, file, filter);
+    	return new IndexedFastqFileDataStoreBuilderVisitor(qualityCodec, file, filter);
     }
     
     /**
@@ -174,10 +175,11 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
      * @param file
      * @throws FileNotFoundException 
      */
-    private IndexedFastqFileDataStore(File file,FastqQualityCodec qualityCodec,Map<String,Range> indexFileRange){
+    private IndexedFastqFileDataStore(File file,FastqQualityCodec qualityCodec,Map<String,Range> indexFileRange,FastXFilter filter){
         this.file = file;
         this.qualityCodec = qualityCodec;
         this.indexFileRange = indexFileRange;
+        this.filter = filter;
     }
    
    
@@ -229,7 +231,7 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
     public StreamingIterator<FastqRecord> iterator() throws DataStoreException {
     	throwExceptionIfClosed();
     	try {
-    		StreamingIterator<FastqRecord> iter = LargeFastqFileDataStore.create(file, qualityCodec)
+    		StreamingIterator<FastqRecord> iter = LargeFastqFileDataStore.create(file, filter, qualityCodec)
 					.iterator();
     		//iter has a different lifecylce than this datastore
     		//so wrap it
@@ -254,7 +256,7 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
      *
      */
     private static final class IndexedFastqFileDataStoreBuilderVisitor implements FastqFileDataStoreBuilderVisitor{
-    	private final Map<String,Range> indexFileRange;
+    	private final Map<String,Range> indexFileRange=new LinkedHashMap<String, Range>();
         private final FastqQualityCodec qualityCodec;
         private final File file;
         private long currentStartOffset=0;
@@ -262,15 +264,13 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
         private String currentId;
         private final FastXFilter filter;
         private boolean includeCurrentRecord;
-        private boolean finishedVisitingFile=false;
+        private volatile boolean finishedVisitingFile=false;
 		private IndexedFastqFileDataStoreBuilderVisitor(
-				Map<String,Range>  indexFileRange,
 				FastqQualityCodec qualityCodec, File file, FastXFilter filter) {
 			
 			if(qualityCodec ==null){
 				throw new NullPointerException("quality codec can not be null");
 			}
-			this.indexFileRange = indexFileRange;
 			this.qualityCodec = qualityCodec;
 			this.file = file;
 			this.filter = filter;
@@ -337,7 +337,7 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
 			if(!finishedVisitingFile){
 				throw new IllegalStateException("not yet finished visiting file");
 			}
-			return new IndexedFastqFileDataStore(file, qualityCodec, indexFileRange);
+			return new IndexedFastqFileDataStore(file, qualityCodec, indexFileRange,filter);
 		}
     	
     }
