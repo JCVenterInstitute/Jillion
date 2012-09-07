@@ -35,7 +35,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestSangerFastQQualityCodecActual.class,
         TestParseSangerEncodedFastQFile.class,        
         TestFormattingFastqRecords.class,
-       
+        TestDefaultFastqRecordWriter.class,
+        
         TestDefaultFastQFileDataStore.class,
         TestDefaultMultiLineFastqRecordsInDataStore.class,
         TestDefaultFastqFileDataStoreGuessCodec.class, 
