@@ -33,7 +33,7 @@ public interface NucleotideSequenceFastaRecordWriter extends FastaRecordWriter<N
 	void write(String id, NucleotideSequence sequence) throws IOException;
 	/**
 	 * Write the given id and {@link NucleotideSequence}
-	 * out as a NucleotideSequenceFastaRecord without a comment.
+	 * out as a NucleotideSequenceFastaRecord along with an optional comment.
 	 * @param id the id of the record to be written.
 	 * @param sequence the {@link NucleotideSequence} to be written.
 	 * @param optionalComment comment to write, if this value is null,
