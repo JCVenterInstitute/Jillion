@@ -23,8 +23,10 @@ import org.jcvi.common.core.io.TextLineParser;
 import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
+import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecordWriter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqUtil;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
 import org.jcvi.common.core.util.JoinedStringBuilder;
@@ -80,6 +82,7 @@ public class FastqFile2 {
             IOUtil.mkdirs(outputFile.getParentFile());
         	out = new PrintWriter(outputFile);
            
+        	DefaultFastqRecordWriter.Builder writerBuilder = new DefaultFastqRecordWriter.Builder(outputFile);
             final File idFile;
             final FastXFilter filter;
             Integer numberOfIds =commandLine.hasOption("n")?Integer.parseInt(commandLine.getOptionValue("n")):null;
@@ -102,48 +105,23 @@ public class FastqFile2 {
             if(commandLine.hasOption("q")){
             	//re-encode qualities
             	FastqQualityCodec reEncodedQualityCodec = parseQualityCodec(commandLine.getOptionValue("q"));
-            	 StreamingIterator<FastqRecord> iter=null;
-                 try{
-                 	iter = LargeFastqFileDataStore.create(fastQFile,filter,qualityCodec).iterator();
-                 	while(iter.hasNext()){
-                 		out.print(iter.next().toFormattedString(reEncodedQualityCodec));
-                 	}
-                 }finally{
-                 	IOUtil.closeAndIgnoreErrors(iter);
-                 }
+            	 
+            	writerBuilder.qualityCodec(reEncodedQualityCodec);
             }else{
-            	//we aren't re-encoding the fastq 
-            	//so we can just stream over the lines we care about.
-	            //don't use fastq parser
-	            //manually read the file for speed reasons
-	            InputStream in = null;
-	            try{
-	            	in = new FileInputStream(fastQFile);
-	            	TextLineParser parser = new TextLineParser(in);
-	            	while(parser.hasNextLine()){
-	            		String defLine = parser.nextLine().trim();
-	            		Matcher matcher = FastqUtil.SEQ_DEFLINE_PATTERN.matcher(defLine);
-		                if(!matcher.find()){
-		                    throw new IllegalStateException("invalid fastq file, could not parse id from "+defLine);
-		                }
-		                String id = matcher.group(1);
-		                String basecalls = parser.nextLine().trim();
-		                String qualDefLine = parser.nextLine().trim();
-		                String qualities = parser.nextLine().trim();
-		                if(filter==null || filter.accept(id)){
-		                    String record= new JoinedStringBuilder(defLine,basecalls,qualDefLine,qualities)
-		                                        .glue("\n")
-		                                        .suffix("\n")
-		                                        .build();
-		                    out.print(record);
-		                }
-	            	}
-	            }finally{
-	            	IOUtil.closeAndIgnoreErrors(in);
-	            }
-	            
-	            
+            	//keep encoding what it was
+            	writerBuilder.qualityCodec(qualityCodec);
             }
+            FastqRecordWriter writer = writerBuilder.build();
+        	StreamingIterator<FastqRecord> iter=null;
+             try{
+             	iter = LargeFastqFileDataStore.create(fastQFile,filter,qualityCodec).iterator();
+             	while(iter.hasNext()){
+             		writer.write(iter.next());
+             	}
+             }finally{
+             	IOUtil.closeAndIgnoreErrors(iter,writer);
+             }
+            
         } catch (ParseException e) {
             printHelp(options);
             System.exit(1);

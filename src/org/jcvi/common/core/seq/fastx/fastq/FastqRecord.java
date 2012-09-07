@@ -73,41 +73,7 @@ public interface FastqRecord extends Trace{
      * or {@code null} if there is no comment.
      */
     String getComment();
-    /**
-     * Convenience method to format {@link FastqRecord}
-     * using SANGER quality encoding and without
-     * duplicating the id on the quality defline.
-     * this is the same as
-     * {@link #toFormattedString(FastqQualityCodec, boolean) toFormattedString(FastqQualityCodec.SANGER, false)}
-     * @return a multiline string which is the fastq encoded version of
-     * this {@link FastqRecord}, never null.
-     */
-    String toFormattedString();
-    /**
-     * Convenience method to format this {@link FastqRecord} without
-     * duplicating the id on the quality defline.
-     * this is the same as
-     * {@link #toFormattedString(FastqQualityCodec, boolean) toFormattedString(qualityCodec, false)}
-     * @param qualityCodec the {@link FastqQualityCodec} to use to encode
-     * the qualities, can not be null.
-     * @return a multiline string which is the fastq encoded version of
-     * this {@link FastqRecord}, never null.
-     * @throws NullPointerException if qualityCodec is null.
-     */
-    String toFormattedString(FastqQualityCodec qualityCodec);
-    /**
-     * Encode the this {@link FastqRecord} into a formatted
-     * multiline String which is used in .fastq formatted files.
-     * @param qualityCodec the {@link FastqQualityCodec} to use to encode
-     * the qualities, can not be null.
-     * @param should the read id be written (again) on the qualities line,
-     * many fastq formats no longer duplicate the id on the quality line to
-     * save space.
-     * @return a multiline string which is the fastq encoded version of
-     * this {@link FastqRecord}, never null.
-     * @throws NullPointerException if qualityCodec is null.
-     */
-    String toFormattedString(FastqQualityCodec qualityCodec, boolean writeIdOnQualityLine);
+
     /**
      * The HashCode of a {@link FastqRecord} is computed using
      * the id, {@link NucleotideSequence} and {@link QualitySequence}

@@ -1,9 +1,7 @@
 package org.jcvi.common.core.seq.fastx.fastq;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Arrays;
 
 import org.jcvi.common.core.Range;
@@ -108,25 +106,22 @@ public class TestRemoveRedundantMatePairs {
 		
 		File mate1File = tempFolder.newFile("mate1");
 		File mate2File = tempFolder.newFile("mate2");
+		FastqRecordWriter writer1 = new DefaultFastqRecordWriter.Builder(mate1File)
+									.build();
+		FastqRecordWriter writer2 = new DefaultFastqRecordWriter.Builder(mate2File)
+									.build();
 		
-		OutputStream out1=null;
-		OutputStream out2=null;
 		try{
-			out1 = new FileOutputStream(mate1File);
-			out2 = new FileOutputStream(mate2File);
+
 			
-			out1.write(left.toFormattedString().getBytes(IOUtil.UTF_8));
-			out2.write(right.toFormattedString().getBytes(IOUtil.UTF_8));
+			writer1.write(left);
+			writer2.write(right);
 			for(int i=0; i<numDups; i++){
-				FastqRecord newLeft = FastqRecordFactory.create(left.getId()+i, left.getNucleotideSequence(), left.getQualitySequence());
-				out1.write(newLeft.toFormattedString().getBytes(IOUtil.UTF_8));
-				
-				FastqRecord newRight= FastqRecordFactory.create(right.getId()+i, right.getNucleotideSequence(), right.getQualitySequence());
-				
-				out2.write(newRight.toFormattedString().getBytes(IOUtil.UTF_8));
+				writer1.write(left.getId()+i, left.getNucleotideSequence(), left.getQualitySequence());				
+				writer2.write(right.getId()+i, right.getNucleotideSequence(), right.getQualitySequence());
 			}
 		}finally{
-			IOUtil.closeAndIgnoreErrors(out1,out2);
+			IOUtil.closeAndIgnoreErrors(writer1,writer2);
 		}
 		
 		return new MatePairFiles(mate1File, mate2File);
@@ -137,35 +132,35 @@ protected MatePairFiles createCompletelyRedundantUpToNBasesData(int numDups) thr
 		File mate1File = tempFolder.newFile("mate1");
 		File mate2File = tempFolder.newFile("mate2");
 		
-		OutputStream out1=null;
-		OutputStream out2=null;
+		FastqRecordWriter writer1 = new DefaultFastqRecordWriter.Builder(mate1File)
+		.build();
+		FastqRecordWriter writer2 = new DefaultFastqRecordWriter.Builder(mate2File)
+				.build();
 		try{
-			out1 = new FileOutputStream(mate1File);
-			out2 = new FileOutputStream(mate2File);
 			Range subRange = Range.createOfLength(numberOfBasesToCompare);
-			out1.write(left.toFormattedString().getBytes(IOUtil.UTF_8));
-			out2.write(right.toFormattedString().getBytes(IOUtil.UTF_8));
+			writer1.write(left);
+			writer2.write(right);
 			for(int i=0; i<numDups; i++){
 				FastqRecord newLeft = FastqRecordFactory.create(left.getId()+i, 
 						new NucleotideSequenceBuilder(left.getNucleotideSequence())
 								.trim(subRange)
-								.append("NNNNNNNNN")
+								.append("NNNNNNNNNN")
 								.build(), 
 				left.getQualitySequence());
-				out1.write(newLeft.toFormattedString().getBytes(IOUtil.UTF_8));
+				writer1.write(newLeft);
 				
 				FastqRecord newRight= FastqRecordFactory.create(right.getId()+i, 
 						new NucleotideSequenceBuilder(right.getNucleotideSequence())
 							.trim(subRange)
-							.append("NNNNNNNNN")
+							.append("NNNNNNNNNN")
 							.build(), 
 				right.getQualitySequence());
 				
-				out2.write(newRight.toFormattedString().getBytes(IOUtil.UTF_8));
+				writer2.write(newRight);
 		
 			}
 		}finally{
-			IOUtil.closeAndIgnoreErrors(out1,out2);
+			IOUtil.closeAndIgnoreErrors(writer1,writer2);
 		}
 		
 		return new MatePairFiles(mate1File, mate2File);

@@ -21,7 +21,6 @@ package org.jcvi.fasta.fastq.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +32,10 @@ import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecordWriter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
@@ -91,7 +92,7 @@ public class SplitFastq {
             }
             int n = Integer.parseInt(commandLine.getOptionValue("n"));
             ReadWriteDirectoryFileServer outputDir = DirectoryFileServer.createReadWriteDirectoryFileServer(commandLine.getOptionValue("o"));
-            List<PrintWriter> writers = createWriters(outputDir, fastqFile, n);
+            List<FastqRecordWriter> writers = createWriters(outputDir, fastqFile, n,fastqQualityCodec);
             
             StreamingIterator<FastqRecord> iterator= LargeFastqFileDataStore.create(fastqFile, fastqQualityCodec).iterator();
             int counter=0;
@@ -99,11 +100,11 @@ public class SplitFastq {
                 while(iterator.hasNext()){
                     int mod = counter %n;
                     FastqRecord record = iterator.next();
-                    writers.get(mod).print(record.toFormattedString(fastqQualityCodec)); 
+                    writers.get(mod).write(record); 
                     counter++;
                 }
             }finally{
-                for(PrintWriter writer : writers){
+                for(FastqRecordWriter writer : writers){
                     IOUtil.closeAndIgnoreErrors(writer);
                 }
                 iterator.close();
@@ -123,18 +124,20 @@ public class SplitFastq {
      * @return
      * @throws IOException 
      */
-    private static List<PrintWriter> createWriters(
-            ReadWriteDirectoryFileServer outputDir, File fastqFile, int n) throws IOException {
-        List<PrintWriter> writers = new ArrayList<PrintWriter>();
+    private static List<FastqRecordWriter> createWriters(
+            ReadWriteDirectoryFileServer outputDir, File fastqFile, int n, FastqQualityCodec fastqQualityCodec) throws IOException {
+        List<FastqRecordWriter> writers = new ArrayList<FastqRecordWriter>();
         String basename = fastqFile.getName();
         try{
             for(int i=0; i< n; i++){
                 File newFile =outputDir.createNewFile(String.format("%s.part_%d.fastq", basename, i));
-                writers.add(new PrintWriter(newFile));
+                writers.add(new DefaultFastqRecordWriter.Builder(newFile)
+                			.qualityCodec(fastqQualityCodec)
+                			.build());
             }
             return writers;
         }catch(IOException e){
-            for(PrintWriter writer : writers){
+            for(FastqRecordWriter writer : writers){
                 IOUtil.closeAndIgnoreErrors(writer);
             }
             throw e;

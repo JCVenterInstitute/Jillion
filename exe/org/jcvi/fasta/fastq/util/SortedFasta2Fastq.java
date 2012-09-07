@@ -21,7 +21,7 @@ package org.jcvi.fasta.fastq.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -35,6 +35,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
@@ -47,9 +48,11 @@ import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecordFactory;
+import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecordWriter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordFactory;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
 import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -209,11 +212,10 @@ public class SortedFasta2Fastq {
     }
     /**
      * @param args
-     * @throws IdReaderException 
-     * @throws FileNotFoundException 
      * @throws InterruptedException 
+     * @throws IOException 
      */
-    public static void main(String[] args) throws IdReaderException, FileNotFoundException, InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
         Options options = new Options();
         options.addOption(new CommandLineOptionBuilder("s", 
                                     "input sequence FASTA file")
@@ -286,7 +288,9 @@ public class SortedFasta2Fastq {
             final BlockingQueue<QualitySequenceFastaRecord> qualityQueue = new ArrayBlockingQueue<QualitySequenceFastaRecord>(bufferSize);
             final BlockingQueue<NucleotideSequenceFastaRecord> sequenceQueue = new ArrayBlockingQueue<NucleotideSequenceFastaRecord>(bufferSize);
             
-            final PrintWriter writer = new PrintWriter(commandLine.getOptionValue("o"));
+            final FastqRecordWriter writer = new DefaultFastqRecordWriter.Builder(new File(commandLine.getOptionValue("o")))
+            							.qualityCodec(fastqQualityCodec)
+            							.build();
             boolean done = false;
            QualityBlockedFastaVisitor qualVisitor = new QualityBlockedFastaVisitor(
                     qualFile, 
@@ -296,6 +300,7 @@ public class SortedFasta2Fastq {
            long startTime = System.currentTimeMillis();
            qualVisitor.start();
            seqVisitor.start();
+           try{
            while(!done){
                QualitySequenceFastaRecord qualityFasta =qualityQueue.take();
                NucleotideSequenceFastaRecord seqFasta = sequenceQueue.take();
@@ -321,14 +326,17 @@ public class SortedFasta2Fastq {
                    FastqRecord fastq = FastqRecordFactory.create(seqFasta.getId(), 
                            seqFasta.getSequence(), qualityFasta.getSequence());
 
-                   writer.print(fastq.toFormattedString(fastqQualityCodec));
+                   writer.write(fastq);
                }
             }
+           long endTime = System.currentTimeMillis();
+           System.out.println(DateUtil.getElapsedTimeAsString(endTime - startTime));
+           
+           }finally{
+        	   IOUtil.closeAndIgnoreErrors(writer);
+           }
             
-            writer.close();
-            long endTime = System.currentTimeMillis();
-            System.out.println(DateUtil.getElapsedTimeAsString(endTime - startTime));
-            
+           
         } catch (ParseException e) {
             printHelp(options);
             System.exit(1);

@@ -21,7 +21,6 @@ package org.jcvi.fasta.fastq.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -44,9 +43,9 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecordWriter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
-import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
-import org.jcvi.common.core.seq.fastx.fastq.FastqRecordFactory;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
@@ -129,7 +128,9 @@ public class Fasta2Fastq {
             final QualitySequenceFastaDataStore qualityDataStore = DefaultQualityFastaFileDataStore.create(qualFile,filter);
             
             File seqFile = new File(commandLine.getOptionValue("s"));
-            final PrintWriter writer = new PrintWriter(commandLine.getOptionValue("o"));
+            final FastqRecordWriter writer = new DefaultFastqRecordWriter.Builder(new File(commandLine.getOptionValue("o")))
+            								.qualityCodec(fastqQualityCodec)
+            								.build();
             
             FastaFileVisitor visitor = new AbstractFastaVisitor() {
                 
@@ -141,12 +142,11 @@ public class Fasta2Fastq {
                             if(qualities ==null){
                                 throw new IllegalStateException("no quality values for "+ id);
                             }
-                            FastqRecord fastq = FastqRecordFactory.create(id, 
+                            writer.write(id, 
                                    new NucleotideSequenceBuilder(entireBody).build(), qualities,comment);
     
-                            writer.print(fastq.toFormattedString(fastqQualityCodec));
                         }
-                    } catch (DataStoreException e) {
+                    } catch (Exception e) {
                         throw new IllegalStateException("error getting quality data for "+ id);
                     }
                     return true;
