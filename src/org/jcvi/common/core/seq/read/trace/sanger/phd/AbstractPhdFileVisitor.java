@@ -216,5 +216,10 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
         tags.add(new DefaultPhdTag(currentTag, currentTagValueBuilder.toString()));
         inTag = false;
     }
+	protected final DataStoreFilter getFilter() {
+		return filter;
+	}
 
+    
+    
 }

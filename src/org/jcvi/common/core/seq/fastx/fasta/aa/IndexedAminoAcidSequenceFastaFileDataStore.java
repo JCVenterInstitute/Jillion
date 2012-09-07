@@ -139,7 +139,8 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore implements AminoAc
 	@Override
 	public StreamingIterator<AminoAcidSequenceFastaRecord> iterator() throws DataStoreException {
 		throwExceptionIfClosed();
-		return DataStoreStreamingIterator.create(this,LargeAminoAcidSequenceFastaIterator.createNewIteratorFor(fastaFile));
+		return DataStoreStreamingIterator.create(this,
+				LargeAminoAcidSequenceFastaIterator.createNewIteratorFor(fastaFile));
 	}
 	
 	private static final class IndexedAminoAcidSequenceFastaDataStoreBuilderVisitor
