@@ -495,13 +495,16 @@ public final class AceFileParser {
             
             @Override
             ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
-            	//parse current line
-            	parserState.visitor.visitLine(line);
+
                 ParserState currentParserState = parserState;
             	if(currentParserState.inAContig && currentParserState.seenAllExpectedReads()){                    
                     currentParserState =currentParserState.notInAContig();
                     currentParserState.visitor.visitEndOfContig();
                 }
+            	//delay calling visit current line
+            	//until after we have determined we are 
+            	//out of the current contig
+            	parserState.visitor.visitLine(line);
                 String lineWithCR;
                 lineWithCR = currentParserState.parser.nextLine();
                 currentParserState.visitor.visitLine(lineWithCR);
