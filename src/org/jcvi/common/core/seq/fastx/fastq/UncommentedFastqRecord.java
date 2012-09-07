@@ -10,7 +10,6 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  *
  */
 class UncommentedFastqRecord implements FastqRecord{
-	 private static final String CR = "\n";
 		private final String id;
 	    private final NucleotideSequence nucleotides;
 	    private final QualitySequence qualities;
@@ -112,37 +111,4 @@ class UncommentedFastqRecord implements FastqRecord{
 	        }
 	        return true;
 	    }
-		@Override
-		public String toFormattedString() {
-			return toFormattedString(FastqQualityCodec.SANGER);
-		}
-		@Override
-		public String toFormattedString(FastqQualityCodec qualityCodec) {
-			return toFormattedString(qualityCodec, false);
-		}
-		@Override
-		public String toFormattedString(FastqQualityCodec qualityCodec,
-				boolean writeIdOnQualityLine) {
-			if(qualityCodec ==null){
-				throw new NullPointerException("qualityCodec can not be null");
-			}
-	        boolean hasComment = getComment() !=null;
-	        
-	        StringBuilder builder = new StringBuilder("@").append(id);
-	        if(hasComment){
-	            builder.append(' ').append(getComment());
-	        }
-	        builder.append(CR)
-	        .append(getNucleotideSequence())
-	        .append("\n+");
-	        if(writeIdOnQualityLine){
-	            builder.append(id);
-	        }
-	        builder.append(CR)
-	        .append(qualityCodec.encode(getQualitySequence()))
-	        .append(CR);
-	        return builder.toString();
-		}
-	   
-
 }

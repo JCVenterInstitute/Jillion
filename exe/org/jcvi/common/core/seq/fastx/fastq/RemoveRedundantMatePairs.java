@@ -21,7 +21,6 @@ package org.jcvi.common.core.seq.fastx.fastq;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -101,8 +100,12 @@ public class RemoveRedundantMatePairs {
             File nonRedundantMate1 = new File(outputDir,prefix+"_1.fastq");
             File nonRedundantMate2 = new File(outputDir,prefix+"_2.fastq");
             
-            FileOutputStream out1 = new FileOutputStream(nonRedundantMate1);
-            FileOutputStream out2 = new FileOutputStream(nonRedundantMate2);
+            FastqRecordWriter out1 = new DefaultFastqRecordWriter.Builder(nonRedundantMate1)
+            							.qualityCodec(qualityCodec)
+            							.build();
+            FastqRecordWriter out2 = new DefaultFastqRecordWriter.Builder(nonRedundantMate2)
+										.qualityCodec(qualityCodec)
+										.build();
             Set<NucleotideSequence> nonRedundantSet = new HashSet<NucleotideSequence>(expectedSize+1,1F);
             MatePairIterator iter =null;
           
@@ -116,8 +119,8 @@ public class RemoveRedundantMatePairs {
 	                if(!nonRedundantSet.contains(seq)){
 	                	 FastqRecord forward = matePair.getForward();
 	 	                FastqRecord reverse = matePair.getReverse();
-	                    out1.write(forward.toFormattedString(qualityCodec).getBytes(IOUtil.UTF_8));
-	                    out2.write(reverse.toFormattedString(qualityCodec).getBytes(IOUtil.UTF_8));
+	                    out1.write(forward);
+	                    out2.write(reverse);
 	                    nonRedundantSet.add(seq);
 	                }
 	            }

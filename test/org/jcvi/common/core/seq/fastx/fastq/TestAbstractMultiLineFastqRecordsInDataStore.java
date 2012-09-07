@@ -63,7 +63,7 @@ public abstract class TestAbstractMultiLineFastqRecordsInDataStore {
 			while(singleIter.hasNext()){
 				FastqRecord single = singleIter.next();
 				FastqRecord multi = multiIter.next();
-				assertEquals(single.toFormattedString(), multi.toFormattedString());
+				assertEquals(single, multi);
 			}
 			assertFalse(multiIter.hasNext());
 		}finally{

@@ -3,7 +3,6 @@ package org.jcvi.fasta.fastq.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -14,10 +13,12 @@ import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecordWriter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordFactory;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqUtil;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -80,7 +81,8 @@ public class BwaTrimmer {
 
 		BwaQualityTrimmer trimmer = new BwaQualityTrimmer(threshold);
 		IOUtil.mkdirs(outputFile.getParentFile());
-		PrintWriter out = new PrintWriter(outputFile);
+		FastqRecordWriter fastqWriter = new DefaultFastqRecordWriter.Builder(outputFile)
+									.build();
 		StreamingIterator<FastqRecord> iter=null;
 		try{
 			iter = datastore.iterator();
@@ -104,13 +106,13 @@ public class BwaTrimmer {
 							.build(),
 							next.getComment());
 				
-				out.print(trimmedSequence.toFormattedString(FastqQualityCodec.SANGER));
+				fastqWriter.write(trimmedSequence);
 
 			}
 			long end = System.currentTimeMillis();
 			System.out.println("took = "+ (end-start)/1000 + " seconds");
 		}finally{
-			IOUtil.closeAndIgnoreErrors(out,iter,datastore);
+			IOUtil.closeAndIgnoreErrors(fastqWriter,iter,datastore);
 		}
 	}
 

@@ -8,6 +8,8 @@ import java.nio.charset.Charset;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 
@@ -179,5 +181,38 @@ public class TestDefaultFastqRecordWriter {
 	        
 	        String actual = new String(out.toByteArray(), charset);
 	        assertEquals(expected, actual);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void differentNumberOfNucleotidesAndQualitiesShouldThrowIllegalArgumentException() throws IOException{
+		 ByteArrayOutputStream out = new ByteArrayOutputStream();
+		 FastqRecordWriter sut = new DefaultFastqRecordWriter.Builder(out).build();
+		 sut.write("id", new NucleotideSequenceBuilder("ACGT").build(),
+				 new QualitySequenceBuilder(new byte[]{10,11,12,13,14}).build());
+		 
+	}
+	@Test(expected = NullPointerException.class)
+	public void nullIdShouldThrowNullPointerException() throws IOException{
+		 ByteArrayOutputStream out = new ByteArrayOutputStream();
+		 FastqRecordWriter sut = new DefaultFastqRecordWriter.Builder(out).build();
+		 sut.write(null, new NucleotideSequenceBuilder("ACGT").build(),
+				 new QualitySequenceBuilder(new byte[]{10,11,12,13}).build());
+		 
+	}
+	@Test(expected = NullPointerException.class)
+	public void nullNucleotidesShouldThrowNullPointerException() throws IOException{
+		 ByteArrayOutputStream out = new ByteArrayOutputStream();
+		 FastqRecordWriter sut = new DefaultFastqRecordWriter.Builder(out).build();
+		 sut.write("id", null,
+				 new QualitySequenceBuilder(new byte[]{10,11,12,13}).build());
+		 
+	}
+	@Test(expected = NullPointerException.class)
+	public void nullQualitiesShouldThrowNullPointerException() throws IOException{
+		 ByteArrayOutputStream out = new ByteArrayOutputStream();
+		 FastqRecordWriter sut = new DefaultFastqRecordWriter.Builder(out).build();
+		 sut.write("id", new NucleotideSequenceBuilder("ACGT").build(),
+				 null);
+		 
 	}
 }
