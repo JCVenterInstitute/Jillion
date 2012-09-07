@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -54,7 +53,8 @@ import org.jcvi.common.core.assembly.util.slice.consensus.NoAmbiguityConsensusCa
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory;
+import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.read.trace.TraceQualityDataStoreAdapter;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -144,8 +144,9 @@ public class RecallAceConsensus {
             File consedDir = inputAceFile.getParentFile().getParentFile();
             File phdDir = ConsedUtil.getPhdDirFor(consedDir);
             File phdballDir = ConsedUtil.getPhdBallDirFor(consedDir);
-            PrintWriter fastaOut = commandLine.hasOption("fasta") ?
-                    new PrintWriter(new File(commandLine.getOptionValue("fasta"))):
+            NucleotideSequenceFastaRecordWriter fastaOut = commandLine.hasOption("fasta") ?
+                    new DefaultNucleotideSequenceFastaRecordWriter.Builder(new File(commandLine.getOptionValue("fasta")))
+            				.build():
                         null;
             
             File outputAceFile = new File(commandLine.getOptionValue("out"));
@@ -180,7 +181,7 @@ public class RecallAceConsensus {
 	                		.copy()
 	                		.ungap()
 	                		.build();
-	                    fastaOut.print(NucleotideSequenceFastaRecordFactory.create(contig.getId(), ungappedRecalledConsensus));
+	                    fastaOut.write(contig.getId(), ungappedRecalledConsensus);
 	                }
 	                final NucleotideSequence gappedRecalledConsensus = recalledConsensusBuilder.build();
 	                AceContigBuilder builder = DefaultAceContig.createBuilder(contig.getId(), gappedRecalledConsensus);
