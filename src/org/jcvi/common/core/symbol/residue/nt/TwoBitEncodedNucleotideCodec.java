@@ -37,6 +37,13 @@ import org.jcvi.common.core.util.iter.IteratorUtil;
 
 
 /**
+ * {@code TwoBitEncodedNucleotideCodec} is a
+ * {@link NucleotideCodec} that
+ * is able to encode
+ * up to 5 different nucleotides as 2 bits each
+ * plus some extra bytes to store offsets
+ * of the 5th base.  The best uses of this
+ * codec is to store ACGT and -/N as the 5th base type.
  * @author dkatzel
  *
  *
