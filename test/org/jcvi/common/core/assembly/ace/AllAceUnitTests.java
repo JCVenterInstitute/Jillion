@@ -54,6 +54,7 @@ import org.junit.runners.Suite.SuiteClasses;
        
        
        TestAceFileWriter.class,
+       TestAceFileWriter2.class,
        TestHiLowAceContigPhdDatastore.class,
        TestDefaultAcePlacedReadReAbacus.class,
        TestDefaultAceContigBuilderReAbacus.class,
