@@ -47,9 +47,10 @@ import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.DefaultScaffold;
 import org.jcvi.common.core.assembly.ScaffoldBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
-import org.jcvi.common.core.assembly.ace.AceFileWriter;
+import org.jcvi.common.core.assembly.ace.AceFileWriter2;
 import org.jcvi.common.core.assembly.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.ace.AcePlacedReadBuilder;
+import org.jcvi.common.core.assembly.ace.DefaultAceFileWriter;
 import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.clc.cas.AbstractCasFileVisitor;
@@ -254,12 +255,17 @@ public class Cas2Consed3 {
             }finally{
                 IOUtil.closeAndIgnoreErrors(phdOut);
             }
-            
-             long numberOfContigs=0;
-             long numberOfReads =0;
-             File tempAce = new File(editDir, "temp.ace");
+             File tmpDir = File.createTempFile("temp", ".aceDir", editDir);
+             //delete the temp file, then recreate it as a directory
+             if(!tmpDir.delete() || !tmpDir.mkdir()){
+            	 throw new IOException("Could not create temp directory: " + tmpDir.getAbsolutePath());
+             }
+             File ace = new File(editDir, prefix+".ace.1");
+             AceFileWriter2 aceWriter = new DefaultAceFileWriter.Builder(ace, phdDataStore)
+             							.tmpDir(tmpDir)
+             							.build();
              File consensusFile = consedOutputDir.createNewFile(prefix+ ".ace.1.consensus.fasta");
-             OutputStream tempOut = new FileOutputStream(tempAce);
+             
              NucleotideSequenceFastaRecordWriter consensusOut = new DefaultNucleotideSequenceFastaRecordWriter.Builder(consensusFile)
              																.build();
              final NucleotideSequenceFastaRecordWriter pseduoMoleculeOut;
@@ -303,14 +309,10 @@ public class Cas2Consed3 {
                  long previousPseduoMoleculeOffset=0;
                  ScaffoldBuilder scaffoldBuilder = DefaultScaffold.createBuilder(referenceId);
                  for(Entry<Range,AceContig> entry : ConsedUtil.split0xContig(builder,true).entrySet()){
-                     numberOfContigs++;
                      AceContig splitContig = entry.getValue();                     
                      Range contigRange = entry.getKey();
                      //add split contig to current scaffold
-                     scaffoldBuilder.add(splitContig.getId(), contigRange);
-                     //add split contig reads to total # reads
-                     numberOfReads+= splitContig.getNumberOfReads();
-                     
+                     scaffoldBuilder.add(splitContig.getId(), contigRange);                     
                      int numberOfUpstreamNs = (int)(contigRange.getBegin() - previousPseduoMoleculeOffset);
                 	 appendNsIfNeeded(pseduoMoleculeBuilder, numberOfUpstreamNs);
                 	 NucleotideSequence ungappedConsensus = new NucleotideSequenceBuilder(splitContig.getConsensusSequence())
@@ -321,7 +323,7 @@ public class Cas2Consed3 {
                      
                      
 					consensusOut.write(splitContig.getId(), ungappedConsensus);
-                     AceFileWriter.writeAceContig(splitContig, phdDataStore, tempOut);
+					aceWriter.write(splitContig);
                      previousPseduoMoleculeOffset = contigRange.getEnd();
                  }
                  int numberOfDownstreamNs = (int)(ungappedLength-1 - previousPseduoMoleculeOffset);
@@ -336,22 +338,18 @@ public class Cas2Consed3 {
                  }
                  builderIterator.remove();
              }
-             IOUtil.closeAndIgnoreErrors(tempOut,consensusOut,pseduoMoleculeOut,agpOut);
-             File ace = new File(editDir, prefix+".ace.1");
-             OutputStream out = new FileOutputStream(ace);
-             out.write(String.format("AS %d %d%n%n", numberOfContigs, numberOfReads).getBytes());
-             IOUtil.copy(new FileInputStream(tempAce), out);
-             
-             IOUtil.deleteIgnoreError(tempAce);
+             IOUtil.closeAndIgnoreErrors(consensusOut,pseduoMoleculeOut,agpOut);
+            
              if(!makePhdBall){
                  IOUtil.deleteIgnoreError(phdFile);
              }
              else{
-                 AceFileWriter.writeWholeAssemblyTag(new DefaultWholeAssemblyAceTag("phdBall", "consed",
-                        DateUtil.getCurrentDate(), "../phdball_dir/"+phdFile.getName()), out);
+            	 aceWriter.write(new DefaultWholeAssemblyAceTag("phdBall", "consed",
+                        DateUtil.getCurrentDate(), "../phdball_dir/"+phdFile.getName()));
                 
              }
-             IOUtil.closeAndIgnoreErrors(out);
+             IOUtil.closeAndIgnoreErrors(aceWriter);
+             IOUtil.recursiveDelete(tmpDir);
              long endTime = DateUtil.getCurrentDate().getTime();
              
              logOut.printf("took %s%n", DateUtil.getElapsedTimeAsString(endTime- startTime));
