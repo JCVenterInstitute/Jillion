@@ -25,13 +25,14 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public class DefaultAceFileWriter implements AceFileWriter2{
 	
-	private static String CR = "\n";
+	private static final String CR = "\n";
+	
+	private static final int DEFAULT_BUFFER_SIZE = 2<<14; 
 	//builder option for writing BS records or not
 		//optional phd datastore to handle upper vs lowercase bases
 		//option for quality threshold for upper vs lowercase
@@ -55,23 +56,24 @@ public class DefaultAceFileWriter implements AceFileWriter2{
 	
 	private DefaultAceFileWriter(OutputStream out, PhdDataStore phdDatastore,File tmpDir,
 			boolean createBsRecords) throws IOException {
-		this.out = new BufferedOutputStream(out);
+		this.out = new BufferedOutputStream(out,DEFAULT_BUFFER_SIZE);
 		this.phdDatastore = phdDatastore;
 		this.createBsRecords = createBsRecords;
+		IOUtil.mkdirs(tmpDir);
 		this.tempFile = File.createTempFile("aceWriter", null, tmpDir);
 		tempFile.deleteOnExit();
-		tempWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile)));
+		tempWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile)),DEFAULT_BUFFER_SIZE);
 	}
 
 	@Override
 	public void close() throws IOException {
-		tempWriter.flush();
+		
 		tempWriter.close();
 		writeAceFileHeader();
 		copyTempFileData();
 		copyTagData();
-		out.flush();
 		out.close();
+		IOUtil.deleteIgnoreError(tempFile);
 		
 	}
 
@@ -116,7 +118,7 @@ public class DefaultAceFileWriter implements AceFileWriter2{
                 contig.getNumberOfReads(),
                 0,
                 contig.isComplemented());
-        tempWriter.write(String.format("%s%n%n%n",AceFileUtil.convertToAcePaddedBasecalls(consensus)));
+        tempWriter.write(String.format("%s\n\n\n",AceFileUtil.convertToAcePaddedBasecalls(consensus)));
         writeFakeUngappedConsensusQualities(consensus);
         tempWriter.write(CR);
         List<IdAlignedReadInfo> assembledFroms = IdAlignedReadInfo.getSortedAssembledFromsFor(contig);
@@ -142,7 +144,7 @@ public class DefaultAceFileWriter implements AceFileWriter2{
 	
 	private String createAssembledFromRecord(AcePlacedRead read, long fullLength){
     	IdAlignedReadInfo assembledFrom = IdAlignedReadInfo.createFrom(read, fullLength);
-        return String.format("AF %s %s %d%n",
+        return String.format("AF %s %s %d\n",
                 assembledFrom.getId(),
                 assembledFrom.getDirection()==Direction.FORWARD? "U":"C",
                         assembledFrom.getStartOffset());
@@ -163,20 +165,22 @@ public class DefaultAceFileWriter implements AceFileWriter2{
         
     }
 	 private void writeFakeUngappedConsensusQualities(NucleotideSequence consensus) throws IOException {
-	        StringBuilder result = new StringBuilder();
-	        int numberOfQualitiesSoFar=0;
-	        for(int i=0; i< consensus.getLength(); i++){
-	            Nucleotide base = consensus.get(i);
-	            if(base.isGap()){
-	                continue;
-	            }
-	            result.append(" 99");
-	            numberOfQualitiesSoFar++;
-	            if(numberOfQualitiesSoFar%50==0){
-	                result.append(String.format("%n"));
+
+	        int length = (int)consensus.getUngappedLength();
+	        int numberOfLines = length/50+1;
+	        StringBuilder result = new StringBuilder(3+3*length+numberOfLines);	      
+	        result.append("BQ\n");
+			for(int i=0; i< length-1; i++){
+	            result.append("99");
+	            if(i%50==0){
+	                result.append(CR);
+	            }else{
+	            	result.append(" ");
 	            }
 	        }
-	        tempWriter.write(String.format("BQ%n%s%n", result.toString()));
+			result.append("99\n");
+			
+	        tempWriter.write(result.toString());
 	    }
 	@Override
 	public void write(ReadAceTag readTag) throws IOException {
@@ -200,7 +204,7 @@ public class DefaultAceFileWriter implements AceFileWriter2{
 	        }
 	        if(!consensusTag.getComments().isEmpty()){
 	            for(String comment :consensusTag.getComments()){
-	                tagBodyBuilder.append(String.format("COMMENT{%n%sC}%n",comment));            
+	                tagBodyBuilder.append(String.format("COMMENT{\n%sC}\n",comment));            
 	            }
 	        }
 	        Range range = consensusTag.asRange();
@@ -233,7 +237,7 @@ public class DefaultAceFileWriter implements AceFileWriter2{
 	public static class Builder{
 
 		private boolean createBsRecords=false;
-		private PhdDataStore phdDataStore;
+		private final PhdDataStore phdDataStore;
 		private final OutputStream out;
 		private File tmpDir;
 		
