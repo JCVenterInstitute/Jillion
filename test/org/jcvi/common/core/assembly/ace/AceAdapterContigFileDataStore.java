@@ -34,7 +34,8 @@ import org.jcvi.common.core.assembly.ctg.ContigFileParser;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
-import org.jcvi.common.core.seq.fastx.FastXRecord;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public class AceAdapterContigFileDataStore extends AbstractAceAdaptedContigFileDataStore implements AceFileContigDataStore{
@@ -45,10 +46,10 @@ public class AceAdapterContigFileDataStore extends AbstractAceAdaptedContigFileD
     /**
      * @param phdDate
      */
-    public AceAdapterContigFileDataStore(DataStore<? extends FastXRecord> fullLengthFastXDataStore,Date phdDate) {
+    public AceAdapterContigFileDataStore(QualitySequenceFastaDataStore fullLengthFastXDataStore,Date phdDate) {
         super(fullLengthFastXDataStore,phdDate);
     }
-    public AceAdapterContigFileDataStore(DataStore<? extends FastXRecord> fullLengthFastXDataStore, Date phdDate, File contigFile) throws FileNotFoundException{
+    public AceAdapterContigFileDataStore(QualitySequenceFastaDataStore fullLengthFastXDataStore, Date phdDate, File contigFile) throws FileNotFoundException{
         this(fullLengthFastXDataStore,phdDate);
         ContigFileParser.parse(contigFile, this);
     }
@@ -108,18 +109,15 @@ public class AceAdapterContigFileDataStore extends AbstractAceAdaptedContigFileD
 	}
 	@Override
 	public StreamingIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return IteratorUtil.createEmptyStreamingIterator();
 	}
 	@Override
 	public StreamingIterator<ReadAceTag> getReadTagIterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return IteratorUtil.createEmptyStreamingIterator();
 	}
 	@Override
 	public StreamingIterator<ConsensusAceTag> getConsensusTagIterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return IteratorUtil.createEmptyStreamingIterator();
 	}
 
 }

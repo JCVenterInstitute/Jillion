@@ -1,15 +1,12 @@
 package org.jcvi.fasta.fastq.util;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.regex.Matcher;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -19,7 +16,6 @@ import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.TextLineParser;
 import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
@@ -29,7 +25,6 @@ import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqUtil;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
-import org.jcvi.common.core.util.JoinedStringBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
 import org.jcvi.common.io.idReader.FirstWordStringIdParser;

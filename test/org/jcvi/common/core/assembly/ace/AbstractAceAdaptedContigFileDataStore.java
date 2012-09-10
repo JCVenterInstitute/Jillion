@@ -28,9 +28,8 @@ import java.util.Date;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ctg.AbstractContigFileVisitor;
-import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.fastx.FastXRecord;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 
@@ -38,12 +37,12 @@ public abstract class AbstractAceAdaptedContigFileDataStore extends AbstractCont
 
     private AceContigBuilder contigBuilder;
     private final Date phdDate;
-    private final DataStore<? extends FastXRecord> fullLengthFastXDataStore;
+    private final QualitySequenceFastaDataStore fullLengthFastXDataStore;
     /**
      * Create a new AceAdapted Contig File DataStore using the given phdDate.
      * @param phdDate the date all faked phd files should be timestamped with.
      */
-    public AbstractAceAdaptedContigFileDataStore(DataStore<? extends FastXRecord> fullLengthFastXDataStore,Date phdDate) {
+    public AbstractAceAdaptedContigFileDataStore(QualitySequenceFastaDataStore fullLengthFastXDataStore,Date phdDate) {
         this.phdDate = new Date(phdDate.getTime());
         this.fullLengthFastXDataStore = fullLengthFastXDataStore;
     }

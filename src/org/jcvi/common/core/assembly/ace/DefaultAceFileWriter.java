@@ -237,24 +237,25 @@ public class DefaultAceFileWriter implements AceFileWriter2{
 		private final OutputStream out;
 		private File tmpDir;
 		
-		public Builder(File outputAceFile) throws FileNotFoundException{
-			out = new FileOutputStream(outputAceFile );
+		public Builder(File outputAceFile,PhdDataStore datastore) throws FileNotFoundException{
+			this(new FileOutputStream(outputAceFile), datastore);
 		}
 		
-		public Builder(OutputStream out){
+		public Builder(OutputStream out,PhdDataStore datastore){
+			if(out==null){
+				throw new NullPointerException("output can not be null");	
+			}
+			if(datastore==null){
+				throw new NullPointerException("datastore can not be null");				
+			}
+			this.phdDataStore = datastore;
 			this.out=out;
 		}
 		public Builder tmpDir(File tmpDir){
 			this.tmpDir = tmpDir;
 			return this;
 		}
-		public Builder phdDataStore(PhdDataStore datastore){
-			if(datastore==null){
-				throw new NullPointerException("datastore can not be null");				
-			}
-			this.phdDataStore = datastore;
-			return this;
-		}
+		
 
 		public AceFileWriter2 build() throws IOException {
 			return new DefaultAceFileWriter(out, phdDataStore, tmpDir,createBsRecords);
