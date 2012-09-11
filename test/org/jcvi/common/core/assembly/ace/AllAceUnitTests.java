@@ -53,7 +53,7 @@ import org.junit.runners.Suite.SuiteClasses;
        TestLargeAceFileDataStoreStreamingIterators.class,
        
        
-       TestAceFileWriter.class,
+       TestAceFileUtil_writingAceContigs.class,
        TestAceFileWriter2.class,
        TestHiLowAceContigPhdDatastore.class,
        TestDefaultAcePlacedReadReAbacus.class,

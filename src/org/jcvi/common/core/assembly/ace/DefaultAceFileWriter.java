@@ -21,18 +21,12 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
-public class DefaultAceFileWriter implements AceFileWriter2{
-	
-	private static final String CR = "\n";
-	
-	private static final int DEFAULT_BUFFER_SIZE = 2<<14; 
+public class DefaultAceFileWriter extends AbstractAceFileWriter{
+
 	//builder option for writing BS records or not
 		//optional phd datastore to handle upper vs lowercase bases
 		//option for quality threshold for upper vs lowercase
@@ -52,7 +46,7 @@ public class DefaultAceFileWriter implements AceFileWriter2{
 	private long numberOfReads=0;
 	private final Writer tempWriter;
 	
-	ByteArrayOutputStream tagOutputStream = new ByteArrayOutputStream();
+	ByteArrayOutputStream tagOutputStream = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
 	
 	private DefaultAceFileWriter(OutputStream out, PhdDataStore phdDatastore,File tmpDir,
 			boolean createBsRecords) throws IOException {
@@ -95,93 +89,16 @@ public class DefaultAceFileWriter implements AceFileWriter2{
 	 private void writeAceFileHeader() throws IOException{
 	     out.write(String.format("AS %d %d%s%s", numberOfContigs, numberOfReads,CR,CR).getBytes(IOUtil.UTF_8));
 	 }
-	 private void writeAceContigHeader(String contigId, long consensusLength, int numberOfReads,
-	    		int numberOfBaseSegments, boolean isComplimented) throws IOException{
-	    	String formattedHeader = String.format("CO %s %d %d %d %s\n", 
-	                contigId, 
-	                consensusLength,
-	                numberOfReads,
-	                numberOfBaseSegments,
-	                isComplimented? "C":"U");
-	    	
-	    	tempWriter.write(formattedHeader);
-	    }
+	 
 	@Override
 	public void write(AceContig contig) throws IOException {
 		numberOfContigs++;
 		numberOfReads+=contig.getNumberOfReads();
-		
-		final NucleotideSequence consensus = contig.getConsensusSequence();
-        writeAceContigHeader(
-                contig.getId(), 
-                consensus.getLength(),
-                contig.getNumberOfReads(),
-                0,
-                contig.isComplemented());
-        tempWriter.write(String.format("%s\n\n\n",AceFileUtil.convertToAcePaddedBasecalls(consensus)));
-        writeFakeUngappedConsensusQualities(consensus);
-        tempWriter.write(CR);
-        List<IdAlignedReadInfo> assembledFroms = IdAlignedReadInfo.getSortedAssembledFromsFor(contig);
-        StringBuilder assembledFromBuilder = new StringBuilder();
-        StringBuilder placedReadBuilder = new StringBuilder();
-        
-        for(IdAlignedReadInfo assembledFrom : assembledFroms){
-            String id = assembledFrom.getId();
-           
-            final AcePlacedRead realPlacedRead = contig.getRead(id);
-             long fullLength = realPlacedRead.getReadInfo().getUngappedFullLength();
-            assembledFromBuilder.append(createAssembledFromRecord(realPlacedRead,fullLength));
-            placedReadBuilder.append(createPlacedReadRecord(realPlacedRead));
-        }
-        assembledFromBuilder.append(CR);
-        placedReadBuilder.append(CR);
-        tempWriter.write(assembledFromBuilder.toString());
-
-        tempWriter.write(placedReadBuilder.toString());
-
+		write(tempWriter, contig, phdDatastore);
 		
 	}
 	
-	private String createAssembledFromRecord(AcePlacedRead read, long fullLength){
-    	IdAlignedReadInfo assembledFrom = IdAlignedReadInfo.createFrom(read, fullLength);
-        return String.format("AF %s %s %d\n",
-                assembledFrom.getId(),
-                assembledFrom.getDirection()==Direction.FORWARD? "U":"C",
-                        assembledFrom.getStartOffset());
-    }
-    
-    
-    private String createPlacedReadRecord(AcePlacedRead read) throws IOException{
-    	 Phd phd;
-		try {
-			phd = phdDatastore.get(read.getId());
-		} catch (DataStoreException e) {
-			throw new IOException("error writing quality values for read "+ read.getId(),e);
-		}
-        return AceFileUtil.createAcePlacedReadRecord(
-                read.getId(),read,
-                phd, 
-                read.getPhdInfo());
-        
-    }
-	 private void writeFakeUngappedConsensusQualities(NucleotideSequence consensus) throws IOException {
-
-	        int length = (int)consensus.getUngappedLength();
-	        int numberOfLines = length/50+1;
-	        StringBuilder result = new StringBuilder(3+3*length+numberOfLines);	      
-	        result.append("BQ\n");
-			for(int i=0; i< length-1; i++){
-	            result.append("99");
-	            if(i%50==0){
-	                result.append(CR);
-	            }else{
-	            	result.append(" ");
-	            }
-	        }
-			result.append("99\n");
-			
-	        tempWriter.write(result.toString());
-	    }
+	
 	@Override
 	public void write(ReadAceTag readTag) throws IOException {
 		Range range = readTag.asRange();

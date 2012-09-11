@@ -36,7 +36,7 @@ import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
-import org.jcvi.common.core.assembly.ace.AceFileWriter;
+import org.jcvi.common.core.assembly.ace.AceFileUtil;
 import org.jcvi.common.core.assembly.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore;
@@ -158,7 +158,7 @@ public class RecallAceConsensus {
             ConsensusCaller consensusCaller = createConsensusCaller(RecallType.parse(commandLine.getOptionValue("recall_with")), PhredQuality.valueOf(30));
            
             AceFileContigDataStore aceContigDataStore = IndexedAceFileDataStore.create(inputAceFile);
-            AceFileWriter.writeAceFileHeader(aceContigDataStore.getNumberOfRecords(), aceContigDataStore.getNumberOfTotalReads(), out);
+            AceFileUtil.writeAceFileHeader(aceContigDataStore.getNumberOfRecords(), aceContigDataStore.getNumberOfTotalReads(), out);
             
             StreamingIterator<AceContig> iter = aceContigDataStore.iterator();
             try{
@@ -195,7 +195,7 @@ public class RecallAceConsensus {
 	                }finally{
 	                	IOUtil.closeAndIgnoreErrors(readIter);
 	                }
-	                AceFileWriter.writeAceContig(builder.build(), masterPhdDataStore, out);
+	                AceFileUtil.writeAceContig(builder.build(), masterPhdDataStore, out);
 	            }
             }finally{
             	IOUtil.closeAndIgnoreErrors(iter);
