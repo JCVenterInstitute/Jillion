@@ -18,7 +18,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
-abstract class AbstractAceFileWriter implements AceFileWriter2{
+abstract class AbstractAceFileWriter implements AceFileWriter{
 	protected static final String CR = "\n";
 	
 	protected static final int DEFAULT_BUFFER_SIZE = 2<<14; 

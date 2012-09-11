@@ -3,7 +3,7 @@ package org.jcvi.common.core.assembly.ace;
 import java.io.Closeable;
 import java.io.IOException;
 
-public interface AceFileWriter2 extends Closeable{
+public interface AceFileWriter extends Closeable{
 
 	void write(AceContig contig) throws IOException;
 	
