@@ -53,7 +53,7 @@ import static org.junit.Assert.*;
  */
 public class TestAceFileWriter2 {
 
-    private final ResourceFileServer resources = new ResourceFileServer(TestAceFileWriter.class);
+    private final ResourceFileServer resources = new ResourceFileServer(TestAceFileUtil_writingAceContigs.class);
     private final File tmpDir;
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();

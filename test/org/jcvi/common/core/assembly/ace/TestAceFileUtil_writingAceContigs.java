@@ -29,7 +29,6 @@ import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.AceContigDataStoreBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
-import org.jcvi.common.core.assembly.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.ace.DefaultAceFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
@@ -53,9 +52,9 @@ import static org.junit.Assert.*;
  *
  *
  */
-public class TestAceFileWriter {
+public class TestAceFileUtil_writingAceContigs {
 
-    private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestAceFileWriter.class);
+    private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestAceFileUtil_writingAceContigs.class);
     
     @Test
     public void writeAndReParse() throws IOException, DataStoreException{
@@ -76,7 +75,7 @@ public class TestAceFileWriter {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int numberOfContigs = (int)aceDataStore.getNumberOfRecords();
         int numberOfReads = countNumberOfTotalReads(aceDataStore);
-        AceFileWriter.writeAceFileHeader(numberOfContigs, numberOfReads, out);
+        AceFileUtil.writeAceFileHeader(numberOfContigs, numberOfReads, out);
         writeAceContigs(phdDataStore, aceDataStore, out);
         
         AceContigDataStoreBuilder builder = DefaultAceFileDataStore.createBuilder();
@@ -120,7 +119,7 @@ public class TestAceFileWriter {
 		try{
 			  while(iter.hasNext()){
 		        	AceContig contig = iter.next();
-		        	AceFileWriter.writeAceContig(contig, phdDataStore, out);
+		        	AceFileUtil.writeAceContig(contig, phdDataStore, out);
 			  }
 		}finally{
 			IOUtil.closeAndIgnoreErrors(iter);

@@ -56,7 +56,7 @@ public class DefaultTraceArchiveInfoBuilder<T extends TraceArchiveRecord> implem
     }
     @Override
     public Map<String, T> getTraceArchiveRecordMap() {
-        return new HashMap<String,T>(map);
+        return new LinkedHashMap<String,T>(map);
     }
 
 

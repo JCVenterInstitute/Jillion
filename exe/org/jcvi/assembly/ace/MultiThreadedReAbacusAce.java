@@ -51,8 +51,8 @@ import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitor;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.AceContigDataStoreBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
+import org.jcvi.common.core.assembly.ace.AceFileUtil;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
-import org.jcvi.common.core.assembly.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
 import org.jcvi.common.core.assembly.ace.DefaultConsensusAceTag;
 import org.jcvi.common.core.assembly.ace.DefaultReadAceTag;
@@ -310,7 +310,7 @@ public class MultiThreadedReAbacusAce {
            //header will be the same because we aren't changing the
            //number of reads or contigs
             try {
-               AceFileWriter.writeAceFileHeader(numberOfContigs, totalNumberOfReads, aceOut);
+            	AceFileUtil.writeAceFileHeader(numberOfContigs, totalNumberOfReads, aceOut);
            } catch (IOException e) {
                throw new IllegalStateException("error writing out new ace header",e);
            }
@@ -325,7 +325,7 @@ public class MultiThreadedReAbacusAce {
                     Range.create(gappedStart,gappedEnd), isTransient);
             
             try {
-               AceFileWriter.writeReadTag(tag, tagOutputStream);
+            	AceFileUtil.writeReadTag(tag, tagOutputStream);
            } catch (IOException e) {
                throw new IllegalStateException("error writing out new ace read tag",e);
            }
@@ -338,7 +338,7 @@ public class MultiThreadedReAbacusAce {
             super.visitWholeAssemblyTag(type, creator, creationDate, data);
             WholeAssemblyAceTag tag = new DefaultWholeAssemblyAceTag(type, creator, creationDate, data);
             try {
-                AceFileWriter.writeWholeAssemblyTag(tag, tagOutputStream);
+            	AceFileUtil.writeWholeAssemblyTag(tag, tagOutputStream);
             } catch (IOException e) {
                 throw new IllegalStateException("error writing out new ace whole assembly tag",e);
             }
@@ -374,7 +374,7 @@ public class MultiThreadedReAbacusAce {
             super.visitEndConsensusTag();
             ConsensusAceTag tag = consensusTagBuilder.build();
             try {
-                AceFileWriter.writeConsensusTag(tag, tagOutputStream);
+            	AceFileUtil.writeConsensusTag(tag, tagOutputStream);
             } catch (IOException e) {
                 throw new IllegalStateException("error writing out new ace consensus tag",e);
             }

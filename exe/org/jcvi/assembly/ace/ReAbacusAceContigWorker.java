@@ -53,8 +53,8 @@ import org.jcvi.common.core.assembly.ace.AbstractAceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
+import org.jcvi.common.core.assembly.ace.AceFileUtil;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
-import org.jcvi.common.core.assembly.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.ace.AcePlacedReadBuilder;
 import org.jcvi.common.core.assembly.ace.HiLowAceContigPhdDatastore;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationParser;
@@ -575,7 +575,7 @@ public class ReAbacusAceContigWorker {
         protected void visitContig(AceContig contig) {
             try {
                 System.out.println("writing ace contig record");
-                AceFileWriter.writeAceContig(contig,phdDataStore, aceOut);
+                AceFileUtil.writeAceContig(contig,phdDataStore, aceOut);
                 aceOut.flush();
                 System.out.println("done writing contig "+ contig.getId());
             } catch (Exception e) {
