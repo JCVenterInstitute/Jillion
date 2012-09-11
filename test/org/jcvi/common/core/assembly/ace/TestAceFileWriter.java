@@ -51,14 +51,14 @@ import static org.junit.Assert.*;
  *
  *
  */
-public class TestAceFileWriter2 {
+public class TestAceFileWriter {
 
     private final ResourceFileServer resources = new ResourceFileServer(TestAceFileUtil_writingAceContigs.class);
     private final File tmpDir;
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
    
-    public TestAceFileWriter2(){
+    public TestAceFileWriter(){
     	tmpDir =folder.newFolder("temp");
     }
     @Test
@@ -78,7 +78,7 @@ public class TestAceFileWriter2 {
 
         File outputFile = File.createTempFile("test", ".ace",tmpDir);
         
-        AceFileWriter2 sut = new DefaultAceFileWriter.Builder(outputFile,phdDataStore)
+        AceFileWriter sut = new DefaultAceFileWriter.Builder(outputFile,phdDataStore)
         						.tmpDir(tmpDir)
         						.build();
         writeContigs(aceDataStore, sut);
@@ -121,7 +121,7 @@ public class TestAceFileWriter2 {
         }
 	}
 	private void writeContigs(AceFileContigDataStore aceDataStore,
-			AceFileWriter2 sut) throws DataStoreException, IOException {
+			AceFileWriter sut) throws DataStoreException, IOException {
 		StreamingIterator<AceContig> iter = aceDataStore.iterator();
         try{
         	while(iter.hasNext()){
@@ -140,7 +140,7 @@ public class TestAceFileWriter2 {
     	
     	 File outputFile = File.createTempFile("test", ".ace",tmpDir);
          
-         AceFileWriter2 sut = new DefaultAceFileWriter.Builder(outputFile,phdDataStore)
+         AceFileWriter sut = new DefaultAceFileWriter.Builder(outputFile,phdDataStore)
          						.tmpDir(tmpDir)
          						.build();
          AceFileContigDataStore datastore = DefaultAceFileDataStore.create(originalAce);
@@ -198,7 +198,7 @@ public class TestAceFileWriter2 {
 		assertFalse(actual.hasNext());
 	}
 	private void writeReadTags(AceFileContigDataStore datastore,
-			AceFileWriter2 sut) throws IOException, DataStoreException {
+			AceFileWriter sut) throws IOException, DataStoreException {
 		StreamingIterator<ReadAceTag> iter = datastore.getReadTagIterator();
 		try{
 			while(iter.hasNext()){
@@ -210,7 +210,7 @@ public class TestAceFileWriter2 {
 	}
 	
 	private void writeWholeAssemblyTags(AceFileContigDataStore datastore,
-			AceFileWriter2 sut) throws IOException, DataStoreException {
+			AceFileWriter sut) throws IOException, DataStoreException {
 		StreamingIterator<WholeAssemblyAceTag> iter = datastore.getWholeAssemblyTagIterator();
 		try{
 			while(iter.hasNext()){
@@ -222,7 +222,7 @@ public class TestAceFileWriter2 {
 	}
 	
 	private void writeConsensusTags(AceFileContigDataStore datastore,
-			AceFileWriter2 sut) throws IOException, DataStoreException {
+			AceFileWriter sut) throws IOException, DataStoreException {
 		StreamingIterator<ConsensusAceTag> iter = datastore.getConsensusTagIterator();
 		try{
 			while(iter.hasNext()){

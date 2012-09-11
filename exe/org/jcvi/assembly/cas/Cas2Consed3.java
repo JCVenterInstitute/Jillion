@@ -47,7 +47,7 @@ import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.DefaultScaffold;
 import org.jcvi.common.core.assembly.ScaffoldBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
-import org.jcvi.common.core.assembly.ace.AceFileWriter2;
+import org.jcvi.common.core.assembly.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.ace.AcePlacedRead;
 import org.jcvi.common.core.assembly.ace.AcePlacedReadBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultAceFileWriter;
@@ -261,7 +261,7 @@ public class Cas2Consed3 {
             	 throw new IOException("Could not create temp directory: " + tmpDir.getAbsolutePath());
              }
              File ace = new File(editDir, prefix+".ace.1");
-             AceFileWriter2 aceWriter = new DefaultAceFileWriter.Builder(ace, phdDataStore)
+             AceFileWriter aceWriter = new DefaultAceFileWriter.Builder(ace, phdDataStore)
              							.tmpDir(tmpDir)
              							.build();
              File consensusFile = consedOutputDir.createNewFile(prefix+ ".ace.1.consensus.fasta");

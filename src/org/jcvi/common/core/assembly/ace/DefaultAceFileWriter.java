@@ -178,7 +178,7 @@ public class DefaultAceFileWriter extends AbstractAceFileWriter{
 		}
 		
 
-		public AceFileWriter2 build() throws IOException {
+		public AceFileWriter build() throws IOException {
 			return new DefaultAceFileWriter(out, phdDataStore, tmpDir,createBsRecords);
 		}
 		
