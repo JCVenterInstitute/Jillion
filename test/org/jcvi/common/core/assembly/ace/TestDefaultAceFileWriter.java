@@ -111,7 +111,6 @@ public class TestDefaultAceFileWriter {
         						.build();
         writeContigs(aceDataStore, sut);
         sut.close();
-        System.out.println(outputFile.getAbsolutePath());
         AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore.create(outputFile);
         assertContigsAreEqual(aceDataStore, reparsedAceDataStore);
     }
