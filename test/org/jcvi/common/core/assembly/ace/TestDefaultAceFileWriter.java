@@ -41,6 +41,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStoreAdapter;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -54,13 +55,15 @@ import static org.junit.Assert.*;
 public class TestDefaultAceFileWriter {
 
     private final ResourceFileServer resources = new ResourceFileServer(TestAceFileUtil_writingAceContigs.class);
-    private final File tmpDir;
+    private File tmpDir;
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
    
-    public TestDefaultAceFileWriter(){
+    @Before
+    public void setupTempFolder(){
     	tmpDir =folder.newFolder("temp");
     }
+
     @Test
     public void convertCtg2Ace() throws IOException, DataStoreException{
         File contigFile = resources.getFile("files/flu_644151.contig");
@@ -76,7 +79,7 @@ public class TestDefaultAceFileWriter {
        
         AceFileContigDataStore aceDataStore = new AceAdapterContigFileDataStore(qualityFastaDataStore,phdDate,contigFile);
 
-        File outputFile = File.createTempFile("test", ".ace",tmpDir);
+        File outputFile = folder.newFile();
         
         AceFileWriter sut = new DefaultAceFileWriter.Builder(outputFile,phdDataStore)
         						.tmpDir(tmpDir)
@@ -103,7 +106,7 @@ public class TestDefaultAceFileWriter {
        
         AceFileContigDataStore aceDataStore = new AceAdapterContigFileDataStore(qualityFastaDataStore,phdDate,contigFile);
 
-        File outputFile = File.createTempFile("test", ".ace",tmpDir);
+        File outputFile = folder.newFile();
         
         AceFileWriter sut = new DefaultAceFileWriter.Builder(outputFile,phdDataStore)
         						.tmpDir(tmpDir)
@@ -165,7 +168,7 @@ public class TestDefaultAceFileWriter {
     	
     	PhdDataStore phdDataStore = HiLowAceContigPhdDatastore.create(originalAce);
     	
-    	 File outputFile = File.createTempFile("test", ".ace",tmpDir);
+    	 File outputFile = folder.newFile();
          
          AceFileWriter sut = new DefaultAceFileWriter.Builder(outputFile,phdDataStore)
          						.tmpDir(tmpDir)
