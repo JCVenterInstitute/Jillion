@@ -24,8 +24,23 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-
-public class DefaultAceFileWriter extends AbstractAceFileWriter{
+/**
+ * {@code DefaultAceFileWriter} handles
+ * writing out correctly formatted
+ * ace files that can be viewed
+ * with consed.
+ * Since some portions of an ace file,
+ * such as the header line contain information
+ * that can not be known until the entire file
+ * is written, this implementation will first
+ * write out data to a temporary file.
+ * The location of the temporary file
+ * can be configured via the builder.
+ * @author dkatzel
+ * @see {@link DefaultAceFileWriter.Builder}
+ *
+ */
+public final class DefaultAceFileWriter extends AbstractAceFileWriter{
 
 	//builder option for writing BS records or not
 		//optional phd datastore to handle upper vs lowercase bases
@@ -49,7 +64,8 @@ public class DefaultAceFileWriter extends AbstractAceFileWriter{
 	ByteArrayOutputStream tagOutputStream = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
 	
 	private DefaultAceFileWriter(OutputStream out, PhdDataStore phdDatastore,File tmpDir,
-			boolean createBsRecords) throws IOException {
+			boolean createBsRecords, boolean computeConsensusQualities) throws IOException {
+		super(computeConsensusQualities);
 		this.out = new BufferedOutputStream(out,DEFAULT_BUFFER_SIZE);
 		this.phdDatastore = phdDatastore;
 		this.createBsRecords = createBsRecords;
@@ -150,140 +166,114 @@ public class DefaultAceFileWriter extends AbstractAceFileWriter{
 		tagOutputStream.write(formattedTag.getBytes(IOUtil.UTF_8));
 		
 	}
-
+	/**
+	 * Builds a new instance of {@link DefaultAceFileWriter}.
+	 * @author dkatzel
+	 *
+	 */
 	public static class Builder{
 
 		private boolean createBsRecords=false;
 		private final PhdDataStore phdDataStore;
 		private final OutputStream out;
 		private File tmpDir;
-		
-		public Builder(File outputAceFile,PhdDataStore datastore) throws FileNotFoundException{
-			this(new FileOutputStream(outputAceFile), datastore);
-		}
-		
-		public Builder(OutputStream out,PhdDataStore datastore){
-			if(out==null){
-				throw new NullPointerException("output can not be null");	
+		private boolean computeConsensusQualities=false;
+		/**
+		 * Create a new Builder instance
+		 * which will build a new instance of 
+		 * DefaultAceFileWriter with the given required
+		 * parameters.
+		 * @param outputAceFile a {@link File} representating
+		 * the path to the output of the ace file to write.
+		 * 
+		 * @param datastore the {@link PhdDataStore}
+		 * needed to write out the ace data.
+		 * The {@link PhdDataStore} needs to be consulted
+		 * to get the quality values of the reads
+		 * to compute consensus quality values,
+		 * get the full length nucleotide sequences of the reads
+		 * in the contigs and 
+		 * to format the full length nucleotide sequences
+		 * by encoding high vs low quality values by using
+		 * upper vs lowercase letters respectively.
+		 * @throws IOException 
+		 */
+		public Builder(File outputAceFile,PhdDataStore datastore) throws IOException{
+			if(outputAceFile ==null){
+				throw new NullPointerException("output ace file can not be null");	
 			}
 			if(datastore==null){
 				throw new NullPointerException("datastore can not be null");				
 			}
+			IOUtil.mkdirs(outputAceFile.getParentFile());
 			this.phdDataStore = datastore;
-			this.out=out;
+			this.out=new FileOutputStream(outputAceFile);
 		}
-		public Builder tmpDir(File tmpDir){
+		
+		/**
+		 * Change the temporary directory used
+		 * to keep temp files during the writing process.
+		 * If this option is not specified,
+		 * then the system's default temp are is used.
+		 * @param tmpDir the path to the tmpDirectory.
+		 * @return
+		 * @throws IOException if there is a problem creating the temp directory
+		 * if it does not exist.
+		 * @throws NullPointerException if tmpDir is null.
+		 * @throws IllegalArgumentException if tmpDir exists but is not
+		 * a directory.
+		 */
+		public Builder tmpDir(File tmpDir) throws IOException{
+			if(tmpDir==null){
+				throw new NullPointerException("tmp dir path can not be null");
+			}
+			if(!tmpDir.exists()){
+				IOUtil.mkdirs(tmpDir);
+			}else if(!tmpDir.isDirectory()){
+				throw new IllegalArgumentException("tmp dir must be a directory");
+			}
 			this.tmpDir = tmpDir;
 			return this;
 		}
+		/**
+		 * Compute the actual consensus qualities
+		 * for each non-gap consensus basecall.
+		 * This is a computationally intense 
+		 * algorithm that requires reading the full length
+		 * qualities 
+		 * for each read in each contig
+		 * from the given {@link PhdDataStore}.
+		 * If this method is not called,
+		 * then the contig consensus will get 
+		 * set to a default value of
+		 * "99" for each non-gap base which 
+		 * consed interprets as 
+		 * "human edited high quality". 
+		 * @return this
+		 */
+		public Builder computeConsensusQualities(){
+			computeConsensusQualities=true;
+			return this;
+		}
 		
-
+		/**
+		 * Create a new instance of {@link DefaultAceFileWriter}
+		 * with the given paramters.
+		 * @return a new instance; never null.
+		 * @throws IOException if there is a problem
+		 * creating the temp directory (it doesn't
+		 * already exist) or the temp file.
+		 * 
+		 */
 		public AceFileWriter build() throws IOException {
-			return new DefaultAceFileWriter(out, phdDataStore, tmpDir,createBsRecords);
+			return new DefaultAceFileWriter(out, phdDataStore, 
+					tmpDir,
+					createBsRecords,
+					computeConsensusQualities);
 		}
 		
 	}
 	
-	private static final class IdAlignedReadInfo implements Comparable<IdAlignedReadInfo>{
-    	private static final int TO_STRING_BUFFER_SIZE = 30;
-		private final String id;
-	    private final byte dir;
-	    private final int startOffset;
-	    private static final Direction[] DIRECTION_VALUES = Direction.values();
-	    public static IdAlignedReadInfo createFrom(AssembledRead read, long ungappedFullLength){
-	        final Range validRange;
-	        Direction dir = read.getDirection();
-	        Range readValidRange = read.getReadInfo().getValidRange();
-	        if(dir==Direction.REVERSE){
-	            validRange = AssemblyUtil.reverseComplementValidRange(readValidRange, ungappedFullLength);
-	        }
-	        else{
-	            validRange = readValidRange;
-	        }
-	        return new IdAlignedReadInfo(read.getId(), 
-	                (int)(read.getGappedStartOffset()-validRange.getBegin()+1),dir);
-	    }
-	    
-	    public static List<IdAlignedReadInfo> getSortedAssembledFromsFor(
-	            Contig<AcePlacedRead> contig){
-	        List<IdAlignedReadInfo> assembledFroms = new ArrayList<IdAlignedReadInfo>(contig.getNumberOfReads());
-	        StreamingIterator<AcePlacedRead> iter = null;
-	        try{
-	        	iter = contig.getReadIterator();
-	        	while(iter.hasNext()){
-	        		AcePlacedRead read = iter.next();
-	        		long fullLength =read.getReadInfo().getUngappedFullLength();
-		            assembledFroms.add(IdAlignedReadInfo.createFrom(read, fullLength));
-	        	}
-	        }finally{
-	        	IOUtil.closeAndIgnoreErrors(iter);
-	        }
-	        Collections.sort(assembledFroms);
-	        return assembledFroms;
-	    }
-	    
-		private IdAlignedReadInfo(String id, int startOffset, Direction dir) {
-			this.id = id;
-			this.dir = (byte)dir.ordinal();
-			this.startOffset = startOffset;
-		}
-
-
-		@Override
-	    public int hashCode() {
-	        final int prime = 31;
-	        int result = 1;
-	        result = prime * result + id.hashCode();
-	        return result;
-	    }
-	    @Override
-	    public boolean equals(Object obj) {
-	        if (this == obj){
-	            return true;
-	        }
-	        if (obj == null){
-	            return false;
-	        }
-	        if (!(obj instanceof IdAlignedReadInfo)){
-	            return false;
-	        }
-	        IdAlignedReadInfo other = (IdAlignedReadInfo) obj;
-	        return id.equals(other.getId());
-	    }
-	    public String getId() {
-	        return id;
-	    }
-
-	    public int getStartOffset() {
-	        return startOffset;
-	    }
-	    
-	    public Direction getDirection(){
-	        return DIRECTION_VALUES[dir];
-	    }
-	    @Override
-	    public String toString() {
-	        StringBuilder builder = new StringBuilder(TO_STRING_BUFFER_SIZE);
-	        builder.append(id).append(' ')
-	        		.append(startOffset)
-	        		.append("is complemented? ")
-	        		.append(getDirection() ==Direction.REVERSE);
-	        return builder.toString();
-	    }
-	    /**
-	    * Compares two AssembledFrom instances and compares them based on start offset
-	    * then by Id.  This should match the order of AssembledFrom records 
-	    * (and reads) in an .ace file.
-	    */
-	    @Override
-	    public int compareTo(IdAlignedReadInfo o) {
-	        int cmp= Integer.valueOf(getStartOffset()).compareTo(o.getStartOffset());
-	        if(cmp !=0){
-	            return cmp;
-	        }
-	        return getId().compareTo(o.getId());
-	    }
-    	
-    }
+	
 	
 }

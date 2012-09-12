@@ -51,14 +51,14 @@ import static org.junit.Assert.*;
  *
  *
  */
-public class TestAceFileWriter {
+public class TestDefaultAceFileWriter {
 
     private final ResourceFileServer resources = new ResourceFileServer(TestAceFileUtil_writingAceContigs.class);
     private final File tmpDir;
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
    
-    public TestAceFileWriter(){
+    public TestDefaultAceFileWriter(){
     	tmpDir =folder.newFolder("temp");
     }
     @Test
@@ -84,6 +84,34 @@ public class TestAceFileWriter {
         writeContigs(aceDataStore, sut);
         sut.close();
         
+        AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore.create(outputFile);
+        assertContigsAreEqual(aceDataStore, reparsedAceDataStore);
+    }
+    
+    @Test
+    public void convertCtg2AceWithComputedConsensusQualities() throws IOException, DataStoreException{
+        File contigFile = resources.getFile("files/flu_644151.contig");
+        File seqFile = resources.getFile("files/flu_644151.seq");
+        File qualFile = resources.getFile("files/flu_644151.qual");
+
+        final Date phdDate = new Date(0L);
+        NucleotideDataStore nucleotideDataStore = new NucleotideDataStoreAdapter(FastaRecordDataStoreAdapter.adapt(DefaultNucleotideSequenceFastaFileDataStore.create(seqFile))); 
+        final QualitySequenceFastaDataStore qualityFastaDataStore = DefaultQualityFastaFileDataStore.create(qualFile);
+        QualityDataStore qualityDataStore = new QualityDataStoreAdapter(FastaRecordDataStoreAdapter.adapt(qualityFastaDataStore)); 
+        
+        PhdDataStore phdDataStore = new ArtificalPhdDataStore(nucleotideDataStore, qualityDataStore, phdDate);
+       
+        AceFileContigDataStore aceDataStore = new AceAdapterContigFileDataStore(qualityFastaDataStore,phdDate,contigFile);
+
+        File outputFile = File.createTempFile("test", ".ace",tmpDir);
+        
+        AceFileWriter sut = new DefaultAceFileWriter.Builder(outputFile,phdDataStore)
+        						.tmpDir(tmpDir)
+        						.computeConsensusQualities()
+        						.build();
+        writeContigs(aceDataStore, sut);
+        sut.close();
+        System.out.println(outputFile.getAbsolutePath());
         AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore.create(outputFile);
         assertContigsAreEqual(aceDataStore, reparsedAceDataStore);
     }

@@ -26,9 +26,7 @@ package org.jcvi.common.core.symbol.qual;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.jcvi.common.core.symbol.Symbol;
 /**

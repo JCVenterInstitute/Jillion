@@ -27,6 +27,8 @@ import java.util.List;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -71,6 +73,14 @@ public final class AssemblyUtil {
         return builder.build();
     }
     
+    public static QualitySequence getUngappedComplementedValidRangeQualities(AssembledRead read,QualitySequence fullRangeUnComplementedQualities){
+    	QualitySequenceBuilder builder = new QualitySequenceBuilder(fullRangeUnComplementedQualities);
+    	if(read.getDirection()==Direction.REVERSE){
+    		builder.reverse();
+    	}
+    	builder.trim(read.getReadInfo().getValidRange());
+    	return builder.build();
+    }
     
     /**
      * Reverse Compliment the given validRange with regards to its fullLength.
