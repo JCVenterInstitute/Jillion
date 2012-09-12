@@ -2,8 +2,8 @@ package org.jcvi.common.core.assembly.clc.cas.var;
 
 import java.util.SortedMap;
 
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 
 public class DefaultReferenceVariations implements ReferenceVariations{
 
@@ -20,7 +20,7 @@ public class DefaultReferenceVariations implements ReferenceVariations{
 	}
 	@Override
 	public StreamingIterator<Variation> getVariationIterator() {
-		return StreamingIteratorAdapter.adapt(map.values().iterator());
+		return IteratorUtil.createStreamingIterator(map.values().iterator());
 	}
 	
 	

@@ -12,7 +12,6 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.DateUtil;
 import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -47,7 +46,7 @@ public class TestFastqConsedPhdAdaptedIterator extends AbstractTestPhdAdaptedIte
 		FastqRecord fastq = createFastq("read1", "ACGT", new byte[]{20,30,40,50});
 		PhdReadRecord read1 = createExpectedPhdReadRecord(fastq);
 		
-		StreamingIterator<FastqRecord> iter = StreamingIteratorAdapter.adapt(Arrays.asList(fastq).iterator());
+		StreamingIterator<FastqRecord> iter = IteratorUtil.createStreamingIterator(Arrays.asList(fastq).iterator());
 		FastqConsedPhdAdaptedIterator sut = createSUT(iter);
 		assertTrue(sut.hasNext());
 		assertEquals(read1, sut.next());
@@ -61,7 +60,7 @@ public class TestFastqConsedPhdAdaptedIterator extends AbstractTestPhdAdaptedIte
 		FastqRecord fastq2 = createFastq("read2", "AAAA", new byte[]{12,15,16,17});
 		PhdReadRecord read1 = createExpectedPhdReadRecord(fastq1);
 		PhdReadRecord read2 = createExpectedPhdReadRecord(fastq2);
-		StreamingIterator<FastqRecord> iter = StreamingIteratorAdapter.adapt(
+		StreamingIterator<FastqRecord> iter = IteratorUtil.createStreamingIterator(
 										Arrays.asList(fastq1, 
 												fastq2)
 												.iterator());
@@ -80,7 +79,7 @@ public class TestFastqConsedPhdAdaptedIterator extends AbstractTestPhdAdaptedIte
 		FastqRecord fastq1 = createFastq("read1", "ACGT", new byte[]{20,30,40,50});
 		FastqRecord fastq2 = createFastq("read2", "AAAA", new byte[]{12,15,16,17});
 		PhdReadRecord read1 = createExpectedPhdReadRecord(fastq1);
-		StreamingIterator<FastqRecord> iter = StreamingIteratorAdapter.adapt(
+		StreamingIterator<FastqRecord> iter = IteratorUtil.createStreamingIterator(
 										Arrays.asList(fastq1, 
 												fastq2)
 												.iterator());
@@ -96,7 +95,7 @@ public class TestFastqConsedPhdAdaptedIterator extends AbstractTestPhdAdaptedIte
 	@Test
 	public void removeShouldThrowException(){
 		FastqRecord fastq = createFastq("read1", "ACGT", new byte[]{20,30,40,50});		
-		StreamingIterator<FastqRecord> iter = StreamingIteratorAdapter.adapt(Arrays.asList(fastq).iterator());
+		StreamingIterator<FastqRecord> iter = IteratorUtil.createStreamingIterator(Arrays.asList(fastq).iterator());
 		FastqConsedPhdAdaptedIterator sut = createSUT(iter);
 		assertTrue(sut.hasNext());
 		try{

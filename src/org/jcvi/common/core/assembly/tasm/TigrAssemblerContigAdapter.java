@@ -34,8 +34,9 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
+
 /**
  * {@code TigrAssemblerContigAdapter} is an adapter to convert a 
  * {@link Contig} into a {@link TigrAssemblerContig} with all
@@ -200,7 +201,7 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	@Override
 	public StreamingIterator<TigrAssemblerPlacedRead> getReadIterator() {
 
-		return StreamingIteratorAdapter.adapt(adaptedReads.values().iterator());
+		return IteratorUtil.createStreamingIterator(adaptedReads.values().iterator());
 	}
 
 	

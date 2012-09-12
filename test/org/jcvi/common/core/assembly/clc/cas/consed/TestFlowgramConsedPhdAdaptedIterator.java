@@ -16,7 +16,6 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.DateUtil;
 import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
 
@@ -53,7 +52,7 @@ public class TestFlowgramConsedPhdAdaptedIterator extends AbstractTestPhdAdapted
 		Flowgram fastq = createFlowgram("read1", "ACGT", new byte[]{20,30,40,50});
 		PhdReadRecord read1 = createExpectedPhdReadRecord(fastq);
 		
-		StreamingIterator<Flowgram> iter = StreamingIteratorAdapter.adapt(Arrays.asList(fastq).iterator());
+		StreamingIterator<Flowgram> iter = IteratorUtil.createStreamingIterator(Arrays.asList(fastq).iterator());
 		FlowgramConsedPhdAdaptedIterator sut = createSUT(iter);
 		assertTrue(sut.hasNext());
 		assertEquals(read1, sut.next());
@@ -67,7 +66,7 @@ public class TestFlowgramConsedPhdAdaptedIterator extends AbstractTestPhdAdapted
 		Flowgram flowgram2 = createFlowgram("read2", "AAAA", new byte[]{12,15,16,17});
 		PhdReadRecord read1 = createExpectedPhdReadRecord(flowgram);
 		PhdReadRecord read2 = createExpectedPhdReadRecord(flowgram2);
-		StreamingIterator<Flowgram> iter = StreamingIteratorAdapter.adapt(
+		StreamingIterator<Flowgram> iter = IteratorUtil.createStreamingIterator(
 										Arrays.asList(flowgram, 
 												flowgram2)
 												.iterator());
@@ -86,7 +85,7 @@ public class TestFlowgramConsedPhdAdaptedIterator extends AbstractTestPhdAdapted
 		Flowgram flowgram = createFlowgram("read1", "ACGT", new byte[]{20,30,40,50});
 		Flowgram flowgram2 = createFlowgram("read2", "AAAA", new byte[]{12,15,16,17});
 		PhdReadRecord read1 = createExpectedPhdReadRecord(flowgram);
-		StreamingIterator<Flowgram> iter = StreamingIteratorAdapter.adapt(
+		StreamingIterator<Flowgram> iter = IteratorUtil.createStreamingIterator(
 										Arrays.asList(flowgram, 
 												flowgram2)
 												.iterator());
@@ -102,7 +101,7 @@ public class TestFlowgramConsedPhdAdaptedIterator extends AbstractTestPhdAdapted
 	@Test
 	public void removeShouldThrowException(){
 		Flowgram flowgram = createFlowgram("read1", "ACGT", new byte[]{20,30,40,50});		
-		StreamingIterator<Flowgram> iter = StreamingIteratorAdapter.adapt(Arrays.asList(flowgram).iterator());
+		StreamingIterator<Flowgram> iter = IteratorUtil.createStreamingIterator(Arrays.asList(flowgram).iterator());
 		FlowgramConsedPhdAdaptedIterator sut = createSUT(iter);
 		assertTrue(sut.hasNext());
 		try{

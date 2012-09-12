@@ -29,8 +29,8 @@ import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 
 public class DefaultTraceArchiveInfo<T extends TraceArchiveRecord> implements TraceArchiveInfo{
     private final Map<String, T> map;
@@ -53,7 +53,7 @@ public class DefaultTraceArchiveInfo<T extends TraceArchiveRecord> implements Tr
 
     @Override
     public StreamingIterator<String> idIterator() {
-        return StreamingIteratorAdapter.adapt(map.keySet().iterator());
+        return IteratorUtil.createStreamingIterator(map.keySet().iterator());
     }
 
     @Override

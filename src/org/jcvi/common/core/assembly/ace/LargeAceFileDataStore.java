@@ -18,8 +18,8 @@ import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 /**
  * {@code LargeAceFileDataStore} is an {@link AceFileContigDataStore}
  * implementation that doesn't store any contig or 
@@ -171,7 +171,7 @@ public final class LargeAceFileDataStore implements AceFileContigDataStore{
 		if( wholeAssemblyTags==null){
 			setTagLists();
 		}
-		return StreamingIteratorAdapter.adapt(wholeAssemblyTags.iterator());
+		return IteratorUtil.createStreamingIterator(wholeAssemblyTags.iterator());
 	}
 	@Override
 	public synchronized StreamingIterator<ReadAceTag> getReadTagIterator()
@@ -180,7 +180,7 @@ public final class LargeAceFileDataStore implements AceFileContigDataStore{
 		if( readTags==null){
 			setTagLists();
 		}
-		return StreamingIteratorAdapter.adapt(readTags.iterator());
+		return IteratorUtil.createStreamingIterator(readTags.iterator());
 	}
 	@Override
 	public synchronized StreamingIterator<ConsensusAceTag> getConsensusTagIterator()
@@ -189,7 +189,7 @@ public final class LargeAceFileDataStore implements AceFileContigDataStore{
 		if( consensusTags==null){
 			setTagLists();
 		}
-		return StreamingIteratorAdapter.adapt(consensusTags.iterator());
+		return IteratorUtil.createStreamingIterator(consensusTags.iterator());
 	}
 	private void setTagLists() throws DataStoreException {
 		try {

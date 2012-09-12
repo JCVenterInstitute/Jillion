@@ -41,7 +41,7 @@ public final class TrimDataStoreUtil {
         
         @Override
         public StreamingIterator<Range> iterator() {
-            return StreamingIteratorAdapter.adapt(IteratorUtil.<Range>createEmptyIterator());
+            return IteratorUtil.createStreamingIterator(IteratorUtil.<Range>createEmptyIterator());
         }
         
         @Override
@@ -57,7 +57,7 @@ public final class TrimDataStoreUtil {
         
         @Override
         public StreamingIterator<String> idIterator() throws DataStoreException {
-            return StreamingIteratorAdapter.adapt(IteratorUtil.<String>createEmptyIterator());
+            return IteratorUtil.createStreamingIterator(IteratorUtil.<String>createEmptyIterator());
             
         }
         

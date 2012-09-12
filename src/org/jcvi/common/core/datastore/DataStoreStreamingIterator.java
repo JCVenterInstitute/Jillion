@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 /**
  * {@linkplain DataStoreStreamingIterator} is a {@link StreamingIterator}
  * implementation for a {@link DataStore}.
@@ -40,7 +40,7 @@ public class DataStoreStreamingIterator<T> implements StreamingIterator<T>{
 	 */
 	public static <T> DataStoreStreamingIterator<T> create(DataStore<?> parentDataStore,
 			Iterator<T> delegate){
-		return new DataStoreStreamingIterator<T>(parentDataStore, StreamingIteratorAdapter.adapt(delegate));
+		return new DataStoreStreamingIterator<T>(parentDataStore, IteratorUtil.createStreamingIterator(delegate));
 	}
 	private DataStoreStreamingIterator(DataStore<?> parentDataStore,
 			StreamingIterator<T> delegate) {

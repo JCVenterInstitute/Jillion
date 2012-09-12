@@ -42,8 +42,8 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.MapUtil;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 /**
  * {@code IndexedAceFileDataStore} is an implementation of 
  * {@link AceFileContigDataStore} that only stores an index containing
@@ -129,17 +129,17 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
    	@Override
    	public StreamingIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() throws DataStoreException {
    		assertNotYetClosed();
-   		return StreamingIteratorAdapter.adapt(wholeAssemblyTags.iterator());
+   		return IteratorUtil.createStreamingIterator(wholeAssemblyTags.iterator());
    	}
    	@Override
    	public StreamingIterator<ReadAceTag> getReadTagIterator() throws DataStoreException {
    		assertNotYetClosed();
-   		return StreamingIteratorAdapter.adapt(readTags.iterator());
+   		return IteratorUtil.createStreamingIterator(readTags.iterator());
    	}
    	@Override
    	public StreamingIterator<ConsensusAceTag> getConsensusTagIterator() throws DataStoreException {
    		assertNotYetClosed();
-   		return StreamingIteratorAdapter.adapt(consensusTags.iterator());
+   		return IteratorUtil.createStreamingIterator(consensusTags.iterator());
    	}
     
     @Override

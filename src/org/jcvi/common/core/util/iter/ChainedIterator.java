@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.util;
+package org.jcvi.common.core.util.iter;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -33,7 +33,7 @@ import java.util.NoSuchElementException;
  *
  *
  */
-public final class ChainedIterator<T> implements Iterator<T>{
+final class ChainedIterator<T> implements Iterator<T>{
   
     private final Iterator<? extends Iterator<T>> chain;
     private Iterator<T> currentIterator;

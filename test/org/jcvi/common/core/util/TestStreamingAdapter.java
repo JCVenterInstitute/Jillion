@@ -24,8 +24,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
+
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -35,7 +36,7 @@ public class TestStreamingAdapter {
 	private StreamingIterator<String> sut;
 	@Before
 	public void setup(){
-		sut = StreamingIteratorAdapter.adapt(stooges.iterator());
+		sut = IteratorUtil.createStreamingIterator(stooges.iterator());
 		
 	}
 	@Test

@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.util;
+package org.jcvi.common.core.util.iter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,9 +25,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.jcvi.common.core.util.ChainedStreamingIterator;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
+
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -39,10 +39,11 @@ public class TestStreamingIterator {
 	List<String> stooges2 = Arrays.asList("shemp","curly-joe","joe besser");
 	@Before
 	public void setup(){
-		sut = new ChainedStreamingIterator<String>(Arrays.asList(
-				StreamingIteratorAdapter.adapt(stooges.iterator()),
-				StreamingIteratorAdapter.adapt(stooges2.iterator())
-		));
+		List<StreamingIterator<String>> list = new ArrayList<StreamingIterator<String>>();
+		list.add(IteratorUtil.createStreamingIterator(stooges.iterator()));
+		list.add(IteratorUtil.createStreamingIterator(stooges2.iterator()));
+		sut = IteratorUtil.createChainedStreamingIterator(list);
+
 	}
 	
 	@Test
