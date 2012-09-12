@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.Direction;
@@ -15,6 +16,9 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
@@ -22,8 +26,14 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 	protected static final String CR = "\n";
 	
 	protected static final int DEFAULT_BUFFER_SIZE = 2<<14; 
+	private final boolean computeConsensusQualities;
 	
-	 protected void writeAceContigHeader(Writer tempWriter, String contigId, long consensusLength, int numberOfReads,
+	
+	 protected AbstractAceFileWriter(boolean computeConsensusQualities) {
+		this.computeConsensusQualities = computeConsensusQualities;
+	}
+
+	protected void writeAceContigHeader(Writer tempWriter, String contigId, long consensusLength, int numberOfReads,
 	    		int numberOfBaseSegments, boolean isComplimented) throws IOException{
 	    	String formattedHeader = String.format("CO %s %d %d %d %s\n", 
 	                contigId, 
@@ -44,7 +54,11 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
                 0,
                 contig.isComplemented());
         tempWriter.write(String.format("%s\n\n\n",AceFileUtil.convertToAcePaddedBasecalls(consensus)));
-        writeFakeUngappedConsensusQualities(tempWriter,consensus);
+        if(computeConsensusQualities){
+        	computeConsensusQualities(tempWriter,contig,phdDataStore);
+        }else{
+        	writeFakeUngappedConsensusQualities(tempWriter,consensus);
+        }
         tempWriter.write(CR);
         List<IdAlignedReadInfo> assembledFroms = IdAlignedReadInfo.getSortedAssembledFromsFor(contig);
         StringBuilder assembledFromBuilder = new StringBuilder();
@@ -67,6 +81,75 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 		
 	}
 	
+	private void computeConsensusQualities(Writer tempWriter, AceContig contig,PhdDataStore phdDataStore) throws IOException {
+		NucleotideSequence consensusSequence = contig.getConsensusSequence();
+		double[] qualities = new double[(int)consensusSequence.getUngappedLength()];
+		StreamingIterator<AcePlacedRead> readIterator = contig.getReadIterator();
+		try{
+			while(readIterator.hasNext()){
+				AcePlacedRead read = readIterator.next();
+				int startOffset = (int)consensusSequence.getUngappedOffsetFor((int)read.getGappedStartOffset());
+				QualitySequence ungappedQualities;
+				try {
+					ungappedQualities = AssemblyUtil.getUngappedComplementedValidRangeQualities(read,phdDataStore.get(read.getId()).getQualitySequence());
+				} catch (DataStoreException e) {
+					throw new IOException("error computing consensus qualities when examining read "+read.getId(),e);
+				}
+				Iterator<Nucleotide> basesIterator = read.getNucleotideSequence().iterator();
+				Iterator<PhredQuality> qualIterator = ungappedQualities.iterator();
+				int i=0;
+				Iterator<Nucleotide> consensusIterator = consensusSequence.iterator(read.asRange());
+				while(basesIterator.hasNext()){
+					Nucleotide consensus = consensusIterator.next();
+					Nucleotide base = basesIterator.next();
+					double qualValue;
+					if(base.isGap()){
+						qualValue=0D;
+					}else{						
+						qualValue =qualIterator.next().getErrorProbability();
+					}
+					if(!consensus.isGap()){
+						if(base == consensus){
+							qualities[startOffset+i] -=qualValue;
+						}else{
+							qualities[startOffset+i] +=qualValue;
+						}
+						i++;	
+					}
+				}
+			}
+		}finally{
+			IOUtil.closeAndIgnoreErrors(readIterator);
+		}
+        int numberOfLines = qualities.length/50+1;
+		StringBuilder formattedString = new StringBuilder(3+ 3* qualities.length+numberOfLines);
+		formattedString.append("BQ\n");
+		for(int i=1; i<qualities.length;i++){
+			formattedString.append(getNormalizedQualValueAsString(qualities, i-1));
+			if(i%50==0){
+				formattedString.append(CR);
+			}else{
+				formattedString.append(" ");
+			}
+		}
+		formattedString.append(getNormalizedQualValueAsString(qualities, qualities.length-1));
+		formattedString.append(CR);
+		tempWriter.write(formattedString.toString());
+		
+	}
+
+	private String getNormalizedQualValueAsString(double[] qualities, int i) {
+		int value;
+		if(qualities[i]<=0){
+			value = PhredQuality.MAX_VALUE;
+		}else{
+			value = PhredQuality.computeQualityScore(qualities[i]);
+		}
+		value = Math.min(value, 99);
+		String qualString = String.format("%02d",value);
+		return qualString;
+	}
+
 	private String createAssembledFromRecord(AcePlacedRead read, long fullLength){
     	IdAlignedReadInfo assembledFrom = IdAlignedReadInfo.createFrom(read, fullLength);
         return String.format("AF %s %s %d\n",
@@ -95,9 +178,9 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 	        int numberOfLines = length/50+1;
 	        StringBuilder result = new StringBuilder(3+3*length+numberOfLines);	      
 	        result.append("BQ\n");
-			for(int i=0; i< length-1; i++){
+			for(int i=1; i<= length-1; i++){
 	            result.append("99");
-	            if(i>0 && i%50==0){
+	            if(i%50==0){
 	                result.append(CR);
 	            }else{
 	            	result.append(" ");
