@@ -35,8 +35,8 @@ import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 
 public class DefaultContigFileDataStore extends AbstractContigFileVisitorBuilder implements ContigDataStore<AssembledRead, Contig<AssembledRead>>{
     private final Map<String,Contig<AssembledRead>> contigs = new TreeMap<String, Contig<AssembledRead>>();
@@ -104,7 +104,7 @@ public class DefaultContigFileDataStore extends AbstractContigFileVisitorBuilder
 
     @Override
     public StreamingIterator<String> idIterator() {
-        return StreamingIteratorAdapter.adapt(contigs.keySet().iterator());
+        return IteratorUtil.createStreamingIterator(contigs.keySet().iterator());
     }
 
 

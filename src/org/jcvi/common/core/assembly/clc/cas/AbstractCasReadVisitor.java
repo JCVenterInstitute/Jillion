@@ -31,7 +31,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.ChainedStreamingIterator;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 
@@ -130,7 +130,7 @@ public abstract class AbstractCasReadVisitor<R extends Read> extends AbstractOne
       @Override
     public final synchronized void visitScoringScheme(CasScoringScheme scheme) {
         super.visitScoringScheme(scheme);
-        readIterator = new ChainedStreamingIterator<R>(iterators);
+        readIterator = IteratorUtil.createChainedStreamingIterator(iterators);
     }
 
     

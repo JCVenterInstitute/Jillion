@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.util;
+package org.jcvi.common.core.util.iter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * {@code ChainedStreamingIterator}
@@ -39,7 +38,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  *
  */
-public final class ChainedStreamingIterator<T> implements StreamingIterator<T>{
+final class ChainedStreamingIterator<T> implements StreamingIterator<T>{
 
     private final List<StreamingIterator<T>> delegates;
     private final Iterator<T> iterator;

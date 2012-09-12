@@ -39,8 +39,8 @@ import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.ArrayIterator;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 
 /**
  * {@code CoverageMapFactory} is a factory class
@@ -260,7 +260,7 @@ public final class CoverageMapFactory {
 	    
 	    @Override
 		public StreamingIterator<CoverageRegion<V>> getRegionIterator() {
-			return StreamingIteratorAdapter.adapt(iterator());
+			return IteratorUtil.createStreamingIterator(iterator());
 		}
 		
 	   
@@ -295,7 +295,7 @@ public final class CoverageMapFactory {
             initialize(elements);
         }
         private final void initialize(Collection<P> collection){
-        	initialize(StreamingIteratorAdapter.adapt(collection.iterator()));
+        	initialize(IteratorUtil.createStreamingIterator(collection.iterator()));
         }
         private final void initialize(StreamingIterator<P> elements){
         	try{

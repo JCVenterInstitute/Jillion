@@ -30,8 +30,8 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.archive.CachedTraceArchiveDataStore;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveDataStore;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveTrace;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -92,7 +92,7 @@ public class TestCachedTraceArchiveMultiTrace {
     
     @Test
     public void iterator() throws DataStoreException{
-        StreamingIterator<String> expectedIterator = StreamingIteratorAdapter.adapt(
+        StreamingIterator<String> expectedIterator = IteratorUtil.createStreamingIterator(
                         Arrays.asList("one","two","three").iterator());
         expect(mockTraceArchive.iterator()).andReturn(expectedIterator);
         replay(mockTraceArchive);

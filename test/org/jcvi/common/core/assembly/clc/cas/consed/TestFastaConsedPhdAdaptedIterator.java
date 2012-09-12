@@ -18,7 +18,6 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.DateUtil;
 import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 import org.junit.Test;
 
 public class TestFastaConsedPhdAdaptedIterator extends AbstractTestPhdAdaptedIterator{
@@ -55,7 +54,7 @@ public class TestFastaConsedPhdAdaptedIterator extends AbstractTestPhdAdaptedIte
 		NucleotideSequenceFastaRecord fasta = createFasta("read1", "ACGT");
 		PhdReadRecord read1 = createExpectedPhdReadRecord(fasta);
 		
-		StreamingIterator<NucleotideSequenceFastaRecord> iter = StreamingIteratorAdapter.adapt(Arrays.asList(fasta).iterator());
+		StreamingIterator<NucleotideSequenceFastaRecord> iter = IteratorUtil.createStreamingIterator(Arrays.asList(fasta).iterator());
 		FastaConsedPhdAdaptedIterator sut = createSUT(iter);
 		assertTrue(sut.hasNext());
 		assertEquals(read1, sut.next());
@@ -69,7 +68,7 @@ public class TestFastaConsedPhdAdaptedIterator extends AbstractTestPhdAdaptedIte
 		NucleotideSequenceFastaRecord fasta2 = createFasta("read2", "AAAA");
 		PhdReadRecord read1 = createExpectedPhdReadRecord(fasta1);
 		PhdReadRecord read2 = createExpectedPhdReadRecord(fasta2);
-		StreamingIterator<NucleotideSequenceFastaRecord> iter = StreamingIteratorAdapter.adapt(
+		StreamingIterator<NucleotideSequenceFastaRecord> iter = IteratorUtil.createStreamingIterator(
 										Arrays.asList(fasta1, 
 												fasta2)
 												.iterator());
@@ -88,7 +87,7 @@ public class TestFastaConsedPhdAdaptedIterator extends AbstractTestPhdAdaptedIte
 		NucleotideSequenceFastaRecord fasta1 = createFasta("read1", "ACGT");
 		NucleotideSequenceFastaRecord fasta2 = createFasta("read2", "AAAA");
 		PhdReadRecord read1 = createExpectedPhdReadRecord(fasta1);
-		StreamingIterator<NucleotideSequenceFastaRecord> iter = StreamingIteratorAdapter.adapt(
+		StreamingIterator<NucleotideSequenceFastaRecord> iter = IteratorUtil.createStreamingIterator(
 										Arrays.asList(fasta1, 
 												fasta2)
 												.iterator());
@@ -104,7 +103,7 @@ public class TestFastaConsedPhdAdaptedIterator extends AbstractTestPhdAdaptedIte
 	@Test
 	public void removeShouldThrowException(){
 		NucleotideSequenceFastaRecord fastq = createFasta("read1", "ACGT");		
-		StreamingIterator<NucleotideSequenceFastaRecord> iter = StreamingIteratorAdapter.adapt(Arrays.asList(fastq).iterator());
+		StreamingIterator<NucleotideSequenceFastaRecord> iter = IteratorUtil.createStreamingIterator(Arrays.asList(fastq).iterator());
 		FastaConsedPhdAdaptedIterator sut = createSUT(iter);
 		assertTrue(sut.hasNext());
 		try{

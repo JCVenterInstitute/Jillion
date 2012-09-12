@@ -20,7 +20,11 @@
 package org.jcvi.common.core.util;
 
 import org.jcvi.common.core.util.iter.TestAbstractBlockingClosableIteratorExceptions;
+import org.jcvi.common.core.util.iter.TestChainedIterator;
 import org.jcvi.common.core.util.iter.TestEmptyIterator;
+import org.jcvi.common.core.util.iter.TestPeekableIterator;
+import org.jcvi.common.core.util.iter.TestPeekableStreamingIterator;
+import org.jcvi.common.core.util.iter.TestStreamingIterator;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -44,6 +48,9 @@ import org.junit.runners.Suite.SuiteClasses;
         TestStreamingAdapter.class,
         TestStreamingIterator.class,
         TestMapValueComparator.class,
+        
+        TestPeekableIterator.class,
+        TestPeekableStreamingIterator.class,
         
         TestAbstractBlockingClosableIteratorExceptions.class,
         TestDateUtilElapsedTime.class,

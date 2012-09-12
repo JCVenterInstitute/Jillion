@@ -37,8 +37,8 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 /**
  * {@code DefaultAceFileDataStore} is a AceContigDataStore
  * implementation that stores all the {@link AceContig}s
@@ -201,15 +201,15 @@ public final class DefaultAceFileDataStore implements AceFileContigDataStore{
 	}
 	@Override
 	public StreamingIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() {
-		return StreamingIteratorAdapter.adapt(wholeAssemblyTags.iterator());
+		return IteratorUtil.createStreamingIterator(wholeAssemblyTags.iterator());
 	}
 	@Override
 	public StreamingIterator<ReadAceTag> getReadTagIterator() {
-		return StreamingIteratorAdapter.adapt(readTags.iterator());
+		return IteratorUtil.createStreamingIterator(readTags.iterator());
 	}
 	@Override
 	public StreamingIterator<ConsensusAceTag> getConsensusTagIterator() {
-		return StreamingIteratorAdapter.adapt(consensusTags.iterator());
+		return IteratorUtil.createStreamingIterator(consensusTags.iterator());
 	}
 
 	private static class DefaultAceFileDataStoreBuilder extends AbstractAceContigBuilder implements AceContigDataStoreBuilder{

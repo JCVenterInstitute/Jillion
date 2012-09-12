@@ -33,8 +33,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 
 final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegion<T> {
     private final Collection<T> elements;
@@ -63,7 +63,7 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
 	}
 	@Override
 	public StreamingIterator<T> getElementIterator() {
-		return StreamingIteratorAdapter.adapt(elements.iterator());
+		return IteratorUtil.createStreamingIterator(elements.iterator());
 	}
     @Override
     public String toString() {

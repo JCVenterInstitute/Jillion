@@ -1,6 +1,10 @@
 package org.jcvi.common.core.util.iter;
 
+import java.io.IOException;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 
 public final class IteratorUtil {
 
@@ -29,6 +33,127 @@ public final class IteratorUtil {
      */
     @SuppressWarnings("unchecked")
     public static <E>  StreamingIterator<E> createEmptyStreamingIterator(){
-        return StreamingIteratorAdapter.adapt(EmptyIterator.INSTANCE);
+        return IteratorUtil.createStreamingIterator(EmptyIterator.INSTANCE);
+    }
+    
+    public static <E> PeekableIterator<E> createPeekableIterator(Iterator<E> iter){
+    	return new PeekableIteratorImpl<E>(iter);
+    }
+    
+    public static <E> StreamingIterator<E> createStreamingIterator(Iterator<E> iter){
+    	return StreamingIteratorAdapter.adapt(iter);
+    }
+    public static <E> PeekableStreamingIterator<E> createPeekableStreamingIterator(Iterator<E> iter){
+    	return new PeekableStreamingIteratorImpl<E>(createStreamingIterator(iter));
+    }
+    public static <E> PeekableStreamingIterator<E> createPeekableStreamingIterator(StreamingIterator<E> iter){
+    	return new PeekableStreamingIteratorImpl<E>(iter);
+    }
+    
+    public static <E> Iterator<E> createChainedIterator(Collection<? extends Iterator<E>> iterators){
+    	return ChainedIterator.create(iterators);
+    }
+    public static <E> StreamingIterator<E> createChainedStreamingIterator(Collection<? extends StreamingIterator<E>> iterators){
+    	return new ChainedStreamingIterator<E>(iterators);
+    }
+    private static class PeekableIteratorImpl<T> implements PeekableIterator<T>{
+
+    	private final Iterator<T> iter;
+    	private T next;
+    	private boolean doneIterating=false;
+    	
+		PeekableIteratorImpl(Iterator<T> iter) {
+			this.iter = iter;
+			updateNext();
+		}
+		
+		private void updateNext(){
+			if(iter.hasNext()){
+				next=iter.next();
+			}else{
+				doneIterating=true;
+			}
+		}
+		@Override
+		public boolean hasNext() {
+			return !doneIterating;
+		}
+		@Override
+		public T next() {
+			T ret = next;
+			updateNext();
+			return ret;
+		}
+		
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException("peekable iterators can not remove");
+			
+		}
+		@Override
+		public T peek() {
+			if(hasNext()){
+				return next;
+			}
+			throw new NoSuchElementException();
+		}
+    	
+    	
+    }
+    
+    private static class PeekableStreamingIteratorImpl<T> implements PeekableStreamingIterator<T>{
+
+    	private final StreamingIterator<T> iter;
+    	private T next;
+    	private boolean doneIterating=false;
+    	
+    	PeekableStreamingIteratorImpl(StreamingIterator<T> iter) {
+			this.iter = iter;
+			updateNext();
+		}
+		
+		private void updateNext(){
+			if(iter.hasNext()){
+				next=iter.next();
+			}else{
+				doneIterating=true;
+			}
+		}
+		
+		@Override
+		public void close() throws IOException {
+			doneIterating=true;
+			iter.close();
+			
+		}
+
+		@Override
+		public boolean hasNext() {
+			return !doneIterating;
+		}
+		@Override
+		public T next() {
+			if(hasNext()){
+				T ret = next;
+				updateNext();
+				return ret;
+			}
+			throw new NoSuchElementException();
+		}
+		
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException("peekable iterators can not remove");
+			
+		}
+		@Override
+		public T peek() {
+			if(hasNext()){
+				return next;
+			}
+			throw new NoSuchElementException();
+		}
+    	
+    	
     }
 }

@@ -33,9 +33,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.common.core.util.ChainedStreamingIterator;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 /**
  * {@code MultipleDataStoreWrapper} is a special proxy to wrap
  * several DataStore instances behind a single iterface.  This
@@ -176,10 +175,10 @@ public final class MultipleDataStoreWrapper<T, D extends DataStore<T>> implement
             if(delegateIterator instanceof StreamingIterator){
                 iterators.add((StreamingIterator<T>)delegateIterator);
             }else{
-                iterators.add(StreamingIteratorAdapter.adapt(delegateIterator));
+                iterators.add(IteratorUtil.createStreamingIterator(delegateIterator));
             }
         }
-        return new ChainedStreamingIterator<T>(iterators);
+        return IteratorUtil.createChainedStreamingIterator(iterators);
     }
     private Object handleIntSumMethod(Method method, Object[] args) throws Throwable {
         int sum=0;

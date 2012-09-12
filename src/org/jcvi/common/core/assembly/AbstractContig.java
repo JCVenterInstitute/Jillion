@@ -29,8 +29,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 
 public abstract class AbstractContig<T extends AssembledRead> implements Contig<T>{
     private final NucleotideSequence consensus;
@@ -72,7 +72,7 @@ public abstract class AbstractContig<T extends AssembledRead> implements Contig<
     }
     @Override
     public StreamingIterator<T> getReadIterator() {       
-        return StreamingIteratorAdapter.adapt(mapById.values().iterator());
+        return IteratorUtil.createStreamingIterator(mapById.values().iterator());
     }
 
     

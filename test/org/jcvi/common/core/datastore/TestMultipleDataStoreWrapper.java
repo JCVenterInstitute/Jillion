@@ -31,8 +31,8 @@ import java.util.Iterator;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.StreamingIteratorAdapter;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -95,8 +95,8 @@ public class TestMultipleDataStoreWrapper {
     
     @Test
     public void iteratorShouldIterateOverAll() throws DataStoreException{
-        StreamingIterator<String> iter1 = StreamingIteratorAdapter.adapt(Arrays.asList("one","two").iterator());
-        StreamingIterator<String> iter2 = StreamingIteratorAdapter.adapt(Arrays.asList("three","four").iterator());
+        StreamingIterator<String> iter1 = IteratorUtil.createStreamingIterator(Arrays.asList("one","two").iterator());
+        StreamingIterator<String> iter2 = IteratorUtil.createStreamingIterator(Arrays.asList("three","four").iterator());
         
         Iterator<String> expectedIterator = Arrays.asList("one","two","three","four").iterator();
         expect(datastore1.iterator()).andReturn(iter1);
