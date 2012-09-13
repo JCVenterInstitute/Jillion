@@ -40,8 +40,6 @@ import org.junit.runners.Suite.SuiteClasses;
        TestAceContigBuilderInvalidRead.class,
        TestBaseSegmentUtil.class,
        TestDefaultAceBestSegment.class,
-       TestDefaultAceBestSegmentMap.class,
-       TestOntheFlyAceBestSegmentMap.class,
        TestAcePlacedReadAdapter.class,
        
        TestDefaultAceFileDataStore.class,
