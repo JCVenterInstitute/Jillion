@@ -94,6 +94,11 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     protected synchronized void setAlignedInfoMap(Map<String, AlignedReadInfo> currentAlignedInfoMap){
     	this.currentAssembledFromMap = currentAlignedInfoMap;
     }
+    
+    
+	protected final Map<String, AlignedReadInfo> getAlignedInfoMap() {
+		return currentAssembledFromMap;
+	}
 	private synchronized void fireVisitNewContigIfWeHaventAlready() {
 		if(readingConsensus){
             readingConsensus=false;

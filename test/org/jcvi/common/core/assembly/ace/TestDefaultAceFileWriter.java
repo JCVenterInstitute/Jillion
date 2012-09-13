@@ -25,7 +25,7 @@ import java.util.Date;
 
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
-import org.jcvi.common.core.assembly.ace.AcePlacedRead;
+import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.DefaultAceFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
@@ -129,13 +129,13 @@ public class TestDefaultAceFileWriter {
 	            AceContig actualContig = reparsedAceDataStore.get(expectedContig.getId());            
 	            assertEquals("consensus", expectedContig.getConsensusSequence(), actualContig.getConsensusSequence());
 	            assertEquals("# reads", expectedContig.getNumberOfReads(), actualContig.getNumberOfReads());
-	            StreamingIterator<AcePlacedRead> readIter =null;
+	            StreamingIterator<AceAssembledRead> readIter =null;
 	            try{
 	            	readIter = expectedContig.getReadIterator();
 	            	while(readIter.hasNext()){
-	            		AcePlacedRead expectedRead = readIter.next();
+	            		AceAssembledRead expectedRead = readIter.next();
 	            		String id = expectedRead.getId();
-	            		AcePlacedRead actualRead = actualContig.getRead(expectedRead.getId());
+	            		AceAssembledRead actualRead = actualContig.getRead(expectedRead.getId());
 	  	                assertEquals(id + " basecalls", expectedRead.getNucleotideSequence(), actualRead.getNucleotideSequence());
 	  	                assertEquals(id + " offset", expectedRead.getGappedStartOffset(), actualRead.getGappedStartOffset());
 	  	                assertEquals(id + " validRange", expectedRead.getReadInfo().getValidRange(), actualRead.getReadInfo().getValidRange());

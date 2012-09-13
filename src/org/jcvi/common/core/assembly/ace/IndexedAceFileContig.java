@@ -5,11 +5,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
@@ -19,17 +21,17 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.Caches;
 import org.jcvi.common.core.util.MapUtil;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code IndexedAceFileContig} is an {@link AceContig}
  * that doesn't store all the data of this contig
  * in memory at any one time.  Instead of storing
- * {@link AcePlacedRead}s, only a map of offset ranges
+ * {@link AceAssembledRead}s, only a map of offset ranges
  * into the ace file are stored.  Whenever a read
  * is requested, the file is re-opened, and 
  * <strong>just the lines for that one read</strong>
@@ -52,14 +54,16 @@ final class IndexedAceFileContig implements AceContig{
 	private final NucleotideSequence consensus;
 	private final File aceFile;
 	private final long contigStartFileOffset;
-	private final Map<String, AcePlacedRead> cachedReads;
+	private final Map<String, AceAssembledRead> cachedReads;
+	private final boolean aceFileHasSortedReads;
 	
 	private IndexedAceFileContig(String contigId,
 			Map<String, AlignedReadInfo> readInfoMap,
 			Map<String,Range> readOffsetRanges, boolean isComplimented,
 			NucleotideSequence consensus, File aceFile,
 			long contigStartFileOffset,
-			int maxCoverage) {
+			int maxCoverage,
+			boolean aceFileHasSortedReads) {
 		this.contigId = contigId;
 		this.readInfoMap = readInfoMap;
 		this.readOffsetRanges = readOffsetRanges;
@@ -68,6 +72,7 @@ final class IndexedAceFileContig implements AceContig{
 		this.aceFile = aceFile;
 		this.contigStartFileOffset = contigStartFileOffset;
 		this.cachedReads = Caches.createSoftReferencedValueLRUCache(maxCoverage*2);
+		this.aceFileHasSortedReads = aceFileHasSortedReads;
 	}
 
 	@Override
@@ -81,7 +86,14 @@ final class IndexedAceFileContig implements AceContig{
 	}
 
 	@Override
-	public StreamingIterator<AcePlacedRead> getReadIterator() {
+	public StreamingIterator<AceAssembledRead> getReadIterator() {
+		if(aceFileHasSortedReads){
+			return createIteratorOverFile();
+		}
+		return new OutOfOrderReadIterator();
+	}
+
+	private StreamingIterator<AceAssembledRead> createIteratorOverFile() {
 		InputStream in = null;
 		try{
 			in = new FileInputStream(aceFile);
@@ -102,11 +114,11 @@ final class IndexedAceFileContig implements AceContig{
 	}
 
 	@Override
-	public synchronized AcePlacedRead getRead(String id) {
+	public synchronized AceAssembledRead getRead(String id) {
 		if(!containsRead(id)){
 			return null;
 		}
-		AcePlacedRead cachedRead =cachedReads.get(id);
+		AceAssembledRead cachedRead =cachedReads.get(id);
 		if(cachedRead !=null){
 			return cachedRead;
 		}
@@ -120,7 +132,7 @@ final class IndexedAceFileContig implements AceContig{
 			builder.visitAssembledFromLine(id, alignmentInfo.getDirection(), alignmentInfo.getStartOffset());
 			
 			AceFileParser.parse(in, builder);
-			AcePlacedRead read= builder.build();
+			AceAssembledRead read= builder.build();
 			cachedReads.put(id, read);
 			return read;
 			
@@ -144,21 +156,66 @@ final class IndexedAceFileContig implements AceContig{
 		return isComplimented;
 	}
 	
-	static final class IndexedContigVisitorBuilder implements AceFileVisitor, Builder<AceContig>{
+	/**
+	 * To maintain the contract that the read ids
+	 * are always in consed preferred sorted order,
+	 * we must fetch the reads in the order
+	 * they should be in if the ace file
+	 * does not order the reads correctly.
+	 * 
+	 * This should be rare and only occurs with ace files
+	 * that are created outside of this library, consed or phrap.
+	 * (perhaps others follow this pattern too, but 454 as of 2009 did not).
+	 * @author dkatzel
+	 *
+	 */
+	class OutOfOrderReadIterator implements StreamingIterator<AceAssembledRead>{
+		private final StreamingIterator<String> sortedIdIterator;
 		
-		private long currentOffset=0;
-		private Map<String,Range> readRanges;
+		public OutOfOrderReadIterator(){
+			sortedIdIterator = IteratorUtil.createStreamingIterator(readOffsetRanges.keySet().iterator());
+		}
+
+		@Override
+		public boolean hasNext() {
+			return sortedIdIterator.hasNext();
+		}
+
+		@Override
+		public void close() throws IOException {
+			sortedIdIterator.close();
+			
+		}
+
+		@Override
+		public AceAssembledRead next() {
+			return getRead(sortedIdIterator.next());
+		}
+
+		@Override
+		public void remove() {
+			sortedIdIterator.remove();
+			
+		}
+		
+	}
+	
+	
+	
+	static final class IndexedContigVisitorBuilder extends AbstractAceFileVisitor implements Builder<AceContig>{
+		
+		private long currentOffset;
+		private Map<String,Range> readFileOffsetRanges;
 		private final File aceFile;
 		private String currentLine;
 		private String contigId;
 		private boolean isComplimented;
-		private Map<String, AlignedReadInfo> readInfoMap;
-		private NucleotideSequenceBuilder consensusBuilder;
-		private boolean readingConsensus=true;
-		private String currentReadId;
 		private final long contigStartOffset;
-		private final List<Range> coverageRanges = new ArrayList<Range>();
+		private Map<String,Range> coverageRanges;
 		private long currentReadStart;
+		private NucleotideSequence contigConsensusSequence;
+		Map<String, AlignedReadInfo> alignedInfoMapCopy;
+		
 		public IndexedContigVisitorBuilder(long startOffset, File aceFile) {
 			this.currentOffset = startOffset;
 			this.aceFile = aceFile;
@@ -166,30 +223,70 @@ final class IndexedAceFileContig implements AceContig{
 		}
 
 		@Override
-		public void visitLine(String line) {
+		public synchronized void visitLine(String line) {
 			currentLine = line;
 			currentOffset+=currentLine.length();
 		}
 
+
 		@Override
-		public void visitFile() {
+		protected void visitNewContig(String contigId,
+				NucleotideSequence consensus, int numberOfBases,
+				int numberOfReads, boolean isComplemented) {
+			contigConsensusSequence = consensus;
 			
 		}
 
 		@Override
-		public void visitEndOfFile() {
+		public synchronized void visitReadHeader(String readId, int gappedLength) {			
+			super.visitReadHeader(readId, gappedLength);
+			currentReadStart = currentOffset - currentLine.length();
+		}
+
+		@Override
+		protected void visitAceRead(String readId,
+				NucleotideSequence validBasecalls, int offset, Direction dir,
+				Range validRange, PhdInfo phdInfo, int ungappedFullLength) {
 			
+			readFileOffsetRanges.put(readId, Range.create(currentReadStart, currentOffset-1));
+			coverageRanges.put(readId, Range.createOfLength(offset, validBasecalls.getLength()));
+			
+			currentReadStart =currentOffset+1;
 		}
 
 		@Override
 		public AceContig build() {
 			
-			CoverageMap<Range> coverageMap = CoverageMapFactory.create(coverageRanges);
+			CoverageMap<Range> coverageMap = CoverageMapFactory.create(coverageRanges.values());
 			int maxCoverage = getMaxCoverage(coverageMap);
-			coverageRanges.clear();
-			return new IndexedAceFileContig(contigId, readInfoMap, readRanges, isComplimented, 
-					consensusBuilder.build(), aceFile, 
-					contigStartOffset, maxCoverage);
+			
+			
+			SortedMap<String,Range> sortedFileOffsetRanges = new TreeMap<String,Range>(new ConsedOrderedReads(coverageRanges));
+			sortedFileOffsetRanges.putAll(readFileOffsetRanges);
+			
+			
+			boolean aceFileHasSortedReads = idsInSameOrder(readFileOffsetRanges,sortedFileOffsetRanges);
+			
+			if(aceFileHasSortedReads){
+				return new IndexedAceFileContig(contigId, alignedInfoMapCopy, readFileOffsetRanges, isComplimented, 
+						contigConsensusSequence, aceFile, 
+						contigStartOffset, maxCoverage,aceFileHasSortedReads);
+			}
+			return new IndexedAceFileContig(contigId, alignedInfoMapCopy, sortedFileOffsetRanges, isComplimented, 
+					contigConsensusSequence, aceFile, 
+					contigStartOffset, maxCoverage,aceFileHasSortedReads);
+		}
+
+		private boolean idsInSameOrder(Map<String, Range> actual,
+				SortedMap<String, Range> sortedIds) {
+			Iterator<String> actualIter = actual.keySet().iterator();
+			Iterator<String> sortedIter = sortedIds.keySet().iterator();
+			while(sortedIter.hasNext()){
+				if(!actualIter.next().equals(sortedIter.next())){
+					return false;
+				}
+			}
+			return true;
 		}
 
 		private int getMaxCoverage(CoverageMap<?> coverageMap){
@@ -199,10 +296,6 @@ final class IndexedAceFileContig implements AceContig{
 			}
 			return currentMax;
 		}
-		@Override
-		public void visitHeader(int numberOfContigs, int totalNumberOfReads) {
-			
-		}
 
 		@Override
 		public boolean shouldVisitContig(String contigId,
@@ -210,113 +303,62 @@ final class IndexedAceFileContig implements AceContig{
 				int numberOfBaseSegments, boolean reverseComplimented) {
 			this.contigId =contigId;
 			int mapCapacity = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads);
-			readRanges = new LinkedHashMap<String, Range>(mapCapacity);
+			readFileOffsetRanges = new LinkedHashMap<String, Range>(mapCapacity);
+			coverageRanges = new HashMap<String, Range>(mapCapacity);
 			isComplimented = reverseComplimented;
-			readInfoMap = new LinkedHashMap<String, AlignedReadInfo>(mapCapacity);
-			consensusBuilder = new NucleotideSequenceBuilder();
 			return true;
 		}
 
-		@Override
-		public void visitBeginContig(String contigId, int numberOfBases,
-				int numberOfReads, int numberOfBaseSegments,
-				boolean reverseComplimented) {
-			
-		}
 
-		@Override
-		public void visitConsensusQualities() {
-			
-		}
+		
 
-		@Override
-		public void visitAssembledFromLine(String readId, Direction dir,
-				int gappedStartOffset) {
-			readInfoMap.put(readId, new AlignedReadInfo(gappedStartOffset, dir));
-			
-		}
 
-		@Override
-		public void visitBaseSegment(Range gappedConsensusRange,
-				String readId) {
-			
-		}
+		
 
-		@Override
-		public void visitReadHeader(String readId, int gappedLength) {
-			if(readingConsensus){
-				readingConsensus=false;
-				
-			}
-			currentReadStart =currentOffset - currentLine.length();
-			currentReadId= readId;
-			coverageRanges.add(Range.createOfLength(readInfoMap.get(readId).getStartOffset(), gappedLength));
-		}
-
-		@Override
-		public void visitQualityLine(int qualLeft, int qualRight,
-				int alignLeft, int alignRight) {
-			
-		}
-
-		@Override
-		public void visitTraceDescriptionLine(String traceName,
-				String phdName, Date date) {
-			//end of current read
-			readRanges.put(currentReadId, Range.create(currentReadStart, currentOffset-1));
-		}
-
-		@Override
-		public void visitBasesLine(String mixedCaseBasecalls) {
-			if(readingConsensus){
-				consensusBuilder.append(mixedCaseBasecalls.trim());
-			}
-			
-		}
-
-		@Override
-		public void visitReadTag(String id, String type, String creator,
-				long gappedStart, long gappedEnd, Date creationDate,
-				boolean isTransient) {
-			
-		}
 
 		@Override
 		public boolean visitEndOfContig() {
+			super.visitEndOfContig();
+			Map<String, AlignedReadInfo> alignedInfoMap = getAlignedInfoMap();
+			
+			alignedInfoMapCopy = new HashMap<String, AlignedReadInfo>(MapUtil.computeMinHashMapSizeWithoutRehashing(alignedInfoMap.size()));
+			alignedInfoMapCopy.putAll(alignedInfoMap);
 			return false;
 		}
 
-		@Override
-		public void visitBeginConsensusTag(String id, String type,
-				String creator, long gappedStart, long gappedEnd,
-				Date creationDate, boolean isTransient) {
-			
-		}
-
-		@Override
-		public void visitConsensusTagComment(String comment) {
-			
-		}
-
-		@Override
-		public void visitConsensusTagData(String data) {
-			
-		}
-
-		@Override
-		public void visitEndConsensusTag() {
-			
-		}
-
-		@Override
-		public void visitWholeAssemblyTag(String type, String creator,
-				Date creationDate, String data) {
-			
-		}
+		
 		
 	}
 	
-	 private static final class IndexedReadIterator extends AbstractBlockingCloseableIterator<AcePlacedRead>{
+	private static class ConsedOrderedReads implements Comparator<String>{
+		private final Map<String,Range> gappedCoverageRanges;
+
+		public ConsedOrderedReads(Map<String, Range> gappedCoverageRanges) {
+			this.gappedCoverageRanges = gappedCoverageRanges;
+		}
+
+		@Override
+		public int compare(String o1, String o2) {
+			Range o1Range = gappedCoverageRanges.get(o1);
+			Range o2Range = gappedCoverageRanges.get(o2);
+			if(o1Range==null){
+				throw new NullPointerException("no range for "+o1);
+			}
+			if(o2Range==null){
+				throw new NullPointerException("no range for "+o2);
+			}
+			int rangeCmp = Range.Comparators.ARRIVAL.compare(o1Range, o2Range);
+			if(rangeCmp !=0){
+				return rangeCmp;
+			}
+			return o1.compareTo(o2);
+		}
+		
+		
+		
+	}
+	
+	 private static final class IndexedReadIterator extends AbstractBlockingCloseableIterator<AceAssembledRead>{
 
 	    	private final NucleotideSequence consensus;
 	    	private final Map<String, AlignedReadInfo> readInfoMap;
@@ -352,7 +394,7 @@ final class IndexedAceFileContig implements AceContig{
 					protected void visitAceRead(String readId,
 							NucleotideSequence validBasecalls, int offset, Direction dir,
 							Range validRange, PhdInfo phdInfo, int ungappedFullLength) {
-						AcePlacedRead read =DefaultAcePlacedRead.createBuilder(IndexedReadIterator.this.consensus, readId, validBasecalls, offset, dir, validRange, phdInfo, ungappedFullLength)
+						AceAssembledRead read =DefaultAceAssembledRead.createBuilder(IndexedReadIterator.this.consensus, readId, validBasecalls, offset, dir, validRange, phdInfo, ungappedFullLength)
 								.build();
 						
 						blockingPut(read);

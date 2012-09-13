@@ -24,17 +24,32 @@
 package org.jcvi.common.core.assembly.ace;
 
 import org.jcvi.common.core.assembly.Contig;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * an {@code AceContig} is a {@link Contig}
  * from an ace file.  Each {@link AceContig}
- * is made up of {@link AcePlacedRead}s.
+ * is made up of {@link AceAssembledRead}s.
  * @author dkatzel
  */
-public interface AceContig extends Contig<AcePlacedRead>{
+public interface AceContig extends Contig<AceAssembledRead>{
     /**
      * Is this contig complemented?
      * @return {@code true} if this contig
      * is complemented; {@code false} otherwise.
      */
     boolean isComplemented();
+    
+    /**
+     * The order of the reads returned by this
+     * iterator is ordered by {@link AceAssembledRead#getGappedStartOffset()}.
+     * If two reads have the same start offset, then the shorter read determined
+     * by {@link AceAssembledRead#getGappedLength()} is returned.
+     * If two reads have the same start offset AND gapped length,
+     * the the read with the lexigraphically lower read id is returned.
+     * <p/>
+     * {@inheritDoc}
+     */
+    @Override
+    StreamingIterator<AceAssembledRead> getReadIterator();
+    
 }

@@ -26,7 +26,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
-import org.jcvi.common.core.assembly.ace.AcePlacedRead;
+import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -59,15 +59,15 @@ public class TestDefaultAceContigBuilderReAbacus {
            
         AceContig contig =sut.build();
         assertEquals("ACGTTACGT", contig.getConsensusSequence().toString());
-        AcePlacedRead read1 = contig.getRead("read1");
+        AceAssembledRead read1 = contig.getRead("read1");
         assertEquals("GTTACG", read1.getNucleotideSequence().toString());
         assertEquals(7, read1.getGappedEndOffset());
         
-        AcePlacedRead read2 = contig.getRead("read2");
+        AceAssembledRead read2 = contig.getRead("read2");
         assertEquals("ACGTTAC", read2.getNucleotideSequence().toString());
         assertEquals(6, read2.getGappedEndOffset());
         
-        AcePlacedRead read3 = contig.getRead("read3");
+        AceAssembledRead read3 = contig.getRead("read3");
         assertEquals("TTACGT", read3.getNucleotideSequence().toString());
         assertEquals(8, read3.getGappedEndOffset());
     }
@@ -90,19 +90,19 @@ public class TestDefaultAceContigBuilderReAbacus {
            
         AceContig contig =sut.build();
         assertEquals("ACGTTACGT", contig.getConsensusSequence().toString());
-        AcePlacedRead read1 = contig.getRead("read1");
+        AceAssembledRead read1 = contig.getRead("read1");
         assertEquals("GTTACG", read1.getNucleotideSequence().toString());
         assertEquals(7, read1.getGappedEndOffset());
         
-        AcePlacedRead read2 = contig.getRead("read2");
+        AceAssembledRead read2 = contig.getRead("read2");
         assertEquals("ACGTTAC", read2.getNucleotideSequence().toString());
         assertEquals(6, read2.getGappedEndOffset());
         
-        AcePlacedRead read3 = contig.getRead("read3");
+        AceAssembledRead read3 = contig.getRead("read3");
         assertEquals("TTACGT", read3.getNucleotideSequence().toString());
         assertEquals(8, read3.getGappedEndOffset());
         
-        AcePlacedRead read4 = contig.getRead("read4");
+        AceAssembledRead read4 = contig.getRead("read4");
         assertEquals("ACGT", read4.getNucleotideSequence().toString());
         assertEquals(5, read4.getGappedStartOffset());
         assertEquals(8, read4.getGappedEndOffset());
@@ -116,7 +116,7 @@ public class TestDefaultAceContigBuilderReAbacus {
                  "ACGT-----ACGT");
 	 }
 	@Override
-	public ContigBuilder<AcePlacedRead, AceContig> setContigId(String contigId) {
+	public ContigBuilder<AceAssembledRead, AceContig> setContigId(String contigId) {
 		delegate.setContigId(contigId);
 		return this;
 	}
@@ -132,21 +132,21 @@ public class TestDefaultAceContigBuilderReAbacus {
 	}
 
 	@Override
-	public ContigBuilder<AcePlacedRead, AceContig> addRead(
-			AcePlacedRead placedRead) {
+	public ContigBuilder<AceAssembledRead, AceContig> addRead(
+			AceAssembledRead placedRead) {
 		delegate.addRead(placedRead);
 		return this;
 	}
 
 	@Override
-	public ContigBuilder<AcePlacedRead, AceContig> addAllReads(
-			Iterable<AcePlacedRead> reads) {
+	public ContigBuilder<AceAssembledRead, AceContig> addAllReads(
+			Iterable<AceAssembledRead> reads) {
 		delegate.addAllReads(reads);
 		return this;
 	}
 
 	@Override
-	public ContigBuilder<AcePlacedRead, AceContig> removeRead(String readId) {
+	public ContigBuilder<AceAssembledRead, AceContig> removeRead(String readId) {
 		return delegate.removeRead(readId);
 		
 	}

@@ -418,16 +418,16 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
     
     
     
-    public static final class ReadVisitorBuilder extends AbstractAceFileVisitor implements Builder<AcePlacedRead>{
+    public static final class ReadVisitorBuilder extends AbstractAceFileVisitor implements Builder<AceAssembledRead>{
 
     	private final NucleotideSequence consensus;
-    	private AcePlacedRead builtRead;
+    	private AceAssembledRead builtRead;
 		public ReadVisitorBuilder(NucleotideSequence consensus) {
 			this.consensus = consensus;
 		}
 
 		@Override
-		public AcePlacedRead build() {
+		public AceAssembledRead build() {
 			return builtRead;
 		}
 
@@ -443,7 +443,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
 		protected void visitAceRead(String readId,
 				NucleotideSequence validBasecalls, int offset, Direction dir,
 				Range validRange, PhdInfo phdInfo, int ungappedFullLength) {
-			builtRead= DefaultAcePlacedRead.createBuilder(consensus, readId, validBasecalls, offset, dir, validRange, phdInfo, ungappedFullLength)
+			builtRead= DefaultAceAssembledRead.createBuilder(consensus, readId, validBasecalls, offset, dir, validRange, phdInfo, ungappedFullLength)
 					.build();
 			
 		}

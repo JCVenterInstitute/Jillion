@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.ace.AcePlacedRead;
+import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.DefaultAceFileDataStore;
 import org.jcvi.common.core.assembly.ace.DefaultPhdInfo;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
@@ -49,7 +49,7 @@ public class TestAceParserPhdInfo {
     private static final String ACE_FILE = "files/sample.ace";
     private static final DateFormat DATE_TIME_FORMATTER = new SimpleDateFormat("EEE MMM dd kk:mm:ss yyyy");
     private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestAceParserPhdInfo.class);
-    private static Contig<AcePlacedRead> actualContig;
+    private static Contig<AceAssembledRead> actualContig;
     
     Map<String, PhdInfo> phdInfoMap;
     @BeforeClass
@@ -96,11 +96,11 @@ public class TestAceParserPhdInfo {
     
     @Test
     public void assertPhdInfosCorrect(){
-    	StreamingIterator<AcePlacedRead> iter=null;
+    	StreamingIterator<AceAssembledRead> iter=null;
     	try{
     		iter = actualContig.getReadIterator();
     		while(iter.hasNext()){
-    			AcePlacedRead read = iter.next();
+    			AceAssembledRead read = iter.next();
     			 assertEquals(phdInfoMap.get(read.getId()), read.getPhdInfo());
     		}
     	}finally{

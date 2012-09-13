@@ -48,7 +48,7 @@ import org.jcvi.common.core.assembly.DefaultScaffold;
 import org.jcvi.common.core.assembly.ScaffoldBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceFileWriter;
-import org.jcvi.common.core.assembly.ace.AcePlacedRead;
+import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.AcePlacedReadBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultAceFileWriter;
 import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
@@ -182,7 +182,7 @@ public class Cas2Consed3 {
                   
                   AbstractAcePlacedReadCasReadVisitor visitor = new AbstractAcePlacedReadCasReadVisitor(casInfo) {
                         @Override
-                        protected void visitMatch(AcePlacedRead acePlacedRead, Phd phd,
+                        protected void visitMatch(AceAssembledRead acePlacedRead, Phd phd,
                                 int casReferenceId) {
                             Integer refKey = Integer.valueOf(casReferenceId);
                             if(!builders.containsKey(refKey)){

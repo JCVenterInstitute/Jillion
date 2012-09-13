@@ -12,18 +12,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
-import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.assembly.AssemblyUtil;
-import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code DefaultAceFileWriter} handles
  * writing out correctly formatted
@@ -53,7 +45,6 @@ public final class DefaultAceFileWriter extends AbstractAceFileWriter{
 	//best segments aren't used anymore in current writer
 	//so I'll have to re-add them.
 	
-	private final boolean createBsRecords;
 	private final PhdDataStore phdDatastore;
 	private final OutputStream out;
 	private final File tempFile;
@@ -65,10 +56,9 @@ public final class DefaultAceFileWriter extends AbstractAceFileWriter{
 	
 	private DefaultAceFileWriter(OutputStream out, PhdDataStore phdDatastore,File tmpDir,
 			boolean createBsRecords, boolean computeConsensusQualities) throws IOException {
-		super(computeConsensusQualities);
+		super(computeConsensusQualities, createBsRecords);
 		this.out = new BufferedOutputStream(out,DEFAULT_BUFFER_SIZE);
 		this.phdDatastore = phdDatastore;
-		this.createBsRecords = createBsRecords;
 		IOUtil.mkdirs(tmpDir);
 		this.tempFile = File.createTempFile("aceWriter", null, tmpDir);
 		tempFile.deleteOnExit();
@@ -255,7 +245,24 @@ public final class DefaultAceFileWriter extends AbstractAceFileWriter{
 			computeConsensusQualities=true;
 			return this;
 		}
-		
+		/**
+		 * Legacy versions of consed
+		 * required ace contigs to include information
+		 * that indicated which read phrap had chosen to be 
+		 * the consensus at a particular offset.  This information
+		 * is no longer required by current versions of consed since
+		 * it is phrap specific.  Including
+		 * Base Segments is not recommended since generating
+		 * them is computationally expensive and can throw
+		 * RuntimeExceptions if there is no read that matches the consensus
+		 * at a particular offset (for example a 0x region or if the consensus
+		 * is an ambiguity).
+		 * @return this.
+		 */
+		public Builder includeBaseSegments(){
+			createBsRecords=true;
+			return this;
+		}
 		/**
 		 * Create a new instance of {@link DefaultAceFileWriter}
 		 * with the given paramters.

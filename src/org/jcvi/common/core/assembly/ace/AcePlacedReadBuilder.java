@@ -25,7 +25,7 @@ import org.jcvi.common.core.util.Builder;
 
 /**
  * {@code AcePlacedReadBuilder} is a {@link Builder}
- * for {@link AcePlacedRead}s for a specific contig.
+ * for {@link AceAssembledRead}s for a specific contig.
  * Methods in this interface can change the bases
  * of this read or shift where on the reference (or contig consensus)
  * this read lands.
@@ -33,7 +33,7 @@ import org.jcvi.common.core.util.Builder;
  *
  *
  */
-public interface AcePlacedReadBuilder extends AssembledReadBuilder<AcePlacedRead>{
+public interface AcePlacedReadBuilder extends AssembledReadBuilder<AceAssembledRead>{
    
 
     /**

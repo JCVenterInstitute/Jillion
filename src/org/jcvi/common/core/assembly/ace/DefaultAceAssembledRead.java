@@ -36,7 +36,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 
-final class DefaultAcePlacedRead implements AcePlacedRead {
+final class DefaultAceAssembledRead implements AceAssembledRead {
     private final PhdInfo phdInfo;
     private final AssembledRead placedRead;
     
@@ -47,7 +47,7 @@ final class DefaultAcePlacedRead implements AcePlacedRead {
         return new Builder(reference, readId, validBases, 
                 offset, dir, clearRange, phdInfo, ungappedFullLength);
     }
-    private DefaultAcePlacedRead(AssembledRead placedRead, PhdInfo phdInfo) {
+    private DefaultAceAssembledRead(AssembledRead placedRead, PhdInfo phdInfo) {
         this.placedRead = placedRead;
         this.phdInfo =phdInfo;
     }
@@ -168,7 +168,7 @@ final class DefaultAcePlacedRead implements AcePlacedRead {
         if (getClass() != obj.getClass()){
             return false;
         }
-        DefaultAcePlacedRead other = (DefaultAcePlacedRead) obj;
+        DefaultAceAssembledRead other = (DefaultAceAssembledRead) obj;
         if (phdInfo == null) {
             if (other.phdInfo != null){
                 return false;
@@ -234,7 +234,7 @@ final class DefaultAcePlacedRead implements AcePlacedRead {
         }
         
         @Override
-		public AssembledReadBuilder<AcePlacedRead> setClearRange(
+		public AssembledReadBuilder<AceAssembledRead> setClearRange(
 				Range updatedClearRange) {
 			delegateBuilder.setClearRange(updatedClearRange);
 			return this;
@@ -298,8 +298,8 @@ final class DefaultAcePlacedRead implements AcePlacedRead {
         * {@inheritDoc}
         */
         @Override
-        public DefaultAcePlacedRead build(){
-            return new DefaultAcePlacedRead(delegateBuilder.build(),phdInfo);
+        public DefaultAceAssembledRead build(){
+            return new DefaultAceAssembledRead(delegateBuilder.build(),phdInfo);
         }
         /**
         * {@inheritDoc}

@@ -31,7 +31,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.assembly.ReadInfo;
-import org.jcvi.common.core.assembly.ace.AcePlacedReadAdapter;
+import org.jcvi.common.core.assembly.ace.AceAssembledReadAdapter;
 import org.jcvi.common.core.assembly.ace.DefaultPhdInfo;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
@@ -44,7 +44,7 @@ public class TestAcePlacedReadAdapter {
     String id = "readId";
     Date date = new Date(123456789L);
     PhdInfo phdInfo = new DefaultPhdInfo(id, id+".phd.1", date);
-    AcePlacedReadAdapter sut;
+    AceAssembledReadAdapter sut;
     long referenceIndex = 1234;
     long validRangeIndex = 7;
     Range validRange = Range.create(1,10);
@@ -54,7 +54,7 @@ public class TestAcePlacedReadAdapter {
         mockPlacedRead = createMock(AssembledRead.class);
         expect(mockPlacedRead.getId()).andReturn(id);
         replay(mockPlacedRead);
-        sut = new AcePlacedReadAdapter(mockPlacedRead, date,null);
+        sut = new AceAssembledReadAdapter(mockPlacedRead, date,null);
         reset(mockPlacedRead);
         expect(mockPlacedRead.getReadInfo()).andStubReturn(readInfo);
     }

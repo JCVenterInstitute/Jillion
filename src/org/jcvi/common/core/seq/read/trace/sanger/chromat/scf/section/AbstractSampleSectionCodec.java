@@ -131,9 +131,6 @@ public abstract class AbstractSampleSectionCodec implements SectionCodec{
         int currentMax = Integer.MIN_VALUE;
         for(Position position : positions){        	
             int value = position.getValue();
-            if(value > Short.MAX_VALUE){
-            	System.out.println("here");
-            }
             if(value > currentMax){
                 currentMax = value;
             }

@@ -31,7 +31,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  *
  */
-public interface AceFileContigDataStore extends ContigDataStore<AcePlacedRead,AceContig>{
+public interface AceFileContigDataStore extends ContigDataStore<AceAssembledRead,AceContig>{
 	/**
 	 * Get the total number of reads over all the contigs
 	 * in the datastore.  This number may be different

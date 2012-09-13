@@ -28,7 +28,7 @@ import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
-import org.jcvi.common.core.assembly.ace.AcePlacedRead;
+import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.DefaultAceFileDataStore;
 import org.jcvi.common.core.assembly.clc.cas.UnTrimmedExtensionTrimMap;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
@@ -84,11 +84,11 @@ public class TestCas2Consed3 {
 
 		private void assertReadsCorrectlyPlaced(AceContig contig,
 				Contig<AssembledRead> expectedContig) {
-			StreamingIterator<AcePlacedRead> iter = null;
+			StreamingIterator<AceAssembledRead> iter = null;
 			try{
 				iter = contig.getReadIterator();
 				while(iter.hasNext()){
-					AcePlacedRead actualRead = iter.next();
+					AceAssembledRead actualRead = iter.next();
 				String readId = actualRead.getId();
 				AssembledRead expectedRead = expectedContig.getRead(readId);
 				assertEquals("read basecalls", expectedRead

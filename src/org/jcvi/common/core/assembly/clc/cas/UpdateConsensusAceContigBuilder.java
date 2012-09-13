@@ -26,7 +26,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
-import org.jcvi.common.core.assembly.ace.AcePlacedRead;
+import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.AcePlacedReadBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
@@ -88,7 +88,7 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
     }
 
     @Override
-    public synchronized UpdateConsensusAceContigBuilder addRead(AcePlacedRead acePlacedRead) {
+    public synchronized UpdateConsensusAceContigBuilder addRead(AceAssembledRead acePlacedRead) {
         variantCounts.add(acePlacedRead);
         builder.addRead(acePlacedRead);
         return this;
@@ -125,8 +125,8 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
     */
     @Override
     public UpdateConsensusAceContigBuilder addAllReads(
-            Iterable<AcePlacedRead> reads) {
-    	for(AcePlacedRead read : reads){
+            Iterable<AceAssembledRead> reads) {
+    	for(AceAssembledRead read : reads){
     		addRead(read);
     	}
     	return this;

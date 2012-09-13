@@ -33,18 +33,18 @@ import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 
-public class AcePlacedReadAdapter implements AcePlacedRead{
+public class AceAssembledReadAdapter implements AceAssembledRead{
 
     private final AssembledRead placedRead;
     private final PhdInfo phdInfo;
     /**
      * @param placedRead
      */
-    public AcePlacedReadAdapter(AssembledRead placedRead,Date phdDate, File traceFile) {
+    public AceAssembledReadAdapter(AssembledRead placedRead,Date phdDate, File traceFile) {
       this(placedRead,
     		  ConsedUtil.generatePhdInfoFor(traceFile, placedRead.getId(), phdDate));
     }
-    public AcePlacedReadAdapter(AssembledRead placedRead,PhdInfo info) {
+    public AceAssembledReadAdapter(AssembledRead placedRead,PhdInfo info) {
         this.placedRead = placedRead;
         this.phdInfo= info;
     }
@@ -120,10 +120,10 @@ public class AcePlacedReadAdapter implements AcePlacedRead{
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof AcePlacedReadAdapter)) {
+        if (!(obj instanceof AceAssembledReadAdapter)) {
             return false;
         }
-        AcePlacedReadAdapter other = (AcePlacedReadAdapter) obj;
+        AceAssembledReadAdapter other = (AceAssembledReadAdapter) obj;
         if (phdInfo == null) {
             if (other.phdInfo != null) {
                 return false;

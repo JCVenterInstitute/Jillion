@@ -43,7 +43,7 @@ public final class BaseSegmentUtil {
 		NucleotideSequence consensus =contig.getConsensusSequence();
 		long length = consensus.getLength();
 		PeekableIterator<Nucleotide> consensusIterator = IteratorUtil.createPeekableIterator(consensus.iterator());
-		PeekableStreamingIterator<AcePlacedRead> readIter = IteratorUtil.createPeekableStreamingIterator(contig.getReadIterator());
+		PeekableStreamingIterator<AceAssembledRead> readIter = IteratorUtil.createPeekableStreamingIterator(contig.getReadIterator());
 		
 		SortedMap<String,Range> sortedReadRanges = createSortedRangeMapFor(readIter,0);			
 		Nucleotide consensusBase = consensusIterator.peek();
@@ -92,7 +92,7 @@ public final class BaseSegmentUtil {
 	}
 
 	private static SortedMap<String, Range> createSortedRangeMapFor(
-			PeekableStreamingIterator<AcePlacedRead> readIter, long offset,
+			PeekableStreamingIterator<AceAssembledRead> readIter, long offset,
 			SortedMap<String, Range> sortedReadRanges) {
 		//remove any reads that no longer provide coverage
 		//this map should be sorted by end offset
@@ -116,7 +116,7 @@ public final class BaseSegmentUtil {
 		while(readIter.hasNext() && !done){
 			//we peek incase we get to a read that starts beyond
 			//our current consensus offset
-			AcePlacedRead currentRead = readIter.peek();
+			AceAssembledRead currentRead = readIter.peek();
 			if(currentRead.getGappedStartOffset()<=offset){
 				readIter.next();
 				map.put(currentRead.getId(), currentRead.asRange());
@@ -138,10 +138,10 @@ public final class BaseSegmentUtil {
 			Nucleotide consensusBase, long consensusOffset) {
 		Iterator<String> idIterator = sortedReadRanges.keySet().iterator();
 		boolean foundMatch=false;
-		AcePlacedRead currentBestRead=null;
+		AceAssembledRead currentBestRead=null;
 		while(!foundMatch && idIterator.hasNext()){
 			String id = idIterator.next();
-			AcePlacedRead read = contig.getRead(id);
+			AceAssembledRead read = contig.getRead(id);
 			ReferenceMappedNucleotideSequence readSequence =read.getNucleotideSequence();
 			long gappedStartOffset = read.getGappedStartOffset();
 			Nucleotide base =readSequence.get(consensusOffset-gappedStartOffset);
@@ -159,7 +159,7 @@ public final class BaseSegmentUtil {
 				consensusOffset);
 	}
 	private static SortedMap<String, Range> createSortedRangeMapFor(
-			PeekableStreamingIterator<AcePlacedRead> readIter, long offset) {
+			PeekableStreamingIterator<AceAssembledRead> readIter, long offset) {
 		return createSortedRangeMapFor(readIter, offset, new TreeMap<String, Range>());
 	}
 	
@@ -175,18 +175,18 @@ public final class BaseSegmentUtil {
 	}
 	
 	private static class CurrentMatchingRead{
-		private final AcePlacedRead read;
+		private final AceAssembledRead read;
 		private final Iterator<Nucleotide> baseIterator;
 		private final long startMatchOffset;
 		
-		public CurrentMatchingRead(AcePlacedRead read,
+		public CurrentMatchingRead(AceAssembledRead read,
 				Iterator<Nucleotide> baseIterator,
 				long startMatchOffset) {
 			this.read = read;
 			this.baseIterator = baseIterator;
 			this.startMatchOffset = startMatchOffset;
 		}
-		protected final AcePlacedRead getRead() {
+		protected final AceAssembledRead getRead() {
 			return read;
 		}
 		protected final Iterator<Nucleotide> getBaseIterator() {

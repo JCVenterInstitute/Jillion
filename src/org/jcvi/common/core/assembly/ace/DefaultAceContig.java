@@ -43,13 +43,13 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
  *
  *
  */
-public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements AceContig{
+public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> implements AceContig{
 
-	private static enum ConsedReadComparator implements Comparator<AcePlacedRead>{
+	private static enum ConsedReadComparator implements Comparator<AceAssembledRead>{
 		INSTANCE;
 		
 		@Override
-		public int compare(AcePlacedRead o1, AcePlacedRead o2) {
+		public int compare(AceAssembledRead o1, AceAssembledRead o2) {
 			int comp= Range.Comparators.ARRIVAL.compare(o1.asRange(),o2.asRange());
 			if(comp!=0){
 				return comp;
@@ -62,7 +62,7 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
     private final boolean complemented;
 
     private DefaultAceContig(String id, NucleotideSequence consensus,
-            Set<AcePlacedRead> reads,boolean complemented) {
+            Set<AceAssembledRead> reads,boolean complemented) {
         super(id, consensus, reads);
         this.complemented = complemented;
     }
@@ -171,7 +171,7 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
         * {@inheritDoc}
         */
         @Override
-        public Builder addRead(AcePlacedRead acePlacedRead) {
+        public Builder addRead(AceAssembledRead acePlacedRead) {
          return addRead(acePlacedRead.getId(),
         		 acePlacedRead.getNucleotideSequence(),
         		 (int)acePlacedRead.getGappedStartOffset(),
@@ -185,8 +185,8 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
         * {@inheritDoc}
         */
         @Override
-        public Builder addAllReads(Iterable<AcePlacedRead> reads){
-            for(AcePlacedRead read : reads){
+        public Builder addAllReads(Iterable<AceAssembledRead> reads){
+            for(AceAssembledRead read : reads){
                 addRead(read);
             }
             return this;
@@ -242,7 +242,7 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
         private AcePlacedReadBuilder createNewAceReadBuilder(
                 String readId, NucleotideSequence validBases, int offset,
                 Direction dir, Range clearRange, PhdInfo phdInfo,int ungappedFullLength) {
-            return DefaultAcePlacedRead.createBuilder(
+            return DefaultAceAssembledRead.createBuilder(
                     fullConsensus,readId,
                     validBases,
                     offset,dir,clearRange,phdInfo,ungappedFullLength);
@@ -283,9 +283,9 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
              built=true;
             if(numberOfReads()==0){
                 //force empty contig if no reads...
-                return new DefaultAceContig(contigId, new NucleotideSequenceBuilder().build(),Collections.<AcePlacedRead>emptySet(),complemented);
+                return new DefaultAceContig(contigId, new NucleotideSequenceBuilder().build(),Collections.<AceAssembledRead>emptySet(),complemented);
             }
-            SortedSet<AcePlacedRead> placedReads = new TreeSet<AcePlacedRead>(ConsedReadComparator.INSTANCE);
+            SortedSet<AceAssembledRead> placedReads = new TreeSet<AceAssembledRead>(ConsedReadComparator.INSTANCE);
             //contig left (and right) might be beyond consensus depending on how
             //trimmed the data is and what assembly/consensus caller is used.
             //force contig left and right to be within the called consensus
