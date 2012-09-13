@@ -74,18 +74,19 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
             assembledFromBuilder.append(createAssembledFromRecord(realPlacedRead,fullLength));
             placedReadBuilder.append(createPlacedReadRecord(realPlacedRead,phdDataStore));
         }
-        assembledFromBuilder.append(CR);
+       
         placedReadBuilder.append(CR);
         tempWriter.write(assembledFromBuilder.toString());
         if(createBsRecords){
         	for(AceBaseSegment bs : BaseSegmentUtil.computeBestSegmentsFor(contig)){
         		Range gappedRange = bs.getGappedConsensusRange();
-        		tempWriter.write(String.format("BS %d %d %s%n", 
+        		tempWriter.write(String.format("BS %d %d %s\n", 
         				gappedRange.getBegin(CoordinateSystem.RESIDUE_BASED),
         				gappedRange.getEnd(CoordinateSystem.RESIDUE_BASED),
         				bs.getReadName()));
         	}
         }
+        tempWriter.write(CR);
         tempWriter.write(placedReadBuilder.toString());
 
 		
