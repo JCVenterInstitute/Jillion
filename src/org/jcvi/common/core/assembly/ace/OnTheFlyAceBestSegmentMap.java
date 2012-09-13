@@ -57,9 +57,9 @@ public class OnTheFlyAceBestSegmentMap implements AceBestSegmentMap{
         this.consensus=consensus;
     }
     @Override
-    public AceBestSegment getBestSegmentFor(long gappedConsensusOffset) {
+    public AceBaseSegment getBestSegmentFor(long gappedConsensusOffset) {
         Range targetRange = Range.create(gappedConsensusOffset,gappedConsensusOffset);
-        List<AceBestSegment> segments = getBestSegmentsFor(targetRange);
+        List<AceBaseSegment> segments = getBestSegmentsFor(targetRange);
         if(segments.isEmpty()){
             return null;
         }
@@ -67,11 +67,11 @@ public class OnTheFlyAceBestSegmentMap implements AceBestSegmentMap{
     }
 
     @Override
-    public List<AceBestSegment> getBestSegmentsFor(Range gappedConsensusRange) {
-        List<AceBestSegment> result = new ArrayList<AceBestSegment>();
-        Iterator<AceBestSegment> iter =iterator();
+    public List<AceBaseSegment> getBestSegmentsFor(Range gappedConsensusRange) {
+        List<AceBaseSegment> result = new ArrayList<AceBaseSegment>();
+        Iterator<AceBaseSegment> iter =iterator();
         while(iter.hasNext()){
-            AceBestSegment segment =iter.next();
+            AceBaseSegment segment =iter.next();
             if(segment.getGappedConsensusRange().intersects(gappedConsensusRange)){
                 result.add(segment);
             }
@@ -82,7 +82,7 @@ public class OnTheFlyAceBestSegmentMap implements AceBestSegmentMap{
     @Override
     public int getNumberOfBestSegments() {
         int counter=0;
-        Iterator<AceBestSegment> iter =iterator();
+        Iterator<AceBaseSegment> iter =iterator();
         while(iter.hasNext()){
             iter.next();
             counter++;
@@ -91,11 +91,11 @@ public class OnTheFlyAceBestSegmentMap implements AceBestSegmentMap{
     }
 
     @Override
-    public Iterator<AceBestSegment> iterator() {
+    public Iterator<AceBaseSegment> iterator() {
         return new BestSegmentIterator(consensus.getLength());
     }
 
-    private class  BestSegmentIterator implements Iterator<AceBestSegment>{
+    private class  BestSegmentIterator implements Iterator<AceBaseSegment>{
         private final Object endOfIterating=new Object();
         private int currentStart=0;
         private Object nextSegment;
@@ -110,9 +110,9 @@ public class OnTheFlyAceBestSegmentMap implements AceBestSegmentMap{
         }
 
         @Override
-        public AceBestSegment next() {
+        public AceBaseSegment next() {
             if(hasNext()){
-                AceBestSegment result = (AceBestSegment)nextSegment;
+                AceBaseSegment result = (AceBaseSegment)nextSegment;
                 computeNextSegment();
                 return result;
             }
@@ -168,7 +168,7 @@ public class OnTheFlyAceBestSegmentMap implements AceBestSegmentMap{
                                 //entering new best segment so we are done...
                                 
                                 previouslyEnteredRange = Range.create(start,end);
-                                nextSegment =new DefaultAceBestSegment(currentElement, previouslyEnteredRange);
+                                nextSegment =new DefaultAceBaseSegment(currentElement, previouslyEnteredRange);
                                 currentStart=end+1;
                                 return;
                             
@@ -180,7 +180,7 @@ public class OnTheFlyAceBestSegmentMap implements AceBestSegmentMap{
                 }
                 i++;
             }     
-                nextSegment =new DefaultAceBestSegment(currentElement, Range.create(start,end));
+                nextSegment =new DefaultAceBaseSegment(currentElement, Range.create(start,end));
                 currentStart=end+1;
            
         }

@@ -38,7 +38,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 public class DefaultAceBestSegmentMap implements AceBestSegmentMap {
 
-    private final Map<Range,AceBestSegment> bestSegments = new LinkedHashMap<Range, AceBestSegment>();
+    private final Map<Range,AceBaseSegment> bestSegments = new LinkedHashMap<Range, AceBaseSegment>();
     public DefaultAceBestSegmentMap(SliceMap sliceMap, NucleotideSequence consensus){
         if(sliceMap ==null){
             throw new NullPointerException("slice map can not be null");            
@@ -69,7 +69,7 @@ public class DefaultAceBestSegmentMap implements AceBestSegmentMap {
                     //we don't have to check if we match currentelement
                     if( currentElement !=null){
                         previouslyEnteredRange = Range.create(start,end);
-                        bestSegments.put(previouslyEnteredRange, new DefaultAceBestSegment(currentElement, previouslyEnteredRange));
+                        bestSegments.put(previouslyEnteredRange, new DefaultAceBaseSegment(currentElement, previouslyEnteredRange));
                     }
                     currentElement = element.getId();
                     start=i;
@@ -85,19 +85,19 @@ public class DefaultAceBestSegmentMap implements AceBestSegmentMap {
         }
         Range lastRange = Range.create(start,end);
         if(!lastRange.equals(previouslyEnteredRange)){       
-            bestSegments.put(lastRange, new DefaultAceBestSegment(currentElement, lastRange));
+            bestSegments.put(lastRange, new DefaultAceBaseSegment(currentElement, lastRange));
         }
     }
     @Override
-    public AceBestSegment getBestSegmentFor(long gappedConsensusOffset) {       
+    public AceBaseSegment getBestSegmentFor(long gappedConsensusOffset) {       
         return getBestSegmentsFor(
                 Range.create(gappedConsensusOffset, gappedConsensusOffset))
                 .get(0);
     }
 
     @Override
-    public List<AceBestSegment> getBestSegmentsFor(Range gappedConsensusRange) {
-        List<AceBestSegment> result = new ArrayList<AceBestSegment>();
+    public List<AceBaseSegment> getBestSegmentsFor(Range gappedConsensusRange) {
+        List<AceBaseSegment> result = new ArrayList<AceBaseSegment>();
         for(Range r : bestSegments.keySet()){
             if(gappedConsensusRange.endsBefore(r)){
                 break;
@@ -110,7 +110,7 @@ public class DefaultAceBestSegmentMap implements AceBestSegmentMap {
     }
 
     @Override
-    public Iterator<AceBestSegment> iterator() {
+    public Iterator<AceBaseSegment> iterator() {
         return bestSegments.values().iterator();
     }
     @Override

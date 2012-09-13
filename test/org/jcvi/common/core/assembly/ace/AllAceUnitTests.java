@@ -38,6 +38,7 @@ import org.junit.runners.Suite.SuiteClasses;
        TestAceParserPhdInfo.class,
        TestDefaultAceContig.class,
        TestAceContigBuilderInvalidRead.class,
+       TestBaseSegmentUtil.class,
        TestDefaultAceBestSegment.class,
        TestDefaultAceBestSegmentMap.class,
        TestOntheFlyAceBestSegmentMap.class,

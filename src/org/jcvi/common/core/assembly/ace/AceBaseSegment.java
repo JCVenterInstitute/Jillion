@@ -32,7 +32,7 @@ import org.jcvi.common.core.Range;
  *
  *
  */
-public interface AceBestSegment {
+public interface AceBaseSegment {
     /**
      * Name of the read that matches the consensus.
      * @return name of the read.
@@ -44,4 +44,11 @@ public interface AceBestSegment {
      * matches EXACTLY.
      */
     Range  getGappedConsensusRange();
+    /**
+     * Two {@link AceBaseSegment}s are equal
+     * if they have the same read name and gapped consensus range.
+     * @param obj
+     */
+    @Override
+    boolean equals(Object obj);
 }

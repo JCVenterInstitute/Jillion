@@ -47,6 +47,9 @@ final class ChainedStreamingIterator<T> implements StreamingIterator<T>{
      * @param delegates
      */
     public ChainedStreamingIterator(Collection<? extends StreamingIterator<T>> delegates) {
+    	if(delegates.contains(null)){
+            throw new NullPointerException("can not contain null iterator");
+        }
         this.delegates = new ArrayList<StreamingIterator<T>>(delegates);
         this.iterator = ChainedIterator.create(delegates);
     }
