@@ -29,7 +29,7 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
-import org.jcvi.common.core.assembly.ace.AcePlacedRead;
+import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.AllAceUnitTests;
 import org.jcvi.common.core.assembly.ace.DefaultAceFileDataStore;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
@@ -80,11 +80,11 @@ public class TestAce2Contig {
       AceFileContigDataStore aceContigDataStore = DefaultAceFileDataStore.create(aceFile);
       AceContig aceContig = aceContigDataStore.get("Contig1");
       assertEquals(aceContig.getConsensusSequence(), contig.getConsensusSequence());
-      StreamingIterator<AcePlacedRead> iter = null;
+      StreamingIterator<AceAssembledRead> iter = null;
       try{
     	  iter = aceContig.getReadIterator();
     	  while(iter.hasNext()){
-    		  AcePlacedRead expectedRead = iter.next();
+    		  AceAssembledRead expectedRead = iter.next();
     		  AssembledRead actualRead = contig.getRead(expectedRead.getId());
               assertEquals(expectedRead.getNucleotideSequence(),actualRead.getNucleotideSequence());
               assertEquals(expectedRead.asRange(), actualRead.asRange());

@@ -22,8 +22,8 @@ package org.jcvi.common.core.assembly.clc.cas.consed;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import org.jcvi.common.core.assembly.ace.AcePlacedRead;
-import org.jcvi.common.core.assembly.ace.AcePlacedReadAdapter;
+import org.jcvi.common.core.assembly.ace.AceAssembledRead;
+import org.jcvi.common.core.assembly.ace.AceAssembledReadAdapter;
 import org.jcvi.common.core.assembly.clc.cas.AbstractCasReadVisitor;
 import org.jcvi.common.core.assembly.clc.cas.CasInfo;
 import org.jcvi.common.core.assembly.clc.cas.CasMatch;
@@ -127,13 +127,13 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     @Override
     protected void visitMatch(CasMatch match, PhdReadRecord readRecord,
             CasPlacedRead placedRead) throws Exception {
-        AcePlacedRead acePlacedRead = new AcePlacedReadAdapter(placedRead, readRecord.getPhdInfo());
+        AceAssembledRead acePlacedRead = new AceAssembledReadAdapter(placedRead, readRecord.getPhdInfo());
         int casReferenceId = (int)match.getChosenAlignment().contigSequenceId();
         visitMatch(acePlacedRead,readRecord.getPhd(),casReferenceId);
         
     }
     
-    protected abstract void visitMatch(AcePlacedRead acePlacedRead,
+    protected abstract void visitMatch(AceAssembledRead acePlacedRead,
             Phd phd,
             int casReferenceId);
 

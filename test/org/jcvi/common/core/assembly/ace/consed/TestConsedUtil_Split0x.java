@@ -31,7 +31,7 @@ import org.jcvi.common.core.assembly.ContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceContigTestUtil;
-import org.jcvi.common.core.assembly.ace.AcePlacedRead;
+import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.AcePlacedReadBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
@@ -65,7 +65,7 @@ public class TestConsedUtil_Split0x {
         * {@inheritDoc}
         */
         @Override
-        public ContigBuilder<AcePlacedRead, AceContig> setContigId(
+        public ContigBuilder<AceAssembledRead, AceContig> setContigId(
                 String contigId) {
             return builder.setContigId(contigId);
         }
@@ -90,8 +90,8 @@ public class TestConsedUtil_Split0x {
         * {@inheritDoc}
         */
         @Override
-        public ContigBuilder<AcePlacedRead, AceContig> addRead(
-                AcePlacedRead placedRead) {
+        public ContigBuilder<AceAssembledRead, AceContig> addRead(
+                AceAssembledRead placedRead) {
             return builder.addRead(placedRead);
         }
 
@@ -99,8 +99,8 @@ public class TestConsedUtil_Split0x {
         * {@inheritDoc}
         */
         @Override
-        public ContigBuilder<AcePlacedRead, AceContig> addAllReads(
-                Iterable<AcePlacedRead> reads) {
+        public ContigBuilder<AceAssembledRead, AceContig> addAllReads(
+                Iterable<AceAssembledRead> reads) {
             return builder.addAllReads(reads);
         }
 
@@ -108,7 +108,7 @@ public class TestConsedUtil_Split0x {
         * {@inheritDoc}
         */
         @Override
-        public ContigBuilder<AcePlacedRead, AceContig> removeRead(String readId) {
+        public ContigBuilder<AceAssembledRead, AceContig> removeRead(String readId) {
             return builder.removeRead(readId);
         }
 
@@ -272,11 +272,11 @@ public class TestConsedUtil_Split0x {
         assertEquals("id",expected.getId(),actual.getId());
         assertEquals("consensus", expected.getConsensusSequence(), actual.getConsensusSequence());
         assertEquals("numberOfReads", expected.getNumberOfReads(), actual.getNumberOfReads());
-        StreamingIterator<AcePlacedRead> iter = null;
+        StreamingIterator<AceAssembledRead> iter = null;
         try{
         	iter = expected.getReadIterator();
         	while(iter.hasNext()){
-        		AcePlacedRead expectedRead = iter.next();
+        		AceAssembledRead expectedRead = iter.next();
 				final String id = expectedRead.getId();
 				assertTrue("missing read " + id, actual.containsRead(id));
 				assertAcePlacedReadsEqual(expectedRead, actual.getRead(id));
@@ -290,8 +290,8 @@ public class TestConsedUtil_Split0x {
      * @param expectedRead
      * @param placedReadById
      */
-    private void assertAcePlacedReadsEqual(AcePlacedRead expected,
-            AcePlacedRead actual) {
+    private void assertAcePlacedReadsEqual(AceAssembledRead expected,
+            AceAssembledRead actual) {
         assertEquals("id",expected.getId(),actual.getId());
         assertEquals("offset",expected.getGappedStartOffset(),actual.getGappedStartOffset());
         assertEquals("direction",expected.getDirection(),actual.getDirection());

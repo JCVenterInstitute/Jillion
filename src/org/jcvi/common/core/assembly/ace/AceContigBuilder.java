@@ -44,7 +44,7 @@ import org.jcvi.common.core.util.Builder;
  *
  *
  */
-public interface AceContigBuilder extends ContigBuilder<AcePlacedRead,AceContig>{
+public interface AceContigBuilder extends ContigBuilder<AceAssembledRead,AceContig>{
     /**
      * Add a read to this contig with the given values.  This read
      * can later get modified via the {@link #getAssembledReadBuilder(String)}.

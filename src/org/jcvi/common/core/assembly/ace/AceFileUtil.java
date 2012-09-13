@@ -345,7 +345,7 @@ public final class AceFileUtil {
         for(IdAlignedReadInfo assembledFrom : assembledFroms){
             String id = assembledFrom.getId();
             final Phd phd = phdDataStore.get(id);
-            final AcePlacedRead realPlacedRead = contig.getRead(id);
+            final AceAssembledRead realPlacedRead = contig.getRead(id);
              long fullLength = realPlacedRead.getReadInfo().getUngappedFullLength();
             assembledFromBuilder.append(createAssembledFromRecord(realPlacedRead,fullLength));
             placedReadBuilder.append(createPlacedReadRecord(realPlacedRead, phd));
@@ -358,13 +358,13 @@ public final class AceFileUtil {
         out.flush();
     }
     private static List<IdAlignedReadInfo> getSortedAssembledFromsFor(
-            Contig<AcePlacedRead> contig){
+            Contig<AceAssembledRead> contig){
         List<IdAlignedReadInfo> assembledFroms = new ArrayList<IdAlignedReadInfo>(contig.getNumberOfReads());
-        StreamingIterator<AcePlacedRead> iter = null;
+        StreamingIterator<AceAssembledRead> iter = null;
         try{
         	iter = contig.getReadIterator();
         	while(iter.hasNext()){
-        		AcePlacedRead read = iter.next();
+        		AceAssembledRead read = iter.next();
         		long fullLength =read.getReadInfo().getUngappedFullLength();
 	            assembledFroms.add(IdAlignedReadInfo.createFrom(read, fullLength));
         	}
@@ -394,7 +394,7 @@ public final class AceFileUtil {
     }
    
 
-    private static String createAssembledFromRecord(AcePlacedRead read, long fullLength){
+    private static String createAssembledFromRecord(AceAssembledRead read, long fullLength){
     	IdAlignedReadInfo assembledFrom = IdAlignedReadInfo.createFrom(read, fullLength);
         return String.format("AF %s %s %d%n",
                 assembledFrom.getId(),
@@ -403,7 +403,7 @@ public final class AceFileUtil {
     }
     
     
-    private static String createPlacedReadRecord(AcePlacedRead read, Phd phd){
+    private static String createPlacedReadRecord(AceAssembledRead read, Phd phd){
         return AceFileUtil.createAcePlacedReadRecord(
                 read.getId(),read,
                 phd, 

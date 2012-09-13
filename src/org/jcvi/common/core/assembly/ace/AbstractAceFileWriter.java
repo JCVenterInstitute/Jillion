@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.Contig;
@@ -27,10 +28,11 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 	
 	protected static final int DEFAULT_BUFFER_SIZE = 2<<14; 
 	private final boolean computeConsensusQualities;
+	private final boolean createBsRecords;
 	
-	
-	 protected AbstractAceFileWriter(boolean computeConsensusQualities) {
+	 protected AbstractAceFileWriter(boolean computeConsensusQualities,boolean createBsRecords) {
 		this.computeConsensusQualities = computeConsensusQualities;
+		this.createBsRecords = createBsRecords;
 	}
 
 	protected void writeAceContigHeader(Writer tempWriter, String contigId, long consensusLength, int numberOfReads,
@@ -67,7 +69,7 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
         for(IdAlignedReadInfo assembledFrom : assembledFroms){
             String id = assembledFrom.getId();
            
-            final AcePlacedRead realPlacedRead = contig.getRead(id);
+            final AceAssembledRead realPlacedRead = contig.getRead(id);
              long fullLength = realPlacedRead.getReadInfo().getUngappedFullLength();
             assembledFromBuilder.append(createAssembledFromRecord(realPlacedRead,fullLength));
             placedReadBuilder.append(createPlacedReadRecord(realPlacedRead,phdDataStore));
@@ -75,7 +77,15 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
         assembledFromBuilder.append(CR);
         placedReadBuilder.append(CR);
         tempWriter.write(assembledFromBuilder.toString());
-
+        if(createBsRecords){
+        	for(AceBaseSegment bs : BaseSegmentUtil.computeBestSegmentsFor(contig)){
+        		Range gappedRange = bs.getGappedConsensusRange();
+        		tempWriter.write(String.format("BS %d %d %s%n", 
+        				gappedRange.getBegin(CoordinateSystem.RESIDUE_BASED),
+        				gappedRange.getEnd(CoordinateSystem.RESIDUE_BASED),
+        				bs.getReadName()));
+        	}
+        }
         tempWriter.write(placedReadBuilder.toString());
 
 		
@@ -84,10 +94,10 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 	private void computeConsensusQualities(Writer tempWriter, AceContig contig,PhdDataStore phdDataStore) throws IOException {
 		NucleotideSequence consensusSequence = contig.getConsensusSequence();
 		double[] qualities = new double[(int)consensusSequence.getUngappedLength()];
-		StreamingIterator<AcePlacedRead> readIterator = contig.getReadIterator();
+		StreamingIterator<AceAssembledRead> readIterator = contig.getReadIterator();
 		try{
 			while(readIterator.hasNext()){
-				AcePlacedRead read = readIterator.next();
+				AceAssembledRead read = readIterator.next();
 				int startOffset = (int)consensusSequence.getUngappedOffsetFor((int)read.getGappedStartOffset());
 				QualitySequence ungappedQualities;
 				try {
@@ -150,7 +160,7 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 		return qualString;
 	}
 
-	private String createAssembledFromRecord(AcePlacedRead read, long fullLength){
+	private String createAssembledFromRecord(AceAssembledRead read, long fullLength){
     	IdAlignedReadInfo assembledFrom = IdAlignedReadInfo.createFrom(read, fullLength);
         return String.format("AF %s %s %d\n",
                 assembledFrom.getId(),
@@ -159,7 +169,7 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
     }
     
     
-    private String createPlacedReadRecord(AcePlacedRead read, PhdDataStore phdDatastore) throws IOException{
+    private String createPlacedReadRecord(AceAssembledRead read, PhdDataStore phdDatastore) throws IOException{
     	 Phd phd;
 		try {
 			phd = phdDatastore.get(read.getId());
@@ -218,13 +228,13 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 	    }
 	    
 	    public static List<IdAlignedReadInfo> getSortedAssembledFromsFor(
-	            Contig<AcePlacedRead> contig){
+	            Contig<AceAssembledRead> contig){
 	        List<IdAlignedReadInfo> assembledFroms = new ArrayList<IdAlignedReadInfo>(contig.getNumberOfReads());
-	        StreamingIterator<AcePlacedRead> iter = null;
+	        StreamingIterator<AceAssembledRead> iter = null;
 	        try{
 	        	iter = contig.getReadIterator();
 	        	while(iter.hasNext()){
-	        		AcePlacedRead read = iter.next();
+	        		AceAssembledRead read = iter.next();
 	        		long fullLength =read.getReadInfo().getUngappedFullLength();
 		            assembledFroms.add(IdAlignedReadInfo.createFrom(read, fullLength));
 	        	}

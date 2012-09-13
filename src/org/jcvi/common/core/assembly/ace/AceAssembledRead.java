@@ -29,7 +29,7 @@ import org.jcvi.common.core.assembly.AssembledRead;
  * specific for reads from an ace file.
  * @author dkatzel
  */
-public interface AcePlacedRead extends AssembledRead{
+public interface AceAssembledRead extends AssembledRead{
     /**
      * Get the {@link PhdInfo} associated with this
      * read.

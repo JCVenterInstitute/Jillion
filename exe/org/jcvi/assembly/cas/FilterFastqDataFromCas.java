@@ -39,7 +39,7 @@ import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Rangeable;
-import org.jcvi.common.core.assembly.ace.AcePlacedRead;
+import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.clc.cas.CasInfo;
 import org.jcvi.common.core.assembly.clc.cas.CasParser;
 import org.jcvi.common.core.assembly.clc.cas.CasUtil;
@@ -66,7 +66,7 @@ public class FilterFastqDataFromCas {
         AbstractAcePlacedReadCasReadVisitor visitor = new AbstractAcePlacedReadCasReadVisitor(casInfo) {
             
             @Override
-            protected void visitMatch(AcePlacedRead acePlacedRead, Phd phd,
+            protected void visitMatch(AceAssembledRead acePlacedRead, Phd phd,
                     int casReferenceId) {
                 String readId = acePlacedRead.getId();
                 if(readId.startsWith("SOLEXA")){
