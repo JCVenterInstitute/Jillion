@@ -33,17 +33,6 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
  *
  */
 public final class DefaultAceFileWriter extends AbstractAceFileWriter{
-
-	//builder option for writing BS records or not
-		//optional phd datastore to handle upper vs lowercase bases
-		//option for quality threshold for upper vs lowercase
-		
-		//what about when I make phd datastores per contig?
-	//ans: only used in a few places to make parital ace files
-	//so make different writer implementation to make parital aces
-	//which won't write out file header
-	//best segments aren't used anymore in current writer
-	//so I'll have to re-add them.
 	
 	private final PhdDataStore phdDatastore;
 	private final OutputStream out;
@@ -204,9 +193,9 @@ public final class DefaultAceFileWriter extends AbstractAceFileWriter{
 		 * Change the temporary directory used
 		 * to keep temp files during the writing process.
 		 * If this option is not specified,
-		 * then the system's default temp are is used.
+		 * then the system's default temp dir area is used.
 		 * @param tmpDir the path to the tmpDirectory.
-		 * @return
+		 * @return this
 		 * @throws IOException if there is a problem creating the temp directory
 		 * if it does not exist.
 		 * @throws NullPointerException if tmpDir is null.
