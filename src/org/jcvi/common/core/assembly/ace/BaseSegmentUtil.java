@@ -33,62 +33,56 @@ public final class BaseSegmentUtil {
 	 * @return
 	 * @throws NoReadMatchesConsensusException if there no aligned
 	 * read has an exact basecall match to the consensus.  This
-	 * can often happen when the consensus has ambigiutiy values
+	 * can often happen when the consensus has ambiguity values
 	 * and the underlying sequences are the bases
 	 * that make up the ambiguity. 
 	 */
 	public static List<AceBaseSegment> computeBestSegmentsFor(AceContig contig){
-		List<AceBaseSegment> bestSegments = new ArrayList<AceBaseSegment>();
-		long offset=0;
+		List<AceBaseSegment> baseSegments = new ArrayList<AceBaseSegment>();
 		NucleotideSequence consensus =contig.getConsensusSequence();
-		long length = consensus.getLength();
 		PeekableIterator<Nucleotide> consensusIterator = IteratorUtil.createPeekableIterator(consensus.iterator());
 		PeekableStreamingIterator<AceAssembledRead> readIter = IteratorUtil.createPeekableStreamingIterator(contig.getReadIterator());
 		
 		SortedMap<String,Range> sortedReadRanges = createSortedRangeMapFor(readIter,0);			
 		Nucleotide consensusBase = consensusIterator.peek();
 		CurrentMatchingRead currentMatchingRead = findFirstReadThatMatchesConsensus(contig, sortedReadRanges,consensusBase);
+
+		long consensusOffsetToBeCovered = computeNextBaseSegment(baseSegments,
+													0, 
+													consensusIterator,
+													currentMatchingRead);
+		while(consensusIterator.hasNext()){
+			consensusBase = consensusIterator.peek();
+			sortedReadRanges = createSortedRangeMapFor(readIter,consensusOffsetToBeCovered,sortedReadRanges);
+			currentMatchingRead = findReadThatMatchesConsensus(contig, sortedReadRanges,consensusBase,consensusOffsetToBeCovered);
+			
+			consensusOffsetToBeCovered = computeNextBaseSegment(baseSegments,
+													consensusOffsetToBeCovered, 
+													consensusIterator,
+													currentMatchingRead);
+		}
+		return baseSegments;
+	}
+	private static long computeNextBaseSegment(
+			List<AceBaseSegment> bestSegments, long consensusOffsetToBeCovered,
+			PeekableIterator<Nucleotide> consensusIterator,
+			CurrentMatchingRead currentMatchingRead) {
+		Nucleotide consensusBase;
 		boolean stillMatches=true;
-		while(offset<length && currentMatchingRead.getBaseIterator().hasNext() && stillMatches){
+		while(consensusIterator.hasNext() && currentMatchingRead.getBaseIterator().hasNext() && stillMatches){
 			
 			consensusBase = consensusIterator.peek();
 			Nucleotide readBase = currentMatchingRead.getBaseIterator().next();
 			stillMatches = consensusBase ==readBase;	
 			if(stillMatches){
-				offset++;
+				consensusOffsetToBeCovered++;
 				consensusIterator.next();
 			}
 		}
 		//here we have a current matching read that no longer matches
 		bestSegments.add(new DefaultAceBaseSegment(currentMatchingRead.getRead().getId(), 
-				Range.create(currentMatchingRead.getStartMatchOffset(), offset-1)));
-		long lastCoveredOffset=offset-1;
-		while(offset<length){
-			consensusBase = consensusIterator.peek();
-			sortedReadRanges = createSortedRangeMapFor(readIter,offset,sortedReadRanges);
-			currentMatchingRead = findReadThatMatchesConsensus(contig, sortedReadRanges,consensusBase,offset);
-			stillMatches=true;
-			while(consensusIterator.hasNext() && currentMatchingRead.getBaseIterator().hasNext() && stillMatches){
-				
-				consensusBase = consensusIterator.peek();
-				Nucleotide readBase = currentMatchingRead.getBaseIterator().next();
-				stillMatches = consensusBase ==readBase;
-				if(stillMatches){
-					consensusIterator.next();
-					offset++;
-				}
-			}
-			//here we have a current matching read that no longer matches
-			bestSegments.add(new DefaultAceBaseSegment(currentMatchingRead.getRead().getId(), 
-					Range.create(currentMatchingRead.getStartMatchOffset(), offset-1)));
-			lastCoveredOffset=offset-1;
-		}
-		if(lastCoveredOffset <length-1){
-			//add final range
-			bestSegments.add(new DefaultAceBaseSegment(currentMatchingRead.getRead().getId(), 
-					Range.create(currentMatchingRead.getStartMatchOffset(), offset-1)));
-		}
-		return bestSegments;
+				Range.create(currentMatchingRead.getStartMatchOffset(), consensusOffsetToBeCovered-1)));
+		return consensusOffsetToBeCovered;
 	}
 
 	private static SortedMap<String, Range> createSortedRangeMapFor(
