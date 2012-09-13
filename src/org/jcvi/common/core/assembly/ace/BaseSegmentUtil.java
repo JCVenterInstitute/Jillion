@@ -138,10 +138,13 @@ public final class BaseSegmentUtil {
 			AceAssembledRead read = contig.getRead(id);
 			ReferenceMappedNucleotideSequence readSequence =read.getNucleotideSequence();
 			long gappedStartOffset = read.getGappedStartOffset();
-			Nucleotide base =readSequence.get(consensusOffset-gappedStartOffset);
-			if(base ==consensusBase){
-				foundMatch=true;
-				currentBestRead = read;
+			long readOffset = consensusOffset-gappedStartOffset;
+			if(readSequence.getLength()>readOffset){
+				Nucleotide base =readSequence.get(readOffset);
+				if(base ==consensusBase){
+					foundMatch=true;
+					currentBestRead = read;
+				}
 			}
 		}
 		if(currentBestRead==null){

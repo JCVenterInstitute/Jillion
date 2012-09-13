@@ -117,6 +117,43 @@ public class TestDefaultAceFileWriter {
         AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore.create(outputFile);
         assertContigsAreEqual(aceDataStore, reparsedAceDataStore);
     }
+    
+    @Test
+    public void convertCtg2AceWithBaseSegments() throws IOException, DataStoreException{
+        File contigFile = resources.getFile("files/flu_644151.contig");
+        File seqFile = resources.getFile("files/flu_644151.seq");
+        File qualFile = resources.getFile("files/flu_644151.qual");
+
+        final Date phdDate = new Date(0L);
+        NucleotideDataStore nucleotideDataStore = new NucleotideDataStoreAdapter(FastaRecordDataStoreAdapter.adapt(DefaultNucleotideSequenceFastaFileDataStore.create(seqFile))); 
+        final QualitySequenceFastaDataStore qualityFastaDataStore = DefaultQualityFastaFileDataStore.create(qualFile);
+        QualityDataStore qualityDataStore = new QualityDataStoreAdapter(FastaRecordDataStoreAdapter.adapt(qualityFastaDataStore)); 
+        
+        PhdDataStore phdDataStore = new ArtificalPhdDataStore(nucleotideDataStore, qualityDataStore, phdDate);
+       
+        AceFileContigDataStore aceDataStore = new AceAdapterContigFileDataStore(qualityFastaDataStore,phdDate,contigFile);
+
+        File outputFile = folder.newFile();
+        
+        AceFileWriter sut = new DefaultAceFileWriter.Builder(outputFile,phdDataStore)
+        						.tmpDir(tmpDir)
+        						.includeBaseSegments()
+        						.build();
+        //writeContigs(aceDataStore, sut);
+        //can't write out all contigs because some have ambiguities
+        sut.write(aceDataStore.get("98"));
+        sut.write(aceDataStore.get("97"));
+        sut.write(aceDataStore.get("96"));
+        sut.write(aceDataStore.get("95"));
+        sut.close();       
+        
+        AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore.create(outputFile);
+        assertContigHasSameRecords(aceDataStore.get("98"), reparsedAceDataStore.get("98"));
+        assertContigHasSameRecords(aceDataStore.get("97"), reparsedAceDataStore.get("97"));
+        assertContigHasSameRecords(aceDataStore.get("96"), reparsedAceDataStore.get("96"));
+        assertContigHasSameRecords(aceDataStore.get("95"), reparsedAceDataStore.get("95"));
+    }
+    
 	private void assertContigsAreEqual(AceFileContigDataStore aceDataStore,
 			AceFileContigDataStore reparsedAceDataStore)
 			throws DataStoreException {
@@ -127,35 +164,41 @@ public class TestDefaultAceFileWriter {
 	        while(contigIter.hasNext()){
 	        	AceContig expectedContig = contigIter.next();
 	            AceContig actualContig = reparsedAceDataStore.get(expectedContig.getId());            
-	            assertEquals("consensus", expectedContig.getConsensusSequence(), actualContig.getConsensusSequence());
-	            assertEquals("# reads", expectedContig.getNumberOfReads(), actualContig.getNumberOfReads());
-	            StreamingIterator<AceAssembledRead> readIter =null;
-	            try{
-	            	readIter = expectedContig.getReadIterator();
-	            	while(readIter.hasNext()){
-	            		AceAssembledRead expectedRead = readIter.next();
-	            		String id = expectedRead.getId();
-	            		AceAssembledRead actualRead = actualContig.getRead(expectedRead.getId());
-	  	                assertEquals(id + " basecalls", expectedRead.getNucleotideSequence(), actualRead.getNucleotideSequence());
-	  	                assertEquals(id + " offset", expectedRead.getGappedStartOffset(), actualRead.getGappedStartOffset());
-	  	                assertEquals(id + " validRange", expectedRead.getReadInfo().getValidRange(), actualRead.getReadInfo().getValidRange());
-	  	                assertEquals(id + " dir", expectedRead.getDirection(), actualRead.getDirection());
-	  	            
-	            	}
-	            }finally{
-	            	IOUtil.closeAndIgnoreErrors(readIter);
-	            }
+	            assertContigHasSameRecords(expectedContig, actualContig);
 	        }
         }finally{
         	IOUtil.closeAndIgnoreErrors(contigIter);
         }
+	}
+
+	private void assertContigHasSameRecords(AceContig expectedContig,
+			AceContig actualContig) {
+		assertEquals("consensus", expectedContig.getConsensusSequence(), actualContig.getConsensusSequence());
+		assertEquals("# reads", expectedContig.getNumberOfReads(), actualContig.getNumberOfReads());
+		StreamingIterator<AceAssembledRead> readIter =null;
+		try{
+			readIter = expectedContig.getReadIterator();
+			while(readIter.hasNext()){
+				AceAssembledRead expectedRead = readIter.next();
+				String id = expectedRead.getId();
+				AceAssembledRead actualRead = actualContig.getRead(expectedRead.getId());
+		        assertEquals(id + " basecalls", expectedRead.getNucleotideSequence(), actualRead.getNucleotideSequence());
+		        assertEquals(id + " offset", expectedRead.getGappedStartOffset(), actualRead.getGappedStartOffset());
+		        assertEquals(id + " validRange", expectedRead.getReadInfo().getValidRange(), actualRead.getReadInfo().getValidRange());
+		        assertEquals(id + " dir", expectedRead.getDirection(), actualRead.getDirection());
+		    
+			}
+		}finally{
+			IOUtil.closeAndIgnoreErrors(readIter);
+		}
 	}
 	private void writeContigs(AceFileContigDataStore aceDataStore,
 			AceFileWriter sut) throws DataStoreException, IOException {
 		StreamingIterator<AceContig> iter = aceDataStore.iterator();
         try{
         	while(iter.hasNext()){
-        		sut.write(iter.next());
+        		AceContig next = iter.next();
+				sut.write(next);
         	}        	
         }finally{
         	IOUtil.closeAndIgnoreErrors(iter);
