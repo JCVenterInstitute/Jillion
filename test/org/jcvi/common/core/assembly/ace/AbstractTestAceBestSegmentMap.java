@@ -33,9 +33,9 @@ import java.util.List;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.ace.AceBestSegment;
+import org.jcvi.common.core.assembly.ace.AceBaseSegment;
 import org.jcvi.common.core.assembly.ace.AceBestSegmentMap;
-import org.jcvi.common.core.assembly.ace.DefaultAceBestSegment;
+import org.jcvi.common.core.assembly.ace.DefaultAceBaseSegment;
 import org.jcvi.common.core.assembly.ace.DefaultAceBestSegmentMap;
 import org.jcvi.common.core.assembly.util.slice.DefaultSliceMap;
 import org.jcvi.common.core.assembly.util.slice.IdedSlice;
@@ -70,13 +70,13 @@ public abstract class AbstractTestAceBestSegmentMap {
         SliceMap sliceMap = new DefaultSliceMap(slices);
         sut = createSut(sliceMap, consensus);
         assertEquals(1, sut.getNumberOfBestSegments());
-        DefaultAceBestSegment expectedSegment = 
-            new DefaultAceBestSegment("read_0", Range.create(0, 3));
+        DefaultAceBaseSegment expectedSegment = 
+            new DefaultAceBaseSegment("read_0", Range.create(0, 3));
         assertEquals(expectedSegment, sut.getBestSegmentFor(0));
         assertEquals(expectedSegment, sut.getBestSegmentFor(1));
         assertEquals(expectedSegment, sut.getBestSegmentFor(2));
         assertEquals(expectedSegment, sut.getBestSegmentFor(3));
-        Iterator<AceBestSegment> actualIter = sut.iterator();
+        Iterator<AceBaseSegment> actualIter = sut.iterator();
         assertEquals(expectedSegment, actualIter.next());
         assertFalse(actualIter.hasNext());
     }
@@ -90,16 +90,16 @@ public abstract class AbstractTestAceBestSegmentMap {
         SliceMap sliceMap = new DefaultSliceMap(slices);
         sut = createSut(sliceMap, consensus);
         assertEquals(2, sut.getNumberOfBestSegments());
-        DefaultAceBestSegment expectedSegment1 = 
-            new DefaultAceBestSegment("read_0", Range.create(0, 2));
-        DefaultAceBestSegment expectedSegment2 = 
-            new DefaultAceBestSegment("read_1", Range.create(3, 3));
+        DefaultAceBaseSegment expectedSegment1 = 
+            new DefaultAceBaseSegment("read_0", Range.create(0, 2));
+        DefaultAceBaseSegment expectedSegment2 = 
+            new DefaultAceBaseSegment("read_1", Range.create(3, 3));
         assertEquals(expectedSegment1, sut.getBestSegmentFor(0));
         assertEquals(expectedSegment1, sut.getBestSegmentFor(1));
         assertEquals(expectedSegment1, sut.getBestSegmentFor(2));
         assertEquals(expectedSegment2, sut.getBestSegmentFor(3));
         
-        Iterator<AceBestSegment> actualIter = sut.iterator();
+        Iterator<AceBaseSegment> actualIter = sut.iterator();
         assertEquals(expectedSegment1, actualIter.next());
         assertEquals(expectedSegment2, actualIter.next());
         assertFalse(actualIter.hasNext());
@@ -114,19 +114,19 @@ public abstract class AbstractTestAceBestSegmentMap {
         SliceMap sliceMap = new DefaultSliceMap(slices);
         sut = createSut(sliceMap, consensus);
         assertEquals(3, sut.getNumberOfBestSegments());
-        DefaultAceBestSegment expectedSegment1 = 
-            new DefaultAceBestSegment("read_0", Range.create(0, 1));
-        DefaultAceBestSegment expectedSegment2 = 
-            new DefaultAceBestSegment("read_1", Range.create(2, 2));
-        DefaultAceBestSegment expectedSegment3 = 
-            new DefaultAceBestSegment("read_0", Range.create(3, 3));
+        DefaultAceBaseSegment expectedSegment1 = 
+            new DefaultAceBaseSegment("read_0", Range.create(0, 1));
+        DefaultAceBaseSegment expectedSegment2 = 
+            new DefaultAceBaseSegment("read_1", Range.create(2, 2));
+        DefaultAceBaseSegment expectedSegment3 = 
+            new DefaultAceBaseSegment("read_0", Range.create(3, 3));
         
         assertEquals(expectedSegment1, sut.getBestSegmentFor(0));
         assertEquals(expectedSegment1, sut.getBestSegmentFor(1));
         assertEquals(expectedSegment2, sut.getBestSegmentFor(2));
         assertEquals(expectedSegment3, sut.getBestSegmentFor(3));
         
-        Iterator<AceBestSegment> actualIter = sut.iterator();
+        Iterator<AceBaseSegment> actualIter = sut.iterator();
         assertEquals(expectedSegment1, actualIter.next());
         assertEquals(expectedSegment2, actualIter.next());
         assertEquals(expectedSegment3, actualIter.next());
@@ -142,10 +142,10 @@ public abstract class AbstractTestAceBestSegmentMap {
         SliceMap sliceMap = new DefaultSliceMap(slices);
         sut = createSut(sliceMap, consensus);
         assertEquals(2, sut.getNumberOfBestSegments());
-        DefaultAceBestSegment expectedSegment1 = 
-            new DefaultAceBestSegment("read_0", Range.create(0, 1));
-        DefaultAceBestSegment expectedSegment2 = 
-            new DefaultAceBestSegment("read_1", Range.create(2, 3));
+        DefaultAceBaseSegment expectedSegment1 = 
+            new DefaultAceBaseSegment("read_0", Range.create(0, 1));
+        DefaultAceBaseSegment expectedSegment2 = 
+            new DefaultAceBaseSegment("read_1", Range.create(2, 3));
 
         
         assertEquals(expectedSegment1, sut.getBestSegmentFor(0));
@@ -153,7 +153,7 @@ public abstract class AbstractTestAceBestSegmentMap {
         assertEquals(expectedSegment2, sut.getBestSegmentFor(2));
         assertEquals(expectedSegment2, sut.getBestSegmentFor(3));
         
-        Iterator<AceBestSegment> actualIter = sut.iterator();
+        Iterator<AceBaseSegment> actualIter = sut.iterator();
         assertEquals(expectedSegment1, actualIter.next());
         assertEquals(expectedSegment2, actualIter.next());
         assertFalse(actualIter.hasNext());

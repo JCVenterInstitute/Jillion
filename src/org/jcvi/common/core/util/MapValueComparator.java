@@ -52,7 +52,7 @@ public final class MapValueComparator<K extends Comparable<? super K>,V> impleme
     public static <K extends Comparable<? super K>,V> SortedMap<K,V> sortAscending(Map<K, V> unsorted, Comparator<V> comparator){
         TreeMap<K,V> sorted= new TreeMap<K,V>(MapValueComparator.create(unsorted,comparator,true));
         sorted.putAll(unsorted);
-        return Collections.unmodifiableSortedMap(sorted);
+        return sorted;
     }
     /**
      * Create an unmodifiable {@link SortedMap} that is sorted by value in descending 
@@ -67,7 +67,7 @@ public final class MapValueComparator<K extends Comparable<? super K>,V> impleme
     public static <K extends Comparable<? super K>,V> SortedMap<K,V> sortDescending(Map<K, V> unsorted, Comparator<V> comparator){
         TreeMap<K,V> sorted= new TreeMap<K,V>(MapValueComparator.create(unsorted,comparator,false));
         sorted.putAll(unsorted);
-        return Collections.unmodifiableSortedMap(sorted);
+        return sorted;
     }
     /**
      * Create an unmodifiable {@link SortedMap} that is sorted by value in ascending 
@@ -84,7 +84,7 @@ public final class MapValueComparator<K extends Comparable<? super K>,V> impleme
     	}
     	TreeMap<K,V> sorted= new TreeMap<K,V>(MapValueComparator.create(unsorted,ComparableComparator.<V>create(),true));
         sorted.putAll(unsorted);
-        return Collections.unmodifiableSortedMap(sorted);
+        return sorted;
     }
     /**
      * Create an unmodifiable {@link SortedMap} that is sorted by value in descending 
@@ -101,7 +101,7 @@ public final class MapValueComparator<K extends Comparable<? super K>,V> impleme
     	}
         TreeMap<K,V> sorted= new TreeMap<K,V>(MapValueComparator.create(unsorted,ComparableComparator.<V>create(),false));
         sorted.putAll(unsorted);
-        return Collections.unmodifiableSortedMap(sorted);
+        return sorted;
     }
     /**
      * Helper static method to infer types of keys so we 

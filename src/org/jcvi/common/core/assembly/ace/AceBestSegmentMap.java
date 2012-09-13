@@ -28,19 +28,19 @@ import java.util.List;
 import org.jcvi.common.core.Range;
 /**
  * {@code AceBestSegmentMap} is a mapping of all
- * the {@link AceBestSegment}s for a contig.
+ * the {@link AceBaseSegment}s for a contig.
  * @author dkatzel
  *
  *
  */
-public interface AceBestSegmentMap extends Iterable<AceBestSegment>{
+public interface AceBestSegmentMap extends Iterable<AceBaseSegment>{
     /**
-     * Get the {@link AceBestSegment} for the given consensus offset.
+     * Get the {@link AceBaseSegment} for the given consensus offset.
      * @param gappedConsensusOffset gapped offset
      * @return the AceBestSegment for the given offset or {@code null}
      * if no AceBestSegment exists.
      */
-    AceBestSegment getBestSegmentFor(long gappedConsensusOffset);
+    AceBaseSegment getBestSegmentFor(long gappedConsensusOffset);
     /**
      * Get the list of AceBestSegments covering a Range of
      * consensus offsets.
@@ -48,7 +48,7 @@ public interface AceBestSegmentMap extends Iterable<AceBestSegment>{
      * @return a list of AceBestSegments, may be empty if no AceBestSegments
      * exist for the given range.
      */
-    List<AceBestSegment> getBestSegmentsFor(Range gappedConsensusRange);
+    List<AceBaseSegment> getBestSegmentsFor(Range gappedConsensusRange);
     /**
      * Get the number of AceBestSegments for the contig.
      * @return the number of best segments in the contig.

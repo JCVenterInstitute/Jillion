@@ -24,7 +24,7 @@
 package org.jcvi.common.core.assembly.ace;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.ace.DefaultAceBestSegment;
+import org.jcvi.common.core.assembly.ace.DefaultAceBaseSegment;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -32,15 +32,15 @@ public class TestDefaultAceBestSegment {
 
     String name = "name";
     Range range = Range.create(1,10);
-    DefaultAceBestSegment sut = new DefaultAceBestSegment(name, range);
+    DefaultAceBaseSegment sut = new DefaultAceBaseSegment(name, range);
     
     @Test(expected = NullPointerException.class)
     public void nullNameShouldThrowNPE(){
-        new DefaultAceBestSegment(null, range);
+        new DefaultAceBaseSegment(null, range);
     }
     @Test(expected = NullPointerException.class)
     public void nullRangeShouldThrowNPE(){
-        new DefaultAceBestSegment(name,null);
+        new DefaultAceBaseSegment(name,null);
     }
     
     @Test
@@ -63,18 +63,18 @@ public class TestDefaultAceBestSegment {
     
     @Test
     public void sameValuesIsEqual(){
-        DefaultAceBestSegment sameValues = new DefaultAceBestSegment(name, range);
+        DefaultAceBaseSegment sameValues = new DefaultAceBaseSegment(name, range);
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);
     }
     @Test
     public void differentNameIsNotEqual(){
-        DefaultAceBestSegment differentName = new DefaultAceBestSegment("different"+name, range);
+        DefaultAceBaseSegment differentName = new DefaultAceBaseSegment("different"+name, range);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentName);
     }
     
     @Test
     public void differentRangeIsNotEqual(){
-        DefaultAceBestSegment differentRange = new DefaultAceBestSegment(name, range.shiftLeft(1));
+        DefaultAceBaseSegment differentRange = new DefaultAceBaseSegment(name, range.shiftLeft(1));
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentRange);
     }
 }

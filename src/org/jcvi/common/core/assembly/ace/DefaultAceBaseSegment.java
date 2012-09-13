@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly.ace;
 
 import org.jcvi.common.core.Range;
 
-public class DefaultAceBestSegment implements AceBestSegment{
+public class DefaultAceBaseSegment implements AceBaseSegment{
 
     private final String name;
     private final Range gappedConsensusRange;
@@ -35,7 +35,7 @@ public class DefaultAceBestSegment implements AceBestSegment{
      * @param gappedConsensusRange
      * @throws NullPointerException if either parameter is null.
      */
-    public DefaultAceBestSegment(String name, Range gappedConsensusRange) {
+    public DefaultAceBaseSegment(String name, Range gappedConsensusRange) {
         if(name ==null || gappedConsensusRange==null){
             throw new NullPointerException("parameters can not be null");
         }
@@ -73,17 +73,17 @@ public class DefaultAceBestSegment implements AceBestSegment{
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof DefaultAceBestSegment)) {
+        if (!(obj instanceof AceBaseSegment)) {
             return false;
         }
-        DefaultAceBestSegment other = (DefaultAceBestSegment) obj;
+        AceBaseSegment other = (AceBaseSegment) obj;
        return getReadName().equals(other.getReadName()) 
        && getGappedConsensusRange().equals(other.getGappedConsensusRange());
     }
 
     @Override
     public String toString() {
-        return "DefaultAceBestSegment [name=" + name
+        return "DefaultAceBaseSegment [name=" + name
                 + ", gappedConsensusRange=" + gappedConsensusRange + "]";
     }
 

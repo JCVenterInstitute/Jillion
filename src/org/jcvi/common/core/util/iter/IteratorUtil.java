@@ -35,24 +35,66 @@ public final class IteratorUtil {
     public static <E>  StreamingIterator<E> createEmptyStreamingIterator(){
         return IteratorUtil.createStreamingIterator(EmptyIterator.INSTANCE);
     }
-    
+    /**
+     * Create a new {@link PeekableStreamingIterator} instance
+     * which wraps the given iterator.
+     * @param iter
+     * @return a new {@link PeekableStreamingIterator};
+     * never null.
+     * @throws NullPointerException if iter is null.
+     */
     public static <E> PeekableIterator<E> createPeekableIterator(Iterator<E> iter){
     	return new PeekableIteratorImpl<E>(iter);
     }
-    
+    /**
+     * Create a new {@link StreamingIterator} instance
+     * which wraps the given iterator.
+     * @param iter
+     * @return a new {@link StreamingIterator};
+     * never null.
+     * @throws NullPointerException if iter is null.
+     */
     public static <E> StreamingIterator<E> createStreamingIterator(Iterator<E> iter){
     	return StreamingIteratorAdapter.adapt(iter);
     }
+    /**
+     * Create a new {@link PeekableStreamingIterator} instance
+     * which wraps the given iterator.
+     * @param iter
+     * @return a new {@link PeekableStreamingIterator};
+     * never null.
+     * @throws NullPointerException if iter is null.
+     */
     public static <E> PeekableStreamingIterator<E> createPeekableStreamingIterator(Iterator<E> iter){
     	return new PeekableStreamingIteratorImpl<E>(createStreamingIterator(iter));
     }
     public static <E> PeekableStreamingIterator<E> createPeekableStreamingIterator(StreamingIterator<E> iter){
     	return new PeekableStreamingIteratorImpl<E>(iter);
     }
-    
+    /**
+     * Create a new {@link Iterator} instance
+     * that wraps several {@link Iterator}s behind a single
+     * {@link Iterator} instance.  Once all the elements in the first
+     * iterator have been iterated over, the next iterator in the chain
+     * gets used.
+     * @return a new {@link Iterator} instance; never null.
+     * @throws NullPointerException if the input collection
+     * is null or if any element in the collection is null.
+     */
     public static <E> Iterator<E> createChainedIterator(Collection<? extends Iterator<E>> iterators){
     	return ChainedIterator.create(iterators);
     }
+    /**
+     * Create a new {@link StreamingIterator} instance
+     * that wraps several {@link StreamingIterator}s behind a single
+     * {@link StreamingIterator} instance.  Once all the elements in the first
+     * iterator have been iterated over, the next iterator in the chain
+     * gets used.  If at any time, {@link StreamingIterator#close()}
+     * is called, then all downstream {@link StreamingIterator} are closed as well.
+     * @return a new {@link StreamingIterator} instance; never null.
+     * @throws NullPointerException if the input collection
+     * is null or if any element in the collection is null.
+     */
     public static <E> StreamingIterator<E> createChainedStreamingIterator(Collection<? extends StreamingIterator<E>> iterators){
     	return new ChainedStreamingIterator<E>(iterators);
     }
@@ -63,6 +105,9 @@ public final class IteratorUtil {
     	private boolean doneIterating=false;
     	
 		PeekableIteratorImpl(Iterator<T> iter) {
+			if(iter==null){
+				throw new NullPointerException();
+			}
 			this.iter = iter;
 			updateNext();
 		}
@@ -108,6 +153,9 @@ public final class IteratorUtil {
     	private boolean doneIterating=false;
     	
     	PeekableStreamingIteratorImpl(StreamingIterator<T> iter) {
+    		if(iter==null){
+				throw new NullPointerException();
+			}
 			this.iter = iter;
 			updateNext();
 		}
