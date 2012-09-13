@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -328,13 +327,8 @@ final class IndexedAceFileContig implements AceContig{
 		
 	}
 	
-	private static class ConsedOrderedReads implements Comparator<String>, Serializable{
-		
-		
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -2949043895669505644L;
+	private static class ConsedOrderedReads implements Comparator<String>{
+
 		private final Map<String,Range> gappedCoverageRanges;
 
 		public ConsedOrderedReads(Map<String, Range> gappedCoverageRanges) {

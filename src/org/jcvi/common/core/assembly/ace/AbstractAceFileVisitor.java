@@ -97,7 +97,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     }
     
     
-	protected synchronized final Map<String, AlignedReadInfo> getAlignedInfoMap() {
+	protected final synchronized  Map<String, AlignedReadInfo> getAlignedInfoMap() {
 		//defensive copy
 		int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(currentAssembledFromMap.size());
 		Map<String, AlignedReadInfo> copy = new HashMap<String, AlignedReadInfo>(capacity);

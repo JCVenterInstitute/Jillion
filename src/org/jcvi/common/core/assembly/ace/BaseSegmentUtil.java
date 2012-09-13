@@ -64,11 +64,12 @@ public final class BaseSegmentUtil {
 		return baseSegments;
 	}
 	private static long computeNextBaseSegment(
-			List<AceBaseSegment> bestSegments, long consensusOffsetToBeCovered,
+			List<AceBaseSegment> bestSegments, long offset,
 			PeekableIterator<Nucleotide> consensusIterator,
 			CurrentMatchingRead currentMatchingRead) {
 		Nucleotide consensusBase;
 		boolean stillMatches=true;
+		long consensusOffsetToBeCovered = offset;
 		while(consensusIterator.hasNext() && currentMatchingRead.getBaseIterator().hasNext() && stillMatches){
 			
 			consensusBase = consensusIterator.peek();
