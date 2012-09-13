@@ -156,8 +156,7 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 			value = PhredQuality.computeQualityScore(qualities[i]);
 		}
 		value = Math.min(value, 99);
-		String qualString = String.format("%02d",value);
-		return qualString;
+		return String.format("%02d",value);
 	}
 
 	private String createAssembledFromRecord(AceAssembledRead read, long fullLength){

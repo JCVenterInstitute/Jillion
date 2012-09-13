@@ -45,20 +45,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
  */
 public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> implements AceContig{
 
-	private static enum ConsedReadComparator implements Comparator<AceAssembledRead>{
-		INSTANCE;
-		
-		@Override
-		public int compare(AceAssembledRead o1, AceAssembledRead o2) {
-			int comp= Range.Comparators.ARRIVAL.compare(o1.asRange(),o2.asRange());
-			if(comp!=0){
-				return comp;
-			}
-			//ranges the same order by id
-			return o1.getId().compareTo(o2.getId());
-		}
-
-	}
+	
     private final boolean complemented;
 
     private DefaultAceContig(String id, NucleotideSequence consensus,
@@ -308,5 +295,23 @@ public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> im
             return new DefaultAceContig(contigId, validConsensus,placedReads,complemented);
         }
     }
-    
+    /**
+     * Comparator singleton that sorts reads like consed does when outputing ace files.
+     * @author dkatzel
+     *
+     */
+    private static enum ConsedReadComparator implements Comparator<AceAssembledRead>{
+		INSTANCE;
+		
+		@Override
+		public int compare(AceAssembledRead o1, AceAssembledRead o2) {
+			int comp= Range.Comparators.ARRIVAL.compare(o1.asRange(),o2.asRange());
+			if(comp!=0){
+				return comp;
+			}
+			//ranges the same order by id
+			return o1.getId().compareTo(o2.getId());
+		}
+
+	}
 }
