@@ -25,10 +25,12 @@ package org.jcvi.common.core.assembly.ace;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
@@ -43,6 +45,20 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
  */
 public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> implements AceContig{
 
+	private static enum ConsedReadComparator implements Comparator<AcePlacedRead>{
+		INSTANCE;
+		
+		@Override
+		public int compare(AcePlacedRead o1, AcePlacedRead o2) {
+			int comp= Range.Comparators.ARRIVAL.compare(o1.asRange(),o2.asRange());
+			if(comp!=0){
+				return comp;
+			}
+			//ranges the same order by id
+			return o1.getId().compareTo(o2.getId());
+		}
+
+	}
     private final boolean complemented;
 
     private DefaultAceContig(String id, NucleotideSequence consensus,
@@ -269,7 +285,7 @@ public final class  DefaultAceContig extends AbstractContig<AcePlacedRead> imple
                 //force empty contig if no reads...
                 return new DefaultAceContig(contigId, new NucleotideSequenceBuilder().build(),Collections.<AcePlacedRead>emptySet(),complemented);
             }
-            Set<AcePlacedRead> placedReads = new HashSet<AcePlacedRead>(aceReadBuilderMap.size()+1,1F);
+            SortedSet<AcePlacedRead> placedReads = new TreeSet<AcePlacedRead>(ConsedReadComparator.INSTANCE);
             //contig left (and right) might be beyond consensus depending on how
             //trimmed the data is and what assembly/consensus caller is used.
             //force contig left and right to be within the called consensus
