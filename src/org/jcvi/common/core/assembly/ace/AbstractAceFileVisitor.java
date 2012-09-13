@@ -35,6 +35,7 @@ import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil.ClipPointsType;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.util.MapUtil;
 /**
  * {@code AbstractAceFileVisitor} is the main {@link AceFileVisitor}
  * implementation that will interpret the visit method calls
@@ -96,8 +97,12 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     }
     
     
-	protected final Map<String, AlignedReadInfo> getAlignedInfoMap() {
-		return currentAssembledFromMap;
+	protected synchronized final Map<String, AlignedReadInfo> getAlignedInfoMap() {
+		//defensive copy
+		int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(currentAssembledFromMap.size());
+		Map<String, AlignedReadInfo> copy = new HashMap<String, AlignedReadInfo>(capacity);
+		copy.putAll(currentAssembledFromMap);
+		return copy;
 	}
 	private synchronized void fireVisitNewContigIfWeHaventAlready() {
 		if(readingConsensus){
