@@ -73,7 +73,7 @@ public final class BaseSegmentUtil {
 			
 			consensusBase = consensusIterator.peek();
 			Nucleotide readBase = currentMatchingRead.getBaseIterator().next();
-			stillMatches = consensusBase ==readBase;	
+			stillMatches = consensusBase.equals(readBase);	
 			if(stillMatches){
 				consensusOffsetToBeCovered++;
 				consensusIterator.next();
@@ -141,7 +141,7 @@ public final class BaseSegmentUtil {
 			long readOffset = consensusOffset-gappedStartOffset;
 			if(readSequence.getLength()>readOffset){
 				Nucleotide base =readSequence.get(readOffset);
-				if(base ==consensusBase){
+				if(base.equals(consensusBase)){
 					foundMatch=true;
 					currentBestRead = read;
 				}
