@@ -126,13 +126,12 @@ public final class AssemblyUtil {
        
         
         NucleotideSequence nucleotideSequence = placedRead.getNucleotideSequence();
-        if(placedRead.getDirection() == Direction.REVERSE){
-            int ungappedOffset=nucleotideSequence.getUngappedOffsetFor(gappedOffset);
+        int ungappedOffset=nucleotideSequence.getUngappedOffsetFor(gappedOffset);
+        if(placedRead.getDirection() == Direction.REVERSE){            
             int numberOfLeadingBasesTrimmed = fullLength-1 - (int)validRange.getEnd();
             return numberOfLeadingBasesTrimmed + ungappedOffset;
-        }        
-        int ungappedValidRangeIndex =  nucleotideSequence.getUngappedOffsetFor(gappedOffset);
-        return ungappedValidRangeIndex + (int)validRange.getBegin();
+        }
+        return ungappedOffset + (int)validRange.getBegin();
     }
    
     /**
