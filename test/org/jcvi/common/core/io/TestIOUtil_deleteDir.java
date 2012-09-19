@@ -45,19 +45,20 @@ public class TestIOUtil_deleteDir {
     }
     private File createMockFile(){
         File singleFile= createMock(File.class);
-        expect(singleFile.exists()).andReturn(true);
+        expect(singleFile.exists()).andStubReturn(true);
         expect(singleFile.isDirectory()).andReturn(false);
         expect(singleFile.delete()).andReturn(true);
         return singleFile;
     }
     private File createMockDir(File...subFiles){
         File dir=createMockDirThatIsNotDeleted(subFiles);
+        
         expect(dir.delete()).andReturn(true);
         return dir;
     }
     private File createMockDirThatIsNotDeleted(File...subFiles){
         File dir= createMock(File.class);
-        expect(dir.exists()).andReturn(true);
+        expect(dir.exists()).andStubReturn(true);
         expect(dir.isDirectory()).andReturn(true);
         expect(dir.listFiles()).andReturn(subFiles);
         return dir;
@@ -65,14 +66,14 @@ public class TestIOUtil_deleteDir {
     
     private File createMockFileThatCantBeDeleted(){
         File singleFile= createMock(File.class);
-        expect(singleFile.exists()).andReturn(true);
+        expect(singleFile.exists()).andStubReturn(true);
         expect(singleFile.isDirectory()).andReturn(false);
         expect(singleFile.delete()).andReturn(false);
         return singleFile;
     }
     private File createNonExistentMockFile(){
         File singleFile= createMock(File.class);
-        expect(singleFile.exists()).andReturn(false);
+        expect(singleFile.exists()).andStubReturn(false);
         return singleFile;
     }
     @Test
@@ -123,7 +124,7 @@ public class TestIOUtil_deleteDir {
         verify(dir);
         verifyAll(subFiles);
     }
-    
+
     @Test
     public void nestedDirs() throws IOException{
         File[] subSubFiles = new File[]{
