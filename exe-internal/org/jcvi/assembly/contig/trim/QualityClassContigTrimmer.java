@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -53,6 +55,7 @@ import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapUtil;
@@ -64,10 +67,10 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.fastx.fasta.qual.LargeQualityFastaFileDataStore;
-import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.qual.QualityDataStoreAdapter;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.glyph.qualClass.QualityClass;
@@ -110,12 +113,12 @@ public class QualityClassContigTrimmer{
     }
 
 
-    public <R extends AssembledRead,C extends Contig<R>> List<TrimmedPlacedRead<R>> trim(C struct,QualityDataStore qualityDataStore, 
+    public <R extends AssembledRead,C extends Contig<R>> List<TrimmedPlacedRead<R>> trim(C contig,QualityDataStore qualityDataStore, 
             QualityClassComputer qualityClassComputer) throws DataStoreException {
 
         Map<R, Range> trimmedReads = new HashMap<R, Range>();
-        CoverageMap<R> coverageMap =CoverageMapFactory.createGappedCoverageMapFromContig(struct);
-        QualityClassMap qualityClassContigMap =DefaultQualityClassContigMap.create(struct, qualityDataStore, qualityClassComputer);
+        CoverageMap<R> coverageMap =CoverageMapFactory.createGappedCoverageMapFromContig(contig);
+        QualityClassMap qualityClassContigMap =DefaultQualityClassContigMap.create(contig, qualityDataStore, qualityClassComputer);
         
        
         for (QualityClassRegion qualityClassRegion : qualityClassContigMap) {
@@ -125,12 +128,11 @@ public class QualityClassContigTrimmer{
 
                     for (R read : coverageRegion) {
                         int gappedValidRangeIndex = (int)read.toGappedValidRangeOffset(consensusIndex);
-                        if (isASnp(read, gappedValidRangeIndex)){                           
-
+                        if (isASnp(read, gappedValidRangeIndex)){  
                             Range oldValidRange = getPreviousValidRange(trimmedReads, read);
-                            Range newValidRange = computeNewValidRange(qualityDataStore, read,oldValidRange,gappedValidRangeIndex);
-                            if (newValidRange != null) {
-                                trimmedReads.put(read, newValidRange);
+                            Range newValidRange = computeNewValidRange(read,gappedValidRangeIndex);
+                            if (newValidRange != null ) {
+                                trimmedReads.put(read, newValidRange.intersection(oldValidRange));
                             }
 
                         }
@@ -149,37 +151,69 @@ public class QualityClassContigTrimmer{
     }
 
     private <R extends AssembledRead> boolean isASnp(R read, int gappedValidRangeIndex) {
-        return read.getNucleotideSequence().getDifferenceMap().containsKey(
-                Integer.valueOf(gappedValidRangeIndex));
+        Map<Integer, Nucleotide> differenceMap = read.getNucleotideSequence().getDifferenceMap();
+		Integer key = Integer.valueOf(gappedValidRangeIndex);
+		Nucleotide base = differenceMap.get(key);
+		//Nadia says the golden rule of editing is
+		//"if the end of a sequence disagrees with the middle of another sequence,
+		//the end gets trimmed".
+		//that would appear to mean consider even if the 
+		//consensus is a gap so consider all differences regardless of
+		//what base it is or what the consensus is.
+		return base !=null;
     }
 
     private boolean isAQualityClassToTrim(QualityClass qualityClass) {
         return qualityClassesToTrim.contains(qualityClass);
     }
 
-    private<R extends AssembledRead> Range computeNewValidRange(QualityDataStore qualityMap, R read, Range oldValidRange,int gappedValidRangeIndex) throws DataStoreException {
-        final Sequence<PhredQuality> qualityValues = qualityMap.get(read.getId());
-
-        int gappedTrimIndex = computeGappedTrimIndex(read,gappedValidRangeIndex);
+    protected<R extends AssembledRead> Range computeNewValidRange(R read, int offsetToBeTrimmedOff) {
+    	ReadInfo readInfo = read.getReadInfo();
+		Range oldValidRange = readInfo.getValidRange();
+        int gappedOffsetToKeep = computeFlankingNonGappedOffsetToKeep(read,offsetToBeTrimmedOff);
      
-        int fullRangeIndex = AssemblyUtil.convertToUngappedFullRangeOffset(read,(int)qualityValues.getLength(), gappedTrimIndex);
-        // need to +1 passed fullRangeIndex to trim off snp for non-gaps
-        if(!read.getNucleotideSequence().isGap(gappedValidRangeIndex)){
-            fullRangeIndex ++;
-        }
-        long fullLength = qualityValues.getLength();
+        int fullRangeIndex = AssemblyUtil.convertToUngappedFullRangeOffset(read, gappedOffsetToKeep);
+
+        long fullLength = readInfo.getUngappedFullLength();
         
-        Range newValidRange = null;
-        if (fullRangeIndex < maxNumberOf5PrimeBasesToTrim) {
-            // 5 prime
-            newValidRange = Range.create(fullRangeIndex, 
-                    oldValidRange.getEnd());
-        } else if (fullLength - fullRangeIndex < maxNumberOf3PrimeBasesToTrim) {
-            // 3 prime
-            newValidRange = Range.create(oldValidRange.getEnd(),
-                    fullRangeIndex);
+        Range validRange;
+        if(read.getDirection()==Direction.FORWARD){
+        	validRange = oldValidRange;
+        }else{
+        	//easier if we pretend everything is forward
+        	//we will switch it back after calculations are done
+        	validRange = AssemblyUtil.reverseComplementValidRange(oldValidRange, readInfo.getUngappedFullLength());
         }
-        return newValidRange;
+        
+        long midPointOfRead = read.getNucleotideSequence().getLength()/2;
+        if(offsetToBeTrimmedOff>midPointOfRead){
+        	//is 3'
+        	long totalNumberOfBasesTrimmedFromEndOfFullLength = fullLength-fullRangeIndex;
+        	if(totalNumberOfBasesTrimmedFromEndOfFullLength<=maxNumberOf3PrimeBasesToTrim){
+        		//OK to trim
+        		int ungappedOffsetToKeep = read.getNucleotideSequence().getUngappedOffsetFor(gappedOffsetToKeep);
+        		long numberOfBasesToTrim = read.getNucleotideSequence().getUngappedLength()-1 -ungappedOffsetToKeep;
+    			validRange= validRange.shrink(0,numberOfBasesToTrim);
+    			if(read.getDirection()==Direction.REVERSE){
+    				return AssemblyUtil.reverseComplementValidRange(validRange, readInfo.getUngappedFullLength());
+    			}
+    			return validRange;
+        	}
+        }else{
+        	//is 5'
+        	if(fullRangeIndex <= maxNumberOf5PrimeBasesToTrim){
+        		//OK to trim
+        		long numberOfBasesToTrim = read.getNucleotideSequence().getUngappedOffsetFor(gappedOffsetToKeep);
+    			validRange=validRange.shrink(numberOfBasesToTrim, 0);
+    			if(read.getDirection()==Direction.REVERSE){
+    				return AssemblyUtil.reverseComplementValidRange(validRange, readInfo.getUngappedFullLength());
+    			}
+    			return validRange;
+        		}
+        	}
+    
+        return null;
+       
     }
 
     private <R extends AssembledRead> Range getPreviousValidRange(
@@ -193,18 +227,18 @@ public class QualityClassContigTrimmer{
         return oldValidRange;
     }
 
-    private <R extends AssembledRead> int computeGappedTrimIndex(R read,
-            int gappedValidRangeIndex) {
-        int gappedTrimIndex;
-        final NucleotideSequence encodedGlyphs = read.getNucleotideSequence();
-        if (read.getDirection() == Direction.FORWARD) {
-            gappedTrimIndex = AssemblyUtil.getRightFlankingNonGapIndex(encodedGlyphs,
-                    gappedValidRangeIndex);
-        } else {
-            gappedTrimIndex = AssemblyUtil.getLeftFlankingNonGapIndex(encodedGlyphs,
-                    gappedValidRangeIndex);
+    private <R extends AssembledRead> int computeFlankingNonGappedOffsetToKeep(R read,
+            int gappedValidRangeOffsetToBeTrimmedOff) {
+        final NucleotideSequence sequence = read.getNucleotideSequence();
+        long midPoint = sequence.getLength()/2;
+       
+        if(gappedValidRangeOffsetToBeTrimmedOff> midPoint) {
+        	//a forward sequence
+            return AssemblyUtil.getLeftFlankingNonGapIndex(sequence,
+                    gappedValidRangeOffsetToBeTrimmedOff-1);
         }
-        return gappedTrimIndex;
+        return AssemblyUtil.getRightFlankingNonGapIndex(sequence,
+                    gappedValidRangeOffsetToBeTrimmedOff+1);
     }
 
     public static void main(String[] args) throws IOException, DataStoreException {
@@ -268,14 +302,14 @@ public class QualityClassContigTrimmer{
 	                        .trim(contig,qualityFastaMap, new DefaultContigQualityClassComputer(
 	                                GapQualityValueStrategies.LOWEST_FLANKING, highQualityThreshold));
 	              
-	                List<TrimmedPlacedRead<AssembledRead>> allChangedReads = new ArrayList<TrimmedPlacedRead<AssembledRead>>();
+	                SortedSet<TrimmedPlacedRead<AssembledRead>> allChangedReads = new TreeSet<TrimmedPlacedRead<AssembledRead>>();
 	                allChangedReads.addAll(trims);
 	                for (TrimmedPlacedRead<AssembledRead> trim : allChangedReads) {
-	                    // force it to be residue based
 	                    Range newtrimmedRange = trim.getNewTrimRange();
 	                    Range oldTrimmedRange = trim.getRead().getReadInfo().getValidRange();
 	                    String readId = trim.getRead().getId();
-	                    long rightDelta = newtrimmedRange.getEnd(CoordinateSystem.RESIDUE_BASED) - oldTrimmedRange.getEnd(CoordinateSystem.RESIDUE_BASED);
+	                    //old trim right will always be >= new right
+	                    long rightDelta = oldTrimmedRange.getEnd()- newtrimmedRange.getEnd();
 	                    long displayRight;
 	                    if (rightDelta == 0) {
 	                        displayRight = trimMap.getReadTrimFor(readId)
@@ -284,10 +318,11 @@ public class QualityClassContigTrimmer{
 	                    } else {
 	                        displayRight = newtrimmedRange.getEnd(CoordinateSystem.RESIDUE_BASED);
 	                    }
-	                    System.out.println(String.format("%s\t%d\t%d\t%d\t%d",
+	                    System.out.printf("%s\t%d\t%d\t%d\t%d\t%s%n",
 	                            readId, newtrimmedRange.getBegin(CoordinateSystem.RESIDUE_BASED), displayRight,
-	                            newtrimmedRange.getBegin(CoordinateSystem.RESIDUE_BASED)
-	                                    - oldTrimmedRange.getBegin(CoordinateSystem.RESIDUE_BASED), rightDelta));
+	                            newtrimmedRange.getBegin()
+	                                    - oldTrimmedRange.getBegin(), rightDelta,
+	                                    trim.getRead().asRange());
 	                }
 	                
 	            }

@@ -26,7 +26,7 @@ package org.jcvi.assembly.contig.trim;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssembledRead;
 
-public class DefaultTrimmedPlacedRead<T extends AssembledRead> implements TrimmedPlacedRead<T> {
+public class DefaultTrimmedPlacedRead<T extends AssembledRead> implements TrimmedPlacedRead<T>, Comparable<TrimmedPlacedRead<T>>{
 
     private final Range newTrimRange;
     private final T read;
@@ -56,6 +56,11 @@ public class DefaultTrimmedPlacedRead<T extends AssembledRead> implements Trimme
         return "DefaultTrimmedPlacedRead [read=" + read + ", newTrimRange="
                 + newTrimRange + "]";
     }
+
+	@Override
+	public int compareTo(TrimmedPlacedRead<T> o) {
+		return getRead().getId().compareTo(o.getRead().getId());
+	}
     
     
 
