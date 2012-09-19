@@ -460,7 +460,11 @@ public class Cas2Consed3 {
 	                   outputDir.createNewDir("chromat_dir");
 	               }
 	            if(commandLine.hasOption("chromat_dir")){
-	            	for(File oldChromatogram : new File(commandLine.getOptionValue("chromat_dir")).listFiles()){
+	            	//need to pull out array first incase
+	            	//the user updates the chromat_dir while running the program?
+	            	//not sure if that matters but it can't hurt...
+	            	File[] oldChromatograms = new File(commandLine.getOptionValue("chromat_dir")).listFiles();
+					for(File oldChromatogram : oldChromatograms){
 	            	    //if the file name is ".something" then
                         //newChromatName will be empty, this causes problems downstream
                         //so skip any files that are hidden 

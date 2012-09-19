@@ -111,18 +111,19 @@ public final class IOUtil {
 
     }
     /**
-     * Deletes the given file and throw an Exception
+     * Deletes the given file and throws an Exception
      * if the delete fails.  This should be used in preference
      * over {@link File#delete()} since that method returns a boolean
      * result to indicate success or failure instead of 
-     * throwing an exception.
+     * throwing an exception.  If the file does not exist,
+     * then this method will not do anything.
      * @param file the file to be deleted.
      * @throws IOException if there is a problem deleting the file.
      * @throws NullPointerException if file is null.
      * @see #deleteIgnoreError(File)
      */
     public static void delete(File file) throws IOException{
-        if(!file.delete()){
+        if(file.exists() && !file.delete()){
             throw new IOException("unable to delete "+ file);
         }
     }
@@ -130,7 +131,8 @@ public final class IOUtil {
      * Tries to delete the given File but doesn't
      * check to see if the delete was successful.
      * This is the same as calling {@link File#delete()}
-     * without checking the return value.
+     * without checking the return value.   If the file does not exist,
+     * then this method will not do anything.
      * @param file the file to delete.
      * @throws NullPointerException if file is null.
      */
@@ -141,7 +143,9 @@ public final class IOUtil {
     	//programs like FindBugs will flag these
     	//statements as bad code since we don't check return value
     	//so I would rather have only 1 such warning instead of dozens.
-        file.delete();
+    	if(file.exists()){
+    		file.delete();
+    	}
     }
     
     /**
