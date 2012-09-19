@@ -26,7 +26,7 @@ package org.jcvi.assembly.contig.trim;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssembledRead;
 
-public interface TrimmedPlacedRead<T extends AssembledRead> {
+public interface TrimmedPlacedRead<T extends AssembledRead> extends Comparable<TrimmedPlacedRead<T>> {
 
     T getRead();
     Range getNewTrimRange();
