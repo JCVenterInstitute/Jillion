@@ -191,7 +191,7 @@ public class MultiThreadedReAbacusAce {
                     InputStream in = new FileInputStream(tempFile);
                     IOUtil.copy(in, out);
                     IOUtil.closeAndIgnoreErrors(in);
-                    tempFile.delete();
+                    IOUtil.deleteIgnoreError(tempFile);
                 }
                 InputStream in = new ByteArrayInputStream(tagWriter.getTagOutputStream().toByteArray());
                 IOUtil.copy(in, out);

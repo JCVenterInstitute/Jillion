@@ -164,7 +164,7 @@ public class GridReAbacusAce {
                 InputStream in = new FileInputStream(tempFile);
                 IOUtil.copy(in, out);
                 IOUtil.closeAndIgnoreErrors(in);
-                tempFile.delete();
+                IOUtil.deleteIgnoreError(tempFile);
             }
             IOUtil.copy(new ByteArrayInputStream(visitor.getTagOutputStream().toByteArray()), out);
             
