@@ -20,7 +20,7 @@
 package org.jcvi.common.core.datastore;
 
 /**
- * {@code InverseDataStoreFilter} is an implentation of
+ * {@code InverseDataStoreFilter} is an implementation of
  * {@link DataStoreFilter} which wraps an existing
  * DataStoreFilter instance and returns the opposite
  * of whatever the wrapped filter would return.
