@@ -97,7 +97,7 @@
 	<target name="bin"
 	         description="Compile Java source and test files" depends="internal.source.only.bin">
 		<!-- source already compiled so only compile tests -->
-		<javac debug="true" destdir="${bin}"  classpathref="test.classpath">
+		<javac debug="true" destdir="${bin}"  classpathref="test.classpath" includeantruntime="false">
 					<src path="${test}"/>
 					<src path="${test-internal}"/>
 					<src path="${exe}"/>
@@ -124,7 +124,7 @@
 			<!-- copile source separately so we can instrument with emma simply
 				 this avoids the need for emma filters-->
 			<!-- debug = true required for emma reports to see line coverage and link to source-->
-			<javac debug="true" destdir="${bin}"  classpathref="classpath">
+			<javac debug="true" destdir="${bin}"  classpathref="classpath" includeantruntime="false">
 				<src path="${src}"/>
 				
 		  	</javac>
@@ -149,7 +149,7 @@
 				<!-- copile source separately so we can instrument with emma simply
 					 this avoids the need for emma filters-->
 				<!-- debug = true required for emma reports to see line coverage and link to source-->
-				<javac debug="true" destdir="${bin}"  classpathref="classpath">
+				<javac debug="true" destdir="${bin}"  classpathref="classpath" includeantruntime="false">
 					<src path="${src-internal}"/>	
 					<src path="${exe}"/>
 					<src path="${exe-internal}"/>
@@ -333,7 +333,7 @@
 		    	<zipfileset src="${test-lib}/easymock-3.1.jar"/>
 		    	<zipfileset src="${test-lib}/objenesis-1.2.jar"/>		    	
 		    	<zipfileset src="${test-lib}/cglib-nodep.jar"/>	
-		    	<zipfileset src="${test-lib}/junit-4.8.2.jar"/>
+		    	<zipfileset src="${test-lib}/junit-4.10.jar"/>
 		    	<zipfileset src="${test-lib}/joda-time-2.0.jar"/>
 		    	
 		    	<manifest>
