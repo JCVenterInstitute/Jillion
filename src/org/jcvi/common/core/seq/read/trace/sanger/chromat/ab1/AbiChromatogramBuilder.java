@@ -174,6 +174,8 @@ public class AbiChromatogramBuilder implements AbiChromatogramFileVisitor, org.j
     @Override
     public void visitComments(Map<String, String> comments) {
         currentBuilder.properties(comments);        
+        //copy comments to original?
+        originalBuilder.properties(comments);
     }
 
     /**
@@ -277,7 +279,7 @@ public class AbiChromatogramBuilder implements AbiChromatogramFileVisitor, org.j
     */
     @Override
     public void visitOriginalCConfidence(byte[] originalConfidence) {
-        originalBuilder.aConfidence(originalConfidence);        
+        originalBuilder.cConfidence(originalConfidence);        
     }
 
     /**

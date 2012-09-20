@@ -58,10 +58,20 @@ public class TestAbiChromatogramTraceParserMatchesZTR {
         assertEquals(expectedZTR.getChannelGroup(), actualAbi.getChannelGroup());
         assertEquals(expectedZTR.getNumberOfTracePositions(), actualAbi.getNumberOfTracePositions());
         assertCommentsCorrect(expectedZTR.getComments(), actualAbi.getComments());
-    
-        
     }
 
+    @Test
+    public void ab1ChromoMatchesZTRChromo() throws FileNotFoundException, TraceDecoderException, IOException{
+    	AbiChromatogram actualAbi = AbiChromatogramFile.create(RESOURCES.getFile("files/SDBHD01T00PB1A1672F.ab1"));
+    	assertEquals(expectedZTR.getNucleotideSequence(), actualAbi.getNucleotideSequence());
+        assertEquals(expectedZTR.getPositionSequence(), actualAbi.getPositionSequence());
+        assertEquals(expectedZTR.getQualitySequence(), actualAbi.getQualitySequence());
+        assertEquals(expectedZTR.getChannelGroup(), actualAbi.getChannelGroup());
+        assertEquals(expectedZTR.getNumberOfTracePositions(), actualAbi.getNumberOfTracePositions());
+        assertCommentsCorrect(expectedZTR.getComments(), actualAbi.getComments());
+  
+    }
+    
 	private void assertCommentsCorrect(Map<String, String> expected,
 			Map<String, String> actual) {
 		assertEquals("num comments",expected.size(), actual.size());
