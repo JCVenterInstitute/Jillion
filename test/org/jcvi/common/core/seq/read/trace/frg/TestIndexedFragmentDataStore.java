@@ -25,16 +25,14 @@ package org.jcvi.common.core.seq.read.trace.frg;
 
 import java.io.File;
 
-import org.jcvi.common.core.seq.read.trace.frg.AbstractFragmentDataStore;
-import org.jcvi.common.core.seq.read.trace.frg.Frg2Parser;
 import org.jcvi.common.core.seq.read.trace.frg.IndexedFragmentDataStore;
 
 public class TestIndexedFragmentDataStore extends AbstractTestFragmentDataStore{
 
     @Override
-    protected AbstractFragmentDataStore createFragmentDataStore(File file)
+    protected FragmentDataStore createFragmentDataStore(File file)
             throws Exception {
-        return new IndexedFragmentDataStore(file, new Frg2Parser());
+        return IndexedFragmentDataStore.create(file);
     }
 
 }

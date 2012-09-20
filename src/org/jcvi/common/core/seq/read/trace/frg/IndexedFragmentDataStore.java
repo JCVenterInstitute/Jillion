@@ -51,7 +51,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  *
  */
-public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
+public final class IndexedFragmentDataStore extends AbstractFragmentDataStore{
 
     private final Map<String,Range> fragmentInfoIndexFileRange, mateInfoIndexFileRange;
     private final File fragFile;
@@ -74,13 +74,13 @@ public class IndexedFragmentDataStore extends AbstractFragmentDataStore{
        
     }
     
-    public IndexedFragmentDataStore(File file, Map<String,Range> fragmentInfoIndexFileRange, Map<String,Range> mateInfoIndexFileRange, Frg2Parser parser){
+    private IndexedFragmentDataStore(File file, Map<String,Range> fragmentInfoIndexFileRange, Map<String,Range> mateInfoIndexFileRange, Frg2Parser parser){
         this.fragmentInfoIndexFileRange = fragmentInfoIndexFileRange;
         this.mateInfoIndexFileRange = mateInfoIndexFileRange;
         this.parser = parser;
         this.fragFile = file;
     }
-    public IndexedFragmentDataStore(File file, Frg2Parser parser){
+    private IndexedFragmentDataStore(File file, Frg2Parser parser){
         this(file, new LinkedHashMap<String,Range>(), new LinkedHashMap<String,Range>(),parser);
     }
     

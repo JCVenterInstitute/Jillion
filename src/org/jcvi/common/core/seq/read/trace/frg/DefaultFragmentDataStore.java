@@ -23,6 +23,10 @@
  */
 package org.jcvi.common.core.seq.read.trace.frg;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,6 +34,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.IteratorUtil;
@@ -40,7 +45,23 @@ public class DefaultFragmentDataStore extends AbstractFragmentDataStore{
     private final Map<String, Fragment> fragments = new LinkedHashMap<String, Fragment>();
     private final Map<String,String> fragmentMates = new HashMap<String, String>();
     
+    public static FragmentDataStore create(File frgFile) throws FileNotFoundException{
+        Frg2Parser parserInstance = new Frg2Parser();
+        DefaultFragmentDataStore datastore = new DefaultFragmentDataStore();
+        InputStream in = null;
+        try{
+            in = new FileInputStream(frgFile);
+            parserInstance.parse(in, datastore);
+            return datastore;
+        }finally{
+            IOUtil.closeAndIgnoreErrors(in);
+        }
+       
+    }
     
+    private DefaultFragmentDataStore(){
+    	//can not instantiate
+    }
     @Override
     public void visitLink(FrgAction action, List<String> fragIds) {
         throwErrorIfAlreadyInitialized();

@@ -31,7 +31,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
-public abstract class AbstractFragmentDataStore implements Frg2Visitor, FragmentDataStore{
+abstract class AbstractFragmentDataStore implements Frg2Visitor, FragmentDataStore{
 
     private boolean initialized;
     private boolean closed;

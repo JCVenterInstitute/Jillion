@@ -24,16 +24,13 @@
 package org.jcvi.common.core.seq.read.trace.frg;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.Iterator;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.read.trace.frg.AbstractFragmentDataStore;
 import org.jcvi.common.core.seq.read.trace.frg.DefaultFragment;
 import org.jcvi.common.core.seq.read.trace.frg.Fragment;
-import org.jcvi.common.core.seq.read.trace.frg.Frg2Parser;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.qual.TigrQualitiesEncodedGyphCodec;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -102,7 +99,7 @@ public abstract class  AbstractTestFragmentDataStore {
 
                             clearRangeFor061, clearRangeFor061,library,""
         );
-    AbstractFragmentDataStore sut;
+    FragmentDataStore sut;
     
     ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestFragmentDataStore.class);
     
@@ -110,10 +107,9 @@ public abstract class  AbstractTestFragmentDataStore {
     public void setup() throws Exception{
         File fileToParse = RESOURCES.getFile(FILE);
         sut = createFragmentDataStore(fileToParse);
-        new Frg2Parser().parse(new FileInputStream(fileToParse), sut);
     }
     
-    protected abstract AbstractFragmentDataStore createFragmentDataStore(File file) throws Exception;
+    protected abstract FragmentDataStore createFragmentDataStore(File file) throws Exception;
     @Test
     public void assertFragEndingIn61isCorrect() throws DataStoreException{
         Fragment fragment = sut.get(fragEndingIn61.getId());
@@ -175,7 +171,7 @@ public abstract class  AbstractTestFragmentDataStore {
     }
     
     @Test
-    public void testIterator(){
+    public void testIterator() throws DataStoreException{
         Iterator<Fragment> expectedIterator = Arrays.asList(fragEndingIn78, fragEndingIn61).iterator();
         Iterator<Fragment> actualIterator = sut.iterator();
         while(expectedIterator.hasNext()){
