@@ -2,12 +2,11 @@ package org.jcvi.common.core.seq.read.trace.archive2;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.jcvi.common.core.io.IOUtil;
 
@@ -32,13 +31,13 @@ public class TraceInfoWriterUtil{
          }
          for(TraceArchiveRecord record : info.getRecordList()){
              writeString(out, "\t\t"+beginTag("trace"));
-             final List<Entry<TraceInfoField,String>> entries;
+             final Map<TraceInfoField,String> entries;
              if(duplicateCommonSections){
             	 entries = getEntiresToWrite(record, commonMap);
              }else{
             	 entries = getEntiresToWrite(record);
              }
-             for(Entry<TraceInfoField,String> entry :entries){
+             for(Entry<TraceInfoField,String> entry :entries.entrySet()){
                  writeString(out,"\t\t\t"+beginAndEndTag(entry.getKey(), entry.getValue()));
              }
              
@@ -49,26 +48,26 @@ public class TraceInfoWriterUtil{
          writeString(out, END_XML);
 
 	}
-    private static List<Entry<TraceInfoField, String>> getEntiresToWrite(TraceArchiveRecord record){
+    private static Map<TraceInfoField, String> getEntiresToWrite(TraceArchiveRecord record){
     	return getEntiresToWrite(record, Collections.<TraceInfoField, String>emptyMap());
     }
-    private static List<Entry<TraceInfoField, String>> getEntiresToWrite(TraceArchiveRecord record, Map<TraceInfoField, String> commonMap){
-    	List<Entry<TraceInfoField, String>> list = new ArrayList<Map.Entry<TraceInfoField,String>>();
-    	
-    	if(!commonMap.isEmpty()){
-    		list.addAll(commonMap.entrySet());
-    	}
-    	list.addAll(record.entrySet());
-    	Collections.sort(list, new Comparator<Entry<TraceInfoField, String>>(){
+    private static Map<TraceInfoField, String> getEntiresToWrite(TraceArchiveRecord record, Map<TraceInfoField, String> commonMap){
+    	Map<TraceInfoField, String> list = new TreeMap<TraceInfoField,String>( new Comparator<TraceInfoField>(){
 
 			@Override
-			public int compare(Entry<TraceInfoField, String> o1,
-					Entry<TraceInfoField, String> o2) {
+			public int compare(TraceInfoField o1,
+					TraceInfoField o2) {
 				//sort in alphabetical order
-				return o1.getKey().name().compareTo(o2.getKey().name());
+				return o1.name().compareTo(o2.name());
 			}
     		
     	});
+    	if(!commonMap.isEmpty()){
+    		list.putAll(commonMap);
+    	}
+    	for(Entry<TraceInfoField, String> entry :record.entrySet()){
+    		list.put(entry.getKey(), entry.getValue());
+    	}
     	
     	return list;
     }

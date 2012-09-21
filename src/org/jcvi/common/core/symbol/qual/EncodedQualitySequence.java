@@ -44,6 +44,10 @@ final class EncodedQualitySequence extends EncodedSequence<PhredQuality> impleme
 		super(codec, glyphsToEncode);
 	}
 
+	@Override
+	public int hashCode(){
+		return super.hashCode();
+	}
 	/**
     * {@inheritDoc}
     */

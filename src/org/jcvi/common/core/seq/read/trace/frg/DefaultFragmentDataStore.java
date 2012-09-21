@@ -40,7 +40,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
-public class DefaultFragmentDataStore extends AbstractFragmentDataStore{
+public final class DefaultFragmentDataStore extends AbstractFragmentDataStore{
     
     private final Map<String, Fragment> fragments = new LinkedHashMap<String, Fragment>();
     private final Map<String,String> fragmentMates = new HashMap<String, String>();

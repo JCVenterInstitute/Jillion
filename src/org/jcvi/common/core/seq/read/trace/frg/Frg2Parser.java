@@ -37,9 +37,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
 import org.jcvi.common.core.seq.read.trace.frg.Frg2Visitor.FrgAction;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 public class Frg2Parser {
@@ -133,7 +131,15 @@ public class Frg2Parser {
      * @param visitor
      */
     private static void handleLibrary(TextLineParser parser, Frg2Visitor visitor) {
-        // TODO Auto-generated method stub
+    	
+    	// TODO Auto-generated method stub
+        /*
+         *  String id = parseIdFrom(libraryRecord);
+        MateOrientation orientation = parseMateOrientationFrom(libraryRecord);
+        Distance distance = createDistanceFrom(libraryRecord);
+        FrgAction action = parseAction(libraryRecord);
+        visitor.visitLibrary(action, id, orientation, distance);
+         */
         
     }
     public void parse(InputStream in, Frg2Visitor visitor){
