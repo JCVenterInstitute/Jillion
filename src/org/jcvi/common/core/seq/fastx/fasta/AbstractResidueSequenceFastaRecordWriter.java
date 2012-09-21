@@ -54,7 +54,7 @@ public abstract class AbstractResidueSequenceFastaRecordWriter<R extends Residue
 	 * @param <F>
 	 * @param <W>
 	 */
-	public static abstract class Builder<R extends Residue, T extends ResidueSequence<R>,F extends FastaRecord<R,T>, W extends FastaRecordWriter<R, T, F>> extends AbstractBuilder<R,T,F,W>{
+	public abstract static class Builder<R extends Residue, T extends ResidueSequence<R>,F extends FastaRecord<R,T>, W extends FastaRecordWriter<R, T, F>> extends AbstractBuilder<R,T,F,W>{
 		protected static final int DEFAULT_RESIDUES_PER_LINE = 60;
 		   
 		public Builder(File outputFile)
