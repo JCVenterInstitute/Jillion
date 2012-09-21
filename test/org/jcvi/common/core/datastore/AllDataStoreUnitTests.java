@@ -37,7 +37,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestDataStoreIterator.class,
     
      TestCachedDataStore.class,
-     TestSimpleDataStore.class,
+     TestMapDataStoreAdapter.class,
+     TestMapDataStoreAdapterProxy.class,
      TestMultipleDataStoreWrapper.class
      
     }

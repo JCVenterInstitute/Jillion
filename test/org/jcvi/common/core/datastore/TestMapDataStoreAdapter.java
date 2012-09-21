@@ -34,7 +34,7 @@ import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-public class TestSimpleDataStore {
+public class TestMapDataStoreAdapter {
 
     private static final Map<String, Integer> MAP = new HashMap<String, Integer>();
     
