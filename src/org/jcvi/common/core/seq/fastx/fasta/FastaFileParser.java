@@ -120,6 +120,10 @@ public final class FastaFileParser {
             done= !parser.hasNextLine();
         }
         
+        public void seenDefline(){
+        	seenFirstDefline=true;
+        }
+        
         public boolean keepParsing(){
         	return keepParsing && !done;
         }
@@ -209,7 +213,7 @@ public final class FastaFileParser {
 	                	parserState.skipCurrentRecord=false;
 	                	parserState.keepParsing=true;
 	                }
-	                parserState.seenFirstDefline = true;
+	                parserState.seenDefline();
                 }
                 return parserState;
             }

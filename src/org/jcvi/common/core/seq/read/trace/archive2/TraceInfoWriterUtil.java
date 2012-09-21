@@ -10,12 +10,16 @@ import java.util.TreeMap;
 
 import org.jcvi.common.core.io.IOUtil;
 
-public class TraceInfoWriterUtil{
+public final class TraceInfoWriterUtil{
 
 	 private static final String BEGIN_XML = 
 		        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<trace_volume>\n";
     private static final String END_XML = "</trace_volume>\n";
 
+    private TraceInfoWriterUtil(){
+    	//can not instantiate
+    }
+    
     public static void writeTraceInfoXML(OutputStream out, TraceArchiveInfo info) throws IOException{
     	writeTraceInfoXML(out,info,true);
     }
