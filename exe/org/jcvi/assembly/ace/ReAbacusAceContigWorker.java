@@ -71,7 +71,7 @@ import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.MostFrequentBasecallConsensusCaller;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory;
@@ -415,7 +415,7 @@ public class ReAbacusAceContigWorker {
                     try {
                         String tempSuffix = String.format("%s.fasta",contigId);
                         ungappedFasta = File.createTempFile("abacusFixerInput", tempSuffix);
-                        writer = new DefaultNucleotideSequenceFastaRecordWriter.Builder(ungappedFasta)
+                        writer = new NucleotideSequenceFastaRecordWriterBuilder(ungappedFasta)
                         			.build();
                         gappedFastaFile = File.createTempFile("abacusFixerMuscleOutput", tempSuffix);
                         ungappedFasta.deleteOnExit();

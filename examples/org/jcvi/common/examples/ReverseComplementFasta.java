@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.nt.LargeNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
@@ -21,7 +21,7 @@ public class ReverseComplementFasta {
 		File reverseComplimentOutputFasta = new File("/path/to/output.sorted.fasta");
 		
 		NucleotideSequenceFastaDataStore dataStore = LargeNucleotideSequenceFastaFileDataStore.create(inputFasta);
-		NucleotideSequenceFastaRecordWriter out = new DefaultNucleotideSequenceFastaRecordWriter.Builder(reverseComplimentOutputFasta)
+		NucleotideSequenceFastaRecordWriter out = new NucleotideSequenceFastaRecordWriterBuilder(reverseComplimentOutputFasta)
 															.build();
 
 		StreamingIterator<NucleotideSequenceFastaRecord> iter=null;

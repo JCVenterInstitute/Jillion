@@ -6,18 +6,17 @@ import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-import org.jcvi.common.core.seq.fastx.fasta.DefaultResidueSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.AbstractResidueSequenceFastaRecordWriter;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-
-public final class DefaultNucleotideSequenceFastaRecordWriter extends DefaultResidueSequenceFastaRecordWriter<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord> implements NucleotideSequenceFastaRecordWriter{
-
-	private DefaultNucleotideSequenceFastaRecordWriter(OutputStream out,
-			int numberOfResiduesPerLine, Charset charSet) {
-		super(out, numberOfResiduesPerLine, charSet);
-	}
-
-	public static class Builder extends DefaultResidueSequenceFastaRecordWriter.AbstractResidueBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord,NucleotideSequenceFastaRecordWriter> {
+/**
+ * {@code NucleotideSequenceFastaRecordWriterBuilder} is a Builder
+ * class that will create a new instance of 
+ * {@link NucleotideSequenceFastaRecordWriter}.
+ * @author dkatzel
+ *
+ */
+public final class NucleotideSequenceFastaRecordWriterBuilder extends AbstractResidueSequenceFastaRecordWriter.Builder<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord,NucleotideSequenceFastaRecordWriter> {
 		/**
 		 * Create a new Builder that will use
 		 * the given {@link OutputStream} to write
@@ -26,7 +25,7 @@ public final class DefaultNucleotideSequenceFastaRecordWriter extends DefaultRes
 		 * can not be null.
 		 * @throws NullPointerException if out is null.
 		 */
-		public Builder(File outputFile) throws FileNotFoundException {
+		public NucleotideSequenceFastaRecordWriterBuilder(File outputFile) throws FileNotFoundException {
 			super(outputFile);
 		}
 		/**
@@ -43,15 +42,21 @@ public final class DefaultNucleotideSequenceFastaRecordWriter extends DefaultRes
 		 * does not exist but cannot be created, 
 		 * or cannot be opened for any other reason.
 		 */
-		public Builder(OutputStream out) {
+		public NucleotideSequenceFastaRecordWriterBuilder(OutputStream out) {
 			super(out);
 		}
 
 		@Override
 		protected NucleotideSequenceFastaRecordWriter create(
 				OutputStream out, int numberOfResiduesPerLine, Charset charSet) {
-			return new DefaultNucleotideSequenceFastaRecordWriter(out, numberOfResiduesPerLine, charSet);
+			return new NucleotideSequenceFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet);
 		}
 		
-	}
+		private static final class NucleotideSequenceFastaRecordWriterImpl extends AbstractResidueSequenceFastaRecordWriter<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord> implements NucleotideSequenceFastaRecordWriter{
+
+			private NucleotideSequenceFastaRecordWriterImpl(OutputStream out,
+					int numberOfResiduesPerLine, Charset charSet) {
+				super(out, numberOfResiduesPerLine, charSet);
+			}
+		}
 }

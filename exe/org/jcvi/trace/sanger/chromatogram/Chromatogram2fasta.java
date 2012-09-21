@@ -33,12 +33,12 @@ import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
-import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualitySequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.read.trace.sanger.DefaultPositionSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramBuilderVisitor;
@@ -73,9 +73,9 @@ public class Chromatogram2fasta implements Closeable{
     	if(seqOut ==null && qualOut ==null && posOut==null){
     		throw new NullPointerException("must have at least 1 non-null outputStream");
     	}
-		this.seqOut = seqOut==null? null : new DefaultNucleotideSequenceFastaRecordWriter.Builder(seqOut).build();
-		this.posOut = posOut==null? null :new DefaultPositionSequenceFastaRecordWriter.Builder(posOut).build();
-		this.qualOut = qualOut==null? null :new DefaultQualitySequenceFastaRecordWriter.Builder(qualOut).build();
+		this.seqOut = seqOut==null? null : new NucleotideSequenceFastaRecordWriterBuilder(seqOut).build();
+		this.posOut = posOut==null? null :new PositionSequenceFastaRecordWriterBuilder(posOut).build();
+		this.qualOut = qualOut==null? null :new QualitySequenceFastaRecordWriterBuilder(qualOut).build();
 	}
 
     public void writeChromatogram(String id, Chromatogram chromo) throws IOException{

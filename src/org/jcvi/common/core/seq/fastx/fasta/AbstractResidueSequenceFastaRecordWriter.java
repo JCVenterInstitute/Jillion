@@ -8,11 +8,20 @@ import java.nio.charset.Charset;
 import org.jcvi.common.core.symbol.residue.Residue;
 import org.jcvi.common.core.symbol.residue.ResidueSequence;
 
-
-public  class DefaultResidueSequenceFastaRecordWriter<R extends Residue, T extends ResidueSequence<R>, F extends FastaRecord<R,T>> extends  AbstractFastaRecordWriter<R, T, F>{
+/**
+ * {@code AbstractResidueSequenceFastaRecordWriter} is an abstract
+ * implementation of a {@link FastaRecordWriter} that 
+ * writes {@link ResidueSequence}s.
+ * @author dkatzel
+ *
+ * @param <R>
+ * @param <T>
+ * @param <F>
+ */
+public abstract class AbstractResidueSequenceFastaRecordWriter<R extends Residue, T extends ResidueSequence<R>, F extends FastaRecord<R,T>> extends  AbstractFastaRecordWriter<R, T, F>{
 
 	
-	protected DefaultResidueSequenceFastaRecordWriter(OutputStream out,
+	protected AbstractResidueSequenceFastaRecordWriter(OutputStream out,
 			int numberOfResiduesPerLine, Charset charSet) {
 		super(out, numberOfResiduesPerLine, charSet);
 	}
@@ -36,16 +45,24 @@ public  class DefaultResidueSequenceFastaRecordWriter<R extends Residue, T exten
 		return null;
 	}
 
-
-	public static abstract class AbstractResidueBuilder<R extends Residue, T extends ResidueSequence<R>,F extends FastaRecord<R,T>, W extends FastaRecordWriter<R, T, F>> extends AbstractBuilder<R,T,F,W>{
+	/**
+	 * 
+	 * @author dkatzel
+	 *
+	 * @param <R>
+	 * @param <T>
+	 * @param <F>
+	 * @param <W>
+	 */
+	public static abstract class Builder<R extends Residue, T extends ResidueSequence<R>,F extends FastaRecord<R,T>, W extends FastaRecordWriter<R, T, F>> extends AbstractBuilder<R,T,F,W>{
 		protected static final int DEFAULT_RESIDUES_PER_LINE = 60;
 		   
-		public AbstractResidueBuilder(File outputFile)
+		public Builder(File outputFile)
 				throws FileNotFoundException {
 			super(outputFile);
 		}
 
-		public AbstractResidueBuilder(OutputStream out) {
+		public Builder(OutputStream out) {
 			super(out);
 		}
 

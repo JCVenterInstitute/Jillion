@@ -76,7 +76,7 @@ import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.IndexedPhdFileDataStore;
@@ -266,13 +266,13 @@ public class Cas2Consed3 {
              							.build();
              File consensusFile = consedOutputDir.createNewFile(prefix+ ".ace.1.consensus.fasta");
              
-             NucleotideSequenceFastaRecordWriter consensusOut = new DefaultNucleotideSequenceFastaRecordWriter.Builder(consensusFile)
+             NucleotideSequenceFastaRecordWriter consensusOut = new NucleotideSequenceFastaRecordWriterBuilder(consensusFile)
              																.build();
              final NucleotideSequenceFastaRecordWriter pseduoMoleculeOut;
              final PrintStream agpOut;
              if(createPseduoMoleculeFasta){
             	 File pseduomoleculeFile = consedOutputDir.createNewFile(prefix+ ".ace.1.pseduomolecule.fasta");
-            	 pseduoMoleculeOut = new DefaultNucleotideSequenceFastaRecordWriter.Builder(pseduomoleculeFile)
+            	 pseduoMoleculeOut = new NucleotideSequenceFastaRecordWriterBuilder(pseduomoleculeFile)
             	 								.build();
             	 
              }else{

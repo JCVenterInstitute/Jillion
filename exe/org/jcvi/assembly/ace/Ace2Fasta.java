@@ -48,7 +48,7 @@ import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -92,7 +92,7 @@ public class Ace2Fasta {
           
             final File aceIn = new File(commandLine.getOptionValue("ace"));
     
-            fastaWriter = new DefaultNucleotideSequenceFastaRecordWriter.Builder(new File(commandLine.getOptionValue("out")))
+            fastaWriter = new NucleotideSequenceFastaRecordWriterBuilder(new File(commandLine.getOptionValue("out")))
             					.build();
             final boolean gapped = commandLine.hasOption("g");
             

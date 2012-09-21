@@ -7,7 +7,7 @@ import java.util.TreeSet;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.nt.IndexedNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
@@ -35,7 +35,7 @@ public class SortFasta {
 		} finally{
 			IOUtil.closeAndIgnoreErrors(iter);
 		}
-		NucleotideSequenceFastaRecordWriter out = new DefaultNucleotideSequenceFastaRecordWriter.Builder(sortedOutputFasta)
+		NucleotideSequenceFastaRecordWriter out = new NucleotideSequenceFastaRecordWriterBuilder(sortedOutputFasta)
 												.build();
 		try{
 			for(String id : sortedIds){
