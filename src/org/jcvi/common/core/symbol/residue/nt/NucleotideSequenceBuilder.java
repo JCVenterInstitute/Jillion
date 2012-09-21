@@ -927,7 +927,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * {@link NucleotideCodec} to use.
      * @author dkatzel
      */
-    private static class CodecDecider{
+    private static final class CodecDecider{
         private int numberOfGaps=0;
         private int numberOfAmbiguities=0;
         private int numberOfNs=0;

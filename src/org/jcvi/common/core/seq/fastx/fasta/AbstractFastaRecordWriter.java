@@ -39,7 +39,7 @@ public  abstract class AbstractFastaRecordWriter<S extends Symbol, T extends Seq
 	}
 
 	@Override
-	public void close() throws IOException {
+	public final void close() throws IOException {
 		//just incase the implementation of
 		//OutputStream is buffering we need to explicitly
 		//call flush
@@ -48,19 +48,19 @@ public  abstract class AbstractFastaRecordWriter<S extends Symbol, T extends Seq
 	}
 
 	@Override
-	public void write(F record) throws IOException {
+	public final void write(F record) throws IOException {
 		write(record.getId(),record.getSequence(),record.getComment());
 		
 	}
 
 	@Override
-	public void write(String id, T sequence)
+	public final void write(String id, T sequence)
 			throws IOException {
 		write(id,sequence,null);		
 	}
 
 	@Override
-	public void write(String id, T sequence,
+	public final void write(String id, T sequence,
 			String optionalComment) throws IOException {
 		String formattedString = toFormattedString(id, sequence, optionalComment);
 		writer.write(formattedString);
@@ -148,6 +148,12 @@ public static abstract class AbstractBuilder<S extends Symbol, T extends Sequenc
 			this.out = out;
 			numberPerLine(getDefaultNumberOfSymbolsPerLine());
 		}
+		/**
+		 * Get the number of symbols
+		 * that should be printed on each line
+		 * of the fasta record body.
+		 * @return a number >=1.
+		 */
 		protected abstract int getDefaultNumberOfSymbolsPerLine();
 		/**
 		 * Create a new Builder that will use
@@ -177,7 +183,7 @@ public static abstract class AbstractBuilder<S extends Symbol, T extends Sequenc
 		 * @return this.
 		 * @throws NullPointerException if charset is null.
 		 */
-		public AbstractBuilder<S,T,F,W> charset(Charset charset){
+		public final AbstractBuilder<S,T,F,W> charset(Charset charset){
 			if(charset ==null){
 				throw new NullPointerException("charset can not be null");
 			}
@@ -194,7 +200,7 @@ public static abstract class AbstractBuilder<S extends Symbol, T extends Sequenc
 		 * @return this.
 		 * @throws IllegalArgumentException if basesPerLine <1.
 		 */
-		public AbstractBuilder<S,T,F,W> numberPerLine(int numberPerLine){
+		public final AbstractBuilder<S,T,F,W> numberPerLine(int numberPerLine){
 			if(numberPerLine<1){
 				throw new IllegalArgumentException("number per line must be >=1");
 			}
@@ -208,7 +214,7 @@ public static abstract class AbstractBuilder<S extends Symbol, T extends Sequenc
 		 * @return a new instance of {@link NucleotideSequenceFastaRecordWriter}. 
 		 */
 		@Override
-		public W build() {
+		public final W build() {
 			return create(out, numberOfSymbolsPerLine, charSet);
 		}
 		/**
