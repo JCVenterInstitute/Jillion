@@ -142,8 +142,7 @@ public class DefaultFastqRecordWriter implements FastqRecordWriter{
 			builder.append(id);
 		}
 		builder.append(CR).append(encodeQualities(qualities)).append(CR);
-		String formattedString = builder.toString();
-		return formattedString;
+		return builder.toString();
 	}
 
 	public static class Builder implements org.jcvi.common.core.util.Builder<FastqRecordWriter>{

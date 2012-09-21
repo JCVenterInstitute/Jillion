@@ -208,11 +208,10 @@ public final class DefaultAceFileWriter extends AbstractAceFileWriter{
 			if(tmpDir==null){
 				throw new NullPointerException("tmp dir path can not be null");
 			}
-			if(!tmpDir.exists()){
-				IOUtil.mkdirs(tmpDir);
-			}else if(!tmpDir.isDirectory()){
+			if(tmpDir.exists() && !tmpDir.isDirectory()){
 				throw new IllegalArgumentException("tmp dir must be a directory");
 			}
+			IOUtil.mkdirs(tmpDir);
 			this.tmpDir = tmpDir;
 			return this;
 		}

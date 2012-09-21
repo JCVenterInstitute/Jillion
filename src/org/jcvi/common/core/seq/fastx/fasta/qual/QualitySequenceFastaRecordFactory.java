@@ -72,7 +72,6 @@ public final class QualitySequenceFastaRecordFactory {
     		builder.append(scanner.nextByte());
     	}
     	scanner.close();
-    	QualitySequence qualitySequence = builder.build();
-		return qualitySequence;
+    	return builder.build();
 	}
 }
