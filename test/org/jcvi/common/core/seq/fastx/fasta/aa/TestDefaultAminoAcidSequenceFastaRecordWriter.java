@@ -21,28 +21,28 @@ public class TestDefaultAminoAcidSequenceFastaRecordWriter {
 	
 	@Test(expected = NullPointerException.class)
 	public void nullOutputStreamShouldThrowNPE(){
-		new DefaultAminoAcidSequenceFastaRecordWriter.Builder((OutputStream)null);
+		new AminoAcidSequenceFastaRecordWriterBuilder((OutputStream)null);
 	}
 	@Test(expected = NullPointerException.class)
 	public void nullFileShouldThrowNPE() throws FileNotFoundException{
-		new DefaultAminoAcidSequenceFastaRecordWriter.Builder((File)null);
+		new AminoAcidSequenceFastaRecordWriterBuilder((File)null);
 	}
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeBasesPerLineShouldthrowIllegalArgumentException(){
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		new DefaultAminoAcidSequenceFastaRecordWriter.Builder(out)
+		new AminoAcidSequenceFastaRecordWriterBuilder(out)
 			.numberPerLine(-1);
 	}
 	@Test(expected = IllegalArgumentException.class)
 	public void zeroBasesPerLineShouldthrowIllegalArgumentException(){
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		new DefaultAminoAcidSequenceFastaRecordWriter.Builder(out)
+		new AminoAcidSequenceFastaRecordWriterBuilder(out)
 			.numberPerLine(0);
 	}
 	@Test
 	public void writeFastasWithDefaultOptions() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		AminoAcidSequenceFastaRecordWriter sut = new DefaultAminoAcidSequenceFastaRecordWriter.Builder(out)
+		AminoAcidSequenceFastaRecordWriter sut = new AminoAcidSequenceFastaRecordWriterBuilder(out)
 													.build();
 		sut.write(record1);		
 		sut.write(record2);
@@ -57,7 +57,7 @@ public class TestDefaultAminoAcidSequenceFastaRecordWriter {
 	@Test
 	public void multiLineFastas() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		AminoAcidSequenceFastaRecordWriter sut = new DefaultAminoAcidSequenceFastaRecordWriter.Builder(out)
+		AminoAcidSequenceFastaRecordWriter sut = new AminoAcidSequenceFastaRecordWriterBuilder(out)
 								.numberPerLine(5)											
 								.build();
 		
@@ -76,7 +76,7 @@ public class TestDefaultAminoAcidSequenceFastaRecordWriter {
 	@Test
 	public void sequenceEndsAtEndOfLineExactly() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		AminoAcidSequenceFastaRecordWriter sut = new DefaultAminoAcidSequenceFastaRecordWriter.Builder(out)
+		AminoAcidSequenceFastaRecordWriter sut = new AminoAcidSequenceFastaRecordWriterBuilder(out)
 								.numberPerLine(4)											
 								.build();
 		
@@ -97,7 +97,7 @@ public class TestDefaultAminoAcidSequenceFastaRecordWriter {
 	public void differentCharSet() throws IOException{
 		Charset charSet = Charset.forName("UTF-16");
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		AminoAcidSequenceFastaRecordWriter sut = new DefaultAminoAcidSequenceFastaRecordWriter.Builder(out)
+		AminoAcidSequenceFastaRecordWriter sut = new AminoAcidSequenceFastaRecordWriterBuilder(out)
 								.numberPerLine(5)	
 								.charset(charSet)
 								.build();

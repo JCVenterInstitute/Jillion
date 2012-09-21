@@ -37,7 +37,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -89,7 +89,7 @@ public class TrimFasta {
             final Map<String, Integer> leftTrimPoints = parseTrimPoints(leftTrimFile);
             final Map<String, Integer> rightTrimPoints = parseTrimPoints(rightTrimFile);
             
-            final NucleotideSequenceFastaRecordWriter writer = new DefaultNucleotideSequenceFastaRecordWriter.Builder(outputFile)
+            final NucleotideSequenceFastaRecordWriter writer = new NucleotideSequenceFastaRecordWriterBuilder(outputFile)
             													.build();
             FastaFileVisitor visitor = new AbstractFastaVisitor() {
 				

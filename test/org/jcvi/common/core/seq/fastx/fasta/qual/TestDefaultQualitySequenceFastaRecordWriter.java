@@ -28,28 +28,28 @@ public class TestDefaultQualitySequenceFastaRecordWriter {
 	
 	@Test(expected = NullPointerException.class)
 	public void nullOutputStreamShouldThrowNPE(){
-		new DefaultQualitySequenceFastaRecordWriter.Builder((OutputStream)null);
+		new QualitySequenceFastaRecordWriterBuilder((OutputStream)null);
 	}
 	@Test(expected = NullPointerException.class)
 	public void nullFileShouldThrowNPE() throws FileNotFoundException{
-		new DefaultQualitySequenceFastaRecordWriter.Builder((File)null);
+		new QualitySequenceFastaRecordWriterBuilder((File)null);
 	}
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeBasesPerLineShouldthrowIllegalArgumentException(){
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		new DefaultQualitySequenceFastaRecordWriter.Builder(out)
+		new QualitySequenceFastaRecordWriterBuilder(out)
 			.numberPerLine(-1);
 	}
 	@Test(expected = IllegalArgumentException.class)
 	public void zeroBasesPerLineShouldthrowIllegalArgumentException(){
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		new DefaultQualitySequenceFastaRecordWriter.Builder(out)
+		new QualitySequenceFastaRecordWriterBuilder(out)
 			.numberPerLine(0);
 	}
 	@Test
 	public void writeFastasWithDefaultOptions() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		QualitySequenceFastaRecordWriter sut = new DefaultQualitySequenceFastaRecordWriter.Builder(out)
+		QualitySequenceFastaRecordWriter sut = new QualitySequenceFastaRecordWriterBuilder(out)
 													.build();
 		sut.write(record1);		
 		sut.write(record2);
@@ -64,7 +64,7 @@ public class TestDefaultQualitySequenceFastaRecordWriter {
 	@Test
 	public void multiLineFastas() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		QualitySequenceFastaRecordWriter sut = new DefaultQualitySequenceFastaRecordWriter.Builder(out)
+		QualitySequenceFastaRecordWriter sut = new QualitySequenceFastaRecordWriterBuilder(out)
 								.numberPerLine(5)											
 								.build();
 		
@@ -83,7 +83,7 @@ public class TestDefaultQualitySequenceFastaRecordWriter {
 	@Test
 	public void sequenceEndsAtEndOfLineExactly() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		QualitySequenceFastaRecordWriter sut = new DefaultQualitySequenceFastaRecordWriter.Builder(out)
+		QualitySequenceFastaRecordWriter sut = new QualitySequenceFastaRecordWriterBuilder(out)
 								.numberPerLine(4)											
 								.build();
 		
@@ -104,7 +104,7 @@ public class TestDefaultQualitySequenceFastaRecordWriter {
 	public void differentCharSet() throws IOException{
 		Charset charSet = Charset.forName("UTF-16");
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		QualitySequenceFastaRecordWriter sut = new DefaultQualitySequenceFastaRecordWriter.Builder(out)
+		QualitySequenceFastaRecordWriter sut = new QualitySequenceFastaRecordWriterBuilder(out)
 								.numberPerLine(5)	
 								.charset(charSet)
 								.build();
@@ -131,7 +131,7 @@ public class TestDefaultQualitySequenceFastaRecordWriter {
 		
 		
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		QualitySequenceFastaRecordWriter sut = new DefaultQualitySequenceFastaRecordWriter.Builder(out).build();
+		QualitySequenceFastaRecordWriter sut = new QualitySequenceFastaRecordWriterBuilder(out).build();
 		StreamingIterator<QualitySequenceFastaRecord> iter=null;
 		
 		try{

@@ -28,7 +28,7 @@ public class TestDefaultPositionSequenceFastaRecordWriter {
 		
 		String asString = asString(peakFile);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		PositionSequenceFastaRecordWriter sut = new DefaultPositionSequenceFastaRecordWriter.Builder(out)
+		PositionSequenceFastaRecordWriter sut = new PositionSequenceFastaRecordWriterBuilder(out)
 												.build();
 		
 		sut.write(fasta);
@@ -41,7 +41,7 @@ public class TestDefaultPositionSequenceFastaRecordWriter {
 		String asString = asString(peakFile);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		Charset charset = Charset.forName("UTF-16");
-		PositionSequenceFastaRecordWriter sut = new DefaultPositionSequenceFastaRecordWriter.Builder(out)
+		PositionSequenceFastaRecordWriter sut = new PositionSequenceFastaRecordWriterBuilder(out)
 												.charset(charset)
 												.build();
 		

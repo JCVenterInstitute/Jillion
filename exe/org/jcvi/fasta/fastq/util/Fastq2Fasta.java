@@ -39,9 +39,9 @@ import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
-import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualitySequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
@@ -112,10 +112,10 @@ public class Fastq2Fasta {
                     Arrays.copyOf(args, args.length-1));
             
             if(commandLine.hasOption("s")){
-                seqOut = new DefaultNucleotideSequenceFastaRecordWriter.Builder(new File(commandLine.getOptionValue("s"))).build();
+                seqOut = new NucleotideSequenceFastaRecordWriterBuilder(new File(commandLine.getOptionValue("s"))).build();
             }
             if(commandLine.hasOption("q")){
-                qualOut = new DefaultQualitySequenceFastaRecordWriter.Builder(new File(commandLine.getOptionValue("q"))).build();
+                qualOut = new QualitySequenceFastaRecordWriterBuilder(new File(commandLine.getOptionValue("q"))).build();
             }
             if(seqOut ==null && qualOut ==null){
                 throw new ParseException("must specify at least either -s or -q");

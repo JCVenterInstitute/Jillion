@@ -33,7 +33,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -69,7 +69,7 @@ public class ReverseComplimentFasta {
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
             File fastaFile = new File(commandLine.getOptionValue("fasta"));
             File outputFile = new File(commandLine.getOptionValue("o"));
-            final NucleotideSequenceFastaRecordWriter writer = new DefaultNucleotideSequenceFastaRecordWriter.Builder(outputFile).build();
+            final NucleotideSequenceFastaRecordWriter writer = new NucleotideSequenceFastaRecordWriterBuilder(outputFile).build();
             FastaFileVisitor visitor = new AbstractFastaVisitor() {
 				
 				@Override
