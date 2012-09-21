@@ -51,7 +51,9 @@ public final class DefaultAceFileWriter extends AbstractAceFileWriter{
 		IOUtil.mkdirs(tmpDir);
 		this.tempFile = File.createTempFile("aceWriter", null, tmpDir);
 		tempFile.deleteOnExit();
-		tempWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile)),DEFAULT_BUFFER_SIZE);
+		tempWriter = new BufferedWriter(
+				new OutputStreamWriter(new FileOutputStream(tempFile), IOUtil.UTF_8),
+				DEFAULT_BUFFER_SIZE);
 	}
 
 	@Override
