@@ -16,7 +16,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  * @param <T>
  */
-public class DataStoreStreamingIterator<T> implements StreamingIterator<T>{
+public final class DataStoreStreamingIterator<T> implements StreamingIterator<T>{
 
 	private final DataStore<?>	parentDataStore;
 	private final StreamingIterator<T> delegate;
@@ -47,7 +47,13 @@ public class DataStoreStreamingIterator<T> implements StreamingIterator<T>{
 		this.parentDataStore = parentDataStore;
 		this.delegate = delegate;
 	}
-
+	/**
+	 * @throws DataStoreClosedException if 
+	 * the datastore has been closed
+	 * but this iterator still has elements
+	 * left to iterate.
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean hasNext() {
 		boolean delegateHasNext = delegate.hasNext();
