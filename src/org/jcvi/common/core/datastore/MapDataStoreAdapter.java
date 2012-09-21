@@ -24,6 +24,9 @@
 package org.jcvi.common.core.datastore;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,7 +40,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  * @param <T> the type of values returned by the datastore.
  */
-public final class MapDataStoreAdapter<T> implements DataStore<T> {
+public final class MapDataStoreAdapter<T> implements DataStore<T>{
 	private volatile boolean isClosed;
     
     private final Map<String, T> map = new LinkedHashMap<String, T>();
@@ -52,6 +55,29 @@ public final class MapDataStoreAdapter<T> implements DataStore<T> {
      */
     public static <T> DataStore<T> adapt(Map<String, T> map){
     	return new MapDataStoreAdapter<T>(map);
+    }
+    /**
+     * Create a new DataStore instance of the given
+     * type T using the data of the given map.
+     * This factory method uses the Java Proxy classes
+     * to create a new implementation of the given interface
+     * which uses the map as a backing store.  This factory class
+     * can only implement methods that conform to the DataStore interface,
+     * if a method the given interface has extension methods that are not
+     * part of the core DataStore interface then trying to call
+     * those methods will throw an illegalArgumentException.
+     * The entries in the given map are copied into a new private map so any future
+     * manipulations to the input map will not affect the returned DataStore.
+     * @param datastoreInterface the interface to proxy.
+     * @param map the map to adapt into a datastore.
+     * @return a new DataStore instance which implements the given datastoreInterface.
+     * @throws NullPointerException if datastoreInterface is null, map is null, or if any keys or values in the map
+     * are null.
+     */
+    @SuppressWarnings("unchecked")
+	public static <T, D extends DataStore<T>> D adapt(Class<D> datastoreInterface, Map<String, T> map){
+    	return (D) Proxy.newProxyInstance(datastoreInterface.getClassLoader(), new Class[]{datastoreInterface},
+    			new DataStoreInvocationHandler<T>(adapt(map)));
     }
     private MapDataStoreAdapter(Map<String, T> map){
     	for(Entry<String, T> entry : map.entrySet()){
@@ -108,5 +134,21 @@ public final class MapDataStoreAdapter<T> implements DataStore<T> {
 		throwExceptionIfClosed();
 		return DataStoreStreamingIterator.create(this, map.values().iterator());
 		 
+	}
+	
+	private static class DataStoreInvocationHandler<T> implements InvocationHandler{
+		private final DataStore<T> delegate;
+
+		public DataStoreInvocationHandler(DataStore<T> delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args)
+				throws Throwable {
+			return method.invoke(delegate, args);
+		}
+		
+		
 	}
 }
