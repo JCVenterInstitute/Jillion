@@ -24,6 +24,7 @@
 package org.jcvi.common.core.seq.read.trace;
 
 import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreAdapter;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**
@@ -33,7 +34,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  *  from the desired trace.
  * @author dkatzel
  */
-public final class TraceNucleotideDataStoreAdapter <T extends Trace> extends AbstractTraceDataStoreAdapter<T,NucleotideSequence> implements NucleotideDataStore {
+public final class TraceNucleotideDataStoreAdapter <T extends Trace> {
 	/**
 	 * Create a new {@link NucleotideDataStore} instance
 	 * by adapting the given DataStore of traces.
@@ -42,15 +43,13 @@ public final class TraceNucleotideDataStoreAdapter <T extends Trace> extends Abs
 	 * @throws NullPointerException if delegate is null.
 	 */
 	public static <T extends Trace> NucleotideDataStore adapt(DataStore<T> delegate){
-        return new TraceNucleotideDataStoreAdapter<T>(delegate);
-    }
-    private TraceNucleotideDataStoreAdapter(DataStore<T> delegate) {
-        super(delegate);
-    }
+        return DataStoreAdapter.adapt(NucleotideDataStore.class, delegate, new DataStoreAdapter.AdapterCallback<T, NucleotideSequence>() {
 
-    @Override
-    protected NucleotideSequence adapt(T delegate) {
-        return delegate.getNucleotideSequence();
+			@Override
+			public NucleotideSequence get(T from) {
+				return from.getNucleotideSequence();
+			}
+		
+        });
     }
-
 }

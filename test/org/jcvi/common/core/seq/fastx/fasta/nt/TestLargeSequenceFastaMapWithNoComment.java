@@ -32,7 +32,7 @@ import org.jcvi.common.core.seq.fastx.fasta.nt.LargeNucleotideSequenceFastaFileD
 public class TestLargeSequenceFastaMapWithNoComment extends AbstractTestSequenceFastaMapWithNoComment{
 
     @Override
-    protected DataStore<NucleotideSequenceFastaRecord> buildMap(
+    protected DataStore<NucleotideSequenceFastaRecord> createDataStore(
             File file) throws IOException {
         return LargeNucleotideSequenceFastaFileDataStore.create(file);
     }

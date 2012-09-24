@@ -24,6 +24,7 @@
 package org.jcvi.common.core.seq.read.trace;
 
 import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreAdapter;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 /**
@@ -32,7 +33,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
  * to the wrapped datastore and then returned only the qualities from the desired trace.
  * @author dkatzel
  */
-public final class TraceQualityDataStoreAdapter<T extends Trace> extends AbstractTraceDataStoreAdapter<T,QualitySequence> implements QualityDataStore{
+public final class TraceQualityDataStoreAdapter<T extends Trace>{
 	/**
 	 * Create a new {@link QualityDataStore} instance
 	 * by adapting the given DataStore of traces.
@@ -41,20 +42,13 @@ public final class TraceQualityDataStoreAdapter<T extends Trace> extends Abstrac
 	 * @throws NullPointerException if delegate is null.
 	 */
     public static <T extends Trace> QualityDataStore adapt(DataStore<T> delegate){
-        return new TraceQualityDataStoreAdapter<T>(delegate);
-    }
-    /**
-     * @param delegate
-     */
-    private TraceQualityDataStoreAdapter(DataStore<T> delegate) {
-      super(delegate);
-    }
+    	return DataStoreAdapter.adapt(QualityDataStore.class, delegate, new DataStoreAdapter.AdapterCallback<T, QualitySequence>() {
 
-    @Override
-    protected QualitySequence adapt(T delegate) {
-        return delegate.getQualitySequence();
+			@Override
+			public QualitySequence get(T from) {
+				return from.getQualitySequence();
+			}
+		
+        });
     }
-
-    
-    
 }

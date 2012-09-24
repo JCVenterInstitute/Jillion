@@ -24,10 +24,6 @@
 package org.jcvi.common.core.datastore;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -75,10 +71,8 @@ public final class MapDataStoreAdapter<T> implements DataStore<T>{
      * @throws NullPointerException if datastoreInterface is null, map is null, or if any keys or values in the map
      * are null.
      */
-    @SuppressWarnings("unchecked")
 	public static <T, D extends DataStore<T>> D adapt(Class<D> datastoreInterface, Map<String, T> map){
-    	return (D) Proxy.newProxyInstance(datastoreInterface.getClassLoader(), new Class[]{datastoreInterface},
-    			new DataStoreInvocationHandler<T>(adapt(map)));
+    	return DataStoreAdapter.adapt(datastoreInterface, adapt(map));
     }
     private MapDataStoreAdapter(Map<String, T> map){
     	for(Entry<String, T> entry : map.entrySet()){
@@ -137,33 +131,4 @@ public final class MapDataStoreAdapter<T> implements DataStore<T>{
 		 
 	}
 	
-	private static class DataStoreInvocationHandler<T> implements InvocationHandler{
-		private final DataStore<T> delegate;
-
-		public DataStoreInvocationHandler(DataStore<T> delegate) {
-			this.delegate = delegate;
-		}
-
-		@Override
-		public Object invoke(Object proxy, Method method, Object[] args)
-				throws Throwable {
-			//we need to wrap the call of invoke and catch any
-			//InvocationTargetExceptions which the dynamic
-			//proxy uses to wrap undeclared thrown checked exceptions.
-			//By rethrowing the cause (the checked exception)
-			//we rethrow the original exception and
-			//maintain the contract of the object
-			//being proxied.
-			//see
-			//http://amitstechblog.wordpress.com/2011/07/24/java-proxies-and-undeclaredthrowableexception/
-			//for a more complete description.
-			try{
-				return method.invoke(delegate, args);
-			}catch(InvocationTargetException e){
-				throw e.getCause();
-			}
-		}
-		
-		
-	}
 }

@@ -34,7 +34,7 @@ import org.junit.Test;
 public abstract class AbstractTestSequenceFastaMapWithNoComment extends AbstractTestSequenceFastaDataStoreWithNoComment{
     @Test
     public void parseStream() throws IOException, DataStoreException{
-        DataStore<NucleotideSequenceFastaRecord> sut = buildMap(
+        DataStore<NucleotideSequenceFastaRecord> sut = createDataStore(
         		RESOURCES.getFile(FASTA_FILE_PATH));
         assertEquals(1, sut.getNumberOfRecords());
         assertEquals(hrv_61, sut.get("hrv-61"));

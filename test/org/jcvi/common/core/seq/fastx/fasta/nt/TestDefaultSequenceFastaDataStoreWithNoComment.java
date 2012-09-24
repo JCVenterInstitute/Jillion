@@ -33,7 +33,7 @@ import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 public class TestDefaultSequenceFastaDataStoreWithNoComment extends AbstractTestSequenceFastaMapWithNoComment{
 
     @Override
-    protected NucleotideSequenceFastaDataStore buildMap(
+    protected NucleotideSequenceFastaDataStore createDataStore(
             File file) throws IOException {
         return DefaultNucleotideSequenceFastaFileDataStore.create(file);
     }

@@ -30,7 +30,6 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStore;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
-import org.jcvi.common.core.symbol.qual.QualityDataStoreAdapter;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.trim.LucyLikeQualityTrimmer;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -52,8 +51,8 @@ public class TestLucyQualityTrimmer {
                             .build();
     @Before
     public void setup() throws  IOException{
-        qualities = new QualityDataStoreAdapter(FastaRecordDataStoreAdapter.adapt(
-        		DefaultQualityFastaFileDataStore.create(RESOURCES.getFile("files/fullLength.qual"))));
+        qualities = FastaRecordDataStoreAdapter.adapt(QualityDataStore.class, 
+        		DefaultQualityFastaFileDataStore.create(RESOURCES.getFile("files/fullLength.qual")));
     }
     
     @Test
@@ -73,24 +72,24 @@ public class TestLucyQualityTrimmer {
     
     @Test
     public void noGoodQualityDataShouldReturnEmptyRange() throws FileNotFoundException, IOException, DataStoreException{
-        QualityDataStore badQualDataStore =new QualityDataStoreAdapter(FastaRecordDataStoreAdapter.adapt(
-                DefaultQualityFastaFileDataStore.create(RESOURCES.getFile("files/bad.qual"))));
+        QualityDataStore badQualDataStore =FastaRecordDataStoreAdapter.adapt(QualityDataStore.class, 
+                DefaultQualityFastaFileDataStore.create(RESOURCES.getFile("files/bad.qual")));
         final QualitySequence badQualities = badQualDataStore.get("SCJIA01T48H08PB26F");
         assertEquals(Range.createEmptyRange(), sut.trim(badQualities));
     }
     
     @Test
     public void bTrashShouldReturnEmptyRange() throws FileNotFoundException, IOException, DataStoreException{
-        QualityDataStore trashQualDataStore =new QualityDataStoreAdapter(FastaRecordDataStoreAdapter.adapt(
-        		DefaultQualityFastaFileDataStore.create(RESOURCES.getFile("files/trash.qual"))));
+        QualityDataStore trashQualDataStore =FastaRecordDataStoreAdapter.adapt(QualityDataStore.class, 
+        		DefaultQualityFastaFileDataStore.create(RESOURCES.getFile("files/trash.qual")));
         final QualitySequence trashQualities = trashQualDataStore.get("JBYHA01T19A06PB2A628FB");
         assertEquals(Range.createEmptyRange(), sut.trim(trashQualities));
     }
     
     @Test
     public void wTrashShouldReturnEmptyRange() throws FileNotFoundException, IOException, DataStoreException{
-        QualityDataStore trashQualDataStore =new QualityDataStoreAdapter(FastaRecordDataStoreAdapter.adapt(
-        		DefaultQualityFastaFileDataStore.create(RESOURCES.getFile("files/trash.qual"))));
+        QualityDataStore trashQualDataStore =FastaRecordDataStoreAdapter.adapt(QualityDataStore.class, 
+        		DefaultQualityFastaFileDataStore.create(RESOURCES.getFile("files/trash.qual")));
         final QualitySequence trashQualities = trashQualDataStore.get("JBZTB06T19E09NA1F");
         assertEquals(Range.createEmptyRange(), sut.trim(trashQualities));
     }

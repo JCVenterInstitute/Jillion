@@ -26,16 +26,13 @@ package org.jcvi.common.core.assembly.clc.cas.read;
 import java.io.File;
 
 import org.jcvi.common.core.assembly.clc.cas.CasTrimMap;
-import org.jcvi.common.core.assembly.clc.cas.EmptyCasTrimMap;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.fastx.fasta.nt.LargeNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.LargeQualityFastaFileDataStore;
 import org.jcvi.common.core.symbol.qual.QualityDataStore;
-import org.jcvi.common.core.symbol.qual.QualityDataStoreAdapter;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStoreAdapter;
 /**
  * {@code FastaCasDataStoreFactory} is a {@link CasDataStoreFactory}
  * implementation for .fasta files.
@@ -75,14 +72,14 @@ public class FastaCasDataStoreFactory extends AbstractCasDataStoreFactory
     @Override
     public NucleotideDataStore getNucleotideDataStoreFor(File pathToDataStore, DataStoreFilter filter) throws CasDataStoreFactoryException {  
         return CachedDataStore.create(NucleotideDataStore.class, 
-                     new NucleotideDataStoreAdapter( FastaRecordDataStoreAdapter.adapt(LargeNucleotideSequenceFastaFileDataStore.create(pathToDataStore))),
+                     FastaRecordDataStoreAdapter.adapt(NucleotideDataStore.class, LargeNucleotideSequenceFastaFileDataStore.create(pathToDataStore)),
                      cacheSize);            
     }
     @Override
     public QualityDataStore getQualityDataStoreFor(
             File fastaFile,DataStoreFilter filter) throws CasDataStoreFactoryException { 
         return CachedDataStore.create(QualityDataStore.class, 
-        		new QualityDataStoreAdapter(FastaRecordDataStoreAdapter.adapt(new LargeQualityFastaFileDataStore(fastaFile))),
+        		FastaRecordDataStoreAdapter.adapt(QualityDataStore.class, new LargeQualityFastaFileDataStore(fastaFile)),
                 cacheSize);  
         
     }
