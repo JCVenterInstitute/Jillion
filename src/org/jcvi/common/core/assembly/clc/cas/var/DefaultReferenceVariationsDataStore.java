@@ -7,10 +7,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code DefaultReferenceVariationsDataStore} is an 
  * implementation of {@link ReferenceVariationsDataStore}
@@ -20,9 +17,8 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * @author dkatzel
  *
  */
-public final class DefaultReferenceVariationsDataStore implements ReferenceVariationsDataStore{
+public final class DefaultReferenceVariationsDataStore {
 
-	private final DataStore<ReferenceVariations> delegate;
 	/**
 	 * Parse the given find_variations log file and 
 	 * create a new {@link ReferenceVariationsDataStore} instance containing
@@ -38,47 +34,7 @@ public final class DefaultReferenceVariationsDataStore implements ReferenceVaria
 		return builder.build();
 	}
 	
-	private DefaultReferenceVariationsDataStore(
-			DataStore<ReferenceVariations> delegate) {
-		this.delegate = delegate;
-	}
-
-	@Override
-	public StreamingIterator<String> idIterator() throws DataStoreException {
-		return delegate.idIterator();
-	}
-
-	@Override
-	public ReferenceVariations get(String id) throws DataStoreException {
-		return delegate.get(id);
-	}
-
-	@Override
-	public boolean contains(String id) throws DataStoreException {
-		return delegate.contains(id);
-	}
-
-	@Override
-	public long getNumberOfRecords() throws DataStoreException {
-		return delegate.getNumberOfRecords();
-	}
-
-	@Override
-	public boolean isClosed(){
-		return delegate.isClosed();
-	}
-
-	@Override
-	public StreamingIterator<ReferenceVariations> iterator()
-			throws DataStoreException {
-		return delegate.iterator();
-	}
-
-	@Override
-	public void close() throws IOException {
-		delegate.close();
-		
-	}
+	
 	private static class Builder implements VariationLogFileVisitor, org.jcvi.common.core.util.Builder<ReferenceVariationsDataStore> {
 
 	    private SortedMap<Long, Variation> currentMap=null;
@@ -87,7 +43,7 @@ public final class DefaultReferenceVariationsDataStore implements ReferenceVaria
 	    
 	    @Override
 		public ReferenceVariationsDataStore build() {
-			return new DefaultReferenceVariationsDataStore(MapDataStoreAdapter.adapt(map));
+			return MapDataStoreAdapter.adapt(ReferenceVariationsDataStore.class,map);
 		}
 
 		/**

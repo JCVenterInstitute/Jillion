@@ -21,115 +21,65 @@ package org.jcvi.common.core.align;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStoreAdapter;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel
  *
  *
  */
-public final class GappedAlignmentDataStore implements NucleotideDataStore{
-
-	 private final NucleotideDataStore delegate;
+public final class GappedNucleotideAlignmentDataStore {
 	 
-    public static GappedAlignmentDataStore createFromAlnFile(File alnFile) throws IOException{
+	private GappedNucleotideAlignmentDataStore(){
+		//can not instantiate
+	}
+    public static NucleotideDataStore createFromAlnFile(File alnFile) throws IOException{
         GappedAlignmentDataStoreBuilder builder = new GappedAlignmentDataStoreBuilder();
         AlnParser.parse(alnFile, builder);
         return builder.build();
     }
    
 
-    private GappedAlignmentDataStore(NucleotideDataStore delegate) {
-        this.delegate = delegate;
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public StreamingIterator<String> idIterator() throws DataStoreException {
-        return delegate.idIterator();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public NucleotideSequence get(String id) throws DataStoreException {
-        return delegate.get(id);
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public boolean contains(String id) throws DataStoreException {
-        return delegate.contains(id);
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public long getNumberOfRecords() throws DataStoreException {
-        return delegate.getNumberOfRecords();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public boolean isClosed(){
-        return delegate.isClosed();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public void close() throws IOException {
-        delegate.close();
-        
-    }
-
-    /**
-    * {@inheritDoc}
-     * @throws DataStoreException 
-    */
-    @Override
-    public StreamingIterator<NucleotideSequence> iterator() throws DataStoreException {
-        return delegate.iterator();
-    }
     
-    private static class GappedAlignmentDataStoreBuilder implements AlnVisitor, Builder<GappedAlignmentDataStore>{
-        private final Map<String, StringBuilder> builders = new LinkedHashMap<String, StringBuilder>();
+    private static class GappedAlignmentDataStoreBuilder implements AlnVisitor, Builder<NucleotideDataStore>{
+        private final Map<String, NucleotideSequenceBuilder> builders = new LinkedHashMap<String, NucleotideSequenceBuilder>();
        
         
         /**
         * {@inheritDoc}
         */
         @Override
-        public GappedAlignmentDataStore build() {
+        public NucleotideDataStore build() {
             Map<String, NucleotideSequence> map = new LinkedHashMap<String, NucleotideSequence>(builders.size());
-            for(Entry<String, StringBuilder> entry : builders.entrySet()){
-                map.put(entry.getKey(), new NucleotideSequenceBuilder(entry.getValue().toString()).build());
+            Iterator<Entry<String, NucleotideSequenceBuilder>> entrySet = builders.entrySet().iterator();
+            //all the sequences in an aln file should be stretched to the same length
+            //so we should be able to dramatically decrease memory usage by making
+            //all the reads reference sequences aligned to the first read
+            if(entrySet.hasNext()){
+            	Entry<String, NucleotideSequenceBuilder> firstEntry = entrySet.next();
+            	//the 1st sequence will become our reference for all others
+            	NucleotideSequence firstSequence = firstEntry.getValue().build();
+            	map.put(firstEntry.getKey(), firstSequence);
+            	while(entrySet.hasNext()){
+            		Entry<String, NucleotideSequenceBuilder> entry = entrySet.next();
+            		NucleotideSequence seq = entry.getValue()
+            									.setReferenceHint(firstSequence, 0)
+            									.build();
+            		map.put(entry.getKey(), seq);
+            	}
+	            builders.clear();
             }
-            builders.clear();
-            return new GappedAlignmentDataStore(
-                    new NucleotideDataStoreAdapter(
-                    		MapDataStoreAdapter.adapt(map)));
+            return MapDataStoreAdapter.adapt(NucleotideDataStore.class, map);
         }
 
         /**
@@ -137,7 +87,7 @@ public final class GappedAlignmentDataStore implements NucleotideDataStore{
         */
         @Override
         public void visitLine(String line) {
-            // TODO Auto-generated method stub
+            //no-op
             
         }
 
@@ -146,7 +96,7 @@ public final class GappedAlignmentDataStore implements NucleotideDataStore{
         */
         @Override
         public void visitFile() {
-            // TODO Auto-generated method stub
+        	//no-op
             
         }
 
@@ -155,7 +105,7 @@ public final class GappedAlignmentDataStore implements NucleotideDataStore{
         */
         @Override
         public void visitEndOfFile() {
-            // TODO Auto-generated method stub
+        	//no-op
             
         }
 
@@ -164,7 +114,7 @@ public final class GappedAlignmentDataStore implements NucleotideDataStore{
         */
         @Override
         public void visitBeginGroup() {
-            // TODO Auto-generated method stub
+        	//no-op
             
         }
 
@@ -173,7 +123,7 @@ public final class GappedAlignmentDataStore implements NucleotideDataStore{
         */
         @Override
         public void visitEndGroup() {
-            // TODO Auto-generated method stub
+        	//no-op
             
         }
 
@@ -183,7 +133,7 @@ public final class GappedAlignmentDataStore implements NucleotideDataStore{
         @Override
         public void visitAlignedSegment(String id, String gappedAlignment) {
             if(!builders.containsKey(id)){
-                builders.put(id, new StringBuilder());
+                builders.put(id, new NucleotideSequenceBuilder());
             }
             builders.get(id).append(gappedAlignment);
             
@@ -195,8 +145,7 @@ public final class GappedAlignmentDataStore implements NucleotideDataStore{
         @Override
         public void visitConservationInfo(
                 List<ConservationInfo> conservationInfos) {
-            // TODO Auto-generated method stub
-            
+        	//no-op
         }
         
     }

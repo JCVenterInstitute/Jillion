@@ -30,11 +30,13 @@ import java.util.Set;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.assembly.AbstractContig;
 import org.jcvi.common.core.assembly.AbstractContigBuilder;
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.DefaultContig;
 import org.jcvi.common.core.assembly.AssembledReadBuilder;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * {@code DefaultTigrAssemblerContig} is a {@link Contig}
@@ -43,7 +45,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  *
  *
  */
-public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlacedRead> implements TigrAssemblerContig{
+public final class DefaultTigrAssemblerContig  extends AbstractContig<TigrAssemblerPlacedRead> implements TigrAssemblerContig{
     private final Map<TigrAssemblerContigAttribute,String> attributes;
     /**
      * @param id
@@ -51,11 +53,9 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
      * @param placedReads
      * @param circular
      */
-    protected DefaultTigrAssemblerContig(String id,
-            NucleotideSequence consensus,
-            Set<TigrAssemblerPlacedRead> placedReads, 
+    private DefaultTigrAssemblerContig(String id, NucleotideSequence consensus, Set<TigrAssemblerPlacedRead> reads, 
             EnumMap<TigrAssemblerContigAttribute, String> attributes) {
-        super(id, consensus, placedReads);
+        super(id,consensus,reads);
         this.attributes = Collections.unmodifiableMap(new EnumMap<TigrAssemblerContigAttribute, String>(attributes));
     }
 
@@ -122,20 +122,70 @@ public class DefaultTigrAssemblerContig extends DefaultContig<TigrAssemblerPlace
 
 
 
-	public static class Builder extends AbstractContigBuilder<TigrAssemblerPlacedRead, DefaultTigrAssemblerContig>{
+	public static class Builder extends AbstractContigBuilder<TigrAssemblerPlacedRead, TigrAssemblerContig>{
         private final EnumMap<TigrAssemblerContigAttribute,String> contigAttributes = new EnumMap<TigrAssemblerContigAttribute,String>(TigrAssemblerContigAttribute.class);
         private final Map<String, EnumMap<TigrAssemblerReadAttribute,String>> readAttributeMaps = new LinkedHashMap<String, EnumMap<TigrAssemblerReadAttribute,String>>();
+
         /**
          * @param id
          * @param consensus
          */
         public Builder(String id, NucleotideSequence consensus) {
-            super(id, consensus);
+        	super(id,consensus);
         }
         public Builder(String id, NucleotideSequence consensus,Map<TigrAssemblerContigAttribute,String> attributes) {
             super(id, consensus);
             this.contigAttributes.putAll(attributes);
         }
+        public <R extends TigrAssemblerPlacedRead, C extends Contig<R>> Builder(C copy){
+            this(copy.getId(), copy.getConsensusSequence());
+            StreamingIterator<R> iter =null;
+            try{
+            	 iter = copy.getReadIterator();
+            	 while(iter.hasNext()){
+            		 R read = iter.next();
+            		 addRead(read);
+            	 }
+            }finally{
+            	IOUtil.closeAndIgnoreErrors(iter);
+            }
+         }
+        public Builder addRead(String id, int offset,String basecalls){
+            return addRead(id, offset, basecalls, Direction.FORWARD);
+        }
+        public Builder addRead(String id, int offset,String basecalls, Direction dir){
+            int numberOfGaps = computeNumberOfGapsIn(basecalls);
+            int ungappedLength = basecalls.length()-numberOfGaps;
+            return addRead(id, offset, 
+            		Range.createOfLength(0,ungappedLength),basecalls, 
+            		dir,ungappedLength);
+        }
+        /**
+         * @param basecalls
+         * @return
+         */
+        private int computeNumberOfGapsIn(String basecalls) {
+            int count=0;
+            for(int i=0; i<basecalls.length(); i++){
+                if(basecalls.charAt(i) == '-'){
+                    count++;
+                }
+            }
+            return count;
+        }
+        @Override
+        public Builder addRead(String id, int offset,Range validRange, String basecalls, Direction dir, int fullUngappedLength){            
+            if(offset <0){
+                throw new IllegalArgumentException("circular reads not supported");
+                
+              }
+            super.addRead(id, offset, validRange, basecalls, dir,fullUngappedLength);
+            return this;            
+        }
+        
+       
+       
+       
         public Builder addAttribute(TigrAssemblerContigAttribute attribute, String value){
             this.contigAttributes.put(attribute, value);
             return this;
