@@ -24,6 +24,7 @@
 package org.jcvi.common.core.util;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -125,13 +126,17 @@ public final class  MultipleWrapper<T> implements InvocationHandler{
     public Object invoke(Object proxy, Method method, Object[] args)
             throws Throwable {
         List<Object> returns = new ArrayList<Object>(delegates.size());
-        for(T delegate :delegates){
-            returns.add(method.invoke(delegate, args));
+        try{
+	        for(T delegate :delegates){
+	            returns.add(method.invoke(delegate, args));
+	        }
+	        if(policy == ReturnPolicy.RETURN_LAST){
+	            return returns.get(returns.size()-1);
+	        }
+	        return returns.get(0);
+        }catch(InvocationTargetException e){
+        	throw e.getCause();
         }
-        if(policy == ReturnPolicy.RETURN_LAST){
-            return returns.get(returns.size()-1);
-        }
-        return returns.get(0);
       
     }
     

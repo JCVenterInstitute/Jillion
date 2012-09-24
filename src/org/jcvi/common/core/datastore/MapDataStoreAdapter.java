@@ -25,6 +25,7 @@ package org.jcvi.common.core.datastore;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.LinkedHashMap;
@@ -146,7 +147,21 @@ public final class MapDataStoreAdapter<T> implements DataStore<T>{
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args)
 				throws Throwable {
-			return method.invoke(delegate, args);
+			//we need to wrap the call of invoke and catch any
+			//InvocationTargetExceptions which the dynamic
+			//proxy uses to wrap undeclared thrown checked exceptions.
+			//By rethrowing the cause (the checked exception)
+			//we rethrow the original exception and
+			//maintain the contract of the object
+			//being proxied.
+			//see
+			//http://amitstechblog.wordpress.com/2011/07/24/java-proxies-and-undeclaredthrowableexception/
+			//for a more complete description.
+			try{
+				return method.invoke(delegate, args);
+			}catch(InvocationTargetException e){
+				throw e.getCause();
+			}
 		}
 		
 		

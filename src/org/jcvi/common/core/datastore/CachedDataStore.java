@@ -24,6 +24,7 @@
 package org.jcvi.common.core.datastore;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
@@ -96,27 +97,31 @@ public final class CachedDataStore <D extends DataStore<?>> implements Invocatio
     @Override
     public synchronized Object invoke(Object proxy, Method method, Object[] args)
             throws Throwable {
-        final String methodName = method.getName();
-        if("clearCache".equals(methodName) && args==null){
-            cache.clear();
-            return null;
-        }
-        if("close".equals(methodName) && args==null){
-            cache.clear();
-        }
-        else if("get".equals(methodName) && Arrays.equals(GET_PARAMETERS,method.getParameterTypes())){
-            String id = (String)args[0];
-            Object result =cache.get(id);
-            if(result !=null){
-                return result;
-            }
-            
-            Object obj =method.invoke(delegate, args);
-            
-            cache.put(id, obj);
-            return obj;
-        }
-        return method.invoke(delegate, args);
+    	try{
+	        final String methodName = method.getName();
+	        if("clearCache".equals(methodName) && args==null){
+	            cache.clear();
+	            return null;
+	        }
+	        if("close".equals(methodName) && args==null){
+	            cache.clear();
+	        }
+	        else if("get".equals(methodName) && Arrays.equals(GET_PARAMETERS,method.getParameterTypes())){
+	            String id = (String)args[0];
+	            Object result =cache.get(id);
+	            if(result !=null){
+	                return result;
+	            }
+	            
+	            Object obj =method.invoke(delegate, args);
+	            
+	            cache.put(id, obj);
+	            return obj;
+	        }
+	        return method.invoke(delegate, args);
+    	}catch(InvocationTargetException e){
+    		throw e.getCause();
+    	}
     }   
     
 }
