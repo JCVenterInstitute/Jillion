@@ -1,13 +1,9 @@
 package org.jcvi.common.core.seq.fastx.fasta.qual;
 
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code DefaultQualityFastaDataStoreBuilder} is a {@link QualitySequenceFastaDataStoreBuilder}
  * that stores all {@link QualitySequenceFastaRecord} added to it via the {@link #addFastaRecord(QualitySequenceFastaRecord)}
@@ -21,7 +17,7 @@ public class DefaultQualityFastaDataStoreBuilder implements QualitySequenceFasta
 	private final Map<String, QualitySequenceFastaRecord> map = new LinkedHashMap<String, QualitySequenceFastaRecord>();
 	@Override
 	public QualitySequenceFastaDataStore build() {
-		return new DefaultQualityFastaDataStoreImpl(map);
+		return MapDataStoreAdapter.adapt(QualitySequenceFastaDataStore.class,map);
 	}
 
 	@Override
@@ -33,48 +29,4 @@ public class DefaultQualityFastaDataStoreBuilder implements QualitySequenceFasta
 		map.put(fastaRecord.getId(), fastaRecord);
 		return this;
 	}
-	
-	private static class DefaultQualityFastaDataStoreImpl implements QualitySequenceFastaDataStore{
-		private final DataStore<QualitySequenceFastaRecord> delegate;
-		public DefaultQualityFastaDataStoreImpl(Map<String, QualitySequenceFastaRecord> map){
-			delegate = MapDataStoreAdapter.adapt(map);
-		}
-		@Override
-		public StreamingIterator<String> idIterator() throws DataStoreException {
-			return delegate.idIterator();
-		}
-
-		@Override
-		public QualitySequenceFastaRecord get(String id) throws DataStoreException {
-			return delegate.get(id);
-		}
-
-		@Override
-		public boolean contains(String id) throws DataStoreException {
-			return delegate.contains(id);
-		}
-
-		@Override
-		public long getNumberOfRecords() throws DataStoreException {
-			return delegate.getNumberOfRecords();
-		}
-
-		@Override
-		public boolean isClosed() {
-			return delegate.isClosed();
-		}
-
-		@Override
-		public void close() throws IOException {
-			delegate.close();
-			
-		}
-
-		@Override
-		public StreamingIterator<QualitySequenceFastaRecord> iterator() throws DataStoreException {
-			return delegate.iterator();
-		}
-		
-	}
-
 }

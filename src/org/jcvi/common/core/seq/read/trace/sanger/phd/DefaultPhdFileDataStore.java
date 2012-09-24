@@ -127,7 +127,7 @@ public final class DefaultPhdFileDataStore{
 
         @Override
         public PhdDataStore build() {
-            return new PhdDataStoreAdapter(MapDataStoreAdapter.adapt(map));
+            return MapDataStoreAdapter.adapt(PhdDataStore.class,map);
         }
 
         /**

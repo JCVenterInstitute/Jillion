@@ -69,8 +69,6 @@ import org.jcvi.common.core.assembly.scaffold.agp.AgpWriter;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConicConsensusCaller;
 import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStoreUtil;
-import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
 import org.jcvi.common.core.io.FileUtil;
@@ -89,7 +87,6 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.DateUtil;
 import org.jcvi.common.core.util.MapUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
 import org.jcvi.common.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
 
@@ -542,12 +539,12 @@ public class Cas2Consed3 {
                     File file = CasUtil.getFileFor(workingDir, filePath);
                     File trimpoints = new File(file.getParentFile(), file.getName()+".trimpoints");
                     if(trimpoints.exists()){
-                        delegates.add(new TrimPointsFileTrimDataStore(trimpoints));
+                        delegates.add(createTrimPointsDataStoreFromFile(trimpoints));
                     }else{
                         //legacy cas2consed 1 named file with capital P
                         File trimPoints = new File(file.getParentFile(), file.getName()+".trimPoints");
                         if(trimPoints.exists()){
-                            delegates.add(new TrimPointsFileTrimDataStore(trimpoints));
+                            delegates.add(createTrimPointsDataStoreFromFile(trimpoints));
                         }
                     }
                 } catch (IOException e) {
@@ -571,17 +568,15 @@ public class Cas2Consed3 {
 	    
 	}
 	
-	private static class TrimPointsFileTrimDataStore implements TrimPointsDataStore{
+	
 		
 		 /**
 	     * The Trim format used by sfffile is {@code <read_id>\t<clear_left>\t<clear_right>\n}
 	     * the trim points are 1-based (residue).
 	     */
 	    private static final Pattern TRIM_PATTERN = Pattern.compile("^(\\S+)\\s+(\\d+)\\s+(\\d+)\\s*$");
-	    
-		private final DataStore<Range> delegate;
 		
-		public TrimPointsFileTrimDataStore(File trimpointsFile) throws IOException{
+		public static TrimPointsDataStore createTrimPointsDataStoreFromFile(File trimpointsFile) throws IOException{
 			 TextLineParser scanner = null;
 			 int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(countNumberOfLines(trimpointsFile));
 			 Map<String,Range> map = new HashMap<String, Range>(capacity);
@@ -605,9 +600,9 @@ public class Cas2Consed3 {
 			} finally {
 				IOUtil.closeAndIgnoreErrors(in, scanner);
 			}
-			delegate = MapDataStoreAdapter.adapt(map);
+			return MapDataStoreAdapter.adapt(TrimPointsDataStore.class, map);
 		}
-		private long countNumberOfLines(File trimpointsFile) throws IOException {
+		private static long countNumberOfLines(File trimpointsFile) throws IOException {
 			InputStream is = new BufferedInputStream(new FileInputStream(trimpointsFile));
 		    try {
 		        byte[] c = new byte[1024];
@@ -624,41 +619,4 @@ public class Cas2Consed3 {
 		        is.close();
 		    }
 		}
-		@Override
-		public StreamingIterator<String> idIterator() throws DataStoreException {
-			return delegate.idIterator();
-		}
-
-		@Override
-		public Range get(String id) throws DataStoreException {
-			return delegate.get(id);
-		}
-
-		@Override
-		public boolean contains(String id) throws DataStoreException {
-			return delegate.contains(id);
-		}
-
-		@Override
-		public long getNumberOfRecords() throws DataStoreException {
-			return delegate.getNumberOfRecords();
-		}
-
-		@Override
-		public boolean isClosed(){
-			return delegate.isClosed();
-		}
-
-		@Override
-		public StreamingIterator<Range> iterator() throws DataStoreException {
-			return delegate.iterator();
-		}
-
-		@Override
-		public void close() throws IOException {
-			delegate.close();
-			
-		}
-		
-	}
 }

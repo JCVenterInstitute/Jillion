@@ -33,7 +33,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
-public class DefaultContig<P extends AssembledRead> extends AbstractContig<P>{
+public final class DefaultContig<P extends AssembledRead> extends AbstractContig<P>{
 
     
 

@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStoreAdapter;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 /**
@@ -39,6 +38,6 @@ public final class TestPrimerTrimmerUtil {
         for(int i=0; i<primers.length; i++){
             map.put("primer_"+i, primers[i]);
         }
-        return new NucleotideDataStoreAdapter(MapDataStoreAdapter.adapt(map));
+        return MapDataStoreAdapter.adapt(NucleotideDataStore.class,map);
     }
 }

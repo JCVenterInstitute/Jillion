@@ -1,16 +1,12 @@
 package org.jcvi.common.core.assembly;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jcvi.common.core.DirectedRange;
-import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.util.MapUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public final class DefaultScaffoldDataStore {
 
@@ -31,7 +27,7 @@ public final class DefaultScaffoldDataStore {
 			for(Entry<String, ScaffoldBuilder> entry : builders.entrySet()){
 				scaffolds.put(entry.getKey(), entry.getValue().build());
 			}
-			return new ScaffoldDataStoreImpl(scaffolds);
+			return MapDataStoreAdapter.adapt(ScaffoldDataStore.class, scaffolds);
 		}
 
 		@Override
@@ -55,52 +51,6 @@ public final class DefaultScaffoldDataStore {
 			builders.get(scaffoldId).add(contigId, directedRange.asRange(), directedRange.getDirection());
 			return this;
 		}
-		
-	}
-	
-	private static class ScaffoldDataStoreImpl implements ScaffoldDataStore{
-		private final DataStore<Scaffold> delegate;
-		
-		public ScaffoldDataStoreImpl(Map<String, Scaffold> scaffolds){
-			delegate = MapDataStoreAdapter.adapt(scaffolds);
-		}
-
-		@Override
-		public StreamingIterator<String> idIterator() throws DataStoreException {
-			return delegate.idIterator();
-		}
-
-		@Override
-		public Scaffold get(String id) throws DataStoreException {
-			return delegate.get(id);
-		}
-
-		@Override
-		public boolean contains(String id) throws DataStoreException {
-			return delegate.contains(id);
-		}
-
-		@Override
-		public long getNumberOfRecords() throws DataStoreException {
-			return delegate.getNumberOfRecords();
-		}
-
-		@Override
-		public boolean isClosed() {
-			return delegate.isClosed();
-		}
-
-		@Override
-		public void close() throws IOException {
-			delegate.close();
-			
-		}
-
-		@Override
-		public StreamingIterator<Scaffold> iterator() throws DataStoreException {
-			return delegate.iterator();
-		}
-		
 		
 	}
 }
