@@ -25,6 +25,6 @@ package org.jcvi.common.core.symbol.residue.nt;
 
 import org.jcvi.common.core.datastore.DataStore;
 
-public interface NucleotideDataStore extends DataStore<NucleotideSequence>{
+public interface NucleotideSequenceDataStore extends DataStore<NucleotideSequence>{
 
 }

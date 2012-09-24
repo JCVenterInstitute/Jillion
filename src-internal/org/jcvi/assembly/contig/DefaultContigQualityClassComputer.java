@@ -31,7 +31,7 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.slice.QualityValueStrategy;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -47,7 +47,7 @@ public class DefaultContigQualityClassComputer implements QualityClassComputer{
     }
     @Override
     public <P extends AssembledRead> QualityClass computeQualityClass( CoverageMap<P> coverageMap,
-            QualityDataStore qualityDataStore,
+            QualitySequenceDataStore qualityDataStore,
     NucleotideSequence consensus,int index) {
         CoverageRegion<P> region = CoverageMapUtil.getRegionWhichCovers(coverageMap, index);
         if(region ==null){
@@ -71,14 +71,14 @@ public class DefaultContigQualityClassComputer implements QualityClassComputer{
         return qualityThreshold;
     }
     protected <P extends AssembledRead> QualityClass computeQualityClassFor(
-            QualityDataStore qualityDataStore, int index,
+            QualitySequenceDataStore qualityDataStore, int index,
             CoverageRegion<P> region, final Nucleotide consensusBase) throws DataStoreException {
         QualityClass.Builder builder = new QualityClass.Builder(consensusBase,qualityThreshold);
         return computeQualityClassFor(qualityDataStore, index, region,
                 consensusBase, builder);
     }
     protected <P extends AssembledRead> QualityClass computeQualityClassFor(
-            QualityDataStore qualityDataStore, int index,
+            QualitySequenceDataStore qualityDataStore, int index,
             CoverageRegion<P> region, final Nucleotide consensusBase,
             QualityClass.Builder builder) throws DataStoreException {
         for(P placedRead : region){

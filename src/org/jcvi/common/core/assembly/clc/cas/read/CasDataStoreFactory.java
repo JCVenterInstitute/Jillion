@@ -24,11 +24,11 @@
 package org.jcvi.common.core.assembly.clc.cas.read;
 
 import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.symbol.qual.QualityDataStore;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 /**
- * {@code CasDataStoreFactory} is a way to get {@link NucleotideDataStore}s
- * and {@link QualityDataStore}s from the file paths
+ * {@code CasDataStoreFactory} is a way to get {@link NucleotideSequenceDataStore}s
+ * and {@link QualitySequenceDataStore}s from the file paths
  * encoded inside a CAS file.  Since the CAS file does not know
  * how this data is encoded, it is this Factory's job
  * of decoding the files into {@link DataStore}s.
@@ -39,26 +39,26 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
 public interface CasDataStoreFactory {
     /**
      * Get the data encoded in the given file
-     * path as a {@link NucleotideDataStore}.
+     * path as a {@link NucleotideSequenceDataStore}.
      * @param pathToDataStore the file path (may be relative) to 
      * a file which has nucleotide data.
      * @return the data encoded in the given 
-     * file as a {@link NucleotideDataStore}.
+     * file as a {@link NucleotideSequenceDataStore}.
      * @throws CasDataStoreFactoryException if there is a problem reading the 
      * file.
      * @throws NullPointerException if the pathToDataStore is {@code null}.
      */
-    NucleotideDataStore getNucleotideDataStoreFor(String pathToDataStore) throws CasDataStoreFactoryException;
+    NucleotideSequenceDataStore getNucleotideDataStoreFor(String pathToDataStore) throws CasDataStoreFactoryException;
     /**
      * Get the data encoded in the given file
-     * path as a {@link QualityDataStore}.
+     * path as a {@link QualitySequenceDataStore}.
      * @param pathToDataStore the file path (may be relative) to 
      * a file which has quality data.
      * @return the data encoded in the given 
-     * file as a {@link QualityDataStore}.
+     * file as a {@link QualitySequenceDataStore}.
      * @throws CasDataStoreFactoryException if there is a problem reading the 
      * file.
      * @throws NullPointerException if the pathToDataStore is {@code null}.
      */
-    QualityDataStore getQualityDataStoreFor(String pathToDataStore) throws CasDataStoreFactoryException;
+    QualitySequenceDataStore getQualityDataStoreFor(String pathToDataStore) throws CasDataStoreFactoryException;
 }

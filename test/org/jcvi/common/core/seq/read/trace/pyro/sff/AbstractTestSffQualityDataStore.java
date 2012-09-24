@@ -30,7 +30,7 @@ import java.util.Iterator;
 
 import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffFileDataStore;
-import org.jcvi.common.core.symbol.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.junit.Test;
 
 public abstract class AbstractTestSffQualityDataStore extends AbstractTestExampleSffFile{
@@ -46,11 +46,11 @@ public abstract class AbstractTestSffQualityDataStore extends AbstractTestExampl
         } 
     }
     
-    protected abstract QualityDataStore createSut(File sffFile) throws Exception;
+    protected abstract QualitySequenceDataStore createSut(File sffFile) throws Exception;
     
     @Test
     public void datastoresMatch() throws Exception{
-        QualityDataStore sut = createSut(SFF_FILE);
+        QualitySequenceDataStore sut = createSut(SFF_FILE);
         assertEquals(sut.getNumberOfRecords(), dataStore.getNumberOfRecords());
         Iterator<String> ids = sut.idIterator();
         while(ids.hasNext()){

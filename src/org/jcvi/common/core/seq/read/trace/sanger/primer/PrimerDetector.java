@@ -14,13 +14,13 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code PrimerDetector} scans a {@link NucleotideSequence}
- * against a {@link NucleotideDataStore} of primer/vector sequences
+ * against a {@link NucleotideSequenceDataStore} of primer/vector sequences
  * to find all primer hits.
  * @author dkatzel
  *
@@ -66,7 +66,7 @@ public class PrimerDetector {
     }
 
     public List<DirectedRange> detect(NucleotideSequence sequence,
-            NucleotideDataStore primersDataStore) {
+            NucleotideSequenceDataStore primersDataStore) {
         List<DirectedRange> ranges = new ArrayList<DirectedRange>();
         StreamingIterator<NucleotideSequence> iter =null; 
         try{

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Before;
@@ -14,7 +14,7 @@ public class TestMapDataStoreAdapterProxy {
 
 	Map<String, NucleotideSequence> map = new HashMap<String, NucleotideSequence>();
 	
-	NucleotideDataStore sut;
+	NucleotideSequenceDataStore sut;
 	public TestMapDataStoreAdapterProxy(){
 		map.put("read1", new NucleotideSequenceBuilder("ACGTACGT")
 								.build());
@@ -25,11 +25,11 @@ public class TestMapDataStoreAdapterProxy {
 	}
 	@Before
 	public void createSut(){
-		sut = MapDataStoreAdapter.adapt(NucleotideDataStore.class, map);
+		sut = MapDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, map);
 	}
 	@Test
 	public void instanceOf(){
-		assertTrue(sut instanceof NucleotideDataStore);
+		assertTrue(sut instanceof NucleotideSequenceDataStore);
 	}
 	
 	@Test

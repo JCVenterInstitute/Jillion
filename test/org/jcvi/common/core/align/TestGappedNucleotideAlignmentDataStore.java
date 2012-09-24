@@ -3,7 +3,7 @@ package org.jcvi.common.core.align;
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 
 public class TestGappedNucleotideAlignmentDataStore {
 	
-	private final NucleotideDataStore sut;
+	private final NucleotideSequenceDataStore sut;
 	
 	public TestGappedNucleotideAlignmentDataStore() throws IOException{
 		ResourceFileServer resources = new ResourceFileServer(TestGappedNucleotideAlignmentDataStore.class);

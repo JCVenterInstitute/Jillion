@@ -30,7 +30,7 @@ import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestNucleotideDataStoreFastaAdatper extends AbstractTestSequenceFastaDataStoreWithNoComment{
@@ -43,8 +43,8 @@ public class TestNucleotideDataStoreFastaAdatper extends AbstractTestSequenceFas
 
     @Test
     public void adaptFasta() throws IOException, DataStoreException{
-        NucleotideDataStore sut=
-        		FastaRecordDataStoreAdapter.adapt(NucleotideDataStore.class, createDataStore(
+        NucleotideSequenceDataStore sut=
+        		FastaRecordDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, createDataStore(
         		RESOURCES.getFile(FASTA_FILE_PATH)));
     
         assertEquals(

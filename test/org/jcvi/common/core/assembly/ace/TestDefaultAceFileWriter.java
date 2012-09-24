@@ -35,8 +35,8 @@ import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStor
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificalPhdDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
-import org.jcvi.common.core.symbol.qual.QualityDataStore;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
@@ -69,9 +69,9 @@ public class TestDefaultAceFileWriter {
         File qualFile = resources.getFile("files/flu_644151.qual");
 
         final Date phdDate = new Date(0L);
-        NucleotideDataStore nucleotideDataStore = FastaRecordDataStoreAdapter.adapt(NucleotideDataStore.class, DefaultNucleotideSequenceFastaFileDataStore.create(seqFile)); 
+        NucleotideSequenceDataStore nucleotideDataStore = FastaRecordDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, DefaultNucleotideSequenceFastaFileDataStore.create(seqFile)); 
         final QualitySequenceFastaDataStore qualityFastaDataStore = DefaultQualityFastaFileDataStore.create(qualFile);
-        QualityDataStore qualityDataStore = FastaRecordDataStoreAdapter.adapt(QualityDataStore.class, qualityFastaDataStore); 
+        QualitySequenceDataStore qualityDataStore = FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, qualityFastaDataStore); 
         
         PhdDataStore phdDataStore = new ArtificalPhdDataStore(nucleotideDataStore, qualityDataStore, phdDate);
        
@@ -96,9 +96,9 @@ public class TestDefaultAceFileWriter {
         File qualFile = resources.getFile("files/flu_644151.qual");
 
         final Date phdDate = new Date(0L);
-        NucleotideDataStore nucleotideDataStore = FastaRecordDataStoreAdapter.adapt(NucleotideDataStore.class, DefaultNucleotideSequenceFastaFileDataStore.create(seqFile)); 
+        NucleotideSequenceDataStore nucleotideDataStore = FastaRecordDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, DefaultNucleotideSequenceFastaFileDataStore.create(seqFile)); 
         final QualitySequenceFastaDataStore qualityFastaDataStore = DefaultQualityFastaFileDataStore.create(qualFile);
-        QualityDataStore qualityDataStore = FastaRecordDataStoreAdapter.adapt(QualityDataStore.class, qualityFastaDataStore); 
+        QualitySequenceDataStore qualityDataStore = FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, qualityFastaDataStore); 
         
         PhdDataStore phdDataStore = new ArtificalPhdDataStore(nucleotideDataStore, qualityDataStore, phdDate);
        
@@ -123,9 +123,9 @@ public class TestDefaultAceFileWriter {
         File qualFile = resources.getFile("files/flu_644151.qual");
 
         final Date phdDate = new Date(0L);
-        NucleotideDataStore nucleotideDataStore = FastaRecordDataStoreAdapter.adapt(NucleotideDataStore.class, DefaultNucleotideSequenceFastaFileDataStore.create(seqFile)); 
+        NucleotideSequenceDataStore nucleotideDataStore = FastaRecordDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, DefaultNucleotideSequenceFastaFileDataStore.create(seqFile)); 
         final QualitySequenceFastaDataStore qualityFastaDataStore = DefaultQualityFastaFileDataStore.create(qualFile);
-        QualityDataStore qualityDataStore = FastaRecordDataStoreAdapter.adapt(QualityDataStore.class, qualityFastaDataStore); 
+        QualitySequenceDataStore qualityDataStore = FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, qualityFastaDataStore); 
         
         PhdDataStore phdDataStore = new ArtificalPhdDataStore(nucleotideDataStore, qualityDataStore, phdDate);
        

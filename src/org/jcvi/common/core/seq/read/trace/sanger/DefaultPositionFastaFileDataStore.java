@@ -15,6 +15,9 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 
 public final class DefaultPositionFastaFileDataStore {
 	
+	private DefaultPositionFastaFileDataStore(){
+		//can not instantiate
+	}
 	public static PositionSequenceFastaDataStore create(File positionFastaFile, FastXFilter filter) throws FileNotFoundException{
 		PositionFastaFileVisitor builder = new PositionFastaFileVisitor(filter);
 		FastaFileParser.parse(positionFastaFile, builder);

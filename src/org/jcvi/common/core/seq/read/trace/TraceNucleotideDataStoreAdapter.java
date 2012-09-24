@@ -25,25 +25,29 @@ package org.jcvi.common.core.seq.read.trace;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreAdapter;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**
  * {@code TraceNucleotideDataStoreAdapter} adapts a {@link TraceDataStore} into
- * a {@link NucleotideDataStore} by delegating all the get() calls
+ * a {@link NucleotideSequenceDataStore} by delegating all the get() calls
  * to the wrapped datastore and then returned only the {@link NucleotideSequence}
  *  from the desired trace.
  * @author dkatzel
  */
 public final class TraceNucleotideDataStoreAdapter <T extends Trace> {
+	
+	private TraceNucleotideDataStoreAdapter(){
+		//can not instantiate
+	}
 	/**
-	 * Create a new {@link NucleotideDataStore} instance
+	 * Create a new {@link NucleotideSequenceDataStore} instance
 	 * by adapting the given DataStore of traces.
 	 * @param delegate the {@link DataStore} to adapt.
-	 * @return a new {@link NucleotideDataStore} instance; never null.
+	 * @return a new {@link NucleotideSequenceDataStore} instance; never null.
 	 * @throws NullPointerException if delegate is null.
 	 */
-	public static <T extends Trace> NucleotideDataStore adapt(DataStore<T> delegate){
-        return DataStoreAdapter.adapt(NucleotideDataStore.class, delegate, new DataStoreAdapter.AdapterCallback<T, NucleotideSequence>() {
+	public static <T extends Trace> NucleotideSequenceDataStore adapt(DataStore<T> delegate){
+        return DataStoreAdapter.adapt(NucleotideSequenceDataStore.class, delegate, new DataStoreAdapter.AdapterCallback<T, NucleotideSequence>() {
 
 			@Override
 			public NucleotideSequence get(T from) {

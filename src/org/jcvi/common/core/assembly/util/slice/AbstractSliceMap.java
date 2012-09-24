@@ -31,7 +31,7 @@ import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 
@@ -39,7 +39,7 @@ public abstract class  AbstractSliceMap implements SliceMap{
 
     protected List<IdedSliceElement> createSliceElementsFor(
             CoverageRegion<? extends AssembledRead> region,
-            long offset, QualityDataStore qualityDataStore,
+            long offset, QualitySequenceDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy) {
         List<IdedSliceElement> sliceElements = new ArrayList<IdedSliceElement>(region.getCoverageDepth());
         for(AssembledRead read : region){

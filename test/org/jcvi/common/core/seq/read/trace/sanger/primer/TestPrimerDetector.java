@@ -8,7 +8,7 @@ import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.trace.sanger.primer.PrimerDetector;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
@@ -18,7 +18,7 @@ public class TestPrimerDetector {
 	    @Test
 	    public void onlyPrimerShouldReturnFullRange(){
 	        NucleotideSequence sequence = new NucleotideSequenceBuilder("AAACGACGTACGTACGT").build();
-	        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(sequence);
+	        NucleotideSequenceDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(sequence);
 	        
 	        List<DirectedRange> actualRanges= sut.detect(sequence, datastore);
 	        assertEquals(1, actualRanges.size());
@@ -28,7 +28,7 @@ public class TestPrimerDetector {
 	    @Test
 	    public void onlyReverseComplementPrimerShouldReturnFullRange(){
 	        NucleotideSequence sequence = new NucleotideSequenceBuilder("AAACGACGTACGTACGT").build();
-	        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
+	        NucleotideSequenceDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
 	        		new NucleotideSequenceBuilder(sequence)
 	        		.reverseComplement()
 	        		.build());
@@ -41,7 +41,7 @@ public class TestPrimerDetector {
 	    @Test
 	    public void hits5primeEnd(){
 	        NucleotideSequence sequence = new NucleotideSequenceBuilder("AAACGACGTACGTACGT").build();
-	        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
+	        NucleotideSequenceDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
 	        		new NucleotideSequenceBuilder("AAACG").build());
 	        
 	        List<DirectedRange> actualRanges= sut.detect(sequence, datastore);
@@ -52,7 +52,7 @@ public class TestPrimerDetector {
 	    @Test
 	    public void reverseComplementHits5primeEnd(){
 	        NucleotideSequence sequence = new NucleotideSequenceBuilder("AAACGACGTACGTACGT").build();
-	        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
+	        NucleotideSequenceDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
 	        		new NucleotideSequenceBuilder("AAACG")
 	        		.reverseComplement()
 	        		.build());
@@ -66,7 +66,7 @@ public class TestPrimerDetector {
 	    @Test
 	    public void hitsCloseTo5primeEnd(){
 	        NucleotideSequence sequence = new NucleotideSequenceBuilder("TTAAACGACGTACGTACGT").build();
-	        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
+	        NucleotideSequenceDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
 	        		new NucleotideSequenceBuilder("AAACG").build());
 
 	        List<DirectedRange> actualRanges= sut.detect(sequence, datastore);
@@ -78,7 +78,7 @@ public class TestPrimerDetector {
 	    @Test
 	    public void reverseComplementHitsCloseTo5primeEnd(){
 	        NucleotideSequence sequence = new NucleotideSequenceBuilder("TTAAACGACGTACGTACGT").build();
-	        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
+	        NucleotideSequenceDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
 	        		new NucleotideSequenceBuilder("AAACG")
 	        		.reverseComplement()
 	        		.build());
@@ -91,7 +91,7 @@ public class TestPrimerDetector {
 	    @Test
 	    public void hitsOn3primerEnd(){
 	        NucleotideSequence sequence = new NucleotideSequenceBuilder("ACGTACGTACGTAAACG").build();
-	        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
+	        NucleotideSequenceDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
 	        		new NucleotideSequenceBuilder("AAACG").build());
 	        
 	        List<DirectedRange> actualRanges= sut.detect(sequence, datastore);
@@ -102,7 +102,7 @@ public class TestPrimerDetector {
 	    @Test
 	    public void reverseComplementHitsOn3primerEnd(){
 	        NucleotideSequence sequence = new NucleotideSequenceBuilder("ACGTACGTACGTAAACG").build();
-	        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
+	        NucleotideSequenceDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
 	        		new NucleotideSequenceBuilder("AAACG")
 	        		.reverseComplement()
 	        		.build());
@@ -115,7 +115,7 @@ public class TestPrimerDetector {
 	    @Test
 	    public void hitsCloseTo3primerEnd(){
 	        NucleotideSequence sequence = new NucleotideSequenceBuilder("ACGTACGTACGTAAACGTT").build();
-	        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
+	        NucleotideSequenceDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
 	        		new NucleotideSequenceBuilder("AAACG").build());
 	        
 	        List<DirectedRange> actualRanges= sut.detect(sequence, datastore);
@@ -126,7 +126,7 @@ public class TestPrimerDetector {
 	    @Test
 	    public void reverseComplementHitsCloseTo3primerEnd(){
 	        NucleotideSequence sequence = new NucleotideSequenceBuilder("ACGTACGTACGTAAACGTT").build();
-	        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
+	        NucleotideSequenceDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
 	        		new NucleotideSequenceBuilder("AAACG")
 	        		.reverseComplement()
 	        		.build());
@@ -140,7 +140,7 @@ public class TestPrimerDetector {
 	    public void hitsInMiddle(){
 	    	 NucleotideSequence sequence = new NucleotideSequenceBuilder(
 	    			 "AAATTTACGTACGTGGGAAAAAATATA").build();
-		        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
+		        NucleotideSequenceDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
 		        		new NucleotideSequenceBuilder("ACGTACGTG")
 		        		.build());
 		        
@@ -155,7 +155,7 @@ public class TestPrimerDetector {
 	    public void reverseComplementHitsInMiddle(){
 	    	 NucleotideSequence sequence = new NucleotideSequenceBuilder(
 	    			 "AAATTTACGTACGTGGGAAAAAATATA").build();
-		        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
+		        NucleotideSequenceDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
 		        		new NucleotideSequenceBuilder("ACGTACGTG")
 		        		.reverseComplement()
 		        		.build());
@@ -171,7 +171,7 @@ public class TestPrimerDetector {
 	    public void multiplePrimerHits(){
 	    	 NucleotideSequence sequence = new NucleotideSequenceBuilder(
 	    			 "AAATTTACGTACGTGGGAAAAAATATA").build();
-		        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
+		        NucleotideSequenceDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(
 		        		new NucleotideSequenceBuilder("ACGTACGTG")
 		        		.reverseComplement()
 		        		.build(),

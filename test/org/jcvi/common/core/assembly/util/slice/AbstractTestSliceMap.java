@@ -27,7 +27,7 @@ import org.jcvi.common.core.assembly.DefaultContig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.slice.SliceMap;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
-import org.jcvi.common.core.symbol.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.junit.Before;
@@ -40,15 +40,15 @@ import static org.junit.Assert.*;
  */
 public abstract class AbstractTestSliceMap {
 
-    protected abstract SliceMap createSliceMapFor(Contig<AssembledRead> contig, QualityDataStore qualityDatastore, QualityValueStrategy qualityValueStrategy);
-    private QualityDataStore qualityDataStore;
+    protected abstract SliceMap createSliceMapFor(Contig<AssembledRead> contig, QualitySequenceDataStore qualityDatastore, QualityValueStrategy qualityValueStrategy);
+    private QualitySequenceDataStore qualityDataStore;
     @Before
     public void setup(){
         Map<String, QualitySequence> qualities = new HashMap<String, QualitySequence>();
         qualities.put("read_0", new QualitySequenceBuilder(new byte[]{10,12,14,16,18,20,22,24}).build());
         qualities.put("read_1", new QualitySequenceBuilder(new byte[]{1,2,3,4,5,6,7,8}).build());
         qualities.put("read_2", new QualitySequenceBuilder(new byte[]{15,16,17,18}).build());
-        qualityDataStore = MapDataStoreAdapter.adapt(QualityDataStore.class, qualities);
+        qualityDataStore = MapDataStoreAdapter.adapt(QualitySequenceDataStore.class, qualities);
     }
     @Test
     public void allSlicesSameDepth(){

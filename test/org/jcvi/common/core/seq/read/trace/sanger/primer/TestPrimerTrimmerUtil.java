@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 /**
@@ -33,11 +33,11 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  */
 public final class TestPrimerTrimmerUtil {
 
-    public static NucleotideDataStore createDataStoreFor(NucleotideSequence...primers){
+    public static NucleotideSequenceDataStore createDataStoreFor(NucleotideSequence...primers){
         Map<String, NucleotideSequence> map = new HashMap<String, NucleotideSequence>();
         for(int i=0; i<primers.length; i++){
             map.put("primer_"+i, primers[i]);
         }
-        return MapDataStoreAdapter.adapt(NucleotideDataStore.class,map);
+        return MapDataStoreAdapter.adapt(NucleotideSequenceDataStore.class,map);
     }
 }

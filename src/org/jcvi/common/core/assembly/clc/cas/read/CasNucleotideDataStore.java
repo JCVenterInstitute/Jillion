@@ -24,8 +24,8 @@
 package org.jcvi.common.core.assembly.clc.cas.read;
 
 
-import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 
-public interface CasNucleotideDataStore extends NucleotideDataStore{
+public interface CasNucleotideDataStore extends NucleotideSequenceDataStore{
 
 }

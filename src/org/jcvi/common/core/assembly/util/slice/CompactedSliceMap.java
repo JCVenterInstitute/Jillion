@@ -35,7 +35,7 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.util.iter.ArrayIterator;
@@ -49,19 +49,19 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
 public final class CompactedSliceMap implements SliceMap {
     private final CompactedSlice[] slices;
 
-    public static <PR extends AssembledRead> CompactedSliceMap create(Contig<PR> contig,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
+    public static <PR extends AssembledRead> CompactedSliceMap create(Contig<PR> contig,QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
         return new CompactedSliceMap(contig, qualityDataStore, qualityValueStrategy);
     }
     public static <PR extends AssembledRead> CompactedSliceMap create(Contig<PR> contig, PhredQuality defaultQuality) throws DataStoreException{
         return new CompactedSliceMap(contig, new NullQualityDataStore(defaultQuality), new FakeQualityValueStrategy(defaultQuality));
     }
-    public static <PR extends AssembledRead> CompactedSliceMap create(CoverageMap<PR> coverageMap,QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
+    public static <PR extends AssembledRead> CompactedSliceMap create(CoverageMap<PR> coverageMap,QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
         return new CompactedSliceMap(coverageMap, qualityDataStore, qualityValueStrategy);
     }
     public static <PR extends AssembledRead> CompactedSliceMap create(CoverageMap<PR> coverageMap,PhredQuality defaultQuality) throws DataStoreException{
         return new CompactedSliceMap(coverageMap, new NullQualityDataStore(defaultQuality), new FakeQualityValueStrategy(defaultQuality));
     }
-    private static final class NullQualityDataStore implements QualityDataStore{
+    private static final class NullQualityDataStore implements QualitySequenceDataStore{
         final QualitySequence fakeQualities;
         public NullQualityDataStore(final PhredQuality defaultQuality){
             fakeQualities = new QualitySequence(){
@@ -182,7 +182,7 @@ public final class CompactedSliceMap implements SliceMap {
         
     }
     private <PR extends AssembledRead, M extends CoverageMap<PR>> CompactedSliceMap(
-            M coverageMap, QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
+            M coverageMap, QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
         int size = (int)CoverageMapUtil.getLastCoveredOffsetIn(coverageMap)+1;
         this.slices = new CompactedSlice[size];
         for(CoverageRegion<PR> region : coverageMap){
@@ -204,7 +204,7 @@ public final class CompactedSliceMap implements SliceMap {
     }
    
     private <PR extends AssembledRead, C extends Contig<PR>>  CompactedSliceMap(
-            C contig, QualityDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
+            C contig, QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
     	CompactedSlice.Builder builders[] = new CompactedSlice.Builder[(int)contig.getConsensusSequence().getLength()];
     	StreamingIterator<PR> readIter = null;
     	try{

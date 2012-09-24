@@ -15,7 +15,9 @@ import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequenceBuilder;
 
 public final class DefaultAminoAcidSequenceFastaDataStore{
 	
-	
+	private DefaultAminoAcidSequenceFastaDataStore(){		
+		//can not instantiate
+	}
 	public static AminoAcidSequenceFastaDataStore create(File fastaFile) throws FileNotFoundException{
 		AminoAcidSequenceFastaDataStoreBuilderVisitor builder = createBuilder();
 		FastaFileParser.parse(fastaFile, builder);

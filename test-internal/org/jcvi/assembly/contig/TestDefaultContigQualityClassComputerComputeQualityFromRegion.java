@@ -33,7 +33,7 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.slice.QualityValueStrategy;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -59,7 +59,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
     QualityValueStrategy qualityValueStrategy;
     DefaultContigQualityClassComputer  sut;
     CoverageRegion<AssembledRead> coverageRegion;
-    QualityDataStore qualityFastaMap;
+    QualitySequenceDataStore qualityFastaMap;
     Nucleotide consensusBase = Nucleotide.Adenine;
     Nucleotide notConsensusBase = Nucleotide.Thymine;
     
@@ -69,7 +69,7 @@ public class TestDefaultContigQualityClassComputerComputeQualityFromRegion {
     public void setup(){
         qualityValueStrategy = createMock(QualityValueStrategy.class);
         coverageRegion = createMock(CoverageRegion.class);
-        qualityFastaMap = createMock(QualityDataStore.class);
+        qualityFastaMap = createMock(QualitySequenceDataStore.class);
         sut = new DefaultContigQualityClassComputer(qualityValueStrategy, threshold);
         builder = createMock(QualityClass.Builder.class);
         expect(builder.build()).andReturn(expectedQuality);

@@ -25,6 +25,6 @@ package org.jcvi.common.core.symbol.qual;
 
 import org.jcvi.common.core.datastore.DataStore;
 
-public interface QualityDataStore extends DataStore<QualitySequence> {
+public interface QualitySequenceDataStore extends DataStore<QualitySequence> {
 
 }

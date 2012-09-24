@@ -23,7 +23,7 @@ import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.symbol.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 
 /**
  * @author dkatzel
@@ -38,7 +38,7 @@ public final class CompactedSliceMapFactory<P extends AssembledRead> extends Abs
     @Override
     protected  SliceMap createNewSliceMap(
             CoverageMap<P> coverageMap,
-                    QualityDataStore qualityDataStore, QualityValueStrategy qualityValueStrategy){
+                    QualitySequenceDataStore qualityDataStore, QualityValueStrategy qualityValueStrategy){
         try {
             return CompactedSliceMap.<P>create(coverageMap, qualityDataStore, qualityValueStrategy);
         } catch (DataStoreException e) {
@@ -49,7 +49,7 @@ public final class CompactedSliceMapFactory<P extends AssembledRead> extends Abs
     @Override
     protected  SliceMap createNewSliceMap(
             Contig<P> contig,
-                    QualityDataStore qualityDataStore, QualityValueStrategy qualityValueStrategy){
+                    QualitySequenceDataStore qualityDataStore, QualityValueStrategy qualityValueStrategy){
         try {
             return CompactedSliceMap.<P>create(contig, qualityDataStore, qualityValueStrategy);
         } catch (DataStoreException e) {
