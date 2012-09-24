@@ -168,45 +168,65 @@ public final class MultipleDataStoreWrapper<T, D extends DataStore<T>> implement
         
     }
     private Object handleIterator(Method method, Object[] args) throws Throwable{
-        List<StreamingIterator<T>> iterators = new ArrayList<StreamingIterator<T>>();
-        for(D delegate : delegates){
-            @SuppressWarnings("unchecked")
-            final Iterator<T> delegateIterator = (Iterator<T>)method.invoke(delegate, args);
-            if(delegateIterator instanceof StreamingIterator){
-                iterators.add((StreamingIterator<T>)delegateIterator);
-            }else{
-                iterators.add(IteratorUtil.createStreamingIterator(delegateIterator));
-            }
-        }
-        return IteratorUtil.createChainedStreamingIterator(iterators);
+    	try{
+	        List<StreamingIterator<T>> iterators = new ArrayList<StreamingIterator<T>>();
+	        for(D delegate : delegates){
+	            @SuppressWarnings("unchecked")
+	            final Iterator<T> delegateIterator = (Iterator<T>)method.invoke(delegate, args);
+	            if(delegateIterator instanceof StreamingIterator){
+	                iterators.add((StreamingIterator<T>)delegateIterator);
+	            }else{
+	                iterators.add(IteratorUtil.createStreamingIterator(delegateIterator));
+	            }
+	        }
+	        return IteratorUtil.createChainedStreamingIterator(iterators);
+    	}catch(InvocationTargetException e){
+    		throw e.getCause();
+    	}
     }
     private Object handleIntSumMethod(Method method, Object[] args) throws Throwable {
-        int sum=0;
-        for(D delegate : delegates){
-            sum+= (Integer)(method.invoke(delegate, args));
-        }
-        return sum;
+    	try{
+	        int sum=0;
+	        for(D delegate : delegates){
+	            sum+= (Integer)(method.invoke(delegate, args));
+	        }
+	        return sum;
+    	}catch(InvocationTargetException e){
+    		throw e.getCause();
+    	}
     }
     private Object handleLongSumMethod(Method method, Object[] args) throws Throwable {
-        long sum=0;
-        for(D delegate : delegates){
-            sum+= ((Long)(method.invoke(delegate, args))).longValue();
-        }
-        return sum;
+    	try{
+	        long sum=0;
+	        for(D delegate : delegates){
+	            sum+= ((Long)(method.invoke(delegate, args))).longValue();
+	        }
+	        return sum;
+    	}catch(InvocationTargetException e){
+    		throw e.getCause();
+    	}
     }
     private Object handleBooleanMethod(Method method, Object[] args) throws Throwable {
-        for(D delegate : delegates){
-            if(((Boolean)method.invoke(delegate, args))){
-                return Boolean.TRUE;
-            }
+        try{
+	    	for(D delegate : delegates){
+	            if(((Boolean)method.invoke(delegate, args))){
+	                return Boolean.TRUE;
+	            }
+	        }
+	        return Boolean.FALSE;
+        }catch(InvocationTargetException e){
+        	throw e.getCause();
         }
-        return Boolean.FALSE;
     }
     private Object handleVoidMethod(Method method, Object[] args) throws Throwable {
-        for(D delegate : delegates){
-            method.invoke(delegate, args);
-        }
-        return null;
+    	try{
+	        for(D delegate : delegates){
+	            method.invoke(delegate, args);
+	        }
+	        return null;
+    	}catch(InvocationTargetException e){
+    		throw e.getCause();
+    	}
         
     }
 }
