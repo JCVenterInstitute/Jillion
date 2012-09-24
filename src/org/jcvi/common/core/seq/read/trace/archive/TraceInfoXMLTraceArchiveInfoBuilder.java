@@ -35,29 +35,29 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class TraceInfoXMLTraceArchiveInfoBuilder <T extends TraceArchiveRecord> implements TraceArchiveInfoBuilder<T>{
+public class TraceInfoXMLTraceArchiveInfoBuilder implements TraceArchiveInfoBuilder<TraceArchiveRecord>{
 
-    private final TraceArchiveInfoBuilder<T> builder;
+    private final TraceArchiveInfoBuilder<TraceArchiveRecord> builder;
     public TraceInfoXMLTraceArchiveInfoBuilder(TraceArchiveRecordIdGenerator recordIdGenerator, InputStream inputStream) throws IOException{
-        this(new DefaultTraceArchiveInfoBuilder<T>(), recordIdGenerator, inputStream);
+        this(new DefaultTraceArchiveInfoBuilder(), recordIdGenerator, inputStream);
     }
-    public TraceInfoXMLTraceArchiveInfoBuilder(TraceArchiveInfoBuilder<T> builder,TraceArchiveRecordIdGenerator recordIdGenerator, InputStream inputStream) throws IOException{
+    public TraceInfoXMLTraceArchiveInfoBuilder(TraceArchiveInfoBuilder<TraceArchiveRecord> builder,TraceArchiveRecordIdGenerator recordIdGenerator, InputStream inputStream) throws IOException{
         this.builder = builder;
-        new TraceInfoParser<T>(this,recordIdGenerator,inputStream);
+        new TraceInfoParser<TraceArchiveRecord>(this,recordIdGenerator,inputStream);
     }
     @Override
-    public Map<String, T> getTraceArchiveRecordMap() {
+    public Map<String, TraceArchiveRecord> getTraceArchiveRecordMap() {
        return builder.getTraceArchiveRecordMap();
     }
 
     @Override
-    public TraceArchiveInfoBuilder put(String id, T record) {
+    public TraceArchiveInfoBuilder put(String id, TraceArchiveRecord record) {
         builder.put(id, record);
         return this;
     }
 
     @Override
-    public TraceArchiveInfoBuilder putAll(Map<String, T> map) {
+    public TraceArchiveInfoBuilder putAll(Map<String, TraceArchiveRecord> map) {
         builder.putAll(map);
         return this;
     }
@@ -74,7 +74,14 @@ public class TraceInfoXMLTraceArchiveInfoBuilder <T extends TraceArchiveRecord> 
         return this;
     }
 
-    private static class TraceInfoParser<T extends TraceArchiveRecord> extends DefaultHandler{
+    
+    @Override
+	public TraceArchiveInfo build() {
+		return builder.build();
+	}
+
+
+	private static class TraceInfoParser<T extends TraceArchiveRecord> extends DefaultHandler{
         private final TraceArchiveRecordIdGenerator recordIdGenerator;
         private final TraceInfoXMLTraceArchiveInfoBuilder instance;
         

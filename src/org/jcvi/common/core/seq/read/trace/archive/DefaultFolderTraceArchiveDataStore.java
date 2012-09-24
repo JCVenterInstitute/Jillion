@@ -38,7 +38,11 @@ public class DefaultFolderTraceArchiveDataStore extends AbstractFolderTraceArchi
     }
     protected TraceArchiveTrace createTraceArchiveTrace(String id)
                                         throws DataStoreException {
-      return new DefaultTraceArchiveTrace(getTraceArchiveInfo().get(id),getRootDirPath());
+      TraceArchiveRecord record = getTraceArchiveInfo().get(id);
+      if(record ==null){
+    	  return null;
+      }
+      return new DefaultTraceArchiveTrace(record,getRootDirPath());
       
     }
 

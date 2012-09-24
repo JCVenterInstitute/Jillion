@@ -38,4 +38,6 @@ public interface TraceArchiveInfoBuilder<T extends TraceArchiveRecord>{
     
     Map<String, T> getTraceArchiveRecordMap();
     
+    TraceArchiveInfo build();
+    
 }

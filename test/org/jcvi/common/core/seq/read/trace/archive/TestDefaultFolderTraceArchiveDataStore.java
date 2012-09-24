@@ -27,11 +27,9 @@ import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.archive.DefaultFolderTraceArchiveDataStore;
-import org.jcvi.common.core.seq.read.trace.archive.DefaultTraceArchiveInfo;
 import org.jcvi.common.core.seq.read.trace.archive.DefaultTraceArchiveTrace;
 import org.jcvi.common.core.seq.read.trace.archive.NameTagTraceArchiveRecordIdGenerator;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveInfo;
-import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveRecord;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveRecordIdGenerator;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveTrace;
 import org.jcvi.common.core.seq.read.trace.archive.TraceInfoXMLTraceArchiveInfoBuilder;
@@ -52,10 +50,10 @@ public class TestDefaultFolderTraceArchiveDataStore {
 	
     @Before
     public void setup() throws IOException{
-       traceInfo = new DefaultTraceArchiveInfo(
-                new TraceInfoXMLTraceArchiveInfoBuilder<TraceArchiveRecord>(
+       traceInfo = 
+                new TraceInfoXMLTraceArchiveInfoBuilder(
                 ID_GENERATOR, 
-                RESOURCES.getFileAsStream(FOLDER_ROOT_DIR+"/TRACEINFO.xml")));
+                RESOURCES.getFileAsStream(FOLDER_ROOT_DIR+"/TRACEINFO.xml")).build();
        
        absoluteRootPath = RESOURCES.getFile(FOLDER_ROOT_DIR).getAbsolutePath();
        sut = new DefaultFolderTraceArchiveDataStore(
@@ -76,15 +74,8 @@ public class TestDefaultFolderTraceArchiveDataStore {
     }
     
     @Test
-    public void traceDoesNotExistShouldThrowTraceDecoderException(){
-        String idThatDoesNotExist = "doesNotExist";
-        try{
-            sut.get(idThatDoesNotExist);
-            fail("should Throw TraceDecoderException");
-        }
-        catch(DataStoreException e){
-            assertEquals(idThatDoesNotExist + " does not exist", e.getMessage());
-        }
+    public void traceDoesNotExistShouldReturnNull() throws DataStoreException{
+    	assertNull(sut.get("doesNotExist"));
         
     }
 }
