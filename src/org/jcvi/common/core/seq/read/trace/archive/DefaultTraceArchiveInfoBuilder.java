@@ -24,20 +24,21 @@
 package org.jcvi.common.core.seq.read.trace.archive;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DefaultTraceArchiveInfoBuilder<T extends TraceArchiveRecord> implements TraceArchiveInfoBuilder<T>{
-    private final Map<String, T> map = new LinkedHashMap<String, T>();
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+
+public class DefaultTraceArchiveInfoBuilder implements TraceArchiveInfoBuilder<TraceArchiveRecord>{
+    private final Map<String, TraceArchiveRecord> map = new LinkedHashMap<String, TraceArchiveRecord>();
     
     @Override
-    public DefaultTraceArchiveInfoBuilder put(String key, T record){
+    public DefaultTraceArchiveInfoBuilder put(String key, TraceArchiveRecord record){
         map.put(key, record);
         return this;
     }
     @Override
-    public DefaultTraceArchiveInfoBuilder putAll(Map<String, T> map){
+    public DefaultTraceArchiveInfoBuilder putAll(Map<String, TraceArchiveRecord> map){
         this.map.putAll(map);
         return this;
     }
@@ -55,9 +56,13 @@ public class DefaultTraceArchiveInfoBuilder<T extends TraceArchiveRecord> implem
         return this;
     }
     @Override
-    public Map<String, T> getTraceArchiveRecordMap() {
-        return new LinkedHashMap<String,T>(map);
+    public Map<String, TraceArchiveRecord> getTraceArchiveRecordMap() {
+        return new LinkedHashMap<String,TraceArchiveRecord>(map);
     }
+	@Override
+	public TraceArchiveInfo build() {
+		return MapDataStoreAdapter.adapt(TraceArchiveInfo.class,map);
+	}
 
 
 }

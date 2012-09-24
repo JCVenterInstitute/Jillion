@@ -26,7 +26,6 @@ package org.jcvi.common.core.seq.read.trace.archive;
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.read.trace.archive.DefaultTraceArchiveInfo;
 import org.jcvi.common.core.seq.read.trace.archive.NameTagTraceArchiveRecordIdGenerator;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveInfo;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveRecord;
@@ -43,10 +42,10 @@ public class TestActualTraceArchiveXML {
 	
     @Test
     public void parseTraceInfo() throws IOException, DataStoreException{
-        TraceArchiveInfo traceInfo = new DefaultTraceArchiveInfo(
-                new TraceInfoXMLTraceArchiveInfoBuilder<TraceArchiveRecord>(
+        TraceArchiveInfo traceInfo = 
+                new TraceInfoXMLTraceArchiveInfoBuilder(
                 ID_GENERATOR, 
-                RESOURCES.getFileAsStream(FOLDER_ROOT_DIR+"/TRACEINFO.xml")));
+                RESOURCES.getFileAsStream(FOLDER_ROOT_DIR+"/TRACEINFO.xml")).build();
        TraceArchiveRecord actualRecord = traceInfo.get("XX08A02T44F09PB11F");
        
        assertEquals("XX08A02T44F09PB11F", actualRecord.getAttribute(TraceInfoField.TRACE_NAME));
