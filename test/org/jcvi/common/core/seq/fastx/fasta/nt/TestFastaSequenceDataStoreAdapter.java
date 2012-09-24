@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
 public class TestFastaSequenceDataStoreAdapter {
 
 	private final File fastaFile;
-	private NucleotideDataStore sut;
+	private NucleotideSequenceDataStore sut;
 	public TestFastaSequenceDataStoreAdapter() throws IOException{
 		ResourceFileServer resources = new ResourceFileServer(TestFastaSequenceDataStoreAdapter.class);
 		fastaFile = resources.getFile("files/19150.fasta");
@@ -25,7 +25,7 @@ public class TestFastaSequenceDataStoreAdapter {
 	
 	@Before
 	public void createDataStore() throws FileNotFoundException{
-		sut = FastaRecordDataStoreAdapter.adapt(NucleotideDataStore.class, DefaultNucleotideSequenceFastaFileDataStore.create(fastaFile));
+		sut = FastaRecordDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, DefaultNucleotideSequenceFastaFileDataStore.create(fastaFile));
 	}
 	@Test
 	public void numberOfRecords() throws DataStoreException{

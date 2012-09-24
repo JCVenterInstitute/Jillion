@@ -25,7 +25,7 @@ import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.trace.sanger.primer.PrimerDetector;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
@@ -46,7 +46,7 @@ public class TestPrimerDetectorInternalPrimerHit {
     
     @Test
     public void detect(){
-        NucleotideDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(forwardPrimer, reversePrimer);
+        NucleotideSequenceDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(forwardPrimer, reversePrimer);
         PrimerDetector detector = new PrimerDetector(13, .9F);
         
         Range expectedRange = Range.create(546, 586);

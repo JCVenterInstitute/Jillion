@@ -34,8 +34,11 @@ import org.jcvi.common.core.symbol.Symbol;
  *
  *
  */
-public class FastaRecordDataStoreAdapter{
+public final class FastaRecordDataStoreAdapter{
 
+	private FastaRecordDataStoreAdapter(){
+		//can not instantiate
+	}
     /**
      * Convert of {@code DataStore<F>} into a DataStore{@code DataStore<T>}
      * @param <T> the values of the fastaRecord.

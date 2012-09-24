@@ -28,7 +28,7 @@ import java.util.Iterator;
 
 import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffFileDataStore;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public abstract class AbstractTestSffNucleotideDataStore extends AbstractTestExampleSffFile{
@@ -44,11 +44,11 @@ public abstract class AbstractTestSffNucleotideDataStore extends AbstractTestExa
         } 
     }
     
-    protected abstract NucleotideDataStore createSut(File sffFile) throws Exception;
+    protected abstract NucleotideSequenceDataStore createSut(File sffFile) throws Exception;
     
     @Test
     public void datastoresMatch() throws Exception{
-        NucleotideDataStore sut = createSut(SFF_FILE);
+        NucleotideSequenceDataStore sut = createSut(SFF_FILE);
         assertEquals(sut.getNumberOfRecords(), dataStore.getNumberOfRecords());
         Iterator<String> ids = sut.idIterator();
         while(ids.hasNext()){

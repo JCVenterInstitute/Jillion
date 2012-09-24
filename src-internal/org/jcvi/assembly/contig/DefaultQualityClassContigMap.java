@@ -33,7 +33,7 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
-import org.jcvi.common.core.symbol.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.glyph.qualClass.QualityClass;
 
@@ -41,11 +41,11 @@ public class DefaultQualityClassContigMap implements QualityClassMap{
 
     List<QualityClassRegion> qualityClassRegions;
     
-    public static <P extends AssembledRead, C extends Contig<P>> QualityClassMap create(C contig,QualityDataStore qualityDataStore, 
+    public static <P extends AssembledRead, C extends Contig<P>> QualityClassMap create(C contig,QualitySequenceDataStore qualityDataStore, 
             QualityClassComputer qualityClassComputer){
        return create(CoverageMapFactory.createGappedCoverageMapFromContig(contig),contig,qualityDataStore,qualityClassComputer);
     }
-    public static <P extends AssembledRead, C extends Contig<P>> QualityClassMap create(CoverageMap<P> coverageMap,C contig,QualityDataStore qualityDataStore, 
+    public static <P extends AssembledRead, C extends Contig<P>> QualityClassMap create(CoverageMap<P> coverageMap,C contig,QualitySequenceDataStore qualityDataStore, 
             QualityClassComputer qualityClassComputer){
        return new DefaultQualityClassContigMap(coverageMap,contig.getConsensusSequence(),qualityDataStore,qualityClassComputer);
     }
@@ -53,7 +53,7 @@ public class DefaultQualityClassContigMap implements QualityClassMap{
     <P extends AssembledRead> DefaultQualityClassContigMap(
                     CoverageMap<P> coverageMap, 
                     NucleotideSequence consensus,
-                    QualityDataStore qualityDataStore, 
+                    QualitySequenceDataStore qualityDataStore, 
                     QualityClassComputer qualityClassComputer){
         qualityClassRegions = new ArrayList<QualityClassRegion>();
         QualityClass qualityClass =null;

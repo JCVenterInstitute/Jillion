@@ -33,13 +33,13 @@ import org.jcvi.common.core.assembly.clc.cas.CasMatch;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePassCasFileVisitor implements CasNucleotideDataStore {
 
-    private final List<NucleotideDataStore> nucleotideDataStores = new ArrayList<NucleotideDataStore>();
+    private final List<NucleotideSequenceDataStore> nucleotideDataStores = new ArrayList<NucleotideSequenceDataStore>();
     
     private final CasDataStoreFactory casDataStoreFactory;
     private DataStore<NucleotideSequence> delegate;
@@ -73,7 +73,7 @@ public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePass
 
     @Override
     public synchronized void close() throws IOException {
-        for(NucleotideDataStore nucleotideDataStore: nucleotideDataStores){
+        for(NucleotideSequenceDataStore nucleotideDataStore: nucleotideDataStores){
             nucleotideDataStore.close();
         }
         delegate.close();

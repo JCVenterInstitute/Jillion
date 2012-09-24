@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
@@ -43,7 +43,7 @@ public final class GappedNucleotideAlignmentDataStore {
 	private GappedNucleotideAlignmentDataStore(){
 		//can not instantiate
 	}
-    public static NucleotideDataStore createFromAlnFile(File alnFile) throws IOException{
+    public static NucleotideSequenceDataStore createFromAlnFile(File alnFile) throws IOException{
         GappedAlignmentDataStoreBuilder builder = new GappedAlignmentDataStoreBuilder();
         AlnParser.parse(alnFile, builder);
         return builder.build();
@@ -51,7 +51,7 @@ public final class GappedNucleotideAlignmentDataStore {
    
 
     
-    private static class GappedAlignmentDataStoreBuilder implements AlnVisitor, Builder<NucleotideDataStore>{
+    private static class GappedAlignmentDataStoreBuilder implements AlnVisitor, Builder<NucleotideSequenceDataStore>{
         private final Map<String, NucleotideSequenceBuilder> builders = new LinkedHashMap<String, NucleotideSequenceBuilder>();
        
         
@@ -59,7 +59,7 @@ public final class GappedNucleotideAlignmentDataStore {
         * {@inheritDoc}
         */
         @Override
-        public NucleotideDataStore build() {
+        public NucleotideSequenceDataStore build() {
             Map<String, NucleotideSequence> map = new LinkedHashMap<String, NucleotideSequence>(builders.size());
             Iterator<Entry<String, NucleotideSequenceBuilder>> entrySet = builders.entrySet().iterator();
             //all the sequences in an aln file should be stretched to the same length
@@ -79,7 +79,7 @@ public final class GappedNucleotideAlignmentDataStore {
             	}
 	            builders.clear();
             }
-            return MapDataStoreAdapter.adapt(NucleotideDataStore.class, map);
+            return MapDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, map);
         }
 
         /**

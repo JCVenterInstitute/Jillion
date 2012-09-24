@@ -27,13 +27,13 @@ import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.symbol.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 
 public interface SliceMapFactory<P extends AssembledRead> {
 
     SliceMap createNewSliceMap(CoverageMap<P> coverageMap, 
-            QualityDataStore qualityDataStore) throws DataStoreException;
+            QualitySequenceDataStore qualityDataStore) throws DataStoreException;
     
     SliceMap createNewSliceMap(Contig<P> coverageMap, 
-            QualityDataStore qualityDataStore) throws DataStoreException;
+            QualitySequenceDataStore qualityDataStore) throws DataStoreException;
 }

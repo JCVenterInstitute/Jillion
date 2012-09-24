@@ -30,7 +30,7 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.assembly.util.slice.QualityValueStrategy;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.glyph.qualClass.QualityClass;
 
@@ -49,14 +49,14 @@ public class TestDefaultContigQualityClassComputer {
     
     QualityValueStrategy qualityValueStrategy;
     DefaultContigQualityClassComputer  sut;
-    QualityDataStore qualityFastaMap;
+    QualitySequenceDataStore qualityFastaMap;
     NucleotideSequence consensus;
     @Before
     public void setup() throws SecurityException{
         qualityValueStrategy = createMock(QualityValueStrategy.class);
 
         sut = new DefaultContigQualityClassComputer(qualityValueStrategy,threshold);
-        qualityFastaMap = createMock(QualityDataStore.class);
+        qualityFastaMap = createMock(QualitySequenceDataStore.class);
         consensus = createMock(NucleotideSequence.class);
     }
     

@@ -24,7 +24,7 @@ import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.slice.CompactedSliceMap;
 import org.jcvi.common.core.assembly.util.slice.SliceMap;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.symbol.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 
 /**
  * @author dkatzel
@@ -38,7 +38,7 @@ public class TestCompactedSliceMap extends AbstractTestSliceMap{
     */
     @Override
     protected SliceMap createSliceMapFor(Contig<AssembledRead> contig,
-            QualityDataStore qualityDatastore,
+            QualitySequenceDataStore qualityDatastore,
             QualityValueStrategy qualityValueStrategy) {
 
         try {

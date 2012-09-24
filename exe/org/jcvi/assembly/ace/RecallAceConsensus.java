@@ -58,7 +58,7 @@ import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWrit
 import org.jcvi.common.core.seq.read.trace.TraceQualityDataStoreAdapter;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -154,7 +154,7 @@ public class RecallAceConsensus {
             PhdDataStore phdballDataStore = new PhdDirQualityDataStore(phdballDir);
             PhdDataStore phdDataStore = new PhdDirQualityDataStore(phdDir);
             PhdDataStore masterPhdDataStore= MultipleDataStoreWrapper.createMultipleDataStoreWrapper(PhdDataStore.class, phdDataStore,phdballDataStore);
-            QualityDataStore qualityDataStore = TraceQualityDataStoreAdapter.adapt(masterPhdDataStore); 
+            QualitySequenceDataStore qualityDataStore = TraceQualityDataStoreAdapter.adapt(masterPhdDataStore); 
             ConsensusCaller consensusCaller = createConsensusCaller(RecallType.parse(commandLine.getOptionValue("recall_with")), PhredQuality.valueOf(30));
            
             AceFileContigDataStore aceContigDataStore = IndexedAceFileDataStore.create(inputAceFile);

@@ -17,6 +17,10 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  */
 public final class DataStoreAdapter {
+	
+	private DataStoreAdapter(){
+		//can not instantiate
+	}
 	/**
 	 * {@code AdapterCallback} is a callback
 	 * method that can convert one type into 
@@ -33,7 +37,7 @@ public final class DataStoreAdapter {
      * @param <T> the "To" type.  This is the type that we want to convert the type F into which may
      * require method calls or new object creation.
 	 */
-	public static interface AdapterCallback<F,T>{
+	public interface AdapterCallback<F,T>{
 		/**
 		 * Get the adapted type from the original type.
 		 * @param from the object to adapt;
@@ -43,7 +47,7 @@ public final class DataStoreAdapter {
 		 * returns null, then {@link DataStoreAdapter}
 		 * will throw a NullPointerException.
 		 */
-		public T get(F from);
+		T get(F from);
 	}
 	/**
      * Create a new DataStore instance of the given

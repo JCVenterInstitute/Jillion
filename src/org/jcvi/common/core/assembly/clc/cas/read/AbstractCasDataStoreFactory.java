@@ -24,8 +24,8 @@ import java.io.File;
 import org.jcvi.common.core.assembly.clc.cas.CasTrimMap;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
-import org.jcvi.common.core.symbol.qual.QualityDataStore;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 
 /**
  * {@code AbstractCasDataStoreFactory} is an abstract
@@ -60,7 +60,7 @@ public abstract class AbstractCasDataStoreFactory implements CasDataStoreFactory
     }
 
     @Override
-    public final NucleotideDataStore getNucleotideDataStoreFor(String pathToDataStore)
+    public final NucleotideSequenceDataStore getNucleotideDataStoreFor(String pathToDataStore)
             throws CasDataStoreFactoryException {
         File trimmedDataStore = getTrimmedFileFor(pathToDataStore);   
         return getNucleotideDataStoreFor(trimmedDataStore,filter);
@@ -80,10 +80,10 @@ public abstract class AbstractCasDataStoreFactory implements CasDataStoreFactory
      * @param file
      * @return
      */
-    protected abstract NucleotideDataStore getNucleotideDataStoreFor(File file,DataStoreFilter filter) throws CasDataStoreFactoryException;
+    protected abstract NucleotideSequenceDataStore getNucleotideDataStoreFor(File file,DataStoreFilter filter) throws CasDataStoreFactoryException;
 
     @Override
-    public final QualityDataStore getQualityDataStoreFor(String pathToDataStore)
+    public final QualitySequenceDataStore getQualityDataStoreFor(String pathToDataStore)
             throws CasDataStoreFactoryException {
         File trimmedDataStore = getTrimmedFileFor(pathToDataStore);   
         return getQualityDataStoreFor(trimmedDataStore,filter);
@@ -92,7 +92,7 @@ public abstract class AbstractCasDataStoreFactory implements CasDataStoreFactory
      * @param file
      * @return
      */
-    protected abstract QualityDataStore getQualityDataStoreFor(File file,DataStoreFilter filter) throws CasDataStoreFactoryException;
+    protected abstract QualitySequenceDataStore getQualityDataStoreFor(File file,DataStoreFilter filter) throws CasDataStoreFactoryException;
 
     
 }

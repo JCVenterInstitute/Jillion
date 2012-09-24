@@ -31,8 +31,8 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.fastx.fasta.nt.LargeNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.LargeQualityFastaFileDataStore;
-import org.jcvi.common.core.symbol.qual.QualityDataStore;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 /**
  * {@code FastaCasDataStoreFactory} is a {@link CasDataStoreFactory}
  * implementation for .fasta files.
@@ -70,16 +70,16 @@ public class FastaCasDataStoreFactory extends AbstractCasDataStoreFactory
         this.cacheSize = cacheSize;
     }
     @Override
-    public NucleotideDataStore getNucleotideDataStoreFor(File pathToDataStore, DataStoreFilter filter) throws CasDataStoreFactoryException {  
-        return CachedDataStore.create(NucleotideDataStore.class, 
-                     FastaRecordDataStoreAdapter.adapt(NucleotideDataStore.class, LargeNucleotideSequenceFastaFileDataStore.create(pathToDataStore)),
+    public NucleotideSequenceDataStore getNucleotideDataStoreFor(File pathToDataStore, DataStoreFilter filter) throws CasDataStoreFactoryException {  
+        return CachedDataStore.create(NucleotideSequenceDataStore.class, 
+                     FastaRecordDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, LargeNucleotideSequenceFastaFileDataStore.create(pathToDataStore)),
                      cacheSize);            
     }
     @Override
-    public QualityDataStore getQualityDataStoreFor(
+    public QualitySequenceDataStore getQualityDataStoreFor(
             File fastaFile,DataStoreFilter filter) throws CasDataStoreFactoryException { 
-        return CachedDataStore.create(QualityDataStore.class, 
-        		FastaRecordDataStoreAdapter.adapt(QualityDataStore.class, new LargeQualityFastaFileDataStore(fastaFile)),
+        return CachedDataStore.create(QualitySequenceDataStore.class, 
+        		FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, new LargeQualityFastaFileDataStore(fastaFile)),
                 cacheSize);  
         
     }

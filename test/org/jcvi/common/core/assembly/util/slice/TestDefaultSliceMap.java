@@ -25,7 +25,7 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.assembly.util.slice.DefaultSliceMap;
 import org.jcvi.common.core.assembly.util.slice.SliceMap;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.symbol.qual.QualityDataStore;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 
 /**
  * @author dkatzel
@@ -39,7 +39,7 @@ public class TestDefaultSliceMap extends AbstractTestSliceMap{
     */
     @Override
     protected SliceMap createSliceMapFor(Contig<AssembledRead> contig,
-            QualityDataStore qualityDatastore, QualityValueStrategy qualityValueStrategy) {
+            QualitySequenceDataStore qualityDatastore, QualityValueStrategy qualityValueStrategy) {
         try {
 			return DefaultSliceMap.create(contig,
 			        qualityDatastore, qualityValueStrategy);
