@@ -63,6 +63,7 @@ public interface DataStore<T> extends Closeable{
      * @return the object being fetched, may be null.
      * @throws DataStoreException if there is a problem fetching the
      * data from this Datastore.
+     * @throws IllegalStateException if this datastore is closed.
      */
     T get(String id) throws DataStoreException;
     /**

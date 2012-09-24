@@ -23,14 +23,10 @@
  */
 package org.jcvi.common.core.seq.fastx.fasta;
 
-import java.io.IOException;
-
 import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.DataStoreIterator;
+import org.jcvi.common.core.datastore.DataStoreAdapter;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.Symbol;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code FastaRecordDataStoreAdapter} adapts a {@link DataStore} of {@link FastaRecord}s
  * into a {@link DataStore} of the value returned by {@link FastaRecord#getSequence()}.
@@ -38,9 +34,8 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  *
  */
-public class FastaRecordDataStoreAdapter<S extends Symbol,T extends Sequence<S>,F extends FastaRecord<S,T>> implements DataStore<T> {
+public class FastaRecordDataStoreAdapter{
 
-    private final DataStore<F> delegate;
     /**
      * Convert of {@code DataStore<F>} into a DataStore{@code DataStore<T>}
      * @param <T> the values of the fastaRecord.
@@ -48,50 +43,15 @@ public class FastaRecordDataStoreAdapter<S extends Symbol,T extends Sequence<S>,
      * @param datastoreOfFastaRecords the DataStore of F to wrap.
      * @return a new {@code DataStore<T>} which wraps the given datastore. 
      */
-    public static <S extends Symbol,T extends Sequence<S>,F extends FastaRecord<S,T>> FastaRecordDataStoreAdapter<S,T,F> adapt(DataStore<F> datastoreOfFastaRecords){
-        return new FastaRecordDataStoreAdapter<S,T,F>(datastoreOfFastaRecords);
-    }
-    public FastaRecordDataStoreAdapter(DataStore<F> datastoreOfFastaRecords){
-        this.delegate = datastoreOfFastaRecords;
-    }
+    public static <S extends Symbol,T extends Sequence<S>,F extends FastaRecord<S,T>, D extends DataStore<T>> D adapt(Class<D> datastoreToMimic, DataStore<F> datastoreOfFastaRecords){
+       return DataStoreAdapter.adapt(datastoreToMimic, datastoreOfFastaRecords, new DataStoreAdapter.AdapterCallback<F, T>() {
 
-    @Override
-    public boolean contains(String id) throws DataStoreException {
-        return delegate.contains(id);
+		@Override
+		public T get(F from) {
+			return from.getSequence();
+		}
+    	   
+       });
     }
-
-    @Override
-    public T get(String id) throws DataStoreException {
-        return delegate.get(id).getSequence();
-    }
-
-    @Override
-    public StreamingIterator<String> idIterator() throws DataStoreException {
-        return delegate.idIterator();
-    }
-
-    @Override
-    public long getNumberOfRecords() throws DataStoreException {
-        return delegate.getNumberOfRecords();
-    }
-
-    @Override
-    public void close() throws IOException {
-        delegate.close();
-        
-    }
-
-    @Override
-    public StreamingIterator<T> iterator() {
-        return new DataStoreIterator<T>(this);
-    }
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public boolean isClosed(){
-        return delegate.isClosed();
-    }
-    
     
 }

@@ -157,5 +157,5 @@ public  abstract class AbstractTestSequenceFastaDataStoreWithNoComment {
 
 
 
-protected abstract DataStore<NucleotideSequenceFastaRecord> buildMap(File file) throws IOException;
+protected abstract DataStore<NucleotideSequenceFastaRecord> createDataStore(File file) throws IOException;
 }
