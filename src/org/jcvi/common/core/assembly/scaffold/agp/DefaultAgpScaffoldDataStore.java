@@ -58,12 +58,12 @@ public final class DefaultAgpScaffoldDataStore {
 	    }
 	
 	    public void visitEndOfFile() {
-	       
+	    	//no-op
 	    }
 	
 	    @Override
 	    public void visitFile() {
-	        // TODO Auto-generated method stub
+	    	//no-op
 	        
 	    }
 	

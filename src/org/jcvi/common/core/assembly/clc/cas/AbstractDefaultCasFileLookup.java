@@ -275,12 +275,12 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
 
         @Override
         public void visitEndOfFile() {
-
+        	//no-op
         }
 
         @Override
         public void visitFile() {
-
+        	//no-op
         }
         @Override
         public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
@@ -318,23 +318,23 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
 		}
 		@Override
 		public void visitLine(String line) {
-			
+			//no-op
 		}
 		@Override
 		public void visitFile() {
-			
+			//no-op
 		}
 		@Override
 		public void visitEndOfFile() {
-			
+			//no-op
 		}
 		@Override
 		public void visitNucleotides(NucleotideSequence nucleotides) {
-			
+			//no-op
 		}
 		@Override
 		public void visitEncodedQualities(String encodedQualities) {
-			
+			//no-op
 		}
        
     }

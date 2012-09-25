@@ -118,7 +118,7 @@ public class CtgFileWriter implements Closeable{
                 placedRead.getNucleotideSequence().getLength(), validLeft+1, validRight+1, 
                 placedRead.getGappedStartOffset()+1-consensus.getNumberOfGapsUntil((int) placedRead.getGappedStartOffset()), 
                 placedRead.getGappedEndOffset()+1-consensus.getNumberOfGapsUntil((int)placedRead.getGappedEndOffset())));
-        header.append("\n");
+        header.append('\n');
         writeToOutputStream(header.toString());
         
     }

@@ -72,7 +72,7 @@ public final class DefaultReferenceVariationsDataStore {
 	    */
 	    @Override
 	    public void visitLine(String line) {
-	        
+	    	//no-op
 	    }
 	    /**
 	    * {@inheritDoc}
@@ -88,7 +88,7 @@ public final class DefaultReferenceVariationsDataStore {
 	    */
 	    @Override
 	    public void visitFile() {
-	        
+	    	//no-op
 	    }
 	    
 	    

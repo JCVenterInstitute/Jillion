@@ -54,7 +54,7 @@ public class BasicChromatogramFile implements Chromatogram, ChromatogramFileVisi
     */
     @Override
     public void visitFile() {
-        
+    	//no-op
     }
 
     /**
@@ -228,7 +228,7 @@ public class BasicChromatogramFile implements Chromatogram, ChromatogramFileVisi
     */
     @Override
     public void visitNewTrace() {
-        
+    	//no-op
     }
 
 
@@ -237,7 +237,7 @@ public class BasicChromatogramFile implements Chromatogram, ChromatogramFileVisi
     */
     @Override
     public void visitEndOfTrace() {
-        
+    	//no-op
     }
 
 

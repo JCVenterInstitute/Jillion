@@ -61,17 +61,25 @@ public final class LargeFastaIdIterator extends AbstractBlockingCloseableIterato
 			}
 
 			@Override
-			public void visitLine(String line) {}
+			public void visitLine(String line) {
+				//no-op
+			}
 
 			@Override
-			public void visitFile() {}
+			public void visitFile() {
+				//no-op
+			}
 
 			@Override
-			public void visitEndOfFile() {}
+			public void visitEndOfFile() {
+				//no-op
+			}
 
 			
 			@Override
-			public void visitBodyLine(String bodyLine) {}
+			public void visitBodyLine(String bodyLine) {
+				//no-op
+			}
 
 			@Override
 			public EndOfBodyReturnCode visitEndOfBody() {

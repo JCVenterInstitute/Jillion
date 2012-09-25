@@ -161,13 +161,12 @@ public final class DefaultSffFileDataStore {
 
 		@Override
 		public void visitFile() {
-			
+			//no-op
 		}
 
 		@Override
 		public void visitEndOfFile() {
-			
-			
+			//no-op			
 		}
     	
     }

@@ -30,6 +30,16 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 /**
+ * {@code AbstractAsmVisitor} is an {@link AsmVisitor}
+ * implementation that implements all void methods
+ * as no-ops and all methods that return
+ * some kind of filter return value as the 
+ * most permissive return so all objects
+ * will get visited.
+ * 
+ * This allows sub-classes to only override
+ * whatever they want to change without requiring
+ * boilerplate code of lots of no-ops.
  * @author dkatzel
  *
  *
@@ -41,7 +51,7 @@ public abstract class AbstractAsmVisitor implements AsmVisitor{
     */
     @Override
     public void visitLine(String line) {
-        
+    	//no-op
     }
 
     /**
@@ -49,7 +59,7 @@ public abstract class AbstractAsmVisitor implements AsmVisitor{
     */
     @Override
     public void visitFile() {
-        
+    	//no-op
     }
 
     /**
@@ -57,7 +67,7 @@ public abstract class AbstractAsmVisitor implements AsmVisitor{
     */
     @Override
     public void visitEndOfFile() {
-        
+    	//no-op
     }
 
     /**
@@ -67,7 +77,7 @@ public abstract class AbstractAsmVisitor implements AsmVisitor{
     public void visitLibraryStatistics(String externalId, long internalId,
             float meanOfDistances, float stdDev, int min, int max,
             List<Integer> histogram) {
-        
+    	//no-op
     }
 
     /**
@@ -76,7 +86,7 @@ public abstract class AbstractAsmVisitor implements AsmVisitor{
     @Override
     public void visitRead(String externalId, long internalId,
             MateStatus mateStatus, boolean isSingleton, Range clearRange) {
-        
+    	//no-op
     }
 
     /**
@@ -85,7 +95,7 @@ public abstract class AbstractAsmVisitor implements AsmVisitor{
     @Override
     public void visitMatePair(String externalIdOfRead1,
             String externalIdOfRead2, MateStatus mateStatus) {
-        
+    	//no-op
     }
 
     /**
@@ -106,6 +116,7 @@ public abstract class AbstractAsmVisitor implements AsmVisitor{
     */
     @Override
     public void visitEndOfUnitig() {
+    	//no-op
     }
 
     /**
@@ -114,7 +125,7 @@ public abstract class AbstractAsmVisitor implements AsmVisitor{
     @Override
     public void visitReadLayout(char readType, String externalReadId,
             DirectedRange readRange, List<Integer> gapOffsets) {
-        
+    	//no-op
     }
 
     /**
@@ -124,7 +135,7 @@ public abstract class AbstractAsmVisitor implements AsmVisitor{
     public void visitUnitigLayout(UnitigLayoutType type,
             String unitigExternalId, DirectedRange unitigRange,
             List<Integer> gapOffsets) {
-        
+    	//no-op
     }
 
     /**
@@ -136,7 +147,7 @@ public abstract class AbstractAsmVisitor implements AsmVisitor{
             OverlapType overlapType, OverlapStatus status,
             boolean isPossibleChimera, int numberOfEdges, float meanDistance,
             float stddev, Set<MatePairEvidence> matePairEvidence) {
-        
+    	//no-op
     }
 
     /**
@@ -148,7 +159,7 @@ public abstract class AbstractAsmVisitor implements AsmVisitor{
             OverlapType overlapType, OverlapStatus status, int numberOfEdges,
             float meanDistance, float stddev,
             Set<MatePairEvidence> matePairEvidence) {
-        
+    	//no-op
     }
 
     /**
@@ -173,7 +184,7 @@ public abstract class AbstractAsmVisitor implements AsmVisitor{
             int anchorSize, long internalAccessionId,
             long accessionForPhasedVariant,
             SortedSet<VariantRecord> variantRecords) {
-        
+    	//no-op
     }
 
     /**
@@ -181,7 +192,7 @@ public abstract class AbstractAsmVisitor implements AsmVisitor{
     */
     @Override
     public void visitEndOfContig() {
-        
+    	//no-op
     }
 
     /**
@@ -200,7 +211,7 @@ public abstract class AbstractAsmVisitor implements AsmVisitor{
     */
     @Override
     public void visitSingleContigInScaffold(String externalContigId) {
-        
+    	//no-op
     }
 
     /**
@@ -210,7 +221,7 @@ public abstract class AbstractAsmVisitor implements AsmVisitor{
     public void visitContigPair(String externalContigId1,
             String externalContigId2, float meanDistance, float stddev,
             LinkOrientation orientation) {
-        
+    	//no-op
     }
 
     /**
@@ -218,7 +229,7 @@ public abstract class AbstractAsmVisitor implements AsmVisitor{
     */
     @Override
     public void visitEndOfScaffold() {
-        
+    	//no-op
     }
 
     /**
@@ -230,7 +241,7 @@ public abstract class AbstractAsmVisitor implements AsmVisitor{
             OverlapType overlapType, OverlapStatus status, int numberOfEdges,
             float meanDistance, float stddev,
             Set<MatePairEvidence> matePairEvidence) {
-        
+    	//no-op
     }
 
 }

@@ -226,12 +226,12 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
 
         @Override
         public void visitEndOfFile() {
-
+        	//no-op
         }
 
         @Override
         public void visitFile() {
-
+        	//no-op
         }
     }
     

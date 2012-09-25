@@ -146,10 +146,14 @@ public final class IndexedSffFileDataStore{
 	private static final class NumberOfReadChecker implements SffFileVisitor{
 		private long numberOfReads=Long.MAX_VALUE;
 		@Override
-		public void visitFile() {}
+		public void visitFile() {
+			//no-op
+		}
 
 		@Override
-		public void visitEndOfFile() {}
+		public void visitEndOfFile() {
+			//no-op
+		}
 
 		@Override
 		public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {

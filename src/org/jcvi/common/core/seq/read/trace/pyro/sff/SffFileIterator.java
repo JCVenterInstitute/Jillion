@@ -60,11 +60,15 @@ public final class SffFileIterator extends AbstractBlockingCloseableIterator<Flo
          	SffFileVisitor visitor = new SffFileVisitor() {
          		private SffReadHeader currentReadHeader;
          		@Override
-         		public void visitFile() {}
+         		public void visitFile() {
+         			//no-op
+         		}
 
          		
          		@Override
-         		public void visitEndOfFile() {}
+         		public void visitEndOfFile() {
+         			//no-op
+         		}
 
          		@Override
          		public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {

@@ -129,7 +129,7 @@ public abstract class AbstractTigrAssemblerFileContigDataStore extends AbstractD
         */
         @Override
         public void visitLine(String line) {
-            
+        	//no-op
         }
 
         /**
@@ -147,7 +147,7 @@ public abstract class AbstractTigrAssemblerFileContigDataStore extends AbstractD
         */
         @Override
         public void visitFile() {
-            
+        	//no-op
         }
 
         /**
