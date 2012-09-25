@@ -147,20 +147,19 @@ public final class LargeAceFileDataStore implements AceFileContigDataStore{
 		if(!contigIdFilter.accept(id)){
 			throw new DataStoreException(String.format("contig id %s not allowed by filter", id));
 		}
-		boolean found = false;
+
 		StreamingIterator<String> ids = idIterator();
 		try{
 			while(ids.hasNext()){
 				String nextId = ids.next();
 				if(id.equals(nextId)){
-					found=true;
-					IOUtil.closeAndIgnoreErrors(ids);
+					return true;
 				}
 			}
 		}finally{
 			IOUtil.closeAndIgnoreErrors(ids);
 		}
-		return found;
+		return false;
 	}
 	
 	
