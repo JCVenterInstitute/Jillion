@@ -23,11 +23,11 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.util.iter.ArrayIterator;
 
 /**
  * @author dkatzel
@@ -57,21 +57,28 @@ public final class CompactedSlice implements IdedSlice{
     public Iterator<IdedSliceElement> iterator() {
     	
         return new Iterator<IdedSliceElement>(){
-            Iterator<String> idIter = new ArrayIterator<String>(ids);
+        	int i=0;
             @Override
             public boolean hasNext() {
-                return idIter.hasNext();
+                return i<ids.length;
             }
 
             @Override
             public IdedSliceElement next() {
-                String id= idIter.next();
-                return getSliceElement(id);
+            	if(!hasNext()){
+            		throw new NoSuchElementException();
+            	}
+            	String id = ids[i];
+            	int offset = i*2;
+                byte dirAndNuc =elements[offset];
+                byte qual = elements[offset+1];
+                i++;
+                return new CompactedSliceElement(id, qual, dirAndNuc);
             }
 
             @Override
             public void remove() {
-                idIter.remove();
+                throw new UnsupportedOperationException();
                 
             }
             

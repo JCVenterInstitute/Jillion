@@ -19,19 +19,10 @@
 
 package org.jcvi.common.core.assembly.util.slice;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.util.coverage.CoverageMapUtil;
-import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -52,156 +43,8 @@ public final class CompactedSliceMap implements SliceMap {
     public static <PR extends AssembledRead> CompactedSliceMap create(Contig<PR> contig,QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
         return new CompactedSliceMap(contig, qualityDataStore, qualityValueStrategy);
     }
-    public static <PR extends AssembledRead> CompactedSliceMap create(Contig<PR> contig, PhredQuality defaultQuality) throws DataStoreException{
-        return new CompactedSliceMap(contig, new NullQualityDataStore(defaultQuality), new FakeQualityValueStrategy(defaultQuality));
-    }
-    public static <PR extends AssembledRead> CompactedSliceMap create(CoverageMap<PR> coverageMap,QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
-        return new CompactedSliceMap(coverageMap, qualityDataStore, qualityValueStrategy);
-    }
-    public static <PR extends AssembledRead> CompactedSliceMap create(CoverageMap<PR> coverageMap,PhredQuality defaultQuality) throws DataStoreException{
-        return new CompactedSliceMap(coverageMap, new NullQualityDataStore(defaultQuality), new FakeQualityValueStrategy(defaultQuality));
-    }
-    private static final class NullQualityDataStore implements QualitySequenceDataStore{
-        final QualitySequence fakeQualities;
-        public NullQualityDataStore(final PhredQuality defaultQuality){
-            fakeQualities = new QualitySequence(){
-             
 
-                /**
-                * {@inheritDoc}
-                */
-                @Override
-                public PhredQuality get(long index) {
-                    return defaultQuality;
-                }
-
-                /**
-                * {@inheritDoc}
-                */
-                @Override
-                public long getLength() {
-                    // TODO Auto-generated method stub
-                    return 0;
-                }
-
-
-                @Override
-                public Iterator<PhredQuality> iterator() {
-                    // TODO Auto-generated method stub
-                    return null;
-                }
-
-				@Override
-				public Iterator<PhredQuality> iterator(Range range) {
-					// TODO Auto-generated method stub
-					return null;
-				}
-                
-            };
-        }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public StreamingIterator<String> idIterator() throws DataStoreException {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public QualitySequence get(String id) throws DataStoreException {
-
-            return fakeQualities;
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public boolean contains(String id) throws DataStoreException {
-            // TODO Auto-generated method stub
-            return false;
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public long getNumberOfRecords() throws DataStoreException {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public boolean isClosed(){
-            // TODO Auto-generated method stub
-            return false;
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public void close() throws IOException {
-            // TODO Auto-generated method stub
-            
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public StreamingIterator<QualitySequence> iterator() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-        
-    }
-    private static final class FakeQualityValueStrategy implements QualityValueStrategy{
-        private final PhredQuality defaultQuality;
-        
-        private FakeQualityValueStrategy(PhredQuality defaultQuality) {
-            super();
-            this.defaultQuality = defaultQuality;
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public PhredQuality getQualityFor(AssembledRead placedRead,
-        		QualitySequence fullQualities, int gappedReadIndex) {
-            return defaultQuality;
-        }
-        
-    }
-    private <PR extends AssembledRead, M extends CoverageMap<PR>> CompactedSliceMap(
-            M coverageMap, QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
-        int size = (int)CoverageMapUtil.getLastCoveredOffsetIn(coverageMap)+1;
-        this.slices = new CompactedSlice[size];
-        for(CoverageRegion<PR> region : coverageMap){
-            Map<String,QualitySequence> qualities = new HashMap<String,QualitySequence>(region.getCoverageDepth());
-            for(AssembledRead read :region){
-                final String id = read.getId();
-                if(qualityDataStore==null){
-                    qualities.put(id,null);
-                }else{
-                    qualities.put(id,qualityDataStore.get(id));
-                }
-            }
-            Range range = region.asRange();
-            for(int i=(int)range.getBegin(); i<=range.getEnd(); i++ ){
-                
-                this.slices[i] =createSlice(region, qualities,qualityValueStrategy,i);                
-            }
-        }
-    }
+   
    
     private <PR extends AssembledRead, C extends Contig<PR>>  CompactedSliceMap(
             C contig, QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
@@ -239,31 +82,7 @@ public final class CompactedSliceMap implements SliceMap {
     		IOUtil.closeAndIgnoreErrors(readIter);
     	}
     }
-    /**
-     * {@inheritDoc}
-     */
-    protected CompactedSlice createSlice(
-            CoverageRegion<? extends AssembledRead> region, 
-            Map<String,QualitySequence> qualities,
-            QualityValueStrategy qualityValueStrategy,
-            int i) {
-        CompactedSlice.Builder builder = new CompactedSlice.Builder();
-        for (AssembledRead read : region) {
-            String id=read.getId();
-            int indexIntoRead = (int) (i - read.getGappedStartOffset());
-            QualitySequence fullQualities = qualities.get(id);
-            final PhredQuality quality;
-            if(fullQualities==null){
-                quality = PhredQuality.valueOf(30);
-            }else{
-                quality = qualityValueStrategy.getQualityFor(read, fullQualities, indexIntoRead);
-            }
-            builder.addSliceElement(id,
-                    read.getNucleotideSequence().get(indexIntoRead),
-                    quality, read.getDirection());
-        }
-        return builder.build();
-    }
+
 
     /**
      * {@inheritDoc}
