@@ -100,4 +100,6 @@ public final class ConsensusNavigationElement extends AbstractNavigationElement{
         Range ungappedRange = AssemblyUtil.toUngappedRange(contig.getConsensusSequence(), gappedFeatureRange);
         return new ConsensusNavigationElement(contig.getId(), ungappedRange,comment);
     }
+    
+    
 }
