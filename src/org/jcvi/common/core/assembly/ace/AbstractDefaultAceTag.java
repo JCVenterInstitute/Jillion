@@ -42,6 +42,15 @@ public abstract class AbstractDefaultAceTag implements AceTag{
      */
     public AbstractDefaultAceTag(String type, String creator,
             Date creationDate, String data) {
+    	if(type ==null){
+    		throw new NullPointerException("type can not be null");
+    	}
+    	if(creator ==null){
+    		throw new NullPointerException("creator can not be null");
+    	}
+    	if(creationDate ==null){
+    		throw new NullPointerException("creationDate can not be null");
+    	}
         this.type = type;
         this.creator = creator;
         this.creationDate = new Date(creationDate.getTime());
@@ -73,10 +82,10 @@ public abstract class AbstractDefaultAceTag implements AceTag{
         final int prime = 31;
         int result = 1;
         result = prime * result
-                + ((creationDate == null) ? 0 : creationDate.hashCode());
-        result = prime * result + ((creator == null) ? 0 : creator.hashCode());
+                + creationDate.hashCode();
+        result = prime * result + creator.hashCode();
         result = prime * result + ((data == null) ? 0 : data.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + type.hashCode();
         return result;
     }
 
@@ -92,18 +101,10 @@ public abstract class AbstractDefaultAceTag implements AceTag{
             return false;
         }
         AbstractDefaultAceTag other = (AbstractDefaultAceTag) obj;
-        if (creationDate == null) {
-            if (other.creationDate != null) {
-                return false;
-            }
-        } else if (!creationDate.equals(other.creationDate)) {
+       if (!creationDate.equals(other.creationDate)) {
             return false;
         }
-        if (creator == null) {
-            if (other.creator != null) {
-                return false;
-            }
-        } else if (!creator.equals(other.creator)) {
+        if (!creator.equals(other.creator)) {
             return false;
         }
         if (data == null) {
@@ -113,11 +114,7 @@ public abstract class AbstractDefaultAceTag implements AceTag{
         } else if (!data.equals(other.data)) {
             return false;
         }
-        if (type == null) {
-            if (other.type != null) {
-                return false;
-            }
-        } else if (!type.equals(other.type)) {
+        if (!type.equals(other.type)) {
             return false;
         }
         return true;

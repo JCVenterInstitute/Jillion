@@ -164,11 +164,11 @@ public final class DefaultScaffold  implements Scaffold{
         final int prime = 31;
         int result = 1;
         result = prime * result
-                + ((contigbyId == null) ? 0 : contigbyId.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
+                + contigbyId.hashCode();
+        result = prime * result + id.hashCode();
         result = prime * result + (int) (length ^ (length >>> 32));
         result = prime * result
-                + ((placedContigs == null) ? 0 : placedContigs.hashCode());
+                + placedContigs.hashCode();
         return result;
     }
     @Override
@@ -183,35 +183,19 @@ public final class DefaultScaffold  implements Scaffold{
             return false;
         }
         DefaultScaffold other = (DefaultScaffold) obj;
-        if (contigbyId == null) {
-            if (other.contigbyId != null){
-                return false;
-            }
-        } else if (!contigbyId.equals(other.contigbyId)){
+        if(!contigbyId.equals(other.contigbyId)){
             return false;
         }
-        if (id == null) {
-            if (other.id != null){
-                return false;
-            }
-        } else if (!id.equals(other.id)){
+        if (!id.equals(other.id)){
             return false;
         }
         if (length != other.length){
             return false;
         }
-        if (placedContigs == null) {
-            if (other.placedContigs != null){
-                return false;
-            }
-        } else if (!placedContigs.equals(other.placedContigs)){
+        if (!placedContigs.equals(other.placedContigs)){
             return false;
         }
-        if (contigMap == null) {
-            if (other.contigMap != null ){
-                return false;
-            }
-        } else if (!contigMap.equals(other.contigMap)){
+        if (!contigMap.equals(other.contigMap)){
             return false;
         }
         return true;
