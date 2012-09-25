@@ -119,7 +119,7 @@ public final class LargeAceFileDataStore implements AceFileContigDataStore{
 	@Override
 	public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
 		throwExceptionIfClosed();
-		IdVisitor ids = new IdVisitor();
+		IdIteratorImpl ids = new IdIteratorImpl();
 		ids.start();
 		return DataStoreStreamingIterator.create(this, ids);
 	}
@@ -605,153 +605,151 @@ public final class LargeAceFileDataStore implements AceFileContigDataStore{
     
     	
     
-    private final class IdVisitor extends AbstractBlockingCloseableIterator<String>{
+    private final class IdIteratorImpl extends AbstractBlockingCloseableIterator<String>{
+    	private class InnerVisitor implements AceFileVisitor{
+    		@Override
+			public void visitLine(String line) {
+				//no-op
+				
+			}
 
+			@Override
+			public void visitFile() {
+				//no-op
+				
+			}
+
+			@Override
+			public void visitEndOfFile() {
+				//no-op
+				
+			}
+
+			@Override
+			public void visitHeader(int numberOfContigs,
+					int totalNumberOfReads) {
+				//no-op
+				
+			}
+
+			@Override
+			public boolean shouldVisitContig(String contigId,
+					int numberOfBases, int numberOfReads,
+					int numberOfBaseSegments, boolean reverseComplimented) {
+				if(contigIdFilter.accept(contigId)){
+					IdIteratorImpl.this.blockingPut(contigId);
+					return true;
+				}
+				return false;
+			}
+
+			@Override
+			public void visitBeginContig(String contigId,
+					int numberOfBases, int numberOfReads,
+					int numberOfBaseSegments, boolean reverseComplimented) {
+				//no-op
+				
+			}
+
+			@Override
+			public void visitConsensusQualities() {
+				//no-op
+				
+			}
+
+			@Override
+			public void visitAssembledFromLine(String readId,
+					Direction dir, int gappedStartOffset) {
+				//no-op
+				
+			}
+
+			@Override
+			public void visitBaseSegment(Range gappedConsensusRange,
+					String readId) {
+				//no-op
+				
+			}
+
+			@Override
+			public void visitReadHeader(String readId, int gappedLength) {
+				//no-op
+				
+			}
+
+			@Override
+			public void visitQualityLine(int qualLeft, int qualRight,
+					int alignLeft, int alignRight) {
+				//no-op
+				
+			}
+
+			@Override
+			public void visitTraceDescriptionLine(String traceName,
+					String phdName, Date date) {
+				//no-op
+				
+			}
+
+			@Override
+			public void visitBasesLine(String mixedCaseBasecalls) {
+				//no-op
+				
+			}
+
+			@Override
+			public void visitReadTag(String id, String type,
+					String creator, long gappedStart, long gappedEnd,
+					Date creationDate, boolean isTransient) {
+				//no-op
+				
+			}
+
+			@Override
+			public boolean visitEndOfContig() {
+				//no-op
+				return true;
+			}
+
+			@Override
+			public void visitBeginConsensusTag(String id, String type,
+					String creator, long gappedStart, long gappedEnd,
+					Date creationDate, boolean isTransient) {
+				//no-op
+				
+			}
+
+			@Override
+			public void visitConsensusTagComment(String comment) {
+				//no-op
+				
+			}
+
+			@Override
+			public void visitConsensusTagData(String data) {
+				//no-op
+				
+			}
+
+			@Override
+			public void visitEndConsensusTag() {
+				//no-op
+				
+			}
+
+			@Override
+			public void visitWholeAssemblyTag(String type, String creator,
+					Date creationDate, String data) {
+				//no-op
+				
+			}
+    	}
         /**
         * {@inheritDoc}
         */
         @Override
         protected void backgroundThreadRunMethod() {
-        	AceFileVisitor builder = new AceFileVisitor() {
-
-				@Override
-				public void visitLine(String line) {
-					//no-op
-					
-				}
-
-				@Override
-				public void visitFile() {
-					//no-op
-					
-				}
-
-				@Override
-				public void visitEndOfFile() {
-					//no-op
-					
-				}
-
-				@Override
-				public void visitHeader(int numberOfContigs,
-						int totalNumberOfReads) {
-					//no-op
-					
-				}
-
-				@Override
-				public boolean shouldVisitContig(String contigId,
-						int numberOfBases, int numberOfReads,
-						int numberOfBaseSegments, boolean reverseComplimented) {
-					if(contigIdFilter.accept(contigId)){
-						IdVisitor.this.blockingPut(contigId);
-						return true;
-					}
-					return false;
-				}
-
-				@Override
-				public void visitBeginContig(String contigId,
-						int numberOfBases, int numberOfReads,
-						int numberOfBaseSegments, boolean reverseComplimented) {
-					//no-op
-					
-				}
-
-				@Override
-				public void visitConsensusQualities() {
-					//no-op
-					
-				}
-
-				@Override
-				public void visitAssembledFromLine(String readId,
-						Direction dir, int gappedStartOffset) {
-					//no-op
-					
-				}
-
-				@Override
-				public void visitBaseSegment(Range gappedConsensusRange,
-						String readId) {
-					//no-op
-					
-				}
-
-				@Override
-				public void visitReadHeader(String readId, int gappedLength) {
-					//no-op
-					
-				}
-
-				@Override
-				public void visitQualityLine(int qualLeft, int qualRight,
-						int alignLeft, int alignRight) {
-					//no-op
-					
-				}
-
-				@Override
-				public void visitTraceDescriptionLine(String traceName,
-						String phdName, Date date) {
-					//no-op
-					
-				}
-
-				@Override
-				public void visitBasesLine(String mixedCaseBasecalls) {
-					//no-op
-					
-				}
-
-				@Override
-				public void visitReadTag(String id, String type,
-						String creator, long gappedStart, long gappedEnd,
-						Date creationDate, boolean isTransient) {
-					//no-op
-					
-				}
-
-				@Override
-				public boolean visitEndOfContig() {
-					//no-op
-					return true;
-				}
-
-				@Override
-				public void visitBeginConsensusTag(String id, String type,
-						String creator, long gappedStart, long gappedEnd,
-						Date creationDate, boolean isTransient) {
-					//no-op
-					
-				}
-
-				@Override
-				public void visitConsensusTagComment(String comment) {
-					//no-op
-					
-				}
-
-				@Override
-				public void visitConsensusTagData(String data) {
-					//no-op
-					
-				}
-
-				@Override
-				public void visitEndConsensusTag() {
-					//no-op
-					
-				}
-
-				@Override
-				public void visitWholeAssemblyTag(String type, String creator,
-						Date creationDate, String data) {
-					//no-op
-					
-				}
-                
-            };
+        	AceFileVisitor builder = new InnerVisitor();
             try {
                 AceFileParser.parse(aceFile, builder);
             } catch (Exception e) {
