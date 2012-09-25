@@ -19,6 +19,9 @@ import org.jcvi.common.core.datastore.MapDataStoreAdapter;
  */
 public final class DefaultReferenceVariationsDataStore {
 
+	private DefaultReferenceVariationsDataStore(){
+		//can not instantiate
+	}
 	/**
 	 * Parse the given find_variations log file and 
 	 * create a new {@link ReferenceVariationsDataStore} instance containing
