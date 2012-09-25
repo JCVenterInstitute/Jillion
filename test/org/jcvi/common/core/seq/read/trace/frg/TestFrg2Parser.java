@@ -30,8 +30,6 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.trace.frg.Frg2Parser;
 import org.jcvi.common.core.seq.read.trace.frg.Frg2Visitor;
 import org.jcvi.common.core.seq.read.trace.frg.Frg2Visitor.FrgAction;
-import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
-import org.jcvi.common.core.symbol.qual.TigrQualitiesEncodedGyphCodec;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
@@ -40,7 +38,6 @@ import static org.easymock.EasyMock.*;
 public class TestFrg2Parser {
 
     private static final String FILE = "files/example.frg2";
-    private static final TigrQualitiesEncodedGyphCodec QUALITY_CODEC = TigrQualitiesEncodedGyphCodec.getINSTANCE();
     
     private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestFrg2Parser.class);
     
@@ -73,9 +70,7 @@ public class TestFrg2Parser {
 "GGACCTGAGGAGAGCACCAACAAGATCAGACGANNA" 
 ).build(), 
 
-new QualitySequenceBuilder(
-        QUALITY_CODEC.decode(
-                (
+FrgTestUtil.decodeQualitySequence(
                         "555566;;;666;;<<<;;<<?CDDDB?<??<<<AADDHHHPVSUUKKG;98:<<>>=???B=;;=>@CDDB?BEDDDIKDVVVKKDDDDDKKKSNNQXP"+
                                 "OLMMMUOPPPSNQJJKKKKKQbXNNPWJJJKKDHEEESYLLFGFFLbb^^^^WWW\\\\\\^\\\\XXX[NQSYYSSSSSSJJTTT[[dZZZYY[gg[[[[[XXR"+
                                 "[YTGGGGGW`YYYYYRRRRR[YYY[dVdd\\YP``PPSMMPPPPMMNSZZ```````\\[YYYYdgggggggddgdddbb``gggdbZZZ\\gggggggggg`"+
@@ -85,7 +80,7 @@ new QualitySequenceBuilder(
                                 "YYOOOOOO[[[[^^^^^^^^^^VVVQQPSPKKMEDD>DDJDGJEEGJJIDDEEEECAAHFGGJJJJLPLL<<;<<HE@::88786666667866667966"+
                                 "6666877778744696657544466664546699877766667667<<766766778888866666789988868666886666666866677787778<"+
                                 "9:99:8876666678776667666669987575005"
-                ).getBytes())).build()
+                )
         , clearRangeFor678, clearRangeFor678,
         "#  Not a comment; this is annotation about where the fragment came from\n");
         
@@ -99,17 +94,15 @@ new QualitySequenceBuilder(
 					"GCGAGATGCTCCTCCAGCTGCGCCACCAGCTGTGCCCGGTGCGCCAGGTCCGACTCCAGCGCCCGGATCTTGGAGCCCAGCTCGCCGATCTGCGGCGTGG" +
 					"AGCCGTGGGTTGGTTGCGCGGTCCTCAGGGTCCCGTGGGGGTGATCAGTTGCATACCCGTGGGGATGCCATGGGGGATGGCGCAGGGTTCGACCGTGTGG" +
 					"AGGGCGGGCGCAGAACCAGGGCGCAGGCACTAAGGCGCGCGCATCATGGGN").build(),
-		 new QualitySequenceBuilder(
-		        QUALITY_CODEC.decode((
+					FrgTestUtil.decodeQualitySequence(
 		                "6689;;6687;>BG>?<??;:9??>NL?;::?9><??<??<::???G@C>888;;AGGGHKKKKKKHHKKKKPCCCCCASK=C=??COM[[bQS]bbbUU"+
 		                "UbbbbbGGCCCCCCFLCFKKFFMSSSbbVVVVKGGGGGOOOOOMUUVVIIIIGGMMMKIKLULIKLbGGLLKKMMMUUUVSVSKKMVVNNNNNNNNSKKG"+
 		                "KHHNNNGKKKKKSVVVSSS\\\\VVVXVVVV\\\\VQKHHHHHNSSRGGGGGKQJDD<;ADBEHJHMPWSSSUUUSSSSVVSSPSXVVKLBJ@JJQXXSQNVbV"+
 		                "NNNNNURQOOHGGCBAA?DKGG?K?GEEJIGC===@@NSKJ=<=B@DDR[\\VVNKMMSSVLKNNKQQSWWOOGGEGGDDDDDGVNSSSNKKNNNSVNNSV"+
 		                "VVPOOSUSUUV[[WSSSNSKQJGGEEEGGNGJHQMOOUUUUUQUUNSVSKPKKKVVSQQVVV\\XXSSRXVbbVVV\\bVSSVSSSUUVUUVVUUUPOOKGE"+
 		                "EEEEEEEEIFHD==?BBDGNOUOVKEAAADDDDEEGGFJIGGJHJGJKMLMJHHKKKNOLVJGB=>@@@>EEEIBIIJMGG><778>ADFJJLLGCCA@>"+
-		                ">==BDGGGG??B===@A>==@??<<<<<<<;999;;BBBBBBBBGB=4440"
-		
-		).getBytes())).build(),
+		                ">==BDGGGG??B===@A>==@??<<<<<<<;999;;BBBBBBBBGB=4440"		
+							),
 		clearRangeFor061,clearRangeFor061,"");
 		
 		mockVisitor.visitLink(FrgAction.ADD, Arrays.asList("334370061","334369678"));
@@ -119,4 +112,6 @@ new QualitySequenceBuilder(
         
         verify(mockVisitor);
     }
+    
+    
 }
