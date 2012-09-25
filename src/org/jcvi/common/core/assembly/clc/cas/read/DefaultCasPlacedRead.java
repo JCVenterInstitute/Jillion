@@ -143,12 +143,12 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((dir == null) ? 0 : dir.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + dir.hashCode();
+		result = prime * result + id.hashCode();
 		result = prime * result
-				+ ((readInfo == null) ? 0 : readInfo.hashCode());
+				+ readInfo.hashCode();
 		result = prime * result
-				+ ((sequence == null) ? 0 : sequence.hashCode());
+				+ sequence.hashCode();
 		result = prime * result + (int) (startOffset ^ (startOffset >>> 32));
 		return result;
 	}
@@ -169,25 +169,13 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
 		if (dir != other.dir) {
 			return false;
 		}
-		if (id == null) {
-			if (other.id != null) {
-				return false;
-			}
-		} else if (!id.equals(other.id)) {
+		if (!id.equals(other.id)) {
 			return false;
 		}
-		if (readInfo == null) {
-			if (other.readInfo != null) {
-				return false;
-			}
-		} else if (!readInfo.equals(other.readInfo)) {
+		if (!readInfo.equals(other.readInfo)) {
 			return false;
 		}
-		if (sequence == null) {
-			if (other.sequence != null) {
-				return false;
-			}
-		} else if (!sequence.equals(other.sequence)) {
+		if (!sequence.equals(other.sequence)) {
 			return false;
 		}
 		if (startOffset != other.startOffset) {
