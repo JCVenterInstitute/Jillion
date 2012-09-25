@@ -272,16 +272,25 @@ public final class IndexedFragmentDataStore extends AbstractFragmentDataStore{
 
         @Override
         public void visitLibrary(FrgAction action, String id,
-                MateOrientation orientation, Distance distance) {}
+                MateOrientation orientation, Distance distance) {
+        	//no-op
+        }
         @Override
-        public void visitLink(FrgAction action, List<String> fragIds) {}
+        public void visitLink(FrgAction action, List<String> fragIds) {
+        	//no-op
+        }
         @Override
-        public void visitEndOfFile(){}
+        public void visitEndOfFile(){
+        	//no-op
+        }
         @Override
-        public void visitLine(String line) {}
+        public void visitLine(String line) {
+        	//no-op
+        }
 
         @Override
-        public void visitFile() {            
+        public void visitFile() {           
+        	//no-op
         }
     }
     
@@ -303,11 +312,15 @@ public final class IndexedFragmentDataStore extends AbstractFragmentDataStore{
                 String fragmentId, String libraryId,
                 NucleotideSequence bases,
                 QualitySequence qualities, Range validRange,
-                Range vectorClearRange, String source) {}
+                Range vectorClearRange, String source) {
+        	//no-op
+        }
 
         @Override
         public void visitLibrary(FrgAction action, String id,
-                MateOrientation orientation, Distance distance) {}
+                MateOrientation orientation, Distance distance) {
+        	//no-op
+        }
         @Override
         public void visitLink(FrgAction action, List<String> fragIds) {
             for(String fragId : fragIds){
@@ -317,11 +330,16 @@ public final class IndexedFragmentDataStore extends AbstractFragmentDataStore{
             }
         }
         @Override
-        public void visitEndOfFile(){}
+        public void visitEndOfFile(){
+        	//no-op
+        }
         @Override
-        public void visitLine(String line) {}
+        public void visitLine(String line) {
+        	//no-op
+        }
         @Override
-        public void visitFile() {            
+        public void visitFile() {        
+        	//no-op
         }
     }
     
@@ -336,14 +354,18 @@ public final class IndexedFragmentDataStore extends AbstractFragmentDataStore{
             Frg2Visitor visitor = new Frg2Visitor(){
 
                 @Override
-                public void visitLine(String line) { }
+                public void visitLine(String line) {
+                	//no-op
+                }
 
                 @Override
-                public void visitFile() {}
+                public void visitFile() {
+                	//no-op
+                }
 
                 @Override
                 public void visitEndOfFile() {
-                    
+                	//no-op
                 }
 
                 @Override
@@ -371,7 +393,9 @@ public final class IndexedFragmentDataStore extends AbstractFragmentDataStore{
                 }
 
                 @Override
-                public void visitLink(FrgAction action, List<String> fragIds) {}
+                public void visitLink(FrgAction action, List<String> fragIds) {
+                	//no-op
+                }
                 
             };
             InputStream in =null;

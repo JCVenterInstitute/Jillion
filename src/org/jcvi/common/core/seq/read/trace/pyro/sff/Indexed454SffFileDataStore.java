@@ -197,12 +197,12 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 		}
 		@Override
 		public void visitFile() {
-			
+			//no-op
 		}
 
 		@Override
 		public void visitEndOfFile() {
-			
+			//no-op
 		}
 
 		public boolean isUseableManifest() {

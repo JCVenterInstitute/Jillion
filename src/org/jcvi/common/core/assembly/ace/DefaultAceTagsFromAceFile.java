@@ -168,7 +168,7 @@ public final class DefaultAceTagsFromAceFile {
     @Override
     protected void visitAceRead(String readId, NucleotideSequence validBasecalls,
             int offset, Direction dir, Range validRange, PhdInfo phdInfo,int ungappedFullLength) {
-        
+        //no-op
     }
 
     /**
@@ -176,7 +176,7 @@ public final class DefaultAceTagsFromAceFile {
      */
      @Override
      protected void visitNewContig(String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean complemented) {
-         
+    	//no-op
      }
        
    }

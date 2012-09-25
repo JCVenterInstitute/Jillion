@@ -205,12 +205,14 @@ public final class SinglePhdFile implements  Phd{
 
 	    @Override
 	    public synchronized void visitEndDna() {
+	    	//no-op
 	    }
 
 
 
 	    @Override
 	    public synchronized void visitEndSequence() {
+	    	//no-op
 	    }
 
 
@@ -233,7 +235,7 @@ public final class SinglePhdFile implements  Phd{
 
         @Override
 	    public synchronized void visitLine(String line) {
-	        
+        	//no-op
 	    }
 
 
@@ -249,6 +251,7 @@ public final class SinglePhdFile implements  Phd{
 
 	    @Override
 	    public synchronized void visitFile() {
+	    	//no-op
 	    }
 	}
 

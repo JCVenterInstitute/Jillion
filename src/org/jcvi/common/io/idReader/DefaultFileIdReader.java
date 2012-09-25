@@ -95,7 +95,7 @@ public class DefaultFileIdReader<T> implements IdReader<T> {
 
     @Override
     public void close() throws IOException {
-        
+    	//no-op
     }
     
     private static class FileIdIterator<T> implements StreamingIterator<T>{

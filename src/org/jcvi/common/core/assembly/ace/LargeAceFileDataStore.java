@@ -463,17 +463,17 @@ public final class LargeAceFileDataStore implements AceFileContigDataStore{
 
 		@Override
 		public void visitFile() {
-			
+			//no-op
 		}
 
 		@Override
 		public void visitEndOfFile() {
-			
+			//no-op
 		}
 
 		@Override
 		public void visitHeader(int numberOfContigs, int totalNumberOfReads) {
-			
+			//no-op
 		}
 
 		@Override
@@ -500,7 +500,7 @@ public final class LargeAceFileDataStore implements AceFileContigDataStore{
 
 		@Override
 		public void visitConsensusQualities() {
-			
+			//no-op
 		}
 
 		@Override
@@ -514,7 +514,7 @@ public final class LargeAceFileDataStore implements AceFileContigDataStore{
 
 		@Override
 		public void visitBaseSegment(Range gappedConsensusRange, String readId) {
-			
+			//no-op
 		}
 
 		@Override
@@ -576,23 +576,23 @@ public final class LargeAceFileDataStore implements AceFileContigDataStore{
 
 		@Override
 		public void visitConsensusTagComment(String comment) {
-			
+			//no-op
 		}
 
 		@Override
 		public void visitConsensusTagData(String data) {
-			
+			//no-op
 		}
 
 		@Override
 		public void visitEndConsensusTag() {
-			
+			//no-op
 		}
 
 		@Override
 		public void visitWholeAssemblyTag(String type, String creator,
 				Date creationDate, String data) {
-			
+			//no-op
 		}
 
 		@Override

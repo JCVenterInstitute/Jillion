@@ -60,7 +60,7 @@ public abstract class AbstractFastaVisitor implements FastaFileVisitor{
 
     @Override
     public void visitFile() {
-        
+    	//no-op
     }
 
 	@Override

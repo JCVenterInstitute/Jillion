@@ -137,7 +137,7 @@ public class DefaultFastqRecordWriter implements FastqRecordWriter{
 		if (hasComment) {
 			builder.append(' ').append(optionalComment);
 		}
-		builder.append(CR).append(encodeNucleotides(sequence)).append(CR).append("+");
+		builder.append(CR).append(encodeNucleotides(sequence)).append(CR).append('+');
 		if (writeIdOnQualityLine) {
 			builder.append(id);
 		}

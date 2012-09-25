@@ -43,11 +43,15 @@ public abstract class AbstractSffFlowgramVisitor implements SffFileVisitor{
 	 */
 	protected abstract ReadDataReturnCode visitFlowgram(Flowgram flowgram);
 	@Override
-	public void visitFile() {}
+	public void visitFile() {
+		//no-op
+	}
 
 	
 	@Override
-	public void visitEndOfFile() {}
+	public void visitEndOfFile() {
+		//no-op
+	}
 
 	@Override
 	public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {

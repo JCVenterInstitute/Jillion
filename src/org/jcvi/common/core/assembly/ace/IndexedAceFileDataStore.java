@@ -260,7 +260,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         */
         @Override
         public void visitFile() {
-            
+        	//no-op
         }
 
         /**
@@ -295,6 +295,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         */
         @Override
         public void visitConsensusQualities() {
+        	//no-op
         }
 
         /**
@@ -303,6 +304,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         @Override
         public void visitAssembledFromLine(String readId, Direction dir,
                 int gappedStartOffset) {
+        	//no-op
         }
 
         /**
@@ -310,6 +312,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         */
         @Override
         public void visitBaseSegment(Range gappedConsensusRange, String readId) {
+        	//no-op
         }
 
         /**
@@ -317,6 +320,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         */
         @Override
         public void visitReadHeader(String readId, int gappedLength) {
+        	//no-op
         }
 
         /**
@@ -338,6 +342,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         @Override
         public void visitTraceDescriptionLine(String traceName, String phdName,
                 Date date) {
+        	//no-op
         }
 
         /**
@@ -345,6 +350,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         */
         @Override
         public void visitBasesLine(String bases) {
+        	//no-op
         }
 
         /**

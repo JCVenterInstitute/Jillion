@@ -124,12 +124,14 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
 
     @Override
     public void visitBeginDna() {
+    	//no-op
     }
 
 
 
     @Override
-    public synchronized void visitBeginSequence(String id) {      
+    public synchronized void visitBeginSequence(String id) { 
+    	//no-op
     }
 
 
@@ -143,13 +145,14 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
 
     @Override
     public synchronized void visitEndDna() {        
+    	//no-op
     }
 
 
 
     @Override
     public synchronized void visitEndSequence() {
-       
+    	//no-op
     }
 
 
@@ -190,7 +193,7 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
 
     @Override
     public synchronized void visitEndOfFile() {
-       
+    	//no-op
         
     }
 
@@ -198,6 +201,7 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
 
     @Override
     public synchronized void visitFile() {
+    	//no-op
     }
 
 

@@ -224,7 +224,7 @@ public final class SffUtil {
         */
         @Override
         public void visitEndOfFile() {
-            
+        	//no-op
         }
 
         /**
@@ -232,7 +232,7 @@ public final class SffUtil {
         */
         @Override
         public void visitFile() {
-            
+        	//no-op
         }
 
         /**

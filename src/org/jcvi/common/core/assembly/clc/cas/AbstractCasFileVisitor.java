@@ -41,73 +41,95 @@ public abstract class AbstractCasFileVisitor implements CasFileVisitor {
     @Override
     public void visitAssemblyProgramInfo(String name, String version,
             String parameters) {
-
+    	//no-op
     }
     /**
      * 
      * {@inheritDoc}
      */
     @Override
-    public void visitReferenceDescription(CasReferenceDescription description) {}
+    public void visitReferenceDescription(CasReferenceDescription description) {
+    	//no-op
+    }
     /**
      * 
      * {@inheritDoc}
      */
     @Override
-    public void visitReferenceFileInfo(CasFileInfo contigFileInfo) {}
+    public void visitReferenceFileInfo(CasFileInfo contigFileInfo) {
+    	//no-op
+    }
     /**
      * 
      * {@inheritDoc}
      */
     @Override
-    public void visitContigPair(CasContigPair contigPair) {}
+    public void visitContigPair(CasContigPair contigPair) {
+    	//no-op
+    }
     /**
      * 
      * {@inheritDoc}
      */
     @Override
-    public void visitMatch(CasMatch match) {}
+    public void visitMatch(CasMatch match) {
+    	//no-op
+    }
     /**
      * 
      * {@inheritDoc}
      */
     @Override
-    public void visitMetaData(long numberOfContigSequences, long numberOfReads) {}
+    public void visitMetaData(long numberOfContigSequences, long numberOfReads) {
+    	//no-op
+    }
     /**
      * 
      * {@inheritDoc}
      */
     @Override
-    public void visitNumberOfReferenceFiles(long numberOfContigFiles) {}
+    public void visitNumberOfReferenceFiles(long numberOfContigFiles) {
+    	//no-op
+    }
     /**
      * 
      * {@inheritDoc}
      */
     @Override
-    public void visitNumberOfReadFiles(long numberOfReadFiles) {}
+    public void visitNumberOfReadFiles(long numberOfReadFiles) {
+    	//no-op
+    }
     /**
      * 
      * {@inheritDoc}
      */
     @Override
-    public void visitReadFileInfo(CasFileInfo readFileInfo) {}
+    public void visitReadFileInfo(CasFileInfo readFileInfo) {
+    	//no-op
+    }
     /**
      * 
      * {@inheritDoc}
      */
     @Override
-    public void visitScoringScheme(CasScoringScheme scheme) {}
+    public void visitScoringScheme(CasScoringScheme scheme) {
+    	//no-op
+    }
     /**
      * 
      * {@inheritDoc}
      */
     @Override
-    public void visitEndOfFile() {}
+    public void visitEndOfFile() {
+    	//no-op
+    }
     /**
      * 
      * {@inheritDoc}
      */
     @Override
-    public void visitFile() {}
+    public void visitFile() {
+    	//no-op
+    }
 
 }

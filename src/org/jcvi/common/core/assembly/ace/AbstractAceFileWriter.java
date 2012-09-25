@@ -140,7 +140,7 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 			if(i%50==0){
 				formattedString.append(CR);
 			}else{
-				formattedString.append(" ");
+				formattedString.append(' ');
 			}
 		}
 		formattedString.append(getNormalizedQualValueAsString(qualities, qualities.length-1));
@@ -193,7 +193,7 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 	            if(i%50==0){
 	                result.append(CR);
 	            }else{
-	            	result.append(" ");
+	            	result.append(' ');
 	            }
 	        }
 			result.append("99\n");
