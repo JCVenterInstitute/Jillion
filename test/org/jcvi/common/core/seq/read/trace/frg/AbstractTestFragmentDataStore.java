@@ -31,8 +31,6 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.frg.DefaultFragment;
 import org.jcvi.common.core.seq.read.trace.frg.Fragment;
-import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
-import org.jcvi.common.core.symbol.qual.TigrQualitiesEncodedGyphCodec;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
@@ -41,7 +39,6 @@ import static org.junit.Assert.*;
 public abstract class  AbstractTestFragmentDataStore {
     private static final String FILE = "files/example.frg2";
     
-    private static final TigrQualitiesEncodedGyphCodec QUALITY_CODEC = TigrQualitiesEncodedGyphCodec.getINSTANCE();
     
     Library library = new DefaultLibrary(".",Distance.buildDistance(5821F, 1513F), MateOrientation.INNIE);
     final Range clearRangeFor678 = Range.create(0,835);
@@ -59,9 +56,7 @@ public abstract class  AbstractTestFragmentDataStore {
                             "GTGTGCGTGCGTGTGTGTGCGTGTGCGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGCGTGAGACGGAAAGAGCCAAG" +
                             "AAGAGCGCGAACTAAAGGAACAACATGGAAATAGGCGCGGCACCAAAGGTGAACCCTGGGCAACCCCATGGAATCCACAGGGAATCCCGTGTAAACCAAG" +
                             "GGACCTGAGGAGAGCACCAACAAGATCAGACGANNA").build(), 
-            new QualitySequenceBuilder(
-                    QUALITY_CODEC.decode(
-                            (
+                  FrgTestUtil.decodeQualitySequence(
                                     "555566;;;666;;<<<;;<<?CDDDB?<??<<<AADDHHHPVSUUKKG;98:<<>>=???B=;;=>@CDDB?BEDDDIKDVVVKKDDDDDKKKSNNQXP"+
                                 "OLMMMUOPPPSNQJJKKKKKQbXNNPWJJJKKDHEEESYLLFGFFLbb^^^^WWW\\\\\\^\\\\XXX[NQSYYSSSSSSJJTTT[[dZZZYY[gg[[[[[XXR"+
                                 "[YTGGGGGW`YYYYYRRRRR[YYY[dVdd\\YP``PPSMMPPPPMMNSZZ```````\\[YYYYdgggggggddgdddbb``gggdbZZZ\\gggggggggg`"+
@@ -71,7 +66,7 @@ public abstract class  AbstractTestFragmentDataStore {
                                 "YYOOOOOO[[[[^^^^^^^^^^VVVQQPSPKKMEDD>DDJDGJEEGJJIDDEEEECAAHFGGJJJJLPLL<<;<<HE@::88786666667866667966"+
                                 "6666877778744696657544466664546699877766667667<<766766778888866666789988868666886666666866677787778<"+
                                 "9:99:8876666678776667666669987575005"
-                            ).getBytes())).build(),
+                            ),
 
             clearRangeFor678, clearRangeFor678,library,"#  Not a comment; this is annotation about where the fragment came from\n"
         );
@@ -85,9 +80,7 @@ public abstract class  AbstractTestFragmentDataStore {
                             "GCGAGATGCTCCTCCAGCTGCGCCACCAGCTGTGCCCGGTGCGCCAGGTCCGACTCCAGCGCCCGGATCTTGGAGCCCAGCTCGCCGATCTGCGGCGTGG" +
                             "AGCCGTGGGTTGGTTGCGCGGTCCTCAGGGTCCCGTGGGGGTGATCAGTTGCATACCCGTGGGGATGCCATGGGGGATGGCGCAGGGTTCGACCGTGTGG" +
                             "AGGGCGGGCGCAGAACCAGGGCGCAGGCACTAAGGCGCGCGCATCATGGGN").build(), 
-            new QualitySequenceBuilder(
-                    QUALITY_CODEC.decode(
-                            (
+                            FrgTestUtil.decodeQualitySequence(
                                     "6689;;6687;>BG>?<??;:9??>NL?;::?9><??<??<::???G@C>888;;AGGGHKKKKKKHHKKKKPCCCCCASK=C=??COM[[bQS]bbbUU"+
                                     "UbbbbbGGCCCCCCFLCFKKFFMSSSbbVVVVKGGGGGOOOOOMUUVVIIIIGGMMMKIKLULIKLbGGLLKKMMMUUUVSVSKKMVVNNNNNNNNSKKG"+
                                     "KHHNNNGKKKKKSVVVSSS\\\\VVVXVVVV\\\\VQKHHHHHNSSRGGGGGKQJDD<;ADBEHJHMPWSSSUUUSSSSVVSSPSXVVKLBJ@JJQXXSQNVbV"+
@@ -95,7 +88,7 @@ public abstract class  AbstractTestFragmentDataStore {
                                     "VVPOOSUSUUV[[WSSSNSKQJGGEEEGGNGJHQMOOUUUUUQUUNSVSKPKKKVVSQQVVV\\XXSSRXVbbVVV\\bVSSVSSSUUVUUVVUUUPOOKGE"+
                                     "EEEEEEEEIFHD==?BBDGNOUOVKEAAADDDDEEGGFJIGGJHJGJKMLMJHHKKKNOLVJGB=>@@@>EEEIBIIJMGG><778>ADFJJLLGCCA@>"+
                                     ">==BDGGGG??B===@A>==@??<<<<<<<;999;;BBBBBBBBGB=4440"
-                            ).getBytes())).build(),
+                            ),
 
                             clearRangeFor061, clearRangeFor061,library,""
         );
