@@ -94,9 +94,11 @@ public class DefaultTraceArchiveRecord implements TraceArchiveRecord {
     public static class Builder implements org.jcvi.common.core.util.Builder<DefaultTraceArchiveRecord>{
         private final Map<TraceInfoField,String> map = new HashMap<TraceInfoField, String>();
         private final Map<String,String> extendedData = new HashMap<String, String>();
-        
+        /**
+         * Create a new Builder instance.
+         */
         public Builder(){
-            
+            super();
         }
         
         public Builder(TraceArchiveRecord record){
