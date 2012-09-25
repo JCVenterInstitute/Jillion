@@ -31,7 +31,6 @@ import java.util.List;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
-import org.jcvi.common.core.assembly.ace.DefaultAceTagsFromAceFile;
 import org.jcvi.common.core.assembly.ace.DefaultConsensusAceTag;
 import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.ace.WholeAssemblyAceTag;
