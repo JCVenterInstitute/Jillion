@@ -30,7 +30,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         TestTestUtilEqualAndHashcodeSame.class,
-        TestTestUtilNotEqualAndHashcodeDifferent.class
+        TestTestUtilNotEqualAndHashcodeDifferent.class,
+        TestTestUtil_FilesAreEqual.class
     }
     )
 public class TestTestUtilSuite {

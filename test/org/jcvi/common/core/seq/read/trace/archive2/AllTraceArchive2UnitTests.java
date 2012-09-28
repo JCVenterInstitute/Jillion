@@ -31,8 +31,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         TestDefaultTraceArchiveRecord.class,
-        TestDefaultTraceArchiveRecordBuilder.class
-
+        TestDefaultTraceArchiveRecordBuilder.class,
+        TestXmlTraceInfoFactory.class,
+        TestTraceArchiveWriter.class
     }
     )
 public class AllTraceArchive2UnitTests {

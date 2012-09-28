@@ -9,4 +9,6 @@ public interface TraceArchiveInfo {
 	Map<TraceInfoField, String> getCommonFields();
 	
 	List<TraceArchiveRecord> getRecordList();
+	
+	TraceArchiveRecord get(String traceName);
 }

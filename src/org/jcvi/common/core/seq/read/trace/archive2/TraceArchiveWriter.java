@@ -160,7 +160,7 @@ public final class TraceArchiveWriter implements Closeable{
 	private void copyTraceFile(TraceArchiveRecordBuilder recordBuilder, String traceName,
 			File traceFile)
 			throws FileNotFoundException, IOException {
-		String pathToTraceFile = String.format("./traces/%s.ztr", traceName);
+		String pathToTraceFile = String.format("traces/%s.ztr", traceName);
 		recordBuilder.put(TraceInfoField.TRACE_FILE, pathToTraceFile);
 		InputStream in = null;
 		OutputStream out = null;
@@ -256,7 +256,7 @@ public final class TraceArchiveWriter implements Closeable{
 	}
 	private void handleSeqFasta(TraceArchiveRecordBuilder recordBuilder, String traceName, Chromatogram chromo)
 			throws FileNotFoundException, IOException {
-		String fastaFilePath = String.format("./fasta/%s.fasta", traceName);
+		String fastaFilePath = String.format("fasta/%s.fasta", traceName);
 		NucleotideSequenceFastaRecordWriter writer = new NucleotideSequenceFastaRecordWriterBuilder(new File(rootDir, fastaFilePath))
 														.build();
 		writer.write(traceName, chromo.getNucleotideSequence());
@@ -267,7 +267,7 @@ public final class TraceArchiveWriter implements Closeable{
 	
 	private void handleQualFasta(TraceArchiveRecordBuilder recordBuilder, String traceName, Chromatogram chromo)
 			throws FileNotFoundException, IOException {
-		String qualFastaFilePath = String.format("./qual/%s.qual", traceName);
+		String qualFastaFilePath = String.format("qual/%s.qual", traceName);
 		QualitySequenceFastaRecordWriter writer = new QualitySequenceFastaRecordWriterBuilder(new File(rootDir, qualFastaFilePath))
 														.build();
 		writer.write(traceName, chromo.getQualitySequence());
@@ -278,7 +278,7 @@ public final class TraceArchiveWriter implements Closeable{
 	
 	private void handlePeakFasta(TraceArchiveRecordBuilder recordBuilder, String traceName, Chromatogram chromo)
 			throws FileNotFoundException, IOException {
-		String peakFastaFilePath = String.format("./peak/%s.peak", traceName);
+		String peakFastaFilePath = String.format("peak/%s.peak", traceName);
 		PositionSequenceFastaRecordWriter writer = new PositionSequenceFastaRecordWriterBuilder(new File(rootDir, peakFastaFilePath))
 														.build();
 		writer.write(traceName, chromo.getPositionSequence());
