@@ -162,9 +162,11 @@ public final class TraceArchiveWriter implements Closeable{
 			throws FileNotFoundException, IOException {
 		String pathToTraceFile = String.format("./traces/%s.ztr", traceName);
 		recordBuilder.put(TraceInfoField.TRACE_FILE, pathToTraceFile);
-		InputStream in = new FileInputStream(traceFile);
-		OutputStream out = new FileOutputStream(new File(rootDir, pathToTraceFile));
+		InputStream in = null;
+		OutputStream out = null;
 		try{
+			in = new FileInputStream(traceFile);
+			out = new FileOutputStream(new File(rootDir, pathToTraceFile));
 			IOUtil.copy(in, out);
 		}finally{
 			IOUtil.closeAndIgnoreErrors(in,out);
@@ -228,7 +230,7 @@ public final class TraceArchiveWriter implements Closeable{
 	}
 	private void createMd5File(File xmlFile, File readMeFile)
 			throws FileNotFoundException, IOException {
-		PrintWriter md5Writer = new PrintWriter(new File(rootDir, "MD5"));
+		PrintWriter md5Writer = new PrintWriter(new File(rootDir, "MD5"), IOUtil.UTF_8_NAME);
 		try{
 		md5Writer.println(createMd5For(xmlFile) +"\tTRACEINFO.XML");
 		md5Writer.println(createMd5For(readMeFile) +"\tREADME");
@@ -237,11 +239,15 @@ public final class TraceArchiveWriter implements Closeable{
 		}
 	}
 	private void writeReadmeText(File readMeFile) throws IOException {
-		PrintWriter writer = new PrintWriter(readMeFile);
+		PrintWriter writer = new PrintWriter(readMeFile, IOUtil.UTF_8_NAME);
 		try{
-			writer.printf(README_TEXT, 
-					DATE_TIME_FORMATTER.format(DateUtil.getCurrentDate()),
-					traceNamesSeen.size());
+			//must synchronize data formatter since 
+			//it is badly designed and not multithreaded.
+			synchronized(DATE_TIME_FORMATTER){
+				writer.printf(README_TEXT, 
+						DATE_TIME_FORMATTER.format(DateUtil.getCurrentDate()),
+						traceNamesSeen.size());
+			}
 		}finally{
 			writer.close();
 		}
