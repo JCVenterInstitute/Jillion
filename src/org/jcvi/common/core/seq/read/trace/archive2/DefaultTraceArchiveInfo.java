@@ -46,7 +46,13 @@ public final class DefaultTraceArchiveInfo implements TraceArchiveInfo{
 			records.add(r);
 			return this;
 		}
-		
+		/**
+		 * Add the given common field with the given value.
+		 * @param key the TraceInfoField to add to all records; can not be null.
+		 * @param value the value to assign to this common field; can not be null.
+		 * @return this.
+		 * @throws NullPointerException if either parameter is null.
+		 */
 		public Builder addCommonField(TraceInfoField key, String value){
 			if(key==null){
 				throw new NullPointerException("common field key can not be null");

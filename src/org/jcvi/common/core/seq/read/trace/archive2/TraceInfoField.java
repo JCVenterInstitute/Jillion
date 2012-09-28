@@ -467,6 +467,14 @@ public enum TraceInfoField {
      * TI's of the reads obtained from the other end of the same template.
      */
      MATE_PAIR,
+     
+     MATE_TI,
+     
+     MATE_NAME,
+     
+     MATE_TEMPLATE_ID,
+     
+     MATE_TRACE_END,
      /**
      * TI that replaced the 
                  current TI as "active"
@@ -512,7 +520,7 @@ public enum TraceInfoField {
 
     @Override
     public String toString() {
-        return this.name().toLowerCase();
+        return this.name().toLowerCase(Locale.US);
     }
 
 }

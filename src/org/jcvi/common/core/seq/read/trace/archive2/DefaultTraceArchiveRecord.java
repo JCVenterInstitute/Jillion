@@ -92,7 +92,7 @@ public class DefaultTraceArchiveRecord implements TraceArchiveRecord {
 
 
 
-    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultTraceArchiveRecord>{
+    public static class Builder implements TraceArchiveRecordBuilder{
         private final Map<TraceInfoField,String> map = new LinkedHashMap<TraceInfoField, String>();
         private final Map<String,String> extendedData = new HashMap<String, String>();
         /**
@@ -111,35 +111,42 @@ public class DefaultTraceArchiveRecord implements TraceArchiveRecord {
             }
         }
         /**
-         * Puts an attribute with the given key and value.  If 
-         * an attribute already exists with the given
-         * key, it will be overwritten with the new value.
-         * @param key the key to add.
-         * @param value the value associated with the given key.
-         * @return {@code this}
-         */
-        public Builder put(TraceInfoField traceInfoField, String value){
+		 * {@inheritDoc}
+		 */
+        @Override
+		public TraceArchiveRecordBuilder put(TraceInfoField traceInfoField, String value){
             map.put(traceInfoField, value);
             return this;
         }
-        public Builder putExtendedData(String key, String value){
+        /**
+		 * {@inheritDoc}
+		 */
+        @Override
+		public TraceArchiveRecordBuilder putExtendedData(String key, String value){
             extendedData.put(key, value);
             return this;
         }
-        public Builder removeExtendedData(String key){
+        public TraceArchiveRecordBuilder removeExtendedData(String key){
             extendedData.remove(key);
             return this;
         }
-        public Builder putAll(Map<TraceInfoField,String> map){
+        /**
+		 * {@inheritDoc}
+		 */
+        @Override
+		public TraceArchiveRecordBuilder putAll(Map<TraceInfoField,String> map){
             this.map.putAll(map);
             return this;
         }
-        public Builder remove(TraceInfoField traceInfoField){
+        public TraceArchiveRecordBuilder remove(TraceInfoField traceInfoField){
             map.remove(traceInfoField);
             return this;
         }
-        @Override
-        public DefaultTraceArchiveRecord build() {
+        /**
+		 * {@inheritDoc}
+		 */
+		@Override
+        public TraceArchiveRecord build() {
             return new DefaultTraceArchiveRecord(map,extendedData);
         }        
         
