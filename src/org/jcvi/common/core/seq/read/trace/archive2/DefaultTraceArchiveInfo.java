@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 public final class DefaultTraceArchiveInfo implements TraceArchiveInfo{
-	private final List<TraceArchiveRecord> records;
+	private final Map<String,TraceArchiveRecord> records;
 	private final Map<TraceInfoField, String> commonFields;
 	
 	
-	private DefaultTraceArchiveInfo(List<TraceArchiveRecord> records,
+	private DefaultTraceArchiveInfo(Map<String,TraceArchiveRecord> records,
 			Map<TraceInfoField, String> commonFields) {
 		this.records = records;
 		this.commonFields = commonFields;
@@ -25,12 +25,18 @@ public final class DefaultTraceArchiveInfo implements TraceArchiveInfo{
 
 	@Override
 	public List<TraceArchiveRecord> getRecordList() {
-		return Collections.unmodifiableList(records);
+		//defensive copy
+		return new ArrayList<TraceArchiveRecord>(records.values());
+	}
+
+	@Override
+	public TraceArchiveRecord get(String traceName) {
+		return records.get(traceName);
 	}
 
 	public static class Builder implements org.jcvi.common.core.util.Builder<TraceArchiveInfo>{
 
-		private final List<TraceArchiveRecord> records = new ArrayList<TraceArchiveRecord>();
+		private final Map<String,TraceArchiveRecord> records = new LinkedHashMap<String,TraceArchiveRecord>();
 		private final Map<TraceInfoField, String> commonFields = new LinkedHashMap<TraceInfoField, String>();
 		
 		public Builder addAllRecords(Collection<? extends TraceArchiveRecord> records){
@@ -43,7 +49,11 @@ public final class DefaultTraceArchiveInfo implements TraceArchiveInfo{
 			if(r ==null){
 				throw new NullPointerException("TraceArchiveRecord can not be null");
 			}
-			records.add(r);
+			String traceName = r.getAttribute(TraceInfoField.TRACE_NAME);
+			if(traceName ==null){
+				throw new IllegalArgumentException("trace archive record must have a value for 'trace_name'");
+			}
+			records.put(traceName,r);
 			return this;
 		}
 		/**

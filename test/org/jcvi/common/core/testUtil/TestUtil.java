@@ -25,7 +25,14 @@ package org.jcvi.common.core.testUtil;
 
 import static org.junit.Assert.*;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.Permission;
+
+import org.jcvi.common.core.io.IOUtil;
 
 
 public final class TestUtil {
@@ -88,10 +95,33 @@ public final class TestUtil {
 		public int getExitCode() {
 			return exitCode;
 		}
-		
-		
-    	
     	
     }
+    
+    public static boolean contentsAreEqual(File file1, File file2) throws IOException{
+		if(file1.length() != file2.length()){
+			return false;
+		}
+		
+		InputStream in1 =null;
+		InputStream in2 =null;
+		
+		try{
+			in1 = new BufferedInputStream(new FileInputStream(file1));
+			in2 = new BufferedInputStream(new FileInputStream(file2));
+			int value1,value2;
+			do{
+				value1 = in1.read();
+				value2 = in2.read();
+				if(value1 !=value2){
+					return false;
+				}
+			}while(value1 >=0);
+			return true;
+		}finally{
+			IOUtil.closeAndIgnoreErrors(in1,in2);
+		}
+		
+	}
 
 }
