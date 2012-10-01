@@ -15,8 +15,8 @@ public class TestHmmModel {
 	public void h3(){
 		NucleotideSequence sequence = new NucleotideSequenceBuilder("AATCGGGATTAGCTACGTAGCTACTTATCGATCG").build();
 		List<Gene> genes = Arrays.asList(
-								new Gene("gene 1", Range.create(6,12)),
-								new Gene("gene 2", Range.create(20,25)));
+								new Gene("gene 1", Range.of(6,12)),
+								new Gene("gene 2", Range.of(20,25)));
 		int[] expected = new int[]{
 				1,1,1,1,1,1,2,2,2,2,2,2,2,1,1,1,1,1,1,1,2,2,2,2,2,2,1,1,1,1,1,1,1,1
 		};
@@ -30,7 +30,7 @@ public class TestHmmModel {
 	public void h5_oneExon(){
 		NucleotideSequence sequence = new NucleotideSequenceBuilder("AATCATGGGGATTAGCTACGTATAGACTTATCGA").build();
 		List<Gene> genes = Arrays.asList(
-					new Gene("gene 1", Range.create(4,24)));
+					new Gene("gene 1", Range.of(4,24)));
 		int[] expected = new int[]{
 				1,1,1,1,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,2,3,4,1,1,1,1,1,1,1,1,1
 			};
@@ -44,7 +44,7 @@ public class TestHmmModel {
 	public void h5_oneIntron(){
 		NucleotideSequence sequence = new NucleotideSequenceBuilder("CATGGCGTGCAGCCCATTAGTTACTGTACCTAGT").build();
 		List<Gene> genes = Arrays.asList(
-					new Gene("gene 1", Range.create(1,5), Range.create(20,32)));
+					new Gene("gene 1", Range.of(1,5), Range.of(20,32)));
 		int[] expected = new int[]{
 				1,2,3,4,2,3,5,5,5,5,5,5,5,5,5,5,5,5,5,5,4,2,3,4,2,3,4,2,3,4,2,3,4,1
 			};
@@ -58,10 +58,10 @@ public class TestHmmModel {
 		NucleotideSequence sequence = new NucleotideSequenceBuilder("GCATGGTCTTAGGTGTATCGACAGTGTAGTAATC").build();
 		List<Gene> genes = Arrays.asList(
 					new Gene("gene 1", 
-							Range.create(2,4),
-							Range.create(12,13),
-							Range.create(24),
-							Range.create(29,31)							
+							Range.of(2,4),
+							Range.of(12,13),
+							Range.of(24),
+							Range.of(29,31)							
 					));
 		int[] expected = new int[]{
 				1,1,2,3,4,5,5,5,5,5,5,5,2,3,5,5,5,5,5,5,5,5,5,5,4,5,5,5,5,2,3,4,1,1
@@ -76,7 +76,7 @@ public class TestHmmModel {
 	public void h27_oneExon(){
 		NucleotideSequence sequence = new NucleotideSequenceBuilder("AATCATGGGGATTAGCTACGTATAGACTTATCGA").build();
 		List<Gene> genes = Arrays.asList(
-					new Gene("gene 1", Range.create(4,24)));
+					new Gene("gene 1", Range.of(4,24)));
 		int[] expected = new int[]{
 				1,1,1,1,2,3,4,5,6,7,5,6,7,5,6,7,5,6,7,5,6,7,8,9,10,1,1,1,1,1,1,1,1,1
 		};
@@ -90,7 +90,7 @@ public class TestHmmModel {
 	public void h27_oneIntron(){
 		NucleotideSequence sequence = new NucleotideSequenceBuilder("CATGGCGTGCAGCCCATTAGTTACTGTACCTAGT").build();
 		List<Gene> genes = Arrays.asList(
-					new Gene("gene 1", Range.create(1,5), Range.create(20,32)));
+					new Gene("gene 1", Range.of(1,5), Range.of(20,32)));
 		int[] expected = new int[]{
 			  //C A T G G C G  T  G  C  A  G  C  C  C  A  T  T  A  G  T T A C T G T A C C T A G  T
 			  //N E E E E E I  I  I  I  I  I  I  I  I  I  I  I  I  I  E E E E E E E E E E E E E  N
@@ -106,10 +106,10 @@ public class TestHmmModel {
 		NucleotideSequence sequence = new NucleotideSequenceBuilder("GCATGGTCTTAGGTGTATCGACAGTGTAGTAATC").build();
 		List<Gene> genes = Arrays.asList(
 					new Gene("gene 1", 
-							Range.create(2,4),
-							Range.create(12,13),
-							Range.create(24),
-							Range.create(29,31)							
+							Range.of(2,4),
+							Range.of(12,13),
+							Range.of(24),
+							Range.of(29,31)							
 					));
 		int[] expected = new int[]{
 			  //G C A T G G  T  C  T  T  A  G  G T G  T  A  T  C  G  A  C  A  G  T G  T  A  G  T A A  T C

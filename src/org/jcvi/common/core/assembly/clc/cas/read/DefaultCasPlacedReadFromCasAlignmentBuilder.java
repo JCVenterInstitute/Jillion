@@ -154,7 +154,9 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
     }
     @Override
     public DefaultCasPlacedRead build() {
-        Range validRange = Range.createOfLength(0, gappedSequenceBuilder.getLength()-numberOfGaps).shiftRight(validRangeStart);
+        Range validRange = new Range.Builder(gappedSequenceBuilder.getLength()-numberOfGaps)
+        					.shiftRight(validRangeStart)
+        					.build();
         if(dir==Direction.REVERSE){
             validRange = AssemblyUtil.reverseComplementValidRange(validRange, fullUngappedLength);
         }

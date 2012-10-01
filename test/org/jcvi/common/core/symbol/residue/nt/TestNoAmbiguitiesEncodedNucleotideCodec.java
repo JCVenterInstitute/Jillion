@@ -205,7 +205,7 @@ public class TestNoAmbiguitiesEncodedNucleotideCodec {
     }
     
     private void assertIterateCorrectly(List<Nucleotide> list){
-    	assertIterateCorrectly(list, Range.createOfLength(list.size()));
+    	assertIterateCorrectly(list, new Range.Builder(list.size()).build());
     }
 	private void assertIterateCorrectly(List<Nucleotide> list, Range range) {
 		Iterator<Nucleotide> expected = list.iterator();
@@ -232,21 +232,21 @@ public class TestNoAmbiguitiesEncodedNucleotideCodec {
 	@Test
     public void rangedIterator(){
     	List<Nucleotide> list = Nucleotides.parse("ACG-ACGT");
-		assertIterateCorrectly(list, Range.create(3,6));
+		assertIterateCorrectly(list, Range.of(3,6));
     }
     @Test
     public void rangedIteratorLastByteHasOnly1Base(){
     	List<Nucleotide> list = Nucleotides.parse("ACG-ACGTC");
-		assertIterateCorrectly(list, Range.create(3,7));
+		assertIterateCorrectly(list, Range.of(3,7));
     }
     @Test
     public void rangedIteratorLastByteHasOnly2Bases(){
     	List<Nucleotide> list = Nucleotides.parse("ACGT-CGTCA");
-		assertIterateCorrectly(list, Range.create(3,7));
+		assertIterateCorrectly(list, Range.of(3,7));
     }
     @Test
     public void rangedIteratorLastByteHasOnly3Bases(){
     	List<Nucleotide> list = Nucleotides.parse("ACGT-CGTCAG");
-		assertIterateCorrectly(list, Range.create(3,8));
+		assertIterateCorrectly(list, Range.of(3,8));
     }
 }

@@ -248,8 +248,8 @@ final class IndexedAceFileContig implements AceContig{
 				NucleotideSequence validBasecalls, int offset, Direction dir,
 				Range validRange, PhdInfo phdInfo, int ungappedFullLength) {
 			
-			readFileOffsetRanges.put(readId, Range.create(currentReadStart, currentOffset-1));
-			coverageRanges.put(readId, Range.createOfLength(offset, validBasecalls.getLength()));
+			readFileOffsetRanges.put(readId, Range.of(currentReadStart, currentOffset-1));
+			coverageRanges.put(readId, new Range.Builder(validBasecalls.getLength()).shiftRight(offset).build());
 			
 			currentReadStart =currentOffset+1;
 		}

@@ -46,36 +46,36 @@ public class TestIndexAceFileOffsets {
     
     @Test
     public void firstContig(){
-        assertEquals(Range.create(21,45890), sut.getIndexRangeFor("22934-PB2"));
+        assertEquals(Range.of(21,45890), sut.getIndexRangeFor("22934-PB2"));
     }
     
     @Test
     public void middleContigPB1(){
-        assertEquals(Range.create(45891,77407), sut.getIndexRangeFor("22934-PB1"));
+        assertEquals(Range.of(45891,77407), sut.getIndexRangeFor("22934-PB1"));
     }
     @Test
     public void middleContigPA(){
-        assertEquals(Range.create(77408,97284), sut.getIndexRangeFor("22934-PA"));
+        assertEquals(Range.of(77408,97284), sut.getIndexRangeFor("22934-PA"));
     }
     @Test
     public void middleContigHA(){
-        assertEquals(Range.create(97285,148972), sut.getIndexRangeFor("22934-HA"));
+        assertEquals(Range.of(97285,148972), sut.getIndexRangeFor("22934-HA"));
     }
     @Test
     public void middleContigNP(){
-        assertEquals(Range.create(148973,175349), sut.getIndexRangeFor("22934-NP"));
+        assertEquals(Range.of(148973,175349), sut.getIndexRangeFor("22934-NP"));
     }
     @Test
     public void middleContigNA(){
-        assertEquals(Range.create(175350,226494), sut.getIndexRangeFor("22934-NA"));
+        assertEquals(Range.of(175350,226494), sut.getIndexRangeFor("22934-NA"));
     }
     @Test
     public void middleContigMP(){
-        assertEquals(Range.create(226495,272700), sut.getIndexRangeFor("22934-MP"));
+        assertEquals(Range.of(226495,272700), sut.getIndexRangeFor("22934-MP"));
     }
     @Test
     public void lastContigThatIsEndOfFile(){
-        assertEquals(Range.create(272701,313955), sut.getIndexRangeFor("22934-NS"));
+        assertEquals(Range.of(272701,313955), sut.getIndexRangeFor("22934-NS"));
     }
     
     @Test
@@ -83,6 +83,6 @@ public class TestIndexAceFileOffsets {
         File aceFile = resources.getFile("files/sample.ace");
         IndexedAceFileDataStore datastore =(IndexedAceFileDataStore) IndexedAceFileDataStore.create(aceFile);
         datastore.get("Contig1");
-        assertEquals(Range.create(8,14667), datastore.getIndexRangeFor("Contig1"));
+        assertEquals(Range.of(8,14667), datastore.getIndexRangeFor("Contig1"));
     }
 }

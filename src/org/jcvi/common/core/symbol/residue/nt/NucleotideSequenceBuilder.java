@@ -340,7 +340,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		int maxEnd = Math.min((tail-1)/NUM_BITS_PER_VALUE, (int)range.getEnd());
 		int bitOffsetOfEnd = maxEnd * NUM_BITS_PER_VALUE+3;
 		
-		return Range.create(bitOffsetOfStart,bitOffsetOfEnd);
+		return Range.of(bitOffsetOfStart,bitOffsetOfEnd);
 	}
 	private void assertStartCoordinateIsValid(int start) {
 		if(start<0){
@@ -711,7 +711,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		if(range==null){
             throw new NullPointerException("range can not be null");
         }
-    	Range currentRange = Range.createOfLength(getLength());
+    	Range currentRange = new Range.Builder(getLength()).build();
     	if(!range.isSubRangeOf(currentRange)){
     		throw new IllegalArgumentException(
     				"range is not a sub-range of the sequence: "+ range);
@@ -760,7 +760,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @return a new List of Nucleotides.
      */
     public List<Nucleotide> asList(){
-        return asList(Range.createOfLength(getLength()));
+        return asList(new Range.Builder(getLength()).build());
     }
     
    

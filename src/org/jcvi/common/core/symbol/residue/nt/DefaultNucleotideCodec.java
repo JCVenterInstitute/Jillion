@@ -387,7 +387,7 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
 			this.encodedData = encodedData;
 			int seqLength = decodedLengthOf(encodedData);
 			if(range.getBegin()<0 || range.getEnd()>=seqLength){
-				throw new IndexOutOfBoundsException("range "+range +" is out of range of sequence which is only "+ Range.createOfLength(seqLength));
+				throw new IndexOutOfBoundsException("range "+range +" is out of range of sequence which is only "+ new Range.Builder(seqLength).build());
 			}
 			currentOffset = (int)range.getBegin();
 			length = (int)range.getEnd()+1;

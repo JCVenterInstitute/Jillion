@@ -100,9 +100,9 @@ public final class Ranges {
             merged = false;
             for(int i=0; i<rangesToMerge.size()-1; i++){
                 Range range = rangesToMerge.get(i);
-                Range clusteredRange = Range.create(range.getBegin()-clusterDistance, range.getEnd()+clusterDistance);
+                Range clusteredRange = Range.of(range.getBegin()-clusterDistance, range.getEnd()+clusterDistance);
                 Range nextRange = rangesToMerge.get(i+1);
-                if(clusteredRange.intersects(nextRange) || clusteredRange.shiftRight(1).intersects(nextRange)){
+                if(clusteredRange.intersects(nextRange) || new Range.Builder(clusteredRange).shiftRight(1).build().intersects(nextRange)){
                     replaceWithCombined(rangesToMerge,range, nextRange);
                     merged= true;
                     break;
@@ -132,7 +132,7 @@ public final class Ranges {
      */
     public static Range createInclusiveRange(Collection<Range> ranges){
         if(ranges.isEmpty()){
-            return Range.createEmptyRange();
+            return new Range.Builder().build();
         }
         Iterator<Range> iter =ranges.iterator();
         Range firstRange =iter.next();
@@ -147,7 +147,7 @@ public final class Ranges {
                 currentRight = range.getEnd();
             }
         }
-        return Range.create(currentLeft, currentRight);
+        return Range.of(currentLeft, currentRight);
     }
     
     private static Range createInclusiveRange(Range... ranges){

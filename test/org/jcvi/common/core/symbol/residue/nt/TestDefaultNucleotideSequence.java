@@ -115,7 +115,7 @@ public class TestDefaultNucleotideSequence {
         Iterator<Nucleotide> expected = Nucleotides.parse(gappedBasecalls)
         								.subList(5, 11)
         								.iterator();
-        Iterator<Nucleotide> actual = sut.iterator(Range.create(5,10));
+        Iterator<Nucleotide> actual = sut.iterator(Range.of(5,10));
         assertTrue(actual.hasNext());
         while(actual.hasNext()){
             assertEquals(expected.next(), actual.next());

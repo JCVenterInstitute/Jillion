@@ -30,8 +30,8 @@ import org.jcvi.common.core.Range;
 import org.junit.Test;
 public class TestEmptyRange{
 
-    private Range emptyRange = Range.createEmptyRange();
-    private Range nonEmptyRange = Range.create(5,5);
+    private Range emptyRange = new Range.Builder().build();
+    private Range nonEmptyRange = Range.of(5,5);
 
 
     @Test

@@ -137,7 +137,7 @@ protected MatePairFiles createCompletelyRedundantUpToNBasesData(int numDups) thr
 		FastqRecordWriter writer2 = new DefaultFastqRecordWriter.Builder(mate2File)
 				.build();
 		try{
-			Range subRange = Range.createOfLength(numberOfBasesToCompare);
+			Range subRange = new Range.Builder(numberOfBasesToCompare).build();
 			writer1.write(left);
 			writer2.write(right);
 			for(int i=0; i<numDups; i++){

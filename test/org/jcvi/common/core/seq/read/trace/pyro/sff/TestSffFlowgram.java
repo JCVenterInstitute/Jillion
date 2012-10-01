@@ -41,8 +41,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestSffFlowgram {
 
-    Range qualitiesClip = Range.create(10,90);
-    Range adapterClip= Range.create(5,95);
+    Range qualitiesClip = Range.of(10,90);
+    Range adapterClip= Range.of(5,95);
     QualitySequence confidence =  new QualitySequenceBuilder(new byte[]{20,15,30,15}).build();
     List<Short> values = convertIntoList(new short[]{202, 310,1,232,7});
     NucleotideSequence basecalls = new NucleotideSequenceBuilder("ACGT").build();

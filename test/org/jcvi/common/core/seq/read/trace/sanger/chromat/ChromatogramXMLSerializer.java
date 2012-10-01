@@ -248,7 +248,7 @@ public final class ChromatogramXMLSerializer {
            return new
            ZTRChromatogramImpl(
                chromatogram,
-               Range.create(clipStart, clipEnd)
+               Range.of(clipStart, clipEnd)
               );
        }
        /**

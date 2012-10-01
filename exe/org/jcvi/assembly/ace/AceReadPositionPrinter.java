@@ -64,11 +64,11 @@ public class AceReadPositionPrinter {
         protected void visitAceRead(String readId, NucleotideSequence validBasecalls,
                 int offset, Direction dir, Range validRange, PhdInfo phdInfo,
                 int ungappedFullLength) {
-            Range gappedOneBasedRange = Range.createOfLength(offset, validBasecalls.getLength());
+            Range gappedOneBasedRange = new Range.Builder(offset, validBasecalls.getLength()).build();
             int nonGapStartPosition = AssemblyUtil.getRightFlankingNonGapIndex(consensus, (int)gappedOneBasedRange.getBegin());
             
             int nonGapEndPosition = AssemblyUtil.getLeftFlankingNonGapIndex(consensus, (int)gappedOneBasedRange.getEnd());
-            Range unGappedOneBasesRange = Range.create(
+            Range unGappedOneBasesRange = Range.of(
                     consensus.getUngappedOffsetFor(nonGapStartPosition),
                     consensus.getUngappedOffsetFor(nonGapEndPosition));
             System.out.printf("%s\t%s\t%d\t%d\t%d\t%d\t%s%n", currentContigId, readId, 

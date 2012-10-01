@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
 public class TestDefaultAceBestSegment {
 
     String name = "name";
-    Range range = Range.create(1,10);
+    Range range = Range.of(1,10);
     DefaultAceBaseSegment sut = new DefaultAceBaseSegment(name, range);
     
     @Test(expected = NullPointerException.class)
@@ -74,7 +74,7 @@ public class TestDefaultAceBestSegment {
     
     @Test
     public void differentRangeIsNotEqual(){
-        DefaultAceBaseSegment differentRange = new DefaultAceBaseSegment(name, range.shiftLeft(1));
+        DefaultAceBaseSegment differentRange = new DefaultAceBaseSegment(name, new Range.Builder(range).shiftLeft(1).build());
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentRange);
     }
 }

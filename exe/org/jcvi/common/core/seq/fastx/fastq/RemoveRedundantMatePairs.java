@@ -92,7 +92,7 @@ public class RemoveRedundantMatePairs {
             File mate2 = new File(commandLine.getOptionValue("mate2"));
             
             int comparisonRangeLength = Integer.parseInt(commandLine.getOptionValue("n"));
-            Range comparisonRange=Range.createOfLength(comparisonRangeLength);
+            Range comparisonRange=new Range.Builder(comparisonRangeLength).build();
             File outputDir = new File(commandLine.getOptionValue("o"));
             outputDir.mkdirs();
             String prefix = commandLine.getOptionValue("prefix");

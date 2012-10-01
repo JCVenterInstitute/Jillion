@@ -59,14 +59,14 @@ public class TestLucyQualityTrimmer {
     public void SAJJA07T27G07MP1F() throws DataStoreException{
         final QualitySequence fullQualities = qualities.get("SAJJA07T27G07MP1F");
         Range actualTrimRange = sut.trim(fullQualities);
-        Range expectedRange = Range.create(CoordinateSystem.RESIDUE_BASED, 12,679);
+        Range expectedRange = Range.of(CoordinateSystem.RESIDUE_BASED, 12,679);
         assertEquals(expectedRange, actualTrimRange);
     }
     @Test
     public void SAJJA07T27G07MP675R() throws DataStoreException{
         final QualitySequence fullQualities = qualities.get("SAJJA07T27G07MP675R");
         Range actualTrimRange = sut.trim(fullQualities);
-        Range expectedRange = Range.create(CoordinateSystem.RESIDUE_BASED, 16,680);
+        Range expectedRange = Range.of(CoordinateSystem.RESIDUE_BASED, 16,680);
         assertEquals(expectedRange, actualTrimRange);
     }
     
@@ -75,7 +75,7 @@ public class TestLucyQualityTrimmer {
         QualitySequenceDataStore badQualDataStore =FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, 
                 DefaultQualityFastaFileDataStore.create(RESOURCES.getFile("files/bad.qual")));
         final QualitySequence badQualities = badQualDataStore.get("SCJIA01T48H08PB26F");
-        assertEquals(Range.createEmptyRange(), sut.trim(badQualities));
+        assertEquals(new Range.Builder().build(), sut.trim(badQualities));
     }
     
     @Test
@@ -83,7 +83,7 @@ public class TestLucyQualityTrimmer {
         QualitySequenceDataStore trashQualDataStore =FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, 
         		DefaultQualityFastaFileDataStore.create(RESOURCES.getFile("files/trash.qual")));
         final QualitySequence trashQualities = trashQualDataStore.get("JBYHA01T19A06PB2A628FB");
-        assertEquals(Range.createEmptyRange(), sut.trim(trashQualities));
+        assertEquals(new Range.Builder().build(), sut.trim(trashQualities));
     }
     
     @Test
@@ -91,6 +91,6 @@ public class TestLucyQualityTrimmer {
         QualitySequenceDataStore trashQualDataStore =FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, 
         		DefaultQualityFastaFileDataStore.create(RESOURCES.getFile("files/trash.qual")));
         final QualitySequence trashQualities = trashQualDataStore.get("JBZTB06T19E09NA1F");
-        assertEquals(Range.createEmptyRange(), sut.trim(trashQualities));
+        assertEquals(new Range.Builder().build(), sut.trim(trashQualities));
     }
 }

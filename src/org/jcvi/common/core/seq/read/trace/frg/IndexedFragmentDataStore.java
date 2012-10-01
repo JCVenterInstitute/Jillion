@@ -103,7 +103,7 @@ public final class IndexedFragmentDataStore extends AbstractFragmentDataStore{
             Range vectorClearRange, String source) {
         throwErrorIfAlreadyInitialized();
         if(this.isAddOrModify(action)){
-            Range fragmentRange = Range.create(currentStart, currentPosition);
+            Range fragmentRange = Range.of(currentStart, currentPosition);
             fragmentInfoIndexFileRange.put(fragmentId, fragmentRange);
             updateRangeStartPosition();
         }
@@ -231,7 +231,7 @@ public final class IndexedFragmentDataStore extends AbstractFragmentDataStore{
     public void visitLink(FrgAction action, List<String> fragIds) {
         throwErrorIfAlreadyInitialized();
         if(this.isAddOrModify(action)){
-            Range fragmentRange = Range.create(currentStart, currentPosition);
+            Range fragmentRange = Range.of(currentStart, currentPosition);
             for(String fragmentId: fragIds){
                 mateInfoIndexFileRange.put(fragmentId, fragmentRange);
             }

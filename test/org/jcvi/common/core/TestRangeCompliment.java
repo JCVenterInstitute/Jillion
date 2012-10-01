@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  */
 public class TestRangeCompliment {
 
-    Range range = Range.create(0,10);
+    Range range = Range.of(0,10);
     
     @Test
     public void complementEmptyShouldReturnEmpty(){
@@ -47,29 +47,29 @@ public class TestRangeCompliment {
     @Test
     public void oneLargeRangeShouldGetSplit(){
         List<Range> expected = Arrays.asList(
-                Range.create(-10, -1),
-                Range.create(11, 20)
+                Range.of(-10, -1),
+                Range.of(11, 20)
                 );
         assertEquals(expected, range.complementFrom(Collections.singleton(
-                Range.create(-10,20))));
+                Range.of(-10,20))));
     }
     
     @Test
     public void oneSideOverhangsShouldReturnThatSide(){
-        Range largeRange = Range.create(0,20);
-        List<Range> expected = Arrays.asList(Range.create(11,20));
+        Range largeRange = Range.of(0,20);
+        List<Range> expected = Arrays.asList(Range.of(11,20));
         assertEquals(expected, range.complementFrom(Collections.singleton(largeRange)));
     }
     
     @Test
     public void twoOverlappingRanges(){
         Collection<Range> ranges = Arrays.asList(
-                    Range.create(0,20),
-                    Range.create(-5,10))
+                    Range.of(0,20),
+                    Range.of(-5,10))
                     ;
         List<Range> expected = Arrays.asList(
-                Range.create(-5,-1),
-                Range.create(11,20)
+                Range.of(-5,-1),
+                Range.of(11,20)
                 );
         assertEquals(expected, range.complementFrom(ranges));
   

@@ -31,8 +31,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultSFFReadHeader {
     int numberOfBases=100;
-    Range qualityClip = Range.create(10,90);
-    Range adapterClip= Range.create(5,95);
+    Range qualityClip = Range.of(10,90);
+    Range adapterClip= Range.of(5,95);
     String name = "sequence name";
 
     DefaultSffReadHeader sut = new DefaultSffReadHeader( numberOfBases,
@@ -89,7 +89,7 @@ public class TestDefaultSFFReadHeader {
     }
     @Test
     public void notEqualsDifferentQualityClip(){
-        Range differentQualityClip = qualityClip.shiftRight(2);
+        Range differentQualityClip = new Range.Builder(qualityClip).shiftRight(2).build();
         DefaultSffReadHeader differentValues = new DefaultSffReadHeader(
                 numberOfBases,
                 differentQualityClip,
@@ -109,7 +109,7 @@ public class TestDefaultSFFReadHeader {
     }
     @Test
     public void notEqualsDifferentAdapterClip(){
-        Range differentAdapterClip = adapterClip.shiftRight(2);
+        Range differentAdapterClip = new Range.Builder(adapterClip).shiftRight(2).build();
         DefaultSffReadHeader differentValues = new DefaultSffReadHeader(
                 numberOfBases,
                 qualityClip,

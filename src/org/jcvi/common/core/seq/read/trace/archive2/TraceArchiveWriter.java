@@ -29,7 +29,7 @@ import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceFastaRecordWri
 import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramBuilderVisitor;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramParser;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFactory;
 import org.jcvi.common.core.util.DateUtil;
 
 /**
@@ -289,7 +289,7 @@ public final class TraceArchiveWriter implements Closeable{
 	
 	private Chromatogram parseChromatogram(String traceName, File traceFile) throws IOException {
 		BasicChromatogramBuilderVisitor chromoBuilder = new BasicChromatogramBuilderVisitor(traceName);
-		ChromatogramParser.parse(traceFile, chromoBuilder);
+		ChromatogramFactory.parse(traceFile, chromoBuilder);
 		return chromoBuilder.build();
 	}
 	/**

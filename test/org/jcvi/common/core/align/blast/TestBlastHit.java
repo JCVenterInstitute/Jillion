@@ -41,8 +41,8 @@ public class TestBlastHit {
     private int length = 806;
     private int mismatches = 118;
     private int numGapOpenings = 2;
-    private DirectedRange queryRange = DirectedRange.create(Range.create(CoordinateSystem.RESIDUE_BASED,1,806));
-    private DirectedRange subjectRange = DirectedRange.create(Range.create(CoordinateSystem.RESIDUE_BASED,99,904));
+    private DirectedRange queryRange = DirectedRange.create(Range.of(CoordinateSystem.RESIDUE_BASED,1,806));
+    private DirectedRange subjectRange = DirectedRange.create(Range.of(CoordinateSystem.RESIDUE_BASED,99,904));
     
     private BigDecimal eValue = new BigDecimal("2e-172");
     private BigDecimal bitScore = new BigDecimal(636.8D);
@@ -144,14 +144,19 @@ public class TestBlastHit {
     @Test
     public void differentQueryRangeShouldNotBeEqual(){
         Hsp different = HspBuilder.copy(sut)
-                            .queryRange(DirectedRange.create(queryRange.getRange().shiftLeft(2)))
+                            .queryRange(DirectedRange.create(
+                            		new Range.Builder(queryRange.getRange())
+                            		.shiftLeft(2)
+                            		.build()))
                             .build();
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, different);
     }
     @Test
     public void differentSubjectRangeShouldNotBeEqual(){
         Hsp different = HspBuilder.copy(sut)
-                            .subjectRange(DirectedRange.create(subjectRange.getRange().shiftLeft(2)))
+                            .subjectRange(DirectedRange.create(new Range.Builder(subjectRange.getRange())
+						                    		.shiftLeft(2)
+						                    		.build()))
                             .build();
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, different);
     }

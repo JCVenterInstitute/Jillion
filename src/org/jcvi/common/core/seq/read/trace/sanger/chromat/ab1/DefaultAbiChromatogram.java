@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 
 /**
@@ -31,30 +30,22 @@ import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
  *
  *
  */
-public final class AbiChromatogramFile {
+public final class DefaultAbiChromatogram {
 
-	private AbiChromatogramFile(){
+	private DefaultAbiChromatogram(){
 		//can not instantiate
 	}
-    public static AbiChromatogram create(File abiFile) throws FileNotFoundException, TraceDecoderException{
+    public static AbiChromatogram of(File abiFile) throws FileNotFoundException, TraceDecoderException{
         AbiChromatogramBuilder builder = new AbiChromatogramBuilder(abiFile.getName());
         Ab1FileParser.parse(abiFile, builder);        
         return builder.build();
     }
     
     public static AbiChromatogram create(String id, InputStream abiStream) throws TraceDecoderException{
-        return create(id,abiStream,true);
+    	 AbiChromatogramBuilder builder = new AbiChromatogramBuilder(id);
+         Ab1FileParser.parse(abiStream, builder);            
+         return builder.build();
     }
-    public static AbiChromatogram create(String id, InputStream abiStream, boolean autoClose) throws TraceDecoderException{
-        try{
-            AbiChromatogramBuilder builder = new AbiChromatogramBuilder(id);
-            Ab1FileParser.parse(abiStream, builder);            
-            return builder.build();
-        }finally{
-            if(autoClose){
-                IOUtil.closeAndIgnoreErrors(abiStream);
-            }
-        }
-    }
+   
     
 }

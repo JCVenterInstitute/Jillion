@@ -157,7 +157,7 @@ public final class DefaultTigrAssemblerContig  extends AbstractContig<TigrAssemb
             int numberOfGaps = computeNumberOfGapsIn(basecalls);
             int ungappedLength = basecalls.length()-numberOfGaps;
             return addRead(id, offset, 
-            		Range.createOfLength(0,ungappedLength),basecalls, 
+            		Range.ofLength(ungappedLength),basecalls, 
             		dir,ungappedLength);
         }
         /**

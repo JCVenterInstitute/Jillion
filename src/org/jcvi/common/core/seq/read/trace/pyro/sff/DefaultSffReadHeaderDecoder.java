@@ -56,8 +56,8 @@ enum DefaultSffReadHeaderDecoder implements SffReadHeaderDecoder {
             IOUtil.blockingSkip(in, padding);
             
             return new DefaultSffReadHeader(numBases,
-                    Range.create(CoordinateSystem.RESIDUE_BASED, qualLeft, qualRight),
-                    Range.create(CoordinateSystem.RESIDUE_BASED, adapterLeft, adapterRight),
+                    Range.of(CoordinateSystem.RESIDUE_BASED, qualLeft, qualRight),
+                    Range.of(CoordinateSystem.RESIDUE_BASED, adapterLeft, adapterRight),
                      name);
         }
         catch(IOException e){

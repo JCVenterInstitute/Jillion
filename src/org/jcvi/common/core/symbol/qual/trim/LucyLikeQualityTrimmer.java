@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -102,9 +101,11 @@ public final class LucyLikeQualityTrimmer  implements QualityTrimmer{
         Range bracketedRegion = findBracketedRegion(errorRates);
         Range largestRange = findLargestCleanRangeFrom(bracketedRegion, errorRates);
         if(largestRange.getLength() < minGoodLength){
-            return Range.createEmptyRange(CoordinateSystem.RESIDUE_BASED,1);
+            return new Range.Builder().build();
         }
-        return largestRange.shiftRight(bracketedRegion.getBegin());
+        return new Range.Builder(largestRange)
+        			.shiftRight(bracketedRegion.getBegin())
+        			.build();
     }
 
 
@@ -142,10 +143,10 @@ public final class LucyLikeQualityTrimmer  implements QualityTrimmer{
         while(!done && currentWindowSize >=SIZE_OF_ENDS){
            
             for(int i=0; i<encodedCandidateErrorRates.size() - currentWindowSize && i<=currentWindowSize; i++){
-                Range currentWindowRange = Range.create(i, currentWindowSize);
+                Range currentWindowRange = Range.of(i, currentWindowSize);
                 double avgErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, currentWindowRange);
-                double leftEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, Range.createOfLength(currentWindowRange.getBegin(),SIZE_OF_ENDS));
-                double rightEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, Range.createOfLength(currentWindowRange.getEnd()-SIZE_OF_ENDS,SIZE_OF_ENDS));
+                double leftEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, new Range.Builder(SIZE_OF_ENDS).shiftRight(currentWindowRange.getBegin()).build());
+                double rightEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, new Range.Builder(SIZE_OF_ENDS).shiftRight(currentWindowRange.getEnd()-SIZE_OF_ENDS).build());
                 if(avgErrorRate <= this.maxTotalAvgError && 
                         leftEndErrorRate <= this.maxErrorAtEnds 
                         && rightEndErrorRate <= this.maxErrorAtEnds){
@@ -155,7 +156,9 @@ public final class LucyLikeQualityTrimmer  implements QualityTrimmer{
             }
             currentWindowSize--;
         }
-        return Range.createEmptyRange(candidateCleanRange.getBegin());
+        return new Range.Builder()
+					.shiftRight(candidateCleanRange.getBegin())
+					.build();
     }
 
 
@@ -173,7 +176,9 @@ public final class LucyLikeQualityTrimmer  implements QualityTrimmer{
             List<Range> trimmedCandidateCleanRanges = new ArrayList<Range>();
             for(Range range : candidateCleanRanges){
                 for(Range newCandidateRange : trim(getSubList(bracketedErrorRates,range), subsequentTrimWindow)){
-                    trimmedCandidateCleanRanges.add(newCandidateRange.shiftRight(range.getBegin()));
+                    trimmedCandidateCleanRanges.add(new Range.Builder(newCandidateRange)
+                    								.shiftRight(range.getBegin())
+                    								.build());
                 }
             }
             candidateCleanRanges = trimmedCandidateCleanRanges;
@@ -190,7 +195,7 @@ public final class LucyLikeQualityTrimmer  implements QualityTrimmer{
     private List<Range> trim(List<Double> errorRates, Window trimWindow) {
         List<Range> candidateCleanRanges = new ArrayList<Range>();
         for(long i=0; i<errorRates.size()-trimWindow.getSize(); i++){
-            Range windowRange = Range.createOfLength(i, trimWindow.getSize());
+            Range windowRange = new Range.Builder(trimWindow.getSize()).shiftRight(i).build();
             
             double avgErrorRate = computeAvgErrorRateOf(errorRates,windowRange);
             if(avgErrorRate <= trimWindow.getMaxErrorRate()){
@@ -215,9 +220,9 @@ public final class LucyLikeQualityTrimmer  implements QualityTrimmer{
         //so we must check before we pass to build range
         //buildRange will throw an exception if left >= right-1
         if(leftCoordinate > rightCoordinate-2){
-            return Range.createEmptyRange();
+            return new Range.Builder().build();
         }
-        return Range.create(leftCoordinate, rightCoordinate);
+        return Range.of(leftCoordinate, rightCoordinate);
     }
     /**
      * @param qualities
@@ -227,7 +232,7 @@ public final class LucyLikeQualityTrimmer  implements QualityTrimmer{
         long coordinate=errorRates.size()-1;
         final int bracketSize = bracketWindow.getSize();
         while(coordinate >= bracketSize){
-            Range windowRange = Range.createOfLength(coordinate-bracketSize,bracketSize);
+            Range windowRange = new Range.Builder(bracketSize).shiftRight(coordinate-bracketSize).build();
             double avgErrorRate = computeAvgErrorRateOf(errorRates,windowRange);
             if(avgErrorRate <= bracketWindow.getMaxErrorRate()){
                 return coordinate;
@@ -246,7 +251,7 @@ public final class LucyLikeQualityTrimmer  implements QualityTrimmer{
         int coordinate=0;
         final int bracketSize = bracketWindow.getSize();
         while(coordinate < errorRates.size()- bracketSize){
-            Range windowRange = Range.createOfLength(coordinate, bracketSize);
+            Range windowRange = new Range.Builder(bracketSize).shiftRight(coordinate).build();
             double avgErrorRate = computeAvgErrorRateOf(errorRates,windowRange);
             if(avgErrorRate <= bracketWindow.getMaxErrorRate()){
                 return coordinate;
@@ -269,7 +274,7 @@ public final class LucyLikeQualityTrimmer  implements QualityTrimmer{
     
     private Range getLargestRangeFrom(List<Range> goodQualityRanges) {
         if(goodQualityRanges.isEmpty()){
-            return Range.createEmptyRange();
+            return new Range.Builder().build();
         }
         List<Range> sorted = new ArrayList<Range>(goodQualityRanges);
         Collections.sort(sorted, Range.Comparators.LONGEST_TO_SHORTEST);

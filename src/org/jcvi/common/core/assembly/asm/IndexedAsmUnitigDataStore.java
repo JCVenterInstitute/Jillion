@@ -379,7 +379,7 @@ public final class IndexedAsmUnitigDataStore implements UnitigDataStore{
         @Override
         public synchronized void visitEndOfContig() {
             if(currentContigId !=null){
-               this.fileRange.put(currentContigId, Range.create(startCurrentUnitigOffset, currentFileOffset));
+               this.fileRange.put(currentContigId, Range.of(startCurrentUnitigOffset, currentFileOffset));
                currentContigId=null;
             }
         }
@@ -388,7 +388,7 @@ public final class IndexedAsmUnitigDataStore implements UnitigDataStore{
         @Override
         public synchronized UnitigDataStore build(){
             
-            return new IndexedAsmUnitigDataStore(asmFile, fileRange,Range.create(startAFG, endAFG),frgDataStore);
+            return new IndexedAsmUnitigDataStore(asmFile, fileRange,Range.of(startAFG, endAFG),frgDataStore);
         }
 
     }

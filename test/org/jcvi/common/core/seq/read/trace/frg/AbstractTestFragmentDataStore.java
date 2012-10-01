@@ -41,8 +41,8 @@ public abstract class  AbstractTestFragmentDataStore {
     
     
     Library library = new DefaultLibrary(".",Distance.buildDistance(5821F, 1513F), MateOrientation.INNIE);
-    final Range clearRangeFor678 = Range.create(0,835);
-    final Range clearRangeFor061 = Range.create(0,650);
+    final Range clearRangeFor678 = Range.of(0,835);
+    final Range clearRangeFor061 = Range.of(0,650);
     
     Fragment fragEndingIn78 = new DefaultFragment(
             "334369678",

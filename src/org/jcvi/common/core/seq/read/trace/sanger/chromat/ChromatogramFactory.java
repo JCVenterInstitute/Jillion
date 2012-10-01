@@ -20,23 +20,59 @@
 package org.jcvi.common.core.seq.read.trace.sanger.chromat;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.MagicNumberInputStream;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.Ab1FileParser;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.DefaultAbiChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.AbiUtil;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFile;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFileParser;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFUtils;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramFile;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramFileParser;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRUtil;
 
-public final class ChromatogramParser {
+public final class ChromatogramFactory {
 
-	private ChromatogramParser(){
+	private ChromatogramFactory(){
 		//can not instantiate
+	}
+	
+	public static Chromatogram create(File chromatogramFile) throws IOException{
+		MagicNumberInputStream mIn =null;
+        try{
+        	mIn= new MagicNumberInputStream(chromatogramFile);	  
+        	String id = FileUtil.getBaseName(chromatogramFile);
+        	return detectATypendCreateChromatogram(mIn, id);
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(mIn);
+        }
+	}
+	public static Chromatogram create(String id, InputStream in) throws IOException{
+		MagicNumberInputStream mIn = new MagicNumberInputStream(in); 
+        return detectATypendCreateChromatogram(mIn, id);
+        
+	}
+	private static Chromatogram detectATypendCreateChromatogram(
+			MagicNumberInputStream mIn, String id)
+			throws TraceDecoderException, FileNotFoundException, IOException {
+		byte[] magicNumber = mIn.peekMagicNumber();
+		
+		if(AbiUtil.isABIMagicNumber(magicNumber)){
+			return DefaultAbiChromatogram.create(id, mIn);
+		}else if(ZTRUtil.isMagicNumber(magicNumber)){
+			return ZTRChromatogramFile.create(id, mIn);
+		}else if(SCFUtils.isMagicNumber(magicNumber)){
+			return SCFChromatogramFile.create(id, mIn);
+		}else{
+			throw new IOException("unknown chromatogram format (not ab1, scf or ztr)");
+		}
 	}
 	public static void parse(File chromatogramFile, ChromatogramFileVisitor visitor) throws IOException{
 		MagicNumberInputStream mIn =null;
@@ -63,13 +99,5 @@ public final class ChromatogramParser {
 		}
 	}
 	
-	public static void parse(InputStream chromatogramStream, ChromatogramFileVisitor visitor) throws IOException{
-		MagicNumberInputStream mIn =null;
-        try{
-        	mIn= new MagicNumberInputStream(chromatogramStream);	        
-	        parseInputStream(visitor, mIn);
-        }finally{
-        	IOUtil.closeAndIgnoreErrors(mIn);
-        }
-	}
+	
 }

@@ -62,7 +62,7 @@ public class TestAbiChromatogramTraceParserMatchesZTR {
 
     @Test
     public void ab1ChromoMatchesZTRChromo() throws FileNotFoundException, TraceDecoderException, IOException{
-    	AbiChromatogram actualAbi = AbiChromatogramFile.create(RESOURCES.getFile("files/SDBHD01T00PB1A1672F.ab1"));
+    	AbiChromatogram actualAbi = DefaultAbiChromatogram.of(RESOURCES.getFile("files/SDBHD01T00PB1A1672F.ab1"));
     	assertEquals(expectedZTR.getNucleotideSequence(), actualAbi.getNucleotideSequence());
         assertEquals(expectedZTR.getPositionSequence(), actualAbi.getPositionSequence());
         assertEquals(expectedZTR.getQualitySequence(), actualAbi.getQualitySequence());

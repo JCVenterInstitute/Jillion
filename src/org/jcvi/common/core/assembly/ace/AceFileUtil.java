@@ -214,7 +214,7 @@ public final class AceFileUtil {
                 );
     }
     private static Range buildGappedValidRangeFor(Range ungappedValidRange, int numberOfGaps,Direction dir, long ungappedFullLength){
-       Range gappedValidRange=  Range.create( 
+       Range gappedValidRange=  Range.of( 
                ungappedValidRange.getBegin(),
                ungappedValidRange.getEnd()+numberOfGaps);
         

@@ -71,7 +71,7 @@ public class TestGrowableShortArray {
 		sut.append((short)30);
 		sut.append((short)40);
 		
-		sut.remove(Range.create(1,2));
+		sut.remove(Range.of(1,2));
 		
 		short[] expected = new short[]{10,40};
 		assertToArrayCorrect(sut, expected);
@@ -84,7 +84,7 @@ public class TestGrowableShortArray {
 		sut.append((short)30);
 		sut.append((short)40);
 		
-		sut.remove(Range.createEmptyRange(2));
+		sut.remove(new Range.Builder().shiftRight(2).build());
 		
 		short[] expected = new short[]{10,20,30,40};
 		assertToArrayCorrect(sut, expected);
@@ -222,7 +222,7 @@ public class TestGrowableShortArray {
 		
 		sut.reverse();  //60,50,Short.MAX_VALUE,29,28,27,26,25,15,Byte.MAX_VALUE,5
 		sut.remove(1);  //60,Short.MAX_VALUE,29,28,27,26,25,15,Byte.MAX_VALUE,5
-		sut.remove(Range.create(3,5)); //60,Short.MAX_VALUE,29,25,15,Byte.MAX_VALUE,5
+		sut.remove(Range.of(3,5)); //60,Short.MAX_VALUE,29,25,15,Byte.MAX_VALUE,5
 		sut.append((short)99);
 		
 		short[] expected = new short[]{60,Short.MAX_VALUE,29,25,15,Byte.MAX_VALUE,5,99};

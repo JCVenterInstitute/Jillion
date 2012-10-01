@@ -88,7 +88,7 @@ public class TestReferenceEncodedNucleotideSequence {
         assertEquals(i,sequenceAsString.length());
         
         //ranged iterator
-        Range range = Range.create(sut.getLength()/4, sut.getLength()/2);
+        Range range = Range.of(sut.getLength()/4, sut.getLength()/2);
         Iterator<Nucleotide> actualRangedIterator = sut.iterator(range);
         int rangedOffset=(int)range.getBegin();
         while(actualRangedIterator.hasNext()){

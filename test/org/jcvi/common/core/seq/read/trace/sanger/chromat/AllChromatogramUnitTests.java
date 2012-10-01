@@ -43,7 +43,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestConvertZtr2Scf.class,
         TestMixAndMatchChromatogramParsers.class,
         AllAbiUnitTests.class,
-        TestChromatogramFileParser.class
+        TestChromatogramFactory.class
              
     }
     )

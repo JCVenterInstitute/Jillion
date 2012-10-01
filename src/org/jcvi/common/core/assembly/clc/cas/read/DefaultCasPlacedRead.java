@@ -127,7 +127,7 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
 
     @Override
 	public Range getGappedContigRange() {
-		return Range.create(getGappedStartOffset(), getGappedEndOffset());
+		return Range.of(getGappedStartOffset(), getGappedEndOffset());
 	}
 
 

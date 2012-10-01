@@ -49,7 +49,7 @@ public class TestPrimerDetectorInternalPrimerHit {
         NucleotideSequenceDataStore datastore = TestPrimerTrimmerUtil.createDataStoreFor(forwardPrimer, reversePrimer);
         PrimerDetector detector = new PrimerDetector(13, .9F);
         
-        Range expectedRange = Range.create(546, 586);
+        Range expectedRange = Range.of(546, 586);
         List<DirectedRange> actualRanges = detector.detect(sequence, datastore);
         assertEquals(1, actualRanges.size());
         assertEquals(expectedRange, actualRanges.get(0).asRange());

@@ -30,7 +30,7 @@ import java.io.InputStream;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.MagicNumberInputStream;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.AbiChromatogramFile;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.DefaultAbiChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.AbiUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFile;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFUtils;
@@ -56,7 +56,7 @@ public enum SangerTraceParser {
 	        String id = traceFile.getName();
 	        byte[] magicNumber = mIn.peekMagicNumber();
 	        if(AbiUtil.isABIMagicNumber(magicNumber)){
-	            return AbiChromatogramFile.create(id,mIn);
+	            return DefaultAbiChromatogram.create(id,mIn);
 	        }else if(ZTRUtil.isMagicNumber(magicNumber)){
 	        	return ZTRChromatogramFile.create(id,mIn);
 	        }else if(SCFUtils.isMagicNumber(magicNumber)){
@@ -82,7 +82,7 @@ public enum SangerTraceParser {
         	mIn= new MagicNumberInputStream(in);
 	        byte[] magicNumber = mIn.peekMagicNumber();
 	        if(AbiUtil.isABIMagicNumber(magicNumber)){
-	            return AbiChromatogramFile.create(id,mIn);
+	            return DefaultAbiChromatogram.create(id,mIn);
 	        }else if(ZTRUtil.isMagicNumber(magicNumber)){
 	        	return ZTRChromatogramFile.create(id,mIn);
 	        }else if(SCFUtils.isMagicNumber(magicNumber)){

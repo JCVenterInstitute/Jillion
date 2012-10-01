@@ -44,7 +44,7 @@ import org.junit.Test;
  */
 public class TestDefaultAcePlacedReadReAbacus {
     String readId = "readId";
-    Range validRange= Range.create(15,25);
+    Range validRange= Range.of(15,25);
     int ungappedFullLength =30;
     Direction dir = Direction.FORWARD;
     PhdInfo phdInfo = createMock(PhdInfo.class);
@@ -90,7 +90,7 @@ public class TestDefaultAcePlacedReadReAbacus {
     
     @Test
     public void reAbacus(){
-        sut.reAbacus(Range.create(3,9), parse("TACGT"));
+        sut.reAbacus(Range.of(3,9), parse("TACGT"));
         
         assertEquals(readId, sut.getId());       
         assertEquals(8, sut.getLength());
@@ -102,7 +102,7 @@ public class TestDefaultAcePlacedReadReAbacus {
     @Test
     public void reAbacusDifferentNonGapBasesShouldThrowException(){
         try{
-            sut.reAbacus(Range.create(3,9), parse("TRCGT"));
+            sut.reAbacus(Range.of(3,9), parse("TRCGT"));
             fail("should throw Exception");
         }catch(IllegalArgumentException expected){
             assertEquals("reAbacusing must retain same ungapped basecalls! 'TACGT' vs 'TRCGT'",

@@ -224,37 +224,37 @@ public class TestNucleotideSequenceBuilder {
     @Test
     public void deleteEmptyShouldDoNothing(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
-        sut.delete(Range.createEmptyRange());
+        sut.delete(new Range.Builder().build());
         assertBuiltSequenceEquals("ACGT",sut);
     }
     @Test
     public void deleteEmptyButBeyondLengthShouldDoNothing(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
-        sut.delete(Range.createEmptyRange(500000));
+        sut.delete(new Range.Builder().shiftRight(500000).build());
         assertBuiltSequenceEquals("ACGT",sut);
     }
     @Test
     public void deleteEmptyButBeyondNegativeShouldDoNothing(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
-        sut.delete(Range.createEmptyRange(-3));
+        sut.delete(new Range.Builder().shiftLeft(3).build());
         assertBuiltSequenceEquals("ACGT",sut);
     }
     @Test
     public void deleteSingleBase(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
-        sut.delete(Range.create(2));
+        sut.delete(Range.of(2));
         assertBuiltSequenceEquals("ACT",sut);
     }
     @Test(expected = IllegalArgumentException.class)
     public void deleteStartingAfterLengthShouldThrowIllegalArgumentException(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
-        sut.delete(Range.create(5));
+        sut.delete(Range.of(5));
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void deleteStartingAtNegativeShouldThrowIllegalArgumentException(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
-        sut.delete(Range.create(-5));
+        sut.delete(Range.of(-5));
     }
     @Test(expected = NullPointerException.class)
     public void deleteNullRangeShouldThrowNPE(){
@@ -264,19 +264,19 @@ public class TestNucleotideSequenceBuilder {
     @Test
     public void deleteRangeGoesBeyondLengthShouldDeleteAsMuchAsPossible(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
-        sut.delete(Range.create(2,10));
+        sut.delete(Range.of(2,10));
         assertBuiltSequenceEquals("AC",sut);
     }
     @Test
     public void deleteMultipleBases(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("AC-N-GT");
-        sut.delete(Range.create(2,4));
+        sut.delete(Range.of(2,4));
         assertBuiltSequenceEquals("ACGT",sut);
     }
     @Test
     public void deleteAllBasesShouldReturnEmptySequence(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
-        sut.delete(Range.create(0,3));
+        sut.delete(Range.of(0,3));
         assertBuiltSequenceEquals("",sut);
     }
     @Test
@@ -285,7 +285,7 @@ public class TestNucleotideSequenceBuilder {
         sut.append("TCGA") //ACGTTCGA
             .prepend("TCGAN-") //TCGAN-ACGTTCGA
             .insert(5,"AAAAA")//TCGANAAAAA-ACGTTCGA
-            .delete(Range.create(2,8)) //TCA-ACGTTCGA
+            .delete(Range.of(2,8)) //TCA-ACGTTCGA
             .append("GGGGG") //TCA-ACGTTCGAGGGGG
             .ungap() //TCAACGTTCGAGGGGG
             .reverseComplement(); //CCCCCTCGAACGTTGA
@@ -298,7 +298,7 @@ public class TestNucleotideSequenceBuilder {
           sut.append("TCGA") //ACGTTCGA
               .prepend("TCGAN-") //TCGAN-ACGTTCGA
               .insert(5,"AAAAA")//TCGANAAAAA-ACGTTCGA
-              .delete(Range.create(2,8)) //TCA-ACGTTCGA
+              .delete(Range.of(2,8)) //TCA-ACGTTCGA
               .append("GGGGG") //TCA-ACGTTCGAGGGGG
               .ungap() //TCAACGTTCGAGGGGG
               .reverseComplement(); //CCCCCTCGAACGTTGA
@@ -344,7 +344,7 @@ public class TestNucleotideSequenceBuilder {
     @Test
     public void deleteRemovesNumGapsCorrectly(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("T-G-G--A")
-                                        .delete(Range.create(2,5));
+                                        .delete(Range.of(2,5));
         assertEquals(2,sut.getNumGaps());
     }
     
@@ -352,7 +352,7 @@ public class TestNucleotideSequenceBuilder {
     public void deleteRemovesNumNsCorrectly(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("T-G-N--A");
         assertEquals(1, sut.getNumNs());
-        sut.delete(Range.create(2,5));
+        sut.delete(Range.of(2,5));
         assertEquals(2,sut.getNumGaps());
         assertEquals(0, sut.getNumNs());
     }
@@ -367,7 +367,7 @@ public class TestNucleotideSequenceBuilder {
     public void deleteRemovesNumAmbiguitiesCorrectly(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("T-G-S--A");
         assertEquals(1, sut.getNumAmbiguities());
-        sut.delete(Range.create(2,5));
+        sut.delete(Range.of(2,5));
         assertEquals(2,sut.getNumGaps());
         assertEquals(0, sut.getNumAmbiguities());
     }
@@ -443,21 +443,21 @@ public class TestNucleotideSequenceBuilder {
     public void trim(){
     	 assertEquals("CG",
                  new NucleotideSequenceBuilder("ACGT")
-    	 					.trim(Range.create(1,2))
+    	 					.trim(Range.of(1,2))
                          .build().toString());
     }
     @Test
     public void trimAndAppendSeesDownstreamChangesAndChangesCodecAccordinly(){
     	 assertEquals("CGR-NA",
                  new NucleotideSequenceBuilder("ACGT")
-    	 					.trim(Range.create(1,2))
+    	 					.trim(Range.of(1,2))
     	 					.append("R-NA")
                          .build().toString());
     }
     @Test
     public void trimReturnsSameReference(){
     	NucleotideSequenceBuilder untrimmed =  new NucleotideSequenceBuilder("ACGT");
-    	NucleotideSequenceBuilder trimmed = untrimmed.trim(Range.create(1,2));
+    	NucleotideSequenceBuilder trimmed = untrimmed.trim(Range.of(1,2));
     	assertSame(untrimmed, trimmed);
     }
     @Test
@@ -500,7 +500,7 @@ public class TestNucleotideSequenceBuilder {
     	NucleotideSequence reference = new NucleotideSequenceBuilder( "AAACCCGGGTTT").build();
    	 	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder(  "ACCCG")
    	 									.setReferenceHint(reference, 2)
-   	 									.trim(Range.create(2, 4));
+   	 									.trim(Range.of(2, 4));
    	 	NucleotideSequence builtSequence = sut.build();
 		assertEquals("CCG",builtSequence.toString());
 		assertTrue(builtSequence instanceof ReferenceMappedNucleotideSequence);
@@ -546,8 +546,8 @@ public class TestNucleotideSequenceBuilder {
     	 sut.append(Nucleotide.Gap);
     	 other.append(Nucleotide.Cytosine);
     	 
-    	 sut.delete(Range.create(4));
-    	 other.delete(Range.create(4));
+    	 sut.delete(Range.of(4));
+    	 other.delete(Range.of(4));
     	 TestUtil.assertEqualAndHashcodeSame(sut,other);
     }
     @Test

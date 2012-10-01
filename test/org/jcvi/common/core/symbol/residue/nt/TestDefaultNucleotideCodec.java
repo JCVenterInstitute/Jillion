@@ -110,7 +110,7 @@ public class TestDefaultNucleotideCodec {
     }
     
     private void assertIterateCorrectly(List<Nucleotide> list){
-    	assertIterateCorrectly(list, Range.createOfLength(list.size()));
+    	assertIterateCorrectly(list, new Range.Builder(list.size()).build());
     }
 	private void assertIterateCorrectly(List<Nucleotide> list, Range range) {
 		Iterator<Nucleotide> expected = list.iterator();
@@ -146,11 +146,11 @@ public class TestDefaultNucleotideCodec {
 	
 	@Test
     public void evenRangedIterator(){
-		assertIterateCorrectly(evenBases, Range.create(10,12));
+		assertIterateCorrectly(evenBases, Range.of(10,12));
     }
     @Test
     public void oddRangedIterator(){
-		assertIterateCorrectly(oddBases,Range.create(10,16));
+		assertIterateCorrectly(oddBases,Range.of(10,16));
     }
     
 }

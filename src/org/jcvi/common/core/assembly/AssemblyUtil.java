@@ -65,10 +65,10 @@ public final class AssemblyUtil {
             
         }
         NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder((int)ungappedFullRangeComplimentedBuilder.getLength());
-        builder.append(ungappedFullRangeComplimentedBuilder.copy().trim(Range.createOfLength(validRange.getBegin())));
+        builder.append(ungappedFullRangeComplimentedBuilder.copy().trim(new Range.Builder(validRange.getBegin()).build()));
         //need to use read's sequence since that might be gapped
         builder.append(placedRead.getNucleotideSequence());
-        builder.append(ungappedFullRangeComplimentedBuilder.copy().trim(Range.create(validRange.getEnd()+1, ungappedFullRangeComplimentedBuilder.getLength() -1)));
+        builder.append(ungappedFullRangeComplimentedBuilder.copy().trim(Range.of(validRange.getEnd()+1, ungappedFullRangeComplimentedBuilder.getLength() -1)));
      
         return builder.build();
     }
@@ -100,7 +100,7 @@ public final class AssemblyUtil {
         }
         long newStart = fullLength - validRange.getEnd()-1;
         long newEnd = fullLength - validRange.getBegin()-1;
-        return Range.create(newStart, newEnd);
+        return Range.of(newStart, newEnd);
     }
     /**
      * Convert the given gapped valid range offset of a given read into its
@@ -193,7 +193,7 @@ public final class AssemblyUtil {
         if(gappedRange ==null){
             throw new NullPointerException("gappedFeatureValidRange can not be null");
         }
-        return Range.create(
+        return Range.of(
                 gappedSequence.getUngappedOffsetFor((int)gappedRange.getBegin()),
                 gappedSequence.getUngappedOffsetFor((int)gappedRange.getEnd())
                 );

@@ -37,7 +37,7 @@ import org.junit.Test;
  */
 public class TestReadNavigationElement {
     String id= "contig id";
-    Range range = Range.create(5,10);
+    Range range = Range.of(5,10);
     String comment = "this is a comment";
     ReadNavigationElement sut = new ReadNavigationElement(id, range,comment);
     
@@ -84,7 +84,7 @@ public class TestReadNavigationElement {
     }
     @Test
     public void differentRangeShouldNotBeEqual(){
-        ReadNavigationElement differentRange = new ReadNavigationElement(id, range.shrink(0, 2),comment);
+        ReadNavigationElement differentRange = new ReadNavigationElement(id, new Range.Builder(range).shrinkRight(2).build(),comment);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentRange);
     }
     @Test

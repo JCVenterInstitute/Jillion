@@ -220,8 +220,8 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         //edited and that could have changed the coordinates.
         //Therefore intersect the qual and align coords
         //to find the region we are interested in
-        Range qualityRange = Range.create(CoordinateSystem.RESIDUE_BASED, qualLeft,qualRight);
-        Range alignmentRange = Range.create(CoordinateSystem.RESIDUE_BASED, alignLeft,alignRight);
+        Range qualityRange = Range.of(CoordinateSystem.RESIDUE_BASED, qualLeft,qualRight);
+        Range alignmentRange = Range.of(CoordinateSystem.RESIDUE_BASED, alignLeft,alignRight);
         Range gappedValidRange =qualityRange.intersection(alignmentRange);
      
         currentOffset = computeReadOffset(assembledFrom, gappedValidRange.getBegin(CoordinateSystem.RESIDUE_BASED));            
@@ -245,7 +245,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         //of the file were diff'ed.
         int ungappedClearLeft = gappedFullLengthSequence.getUngappedOffsetFor((int)gappedValidRange.getBegin());
         int ungappedClearRight = gappedFullLengthSequence.getUngappedOffsetFor((int)gappedValidRange.getEnd());
-        Range ungappedValidRange = Range.create(CoordinateSystem.RESIDUE_BASED, ungappedClearLeft+1, ungappedClearRight+1 );
+        Range ungappedValidRange = Range.of(CoordinateSystem.RESIDUE_BASED, ungappedClearLeft+1, ungappedClearRight+1 );
         if(readDirection == Direction.REVERSE){
             ungappedValidRange = AssemblyUtil.reverseComplementValidRange(ungappedValidRange, currentReadUngappedFullLength);            
         }

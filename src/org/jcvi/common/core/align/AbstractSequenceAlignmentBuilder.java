@@ -130,8 +130,8 @@ public abstract class AbstractSequenceAlignmentBuilder
 			subjectStart=0;
 		}
 		if(builtFromTraceback){
-			queryRange = Range.create(queryStart-querySequenceBuilder.getUngappedLength()+1, queryStart);
-			subjectRange = Range.create(subjectStart-subjectSequenceBuilder.getUngappedLength()+1, subjectStart);
+			queryRange = Range.of(queryStart-querySequenceBuilder.getUngappedLength()+1, queryStart);
+			subjectRange = Range.of(subjectStart-subjectSequenceBuilder.getUngappedLength()+1, subjectStart);
 			//we built these sequence backwards
 			//since they were built from a traceback
 			//so reverse (but not complement) the sequences
@@ -139,8 +139,8 @@ public abstract class AbstractSequenceAlignmentBuilder
 			querySequenceBuilder.reverse();
 			subjectSequenceBuilder.reverse();
 		}else{
-			queryRange = Range.createOfLength(queryStart, querySequenceBuilder.getUngappedLength());
-			subjectRange = Range.createOfLength(subjectStart, subjectSequenceBuilder.getUngappedLength());
+			queryRange = new Range.Builder(querySequenceBuilder.getUngappedLength()).shiftRight(queryStart).build();
+			subjectRange = new Range.Builder(subjectSequenceBuilder.getUngappedLength()).shiftRight(subjectStart).build();
 		
 		}
 		return createAlignment(percentIdentity, alignmentLength, numMisMatches, numGaps, 

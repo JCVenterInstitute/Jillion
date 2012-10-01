@@ -352,7 +352,7 @@ public class ReAbacusAceContigWorker {
                     int gappedStart=consensus.getGappedOffsetFor((int)ungappedRange.getBegin()- numberOfFlankingBases)+1;
                     int gappedEnd = consensus.getGappedOffsetFor((int)ungappedRange.getEnd()+1+numberOfFlankingBases)-1;
                    
-                    Range gappedFlankingRange = Range.create(gappedStart, gappedEnd);
+                    Range gappedFlankingRange = Range.of(gappedStart, gappedEnd);
                     rangesToMerge.add(gappedFlankingRange);
                 }
                 
@@ -364,7 +364,7 @@ public class ReAbacusAceContigWorker {
                 for(Range gappedAbacusProblemRange : reversedSortedRanges){
                     int gappedStart = (int)gappedAbacusProblemRange.getBegin();
                     int gappedEnd = (int)gappedAbacusProblemRange.getEnd();
-                    Range ungappedProblemRange = Range.create(
+                    Range ungappedProblemRange = Range.of(
                             consensus.getUngappedOffsetFor(gappedStart),
                             consensus.getUngappedOffsetFor(gappedEnd)
                             );
@@ -393,7 +393,7 @@ public class ReAbacusAceContigWorker {
                             //so we don't care
                             continue;
                         }
-                        Range affectedSequenceRange = Range.create(start, end); 
+                        Range affectedSequenceRange = Range.of(start, end); 
                         NucleotideSequence ungappedProblemSequence = readBuilder.getNucleotideSequenceBuilder()
                         											.copy()
 									                        		.trim(affectedSequenceRange)
@@ -473,7 +473,7 @@ public class ReAbacusAceContigWorker {
 	                           
 	                            Range sequenceRange = Range.parseRange(gappedFasta.getComment());
 	                            
-	                            Range newGappedRange = Range.createOfLength(gappedSequence.getLength());
+	                            Range newGappedRange = new Range.Builder(gappedSequence.getLength()).build();
 	                            //will be 0 unless we are in the beginning of a read
 	                            //which will change this number later
 	                            int numberOfLeadingGaps=0;
@@ -494,23 +494,23 @@ public class ReAbacusAceContigWorker {
 	                            basesBuilder.delete(sequenceRange);
 	                            
 	                            long length =basesBuilder.getLength();
-	                            Range fixedBasesRange = newGappedRange;
+	                            Range.Builder fixedBasesRange = new Range.Builder(newGappedRange);
 	                            if(length-1 <sequenceRange.getBegin()){
 	                                //we are fixing the end of the read
 	                                //trim off trailing gaps
-	                                fixedBasesRange = fixedBasesRange.shrink(0, numberOfTrailingGaps);
+	                                fixedBasesRange.shrinkRight(numberOfTrailingGaps);
 	                            }
 	                            if(sequenceRange.getBegin()==0){
 	                                //we are fixing beginning of sequence
 	                                //trim off leading gaps
 	                                numberOfLeadingGaps = gappedSequence.getGappedOffsetFor(0);
-	                                fixedBasesRange=fixedBasesRange.shrink(numberOfLeadingGaps, 0);
+	                                fixedBasesRange.shrinkLeft(numberOfLeadingGaps);
 	                                //need to adjust the start coordinate since it could
 	                                //have been originally placed incorrectly
 	                                readBuilder.setStartOffset(gappedStart+numberOfLeadingGaps);
 	                            }
 	                            NucleotideSequence fixedSequence = new NucleotideSequenceBuilder(gappedSequence)
-	                            										.trim(fixedBasesRange)
+	                            										.trim(fixedBasesRange.build())
 	                            										.build();
 	                            basesBuilder.insert((int)sequenceRange.getBegin(), fixedSequence);
 	                            Iterator<Nucleotide> fixedIter = fixedSequence.iterator();

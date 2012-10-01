@@ -69,7 +69,7 @@ public class TestGrowableByteArray {
 		sut.append((byte)30);
 		sut.append((byte)40);
 		
-		sut.remove(Range.create(1,2));
+		sut.remove(Range.of(1,2));
 		
 		byte[] expected = new byte[]{10,40};
 		assertToArrayCorrect(sut, expected);
@@ -82,7 +82,7 @@ public class TestGrowableByteArray {
 		sut.append((byte)30);
 		sut.append((byte)40);
 		
-		sut.remove(Range.createEmptyRange(2));
+		sut.remove(new Range.Builder().shiftRight(2).build());
 		
 		byte[] expected = new byte[]{10,20,30,40};
 		assertToArrayCorrect(sut, expected);
@@ -220,7 +220,7 @@ public class TestGrowableByteArray {
 		
 		sut.reverse();  //60,50,30,29,28,27,26,25,15,10,5
 		sut.remove(1);  //60,30,29,28,27,26,25,15,10,5
-		sut.remove(Range.create(3,5)); //60,30,29,25,15,10,5
+		sut.remove(Range.of(3,5)); //60,30,29,25,15,10,5
 		sut.append((byte)99);
 		
 		byte[] expected = new byte[]{60,30,29,25,15,10,5,99};

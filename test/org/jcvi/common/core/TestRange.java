@@ -38,8 +38,8 @@ import org.jcvi.common.core.Range.CoordinateSystem;
 import org.junit.Test;
 
 public class TestRange{
-    private Range range = Range.create(1,10);
-    private Range emptyRange = Range.create(0, -1);
+    private Range range = Range.of(1,10);
+    private Range emptyRange = Range.of(0, -1);
     @Test
     public void testEquals_null_notEqual(){
         assertFalse(range.equals(null));
@@ -57,49 +57,49 @@ public class TestRange{
     }
 
     @Test public void testEquals_sameLeftSameRightDiffSystem_notEqual(){
-        final Range range2 = Range.create(Range.CoordinateSystem.SPACE_BASED,range.getBegin(),range.getEnd());
+        final Range range2 = Range.of(Range.CoordinateSystem.SPACE_BASED,range.getBegin(),range.getEnd());
         assertFalse(range.equals(range2));
         assertFalse(range.hashCode()==range2.hashCode());
     }
 
     @Test public void testEquals_differentLeftSameRight_notEqual(){
-        final Range range2 = Range.create(range.getBegin()-1,range.getEnd());
+        final Range range2 = Range.of(range.getBegin()-1,range.getEnd());
         assertFalse(range.equals(range2));
         assertFalse(range.hashCode()==range2.hashCode());
     }
 
     @Test public void testEquals_differentLeftDifferentRightDiffSystem_equal(){
-        final Range range2 = Range.create(Range.CoordinateSystem.RESIDUE_BASED,range.getBegin()+1,range.getEnd()+1);
+        final Range range2 = Range.of(Range.CoordinateSystem.RESIDUE_BASED,range.getBegin()+1,range.getEnd()+1);
         assertEquals(range,range2);
         assertEquals(range.hashCode(),range2.hashCode());
     }
 
     @Test public void testEquals_differentLeftDifferentRightDiffSystem_notEqual(){
-        final Range range2 = Range.create(Range.CoordinateSystem.SPACE_BASED,range.getBegin()+1,range.getEnd()+1);
+        final Range range2 = Range.of(Range.CoordinateSystem.SPACE_BASED,range.getBegin()+1,range.getEnd()+1);
         assertFalse(range.equals(range2));
         assertFalse(range.hashCode()==range2.hashCode());
     }
 
     @Test public void testEquals_sameLeftDifferentRight_notEqual(){
-        final Range range2 = Range.create(range.getBegin(),range.getEnd()+1);
+        final Range range2 = Range.of(range.getBegin(),range.getEnd()+1);
         assertFalse(range.equals(range2));
         assertFalse(range.hashCode()==range2.hashCode());
     }
 
     @Test public void testEquals_sameLeftDifferentRightDiffSystem_equal(){
-        final Range range2 = Range.create(Range.CoordinateSystem.SPACE_BASED,range.getBegin(),range.getEnd()+1);
+        final Range range2 = Range.of(Range.CoordinateSystem.SPACE_BASED,range.getBegin(),range.getEnd()+1);
         assertEquals(range,range2);
         assertEquals(range.hashCode(),range2.hashCode());
     }
 
     @Test public void testEquals_sameLeftDifferentRightDiffSystem_notEqual(){
-        final Range range2 = Range.create(Range.CoordinateSystem.RESIDUE_BASED,range.getBegin(),range.getEnd()+1);
+        final Range range2 = Range.of(Range.CoordinateSystem.RESIDUE_BASED,range.getBegin(),range.getEnd()+1);
         assertFalse(range.equals(range2));
         assertFalse(range.hashCode()==range2.hashCode());
     }
 
     @Test public void testEquals_differentLeftDifferentRight_notEqual(){
-        final Range range2 = Range.create(range.getBegin()+1,range.getEnd()+1);
+        final Range range2 = Range.of(range.getBegin()+1,range.getEnd()+1);
         assertFalse(range.equals(range2));
         assertFalse(range.hashCode()==range2.hashCode());
     }
@@ -109,7 +109,7 @@ public class TestRange{
         int left = 10;
         int right =20;
 
-        Range sut = Range.create(left,right);
+        Range sut = Range.of(left,right);
         assertEquals(left,sut.getBegin());
         assertEquals(right, sut.getEnd());
     }
@@ -119,7 +119,7 @@ public class TestRange{
         int left = 10;
         int length = 10;
 
-        Range sut = Range.createOfLength(left,length);
+        Range sut = new Range.Builder(length).shiftRight(left).build();
         assertEquals(left,sut.getBegin());
         assertEquals(left+length-1, sut.getEnd());
     }
@@ -129,33 +129,11 @@ public class TestRange{
         int left = 10;
         int length = 0;
 
-        Range sut = Range.createOfLength(left,length);
+        Range sut = new Range.Builder(length).shiftRight(left).build();
         assertEquals(left,sut.getBegin());
         assertEquals(left+length-1, sut.getEnd());
     }
 
-    @Test
-    public void testBuildRangeOfLengthSpaceBasedRange_emptyRange(){
-        int left = 10;
-        int length = 0;
-
-        Range sut = Range.createOfLength(Range.CoordinateSystem.SPACE_BASED,left,length);
-        assertEquals(left,sut.getBegin());
-        assertEquals(left+length, sut.getEnd(CoordinateSystem.SPACE_BASED));
-        assertEquals(left+length-1, sut.getEnd());
-    }
-
-    @Test
-    public void testBuildRangeOfLengthResidueBasedRange_emptyRange(){
-        int left = 10;
-        int length = 0;
-
-        Range sut = Range.createOfLength(Range.CoordinateSystem.RESIDUE_BASED,left,length);
-        assertEquals(left-1,sut.getBegin());
-        assertEquals(left,sut.getBegin(CoordinateSystem.RESIDUE_BASED));
-        assertEquals(left+length-1-1, sut.getEnd());
-        assertEquals(left+length-1, sut.getEnd(CoordinateSystem.RESIDUE_BASED));
-    }
 
     
     @Test(expected=IllegalArgumentException.class)
@@ -163,7 +141,7 @@ public class TestRange{
         int left = 0;
         int length =-1;
 
-        Range.createOfLength(left,length);
+        new Range.Builder(length).shiftRight(left).build();
     }
 
     
@@ -172,7 +150,7 @@ public class TestRange{
         int left = 10;
         int right =20;
 
-        Range sut = Range.create(Range.CoordinateSystem.ZERO_BASED,left,right);
+        Range sut = Range.of(Range.CoordinateSystem.ZERO_BASED,left,right);
         assertEquals(left,sut.getBegin(CoordinateSystem.ZERO_BASED));
         assertEquals(right, sut.getEnd(CoordinateSystem.ZERO_BASED));
         assertEquals(left,sut.getBegin());
@@ -183,7 +161,7 @@ public class TestRange{
         int left = 10;
         int right =20;
 
-        Range sut = Range.create(Range.CoordinateSystem.SPACE_BASED,left,right);
+        Range sut = Range.of(Range.CoordinateSystem.SPACE_BASED,left,right);
         assertEquals(left,sut.getBegin(CoordinateSystem.SPACE_BASED));
         assertEquals(right, sut.getEnd(CoordinateSystem.SPACE_BASED));
         assertEquals(left,sut.getBegin());
@@ -194,7 +172,7 @@ public class TestRange{
         int left = 10;
         int right =20;
 
-        Range sut = Range.create(Range.CoordinateSystem.RESIDUE_BASED,left,right);
+        Range sut = Range.of(Range.CoordinateSystem.RESIDUE_BASED,left,right);
         assertEquals(left,sut.getBegin(CoordinateSystem.RESIDUE_BASED));
         assertEquals(right, sut.getEnd(CoordinateSystem.RESIDUE_BASED));
         assertEquals(left,sut.getBegin()+1);
@@ -205,7 +183,7 @@ public class TestRange{
         int left = 1;
         int right =0;
 
-        Range sut = Range.create(Range.CoordinateSystem.RESIDUE_BASED,left,right);
+        Range sut = Range.of(Range.CoordinateSystem.RESIDUE_BASED,left,right);
         assertTrue(sut.isEmpty());
         assertEquals(sut,emptyRange);
     }
@@ -214,7 +192,7 @@ public class TestRange{
         int left = 0;
         int right =0;
 
-        Range sut = Range.create(Range.CoordinateSystem.SPACE_BASED,left,right);
+        Range sut = Range.of(Range.CoordinateSystem.SPACE_BASED,left,right);
         assertTrue(sut.isEmpty());
         assertEquals(sut,emptyRange);
         assertEquals(sut.hashCode(),emptyRange.hashCode());
@@ -222,37 +200,17 @@ public class TestRange{
 
     @Test public void testDefaultBuildEmptyRangeConstruction(){
 
-        Range sut = Range.createEmptyRange();
+        Range sut = new Range.Builder().build();
         assertTrue(sut.isEmpty());
         assertEquals(sut,emptyRange);
     }
 
     @Test public void testDefaultCoordinateSpecificBuildEmptyRangeConstruction(){
-        Range sut = Range.createEmptyRange(0);
+        Range sut = new Range.Builder()
+						.build();
         assertTrue(sut.isEmpty());
         assertEquals(sut,emptyRange);
-    }
-
-    @Test public void testResidueCoordinateSpecificBuildEmptyRangeConstruction(){
-        Range sut = Range.createEmptyRange(Range.CoordinateSystem.RESIDUE_BASED,1);
-        assertTrue(sut.isEmpty());
-        assertEquals(sut,emptyRange);
-    }
-
-    @Test public void testSpaceCoordinateSpecificEmptyRangeConstruction(){
-        Range sut = Range.createEmptyRange(Range.CoordinateSystem.SPACE_BASED,0);
-        assertTrue(sut.isEmpty());
-        assertEquals(sut,emptyRange);
-    }
-
-    @Test public void testNonZeroCoordinateSpecificEmptyRangeConstruction(){
-        int zeroRangeLocation = 7;
-        Range sut = Range.createEmptyRange(Range.CoordinateSystem.SPACE_BASED,zeroRangeLocation);
-        assertTrue(sut.isEmpty());
-        assertEquals(sut.getBegin(CoordinateSystem.SPACE_BASED),zeroRangeLocation);
-        assertEquals(sut.getEnd(CoordinateSystem.SPACE_BASED),zeroRangeLocation);
-        assertFalse(sut.equals(emptyRange));
-    }
+    } 
 
    
 
@@ -260,11 +218,11 @@ public class TestRange{
         int left = 0;
         int right =-1;
 
-        Range.create(Range.CoordinateSystem.SPACE_BASED,left,right);
+        Range.of(Range.CoordinateSystem.SPACE_BASED,left,right);
     }
 
     @Test(expected=IllegalArgumentException.class) public void testConstructor_leftGreaterThanRight_shouldThrowIllegalArgumentException(){
-        Range.create(10,0);
+        Range.of(10,0);
     }
 
     
@@ -272,7 +230,7 @@ public class TestRange{
     @Test public void testzeroToSpaceCoordinateSystem(){
         long rangeStart = 5;
         long rangeEnd = 15;
-        Range range = Range.create(Range.CoordinateSystem.ZERO_BASED,rangeStart,rangeEnd);
+        Range range = Range.of(Range.CoordinateSystem.ZERO_BASED,rangeStart,rangeEnd);
         assertEquals(range.getBegin(CoordinateSystem.SPACE_BASED),rangeStart);
         assertEquals(range.getEnd(CoordinateSystem.SPACE_BASED),rangeEnd+1);
     }
@@ -280,7 +238,7 @@ public class TestRange{
     @Test public void testzeroToResidueCoordinateSystem(){
         long rangeStart = 5;
         long rangeEnd = 15;
-        Range range = Range.create(Range.CoordinateSystem.ZERO_BASED,rangeStart,rangeEnd);
+        Range range = Range.of(Range.CoordinateSystem.ZERO_BASED,rangeStart,rangeEnd);
         assertEquals(range.getBegin(CoordinateSystem.RESIDUE_BASED),rangeStart+1);
         assertEquals(range.getEnd(CoordinateSystem.RESIDUE_BASED),rangeEnd+1);
     }
@@ -292,39 +250,39 @@ public class TestRange{
     }
 
     @Test public void testSubRangeOf_leftIsSameRightIsLess_isSubRange(){
-        Range subRange = Range.create(range.getBegin(),range.getEnd()-1);
+        Range subRange = Range.of(range.getBegin(),range.getEnd()-1);
         assertTrue(subRange.isSubRangeOf(range));
     }
     @Test public void testSubRangeOf_leftIsSameRightIsMore_isNotSubRange(){
-        Range subRange = Range.create(range.getBegin(),range.getEnd()+1);
+        Range subRange = Range.of(range.getBegin(),range.getEnd()+1);
         assertFalse(subRange.isSubRangeOf(range));
     }
     @Test public void testSubRangeOf_leftIsLessRightIsMore_isNotSubRange(){
-        Range notSubRange = Range.create(range.getBegin()-1,range.getEnd()+1);
+        Range notSubRange = Range.of(range.getBegin()-1,range.getEnd()+1);
         assertFalse(notSubRange.isSubRangeOf(range));
     }
 
     @Test public void testSubRangeOf_leftIsLessRightIsLess_isNotSubRange(){
-        Range notSubRange = Range.create(range.getBegin()-1,range.getEnd()-1);
+        Range notSubRange = Range.of(range.getBegin()-1,range.getEnd()-1);
         assertFalse(notSubRange.isSubRangeOf(range));
     }
     @Test public void testSubRangeOf_leftIsLessRightIsSame_isNotSubRange(){
-        Range notSubRange = Range.create(range.getBegin()-1,range.getEnd());
+        Range notSubRange = Range.of(range.getBegin()-1,range.getEnd());
         assertFalse(notSubRange.isSubRangeOf(range));
     }
 
     @Test public void testSubRangeOf_leftIsMoreRightIsSame_isSubRange(){
-        Range subRange = Range.create(range.getBegin()+1,range.getEnd());
+        Range subRange = Range.of(range.getBegin()+1,range.getEnd());
         assertTrue(subRange.isSubRangeOf(range));
     }
     @Test public void testSubRangeOf_leftIsMoreRightIsLess_isSubRange(){
-        Range subRange = Range.create(range.getBegin()+1,range.getEnd()-1);
+        Range subRange = Range.of(range.getBegin()+1,range.getEnd()-1);
 
         assertTrue(subRange.isSubRangeOf(range));
     }
 
     @Test public void testSubRangeOf_leftIsMoreRightIsMore_isNotSubRange(){
-        Range subRange = Range.create(range.getBegin()+1,range.getEnd()+1);
+        Range subRange = Range.of(range.getBegin()+1,range.getEnd()+1);
 
         assertFalse(subRange.isSubRangeOf(range));
     }
@@ -356,12 +314,12 @@ public class TestRange{
     }
 
     @Test public void testSize_sameLeftAndRight_sizeIsOne(){
-        Range oneRange = Range.create(5,5);
+        Range oneRange = Range.of(5,5);
         assertEquals(1, oneRange.getLength());
     }
 
     @Test public void testSize_leftAndRightAreZero_sizeIsOne(){
-        Range zeroRange = Range.create(0,0);
+        Range zeroRange = Range.of(0,0);
         assertEquals(1, zeroRange.getLength());
     }
     
@@ -380,31 +338,31 @@ public class TestRange{
     @Test public void testIntersects()
     {
     	
-        Range target = Range.create(5, 15);
+        Range target = Range.of(5, 15);
         assertTrue(this.range.intersects(target));
     }
 
     @Test public void testIntersects_doesntReallyIntersect()
     {
-        Range target = Range.create(15,25);
+        Range target = Range.of(15,25);
         assertFalse(this.range.intersects(target));
     }
 
     @Test public void testIntersects_barelyIntersectsStart()
     {
-        Range target = Range.create(-10, 1);
+        Range target = Range.of(-10, 1);
         assertTrue(this.range.intersects(target));
     }
 
     @Test public void testIntersects_barelyIntersectsEnd()
     {
-        Range target = Range.create(10, 12);
+        Range target = Range.of(10, 12);
         assertTrue(this.range.intersects(target));
     }
 
     @Test public void testIntersects_subRange()
     {
-        Range target = Range.create(5, 7);
+        Range target = Range.of(5, 7);
         assertTrue(this.range.intersects(target));
     }
 
@@ -438,32 +396,32 @@ public class TestRange{
   
     @Test public void testIntersection_normal()
     {
-        Range target = Range.create(5,15);
-        assertEquals(Range.create(5, 10), this.range.intersection(target));
+        Range target = Range.of(5,15);
+        assertEquals(Range.of(5, 10), this.range.intersection(target));
     }
 
     @Test public void testIntersection_subrange()
     {
-        Range target = Range.create(5,7);
+        Range target = Range.of(5,7);
         assertEquals(target, this.range.intersection(target));
     }
 
     @Test public void testIntersection_superrange()
     {
-        Range target = Range.create(-4, 20);
+        Range target = Range.of(-4, 20);
         assertEquals(this.range, this.range.intersection(target));
     }
 
     @Test public void testIntersection_onePointIntersectStart()
     {
-        Range target = Range.create(-4, 1);
-        assertEquals(Range.create(1, 1), this.range.intersection(target));
+        Range target = Range.of(-4, 1);
+        assertEquals(Range.of(1, 1), this.range.intersection(target));
     }
 
     @Test public void testIntersection_onePointIntersectEnd()
     {
-        Range target = Range.create(10, 12);
-        assertEquals(Range.create(10, 10), this.range.intersection(target));
+        Range target = Range.of(10, 12);
+        assertEquals(Range.of(10, 10), this.range.intersection(target));
     }
 
     @Test public void testIntersection_empty()
@@ -473,7 +431,7 @@ public class TestRange{
 
     @Test public void testIntersection_nointersection()
     {
-        Range target = Range.create(15,25);
+        Range target = Range.of(15,25);
         assertEquals(emptyRange, this.range.intersection(target));
     }
     @Test public void testIntersection_self()
@@ -496,19 +454,19 @@ public class TestRange{
 
     @Test public void testStartsBefore()
     {
-        Range target = Range.create(15,25);
+        Range target = Range.of(15,25);
         assertTrue(this.range.startsBefore(target));
     }
 
     @Test public void testStartsBefore_false()
     {
-        Range target = Range.create(-5, 10);
+        Range target = Range.of(-5, 10);
         assertFalse(this.range.startsBefore(target));
     }
 
     @Test public void testStartsBefore_sameStart()
     {
-        Range target = Range.create(1, 15);
+        Range target = Range.of(1, 15);
         assertFalse(this.range.startsBefore(target));
     }
 
@@ -532,19 +490,19 @@ public class TestRange{
 
     @Test public void testEndsBefore()
     {
-        Range target = Range.create(12,20);
+        Range target = Range.of(12,20);
         assertTrue(this.range.endsBefore(target));
     }
 
     @Test public void testEndsBefore_false()
     {
-        Range target = Range.create(-5, 8);
+        Range target = Range.of(-5, 8);
         assertFalse(this.range.endsBefore(target));
     }
 
     @Test public void testEndsBefore_sameEnd()
     {
-        Range target = Range.create(5, 10);
+        Range target = Range.of(5, 10);
         assertFalse(this.range.endsBefore(target));
     }
 
@@ -623,7 +581,7 @@ public class TestRange{
     private void validParse(String sep) {
         long start = 15;
         long end = 45;
-        final Range expected = Range.create(start, end);
+        final Range expected = Range.of(start, end);
         assertEquals(expected,Range.parseRange(convertIntoString(start,end,sep)));
         assertEquals(expected,Range.parseRange(convertIntoString(start,end," "+sep+"\t")));
     }
@@ -645,23 +603,20 @@ public class TestRange{
     }
     @Test
     public void buildRange(){
-        assertEquals(range, Range.create(range.getBegin(), range.getEnd()));
+        assertEquals(range, Range.of(range.getBegin(), range.getEnd()));
     }
     @Test
     public void buildRangeWithCoordinateSystem(){
-        assertEquals(range, Range.create(CoordinateSystem.RESIDUE_BASED,range.getBegin()+1, range.getEnd()+1));
+        assertEquals(range, Range.of(CoordinateSystem.RESIDUE_BASED,range.getBegin()+1, range.getEnd()+1));
     }
     @Test(expected = NullPointerException.class)
     public void buildRangeWithNullCoordinateSystemShouldThrowNPE(){
-        Range.create(null,range.getBegin()+1, range.getEnd()+1);
+        Range.of(null,range.getBegin()+1, range.getEnd()+1);
     }
-    @Test(expected = NullPointerException.class)
-    public void buildEmptyRangeWithNullCoordinateSystemShouldThrowNPE(){
-        Range.createEmptyRange(null,range.getBegin()+1);
-    }
+
     @Test
     public void buildEmptyRange(){
-        Range emptyRange = Range.create(10, 9);
+        Range emptyRange = Range.of(10, 9);
         assertEquals(10, emptyRange.getBegin());
         assertEquals(9, emptyRange.getEnd());
         assertTrue(emptyRange.isEmpty());
@@ -678,18 +633,20 @@ public class TestRange{
     @Test
     public void buildInclusiveRange(){
         List<Range> ranges = Arrays.asList(
-                    Range.create(10, 20),
-                    Range.create( 50, 100),
-                    Range.create( -5, 3)
+                    Range.of(10, 20),
+                    Range.of( 50, 100),
+                    Range.of( -5, 3)
                     );
-        Range expected = Range.create(-5,100);
+        Range expected = Range.of(-5,100);
         assertEquals(expected, Ranges.createInclusiveRange(ranges));
     }
     
     @Test
     public void shiftRight(){
         int units = 5;
-        Range shifted = range.shiftRight(units);
+        Range shifted = new Range.Builder(range)
+							.shiftRight(units)
+							.build();
         assertEquals(range.getBegin()+units, shifted.getBegin());
         assertEquals(range.getEnd()+units, shifted.getEnd());
         assertEquals(range.getLength(), shifted.getLength());
@@ -698,7 +655,9 @@ public class TestRange{
     @Test
     public void shiftLeft(){
         int units = 5;
-        Range shifted = range.shiftLeft(units);
+        Range shifted = new Range.Builder(range)
+							.shiftLeft(units)
+							.build();
         assertEquals(range.getBegin()-units, shifted.getBegin());
         assertEquals(range.getEnd()-units, shifted.getEnd());
         assertEquals(range.getLength(), shifted.getLength());
@@ -721,7 +680,7 @@ public class TestRange{
     
     @Test
     public void mergeTwoRangesNoOverlapShouldReturnTwoRanges(){
-        Range nonOverlappingRange = Range.create(12, 20);
+        Range nonOverlappingRange = Range.of(12, 20);
         List<Range> nonOverlappingRanges = Arrays.asList(range,nonOverlappingRange);
         assertEquals(
                 nonOverlappingRanges,
@@ -731,9 +690,9 @@ public class TestRange{
     
     @Test
     public void mergeTwoRanges(){
-        Range overlappingRange = Range.create(5, 20);
+        Range overlappingRange = Range.of(5, 20);
         List<Range> overlappingRanges = Arrays.asList(range,overlappingRange);
-        List<Range> expectedRanges = Arrays.asList(Range.create(range.getBegin(), overlappingRange.getEnd()));
+        List<Range> expectedRanges = Arrays.asList(Range.of(range.getBegin(), overlappingRange.getEnd()));
         assertEquals(
                 expectedRanges,
                 Ranges.merge(overlappingRanges));
@@ -741,10 +700,10 @@ public class TestRange{
     }
     @Test
     public void mergeTwoAdjacentButNotOverlappingRangesShouldMergeIntoOne(){
-        Range adjacentRange = Range.create(11, 20);
+        Range adjacentRange = Range.of(11, 20);
         List<Range> rangesToMerge = Arrays.asList(range,adjacentRange);
         List<Range> expectedRanges = Arrays.asList(
-                Range.create(range.getBegin(), adjacentRange.getEnd()));
+                Range.of(range.getBegin(), adjacentRange.getEnd()));
         assertEquals(
                 expectedRanges,
                 Ranges.merge(rangesToMerge));
@@ -752,10 +711,10 @@ public class TestRange{
     }
     @Test
     public void mergeThreeRanges(){
-        Range overlappingRange_1 = Range.create(5, 20);
-        Range overlappingRange_2 = Range.create(15, 30);
+        Range overlappingRange_1 = Range.of(5, 20);
+        Range overlappingRange_2 = Range.of(15, 30);
         List<Range> overlappingRanges = Arrays.asList(range,overlappingRange_1,overlappingRange_2);
-        List<Range> expectedRanges = Arrays.asList(Range.create(range.getBegin(), overlappingRange_2.getEnd()));
+        List<Range> expectedRanges = Arrays.asList(Range.of(range.getBegin(), overlappingRange_2.getEnd()));
         assertEquals(
                 expectedRanges,
                 Ranges.merge(overlappingRanges));
@@ -763,10 +722,10 @@ public class TestRange{
     }
     @Test
     public void mergeThreeRangesThirdRangeConnectsTwoRangeIslands(){
-        Range overlappingRange_2 = Range.create(5, 20);
-        Range overlappingRange_1 = Range.create(15, 30);
+        Range overlappingRange_2 = Range.of(5, 20);
+        Range overlappingRange_1 = Range.of(15, 30);
         List<Range> overlappingRanges = Arrays.asList(range,overlappingRange_1,overlappingRange_2);
-        List<Range> expectedRanges = Arrays.asList(Range.create(range.getBegin(), overlappingRange_1.getEnd()));
+        List<Range> expectedRanges = Arrays.asList(Range.of(range.getBegin(), overlappingRange_1.getEnd()));
         assertEquals(
                 expectedRanges,
                 Ranges.merge(overlappingRanges));
@@ -774,10 +733,10 @@ public class TestRange{
     }
     @Test
     public void mergeThreeRangesOnlyTwoMerge(){
-        Range overlappingRange = Range.create(5, 20);
-        Range nonOverlappingRange = Range.create(22, 30);
+        Range overlappingRange = Range.of(5, 20);
+        Range nonOverlappingRange = Range.of(22, 30);
         List<Range> overlappingRanges = Arrays.asList(range,overlappingRange,nonOverlappingRange);
-        List<Range> expectedRanges = Arrays.asList(Range.create(range.getBegin(), overlappingRange.getEnd()),nonOverlappingRange);
+        List<Range> expectedRanges = Arrays.asList(Range.of(range.getBegin(), overlappingRange.getEnd()),nonOverlappingRange);
         assertEquals(
                 expectedRanges,
                 Ranges.merge(overlappingRanges));
@@ -792,14 +751,15 @@ public class TestRange{
                 Ranges.merge(consecutiveRanges));
     }
     private Range createRangeSeparatedFrom(Range range, int distance){
-        return Range.createOfLength(range.getEnd()+ distance, range.getLength());
+        return new Range.Builder(range.getLength())
+        		.shiftRight(range.getEnd()+ distance).build();
     }
     @Test
     public void mergeRightClusteredRanges(){
         int clusterDistance=30;
         Range clusterableRange = createRangeSeparatedFrom(range,clusterDistance);
         List<Range> clusteredRanges = Arrays.asList(range, clusterableRange);
-        List<Range> expectedRange = Arrays.asList(Range.create(range.getBegin(), clusterableRange.getEnd()));
+        List<Range> expectedRange = Arrays.asList(Range.of(range.getBegin(), clusterableRange.getEnd()));
         assertEquals(
                 expectedRange,
                 Ranges.merge(clusteredRanges,clusterDistance));
@@ -809,7 +769,7 @@ public class TestRange{
         int clusterDistance=30;
         Range clusterableRange = createRangeSeparatedFrom(range,clusterDistance+1);
         List<Range> clusteredRanges = Arrays.asList(range, clusterableRange);
-        List<Range> expectedRange = Arrays.asList(Range.create(range.getBegin(), clusterableRange.getEnd()));
+        List<Range> expectedRange = Arrays.asList(Range.of(range.getBegin(), clusterableRange.getEnd()));
         assertEquals(
                 expectedRange,
                 Ranges.merge(clusteredRanges,clusterDistance));
@@ -828,7 +788,7 @@ public class TestRange{
         int clusterDistance=30;
         Range clusterableRange = createRangeSeparatedFrom(range,-clusterDistance);
         List<Range> clusteredRanges = Arrays.asList(range, clusterableRange);
-        List<Range> expectedRange = Arrays.asList(Range.create(clusterableRange.getBegin(), range.getEnd()));
+        List<Range> expectedRange = Arrays.asList(Range.of(clusterableRange.getBegin(), range.getEnd()));
         assertEquals(
                 expectedRange,
                 Ranges.merge(clusteredRanges,clusterDistance));
@@ -839,7 +799,7 @@ public class TestRange{
         Range leftClusterableRange = createRangeSeparatedFrom(range,-clusterDistance);
         Range rightClusterableRange = createRangeSeparatedFrom(range,clusterDistance);
         List<Range> clusteredRanges = Arrays.asList(range, leftClusterableRange,rightClusterableRange);
-        List<Range> expectedRange = Arrays.asList(Range.create(leftClusterableRange.getBegin(), rightClusterableRange.getEnd()));
+        List<Range> expectedRange = Arrays.asList(Range.of(leftClusterableRange.getBegin(), rightClusterableRange.getEnd()));
         assertEquals(
                 expectedRange,
                 Ranges.merge(clusteredRanges,clusterDistance));
@@ -858,34 +818,50 @@ public class TestRange{
     
     @Test
     public void growRight(){
-        Range expected = Range.create(1, 15);
-        assertEquals(expected, range.grow(0, 5));
+        Range expected = Range.of(1, 15);
+        assertEquals(expected, new Range.Builder(range)
+							.growRight(5)
+							.build());
     }
     @Test
     public void growLeft(){
-        Range expected = Range.create(-4, 10);
-        assertEquals(expected, range.grow(5, 0));
+        Range expected = Range.of(-4, 10);
+        
+        assertEquals(expected, 
+        		new Range.Builder(range)
+        			.growLeft(5)
+        			.build());
     }
     @Test
     public void grow(){
-        Range expected = Range.create(-4, 15);
-        assertEquals(expected, range.grow(5, 5));
+        Range expected = Range.of(-4, 15);
+        assertEquals(expected, new Range.Builder(range)
+								.growLeft(5)
+								.growRight(5)
+								.build());
     }
     
     @Test
     public void shrinkLeft(){
-        Range expected = Range.create(6, 10);
-        assertEquals(expected, range.shrink(5, 0));
+        Range expected = Range.of(6, 10);
+        assertEquals(expected, new Range.Builder(range)
+									.shrinkLeft(5)
+									.build());
     }
     @Test
     public void shrinkRight(){
-        Range expected = Range.create(1, 5);
-        assertEquals(expected, range.shrink(0, 5));
+        Range expected = Range.of(1, 5);
+        assertEquals(expected, new Range.Builder(range)
+		.shrinkRight(5)
+		.build());
     }
     @Test
     public void shrink(){
-        Range expected = Range.create(6, 5);
-        assertEquals(expected, range.shrink(5, 5));
+        Range expected = Range.of(6, 5);
+        assertEquals(expected, new Range.Builder(range)
+								.shrinkLeft(5)
+								.shrinkRight(5)
+								.build());
     }
   
     
@@ -901,33 +877,43 @@ public class TestRange{
     
     @Test
     public void complementNoIntersectionShouldReturnOriginalRange(){
-        Range noOverlapRange = range.shiftRight(1000);
+        Range noOverlapRange = new Range.Builder(range).shiftRight(1000).build();
         assertEquals(Arrays.asList(range),range.complement(noOverlapRange));
     }
     
     @Test
     public void complementOfSubRangeShouldReturn2DisjointRanges(){
-        Range subrange = range.shrink(2, 2);
-        assertEquals(Arrays.asList(Range.create(range.getBegin(),2), Range.create(range.getEnd()-1, range.getEnd())),
+        Range subrange = new Range.Builder(range)
+        					.shrinkLeft(2)
+        					.shrinkRight(2)
+        					.build();
+        assertEquals(Arrays.asList(Range.of(range.getBegin(),2), Range.of(range.getEnd()-1, range.getEnd())),
                 range.complement(subrange));
     }
     
     @Test
     public void complementOfSuperRangeShouldReturnEmptyList(){
-        Range superRange = range.grow(2, 2);
+        Range superRange = new Range.Builder(range)
+        					.growLeft(2)
+        					.growRight(2)
+        					.build();
         assertEquals(Collections.emptyList(), range.complement(superRange));
     }
     @Test
     public void complementOfLeftSideShouldReturnArrayOfOneElementContainingRightSide(){
-        Range left = range.shrink(0, 2);
-        assertEquals(Arrays.asList(Range.create(range.getEnd()-1, range.getEnd())),
+        Range left = new Range.Builder(range)
+        				.shrinkRight(2)
+        				.build();
+        assertEquals(Arrays.asList(Range.of(range.getEnd()-1, range.getEnd())),
                 range.complement(left));
     }
     
     @Test
     public void complementOfRightSideShouldReturnArrayOfOneElementContainingLeftSide(){
-        Range right = range.shrink(2, 0);
-        assertEquals(Arrays.asList(Range.create(range.getBegin(),2)),
+        Range right = new Range.Builder(range)
+        				.shrinkLeft(2)
+        				.build();
+        assertEquals(Arrays.asList(Range.of(range.getBegin(),2)),
                 range.complement(right));
     }
     
@@ -938,8 +924,8 @@ public class TestRange{
     @Test
     public void splitInto2Ranges(){
         List<Range> expected = Arrays.asList(
-                Range.createOfLength(range.getBegin(), range.getLength()/2),
-                Range.create(range.getLength()/2+1, range.getEnd())
+                new Range.Builder(range.getLength()/2).shiftRight(range.getBegin()).build() ,
+                Range.of(range.getLength()/2+1, range.getEnd())
         );
         
         assertEquals(expected, range.split(range.getLength()/2));
@@ -948,10 +934,10 @@ public class TestRange{
     public void splitInto4Ranges(){
         //range is [1-10]
         List<Range> expected = Arrays.asList(
-                Range.create(1,3),
-                Range.create(4,6),
-                Range.create(7,9),
-                Range.create(10,10)
+                Range.of(1,3),
+                Range.of(4,6),
+                Range.of(7,9),
+                Range.of(10,10)
         );
         
         assertEquals(expected, range.split(3));
@@ -972,39 +958,39 @@ public class TestRange{
     @Test
     public void mergeIntoClusters2RangesFartherAwayThanMaxClusterDistanceSame2Ranges(){
         int maxClusterDistance=100;
-        Range farAwayRange = range.shiftRight(maxClusterDistance+1);
+        Range farAwayRange = new Range.Builder(range).shiftRight(maxClusterDistance+1).build();
         final List<Range> inputList = Arrays.asList(range,farAwayRange);
         assertEquals(inputList, Ranges.mergeIntoClusters(inputList, maxClusterDistance));
     }
     @Test
     public void mergeIntoClusters2OverLappingRanges(){
         int maxClusterDistance=100;
-        Range overlappingRange = range.shiftRight(5);
+        Range overlappingRange = new Range.Builder(range).shiftRight(5).build();
         final List<Range> inputList = Arrays.asList(range,overlappingRange);
-        final List<Range> expectedList = Arrays.asList(Range.create(range.getBegin(), overlappingRange.getEnd()));
+        final List<Range> expectedList = Arrays.asList(Range.of(range.getBegin(), overlappingRange.getEnd()));
         assertEquals(expectedList, Ranges.mergeIntoClusters(inputList, maxClusterDistance));
     }
     @Test
     public void mergeIntoClusters3OverLappingRanges(){
         int maxClusterDistance=100;
-        Range overlappingRange = range.shiftRight(5);
-        Range overlappingRange2 = overlappingRange.shiftRight(10);
+        Range overlappingRange = new Range.Builder(range).shiftRight(5).build();
+        Range overlappingRange2 = new Range.Builder(overlappingRange).shiftRight(10).build();
         final List<Range> inputList = Arrays.asList(range,overlappingRange,overlappingRange2);
-        final List<Range> expectedList = Arrays.asList(Range.create(range.getBegin(), overlappingRange2.getEnd()));
+        final List<Range> expectedList = Arrays.asList(Range.of(range.getBegin(), overlappingRange2.getEnd()));
         assertEquals(expectedList, Ranges.mergeIntoClusters(inputList, maxClusterDistance));
     }
     
     @Test
     public void mergeIntoClustersWhenRangeIsLongerThanClusterDistanceShouldSplit(){
         int maxClusterDistance=100;
-        Range range = Range.create(0,10);
+        Range range = Range.of(0,10);
         //range [10,110] -> [10, 109][110-110]
-        Range hugeRange = Range.create(10,110);
+        Range hugeRange = Range.of(10,110);
        
         final List<Range> inputList = Arrays.asList(range,hugeRange);
         final List<Range> expectedList = Arrays.asList(
-                Range.create(0,99),
-                Range.create(100,110)
+                Range.of(0,99),
+                Range.of(100,110)
             );
         assertEquals(expectedList, Ranges.mergeIntoClusters(inputList, maxClusterDistance));
     }
@@ -1012,42 +998,42 @@ public class TestRange{
     @Test
     public void mergeIntoClustersReSplitHugeRangeToMakeMoreEfficentClusters(){
         int maxClusterDistance=100;
-        Range range = Range.create(0,10);
-        Range hugeRange = Range.create(10,110);
-        Range range2 = Range.create(10,20);
-        Range range3 = Range.create(108,120);
+        Range range = Range.of(0,10);
+        Range hugeRange = Range.of(10,110);
+        Range range2 = Range.of(10,20);
+        Range range3 = Range.of(108,120);
         final List<Range> inputList = Arrays.asList(range,range2,range3,hugeRange);
         final List<Range> expectedList = Arrays.asList(
-                Range.create(0,99),
-                Range.create(100,120)
+                Range.of(0,99),
+                Range.of(100,120)
             );
         assertEquals(expectedList, Ranges.mergeIntoClusters(inputList, maxClusterDistance));
     }
    
     @Test
     public void byteRangeWithByteLength(){
-    	Range r = Range.create(12,123);
+    	Range r = Range.of(12,123);
     	assertEquals(12, r.getBegin());
     	assertEquals(123, r.getEnd());
     	assertEquals(112, r.getLength());
     }
     @Test
     public void byteRangeWithUnsignedByteLength(){
-    	Range r = Range.create(12,223);
+    	Range r = Range.of(12,223);
     	assertEquals(12, r.getBegin());
     	assertEquals(223, r.getEnd());
     	assertEquals(212, r.getLength());
     }
     @Test
     public void byteRangeWithShortLength(){
-    	Range r = Range.create(0,499);
+    	Range r = Range.of(0,499);
     	assertEquals(0, r.getBegin());
     	assertEquals(499, r.getEnd());
     	assertEquals(500, r.getLength());
     }
     @Test
     public void byteRangeWithUnsignedShortLength(){
-    	Range r = Range.create(0,59999);
+    	Range r = Range.of(0,59999);
     	assertEquals(0, r.getBegin());
     	assertEquals(59999, r.getEnd());
     	assertEquals(60000, r.getLength());
@@ -1055,7 +1041,7 @@ public class TestRange{
     
     @Test
     public void byteRangeWithIntLength(){
-    	Range r = Range.create(0,99999);
+    	Range r = Range.of(0,99999);
     	assertEquals(0, r.getBegin());
     	assertEquals(99999, r.getEnd());
     	assertEquals(100000, r.getLength());
@@ -1063,7 +1049,7 @@ public class TestRange{
     @Test
     public void byteRangeWithUnsignedIntLength(){
     	long end = Integer.MAX_VALUE+1L;
-    	Range r = Range.create(0,end);
+    	Range r = Range.of(0,end);
     	assertEquals(0, r.getBegin());
     	assertEquals(end, r.getEnd());
     	assertEquals(Integer.MAX_VALUE+2L, r.getLength());
@@ -1071,7 +1057,7 @@ public class TestRange{
     @Test
     public void byteRangeWithLongLength(){
     	long end = Long.MAX_VALUE-1L;
-    	Range r = Range.create(0,end);
+    	Range r = Range.of(0,end);
     	assertEquals(0, r.getBegin());
     	assertEquals(end, r.getEnd());
     	assertEquals(Long.MAX_VALUE, r.getLength());
@@ -1079,7 +1065,7 @@ public class TestRange{
     
     @Test
     public void unsignedByteWithShortLength(){
-    	Range r = Range.createOfLength(Byte.MAX_VALUE+1,500);
+    	Range r = new Range.Builder(500).shiftRight(Byte.MAX_VALUE+1).build();
     	assertEquals(Byte.MAX_VALUE+1, r.getBegin());
     	assertEquals(Byte.MAX_VALUE+500, r.getEnd());
     	assertEquals(500, r.getLength());
@@ -1087,7 +1073,7 @@ public class TestRange{
     
     @Test
     public void unsignedByteWithUnsignedShortLength(){
-    	Range r = Range.createOfLength(Byte.MAX_VALUE+1,Short.MAX_VALUE+1);
+    	Range r = new Range.Builder(Short.MAX_VALUE+1).shiftRight(Byte.MAX_VALUE+1).build();
     	assertEquals(Byte.MAX_VALUE+1, r.getBegin());
     	assertEquals(Byte.MAX_VALUE+Short.MAX_VALUE+1, r.getEnd());
     	assertEquals(Short.MAX_VALUE+1, r.getLength());
@@ -1095,21 +1081,21 @@ public class TestRange{
     
     @Test
     public void unsignedByteWithIntLength(){
-    	Range r = Range.createOfLength(Byte.MAX_VALUE+1,Integer.MAX_VALUE);
+    	Range r = new Range.Builder(Integer.MAX_VALUE).shiftRight(Byte.MAX_VALUE+1).build();
     	assertEquals(Byte.MAX_VALUE+1, r.getBegin());
     	assertEquals(Byte.MAX_VALUE+(long)Integer.MAX_VALUE, r.getEnd());
     	assertEquals(Integer.MAX_VALUE, r.getLength());
     }
     @Test
     public void unsignedByteWithUnsignedIntLength(){
-    	Range r = Range.createOfLength(Byte.MAX_VALUE+1,Integer.MAX_VALUE+1L);
+    	Range r = new Range.Builder(Integer.MAX_VALUE+1L).shiftRight(Byte.MAX_VALUE+1).build();
     	assertEquals(Byte.MAX_VALUE+1, r.getBegin());
     	assertEquals(Byte.MAX_VALUE+(long)Integer.MAX_VALUE+1L, r.getEnd());
     	assertEquals(Integer.MAX_VALUE+1L, r.getLength());
     }
     @Test
     public void unsignedByteWithLongLength(){
-    	Range r = Range.createOfLength(Byte.MAX_VALUE+1,0x100000000L);
+    	Range r = new Range.Builder(0x100000000L).shiftRight(Byte.MAX_VALUE+1).build();
     	assertEquals(Byte.MAX_VALUE+1, r.getBegin());
     	assertEquals(4294967423L, r.getEnd());
     	assertEquals(4294967296L, r.getLength());
@@ -1117,7 +1103,7 @@ public class TestRange{
     //////////////////////////
     @Test
     public void shortWithShortLength(){
-    	Range r = Range.createOfLength(Short.MAX_VALUE,500);
+    	Range r = new Range.Builder(500).shiftRight(Short.MAX_VALUE).build();
     	assertEquals(Short.MAX_VALUE, r.getBegin());
     	assertEquals(Short.MAX_VALUE+499, r.getEnd());
     	assertEquals(500, r.getLength());
@@ -1125,7 +1111,7 @@ public class TestRange{
     
     @Test
     public void shortWithUnsignedShortLength(){
-    	Range r = Range.createOfLength(Short.MAX_VALUE,Short.MAX_VALUE+1);
+    	Range r = new Range.Builder(Short.MAX_VALUE+1).shiftRight(Short.MAX_VALUE).build();
     	assertEquals(Short.MAX_VALUE, r.getBegin());
     	assertEquals(Short.MAX_VALUE+Short.MAX_VALUE, r.getEnd());
     	assertEquals(Short.MAX_VALUE+1, r.getLength());
@@ -1133,21 +1119,21 @@ public class TestRange{
     
     @Test
     public void shortWithIntLength(){
-    	Range r = Range.createOfLength(Short.MAX_VALUE,Integer.MAX_VALUE);
+    	Range r = new Range.Builder(Integer.MAX_VALUE).shiftRight(Short.MAX_VALUE).build();
     	assertEquals(Short.MAX_VALUE, r.getBegin());
     	assertEquals(Short.MAX_VALUE+(long)Integer.MAX_VALUE-1, r.getEnd());
     	assertEquals(Integer.MAX_VALUE, r.getLength());
     }
     @Test
     public void shortWithUnsignedIntLength(){
-    	Range r = Range.createOfLength(Short.MAX_VALUE,Integer.MAX_VALUE+1L);
+    	Range r = new Range.Builder(Integer.MAX_VALUE+1L).shiftRight(Short.MAX_VALUE).build();
     	assertEquals(Short.MAX_VALUE, r.getBegin());
     	assertEquals(Short.MAX_VALUE+(long)Integer.MAX_VALUE, r.getEnd());
     	assertEquals(Integer.MAX_VALUE+1L, r.getLength());
     }
     @Test
     public void shortWithLongLength(){
-    	Range r = Range.createOfLength(Short.MAX_VALUE,0x100000000L);
+    	Range r = new Range.Builder(0x100000000L).shiftRight(Short.MAX_VALUE).build();
     	assertEquals(Short.MAX_VALUE, r.getBegin());
     	assertEquals(4295000062L, r.getEnd());
     	assertEquals(4294967296L, r.getLength());
@@ -1155,7 +1141,7 @@ public class TestRange{
     /////////////////////////////////
     @Test
     public void intWithShortLength(){
-    	Range r = Range.createOfLength(Integer.MAX_VALUE,500);
+    	Range r = new Range.Builder(500).shiftRight(Integer.MAX_VALUE).build();
     	assertEquals(Integer.MAX_VALUE, r.getBegin());
     	assertEquals(Integer.MAX_VALUE+499L, r.getEnd());
     	assertEquals(500, r.getLength());
@@ -1163,7 +1149,7 @@ public class TestRange{
     
     @Test
     public void intWithUnsignedShortLength(){
-    	Range r = Range.createOfLength(Integer.MAX_VALUE,Short.MAX_VALUE+1);
+    	Range r = new Range.Builder(Short.MAX_VALUE+1).shiftRight(Integer.MAX_VALUE).build();
     	assertEquals(Integer.MAX_VALUE, r.getBegin());
     	assertEquals(Integer.MAX_VALUE+(long)Short.MAX_VALUE, r.getEnd());
     	assertEquals(Short.MAX_VALUE+1, r.getLength());
@@ -1171,21 +1157,21 @@ public class TestRange{
     
     @Test
     public void intWithIntLength(){
-    	Range r = Range.createOfLength(Integer.MAX_VALUE,Integer.MAX_VALUE);
+    	Range r = new Range.Builder(Integer.MAX_VALUE).shiftRight(Integer.MAX_VALUE).build();
     	assertEquals(Integer.MAX_VALUE, r.getBegin());
     	assertEquals(Integer.MAX_VALUE+(long)Integer.MAX_VALUE-1, r.getEnd());
     	assertEquals(Integer.MAX_VALUE, r.getLength());
     }
     @Test
     public void intWithUnsignedIntLength(){
-    	Range r = Range.createOfLength(Integer.MAX_VALUE,Integer.MAX_VALUE+1L);
+    	Range r = new Range.Builder(Integer.MAX_VALUE+1L).shiftRight(Integer.MAX_VALUE).build();
     	assertEquals(Integer.MAX_VALUE, r.getBegin());
     	assertEquals(Integer.MAX_VALUE+(long)Integer.MAX_VALUE, r.getEnd());
     	assertEquals(Integer.MAX_VALUE+1L, r.getLength());
     }
     @Test
     public void intWithLongLength(){
-    	Range r = Range.createOfLength(Integer.MAX_VALUE,0x100000000L);
+    	Range r = new Range.Builder(0x100000000L).shiftRight(Integer.MAX_VALUE).build();
     	assertEquals(Integer.MAX_VALUE, r.getBegin());
     	assertEquals(6442450942L, r.getEnd());
     	assertEquals(4294967296L, r.getLength());
@@ -1193,7 +1179,7 @@ public class TestRange{
     ////////////////////////////////
     @Test
     public void unsignedShortWithShortLength(){
-    	Range r = Range.createOfLength(Short.MAX_VALUE+1,500);
+    	Range r = new Range.Builder(500).shiftRight(Short.MAX_VALUE+1).build();
     	assertEquals(Short.MAX_VALUE+1, r.getBegin());
     	assertEquals(Short.MAX_VALUE+1+499, r.getEnd());
     	assertEquals(500, r.getLength());
@@ -1201,7 +1187,7 @@ public class TestRange{
     
     @Test
     public void unsignedShortWithUnsignedShortLength(){
-    	Range r = Range.createOfLength(Short.MAX_VALUE+1,Short.MAX_VALUE+1);
+    	Range r = new Range.Builder(Short.MAX_VALUE+1).shiftRight(Short.MAX_VALUE+1).build();
     	assertEquals(Short.MAX_VALUE+1, r.getBegin());
     	assertEquals(Short.MAX_VALUE+1+Short.MAX_VALUE, r.getEnd());
     	assertEquals(Short.MAX_VALUE+1, r.getLength());
@@ -1209,21 +1195,21 @@ public class TestRange{
     
     @Test
     public void unsignedShortWithIntLength(){
-    	Range r = Range.createOfLength(Short.MAX_VALUE+1,Integer.MAX_VALUE);
+    	Range r = new Range.Builder(Integer.MAX_VALUE).shiftRight(Short.MAX_VALUE+1).build();
     	assertEquals(Short.MAX_VALUE+1, r.getBegin());
     	assertEquals(Short.MAX_VALUE+(long)Integer.MAX_VALUE, r.getEnd());
     	assertEquals(Integer.MAX_VALUE, r.getLength());
     }
     @Test
     public void unsignedShortWithUnsignedIntLength(){
-    	Range r = Range.createOfLength(Short.MAX_VALUE+1,Integer.MAX_VALUE+1L);
+    	Range r = new Range.Builder(Integer.MAX_VALUE+1L).shiftRight(Short.MAX_VALUE+1).build();
     	assertEquals(Short.MAX_VALUE+1, r.getBegin());
     	assertEquals(Short.MAX_VALUE+(long)Integer.MAX_VALUE+1, r.getEnd());
     	assertEquals(Integer.MAX_VALUE+1L, r.getLength());
     }
     @Test
     public void unsignedShortWithLongLength(){
-    	Range r = Range.createOfLength(Short.MAX_VALUE+1,0x100000000L);
+    	Range r = new Range.Builder(0x100000000L).shiftRight(Short.MAX_VALUE+1).build();
     	assertEquals(Short.MAX_VALUE+1, r.getBegin());
     	assertEquals(4295000063L, r.getEnd());
     	assertEquals(4294967296L, r.getLength());
@@ -1231,7 +1217,7 @@ public class TestRange{
     ///////////////////////
     @Test
     public void unsignedIntWithShortLength(){
-    	Range r = Range.createOfLength(Integer.MAX_VALUE+1L,500);
+    	Range r = new Range.Builder(500).shiftRight(Integer.MAX_VALUE+1L).build();
     	assertEquals(Integer.MAX_VALUE+1L, r.getBegin());
     	assertEquals(Integer.MAX_VALUE+1L+499L, r.getEnd());
     	assertEquals(500, r.getLength());
@@ -1239,7 +1225,7 @@ public class TestRange{
     
     @Test
     public void unsignedIntWithUnsignedShortLength(){
-    	Range r = Range.createOfLength(Integer.MAX_VALUE+1L,Short.MAX_VALUE+1);
+    	Range r = new Range.Builder(Short.MAX_VALUE+1).shiftRight(Integer.MAX_VALUE+1L).build();
     	assertEquals(Integer.MAX_VALUE+1L, r.getBegin());
     	assertEquals(Integer.MAX_VALUE+1L+(long)Short.MAX_VALUE, r.getEnd());
     	assertEquals(Short.MAX_VALUE+1, r.getLength());
@@ -1247,21 +1233,21 @@ public class TestRange{
     
     @Test
     public void unsignedIntWithIntLength(){
-    	Range r = Range.createOfLength(Integer.MAX_VALUE+1L,Integer.MAX_VALUE);
+    	Range r = new Range.Builder(Integer.MAX_VALUE).shiftRight(Integer.MAX_VALUE+1L).build();
     	assertEquals(Integer.MAX_VALUE+1L, r.getBegin());
     	assertEquals(Integer.MAX_VALUE+(long)Integer.MAX_VALUE, r.getEnd());
     	assertEquals(Integer.MAX_VALUE, r.getLength());
     }
     @Test
     public void unsignedIntWithUnsignedIntLength(){
-    	Range r = Range.createOfLength(Integer.MAX_VALUE+1L,Integer.MAX_VALUE+1L);
+    	Range r = new Range.Builder(Integer.MAX_VALUE+1L).shiftRight(Integer.MAX_VALUE+1L).build();
     	assertEquals(Integer.MAX_VALUE+1L, r.getBegin());
     	assertEquals(Integer.MAX_VALUE+(long)Integer.MAX_VALUE+1L, r.getEnd());
     	assertEquals(Integer.MAX_VALUE+1L, r.getLength());
     }   
     @Test
     public void unsignedIntWithLongLength(){
-    	Range r = Range.createOfLength(Integer.MAX_VALUE+1L,0x100000000L);
+    	Range r = new Range.Builder(0x100000000L).shiftRight(Integer.MAX_VALUE+1L).build();
     	assertEquals(Integer.MAX_VALUE+1L, r.getBegin());
     	assertEquals(6442450943L, r.getEnd());
     	assertEquals(4294967296L, r.getLength());
@@ -1271,7 +1257,7 @@ public class TestRange{
     
 	@Test
 	public void longWithShortLength() {
-		Range r = Range.createOfLength(0x100000000L, 500);
+		Range r = new Range.Builder(500).shiftRight(0x100000000L).build();
 		assertEquals(0x100000000L, r.getBegin());
 		assertEquals(4294967795L, r.getEnd());
 		assertEquals(500, r.getLength());
@@ -1279,7 +1265,7 @@ public class TestRange{
 
 	@Test
 	public void longWithUnsignedShortLength() {
-		Range r = Range.createOfLength(0x100000000L, Short.MAX_VALUE + 1);
+		Range r = new Range.Builder(Short.MAX_VALUE + 1).shiftRight(0x100000000L).build();
 		assertEquals(0x100000000L, r.getBegin());
 		assertEquals(4295000063L, r.getEnd());
 		assertEquals(Short.MAX_VALUE + 1, r.getLength());
@@ -1287,8 +1273,9 @@ public class TestRange{
 
 	@Test
 	public void longWithIntLength() {
-		Range r = Range
-				.createOfLength(0x100000000L, Integer.MAX_VALUE);
+		Range r = new Range.Builder(Integer.MAX_VALUE)
+					.shiftRight(0x100000000L)
+					.build();
 		assertEquals(0x100000000L, r.getBegin());
 		assertEquals(6442450942L, r.getEnd());
 		assertEquals(Integer.MAX_VALUE, r.getLength());
@@ -1296,8 +1283,9 @@ public class TestRange{
 
 	@Test
 	public void longWithUnsignedIntLength() {
-		Range r = Range.createOfLength(0x100000000L,
-				Integer.MAX_VALUE + 1L);
+		Range r =new Range.Builder(Integer.MAX_VALUE + 1L)
+						.shiftRight(0x100000000L)
+						.build();
 		assertEquals(0x100000000L, r.getBegin());
 		assertEquals(6442450943L, r.getEnd());
 		assertEquals(Integer.MAX_VALUE + 1L, r.getLength());
@@ -1305,42 +1293,55 @@ public class TestRange{
 
     @Test
     public void emptyRangeWithNegativeCoordinate(){
-    	Range r = Range.createEmptyRange(-1);
+    	Range r = new Range.Builder()
+					.shiftLeft(1)
+					.build();
     	assertEquals(-1, r.getBegin());
     	assertTrue(r.isEmpty());
     	assertEquals(-2, r.getEnd());
     }
     @Test
     public void emptyRangeWithNegativeShortValueCoordinate(){
-    	Range r = Range.createEmptyRange(Short.MIN_VALUE);
+    	Range r = new Range.Builder()
+		.shiftRight(Short.MIN_VALUE)
+		.build();
     	assertEquals(Short.MIN_VALUE, r.getBegin());
     	assertTrue(r.isEmpty());
     	assertEquals(Short.MIN_VALUE -1, r.getEnd());
     }
     @Test
     public void emptyRangeWithNegativeIntValueCoordinate(){
-    	Range r = Range.createEmptyRange(Integer.MIN_VALUE);
+    	Range r = new Range.Builder()
+					.shiftRight(Integer.MIN_VALUE)
+					.build();
     	assertEquals(Integer.MIN_VALUE, r.getBegin());
     	assertTrue(r.isEmpty());
     	assertEquals(Integer.MIN_VALUE -1L, r.getEnd());
     }
     @Test
     public void emptyRangeWithShortValueCoordinate(){
-    	Range r = Range.createEmptyRange(Short.MAX_VALUE);
+    	Range r = new Range.Builder()
+					.shiftRight(Short.MAX_VALUE)
+					.build();
     	assertEquals(Short.MAX_VALUE, r.getBegin());
     	assertTrue(r.isEmpty());
     	assertEquals(Short.MAX_VALUE -1, r.getEnd());
     }
     @Test
     public void emptyRangeWithIntValueCoordinate(){
-    	Range r = Range.createEmptyRange(Integer.MAX_VALUE);
+    	
+    	Range r = new Range.Builder()
+							.shiftRight(Integer.MAX_VALUE)
+							.build();
     	assertEquals(Integer.MAX_VALUE, r.getBegin());
     	assertTrue(r.isEmpty());
     	assertEquals(Integer.MAX_VALUE -1L, r.getEnd());
     }
     @Test
     public void emptyRangeWithLongValueCoordinate(){
-    	Range r = Range.createEmptyRange(Long.MAX_VALUE);
+    	Range r = new Range.Builder()
+						.shiftRight(Long.MAX_VALUE)
+						.build();
     	assertEquals(Long.MAX_VALUE, r.getBegin());
     	assertTrue(r.isEmpty());
     	assertEquals(Long.MAX_VALUE -1L, r.getEnd());
@@ -1348,16 +1349,16 @@ public class TestRange{
     
     @Test(expected = IndexOutOfBoundsException.class)
     public void createRangeWithLengthThatIsTooBigShouldThrowException(){
-    	Range.createOfLength(Long.MAX_VALUE, 400);
+    	new Range.Builder(400).shiftRight(Long.MAX_VALUE).build();
     }
     @Test(expected = IllegalArgumentException.class)
     public void createRangeWithNegativeLengthShouldThrowException(){
-    	Range.createOfLength(20, -40);
+    	new Range.Builder(20, -40).build();
     }
     
     @Test
     public void longRange(){
-    	Range r = Range.create(Long.MIN_VALUE, Integer.MIN_VALUE);
+    	Range r = Range.of(Long.MIN_VALUE, Integer.MIN_VALUE);
     	assertEquals(Long.MIN_VALUE, r.getBegin());
     	assertEquals(Integer.MIN_VALUE, r.getEnd());
     	assertEquals(
@@ -1366,7 +1367,7 @@ public class TestRange{
     }
     @Test
     public void intRange(){
-    	Range r = Range.create(Integer.MIN_VALUE, 0);
+    	Range r = Range.of(Integer.MIN_VALUE, 0);
     	assertEquals(Integer.MIN_VALUE, r.getBegin());
     	assertEquals(0, r.getEnd());
     	assertEquals(Math.abs((long)Integer.MIN_VALUE)+1L, r.getLength());

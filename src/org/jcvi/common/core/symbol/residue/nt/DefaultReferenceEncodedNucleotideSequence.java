@@ -268,7 +268,8 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 		//list.add(offset, snp);
 		//list.remove(offset+1);
 		//without resizing list everytime.
-		Nucleotide[] array= createReferenceArray(Range.createOfLength(startOffset,length));
+		Nucleotide[] array= createReferenceArray(new Range.Builder(length)
+										.shiftRight(startOffset).build());
 		if(encodedSnpsInfo !=null){
 			//pull out all of our SNP data at the same
 			//time and 
