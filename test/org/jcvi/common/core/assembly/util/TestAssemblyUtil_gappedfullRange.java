@@ -51,7 +51,7 @@ public class TestAssemblyUtil_gappedfullRange {
     	NucleotideSequence ungappedUnComplimentedFullRange = new NucleotideSequenceBuilder(gappedValidRange)
 																.ungap()
 																.build();
-        Range validRange = Range.createOfLength(ungappedUnComplimentedFullRange.getLength());
+        Range validRange = new Range.Builder(ungappedUnComplimentedFullRange.getLength()).build();
         ReferenceMappedNucleotideSequence readSequence = createMock(ReferenceMappedNucleotideSequence.class);
         expect(readSequence.iterator()).andReturn(gappedValidRange.iterator());
        ReadInfo readInfo = new ReadInfo(validRange, (int)ungappedUnComplimentedFullRange.getLength());
@@ -72,7 +72,7 @@ public class TestAssemblyUtil_gappedfullRange {
         													.ungap()
         													.reverseComplement()
         													.build();
-        Range validRange = Range.createOfLength(0, ungappedUnComplimentedFullRange.getLength());
+        Range validRange = new Range.Builder(ungappedUnComplimentedFullRange.getLength()).build();
         
         ReferenceMappedNucleotideSequence readSequence = createMock(ReferenceMappedNucleotideSequence.class);
         expect(readSequence.iterator()).andReturn(gappedValidRange.iterator());
@@ -91,7 +91,7 @@ public class TestAssemblyUtil_gappedfullRange {
     @Test
     public void hasBeyondValidRange(){
     	NucleotideSequence ungappedUnComplimentedFullRange = new NucleotideSequenceBuilder("RRACGTACGTKKK").build();
-        Range validRange = Range.create(2, 9);
+        Range validRange = Range.of(2, 9);
         ReferenceMappedNucleotideSequence readSequence = createMock(ReferenceMappedNucleotideSequence.class);
         expect(readSequence.iterator()).andReturn(new NucleotideSequenceBuilder("ACGT-ACGT").build().iterator());
         
@@ -109,7 +109,7 @@ public class TestAssemblyUtil_gappedfullRange {
     @Test
     public void hasBeyondValidRangeAndUngapped(){
     	NucleotideSequence ungappedUnComplimentedFullRange = new NucleotideSequenceBuilder("RRACGTACGTKKK").build();
-        Range validRange = Range.create(3, 10);
+        Range validRange = Range.of(3, 10);
         ReferenceMappedNucleotideSequence readSequence = createMock(ReferenceMappedNucleotideSequence.class);
         expect(readSequence.iterator()).andReturn(new NucleotideSequenceBuilder("MACGTACG").build().iterator());
         

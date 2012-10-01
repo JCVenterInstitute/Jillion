@@ -78,7 +78,7 @@ public final class SffUtil {
      */
     static final byte[] EMPTY_CLIP_BYTES = new byte[]{0,0,0,0};
     
-    public static final Range EMPTY_CLIP = Range.create(CoordinateSystem.RESIDUE_BASED, -1, -1);
+    public static final Range EMPTY_CLIP = Range.of(CoordinateSystem.RESIDUE_BASED, -1, -1);
     public static final Pattern SFFINFO_ENCODED_FLOWGRAM_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)");
    
     private SffUtil(){}
@@ -180,7 +180,7 @@ public final class SffUtil {
                 qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED)==0?numberOfBases:qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED), 
                         adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED)==0?numberOfBases:adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED));
         
-        return Range.create(CoordinateSystem.RESIDUE_BASED, firstBaseOfInsert, lastBaseOfInsert);
+        return Range.of(CoordinateSystem.RESIDUE_BASED, firstBaseOfInsert, lastBaseOfInsert);
     }
     public static Range getTrimRangeFor(SffReadHeader readHeader){
         Range qualityClip = readHeader.getQualityClip();
@@ -193,7 +193,7 @@ public final class SffUtil {
                 qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED)==0?numberOfBases:qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED), 
                         adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED)==0?numberOfBases:adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED));
         
-        return Range.create(CoordinateSystem.RESIDUE_BASED, firstBaseOfInsert, lastBaseOfInsert);
+        return Range.of(CoordinateSystem.RESIDUE_BASED, firstBaseOfInsert, lastBaseOfInsert);
     }
     
     

@@ -29,7 +29,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestAssemblyUtil_reverseComplimentRange {
 
-    private final Range range = Range.create(0, 9);
+    private final Range range = Range.of(0, 9);
     @Test
     public void reverseFullRange(){
         assertEquals(range, AssemblyUtil.reverseComplementValidRange(range, range.getLength()));
@@ -37,7 +37,7 @@ public class TestAssemblyUtil_reverseComplimentRange {
     
     @Test
     public void reverse(){
-        Range expectedRange = Range.create(5,14);
+        Range expectedRange = Range.of(5,14);
         assertEquals(expectedRange, AssemblyUtil.reverseComplementValidRange(range, 15));
     }
     
@@ -48,7 +48,7 @@ public class TestAssemblyUtil_reverseComplimentRange {
     
     @Test
     public void validRangeInMiddleOfFullRange(){
-        Range validRange = Range.create(5,9);
-       assertEquals(Range.create(10,14), AssemblyUtil.reverseComplementValidRange(validRange, 20));
+        Range validRange = Range.of(5,9);
+       assertEquals(Range.of(10,14), AssemblyUtil.reverseComplementValidRange(validRange, 20));
     }
 }

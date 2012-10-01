@@ -588,7 +588,7 @@ public class Cas2Consed3 {
 					Matcher matcher = TRIM_PATTERN.matcher(line);
 					if (matcher.matches()) {
 						String id = matcher.group(1);
-						Range validRange = Range.create(
+						Range validRange = Range.of(
 								CoordinateSystem.RESIDUE_BASED,
 								Integer.parseInt(matcher.group(2)),
 								Integer.parseInt(matcher.group(3)));

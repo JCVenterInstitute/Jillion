@@ -159,7 +159,8 @@ public class IndexedContigFileDataStore implements ContigDataStore<AssembledRead
         @Override
         protected void addContig(Contig<AssembledRead> contig) {
             int actualLengthOfContig = sizeOfCurrentContig-currentLineLength;
-            mappedRanges.put(contig.getId(), Range.createOfLength(currentStartOffset, actualLengthOfContig));
+            mappedRanges.put(contig.getId(), new Range.Builder(actualLengthOfContig)
+            					.shiftRight(currentStartOffset).build());
             currentStartOffset+=actualLengthOfContig;
             resetCurrentContigSize(currentLineLength);
         }

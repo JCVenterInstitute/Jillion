@@ -65,7 +65,7 @@ public abstract class AbstractIndexedFastaDataStoreBuilderVisitor<S extends Symb
 		throwErrorIfDone();
 		lastId = id;
 		long endOfRecord = currentOffset -1;
-		index.put(id, Range.create(currentStartOffset, endOfRecord));
+		index.put(id, Range.of(currentStartOffset, endOfRecord));
 		currentStartOffset = endOfRecord+1;
 		return true;
 	}
@@ -96,7 +96,9 @@ public abstract class AbstractIndexedFastaDataStoreBuilderVisitor<S extends Symb
 			//be missing the last line (since we chop it off
 			//assuming it's the start of the next record
 			//this code will add that line back on.
-			Range updatedRange = index.get(lastId).grow(0, currentLineLength-1);
+			Range updatedRange = new Range.Builder(index.get(lastId))
+									.growRight(currentLineLength-1)
+									.build();
 			index.put(lastId, updatedRange);
 		}
 		

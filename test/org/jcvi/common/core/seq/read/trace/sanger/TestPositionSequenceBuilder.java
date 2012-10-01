@@ -165,14 +165,14 @@ public class TestPositionSequenceBuilder {
 	@Test
 	public void delete(){
 		PositionSequenceBuilder sut = new PositionSequenceBuilder(new short[]{10,20,30,40});
-		sut.delete(Range.create(1,2));	
+		sut.delete(Range.of(1,2));	
 		assertArrayEquals(new short[]{10,40},
 				toShortArray(sut.build()));
 	}
 	@Test
 	public void trim(){
 		PositionSequenceBuilder sut = new PositionSequenceBuilder(new short[]{10,20,30,40});
-		sut.trim(Range.create(1,2));	
+		sut.trim(Range.of(1,2));	
 		assertArrayEquals(new short[]{20,30},
 				toShortArray(sut.build()));
 	}
@@ -207,9 +207,9 @@ public class TestPositionSequenceBuilder {
 		sut.append(99) 	//10,20,30,40,99
 		.reverse()	//99,40,30,20,10
 		.replace(1, Position.valueOf(60))	//99,60,30,20,10
-		.delete(Range.create(2,3))//99,60,10
+		.delete(Range.of(2,3))//99,60,10
 		.prepend(new short[]{1,2,3,4,5,6,7,Short.MAX_VALUE})  //1,2,3,4,5,6,7,Short.MAX_VALUE,99,60,10
-		.trim(Range.create(2,8));  //3,4,5,6,7,Short.MAX_VALUE,99
+		.trim(Range.of(2,8));  //3,4,5,6,7,Short.MAX_VALUE,99
 		assertArrayEquals(new short[]{3,4,5,6,7,Short.MAX_VALUE,99},
 				toShortArray(sut.build()));
 	}

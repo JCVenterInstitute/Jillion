@@ -43,7 +43,7 @@ public class TestDefaultPlacedRead {
     Direction dir = Direction.FORWARD;
     long start = 100;
     long length = 200L;
-    Range validRange = Range.create(start, length);
+    Range validRange = Range.of(start, length);
     DefaultPlacedRead sut ;
     		String id = "id";
     @Before

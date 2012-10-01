@@ -75,7 +75,7 @@ public final class DefaultScaffold  implements Scaffold{
         }
         List<Range> ranges = new ArrayList<Range>(placedContigs.size());
         for(PlacedContig contig : placedContigs){
-            ranges.add(Range.create(contig.getBegin(), contig.getEnd()));
+            ranges.add(Range.of(contig.getBegin(), contig.getEnd()));
         }
         length = Ranges.createInclusiveRange(ranges).getLength();
         contigMap =CoverageMapFactory.create(placedContigs);
@@ -135,7 +135,7 @@ public final class DefaultScaffold  implements Scaffold{
         }
 
         // make sure the specified range falls within the placed contig's range
-        Range normalizedPlacedContigRange = Range.create(0,placedContig.getLength()-1);
+        Range normalizedPlacedContigRange = Range.of(0,placedContig.getLength()-1);
         if ( !placedContigRange.isSubRangeOf(normalizedPlacedContigRange) ) {
             throw new IllegalArgumentException("Specified contig range " + placedContigRange
                 + " is not a subrange of its parent placed contig " + placedContig
@@ -144,12 +144,12 @@ public final class DefaultScaffold  implements Scaffold{
 
         if ( placedContig.getDirection() == Direction.FORWARD ) {
             long rightShift = placedContig.getBegin();
-            return Range.create(
+            return Range.of(
                     rightShift+placedContigRange.getBegin(),
                     rightShift+placedContigRange.getEnd());
         } else if ( placedContig.getDirection() == Direction.REVERSE ) {
             long leftShift = placedContig.getEnd()-placedContigRange.getBegin();
-            return Range.create(
+            return Range.of(
                     leftShift-(placedContigRange.getLength()-1),
                     leftShift);
         } else {
@@ -280,7 +280,9 @@ public final class DefaultScaffold  implements Scaffold{
                 for(PlacedContig contig : contigs){
                     shiftedContigs.add(
                     		new DefaultPlacedContig(contig.getContigId(),
-                    				contig.getValidRange().shiftLeft(shiftOffset),
+                    				new Range.Builder(contig.getValidRange())
+                    							.shiftLeft(shiftOffset)
+                    							.build(),
                     				contig.getDirection()));
                 }
                 contigs = shiftedContigs;

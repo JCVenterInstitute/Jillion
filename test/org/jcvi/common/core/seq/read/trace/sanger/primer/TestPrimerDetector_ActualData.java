@@ -64,7 +64,7 @@ public class TestPrimerDetector_ActualData {
     	PrimerDetector detector = new PrimerDetector(13, .9F);
     	List<DirectedRange> hits = detector.detect(sequence, primerDataStore);
     	assertEquals(1, hits.size());
-    	assertEquals(Range.create(643,680), hits.get(0).asRange());
+    	assertEquals(Range.of(643,680), hits.get(0).asRange());
     	assertEquals(Direction.REVERSE, hits.get(0).getDirection());
     }
     

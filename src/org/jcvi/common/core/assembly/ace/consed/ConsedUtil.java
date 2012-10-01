@@ -355,8 +355,8 @@ public final class ConsedUtil {
 	        //edited and that could have changed the coordinates.
 	        //Therefore intersect the qual and align coords
 	        //to find the region we are interested in
-	        Range qualityRange = Range.create(CoordinateSystem.RESIDUE_BASED, qualLeft,qualRight);
-	        Range alignmentRange = Range.create(CoordinateSystem.RESIDUE_BASED, alignLeft,alignRight);
+	        Range qualityRange = Range.of(CoordinateSystem.RESIDUE_BASED, qualLeft,qualRight);
+	        Range alignmentRange = Range.of(CoordinateSystem.RESIDUE_BASED, alignLeft,alignRight);
 	        if(qualityRange.intersects(alignmentRange)){
 	        	return ClipPointsType.VALID;
 	        }else{	        

@@ -275,7 +275,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
                 QualitySequence qualities, PositionSequence positions,
                 Properties comments, List<PhdTag> tags) {
             long endOfOldRecord = currentOffset-currentLineLength-1;
-            recordLocations.put(id, Range.create(currentStartOffset,endOfOldRecord));
+            recordLocations.put(id, Range.of(currentStartOffset,endOfOldRecord));
             currentStartOffset=endOfOldRecord;
             return true;
         }

@@ -32,7 +32,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestRangeIterator {
 
-    Range range = Range.create(1, 10);
+    Range range = Range.of(1, 10);
     Iterator<Long> sut;
     @Before
     public void setup(){

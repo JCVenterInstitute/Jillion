@@ -283,7 +283,7 @@ public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> im
             //throw away the rest            
             NucleotideSequence validConsensus = mutableConsensus
             		.copy()
-            		.trim(Range.create(contigLeft, contigRight))
+            		.trim(Range.of(contigLeft, contigRight))
             		.build();
             for(AcePlacedReadBuilder aceReadBuilder : aceReadBuilderMap.values()){
                 int newOffset = (int)aceReadBuilder.getBegin() - contigLeft;

@@ -263,7 +263,7 @@ public class GridReAbacusAce {
                  boolean isTransient) {
              super.visitReadTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
              ReadAceTag tag =new DefaultReadAceTag(id, type, creator, creationDate, 
-                     Range.create(gappedStart,gappedEnd), isTransient);
+                     Range.of(gappedStart,gappedEnd), isTransient);
              
              try {
             	 AceFileUtil.writeReadTag(tag, tagOutputStream);
@@ -291,7 +291,7 @@ public class GridReAbacusAce {
                  boolean isTransient) {
              super.visitBeginConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
              consensusTagBuilder = new DefaultConsensusAceTag.Builder(id, 
-                     type, creator, creationDate, Range.create(gappedStart, gappedEnd), isTransient);
+                     type, creator, creationDate, Range.of(gappedStart, gappedEnd), isTransient);
 
          }
          @Override

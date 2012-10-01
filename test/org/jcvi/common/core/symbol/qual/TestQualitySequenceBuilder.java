@@ -40,7 +40,7 @@ public class TestQualitySequenceBuilder {
 	@Test
 	public void deleteMiddle(){
 		QualitySequenceBuilder sut = new QualitySequenceBuilder(new byte[]{10,12,13,13,13,13,13,13,8});
-		sut.delete(Range.create(3,6));
+		sut.delete(Range.of(3,6));
 		assertEquals(5, sut.getLength());
 		QualitySequence seq =sut.build();
 		assertArrayEquals(
@@ -50,7 +50,7 @@ public class TestQualitySequenceBuilder {
 	@Test
 	public void deleteBeginning(){
 		QualitySequenceBuilder sut = new QualitySequenceBuilder(new byte[]{10,12,13,13,13,13,13,13,8});
-		sut.delete(Range.create(0,2));
+		sut.delete(Range.of(0,2));
 		assertEquals(6, sut.getLength());
 		QualitySequence seq =sut.build();
 		assertArrayEquals(
@@ -61,7 +61,7 @@ public class TestQualitySequenceBuilder {
 	@Test
 	public void deleteEnd(){
 		QualitySequenceBuilder sut = new QualitySequenceBuilder(new byte[]{10,12,13,13,13,13,13,13,8});
-		sut.delete(Range.create(6,8));
+		sut.delete(Range.of(6,8));
 		assertEquals(6, sut.getLength());
 		QualitySequence seq =sut.build();
 		assertArrayEquals(
@@ -71,7 +71,7 @@ public class TestQualitySequenceBuilder {
 	@Test
 	public void trim(){
 		QualitySequenceBuilder sut = new QualitySequenceBuilder(new byte[]{10,12,13,13,13,13,13,13,8});
-		sut.trim(Range.create(3,6));
+		sut.trim(Range.of(3,6));
 		assertEquals(4, sut.getLength());
 		QualitySequence seq =sut.build();
 		assertArrayEquals(
@@ -237,7 +237,7 @@ public class TestQualitySequenceBuilder {
 		QualitySequenceBuilder copy = sut.copy();
 		copy.append(99);
 		
-		sut.delete(Range.create(2,5));
+		sut.delete(Range.of(2,5));
 		
 		assertEquals(10, copy.getLength());
 		assertArrayEquals(
@@ -256,7 +256,7 @@ public class TestQualitySequenceBuilder {
 		sut.append(new byte[]{10,12,13,13,13,13,13,13,8})
 		.insert(5, new byte[]{99,99,99,99,5}) //10,12,13,13,13,99,99,99,99,5,13,13,13,8
 		.reverse() // 8,13,13,13,5,99,99,99,99,13,13,13,12,10
-		.trim(Range.create(2,12)) // 13,13,5,99,99,99,99,13,13,13,12		
+		.trim(Range.of(2,12)) // 13,13,5,99,99,99,99,13,13,13,12		
 		.prepend(45)// 45,13,13,5,99,99,99,99,13,13,13,12
 		.append(37) // 45,13,13,5,99,99,99,99,13,13,13,12,37
 		.replace(10, PhredQuality.valueOf(5)); // 45,13,13,5,99,99,99,99,13,13,5,12,37

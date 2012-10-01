@@ -45,7 +45,7 @@ public class TestCoverageMapFactoryUngappedCoverageMaps {
 		assertEquals(2, ungappedCoverageMap.getNumberOfRegions());
 		assertEquals(gappedCoverageMap.getRegion(0), ungappedCoverageMap.getRegion(0));
 		CoverageRegion<AssembledRead> coverageRegion = ungappedCoverageMap.getRegion(1);
-		assertEquals(Range.create(4,6), coverageRegion.asRange());
+		assertEquals(Range.of(4,6), coverageRegion.asRange());
 		assertEquals(2, coverageRegion.getCoverageDepth());
 		List<String> actualReads = new ArrayList<String>();
 		StreamingIterator<AssembledRead> readIter = null;

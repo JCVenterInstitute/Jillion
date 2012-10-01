@@ -12,7 +12,7 @@ import org.junit.rules.ExpectedException;
 import static org.junit.Assert.*;
 public class TestGene {
 	private final String name = "name";
-	private final Gene gene = new Gene(name, Range.create(1,10));
+	private final Gene gene = new Gene(name, Range.of(1,10));
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
@@ -21,23 +21,23 @@ public class TestGene {
 	public void nullNameShouldThrowNPE(){
 	    thrown.expect(NullPointerException.class);
 	    thrown.expectMessage("name can not be null");
-	    new Gene(null, Range.create(1,10));
+	    new Gene(null, Range.of(1,10));
 	}
 	@Test
 	public void oneExon(){		
 		assertEquals(name, gene.getName());
-		assertEquals(Arrays.asList(Range.create(1,10)), gene.getExons());
+		assertEquals(Arrays.asList(Range.of(1,10)), gene.getExons());
 		assertTrue(gene.getIntrons().isEmpty());
 	}
 	
 	@Test
 	public void oneIntron(){
 		List<Range> exons = Arrays.asList(
-				Range.create(1,10),
-				Range.create(20,30)
+				Range.of(1,10),
+				Range.of(20,30)
 				);
 		List<Range> expectedIntrons = Arrays.asList(
-				Range.create(11,19)
+				Range.of(11,19)
 				);
 		Gene gene = new Gene(name, exons);
 		assertEquals(name, gene.getName());
@@ -47,13 +47,13 @@ public class TestGene {
 	@Test
 	public void twoIntrons(){
 		List<Range> exons = Arrays.asList(
-				Range.create(1,10),
-				Range.create(20,30),
-				Range.create(35,40)
+				Range.of(1,10),
+				Range.of(20,30),
+				Range.of(35,40)
 				);
 		List<Range> expectedIntrons = Arrays.asList(
-				Range.create(11,19),
-				Range.create(31,34)
+				Range.of(11,19),
+				Range.of(31,34)
 				);
 		Gene gene = new Gene(name, exons);
 		assertEquals(name, gene.getName());
@@ -68,7 +68,7 @@ public class TestGene {
 	
 	@Test
 	public void sameValuesAreEqual(){
-		Gene same = new Gene(name, Range.create(1,10));
+		Gene same = new Gene(name, Range.of(1,10));
 		TestUtil.assertEqualAndHashcodeSame(gene, same);
 	}
 	@Test
@@ -82,13 +82,13 @@ public class TestGene {
 	}
 	@Test
 	public void differentNameIsNotEqual(){
-		Gene different = new Gene("not" + name, Range.create(1,10));
+		Gene different = new Gene("not" + name, Range.of(1,10));
 		TestUtil.assertNotEqualAndHashcodeDifferent(gene, different);
 	}
 	
 	@Test
 	public void differentExonShouldNotBeEqual(){
-		Gene different = new Gene(name, Range.create(1,20));
+		Gene different = new Gene(name, Range.of(1,20));
 		TestUtil.assertNotEqualAndHashcodeDifferent(gene, different);
 	}
 }

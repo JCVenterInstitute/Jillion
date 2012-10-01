@@ -45,11 +45,11 @@ public class ReadTrimUtil {
             //skip euid
             scanner.next();
             String seqName = scanner.next();
-            Range clrRange = Range.create(CoordinateSystem.RESIDUE_BASED, 
+            Range clrRange = Range.of(CoordinateSystem.RESIDUE_BASED, 
                     scanner.nextLong(), scanner.nextLong());
-            Range clvRange = Range.create(CoordinateSystem.RESIDUE_BASED, 
+            Range clvRange = Range.of(CoordinateSystem.RESIDUE_BASED, 
                     scanner.nextLong(), scanner.nextLong());
-            Range clbRange = Range.create(CoordinateSystem.RESIDUE_BASED, 
+            Range clbRange = Range.of(CoordinateSystem.RESIDUE_BASED, 
                     scanner.nextLong(), scanner.nextLong());
             Map<TrimType, Range> trimMap =new EnumMap<TrimType, Range>(TrimType.class);
             trimMap.put(TrimType.CLR, clrRange);

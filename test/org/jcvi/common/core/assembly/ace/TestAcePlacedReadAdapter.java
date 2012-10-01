@@ -47,7 +47,7 @@ public class TestAcePlacedReadAdapter {
     AceAssembledReadAdapter sut;
     long referenceIndex = 1234;
     long validRangeIndex = 7;
-    Range validRange = Range.create(1,10);
+    Range validRange = Range.of(1,10);
     ReadInfo readInfo = new ReadInfo(validRange, (int)validRange.getLength()+1);
     @Before
     public void setup(){

@@ -174,7 +174,7 @@ public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
 			stop = (int)getLength();
 		}
 		public RangedIterator(Range r){
-			Range maxRange = Range.createOfLength(getLength());
+			Range maxRange = new Range.Builder(getLength()).build();
 			if(!r.isSubRangeOf(maxRange)){
 				throw new IndexOutOfBoundsException(
 						String.format("range %s contains offsets that are out of bounds of %s", r, maxRange));

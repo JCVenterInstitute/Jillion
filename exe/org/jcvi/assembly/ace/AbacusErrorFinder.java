@@ -61,7 +61,7 @@ public class AbacusErrorFinder {
         for(Range ungappedCandidateRange : ungappedCandidateRanges){           
             int gappedStart = consensus.getGappedOffsetFor((int)ungappedCandidateRange.getBegin())+1;
             int gappedEnd = consensus.getGappedOffsetFor((int)ungappedCandidateRange.getEnd()+1) -1;
-            Range gappedCandidateRange = Range.create(gappedStart, gappedEnd);
+            Range gappedCandidateRange = Range.of(gappedStart, gappedEnd);
             Set<String> readIds = new HashSet<String>();
             for(CoverageRegion<P> region : CoverageMapUtil.getRegionsWhichIntersect(coverageMap, gappedCandidateRange)){
                 for(P read : region){
@@ -75,7 +75,7 @@ public class AbacusErrorFinder {
                 long adjustedEnd = Math.min(gappedCandidateRange.getEnd(), read.getGappedEndOffset());
                 boolean spansEntireRegion = (adjustedStart == gappedCandidateRange.getBegin()) && (adjustedEnd == gappedCandidateRange.getEnd());
                 if(spansEntireRegion){
-                    Range rangeOfInterest = Range.create(
+                    Range rangeOfInterest = Range.of(
                             read.toGappedValidRangeOffset(adjustedStart),
                             read.toGappedValidRangeOffset(adjustedEnd));
                    double numGaps=0;
@@ -110,7 +110,7 @@ public class AbacusErrorFinder {
                 int ungappedStart =consensus.getUngappedOffsetFor((int)error.getBegin());
                 int ungappedEnd =consensus.getUngappedOffsetFor((int)error.getEnd());
                 
-                ungappedRanges.add(Range.create(ungappedStart, ungappedEnd)); 
+                ungappedRanges.add(Range.of(ungappedStart, ungappedEnd)); 
             }
         }
 
@@ -132,7 +132,7 @@ public class AbacusErrorFinder {
 	            P placedRead = readIterator.next();
         		List<Range> gaps = new ArrayList<Range>(placedRead.getNucleotideSequence().getNumberOfGaps());
 	            for(Integer gapOffset : placedRead.getNucleotideSequence().getGapOffsets()){
-	                Range buildRange = Range.create(gapOffset.intValue() + placedRead.getGappedStartOffset());
+	                Range buildRange = Range.of(gapOffset.intValue() + placedRead.getGappedStartOffset());
 	                gaps.add(buildRange);
 	            }
 	            List<Range> mergeRanges = Ranges.merge(gaps);

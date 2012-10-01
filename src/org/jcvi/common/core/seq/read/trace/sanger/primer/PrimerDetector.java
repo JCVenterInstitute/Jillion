@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Direction;
+import org.jcvi.common.core.Range;
 import org.jcvi.common.core.align.pairwise.DefaultNucleotideScoringMatrix;
 import org.jcvi.common.core.align.pairwise.NucleotidePairwiseSequenceAlignment;
 import org.jcvi.common.core.align.pairwise.NucleotideSmithWatermanAligner;
@@ -194,20 +195,32 @@ public class PrimerDetector {
                 	if(forwardIsCandidate && reverseIsCandidate){
                 		if(reverseAlignment.getScore() > forwardAlignment.getScore()){
                 			DirectedRange range = DirectedRange.create(
-	                    			reverseAlignment.getSubjectRange().asRange().grow(numberOfMissingReverseBases, 0), Direction.REVERSE);
+	                    			new Range.Builder(reverseAlignment.getSubjectRange().asRange())
+	                    			.growLeft(numberOfMissingReverseBases)
+	                    			.build(), 
+	                    			
+	                    			Direction.REVERSE);
                 			hits.add(new PrimerHit(fasta.getId(), range));
                 		}else{
                 			DirectedRange range = DirectedRange.create(
-	                    			forwardAlignment.getSubjectRange().asRange().grow(0,numberOfMissingForwardBases), Direction.FORWARD);
+                					new Range.Builder(forwardAlignment.getSubjectRange().asRange())
+                					.growRight(numberOfMissingForwardBases)
+                					.build(), 
+                					Direction.FORWARD);
                 			hits.add(new PrimerHit(fasta.getId(), range));
                 		}
                 	}else if(forwardIsCandidate){
                 		DirectedRange range = DirectedRange.create(
-                    			forwardAlignment.getSubjectRange().asRange().grow(0,numberOfMissingForwardBases), Direction.FORWARD);
+                				new Range.Builder(forwardAlignment.getSubjectRange().asRange())
+                				.growRight(numberOfMissingForwardBases)
+                				.build(),
+                				Direction.FORWARD);
                 		hits.add(new PrimerHit(fasta.getId(), range));
                 	}else if(reverseIsCandidate){
                 		DirectedRange range = DirectedRange.create(
-                    			reverseAlignment.getSubjectRange().asRange().grow(numberOfMissingReverseBases, 0), Direction.REVERSE);
+                				new Range.Builder(reverseAlignment.getSubjectRange().asRange())
+                				.growLeft(numberOfMissingReverseBases)
+                				.build(), Direction.REVERSE);
                 		hits.add(new PrimerHit(fasta.getId(), range));
                 	}
 	                   

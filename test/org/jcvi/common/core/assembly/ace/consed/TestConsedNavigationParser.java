@@ -50,11 +50,11 @@ public class TestConsedNavigationParser {
         expectLastCall().anyTimes();
         mockVisitor.visitElement(new ReadNavigationElement(
                 "B11_hs1-60153193_GGor_050426.f", 
-                Range.create(CoordinateSystem.RESIDUE_BASED, 34),
+                Range.of(33),
                 "a comment"));
         mockVisitor.visitElement(new ConsensusNavigationElement(
                 "hs21-15002178_HSap-Contig", 
-                Range.create(CoordinateSystem.RESIDUE_BASED, 1774, 1784),
+                Range.of(CoordinateSystem.RESIDUE_BASED, 1774, 1784),
                 "another comment"));
         
         mockVisitor.visitEndOfFile();

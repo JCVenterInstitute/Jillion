@@ -22,7 +22,7 @@ public class TestQualityClassContigTrimmer {
 	NucleotideSequence referenceSequence = new NucleotideSequenceBuilder("ACGT").build();
 	@Test
 	public void computeNewValidRangeFor3primeTrimmedUngappedForwardRead(){
-		Range oldValidRange = Range.create(10,13);
+		Range oldValidRange = Range.of(10,13);
 		ReadInfo readInfo = new ReadInfo(oldValidRange, 20);
 		ReferenceMappedNucleotideSequence seq = new NucleotideSequenceBuilder("ACGA")
 													.setReferenceHint(referenceSequence, 0)
@@ -36,13 +36,16 @@ public class TestQualityClassContigTrimmer {
 		
 		Range newValidRange = sut.computeNewValidRange(read, 3);
 		assertNotNull(newValidRange);
-		assertEquals(oldValidRange.shrink(0, 1), newValidRange);
+		assertEquals(new Range.Builder(oldValidRange)
+						.shrinkRight(1)
+						.build(), 
+						newValidRange);
 		
 	}
 	
 	@Test
 	public void computeNewValidRangeFor5primeTrimmedUngappedForwardRead(){
-		Range oldValidRange = Range.create(10,13);
+		Range oldValidRange = Range.of(10,13);
 		ReadInfo readInfo = new ReadInfo(oldValidRange, 20);
 		ReferenceMappedNucleotideSequence seq = new NucleotideSequenceBuilder("GCGT")
 													.setReferenceHint(referenceSequence, 0)
@@ -56,13 +59,16 @@ public class TestQualityClassContigTrimmer {
 		
 		Range newValidRange = sut.computeNewValidRange(read, 0);
 		assertNotNull(newValidRange);
-		assertEquals(oldValidRange.shrink(1, 0), newValidRange);
+		assertEquals(new Range.Builder(oldValidRange)
+						.shrinkLeft(1)
+						.build(),
+						newValidRange);
 		
 	}
 	
 	@Test
 	public void tooMuchToTrimShouldReturnNullValidRange5primeForwardRead(){
-		Range oldValidRange = Range.create(maxNumberOfBasesToTrimOn5prime,maxNumberOfBasesToTrimOn5prime+4);
+		Range oldValidRange = Range.of(maxNumberOfBasesToTrimOn5prime,maxNumberOfBasesToTrimOn5prime+4);
 		ReadInfo readInfo = new ReadInfo(oldValidRange, 20);
 		ReferenceMappedNucleotideSequence seq = new NucleotideSequenceBuilder("GCGT")
 													.setReferenceHint(referenceSequence, 0)
@@ -81,7 +87,7 @@ public class TestQualityClassContigTrimmer {
 	
 	@Test
 	public void computeNewValidRangeFor3primeTrimmedUngappedReverseRead(){
-		Range oldValidRange = Range.create(10,13);
+		Range oldValidRange = Range.of(10,13);
 		ReadInfo readInfo = new ReadInfo(oldValidRange, 20);
 		ReferenceMappedNucleotideSequence seq = new NucleotideSequenceBuilder("ACGA")
 													.setReferenceHint(referenceSequence, 0)
@@ -95,13 +101,13 @@ public class TestQualityClassContigTrimmer {
 		
 		Range newValidRange = sut.computeNewValidRange(read, 3);
 		assertNotNull(newValidRange);
-		assertEquals(Range.create(11,13), newValidRange);
+		assertEquals(Range.of(11,13), newValidRange);
 		
 	}
 	
 	@Test
 	public void tooMuchToTrimShouldReturnNullValidRange3primeTrimmedUngappedReverseRead(){
-		Range oldValidRange = Range.create(maxNumberOfBasesToTrimOn3primer,maxNumberOfBasesToTrimOn3primer+4);
+		Range oldValidRange = Range.of(maxNumberOfBasesToTrimOn3primer,maxNumberOfBasesToTrimOn3primer+4);
 		ReadInfo readInfo = new ReadInfo(oldValidRange, 20);
 		ReferenceMappedNucleotideSequence seq = new NucleotideSequenceBuilder("ACGA")
 													.setReferenceHint(referenceSequence, 0)
@@ -120,7 +126,7 @@ public class TestQualityClassContigTrimmer {
 	
 	@Test
 	public void computeNewValidRangeFor5primeTrimmedUngappedReverseRead(){
-		Range oldValidRange = Range.create(10,13);
+		Range oldValidRange = Range.of(10,13);
 		ReadInfo readInfo = new ReadInfo(oldValidRange, 20);
 		ReferenceMappedNucleotideSequence seq = new NucleotideSequenceBuilder("GCGT")
 													.setReferenceHint(referenceSequence, 0)
@@ -134,7 +140,7 @@ public class TestQualityClassContigTrimmer {
 		
 		Range newValidRange = sut.computeNewValidRange(read, 0);
 		assertNotNull(newValidRange);
-		assertEquals(Range.create(10,12), newValidRange);
+		assertEquals(Range.of(10,12), newValidRange);
 		
 	}
 }

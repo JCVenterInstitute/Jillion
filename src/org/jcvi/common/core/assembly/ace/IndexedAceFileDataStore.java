@@ -361,7 +361,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
                 long gappedStart, long gappedEnd, Date creationDate,
                 boolean isTransient) {
             readTags.add(new DefaultReadAceTag(id, type, creator, creationDate, 
-                    Range.create(gappedStart,gappedEnd), isTransient));
+                    Range.of(gappedStart,gappedEnd), isTransient));
         }
 
         /**
@@ -370,7 +370,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         @Override
         public synchronized boolean visitEndOfContig() {    
         	//
-        	indexFileRange.put(currentContigId, Range.create(currentStartOffset, 
+        	indexFileRange.put(currentContigId, Range.of(currentStartOffset, 
                     currentFileOffset-1));
             return true;
         }
@@ -383,7 +383,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
                 String creator, long gappedStart, long gappedEnd,
                 Date creationDate, boolean isTransient) {
             consensusTagBuilder = new DefaultConsensusAceTag.Builder(id, 
-                    type, creator, creationDate, Range.create(gappedStart, gappedEnd), isTransient);
+                    type, creator, creationDate, Range.of(gappedStart, gappedEnd), isTransient);
 
         }
 

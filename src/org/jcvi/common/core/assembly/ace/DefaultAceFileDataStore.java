@@ -282,7 +282,7 @@ public final class DefaultAceFileDataStore implements AceFileContigDataStore{
                 boolean isTransient) {
             super.visitBeginConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
             consensusTagBuilder = new DefaultConsensusAceTag.Builder(id, 
-                    type, creator, creationDate, Range.create(gappedStart, gappedEnd), isTransient);
+                    type, creator, creationDate, Range.of(gappedStart, gappedEnd), isTransient);
 
         }
 
@@ -325,7 +325,7 @@ public final class DefaultAceFileDataStore implements AceFileContigDataStore{
                 boolean isTransient) {
             super.visitReadTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
             readTags.add(new DefaultReadAceTag(id, type, creator, creationDate, 
-                    Range.create(gappedStart,gappedEnd), isTransient));
+                    Range.of(gappedStart,gappedEnd), isTransient));
 
         }
 

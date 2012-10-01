@@ -454,7 +454,7 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
 				ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
 	            int sequenceLength =offsetStrategy.getNext(buf);
 	            if(range.getBegin()<0 || range.getEnd()>=sequenceLength){
-					throw new IndexOutOfBoundsException("range "+range +" is out of range of sequence which is only "+ Range.createOfLength(sequenceLength));
+					throw new IndexOutOfBoundsException("range "+range +" is out of range of sequence which is only "+ new Range.Builder(sequenceLength).build());
 				}
 	            this.length = (int)range.getEnd()+1;
 	            this.sentinelIterator = parseSentinelOffsetsIteratorFrom(buf,offsetStrategy);

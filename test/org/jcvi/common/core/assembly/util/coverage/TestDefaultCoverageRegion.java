@@ -44,7 +44,7 @@ public class TestDefaultCoverageRegion {
     DefaultCoverageRegion<Range> sut = new DefaultCoverageRegion.Builder<Range>(start,Arrays.asList(seq1,seq2))
                                         .end(end)
                                         .build();
-    Range range = Range.create(start, end);
+    Range range = Range.of(start, end);
     @Test
     public void builder(){
 

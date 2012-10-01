@@ -304,7 +304,7 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
 		public EndOfBodyReturnCode visitEndOfBody() {
 			checkNotFinished();
 			if(includeCurrentRecord){
-				indexFileRange.put(currentId, Range.create(currentStartOffset, currentEndOffset));
+				indexFileRange.put(currentId, Range.of(currentStartOffset, currentEndOffset));
 			}
 			currentStartOffset=currentEndOffset+1;
 			return EndOfBodyReturnCode.KEEP_PARSING;

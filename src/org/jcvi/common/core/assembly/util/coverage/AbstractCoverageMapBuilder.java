@@ -109,7 +109,7 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
         //iterate backwards to avoid concurrent modification errors
         for (int i = coverageRegionBuilders.size() - 1; i >= 0; i--) {
             CoverageRegionBuilder<P> builder = coverageRegionBuilders.get(i);
-            Range range = Range.create(builder.start(), builder.end());
+            Range range = Range.of(builder.start(), builder.end());
             if (range.isEmpty()) {
                 coverageRegionBuilders.remove(i);
             }

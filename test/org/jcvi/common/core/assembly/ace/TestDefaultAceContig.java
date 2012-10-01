@@ -62,7 +62,7 @@ public class TestDefaultAceContig {
     public void readThatHasNegativeOffsetShouldGetTrimmedToOffsetZero(){
         AceContigBuilder sut =  DefaultAceContig.createBuilder("id",
                                             "ACGTACGTACGTACGT");
-        sut.addRead("read", new NucleotideSequenceBuilder("ACGTACGTACGTACGT").build(), -2, Direction.FORWARD, Range.create(2, 18), null,18);
+        sut.addRead("read", new NucleotideSequenceBuilder("ACGTACGTACGTACGT").build(), -2, Direction.FORWARD, Range.of(2, 18), null,18);
             AceContig contig =sut.build();
             NucleotideSequence consensus =contig.getConsensusSequence();
             assertEquals(16, consensus.getLength());

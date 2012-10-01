@@ -61,7 +61,7 @@ public class TestAceContigBuilderInvalidRead {
         int offset =1;
         String validBases = consensus;
         
-        Range clearRange = Range.createOfLength(0, validBases.length());
+        Range clearRange = new Range.Builder(validBases.length()).build();
         PhdInfo phdInfo = createMock(PhdInfo.class);
         addReadToBuilder(readId, validBases, offset, Direction.FORWARD, clearRange, phdInfo);
         assertEquals(sut.numberOfReads(),0);

@@ -114,10 +114,10 @@ public final class DirectedRange implements Rangeable{
         private static DirectedRange convertIntoRange(
                 CoordinateSystem coordinateSystem, long first, long second) {
             if(first<second){
-                Range range =Range.create(coordinateSystem,first,second);
+                Range range =Range.of(coordinateSystem,first,second);
                 return new DirectedRange(range, Direction.FORWARD);
             }
-            Range range =Range.create(coordinateSystem,second,first);
+            Range range =Range.of(coordinateSystem,second,first);
             return new DirectedRange(range, Direction.REVERSE);
         }
         public static DirectedRange parse(String rangeAsString){

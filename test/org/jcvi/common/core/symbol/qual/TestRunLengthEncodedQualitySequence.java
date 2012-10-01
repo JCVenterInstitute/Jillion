@@ -51,7 +51,7 @@ public class TestRunLengthEncodedQualitySequence {
 	
 	@Test
 	public void rangedIterator(){
-		Range range = Range.create(2,12);
+		Range range = Range.of(2,12);
 		Iterator<PhredQuality> iter = sut.iterator(range);
 		int i=(int)range.getBegin();
 		while(iter.hasNext()){

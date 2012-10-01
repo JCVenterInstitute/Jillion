@@ -82,7 +82,7 @@ public final class BaseSegmentUtil {
 		}
 		//here we have a current matching read that no longer matches
 		bestSegments.add(new DefaultAceBaseSegment(currentMatchingRead.getRead().getId(), 
-				Range.create(currentMatchingRead.getStartMatchOffset(), consensusOffsetToBeCovered-1)));
+				Range.of(currentMatchingRead.getStartMatchOffset(), consensusOffsetToBeCovered-1)));
 		return consensusOffsetToBeCovered;
 	}
 
@@ -151,7 +151,7 @@ public final class BaseSegmentUtil {
 		if(currentBestRead==null){
 			throw new NoReadMatchesConsensusException(consensusBase,consensusOffset);
 		}
-		Range readRange = Range.create(consensusOffset- currentBestRead.getGappedStartOffset(), currentBestRead.getGappedEndOffset()- currentBestRead.getGappedStartOffset());
+		Range readRange = Range.of(consensusOffset- currentBestRead.getGappedStartOffset(), currentBestRead.getGappedEndOffset()- currentBestRead.getGappedStartOffset());
 		return new CurrentMatchingRead(currentBestRead, 
 				currentBestRead.getNucleotideSequence().iterator(readRange),
 				consensusOffset);

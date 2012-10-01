@@ -30,7 +30,7 @@ import org.jcvi.glyph.qualClass.QualityClass;
 import org.junit.Test;
 public class TestQualityClassRegion {
 
-    Range range = Range.create(5, 20);
+    Range range = Range.of(5, 20);
     QualityClass qualityClass = QualityClass.valueOf((byte)20);
     QualityClass differentQualityClass = QualityClass.valueOf((byte)5);
     QualityClassRegion sut = new QualityClassRegion(qualityClass, range);
@@ -88,7 +88,7 @@ public class TestQualityClassRegion {
     @Test
     public void differentRangeShouldNotBeEqual(){
         QualityClassRegion hasDifferentRange = new QualityClassRegion(differentQualityClass, 
-                Range.create(10, 20));
+                Range.of(10, 20));
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasDifferentRange);
     }
     

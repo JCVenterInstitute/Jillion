@@ -45,8 +45,8 @@ import static org.junit.Assert.*;
  */
 public class TestSffWriter {
     int numberOfBases=123;
-    Range qualityClip = Range.create(10, 20);
-    Range adapterClip = Range.create(4, 122);
+    Range qualityClip = Range.of(10, 20);
+    Range adapterClip = Range.of(4, 122);
     String name = "readName";
     @Test
     public void writeCommonHeaderWithNoIndex() throws IOException{

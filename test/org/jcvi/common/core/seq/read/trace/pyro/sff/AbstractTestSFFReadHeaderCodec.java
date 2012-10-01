@@ -35,8 +35,8 @@ public class AbstractTestSFFReadHeaderCodec {
     protected int qual_right= 100;
     protected  int adapter_left = 10;
     protected  int adapter_right= 100;
-    protected  Range qualityClip = Range.create(CoordinateSystem.RESIDUE_BASED, qual_left, qual_right);
-    protected Range adapterClip= Range.create(CoordinateSystem.RESIDUE_BASED, adapter_left, adapter_right);
+    protected  Range qualityClip = Range.of(CoordinateSystem.RESIDUE_BASED, qual_left, qual_right);
+    protected Range adapterClip= Range.of(CoordinateSystem.RESIDUE_BASED, adapter_left, adapter_right);
     protected String name = "sequence name";
     protected short headerLength= (short)(16+name.length()+SffUtil.caclulatePaddedBytes(16+name.length()));
 

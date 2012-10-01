@@ -175,13 +175,13 @@ public class QualityClassContigTrimmer{
 
         long fullLength = readInfo.getUngappedFullLength();
         
-        Range validRange;
+        Range.Builder validRange;
         if(read.getDirection()==Direction.FORWARD){
-        	validRange = oldValidRange;
+        	validRange = new Range.Builder(oldValidRange);
         }else{
         	//easier if we pretend everything is forward
         	//we will switch it back after calculations are done
-        	validRange = AssemblyUtil.reverseComplementValidRange(oldValidRange, readInfo.getUngappedFullLength());
+        	validRange = new Range.Builder(AssemblyUtil.reverseComplementValidRange(oldValidRange, readInfo.getUngappedFullLength()));
         }
         
         long midPointOfRead = read.getNucleotideSequence().getLength()/2;
@@ -192,22 +192,22 @@ public class QualityClassContigTrimmer{
         		//OK to trim
         		int ungappedOffsetToKeep = read.getNucleotideSequence().getUngappedOffsetFor(gappedOffsetToKeep);
         		long numberOfBasesToTrim = read.getNucleotideSequence().getUngappedLength()-1 -ungappedOffsetToKeep;
-    			validRange= validRange.shrink(0,numberOfBasesToTrim);
+    			validRange.shrinkRight(numberOfBasesToTrim);
     			if(read.getDirection()==Direction.REVERSE){
-    				return AssemblyUtil.reverseComplementValidRange(validRange, readInfo.getUngappedFullLength());
+    				return AssemblyUtil.reverseComplementValidRange(validRange.build(), readInfo.getUngappedFullLength());
     			}
-    			return validRange;
+    			return validRange.build();
         	}
         }else{
         	//is 5'
         	if(fullRangeIndex <= maxNumberOf5PrimeBasesToTrim){
         		//OK to trim
         		long numberOfBasesToTrim = read.getNucleotideSequence().getUngappedOffsetFor(gappedOffsetToKeep);
-    			validRange=validRange.shrink(numberOfBasesToTrim, 0);
+    			validRange.shrinkLeft(numberOfBasesToTrim);
     			if(read.getDirection()==Direction.REVERSE){
-    				return AssemblyUtil.reverseComplementValidRange(validRange, readInfo.getUngappedFullLength());
+    				return AssemblyUtil.reverseComplementValidRange(validRange.build(), readInfo.getUngappedFullLength());
     			}
-    			return validRange;
+    			return validRange.build();
         		}
         	}
     

@@ -44,8 +44,8 @@ public class TestDefaultFragment {
     QualitySequence qualities = createMock(QualitySequence.class);
     
     Library library = createMock(Library.class);
-    Range validRange = Range.create(10, 20);
-    Range clearRange = Range.create(12,20);
+    Range validRange = Range.of(10, 20);
+    Range clearRange = Range.of(12,20);
     long basesLength=21;
     DefaultFragment sut;
     
@@ -132,13 +132,13 @@ public class TestDefaultFragment {
     }
     @Test
     public void differentValildRangeShouldStillBeEqual(){
-        DefaultFragment hasDifferentValidRange = new DefaultFragment(id,bases,qualities, validRange.shiftLeft(1), clearRange,library,comment);
+        DefaultFragment hasDifferentValidRange = new DefaultFragment(id,bases,qualities, new Range.Builder(validRange).shiftLeft(1).build(), clearRange,library,comment);
         TestUtil.assertEqualAndHashcodeSame(sut, hasDifferentValidRange);
     }
     
     @Test
     public void differentClearRangeShouldStillBeEqual(){
-        DefaultFragment hasDifferentClearRange = new DefaultFragment(id,bases,qualities, validRange, clearRange.shiftLeft(1),library,comment);
+        DefaultFragment hasDifferentClearRange = new DefaultFragment(id,bases,qualities, validRange, new Range.Builder(clearRange).shiftLeft(1).build(),library,comment);
         TestUtil.assertEqualAndHashcodeSame(sut, hasDifferentClearRange);
     }
     @Test

@@ -54,13 +54,13 @@ public abstract class AbstractAceTagsFromAceFileDataStore {
     ConsensusAceTag consensusTag0 = new DefaultConsensusAceTag.Builder(
                                             "Contig1", "repeat", "consed",
                                             new DateTime(1997, 12, 18, 18, 6, 23, 0).toDate(), 
-                                            Range.create(976,986), 
+                                            Range.of(976,986), 
                                             false)
                                             .build();
     ConsensusAceTag consensusTag1 = new DefaultConsensusAceTag.Builder(
             "Contig1", "comment", "consed",
             new DateTime(1997, 12, 18, 18, 6, 23, 0).toDate(), 
-            Range.create(996,1007), 
+            Range.of(996,1007), 
             false)
             .appendData("This is line 1 of a comment\nThere may be any number of lines\n")
             .build();
@@ -68,7 +68,7 @@ public abstract class AbstractAceTagsFromAceFileDataStore {
     ConsensusAceTag consensusTag2 = new DefaultConsensusAceTag.Builder(
             "Contig1", "oligo", "consed",
             new DateTime(1997, 12, 18, 18, 6, 23, 0).toDate(), 
-            Range.create(963,987), 
+            Range.of(963,987), 
             false)
             .appendData("standard.1 acataagacattctaaatttttact 50 U\nseq from clone\n")
             .build();
@@ -76,7 +76,7 @@ public abstract class AbstractAceTagsFromAceFileDataStore {
     ConsensusAceTag consensusTag3 = new DefaultConsensusAceTag.Builder(
             "Contig853", "join", "consed",
             new DateTime(2009, 12, 28, 11, 38, 57, 0).toDate(), 
-            Range.create(437,437), 
+            Range.of(437,437), 
             false)
             .addComment("old contigs:\nContig844 pinned pos: 511 length: 1324 reads: 1\nContig850 pinned pos: 23 length: 208,876 reads: 29,325\nace file: /local/closure10/HMP/HMP084/Newbler_091709_consed/hmp084/assembly/cons\ned/edit_dir/454Contigs.ace.176\nnew contig Contig853  length: 208,876 reads: 29,326\n")
             .build();
@@ -84,13 +84,13 @@ public abstract class AbstractAceTagsFromAceFileDataStore {
     ConsensusAceTag consensusTag4 = new DefaultConsensusAceTag.Builder(
             "Contig853", "contigEndPair", "consed",
             new DateTime(2009, 12, 28, 12, 10, 44, 0).toDate(), 
-            Range.create(10,10), 
+            Range.of(10,10), 
             false)
             .appendData("3\n<-gap\nggcctcgggg\n")
             .build();
     ReadAceTag readTag1 = new DefaultReadAceTag("djs14_680.s1", "matchElsewhereLowQual",
     		"phrap", new DateTime(1999, 8, 23, 11, 43, 56, 0).toDate(), 
-    		Range.create(903,932)
+    		Range.of(903,932)
     		, true);
 
     AceFileContigDataStore sut;

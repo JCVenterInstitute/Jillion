@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 public class TestConsensusNavigationElement {
 
     String id= "contig id";
-    Range range = Range.create(5,10);
+    Range range = Range.of(5,10);
     String comment = "this is a comment";
     ConsensusNavigationElement sut = new ConsensusNavigationElement(id, range,comment);
     
@@ -81,7 +81,7 @@ public class TestConsensusNavigationElement {
     }
     @Test
     public void differentRangeShouldNotBeEqual(){
-        ConsensusNavigationElement differentRange = new ConsensusNavigationElement(id, range.shrink(0, 2),comment);
+        ConsensusNavigationElement differentRange = new ConsensusNavigationElement(id, new Range.Builder(range).shrinkRight(2).build(),comment);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentRange);
     }
     @Test

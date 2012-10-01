@@ -187,7 +187,7 @@ public final class DefaultPlacedRead implements AssembledRead {
     
     @Override
 	public Range getGappedContigRange() {
-		return Range.create(getGappedStartOffset(), getGappedEndOffset());
+		return Range.of(getGappedStartOffset(), getGappedEndOffset());
 	}
 
 	private static class Builder implements AssembledReadBuilder<AssembledRead>{
@@ -387,7 +387,7 @@ public final class DefaultPlacedRead implements AssembledRead {
         */
         @Override
         public Range asRange(){
-            return Range.create(offset,getEnd());
+            return Range.of(offset,getEnd());
         }
         /**
         * {@inheritDoc}

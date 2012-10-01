@@ -212,7 +212,7 @@ public class TestACGTNNucleotideCodec {
     
 
     private void assertIterateCorrectly(List<Nucleotide> list){
-    	assertIterateCorrectly(list, Range.createOfLength(list.size()));
+    	assertIterateCorrectly(list, new Range.Builder(list.size()).build());
     }
 	private void assertIterateCorrectly(List<Nucleotide> list, Range range) {
 		Iterator<Nucleotide> expected = list.iterator();
@@ -239,22 +239,22 @@ public class TestACGTNNucleotideCodec {
 	@Test
     public void rangedIterator(){
     	List<Nucleotide> list = asList(new NucleotideSequenceBuilder("ACGNACGT"));
-		assertIterateCorrectly(list, Range.create(2,6));
+		assertIterateCorrectly(list, Range.of(2,6));
     }
     @Test
     public void rangedIteratorLastByteHasOnly1Base(){
     	List<Nucleotide> list = asList(new NucleotideSequenceBuilder("ACGNACGTC"));
-		assertIterateCorrectly(list, Range.create(4,7));
+		assertIterateCorrectly(list, Range.of(4,7));
     }
     @Test
     public void rangedIteratorLastByteHasOnly2Bases(){
     	List<Nucleotide> list = asList(new NucleotideSequenceBuilder("ACGTNCGTCA"));
-		assertIterateCorrectly(list, Range.create(4,7));
+		assertIterateCorrectly(list, Range.of(4,7));
     }
     @Test
     public void rangedIteratorLastByteHasOnly3Bases(){
     	List<Nucleotide> list = asList(new NucleotideSequenceBuilder("ACGTNCGTCAG"));
-		assertIterateCorrectly(list, Range.create(4,7));
+		assertIterateCorrectly(list, Range.of(4,7));
     }
     
 }

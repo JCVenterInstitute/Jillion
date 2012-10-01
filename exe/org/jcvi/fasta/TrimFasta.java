@@ -99,7 +99,7 @@ public class TrimFasta {
                     long untrimmedLength = builder.getLength();
                     Integer l = leftTrimPoints.get(id);
                     Integer r = rightTrimPoints.get(id);
-                    Range trimRange = Range.create(l ==null? 0:l, 
+                    Range trimRange = Range.of(l ==null? 0:l, 
                                                     untrimmedLength -1 -(r==null?0:r));
                     
                     try {

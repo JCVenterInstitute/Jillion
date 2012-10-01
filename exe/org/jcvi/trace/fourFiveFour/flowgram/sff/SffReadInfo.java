@@ -67,7 +67,7 @@ public class SffReadInfo implements SffFileVisitor {
         final Range qualityClip = readHeader.getQualityClip();
         final Range adapterClip = readHeader.getAdapterClip();
         Range trimmedRange;
-        if(adapterClip.equals(Range.create(CoordinateSystem.RESIDUE_BASED,0,0))){
+        if(adapterClip.equals(Range.of(CoordinateSystem.RESIDUE_BASED,0,0))){
             trimmedRange= qualityClip;
         }
         else{

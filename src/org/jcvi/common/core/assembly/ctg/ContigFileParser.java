@@ -146,10 +146,10 @@ public final class ContigFileParser  {
            int right = Integer.parseInt(newSequenceMatcher.group(5));
            Range validRange;
            if(dir == Direction.REVERSE){
-               validRange = Range.create(CoordinateSystem.RESIDUE_BASED,right, left);
+               validRange = Range.of(CoordinateSystem.RESIDUE_BASED,right, left);
            }
            else{
-               validRange = Range.create(CoordinateSystem.RESIDUE_BASED,left, right);
+               validRange = Range.of(CoordinateSystem.RESIDUE_BASED,left, right);
            }
         return validRange;
     }

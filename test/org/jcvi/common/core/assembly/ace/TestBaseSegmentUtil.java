@@ -19,12 +19,12 @@ public class TestBaseSegmentUtil {
 							.addRead("read1", new NucleotideSequenceBuilder("ACGTACGT").build(),
 									0,
 									Direction.FORWARD, 
-									Range.create(0,7), mockPhdInfo, 8)
+									Range.of(0,7), mockPhdInfo, 8)
 							.build();
 		
 		List<AceBaseSegment> actual =BaseSegmentUtil.computeBestSegmentsFor(contig);
 		List<AceBaseSegment> expected = Arrays.<AceBaseSegment>asList(
-				new DefaultAceBaseSegment("read1", Range.create(0,7)));
+				new DefaultAceBaseSegment("read1", Range.of(0,7)));
 		
 		assertEquals(expected,actual);
 	}
@@ -34,16 +34,16 @@ public class TestBaseSegmentUtil {
 							.addRead("read1", new NucleotideSequenceBuilder("ACGTACGT").build(),
 									0,
 									Direction.FORWARD, 
-									Range.create(0,7), mockPhdInfo, 8)
+									Range.of(0,7), mockPhdInfo, 8)
 								.addRead("read2", new NucleotideSequenceBuilder("ACGTACGT").build(),
 									0,
 									Direction.FORWARD, 
-									Range.create(0,7), mockPhdInfo, 8)
+									Range.of(0,7), mockPhdInfo, 8)
 							.build();
 		
 		List<AceBaseSegment> actual =BaseSegmentUtil.computeBestSegmentsFor(contig);
 		List<AceBaseSegment> expected = Arrays.<AceBaseSegment>asList(
-				new DefaultAceBaseSegment("read1", Range.create(0,7)));
+				new DefaultAceBaseSegment("read1", Range.of(0,7)));
 		
 		assertEquals(expected,actual);
 	}
@@ -53,17 +53,17 @@ public class TestBaseSegmentUtil {
 							.addRead("read1", new NucleotideSequenceBuilder("ACGTA").build(),
 									0,
 									Direction.FORWARD, 
-									Range.create(0,4), mockPhdInfo, 5)
+									Range.of(0,4), mockPhdInfo, 5)
 								.addRead("read2", new NucleotideSequenceBuilder("ACGT").build(),
 									4,
 									Direction.FORWARD, 
-									Range.create(0,3), mockPhdInfo, 4)
+									Range.of(0,3), mockPhdInfo, 4)
 							.build();
 		
 		List<AceBaseSegment> actual =BaseSegmentUtil.computeBestSegmentsFor(contig);
 		List<AceBaseSegment> expected = Arrays.<AceBaseSegment>asList(
-				new DefaultAceBaseSegment("read1", Range.create(0,4)),
-				new DefaultAceBaseSegment("read2", Range.create(5,7))
+				new DefaultAceBaseSegment("read1", Range.of(0,4)),
+				new DefaultAceBaseSegment("read2", Range.of(5,7))
 				);
 		
 		assertEquals(expected,actual);
@@ -75,17 +75,17 @@ public class TestBaseSegmentUtil {
 							.addRead("read1", new NucleotideSequenceBuilder("ACG-ACGT").build(),
 									0,
 									Direction.FORWARD, 
-									Range.create(0,7), mockPhdInfo, 8)
+									Range.of(0,7), mockPhdInfo, 8)
 								.addRead("read2", new NucleotideSequenceBuilder("ACGTACGT").build(),
 									0,
 									Direction.FORWARD, 
-									Range.create(0,7), mockPhdInfo, 8)
+									Range.of(0,7), mockPhdInfo, 8)
 							.build();
 		
 		List<AceBaseSegment> actual =BaseSegmentUtil.computeBestSegmentsFor(contig);
 		List<AceBaseSegment> expected = Arrays.<AceBaseSegment>asList(
-				new DefaultAceBaseSegment("read1", Range.create(0,2)),
-				new DefaultAceBaseSegment("read2", Range.create(3,7)));
+				new DefaultAceBaseSegment("read1", Range.of(0,2)),
+				new DefaultAceBaseSegment("read2", Range.of(3,7)));
 		
 		assertEquals(expected,actual);
 	}
@@ -95,18 +95,18 @@ public class TestBaseSegmentUtil {
 							.addRead("read1", new NucleotideSequenceBuilder("ACG-ACGT").build(),
 									0,
 									Direction.FORWARD, 
-									Range.create(0,7), mockPhdInfo, 8)
+									Range.of(0,7), mockPhdInfo, 8)
 								.addRead("read2", new NucleotideSequenceBuilder("ACGTAC-T").build(),
 									0,
 									Direction.FORWARD, 
-									Range.create(0,7), mockPhdInfo, 8)
+									Range.of(0,7), mockPhdInfo, 8)
 							.build();
 		
 		List<AceBaseSegment> actual =BaseSegmentUtil.computeBestSegmentsFor(contig);
 		List<AceBaseSegment> expected = Arrays.<AceBaseSegment>asList(
-				new DefaultAceBaseSegment("read1", Range.create(0,2)),
-				new DefaultAceBaseSegment("read2", Range.create(3,5)),
-				new DefaultAceBaseSegment("read1", Range.create(6,7)));
+				new DefaultAceBaseSegment("read1", Range.of(0,2)),
+				new DefaultAceBaseSegment("read2", Range.of(3,5)),
+				new DefaultAceBaseSegment("read1", Range.of(6,7)));
 		
 		assertEquals(expected,actual);
 	}
@@ -117,11 +117,11 @@ public class TestBaseSegmentUtil {
 							.addRead("read1", new NucleotideSequenceBuilder("ACGTACGT").build(),
 									0,
 									Direction.FORWARD, 
-									Range.create(0,7), mockPhdInfo, 8)
+									Range.of(0,7), mockPhdInfo, 8)
 								.addRead("read2", new NucleotideSequenceBuilder("ACGAACGT").build(),
 									0,
 									Direction.FORWARD, 
-									Range.create(0,7), mockPhdInfo, 8)
+									Range.of(0,7), mockPhdInfo, 8)
 							.build();
 		
 		BaseSegmentUtil.computeBestSegmentsFor(contig);

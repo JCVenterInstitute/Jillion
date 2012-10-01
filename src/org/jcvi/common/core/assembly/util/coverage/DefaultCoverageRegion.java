@@ -212,7 +212,7 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
             if(!endIsSet){
                 throw new IllegalStateException("end must be set");
             }
-            return new DefaultCoverageRegion<T>(Range.create(start, end), elements);
+            return new DefaultCoverageRegion<T>(Range.of(start, end), elements);
         }
         /**
          * 

@@ -73,7 +73,7 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
         expect(placedRead.getNucleotideSequence()).andReturn(sequence).anyTimes();
         expect(sequence.isGap(gappedReadIndex)).andReturn(false);
         expect(placedRead.getDirection()).andStubReturn(Direction.FORWARD);
-        Range validRange = Range.create(10,100);
+        Range validRange = Range.of(10,100);
         int fullLength = (int)(validRange.getEnd()+validRange.getBegin());
         ReadInfo readInfo = new ReadInfo(validRange, fullLength);
         expect(placedRead.getReadInfo()).andStubReturn(readInfo);
@@ -92,7 +92,7 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
     public void getUngappedQualityFromReverseRead(){
         int gappedReadIndex = 12;
         int ungappedReadOffset = gappedReadIndex-2;
-        Range validRange = Range.create(10,100);
+        Range validRange = Range.of(10,100);
         int fullLength=110;
         expect(placedRead.getNucleotideSequence()).andReturn(sequence).anyTimes();
         expect(placedRead.getDirection()).andStubReturn(Direction.REVERSE);

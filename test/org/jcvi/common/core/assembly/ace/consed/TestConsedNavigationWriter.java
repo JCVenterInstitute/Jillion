@@ -64,7 +64,7 @@ public class TestConsedNavigationWriter {
 	@Test
 	public void oneReadElement() throws IOException{
 		String readId = "readId";
-		Range range = Range.create(CoordinateSystem.RESIDUE_BASED,10, 24);
+		Range range = Range.of(CoordinateSystem.RESIDUE_BASED,10, 24);
 		String comment = "read Comment";
 		ReadNavigationElement element = new ReadNavigationElement(
 				readId, range, comment);
@@ -84,7 +84,7 @@ public class TestConsedNavigationWriter {
 	@Test
 	public void oneReadElementWithNoComment() throws IOException{
 		String readId = "readId";
-		Range range = Range.create(CoordinateSystem.RESIDUE_BASED,10, 24);
+		Range range = Range.of(CoordinateSystem.RESIDUE_BASED,10, 24);
 		ReadNavigationElement element = new ReadNavigationElement(
 				readId, range);
 		sut.writeNavigationElement(element);
@@ -104,7 +104,7 @@ public class TestConsedNavigationWriter {
 	@Test
 	public void oneConsensusElement() throws IOException{
 		String readId = "readId";
-		Range range = Range.create(CoordinateSystem.RESIDUE_BASED,10, 24);
+		Range range = Range.of(CoordinateSystem.RESIDUE_BASED,10, 24);
 		String comment = "read Comment";
 		ConsensusNavigationElement element = new ConsensusNavigationElement(
 				readId, range, comment);
@@ -125,7 +125,7 @@ public class TestConsedNavigationWriter {
 	@Test
 	public void oneConsensusElementWithoutComment() throws IOException{
 		String readId = "readId";
-		Range range = Range.create(CoordinateSystem.RESIDUE_BASED,10, 24);
+		Range range = Range.of(CoordinateSystem.RESIDUE_BASED,10, 24);
 		ConsensusNavigationElement element = new ConsensusNavigationElement(
 				readId, range);
 		sut.writeNavigationElement(element);
@@ -145,12 +145,14 @@ public class TestConsedNavigationWriter {
 	@Test
 	public void multipleElements() throws IOException{
 		String readId = "readId";
-		Range range = Range.create(CoordinateSystem.RESIDUE_BASED,10, 24);
+		Range range = Range.of(CoordinateSystem.RESIDUE_BASED,10, 24);
 		ConsensusNavigationElement element = new ConsensusNavigationElement(
 				readId, range);
 		sut.writeNavigationElement(element);
 		sut.writeNavigationElement(new ReadNavigationElement(
-				"another"+readId, range.shiftLeft(3)));
+				"another"+readId, new Range.Builder(range)
+										.shiftLeft(3)
+										.build()));
 		sut.close();
 
 		StringBuilder expectedOutput = new StringBuilder("TITLE: "+title+"\n");

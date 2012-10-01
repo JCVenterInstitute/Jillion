@@ -46,7 +46,7 @@ public final class CoverageMapUtil {
     
 
     public static <V extends Rangeable> CoverageRegion<V> getRegionWhichCovers(CoverageMap<V> coverageMap, long consensusIndex) {
-        Range range = Range.create(consensusIndex, consensusIndex);
+        Range range = Range.of(consensusIndex, consensusIndex);
         final List<CoverageRegion<V>> intersectedRegion = getRegionsWhichIntersect(coverageMap, range);
         if(intersectedRegion.isEmpty()){
             return null;

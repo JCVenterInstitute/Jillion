@@ -37,7 +37,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 
 	 
 	
-	Range validRange = Range.create(CoordinateSystem.RESIDUE_BASED,5, 13);
+	Range validRange = Range.of(CoordinateSystem.RESIDUE_BASED,5, 13);
 	String id = "readId";
 	int offset = 5;
 	String readSequence = "ACGT-ACGT";

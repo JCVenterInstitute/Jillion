@@ -39,13 +39,18 @@ public class TestRangeDepartureComparator
     {
         super();
         
-        this.a = Range.create(10, 20);
-        this.b = Range.create(10, 18);
-        this.c = Range.create(12, 20);
-        this.d = Range.create(12, 18);
-        this.e = Range.createEmptyRange();
-        this.f = Range.createEmptyRange(-1);
-        this.g = Range.createEmptyRange(30);
+        this.a = Range.of(10, 20);
+        this.b = Range.of(10, 18);
+        this.c = Range.of(12, 20);
+        this.d = Range.of(12, 18);
+        this.e = new Range.Builder()
+		.build();
+        this.f = new Range.Builder()
+					.shiftRight(-1)
+					.build();
+        this.g = new Range.Builder()
+					.shiftRight(30)
+					.build();
     }
     
    

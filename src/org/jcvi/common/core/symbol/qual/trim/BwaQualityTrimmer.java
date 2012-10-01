@@ -64,9 +64,9 @@ public class BwaQualityTrimmer implements QualityTrimmer {
 		//change code to match 
 		if(currentLength==0){
 			//never found a good window
-			return Range.createEmptyRange();
+			return new Range.Builder().build();
 		}
-		return Range.createOfLength(goodQualityWindowLength);
+		return new Range.Builder(goodQualityWindowLength).build();
 	}
 
 	

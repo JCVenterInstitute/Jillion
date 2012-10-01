@@ -210,8 +210,8 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
 
 	@Override
 	public PositionSequenceBuilder trim(Range range) {
-		Range right = Range.create(range.getEnd()+1, builder.getCurrentLength()-1);
-		Range left = Range.create(0,range.getBegin()-1);
+		Range right = Range.of(range.getEnd()+1, builder.getCurrentLength()-1);
+		Range left = Range.of(0,range.getBegin()-1);
 		builder.remove(right);
 		builder.remove(left);
 		return this;
