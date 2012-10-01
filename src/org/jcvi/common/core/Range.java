@@ -2301,23 +2301,74 @@ public abstract class Range implements Rangeable,Iterable<Long>
 		
     }
     
-    
+    /**
+     * {@code Builder} is a mutable object
+     * that allows clients to create a 
+     * {@link Range} object using the current
+     * specification.  
+     * <p/>
+     * <strong>Note:</strong> {@link Builder#build()} is not guaranteed to return new instances and may return
+     * a cached instance instead (flyweight pattern).
+     * <p/>
+     * This class is not thread-safe.
+     * @author dkatzel
+     *
+     */
     public static final class Builder {
     	
     	private long begin;
     	private long end;
     	private CoordinateSystem inputCoordinateSystem;
+    	/**
+    	 * Create a new Builder instance
+    	 * which is initialized to an 
+    	 * empty range with a coordinate at the
+    	 * origin (zero for {@link CoordinateSystem#ZERO_BASED}).
+    	 */
     	public Builder(){
     		this(0);
     	}
+    	/**
+    	 * Create a new Builder instance
+    	 * which is initialized to the given
+    	 * begin and end coordinates in zero-based
+    	 * coordinate space.
+    	 * This is equivalent to 
+    	 * {@link Builder#Builder(CoordinateSystem, long, long)
+    	 * new Builder(CoordinateSystem.ZERO_BASED, begin,end}.
+    	 * @param begin the initial  begin coordinate of the range in zero based coordinates. 
+    	 * @param end the initial end coordinate in zero based coordinates. 
+    	 * @see Builder#Builder(CoordinateSystem, long, long)
+    	 */
     	public Builder(long begin, long end){
     		this(CoordinateSystem.ZERO_BASED, begin,end);
     	}
+    	/**
+    	 * Create a new Builder instance
+    	 * which is initialized to the given
+    	 * begin and end coordinates in the
+    	 * given coordinate space.
+    	 * @param cs the {@link CoordinateSystem} these coordinates are
+    	 * given in; can not be null.
+    	 * @param begin the initial  begin coordinate of the range in zero based coordinates. 
+    	 * @param end the initial end coordinate in zero based coordinates. 
+    	 * @throws NullPointerException if cs is null.
+    	 */
     	public Builder(CoordinateSystem cs,long begin, long end){
     		this.begin = cs.getStart(begin);
     		this.end = cs.getEnd(end);
     		this.inputCoordinateSystem = cs;
     	}
+    	/**
+    	 * Create a new Builder instance
+    	 * which is initialized to an 
+    	 * range with a coordinate at the
+    	 * origin (zero for {@link CoordinateSystem#ZERO_BASED})
+    	 * and a length of the given length.
+    	 * @param length the initial length of the range;
+    	 * can not be {@literal <0}.
+    	 * @throws IllegalArgumentException if length {@literal <0}.
+    	 */
     	public Builder(long length){
     		if(length <0){
     			throw new IllegalArgumentException("must be >=0");
@@ -2325,6 +2376,13 @@ public abstract class Range implements Rangeable,Iterable<Long>
     		begin=0;
     		end = length-1;
     	}
+    	/**
+    	 * Create a new Builder instance
+    	 * which is initialized to have the same
+    	 * begin and end coordinates as the given {@link Range}.
+    	 * @param range the range to copy;
+    	 * can not be null.
+    	 */
     	public Builder(Range range){
     		if(range ==null){
     			throw new NullPointerException("range can not be null");
@@ -2332,36 +2390,111 @@ public abstract class Range implements Rangeable,Iterable<Long>
     		begin=range.getBegin();
     		end = range.getEnd();
     	}
+    	/**
+    	 * Shift the entire range to the left the given
+    	 * amount of units.  This will subtract the given number
+    	 * of  units
+    	 * from both the begin and end coordinates from their
+    	 * current values.
+    	 * @param units the amount to shift to the left. If this number
+    	 * is negative, then that is the equivalent of shifting
+    	 * to the right by the given number of units
+    	 * @return this.
+    	 * @see #shiftRight(long)
+    	 */
     	public Builder shiftLeft(long units){
     		begin-=units;
     		end-=units;
     		return this;
     	}
-    	
+    	/**
+    	 * Shift the entire range to the right the given
+    	 * amount of units.  This will add the given number
+    	 * of  units
+    	 * from both the begin and end coordinates from their
+    	 * current values.
+    	 * @param units the amount to shift to the right. If this number
+    	 * is negative, then that is the equivalent of shifting
+    	 * to the left by the given number of units
+    	 * @return this.
+    	 * @see #shiftLeft(long)
+    	 */
     	public Builder shiftRight(long units){
     		begin+=units;
     		end+=units;
     		return this;
     	}
+    	/**
+    	 * Shrink the begin value by the given
+    	 * amount of units.  This will add the given number
+    	 * of  units to the begin coordinate which will also cause
+    	 * the range's length to be shrunk by the given amount.
+    	 * @param units the amount to shrink to the left. If this number
+    	 * is negative, then that is the equivalent of growing
+    	 * to the left by the given number of units
+    	 * @return this.
+    	 * @see #growLeft(long)
+    	 */
     	public Builder shrinkLeft(long units){
     		begin+=units;
     		return this;
     	}
-    	
+    	/**
+    	 * Shrink the end value by the given
+    	 * amount of units.  This will subtract the given number
+    	 * of  units to the end coordinate which will also cause
+    	 * the range's length to be shrunk by the given amount.
+    	 * @param units the amount to shrink to the right. If this number
+    	 * is negative, then that is the equivalent of growing
+    	 * to the right by the given number of units
+    	 * @return this.
+    	 * @see #growRight(long)
+    	 */
     	public Builder shrinkRight(long units){
     		end -=units;
     		return this;
     	}
+    	/**
+    	 * Grows the begin value by the given
+    	 * amount of units.  This will subtract the given number
+    	 * of  units to the begin coordinate which will also cause
+    	 * the range's length to be grown by the given amount.
+    	 * @param units the amount to grow to the left. If this number
+    	 * is negative, then that is the equivalent of shrinking
+    	 * to the left by the given number of units
+    	 * @return this.
+    	 * @see #shrinkLeft(long)
+    	 */
     	public Builder growLeft(long units){
     		begin-=units;
     		return this;
     	}
-    	
+    	/**
+    	 * Grows the end value by the given
+    	 * amount of units.  This will subtract the given number
+    	 * of  units to the end coordinate which will also cause
+    	 * the range's length to be grown by the given amount.
+    	 * @param units the amount to grow to the right. If this number
+    	 * is negative, then that is the equivalent of shrinking
+    	 * to the right by the given number of units
+    	 * @return this.
+    	 * @see #shrinkRight(long)
+    	 */
     	public Builder growRight(long units){
     		end +=units;
     		return this;
     	}
-    	
+    	/**
+    	 * Use the current begin, end and length
+    	 * values of this Builder to return an instance
+    	 * of a {@link Range} object with the same values.
+    	 * This method is not guaranteed to return new instances and may return
+	     * a cached instance instead (flyweight pattern).
+	     * @return a {@link Range}; never null but might 
+	     * not be a new instance.
+	     * @throws IllegalArgumentException if {@code end < begin -1} 
+	     * or if the resulting range length > {@link Long#MAX_VALUE}.
+    	 */
     	public Range build(){
     		long length = end-begin+1;
     		if(length<0){
