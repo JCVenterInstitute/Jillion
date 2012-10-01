@@ -2318,7 +2318,7 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	
     	private long begin;
     	private long end;
-    	private CoordinateSystem inputCoordinateSystem;
+    	private final CoordinateSystem inputCoordinateSystem;
     	/**
     	 * Create a new Builder instance
     	 * which is initialized to an 
@@ -2355,6 +2355,9 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	 * @throws NullPointerException if cs is null.
     	 */
     	public Builder(CoordinateSystem cs,long begin, long end){
+    		if(cs ==null){
+    			throw new NullPointerException("CoordinateSystem can not be null");
+    		}
     		this.begin = cs.getStart(begin);
     		this.end = cs.getEnd(end);
     		this.inputCoordinateSystem = cs;
@@ -2375,6 +2378,7 @@ public abstract class Range implements Rangeable,Iterable<Long>
     		}
     		begin=0;
     		end = length-1;
+    		inputCoordinateSystem = CoordinateSystem.ZERO_BASED;
     	}
     	/**
     	 * Create a new Builder instance
@@ -2389,6 +2393,7 @@ public abstract class Range implements Rangeable,Iterable<Long>
     		}
     		begin=range.getBegin();
     		end = range.getEnd();
+    		inputCoordinateSystem = CoordinateSystem.ZERO_BASED;
     	}
     	/**
     	 * Shift the entire range to the left the given
@@ -2498,7 +2503,7 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	public Range build(){
     		long length = end-begin+1;
     		if(length<0){
-    			new IllegalArgumentException("length can not be negative");
+    			throw new IllegalArgumentException("length can not be negative");
     		}
     		if(begin >0){
         		long maxLength = Long.MAX_VALUE - begin;
