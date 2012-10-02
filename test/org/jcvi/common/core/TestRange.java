@@ -119,7 +119,7 @@ public class TestRange{
         int left = 10;
         int length = 10;
 
-        Range sut = new Range.Builder(length).shiftRight(left).build();
+        Range sut = new Range.Builder(length).shift(left).build();
         assertEquals(left,sut.getBegin());
         assertEquals(left+length-1, sut.getEnd());
     }
@@ -129,7 +129,7 @@ public class TestRange{
         int left = 10;
         int length = 0;
 
-        Range sut = new Range.Builder(length).shiftRight(left).build();
+        Range sut = new Range.Builder(length).shift(left).build();
         assertEquals(left,sut.getBegin());
         assertEquals(left+length-1, sut.getEnd());
     }
@@ -141,7 +141,7 @@ public class TestRange{
         int left = 0;
         int length =-1;
 
-        new Range.Builder(length).shiftRight(left).build();
+        new Range.Builder(length).shift(left).build();
     }
 
     
@@ -645,7 +645,7 @@ public class TestRange{
     public void shiftRight(){
         int units = 5;
         Range shifted = new Range.Builder(range)
-							.shiftRight(units)
+							.shift(units)
 							.build();
         assertEquals(range.getBegin()+units, shifted.getBegin());
         assertEquals(range.getEnd()+units, shifted.getEnd());
@@ -656,7 +656,7 @@ public class TestRange{
     public void shiftLeft(){
         int units = 5;
         Range shifted = new Range.Builder(range)
-							.shiftLeft(units)
+							.shift(-units)
 							.build();
         assertEquals(range.getBegin()-units, shifted.getBegin());
         assertEquals(range.getEnd()-units, shifted.getEnd());
@@ -752,7 +752,7 @@ public class TestRange{
     }
     private Range createRangeSeparatedFrom(Range range, int distance){
         return new Range.Builder(range.getLength())
-        		.shiftRight(range.getEnd()+ distance).build();
+        		.shift(range.getEnd()+ distance).build();
     }
     @Test
     public void mergeRightClusteredRanges(){
@@ -820,7 +820,7 @@ public class TestRange{
     public void growRight(){
         Range expected = Range.of(1, 15);
         assertEquals(expected, new Range.Builder(range)
-							.growRight(5)
+							.growEnd(5)
 							.build());
     }
     @Test
@@ -829,15 +829,15 @@ public class TestRange{
         
         assertEquals(expected, 
         		new Range.Builder(range)
-        			.growLeft(5)
+        			.growBegin(5)
         			.build());
     }
     @Test
     public void grow(){
         Range expected = Range.of(-4, 15);
         assertEquals(expected, new Range.Builder(range)
-								.growLeft(5)
-								.growRight(5)
+								.growBegin(5)
+								.growEnd(5)
 								.build());
     }
     
@@ -845,22 +845,22 @@ public class TestRange{
     public void shrinkLeft(){
         Range expected = Range.of(6, 10);
         assertEquals(expected, new Range.Builder(range)
-									.shrinkLeft(5)
+									.shrinkBegin(5)
 									.build());
     }
     @Test
     public void shrinkRight(){
         Range expected = Range.of(1, 5);
         assertEquals(expected, new Range.Builder(range)
-		.shrinkRight(5)
+		.shrinkEnd(5)
 		.build());
     }
     @Test
     public void shrink(){
         Range expected = Range.of(6, 5);
         assertEquals(expected, new Range.Builder(range)
-								.shrinkLeft(5)
-								.shrinkRight(5)
+								.shrinkBegin(5)
+								.shrinkEnd(5)
 								.build());
     }
   
@@ -877,15 +877,15 @@ public class TestRange{
     
     @Test
     public void complementNoIntersectionShouldReturnOriginalRange(){
-        Range noOverlapRange = new Range.Builder(range).shiftRight(1000).build();
+        Range noOverlapRange = new Range.Builder(range).shift(1000).build();
         assertEquals(Arrays.asList(range),range.complement(noOverlapRange));
     }
     
     @Test
     public void complementOfSubRangeShouldReturn2DisjointRanges(){
         Range subrange = new Range.Builder(range)
-        					.shrinkLeft(2)
-        					.shrinkRight(2)
+        					.shrinkBegin(2)
+        					.shrinkEnd(2)
         					.build();
         assertEquals(Arrays.asList(Range.of(range.getBegin(),2), Range.of(range.getEnd()-1, range.getEnd())),
                 range.complement(subrange));
@@ -894,15 +894,15 @@ public class TestRange{
     @Test
     public void complementOfSuperRangeShouldReturnEmptyList(){
         Range superRange = new Range.Builder(range)
-        					.growLeft(2)
-        					.growRight(2)
+        					.growBegin(2)
+        					.growEnd(2)
         					.build();
         assertEquals(Collections.emptyList(), range.complement(superRange));
     }
     @Test
     public void complementOfLeftSideShouldReturnArrayOfOneElementContainingRightSide(){
         Range left = new Range.Builder(range)
-        				.shrinkRight(2)
+        				.shrinkEnd(2)
         				.build();
         assertEquals(Arrays.asList(Range.of(range.getEnd()-1, range.getEnd())),
                 range.complement(left));
@@ -911,7 +911,7 @@ public class TestRange{
     @Test
     public void complementOfRightSideShouldReturnArrayOfOneElementContainingLeftSide(){
         Range right = new Range.Builder(range)
-        				.shrinkLeft(2)
+        				.shrinkBegin(2)
         				.build();
         assertEquals(Arrays.asList(Range.of(range.getBegin(),2)),
                 range.complement(right));
@@ -924,7 +924,7 @@ public class TestRange{
     @Test
     public void splitInto2Ranges(){
         List<Range> expected = Arrays.asList(
-                new Range.Builder(range.getLength()/2).shiftRight(range.getBegin()).build() ,
+                new Range.Builder(range.getLength()/2).shift(range.getBegin()).build() ,
                 Range.of(range.getLength()/2+1, range.getEnd())
         );
         
@@ -958,14 +958,14 @@ public class TestRange{
     @Test
     public void mergeIntoClusters2RangesFartherAwayThanMaxClusterDistanceSame2Ranges(){
         int maxClusterDistance=100;
-        Range farAwayRange = new Range.Builder(range).shiftRight(maxClusterDistance+1).build();
+        Range farAwayRange = new Range.Builder(range).shift(maxClusterDistance+1).build();
         final List<Range> inputList = Arrays.asList(range,farAwayRange);
         assertEquals(inputList, Ranges.mergeIntoClusters(inputList, maxClusterDistance));
     }
     @Test
     public void mergeIntoClusters2OverLappingRanges(){
         int maxClusterDistance=100;
-        Range overlappingRange = new Range.Builder(range).shiftRight(5).build();
+        Range overlappingRange = new Range.Builder(range).shift(5).build();
         final List<Range> inputList = Arrays.asList(range,overlappingRange);
         final List<Range> expectedList = Arrays.asList(Range.of(range.getBegin(), overlappingRange.getEnd()));
         assertEquals(expectedList, Ranges.mergeIntoClusters(inputList, maxClusterDistance));
@@ -973,8 +973,8 @@ public class TestRange{
     @Test
     public void mergeIntoClusters3OverLappingRanges(){
         int maxClusterDistance=100;
-        Range overlappingRange = new Range.Builder(range).shiftRight(5).build();
-        Range overlappingRange2 = new Range.Builder(overlappingRange).shiftRight(10).build();
+        Range overlappingRange = new Range.Builder(range).shift(5).build();
+        Range overlappingRange2 = new Range.Builder(overlappingRange).shift(10).build();
         final List<Range> inputList = Arrays.asList(range,overlappingRange,overlappingRange2);
         final List<Range> expectedList = Arrays.asList(Range.of(range.getBegin(), overlappingRange2.getEnd()));
         assertEquals(expectedList, Ranges.mergeIntoClusters(inputList, maxClusterDistance));
@@ -1065,7 +1065,7 @@ public class TestRange{
     
     @Test
     public void unsignedByteWithShortLength(){
-    	Range r = new Range.Builder(500).shiftRight(Byte.MAX_VALUE+1).build();
+    	Range r = new Range.Builder(500).shift(Byte.MAX_VALUE+1).build();
     	assertEquals(Byte.MAX_VALUE+1, r.getBegin());
     	assertEquals(Byte.MAX_VALUE+500, r.getEnd());
     	assertEquals(500, r.getLength());
@@ -1073,7 +1073,7 @@ public class TestRange{
     
     @Test
     public void unsignedByteWithUnsignedShortLength(){
-    	Range r = new Range.Builder(Short.MAX_VALUE+1).shiftRight(Byte.MAX_VALUE+1).build();
+    	Range r = new Range.Builder(Short.MAX_VALUE+1).shift(Byte.MAX_VALUE+1).build();
     	assertEquals(Byte.MAX_VALUE+1, r.getBegin());
     	assertEquals(Byte.MAX_VALUE+Short.MAX_VALUE+1, r.getEnd());
     	assertEquals(Short.MAX_VALUE+1, r.getLength());
@@ -1081,21 +1081,21 @@ public class TestRange{
     
     @Test
     public void unsignedByteWithIntLength(){
-    	Range r = new Range.Builder(Integer.MAX_VALUE).shiftRight(Byte.MAX_VALUE+1).build();
+    	Range r = new Range.Builder(Integer.MAX_VALUE).shift(Byte.MAX_VALUE+1).build();
     	assertEquals(Byte.MAX_VALUE+1, r.getBegin());
     	assertEquals(Byte.MAX_VALUE+(long)Integer.MAX_VALUE, r.getEnd());
     	assertEquals(Integer.MAX_VALUE, r.getLength());
     }
     @Test
     public void unsignedByteWithUnsignedIntLength(){
-    	Range r = new Range.Builder(Integer.MAX_VALUE+1L).shiftRight(Byte.MAX_VALUE+1).build();
+    	Range r = new Range.Builder(Integer.MAX_VALUE+1L).shift(Byte.MAX_VALUE+1).build();
     	assertEquals(Byte.MAX_VALUE+1, r.getBegin());
     	assertEquals(Byte.MAX_VALUE+(long)Integer.MAX_VALUE+1L, r.getEnd());
     	assertEquals(Integer.MAX_VALUE+1L, r.getLength());
     }
     @Test
     public void unsignedByteWithLongLength(){
-    	Range r = new Range.Builder(0x100000000L).shiftRight(Byte.MAX_VALUE+1).build();
+    	Range r = new Range.Builder(0x100000000L).shift(Byte.MAX_VALUE+1).build();
     	assertEquals(Byte.MAX_VALUE+1, r.getBegin());
     	assertEquals(4294967423L, r.getEnd());
     	assertEquals(4294967296L, r.getLength());
@@ -1103,7 +1103,7 @@ public class TestRange{
     //////////////////////////
     @Test
     public void shortWithShortLength(){
-    	Range r = new Range.Builder(500).shiftRight(Short.MAX_VALUE).build();
+    	Range r = new Range.Builder(500).shift(Short.MAX_VALUE).build();
     	assertEquals(Short.MAX_VALUE, r.getBegin());
     	assertEquals(Short.MAX_VALUE+499, r.getEnd());
     	assertEquals(500, r.getLength());
@@ -1111,7 +1111,7 @@ public class TestRange{
     
     @Test
     public void shortWithUnsignedShortLength(){
-    	Range r = new Range.Builder(Short.MAX_VALUE+1).shiftRight(Short.MAX_VALUE).build();
+    	Range r = new Range.Builder(Short.MAX_VALUE+1).shift(Short.MAX_VALUE).build();
     	assertEquals(Short.MAX_VALUE, r.getBegin());
     	assertEquals(Short.MAX_VALUE+Short.MAX_VALUE, r.getEnd());
     	assertEquals(Short.MAX_VALUE+1, r.getLength());
@@ -1119,21 +1119,21 @@ public class TestRange{
     
     @Test
     public void shortWithIntLength(){
-    	Range r = new Range.Builder(Integer.MAX_VALUE).shiftRight(Short.MAX_VALUE).build();
+    	Range r = new Range.Builder(Integer.MAX_VALUE).shift(Short.MAX_VALUE).build();
     	assertEquals(Short.MAX_VALUE, r.getBegin());
     	assertEquals(Short.MAX_VALUE+(long)Integer.MAX_VALUE-1, r.getEnd());
     	assertEquals(Integer.MAX_VALUE, r.getLength());
     }
     @Test
     public void shortWithUnsignedIntLength(){
-    	Range r = new Range.Builder(Integer.MAX_VALUE+1L).shiftRight(Short.MAX_VALUE).build();
+    	Range r = new Range.Builder(Integer.MAX_VALUE+1L).shift(Short.MAX_VALUE).build();
     	assertEquals(Short.MAX_VALUE, r.getBegin());
     	assertEquals(Short.MAX_VALUE+(long)Integer.MAX_VALUE, r.getEnd());
     	assertEquals(Integer.MAX_VALUE+1L, r.getLength());
     }
     @Test
     public void shortWithLongLength(){
-    	Range r = new Range.Builder(0x100000000L).shiftRight(Short.MAX_VALUE).build();
+    	Range r = new Range.Builder(0x100000000L).shift(Short.MAX_VALUE).build();
     	assertEquals(Short.MAX_VALUE, r.getBegin());
     	assertEquals(4295000062L, r.getEnd());
     	assertEquals(4294967296L, r.getLength());
@@ -1141,7 +1141,7 @@ public class TestRange{
     /////////////////////////////////
     @Test
     public void intWithShortLength(){
-    	Range r = new Range.Builder(500).shiftRight(Integer.MAX_VALUE).build();
+    	Range r = new Range.Builder(500).shift(Integer.MAX_VALUE).build();
     	assertEquals(Integer.MAX_VALUE, r.getBegin());
     	assertEquals(Integer.MAX_VALUE+499L, r.getEnd());
     	assertEquals(500, r.getLength());
@@ -1149,7 +1149,7 @@ public class TestRange{
     
     @Test
     public void intWithUnsignedShortLength(){
-    	Range r = new Range.Builder(Short.MAX_VALUE+1).shiftRight(Integer.MAX_VALUE).build();
+    	Range r = new Range.Builder(Short.MAX_VALUE+1).shift(Integer.MAX_VALUE).build();
     	assertEquals(Integer.MAX_VALUE, r.getBegin());
     	assertEquals(Integer.MAX_VALUE+(long)Short.MAX_VALUE, r.getEnd());
     	assertEquals(Short.MAX_VALUE+1, r.getLength());
@@ -1157,21 +1157,21 @@ public class TestRange{
     
     @Test
     public void intWithIntLength(){
-    	Range r = new Range.Builder(Integer.MAX_VALUE).shiftRight(Integer.MAX_VALUE).build();
+    	Range r = new Range.Builder(Integer.MAX_VALUE).shift(Integer.MAX_VALUE).build();
     	assertEquals(Integer.MAX_VALUE, r.getBegin());
     	assertEquals(Integer.MAX_VALUE+(long)Integer.MAX_VALUE-1, r.getEnd());
     	assertEquals(Integer.MAX_VALUE, r.getLength());
     }
     @Test
     public void intWithUnsignedIntLength(){
-    	Range r = new Range.Builder(Integer.MAX_VALUE+1L).shiftRight(Integer.MAX_VALUE).build();
+    	Range r = new Range.Builder(Integer.MAX_VALUE+1L).shift(Integer.MAX_VALUE).build();
     	assertEquals(Integer.MAX_VALUE, r.getBegin());
     	assertEquals(Integer.MAX_VALUE+(long)Integer.MAX_VALUE, r.getEnd());
     	assertEquals(Integer.MAX_VALUE+1L, r.getLength());
     }
     @Test
     public void intWithLongLength(){
-    	Range r = new Range.Builder(0x100000000L).shiftRight(Integer.MAX_VALUE).build();
+    	Range r = new Range.Builder(0x100000000L).shift(Integer.MAX_VALUE).build();
     	assertEquals(Integer.MAX_VALUE, r.getBegin());
     	assertEquals(6442450942L, r.getEnd());
     	assertEquals(4294967296L, r.getLength());
@@ -1179,7 +1179,7 @@ public class TestRange{
     ////////////////////////////////
     @Test
     public void unsignedShortWithShortLength(){
-    	Range r = new Range.Builder(500).shiftRight(Short.MAX_VALUE+1).build();
+    	Range r = new Range.Builder(500).shift(Short.MAX_VALUE+1).build();
     	assertEquals(Short.MAX_VALUE+1, r.getBegin());
     	assertEquals(Short.MAX_VALUE+1+499, r.getEnd());
     	assertEquals(500, r.getLength());
@@ -1187,7 +1187,7 @@ public class TestRange{
     
     @Test
     public void unsignedShortWithUnsignedShortLength(){
-    	Range r = new Range.Builder(Short.MAX_VALUE+1).shiftRight(Short.MAX_VALUE+1).build();
+    	Range r = new Range.Builder(Short.MAX_VALUE+1).shift(Short.MAX_VALUE+1).build();
     	assertEquals(Short.MAX_VALUE+1, r.getBegin());
     	assertEquals(Short.MAX_VALUE+1+Short.MAX_VALUE, r.getEnd());
     	assertEquals(Short.MAX_VALUE+1, r.getLength());
@@ -1195,21 +1195,21 @@ public class TestRange{
     
     @Test
     public void unsignedShortWithIntLength(){
-    	Range r = new Range.Builder(Integer.MAX_VALUE).shiftRight(Short.MAX_VALUE+1).build();
+    	Range r = new Range.Builder(Integer.MAX_VALUE).shift(Short.MAX_VALUE+1).build();
     	assertEquals(Short.MAX_VALUE+1, r.getBegin());
     	assertEquals(Short.MAX_VALUE+(long)Integer.MAX_VALUE, r.getEnd());
     	assertEquals(Integer.MAX_VALUE, r.getLength());
     }
     @Test
     public void unsignedShortWithUnsignedIntLength(){
-    	Range r = new Range.Builder(Integer.MAX_VALUE+1L).shiftRight(Short.MAX_VALUE+1).build();
+    	Range r = new Range.Builder(Integer.MAX_VALUE+1L).shift(Short.MAX_VALUE+1).build();
     	assertEquals(Short.MAX_VALUE+1, r.getBegin());
     	assertEquals(Short.MAX_VALUE+(long)Integer.MAX_VALUE+1, r.getEnd());
     	assertEquals(Integer.MAX_VALUE+1L, r.getLength());
     }
     @Test
     public void unsignedShortWithLongLength(){
-    	Range r = new Range.Builder(0x100000000L).shiftRight(Short.MAX_VALUE+1).build();
+    	Range r = new Range.Builder(0x100000000L).shift(Short.MAX_VALUE+1).build();
     	assertEquals(Short.MAX_VALUE+1, r.getBegin());
     	assertEquals(4295000063L, r.getEnd());
     	assertEquals(4294967296L, r.getLength());
@@ -1217,7 +1217,7 @@ public class TestRange{
     ///////////////////////
     @Test
     public void unsignedIntWithShortLength(){
-    	Range r = new Range.Builder(500).shiftRight(Integer.MAX_VALUE+1L).build();
+    	Range r = new Range.Builder(500).shift(Integer.MAX_VALUE+1L).build();
     	assertEquals(Integer.MAX_VALUE+1L, r.getBegin());
     	assertEquals(Integer.MAX_VALUE+1L+499L, r.getEnd());
     	assertEquals(500, r.getLength());
@@ -1225,7 +1225,7 @@ public class TestRange{
     
     @Test
     public void unsignedIntWithUnsignedShortLength(){
-    	Range r = new Range.Builder(Short.MAX_VALUE+1).shiftRight(Integer.MAX_VALUE+1L).build();
+    	Range r = new Range.Builder(Short.MAX_VALUE+1).shift(Integer.MAX_VALUE+1L).build();
     	assertEquals(Integer.MAX_VALUE+1L, r.getBegin());
     	assertEquals(Integer.MAX_VALUE+1L+(long)Short.MAX_VALUE, r.getEnd());
     	assertEquals(Short.MAX_VALUE+1, r.getLength());
@@ -1233,21 +1233,21 @@ public class TestRange{
     
     @Test
     public void unsignedIntWithIntLength(){
-    	Range r = new Range.Builder(Integer.MAX_VALUE).shiftRight(Integer.MAX_VALUE+1L).build();
+    	Range r = new Range.Builder(Integer.MAX_VALUE).shift(Integer.MAX_VALUE+1L).build();
     	assertEquals(Integer.MAX_VALUE+1L, r.getBegin());
     	assertEquals(Integer.MAX_VALUE+(long)Integer.MAX_VALUE, r.getEnd());
     	assertEquals(Integer.MAX_VALUE, r.getLength());
     }
     @Test
     public void unsignedIntWithUnsignedIntLength(){
-    	Range r = new Range.Builder(Integer.MAX_VALUE+1L).shiftRight(Integer.MAX_VALUE+1L).build();
+    	Range r = new Range.Builder(Integer.MAX_VALUE+1L).shift(Integer.MAX_VALUE+1L).build();
     	assertEquals(Integer.MAX_VALUE+1L, r.getBegin());
     	assertEquals(Integer.MAX_VALUE+(long)Integer.MAX_VALUE+1L, r.getEnd());
     	assertEquals(Integer.MAX_VALUE+1L, r.getLength());
     }   
     @Test
     public void unsignedIntWithLongLength(){
-    	Range r = new Range.Builder(0x100000000L).shiftRight(Integer.MAX_VALUE+1L).build();
+    	Range r = new Range.Builder(0x100000000L).shift(Integer.MAX_VALUE+1L).build();
     	assertEquals(Integer.MAX_VALUE+1L, r.getBegin());
     	assertEquals(6442450943L, r.getEnd());
     	assertEquals(4294967296L, r.getLength());
@@ -1257,7 +1257,7 @@ public class TestRange{
     
 	@Test
 	public void longWithShortLength() {
-		Range r = new Range.Builder(500).shiftRight(0x100000000L).build();
+		Range r = new Range.Builder(500).shift(0x100000000L).build();
 		assertEquals(0x100000000L, r.getBegin());
 		assertEquals(4294967795L, r.getEnd());
 		assertEquals(500, r.getLength());
@@ -1265,7 +1265,7 @@ public class TestRange{
 
 	@Test
 	public void longWithUnsignedShortLength() {
-		Range r = new Range.Builder(Short.MAX_VALUE + 1).shiftRight(0x100000000L).build();
+		Range r = new Range.Builder(Short.MAX_VALUE + 1).shift(0x100000000L).build();
 		assertEquals(0x100000000L, r.getBegin());
 		assertEquals(4295000063L, r.getEnd());
 		assertEquals(Short.MAX_VALUE + 1, r.getLength());
@@ -1274,7 +1274,7 @@ public class TestRange{
 	@Test
 	public void longWithIntLength() {
 		Range r = new Range.Builder(Integer.MAX_VALUE)
-					.shiftRight(0x100000000L)
+					.shift(0x100000000L)
 					.build();
 		assertEquals(0x100000000L, r.getBegin());
 		assertEquals(6442450942L, r.getEnd());
@@ -1284,7 +1284,7 @@ public class TestRange{
 	@Test
 	public void longWithUnsignedIntLength() {
 		Range r =new Range.Builder(Integer.MAX_VALUE + 1L)
-						.shiftRight(0x100000000L)
+						.shift(0x100000000L)
 						.build();
 		assertEquals(0x100000000L, r.getBegin());
 		assertEquals(6442450943L, r.getEnd());
@@ -1294,7 +1294,7 @@ public class TestRange{
     @Test
     public void emptyRangeWithNegativeCoordinate(){
     	Range r = new Range.Builder()
-					.shiftLeft(1)
+					.shift(-1)
 					.build();
     	assertEquals(-1, r.getBegin());
     	assertTrue(r.isEmpty());
@@ -1303,7 +1303,7 @@ public class TestRange{
     @Test
     public void emptyRangeWithNegativeShortValueCoordinate(){
     	Range r = new Range.Builder()
-		.shiftRight(Short.MIN_VALUE)
+		.shift(Short.MIN_VALUE)
 		.build();
     	assertEquals(Short.MIN_VALUE, r.getBegin());
     	assertTrue(r.isEmpty());
@@ -1312,7 +1312,7 @@ public class TestRange{
     @Test
     public void emptyRangeWithNegativeIntValueCoordinate(){
     	Range r = new Range.Builder()
-					.shiftRight(Integer.MIN_VALUE)
+					.shift(Integer.MIN_VALUE)
 					.build();
     	assertEquals(Integer.MIN_VALUE, r.getBegin());
     	assertTrue(r.isEmpty());
@@ -1321,7 +1321,7 @@ public class TestRange{
     @Test
     public void emptyRangeWithShortValueCoordinate(){
     	Range r = new Range.Builder()
-					.shiftRight(Short.MAX_VALUE)
+					.shift(Short.MAX_VALUE)
 					.build();
     	assertEquals(Short.MAX_VALUE, r.getBegin());
     	assertTrue(r.isEmpty());
@@ -1331,7 +1331,7 @@ public class TestRange{
     public void emptyRangeWithIntValueCoordinate(){
     	
     	Range r = new Range.Builder()
-							.shiftRight(Integer.MAX_VALUE)
+							.shift(Integer.MAX_VALUE)
 							.build();
     	assertEquals(Integer.MAX_VALUE, r.getBegin());
     	assertTrue(r.isEmpty());
@@ -1340,7 +1340,7 @@ public class TestRange{
     @Test
     public void emptyRangeWithLongValueCoordinate(){
     	Range r = new Range.Builder()
-						.shiftRight(Long.MAX_VALUE)
+						.shift(Long.MAX_VALUE)
 						.build();
     	assertEquals(Long.MAX_VALUE, r.getBegin());
     	assertTrue(r.isEmpty());
@@ -1349,7 +1349,7 @@ public class TestRange{
     
     @Test(expected = IndexOutOfBoundsException.class)
     public void createRangeWithLengthThatIsTooBigShouldThrowException(){
-    	new Range.Builder(400).shiftRight(Long.MAX_VALUE).build();
+    	new Range.Builder(400).shift(Long.MAX_VALUE).build();
     }
     @Test(expected = IllegalArgumentException.class)
     public void createRangeWithNegativeLengthShouldThrowException(){

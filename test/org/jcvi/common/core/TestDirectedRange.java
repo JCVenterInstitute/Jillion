@@ -57,7 +57,7 @@ public class TestDirectedRange {
 	@Test
 	public void differentRangesAreNotEqual(){
 		DirectedRange a = DirectedRange.create(range);
-		DirectedRange b = DirectedRange.create(new Range.Builder(range).shiftRight(2).build());
+		DirectedRange b = DirectedRange.create(new Range.Builder(range).shift(2).build());
 		TestUtil.assertNotEqualAndHashcodeDifferent(a, b);
 	}
 	@Test

@@ -104,7 +104,7 @@ public final class LucyLikeQualityTrimmer  implements QualityTrimmer{
             return new Range.Builder().build();
         }
         return new Range.Builder(largestRange)
-        			.shiftRight(bracketedRegion.getBegin())
+        			.shift(bracketedRegion.getBegin())
         			.build();
     }
 
@@ -145,8 +145,8 @@ public final class LucyLikeQualityTrimmer  implements QualityTrimmer{
             for(int i=0; i<encodedCandidateErrorRates.size() - currentWindowSize && i<=currentWindowSize; i++){
                 Range currentWindowRange = Range.of(i, currentWindowSize);
                 double avgErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, currentWindowRange);
-                double leftEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, new Range.Builder(SIZE_OF_ENDS).shiftRight(currentWindowRange.getBegin()).build());
-                double rightEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, new Range.Builder(SIZE_OF_ENDS).shiftRight(currentWindowRange.getEnd()-SIZE_OF_ENDS).build());
+                double leftEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, new Range.Builder(SIZE_OF_ENDS).shift(currentWindowRange.getBegin()).build());
+                double rightEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, new Range.Builder(SIZE_OF_ENDS).shift(currentWindowRange.getEnd()-SIZE_OF_ENDS).build());
                 if(avgErrorRate <= this.maxTotalAvgError && 
                         leftEndErrorRate <= this.maxErrorAtEnds 
                         && rightEndErrorRate <= this.maxErrorAtEnds){
@@ -157,7 +157,7 @@ public final class LucyLikeQualityTrimmer  implements QualityTrimmer{
             currentWindowSize--;
         }
         return new Range.Builder()
-					.shiftRight(candidateCleanRange.getBegin())
+					.shift(candidateCleanRange.getBegin())
 					.build();
     }
 
@@ -177,7 +177,7 @@ public final class LucyLikeQualityTrimmer  implements QualityTrimmer{
             for(Range range : candidateCleanRanges){
                 for(Range newCandidateRange : trim(getSubList(bracketedErrorRates,range), subsequentTrimWindow)){
                     trimmedCandidateCleanRanges.add(new Range.Builder(newCandidateRange)
-                    								.shiftRight(range.getBegin())
+                    								.shift(range.getBegin())
                     								.build());
                 }
             }
@@ -195,7 +195,7 @@ public final class LucyLikeQualityTrimmer  implements QualityTrimmer{
     private List<Range> trim(List<Double> errorRates, Window trimWindow) {
         List<Range> candidateCleanRanges = new ArrayList<Range>();
         for(long i=0; i<errorRates.size()-trimWindow.getSize(); i++){
-            Range windowRange = new Range.Builder(trimWindow.getSize()).shiftRight(i).build();
+            Range windowRange = new Range.Builder(trimWindow.getSize()).shift(i).build();
             
             double avgErrorRate = computeAvgErrorRateOf(errorRates,windowRange);
             if(avgErrorRate <= trimWindow.getMaxErrorRate()){
@@ -232,7 +232,7 @@ public final class LucyLikeQualityTrimmer  implements QualityTrimmer{
         long coordinate=errorRates.size()-1;
         final int bracketSize = bracketWindow.getSize();
         while(coordinate >= bracketSize){
-            Range windowRange = new Range.Builder(bracketSize).shiftRight(coordinate-bracketSize).build();
+            Range windowRange = new Range.Builder(bracketSize).shift(coordinate-bracketSize).build();
             double avgErrorRate = computeAvgErrorRateOf(errorRates,windowRange);
             if(avgErrorRate <= bracketWindow.getMaxErrorRate()){
                 return coordinate;
@@ -251,7 +251,7 @@ public final class LucyLikeQualityTrimmer  implements QualityTrimmer{
         int coordinate=0;
         final int bracketSize = bracketWindow.getSize();
         while(coordinate < errorRates.size()- bracketSize){
-            Range windowRange = new Range.Builder(bracketSize).shiftRight(coordinate).build();
+            Range windowRange = new Range.Builder(bracketSize).shift(coordinate).build();
             double avgErrorRate = computeAvgErrorRateOf(errorRates,windowRange);
             if(avgErrorRate <= bracketWindow.getMaxErrorRate()){
                 return coordinate;

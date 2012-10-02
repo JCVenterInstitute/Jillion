@@ -139,8 +139,8 @@ public abstract class AbstractSequenceAlignmentBuilder
 			querySequenceBuilder.reverse();
 			subjectSequenceBuilder.reverse();
 		}else{
-			queryRange = new Range.Builder(querySequenceBuilder.getUngappedLength()).shiftRight(queryStart).build();
-			subjectRange = new Range.Builder(subjectSequenceBuilder.getUngappedLength()).shiftRight(subjectStart).build();
+			queryRange = new Range.Builder(querySequenceBuilder.getUngappedLength()).shift(queryStart).build();
+			subjectRange = new Range.Builder(subjectSequenceBuilder.getUngappedLength()).shift(subjectStart).build();
 		
 		}
 		return createAlignment(percentIdentity, alignmentLength, numMisMatches, numGaps, 

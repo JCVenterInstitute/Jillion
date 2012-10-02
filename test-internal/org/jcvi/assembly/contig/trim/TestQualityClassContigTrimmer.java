@@ -37,7 +37,7 @@ public class TestQualityClassContigTrimmer {
 		Range newValidRange = sut.computeNewValidRange(read, 3);
 		assertNotNull(newValidRange);
 		assertEquals(new Range.Builder(oldValidRange)
-						.shrinkRight(1)
+						.shrinkEnd(1)
 						.build(), 
 						newValidRange);
 		
@@ -60,7 +60,7 @@ public class TestQualityClassContigTrimmer {
 		Range newValidRange = sut.computeNewValidRange(read, 0);
 		assertNotNull(newValidRange);
 		assertEquals(new Range.Builder(oldValidRange)
-						.shrinkLeft(1)
+						.shrinkBegin(1)
 						.build(),
 						newValidRange);
 		

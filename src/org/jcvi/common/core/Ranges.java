@@ -102,7 +102,7 @@ public final class Ranges {
                 Range range = rangesToMerge.get(i);
                 Range clusteredRange = Range.of(range.getBegin()-clusterDistance, range.getEnd()+clusterDistance);
                 Range nextRange = rangesToMerge.get(i+1);
-                if(clusteredRange.intersects(nextRange) || new Range.Builder(clusteredRange).shiftRight(1).build().intersects(nextRange)){
+                if(clusteredRange.intersects(nextRange) || new Range.Builder(clusteredRange).shift(1).build().intersects(nextRange)){
                     replaceWithCombined(rangesToMerge,range, nextRange);
                     merged= true;
                     break;

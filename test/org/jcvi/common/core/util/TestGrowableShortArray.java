@@ -84,7 +84,7 @@ public class TestGrowableShortArray {
 		sut.append((short)30);
 		sut.append((short)40);
 		
-		sut.remove(new Range.Builder().shiftRight(2).build());
+		sut.remove(new Range.Builder().shift(2).build());
 		
 		short[] expected = new short[]{10,20,30,40};
 		assertToArrayCorrect(sut, expected);

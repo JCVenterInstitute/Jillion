@@ -45,7 +45,7 @@ public class TestAssemblyUtil_convertToUngappedRange {
     }
     @Test
     public void upstreamGapShouldShiftRange(){
-        assertEquals(new Range.Builder(range).shiftLeft(1).build(), AssemblyUtil.toUngappedRange(
+        assertEquals(new Range.Builder(range).shift(-1).build(), AssemblyUtil.toUngappedRange(
                 new NucleotideSequenceBuilder("A-CGTACGT").build(), range));
     }
     

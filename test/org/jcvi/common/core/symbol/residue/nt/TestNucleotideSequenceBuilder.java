@@ -230,13 +230,13 @@ public class TestNucleotideSequenceBuilder {
     @Test
     public void deleteEmptyButBeyondLengthShouldDoNothing(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
-        sut.delete(new Range.Builder().shiftRight(500000).build());
+        sut.delete(new Range.Builder().shift(500000).build());
         assertBuiltSequenceEquals("ACGT",sut);
     }
     @Test
     public void deleteEmptyButBeyondNegativeShouldDoNothing(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
-        sut.delete(new Range.Builder().shiftLeft(3).build());
+        sut.delete(new Range.Builder().shift(-3).build());
         assertBuiltSequenceEquals("ACGT",sut);
     }
     @Test

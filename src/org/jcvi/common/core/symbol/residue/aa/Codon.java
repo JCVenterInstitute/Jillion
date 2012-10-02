@@ -341,7 +341,7 @@ public final class Codon
             throw new IllegalArgumentException("must have at least 3 nucleotides after given offset "+ (basecalls.getLength()-(offset+3)));
         }
         List<Nucleotide> list = new ArrayList<Nucleotide>(3);
-        Iterator<Nucleotide> iter = basecalls.iterator(new Range.Builder(3).shiftRight(offset).build());
+        Iterator<Nucleotide> iter = basecalls.iterator(new Range.Builder(3).shift(offset).build());
         list.add(iter.next());
         list.add(iter.next());
         list.add(iter.next());

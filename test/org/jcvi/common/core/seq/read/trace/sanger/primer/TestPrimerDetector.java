@@ -71,7 +71,7 @@ public class TestPrimerDetector {
 
 	        List<DirectedRange> actualRanges= sut.detect(sequence, datastore);
 	        assertEquals(1, actualRanges.size());
-	        assertEquals(new Range.Builder(5).shiftRight(2).build(), actualRanges.get(0).asRange());
+	        assertEquals(new Range.Builder(5).shift(2).build(), actualRanges.get(0).asRange());
 	        assertEquals(Direction.FORWARD, actualRanges.get(0).getDirection());
 	    }
 	    
@@ -85,7 +85,7 @@ public class TestPrimerDetector {
 
 	        List<DirectedRange> actualRanges= sut.detect(sequence, datastore);
 	        assertEquals(1, actualRanges.size());
-	        assertEquals(new Range.Builder(5).shiftRight(2).build(), actualRanges.get(0).asRange());
+	        assertEquals(new Range.Builder(5).shift(2).build(), actualRanges.get(0).asRange());
 	        assertEquals(Direction.REVERSE, actualRanges.get(0).getDirection());
 	    }
 	    @Test
@@ -96,7 +96,7 @@ public class TestPrimerDetector {
 	        
 	        List<DirectedRange> actualRanges= sut.detect(sequence, datastore);
 	        assertEquals(1, actualRanges.size());
-	        assertEquals(new Range.Builder(5).shiftRight(12).build(), actualRanges.get(0).asRange());
+	        assertEquals(new Range.Builder(5).shift(12).build(), actualRanges.get(0).asRange());
 	        assertEquals(Direction.FORWARD, actualRanges.get(0).getDirection());
 	    }
 	    @Test
@@ -109,7 +109,7 @@ public class TestPrimerDetector {
 	        
 	        List<DirectedRange> actualRanges= sut.detect(sequence, datastore);
 	        assertEquals(1, actualRanges.size());
-	        assertEquals(new Range.Builder(5).shiftRight(12).build(), actualRanges.get(0).asRange());
+	        assertEquals(new Range.Builder(5).shift(12).build(), actualRanges.get(0).asRange());
 	        assertEquals(Direction.REVERSE, actualRanges.get(0).getDirection());
 	    }
 	    @Test
@@ -120,7 +120,7 @@ public class TestPrimerDetector {
 	        
 	        List<DirectedRange> actualRanges= sut.detect(sequence, datastore);
 	        assertEquals(1, actualRanges.size());
-	        assertEquals(new Range.Builder(5).shiftRight(12).build(), actualRanges.get(0).asRange());
+	        assertEquals(new Range.Builder(5).shift(12).build(), actualRanges.get(0).asRange());
 	        assertEquals(Direction.FORWARD, actualRanges.get(0).getDirection());
 	    }
 	    @Test
@@ -133,7 +133,7 @@ public class TestPrimerDetector {
 	        
 	        List<DirectedRange> actualRanges= sut.detect(sequence, datastore);
 	        assertEquals(1, actualRanges.size());
-	        assertEquals(new Range.Builder(5).shiftRight(12).build(), actualRanges.get(0).asRange());
+	        assertEquals(new Range.Builder(5).shift(12).build(), actualRanges.get(0).asRange());
 	        assertEquals(Direction.REVERSE, actualRanges.get(0).getDirection());
 	    }
 	    @Test
@@ -146,7 +146,7 @@ public class TestPrimerDetector {
 		        
 		        List<DirectedRange> actualRanges= sut.detect(sequence, datastore);
 		        assertEquals(1, actualRanges.size());
-		        assertEquals(new Range.Builder(9).shiftRight(6).build(), actualRanges.get(0).asRange());
+		        assertEquals(new Range.Builder(9).shift(6).build(), actualRanges.get(0).asRange());
 		        assertEquals(Direction.FORWARD, actualRanges.get(0).getDirection());
 		        
 	    }
@@ -162,7 +162,7 @@ public class TestPrimerDetector {
 		        
 		        List<DirectedRange> actualRanges= sut.detect(sequence, datastore);
 		        assertEquals(1, actualRanges.size());
-		        assertEquals(new Range.Builder(9).shiftRight(6).build(), actualRanges.get(0).asRange());
+		        assertEquals(new Range.Builder(9).shift(6).build(), actualRanges.get(0).asRange());
 		        assertEquals(Direction.REVERSE, actualRanges.get(0).getDirection());
 		        
 	    }
@@ -182,10 +182,10 @@ public class TestPrimerDetector {
 		        
 		        List<DirectedRange> actualRanges= sut.detect(sequence, datastore);
 		        assertEquals(2, actualRanges.size());
-		        assertEquals(new Range.Builder(9).shiftRight(6).build(), actualRanges.get(0).asRange());
+		        assertEquals(new Range.Builder(9).shift(6).build(), actualRanges.get(0).asRange());
 		        assertEquals(Direction.REVERSE, actualRanges.get(0).getDirection());
 		        
-		        assertEquals(new Range.Builder(10).shiftRight(17).build(), actualRanges.get(1).asRange());
+		        assertEquals(new Range.Builder(10).shift(17).build(), actualRanges.get(1).asRange());
 		        assertEquals(Direction.FORWARD, actualRanges.get(1).getDirection());
 		        
 	    }

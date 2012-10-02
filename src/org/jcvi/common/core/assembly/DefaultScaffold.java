@@ -276,12 +276,12 @@ public final class DefaultScaffold  implements Scaffold{
             if(shiftContigs && !contigs.isEmpty()){
                 SortedSet<PlacedContig> shiftedContigs = new TreeSet<PlacedContig>(new PlacedContigComparator());
                 PlacedContig firstContig = contigs.first();
-                long shiftOffset = firstContig.getBegin();
+                long shiftOffset = -firstContig.getBegin();
                 for(PlacedContig contig : contigs){
                     shiftedContigs.add(
                     		new DefaultPlacedContig(contig.getContigId(),
                     				new Range.Builder(contig.getValidRange())
-                    							.shiftLeft(shiftOffset)
+                    							.shift(shiftOffset)
                     							.build(),
                     				contig.getDirection()));
                 }
