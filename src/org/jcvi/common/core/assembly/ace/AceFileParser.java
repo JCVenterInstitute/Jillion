@@ -32,12 +32,14 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 /**
  * {@code AceFileParser} contains methods for parsing
  * ACE formatted files.
@@ -132,7 +134,8 @@ public final class AceFileParser {
         private final boolean inAContig;
         private final int expectedNumberOfReads;
         private int numberOfReadsSeen;
-        
+        private boolean inConsensusQualities=false;
+        private QualitySequenceBuilder currentQualitySequenceBuilder;
         ParserState(AceFileVisitor visitor,
                 InputStream inputStream) throws IOException{
            this(visitor, true,  new TextLineParser(new BufferedInputStream(inputStream)), false,true,false,0,0);
@@ -151,6 +154,21 @@ public final class AceFileParser {
         public ParserState seenRead(){
             numberOfReadsSeen++;
             return this;
+        }
+        public boolean inConsensusQualities(){
+        	return inConsensusQualities;
+        }
+        
+        public void numberOfBasesInContig(int numBases){
+        	currentQualitySequenceBuilder = new QualitySequenceBuilder(numBases);
+        }
+        public ParserState inConsensusQualities(boolean inConsensusQualities){
+        	this.inConsensusQualities = inConsensusQualities;
+        	if(!inConsensusQualities){
+        		visitor.visitConsensusQualities(currentQualitySequenceBuilder.build());
+            	currentQualitySequenceBuilder =null;
+        	}
+        	return this;
         }
         /**
          * @return
@@ -239,7 +257,7 @@ public final class AceFileParser {
             	//parse current line
             	parserState.visitor.visitLine(line);
                 if(parserState.parseCurrentContig()){
-                    parserState.visitor.visitConsensusQualities();
+                	parserState = parserState.inConsensusQualities(true);
                 }
                 return parserState;
             }
@@ -283,6 +301,7 @@ public final class AceFileParser {
                 boolean parseCurrentContig = ret.visitor.shouldVisitContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
                 if(parseCurrentContig){
                 	ret.visitor.visitBeginContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
+                	ret.numberOfBasesInContig(numberOfBases);
                 }else{
                     ret = ret.dontParseCurrentContig();
                 }
@@ -294,6 +313,9 @@ public final class AceFileParser {
             @Override
             ParserState handle(Matcher assembledFromMatcher, ParserState parserState, String line) {
             	//parse current line
+            	if(parserState.inConsensusQualities()){
+            		parserState.inConsensusQualities(false);
+            	}
             	parserState.visitor.visitLine(line);
                 if(parserState.parseCurrentContig()){
                     String name = assembledFromMatcher.group(1);
@@ -575,8 +597,15 @@ public final class AceFileParser {
             @Override
             ParserState handle(Matcher matcher, ParserState parserState,
                     String line) throws IOException {
+            	
             	//just visit the current line
                 parserState.visitor.visitLine(line);
+                if(parserState.inConsensusQualities()){
+            		Scanner scanner = new Scanner(line);
+            		while(scanner.hasNext()){
+            			parserState.currentQualitySequenceBuilder.append(scanner.nextInt());
+            		}            		
+            	}
                 return parserState;
             }
         }

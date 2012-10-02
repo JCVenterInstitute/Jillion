@@ -11,6 +11,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.AceContigDataStoreBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 
 class ReAbacusAceFileVisitor implements AceFileVisitor{
 
@@ -94,9 +95,9 @@ class ReAbacusAceFileVisitor implements AceFileVisitor{
 	}
 
 	@Override
-	public void visitConsensusQualities() {
+	public void visitConsensusQualities(QualitySequence ungappedConsensusQualities) {
 		//only called if our builder cares
-		reAbacusDataStoreBuilder.visitConsensusQualities();
+		reAbacusDataStoreBuilder.visitConsensusQualities(null);
 		
 	}
 

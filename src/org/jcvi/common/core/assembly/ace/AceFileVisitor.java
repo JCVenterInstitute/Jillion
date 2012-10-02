@@ -29,6 +29,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.FileVisitor;
 import org.jcvi.common.core.io.TextFileVisitor;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 /**
  * {@code AceFileVisitor} is a {@link FileVisitor}
  * implementation for Ace Files.
@@ -40,6 +41,67 @@ import org.jcvi.common.core.io.TextFileVisitor;
  *
  */
 public interface AceFileVisitor extends TextFileVisitor{
+	
+	/**
+	 * Allowable return values
+	 * for AceFileVisitor#
+	 * @author dkatzel
+	 *
+	 */
+	enum BeginContigReturnCode{
+		/**
+		 * Skip the current contig record.
+		 * Every call to {@link AceFileVisitor#visitLine(String)}
+		 * followed eventually by {@link AceFileVisitor#visitEndOfContig()}
+		 * will still be called but the following methods
+		 * will not be called for the current contig:
+		 * <ul>
+		 * <li>{@link AceFileVisitor#visitBaseSegment(Range, String)}</li>
+		 * <li>{@link AceFileVisitor#visitAssembledFromLine(String, Direction, int)}</li>
+		 * <li>{@link AceFileVisitor#visitBasesLine(String)}</li>
+		 * <li>{@link AceFileVisitor#visitConsensusQualities(QualitySequence)}</li>
+		 * <li>{@link AceFileVisitor#visitReadHeader(String, int)}</li>
+		 * <li>{@link AceFileVisitor#visitQualityLine(int, int, int, int)}</li>
+		 * <li>{@link AceFileVisitor#visitTraceDescriptionLine(String, String, Date)}</li>
+		 * </ul>
+		 */
+		SKIP_CURRENT_RECORD,
+		/**
+		 * Completely parse and visit the current contig record.
+		 * Every call to {@link AceFileVisitor#visitLine(String)}
+		 * will be made as well as the following  method calls in the following order:
+		 * <ol>
+		 * 
+		 * <li>Several calls to {@link AceFileVisitor#visitBasesLine(String)}
+		 * one for each line of the contig consensus basecalls.</li>
+		 * <li>{@link AceFileVisitor#visitConsensusQualities(QualitySequence)}</li>
+		 * <li>1 call to 
+		 * {@link AceFileVisitor#visitAssembledFromLine(String, Direction, int)}
+		 * for each read in the contig.</li>
+		 * <li>1 call to 
+		 * {@link AceFileVisitor#visitBaseSegment(Range, String)}
+		 * for each base segment line (if there are any).  This section
+		 * of an ace file is now optional and not recommended so most
+		 * current ace file will probably not include any base segments.
+		 * </li>
+		 * <p/>
+		 * Then for each read:
+		 * <li>{@link AceFileVisitor#visitReadHeader(String, int)}</li>
+		 * <li>Several calls to {@link AceFileVisitor#visitBasesLine(String)}
+		 * one for each line of the read basecalls.</li>
+		 * <li>{@link AceFileVisitor#visitQualityLine(int, int, int, int)}</li>
+		 * <li>{@link AceFileVisitor#visitTraceDescriptionLine(String, String, Date)}</li>
+		 * </ol>
+		 * followed eventually by {@link AceFileVisitor#visitEndOfContig()}
+		 */
+		VISIT_CURRENT_RECORD,
+		/**
+		 * Halt parsing this ace file
+		 * and jump immediately
+		 * to {@link AceFileVisitor#visitEndOfFile()}.
+		 */
+		STOP_PARSING
+	}
     /**
      * Visits the Ace File Header.
      * @param numberOfContigs number of contigs in this file.
@@ -83,8 +145,11 @@ public interface AceFileVisitor extends TextFileVisitor{
      * begin visiting consensus qualities.  This method will only
      * get called if the current contig is being parsed which is determined
      * by the return value of {@link #visitBeginContig(String, int, int, int, boolean)}.
+     * @param ungappedConsensusQualities all the
+     * ungapped consensus qualities as a {@link QualitySequence};
+     * will never be null.
      */
-    void visitConsensusQualities();
+    void visitConsensusQualities(QualitySequence ungappedConsensusQualities);
     /**
      * AssembledFroms define the location of the 
      * read within a contig.  This method will only

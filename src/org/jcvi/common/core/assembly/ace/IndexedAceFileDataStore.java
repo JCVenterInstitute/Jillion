@@ -39,6 +39,7 @@ import org.jcvi.common.core.assembly.ace.consed.ConsedUtil.ClipPointsType;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.MapUtil;
@@ -294,7 +295,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         * {@inheritDoc}
         */
         @Override
-        public void visitConsensusQualities() {
+        public void visitConsensusQualities(QualitySequence ungappedConsensusQualities) {
         	//no-op
         }
 

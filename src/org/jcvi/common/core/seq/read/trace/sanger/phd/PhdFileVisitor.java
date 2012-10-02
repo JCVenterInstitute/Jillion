@@ -28,9 +28,17 @@ import java.util.Properties;
 import org.jcvi.common.core.io.TextFileVisitor;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-
+/**
+ * {@code PhdFileVisitor} is a {@link TextFileVisitor}
+ * for visiting Phd encoded files.
+ * This interface can visit single phd files
+ * or multiple phd records either, usually stored
+ * in phd.ball files.
+ * @author dkatzel
+ *
+ */
 public interface PhdFileVisitor extends TextFileVisitor{
-
+	
     void visitBeginSequence(String id);
     
     void visitEndSequence();
@@ -48,7 +56,13 @@ public interface PhdFileVisitor extends TextFileVisitor{
     void visitEndTag();
     
     boolean visitBeginPhd(String id);
-    
+    /**
+     * The current Phd record is done being visited.
+     * This method will be called before
+     * the call to the next line via {@link #visitLine(String)}
+     * or if the file has ended, before {@link #visitEndOfFile()}.
+     * @return
+     */
     boolean visitEndPhd();
     
 }
