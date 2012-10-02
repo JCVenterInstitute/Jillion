@@ -278,7 +278,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
          * {@inheritDoc}
          */
         @Override
-		public BeginContigReturnCode visitBeginContig(String contigId, int numberOfBases,
+		public synchronized BeginContigReturnCode visitBeginContig(String contigId, int numberOfBases,
 				int numberOfReads, int numberOfBaseSegments,
 				boolean reverseComplimented) {
         	currentContigId = contigId;
