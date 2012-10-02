@@ -249,7 +249,7 @@ final class IndexedAceFileContig implements AceContig{
 				Range validRange, PhdInfo phdInfo, int ungappedFullLength) {
 			
 			readFileOffsetRanges.put(readId, Range.of(currentReadStart, currentOffset-1));
-			coverageRanges.put(readId, new Range.Builder(validBasecalls.getLength()).shiftRight(offset).build());
+			coverageRanges.put(readId, new Range.Builder(validBasecalls.getLength()).shift(offset).build());
 			
 			currentReadStart =currentOffset+1;
 		}

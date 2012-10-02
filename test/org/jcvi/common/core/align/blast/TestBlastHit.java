@@ -146,7 +146,7 @@ public class TestBlastHit {
         Hsp different = HspBuilder.copy(sut)
                             .queryRange(DirectedRange.create(
                             		new Range.Builder(queryRange.getRange())
-                            		.shiftLeft(2)
+                            		.shift(2)
                             		.build()))
                             .build();
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, different);
@@ -155,7 +155,7 @@ public class TestBlastHit {
     public void differentSubjectRangeShouldNotBeEqual(){
         Hsp different = HspBuilder.copy(sut)
                             .subjectRange(DirectedRange.create(new Range.Builder(subjectRange.getRange())
-						                    		.shiftLeft(2)
+						                    		.shift(2)
 						                    		.build()))
                             .build();
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, different);

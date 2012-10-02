@@ -91,7 +91,7 @@ public class TestDefaultScaffold {
 		assertEquals(unshifted.getContigId(), shifted.getContigId());
 		assertEquals(unshifted.getDirection(), shifted.getDirection());
 		assertEquals(new Range.Builder(unshifted.asRange())
-						.shiftLeft(shiftOffset)
+						.shift(-shiftOffset)
 						.build(), shifted.asRange());
 	}
 

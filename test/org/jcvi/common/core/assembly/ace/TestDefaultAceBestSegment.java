@@ -74,7 +74,7 @@ public class TestDefaultAceBestSegment {
     
     @Test
     public void differentRangeIsNotEqual(){
-        DefaultAceBaseSegment differentRange = new DefaultAceBaseSegment(name, new Range.Builder(range).shiftLeft(1).build());
+        DefaultAceBaseSegment differentRange = new DefaultAceBaseSegment(name, new Range.Builder(range).shift(1).build());
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentRange);
     }
 }

@@ -84,7 +84,7 @@ public class TestReadNavigationElement {
     }
     @Test
     public void differentRangeShouldNotBeEqual(){
-        ReadNavigationElement differentRange = new ReadNavigationElement(id, new Range.Builder(range).shrinkRight(2).build(),comment);
+        ReadNavigationElement differentRange = new ReadNavigationElement(id, new Range.Builder(range).shrinkEnd(2).build(),comment);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentRange);
     }
     @Test

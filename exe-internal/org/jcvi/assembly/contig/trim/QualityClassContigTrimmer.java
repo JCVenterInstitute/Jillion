@@ -192,7 +192,7 @@ public class QualityClassContigTrimmer{
         		//OK to trim
         		int ungappedOffsetToKeep = read.getNucleotideSequence().getUngappedOffsetFor(gappedOffsetToKeep);
         		long numberOfBasesToTrim = read.getNucleotideSequence().getUngappedLength()-1 -ungappedOffsetToKeep;
-    			validRange.shrinkRight(numberOfBasesToTrim);
+    			validRange.shrinkEnd(numberOfBasesToTrim);
     			if(read.getDirection()==Direction.REVERSE){
     				return AssemblyUtil.reverseComplementValidRange(validRange.build(), readInfo.getUngappedFullLength());
     			}
@@ -203,7 +203,7 @@ public class QualityClassContigTrimmer{
         	if(fullRangeIndex <= maxNumberOf5PrimeBasesToTrim){
         		//OK to trim
         		long numberOfBasesToTrim = read.getNucleotideSequence().getUngappedOffsetFor(gappedOffsetToKeep);
-    			validRange.shrinkLeft(numberOfBasesToTrim);
+    			validRange.shrinkBegin(numberOfBasesToTrim);
     			if(read.getDirection()==Direction.REVERSE){
     				return AssemblyUtil.reverseComplementValidRange(validRange.build(), readInfo.getUngappedFullLength());
     			}

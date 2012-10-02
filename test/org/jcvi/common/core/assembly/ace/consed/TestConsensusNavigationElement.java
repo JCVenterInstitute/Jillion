@@ -81,7 +81,7 @@ public class TestConsensusNavigationElement {
     }
     @Test
     public void differentRangeShouldNotBeEqual(){
-        ConsensusNavigationElement differentRange = new ConsensusNavigationElement(id, new Range.Builder(range).shrinkRight(2).build(),comment);
+        ConsensusNavigationElement differentRange = new ConsensusNavigationElement(id, new Range.Builder(range).shrinkEnd(2).build(),comment);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentRange);
     }
     @Test

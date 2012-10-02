@@ -82,7 +82,7 @@ public class TestGrowableByteArray {
 		sut.append((byte)30);
 		sut.append((byte)40);
 		
-		sut.remove(new Range.Builder().shiftRight(2).build());
+		sut.remove(new Range.Builder().shift(2).build());
 		
 		byte[] expected = new byte[]{10,20,30,40};
 		assertToArrayCorrect(sut, expected);

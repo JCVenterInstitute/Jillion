@@ -132,13 +132,13 @@ public class TestDefaultFragment {
     }
     @Test
     public void differentValildRangeShouldStillBeEqual(){
-        DefaultFragment hasDifferentValidRange = new DefaultFragment(id,bases,qualities, new Range.Builder(validRange).shiftLeft(1).build(), clearRange,library,comment);
+        DefaultFragment hasDifferentValidRange = new DefaultFragment(id,bases,qualities, new Range.Builder(validRange).shift(1).build(), clearRange,library,comment);
         TestUtil.assertEqualAndHashcodeSame(sut, hasDifferentValidRange);
     }
     
     @Test
     public void differentClearRangeShouldStillBeEqual(){
-        DefaultFragment hasDifferentClearRange = new DefaultFragment(id,bases,qualities, validRange, new Range.Builder(clearRange).shiftLeft(1).build(),library,comment);
+        DefaultFragment hasDifferentClearRange = new DefaultFragment(id,bases,qualities, validRange, new Range.Builder(clearRange).shift(1).build(),library,comment);
         TestUtil.assertEqualAndHashcodeSame(sut, hasDifferentClearRange);
     }
     @Test

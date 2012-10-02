@@ -47,10 +47,10 @@ public class TestRangeArrivalComparator
         this.e = new Range.Builder()
 					.build();
         this.f = new Range.Builder()
-				.shiftRight(-1)
+				.shift(-1)
 				.build();
         this.g = new Range.Builder()
-			.shiftRight(30)
+			.shift(30)
 			.build();
     }
     

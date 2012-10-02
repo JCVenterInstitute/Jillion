@@ -498,13 +498,13 @@ public class ReAbacusAceContigWorker {
 	                            if(length-1 <sequenceRange.getBegin()){
 	                                //we are fixing the end of the read
 	                                //trim off trailing gaps
-	                                fixedBasesRange.shrinkRight(numberOfTrailingGaps);
+	                                fixedBasesRange.shrinkEnd(numberOfTrailingGaps);
 	                            }
 	                            if(sequenceRange.getBegin()==0){
 	                                //we are fixing beginning of sequence
 	                                //trim off leading gaps
 	                                numberOfLeadingGaps = gappedSequence.getGappedOffsetFor(0);
-	                                fixedBasesRange.shrinkLeft(numberOfLeadingGaps);
+	                                fixedBasesRange.shrinkBegin(numberOfLeadingGaps);
 	                                //need to adjust the start coordinate since it could
 	                                //have been originally placed incorrectly
 	                                readBuilder.setStartOffset(gappedStart+numberOfLeadingGaps);

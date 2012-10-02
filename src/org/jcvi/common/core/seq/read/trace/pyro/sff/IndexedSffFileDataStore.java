@@ -234,7 +234,7 @@ public final class IndexedSffFileDataStore{
 	public ReadDataReturnCode visitReadData(SffReadData readData) {
 		encodedReadLength += SffWriter.getNumberOfBytesFor(readData);
 		indexRanges.put(currentReadId, new Range.Builder(encodedReadLength)
-										.shiftRight(currentOffset).build());
+										.shift(currentOffset).build());
 		currentOffset+=encodedReadLength;
 		return ReadDataReturnCode.PARSE_NEXT_READ;
 	}

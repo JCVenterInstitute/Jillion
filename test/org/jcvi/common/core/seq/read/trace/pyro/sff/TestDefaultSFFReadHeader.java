@@ -89,7 +89,7 @@ public class TestDefaultSFFReadHeader {
     }
     @Test
     public void notEqualsDifferentQualityClip(){
-        Range differentQualityClip = new Range.Builder(qualityClip).shiftRight(2).build();
+        Range differentQualityClip = new Range.Builder(qualityClip).shift(2).build();
         DefaultSffReadHeader differentValues = new DefaultSffReadHeader(
                 numberOfBases,
                 differentQualityClip,
@@ -109,7 +109,7 @@ public class TestDefaultSFFReadHeader {
     }
     @Test
     public void notEqualsDifferentAdapterClip(){
-        Range differentAdapterClip = new Range.Builder(adapterClip).shiftRight(2).build();
+        Range differentAdapterClip = new Range.Builder(adapterClip).shift(2).build();
         DefaultSffReadHeader differentValues = new DefaultSffReadHeader(
                 numberOfBases,
                 qualityClip,

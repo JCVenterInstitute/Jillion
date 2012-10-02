@@ -151,7 +151,7 @@ public class TestConsedNavigationWriter {
 		sut.writeNavigationElement(element);
 		sut.writeNavigationElement(new ReadNavigationElement(
 				"another"+readId, new Range.Builder(range)
-										.shiftLeft(3)
+										.shift(-3)
 										.build()));
 		sut.close();
 

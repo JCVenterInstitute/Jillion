@@ -413,7 +413,7 @@ public abstract class Range implements Rangeable,Iterable<Long>
      */
     public static Range of(long singleCoordinate){
         return new Range.Builder(1)
-        			.shiftRight(singleCoordinate)
+        			.shift(singleCoordinate)
         			.build();
     }
 
@@ -2395,36 +2395,21 @@ public abstract class Range implements Rangeable,Iterable<Long>
     		end = range.getEnd();
     		inputCoordinateSystem = CoordinateSystem.ZERO_BASED;
     	}
+
     	/**
-    	 * Shift the entire range to the left the given
-    	 * amount of units.  This will subtract the given number
-    	 * of  units
-    	 * from both the begin and end coordinates from their
-    	 * current values.
-    	 * @param units the amount to shift to the left. If this number
-    	 * is negative, then that is the equivalent of shifting
-    	 * to the right by the given number of units
-    	 * @return this.
-    	 * @see #shiftRight(long)
-    	 */
-    	public Builder shiftLeft(long units){
-    		begin-=units;
-    		end-=units;
-    		return this;
-    	}
-    	/**
-    	 * Shift the entire range to the right the given
-    	 * amount of units.  This will add the given number
-    	 * of  units
-    	 * from both the begin and end coordinates from their
-    	 * current values.
-    	 * @param units the amount to shift to the right. If this number
-    	 * is negative, then that is the equivalent of shifting
-    	 * to the left by the given number of units
+    	 * Shift the entire range by the given
+    	 * amount of units. Both the begin and end coordinates
+    	 * will be adjusted by the given value.  The length 
+    	 * will remain the same. 
+    	 * @param units the amount to shift. If this number
+    	 * is positive, then the begin and end coordinates
+    	 * will be increased; if this number is negative, 
+    	 * then the begin and end coordinates will be decreased.
+    	 * A value of 0 will cause no changes.
     	 * @return this.
     	 * @see #shiftLeft(long)
     	 */
-    	public Builder shiftRight(long units){
+    	public Builder shift(long units){
     		begin+=units;
     		end+=units;
     		return this;
@@ -2438,9 +2423,9 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	 * is negative, then that is the equivalent of growing
     	 * to the left by the given number of units
     	 * @return this.
-    	 * @see #growLeft(long)
+    	 * @see #growBegin(long)
     	 */
-    	public Builder shrinkLeft(long units){
+    	public Builder shrinkBegin(long units){
     		begin+=units;
     		return this;
     	}
@@ -2453,9 +2438,9 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	 * is negative, then that is the equivalent of growing
     	 * to the right by the given number of units
     	 * @return this.
-    	 * @see #growRight(long)
+    	 * @see #growEnd(long)
     	 */
-    	public Builder shrinkRight(long units){
+    	public Builder shrinkEnd(long units){
     		end -=units;
     		return this;
     	}
@@ -2468,9 +2453,9 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	 * is negative, then that is the equivalent of shrinking
     	 * to the left by the given number of units
     	 * @return this.
-    	 * @see #shrinkLeft(long)
+    	 * @see #shrinkBegin(long)
     	 */
-    	public Builder growLeft(long units){
+    	public Builder growBegin(long units){
     		begin-=units;
     		return this;
     	}
@@ -2483,9 +2468,9 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	 * is negative, then that is the equivalent of shrinking
     	 * to the right by the given number of units
     	 * @return this.
-    	 * @see #shrinkRight(long)
+    	 * @see #shrinkEnd(long)
     	 */
-    	public Builder growRight(long units){
+    	public Builder growEnd(long units){
     		end +=units;
     		return this;
     	}
