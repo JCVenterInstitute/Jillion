@@ -143,7 +143,6 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
      * under certain conditions.
      * {@inheritDoc}
      */
-    @Override
 	public boolean shouldVisitContig(String contigId, int numberOfBases,
 			int numberOfReads, int numberOfBaseSegments,
 			boolean reverseComplimented) {
@@ -155,7 +154,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
      * {@inheritDoc}
      */
     @Override
-    public final synchronized void visitBeginContig(String contigId, int numberOfBases,
+    public final synchronized BeginContigReturnCode visitBeginContig(String contigId, int numberOfBases,
             int numberOfReads, int numberOfBaseSegments,
             boolean reverseComplimented) {
         throwExceptionIfInitialized();
@@ -166,6 +165,11 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         currentContigIsComplimented = reverseComplimented;
         numberOfBasesInCurrentContig = numberOfBases;
         numberOfReadsInCurrentContig = numberOfReads;
+        if(shouldVisitContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented)){
+        	return BeginContigReturnCode.VISIT_CURRENT_CONTIG;
+        }else{
+        	return BeginContigReturnCode.SKIP_CURRENT_CONTIG;
+        }
     }
 
     @Override
@@ -387,13 +391,13 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
      * {@inheritDoc}
      */
      @Override
-     public boolean visitEndOfContig() {
+     public EndContigReturnCode visitEndOfContig() {
          //if the contig has 0 reads
          //then we don't have AF records
          //so we need to check if we need to call
          //visit new contig here as well.
          fireVisitNewContigIfWeHaventAlready();
-         return true;
+         return EndContigReturnCode.KEEP_PARSING;
      
      }
 }

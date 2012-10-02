@@ -317,10 +317,10 @@ final class IndexedAceFileContig implements AceContig{
 
 
 		@Override
-		public boolean visitEndOfContig() {
+		public EndContigReturnCode visitEndOfContig() {
 			super.visitEndOfContig();
 			alignedInfoMapCopy = getAlignedInfoMap();
-			return false;
+			return EndContigReturnCode.STOP_PARSING;
 		}
 
 		
@@ -384,8 +384,8 @@ final class IndexedAceFileContig implements AceContig{
 					}
 					
 					@Override
-					public boolean visitEndOfContig() {
-						return false;
+					public EndContigReturnCode visitEndOfContig() {
+						return EndContigReturnCode.STOP_PARSING;
 					}
 
 					@Override

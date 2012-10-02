@@ -214,14 +214,14 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         * {@inheritDoc}
         */
         @Override
-        public synchronized boolean visitEndOfContig() {
+        public synchronized EndContigReturnCode visitEndOfContig() {
             
             if(contigId==null){
-                return true;
+                return EndContigReturnCode.KEEP_PARSING;
             }
             //keep parsing until we finish 
             //our contig of interest
-            return !contigOfInterest;
+            return contigOfInterest? EndContigReturnCode.STOP_PARSING:EndContigReturnCode.KEEP_PARSING;
         }
 
         @Override

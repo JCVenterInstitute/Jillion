@@ -44,7 +44,7 @@ public interface AceFileVisitor extends TextFileVisitor{
 	
 	/**
 	 * Allowable return values
-	 * for AceFileVisitor#
+	 * for {@link AceFileVisitor#visitBeginContig(String, int, int, int, boolean)}.
 	 * @author dkatzel
 	 *
 	 */
@@ -65,7 +65,7 @@ public interface AceFileVisitor extends TextFileVisitor{
 		 * <li>{@link AceFileVisitor#visitTraceDescriptionLine(String, String, Date)}</li>
 		 * </ul>
 		 */
-		SKIP_CURRENT_RECORD,
+		SKIP_CURRENT_CONTIG,
 		/**
 		 * Completely parse and visit the current contig record.
 		 * Every call to {@link AceFileVisitor#visitLine(String)}
@@ -94,9 +94,36 @@ public interface AceFileVisitor extends TextFileVisitor{
 		 * </ol>
 		 * followed eventually by {@link AceFileVisitor#visitEndOfContig()}
 		 */
-		VISIT_CURRENT_RECORD,
+		VISIT_CURRENT_CONTIG
+	}
+	
+	/**
+	 * Allowable return values
+	 * for {@link AceFileVisitor#visitEndOfContig()}.
+	 * @author dkatzel
+	 *
+	 */
+	enum EndContigReturnCode{
 		/**
-		 * Halt parsing this ace file
+		 * Continue parsing the ace file,
+		 * if there are still more records
+		 * to be parsed then
+		 * if there are more contigs in the file,
+		 * then {@link AceFileVisitor#visitBeginContig(String, int, int, int, boolean)}
+		 * will be called next or if the next record
+		 * in the ace file is a consed tag, then one of the ace tag methods
+		 * {@link AceFileVisitor#visitWholeAssemblyTag(String, String, Date, String)}
+		 * {@link AceFileVisitor#visitReadTag(String, String, String, long, long, Date, boolean)}
+		 * or 
+		 * {@link AceFileVisitor#visitBeginConsensusTag(String, String, String, long, long, Date, boolean)}
+		 * 
+		 * will get called next.
+		 * If there are no more records in the file, 
+		 * otherwise {@link AceFileVisitor#visitEndOfFile()} will be called.
+		 */
+		KEEP_PARSING,
+		/**
+		 * Halt parsing this file
 		 * and jump immediately
 		 * to {@link AceFileVisitor#visitEndOfFile()}.
 		 */
@@ -108,25 +135,7 @@ public interface AceFileVisitor extends TextFileVisitor{
      * @param totalNumberOfReads total number of reads in this file.
      */
     void visitHeader(int numberOfContigs, int totalNumberOfReads);
-    
-    /**
-     * Should the given contig with the following
-     * attributes get visited?
-     * @param contigId the id of the contig visited.
-     * @param numberOfBases number of bases in contig (Does this count bases
-     * outside of valid range?)
-     * @param numberOfReads number of reads in contig.
-     * @param numberOfBaseSegments number of base segment lines
-     * which indicate reads phrap has chosen to be the consensus
-     * at a particular position.
-     * @param isComplemented is this contig reverse complemented
-     * @return {@code true} if this contig should be parsed; {@code false}
-     * if this contig should be skipped.  If this contig is to be skipped,
-     * then only {@link #visitLine(String)} and {@link #visitEndOfContig()} methods will get called
-     * for this contig.
-     */
-    boolean shouldVisitContig(String contigId, int numberOfBases, int numberOfReads, int numberOfBaseSegments, boolean isComplemented);
-   
+
     /**
      * Begin Visiting the current contig.  This method will
      * only be called if the previous call to {@link #shouldVisitContig(String, int, int, int, boolean)}
@@ -139,8 +148,12 @@ public interface AceFileVisitor extends TextFileVisitor{
      * which indicate reads phrap has chosen to be the consensus
      * at a particular position.
      * @param reverseComplemented is this contig reverse complemented
+     * @return a non-null instance of {@link BeginContigReturnCode}
+     * which will tell the parser how to proceed with the current contig.
+     * If the returned value is null, then the parser will throw
+     * a {@link NullPointerException}.
      */
-    void visitBeginContig(String contigId, int numberOfBases, int numberOfReads, int numberOfBaseSegments, boolean reverseComplemented);
+    BeginContigReturnCode visitBeginContig(String contigId, int numberOfBases, int numberOfReads, int numberOfBaseSegments, boolean reverseComplemented);
     /**
      * begin visiting consensus qualities.  This method will only
      * get called if the current contig is being parsed which is determined
@@ -231,10 +244,12 @@ public interface AceFileVisitor extends TextFileVisitor{
      * that there is no more data for the current contig
      * and <strong>before</strong> the next line is visited
      * via the {@link #visitLine(String)}.
-     * @return {@code true} if the ace file should keep parsing;
-     * {@code false} otherwise.
+     * @return a non-null instance of {@link EndContigReturnCode}
+     * which will tell the parser how to proceed with the ace file.
+     * If the returned value is null, then the parser will throw
+     * a {@link NullPointerException}.
      */
-    boolean visitEndOfContig();
+    EndContigReturnCode visitEndOfContig();
     /**
      * Begin to start visiting a consensus tag.  Consensus tags are multiple lines
      * and can contain nested comments inside them.  Any lines visited from now

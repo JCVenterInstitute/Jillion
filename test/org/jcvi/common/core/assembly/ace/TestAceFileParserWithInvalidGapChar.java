@@ -23,6 +23,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
+import org.jcvi.common.core.assembly.ace.AceFileVisitor.BeginContigReturnCode;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -39,6 +40,8 @@ public class TestAceFileParserWithInvalidGapChar {
         String problemLine = "agccgaaggagg*ttttggaaacaccaaggg-g*ggtcagaccccaacgc\n";
         ResourceFileServer resources = new ResourceFileServer(TestAceFileParserWithInvalidGapChar.class);
         AceFileVisitor mockVisitor = createNiceMock(AceFileVisitor.class);
+        expect(mockVisitor.visitBeginContig(isA(String.class), anyInt(), anyInt(), anyInt(), anyBoolean()))
+        			.andReturn(BeginContigReturnCode.SKIP_CURRENT_CONTIG);
         replay(mockVisitor);
         try{
             AceFileParser.parse(resources.getFile("files/invalidAceFileWithDash.ace"), mockVisitor);

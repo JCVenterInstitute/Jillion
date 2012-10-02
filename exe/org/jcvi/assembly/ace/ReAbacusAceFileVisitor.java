@@ -62,9 +62,11 @@ class ReAbacusAceFileVisitor implements AceFileVisitor{
 		
 	}
 
+
 	@Override
-	public boolean shouldVisitContig(String contigId, int numberOfBases,
-			int numberOfReads, int numberOfBaseSegments, boolean isComplemented) {
+	public BeginContigReturnCode visitBeginContig(String contigId, int numberOfBases,
+			int numberOfReads, int numberOfBaseSegments,
+			boolean reverseComplemented) {
 		streamThruCurrentContig = !idsToReAbacus.contains(contigId);
 		
 		if(streamThruCurrentContig){
@@ -75,23 +77,11 @@ class ReAbacusAceFileVisitor implements AceFileVisitor{
 			} catch (IOException e) {
 				throw new IllegalStateException("error writing temp file");
 			}
-			return false;
+			return BeginContigReturnCode.SKIP_CURRENT_CONTIG;
 		}
-		//we aren't streaming so delegate to our builder
-		return reAbacusDataStoreBuilder.shouldVisitContig(contigId,
-															numberOfBases, 
-															numberOfReads, 
-															numberOfBaseSegments, 
-															isComplemented);
-	}
-
-	@Override
-	public void visitBeginContig(String contigId, int numberOfBases,
-			int numberOfReads, int numberOfBaseSegments,
-			boolean reverseComplemented) {
 		//can only be called if our builder cares
 		reAbacusDataStoreBuilder.visitBeginContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplemented);
-		
+		return BeginContigReturnCode.VISIT_CURRENT_CONTIG;
 	}
 
 	@Override
@@ -148,13 +138,13 @@ class ReAbacusAceFileVisitor implements AceFileVisitor{
 	}
 
 	@Override
-	public boolean visitEndOfContig() {
+	public EndContigReturnCode visitEndOfContig() {
 		if(streamThruCurrentContig){
 			currentWriter.close();
 		}
 		reAbacusDataStoreBuilder.visitEndOfContig();
 		
-		return true;
+		return EndContigReturnCode.KEEP_PARSING;
 	}
 
 	@Override
