@@ -78,6 +78,7 @@ import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFact
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -663,7 +664,7 @@ public class ReAbacusAceContigWorker {
 			
 		}
 		@Override
-		public void visitConsensusQualities() {
+		public void visitConsensusQualities(QualitySequence ungappedConsensusQualities) {
 			// TODO Auto-generated method stub
 			
 		}

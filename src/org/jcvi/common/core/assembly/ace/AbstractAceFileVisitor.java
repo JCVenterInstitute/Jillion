@@ -33,6 +33,7 @@ import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil.ClipPointsType;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.MapUtil;
@@ -126,7 +127,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     protected abstract void visitNewContig(String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean isComplemented);
 
     @Override
-    public synchronized void visitConsensusQualities() {
+    public synchronized void visitConsensusQualities(QualitySequence ungappedConsensusQualities) {
         throwExceptionIfInitialized();
 
     }

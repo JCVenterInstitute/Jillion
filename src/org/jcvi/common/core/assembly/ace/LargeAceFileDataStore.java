@@ -16,6 +16,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 import org.jcvi.common.core.util.iter.IteratorUtil;
@@ -300,7 +301,7 @@ public final class LargeAceFileDataStore implements AceFileContigDataStore{
 		}
 
 		@Override
-		public void visitConsensusQualities() {
+		public void visitConsensusQualities(QualitySequence ungappedConsensusQualities) {
 			//no-op
 			
 		}
@@ -498,7 +499,7 @@ public final class LargeAceFileDataStore implements AceFileContigDataStore{
 		}
 
 		@Override
-		public void visitConsensusQualities() {
+		public void visitConsensusQualities(QualitySequence ungappedConsensusQualities) {
 			//no-op
 		}
 
@@ -651,7 +652,7 @@ public final class LargeAceFileDataStore implements AceFileContigDataStore{
 			}
 
 			@Override
-			public void visitConsensusQualities() {
+			public void visitConsensusQualities(QualitySequence ungappedConsensusQualities) {
 				//no-op
 				
 			}
