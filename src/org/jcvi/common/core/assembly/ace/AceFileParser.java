@@ -288,13 +288,10 @@ public final class AceFileParser {
             ParserState handle(Matcher contigMatcher, ParserState struct, String line) {
                 ParserState ret = struct;
                 if(!struct.isFirstContigInFile){
-                	EndContigReturnCode retCode = ret.visitor.visitEndOfContig();
-                	if(retCode ==null){
-                		throw new NullPointerException("EndContigReturnCode can not be null");
-                	}
-                	if(retCode == EndContigReturnCode.STOP_PARSING){
-                		ret= ret.stopParsing();
-                	}
+                	ret = handleEndOfContig(ret);
+                }
+                if(ret.done()){
+                	return ret;
                 }
                 //delayed visiting current line so we can tell
                 //visitor we have reached the end of a contig.
@@ -435,7 +432,10 @@ public final class AceFileParser {
                 ParserState currentParserState=parserState;
             	if(currentParserState.inAContig && currentParserState.seenAllExpectedReads()){                    
                     currentParserState =currentParserState.notInAContig();
-                    currentParserState.visitor.visitEndOfContig();
+                    currentParserState = handleEndOfContig(currentParserState);
+                    if(currentParserState.done()){
+                    	return currentParserState; 
+                    }
                 }
                 
                 String lineWithCR;
@@ -475,7 +475,10 @@ public final class AceFileParser {
                 ParserState currentParserState = parserState;
             	if(currentParserState.inAContig && currentParserState.seenAllExpectedReads()){
                     currentParserState =currentParserState.notInAContig();
-                    currentParserState.visitor.visitEndOfContig();                    
+                    currentParserState = handleEndOfContig(currentParserState);
+                    if(currentParserState.done()){
+                    	return currentParserState; 
+                    }                   
                 }
             	//delay calling visit current line
             	//until after we have determined we are 
@@ -531,7 +534,10 @@ public final class AceFileParser {
                 ParserState currentParserState = parserState;
             	if(currentParserState.inAContig && currentParserState.seenAllExpectedReads()){                    
                     currentParserState =currentParserState.notInAContig();
-                    currentParserState.visitor.visitEndOfContig();
+                    currentParserState = handleEndOfContig(currentParserState);
+                    if(currentParserState.done()){
+                    	return currentParserState; 
+                    }
                 }
             	//delay calling visit current line
             	//until after we have determined we are 
@@ -639,7 +645,18 @@ public final class AceFileParser {
             return COMPLIMENT_STRING.equals(orientation);
         }
         abstract ParserState handle(Matcher matcher, ParserState struct, String line) throws IOException;
-        /**
+        
+        private static ParserState handleEndOfContig(ParserState ret) {
+			EndContigReturnCode retCode = ret.visitor.visitEndOfContig();
+			if(retCode ==null){
+				throw new NullPointerException("EndContigReturnCode can not be null");
+			}
+			if(retCode == EndContigReturnCode.STOP_PARSING){
+				ret= ret.stopParsing();
+			}
+			return ret;
+		}
+		/**
          * ResultHandler stores the SectionHandler that will 
          * be used to handle the current section and the Matcher
          * that matched the section (we store this so we 

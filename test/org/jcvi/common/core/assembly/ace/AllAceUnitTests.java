@@ -51,7 +51,7 @@ import org.junit.runners.Suite.SuiteClasses;
        TestIndexedAceDataStoreStreamingIterators.class,
        TestLargeAceFileDataStoreStreamingIterators.class,
        
-       
+       TestAceFileParserStopParsingMiddleContig.class,
        TestAceFileUtil_writingAceContigs.class,
        TestDefaultAceFileWriter.class,
        TestHiLowAceContigPhdDatastore.class,
