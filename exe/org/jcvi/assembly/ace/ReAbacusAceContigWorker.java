@@ -649,18 +649,13 @@ public class ReAbacusAceContigWorker {
 			// TODO Auto-generated method stub
 			
 		}
+
 		@Override
-		public boolean shouldVisitContig(String contigId, int numberOfBases,
-				int numberOfReads, int numberOfBaseSegments,
-				boolean isComplemented) {
-			streamCurrentContig = this.contigId.equals(contigId);
-			return false;
-		}
-		@Override
-		public void visitBeginContig(String contigId, int numberOfBases,
+		public BeginContigReturnCode visitBeginContig(String contigId, int numberOfBases,
 				int numberOfReads, int numberOfBaseSegments,
 				boolean reverseComplemented) {
-			// TODO Auto-generated method stub
+			streamCurrentContig = this.contigId.equals(contigId);
+			return BeginContigReturnCode.SKIP_CURRENT_CONTIG;
 			
 		}
 		@Override
@@ -709,7 +704,7 @@ public class ReAbacusAceContigWorker {
 			
 		}
 		@Override
-		public boolean visitEndOfContig() {
+		public EndContigReturnCode visitEndOfContig() {
 			try {
 				out.flush();
 			} catch (IOException e) {
@@ -717,7 +712,7 @@ public class ReAbacusAceContigWorker {
 			}
 			//this will stop parsing as soon as we are done writing the contig
 			//we care about.
-			return !streamCurrentContig;
+			return streamCurrentContig?EndContigReturnCode.STOP_PARSING: EndContigReturnCode.KEEP_PARSING;
 		}
 		@Override
 		public void visitBeginConsensusTag(String id, String type,

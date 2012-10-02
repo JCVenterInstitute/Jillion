@@ -238,15 +238,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
             currentLineLength = length;
             currentFileOffset+=length;            
         }
-        
-        @Override
-		public synchronized boolean shouldVisitContig(String contigId, int numberOfBases,
-				int numberOfReads, int numberOfBaseSegments,
-				boolean reverseComplimented) {
-            currentContigId = contigId;
-            currentStartOffset=currentFileOffset-currentLineLength;
-            return true;
-		}
+
         /**
         * {@inheritDoc}
         */
@@ -286,10 +278,13 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
          * {@inheritDoc}
          */
         @Override
-		public void visitBeginContig(String contigId, int numberOfBases,
+		public BeginContigReturnCode visitBeginContig(String contigId, int numberOfBases,
 				int numberOfReads, int numberOfBaseSegments,
 				boolean reverseComplimented) {
+        	currentContigId = contigId;
+            currentStartOffset=currentFileOffset-currentLineLength;
 			totalNumberOfReads +=numberOfReads;
+			return BeginContigReturnCode.VISIT_CURRENT_CONTIG;
 		}
 		/**
         * {@inheritDoc}
@@ -369,11 +364,11 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         * {@inheritDoc}
         */
         @Override
-        public synchronized boolean visitEndOfContig() {    
+        public synchronized EndContigReturnCode visitEndOfContig() {    
         	//
         	indexFileRange.put(currentContigId, Range.of(currentStartOffset, 
                     currentFileOffset-1));
-            return true;
+            return EndContigReturnCode.KEEP_PARSING;
         }
 
         /**

@@ -37,6 +37,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.Direction;
+import org.jcvi.common.core.assembly.ace.AceFileVisitor.BeginContigReturnCode;
+import org.jcvi.common.core.assembly.ace.AceFileVisitor.EndContigReturnCode;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
@@ -285,8 +287,14 @@ public final class AceFileParser {
             @Override
             ParserState handle(Matcher contigMatcher, ParserState struct, String line) {
                 ParserState ret = struct;
-                if(!struct.isFirstContigInFile && !ret.visitor.visitEndOfContig()){
-                    ret= ret.stopParsing();
+                if(!struct.isFirstContigInFile){
+                	EndContigReturnCode retCode = ret.visitor.visitEndOfContig();
+                	if(retCode ==null){
+                		throw new NullPointerException("EndContigReturnCode can not be null");
+                	}
+                	if(retCode == EndContigReturnCode.STOP_PARSING){
+                		ret= ret.stopParsing();
+                	}
                 }
                 //delayed visiting current line so we can tell
                 //visitor we have reached the end of a contig.
@@ -298,9 +306,11 @@ public final class AceFileParser {
                 boolean reverseComplimented = isComplimented(contigMatcher.group(5));
                 
                 ret= ret.inAContig(numberOfReads);
-                boolean parseCurrentContig = ret.visitor.shouldVisitContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
-                if(parseCurrentContig){
-                	ret.visitor.visitBeginContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
+                BeginContigReturnCode retCode= ret.visitor.visitBeginContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
+            	if(retCode ==null){
+            		throw new NullPointerException("BeginContigReturnCode can not be null");
+            	}
+            	if(retCode==BeginContigReturnCode.VISIT_CURRENT_CONTIG){
                 	ret.numberOfBasesInContig(numberOfBases);
                 }else{
                     ret = ret.dontParseCurrentContig();

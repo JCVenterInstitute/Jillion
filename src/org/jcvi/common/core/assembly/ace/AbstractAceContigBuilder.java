@@ -58,13 +58,13 @@ public abstract class AbstractAceContigBuilder extends AbstractAceFileVisitor {
     }
     
     @Override
-    public boolean visitEndOfContig() {
+    public EndContigReturnCode visitEndOfContig() {
         if(contigBuilder !=null){
             postProcess(contigBuilder);
             visitContig(contigBuilder.build());
             contigBuilder=null;
         }
-        return true;
+        return EndContigReturnCode.KEEP_PARSING;
     }
     
     

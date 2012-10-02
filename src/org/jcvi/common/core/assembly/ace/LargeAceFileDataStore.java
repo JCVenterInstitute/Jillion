@@ -281,22 +281,15 @@ public final class LargeAceFileDataStore implements AceFileContigDataStore{
 		}
 
 		@Override
-		public boolean shouldVisitContig(String contigId, int numberOfBases,
+		public BeginContigReturnCode visitBeginContig(String contigId, int numberOfBases,
 				int numberOfReads, int numberOfBaseSegments,
 				boolean reverseComplimented) {
 			if(contigIdFilter.accept(contigId)){
 				size++;
 				totalNumberOfReads+=numberOfReads;
-				return true;
+				return BeginContigReturnCode.VISIT_CURRENT_CONTIG;
 			}
-			return false;
-		}
-
-		@Override
-		public void visitBeginContig(String contigId, int numberOfBases,
-				int numberOfReads, int numberOfBaseSegments,
-				boolean reverseComplimented) {
-			//no-op
+			return BeginContigReturnCode.SKIP_CURRENT_CONTIG;
 			
 		}
 
@@ -358,9 +351,9 @@ public final class LargeAceFileDataStore implements AceFileContigDataStore{
 		}
 
 		@Override
-		public boolean visitEndOfContig() {
+		public EndContigReturnCode visitEndOfContig() {
 			//no-op
-			return true;
+			return EndContigReturnCode.KEEP_PARSING;
 		}
 
 		@Override
@@ -476,25 +469,19 @@ public final class LargeAceFileDataStore implements AceFileContigDataStore{
 			//no-op
 		}
 
+
+
 		@Override
-		public boolean shouldVisitContig(String contigId, int numberOfBases,
+		public BeginContigReturnCode visitBeginContig(String contigId, int numberOfBases,
 				int numberOfReads, int numberOfBaseSegments,
 				boolean reverseComplimented) {
+			
 			if(contigIdToGet.equals(contigId)){
 				visitorBuilder = new IndexedAceFileContig.IndexedContigVisitorBuilder(startOffset-currentLine.length(), aceFile);
 				visitorBuilder.visitLine(currentLine);
-				return visitorBuilder.shouldVisitContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
+				return visitorBuilder.visitBeginContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
 			}
-			return false;
-		}
-
-		@Override
-		public void visitBeginContig(String contigId, int numberOfBases,
-				int numberOfReads, int numberOfBaseSegments,
-				boolean reverseComplimented) {
-			if(visitorBuilder!=null){
-				visitorBuilder.visitBeginContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
-			}
+			return BeginContigReturnCode.SKIP_CURRENT_CONTIG;
 			
 		}
 
@@ -559,12 +546,12 @@ public final class LargeAceFileDataStore implements AceFileContigDataStore{
 		}
 
 		@Override
-		public boolean visitEndOfContig() {
+		public EndContigReturnCode visitEndOfContig() {
 			if(visitorBuilder !=null){
 				return visitorBuilder.visitEndOfContig();
 			}
 			//haven't found our contig yet
-			return true;
+			return EndContigReturnCode.KEEP_PARSING;
 		}
 
 		@Override
@@ -632,22 +619,16 @@ public final class LargeAceFileDataStore implements AceFileContigDataStore{
 				
 			}
 
+
 			@Override
-			public boolean shouldVisitContig(String contigId,
+			public BeginContigReturnCode visitBeginContig(String contigId,
 					int numberOfBases, int numberOfReads,
 					int numberOfBaseSegments, boolean reverseComplimented) {
 				if(contigIdFilter.accept(contigId)){
 					IdIteratorImpl.this.blockingPut(contigId);
-					return true;
+					return BeginContigReturnCode.VISIT_CURRENT_CONTIG;
 				}
-				return false;
-			}
-
-			@Override
-			public void visitBeginContig(String contigId,
-					int numberOfBases, int numberOfReads,
-					int numberOfBaseSegments, boolean reverseComplimented) {
-				//no-op
+				return BeginContigReturnCode.SKIP_CURRENT_CONTIG;
 				
 			}
 
@@ -706,9 +687,9 @@ public final class LargeAceFileDataStore implements AceFileContigDataStore{
 			}
 
 			@Override
-			public boolean visitEndOfContig() {
+			public EndContigReturnCode visitEndOfContig() {
 				//no-op
-				return true;
+				return EndContigReturnCode.KEEP_PARSING;
 			}
 
 			@Override
