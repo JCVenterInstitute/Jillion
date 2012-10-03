@@ -38,11 +38,6 @@ public class TestDefaultPositionCodec {
     }
     
     DefaultPositionCodec sut = DefaultPositionCodec.INSTANCE;
-    @Test
-    public void decode(){
-        List<Position> actualGlyphs =sut.decode(encodedShortsAsByteArray);
-        assertEquals(decodedGlyphs, actualGlyphs);
-    }
     
     @Test
     public void encode(){
@@ -71,6 +66,8 @@ public class TestDefaultPositionCodec {
     						Position.valueOf(2*Short.MAX_VALUE - 1));
     	
     	byte[] actual = sut.encode(positions);
-    	assertEquals(positions, sut.decode(actual));
+    	for(int i=0; i<positions.size(); i++){
+            assertEquals( positions.get(i), sut.decode(actual, i));
+        }
     }
 }

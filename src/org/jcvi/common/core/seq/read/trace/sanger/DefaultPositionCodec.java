@@ -24,10 +24,7 @@
 package org.jcvi.common.core.seq.read.trace.sanger;
 
 import java.nio.ByteBuffer;
-import java.nio.ShortBuffer;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.GlyphCodec;
@@ -38,15 +35,7 @@ enum DefaultPositionCodec implements GlyphCodec<Position>{
    
     INSTANCE;
    
-    @Override
-    public List<Position> decode(byte[] encodedGlyphs) {
-        List<Position> glyphs = new ArrayList<Position>();
-        ShortBuffer buf = ByteBuffer.wrap(encodedGlyphs).asShortBuffer();
-        while(buf.hasRemaining()){
-            glyphs.add(Position.valueOf(IOUtil.toUnsignedShort(buf.get())));
-        }
-        return glyphs;
-    }
+   
 
     @Override
     public Position decode(byte[] encodedGlyphs, long index) {

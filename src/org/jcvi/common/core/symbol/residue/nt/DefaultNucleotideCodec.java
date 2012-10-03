@@ -110,27 +110,7 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
             GLYPH_TO_BYTE_MAP.put(entry.getValue(), entry.getKey());           
         }
     }
-    @Override
-    public List<Nucleotide> decode(byte[] encodedGlyphs) {
-        int length = decodedLengthOf(encodedGlyphs);
-        List<Nucleotide> result = new ArrayList<Nucleotide>(length);
-        
-        for(int i=HEADER_LENGTH; i<encodedGlyphs.length-1; i++){
-            byte[] values =decodeNext2Values(encodedGlyphs[i]);
-            result.add(ORDINAL_VALUES[values[0]]);
-            result.add(ORDINAL_VALUES[values[1]]);
-        }
-        if(length>0){
-        	byte[] values =decodeNext2Values(encodedGlyphs[encodedGlyphs.length-1]);             
-            if(isEven(length)){
-                result.add(ORDINAL_VALUES[values[0]]);
-                result.add(ORDINAL_VALUES[values[1]]);
-            }else{
-                result.add(ORDINAL_VALUES[values[0]]);
-            }
-        }
-        return result;
-    }
+   
     @Override
     public Nucleotide decode(byte[] encodedGlyphs, long index){
         final byte getByteForGlyph = getEncodedByteForGlyph(encodedGlyphs,index);

@@ -2,11 +2,9 @@ package org.jcvi.common.core.symbol.residue.aa;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
-import java.util.List;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.GlyphCodec;
@@ -53,23 +51,6 @@ public enum CompactAminoAcidSequenceCodec implements GlyphCodec<AminoAcid> {
 		return buf.array();
 	}
 
-	@Override
-	public List<AminoAcid> decode(byte[] encodedGlyphs) {
-		ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
-		int size = buf.getInt();
-		byte[] tmp = Arrays.copyOfRange(encodedGlyphs, 4, encodedGlyphs.length);
-		
-		BitSet bits = IOUtil.toBitSet(tmp);
-		List<AminoAcid> list = new ArrayList<AminoAcid>(size);
-		int offset=0;
-		while(list.size()<size){
-			BitSet subSet =bits.get(offset, offset+BITS_PER_AA);
-			final AminoAcid aa = getAminoAcidFor(subSet);
-			list.add(aa);
-			offset+=BITS_PER_AA;
-		}
-		return list;
-	}
 
 	protected AminoAcid getAminoAcidFor(BitSet subSet) {
 		final AminoAcid aa;

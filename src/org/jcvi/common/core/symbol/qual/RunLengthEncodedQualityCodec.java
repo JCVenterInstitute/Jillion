@@ -52,14 +52,7 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
     RunLengthEncodedQualityCodec( byte guard){
         this.guard = guard;
     }
-    @Override
-    public List<PhredQuality> decode(byte[] encodedGlyphs) {
-        ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
-        int size = buf.getInt();
-        byte guard = buf.get();
-       
-        return decode(decodeUpTo(buf, guard, size-1));
-    }
+    
     
     public Iterator<PhredQuality> iterator(byte[] encodedData){
     	  ByteBuffer buf = ByteBuffer.wrap(encodedData);
@@ -106,42 +99,8 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
 		//is required to get it to compile.
 		throw new IllegalStateException("could not find index "+index);
     }
-    private List<RunLength<PhredQuality>> decodeUpTo(ByteBuffer buf, byte guard,int maxIndex) {
-        //size of list initialized to 25% of max index
-        //since we expect the run length to be pretty well compressed
-        //tests on 454 sequences show rle takes up only 16% memory footprint
-        List<RunLength<PhredQuality>> runLengthList = new ArrayList<RunLength<PhredQuality>>(maxIndex/4);
-        int lengthDecoded=0;
-        while(lengthDecoded<=maxIndex && buf.hasRemaining()){
-            byte value = buf.get();            
-            if( value == guard){                                  
-            	lengthDecoded += handleRun(buf, guard, runLengthList);
-            }
-            else{
-            	//if not guard, just output token
-                lengthDecoded += handleSingleToken(value, runLengthList);
-            }
-        }
-        return runLengthList;
-    }
-    private int handleRun(ByteBuffer buf, byte guard,
-            List<RunLength<PhredQuality>> runLengthList) {
-        int count = buf.getShort();
-        if(count ==0){
-        	//count is 0 so guard byte must be actual value.
-            return handleSingleToken(guard, runLengthList);
-        }
-        byte repValue = buf.get();                   
-        runLengthList.add(new RunLength<PhredQuality>(PhredQuality.valueOf(repValue),count));
-        return count;
-          
-    }
-    private int handleSingleToken(byte guard,
-            List<RunLength<PhredQuality>> runLengthList) {
-        runLengthList.add(new RunLength<PhredQuality>(PhredQuality.valueOf(guard),1));
-        return 1;
-    }
 
+   
     @Override
     public PhredQuality decode(byte[] encodedGlyphs, long index) {
     	 if(index <0){
@@ -318,18 +277,7 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
     	return encoding;
     }
    
-    
-    private static <T> List<T> decode(List<RunLength<T>> encoding){
-        List<T> decoded = new ArrayList<T>();
-        for(RunLength<T> runLength : encoding){
-            final T value = runLength.getValue();
-            for(int i=0; i< runLength.getLength(); i++){                
-                decoded.add(value);
-            }
-        }
-        return decoded;
-    }
-
+   
     private static final class RunLengthIterator implements Iterator<PhredQuality>{
 		private long currentOffset;
 		private final ByteBuffer buf;
