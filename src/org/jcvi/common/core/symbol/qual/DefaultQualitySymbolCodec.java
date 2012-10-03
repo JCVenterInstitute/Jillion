@@ -24,9 +24,7 @@
 package org.jcvi.common.core.symbol.qual;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * {@code DefaultQualitySymbolCodec} stores 
@@ -40,15 +38,6 @@ enum DefaultQualitySymbolCodec implements QualitySymbolCodec{
 	INSTANCE
 	;
 	
-    @Override
-    public List<PhredQuality> decode(byte[] encodedGlyphs) {
-        List<PhredQuality> glyphs = new ArrayList<PhredQuality>();
-        ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
-        while(buf.hasRemaining()){
-            glyphs.add(PhredQuality.valueOf(buf.get()));
-        }
-        return glyphs;
-    }
 
     @Override
     public PhredQuality decode(byte[] encodedGlyphs, long index) {

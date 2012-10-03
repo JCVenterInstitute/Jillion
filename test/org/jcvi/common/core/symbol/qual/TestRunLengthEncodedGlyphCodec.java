@@ -79,12 +79,6 @@ public class TestRunLengthEncodedGlyphCodec {
     }
     
     @Test
-    public void decode(){
-        List<PhredQuality> actual =sut.decode(expected);
-        assertEquals(decodedValues, actual);
-    }
-    
-    @Test
     public void decodeLengthOf(){
         assertEquals(decodedValues.size(), sut.decodedLengthOf(expected));
     }

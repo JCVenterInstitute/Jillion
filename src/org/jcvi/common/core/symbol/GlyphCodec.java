@@ -43,14 +43,6 @@ public interface GlyphCodec<T extends Symbol> {
 	 * @return a byte array (never null).
 	 */
     byte[] encode(Collection<T> glyphs);
-    /**
-     * Decode a byte array into a list
-     * of glyphs.
-     * @param encodedGlyphs the byte 
-     * array of encoded glyphs.
-     * @return a list of glyphs (never null)
-     */
-    List<T> decode(byte[] encodedGlyphs);
     
     /**
      * Get a single Gyph from the encoded

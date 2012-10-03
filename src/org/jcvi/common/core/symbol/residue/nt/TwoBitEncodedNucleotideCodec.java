@@ -113,12 +113,7 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
             }
             return 4;
         }
-        @Override
-        public List<Nucleotide> decode(byte[] encodedGlyphs) {
-            NucleotideSequenceBuilder builder = populateNucleotideSequenceBuilderFrom(encodedGlyphs);
-            
-            return builder.asList();
-        }
+       
 		protected final NucleotideSequenceBuilder populateNucleotideSequenceBuilderFrom(
 				byte[] encodedGlyphs) {
 			ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);

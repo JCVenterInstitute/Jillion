@@ -25,6 +25,7 @@ package org.jcvi.common.core.symbol.residue.nt;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -44,13 +45,13 @@ public class TestDefaultNucleotideCodec {
     @Test
     public void evenEncodesAndDecodes(){
         byte[] encoded =sut.encode(evenBases);
-        assertEquals(evenBases, sut.decode(encoded));
+        assertEquals(evenBases, decode(encoded));
     }
     
     @Test
     public void oddEncodesAndDecodes(){
         byte[] encoded =sut.encode(oddBases);
-        assertEquals(oddBases, sut.decode(encoded));
+        assertEquals(oddBases, decode(encoded));
     }
     /**
      * this is a regression test for a bug where I was getting
@@ -68,7 +69,16 @@ public class TestDefaultNucleotideCodec {
         List<Nucleotide> expectedGlyphs = Nucleotides.parse(basesString);
         byte[] encoded =sut.encode(expectedGlyphs);
         assertEquals("did not decode final base of "+finalBase + " correctly",
-                expectedGlyphs, sut.decode(encoded));
+                expectedGlyphs, decode(encoded));
+    }
+    
+    private List<Nucleotide> decode(byte[] encodedBytes){
+    	List<Nucleotide> list = new ArrayList<Nucleotide>();
+    	Iterator<Nucleotide> iter = sut.iterator(encodedBytes);
+    	while(iter.hasNext()){
+    		list.add(iter.next());
+    	}
+    	return list;
     }
     /**
      * to go along with {@link #oddNumberOfBasesEndsWithC()}
@@ -84,7 +94,7 @@ public class TestDefaultNucleotideCodec {
     @Test
     public void noBases(){
         byte[] encoded = sut.encode(Collections.<Nucleotide>emptyList());
-        assertTrue(sut.decode(encoded).isEmpty());
+        assertTrue(decode(encoded).isEmpty());
     }
     
     @Test(expected = IndexOutOfBoundsException.class)
