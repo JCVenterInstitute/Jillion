@@ -141,19 +141,16 @@ public final class DefaultScaffold  implements Scaffold{
                 + " is not a subrange of its parent placed contig " + placedContig
                 + "(normalized range " + normalizedPlacedContigRange + ")");
         }
-
+        final Range.Builder rangeBuilder; 
         if ( placedContig.getDirection() == Direction.FORWARD ) {
-            long rightShift = placedContig.getBegin();
-            return Range.of(
-                    rightShift+placedContigRange.getBegin(),
-                    rightShift+placedContigRange.getEnd());
+        	rangeBuilder= new Range.Builder(placedContigRange);
         } else{
-        	//read is reversed
-            long leftShift = placedContig.getEnd()-placedContigRange.getBegin();
-            return Range.of(
-                    leftShift-(placedContigRange.getLength()-1),
-                    leftShift);
+        	//contig is reversed
+        	Range reverseComplementRange = AssemblyUtil.reverseComplementValidRange(placedContigRange, placedContig.getLength());
+			rangeBuilder= new Range.Builder(reverseComplementRange);
         }
+        rangeBuilder.shift(placedContig.getBegin());
+        return rangeBuilder.build();
     }
     
     @Override
