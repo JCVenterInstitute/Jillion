@@ -41,9 +41,7 @@ public class TestDirection {
 
         return Arrays.asList(new Object[][]{
                 {FORWARD, "forward", "F", REVERSE},
-                {REVERSE, "reverse", "R", FORWARD},
-                {NONE, "none", "N", NONE},
-                {UNKNOWN, "unkown", "U", UNKNOWN},
+                {REVERSE, "reverse", "R", FORWARD}
         });
     }
     

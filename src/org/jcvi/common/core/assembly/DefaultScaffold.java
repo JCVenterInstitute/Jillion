@@ -147,15 +147,12 @@ public final class DefaultScaffold  implements Scaffold{
             return Range.of(
                     rightShift+placedContigRange.getBegin(),
                     rightShift+placedContigRange.getEnd());
-        } else if ( placedContig.getDirection() == Direction.REVERSE ) {
+        } else{
+        	//read is reversed
             long leftShift = placedContig.getEnd()-placedContigRange.getBegin();
             return Range.of(
                     leftShift-(placedContigRange.getLength()-1),
                     leftShift);
-        } else {
-            throw new IllegalArgumentException("Do not know how to convert a(n) " +
-                placedContig.getDirection() + " oriented placed contig range " +
-                "to its equivalent parent scaffold range");
         }
     }
     
