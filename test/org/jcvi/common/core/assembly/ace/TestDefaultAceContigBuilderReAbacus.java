@@ -52,10 +52,10 @@ public class TestDefaultAceContigBuilderReAbacus {
         .addRead("read2", "ACGT--T--AC", 0, Direction.FORWARD, Range.of(2,8), read1PhdInfo, 10)
         .addRead("read3",    "T---T-ACGT", 3, Direction.FORWARD, Range.of(2,8), read1PhdInfo, 10);
         
-        sut.getAssembledReadBuilder("read1").reAbacus(Range.of(2,6), "T");
-        sut.getAssembledReadBuilder("read2").reAbacus(Range.of(4,8), "T");
-        sut.getAssembledReadBuilder("read3").reAbacus(Range.of(1,5), "T");
-        sut.getConsensusBuilder().delete(Range.of(4,8)).insert(4, "T");
+        sut.getAssembledReadBuilder("read1").reAbacus(Range.of(2,6), asSequence("T"));
+        sut.getAssembledReadBuilder("read2").reAbacus(Range.of(4,8), asSequence("T"));
+        sut.getAssembledReadBuilder("read3").reAbacus(Range.of(1,5),asSequence("T"));
+        sut.getConsensusBuilder().delete(Range.of(4,8)).insert(4, asSequence("T"));
            
         AceContig contig =sut.build();
         assertEquals("ACGTTACGT", contig.getConsensusSequence().toString());
@@ -72,7 +72,12 @@ public class TestDefaultAceContigBuilderReAbacus {
         assertEquals(8, read3.getGappedEndOffset());
     }
     
-    @Test
+    private NucleotideSequence asSequence(String bases) {
+		
+		return new NucleotideSequenceBuilder(bases).build();
+	}
+
+	@Test
     public void abacusAndShiftDownstreamReads(){
     	AceContigBuilderTestDouble sut =  new AceContigBuilderTestDouble("id",
                           "ACGT-----ACGT")
@@ -82,10 +87,10 @@ public class TestDefaultAceContigBuilderReAbacus {
         .addRead("read3",    "T---T-ACGT", 3, Direction.FORWARD, Range.of(2,8), read1PhdInfo, 10)
         .addRead("read4",           "ACGT", 9, Direction.FORWARD, Range.of(2,4), read1PhdInfo, 10);
         
-        sut.getAssembledReadBuilder("read1").reAbacus(Range.of(2,6), "T");
-        sut.getAssembledReadBuilder("read2").reAbacus(Range.of(4,8), "T");
-        sut.getAssembledReadBuilder("read3").reAbacus(Range.of(1,5), "T");
-        sut.getConsensusBuilder().delete(Range.of(4,8)).insert(4, "T");
+        sut.getAssembledReadBuilder("read1").reAbacus(Range.of(2,6), asSequence("T"));
+        sut.getAssembledReadBuilder("read2").reAbacus(Range.of(4,8), asSequence("T"));
+        sut.getAssembledReadBuilder("read3").reAbacus(Range.of(1,5), asSequence("T"));
+        sut.getConsensusBuilder().delete(Range.of(4,8)).insert(4, asSequence("T"));
         sut.getAssembledReadBuilder("read4").shiftLeft(4);
            
         AceContig contig =sut.build();
