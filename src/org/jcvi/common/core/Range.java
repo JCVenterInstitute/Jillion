@@ -27,7 +27,6 @@ import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -42,10 +41,10 @@ import org.jcvi.common.core.util.Caches;
 /**
  * A <code>Range</code> is a pair of coordinate values which describe a
  * contiguous subset of a sequence of values.  <code>Range</code>s are
- * immutable.  Changes to a <code>Range</code> are done using various methods
- * which return different <code>Range</code> instances.
+ * immutable.  Changes to a <code>Range</code> are done using {@link Builder Range.Builder} 
+ * to create new instances.
  * <p>
- * <code>Range</code>s have a start (or left) value and an end (or right)
+ * <code>Range</code>s have a begin value and an end
  * value.  The start value will always be less than or equal to the end value.
  * The minimum start value of a Range is {@link Long#MIN_VALUE}  and the max end
  * value of a Range is {@link Long#MAX_VALUE}. Also due to limitations
@@ -58,9 +57,11 @@ import org.jcvi.common.core.util.Caches;
  * will have a size of 1 not 0.  This is done to conform with the overwhelming
  * majority use of inclusive ranges in Bioinformatics. The implications of this are particularly important when thinking about the
  * desire to represent no range at all.  A <code>Range</code> of 0 to 0 still
- * has a size of 1.  In order to represent a <code>Range</code> with size 0,
- * you need to explicitly use an empty range via the factory methods:
- * {@link #createEmptyRange()} {@link #createEmptyRange(long)} {@link #createEmptyRange(CoordinateSystem, long)}. 
+ * has a size of 1.  In order to represent a <code>Range</code> with length 0,
+ * you need to create a Range of length 0 by either using the static factory method
+ * {@link Range#ofLength(long) Range.ofLength(0)} or create a new
+ * {@link Builder Range.Builder} instance with either the empty constructor
+ * or use the methods on the builder to shrink the range to an empty length.
  * <p>
  * Often, Bioinformatics formats use non-0-based coordinates. Other coordinate system start and end values can be queried
  * via the {@link #getBegin(CoordinateSystem)} and {@link #getEnd(CoordinateSystem)} methods.  
@@ -68,17 +69,25 @@ import org.jcvi.common.core.util.Caches;
  * via the {@link Range#of(CoordinateSystem, long, long)} method.  If this method is used,
  * the input values will automatically get converted into 0-based coordinates.
  * <p/>
- * Ranges can be constructed using the various Range.create(...) methods
- * which might return different Range implementations based on 
- * what the input values.  In addition, since Ranges are immutable,
- * it is not guaranteed that the Range object returned by the build methods
- * is a new object since Ranges are often cached (Flyweight pattern).  Therefore;
+ * Ranges can be constructed using either {@link Builder Range.Builder} 
+ * of through several convenience static factory methods including
+ *  {@link Range#of(long)}, {@link Range#of(long, long)} ,
+ *  {@link Range#of(CoordinateSystem, long, long)} and {@link Range#ofLength(long)}.
+ *  All of these methods use {@link Builder Range.Builder}  internally.
+ *  <p/>
+ *  The actual implementation of Range returned by these methods or the {@link Builder Range.Builder} 
+ *  might vary based on input values in order to decrease memory usage.  (For example a Range that is very short
+ *  could represent the length as a byte instead of a long.  Or if the range is in positive
+ *  coordinates then memory could be saved by using unsigned values instead of signed. etc).
+ *  In addition, since Ranges are immutable,
+ * it is not guaranteed that the Range object returned by these creation methods
+ * is a new instance since Ranges are often cached (Flyweight pattern).  Therefore;
  * <strong> Range objects should not be used
  * for synchronization locks.</strong>  Range objects are cached and shared, synchronizing
  * on the same object as other, unrelated code can cause deadlock.
  * <pre> 
  * &#047;&#047;don't do this
- * private static Range range = Range.create(0,9);
+ * private static Range range = Range.ofLength(10);
  * ...
  *   synchronized(range){ .. }
  * ...
@@ -87,6 +96,7 @@ import org.jcvi.common.core.util.Caches;
  * @author jsitz@jcvi.org
  * 
  * @see CoordinateSystem
+ * @see {@link Builder Range.Builder} 
  * 
  */
 public abstract class Range implements Rangeable,Iterable<Long>
@@ -267,7 +277,7 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	 * Residue based coordinate system is a "1s based"
     	 * position system where there first element has a 
     	 * position of 1 and the last element in the range
-    	 * as a position of length.
+    	 * has a position of length.
     	 *  <pre> 
          * coordinate system    1  2  3  4  5  6
          *                    --|--|--|--|--|--|
@@ -786,41 +796,36 @@ public abstract class Range implements Rangeable,Iterable<Long>
 
         return !(this.getBegin() > target.getEnd() || this.getEnd() < target.getBegin());
     }
-    public boolean intersects(long coordinate){
-        return coordinate >= this.getBegin() && coordinate <=this.getEnd();
-    }
     /**
      * Calculates the intersection of this {@link Range} and a second one.
+     * 
      * <p>
      * The intersection of an empty list with any other list is always the
-     * empty list.  The intersection of
+     * empty list.
      *
-     * @param target The second {@link Range} to compare
+     * @param other The second {@link Range} to compare
      * @return A {@link Range} object spanning only the range of values covered
-     * by both {@link Range}s.
+     * by both this Range and the other {@link Range}.
      */
-    public Range intersection(Range target)
+    public Range intersection(Range other)
     {
-        if (target == null)
-        {
+        if (other == null){
             throw new IllegalArgumentException("Null Range used in intersection operation.");
         }
         if(isEmpty()){
-            return this;
+        	return this;
         }
-        if (target.isEmpty())
-        {
-            return target.intersection(this);
+        if (other.isEmpty()){
+        	return other;
         }
-
-        try{
-            long intersectionStart = Math.max(target.getBegin(), this.getBegin());
-			long intersectionEnd = Math.min(target.getEnd(), this.getEnd());
-			return  Range.of(intersectionStart,
-                            intersectionEnd);
-        }catch(IllegalArgumentException e){
-            return new Range.Builder().build();
-        }
+        long intersectionStart = Math.max(other.getBegin(), this.getBegin());
+		long intersectionEnd = Math.min(other.getEnd(), this.getEnd());
+		if(intersectionEnd > intersectionStart-1){
+			return  Range.of(intersectionStart, intersectionEnd);
+		}else{
+			return new Range.Builder().build();
+		}
+        
 
     }
     /**
@@ -863,41 +868,37 @@ public abstract class Range implements Rangeable,Iterable<Long>
      * Checks to see if this <code>Range</code> starts before the given
      * comparison <code>Range</code>.
      *
-     * @param target The <code>Range</code> to compare to.
-     * @return <code>true</code> if the left-hand coordinate of this
-     * <code>Range</code> is less than the left-hand coordinate of the
-     * comparison <code>Range</code>.
+     * @param other The other <code>Range</code> to compare to.
+     * @return <code>true</code> if the begin coordinate of this
+     * <code>Range</code> is less than the  begin coordinate of the
+     * other <code>Range</code>.
+     * @throws NullPointerException if other is null.
      */
-    public boolean startsBefore(Range target)
+    public boolean startsBefore(Range other)
     {
-        if (target == null)
-        {
-            throw new IllegalArgumentException("Null Range used in range comparison operation.");
+        if (other == null){
+            throw new NullPointerException("Null Range used in range comparison operation.");
         }
 
-        return this.getBegin() < target.getBegin();
+        return this.getBegin() < other.getBegin();
     }
 
     /**
      * Checks to see if this <code>Range</code> ends before the given target.
      *
-     * @param target The target <code>Range</code> to check against.
+     * @param other The target <code>Range</code> to check against.
      * @return <code>true</code> if this <code>Range</code> has an end value
      * which occurs before (and not at the same point as) the target
      * <code>Range</code>.
+     * @throws NullPointerException if other is null.
      */
-    public boolean endsBefore(Range target)
+    public boolean endsBefore(Range other)
     {
-        if (target == null)
-        {
-            throw new IllegalArgumentException("Null Range used in range comparison operation.");
-        }
-        if (isEmpty() || target.isEmpty())
-        {
-            return false;
+        if (other == null){
+            throw new NullPointerException("Null Range used in range comparison operation.");
         }
         
-        return this.getEnd() < target.getBegin();
+        return this.getEnd() < other.getBegin();
     } 
    
     /**
@@ -942,22 +943,33 @@ public abstract class Range implements Rangeable,Iterable<Long>
      * @return a List of split Ranges; never null or empty but may
      * just be a single element if this Range is smaller than the max length
      * specified.
+     * @throws IllegalArgumentException if maxSplitLength
+     * <1.
      */
     public List<Range> split(long maxSplitLength){
+    	if(maxSplitLength <1){
+    		throw new IllegalArgumentException("max splitLength must be >= 1");
+    	}
+    	List<Range> list = new ArrayList<Range>();
         if(getLength()<maxSplitLength){
-            return Collections.singletonList(this);
-        }
-        long currentStart=getBegin();
-        List<Range> list = new ArrayList<Range>();
-        while(currentStart<=getEnd()){
-            long endCoordinate = Math.min(getEnd(), currentStart+maxSplitLength-1);
-            list.add(Range.of(currentStart, endCoordinate));
-            currentStart = currentStart+maxSplitLength;
+            list.add(this);
+        }else{
+	        long currentStart=getBegin();	        
+	        long end = getEnd();
+			while(currentStart<=end){
+	            long endCoordinate = Math.min(end, currentStart+maxSplitLength-1);
+	            list.add(Range.of(currentStart, endCoordinate));
+	            currentStart = currentStart+maxSplitLength;
+	        }
         }
         return list;
     }
    
-
+    /**
+     * Get the length of this range.
+     * @return the length;
+     * will always be >=0.
+     */
     public long getLength() {
     	 return getEnd() - getBegin() + 1;
     }
@@ -2335,10 +2347,13 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	 * coordinate space.
     	 * This is equivalent to 
     	 * {@link Builder#Builder(CoordinateSystem, long, long)
-    	 * new Builder(CoordinateSystem.ZERO_BASED, begin,end}.
-    	 * @param begin the initial  begin coordinate of the range in zero based coordinates. 
-    	 * @param end the initial end coordinate in zero based coordinates. 
+    	 * new Builder(CoordinateSystem.ZERO_BASED, begin,end)}.
+    	 * @param begin the initial  inclusive begin coordinate of the range in zero based coordinates. 
+    	 * @param end the initial inclusive end coordinate in zero based coordinates. 
     	 * @see Builder#Builder(CoordinateSystem, long, long)
+    	 *  @throws IllegalArgumentException if the given
+    	 * begin and end coordiantes cause the
+    	 * length to be negative.
     	 */
     	public Builder(long begin, long end){
     		this(CoordinateSystem.ZERO_BASED, begin,end);
@@ -2350,17 +2365,30 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	 * given coordinate space.
     	 * @param cs the {@link CoordinateSystem} these coordinates are
     	 * given in; can not be null.
-    	 * @param begin the initial  begin coordinate of the range in zero based coordinates. 
-    	 * @param end the initial end coordinate in zero based coordinates. 
+    	 * @param begin the initial  begin coordinate of the range in the given
+    	 * {@link CoordinateSystem}. 
+    	 * @param end the initial end coordinate of the range in the given
+    	 * {@link CoordinateSystem}.  
     	 * @throws NullPointerException if cs is null.
+    	 * @throws IllegalArgumentException if the given
+    	 * begin and end coordiantes cause the
+    	 * length to be negative.
     	 */
     	public Builder(CoordinateSystem cs,long begin, long end){
     		if(cs ==null){
     			throw new NullPointerException("CoordinateSystem can not be null");
     		}
+    		assertValidCoordinates(begin,end);
     		this.begin = cs.getStart(begin);
     		this.end = cs.getEnd(end);
     		this.inputCoordinateSystem = cs;
+    		
+    	}
+    	private void assertValidCoordinates(long begin, long end){
+    		long length = end-begin+1;
+    		if(length<0){
+    			throw new IllegalArgumentException("length can not be negative");
+    		}
     	}
     	/**
     	 * Create a new Builder instance
@@ -2424,9 +2452,14 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	 * to the left by the given number of units
     	 * @return this.
     	 * @see #growBegin(long)
+    	 * @throws IllegalArgumentException if shrinking the begin
+    	 * coordinate by the given amount causes the range's
+    	 * length to be negative.
     	 */
     	public Builder shrinkBegin(long units){
-    		begin+=units;
+    		long newBegin = begin+units;
+    		assertValidCoordinates(newBegin,end);
+    		begin = newBegin;
     		return this;
     	}
     	/**
@@ -2439,8 +2472,13 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	 * to the right by the given number of units
     	 * @return this.
     	 * @see #growEnd(long)
+    	 * @throws IllegalArgumentException if shrinking the end
+    	 * coordinate by the given amount causes the range's
+    	 * length to be negative.
     	 */
     	public Builder shrinkEnd(long units){
+    		long newEnd = end-units;
+    		assertValidCoordinates(begin,newEnd);
     		end -=units;
     		return this;
     	}

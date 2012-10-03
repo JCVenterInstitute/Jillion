@@ -48,7 +48,10 @@ public class TestEmptyRange{
     }
     @Test
     public void testEndsBefore(){
-        assertFalse(emptyRange.endsBefore(nonEmptyRange));
+        assertTrue(emptyRange.endsBefore(nonEmptyRange));
+        assertFalse(new Range.Builder()
+        			.shift(10)
+        			.build().endsBefore(nonEmptyRange));
     }
     @Test
     public void testIntersects(){

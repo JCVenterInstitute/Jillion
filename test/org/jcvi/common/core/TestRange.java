@@ -322,19 +322,7 @@ public class TestRange{
         Range zeroRange = Range.of(0,0);
         assertEquals(1, zeroRange.getLength());
     }
-    
-    @Test
-    public void intersectsSingleCoordinate(){
-        assertTrue(range.intersects(5));
-    }
-    @Test
-    public void intersectsSingleCoordinateBeforeRangeShouldNotIntersect(){
-        assertFalse(range.intersects(0));
-    }
-    @Test
-    public void intersectsSingleCoordinateAfterRangeShouldNotIntersect(){
-        assertFalse(range.intersects(range.getEnd()+1));
-    }
+
     @Test public void testIntersects()
     {
     	
@@ -475,17 +463,10 @@ public class TestRange{
         assertFalse(this.range.startsBefore(this.range));
     }
 
-    @Test public void testStartsBefore_null()
+    @Test(expected = NullPointerException.class)
+    public void testStartsBefore_null()
     {
-        try
-        {
-            this.range.startsBefore(null);
-            fail();
-        }
-        catch (IllegalArgumentException e)
-        {
-            // We expect this
-        }
+       this.range.startsBefore(null);
     }
 
     @Test public void testEndsBefore()
@@ -511,17 +492,10 @@ public class TestRange{
         assertFalse(this.range.endsBefore(this.range));
     }
 
-    @Test public void testEndsBefore_null()
+    @Test(expected = NullPointerException.class)
+    public void testEndsBefore_null()
     {
-        try
-        {
-            this.range.endsBefore(null);
-            fail();
-        }
-        catch (IllegalArgumentException e)
-        {
-            // We expect this
-        }
+      this.range.endsBefore(null);           
     }
 
    
