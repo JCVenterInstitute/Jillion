@@ -21,7 +21,6 @@ package org.jcvi.common.core.assembly.tasm;
 
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Map.Entry;
@@ -32,7 +31,6 @@ import org.jcvi.common.core.assembly.DefaultPlacedRead;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.AssembledReadBuilder;
 import org.jcvi.common.core.assembly.ReadInfo;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
@@ -335,17 +333,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         */
         @Override
         public AssembledReadBuilder<TigrAssemblerPlacedRead> reAbacus(
-                Range gappedValidRangeToChange, String newBasecalls) {
-            delegate.reAbacus(gappedValidRangeToChange, newBasecalls);
-            return this;
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public AssembledReadBuilder<TigrAssemblerPlacedRead> reAbacus(
-                Range gappedValidRangeToChange, List<Nucleotide> newBasecalls) {
+                Range gappedValidRangeToChange, NucleotideSequence newBasecalls) {
             delegate.reAbacus(gappedValidRangeToChange, newBasecalls);
             return this;
         }

@@ -23,8 +23,6 @@
  */
 package org.jcvi.common.core.assembly;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.jcvi.common.core.Direction;
@@ -333,31 +331,23 @@ public final class DefaultPlacedRead implements AssembledRead {
             																.buildReferenceEncodedNucleotideSequence();
             return new DefaultPlacedRead(readId, updatedEncodedBasecalls, offset, dir, ungappedFullLength,clearRange);
         }
+
         /**
         * {@inheritDoc}
         */
-        @Override
-        public Builder reAbacus(Range gappedValidRangeToChange, String newBasecalls){
-            return reAbacus(gappedValidRangeToChange, new NucleotideSequenceBuilder(newBasecalls).asList());
-        }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public Builder reAbacus(Range gappedValidRangeToChange, List<Nucleotide> newBasecalls){
-            List<Nucleotide> oldUngappedBasecalls = getNucleotideSequenceBuilder()
+         @Override
+        public Builder reAbacus(Range gappedValidRangeToChange, NucleotideSequence newBasecalls){
+        	
+        	 NucleotideSequence newUngappedBasecalls = new NucleotideSequenceBuilder(newBasecalls)
+				.ungap()
+				.build();
+        	 
+            NucleotideSequence oldUngappedBasecalls = getNucleotideSequenceBuilder()
             										.copy()
             										.trim(gappedValidRangeToChange)
             										.ungap()
-            										.asList();
-            List<Nucleotide> newUngappedBasecalls = new ArrayList<Nucleotide>(newBasecalls.size());
-            //make sure we aren't adding/editing any basecalls
-            //only gaps should be affected
-            for(Nucleotide newBase : newBasecalls){
-                if(!newBase.isGap()){
-                    newUngappedBasecalls.add(newBase);
-                }
-            }
+            										.build();
+           
             if(!oldUngappedBasecalls.equals(newUngappedBasecalls)){
                 throw new IllegalReAbacus(oldUngappedBasecalls,newUngappedBasecalls);
             }
@@ -488,10 +478,10 @@ public final class DefaultPlacedRead implements AssembledRead {
 
         private static final long serialVersionUID = -8272559886165301526L;
 
-        public IllegalReAbacus(List<Nucleotide> oldUngappedBasecalls, List<Nucleotide> newUngappedBasecalls){
+        public IllegalReAbacus(NucleotideSequence  oldUngappedBasecalls, NucleotideSequence newUngappedBasecalls){
             super(String.format("reAbacusing must retain same ungapped basecalls! '%s' vs '%s'", 
-                    new NucleotideSequenceBuilder(oldUngappedBasecalls).toString(),
-                    new NucleotideSequenceBuilder(newUngappedBasecalls).toString()
+                   oldUngappedBasecalls,
+                    newUngappedBasecalls
                     ));
         }
     

@@ -19,12 +19,9 @@
 
 package org.jcvi.common.core.assembly;
 
-import java.util.List;
-
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Rangeable;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
@@ -125,26 +122,7 @@ public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable
      * @param gappedValidRangeToChange the subsequence of the read to change
      * in gapped <strong>valid range</strong> coordinate system 
      * (only has long as the length of the read).
-     * @param newBasecalls the new gapped sequence to replace the bases previously 
-     * existing in the {@code gappedValidRangeToChange} range.  The new basecalls
-     * do not have to have the same length as the old values but must have the same 
-     * ungapped sequence.
-     * @return this.
-     * @throws IllegalArgumentException if the ungapped version of the newBasecalls 
-     * does not match the ungapped version of the bases to be replaced.
-     */
-    AssembledReadBuilder<R> reAbacus(Range gappedValidRangeToChange, String newBasecalls);
-    /**
-     * Modify the gapped basecall sequence of this read
-     * to change <strong>only the gaps</strong> of the given subsequence.
-     * Sometimes, assembly errors or new alignments mean that parts of underlying 
-     * reads may have to get re-gapped to make better alignments.  This method
-     * allows partial sequences to get modified so that their gapped sequence
-     * can be modified without changing the non-gap bases.
-     * @param gappedValidRangeToChange the subsequence of the read to change
-     * in gapped <strong>valid range</strong> coordinate system 
-     * (only has long as the length of the read).
-     * @param newBasecalls the new gapped sequence to replace the bases previously 
+     * @param newBasecalls the new gapped {@link NucleotideSequence} to replace the bases previously 
      * existing in the {@code gappedValidRangeToChange} range.  The new basecalls
      * do not have to have the same length as the old values but must have the same 
      * ungapped sequence.
@@ -153,7 +131,7 @@ public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable
      * does not match the ungapped version of the bases to be replaced.
      */
     AssembledReadBuilder<R> reAbacus(Range gappedValidRangeToChange,
-            List<Nucleotide> newBasecalls);
+            NucleotideSequence newBasecalls);
     /**
     * Get the gapped length of this read that
     * aligns to the reference.

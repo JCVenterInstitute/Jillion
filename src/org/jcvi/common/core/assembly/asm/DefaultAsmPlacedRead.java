@@ -294,15 +294,7 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
         * {@inheritDoc}
         */
         @Override
-        public Builder reAbacus(Range gappedValidRangeToChange, String newBasecalls){
-            delegateBuilder.reAbacus(gappedValidRangeToChange, newBasecalls);
-            return this;
-        }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public Builder reAbacus(Range gappedValidRangeToChange, List<Nucleotide> newBasecalls){
+        public Builder reAbacus(Range gappedValidRangeToChange, NucleotideSequence newBasecalls){
             delegateBuilder.reAbacus(gappedValidRangeToChange, newBasecalls);
             return this;
         }

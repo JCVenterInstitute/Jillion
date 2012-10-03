@@ -24,7 +24,6 @@
 package org.jcvi.common.core.symbol;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * {@code GlyphCodec} is an interface
