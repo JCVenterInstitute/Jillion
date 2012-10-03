@@ -135,23 +135,12 @@ public class TestDefaultScaffold {
         scaffold.convertContigRangeToScaffoldRange("contig1",Range.of(50,150));
     }
 
-    @Test(expected= IllegalArgumentException.class)
+    @Test(expected= NullPointerException.class)
     public void testInvalidContigDirectionCoordinateConversionTest() {
         ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
-        builder.add("contig1", Range.of(0,100), Direction.UNKNOWN);
-        Scaffold scaffold = builder.build();
+        builder.add("contig1", Range.of(0,100),null);
+        }
 
-        scaffold.convertContigRangeToScaffoldRange("contig1",Range.of(20,50));
-    }
-
-    @Test(expected= IllegalArgumentException.class)
-    public void testInvalidContigDirectionCoordinateConversionTest2() {
-        ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
-        builder.add("contig1", Range.of(0,100), Direction.NONE);
-        Scaffold scaffold = builder.build();
-
-        scaffold.convertContigRangeToScaffoldRange("contig1",Range.of(20,50));
-    }
     
     @Test
     public void testSingleForwardContigCoordinateConversionTest() {

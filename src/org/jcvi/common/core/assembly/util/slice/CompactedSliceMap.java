@@ -60,6 +60,9 @@ public final class CompactedSliceMap implements SliceMap {
     			Direction dir = read.getDirection();
     			
     			QualitySequence fullQualities = qualityDataStore.get(id);
+    			if(fullQualities ==null){
+    				throw new NullPointerException("could not get qualities for "+id);
+    			}
     			for(Nucleotide base : read.getNucleotideSequence()){
     				PhredQuality quality = qualityValueStrategy.getQualityFor(read, fullQualities, i);
     				if(builders[start+i] ==null){

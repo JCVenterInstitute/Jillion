@@ -45,6 +45,15 @@ public class DefaultPlacedContig implements PlacedContig{
      * @param direction the direction this contig faces.
      */
     public DefaultPlacedContig(String id, Range range,Direction direction){
+    	if(id ==null){
+    		throw new NullPointerException("id can not be null");
+    	}
+    	if(range ==null){
+    		throw new NullPointerException("range can not be null");
+    	}
+    	if(direction ==null){
+    		throw new NullPointerException("direction can not be null");
+    	}
         contigId = id;
         this.range = range;
         this.direction = direction;
@@ -81,10 +90,10 @@ public class DefaultPlacedContig implements PlacedContig{
         final int prime = 31;
         int result = 1;
         result = prime * result
-                + ((contigId == null) ? 0 : contigId.hashCode());
+                + contigId.hashCode();
         result = prime * result
-                + ((direction == null) ? 0 : direction.hashCode());
-        result = prime * result + ((range == null) ? 0 : range.hashCode());
+                + direction.hashCode();
+        result = prime * result + range.hashCode();
         return result;
     }
     @Override
@@ -99,25 +108,13 @@ public class DefaultPlacedContig implements PlacedContig{
             return false;
         }
         DefaultPlacedContig other = (DefaultPlacedContig) obj;
-        if (contigId == null) {
-            if (other.contigId != null){
-                return false;
-            }
-        } else if (!contigId.equals(other.contigId)){
+        if (!contigId.equals(other.contigId)){
             return false;            
         }
-        if (direction == null) {
-            if (other.direction != null){
-                return false;
-            }
-        } else if (!direction.equals(other.direction)){
+        if (!direction.equals(other.direction)){
             return false;            
         }
-        if (range == null) {
-            if (other.range != null){
-                return false;
-            }
-        } else if (!range.equals(other.range)){
+        if (!range.equals(other.range)){
             return false;
         }
         return true;

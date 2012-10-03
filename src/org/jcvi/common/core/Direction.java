@@ -26,11 +26,7 @@ import java.util.Map;
  * directionality for some sequence of bases.  Theoretically, the idea of
  * "forward" and "reverse" can often get rather confused.  In practice, these
  * ideas are used to standardize a set of sequences which share the same
- * orientation with respect to some reference.  Many sequences have no notion
- * of direction and this state is fully supported.
- * <p>
- * The primary uses for directionality are in finding or assigning sequence
- * mate pairs or in performing trimming with specific primers.
+ * orientation with respect to some reference.
  *
  * @author jsitz
  * @author dkatzel
@@ -46,18 +42,8 @@ public enum Direction
      * The sequence has an orientation opposite of the directionality of
      * the reference.
      */
-    REVERSE,
-    /**
-     * Sequence does not have a direction
-     * or the concept of
-     * direction is meaningless.
-     */
-    NONE,
-    /**
-     * The Sequence has a direction,
-     * but it is currently not known.
-     */
-    UNKNOWN;
+    REVERSE;
+    
     
     
     private static Map<String, Direction> PARSED_DIRECTIONS;
@@ -81,12 +67,6 @@ public enum Direction
     	PARSED_DIRECTIONS.put("tF", Direction.FORWARD);
     	PARSED_DIRECTIONS.put("tf", Direction.FORWARD);
     	PARSED_DIRECTIONS.put("0", Direction.FORWARD);
-    	
-    	PARSED_DIRECTIONS.put("n", Direction.NONE);
-    	PARSED_DIRECTIONS.put("N", Direction.NONE);
-    	
-    	PARSED_DIRECTIONS.put("U", Direction.UNKNOWN);
-    	PARSED_DIRECTIONS.put("u", Direction.UNKNOWN);
     }
     /**
      * Parse a string to determine the {@link Direction}.
@@ -109,8 +89,15 @@ public enum Direction
      * </ul>
      * @param dirString
      * @return
+     * @throws NullPointerException if dirString is null.
+     * @throws IllegalArgumentException if dirString is not 
+     * one of the specified values.
+     * 
      */
     public static Direction parseSequenceDirection(String dirString){
+    	if(dirString ==null){
+    		throw new NullPointerException("dirString can not be null");
+    	}
         if(PARSED_DIRECTIONS.containsKey(dirString)){
         	return PARSED_DIRECTIONS.get(dirString);
         }  
@@ -118,7 +105,7 @@ public enum Direction
         if(PARSED_DIRECTIONS.containsKey(firstLetter)){
         	return PARSED_DIRECTIONS.get(firstLetter);
         } 
-        return Direction.UNKNOWN;
+        throw new IllegalArgumentException("unknown dirString : "+ dirString);
         
         
     }
