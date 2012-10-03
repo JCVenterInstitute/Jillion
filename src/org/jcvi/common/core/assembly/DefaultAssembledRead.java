@@ -33,7 +33,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 
 
-public final class DefaultPlacedRead implements AssembledRead {
+public final class DefaultAssembledRead implements AssembledRead {
 
     private final long start;
     private final byte directionOrdinal;
@@ -57,7 +57,7 @@ public final class DefaultPlacedRead implements AssembledRead {
                  clearRange, ungappedFullLength);
     }
     
-    DefaultPlacedRead(String id, ReferenceMappedNucleotideSequence sequence, long start, Direction sequenceDirection, int ungappedFullLength, Range validRange){
+    DefaultAssembledRead(String id, ReferenceMappedNucleotideSequence sequence, long start, Direction sequenceDirection, int ungappedFullLength, Range validRange){
        this.id = id;
        this.sequence = sequence;
         this.start= start;
@@ -329,7 +329,7 @@ public final class DefaultPlacedRead implements AssembledRead {
             ReferenceMappedNucleotideSequence updatedEncodedBasecalls = new NucleotideSequenceBuilder(currentBasecallsAsString())
             																.setReferenceHint(reference, offset)
             																.buildReferenceEncodedNucleotideSequence();
-            return new DefaultPlacedRead(readId, updatedEncodedBasecalls, offset, dir, ungappedFullLength,clearRange);
+            return new DefaultAssembledRead(readId, updatedEncodedBasecalls, offset, dir, ungappedFullLength,clearRange);
         }
 
         /**

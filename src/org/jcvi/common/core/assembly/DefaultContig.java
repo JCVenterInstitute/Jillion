@@ -127,7 +127,7 @@ public final class DefaultContig<P extends AssembledRead> extends AbstractContig
         @Override
         protected AssembledReadBuilder<AssembledRead> createPlacedReadBuilder(
                 AssembledRead read) {
-            return DefaultPlacedRead.createBuilder(
+            return DefaultAssembledRead.createBuilder(
                     getConsensusBuilder().build(), 
                     read.getId(), 
                     read.getNucleotideSequence().toString(), 
@@ -143,7 +143,7 @@ public final class DefaultContig<P extends AssembledRead> extends AbstractContig
         protected AssembledReadBuilder<AssembledRead> createPlacedReadBuilder(
                 String id, int offset, Range validRange, String basecalls,
                 Direction dir, int fullUngappedLength) {
-            return DefaultPlacedRead.createBuilder(
+            return DefaultAssembledRead.createBuilder(
                     getConsensusBuilder().build(), 
                     id, 
                     basecalls, 

@@ -31,7 +31,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyTestUtil;
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.DefaultPlacedRead;
+import org.jcvi.common.core.assembly.DefaultAssembledRead;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -403,7 +403,7 @@ public abstract class TestContigFileParser {
         "AAGGGCAGCTCTTCGGACCCTGCCAATAAATATTATACAGACTCTCAGAGTTACTATAAT" +
         "ATTGATACT").build();
                         
-    AssembledRead CVGWB15T06B037761RM = DefaultPlacedRead.createBuilder(contigConsensus, "CVGWB15T06B037761RM", 
+    AssembledRead CVGWB15T06B037761RM = DefaultAssembledRead.createBuilder(contigConsensus, "CVGWB15T06B037761RM", 
             "AAGTTTAATACTGATAATAAGGTTATATACACCACAGAAGTGGCTTCAAAGCTTAATTTT" +
             "AAGTTGTGTTGTTTGGCCTTTAAGAATGCTTTACAGACGTTTAATTGGAGTGTTGTGTAC" +
             "AGGGGCTTCTTTCTAGTGGCAACAGTCTTTTTATTATGG-TTTAACTTTTTGTATGCCAA" +
@@ -422,7 +422,7 @@ public abstract class TestContigFileParser {
             .build();
    
     
-    AssembledRead CVGWB47T06D1122735FMB = DefaultPlacedRead.createBuilder(contigConsensus, "CVGWB47T06D1122735FMB",             
+    AssembledRead CVGWB47T06D1122735FMB = DefaultAssembledRead.createBuilder(contigConsensus, "CVGWB47T06D1122735FMB",             
                          "GTACCTATGTAGAAAATAACGGTCACCCGAAATTAGATTGGCTAGACCTTGACCCGCAAT" +
                          "TGTGTAATTCAGGAA-GGATTTCCGCAAAGAGTGGTAACTCTCTCTTTAGGAGTTTCCAT" +
                          "TTTACTGATTTTTACAACTACACAGGAGAAGGCGACCAAATTATATTTTATGAAGGAGTT" +

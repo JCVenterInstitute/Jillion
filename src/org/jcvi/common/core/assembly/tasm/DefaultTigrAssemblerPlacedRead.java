@@ -27,7 +27,7 @@ import java.util.Map.Entry;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.DefaultPlacedRead;
+import org.jcvi.common.core.assembly.DefaultAssembledRead;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.AssembledReadBuilder;
 import org.jcvi.common.core.assembly.ReadInfo;
@@ -218,7 +218,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
                 String readId,String validBases,
                 int offset, Direction dir, Range clearRange,
                 int ungappedFullLength) {
-            this.delegate = DefaultPlacedRead.createBuilder(reference, readId, validBases, offset, dir, clearRange, ungappedFullLength);
+            this.delegate = DefaultAssembledRead.createBuilder(reference, readId, validBases, offset, dir, clearRange, ungappedFullLength);
         }
 
         /**
