@@ -323,7 +323,7 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         * {@inheritDoc}
         */
         @Override
-        public void visitQualityLine(int qualLeft, int qualRight,
+        public synchronized void visitQualityLine(int qualLeft, int qualRight,
                 int alignLeft, int alignRight) {
         	 ClipPointsType clipPointsType = ConsedUtil.ClipPointsType.getType(qualLeft, qualRight, alignLeft, alignRight);
      		if(clipPointsType !=ClipPointsType.VALID){
