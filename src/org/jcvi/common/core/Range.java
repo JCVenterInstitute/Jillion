@@ -726,8 +726,8 @@ public abstract class Range implements Rangeable,Iterable<Long>
     }
 
     /**
-     * Checks if this range is empty.
-     *
+     * Checks if this range is empty (has length of 0).
+     * 
      * @return <code>true</code> if the range is empty, <code>false</code>
      * otherwise.
      */
