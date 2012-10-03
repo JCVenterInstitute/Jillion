@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.DefaultPlacedRead;
+import org.jcvi.common.core.assembly.DefaultAssembledRead;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.common.core.testUtil.TestUtil;
@@ -44,14 +44,14 @@ public class TestDefaultPlacedRead {
     long start = 100;
     long length = 200L;
     Range validRange = Range.of(start, length);
-    DefaultPlacedRead sut ;
+    DefaultAssembledRead sut ;
     		String id = "id";
     @Before
     public void setup(){
         sequence = createMock(ReferenceMappedNucleotideSequence.class);
         expect(sequence.getLength()).andStubReturn(length);
         replay(sequence);
-        sut = new DefaultPlacedRead(id,sequence, start,dir,ungappedLength,validRange);
+        sut = new DefaultAssembledRead(id,sequence, start,dir,ungappedLength,validRange);
     
     }
     @Test
@@ -83,23 +83,23 @@ public class TestDefaultPlacedRead {
     
     @Test
     public void sameValuesAreEqual(){
-        AssembledRead sameValues =  new DefaultPlacedRead(id, sequence, start,dir,500,validRange);
+        AssembledRead sameValues =  new DefaultAssembledRead(id, sequence, start,dir,500,validRange);
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);
     }
     @Test
     public void differentReadIsNotEqual(){
         ReferenceMappedNucleotideSequence differentSequence = createMock(ReferenceMappedNucleotideSequence.class);
-        AssembledRead hasDifferentRead =  new DefaultPlacedRead(id, differentSequence, start,dir,500,validRange);
+        AssembledRead hasDifferentRead =  new DefaultAssembledRead(id, differentSequence, start,dir,500,validRange);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasDifferentRead);
     }
     @Test
     public void differentIdIsNotEqual(){
-         AssembledRead hasDifferentRead =  new DefaultPlacedRead("different"+id, sequence, start,dir,500,validRange);
+         AssembledRead hasDifferentRead =  new DefaultAssembledRead("different"+id, sequence, start,dir,500,validRange);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasDifferentRead);
     }
     @Test
     public void differentStartIsNotEqual(){
-        AssembledRead hasDifferentStart =  new DefaultPlacedRead(id,sequence, start-1,dir,500,validRange);
+        AssembledRead hasDifferentStart =  new DefaultAssembledRead(id,sequence, start-1,dir,500,validRange);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasDifferentStart);
     }
     

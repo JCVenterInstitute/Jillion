@@ -24,7 +24,7 @@ import java.util.Map.Entry;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
-import org.jcvi.common.core.assembly.DefaultPlacedRead;
+import org.jcvi.common.core.assembly.DefaultAssembledRead;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.tasm.TigrAssemblerPlacedReadAdapter;
 import org.jcvi.common.core.assembly.tasm.TigrAssemblerReadAttribute;
@@ -56,7 +56,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 	
 	@Test
 	public void adaptedReadShouldDelegateAllPlacedReadMethods(){
-		AssembledRead delegate = DefaultPlacedRead.createBuilder(consensus, id, readSequence, offset, 
+		AssembledRead delegate = DefaultAssembledRead.createBuilder(consensus, id, readSequence, offset, 
 		        Direction.FORWARD,validRange, ungappedLength)
 		        .build();
 		TigrAssemblerPlacedReadAdapter sut = new TigrAssemblerPlacedReadAdapter(delegate);
@@ -69,7 +69,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 	}
 	@Test
 	public void reverseReadShouldHaveSwappedSeqLeftandSeqRightAttributes(){
-	    AssembledRead delegate = DefaultPlacedRead.createBuilder(consensus, id, readSequence, offset, 
+	    AssembledRead delegate = DefaultAssembledRead.createBuilder(consensus, id, readSequence, offset, 
                 Direction.REVERSE,validRange, ungappedLength)
                 .build();
 		TigrAssemblerPlacedReadAdapter sut = new TigrAssemblerPlacedReadAdapter(delegate);

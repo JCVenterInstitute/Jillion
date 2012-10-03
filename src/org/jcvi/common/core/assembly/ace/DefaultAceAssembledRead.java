@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.DefaultPlacedRead;
+import org.jcvi.common.core.assembly.DefaultAssembledRead;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.AssembledReadBuilder;
 import org.jcvi.common.core.assembly.ReadInfo;
@@ -195,7 +195,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
         public Builder(NucleotideSequence reference, String readId,NucleotideSequence validBases,
                             int offset, Direction dir, Range clearRange,PhdInfo phdInfo,
                             int ungappedFullLength){
-            this.delegateBuilder = DefaultPlacedRead.createBuilder(
+            this.delegateBuilder = DefaultAssembledRead.createBuilder(
                     reference, readId, validBases, offset,
                     dir, clearRange, ungappedFullLength);
             this.phdInfo = phdInfo;
