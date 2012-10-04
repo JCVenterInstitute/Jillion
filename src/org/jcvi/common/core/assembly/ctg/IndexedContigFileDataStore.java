@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.ContigDataStore;
@@ -38,6 +39,8 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code IndexedContigFileDataStore} is an implementation of 
@@ -50,20 +53,22 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  *
  */
-public class IndexedContigFileDataStore implements ContigDataStore<AssembledRead, Contig<AssembledRead>>{
+public class IndexedContigFileDataStore implements CtgContigDataStore{
 
     private final File file;
     private final Map<String, Range> mappedRanges;
     private volatile boolean closed;
+    private final NucleotideSequenceFastaDataStore fullLengthSequenceDataStore;
     /**
      * Construct an new instance of IndexedContigFileDataStore and create
      * the internal index.
      * @param file the contig file to create the datastore for.
      * @throws FileNotFoundException if the contig file does not exist.
      */
-    public IndexedContigFileDataStore(File file) throws FileNotFoundException{
+    public IndexedContigFileDataStore(NucleotideSequenceFastaDataStore fullLengthSequenceDataStore, File file) throws FileNotFoundException{
         this.file = file;
         this.mappedRanges = new LinkedHashMap<String, Range>();
+        this.fullLengthSequenceDataStore = fullLengthSequenceDataStore;
         ContigFileParser.parse(file,
                                         new IndexedContigFileVisitor(mappedRanges));
         
@@ -90,7 +95,7 @@ public class IndexedContigFileDataStore implements ContigDataStore<AssembledRead
         }
         InputStream inputStream=null;
         try {
-            SingleContigFileVisitor visitor = new SingleContigFileVisitor();
+            SingleContigFileVisitor visitor = new SingleContigFileVisitor(fullLengthSequenceDataStore);
             inputStream = IOUtil.createInputStreamFromFile(file,(int)range.getBegin(), (int)range.getLength());
             ContigFileParser.parse(inputStream,visitor);
             return visitor.getContigToReturn();
@@ -121,7 +126,11 @@ public class IndexedContigFileDataStore implements ContigDataStore<AssembledRead
     private static class SingleContigFileVisitor extends AbstractContigFileVisitorBuilder{
         private Contig<AssembledRead> contigToReturn;
 
-        @Override
+        public SingleContigFileVisitor(
+				NucleotideSequenceFastaDataStore fullLengthSequenceDataStore) {
+			super(fullLengthSequenceDataStore);
+		}
+		@Override
         protected synchronized void addContig(Contig<AssembledRead>  contig) {
             if(contigToReturn !=null){
                 throw new IllegalStateException("can not add more than one contig");
@@ -135,11 +144,12 @@ public class IndexedContigFileDataStore implements ContigDataStore<AssembledRead
     }
     
     
-    private static class IndexedContigFileVisitor extends AbstractContigFileVisitorBuilder{
+    private static class IndexedContigFileVisitor extends AbstractContigFileVisitor{
 
         private int sizeOfCurrentContig;
         private int currentStartOffset;
         private int currentLineLength;
+        private String currentContigId;
         private final Map<String, Range> mappedRanges;
         
         IndexedContigFileVisitor(Map<String, Range> mappedRanges){
@@ -157,13 +167,27 @@ public class IndexedContigFileDataStore implements ContigDataStore<AssembledRead
         }
 
         @Override
-        protected void addContig(Contig<AssembledRead> contig) {
-            int actualLengthOfContig = sizeOfCurrentContig-currentLineLength;
-            mappedRanges.put(contig.getId(), new Range.Builder(actualLengthOfContig)
-            					.shift(currentStartOffset).build());
-            currentStartOffset+=actualLengthOfContig;
-            resetCurrentContigSize(currentLineLength);
-        }
+		protected void visitRead(String readId, int offset, Range validRange,
+				NucleotideSequence basecalls, Direction dir) {
+			//no-op
+			
+		}
+		@Override
+		protected void visitEndOfContig() {
+			 int actualLengthOfContig = sizeOfCurrentContig-currentLineLength;
+	            mappedRanges.put(currentContigId, new Range.Builder(actualLengthOfContig)
+	            					.shift(currentStartOffset).build());
+	            currentStartOffset+=actualLengthOfContig;
+	            resetCurrentContigSize(currentLineLength);
+			
+		}
+		@Override
+		protected void visitBeginContig(String contigId,
+				NucleotideSequence consensus) {
+			//no-op
+			currentContigId=contigId;
+		}
+		
         
     }
 

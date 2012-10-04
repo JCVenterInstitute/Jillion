@@ -31,23 +31,35 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
-public abstract class AbstractTestContigFileDataStore extends TestContigFileParser{
+public abstract class AbstractTestContigFileDataStore extends TestAbstractContigFileParser{
 
+	protected final NucleotideSequenceFastaDataStore fullLengthSequences;
+	private ContigDataStore<AssembledRead, Contig<AssembledRead>> dataStore;
+	
+	public AbstractTestContigFileDataStore() throws FileNotFoundException, IOException{
+		fullLengthSequences = DefaultNucleotideSequenceFastaFileDataStore.create(RESOURCES.getFile("files/gcv_23918.raw.seq.fasta.fasta"));
+		dataStore = buildContigFileDataStore(fullLengthSequences, getFile() );
+	}
+	@After
+	public void closeDataStores(){
+		IOUtil.closeAndIgnoreErrors(dataStore, fullLengthSequences);
+	}
     @Test
     public void thereAre4Contigs() throws DataStoreException, IOException{
-        ContigDataStore<AssembledRead, Contig<AssembledRead>> dataStore = buildContigFileDataStore(getFile());
         assertEquals(4, dataStore.getNumberOfRecords());
     }
     @Override
     protected Contig getContig925From(File file) throws FileNotFoundException {
-        ContigDataStore<AssembledRead, Contig<AssembledRead>> dataStore = buildContigFileDataStore(file);
         return getContig(dataStore, "925");
     }
     @Override
     protected Contig getContig928From(File file) throws Exception{
-        ContigDataStore<AssembledRead, Contig<AssembledRead>> dataStore = buildContigFileDataStore(file);
         return getContig(dataStore, "928");
     }
     private Contig getContig(
@@ -60,6 +72,6 @@ public abstract class AbstractTestContigFileDataStore extends TestContigFilePars
         }
     }
     protected abstract ContigDataStore<AssembledRead, Contig<AssembledRead>> buildContigFileDataStore(
-            File file) throws FileNotFoundException;
+    		NucleotideSequenceFastaDataStore fullLengthSequences, File contigFile) throws FileNotFoundException;
 
 }

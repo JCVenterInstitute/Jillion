@@ -39,12 +39,12 @@ import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public abstract class TestContigFileParser {
+public abstract class TestAbstractContigFileParser {
     private String pathToFile = "files/gcv_23918.contig";
     int contig_id=925;
     int contig_length = 21249;
     int numberOfReads= 210;
-    ResourceFileServer RESOURCES = new ResourceFileServer(TestContigFileParser.class);
+    ResourceFileServer RESOURCES = new ResourceFileServer(TestAbstractContigFileParser.class);
 
                         NucleotideSequence contigConsensus = new NucleotideSequenceBuilder(
         "TAAAGTGGCCACTAAATATGTTAAGAAGGTTACTGGCAAACTAGCCGTGCGCTTTAAGGC" +
@@ -493,7 +493,7 @@ public abstract class TestContigFileParser {
 
     protected abstract Contig getContig928From(File file) throws Exception;
     
-    public File getFile() throws IOException {
+    protected final File getFile() throws IOException {
         return RESOURCES.getFile(pathToFile);
     }
 

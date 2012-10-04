@@ -25,12 +25,14 @@ package org.jcvi.common.core.assembly.ctg;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 public abstract class  AbstractContigFileVisitor implements ContigFileVisitor{
     private boolean initialized;
     private String currentContigId;
     private boolean readingConsensus=true;
-    private StringBuilder currentBasecalls = new StringBuilder();
+    private NucleotideSequenceBuilder currentBasecalls = new NucleotideSequenceBuilder();
     
     private int currentReadOffset;
     private String currentReadId ;
@@ -76,20 +78,20 @@ public abstract class  AbstractContigFileVisitor implements ContigFileVisitor{
             visitEndOfContig();
         }
         currentContigId = contigId;
-        currentBasecalls = new StringBuilder();
+        currentBasecalls = new NucleotideSequenceBuilder();
         readingConsensus=true;
     }
 
-    protected abstract void visitRead(String readId, int offset, Range validRange, String basecalls, Direction dir);
+    protected abstract void visitRead(String readId, int offset, Range validRange, NucleotideSequence basecalls, Direction dir);
     protected abstract void visitEndOfContig();
-    protected abstract void visitBeginContig(String contigId, String consensus);
+    protected abstract void visitBeginContig(String contigId, NucleotideSequence consensus);
     
     @Override
     public void visitNewRead(String seqId, int offset, Range validRange,
             Direction dir) {
         throwExceptionIfInitialized();
         if(readingConsensus){  
-            visitBeginContig(currentContigId, currentBasecalls.toString());
+            visitBeginContig(currentContigId, currentBasecalls.build());
             
             readingConsensus =false;
         }
@@ -101,12 +103,12 @@ public abstract class  AbstractContigFileVisitor implements ContigFileVisitor{
         this.currentReadOffset = offset;
         this.currentReadSequenceDirection = dir;
         this.currentReadValidRange= validRange;
-        currentBasecalls = new StringBuilder();
+        currentBasecalls = new NucleotideSequenceBuilder();
         
     }
 
     private void visitCurrentRead() {
-        visitRead(currentReadId, currentReadOffset, currentReadValidRange, currentBasecalls.toString(), currentReadSequenceDirection);
+        visitRead(currentReadId, currentReadOffset, currentReadValidRange, currentBasecalls.build(), currentReadSequenceDirection);
     }
 
     

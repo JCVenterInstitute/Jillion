@@ -21,6 +21,7 @@ package org.jcvi.common.core.assembly.tasm;
 
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.assembly.tasm.DefaultTigrAssemblerFileContigDataStore;
 import org.jcvi.common.core.assembly.tasm.TigrAssemblerContig;
@@ -35,11 +36,11 @@ public class TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes {
 
 	 private static final FileServer RESOURCES = new ResourceFileServer(TestTigrAssemblerContigDataStore.class);
 	    
-	    private static final DefaultContigFileDataStore contigDataStore;
+	    private static final ContigDataStore<AssembledRead, Contig<AssembledRead>> contigDataStore;
 	    private static final DefaultTigrAssemblerFileContigDataStore tasmDataStore;
 	    static{
 	        try {
-	            contigDataStore= new DefaultContigFileDataStore(RESOURCES.getFile("files/giv-15050.contig"));
+	            contigDataStore= DefaultContigFileDataStore.create(RESOURCES.getFile("files/giv-15050.contig"));
 	        } catch (Exception e) {
 	            throw new IllegalStateException("could not parse contig file",e);
 	        } 

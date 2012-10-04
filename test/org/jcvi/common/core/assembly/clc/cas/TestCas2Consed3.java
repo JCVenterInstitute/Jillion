@@ -52,7 +52,7 @@ public class TestCas2Consed3 {
 	 TemporaryDirectoryFileServer tempDir;
 	 @Before
 	    public void setup() throws IOException{
-	        expectedDataStore = new DefaultContigFileDataStore(RESOURCES.getFile("files/expected.contig"));
+	        expectedDataStore = DefaultContigFileDataStore.create(RESOURCES.getFile("files/expected.contig"));
 	        tempDir = DirectoryFileServer.createTemporaryDirectoryFileServer();
 	   	    
 	 }
