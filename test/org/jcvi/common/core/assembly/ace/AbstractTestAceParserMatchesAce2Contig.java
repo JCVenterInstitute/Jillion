@@ -33,6 +33,7 @@ import java.util.List;
 
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
@@ -43,7 +44,7 @@ import org.junit.After;
 import org.junit.Test;
 
 public abstract class  AbstractTestAceParserMatchesAce2Contig {
-    DefaultContigFileDataStore expectedContigDataStore;
+    ContigDataStore<AssembledRead, Contig<AssembledRead>> expectedContigDataStore;
     ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestAceParserMatchesAce2Contig.class);
     private final String pathToAceFile;
     
@@ -61,8 +62,7 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
 			);
     
     AbstractTestAceParserMatchesAce2Contig(String aceFile, String contigFile) throws IOException, DataStoreException{
-        this.expectedContigDataStore = new DefaultContigFileDataStore(
-        		RESOURCES.getFileAsStream(contigFile));
+        this.expectedContigDataStore = DefaultContigFileDataStore.create(RESOURCES.getFile(contigFile));
         pathToAceFile = aceFile;
         sut = createDataStoreFor(RESOURCES.getFile(aceFile));
     }

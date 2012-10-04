@@ -28,22 +28,103 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
 import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreAdapter;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 
 public abstract class AbstractContigFileVisitorBuilder extends AbstractContigFileVisitor{
 
+	private final DataStore<Long> fullRangeLengthDataStore;
+	
     private DefaultContig.Builder currentContigBuilder;
     
     protected abstract void  addContig(Contig<AssembledRead> contig);
+    
+    public AbstractContigFileVisitorBuilder(){
+    	this((DataStore<Long>)null);
+    }
+    public AbstractContigFileVisitorBuilder(DataStore<Long> fullRangeLengthDataStore){
+    	this.fullRangeLengthDataStore = fullRangeLengthDataStore;
+    }
+    
+    @SuppressWarnings("unchecked")
+	public AbstractContigFileVisitorBuilder(NucleotideSequenceDataStore fullLengthSequenceDataStore){
+    	this.fullRangeLengthDataStore = (DataStore<Long>)DataStoreAdapter.adapt(DataStore.class, fullLengthSequenceDataStore, 
+    			new DataStoreAdapter.AdapterCallback<NucleotideSequence, Long>() {
 
+					@Override
+					public Long get(NucleotideSequence from) {
+						return from.getUngappedLength();
+					}
+    		
+		});
+    }
+    
+    @SuppressWarnings("unchecked")
+	public AbstractContigFileVisitorBuilder(QualitySequenceDataStore fullLengthQualityDataStore){
+    	this.fullRangeLengthDataStore = (DataStore<Long>)DataStoreAdapter.adapt(DataStore.class, fullLengthQualityDataStore, 
+    			new DataStoreAdapter.AdapterCallback<QualitySequence, Long>() {
+
+					@Override
+					public Long get(QualitySequence from) {
+						return from.getLength();
+					}
+    		
+		});
+    }
+    @SuppressWarnings("unchecked")
+	public AbstractContigFileVisitorBuilder(NucleotideSequenceFastaDataStore fullLengthSequenceDataStore){
+    	this.fullRangeLengthDataStore = (DataStore<Long>)DataStoreAdapter.adapt(DataStore.class, fullLengthSequenceDataStore, 
+    			new DataStoreAdapter.AdapterCallback<NucleotideSequenceFastaRecord, Long>() {
+
+					@Override
+					public Long get(NucleotideSequenceFastaRecord from) {
+						return from.getSequence().getUngappedLength();
+					}
+    		
+		});
+    }
+    
+    @SuppressWarnings("unchecked")
+	public AbstractContigFileVisitorBuilder(QualitySequenceFastaDataStore fullLengthQualityDataStore){
+    	this.fullRangeLengthDataStore = (DataStore<Long>)DataStoreAdapter.adapt(DataStore.class, fullLengthQualityDataStore, 
+    			new DataStoreAdapter.AdapterCallback<QualitySequenceFastaRecord, Long>() {
+
+					@Override
+					public Long get(QualitySequenceFastaRecord from) {
+						return from.getSequence().getLength();
+					}
+    		
+		});
+    }
     @Override
     protected void visitRead(String readId, int offset, Range validRange,
-            String basecalls, Direction dir) {
-       
-        currentContigBuilder.addRead(readId, offset, validRange,basecalls,dir,(int)validRange.getEnd()); 
-        
-        
+    		NucleotideSequence basecalls, Direction dir) {
+    	final int fullLength;
+    	if(fullRangeLengthDataStore ==null){
+    		//fake validRangelength
+    		fullLength =(int)validRange.getEnd();
+    	}else{
+    		try {
+				Long length =fullRangeLengthDataStore.get(readId);
+				if(length==null){
+					throw new IllegalStateException("could not find full length value from datastore for read id "+readId);
+				}
+				fullLength=length.intValue();
+			} catch (DataStoreException e) {
+				throw new IllegalStateException("error getting full length value from datastore for read id "+ readId,e);
+			}
+    		
+    	}
+        currentContigBuilder.addRead(readId, offset, validRange,basecalls.toString(),dir,fullLength); 
     }
 
     @Override
@@ -52,12 +133,8 @@ public abstract class AbstractContigFileVisitorBuilder extends AbstractContigFil
     }
 
     @Override
-    protected void visitBeginContig(String contigId, String consensus) {
-        currentContigBuilder = new DefaultContig.Builder(contigId,
-                encodedConsensus(consensus));
-    }
-    private NucleotideSequence encodedConsensus(String basecalls) {
-        return new NucleotideSequenceBuilder(basecalls).build();
+    protected void visitBeginContig(String contigId, NucleotideSequence consensus) {
+        currentContigBuilder = new DefaultContig.Builder(contigId, consensus);
     }
 
     /**

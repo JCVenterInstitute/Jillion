@@ -284,7 +284,7 @@ public class QualityClassContigTrimmer{
                 qualityClassesToTrim.add(QualityClass.valueOf(Byte.parseByte(qualityClassAsString)));
             }
             ReadTrimMap trimMap = ReadTrimUtil.readReadTrimsFromFile(trimFile);
-            ContigDataStore<AssembledRead, Contig<AssembledRead>> contigDataStore = new DefaultContigFileDataStore(
+            ContigDataStore<AssembledRead, Contig<AssembledRead>> contigDataStore = DefaultContigFileDataStore.create(
                     contigFile);
             QualitySequenceDataStore qualityFastaMap = 
                 CachedDataStore.create(QualitySequenceDataStore.class, 

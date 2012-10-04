@@ -31,6 +31,7 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ctg.CtgFileWriter;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -41,13 +42,13 @@ import static org.junit.Assert.*;
 public class TestContigFileWriter {
     ByteArrayOutputStream out;
     CtgFileWriter sut;
-    static DefaultContigFileDataStore dataStore;
+    static CtgContigDataStore dataStore;
     private static String pathToFile = "files/gcv_23918.contig";
     private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestContigFileWriter.class);
     
     @BeforeClass
     public static void parseContigs() throws IOException{
-       dataStore = new DefaultContigFileDataStore(RESOURCES.getFileAsStream(pathToFile));
+       dataStore = DefaultContigFileDataStore.create(RESOURCES.getFile(pathToFile));
     }
     @Before
     public void setup(){
@@ -56,7 +57,7 @@ public class TestContigFileWriter {
     }
     
     @Test
-    public void write() throws IOException{
+    public void write() throws IOException, DataStoreException{
     	StreamingIterator<Contig<AssembledRead>> iter = dataStore.iterator();
     	try{
         while(iter.hasNext()){

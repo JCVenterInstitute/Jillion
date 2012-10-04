@@ -27,6 +27,7 @@ import java.io.InputStream;
 import org.jcvi.assembly.ace.Ace2Contig;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.AceAssembledRead;
@@ -74,7 +75,7 @@ public class TestAce2Contig {
         
         FileInputStream actualStream = new FileInputStream(actualContigFile);
        IOUtil.closeAndIgnoreErrors(actualStream);
-      DefaultContigFileDataStore contigFileDataStore = new DefaultContigFileDataStore(actualContigFile);
+      ContigDataStore<AssembledRead, Contig<AssembledRead>> contigFileDataStore = DefaultContigFileDataStore.create(actualContigFile);
       Contig<AssembledRead> contig = contigFileDataStore.get("Contig1");
       
       AceFileContigDataStore aceContigDataStore = DefaultAceFileDataStore.create(aceFile);

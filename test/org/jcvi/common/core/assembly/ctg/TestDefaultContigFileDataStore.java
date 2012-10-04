@@ -25,14 +25,24 @@ package org.jcvi.common.core.assembly.ctg;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
+import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.common.core.assembly.Contig;
+import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 
 public class TestDefaultContigFileDataStore extends AbstractTestContigFileDataStore{
    
-    @Override
-    protected DefaultContigFileDataStore buildContigFileDataStore(
-            File file) throws FileNotFoundException {
-        return new DefaultContigFileDataStore(file);
+    public TestDefaultContigFileDataStore() throws FileNotFoundException,
+			IOException {
+		super();
+	}
+
+	@Override
+    protected ContigDataStore<AssembledRead, Contig<AssembledRead>> buildContigFileDataStore(
+    		NucleotideSequenceFastaDataStore fullLengthSequences, File file) throws FileNotFoundException {
+        return DefaultContigFileDataStore.create(fullLengthSequences, file);
     }
 }

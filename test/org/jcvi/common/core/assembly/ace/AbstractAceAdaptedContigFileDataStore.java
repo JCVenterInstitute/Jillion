@@ -30,6 +30,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ctg.AbstractContigFileVisitor;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 
@@ -48,7 +49,7 @@ public abstract class AbstractAceAdaptedContigFileDataStore extends AbstractCont
     }
 
     @Override
-    protected void visitBeginContig(String contigId, String consensus) {
+    protected void visitBeginContig(String contigId, NucleotideSequence consensus) {
         contigBuilder = DefaultAceContig.createBuilder(contigId, consensus);
     }
 
@@ -60,7 +61,7 @@ public abstract class AbstractAceAdaptedContigFileDataStore extends AbstractCont
 
     @Override
     protected void visitRead(String readId, int offset, Range validRange,
-            String basecalls, Direction dir) {
+    		NucleotideSequence basecalls, Direction dir) {
         
         PhdInfo info =new DefaultPhdInfo(readId, readId+".phd.1", phdDate);
         try {
