@@ -81,7 +81,7 @@ final class IndexedAceFileContig implements AceContig{
 	}
 
 	@Override
-	public int getNumberOfReads() {
+	public long getNumberOfReads() {
 		return readInfoMap.size();
 	}
 

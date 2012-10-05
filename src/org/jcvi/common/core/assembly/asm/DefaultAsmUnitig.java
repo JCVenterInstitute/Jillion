@@ -50,7 +50,7 @@ public class DefaultAsmUnitig implements AsmUnitig{
     * {@inheritDoc}
     */
     @Override
-    public int getNumberOfReads() {
+    public long getNumberOfReads() {
         return delegate.getNumberOfReads();
     }
 

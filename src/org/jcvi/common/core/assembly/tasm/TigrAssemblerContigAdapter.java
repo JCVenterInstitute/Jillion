@@ -188,7 +188,7 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	}
 
 	@Override
-	public int getNumberOfReads() {
+	public long getNumberOfReads() {
 		return delegate.getNumberOfReads();
 	}
 
