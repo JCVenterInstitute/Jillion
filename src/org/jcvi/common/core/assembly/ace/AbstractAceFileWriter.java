@@ -35,7 +35,7 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 		this.createBsRecords = createBsRecords;
 	}
 
-	protected void writeAceContigHeader(Writer tempWriter, String contigId, long consensusLength, int numberOfReads,
+	protected void writeAceContigHeader(Writer tempWriter, String contigId, long consensusLength, long numberOfReads,
 	    		int numberOfBaseSegments, boolean isComplimented) throws IOException{
 	    	String formattedHeader = String.format("CO %s %d %d %d %s\n", 
 	                contigId, 
@@ -229,7 +229,7 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 	    
 	    public static List<IdAlignedReadInfo> getSortedAssembledFromsFor(
 	            Contig<AceAssembledRead> contig){
-	        List<IdAlignedReadInfo> assembledFroms = new ArrayList<IdAlignedReadInfo>(contig.getNumberOfReads());
+	        List<IdAlignedReadInfo> assembledFroms = new ArrayList<IdAlignedReadInfo>((int)contig.getNumberOfReads());
 	        StreamingIterator<AceAssembledRead> iter = null;
 	        try{
 	        	iter = contig.getReadIterator();

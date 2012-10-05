@@ -124,7 +124,7 @@ public class AbacusErrorFinder {
     }
     private <P extends AssembledRead, C extends Contig<P>> List<Range> getUngappedCandidateRanges(C contig) {
         
-        List<Range> gapRangesPerRead = new ArrayList<Range>(contig.getNumberOfReads());
+        List<Range> gapRangesPerRead = new ArrayList<Range>((int)contig.getNumberOfReads());
         StreamingIterator<P> readIterator = null;
         try{
         	readIterator = contig.getReadIterator();

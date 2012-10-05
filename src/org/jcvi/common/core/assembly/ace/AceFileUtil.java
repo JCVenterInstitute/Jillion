@@ -256,7 +256,7 @@ public final class AceFileUtil {
         readRecord.append(String.format("%s%n",createPhdRecord(phdInfo)));
         return readRecord.toString();
     }
-    public static void writeAceContigHeader(String contigId, long consensusLength, int numberOfReads,
+    public static void writeAceContigHeader(String contigId, long consensusLength, long numberOfReads,
     		int numberOfBaseSegments, boolean isComplimented, OutputStream out) throws IOException{
     	writeString(String.format(CONTIG_HEADER, 
                 contigId, 
@@ -359,7 +359,7 @@ public final class AceFileUtil {
     }
     private static List<IdAlignedReadInfo> getSortedAssembledFromsFor(
             Contig<AceAssembledRead> contig){
-        List<IdAlignedReadInfo> assembledFroms = new ArrayList<IdAlignedReadInfo>(contig.getNumberOfReads());
+        List<IdAlignedReadInfo> assembledFroms = new ArrayList<IdAlignedReadInfo>((int)contig.getNumberOfReads());
         StreamingIterator<AceAssembledRead> iter = null;
         try{
         	iter = contig.getReadIterator();

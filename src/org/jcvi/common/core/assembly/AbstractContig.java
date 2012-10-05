@@ -63,7 +63,7 @@ public abstract class AbstractContig<T extends AssembledRead> implements Contig<
     }
 
     @Override
-    public int getNumberOfReads() {
+    public long getNumberOfReads() {
         return mapById.size();
     }
     @Override

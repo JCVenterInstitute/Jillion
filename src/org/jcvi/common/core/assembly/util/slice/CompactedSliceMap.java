@@ -38,7 +38,8 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * 
  */
 public final class CompactedSliceMap implements SliceMap {
-    private final CompactedSlice[] slices;
+    private static final PhredQuality DEFAULT_QUALITY = PhredQuality.valueOf(30);
+	private final CompactedSlice[] slices;
 
     public static <PR extends AssembledRead> CompactedSliceMap create(Contig<PR> contig,QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
         return new CompactedSliceMap(contig, qualityDataStore, qualityValueStrategy);
@@ -58,13 +59,23 @@ public final class CompactedSliceMap implements SliceMap {
     			int i=0;
     			String id =read.getId();
     			Direction dir = read.getDirection();
-    			
-    			QualitySequence fullQualities = qualityDataStore.get(id);
-    			if(fullQualities ==null){
-    				throw new NullPointerException("could not get qualities for "+id);
+    			QualitySequence fullQualities =null;
+    			if(qualityDataStore!=null){
+    				fullQualities = qualityDataStore.get(id);
+        			
+        			if(fullQualities ==null){
+        				throw new NullPointerException("could not get qualities for "+id);
+        			}
     			}
+    			
     			for(Nucleotide base : read.getNucleotideSequence()){
-    				PhredQuality quality = qualityValueStrategy.getQualityFor(read, fullQualities, i);
+    				
+    				final PhredQuality quality;
+    				if(fullQualities==null){
+    					quality = DEFAULT_QUALITY;
+    				}else{
+    					quality= qualityValueStrategy.getQualityFor(read, fullQualities, i);
+    				}
     				if(builders[start+i] ==null){
     					builders[start+i] = new CompactedSlice.Builder();
     				}

@@ -43,11 +43,12 @@ public interface Contig<T extends AssembledRead>{
      * Get the number of reads in this contig.
      * @return the number of reads in this contig; will always be >=0.
      */
-    int getNumberOfReads();
+    long getNumberOfReads();
     /**
      * Get the {@link StreamingIterator} of {@link AssembledRead}s
      * that are contained in this contig. 
      * @return a {@link StreamingIterator}  of {@link AssembledRead}s; will never be null 
+     * and never contain any null elements,
      * but could be empty.
      */
     StreamingIterator<T> getReadIterator();
