@@ -49,6 +49,10 @@ public final class DefaultTigrAssemblerFileContigDataStore {
     	 TigrAssemblyFileParser.parse(tasmFile, builder);
     	 return builder.build();
     }
+    
+    private DefaultTigrAssemblerFileContigDataStore(){
+    	//can not instantiate
+    }
    
     private static class BuilderImpl implements TigrAssemblyFileVisitor, Builder<TigrAssemblerContigDataStore> {
 
@@ -65,7 +69,7 @@ public final class DefaultTigrAssemblerFileContigDataStore {
         private Direction currentDirection;
         
         private String currentReadBasecalls;
-        private Map<String, TigrAssemblerContig> contigs = new LinkedHashMap<String, TigrAssemblerContig>();
+        private final Map<String, TigrAssemblerContig> contigs = new LinkedHashMap<String, TigrAssemblerContig>();
        
         
         @Override
