@@ -16,7 +16,7 @@ import org.junit.runners.Suite.SuiteClasses;
          TestRangeCompliment.class,
          TestRangeIterator.class,
          TestRangeComparatorShortestToLongest.class,
-         TestRangeComparatorLongestToShortest.class,
+         TestRangeComparatorLongestToShortest.class
     }
     )
 public class AllRangeTests {
