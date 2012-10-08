@@ -26,6 +26,8 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import java.util.Arrays;
 
 import org.jcvi.common.core.seq.read.trace.pyro.sff.DefaultSffReadData;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.testUtil.TestUtil;
@@ -36,7 +38,7 @@ import static org.junit.Assert.*;
 public class TestDefaultReadData {
 
 	NucleotideSequence basecalls = new NucleotideSequenceBuilder("ACGTACGT").build();
-    byte[] qualities = new byte[]{20,30,40,20,30,40,50,20};
+    QualitySequence qualities = new QualitySequenceBuilder(new byte[]{20,30,40,20,30,40,50,20}).build();
     short[] flowgramValues = new short[]{100,97,110,80,120,101,100,93};
     byte[] indexes = new byte[]{1,1,1,1,1,1,1,1};
 
@@ -44,8 +46,8 @@ public class TestDefaultReadData {
 
     @Test
     public void constructor(){
-        assertEquals(basecalls, sut.getBasecalls());
-        assertTrue(Arrays.equals(qualities, sut.getQualities()));
+        assertEquals(basecalls, sut.getNucleotideSequence());
+        assertEquals(qualities, sut.getQualitySequence());
         assertTrue(Arrays.equals(indexes, sut.getFlowIndexPerBase()));
         assertTrue(Arrays.equals(flowgramValues, sut.getFlowgramValues()));
     }
@@ -167,7 +169,7 @@ public class TestDefaultReadData {
             new DefaultSffReadData(basecalls,
                                        indexes,
                                         flowgramValues,
-                                        new byte[]{0,0,0,0,0,0});
+                                        new QualitySequenceBuilder(new byte[]{0,0,0,0,0,0}).build());
             fail("should throw IllegalArgumentException when qualities length is different");
         }catch(IllegalArgumentException expected){
             assertEquals("basecalls, indexes and qualities must be the same length",expected.getMessage());

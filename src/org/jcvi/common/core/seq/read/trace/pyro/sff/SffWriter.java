@@ -26,6 +26,7 @@ import java.nio.ByteBuffer;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 /**
@@ -134,9 +135,9 @@ public final class SffWriter {
         }
         out.write(flowValues.array());
         out.write(readData.getFlowIndexPerBase());
-        final NucleotideSequence basecalls = readData.getBasecalls();
+        final NucleotideSequence basecalls = readData.getNucleotideSequence();
         out.write(basecalls.toString().getBytes(IOUtil.UTF_8));
-        out.write(readData.getQualities());
+        out.write(PhredQuality.toArray(readData.getQualitySequence()));
         int readDataLength = SffUtil.getReadDataLength(flowgramValues.length, (int)basecalls.getLength());
         int padding =SffUtil.caclulatePaddedBytes(readDataLength);
         out.write(new byte[padding]);
@@ -145,7 +146,7 @@ public final class SffWriter {
     }
     
     public static int getNumberOfBytesFor(SffReadData readData){
-    	 int readDataLength = SffUtil.getReadDataLength(readData.getFlowgramValues().length, (int)readData.getBasecalls().getLength());
+    	 int readDataLength = SffUtil.getReadDataLength(readData.getFlowgramValues().length, (int)readData.getNucleotideSequence().getLength());
          int padding =SffUtil.caclulatePaddedBytes(readDataLength);
          return readDataLength+padding;
     }

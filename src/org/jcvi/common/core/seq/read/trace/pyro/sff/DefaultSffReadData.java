@@ -26,6 +26,7 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import java.math.BigInteger;
 import java.util.Arrays;
 
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.ObjectsUtil;
 import org.jcvi.common.core.util.MathUtil;
@@ -35,7 +36,7 @@ final class DefaultSffReadData implements SffReadData {
     private final NucleotideSequence basecalls;
     private final byte[] indexes;
     private final short[] values;
-    private final byte[] qualities;
+    private final QualitySequence qualities;
 
 
     /**
@@ -45,18 +46,18 @@ final class DefaultSffReadData implements SffReadData {
      * @param qualities
      */
     public DefaultSffReadData(NucleotideSequence basecalls, byte[] indexes, short[] values,
-            byte[] qualities) {
+    		QualitySequence qualities) {
         validateArguments(basecalls, indexes, values, qualities);
         this.basecalls = basecalls;
         //make defensive copies
         
         this.indexes = Arrays.copyOf(indexes, indexes.length);
         this.values = Arrays.copyOf(values, values.length);
-        this.qualities = Arrays.copyOf(qualities, qualities.length);
+        this.qualities = qualities;
     }
 
     private void validateArguments(NucleotideSequence basecalls, byte[] indexes,
-            short[] values, byte[] qualities) {
+            short[] values, QualitySequence qualities) {
         canNotBeNull(basecalls, indexes, values, qualities);
         lengthsMatch(basecalls, indexes, qualities);
         indexesWithinBounds(indexes, values);
@@ -70,14 +71,14 @@ final class DefaultSffReadData implements SffReadData {
         }
     }
 
-    private void lengthsMatch(NucleotideSequence basecalls, byte[] indexes, byte[] qualities) {
-        if(basecalls.getLength() !=indexes.length || indexes.length !=qualities.length){
+    private void lengthsMatch(NucleotideSequence basecalls, byte[] indexes, QualitySequence qualities) {
+        if(basecalls.getLength() !=indexes.length || indexes.length !=qualities.getLength()){
             throw new IllegalArgumentException("basecalls, indexes and qualities must be the same length");
         }
     }
 
     private void canNotBeNull(NucleotideSequence basecalls, byte[] indexes, short[] values,
-            byte[] qualities) {
+    		QualitySequence qualities) {
         ObjectsUtil.checkNotNull(basecalls, "basecalls can not be null");
         ObjectsUtil.checkNotNull(indexes, "indexes can not be null");
         ObjectsUtil.checkNotNull(values, "flowgram values can not be null");
@@ -85,7 +86,7 @@ final class DefaultSffReadData implements SffReadData {
     }
 
     @Override
-    public NucleotideSequence getBasecalls() {
+    public NucleotideSequence getNucleotideSequence() {
         return basecalls;
     }
 
@@ -102,9 +103,8 @@ final class DefaultSffReadData implements SffReadData {
     }
 
     @Override
-    public byte[] getQualities() {
-        //defensive copy
-        return Arrays.copyOf(qualities, qualities.length);
+    public QualitySequence getQualitySequence() {
+        return qualities;
     }
 
     /**
@@ -116,7 +116,7 @@ final class DefaultSffReadData implements SffReadData {
         int result = 1;
         result = prime * result+ basecalls.hashCode();
         result = prime * result + Arrays.hashCode(indexes);
-        result = prime * result + Arrays.hashCode(qualities);
+        result = prime * result + qualities.hashCode();
         result = prime * result + Arrays.hashCode(values);
         return result;
     }
@@ -133,9 +133,9 @@ final class DefaultSffReadData implements SffReadData {
             return false;
         }
         final DefaultSffReadData other = (DefaultSffReadData) obj;
-        return ObjectsUtil.nullSafeEquals(getBasecalls(), other.getBasecalls())
+        return ObjectsUtil.nullSafeEquals(getNucleotideSequence(), other.getNucleotideSequence())
                 && Arrays.equals(indexes, other.indexes)
-                && Arrays.equals(qualities, other.qualities)
+                && qualities.equals(other.getQualitySequence())
                 && Arrays.equals(values, other.values);
 
     }

@@ -23,6 +23,7 @@
  */
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 /**
@@ -51,12 +52,12 @@ public interface SffReadData {
      * The called basecalls as a {@link NucleotideSequence}.
      * @return a {@link NucleotideSequence}; never null.
      */
-    NucleotideSequence getBasecalls();
+    NucleotideSequence getNucleotideSequence();
     /**
-     * The quality scores for each bases in the sequence
-     * stored as Phred values.
+     * The quality scores for each base in the sequence
+     * as a {@link QualitySequence}.
      * @return
      */
-    byte[] getQualities();
+    QualitySequence getQualitySequence();
 
 }
