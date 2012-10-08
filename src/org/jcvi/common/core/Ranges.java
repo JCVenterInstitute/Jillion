@@ -18,10 +18,10 @@ public final class Ranges {
 	private Ranges(){}
 	/**
      * Combine the given Ranges into fewer ranges that cover the same region.
-     * This is the same as {@link #merge(List, int) merge(rangesToMerge,0)} 
+     * This is the same as {@link #merge(Collection, int) merge(rangesToMerge,0)} 
      * @param rangesToMerge
      * @return a new list of merged Ranges.
-     * @see #merge(List, int)
+     * @see #merge(Collection, int)
      */
     public static List<Range> merge(Collection<Range> rangesToMerge){
         return merge(rangesToMerge,0);
