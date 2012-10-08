@@ -34,6 +34,9 @@ import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadData;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadHeader;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffWriter;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
@@ -147,7 +150,7 @@ public class TestSffWriter {
     
     @Test
     public void encodeReadData() throws IOException{
-        byte[] qualities = new byte[]{20,30,40,35};
+        QualitySequence qualities = new QualitySequenceBuilder(new byte[]{20,30,40,35}).build();
         short[] values = new short[]{100,8,97,4,200};
         byte[] indexes = new byte[]{1,2,2,0};
         NucleotideSequence bases = new NucleotideSequenceBuilder("TATT").build();
@@ -161,15 +164,15 @@ public class TestSffWriter {
         
     }
     private byte[] encodeExpectedReadData(SffReadData readData){
-        int basesLength =(int)readData.getBasecalls().getLength();
+        int basesLength =(int)readData.getNucleotideSequence().getLength();
         int numberOfFlows = readData.getFlowgramValues().length;
         int readDataLength = numberOfFlows * 2 + 3*basesLength;
         int padding =SffUtil.caclulatePaddedBytes(readDataLength);
         ByteBuffer buf = ByteBuffer.wrap(new byte[readDataLength+padding]);
         IOUtil.putShortArray(buf, readData.getFlowgramValues());
         buf.put(readData.getFlowIndexPerBase());
-        buf.put(readData.getBasecalls().toString().getBytes(IOUtil.UTF_8));
-        buf.put(readData.getQualities());
+        buf.put(readData.getNucleotideSequence().toString().getBytes(IOUtil.UTF_8));
+        buf.put(PhredQuality.toArray(readData.getQualitySequence()));
         return buf.array();
     }
 }

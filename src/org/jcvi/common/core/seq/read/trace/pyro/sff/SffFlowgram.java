@@ -50,8 +50,8 @@ final class SffFlowgram implements Flowgram {
     public static Flowgram create(SffReadHeader readHeader, SffReadData readData) {
         return new SffFlowgram(
                 readHeader.getId(),
-                new NucleotideSequenceBuilder(readData.getBasecalls()).build(),
-                new QualitySequenceBuilder(readData.getQualities()).build(),
+                new NucleotideSequenceBuilder(readData.getNucleotideSequence()).build(),
+                new QualitySequenceBuilder(readData.getQualitySequence()).build(),
                 computeValues(readData),
                 readHeader.getQualityClip(),
                 readHeader.getAdapterClip());

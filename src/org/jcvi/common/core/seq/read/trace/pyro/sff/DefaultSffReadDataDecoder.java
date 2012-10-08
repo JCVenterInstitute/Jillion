@@ -27,6 +27,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
@@ -43,7 +45,8 @@ enum DefaultSffReadDataDecoder implements SffReadDataDecoder {
             NucleotideSequence bases = new NucleotideSequenceBuilder()
             					.append(new String(IOUtil.toByteArray(in, numberOfBases),IOUtil.UTF_8))
             					.build();
-            byte[] qualities = IOUtil.toByteArray(in, numberOfBases);
+            QualitySequence qualities = new QualitySequenceBuilder(IOUtil.toByteArray(in, numberOfBases))
+            								.build();
 
             int readDataLength = SffUtil.getReadDataLength(numberOfFlows, numberOfBases);
             int padding =SffUtil.caclulatePaddedBytes(readDataLength);
