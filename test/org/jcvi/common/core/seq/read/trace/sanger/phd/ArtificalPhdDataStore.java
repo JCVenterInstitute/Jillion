@@ -31,9 +31,8 @@ import java.util.Properties;
 import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.read.trace.Trace;
-import org.jcvi.common.core.seq.read.trace.TraceNucleotideDataStoreAdapter;
-import org.jcvi.common.core.seq.read.trace.TraceQualityDataStoreAdapter;
+import org.jcvi.common.core.datastore.DataStoreIterator;
+import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -63,39 +62,45 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
     }
 
     @Override
-    public synchronized boolean contains(String id) throws DataStoreException {
-        super.contains(id);
-        return seqDataStore.contains(id);
-    }
+	protected boolean containsImpl(String id) throws DataStoreException {
+		return seqDataStore.contains(id);
+	}
 
-    @Override
-    public synchronized Phd get(String id) throws DataStoreException {
-        super.get(id);
-       final NucleotideSequence basecalls = seqDataStore.get(id);
-       if(basecalls ==null){
-           throw new NullPointerException("could not find basecalls for "+id);
-       }
-    final QualitySequence qualities = qualDataStore.get(id);
-    if(qualities ==null){
-        throw new NullPointerException("could not find qualities for "+id);
-    }
-    return ArtificialPhd.createNewbler454Phd(id,
-    			basecalls, 
-                qualities,
-                comments,Collections.<PhdTag>emptyList());
-    }
+	@Override
+	protected Phd getImpl(String id) throws DataStoreException {
+		final NucleotideSequence basecalls = seqDataStore.get(id);
+	       if(basecalls ==null){
+	           throw new NullPointerException("could not find basecalls for "+id);
+	       }
+	    final QualitySequence qualities = qualDataStore.get(id);
+	    if(qualities ==null){
+	        throw new NullPointerException("could not find qualities for "+id);
+	    }
+	    return ArtificialPhd.createNewbler454Phd(id,
+	    			basecalls, 
+	                qualities,
+	                comments,Collections.<PhdTag>emptyList());
+	}
 
-    @Override
-    public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
-        super.idIterator();
-        return seqDataStore.idIterator();
-    }
+	@Override
+	protected long getNumberOfRecordsImpl() throws DataStoreException {
+		return seqDataStore.getNumberOfRecords();
+	}
 
-    @Override
-    public synchronized long getNumberOfRecords() throws DataStoreException {
-        super.getNumberOfRecords();
-        return seqDataStore.getNumberOfRecords();
-    }
+	@Override
+	protected StreamingIterator<String> idIteratorImpl() throws DataStoreException {
+		return seqDataStore.idIterator();
+	}
+
+	@Override
+	protected StreamingIterator<Phd> iteratorImpl() {
+		return DataStoreStreamingIterator.create(this, 
+				new DataStoreIterator<Phd>(this));
+		
+	}
+
+
+
 
 	@Override
 	protected void handleClose() throws IOException {

@@ -33,6 +33,7 @@ import java.util.Iterator;
 import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
@@ -95,35 +96,22 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
     }
 
     @Override
-    public synchronized boolean contains(String id) throws DataStoreException {
-        super.contains(id);
-        return get(id)!=null;
-    }
-
-    @Override
-    public synchronized Flowgram get(String id) throws DataStoreException {
-        super.get(id);        
-        try{
+	protected boolean containsImpl(String id) throws DataStoreException {
+		return get(id)!=null;
+	}
+	@Override
+	protected Flowgram getImpl(String id) throws DataStoreException {
+		try{
         	SingleFlowgramVisitor singleVisitor = new SingleFlowgramVisitor(id);
         	SffFileParser.parse(sffFile, singleVisitor);
         	return singleVisitor.getFlowgram();
         } catch (IOException e) {
             throw new DataStoreException("could not read sffFile ",e);
         }
-       
-    }
-
-    @Override
-    public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
-        super.idIterator();
-        return new SffIdIterator(SffFileIterator.createNewIteratorFor(sffFile));
-        
-    }
-
-    @Override
-    public synchronized long getNumberOfRecords() throws DataStoreException {
-        super.getNumberOfRecords();
-        if(this.size ==null){
+	}
+	@Override
+	protected synchronized long getNumberOfRecordsImpl() throws DataStoreException {
+		if(this.size ==null){
         	DataInputStream in = null;
         	try{
         		in = new DataInputStream(new FileInputStream(sffFile));
@@ -135,7 +123,20 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
         	}
         }
         return size;
-    }
+	}
+	@Override
+	protected StreamingIterator<String> idIteratorImpl()
+			throws DataStoreException {
+		return new SffIdIterator(this.iterator());
+	}
+	@Override
+	protected StreamingIterator<Flowgram> iteratorImpl()
+			throws DataStoreException {
+		return DataStoreStreamingIterator.create(this,
+				SffFileIterator.createNewIteratorFor(sffFile));
+	}
+	
+   
 
    
 
@@ -144,11 +145,7 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
 		//no-op
 		
 	}
-	@Override
-    public synchronized StreamingIterator<Flowgram> iterator() {
-        super.iterator();
-      return SffFileIterator.createNewIteratorFor(sffFile);
-    }
+	
     /**
      * {@code SffIdIterator} is a {@link StreamingIterator}
      * that wraps the Iterator of Flowgrams and returns just

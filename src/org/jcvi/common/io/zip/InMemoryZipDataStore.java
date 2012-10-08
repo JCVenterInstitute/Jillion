@@ -38,9 +38,9 @@ import java.util.zip.ZipInputStream;
 
 import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreIterator;
+import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * An {@code InMemoryZipDataStore} is a {@link ZipDataStore} implementation
@@ -121,45 +121,32 @@ public final class InMemoryZipDataStore extends AbstractDataStore<InputStream> i
             entry = inputStream.getNextEntry();
         }
     }
-    /**
-     * 
-     * {@inheritDoc}
-     */
+    
+    
     @Override
-    public synchronized boolean contains(String id) throws DataStoreException {
-        super.contains(id);
-        return contents.containsKey(id);
-    }
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized InputStream get(String id) throws DataStoreException {
-        super.get(id);
-        ByteBuffer buffer = contents.get(id);
+	protected boolean containsImpl(String id) {
+		return contents.containsKey(id);
+	}
+	@Override
+	protected InputStream getImpl(String id) {
+		 ByteBuffer buffer = contents.get(id);
         return new ByteArrayInputStream(buffer.array());
-    }
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
-        super.idIterator();
-        return IteratorUtil.createStreamingIterator(contents.keySet().iterator());
-    }
-    /**
-     * 
-     * {@inheritDoc}
-     * <p/>
-     * Get the number of zip entries in the zip file.
-     */
-    @Override
-    public synchronized long getNumberOfRecords() throws DataStoreException {
-        super.getNumberOfRecords();
-        return contents.size();
-    }
+	}
+	@Override
+	protected long getNumberOfRecordsImpl() {
+		return contents.size();
+	}
+	@Override
+	protected StreamingIterator<String> idIteratorImpl() {
+		return DataStoreStreamingIterator.create(this, contents.keySet().iterator());
+	}
+	@Override
+	protected StreamingIterator<InputStream> iteratorImpl() {
+		return DataStoreStreamingIterator.create(this, new DataStoreIterator<InputStream>(this));
+	}
+	
+   
+   
     
     /**
      * 
