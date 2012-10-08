@@ -23,9 +23,6 @@
  */
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadData;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,10 +33,7 @@ public class TestSFFFlowgram_computeValues {
     short[] encodedValues = new short[]{213,0,2, 97, 120};
     byte[] indexes = new byte[]{1,2,1,1};
 
-    List<Short> expectedValues = Arrays.<Short>asList((short)213,
-                                                        (short)2,
-                                                        (short)97,
-                                                        (short)120);
+    short[] expectedValues = new short[]{213,2,97, 120};
     SffReadData mockReadData;
 
     @Before
@@ -52,8 +46,8 @@ public class TestSFFFlowgram_computeValues {
         expect(mockReadData.getFlowIndexPerBase()).andReturn(indexes);
         expect(mockReadData.getFlowgramValues()).andReturn(encodedValues);
         replay(mockReadData);
-        List<Short> actualValues = SffFlowgram.computeValues(mockReadData);
-        assertEquals(expectedValues, actualValues);
+        short[] actualValues = SffFlowgram.computeValues(mockReadData);
+        assertArrayEquals(expectedValues, actualValues);
         verify(mockReadData);
     }
     @Test
@@ -61,7 +55,7 @@ public class TestSFFFlowgram_computeValues {
         expect(mockReadData.getFlowIndexPerBase()).andReturn(new byte[]{});
         expect(mockReadData.getFlowgramValues()).andReturn(encodedValues);
         replay(mockReadData);
-        assertTrue(SffFlowgram.computeValues(mockReadData).isEmpty());
+        assertEquals(0,SffFlowgram.computeValues(mockReadData).length);
         verify(mockReadData);
     }
     @Test
@@ -79,18 +73,5 @@ public class TestSFFFlowgram_computeValues {
         verify(mockReadData);
     }
 
-    @Test
-    public void returnsUnmodifiableList(){
-        expect(mockReadData.getFlowIndexPerBase()).andReturn(indexes);
-        expect(mockReadData.getFlowgramValues()).andReturn(encodedValues);
-        replay(mockReadData);
-        List<Short> actualValues = SffFlowgram.computeValues(mockReadData);
-        try{
-            actualValues.add((short)0);
-            fail("returned list should not be modifiable");
-        }catch(UnsupportedOperationException expected){
-
-        }
-        verify(mockReadData);
-    }
+    
 }

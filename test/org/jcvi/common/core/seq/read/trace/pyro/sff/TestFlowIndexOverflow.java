@@ -25,7 +25,6 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
@@ -58,7 +57,7 @@ public class TestFlowIndexOverflow{
     		new NucleotideSequenceBuilder(
                       "TCAGCGATACACATAGCGCGTACATCCACATCGTGGCGTCTCAAGGCACACAGGGGGATAGGN").build(),
                       new QualitySequenceBuilder(new byte[]{36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,38,36,38,38,38,37,36,36,34,33,33,31,36,36,31,31,31,31,31,31,23,23,23,23,31,36,37,35,31,26,20,20,35,35,35,36,36,36,36,36,0}).build(),
-                        Arrays.<Short>asList((short)101,(short)101,(short)102,(short)103,(short)106,(short)109,(short)87,(short)106, (short) 103,(short)102,(short)103,(short)99,(short)101,(short)98,(short)101,(short)96,(short)95,(short)103, (short)114,(short)106,(short)103,(short)105,(short)96,(short)100,(short)94,(short)188,(short)101, (short)95,(short) 110,(short)110,(short)123,(short)66,(short)95,(short)194,(short)86,(short)113,(short)68,(short)73,(short)110, (short)121,(short)237,(short)240,(short)84,(short)96,(short)80,(short)102,(short)109,(short)56,(short)484,(short)102,(short)110,(short)103,(short)222,(short) 8),
+                        new short[]{ 101, 101, 102, 103, 106, 109, 87, 106,  103, 102, 103, 99, 101, 98, 101, 96, 95, 103,  114, 106, 103, 105, 96, 100, 94, 188, 101,  95, 110, 110, 123, 66, 95, 194, 86, 113, 68, 73, 110,  121, 237, 240, 84, 96, 80, 102, 109, 56, 484, 102, 110, 103, 222, 8},
                         Range.of(CoordinateSystem.RESIDUE_BASED, 25,62),
                 Range.of(CoordinateSystem.RESIDUE_BASED,0,0)
         );

@@ -23,10 +23,7 @@
  */
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
@@ -37,6 +34,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.util.GrowableShortArray;
 import org.jcvi.common.core.util.ObjectsUtil;
 
 final class SffFlowgram implements Flowgram {
@@ -57,16 +55,19 @@ final class SffFlowgram implements Flowgram {
                 readHeader.getAdapterClip());
     }
     
-    protected static List<Short> computeValues(SffReadData readData) {
+    static short[] computeValues(SffReadData readData) {
         final byte[] indexes = readData.getFlowIndexPerBase();
         final short[] encodedValues =readData.getFlowgramValues();
         verifyNotEmpty(encodedValues);
         return computeValues(indexes, encodedValues);
     }
 
-    private static List<Short> computeValues(final byte[] indexes,
+    private static short[] computeValues(final byte[] indexes,
             final short[] encodedValues) {
-        List<Short> values = new ArrayList<Short>();
+    	if(indexes.length==0){
+    		return new short[0];
+    	}
+        GrowableShortArray values = new GrowableShortArray(indexes.length);
         // positions are 1-based so start with -1 to compensate.
         int position=-1;
         int i=0;
@@ -74,12 +75,12 @@ final class SffFlowgram implements Flowgram {
         while( i < indexes.length){
             if(indexes[i] != 0){
                 position+=IOUtil.toUnsignedByte(indexes[i]);
-                values.add(encodedValues[position]);
+                values.append(encodedValues[position]);
             }
             i++;
         }
 
-        return Collections.unmodifiableList(values);
+        return values.toArray();
     }
 
     private static void verifyNotEmpty(final short[] encodedValues) {
@@ -95,21 +96,18 @@ final class SffFlowgram implements Flowgram {
      * @param adapterClip
      */
     protected SffFlowgram(String id,NucleotideSequence basecalls, QualitySequence qualities,
-            List<Short> values, Range qualitiesClip, Range adapterClip) {
+            short[] values, Range qualitiesClip, Range adapterClip) {
         canNotBeNull(id,basecalls, qualities, values, qualitiesClip, adapterClip);
         this.id = id;
         this.basecalls = basecalls;
         this.qualities = qualities;
-        this.values = new short[values.size()];
-        for(int i=0; i< values.size(); i++){
-            this.values[i]= values.get(i);
-        }
+        this.values = values;
         this.qualitiesClip = qualitiesClip;
         this.adapterClip = adapterClip;
     }
 
     private void canNotBeNull(String id,NucleotideSequence basecalls, Sequence<PhredQuality> qualities,
-            List<Short> values, Range qualitiesClip, Range adapterClip) {
+            short[] values, Range qualitiesClip, Range adapterClip) {
         ObjectsUtil.checkNotNull(id, "id can not be null");
         ObjectsUtil.checkNotNull(basecalls, "basecalls can not be null");
         ObjectsUtil.checkNotNull(qualities, "qualities can not be null");
@@ -117,7 +115,7 @@ final class SffFlowgram implements Flowgram {
         ObjectsUtil.checkNotNull(qualitiesClip, "qualitiesClip can not be null");
         ObjectsUtil.checkNotNull(adapterClip, "adapterClip can not be null");
 
-        if(values.isEmpty()){
+        if(values.length==0){
             throw new IllegalArgumentException("values can not be empty");
         }
     }
