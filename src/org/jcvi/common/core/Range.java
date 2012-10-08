@@ -735,38 +735,24 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	return false;
     }
     /**
-     * Checks to see if the given target <code>Range</code> is contained within
-     * this <code>Range</code>.  This does not require this <code>Range</code>
+     * Checks to see if the this <code>Range</code> is contained within
+     * the given <code>Range</code>.  This does not require this <code>Range</code>
      * to be a strict subset of the target.  More precisely: a
      * <code>Range</code> is always a sub-range of itself.
      *
-     * @param range The <code>Range</code> to compare to.
+     * @param range The <code>Range</code> to compare to; can not be null.
      * @return <code>true</code> if every value in this <code>Range</code> is
      * found in the given comparison <code>Range</code>.
+     * @throws NullPointerException if range is null.
      */
     public boolean isSubRangeOf(Range range) {
         if(range==null){
-            return false;
+            throw new NullPointerException("range can not be null");
         }
-        
-        /* We are always a subrange of ourselves */
-        if (this.equals(range))
-        {
-            return true;
-        }
-        return isCompletelyInsideOf(range);
+        return getBegin()>=range.getBegin() && getEnd()<=range.getEnd();
        
     }
-    private boolean isCompletelyInsideOf(Range range) {
-    	long start = getBegin();
-    	long end = getEnd();
-    	long otherStart = range.getBegin();
-    	long otherEnd = range.getEnd();
-    	
-        return (start>otherStart && end<otherEnd) ||
-           (start==otherStart && end<otherEnd) ||
-           (start>otherStart && end==otherEnd);
-    }
+    
 
     /**
      * Checks to see if the given {@link Range} intersects this one.
@@ -820,13 +806,16 @@ public abstract class Range implements Rangeable,Iterable<Long>
         }
         long intersectionStart = Math.max(other.getBegin(), this.getBegin());
 		long intersectionEnd = Math.min(other.getEnd(), this.getEnd());
-		if(intersectionEnd > intersectionStart-1){
-			return  Range.of(intersectionStart, intersectionEnd);
-		}else{
+		//this mess is so we don't deal with underflow
+		//if start is Long.MIN_VALUE
+		long length = intersectionEnd - intersectionStart+1;
+		if(length<-1){
 			return new Range.Builder().build();
 		}
-        
-
+			return new Range.Builder(length)
+						.shift(intersectionStart)
+						.build();
+		
     }
     /**
      * Get the List of Ranges that represents the 
@@ -842,16 +831,23 @@ public abstract class Range implements Rangeable,Iterable<Long>
         if(intersection.isEmpty()){
             return Arrays.asList(this);
         }
-        
-        Range beforeOther = Range.of(getBegin(), intersection.getBegin()-1);
-        Range afterOther = Range.of(intersection.getEnd()+1, getEnd());
         List<Range> complementedRanges = new ArrayList<Range>();
-        if(!beforeOther.isEmpty()){
-            complementedRanges.add(beforeOther);
+        if(intersection.getBegin()!=Long.MIN_VALUE){
+	        Range beforeOther = Range.of(getBegin(), intersection.getBegin()-1);
+	        if(!beforeOther.isEmpty()){
+	            complementedRanges.add(beforeOther);
+	        }
         }
-        if(!afterOther.isEmpty()){
-            complementedRanges.add(afterOther);
+        
+        if(intersection.getEnd()!=Long.MAX_VALUE){        	
+        	Range afterOther= Range.of(intersection.getEnd()+1, getEnd());
+        	if(!afterOther.isEmpty()){
+                complementedRanges.add(afterOther);
+            }
         }
+        
+       
+        
         return Ranges.merge(complementedRanges);
     }
     
@@ -996,7 +992,21 @@ public abstract class Range implements Rangeable,Iterable<Long>
         }
         @Override
         public boolean hasNext() {
-            return index<=to;
+        	//have to handle special case where end
+        	//coordinate is Long.MAX_VALUE since
+        	//all longs are <= MAX value
+        	//see Java Puzzlers Puzzle #26 for more info
+        	if(to == Long.MAX_VALUE){
+        		//if we wrap around to a number
+        		//less than our starting point
+        		//we know we overflowed
+        		//so we have passed MAX_VALUE
+        		//(or we are an empty range which
+        		//wouldn't have a next anyway)
+        		return index >from;
+        	}else{
+        		return index<=to;
+        	}
         }
 
         @Override
@@ -2529,7 +2539,7 @@ public abstract class Range implements Rangeable,Iterable<Long>
     			throw new IllegalArgumentException("length can not be negative");
     		}
     		if(begin >0){
-        		long maxLength = Long.MAX_VALUE - begin;
+        		long maxLength = Long.MAX_VALUE - begin+1;
         		if(maxLength < length){
         			throw new IndexOutOfBoundsException(
         					String.format("given length %d would make range [%d - ? ] beyond max allowed end offset",

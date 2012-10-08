@@ -35,15 +35,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         TestDirection.class,
-        TestRange.class,
-        TestDirectedRange.class,
-        TestRangeArrivalComparator.class,
-        TestRangeDepartureComparator.class,
-        TestEmptyRange.class,
-        TestRangeCompliment.class,
-        TestRangeIterator.class,
-        TestRangeComparatorShortestToLongest.class,
-        TestRangeComparatorLongestToShortest.class,
+        AllRangeTests.class,
         
         
         TestTestUtilSuite.class,

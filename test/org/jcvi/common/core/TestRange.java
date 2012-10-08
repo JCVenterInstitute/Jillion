@@ -245,7 +245,8 @@ public class TestRange{
 
    
 
-    @Test public void testSubRangeOf_nullRange_isNotSubRange(){
+    @Test(expected = NullPointerException.class)
+    public void testSubRangeOf_nullRangeShouldThrowNPE(){
         assertFalse(range.isSubRangeOf(null));
     }
 

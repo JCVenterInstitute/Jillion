@@ -65,4 +65,27 @@ public class TestRangeIterator {
         }
         assertFalse(sut.hasNext());
     }
+    /**
+     * All longs are <= Long.MAX_VALUE
+     * if the iteration code is naively 
+     * written it will infinite loop if end is max_value.
+     * See Java Puzzlers Puzzle# 26 for more details.
+     */
+    @Test
+    public void testEndIsInMax(){
+    	Range r = Range.of(Long.MAX_VALUE-10, Long.MAX_VALUE);
+    	Iterator<Long> sut = r.iterator();
+    	for(int i =0; i< 11; i++){    		
+            assertEquals(Long.MAX_VALUE-10+i, sut.next().longValue());
+        }
+        assertFalse(sut.hasNext());
+    }
+    @Test
+    public void testEndIsMaxEmptyRange(){
+    	Range r = new Range.Builder()
+    				.shift(Long.MAX_VALUE)
+    				.build();
+    	Iterator<Long> sut = r.iterator();
+    	assertFalse(sut.hasNext());
+    }
 }
