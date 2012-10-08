@@ -37,7 +37,7 @@ public class TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes {
 	 private static final FileServer RESOURCES = new ResourceFileServer(TestTigrAssemblerContigDataStore.class);
 	    
 	    private static final ContigDataStore<AssembledRead, Contig<AssembledRead>> contigDataStore;
-	    private static final DefaultTigrAssemblerFileContigDataStore tasmDataStore;
+	    private static final TigrAssemblerContigDataStore tasmDataStore;
 	    static{
 	        try {
 	            contigDataStore= DefaultContigFileDataStore.create(RESOURCES.getFile("files/giv-15050.contig"));
@@ -45,7 +45,7 @@ public class TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes {
 	            throw new IllegalStateException("could not parse contig file",e);
 	        } 
 	        try {
-	            tasmDataStore= new DefaultTigrAssemblerFileContigDataStore(RESOURCES.getFile("files/giv-15050.tasm"));
+	            tasmDataStore= DefaultTigrAssemblerFileContigDataStore.create(RESOURCES.getFile("files/giv-15050.tasm"));
 	        } catch (Exception e) {
 	            throw new IllegalStateException("could not parse contig file",e);
 	        } 
