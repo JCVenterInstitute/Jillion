@@ -35,8 +35,11 @@ import org.junit.runners.Suite.SuiteClasses;
         TestPhredQualityStaticMethods.class,
         TestPhredQuality.class,
         TestRunLengthEncodedGlyphCodec.class,
-        TestRunLengthEncodedQualitySequence.class,
+        TestRunLengthEncodedQualitySequence.class,        
+        TestDefaultQualitySequence.class,
+        TestRunLengthEncodedQualitySequenceImpl.class,
         TestQualitySequenceBuilder.class,
+        
         AllQualityTrimmerTests.class
     }
     )
