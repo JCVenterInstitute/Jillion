@@ -23,10 +23,6 @@
  */
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFlowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffUtil;
@@ -44,7 +40,7 @@ public class TestSffFlowgram {
     Range qualitiesClip = Range.of(10,90);
     Range adapterClip= Range.of(5,95);
     QualitySequence confidence =  new QualitySequenceBuilder(new byte[]{20,15,30,15}).build();
-    List<Short> values = convertIntoList(new short[]{202, 310,1,232,7});
+    short[] values = new short[]{202, 310,1,232,7};
     NucleotideSequence basecalls = new NucleotideSequenceBuilder("ACGT").build();
     String id = "readId";
     SffFlowgram sut;
@@ -54,13 +50,7 @@ public class TestSffFlowgram {
         
     }
 
-    private static List<Short> convertIntoList(short[] values) {
-        List<Short> valueList = new ArrayList<Short>();
-        for(short s: values){
-            valueList.add(s);
-        }
-        return valueList;
-    }
+   
     
     @Test
     public void constructor(){
@@ -69,9 +59,9 @@ public class TestSffFlowgram {
         assertEquals(confidence, sut.getQualitySequence());
         assertEquals(qualitiesClip, sut.getQualityClip());
         assertEquals(adapterClip, sut.getAdapterClip());
-        assertEquals(values.size(), sut.getNumberOfFlows());
-        for(int i=0; i< values.size(); i++){
-            assertEquals(SffUtil.convertFlowgramValue(values.get(i)), 
+        assertEquals(values.length, sut.getNumberOfFlows());
+        for(int i=0; i< values.length; i++){
+            assertEquals(SffUtil.convertFlowgramValue(values[i]), 
                             sut.getFlowValue(i),0);
         }
     }
@@ -118,7 +108,7 @@ public class TestSffFlowgram {
     @Test
     public void emptyValuesShouldthrowIllegalArgumentException(){
         try{
-            new SffFlowgram(id,basecalls,confidence,Collections.<Short>emptyList(),qualitiesClip, adapterClip);
+            new SffFlowgram(id,basecalls,confidence,new short[0],qualitiesClip, adapterClip);
             fail("should throw IllegalArgumentException when values is empty");
         }
         catch(IllegalArgumentException expected){
@@ -166,14 +156,14 @@ public class TestSffFlowgram {
     @Test
     public void notEqualsDifferentValues(){
         SffFlowgram differentValues = new SffFlowgram(id,basecalls,confidence,
-                convertIntoList(new short[]{1,2,3,4,5,6,7}),
+                new short[]{1,2,3,4,5,6,7},
                     qualitiesClip, adapterClip);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
     }
     @Test
     public void notEqualsValues(){
         SffFlowgram differentValues = new SffFlowgram(id,basecalls,confidence,
-                convertIntoList(new short[]{1,2,3,4,5,6,7}),
+                new short[]{1,2,3,4,5,6,7},
                     qualitiesClip, adapterClip);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentValues);
     }
