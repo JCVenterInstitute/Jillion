@@ -34,10 +34,10 @@ import static org.easymock.EasyMock.*;
 public class TestTigrAssemblerWriter {
 	private static final FileServer RESOURCES = new ResourceFileServer(TestTigrAssemblerWriter.class);
 	   
-	private static final DefaultTigrAssemblerFileContigDataStore tasmDataStore;
+	private static final TigrAssemblerContigDataStore tasmDataStore;
 	static{	         
         try {
-            tasmDataStore= new DefaultTigrAssemblerFileContigDataStore(RESOURCES.getFile("files/giv-15050.tasm"));
+            tasmDataStore= DefaultTigrAssemblerFileContigDataStore.create(RESOURCES.getFile("files/giv-15050.tasm"));
         } catch (Exception e) {
             throw new IllegalStateException("could not parse contig file",e);
         } 
@@ -47,7 +47,7 @@ public class TestTigrAssemblerWriter {
     @Test(expected = NullPointerException.class)
     public void writeNullDataStoreShouldThrowNullPointerException() throws IOException{
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
-    	TigrAssemblerWriter.write((DefaultTigrAssemblerFileContigDataStore)null,out);
+    	TigrAssemblerWriter.write((TigrAssemblerContigDataStore)null,out);
     }
     @Test(expected = NullPointerException.class)
     public void writeNullOutputStreamShouldThrowNullPointerException() throws IOException{

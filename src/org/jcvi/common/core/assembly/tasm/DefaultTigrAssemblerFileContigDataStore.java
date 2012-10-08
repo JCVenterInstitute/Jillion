@@ -21,13 +21,16 @@ package org.jcvi.common.core.assembly.tasm;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.util.iter.IteratorUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.Direction;
+import org.jcvi.common.core.Range;
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.util.Builder;
 
 /**
  * {@code DefaultTigrAssemblerFileContigDataStore} is an implemenation
@@ -38,65 +41,174 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  *
  */
-public class DefaultTigrAssemblerFileContigDataStore extends AbstractTigrAssemblerFileContigDataStore{
+public final class DefaultTigrAssemblerFileContigDataStore {
 
-    private Map<String, TigrAssemblerContig> contigs;
     
-    public DefaultTigrAssemblerFileContigDataStore(File tasmFile) throws FileNotFoundException{        
-        super(tasmFile);
+    public static TigrAssemblerContigDataStore create(File tasmFile) throws FileNotFoundException{ 
+    	BuilderImpl builder = new BuilderImpl();
+    	 TigrAssemblyFileParser.parse(tasmFile, builder);
+    	 return builder.build();
     }
    
-    @Override
-	protected void handleClose() throws IOException {
-        contigs.clear();
-		
-	}
-    
-    @Override
-	public synchronized boolean contains(String id) throws DataStoreException {
-		super.contains(id);
-		return contigs.containsKey(id);
-	}
+    private static class BuilderImpl implements TigrAssemblyFileVisitor, Builder<TigrAssemblerContigDataStore> {
 
-	@Override
-    public synchronized TigrAssemblerContig get(String id)
-            throws DataStoreException {
-        super.get(id);
-        return contigs.get(id);
-    }
-    @Override
-    public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
-        super.idIterator();
-        return IteratorUtil.createStreamingIterator(contigs.keySet().iterator());
-    }
-    @Override
-    public synchronized StreamingIterator<TigrAssemblerContig> iterator() {
-        super.iterator();
-        return IteratorUtil.createStreamingIterator(contigs.values().iterator());
-    }
-    @Override
-    public synchronized long getNumberOfRecords() throws DataStoreException {
-        super.getNumberOfRecords();
-        return contigs.size();
-    }
+        private DefaultTigrAssemblerContig.Builder currentBuilder;
 
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    protected void visitContig(TigrAssemblerContig contig) {
-       contigs.put(contig.getId(), contig);
+        private String currentContigId;
+        private NucleotideSequence currentContigConsensus;
+        private Map<TigrAssemblerContigAttribute, String> currentContigAttributes;
         
-    }
-
-    /**
-    * Initialize contig Map.
-    */
-    @Override
-    protected void initialize(File tasmFile) {
-        contigs = new LinkedHashMap<String, TigrAssemblerContig>();
+        private EnumMap<TigrAssemblerReadAttribute, String> currentReadAttributes;
+        private String currentReadId;
+        private int currentOffset;
+        private Range currentValidRange;
+        private Direction currentDirection;
         
-    }
+        private String currentReadBasecalls;
+        private Map<String, TigrAssemblerContig> contigs = new LinkedHashMap<String, TigrAssemblerContig>();
+       
+        
+        @Override
+		public TigrAssemblerContigDataStore build() {
+			return MapDataStoreAdapter.adapt(TigrAssemblerContigDataStore.class, contigs);
+		}
+
+		/**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitContigAttribute(String key, String value) {
+            currentContigAttributes.put(TigrAssemblerContigAttribute.getAttributeFor(key), value);
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitReadAttribute(String key, String value) {
+            currentReadAttributes.put(TigrAssemblerReadAttribute.getAttributeFor(key), value);
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitConsensusBasecallsLine(String lineOfBasecalls) {
+            currentContigConsensus = new NucleotideSequenceBuilder(lineOfBasecalls).build();
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitNewContig(String contigId) {        
+            currentContigId = contigId;        
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitNewRead(String readId, int offset, Range validRange,
+                Direction dir) {
+            currentReadId = readId;
+            currentOffset=offset;
+            currentValidRange = validRange;
+            currentDirection = dir;
+            
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitReadBasecallsLine(String lineOfBasecalls) {
+            currentReadBasecalls = lineOfBasecalls;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitLine(String line) {
+        	//no-op
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitEndOfFile() {
+        	 if(currentBuilder !=null){
+                 visitContig(currentBuilder.build());
+             }
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitFile() {
+        	//no-op
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitBeginContigBlock() {
+            if(currentBuilder !=null){
+                visitContig(currentBuilder.build());
+            }
+            currentBuilder=null;
+            currentContigAttributes= new EnumMap<TigrAssemblerContigAttribute, String>(TigrAssemblerContigAttribute.class);
+        }
+        /**
+         * Visit the given {@link TigrAssemblerContig} to this DataStore.
+         * @param contig the TIGR Assembler contig being visited.
+         */
+        private  void visitContig(TigrAssemblerContig contig){
+        	contigs.put(contig.getId(), contig);
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitBeginReadBlock() {
+            currentReadId=null;
+            currentOffset=0;
+            currentValidRange=null;
+            currentDirection=null;
+            currentReadAttributes = new EnumMap<TigrAssemblerReadAttribute, String>(TigrAssemblerReadAttribute.class);
+            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitEndContigBlock() {
+            currentBuilder = new DefaultTigrAssemblerContig.Builder(currentContigId, currentContigConsensus,currentContigAttributes);
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitEndReadBlock() {
+        	if(currentReadId !=null){
+	            this.currentBuilder.addReadAttributes(currentReadId, currentReadAttributes);
+	            this.currentBuilder.addRead(currentReadId, currentOffset, currentValidRange,
+	                    currentReadBasecalls, currentDirection,
+	                    (int)currentValidRange.getEnd());
+        	}
+        }
+       
+}
     
     
     

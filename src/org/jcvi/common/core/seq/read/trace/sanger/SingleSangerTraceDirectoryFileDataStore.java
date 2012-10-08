@@ -25,6 +25,8 @@ import java.util.Iterator;
 
 import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.FileIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
@@ -42,6 +44,7 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
 
     private final DirectoryFileServer fileServer;
     private final String extension;
+    private Long numRecords =null;
     public SingleSangerTraceDirectoryFileDataStore(DirectoryFileServer fileServer,
             String extension) {
         if(fileServer ==null){
@@ -65,79 +68,125 @@ public class SingleSangerTraceDirectoryFileDataStore extends AbstractDataStore<F
         }
         return id;
     }
-    /**
-     * {@inheritDoc}
-     */
-     @Override
-     public synchronized boolean contains(String id) throws DataStoreException {
-         super.contains(id);
-         try {
+    
+    
+    @Override
+	protected boolean containsImpl(String id) throws DataStoreException {
+    	try {
             return this.fileServer.contains(addExtensionIfNeeded(id));
         } catch (IOException e) {
             throw new DataStoreException("error when checking if Datastore contains" +id ,e);
         }
-     }
+	}
+	@Override
+	protected FileSangerTrace getImpl(String id) throws DataStoreException {
+		try{
+            File file = fileServer.getFile(addExtensionIfNeeded(id));
+            SangerTrace traceData= SangerTraceParser.INSTANCE.decode(file);
+            return new DefaultFileSangerTrace(traceData,file);
+        } catch (IOException e) {
+           throw new DataStoreException("could not get trace for "+id, e);
+        }
+	}
+	@Override
+	protected synchronized long getNumberOfRecordsImpl() throws DataStoreException {
+		if(numRecords==null){
+			long counter=0L;
+			StreamingIterator<FileSangerTrace> iter = iteratorImpl();
+			try{
+				while(iter.hasNext()){
+					counter++;
+					iter.next();
+				}
+				numRecords = Long.valueOf(counter);
+			}catch(Exception e){
+				throw new DataStoreException("error counting number of records",e);
+			}finally{
+				IOUtil.closeAndIgnoreErrors(iter);
+			}
+		}
+		
+		return numRecords.longValue();
+	}
+	@Override
+	protected StreamingIterator<String> idIteratorImpl()
+			throws DataStoreException {
+		return DataStoreStreamingIterator.create(this, new IdIteratorImpl());
+	}
+	@Override
+	protected StreamingIterator<FileSangerTrace> iteratorImpl()
+			throws DataStoreException {
+		return DataStoreStreamingIterator.create(this, new IteratorImpl());
+	}
+	
 
-     /**
-     * {@inheritDoc}
-     */
-     @Override
-     public synchronized FileSangerTrace get(String id) throws DataStoreException {
-         super.get(id);
-         
-             try{
-                 File file = fileServer.getFile(addExtensionIfNeeded(id));
-                 SangerTrace traceData= SangerTraceParser.INSTANCE.decode(file);
-                 return new DefaultFileSangerTrace(traceData,file);
-             } catch (IOException e) {
-                throw new DataStoreException("could not get trace for "+id, e);
-             }
-
-     }
-     /**
-      * {@inheritDoc}
-      */
-      @Override
-      public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
-          super.idIterator();
-          return new StreamingIterator<String>(){
-              Iterator<File> iter = FileIterator.createNonRecursiveFileIteratorBuilder(
-                      fileServer.getRootDir())
-                      .build();
-
-            @Override
-            public boolean hasNext() {
-                return iter.hasNext();
-            }
-
-            @Override
-            public String next() {
-                String actualFilename = iter.next().getName();
-                if(extension!=null){
-                    return actualFilename.substring(0, actualFilename.length()-extension.length());
-                }
-                return actualFilename;
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-                
-            }
-
-            @Override
-            public void close() throws IOException {
-                //no-op
-                
-            }
-              
-          };
-      }
+    
+    
 	@Override
 	protected void handleClose() throws IOException {
 		//no-op
 		
 	}
       
+	private final class IdIteratorImpl implements Iterator<String>{
+		private final Iterator<File> iter;
+		IdIteratorImpl(){
+            iter = FileIterator.createNonRecursiveFileIteratorBuilder(
+                    fileServer.getRootDir())
+                    .build();
+		}
+          @Override
+          public boolean hasNext() {
+              return iter.hasNext();
+          }
+
+          @Override
+          public String next() {
+              String actualFilename = iter.next().getName();
+              if(extension!=null){
+                  return actualFilename.substring(0, actualFilename.length()-extension.length());
+              }
+              return actualFilename;
+          }
+
+          @Override
+          public void remove() {
+              throw new UnsupportedOperationException();
+              
+          }
+        
+	}
+	
+	private final class IteratorImpl implements Iterator<FileSangerTrace>{
+		private final Iterator<File> iter;
+		IteratorImpl(){
+            iter = FileIterator.createNonRecursiveFileIteratorBuilder(
+                    fileServer.getRootDir())
+                    .build();
+		}
+          @Override
+          public boolean hasNext() {
+              return iter.hasNext();
+          }
+
+          @Override
+          public FileSangerTrace next() {
+              File file = iter.next();			
+			try {
+				 SangerTrace traceData = SangerTraceParser.INSTANCE.decode(file);
+				 return new DefaultFileSangerTrace(traceData,file);
+			} catch (IOException e) {
+				throw new IllegalStateException("error parsing sanger trace file : "+ file.getAbsolutePath(), e);
+			}
+             
+          }
+
+          @Override
+          public void remove() {
+              throw new UnsupportedOperationException();
+              
+          }
+        
+	}
       
 }

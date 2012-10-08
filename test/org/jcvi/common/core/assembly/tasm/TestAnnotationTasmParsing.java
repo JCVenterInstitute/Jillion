@@ -11,9 +11,9 @@ import static org.junit.Assert.*;
 public class TestAnnotationTasmParsing {
 	 private static final FileServer RESOURCES = new ResourceFileServer(TestAnnotationTasmParsing.class);
 	 
-	 private final DefaultTigrAssemblerFileContigDataStore datastore;
+	 private final TigrAssemblerContigDataStore datastore;
 	 public TestAnnotationTasmParsing() throws FileNotFoundException, IOException{
-		 datastore = new DefaultTigrAssemblerFileContigDataStore(RESOURCES.getFile("files/annotation.tasm"));
+		 datastore = DefaultTigrAssemblerFileContigDataStore.create(RESOURCES.getFile("files/annotation.tasm"));
 			
 	 }
 	 @Test
