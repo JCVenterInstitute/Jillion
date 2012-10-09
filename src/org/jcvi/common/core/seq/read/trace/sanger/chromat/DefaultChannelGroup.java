@@ -65,17 +65,17 @@ public class DefaultChannelGroup implements ChannelGroup {
     }
     private void positionsMustHaveSameLength() {
         long posLength = aChannel.getPositions().getLength();
-        if(posLength !=cChannel.getPositions().getLength() ||
-                posLength !=gChannel.getPositions().getLength()||
-                posLength !=tChannel.getPositions().getLength() ){
+        if(posLength !=cChannel.getPositions().getLength()
+        		 || posLength !=gChannel.getPositions().getLength()
+        		|| posLength !=tChannel.getPositions().getLength() ){
                 throw new IllegalArgumentException("positions must all have the same length");
             }
     }
     private void confidencesMustHaveSameLength() {
         long confidenceLength = aChannel.getConfidence().getLength();
-        if(confidenceLength !=cChannel.getConfidence().getLength() ||
-            confidenceLength !=gChannel.getConfidence().getLength() ||
-            confidenceLength !=tChannel.getConfidence().getLength() ){
+        if(confidenceLength !=cChannel.getConfidence().getLength() 
+        	|| confidenceLength !=gChannel.getConfidence().getLength()
+        	|| confidenceLength !=tChannel.getConfidence().getLength() ){
             throw new IllegalArgumentException("confidences must all have the same length");
         }
     }

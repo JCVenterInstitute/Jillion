@@ -239,8 +239,7 @@ public final class Well implements Comparable<Well>{
             return false;
         }
         final Well other = (Well) obj;
-        return this.row == other.row &&
-            this.column == other.column;
+        return this.row == other.row && this.column == other.column;
     }
   
     /**

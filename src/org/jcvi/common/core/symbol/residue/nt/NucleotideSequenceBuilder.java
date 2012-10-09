@@ -1005,8 +1005,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
                 handleGap(increment);
             }else if(value == N_VALUE){
                 handleN(increment);
-            }else if(value != A_VALUE && value != C_VALUE && 
-                    value != G_VALUE && value != T_VALUE){
+            }else if(value != A_VALUE && value != C_VALUE 
+                    && value != G_VALUE && value != T_VALUE){
                 handleAmbiguity(increment);                
             }
         }

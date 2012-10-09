@@ -78,8 +78,9 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
      * @param substitutionConfidence the substitutionConfidence to set
      */
     public SCFChromatogramBuilder substitutionConfidence(byte[] substitutionConfidence) {
-        this.substitutionConfidence = substitutionConfidence ==null?null:
-        	new QualitySequenceBuilder(substitutionConfidence).build();
+        this.substitutionConfidence = substitutionConfidence ==null
+        		? null
+        		: new QualitySequenceBuilder(substitutionConfidence).build();
         return this;
     }
 
@@ -94,8 +95,9 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
      * @param insertionConfidence the insertionConfidence to set
      */
     public SCFChromatogramBuilder insertionConfidence(byte[] insertionConfidence) {
-        this.insertionConfidence = insertionConfidence ==null?null:
-        	new QualitySequenceBuilder(insertionConfidence).build();
+        this.insertionConfidence = insertionConfidence ==null
+        		? null
+        	:  	new QualitySequenceBuilder(insertionConfidence).build();
         return this;
     }
 

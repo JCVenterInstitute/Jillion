@@ -462,8 +462,8 @@ public final class IndexedAsmUnitigDataStore implements UnitigDataStore{
                             (int)fullLengthSequence.getLength(),
                             false);
                 } catch (DataStoreException e) {
-                    throw new IllegalStateException("error getting read id "+ externalReadId +
-                            " from frg file",e);
+                    throw new IllegalStateException("error getting read id "+ externalReadId
+                           + " from frg file",e);
                 }
             }
            

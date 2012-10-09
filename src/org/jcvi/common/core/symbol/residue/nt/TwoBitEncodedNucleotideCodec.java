@@ -280,8 +280,8 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
         public static int getNumberOfEncodedBytesFor(int totalLength, int numberOfSentinelValues){
         	int encodedBasesSize = computeHeaderlessEncodedSize(totalLength);
         	ValueSizeStrategy numBasesSizeStrategy = ValueSizeStrategy.getStrategyFor(totalLength);
-            ValueSizeStrategy sentinelSizeStrategy = numberOfSentinelValues==0?
-            												ValueSizeStrategy.NONE 
+            ValueSizeStrategy sentinelSizeStrategy = numberOfSentinelValues==0
+            											?	ValueSizeStrategy.NONE 
             											:	ValueSizeStrategy.getStrategyFor(numberOfSentinelValues);
             return computeEncodedBufferSize(encodedBasesSize,
 					numBasesSizeStrategy, numberOfSentinelValues,
@@ -295,8 +295,8 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
             encodedBases.flip();
             ValueSizeStrategy numBasesSizeStrategy = ValueSizeStrategy.getStrategyFor(unEncodedSize);
             int numberOfSentinels = sentinels.size();
-			ValueSizeStrategy sentinelSizeStrategy = sentinels.isEmpty()?
-            												ValueSizeStrategy.NONE 
+			ValueSizeStrategy sentinelSizeStrategy = sentinels.isEmpty()
+            											?	ValueSizeStrategy.NONE 
             											:	ValueSizeStrategy.getStrategyFor(numberOfSentinels);
             
             int bufferSize = computeEncodedBufferSize(encodedBasesSize,

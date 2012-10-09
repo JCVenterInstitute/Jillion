@@ -344,8 +344,8 @@ public enum Chunk {
         }
         
         private boolean matchesCharacterIgnoringCase(char c, char charToMatch){
-            return Character.toLowerCase(c) == charToMatch ||
-                Character.toUpperCase(c) == charToMatch;
+            return Character.toLowerCase(c) == charToMatch
+                || Character.toUpperCase(c) == charToMatch;
         }
 
         private void setConfidences(ByteBuffer calledConfidence, ByteBuffer unCalledConfidence,

@@ -73,10 +73,10 @@ public class DefaultSliceElement implements IdedSliceElement {
         }
         IdedSliceElement other = (IdedSliceElement) obj;
         return 
-        ObjectsUtil.nullSafeEquals(getId(), other.getId()) &&
-        ObjectsUtil.nullSafeEquals(getBase(), other.getBase()) &&
-        ObjectsUtil.nullSafeEquals(getQuality(), other.getQuality()) &&
-        ObjectsUtil.nullSafeEquals(getSequenceDirection(), other.getSequenceDirection());
+        ObjectsUtil.nullSafeEquals(getId(), other.getId()) 
+        && ObjectsUtil.nullSafeEquals(getBase(), other.getBase())
+        && ObjectsUtil.nullSafeEquals(getQuality(), other.getQuality())
+        && ObjectsUtil.nullSafeEquals(getSequenceDirection(), other.getSequenceDirection());
        
     }
 

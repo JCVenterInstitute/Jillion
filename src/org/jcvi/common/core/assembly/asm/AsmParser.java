@@ -912,8 +912,8 @@ public final class AsmParser {
                 String duplicateId = parseContigId(parserState, visitor);
                 if(!contigId.equals(duplicateId)){
                     throw new IOException(
-                            String.format("invalid single contig scaffold, " +
-                            		"contig ids ct1 and ct2 should be identical %s vs %s",
+                            String.format(
+                        		"invalid single contig scaffold, contig ids ct1 and ct2 should be identical %s vs %s",
                             		contigId, duplicateId));
                 }
                 //only 1 contig mean, stddev and ori should be ignored

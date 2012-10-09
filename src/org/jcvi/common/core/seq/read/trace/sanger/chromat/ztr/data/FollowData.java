@@ -103,10 +103,10 @@ public enum FollowData implements Data {
 		result.put(data[0]);
 		//follow encode the rest
 		for(int i=1; i<data.length; i++){
-			int value = IOUtil.toUnsignedByte(followArray[
-			                         IOUtil.toUnsignedByte(data[i-1])]) -
-							IOUtil.toUnsignedByte(data[i]);
-			result.put(IOUtil.toSignedByte(value));
+			int prev = IOUtil.toUnsignedByte(data[i-1]);
+			int current = IOUtil.toUnsignedByte(data[i]);
+			int nextFollowValue = IOUtil.toUnsignedByte(followArray[prev]) - current;
+			result.put(IOUtil.toSignedByte(nextFollowValue));
 		}
 		result.flip();
 		return result.array();

@@ -911,7 +911,7 @@ public abstract class Range implements Rangeable,Iterable<Long>
     }
     /**
      * Returns a String representation of this Range in given coordinate system.
-     * The actual format is {@code [localStart - localEnd]/systemAbbreviatedName}
+     * The actual format is {@code [localStart .. localEnd]/systemAbbreviatedName}
      * @throws NullPointerException if coordinateSystem is null.
      */
     public String toString(CoordinateSystem coordinateSystem)
@@ -919,7 +919,7 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	if(coordinateSystem ==null){
     		throw new NullPointerException("coordinateSystem can not be null");
     	}
-        return String.format("[ %d - %d ]/%s", 
+        return String.format("[ %d .. %d ]/%s", 
         		coordinateSystem.getLocalStart(getBegin()) ,
         		coordinateSystem.getLocalEnd(getEnd()),
                 coordinateSystem.getAbbreviatedName());

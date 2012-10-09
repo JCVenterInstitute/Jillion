@@ -216,8 +216,8 @@ public enum Nucleotide implements Residue {
      * {@code false} otherwise.
      */
     public boolean isAmbiguity(){
-        return !isGap() && this !=Adenine && 
-        this !=Cytosine && this != Guanine && this != Thymine;
+        return !isGap() && this !=Adenine  
+         && this !=Cytosine && this != Guanine && this != Thymine;
     }
     
     @Override

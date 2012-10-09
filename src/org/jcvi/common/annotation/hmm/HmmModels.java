@@ -207,8 +207,8 @@ public enum HmmModels {
 			//first bases are GT
 			if(intronBases.get(0)!= Nucleotide.Guanine 
 					|| intronBases.get(1)!= Nucleotide.Thymine ){
-				throw new IllegalStateException("intron must start with 'GT' : "+ 
-					intronBases.get(0)+ intronBases.get(1));
+				throw new IllegalStateException("intron must start with 'GT' : " 
+					+ intronBases.get(0)+ intronBases.get(1));
 			}
 			array[0] = 13+phaseShift;
 			array[1] = 14+phaseShift;
@@ -216,9 +216,9 @@ public enum HmmModels {
 			int size = intronLength;
 			if(intronBases.get(size-2)!= Nucleotide.Adenine 
 					|| intronBases.get(size-1)!= Nucleotide.Guanine ){
-				throw new IllegalStateException("intron must start with 'AG' : "+ 
-						intronBases.get(size-2)+
-						intronBases.get(size-1));
+				throw new IllegalStateException("intron must start with 'AG' : " 
+						+ intronBases.get(size-2)
+						+ intronBases.get(size-1));
 			}
 			array[array.length-2] = 16+phaseShift;
 			array[array.length-1] = 17+phaseShift;

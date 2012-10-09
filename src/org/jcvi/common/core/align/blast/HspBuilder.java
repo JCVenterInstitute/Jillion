@@ -69,8 +69,8 @@ public final class HspBuilder implements org.jcvi.common.core.util.Builder<Hsp>{
             query(queryId);
         }
         public HspBuilder gappedAlignments(NucleotideSequence queryAlignment, NucleotideSequence subjectAlignment) {
-            if((queryAlignment ==null && subjectAlignment !=null) ||
-               (subjectAlignment ==null && queryAlignment !=null)){
+            if((queryAlignment ==null && subjectAlignment !=null) 
+            		|| (subjectAlignment ==null && queryAlignment !=null)){
                 throw new NullPointerException("gapped alignments must be either both null or neither null");
             }
             this.queryAlignment = queryAlignment;
