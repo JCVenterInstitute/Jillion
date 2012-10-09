@@ -80,6 +80,7 @@ public final class GridUtils
                         try {
                             GLOBAL_SESSION.exit();
                         } catch (DrmaaException e) {
+                        	//ignore; there's nothing we can do
                         }
                     }
                     

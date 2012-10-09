@@ -191,9 +191,9 @@ public final class IOUtil {
         }
     }
     /**
-     * Close the given Closeable and ignore any exceptions
+     * Close the given {@link Closeable} and ignore any exceptions
      * that are thrown.  Passing in a null will do nothing.
-     * @param closeable the closable object to close
+     * @param closeable the {@link Closeable} object to close.
      */
     public static void closeAndIgnoreErrors(Closeable closeable){
         try {

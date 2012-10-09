@@ -351,8 +351,6 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
 		builder.append(ORDINAL_VALUES[currentDecodedBytes[0]]);
 		if(isEven(length)){
 			builder.append(ORDINAL_VALUES[currentDecodedBytes[1]]);
-		}else{
-			
 		}
 		return builder.toString();
 	}

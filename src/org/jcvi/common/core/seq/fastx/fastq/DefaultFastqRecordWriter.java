@@ -17,7 +17,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
-public class DefaultFastqRecordWriter implements FastqRecordWriter{
+public final class DefaultFastqRecordWriter implements FastqRecordWriter{
 	private static final String CR = "\n";
 	private static final int ALL_ON_ONE_LINE =-1;
 	
