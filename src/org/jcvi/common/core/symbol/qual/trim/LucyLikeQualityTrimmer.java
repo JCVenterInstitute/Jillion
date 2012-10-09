@@ -147,8 +147,8 @@ public final class LucyLikeQualityTrimmer  implements QualityTrimmer{
                 double avgErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, currentWindowRange);
                 double leftEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, new Range.Builder(SIZE_OF_ENDS).shift(currentWindowRange.getBegin()).build());
                 double rightEndErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, new Range.Builder(SIZE_OF_ENDS).shift(currentWindowRange.getEnd()-SIZE_OF_ENDS).build());
-                if(avgErrorRate <= this.maxTotalAvgError && 
-                        leftEndErrorRate <= this.maxErrorAtEnds 
+                if(avgErrorRate <= this.maxTotalAvgError 
+                        && leftEndErrorRate <= this.maxErrorAtEnds 
                         && rightEndErrorRate <= this.maxErrorAtEnds){
                     //found a good range!
                     return currentWindowRange;

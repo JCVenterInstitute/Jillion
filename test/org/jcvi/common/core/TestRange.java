@@ -503,19 +503,19 @@ public class TestRange{
 
     @Test public void testToString()
     {
-        assertEquals("[ 1 - 10 ]/0B", this.range.toString());
+        assertEquals("[ 1 .. 10 ]/0B", this.range.toString());
     }
     @Test public void testToStringResidueBasedCoordinate()
     {
-        assertEquals("[ 2 - 11 ]/RB", this.range.toString(CoordinateSystem.RESIDUE_BASED));
+        assertEquals("[ 2 .. 11 ]/RB", this.range.toString(CoordinateSystem.RESIDUE_BASED));
     }
     @Test public void testToStringSpacedBasedCoordinate()
     {
-        assertEquals("[ 1 - 11 ]/SB", this.range.toString(CoordinateSystem.SPACE_BASED));
+        assertEquals("[ 1 .. 11 ]/SB", this.range.toString(CoordinateSystem.SPACE_BASED));
     }
     @Test public void testToStringZeroBased()
     {
-        assertEquals("[ 1 - 10 ]/0B", this.range.toString(CoordinateSystem.ZERO_BASED));
+        assertEquals("[ 1 .. 10 ]/0B", this.range.toString(CoordinateSystem.ZERO_BASED));
     }
     private String convertIntoString(Object left, Object right, String seperator){
         StringBuilder result = new StringBuilder();

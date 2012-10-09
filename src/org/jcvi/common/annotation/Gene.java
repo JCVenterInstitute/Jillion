@@ -35,8 +35,8 @@ public final class Gene {
 		for(Range exon : this.exons){
 			 introns = exon.complementFrom(introns);
 		}
-		this.introns = introns.equals(completeExonRange)? 
-				Collections.<Range>emptyList() 
+		this.introns = introns.equals(completeExonRange)
+				? Collections.<Range>emptyList() 
 				: introns;
 	}
 	/**

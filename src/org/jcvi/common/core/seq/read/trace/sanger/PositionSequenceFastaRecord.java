@@ -72,8 +72,8 @@ public final class PositionSequenceFastaRecord implements FastaRecord<Position, 
         PositionSequenceFastaRecord other = (PositionSequenceFastaRecord)obj;
 		return 
         
-        ObjectsUtil.nullSafeEquals(getId(), other.getId()) &&
-        ObjectsUtil.nullSafeEquals(getSequence(), other.getSequence());
+        ObjectsUtil.nullSafeEquals(getId(), other.getId())
+         && ObjectsUtil.nullSafeEquals(getSequence(), other.getSequence());
     }   
 
    

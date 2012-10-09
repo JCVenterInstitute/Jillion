@@ -206,9 +206,9 @@ public final class TigrAssemblyFileParser {
     private static void visitRead(ContigFileVisitor visitor,
             String currentSequenceName, int currentSequenceLeftEnd,
             int currentSequenceRightEnd, int currentOffset, String currentBases) {
-        Direction dir = currentSequenceLeftEnd > currentSequenceRightEnd?
-                                Direction.REVERSE:
-                                Direction.FORWARD;
+        Direction dir = currentSequenceLeftEnd > currentSequenceRightEnd
+                               ? Direction.REVERSE
+                               : Direction.FORWARD;
         final Range validRange;
         if(dir == Direction.REVERSE){
             validRange= Range.of(CoordinateSystem.RESIDUE_BASED, currentSequenceRightEnd, currentSequenceLeftEnd);

@@ -160,8 +160,8 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 			BitSet inAHorizontalGap = new BitSet(lengthOfSeq2+1);
 			for(int j=1; j<= lengthOfSeq2; j++){
 				float diagnol = scoreCache[PREVIOUS_ROW][j-1];
-				float verticalGapExtensionScore = inAVerticalGapCache[PREVIOUS_ROW].get(j)? 
-							scoreCache[PREVIOUS_ROW][j] + extendGapPenalty 
+				float verticalGapExtensionScore = inAVerticalGapCache[PREVIOUS_ROW].get(j) 
+							? scoreCache[PREVIOUS_ROW][j] + extendGapPenalty 
 							: Float.NEGATIVE_INFINITY	;
 				float verticalOpenGapScore = scoreCache[PREVIOUS_ROW][j] + openGapPenalty;
 				if(verticalGapExtensionScore > verticalOpenGapScore){
@@ -170,8 +170,8 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 					verticalGapPenaltiesSoFar[j] = verticalOpenGapScore;
 				}
 				
-				float horizontalGapExtensionScore =  inAHorizontalGap.get(j-1) ?
-						scoreCache[CURRENT_ROW][j-1]+ extendGapPenalty
+				float horizontalGapExtensionScore =  inAHorizontalGap.get(j-1) 
+						? scoreCache[CURRENT_ROW][j-1]+ extendGapPenalty
 						: Float.NEGATIVE_INFINITY;
 				float horizontalGapOpenScore = scoreCache[CURRENT_ROW][j-1] + openGapPenalty;
 				if(horizontalGapExtensionScore >= horizontalGapOpenScore){

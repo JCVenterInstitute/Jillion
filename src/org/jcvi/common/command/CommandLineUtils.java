@@ -127,8 +127,8 @@ public final class CommandLineUtils {
     public static boolean helpRequested(String[] args){
         for(int i=0; i< args.length; i++){
             String arg = args[i];
-            if("-h".equals(arg) || "--h".equals(arg) ||
-                    "-help".equals(arg) || "--help".equals(arg)){
+            if("-h".equals(arg) || "--h".equals(arg) 
+            		||   "-help".equals(arg) || "--help".equals(arg)){
                 return true;
             }
         }

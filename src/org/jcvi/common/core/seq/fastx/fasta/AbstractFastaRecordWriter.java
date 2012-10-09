@@ -126,7 +126,7 @@ public  abstract class AbstractFastaRecordWriter<S extends Symbol, T extends Seq
    
     protected abstract int numberOfCharsFor(int numberOfSymbols);
     
-public static abstract class AbstractBuilder<S extends Symbol, T extends Sequence<S>,F extends FastaRecord<S,T>, W extends FastaRecordWriter<S, T, F>> implements org.jcvi.common.core.util.Builder<W>{
+    public abstract static class AbstractBuilder<S extends Symbol, T extends Sequence<S>,F extends FastaRecord<S,T>, W extends FastaRecordWriter<S, T, F>> implements org.jcvi.common.core.util.Builder<W>{
 		
 		private static final Charset DEFAULT_CHARSET = IOUtil.UTF_8;
 		private final OutputStream out;

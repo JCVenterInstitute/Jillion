@@ -64,9 +64,9 @@ class RunLengthEncodedQualitySequence implements QualitySequence{
 			return false;
 		}
 		Iterator<PhredQuality> iter = iterator();
-		Iterator<PhredQuality> OtherIter = other.iterator();
+		Iterator<PhredQuality> otherIter = other.iterator();
 		while(iter.hasNext()){
-			if(!iter.next().equals(OtherIter.next())){
+			if(!iter.next().equals(otherIter.next())){
 				return false;
 			}
 		}

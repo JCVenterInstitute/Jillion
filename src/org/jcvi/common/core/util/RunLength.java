@@ -61,8 +61,8 @@ public final class RunLength<T> {
             return false;
         }
         RunLength<?> other = (RunLength<?>) obj;
-        return length == other.length && 
-        		ObjectsUtil.nullSafeEquals(getValue(), other.getValue());
+        return length == other.length  
+        		&& ObjectsUtil.nullSafeEquals(getValue(), other.getValue());
     }
     @Override
     public String toString() {

@@ -50,18 +50,18 @@ import org.jcvi.common.core.util.DateUtil;
 public final class TraceArchiveWriter implements Closeable{
 
 	private static final String README_TEXT = 
-			"JCVI Trace Volume Generated: %s%n" +
-			"In instances where two basecallers are reported both callers were used in%n" +
-			"conjuction to create the basecall and/or assign quality values.%n%n" +
+			"JCVI Trace Volume Generated: %s%n"
+			+ "In instances where two basecallers are reported both callers were used in%n"
+			+ "conjuction to create the basecall and/or assign quality values.%n%n"
 
-			"This volume contains:%n" +
-			". MD5            MD5 file signatures%n" +
-			". README         This file%n" +
-			". TRACEINFO.XML  Auxiliary information in XML format%n" +
-			". fasta          directory containing basecalls%n" +
-			". peak           directory containing peak index values%n" +
-			". qual           directory containing quality scores%n" +
-			". traces         directory containing %d trace file(s)%n";
+			+ "This volume contains:%n"
+			+ ". MD5            MD5 file signatures%n"
+			+ ". README         This file%n"
+			+ ". TRACEINFO.XML  Auxiliary information in XML format%n"
+			+ ". fasta          directory containing basecalls%n"
+			+ ". peak           directory containing peak index values%n"
+			+ ". qual           directory containing quality scores%n"
+			+ ". traces         directory containing %d trace file(s)%n";
 	
 	private static final DateFormat DATE_TIME_FORMATTER = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss", Locale.US);
     
