@@ -273,19 +273,9 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         * {@inheritDoc}
         */
         @Override
-        public AssembledReadBuilder<TigrAssemblerPlacedRead> shiftRight(
+        public AssembledReadBuilder<TigrAssemblerPlacedRead> shift(
                 int numberOfBases) {
-            delegate.shiftRight(numberOfBases);
-            return this;
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public AssembledReadBuilder<TigrAssemblerPlacedRead> shiftLeft(
-                int numberOfBases) {
-            delegate.shiftLeft(numberOfBases);
+            delegate.shift(numberOfBases);
             return this;
         }
 

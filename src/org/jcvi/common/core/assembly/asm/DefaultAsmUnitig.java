@@ -32,9 +32,9 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  */
 public class DefaultAsmUnitig implements AsmUnitig{
 
-    private final Contig<AsmPlacedRead> delegate;
+    private final Contig<AsmAssembledRead> delegate;
 
-    public DefaultAsmUnitig(Contig<AsmPlacedRead> delegate) {
+    public DefaultAsmUnitig(Contig<AsmAssembledRead> delegate) {
         this.delegate = delegate;
     }
 
@@ -58,7 +58,7 @@ public class DefaultAsmUnitig implements AsmUnitig{
     * {@inheritDoc}
     */
     @Override
-    public StreamingIterator<AsmPlacedRead> getReadIterator() {
+    public StreamingIterator<AsmAssembledRead> getReadIterator() {
         return delegate.getReadIterator();
     }
 
@@ -74,7 +74,7 @@ public class DefaultAsmUnitig implements AsmUnitig{
     * {@inheritDoc}
     */
     @Override
-    public AsmPlacedRead getRead(String id) {
+    public AsmAssembledRead getRead(String id) {
         return delegate.getRead(id);
     }
 

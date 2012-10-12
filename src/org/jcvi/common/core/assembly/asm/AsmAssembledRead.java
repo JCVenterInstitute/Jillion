@@ -17,28 +17,22 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.assembly.ace;
+package org.jcvi.common.core.assembly.asm;
 
-import org.jcvi.common.core.assembly.AssembledReadBuilder;
-
-import org.jcvi.common.core.util.Builder;
+import org.jcvi.common.core.assembly.AssembledRead;
 
 /**
- * {@code AcePlacedReadBuilder} is a {@link Builder}
- * for {@link AceAssembledRead}s for a specific contig.
- * Methods in this interface can change the bases
- * of this read or shift where on the reference (or contig consensus)
- * this read lands.
  * @author dkatzel
  *
  *
  */
-public interface AcePlacedReadBuilder extends AssembledReadBuilder<AceAssembledRead>{
-   
-
+public interface AsmAssembledRead extends AssembledRead{
     /**
-     * @return the phdInfo
+     * Is this read a repeat surrogate
+     * unitig which was cautiously placed
+     * by Celera Assembler at one or more
+     * locations.
+     * @return
      */
-    PhdInfo getPhdInfo();
-
+    boolean isRepeatSurrogate();
 }

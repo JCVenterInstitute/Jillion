@@ -41,7 +41,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
     private final AssembledRead placedRead;
     
     
-    public static AcePlacedReadBuilder createBuilder(NucleotideSequence reference, String readId,NucleotideSequence validBases,
+    public static AceAssembledReadBuilder createBuilder(NucleotideSequence reference, String readId,NucleotideSequence validBases,
             int offset, Direction dir, Range clearRange,PhdInfo phdInfo,
             int ungappedFullLength){
         return new Builder(reference, readId, validBases, 
@@ -187,7 +187,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
     }
 
 
-    private static class Builder implements AcePlacedReadBuilder{
+    private static class Builder implements AceAssembledReadBuilder{
         private final PhdInfo phdInfo;        
         private final AssembledReadBuilder<AssembledRead> delegateBuilder;
         
@@ -245,16 +245,8 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
         * {@inheritDoc}
         */
         @Override
-        public Builder shiftRight(int numberOfBases){
-            delegateBuilder.shiftRight(numberOfBases);
-            return this;
-        }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public Builder shiftLeft(int numberOfBases){
-            delegateBuilder.shiftLeft(numberOfBases);
+        public Builder shift(int numberOfBases){
+            delegateBuilder.shift(numberOfBases);
             return this;
         }
         /**

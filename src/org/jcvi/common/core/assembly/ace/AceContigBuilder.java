@@ -70,17 +70,17 @@ public interface AceContigBuilder extends ContigBuilder<AceAssembledRead,AceCont
      * 
     * {@inheritDoc}
     * <p/>
-    * Get the {@link AcePlacedReadBuilder} for the given read id.
+    * Get the {@link AceAssembledReadBuilder} for the given read id.
      */
     @Override
-    AcePlacedReadBuilder getAssembledReadBuilder(String readId);
+    AceAssembledReadBuilder getAssembledReadBuilder(String readId);
     
     /**
      * 
     * {@inheritDoc}
      */
     @Override
-    Collection<AcePlacedReadBuilder> getAllAssembledReadBuilders();
+    Collection<AceAssembledReadBuilder> getAllAssembledReadBuilders();
 
     /**
      * Set this contig as being complemented.

@@ -27,11 +27,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
 import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -55,7 +56,7 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
     private final File fastQFile;
     private Long size=null;
     private volatile boolean closed;
-    private final FastXFilter filter;
+    private final DataStoreFilter filter;
     
     /**
      * Create a new {@link FastqDataStore} instance for the given
@@ -99,14 +100,14 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
      * @throws FileNotFoundException if the given Fastq file does not exist.
      * @throws NullPointerException if fastqFile is null.
      */
-    public static FastqDataStore create(File fastqFile, FastXFilter filter, FastqQualityCodec qualityCodec) throws FileNotFoundException{
+    public static FastqDataStore create(File fastqFile, DataStoreFilter filter, FastqQualityCodec qualityCodec) throws FileNotFoundException{
     	return new LargeFastqFileDataStore(fastqFile, qualityCodec,filter);
     }
     /**
      * @param qualityCodec
      * @throws FileNotFoundException 
      */
-    private LargeFastqFileDataStore(File fastQFile, FastqQualityCodec qualityCodec,FastXFilter filter) throws FileNotFoundException {
+    private LargeFastqFileDataStore(File fastQFile, FastqQualityCodec qualityCodec,DataStoreFilter filter) throws FileNotFoundException {
     	if(fastQFile==null){
     		throw new NullPointerException("fastq file can not be null");
     	}
@@ -114,7 +115,7 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
     		throw new FileNotFoundException("could not find " + fastQFile.getAbsolutePath());
     	}
     	if(filter==null){
-    		this.filter = AcceptingFastXFilter.INSTANCE;
+    		this.filter = AcceptingDataStoreFilter.INSTANCE;
     	}else{
     		this.filter = filter;
     	}
@@ -260,10 +261,10 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
      */
     private final class LargeFastqFileIterator extends AbstractBlockingCloseableIterator<FastqRecord> implements StreamingIterator<FastqRecord>{
 
-    	private final FastXFilter filter;
+    	private final DataStoreFilter filter;
     	
 
-    	public LargeFastqFileIterator(FastXFilter filter) {
+    	public LargeFastqFileIterator(DataStoreFilter filter) {
 			this.filter = filter;
 		}
 
@@ -287,7 +288,11 @@ public final class LargeFastqFileDataStore implements FastqDataStore {
 							String id, String optionalComment) {
 						currentId = id;
 						currentComment = optionalComment;
-						if (filter.accept(id, optionalComment)) {
+						if(filter instanceof FastXFilter){
+							if(((FastXFilter) filter).accept(id, optionalComment)){
+								return FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD;
+							}
+						}else if (filter.accept(id)) {
 							return FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD;
 						}
 						return FastXFileVisitor.DeflineReturnCode.SKIP_CURRENT_RECORD;

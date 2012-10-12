@@ -28,7 +28,7 @@ import org.jcvi.common.core.assembly.ContigBuilder;
  *
  *
  */
-public interface AsmContigBuilder extends ContigBuilder<AsmPlacedRead, AsmContig>{
+public interface AsmContigBuilder extends ContigBuilder<AsmAssembledRead, AsmContig>{
 
     void setDegenerate(boolean isDegenerate);
     

@@ -37,11 +37,11 @@ import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
  *
  *
  */
-public final class DefaultAsmPlacedRead implements AsmPlacedRead{
+public final class DefaultAsmPlacedRead implements AsmAssembledRead{
     private final boolean isSurrogate;
     private final AssembledRead placedRead;
     
-    public static AsmPlacedReadBuilder createBuilder(NucleotideSequence reference, String readId,String validBases,
+    public static AsmAssembledReadBuilder createBuilder(NucleotideSequence reference, String readId,String validBases,
             int offset, Direction dir, Range clearRange,
             int ungappedFullLength, boolean isSurrogate){
         return new Builder(reference, readId, validBases, 
@@ -183,7 +183,7 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
         return true;
     }
 
-    private static class Builder implements AsmPlacedReadBuilder{
+    private static class Builder implements AsmAssembledReadBuilder{
         private boolean isSurrogate=false;        
         private final AssembledReadBuilder<AssembledRead> delegateBuilder;
         
@@ -233,16 +233,8 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
         * {@inheritDoc}
         */
         @Override
-        public Builder shiftRight(int numberOfBases){
-            delegateBuilder.shiftRight(numberOfBases);
-            return this;
-        }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public Builder shiftLeft(int numberOfBases){
-            delegateBuilder.shiftLeft(numberOfBases);
+        public Builder shift(int numberOfBases){
+            delegateBuilder.shift(numberOfBases);
             return this;
         }
         /**
@@ -257,7 +249,7 @@ public final class DefaultAsmPlacedRead implements AsmPlacedRead{
 
 
         @Override
-		public AssembledReadBuilder<AsmPlacedRead> setClearRange(
+		public AssembledReadBuilder<AsmAssembledRead> setClearRange(
 				Range updatedClearRange) {
         	delegateBuilder.setClearRange(updatedClearRange);
 			return this;

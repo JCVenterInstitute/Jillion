@@ -32,7 +32,7 @@ import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceContigTestUtil;
 import org.jcvi.common.core.assembly.ace.AceAssembledRead;
-import org.jcvi.common.core.assembly.ace.AcePlacedReadBuilder;
+import org.jcvi.common.core.assembly.ace.AceAssembledReadBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
@@ -142,7 +142,7 @@ public class TestConsedUtil_Split0x {
         * {@inheritDoc}
         */
         @Override
-        public AcePlacedReadBuilder getAssembledReadBuilder(String readId) {
+        public AceAssembledReadBuilder getAssembledReadBuilder(String readId) {
             return builder.getAssembledReadBuilder(readId);
         }
 
@@ -150,7 +150,7 @@ public class TestConsedUtil_Split0x {
         * {@inheritDoc}
         */
         @Override
-        public Collection<AcePlacedReadBuilder> getAllAssembledReadBuilders() {
+        public Collection<AceAssembledReadBuilder> getAllAssembledReadBuilders() {
             return builder.getAllAssembledReadBuilders();
         }
 
