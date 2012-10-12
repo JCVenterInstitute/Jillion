@@ -22,14 +22,14 @@ package org.jcvi.common.core.datastore;
 import java.util.Collection;
 
 /**
- * {@code DefaultIncludeDataStoreFilter} is a default implementation
+ * {@code IncludeDataStoreFilter} is a default implementation
  * of a DataStoreFilter in which all the given ids should be 
  * accepted by this filter.
  * @author dkatzel
  *
  *
  */
-public class DefaultIncludeDataStoreFilter implements DataStoreFilter{
+public class IncludeDataStoreFilter implements DataStoreFilter{
 
     private final Collection<String> ids;
 
@@ -38,7 +38,7 @@ public class DefaultIncludeDataStoreFilter implements DataStoreFilter{
      * @param ids this list of ids that should be accepted
      * by this filter.
      */
-    public DefaultIncludeDataStoreFilter(Collection<String> ids) {
+    public IncludeDataStoreFilter(Collection<String> ids) {
         this.ids = ids;
     }
 

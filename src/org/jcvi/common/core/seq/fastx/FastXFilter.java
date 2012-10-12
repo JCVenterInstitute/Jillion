@@ -18,6 +18,8 @@
  ******************************************************************************/
 package org.jcvi.common.core.seq.fastx;
 
+import org.jcvi.common.core.datastore.DataStoreFilter;
+
 
 /**
  * {@code FastXFilter} filters a FastX (Fasta or Fastq) file.
@@ -25,7 +27,7 @@ package org.jcvi.common.core.seq.fastx;
  *
  *
  */
-public interface FastXFilter {
+public interface FastXFilter extends DataStoreFilter{
     /**
      * Filters the fastX record with the given read id and optional comment.
      * @param id the id of the read to possibly filter.

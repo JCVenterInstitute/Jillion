@@ -26,7 +26,7 @@ import org.jcvi.common.core.assembly.AssembledReadBuilder;
  *
  *
  */
-public interface AsmPlacedReadBuilder extends AssembledReadBuilder<AsmPlacedRead>{
+public interface AsmAssembledReadBuilder extends AssembledReadBuilder<AsmAssembledRead>{
 
     boolean isRepeatSurrogate();
     

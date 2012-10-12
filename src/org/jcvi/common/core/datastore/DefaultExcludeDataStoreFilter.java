@@ -42,7 +42,7 @@ public class DefaultExcludeDataStoreFilter implements DataStoreFilter{
         //its just easier to invert an include filter
         //rather than copy and paste code
         filter = new InverseDataStoreFilter(
-                new DefaultIncludeDataStoreFilter(ids));
+                new IncludeDataStoreFilter(ids));
     }
     /**
     * {@inheritDoc}

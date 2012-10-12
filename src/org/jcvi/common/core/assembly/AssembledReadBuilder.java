@@ -70,22 +70,17 @@ public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable
     AssembledReadBuilder<R> setStartOffset(int newOffset);
     /**
      * Change the gapped start offset of this read
-     * by shifting it to the right the given number of gapped
+     * by shifting it to the given number of gapped
      * bases.
      * @param numberOfBases the number of gapped bases
-     * this read should get shifted to the right.
+     * this read should get shifted by. A positive value
+     * will increase this read's gapped start offset'
+     * a negative value will decrease this read's
+     * gapped start offset.  A value of 0 will 
+     * cause no change.
      * @return this.
      */
-    AssembledReadBuilder<R> shiftRight(int numberOfBases);
-    /**
-     * Change the gapped start offset of this read
-     * by shifting it to the left the given number of gapped
-     * bases.
-     * @param numberOfBases the number of gapped bases
-     * this read should get shifted to the left.
-     * @return this.
-     */
-    AssembledReadBuilder<R> shiftLeft(int numberOfBases);
+    AssembledReadBuilder<R> shift(int numberOfBases);
 
     /**
      * @return the clearRange

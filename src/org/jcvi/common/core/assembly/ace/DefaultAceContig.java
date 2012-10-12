@@ -96,7 +96,7 @@ public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> im
         private NucleotideSequence fullConsensus;
         private final NucleotideSequenceBuilder mutableConsensus;
         private String contigId;
-        private final Map<String, AcePlacedReadBuilder>aceReadBuilderMap = new HashMap<String, AcePlacedReadBuilder>();
+        private final Map<String, AceAssembledReadBuilder>aceReadBuilderMap = new HashMap<String, AceAssembledReadBuilder>();
         private int contigLeft= -1;
         private int contigRight = -1;
         private boolean built=false;
@@ -182,14 +182,14 @@ public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> im
         * {@inheritDoc}
         */
     	@Override
-        public Collection<AcePlacedReadBuilder> getAllAssembledReadBuilders(){
+        public Collection<AceAssembledReadBuilder> getAllAssembledReadBuilders(){
     	    return aceReadBuilderMap.values();
     	}
         /**
         * {@inheritDoc}
         */
         @Override
-        public AcePlacedReadBuilder getAssembledReadBuilder(String readId){
+        public AceAssembledReadBuilder getAssembledReadBuilder(String readId){
             return aceReadBuilderMap.get(readId);
         }
         
@@ -218,7 +218,7 @@ public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> im
             //BCISD-211
             int correctedOffset = Math.max(0,offset);
             adjustContigLeftAndRight(validBases, correctedOffset);
-            AcePlacedReadBuilder aceReadBuilder = createNewAceReadBuilder(readId, validBases, correctedOffset, dir, 
+            AceAssembledReadBuilder aceReadBuilder = createNewAceReadBuilder(readId, validBases, correctedOffset, dir, 
                         clearRange,phdInfo,ungappedFullLength);
                 
                 
@@ -226,7 +226,7 @@ public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> im
             
             return this;
         }
-        private AcePlacedReadBuilder createNewAceReadBuilder(
+        private AceAssembledReadBuilder createNewAceReadBuilder(
                 String readId, NucleotideSequence validBases, int offset,
                 Direction dir, Range clearRange, PhdInfo phdInfo,int ungappedFullLength) {
             return DefaultAceAssembledRead.createBuilder(
@@ -285,7 +285,7 @@ public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> im
             		.copy()
             		.trim(Range.of(contigLeft, contigRight))
             		.build();
-            for(AcePlacedReadBuilder aceReadBuilder : aceReadBuilderMap.values()){
+            for(AceAssembledReadBuilder aceReadBuilder : aceReadBuilderMap.values()){
                 int newOffset = (int)aceReadBuilder.getBegin() - contigLeft;
                 aceReadBuilder.reference(validConsensus,newOffset);
                 placedReads.add(aceReadBuilder.build());                

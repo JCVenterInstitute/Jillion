@@ -91,7 +91,7 @@ public class TestDefaultAceContigBuilderReAbacus {
         sut.getAssembledReadBuilder("read2").reAbacus(Range.of(4,8), asSequence("T"));
         sut.getAssembledReadBuilder("read3").reAbacus(Range.of(1,5), asSequence("T"));
         sut.getConsensusBuilder().delete(Range.of(4,8)).insert(4, asSequence("T"));
-        sut.getAssembledReadBuilder("read4").shiftLeft(4);
+        sut.getAssembledReadBuilder("read4").shift(-4);
            
         AceContig contig =sut.build();
         assertEquals("ACGTTACGT", contig.getConsensusSequence().toString());
@@ -179,12 +179,12 @@ public class TestDefaultAceContigBuilderReAbacus {
 		return addRead(readId, new NucleotideSequenceBuilder(validBases).build(), offset, dir, clearRange, phdInfo, ungappedFullLength);
 	}
 	@Override
-	public AcePlacedReadBuilder getAssembledReadBuilder(String readId) {
+	public AceAssembledReadBuilder getAssembledReadBuilder(String readId) {
 		return delegate.getAssembledReadBuilder(readId);
 	}
 
 	@Override
-	public Collection<AcePlacedReadBuilder> getAllAssembledReadBuilders() {
+	public Collection<AceAssembledReadBuilder> getAllAssembledReadBuilders() {
 		return delegate.getAllAssembledReadBuilders();
 	}
 

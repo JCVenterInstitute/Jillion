@@ -271,15 +271,8 @@ public final class DefaultAssembledRead implements AssembledRead {
         * {@inheritDoc}
         */
         @Override
-        public Builder shiftRight(int numberOfBases){
+        public Builder shift(int numberOfBases){
             return setStartOffset(offset+numberOfBases);
-        }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public Builder shiftLeft(int numberOfBases){
-            return setStartOffset(offset-numberOfBases);
         }
         /**
         * {@inheritDoc}

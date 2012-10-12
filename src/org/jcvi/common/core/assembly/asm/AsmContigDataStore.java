@@ -26,6 +26,6 @@ import org.jcvi.common.core.assembly.ContigDataStore;
  *
  *
  */
-public interface AsmContigDataStore extends ContigDataStore<AsmPlacedRead, AsmContig>{
+public interface AsmContigDataStore extends ContigDataStore<AsmAssembledRead, AsmContig>{
 
 }

@@ -26,6 +26,6 @@ import org.jcvi.common.core.assembly.Contig;
  *
  *
  */
-public interface AsmUnitig extends Contig<AsmPlacedRead>{
+public interface AsmUnitig extends Contig<AsmAssembledRead>{
 
 }

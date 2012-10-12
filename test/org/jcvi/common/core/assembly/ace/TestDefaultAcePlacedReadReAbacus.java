@@ -26,7 +26,7 @@ import static org.junit.Assert.fail;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.ace.AcePlacedReadBuilder;
+import org.jcvi.common.core.assembly.ace.AceAssembledReadBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultAceAssembledRead;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -49,7 +49,7 @@ public class TestDefaultAcePlacedReadReAbacus {
     int originalStartOffset=5;
     NucleotideSequence consensus = new NucleotideSequenceBuilder("NNNNACGTTACGTTT").build();
     NucleotideSequence originalSequence =   new NucleotideSequenceBuilder("ACGT-ACG-T").build();
-    AcePlacedReadBuilder sut = DefaultAceAssembledRead.createBuilder(
+    AceAssembledReadBuilder sut = DefaultAceAssembledRead.createBuilder(
             consensus, readId, 
             originalSequence, 
             originalStartOffset, dir, validRange, phdInfo, ungappedFullLength);

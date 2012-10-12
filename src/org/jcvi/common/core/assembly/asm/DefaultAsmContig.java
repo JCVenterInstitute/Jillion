@@ -38,7 +38,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
  *
  *
  */
-public final class DefaultAsmContig extends AbstractContig<AsmPlacedRead> implements AsmContig{
+public final class DefaultAsmContig extends AbstractContig<AsmAssembledRead> implements AsmContig{
 
     private final boolean isDegenerate;
     
@@ -49,7 +49,7 @@ public final class DefaultAsmContig extends AbstractContig<AsmPlacedRead> implem
         return new DefaultAsmContigBuilder(id, consensus, isDegenerate);
     }
     private DefaultAsmContig(String id, NucleotideSequence consensus,
-            Set<AsmPlacedRead> reads,boolean isDegenerate) {
+            Set<AsmAssembledRead> reads,boolean isDegenerate) {
         super(id,consensus,reads);
         this.isDegenerate = isDegenerate;
     }
@@ -69,7 +69,7 @@ public final class DefaultAsmContig extends AbstractContig<AsmPlacedRead> implem
         private final NucleotideSequence fullConsensus;
         private final NucleotideSequenceBuilder mutableConsensus;
         private String contigId;
-        private final Map<String, AsmPlacedReadBuilder>aceReadBuilderMap = new HashMap<String, AsmPlacedReadBuilder>();
+        private final Map<String, AsmAssembledReadBuilder>aceReadBuilderMap = new HashMap<String, AsmAssembledReadBuilder>();
    
         boolean isDegenerate;
         DefaultAsmContigBuilder(String id, NucleotideSequence consensus,boolean isDegenerate){
@@ -82,7 +82,7 @@ public final class DefaultAsmContig extends AbstractContig<AsmPlacedRead> implem
         * {@inheritDoc}
         */
         @Override
-        public ContigBuilder<AsmPlacedRead, AsmContig> setContigId(String contigId) {
+        public ContigBuilder<AsmAssembledRead, AsmContig> setContigId(String contigId) {
             this.contigId =contigId;
             return this;
         }
@@ -107,8 +107,8 @@ public final class DefaultAsmContig extends AbstractContig<AsmPlacedRead> implem
         * {@inheritDoc}
         */
         @Override
-        public ContigBuilder<AsmPlacedRead, AsmContig> addRead(
-                AsmPlacedRead placedRead) {
+        public ContigBuilder<AsmAssembledRead, AsmContig> addRead(
+                AsmAssembledRead placedRead) {
             return addRead(placedRead.getId(),
                     placedRead.getNucleotideSequence().toString(),
                     (int)placedRead.getGappedStartOffset(),
@@ -134,9 +134,9 @@ public final class DefaultAsmContig extends AbstractContig<AsmPlacedRead> implem
         * {@inheritDoc}
         */
         @Override
-        public ContigBuilder<AsmPlacedRead, AsmContig> addAllReads(
-                Iterable<AsmPlacedRead> reads) {
-           for(AsmPlacedRead read : reads){
+        public ContigBuilder<AsmAssembledRead, AsmContig> addAllReads(
+                Iterable<AsmAssembledRead> reads) {
+           for(AsmAssembledRead read : reads){
                addRead(read);
            }
             return this;
@@ -146,7 +146,7 @@ public final class DefaultAsmContig extends AbstractContig<AsmPlacedRead> implem
         * {@inheritDoc}
         */
         @Override
-        public Collection<? extends AssembledReadBuilder<AsmPlacedRead>> getAllAssembledReadBuilders() {
+        public Collection<? extends AssembledReadBuilder<AsmAssembledRead>> getAllAssembledReadBuilders() {
            
             return aceReadBuilderMap.values();
         }
@@ -155,7 +155,7 @@ public final class DefaultAsmContig extends AbstractContig<AsmPlacedRead> implem
         * {@inheritDoc}
         */
         @Override
-        public AssembledReadBuilder<AsmPlacedRead> getAssembledReadBuilder(String readId) {
+        public AssembledReadBuilder<AsmAssembledRead> getAssembledReadBuilder(String readId) {
             return aceReadBuilderMap.get(readId);
         }
 
@@ -163,7 +163,7 @@ public final class DefaultAsmContig extends AbstractContig<AsmPlacedRead> implem
         * {@inheritDoc}
         */
         @Override
-        public ContigBuilder<AsmPlacedRead, AsmContig> removeRead(String readId) {
+        public ContigBuilder<AsmAssembledRead, AsmContig> removeRead(String readId) {
             aceReadBuilderMap.remove(readId);   
             return this;
         }
@@ -181,8 +181,8 @@ public final class DefaultAsmContig extends AbstractContig<AsmPlacedRead> implem
         */
         @Override
         public AsmContig build() {
-            Set<AsmPlacedRead> reads = new HashSet<AsmPlacedRead>(aceReadBuilderMap.size()+1);
-            for(AsmPlacedReadBuilder builder : aceReadBuilderMap.values()){
+            Set<AsmAssembledRead> reads = new HashSet<AsmAssembledRead>(aceReadBuilderMap.size()+1);
+            for(AsmAssembledReadBuilder builder : aceReadBuilderMap.values()){
                 reads.add(builder.build());
             }
             aceReadBuilderMap.clear();
