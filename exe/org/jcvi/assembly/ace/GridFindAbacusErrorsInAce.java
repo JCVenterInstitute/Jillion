@@ -61,7 +61,7 @@ import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationWriter;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DefaultExcludeDataStoreFilter;
-import org.jcvi.common.core.datastore.DefaultIncludeDataStoreFilter;
+import org.jcvi.common.core.datastore.IncludeDataStoreFilter;
 import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -268,7 +268,7 @@ public class GridFindAbacusErrorsInAce {
                 Set<String> excludeList=parseIdsFrom(new File(commandLine.getOptionValue("e")));
                 includeList.removeAll(excludeList);
             }
-            filter = new DefaultIncludeDataStoreFilter(includeList);
+            filter = new IncludeDataStoreFilter(includeList);
             
         }else if(commandLine.hasOption("e")){
             idFile =new File(commandLine.getOptionValue("e"));
