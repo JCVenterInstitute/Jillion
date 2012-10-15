@@ -49,7 +49,7 @@ import org.jcvi.common.core.assembly.ScaffoldBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.ace.AceAssembledRead;
-import org.jcvi.common.core.assembly.ace.AcePlacedReadBuilder;
+import org.jcvi.common.core.assembly.ace.AceAssembledReadBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultAceFileWriter;
 import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
@@ -289,7 +289,7 @@ public class Cas2Consed3 {
                  NucleotideSequence fullConsensus =builder.getConsensusBuilder().build();
                  long ungappedLength = fullConsensus.getUngappedLength();
                  long firstReadStart= fullConsensus.getLength();
-                 for(AcePlacedReadBuilder readBuilder : builder.getAllAssembledReadBuilders()){
+                 for(AceAssembledReadBuilder readBuilder : builder.getAllAssembledReadBuilders()){
                      long start =readBuilder.getBegin();
                      if(start < firstReadStart){
                          firstReadStart = start;

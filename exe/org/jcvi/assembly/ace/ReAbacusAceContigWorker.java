@@ -55,7 +55,7 @@ import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileUtil;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
-import org.jcvi.common.core.assembly.ace.AcePlacedReadBuilder;
+import org.jcvi.common.core.assembly.ace.AceAssembledReadBuilder;
 import org.jcvi.common.core.assembly.ace.HiLowAceContigPhdDatastore;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationParser;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationVisitor;
@@ -360,7 +360,7 @@ public class ReAbacusAceContigWorker {
                 List<Range> reversedSortedRanges = new ArrayList<Range>(Ranges.merge(rangesToMerge));
                 Collections.reverse(reversedSortedRanges);
                
-                CoverageMap<AcePlacedReadBuilder> coverageMap = CoverageMapFactory.create(contigBuilder.getAllAssembledReadBuilders());
+                CoverageMap<AceAssembledReadBuilder> coverageMap = CoverageMapFactory.create(contigBuilder.getAllAssembledReadBuilders());
                 
                 for(Range gappedAbacusProblemRange : reversedSortedRanges){
                     int gappedStart = (int)gappedAbacusProblemRange.getBegin();
@@ -372,8 +372,8 @@ public class ReAbacusAceContigWorker {
                     
                     System.out.println("now working on "+ ungappedProblemRange);
                   Set<String> affectedReads = new LinkedHashSet<String>();
-                    for(CoverageRegion<AcePlacedReadBuilder> regions : CoverageMapUtil.getRegionsWhichIntersect( coverageMap, gappedAbacusProblemRange)){
-                        for(AcePlacedReadBuilder read : regions){
+                    for(CoverageRegion<AceAssembledReadBuilder> regions : CoverageMapUtil.getRegionsWhichIntersect( coverageMap, gappedAbacusProblemRange)){
+                        for(AceAssembledReadBuilder read : regions){
                             affectedReads.add(read.getId());
                         }
                     }
@@ -381,7 +381,7 @@ public class ReAbacusAceContigWorker {
                     Map<String, NucleotideSequenceFastaRecord> ungappedSequences = new LinkedHashMap<String, NucleotideSequenceFastaRecord>();
                     int maxSeenLength=0;
                     for(String readId : affectedReads){
-                        AcePlacedReadBuilder readBuilder =contigBuilder.getAssembledReadBuilder(readId);
+                        AceAssembledReadBuilder readBuilder =contigBuilder.getAssembledReadBuilder(readId);
                         int flankedStart = Math.max(0,gappedStart);
                         
                         int flankedEnd = Math.min((int)consensus.getLength()-1,gappedEnd);
@@ -470,7 +470,7 @@ public class ReAbacusAceContigWorker {
 	                			NucleotideSequenceFastaRecord gappedFasta = iter.next();
 	                            String id = gappedFasta.getId();
 	                            NucleotideSequence gappedSequence = gappedFasta.getSequence();
-	                            AcePlacedReadBuilder readBuilder =contigBuilder.getAssembledReadBuilder(id);
+	                            AceAssembledReadBuilder readBuilder =contigBuilder.getAssembledReadBuilder(id);
 	                           
 	                            Range sequenceRange = Range.parseRange(gappedFasta.getComment());
 	                            
@@ -542,7 +542,7 @@ public class ReAbacusAceContigWorker {
                        contigConsensusBuilder.delete(gappedAbacusProblemRange);
                         contigConsensusBuilder.insert((int)gappedAbacusProblemRange.getBegin(), updatedConsensus);
                         //update downstream offsets
-                        for(AcePlacedReadBuilder readBuilder : contigBuilder.getAllAssembledReadBuilders()){
+                        for(AceAssembledReadBuilder readBuilder : contigBuilder.getAllAssembledReadBuilders()){
                             
                             long oldStart =readBuilder.getBegin();
                             if(oldStart>gappedAbacusProblemRange.getBegin() && 

@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.IncludeDataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.FastXFilter;
-import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecordWriter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
@@ -29,7 +29,7 @@ public class ReEncodeFastq {
 		File fastqFile = new File("path/to/fastq");
 		List<String> idsToInclude = new ArrayList<String>();//put names here
 		
-		FastXFilter filter = new IncludeFastXIdFilter(idsToInclude);
+		DataStoreFilter filter = new IncludeDataStoreFilter(idsToInclude);
 		//for an example, we will tell the parser that
 		//this fastqFile has sanger encoded quality values
 		//but other factory methods can auto-detect the quality encoding
