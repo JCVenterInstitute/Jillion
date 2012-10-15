@@ -54,7 +54,7 @@ import org.junit.runners.Suite.SuiteClasses;
        TestAceFileParserStopParsingMiddleContig.class,
        TestAceFileUtil_writingAceContigs.class,
        TestDefaultAceFileWriter.class,
-       TestHiLowAceContigPhdDatastore.class,
+       TestHighLowAceContigPhdDatastore.class,
        TestDefaultAcePlacedReadReAbacus.class,
        TestDefaultAceContigBuilderReAbacus.class,
        TestAceVisitorSkipContigs.class,

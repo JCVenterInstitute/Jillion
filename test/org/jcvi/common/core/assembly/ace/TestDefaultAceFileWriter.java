@@ -207,7 +207,7 @@ public class TestDefaultAceFileWriter {
     public void rewritingAceShouldBeSimilar() throws IOException, DataStoreException{
     	File originalAce = resources.getFile("files/sample.ace");
     	
-    	PhdDataStore phdDataStore = HiLowAceContigPhdDatastore.create(originalAce);
+    	PhdDataStore phdDataStore = HighLowAceContigPhdDatastore.create(originalAce);
     	
     	 File outputFile = folder.newFile();
          

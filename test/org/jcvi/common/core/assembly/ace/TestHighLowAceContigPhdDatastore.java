@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.jcvi.common.core.assembly.ace.HiLowAceContigPhdDatastore;
+import org.jcvi.common.core.assembly.ace.HighLowAceContigPhdDatastore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
@@ -40,14 +40,14 @@ import static org.junit.Assert.*;
  *
  *
  */
-public class TestHiLowAceContigPhdDatastore {
+public class TestHighLowAceContigPhdDatastore {
 
-    HiLowAceContigPhdDatastore sut;
-    ResourceFileServer rs = new ResourceFileServer(TestHiLowAceContigPhdDatastore.class);
+    HighLowAceContigPhdDatastore sut;
+    ResourceFileServer rs = new ResourceFileServer(TestHighLowAceContigPhdDatastore.class);
     @Before
     public void setup() throws IOException{
         File ace = rs.getFile("files/sample.ace");
-        sut = HiLowAceContigPhdDatastore.create(ace, "Contig1");
+        sut = HighLowAceContigPhdDatastore.create(ace, "Contig1");
     }
     
     @After
@@ -167,19 +167,19 @@ public class TestHiLowAceContigPhdDatastore {
 
     private void addLowQualities(QualitySequenceBuilder builder, int numberOfQualities) {
     	byte[] array = new byte[numberOfQualities];
-    	Arrays.fill(array, HiLowAceContigPhdDatastore.DEFAULT_LOW_QUALITY.getQualityScore());
+    	Arrays.fill(array, HighLowAceContigPhdDatastore.DEFAULT_LOW_QUALITY.getQualityScore());
         builder.append(array);       
     }
     private void addLowQuality(QualitySequenceBuilder builder){
-       builder.append(HiLowAceContigPhdDatastore.DEFAULT_LOW_QUALITY.getQualityScore());
+       builder.append(HighLowAceContigPhdDatastore.DEFAULT_LOW_QUALITY.getQualityScore());
     }
     private void addHighQualities(QualitySequenceBuilder builder, int numberOfQualities) {
     	byte[] array = new byte[numberOfQualities];
-    	Arrays.fill(array, HiLowAceContigPhdDatastore.DEFAULT_HIGH_QUALITY.getQualityScore());
+    	Arrays.fill(array, HighLowAceContigPhdDatastore.DEFAULT_HIGH_QUALITY.getQualityScore());
         builder.append(array); 
     }
     
     private void addHighQuality(QualitySequenceBuilder builder){
-    	builder.append(HiLowAceContigPhdDatastore.DEFAULT_HIGH_QUALITY.getQualityScore());
+    	builder.append(HighLowAceContigPhdDatastore.DEFAULT_HIGH_QUALITY.getQualityScore());
     }
 }
