@@ -42,37 +42,37 @@ import org.jcvi.common.core.util.MapUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
- * {@code HiLowAceContigPhdDatastore} is a PhdDataStore
+ * {@code HighLowAceContigPhdDatastore} is a PhdDataStore
  * that only sets the quality values for each basecall
  * to either a high quality or a low quality. The threshold
  * for determining if the value is high or low depends on if the 
  * provided basecall in the ace file is upper or lower case.
  * This implementation is helpful if only approximate quality 
  * values are needed and speed and memory usage demands
- * that the actual phd file can not be parsed.
+ * that the actual phd file can not be used.
  * @author dkatzel
  */
-public final class HiLowAceContigPhdDatastore implements PhdDataStore{
+public final class HighLowAceContigPhdDatastore implements PhdDataStore{
     public static final PhredQuality DEFAULT_LOW_QUALITY = PhredQuality.valueOf(15);
     public static final PhredQuality DEFAULT_HIGH_QUALITY = AceFileUtil.ACE_DEFAULT_HIGH_QUALITY_THRESHOLD;
     private final PhdDataStore delegate;
     
-    public static HiLowAceContigPhdDatastore create(File aceContigFile, final String contigId) throws IOException{
-        return new HiLowAceContigPhdDatastore(aceContigFile, contigId);
+    public static HighLowAceContigPhdDatastore create(File aceContigFile, final String contigId) throws IOException{
+        return new HighLowAceContigPhdDatastore(aceContigFile, contigId);
     }
-    public static HiLowAceContigPhdDatastore create(File aceContigFile) throws IOException{
-        return new HiLowAceContigPhdDatastore(aceContigFile,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
+    public static HighLowAceContigPhdDatastore create(File aceContigFile) throws IOException{
+        return new HighLowAceContigPhdDatastore(aceContigFile,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
     }
-    public static HiLowAceContigPhdDatastore create(InputStream aceContigFile) throws IOException{
-        return new HiLowAceContigPhdDatastore(aceContigFile,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
+    public static HighLowAceContigPhdDatastore create(InputStream aceContigFile) throws IOException{
+        return new HighLowAceContigPhdDatastore(aceContigFile,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
     }
-    public static HiLowAceContigPhdDatastore create(InputStream aceContigFile, String contigId) throws IOException{
-        return new HiLowAceContigPhdDatastore(aceContigFile,contigId, DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
+    public static HighLowAceContigPhdDatastore create(InputStream aceContigFile, String contigId) throws IOException{
+        return new HighLowAceContigPhdDatastore(aceContigFile,contigId, DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
     }
-    private HiLowAceContigPhdDatastore(File aceContigFile, final String contigId) throws IOException{
+    private HighLowAceContigPhdDatastore(File aceContigFile, final String contigId) throws IOException{
         this(aceContigFile,contigId,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
     }
-    private HiLowAceContigPhdDatastore(File aceContigFile, final String contigId, 
+    private HighLowAceContigPhdDatastore(File aceContigFile, final String contigId, 
             final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
         FullLengthPhdParser visitor = new FullLengthPhdParser(contigId, lowQuality,highQuality);
         
@@ -80,7 +80,7 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         delegate = DataStoreAdapter.adapt(PhdDataStore.class, MapDataStoreAdapter.adapt(visitor.getPhds()));
         
     }
-    private HiLowAceContigPhdDatastore(InputStream aceContigFile,
+    private HighLowAceContigPhdDatastore(InputStream aceContigFile,
             final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
         FullLengthPhdParser visitor = new FullLengthPhdParser(lowQuality,highQuality);
         
@@ -88,7 +88,7 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         delegate = DataStoreAdapter.adapt(PhdDataStore.class, MapDataStoreAdapter.adapt(visitor.getPhds()));
         
     }
-    private HiLowAceContigPhdDatastore(InputStream aceContigFile, String contigId,
+    private HighLowAceContigPhdDatastore(InputStream aceContigFile, String contigId,
             final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
         FullLengthPhdParser visitor = new FullLengthPhdParser(contigId,lowQuality,highQuality);
         
@@ -97,7 +97,7 @@ public final class HiLowAceContigPhdDatastore implements PhdDataStore{
         
     }
     
-    public HiLowAceContigPhdDatastore(File aceContigFile, 
+    public HighLowAceContigPhdDatastore(File aceContigFile, 
             final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
         FullLengthPhdParser visitor = new FullLengthPhdParser(lowQuality,highQuality);
         

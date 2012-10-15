@@ -57,7 +57,7 @@ import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
 import org.jcvi.common.core.assembly.ace.DefaultConsensusAceTag;
 import org.jcvi.common.core.assembly.ace.DefaultReadAceTag;
 import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
-import org.jcvi.common.core.assembly.ace.HiLowAceContigPhdDatastore;
+import org.jcvi.common.core.assembly.ace.HighLowAceContigPhdDatastore;
 import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore;
 import org.jcvi.common.core.assembly.ace.LargeAceFileDataStore;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
@@ -273,7 +273,7 @@ public class MultiThreadedReAbacusAce {
         */
         @Override
         public Void call() throws IOException{
-            PhdDataStore hilowPhdDataStore = HiLowAceContigPhdDatastore.create(inputAceFile, contigId);   
+            PhdDataStore hilowPhdDataStore = HighLowAceContigPhdDatastore.create(inputAceFile, contigId);   
             OutputStream out = new FileOutputStream(outFile);
             AbacusFixerBuilder contigFixer = new AbacusFixerBuilder(abacusErrorMap,contigId, numberOfFlankingBases, out, hilowPhdDataStore,maxMuscleMem);
             

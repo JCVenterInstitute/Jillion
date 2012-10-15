@@ -56,7 +56,7 @@ import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileUtil;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.ace.AceAssembledReadBuilder;
-import org.jcvi.common.core.assembly.ace.HiLowAceContigPhdDatastore;
+import org.jcvi.common.core.assembly.ace.HighLowAceContigPhdDatastore;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationParser;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationVisitor;
 import org.jcvi.common.core.assembly.ace.consed.ConsensusNavigationElement;
@@ -218,7 +218,7 @@ public class ReAbacusAceContigWorker {
                 //only reabacus if we have to
                 //use hiLow phd to get lowercase/upper case right when we write out
                 //the new file.
-                PhdDataStore hilowPhdDataStore = HiLowAceContigPhdDatastore.create(inputAceFile, contigId);
+                PhdDataStore hilowPhdDataStore = HighLowAceContigPhdDatastore.create(inputAceFile, contigId);
                 reabacusContig(inputAceFile, abacusErrorMap,contigId, out, numberOfFlankingBases, hilowPhdDataStore, maxMuscleMem);
             }else{
                 //just stream contig?
