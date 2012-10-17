@@ -26,11 +26,10 @@ package org.jcvi.common.core.seq.read.trace.archive;
 import java.io.InputStream;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideFastaDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory.FastaDataStoreType;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
@@ -54,8 +53,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
     	PositionSequenceFastaDataStore datastore = null;
     	InputStream in=null;
         try{
-        	in = getInputStreamFor(TraceInfoField.PEAK_FILE);
-            datastore =DefaultPositionFastaFileDataStore.create(in);
+            datastore =DefaultPositionFastaFileDataStore.create(getFile(TraceInfoField.PEAK_FILE));
             StreamingIterator<PositionSequenceFastaRecord> iter=null;
             try{
             	iter = datastore.iterator();
@@ -76,21 +74,19 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
 
     @Override
     public NucleotideSequence getNucleotideSequence() {
-        InputStream in=null;
-        NucleotideSequenceFastaDataStore datastore=null;
-        NucleotideFastaDataStoreBuilderVisitor visitor= DefaultNucleotideSequenceFastaFileDataStore.createBuilder();
-        StreamingIterator<NucleotideSequenceFastaRecord> iterator=null;
+    	StreamingIterator<NucleotideSequenceFastaRecord> iterator=null;
+    	NucleotideSequenceFastaDataStore datastore=null;
         try{
-            in = getInputStreamFor(TraceInfoField.BASE_FILE);
-            FastaFileParser.parse(in, visitor);
-            datastore = visitor.build();
+        	 datastore= NucleotideSequenceFastaFileDataStoreFactory.create(getFile(TraceInfoField.BASE_FILE),
+             		FastaDataStoreType.MAP_BACKED);
+             
             iterator = datastore.iterator();
 			return iterator.next().getSequence();
         } catch (Exception e) {
             throw new IllegalArgumentException("basecall file not valid",e);
         }
         finally{
-            IOUtil.closeAndIgnoreErrors(in, iterator,datastore);
+            IOUtil.closeAndIgnoreErrors(iterator,datastore);
         }
     }
 
@@ -99,7 +95,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
         QualitySequenceFastaDataStore datastore =null;
         StreamingIterator<QualitySequenceFastaRecord> iterator =null;
         try{
-        	datastore = DefaultQualityFastaFileDataStore.create(getInputStreamFor(TraceInfoField.QUAL_FILE));           
+        	datastore = DefaultQualityFastaFileDataStore.create(getFile(TraceInfoField.QUAL_FILE));           
             iterator = datastore.iterator();
 			return iterator.next().getSequence();
         } catch (Exception e) {

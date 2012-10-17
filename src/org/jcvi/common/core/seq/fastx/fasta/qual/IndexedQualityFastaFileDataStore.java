@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
@@ -137,7 +138,7 @@ public final class IndexedQualityFastaFileDataStore implements QualitySequenceFa
 			implements	QualityFastaDataStoreBuilderVisitor{
 
 			private IndexedQualityFastaDataStoreBuilderVisitor(File fastaFile){
-				super(fastaFile);
+				super(fastaFile, AcceptingDataStoreFilter.INSTANCE);
 			}
 			@Override
 			protected QualitySequenceFastaDataStore createDataStore(

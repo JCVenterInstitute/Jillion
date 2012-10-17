@@ -7,10 +7,11 @@ import java.util.TreeSet;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
-import org.jcvi.common.core.seq.fastx.fasta.nt.IndexedNucleotideFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory.FastaDataStoreType;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public class SortFasta {
@@ -21,10 +22,10 @@ public class SortFasta {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws DataStoreException, IOException {
-		File inputFasta = new File("/local/netapp_scratch/dkatzel/draft_submission_validation_comparisons/swiv/INS/NIGSP_INS_00077.fastacas2consed.ace.1.consensus.fasta");
-		File sortedOutputFasta = new File("/local/netapp_scratch/dkatzel/draft_submission_validation_comparisons/swiv/INS/NIGSP_INS_00077.fastacas2consed.ace.1.consensus.fasta.sorted");
+		File inputFasta = new File("path/to/input.fasta");
+		File sortedOutputFasta = new File("path/to/sorted/output.fasta");
 		
-		NucleotideSequenceFastaDataStore dataStore = IndexedNucleotideFastaFileDataStore.create(inputFasta);
+		NucleotideSequenceFastaDataStore dataStore = NucleotideSequenceFastaFileDataStoreFactory.create(inputFasta, FastaDataStoreType.INDEXED);
 		SortedSet<String> sortedIds = new TreeSet<String>();
 		StreamingIterator<String> iter=null;
 		try {

@@ -2,6 +2,7 @@ package org.jcvi;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,9 +18,10 @@ import org.jcvi.common.core.align.pairwise.NucleotideSmithWatermanAligner;
 import org.jcvi.common.core.align.pairwise.PairwiseSequenceAlignment;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory.FastaDataStoreType;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
@@ -34,7 +36,7 @@ public class BarcodeDetector {
 	 * @throws FileNotFoundException 
 	 * @throws DataStoreException 
 	 */
-	public static void main(String[] args) throws FileNotFoundException, DataStoreException {
+	public static void main(String[] args) throws IOException, DataStoreException {
 		File barcodeFasta = new File("/home/dkatzel/iotorrent_data/barcode_metadata_from_GLK.txt.pat");
 		File fastq = new File("/home/dkatzel/iotorrent_data/R_2012_01_13_11_34_59_user_1IO-5_Auto_1IO-5_6.fastq");
 
@@ -47,7 +49,7 @@ public class BarcodeDetector {
 		matrix = builder.build();
 		
 		
-		NucleotideSequenceFastaDataStore barcodes = DefaultNucleotideSequenceFastaFileDataStore.create(barcodeFasta);
+		NucleotideSequenceFastaDataStore barcodes = NucleotideSequenceFastaFileDataStoreFactory.create(barcodeFasta, FastaDataStoreType.MAP_BACKED);
 		Set<String> unmatched = new HashSet<String>();
 		Map<String, Set<String>> mappedReads = new TreeMap<String, Set<String>>();
 		

@@ -20,12 +20,12 @@
 package org.jcvi.fasta;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory.FastaDataStoreType;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Rule;
@@ -57,7 +57,7 @@ public class TestTrimFasta {
     }
     
     @Test
-    public void shouldTrimBasedOnLeftAndRightTrimFiles() throws FileNotFoundException, DataStoreException{
+    public void shouldTrimBasedOnLeftAndRightTrimFiles() throws IOException, DataStoreException{
         TrimFasta.main(new String[]{
                 "-f", fastaFile.getAbsolutePath(),
                 "-l", left.getAbsolutePath(),
@@ -65,7 +65,8 @@ public class TestTrimFasta {
                 "-o", outputFile.getAbsolutePath()
         });
         
-        NucleotideSequenceFastaDataStore actualDataStore = DefaultNucleotideSequenceFastaFileDataStore.create(outputFile);
+        NucleotideSequenceFastaDataStore actualDataStore = NucleotideSequenceFastaFileDataStoreFactory.create(outputFile,
+        														FastaDataStoreType.MAP_BACKED);
         assertEquals(
                     actualDataStore.get("read1").getSequence().toString(),
                     "CCCTTT");

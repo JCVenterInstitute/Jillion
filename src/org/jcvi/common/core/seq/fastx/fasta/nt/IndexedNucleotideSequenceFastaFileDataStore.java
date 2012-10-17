@@ -7,7 +7,9 @@ import java.io.InputStream;
 import java.util.Map;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractIndexedFastaDataStoreBuilderVisitor;
@@ -27,17 +29,17 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
-public final class IndexedNucleotideFastaFileDataStore implements NucleotideSequenceFastaDataStore{
+final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSequenceFastaDataStore{
 	
 	private final Map<String,Range> index;
 	private final File fastaFile;
 	private volatile boolean closed;
 	/**
-	 * Creates a new {@link IndexedNucleotideFastaFileDataStore}
+	 * Creates a new {@link IndexedNucleotideSequenceFastaFileDataStore}
 	 * instance using the given fastaFile.
-	 * @param fastaFile the fasta to create an {@link IndexedNucleotideFastaFileDataStore}
+	 * @param fastaFile the fasta to create an {@link IndexedNucleotideSequenceFastaFileDataStore}
 	 * for.
-	 * @return a new instance of {@link IndexedNucleotideFastaFileDataStore};
+	 * @return a new instance of {@link IndexedNucleotideSequenceFastaFileDataStore};
 	 * never null.
 	 * @throws FileNotFoundException if the input fasta file does not exist.
 	 * @throws NullPointerException if the input fasta file is null.
@@ -48,14 +50,30 @@ public final class IndexedNucleotideFastaFileDataStore implements NucleotideSequ
 		return builder.build();
 	}
 	/**
+	 * Creates a new {@link IndexedNucleotideSequenceFastaFileDataStore}
+	 * instance using the given fastaFile.
+	 * @param fastaFile the fasta to create an {@link IndexedNucleotideSequenceFastaFileDataStore}
+	 * for.
+	 * @param filter the {@link DataStoreFilter} to use to filter the records from the fasta file.
+	 * @return a new instance of {@link IndexedNucleotideSequenceFastaFileDataStore};
+	 * never null.
+	 * @throws FileNotFoundException if the input fasta file does not exist.
+	 * @throws NullPointerException if the input fasta file is null.
+	 */
+	public static NucleotideSequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws FileNotFoundException{
+		NucleotideFastaDataStoreBuilderVisitor builder = createBuilder(fastaFile, filter);
+		FastaFileParser.parse(fastaFile, builder);
+		return builder.build();
+	}
+	/**
 	 * Creates a new {@link NucleotideFastaDataStoreBuilderVisitor}
-	 * instance that will build an {@link IndexedNucleotideFastaFileDataStore}
+	 * instance that will build an {@link IndexedNucleotideSequenceFastaFileDataStore}
 	 * using the given fastaFile.  This implementation of {@link NucleotideFastaDataStoreBuilderVisitor}
 	 * can only be used to parse a single fasta file (the one given) and does not support
 	 * {@link NucleotideFastaDataStoreBuilderVisitor#addFastaRecord(DefaultNucleotideSequenceFastaRecord)}.
 	 * This builder visitor can only build the datastore via the visitXXX methods in the {@link FastaFileVisitor}
 	 * interface.
-	 * @param fastaFile the fasta to create an {@link IndexedNucleotideFastaFileDataStore}
+	 * @param fastaFile the fasta to create an {@link IndexedNucleotideSequenceFastaFileDataStore}
 	 * for.
 	 * @return a new instance of {@link NucleotideFastaDataStoreBuilderVisitor};
 	 * never null.
@@ -69,13 +87,39 @@ public final class IndexedNucleotideFastaFileDataStore implements NucleotideSequ
 		if(!fastaFile.exists()){
 			throw new FileNotFoundException(fastaFile.getAbsolutePath());
 		}
-		return new IndexedNucleotideFastaDataStoreBuilderVisitor(fastaFile);
+		return new IndexedNucleotideFastaDataStoreBuilderVisitor(fastaFile, AcceptingDataStoreFilter.INSTANCE);
+	}
+	/**
+	 * Creates a new {@link NucleotideFastaDataStoreBuilderVisitor}
+	 * instance that will build an {@link IndexedNucleotideSequenceFastaFileDataStore}
+	 * using the given fastaFile.  This implementation of {@link NucleotideFastaDataStoreBuilderVisitor}
+	 * can only be used to parse a single fasta file (the one given) and does not support
+	 * {@link NucleotideFastaDataStoreBuilderVisitor#addFastaRecord(DefaultNucleotideSequenceFastaRecord)}.
+	 * This builder visitor can only build the datastore via the visitXXX methods in the {@link FastaFileVisitor}
+	 * interface.
+	 * @param fastaFile the fasta to create an {@link IndexedNucleotideSequenceFastaFileDataStore}
+	 * for.
+	 * @return a new instance of {@link NucleotideFastaDataStoreBuilderVisitor};
+	 * never null.
+	 * @throws FileNotFoundException if the input fasta file does not exist.
+	 * @throws NullPointerException if the input fasta file is null.
+	 */
+	public static NucleotideFastaDataStoreBuilderVisitor createBuilder(File fastaFile, DataStoreFilter filter) throws FileNotFoundException{
+		if(fastaFile ==null){
+			throw new NullPointerException("fasta file can not be null");
+		}
+		if(!fastaFile.exists()){
+			throw new FileNotFoundException(fastaFile.getAbsolutePath());
+		}
+		if(filter ==null){
+			throw new NullPointerException("filter can not be null");
+		}
+		return new IndexedNucleotideFastaDataStoreBuilderVisitor(fastaFile,filter);
 	}
 	
 	
 	
-	
-	private IndexedNucleotideFastaFileDataStore(Map<String,Range> index, File fastaFile){
+	private IndexedNucleotideSequenceFastaFileDataStore(Map<String,Range> index, File fastaFile){
 		this.index = index;
 		this.fastaFile = fastaFile;
 	}
@@ -144,14 +188,14 @@ public final class IndexedNucleotideFastaFileDataStore implements NucleotideSequ
 			AbstractIndexedFastaDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>
 			implements NucleotideFastaDataStoreBuilderVisitor {
 
-		private IndexedNucleotideFastaDataStoreBuilderVisitor(File fastaFile) {
-			super(fastaFile);
+		private IndexedNucleotideFastaDataStoreBuilderVisitor(File fastaFile, DataStoreFilter filter) {
+			super(fastaFile, filter);
 		}
 
 		@Override
 		protected NucleotideSequenceFastaDataStore createDataStore(
 				Map<String,Range> index, File fastaFile) {
-			return new IndexedNucleotideFastaFileDataStore(index, fastaFile);
+			return new IndexedNucleotideSequenceFastaFileDataStore(index, fastaFile);
 		}
 
 

@@ -1,22 +1,23 @@
 package org.jcvi.common.core.seq.fastx.fasta;
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
-import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.Symbol;
 
 public abstract class AbstractFastaFileDataStoreBuilderVisitor<S extends Symbol, T extends Sequence<S>, F extends FastaRecord<S, T>, D extends DataStore<F>> extends AbstractFastaVisitor implements FastaFileDataStoreBuilderVisitor<S,T,F,D>{
 	private final FastaDataStoreBuilder<S,T,F,D> builder;
-	private final FastXFilter filter;
+	private final DataStoreFilter filter;
 	public AbstractFastaFileDataStoreBuilderVisitor(FastaDataStoreBuilder<S,T,F,D> builder){
 		this(builder,null);
 	}
-	public AbstractFastaFileDataStoreBuilderVisitor(FastaDataStoreBuilder<S,T,F,D> builder, FastXFilter filter){
+	public AbstractFastaFileDataStoreBuilderVisitor(FastaDataStoreBuilder<S,T,F,D> builder, DataStoreFilter filter){
 		if(builder==null){
 			throw new NullPointerException("builder can not be null");
 		}
 		if(filter ==null){
-			this.filter = AcceptingFastXFilter.INSTANCE;
+			this.filter = AcceptingDataStoreFilter.INSTANCE;
 		}else{
 			this.filter = filter;
 		}
@@ -47,7 +48,11 @@ public abstract class AbstractFastaFileDataStoreBuilderVisitor<S extends Symbol,
 
 	@Override
 	public <E extends F> FastaDataStoreBuilder<S, T, F, D>  addFastaRecord(E fastaRecord) {
-		if(filter.accept(fastaRecord.getId())){
+		if(filter instanceof FastXFilter){
+			if(((FastXFilter)filter).accept(fastaRecord.getId(), fastaRecord.getComment())){
+				builder.addFastaRecord(fastaRecord);
+			}
+		}else if(filter.accept(fastaRecord.getId())){
 			builder.addFastaRecord(fastaRecord);
 		}
 		return this;

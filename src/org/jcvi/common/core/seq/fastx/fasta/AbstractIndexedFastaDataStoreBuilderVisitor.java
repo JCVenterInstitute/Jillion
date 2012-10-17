@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.Symbol;
 /**
@@ -33,9 +35,11 @@ public abstract class AbstractIndexedFastaDataStoreBuilderVisitor<S extends Symb
 	private String lastId=null;
 	private boolean doneReadingFile=false;
 	private boolean built=false;
+	private final DataStoreFilter filter;
 	
-	protected AbstractIndexedFastaDataStoreBuilderVisitor(File fastaFile){
+	protected AbstractIndexedFastaDataStoreBuilderVisitor(File fastaFile,DataStoreFilter filter){
 		this.fastaFile = fastaFile;
+		this.filter = filter;
 	}
 	@Override
 	public <E extends F> FastaFileDataStoreBuilderVisitor<S,T,F,D> addFastaRecord(
@@ -65,7 +69,15 @@ public abstract class AbstractIndexedFastaDataStoreBuilderVisitor<S extends Symb
 		throwErrorIfDone();
 		lastId = id;
 		long endOfRecord = currentOffset -1;
-		index.put(id, Range.of(currentStartOffset, endOfRecord));
+		final boolean accept;
+		if(filter instanceof FastXFilter){
+			accept =((FastXFilter)filter).accept(id, comment);
+		}else{
+			accept = filter.accept(id);
+		}
+		if(accept){
+			index.put(id, Range.of(currentStartOffset, endOfRecord));
+		}
 		currentStartOffset = endOfRecord+1;
 		return true;
 	}
@@ -90,7 +102,7 @@ public abstract class AbstractIndexedFastaDataStoreBuilderVisitor<S extends Symb
 	@Override
 	public synchronized void visitEndOfFile() {
 		doneReadingFile=true;
-		if(lastId !=null){
+		if(lastId !=null && index.containsKey(lastId)){
 			//because we won't know when we get to the end 
 			//of the file until our last record will 
 			//be missing the last line (since we chop it off

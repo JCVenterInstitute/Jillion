@@ -22,6 +22,9 @@ package org.jcvi.common.core.seq.fastx.fasta;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 
 /**
@@ -32,19 +35,30 @@ import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 public final class LargeFastaIdIterator extends AbstractBlockingCloseableIterator<String>{
 
     private final File fastaFile;
-    
-    public static LargeFastaIdIterator createNewIteratorFor(File fastaFile){
-    	LargeFastaIdIterator iter= new LargeFastaIdIterator(fastaFile);
+    private final DataStoreFilter filter;
+    public static LargeFastaIdIterator createNewIteratorFor(File fastaFile, DataStoreFilter filter){
+    	if(fastaFile ==null){
+    		throw new NullPointerException("fasta file can not be null");
+    	}
+    	if(filter ==null){
+    		throw new NullPointerException("filter can not be null");
+    	}
+    	LargeFastaIdIterator iter= new LargeFastaIdIterator(fastaFile,filter);
 		iter.start();
     	
     	return iter;
+    }
+    public static LargeFastaIdIterator createNewIteratorFor(File fastaFile){
+    	return createNewIteratorFor(fastaFile, AcceptingDataStoreFilter.INSTANCE);
     }
 	
     /**
      * @param fastaFile
      */
-    private LargeFastaIdIterator(File fastaFile) {
+    private LargeFastaIdIterator(File fastaFile, DataStoreFilter filter) {
+    	
         this.fastaFile = fastaFile;
+        this.filter = filter;
     }
 
 
@@ -56,7 +70,15 @@ public final class LargeFastaIdIterator extends AbstractBlockingCloseableIterato
     	FastaFileVisitor visitor = new FastaFileVisitor() {
     		@Override
 			public DeflineReturnCode visitDefline(String id, String comment) {
-				LargeFastaIdIterator.this.blockingPut(id);
+    			final boolean accept;
+    			if(filter instanceof FastXFilter){
+    				accept =((FastXFilter)filter).accept(id, comment);
+    			}else{
+    				accept = filter.accept(id);
+    			}
+    			if(accept){
+    				LargeFastaIdIterator.this.blockingPut(id);
+    			}
 				return DeflineReturnCode.SKIP_CURRENT_RECORD;
 			}
 

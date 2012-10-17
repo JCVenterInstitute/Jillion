@@ -24,10 +24,7 @@
 package org.jcvi.common.core.seq.read.trace.archive;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.util.ObjectsUtil;
@@ -72,11 +69,8 @@ public abstract class AbstractTraceArchiveTrace implements TraceArchiveTrace {
         return f;
     }
 
-    protected final InputStream getInputStreamFor(TraceInfoField traceInfoField) throws FileNotFoundException{
-        return new FileInputStream(getFile(traceInfoField));
-    }
 
-    private File getFile(TraceInfoField traceInfoField) {
+    protected final File getFile(TraceInfoField traceInfoField) {
         return new File(rootDirPath+"/"+record.getAttribute(traceInfoField));
     }
     @Override
