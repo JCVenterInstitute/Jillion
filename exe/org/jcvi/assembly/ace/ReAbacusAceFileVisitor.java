@@ -1,7 +1,6 @@
 package org.jcvi.assembly.ace;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
@@ -9,13 +8,10 @@ import java.util.Set;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.ace.AceContigDataStoreBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 
 class ReAbacusAceFileVisitor implements AceFileVisitor{
-
-	private final AceContigDataStoreBuilder reAbacusDataStoreBuilder;
 	private final File tempOutputDir;
 	private final String tempFilePrefix;
 	private final Set<String> idsToReAbacus;
@@ -24,10 +20,8 @@ class ReAbacusAceFileVisitor implements AceFileVisitor{
 	private PrintWriter currentWriter;
 	private String currentLine;
 	public ReAbacusAceFileVisitor(
-			AceContigDataStoreBuilder reAbacusDataStoreBuilder,
 			Set<String> idsToReAbacus,
 			File tempOutputDir, String tempFilePrefix) {
-		this.reAbacusDataStoreBuilder = reAbacusDataStoreBuilder;
 		this.tempOutputDir = tempOutputDir;
 		this.tempFilePrefix = tempFilePrefix;
 		this.idsToReAbacus = idsToReAbacus;
@@ -35,9 +29,6 @@ class ReAbacusAceFileVisitor implements AceFileVisitor{
 
 	@Override
 	public void visitLine(String line) {
-		//always visit lines in case
-		//the builder needs it (like for indexed implementations)
-		reAbacusDataStoreBuilder.visitLine(line);
 		if(streamThruCurrentContig){
 			currentWriter.print(line);
 		}
@@ -46,13 +37,11 @@ class ReAbacusAceFileVisitor implements AceFileVisitor{
 
 	@Override
 	public void visitFile() {
-		reAbacusDataStoreBuilder.visitFile();
 		
 	}
 
 	@Override
 	public void visitEndOfFile() {
-		reAbacusDataStoreBuilder.visitEndOfFile();
 		
 	}
 
@@ -76,56 +65,45 @@ class ReAbacusAceFileVisitor implements AceFileVisitor{
 				currentWriter.print(currentLine);
 			} catch (IOException e) {
 				throw new IllegalStateException("error writing temp file");
-			}
-			return BeginContigReturnCode.SKIP_CURRENT_CONTIG;
+			}			
 		}
-		//can only be called if our builder cares
-		reAbacusDataStoreBuilder.visitBeginContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplemented);
-		return BeginContigReturnCode.VISIT_CURRENT_CONTIG;
+		return BeginContigReturnCode.SKIP_CURRENT_CONTIG;
 	}
 
 	@Override
 	public void visitConsensusQualities(QualitySequence ungappedConsensusQualities) {
-		//only called if our builder cares
-		reAbacusDataStoreBuilder.visitConsensusQualities(null);
 		
 	}
 
 	@Override
 	public void visitAssembledFromLine(String readId, Direction dir,
 			int gappedStartOffset) {
-		reAbacusDataStoreBuilder.visitAssembledFromLine(readId, dir, gappedStartOffset);
 		
 	}
 
 	@Override
 	public void visitBaseSegment(Range gappedConsensusRange, String readId) {
-		reAbacusDataStoreBuilder.visitBaseSegment(gappedConsensusRange, readId);
 		
 	}
 
 	@Override
 	public void visitReadHeader(String readId, int gappedLength) {
-		reAbacusDataStoreBuilder.visitReadHeader(readId, gappedLength);		
 	}
 
 	@Override
 	public void visitQualityLine(int qualLeft, int qualRight, int alignLeft,
 			int alignRight) {
-		reAbacusDataStoreBuilder.visitQualityLine(qualLeft, qualRight, alignLeft, alignRight);
 		
 	}
 
 	@Override
 	public void visitTraceDescriptionLine(String traceName, String phdName,
 			Date date) {
-		reAbacusDataStoreBuilder.visitTraceDescriptionLine(traceName, phdName, date);
 		
 	}
 
 	@Override
 	public void visitBasesLine(String mixedCaseBasecalls) {
-		reAbacusDataStoreBuilder.visitBasesLine(mixedCaseBasecalls);
 		
 	}
 
@@ -133,8 +111,6 @@ class ReAbacusAceFileVisitor implements AceFileVisitor{
 	public void visitReadTag(String id, String type, String creator,
 			long gappedStart, long gappedEnd, Date creationDate,
 			boolean isTransient) {
-		reAbacusDataStoreBuilder.visitReadTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
-		
 	}
 
 	@Override
@@ -142,7 +118,6 @@ class ReAbacusAceFileVisitor implements AceFileVisitor{
 		if(streamThruCurrentContig){
 			currentWriter.close();
 		}
-		reAbacusDataStoreBuilder.visitEndOfContig();
 		
 		return EndContigReturnCode.KEEP_PARSING;
 	}
@@ -151,31 +126,26 @@ class ReAbacusAceFileVisitor implements AceFileVisitor{
 	public void visitBeginConsensusTag(String id, String type, String creator,
 			long gappedStart, long gappedEnd, Date creationDate,
 			boolean isTransient) {
-		reAbacusDataStoreBuilder.visitBeginConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
-		
+	
 	}
 
 	@Override
 	public void visitConsensusTagComment(String comment) {
-		reAbacusDataStoreBuilder.visitConsensusTagComment(comment);
 		
 	}
 
 	@Override
-	public void visitConsensusTagData(String data) {
-		reAbacusDataStoreBuilder.visitConsensusTagData(data);		
+	public void visitConsensusTagData(String data) {		
 	}
 
 	@Override
 	public void visitEndConsensusTag() {
-		reAbacusDataStoreBuilder.visitEndConsensusTag();
 		
 	}
 
 	@Override
 	public void visitWholeAssemblyTag(String type, String creator,
-			Date creationDate, String data) {
-		reAbacusDataStoreBuilder.visitWholeAssemblyTag(type, creator, creationDate, data);		
+			Date creationDate, String data) {		
 	}
 
 }

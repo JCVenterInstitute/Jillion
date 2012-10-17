@@ -39,8 +39,9 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
+import org.jcvi.common.core.assembly.ace.AceFileContigDataStoreFactory;
 import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
-import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore;
+import org.jcvi.common.core.assembly.ace.AceFileContigDataStoreFactory.AceFileDataStoreType;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
@@ -113,7 +114,7 @@ public class Ace2Fasta {
             }else{
                 filter = AcceptingFastXFilter.INSTANCE;
             }
-            AceFileContigDataStore contigDataStore = IndexedAceFileDataStore.create(aceIn);
+            AceFileContigDataStore contigDataStore = AceFileContigDataStoreFactory.create(aceIn, AceFileDataStoreType.INDEXED);
             //consed allows users to rename contigs, but instead of changing
             //the CO record in the ace, the new name is stored as a comment at
             //the end of the file.  contigIdMap parses those comments 

@@ -49,7 +49,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  *
  */
-public final class DefaultAceFileDataStore implements AceFileContigDataStore{
+final class DefaultAceFileDataStore implements AceFileContigDataStore{
 	/**
 	 * {@link DataStore} wrapper of our {@link AceContig}s.
 	 */
