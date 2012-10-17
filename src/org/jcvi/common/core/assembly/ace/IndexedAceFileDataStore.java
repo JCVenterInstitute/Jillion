@@ -36,7 +36,9 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil.ClipPointsType;
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -52,7 +54,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * inside the ace file. Furthermore, each {@link AceContig}
  * in this datastore will not store all the underlying read
  * data in memory either.  Calls to {@link AceContig#getRead(String)} may
- * cause part of the ace file to be re-parsed in order to retreive
+ * cause part of the ace file to be re-parsed in order to retrieve
  * any missing information.  
  * <p/>
  * This allows large files to provide random 
@@ -61,7 +63,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
-public final class IndexedAceFileDataStore implements AceFileContigDataStore{
+final class IndexedAceFileDataStore implements AceFileContigDataStore{
     private final Map<String, Range> indexFileRange;
     private final File file;
     private final long totalNumberOfReads;
@@ -86,6 +88,25 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
     public static AceContigDataStoreBuilder createBuilder(File aceFile){
         return new IndexedAceFileDataStoreBuilder(aceFile);
     }
+    
+    /**
+     * Create a new empty {@link AceContigDataStoreBuilder}
+     * that will create an {@link IndexedAceFileDataStore} 
+     * once the builder has been built.  Only the 
+     * given ace file should be used with to populate/index
+     * the returned builder.
+     * @param aceFile aceFile the aceFile to parse.  NOTE: 
+     * the file isn't actually parsed in this method.  The builder
+     * will only store a reference to this file for future
+     * use when it needs to re-parse after indexing has occurred.
+     * @param filter a {@link DataStoreFilter} that can be used
+     * to include/exclude certain contigs can not be null. 
+     * @return a new AceContigDataStoreBuilder, never null.
+     * throws NullPointerException if aceFile is null.
+     */
+    public static AceContigDataStoreBuilder createBuilder(File aceFile, DataStoreFilter filter){
+        return new IndexedAceFileDataStoreBuilder(aceFile, filter);
+    }
 
     /**
      * Create a new {@link AceFileContigDataStore} instance
@@ -99,6 +120,24 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
      */
     public static AceFileContigDataStore create(File aceFile) throws IOException{
         AceContigDataStoreBuilder builder = createBuilder(aceFile);
+        AceFileParser.parse(aceFile, builder);
+        return builder.build();
+    }
+    
+    /**
+     * Create a new {@link AceFileContigDataStore} instance
+     * for the contigs in the given aceFile.
+     * @param aceFile the aceFile to parse.
+     * @param filter a {@link DataStoreFilter} that can be used
+     * to include/exclude certain contigs can not be null.
+     * @return a new  a new {@link AceFileContigDataStore}
+     * that only stores an index containing file offsets to the various contigs contained
+     * inside the ace file. 
+     * @throws IOException if there is a problem reading the ace file
+     * @throws NullPointerException if aceFile is null.
+     */
+    public static AceFileContigDataStore create(File aceFile, DataStoreFilter filter) throws IOException{
+        AceContigDataStoreBuilder builder = createBuilder(aceFile,filter);
         AceFileParser.parse(aceFile, builder);
         return builder.build();
     }
@@ -219,6 +258,9 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         private final List<WholeAssemblyAceTag> wholeAssemblyTags = new ArrayList<WholeAssemblyAceTag>();
         private final List<ConsensusAceTag> consensusTags = new ArrayList<ConsensusAceTag>();
         private final List<ReadAceTag> readTags = new ArrayList<ReadAceTag>();
+        
+        private final DataStoreFilter filter;
+        
         /**
          * Consensus tags span multiple lines of the ace file so we need to build
          * up the consensus tags as we parse.
@@ -226,10 +268,18 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         private DefaultConsensusAceTag.Builder consensusTagBuilder;
         
         public IndexedAceFileDataStoreBuilder(File aceFile){
+           this(aceFile, AcceptingDataStoreFilter.INSTANCE);
+        }
+        
+        public IndexedAceFileDataStoreBuilder(File aceFile, DataStoreFilter filter){
             if(aceFile==null){
                 throw new NullPointerException("ace file cannot be null");
-            }           
+            } 
+            if(filter==null){
+                throw new NullPointerException("DataStoreFilter cannot be null");
+            }
             this.aceFile = aceFile;
+            this.filter =filter;
         }
         
         @Override
@@ -283,8 +333,13 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
 				boolean reverseComplimented) {
         	currentContigId = contigId;
             currentStartOffset=currentFileOffset-currentLineLength;
-			totalNumberOfReads +=numberOfReads;
-			return BeginContigReturnCode.VISIT_CURRENT_CONTIG;
+            
+            if(filter.accept(contigId)){
+				totalNumberOfReads +=numberOfReads;
+				return BeginContigReturnCode.VISIT_CURRENT_CONTIG;
+            }else{
+            	return BeginContigReturnCode.SKIP_CURRENT_CONTIG;
+            }
 		}
 		/**
         * {@inheritDoc}
@@ -365,9 +420,10 @@ public final class IndexedAceFileDataStore implements AceFileContigDataStore{
         */
         @Override
         public synchronized EndContigReturnCode visitEndOfContig() {    
-        	//
-        	indexFileRange.put(currentContigId, Range.of(currentStartOffset, 
-                    currentFileOffset-1));
+        	if(filter.accept(currentContigId)){
+        		indexFileRange.put(currentContigId, Range.of(currentStartOffset, 
+        														currentFileOffset-1));
+        	}
             return EndContigReturnCode.KEEP_PARSING;
         }
 

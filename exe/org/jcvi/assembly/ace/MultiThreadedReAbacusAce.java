@@ -49,7 +49,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitor;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
-import org.jcvi.common.core.assembly.ace.AceContigDataStoreBuilder;
+import org.jcvi.common.core.assembly.ace.AceFileContigDataStoreFactory;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileUtil;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
@@ -58,16 +58,17 @@ import org.jcvi.common.core.assembly.ace.DefaultConsensusAceTag;
 import org.jcvi.common.core.assembly.ace.DefaultReadAceTag;
 import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.ace.HighLowAceContigPhdDatastore;
-import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore;
-import org.jcvi.common.core.assembly.ace.LargeAceFileDataStore;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.ace.ReadAceTag;
 import org.jcvi.common.core.assembly.ace.WholeAssemblyAceTag;
+import org.jcvi.common.core.assembly.ace.AceFileContigDataStoreFactory.AceFileDataStoreType;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationParser;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationVisitor;
 import org.jcvi.common.core.assembly.ace.consed.ConsensusNavigationElement;
 import org.jcvi.common.core.assembly.ace.consed.ReadNavigationElement;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.IncludeDataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -140,17 +141,17 @@ public class MultiThreadedReAbacusAce {
             
             ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
             TagWriter tagWriter = new TagWriter(out);
-            //populate offsets
-            AceContigDataStoreBuilder builder =IndexedAceFileDataStore.createBuilder(inputAceFile);
             
-            ReAbacusAceFileVisitor visitor = new ReAbacusAceFileVisitor(builder, abacusErrorMap.keySet(), outputAceFile.getParentFile(), outputAceFile.getName());
+            ReAbacusAceFileVisitor visitor = new ReAbacusAceFileVisitor(abacusErrorMap.keySet(), outputAceFile.getParentFile(), outputAceFile.getName());
             
             AceFileParser.parse(inputAceFile,
             		MultipleWrapper.createMultipleWrapper(AceFileVisitor.class, visitor,tagWriter));
             //datastore should now only contain what needs to be reabacused
-            AceFileContigDataStore datastore = builder.build();
+            DataStoreFilter filter = new IncludeDataStoreFilter(abacusErrorMap.keySet());
+            AceFileContigDataStore datastore = AceFileContigDataStoreFactory.create(outputAceFile, AceFileDataStoreType.LARGE, filter);
             StreamingIterator<String> idIter = datastore.idIterator();
             List<Future<Void>> futures = new ArrayList<Future<Void>>();
+            
             try{            	
 	            while(idIter.hasNext()){
 	                String contigId = idIter.next();
@@ -184,7 +185,8 @@ public class MultiThreadedReAbacusAce {
             	//datastore now only contains what was re-abacused
             	//so we need to create a new datastore to get the ids of all the contigs
             	//in the same order as the original ace
-                StreamingIterator<String> contigIdIter = LargeAceFileDataStore.create(inputAceFile).idIterator();
+                StreamingIterator<String> contigIdIter = AceFileContigDataStoreFactory.create(inputAceFile, AceFileDataStoreType.LARGE)
+                												.idIterator();
                 while(contigIdIter.hasNext()){
                     String contigId = contigIdIter.next();
                     File tempFile = new File(outputAceFile.getParentFile(), outputAceFile.getName()+".contig"+contigId);
@@ -220,34 +222,6 @@ public class MultiThreadedReAbacusAce {
                 options,
                "Created by Danny Katzel"
                   );
-        
-    }
-    private static class StreamContigWorker implements Callable<Void>{
-        private final File inputAceFile;
-        private final Range range;
-        private final File outFile;
-        
-        
-        public StreamContigWorker(File inputAceFile, Range range,
-                File outFile) {
-            this.inputAceFile = inputAceFile;
-            this.range = range;
-            this.outFile = outFile;
-        }
-
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public Void call() throws Exception {
-            OutputStream out = new FileOutputStream(outFile);
-            InputStream inputStream = IOUtil.createInputStreamFromFile(inputAceFile,(int)range.getBegin(), (int)range.getLength());
-            IOUtil.copy(inputStream, out);
-            IOUtil.closeAndIgnoreErrors(inputStream,out);
-            return null;
-        }
-        
         
     }
 

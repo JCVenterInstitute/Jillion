@@ -57,7 +57,11 @@ import org.junit.runners.Suite.SuiteClasses;
        TestHighLowAceContigPhdDatastore.class,
        TestDefaultAcePlacedReadReAbacus.class,
        TestDefaultAceContigBuilderReAbacus.class,
-       TestAceVisitorSkipContigs.class,
+       
+       TestFilteredDefaultAceFileDataStore.class,
+       TestFilteredIndexedAceFileDataStore.class,
+       TestFilteredLargeIndexedAceFileDataStore.class,
+       
        TestAceFileParserWithInvalidGapChar.class,
        
        AceTagsFromDefaultAceFileDataStore.class,

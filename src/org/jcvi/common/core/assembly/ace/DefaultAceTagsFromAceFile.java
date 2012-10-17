@@ -38,7 +38,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  *
  *
  */
-public final class DefaultAceTagsFromAceFile {
+final class DefaultAceTagsFromAceFile {
     /**
      * {@code AceTagsFromFileBuilder} is an {@link AceFileVisitor}
      * that will populate an {@link AceTags} object

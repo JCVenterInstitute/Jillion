@@ -31,7 +31,7 @@ import java.util.List;
  * together.
  * @author dkatzel
  */
-public interface AceTags {
+interface AceTags {
     /**
      * Get all the consensus tags for this 
      * assembly.

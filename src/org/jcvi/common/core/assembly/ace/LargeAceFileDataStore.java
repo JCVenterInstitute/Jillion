@@ -38,7 +38,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * @author dkatzel
  *
  */
-public final class LargeAceFileDataStore implements AceFileContigDataStore{
+final class LargeAceFileDataStore implements AceFileContigDataStore{
 
 	private final File aceFile;
 	private Long numberOfContigs = null;

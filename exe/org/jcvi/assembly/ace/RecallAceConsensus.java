@@ -36,10 +36,11 @@ import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
+import org.jcvi.common.core.assembly.ace.AceFileContigDataStoreFactory;
 import org.jcvi.common.core.assembly.ace.AceFileUtil;
 import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.DefaultAceContig;
-import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore;
+import org.jcvi.common.core.assembly.ace.AceFileContigDataStoreFactory.AceFileDataStoreType;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.ace.consed.PhdDirQualityDataStore;
 import org.jcvi.common.core.assembly.util.slice.CompactedSliceMap;
@@ -157,7 +158,7 @@ public class RecallAceConsensus {
             QualitySequenceDataStore qualityDataStore = TraceQualityDataStoreAdapter.adapt(masterPhdDataStore); 
             ConsensusCaller consensusCaller = createConsensusCaller(RecallType.parse(commandLine.getOptionValue("recall_with")), PhredQuality.valueOf(30));
            
-            AceFileContigDataStore aceContigDataStore = IndexedAceFileDataStore.create(inputAceFile);
+            AceFileContigDataStore aceContigDataStore = AceFileContigDataStoreFactory.create(inputAceFile, AceFileDataStoreType.INDEXED);
             AceFileUtil.writeAceFileHeader(aceContigDataStore.getNumberOfRecords(), aceContigDataStore.getNumberOfTotalReads(), out);
             
             StreamingIterator<AceContig> iter = aceContigDataStore.iterator();
