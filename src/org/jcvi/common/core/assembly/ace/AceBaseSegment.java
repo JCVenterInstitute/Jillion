@@ -32,7 +32,7 @@ import org.jcvi.common.core.Range;
  *
  *
  */
-public interface AceBaseSegment {
+interface AceBaseSegment {
     /**
      * Name of the read that matches the consensus.
      * @return name of the read.

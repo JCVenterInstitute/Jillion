@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly.ace;
 
 import org.jcvi.common.core.Range;
 
-public class DefaultAceBaseSegment implements AceBaseSegment{
+class DefaultAceBaseSegment implements AceBaseSegment{
 
     private final String name;
     private final Range gappedConsensusRange;

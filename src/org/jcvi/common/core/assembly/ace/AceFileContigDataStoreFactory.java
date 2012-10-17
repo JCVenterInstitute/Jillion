@@ -11,6 +11,10 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
  * {@code AceFileContigDataStoreFactory} is a 
  * factory class that creates new instances
  * of {@link AceFileContigDataStore}s.
+ * The order of {@link AceFileContigDataStore#iterator()}
+ * and {@link AceFileContigDataStore#idIterator()}
+ * is the order of that the contigs appear 
+ * in the ace file.
  * @author dkatzel
  *
  */
@@ -51,7 +55,7 @@ public final class AceFileContigDataStoreFactory {
 		 * read information in memory.
 		 * This means that each {@link DataStore#get(String)} or {@link DataStore#contains(String)}
 		 * requires re-parsing the ace file which can take some time.
-		 * Other methods such as {@link #getNumberOfRecords()} are lazy-loaded
+		 * Other methods such as {@link DataStore#getNumberOfRecords()} are lazy-loaded
 		 * and are only parsed the first time they are asked for.
 		 * <p/>
 		 * This implementation is ideal for use cases
