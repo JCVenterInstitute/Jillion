@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
@@ -149,7 +150,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore implements AminoAc
 			implements AminoAcidSequenceFastaDataStoreBuilderVisitor {
 
 		private IndexedAminoAcidSequenceFastaDataStoreBuilderVisitor(File fastaFile) {
-			super(fastaFile);
+			super(fastaFile, AcceptingDataStoreFilter.INSTANCE);
 		}
 
 		@Override

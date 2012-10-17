@@ -32,8 +32,10 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
@@ -50,12 +52,12 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * in {@link CachedDataStore}.
  * @author dkatzel
  */
-public final class LargeNucleotideSequenceFastaFileDataStore implements NucleotideSequenceFastaDataStore{
+final class LargeNucleotideSequenceFastaFileDataStore implements NucleotideSequenceFastaDataStore{
 	
 	
 	private static final Pattern NEXT_ID_PATTERN = Pattern.compile("^>(\\S+)");
     private final File fastaFile;
-
+    private final DataStoreFilter filter;
     private Long size;
     private volatile boolean closed=false;
     /**
@@ -66,18 +68,31 @@ public final class LargeNucleotideSequenceFastaFileDataStore implements Nucleoti
      * @throws NullPointerException if fastaFile is null.
      */
 	public static NucleotideSequenceFastaDataStore create(File fastaFile){
-		return new LargeNucleotideSequenceFastaFileDataStore(fastaFile);
+		return create(fastaFile, AcceptingDataStoreFilter.INSTANCE);
 	}
-   
+	 /**
+     * Construct a {@link LargeNucleotideSequenceFastaFileDataStore}
+     * for the given Fasta file.
+     * @param fastaFile the Fasta File to use, can not be null.
+     * @param fastaRecordFactory the NucleotideFastaRecordFactory implementation to use.
+     * @throws NullPointerException if fastaFile is null.
+     */
+	public static NucleotideSequenceFastaDataStore create(File fastaFile, DataStoreFilter filter){
+		return new LargeNucleotideSequenceFastaFileDataStore(fastaFile, filter);
+	}
     /**
      * Construct a {@link LargeNucleotideSequenceFastaFileDataStore}
      * @param fastaFile the Fasta File to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-    private LargeNucleotideSequenceFastaFileDataStore(File fastaFile) {
+    private LargeNucleotideSequenceFastaFileDataStore(File fastaFile, DataStoreFilter filter) {
         if(fastaFile ==null){
             throw new NullPointerException("fasta file can not be null");
         }
+        if(filter ==null){
+            throw new NullPointerException("filter file can not be null");
+        }
+        this.filter =filter;
         this.fastaFile = fastaFile;
     }
     
@@ -124,7 +139,7 @@ public final class LargeNucleotideSequenceFastaFileDataStore implements Nucleoti
                 return null;
             }
       
-            NucleotideFastaDataStoreBuilderVisitor builder= DefaultNucleotideSequenceFastaFileDataStore.createBuilder();
+            NucleotideFastaDataStoreBuilderVisitor builder= DefaultNucleotideSequenceFastaFileDataStore.createBuilder(filter);
             FastaFileParser.parse(in, builder);
             datastore = builder.build();
             return datastore.get(id);
@@ -140,7 +155,7 @@ public final class LargeNucleotideSequenceFastaFileDataStore implements Nucleoti
     @Override
     public StreamingIterator<String> idIterator() throws DataStoreException {
         checkNotYetClosed();
-        return DataStoreStreamingIterator.create(this,LargeFastaIdIterator.createNewIteratorFor(fastaFile));
+        return DataStoreStreamingIterator.create(this,LargeFastaIdIterator.createNewIteratorFor(fastaFile,filter));
         
     }
 
@@ -155,7 +170,10 @@ public final class LargeNucleotideSequenceFastaFileDataStore implements Nucleoti
                     String line = scanner.nextLine();
                     Matcher matcher = NEXT_ID_PATTERN.matcher(line);
                     if(matcher.find()){
-                        counter++;
+                    	String id = matcher.group(1);
+                    	if(filter.accept(id)){
+                    		counter++;
+                    	}
                     }
                 }
                 size= counter;            

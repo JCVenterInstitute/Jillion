@@ -6,8 +6,9 @@ import java.io.IOException;
 import org.easymock.IAnswer;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory.FastaDataStoreType;
 import org.jcvi.common.core.seq.read.trace.archive2.TraceArchiveWriter.TraceArchiveRecordDataException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramFile;
@@ -97,8 +98,8 @@ public class TestTraceArchiveWriter {
 		
 		File k18FastaFile = new File(rootInputDir, "base/1119369014798.base");
 		assertEquals("fasta/I11.fasta", i11.getAttribute(TraceInfoField.BASE_FILE));
-		NucleotideSequenceFastaDataStore expectedFastaDataStore = DefaultNucleotideSequenceFastaFileDataStore.create(k18FastaFile);
-		NucleotideSequenceFastaDataStore actualFastaDataStore = DefaultNucleotideSequenceFastaFileDataStore.create(new File(outputDir, "fasta/I11.fasta"));
+		NucleotideSequenceFastaDataStore expectedFastaDataStore = NucleotideSequenceFastaFileDataStoreFactory.create(k18FastaFile, FastaDataStoreType.MAP_BACKED);
+		NucleotideSequenceFastaDataStore actualFastaDataStore = NucleotideSequenceFastaFileDataStoreFactory.create(new File(outputDir, "fasta/I11.fasta"), FastaDataStoreType.MAP_BACKED);
 		assertEquals(expectedFastaDataStore.get("1119369014798").getSequence(), actualFastaDataStore.get("I11").getSequence());
 	
 		assertEquals("chromotogram bases don't match fasta", i11Chromo.getNucleotideSequence(), actualFastaDataStore.get("I11").getSequence());

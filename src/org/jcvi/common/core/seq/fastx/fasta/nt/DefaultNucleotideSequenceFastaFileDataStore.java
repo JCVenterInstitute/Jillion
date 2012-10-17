@@ -27,8 +27,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaFileDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
@@ -43,7 +43,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
  * @see LargeNucleotideSequenceFastaFileDataStore
  *
  */
-public final class DefaultNucleotideSequenceFastaFileDataStore{
+final class DefaultNucleotideSequenceFastaFileDataStore{
 	
 	private DefaultNucleotideSequenceFastaFileDataStore(){
 		//can not instantiate.
@@ -51,14 +51,14 @@ public final class DefaultNucleotideSequenceFastaFileDataStore{
 	public static NucleotideFastaDataStoreBuilderVisitor createBuilder(){
 		return createBuilder(null);
 	}
-	public static NucleotideFastaDataStoreBuilderVisitor createBuilder(FastXFilter filter){
+	public static NucleotideFastaDataStoreBuilderVisitor createBuilder(DataStoreFilter filter){
 		return new NucleotideFastaDataStoreBuilderVisitorImpl(filter);
 	}
 	
 	public static NucleotideSequenceFastaDataStore create(File fastaFile) throws FileNotFoundException{
 		return create(fastaFile,null);
 	}
-	public static NucleotideSequenceFastaDataStore create(File fastaFile, FastXFilter filter) throws FileNotFoundException{
+	public static NucleotideSequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws FileNotFoundException{
 		NucleotideFastaDataStoreBuilderVisitor builder = createBuilder(filter);
 		FastaFileParser.parse(fastaFile, builder);
 		return builder.build();
@@ -67,7 +67,7 @@ public final class DefaultNucleotideSequenceFastaFileDataStore{
 	public static NucleotideSequenceFastaDataStore create(InputStream in) throws FileNotFoundException{
 		return create(in,null);
 	}
-	public static NucleotideSequenceFastaDataStore create(InputStream in, FastXFilter filter) throws FileNotFoundException{
+	public static NucleotideSequenceFastaDataStore create(InputStream in, DataStoreFilter filter) throws FileNotFoundException{
 		try{
 			NucleotideFastaDataStoreBuilderVisitor builder = createBuilder(filter);
 			FastaFileParser.parse(in, builder);
@@ -90,7 +90,7 @@ public final class DefaultNucleotideSequenceFastaFileDataStore{
 		public NucleotideFastaDataStoreBuilderVisitorImpl() {
 			super(new DefaultNucleotideSequenceFastaDataStoreBuilder());
 		}
-		public NucleotideFastaDataStoreBuilderVisitorImpl(FastXFilter filter) {
+		public NucleotideFastaDataStoreBuilderVisitorImpl(DataStoreFilter filter) {
 			super(new DefaultNucleotideSequenceFastaDataStoreBuilder(), filter);
 		}
 

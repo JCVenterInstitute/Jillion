@@ -24,12 +24,14 @@
 package org.jcvi.common.core.assembly.clc.cas.read;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.jcvi.common.core.assembly.clc.cas.CasTrimMap;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
-import org.jcvi.common.core.seq.fastx.fasta.nt.LargeNucleotideSequenceFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory.FastaDataStoreType;
 import org.jcvi.common.core.seq.fastx.fasta.qual.LargeQualityFastaFileDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
@@ -71,9 +73,14 @@ public class FastaCasDataStoreFactory extends AbstractCasDataStoreFactory
     }
     @Override
     public NucleotideSequenceDataStore getNucleotideDataStoreFor(File pathToDataStore, DataStoreFilter filter) throws CasDataStoreFactoryException {  
-        return CachedDataStore.create(NucleotideSequenceDataStore.class, 
-                     FastaRecordDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, LargeNucleotideSequenceFastaFileDataStore.create(pathToDataStore)),
-                     cacheSize);            
+        try {
+			return CachedDataStore.create(NucleotideSequenceDataStore.class, 
+			             FastaRecordDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, 
+			            		 NucleotideSequenceFastaFileDataStoreFactory.create(pathToDataStore, FastaDataStoreType.LARGE)),
+			             cacheSize);
+		} catch (IOException e) {
+			throw new CasDataStoreFactoryException("could not create nucleotide sequence datastore for "+ pathToDataStore.getAbsolutePath(), e);
+		}            
     }
     @Override
     public QualitySequenceDataStore getQualityDataStoreFor(
