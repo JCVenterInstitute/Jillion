@@ -22,7 +22,7 @@ import org.jcvi.common.core.util.iter.PeekableStreamingIterator;
  * @author dkatzel
  *
  */
-public final class BaseSegmentUtil {
+final class BaseSegmentUtil {
 	
 	private BaseSegmentUtil(){
 		//can not instantiate
