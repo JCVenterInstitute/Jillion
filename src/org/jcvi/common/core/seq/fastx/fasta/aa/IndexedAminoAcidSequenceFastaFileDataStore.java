@@ -9,6 +9,7 @@ import java.util.Map;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractIndexedFastaDataStoreBuilderVisitor;
@@ -29,7 +30,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
-public final class IndexedAminoAcidSequenceFastaFileDataStore implements AminoAcidSequenceFastaDataStore{
+final class IndexedAminoAcidSequenceFastaFileDataStore implements AminoAcidSequenceFastaDataStore{
 	
 	private final Map<String,Range> index;
 	private final File fastaFile;
@@ -49,6 +50,24 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore implements AminoAc
 		FastaFileParser.parse(fastaFile, builder);
 		return builder.build();
 	}
+	
+	/**
+	 * Creates a new {@link IndexedAminoAcidSequenceFastaFileDataStore}
+	 * instance using the given fastaFile.
+	 * @param fastaFile the fasta to create an {@link IndexedAminoAcidSequenceFastaFileDataStore}
+	 * for.
+	 * @param filter the {@link DataStoreFilter} instance used to filter out the fasta records;
+	 * can not be null.
+	 * @return a new instance of {@link IndexedAminoAcidSequenceFastaFileDataStore};
+	 * never null.
+	 * @throws FileNotFoundException if the input fasta file does not exist.
+	 * @throws NullPointerException if the input fasta file is null.
+	 */
+	public static AminoAcidSequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws FileNotFoundException{
+		AminoAcidSequenceFastaDataStoreBuilderVisitor builder = createBuilder(fastaFile,filter);
+		FastaFileParser.parse(fastaFile, builder);
+		return builder.build();
+	}
 	/**
 	 * Creates a new {@link AminoAcidSequenceFastaDataStoreBuilderVisitor}
 	 * instance that will build an {@link IndexedAminoAcidSequenceFastaFileDataStore}
@@ -65,16 +84,36 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore implements AminoAc
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
 	public static AminoAcidSequenceFastaDataStoreBuilderVisitor createBuilder(File fastaFile) throws FileNotFoundException{
+		return createBuilder(fastaFile, AcceptingDataStoreFilter.INSTANCE);
+	}
+	
+	/**
+	 * Creates a new {@link AminoAcidSequenceFastaDataStoreBuilderVisitor}
+	 * instance that will build an {@link IndexedAminoAcidSequenceFastaFileDataStore}
+	 * using the given fastaFile.  This implementation of {@link AminoAcidSequenceFastaDataStoreBuilderVisitor}
+	 * can only be used to parse a single fasta file (the one given) and does not support
+	 * {@link AminoAcidSequenceFastaDataStoreBuilderVisitor#addFastaRecord(AminoAcidSequenceFastaRecord)}.
+	 * This builder visitor can only build the datastore via the visitXXX methods in the {@link FastaFileVisitor}
+	 * interface.
+	 * @param fastaFile the fasta to create an {@link IndexedAminoAcidSequenceFastaFileDataStore}
+	 * for.
+	 * @return a new instance of {@link AminoAcidSequenceFastaDataStoreBuilderVisitor};
+	 * never null.
+	 * @throws FileNotFoundException if the input fasta file does not exist.
+	 * @throws NullPointerException if the input fasta file is null.
+	 */
+	public static AminoAcidSequenceFastaDataStoreBuilderVisitor createBuilder(File fastaFile, DataStoreFilter filter) throws FileNotFoundException{
 		if(fastaFile ==null){
 			throw new NullPointerException("fasta file can not be null");
 		}
 		if(!fastaFile.exists()){
 			throw new FileNotFoundException(fastaFile.getAbsolutePath());
 		}
-		return new IndexedAminoAcidSequenceFastaDataStoreBuilderVisitor(fastaFile);
+		if(filter==null){
+			throw new NullPointerException("filter can not be null");
+		}
+		return new IndexedAminoAcidSequenceFastaDataStoreBuilderVisitor(fastaFile, filter);
 	}
-	
-	
 	
 	
 	private IndexedAminoAcidSequenceFastaFileDataStore(Map<String,Range> index, File fastaFile){
@@ -149,8 +188,8 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore implements AminoAc
 			AbstractIndexedFastaDataStoreBuilderVisitor<AminoAcid, AminoAcidSequence, AminoAcidSequenceFastaRecord, AminoAcidSequenceFastaDataStore>
 			implements AminoAcidSequenceFastaDataStoreBuilderVisitor {
 
-		private IndexedAminoAcidSequenceFastaDataStoreBuilderVisitor(File fastaFile) {
-			super(fastaFile, AcceptingDataStoreFilter.INSTANCE);
+		private IndexedAminoAcidSequenceFastaDataStoreBuilderVisitor(File fastaFile, DataStoreFilter filter) {
+			super(fastaFile, filter);
 		}
 
 		@Override

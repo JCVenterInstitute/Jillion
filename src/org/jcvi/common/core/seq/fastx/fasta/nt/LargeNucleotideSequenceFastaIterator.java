@@ -22,6 +22,8 @@ package org.jcvi.common.core.seq.fastx.fasta.nt;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
@@ -36,16 +38,18 @@ import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 public final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingCloseableIterator<NucleotideSequenceFastaRecord>{
 
 	private final File fastaFile;
+	private final DataStoreFilter filter;
 	
-	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(File fastaFile){
-		 LargeNucleotideSequenceFastaIterator iter = new LargeNucleotideSequenceFastaIterator(fastaFile);
+	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(File fastaFile, DataStoreFilter filter){
+		 LargeNucleotideSequenceFastaIterator iter = new LargeNucleotideSequenceFastaIterator(fastaFile, filter);
 				                                iter.start();			
 	    	
 	    	return iter;
 	    }
 	 
-	 private LargeNucleotideSequenceFastaIterator(File fastaFile){
+	 private LargeNucleotideSequenceFastaIterator(File fastaFile, DataStoreFilter filter){
 		 this.fastaFile = fastaFile;
+		 this.filter = filter;
 	 }
 	 /**
 	    * {@inheritDoc}
@@ -56,8 +60,16 @@ public final class LargeNucleotideSequenceFastaIterator extends AbstractBlocking
 				
 				@Override
 				protected boolean visitRecord(String id, String comment, String entireBody) {
-					NucleotideSequenceFastaRecord fastaRecord = NucleotideSequenceFastaRecordFactory.create(id, new NucleotideSequenceBuilder(entireBody).build(),comment);
-					blockingPut(fastaRecord);
+					boolean accept;
+					if(filter instanceof FastXFilter){
+						accept=((FastXFilter)filter).accept(id, comment);
+					}else{
+						accept = filter.accept(id);
+					}
+					if(accept){
+						NucleotideSequenceFastaRecord fastaRecord = NucleotideSequenceFastaRecordFactory.create(id, new NucleotideSequenceBuilder(entireBody).build(),comment);
+						blockingPut(fastaRecord);
+					}
 	                return !LargeNucleotideSequenceFastaIterator.this.isClosed();
 				}
 			};

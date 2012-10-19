@@ -43,7 +43,7 @@ public final class FastaUtil {
     public static final char HEADER_PREFIX = '>';
     
     
-    private static final Pattern ID_LINE_PATTERN = Pattern.compile("^>(\\S+)(\\s+(.*))?");
+    public static final Pattern ID_LINE_PATTERN = Pattern.compile("^>(\\S+)(\\s+(.*))?");
 
     private FastaUtil(){
     	

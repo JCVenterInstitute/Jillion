@@ -25,7 +25,7 @@ import java.io.IOException;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory.FastaDataStoreType;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreType;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Rule;
@@ -66,7 +66,7 @@ public class TestTrimFasta {
         });
         
         NucleotideSequenceFastaDataStore actualDataStore = NucleotideSequenceFastaFileDataStoreFactory.create(outputFile,
-        														FastaDataStoreType.MAP_BACKED);
+        														FastaFileDataStoreType.MAP_BACKED);
         assertEquals(
                     actualDataStore.get("read1").getSequence().toString(),
                     "CCCTTT");

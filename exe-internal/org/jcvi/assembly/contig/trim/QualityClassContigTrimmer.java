@@ -65,8 +65,9 @@ import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreType;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
-import org.jcvi.common.core.seq.fastx.fasta.qual.LargeQualityFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreFactory;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
@@ -288,7 +289,7 @@ public class QualityClassContigTrimmer{
                     contigFile);
             QualitySequenceDataStore qualityFastaMap = 
                 CachedDataStore.create(QualitySequenceDataStore.class, 
-                		FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class,new LargeQualityFastaFileDataStore(qualFastaFile)),
+                		FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class,QualitySequenceFastaFileDataStoreFactory.create(qualFastaFile, FastaFileDataStoreType.LARGE)),
                         100);
             StreamingIterator<Contig<AssembledRead>> iter = contigDataStore.iterator();
             try{

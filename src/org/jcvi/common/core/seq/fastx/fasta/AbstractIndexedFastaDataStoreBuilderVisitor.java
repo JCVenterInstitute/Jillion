@@ -63,7 +63,13 @@ public abstract class AbstractIndexedFastaDataStoreBuilderVisitor<S extends Symb
 		built=true;
 		return createDataStore(index, fastaFile);
 	}
-
+	/**
+	 * Get the {@link DataStoreFilter} used by this builder.
+	 * @return a {@link DataStoreFilter} instance, never null.
+	 */
+	protected final DataStoreFilter getFilter() {
+		return filter;
+	}
 	@Override
 	public synchronized boolean visitRecord(String id, String comment, String entireBody) {
 		throwErrorIfDone();

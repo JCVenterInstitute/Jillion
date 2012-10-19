@@ -28,7 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 
-import org.jcvi.common.core.seq.fastx.FastXFilter;
+import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaFileDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -51,7 +51,7 @@ public final class DefaultQualityFastaFileDataStore {
     	return create(fastaFile,null);
     }
     
-    public static QualitySequenceFastaDataStore create(File fastaFile, FastXFilter filter) throws FileNotFoundException{
+    public static QualitySequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws FileNotFoundException{
     	QualityFastaDataStoreBuilderVisitor builder = createBuilder(filter);
     	FastaFileParser.parse(fastaFile, builder);
     	return builder.build();
@@ -60,7 +60,7 @@ public final class DefaultQualityFastaFileDataStore {
     public static QualitySequenceFastaDataStore create(InputStream fastaStream) throws FileNotFoundException{
     	return create(fastaStream,null);
     }
-    public static QualitySequenceFastaDataStore create(InputStream fastaStream, FastXFilter filter) throws FileNotFoundException{
+    public static QualitySequenceFastaDataStore create(InputStream fastaStream, DataStoreFilter filter) throws FileNotFoundException{
     	QualityFastaDataStoreBuilderVisitor builder = createBuilder(filter);
     	FastaFileParser.parse(fastaStream, builder);
     	return builder.build();
@@ -68,7 +68,7 @@ public final class DefaultQualityFastaFileDataStore {
     public static QualityFastaDataStoreBuilderVisitor createBuilder(){
     	return createBuilder(null);
     }
-    public static QualityFastaDataStoreBuilderVisitor createBuilder(FastXFilter filter){
+    public static QualityFastaDataStoreBuilderVisitor createBuilder(DataStoreFilter filter){
     	return new DefaultQualityFastaDataStoreBuilderVisitor(filter);
     }
     
@@ -77,7 +77,7 @@ public final class DefaultQualityFastaFileDataStore {
     				extends AbstractFastaFileDataStoreBuilderVisitor<PhredQuality, QualitySequence, QualitySequenceFastaRecord, QualitySequenceFastaDataStore>
     		implements QualityFastaDataStoreBuilderVisitor{
 		
-		public DefaultQualityFastaDataStoreBuilderVisitor(FastXFilter filter){
+		public DefaultQualityFastaDataStoreBuilderVisitor(DataStoreFilter filter){
 			super(new DefaultQualityFastaDataStoreBuilder(),filter);
 		}
 

@@ -10,7 +10,7 @@ import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWrit
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory.FastaDataStoreType;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreType;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -21,7 +21,7 @@ public class ReverseComplementFasta {
 		File inputFasta = new File("path/to/input/fasta");
 		File reverseComplimentOutputFasta = new File("/path/to/output.sorted.fasta");
 		
-		NucleotideSequenceFastaDataStore dataStore = NucleotideSequenceFastaFileDataStoreFactory.create(inputFasta, FastaDataStoreType.LARGE);
+		NucleotideSequenceFastaDataStore dataStore = NucleotideSequenceFastaFileDataStoreFactory.create(inputFasta, FastaFileDataStoreType.LARGE);
 		NucleotideSequenceFastaRecordWriter out = new NucleotideSequenceFastaRecordWriterBuilder(reverseComplimentOutputFasta)
 															.build();
 

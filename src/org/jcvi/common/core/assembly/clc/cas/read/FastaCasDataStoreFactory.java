@@ -31,8 +31,8 @@ import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory.FastaDataStoreType;
-import org.jcvi.common.core.seq.fastx.fasta.qual.LargeQualityFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreType;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreFactory;
 import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 /**
@@ -76,7 +76,7 @@ public class FastaCasDataStoreFactory extends AbstractCasDataStoreFactory
         try {
 			return CachedDataStore.create(NucleotideSequenceDataStore.class, 
 			             FastaRecordDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, 
-			            		 NucleotideSequenceFastaFileDataStoreFactory.create(pathToDataStore, FastaDataStoreType.LARGE)),
+			            		 NucleotideSequenceFastaFileDataStoreFactory.create(pathToDataStore, FastaFileDataStoreType.LARGE)),
 			             cacheSize);
 		} catch (IOException e) {
 			throw new CasDataStoreFactoryException("could not create nucleotide sequence datastore for "+ pathToDataStore.getAbsolutePath(), e);
@@ -85,9 +85,13 @@ public class FastaCasDataStoreFactory extends AbstractCasDataStoreFactory
     @Override
     public QualitySequenceDataStore getQualityDataStoreFor(
             File fastaFile,DataStoreFilter filter) throws CasDataStoreFactoryException { 
-        return CachedDataStore.create(QualitySequenceDataStore.class, 
-        		FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, new LargeQualityFastaFileDataStore(fastaFile)),
-                cacheSize);  
+        try {
+			return CachedDataStore.create(QualitySequenceDataStore.class, 
+					FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, QualitySequenceFastaFileDataStoreFactory.create(fastaFile, FastaFileDataStoreType.LARGE)),
+			        cacheSize);
+		} catch (IOException e) {
+			throw new CasDataStoreFactoryException("error creating quality datastore for "+fastaFile.getAbsolutePath(),e);
+		}  
         
     }
 
