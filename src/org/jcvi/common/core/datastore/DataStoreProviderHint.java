@@ -10,7 +10,9 @@ import java.util.Map;
  * for the desired scenario. The 
  * factory might not always honor these
  * hints if the factory does not know how 
- * to implement that specific hint. 
+ * to implement that specific hint or
+ * if the specified hint can not be used
+ * for the given input data. 
  * @author dkatzel
  *
  */
