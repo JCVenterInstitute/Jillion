@@ -8,7 +8,15 @@ import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreType;
 
-public class QualitySequenceFastaFileDataStoreFactory {
+/**
+ * {@code QualitySequenceFastaFileDataStoreFactory}
+ * is a factory class that can create new instances
+ * of {@link QualitySequenceFastaDataStore}s
+ * using data from a given input fasta file.
+ * @author dkatzel
+ *
+ */
+public final class QualitySequenceFastaFileDataStoreFactory {
 
 	private QualitySequenceFastaFileDataStoreFactory(){
 		//can not instantiate
