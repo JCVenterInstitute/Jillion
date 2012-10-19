@@ -57,7 +57,7 @@ public final class QualitySequenceFastaFileDataStoreFactory {
 		switch(type){
 			case OPTIMIZE_RANDOM_ACCESS_SPEED: return DefaultQualityFastaFileDataStore.create(fastaFile,filter);
 			case OPTIMIZE_RANDOM_ACCESS_MEMORY: return IndexedQualityFastaFileDataStore.create(fastaFile,filter);
-			case OPTIMIZE_ONE_PASS_ITERATION: return LargeQualityFastaFileDataStore.create(fastaFile,filter);
+			case OPTIMIZE_ITERATION: return LargeQualityFastaFileDataStore.create(fastaFile,filter);
 			default:
 				throw new IllegalArgumentException("unknown type : "+ type);
 		}

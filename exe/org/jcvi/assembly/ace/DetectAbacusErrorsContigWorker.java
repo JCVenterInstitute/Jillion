@@ -103,7 +103,7 @@ public class DetectAbacusErrorsContigWorker {
                     : DEFAULT_GAP_PERCENTAGE;
             final AbacusErrorFinder abacusErrorFinder = new AbacusErrorFinder(5,3,percentGap);
             try{
-                AceFileContigDataStore datastore = AceFileContigDataStoreFactory.create(aceFile, DataStoreProviderHint.OPTIMIZE_ONE_PASS_ITERATION);
+                AceFileContigDataStore datastore = AceFileContigDataStoreFactory.create(aceFile, DataStoreProviderHint.OPTIMIZE_ITERATION);
                 try {
                     findErrorsIn(abacusErrorFinder, datastore.get(contigId), out,consedNavWriter);
                 } catch (IOException e) {

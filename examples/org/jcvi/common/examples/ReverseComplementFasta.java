@@ -21,7 +21,7 @@ public class ReverseComplementFasta {
 		File inputFasta = new File("path/to/input/fasta");
 		File reverseComplimentOutputFasta = new File("/path/to/output.sorted.fasta");
 		
-		NucleotideSequenceFastaDataStore dataStore = NucleotideSequenceFastaFileDataStoreFactory.create(inputFasta, DataStoreProviderHint.OPTIMIZE_ONE_PASS_ITERATION);
+		NucleotideSequenceFastaDataStore dataStore = NucleotideSequenceFastaFileDataStoreFactory.create(inputFasta, DataStoreProviderHint.OPTIMIZE_ITERATION);
 		NucleotideSequenceFastaRecordWriter out = new NucleotideSequenceFastaRecordWriterBuilder(reverseComplimentOutputFasta)
 															.build();
 

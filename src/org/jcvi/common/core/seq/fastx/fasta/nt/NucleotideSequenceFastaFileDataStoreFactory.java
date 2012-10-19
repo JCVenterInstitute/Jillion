@@ -58,7 +58,7 @@ public final class NucleotideSequenceFastaFileDataStoreFactory {
 		switch(type){
 			case OPTIMIZE_RANDOM_ACCESS_SPEED: return DefaultNucleotideSequenceFastaFileDataStore.create(fastaFile,filter);
 			case OPTIMIZE_RANDOM_ACCESS_MEMORY: return IndexedNucleotideSequenceFastaFileDataStore.create(fastaFile,filter);
-			case OPTIMIZE_ONE_PASS_ITERATION: return LargeNucleotideSequenceFastaFileDataStore.create(fastaFile,filter);
+			case OPTIMIZE_ITERATION: return LargeNucleotideSequenceFastaFileDataStore.create(fastaFile,filter);
 			default:
 				throw new IllegalArgumentException("unknown type : "+ type);
 		}

@@ -289,7 +289,7 @@ public class QualityClassContigTrimmer{
                     contigFile);
             QualitySequenceDataStore qualityFastaMap = 
                 CachedDataStore.create(QualitySequenceDataStore.class, 
-                		FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class,QualitySequenceFastaFileDataStoreFactory.create(qualFastaFile, DataStoreProviderHint.OPTIMIZE_ONE_PASS_ITERATION)),
+                		FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class,QualitySequenceFastaFileDataStoreFactory.create(qualFastaFile, DataStoreProviderHint.OPTIMIZE_ITERATION)),
                         100);
             StreamingIterator<Contig<AssembledRead>> iter = contigDataStore.iterator();
             try{

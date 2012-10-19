@@ -64,23 +64,26 @@ public enum DataStoreProviderHint{
 	 * Use a {@link DataStore} implementation that
 	 * has been optimized for iterating over records
 	 * using {@link DataStore#iterator()} and {@link DataStore#idIterator()}
-	 * at the expense of poor performance of 
+	 * possibly at the expense of poor performance of 
 	 * randomly accessing records
 	 * with {@link DataStore#get(String)} or {@link DataStore#contains(String)}.
-	 * Such an implementation is ideal for use cases
+	 * Such an implementation is ideal for datastores
+	 * that contain so many records that storing them in memory would
+	 * cause out of memory errors or if the number of records exceeds
+	 * {@link Integer#MAX_VALUE} or for use cases
 	 * where the contents of the input
-	 * will only be read once in a single pass.
+	 * will only be iterated over in a single pass.
 	 * For example, iterating over each record only once 
 	 * using {@link DataStore#iterator()}. 
 	 * <p/>
 	 * Since calls to
 	 * {@link DataStore#get(String)} or {@link DataStore#contains(String)}
-	 * are so expensive,
+	 * may be so expensive,
 	 * it is recommended that instances of that use 
 	 * this hint
 	 * are wrapped by a {@link CachedDataStore}
 	 * if random access will be used.
 	 */
-	OPTIMIZE_ONE_PASS_ITERATION
+	OPTIMIZE_ITERATION
 	;
 }
