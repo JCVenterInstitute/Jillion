@@ -57,7 +57,7 @@ public final class AminoAcidSequenceFastaFileDataStoreFactory {
 		switch(type){
 			case OPTIMIZE_RANDOM_ACCESS_SPEED: return DefaultAminoAcidSequenceFastaDataStore.create(fastaFile,filter);
 			case OPTIMIZE_RANDOM_ACCESS_MEMORY: return IndexedAminoAcidSequenceFastaFileDataStore.create(fastaFile,filter);
-			case OPTIMIZE_ONE_PASS_ITERATION: return LargeAminoAcidSequenceFastaFileDataStore.create(fastaFile,filter);
+			case OPTIMIZE_ITERATION: return LargeAminoAcidSequenceFastaFileDataStore.create(fastaFile,filter);
 			default:
 				throw new IllegalArgumentException("unknown type : "+ type);
 		}

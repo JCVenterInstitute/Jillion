@@ -91,7 +91,7 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     public StreamingIterator<PhdReadRecord> createFastaIterator(File fastaFile,
             TraceDetails traceDetails) throws DataStoreException{        
         try {
-			NucleotideSequenceFastaDataStore datastore = NucleotideSequenceFastaFileDataStoreFactory.create(fastaFile, DataStoreProviderHint.OPTIMIZE_ONE_PASS_ITERATION);
+			NucleotideSequenceFastaDataStore datastore = NucleotideSequenceFastaFileDataStoreFactory.create(fastaFile, DataStoreProviderHint.OPTIMIZE_ITERATION);
 			return new FastaConsedPhdAdaptedIterator(
 	                datastore.iterator(),
 	                fastaFile,
@@ -108,7 +108,7 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     public StreamingIterator<PhdReadRecord> createChromatogramIterator(
             File chromatogramFile, TraceDetails traceDetails) throws DataStoreException{
         try {
-			NucleotideSequenceFastaDataStore datastore = NucleotideSequenceFastaFileDataStoreFactory.create(chromatogramFile, DataStoreProviderHint.OPTIMIZE_ONE_PASS_ITERATION);
+			NucleotideSequenceFastaDataStore datastore = NucleotideSequenceFastaFileDataStoreFactory.create(chromatogramFile, DataStoreProviderHint.OPTIMIZE_ITERATION);
 			return new ChromatDirFastaConsedPhdAdaptedIterator(
 					datastore.iterator(),
 	                chromatogramFile,

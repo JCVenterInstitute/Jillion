@@ -148,7 +148,7 @@ public class MultiThreadedReAbacusAce {
             		MultipleWrapper.createMultipleWrapper(AceFileVisitor.class, visitor,tagWriter));
             //datastore should now only contain what needs to be reabacused
             DataStoreFilter filter = new IncludeDataStoreFilter(abacusErrorMap.keySet());
-            AceFileContigDataStore datastore = AceFileContigDataStoreFactory.create(outputAceFile, DataStoreProviderHint.OPTIMIZE_ONE_PASS_ITERATION, filter);
+            AceFileContigDataStore datastore = AceFileContigDataStoreFactory.create(outputAceFile, DataStoreProviderHint.OPTIMIZE_ITERATION, filter);
             StreamingIterator<String> idIter = datastore.idIterator();
             List<Future<Void>> futures = new ArrayList<Future<Void>>();
             
@@ -185,7 +185,7 @@ public class MultiThreadedReAbacusAce {
             	//datastore now only contains what was re-abacused
             	//so we need to create a new datastore to get the ids of all the contigs
             	//in the same order as the original ace
-                StreamingIterator<String> contigIdIter = AceFileContigDataStoreFactory.create(inputAceFile, DataStoreProviderHint.OPTIMIZE_ONE_PASS_ITERATION)
+                StreamingIterator<String> contigIdIter = AceFileContigDataStoreFactory.create(inputAceFile, DataStoreProviderHint.OPTIMIZE_ITERATION)
                 												.idIterator();
                 while(contigIdIter.hasNext()){
                     String contigId = contigIdIter.next();

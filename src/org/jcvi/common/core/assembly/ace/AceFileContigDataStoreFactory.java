@@ -59,7 +59,7 @@ public final class AceFileContigDataStoreFactory {
 		switch(type){
 			case OPTIMIZE_RANDOM_ACCESS_SPEED: return DefaultAceFileDataStore.create(aceFile,filter);
 			case OPTIMIZE_RANDOM_ACCESS_MEMORY: return IndexedAceFileDataStore.create(aceFile,filter);
-			case OPTIMIZE_ONE_PASS_ITERATION: return LargeAceFileDataStore.create(aceFile,filter);
+			case OPTIMIZE_ITERATION: return LargeAceFileDataStore.create(aceFile,filter);
 			default:
 				throw new IllegalArgumentException("unknown type : "+ type);
 		}
