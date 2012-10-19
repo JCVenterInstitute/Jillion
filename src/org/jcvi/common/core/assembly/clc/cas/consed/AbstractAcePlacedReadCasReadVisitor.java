@@ -21,6 +21,7 @@ package org.jcvi.common.core.assembly.clc.cas.consed;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.AceAssembledReadAdapter;
@@ -29,9 +30,10 @@ import org.jcvi.common.core.assembly.clc.cas.CasInfo;
 import org.jcvi.common.core.assembly.clc.cas.CasMatch;
 import org.jcvi.common.core.assembly.clc.cas.TraceDetails;
 import org.jcvi.common.core.assembly.clc.cas.read.CasPlacedRead;
-import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.fastx.fasta.nt.LargeNucleotideSequenceFastaIterator;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreType;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileIterator;
@@ -87,11 +89,16 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     */
     @Override
     public StreamingIterator<PhdReadRecord> createFastaIterator(File fastaFile,
-            TraceDetails traceDetails) throws DataStoreException{
-        return new FastaConsedPhdAdaptedIterator(
-                LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile, AcceptingDataStoreFilter.INSTANCE),
-                fastaFile,
-                traceDetails.getPhdDate(), PhredQuality.valueOf(30));
+            TraceDetails traceDetails) throws DataStoreException{        
+        try {
+			NucleotideSequenceFastaDataStore datastore = NucleotideSequenceFastaFileDataStoreFactory.create(fastaFile, FastaFileDataStoreType.LARGE);
+			return new FastaConsedPhdAdaptedIterator(
+	                datastore.iterator(),
+	                fastaFile,
+	                traceDetails.getPhdDate(), PhredQuality.valueOf(30));
+        } catch (IOException e) {
+			throw new DataStoreException("error reading fasta file "+ fastaFile.getAbsolutePath(),e);
+		}
     }
 
     /**
@@ -100,12 +107,17 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     @Override
     public StreamingIterator<PhdReadRecord> createChromatogramIterator(
             File chromatogramFile, TraceDetails traceDetails) throws DataStoreException{
+        try {
+			NucleotideSequenceFastaDataStore datastore = NucleotideSequenceFastaFileDataStoreFactory.create(chromatogramFile, FastaFileDataStoreType.LARGE);
+			return new ChromatDirFastaConsedPhdAdaptedIterator(
+					datastore.iterator(),
+	                chromatogramFile,
+	                traceDetails.getPhdDate(), PhredQuality.valueOf(30),
+	                traceDetails.getChromatDir());
+        } catch (IOException e) {
+			throw new DataStoreException("error reading fasta file for chromatogram "+ chromatogramFile.getAbsolutePath(),e);
+		}
         
-        return new ChromatDirFastaConsedPhdAdaptedIterator(
-                LargeNucleotideSequenceFastaIterator.createNewIteratorFor(chromatogramFile,AcceptingDataStoreFilter.INSTANCE),
-                chromatogramFile,
-                traceDetails.getPhdDate(), PhredQuality.valueOf(30),
-                traceDetails.getChromatDir());
     }
 
     /**
