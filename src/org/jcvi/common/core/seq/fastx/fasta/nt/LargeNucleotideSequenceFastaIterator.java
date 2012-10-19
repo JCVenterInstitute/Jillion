@@ -35,7 +35,7 @@ import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
  *
  *
  */
-public final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingCloseableIterator<NucleotideSequenceFastaRecord>{
+final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingCloseableIterator<NucleotideSequenceFastaRecord>{
 
 	private final File fastaFile;
 	private final DataStoreFilter filter;
