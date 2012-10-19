@@ -29,9 +29,9 @@ import java.io.IOException;
 import org.jcvi.common.core.assembly.clc.cas.CasTrimMap;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreType;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreFactory;
 import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
@@ -76,7 +76,7 @@ public class FastaCasDataStoreFactory extends AbstractCasDataStoreFactory
         try {
 			return CachedDataStore.create(NucleotideSequenceDataStore.class, 
 			             FastaRecordDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, 
-			            		 NucleotideSequenceFastaFileDataStoreFactory.create(pathToDataStore, FastaFileDataStoreType.LARGE)),
+			            		 NucleotideSequenceFastaFileDataStoreFactory.create(pathToDataStore, DataStoreProviderHint.OPTIMIZE_ONE_PASS_ITERATION)),
 			             cacheSize);
 		} catch (IOException e) {
 			throw new CasDataStoreFactoryException("could not create nucleotide sequence datastore for "+ pathToDataStore.getAbsolutePath(), e);
@@ -87,7 +87,7 @@ public class FastaCasDataStoreFactory extends AbstractCasDataStoreFactory
             File fastaFile,DataStoreFilter filter) throws CasDataStoreFactoryException { 
         try {
 			return CachedDataStore.create(QualitySequenceDataStore.class, 
-					FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, QualitySequenceFastaFileDataStoreFactory.create(fastaFile, FastaFileDataStoreType.LARGE)),
+					FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, QualitySequenceFastaFileDataStoreFactory.create(fastaFile, DataStoreProviderHint.OPTIMIZE_ONE_PASS_ITERATION)),
 			        cacheSize);
 		} catch (IOException e) {
 			throw new CasDataStoreFactoryException("error creating quality datastore for "+fastaFile.getAbsolutePath(),e);

@@ -3,13 +3,13 @@ package org.jcvi.common.core.assembly.ace;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.assembly.ace.AceFileContigDataStoreFactory.AceFileDataStoreType;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 
 public class AceTagsFromIndexedAceFileDataStore extends AbstractAceTagsFromAceFileDataStore{
 
 	@Override
 	protected AceFileContigDataStore createDataStoreFor(File aceFile) throws IOException {
-		return AceFileContigDataStoreFactory.create(aceFile, AceFileDataStoreType.INDEXED);
+		return AceFileContigDataStoreFactory.create(aceFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY);
 	}
 
 }

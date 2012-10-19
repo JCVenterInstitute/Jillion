@@ -17,11 +17,11 @@ import org.jcvi.common.core.align.pairwise.NucleotideScoringMatrix;
 import org.jcvi.common.core.align.pairwise.NucleotideSmithWatermanAligner;
 import org.jcvi.common.core.align.pairwise.PairwiseSequenceAlignment;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreType;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
@@ -49,7 +49,7 @@ public class BarcodeDetector {
 		matrix = builder.build();
 		
 		
-		NucleotideSequenceFastaDataStore barcodes = NucleotideSequenceFastaFileDataStoreFactory.create(barcodeFasta, FastaFileDataStoreType.MAP_BACKED);
+		NucleotideSequenceFastaDataStore barcodes = NucleotideSequenceFastaFileDataStoreFactory.create(barcodeFasta, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED);
 		Set<String> unmatched = new HashSet<String>();
 		Map<String, Set<String>> mappedReads = new TreeMap<String, Set<String>>();
 		

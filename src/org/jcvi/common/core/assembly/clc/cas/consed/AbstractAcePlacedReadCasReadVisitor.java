@@ -31,7 +31,7 @@ import org.jcvi.common.core.assembly.clc.cas.CasMatch;
 import org.jcvi.common.core.assembly.clc.cas.TraceDetails;
 import org.jcvi.common.core.assembly.clc.cas.read.CasPlacedRead;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreType;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
@@ -91,7 +91,7 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     public StreamingIterator<PhdReadRecord> createFastaIterator(File fastaFile,
             TraceDetails traceDetails) throws DataStoreException{        
         try {
-			NucleotideSequenceFastaDataStore datastore = NucleotideSequenceFastaFileDataStoreFactory.create(fastaFile, FastaFileDataStoreType.LARGE);
+			NucleotideSequenceFastaDataStore datastore = NucleotideSequenceFastaFileDataStoreFactory.create(fastaFile, DataStoreProviderHint.OPTIMIZE_ONE_PASS_ITERATION);
 			return new FastaConsedPhdAdaptedIterator(
 	                datastore.iterator(),
 	                fastaFile,
@@ -108,7 +108,7 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     public StreamingIterator<PhdReadRecord> createChromatogramIterator(
             File chromatogramFile, TraceDetails traceDetails) throws DataStoreException{
         try {
-			NucleotideSequenceFastaDataStore datastore = NucleotideSequenceFastaFileDataStoreFactory.create(chromatogramFile, FastaFileDataStoreType.LARGE);
+			NucleotideSequenceFastaDataStore datastore = NucleotideSequenceFastaFileDataStoreFactory.create(chromatogramFile, DataStoreProviderHint.OPTIMIZE_ONE_PASS_ITERATION);
 			return new ChromatDirFastaConsedPhdAdaptedIterator(
 					datastore.iterator(),
 	                chromatogramFile,

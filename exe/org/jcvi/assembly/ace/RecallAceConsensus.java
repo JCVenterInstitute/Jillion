@@ -40,7 +40,6 @@ import org.jcvi.common.core.assembly.ace.AceFileContigDataStoreFactory;
 import org.jcvi.common.core.assembly.ace.AceFileUtil;
 import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.DefaultAceContig;
-import org.jcvi.common.core.assembly.ace.AceFileContigDataStoreFactory.AceFileDataStoreType;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.ace.consed.PhdDirQualityDataStore;
 import org.jcvi.common.core.assembly.util.slice.CompactedSliceMap;
@@ -52,6 +51,7 @@ import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusResult;
 import org.jcvi.common.core.assembly.util.slice.consensus.NoAmbiguityConsensusCaller;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
@@ -158,7 +158,7 @@ public class RecallAceConsensus {
             QualitySequenceDataStore qualityDataStore = TraceQualityDataStoreAdapter.adapt(masterPhdDataStore); 
             ConsensusCaller consensusCaller = createConsensusCaller(RecallType.parse(commandLine.getOptionValue("recall_with")), PhredQuality.valueOf(30));
            
-            AceFileContigDataStore aceContigDataStore = AceFileContigDataStoreFactory.create(inputAceFile, AceFileDataStoreType.INDEXED);
+            AceFileContigDataStore aceContigDataStore = AceFileContigDataStoreFactory.create(inputAceFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY);
             AceFileUtil.writeAceFileHeader(aceContigDataStore.getNumberOfRecords(), aceContigDataStore.getNumberOfTotalReads(), out);
             
             StreamingIterator<AceContig> iter = aceContigDataStore.iterator();

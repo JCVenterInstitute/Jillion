@@ -57,10 +57,10 @@ import org.jcvi.common.command.grid.SimpleGridJob;
 import org.jcvi.common.command.grid.GridJob.MemoryUnit;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStoreFactory;
-import org.jcvi.common.core.assembly.ace.AceFileContigDataStoreFactory.AceFileDataStoreType;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationWriter;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.datastore.DefaultExcludeDataStoreFilter;
 import org.jcvi.common.core.datastore.IncludeDataStoreFilter;
 import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
@@ -166,7 +166,7 @@ public class GridFindAbacusErrorsInAce {
             List<SimpleGridJob> jobs = new ArrayList<SimpleGridJob>();
             File aceFile = new File(commandLine.getOptionValue("a"));
             final DataStoreFilter filter = getDataStoreFilter(commandLine);
-            AceFileContigDataStore datastore = AceFileContigDataStoreFactory.create(aceFile, AceFileDataStoreType.INDEXED);
+            AceFileContigDataStore datastore = AceFileContigDataStoreFactory.create(aceFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY);
             StreamingIterator<String> idIter = datastore.idIterator();
             Set<File> files = new HashSet<File>();
             try{

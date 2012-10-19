@@ -19,7 +19,9 @@
 
 package org.jcvi.fasta.fastq.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -28,10 +30,10 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreType;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqFileDataStore;
@@ -110,8 +112,8 @@ public class TestFastQ2FastaEnd2End {
                  "-s", seqOutputFile.getAbsolutePath(),
                  "-q", qualOutputFile.getAbsolutePath(),
                  fastQFile.getAbsolutePath()});
-         NucleotideSequenceFastaDataStore filteredSeqDataStore = NucleotideSequenceFastaFileDataStoreFactory.create(seqOutputFile, FastaFileDataStoreType.MAP_BACKED);
-         QualitySequenceFastaDataStore filteredQualityDataStore = QualitySequenceFastaFileDataStoreFactory.create(qualOutputFile, FastaFileDataStoreType.MAP_BACKED);
+         NucleotideSequenceFastaDataStore filteredSeqDataStore = NucleotideSequenceFastaFileDataStoreFactory.create(seqOutputFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED);
+         QualitySequenceFastaDataStore filteredQualityDataStore = QualitySequenceFastaFileDataStoreFactory.create(qualOutputFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED);
          
          assertEquals(2, filteredSeqDataStore.getNumberOfRecords());
          assertEquals(2, filteredQualityDataStore.getNumberOfRecords());
@@ -131,8 +133,8 @@ public class TestFastQ2FastaEnd2End {
                 "-q", qualOutputFile.getAbsolutePath(),
                 "-sanger",
                 sangerFastQFile.getAbsolutePath()});
-        NucleotideSequenceFastaDataStore filteredSeqDataStore = NucleotideSequenceFastaFileDataStoreFactory.create(seqOutputFile, FastaFileDataStoreType.MAP_BACKED);
-        QualitySequenceFastaDataStore filteredQualityDataStore = QualitySequenceFastaFileDataStoreFactory.create(qualOutputFile, FastaFileDataStoreType.MAP_BACKED);
+        NucleotideSequenceFastaDataStore filteredSeqDataStore = NucleotideSequenceFastaFileDataStoreFactory.create(seqOutputFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED);
+        QualitySequenceFastaDataStore filteredQualityDataStore = QualitySequenceFastaFileDataStoreFactory.create(qualOutputFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED);
         
         assertEquals(2, filteredSeqDataStore.getNumberOfRecords());
         assertEquals(2, filteredQualityDataStore.getNumberOfRecords());
@@ -165,8 +167,8 @@ public class TestFastQ2FastaEnd2End {
                  "-s", seqOutputFile.getAbsolutePath(),
                  "-q", qualOutputFile.getAbsolutePath(),
                  fastQFile.getAbsolutePath()});
-         NucleotideSequenceFastaDataStore filteredSeqDataStore = NucleotideSequenceFastaFileDataStoreFactory.create(seqOutputFile, FastaFileDataStoreType.MAP_BACKED);
-         QualitySequenceFastaDataStore filteredQualityDataStore = QualitySequenceFastaFileDataStoreFactory.create(qualOutputFile, FastaFileDataStoreType.MAP_BACKED);
+         NucleotideSequenceFastaDataStore filteredSeqDataStore = NucleotideSequenceFastaFileDataStoreFactory.create(seqOutputFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED);
+         QualitySequenceFastaDataStore filteredQualityDataStore = QualitySequenceFastaFileDataStoreFactory.create(qualOutputFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED);
          
          assertEquals(1, filteredSeqDataStore.getNumberOfRecords());
          assertEquals(1, filteredQualityDataStore.getNumberOfRecords());
@@ -184,7 +186,7 @@ public class TestFastQ2FastaEnd2End {
          Fastq2Fasta.main(new String[]{"-i",ids.getAbsolutePath(),
                  "-s", seqOutputFile.getAbsolutePath(),
                  fastQFile.getAbsolutePath()});
-         NucleotideSequenceFastaDataStore filteredSeqDataStore = NucleotideSequenceFastaFileDataStoreFactory.create(seqOutputFile, FastaFileDataStoreType.MAP_BACKED);
+         NucleotideSequenceFastaDataStore filteredSeqDataStore = NucleotideSequenceFastaFileDataStoreFactory.create(seqOutputFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED);
          assertEquals(0L, qualOutputFile.length());
          assertEquals(1, filteredSeqDataStore.getNumberOfRecords());
          assertFalse(filteredSeqDataStore.contains(otherId));
@@ -200,7 +202,7 @@ public class TestFastQ2FastaEnd2End {
          Fastq2Fasta.main(new String[]{"-i",ids.getAbsolutePath(),
                  "-q", qualOutputFile.getAbsolutePath(),
                  fastQFile.getAbsolutePath()});
-         QualitySequenceFastaDataStore filteredQualityDataStore = QualitySequenceFastaFileDataStoreFactory.create(qualOutputFile, FastaFileDataStoreType.MAP_BACKED);
+         QualitySequenceFastaDataStore filteredQualityDataStore = QualitySequenceFastaFileDataStoreFactory.create(qualOutputFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED);
          assertEquals(0L, seqOutputFile.length());
          assertEquals(1, filteredQualityDataStore.getNumberOfRecords());
 
@@ -218,8 +220,8 @@ public class TestFastQ2FastaEnd2End {
                  "-q", qualOutputFile.getAbsolutePath(),
                  fastQFile.getAbsolutePath()});
          
-         NucleotideSequenceFastaDataStore filteredSeqDataStore = NucleotideSequenceFastaFileDataStoreFactory.create(seqOutputFile, FastaFileDataStoreType.MAP_BACKED);
-         QualitySequenceFastaDataStore filteredQualityDataStore = QualitySequenceFastaFileDataStoreFactory.create(qualOutputFile, FastaFileDataStoreType.MAP_BACKED);
+         NucleotideSequenceFastaDataStore filteredSeqDataStore = NucleotideSequenceFastaFileDataStoreFactory.create(seqOutputFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED);
+         QualitySequenceFastaDataStore filteredQualityDataStore = QualitySequenceFastaFileDataStoreFactory.create(qualOutputFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED);
         
          assertEquals(1, filteredSeqDataStore.getNumberOfRecords());
          assertEquals(1, filteredQualityDataStore.getNumberOfRecords());
