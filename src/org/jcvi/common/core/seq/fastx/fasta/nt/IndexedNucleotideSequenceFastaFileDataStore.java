@@ -33,6 +33,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 	
 	private final Map<String,Range> index;
 	private final File fastaFile;
+	private final DataStoreFilter filter;
 	private volatile boolean closed;
 	/**
 	 * Creates a new {@link IndexedNucleotideSequenceFastaFileDataStore}
@@ -119,9 +120,10 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 	
 	
 	
-	private IndexedNucleotideSequenceFastaFileDataStore(Map<String,Range> index, File fastaFile){
+	private IndexedNucleotideSequenceFastaFileDataStore(Map<String,Range> index, File fastaFile, DataStoreFilter filter){
 		this.index = index;
 		this.fastaFile = fastaFile;
+		this.filter = filter;
 	}
 	@Override
 	public StreamingIterator<String> idIterator() throws DataStoreException {
@@ -180,14 +182,14 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 	@Override
 	public StreamingIterator<NucleotideSequenceFastaRecord> iterator() throws DataStoreException {
 		throwExceptionIfClosed();
-		return DataStoreStreamingIterator.create(this,LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile));
+		return DataStoreStreamingIterator.create(this,LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile,filter));
 	}
 	
 	private static final class IndexedNucleotideFastaDataStoreBuilderVisitor
 			extends
 			AbstractIndexedFastaDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>
 			implements NucleotideFastaDataStoreBuilderVisitor {
-
+		
 		private IndexedNucleotideFastaDataStoreBuilderVisitor(File fastaFile, DataStoreFilter filter) {
 			super(fastaFile, filter);
 		}
@@ -195,7 +197,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 		@Override
 		protected NucleotideSequenceFastaDataStore createDataStore(
 				Map<String,Range> index, File fastaFile) {
-			return new IndexedNucleotideSequenceFastaFileDataStore(index, fastaFile);
+			return new IndexedNucleotideSequenceFastaFileDataStore(index, fastaFile, getFilter());
 		}
 
 

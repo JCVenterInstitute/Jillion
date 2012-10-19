@@ -21,7 +21,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory.FastaDataStoreType;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreType;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
@@ -49,7 +49,7 @@ public class BarcodeDetector {
 		matrix = builder.build();
 		
 		
-		NucleotideSequenceFastaDataStore barcodes = NucleotideSequenceFastaFileDataStoreFactory.create(barcodeFasta, FastaDataStoreType.MAP_BACKED);
+		NucleotideSequenceFastaDataStore barcodes = NucleotideSequenceFastaFileDataStoreFactory.create(barcodeFasta, FastaFileDataStoreType.MAP_BACKED);
 		Set<String> unmatched = new HashSet<String>();
 		Map<String, Set<String>> mappedReads = new TreeMap<String, Set<String>>();
 		

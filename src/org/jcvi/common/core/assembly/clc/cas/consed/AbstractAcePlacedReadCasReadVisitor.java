@@ -29,6 +29,7 @@ import org.jcvi.common.core.assembly.clc.cas.CasInfo;
 import org.jcvi.common.core.assembly.clc.cas.CasMatch;
 import org.jcvi.common.core.assembly.clc.cas.TraceDetails;
 import org.jcvi.common.core.assembly.clc.cas.read.CasPlacedRead;
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fastx.fasta.nt.LargeNucleotideSequenceFastaIterator;
 import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
@@ -88,7 +89,7 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     public StreamingIterator<PhdReadRecord> createFastaIterator(File fastaFile,
             TraceDetails traceDetails) throws DataStoreException{
         return new FastaConsedPhdAdaptedIterator(
-                LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile),
+                LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile, AcceptingDataStoreFilter.INSTANCE),
                 fastaFile,
                 traceDetails.getPhdDate(), PhredQuality.valueOf(30));
     }
@@ -101,7 +102,7 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
             File chromatogramFile, TraceDetails traceDetails) throws DataStoreException{
         
         return new ChromatDirFastaConsedPhdAdaptedIterator(
-                LargeNucleotideSequenceFastaIterator.createNewIteratorFor(chromatogramFile),
+                LargeNucleotideSequenceFastaIterator.createNewIteratorFor(chromatogramFile,AcceptingDataStoreFilter.INSTANCE),
                 chromatogramFile,
                 traceDetails.getPhdDate(), PhredQuality.valueOf(30),
                 traceDetails.getChromatDir());

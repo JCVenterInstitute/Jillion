@@ -9,6 +9,7 @@ import java.util.Map;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractIndexedFastaDataStoreBuilderVisitor;
@@ -44,7 +45,21 @@ public final class IndexedQualityFastaFileDataStore implements QualitySequenceFa
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
 	public static QualitySequenceFastaDataStore create(File fastaFile) throws FileNotFoundException{
-		QualityFastaDataStoreBuilderVisitor builder = createBuilder(fastaFile);
+		return create(fastaFile, AcceptingDataStoreFilter.INSTANCE);
+	}
+	
+	/**
+	 * Creates a new {@link IndexedQualityFastaFileDataStore}
+	 * instance using the given fastaFile.
+	 * @param fastaFile the fasta to create an {@link IndexedQualityFastaFileDataStore}
+	 * for.
+	 * @return a new instance of {@link IndexedQualityFastaFileDataStore};
+	 * never null.
+	 * @throws FileNotFoundException if the input fasta file does not exist.
+	 * @throws NullPointerException if the input fasta file is null.
+	 */
+	public static QualitySequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws FileNotFoundException{
+		QualityFastaDataStoreBuilderVisitor builder = createBuilder(fastaFile,filter);
 		FastaFileParser.parse(fastaFile, builder);
 		return builder.build();
 	}
@@ -64,7 +79,26 @@ public final class IndexedQualityFastaFileDataStore implements QualitySequenceFa
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
 	public static QualityFastaDataStoreBuilderVisitor createBuilder(File fastaFile){
-		return new IndexedQualityFastaDataStoreBuilderVisitor(fastaFile);
+		return createBuilder(fastaFile, AcceptingDataStoreFilter.INSTANCE);
+	}
+	
+	/**
+	 * Creates a new {@link QualityFastaDataStoreBuilderVisitor}
+	 * instance that will build an {@link IndexedQualityFastaFileDataStore}
+	 * using the given fastaFile.  This implementation of {@link QualityFastaDataStoreBuilderVisitor}
+	 * can only be used to parse a single fasta file (the one given) and does not support
+	 * {@link QualityFastaDataStoreBuilderVisitor#addFastaRecord(QualitySequenceFastaRecord)}.
+	 * This builder visitor can only build the datastore via the visitXXX methods in the {@link FastaFileVisitor}
+	 * interface.
+	 * @param fastaFile the fasta to create an {@link IndexedQualityFastaFileDataStore}
+	 * for.
+	 * @return a new instance of {@link QualityFastaDataStoreBuilderVisitor};
+	 * never null.
+	 * @throws FileNotFoundException if the input fasta file does not exist.
+	 * @throws NullPointerException if the input fasta file is null.
+	 */
+	public static QualityFastaDataStoreBuilderVisitor createBuilder(File fastaFile, DataStoreFilter filter){
+		return new IndexedQualityFastaDataStoreBuilderVisitor(fastaFile, filter);
 	}
 	
 	private IndexedQualityFastaFileDataStore(Map<String,Range> index,File fastaFile){
@@ -137,8 +171,8 @@ public final class IndexedQualityFastaFileDataStore implements QualitySequenceFa
 	extends AbstractIndexedFastaDataStoreBuilderVisitor<PhredQuality, QualitySequence, QualitySequenceFastaRecord, QualitySequenceFastaDataStore>
 			implements	QualityFastaDataStoreBuilderVisitor{
 
-			private IndexedQualityFastaDataStoreBuilderVisitor(File fastaFile){
-				super(fastaFile, AcceptingDataStoreFilter.INSTANCE);
+			private IndexedQualityFastaDataStoreBuilderVisitor(File fastaFile, DataStoreFilter filter){
+				super(fastaFile, filter);
 			}
 			@Override
 			protected QualitySequenceFastaDataStore createDataStore(

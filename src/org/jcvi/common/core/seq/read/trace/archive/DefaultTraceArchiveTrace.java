@@ -29,7 +29,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory.FastaDataStoreType;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreType;
 import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
@@ -78,7 +78,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
     	NucleotideSequenceFastaDataStore datastore=null;
         try{
         	 datastore= NucleotideSequenceFastaFileDataStoreFactory.create(getFile(TraceInfoField.BASE_FILE),
-             		FastaDataStoreType.MAP_BACKED);
+             		FastaFileDataStoreType.MAP_BACKED);
              
             iterator = datastore.iterator();
 			return iterator.next().getSequence();

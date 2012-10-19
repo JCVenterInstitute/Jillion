@@ -32,9 +32,9 @@ import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreType;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory.FastaDataStoreType;
 import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -45,7 +45,7 @@ public abstract class AbstractTestContigFileDataStore extends TestAbstractContig
 	
 	public AbstractTestContigFileDataStore() throws FileNotFoundException, IOException{
 		fullLengthSequences = NucleotideSequenceFastaFileDataStoreFactory.create(RESOURCES.getFile("files/gcv_23918.raw.seq.fasta.fasta"),
-						FastaDataStoreType.MAP_BACKED);
+				FastaFileDataStoreType.MAP_BACKED);
 		dataStore = buildContigFileDataStore(fullLengthSequences, getFile() );
 	}
 	@After

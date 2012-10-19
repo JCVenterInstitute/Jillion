@@ -34,7 +34,7 @@ public class TestLargeQualityFastaDataStore extends AbstractTestQualityFastaData
     @Override
     protected  QualitySequenceFastaDataStore createDataStore(File file)
             throws IOException {
-        return new LargeQualityFastaFileDataStore(file);
+        return LargeQualityFastaFileDataStore.create(file);
     }
 
 }

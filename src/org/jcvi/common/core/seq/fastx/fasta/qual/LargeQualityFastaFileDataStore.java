@@ -24,15 +24,14 @@
 package org.jcvi.common.core.seq.fastx.fasta.qual;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.CachedDataStore;
-import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
-import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
+import org.jcvi.common.core.seq.fastx.fasta.AbstractLargeFastaFileDataStore;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code LargeQualityFastaFileDataStore} is an implementation
@@ -46,140 +45,27 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  *
  */
-public final class LargeQualityFastaFileDataStore implements QualitySequenceFastaDataStore{
-   private final File fastaFile;
-   volatile boolean closed;
-    private Long size;
+public final class LargeQualityFastaFileDataStore extends AbstractLargeFastaFileDataStore<PhredQuality, QualitySequence, QualitySequenceFastaRecord> implements QualitySequenceFastaDataStore{
+
     
     public static QualitySequenceFastaDataStore create(File fastaFile){
-    	return new LargeQualityFastaFileDataStore(fastaFile);
+    	return create(fastaFile, AcceptingDataStoreFilter.INSTANCE);
     }
-    /**
-     * Construct a {@link LargeQualityFastaFileDataStore}
-     * for the given Fasta file.
-     * @param fastaFile the Fasta File to use, can not be null.
-     * @throws NullPointerException if fastaFile is null.
-     */
-    public LargeQualityFastaFileDataStore(File fastaFile) {
-        if(fastaFile ==null){
-            throw new NullPointerException("fasta file can not be null");
-        }
-        this.fastaFile = fastaFile;
+    public static QualitySequenceFastaDataStore create(File fastaFile, DataStoreFilter filter){
+    	return new LargeQualityFastaFileDataStore(fastaFile,filter);
     }
-  
-    
-
-    @Override
-    public boolean contains(String id) throws DataStoreException {
-    	checkNotYetClosed();
-    	StreamingIterator<String> iter =idIterator();
-    	while(iter.hasNext()){
-    		String nextId = iter.next();
-    		if(nextId.equals(id)){
-    			IOUtil.closeAndIgnoreErrors(iter);
-    			return true;
-    		}
-    	}
-    	return false;
-    }
-
-    @Override
-    public QualitySequenceFastaRecord get(String id)
-            throws DataStoreException {
-    	checkNotYetClosed();
-    	StreamingIterator<QualitySequenceFastaRecord> iter =iterator();
-    	while(iter.hasNext()){
-    		QualitySequenceFastaRecord fasta = iter.next();
-    		if(fasta.getId().equals(id)){
-    			IOUtil.closeAndIgnoreErrors(iter);
-    			return fasta;
-    		}
-    	}
-    	 throw new DataStoreException("could not get record for "+id);
-       
-    }
-
-    @Override
-    public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
-        checkNotYetClosed();
-        QualitySequenceFastaDataStoreIdIteratorImpl iter= new QualitySequenceFastaDataStoreIdIteratorImpl(fastaFile);
-        iter.start();
-        return DataStoreStreamingIterator.create(this,iter);
-
-    }
-
-    private void checkNotYetClosed() {
-    	if(closed){
-            throw new IllegalStateException("already closed");
-        }
-		
+	protected LargeQualityFastaFileDataStore(File fastaFile, DataStoreFilter filter) {
+		super(fastaFile, filter);
 	}
 
-
-
 	@Override
-	public boolean isClosed(){
-		return closed;
-	}
-
-
-
-	@Override
-	public void close() throws IOException {
-		closed=true;
-		
-	}
-
-
-
-	@Override
-    public synchronized long getNumberOfRecords() throws DataStoreException {
-        checkNotYetClosed();
-            if(size ==null){
-            	
-                RecordCounter recordCounter = new RecordCounter();
-				
-				try {
-					FastaFileParser.parse(fastaFile, recordCounter);
-					LargeQualityFastaFileDataStore.this.size=recordCounter.getCount();
-				} catch (FileNotFoundException e) {
-					throw new DataStoreException("error parsing fasta file",e);
-				}
-            	
-            } 
-
-        return size;
-
-    }
-    /**
-     * visits a fasta file and counts how many records there are.
-     * @author dkatzel
-     *
-     *
-     */
-    private static final class RecordCounter extends AbstractFastaVisitor{
-        long count=0;
-        @Override
-        public synchronized boolean visitRecord(String id, String comment, String entireBody) {
-            count++;
-            return true;
-        }
-        /**
-         * @return the count
-         */
-        public synchronized long getCount() {
-            return count;
-        }
-        
-        
-    }
-
-    @Override
-    public synchronized StreamingIterator<QualitySequenceFastaRecord> iterator() {
-        checkNotYetClosed();
-        QualitySequenceFastaDataStoreIteratorImpl iter = new QualitySequenceFastaDataStoreIteratorImpl(fastaFile);
+	protected StreamingIterator<QualitySequenceFastaRecord> createNewIterator(
+			File fastaFile) {
+		QualitySequenceFastaDataStoreIteratorImpl iter = new QualitySequenceFastaDataStoreIteratorImpl(fastaFile);
         iter.start();
         
         return DataStoreStreamingIterator.create(this,iter);
-    }
+	}
+   
+	
 }

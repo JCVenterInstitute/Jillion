@@ -11,7 +11,7 @@ import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataSt
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory.FastaDataStoreType;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreType;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public class SortFasta {
@@ -25,7 +25,7 @@ public class SortFasta {
 		File inputFasta = new File("path/to/input.fasta");
 		File sortedOutputFasta = new File("path/to/sorted/output.fasta");
 		
-		NucleotideSequenceFastaDataStore dataStore = NucleotideSequenceFastaFileDataStoreFactory.create(inputFasta, FastaDataStoreType.INDEXED);
+		NucleotideSequenceFastaDataStore dataStore = NucleotideSequenceFastaFileDataStoreFactory.create(inputFasta, FastaFileDataStoreType.INDEXED);
 		SortedSet<String> sortedIds = new TreeSet<String>();
 		StreamingIterator<String> iter=null;
 		try {
