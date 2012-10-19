@@ -32,7 +32,7 @@ import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
  *
  *
  */
-public final class LargeFastaIdIterator extends AbstractBlockingCloseableIterator<String>{
+final class LargeFastaIdIterator extends AbstractBlockingCloseableIterator<String>{
 
     private final File fastaFile;
     private final DataStoreFilter filter;
