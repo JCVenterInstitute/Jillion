@@ -29,7 +29,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
-public final class IndexedQualityFastaFileDataStore implements QualitySequenceFastaDataStore{
+final class IndexedQualityFastaFileDataStore implements QualitySequenceFastaDataStore{
 
 	private final Map<String,Range> index;
 	private final File fastaFile;

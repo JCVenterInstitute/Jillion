@@ -42,7 +42,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
  * @see LargeQualityFastaFileDataStore
  *
  */
-public final class DefaultQualityFastaFileDataStore {
+final class DefaultQualityFastaFileDataStore {
     
 	private DefaultQualityFastaFileDataStore(){
 		//can not instantiate

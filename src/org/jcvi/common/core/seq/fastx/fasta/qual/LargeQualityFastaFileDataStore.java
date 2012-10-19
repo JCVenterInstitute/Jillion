@@ -45,7 +45,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  *
  */
-public final class LargeQualityFastaFileDataStore extends AbstractLargeFastaFileDataStore<PhredQuality, QualitySequence, QualitySequenceFastaRecord> implements QualitySequenceFastaDataStore{
+final class LargeQualityFastaFileDataStore extends AbstractLargeFastaFileDataStore<PhredQuality, QualitySequence, QualitySequenceFastaRecord> implements QualitySequenceFastaDataStore{
 
     
     public static QualitySequenceFastaDataStore create(File fastaFile){
