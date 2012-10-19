@@ -61,13 +61,13 @@ import org.jcvi.common.core.assembly.ace.HighLowAceContigPhdDatastore;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.ace.ReadAceTag;
 import org.jcvi.common.core.assembly.ace.WholeAssemblyAceTag;
-import org.jcvi.common.core.assembly.ace.AceFileContigDataStoreFactory.AceFileDataStoreType;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationParser;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationVisitor;
 import org.jcvi.common.core.assembly.ace.consed.ConsensusNavigationElement;
 import org.jcvi.common.core.assembly.ace.consed.ReadNavigationElement;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.datastore.IncludeDataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
@@ -148,7 +148,7 @@ public class MultiThreadedReAbacusAce {
             		MultipleWrapper.createMultipleWrapper(AceFileVisitor.class, visitor,tagWriter));
             //datastore should now only contain what needs to be reabacused
             DataStoreFilter filter = new IncludeDataStoreFilter(abacusErrorMap.keySet());
-            AceFileContigDataStore datastore = AceFileContigDataStoreFactory.create(outputAceFile, AceFileDataStoreType.LARGE, filter);
+            AceFileContigDataStore datastore = AceFileContigDataStoreFactory.create(outputAceFile, DataStoreProviderHint.OPTIMIZE_ONE_PASS_ITERATION, filter);
             StreamingIterator<String> idIter = datastore.idIterator();
             List<Future<Void>> futures = new ArrayList<Future<Void>>();
             
@@ -185,7 +185,7 @@ public class MultiThreadedReAbacusAce {
             	//datastore now only contains what was re-abacused
             	//so we need to create a new datastore to get the ids of all the contigs
             	//in the same order as the original ace
-                StreamingIterator<String> contigIdIter = AceFileContigDataStoreFactory.create(inputAceFile, AceFileDataStoreType.LARGE)
+                StreamingIterator<String> contigIdIter = AceFileContigDataStoreFactory.create(inputAceFile, DataStoreProviderHint.OPTIMIZE_ONE_PASS_ITERATION)
                 												.idIterator();
                 while(contigIdIter.hasNext()){
                     String contigId = contigIdIter.next();

@@ -33,13 +33,13 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
 import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
-import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreType;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
@@ -126,7 +126,7 @@ public class Fasta2Fastq {
           
             File qualFile = new File(commandLine.getOptionValue("q"));
             
-            final QualitySequenceFastaDataStore qualityDataStore = QualitySequenceFastaFileDataStoreFactory.create(qualFile, FastaFileDataStoreType.MAP_BACKED, filter);
+            final QualitySequenceFastaDataStore qualityDataStore = QualitySequenceFastaFileDataStoreFactory.create(qualFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED, filter);
             
             File seqFile = new File(commandLine.getOptionValue("s"));
             final FastqRecordWriter writer = new DefaultFastqRecordWriter.Builder(new File(commandLine.getOptionValue("o")))

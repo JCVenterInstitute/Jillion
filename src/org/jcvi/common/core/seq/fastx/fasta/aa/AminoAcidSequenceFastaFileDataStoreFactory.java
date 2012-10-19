@@ -6,7 +6,7 @@ import java.io.IOException;
 import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreType;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 
 /**
  * {@code AminoAcidSequenceFastaFileDataStoreFactory}
@@ -28,7 +28,7 @@ public final class AminoAcidSequenceFastaFileDataStoreFactory {
 	 * {@link DataStoreFilter}.
 	 * @param fastaFile the fasta file to used to create the {@link DataStore};
 	 * the file must exist and be readable and can not be null.
-	 * @param type an {@link FastaFileDataStoreType} instance
+	 * @param type an {@link DataStoreProviderHint} instance
 	 * that explains what kind of {@link AminoAcidSequenceFastaDataStore} implementation 
 	 * to return; can not be null.
 	 * @param filter a {@link DataStoreFilter} instance that can be
@@ -38,7 +38,7 @@ public final class AminoAcidSequenceFastaFileDataStoreFactory {
 	 * @throws NullPointerException if any input parameter is null.
 	 * @throws IllegalArgumentException if the fasta file does not exist or is not readable.
 	 */
-	public static AminoAcidSequenceFastaDataStore create(File fastaFile, FastaFileDataStoreType type, DataStoreFilter filter) throws IOException{
+	public static AminoAcidSequenceFastaDataStore create(File fastaFile, DataStoreProviderHint type, DataStoreFilter filter) throws IOException{
 		if(fastaFile==null){
 			throw new NullPointerException("fasta file can not be null");
 		}
@@ -55,9 +55,9 @@ public final class AminoAcidSequenceFastaFileDataStoreFactory {
 			throw new NullPointerException("DataStoreFilter can not be null");
 		}
 		switch(type){
-			case MAP_BACKED: return DefaultAminoAcidSequenceFastaDataStore.create(fastaFile,filter);
-			case INDEXED: return IndexedAminoAcidSequenceFastaFileDataStore.create(fastaFile,filter);
-			case LARGE: return LargeAminoAcidSequenceFastaFileDataStore.create(fastaFile,filter);
+			case OPTIMIZE_RANDOM_ACCESS_SPEED: return DefaultAminoAcidSequenceFastaDataStore.create(fastaFile,filter);
+			case OPTIMIZE_RANDOM_ACCESS_MEMORY: return IndexedAminoAcidSequenceFastaFileDataStore.create(fastaFile,filter);
+			case OPTIMIZE_ONE_PASS_ITERATION: return LargeAminoAcidSequenceFastaFileDataStore.create(fastaFile,filter);
 			default:
 				throw new IllegalArgumentException("unknown type : "+ type);
 		}
@@ -68,10 +68,10 @@ public final class AminoAcidSequenceFastaFileDataStoreFactory {
 	 * for the given fasta file of the given implementation type
 	 * which will contain ALL the {@link AminoAcidSequenceFastaRecord}s in the fasta file.
 	 * This is a convenience method for
-	 * {@link #create(File, FastaFileDataStoreType, DataStoreFilter) create(fastaFile, type,  AcceptingDataStoreFilter.INSTANCE)}.
+	 * {@link #create(File, DataStoreProviderHint, DataStoreFilter) create(fastaFile, type,  AcceptingDataStoreFilter.INSTANCE)}.
 	 * @param fastaFile the fasta file to used to create the {@link DataStore};
 	 * the file must exist and be readable and can not be null.
-	 * @param type an {@link FastaFileDataStoreType} instance
+	 * @param type an {@link DataStoreProviderHint} instance
 	 * that explains what kind of {@link AminoAcidSequenceFastaDataStore} implementation 
 	 * to return; can not be null.
 	 * @return a new {@link AminoAcidSequenceFastaDataStore}; will never be null.
@@ -79,7 +79,7 @@ public final class AminoAcidSequenceFastaFileDataStoreFactory {
 	 * @throws NullPointerException if any input parameter is null.
 	 * @throws IllegalArgumentException if the fasta file does not exist or is not readable.
 	 */
-	public static AminoAcidSequenceFastaDataStore create(File fastaFile, FastaFileDataStoreType type) throws IOException{
+	public static AminoAcidSequenceFastaDataStore create(File fastaFile, DataStoreProviderHint type) throws IOException{
 		return create(fastaFile, type, AcceptingDataStoreFilter.INSTANCE);
 	}
 }

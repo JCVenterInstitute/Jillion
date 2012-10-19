@@ -36,10 +36,10 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStoreFactory;
-import org.jcvi.common.core.assembly.ace.AceFileContigDataStoreFactory.AceFileDataStoreType;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationWriter;
 import org.jcvi.common.core.assembly.ace.consed.ConsensusNavigationElement;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 
 /**
@@ -103,7 +103,7 @@ public class DetectAbacusErrorsContigWorker {
                     : DEFAULT_GAP_PERCENTAGE;
             final AbacusErrorFinder abacusErrorFinder = new AbacusErrorFinder(5,3,percentGap);
             try{
-                AceFileContigDataStore datastore = AceFileContigDataStoreFactory.create(aceFile, AceFileDataStoreType.LARGE);
+                AceFileContigDataStore datastore = AceFileContigDataStoreFactory.create(aceFile, DataStoreProviderHint.OPTIMIZE_ONE_PASS_ITERATION);
                 try {
                     findErrorsIn(abacusErrorFinder, datastore.get(contigId), out,consedNavWriter);
                 } catch (IOException e) {

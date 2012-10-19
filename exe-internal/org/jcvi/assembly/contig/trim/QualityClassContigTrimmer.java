@@ -31,8 +31,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -51,21 +51,21 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.Rangeable;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.ContigDataStore;
-import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapUtil;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
-import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreType;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreFactory;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -289,7 +289,7 @@ public class QualityClassContigTrimmer{
                     contigFile);
             QualitySequenceDataStore qualityFastaMap = 
                 CachedDataStore.create(QualitySequenceDataStore.class, 
-                		FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class,QualitySequenceFastaFileDataStoreFactory.create(qualFastaFile, FastaFileDataStoreType.LARGE)),
+                		FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class,QualitySequenceFastaFileDataStoreFactory.create(qualFastaFile, DataStoreProviderHint.OPTIMIZE_ONE_PASS_ITERATION)),
                         100);
             StreamingIterator<Contig<AssembledRead>> iter = contigDataStore.iterator();
             try{

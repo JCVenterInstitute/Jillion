@@ -19,19 +19,20 @@
 
 package org.jcvi.fasta;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreType;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
@@ -66,7 +67,7 @@ public class TestTrimFasta {
         });
         
         NucleotideSequenceFastaDataStore actualDataStore = NucleotideSequenceFastaFileDataStoreFactory.create(outputFile,
-        														FastaFileDataStoreType.MAP_BACKED);
+        														DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED);
         assertEquals(
                     actualDataStore.get("read1").getSequence().toString(),
                     "CCCTTT");

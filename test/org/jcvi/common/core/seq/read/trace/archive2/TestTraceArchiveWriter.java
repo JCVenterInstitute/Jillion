@@ -1,14 +1,22 @@
 package org.jcvi.common.core.seq.read.trace.archive2;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.getCurrentArguments;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.easymock.IAnswer;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreType;
 import org.jcvi.common.core.seq.read.trace.archive2.TraceArchiveWriter.TraceArchiveRecordDataException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ztr.ZTRChromatogramFile;
@@ -18,9 +26,6 @@ import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 public class TestTraceArchiveWriter {
 
 	
@@ -98,8 +103,8 @@ public class TestTraceArchiveWriter {
 		
 		File k18FastaFile = new File(rootInputDir, "base/1119369014798.base");
 		assertEquals("fasta/I11.fasta", i11.getAttribute(TraceInfoField.BASE_FILE));
-		NucleotideSequenceFastaDataStore expectedFastaDataStore = NucleotideSequenceFastaFileDataStoreFactory.create(k18FastaFile, FastaFileDataStoreType.MAP_BACKED);
-		NucleotideSequenceFastaDataStore actualFastaDataStore = NucleotideSequenceFastaFileDataStoreFactory.create(new File(outputDir, "fasta/I11.fasta"), FastaFileDataStoreType.MAP_BACKED);
+		NucleotideSequenceFastaDataStore expectedFastaDataStore = NucleotideSequenceFastaFileDataStoreFactory.create(k18FastaFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED);
+		NucleotideSequenceFastaDataStore actualFastaDataStore = NucleotideSequenceFastaFileDataStoreFactory.create(new File(outputDir, "fasta/I11.fasta"), DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED);
 		assertEquals(expectedFastaDataStore.get("1119369014798").getSequence(), actualFastaDataStore.get("I11").getSequence());
 	
 		assertEquals("chromotogram bases don't match fasta", i11Chromo.getNucleotideSequence(), actualFastaDataStore.get("I11").getSequence());

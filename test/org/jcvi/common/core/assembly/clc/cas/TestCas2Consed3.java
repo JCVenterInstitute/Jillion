@@ -30,11 +30,11 @@ import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStoreFactory;
-import org.jcvi.common.core.assembly.ace.AceFileContigDataStoreFactory.AceFileDataStoreType;
 import org.jcvi.common.core.assembly.clc.cas.UnTrimmedExtensionTrimMap;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStoreUtil;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -65,7 +65,7 @@ public class TestCas2Consed3 {
 	      cas2consed3.convert(TrimDataStoreUtil.EMPTY_DATASTORE,new UnTrimmedExtensionTrimMap(),FastqQualityCodec.ILLUMINA, false,false,false);
 	      
 	      File aceFile = tempDir.getFile("edit_dir/"+prefix+".ace.1");
-	      AceFileContigDataStore dataStore = AceFileContigDataStoreFactory.create(aceFile, AceFileDataStoreType.MAP_BACKED);
+	      AceFileContigDataStore dataStore = AceFileContigDataStoreFactory.create(aceFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED);
 	      assertEquals("# contigs", expectedDataStore.getNumberOfRecords(), dataStore.getNumberOfRecords());
 	        StreamingIterator<AceContig> iter = dataStore.iterator();
 	        try{
