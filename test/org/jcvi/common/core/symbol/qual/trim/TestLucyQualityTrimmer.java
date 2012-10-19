@@ -21,14 +21,16 @@ package org.jcvi.common.core.symbol.qual.trim;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreType;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
-import org.jcvi.common.core.seq.fastx.fasta.qual.DefaultQualityFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreFactory;
 import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.trim.LucyLikeQualityTrimmer;
@@ -42,17 +44,22 @@ import org.junit.Test;
  *
  */
 public class TestLucyQualityTrimmer {
-    private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestLucyQualityTrimmer.class);
+    private final ResourceFileServer resources;
     private QualitySequenceDataStore qualities;
     
     LucyLikeQualityTrimmer sut = new LucyLikeQualityTrimmer.Builder(30)
                             .addTrimWindow(30, 0.1F)
                             .addTrimWindow(10, 0.35F)
                             .build();
+    
+    public TestLucyQualityTrimmer(){
+    	resources = new ResourceFileServer(TestLucyQualityTrimmer.class);
+    }
     @Before
     public void setup() throws  IOException{
-        qualities = FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, 
-        		DefaultQualityFastaFileDataStore.create(RESOURCES.getFile("files/fullLength.qual")));
+        File qualFile = resources.getFile("files/fullLength.qual");
+		qualities = FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, 
+				QualitySequenceFastaFileDataStoreFactory.create(qualFile, FastaFileDataStoreType.MAP_BACKED));
     }
     
     @Test
@@ -72,24 +79,27 @@ public class TestLucyQualityTrimmer {
     
     @Test
     public void noGoodQualityDataShouldReturnEmptyRange() throws FileNotFoundException, IOException, DataStoreException{
-        QualitySequenceDataStore badQualDataStore =FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, 
-                DefaultQualityFastaFileDataStore.create(RESOURCES.getFile("files/bad.qual")));
+        File qualFile = resources.getFile("files/bad.qual");
+		QualitySequenceDataStore badQualDataStore =FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, 
+				QualitySequenceFastaFileDataStoreFactory.create(qualFile, FastaFileDataStoreType.MAP_BACKED));
         final QualitySequence badQualities = badQualDataStore.get("SCJIA01T48H08PB26F");
         assertEquals(new Range.Builder().build(), sut.trim(badQualities));
     }
     
     @Test
     public void bTrashShouldReturnEmptyRange() throws FileNotFoundException, IOException, DataStoreException{
-        QualitySequenceDataStore trashQualDataStore =FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, 
-        		DefaultQualityFastaFileDataStore.create(RESOURCES.getFile("files/trash.qual")));
+        File qualFile = resources.getFile("files/trash.qual");
+		QualitySequenceDataStore trashQualDataStore =FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, 
+				QualitySequenceFastaFileDataStoreFactory.create(qualFile, FastaFileDataStoreType.MAP_BACKED));
         final QualitySequence trashQualities = trashQualDataStore.get("JBYHA01T19A06PB2A628FB");
         assertEquals(new Range.Builder().build(), sut.trim(trashQualities));
     }
     
     @Test
     public void wTrashShouldReturnEmptyRange() throws FileNotFoundException, IOException, DataStoreException{
-        QualitySequenceDataStore trashQualDataStore =FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, 
-        		DefaultQualityFastaFileDataStore.create(RESOURCES.getFile("files/trash.qual")));
+        File qualFile = resources.getFile("files/trash.qual");
+		QualitySequenceDataStore trashQualDataStore =FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, 
+				QualitySequenceFastaFileDataStoreFactory.create(qualFile, FastaFileDataStoreType.MAP_BACKED));
         final QualitySequence trashQualities = trashQualDataStore.get("JBZTB06T19E09NA1F");
         assertEquals(new Range.Builder().build(), sut.trim(trashQualities));
     }
