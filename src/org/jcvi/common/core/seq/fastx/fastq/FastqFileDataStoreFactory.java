@@ -15,7 +15,11 @@ import org.jcvi.common.core.datastore.DataStoreProviderHint;
  * @author dkatzel
  *
  */
-public class FastqFileDataStoreFactory {
+public final class FastqFileDataStoreFactory {
+	
+	private FastqFileDataStoreFactory(){
+		//can not instantiate
+	}
 	/**
 	 * Create a new {@link FastqDataStore} instance
 	 * for the given fastq file using the given {@link DataStoreProviderHint}
