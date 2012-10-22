@@ -5,12 +5,13 @@ import java.io.IOException;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
+import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordFactory;
-import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -25,8 +26,11 @@ public class TestBwaQualityTrimmer {
 	private final BwaQualityTrimmer sut = new BwaQualityTrimmer(PhredQuality.valueOf(20));
 	public TestBwaQualityTrimmer() throws FileNotFoundException, IOException{
 		ResourceFileServer resources = new ResourceFileServer(TestBwaQualityTrimmer.class);
-		inputFastq = LargeFastqFileDataStore.create(resources.getFile("files/bwa_input.fastq"), FastqQualityCodec.SANGER);
-		outputFastq = LargeFastqFileDataStore.create(resources.getFile("files/bwa_output.fastq"), FastqQualityCodec.SANGER);
+		inputFastq = 
+				FastqFileDataStoreFactory.create(resources.getFile("files/bwa_input.fastq"), 
+							DataStoreProviderHint.OPTIMIZE_ITERATION, FastqQualityCodec.SANGER);
+		outputFastq = FastqFileDataStoreFactory.create(resources.getFile("files/bwa_output.fastq"), 
+				DataStoreProviderHint.OPTIMIZE_ITERATION, FastqQualityCodec.SANGER);
 		
 	}
 	@Test

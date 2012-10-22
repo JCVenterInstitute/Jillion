@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -40,7 +41,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  * @see LargeFastqFileDataStore
  *
  */
-public final class DefaultFastqFileDataStore{
+final class DefaultFastqFileDataStore{
 	
 	private DefaultFastqFileDataStore(){
 		//can not instantiate
@@ -70,7 +71,7 @@ public final class DefaultFastqFileDataStore{
 	 * {@link FastqFileParser#parse(InputStream, FastqFileVisitor)}.
 	 * 
 	 * @param filter
-	 *            an instance of {@link FastXFilter} that can be used to filter
+	 *            an instance of {@link DataStoreFilter} that can be used to filter
 	 *            out some {@link FastqRecord}s from the datastore; can not be
 	 *            null
 	 * @param qualityCodec
@@ -83,7 +84,7 @@ public final class DefaultFastqFileDataStore{
 	 * @throws NullPointerException
 	 *             if either filter or qualityCodec is null.
 	 */
-   public static FastqFileDataStoreBuilderVisitor createBuilder(FastXFilter filter, FastqQualityCodec qualityCodec){
+   public static FastqFileDataStoreBuilderVisitor createBuilder(DataStoreFilter filter, FastqQualityCodec qualityCodec){
 	   return new DefaultFastqFileDataStoreBuilderVisitor(filter, qualityCodec);
    }
 
@@ -124,7 +125,7 @@ public final class DefaultFastqFileDataStore{
 	 * @param fastqFile
 	 *            the fastq file to parse, must exist and can not be null.
 	 * @param filter
-	 *            an instance of {@link FastXFilter} that can be used to filter
+	 *            an instance of {@link DataStoreFilter} that can be used to filter
 	 *            out some {@link FastqRecord}s from the datastore.
 	 * @param qualityCodec
 	 *            the {@link FastqQualityCodec} needed to parse the encoded
@@ -138,7 +139,7 @@ public final class DefaultFastqFileDataStore{
 	 * @throws NullPointerException
 	 *             if either fastqFile or filter is null.
 	 */
-   public static FastqDataStore create(File fastqFile, FastXFilter filter,FastqQualityCodec qualityCodec) throws IOException{
+   public static FastqDataStore create(File fastqFile, DataStoreFilter filter,FastqQualityCodec qualityCodec) throws IOException{
 	   FastqFileDataStoreBuilderVisitor builderVisitor = createBuilder(filter, qualityCodec);
 	   FastqFileParser.parse(fastqFile, builderVisitor);
 	   return builderVisitor.build();
@@ -203,7 +204,7 @@ public final class DefaultFastqFileDataStore{
 	 * @throws NullPointerException
 	 *             if fastqStream is null.
 	 */
-   public static FastqDataStore create(InputStream fastqStream, FastXFilter filter,FastqQualityCodec qualityCodec) throws IOException{
+   public static FastqDataStore create(InputStream fastqStream, DataStoreFilter filter,FastqQualityCodec qualityCodec) throws IOException{
 	   FastqFileDataStoreBuilderVisitor builderVisitor = createBuilder(filter, qualityCodec);
 	   FastqFileParser.parse(fastqStream, builderVisitor);
 	   return builderVisitor.build();
@@ -211,21 +212,21 @@ public final class DefaultFastqFileDataStore{
     
     private static final class DefaultFastqFileDataStoreBuilderVisitor implements FastqFileDataStoreBuilderVisitor{
 
-    	private final FastXFilter filter;
+    	private final DataStoreFilter filter;
     	private String currentId;
     	private String currentComment;
     	private NucleotideSequence currentNucleotideSequence;
     	private QualitySequence currentQualitySequence;
     	private final FastqQualityCodec qualityCodec;
-    	private final DefaultFastqDataStore.Builder builder;
+    	private final DefaultFastqDataStoreBuilder builder;
     	/**
     	 * Create new Builder
-    	 * @param filter the {@link FastXFilter} to use can not be null.
+    	 * @param filter the {@link DataStoreFilter} to use can not be null.
     	 * @param qualityCodec the {@link FastqQualityCodec} to use;
     	 * if this parameter is null, then guess the encoding which may
     	 * have performance penalty.
     	 */
-		private DefaultFastqFileDataStoreBuilderVisitor(FastXFilter filter, FastqQualityCodec qualityCodec) {
+		private DefaultFastqFileDataStoreBuilderVisitor(DataStoreFilter filter, FastqQualityCodec qualityCodec) {
 			if(filter==null){
 				throw new NullPointerException("filter can not be null");
 			}
@@ -234,13 +235,18 @@ public final class DefaultFastqFileDataStore{
 			}
 			this.filter = filter;
 			this.qualityCodec = qualityCodec;
-			builder = new DefaultFastqDataStore.Builder();
+			builder = new DefaultFastqDataStoreBuilder();
 		}
 
 		@Override
 		public DeflineReturnCode visitDefline(String id, String optionalComment) {
-
-			if(filter.accept(id, optionalComment)){
+			final boolean accept;
+			if(filter instanceof FastXFilter){
+				accept =((FastXFilter)filter).accept(id,optionalComment);
+			}else {
+				accept = filter.accept(id);
+			}
+			if(accept){
 				currentId=id;
 				currentComment = optionalComment;
 				return DeflineReturnCode.VISIT_CURRENT_RECORD;

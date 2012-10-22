@@ -24,12 +24,13 @@ public final class NucleotideSequenceFastaFileDataStoreFactory {
 	}
 	/**
 	 * Create a new {@link NucleotideSequenceFastaDataStore} instance
-	 * for the given fasta file of the given implementation type
+	 * for the given fasta file using the given {@link DataStoreProviderHint}
+	 * as an implementation guide
 	 * which will only contain the {@link NucleotideSequenceFastaRecord}s specified by the given 
 	 * {@link DataStoreFilter}.
 	 * @param fastaFile the fasta file to used to create the {@link DataStore};
 	 * the file must exist and be readable and can not be null.
-	 * @param type an {@link DataStoreProviderHint} instance
+	 * @param providerHint an {@link DataStoreProviderHint} instance
 	 * that explains what kind of {@link NucleotideSequenceFastaDataStore} implementation 
 	 * to return; can not be null.
 	 * @param filter a {@link DataStoreFilter} instance that can be
@@ -39,7 +40,7 @@ public final class NucleotideSequenceFastaFileDataStoreFactory {
 	 * @throws NullPointerException if any input parameter is null.
 	 * @throws IllegalArgumentException if the fasta file does not exist or is not readable.
 	 */
-	public static NucleotideSequenceFastaDataStore create(File fastaFile, DataStoreProviderHint type, DataStoreFilter filter) throws IOException{
+	public static NucleotideSequenceFastaDataStore create(File fastaFile, DataStoreProviderHint providerHint, DataStoreFilter filter) throws IOException{
 		if(fastaFile==null){
 			throw new NullPointerException("fasta file can not be null");
 		}
@@ -49,18 +50,18 @@ public final class NucleotideSequenceFastaFileDataStoreFactory {
 		if(!fastaFile.canRead()){
 			throw new IllegalArgumentException("fasta file must be readable");
 		}
-		if(type==null){
-			throw new NullPointerException("FastaDataStoreType can not be null");
+		if(providerHint==null){
+			throw new NullPointerException("DataStoreProviderHint can not be null");
 		}
 		if(filter==null){
 			throw new NullPointerException("DataStoreFilter can not be null");
 		}
-		switch(type){
+		switch(providerHint){
 			case OPTIMIZE_RANDOM_ACCESS_SPEED: return DefaultNucleotideSequenceFastaFileDataStore.create(fastaFile,filter);
 			case OPTIMIZE_RANDOM_ACCESS_MEMORY: return IndexedNucleotideSequenceFastaFileDataStore.create(fastaFile,filter);
 			case OPTIMIZE_ITERATION: return LargeNucleotideSequenceFastaFileDataStore.create(fastaFile,filter);
 			default:
-				throw new IllegalArgumentException("unknown type : "+ type);
+				throw new IllegalArgumentException("unknown provider hint : "+ providerHint);
 		}
 	}
 	

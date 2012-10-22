@@ -51,7 +51,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  *
  */
-public final class LargeFastqFileDataStore implements FastqDataStore {
+final class LargeFastqFileDataStore implements FastqDataStore {
     private final FastqQualityCodec qualityCodec;
     private final File fastQFile;
     private Long size=null;
