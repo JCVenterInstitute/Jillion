@@ -170,7 +170,8 @@ public final class GridUtils
         builder.append("\nJob Usage:");
 
         // try to get the map
-        Map<String,String> rmap = info.getResourceUsage();
+        @SuppressWarnings("unchecked")
+		Map<String,String> rmap = info.getResourceUsage();
         if(rmap ==null || rmap.isEmpty()){
         	builder.append("\n  not available");
         }else{

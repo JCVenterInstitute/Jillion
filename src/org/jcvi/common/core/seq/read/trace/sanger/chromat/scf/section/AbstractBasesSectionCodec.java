@@ -78,7 +78,7 @@ public abstract class AbstractBasesSectionCodec implements SectionCodec{
 
     protected static SCFChromatogramBuilder setConfidences(SCFChromatogramBuilder c, byte[][] probability) {
 
-        return (SCFChromatogramBuilder) c.aConfidence(probability[0])
+        return c.aConfidence(probability[0])
             .cConfidence(probability[1])
             .gConfidence(probability[2])
             .tConfidence(probability[3]);

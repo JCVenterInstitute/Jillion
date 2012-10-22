@@ -33,7 +33,7 @@ public final class AbiUtil {
 	/**
 	 * The magic number of an Ab1 file.
 	 */
-	private static final byte[] MAGIC_NUMBER = new byte[]{(char)'A',(char)'B',(char)'I',(char)'F'};
+	private static final byte[] MAGIC_NUMBER = new byte[]{'A','B','I','F'};
     
 	public static final int HEADER_SIZE = 30;
 	

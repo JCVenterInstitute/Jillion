@@ -891,7 +891,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             int startBitOfJ = jOffset*NUM_BITS_PER_VALUE;
             byte ordinalOfJ = getNucleotideFor(startBitOfJ).getOrdinalAsByte();
             setBitsFor(startBitOfI, ordinalOfJ);
-            setBitsFor(startBitOfJ, (byte) ordinalOfI);
+            setBitsFor(startBitOfJ, ordinalOfI);
         }
 		return this;
 	}

@@ -99,7 +99,7 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 		try{
 			while(readIterator.hasNext()){
 				AceAssembledRead read = readIterator.next();
-				int startOffset = (int)consensusSequence.getUngappedOffsetFor((int)read.getGappedStartOffset());
+				int startOffset = consensusSequence.getUngappedOffsetFor((int)read.getGappedStartOffset());
 				QualitySequence ungappedQualities;
 				try {
 					ungappedQualities = AssemblyUtil.getUngappedComplementedValidRangeQualities(read,phdDataStore.get(read.getId()).getQualitySequence());

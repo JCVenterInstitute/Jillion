@@ -58,7 +58,7 @@ public final class DefaultContig<P extends AssembledRead> extends AbstractContig
 		return super.hashCode();
 	}
 
-	public static class Builder extends AbstractContigBuilder<AssembledRead, Contig<AssembledRead>>{
+	public static final class Builder extends AbstractContigBuilder<AssembledRead, Contig<AssembledRead>>{
         public Builder(String id, String consensus){
            this(id, new NucleotideSequenceBuilder(consensus)
            					.build());
@@ -134,7 +134,7 @@ public final class DefaultContig<P extends AssembledRead> extends AbstractContig
                     (int)read.getGappedStartOffset(), 
                     read.getDirection(), 
                     read.getReadInfo().getValidRange(),
-                    (int)read.getReadInfo().getUngappedFullLength());
+                    read.getReadInfo().getUngappedFullLength());
         }
         /**
         * {@inheritDoc}

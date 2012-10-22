@@ -341,6 +341,11 @@ public final class TraceArchiveWriter implements Closeable{
 	 */
 	public static class TraceArchiveRecordDataException extends Exception{
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public TraceArchiveRecordDataException(String message, Throwable cause) {
 			super(message, cause);
 		}

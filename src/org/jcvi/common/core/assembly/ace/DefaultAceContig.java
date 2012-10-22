@@ -92,7 +92,7 @@ public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> im
 
 
 
-    private static class Builder implements AceContigBuilder{
+    private static final class Builder implements AceContigBuilder{
         private NucleotideSequence fullConsensus;
         private final NucleotideSequenceBuilder mutableConsensus;
         private String contigId;
