@@ -21,7 +21,7 @@ import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
-import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecordWriter;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
@@ -79,7 +79,7 @@ public class FastqFile2 {
             IOUtil.mkdirs(outputFile.getParentFile());
         	out = new PrintWriter(outputFile);
            
-        	DefaultFastqRecordWriter.Builder writerBuilder = new DefaultFastqRecordWriter.Builder(outputFile);
+        	FastqRecordWriterBuilder writerBuilder = new FastqRecordWriterBuilder(outputFile);
             final File idFile;
             final DataStoreFilter filter;
             Integer numberOfIds =commandLine.hasOption("n")?Integer.parseInt(commandLine.getOptionValue("n")):null;

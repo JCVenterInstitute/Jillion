@@ -44,7 +44,7 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreFactory;
-import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecordWriter;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -129,7 +129,7 @@ public class Fasta2Fastq {
             final QualitySequenceFastaDataStore qualityDataStore = QualitySequenceFastaFileDataStoreFactory.create(qualFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED, filter);
             
             File seqFile = new File(commandLine.getOptionValue("s"));
-            final FastqRecordWriter writer = new DefaultFastqRecordWriter.Builder(new File(commandLine.getOptionValue("o")))
+            final FastqRecordWriter writer = new FastqRecordWriterBuilder(new File(commandLine.getOptionValue("o")))
             								.qualityCodec(fastqQualityCodec)
             								.build();
             

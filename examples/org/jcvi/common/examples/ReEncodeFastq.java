@@ -10,7 +10,7 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.datastore.IncludeDataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecordWriter;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
@@ -39,7 +39,7 @@ public class ReEncodeFastq {
 												FastqQualityCodec.SANGER, filter);
 		
 		//note that we are re-encoding it in illumina format
-		FastqRecordWriter writer = new DefaultFastqRecordWriter.Builder(outFile)
+		FastqRecordWriter writer = new FastqRecordWriterBuilder(outFile)
 										.qualityCodec(FastqQualityCodec.ILLUMINA)
 										.build();
 		

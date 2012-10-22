@@ -48,7 +48,7 @@ import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecordFactory;
-import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecordWriter;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordFactory;
@@ -288,7 +288,7 @@ public class SortedFasta2Fastq {
             final BlockingQueue<QualitySequenceFastaRecord> qualityQueue = new ArrayBlockingQueue<QualitySequenceFastaRecord>(bufferSize);
             final BlockingQueue<NucleotideSequenceFastaRecord> sequenceQueue = new ArrayBlockingQueue<NucleotideSequenceFastaRecord>(bufferSize);
             
-            final FastqRecordWriter writer = new DefaultFastqRecordWriter.Builder(new File(commandLine.getOptionValue("o")))
+            final FastqRecordWriter writer = new FastqRecordWriterBuilder(new File(commandLine.getOptionValue("o")))
             							.qualityCodec(fastqQualityCodec)
             							.build();
             boolean done = false;

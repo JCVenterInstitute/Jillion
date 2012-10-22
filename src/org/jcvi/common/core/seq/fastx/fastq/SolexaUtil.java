@@ -26,13 +26,13 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 
 /**
  * {@code SolexaUtil} is a utility class for working with 
- * Solexa formatted FASTQ data.
+ * Solexa formatted fastq data.
  * @author dkatzel
  * @see <a href="http://nar.oxfordjournals.org/cgi/content/full/38/6/1767"
  * >Cock et al (2009) The Sanger FASTQ file format for sequences with quality scores, and the Solexa/Illumina FASTQ variants. Nucleic Acids Research</a>
  *
  */
-public final class SolexaUtil {
+final class SolexaUtil {
     /**
      * 
      */
