@@ -660,7 +660,7 @@ public final class Ab1FileParser {
 						.setRecordLength(IOUtil.readUnsignedInt(in))
 						.setDataRecord(IOUtil.readUnsignedInt(in))
 						.setCrypticValue(IOUtil.readUnsignedInt(in));
-				TaggedDataRecord record = builder.build();
+				TaggedDataRecord<?,?> record = builder.build();
 				if(isAb1ChromatogramVisitor){
 				    visitCorrectTaggedDataRecordViaReflection((AbiChromatogramFileVisitor) visitor,record, abiDataBlock);
 				}
@@ -746,7 +746,7 @@ public final class Ab1FileParser {
 		private final Map<TaggedDataName,List<TimeTaggedDataRecord>> timeDataRecords = new EnumMap<TaggedDataName, List<TimeTaggedDataRecord>>(TaggedDataName.class);
 		private final Map<TaggedDataName,List<UserDefinedTaggedDataRecord>> userDefinedDataRecords = new EnumMap<TaggedDataName, List<UserDefinedTaggedDataRecord>>(TaggedDataName.class);
         
-		public void add(TaggedDataRecord record){
+		public void add(TaggedDataRecord<?,?> record){
 			switch(record.getDataType()){
 							
 			case DATE:
@@ -781,7 +781,8 @@ public final class Ab1FileParser {
 			}
 		}
 		
-		private <T> void add(TaggedDataRecord record, Map<TaggedDataName,List<T>> map){
+		@SuppressWarnings("unchecked")
+		private <T extends TaggedDataRecord<?,?>> void add(TaggedDataRecord<?,?> record, Map<TaggedDataName,List<T>> map){
 			TaggedDataName name = record.getTagName();
 			if(!map.containsKey(name)){
 				map.put(name, new ArrayList<T>());

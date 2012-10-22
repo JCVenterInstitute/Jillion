@@ -904,7 +904,8 @@ public final class GridJobBuilders {
          /**
         * {@inheritDoc}
         */
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         public List<String> runTemplate(JobTemplate template) throws DrmaaException {
             return getGridSession().runBulkJobs(template,
                     this.bulkJobStartLoopIndex,
