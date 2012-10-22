@@ -7,12 +7,14 @@ import java.util.Map;
  * describes implementation hints to 
  * help datastore factories return
  * instances of datastore implementations
- * for the desired scenario. The 
- * factory might not always honor these
- * hints if the factory does not know how 
- * to implement that specific hint or
- * if the specified hint can not be used
- * for the given input data. 
+ * for the desired scenario. 
+ * <strong>NOTE:</strong>
+ * These hints are only guidelines;
+ * the factories might
+ * ignore any and all hints.  It is also
+ * possible that  the factory could
+ * return the same implementation
+ * for multiple hints.
  * @author dkatzel
  *
  */
