@@ -126,7 +126,7 @@
 			<!-- debug = true required for emma reports to see line coverage and link to source-->
 			<javac debug="true" destdir="${bin}"  classpathref="classpath" includeantruntime="false">
 				<src path="${src}"/>
-				
+				<compilerarg line="-Xlint:all"/>
 		  	</javac>
 			<emma enabled="${emma.enabled}" >
 				
@@ -153,7 +153,7 @@
 					<src path="${src-internal}"/>	
 					<src path="${exe}"/>
 					<src path="${exe-internal}"/>
-					
+					<compilerarg line="-Xlint:all"/>
 			  	</javac>
 				<emma enabled="${emma.enabled}" >
 									      <instr instrpath="${bin}"
