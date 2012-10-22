@@ -38,7 +38,15 @@ import org.jcvi.common.core.symbol.Symbol;
  */
 public final class PhredQuality implements Symbol, Comparable<PhredQuality>{
     //127 should be good enough for anybody
+	/**
+	 * Max allowed Phred Quality score, currently set to
+	 * {@value}.
+	 */
     public static final byte MAX_VALUE = Byte.MAX_VALUE;
+    /**
+     * Minimum allowd Phred Quality score, currently set to
+     * {@value}.
+     */
     public static final byte MIN_VALUE = 0;
     private static final double TEN = 10D;
     private static final PhredQuality[] CACHE;
@@ -183,7 +191,13 @@ public final class PhredQuality implements Symbol, Comparable<PhredQuality>{
 		result = prime * result + value;
 		return result;
 	}
-
+	/**
+	 * Two {@link PhredQuality} values are equal
+	 * if and only if they both have the same quality score.
+	 * @return {@code true} if the given {@link PhredQuality}
+	 * has the same quality score as this; {@code false}
+	 * otherwise.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

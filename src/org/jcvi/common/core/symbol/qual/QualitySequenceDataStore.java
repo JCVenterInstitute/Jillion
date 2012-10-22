@@ -24,7 +24,13 @@
 package org.jcvi.common.core.symbol.qual;
 
 import org.jcvi.common.core.datastore.DataStore;
-
+/**
+ * {@code QualitySequenceDataStore} is a marker
+ * interface for a {@link DataStore}
+ * of {@link QualitySequence}s.
+ * @author dkatzel
+ *
+ */
 public interface QualitySequenceDataStore extends DataStore<QualitySequence> {
 
 }
