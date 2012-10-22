@@ -33,7 +33,7 @@ import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecordWriter;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
@@ -135,7 +135,7 @@ public class SplitFastq {
         try{
             for(int i=0; i< n; i++){
                 File newFile =outputDir.createNewFile(String.format("%s.part_%d.fastq", basename, i));
-                writers.add(new DefaultFastqRecordWriter.Builder(newFile)
+                writers.add(new FastqRecordWriterBuilder(newFile)
                 			.qualityCodec(fastqQualityCodec)
                 			.build());
             }

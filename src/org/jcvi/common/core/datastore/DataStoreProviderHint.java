@@ -14,7 +14,7 @@ import java.util.Map;
  * ignore any and all hints.  It is also
  * possible that  the factory could
  * return the same implementation
- * for multiple hints.
+ * for multiple hint values.
  * @author dkatzel
  *
  */

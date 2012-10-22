@@ -100,10 +100,10 @@ public class RemoveRedundantMatePairs {
             File nonRedundantMate1 = new File(outputDir,prefix+"_1.fastq");
             File nonRedundantMate2 = new File(outputDir,prefix+"_2.fastq");
             
-            FastqRecordWriter out1 = new DefaultFastqRecordWriter.Builder(nonRedundantMate1)
+            FastqRecordWriter out1 = new FastqRecordWriterBuilder(nonRedundantMate1)
             							.qualityCodec(qualityCodec)
             							.build();
-            FastqRecordWriter out2 = new DefaultFastqRecordWriter.Builder(nonRedundantMate2)
+            FastqRecordWriter out2 = new FastqRecordWriterBuilder(nonRedundantMate2)
 										.qualityCodec(qualityCodec)
 										.build();
             Set<NucleotideSequence> nonRedundantSet = new HashSet<NucleotideSequence>(expectedSize+1,1F);

@@ -111,9 +111,9 @@ public class TestRemoveRedundantMatePairs {
 		
 		File mate1File = tempFolder.newFile("mate1");
 		File mate2File = tempFolder.newFile("mate2");
-		FastqRecordWriter writer1 = new DefaultFastqRecordWriter.Builder(mate1File)
+		FastqRecordWriter writer1 = new FastqRecordWriterBuilder(mate1File)
 									.build();
-		FastqRecordWriter writer2 = new DefaultFastqRecordWriter.Builder(mate2File)
+		FastqRecordWriter writer2 = new FastqRecordWriterBuilder(mate2File)
 									.build();
 		
 		try{
@@ -137,9 +137,9 @@ protected MatePairFiles createCompletelyRedundantUpToNBasesData(int numDups) thr
 		File mate1File = tempFolder.newFile("mate1");
 		File mate2File = tempFolder.newFile("mate2");
 		
-		FastqRecordWriter writer1 = new DefaultFastqRecordWriter.Builder(mate1File)
+		FastqRecordWriter writer1 = new FastqRecordWriterBuilder(mate1File)
 		.build();
-		FastqRecordWriter writer2 = new DefaultFastqRecordWriter.Builder(mate2File)
+		FastqRecordWriter writer2 = new FastqRecordWriterBuilder(mate2File)
 				.build();
 		try{
 			Range subRange = new Range.Builder(numberOfBasesToCompare).build();

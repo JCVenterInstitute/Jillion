@@ -40,7 +40,8 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 /**
  * {@code FastqFileParser} parses FASTQ encoded files
- * regardless of how the qualities are encoded.
+ * and calls callback methods
+ * on the given {@link FastqFileVisitor}.
  * @author dkatzel
  *
  */
