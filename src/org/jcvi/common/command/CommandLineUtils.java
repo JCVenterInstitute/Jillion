@@ -49,6 +49,14 @@ import org.jcvi.common.io.idReader.StringIdParser;
  *
  */
 public final class CommandLineUtils {
+	/**
+	 * {@value}.
+	 */
+	private static final String INCLUDE_FLAG = "i";
+	/**
+	 * {@value}.
+	 */
+	private static final String EXCLUDE_FLAG = "e";
 	private CommandLineUtils(){
 		//private constructor
 	}
@@ -68,25 +76,25 @@ public final class CommandLineUtils {
         
     }
     public static void addIncludeAndExcludeDataStoreFilterOptionsTo(Options options){
-        options.addOption(new CommandLineOptionBuilder("i", "optional file of contig ids to include")
+        options.addOption(new CommandLineOptionBuilder(INCLUDE_FLAG, "optional file of contig ids to include")
             .build());
-        options.addOption(new CommandLineOptionBuilder("e", "optional file of contig ids to exclude")
+        options.addOption(new CommandLineOptionBuilder(EXCLUDE_FLAG, "optional file of contig ids to exclude")
             .build());
 
     }
     public static DataStoreFilter createDataStoreFilter(
             CommandLine commandLine) throws IdReaderException {
         final DataStoreFilter filter;
-        if(commandLine.hasOption("i")){
-            Set<String> includeList=parseIdsFrom(new File(commandLine.getOptionValue("i")));
-            if(commandLine.hasOption("e")){
-                Set<String> excludeList=parseIdsFrom(new File(commandLine.getOptionValue("e")));
+        if(commandLine.hasOption(INCLUDE_FLAG)){
+            Set<String> includeList=parseIdsFrom(new File(commandLine.getOptionValue(INCLUDE_FLAG)));
+            if(commandLine.hasOption(EXCLUDE_FLAG)){
+                Set<String> excludeList=parseIdsFrom(new File(commandLine.getOptionValue(EXCLUDE_FLAG)));
                 includeList.removeAll(excludeList);
             }
             filter = new IncludeDataStoreFilter(includeList);
             
-        }else if(commandLine.hasOption("e")){
-            filter = new DefaultExcludeDataStoreFilter(parseIdsFrom(new File(commandLine.getOptionValue("e"))));
+        }else if(commandLine.hasOption(EXCLUDE_FLAG)){
+            filter = new DefaultExcludeDataStoreFilter(parseIdsFrom(new File(commandLine.getOptionValue(EXCLUDE_FLAG))));
         }else{
             filter = AcceptingDataStoreFilter.INSTANCE;
         }
