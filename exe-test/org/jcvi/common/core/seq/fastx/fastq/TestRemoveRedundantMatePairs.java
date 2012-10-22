@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -50,8 +51,10 @@ public class TestRemoveRedundantMatePairs {
 		MatePairFiles inputMates = createCompletelyRedundantData(5);
 		MatePairFiles outputMates = dedupe(inputMates);
 		
-		FastqDataStore filtered1 = DefaultFastqFileDataStore.create(outputMates.getFile1(), FastqQualityCodec.SANGER);
-		FastqDataStore filtered2 = DefaultFastqFileDataStore.create(outputMates.getFile2(), FastqQualityCodec.SANGER);
+		FastqDataStore filtered1 = FastqFileDataStoreFactory.create(outputMates.getFile1(), 
+						DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED, FastqQualityCodec.SANGER);
+		FastqDataStore filtered2 = FastqFileDataStoreFactory.create(outputMates.getFile2(), 
+				DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED, FastqQualityCodec.SANGER);
 		
 		assertEquals(1L, filtered1.getNumberOfRecords());
 		assertEquals(1L, filtered2.getNumberOfRecords());
@@ -65,8 +68,10 @@ public class TestRemoveRedundantMatePairs {
 		MatePairFiles inputMates = createCompletelyRedundantUpToNBasesData(5);
 		MatePairFiles outputMates = dedupe(inputMates);
 		
-		FastqDataStore filtered1 = DefaultFastqFileDataStore.create(outputMates.getFile1(), FastqQualityCodec.SANGER);
-		FastqDataStore filtered2 = DefaultFastqFileDataStore.create(outputMates.getFile2(), FastqQualityCodec.SANGER);
+		FastqDataStore filtered1 = FastqFileDataStoreFactory.create(outputMates.getFile1(), 
+				DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED, FastqQualityCodec.SANGER);
+		FastqDataStore filtered2 = FastqFileDataStoreFactory.create(outputMates.getFile2(), 
+				DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED, FastqQualityCodec.SANGER);
 		
 		assertEquals(1L, filtered1.getNumberOfRecords());
 		assertEquals(1L, filtered2.getNumberOfRecords());

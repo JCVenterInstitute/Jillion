@@ -31,12 +31,13 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecordWriter;
+import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
-import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
 import org.jcvi.common.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
@@ -94,9 +95,12 @@ public class SplitFastq {
             ReadWriteDirectoryFileServer outputDir = DirectoryFileServer.createReadWriteDirectoryFileServer(commandLine.getOptionValue("o"));
             List<FastqRecordWriter> writers = createWriters(outputDir, fastqFile, n,fastqQualityCodec);
             
-            StreamingIterator<FastqRecord> iterator= LargeFastqFileDataStore.create(fastqFile, fastqQualityCodec).iterator();
+            StreamingIterator<FastqRecord> iterator= null;
+            		
             int counter=0;
             try{
+            	iterator=FastqFileDataStoreFactory.create(fastqFile, DataStoreProviderHint.OPTIMIZE_ITERATION, fastqQualityCodec)
+                		.iterator();
                 while(iterator.hasNext()){
                     int mod = counter %n;
                     FastqRecord record = iterator.next();
@@ -107,7 +111,7 @@ public class SplitFastq {
                 for(FastqRecordWriter writer : writers){
                     IOUtil.closeAndIgnoreErrors(writer);
                 }
-                iterator.close();
+                IOUtil.closeAndIgnoreErrors(iterator);
             }
         } catch (ParseException e) {
             System.err.println(e.getMessage());

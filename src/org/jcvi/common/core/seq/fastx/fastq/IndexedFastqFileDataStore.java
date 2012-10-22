@@ -27,10 +27,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -45,12 +46,12 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
-public final class IndexedFastqFileDataStore implements FastqDataStore{
+final class IndexedFastqFileDataStore implements FastqDataStore{
 
     private final Map<String, Range> indexFileRange;
     private final FastqQualityCodec qualityCodec;
     private final File file;
-    private final FastXFilter filter;
+    private final DataStoreFilter filter;
     private volatile boolean closed;
     /**
 	 * Creates a new {@link FastqFileDataStoreBuilderVisitor}
@@ -83,7 +84,7 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
 	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
 	 */
     public static FastqFileDataStoreBuilderVisitor createBuilder(File file,FastqQualityCodec qualityCodec){
-    	return new IndexedFastqFileDataStoreBuilderVisitor(qualityCodec, file, AcceptingFastXFilter.INSTANCE);
+    	return new IndexedFastqFileDataStoreBuilderVisitor(qualityCodec, file, AcceptingDataStoreFilter.INSTANCE);
     }
     /**
 	 * Creates a new {@link IndexedFastqFileDataStore}
@@ -141,7 +142,7 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
    	 * @throws FileNotFoundException if the input fasta file does not exist.
    	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
    	 */
-    public static FastqFileDataStoreBuilderVisitor createBuilder(File file,FastqQualityCodec qualityCodec, FastXFilter filter){
+    public static FastqFileDataStoreBuilderVisitor createBuilder(File file,FastqQualityCodec qualityCodec, DataStoreFilter filter){
     	return new IndexedFastqFileDataStoreBuilderVisitor(qualityCodec, file, filter);
     }
     
@@ -155,7 +156,7 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
    	 * for.
    	 * @param qualityCodec the {@link FastqQualityCodec} that should
 	 * be used to decode the encoded qualities of each record in the file.
-	 * @param filter a {@link FastXFilter} that will be used
+	 * @param filter a {@link DataStoreFilter} that will be used
 	 * to filter out some (possibly all or none) of the records from
 	 * the fastq file so they will not be included in the {@link FastqDataStore}.
 	 * Only records which cause {@link FastXFilter#accept(String, String)}
@@ -166,7 +167,7 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
    	 * if there is a problem parsing the file.
    	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
    	 */
-    public static FastqDataStore create(File file,FastqQualityCodec qualityCodec,FastXFilter filter) throws IOException{
+    public static FastqDataStore create(File file,FastqQualityCodec qualityCodec,DataStoreFilter filter) throws IOException{
     	FastqFileDataStoreBuilderVisitor builderVisitor = createBuilder(file, qualityCodec,filter);
     	FastqFileParser.parse(file, builderVisitor);
     	return builderVisitor.build();
@@ -175,7 +176,7 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
      * @param file
      * @throws FileNotFoundException 
      */
-    private IndexedFastqFileDataStore(File file,FastqQualityCodec qualityCodec,Map<String,Range> indexFileRange,FastXFilter filter){
+    private IndexedFastqFileDataStore(File file,FastqQualityCodec qualityCodec,Map<String,Range> indexFileRange,DataStoreFilter filter){
         this.file = file;
         this.qualityCodec = qualityCodec;
         this.indexFileRange = indexFileRange;
@@ -262,11 +263,11 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
         private long currentStartOffset=0;
         private long currentEndOffset=-1L;
         private String currentId;
-        private final FastXFilter filter;
+        private final DataStoreFilter filter;
         private boolean includeCurrentRecord;
         private volatile boolean finishedVisitingFile=false;
 		private IndexedFastqFileDataStoreBuilderVisitor(
-				FastqQualityCodec qualityCodec, File file, FastXFilter filter) {
+				FastqQualityCodec qualityCodec, File file, DataStoreFilter filter) {
 			
 			if(qualityCodec ==null){
 				throw new NullPointerException("quality codec can not be null");
@@ -280,7 +281,11 @@ public final class IndexedFastqFileDataStore implements FastqDataStore{
 		public DeflineReturnCode visitDefline(String id, String optionalComment) {
 			checkNotFinished();
 			currentId = id;
-			includeCurrentRecord = filter.accept(id, optionalComment);
+			if(filter instanceof FastXFilter){
+				includeCurrentRecord= ((FastXFilter)filter).accept(id, optionalComment);
+			}else{
+				includeCurrentRecord= filter.accept(id);
+			}
 			
 			if(includeCurrentRecord){
 				return DeflineReturnCode.VISIT_CURRENT_RECORD;

@@ -34,6 +34,7 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
@@ -43,9 +44,9 @@ import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWrit
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
-import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
 import org.jcvi.common.io.idReader.IdReader;
@@ -146,8 +147,8 @@ public class Fastq2Fasta {
             
             StreamingIterator<FastqRecord> iter=null;
             try{
-            	iter = LargeFastqFileDataStore.create(fastQFile, filter, fastqQualityCodec)
-            								.iterator();
+            	iter = FastqFileDataStoreFactory.create(fastQFile, DataStoreProviderHint.OPTIMIZE_ITERATION, fastqQualityCodec, filter)
+            					.iterator();
             	while(iter.hasNext()){
             		FastqRecord fastQ = iter.next();
             		 String id = fastQ.getId();

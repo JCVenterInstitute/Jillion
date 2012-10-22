@@ -20,7 +20,6 @@
 package org.jcvi.common.core.seq.fastx.fastq;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,6 +32,7 @@ import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -187,9 +187,9 @@ public class RemoveRedundantMatePairs {
     	private final StreamingIterator<FastqRecord> mate1Iterator;
     	private final StreamingIterator<FastqRecord> mate2Iterator;
     	private long recordCounter=0L;
-    	public MatePairIterator(File fastq1, File fastq2, FastqQualityCodec qualityCodec) throws FileNotFoundException, DataStoreException{
-    		mate1Iterator = LargeFastqFileDataStore.create(fastq1, qualityCodec).iterator();
-        	mate2Iterator = LargeFastqFileDataStore.create(fastq2, qualityCodec).iterator();
+    	public MatePairIterator(File fastq1, File fastq2, FastqQualityCodec qualityCodec) throws IOException, DataStoreException{
+    		mate1Iterator = FastqFileDataStoreFactory.create(fastq1, DataStoreProviderHint.OPTIMIZE_ITERATION, qualityCodec).iterator();
+        	mate2Iterator = FastqFileDataStoreFactory.create(fastq2, DataStoreProviderHint.OPTIMIZE_ITERATION, qualityCodec).iterator();
         
     	}
     	

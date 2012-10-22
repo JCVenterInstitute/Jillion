@@ -14,17 +14,19 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
+import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
-import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.fastq.DefaultFastqRecordWriter;
+import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqUtil;
-import org.jcvi.common.core.seq.fastx.fastq.LargeFastqFileDataStore;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
 import org.jcvi.common.io.idReader.FirstWordStringIdParser;
@@ -79,7 +81,7 @@ public class FastqFile2 {
            
         	DefaultFastqRecordWriter.Builder writerBuilder = new DefaultFastqRecordWriter.Builder(outputFile);
             final File idFile;
-            final FastXFilter filter;
+            final DataStoreFilter filter;
             Integer numberOfIds =commandLine.hasOption("n")?Integer.parseInt(commandLine.getOptionValue("n")):null;
             if(commandLine.hasOption("i")){
                 idFile =new File(commandLine.getOptionValue("i"));
@@ -95,7 +97,7 @@ public class FastqFile2 {
                 idFile =new File(commandLine.getOptionValue("e"));
                 filter = new ExcludeFastXIdFilter(parseIdsFrom(idFile,numberOfIds));
             }else{
-            	filter=null;
+            	filter=AcceptingDataStoreFilter.INSTANCE;
             }
             if(commandLine.hasOption("q")){
             	//re-encode qualities
@@ -109,7 +111,8 @@ public class FastqFile2 {
             FastqRecordWriter writer = writerBuilder.build();
         	StreamingIterator<FastqRecord> iter=null;
              try{
-             	iter = LargeFastqFileDataStore.create(fastQFile,filter,qualityCodec).iterator();
+             	iter = FastqFileDataStoreFactory.create(fastQFile, DataStoreProviderHint.OPTIMIZE_ITERATION, qualityCodec, filter)
+             										.iterator();
              	while(iter.hasNext()){
              		writer.write(iter.next());
              	}
