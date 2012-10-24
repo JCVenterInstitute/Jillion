@@ -13,6 +13,6 @@ import org.jcvi.common.core.util.Builder;
  * @author dkatzel
  *
  */
-public interface FastqFileDataStoreBuilderVisitor extends FastqFileVisitor, Builder<FastqDataStore> {
+interface FastqFileDataStoreBuilderVisitor extends FastqFileVisitor, Builder<FastqDataStore> {
 
 }
