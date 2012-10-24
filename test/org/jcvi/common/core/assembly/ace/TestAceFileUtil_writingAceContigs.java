@@ -33,7 +33,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreFactory;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificalPhdDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
@@ -58,7 +58,7 @@ public class TestAceFileUtil_writingAceContigs {
 
         final Date phdDate = new Date(0L);
         NucleotideSequenceDataStore nucleotideDataStore = FastaRecordDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, NucleotideSequenceFastaFileDataStoreFactory.create(seqFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED)); 
-        final QualitySequenceFastaDataStore qualityFastaDataStore = QualitySequenceFastaFileDataStoreFactory.create(qualFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED);
+        final QualitySequenceFastaDataStore qualityFastaDataStore = new QualitySequenceFastaFileDataStoreBuilder(qualFile).build();
         QualitySequenceDataStore qualityDataStore = FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, qualityFastaDataStore); 
         
         PhdDataStore phdDataStore = new ArtificalPhdDataStore(nucleotideDataStore, qualityDataStore, phdDate);

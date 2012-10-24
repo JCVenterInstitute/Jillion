@@ -20,13 +20,10 @@
 package org.jcvi.fasta.fastq.util;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -35,32 +32,24 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
+import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
-import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
-import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordFactory;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecordFactory;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
-import org.jcvi.common.core.symbol.Symbol;
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.DateUtil;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
 import org.jcvi.common.io.idReader.IdReader;
 import org.jcvi.common.io.idReader.IdReaderException;
@@ -77,145 +66,19 @@ import org.jcvi.common.io.idReader.StringIdParser;
  *
  */
 public class SortedFasta2Fastq {
-    /**
-     * This is our end of file token which tell us we are
-     * done parsing by the time we get to this object in our quality queue.
-     */
-    private static final QualitySequenceFastaRecord QUALITY_END_OF_FILE = QualitySequenceFastaRecordFactory.create("NULL", "", "");
-    /**
-     * This is our end of file token which tell us we are
-     * done parsing by the time we get to this object in our seq queue.
-     */
-    private static final NucleotideSequenceFastaRecord SEQ_END_OF_FILE = NucleotideSequenceFastaRecordFactory.create("NULL", new NucleotideSequenceBuilder("A").build());
-    
+   
     private static final int DEFAULT_QUEUE_SIZE = 1000;
+
     
-    private abstract static class BlockedFastaVisitor<T extends Symbol,E extends Sequence<T>, F extends FastaRecord<T,E>> extends Thread{
-        final BlockingQueue<F> queue;
-        final File file;
-       
-        private final FastXFilter filter;
-        
-        
-        /**
-         * @param file
-         * @param queue
-         */
-        public BlockedFastaVisitor(File file,
-                BlockingQueue<F> queue, FastXFilter filter) {
-            this.file = file;
-            this.queue = queue;
-            this.filter = filter;
-        }
-       
-        protected BlockingQueue<F> getQueue() {
-            return queue;
-        }
-
-        protected FastXFilter getFilter() {
-            return filter;
-        }
-        
-        
-    }
-    private static class QualityBlockedFastaVisitor extends BlockedFastaVisitor<PhredQuality, QualitySequence, QualitySequenceFastaRecord>{
-
-        /**
-         * @param file
-         * @param queue
-         */
-        public QualityBlockedFastaVisitor(File file,
-                BlockingQueue<QualitySequenceFastaRecord> queue,FastXFilter filter) {
-            super(file, queue,filter);
-        }
-
-        @Override
-        public void run() {
-            FastaFileVisitor qualVisitor = new AbstractFastaVisitor() {
-                
-                @Override
-                public boolean visitRecord(String id, String comment, String entireBody) {
-                    if(getFilter().accept(id)){
-                        try {
-                            getQueue().put(QualitySequenceFastaRecordFactory.create(id, entireBody, comment));
-                        } catch (InterruptedException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    }
-                    return true;
-                }
-                
-
-                @Override
-                public void visitEndOfFile() {
-                    try {
-                        getQueue().put(QUALITY_END_OF_FILE);
-                    } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-                
-            };
-            try {
-                FastaFileParser.parse(file, qualVisitor);
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-    }
     
-    private static class SequenceBlockedFastaVisitor extends BlockedFastaVisitor<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord>{
-        
-    /**
-         * @param file
-         * @param queue
-         */
-        public SequenceBlockedFastaVisitor(File file,
-                BlockingQueue<NucleotideSequenceFastaRecord> queue,FastXFilter filter) {
-            super(file, queue, filter);
-        }
-        @Override
-        public void run() {
-            FastaFileVisitor seqVisitor = new AbstractFastaVisitor() {
-                @Override
-                public boolean visitRecord(String id, String comment, String entireBody) {
-                    if(getFilter().accept(id)){
-                        try {
-                            getQueue().put(NucleotideSequenceFastaRecordFactory.create(id, new NucleotideSequenceBuilder(entireBody).build(), comment));
-                        } catch (InterruptedException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    }
-                    return true;
-                }
-                @Override
-                public void visitEndOfFile() {
-                    try {
-                        getQueue().put(SEQ_END_OF_FILE);
-                    } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            };
-            try {
-                FastaFileParser.parse(file, seqVisitor);
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-    }
+   
     /**
      * @param args
      * @throws InterruptedException 
      * @throws IOException 
+     * @throws DataStoreException 
      */
-    public static void main(String[] args) throws InterruptedException, IOException {
+    public static void main(String[] args) throws InterruptedException, IOException, DataStoreException {
         Options options = new Options();
         options.addOption(new CommandLineOptionBuilder("s", 
                                     "input sequence FASTA file")
@@ -283,59 +146,53 @@ public class SortedFasta2Fastq {
             }else{
                 bufferSize = DEFAULT_QUEUE_SIZE;
             }
-            final FastqQualityCodec fastqQualityCodec = useSanger? FastqQualityCodec.SANGER: FastqQualityCodec.ILLUMINA;
-        
-            final BlockingQueue<QualitySequenceFastaRecord> qualityQueue = new ArrayBlockingQueue<QualitySequenceFastaRecord>(bufferSize);
-            final BlockingQueue<NucleotideSequenceFastaRecord> sequenceQueue = new ArrayBlockingQueue<NucleotideSequenceFastaRecord>(bufferSize);
             
+            final FastqQualityCodec fastqQualityCodec = useSanger? FastqQualityCodec.SANGER: FastqQualityCodec.ILLUMINA;
             final FastqRecordWriter writer = new FastqRecordWriterBuilder(new File(commandLine.getOptionValue("o")))
-            							.qualityCodec(fastqQualityCodec)
-            							.build();
-            boolean done = false;
-           QualityBlockedFastaVisitor qualVisitor = new QualityBlockedFastaVisitor(
-                    qualFile, 
-                    qualityQueue, filter); 
-           
-           SequenceBlockedFastaVisitor seqVisitor = new SequenceBlockedFastaVisitor(seqFile, sequenceQueue, filter);
-           long startTime = System.currentTimeMillis();
-           qualVisitor.start();
-           seqVisitor.start();
-           try{
-           while(!done){
-               QualitySequenceFastaRecord qualityFasta =qualityQueue.take();
-               NucleotideSequenceFastaRecord seqFasta = sequenceQueue.take();
-               if(qualityFasta == QUALITY_END_OF_FILE){
-                   if(seqFasta == SEQ_END_OF_FILE){
-                       done = true;
-                   }else{
-                       throw new IllegalStateException("more seq records than qualities");
-                   }
-               }else{
-                   if(seqFasta == SEQ_END_OF_FILE){
-                       throw new IllegalStateException("more quality records than sequences");
-                   }
-                   
-                   if(!seqFasta.getId().equals(qualityFasta.getId())){
-                       throw new IllegalStateException(String.format(
-                               "seq and qual records are not in the same order: seq= %s qual = %s",
-                               seqFasta.getId(),
-                               qualityFasta.getId()));
-                       
-                   }
-                 //here we have a valid seq and qual
-                   FastqRecord fastq = new FastqRecordBuilder(seqFasta.getId(), 
-                           seqFasta.getSequence(), qualityFasta.getSequence())
-                   				.build();
-
-                   writer.write(fastq);
-               }
+													.qualityCodec(fastqQualityCodec)
+													.build();
+            long startTime = System.currentTimeMillis();
+            StreamingIterator<NucleotideSequenceFastaRecord> nucleotideIter=null;
+            StreamingIterator<QualitySequenceFastaRecord> qualityIter =null;
+            try{
+            	nucleotideIter = NucleotideSequenceFastaFileDataStoreFactory.create(seqFile, DataStoreProviderHint.OPTIMIZE_ITERATION, filter)
+            																	.iterator();
+            
+            	qualityIter =  new QualitySequenceFastaFileDataStoreBuilder(qualFile)
+				            			.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+				            			.filter(filter)
+				            			.build()
+				            			.iterator();
+	            while(nucleotideIter.hasNext() && qualityIter.hasNext()){
+	            	QualitySequenceFastaRecord qualityFasta = qualityIter.next();
+	            	NucleotideSequenceFastaRecord seqFasta = nucleotideIter.next();
+	            	if(!seqFasta.getId().equals(qualityFasta.getId())){
+	                    throw new IllegalStateException(String.format(
+	                            "seq and qual records are not in the same order: seq= %s qual = %s",
+	                            seqFasta.getId(),
+	                            qualityFasta.getId()));
+	                    
+	                }
+	              //here we have a valid seq and qual
+	                FastqRecord fastq = new FastqRecordBuilder(seqFasta.getId(), 
+	                        seqFasta.getSequence(), qualityFasta.getSequence())
+	                				.build();
+	
+	                writer.write(fastq);
+	            }
+	            if(nucleotideIter.hasNext()){
+	            	throw new IllegalStateException("more seq records than qualities");
+	            }
+	            if(qualityIter.hasNext()){
+	            	throw new IllegalStateException("more quality records than sequences");
+	            }
+            }finally{
+            	IOUtil.closeAndIgnoreErrors(nucleotideIter, qualityIter,writer);
             }
+           
            long endTime = System.currentTimeMillis();
            System.out.println(DateUtil.getElapsedTimeAsString(endTime - startTime));
            
-           }finally{
-        	   IOUtil.closeAndIgnoreErrors(writer);
-           }
             
            
         } catch (ParseException e) {

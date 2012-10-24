@@ -49,7 +49,7 @@ public abstract class AbstractTestQualityFastaDataStore {
     
     
     QualitySequenceFastaRecord JGBAA02T21A12PB1A1F = 
-    		QualitySequenceFastaRecordFactory.create(
+    		new QualitySequenceFastaRecordBuilder(
                     "JGBAA02T21A12PB1A1F",
                    new QualitySequenceBuilder(
                                     new byte[]{
@@ -91,11 +91,12 @@ public abstract class AbstractTestQualityFastaDataStore {
                                             34, 44, 38, 36, 29, 27, 19, 19, 29, 28, 28, 26, 26, 21, 19, 45, 45,
                                             47, 36, 36, 36, 32, 28, 26, 16, 12, 9, 6, 7, 8, 7, 11, 12, 14,
                                             10, 10, 6, 6, 6, 6, 6, 9
-                                    }).build());
+                                    }).build())
+    				.build();
     
     
     QualitySequenceFastaRecord JGBAA07T21D08MP605F = 
-    		QualitySequenceFastaRecordFactory.create(
+    		new QualitySequenceFastaRecordBuilder(
                 "JGBAA07T21D08MP605F",
                 new QualitySequenceBuilder(
                                 new byte[]{
@@ -125,11 +126,12 @@ public abstract class AbstractTestQualityFastaDataStore {
                                         45,45,45,38,40,40,38,45,36,32,35,40,40,38,45,40,40,
                                         32,27,27,20,18,32,30,34,40,12,8,9,6,6,6,6,8,
                                         11,19,12,7,7,6,6,6
-                                }).build());
+                                }).build())
+    					.build();
     
     
     QualitySequenceFastaRecord JGBAA01T21H05PB2A2341BRB = 
-        QualitySequenceFastaRecordFactory.create(
+        new QualitySequenceFastaRecordBuilder(
                 "JGBAA01T21H05PB2A2341BRB",
                 new QualitySequenceBuilder(
                                 new byte[]{
@@ -175,7 +177,8 @@ public abstract class AbstractTestQualityFastaDataStore {
                                         44, 44, 44, 44, 45, 44, 44, 47, 38, 44, 45, 40, 40, 45, 40, 40, 39,
                                         20, 20, 20, 27, 17, 17, 9, 9, 20, 9, 9, 27, 24, 35, 26, 30, 33,
                                         33, 33, 35, 44, 44, 22, 16, 9, 7, 7
-                                }).build());
+                                }).build())
+    						.build();
     ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestQualityFastaDataStore.class);
     @Test
     public void parseFile() throws IOException, DataStoreException{
