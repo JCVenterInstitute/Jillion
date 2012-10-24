@@ -30,6 +30,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
+    	
+    	TestFastqRecordBuilder.class,
+    	
         TestSangerFastQQualityCodec.class,
         TestIlluminaFastQQualityCodec.class,
         TestSangerFastQQualityCodecActual.class,

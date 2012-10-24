@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
-import org.jcvi.common.core.seq.fastx.fastq.FastqRecordFactory;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecordBuilder;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.DateUtil;
@@ -37,9 +37,10 @@ public class TestFastqConsedPhdAdaptedIterator extends AbstractTestPhdAdaptedIte
 				fastqRecord.getQualitySequence(), phdDate);
 	}
 	private FastqRecord createFastq(String id, String bases, byte[] quals){
-		return FastqRecordFactory.create("read1",
+		return new FastqRecordBuilder("read1",
 				new NucleotideSequenceBuilder(bases).build(),
-				new QualitySequenceBuilder(quals).build());
+				new QualitySequenceBuilder(quals).build())
+				.build();
 	}
 	@Test
 	public void oneRead(){

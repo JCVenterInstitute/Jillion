@@ -19,7 +19,7 @@ import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
-import org.jcvi.common.core.seq.fastx.fastq.FastqRecordFactory;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecordBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqUtil;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -101,14 +101,15 @@ public class BwaTrimmer {
 				if(trimRange.getLength() < minLength){					
 					continue;
 				}
-				FastqRecord trimmedSequence = FastqRecordFactory.create(next.getId(),
+				FastqRecord trimmedSequence = new FastqRecordBuilder(next.getId(),
 						new NucleotideSequenceBuilder(next.getNucleotideSequence())
 							.trim(trimRange)
 							.build(),
 						new QualitySequenceBuilder(next.getQualitySequence())
 							.trim(trimRange)
-							.build(),
-							next.getComment());
+							.build())
+				.comment(next.getComment())
+				.build();
 				
 				fastqWriter.write(trimmedSequence);
 

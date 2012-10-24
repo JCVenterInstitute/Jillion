@@ -11,7 +11,7 @@ import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
-import org.jcvi.common.core.seq.fastx.fastq.FastqRecordFactory;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecordBuilder;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -50,13 +50,14 @@ public class TestBwaQualityTrimmer {
 				FastqRecord input = inputIterator.next();
 				Range trimmedRange = sut.trim(input.getQualitySequence());
 				if(trimmedRange.getLength() >=64){
-					FastqRecord trimmedSequence = FastqRecordFactory.create(input.getId(),
+					FastqRecord trimmedSequence = new FastqRecordBuilder(input.getId(),
 							new NucleotideSequenceBuilder(input.getNucleotideSequence())
 								.trim(trimmedRange)
 								.build(),
 							new QualitySequenceBuilder(input.getQualitySequence())
 								.trim(trimmedRange)
-								.build());
+								.build())
+						.build();
 					assertEquals(trimmedSequence.getId(),expectedIterator.next(), trimmedSequence);
 				}
 			}

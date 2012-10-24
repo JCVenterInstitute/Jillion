@@ -23,15 +23,15 @@ public class TestRemoveRedundantMatePairs {
 	public TestRemoveRedundantMatePairs(){
 		byte[] qualities = new byte[20];
 		Arrays.fill(qualities, (byte)20);
-		left = FastqRecordFactory.create("id", 
-				new NucleotideSequenceBuilder()
-		.append("ACGTACGTACGTACGTACGT").build(), 
-		new QualitySequenceBuilder(qualities).build());
+		left = new FastqRecordBuilder("id", 
+							new NucleotideSequenceBuilder("ACGTACGTACGTACGTACGT").build(), 
+							new QualitySequenceBuilder(qualities).build())
+				.build();
 		
-		right = FastqRecordFactory.create("id", 
-				new NucleotideSequenceBuilder()
-		.append("AAAAAAAAAAATTTTTTTTT").build(), 
-		new QualitySequenceBuilder(qualities).build());
+		right = new FastqRecordBuilder("id", 
+					new NucleotideSequenceBuilder("AAAAAAAAAAATTTTTTTTT").build(), 
+					new QualitySequenceBuilder(qualities).build())
+				.build();
 	}
 
 	@Rule
@@ -154,20 +154,22 @@ protected MatePairFiles createCompletelyRedundantUpToNBasesData(int numDups) thr
 			writer1.write(left);
 			writer2.write(right);
 			for(int i=0; i<numDups; i++){
-				FastqRecord newLeft = FastqRecordFactory.create(left.getId()+i, 
+				FastqRecord newLeft = new FastqRecordBuilder(left.getId()+i, 
 						new NucleotideSequenceBuilder(left.getNucleotideSequence())
 								.trim(subRange)
 								.append("NNNNNNNNNN")
 								.build(), 
-				left.getQualitySequence());
+						left.getQualitySequence())
+				.build();
 				writer1.write(newLeft);
 				
-				FastqRecord newRight= FastqRecordFactory.create(right.getId()+i, 
+				FastqRecord newRight= new FastqRecordBuilder(right.getId()+i, 
 						new NucleotideSequenceBuilder(right.getNucleotideSequence())
 							.trim(subRange)
 							.append("NNNNNNNNNN")
 							.build(), 
-				right.getQualitySequence());
+							right.getQualitySequence())
+						.build();
 				
 				writer2.write(newRight);
 		
