@@ -33,7 +33,9 @@ class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingCloseabl
 				protected boolean visitRecord(String id, String comment,
 						String entireBody) {
 					QualitySequenceFastaRecord record = 
-							QualitySequenceFastaRecordFactory.create(id, entireBody, comment);
+							new QualitySequenceFastaRecordBuilder(id, entireBody)
+													.comment(comment)
+													.build();
 					blockingPut(record);
 					return true;
 				}

@@ -31,7 +31,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestQualitySequenceFastaRecordFactory.class,
+        TestQualitySequenceFastaRecordBuilder.class,
         TestDefaultQualityFastaDataStore.class,
         TestLargeQualityFastaDataStore.class,
         TestIndexedQualityFastaFileDataStore.class,

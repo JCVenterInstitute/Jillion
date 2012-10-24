@@ -51,7 +51,9 @@ public final class FastqRecordBuilder implements Builder<FastqRecord>{
 	}
 	/**
 	 * Add the given String to this fastq record as a comment
-	 * which will get returned by {@link FastqRecord#getComment()}
+	 * which will get returned by {@link FastqRecord#getComment()}.
+	 * Calling this method more than once will cause the last value to
+	 * overwrite the previous value.
 	 * @param comments the comment to make for this record;
 	 * if this is set to null (the default) then this
 	 * record has no comment.

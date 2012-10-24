@@ -32,7 +32,7 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
-import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreFactory;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 /**
@@ -87,7 +87,10 @@ public class FastaCasDataStoreFactory extends AbstractCasDataStoreFactory
             File fastaFile,DataStoreFilter filter) throws CasDataStoreFactoryException { 
         try {
 			return CachedDataStore.create(QualitySequenceDataStore.class, 
-					FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, QualitySequenceFastaFileDataStoreFactory.create(fastaFile, DataStoreProviderHint.OPTIMIZE_ITERATION)),
+					FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, 
+							new QualitySequenceFastaFileDataStoreBuilder(fastaFile)
+									.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+									.build()),
 			        cacheSize);
 		} catch (IOException e) {
 			throw new CasDataStoreFactoryException("error creating quality datastore for "+fastaFile.getAbsolutePath(),e);

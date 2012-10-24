@@ -18,10 +18,12 @@ import org.jcvi.common.core.util.Builder;
  */
 public final class FastqFileDataStoreBuilder{
 	private final File fastqFile;
-	private FastqQualityCodec codec=null;
+	
 	private DataStoreFilter filter = AcceptingDataStoreFilter.INSTANCE;
 	//by default store everything in memory
 	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED;
+	
+	private FastqQualityCodec codec=null;
 	
 	/**
 	 * Create a new instance of {@code FastqFileDataStoreBuilder}

@@ -20,11 +20,15 @@ import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 
 public class TestDefaultQualitySequenceFastaRecordWriter {
-	private final QualitySequenceFastaRecord record1 = QualitySequenceFastaRecordFactory.create("id_1", 
-			new QualitySequenceBuilder(new byte[]{8,9,10,11,12,13,14,15}).build(),
-			"a comment");
-	private final QualitySequenceFastaRecord record2 = QualitySequenceFastaRecordFactory.create("id_2", 
-			new QualitySequenceBuilder(new byte[]{20,20,20,20,30,30,30,30,40,40,40,40}).build());
+	private final QualitySequenceFastaRecord record1 = new QualitySequenceFastaRecordBuilder("id_1", 
+						new QualitySequenceBuilder(new byte[]{8,9,10,11,12,13,14,15}).build())
+						.comment("a comment")
+						.build();
+	private final QualitySequenceFastaRecord record2 = 
+			new QualitySequenceFastaRecordBuilder("id_2", 
+									new QualitySequenceBuilder(new byte[]{20,20,20,20,30,30,30,30,40,40,40,40})
+											.build())
+			.build();
 	
 	@Test(expected = NullPointerException.class)
 	public void nullOutputStreamShouldThrowNPE(){

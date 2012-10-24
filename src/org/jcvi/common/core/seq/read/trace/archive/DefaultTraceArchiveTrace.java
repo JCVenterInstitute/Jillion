@@ -32,7 +32,7 @@ import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreFactory;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.DefaultPositionFastaFileDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
@@ -97,7 +97,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
         StreamingIterator<QualitySequenceFastaRecord> iterator =null;
         try{
         	File qualFile = getFile(TraceInfoField.QUAL_FILE);
-			datastore = QualitySequenceFastaFileDataStoreFactory.create(qualFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED);         
+			datastore = new QualitySequenceFastaFileDataStoreBuilder(qualFile).build();         
             iterator = datastore.iterator();
 			return iterator.next().getSequence();
         } catch (Exception e) {
