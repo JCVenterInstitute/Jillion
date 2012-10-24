@@ -23,6 +23,7 @@
  */
 package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -70,7 +71,7 @@ public final class SffFileParser {
      * @throws NullPointerException if the inputstream or visitor are null.
      */
     public static void parse(InputStream in, SffFileVisitor visitor) throws SffDecoderException{
-        DataInputStream dataIn = new DataInputStream(in);
+        DataInputStream dataIn = new DataInputStream(new BufferedInputStream(in));
         visitor.visitFile();
         SffCommonHeader commonHeader =DefaultSFFCommonHeaderDecoder.INSTANCE.decodeHeader(dataIn);
         CommonHeaderReturnCode commonHeaderRet = visitor.visitCommonHeader(commonHeader);
