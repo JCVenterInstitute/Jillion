@@ -51,7 +51,7 @@ import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecordFacto
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
-import org.jcvi.common.core.seq.fastx.fastq.FastqRecordFactory;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecordBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
 import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.symbol.Sequence;
@@ -323,8 +323,9 @@ public class SortedFasta2Fastq {
                        
                    }
                  //here we have a valid seq and qual
-                   FastqRecord fastq = FastqRecordFactory.create(seqFasta.getId(), 
-                           seqFasta.getSequence(), qualityFasta.getSequence());
+                   FastqRecord fastq = new FastqRecordBuilder(seqFasta.getId(), 
+                           seqFasta.getSequence(), qualityFasta.getSequence())
+                   				.build();
 
                    writer.write(fastq);
                }
