@@ -23,6 +23,7 @@
  */
 package org.jcvi.common.core.assembly.clc.cas;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -71,7 +72,7 @@ public final class CasParser {
     }
     private void parseMatches(File file,
             CasFileVisitor visitor) throws IOException {
-        DataInputStream dataIn = new DataInputStream(new FileInputStream(file));
+        DataInputStream dataIn = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
         try{
         IOUtil.blockingSkip(dataIn, 16);
         for(int i=0; i<numberOfReads; i++){
@@ -129,7 +130,7 @@ public final class CasParser {
         
     }
     private void parseMetaData(File file, CasFileVisitor visitor) throws IOException {
-        DataInputStream dataIn = new DataInputStream(new FileInputStream(file));
+        DataInputStream dataIn = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
         try{
             byte[] magicNumber = IOUtil.toByteArray(dataIn, 8);
             if(!Arrays.equals(CAS_MAGIC_NUMBER, magicNumber)){

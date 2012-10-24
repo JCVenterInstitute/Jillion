@@ -23,6 +23,7 @@
  */
 package org.jcvi.common.core.seq.read.trace.frg;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -68,7 +69,7 @@ public class Frg2Parser {
        }
     }
     public static void parse2(InputStream frgStream, Frg2Visitor visitor) throws IOException{
-        TextLineParser parser = new TextLineParser(frgStream);
+        TextLineParser parser = new TextLineParser(new BufferedInputStream(frgStream));
         while(parser.hasNextLine()){
             String line = parser.nextLine();
             visitor.visitLine(line);
