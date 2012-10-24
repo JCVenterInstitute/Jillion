@@ -46,7 +46,7 @@ public class TestLucyQualityTrimmer {
     private final ResourceFileServer resources;
     private QualitySequenceDataStore qualities;
     
-    LucyLikeQualityTrimmer sut = new LucyLikeQualityTrimmer.Builder(30)
+    QualityTrimmer sut = new LucyQualityTrimmerBuilder(30)
                             .addTrimWindow(30, 0.1F)
                             .addTrimWindow(10, 0.35F)
                             .build();

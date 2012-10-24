@@ -16,7 +16,7 @@ import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
-import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreFactory;
+import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordFactory;
@@ -78,8 +78,11 @@ public class BwaTrimmer {
 		
 		PhredQuality threshold = PhredQuality.valueOf(Integer.parseInt(commandLine.getOptionValue("q")));
 		FastqQualityCodec codec = getQualityCodec(commandLine, fastqFile);
-		FastqDataStore datastore = FastqFileDataStoreFactory.create(fastqFile, DataStoreProviderHint.OPTIMIZE_ITERATION, codec);
-
+		FastqDataStore datastore = new FastqFileDataStoreBuilder(fastqFile)
+										.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+										.qualityCodec(codec)
+										.build();
+				
 		BwaQualityTrimmer trimmer = new BwaQualityTrimmer(threshold);
 		IOUtil.mkdirs(outputFile.getParentFile());
 		FastqRecordWriter fastqWriter = new FastqRecordWriterBuilder(outputFile)

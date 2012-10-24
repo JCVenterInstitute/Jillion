@@ -34,7 +34,7 @@ import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
-import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreFactory;
+import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileIterator;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -60,7 +60,10 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     public StreamingIterator<PhdReadRecord> createFastqIterator(
             File illuminaFile, TraceDetails traceDetails) throws DataStoreException {
 		try {
-			FastqDataStore datastore = FastqFileDataStoreFactory.create(illuminaFile, DataStoreProviderHint.OPTIMIZE_ITERATION,traceDetails.getFastqQualityCodec());
+			FastqDataStore datastore = new FastqFileDataStoreBuilder(illuminaFile)
+											.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+											.qualityCodec(traceDetails.getFastqQualityCodec())
+											.build();
 			return new FastqConsedPhdAdaptedIterator( 
 	        		datastore.iterator(),
 	                illuminaFile, 
