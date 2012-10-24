@@ -22,7 +22,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreFactory;
+import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
@@ -57,8 +57,11 @@ public class BarcodeDetector {
 		int sequencesSeen =0;
 		StreamingIterator<FastqRecord> fastqIterator= null;
 		try{
-			fastqIterator = FastqFileDataStoreFactory.create(fastq, DataStoreProviderHint.OPTIMIZE_ITERATION, FastqQualityCodec.SANGER)
-											.iterator();
+			fastqIterator = new FastqFileDataStoreBuilder(fastq)
+									.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+									.qualityCodec(FastqQualityCodec.SANGER)
+									.build()
+									.iterator();
 			
 			while(fastqIterator.hasNext()){
 				sequencesSeen++;

@@ -34,7 +34,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriterBuilder;
-import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreFactory;
+import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
@@ -99,8 +99,11 @@ public class SplitFastq {
             		
             int counter=0;
             try{
-            	iterator=FastqFileDataStoreFactory.create(fastqFile, DataStoreProviderHint.OPTIMIZE_ITERATION, fastqQualityCodec)
-                		.iterator();
+            	iterator=new FastqFileDataStoreBuilder(fastqFile)
+							.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+							.qualityCodec(fastqQualityCodec)
+							.build()
+							.iterator();
                 while(iterator.hasNext()){
                     int mod = counter %n;
                     FastqRecord record = iterator.next();

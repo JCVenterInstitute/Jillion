@@ -44,7 +44,7 @@ import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWrit
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecordWriter;
-import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreFactory;
+import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -147,7 +147,11 @@ public class Fastq2Fasta {
             
             StreamingIterator<FastqRecord> iter=null;
             try{
-            	iter = FastqFileDataStoreFactory.create(fastQFile, DataStoreProviderHint.OPTIMIZE_ITERATION, fastqQualityCodec, filter)
+            	iter = new FastqFileDataStoreBuilder(fastQFile)
+								.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+								.qualityCodec(fastqQualityCodec)
+								.filter(filter)
+								.build()
             					.iterator();
             	while(iter.hasNext()){
             		FastqRecord fastQ = iter.next();

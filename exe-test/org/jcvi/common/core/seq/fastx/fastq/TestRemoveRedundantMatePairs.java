@@ -51,10 +51,14 @@ public class TestRemoveRedundantMatePairs {
 		MatePairFiles inputMates = createCompletelyRedundantData(5);
 		MatePairFiles outputMates = dedupe(inputMates);
 		
-		FastqDataStore filtered1 = FastqFileDataStoreFactory.create(outputMates.getFile1(), 
-						DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED, FastqQualityCodec.SANGER);
-		FastqDataStore filtered2 = FastqFileDataStoreFactory.create(outputMates.getFile2(), 
-				DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED, FastqQualityCodec.SANGER);
+		FastqDataStore filtered1 = new FastqFileDataStoreBuilder(outputMates.getFile1())
+										.hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED)
+										.qualityCodec(FastqQualityCodec.SANGER)
+										.build();
+		FastqDataStore filtered2 =  new FastqFileDataStoreBuilder(outputMates.getFile2())
+										.hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED)
+										.qualityCodec(FastqQualityCodec.SANGER)
+										.build();
 		
 		assertEquals(1L, filtered1.getNumberOfRecords());
 		assertEquals(1L, filtered2.getNumberOfRecords());
@@ -68,10 +72,14 @@ public class TestRemoveRedundantMatePairs {
 		MatePairFiles inputMates = createCompletelyRedundantUpToNBasesData(5);
 		MatePairFiles outputMates = dedupe(inputMates);
 		
-		FastqDataStore filtered1 = FastqFileDataStoreFactory.create(outputMates.getFile1(), 
-				DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED, FastqQualityCodec.SANGER);
-		FastqDataStore filtered2 = FastqFileDataStoreFactory.create(outputMates.getFile2(), 
-				DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED, FastqQualityCodec.SANGER);
+		FastqDataStore filtered1 = new FastqFileDataStoreBuilder(outputMates.getFile1())
+										.hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED)
+										.qualityCodec(FastqQualityCodec.SANGER)
+										.build();
+		FastqDataStore filtered2 = new FastqFileDataStoreBuilder(outputMates.getFile2())
+										.hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED)
+										.qualityCodec(FastqQualityCodec.SANGER)
+										.build();
 		
 		assertEquals(1L, filtered1.getNumberOfRecords());
 		assertEquals(1L, filtered2.getNumberOfRecords());

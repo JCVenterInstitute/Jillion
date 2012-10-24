@@ -188,8 +188,16 @@ public class RemoveRedundantMatePairs {
     	private final StreamingIterator<FastqRecord> mate2Iterator;
     	private long recordCounter=0L;
     	public MatePairIterator(File fastq1, File fastq2, FastqQualityCodec qualityCodec) throws IOException, DataStoreException{
-    		mate1Iterator = FastqFileDataStoreFactory.create(fastq1, DataStoreProviderHint.OPTIMIZE_ITERATION, qualityCodec).iterator();
-        	mate2Iterator = FastqFileDataStoreFactory.create(fastq2, DataStoreProviderHint.OPTIMIZE_ITERATION, qualityCodec).iterator();
+    		mate1Iterator = new FastqFileDataStoreBuilder(fastq1)
+									.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+									.qualityCodec(qualityCodec)
+									.build()
+									.iterator();
+    			mate2Iterator =  new FastqFileDataStoreBuilder(fastq2)
+									.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+									.qualityCodec(qualityCodec)
+									.build()
+									.iterator();
         
     	}
     	

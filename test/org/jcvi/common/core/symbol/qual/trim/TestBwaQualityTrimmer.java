@@ -8,7 +8,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
-import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreFactory;
+import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordFactory;
@@ -26,11 +26,15 @@ public class TestBwaQualityTrimmer {
 	private final BwaQualityTrimmer sut = new BwaQualityTrimmer(PhredQuality.valueOf(20));
 	public TestBwaQualityTrimmer() throws FileNotFoundException, IOException{
 		ResourceFileServer resources = new ResourceFileServer(TestBwaQualityTrimmer.class);
-		inputFastq = 
-				FastqFileDataStoreFactory.create(resources.getFile("files/bwa_input.fastq"), 
-							DataStoreProviderHint.OPTIMIZE_ITERATION, FastqQualityCodec.SANGER);
-		outputFastq = FastqFileDataStoreFactory.create(resources.getFile("files/bwa_output.fastq"), 
-				DataStoreProviderHint.OPTIMIZE_ITERATION, FastqQualityCodec.SANGER);
+		inputFastq = new FastqFileDataStoreBuilder(resources.getFile("files/bwa_input.fastq"))
+							.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+							.qualityCodec(FastqQualityCodec.SANGER)
+							.build();
+			
+		outputFastq = new FastqFileDataStoreBuilder(resources.getFile("files/bwa_output.fastq"))
+							.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+							.qualityCodec(FastqQualityCodec.SANGER)
+							.build();
 		
 	}
 	@Test

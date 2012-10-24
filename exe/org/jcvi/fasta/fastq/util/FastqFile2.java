@@ -22,7 +22,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriterBuilder;
-import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreFactory;
+import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
@@ -111,8 +111,12 @@ public class FastqFile2 {
             FastqRecordWriter writer = writerBuilder.build();
         	StreamingIterator<FastqRecord> iter=null;
              try{
-             	iter = FastqFileDataStoreFactory.create(fastQFile, DataStoreProviderHint.OPTIMIZE_ITERATION, qualityCodec, filter)
-             										.iterator();
+             	iter = new FastqFileDataStoreBuilder(fastQFile)
+								.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+								.qualityCodec(qualityCodec)
+								.filter(filter)
+								.build()
+								.iterator();
              	while(iter.hasNext()){
              		writer.write(iter.next());
              	}

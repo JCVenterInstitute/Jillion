@@ -12,7 +12,7 @@ import org.jcvi.common.core.datastore.IncludeDataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
-import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreFactory;
+import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
@@ -35,8 +35,11 @@ public class ReEncodeFastq {
 		//this fastqFile has sanger encoded quality values
 		//but other factory methods can auto-detect the quality encoding
 		//for us for a minor performance penalty.
-		FastqDataStore datastore = FastqFileDataStoreFactory.create(fastqFile, DataStoreProviderHint.OPTIMIZE_ITERATION, 
-												FastqQualityCodec.SANGER, filter);
+		FastqDataStore datastore = new FastqFileDataStoreBuilder(fastqFile)
+										.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+										.qualityCodec(FastqQualityCodec.SANGER)
+										.filter(filter)
+										.build();
 		
 		//note that we are re-encoding it in illumina format
 		FastqRecordWriter writer = new FastqRecordWriterBuilder(outFile)
