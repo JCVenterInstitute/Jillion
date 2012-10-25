@@ -47,7 +47,7 @@ public abstract class AbstractFastaFileDataStoreBuilder<T extends Symbol, S exte
 	 * @return this.
 	 * @throws NullPointerException if filter is null.
 	 */
-	public final AbstractFastaFileDataStoreBuilder<T, S, F, D> filter(DataStoreFilter filter) {
+	protected AbstractFastaFileDataStoreBuilder<T, S, F, D> filter(DataStoreFilter filter) {
 		if(filter==null){
 			throw new NullPointerException("filter can not be null");
 		}
@@ -71,7 +71,7 @@ public abstract class AbstractFastaFileDataStoreBuilder<T extends Symbol, S exte
 	 * @throws NullPointerException if hint is null.
 	 * @see DataStoreProviderHint
 	 */
-	public final AbstractFastaFileDataStoreBuilder<T, S, F, D> hint(DataStoreProviderHint hint) {
+	protected AbstractFastaFileDataStoreBuilder<T, S, F, D> hint(DataStoreProviderHint hint) {
 		if(hint==null){
 			throw new NullPointerException("hint can not be null");
 		}
@@ -106,7 +106,7 @@ public abstract class AbstractFastaFileDataStoreBuilder<T extends Symbol, S exte
 	 * fasta file.
 	 * @see #hint(DataStoreProviderHint)
 	 */
-	public final D build() throws IOException {
+	protected D build() throws IOException {
 		return createNewInstance(fastaFile, hint, filter);
 	}
 

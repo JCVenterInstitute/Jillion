@@ -46,4 +46,37 @@ public final class QualitySequenceFastaFileDataStoreBuilder extends AbstractFast
 				throw new IllegalArgumentException("unknown hint : "+ hint);
 		}
 	}
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public QualitySequenceFastaFileDataStoreBuilder filter(
+			DataStoreFilter filter) {
+		super.filter(filter);
+		return this;
+	}
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public QualitySequenceFastaFileDataStoreBuilder hint(
+			DataStoreProviderHint hint) {
+		super.hint(hint);
+		return this;
+	}
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public QualitySequenceFastaDataStore build() throws IOException {
+		return super.build();
+	}
+	
+	
 }
