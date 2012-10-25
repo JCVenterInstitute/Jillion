@@ -23,14 +23,20 @@
  */
 package org.jcvi.common.core.datastore;
 
-import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.reset;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.NoSuchElementException;
 
-import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.DataStoreIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.junit.Before;
 import org.junit.Test;
@@ -94,11 +100,13 @@ public class TestDataStoreIterator {
         verify(mockDataStore,mockIterator);
     }
     @Test
-    public void nextThrowsDataStoreExceptionShouldThrowIllegalStateException() throws DataStoreException{
+    public void nextThrowsDataStoreExceptionShouldThrowIllegalStateException() throws DataStoreException, IOException{
         DataStoreException expectedException = new DataStoreException("expected");
         String nextId = "nextId";
         expect(mockIterator.next()).andReturn(nextId);
         expect(mockDataStore.get(nextId)).andThrow(expectedException);
+        //exception should close iterator
+        mockIterator.close();
         replay(mockDataStore,mockIterator);       
         try{
             sut.next();
