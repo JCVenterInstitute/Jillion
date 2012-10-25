@@ -1347,4 +1347,14 @@ public class TestRange{
     	assertEquals(0, r.getEnd());
     	assertEquals(Math.abs((long)Integer.MIN_VALUE)+1L, r.getLength());
     }
+    /**
+     * Regression test for bug found in Oct 2012
+     * where there was a < sign instead of a <=
+     * 
+     */
+    @Test
+    public void intersectionCausesLengthOfNegativeShouldReturnEmptyRange(){
+    	Range result = Range.of(1,5).intersection(Range.of(7,10));
+    	assertTrue(result.isEmpty());
+    }
 }
