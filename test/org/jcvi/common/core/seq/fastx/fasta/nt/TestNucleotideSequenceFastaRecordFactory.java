@@ -36,39 +36,36 @@ public class TestNucleotideSequenceFastaRecordFactory {
     private final String id = "1234";
     private final String comment = "comment";
     private final String bases = "ACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGTACGT-N";
-    private final  NucleotideSequence encodedGlyphs =new NucleotideSequenceBuilder(bases).build();
+    private final  NucleotideSequence sequence =new NucleotideSequenceBuilder(bases).build();
 
     private final NucleotideSequenceFastaRecord sut;
     
     public TestNucleotideSequenceFastaRecordFactory(){
 
-        sut = NucleotideSequenceFastaRecordFactory.create(id,  encodedGlyphs,comment);
+        sut = new NucleotideSequenceFastaRecordBuilder(id,  sequence)
+        			.comment(comment)
+        			.build();
     }
     
     @Test
     public void withComment(){
         assertEquals(id, sut.getId());
         assertEquals(comment, sut.getComment());
-        assertEquals(encodedGlyphs, sut.getSequence());
+        assertEquals(sequence, sut.getSequence());
     }
     
     @Test
     public void withoutComment(){
-        NucleotideSequenceFastaRecord fasta = NucleotideSequenceFastaRecordFactory.create(id, encodedGlyphs);
+        NucleotideSequenceFastaRecord fasta = new NucleotideSequenceFastaRecordBuilder(id, sequence).build();
         
         assertEquals(id, fasta.getId());
         assertNull(fasta.getComment());
-        assertEquals(encodedGlyphs, fasta.getSequence());
+        assertEquals(sequence, fasta.getSequence());
     }
    
-    @Test
+    @Test(expected = NullPointerException.class)
     public void nullIdThrowsNullPointerException(){
-        try{
-        	NucleotideSequenceFastaRecordFactory.create(null, encodedGlyphs);
-            fail("null id should throw IllegalArgumentException");
-        }catch(NullPointerException e){
-            assertEquals("identifier can not be null", e.getMessage());
-        }
+     new NucleotideSequenceFastaRecordBuilder(null, sequence);        
     }
     
     @Test
@@ -77,26 +74,28 @@ public class TestNucleotideSequenceFastaRecordFactory {
     }
     @Test
     public void equalsSameValues(){
-        NucleotideSequenceFastaRecord sameValues = NucleotideSequenceFastaRecordFactory.create(id, 
-                encodedGlyphs,comment);
+        NucleotideSequenceFastaRecord sameValues = new NucleotideSequenceFastaRecordBuilder(id, sequence)
+        											.comment(comment)
+        											.build();
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);        
     }
     @Test
     public void equalsDifferentComment(){
-        NucleotideSequenceFastaRecord sameValues =NucleotideSequenceFastaRecordFactory.create(id, 
-                encodedGlyphs,"diff"+comment);
+        NucleotideSequenceFastaRecord sameValues =new NucleotideSequenceFastaRecordBuilder(id, sequence)
+        											.comment("diff"+comment)
+        											.build();
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);        
     }
     @Test
     public void equalsNoComment(){
-        NucleotideSequenceFastaRecord sameValues =NucleotideSequenceFastaRecordFactory.create(id, 
-                encodedGlyphs);
+        NucleotideSequenceFastaRecord sameValues = new NucleotideSequenceFastaRecordBuilder(id, sequence).build();
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);        
     }
     @Test
     public void notEqualsDifferentBases(){
-        NucleotideSequenceFastaRecord differentBasesAndChecksum = NucleotideSequenceFastaRecordFactory.create(id, 
-                new NucleotideSequenceBuilder(bases.substring(2)).build(),comment);
+        NucleotideSequenceFastaRecord differentBasesAndChecksum = new NucleotideSequenceFastaRecordBuilder(id, bases.substring(2))
+        														.comment(comment)
+        														.build();
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentBasesAndChecksum);        
     }
     

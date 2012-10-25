@@ -9,15 +9,13 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequenceBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultAminoAcidSequenceFastaRecordWriter {
-	private final AminoAcidSequenceFastaRecord record1 = AminoAcidSequenceFastaRecordFactory.create("id_1", 
-			new AminoAcidSequenceBuilder("CVGITPSA").build(),
-			"a comment");
-	private final AminoAcidSequenceFastaRecord record2 = AminoAcidSequenceFastaRecordFactory.create("id_2", 
-			new AminoAcidSequenceBuilder("CVGITPSAKASILHEV").build());
+	private final AminoAcidSequenceFastaRecord record1 = new AminoAcidSequenceFastaRecordBuilder("id_1", "CVGITPSA")
+																.comment("a comment")
+																.build();
+	private final AminoAcidSequenceFastaRecord record2 = new AminoAcidSequenceFastaRecordBuilder("id_2", "CVGITPSAKASILHEV").build();
 	
 	@Test(expected = NullPointerException.class)
 	public void nullOutputStreamShouldThrowNPE(){

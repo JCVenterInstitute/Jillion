@@ -8,15 +8,16 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultNucleotideSequenceFastaRecordWriter {
-	private final NucleotideSequenceFastaRecord record1 = NucleotideSequenceFastaRecordFactory.create("id_1", 
-			new NucleotideSequenceBuilder("ACGTACGT").build(),
-			"a comment");
-	private final NucleotideSequenceFastaRecord record2 = NucleotideSequenceFastaRecordFactory.create("id_2", 
-			new NucleotideSequenceBuilder("AAAACCCCGGGGTTTT").build());
+	private final NucleotideSequenceFastaRecord record1 = 
+			new NucleotideSequenceFastaRecordBuilder("id_1", "ACGTACGT")
+						.comment("a comment")
+						.build();
+		
+	private final NucleotideSequenceFastaRecord record2 = 
+			new NucleotideSequenceFastaRecordBuilder("id_2","AAAACCCCGGGGTTTT").build();
 	
 	@Test(expected = NullPointerException.class)
 	public void nullOutputStreamShouldThrowNPE(){

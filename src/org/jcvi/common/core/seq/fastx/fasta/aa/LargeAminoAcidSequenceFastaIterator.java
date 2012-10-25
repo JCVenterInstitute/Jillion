@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
-import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequenceBuilder;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 
 final class LargeAminoAcidSequenceFastaIterator extends AbstractBlockingCloseableIterator<AminoAcidSequenceFastaRecord>{
@@ -32,7 +31,9 @@ final class LargeAminoAcidSequenceFastaIterator extends AbstractBlockingCloseabl
 				
 				@Override
 				protected boolean visitRecord(String id, String comment, String entireBody) {
-					AminoAcidSequenceFastaRecord fastaRecord = AminoAcidSequenceFastaRecordFactory.create(id, new AminoAcidSequenceBuilder(entireBody).build(),comment);
+					AminoAcidSequenceFastaRecord fastaRecord = new AminoAcidSequenceFastaRecordBuilder(id, entireBody)
+																	.comment(comment)
+																	.build();
 					blockingPut(fastaRecord);
 	                return !LargeAminoAcidSequenceFastaIterator.this.isClosed();
 				}

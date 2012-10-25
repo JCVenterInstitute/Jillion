@@ -2,7 +2,8 @@ package org.jcvi.common.core.seq.fastx.fasta.qual;
 
 import java.util.Scanner;
 
-import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecordBuilder;
+import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 /**
@@ -13,11 +14,8 @@ import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
  * @author dkatzel
  *
  */
-public final class QualitySequenceFastaRecordBuilder {
+public final class QualitySequenceFastaRecordBuilder extends AbstractFastaRecordBuilder<PhredQuality, QualitySequence,QualitySequenceFastaRecord> {
 
-	private final String id;
-	private final QualitySequence sequence;
-	private String comment=null;
 	/**
 	 * Create a new builder instance for the given id and 
 	 * entire quality values as a human readable string.
@@ -36,42 +34,6 @@ public final class QualitySequenceFastaRecordBuilder {
 	 * can not be null.
 	 *  @throws NullPointerException if either parameter is null.
 	 */
-	public QualitySequenceFastaRecordBuilder(String id, QualitySequence sequence){
-		if(id ==null){
-			throw new NullPointerException("id can not be null");
-		}
-		if(sequence ==null){
-			throw new NullPointerException("sequence can not be null");
-		}
-		this.id = id;
-		this.sequence = sequence;
-	}
-	/**
-	 * Add an optional comment to this fasta record.
-	 * This will be the value returned by {@link FastaRecord#getComment()}.
-	 * Calling this method more than once will cause the last value to
-	 * overwrite the previous value.
-	 * @param comment the comment for this fasta record;
-	 * if this value is null, then there is no comment.
-	 * @return this.
-	 */
-	public QualitySequenceFastaRecordBuilder comment(String comment){
-		this.comment = comment;
-		return this;
-	}
-	/**
-	 * Create a new instance of {@link QualitySequenceFastaRecord}
-	 * using the given parameters so far.
-	 * @return
-	 */
-	public QualitySequenceFastaRecord build(){
-		if(comment ==null){
-			return new UncommentedQualitySequenceFastaRecord(id, sequence);
-		}
-		return new CommentedQualitySequenceFastaRecord(id, sequence, comment);
-	}
-	
-	
 	
 	private static QualitySequence parseQualitySequence(String sequence) {
 		Scanner scanner = new Scanner(sequence);
@@ -82,4 +44,17 @@ public final class QualitySequenceFastaRecordBuilder {
     	scanner.close();
     	return builder.build();
 	}
+	public QualitySequenceFastaRecordBuilder(String id, QualitySequence sequence) {
+		super(id, sequence);
+	}
+	@Override
+	protected QualitySequenceFastaRecord createNewInstance(String id, QualitySequence sequence,
+			String comment) {
+		if(comment ==null){
+			return new UncommentedQualitySequenceFastaRecord(id, sequence);
+		}
+		return new CommentedQualitySequenceFastaRecord(id, sequence, comment);
+	}
+	
+	
 }
