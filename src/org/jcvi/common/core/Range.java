@@ -809,7 +809,7 @@ public abstract class Range implements Rangeable,Iterable<Long>
 		//this mess is so we don't deal with underflow
 		//if start is Long.MIN_VALUE
 		long length = intersectionEnd - intersectionStart+1;
-		if(length<-1){
+		if(length<=-1){
 			return new Range.Builder().build();
 		}
 			return new Range.Builder(length)
