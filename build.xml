@@ -295,7 +295,8 @@
 					author ="true"
 					destdir = "javadoc"
 					windowtitle = "${project-name} API"
-					linksource= "yes">
+					linksource= "yes"
+				access="public">
 			</javadoc>
 		</target>
 	
