@@ -12,7 +12,7 @@ import org.jcvi.common.core.datastore.MapDataStoreAdapter;
  * @author dkatzel
  *
  */
-public final class DefaultNucleotideSequenceFastaDataStoreBuilder implements NucleotideSequenceFastaDataStoreBuilder{
+final class DefaultNucleotideSequenceFastaDataStoreBuilder implements NucleotideSequenceFastaDataStoreBuilder{
 
 	private final Map<String, NucleotideSequenceFastaRecord> map = new LinkedHashMap<String, NucleotideSequenceFastaRecord>();
 	@Override
