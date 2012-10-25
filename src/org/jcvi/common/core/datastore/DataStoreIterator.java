@@ -25,16 +25,18 @@ package org.jcvi.common.core.datastore;
 
 import java.io.IOException;
 
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public final class DataStoreIterator<T> implements StreamingIterator<T>{
-    private final StreamingIterator<String> ids; 
+    private StreamingIterator<String> ids; 
     private final DataStore<T> dataStore;
     public DataStoreIterator(DataStore<T> dataStore){
         this.dataStore =  dataStore;
         try {
             ids = dataStore.idIterator();
         } catch (DataStoreException e) {
+        	IOUtil.closeAndIgnoreErrors(ids);
             throw new IllegalStateException("could not iterate over ids", e);
         }
     }
@@ -48,6 +50,7 @@ public final class DataStoreIterator<T> implements StreamingIterator<T>{
         try {
             return dataStore.get(ids.next());
         } catch (DataStoreException e) {
+        	IOUtil.closeAndIgnoreErrors(ids);
             throw new IllegalStateException("could not get next element", e);
         }
     }
