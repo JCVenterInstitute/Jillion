@@ -39,7 +39,7 @@ import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
@@ -155,8 +155,11 @@ public class SortedFasta2Fastq {
             StreamingIterator<NucleotideSequenceFastaRecord> nucleotideIter=null;
             StreamingIterator<QualitySequenceFastaRecord> qualityIter =null;
             try{
-            	nucleotideIter = NucleotideSequenceFastaFileDataStoreFactory.create(seqFile, DataStoreProviderHint.OPTIMIZE_ITERATION, filter)
-            																	.iterator();
+            	nucleotideIter = new NucleotideSequenceFastaFileDataStoreBuilder(seqFile)
+            						.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+            						.filter(filter)
+            						.build()
+            						.iterator();
             
             	qualityIter =  new QualitySequenceFastaFileDataStoreBuilder(qualFile)
 				            			.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)

@@ -26,10 +26,9 @@ package org.jcvi.common.core.seq.read.trace.archive;
 import java.io.File;
 import java.io.InputStream;
 
-import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
@@ -78,8 +77,7 @@ public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
     	StreamingIterator<NucleotideSequenceFastaRecord> iterator=null;
     	NucleotideSequenceFastaDataStore datastore=null;
         try{
-        	 datastore= NucleotideSequenceFastaFileDataStoreFactory.create(getFile(TraceInfoField.BASE_FILE),
-             		DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED);
+        	 datastore= new NucleotideSequenceFastaFileDataStoreBuilder(getFile(TraceInfoField.BASE_FILE)).build();
              
             iterator = datastore.iterator();
 			return iterator.next().getSequence();

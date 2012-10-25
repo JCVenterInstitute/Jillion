@@ -9,7 +9,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -25,7 +25,9 @@ public class SortFasta {
 		File inputFasta = new File("path/to/input.fasta");
 		File sortedOutputFasta = new File("path/to/sorted/output.fasta");
 		
-		NucleotideSequenceFastaDataStore dataStore = NucleotideSequenceFastaFileDataStoreFactory.create(inputFasta, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY);
+		NucleotideSequenceFastaDataStore dataStore = new NucleotideSequenceFastaFileDataStoreBuilder(inputFasta)
+														.hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY)
+														.build();
 		SortedSet<String> sortedIds = new TreeSet<String>();
 		StreamingIterator<String> iter=null;
 		try {
@@ -43,7 +45,7 @@ public class SortFasta {
 				out.write(dataStore.get(id));
 			}
 		}finally{
-			IOUtil.closeAndIgnoreErrors(out);
+			IOUtil.closeAndIgnoreErrors(out,dataStore);
 		}
 		
 	}

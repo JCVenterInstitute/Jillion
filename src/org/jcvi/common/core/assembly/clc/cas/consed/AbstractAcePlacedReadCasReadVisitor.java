@@ -32,7 +32,7 @@ import org.jcvi.common.core.assembly.clc.cas.read.CasPlacedRead;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileIterator;
@@ -93,7 +93,9 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     public StreamingIterator<PhdReadRecord> createFastaIterator(File fastaFile,
             TraceDetails traceDetails) throws DataStoreException{        
         try {
-			NucleotideSequenceFastaDataStore datastore = NucleotideSequenceFastaFileDataStoreFactory.create(fastaFile, DataStoreProviderHint.OPTIMIZE_ITERATION);
+			NucleotideSequenceFastaDataStore datastore = new NucleotideSequenceFastaFileDataStoreBuilder(fastaFile)
+															.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+															.build();
 			return new FastaConsedPhdAdaptedIterator(
 	                datastore.iterator(),
 	                fastaFile,
@@ -110,7 +112,10 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     public StreamingIterator<PhdReadRecord> createChromatogramIterator(
             File chromatogramFile, TraceDetails traceDetails) throws DataStoreException{
         try {
-			NucleotideSequenceFastaDataStore datastore = NucleotideSequenceFastaFileDataStoreFactory.create(chromatogramFile, DataStoreProviderHint.OPTIMIZE_ITERATION);
+        	//there should only be a few sanger traces so we can take the memory 
+        	//hit and store it all in memory
+			NucleotideSequenceFastaDataStore datastore = new NucleotideSequenceFastaFileDataStoreBuilder(chromatogramFile)
+														.build();
 			return new ChromatDirFastaConsedPhdAdaptedIterator(
 					datastore.iterator(),
 	                chromatogramFile,
