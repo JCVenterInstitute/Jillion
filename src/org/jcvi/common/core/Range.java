@@ -812,6 +812,9 @@ public abstract class Range implements Rangeable,Iterable<Long>
 		if(length<=-1){
 			return new Range.Builder().build();
 		}
+		//length >=0 can be handled by builder
+		//we include length of 0 since 
+		//that might have a different start coordinate
 			return new Range.Builder(length)
 						.shift(intersectionStart)
 						.build();
