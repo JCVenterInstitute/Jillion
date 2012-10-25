@@ -9,7 +9,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  * @author dkatzel
  *
  */
-public interface NucleotideSequenceFastaDataStoreBuilder extends FastaDataStoreBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>{
+interface NucleotideSequenceFastaDataStoreBuilder extends FastaDataStoreBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>{
 	/**
 	 * Adds the given {@link NucleotideSequenceFastaRecord} to this builder.
 	 * <p/>
