@@ -1,4 +1,4 @@
-package org.jcvi.common.core.seq.fastx.fasta.aa;
+package org.jcvi.common.core.seq.fastx.fasta.aa.impl;
 
 
 import java.io.File;
@@ -8,6 +8,8 @@ import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractLargeFastaFileDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.aa.AminoAcidSequenceFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.aa.AminoAcidSequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -22,7 +24,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * in {@link CachedDataStore}.
  * @author dkatzel
  */
-final class LargeAminoAcidSequenceFastaFileDataStore extends AbstractLargeFastaFileDataStore<AminoAcid, AminoAcidSequence, AminoAcidSequenceFastaRecord> implements AminoAcidSequenceFastaDataStore{
+public final class LargeAminoAcidSequenceFastaFileDataStore extends AbstractLargeFastaFileDataStore<AminoAcid, AminoAcidSequence, AminoAcidSequenceFastaRecord> implements AminoAcidSequenceFastaDataStore{
 	
 	
 	

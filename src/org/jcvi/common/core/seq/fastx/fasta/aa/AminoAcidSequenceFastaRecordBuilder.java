@@ -1,6 +1,8 @@
 package org.jcvi.common.core.seq.fastx.fasta.aa;
 
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecordBuilder;
+import org.jcvi.common.core.seq.fastx.fasta.aa.impl.CommentedAminoAcidSequenceFastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.aa.impl.UnCommentedAminoAcidSequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequenceBuilder;

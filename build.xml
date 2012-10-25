@@ -6,6 +6,7 @@
 	<property name="bin" value ="bin_ant"/>
 	<property name="reports" value ="reports"/>
 	<property name="src" value ="src"/>
+	<property name="src-impl" value ="src-impl"/>
 	<property name="src-internal" value ="src-internal"/>
 	<property name="test" value ="test"/>
 	<property name="test-internal" value ="test-internal"/>
@@ -126,6 +127,7 @@
 			<!-- debug = true required for emma reports to see line coverage and link to source-->
 			<javac debug="true" destdir="${bin}"  classpathref="classpath" includeantruntime="false">
 				<src path="${src}"/>
+				<src path="${src-impl}"/>
 				<compilerarg line="-Xlint:all"/>
 		  	</javac>
 			<emma enabled="${emma.enabled}" >
@@ -139,6 +141,7 @@
 						  	    </emma>
 			<copy todir="${bin}">
 				<fileset dir="${src}" excludes="**/*.java"/>
+				<fileset dir="${src-impl}" excludes="**/*.java"/>
 			</copy>
 
 		 </target>
@@ -194,6 +197,9 @@
 	          <fileset dir="${src}">
 	              <include name="**/*.java"/>
 	          </fileset>
+	   	<fileset dir="${src-impl}">
+	   		              <include name="**/*.java"/>
+	   		          </fileset>
 	      </pmd>
 	  </target>
 
@@ -203,6 +209,7 @@
 	              outputFile="findbugs.xml">
 	      <auxClasspath refid = "test.classpath" />
 	      <sourcePath path="${src}" />
+	    	<sourcePath path="${src-impl}" />
 	      <class location="${bin}" />
 	    
 	    </findbugs>
@@ -277,6 +284,7 @@
 			<report>
 				<sourcepath>
 				          <dirset dir="${src}" />
+					<dirset dir="${src-impl}" />
 				</sourcepath>
 				<infileset dir="." includes="*.em, *.ec" />
 	 	 		<xml outfile = "coverage.xml"/>
@@ -306,6 +314,7 @@
 			classpathref="test.classpath">
 			
 		  <fileset dir="${src}" includes="**/*.java"/>
+			<fileset dir="${src-impl}" includes="**/*.java"/>
 		  <formatter type="xml" toFile="checkstyle_errors.xml"/>
 		</checkstyle>
 		</target>

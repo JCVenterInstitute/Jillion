@@ -1,8 +1,9 @@
-package org.jcvi.common.core.seq.fastx.fasta.aa;
+package org.jcvi.common.core.seq.fastx.fasta.aa.impl;
 
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
+import org.jcvi.common.core.seq.fastx.fasta.aa.AminoAcidSequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 import org.jcvi.common.core.util.ObjectsUtil;
 /**
@@ -13,7 +14,7 @@ import org.jcvi.common.core.util.ObjectsUtil;
  * @author dkatzel
  *
  */
-class UnCommentedAminoAcidSequenceFastaRecord implements AminoAcidSequenceFastaRecord{
+public class UnCommentedAminoAcidSequenceFastaRecord implements AminoAcidSequenceFastaRecord{
 
 	private static final int NUMBER_OF_BASES_PER_LINE = 60;
 	private static final Pattern LINE_SPLITTER_PATTERN = Pattern.compile(String.format("(.{%s})", NUMBER_OF_BASES_PER_LINE));
