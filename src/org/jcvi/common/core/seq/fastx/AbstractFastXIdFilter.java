@@ -28,7 +28,7 @@ import java.util.Collection;
  *
  *
  */
-public abstract class AbstractFastXIdFilter implements FastXFilter{
+abstract class AbstractFastXIdFilter implements FastXFilter{
 
     private final Collection<String> ids;
 
