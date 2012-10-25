@@ -24,7 +24,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
-import org.jcvi.common.core.datastore.DefaultExcludeDataStoreFilter;
 import org.junit.Test;
 
 /**
@@ -33,7 +32,7 @@ import org.junit.Test;
  *
  */
 public class TestDefaultExcludeDataStoreFilter {
-    DefaultExcludeDataStoreFilter sut = new DefaultExcludeDataStoreFilter(Arrays.asList("include_1", "include_2"));
+    DataStoreFilter sut = DataStoreFilters.newExcludeFilter(Arrays.asList("include_1", "include_2"));
     
     @Test
     public void idIsInIncludeListShouldNotAccept(){

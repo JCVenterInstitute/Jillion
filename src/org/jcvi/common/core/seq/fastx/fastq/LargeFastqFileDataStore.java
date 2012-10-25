@@ -27,10 +27,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
@@ -115,7 +115,7 @@ final class LargeFastqFileDataStore implements FastqDataStore {
     		throw new FileNotFoundException("could not find " + fastQFile.getAbsolutePath());
     	}
     	if(filter==null){
-    		this.filter = AcceptingDataStoreFilter.INSTANCE;
+    		this.filter = DataStoreFilters.alwaysAccept();
     	}else{
     		this.filter = filter;
     	}

@@ -7,9 +7,9 @@ import java.io.InputStream;
 import java.util.Map;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractIndexedFastaDataStoreBuilderVisitor;
@@ -86,7 +86,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore implements AminoAc
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
 	public static AminoAcidSequenceFastaDataStoreBuilderVisitor createBuilder(File fastaFile) throws FileNotFoundException{
-		return createBuilder(fastaFile, AcceptingDataStoreFilter.INSTANCE);
+		return createBuilder(fastaFile, DataStoreFilters.alwaysAccept());
 	}
 	
 	/**

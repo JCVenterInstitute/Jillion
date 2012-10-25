@@ -25,9 +25,9 @@ package org.jcvi.common.core.seq.fastx.fasta.nt;
 
 import java.io.File;
 
-import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractLargeFastaFileDataStore;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
@@ -52,7 +52,7 @@ final class LargeNucleotideSequenceFastaFileDataStore extends AbstractLargeFasta
      * @throws NullPointerException if fastaFile is null.
      */
 	public static NucleotideSequenceFastaDataStore create(File fastaFile){
-		return create(fastaFile, AcceptingDataStoreFilter.INSTANCE);
+		return create(fastaFile, DataStoreFilters.alwaysAccept());
 	}
 	 /**
      * Construct a {@link LargeNucleotideSequenceFastaFileDataStore}

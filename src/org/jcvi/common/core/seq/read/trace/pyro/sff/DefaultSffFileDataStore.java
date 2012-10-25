@@ -27,7 +27,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 /**
@@ -84,7 +84,7 @@ public final class DefaultSffFileDataStore {
 	 * never null.
 	 */
 	public static SffFileVisitorDataStoreBuilder createVisitorBuilder() {
-		return new DefaultSffFileVisitorDataStoreBuilder(AcceptingDataStoreFilter.INSTANCE);
+		return new DefaultSffFileVisitorDataStoreBuilder(DataStoreFilters.alwaysAccept());
 	}
 	/**
 	 * Create a new {@link SffFileVisitorDataStoreBuilder}

@@ -25,7 +25,7 @@ package org.jcvi.common.core.datastore;
 
 import java.io.IOException;
 
-import org.jcvi.common.core.datastore.Cacheable;
+import org.jcvi.common.core.datastore.CachedDataStore.Cacheable;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;

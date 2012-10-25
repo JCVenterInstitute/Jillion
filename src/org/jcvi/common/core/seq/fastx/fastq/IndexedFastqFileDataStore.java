@@ -27,9 +27,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
@@ -84,7 +84,7 @@ final class IndexedFastqFileDataStore implements FastqDataStore{
 	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
 	 */
     public static FastqFileDataStoreBuilderVisitor createBuilder(File file,FastqQualityCodec qualityCodec){
-    	return new IndexedFastqFileDataStoreBuilderVisitor(qualityCodec, file, AcceptingDataStoreFilter.INSTANCE);
+    	return new IndexedFastqFileDataStoreBuilderVisitor(qualityCodec, file, DataStoreFilters.alwaysAccept());
     }
     /**
 	 * Creates a new {@link IndexedFastqFileDataStore}

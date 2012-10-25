@@ -21,7 +21,6 @@ package org.jcvi.common.core.datastore;
 
 import java.util.Arrays;
 
-import org.jcvi.common.core.datastore.IncludeDataStoreFilter;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**
@@ -31,7 +30,7 @@ import static org.junit.Assert.*;
  */
 public class TestDefaultIncludeDataStoreFilter {
 
-    IncludeDataStoreFilter sut = new IncludeDataStoreFilter(Arrays.asList("include_1", "include_2"));
+    DataStoreFilter sut = DataStoreFilters.newIncludeFilter(Arrays.asList("include_1", "include_2"));
     
     @Test
     public void idIsInIncludeListShouldAccept(){

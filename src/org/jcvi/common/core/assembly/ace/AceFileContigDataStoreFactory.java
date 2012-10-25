@@ -3,9 +3,9 @@ package org.jcvi.common.core.assembly.ace;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 /**
  * {@code AceFileContigDataStoreFactory} is a 
@@ -70,7 +70,7 @@ public final class AceFileContigDataStoreFactory {
 	 * Create a new {@link AceFileContigDataStore} instance
 	 * for the given ace file of the given implementation type.
 	 * This is a convenience method for
-	 * {@link #create(File, DataStoreProviderHint, DataStoreFilter) create(aceFile, type, AcceptingDataStoreFilter.INSTANCE}.
+	 * {@link #create(File, DataStoreProviderHint, DataStoreFilter) create(aceFile, type, DataStoreFilters.alwaysAccept()}.
 	 * @param aceFile the ace file to used to create the {@link DataStore};
 	 * the file must exist and can not be null.
 	 * @param type an {@link DataStoreProviderHint} instance
@@ -82,7 +82,7 @@ public final class AceFileContigDataStoreFactory {
 	 * @throws IllegalArgumentException if the ace file does not exist or is not readable.
 	 */
 	public static AceFileContigDataStore create(File aceFile,DataStoreProviderHint type) throws IOException{
-		return create(aceFile, type, AcceptingDataStoreFilter.INSTANCE);		
+		return create(aceFile, type, DataStoreFilters.alwaysAccept());		
 	}
 	
 }

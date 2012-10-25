@@ -3,9 +3,9 @@ package org.jcvi.common.core.seq.fastx.fasta.aa.impl;
 
 import java.io.File;
 
-import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractLargeFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.aa.AminoAcidSequenceFastaDataStore;
@@ -35,7 +35,7 @@ public final class LargeAminoAcidSequenceFastaFileDataStore extends AbstractLarg
      * @throws NullPointerException if fastaFile is null.
      */
 	public static AminoAcidSequenceFastaDataStore create(File fastaFile){
-		return create(fastaFile, AcceptingDataStoreFilter.INSTANCE);
+		return create(fastaFile, DataStoreFilters.alwaysAccept());
 	}
 	/**
      * Construct a {@link LargeAminoAcidSequenceFastaFileDataStore}

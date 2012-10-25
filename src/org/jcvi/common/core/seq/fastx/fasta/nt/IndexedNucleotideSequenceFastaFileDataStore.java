@@ -7,15 +7,15 @@ import java.io.InputStream;
 import java.util.Map;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractIndexedFastaDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
-import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
+import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -88,7 +88,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 		if(!fastaFile.exists()){
 			throw new FileNotFoundException(fastaFile.getAbsolutePath());
 		}
-		return new IndexedNucleotideFastaDataStoreBuilderVisitor(fastaFile, AcceptingDataStoreFilter.INSTANCE);
+		return new IndexedNucleotideFastaDataStoreBuilderVisitor(fastaFile, DataStoreFilters.alwaysAccept());
 	}
 	/**
 	 * Creates a new {@link NucleotideFastaDataStoreBuilderVisitor}

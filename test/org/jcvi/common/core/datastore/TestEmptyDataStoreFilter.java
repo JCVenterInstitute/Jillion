@@ -19,17 +19,16 @@
 
 package org.jcvi.common.core.datastore;
 
-import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
  *
  */
 public class TestEmptyDataStoreFilter {
-    DataStoreFilter sut = AcceptingDataStoreFilter.INSTANCE;
+    DataStoreFilter sut = DataStoreFilters.alwaysAccept();
     @Test
     public void alwaysTrue(){
         assertTrue(sut.accept("something"));

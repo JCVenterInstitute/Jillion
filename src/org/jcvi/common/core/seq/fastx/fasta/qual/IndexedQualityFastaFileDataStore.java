@@ -7,15 +7,15 @@ import java.io.InputStream;
 import java.util.Map;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractIndexedFastaDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
-import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
+import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -45,7 +45,7 @@ final class IndexedQualityFastaFileDataStore implements QualitySequenceFastaData
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
 	public static QualitySequenceFastaDataStore create(File fastaFile) throws FileNotFoundException{
-		return create(fastaFile, AcceptingDataStoreFilter.INSTANCE);
+		return create(fastaFile, DataStoreFilters.alwaysAccept());
 	}
 	
 	/**
@@ -79,7 +79,7 @@ final class IndexedQualityFastaFileDataStore implements QualitySequenceFastaData
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
 	public static QualityFastaDataStoreBuilderVisitor createBuilder(File fastaFile){
-		return createBuilder(fastaFile, AcceptingDataStoreFilter.INSTANCE);
+		return createBuilder(fastaFile, DataStoreFilters.alwaysAccept());
 	}
 	
 	/**

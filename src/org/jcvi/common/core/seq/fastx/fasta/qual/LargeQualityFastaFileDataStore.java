@@ -25,9 +25,9 @@ package org.jcvi.common.core.seq.fastx.fasta.qual;
 
 import java.io.File;
 
-import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractLargeFastaFileDataStore;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
@@ -49,7 +49,7 @@ final class LargeQualityFastaFileDataStore extends AbstractLargeFastaFileDataSto
 
     
     public static QualitySequenceFastaDataStore create(File fastaFile){
-    	return create(fastaFile, AcceptingDataStoreFilter.INSTANCE);
+    	return create(fastaFile, DataStoreFilters.alwaysAccept());
     }
     public static QualitySequenceFastaDataStore create(File fastaFile, DataStoreFilter filter){
     	return new LargeQualityFastaFileDataStore(fastaFile,filter);
