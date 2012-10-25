@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaFileDataStoreBuilder;
+import org.jcvi.common.core.seq.fastx.fasta.FastaDataStore;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 
@@ -19,7 +20,14 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
  */
 public final class QualitySequenceFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<PhredQuality, QualitySequence, QualitySequenceFastaRecord, QualitySequenceFastaDataStore>{
 
-	
+	/**
+	 * Create a new Builder instance of 
+	 * which will build a {@link FastaDataStore} for the given
+	 * fasta file.
+	 * @param fastaFile the fasta file make a {@link FastaDataStore} with. 
+	 * @throws IOException if the fasta file does not exist, or can not be read.
+	 * @throws NullPointerException if fastaFile is null.
+	 */
 	public QualitySequenceFastaFileDataStoreBuilder(File fastaFile)
 			throws IOException {
 		super(fastaFile);

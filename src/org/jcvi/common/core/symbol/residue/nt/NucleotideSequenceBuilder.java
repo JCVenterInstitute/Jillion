@@ -127,6 +127,9 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * '*' (consed) and '-' (TIGR) as gap characters. 
      * @param sequence the initial nucleotide sequence.
      * @throws NullPointerException if sequence is null.
+     * @throws IllegalArgumentException if any non-whitespace
+     * in character in the sequence can not be converted
+     * into a {@link Nucleotide}.
      */
     public NucleotideSequenceBuilder(String sequence){
     	NewValues newValues = new NewValues(sequence);

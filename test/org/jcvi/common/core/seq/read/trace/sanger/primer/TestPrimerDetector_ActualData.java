@@ -28,9 +28,8 @@ import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreFactory;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -53,13 +52,13 @@ public class TestPrimerDetector_ActualData {
         primerDataStore = 
         
         		FastaRecordDataStoreAdapter.adapt(NucleotideSequenceDataStore.class,
-        				NucleotideSequenceFastaFileDataStoreFactory.create(
-                        RESOURCES.getFile("files/primers.fasta"),
-                        DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED));
-        sequence = NucleotideSequenceFastaFileDataStoreFactory.create(
-                                RESOURCES.getFile("files/fullLength.fasta"),
-                                DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED)
-                        .get("SAJJA07T27G07MP1F").getSequence();
+        				new NucleotideSequenceFastaFileDataStoreBuilder(
+                        RESOURCES.getFile("files/primers.fasta"))
+                        .build());
+        sequence = new NucleotideSequenceFastaFileDataStoreBuilder(
+                                RESOURCES.getFile("files/fullLength.fasta"))
+        					.build()
+        					.get("SAJJA07T27G07MP1F").getSequence();
     }    
   
     @Test
