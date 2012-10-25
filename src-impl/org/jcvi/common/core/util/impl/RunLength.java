@@ -21,7 +21,9 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.util;
+package org.jcvi.common.core.util.impl;
+
+import org.jcvi.common.core.util.ObjectsUtil;
 
 
 public final class RunLength<T> {

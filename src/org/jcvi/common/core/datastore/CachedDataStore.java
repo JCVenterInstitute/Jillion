@@ -30,7 +30,7 @@ import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.jcvi.common.core.util.Caches;
+import org.jcvi.common.core.util.impl.Caches;
 
 /**
  * {@code CachedDataStore} uses the Java Proxy classes to

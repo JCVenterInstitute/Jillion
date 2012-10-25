@@ -22,7 +22,7 @@
  *
  * Copyright 2008: J. Craig Venter Institute
  */
-package org.jcvi.common.core.util;
+package org.jcvi.common.core.util.impl;
 
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import org.jcvi.common.core.util.MapUtil;
 
 /**
  * <code>Caches</code> is a utility class which contains various 

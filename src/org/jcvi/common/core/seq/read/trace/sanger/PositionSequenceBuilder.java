@@ -6,7 +6,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.SequenceBuilder;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.util.GrowableShortArray;
+import org.jcvi.common.core.util.impl.GrowableShortArray;
 
 public final class PositionSequenceBuilder implements SequenceBuilder<Position, PositionSequence>{
 	/**

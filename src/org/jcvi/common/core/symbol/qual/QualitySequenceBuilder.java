@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.SequenceBuilder;
-import org.jcvi.common.core.util.GrowableByteArray;
+import org.jcvi.common.core.util.impl.GrowableByteArray;
 /**
  * {@code QualitySequenceBuilder} is a 
  * is a way to

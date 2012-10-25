@@ -35,7 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.Caches;
+import org.jcvi.common.core.util.impl.Caches;
 
 
 /**

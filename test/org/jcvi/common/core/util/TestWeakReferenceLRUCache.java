@@ -22,6 +22,7 @@ package org.jcvi.common.core.util;
 import java.util.Collections;
 import java.util.Map;
 
+import org.jcvi.common.core.util.impl.Caches;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**

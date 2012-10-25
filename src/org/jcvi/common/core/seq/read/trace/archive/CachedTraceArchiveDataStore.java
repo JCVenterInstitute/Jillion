@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.util.Caches;
+import org.jcvi.common.core.util.impl.Caches;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code CachedTraceArchiveDataStore} is a {@link TraceArchiveDataStore}

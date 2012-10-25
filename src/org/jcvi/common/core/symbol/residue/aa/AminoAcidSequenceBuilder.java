@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.ResidueSequenceBuilder;
-import org.jcvi.common.core.util.GrowableByteArray;
+import org.jcvi.common.core.util.impl.GrowableByteArray;
 
 public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<AminoAcid,AminoAcidSequence>{
 	private static final AminoAcid[] AMINO_ACID_VALUES = AminoAcid.values();

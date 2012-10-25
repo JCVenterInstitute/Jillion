@@ -19,11 +19,12 @@
 
 package org.jcvi.common.core.util;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import org.jcvi.common.core.util.impl.ComparableComparator;
 
 /**
  * {@code MapValueComparator} is a {@link Comparator}

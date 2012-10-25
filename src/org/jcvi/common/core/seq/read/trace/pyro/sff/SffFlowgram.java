@@ -34,8 +34,8 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.util.GrowableShortArray;
 import org.jcvi.common.core.util.ObjectsUtil;
+import org.jcvi.common.core.util.impl.GrowableShortArray;
 
 final class SffFlowgram implements Flowgram {
     private final String id;
