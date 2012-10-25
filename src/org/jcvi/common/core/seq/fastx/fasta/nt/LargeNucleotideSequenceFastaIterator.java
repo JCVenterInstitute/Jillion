@@ -27,7 +27,6 @@ import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 
 /**
@@ -67,7 +66,9 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingCloseab
 						accept = filter.accept(id);
 					}
 					if(accept){
-						NucleotideSequenceFastaRecord fastaRecord = NucleotideSequenceFastaRecordFactory.create(id, new NucleotideSequenceBuilder(entireBody).build(),comment);
+						NucleotideSequenceFastaRecord fastaRecord = new NucleotideSequenceFastaRecordBuilder(id, entireBody)
+																		.comment(comment)
+																		.build();
 						blockingPut(fastaRecord);
 					}
 	                return !LargeNucleotideSequenceFastaIterator.this.isClosed();

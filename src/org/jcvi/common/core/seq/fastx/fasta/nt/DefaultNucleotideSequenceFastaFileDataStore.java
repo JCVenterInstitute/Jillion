@@ -33,7 +33,6 @@ import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaFileDataStoreBuilderVis
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 /**
  * {@code DefaultNucleotideFastaFileDataStore} is the default implementation
  * of {@link NucleotideSequenceFastaDataStore} which stores
@@ -97,8 +96,9 @@ final class DefaultNucleotideSequenceFastaFileDataStore{
 		@Override
 		protected NucleotideSequenceFastaRecord createFastaRecord(String id,
 				String comment, String entireBody) {
-			NucleotideSequence seq = new NucleotideSequenceBuilder(entireBody).build();
-			return NucleotideSequenceFastaRecordFactory.create(id, seq,comment);
+			return new NucleotideSequenceFastaRecordBuilder(id, entireBody)
+						.comment(comment)
+						.build();
 		}
     	
     }
