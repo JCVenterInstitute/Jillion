@@ -1,5 +1,6 @@
 package org.jcvi.common.core.seq.fastx.fasta.aa;
 
+import org.jcvi.common.core.seq.fastx.fasta.aa.impl.UnCommentedAminoAcidSequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 import org.junit.Test;
 import static org.junit.Assert.*;

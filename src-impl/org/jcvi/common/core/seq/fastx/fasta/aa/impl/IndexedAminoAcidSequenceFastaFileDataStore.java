@@ -1,4 +1,4 @@
-package org.jcvi.common.core.seq.fastx.fasta.aa;
+package org.jcvi.common.core.seq.fastx.fasta.aa.impl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,6 +16,8 @@ import org.jcvi.common.core.seq.fastx.fasta.AbstractIndexedFastaDataStoreBuilder
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.aa.AminoAcidSequenceFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.aa.AminoAcidSequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -30,7 +32,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
-final class IndexedAminoAcidSequenceFastaFileDataStore implements AminoAcidSequenceFastaDataStore{
+public final class IndexedAminoAcidSequenceFastaFileDataStore implements AminoAcidSequenceFastaDataStore{
 	
 	private final Map<String,Range> index;
 	private final File fastaFile;

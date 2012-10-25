@@ -1,8 +1,8 @@
-package org.jcvi.common.core.seq.fastx.fasta.aa;
+package org.jcvi.common.core.seq.fastx.fasta.aa.impl;
 
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 
-class CommentedAminoAcidSequenceFastaRecord extends UnCommentedAminoAcidSequenceFastaRecord{
+public class CommentedAminoAcidSequenceFastaRecord extends UnCommentedAminoAcidSequenceFastaRecord{
 
 	private final String comments;
 	
