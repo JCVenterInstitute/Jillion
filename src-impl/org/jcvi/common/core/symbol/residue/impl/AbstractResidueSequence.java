@@ -1,4 +1,7 @@
-package org.jcvi.common.core.symbol.residue;
+package org.jcvi.common.core.symbol.residue.impl;
+
+import org.jcvi.common.core.symbol.residue.Residue;
+import org.jcvi.common.core.symbol.residue.ResidueSequence;
 
 /**
  * {@code AbstractResidueSequence} is an abstract implementation of 

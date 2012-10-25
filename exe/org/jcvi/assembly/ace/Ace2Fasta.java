@@ -43,14 +43,12 @@ import org.jcvi.common.core.assembly.ace.AceFileContigDataStoreFactory;
 import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
-import org.jcvi.common.core.seq.fastx.FastXFilter;
-import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
-import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
@@ -98,7 +96,7 @@ public class Ace2Fasta {
             final boolean gapped = commandLine.hasOption("g");
             
             final File idFile;
-            final FastXFilter filter;
+            final DataStoreFilter filter;
             if(commandLine.hasOption("i")){
                 idFile =new File(commandLine.getOptionValue("i"));
                 Set<String> includeList=parseIdsFrom(idFile);
@@ -106,13 +104,13 @@ public class Ace2Fasta {
                     Set<String> excludeList=parseIdsFrom(new File(commandLine.getOptionValue("e")));
                     includeList.removeAll(excludeList);
                 }
-                filter = new IncludeFastXIdFilter(includeList);
+                filter = DataStoreFilters.newIncludeFilter(includeList);
                 
             }else if(commandLine.hasOption("e")){
                 idFile =new File(commandLine.getOptionValue("e"));
-                filter = new ExcludeFastXIdFilter(parseIdsFrom(idFile));
+                filter = DataStoreFilters.newExcludeFilter(parseIdsFrom(idFile));
             }else{
-                filter = AcceptingFastXFilter.INSTANCE;
+                filter =DataStoreFilters.alwaysAccept();
             }
             AceFileContigDataStore contigDataStore = AceFileContigDataStoreFactory.create(aceIn, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY);
             //consed allows users to rename contigs, but instead of changing

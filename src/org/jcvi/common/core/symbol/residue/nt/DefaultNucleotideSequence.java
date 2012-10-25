@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.symbol.residue.AbstractResidueSequence;
+import org.jcvi.common.core.symbol.residue.impl.AbstractResidueSequence;
 
 /**
  * {@code DefaultNucleotideSequence} is the default

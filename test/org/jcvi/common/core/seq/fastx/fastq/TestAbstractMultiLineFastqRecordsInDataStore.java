@@ -1,19 +1,20 @@
 package org.jcvi.common.core.seq.fastx.fastq;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.FastXFilter;
-import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 /**
  * The fastq spec actually allows
  * multi-line sequences and qualities but most
@@ -33,7 +34,7 @@ public abstract class TestAbstractMultiLineFastqRecordsInDataStore {
 	
 	protected abstract FastqDataStore createFastqDataStoreFor(File fastq, FastqQualityCodec qualityCodec) throws IOException;
 	
-	protected abstract FastqDataStore createFastqDataStoreFor(File fastq, FastqQualityCodec qualityCodec, FastXFilter filter) throws IOException;
+	protected abstract FastqDataStore createFastqDataStoreFor(File fastq, FastqQualityCodec qualityCodec, DataStoreFilter filter) throws IOException;
 	
 	@Test
 	public void multiLineMatchesSingleline() throws IOException, DataStoreException{
@@ -78,7 +79,7 @@ public abstract class TestAbstractMultiLineFastqRecordsInDataStore {
 	@Test
 	public void filteredDataStore() throws IOException, DataStoreException{
 		List<String> include = Arrays.asList("SOLEXA1_0007:2:13:163:254#GATCAG/2");
-		FastXFilter filter = new IncludeFastXIdFilter(include);
+		DataStoreFilter filter = DataStoreFilters.newIncludeFilter(include);
 		FastqDataStore singleDataStore = createFastqDataStoreFor(
 				resources.getFile("files/sanger.fastq"),
 				FastqQualityCodec.SANGER,

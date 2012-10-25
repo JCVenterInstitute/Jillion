@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.symbol.GlyphCodec;
+import org.jcvi.common.core.symbol.impl.GlyphCodec;
 import org.jcvi.common.core.symbol.residue.nt.DefaultNucleotideCodec;
 import org.jcvi.common.core.symbol.residue.nt.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;

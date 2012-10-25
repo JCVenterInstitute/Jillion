@@ -21,9 +21,11 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.io;
+package org.jcvi.common.core.io.impl;
 
 import java.nio.ByteBuffer;
+
+import org.jcvi.common.core.io.IOUtil;
 
 
 /**

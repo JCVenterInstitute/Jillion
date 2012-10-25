@@ -38,9 +38,9 @@ import java.util.TreeMap;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.ValueSizeStrategy;
+import org.jcvi.common.core.io.impl.ValueSizeStrategy;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.residue.AbstractResidueSequence;
+import org.jcvi.common.core.symbol.residue.impl.AbstractResidueSequence;
 import org.jcvi.common.core.util.iter.ArrayIterator;
 
 final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSequence<Nucleotide> implements ReferenceMappedNucleotideSequence{

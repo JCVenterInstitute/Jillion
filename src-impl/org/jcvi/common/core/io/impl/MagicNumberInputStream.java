@@ -17,13 +17,15 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.io;
+package org.jcvi.common.core.io.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+
+import org.jcvi.common.core.io.IOUtil;
 
 /**
  * {@code MagicNumberInputStream} is an
@@ -38,7 +40,7 @@ import java.util.Arrays;
  *
  *
  */
-public class MagicNumberInputStream extends InputStream{
+public final class MagicNumberInputStream extends InputStream{
 
     private final InputStream in;
     private final byte[] magicNumber;

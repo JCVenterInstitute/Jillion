@@ -27,7 +27,7 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import org.jcvi.common.core.io.ValueSizeStrategy;
+import org.jcvi.common.core.io.impl.ValueSizeStrategy;
 import org.jcvi.common.core.seq.read.trace.TraceEncoderException;
 
 /**

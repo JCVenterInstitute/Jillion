@@ -3,7 +3,7 @@ package org.jcvi.common.core.seq.fastx.fastq;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.seq.fastx.FastXFilter;
+import org.jcvi.common.core.datastore.DataStoreFilter;
 
 public class TestDefaultMultiLineFastqRecordsInDataStore extends TestAbstractMultiLineFastqRecordsInDataStore{
 
@@ -16,7 +16,7 @@ public class TestDefaultMultiLineFastqRecordsInDataStore extends TestAbstractMul
 
 	@Override
 	protected FastqDataStore createFastqDataStoreFor(File fastq,
-			FastqQualityCodec qualityCodec, FastXFilter filter)
+			FastqQualityCodec qualityCodec, DataStoreFilter filter)
 			throws IOException {
 		return DefaultFastqFileDataStore.create(fastq, filter, qualityCodec);
 	}
