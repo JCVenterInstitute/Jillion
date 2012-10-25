@@ -45,4 +45,37 @@ public final class NucleotideSequenceFastaFileDataStoreBuilder extends AbstractF
 				throw new IllegalArgumentException("unknown provider hint : "+ providerHint);
 		}
 	}
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public NucleotideSequenceFastaFileDataStoreBuilder filter(
+			DataStoreFilter filter) {
+		super.filter(filter);
+		return this;
+	}
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public NucleotideSequenceFastaFileDataStoreBuilder hint(
+			DataStoreProviderHint hint) {
+		super.hint(hint);
+		return this;
+	}
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public NucleotideSequenceFastaDataStore build() throws IOException {
+		return super.build();
+	}
+	
+	
 }

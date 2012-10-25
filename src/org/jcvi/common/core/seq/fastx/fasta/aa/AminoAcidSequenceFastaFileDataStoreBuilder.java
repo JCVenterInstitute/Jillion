@@ -45,6 +45,34 @@ public final class AminoAcidSequenceFastaFileDataStoreBuilder extends AbstractFa
 				throw new IllegalArgumentException("unknown provider hint :"+ hint);
 		}
 	}
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public AminoAcidSequenceFastaFileDataStoreBuilder filter(
+			DataStoreFilter filter) {
+		super.filter(filter);
+		return this;
+	}
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public AminoAcidSequenceFastaFileDataStoreBuilder hint(
+			DataStoreProviderHint hint) {
+		super.hint(hint);
+		return this;
+	}
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public AminoAcidSequenceFastaDataStore build() throws IOException {
+		return super.build();
+	}
 	
 	
 }
