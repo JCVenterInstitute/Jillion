@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.symbol.GlyphCodec;
+import org.jcvi.common.core.symbol.impl.GlyphCodec;
 
 /**
  * @author dkatzel

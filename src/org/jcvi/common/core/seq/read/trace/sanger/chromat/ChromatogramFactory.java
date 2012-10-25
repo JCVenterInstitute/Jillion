@@ -26,7 +26,7 @@ import java.io.InputStream;
 
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.MagicNumberInputStream;
+import org.jcvi.common.core.io.impl.MagicNumberInputStream;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.Ab1FileParser;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ab1.DefaultAbiChromatogram;

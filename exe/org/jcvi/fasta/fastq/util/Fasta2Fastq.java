@@ -33,19 +33,17 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
-import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
-import org.jcvi.common.core.seq.fastx.FastXFilter;
-import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
-import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriterBuilder;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
@@ -105,7 +103,7 @@ public class Fasta2Fastq {
             boolean useSanger = commandLine.hasOption("sanger");
             
             final File idFile;
-            final FastXFilter filter;
+            final DataStoreFilter filter;
             if(commandLine.hasOption("i")){
                 idFile =new File(commandLine.getOptionValue("i"));
                 Set<String> includeList=parseIdsFrom(idFile);
@@ -113,13 +111,13 @@ public class Fasta2Fastq {
                     Set<String> excludeList=parseIdsFrom(new File(commandLine.getOptionValue("e")));
                     includeList.removeAll(excludeList);
                 }
-                filter = new IncludeFastXIdFilter(includeList);
+                filter = DataStoreFilters.newIncludeFilter(includeList);
                 
             }else if(commandLine.hasOption("e")){
                 idFile =new File(commandLine.getOptionValue("e"));
-                filter = new ExcludeFastXIdFilter(parseIdsFrom(idFile));
+                filter = DataStoreFilters.newExcludeFilter(parseIdsFrom(idFile));
             }else{
-                filter = AcceptingFastXFilter.INSTANCE;
+                filter = DataStoreFilters.alwaysAccept();
             }
             final FastqQualityCodec fastqQualityCodec = useSanger? FastqQualityCodec.SANGER: FastqQualityCodec.ILLUMINA;
           
@@ -139,7 +137,7 @@ public class Fasta2Fastq {
                 @Override
                 public boolean visitRecord(String id, String comment, String entireBody) {
                     try {
-                        if(filter.accept(id, comment)){
+                        if(filter.accept(id)){
                             QualitySequence qualities =qualityDataStore.get(id).getSequence();
                             if(qualities ==null){
                                 throw new IllegalStateException("no quality values for "+ id);

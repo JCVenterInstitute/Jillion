@@ -21,9 +21,11 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.symbol;
+package org.jcvi.common.core.symbol.impl;
 
 import java.util.Collection;
+
+import org.jcvi.common.core.symbol.Symbol;
 
 /**
  * {@code GlyphCodec} is an interface

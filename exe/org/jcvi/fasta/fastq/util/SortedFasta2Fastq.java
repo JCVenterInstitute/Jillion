@@ -33,21 +33,19 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
-import org.jcvi.common.core.seq.fastx.FastXFilter;
-import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
-import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
+import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriterBuilder;
 import org.jcvi.common.core.util.DateUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
@@ -124,7 +122,7 @@ public class SortedFasta2Fastq {
             
             
             final File idFile;
-            final FastXFilter filter;
+            final DataStoreFilter filter;
             if(commandLine.hasOption("i")){
                 idFile =new File(commandLine.getOptionValue("i"));
                 Set<String> includeList=parseIdsFrom(idFile);
@@ -132,13 +130,13 @@ public class SortedFasta2Fastq {
                     Set<String> excludeList=parseIdsFrom(new File(commandLine.getOptionValue("e")));
                     includeList.removeAll(excludeList);
                 }
-                filter = new IncludeFastXIdFilter(includeList);
+                filter = DataStoreFilters.newIncludeFilter(includeList);
                 
             }else if(commandLine.hasOption("e")){
                 idFile =new File(commandLine.getOptionValue("e"));
-                filter = new ExcludeFastXIdFilter(parseIdsFrom(idFile));
+                filter = DataStoreFilters.newExcludeFilter(parseIdsFrom(idFile));
             }else{
-                filter = AcceptingFastXFilter.INSTANCE;
+                filter = DataStoreFilters.alwaysAccept();
             }
             final int bufferSize;
             if(commandLine.hasOption("b")){

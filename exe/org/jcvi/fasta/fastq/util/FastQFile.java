@@ -37,10 +37,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
-import org.jcvi.common.core.seq.fastx.FastXFilter;
-import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqUtil;
 import org.jcvi.common.core.util.JoinedStringBuilder;
 import org.jcvi.common.io.idReader.DefaultFileIdReader;
@@ -103,7 +102,7 @@ public class FastQFile {
                 out = new FileOutputStream(DEFAULT_FILE_OUTPUT);
             }
             final File idFile;
-            final FastXFilter filter;
+            final DataStoreFilter filter;
             Integer numberOfIds =commandLine.hasOption("n")?Integer.parseInt(commandLine.getOptionValue("n")):null;
             if(commandLine.hasOption("i")){
                 idFile =new File(commandLine.getOptionValue("i"));
@@ -113,11 +112,11 @@ public class FastQFile {
                             new File(commandLine.getOptionValue("e")),numberOfIds);
                     includeList.removeAll(excludeList);
                 }
-                filter = new IncludeFastXIdFilter(includeList);
+                filter = DataStoreFilters.newIncludeFilter(includeList);
                 
             }else{
                 idFile =new File(commandLine.getOptionValue("e"));
-                filter = new ExcludeFastXIdFilter(parseIdsFrom(idFile,numberOfIds));
+                filter = DataStoreFilters.newExcludeFilter(parseIdsFrom(idFile,numberOfIds));
             }
             //don't use fastq parser
             //manually read the file for speed reasons

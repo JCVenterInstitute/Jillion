@@ -19,8 +19,6 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.ExcludeFastXIdFilter;
-import org.jcvi.common.core.seq.fastx.IncludeFastXIdFilter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
@@ -91,11 +89,11 @@ public class FastqFile2 {
                             new File(commandLine.getOptionValue("e")),numberOfIds);
                     includeList.removeAll(excludeList);
                 }
-                filter = new IncludeFastXIdFilter(includeList);
+                filter = DataStoreFilters.newIncludeFilter(includeList);
                 
             }else if(commandLine.hasOption("e")){
                 idFile =new File(commandLine.getOptionValue("e"));
-                filter = new ExcludeFastXIdFilter(parseIdsFrom(idFile,numberOfIds));
+                filter = DataStoreFilters.newExcludeFilter(parseIdsFrom(idFile,numberOfIds));
             }else{
             	filter=DataStoreFilters.alwaysAccept();
             }

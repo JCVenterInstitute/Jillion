@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.symbol;
+package org.jcvi.common.core.symbol.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,6 +29,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.symbol.Sequence;
+import org.jcvi.common.core.symbol.Symbol;
 /**
  * {@code EncodedSequence} is a composite object
  * containing a byte representation of data and an {@link GlyphCodec}

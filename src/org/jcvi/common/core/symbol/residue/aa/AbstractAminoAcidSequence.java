@@ -6,10 +6,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.symbol.EncodedSequence;
-import org.jcvi.common.core.symbol.GlyphCodec;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.residue.AbstractResidueSequence;
+import org.jcvi.common.core.symbol.impl.EncodedSequence;
+import org.jcvi.common.core.symbol.impl.GlyphCodec;
+import org.jcvi.common.core.symbol.residue.impl.AbstractResidueSequence;
 
 public abstract class AbstractAminoAcidSequence extends AbstractResidueSequence<AminoAcid> implements AminoAcidSequence {
 

@@ -32,7 +32,7 @@ import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.ValueSizeStrategy;
+import org.jcvi.common.core.io.impl.ValueSizeStrategy;
 import org.jcvi.common.core.util.iter.IteratorUtil;
 
 

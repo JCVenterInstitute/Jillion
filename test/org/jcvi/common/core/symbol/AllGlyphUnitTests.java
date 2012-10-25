@@ -35,8 +35,7 @@ import org.junit.runners.Suite.SuiteClasses;
     {
 
         AllResidueUnitTests.class,
-       AllPhredQualityTests.class,  
-       AllEncoderUnitTests.class
+       AllPhredQualityTests.class
     }
 )
 public class AllGlyphUnitTests {

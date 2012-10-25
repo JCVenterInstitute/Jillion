@@ -3,7 +3,8 @@ package org.jcvi.common.core.seq.fastx.fastq;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.seq.fastx.FastXFilter;
+import org.jcvi.common.core.datastore.DataStoreFilter;
+
 import static org.junit.Assert.*;
 public class TestLargeMultilineFastqFileDataStoreGuessCodec extends TestAbstractMultiLineFastqRecordsInDataStore{
 
@@ -17,7 +18,7 @@ public class TestLargeMultilineFastqFileDataStoreGuessCodec extends TestAbstract
 
 	@Override
 	protected FastqDataStore createFastqDataStoreFor(File fastq,
-			FastqQualityCodec qualityCodec, FastXFilter filter)
+			FastqQualityCodec qualityCodec, DataStoreFilter filter)
 			throws IOException {
 		FastqQualityCodec codec = FastqUtil.guessQualityCodecUsed(fastq);
 		assertSame(codec,qualityCodec);

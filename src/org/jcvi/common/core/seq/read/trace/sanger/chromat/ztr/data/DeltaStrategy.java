@@ -27,7 +27,7 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.io.ValueSizeStrategy;
+import org.jcvi.common.core.io.impl.ValueSizeStrategy;
 import org.jcvi.common.core.util.MapUtil;
 /**
  * There are several different possible Delta strategies

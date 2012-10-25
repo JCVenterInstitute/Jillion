@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.seq.fastx.AcceptingFastXFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -61,7 +61,7 @@ final class DefaultFastqFileDataStore{
     * @throws NullPointerException if qualityCodec is null.
     */
    public static FastqFileDataStoreBuilderVisitor createBuilder(FastqQualityCodec qualityCodec){
-	   return createBuilder(AcceptingFastXFilter.INSTANCE, qualityCodec);
+	   return createBuilder(DataStoreFilters.alwaysAccept(), qualityCodec);
    }
 
 	/**
