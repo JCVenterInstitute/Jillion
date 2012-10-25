@@ -26,6 +26,8 @@ package org.jcvi.common.core.util;
 import java.util.Deque;
 import java.util.Queue;
 
+import org.jcvi.common.core.util.impl.AbstractFOQueue;
+
 /**
  * {@code LIFOQueue} is a Last In First Out {@link Queue} that
  * adds and removes elements from the head.

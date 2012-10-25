@@ -24,6 +24,8 @@
 package org.jcvi.common.core.util;
 import java.util.Deque;
 
+import org.jcvi.common.core.util.impl.AbstractFOQueue;
+
 
 /**
  * {@code FIFOQueue} is a First In First Out {@link Queue} that

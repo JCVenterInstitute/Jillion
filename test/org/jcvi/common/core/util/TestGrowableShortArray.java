@@ -4,6 +4,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.util.impl.GrowableShortArray;
 import org.junit.Test;
 
 public class TestGrowableShortArray {

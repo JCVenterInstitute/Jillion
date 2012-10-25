@@ -1,4 +1,4 @@
-package org.jcvi.common.core.util;
+package org.jcvi.common.core.util.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;

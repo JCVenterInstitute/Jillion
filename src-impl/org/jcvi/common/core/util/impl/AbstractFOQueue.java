@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.util;
+package org.jcvi.common.core.util.impl;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -34,7 +34,7 @@ import java.util.Queue;
  * "First Out" operations.
  * @author dkatzel
  */
-abstract class AbstractFOQueue<E> implements Queue<E>{
+public abstract class AbstractFOQueue<E> implements Queue<E>{
     /**
      * A Deque used internally
      * for storing the elements.  All operations
