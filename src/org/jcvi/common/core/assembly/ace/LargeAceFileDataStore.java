@@ -10,10 +10,10 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil.ClipPointsType;
-import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -60,7 +60,7 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
 	 * @throws NullPointerException if aceFile is null.
 	 */
 	public static AceFileContigDataStore create(File aceFile) throws FileNotFoundException{
-		return new LargeAceFileDataStore(aceFile, AcceptingDataStoreFilter.INSTANCE);
+		return new LargeAceFileDataStore(aceFile, DataStoreFilters.alwaysAccept());
 	}
 	/**
 	 * Create a new instance of {@link LargeAceFileDataStore}

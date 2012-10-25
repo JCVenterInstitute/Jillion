@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.Symbol;
@@ -13,7 +13,7 @@ import org.jcvi.common.core.symbol.Symbol;
 public abstract class AbstractFastaFileDataStoreBuilder<T extends Symbol, S extends Sequence<T>, F extends FastaRecord<T,S>, D extends FastaDataStore<T,S, F>> {
 
 	protected final File fastaFile;
-	private DataStoreFilter filter = AcceptingDataStoreFilter.INSTANCE;
+	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
 	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED;
 	/**
 	 * Create a new Builder instance of 

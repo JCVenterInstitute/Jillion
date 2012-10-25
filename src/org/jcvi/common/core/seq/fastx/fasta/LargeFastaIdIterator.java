@@ -22,8 +22,8 @@ package org.jcvi.common.core.seq.fastx.fasta;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 
@@ -49,7 +49,7 @@ final class LargeFastaIdIterator extends AbstractBlockingCloseableIterator<Strin
     	return iter;
     }
     public static LargeFastaIdIterator createNewIteratorFor(File fastaFile){
-    	return createNewIteratorFor(fastaFile, AcceptingDataStoreFilter.INSTANCE);
+    	return createNewIteratorFor(fastaFile, DataStoreFilters.alwaysAccept());
     }
 	
     /**

@@ -20,7 +20,6 @@
 package org.jcvi.common.core.datastore;
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.datastore.InverseDataStoreFilter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,11 +34,11 @@ public class TestInverseDataStoreFilter {
 
     private DataStoreFilter mock;
     private final String id = "id";
-    private InverseDataStoreFilter sut;
+    private DataStoreFilter sut;
     @Before
     public void setup(){
         mock = createMock(DataStoreFilter.class);  
-        sut = new InverseDataStoreFilter(mock);
+        sut = DataStoreFilters.invertFilter(mock);
     }
     
     @Test

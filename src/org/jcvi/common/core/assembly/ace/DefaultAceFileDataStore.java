@@ -35,7 +35,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -227,7 +227,7 @@ final class DefaultAceFileDataStore implements AceFileContigDataStore{
         private DefaultConsensusAceTag.Builder consensusTagBuilder;
         
         public DefaultAceFileDataStoreBuilder(){
-            this(AcceptingDataStoreFilter.INSTANCE);
+            this(DataStoreFilters.alwaysAccept());
         }
         public DefaultAceFileDataStoreBuilder(DataStoreFilter filter) {
             if(filter==null){

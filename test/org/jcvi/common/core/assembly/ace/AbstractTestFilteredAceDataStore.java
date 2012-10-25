@@ -31,7 +31,7 @@ import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.datastore.DefaultExcludeDataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -49,7 +49,7 @@ public abstract class AbstractTestFilteredAceDataStore{
     public void skipSelectedContig() throws IOException, DataStoreException{
         String contigIdToSkip = "22934-PB1";
         File aceFile = resources.getFile("files/fluSample.ace");
-        DataStoreFilter filter = new DefaultExcludeDataStoreFilter(Collections.singleton(contigIdToSkip));
+        DataStoreFilter filter = DataStoreFilters.newExcludeFilter(Collections.singleton(contigIdToSkip));
         AceFileContigDataStore datastore = create(aceFile, filter);
         assertEquals(7, datastore.getNumberOfRecords());
         assertEquals(499 , datastore.getNumberOfTotalReads());

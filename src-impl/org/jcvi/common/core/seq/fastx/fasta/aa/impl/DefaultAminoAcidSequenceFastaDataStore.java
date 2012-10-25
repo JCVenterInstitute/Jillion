@@ -5,8 +5,8 @@ import java.io.FileNotFoundException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
@@ -34,7 +34,7 @@ public final class DefaultAminoAcidSequenceFastaDataStore{
 		return builder.build();
 	}
 	public static AminoAcidSequenceFastaDataStoreBuilderVisitor createBuilder(){
-		return createBuilder(AcceptingDataStoreFilter.INSTANCE);
+		return createBuilder(DataStoreFilters.alwaysAccept());
 	}
 	public static AminoAcidSequenceFastaDataStoreBuilderVisitor createBuilder(DataStoreFilter filter){
 		return new DefaultAminoAcidSequenceFastaDataStoreBuilder(filter);

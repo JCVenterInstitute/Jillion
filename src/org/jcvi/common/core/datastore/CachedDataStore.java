@@ -123,5 +123,20 @@ public final class CachedDataStore <D extends DataStore<?>> implements Invocatio
     		throw e.getCause();
     	}
     }   
-    
+    /**
+     * {@code Cacheable} is an interface that is used
+     * for Cached objects created by {@link CachedDataStore}.
+     * This way it is possible to determine
+     * at runtime if a given datastore has a cache.
+     * @author dkatzel
+     *
+     *
+     */
+    public static interface Cacheable {
+        /**
+         * Clears the cache without
+         * closing the datastore.
+         */
+        void clearCache();
+    }
 }

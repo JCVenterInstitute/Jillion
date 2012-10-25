@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.jcvi.common.core.datastore.AcceptingDataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.util.Builder;
 /**
@@ -19,7 +19,7 @@ import org.jcvi.common.core.util.Builder;
 public final class FastqFileDataStoreBuilder{
 	private final File fastqFile;
 	
-	private DataStoreFilter filter = AcceptingDataStoreFilter.INSTANCE;
+	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
 	//by default store everything in memory
 	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED;
 	
