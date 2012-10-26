@@ -30,9 +30,9 @@ import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 
-public class TestIndexedAceFileDataStore extends TestAbstractAceParserMatchesAce2ContigMultipleContigs{
+public class TestMemoryMappedIndexedAceFileDataStore extends TestAbstractAceParserMatchesAce2ContigMultipleContigs{
 
-    public TestIndexedAceFileDataStore() throws IOException, DataStoreException {
+    public TestMemoryMappedIndexedAceFileDataStore() throws IOException, DataStoreException {
         super();        
     }
 

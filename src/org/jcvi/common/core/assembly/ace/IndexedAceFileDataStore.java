@@ -70,6 +70,20 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * @author dkatzel
  */
 final class IndexedAceFileDataStore{
+	
+	private static boolean allowMemoryMapping=true;
+	/**
+	 * For testing only. Turn on/off
+	 * ability to return memory mapped instances.
+	 * @param allowMemoryMapping
+	 */
+	static synchronized void allowMemoryMapping(boolean allowMemoryMapping ){
+		IndexedAceFileDataStore.allowMemoryMapping = allowMemoryMapping;
+	}
+	
+	static synchronized boolean allowMemoryMapping(){
+		return allowMemoryMapping;
+	}
     /**
      * Create a new empty {@link AceContigDataStoreBuilder}
      * that will create an {@link IndexedAceFileDataStore} 
@@ -166,6 +180,7 @@ final class IndexedAceFileDataStore{
         private final List<ReadAceTag> readTags = new ArrayList<ReadAceTag>();
         
         private final DataStoreFilter filter;
+       
         
         /**
          * Consensus tags span multiple lines of the ace file so we need to build
@@ -200,7 +215,7 @@ final class IndexedAceFileDataStore{
         */
         @Override
         public synchronized AceFileContigDataStore build() {
-        	if(aceFile.length() <=Integer.MAX_VALUE){
+        	if(allowMemoryMapping && aceFile.length() <=Integer.MAX_VALUE){
         		try {
 					return new MemoryMappedIndexedAceFileDataStore(aceFile, indexFileRange,
 							totalNumberOfReads,
