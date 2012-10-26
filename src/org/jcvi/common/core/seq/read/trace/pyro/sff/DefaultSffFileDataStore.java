@@ -38,7 +38,7 @@ import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
  * for large sff files.
  * @author dkatzel
  */
-public final class DefaultSffFileDataStore {
+final class DefaultSffFileDataStore {
 
 	private DefaultSffFileDataStore(){
 		//can not instantiate

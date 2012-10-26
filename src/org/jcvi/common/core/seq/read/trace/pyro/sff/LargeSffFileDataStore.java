@@ -33,6 +33,8 @@ import java.util.Iterator;
 import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
@@ -49,10 +51,11 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * @author dkatzel
  *
  */
-public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements FlowgramDataStore{
+final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements FlowgramDataStore{
 
     private final File sffFile;
     private Long size=null;
+    private final DataStoreFilter filter;
     
     /**
      * Create a new instance of {@link LargeSffFileDataStore}.
@@ -62,10 +65,21 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
      * @throws IOException if sffFile does not exist or is not a valid sff file.
      */
     public static FlowgramDataStore create(File sffFile) throws IOException{
+    	return create(sffFile, DataStoreFilters.alwaysAccept());
+    }
+    
+    /**
+     * Create a new instance of {@link LargeSffFileDataStore}.
+     * @param sffFile the sff file to parse.
+     * @return a new SffDataStore; never null.
+     * @throws NullPointerException if sffFile is null.
+     * @throws IOException if sffFile does not exist or is not a valid sff file.
+     */
+    public static FlowgramDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
     	verifyFileExists(sffFile);
     	verifyIsValidSff(sffFile);
     	
-    	return new LargeSffFileDataStore(sffFile);
+    	return new LargeSffFileDataStore(sffFile,filter);
     }
 	private static void verifyFileExists(File sffFile)
 			throws FileNotFoundException {
@@ -91,8 +105,9 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
 	/**
      * @param sffFile
      */
-    private LargeSffFileDataStore(File sffFile) {
+    private LargeSffFileDataStore(File sffFile, DataStoreFilter filter) {
         this.sffFile = sffFile;
+        this.filter = filter;
     }
 
     @Override
@@ -101,6 +116,9 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
 	}
 	@Override
 	protected Flowgram getImpl(String id) throws DataStoreException {
+		if(!filter.accept(id)){
+			return null;
+		}
 		try{
         	SingleFlowgramVisitor singleVisitor = new SingleFlowgramVisitor(id);
         	SffFileParser.parse(sffFile, singleVisitor);
@@ -112,14 +130,25 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
 	@Override
 	protected synchronized long getNumberOfRecordsImpl() throws DataStoreException {
 		if(this.size ==null){
-        	DataInputStream in = null;
+			//since filter could mean we won't
+			//accept everything we can't just
+			//look at the value in the common header
+			//must iterate through everything
+			StreamingIterator<Flowgram> iter=null;
+			
+        	
         	try{
-        		in = new DataInputStream(new FileInputStream(sffFile));
-        		size =DefaultSFFCommonHeaderDecoder.INSTANCE.decodeHeader(in).getNumberOfReads();
+        		iter = iterator();
+        		long count=0;
+        		while(iter.hasNext()){
+        			iter.next();
+        			count++;
+        		}
+        		size = count;
         	}catch(Exception e){
         		 throw new DataStoreException("could not parse sffFile ",e);
         	}finally{
-        		IOUtil.closeAndIgnoreErrors(in);
+        		IOUtil.closeAndIgnoreErrors(iter);
         	}
         }
         return size;
@@ -133,7 +162,7 @@ public final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> imp
 	protected StreamingIterator<Flowgram> iteratorImpl()
 			throws DataStoreException {
 		return DataStoreStreamingIterator.create(this,
-				SffFileIterator.createNewIteratorFor(sffFile));
+				SffFileIterator.createNewIteratorFor(sffFile,filter));
 	}
 	
    

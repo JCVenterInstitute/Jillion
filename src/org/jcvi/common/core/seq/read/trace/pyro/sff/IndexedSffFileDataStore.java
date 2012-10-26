@@ -8,9 +8,10 @@ import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
@@ -49,7 +50,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * @author dkatzel
  *
  */
-public final class IndexedSffFileDataStore{
+final class IndexedSffFileDataStore{
 	
 	private IndexedSffFileDataStore(){
 		//can not instantiate
@@ -101,7 +102,7 @@ public final class IndexedSffFileDataStore{
      */
 	public static SffFileVisitorDataStoreBuilder createVisitorBuilder(File sffFile) throws IOException{
 		verifyCanCreateIndex(sffFile);
-		return new FullPassIndexedSffVisitorBuilder(sffFile);
+		return new FullPassIndexedSffVisitorBuilder(sffFile,DataStoreFilters.alwaysAccept());
 	}
 	/**
 	 * Create a new {@link FlowgramDataStore} instance which only indexes
@@ -116,12 +117,28 @@ public final class IndexedSffFileDataStore{
 	 * @see #canCreateIndexedDataStore(File)
 	 */
 	public static FlowgramDataStore create(File sffFile) throws IOException{
-		FlowgramDataStore manifestDataStore = Indexed454SffFileDataStore.create(sffFile);
+		return create(sffFile, DataStoreFilters.alwaysAccept());
+	}
+	
+	/**
+	 * Create a new {@link FlowgramDataStore} instance which only indexes
+	 * byte offsets for each read.
+	 * @param sffFile the sff file to create a datastore for.
+	 * @return a new {@link FlowgramDataStore} instance; never null.
+	 * @throws IOException if there is a problem reading the file.
+	 * @throws IllegalArgumentException if the given sffFile
+	 * has more than {@link Integer#MAX_VALUE} reads.
+	 * @throws NullPointerException if sffFile is null.
+	 * @throws IllegalArgumentException if sffFile does not exist.
+	 * @see #canCreateIndexedDataStore(File)
+	 */
+	public static FlowgramDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
+		FlowgramDataStore manifestDataStore = Indexed454SffFileDataStore.create(sffFile, filter);
 		if(manifestDataStore!=null){
 			return manifestDataStore;
 		}
 		//do full pass if can't use manifest
-		return createByFullyParsing(sffFile);
+		return createByFullyParsing(sffFile, filter);
 	}
 	
 	/**
@@ -137,8 +154,8 @@ public final class IndexedSffFileDataStore{
 	 * @throws IllegalArgumentException if sffFile does not exist.
 	 * @see #canCreateIndexedDataStore(File)
 	 */
-	static FlowgramDataStore createByFullyParsing(File sffFile) throws IOException{
-		FullPassIndexedSffVisitorBuilder builder= new FullPassIndexedSffVisitorBuilder(sffFile);
+	static FlowgramDataStore createByFullyParsing(File sffFile, DataStoreFilter filter) throws IOException{
+		FullPassIndexedSffVisitorBuilder builder= new FullPassIndexedSffVisitorBuilder(sffFile, filter);
 		SffFileParser.parse(sffFile, builder);
 		return builder.build();
 	}
@@ -191,8 +208,9 @@ public final class IndexedSffFileDataStore{
 	  private int encodedReadLength=0;
 	  private String currentReadId;
 	  private final File sffFile;
+	  private final DataStoreFilter filter;
 	  
-	  private FullPassIndexedSffVisitorBuilder(File sffFile) throws FileNotFoundException{
+	  private FullPassIndexedSffVisitorBuilder(File sffFile, DataStoreFilter filter) throws FileNotFoundException{
 		  if(sffFile==null){
 			  throw new NullPointerException("sff file can not be null");
 		  }
@@ -200,6 +218,7 @@ public final class IndexedSffFileDataStore{
 	    		throw new FileNotFoundException("sff file does not exist");
 	    	}
 		  this.sffFile = sffFile;
+		  this.filter = filter;
 	  }
 	  @Override
 	public void visitFile() {
@@ -233,8 +252,10 @@ public final class IndexedSffFileDataStore{
 	@Override
 	public ReadDataReturnCode visitReadData(SffReadData readData) {
 		encodedReadLength += SffWriter.getNumberOfBytesFor(readData);
-		indexRanges.put(currentReadId, new Range.Builder(encodedReadLength)
+		if(filter.accept(currentReadId)){
+			indexRanges.put(currentReadId, new Range.Builder(encodedReadLength)
 										.shift(currentOffset).build());
+		}
 		currentOffset+=encodedReadLength;
 		return ReadDataReturnCode.PARSE_NEXT_READ;
 	}
