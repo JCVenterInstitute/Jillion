@@ -134,7 +134,7 @@ abstract class AbstractIndexedAceFileContig implements AceContig{
 		InputStream in = null;
 		try{
 			Range offsetRange = readOffsetRanges.get(id);
-			in = IOUtil.createInputStreamFromFile(aceFile, (int)offsetRange.getBegin(), (int)offsetRange.getLength());
+			in = getInputStreamOfRead(offsetRange);
 			ReadVisitorBuilder builder = new ReadVisitorBuilder(consensus);
 			builder.visitBeginContig(contigId, 0, 0, 0, isComplimented);
 			AlignedReadInfo alignmentInfo = readInfoMap.get(id);
