@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
@@ -49,6 +51,7 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 	 */
 	private final Map<String, Integer> map;
 	private boolean isClosed=false;
+	private final DataStoreFilter filter;
 	/**
 	 * Try to create a {@link FlowgramDataStore} by only parsing
 	 * the 454 index at the end of the sff file.
@@ -62,21 +65,26 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 	 * @throws IOException if there is a problem reading the file.
 	 */
 	public static FlowgramDataStore create(File sffFile) throws IOException{
-		ManifestCreatorVisitor visitor = new ManifestCreatorVisitor(sffFile);
-		SffFileParser.parse(sffFile, visitor);
-		if(!visitor.isUseableManifest()){
-			//no manifest delegate to iterating thru
-			return null;
-		}
-		return new Indexed454SffFileDataStore(visitor);
+		return create(sffFile, DataStoreFilters.alwaysAccept());
 	}
-
+	public static FlowgramDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
+		ManifestCreatorVisitor visitor = new ManifestCreatorVisitor(sffFile, filter);
+		SffFileParser.parse(sffFile, visitor);
+		//there is a valid sff formatted manifest inside the sff file
+		if(visitor.isUseableManifest()){
+			return new Indexed454SffFileDataStore(visitor);
+		}
+		//no manifest delegate to iterating thru
+		return null;
+		
+	}
 	
 	
 	private Indexed454SffFileDataStore(ManifestCreatorVisitor visitor){
 		this.map = visitor.map;
 		this.sffFile = visitor.sffFile;
 		this.commonHeader = visitor.commonHeader;
+		this.filter = visitor.filter;
 	}
 	@Override
 	public StreamingIterator<String> idIterator() throws DataStoreException {
@@ -84,7 +92,7 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 		try {
 			//use large sffFileDataStore 
 			//to parse ids in order in file
-			return LargeSffFileDataStore.create(sffFile).idIterator();
+			return LargeSffFileDataStore.create(sffFile,filter).idIterator();
 		} catch (IOException e) {
 			throw new IllegalStateException("sff file has been deleted",e);
 		}
@@ -154,7 +162,7 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 	public StreamingIterator<Flowgram> iterator() throws DataStoreException {
 		throwErrorIfClosed();
 		try {
-			return LargeSffFileDataStore.create(sffFile).iterator();
+			return LargeSffFileDataStore.create(sffFile,filter).iterator();
 		} catch (IOException e) {
 			throw new DataStoreException("sff file has been deleted",e);
 		}
@@ -191,8 +199,12 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 		private SffCommonHeader commonHeader;
 		private Map<String, Integer> map;
 		private boolean useableManifest=false;
-		private ManifestCreatorVisitor(File sffFile) {
+		
+		private final DataStoreFilter filter;
+		
+		private ManifestCreatorVisitor(File sffFile, DataStoreFilter filter) {
 			this.sffFile = sffFile;
+			this.filter = filter;
 			
 		}
 		@Override
@@ -294,11 +306,17 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 				}
 				byte[] index = new byte[4];
 				IOUtil.blockingRead(in, index);
-				index =IOUtil.switchEndian(index);
-				long offset =convertFromBase255(index);
-				//signed int to save space
-				map.put(id,IOUtil.toSignedInt(offset));
-				in.read();//skip
+				//only include id in index if we care about it.
+				if(filter.accept(id)){
+					index =IOUtil.switchEndian(index);
+					long offset =convertFromBase255(index);
+					//signed int to save space
+					map.put(id,IOUtil.toSignedInt(offset));
+				}
+				//skip the read data since we only care about names
+				//at the moment.  The read data will be
+				//reparsed during a call to DataStore#get()
+				in.read();
 			}
 		}
 

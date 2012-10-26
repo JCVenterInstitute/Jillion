@@ -22,10 +22,9 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import java.io.File;
 import java.io.IOException;
 
+import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor.CommonHeaderReturnCode;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor.ReadDataReturnCode;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor.ReadHeaderReturnCode;
 import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
@@ -39,19 +38,22 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
 public final class SffFileIterator extends AbstractBlockingCloseableIterator<Flowgram>{
 
 	private final File sffFile;
-	
-    public static SffFileIterator createNewIteratorFor(File sffFile){
+	private final DataStoreFilter filter;
+	public static SffFileIterator createNewIteratorFor(File sffFile){
+		return createNewIteratorFor(sffFile, DataStoreFilters.alwaysAccept());
+	}
+    public static SffFileIterator createNewIteratorFor(File sffFile, DataStoreFilter filter){
     	SffFileIterator iter;
-			iter = new SffFileIterator(sffFile);
+			iter = new SffFileIterator(sffFile,filter);
 			iter.start();
 		
     	
     	return iter;
     }
 	
-	private SffFileIterator(File sffFile){
+	private SffFileIterator(File sffFile, DataStoreFilter filter){
 		this.sffFile = sffFile;
-		 
+		 this.filter =filter;
 	}
 
 	@Override
@@ -77,8 +79,11 @@ public final class SffFileIterator extends AbstractBlockingCloseableIterator<Flo
 
          		@Override
          		public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
-         			this.currentReadHeader = readHeader;
-         			return ReadHeaderReturnCode.PARSE_READ_DATA;
+         			if(filter.accept(readHeader.getId())){
+	         			this.currentReadHeader = readHeader;
+	         			return ReadHeaderReturnCode.PARSE_READ_DATA;
+         			}
+         			return ReadHeaderReturnCode.SKIP_CURRENT_READ;
          		}
 
          		@Override
