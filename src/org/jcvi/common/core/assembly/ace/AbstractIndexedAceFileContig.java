@@ -1,7 +1,6 @@
 package org.jcvi.common.core.assembly.ace;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,8 +16,8 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore.ReadVisitorBuilder;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
+import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
@@ -45,7 +44,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * @author dkatzel
  *
  */
-final class IndexedAceFileContig implements AceContig{
+abstract class AbstractIndexedAceFileContig implements AceContig{
 
 	private final String contigId;
 	private final Map<String, AlignedReadInfo> readInfoMap;
@@ -57,7 +56,7 @@ final class IndexedAceFileContig implements AceContig{
 	private final Map<String, AceAssembledRead> cachedReads;
 	private final boolean aceFileHasSortedReads;
 	
-	private IndexedAceFileContig(String contigId,
+	protected AbstractIndexedAceFileContig(String contigId,
 			Map<String, AlignedReadInfo> readInfoMap,
 			Map<String,Range> readOffsetRanges, boolean isComplimented,
 			NucleotideSequence consensus, File aceFile,
@@ -96,9 +95,7 @@ final class IndexedAceFileContig implements AceContig{
 	private StreamingIterator<AceAssembledRead> createIteratorOverFile() {
 		InputStream in = null;
 		try{
-			in = new FileInputStream(aceFile);
-			//seek to start of contig
-			IOUtil.blockingSkip(in, contigStartFileOffset);
+			in = getInputStreamOfContig();
 			//start parsing
 			IndexedReadIterator iter = new IndexedReadIterator(in, consensus, readInfoMap);
 			iter.start();
@@ -108,6 +105,18 @@ final class IndexedAceFileContig implements AceContig{
 		}
 	}
 
+	
+	protected abstract InputStream getInputStreamOfContig() throws IOException;
+	
+	protected final long getContigStartFileOffset() {
+		return contigStartFileOffset;
+	}
+
+	protected final File getAceFile() {
+		return aceFile;
+	}
+
+	protected abstract InputStream getInputStreamOfRead(Range offsetRange) throws IOException;
 	@Override
 	public NucleotideSequence getConsensusSequence() {
 		return consensus;
@@ -266,15 +275,29 @@ final class IndexedAceFileContig implements AceContig{
 			
 			
 			boolean aceFileHasSortedReads = idsInSameOrder(readFileOffsetRanges,sortedFileOffsetRanges);
-			
-			if(aceFileHasSortedReads){
-				return new IndexedAceFileContig(contigId, alignedInfoMapCopy, readFileOffsetRanges, isComplimented, 
+			long numBytesInContig = currentOffset - contigStartOffset;
+			if(numBytesInContig > Integer.MAX_VALUE){
+				if(aceFileHasSortedReads){
+					return new LargeIndexedAceFileContig(contigId, alignedInfoMapCopy, readFileOffsetRanges, isComplimented, 
+							contigConsensusSequence, aceFile, 
+							contigStartOffset, maxCoverage,aceFileHasSortedReads);
+				}
+				return new LargeIndexedAceFileContig(contigId, alignedInfoMapCopy, sortedFileOffsetRanges, isComplimented, 
 						contigConsensusSequence, aceFile, 
 						contigStartOffset, maxCoverage,aceFileHasSortedReads);
 			}
-			return new IndexedAceFileContig(contigId, alignedInfoMapCopy, sortedFileOffsetRanges, isComplimented, 
+			try{
+			if(aceFileHasSortedReads){
+				return new MemoryMappedIndexedAceFileContig(contigId, alignedInfoMapCopy, readFileOffsetRanges, isComplimented, 
+						contigConsensusSequence, aceFile, 
+						contigStartOffset, maxCoverage,aceFileHasSortedReads,(int)numBytesInContig);
+			}
+			return new MemoryMappedIndexedAceFileContig(contigId, alignedInfoMapCopy, sortedFileOffsetRanges, isComplimented, 
 					contigConsensusSequence, aceFile, 
-					contigStartOffset, maxCoverage,aceFileHasSortedReads);
+					contigStartOffset, maxCoverage,aceFileHasSortedReads,(int)numBytesInContig);
+			}catch(Exception e){
+				throw new IllegalStateException("error creating contig "+ contigId ,e);
+			}
 		}
 
 		private boolean idsInSameOrder(Map<String, Range> actual,

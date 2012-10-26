@@ -433,7 +433,7 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
     }
     private static final class IndexedSingleContigVisitor implements AceFileVisitor, Builder<AceContig>{
 
-    	IndexedAceFileContig.IndexedContigVisitorBuilder visitorBuilder;
+    	LargeIndexedAceFileContig.IndexedContigVisitorBuilder visitorBuilder;
     	private final String contigIdToGet;
     	private final File aceFile;
     	private long startOffset=0L;
@@ -477,7 +477,7 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
 				boolean reverseComplimented) {
 			
 			if(contigIdToGet.equals(contigId)){
-				visitorBuilder = new IndexedAceFileContig.IndexedContigVisitorBuilder(startOffset-currentLine.length(), aceFile);
+				visitorBuilder = new LargeIndexedAceFileContig.IndexedContigVisitorBuilder(startOffset-currentLine.length(), aceFile);
 				visitorBuilder.visitLine(currentLine);
 				return visitorBuilder.visitBeginContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
 			}
