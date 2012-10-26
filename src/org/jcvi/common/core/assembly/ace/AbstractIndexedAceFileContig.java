@@ -276,28 +276,31 @@ abstract class AbstractIndexedAceFileContig implements AceContig{
 			
 			boolean aceFileHasSortedReads = idsInSameOrder(readFileOffsetRanges,sortedFileOffsetRanges);
 			long numBytesInContig = currentOffset - contigStartOffset;
-			if(numBytesInContig > Integer.MAX_VALUE){
-				if(aceFileHasSortedReads){
-					return new LargeIndexedAceFileContig(contigId, alignedInfoMapCopy, readFileOffsetRanges, isComplimented, 
+			if(IndexedAceFileDataStore.allowMemoryMapping() &&  numBytesInContig <= Integer.MAX_VALUE){
+				try{
+					if(aceFileHasSortedReads){
+						return new MemoryMappedIndexedAceFileContig(contigId, alignedInfoMapCopy, readFileOffsetRanges, isComplimented, 
+								contigConsensusSequence, aceFile, 
+								contigStartOffset, maxCoverage,aceFileHasSortedReads,(int)numBytesInContig);
+					}
+					return new MemoryMappedIndexedAceFileContig(contigId, alignedInfoMapCopy, sortedFileOffsetRanges, isComplimented, 
 							contigConsensusSequence, aceFile, 
-							contigStartOffset, maxCoverage,aceFileHasSortedReads);
+							contigStartOffset, maxCoverage,aceFileHasSortedReads,(int)numBytesInContig);
+					
+				}catch(Exception e){
+					throw new IllegalStateException("error creating contig "+ contigId ,e);
 				}
-				return new LargeIndexedAceFileContig(contigId, alignedInfoMapCopy, sortedFileOffsetRanges, isComplimented, 
+			}
+			if(aceFileHasSortedReads){
+				return new LargeIndexedAceFileContig(contigId, alignedInfoMapCopy, readFileOffsetRanges, isComplimented, 
 						contigConsensusSequence, aceFile, 
 						contigStartOffset, maxCoverage,aceFileHasSortedReads);
 			}
-			try{
-			if(aceFileHasSortedReads){
-				return new MemoryMappedIndexedAceFileContig(contigId, alignedInfoMapCopy, readFileOffsetRanges, isComplimented, 
-						contigConsensusSequence, aceFile, 
-						contigStartOffset, maxCoverage,aceFileHasSortedReads,(int)numBytesInContig);
-			}
-			return new MemoryMappedIndexedAceFileContig(contigId, alignedInfoMapCopy, sortedFileOffsetRanges, isComplimented, 
+			return new LargeIndexedAceFileContig(contigId, alignedInfoMapCopy, sortedFileOffsetRanges, isComplimented, 
 					contigConsensusSequence, aceFile, 
-					contigStartOffset, maxCoverage,aceFileHasSortedReads,(int)numBytesInContig);
-			}catch(Exception e){
-				throw new IllegalStateException("error creating contig "+ contigId ,e);
-			}
+					contigStartOffset, maxCoverage,aceFileHasSortedReads);
+			
+			
 		}
 
 		private boolean idsInSameOrder(Map<String, Range> actual,

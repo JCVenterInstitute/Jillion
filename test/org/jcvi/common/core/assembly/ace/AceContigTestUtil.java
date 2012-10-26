@@ -19,11 +19,10 @@
 
 package org.jcvi.common.core.assembly.ace;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-
-import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
@@ -47,6 +46,16 @@ public final class AceContigTestUtil {
         	while(iter.hasNext()){
         		AssembledRead expectedRead = iter.next();
         		assertPlacedReadParsedCorrectly(expectedRead, actual.getRead(expectedRead.getId()));
+        	}
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(iter);
+        }
+        //now iterate over actual
+        try{
+        	iter = actual.getReadIterator();
+        	while(iter.hasNext()){
+        		AssembledRead actualRead = iter.next();
+        		assertPlacedReadParsedCorrectly(actualRead, expected.getRead(actualRead.getId()));
         	}
         }finally{
         	IOUtil.closeAndIgnoreErrors(iter);
