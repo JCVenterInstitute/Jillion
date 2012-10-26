@@ -29,11 +29,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.EOFException;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -558,11 +558,10 @@ public final class IOUtil {
         return paddingString.toString();
     }
     
-    public static InputStream createInputStreamFromFile(File file,int startOffset, int length)throws IOException {
-        final FileInputStream fileInputStream = new FileInputStream(file);
+    public static InputStream createInputStreamFromFile(File file,long startOffset, int length)throws IOException {
         FileChannel fastaFileChannel=null;
        try{
-            fastaFileChannel =fileInputStream.getChannel();
+            fastaFileChannel =new RandomAccessFile(file,"r").getChannel();
             ByteBuffer buf= ByteBuffer.allocate(length);
             fastaFileChannel.position(startOffset);
             int bytesRead =fastaFileChannel.read(buf);
@@ -573,7 +572,7 @@ public final class IOUtil {
             return new ByteArrayInputStream(buf.array());
         
        }finally{
-           IOUtil.closeAndIgnoreErrors(fileInputStream,fastaFileChannel);
+           IOUtil.closeAndIgnoreErrors(fastaFileChannel);
        }
     }
     /**

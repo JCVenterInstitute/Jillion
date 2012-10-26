@@ -19,16 +19,17 @@
 
 package org.jcvi.common.core.assembly.ace;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore;
+import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore.AbstractIndexedAceFileDataStoreImpl;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
@@ -37,11 +38,11 @@ import static org.junit.Assert.*;
 public class TestIndexAceFileOffsets {
 
     private static ResourceFileServer resources = new ResourceFileServer(TestIndexAceFileOffsets.class);
-    private static IndexedAceFileDataStore sut;
+    private static AbstractIndexedAceFileDataStoreImpl sut;
     @BeforeClass
     public static void setup() throws IOException{
         File aceFile = resources.getFile("files/fluSample.ace");
-        sut =(IndexedAceFileDataStore)IndexedAceFileDataStore.create(aceFile);
+        sut =(AbstractIndexedAceFileDataStoreImpl)IndexedAceFileDataStore.create(aceFile);
     }
     
     @Test
@@ -81,7 +82,7 @@ public class TestIndexAceFileOffsets {
     @Test
     public void aceFileThatHasTagsAtEnd() throws IOException, DataStoreException{
         File aceFile = resources.getFile("files/sample.ace");
-        IndexedAceFileDataStore datastore =(IndexedAceFileDataStore) IndexedAceFileDataStore.create(aceFile);
+        AbstractIndexedAceFileDataStoreImpl datastore =(AbstractIndexedAceFileDataStoreImpl) IndexedAceFileDataStore.create(aceFile);
         datastore.get("Contig1");
         assertEquals(Range.of(8,14667), datastore.getIndexRangeFor("Contig1"));
     }

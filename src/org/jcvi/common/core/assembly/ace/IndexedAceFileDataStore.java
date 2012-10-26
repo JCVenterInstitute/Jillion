@@ -26,6 +26,11 @@ package org.jcvi.common.core.assembly.ace;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileChannel.MapMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -41,6 +46,7 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.io.impl.ByteBufferInputStream;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
@@ -63,15 +69,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
-final class IndexedAceFileDataStore implements AceFileContigDataStore{
-    private final Map<String, Range> indexFileRange;
-    private final File file;
-    private final long totalNumberOfReads;
-    private final List<WholeAssemblyAceTag> wholeAssemblyTags;
-    private final List<ConsensusAceTag> consensusTags;
-    private final List<ReadAceTag> readTags;
-    
-    private volatile boolean  closed=false;
+final class IndexedAceFileDataStore{
     /**
      * Create a new empty {@link AceContigDataStoreBuilder}
      * that will create an {@link IndexedAceFileDataStore} 
@@ -142,99 +140,7 @@ final class IndexedAceFileDataStore implements AceFileContigDataStore{
         return builder.build();
     }
     
-    private IndexedAceFileDataStore(File file, Map<String, Range> indexFileRange,
-    		long totalNumberOfReads,
-			List<WholeAssemblyAceTag> wholeAssemblyTags,
-			List<ConsensusAceTag> consensusTags, List<ReadAceTag> readTags) {
-    	this.indexFileRange = indexFileRange;
-    	this.file = file;
-		this.totalNumberOfReads = totalNumberOfReads;
-		this.wholeAssemblyTags = wholeAssemblyTags;
-		this.consensusTags = consensusTags;
-		this.readTags = readTags;
-       
-    }
-
-    private void assertNotYetClosed() throws DataStoreException{
-    	if(closed){
-    		throw new DataStoreException("datastore is closed");
-    	}
-    }
-    
-    @Override
-   	public long getNumberOfTotalReads() throws DataStoreException {
-    	assertNotYetClosed();
-   		return totalNumberOfReads;
-   	}
-   	@Override
-   	public StreamingIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() throws DataStoreException {
-   		assertNotYetClosed();
-   		return IteratorUtil.createStreamingIterator(wholeAssemblyTags.iterator());
-   	}
-   	@Override
-   	public StreamingIterator<ReadAceTag> getReadTagIterator() throws DataStoreException {
-   		assertNotYetClosed();
-   		return IteratorUtil.createStreamingIterator(readTags.iterator());
-   	}
-   	@Override
-   	public StreamingIterator<ConsensusAceTag> getConsensusTagIterator() throws DataStoreException {
-   		assertNotYetClosed();
-   		return IteratorUtil.createStreamingIterator(consensusTags.iterator());
-   	}
-    
-    @Override
-    public boolean contains(String contigId) throws DataStoreException {
-    	assertNotYetClosed();
-        return indexFileRange.containsKey(contigId);
-    }
-
-    @Override
-    public AceContig get(String contigId) throws DataStoreException {
-    	assertNotYetClosed();
-        Range range = indexFileRange.get(contigId);
-        InputStream inputStream=null;
-        try {
-        	IndexedAceFileContig.IndexedContigVisitorBuilder visitorBuilder = new IndexedAceFileContig.IndexedContigVisitorBuilder(range.getBegin(), file);
-            inputStream = IOUtil.createInputStreamFromFile(file,(int)range.getBegin(), (int)range.getLength());
-            AceFileParser.parse(inputStream, visitorBuilder);
-            return visitorBuilder.build();
-        } catch (Exception e) {
-            throw new DataStoreException("error trying to get contig "+ contigId,e);
-        }finally{
-            IOUtil.closeAndIgnoreErrors(inputStream);
-        }
-    }
-
-    @Override
-    public StreamingIterator<String> idIterator() {
-        return DataStoreStreamingIterator.create(this, indexFileRange.keySet().iterator());
-    }
-
-    @Override
-    public long getNumberOfRecords() throws DataStoreException {
-    	assertNotYetClosed();
-        return indexFileRange.size();
-    }
-
-    @Override
-    public void close() throws IOException {
-        closed=true;
-        
-    }
-
-
-    @Override
-    public StreamingIterator<AceContig> iterator() {
-    	StreamingIterator<AceContig> iter= new IndexedContigIterator(idIterator());
-    	return DataStoreStreamingIterator.create(this,iter);
-    }
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public boolean isClosed() {
-        return closed;
-    }
+   
     
    
     /**
@@ -294,7 +200,16 @@ final class IndexedAceFileDataStore implements AceFileContigDataStore{
         */
         @Override
         public synchronized AceFileContigDataStore build() {
-            return new IndexedAceFileDataStore(aceFile, indexFileRange,
+        	if(aceFile.length() <=Integer.MAX_VALUE){
+        		try {
+					return new MemoryMappedIndexedAceFileDataStore(aceFile, indexFileRange,
+							totalNumberOfReads,
+							wholeAssemblyTags,consensusTags,readTags);
+				} catch (IOException e) {
+					throw new IllegalStateException("error creating contig datastore",e);
+				}
+        	}
+            return new LargeIndexedAceFileDataStore(aceFile, indexFileRange,
             		totalNumberOfReads,
             		wholeAssemblyTags,consensusTags,readTags);
         }
@@ -510,47 +425,211 @@ final class IndexedAceFileDataStore implements AceFileContigDataStore{
 	}
 
     
-    private final class IndexedContigIterator implements StreamingIterator<AceContig>{
-
-    	private final StreamingIterator<String> idIterator;
-    	
-		public IndexedContigIterator(StreamingIterator<String> idIterator) {
-			this.idIterator = idIterator;
-		}
-
-		@Override
-		public boolean hasNext() {
-			return idIterator.hasNext();
-		}
-
-		@Override
-		public void close() throws IOException {
-			idIterator.close();
-			
-		}
-
-		@Override
-		public AceContig next() {
-			String id = idIterator.next();
-			try {
-				return get(id);
-			} catch (Throwable t) {
-				IOUtil.closeAndIgnoreErrors(idIterator);
-				throw new IllegalStateException("error getting contig"+ id,t);
-			}
-		}
-
-		@Override
-		public void remove() {
-			idIterator.remove();
-			
-		}
-
-    }
-
-	Range getIndexRangeFor(String id) {
-		return indexFileRange.get(id);
-	}
    
+   
+	
+	static abstract class AbstractIndexedAceFileDataStoreImpl implements AceFileContigDataStore{
+		  private final Map<String, Range> indexFileRange;
+		    private final File file;
+		    private final long totalNumberOfReads;
+		    private final List<WholeAssemblyAceTag> wholeAssemblyTags;
+		    private final List<ConsensusAceTag> consensusTags;
+		    private final List<ReadAceTag> readTags;
+		    
+		    private volatile boolean  closed=false;
+		
+		protected AbstractIndexedAceFileDataStoreImpl(File file, Map<String, Range> indexFileRange,
+	    		long totalNumberOfReads,
+				List<WholeAssemblyAceTag> wholeAssemblyTags,
+				List<ConsensusAceTag> consensusTags, List<ReadAceTag> readTags) {
+	    	this.indexFileRange = indexFileRange;
+	    	this.file = file;
+			this.totalNumberOfReads = totalNumberOfReads;
+			this.wholeAssemblyTags = wholeAssemblyTags;
+			this.consensusTags = consensusTags;
+			this.readTags = readTags;
+	    }
+
+	    private void assertNotYetClosed() throws DataStoreException{
+	    	if(closed){
+	    		throw new DataStoreException("datastore is closed");
+	    	}
+	    }
+	    
+	    @Override
+	   	public long getNumberOfTotalReads() throws DataStoreException {
+	    	assertNotYetClosed();
+	   		return totalNumberOfReads;
+	   	}
+	   	@Override
+	   	public StreamingIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() throws DataStoreException {
+	   		assertNotYetClosed();
+	   		return IteratorUtil.createStreamingIterator(wholeAssemblyTags.iterator());
+	   	}
+	   	@Override
+	   	public StreamingIterator<ReadAceTag> getReadTagIterator() throws DataStoreException {
+	   		assertNotYetClosed();
+	   		return IteratorUtil.createStreamingIterator(readTags.iterator());
+	   	}
+	   	@Override
+	   	public StreamingIterator<ConsensusAceTag> getConsensusTagIterator() throws DataStoreException {
+	   		assertNotYetClosed();
+	   		return IteratorUtil.createStreamingIterator(consensusTags.iterator());
+	   	}
+	    
+	    @Override
+	    public boolean contains(String contigId) throws DataStoreException {
+	    	assertNotYetClosed();
+	        return indexFileRange.containsKey(contigId);
+	    }
+
+	    @Override
+	    public AceContig get(String contigId) throws DataStoreException {
+	    	assertNotYetClosed();
+	        Range range = indexFileRange.get(contigId);
+	        return get(contigId, range);
+	    }
+	    
+	    protected final File getFile() {
+			return file;
+		}
+
+		protected abstract AceContig get(String contigId, Range fileRange) throws DataStoreException;
+
+	    @Override
+	    public StreamingIterator<String> idIterator() {
+	        return DataStoreStreamingIterator.create(this, indexFileRange.keySet().iterator());
+	    }
+
+	    @Override
+	    public long getNumberOfRecords() throws DataStoreException {
+	    	assertNotYetClosed();
+	        return indexFileRange.size();
+	    }
+
+	    @Override
+	    public void close() throws IOException {
+	        closed=true;
+	        
+	    }
+
+
+	    @Override
+	    public StreamingIterator<AceContig> iterator() {
+	    	StreamingIterator<AceContig> iter= new IndexedContigIterator(idIterator());
+	    	return DataStoreStreamingIterator.create(this,iter);
+	    }
+	    /**
+	    * {@inheritDoc}
+	    */
+	    @Override
+	    public boolean isClosed() {
+	        return closed;
+	    }
+	    
+	    private final class IndexedContigIterator implements StreamingIterator<AceContig>{
+
+	    	private final StreamingIterator<String> idIterator;
+	    	
+			public IndexedContigIterator(StreamingIterator<String> idIterator) {
+				this.idIterator = idIterator;
+			}
+
+			@Override
+			public boolean hasNext() {
+				return idIterator.hasNext();
+			}
+
+			@Override
+			public void close() throws IOException {
+				idIterator.close();
+				
+			}
+
+			@Override
+			public AceContig next() {
+				String id = idIterator.next();
+				try {
+					return get(id);
+				} catch (Throwable t) {
+					IOUtil.closeAndIgnoreErrors(idIterator);
+					throw new IllegalStateException("error getting contig"+ id,t);
+				}
+			}
+
+			@Override
+			public void remove() {
+				idIterator.remove();
+				
+			}
+
+	    }
+
+		Range getIndexRangeFor(String id) {
+			return indexFileRange.get(id);
+		}
+	}
+	
+	private static class MemoryMappedIndexedAceFileDataStore extends AbstractIndexedAceFileDataStoreImpl{
+		private final MappedByteBuffer buffer;
+		protected MemoryMappedIndexedAceFileDataStore(File file,
+				Map<String, Range> indexFileRange, long totalNumberOfReads,
+				List<WholeAssemblyAceTag> wholeAssemblyTags,
+				List<ConsensusAceTag> consensusTags, List<ReadAceTag> readTags) throws IOException {
+			super(file, indexFileRange, totalNumberOfReads, wholeAssemblyTags,
+					consensusTags, readTags);
+			FileChannel channel = new RandomAccessFile(file,"r").getChannel();
+			buffer = channel.map(MapMode.READ_ONLY, 0, (int)file.length());
+		}
+
+		@Override
+		protected synchronized AceContig get(String contigId,Range fileRange) throws DataStoreException {
+			//change the position and limit 
+			//so our byte buffer inputstream only reads what we want
+			ByteBuffer copyOfBuffer = buffer.duplicate();
+			copyOfBuffer.position((int)fileRange.getBegin());
+			copyOfBuffer.limit((int)fileRange.getEnd());
+			
+			InputStream in = new ByteBufferInputStream(copyOfBuffer);
+			LargeIndexedAceFileContig.IndexedContigVisitorBuilder visitorBuilder = new LargeIndexedAceFileContig.IndexedContigVisitorBuilder(fileRange.getBegin(), getFile());
+			try {
+				AceFileParser.parse(in, visitorBuilder);
+			} catch (IOException e) {
+				 throw new DataStoreException("error trying to get contig "+ contigId,e);
+			}finally{
+				IOUtil.closeAndIgnoreErrors(in);				
+			}
+            return visitorBuilder.build();
+		}
+		
+	}
+	
+	private static class LargeIndexedAceFileDataStore extends AbstractIndexedAceFileDataStoreImpl{
+
+		protected LargeIndexedAceFileDataStore(File file,
+				Map<String, Range> indexFileRange, long totalNumberOfReads,
+				List<WholeAssemblyAceTag> wholeAssemblyTags,
+				List<ConsensusAceTag> consensusTags, List<ReadAceTag> readTags) {
+			super(file, indexFileRange, totalNumberOfReads, wholeAssemblyTags,
+					consensusTags, readTags);
+		}
+
+		@Override
+		protected AceContig get(String contigId,Range range) throws DataStoreException {
+			File file = getFile();
+			InputStream inputStream=null;
+	        try {
+	        	LargeIndexedAceFileContig.IndexedContigVisitorBuilder visitorBuilder = new LargeIndexedAceFileContig.IndexedContigVisitorBuilder(range.getBegin(), file);
+	            inputStream = IOUtil.createInputStreamFromFile(file,range.getBegin(), (int)range.getLength());
+	            AceFileParser.parse(inputStream, visitorBuilder);
+	            return visitorBuilder.build();
+	        } catch (Exception e) {
+	            throw new DataStoreException("error trying to get contig "+ contigId,e);
+	        }finally{
+	            IOUtil.closeAndIgnoreErrors(inputStream);
+	        }
+		}
+		
+	}
   
 }
