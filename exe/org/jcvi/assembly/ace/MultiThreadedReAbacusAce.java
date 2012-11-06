@@ -49,7 +49,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitor;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
-import org.jcvi.common.core.assembly.ace.AceFileContigDataStoreFactory;
+import org.jcvi.common.core.assembly.ace.AceFileDataStoreBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileUtil;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
@@ -148,7 +148,11 @@ public class MultiThreadedReAbacusAce {
             		MultipleWrapper.createMultipleWrapper(AceFileVisitor.class, visitor,tagWriter));
             //datastore should now only contain what needs to be reabacused
             DataStoreFilter filter = DataStoreFilters.newIncludeFilter(abacusErrorMap.keySet());
-            AceFileContigDataStore datastore = AceFileContigDataStoreFactory.create(outputAceFile, DataStoreProviderHint.OPTIMIZE_ITERATION, filter);
+            AceFileContigDataStore datastore = new AceFileDataStoreBuilder(outputAceFile)
+            									.filter(filter)
+            									.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+            									.build();
+            		
             StreamingIterator<String> idIter = datastore.idIterator();
             List<Future<Void>> futures = new ArrayList<Future<Void>>();
             
@@ -185,8 +189,10 @@ public class MultiThreadedReAbacusAce {
             	//datastore now only contains what was re-abacused
             	//so we need to create a new datastore to get the ids of all the contigs
             	//in the same order as the original ace
-                StreamingIterator<String> contigIdIter = AceFileContigDataStoreFactory.create(inputAceFile, DataStoreProviderHint.OPTIMIZE_ITERATION)
-                												.idIterator();
+                StreamingIterator<String> contigIdIter = new AceFileDataStoreBuilder(inputAceFile)
+														.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+														.build()
+														.idIterator();
                 while(contigIdIter.hasNext()){
                     String contigId = contigIdIter.next();
                     File tempFile = new File(outputAceFile.getParentFile(), outputAceFile.getName()+".contig"+contigId);

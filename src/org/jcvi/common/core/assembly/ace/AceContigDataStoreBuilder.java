@@ -30,6 +30,6 @@ import org.jcvi.common.core.util.Builder;
  *
  *
  */
-public interface AceContigDataStoreBuilder extends AceFileVisitor, Builder<AceFileContigDataStore>{
+interface AceContigDataStoreBuilder extends AceFileVisitor, Builder<AceFileContigDataStore>{
 
 }
