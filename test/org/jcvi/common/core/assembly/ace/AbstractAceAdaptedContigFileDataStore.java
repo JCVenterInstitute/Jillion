@@ -50,7 +50,7 @@ public abstract class AbstractAceAdaptedContigFileDataStore extends AbstractCont
 
     @Override
     protected void visitBeginContig(String contigId, NucleotideSequence consensus) {
-        contigBuilder = DefaultAceContig.createBuilder(contigId, consensus);
+        contigBuilder = DefaultAceContigBuilder.createBuilder(contigId, consensus);
     }
 
     @Override

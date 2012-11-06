@@ -20,14 +20,15 @@
 package org.jcvi.common.core.assembly.util.slice;
 
 import java.util.Iterator;
+
 import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.util.iter.ArrayIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -44,15 +45,23 @@ public final class CompactedSliceMap implements SliceMap {
     public static <PR extends AssembledRead> CompactedSliceMap create(Contig<PR> contig,QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
         return new CompactedSliceMap(contig, qualityDataStore, qualityValueStrategy);
     }
-
+    public static <PR extends AssembledRead> CompactedSliceMap create(StreamingIterator<PR> readIterator, int consensusLength,QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
+        return new CompactedSliceMap(readIterator,consensusLength, qualityDataStore, qualityValueStrategy);
+    }
    
    
     private <PR extends AssembledRead, C extends Contig<PR>>  CompactedSliceMap(
             C contig, QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
-    	CompactedSlice.Builder builders[] = new CompactedSlice.Builder[(int)contig.getConsensusSequence().getLength()];
-    	StreamingIterator<PR> readIter = null;
+		this(contig.getReadIterator(), (int)contig.getConsensusSequence().getLength(), qualityDataStore,
+				qualityValueStrategy);
+    }
+    private <PR extends AssembledRead, C extends Contig<PR>>  CompactedSliceMap(StreamingIterator<PR> readIter,
+			int consensusLength, QualitySequenceDataStore qualityDataStore,
+			QualityValueStrategy qualityValueStrategy)
+			throws DataStoreException {
+		CompactedSlice.Builder builders[] = new CompactedSlice.Builder[consensusLength];
+    
     	try{
-    		readIter = contig.getReadIterator();
     		while(readIter.hasNext()){
     			PR read = readIter.next();
     			int start = (int)read.getGappedStartOffset();
@@ -95,7 +104,7 @@ public final class CompactedSliceMap implements SliceMap {
     	}finally{
     		IOUtil.closeAndIgnoreErrors(readIter);
     	}
-    }
+	}
 
 
     /**

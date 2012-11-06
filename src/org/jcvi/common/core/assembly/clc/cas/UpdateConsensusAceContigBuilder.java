@@ -28,7 +28,7 @@ import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.AceAssembledReadBuilder;
-import org.jcvi.common.core.assembly.ace.DefaultAceContig;
+import org.jcvi.common.core.assembly.ace.DefaultAceContigBuilder;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.util.slice.CompactedSlice;
 import org.jcvi.common.core.assembly.util.slice.Slice;
@@ -64,7 +64,7 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
      */
     public UpdateConsensusAceContigBuilder(String contigId,
             NucleotideSequence fullConsensus) {
-        builder = DefaultAceContig.createBuilder(contigId, fullConsensus);
+        builder = DefaultAceContigBuilder.createBuilder(contigId, fullConsensus);
         variantCounts = new VariantCounts((int)fullConsensus.getLength());
         
     }

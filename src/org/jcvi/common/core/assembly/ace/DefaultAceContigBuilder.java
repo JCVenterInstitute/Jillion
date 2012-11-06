@@ -35,6 +35,9 @@ import java.util.TreeSet;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AbstractContig;
+import org.jcvi.common.core.assembly.util.slice.QualityValueStrategy;
+import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 /**
@@ -43,15 +46,22 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
  *
  *
  */
-public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> implements AceContig{
+public final class  DefaultAceContigBuilder implements AceContigBuilder{
 
 	
-    private final boolean complemented;
-
-    private DefaultAceContig(String id, NucleotideSequence consensus,
-            Set<AceAssembledRead> reads,boolean complemented) {
-        super(id, consensus, reads);
-        this.complemented = complemented;
+   
+    /**
+     * Create a new {@link AceContigBuilder} for a contig with the given
+     * contig id and starting with the given consensus.  Both the contig id
+     * and the consensus can be changed by calling methods on the returned
+     * builder.
+     * @param contigId the initial contig id to use for this contig (may later be changed)
+     * @param consensus the initial contig consensus for this contig (may be changed later)
+     * @return a new {@link AceContigBuilder} instance; never null.
+     * @throws NullPointerException if contigId or consensus are null.
+     */
+    public static DefaultAceContigBuilder createBuilder(String contigId, String consensus){
+        return new DefaultAceContigBuilder(contigId, consensus);
     }
     /**
      * Create a new {@link AceContigBuilder} for a contig with the given
@@ -63,78 +73,41 @@ public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> im
      * @return a new {@link AceContigBuilder} instance; never null.
      * @throws NullPointerException if contigId or consensus are null.
      */
-    public static AceContigBuilder createBuilder(String contigId, String consensus){
-        return new Builder(contigId, consensus);
-    }
-    /**
-     * Create a new {@link AceContigBuilder} for a contig with the given
-     * contig id and starting with the given consensus.  Both the contig id
-     * and the consensus can be changed by calling methods on the returned
-     * builder.
-     * @param contigId the initial contig id to use for this contig (may later be changed)
-     * @param consensus the initial contig consensus for this contig (may be changed later)
-     * @return a new {@link AceContigBuilder} instance; never null.
-     * @throws NullPointerException if contigId or consensus are null.
-     */
-    public static AceContigBuilder createBuilder(String contigId, NucleotideSequence consensus){
-        return new Builder(contigId, consensus);
+    public static DefaultAceContigBuilder createBuilder(String contigId, NucleotideSequence consensus){
+        return new DefaultAceContigBuilder(contigId, consensus);
     }
     
     
-    
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public boolean isComplemented() {
-        return complemented;
-    }
-
-
-
-    @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + (complemented ? 1231 : 1237);
-		return result;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (!super.equals(obj)) {
-			return false;
-		}
-		if (!(obj instanceof DefaultAceContig)) {
-			return false;
-		}
-		DefaultAceContig other = (DefaultAceContig) obj;
-		if (complemented != other.complemented) {
-			return false;
-		}
-		return true;
-	}
-
-
-
-	private static final class Builder implements AceContigBuilder{
+    	/**
+    	 * {@link ConsensusCaller} used to update the
+    	 * consensus during {@link #build()}.  If set to {@code null},
+    	 * then no recalling is to be done (null by default).
+    	 */
+    	private ConsensusCaller consensusCaller =null;
+    	/**
+    	 * {@link QualitySequenceDataStore} used during
+    	 * consensus recalling.  Set to null if 
+    	 * no recalling is to be done. (null by default).
+    	 */
+    	private QualitySequenceDataStore qualityDataStore =null;
+    	
+    	private QualityValueStrategy qualityValueStrategy=null;
+    	
         private NucleotideSequence fullConsensus;
         private final NucleotideSequenceBuilder mutableConsensus;
         private String contigId;
         private final Map<String, AceAssembledReadBuilder>aceReadBuilderMap = new HashMap<String, AceAssembledReadBuilder>();
         private int contigLeft= -1;
         private int contigRight = -1;
-        private boolean built=false;
+        private volatile boolean built=false;
         private boolean complemented=false;
-        public Builder(String contigId, String fullConsensus){
+        public DefaultAceContigBuilder(String contigId, String fullConsensus){
            this(contigId,                   
         		   new NucleotideSequenceBuilder(fullConsensus).build()
             );
         }
        
-        public Builder(String contigId, NucleotideSequence fullConsensus){
+        public DefaultAceContigBuilder(String contigId, NucleotideSequence fullConsensus){
             if(contigId ==null){
                 throw new NullPointerException("contig id can not be null");
             }
@@ -151,15 +124,42 @@ public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> im
          * @return this
          */
         @Override
-        public synchronized Builder setComplemented(boolean complemented){
+        public DefaultAceContigBuilder setComplemented(boolean complemented){
             this.complemented = complemented;
             return this;
+        }
+        /**
+         * Recall the consensus using the given
+         * {@link ConsensusCaller} and {@link QualitySequenceDataStore}
+         * which contains the quality data for all of the reads in this ace contig.
+         * The consensus will get recalled inside the {@link #build()}
+         * method before the {@link AceContig} instance is created.
+         * @param consensusCaller the {@link ConsensusCaller}  instance to use
+         * to recall the consensus of this contig; can not be null.
+         * @param qualityDataStore the {@link QualitySequenceDataStore}
+         * which contains all the quality data for all of the reads
+         * in this contig; can not be null.
+         * @return this.
+         * @throws NullPointerException if any parameter is null.
+         */
+        public DefaultAceContigBuilder recallConsensus(ConsensusCaller consensusCaller, 
+        		QualitySequenceDataStore qualityDataStore,
+        		QualityValueStrategy qualityValueStrategy){
+        	if(consensusCaller ==null){
+        		throw new NullPointerException("consensus caller can not be null");
+        	}
+        	if(qualityDataStore ==null){
+        		throw new NullPointerException("quality datastore can not be null");
+        	}
+        	this.consensusCaller=consensusCaller;
+        	this.qualityDataStore = qualityDataStore;
+        	return this;
         }
         /**
         * {@inheritDoc}
         */
         @Override
-        public Builder setContigId(String contigId){
+        public DefaultAceContigBuilder setContigId(String contigId){
             if(contigId==null){
                 throw new NullPointerException("contig id can not be null");
             }
@@ -185,7 +185,7 @@ public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> im
         * {@inheritDoc}
         */
         @Override
-        public Builder addRead(AceAssembledRead acePlacedRead) {
+        public DefaultAceContigBuilder addRead(AceAssembledRead acePlacedRead) {
          return addRead(acePlacedRead.getId(),
         		 acePlacedRead.getNucleotideSequence(),
         		 (int)acePlacedRead.getGappedStartOffset(),
@@ -199,7 +199,7 @@ public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> im
         * {@inheritDoc}
         */
         @Override
-        public Builder addAllReads(Iterable<AceAssembledRead> reads){
+        public DefaultAceContigBuilder addAllReads(Iterable<AceAssembledRead> reads){
             for(AceAssembledRead read : reads){
                 addRead(read);
             }
@@ -225,7 +225,7 @@ public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> im
         * {@inheritDoc}
         */
         @Override
-        public Builder removeRead(String readId) {
+        public DefaultAceContigBuilder removeRead(String readId) {
             if(readId==null){
                 throw new NullPointerException("read id can not be null");
             }
@@ -237,7 +237,7 @@ public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> im
         * {@inheritDoc}
         */
         @Override
-        public Builder addRead(String readId, NucleotideSequence validBases, int offset,
+        public DefaultAceContigBuilder addRead(String readId, NucleotideSequence validBases, int offset,
                 Direction dir, Range clearRange,PhdInfo phdInfo,int ungappedFullLength) {
             //contig left (and right) might be beyond consensus depending on how
             //trimmed the data is and what assembly/consensus caller is used.
@@ -261,17 +261,17 @@ public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> im
                     validBases,
                     offset,dir,clearRange,phdInfo,ungappedFullLength);
         }
-        private synchronized void adjustContigLeftAndRight(NucleotideSequence validBases, int offset) {
+        private void adjustContigLeftAndRight(NucleotideSequence validBases, int offset) {
             adjustContigLeft(offset);
             adjustContigRight(validBases, offset);
         }
-        private synchronized void adjustContigRight(NucleotideSequence validBases, int offset) {
+        private void adjustContigRight(NucleotideSequence validBases, int offset) {
             final int endOfNewRead = offset+ (int)validBases.getLength()-1;
             if(endOfNewRead <= fullConsensus.getLength() && (contigRight ==-1 || endOfNewRead > contigRight)){
                 contigRight = endOfNewRead ;
             }
         }
-        private synchronized void adjustContigLeft(int offset) {
+        private void adjustContigLeft(int offset) {
             
             if(contigLeft ==-1 || offset <contigLeft){
                 contigLeft = offset;
@@ -290,14 +290,17 @@ public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> im
         * {@inheritDoc}
         */
         @Override
-        public synchronized DefaultAceContig build(){
+        public AceContig build(){
              if(built){
                  throw new IllegalStateException("this contig has already been built");
              }
-             built=true;
+             
             if(numberOfReads()==0){
                 //force empty contig if no reads...
-                return new DefaultAceContig(contigId, new NucleotideSequenceBuilder().build(),Collections.<AceAssembledRead>emptySet(),complemented);
+                return new DefaultAceContigImpl(contigId, new NucleotideSequenceBuilder().build(),Collections.<AceAssembledRead>emptySet(),complemented);
+            }
+            if(consensusCaller !=null){
+            	recallConsensus();
             }
             SortedSet<AceAssembledRead> placedReads = new TreeSet<AceAssembledRead>(ConsedReadComparator.INSTANCE);
             //contig left (and right) might be beyond consensus depending on how
@@ -317,12 +320,52 @@ public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> im
                 aceReadBuilder.reference(validConsensus,newOffset);
                 placedReads.add(aceReadBuilder.build());                
             } 
+            built=true;
             aceReadBuilderMap.clear();
             fullConsensus = null;
-            return new DefaultAceContig(contigId, validConsensus,placedReads,complemented);
+            
+            return new DefaultAceContigImpl(contigId, validConsensus,placedReads,complemented);
         }
-    }
-    /**
+    
+    private void recallConsensus() {
+    	/*
+    	CompactedSlice.Builder builders[] = new CompactedSlice.Builder[consensusLength];
+        
+    	while(readIter.hasNext()){
+			PR read = readIter.next();
+			int start = (int)read.getGappedStartOffset();
+			int i=0;
+			String id =read.getId();
+			Direction dir = read.getDirection();
+			QualitySequence fullQualities =null;
+			if(qualityDataStore!=null){
+				fullQualities = qualityDataStore.get(id);
+    			
+    			if(fullQualities ==null){
+    				throw new NullPointerException("could not get qualities for "+id);
+    			}
+			}
+			
+			for(Nucleotide base : read.getNucleotideSequence()){
+				
+				final PhredQuality quality;
+				if(fullQualities==null){
+					quality = DEFAULT_QUALITY;
+				}else{
+					quality= qualityValueStrategy.getQualityFor(read, fullQualities, i);
+				}
+				if(builders[start+i] ==null){
+					builders[start+i] = new CompactedSlice.Builder();
+				}
+				builders[start+i].addSliceElement(id, base, quality, dir);
+				i++;
+			}
+		}
+		*/
+			
+	}
+
+	/**
      * Comparator singleton that sorts reads like consed does when outputing ace files.
      * @author dkatzel
      *
@@ -341,4 +384,54 @@ public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> im
 		}
 
 	}
+    
+    private static final class  DefaultAceContigImpl extends AbstractContig<AceAssembledRead> implements AceContig{
+
+    	
+        private final boolean complemented;
+
+        private DefaultAceContigImpl(String id, NucleotideSequence consensus,
+                Set<AceAssembledRead> reads,boolean complemented) {
+            super(id, consensus, reads);
+            this.complemented = complemented;
+        }
+       
+        
+        
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public boolean isComplemented() {
+            return complemented;
+        }
+
+
+
+        @Override
+    	public int hashCode() {
+    		final int prime = 31;
+    		int result = super.hashCode();
+    		result = prime * result + (complemented ? 1231 : 1237);
+    		return result;
+    	}
+    	@Override
+    	public boolean equals(Object obj) {
+    		if (this == obj) {
+    			return true;
+    		}
+    		if (!super.equals(obj)) {
+    			return false;
+    		}
+    		if (!(obj instanceof DefaultAceContigBuilder)) {
+    			return false;
+    		}
+    		DefaultAceContigBuilder other = (DefaultAceContigBuilder) obj;
+    		if (complemented != other.complemented) {
+    			return false;
+    		}
+    		return true;
+    	}
+    }
+
 }

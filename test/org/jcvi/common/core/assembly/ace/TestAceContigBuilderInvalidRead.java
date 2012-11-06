@@ -26,7 +26,7 @@ package org.jcvi.common.core.assembly.ace;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
-import org.jcvi.common.core.assembly.ace.DefaultAceContig;
+import org.jcvi.common.core.assembly.ace.DefaultAceContigBuilder;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Before;
@@ -52,7 +52,7 @@ public class TestAceContigBuilderInvalidRead {
     private AceContigBuilder sut;
     @Before
     public void setup(){
-        sut = DefaultAceContig.createBuilder(contigId, consensus);
+        sut = DefaultAceContigBuilder.createBuilder(contigId, consensus);
     }
     
     @Test(expected= IllegalArgumentException.class)

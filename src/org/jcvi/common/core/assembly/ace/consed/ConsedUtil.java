@@ -43,7 +43,7 @@ import org.jcvi.common.core.assembly.ace.AceAssembledReadBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
-import org.jcvi.common.core.assembly.ace.DefaultAceContig;
+import org.jcvi.common.core.assembly.ace.DefaultAceContigBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultPhdInfo;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
@@ -199,7 +199,7 @@ public final class ConsedUtil {
         String contigId = String.format("%s_%d_%d",originalContigId, 
                 oldStart + consensus.getUngappedOffsetFor((int) contigRange.getBegin()),
                 oldStart + consensus.getUngappedOffsetFor((int) contigRange.getEnd()));
-        AceContigBuilder builder = DefaultAceContig.createBuilder(contigId, contigConsensus);
+        AceContigBuilder builder = DefaultAceContigBuilder.createBuilder(contigId, contigConsensus);
         
         for(String readId : contigReads){
             final AceAssembledReadBuilder read = builderToSplit.getAssembledReadBuilder(readId);
