@@ -11,7 +11,7 @@ import org.jcvi.common.core.io.IOUtil;
  * @author dkatzel
  *
  */
-public class ByteBufferInputStream extends InputStream{
+public final class ByteBufferInputStream extends InputStream{
 
 	private final ByteBuffer buffer;
 	
