@@ -19,18 +19,19 @@
 
 package org.jcvi.common.core.assembly.clc.cas;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.assembly.cas.Cas2Consed3;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.ContigDataStore;
-import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
-import org.jcvi.common.core.assembly.ace.AceAssembledRead;
-import org.jcvi.common.core.assembly.ace.AceFileContigDataStoreFactory;
-import org.jcvi.common.core.assembly.clc.cas.UnTrimmedExtensionTrimMap;
+import org.jcvi.common.core.assembly.ace.AceFileDataStoreBuilder;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStoreUtil;
 import org.jcvi.common.core.datastore.DataStoreException;
@@ -39,11 +40,10 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.common.io.fileServer.DirectoryFileServer.TemporaryDirectoryFileServer;
+import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestCas2Consed3 {
 
 	 private final ResourceFileServer RESOURCES = new ResourceFileServer(TestCas2Consed3.class); 
@@ -65,8 +65,10 @@ public class TestCas2Consed3 {
 	      cas2consed3.convert(TrimDataStoreUtil.EMPTY_DATASTORE,new UnTrimmedExtensionTrimMap(),FastqQualityCodec.ILLUMINA, false,false,false);
 	      
 	      File aceFile = tempDir.getFile("edit_dir/"+prefix+".ace.1");
-	      AceFileContigDataStore dataStore = AceFileContigDataStoreFactory.create(aceFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED);
-	      assertEquals("# contigs", expectedDataStore.getNumberOfRecords(), dataStore.getNumberOfRecords());
+	      AceFileContigDataStore dataStore =new AceFileDataStoreBuilder(aceFile)
+												.hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED)
+												.build();
+	        assertEquals("# contigs", expectedDataStore.getNumberOfRecords(), dataStore.getNumberOfRecords());
 	        StreamingIterator<AceContig> iter = dataStore.iterator();
 	        try{
 		        while(iter.hasNext()){

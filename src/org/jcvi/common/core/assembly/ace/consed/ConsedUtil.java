@@ -36,20 +36,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.Range.CoordinateSystem;
+import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.assembly.AssemblyUtil;
+import org.jcvi.common.core.assembly.ace.AceAssembledReadBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
-import org.jcvi.common.core.assembly.ace.AceAssembledReadBuilder;
 import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
 import org.jcvi.common.core.assembly.ace.DefaultAceContig;
 import org.jcvi.common.core.assembly.ace.DefaultPhdInfo;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
+import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapUtil;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
-import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -253,13 +253,18 @@ public final class ConsedUtil {
      *<p/>Consed labels each version of the ace file with a incrementing
      *value so {@code prefix.ace.2} is newer than {@code prefix.ace.1}.
      * @param editDir the consed edit_dir folder to inspect.
+     * If this parameter is null, then this method will
+     * return null.
      * @param filenamePrefix the beginning part of the file name to filter,
      * incase there are more than 1 groups of versioned assemblies.
      * @return the File object representing the latest version of the ace file
      * with the given prefix in the given edit_dir; {@code null}
-     * if no such file exists.
+     * if no such file exists or if editDir is also {@code null}.
      */
     public static File getLatestAceFile(File editDir, final String filenamePrefix){
+    	if(editDir==null){
+    		return null;
+    	}
         int highestAceFileVersion=Integer.MIN_VALUE;
         File highestAceFile=null;
         try{

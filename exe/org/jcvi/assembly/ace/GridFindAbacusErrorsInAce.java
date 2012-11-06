@@ -30,10 +30,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -49,14 +49,14 @@ import org.ggf.drmaa.SessionFactory;
 import org.jcvi.common.command.Command;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
+import org.jcvi.common.command.grid.GridJob.MemoryUnit;
 import org.jcvi.common.command.grid.GridJobBuilder;
 import org.jcvi.common.command.grid.GridJobBuilders;
 import org.jcvi.common.command.grid.GridJobExecutorService;
 import org.jcvi.common.command.grid.PostExecutionHook;
 import org.jcvi.common.command.grid.SimpleGridJob;
-import org.jcvi.common.command.grid.GridJob.MemoryUnit;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
-import org.jcvi.common.core.assembly.ace.AceFileContigDataStoreFactory;
+import org.jcvi.common.core.assembly.ace.AceFileDataStoreBuilder;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationWriter;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
@@ -164,7 +164,9 @@ public class GridFindAbacusErrorsInAce {
             List<SimpleGridJob> jobs = new ArrayList<SimpleGridJob>();
             File aceFile = new File(commandLine.getOptionValue("a"));
             final DataStoreFilter filter = getDataStoreFilter(commandLine);
-            AceFileContigDataStore datastore = AceFileContigDataStoreFactory.create(aceFile, DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY);
+            AceFileContigDataStore datastore = new AceFileDataStoreBuilder(aceFile)
+													.hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY)
+													.build();
             StreamingIterator<String> idIter = datastore.idIterator();
             Set<File> files = new HashSet<File>();
             try{
