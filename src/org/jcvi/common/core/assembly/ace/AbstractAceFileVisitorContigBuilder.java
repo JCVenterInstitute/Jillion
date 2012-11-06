@@ -35,7 +35,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  *
  *
  */
-public abstract class AbstractAceContigBuilder extends AbstractAceFileVisitor {
+public abstract class AbstractAceFileVisitorContigBuilder extends AbstractAceFileVisitor {
    
    
     private AceContigBuilder contigBuilder;

@@ -212,7 +212,7 @@ final class DefaultAceFileDataStore implements AceFileContigDataStore{
 		return IteratorUtil.createStreamingIterator(consensusTags.iterator());
 	}
 
-	private static class DefaultAceFileDataStoreBuilder extends AbstractAceContigBuilder implements AceContigDataStoreBuilder{
+	private static class DefaultAceFileDataStoreBuilder extends AbstractAceFileVisitorContigBuilder implements AceContigDataStoreBuilder{
         private Map<String, AceContig> contigMap;
         
         private final DataStoreFilter filter;

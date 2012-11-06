@@ -26,7 +26,7 @@ package org.jcvi.common.core.assembly.ace;
 import java.util.Date;
 
 
-public abstract class AbstractDefaultAceTag implements AceTag{
+abstract class AbstractDefaultAceTag implements AceTag{
     private final String type;
     private final String creator;
     private final Date creationDate;

@@ -403,7 +403,7 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
         */
         @Override
         protected void backgroundThreadRunMethod() {
-            AbstractAceContigBuilder builder = new AbstractAceContigBuilder() {
+            AbstractAceFileVisitorContigBuilder builder = new AbstractAceFileVisitorContigBuilder() {
 
                 @Override
 				public synchronized boolean shouldVisitContig(String contigId,
