@@ -20,6 +20,7 @@
 package org.jcvi.common.core.util;
 
 import org.jcvi.common.core.util.iter.TestAbstractBlockingClosableIteratorExceptions;
+import org.jcvi.common.core.util.iter.TestArrayIterator;
 import org.jcvi.common.core.util.iter.TestChainedIterator;
 import org.jcvi.common.core.util.iter.TestEmptyIterator;
 import org.jcvi.common.core.util.iter.TestPeekableIterator;
@@ -32,7 +33,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestObjectsUtil.class,
+       
+    	TestObjectsUtil.class,
         TestRunLength.class,
         MathUtilSuite.class,
         TestLRUCache.class,
@@ -49,6 +51,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestStreamingIterator.class,
         TestMapValueComparator.class,
         
+        TestArrayIterator.class,
         TestPeekableIterator.class,
         TestPeekableStreamingIterator.class,
         

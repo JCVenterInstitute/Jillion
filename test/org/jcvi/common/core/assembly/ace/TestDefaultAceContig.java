@@ -23,7 +23,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
-import org.jcvi.common.core.assembly.ace.DefaultAceContig;
+import org.jcvi.common.core.assembly.ace.DefaultAceContigBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
@@ -37,7 +37,7 @@ public class TestDefaultAceContig {
 
     @Test
     public void noPlacedReadsShouldMakeEmptyContig(){
-        AceContigBuilder sut =  DefaultAceContig.createBuilder("id",
+        AceContigBuilder sut =  DefaultAceContigBuilder.createBuilder("id",
                 "ACGTACGTACGTACGT");
         AceContig contig =sut.build();
         NucleotideSequence consensus =contig.getConsensusSequence();
@@ -47,7 +47,7 @@ public class TestDefaultAceContig {
     }
     @Test
     public void callingBuildTwiceShouldThrowIllegalStateException(){
-        AceContigBuilder sut =  DefaultAceContig.createBuilder("id",
+        AceContigBuilder sut =  DefaultAceContigBuilder.createBuilder("id",
                 "ACGTACGTACGTACGT");
         sut.build();
         
@@ -60,7 +60,7 @@ public class TestDefaultAceContig {
     }
     @Test
     public void readThatHasNegativeOffsetShouldGetTrimmedToOffsetZero(){
-        AceContigBuilder sut =  DefaultAceContig.createBuilder("id",
+        AceContigBuilder sut =  DefaultAceContigBuilder.createBuilder("id",
                                             "ACGTACGTACGTACGT");
         sut.addRead("read", new NucleotideSequenceBuilder("ACGTACGTACGTACGT").build(), -2, Direction.FORWARD, Range.of(2, 18), null,18);
             AceContig contig =sut.build();
