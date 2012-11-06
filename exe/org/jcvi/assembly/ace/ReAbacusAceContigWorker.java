@@ -49,7 +49,7 @@ import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Ranges;
-import org.jcvi.common.core.assembly.ace.AbstractAceContigBuilder;
+import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitorContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceAssembledReadBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
@@ -306,7 +306,7 @@ public class ReAbacusAceContigWorker {
     
     
     
-    static class AbacusFixerBuilder extends AbstractAceContigBuilder{
+    static class AbacusFixerBuilder extends AbstractAceFileVisitorContigBuilder{
         private final Map<String, List<Range>> abacusProblemRanges;
         private final int numberOfFlankingBases;
         private final OutputStream aceOut;

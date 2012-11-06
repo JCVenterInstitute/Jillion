@@ -92,7 +92,34 @@ public final class  DefaultAceContig extends AbstractContig<AceAssembledRead> im
 
 
 
-    private static final class Builder implements AceContigBuilder{
+    @Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + (complemented ? 1231 : 1237);
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof DefaultAceContig)) {
+			return false;
+		}
+		DefaultAceContig other = (DefaultAceContig) obj;
+		if (complemented != other.complemented) {
+			return false;
+		}
+		return true;
+	}
+
+
+
+	private static final class Builder implements AceContigBuilder{
         private NucleotideSequence fullConsensus;
         private final NucleotideSequenceBuilder mutableConsensus;
         private String contigId;

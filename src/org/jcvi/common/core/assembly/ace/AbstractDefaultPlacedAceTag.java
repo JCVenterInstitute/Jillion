@@ -28,7 +28,7 @@ import java.util.Date;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Rangeable;
 
-public abstract class AbstractDefaultPlacedAceTag extends AbstractDefaultAceTag implements RangeableAceTag{
+abstract class AbstractDefaultPlacedAceTag extends AbstractDefaultAceTag implements RangeableAceTag{
     private final String id;
     
     private final Rangeable location;

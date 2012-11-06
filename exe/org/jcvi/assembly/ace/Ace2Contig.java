@@ -29,7 +29,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
-import org.jcvi.common.core.assembly.ace.AbstractAceContigBuilder;
+import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitorContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
@@ -87,7 +87,7 @@ public class Ace2Contig {
             final DataStoreFilter filter = CommandLineUtils.createDataStoreFilter(commandLine);
             
             
-            AceFileVisitor aceVisitor = new AbstractAceContigBuilder(){
+            AceFileVisitor aceVisitor = new AbstractAceFileVisitorContigBuilder(){
 
                 @Override
                 protected void visitContig(AceContig contig) {
