@@ -27,7 +27,7 @@ import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
-import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
 
 /**
  * @author dkatzel

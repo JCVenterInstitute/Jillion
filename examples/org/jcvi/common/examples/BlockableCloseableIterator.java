@@ -21,7 +21,7 @@ package org.jcvi.common.examples;
 
 import java.math.BigDecimal;
 
-import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
 
 /**
  * Example of using a {@link BlockableCloseableIterator}

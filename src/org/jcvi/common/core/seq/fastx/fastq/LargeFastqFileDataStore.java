@@ -37,8 +37,8 @@ import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
 /**
  * {@code LargeFastqFileDataStore} is a {@link FastqDataStore} implementation
  * to be used a very large Fastq Files.  No data contained in this

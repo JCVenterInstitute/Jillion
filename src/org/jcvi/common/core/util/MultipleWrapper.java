@@ -28,9 +28,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-import org.jcvi.common.core.util.iter.ArrayIterable;
 /**
  * {@code MultipleWrapper} uses dymanic proxies to wrap
  * several instances of an interface.  This allows
@@ -93,7 +92,7 @@ public final class  MultipleWrapper<T> implements InvocationHandler{
      * @see #createMultipleWrapper(Class, ReturnPolicy, Object...)
      */
     public static <T,I extends T> T createMultipleWrapper(Class<T> classType,I... delegates){
-       return createMultipleWrapper(classType,ReturnPolicy.RETURN_FIRST,new ArrayIterable<T>(delegates));
+       return createMultipleWrapper(classType,ReturnPolicy.RETURN_FIRST,Arrays.asList(delegates));
     }
     /**
      * Convenience constructor which is the same as calling
@@ -102,7 +101,7 @@ public final class  MultipleWrapper<T> implements InvocationHandler{
      * @see #createMultipleWrapper(Class, ReturnPolicy, Object...)
      */
     public static <T,I extends T> T createMultipleWrapper(Class<T> classType,ReturnPolicy policy,I... delegates){
-       return createMultipleWrapper(classType,policy,new ArrayIterable<T>(delegates));
+       return createMultipleWrapper(classType,policy,Arrays.asList(delegates));
     }
     
     

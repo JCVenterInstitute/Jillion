@@ -20,7 +20,6 @@
 package org.jcvi.common.core.util;
 
 import org.jcvi.common.core.util.iter.TestAbstractBlockingClosableIteratorExceptions;
-import org.jcvi.common.core.util.iter.TestArrayIterator;
 import org.jcvi.common.core.util.iter.TestChainedIterator;
 import org.jcvi.common.core.util.iter.TestEmptyIterator;
 import org.jcvi.common.core.util.iter.TestPeekableIterator;
@@ -40,7 +39,6 @@ import org.junit.runners.Suite.SuiteClasses;
         TestLRUCache.class,
         TestWeakReferenceLRUCache.class,
         TestEmptyIterator.class,
-        TestArrayIterable.class,
         TestFileIterator.class,
         TestDepthFirstFileIterator.class,
         TestBreadthFirstFileIterator.class,
@@ -50,8 +48,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestStreamingAdapter.class,
         TestStreamingIterator.class,
         TestMapValueComparator.class,
-        
-        TestArrayIterator.class,
+
         TestPeekableIterator.class,
         TestPeekableStreamingIterator.class,
         

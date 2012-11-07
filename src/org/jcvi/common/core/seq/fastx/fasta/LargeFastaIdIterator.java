@@ -25,7 +25,7 @@ import java.io.FileNotFoundException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
-import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
 
 /**
  * @author dkatzel

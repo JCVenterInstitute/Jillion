@@ -19,15 +19,16 @@
 
 package org.jcvi.common.core.assembly.ace;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.util.Date;
+
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.ace.AceContig;
-import org.jcvi.common.core.assembly.ace.AceContigBuilder;
-import org.jcvi.common.core.assembly.ace.DefaultAceContigBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
@@ -46,10 +47,29 @@ public class TestDefaultAceContig {
         assertEquals(0,contig.getNumberOfReads());
     }
     @Test
-    public void callingBuildTwiceShouldThrowIllegalStateException(){
+    public void callingBuildTwiceOnEmptyContigShouldThrowIllegalStateException(){
         AceContigBuilder sut =  DefaultAceContigBuilder.createBuilder("id",
                 "ACGTACGTACGTACGT");
         sut.build();
+        
+        try{
+            sut.build();
+            fail("should throw IllegalStateException if build() called twice");
+        }catch(IllegalStateException e){
+            //expected
+        }
+    }
+    @Test
+    public void callingBuildTwiceOnPopulatedContigShouldThrowIllegalStateException(){
+        AceContigBuilder sut =  DefaultAceContigBuilder.createBuilder("id", "ACGTACGTACGTACGT");
+        sut.build();
+        sut.addRead("read", 
+        		new NucleotideSequenceBuilder("ACGTACGTACGTACGT").build(), 
+        		0, 
+        		Direction.FORWARD, 
+        		Range.of(2, 18),
+        		new DefaultPhdInfo("traceName", "phdName", new Date()),
+        		18);
         
         try{
             sut.build();

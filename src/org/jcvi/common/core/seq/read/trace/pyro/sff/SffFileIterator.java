@@ -25,8 +25,8 @@ import java.io.IOException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
-import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
 
 /**
  * {@code SffFileIterator} is a {@link StreamingIterator}
