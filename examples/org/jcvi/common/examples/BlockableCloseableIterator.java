@@ -21,7 +21,7 @@ package org.jcvi.common.examples;
 
 import java.math.BigDecimal;
 
-import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.iter.impl.AbstractBlockingStreamingIterator;
 
 /**
  * Example of using a {@link BlockableCloseableIterator}
@@ -30,13 +30,13 @@ import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
  */
 public class BlockableCloseableIterator {
     /**
-     * Example implementation of {@link AbstractBlockingCloseableIterator}
+     * Example implementation of {@link AbstractBlockingStreamingIterator}
      * which will compute the approximate value of PI.
      * Each {@link BigDecimal} returned by this iterator
      * will be a more accurate approximation.
      * @author dkatzel
      */
-    private static class ApproximatePiIterator extends AbstractBlockingCloseableIterator<BigDecimal>{
+    private static class ApproximatePiIterator extends AbstractBlockingStreamingIterator<BigDecimal>{
         private final int numOfIterations;
         public static final BigDecimal FOUR = BigDecimal.valueOf(4);
         /**

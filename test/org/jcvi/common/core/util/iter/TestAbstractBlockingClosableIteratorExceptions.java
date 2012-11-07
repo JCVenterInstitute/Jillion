@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.iter.impl.AbstractBlockingStreamingIterator;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -45,7 +45,7 @@ public class TestAbstractBlockingClosableIteratorExceptions {
     
     private List<String> names = Arrays.asList("moe","larry","curly", "shemp","curly joe", "joe");
     
-    private class TestDouble extends AbstractBlockingCloseableIterator<String>{
+    private class TestDouble extends AbstractBlockingStreamingIterator<String>{
         private final int numberOfRecordsUntilThrowException;
         private final List<String> list;
         
