@@ -20,7 +20,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.iter.impl.AbstractBlockingStreamingIterator;
 /**
  * {@code LargeAceFileDataStore} is an {@link AceFileContigDataStore}
  * implementation that doesn't store any contig or 
@@ -396,7 +396,7 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
      * to iterate over the entire file in 1 pass.
      * @author dkatzel
      */
-    private final class AceFileDataStoreIterator extends AbstractBlockingCloseableIterator<AceContig>{
+    private final class AceFileDataStoreIterator extends AbstractBlockingStreamingIterator<AceContig>{
 
         /**
         * {@inheritDoc}
@@ -592,7 +592,7 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
     
     	
     
-    private final class IdIteratorImpl extends AbstractBlockingCloseableIterator<String>{
+    private final class IdIteratorImpl extends AbstractBlockingStreamingIterator<String>{
     	private class InnerVisitor implements AceFileVisitor{
     		@Override
 			public void visitLine(String line) {

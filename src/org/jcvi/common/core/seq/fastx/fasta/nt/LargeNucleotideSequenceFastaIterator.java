@@ -27,14 +27,14 @@ import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
-import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.iter.impl.AbstractBlockingStreamingIterator;
 
 /**
  * @author dkatzel
  *
  *
  */
-final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingCloseableIterator<NucleotideSequenceFastaRecord>{
+final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreamingIterator<NucleotideSequenceFastaRecord>{
 
 	private final File fastaFile;
 	private final DataStoreFilter filter;

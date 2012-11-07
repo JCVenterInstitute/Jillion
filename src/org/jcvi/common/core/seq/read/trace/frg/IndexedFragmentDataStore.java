@@ -39,7 +39,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.iter.impl.AbstractBlockingStreamingIterator;
 /**
  * {@code IndexedFragmentDataStore} is an implementation of 
  * {@link FragmentDataStore} that only stores an index containing
@@ -344,7 +344,7 @@ public final class IndexedFragmentDataStore extends AbstractFragmentDataStore{
     }
     
     
-    private class FrgIterator extends AbstractBlockingCloseableIterator<Fragment>{
+    private class FrgIterator extends AbstractBlockingStreamingIterator<Fragment>{
 
         /**
         * {@inheritDoc}

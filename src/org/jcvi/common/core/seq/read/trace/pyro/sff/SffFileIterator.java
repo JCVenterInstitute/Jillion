@@ -26,7 +26,7 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.iter.impl.AbstractBlockingStreamingIterator;
 
 /**
  * {@code SffFileIterator} is a {@link StreamingIterator}
@@ -35,7 +35,7 @@ import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
  * @author dkatzel
  *
  */
-public final class SffFileIterator extends AbstractBlockingCloseableIterator<Flowgram>{
+public final class SffFileIterator extends AbstractBlockingStreamingIterator<Flowgram>{
 
 	private final File sffFile;
 	private final DataStoreFilter filter;

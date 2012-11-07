@@ -8,9 +8,9 @@ import org.jcvi.common.core.datastore.DataStoreClosedException;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
-import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.iter.impl.AbstractBlockingStreamingIterator;
 
-class QualitySequenceFastaDataStoreIdIteratorImpl extends AbstractBlockingCloseableIterator<String>{
+class QualitySequenceFastaDataStoreIdIteratorImpl extends AbstractBlockingStreamingIterator<String>{
 		private final File fastaFile;
 		public QualitySequenceFastaDataStoreIdIteratorImpl(File fastaFile) {
 			if(!fastaFile.exists()){

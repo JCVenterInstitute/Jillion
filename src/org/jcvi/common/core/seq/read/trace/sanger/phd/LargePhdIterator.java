@@ -27,7 +27,7 @@ import java.util.Properties;
 import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.iter.impl.AbstractBlockingStreamingIterator;
 
 /**
  * {@code LargePhdIterator} is a {@link CloseableIterator}
@@ -37,7 +37,7 @@ import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
  * @author dkatzel
  *
  */
-public final class LargePhdIterator extends AbstractBlockingCloseableIterator<Phd>{
+public final class LargePhdIterator extends AbstractBlockingStreamingIterator<Phd>{
     private final File phdFile;
         
     

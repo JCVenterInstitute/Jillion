@@ -25,14 +25,14 @@ import java.io.FileNotFoundException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
-import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.iter.impl.AbstractBlockingStreamingIterator;
 
 /**
  * @author dkatzel
  *
  *
  */
-final class LargeFastaIdIterator extends AbstractBlockingCloseableIterator<String>{
+final class LargeFastaIdIterator extends AbstractBlockingStreamingIterator<String>{
 
     private final File fastaFile;
     private final DataStoreFilter filter;

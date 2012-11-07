@@ -25,7 +25,7 @@ import org.jcvi.common.core.util.MapUtil;
 import org.jcvi.common.core.util.impl.Caches;
 import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.iter.impl.AbstractBlockingStreamingIterator;
 /**
  * {@code IndexedAceFileContig} is an {@link AceContig}
  * that doesn't store all the data of this contig
@@ -382,7 +382,7 @@ abstract class AbstractIndexedAceFileContig implements AceContig{
 		
 	}
 	
-	 private static final class IndexedReadIterator extends AbstractBlockingCloseableIterator<AceAssembledRead>{
+	 private static final class IndexedReadIterator extends AbstractBlockingStreamingIterator<AceAssembledRead>{
 
 	    	private final NucleotideSequence consensus;
 	    	private final Map<String, AlignedReadInfo> readInfoMap;

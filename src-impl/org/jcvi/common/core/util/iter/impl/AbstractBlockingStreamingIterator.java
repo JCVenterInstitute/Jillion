@@ -98,7 +98,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  * @param <T> the type of elements being iterated over.
  */
-public abstract class AbstractBlockingCloseableIterator<T> implements StreamingIterator<T>{
+public abstract class AbstractBlockingStreamingIterator<T> implements StreamingIterator<T>{
 
 	private final Object endOfFileToken = new Object();
     private final BlockingQueue<Object> queue = new LinkedBlockingQueue<Object>(1);
@@ -268,14 +268,14 @@ public abstract class AbstractBlockingCloseableIterator<T> implements StreamingI
 	          * closes the blocked iterator.
 	          */
 	         public void kill(){
-	             IOUtil.closeAndIgnoreErrors(AbstractBlockingCloseableIterator.this);                
+	             IOUtil.closeAndIgnoreErrors(AbstractBlockingStreamingIterator.this);                
 	         }
 	         @Override
 	         public void run() {
 	             try{
 	                 backgroundThreadRunMethod();
 	             }catch(RuntimeException e){
-	                 AbstractBlockingCloseableIterator.this.uncaughtException = e;	                 
+	                 AbstractBlockingStreamingIterator.this.uncaughtException = e;	                 
 	             }finally{
 	                 finishedIterating();
 	             }
