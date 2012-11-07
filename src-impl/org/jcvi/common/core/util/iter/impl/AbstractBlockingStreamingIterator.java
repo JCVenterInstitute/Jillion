@@ -30,9 +30,9 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
- * {@code AbstractBlockingCloseableIterator}
+ * {@code AbstractBlockingStreamingIterator}
  * is a {@link StreamingIterator} that is
- * meant be used with a iterate over a large computationally intensive
+ * meant be used to iterate over a large computationally intensive
  * or memory intensive process.  Only 1 record (the next record
  * to be returned by {@link Iterator#next()}) will be referenced by this class.
  * This class will perform the intensive computation in a background Thread
@@ -45,7 +45,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * if the iterator is not explicitly closed via the {@link #close()}
  * method, then the background thread will block forever. This is 
  * especially true in situations when Exceptions are thrown by other objects.
- * Please make sure CloseableIterators are closed in finally blocks.
+ * Please make sure {@link StreamingIterator}s are closed in finally blocks.
  * <p/>
  * The background thread is not started until the {@link #start()}
  * method is called.  This allows for subclasses to set up
@@ -56,22 +56,25 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * <pre> 
 
      //Example implementation 
-     //will compute the approximate value of PI.
+     //will compute the approximate value of &pi;.
      //Each {@link BigDecimal} returned by this iterator
      //will be a more accurate approximation.
-    
-    class ApproximatePiIterator extends AbstractBlockingCloseableIterator&lt;BigDecimal&gt;{
+    //This class computes the value of &pi; using the Madhava-Leibniz series:
+    //&pi; = 4 &sum; ( (-1)<sup>k</sup> / (2k + 1) )
+     
+    class ApproximatePiIterator extends AbstractBlockingStreamingIterator&lt;BigDecimal&gt;{
         private final int numOfIterations;
         
         public ApproximatePiIterator(int numOfIterations) {
             this.numOfIterations = numOfIterations;
         }
         
-        //Computes the value of &pi; using the Madhava–Leibniz series:
-        //&pi; = 4 &sum; (-1)<sup>k</sup> / (2k + 1)    
+         
         protected void backgroundThreadRunMethod() throws RuntimeException {
+           
+            this.blockingPut(FOUR);
+            
             BigDecimal currentValue = BigDecimal.valueOf(1);
-            this.blockingPut(currentValue.multiply(FOUR));
             for(int i=1; i&lt;numOfIterations; i++){
                 BigDecimal x = BigDecimal.valueOf(1D/(2*i+1));
                 if(i%2==0){
@@ -86,10 +89,14 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
     }
     
     public static void main(String[] args){
-        ApproximatePiIterator approxPi = new ApproximatePiIterator(5000);
+        ApproximatePiIterator approxPi = new ApproximatePiIterator(1_000_000);
         approxPi.start();
-        while(approxPi.hasNext()){
-            System.out.println(approxPi.next());
+        try{
+           while(approxPi.hasNext()){
+              System.out.println(approxPi.next());
+           }
+        }finally{
+           IOUtil.closeAndIgnoreErrors(approxPi.close());
         }
     }
  * </pre>

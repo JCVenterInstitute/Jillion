@@ -24,11 +24,11 @@ import java.math.BigDecimal;
 import org.jcvi.common.core.util.iter.impl.AbstractBlockingStreamingIterator;
 
 /**
- * Example of using a {@link BlockableCloseableIterator}
+ * Example of using a {@link BlockableStreamingIterator}
  * to compute more and more accurate values of PI.
  * @author dkatzel
  */
-public class BlockableCloseableIterator {
+public class BlockableStreamingIterator {
     /**
      * Example implementation of {@link AbstractBlockingStreamingIterator}
      * which will compute the approximate value of PI.
@@ -68,7 +68,7 @@ public class BlockableCloseableIterator {
         @Override
         protected void backgroundThreadRunMethod() throws RuntimeException {
             BigDecimal currentValue = BigDecimal.valueOf(1);
-            this.blockingPut(currentValue.multiply(FOUR));
+            this.blockingPut(FOUR);
             for(int i=1; i<numOfIterations; i++){
                 BigDecimal x = BigDecimal.valueOf(1D/(2*i+1));
                 if(i%2==0){
@@ -83,7 +83,7 @@ public class BlockableCloseableIterator {
     }
     
     public static void main(String[] args){
-        ApproximatePiIterator approxPi = new ApproximatePiIterator(5000);
+        ApproximatePiIterator approxPi = new ApproximatePiIterator(1000000);
         approxPi.start();
         while(approxPi.hasNext()){
             System.out.println(approxPi.next());
