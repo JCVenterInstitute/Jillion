@@ -1,8 +1,7 @@
 package org.jcvi.common.core.util;
 
+import java.util.Arrays;
 import java.util.Iterator;
-
-import org.jcvi.common.core.util.iter.ArrayIterable;
 
 /**
  * {@code JoinedStringBuilder}
@@ -42,7 +41,7 @@ public final class JoinedStringBuilder implements Builder<String>{
      * during the join.
      */
     public JoinedStringBuilder(Object... elements){
-        this(new ArrayIterable<Object>(elements));
+        this(Arrays.asList(elements));
     }
     /**
      * The given glue's {@link Object#toString()} is what is concatenated

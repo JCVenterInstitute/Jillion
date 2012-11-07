@@ -8,7 +8,7 @@ import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.aa.AminoAcidSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.aa.AminoAcidSequenceFastaRecordBuilder;
-import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
+import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
 
 final class LargeAminoAcidSequenceFastaIterator extends AbstractBlockingCloseableIterator<AminoAcidSequenceFastaRecord>{
 

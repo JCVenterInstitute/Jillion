@@ -38,8 +38,8 @@ import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
 /**
  * {@code IndexedFragmentDataStore} is an implementation of 
  * {@link FragmentDataStore} that only stores an index containing

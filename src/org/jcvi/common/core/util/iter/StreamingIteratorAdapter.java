@@ -31,7 +31,7 @@ import java.util.NoSuchElementException;
  *
  *
  */
-public final class StreamingIteratorAdapter<T> implements StreamingIterator<T>{
+final class StreamingIteratorAdapter<T> implements StreamingIterator<T>{
 
 	private final Iterator<T> iterator;
 	private volatile boolean isClosed = false;

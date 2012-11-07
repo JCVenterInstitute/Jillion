@@ -23,23 +23,23 @@
  */
 package org.jcvi.common.core.assembly.util.slice;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapUtil;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.util.iter.ArrayIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public class DefaultSliceMap extends AbstractSliceMap{
@@ -144,7 +144,7 @@ public class DefaultSliceMap extends AbstractSliceMap{
     }
     @Override
     public Iterator<IdedSlice> iterator() {
-        return new ArrayIterator<IdedSlice>(slices);
+        return Arrays.<IdedSlice>asList(slices).iterator();
     }
 
     

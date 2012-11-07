@@ -25,6 +25,7 @@ package org.jcvi.common.core.assembly.util.coverage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,12 +34,11 @@ import java.util.List;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Rangeable;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.iter.ArrayIterator;
 import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
@@ -253,7 +253,7 @@ public final class CoverageMapFactory {
 	    
 	    @Override
 	    public Iterator<CoverageRegion<V>> iterator() {
-	        return new ArrayIterator<CoverageRegion<V>>(regions);
+	        return Arrays.asList(regions).iterator();
 	    }
 	
 	    

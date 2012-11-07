@@ -297,6 +297,7 @@ public final class  DefaultAceContigBuilder implements AceContigBuilder{
              
             if(numberOfReads()==0){
                 //force empty contig if no reads...
+            	 built=true;
                 return new DefaultAceContigImpl(contigId, new NucleotideSequenceBuilder().build(),Collections.<AceAssembledRead>emptySet(),complemented);
             }
             if(consensusCaller !=null){

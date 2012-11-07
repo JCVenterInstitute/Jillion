@@ -41,7 +41,6 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.impl.ValueSizeStrategy;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.impl.AbstractResidueSequence;
-import org.jcvi.common.core.util.iter.ArrayIterator;
 
 final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSequence<Nucleotide> implements ReferenceMappedNucleotideSequence{
 
@@ -233,14 +232,13 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
     @Override
 	public Iterator<Nucleotide> iterator() {
     	Nucleotide[] array = asNucleotideArray();
-    	return new ArrayIterator<Nucleotide>(array);
+    	return Arrays.asList(array).iterator();
 	}
 
 	@Override
-	public Iterator<Nucleotide> iterator(Range range) {
-		// TODO optimize by making sub-arrays
-		Nucleotide[] array = asNucleotideArray();
-    	return new ArrayIterator<Nucleotide>(Arrays.copyOfRange(array, (int)range.getBegin(), (int)range.getEnd()+1));
+	public Iterator<Nucleotide> iterator(Range range) {		
+		Nucleotide[] array = asNucleotideArray(range);
+		return Arrays.asList(array).iterator();
 	}
 
 
@@ -256,7 +254,13 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 		}
 		return array;
 	}
-
+	private Nucleotide[] asNucleotideArray(Range range) {
+		if(range==null){
+			throw new NullPointerException("range can not be null");
+		}
+		Nucleotide[] array = asNucleotideArray();
+		return Arrays.copyOfRange(array, (int)range.getBegin(), (int)range.getEnd()+1);
+	}
 	private Nucleotide[] asNucleotideArray() {
 		//get the reference bases as an array
 		//we convert to an array since

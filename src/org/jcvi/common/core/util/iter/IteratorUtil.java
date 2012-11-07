@@ -201,7 +201,52 @@ public final class IteratorUtil {
 			}
 			throw new NoSuchElementException();
 		}
-    	
-    	
     }
+    
+    /**
+     * {@code EmptyIterator} is a NullObject implementation
+     * of {@link Iterator}; an EmptyIterator will never 
+     * have any elements to iterate over.
+     * @author dkatzel
+     *
+     *
+     */
+    private static class EmptyIterator<E> implements Iterator<E> {
+        /**
+         * Singleton instance of Empty iterator that can be shared 
+         * by all.
+         */
+        @SuppressWarnings("rawtypes")
+    	static final EmptyIterator INSTANCE  = new EmptyIterator();
+        /**
+         * Private constructor so no one can subclass.
+         */
+        private EmptyIterator(){}
+        /**
+         * Never has a next.
+         * @return {@code false}
+         */
+        @Override
+        public boolean hasNext() {
+            return false;
+        }
+        /**
+         * Will always throw an NoSuchElementException.
+         * @throws NoSuchElementException because there will never be a next.
+         */
+        @Override
+        public E next() {
+            throw new NoSuchElementException("no elements in empty iterator");
+        }
+        /**
+         * Does nothing.
+         */
+        @Override
+        public void remove() {
+            //no-op
+        }
+
+    }
+    
+    
 }

@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.util.iter;
+package org.jcvi.common.core.util.iter.impl;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -27,6 +27,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * {@code AbstractBlockingCloseableIterator}

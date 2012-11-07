@@ -23,9 +23,9 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.MapUtil;
 import org.jcvi.common.core.util.impl.Caches;
-import org.jcvi.common.core.util.iter.AbstractBlockingCloseableIterator;
 import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.util.iter.impl.AbstractBlockingCloseableIterator;
 /**
  * {@code IndexedAceFileContig} is an {@link AceContig}
  * that doesn't store all the data of this contig
