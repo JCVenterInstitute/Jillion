@@ -72,35 +72,6 @@ import org.jcvi.common.core.util.Builder;
  *
  */
 public final class  DefaultAceContigBuilder implements AceContigBuilder{
-
-	
-   
-    /**
-     * Create a new {@link AceContigBuilder} for a contig with the given
-     * contig id and starting with the given consensus.  Both the contig id
-     * and the consensus can be changed by calling methods on the returned
-     * builder.
-     * @param contigId the initial contig id to use for this contig (may later be changed)
-     * @param consensus the initial contig consensus for this contig (may be changed later)
-     * @return a new {@link AceContigBuilder} instance; never null.
-     * @throws NullPointerException if contigId or consensus are null.
-     */
-    public static DefaultAceContigBuilder createBuilder(String contigId, String consensus){
-        return new DefaultAceContigBuilder(contigId, consensus);
-    }
-    /**
-     * Create a new {@link AceContigBuilder} for a contig with the given
-     * contig id and starting with the given consensus.  Both the contig id
-     * and the consensus can be changed by calling methods on the returned
-     * builder.
-     * @param contigId the initial contig id to use for this contig (may later be changed)
-     * @param consensus the initial contig consensus for this contig (may be changed later)
-     * @return a new {@link AceContigBuilder} instance; never null.
-     * @throws NullPointerException if contigId or consensus are null.
-     */
-    public static DefaultAceContigBuilder createBuilder(String contigId, NucleotideSequence consensus){
-        return new DefaultAceContigBuilder(contigId, consensus);
-    }
     /**
      * default quality value that every basecall will get
      * if consensus caller is used to recall the consensus
@@ -637,10 +608,10 @@ public final class  DefaultAceContigBuilder implements AceContigBuilder{
     		if (!super.equals(obj)) {
     			return false;
     		}
-    		if (!(obj instanceof DefaultAceContigBuilder)) {
+    		if (!(obj instanceof DefaultAceContigImpl)) {
     			return false;
     		}
-    		DefaultAceContigBuilder other = (DefaultAceContigBuilder) obj;
+    		DefaultAceContigImpl other = (DefaultAceContigImpl) obj;
     		if (complemented != other.complemented) {
     			return false;
     		}
