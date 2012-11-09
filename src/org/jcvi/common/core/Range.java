@@ -2464,12 +2464,12 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	 * is negative, then that is the equivalent of growing
     	 * to the left by the given number of units
     	 * @return this.
-    	 * @see #growBegin(long)
+    	 * @see #expandBegin(long)
     	 * @throws IllegalArgumentException if shrinking the begin
     	 * coordinate by the given amount causes the range's
     	 * length to be negative.
     	 */
-    	public Builder shrinkBegin(long units){
+    	public Builder contractBegin(long units){
     		long newBegin = begin+units;
     		assertValidCoordinates(newBegin,end);
     		begin = newBegin;
@@ -2484,12 +2484,12 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	 * is negative, then that is the equivalent of growing
     	 * to the right by the given number of units
     	 * @return this.
-    	 * @see #growEnd(long)
+    	 * @see #expandEnd(long)
     	 * @throws IllegalArgumentException if shrinking the end
     	 * coordinate by the given amount causes the range's
     	 * length to be negative.
     	 */
-    	public Builder shrinkEnd(long units){
+    	public Builder contractEnd(long units){
     		long newEnd = end-units;
     		assertValidCoordinates(begin,newEnd);
     		end -=units;
@@ -2504,9 +2504,9 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	 * is negative, then that is the equivalent of shrinking
     	 * to the left by the given number of units
     	 * @return this.
-    	 * @see #shrinkBegin(long)
+    	 * @see #contractBegin(long)
     	 */
-    	public Builder growBegin(long units){
+    	public Builder expandBegin(long units){
     		begin-=units;
     		return this;
     	}
@@ -2519,9 +2519,9 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	 * is negative, then that is the equivalent of shrinking
     	 * to the right by the given number of units
     	 * @return this.
-    	 * @see #shrinkEnd(long)
+    	 * @see #contractEnd(long)
     	 */
-    	public Builder growEnd(long units){
+    	public Builder expandEnd(long units){
     		end +=units;
     		return this;
     	}

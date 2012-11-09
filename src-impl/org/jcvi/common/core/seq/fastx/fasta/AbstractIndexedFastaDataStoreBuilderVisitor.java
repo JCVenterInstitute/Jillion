@@ -115,7 +115,7 @@ public abstract class AbstractIndexedFastaDataStoreBuilderVisitor<S extends Symb
 			//assuming it's the start of the next record
 			//this code will add that line back on.
 			Range updatedRange = new Range.Builder(index.get(lastId))
-									.growEnd(currentLineLength-1)
+									.expandEnd(currentLineLength-1)
 									.build();
 			index.put(lastId, updatedRange);
 		}

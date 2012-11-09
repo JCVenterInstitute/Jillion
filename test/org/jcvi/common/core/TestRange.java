@@ -795,7 +795,7 @@ public class TestRange{
     public void growRight(){
         Range expected = Range.of(1, 15);
         assertEquals(expected, new Range.Builder(range)
-							.growEnd(5)
+							.expandEnd(5)
 							.build());
     }
     @Test
@@ -804,15 +804,15 @@ public class TestRange{
         
         assertEquals(expected, 
         		new Range.Builder(range)
-        			.growBegin(5)
+        			.expandBegin(5)
         			.build());
     }
     @Test
     public void grow(){
         Range expected = Range.of(-4, 15);
         assertEquals(expected, new Range.Builder(range)
-								.growBegin(5)
-								.growEnd(5)
+								.expandBegin(5)
+								.expandEnd(5)
 								.build());
     }
     
@@ -820,22 +820,22 @@ public class TestRange{
     public void shrinkLeft(){
         Range expected = Range.of(6, 10);
         assertEquals(expected, new Range.Builder(range)
-									.shrinkBegin(5)
+									.contractBegin(5)
 									.build());
     }
     @Test
     public void shrinkRight(){
         Range expected = Range.of(1, 5);
         assertEquals(expected, new Range.Builder(range)
-		.shrinkEnd(5)
+		.contractEnd(5)
 		.build());
     }
     @Test
     public void shrink(){
         Range expected = Range.of(6, 5);
         assertEquals(expected, new Range.Builder(range)
-								.shrinkBegin(5)
-								.shrinkEnd(5)
+								.contractBegin(5)
+								.contractEnd(5)
 								.build());
     }
   
@@ -859,8 +859,8 @@ public class TestRange{
     @Test
     public void complementOfSubRangeShouldReturn2DisjointRanges(){
         Range subrange = new Range.Builder(range)
-        					.shrinkBegin(2)
-        					.shrinkEnd(2)
+        					.contractBegin(2)
+        					.contractEnd(2)
         					.build();
         assertEquals(Arrays.asList(Range.of(range.getBegin(),2), Range.of(range.getEnd()-1, range.getEnd())),
                 range.complement(subrange));
@@ -869,15 +869,15 @@ public class TestRange{
     @Test
     public void complementOfSuperRangeShouldReturnEmptyList(){
         Range superRange = new Range.Builder(range)
-        					.growBegin(2)
-        					.growEnd(2)
+        					.expandBegin(2)
+        					.expandEnd(2)
         					.build();
         assertEquals(Collections.emptyList(), range.complement(superRange));
     }
     @Test
     public void complementOfLeftSideShouldReturnArrayOfOneElementContainingRightSide(){
         Range left = new Range.Builder(range)
-        				.shrinkEnd(2)
+        				.contractEnd(2)
         				.build();
         assertEquals(Arrays.asList(Range.of(range.getEnd()-1, range.getEnd())),
                 range.complement(left));
@@ -886,7 +886,7 @@ public class TestRange{
     @Test
     public void complementOfRightSideShouldReturnArrayOfOneElementContainingLeftSide(){
         Range right = new Range.Builder(range)
-        				.shrinkBegin(2)
+        				.contractBegin(2)
         				.build();
         assertEquals(Arrays.asList(Range.of(range.getBegin(),2)),
                 range.complement(right));

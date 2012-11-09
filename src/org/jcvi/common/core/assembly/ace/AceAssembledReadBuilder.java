@@ -20,7 +20,6 @@
 package org.jcvi.common.core.assembly.ace;
 
 import org.jcvi.common.core.assembly.AssembledReadBuilder;
-
 import org.jcvi.common.core.util.Builder;
 
 /**
@@ -41,4 +40,5 @@ public interface AceAssembledReadBuilder extends AssembledReadBuilder<AceAssembl
      */
     PhdInfo getPhdInfo();
 
+    
 }

@@ -196,7 +196,7 @@ public class PrimerDetector {
                 		if(reverseAlignment.getScore() > forwardAlignment.getScore()){
                 			DirectedRange range = DirectedRange.create(
 	                    			new Range.Builder(reverseAlignment.getSubjectRange().asRange())
-	                    			.growBegin(numberOfMissingReverseBases)
+	                    			.expandBegin(numberOfMissingReverseBases)
 	                    			.build(), 
 	                    			
 	                    			Direction.REVERSE);
@@ -204,7 +204,7 @@ public class PrimerDetector {
                 		}else{
                 			DirectedRange range = DirectedRange.create(
                 					new Range.Builder(forwardAlignment.getSubjectRange().asRange())
-                					.growEnd(numberOfMissingForwardBases)
+                					.expandEnd(numberOfMissingForwardBases)
                 					.build(), 
                 					Direction.FORWARD);
                 			hits.add(new PrimerHit(fasta.getId(), range));
@@ -212,14 +212,14 @@ public class PrimerDetector {
                 	}else if(forwardIsCandidate){
                 		DirectedRange range = DirectedRange.create(
                 				new Range.Builder(forwardAlignment.getSubjectRange().asRange())
-                				.growEnd(numberOfMissingForwardBases)
+                				.expandEnd(numberOfMissingForwardBases)
                 				.build(),
                 				Direction.FORWARD);
                 		hits.add(new PrimerHit(fasta.getId(), range));
                 	}else if(reverseIsCandidate){
                 		DirectedRange range = DirectedRange.create(
                 				new Range.Builder(reverseAlignment.getSubjectRange().asRange())
-                				.growBegin(numberOfMissingReverseBases)
+                				.expandBegin(numberOfMissingReverseBases)
                 				.build(), Direction.REVERSE);
                 		hits.add(new PrimerHit(fasta.getId(), range));
                 	}

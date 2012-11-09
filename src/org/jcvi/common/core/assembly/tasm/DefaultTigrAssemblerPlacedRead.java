@@ -22,15 +22,16 @@ package org.jcvi.common.core.assembly.tasm;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.DefaultAssembledRead;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.AssembledReadBuilder;
+import org.jcvi.common.core.assembly.DefaultAssembledRead;
 import org.jcvi.common.core.assembly.ReadInfo;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
@@ -287,12 +288,6 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
             return delegate.getClearRange();
         }
 
-        @Override
-		public AssembledReadBuilder<TigrAssemblerPlacedRead> setClearRange(
-				Range updatedClearRange) {
-        	delegate.setClearRange(updatedClearRange);
-			return this;
-		}
 
 		/**
         * {@inheritDoc}
@@ -368,6 +363,133 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
             return delegate.getCurrentNucleotideSequence();
         }
 
+        
+        @Override
+		public AssembledReadBuilder<TigrAssemblerPlacedRead> append(Nucleotide base) {
+			delegate.append(base);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<TigrAssemblerPlacedRead> append(
+				Iterable<Nucleotide> sequence) {
+			delegate.append(sequence);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<TigrAssemblerPlacedRead> append(String sequence) {
+			delegate.append(sequence);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<TigrAssemblerPlacedRead> insert(int offset,
+				String sequence) {
+			delegate.insert(offset, sequence);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<TigrAssemblerPlacedRead> replace(int offset,
+				Nucleotide replacement) {
+			delegate.replace(offset, replacement);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<TigrAssemblerPlacedRead> delete(Range range) {
+			delegate.delete(range);
+			return this;
+		}
+
+
+		@Override
+		public int getNumGaps() {
+			return delegate.getNumGaps();
+		}
+
+
+		@Override
+		public int getNumNs() {
+			return delegate.getNumNs();
+		}
+
+
+		@Override
+		public int getNumAmbiguities() {
+			return delegate.getNumAmbiguities();
+		}
+
+
+		@Override
+		public AssembledReadBuilder<TigrAssemblerPlacedRead> prepend(String sequence) {
+			delegate.prepend(sequence);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<TigrAssemblerPlacedRead> insert(int offset,
+				Iterable<Nucleotide> sequence) {
+			delegate.insert(offset, sequence);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<TigrAssemblerPlacedRead> insert(int offset,
+				Nucleotide base) {
+			delegate.insert(offset, base);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<TigrAssemblerPlacedRead> prepend(
+				Iterable<Nucleotide> sequence) {
+			delegate.prepend(sequence);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<TigrAssemblerPlacedRead> expandValidRangeBegin(
+				long units) {
+			delegate.expandValidRangeBegin(units);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<TigrAssemblerPlacedRead> expandValidRangeEnd(
+				long units) {
+			delegate.expandValidRangeEnd(units);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<TigrAssemblerPlacedRead> contractValidRangeBegin(
+				long units) {
+			delegate.contractValidRangeBegin(units);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<TigrAssemblerPlacedRead> contractValidRangeEnd(
+				long units) {
+			delegate.contractValidRangeEnd(units);
+			return this;
+		}
+        
+        
         /**
         * {@inheritDoc}
         */
