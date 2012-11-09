@@ -36,8 +36,11 @@ import org.junit.runners.Suite.SuiteClasses;
        TestDefaultPhdInfo.class,
        TestAssembledFrom.class,
        TestAceParserPhdInfo.class,
+       
        TestDefaultAceContig.class,
        TestAceContigBuilderInvalidRead.class,
+       TestAceContigBuilderRecallConsensus.class,
+       
        TestBaseSegmentUtil.class,
        TestDefaultAceBestSegment.class,
        TestAcePlacedReadAdapter.class,

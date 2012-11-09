@@ -23,36 +23,22 @@
  */
 package org.jcvi.common.core.assembly.ace;
 
+import static org.easymock.EasyMock.createMock;
+import static org.junit.Assert.assertEquals;
+
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.ace.AceContigBuilder;
-import org.jcvi.common.core.assembly.ace.DefaultAceContigBuilder;
-import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Before;
 import org.junit.Test;
-
-/**
- * Some 454 flu mapping assemblies with very deep coverage are causing 
- * assembly errors where some reads are getting shifted.  If one of these
- * shifted reads happens to be at the end of the contig, it will go 
- * beyond the length of the consensus.  this tests
- * check to make sure AceContigBuilder ignores these reads and logs it.
- * 
- * @author dkatzel
- *
- *
- */
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 public class TestAceContigBuilderInvalidRead {
 
     private final String consensus = "ACGT";
     private final String contigId = "id";
-    private AceContigBuilder sut;
+    private DefaultAceContigBuilder sut;
     @Before
     public void setup(){
-        sut = DefaultAceContigBuilder.createBuilder(contigId, consensus);
+        sut = new DefaultAceContigBuilder(contigId, consensus);
     }
     
     @Test(expected= IllegalArgumentException.class)

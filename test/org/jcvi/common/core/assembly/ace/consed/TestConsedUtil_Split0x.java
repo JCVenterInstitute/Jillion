@@ -29,7 +29,6 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.AceContig;
-import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceContigTestUtil;
 import org.jcvi.common.core.assembly.ace.DefaultAceContigBuilder;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
@@ -50,8 +49,8 @@ public class TestConsedUtil_Split0x {
     
     @Test
     public void contigWithNo0xRegionsShouldNotTrim(){       
-        AceContigBuilder contigBuilder =
-        	DefaultAceContigBuilder.createBuilder(originalId,referenceConsensus)
+    	DefaultAceContigBuilder contigBuilder =
+        	new DefaultAceContigBuilder(originalId,referenceConsensus)
         .addRead("read1", new NucleotideSequenceBuilder(referenceConsensus.substring(0, 11)).build(),
         		0, 
                 Direction.FORWARD, 
@@ -67,7 +66,7 @@ public class TestConsedUtil_Split0x {
         
         final SortedMap<Range,AceContig> actualcontigs = ConsedUtil.split0xContig(contigBuilder, false);
         assertEquals(1,actualcontigs.size());
-        AceContig expected = DefaultAceContigBuilder.createBuilder(originalId,referenceConsensus)
+        AceContig expected = new DefaultAceContigBuilder(originalId,referenceConsensus)
 							        		 .addRead("read1", new NucleotideSequenceBuilder(referenceConsensus.substring(0, 11)).build(),
 							        	        		0, 
 							        	                Direction.FORWARD, 
@@ -91,7 +90,7 @@ public class TestConsedUtil_Split0x {
         final PhdInfo read1Phd = createMock(PhdInfo.class);
         final PhdInfo read2Phd = createMock(PhdInfo.class);
 
-        AceContigBuilder contig = DefaultAceContigBuilder.createBuilder(originalId,referenceConsensus)
+        DefaultAceContigBuilder contig = new DefaultAceContigBuilder(originalId,referenceConsensus)
 		        .addRead("read1", new NucleotideSequenceBuilder(referenceConsensus.substring(0, 11)).build(), 
 		        		0, 
 		                Direction.FORWARD, 
@@ -109,7 +108,7 @@ public class TestConsedUtil_Split0x {
         SortedMap<Range,AceContig> splitContigs = ConsedUtil.split0xContig(contig,  false);
         assertEquals("# of split contigs", 2, splitContigs.size());
         
-        AceContig expectedFirstContig = DefaultAceContigBuilder.createBuilder(
+        AceContig expectedFirstContig = new DefaultAceContigBuilder(
                 String.format("%s_%d_%d",originalId,1,11),referenceConsensus.substring(0, 11))
                             .addRead("read1", new NucleotideSequenceBuilder(referenceConsensus.substring(0, 11)).build(),
                             		0, 
@@ -118,7 +117,7 @@ public class TestConsedUtil_Split0x {
                                     read1Phd,
                                     20)
                                     .build();
-        AceContig expectedSecondContig = DefaultAceContigBuilder.createBuilder(
+        AceContig expectedSecondContig = new DefaultAceContigBuilder(
                 String.format("%s_%d_%d",originalId,13,21),referenceConsensus.substring(12))
                         .addRead("read2", new NucleotideSequenceBuilder(referenceConsensus.substring(12)).build(),
                         		0, 
@@ -136,7 +135,7 @@ public class TestConsedUtil_Split0x {
 
         final PhdInfo read1Phd = createMock(PhdInfo.class);
         final PhdInfo read2Phd = createMock(PhdInfo.class);
-        AceContigBuilder contig = DefaultAceContigBuilder.createBuilder("id_1_12",referenceConsensus)
+        DefaultAceContigBuilder contig = new DefaultAceContigBuilder("id_1_12",referenceConsensus)
         
 		        .addRead("read1", new NucleotideSequenceBuilder(referenceConsensus.substring(0, 11)).build(),
 		        		0, 
@@ -154,7 +153,7 @@ public class TestConsedUtil_Split0x {
         
         assertEquals("# of split contigs", 2, splitContigs.size());
         
-        AceContig expectedFirstContig = DefaultAceContigBuilder.createBuilder(
+        AceContig expectedFirstContig = new DefaultAceContigBuilder(
                 String.format("id_%d_%d",1,11),referenceConsensus.substring(0, 11))
                             .addRead("read1", new NucleotideSequenceBuilder(referenceConsensus.substring(0, 11)).build(),
                             		0, 
@@ -163,7 +162,7 @@ public class TestConsedUtil_Split0x {
                                     read1Phd,
                                     20)
                                     .build();
-        AceContig expectedSecondContig = DefaultAceContigBuilder.createBuilder(
+        AceContig expectedSecondContig = new DefaultAceContigBuilder(
                 String.format("id_%d_%d",13,21),referenceConsensus.substring(12))
                         .addRead("read2", new NucleotideSequenceBuilder(referenceConsensus.substring(12)).build(),
                         		0, 

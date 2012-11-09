@@ -46,10 +46,11 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.DefaultScaffold;
 import org.jcvi.common.core.assembly.ScaffoldBuilder;
-import org.jcvi.common.core.assembly.ace.AceContig;
-import org.jcvi.common.core.assembly.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.AceAssembledReadBuilder;
+import org.jcvi.common.core.assembly.ace.AceContig;
+import org.jcvi.common.core.assembly.ace.AceFileWriter;
+import org.jcvi.common.core.assembly.ace.DefaultAceContigBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultAceFileWriter;
 import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
@@ -63,19 +64,19 @@ import org.jcvi.common.core.assembly.clc.cas.EmptyCasTrimMap;
 import org.jcvi.common.core.assembly.clc.cas.ExternalTrimInfo;
 import org.jcvi.common.core.assembly.clc.cas.ReadFileType;
 import org.jcvi.common.core.assembly.clc.cas.UnTrimmedExtensionTrimMap;
-import org.jcvi.common.core.assembly.clc.cas.UpdateConsensusAceContigBuilder;
 import org.jcvi.common.core.assembly.clc.cas.consed.AbstractAcePlacedReadCasReadVisitor;
 import org.jcvi.common.core.assembly.scaffold.agp.AgpWriter;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConicConsensusCaller;
-import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
+import org.jcvi.common.core.assembly.util.slice.consensus.MostFrequentBasecallConsensusCaller;
 import org.jcvi.common.core.assembly.util.trim.TrimDataStoreUtil;
+import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.IndexedPhdFileDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
@@ -168,7 +169,7 @@ public class Cas2Consed3 {
                                 .hasEdits(hasEdits)
                                 .chromatDir(chromatDir)
                                 .build();
-            final Map<Integer, UpdateConsensusAceContigBuilder> builders = new HashMap<Integer, UpdateConsensusAceContigBuilder>();
+            final Map<Integer, DefaultAceContigBuilder> builders = new HashMap<Integer, DefaultAceContigBuilder>();
             
             final File phdFile = new File(phdBallDir, "phd.ball.1");
             final OutputStream phdOut = new FileOutputStream(phdFile);
@@ -183,12 +184,14 @@ public class Cas2Consed3 {
                                 int casReferenceId) {
                             Integer refKey = Integer.valueOf(casReferenceId);
                             if(!builders.containsKey(refKey)){
-                                final UpdateConsensusAceContigBuilder builder = new UpdateConsensusAceContigBuilder(
+                                final DefaultAceContigBuilder builder = new DefaultAceContigBuilder(
                                         
                                         casInfo.getReferenceIdLookup().getLookupIdFor(casReferenceId), 
                                         getGappedReference(casReferenceId));
                                 if(useConic){
-                                	builder.consensusCaller(new ConicConsensusCaller(PhredQuality.valueOf(30)));
+                                	builder.recallConsensus(new ConicConsensusCaller(PhredQuality.valueOf(30)));
+                                }else{
+                                	builder.recallConsensus(MostFrequentBasecallConsensusCaller.INSTANCE);
                                 }
                                 //
                                 builders.put(refKey, builder);
@@ -282,10 +285,10 @@ public class Cas2Consed3 {
              }else{
             	 agpOut=null;
              }
-             Iterator<UpdateConsensusAceContigBuilder> builderIterator = builders.values().iterator();
+             Iterator<DefaultAceContigBuilder> builderIterator = builders.values().iterator();
              while(builderIterator.hasNext()){
-                 UpdateConsensusAceContigBuilder builder = builderIterator.next();                
-                 builder.updateConsensus();
+            	 DefaultAceContigBuilder builder = builderIterator.next();                
+                 builder.recallConsensusNow();
                  NucleotideSequence fullConsensus =builder.getConsensusBuilder().build();
                  long ungappedLength = fullConsensus.getUngappedLength();
                  long firstReadStart= fullConsensus.getLength();

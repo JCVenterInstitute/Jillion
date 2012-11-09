@@ -63,7 +63,9 @@ public interface ResidueSequence<R extends Residue> extends Sequence<R> {
     /**
      * Get the corresponding gapped offset into
      * this sequence for the given
-     * ungapped offset.
+     * ungapped offset. For example
+     * calling this method passing in a value of {@code 0}
+     * will return the number of leading gaps in this sequence.
      * @param ungappedOffset the offset into the ungapped coordinate
      * system of the desired nucleotide.
      * @return the corresponding offset for the equivalent

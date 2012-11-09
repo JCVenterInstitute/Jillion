@@ -36,7 +36,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 public abstract class AbstractAceAdaptedContigFileDataStore extends AbstractContigFileVisitor{
 
-    private AceContigBuilder contigBuilder;
+    private DefaultAceContigBuilder contigBuilder;
     private final Date phdDate;
     private final QualitySequenceFastaDataStore fullLengthFastXDataStore;
     /**
@@ -50,7 +50,7 @@ public abstract class AbstractAceAdaptedContigFileDataStore extends AbstractCont
 
     @Override
     protected void visitBeginContig(String contigId, NucleotideSequence consensus) {
-        contigBuilder = DefaultAceContigBuilder.createBuilder(contigId, consensus);
+        contigBuilder = new DefaultAceContigBuilder(contigId, consensus);
     }
 
     @Override
