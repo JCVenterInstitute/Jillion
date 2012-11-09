@@ -22,6 +22,7 @@ package org.jcvi.common.core.assembly;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Rangeable;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
@@ -87,7 +88,6 @@ public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable
      */
     Range getClearRange();
 
-    AssembledReadBuilder<R> setClearRange(Range updatedClearRange);
     /**
      * Get the {@link Direction} of this read.
      * @return the {@link Direction} will never be null.
@@ -162,5 +162,159 @@ public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable
      * basecalls of this read; never null.
      */
     NucleotideSequence getCurrentNucleotideSequence();
+    
+    
+    
+    /**
+     * Appends the given base to the end
+     * of the builder's mutable sequence.
+     * @param base a single nucleotide sequence to be appended
+     * to the end our builder.
+     * @throws NullPointerException if base is null.
+     * @return this
+     */
+    AssembledReadBuilder<R> append(Nucleotide base);
+    /**
+     * Appends the given sequence to the end
+     * of the builder's mutable sequence.
+     * @param sequence the nucleotide sequence to be appended
+     * to the end our builder.
+     * @throws NullPointerException if sequence is null.
+     * @return this.
+     */
+    AssembledReadBuilder<R> append(Iterable<Nucleotide> sequence);
+    
+	
+   
+    
+    /**
+     * Appends the given sequence to the end
+     * of the builder's mutable sequence.
+     * Any whitespace in the input string will be ignored.
+     *  This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
+     * @param sequence the nucleotide sequence to be appended
+     * to the end our builder.
+     * @throws NullPointerException if sequence is null.
+     * @return this.
+     */
+    AssembledReadBuilder<R> append(String sequence);
+    /**
+     * Inserts the given sequence to the builder's mutable sequence
+     * starting at the given offset.  If any nucleotides existed
+     * downstream of this offset before this insert method
+     * was executed, then those nucleotides will be shifted by n
+     * bases where n is the length of the given sequence to insert.
+     * Any whitespace in the input string will be ignored.
+     *  This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
+     * @param offset the GAPPED offset into this mutable sequence
+     * to begin insertion.
+     * @param sequence the nucleotide sequence to be 
+     * inserted at the given offset.
+     * @throws NullPointerException if sequence is null.
+     * @throws IllegalArgumentException if offset is invalid.
+     * return this.
+     */
+    AssembledReadBuilder<R> insert(int offset, String sequence);
+    
+    
+    /**
+     * Replace the Nucleotide at the given offset with a different nucleotide.
+     * @param offset the gapped offset to modify.
+     * @param replacement the new {@link Nucleotide} to replace the old
+     * {@link Nucleotide} at that location.
+     * @return this
+     * @throws NullPointerException if replacement is null.
+     * @throws IllegalArgumentException if offset is invalid.
+     */
+    AssembledReadBuilder<R> replace(int offset, Nucleotide replacement);
+
+    /**
+     * Deletes the nucleotides from the given range of this 
+     * partially constructed NucleotideSequence.  If the given
+     * range is empty, then the nucleotideSequence will not
+     * be modified. If the range extends beyond the currently
+     * built sequence, then this will delete until the end of
+     * the sequence.
+     * @param range the range to delete can not be null.
+     * @return this.
+     * @throws NullPointerException if range is null.
+     * @throws IllegalArgumentException if range's start is negative
+     * or greater than this nucleotide sequence's current length.
+     */
+    AssembledReadBuilder<R> delete(Range range);
+    
+    
+    int getNumGaps();
+    
+    int getNumNs();
+    int getNumAmbiguities();
+    
+    /**
+     * Inserts the given sequence the beginning
+     * of the builder's mutable sequence.
+     * This is the same as calling 
+     * {@link #insert(int, String) insert(0,sequence)}
+     * @param sequence the nucleotide sequence to be 
+     * inserted at the beginning.
+     * @return this.
+     * @throws NullPointerException if sequence is null.
+     * @see #insert(int, String)
+     */
+    AssembledReadBuilder<R> prepend(String sequence);
+    /**
+     * Inserts the given sequence to the builder's mutable sequence
+     * starting at the given offset.  If any nucleotides existed
+     * downstream of this offset before this insert method
+     * was executed, then those nucleotides will be shifted by n
+     * bases where n is the length of the given sequence to insert.
+     * @param offset the <strong>gapped</strong> offset into this mutable sequence
+     * to begin insertion.  If the offset = the current length then this insertion
+     * is treated as an append.
+     * @param sequence the nucleotide sequence to be 
+     * inserted at the given offset.
+     * @return this
+     * @throws NullPointerException if sequence is null.
+     * @throws IllegalArgumentException if offset <0 or > current sequence length.
+     */
+    AssembledReadBuilder<R> insert(int offset, Iterable<Nucleotide> sequence);
+    
+    /**
+     * Inserts the given {@link Nucleotide} to the builder's mutable sequence
+     * at the given offset.  If any nucleotides existed
+     * downstream of this offset before this insert method
+     * was executed, then those nucleotides will be shifted by 1
+     * base.
+     * @param offset the GAPPED offset into this mutable sequence
+     * to begin insertion.
+     * @param base the {@link Nucleotide} to be 
+     * inserted at the given offset.
+     * @return this
+     * @throws NullPointerException if base is null.
+     * @throws IllegalArgumentException if offset <0 or > current sequence length.
+     */
+    AssembledReadBuilder<R> insert(int offset, Nucleotide base);
+    /**
+     * Inserts the given sequence the beginning
+     * of the builder's mutable sequence.
+     * This is the same as calling 
+     * {@link #insert(int, Iterable) insert(0,sequence)}
+     * @param sequence the nucleotide sequence to be 
+     * inserted at the beginning.
+     * @return this.
+     * @throws NullPointerException if sequence is null.
+     * @see #insert(int, Iterable)
+     */
+    AssembledReadBuilder<R> prepend(Iterable<Nucleotide> sequence);
+
+    
+    AssembledReadBuilder<R> expandValidRangeBegin(long units);
+    
+    AssembledReadBuilder<R> expandValidRangeEnd(long units);
+    
+    AssembledReadBuilder<R> contractValidRangeBegin(long units);
+    
+    AssembledReadBuilder<R> contractValidRangeEnd(long units);
 
 }

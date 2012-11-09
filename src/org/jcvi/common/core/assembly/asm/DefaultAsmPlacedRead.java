@@ -23,9 +23,9 @@ import java.util.List;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.DefaultAssembledRead;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.AssembledReadBuilder;
+import org.jcvi.common.core.assembly.DefaultAssembledRead;
 import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -247,15 +247,6 @@ public final class DefaultAsmPlacedRead implements AsmAssembledRead{
 
 
 
-
-        @Override
-		public AssembledReadBuilder<AsmAssembledRead> setClearRange(
-				Range updatedClearRange) {
-        	delegateBuilder.setClearRange(updatedClearRange);
-			return this;
-		}
-
-
 		/**
         * {@inheritDoc}
         */
@@ -328,6 +319,133 @@ public final class DefaultAsmPlacedRead implements AsmAssembledRead{
         }
 
 
+        
+        @Override
+		public AssembledReadBuilder<AsmAssembledRead> append(Nucleotide base) {
+			delegateBuilder.append(base);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<AsmAssembledRead> append(
+				Iterable<Nucleotide> sequence) {
+			delegateBuilder.append(sequence);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<AsmAssembledRead> append(String sequence) {
+			delegateBuilder.append(sequence);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<AsmAssembledRead> insert(int offset,
+				String sequence) {
+			delegateBuilder.insert(offset, sequence);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<AsmAssembledRead> replace(int offset,
+				Nucleotide replacement) {
+			delegateBuilder.replace(offset, replacement);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<AsmAssembledRead> delete(Range range) {
+			delegateBuilder.delete(range);
+			return this;
+		}
+
+
+		@Override
+		public int getNumGaps() {
+			return delegateBuilder.getNumGaps();
+		}
+
+
+		@Override
+		public int getNumNs() {
+			return delegateBuilder.getNumNs();
+		}
+
+
+		@Override
+		public int getNumAmbiguities() {
+			return delegateBuilder.getNumAmbiguities();
+		}
+
+
+		@Override
+		public AssembledReadBuilder<AsmAssembledRead> prepend(String sequence) {
+			delegateBuilder.prepend(sequence);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<AsmAssembledRead> insert(int offset,
+				Iterable<Nucleotide> sequence) {
+			delegateBuilder.insert(offset, sequence);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<AsmAssembledRead> insert(int offset,
+				Nucleotide base) {
+			delegateBuilder.insert(offset, base);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<AsmAssembledRead> prepend(
+				Iterable<Nucleotide> sequence) {
+			delegateBuilder.prepend(sequence);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<AsmAssembledRead> expandValidRangeBegin(
+				long units) {
+			delegateBuilder.expandValidRangeBegin(units);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<AsmAssembledRead> expandValidRangeEnd(
+				long units) {
+			delegateBuilder.expandValidRangeEnd(units);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<AsmAssembledRead> contractValidRangeBegin(
+				long units) {
+			delegateBuilder.contractValidRangeBegin(units);
+			return this;
+		}
+
+
+		@Override
+		public AssembledReadBuilder<AsmAssembledRead> contractValidRangeEnd(
+				long units) {
+			delegateBuilder.contractValidRangeEnd(units);
+			return this;
+		}
+        
+        
         /**
         * {@inheritDoc}
         */

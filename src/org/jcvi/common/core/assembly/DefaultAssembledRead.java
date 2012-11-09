@@ -282,17 +282,6 @@ public final class DefaultAssembledRead implements AssembledRead {
             return clearRange;
         }
 
-        /**
-         * {@inheritDoc}
-         */
-         @Override
-         public Builder setClearRange(Range clearRange) {
-        	 if(clearRange ==null){
-        		 throw new NullPointerException("clear range can not be null");
-        	 }
-             this.clearRange = clearRange;
-             return this;
-         }
 
         /**
         * {@inheritDoc}
@@ -322,7 +311,11 @@ public final class DefaultAssembledRead implements AssembledRead {
             ReferenceMappedNucleotideSequence updatedEncodedBasecalls = new NucleotideSequenceBuilder(currentBasecallsAsString())
             																.setReferenceHint(reference, offset)
             																.buildReferenceEncodedNucleotideSequence();
-            return new DefaultAssembledRead(readId, updatedEncodedBasecalls, offset, dir, ungappedFullLength,clearRange);
+            return new DefaultAssembledRead(readId, 
+            		updatedEncodedBasecalls, 
+            		offset, dir, 
+            		ungappedFullLength,
+            		clearRange);
         }
 
         /**
@@ -401,7 +394,212 @@ public final class DefaultAssembledRead implements AssembledRead {
             return basesBuilder.toString();
         }
 
+        @Override
+		public Builder append(Nucleotide base) {
+        	basesBuilder
+        					.append(base);
+        	if(base !=Nucleotide.Gap){
+        		expandValidRangeEnd(1);
+        	}
+			return this;
+		}
 
+
+		@Override
+		public Builder append(Iterable<Nucleotide> sequence) {
+			NucleotideSequenceBuilder validRangeBuilder =basesBuilder;
+			//have to get old and new length 
+			//because we don't know how long iterable is
+			//(there's no size method on iterable)
+			long oldLength = validRangeBuilder.getUngappedLength();
+			validRangeBuilder.append(sequence);
+			long newLength = validRangeBuilder.getUngappedLength();
+			long numberUngappedBasesAdded = newLength-oldLength;
+			//expand valid range end by length of insert
+			expandValidRangeEnd(numberUngappedBasesAdded);
+			return this;
+		}
+
+
+		@Override
+		public Builder append(String sequence) {
+			return append(new NucleotideSequenceBuilder(sequence));
+		}
+
+
+		@Override
+		public Builder insert(int offset, String sequence) {
+			return insert(offset, new NucleotideSequenceBuilder(sequence));
+		}
+
+
+		@Override
+		public Builder replace(int offset, Nucleotide replacement) {
+			
+			NucleotideSequenceBuilder sequenceBuilder = basesBuilder;
+			long oldLength = sequenceBuilder.getUngappedLength();
+			sequenceBuilder.replace(offset, replacement);
+			long newLength = sequenceBuilder.getUngappedLength();
+			//have to modify valid range
+			//if number of gaps has changed
+			if(newLength < oldLength){
+				//we replaced a nongap with a gap
+				
+				//we only have to care
+				//about non-leading gaps
+				//because replacing the first base 
+				//with a gap
+				//does not actually change the ungapped
+				//valid range
+				if(offset>0){					
+					contractValidRangeEnd(1);
+				}
+			}else if(newLength > oldLength){
+				//unlike adding  a gap
+				//replacing a gap with a non-gap
+				//will always only expand valid range
+				//end.  Even if the first base 
+				//is affected, the valid range start
+				//won't change.
+				expandValidRangeEnd(1);
+			}
+			return this;
+		}
+
+
+		@Override
+		public Builder delete(Range range) {
+			NucleotideSequenceBuilder sequenceBuilder = basesBuilder;
+			long oldUngappedLength = sequenceBuilder.getUngappedLength();
+			sequenceBuilder.delete(range);
+			long newUngappedLength = sequenceBuilder.getUngappedLength();
+			long numberOfUngappedBasesDeleted = newUngappedLength - oldUngappedLength;
+			if(numberOfUngappedBasesDeleted>0){
+				if(range.getBegin()==0){
+					//we deleted the first valid base
+					contractValidRangeBegin(numberOfUngappedBasesDeleted);
+				}else{
+					//anything downstream of first base
+					//will affect the valid range end coordinate.
+					contractValidRangeEnd(numberOfUngappedBasesDeleted);
+				}
+			}
+			
+			return this;
+		}
+
+
+		@Override
+		public int getNumGaps() {
+			return basesBuilder
+					.getNumGaps();
+		}
+
+
+		@Override
+		public int getNumNs() {
+			return basesBuilder
+					.getNumNs();
+		}
+
+
+		@Override
+		public int getNumAmbiguities() {
+			return basesBuilder
+						.getNumAmbiguities();
+		}
+
+
+		@Override
+		public Builder prepend(String sequence) {
+			return prepend(new NucleotideSequenceBuilder(sequence));
+		}
+
+
+		@Override
+		public Builder insert(int offset,
+				Iterable<Nucleotide> sequence) {
+			NucleotideSequenceBuilder validRangeBuilder =basesBuilder;
+			//have to get old and new length 
+			//because we don't know how long iterable is
+			//(there's no size method on iterable)
+			long oldLength = validRangeBuilder.getUngappedLength();
+			validRangeBuilder.insert(offset, sequence);
+			long newLength = validRangeBuilder.getUngappedLength();
+			long numberOfNonGapsAdded = newLength-oldLength;
+			//expand valid range end by length of insert
+			expandValidRangeEnd(numberOfNonGapsAdded);
+			return this;
+		}
+
+
+		@Override
+		public Builder insert(int offset, Nucleotide base) {
+			NucleotideSequenceBuilder validRangeBuilder =basesBuilder;
+			validRangeBuilder.insert(offset, base);
+			if(base !=Nucleotide.Gap){
+				//expand valid range end by 1 to include added base
+				expandValidRangeEnd(1);
+			}
+			return this;
+		}
+
+
+		@Override
+		public Builder prepend(Iterable<Nucleotide> sequence) {
+			NucleotideSequenceBuilder validRangeBuilder =basesBuilder;
+			//have to get old and new length 
+			//because we don't know how long iterable is
+			//(there's no size method on iterable)
+			long oldLength = validRangeBuilder.getUngappedLength();
+			validRangeBuilder.prepend(sequence);
+			long newLength = validRangeBuilder.getUngappedLength();
+			long numberOfNonGapBasesAdded = newLength-oldLength;
+			//expand the valid range to include new prepended bases
+			expandValidRangeBegin(numberOfNonGapBasesAdded);
+			return this;
+		}
+
+
+
+		@Override
+		public Builder expandValidRangeBegin(long units) {
+			Range updatedClearRange = new Range.Builder(clearRange)
+												.expandBegin(units)
+												.build();
+			clearRange =updatedClearRange;
+			return this;
+		}
+
+
+		@Override
+		public Builder expandValidRangeEnd(long units) {
+			Range updatedClearRange = new Range.Builder(clearRange)
+											.expandEnd(units)
+											.build();
+			clearRange =updatedClearRange;
+			return this;
+		}
+
+
+		@Override
+		public Builder contractValidRangeBegin(long units) {
+			Range updatedClearRange = new Range.Builder(clearRange)
+											.contractBegin(units)
+											.build();
+			clearRange =updatedClearRange;
+			return this;
+		}
+
+
+		@Override
+		public Builder contractValidRangeEnd(long units) {
+			Range updatedClearRange = new Range.Builder(clearRange)
+											.contractEnd(units)
+											.build();
+			clearRange =updatedClearRange;
+			return this;
+		}
 
 
         

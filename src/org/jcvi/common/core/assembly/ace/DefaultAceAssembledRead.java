@@ -27,9 +27,9 @@ import java.util.List;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.DefaultAssembledRead;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.AssembledReadBuilder;
+import org.jcvi.common.core.assembly.DefaultAssembledRead;
 import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -232,13 +232,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
             delegateBuilder.setStartOffset(newOffset);
             return this;
         }
-        
-        @Override
-		public AssembledReadBuilder<AceAssembledRead> setClearRange(
-				Range updatedClearRange) {
-			delegateBuilder.setClearRange(updatedClearRange);
-			return this;
-		}
+      
 
 
 		/**
@@ -338,8 +332,133 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
             return delegateBuilder.getCurrentNucleotideSequence();
         }
 
+		@Override
+		public AceAssembledReadBuilder append(Nucleotide base) {
+			delegateBuilder.append(base);
+			return this;
+		}
 
-        /**
+
+		@Override
+		public AceAssembledReadBuilder append(
+				Iterable<Nucleotide> sequence) {
+			delegateBuilder.append(sequence);
+			return this;
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder append(String sequence) {
+			delegateBuilder.append(sequence);
+			return this;
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder insert(int offset,
+				String sequence) {
+			delegateBuilder.insert(offset, sequence);
+			return this;
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder replace(int offset,
+				Nucleotide replacement) {
+			delegateBuilder.replace(offset, replacement);
+			return this;
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder delete(Range range) {
+			delegateBuilder.delete(range);
+			return this;
+		}
+
+
+		@Override
+		public int getNumGaps() {
+			return delegateBuilder.getNumGaps();
+		}
+
+
+		@Override
+		public int getNumNs() {
+			return delegateBuilder.getNumNs();
+		}
+
+
+		@Override
+		public int getNumAmbiguities() {
+			return delegateBuilder.getNumAmbiguities();
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder prepend(String sequence) {
+			delegateBuilder.prepend(sequence);
+			return this;
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder insert(int offset,
+				Iterable<Nucleotide> sequence) {
+			delegateBuilder.insert(offset, sequence);
+			return this;
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder insert(int offset,
+				Nucleotide base) {
+			delegateBuilder.insert(offset, base);
+			return this;
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder prepend(
+				Iterable<Nucleotide> sequence) {
+			delegateBuilder.prepend(sequence);
+			return this;
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder expandValidRangeBegin(
+				long units) {
+			delegateBuilder.expandValidRangeBegin(units);
+			return this;
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder expandValidRangeEnd(
+				long units) {
+			delegateBuilder.expandValidRangeEnd(units);
+			return this;
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder contractValidRangeBegin(
+				long units) {
+			delegateBuilder.contractValidRangeBegin(units);
+			return this;
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder contractValidRangeEnd(
+				long units) {
+			delegateBuilder.contractValidRangeEnd(units);
+			return this;
+		}
+
+
+		/**
         * {@inheritDoc}
         */
         @Override
