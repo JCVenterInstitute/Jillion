@@ -27,9 +27,8 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -41,18 +40,15 @@ import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.ace.AceAssembledReadBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
-import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
 import org.jcvi.common.core.assembly.ace.DefaultAceContigBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultPhdInfo;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
-import org.jcvi.common.core.assembly.util.coverage.CoverageMapUtil;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
 /**
  * This class contains utility scripts for
@@ -144,9 +140,9 @@ public final class ConsedUtil {
      * If there are no 0x regions in the given contig, then a Map containing
      * one entry containing the Range covered and the reference of the given contig is returned.
      */
-    public static SortedMap<Range,AceContig> split0xContig(AceContigBuilder contigBuilder, boolean adjustIdCoordinates){
+    public static SortedMap<Range,AceContig> split0xContig(DefaultAceContigBuilder contigBuilder, boolean adjustIdCoordinates){
         List<Range> coveredRegions = new ArrayList<Range>();
-        NucleotideSequence consensus = contigBuilder.getConsensusBuilder().build();
+        NucleotideSequence unSplitConsensus = contigBuilder.getConsensusBuilder().build();
         CoverageMap<AceAssembledReadBuilder> coverageMap = CoverageMapFactory.create(contigBuilder.getAllAssembledReadBuilders());
         for(CoverageRegion<AceAssembledReadBuilder> region : coverageMap){
             if(region.getCoverageDepth()>0){
@@ -160,7 +156,7 @@ public final class ConsedUtil {
         SortedMap<Range, AceContig> map = new TreeMap<Range, AceContig>(Range.Comparators.ARRIVAL);
         if(contigRanges.size()==1){
             //no 0x region        	
-        	map.put(AssemblyUtil.toUngappedRange(consensus, contigRanges.get(0)), contigBuilder.build());
+        	map.put(AssemblyUtil.toUngappedRange(unSplitConsensus, contigRanges.get(0)), contigBuilder.build());
             return map;
         }
         String originalContigId= contigBuilder.getContigId();
@@ -172,48 +168,26 @@ public final class ConsedUtil {
                 oldStart=Integer.parseInt(matcher.group(2));
             }
         }
-        for(Range contigRange : contigRanges){
-            AceContig splitContig = createSplitContig(contigBuilder,
-                    coverageMap, consensus, originalContigId, oldStart,
-                    contigRange);
-            Range ungappedRange = AssemblyUtil.toUngappedRange(consensus, contigRange);
-            map.put(ungappedRange, splitContig);
+        for(Entry<Range, DefaultAceContigBuilder> splitContigEntry: contigBuilder.split(contigRanges).entrySet()){
+        	//id is now <original_id>_<ungapped 1-based start>_<ungapped 1-based end>
+            Range contigRange = splitContigEntry.getKey();
+            DefaultAceContigBuilder splitContigBuilder = splitContigEntry.getValue();
+			String newContigId = computeSplitContigId(unSplitConsensus, originalContigId,
+    				oldStart, contigRange);
+			
+			splitContigBuilder.setContigId(newContigId);
+			map.put(contigRange, splitContigBuilder.build());
         }
+        
         return map;
     }
-    private static AceContig createSplitContig(AceContigBuilder builderToSplit,
-            CoverageMap<AceAssembledReadBuilder> coverageMap,
-            NucleotideSequence consensus, String originalContigId,
-            int oldStart, Range contigRange) {
-        Set<String> contigReads = new HashSet<String>();
-        
-        for(CoverageRegion<AceAssembledReadBuilder> region : CoverageMapUtil.getRegionsWhichIntersect(coverageMap, contigRange)){
-            for(AceAssembledReadBuilder read : region){
-                contigReads.add(read.getId());
-            }
-        }
-        NucleotideSequence contigConsensus =new NucleotideSequenceBuilder(consensus)
-        							.trim(contigRange)
-        							.build();
-        //id is now <original_id>_<ungapped 1-based start>_<ungapped 1-based end>
-        String contigId = String.format("%s_%d_%d",originalContigId, 
+	private static String computeSplitContigId(NucleotideSequence consensus,
+			String originalContigId, int oldStart, Range contigRange) {
+		String contigId = String.format("%s_%d_%d",originalContigId, 
                 oldStart + consensus.getUngappedOffsetFor((int) contigRange.getBegin()),
                 oldStart + consensus.getUngappedOffsetFor((int) contigRange.getEnd()));
-        AceContigBuilder builder = DefaultAceContigBuilder.createBuilder(contigId, contigConsensus);
-        
-        for(String readId : contigReads){
-            final AceAssembledReadBuilder read = builderToSplit.getAssembledReadBuilder(readId);
-            if(read ==null){
-                throw new NullPointerException("got a null read for id " + readId);
-            }
-            builder.addRead(readId, 
-                    read.getNucleotideSequenceBuilder().build(), 
-                    (int)(read.getBegin() - contigRange.getBegin()), 
-                    read.getDirection(), read.getClearRange(), read.getPhdInfo(),
-                    read.getUngappedFullLength());
-        }
-        return builder.build();
-    }
+		return contigId;
+	}
     /**
      * Checks to see if the given {@link ConsensusAceTag} is denotes
      * that the contig has been renamed.

@@ -30,7 +30,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  * {@code AbstractAceContigBuilder} is an abstract
  * implementation of {@link AceFileVisitor}
  * that does all the computations required
- * to populate instances of {@link AceContigBuilder}.
+ * to populate instances of {@link DefaultAceContigBuilder}.
  * @author dkatzel
  *
  *
@@ -38,7 +38,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 public abstract class AbstractAceFileVisitorContigBuilder extends AbstractAceFileVisitor {
    
    
-    private AceContigBuilder contigBuilder;
+    private DefaultAceContigBuilder contigBuilder;
     /**
      * Visit the given fully constructed AceContig. 
      * @param contig the fully constructed AceContig
@@ -53,7 +53,7 @@ public abstract class AbstractAceFileVisitorContigBuilder extends AbstractAceFil
      * By default, this method does nothing.
      * @param contigBuilder
      */
-    protected void postProcess(final AceContigBuilder contigBuilder){
+    protected void postProcess(final DefaultAceContigBuilder contigBuilder){
         //no-op
     }
     
@@ -70,7 +70,7 @@ public abstract class AbstractAceFileVisitorContigBuilder extends AbstractAceFil
     
     @Override
     protected void visitNewContig(String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean complemented) {
-        contigBuilder= DefaultAceContigBuilder.createBuilder(contigId, consensus);
+        contigBuilder= new DefaultAceContigBuilder(contigId, consensus);
         contigBuilder.setComplemented(complemented);
         
     }

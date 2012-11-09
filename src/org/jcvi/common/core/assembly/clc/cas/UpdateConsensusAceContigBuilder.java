@@ -64,7 +64,7 @@ public class UpdateConsensusAceContigBuilder implements AceContigBuilder{
      */
     public UpdateConsensusAceContigBuilder(String contigId,
             NucleotideSequence fullConsensus) {
-        builder = DefaultAceContigBuilder.createBuilder(contigId, fullConsensus);
+        builder = new DefaultAceContigBuilder(contigId, fullConsensus);
         variantCounts = new VariantCounts((int)fullConsensus.getLength());
         
     }

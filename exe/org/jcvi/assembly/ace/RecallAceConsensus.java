@@ -34,7 +34,6 @@ import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.AceContig;
-import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.AceFileDataStoreBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileUtil;
@@ -186,7 +185,7 @@ public class RecallAceConsensus {
 	                    fastaOut.write(contig.getId(), ungappedRecalledConsensus);
 	                }
 	                final NucleotideSequence gappedRecalledConsensus = recalledConsensusBuilder.build();
-	                AceContigBuilder builder = DefaultAceContigBuilder.createBuilder(contig.getId(), gappedRecalledConsensus);
+	                DefaultAceContigBuilder builder = new DefaultAceContigBuilder(contig.getId(), gappedRecalledConsensus);
 	                StreamingIterator<AceAssembledRead> readIter = null;
 	                try{
 	                	readIter = contig.getReadIterator();

@@ -19,18 +19,17 @@
 
 package org.jcvi.common.core.symbol.residue.nt;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
 import org.junit.Test;
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
@@ -126,5 +125,11 @@ public class TestDefaultNucleotideSequence {
     @Test
     public void testToString(){
         assertEquals(gappedBasecalls, sut.toString());
+    }
+    
+    @Test
+    public void getNumberOfLeadingGaps(){
+    	NucleotideSequence seq = new NucleotideSequenceBuilder("----ACGT").build();
+    	assertEquals(4, seq.getGappedOffsetFor(0));
     }
 }
