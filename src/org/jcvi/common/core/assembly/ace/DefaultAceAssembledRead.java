@@ -201,8 +201,24 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
             this.phdInfo = phdInfo;
         }
         
+        private Builder(Builder copy){
+        	 this.delegateBuilder = copy.delegateBuilder.copy();
+        	 this.phdInfo = copy.phdInfo;
+        }
         
-        /**
+        
+        @Override
+		public AceAssembledReadBuilder trim(Range trimRange) {
+			delegateBuilder.trim(trimRange);
+			return this;
+		}
+
+		@Override
+		public AceAssembledReadBuilder copy() {
+			return new Builder(this);
+		}
+
+		/**
         * {@inheritDoc}
         */
         @Override
