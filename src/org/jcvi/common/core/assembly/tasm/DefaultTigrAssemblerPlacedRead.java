@@ -221,7 +221,20 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
                 int ungappedFullLength) {
             this.delegate = DefaultAssembledRead.createBuilder(reference, readId, validBases, offset, dir, clearRange, ungappedFullLength);
         }
-
+        private Builder(Builder copy){
+          	 this.delegate = copy.delegate.copy();
+          	 this.map.putAll(copy.map);
+          }
+          
+        @Override
+		public TigrAssemblerPlacedReadBuilder trim(Range trimRange) {
+			delegate.trim(trimRange);
+			return this;
+		}
+          @Override
+   		public TigrAssemblerPlacedReadBuilder copy() {
+   			return new Builder(this);
+   		}
         /**
         * {@inheritDoc}
         */

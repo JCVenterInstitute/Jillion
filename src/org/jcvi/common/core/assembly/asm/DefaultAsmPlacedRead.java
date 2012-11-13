@@ -197,7 +197,20 @@ public final class DefaultAsmPlacedRead implements AsmAssembledRead{
             this.isSurrogate = isSurrogate;
         }
         
-        
+        private Builder(Builder copy){
+       	 this.delegateBuilder = copy.delegateBuilder.copy();
+       	 this.isSurrogate = copy.isSurrogate;
+       }
+       
+        @Override
+		public AsmAssembledReadBuilder trim(Range trimRange) {
+			delegateBuilder.trim(trimRange);
+			return this;
+		}
+       @Override
+		public AsmAssembledReadBuilder copy() {
+			return new Builder(this);
+		}
         /**
         * {@inheritDoc}
         */

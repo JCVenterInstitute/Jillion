@@ -39,6 +39,8 @@ public interface AceAssembledReadBuilder extends AssembledReadBuilder<AceAssembl
      * @return the phdInfo
      */
     PhdInfo getPhdInfo();
+    
+    AceAssembledReadBuilder copy();
 
     
 }

@@ -207,6 +207,18 @@ public final class DefaultAssembledRead implements AssembledRead {
         private final Direction dir;
         private final int ungappedFullLength;
         
+        
+        private Builder( Builder copy){
+        	this.readId = copy.readId;
+            this.dir =copy.dir;
+            this.clearRange = copy.clearRange;
+            this.offset = copy.offset;
+            this.originalSequence = copy.originalSequence;
+            this.basesBuilder =copy.basesBuilder==null? null: copy.basesBuilder.copy();
+            this.reference = copy.reference;
+            this.ungappedFullLength = copy.ungappedFullLength;
+        }
+        
         public Builder(NucleotideSequence reference, String readId, NucleotideSequence validBases,
                             int offset, Direction dir, Range clearRange,
                             int ungappedFullLength){
@@ -231,7 +243,10 @@ public final class DefaultAssembledRead implements AssembledRead {
             this.ungappedFullLength = ungappedFullLength;
         }
         
-        
+        @Override
+		public AssembledReadBuilder<AssembledRead> copy() {
+			return new Builder(this);
+		}
         /**
         * {@inheritDoc}
         */
@@ -432,6 +447,32 @@ public final class DefaultAssembledRead implements AssembledRead {
 			return insert(offset, new NucleotideSequenceBuilder(sequence));
 		}
 
+
+		@Override
+		public AssembledReadBuilder<AssembledRead> trim(Range trimRange) {
+			NucleotideSequence untrimmed = getCurrentNucleotideSequence();
+			int numLeft =untrimmed.getUngappedOffsetFor((int)trimRange.getBegin());
+			int numRight =(int)(untrimmed.getUngappedLength()-1  -untrimmed.getUngappedOffsetFor((int)trimRange.getEnd()));
+			
+			
+			//for now we are actually trimming the sequence
+			//but future versions will only update
+			//valid range when we start tracking
+			//the full sequence...
+			getNucleotideSequenceBuilder()
+				.trim(trimRange);
+			if(dir == Direction.FORWARD){
+				this.contractValidRangeBegin(numLeft);
+				this.contractValidRangeEnd(numRight);
+			}else{
+				this.contractValidRangeBegin(numRight);
+				this.contractValidRangeEnd(numLeft);
+			}
+			//shift this sequence the number of bases up
+			//from its old start
+			this.shift((int)trimRange.getBegin());
+			return this;
+		}
 
 		@Override
 		public Builder replace(int offset, Nucleotide replacement) {
@@ -662,6 +703,11 @@ public final class DefaultAssembledRead implements AssembledRead {
             }
             return true;
         }
+
+
+		
+        
+        
         
     }
 

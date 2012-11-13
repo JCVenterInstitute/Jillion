@@ -47,6 +47,7 @@ import org.jcvi.common.core.assembly.util.slice.QualityValueStrategy;
 import org.jcvi.common.core.assembly.util.slice.Slice;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
@@ -54,6 +55,7 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code AceContigBuilder} is a {@link Builder}
  * for {@link AceContig}s that allows
@@ -136,6 +138,28 @@ public final class  DefaultAceContigBuilder implements AceContigBuilder{
     	this.initialConsensus = initialConsensus;
     	 this.contigId = contigId;
     	 this.mutableConsensus = new NucleotideSequenceBuilder(initialConsensus);
+    }
+    /**
+     * Create a new instance of DefaultAceContigBuilder
+     * whose initial state is an exact copy
+     * of the given AceContig.
+     * @param copy the {@link AceContig} to copy
+     * can not be null.
+     * @throws NullPointerException if copy is null.
+     */
+    public DefaultAceContigBuilder(AceContig copy){
+    	this.contigId=copy.getId();
+    	this.initialConsensus = copy.getConsensusSequence();
+    	this.mutableConsensus = new NucleotideSequenceBuilder(initialConsensus);
+    	StreamingIterator<AceAssembledRead> readIter =null;
+    	try{
+    		readIter = copy.getReadIterator();
+    		while(readIter.hasNext()){
+    			this.addRead(readIter.next());
+    		}
+    	}finally{
+    		IOUtil.closeAndIgnoreErrors(readIter);
+    	}
     }
     /**
      * Set this contig as being complemented.
@@ -528,16 +552,25 @@ public final class  DefaultAceContigBuilder implements AceContigBuilder{
                 }
             }
             for(String readId : contigReads){
-            	AceAssembledReadBuilder readBuilder = aceReadBuilderMap.get(readId);
+            	//create a copy so we 
+            	//can modify our version without
+            	//affecting original
+            	AceAssembledReadBuilder readBuilder = aceReadBuilderMap.get(readId)
+            											.copy();
             	Range readTrimRange = new Range.Builder(readBuilder.asRange().intersection(rangeTokeep))
             						.shift(-readBuilder.getBegin()) //adjust trim range to be relative of read start
             						.build();
-            	NucleotideSequence trimmedBases = readBuilder.getNucleotideSequenceBuilder()
-            							.copy()
-            							.trim(readTrimRange)
-            							.build();
+            	//trim updated
+            	//valid range sequence
+            	//and clear range
+            	//so we can just use the returned values
+            	//when adding this adjusted read to the split
+            	//contig.
+        		readBuilder.trim(readTrimRange);
+            	
+            	
             	splitContig.addRead(readId, 
-            			trimmedBases, 
+            			readBuilder.getCurrentNucleotideSequence(), 
             			(int)(readBuilder.getBegin() - rangeTokeep.getBegin()), 
             			readBuilder.getDirection(), 
             			readBuilder.getClearRange(), 

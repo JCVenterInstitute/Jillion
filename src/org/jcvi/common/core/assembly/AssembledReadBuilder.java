@@ -309,6 +309,20 @@ public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable
     AssembledReadBuilder<R> prepend(Iterable<Nucleotide> sequence);
 
     
+    /**
+     * Trim this read to only 
+     * contain the  sequence of the given gapped
+     * range.  This read's valid range will now be modified
+     * to contain only the bases in the trim range.
+     * @param trimRange the <strong>gapped</strong> range to modify
+     * the valid bases.
+     * @return this
+     * @throws NullPointerException if range is null.
+     * @throws IllegalArgumentException if range is beyond the
+     * current sequence valid range.
+     */
+    AssembledReadBuilder<R> trim(Range trimRange);
+    
     AssembledReadBuilder<R> expandValidRangeBegin(long units);
     
     AssembledReadBuilder<R> expandValidRangeEnd(long units);
@@ -317,4 +331,5 @@ public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable
     
     AssembledReadBuilder<R> contractValidRangeEnd(long units);
 
+    AssembledReadBuilder<R> copy();
 }
