@@ -19,12 +19,10 @@
 
 package org.jcvi.common.core.assembly.util.trim;
 
-import java.io.IOException;
+import java.util.Collections;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.util.iter.IteratorUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 
 /**
  * @author dkatzel
@@ -33,47 +31,12 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  */
 public final class TrimDataStoreUtil {
     /**
-     * Returns an {@link TrimPointsDataStore} that
+     * Create a new instance of
+     * a {@link TrimPointsDataStore} that
      * contains no data.
      */
-    public static final TrimPointsDataStore EMPTY_DATASTORE = new TrimPointsDataStore() {
-        
-        @Override
-        public StreamingIterator<Range> iterator() {
-            return IteratorUtil.createStreamingIterator(IteratorUtil.<Range>createEmptyIterator());
-        }
-        
-        @Override
-        public void close() throws IOException {
-            // no op
-            
-        }
-        
-        @Override
-        public long getNumberOfRecords() throws DataStoreException {
-            return 0;
-        }
-        
-        @Override
-        public StreamingIterator<String> idIterator() throws DataStoreException {
-            return IteratorUtil.createStreamingIterator(IteratorUtil.<String>createEmptyIterator());
-            
-        }
-        
-        @Override
-        public Range get(String id) throws DataStoreException {
-            return null;
-        }
-        
-        @Override
-        public boolean contains(String id) throws DataStoreException {
-            return false;
-        }
-
-        @Override
-        public boolean isClosed() {
-            //always open
-            return true;
-        }
-    };
+    public static TrimPointsDataStore createEmptyTrimPointsDataStore(){
+    	return MapDataStoreAdapter.adapt(TrimPointsDataStore.class, 
+    															Collections.<String,Range>emptyMap());
+    }
 }
