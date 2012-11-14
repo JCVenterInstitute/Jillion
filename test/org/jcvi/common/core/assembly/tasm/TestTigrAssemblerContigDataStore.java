@@ -23,8 +23,8 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
-import org.jcvi.common.core.assembly.tasm.DefaultTigrAssemblerFileContigDataStore;
-import org.jcvi.common.core.assembly.tasm.TigrAssemblerContig;
+import org.jcvi.common.core.assembly.tasm.DefaultTasmFileContigDataStore;
+import org.jcvi.common.core.assembly.tasm.TasmContig;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.io.fileServer.FileServer;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -40,7 +40,7 @@ public class TestTigrAssemblerContigDataStore {
     private static final FileServer RESOURCES = new ResourceFileServer(TestTigrAssemblerContigDataStore.class);
     
     private static final ContigDataStore<AssembledRead, Contig<AssembledRead>> contigDataStore;
-    private static final TigrAssemblerContigDataStore tasmDataStore;
+    private static final TasmContigDataStore tasmDataStore;
     static{
         try {
             contigDataStore= DefaultContigFileDataStore.create(RESOURCES.getFile("files/giv-15050.contig"));
@@ -48,7 +48,7 @@ public class TestTigrAssemblerContigDataStore {
             throw new IllegalStateException("could not parse contig file",e);
         } 
         try {
-            tasmDataStore= DefaultTigrAssemblerFileContigDataStore.create(RESOURCES.getFile("files/giv-15050.tasm"));
+            tasmDataStore= DefaultTasmFileContigDataStore.create(RESOURCES.getFile("files/giv-15050.tasm"));
         } catch (Exception e) {
             throw new IllegalStateException("could not parse contig file",e);
         } 
@@ -91,7 +91,7 @@ public class TestTigrAssemblerContigDataStore {
         assertContigDataMatches(contigDataStore.get("27235"), tasmDataStore.get("1122071329934"));
     }
 
-    private void assertContigDataMatches(Contig<AssembledRead> contig, TigrAssemblerContig tasm){
+    private void assertContigDataMatches(Contig<AssembledRead> contig, TasmContig tasm){
         assertEquals("consensus",contig.getConsensusSequence(), tasm.getConsensusSequence());
         assertEquals("#reads",contig.getNumberOfReads(), tasm.getNumberOfReads());
         

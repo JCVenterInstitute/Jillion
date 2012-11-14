@@ -21,18 +21,23 @@ package org.jcvi.common.core.assembly.tasm;
 
 import java.util.Map;
 
-import org.jcvi.common.core.assembly.AssembledReadBuilder;
+import org.jcvi.common.core.assembly.AssembledRead;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface TigrAssemblerPlacedReadBuilder extends AssembledReadBuilder<TigrAssemblerPlacedRead>{
-
-    TigrAssemblerPlacedReadBuilder addAttribute(TigrAssemblerReadAttribute key, String value);
+public interface TasmAssembledRead extends AssembledRead{
+    /**
+     * Get the Tigr Assembler properties associated with this
+     * Read.
+     * @return a non-null {@link Map} containing all
+     * the attributes of this read as Key Value pairs.
+     */
+    Map<TasmReadAttribute,String> getAttributes();
     
-    TigrAssemblerPlacedReadBuilder removeAttribute(TigrAssemblerReadAttribute key);
+    boolean hasAttribute(TasmReadAttribute attribute);
     
-    TigrAssemblerPlacedReadBuilder addAllAttributes(Map<TigrAssemblerReadAttribute,String> map);
+    String getAttributeValue(TasmReadAttribute attribute);
 }

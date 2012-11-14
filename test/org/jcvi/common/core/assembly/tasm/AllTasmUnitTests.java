@@ -33,6 +33,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
        TestTigrAssemblerContigDataStore.class ,
+       TestDefaultTigrAssemblerAssembledReadBuilder.class,
        TestTigrAssemblerWriter.class,
        TestTigrAssemblerPlacedReadAdapter.class,
        TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes.class,

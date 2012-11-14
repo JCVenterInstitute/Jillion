@@ -32,35 +32,35 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AbstractContig;
 import org.jcvi.common.core.assembly.AbstractContigBuilder;
-import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledReadBuilder;
+import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
- * {@code DefaultTigrAssemblerContig} is a {@link Contig}
+ * {@code DefaultTasmContig} is a {@link Contig}
  * implementation for TIGR Assembler contig data.
  * @author dkatzel
  *
  *
  */
-public final class DefaultTigrAssemblerContig  extends AbstractContig<TigrAssemblerPlacedRead> implements TigrAssemblerContig{
-    private final Map<TigrAssemblerContigAttribute,String> attributes;
+public final class DefaultTasmContig  extends AbstractContig<TasmAssembledRead> implements TasmContig{
+    private final Map<TasmContigAttribute,String> attributes;
     /**
      * @param id
      * @param consensus
      * @param placedReads
      * @param circular
      */
-    private DefaultTigrAssemblerContig(String id, NucleotideSequence consensus, Set<TigrAssemblerPlacedRead> reads, 
-            EnumMap<TigrAssemblerContigAttribute, String> attributes) {
+    private DefaultTasmContig(String id, NucleotideSequence consensus, Set<TasmAssembledRead> reads, 
+            EnumMap<TasmContigAttribute, String> attributes) {
         super(id,consensus,reads);
-        this.attributes = Collections.unmodifiableMap(new EnumMap<TigrAssemblerContigAttribute, String>(attributes));
+        this.attributes = Collections.unmodifiableMap(new EnumMap<TasmContigAttribute, String>(attributes));
     }
 
     @Override
-	public String getAttributeValue(TigrAssemblerContigAttribute attribute) {
+	public String getAttributeValue(TasmContigAttribute attribute) {
 		if(!hasAttribute(attribute)){
 			throw new NoSuchElementException("contig does not have an attribute "+attribute);
 		}
@@ -69,11 +69,11 @@ public final class DefaultTigrAssemblerContig  extends AbstractContig<TigrAssemb
 
 
 	@Override
-	public boolean hasAttribute(TigrAssemblerContigAttribute attribute) {
+	public boolean hasAttribute(TasmContigAttribute attribute) {
 		return attributes.containsKey(attribute);
 	}
     @Override
-    public Map<TigrAssemblerContigAttribute, String> getAttributes() {
+    public Map<TasmContigAttribute, String> getAttributes() {
         return attributes;
     }
     
@@ -104,10 +104,10 @@ public final class DefaultTigrAssemblerContig  extends AbstractContig<TigrAssemb
 		if (!super.equals(obj)) {
 			return false;
 		}
-		if (!(obj instanceof TigrAssemblerContig)) {
+		if (!(obj instanceof TasmContig)) {
 			return false;
 		}
-		TigrAssemblerContig other = (TigrAssemblerContig) obj;
+		TasmContig other = (TasmContig) obj;
 		if (attributes == null) {
 			if (other.getAttributes() != null) {
 				return false;
@@ -122,9 +122,9 @@ public final class DefaultTigrAssemblerContig  extends AbstractContig<TigrAssemb
 
 
 
-	public static class Builder extends AbstractContigBuilder<TigrAssemblerPlacedRead, TigrAssemblerContig>{
-        private final EnumMap<TigrAssemblerContigAttribute,String> contigAttributes = new EnumMap<TigrAssemblerContigAttribute,String>(TigrAssemblerContigAttribute.class);
-        private final Map<String, EnumMap<TigrAssemblerReadAttribute,String>> readAttributeMaps = new LinkedHashMap<String, EnumMap<TigrAssemblerReadAttribute,String>>();
+	public static class Builder extends AbstractContigBuilder<TasmAssembledRead, TasmContig>{
+        private final EnumMap<TasmContigAttribute,String> contigAttributes = new EnumMap<TasmContigAttribute,String>(TasmContigAttribute.class);
+        private final Map<String, EnumMap<TasmReadAttribute,String>> readAttributeMaps = new LinkedHashMap<String, EnumMap<TasmReadAttribute,String>>();
 
         /**
          * @param id
@@ -133,11 +133,11 @@ public final class DefaultTigrAssemblerContig  extends AbstractContig<TigrAssemb
         public Builder(String id, NucleotideSequence consensus) {
         	super(id,consensus);
         }
-        public Builder(String id, NucleotideSequence consensus,Map<TigrAssemblerContigAttribute,String> attributes) {
+        public Builder(String id, NucleotideSequence consensus,Map<TasmContigAttribute,String> attributes) {
             super(id, consensus);
             this.contigAttributes.putAll(attributes);
         }
-        public <R extends TigrAssemblerPlacedRead, C extends Contig<R>> Builder(C copy){
+        public <R extends TasmAssembledRead, C extends Contig<R>> Builder(C copy){
             this(copy.getId(), copy.getConsensusSequence());
             StreamingIterator<R> iter =null;
             try{
@@ -186,26 +186,26 @@ public final class DefaultTigrAssemblerContig  extends AbstractContig<TigrAssemb
        
        
        
-        public Builder addAttribute(TigrAssemblerContigAttribute attribute, String value){
+        public Builder addAttribute(TasmContigAttribute attribute, String value){
             this.contigAttributes.put(attribute, value);
             return this;
         }
-        public Builder removeAttribute(TigrAssemblerContigAttribute attribute){
+        public Builder removeAttribute(TasmContigAttribute attribute){
             this.contigAttributes.remove(attribute);
             return this;
         }
         @Override
-        public DefaultTigrAssemblerContig build() {
-            Set<TigrAssemblerPlacedRead> reads = new LinkedHashSet<TigrAssemblerPlacedRead>();
-            for(AssembledReadBuilder<TigrAssemblerPlacedRead> builder : getAllAssembledReadBuilders()){
-               ((TigrAssemblerPlacedReadBuilder)builder).addAllAttributes(readAttributeMaps.get(builder.getId()));
+        public DefaultTasmContig build() {
+            Set<TasmAssembledRead> reads = new LinkedHashSet<TasmAssembledRead>();
+            for(AssembledReadBuilder<TasmAssembledRead> builder : getAllAssembledReadBuilders()){
+               ((TasmAssembledReadBuilder)builder).addAllAttributes(readAttributeMaps.get(builder.getId()));
                 reads.add(builder.build());
             }
-            return new DefaultTigrAssemblerContig(getContigId(),getConsensusBuilder().build(),
+            return new DefaultTasmContig(getContigId(),getConsensusBuilder().build(),
                     reads,contigAttributes);
         }
     
-        public Builder addReadAttributes(String id, EnumMap<TigrAssemblerReadAttribute, String> readAttributes) {
+        public Builder addReadAttributes(String id, EnumMap<TasmReadAttribute, String> readAttributes) {
             readAttributeMaps.put(id, readAttributes);
             return this;
         }
@@ -214,9 +214,9 @@ public final class DefaultTigrAssemblerContig  extends AbstractContig<TigrAssemb
         * {@inheritDoc}
         */
         @Override
-        protected TigrAssemblerPlacedReadBuilder createPlacedReadBuilder(
-                TigrAssemblerPlacedRead read) {
-            TigrAssemblerPlacedReadBuilder builder =DefaultTigrAssemblerPlacedRead.createBuilder(
+        protected TasmAssembledReadBuilder createPlacedReadBuilder(
+                TasmAssembledRead read) {
+            TasmAssembledReadBuilder builder =DefaultTasmAssembledRead.createBuilder(
                     getConsensusBuilder().build(), 
                     read.getId(), 
                     read.getNucleotideSequence().toString(), 
@@ -224,7 +224,7 @@ public final class DefaultTigrAssemblerContig  extends AbstractContig<TigrAssemb
                     read.getDirection(), 
                     read.getReadInfo().getValidRange(),
                     read.getReadInfo().getUngappedFullLength());
-            for(Entry<TigrAssemblerReadAttribute,String> entry : read.getAttributes().entrySet()){
+            for(Entry<TasmReadAttribute,String> entry : read.getAttributes().entrySet()){
                 builder.addAttribute(entry.getKey(), entry.getValue());
             }
             return builder;
@@ -233,10 +233,10 @@ public final class DefaultTigrAssemblerContig  extends AbstractContig<TigrAssemb
         * {@inheritDoc}
         */
         @Override
-        protected TigrAssemblerPlacedReadBuilder createPlacedReadBuilder(
+        protected TasmAssembledReadBuilder createPlacedReadBuilder(
                 String id, int offset, Range validRange, String basecalls,
                 Direction dir, int fullUngappedLength) {
-            return DefaultTigrAssemblerPlacedRead.createBuilder(
+            return DefaultTasmAssembledRead.createBuilder(
                     getConsensusBuilder().build(), 
                     id, 
                     basecalls, 

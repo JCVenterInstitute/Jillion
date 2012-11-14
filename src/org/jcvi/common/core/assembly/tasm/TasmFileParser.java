@@ -34,12 +34,13 @@ import org.jcvi.common.core.assembly.ctg.ContigFileVisitor;
 import org.jcvi.common.core.io.IOUtil;
 
 /**
- * {@code TigrAssemblyFileParser} parses TIGR Assembler contig files.
+ * {@code TasmFileParser} parses TIGR Assembler contig files
+ * from a {@literal .tasm} file.
  * @author dkatzel
  *
  *
  */
-public final class TigrAssemblyFileParser {
+public final class TasmFileParser {
     private static final String CR = "\n";
     /**
      * Each contig data is separated by a pipe ('|').
@@ -47,14 +48,14 @@ public final class TigrAssemblyFileParser {
     private static final String END_OF_CONTIG = "|";
     private static final Pattern KEY_VALUE_PATTERN = Pattern.compile("(\\S+)\\s+(\\S+.*$)");
    
-    private TigrAssemblyFileParser(){
+    private TasmFileParser(){
     	//can not instantiate.
     }
     /**
      * Parse the given TIGR Assembly file and call the appropriate 
      * visitXXX methods in the given {@link ContigFileVisitor}.
-     * If the given visitor is a  {@link TigrAssemblyFileVisitor}
-     * then additional visitXXX methods specific to {@link TigrAssemblyFileVisitor}
+     * If the given visitor is a  {@link TasmFileVisitor}
+     * then additional visitXXX methods specific to {@link TasmFileVisitor}
      * are called as well.
      * @param tasmFile the TIGR Assembly file.
      * @param visitor the {@link ContigFileVisitor} implementation to visit.
@@ -72,15 +73,15 @@ public final class TigrAssemblyFileParser {
     /**
      * Parse the given TIGR Assembly {@link InputStream} and call the appropriate 
      * visitXXX methods in the given {@link ContigFileVisitor}.
-     * If the given visitor is a  {@link TigrAssemblyFileVisitor}
-     * then additional visitXXX methods specific to {@link TigrAssemblyFileVisitor}
+     * If the given visitor is a  {@link TasmFileVisitor}
+     * then additional visitXXX methods specific to {@link TasmFileVisitor}
      * are called as well.
      * @param inputStream an InputStream containing TIGR Assembly file data.
      * @param visitor the {@link ContigFileVisitor} implementation to visit.
      * @throws FileNotFoundException if tasmFile does not exist.
      */
     public static void parse(InputStream inputStream, ContigFileVisitor visitor){
-        boolean isTigrAssemblyVisitor = visitor instanceof TigrAssemblyFileVisitor;
+        boolean isTigrAssemblyVisitor = visitor instanceof TasmFileVisitor;
         
         Scanner scanner = new Scanner(inputStream, IOUtil.UTF_8_NAME).useDelimiter(CR);
         boolean inContigRecord=true;
@@ -93,7 +94,7 @@ public final class TigrAssemblyFileParser {
         String currentContigConsensus =null;
         visitor.visitFile();
         if(isTigrAssemblyVisitor){
-            ((TigrAssemblyFileVisitor)visitor).visitBeginContigBlock();
+            ((TasmFileVisitor)visitor).visitBeginContigBlock();
         }
         while(scanner.hasNextLine()) {
             String line = scanner.nextLine();
@@ -105,7 +106,7 @@ public final class TigrAssemblyFileParser {
                 String value = matcher.group(2);
                 if(inContigRecord){
                     if(isTigrAssemblyVisitor){
-                        ((TigrAssemblyFileVisitor)visitor).visitContigAttribute(key, value);
+                        ((TasmFileVisitor)visitor).visitContigAttribute(key, value);
                     }
                     if("asmbl_id".equals(key)){
                         currentContigId =value;
@@ -115,7 +116,7 @@ public final class TigrAssemblyFileParser {
                     }
                 }else{
                     if(isTigrAssemblyVisitor){
-                        ((TigrAssemblyFileVisitor)visitor).visitReadAttribute(key, value);
+                        ((TasmFileVisitor)visitor).visitReadAttribute(key, value);
                     }
                     if("lsequence".equals(key)){
                         currentBases =value;
@@ -141,8 +142,8 @@ public final class TigrAssemblyFileParser {
                     currentContigId=null;
                     currentContigConsensus =null;
                     if(isTigrAssemblyVisitor){
-                        ((TigrAssemblyFileVisitor)visitor).visitEndContigBlock();
-                        ((TigrAssemblyFileVisitor)visitor).visitBeginReadBlock();
+                        ((TasmFileVisitor)visitor).visitEndContigBlock();
+                        ((TasmFileVisitor)visitor).visitBeginReadBlock();
                     }
             	}
                 if(isEndOfRecord(line)){                    
@@ -152,8 +153,8 @@ public final class TigrAssemblyFileParser {
                             currentSequenceRightEnd, currentOffset,
                             currentBases);
                     if(isTigrAssemblyVisitor){
-                        ((TigrAssemblyFileVisitor)visitor).visitEndReadBlock();
-                        ((TigrAssemblyFileVisitor)visitor).visitBeginReadBlock();
+                        ((TasmFileVisitor)visitor).visitEndReadBlock();
+                        ((TasmFileVisitor)visitor).visitBeginReadBlock();
                     }                      
                     //reset current read data
                     currentSequenceName=null;
@@ -170,8 +171,8 @@ public final class TigrAssemblyFileParser {
                 		}
                         inContigRecord=true;
                         if(isTigrAssemblyVisitor){         
-                        	((TigrAssemblyFileVisitor)visitor).visitEndReadBlock();
-                            ((TigrAssemblyFileVisitor)visitor).visitBeginContigBlock();
+                        	((TasmFileVisitor)visitor).visitEndReadBlock();
+                            ((TasmFileVisitor)visitor).visitBeginContigBlock();
                         }
                         //reset current read data
                         currentSequenceName=null;
@@ -188,7 +189,7 @@ public final class TigrAssemblyFileParser {
              visitor.visitConsensusBasecallsLine(currentContigConsensus);
         	//no reads for this contig
         	if(isTigrAssemblyVisitor){
-                ((TigrAssemblyFileVisitor)visitor).visitEndContigBlock();
+                ((TasmFileVisitor)visitor).visitEndContigBlock();
             }
         }else{
         //visit last read if there is any data left
@@ -197,7 +198,7 @@ public final class TigrAssemblyFileParser {
                     currentSequenceRightEnd, currentOffset,
                     currentBases);
             if(isTigrAssemblyVisitor){
-                ((TigrAssemblyFileVisitor)visitor).visitEndReadBlock();
+                ((TasmFileVisitor)visitor).visitEndReadBlock();
             }
         }
        
