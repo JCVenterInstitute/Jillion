@@ -448,7 +448,7 @@ public class Cas2Consed3 {
 	                trimDatastore = trimDataStoreBuilder.build();
 	                trimToUntrimmedMap = new UnTrimmedExtensionTrimMap();
 	            }else{
-	                trimDatastore = TrimDataStoreUtil.EMPTY_DATASTORE;
+	                trimDatastore = TrimDataStoreUtil.createEmptyTrimPointsDataStore();
 	                trimToUntrimmedMap = EmptyCasTrimMap.getInstance();
 	            }
 	            
@@ -562,7 +562,7 @@ public class Cas2Consed3 {
         @Override
         public TrimPointsDataStore build() {
         	if(delegates.isEmpty()){
-        		return TrimDataStoreUtil.EMPTY_DATASTORE;
+        		return TrimDataStoreUtil.createEmptyTrimPointsDataStore();
         	}
             TrimPointsDataStore datastore= MultipleDataStoreWrapper.createMultipleDataStoreWrapper(TrimPointsDataStore.class, delegates);
             delegates = null;

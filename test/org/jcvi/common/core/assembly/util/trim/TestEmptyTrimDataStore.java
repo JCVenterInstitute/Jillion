@@ -1,14 +1,19 @@
 package org.jcvi.common.core.assembly.util.trim;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
 import java.util.Iterator;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestEmptyTrimDataStore {
 
-	TrimPointsDataStore sut = TrimDataStoreUtil.EMPTY_DATASTORE;
+	TrimPointsDataStore sut = TrimDataStoreUtil.createEmptyTrimPointsDataStore();
 	
 	@Test
 	public void shouldContain0Records() throws DataStoreException{
@@ -34,5 +39,11 @@ public class TestEmptyTrimDataStore {
 		assertNull(sut.get("something"));
 	}
 	
-	
+	@Test
+	public void close() throws IOException{
+		TrimPointsDataStore emptyDataStore = TrimDataStoreUtil.createEmptyTrimPointsDataStore();
+		assertFalse(emptyDataStore.isClosed());
+		emptyDataStore.close();
+		assertTrue(emptyDataStore.isClosed());
+	}
 }
