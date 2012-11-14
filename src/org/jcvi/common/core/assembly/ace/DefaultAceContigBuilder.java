@@ -420,6 +420,10 @@ public final class  DefaultAceContigBuilder implements AceContigBuilder{
      * that was set by
      * {@link #recallConsensus(ConsensusCaller)} or
      * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}.
+     * Only regions of the contig that have read coverage 
+     * get recalled.  The Consensus of "0x" regions
+     * remains unchanged.
+     * 
      * If this method is called without first
      * setting a {@link ConsensusCaller}, then this
      * method will throw an {@link IllegalStateException}.
