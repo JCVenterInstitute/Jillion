@@ -11,9 +11,9 @@ import static org.junit.Assert.*;
 public class TestAnnotationTasmParsing {
 	 private static final FileServer RESOURCES = new ResourceFileServer(TestAnnotationTasmParsing.class);
 	 
-	 private final TigrAssemblerContigDataStore datastore;
+	 private final TasmContigDataStore datastore;
 	 public TestAnnotationTasmParsing() throws FileNotFoundException, IOException{
-		 datastore = DefaultTigrAssemblerFileContigDataStore.create(RESOURCES.getFile("files/annotation.tasm"));
+		 datastore = DefaultTasmFileContigDataStore.create(RESOURCES.getFile("files/annotation.tasm"));
 			
 	 }
 	 @Test
@@ -74,7 +74,7 @@ public class TestAnnotationTasmParsing {
 				 "CTGGACGGATTAAGAAGGAGGAGTTTGCTGAGATCATGAAGATCTGTTCCACCAT" +
 				 "TGAAGAGCTCAGACGGCAGAAATAGTGAATTTAGCTTGTCCTTCATG";
 		 
-		 TigrAssemblerContig contig = datastore.get("1122071329927");
+		 TasmContig contig = datastore.get("1122071329927");
 		assertEquals(gappedConsensusOf927, contig.getConsensusSequence().toString());
 	 }
 }

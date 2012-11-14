@@ -28,8 +28,8 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -38,32 +38,32 @@ import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
- * {@code TigrAssemblerContigAdapter} is an adapter to convert a 
- * {@link Contig} into a {@link TigrAssemblerContig} with all
- * the appropriate {@link TigrAssemblerContigAttribute} 
- * and {@link TigrAssemblerReadAttribute} attributes set.
+ * {@code TasmContigAdapter} is an adapter to convert a 
+ * {@link Contig} into a {@link TasmContig} with all
+ * the appropriate {@link TasmContigAttribute} 
+ * and {@link TasmReadAttribute} attributes set.
  * @author dkatzel
  *
  */
-public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
+public final class TasmContigAdapter implements TasmContig{
 
 	private final Contig<? extends AssembledRead> delegate;
-	private final Map<String, TigrAssemblerPlacedRead> adaptedReads = new LinkedHashMap<String, TigrAssemblerPlacedRead>();
-	private final Map<TigrAssemblerContigAttribute,String> attributes;
+	private final Map<String, TasmAssembledRead> adaptedReads = new LinkedHashMap<String, TasmAssembledRead>();
+	private final Map<TasmContigAttribute,String> attributes;
 	/**
 	 * Private constructor only called by the Builder.
 	 * @param delegate
 	 * @param optionalAttributes
 	 * @see Builder
 	 */
-	private TigrAssemblerContigAdapter(Contig<? extends AssembledRead> delegate, Map<TigrAssemblerContigAttribute, String> optionalAttributes) {
+	private TasmContigAdapter(Contig<? extends AssembledRead> delegate, Map<TasmContigAttribute, String> optionalAttributes) {
 		this.delegate = delegate;
 		StreamingIterator<? extends AssembledRead> iter = null;
 		try{
 			iter = delegate.getReadIterator();
 			while(iter.hasNext()){
 				AssembledRead read = iter.next();
-				adaptedReads.put(read.getId(), new TigrAssemblerPlacedReadAdapter(read));
+				adaptedReads.put(read.getId(), new TasmAssembledReadAdapter(read));
 			}
 		}finally{
 			IOUtil.closeAndIgnoreErrors(iter);
@@ -81,28 +81,28 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	 * @return a Map containing all the adapted
 	 * attributes except for gapped and ungapped consensus.
 	 */
-	private Map<TigrAssemblerContigAttribute,String> createNonConsensusAttributes(
-			Contig<? extends AssembledRead> delegate, Map<TigrAssemblerContigAttribute, String> optionalAttributes) {
-		Map<TigrAssemblerContigAttribute,String> map = new EnumMap<TigrAssemblerContigAttribute,String>(TigrAssemblerContigAttribute.class);
-		map.put(TigrAssemblerContigAttribute.ASMBL_ID, delegate.getId());
-		map.put(TigrAssemblerContigAttribute.NUMBER_OF_READS, ""+delegate.getNumberOfReads());
+	private Map<TasmContigAttribute,String> createNonConsensusAttributes(
+			Contig<? extends AssembledRead> delegate, Map<TasmContigAttribute, String> optionalAttributes) {
+		Map<TasmContigAttribute,String> map = new EnumMap<TasmContigAttribute,String>(TasmContigAttribute.class);
+		map.put(TasmContigAttribute.ASMBL_ID, delegate.getId());
+		map.put(TasmContigAttribute.NUMBER_OF_READS, ""+delegate.getNumberOfReads());
 		
-		map.put(TigrAssemblerContigAttribute.IS_CIRCULAR, "0");
+		map.put(TasmContigAttribute.IS_CIRCULAR, "0");
 		
 		double averageCoverage = computeAvgCoverageFor(delegate);
-		map.put(TigrAssemblerContigAttribute.AVG_COVERAGE,String.format("%.2f",averageCoverage));
+		map.put(TasmContigAttribute.AVG_COVERAGE,String.format("%.2f",averageCoverage));
 		double percentN = computePercentNFor(delegate);
-		map.put(TigrAssemblerContigAttribute.PERCENT_N,String.format("%.2f",percentN));
+		map.put(TasmContigAttribute.PERCENT_N,String.format("%.2f",percentN));
 		
 		map.putAll(optionalAttributes);
 		return map;
 	}
 	
-	private Map<TigrAssemblerContigAttribute,String> generateConsensusAttributes(){
-		Map<TigrAssemblerContigAttribute,String> map = new EnumMap<TigrAssemblerContigAttribute,String>(TigrAssemblerContigAttribute.class);
-		map.put(TigrAssemblerContigAttribute.GAPPED_CONSENSUS, delegate.getConsensusSequence().toString());
+	private Map<TasmContigAttribute,String> generateConsensusAttributes(){
+		Map<TasmContigAttribute,String> map = new EnumMap<TasmContigAttribute,String>(TasmContigAttribute.class);
+		map.put(TasmContigAttribute.GAPPED_CONSENSUS, delegate.getConsensusSequence().toString());
 	
-		map.put(TigrAssemblerContigAttribute.UNGAPPED_CONSENSUS, new NucleotideSequenceBuilder(delegate.getConsensusSequence())
+		map.put(TasmContigAttribute.UNGAPPED_CONSENSUS, new NucleotideSequenceBuilder(delegate.getConsensusSequence())
 																	.ungap()
 																	.toString());
 		
@@ -138,7 +138,7 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	}
 
 	@Override
-	public String getAttributeValue(TigrAssemblerContigAttribute attribute) {
+	public String getAttributeValue(TasmContigAttribute attribute) {
 		switch(attribute){
 		case UNGAPPED_CONSENSUS:
 		case GAPPED_CONSENSUS:
@@ -148,21 +148,21 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		}
 	}
 
-	private Map<TigrAssemblerContigAttribute, String> createAllAttributes(){
-		Map<TigrAssemblerContigAttribute,String> map = new EnumMap<TigrAssemblerContigAttribute,String>(TigrAssemblerContigAttribute.class);
+	private Map<TasmContigAttribute, String> createAllAttributes(){
+		Map<TasmContigAttribute,String> map = new EnumMap<TasmContigAttribute,String>(TasmContigAttribute.class);
 		map.putAll(attributes);
 		map.putAll(generateConsensusAttributes());
 		return map;
 		
 	}
 	@Override
-	public Map<TigrAssemblerContigAttribute, String> getAttributes() {
+	public Map<TasmContigAttribute, String> getAttributes() {
 		return Collections.unmodifiableMap(createAllAttributes());
 	}
 
 	
 	@Override
-	public boolean hasAttribute(TigrAssemblerContigAttribute attribute) {
+	public boolean hasAttribute(TasmContigAttribute attribute) {
 		switch(attribute){
 		case UNGAPPED_CONSENSUS:
 		case GAPPED_CONSENSUS:
@@ -193,13 +193,13 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	}
 
 	@Override
-	public TigrAssemblerPlacedRead getRead(
+	public TasmAssembledRead getRead(
 			String id) {
 		return adaptedReads.get(id);
 	}
 
 	@Override
-	public StreamingIterator<TigrAssemblerPlacedRead> getReadIterator() {
+	public StreamingIterator<TasmAssembledRead> getReadIterator() {
 
 		return IteratorUtil.createStreamingIterator(adaptedReads.values().iterator());
 	}
@@ -207,7 +207,7 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	
 	/**
 	 * {@code Builder} is a Builder object for making 
-	 * TigrAssemblerContigAdapter instances.  Some {@link TigrAssemblerContigAttribute}s
+	 * TigrAssemblerContigAdapter instances.  Some {@link TasmContigAttribute}s
 	 * can be 
 	 * automatically computed based on the contig to adapt,
 	 * however, some other optional contig attributes can not be inferred
@@ -216,7 +216,7 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 	 * @author dkatzel
 	 *
 	 */
-	public static class Builder implements org.jcvi.common.core.util.Builder<TigrAssemblerContigAdapter>{
+	public static class Builder implements org.jcvi.common.core.util.Builder<TasmContigAdapter>{
 
 		//03/05/10 01:52:31 PM
 		/**
@@ -229,7 +229,7 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		
 		
 		private final Contig<? extends AssembledRead> contig;
-		private final Map<TigrAssemblerContigAttribute, String> optionalAttributes = new EnumMap<TigrAssemblerContigAttribute, String>(TigrAssemblerContigAttribute.class);
+		private final Map<TasmContigAttribute, String> optionalAttributes = new EnumMap<TasmContigAttribute, String>(TasmContigAttribute.class);
 		/**
 		 * Adapts the given contig object into a TigrAssemblerContig.
 		 * @param contig the contig to adapt.
@@ -242,7 +242,7 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 			return EDIT_DATE_FORMATTER.format(editDate);
 		}
 		/**
-		 * Sets the {@link TigrAssemblerContigAttribute#TYPE}
+		 * Sets the {@link TasmContigAttribute#TYPE}
 		 * attribute for this adapted contig.  Calling this method
 		 * multiple times will overwrite previous entries with the current
 		 * entry. Setting the value to {@code null} will remove the current
@@ -255,13 +255,13 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		 */
 		public Builder withType(String type){
 			if(type ==null){
-				optionalAttributes.remove(TigrAssemblerContigAttribute.TYPE);
+				optionalAttributes.remove(TasmContigAttribute.TYPE);
 			}
-			optionalAttributes.put(TigrAssemblerContigAttribute.TYPE,type);
+			optionalAttributes.put(TasmContigAttribute.TYPE,type);
 			return this;
 		}
 		/**
-         * Sets the {@link TigrAssemblerContigAttribute#COMMENT}
+         * Sets the {@link TasmContigAttribute#COMMENT}
          * attribute for this adapted contig.  Calling this method
          * multiple times will overwrite previous entries with the current
          * entry. Setting the value to {@code null} will remove the current
@@ -274,13 +274,13 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
          */
         public Builder withComment(String comment){
             if(comment ==null){
-                optionalAttributes.remove(TigrAssemblerContigAttribute.COMMENT);
+                optionalAttributes.remove(TasmContigAttribute.COMMENT);
             }
-            optionalAttributes.put(TigrAssemblerContigAttribute.COMMENT,comment);
+            optionalAttributes.put(TasmContigAttribute.COMMENT,comment);
             return this;
         }
         /**
-         * Sets the {@link TigrAssemblerContigAttribute#COM_NAME}
+         * Sets the {@link TasmContigAttribute#COM_NAME}
          * attribute for this adapted contig.  Calling this method
          * multiple times will overwrite previous entries with the current
          * entry. Setting the value to {@code null} will remove the current
@@ -293,13 +293,13 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
          */
         public Builder withCommonName(String commonName){
             if(commonName ==null){
-                optionalAttributes.remove(TigrAssemblerContigAttribute.COM_NAME);
+                optionalAttributes.remove(TasmContigAttribute.COM_NAME);
             }
-            optionalAttributes.put(TigrAssemblerContigAttribute.COM_NAME,commonName);
+            optionalAttributes.put(TasmContigAttribute.COM_NAME,commonName);
             return this;
         }
         /**
-         * Sets the {@link TigrAssemblerContigAttribute#CA_CONTIG_ID}
+         * Sets the {@link TasmContigAttribute#CA_CONTIG_ID}
          * attribute for this adapted contig.  Calling this method
          * multiple times will overwrite previous entries with the current
          * entry. Setting the value to {@code null} will remove the current
@@ -313,14 +313,14 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
          */
         public Builder withCeleraAssemblerContigId(String caId){
             if(caId ==null){
-                optionalAttributes.remove(TigrAssemblerContigAttribute.CA_CONTIG_ID);
+                optionalAttributes.remove(TasmContigAttribute.CA_CONTIG_ID);
             }
-            optionalAttributes.put(TigrAssemblerContigAttribute.CA_CONTIG_ID,caId);
+            optionalAttributes.put(TasmContigAttribute.CA_CONTIG_ID,caId);
             return this;
         }
         
         /**
-         * Sets the {@link TigrAssemblerContigAttribute#ASMBL_ID}
+         * Sets the {@link TasmContigAttribute#ASMBL_ID}
          * attribute for this adapted contig.  Calling this method
          * multiple times will overwrite previous entries with the current
          * entry. Setting the value to {@code null} will remove the current
@@ -333,13 +333,13 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
          */
         public Builder withAssembleId(String asmblId){
             if(asmblId ==null){
-                optionalAttributes.remove(TigrAssemblerContigAttribute.ASMBL_ID);
+                optionalAttributes.remove(TasmContigAttribute.ASMBL_ID);
             }
-            optionalAttributes.put(TigrAssemblerContigAttribute.ASMBL_ID,asmblId);
+            optionalAttributes.put(TasmContigAttribute.ASMBL_ID,asmblId);
             return this;
         }
 		/**
-		 * Sets the {@link TigrAssemblerContigAttribute#METHOD}
+		 * Sets the {@link TasmContigAttribute#METHOD}
 		 * attribute for this adapted contig.  Calling this method
 		 * multiple times will overwrite previous entries with the current
 		 * entry. Setting the value to {@code null} will remove the current
@@ -352,13 +352,13 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		 */
 		public Builder withMethod(String method){
 			if(method ==null){
-				optionalAttributes.remove(TigrAssemblerContigAttribute.METHOD);
+				optionalAttributes.remove(TasmContigAttribute.METHOD);
 			}
-			optionalAttributes.put(TigrAssemblerContigAttribute.METHOD,method);
+			optionalAttributes.put(TasmContigAttribute.METHOD,method);
 			return this;
 		}
 		/**
-		 * Sets the {@link TigrAssemblerContigAttribute#EDIT_STATUS}
+		 * Sets the {@link TasmContigAttribute#EDIT_STATUS}
 		 * attribute for this adapted contig.  Calling this method
 		 * multiple times will overwrite previous entries with the current
 		 * entry. Setting the value to {@code null} will remove the current
@@ -371,13 +371,13 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		 */
 		public Builder withEditStatus(String editStatus){
 			if(editStatus ==null){
-				optionalAttributes.remove(TigrAssemblerContigAttribute.EDIT_STATUS);
+				optionalAttributes.remove(TasmContigAttribute.EDIT_STATUS);
 			}
-			optionalAttributes.put(TigrAssemblerContigAttribute.EDIT_STATUS,editStatus);
+			optionalAttributes.put(TasmContigAttribute.EDIT_STATUS,editStatus);
 			return this;
 		}
 		/**
-		 * Sets the {@link TigrAssemblerContigAttribute#FULL_CDS}
+		 * Sets the {@link TasmContigAttribute#FULL_CDS}
 		 * attribute for this adapted contig.  Calling this method
 		 * multiple times will overwrite previous entries with the current
 		 * entry. Setting the value to {@code null} will remove the current
@@ -390,13 +390,13 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		 */
 		public Builder withFullCDS(String fullCDS){
 			if(fullCDS ==null){
-				optionalAttributes.remove(TigrAssemblerContigAttribute.FULL_CDS);
+				optionalAttributes.remove(TasmContigAttribute.FULL_CDS);
 			}
-			optionalAttributes.put(TigrAssemblerContigAttribute.FULL_CDS,fullCDS);
+			optionalAttributes.put(TasmContigAttribute.FULL_CDS,fullCDS);
 			return this;
 		}
 		/**
-		 * Sets the {@link TigrAssemblerContigAttribute#CDS_START}
+		 * Sets the {@link TasmContigAttribute#CDS_START}
 		 * attribute for this adapted contig.  Calling this method
 		 * multiple times will overwrite previous entries with the current
 		 * entry. Setting the value to {@code null} will remove the current
@@ -409,14 +409,14 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		 */
 		public Builder withCDSStart(Integer cdsStart){
 			if(cdsStart ==null){
-				optionalAttributes.remove(TigrAssemblerContigAttribute.CDS_START);
+				optionalAttributes.remove(TasmContigAttribute.CDS_START);
 			}else{
-			    optionalAttributes.put(TigrAssemblerContigAttribute.CDS_START,cdsStart.toString());
+			    optionalAttributes.put(TasmContigAttribute.CDS_START,cdsStart.toString());
 			}
 			return this;
 		}
 		/**
-		 * Sets the {@link TigrAssemblerContigAttribute#CDS_END}
+		 * Sets the {@link TasmContigAttribute#CDS_END}
 		 * attribute for this adapted contig.  Calling this method
 		 * multiple times will overwrite previous entries with the current
 		 * entry. Setting the value to {@code null} will remove the current
@@ -429,9 +429,9 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		 */
 		public Builder withCDSEnd(Integer cdsEnd){
 			if(cdsEnd ==null){
-				optionalAttributes.remove(TigrAssemblerContigAttribute.CDS_END);
+				optionalAttributes.remove(TasmContigAttribute.CDS_END);
 			}else{
-			    optionalAttributes.put(TigrAssemblerContigAttribute.CDS_END,cdsEnd.toString());
+			    optionalAttributes.put(TasmContigAttribute.CDS_END,cdsEnd.toString());
 			}
 			return this;
 		}
@@ -450,15 +450,15 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		 */
 		public Builder withEditInfo(String editPerson, Date editDate){
 			if(editPerson ==null || editDate ==null){
-				optionalAttributes.remove(TigrAssemblerContigAttribute.EDIT_PERSON);
-				optionalAttributes.remove(TigrAssemblerContigAttribute.EDIT_DATE);
+				optionalAttributes.remove(TasmContigAttribute.EDIT_PERSON);
+				optionalAttributes.remove(TasmContigAttribute.EDIT_DATE);
 			}
-			optionalAttributes.put(TigrAssemblerContigAttribute.EDIT_PERSON,editPerson);
-			optionalAttributes.put(TigrAssemblerContigAttribute.EDIT_DATE, formatEditDate(editDate));
+			optionalAttributes.put(TasmContigAttribute.EDIT_PERSON,editPerson);
+			optionalAttributes.put(TasmContigAttribute.EDIT_DATE, formatEditDate(editDate));
 			return this;
 		}
 		/**
-		 * Sets the {@link TigrAssemblerContigAttribute#FRAME_SHIFT}
+		 * Sets the {@link TasmContigAttribute#FRAME_SHIFT}
 		 * attribute for this adapted contig.  Calling this method
 		 * multiple times will overwrite previous entries with the current
 		 * entry. Setting the value to {@code null} will remove the current
@@ -471,9 +471,9 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		 */
 		public Builder withFrameShift(String frameShift){
 			if(frameShift ==null){
-				optionalAttributes.remove(TigrAssemblerContigAttribute.FRAME_SHIFT);
+				optionalAttributes.remove(TasmContigAttribute.FRAME_SHIFT);
 			}
-			optionalAttributes.put(TigrAssemblerContigAttribute.FRAME_SHIFT,frameShift);
+			optionalAttributes.put(TasmContigAttribute.FRAME_SHIFT,frameShift);
 			return this;
 		}
 		/**
@@ -482,8 +482,8 @@ public final class TigrAssemblerContigAdapter implements TigrAssemblerContig{
 		 * optional attributes set.
 		 */
 		@Override
-		public TigrAssemblerContigAdapter build() {
-			return new TigrAssemblerContigAdapter(contig, optionalAttributes);
+		public TasmContigAdapter build() {
+			return new TasmContigAdapter(contig, optionalAttributes);
 		}
 		
 	}

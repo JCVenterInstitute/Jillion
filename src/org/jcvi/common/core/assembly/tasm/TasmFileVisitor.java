@@ -26,7 +26,7 @@ import org.jcvi.common.core.assembly.ctg.ContigFileVisitor;
  *
  *
  */
-public interface TigrAssemblyFileVisitor extends ContigFileVisitor{
+public interface TasmFileVisitor extends ContigFileVisitor{
 
     void visitContigAttribute(String key, String value);
     void visitReadAttribute(String key, String value);

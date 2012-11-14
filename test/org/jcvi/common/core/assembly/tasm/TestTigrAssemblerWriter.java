@@ -21,9 +21,9 @@ package org.jcvi.common.core.assembly.tasm;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.jcvi.common.core.assembly.tasm.DefaultTigrAssemblerFileContigDataStore;
-import org.jcvi.common.core.assembly.tasm.TigrAssemblerContigDataStore;
-import org.jcvi.common.core.assembly.tasm.TigrAssemblerWriter;
+import org.jcvi.common.core.assembly.tasm.DefaultTasmFileContigDataStore;
+import org.jcvi.common.core.assembly.tasm.TasmContigDataStore;
+import org.jcvi.common.core.assembly.tasm.TasmFileWriter;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.io.fileServer.FileServer;
@@ -34,10 +34,10 @@ import static org.easymock.EasyMock.*;
 public class TestTigrAssemblerWriter {
 	private static final FileServer RESOURCES = new ResourceFileServer(TestTigrAssemblerWriter.class);
 	   
-	private static final TigrAssemblerContigDataStore tasmDataStore;
+	private static final TasmContigDataStore tasmDataStore;
 	static{	         
         try {
-            tasmDataStore= DefaultTigrAssemblerFileContigDataStore.create(RESOURCES.getFile("files/giv-15050.tasm"));
+            tasmDataStore= DefaultTasmFileContigDataStore.create(RESOURCES.getFile("files/giv-15050.tasm"));
         } catch (Exception e) {
             throw new IllegalStateException("could not parse contig file",e);
         } 
@@ -47,21 +47,21 @@ public class TestTigrAssemblerWriter {
     @Test(expected = NullPointerException.class)
     public void writeNullDataStoreShouldThrowNullPointerException() throws IOException{
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
-    	TigrAssemblerWriter.write((TigrAssemblerContigDataStore)null,out);
+    	TasmFileWriter.write((TasmContigDataStore)null,out);
     }
     @Test(expected = NullPointerException.class)
     public void writeNullOutputStreamShouldThrowNullPointerException() throws IOException{
-    	TigrAssemblerWriter.write(tasmDataStore,null);
+    	TasmFileWriter.write(tasmDataStore,null);
     }
     @Test
     public void whenDataStoreThrowsExceptionShouldWrapInIOException() throws DataStoreException{
-    	TigrAssemblerContigDataStore mockDataStore = createMock(TigrAssemblerContigDataStore.class);
+    	TasmContigDataStore mockDataStore = createMock(TasmContigDataStore.class);
     	DataStoreException expectedException = new DataStoreException("expected");
     	expect(mockDataStore.idIterator()).andThrow(expectedException);
     	replay(mockDataStore);
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
     	try {
-			TigrAssemblerWriter.write(mockDataStore,out);
+			TasmFileWriter.write(mockDataStore,out);
 			fail("should wrap DataStoreException in IOException");
 		} catch (IOException e) {
 			assertEquals("error writing tasm file", e.getMessage());
@@ -71,7 +71,7 @@ public class TestTigrAssemblerWriter {
     @Test
     public void rewrittenTasmShouldMatchOriginalByteForByte() throws IOException{
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
-    	TigrAssemblerWriter.write(tasmDataStore,out);
+    	TasmFileWriter.write(tasmDataStore,out);
     	byte[] expected = IOUtil.toByteArray(RESOURCES.getFileAsStream("files/giv-15050.tasm"));
     	assertArrayEquals(expected, out.toByteArray());
     }

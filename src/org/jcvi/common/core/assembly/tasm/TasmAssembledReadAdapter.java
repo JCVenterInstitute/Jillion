@@ -28,23 +28,27 @@ import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 /**
- * {@code TigrAssemblerPlacedReadAdapter} is a Adapter which allows
- * a PlacedRead to conform to the TigrAssemblerPlacedRead interface.
+ * {@code TasmAssembledReadAdapter} is a Adapter which allows
+ * an {@link AssembledRead} to conform to the {@link TasmAssembledRead}
+ *  interface.
  * @author dkatzel
  *
  */
-public final class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlacedRead{
+public final class TasmAssembledReadAdapter implements TasmAssembledRead{
 
 	private final AssembledRead delegatePlacedRead;
 	
 	/**
-	 * Adapt the given placedRead into a TigrAssemblerPlacedRead.
-	 * @param delegatePlacedRead the PlacedRead instance to adapt
+	 * Adapt the given placedRead into a {@link TasmAssembledRead}.
+	 * @param read the {@link AssembledRead} instance to adapt
 	 * (may not be null).
 	 * @throws NullPointerException if delegatePlacedRead is null.
 	 */
-	public TigrAssemblerPlacedReadAdapter(AssembledRead delegatePlacedRead) {
-		this.delegatePlacedRead = delegatePlacedRead;
+	public TasmAssembledReadAdapter(AssembledRead read) {
+		if(read ==null){
+			throw new NullPointerException("adapted read can not be null");
+		}
+		this.delegatePlacedRead = read;
 		generateAttributes();
 	}
 	/**
@@ -52,43 +56,43 @@ public final class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlaced
 	 * attributes on the fly
 	 * @return
 	 */
-	private Map<TigrAssemblerReadAttribute, String> generateAttributes() {
-		Map<TigrAssemblerReadAttribute, String> attributes = new EnumMap<TigrAssemblerReadAttribute, String>(TigrAssemblerReadAttribute.class);
-		attributes.put(TigrAssemblerReadAttribute.NAME, getId());
+	private Map<TasmReadAttribute, String> generateAttributes() {
+		Map<TasmReadAttribute, String> attributes = new EnumMap<TasmReadAttribute, String>(TasmReadAttribute.class);
+		attributes.put(TasmReadAttribute.NAME, getId());
 		
 		//TODO is asm_lend / asm_rend ungapped or gapped?
 		//try ungapped?
 		int asmLend =1+ getNucleotideSequence().getUngappedOffsetFor((int)getGappedStartOffset());
 		int asmRend =1+ getNucleotideSequence().getUngappedOffsetFor((int)getGappedEndOffset());
-		attributes.put(TigrAssemblerReadAttribute.CONTIG_LEFT, ""+asmLend);
-		attributes.put(TigrAssemblerReadAttribute.CONTIG_RIGHT, ""+asmRend);
-		attributes.put(TigrAssemblerReadAttribute.CONTIG_START_OFFSET, ""+(this.getGappedStartOffset()));
-		attributes.put(TigrAssemblerReadAttribute.GAPPED_SEQUENCE, this.getNucleotideSequence().toString());
+		attributes.put(TasmReadAttribute.CONTIG_LEFT, ""+asmLend);
+		attributes.put(TasmReadAttribute.CONTIG_RIGHT, ""+asmRend);
+		attributes.put(TasmReadAttribute.CONTIG_START_OFFSET, ""+(this.getGappedStartOffset()));
+		attributes.put(TasmReadAttribute.GAPPED_SEQUENCE, this.getNucleotideSequence().toString());
 		
 		Range validRange = this.getReadInfo().getValidRange();
 		if(this.getDirection()== Direction.FORWARD){
-			attributes.put(TigrAssemblerReadAttribute.SEQUENCE_LEFT, ""+(validRange.getBegin()+1));
-			attributes.put(TigrAssemblerReadAttribute.SEQUENCE_RIGHT, ""+(validRange.getEnd()+1));
+			attributes.put(TasmReadAttribute.SEQUENCE_LEFT, ""+(validRange.getBegin()+1));
+			attributes.put(TasmReadAttribute.SEQUENCE_RIGHT, ""+(validRange.getEnd()+1));
 		}else{
 			//reverse gets left and right flipped
-			attributes.put(TigrAssemblerReadAttribute.SEQUENCE_RIGHT, ""+(validRange.getBegin()+1));
-			attributes.put(TigrAssemblerReadAttribute.SEQUENCE_LEFT, ""+(validRange.getEnd()+1));
+			attributes.put(TasmReadAttribute.SEQUENCE_RIGHT, ""+(validRange.getBegin()+1));
+			attributes.put(TasmReadAttribute.SEQUENCE_LEFT, ""+(validRange.getEnd()+1));
 		}
 		return attributes;
 	}
 
 	@Override
-	public String getAttributeValue(TigrAssemblerReadAttribute attribute) {
+	public String getAttributeValue(TasmReadAttribute attribute) {
 		return generateAttributes().get(attribute);
 	}
 
 	@Override
-	public Map<TigrAssemblerReadAttribute, String> getAttributes() {
+	public Map<TasmReadAttribute, String> getAttributes() {
 		return generateAttributes();
 	}
 
 	@Override
-	public boolean hasAttribute(TigrAssemblerReadAttribute attribute) {
+	public boolean hasAttribute(TasmReadAttribute attribute) {
 		switch( attribute){
 			case BEST :
 			case COMMENT:
@@ -176,10 +180,10 @@ public final class TigrAssemblerPlacedReadAdapter implements TigrAssemblerPlaced
 			return false;
 		}
 		
-		if (!(obj instanceof TigrAssemblerPlacedRead)) {
+		if (!(obj instanceof TasmAssembledRead)) {
 			return true;
 		}
-		TigrAssemblerPlacedRead otherTigrRead = (TigrAssemblerPlacedRead) obj;
+		TasmAssembledRead otherTigrRead = (TasmAssembledRead) obj;
 		return !generateAttributes().equals(otherTigrRead.getAttributes());
 	}
     /**

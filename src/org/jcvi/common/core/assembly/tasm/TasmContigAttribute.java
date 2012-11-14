@@ -22,7 +22,7 @@ package org.jcvi.common.core.assembly.tasm;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum TigrAssemblerContigAttribute {
+public enum TasmContigAttribute {
 	//ordinal order is the order in .tasm file
 	//not sure if we need to keep this order
 	//for bcp to work in Project database
@@ -50,13 +50,13 @@ public enum TigrAssemblerContigAttribute {
 	;
 	
 	private final String assemblyTableColumn;
-	private static final Map<String, TigrAssemblerContigAttribute> MAP = new HashMap<String, TigrAssemblerContigAttribute>();
+	private static final Map<String, TasmContigAttribute> MAP = new HashMap<String, TasmContigAttribute>();
 	static{
-		for(TigrAssemblerContigAttribute attribute : values()){
+		for(TasmContigAttribute attribute : values()){
 			MAP.put(attribute.getAssemblyTableColumn(), attribute);
 		}
 	}
-	TigrAssemblerContigAttribute(String assemblyTableColumn){
+	TasmContigAttribute(String assemblyTableColumn){
 		this.assemblyTableColumn = assemblyTableColumn;
 	}
 
@@ -67,7 +67,7 @@ public enum TigrAssemblerContigAttribute {
 		return assemblyTableColumn;
 	}
 	
-	public static TigrAssemblerContigAttribute getAttributeFor(String attribute){
+	public static TasmContigAttribute getAttributeFor(String attribute){
 		if(MAP.containsKey(attribute)){
 			return MAP.get(attribute);
 		}

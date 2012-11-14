@@ -41,40 +41,40 @@ import org.jcvi.common.core.util.Builder;
  *
  *
  */
-public final class DefaultTigrAssemblerFileContigDataStore {
+public final class DefaultTasmFileContigDataStore {
 
     
-    public static TigrAssemblerContigDataStore create(File tasmFile) throws FileNotFoundException{ 
+    public static TasmContigDataStore create(File tasmFile) throws FileNotFoundException{ 
     	BuilderImpl builder = new BuilderImpl();
-    	 TigrAssemblyFileParser.parse(tasmFile, builder);
+    	 TasmFileParser.parse(tasmFile, builder);
     	 return builder.build();
     }
     
-    private DefaultTigrAssemblerFileContigDataStore(){
+    private DefaultTasmFileContigDataStore(){
     	//can not instantiate
     }
    
-    private static class BuilderImpl implements TigrAssemblyFileVisitor, Builder<TigrAssemblerContigDataStore> {
+    private static class BuilderImpl implements TasmFileVisitor, Builder<TasmContigDataStore> {
 
-        private DefaultTigrAssemblerContig.Builder currentBuilder;
+        private DefaultTasmContig.Builder currentBuilder;
 
         private String currentContigId;
         private NucleotideSequence currentContigConsensus;
-        private Map<TigrAssemblerContigAttribute, String> currentContigAttributes;
+        private Map<TasmContigAttribute, String> currentContigAttributes;
         
-        private EnumMap<TigrAssemblerReadAttribute, String> currentReadAttributes;
+        private EnumMap<TasmReadAttribute, String> currentReadAttributes;
         private String currentReadId;
         private int currentOffset;
         private Range currentValidRange;
         private Direction currentDirection;
         
         private String currentReadBasecalls;
-        private final Map<String, TigrAssemblerContig> contigs = new LinkedHashMap<String, TigrAssemblerContig>();
+        private final Map<String, TasmContig> contigs = new LinkedHashMap<String, TasmContig>();
        
         
         @Override
-		public TigrAssemblerContigDataStore build() {
-			return MapDataStoreAdapter.adapt(TigrAssemblerContigDataStore.class, contigs);
+		public TasmContigDataStore build() {
+			return MapDataStoreAdapter.adapt(TasmContigDataStore.class, contigs);
 		}
 
 		/**
@@ -82,7 +82,7 @@ public final class DefaultTigrAssemblerFileContigDataStore {
         */
         @Override
         public void visitContigAttribute(String key, String value) {
-            currentContigAttributes.put(TigrAssemblerContigAttribute.getAttributeFor(key), value);
+            currentContigAttributes.put(TasmContigAttribute.getAttributeFor(key), value);
             
         }
 
@@ -91,7 +91,7 @@ public final class DefaultTigrAssemblerFileContigDataStore {
         */
         @Override
         public void visitReadAttribute(String key, String value) {
-            currentReadAttributes.put(TigrAssemblerReadAttribute.getAttributeFor(key), value);
+            currentReadAttributes.put(TasmReadAttribute.getAttributeFor(key), value);
             
         }
 
@@ -169,13 +169,13 @@ public final class DefaultTigrAssemblerFileContigDataStore {
                 visitContig(currentBuilder.build());
             }
             currentBuilder=null;
-            currentContigAttributes= new EnumMap<TigrAssemblerContigAttribute, String>(TigrAssemblerContigAttribute.class);
+            currentContigAttributes= new EnumMap<TasmContigAttribute, String>(TasmContigAttribute.class);
         }
         /**
-         * Visit the given {@link TigrAssemblerContig} to this DataStore.
+         * Visit the given {@link TasmContig} to this DataStore.
          * @param contig the TIGR Assembler contig being visited.
          */
-        private  void visitContig(TigrAssemblerContig contig){
+        private  void visitContig(TasmContig contig){
         	contigs.put(contig.getId(), contig);
         }
         /**
@@ -187,7 +187,7 @@ public final class DefaultTigrAssemblerFileContigDataStore {
             currentOffset=0;
             currentValidRange=null;
             currentDirection=null;
-            currentReadAttributes = new EnumMap<TigrAssemblerReadAttribute, String>(TigrAssemblerReadAttribute.class);
+            currentReadAttributes = new EnumMap<TasmReadAttribute, String>(TasmReadAttribute.class);
             
         }
 
@@ -196,7 +196,7 @@ public final class DefaultTigrAssemblerFileContigDataStore {
         */
         @Override
         public void visitEndContigBlock() {
-            currentBuilder = new DefaultTigrAssemblerContig.Builder(currentContigId, currentContigConsensus,currentContigAttributes);
+            currentBuilder = new DefaultTasmContig.Builder(currentContigId, currentContigConsensus,currentContigAttributes);
         }
 
         /**

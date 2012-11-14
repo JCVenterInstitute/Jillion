@@ -41,7 +41,9 @@ public final class DefaultAsmPlacedRead implements AsmAssembledRead{
     private final boolean isSurrogate;
     private final AssembledRead placedRead;
     
-    public static AsmAssembledReadBuilder createBuilder(NucleotideSequence reference, String readId,String validBases,
+    public static AsmAssembledReadBuilder createBuilder(NucleotideSequence reference, 
+    		String readId,
+    		String validBases,
             int offset, Direction dir, Range clearRange,
             int ungappedFullLength, boolean isSurrogate){
         return new Builder(reference, readId, validBases, 

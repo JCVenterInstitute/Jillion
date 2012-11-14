@@ -41,13 +41,13 @@ import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
  *
  *
  */
-final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
+final class DefaultTasmAssembledRead implements TasmAssembledRead{
 
-    private final Map<TigrAssemblerReadAttribute,String> attributes;
+    private final Map<TasmReadAttribute,String> attributes;
     private final AssembledRead delegate;
     
     
-    public static TigrAssemblerPlacedReadBuilder createBuilder(NucleotideSequence reference, 
+    public static TasmAssembledReadBuilder createBuilder(NucleotideSequence reference, 
             String readId,String validBases,
             int offset, Direction dir, Range clearRange,
             int ungappedFullLength){
@@ -58,34 +58,34 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
      * @param start
      * @param sequenceDirection
      */
-    private DefaultTigrAssemblerPlacedRead(
+    private DefaultTasmAssembledRead(
             AssembledRead read) {
-        this(read, new EnumMap<TigrAssemblerReadAttribute,String>(TigrAssemblerReadAttribute.class));
+        this(read, new EnumMap<TasmReadAttribute,String>(TasmReadAttribute.class));
     }
     /**
      * @param read
      * @param start
      * @param sequenceDirection
      */
-    private DefaultTigrAssemblerPlacedRead(
-            AssembledRead read, Map<TigrAssemblerReadAttribute, String> attributes) {
+    private DefaultTasmAssembledRead(
+            AssembledRead read, Map<TasmReadAttribute, String> attributes) {
         this.delegate = read;
-        Map<TigrAssemblerReadAttribute, String> map = new EnumMap<TigrAssemblerReadAttribute, String>(attributes);
+        Map<TasmReadAttribute, String> map = new EnumMap<TasmReadAttribute, String>(attributes);
         this.attributes = Collections.unmodifiableMap(map);
     }
     @Override
-    public Map<TigrAssemblerReadAttribute, String> getAttributes() {
+    public Map<TasmReadAttribute, String> getAttributes() {
         return attributes;
     }
 	@Override
-	public String getAttributeValue(TigrAssemblerReadAttribute attribute) {
+	public String getAttributeValue(TasmReadAttribute attribute) {
 		if(!hasAttribute(attribute)){
 			throw new NoSuchElementException("read does not contain attribute "+attribute);
 		}
 		return attributes.get(attribute);
 	}
 	@Override
-	public boolean hasAttribute(TigrAssemblerReadAttribute attribute) {
+	public boolean hasAttribute(TasmReadAttribute attribute) {
 		return attributes.containsKey(attribute);
 	}
 	
@@ -188,10 +188,10 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof DefaultTigrAssemblerPlacedRead)) {
+        if (!(obj instanceof DefaultTasmAssembledRead)) {
             return false;
         }
-        DefaultTigrAssemblerPlacedRead other = (DefaultTigrAssemblerPlacedRead) obj;
+        DefaultTasmAssembledRead other = (DefaultTasmAssembledRead) obj;
         if (attributes == null) {
             if (other.attributes != null) {
                 return false;
@@ -209,9 +209,9 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         return true;
     }
 	
-    private static class Builder implements TigrAssemblerPlacedReadBuilder{
+    private static class Builder implements TasmAssembledReadBuilder{
 
-        private final Map<TigrAssemblerReadAttribute, String> map =new EnumMap<TigrAssemblerReadAttribute,String>(TigrAssemblerReadAttribute.class);
+        private final Map<TasmReadAttribute, String> map =new EnumMap<TasmReadAttribute,String>(TasmReadAttribute.class);
         private final AssembledReadBuilder<AssembledRead> delegate;
         
         
@@ -227,21 +227,21 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
           }
           
         @Override
-		public TigrAssemblerPlacedReadBuilder trim(Range trimRange) {
+		public TasmAssembledReadBuilder trim(Range trimRange) {
 			delegate.trim(trimRange);
 			return this;
 		}
           @Override
-   		public TigrAssemblerPlacedReadBuilder copy() {
+   		public TasmAssembledReadBuilder copy() {
    			return new Builder(this);
    		}
         /**
         * {@inheritDoc}
         */
         @Override
-        public TigrAssemblerPlacedReadBuilder addAllAttributes(
-                Map<TigrAssemblerReadAttribute, String> map) {
-            for(Entry<TigrAssemblerReadAttribute, String> entry : map.entrySet()){
+        public TasmAssembledReadBuilder addAllAttributes(
+                Map<TasmReadAttribute, String> map) {
+            for(Entry<TasmReadAttribute, String> entry : map.entrySet()){
                 addAttribute(entry.getKey(), entry.getValue());
             }
             return this;
@@ -251,7 +251,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         * {@inheritDoc}
         */
         @Override
-        public AssembledReadBuilder<TigrAssemblerPlacedRead> reference(
+        public AssembledReadBuilder<TasmAssembledRead> reference(
                 NucleotideSequence reference, int newOffset) {
             delegate.reference(reference, newOffset);
             return this;
@@ -277,7 +277,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         * {@inheritDoc}
         */
         @Override
-        public AssembledReadBuilder<TigrAssemblerPlacedRead> setStartOffset(
+        public AssembledReadBuilder<TasmAssembledRead> setStartOffset(
                 int newOffset) {
             delegate.setStartOffset(newOffset);
             return this;
@@ -287,7 +287,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         * {@inheritDoc}
         */
         @Override
-        public AssembledReadBuilder<TigrAssemblerPlacedRead> shift(
+        public AssembledReadBuilder<TasmAssembledRead> shift(
                 int numberOfBases) {
             delegate.shift(numberOfBases);
             return this;
@@ -322,15 +322,15 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         * {@inheritDoc}
         */
         @Override
-        public TigrAssemblerPlacedRead build() {
-            return new DefaultTigrAssemblerPlacedRead(delegate.build(), map);
+        public TasmAssembledRead build() {
+            return new DefaultTasmAssembledRead(delegate.build(), map);
         }
 
         /**
         * {@inheritDoc}
         */
         @Override
-        public AssembledReadBuilder<TigrAssemblerPlacedRead> reAbacus(
+        public AssembledReadBuilder<TasmAssembledRead> reAbacus(
                 Range gappedValidRangeToChange, NucleotideSequence newBasecalls) {
             delegate.reAbacus(gappedValidRangeToChange, newBasecalls);
             return this;
@@ -378,14 +378,14 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
 
         
         @Override
-		public AssembledReadBuilder<TigrAssemblerPlacedRead> append(Nucleotide base) {
+		public AssembledReadBuilder<TasmAssembledRead> append(Nucleotide base) {
 			delegate.append(base);
 			return this;
 		}
 
 
 		@Override
-		public AssembledReadBuilder<TigrAssemblerPlacedRead> append(
+		public AssembledReadBuilder<TasmAssembledRead> append(
 				Iterable<Nucleotide> sequence) {
 			delegate.append(sequence);
 			return this;
@@ -393,14 +393,14 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
 
 
 		@Override
-		public AssembledReadBuilder<TigrAssemblerPlacedRead> append(String sequence) {
+		public AssembledReadBuilder<TasmAssembledRead> append(String sequence) {
 			delegate.append(sequence);
 			return this;
 		}
 
 
 		@Override
-		public AssembledReadBuilder<TigrAssemblerPlacedRead> insert(int offset,
+		public AssembledReadBuilder<TasmAssembledRead> insert(int offset,
 				String sequence) {
 			delegate.insert(offset, sequence);
 			return this;
@@ -408,7 +408,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
 
 
 		@Override
-		public AssembledReadBuilder<TigrAssemblerPlacedRead> replace(int offset,
+		public AssembledReadBuilder<TasmAssembledRead> replace(int offset,
 				Nucleotide replacement) {
 			delegate.replace(offset, replacement);
 			return this;
@@ -416,7 +416,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
 
 
 		@Override
-		public AssembledReadBuilder<TigrAssemblerPlacedRead> delete(Range range) {
+		public AssembledReadBuilder<TasmAssembledRead> delete(Range range) {
 			delegate.delete(range);
 			return this;
 		}
@@ -441,14 +441,14 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
 
 
 		@Override
-		public AssembledReadBuilder<TigrAssemblerPlacedRead> prepend(String sequence) {
+		public AssembledReadBuilder<TasmAssembledRead> prepend(String sequence) {
 			delegate.prepend(sequence);
 			return this;
 		}
 
 
 		@Override
-		public AssembledReadBuilder<TigrAssemblerPlacedRead> insert(int offset,
+		public AssembledReadBuilder<TasmAssembledRead> insert(int offset,
 				Iterable<Nucleotide> sequence) {
 			delegate.insert(offset, sequence);
 			return this;
@@ -456,7 +456,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
 
 
 		@Override
-		public AssembledReadBuilder<TigrAssemblerPlacedRead> insert(int offset,
+		public AssembledReadBuilder<TasmAssembledRead> insert(int offset,
 				Nucleotide base) {
 			delegate.insert(offset, base);
 			return this;
@@ -464,7 +464,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
 
 
 		@Override
-		public AssembledReadBuilder<TigrAssemblerPlacedRead> prepend(
+		public AssembledReadBuilder<TasmAssembledRead> prepend(
 				Iterable<Nucleotide> sequence) {
 			delegate.prepend(sequence);
 			return this;
@@ -472,7 +472,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
 
 
 		@Override
-		public AssembledReadBuilder<TigrAssemblerPlacedRead> expandValidRangeBegin(
+		public AssembledReadBuilder<TasmAssembledRead> expandValidRangeBegin(
 				long units) {
 			delegate.expandValidRangeBegin(units);
 			return this;
@@ -480,7 +480,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
 
 
 		@Override
-		public AssembledReadBuilder<TigrAssemblerPlacedRead> expandValidRangeEnd(
+		public AssembledReadBuilder<TasmAssembledRead> expandValidRangeEnd(
 				long units) {
 			delegate.expandValidRangeEnd(units);
 			return this;
@@ -488,7 +488,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
 
 
 		@Override
-		public AssembledReadBuilder<TigrAssemblerPlacedRead> contractValidRangeBegin(
+		public AssembledReadBuilder<TasmAssembledRead> contractValidRangeBegin(
 				long units) {
 			delegate.contractValidRangeBegin(units);
 			return this;
@@ -496,7 +496,7 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
 
 
 		@Override
-		public AssembledReadBuilder<TigrAssemblerPlacedRead> contractValidRangeEnd(
+		public AssembledReadBuilder<TasmAssembledRead> contractValidRangeEnd(
 				long units) {
 			delegate.contractValidRangeEnd(units);
 			return this;
@@ -552,8 +552,8 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         * {@inheritDoc}
         */
         @Override
-        public TigrAssemblerPlacedReadBuilder addAttribute(
-                TigrAssemblerReadAttribute key, String value) {
+        public TasmAssembledReadBuilder addAttribute(
+                TasmReadAttribute key, String value) {
             map.put(key, value);
             return this;
         }
@@ -562,8 +562,8 @@ final class DefaultTigrAssemblerPlacedRead implements TigrAssemblerPlacedRead{
         * {@inheritDoc}
         */
         @Override
-        public TigrAssemblerPlacedReadBuilder removeAttribute(
-                TigrAssemblerReadAttribute key) {
+        public TasmAssembledReadBuilder removeAttribute(
+                TasmReadAttribute key) {
             map.remove(key);
             return this;
         }

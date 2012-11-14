@@ -11,7 +11,7 @@ public final class TigrAssemblerTestUtil {
 
 	private TigrAssemblerTestUtil(){}
 	
-	public static void assertAllReadsCorrectlyPlaced(Contig<AssembledRead> expected, TigrAssemblerContig actual){
+	public static void assertAllReadsCorrectlyPlaced(Contig<AssembledRead> expected, TasmContig actual){
 		StreamingIterator<? extends AssembledRead> iter=null;
 		try{
 			iter = expected.getReadIterator();

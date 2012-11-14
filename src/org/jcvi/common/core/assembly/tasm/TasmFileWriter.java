@@ -28,7 +28,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
- * {@code TigrAssemblerWriter} writes out TIGR Assembler
+ * {@code TasmFileWriter} writes out TIGR Assembler
  * formated files (.tasm).  This assembly format 
  * probably does not have much use outside of 
  * JCVI since the format is specially tailored to the 
@@ -36,18 +36,18 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * @author dkatzel
  *
  */
-public final class TigrAssemblerWriter {
+public final class TasmFileWriter {
     private static final Charset UTF_8 = Charset.forName("UTF-8");
 	private static final byte[] BLANK_LINE = "\n".getBytes(UTF_8);
 	private static final byte[] CONTIG_SEPARATOR = "|\n".getBytes(UTF_8);
 	private static final String EOL = "\n";
-	private TigrAssemblerWriter(){
+	private TasmFileWriter(){
 		//can not instantiate 
 	}
 	public static void writeContigSeparator(OutputStream out) throws IOException{
 	    out.write(CONTIG_SEPARATOR);
 	}
-	public static void write(TigrAssemblerContigDataStore datastore, OutputStream out) throws IOException{
+	public static void write(TasmContigDataStore datastore, OutputStream out) throws IOException{
 		if(datastore==null){
 			throw new NullPointerException("data store can not be null");
 		}
@@ -56,7 +56,7 @@ public final class TigrAssemblerWriter {
 			contigIds = datastore.idIterator();
 			
 			while(contigIds.hasNext()){
-				TigrAssemblerContig contig =datastore.get(contigIds.next());
+				TasmContig contig =datastore.get(contigIds.next());
 				write(contig,out);
 				if(contigIds.hasNext()){
 					out.write(CONTIG_SEPARATOR);
@@ -68,8 +68,8 @@ public final class TigrAssemblerWriter {
 		
 	}
 
-	public static void write(TigrAssemblerContig contig, OutputStream out) throws IOException {
-		for(TigrAssemblerContigAttribute contigAttribute : TigrAssemblerContigAttribute.values()){
+	public static void write(TasmContig contig, OutputStream out) throws IOException {
+		for(TasmContigAttribute contigAttribute : TasmContigAttribute.values()){
 		    if(contig.hasAttribute(contigAttribute)){
     		    String assemblyTableColumn = contigAttribute.getAssemblyTableColumn();
     			StringBuilder row = new StringBuilder(assemblyTableColumn);
@@ -87,12 +87,12 @@ public final class TigrAssemblerWriter {
 		if(contig.getNumberOfReads()>0){
     		out.write(BLANK_LINE);
     		
-    		StreamingIterator<TigrAssemblerPlacedRead> placedReadIterator=null;
+    		StreamingIterator<TasmAssembledRead> placedReadIterator=null;
     		try{
 	    		placedReadIterator= contig.getReadIterator();
 	    		while(placedReadIterator.hasNext()){
-	    			TigrAssemblerPlacedRead read = placedReadIterator.next();
-	    			for(TigrAssemblerReadAttribute readAttribute : TigrAssemblerReadAttribute.values()){
+	    			TasmAssembledRead read = placedReadIterator.next();
+	    			for(TasmReadAttribute readAttribute : TasmReadAttribute.values()){
 	    				String assemblyTableColumn = readAttribute.getAssemblyTableColumn();
 	    				int padding = 4-assemblyTableColumn.length()%4;
 	    				StringBuilder row = new StringBuilder(assemblyTableColumn);

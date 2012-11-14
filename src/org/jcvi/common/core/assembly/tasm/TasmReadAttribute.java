@@ -21,8 +21,19 @@ package org.jcvi.common.core.assembly.tasm;
 
 import java.util.HashMap;
 import java.util.Map;
-
-public enum TigrAssemblerReadAttribute {
+/**
+ * {@code TasmReadAttribute} 
+ * of all possible attribute keys
+ * that can be attributed to 
+ * a {@link TasmAssembledRead}.
+ * These values are fixed since the attributes
+ * correspond to the legacy TIGR
+ * internal database columns that used
+ * to store this information.
+ * @author dkatzel
+ *
+ */
+public enum TasmReadAttribute {
 	NAME("seq_name"),
 	CONTIG_LEFT("asm_lend"),
 	CONTIG_RIGHT("asm_rend"),
@@ -37,13 +48,13 @@ public enum TigrAssemblerReadAttribute {
 ;
 	
 	private final String assemblyTableColumn;
-	private static final Map<String, TigrAssemblerReadAttribute> MAP = new HashMap<String, TigrAssemblerReadAttribute>();
+	private static final Map<String, TasmReadAttribute> MAP = new HashMap<String, TasmReadAttribute>();
 	static{
-		for(TigrAssemblerReadAttribute attribute : values()){
+		for(TasmReadAttribute attribute : values()){
 			MAP.put(attribute.getAssemblyTableColumn(), attribute);
 		}
 	}
-	TigrAssemblerReadAttribute(String assemblyTableColumn){
+	TasmReadAttribute(String assemblyTableColumn){
 		this.assemblyTableColumn = assemblyTableColumn;
 	}
 
@@ -54,7 +65,7 @@ public enum TigrAssemblerReadAttribute {
 		return assemblyTableColumn;
 	}
 	
-	public static TigrAssemblerReadAttribute getAttributeFor(String attribute){
+	public static TasmReadAttribute getAttributeFor(String attribute){
 		if(MAP.containsKey(attribute)){
 			return MAP.get(attribute);
 		}

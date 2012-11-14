@@ -18,8 +18,15 @@
  ******************************************************************************/
 
 /**
- * This package contains classes to handle the 
- * TIGR Assembler file format.  TIGR Assembler files (.tasm)
- * are produced by the TIGR Assembler.
+ * This package contains classes to handle  
+ * TIGR Assembler formatted assembly files.
+ * Files of this type are produced by
+ * the legacy  TIGR Assembler
+ * and usually have a file extension of .tasm
+ * or .asm.  The .asm extension has been deprecated
+ * since it can be easily confused with TIGR Assembler's
+ * replacement, Celera Assembler, which also produces
+ * assembly files with a .asm file extension although the data
+ * is encoded completely differently.
  */
 package org.jcvi.common.core.assembly.tasm;

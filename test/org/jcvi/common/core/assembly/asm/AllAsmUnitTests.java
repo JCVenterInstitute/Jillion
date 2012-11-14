@@ -8,8 +8,11 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     { 
      TestAsmUtil.class	,
+     
      TestDefaultAsmContigDataStore.class,
      TestIndexedAsmContigDataStore.class,
+     
+     TestDefaultAsmAssembledReadBuilder.class,
      
      TestDefaultUnitigDataStore.class,
      TestIndexedUnitigDataStore.class

@@ -23,10 +23,10 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
-import org.jcvi.common.core.assembly.tasm.DefaultTigrAssemblerFileContigDataStore;
-import org.jcvi.common.core.assembly.tasm.TigrAssemblerContig;
-import org.jcvi.common.core.assembly.tasm.TigrAssemblerContigAdapter;
-import org.jcvi.common.core.assembly.tasm.TigrAssemblerContigAttribute;
+import org.jcvi.common.core.assembly.tasm.DefaultTasmFileContigDataStore;
+import org.jcvi.common.core.assembly.tasm.TasmContig;
+import org.jcvi.common.core.assembly.tasm.TasmContigAdapter;
+import org.jcvi.common.core.assembly.tasm.TasmContigAttribute;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.io.fileServer.FileServer;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -37,7 +37,7 @@ public class TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes {
 	 private static final FileServer RESOURCES = new ResourceFileServer(TestTigrAssemblerContigDataStore.class);
 	    
 	    private static final ContigDataStore<AssembledRead, Contig<AssembledRead>> contigDataStore;
-	    private static final TigrAssemblerContigDataStore tasmDataStore;
+	    private static final TasmContigDataStore tasmDataStore;
 	    static{
 	        try {
 	            contigDataStore= DefaultContigFileDataStore.create(RESOURCES.getFile("files/giv-15050.contig"));
@@ -45,7 +45,7 @@ public class TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes {
 	            throw new IllegalStateException("could not parse contig file",e);
 	        } 
 	        try {
-	            tasmDataStore= DefaultTigrAssemblerFileContigDataStore.create(RESOURCES.getFile("files/giv-15050.tasm"));
+	            tasmDataStore= DefaultTasmFileContigDataStore.create(RESOURCES.getFile("files/giv-15050.tasm"));
 	        } catch (Exception e) {
 	            throw new IllegalStateException("could not parse contig file",e);
 	        } 
@@ -54,9 +54,9 @@ public class TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes {
 	    @Test
 	    public void adaptPB2() throws DataStoreException{
 	    	Contig<AssembledRead> contig =contigDataStore.get("15044");
-	    	TigrAssemblerContig tasm =tasmDataStore.get("1122071329926");
+	    	TasmContig tasm =tasmDataStore.get("1122071329926");
 	    	
-	    	TigrAssemblerContigAdapter sut = new TigrAssemblerContigAdapter.Builder(contig)
+	    	TasmContigAdapter sut = new TasmContigAdapter.Builder(contig)
 	    									.build();
 	    	assertEquals(contig.getId(), sut.getId());
 	    	assertEquals(contig.getConsensusSequence(), sut.getConsensusSequence());
@@ -65,23 +65,23 @@ public class TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes {
 	    	assertRequiredAttributesAreEqual(tasm, sut);
 	    }
 	    
-	    private void assertRequiredAttributesAreEqual(TigrAssemblerContig expected, TigrAssemblerContigAdapter actual){
+	    private void assertRequiredAttributesAreEqual(TasmContig expected, TasmContigAdapter actual){
 	    	//apparently pull_contig sets the asmb_id to the ca_contig_id if present which will throw off our
 	    	//asmbl_id check
 	    	//	assertAttributeValueEquals(TigrAssemblerContigAttribute.ASMBL_ID,expected, actual);
-	    	assertAttributeValueEquals(TigrAssemblerContigAttribute.UNGAPPED_CONSENSUS,expected, actual);
-	    	assertAttributeValueEquals(TigrAssemblerContigAttribute.GAPPED_CONSENSUS,expected, actual);
-	    	assertAttributeValueEquals(TigrAssemblerContigAttribute.PERCENT_N,expected, actual);
-	    	assertAttributeValueEquals(TigrAssemblerContigAttribute.NUMBER_OF_READS,expected, actual);
-	    	assertAttributeValueEquals(TigrAssemblerContigAttribute.IS_CIRCULAR,expected, actual);
+	    	assertAttributeValueEquals(TasmContigAttribute.UNGAPPED_CONSENSUS,expected, actual);
+	    	assertAttributeValueEquals(TasmContigAttribute.GAPPED_CONSENSUS,expected, actual);
+	    	assertAttributeValueEquals(TasmContigAttribute.PERCENT_N,expected, actual);
+	    	assertAttributeValueEquals(TasmContigAttribute.NUMBER_OF_READS,expected, actual);
+	    	assertAttributeValueEquals(TasmContigAttribute.IS_CIRCULAR,expected, actual);
 	    	
 	    	//avg coverage is actually computed by java common and estimated by legacy TIGR tools
 	    	//so be flexible with rounding errors
-	    	assertEquals(Float.parseFloat(expected.getAttributeValue(TigrAssemblerContigAttribute.AVG_COVERAGE)), 
-	    			Float.parseFloat(actual.getAttributeValue(TigrAssemblerContigAttribute.AVG_COVERAGE)),
+	    	assertEquals(Float.parseFloat(expected.getAttributeValue(TasmContigAttribute.AVG_COVERAGE)), 
+	    			Float.parseFloat(actual.getAttributeValue(TasmContigAttribute.AVG_COVERAGE)),
 	    			.1F);
 	    }
-	    private void assertAttributeValueEquals(TigrAssemblerContigAttribute attribute,TigrAssemblerContig expected,TigrAssemblerContig actual ){
+	    private void assertAttributeValueEquals(TasmContigAttribute attribute,TasmContig expected,TasmContig actual ){
 	    	assertEquals(expected.getAttributeValue(attribute), actual.getAttributeValue(attribute));
 	    }
 }
