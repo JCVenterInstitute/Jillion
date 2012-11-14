@@ -86,6 +86,51 @@ public class TestConsedUtil_Split0x {
     }
     
     @Test
+    public void singleContigThatMissesEdgesShouldReturnUntrimmedButWithSubRange(){       
+    	DefaultAceContigBuilder contigBuilder =
+        	new DefaultAceContigBuilder(originalId,
+        			new NucleotideSequenceBuilder(referenceConsensus)
+        					.prepend("NNNN")
+        					.append("NNNN")
+        					.build())
+        .addRead("read1", new NucleotideSequenceBuilder(referenceConsensus.substring(0, 11)).build(),
+        		4, 
+                Direction.FORWARD, 
+                Range.of(0, 10), 
+                createMock(PhdInfo.class),
+                20)
+        .addRead("read2", new NucleotideSequenceBuilder(referenceConsensus.substring(10)).build(),
+        		14,
+                Direction.FORWARD, 
+                Range.of(0, 11), 
+                createMock(PhdInfo.class),
+                20);
+        
+        final SortedMap<Range,AceContig> actualcontigs = ConsedUtil.split0xContig(contigBuilder, false);
+        assertEquals(1,actualcontigs.size());
+        AceContig expected = new DefaultAceContigBuilder(originalId+"_5_25",referenceConsensus)
+							        		 .addRead("read1", new NucleotideSequenceBuilder(referenceConsensus.substring(0, 11)).build(),
+							        	        		0, 
+							        	                Direction.FORWARD, 
+							        	                Range.of(0, 10), 
+							        	                createMock(PhdInfo.class),
+							        	                20)
+							        	        .addRead("read2", new NucleotideSequenceBuilder(referenceConsensus.substring(10)).build(),
+							        	        		10,
+							        	                Direction.FORWARD, 
+							        	                Range.of(0, 11), 
+							        	                createMock(PhdInfo.class),
+							        	                20)
+                                        .build();
+        Range expectedRange = Range.of(4,24);
+        assertEquals(expectedRange, actualcontigs.firstKey());
+        AceContigTestUtil.assertContigsEqual(expected, actualcontigs.get(expectedRange));
+    }
+    
+    
+    
+    
+    @Test
     public void one0xRegionShouldSplitContigIn2(){
         final PhdInfo read1Phd = createMock(PhdInfo.class);
         final PhdInfo read2Phd = createMock(PhdInfo.class);

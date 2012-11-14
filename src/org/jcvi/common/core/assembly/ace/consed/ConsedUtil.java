@@ -154,11 +154,7 @@ public final class ConsedUtil {
         
         List<Range> contigRanges =Ranges.merge(coveredRegions);
         SortedMap<Range, AceContig> map = new TreeMap<Range, AceContig>(Range.Comparators.ARRIVAL);
-        if(contigRanges.size()==1){
-            //no 0x region        	
-        	map.put(AssemblyUtil.toUngappedRange(unSplitConsensus, contigRanges.get(0)), contigBuilder.build());
-            return map;
-        }
+        
         String originalContigId= contigBuilder.getContigId();
         int oldStart=1;
         if(adjustIdCoordinates){
@@ -168,10 +164,24 @@ public final class ConsedUtil {
                 oldStart=Integer.parseInt(matcher.group(2));
             }
         }
+        
+        if(contigRanges.size()==1){
+            //contig in 1 piece        	
+        	Range contigRange = AssemblyUtil.toUngappedRange(unSplitConsensus, contigRanges.get(0));
+        	//we might still have 0x regions at the edges so check
+        	//to see if we're full (gapped) size
+        	if(contigRange.getLength() <unSplitConsensus.getLength()){
+        		String newContigId = computeSplitContigId(unSplitConsensus, originalContigId, oldStart, contigRange);
+            	contigBuilder.setContigId(newContigId);
+        	}
+        	map.put(contigRange, contigBuilder.build());
+            return map;
+        }
         for(Entry<Range, DefaultAceContigBuilder> splitContigEntry: contigBuilder.split(contigRanges).entrySet()){
         	//id is now <original_id>_<ungapped 1-based start>_<ungapped 1-based end>
-            Range contigRange = splitContigEntry.getKey();
+           
             DefaultAceContigBuilder splitContigBuilder = splitContigEntry.getValue();
+            Range contigRange = splitContigEntry.getKey();
 			String newContigId = computeSplitContigId(unSplitConsensus, originalContigId,
     				oldStart, contigRange);
 			
