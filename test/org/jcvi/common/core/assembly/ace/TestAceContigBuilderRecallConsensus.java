@@ -34,7 +34,18 @@ public class TestAceContigBuilderRecallConsensus {
 		sut.recallConsensusNow();
 		
 	}
-	
+	@Test
+	public void recallShouldSkip0xRegion(){
+		DefaultAceContigBuilder sut = new DefaultAceContigBuilder("id","ACGT")
+										.addRead("read1", new NucleotideSequenceBuilder("AC").build(), 0, Direction.FORWARD,  Range.ofLength(2), phdInfo, 4)
+										.addRead("read2", new NucleotideSequenceBuilder("T").build(), 3, Direction.REVERSE,  Range.ofLength(1), phdInfo, 4);
+										;
+										
+		sut.recallConsensus(MostFrequentBasecallConsensusCaller.INSTANCE);
+		sut.recallConsensusNow();
+		
+		assertEquals("ACGT", sut.getConsensusBuilder().toString());
+	}
 	@Test
 	public void recallConsensusNowWithoutQualityData(){
 		DefaultAceContigBuilder sut = new DefaultAceContigBuilder("id","ACNT")
