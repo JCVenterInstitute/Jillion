@@ -150,29 +150,8 @@ public final class DefaultTasmContig  extends AbstractContig<TasmAssembledRead> 
             	IOUtil.closeAndIgnoreErrors(iter);
             }
          }
-        public Builder addRead(String id, int offset,String basecalls){
-            return addRead(id, offset, basecalls, Direction.FORWARD);
-        }
-        public Builder addRead(String id, int offset,String basecalls, Direction dir){
-            int numberOfGaps = computeNumberOfGapsIn(basecalls);
-            int ungappedLength = basecalls.length()-numberOfGaps;
-            return addRead(id, offset, 
-            		Range.ofLength(ungappedLength),basecalls, 
-            		dir,ungappedLength);
-        }
-        /**
-         * @param basecalls
-         * @return
-         */
-        private int computeNumberOfGapsIn(String basecalls) {
-            int count=0;
-            for(int i=0; i<basecalls.length(); i++){
-                if(basecalls.charAt(i) == '-'){
-                    count++;
-                }
-            }
-            return count;
-        }
+       
+       
         @Override
         public Builder addRead(String id, int offset,Range validRange, String basecalls, Direction dir, int fullUngappedLength){            
             if(offset <0){
