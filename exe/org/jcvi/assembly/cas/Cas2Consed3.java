@@ -47,7 +47,6 @@ import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.DefaultScaffold;
 import org.jcvi.common.core.assembly.ScaffoldBuilder;
 import org.jcvi.common.core.assembly.ace.AceAssembledRead;
-import org.jcvi.common.core.assembly.ace.AceAssembledReadBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.ace.DefaultAceContigBuilder;
@@ -291,20 +290,7 @@ public class Cas2Consed3 {
                  builder.recallConsensusNow();
                  NucleotideSequence fullConsensus =builder.getConsensusBuilder().build();
                  long ungappedLength = fullConsensus.getUngappedLength();
-                 long firstReadStart= fullConsensus.getLength();
-                 for(AceAssembledReadBuilder readBuilder : builder.getAllAssembledReadBuilders()){
-                     long start =readBuilder.getBegin();
-                     if(start < firstReadStart){
-                         firstReadStart = start;
-                     }
-                 }
-                 long ungappedStart = fullConsensus.getUngappedOffsetFor((int)firstReadStart);
-                 //update contig id to append mapped coordinates 1- ungapped length
-                 String referenceId = builder.getContigId();
-                 String newContigId = String.format("%s_%d_%d",builder.getContigId(),
-                                     ungappedStart+1,
-                                         ungappedLength);
-                 builder.setContigId(newContigId);
+                 String referenceId = builder.getContigId();                 
                  NucleotideSequenceBuilder pseduoMoleculeBuilder = new NucleotideSequenceBuilder((int)ungappedLength);
                  long previousPseduoMoleculeOffset=0;
                  ScaffoldBuilder scaffoldBuilder = DefaultScaffold.createBuilder(referenceId);
