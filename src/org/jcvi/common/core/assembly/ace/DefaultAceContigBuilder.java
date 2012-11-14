@@ -481,8 +481,11 @@ public final class  DefaultAceContigBuilder implements AceContigBuilder{
 			}
     	}
     	for(int i=0; i<builders.length; i++){
-    		Slice<?> slice = builders[i].build();            
-    		mutableConsensus.replace(i,consensusCaller.callConsensus(slice).getConsensus());
+    		CompactedSlice.Builder builder = builders[i];
+    		if(builder !=null){
+				Slice<?> slice = builder.build();            
+	    		mutableConsensus.replace(i,consensusCaller.callConsensus(slice).getConsensus());
+    		}
     	}
     	return this;
 	}
