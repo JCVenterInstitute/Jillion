@@ -23,21 +23,22 @@
  */
 package org.jcvi.common.core.assembly.ctg;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.AssemblyTestUtil;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultAssembledRead;
-import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public abstract class TestAbstractContigFileParser {
     private String pathToFile = "files/gcv_23918.contig";
@@ -418,7 +419,7 @@ public abstract class TestAbstractContigFileParser {
             "CAGCTATGTATAATGTTTATTGTCTTTGTAGACATGTTATGTATGGATGTAGTAAGCCTG" +
             "GTTGCTTGTTTTGTTATAAGAGAAACCGTAGTGTCCGTGTTAAGTGTAGCACCGTAGTTT" +
             "G" 
-            , 4870, Direction.REVERSE, Range.of(10,788), 790)
+            , 4870, Direction.REVERSE, Range.of(10,788), 883)
             .build();
    
     
@@ -433,7 +434,7 @@ public abstract class TestAbstractContigFileParser {
                          "TTATTACTATGAGAGTGAGGCTAATTTCACACTACAAGGTTGTGATGAATTTATAGTACC" +
                          "GCTCTGCGTTTTTAATGGCCGTTCCAAGGGCAGCTC"
                          ,
-            20675, Direction.FORWARD,Range.of(40,553),553)
+            20675, Direction.FORWARD,Range.of(40,553),784)
             .build();
     
     
