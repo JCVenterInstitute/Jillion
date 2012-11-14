@@ -40,6 +40,7 @@ import org.junit.runners.Suite.SuiteClasses;
        TestDefaultAceContig.class,
        TestAceContigBuilderInvalidRead.class,
        TestAceContigBuilderRecallConsensus.class,
+       TestDefaultAceAssembledReadBuilder.class,
        
        TestBaseSegmentUtil.class,
        TestDefaultAceBestSegment.class,

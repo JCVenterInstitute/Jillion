@@ -31,6 +31,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {  
+    	TestDefaultAssembledReadBuilder.class,    	
         TestContigFileWriter.class,
         TestDefaultContigFileDataStore.class,
         TestIndexedContigFileDataStore.class 

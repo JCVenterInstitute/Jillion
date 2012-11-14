@@ -205,7 +205,7 @@ public final class DefaultAssembledRead implements AssembledRead {
         private Range clearRange;
         private NucleotideSequence reference;
         private final Direction dir;
-        private final int ungappedFullLength;
+        private int ungappedFullLength;
         
         
         private Builder( Builder copy){
@@ -411,10 +411,10 @@ public final class DefaultAssembledRead implements AssembledRead {
 
         @Override
 		public Builder append(Nucleotide base) {
-        	basesBuilder
-        					.append(base);
+        	getNucleotideSequenceBuilder().append(base);
         	if(base !=Nucleotide.Gap){
         		expandValidRangeEnd(1);
+        		ungappedFullLength++;
         	}
 			return this;
 		}
@@ -422,7 +422,7 @@ public final class DefaultAssembledRead implements AssembledRead {
 
 		@Override
 		public Builder append(Iterable<Nucleotide> sequence) {
-			NucleotideSequenceBuilder validRangeBuilder =basesBuilder;
+			NucleotideSequenceBuilder validRangeBuilder =getNucleotideSequenceBuilder();
 			//have to get old and new length 
 			//because we don't know how long iterable is
 			//(there's no size method on iterable)
@@ -432,6 +432,8 @@ public final class DefaultAssembledRead implements AssembledRead {
 			long numberUngappedBasesAdded = newLength-oldLength;
 			//expand valid range end by length of insert
 			expandValidRangeEnd(numberUngappedBasesAdded);
+			//update ungapped full length accordingly
+			ungappedFullLength+=numberUngappedBasesAdded;
 			return this;
 		}
 
@@ -477,7 +479,7 @@ public final class DefaultAssembledRead implements AssembledRead {
 		@Override
 		public Builder replace(int offset, Nucleotide replacement) {
 			
-			NucleotideSequenceBuilder sequenceBuilder = basesBuilder;
+			NucleotideSequenceBuilder sequenceBuilder = getNucleotideSequenceBuilder();
 			long oldLength = sequenceBuilder.getUngappedLength();
 			sequenceBuilder.replace(offset, replacement);
 			long newLength = sequenceBuilder.getUngappedLength();
@@ -485,23 +487,10 @@ public final class DefaultAssembledRead implements AssembledRead {
 			//if number of gaps has changed
 			if(newLength < oldLength){
 				//we replaced a nongap with a gap
-				
-				//we only have to care
-				//about non-leading gaps
-				//because replacing the first base 
-				//with a gap
-				//does not actually change the ungapped
-				//valid range
-				if(offset>0){					
-					contractValidRangeEnd(1);
-				}
+				ungappedFullLength--;				
+				contractValidRangeEnd(1);
 			}else if(newLength > oldLength){
-				//unlike adding  a gap
-				//replacing a gap with a non-gap
-				//will always only expand valid range
-				//end.  Even if the first base 
-				//is affected, the valid range start
-				//won't change.
+				ungappedFullLength++;
 				expandValidRangeEnd(1);
 			}
 			return this;
@@ -510,20 +499,18 @@ public final class DefaultAssembledRead implements AssembledRead {
 
 		@Override
 		public Builder delete(Range range) {
-			NucleotideSequenceBuilder sequenceBuilder = basesBuilder;
+			NucleotideSequenceBuilder sequenceBuilder = getNucleotideSequenceBuilder();
 			long oldUngappedLength = sequenceBuilder.getUngappedLength();
 			sequenceBuilder.delete(range);
 			long newUngappedLength = sequenceBuilder.getUngappedLength();
-			long numberOfUngappedBasesDeleted = newUngappedLength - oldUngappedLength;
+			long numberOfUngappedBasesDeleted = oldUngappedLength -newUngappedLength;
 			if(numberOfUngappedBasesDeleted>0){
-				if(range.getBegin()==0){
-					//we deleted the first valid base
-					contractValidRangeBegin(numberOfUngappedBasesDeleted);
-				}else{
-					//anything downstream of first base
-					//will affect the valid range end coordinate.
-					contractValidRangeEnd(numberOfUngappedBasesDeleted);
-				}
+				//we only ever contract the end of the valid
+				//range since the good part always starts
+				//at the same place									
+				contractValidRangeEnd(numberOfUngappedBasesDeleted);
+				//update ungapped full length accordingly
+				ungappedFullLength-=numberOfUngappedBasesDeleted;
 			}
 			
 			return this;
@@ -532,21 +519,21 @@ public final class DefaultAssembledRead implements AssembledRead {
 
 		@Override
 		public int getNumGaps() {
-			return basesBuilder
+			return getNucleotideSequenceBuilder()
 					.getNumGaps();
 		}
 
 
 		@Override
 		public int getNumNs() {
-			return basesBuilder
+			return getNucleotideSequenceBuilder()
 					.getNumNs();
 		}
 
 
 		@Override
 		public int getNumAmbiguities() {
-			return basesBuilder
+			return getNucleotideSequenceBuilder()
 						.getNumAmbiguities();
 		}
 
@@ -560,7 +547,7 @@ public final class DefaultAssembledRead implements AssembledRead {
 		@Override
 		public Builder insert(int offset,
 				Iterable<Nucleotide> sequence) {
-			NucleotideSequenceBuilder validRangeBuilder =basesBuilder;
+			NucleotideSequenceBuilder validRangeBuilder =getNucleotideSequenceBuilder();
 			//have to get old and new length 
 			//because we don't know how long iterable is
 			//(there's no size method on iterable)
@@ -570,17 +557,20 @@ public final class DefaultAssembledRead implements AssembledRead {
 			long numberOfNonGapsAdded = newLength-oldLength;
 			//expand valid range end by length of insert
 			expandValidRangeEnd(numberOfNonGapsAdded);
+			
+			ungappedFullLength+=numberOfNonGapsAdded;
 			return this;
 		}
 
 
 		@Override
 		public Builder insert(int offset, Nucleotide base) {
-			NucleotideSequenceBuilder validRangeBuilder =basesBuilder;
+			NucleotideSequenceBuilder validRangeBuilder =getNucleotideSequenceBuilder();
 			validRangeBuilder.insert(offset, base);
 			if(base !=Nucleotide.Gap){
 				//expand valid range end by 1 to include added base
 				expandValidRangeEnd(1);
+				ungappedFullLength++;
 			}
 			return this;
 		}
@@ -588,17 +578,7 @@ public final class DefaultAssembledRead implements AssembledRead {
 
 		@Override
 		public Builder prepend(Iterable<Nucleotide> sequence) {
-			NucleotideSequenceBuilder validRangeBuilder =basesBuilder;
-			//have to get old and new length 
-			//because we don't know how long iterable is
-			//(there's no size method on iterable)
-			long oldLength = validRangeBuilder.getUngappedLength();
-			validRangeBuilder.prepend(sequence);
-			long newLength = validRangeBuilder.getUngappedLength();
-			long numberOfNonGapBasesAdded = newLength-oldLength;
-			//expand the valid range to include new prepended bases
-			expandValidRangeBegin(numberOfNonGapBasesAdded);
-			return this;
+			return insert(0, sequence);
 		}
 
 
@@ -650,10 +630,7 @@ public final class DefaultAssembledRead implements AssembledRead {
         @Override
         public int hashCode() {
             final int prime = 31;
-            int result = 1;
-            result = prime * result
-                    + ((basesBuilder == null) ? 0 : basesBuilder.hashCode());
-            result = prime * result + offset;
+            int result = 1;           
             result = prime * result
                     + ((readId == null) ? 0 : readId.hashCode());
             result = prime * result
@@ -677,16 +654,6 @@ public final class DefaultAssembledRead implements AssembledRead {
                 return false;
             }
             Builder other = (Builder) obj;
-            if (basesBuilder == null) {
-                if (other.basesBuilder != null) {
-                    return false;
-                }
-            } else if (!basesBuilder.equals(other.basesBuilder)) {
-                return false;
-            }
-            if (offset != other.offset) {
-                return false;
-            }
             if (readId == null) {
                 if (other.readId != null) {
                     return false;
