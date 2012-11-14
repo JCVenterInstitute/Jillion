@@ -175,6 +175,55 @@ public class TestConsedUtil_Split0x {
         assertContigsEqual(expectedSecondContig, splitContigs.get(Range.of(12,20)));
     }
     
+    
+    @Test
+    public void contigIdAlreadyHasCoordinatesThatTakeIntoAccountMissing5primeAtTheEnd_ShouldModifyThoseCoordinates(){
+
+        final PhdInfo read1Phd = createMock(PhdInfo.class);
+        final PhdInfo read2Phd = createMock(PhdInfo.class);
+        DefaultAceContigBuilder contig = new DefaultAceContigBuilder("id_5_12",
+        		new NucleotideSequenceBuilder(referenceConsensus)
+        								.prepend("NNNN")
+        								.build())
+        
+		        .addRead("read1", new NucleotideSequenceBuilder(referenceConsensus.substring(0, 11)).build(),
+		        		4, 
+		                Direction.FORWARD, 
+		                Range.of(0, 10), 
+		                read1Phd,
+		                20)
+		        .addRead("read2", new NucleotideSequenceBuilder(referenceConsensus.substring(12)).build(),
+		        		16, 
+		                Direction.FORWARD, 
+		                Range.of(0, 9), 
+		                read2Phd,
+		                20);
+        SortedMap<Range,AceContig> splitContigs = ConsedUtil.split0xContig(contig, true);
+        
+        assertEquals("# of split contigs", 2, splitContigs.size());
+        //since consideUtil thinks we are already shifted 5 we shift 4 more to 9!
+        AceContig expectedFirstContig = new DefaultAceContigBuilder(
+                String.format("id_%d_%d",9,19),referenceConsensus.substring(0, 11))
+                            .addRead("read1", new NucleotideSequenceBuilder(referenceConsensus.substring(0, 11)).build(),
+                            		0, 
+                                    Direction.FORWARD, 
+                                    Range.of(0, 10), 
+                                    read1Phd,
+                                    20)
+                                    .build();
+        AceContig expectedSecondContig = new DefaultAceContigBuilder(
+                String.format("id_%d_%d",21,29),referenceConsensus.substring(12))
+                        .addRead("read2", new NucleotideSequenceBuilder(referenceConsensus.substring(12)).build(),
+                        		0, 
+                                Direction.FORWARD, 
+                                Range.of(0, 9), 
+                                read2Phd,
+                                20)
+                                    .build();
+        assertContigsEqual(expectedFirstContig, splitContigs.get(Range.of(4,14)));
+        assertContigsEqual(expectedSecondContig, splitContigs.get(Range.of(16,24)));
+    }
+    
     private void assertContigsEqual(AceContig expected, AceContig actual){
         assertEquals("id",expected.getId(),actual.getId());
         assertEquals("consensus", expected.getConsensusSequence(), actual.getConsensusSequence());

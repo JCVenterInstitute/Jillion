@@ -494,32 +494,6 @@ public final class  DefaultAceContigBuilder implements AceContigBuilder{
     	return this;
 	}
     
-    public NucleotideSequenceBuilder getReadSequenceBuilder(String readId){
-    	AceAssembledReadBuilder assembledReadBuilder = getAssembledReadBuilder(readId);
-		if(assembledReadBuilder==null){
-			throw new IllegalArgumentException(
-    				String.format("read %s is not in contig", readId));
-		}
-    	return assembledReadBuilder.getNucleotideSequenceBuilder();
-    }
-    
-    public DefaultAceContigBuilder shiftRead(String readId, int numberOfBases){
-    	AceAssembledReadBuilder readBuilder =getAssembledReadBuilder(readId);
-    	if(readBuilder==null){
-    		throw new IllegalArgumentException(
-    				String.format("read %s is not in contig", readId));
-    	}
-    	long oldReadEnd = readBuilder.getEnd();
-    	long newReadEnd = oldReadEnd + numberOfBases;
-    	long newReadBegin = readBuilder.getBegin()+numberOfBases;
-    	if(newReadBegin<0 || newReadEnd>=mutableConsensus.getLength()){
-    		throw new IllegalArgumentException(
-    				String.format("shifting read %s by %d will extend beyond consensus",readId, numberOfBases));
-    	}
-    	readBuilder.shift(numberOfBases);
-    	return this;
-    }
-    
     /**
      * Split the contents of the current ContigBuilder into possibly multiple
      * new ContigBuilders.  The returned ContigBuilders will be new
