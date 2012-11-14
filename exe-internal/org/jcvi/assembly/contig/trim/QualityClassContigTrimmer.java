@@ -62,11 +62,12 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapUtil;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
-import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
@@ -247,6 +248,10 @@ public class QualityClassContigTrimmer{
                                 .longName("contig_file")
                                 .isRequired(true)
                                 .build());
+            options.addOption(new CommandLineOptionBuilder("s", "sequence fasta file (full range)")
+													            .longName("seq_file")
+													            .isRequired(true)
+													            .build());
             options.addOption(new CommandLineOptionBuilder("q", "quality fasta file (full range)")
                                 .longName("qual_file")
                                 .isRequired(true)
@@ -267,6 +272,7 @@ public class QualityClassContigTrimmer{
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
             
             File contigFile = new File(commandLine.getOptionValue("c"));
+            File seqFastaFile = new File(commandLine.getOptionValue("s"));
             File qualFastaFile = new File(commandLine.getOptionValue("q"));
             File trimFile = new File(commandLine.getOptionValue("f"));
             
@@ -285,15 +291,17 @@ public class QualityClassContigTrimmer{
                 qualityClassesToTrim.add(QualityClass.valueOf(Byte.parseByte(qualityClassAsString)));
             }
             ReadTrimMap trimMap = ReadTrimUtil.readReadTrimsFromFile(trimFile);
-            ContigDataStore<AssembledRead, Contig<AssembledRead>> contigDataStore = DefaultContigFileDataStore.create(
-                    contigFile);
+            
+            NucleotideSequenceFastaDataStore fullRangeSequenceDataStore = new NucleotideSequenceFastaFileDataStoreBuilder(seqFastaFile)
+																		            .hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY)
+																					.build();	
+            
+            ContigDataStore<AssembledRead, Contig<AssembledRead>> contigDataStore = DefaultContigFileDataStore.create(fullRangeSequenceDataStore, contigFile);
             QualitySequenceDataStore qualityFastaMap = 
-                CachedDataStore.create(QualitySequenceDataStore.class, 
                 		FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class,
                 				new QualitySequenceFastaFileDataStoreBuilder(qualFastaFile)
-                					.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
-                					.build()),
-                        100);
+                					.hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY)
+                					.build());
             StreamingIterator<Contig<AssembledRead>> iter = contigDataStore.iterator();
             try{
 	            while(iter.hasNext()) {
