@@ -429,37 +429,7 @@ public final class DefaultAsmPlacedRead implements AsmAssembledRead{
 		}
 
 
-		@Override
-		public AssembledReadBuilder<AsmAssembledRead> expandValidRangeBegin(
-				long units) {
-			delegateBuilder.expandValidRangeBegin(units);
-			return this;
-		}
-
-
-		@Override
-		public AssembledReadBuilder<AsmAssembledRead> expandValidRangeEnd(
-				long units) {
-			delegateBuilder.expandValidRangeEnd(units);
-			return this;
-		}
-
-
-		@Override
-		public AssembledReadBuilder<AsmAssembledRead> contractValidRangeBegin(
-				long units) {
-			delegateBuilder.contractValidRangeBegin(units);
-			return this;
-		}
-
-
-		@Override
-		public AssembledReadBuilder<AsmAssembledRead> contractValidRangeEnd(
-				long units) {
-			delegateBuilder.contractValidRangeEnd(units);
-			return this;
-		}
-        
+		
         
         /**
         * {@inheritDoc}
