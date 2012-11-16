@@ -30,10 +30,10 @@ import java.util.Set;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.AbstractContig;
 import org.jcvi.common.core.assembly.AbstractContigBuilder;
 import org.jcvi.common.core.assembly.AssembledReadBuilder;
 import org.jcvi.common.core.assembly.Contig;
+import org.jcvi.common.core.assembly.DefaultContig;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -45,8 +45,9 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  *
  */
-public final class DefaultTasmContig  extends AbstractContig<TasmAssembledRead> implements TasmContig{
+public final class DefaultTasmContig implements TasmContig{
     private final Map<TasmContigAttribute,String> attributes;
+    private final Contig<TasmAssembledRead> contig;
     /**
      * @param id
      * @param consensus
@@ -55,7 +56,7 @@ public final class DefaultTasmContig  extends AbstractContig<TasmAssembledRead> 
      */
     private DefaultTasmContig(String id, NucleotideSequence consensus, Set<TasmAssembledRead> reads, 
             EnumMap<TasmContigAttribute, String> attributes) {
-        super(id,consensus,reads);
+        contig = new DefaultContig<TasmAssembledRead>(id,consensus,reads);
         this.attributes = Collections.unmodifiableMap(new EnumMap<TasmContigAttribute, String>(attributes));
     }
 
@@ -76,7 +77,49 @@ public final class DefaultTasmContig  extends AbstractContig<TasmAssembledRead> 
     public Map<TasmContigAttribute, String> getAttributes() {
         return attributes;
     }
-    
+
+
+
+	@Override
+	public String getId() {
+		return contig.getId();
+	}
+
+
+
+	@Override
+	public long getNumberOfReads() {
+		return contig.getNumberOfReads();
+	}
+
+
+
+	@Override
+	public NucleotideSequence getConsensusSequence() {
+		return contig.getConsensusSequence();
+	}
+
+
+
+	@Override
+	public TasmAssembledRead getRead(String id) {
+		return contig.getRead(id);
+	}
+
+
+
+	@Override
+	public boolean containsRead(String readId) {
+		return contig.containsRead(readId);
+	}
+
+
+
+	@Override
+	public StreamingIterator<TasmAssembledRead> getReadIterator() {
+		return contig.getReadIterator();
+	}
+
 
     
 
@@ -87,7 +130,7 @@ public final class DefaultTasmContig  extends AbstractContig<TasmAssembledRead> 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
+		int result = contig.hashCode();
 		result = prime * result
 				+ ((attributes == null) ? 0 : attributes.hashCode());
 		return result;
@@ -100,14 +143,14 @@ public final class DefaultTasmContig  extends AbstractContig<TasmAssembledRead> 
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
-		}
-		if (!super.equals(obj)) {
-			return false;
-		}
+		}		
 		if (!(obj instanceof TasmContig)) {
 			return false;
 		}
 		TasmContig other = (TasmContig) obj;
+		if(!contig.equals(other)){
+			return false;
+		}
 		if (attributes == null) {
 			if (other.getAttributes() != null) {
 				return false;

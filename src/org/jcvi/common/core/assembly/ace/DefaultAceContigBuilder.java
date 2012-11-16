@@ -37,7 +37,8 @@ import java.util.TreeSet;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.AbstractContig;
+import org.jcvi.common.core.assembly.Contig;
+import org.jcvi.common.core.assembly.DefaultContig;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapUtil;
@@ -584,14 +585,14 @@ public final class  DefaultAceContigBuilder implements AceContigBuilder{
 
 	}
     
-    private static final class  DefaultAceContigImpl extends AbstractContig<AceAssembledRead> implements AceContig{
+    private static final class  DefaultAceContigImpl implements AceContig{
 
     	
         private final boolean complemented;
-
+        private final Contig<AceAssembledRead> contig;
         private DefaultAceContigImpl(String id, NucleotideSequence consensus,
                 Set<AceAssembledRead> reads,boolean complemented) {
-            super(id, consensus, reads);
+            contig = new DefaultContig<AceAssembledRead>(id, consensus, reads);
             this.complemented = complemented;
         }
        
@@ -607,30 +608,79 @@ public final class  DefaultAceContigBuilder implements AceContigBuilder{
 
 
 
-        @Override
-    	public int hashCode() {
-    		final int prime = 31;
-    		int result = super.hashCode();
-    		result = prime * result + (complemented ? 1231 : 1237);
-    		return result;
-    	}
-    	@Override
-    	public boolean equals(Object obj) {
-    		if (this == obj) {
-    			return true;
-    		}
-    		if (!super.equals(obj)) {
-    			return false;
-    		}
-    		if (!(obj instanceof DefaultAceContigImpl)) {
-    			return false;
-    		}
-    		DefaultAceContigImpl other = (DefaultAceContigImpl) obj;
-    		if (complemented != other.complemented) {
-    			return false;
-    		}
-    		return true;
-    	}
+		@Override
+		public String getId() {
+			return contig.getId();
+		}
+
+
+
+		@Override
+		public long getNumberOfReads() {
+			return contig.getNumberOfReads();
+		}
+
+
+
+		@Override
+		public NucleotideSequence getConsensusSequence() {
+			return contig.getConsensusSequence();
+		}
+
+
+
+		@Override
+		public AceAssembledRead getRead(String id) {
+			return contig.getRead(id);
+		}
+
+
+
+		@Override
+		public boolean containsRead(String readId) {
+			return contig.containsRead(readId);
+		}
+
+
+
+		@Override
+		public StreamingIterator<AceAssembledRead> getReadIterator() {
+			return contig.getReadIterator();
+		}
+
+
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + (complemented ? 1231 : 1237);
+			result = prime * result + contig.hashCode();
+			return result;
+		}
+
+
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (!(obj instanceof AceContig)) {
+				return false;
+			}
+			AceContig other = (AceContig) obj;
+			if (complemented != other.isComplemented()) {
+				return false;
+			}
+			if (!contig.equals(other)) {
+				return false;
+			}
+			return true;
+		}
     }
 
 }

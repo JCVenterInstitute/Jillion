@@ -27,34 +27,114 @@ import java.util.Set;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.AbstractContig;
-import org.jcvi.common.core.assembly.ContigBuilder;
 import org.jcvi.common.core.assembly.AssembledReadBuilder;
+import org.jcvi.common.core.assembly.Contig;
+import org.jcvi.common.core.assembly.ContigBuilder;
+import org.jcvi.common.core.assembly.DefaultContig;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel
  *
  *
  */
-public final class DefaultAsmContig extends AbstractContig<AsmAssembledRead> implements AsmContig{
+public final class DefaultAsmContig implements AsmContig{
 
     private final boolean isDegenerate;
-    
+    private final Contig<AsmAssembledRead> contig;
     public static AsmContigBuilder createBuilder(String id, NucleotideSequence consensus){
         return createBuilder(id,consensus,false);
     }
     public static AsmContigBuilder createBuilder(String id, NucleotideSequence consensus, boolean isDegenerate){
         return new DefaultAsmContigBuilder(id, consensus, isDegenerate);
     }
+
+    
     private DefaultAsmContig(String id, NucleotideSequence consensus,
             Set<AsmAssembledRead> reads,boolean isDegenerate) {
-        super(id,consensus,reads);
+        contig = new DefaultContig<AsmAssembledRead>(id, consensus, reads);
         this.isDegenerate = isDegenerate;
     }
-
    
+ 
+
+
+
+	@Override
+	public String getId() {
+		return contig.getId();
+	}
+
+
+
+	@Override
+	public long getNumberOfReads() {
+		return contig.getNumberOfReads();
+	}
+
+
+
+	@Override
+	public NucleotideSequence getConsensusSequence() {
+		return contig.getConsensusSequence();
+	}
+
+
+
+	@Override
+	public AsmAssembledRead getRead(String id) {
+		return contig.getRead(id);
+	}
+
+
+
+	@Override
+	public boolean containsRead(String readId) {
+		return contig.containsRead(readId);
+	}
+
+
+
+	@Override
+	public StreamingIterator<AsmAssembledRead> getReadIterator() {
+		return contig.getReadIterator();
+	}
+
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (isDegenerate ? 1231 : 1237);
+		result = prime * result + contig.hashCode();
+		return result;
+	}
+
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof AsmContig)) {
+			return false;
+		}
+		AsmContig other = (AsmContig) obj;
+		if (isDegenerate != other.isDegenerate()) {
+			return false;
+		}
+		if (!contig.equals(other)) {
+			return false;
+		}
+		return true;
+	}
 
     /**
     * {@inheritDoc}
