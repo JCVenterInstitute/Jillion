@@ -33,7 +33,7 @@ import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
 import org.jcvi.common.core.assembly.ace.AceFileDataStoreBuilder;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
-import org.jcvi.common.core.assembly.util.trim.TrimDataStoreUtil;
+import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStoreUtil;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
@@ -62,7 +62,7 @@ public class TestCas2Consed3 {
 	    public void parseCas() throws IOException, DataStoreException{
 	        File casFile = RESOURCES.getFile("files/flu.cas");
 	      Cas2Consed3 cas2consed3 = new Cas2Consed3(casFile, tempDir,prefix,true,false);
-	      cas2consed3.convert(TrimDataStoreUtil.createEmptyTrimPointsDataStore(),new UnTrimmedExtensionTrimMap(),FastqQualityCodec.ILLUMINA, false,false,false);
+	      cas2consed3.convert(TrimPointsDataStoreUtil.createEmptyTrimPointsDataStore(),new UnTrimmedExtensionTrimMap(),FastqQualityCodec.ILLUMINA, false,false,false);
 	      
 	      File aceFile = tempDir.getFile("edit_dir/"+prefix+".ace.1");
 	      AceFileContigDataStore dataStore =new AceFileDataStoreBuilder(aceFile)

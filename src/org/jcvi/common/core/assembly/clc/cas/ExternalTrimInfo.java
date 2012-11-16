@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.assembly.clc.cas;
 
-import org.jcvi.common.core.assembly.util.trim.TrimDataStoreUtil;
+import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStoreUtil;
 import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 
 /**
@@ -31,7 +31,7 @@ public final class ExternalTrimInfo {
 
     private static final ExternalTrimInfo EMPTY = new ExternalTrimInfo(
             EmptyCasTrimMap.getInstance(),
-            TrimDataStoreUtil.createEmptyTrimPointsDataStore());
+            TrimPointsDataStoreUtil.createEmptyTrimPointsDataStore());
     
     private final TrimPointsDataStore trimDataStore;
     private final CasTrimMap casTrimMap;

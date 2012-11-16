@@ -13,7 +13,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.junit.Test;
 public class TestEmptyTrimDataStore {
 
-	TrimPointsDataStore sut = TrimDataStoreUtil.createEmptyTrimPointsDataStore();
+	TrimPointsDataStore sut = TrimPointsDataStoreUtil.createEmptyTrimPointsDataStore();
 	
 	@Test
 	public void shouldContain0Records() throws DataStoreException{
@@ -41,7 +41,7 @@ public class TestEmptyTrimDataStore {
 	
 	@Test
 	public void close() throws IOException{
-		TrimPointsDataStore emptyDataStore = TrimDataStoreUtil.createEmptyTrimPointsDataStore();
+		TrimPointsDataStore emptyDataStore = TrimPointsDataStoreUtil.createEmptyTrimPointsDataStore();
 		assertFalse(emptyDataStore.isClosed());
 		emptyDataStore.close();
 		assertTrue(emptyDataStore.isClosed());

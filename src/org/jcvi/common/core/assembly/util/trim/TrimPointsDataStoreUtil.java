@@ -25,11 +25,17 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 
 /**
+ * Utility class for working
+ * with {@link TrimPointsDataStore}s.
  * @author dkatzel
  *
  *
  */
-public final class TrimDataStoreUtil {
+public final class TrimPointsDataStoreUtil {
+	
+	private TrimPointsDataStoreUtil(){
+		//can no instantiate
+	}
     /**
      * Create a new instance of
      * a {@link TrimPointsDataStore} that
