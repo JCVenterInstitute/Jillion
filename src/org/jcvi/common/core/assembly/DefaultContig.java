@@ -23,7 +23,10 @@
  */
 package org.jcvi.common.core.assembly;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.jcvi.common.core.Direction;
@@ -31,31 +34,106 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
-public final class DefaultContig<P extends AssembledRead> extends AbstractContig<P>{
+public final class DefaultContig<T extends AssembledRead> implements Contig<T>{
 
+	private final NucleotideSequence consensus;
+    private final String id;
+    private final Map<String, T> mapById;
     
-
-    public DefaultContig(String id, NucleotideSequence consensus,
-            Set<P> reads) {
-        super(id, consensus, reads);
+    public DefaultContig(String id, NucleotideSequence consensus, Set<T> assembledReads){
+    	if(id==null){
+    		throw new NullPointerException("id can not be null");
+    	}
+    	if(consensus==null){
+    		throw new NullPointerException("consensus can not be null");
+    	}
+        this.id = id;
+        this.consensus = consensus;
+        mapById = new LinkedHashMap<String, T>(assembledReads.size()+1, 1F);
+        for(T r : assembledReads){
+            mapById.put(r.getId(), r);
+        }
+       
     }
-    
-    /* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		return super.equals(obj);
-	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+    @Override
+    public NucleotideSequence getConsensusSequence() {
+        return consensus;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public long getNumberOfReads() {
+        return mapById.size();
+    }
+    @Override
+    public T getRead(String id) {
+        return mapById.get(id);
+    }
+    @Override
+    public StreamingIterator<T> getReadIterator() {       
+        return IteratorUtil.createStreamingIterator(mapById.values().iterator());
+    }
+
+    
+
+
+    @Override
+    public boolean containsRead(String placedReadId) {
+        return mapById.containsKey(placedReadId);
+    }
+
 	@Override
 	public int hashCode() {
-		return super.hashCode();
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ consensus.hashCode();
+		result = prime * result +  id.hashCode();
+		result = prime * result +  mapById.hashCode();
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Contig)) {
+			return false;
+		}
+		Contig<?> other = (Contig<?>) obj;
+		
+		if (!id.equals(other.getId())) {
+			return false;
+		}
+		if (!consensus.equals(other.getConsensusSequence())) {
+			return false;
+		}
+		if (getNumberOfReads()!=other.getNumberOfReads()) {
+			return false;
+		}
+		for(Entry<String, T> entry : mapById.entrySet()){
+			String readId = entry.getKey();
+			if(!other.containsRead(readId)){
+				return false;
+			}
+			if(!entry.getValue().equals(other.getRead(readId))){
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 	public static final class Builder extends AbstractContigBuilder<AssembledRead, Contig<AssembledRead>>{
