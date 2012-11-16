@@ -67,7 +67,7 @@ import org.jcvi.common.core.assembly.clc.cas.consed.AbstractAcePlacedReadCasRead
 import org.jcvi.common.core.assembly.scaffold.agp.AgpWriter;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConicConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.MostFrequentBasecallConsensusCaller;
-import org.jcvi.common.core.assembly.util.trim.TrimDataStoreUtil;
+import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStoreUtil;
 import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
@@ -434,7 +434,7 @@ public class Cas2Consed3 {
 	                trimDatastore = trimDataStoreBuilder.build();
 	                trimToUntrimmedMap = new UnTrimmedExtensionTrimMap();
 	            }else{
-	                trimDatastore = TrimDataStoreUtil.createEmptyTrimPointsDataStore();
+	                trimDatastore = TrimPointsDataStoreUtil.createEmptyTrimPointsDataStore();
 	                trimToUntrimmedMap = EmptyCasTrimMap.getInstance();
 	            }
 	            
@@ -548,7 +548,7 @@ public class Cas2Consed3 {
         @Override
         public TrimPointsDataStore build() {
         	if(delegates.isEmpty()){
-        		return TrimDataStoreUtil.createEmptyTrimPointsDataStore();
+        		return TrimPointsDataStoreUtil.createEmptyTrimPointsDataStore();
         	}
             TrimPointsDataStore datastore= MultipleDataStoreWrapper.createMultipleDataStoreWrapper(TrimPointsDataStore.class, delegates);
             delegates = null;
