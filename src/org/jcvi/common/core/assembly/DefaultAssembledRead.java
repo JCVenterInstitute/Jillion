@@ -581,20 +581,9 @@ public final class DefaultAssembledRead implements AssembledRead {
 			return insert(0, sequence);
 		}
 
+		
 
-
-		@Override
-		public Builder expandValidRangeBegin(long units) {
-			Range updatedClearRange = new Range.Builder(clearRange)
-												.expandBegin(units)
-												.build();
-			clearRange =updatedClearRange;
-			return this;
-		}
-
-
-		@Override
-		public Builder expandValidRangeEnd(long units) {
+		private Builder expandValidRangeEnd(long units) {
 			Range updatedClearRange = new Range.Builder(clearRange)
 											.expandEnd(units)
 											.build();
@@ -602,9 +591,7 @@ public final class DefaultAssembledRead implements AssembledRead {
 			return this;
 		}
 
-
-		@Override
-		public Builder contractValidRangeBegin(long units) {
+		private Builder contractValidRangeBegin(long units) {
 			Range updatedClearRange = new Range.Builder(clearRange)
 											.contractBegin(units)
 											.build();
@@ -612,9 +599,7 @@ public final class DefaultAssembledRead implements AssembledRead {
 			return this;
 		}
 
-
-		@Override
-		public Builder contractValidRangeEnd(long units) {
+		private Builder contractValidRangeEnd(long units) {
 			Range updatedClearRange = new Range.Builder(clearRange)
 											.contractEnd(units)
 											.build();

@@ -471,37 +471,6 @@ final class DefaultTasmAssembledRead implements TasmAssembledRead{
 		}
 
 
-		@Override
-		public AssembledReadBuilder<TasmAssembledRead> expandValidRangeBegin(
-				long units) {
-			delegate.expandValidRangeBegin(units);
-			return this;
-		}
-
-
-		@Override
-		public AssembledReadBuilder<TasmAssembledRead> expandValidRangeEnd(
-				long units) {
-			delegate.expandValidRangeEnd(units);
-			return this;
-		}
-
-
-		@Override
-		public AssembledReadBuilder<TasmAssembledRead> contractValidRangeBegin(
-				long units) {
-			delegate.contractValidRangeBegin(units);
-			return this;
-		}
-
-
-		@Override
-		public AssembledReadBuilder<TasmAssembledRead> contractValidRangeEnd(
-				long units) {
-			delegate.contractValidRangeEnd(units);
-			return this;
-		}
-        
         
         /**
         * {@inheritDoc}

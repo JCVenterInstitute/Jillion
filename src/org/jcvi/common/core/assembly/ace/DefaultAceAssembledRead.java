@@ -442,36 +442,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
 		}
 
 
-		@Override
-		public AceAssembledReadBuilder expandValidRangeBegin(
-				long units) {
-			delegateBuilder.expandValidRangeBegin(units);
-			return this;
-		}
-
-
-		@Override
-		public AceAssembledReadBuilder expandValidRangeEnd(
-				long units) {
-			delegateBuilder.expandValidRangeEnd(units);
-			return this;
-		}
-
-
-		@Override
-		public AceAssembledReadBuilder contractValidRangeBegin(
-				long units) {
-			delegateBuilder.contractValidRangeBegin(units);
-			return this;
-		}
-
-
-		@Override
-		public AceAssembledReadBuilder contractValidRangeEnd(
-				long units) {
-			delegateBuilder.contractValidRangeEnd(units);
-			return this;
-		}
+		
 
 
 		/**

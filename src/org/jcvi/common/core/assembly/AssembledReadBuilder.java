@@ -323,13 +323,14 @@ public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable
      */
     AssembledReadBuilder<R> trim(Range trimRange);
     
-    AssembledReadBuilder<R> expandValidRangeBegin(long units);
-    
-    AssembledReadBuilder<R> expandValidRangeEnd(long units);
-    
-    AssembledReadBuilder<R> contractValidRangeBegin(long units);
-    
-    AssembledReadBuilder<R> contractValidRangeEnd(long units);
-
+    /**
+     * Create a new {@link AssembledReadBuilder}
+     * instance whose data is a copy of this 
+     * object.  Any modifications to this object
+     * or the returned copy will not
+     * be reflected in the other.
+     * @return a new {@link AssembledReadBuilder}
+     * instance; never null.
+     */
     AssembledReadBuilder<R> copy();
 }
