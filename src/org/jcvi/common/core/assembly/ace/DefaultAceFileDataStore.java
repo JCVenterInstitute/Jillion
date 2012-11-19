@@ -224,7 +224,7 @@ final class DefaultAceFileDataStore implements AceFileContigDataStore{
          * Consensus tags span multiple lines of the ace file so we need to build
          * up the consensus tags as we parse.
          */
-        private DefaultConsensusAceTag.Builder consensusTagBuilder;
+        private DefaultConsensusAceTagBuilder consensusTagBuilder;
         
         public DefaultAceFileDataStoreBuilder(){
             this(DataStoreFilters.alwaysAccept());
@@ -281,7 +281,7 @@ final class DefaultAceFileDataStore implements AceFileContigDataStore{
                 long gappedStart, long gappedEnd, Date creationDate,
                 boolean isTransient) {
             super.visitBeginConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
-            consensusTagBuilder = new DefaultConsensusAceTag.Builder(id, 
+            consensusTagBuilder = new DefaultConsensusAceTagBuilder(id, 
                     type, creator, creationDate, Range.of(gappedStart, gappedEnd), isTransient);
 
         }

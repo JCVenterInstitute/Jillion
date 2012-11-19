@@ -29,10 +29,59 @@ import java.util.List;
 
 import org.jcvi.common.core.Rangeable;
 
-public final class DefaultConsensusAceTag extends AbstractDefaultPlacedAceTag implements ConsensusAceTag{
+public final class DefaultConsensusAceTagBuilder implements org.jcvi.common.core.util.Builder<ConsensusAceTag>{
+        private final List<String> comments = new ArrayList<String>();
+        private final String id;
+        
+        private final Rangeable location;
+        private final boolean isTransient;
+        
+        private final String type;
+        private final String creator;
+        private final Date creationDate;
+        private final StringBuilder dataBuilder = new StringBuilder();
+        
+        /**
+         * @param id
+         * @param type
+         * @param creator
+         * @param creationDate
+         * @param location
+         * @param isTransient
+         * @param data
+         */
+        public DefaultConsensusAceTagBuilder(String id, String type, String creator,
+                Date creationDate, Rangeable location, boolean isTransient) {
+            this.id = id;
+            this.location = location;
+            this.isTransient = isTransient;
+            this.type = type;
+            this.creator = creator;
+            this.creationDate = new Date(creationDate.getTime());
+        }
+
+        public DefaultConsensusAceTagBuilder appendData(String data){
+            dataBuilder.append(data);
+            return this;
+        }
+
+        public DefaultConsensusAceTagBuilder addComment(String comment){
+            comments.add(comment);
+            return this;
+        }
+
+        @Override
+        public ConsensusAceTag build() {
+            return new DefaultConsensusAceTagBuilderImpl(id, type, creator, 
+                    creationDate, location, dataBuilder.toString(), 
+                    comments, isTransient);
+        }
+
+
+private static final class DefaultConsensusAceTagBuilderImpl extends AbstractDefaultPlacedAceTag implements ConsensusAceTag{
     private final List<String> comments;
     
-    private DefaultConsensusAceTag(String id, String type, String creator,
+    private DefaultConsensusAceTagBuilderImpl(String id, String type, String creator,
             Date creationDate, Rangeable location, String data, List<String> comments, boolean isTransient) {
         super(id, type, creator, creationDate, location, data, isTransient);
         this.comments = comments;
@@ -59,10 +108,10 @@ public final class DefaultConsensusAceTag extends AbstractDefaultPlacedAceTag im
         if (!super.equals(obj)) {
             return false;
         }
-        if (!(obj instanceof DefaultConsensusAceTag)) {
+        if (!(obj instanceof DefaultConsensusAceTagBuilder)) {
             return false;
         }
-        DefaultConsensusAceTag other = (DefaultConsensusAceTag) obj;
+        DefaultConsensusAceTagBuilder other = (DefaultConsensusAceTagBuilder) obj;
         if (comments == null) {
             if (other.comments != null) {
                 return false;
@@ -84,59 +133,5 @@ public final class DefaultConsensusAceTag extends AbstractDefaultPlacedAceTag im
                 + ", getCreator()=" + getCreator() + ", getData()=" + getData()
                 + ", getType()=" + getType() + "]";
     }
-
-
-
-
-    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultConsensusAceTag>{
-        private final List<String> comments = new ArrayList<String>();
-        private final String id;
-        
-        private final Rangeable location;
-        private final boolean isTransient;
-        
-        private final String type;
-        private final String creator;
-        private final Date creationDate;
-        private final StringBuilder dataBuilder = new StringBuilder();
-        
-        
-        
-        /**
-         * @param id
-         * @param type
-         * @param creator
-         * @param creationDate
-         * @param location
-         * @param isTransient
-         * @param data
-         */
-        public Builder(String id, String type, String creator,
-                Date creationDate, Rangeable location, boolean isTransient) {
-            this.id = id;
-            this.location = location;
-            this.isTransient = isTransient;
-            this.type = type;
-            this.creator = creator;
-            this.creationDate = new Date(creationDate.getTime());
-        }
-
-        public Builder appendData(String data){
-            dataBuilder.append(data);
-            return this;
-        }
-
-        public Builder addComment(String comment){
-            comments.add(comment);
-            return this;
-        }
-
-        @Override
-        public DefaultConsensusAceTag build() {
-            return new DefaultConsensusAceTag(id, type, creator, 
-                    creationDate, location, dataBuilder.toString(), 
-                    comments, isTransient);
-        }
-        
-    }
+}
 }
