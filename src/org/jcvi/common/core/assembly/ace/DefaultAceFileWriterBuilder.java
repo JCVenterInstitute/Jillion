@@ -17,7 +17,11 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 /**
- * {@code DefaultAceFileWriter} handles
+ * {@code DefaultAceFileWriterBuilder} 
+ * is a builder
+ * for creating new
+ * {@link AceFileWriter} instances
+ * that handles
  * writing out correctly formatted
  * ace files that can be viewed
  * with consed.
@@ -29,10 +33,128 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
  * The location of the temporary file
  * can be configured via the builder.
  * @author dkatzel
- * @see {@link DefaultAceFileWriter.Builder}
+ * @see {@link DefaultAceFileWriterBuilder.Builder}
  *
  */
-public final class DefaultAceFileWriter extends AbstractAceFileWriter{
+public final class DefaultAceFileWriterBuilder{
+	
+		private boolean createBsRecords=false;
+		private final PhdDataStore phdDataStore;
+		private final OutputStream out;
+		private File tmpDir;
+		private boolean computeConsensusQualities=false;
+		/**
+		 * Create a new Builder instance
+		 * which will build a new instance of 
+		 * DefaultAceFileWriter with the given required
+		 * parameters.
+		 * @param outputAceFile a {@link File} representating
+		 * the path to the output of the ace file to write.
+		 * 
+		 * @param datastore the {@link PhdDataStore}
+		 * needed to write out the ace data.
+		 * The {@link PhdDataStore} needs to be consulted
+		 * to get the quality values of the reads
+		 * to compute consensus quality values,
+		 * get the full length nucleotide sequences of the reads
+		 * in the contigs and 
+		 * to format the full length nucleotide sequences
+		 * by encoding high vs low quality values by using
+		 * upper vs lowercase letters respectively.
+		 * @throws IOException 
+		 */
+		public DefaultAceFileWriterBuilder(File outputAceFile,PhdDataStore datastore) throws IOException{
+			if(outputAceFile ==null){
+				throw new NullPointerException("output ace file can not be null");	
+			}
+			if(datastore==null){
+				throw new NullPointerException("datastore can not be null");				
+			}
+			IOUtil.mkdirs(outputAceFile.getParentFile());
+			this.phdDataStore = datastore;
+			this.out=new FileOutputStream(outputAceFile);
+		}
+		
+		/**
+		 * Change the temporary directory used
+		 * to keep temp files during the writing process.
+		 * If this option is not specified,
+		 * then the system's default temp dir area is used.
+		 * @param tmpDir the path to the tmpDirectory.
+		 * @return this
+		 * @throws IOException if there is a problem creating the temp directory
+		 * if it does not exist.
+		 * @throws NullPointerException if tmpDir is null.
+		 * @throws IllegalArgumentException if tmpDir exists but is not
+		 * a directory.
+		 */
+		public DefaultAceFileWriterBuilder tmpDir(File tmpDir) throws IOException{
+			if(tmpDir==null){
+				throw new NullPointerException("tmp dir path can not be null");
+			}
+			if(tmpDir.exists() && !tmpDir.isDirectory()){
+				throw new IllegalArgumentException("tmp dir must be a directory");
+			}
+			IOUtil.mkdirs(tmpDir);
+			this.tmpDir = tmpDir;
+			return this;
+		}
+		/**
+		 * Compute the actual consensus qualities
+		 * for each non-gap consensus basecall.
+		 * This is a computationally intense 
+		 * algorithm that requires reading the full length
+		 * qualities 
+		 * for each read in each contig
+		 * from the given {@link PhdDataStore}.
+		 * If this method is not called,
+		 * then the contig consensus will get 
+		 * set to a default value of
+		 * "99" for each non-gap base which 
+		 * consed interprets as 
+		 * "human edited high quality". 
+		 * @return this
+		 */
+		public DefaultAceFileWriterBuilder computeConsensusQualities(){
+			computeConsensusQualities=true;
+			return this;
+		}
+		/**
+		 * Legacy versions of consed
+		 * required ace contigs to include information
+		 * that indicated which read phrap had chosen to be 
+		 * the consensus at a particular offset.  This information
+		 * is no longer required by current versions of consed since
+		 * it is phrap specific.  Including
+		 * Base Segments is not recommended since generating
+		 * them is computationally expensive and can throw
+		 * RuntimeExceptions if there is no read that matches the consensus
+		 * at a particular offset (for example a 0x region or if the consensus
+		 * is an ambiguity).
+		 * @return this.
+		 */
+		public DefaultAceFileWriterBuilder includeBaseSegments(){
+			createBsRecords=true;
+			return this;
+		}
+		/**
+		 * Create a new instance of {@link DefaultAceFileWriterBuilder}
+		 * with the given paramters.
+		 * @return a new instance; never null.
+		 * @throws IOException if there is a problem
+		 * creating the temp directory (it doesn't
+		 * already exist) or the temp file.
+		 * 
+		 */
+		public AceFileWriter build() throws IOException {
+			return new DefaultAceFileWriter(out, phdDataStore, 
+					tmpDir,
+					createBsRecords,
+					computeConsensusQualities);
+		}
+
+	
+private final class DefaultAceFileWriter extends AbstractAceFileWriter{
 	
 	private final PhdDataStore phdDatastore;
 	private final OutputStream out;
@@ -147,130 +269,6 @@ public final class DefaultAceFileWriter extends AbstractAceFileWriter{
 		tagOutputStream.write(formattedTag.getBytes(IOUtil.UTF_8));
 		
 	}
-	/**
-	 * Builds a new instance of {@link DefaultAceFileWriter}.
-	 * @author dkatzel
-	 *
-	 */
-	public static class Builder{
-
-		private boolean createBsRecords=false;
-		private final PhdDataStore phdDataStore;
-		private final OutputStream out;
-		private File tmpDir;
-		private boolean computeConsensusQualities=false;
-		/**
-		 * Create a new Builder instance
-		 * which will build a new instance of 
-		 * DefaultAceFileWriter with the given required
-		 * parameters.
-		 * @param outputAceFile a {@link File} representating
-		 * the path to the output of the ace file to write.
-		 * 
-		 * @param datastore the {@link PhdDataStore}
-		 * needed to write out the ace data.
-		 * The {@link PhdDataStore} needs to be consulted
-		 * to get the quality values of the reads
-		 * to compute consensus quality values,
-		 * get the full length nucleotide sequences of the reads
-		 * in the contigs and 
-		 * to format the full length nucleotide sequences
-		 * by encoding high vs low quality values by using
-		 * upper vs lowercase letters respectively.
-		 * @throws IOException 
-		 */
-		public Builder(File outputAceFile,PhdDataStore datastore) throws IOException{
-			if(outputAceFile ==null){
-				throw new NullPointerException("output ace file can not be null");	
-			}
-			if(datastore==null){
-				throw new NullPointerException("datastore can not be null");				
-			}
-			IOUtil.mkdirs(outputAceFile.getParentFile());
-			this.phdDataStore = datastore;
-			this.out=new FileOutputStream(outputAceFile);
-		}
-		
-		/**
-		 * Change the temporary directory used
-		 * to keep temp files during the writing process.
-		 * If this option is not specified,
-		 * then the system's default temp dir area is used.
-		 * @param tmpDir the path to the tmpDirectory.
-		 * @return this
-		 * @throws IOException if there is a problem creating the temp directory
-		 * if it does not exist.
-		 * @throws NullPointerException if tmpDir is null.
-		 * @throws IllegalArgumentException if tmpDir exists but is not
-		 * a directory.
-		 */
-		public Builder tmpDir(File tmpDir) throws IOException{
-			if(tmpDir==null){
-				throw new NullPointerException("tmp dir path can not be null");
-			}
-			if(tmpDir.exists() && !tmpDir.isDirectory()){
-				throw new IllegalArgumentException("tmp dir must be a directory");
-			}
-			IOUtil.mkdirs(tmpDir);
-			this.tmpDir = tmpDir;
-			return this;
-		}
-		/**
-		 * Compute the actual consensus qualities
-		 * for each non-gap consensus basecall.
-		 * This is a computationally intense 
-		 * algorithm that requires reading the full length
-		 * qualities 
-		 * for each read in each contig
-		 * from the given {@link PhdDataStore}.
-		 * If this method is not called,
-		 * then the contig consensus will get 
-		 * set to a default value of
-		 * "99" for each non-gap base which 
-		 * consed interprets as 
-		 * "human edited high quality". 
-		 * @return this
-		 */
-		public Builder computeConsensusQualities(){
-			computeConsensusQualities=true;
-			return this;
-		}
-		/**
-		 * Legacy versions of consed
-		 * required ace contigs to include information
-		 * that indicated which read phrap had chosen to be 
-		 * the consensus at a particular offset.  This information
-		 * is no longer required by current versions of consed since
-		 * it is phrap specific.  Including
-		 * Base Segments is not recommended since generating
-		 * them is computationally expensive and can throw
-		 * RuntimeExceptions if there is no read that matches the consensus
-		 * at a particular offset (for example a 0x region or if the consensus
-		 * is an ambiguity).
-		 * @return this.
-		 */
-		public Builder includeBaseSegments(){
-			createBsRecords=true;
-			return this;
-		}
-		/**
-		 * Create a new instance of {@link DefaultAceFileWriter}
-		 * with the given paramters.
-		 * @return a new instance; never null.
-		 * @throws IOException if there is a problem
-		 * creating the temp directory (it doesn't
-		 * already exist) or the temp file.
-		 * 
-		 */
-		public AceFileWriter build() throws IOException {
-			return new DefaultAceFileWriter(out, phdDataStore, 
-					tmpDir,
-					createBsRecords,
-					computeConsensusQualities);
-		}
-		
-	}
-	
-	
+}
 	
 }

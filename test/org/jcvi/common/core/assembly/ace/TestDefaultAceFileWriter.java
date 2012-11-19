@@ -77,7 +77,7 @@ public class TestDefaultAceFileWriter {
 
         File outputFile = folder.newFile();
         
-        AceFileWriter sut = new DefaultAceFileWriter.Builder(outputFile,phdDataStore)
+        AceFileWriter sut = new DefaultAceFileWriterBuilder(outputFile,phdDataStore)
         						.tmpDir(tmpDir)
         						.build();
         writeContigs(aceDataStore, sut);
@@ -104,7 +104,7 @@ public class TestDefaultAceFileWriter {
 
         File outputFile = folder.newFile();
         
-        AceFileWriter sut = new DefaultAceFileWriter.Builder(outputFile,phdDataStore)
+        AceFileWriter sut = new DefaultAceFileWriterBuilder(outputFile,phdDataStore)
         						.tmpDir(tmpDir)
         						.computeConsensusQualities()
         						.build();
@@ -131,7 +131,7 @@ public class TestDefaultAceFileWriter {
 
         File outputFile = folder.newFile();
         
-        AceFileWriter sut = new DefaultAceFileWriter.Builder(outputFile,phdDataStore)
+        AceFileWriter sut = new DefaultAceFileWriterBuilder(outputFile,phdDataStore)
         						.tmpDir(tmpDir)
         						.includeBaseSegments()
         						.build();
@@ -209,7 +209,7 @@ public class TestDefaultAceFileWriter {
     	
     	 File outputFile = folder.newFile();
          
-         AceFileWriter sut = new DefaultAceFileWriter.Builder(outputFile,phdDataStore)
+         AceFileWriter sut = new DefaultAceFileWriterBuilder(outputFile,phdDataStore)
          						.tmpDir(tmpDir)
          						.build();
          AceFileContigDataStore datastore = DefaultAceFileDataStore.create(originalAce);
