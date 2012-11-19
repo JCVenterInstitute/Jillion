@@ -39,7 +39,8 @@ public interface AceFileContigDataStore extends ContigDataStore<AceAssembledRead
 	 * for two reasons:
 	 * <ol>
 	 * <li>Some contigs may be filtered out of this datastore depending
-	 * on the implementation and parameters passed to the factory method.</li>
+	 * on the parameters used when constructing this {@link AceFileContigDataStore}
+	 * instance.</li>
 	 * <li>Some reads in a contig may be excluded because they are either invalid
 	 * or don't provide any coverage</li>
 	 * </ol>

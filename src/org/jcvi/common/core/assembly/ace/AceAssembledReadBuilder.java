@@ -20,14 +20,15 @@
 package org.jcvi.common.core.assembly.ace;
 
 import org.jcvi.common.core.assembly.AssembledReadBuilder;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 
 /**
- * {@code AcePlacedReadBuilder} is a {@link Builder}
- * for {@link AceAssembledRead}s for a specific contig.
- * Methods in this interface can change the bases
- * of this read or shift where on the reference (or contig consensus)
- * this read lands.
+ * {@code AceAssembledReadBuilder} is a {@link Builder}
+ * for {@link AceAssembledRead}s for a specific {@link AceContig}.
+ * Methods in this interface can modify the {@link NucleotideSequence}
+ * of this read or shift where on the contig
+ * this read aligns.
  * @author dkatzel
  *
  *
@@ -36,10 +37,16 @@ public interface AceAssembledReadBuilder extends AssembledReadBuilder<AceAssembl
    
 
     /**
+     * Get the {@link PhdInfo}
+     * for this read.
      * @return the phdInfo
+     * (never null).
      */
     PhdInfo getPhdInfo();
-    
+    /**
+     * 
+     * {@inheritDoc}
+     */
     AceAssembledReadBuilder copy();
 
     

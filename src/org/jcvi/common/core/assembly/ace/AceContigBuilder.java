@@ -30,16 +30,13 @@ import org.jcvi.common.core.util.Builder;
 /**
  * {@code AceContigBuilder} is a {@link Builder}
  * for {@link AceContig}s that allows
- * creating a contig object by adding placed reads
- * and setting a consensus.  An {@link AceContigBuilder}
+ * creating a contig object by adding/removing/modifying
+ *  {@link AceAssembledRead}s
+ * and modifying/recalling a consensus sequence.  
+ * An {@link AceContigBuilder}
  * can be used to create AceContig objects that 
  * have been created by an assembler or can be used
- * to create contigs from the imagination.
- * There are additional methods to allow
- * the contig consensus or underlying
- * reads to be modified before
- * the creation of the {@link AceContig} instance
- * (which is immutable).
+ * to create contigs from the scratch.
  * @author dkatzel
  *
  *
@@ -84,7 +81,9 @@ public interface AceContigBuilder extends ContigBuilder<AceAssembledRead,AceCont
 
     /**
      * Set this contig as being complemented.
-     * @param complemented
+     * @param complemented {@code true} 
+     * if this contig should be considered complemented;
+     * {@code false} otherwise.
      * @return this
      */
     AceContigBuilder setComplemented(boolean complemented);

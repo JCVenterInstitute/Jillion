@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly.ace;
 
 import org.jcvi.common.core.assembly.AssembledRead;
 /**
- * {@code AcePlacedRead} is a {@link AssembledRead} implementation
+ * {@code AceAssembledRead} is a {@link AssembledRead} implementation
  * specific for reads from an ace file.
  * @author dkatzel
  */
