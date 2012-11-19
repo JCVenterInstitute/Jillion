@@ -47,19 +47,19 @@ import org.ggf.drmaa.SessionFactory;
 import org.jcvi.common.command.Command;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
+import org.jcvi.common.command.grid.GridJob.MemoryUnit;
 import org.jcvi.common.command.grid.GridJobBuilder;
 import org.jcvi.common.command.grid.GridJobBuilders;
 import org.jcvi.common.command.grid.GridJobExecutorService;
 import org.jcvi.common.command.grid.PostExecutionHook;
 import org.jcvi.common.command.grid.SimpleGridJob;
-import org.jcvi.common.command.grid.GridJob.MemoryUnit;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitor;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileUtil;
 import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
-import org.jcvi.common.core.assembly.ace.DefaultConsensusAceTag;
+import org.jcvi.common.core.assembly.ace.DefaultConsensusAceTagBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultReadAceTag;
 import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
@@ -211,7 +211,7 @@ public class GridReAbacusAce {
         private final ByteArrayOutputStream tagOutputStream = new ByteArrayOutputStream();
         private final File aceFile;
         private final File outputAceFile;
-        private DefaultConsensusAceTag.Builder consensusTagBuilder;
+        private DefaultConsensusAceTagBuilder consensusTagBuilder;
         private final String projectCode;
         private final Session session;
         private final List<SimpleGridJob> jobs = new ArrayList<SimpleGridJob>();
@@ -290,7 +290,7 @@ public class GridReAbacusAce {
                  long gappedStart, long gappedEnd, Date creationDate,
                  boolean isTransient) {
              super.visitBeginConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
-             consensusTagBuilder = new DefaultConsensusAceTag.Builder(id, 
+             consensusTagBuilder = new DefaultConsensusAceTagBuilder(id, 
                      type, creator, creationDate, Range.of(gappedStart, gappedEnd), isTransient);
 
          }

@@ -54,7 +54,7 @@ import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileUtil;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
-import org.jcvi.common.core.assembly.ace.DefaultConsensusAceTag;
+import org.jcvi.common.core.assembly.ace.DefaultConsensusAceTagBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultReadAceTag;
 import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.ace.HighLowAceContigPhdDatastore;
@@ -265,7 +265,7 @@ public class MultiThreadedReAbacusAce {
 
    private static class TagWriter extends AbstractAceFileVisitor{
        private final ByteArrayOutputStream tagOutputStream = new ByteArrayOutputStream();
-       private DefaultConsensusAceTag.Builder consensusTagBuilder;
+       private DefaultConsensusAceTagBuilder consensusTagBuilder;
        private final OutputStream aceOut;
        
        
@@ -329,7 +329,7 @@ public class MultiThreadedReAbacusAce {
                 long gappedStart, long gappedEnd, Date creationDate,
                 boolean isTransient) {
             super.visitBeginConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
-            consensusTagBuilder = new DefaultConsensusAceTag.Builder(id, 
+            consensusTagBuilder = new DefaultConsensusAceTagBuilder(id, 
                     type, creator, creationDate, Range.of(gappedStart, gappedEnd), isTransient);
 
         }

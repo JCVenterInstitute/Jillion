@@ -57,16 +57,16 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
     public static final PhredQuality DEFAULT_HIGH_QUALITY = AceFileUtil.ACE_DEFAULT_HIGH_QUALITY_THRESHOLD;
     private final PhdDataStore delegate;
     
-    public static HighLowAceContigPhdDatastore create(File aceContigFile, final String contigId) throws IOException{
+    public static PhdDataStore create(File aceContigFile, final String contigId) throws IOException{
         return new HighLowAceContigPhdDatastore(aceContigFile, contigId);
     }
-    public static HighLowAceContigPhdDatastore create(File aceContigFile) throws IOException{
+    public static PhdDataStore create(File aceContigFile) throws IOException{
         return new HighLowAceContigPhdDatastore(aceContigFile,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
     }
-    public static HighLowAceContigPhdDatastore create(InputStream aceContigFile) throws IOException{
+    public static PhdDataStore create(InputStream aceContigFile) throws IOException{
         return new HighLowAceContigPhdDatastore(aceContigFile,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
     }
-    public static HighLowAceContigPhdDatastore create(InputStream aceContigFile, String contigId) throws IOException{
+    public static PhdDataStore create(InputStream aceContigFile, String contigId) throws IOException{
         return new HighLowAceContigPhdDatastore(aceContigFile,contigId, DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
     }
     private HighLowAceContigPhdDatastore(File aceContigFile, final String contigId) throws IOException{
@@ -97,7 +97,7 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
         
     }
     
-    public HighLowAceContigPhdDatastore(File aceContigFile, 
+    private HighLowAceContigPhdDatastore(File aceContigFile, 
             final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
         FullLengthPhdParser visitor = new FullLengthPhdParser(lowQuality,highQuality);
         

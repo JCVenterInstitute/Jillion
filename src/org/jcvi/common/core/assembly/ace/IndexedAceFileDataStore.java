@@ -186,7 +186,7 @@ final class IndexedAceFileDataStore{
          * Consensus tags span multiple lines of the ace file so we need to build
          * up the consensus tags as we parse.
          */
-        private DefaultConsensusAceTag.Builder consensusTagBuilder;
+        private DefaultConsensusAceTagBuilder consensusTagBuilder;
         
         public IndexedAceFileDataStoreBuilder(File aceFile){
            this(aceFile, DataStoreFilters.alwaysAccept());
@@ -364,7 +364,7 @@ final class IndexedAceFileDataStore{
         public void visitBeginConsensusTag(String id, String type,
                 String creator, long gappedStart, long gappedEnd,
                 Date creationDate, boolean isTransient) {
-            consensusTagBuilder = new DefaultConsensusAceTag.Builder(id, 
+            consensusTagBuilder = new DefaultConsensusAceTagBuilder(id, 
                     type, creator, creationDate, Range.of(gappedStart, gappedEnd), isTransient);
 
         }
