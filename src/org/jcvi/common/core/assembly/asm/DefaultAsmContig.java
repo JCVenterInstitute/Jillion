@@ -31,6 +31,7 @@ import org.jcvi.common.core.assembly.AssembledReadBuilder;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.ContigBuilder;
 import org.jcvi.common.core.assembly.DefaultContig;
+import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -130,9 +131,31 @@ public final class DefaultAsmContig implements AsmContig{
 		if (isDegenerate != other.isDegenerate()) {
 			return false;
 		}
-		if (!contig.equals(other)) {
+		if (!contig.getId().equals(other.getId())) {
 			return false;
 		}
+		if (!contig.getConsensusSequence().equals(other.getConsensusSequence())) {
+			return false;
+		}
+		if (contig.getNumberOfReads()!=other.getNumberOfReads()) {
+			return false;
+		}
+		StreamingIterator<AsmAssembledRead> readIter=null;
+		try{
+			readIter = contig.getReadIterator();
+			while(readIter.hasNext()){
+				AsmAssembledRead read = readIter.next();
+				String readId = read.getId();
+				if(!other.containsRead(readId)){
+					return false;
+				}
+				if(!read.equals(other.getRead(readId))){
+					return false;
+				}
+			}
+		}finally{
+			IOUtil.closeAndIgnoreErrors(readIter);
+		}			
 		return true;
 	}
 
