@@ -50,7 +50,7 @@ import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.ace.DefaultAceContigBuilder;
-import org.jcvi.common.core.assembly.ace.DefaultAceFileWriter;
+import org.jcvi.common.core.assembly.ace.DefaultAceFileWriterBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.clc.cas.AbstractCasFileVisitor;
@@ -67,8 +67,8 @@ import org.jcvi.common.core.assembly.clc.cas.consed.AbstractAcePlacedReadCasRead
 import org.jcvi.common.core.assembly.scaffold.agp.AgpWriter;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConicConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.MostFrequentBasecallConsensusCaller;
-import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStoreUtil;
 import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
+import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStoreUtil;
 import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
 import org.jcvi.common.core.io.FileUtil;
@@ -260,7 +260,7 @@ public class Cas2Consed3 {
             	 throw new IOException("Could not create temp directory: " + tmpDir.getAbsolutePath());
              }
              File ace = new File(editDir, prefix+".ace.1");
-             AceFileWriter aceWriter = new DefaultAceFileWriter.Builder(ace, phdDataStore)
+             AceFileWriter aceWriter = new DefaultAceFileWriterBuilder(ace, phdDataStore)
              							.tmpDir(tmpDir)
              							.build();
              File consensusFile = consedOutputDir.createNewFile(prefix+ ".ace.1.consensus.fasta");
