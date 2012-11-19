@@ -148,9 +148,32 @@ public final class DefaultTasmContig implements TasmContig{
 			return false;
 		}
 		TasmContig other = (TasmContig) obj;
-		if(!contig.equals(other)){
+		if (!contig.getId().equals(other.getId())) {
 			return false;
 		}
+		if (!contig.getConsensusSequence().equals(other.getConsensusSequence())) {
+			return false;
+		}
+		if (contig.getNumberOfReads()!=other.getNumberOfReads()) {
+			return false;
+		}
+		StreamingIterator<TasmAssembledRead> readIter=null;
+		try{
+			readIter = contig.getReadIterator();
+			while(readIter.hasNext()){
+				TasmAssembledRead read = readIter.next();
+				String readId = read.getId();
+				if(!other.containsRead(readId)){
+					return false;
+				}
+				if(!read.equals(other.getRead(readId))){
+					return false;
+				}
+			}
+		}finally{
+			IOUtil.closeAndIgnoreErrors(readIter);
+		}			
+
 		if (attributes == null) {
 			if (other.getAttributes() != null) {
 				return false;
