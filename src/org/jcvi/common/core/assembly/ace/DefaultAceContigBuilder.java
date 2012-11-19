@@ -676,9 +676,31 @@ public final class  DefaultAceContigBuilder implements AceContigBuilder{
 			if (complemented != other.isComplemented()) {
 				return false;
 			}
-			if (!contig.equals(other)) {
+			if (!contig.getId().equals(other.getId())) {
 				return false;
 			}
+			if (!contig.getConsensusSequence().equals(other.getConsensusSequence())) {
+				return false;
+			}
+			if (contig.getNumberOfReads()!=other.getNumberOfReads()) {
+				return false;
+			}
+			StreamingIterator<AceAssembledRead> readIter=null;
+			try{
+				readIter = contig.getReadIterator();
+				while(readIter.hasNext()){
+					AceAssembledRead read = readIter.next();
+					String readId = read.getId();
+					if(!other.containsRead(readId)){
+						return false;
+					}
+					if(!read.equals(other.getRead(readId))){
+						return false;
+					}
+				}
+			}finally{
+				IOUtil.closeAndIgnoreErrors(readIter);
+			}			
 			return true;
 		}
     }
