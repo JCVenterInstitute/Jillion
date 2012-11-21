@@ -19,14 +19,13 @@
 
 package org.jcvi.common.core.symbol.residue.nt;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
@@ -306,14 +305,19 @@ public class TestNucleotideSequenceBuilder {
     }
     
     @Test
-    public void reverseComplimentOddNumberOfBases(){
+    public void reverseComplementOddNumberOfBases(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT-");
         sut.reverseComplement();
         assertBuiltSequenceEquals("-ACGT",sut);
     }
-    
     @Test
-    public void reverseComplimentEvenNumberOfBases(){
+    public void reverseComplementPalindromicSequence(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("GAATTC");
+        sut.reverseComplement();
+        assertBuiltSequenceEquals("GAATTC",sut);
+    }
+    @Test
+    public void reverseComplementEvenNumberOfBases(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("TGGA");
         sut.reverseComplement();
         assertBuiltSequenceEquals("TCCA",sut);
@@ -563,5 +567,12 @@ public class TestNucleotideSequenceBuilder {
    	 	TestUtil.assertNotEqualAndHashcodeDifferent(sut,
    	 									sut.copy()
    	 									.append(Nucleotide.Gap));
+    }
+    
+    @Test
+    public void testComplement(){
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT")
+    										.complement();
+    	assertEquals("TGCA", sut.toString());
     }
 }

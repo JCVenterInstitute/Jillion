@@ -138,7 +138,12 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         this.tail = newValues.getLength()*NUM_BITS_PER_VALUE;  
     }
 
-	
+    public NucleotideSequenceBuilder(Nucleotide singleNucleotide){
+    	NewValues newValues = new NewValues(singleNucleotide);
+        this.bits = newValues.getBits();
+        codecDecider = new CodecDecider(newValues);
+        this.tail = newValues.getLength()*NUM_BITS_PER_VALUE;  
+    }
 
     
     
@@ -833,7 +838,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * For example:
      * <pre>
      *      new NucleotideSequenceBuilder("CGGC")
-                .reverseCompliment()
+                .reverseComplement()
                 .append("N");                
      * </pre>
      * will generate a Sequence "GCCGN".
@@ -858,6 +863,34 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         }
         return this;
     }
+    /**
+     * Complements all the nucleotides currently in this builder
+     * but does not reverse the sequence.
+     * Calling this method will only complement bases that 
+     * already exist in this builder; any additional operations
+     * to insert bases will not be affected.
+     * <p/>
+     * For example:
+     * <pre>
+     *      new NucleotideSequenceBuilder("ATGT")
+                .compliment()
+                .append("N");                
+     * </pre>
+     * will generate a Sequence "TACAN".
+     * @return this.
+     */
+    public NucleotideSequenceBuilder complement(){
+        int currentLength = codecDecider.getCurrentLength();
+        for(int i=0; i<currentLength; i++){
+            int startBitOfI = i*NUM_BITS_PER_VALUE;
+            Nucleotide complement = getNucleotideFor(startBitOfI).complement();
+            byte complementOrdinal = (byte) complement.ordinal();
+            setBitsFor(startBitOfI, complementOrdinal);
+        }
+        return this;
+    }
+    
+    
 	private void setBitsFor(int offset, byte twoBitValue) {
 		setBitsFor(bits, offset, twoBitValue);
 	}
