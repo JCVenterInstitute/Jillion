@@ -105,18 +105,30 @@ private static final class DefaultConsensusAceTagBuilderImpl extends AbstractDef
         if (this == obj) {
             return true;
         }
-        if (!super.equals(obj)) {
+        if (!(obj instanceof ConsensusAceTag)) {
             return false;
         }
-        if (!(obj instanceof DefaultConsensusAceTagBuilder)) {
+        ConsensusAceTag other = (ConsensusAceTag) obj;
+        
+        
+        if(!getId().equals(other.getId())) {
             return false;
         }
-        DefaultConsensusAceTagBuilder other = (DefaultConsensusAceTagBuilder) obj;
-        if (comments == null) {
-            if (other.comments != null) {
+        if (isTransient() != other.isTransient()) {
+            return false;
+        }
+        if (asRange() == null) {
+            if (other.asRange() != null) {
                 return false;
             }
-        } else if (!comments.equals(other.comments)) {
+        } else if (!asRange().equals(other.asRange())) {
+            return false;
+        }
+        if (comments == null) {
+            if (other.getComments() != null) {
+                return false;
+            }
+        } else if (!comments.equals(other.getComments())) {
             return false;
         }
         return true;
