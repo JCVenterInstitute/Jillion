@@ -154,7 +154,7 @@ public final class DefaultAceFileWriterBuilder{
 		}
 
 	
-private final class DefaultAceFileWriter extends AbstractAceFileWriter{
+private static final class DefaultAceFileWriter extends AbstractAceFileWriter{
 	
 	private final PhdDataStore phdDatastore;
 	private final OutputStream out;
