@@ -1,5 +1,6 @@
 package org.jcvi.common.primer;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -346,7 +347,12 @@ nearest-neighbor thermodynamics.
 	public abstract double estimateTm(NucleotideSequence sequence, double nM);
 	
 	
-	private static final class LookupTable{
+	private static final class LookupTable implements Serializable{
+		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private final Map<NucleotideSequence,Integer> map;
 		
 		LookupTable(Map<NucleotideSequence,Integer> map){
