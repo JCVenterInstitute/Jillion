@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.seq.read.trace.sanger.primer;
+package org.jcvi.common.primer;
 
 import java.util.HashMap;
 import java.util.Map;
