@@ -1,4 +1,4 @@
-package org.jcvi.common.core.seq.read.trace.sanger.primer;
+package org.jcvi.common.primer;
 
 import java.util.ArrayList;
 import java.util.List;
