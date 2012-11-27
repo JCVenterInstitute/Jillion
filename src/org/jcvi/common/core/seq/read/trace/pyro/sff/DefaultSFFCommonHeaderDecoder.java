@@ -26,6 +26,8 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.Arrays;
 
 import org.jcvi.common.core.io.IOUtil;
@@ -44,7 +46,60 @@ enum DefaultSFFCommonHeaderDecoder implements SffCommonHeaderDecoder {
      * Currently SFF only has 1 format code which has a value of <code>1</code>.
      */
     private static final byte FORMAT_CODE = 1;
+    
+    private static final byte FIXED_HEADER_SIZE = 31;
+    
     @Override
+	public SffCommonHeader decodeHeader(FileChannel sff) throws SffDecoderException {
+		ByteBuffer fixedLengthHeader = ByteBuffer.allocate(FIXED_HEADER_SIZE);
+    	try{
+			while (sff.read(fixedLengthHeader) >0){
+	    		//keep reading until we fill buffer...
+			}
+			fixedLengthHeader.flip();
+			verifyMagicNumber(fixedLengthHeader);
+			verifyVersion1(fixedLengthHeader);
+			 BigInteger indexOffset = IOUtil.getUnsignedLong(fixedLengthHeader);
+			 long indexLength = IOUtil.getUnsignedInt(fixedLengthHeader);
+            long numReads = IOUtil.getUnsignedInt(fixedLengthHeader);
+            //skip header length
+            fixedLengthHeader.position(2+fixedLengthHeader.position());
+            int keyLength = IOUtil.getUnsignedShort(fixedLengthHeader);
+            int flowsPerRead = IOUtil.getUnsignedShort(fixedLengthHeader);
+            verifyFlowgramFormatCode(fixedLengthHeader);
+            ByteBuffer flowBuffer = ByteBuffer.allocate(flowsPerRead);
+            ByteBuffer keySequenceBuffer = ByteBuffer.allocate(keyLength);
+            //gather read to read both buffers in one
+            //native I/O op
+            sff.read(new ByteBuffer[]{flowBuffer, keySequenceBuffer});
+            
+            NucleotideSequence flow = new NucleotideSequenceBuilder(
+            								new String(flowBuffer.array(), IOUtil.UTF_8))
+            						.build();
+            NucleotideSequence keySequence = new NucleotideSequenceBuilder(
+											new String(keySequenceBuffer.array(), IOUtil.UTF_8))
+									.build();
+            int bytesReadSoFar = FIXED_HEADER_SIZE+flowsPerRead+keyLength;
+            int padding =SffUtil.caclulatePaddedBytes(bytesReadSoFar);
+            sff.position(padding+ sff.position());
+
+            return new DefaultSffCommonHeader(indexOffset, indexLength,
+            numReads, flowsPerRead, flow,
+            keySequence);
+            
+    	}catch(IOException e){
+    		throw new SffDecoderException("error reading sff header", e);
+    	}
+	}
+	private void verifyMagicNumber(ByteBuffer fixedLengthHeader)
+			throws SffDecoderException {
+		byte[] actualMagicNumber = new byte[4];
+		fixedLengthHeader.get(actualMagicNumber);
+		if(!Arrays.equals(MAGIC_NUMBER, actualMagicNumber)){
+			throw new SffDecoderException("magic number does not match expected");
+		}
+	}
+	@Override
     public SffCommonHeader decodeHeader(DataInputStream in) throws SffDecoderException{
 
         try{
@@ -99,11 +154,25 @@ enum DefaultSFFCommonHeaderDecoder implements SffCommonHeaderDecoder {
         if(in.readByte() != FORMAT_CODE){
             throw new SffDecoderException("unknown flowgram format code");
         }
+    }
+    private void verifyFlowgramFormatCode(ByteBuffer in) throws IOException, SffDecoderException {
+        //currently only 1 format code
+        if(in.get() != FORMAT_CODE){
+            throw new SffDecoderException("unknown flowgram format code");
+        }
 
     }
     private void verifyVersion1(DataInputStream in) throws IOException, SffDecoderException {
         byte[] versionArray = new byte[4];
         IOUtil.blockingRead(in, versionArray);
+        if(!Arrays.equals(versionArray, ACCEPTED_VERSION)){
+            throw new SffDecoderException("version not compatible with decoder");
+        }
+
+    }
+    private void verifyVersion1(ByteBuffer buf) throws IOException, SffDecoderException {
+        byte[] versionArray = new byte[4];
+        buf.get(versionArray);
         if(!Arrays.equals(versionArray, ACCEPTED_VERSION)){
             throw new SffDecoderException("version not compatible with decoder");
         }

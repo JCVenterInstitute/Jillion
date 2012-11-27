@@ -23,10 +23,9 @@
  */
 package org.jcvi.trace.fourFiveFour.flowgram.sff;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
 
 import org.apache.commons.cli.CommandLine;
@@ -39,10 +38,10 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffCommonHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileParser;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadData;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadHeader;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileParser;
 
 public class SffReadInfo implements SffFileVisitor {
 
@@ -110,7 +109,6 @@ public class SffReadInfo implements SffFileVisitor {
         
         options.addOption(new CommandLineOptionBuilder("output", "output file (defaults to STDOUT)")
                         .build());
-        InputStream in=null;
         FileOutputStream fileOut=null;
         try {
             CommandLine commandLine = CommandLineUtils.parseCommandLine(options, args);
@@ -121,8 +119,7 @@ public class SffReadInfo implements SffFileVisitor {
             }else{
                 info = new SffReadInfo();
             }
-            in = new FileInputStream(commandLine.getOptionValue("sff"));
-            SffFileParser.parse(in, info);
+            SffFileParser.parse(new File(commandLine.getOptionValue("sff")), info);
             
             
         } catch (ParseException e) {
@@ -131,7 +128,6 @@ public class SffReadInfo implements SffFileVisitor {
             System.exit(1);
         }
         finally{
-            IOUtil.closeAndIgnoreErrors(in);
             IOUtil.closeAndIgnoreErrors(fileOut);
         }
     }
