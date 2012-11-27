@@ -37,11 +37,14 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.junit.Test;
 /**
+ * Tests Split 0x regions if
+ * there are no gaps in the consensus.
+ * 
  * @author dkatzel
  *
  *
  */
-public class TestConsedUtil_Split0x {
+public class TestConsedUtil_Split0xNoGaps {
 
     private final String originalId="origId";
     private final String referenceConsensus = "AACGTACGTAAACGTACGTAA";

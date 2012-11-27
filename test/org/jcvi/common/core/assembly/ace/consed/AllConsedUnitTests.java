@@ -32,7 +32,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         TestConsedUtil.class,
-        TestConsedUtil_Split0x.class,
+        TestConsedUtil_Split0xNoGaps.class,
+        TestConsedUtil_Split0xWithGaps.class,
+        
         TestConsedUtilGetLatestAce.class,
         TestConsensusNavigationElement.class,
         TestConsensusNavigationElementFactoryMethod.class,
