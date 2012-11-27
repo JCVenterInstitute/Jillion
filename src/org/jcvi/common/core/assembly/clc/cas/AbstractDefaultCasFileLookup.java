@@ -24,7 +24,6 @@
 package org.jcvi.common.core.assembly.clc.cas;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,16 +32,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.common.core.assembly.clc.cas.align.CasScoringScheme;
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fastq.FastqFileParser;
 import org.jcvi.common.core.seq.fastx.fastq.FastqFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffCommonHeader;
+import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileParser;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadData;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadHeader;
-import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileParser;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasFileVisitor{
@@ -122,31 +120,17 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
     }
     private void parse(File file) throws IOException {
         String fileName = file.getName();
-        FileInputStream in=null;
-        try{
-            if(fileName.endsWith("sff")){
-                
-                    in = new FileInputStream(file);
-                    SffFileParser.parse(in, new SffReadOrder(file));
-                
-            }
-            else if(fileName.endsWith("fastq") || fileName.matches("\\S*\\.fastq\\S*")){
-                in = new FileInputStream(file);
-                FastqFileParser.parse(in, new FastqReadOrder(file));
-            }
-            else{
-              //try as fasta...
-                in = new FileInputStream(file);
-                FastaFileParser.parse(in, new FastaReadOrder(file));
-               
-            }
-        }finally{
-            IOUtil.closeAndIgnoreErrors(in);
+        if(fileName.endsWith("sff")){
+          SffFileParser.parse(file, new SffReadOrder(file));                
         }
-        
-        
-        
-            
+        else if(fileName.endsWith("fastq") || fileName.matches("\\S*\\.fastq\\S*")){
+            FastqFileParser.parse(file, new FastqReadOrder(file));
+        }
+        else{
+          //try as fasta...
+            FastaFileParser.parse(file, new FastaReadOrder(file));
+           
+        }
     }
     
     @Override

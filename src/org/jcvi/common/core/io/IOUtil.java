@@ -482,6 +482,31 @@ public final class IOUtil {
         return new BigInteger(1,
                  IOUtil.toByteArray(in, 1, endian)).shortValue();
      }
+    
+    public static BigInteger getUnsignedLong(ByteBuffer buf) throws IOException{
+        byte[] tmp = new byte[8];
+        buf.get(tmp);
+    	return new BigInteger(1,tmp);
+     }
+    public static long getUnsignedInt(ByteBuffer buf) throws IOException{
+        byte[] tmp = new byte[4];
+        buf.get(tmp);
+    	return new BigInteger(1,tmp).longValue();
+     }
+    public static int getUnsignedShort(ByteBuffer buf) throws IOException{
+        byte[] tmp = new byte[2];
+        buf.get(tmp);
+    	return new BigInteger(1,tmp).intValue();
+     }
+    public static short getUnsignedByte(ByteBuffer buf) throws IOException{
+        byte[] tmp = new byte[1];
+        buf.get(tmp);
+    	return new BigInteger(1,tmp).shortValue();
+     }
+    
+    
+    
+    
     public static BigInteger readUnsignedLong(InputStream in) throws IOException{
        return readUnsignedLong(in, Endian.BIG);
      }
