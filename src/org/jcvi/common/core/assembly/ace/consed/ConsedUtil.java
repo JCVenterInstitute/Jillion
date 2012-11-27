@@ -167,14 +167,15 @@ public final class ConsedUtil {
         
         if(contigRanges.size()==1){
             //contig in 1 piece        	
-        	Range contigRange = AssemblyUtil.toUngappedRange(unSplitConsensus, contigRanges.get(0));
+        	Range gappedContigRange = contigRanges.get(0);
+			Range ungappedContigRange = AssemblyUtil.toUngappedRange(unSplitConsensus, gappedContigRange);
         	//we might still have 0x regions at the edges so check
-        	//to see if we're full (gapped) size
-        	if(contigRange.getLength() <unSplitConsensus.getLength()){
-        		String newContigId = computeSplitContigId(unSplitConsensus, originalContigId, oldStart, contigRange);
+        	//to see if we're full (ungapped) size
+        	if(ungappedContigRange.getLength() <unSplitConsensus.getUngappedLength()){
+        		String newContigId = computeSplitContigId(unSplitConsensus, originalContigId, oldStart, gappedContigRange);
             	contigBuilder.setContigId(newContigId);
         	}
-        	map.put(contigRange, contigBuilder.build());
+        	map.put(gappedContigRange, contigBuilder.build());
             return map;
         }
         for(Entry<Range, DefaultAceContigBuilder> splitContigEntry: contigBuilder.split(contigRanges).entrySet()){
