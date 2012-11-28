@@ -49,22 +49,41 @@ import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
  * @see <a href = "http://www.phrap.org/consed/distributions/README.20.0.txt">Consed documentation which contains the ACE FILE FORMAT</a>
  */
 public final class AceFileParser {
-	
+	private static Pattern HEADER_PATTERN = Pattern.compile("^AS\\s+(\\d+)\\s+(\\d+)");
 	private AceFileParser(){
 		//private constructor.
 	}
     /**
      * Parse the given aceFile and call the appropriate methods on the given AceFileVisitor.
+     * The given ace file must be a complete, fully formatted ace file
+     * including all ace header information.  For parsing
+     * partial ace files use {@link #parse(InputStream, AceFileVisitor)}.
      * @param aceFile the ace file to parse, can not be null.
      * @param visitor the visitor to be visited, can not be null.
      * @throws IOException if the ace file does not exist or 
      * if there is a problem reading the ace file .
      * @throws NullPointerException if either the aceFile or the visitor are {@code null}.
+     * @see #parse(InputStream, AceFileVisitor)
      */
     public static void parse(File aceFile, AceFileVisitor visitor) throws IOException{
         InputStream in = new FileInputStream(aceFile);
         try{
-            parse(in, visitor);
+        	TextLineParser parser = new TextLineParser(new BufferedInputStream(in));
+        	//check first line in file to make sure it is valid formatted
+        	//ace file, can't do this for inputStream since 
+        	//we may get a parital stream
+        	visitor.visitFile();
+        	String firstLine = parser.nextLine();
+        	 Matcher matcher = HEADER_PATTERN.matcher(firstLine);
+             if(!matcher.find()){            	 
+            	 throw new IOException("not valid ace file header : " + firstLine);
+             }
+             visitor.visitLine(firstLine);
+             int numberOfContigs = Integer.parseInt(matcher.group(1));
+             int totalNumberOfReads = Integer.parseInt(matcher.group(2));
+             visitor.visitHeader(numberOfContigs, totalNumberOfReads);
+             AceParserState parserState= new AceParserState(visitor,true,parser,false,true,false,0,0);
+             parseAceData(parserState, visitor);
         }finally{
             IOUtil.closeAndIgnoreErrors(in);
         }
@@ -72,6 +91,9 @@ public final class AceFileParser {
     /**
      * Parse the given {@link InputStream} containing ace encoded data
      * and call the appropriate methods on the given AceFileVisitor.
+     * This method may be used to parse partial ace data,
+     * for example, an {@link InputStream} containing only formatted ace data
+     * for a single contig.
      * If the entire inputStream is parsed, then it will automatically
      * be closed, however if there is an error while reading the {@link InputStream},
      * then the {@link InputStream} will be left open.
@@ -88,25 +110,29 @@ public final class AceFileParser {
             throw new NullPointerException("visitor can not be null");
         }
         visitor.visitFile();
-        ParserState parserState = new ParserState(visitor, inputStream);
-        while(!parserState.done()){
+        AceParserState parserState = AceParserState.create(inputStream, visitor);
+        parseAceData(parserState, visitor);
+        
+    }
+	private static void parseAceData(AceParserState parserState,
+			AceFileVisitor visitor) throws IOException {
+		while(!parserState.done()){
             parserState = parserState.parseNextSection();
         }
         handleEndOfParsing(visitor, parserState);
         visitor.visitEndOfFile();
-        
-    }
+	}
     /**
      * This method figures out if we need
      * to call {@link AceFileVisitor#visitEndOfContig()}
-     * or not and might also close the {@link ParserState}
+     * or not and might also close the {@link AceParserState}
      * (which should close the stream)
      * 
      * @param visitor
      * @param parserState
      */
     private static void handleEndOfParsing(AceFileVisitor visitor,
-            ParserState parserState) {
+            AceParserState parserState) {
         if(!parserState.stopParsing && parserState.inAContig){        
             visitor.visitEndOfContig();
         }else{
@@ -127,7 +153,9 @@ public final class AceFileParser {
      * @author dkatzel
      *
      */
-    private static class ParserState implements Closeable{
+    private static class AceParserState implements Closeable{
+    	
+    	
         final boolean isFirstContigInFile;
         final AceFileVisitor visitor;
         final TextLineParser parser;
@@ -138,22 +166,25 @@ public final class AceFileParser {
         private int numberOfReadsSeen;
         private boolean inConsensusQualities=false;
         private QualitySequenceBuilder currentQualitySequenceBuilder;
-        ParserState(AceFileVisitor visitor,
-                InputStream inputStream) throws IOException{
-           this(visitor, true,  new TextLineParser(new BufferedInputStream(inputStream)), false,true,false,0,0);
-       }
         
-        public ParserState stopParsing(){
-            return new ParserState(visitor, isFirstContigInFile, parser,true,parseCurrentContig,inAContig, expectedNumberOfReads, numberOfReadsSeen);
+        public static AceParserState create(InputStream in, AceFileVisitor visitor) throws IOException{
+        	
+        	TextLineParser parser = new TextLineParser(new BufferedInputStream(in));        	
+             return new AceParserState(visitor,true,parser,false,true,false,0,0);
         }
-        public ParserState dontParseCurrentContig(){
-            return new ParserState(visitor, isFirstContigInFile, parser,stopParsing,false,inAContig, expectedNumberOfReads, numberOfReadsSeen);
+        
+        
+        public AceParserState stopParsing(){
+            return new AceParserState(visitor, isFirstContigInFile, parser,true,parseCurrentContig,inAContig, expectedNumberOfReads, numberOfReadsSeen);
+        }
+        public AceParserState dontParseCurrentContig(){
+            return new AceParserState(visitor, isFirstContigInFile, parser,stopParsing,false,inAContig, expectedNumberOfReads, numberOfReadsSeen);
         }
         
         public boolean seenAllExpectedReads(){
             return numberOfReadsSeen == expectedNumberOfReads;
         }
-        public ParserState seenRead(){
+        public AceParserState seenRead(){
             numberOfReadsSeen++;
             return this;
         }
@@ -164,7 +195,7 @@ public final class AceFileParser {
         public void numberOfBasesInContig(int numBases){
         	currentQualitySequenceBuilder = new QualitySequenceBuilder(numBases);
         }
-        public ParserState inConsensusQualities(boolean inConsensusQualities){
+        public AceParserState inConsensusQualities(boolean inConsensusQualities){
         	this.inConsensusQualities = inConsensusQualities;
         	if(!inConsensusQualities){
         		visitor.visitConsensusQualities(currentQualitySequenceBuilder.build());
@@ -176,12 +207,12 @@ public final class AceFileParser {
          * @return
          * @throws IOException 
          */
-        public ParserState parseNextSection() throws IOException {
+        public AceParserState parseNextSection() throws IOException {
             String lineWithCR = parser.nextLine();           
 
             return SectionHandler.handleSection(lineWithCR, this);
         }
-        ParserState(AceFileVisitor visitor, boolean isFirstContigInFile,
+        AceParserState(AceFileVisitor visitor, boolean isFirstContigInFile,
                TextLineParser parser, boolean stopParsing, boolean parseCurrentContig, boolean inAContig,
                int numberOfExpectedReads, int numberOfReadsSeen) {
             this.visitor = visitor;
@@ -208,8 +239,8 @@ public final class AceFileParser {
          * values except {@link #isFirstContigInFile} is now
          * set to {@code false}.
          */
-        ParserState inAContig(int numberOfExpectedReads){
-            return new ParserState(visitor, false, parser,stopParsing,true,true, numberOfExpectedReads,0);
+        AceParserState inAContig(int numberOfExpectedReads){
+            return new AceParserState(visitor, false, parser,stopParsing,true,true, numberOfExpectedReads,0);
         }
         /**
          * Returns new ParserStruct instance but which
@@ -218,12 +249,12 @@ public final class AceFileParser {
          * values except {@link #isFirstContigInFile} is now
          * set to {@code false}.
          */
-        ParserState notInAContig(){
+        AceParserState notInAContig(){
             if(expectedNumberOfReads !=numberOfReadsSeen){
                 throw new IllegalStateException(
                         String.format("did not visit all expected reads : %d vs %d", numberOfReadsSeen, expectedNumberOfReads));
             }
-            return new ParserState(visitor, false, parser,stopParsing,true,false,0,0);
+            return new AceParserState(visitor, false, parser,stopParsing,true,false,0,0);
         }
         /**
         * {@inheritDoc}
@@ -244,7 +275,7 @@ public final class AceFileParser {
         
         ACE_HEADER("^AS\\s+(\\d+)\\s+(\\d+)"){
             @Override
-            ParserState handle(Matcher headerMatcher, ParserState struct, String line) {
+            AceParserState handle(Matcher headerMatcher, AceParserState struct, String line) {
             	//parse current line
             	struct.visitor.visitLine(line);
                 int numberOfContigs = Integer.parseInt(headerMatcher.group(1));
@@ -255,7 +286,7 @@ public final class AceFileParser {
         },
         CONSENSUS_QUALITIES("^BQ\\s*"){
             @Override
-            ParserState handle(Matcher matcher, ParserState parserState, String line) {
+            AceParserState handle(Matcher matcher, AceParserState parserState, String line) {
             	//parse current line
             	parserState.visitor.visitLine(line);
                 if(parserState.parseCurrentContig()){
@@ -270,7 +301,7 @@ public final class AceFileParser {
          */
         BASECALLS("^([\\-*a-zA-Z]+)\\s*$"){
             @Override
-            ParserState handle(Matcher basecallMatcher, ParserState parserState, String line) {
+            AceParserState handle(Matcher basecallMatcher, AceParserState parserState, String line) {
             	//parse current line
             	parserState.visitor.visitLine(line);
                 if(line.indexOf('-') !=-1){
@@ -285,8 +316,8 @@ public final class AceFileParser {
         },
         CONTIG_HEADER("^CO\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+([UC])"){
             @Override
-            ParserState handle(Matcher contigMatcher, ParserState struct, String line) {
-                ParserState ret = struct;
+            AceParserState handle(Matcher contigMatcher, AceParserState struct, String line) {
+                AceParserState ret = struct;
                 if(!struct.isFirstContigInFile){
                 	ret = handleEndOfContig(ret);
                 }
@@ -318,7 +349,7 @@ public final class AceFileParser {
         },
         ASSEMBLED_FROM("^AF\\s+(\\S+)\\s+([U|C])\\s+(-?\\d+)"){
             @Override
-            ParserState handle(Matcher assembledFromMatcher, ParserState parserState, String line) {
+            AceParserState handle(Matcher assembledFromMatcher, AceParserState parserState, String line) {
             	//parse current line
             	if(parserState.inConsensusQualities()){
             		parserState.inConsensusQualities(false);
@@ -336,7 +367,7 @@ public final class AceFileParser {
         },
         READ_HEADER("^RD\\s+(\\S+)\\s+(\\d+)"){
             @Override
-            ParserState handle(Matcher readMatcher, ParserState parserState, String line) {
+            AceParserState handle(Matcher readMatcher, AceParserState parserState, String line) {
             	//parse current line
             	parserState.visitor.visitLine(line);
                 if(parserState.parseCurrentContig()){
@@ -349,7 +380,7 @@ public final class AceFileParser {
         },
         READ_QUALITY("^QA\\s+(-?\\d+)\\s+(-?\\d+)\\s+(\\d+)\\s+(\\d+)"){
             @Override
-            ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) {
+            AceParserState handle(Matcher qualityMatcher, AceParserState parserState, String line) {
             	//parse current line
             	parserState.visitor.visitLine(line);
                 if(parserState.parseCurrentContig()){
@@ -371,7 +402,7 @@ public final class AceFileParser {
             private final Pattern sffFakeChromatogramPattern = Pattern.compile("sff:(\\S+)?\\.sff:(\\S+)");
              
             @Override
-            ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
+            AceParserState handle(Matcher qualityMatcher, AceParserState parserState, String line) throws IOException {
             	//parse current line
             	parserState.visitor.visitLine(line);
                 if(parserState.parseCurrentContig()){
@@ -426,10 +457,10 @@ public final class AceFileParser {
             private final Pattern readTagPattern = Pattern.compile("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d{6}:\\d{6})");
             
             @Override
-            ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
+            AceParserState handle(Matcher qualityMatcher, AceParserState parserState, String line) throws IOException {
             	//parse current line
             	parserState.visitor.visitLine(line);
-                ParserState currentParserState=parserState;
+                AceParserState currentParserState=parserState;
             	if(currentParserState.inAContig && currentParserState.seenAllExpectedReads()){                    
                     currentParserState =currentParserState.notInAContig();
                     currentParserState = handleEndOfContig(currentParserState);
@@ -470,9 +501,9 @@ public final class AceFileParser {
             private final Pattern wholeAssemblyTagPattern = Pattern.compile("(\\S+)\\s+(\\S+)\\s+(\\d{6}:\\d{6})");
             
             @Override
-            ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
+            AceParserState handle(Matcher qualityMatcher, AceParserState parserState, String line) throws IOException {
             	
-                ParserState currentParserState = parserState;
+                AceParserState currentParserState = parserState;
             	if(currentParserState.inAContig && currentParserState.seenAllExpectedReads()){
                     currentParserState =currentParserState.notInAContig();
                     currentParserState = handleEndOfContig(currentParserState);
@@ -505,7 +536,7 @@ public final class AceFileParser {
                 return currentParserState;
             }
 
-            private StringBuilder parseWholeAssemblyTagData(ParserState struct)
+            private StringBuilder parseWholeAssemblyTagData(AceParserState struct)
                     throws IOException {
                 String lineWithCR;
                 boolean doneTag =false;
@@ -529,9 +560,9 @@ public final class AceFileParser {
             private final Pattern consensusTagPattern = Pattern.compile("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d{6}:\\d{6})(\\s+(noTrans))?");
             
             @Override
-            ParserState handle(Matcher qualityMatcher, ParserState parserState, String line) throws IOException {
+            AceParserState handle(Matcher qualityMatcher, AceParserState parserState, String line) throws IOException {
 
-                ParserState currentParserState = parserState;
+                AceParserState currentParserState = parserState;
             	if(currentParserState.inAContig && currentParserState.seenAllExpectedReads()){                    
                     currentParserState =currentParserState.notInAContig();
                     currentParserState = handleEndOfContig(currentParserState);
@@ -575,7 +606,7 @@ public final class AceFileParser {
                 return currentParserState;
             }
 
-            private void parseConsensusTagData(ParserState parserState,
+            private void parseConsensusTagData(AceParserState parserState,
                     boolean pDoneTag, boolean pInComment) throws IOException {
                 String lineWithCR;
                 StringBuilder consensusComment=null;
@@ -611,7 +642,7 @@ public final class AceFileParser {
         },
         IGNORE{
             @Override
-            ParserState handle(Matcher matcher, ParserState parserState,
+            AceParserState handle(Matcher matcher, AceParserState parserState,
                     String line) throws IOException {
             	
             	//just visit the current line
@@ -644,9 +675,9 @@ public final class AceFileParser {
         final boolean isComplimented(final String orientation) {
             return COMPLIMENT_STRING.equals(orientation);
         }
-        abstract ParserState handle(Matcher matcher, ParserState struct, String line) throws IOException;
+        abstract AceParserState handle(Matcher matcher, AceParserState struct, String line) throws IOException;
         
-        private static ParserState handleEndOfContig(ParserState ret) {
+        private static AceParserState handleEndOfContig(AceParserState ret) {
 			EndContigReturnCode retCode = ret.visitor.visitEndOfContig();
 			if(retCode ==null){
 				throw new NullPointerException("EndContigReturnCode can not be null");
@@ -671,7 +702,7 @@ public final class AceFileParser {
                 this.handler = handler;
                 this.matcher = matcher;
             }
-            ParserState handle(String line, ParserState struct) throws IOException{
+            AceParserState handle(String line, AceParserState struct) throws IOException{
                 return handler.handle(matcher, struct, line);
             }
         }
@@ -685,7 +716,7 @@ public final class AceFileParser {
             //if we don't find a handler, then we ignore it
             return new ResultHandler(IGNORE,null);
         }
-        public static ParserState handleSection(String line, ParserState struct) throws IOException{
+        public static AceParserState handleSection(String line, AceParserState struct) throws IOException{
             return findCorrectHandlerFor(line).handle(line, struct);
 
         }

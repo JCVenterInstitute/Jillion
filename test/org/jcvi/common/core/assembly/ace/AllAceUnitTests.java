@@ -37,6 +37,8 @@ import org.junit.runners.Suite.SuiteClasses;
        TestAssembledFrom.class,
        TestAceParserPhdInfo.class,
        
+       TestParseInvalidAceNotAnAceFile.class,
+       
        TestDefaultAceContig.class,
        TestAceContigBuilderInvalidRead.class,
        TestAceContigBuilderRecallConsensus.class,
