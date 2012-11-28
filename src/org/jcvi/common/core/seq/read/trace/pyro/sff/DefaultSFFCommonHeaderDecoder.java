@@ -27,7 +27,6 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.util.Arrays;
 
 import org.jcvi.common.core.io.IOUtil;
@@ -50,38 +49,35 @@ enum DefaultSFFCommonHeaderDecoder implements SffCommonHeaderDecoder {
     private static final byte FIXED_HEADER_SIZE = 31;
     
     @Override
-	public SffCommonHeader decodeHeader(FileChannel sff) throws SffDecoderException {
-		ByteBuffer fixedLengthHeader = ByteBuffer.allocate(FIXED_HEADER_SIZE);
+	public SffCommonHeader decodeHeader(ByteBuffer buf) throws SffDecoderException {
+
     	try{
-			while (sff.read(fixedLengthHeader) >0){
-	    		//keep reading until we fill buffer...
-			}
-			fixedLengthHeader.flip();
-			verifyMagicNumber(fixedLengthHeader);
-			verifyVersion1(fixedLengthHeader);
-			 BigInteger indexOffset = IOUtil.getUnsignedLong(fixedLengthHeader);
-			 long indexLength = IOUtil.getUnsignedInt(fixedLengthHeader);
-            long numReads = IOUtil.getUnsignedInt(fixedLengthHeader);
+			verifyMagicNumber(buf);
+			verifyVersion1(buf);
+			 BigInteger indexOffset = IOUtil.getUnsignedLong(buf);
+			 long indexLength = IOUtil.getUnsignedInt(buf);
+            long numReads = IOUtil.getUnsignedInt(buf);
             //skip header length
-            fixedLengthHeader.position(2+fixedLengthHeader.position());
-            int keyLength = IOUtil.getUnsignedShort(fixedLengthHeader);
-            int flowsPerRead = IOUtil.getUnsignedShort(fixedLengthHeader);
-            verifyFlowgramFormatCode(fixedLengthHeader);
-            ByteBuffer flowBuffer = ByteBuffer.allocate(flowsPerRead);
-            ByteBuffer keySequenceBuffer = ByteBuffer.allocate(keyLength);
+            buf.position(2+buf.position());
+            int keyLength = IOUtil.getUnsignedShort(buf);
+            int flowsPerRead = IOUtil.getUnsignedShort(buf);
+            verifyFlowgramFormatCode(buf);
+            byte[] flowBuffer = new byte[flowsPerRead];
+            byte[] keySequenceBuffer = new byte[keyLength];
             //gather read to read both buffers in one
             //native I/O op
-            sff.read(new ByteBuffer[]{flowBuffer, keySequenceBuffer});
+            buf.get(flowBuffer);
+            buf.get(keySequenceBuffer);
             
             NucleotideSequence flow = new NucleotideSequenceBuilder(
-            								new String(flowBuffer.array(), IOUtil.UTF_8))
+            								new String(flowBuffer, IOUtil.UTF_8))
             						.build();
             NucleotideSequence keySequence = new NucleotideSequenceBuilder(
-											new String(keySequenceBuffer.array(), IOUtil.UTF_8))
+											new String(keySequenceBuffer, IOUtil.UTF_8))
 									.build();
             int bytesReadSoFar = FIXED_HEADER_SIZE+flowsPerRead+keyLength;
             int padding =SffUtil.caclulatePaddedBytes(bytesReadSoFar);
-            sff.position(padding+ sff.position());
+            buf.position(padding+ buf.position());
 
             return new DefaultSffCommonHeader(indexOffset, indexLength,
             numReads, flowsPerRead, flow,
