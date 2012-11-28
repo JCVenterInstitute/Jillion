@@ -1,6 +1,6 @@
 package org.jcvi.common.primer;
 
-public enum SaltAdjustmentStrategy {
+public enum SaltCorrectionStrategy {
 	/**
 	 * The used salt correction
 	 * used most often in programs
@@ -16,7 +16,7 @@ public enum SaltAdjustmentStrategy {
 	
 	private final double adjustmentConstant;
 	
-	private SaltAdjustmentStrategy(double adjustmentConstant){
+	private SaltCorrectionStrategy(double adjustmentConstant){
 		this.adjustmentConstant = adjustmentConstant;
 	}
 	/**

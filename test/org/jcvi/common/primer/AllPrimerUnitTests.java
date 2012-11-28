@@ -8,7 +8,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
 	TestPrimerDetector.class,
 	TestPrimerDetector_ActualData.class,
-	TestPrimerDetectorInternalPrimerHit.class
+	TestPrimerDetectorInternalPrimerHit.class,
+	
+	TestSaltCorrectionStrategy.class
 	
 }
 )
