@@ -25,6 +25,8 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.nio.BufferUnderflowException;
+import java.nio.ByteBuffer;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -58,5 +60,36 @@ enum DefaultSffReadDataDecoder implements SffReadDataDecoder {
         }
 
     }
+    @Override
+    public SffReadData decode(ByteBuffer in, int numberOfFlows, int numberOfBases) throws SffDecoderException {
+        try{
+            short[] values = new short[numberOfFlows];            
+            in.asShortBuffer().get(values);
+            //need to increment position
+            //because shortBuffer view used above
+            //to get flow values has its own
+            //independent position field
+            in.position(in.position()+numberOfFlows*2);
 
+            byte[] indexes = new byte[numberOfBases];
+            in.get(indexes);
+            
+            byte[] basecallsAsBytes = new byte[numberOfBases];
+            in.get(basecallsAsBytes);
+            NucleotideSequence bases = new NucleotideSequenceBuilder(new String(basecallsAsBytes,IOUtil.UTF_8))
+            								.build();
+            byte[] qualitiesAsBytes = new byte[numberOfBases];
+            in.get(qualitiesAsBytes);
+            QualitySequence qualities = new QualitySequenceBuilder(qualitiesAsBytes).build();
+
+            int readDataLength = SffUtil.getReadDataLength(numberOfFlows, numberOfBases);
+            int padding =SffUtil.caclulatePaddedBytes(readDataLength);
+            in.position(in.position()+padding);
+            return new DefaultSffReadData(bases, indexes, values,qualities);
+        }
+        catch(BufferUnderflowException e){
+            throw new SffDecoderException("error decoding read data", e);
+        }
+
+    }
 }

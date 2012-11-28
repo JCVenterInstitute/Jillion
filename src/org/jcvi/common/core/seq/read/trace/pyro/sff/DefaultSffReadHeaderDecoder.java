@@ -25,6 +25,8 @@ package org.jcvi.common.core.seq.read.trace.pyro.sff;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.nio.BufferUnderflowException;
+import java.nio.ByteBuffer;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
@@ -36,7 +38,9 @@ enum DefaultSffReadHeaderDecoder implements SffReadHeaderDecoder {
 	 */
 	INSTANCE;
 	
-    @Override
+    private static final int FIXED_PORTION_HEADER_LENGTH = 16;
+
+	@Override
     public SffReadHeader decodeReadHeader(DataInputStream in)
             throws SffDecoderException {
         try{
@@ -64,7 +68,33 @@ enum DefaultSffReadHeaderDecoder implements SffReadHeaderDecoder {
             throw new SffDecoderException("error trying to decode read header",e);
         }
     }
-
+	@Override
+    public SffReadHeader decodeReadHeader(ByteBuffer buf)
+            throws SffDecoderException {
+        try{
+            short headerLength =buf.getShort();
+            short nameLegnth = buf.getShort();
+            int numBases = buf.getInt();
+            short qualLeft = buf.getShort();
+            short qualRight = buf.getShort();
+            short adapterLeft = buf.getShort();
+            short adapterRight = buf.getShort();
+            String name = readSequenceName(buf,nameLegnth);
+            int bytesReadSoFar = FIXED_PORTION_HEADER_LENGTH+nameLegnth;
+            int padding =SffUtil.caclulatePaddedBytes(bytesReadSoFar);
+            if(headerLength != bytesReadSoFar+padding){
+                throw new SffDecoderException("invalid header length");
+            }
+            buf.position(padding+ buf.position());
+            return new DefaultSffReadHeader(numBases,
+                    Range.of(CoordinateSystem.RESIDUE_BASED, qualLeft, qualRight),
+                    Range.of(CoordinateSystem.RESIDUE_BASED, adapterLeft, adapterRight),
+                     name);
+        }
+        catch(IOException e){
+            throw new SffDecoderException("error trying to decode read header",e);
+        }
+    }
 
     private String readSequenceName(DataInputStream in, short length) throws IOException {
         byte[] name = new byte[length];
@@ -77,5 +107,14 @@ enum DefaultSffReadHeaderDecoder implements SffReadHeaderDecoder {
         return new String(name,IOUtil.UTF_8);
     }
 
-    
+    private String readSequenceName(ByteBuffer buf, int length) throws IOException {
+        byte[] name = new byte[length];
+        try{
+        	buf.get(name);
+        }catch(BufferUnderflowException e){
+        	throw new SffDecoderException("error decoding seq name",e);
+        }
+       
+        return new String(name,IOUtil.UTF_8);
+    }
 }
