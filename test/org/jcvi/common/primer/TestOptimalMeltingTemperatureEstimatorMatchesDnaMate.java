@@ -49,7 +49,7 @@ public class TestOptimalMeltingTemperatureEstimatorMatchesDnaMate {
 	public void breslaurWithSaltAdjustment(){
 		double noSalt =OptimalMeltingTemperatureEstimator.BRESLAUR.estimateTm(sequence, oligoConcentration);
 		assertEquals(sequence.toString(), breslaur, 
-				SaltCorrectionStrategy.SCHILDKRAUT_LIFSON.adjustTm(noSalt, saltConcentration),
+				SaltCorrectionStrategy.SCHILDKRAUT_LIFSON.adjustTemperature(noSalt, saltConcentration),
 				0.1D);
 	}
 	
@@ -57,14 +57,14 @@ public class TestOptimalMeltingTemperatureEstimatorMatchesDnaMate {
 	public void santaLuciaAllawiWithSaltAdjustment(){
 		double noSalt =OptimalMeltingTemperatureEstimator.ALLAWI_SANTALUCIA.estimateTm(sequence, oligoConcentration);
 		assertEquals(sequence.toString(), santaLucia, 
-				SaltCorrectionStrategy.SCHILDKRAUT_LIFSON.adjustTm(noSalt, saltConcentration),
+				SaltCorrectionStrategy.SCHILDKRAUT_LIFSON.adjustTemperature(noSalt, saltConcentration),
 				0.1D);
 	}
 	@Test
 	public void sugimotoWithSaltAdjustment(){
 		double noSalt =OptimalMeltingTemperatureEstimator.SUGIMOTO.estimateTm(sequence, oligoConcentration);
 		assertEquals(sequence.toString(), sugimoto, 
-				SaltCorrectionStrategy.SCHILDKRAUT_LIFSON.adjustTm(noSalt, saltConcentration),
+				SaltCorrectionStrategy.SCHILDKRAUT_LIFSON.adjustTemperature(noSalt, saltConcentration),
 				0.1D);
 	}
 }

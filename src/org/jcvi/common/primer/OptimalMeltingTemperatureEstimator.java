@@ -14,8 +14,11 @@ import org.jcvi.common.core.util.iter.PeekableIterator;
 /**
  * Includes several algorithms
  * that compute the optimal
- * melting temperature for
+ * melting temperature (T<sub>m</sub>) for
  * a primer sequence.
+ * Melting Temperature is when half
+ * of the DNA dissociates and becomes
+ * single stranded.
  * @author dkatzel
  *
  */
@@ -55,14 +58,14 @@ public enum OptimalMeltingTemperatureEstimator {
 		
 	},
 	/**
-	 * Use the Wallace formaula
+	 * Use the Wallace et al. formula
 	 * which only takes into account the number of 
 	 * A,C,G and T nucleotides.  The positions of the nucleotides
 	 * is does not matter.  This
 	 * estimation and is not recommended for
 	 * large primers.
-	 * @see <a href="http://www.pubget.com/paper/158748">
-	 Wallace RB et al. (1979) Nucleic Acids Res 6:3543-3557; PMID 158748</a> 
+	 * @see <a href=http://www.ncbi.nlm.nih.gov/pmc/articles/PMC327955/">
+	RB Wallace, et al. Nucleic Acids Res. 1979;6:3543.</a> 
 	 */
 	WALLACE{
 		/**
