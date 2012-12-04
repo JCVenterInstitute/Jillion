@@ -16,7 +16,7 @@ public enum SaltCorrectionStrategy {
 	SCHILDKRAUT_LIFSON(16.6D),
 	/**
 	 * The used salt correction
-	 * listed in the santaLucia paper
+	 * listed in the santaLucia96 paper.
 	 * The correction equation is 
 	 * <pre>12.5 * log10(concentration in nM) + initialTm</pre>
 	 * The implementation will convert the input mM into nM.
@@ -28,7 +28,22 @@ public enum SaltCorrectionStrategy {
 	 Improved nearest-neighbor parameters for predicting DNA duplex stability.
 	Biochemistry. 1996 Mar 19;35(11):3555-62; PMID 8639506 
 	 */
-	SANTALUCIA_1996(12.5D)
+	SANTALUCIA_1996(12.5D),
+	/**
+	 * No Salt Correction,
+	 * {@link #adjustTm(double, double)}
+	 * returns the initial uncorrected temperature.
+	 */
+	NONE(0D){
+		/**
+		 * @return initialTm always.
+		 */
+		@Override
+		public double adjustTemperature(double initialTm, double mM) {
+			return initialTm;
+		}
+		
+	}
 	;
 	
 	private final double adjustmentConstant;
@@ -46,7 +61,7 @@ public enum SaltCorrectionStrategy {
 	 * @return a new temperature in degrees
 	 * celsius taking salt concentration into account.
 	 */
-	public double adjustTm(double initialTm, double mM){
+	public double adjustTemperature(double initialTm, double mM){
 		if(mM<0){
 			throw new IllegalArgumentException("concentration can not be negative");
 		}
