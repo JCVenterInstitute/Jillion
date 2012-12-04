@@ -10,7 +10,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	TestPrimerDetector_ActualData.class,
 	TestPrimerDetectorInternalPrimerHit.class,
 	
-	TestSaltCorrectionStrategy.class
+	TestSaltCorrectionStrategy.class,
+	TestOptimalMeltingTemperatureEstimatorMatchesDnaMate.class
 	
 }
 )

@@ -2,6 +2,7 @@ package org.jcvi.common.primer;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -10,8 +11,15 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.PeekableIterator;
-
-public enum PrimerTempEstimator {
+/**
+ * Includes several algorithms
+ * that compute the optimal
+ * melting temperature for
+ * a primer sequence.
+ * @author dkatzel
+ *
+ */
+public enum OptimalMeltingTemperatureEstimator {
 	/**
 	 * Use the Marmur formaula
 	 * which only takes into account the number of 
@@ -120,6 +128,19 @@ public enum PrimerTempEstimator {
 				double molarConcentration) {
 			return estimateTm(sequence, molarConcentration, deltaH, deltaS);
 		}
+
+		@Override
+		protected InitialValues getSymmetryCorrection() {
+			return new InitialValues(13.4, 0D);
+		}
+
+		@Override
+		protected InitialValues getInitialValuesFor(NucleotideSequence sequence) {
+			if(hasGorC(sequence)){
+				return new InitialValues(167.7D, 0D);
+			}
+			return new InitialValues(201.3D, 0D);
+		}
 		
 	},
 	/**
@@ -127,87 +148,75 @@ public enum PrimerTempEstimator {
 	 * using an improved nearest-neighbor 
 	 * version of Freier et al 
 	 * using updated transition tables
-	 * as described by SantaLucia96.
-	 * @see <a href="http://www.ncbi.nlm.nih.gov/pubmed/8639506">
-	 SantaLucia J Jr, Allawi HT, Seneviratne PA.
-	 Improved nearest-neighbor parameters for predicting DNA duplex stability.
-	Biochemistry. 1996 Mar 19;35(11):3555-62; PMID 8639506 
-	 </a>
+	 * as described 
+	 * Allawi, H. T. & SantaLucia, J., Jr. (1997), "Thermodynamics and NMR of Internal G-T Mismatches in DNA", Biochemistry 36, 10581-10594.
 	 */
-	SANTALUCIA_ALLAWI{
-			
+	ALLAWI_SANTALUCIA{
+
 		private final LookupTable deltaH = new LookupTable.Builder()
-											.aa(84).ac(74).ag(61).at(65)
-											.ca(74).cc(67).cg(101).ct(61)
-											.ga(77).gc(111).gg(67).gt(86)
-											.ta(63).tc(77).tg(74).tt(84)
-											.build();
+												.aa(79).ac(84).ag(78).at(72)
+												.ca(85).cc(80).cg(106).ct(78)
+												.ga(82).gc(98).gg(80).gt(84)
+												.ta(72).tc(82).tg(85).tt(79)
+												.build();
 		private final LookupTable deltaS = new LookupTable.Builder()
-											.aa(236).ac(230).ag(161).at(188)
-											.ca(193).cc(156).cg(255).ct(161)
-											.ga(203).gc(255).gg(156).gt(230)
-											.ta(185).tc(203).tg(193).tt(236)
-											.build();
-		
+												.aa(222).ac(224).ag(210).at(204)
+												.ca(227).cc(199).cg(272).ct(210)
+												.ga(222).gc(244).gg(199).gt(224)
+												.ta(213).tc(222).tg(227).tt(222)
+												.build();
 		@Override
 		public double estimateTm(NucleotideSequence sequence, double molarConcentration) {
 			return estimateTm(sequence, molarConcentration, deltaH, deltaS);
 		}
-		/**
-		 * The Santa Lucia paper has extra columns
-		 * in table 3 to descript the deltaS and deltaG
-		 * values for duplexes that contain at
-		 * least one GC base pair and those that
-		 * only contain AT base pairs.
-		 * {@inheritDoc}
-		 */
+		
 		@Override
-		protected double getInitialEntropyFor(
-				NucleotideSequence sequence) {
-			boolean hasGC=false;
-			for(Nucleotide n : sequence){
-				if(n == Nucleotide.Guanine || n == Nucleotide.Cytosine){
-					hasGC=true;
-					break;
-				}
-			}
-			if(hasGC){
-				return 59;
-			}else{
-				return 90;
-			}
+		protected InitialValues getSymmetryCorrection() {
+			return new InitialValues(14D, 0D);
 		}
-		/**
-		 * The Santa Lucia paper found
-		 * sequences with 5' terminal T-A 3' bp
-		 * should get a entropy penalty
-		 * while others (even including
-		 * 5' A-T 3' bp) should not.
-		 * {@inheritDoc}
-		 */
+		
 		@Override
-		protected double getTerminalBasePenalty(Nucleotide terminalBase) {
-			//only 5' T should be penalized
-			return terminalBase ==Nucleotide.Thymine? 4: 0;
+		protected InitialValues getInitialValuesFor(NucleotideSequence sequence) {
+			Nucleotide firstBase = sequence.get(0);
+			Nucleotide lastBase = sequence.get(sequence.getLength()-1);
+			double entropy=0D;
+			double enthalpy = 0D;
+			if(firstBase==Nucleotide.Guanine || firstBase==Nucleotide.Cytosine){
+				entropy +=28;
+				enthalpy -=1;
+			}else if(firstBase==Nucleotide.Adenine || firstBase==Nucleotide.Thymine){
+				entropy -=41;
+				enthalpy -=23D;
+			}
+			if(lastBase==Nucleotide.Guanine || lastBase==Nucleotide.Cytosine){
+				entropy +=28;
+				enthalpy -=1;
+			}else if(lastBase==Nucleotide.Adenine || lastBase==Nucleotide.Thymine){
+				entropy -=41;
+				enthalpy -=23D;
+			}
+			return new InitialValues(entropy,enthalpy);
 		}
+		
 		
 		
 	},
 	/**
 	 * Computes the optimal melting temperature
-	 * using an the same equation
-	 * as {@link #SANTALUCIA_ALLAWI} except 
-	 * using updated "unified" transition tables
-	 * that were derived differently as
-	 * described in SantaLucia 98.
-	 * @see <a href="">
+	 * using an the same transition tables
+	 * as {@link #ALLAWI_SANTALUCIA} (now calling
+	 * this "unified" transition tables)
+	 * but uses a modified initiation
+	 * parameters for terminal
+	 * G*C and terminal A*T pairs.
+	 * @see <a href="http://www.ncbi.nlm.nih.gov/pubmed/9465037">
 	 J J SantaLucia.
 	 A unified view of polymer, dumbbell, and oligonucleotide DNA
 nearest-neighbor thermodynamics. 
 	Proc Natl Acad Sci U S A 95(4):1460-5 (1998), PMID 9465037 
 	 </a>
 	 */
-	SANTALUCIA{
+	SANTALUCIA_1998{
 			
 		private final LookupTable deltaH = new LookupTable.Builder()
 											.aa(79).ac(84).ag(78).at(72)
@@ -226,31 +235,168 @@ nearest-neighbor thermodynamics.
 		public double estimateTm(NucleotideSequence sequence, double molarConcentration) {
 			return estimateTm(sequence, molarConcentration, deltaH, deltaS);
 		}
-		/**
-		 * The Santa Lucia paper has extra columns
-		 * in table 3 to descript the deltaS and deltaG
-		 * values for duplexes that contain at
-		 * least one GC base pair and those that
-		 * only contain AT base pairs.
-		 * {@inheritDoc}
-		 */
+
+		
 		@Override
-		protected double getInitialEntropyFor(NucleotideSequence sequence) {
-			Nucleotide firstBase = sequence.get(0);
-			Nucleotide secondBase = sequence.get(1);
-			if((firstBase==Nucleotide.Guanine && secondBase==Nucleotide.Cytosine)
-					|| (firstBase==Nucleotide.Cytosine && secondBase==Nucleotide.Guanine) ){
-				return -28;
-			}else if((firstBase==Nucleotide.Adenine && secondBase==Nucleotide.Thymine)
-				|| (firstBase==Nucleotide.Thymine && secondBase==Nucleotide.Adenine) ){
-				return -28;
+		protected InitialValues getInitialValuesFor(NucleotideSequence sequence) {
+			double entropy=0D;
+			double enthalpy=0D;
+			if(hasGorC(sequence)){
+				entropy +=59;
+			}else{
+				entropy +=90;
 			}
-				return 0D;
+			Nucleotide firstBase=sequence.get(0);
+			if(firstBase==Nucleotide.Thymine || firstBase == Nucleotide.Adenine){
+				entropy -=41;
+				enthalpy -=23;
+			}else{
+				entropy +=28;
+				enthalpy -=1;
+			}
+
+			return new InitialValues(entropy, enthalpy);
+		}
+
+
+		@Override
+		protected InitialValues getSymmetryCorrection() {
+			return new InitialValues(14D, 0D);
 		}
 		
 		
+	},
+	/**
+	 * Computes the optimal melting temperature
+	 * using transition tables derived from
+	 *  John SantaLucia, Jr., Hatim T. Allawi, and P. Ananda Seneviratne.
+	Improved Nearest-Neighbor Parameters for Predicting DNA Duplex Stability. 
+	Biochemistry 1996, 35, 3555-3562.
+	 *  @see <a href="http://www.ncbi.nlm.nih.gov/pubmed/8639506">
+	 SantaLucia J Jr, Allawi HT, Seneviratne PA.
+	 Improved nearest-neighbor parameters for predicting DNA duplex stability.
+	Biochemistry. 1996 Mar 19;35(11):3555-62; PMID 8639506 
+	 */
+	SANTALUCIA_1996{
+			
+		private final LookupTable deltaH = new LookupTable.Builder()
+												.aa(84).ac(86).ag(61).at(65)
+												.ca(74).cc(67).cg(101).ct(61)
+												.ga(77).gc(111).gg(67).gt(86)
+												.ta(63).tc(77).tg(74).tt(84)
+												.build();
+		private final LookupTable deltaS = new LookupTable.Builder()
+												.aa(236).ac(230).ag(161).at(188)
+												.ca(193).cc(156).cg(255).ct(161)
+												.ga(203).gc(284).gg(156).gt(230)
+												.ta(185).tc(203).tg(193).tt(236)
+												.build();
+										
+		@Override
+		public double estimateTm(NucleotideSequence sequence, double molarConcentration) {
+			return estimateTm(sequence, molarConcentration, deltaH, deltaS);
+		}
+
+		
+		@Override
+		protected InitialValues getInitialValuesFor(NucleotideSequence sequence) {
+			//this data is set by table 3 in the paper
+			//specifically table 3 footnotes b,c and e
+			double entropy=0D;
+			double enthalpy=0D;
+			if(hasGorC(sequence)){
+				//initiation paramter for duplexes
+				//that contain at least one G*C pair
+				entropy +=59;
+			}else{
+				//initiation paramter for duplexes
+				//that contain only A*T pairs
+				entropy +=90;
+			}
+			//compute penalty for EACH terminal 5'T*A 3'
+			// but not 5' A*T 3'
+			enthalpy -=40 *getNumberOfTerminal5primerTs(sequence);
+			
+
+			return new InitialValues(entropy, enthalpy);
+		}
+
+
+		private int getNumberOfTerminal5primerTs(NucleotideSequence sequence) {
+			NucleotideSequence reversedSeq = new NucleotideSequenceBuilder(sequence)
+												.reverse()
+												.build();
+			Iterator<Nucleotide> iter = reversedSeq.iterator();
+			boolean done=false;
+			int numberOfTerminalTs=0;
+			while(!done && iter.hasNext()){
+				if(iter.next() == Nucleotide.Thymine){
+					numberOfTerminalTs++;
+				}else{
+					done=true;
+				}
+				
+			}
+			return numberOfTerminalTs;
+		}
+
+
+		@Override
+		protected InitialValues getSymmetryCorrection() {
+			//this data is set by table 3 in the paper
+			//specifically table 3 footnote d
+			return new InitialValues(14D, 0D);
+		}
+		
+		
+	},
+	/**
+	  Computes the optimal melting temperature
+	 * using an improved nearest-neighbor 
+	 * version of Freier et al 
+	 * using updated transition tables
+	 * as described by Sugimoto et all.
+	 * @see <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC146261/">
+	 Naoki Sugimoto, Shu-ich Nakano, Mari Yoneyama and Kei-ich Honda.
+	 Improved thermodynamic parameters and helix
+initiation factor to predict stability of DNA duplexes.
+	Nucleic Acids Research. 1996 Vol. 24. No. 22 4501-4505; PMCID: PMC146261 
+	 </a>
+	 */
+	SUGIMOTO{
+		
+		private final LookupTable deltaH = new LookupTable.Builder()
+											.aa(80).ac(94).ag(66).at(56)
+											.ca(82).cc(109).cg(118).ct(66)
+											.ga(88).gc(105).gg(109).gt(94)
+											.ta(66).tc(88).tg(82).tt(80)
+											.build();
+		private final LookupTable deltaS = new LookupTable.Builder()
+											.aa(219).ac(255).ag(164).at(152)
+											.ca(210).cc(284).cg(290).ct(164)
+											.ga(235).gc(264).gg(284).gt(255)
+											.ta(184).tc(235).tg(210).tt(219)
+											.build();
+		
+		@Override
+		public double estimateTm(NucleotideSequence sequence, double molarConcentration) {
+			return estimateTm(sequence, molarConcentration, deltaH, deltaS);
+		}
+		
+		
+		@Override
+		protected InitialValues getInitialValuesFor(NucleotideSequence sequence) {
+			
+			return new InitialValues(90D, -6D);
+		}
+
+		@Override
+		protected InitialValues getSymmetryCorrection() {
+			return new InitialValues(14D, 0D);
+		}
 		
 	}
+	
 	;
 	
 	private static final double R = 1.987D;
@@ -262,18 +408,17 @@ nearest-neighbor thermodynamics.
 			throw new IllegalArgumentException("concentration must be >0");
 		}
 		//initiation
+		InitialValues initialValues = getInitialValuesFor(sequence);
+		double totalEntropy = initialValues.getInitialEntropy();
 		
-		double totalEntropy = getInitialEntropyFor(sequence);
-		double totalEnthalpy;
+		double totalEnthalpy = initialValues.getInitialEnthalpy();
 		double adjustedMolarConcentration;
 		if(isSymmetric(sequence)){
-			//symmetry correction?
-			totalEntropy += 14D;
-			totalEnthalpy = 40;
+			InitialValues symmetryPenalty = getSymmetryCorrection();
+			totalEntropy += symmetryPenalty.getInitialEntropy();
+			totalEnthalpy += symmetryPenalty.getInitialEnthalpy();
 			adjustedMolarConcentration = nM/1000000000D;
 		}else{
-			totalEnthalpy = 0D;
-			totalEntropy += 108D;
 			adjustedMolarConcentration = nM/4000000000D;
 		}
 		PeekableIterator<Nucleotide> iter = IteratorUtil.createPeekableIterator(sequence.iterator());
@@ -289,7 +434,6 @@ nearest-neighbor thermodynamics.
 			totalEntropy += entropyLookup.lookup(diNucleotide);
 			previous = next;
 		}
-		totalEnthalpy -= getTerminalBasePenalty(previous);
 		//enthalpy lookups are in 100cal/mol
 		//need to convert them
 		totalEnthalpy *=-100D;
@@ -302,11 +446,11 @@ nearest-neighbor thermodynamics.
 		return tempInKelvin - 273.15D;
 	
 	}
-	protected double getTerminalBasePenalty(Nucleotide terminalBase) {
-		return 0D;
+	protected InitialValues getSymmetryCorrection() {
+		return new InitialValues();
 	}
-	protected double getInitialEntropyFor(NucleotideSequence sequence){
-		return 0D;
+	protected InitialValues getInitialValuesFor(NucleotideSequence sequence) {
+		return new InitialValues();
 	}
 	
 	private void verifyOnlyHasACGT(NucleotideSequence sequence) {
@@ -346,7 +490,69 @@ nearest-neighbor thermodynamics.
 	 */
 	public abstract double estimateTm(NucleotideSequence sequence, double nM);
 	
-	
+	protected boolean hasGorC(NucleotideSequence sequence) {
+		boolean hasGC=false;
+		for(Nucleotide n : sequence){
+			if(n == Nucleotide.Guanine || n == Nucleotide.Cytosine){
+				hasGC=true;
+				break;
+			}
+		}
+		return hasGC;
+	}
+
+	private static final class InitialValues{
+		private double initialEntropy;
+		private double initialEnthalpy;
+		public InitialValues(){
+			this(0D,0D);
+		}
+		public InitialValues(double initialEntropy, double initialEnthalpy) {
+			this.initialEntropy = initialEntropy;
+			this.initialEnthalpy = initialEnthalpy;
+		}
+		public final double getInitialEntropy() {
+			return initialEntropy;
+		}
+		public final double getInitialEnthalpy() {
+			return initialEnthalpy;
+		}
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			long temp;
+			temp = Double.doubleToLongBits(initialEnthalpy);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			temp = Double.doubleToLongBits(initialEntropy);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			return result;
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (!(obj instanceof InitialValues)) {
+				return false;
+			}
+			InitialValues other = (InitialValues) obj;
+			if (Double.doubleToLongBits(initialEnthalpy) != Double
+					.doubleToLongBits(other.initialEnthalpy)) {
+				return false;
+			}
+			if (Double.doubleToLongBits(initialEntropy) != Double
+					.doubleToLongBits(other.initialEntropy)) {
+				return false;
+			}
+			return true;
+		}
+		
+		
+	}
 	private static final class LookupTable implements Serializable{
 		
 		/**
