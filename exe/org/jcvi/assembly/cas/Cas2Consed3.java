@@ -49,7 +49,7 @@ import org.jcvi.common.core.assembly.ScaffoldBuilder;
 import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceFileWriter;
-import org.jcvi.common.core.assembly.ace.DefaultAceContigBuilder;
+import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultAceFileWriterBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
@@ -168,7 +168,7 @@ public class Cas2Consed3 {
                                 .hasEdits(hasEdits)
                                 .chromatDir(chromatDir)
                                 .build();
-            final Map<Integer, DefaultAceContigBuilder> builders = new HashMap<Integer, DefaultAceContigBuilder>();
+            final Map<Integer, AceContigBuilder> builders = new HashMap<Integer, AceContigBuilder>();
             
             final File phdFile = new File(phdBallDir, "phd.ball.1");
             final OutputStream phdOut = new FileOutputStream(phdFile);
@@ -183,7 +183,7 @@ public class Cas2Consed3 {
                                 int casReferenceId) {
                             Integer refKey = Integer.valueOf(casReferenceId);
                             if(!builders.containsKey(refKey)){
-                                final DefaultAceContigBuilder builder = new DefaultAceContigBuilder(
+                                final AceContigBuilder builder = new AceContigBuilder(
                                         
                                         casInfo.getReferenceIdLookup().getLookupIdFor(casReferenceId), 
                                         getGappedReference(casReferenceId));
@@ -284,9 +284,9 @@ public class Cas2Consed3 {
              }else{
             	 agpOut=null;
              }
-             Iterator<DefaultAceContigBuilder> builderIterator = builders.values().iterator();
+             Iterator<AceContigBuilder> builderIterator = builders.values().iterator();
              while(builderIterator.hasNext()){
-            	 DefaultAceContigBuilder builder = builderIterator.next();                
+            	 AceContigBuilder builder = builderIterator.next();                
                  builder.recallConsensusNow();
                  NucleotideSequence fullConsensus =builder.getConsensusBuilder().build();
                  long ungappedLength = fullConsensus.getUngappedLength();

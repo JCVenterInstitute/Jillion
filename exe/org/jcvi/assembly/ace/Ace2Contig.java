@@ -30,7 +30,7 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitorContigBuilder;
-import org.jcvi.common.core.assembly.ace.AceContig;
+import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.ctg.CtgFileWriter;
@@ -90,12 +90,12 @@ public class Ace2Contig {
             AceFileVisitor aceVisitor = new AbstractAceFileVisitorContigBuilder(){
 
                 @Override
-                protected void visitContig(AceContig contig) {
-                    if(filter.accept(contig.getId())){
+                protected void visitContig(AceContigBuilder contigBuilder) {
+                    if(filter.accept(contigBuilder.getContigId())){
                         try {
-                            writer.write(contig);
+                            writer.write(contigBuilder.build());
                         } catch (Exception e) {
-                            throw new IllegalStateException("error writing contig "+ contig.getId(), e);
+                            throw new IllegalStateException("error writing contig "+ contigBuilder.getContigId(), e);
                         }
                     }
                 }

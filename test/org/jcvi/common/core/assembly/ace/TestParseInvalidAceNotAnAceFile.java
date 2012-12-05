@@ -15,7 +15,7 @@ public class TestParseInvalidAceNotAnAceFile {
 		AceFileParser.parse(nonAce, new AbstractAceFileVisitorContigBuilder() {
 			
 			@Override
-			protected void visitContig(AceContig contig) {
+			protected void visitContig(AceContigBuilder contig) {
 				throw new IllegalStateException("should not get this far");			
 			}
 		});

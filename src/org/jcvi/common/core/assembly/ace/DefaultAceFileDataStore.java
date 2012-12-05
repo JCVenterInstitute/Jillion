@@ -271,7 +271,8 @@ final class DefaultAceFileDataStore implements AceFileContigDataStore{
         * {@inheritDoc}
         */
         @Override
-        protected void visitContig(AceContig contig) {
+        protected void visitContig(AceContigBuilder contigBuilder) {
+        	AceContig contig = contigBuilder.build();
             contigMap.put(contig.getId(), contig);
             totalNumberOfReads +=contig.getNumberOfReads();
         }

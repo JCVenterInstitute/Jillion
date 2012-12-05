@@ -52,10 +52,10 @@ import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitorContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceAssembledReadBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
+import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileUtil;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
-import org.jcvi.common.core.assembly.ace.DefaultAceContigBuilder;
 import org.jcvi.common.core.assembly.ace.HighLowAceContigPhdDatastore;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationParser;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationVisitor;
@@ -336,7 +336,7 @@ public class ReAbacusAceContigWorker {
         * {@inheritDoc}
         */
         @Override
-        protected void postProcess(DefaultAceContigBuilder contigBuilder) {
+        protected void visitContig(AceContigBuilder contigBuilder) {
             String contigId = contigBuilder.getContigId();
             System.out.println(contigId);
             if(abacusProblemRanges.containsKey(contigId)){
@@ -569,24 +569,18 @@ public class ReAbacusAceContigWorker {
                 }
                 System.out.println("done modifying contig read to be built");
             }
-
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        protected void visitContig(AceContig contig) {
+            AceContig contig = contigBuilder.build();
             try {
                 System.out.println("writing ace contig record");
+                
                 AceFileUtil.writeAceContig(contig,phdDataStore, aceOut);
                 aceOut.flush();
                 System.out.println("done writing contig "+ contig.getId());
             } catch (Exception e) {
                 throw new RuntimeException("error writing out contig "+contig.getId(), e);
             }
-            
         }
+
 
 
         /**
