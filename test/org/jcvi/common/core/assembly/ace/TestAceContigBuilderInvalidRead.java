@@ -35,10 +35,10 @@ public class TestAceContigBuilderInvalidRead {
 
     private final String consensus = "ACGT";
     private final String contigId = "id";
-    private DefaultAceContigBuilder sut;
+    private AceContigBuilder sut;
     @Before
     public void setup(){
-        sut = new DefaultAceContigBuilder(contigId, consensus);
+        sut = new AceContigBuilder(contigId, consensus);
     }
     
     @Test(expected= IllegalArgumentException.class)

@@ -38,7 +38,7 @@ public class TestDefaultAceContigBuilderReAbacus {
     
     @Test
     public void abacus(){
-    	DefaultAceContigBuilder sut =  new DefaultAceContigBuilder("id",
+    	AceContigBuilder sut =  new AceContigBuilder("id",
                           "ACGT-----ACGT")
         
         .addRead("read1",   new NucleotideSequenceBuilder("GT-T---ACG").build(), 2, Direction.FORWARD, Range.of(2,7), read1PhdInfo, 10)
@@ -72,7 +72,7 @@ public class TestDefaultAceContigBuilderReAbacus {
 
 	@Test
     public void abacusAndShiftDownstreamReads(){
-		DefaultAceContigBuilder sut =  new DefaultAceContigBuilder("id",
+		AceContigBuilder sut =  new AceContigBuilder("id",
                           "ACGT-----ACGT")
         
         .addRead("read1",   new NucleotideSequenceBuilder("GT-T---ACG").build(), 2, Direction.FORWARD, Range.of(2,7), read1PhdInfo, 10)

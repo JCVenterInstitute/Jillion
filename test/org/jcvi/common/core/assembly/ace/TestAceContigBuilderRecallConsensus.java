@@ -28,7 +28,7 @@ public class TestAceContigBuilderRecallConsensus {
 	
 	@Test
 	public void recallingConsensusNowWithoutSettingConsensusCallerShouldThrowException(){
-		DefaultAceContigBuilder sut = new DefaultAceContigBuilder("id","ACGTACGTACGT");
+		AceContigBuilder sut = new AceContigBuilder("id","ACGTACGTACGT");
 		
 		exception.expect(IllegalStateException.class);
 		sut.recallConsensusNow();
@@ -36,7 +36,7 @@ public class TestAceContigBuilderRecallConsensus {
 	}
 	@Test
 	public void recallShouldSkip0xRegion(){
-		DefaultAceContigBuilder sut = new DefaultAceContigBuilder("id","ACGT")
+		AceContigBuilder sut = new AceContigBuilder("id","ACGT")
 										.addRead("read1", new NucleotideSequenceBuilder("AC").build(), 0, Direction.FORWARD,  Range.ofLength(2), phdInfo, 4)
 										.addRead("read2", new NucleotideSequenceBuilder("T").build(), 3, Direction.REVERSE,  Range.ofLength(1), phdInfo, 4);
 										;
@@ -48,7 +48,7 @@ public class TestAceContigBuilderRecallConsensus {
 	}
 	@Test
 	public void recallConsensusNowWithoutQualityData(){
-		DefaultAceContigBuilder sut = new DefaultAceContigBuilder("id","ACNT")
+		AceContigBuilder sut = new AceContigBuilder("id","ACNT")
 										.addRead("read1", new NucleotideSequenceBuilder("ACGT").build(), 0, Direction.FORWARD,  Range.ofLength(4), phdInfo, 4)
 										.addRead("read2", new NucleotideSequenceBuilder("ACGT").build(), 0, Direction.REVERSE,  Range.ofLength(4), phdInfo, 4);
 										;
@@ -60,7 +60,7 @@ public class TestAceContigBuilderRecallConsensus {
 	}
 	@Test
 	public void recallConsensusDuringBuildWithoutQualityData(){
-		DefaultAceContigBuilder sut = new DefaultAceContigBuilder("id","ACNT")
+		AceContigBuilder sut = new AceContigBuilder("id","ACNT")
 										.addRead("read1", new NucleotideSequenceBuilder("ACGT").build(), 0, Direction.FORWARD,  Range.ofLength(4), phdInfo, 4)
 										.addRead("read2", new NucleotideSequenceBuilder("ACGT").build(), 0, Direction.REVERSE,  Range.ofLength(4), phdInfo, 4);
 										;
@@ -72,7 +72,7 @@ public class TestAceContigBuilderRecallConsensus {
 	
 	@Test
 	public void recallAmiguiousConsensusDuringBuildWithoutQualityData(){
-		DefaultAceContigBuilder sut = new DefaultAceContigBuilder("id","ACNT")
+		AceContigBuilder sut = new AceContigBuilder("id","ACNT")
 										.addRead("read1", new NucleotideSequenceBuilder("ACAT").build(), 0, Direction.FORWARD,  Range.ofLength(4), phdInfo, 4)
 										.addRead("read2", new NucleotideSequenceBuilder("ACGT").build(), 0, Direction.REVERSE,  Range.ofLength(4), phdInfo, 4);
 										;
@@ -84,7 +84,7 @@ public class TestAceContigBuilderRecallConsensus {
 	
 	@Test
 	public void recallAmiguiousConsensusNowWithoutQualityData(){
-		DefaultAceContigBuilder sut = new DefaultAceContigBuilder("id","ACNT")
+		AceContigBuilder sut = new AceContigBuilder("id","ACNT")
 										.addRead("read1", new NucleotideSequenceBuilder("ACAT").build(), 0, Direction.FORWARD,  Range.ofLength(4), phdInfo, 4)
 										.addRead("read2", new NucleotideSequenceBuilder("ACGT").build(), 0, Direction.REVERSE,  Range.ofLength(4), phdInfo, 4);
 										;
@@ -97,7 +97,7 @@ public class TestAceContigBuilderRecallConsensus {
 	
 	@Test
 	public void recallConsensusUsingActualQualityData(){
-		DefaultAceContigBuilder sut = new DefaultAceContigBuilder("id","ACNT")
+		AceContigBuilder sut = new AceContigBuilder("id","ACNT")
 								.addRead("read1", new NucleotideSequenceBuilder("ACAT").build(), 0, Direction.FORWARD, Range.ofLength(4), phdInfo, 4)
 								.addRead("read2", new NucleotideSequenceBuilder("ACGT").build(), 0, Direction.REVERSE,  Range.ofLength(4), phdInfo, 4);
 								;

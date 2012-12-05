@@ -30,7 +30,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigTestUtil;
-import org.jcvi.common.core.assembly.ace.DefaultAceContigBuilder;
+import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -52,8 +52,8 @@ public class TestConsedUtil_Split0xWithGaps {
     
     @Test
     public void contigWithNo0xRegionsAndFullLengthShouldNotTrim(){       
-    	DefaultAceContigBuilder contigBuilder =
-        	new DefaultAceContigBuilder(originalId,referenceConsensus)
+    	AceContigBuilder contigBuilder =
+        	new AceContigBuilder(originalId,referenceConsensus)
         .addRead("read1", new NucleotideSequenceBuilder("ACGT-ACGT-ACGT").build(),
         		0, 
                 Direction.FORWARD, 
@@ -69,7 +69,7 @@ public class TestConsedUtil_Split0xWithGaps {
         
         final SortedMap<Range,AceContig> actualcontigs = ConsedUtil.split0xContig(contigBuilder, false);
         assertEquals(1,actualcontigs.size());
-        AceContig expected = new DefaultAceContigBuilder(originalId,referenceConsensus)
+        AceContig expected = new AceContigBuilder(originalId,referenceConsensus)
 								        .addRead("read1", new NucleotideSequenceBuilder("ACGT-ACGT-ACGT").build(),
 								        		0, 
 								                Direction.FORWARD, 
@@ -90,8 +90,8 @@ public class TestConsedUtil_Split0xWithGaps {
     
     @Test
     public void singleContigThatMissesEdgesShouldReturnUntrimmedButWithSubRange(){       
-    	DefaultAceContigBuilder contigBuilder =
-        	new DefaultAceContigBuilder(originalId,
+    	AceContigBuilder contigBuilder =
+        	new AceContigBuilder(originalId,
         			new NucleotideSequenceBuilder(referenceConsensus)
         					.prepend("NNNN")
         					.append("NNNN")
@@ -111,7 +111,7 @@ public class TestConsedUtil_Split0xWithGaps {
         
         final SortedMap<Range,AceContig> actualcontigs = ConsedUtil.split0xContig(contigBuilder, false);
         assertEquals(1,actualcontigs.size());
-        AceContig expected = new DefaultAceContigBuilder(originalId+"_5_16",referenceConsensus)
+        AceContig expected = new AceContigBuilder(originalId+"_5_16",referenceConsensus)
 									        .addRead("read1", new NucleotideSequenceBuilder("ACGT-ACGT-ACGT").build(),
 									        		0, 
 									                Direction.FORWARD, 
@@ -135,7 +135,7 @@ public class TestConsedUtil_Split0xWithGaps {
         final PhdInfo read1Phd = createMock(PhdInfo.class);
         final PhdInfo read2Phd = createMock(PhdInfo.class);
 
-        DefaultAceContigBuilder contig = new DefaultAceContigBuilder(originalId,referenceConsensus)
+        AceContigBuilder contig = new AceContigBuilder(originalId,referenceConsensus)
 			        .addRead("read1", new NucleotideSequenceBuilder("ACGT").build(),
 			        		0, 
 			                Direction.FORWARD, 
@@ -153,7 +153,7 @@ public class TestConsedUtil_Split0xWithGaps {
         SortedMap<Range,AceContig> splitContigs = ConsedUtil.split0xContig(contig,  false);
         assertEquals("# of split contigs", 2, splitContigs.size());
         
-        AceContig expectedFirstContig = new DefaultAceContigBuilder(
+        AceContig expectedFirstContig = new AceContigBuilder(
                 String.format("%s_%d_%d",originalId,1,4),"ACGT")
 					        .addRead("read1", new NucleotideSequenceBuilder("ACGT").build(),
 					        		0, 
@@ -162,7 +162,7 @@ public class TestConsedUtil_Split0xWithGaps {
 					                read1Phd,
 					                20)
                                     .build();
-        AceContig expectedSecondContig = new DefaultAceContigBuilder(
+        AceContig expectedSecondContig = new AceContigBuilder(
         		//coordinates are 9-12 because it's ungapped
                 String.format("%s_%d_%d",originalId,9,12),"ACGT")
                         .addRead("read2", new NucleotideSequenceBuilder("ACGT").build(),
@@ -182,7 +182,7 @@ public class TestConsedUtil_Split0xWithGaps {
     	final PhdInfo read1Phd = createMock(PhdInfo.class);
         final PhdInfo read2Phd = createMock(PhdInfo.class);
 
-        DefaultAceContigBuilder contig = new DefaultAceContigBuilder("id_1_12",referenceConsensus)
+        AceContigBuilder contig = new AceContigBuilder("id_1_12",referenceConsensus)
 			        .addRead("read1", new NucleotideSequenceBuilder("ACGT").build(),
 			        		0, 
 			                Direction.FORWARD, 
@@ -200,7 +200,7 @@ public class TestConsedUtil_Split0xWithGaps {
         SortedMap<Range,AceContig> splitContigs = ConsedUtil.split0xContig(contig,  true);
         assertEquals("# of split contigs", 2, splitContigs.size());
         
-        AceContig expectedFirstContig = new DefaultAceContigBuilder(
+        AceContig expectedFirstContig = new AceContigBuilder(
                 "id_1_4","ACGT")
 					        .addRead("read1", new NucleotideSequenceBuilder("ACGT").build(),
 					        		0, 
@@ -209,7 +209,7 @@ public class TestConsedUtil_Split0xWithGaps {
 					                read1Phd,
 					                20)
                                     .build();
-        AceContig expectedSecondContig = new DefaultAceContigBuilder(
+        AceContig expectedSecondContig = new AceContigBuilder(
         		//coordinates are 9-12 because it's ungapped
                 "id_9_12","ACGT")
                         .addRead("read2", new NucleotideSequenceBuilder("ACGT").build(),
@@ -228,7 +228,7 @@ public class TestConsedUtil_Split0xWithGaps {
     	final PhdInfo read1Phd = createMock(PhdInfo.class);
         final PhdInfo read2Phd = createMock(PhdInfo.class);
 
-        DefaultAceContigBuilder contig = new DefaultAceContigBuilder("id_5_17",referenceConsensus)
+        AceContigBuilder contig = new AceContigBuilder("id_5_17",referenceConsensus)
 			        .addRead("read1", new NucleotideSequenceBuilder("ACGT").build(),
 			        		0, 
 			                Direction.FORWARD, 
@@ -246,7 +246,7 @@ public class TestConsedUtil_Split0xWithGaps {
         SortedMap<Range,AceContig> splitContigs = ConsedUtil.split0xContig(contig,  true);
         assertEquals("# of split contigs", 2, splitContigs.size());
         //since consedUtil thinks we are shifted by 5 have to adjust all coordiantes by 5
-        AceContig expectedFirstContig = new DefaultAceContigBuilder(
+        AceContig expectedFirstContig = new AceContigBuilder(
                 "id_5_8","ACGT")
 					        .addRead("read1", new NucleotideSequenceBuilder("ACGT").build(),
 					        		0, 
@@ -255,7 +255,7 @@ public class TestConsedUtil_Split0xWithGaps {
 					                read1Phd,
 					                20)
                                     .build();
-        AceContig expectedSecondContig = new DefaultAceContigBuilder(
+        AceContig expectedSecondContig = new AceContigBuilder(
         		//coordinates are 9-12 because it's ungapped
                 "id_13_16","ACGT")
                         .addRead("read2", new NucleotideSequenceBuilder("ACGT").build(),
