@@ -19,12 +19,10 @@
 
 package org.jcvi.common.core.symbol.residue.nt;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.Range;
@@ -701,42 +699,9 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         this.tail = numberOfBitsUsed;
 		return this;
     }
-    /**
-     * Get a sublist of the current nucleotide sequence as a list
-     * of Nucleotide objects.
-     * @param range the  range of the sublist to generate.
-     * @return a new List of Nucleotides.
-     * @throws NullPointerException if range is null.
-     * @throws IllegalArgumentException if range is not a sublist of the current
-     * sequence.
-     */
-    public List<Nucleotide> asList(Range range){
-    	return asList(range,true);
-    }
+   
     
-    
-	private List<Nucleotide> asList(Range range, boolean includeGaps) {
-		if(range==null){
-            throw new NullPointerException("range can not be null");
-        }
-    	Range currentRange = new Range.Builder(getLength()).build();
-    	if(!range.isSubRangeOf(currentRange)){
-    		throw new IllegalArgumentException(
-    				"range is not a sub-range of the sequence: "+ range);
-    	}
-        List<Nucleotide> bases = new ArrayList<Nucleotide>((int)range.getLength());
-        int start = (int)range.getBegin()*NUM_BITS_PER_VALUE;
-        int end = (int)range.getEnd()*NUM_BITS_PER_VALUE+NUM_BITS_PER_VALUE;
-        
-        
-        for(int i=start; i<end; i+=NUM_BITS_PER_VALUE){
-        	Nucleotide base = getNucleotideFor(i);
-        	if(includeGaps || (!includeGaps && !base.isGap())){
-        		bases.add(base);
-        	}
-        }
-        return bases;
-	}
+   
 	private Nucleotide getNucleotideFor(int bitStartOffset) {
 		int ordinal = getNucleotideOrdinalFor(bitStartOffset);
 		return NUCLEOTIDE_VALUES[ordinal];
@@ -760,16 +725,6 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		BitSet copyOfBits = bits.get(0,tail);		
 		return new NucleotideSequenceBuilder(copyOfBits, tail,codecDecider);
 	}
-    
-   
-    /**
-     * Get the entire current nucleotide sequence as a list
-     * of Nucleotide objects.
-     * @return a new List of Nucleotides.
-     */
-    public List<Nucleotide> asList(){
-        return asList(new Range.Builder(getLength()).build());
-    }
     
    
 	@Override

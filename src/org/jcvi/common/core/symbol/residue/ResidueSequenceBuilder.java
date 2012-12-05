@@ -1,7 +1,5 @@
 package org.jcvi.common.core.symbol.residue;
 
-import java.util.List;
-
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.SequenceBuilder;
@@ -216,16 +214,6 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * but may be empty.
      */
     S build(Range range);
-    /**
-     * Get a sublist of the current residue sequence as a list
-     * of Nucleotide objects.
-     * @param range the  range of the sublist to generate.
-     * @return a new List of Residues.
-     * @throws NullPointerException if range is null.
-     * @throws IllegalArgumentException if range is not a sublist of the current
-     * sequence.
-     */
-    List<R> asList(Range range);
    
 	
 	
