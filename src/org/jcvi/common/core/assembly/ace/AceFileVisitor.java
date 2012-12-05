@@ -137,9 +137,7 @@ public interface AceFileVisitor extends TextFileVisitor{
     void visitHeader(int numberOfContigs, int totalNumberOfReads);
 
     /**
-     * Begin Visiting the current contig.  This method will
-     * only be called if the previous call to {@link #shouldVisitContig(String, int, int, int, boolean)}
-     * returns {@code true}.
+     * Denotes when a new contig has been detected. 
      * @param contigId the id of the contig visited.
      * @param numberOfBases number of bases in contig (Does this count bases
      * outside of valid range?)

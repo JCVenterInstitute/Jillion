@@ -27,10 +27,12 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**
- * {@code AbstractAceContigBuilder} is an abstract
+ * {@code AbstractAceFileVisitorContigBuilder} is an abstract
  * implementation of {@link AceFileVisitor}
  * that does all the computations required
- * to populate instances of {@link AceContigBuilder}.
+ * to populate instances of {@link AceContigBuilder}
+ * for each contig object that gets parsed
+ * from an ace file.
  * @author dkatzel
  *
  *
@@ -41,12 +43,15 @@ public abstract class AbstractAceFileVisitorContigBuilder extends AbstractAceFil
     private AceContigBuilder contigBuilder;
 
     /**
-     * Override this method if any modifications
-     * need to be made to the builder before the contig has been built.
-     * This method will be called after all the reads have been
-     * visited but before {@link #visitContig(AceContig)}. 
-     * By default, this method does nothing.
-     * @param contigBuilder
+     * Visit the current AceContig data represented as an {@link AceContigBuilder}
+     * object.  This AceContigBuilder contains the current contig id, its consensus sequence and all the underlying reads
+     * as described by the ace file.  Clients are free to modify this {@link AceContigBuilder}
+     * anyway they want including but not limited to adding/removing reads,
+     * changing the contig id, editing reads etc.
+     * <p/>
+     * Only contigs that are visited as determined by {@link #visitBeginContig(String, int, int, int, boolean)
+     * will cause this method to be called on them after they have been fully parsed.
+     * @param contigBuilder an {@link AceContigBuilder} instance; never null.
      */
     protected abstract void visitContig(final AceContigBuilder contigBuilder);
     

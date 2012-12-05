@@ -20,9 +20,7 @@
 package org.jcvi.assembly.ace;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -32,24 +30,19 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
-import org.jcvi.common.core.assembly.ace.AceAssembledRead;
+import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitorContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
-import org.jcvi.common.core.assembly.ace.AceFileContigDataStore;
-import org.jcvi.common.core.assembly.ace.AceFileDataStoreBuilder;
-import org.jcvi.common.core.assembly.ace.AceFileUtil;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
+import org.jcvi.common.core.assembly.ace.AceFileParser;
+import org.jcvi.common.core.assembly.ace.AceFileWriter;
+import org.jcvi.common.core.assembly.ace.DefaultAceFileWriterBuilder;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.ace.consed.PhdDirQualityDataStore;
-import org.jcvi.common.core.assembly.util.slice.CompactedSliceMap;
 import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
-import org.jcvi.common.core.assembly.util.slice.Slice;
-import org.jcvi.common.core.assembly.util.slice.SliceMap;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConicConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
-import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusResult;
 import org.jcvi.common.core.assembly.util.slice.consensus.NoAmbiguityConsensusCaller;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
@@ -60,7 +53,6 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel
@@ -143,19 +135,19 @@ public class RecallAceConsensus {
             File consedDir = inputAceFile.getParentFile().getParentFile();
             File phdDir = ConsedUtil.getPhdDirFor(consedDir);
             File phdballDir = ConsedUtil.getPhdBallDirFor(consedDir);
-            NucleotideSequenceFastaRecordWriter fastaOut = commandLine.hasOption("fasta") ?
+            final NucleotideSequenceFastaRecordWriter fastaOut = commandLine.hasOption("fasta") ?
                     new NucleotideSequenceFastaRecordWriterBuilder(new File(commandLine.getOptionValue("fasta")))
             				.build():
                         null;
             
             File outputAceFile = new File(commandLine.getOptionValue("out"));
-            final OutputStream out = new FileOutputStream(outputAceFile);
+            //final OutputStream out = new FileOutputStream(outputAceFile);
             PhdDataStore phdballDataStore = new PhdDirQualityDataStore(phdballDir);
             PhdDataStore phdDataStore = new PhdDirQualityDataStore(phdDir);
             PhdDataStore masterPhdDataStore= MultipleDataStoreWrapper.createMultipleDataStoreWrapper(PhdDataStore.class, phdDataStore,phdballDataStore);
-            QualitySequenceDataStore qualityDataStore = TraceQualityDataStoreAdapter.adapt(masterPhdDataStore); 
-            ConsensusCaller consensusCaller = createConsensusCaller(RecallType.parse(commandLine.getOptionValue("recall_with")), PhredQuality.valueOf(30));
-           
+            final QualitySequenceDataStore qualityDataStore = TraceQualityDataStoreAdapter.adapt(masterPhdDataStore); 
+            final ConsensusCaller consensusCaller = createConsensusCaller(RecallType.parse(commandLine.getOptionValue("recall_with")), PhredQuality.valueOf(30));
+           /*
             AceFileContigDataStore aceContigDataStore = new AceFileDataStoreBuilder(inputAceFile)
 																.hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY)
 																.build();
@@ -201,7 +193,39 @@ public class RecallAceConsensus {
             }finally{
             	IOUtil.closeAndIgnoreErrors(iter);
             }
-            IOUtil.closeAndIgnoreErrors(aceContigDataStore,fastaOut,masterPhdDataStore,out);
+            //this code above has been replaced
+            //by new AcecontigBuilder.recallConsensus() method which will also be more efficient and cleaner
+            
+            */
+            final AceFileWriter aceWriter = new DefaultAceFileWriterBuilder(outputAceFile, masterPhdDataStore)
+            									.build();
+            AbstractAceFileVisitorContigBuilder visitorBuilder = new AbstractAceFileVisitorContigBuilder(){
+
+				@Override
+				protected void visitContig(AceContigBuilder contigBuilder) {
+					contigBuilder.recallConsensus(consensusCaller, qualityDataStore, GapQualityValueStrategies.LOWEST_FLANKING);
+					AceContig contig = contigBuilder.build();
+					 try {
+						if(fastaOut !=null){
+							NucleotideSequence ungappedRecalledConsensus = new NucleotideSequenceBuilder(contig.getConsensusSequence())
+													                		.ungap()
+													                		.build();
+		                   
+							fastaOut.write(contig.getId(), ungappedRecalledConsensus);
+							
+						}
+						aceWriter.write(contig);
+					 } catch (IOException e) {
+						throw new IllegalStateException("error writing output files",e);
+					}
+				}
+            	
+            };
+            try{
+            	AceFileParser.parse(inputAceFile, visitorBuilder);
+            }finally{
+            	IOUtil.closeAndIgnoreErrors(fastaOut,masterPhdDataStore);
+            }
         } catch (ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
