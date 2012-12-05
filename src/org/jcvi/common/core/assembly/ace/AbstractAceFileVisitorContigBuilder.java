@@ -39,12 +39,7 @@ public abstract class AbstractAceFileVisitorContigBuilder extends AbstractAceFil
    
    
     private AceContigBuilder contigBuilder;
-    /**
-     * Visit the given fully constructed AceContig. 
-     * @param contig the fully constructed AceContig
-     * that was built from an Ace File.
-     */
-    protected abstract void  visitContig(AceContig contig);
+
     /**
      * Override this method if any modifications
      * need to be made to the builder before the contig has been built.
@@ -53,15 +48,12 @@ public abstract class AbstractAceFileVisitorContigBuilder extends AbstractAceFil
      * By default, this method does nothing.
      * @param contigBuilder
      */
-    protected void postProcess(final AceContigBuilder contigBuilder){
-        //no-op
-    }
+    protected abstract void visitContig(final AceContigBuilder contigBuilder);
     
     @Override
     public EndContigReturnCode visitEndOfContig() {
         if(contigBuilder !=null){
-            postProcess(contigBuilder);
-            visitContig(contigBuilder.build());
+            visitContig(contigBuilder);
             contigBuilder=null;
         }
         return EndContigReturnCode.KEEP_PARSING;

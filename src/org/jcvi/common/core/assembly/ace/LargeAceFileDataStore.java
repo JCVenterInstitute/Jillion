@@ -415,8 +415,8 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
 			
 
                 @Override
-                protected void visitContig(AceContig contig) {
-                    AceFileDataStoreIterator.this.blockingPut(contig);
+                protected void visitContig(AceContigBuilder contigBuilder) {
+                    AceFileDataStoreIterator.this.blockingPut(contigBuilder.build());
                     
                 }
                 
