@@ -38,7 +38,7 @@ public class TestDefaultAceContig {
 
     @Test
     public void noPlacedReadsShouldMakeEmptyContig(){
-    	DefaultAceContigBuilder sut =  new DefaultAceContigBuilder("id",
+    	AceContigBuilder sut =  new AceContigBuilder("id",
                 "ACGTACGTACGTACGT");
         AceContig contig =sut.build();
         NucleotideSequence consensus =contig.getConsensusSequence();
@@ -48,7 +48,7 @@ public class TestDefaultAceContig {
     }
     @Test
     public void callingBuildTwiceOnEmptyContigShouldThrowIllegalStateException(){
-    	DefaultAceContigBuilder sut =  new DefaultAceContigBuilder("id",
+    	AceContigBuilder sut =  new AceContigBuilder("id",
                 "ACGTACGTACGTACGT");
         sut.build();
         
@@ -61,7 +61,7 @@ public class TestDefaultAceContig {
     }
     @Test
     public void callingBuildTwiceOnPopulatedContigShouldThrowIllegalStateException(){
-    	DefaultAceContigBuilder sut =  new DefaultAceContigBuilder("id", "ACGTACGTACGTACGT");
+    	AceContigBuilder sut =  new AceContigBuilder("id", "ACGTACGTACGTACGT");
         sut.build();
         sut.addRead("read", 
         		new NucleotideSequenceBuilder("ACGTACGTACGTACGT").build(), 
@@ -80,7 +80,7 @@ public class TestDefaultAceContig {
     }
     @Test
     public void readThatHasNegativeOffsetShouldGetTrimmedToOffsetZero(){
-    	DefaultAceContigBuilder sut =  new DefaultAceContigBuilder("id",
+    	AceContigBuilder sut =  new AceContigBuilder("id",
                                             "ACGTACGTACGTACGT");
         sut.addRead("read", new NucleotideSequenceBuilder("ACGTACGTACGTACGT").build(), -2, Direction.FORWARD, Range.of(2, 18), null,18);
             AceContig contig =sut.build();

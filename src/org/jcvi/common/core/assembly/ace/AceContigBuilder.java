@@ -75,7 +75,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  *
  */
-public final class  DefaultAceContigBuilder implements ContigBuilder<AceAssembledRead,AceContig>{
+public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,AceContig>{
     /**
      * default quality value that every basecall will get
      * if consensus caller is used to recall the consensus
@@ -106,31 +106,31 @@ public final class  DefaultAceContigBuilder implements ContigBuilder<AceAssemble
     private volatile boolean built=false;
     private boolean complemented=false;
     /**
-     * Create a new {@link DefaultAceContigBuilder} for a contig with the given
+     * Create a new {@link AceContigBuilder} for a contig with the given
      * contig id and starting with the given consensus.  Both the contig id
      * and the consensus can be changed by calling methods on the returned
      * builder.
      * @param contigId the initial contig id to use for this contig (may later be changed)
      * @param initialConsensus the initial contig consensus for this contig (may be changed later)
-     * @return a new {@link DefaultAceContigBuilder} instance; never null.
+     * @return a new {@link AceContigBuilder} instance; never null.
      * @throws NullPointerException if contigId or consensus are null.
      */
-    public DefaultAceContigBuilder(String contigId, String initialConsensus){
+    public AceContigBuilder(String contigId, String initialConsensus){
        this(contigId,                   
     		   new NucleotideSequenceBuilder(initialConsensus).build()
         );
     }
     /**
-     * Create a new {@link DefaultAceContigBuilder} for a contig with the given
+     * Create a new {@link AceContigBuilder} for a contig with the given
      * contig id and starting with the given consensus.  Both the contig id
      * and the consensus can be changed by calling methods on the returned
      * builder.
      * @param contigId the initial contig id to use for this contig (may later be changed)
      * @param initialConsensus the initial contig consensus for this contig (may be changed later)
-     * @return a new {@link DefaultAceContigBuilder} instance; never null.
+     * @return a new {@link AceContigBuilder} instance; never null.
      * @throws NullPointerException if contigId or consensus are null.
      */
-    public DefaultAceContigBuilder(String contigId, NucleotideSequence initialConsensus){
+    public AceContigBuilder(String contigId, NucleotideSequence initialConsensus){
         if(contigId ==null){
             throw new NullPointerException("contig id can not be null");
         }
@@ -149,7 +149,7 @@ public final class  DefaultAceContigBuilder implements ContigBuilder<AceAssemble
      * can not be null.
      * @throws NullPointerException if copy is null.
      */
-    public DefaultAceContigBuilder(AceContig copy){
+    public AceContigBuilder(AceContig copy){
     	this.contigId=copy.getId();
     	this.initialConsensus = copy.getConsensusSequence();
     	this.mutableConsensus = new NucleotideSequenceBuilder(initialConsensus);
@@ -174,7 +174,7 @@ public final class  DefaultAceContigBuilder implements ContigBuilder<AceAssemble
      * @param complemented is this ace contig complemented or not.
      * @return this
      */
-    public DefaultAceContigBuilder setComplemented(boolean complemented){
+    public AceContigBuilder setComplemented(boolean complemented){
         this.complemented = complemented;
         return this;
     }
@@ -193,7 +193,7 @@ public final class  DefaultAceContigBuilder implements ContigBuilder<AceAssemble
      * @return this.
      * @throws NullPointerException if any parameter is null.
      */
-    public DefaultAceContigBuilder recallConsensus(ConsensusCaller consensusCaller, 
+    public AceContigBuilder recallConsensus(ConsensusCaller consensusCaller, 
     		QualitySequenceDataStore qualityDataStore,
     		QualityValueStrategy qualityValueStrategy){
     	if(consensusCaller ==null){
@@ -219,7 +219,7 @@ public final class  DefaultAceContigBuilder implements ContigBuilder<AceAssemble
      * @return this.
      * @throws NullPointerException if any parameter is null.
      */
-    public DefaultAceContigBuilder recallConsensus(ConsensusCaller consensusCaller){
+    public AceContigBuilder recallConsensus(ConsensusCaller consensusCaller){
     	if(consensusCaller ==null){
     		throw new NullPointerException("consensus caller can not be null");
     	}
@@ -230,7 +230,7 @@ public final class  DefaultAceContigBuilder implements ContigBuilder<AceAssemble
     * {@inheritDoc}
     */
     @Override
-    public DefaultAceContigBuilder setContigId(String contigId){
+    public AceContigBuilder setContigId(String contigId){
         if(contigId==null){
             throw new NullPointerException("contig id can not be null");
         }
@@ -254,7 +254,7 @@ public final class  DefaultAceContigBuilder implements ContigBuilder<AceAssemble
     
     
     @Override
-    public DefaultAceContigBuilder addRead(AceAssembledRead acePlacedRead) {
+    public AceContigBuilder addRead(AceAssembledRead acePlacedRead) {
      return addRead(acePlacedRead.getId(),
     		 acePlacedRead.getNucleotideSequence(),
     		 (int)acePlacedRead.getGappedStartOffset(),
@@ -268,7 +268,7 @@ public final class  DefaultAceContigBuilder implements ContigBuilder<AceAssemble
     * {@inheritDoc}
     */
     @Override
-    public DefaultAceContigBuilder addAllReads(Iterable<AceAssembledRead> reads){
+    public AceContigBuilder addAllReads(Iterable<AceAssembledRead> reads){
         for(AceAssembledRead read : reads){
             addRead(read);
         }
@@ -294,7 +294,7 @@ public final class  DefaultAceContigBuilder implements ContigBuilder<AceAssemble
     * {@inheritDoc}
     */
     @Override
-    public DefaultAceContigBuilder removeRead(String readId) {
+    public AceContigBuilder removeRead(String readId) {
         if(readId==null){
             throw new NullPointerException("read id can not be null");
         }
@@ -321,7 +321,7 @@ public final class  DefaultAceContigBuilder implements ContigBuilder<AceAssemble
      * read from the sequence machine.
      * @return this.
      */
-    public DefaultAceContigBuilder addRead(String readId, NucleotideSequence validBases, int offset,
+    public AceContigBuilder addRead(String readId, NucleotideSequence validBases, int offset,
             Direction dir, Range clearRange,PhdInfo phdInfo,int ungappedFullLength) {
         //contig left (and right) might be beyond consensus depending on how
         //trimmed the data is and what assembly/consensus caller is used.
@@ -442,7 +442,7 @@ public final class  DefaultAceContigBuilder implements ContigBuilder<AceAssemble
      * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}.
      * @see #build()
      */
-    public DefaultAceContigBuilder recallConsensusNow() {
+    public AceContigBuilder recallConsensusNow() {
     	if(consensusCaller==null){
     		throw new IllegalStateException("must set consensus caller");
     	}
@@ -514,8 +514,8 @@ public final class  DefaultAceContigBuilder implements ContigBuilder<AceAssemble
      * @return a new Map, sorted by Range arrival, each entry value in the map is a new contigBuilder
      * which contains only the portion of this contig at that particular entry key range.
      */
-    public SortedMap<Range, DefaultAceContigBuilder> split(Collection<Range> rangesToKeep){
-    	SortedMap<Range, DefaultAceContigBuilder> splitContigs = new TreeMap<Range, DefaultAceContigBuilder>(Range.Comparators.ARRIVAL);
+    public SortedMap<Range, AceContigBuilder> split(Collection<Range> rangesToKeep){
+    	SortedMap<Range, AceContigBuilder> splitContigs = new TreeMap<Range, AceContigBuilder>(Range.Comparators.ARRIVAL);
     	
     	CoverageMap<AceAssembledReadBuilder> coverageMap = CoverageMapFactory.create(aceReadBuilderMap.values());
     	
@@ -525,7 +525,7 @@ public final class  DefaultAceContigBuilder implements ContigBuilder<AceAssemble
             									.copy()
 												.trim(rangeTokeep)
 												.build();
-            DefaultAceContigBuilder splitContig = new DefaultAceContigBuilder(contigId, contigConsensus);
+            AceContigBuilder splitContig = new AceContigBuilder(contigId, contigConsensus);
             Set<String> contigReads = new HashSet<String>();            
             for(CoverageRegion<AceAssembledReadBuilder> region : CoverageMapUtil.getRegionsWhichIntersect(coverageMap, rangeTokeep)){
                 for(AceAssembledReadBuilder read : region){

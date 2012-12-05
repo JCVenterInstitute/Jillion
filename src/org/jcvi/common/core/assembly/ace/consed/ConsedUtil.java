@@ -41,7 +41,7 @@ import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.ace.AceAssembledReadBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
-import org.jcvi.common.core.assembly.ace.DefaultAceContigBuilder;
+import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultPhdInfo;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
@@ -140,7 +140,7 @@ public final class ConsedUtil {
      * If there are no 0x regions in the given contig, then a Map containing
      * one entry containing the Range covered and the reference of the given contig is returned.
      */
-    public static SortedMap<Range,AceContig> split0xContig(DefaultAceContigBuilder contigBuilder, boolean adjustIdCoordinates){
+    public static SortedMap<Range,AceContig> split0xContig(AceContigBuilder contigBuilder, boolean adjustIdCoordinates){
         List<Range> coveredRegions = new ArrayList<Range>();
         NucleotideSequence unSplitConsensus = contigBuilder.getConsensusBuilder().build();
         CoverageMap<AceAssembledReadBuilder> coverageMap = CoverageMapFactory.create(contigBuilder.getAllAssembledReadBuilders());
@@ -178,10 +178,10 @@ public final class ConsedUtil {
         	map.put(gappedContigRange, contigBuilder.build());
             return map;
         }
-        for(Entry<Range, DefaultAceContigBuilder> splitContigEntry: contigBuilder.split(contigRanges).entrySet()){
+        for(Entry<Range, AceContigBuilder> splitContigEntry: contigBuilder.split(contigRanges).entrySet()){
         	//id is now <original_id>_<ungapped 1-based start>_<ungapped 1-based end>
            
-            DefaultAceContigBuilder splitContigBuilder = splitContigEntry.getValue();
+            AceContigBuilder splitContigBuilder = splitContigEntry.getValue();
             Range contigRange = splitContigEntry.getKey();
 			String newContigId = computeSplitContigId(unSplitConsensus, originalContigId,
     				oldStart, contigRange);

@@ -15,7 +15,7 @@ public class TestBaseSegmentUtil {
 	PhdInfo mockPhdInfo = createMock(PhdInfo.class);
 	@Test
 	public void oneReadCoversConsensusExactly(){
-		AceContig contig = new DefaultAceContigBuilder("contig", "ACGTACGT")
+		AceContig contig = new AceContigBuilder("contig", "ACGTACGT")
 							.addRead("read1", new NucleotideSequenceBuilder("ACGTACGT").build(),
 									0,
 									Direction.FORWARD, 
@@ -30,7 +30,7 @@ public class TestBaseSegmentUtil {
 	}
 	@Test
 	public void firstReadCoversConsensusExactlyBestSegmentShouldOnlyHaveFirstRead(){
-		AceContig contig = new DefaultAceContigBuilder("contig", "ACGTACGT")
+		AceContig contig = new AceContigBuilder("contig", "ACGTACGT")
 							.addRead("read1", new NucleotideSequenceBuilder("ACGTACGT").build(),
 									0,
 									Direction.FORWARD, 
@@ -49,7 +49,7 @@ public class TestBaseSegmentUtil {
 	}
 	@Test
 	public void twoReadsSpanConsensusExactlyShouldHave2BestSegments(){
-		AceContig contig = new DefaultAceContigBuilder("contig", "ACGTACGT")
+		AceContig contig = new AceContigBuilder("contig", "ACGTACGT")
 							.addRead("read1", new NucleotideSequenceBuilder("ACGTA").build(),
 									0,
 									Direction.FORWARD, 
@@ -71,7 +71,7 @@ public class TestBaseSegmentUtil {
 	
 	@Test
 	public void whenReadMismatchesShouldMoveToNextRead(){
-		AceContig contig = new DefaultAceContigBuilder("contig", "ACGTACGT")
+		AceContig contig = new AceContigBuilder("contig", "ACGTACGT")
 							.addRead("read1", new NucleotideSequenceBuilder("ACG-ACGT").build(),
 									0,
 									Direction.FORWARD, 
@@ -91,7 +91,7 @@ public class TestBaseSegmentUtil {
 	}
 	@Test
 	public void shouldRollOverBackToPreviousReadsThatStillCoverIfLastReadInSliceMismatches(){
-		AceContig contig = new DefaultAceContigBuilder("contig", "ACGTACGT")
+		AceContig contig = new AceContigBuilder("contig", "ACGTACGT")
 							.addRead("read1", new NucleotideSequenceBuilder("ACG-ACGT").build(),
 									0,
 									Direction.FORWARD, 
@@ -113,7 +113,7 @@ public class TestBaseSegmentUtil {
 	
 	@Test(expected = NoReadMatchesConsensusException.class)
 	public void noReadsMatchConsensusShouldThrowException(){
-		AceContig contig = new DefaultAceContigBuilder("contig", "ACGWACGT")
+		AceContig contig = new AceContigBuilder("contig", "ACGWACGT")
 							.addRead("read1", new NucleotideSequenceBuilder("ACGTACGT").build(),
 									0,
 									Direction.FORWARD, 
