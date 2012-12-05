@@ -38,6 +38,7 @@ import java.util.TreeSet;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
+import org.jcvi.common.core.assembly.ContigBuilder;
 import org.jcvi.common.core.assembly.DefaultContig;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
@@ -60,11 +61,11 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code AceContigBuilder} is a {@link Builder}
  * for {@link AceContig}s that allows
- * creating a contig object read by read. by adding placed reads
+ * creating {@link AceContig} objects read by read by adding assembled reads
  * and setting a consensus.  An {@link AceContigBuilder}
  * can be used to create AceContig objects that 
  * have been created by an assembler or can be used
- * to create contigs from the imagination.
+ * to create contigs from "scratch".
  * There are additional methods to allow
  * the contig consensus or underlying
  * reads to be modified before
@@ -74,7 +75,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  *
  */
-public final class  DefaultAceContigBuilder implements AceContigBuilder{
+public final class  DefaultAceContigBuilder implements ContigBuilder<AceAssembledRead,AceContig>{
     /**
      * default quality value that every basecall will get
      * if consensus caller is used to recall the consensus
@@ -173,7 +174,6 @@ public final class  DefaultAceContigBuilder implements AceContigBuilder{
      * @param complemented is this ace contig complemented or not.
      * @return this
      */
-    @Override
     public DefaultAceContigBuilder setComplemented(boolean complemented){
         this.complemented = complemented;
         return this;
@@ -321,7 +321,6 @@ public final class  DefaultAceContigBuilder implements AceContigBuilder{
      * read from the sequence machine.
      * @return this.
      */
-    @Override
     public DefaultAceContigBuilder addRead(String readId, NucleotideSequence validBases, int offset,
             Direction dir, Range clearRange,PhdInfo phdInfo,int ungappedFullLength) {
         //contig left (and right) might be beyond consensus depending on how

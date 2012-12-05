@@ -30,7 +30,7 @@ import org.jcvi.common.core.util.Builder;
  *
  *
  */
-public interface AceTagsBuilder extends Builder<AceTags>{
+interface AceTagsBuilder extends Builder<AceTags>{
     /**
      * Add the given {@link ConsensusAceTag} to this.
      * @param tag the {@link ConsensusAceTag} to add; can not be null.
