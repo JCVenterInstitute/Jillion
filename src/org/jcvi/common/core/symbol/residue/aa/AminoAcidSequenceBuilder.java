@@ -210,8 +210,7 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 		return false;
 	}
 
-	@Override
-	public List<AminoAcid> asList(Range range) {
+	private List<AminoAcid> asList(Range range) {
 		AminoAcidSequence s = build();
 		List<AminoAcid> list = new ArrayList<AminoAcid>((int)range.getLength());
 		Iterator<AminoAcid> iter = s.iterator(range);
