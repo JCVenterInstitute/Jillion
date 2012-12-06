@@ -300,7 +300,7 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
 		}
 
 		@Override
-		public void visitAssembledFromLine(String readId, Direction dir,
+		public void visitAlignedReadInfo(String readId, Direction dir,
 				int gappedStartOffset) {
 			//no-op
 			
@@ -406,7 +406,7 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
             AbstractAceFileVisitorContigBuilder builder = new AbstractAceFileVisitorContigBuilder() {
 
                 @Override
-				public synchronized boolean shouldVisitContig(String contigId,
+				public synchronized boolean shouldParseContig(String contigId,
 						int numberOfBases, int numberOfReads,
 						int numberOfBaseSegments, boolean reverseComplimented) {
 					return contigIdFilter.accept(contigId);
@@ -491,10 +491,10 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
 		}
 
 		@Override
-		public void visitAssembledFromLine(String readId, Direction dir,
+		public void visitAlignedReadInfo(String readId, Direction dir,
 				int gappedStartOffset) {
 			if(visitorBuilder!=null){
-				visitorBuilder.visitAssembledFromLine(readId, dir, gappedStartOffset);
+				visitorBuilder.visitAlignedReadInfo(readId, dir, gappedStartOffset);
 			}
 			
 		}
@@ -639,7 +639,7 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
 			}
 
 			@Override
-			public void visitAssembledFromLine(String readId,
+			public void visitAlignedReadInfo(String readId,
 					Direction dir, int gappedStartOffset) {
 				//no-op
 				

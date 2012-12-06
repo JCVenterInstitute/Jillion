@@ -360,7 +360,7 @@ public final class AceFileParser {
                     final String group = assembledFromMatcher.group(2);
                     Direction dir = isComplimented(group)? Direction.REVERSE : Direction.FORWARD;
                     int fullRangeOffset = Integer.parseInt(assembledFromMatcher.group(3));
-                    parserState.visitor.visitAssembledFromLine(name, dir, fullRangeOffset);
+                    parserState.visitor.visitAlignedReadInfo(name, dir, fullRangeOffset);
                 }
                 return parserState;
             } 

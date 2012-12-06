@@ -225,7 +225,7 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
         }
 
         @Override
-		public synchronized boolean shouldVisitContig(String aceContigId, int numberOfBases,
+		public synchronized boolean shouldParseContig(String aceContigId, int numberOfBases,
 				int numberOfReads, int numberOfBaseSegments,
 				boolean reverseComplimented) {
         	if(contigId !=null){

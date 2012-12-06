@@ -283,7 +283,7 @@ final class IndexedAceFileDataStore{
         * {@inheritDoc}
         */
         @Override
-        public void visitAssembledFromLine(String readId, Direction dir,
+        public void visitAlignedReadInfo(String readId, Direction dir,
                 int gappedStartOffset) {
         	//no-op
         }

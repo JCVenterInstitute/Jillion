@@ -41,6 +41,7 @@ import org.jcvi.common.core.util.MapUtil;
  * {@code AbstractAceFileVisitor} is the main {@link AceFileVisitor}
  * implementation that will interpret the visit method calls
  * to build valid reads and contigs.
+ * This class is not thread-safe.
  * @author dkatzel
  *
  *
@@ -50,7 +51,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     private String currentReadId;
     private int currentReadGappedFullLength;
     private int currentReadUngappedFullLength;
-    private Map<String, AlignedReadInfo> currentAssembledFromMap;
+    private Map<String, AlignedReadInfo> currentAlignedReadInfoMap;
     private boolean readingConsensus=true;
     private NucleotideSequenceBuilder currentBasecalls = new NucleotideSequenceBuilder();
     private PhdInfo currentDefaultPhdInfo;
@@ -62,21 +63,27 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     private int numberOfBasesInCurrentContig;
     private int numberOfReadsInCurrentContig;
     private boolean currentContigIsComplimented=false;
-    private boolean initialized;
-
-    public synchronized boolean isInitialized() {
-        return initialized;
-    }
+    private volatile boolean initialized;
+    
     protected final String getCurrentFullLengthBasecalls(){
         return currentFullLengthBases;
     }
+    /**
+     * Begin visiting an ace file; only one ace file
+     * can be visited per instance.
+     * @throws IllegalStateException if a second file
+     * is visited after the first file has finished
+     * via {@link #visitEndOfFile()}.
+     *
+     * {@inheritDoc}
+     */
     @Override
-    public synchronized void visitFile() {
+    public void visitFile() {
         throwExceptionIfInitialized();
     }
 
-    private synchronized void throwExceptionIfInitialized() {
-        if(isInitialized()){
+    private void throwExceptionIfInitialized() {
+        if(initialized){
             throw new IllegalStateException("already initialized");
         }
     }
@@ -86,23 +93,23 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
      * {@inheritDoc}
      */
     @Override
-    public synchronized void visitAssembledFromLine(String readId,
+    public synchronized void visitAlignedReadInfo(String readId,
             Direction dir, int gappedStartOffset) {
         throwExceptionIfInitialized();
         fireVisitNewContigIfWeHaventAlready();
         final AlignedReadInfo assembledFromObj = new AlignedReadInfo(gappedStartOffset, dir);
-        currentAssembledFromMap.put(readId, assembledFromObj);
+        currentAlignedReadInfoMap.put(readId, assembledFromObj);
     }
     protected synchronized void setAlignedInfoMap(Map<String, AlignedReadInfo> currentAlignedInfoMap){
-    	this.currentAssembledFromMap = currentAlignedInfoMap;
+    	this.currentAlignedReadInfoMap = currentAlignedInfoMap;
     }
     
     
 	protected final synchronized  Map<String, AlignedReadInfo> getAlignedInfoMap() {
 		//defensive copy
-		int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(currentAssembledFromMap.size());
+		int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(currentAlignedReadInfoMap.size());
 		Map<String, AlignedReadInfo> copy = new HashMap<String, AlignedReadInfo>(capacity);
-		copy.putAll(currentAssembledFromMap);
+		copy.putAll(currentAlignedReadInfoMap);
 		return copy;
 	}
 	private synchronized void fireVisitNewContigIfWeHaventAlready() {
@@ -127,45 +134,60 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     protected abstract void visitNewContig(String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean isComplemented);
 
     @Override
-    public synchronized void visitConsensusQualities(QualitySequence ungappedConsensusQualities) {
+    public void visitConsensusQualities(QualitySequence ungappedConsensusQualities) {
         throwExceptionIfInitialized();
 
     }
 
     @Override
-    public synchronized void visitBaseSegment(Range gappedConsensusRange, String readId) {
+    public void visitBaseSegment(Range gappedConsensusRange, String readId) {
         throwExceptionIfInitialized();
 
     }
     /**
-     * By default this method will always return true.  Please override
-     * if your implementation requires only visiting contigs
-     * under certain conditions.
-     * {@inheritDoc}
+     * Should the current contig with the given header info
+     * get parsed.  This method defaults to always
+     * return {@code true} but may be overridden by
+     * child classes.  This method exists
+     * to allow child classes to skip contigs
+     * without overriding
+     * {@link #visitBeginContig(String, int, int, int, boolean)}
+     * which has been made final in {@link AbstractAceFileVisitor}
+     * in order to make sure temporary data invariants required 
+     * by {@link AbstractAceFileVisitor} to function properly 
+     * are never violated.
+     * 
+     * @return {@code} to parse the current contig;
+     * {@code false} otherwise.  This should act the same
+     * as if the client code was able to override 
+     * {@link #visitBeginContig(String, int, int, int, boolean)}
+     * and return {@link BeginContigReturnCode#VISIT_CURRENT_CONTIG}
+     * or {@link BeginContigReturnCode#SKIP_CURRENT_CONTIG} respectively.
      */
-	public boolean shouldVisitContig(String contigId, int numberOfBases,
+	protected boolean shouldParseContig(String contigId, int numberOfBases,
 			int numberOfReads, int numberOfBaseSegments,
 			boolean reverseComplimented) {
 		return true;
 	}
 	/**
-     * Reset all temp data that contains contig specific information.
-     * <p/>
-     * {@inheritDoc}
-     */
+	 * Can not be overridden; in order to control
+	 * which contigs get parsed plese override {@link #shouldParseContig(String, int, int, int, boolean)}.
+	 * @see #shouldParseContig(String, int, int, int, boolean)
+	 */
     @Override
     public final synchronized BeginContigReturnCode visitBeginContig(String contigId, int numberOfBases,
             int numberOfReads, int numberOfBaseSegments,
             boolean reverseComplimented) {
+    	//reset all temporary data that contains contig specific information.
         throwExceptionIfInitialized();
         currentContigId = contigId;
-        currentAssembledFromMap = new HashMap<String, AlignedReadInfo>();
+        currentAlignedReadInfoMap = new HashMap<String, AlignedReadInfo>();
         readingConsensus = true;
         currentBasecalls = new NucleotideSequenceBuilder();
         currentContigIsComplimented = reverseComplimented;
         numberOfBasesInCurrentContig = numberOfBases;
         numberOfReadsInCurrentContig = numberOfReads;
-        if(shouldVisitContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented)){
+        if(shouldParseContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented)){
         	return BeginContigReturnCode.VISIT_CURRENT_CONTIG;
         }else{
         	return BeginContigReturnCode.SKIP_CURRENT_CONTIG;
@@ -173,7 +195,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     }
 
     @Override
-    public synchronized void visitHeader(int numberOfContigs, int totalNumberOfReads) {
+    public void visitHeader(int numberOfContigs, int totalNumberOfReads) {
         throwExceptionIfInitialized();
     }
     /**
@@ -185,13 +207,13 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
      * {@inheritDoc}
      */
     @Override
-    public synchronized void visitQualityLine(int qualLeft,
+    public void visitQualityLine(int qualLeft,
             int qualRight, int alignLeft, int alignRight) {
         throwExceptionIfInitialized();  
         if(currentReadId ==null){
         	throw new IllegalStateException("current read id is null");
         }
-        AlignedReadInfo assembledFrom =currentAssembledFromMap.get(currentReadId);
+        AlignedReadInfo assembledFrom =currentAlignedReadInfoMap.get(currentReadId);
         if(assembledFrom ==null){
             throw new IllegalStateException("unknown read no AF record for "+ currentReadId);
         }
@@ -283,12 +305,12 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     }
 
     @Override
-    public synchronized void visitLine(String line) {
+    public void visitLine(String line) {
         throwExceptionIfInitialized();
     }
 
     @Override
-    public synchronized void visitReadHeader(String readId, int gappedLength) {
+    public void visitReadHeader(String readId, int gappedLength) {
         throwExceptionIfInitialized();
         currentReadId = readId;
         currentReadGappedFullLength = gappedLength;
@@ -296,12 +318,12 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     }
 
     @Override
-    public synchronized void visitTraceDescriptionLine(String traceName, String phdName,
+    public void visitTraceDescriptionLine(String traceName, String phdName,
             Date date) {
         throwExceptionIfInitialized();
         if(!skipCurrentRead){
             currentDefaultPhdInfo =new PhdInfo(traceName, phdName, date);
-            AlignedReadInfo assembledFrom = currentAssembledFromMap.get(currentReadId);
+            AlignedReadInfo assembledFrom = currentAlignedReadInfoMap.get(currentReadId);
             visitAceRead(currentReadId, currentValidBases ,currentOffset, assembledFrom.getDirection(), 
                     currentClearRange ,currentDefaultPhdInfo,currentReadUngappedFullLength);
         }
@@ -328,13 +350,13 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     
     
     @Override
-    public synchronized void visitBasesLine(String bases) {
+    public void visitBasesLine(String bases) {
         throwExceptionIfInitialized();
         currentBasecalls.append(bases.trim());
     }
 
     @Override
-    public synchronized void visitEndOfFile() {
+    public void visitEndOfFile() {
         throwExceptionIfInitialized();  
         clearTempData();
         initialized = true;
@@ -343,7 +365,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     
     private void clearTempData(){
         currentContigId = null;
-        currentAssembledFromMap = null;
+        currentAlignedReadInfoMap = null;
         currentBasecalls = null;
     }
 
