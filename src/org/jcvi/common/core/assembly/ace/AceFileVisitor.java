@@ -153,7 +153,8 @@ public interface AceFileVisitor extends TextFileVisitor{
      */
     BeginContigReturnCode visitBeginContig(String contigId, int numberOfBases, int numberOfReads, int numberOfBaseSegments, boolean reverseComplemented);
     /**
-     * begin visiting consensus qualities.  This method will only
+     * Visit the ungapped consensus qualities
+     * of the current contig being parsed.  This method will only
      * get called if the current contig is being parsed which is determined
      * by the return value of {@link #visitBeginContig(String, int, int, int, boolean)}.
      * @param ungappedConsensusQualities all the
@@ -162,7 +163,7 @@ public interface AceFileVisitor extends TextFileVisitor{
      */
     void visitConsensusQualities(QualitySequence ungappedConsensusQualities);
     /**
-     * AssembledFroms define the location of the 
+     * Visit a line that defines the location of a 
      * read within a contig.  This method will only
      * get called if the current contig is being parsed which is determined
      * by the return value of {@link #visitBeginContig(String, int, int, int, boolean)}.
@@ -170,12 +171,16 @@ public interface AceFileVisitor extends TextFileVisitor{
      * @param dir {@link Direction} of read inside contig.
      * @param gappedStartOffset gapped start offset of read inside contig.
      */
-    void visitAssembledFromLine(String readId, Direction dir, int gappedStartOffset);
+    void visitAlignedReadInfo(String readId, Direction dir, int gappedStartOffset);
     /**
      * Base Segments indicate reads phrap has chosen to be the consensus
      * at a particular position.  This method will only
-     * get called if the current contig is being parsed which is determined
-     * by the return value of {@link #visitBeginContig(String, int, int, int, boolean)}.
+     * get called if ace file contains BaseSegment data 
+     * (new versions of consed no longer require it)
+     * and the current contig is getting parsed because the previous
+     * call to 
+     * {@link #visitBeginContig(String, int, int, int, boolean)}
+     * returned {@link BeginContigReturnCode#VISIT_CURRENT_CONTIG}.
      * @param gappedConsensusRange range of consensus being defined.
      * @param readId read id that provides coverage at that range.
      */

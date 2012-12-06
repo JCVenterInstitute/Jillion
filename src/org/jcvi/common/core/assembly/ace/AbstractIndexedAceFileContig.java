@@ -138,7 +138,7 @@ abstract class AbstractIndexedAceFileContig implements AceContig{
 			ReadVisitorBuilder builder = new ReadVisitorBuilder(consensus);
 			builder.visitBeginContig(contigId, 0, 0, 0, isComplimented);
 			AlignedReadInfo alignmentInfo = readInfoMap.get(id);
-			builder.visitAssembledFromLine(id, alignmentInfo.getDirection(), alignmentInfo.getStartOffset());
+			builder.visitAlignedReadInfo(id, alignmentInfo.getDirection(), alignmentInfo.getStartOffset());
 			
 			AceFileParser.parse(in, builder);
 			AceAssembledRead read= builder.build();
@@ -324,7 +324,7 @@ abstract class AbstractIndexedAceFileContig implements AceContig{
 		}
 
 		@Override
-		public boolean shouldVisitContig(String contigId,
+		public boolean shouldParseContig(String contigId,
 				int numberOfBases, int numberOfReads,
 				int numberOfBaseSegments, boolean reverseComplimented) {
 			this.contigId =contigId;

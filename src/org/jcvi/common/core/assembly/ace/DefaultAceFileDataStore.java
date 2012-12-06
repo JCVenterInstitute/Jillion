@@ -247,7 +247,7 @@ final class DefaultAceFileDataStore implements AceFileContigDataStore{
         }
 
         @Override
-		public boolean shouldVisitContig(String contigId, int numberOfBases,
+		public boolean shouldParseContig(String contigId, int numberOfBases,
 				int numberOfReads, int numberOfBaseSegments,
 				boolean reverseComplimented) {
 			return filter.accept(contigId);

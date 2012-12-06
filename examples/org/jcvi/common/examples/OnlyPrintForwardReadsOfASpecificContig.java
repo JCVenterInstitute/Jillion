@@ -27,7 +27,7 @@ public class OnlyPrintForwardReadsOfASpecificContig {
 			//we only want to visit the contig with 
 			//the id we care about
 			@Override
-			public boolean shouldVisitContig(String contigId,
+			public boolean shouldParseContig(String contigId,
 					int numberOfBases, int numberOfReads,
 					int numberOfBaseSegments, boolean reverseComplimented) {
 				return contigIdToPrint.equals(contigId);

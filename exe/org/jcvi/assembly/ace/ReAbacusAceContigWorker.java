@@ -325,7 +325,7 @@ public class ReAbacusAceContigWorker {
 
         
         @Override
-		public boolean shouldVisitContig(String contigId, int numberOfBases,
+		public boolean shouldParseContig(String contigId, int numberOfBases,
 				int numberOfReads, int numberOfBaseSegments,
 				boolean reverseComplimented) {
         	return this.contigId.equals(contigId) && abacusProblemRanges.containsKey(contigId);
@@ -661,7 +661,7 @@ public class ReAbacusAceContigWorker {
 			
 		}
 		@Override
-		public void visitAssembledFromLine(String readId, Direction dir,
+		public void visitAlignedReadInfo(String readId, Direction dir,
 				int gappedStartOffset) {
 			// TODO Auto-generated method stub
 			
