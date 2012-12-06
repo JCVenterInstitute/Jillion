@@ -60,11 +60,11 @@ final class DefaultAceFileDataStore implements AceFileContigDataStore{
 	 */
     private final long totalNumberOfReads;
     /**
-     * List of all the {@link DefaultWholeAssemblyAceTag}s
+     * List of all the {@link WholeAssemblyAceTag}s
      * in the ace file in the order they are
      * declared in the file.
      */
-    private final List<DefaultWholeAssemblyAceTag> wholeAssemblyTags;
+    private final List<WholeAssemblyAceTag> wholeAssemblyTags;
     /**
      * List of all the {@link ConsensusAceTag}s
      * in the ace file in the order they are
@@ -72,11 +72,11 @@ final class DefaultAceFileDataStore implements AceFileContigDataStore{
      */
     private final List<ConsensusAceTag> consensusTags;
     /**
-     * List of all the {@link DefaultReadAceTag}s
+     * List of all the {@link ReadAceTag}s
      * in the ace file in the order they are
      * declared in the file.
      */
-    private final List<DefaultReadAceTag> readTags;
+    private final List<ReadAceTag> readTags;
 	
 	/**
      * Create a new empty AceContigDataStoreBuilder
@@ -135,8 +135,8 @@ final class DefaultAceFileDataStore implements AceFileContigDataStore{
     
     private DefaultAceFileDataStore(DataStore<AceContig> delegate,
 			long totalNumberOfReads,
-			List<DefaultWholeAssemblyAceTag> wholeAssemblyTags,
-			List<ConsensusAceTag> consensusTags, List<DefaultReadAceTag> readTags) {
+			List<WholeAssemblyAceTag> wholeAssemblyTags,
+			List<ConsensusAceTag> consensusTags, List<ReadAceTag> readTags) {
 		this.delegate = delegate;
 		this.totalNumberOfReads = totalNumberOfReads;
 		this.wholeAssemblyTags = wholeAssemblyTags;
@@ -200,11 +200,11 @@ final class DefaultAceFileDataStore implements AceFileContigDataStore{
 		return totalNumberOfReads;
 	}
 	@Override
-	public StreamingIterator<DefaultWholeAssemblyAceTag> getWholeAssemblyTagIterator() {
+	public StreamingIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() {
 		return IteratorUtil.createStreamingIterator(wholeAssemblyTags.iterator());
 	}
 	@Override
-	public StreamingIterator<DefaultReadAceTag> getReadTagIterator() {
+	public StreamingIterator<ReadAceTag> getReadTagIterator() {
 		return IteratorUtil.createStreamingIterator(readTags.iterator());
 	}
 	@Override
@@ -217,9 +217,9 @@ final class DefaultAceFileDataStore implements AceFileContigDataStore{
         
         private final DataStoreFilter filter;
         private long totalNumberOfReads =0L;
-        private final List<DefaultWholeAssemblyAceTag> wholeAssemblyTags = new ArrayList<DefaultWholeAssemblyAceTag>();
+        private final List<WholeAssemblyAceTag> wholeAssemblyTags = new ArrayList<WholeAssemblyAceTag>();
         private final List<ConsensusAceTag> consensusTags = new ArrayList<ConsensusAceTag>();
-        private final List<DefaultReadAceTag> readTags = new ArrayList<DefaultReadAceTag>();
+        private final List<ReadAceTag> readTags = new ArrayList<ReadAceTag>();
         /**
          * Consensus tags span multiple lines of the ace file so we need to build
          * up the consensus tags as we parse.
@@ -291,7 +291,7 @@ final class DefaultAceFileDataStore implements AceFileContigDataStore{
         public void visitWholeAssemblyTag(String type, String creator,
                 Date creationDate, String data) {
             super.visitWholeAssemblyTag(type, creator, creationDate, data);
-            wholeAssemblyTags.add(new DefaultWholeAssemblyAceTag(type, creator, creationDate, data.trim()));
+            wholeAssemblyTags.add(new WholeAssemblyAceTag(type, creator, creationDate, data.trim()));
         }
         
 
@@ -325,7 +325,7 @@ final class DefaultAceFileDataStore implements AceFileContigDataStore{
                 long gappedStart, long gappedEnd, Date creationDate,
                 boolean isTransient) {
             super.visitReadTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
-            readTags.add(new DefaultReadAceTag(id, type, creator, creationDate, 
+            readTags.add(new ReadAceTag(id, type, creator, creationDate, 
                     Range.of(gappedStart,gappedEnd), isTransient));
 
         }

@@ -245,8 +245,8 @@ public class TestDefaultAceFileWriter {
 	}
 	private void assertReadTagsAreEqual(AceFileContigDataStore datastore,
 			AceFileContigDataStore reparsedAceDataStore) throws DataStoreException {
-		StreamingIterator<DefaultReadAceTag> expected = datastore.getReadTagIterator();
-		StreamingIterator<DefaultReadAceTag> actual = datastore.getReadTagIterator();
+		StreamingIterator<ReadAceTag> expected = datastore.getReadTagIterator();
+		StreamingIterator<ReadAceTag> actual = datastore.getReadTagIterator();
 		
 		while(expected.hasNext()){
 			assertTrue(actual.hasNext());
@@ -257,8 +257,8 @@ public class TestDefaultAceFileWriter {
 	}
 	private void assertWholeReadTagsAreEqual(AceFileContigDataStore datastore,
 			AceFileContigDataStore reparsedAceDataStore) throws DataStoreException {
-		StreamingIterator<DefaultWholeAssemblyAceTag> expected = datastore.getWholeAssemblyTagIterator();
-		StreamingIterator<DefaultWholeAssemblyAceTag> actual = datastore.getWholeAssemblyTagIterator();
+		StreamingIterator<WholeAssemblyAceTag> expected = datastore.getWholeAssemblyTagIterator();
+		StreamingIterator<WholeAssemblyAceTag> actual = datastore.getWholeAssemblyTagIterator();
 		
 		while(expected.hasNext()){
 			assertTrue(actual.hasNext());
@@ -268,7 +268,7 @@ public class TestDefaultAceFileWriter {
 	}
 	private void writeReadTags(AceFileContigDataStore datastore,
 			AceFileWriter sut) throws IOException, DataStoreException {
-		StreamingIterator<DefaultReadAceTag> iter = datastore.getReadTagIterator();
+		StreamingIterator<ReadAceTag> iter = datastore.getReadTagIterator();
 		try{
 			while(iter.hasNext()){
 				sut.write(iter.next());
@@ -280,7 +280,7 @@ public class TestDefaultAceFileWriter {
 	
 	private void writeWholeAssemblyTags(AceFileContigDataStore datastore,
 			AceFileWriter sut) throws IOException, DataStoreException {
-		StreamingIterator<DefaultWholeAssemblyAceTag> iter = datastore.getWholeAssemblyTagIterator();
+		StreamingIterator<WholeAssemblyAceTag> iter = datastore.getWholeAssemblyTagIterator();
 		try{
 			while(iter.hasNext()){
 				sut.write(iter.next());

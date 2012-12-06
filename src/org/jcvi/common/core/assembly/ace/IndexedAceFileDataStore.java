@@ -175,9 +175,9 @@ final class IndexedAceFileDataStore{
         private long currentFileOffset;
         private String currentContigId;
         private long totalNumberOfReads=0L;
-        private final List<DefaultWholeAssemblyAceTag> wholeAssemblyTags = new ArrayList<DefaultWholeAssemblyAceTag>();
+        private final List<WholeAssemblyAceTag> wholeAssemblyTags = new ArrayList<WholeAssemblyAceTag>();
         private final List<ConsensusAceTag> consensusTags = new ArrayList<ConsensusAceTag>();
-        private final List<DefaultReadAceTag> readTags = new ArrayList<DefaultReadAceTag>();
+        private final List<ReadAceTag> readTags = new ArrayList<ReadAceTag>();
         
         private final DataStoreFilter filter;
        
@@ -341,7 +341,7 @@ final class IndexedAceFileDataStore{
         public void visitReadTag(String id, String type, String creator,
                 long gappedStart, long gappedEnd, Date creationDate,
                 boolean isTransient) {
-            readTags.add(new DefaultReadAceTag(id, type, creator, creationDate, 
+            readTags.add(new ReadAceTag(id, type, creator, creationDate, 
                     Range.of(gappedStart,gappedEnd), isTransient));
         }
 
@@ -399,7 +399,7 @@ final class IndexedAceFileDataStore{
         @Override
         public void visitWholeAssemblyTag(String type, String creator,
                 Date creationDate, String data) {
-            wholeAssemblyTags.add(new DefaultWholeAssemblyAceTag(type, creator, creationDate, data.trim()));
+            wholeAssemblyTags.add(new WholeAssemblyAceTag(type, creator, creationDate, data.trim()));
             
         }
     }
@@ -447,16 +447,16 @@ final class IndexedAceFileDataStore{
 		  private final Map<String, Range> indexFileRange;
 		    private final File file;
 		    private final long totalNumberOfReads;
-		    private final List<DefaultWholeAssemblyAceTag> wholeAssemblyTags;
+		    private final List<WholeAssemblyAceTag> wholeAssemblyTags;
 		    private final List<ConsensusAceTag> consensusTags;
-		    private final List<DefaultReadAceTag> readTags;
+		    private final List<ReadAceTag> readTags;
 		    
 		    private volatile boolean  closed=false;
 		
 		protected AbstractIndexedAceFileDataStoreImpl(File file, Map<String, Range> indexFileRange,
 	    		long totalNumberOfReads,
-				List<DefaultWholeAssemblyAceTag> wholeAssemblyTags,
-				List<ConsensusAceTag> consensusTags, List<DefaultReadAceTag> readTags) {
+				List<WholeAssemblyAceTag> wholeAssemblyTags,
+				List<ConsensusAceTag> consensusTags, List<ReadAceTag> readTags) {
 	    	this.indexFileRange = indexFileRange;
 	    	this.file = file;
 			this.totalNumberOfReads = totalNumberOfReads;
@@ -477,12 +477,12 @@ final class IndexedAceFileDataStore{
 	   		return totalNumberOfReads;
 	   	}
 	   	@Override
-	   	public StreamingIterator<DefaultWholeAssemblyAceTag> getWholeAssemblyTagIterator() throws DataStoreException {
+	   	public StreamingIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() throws DataStoreException {
 	   		assertNotYetClosed();
 	   		return IteratorUtil.createStreamingIterator(wholeAssemblyTags.iterator());
 	   	}
 	   	@Override
-	   	public StreamingIterator<DefaultReadAceTag> getReadTagIterator() throws DataStoreException {
+	   	public StreamingIterator<ReadAceTag> getReadTagIterator() throws DataStoreException {
 	   		assertNotYetClosed();
 	   		return IteratorUtil.createStreamingIterator(readTags.iterator());
 	   	}
@@ -589,8 +589,8 @@ final class IndexedAceFileDataStore{
 		private final MappedByteBuffer buffer;
 		protected MemoryMappedIndexedAceFileDataStore(File file,
 				Map<String, Range> indexFileRange, long totalNumberOfReads,
-				List<DefaultWholeAssemblyAceTag> wholeAssemblyTags,
-				List<ConsensusAceTag> consensusTags, List<DefaultReadAceTag> readTags) throws IOException {
+				List<WholeAssemblyAceTag> wholeAssemblyTags,
+				List<ConsensusAceTag> consensusTags, List<ReadAceTag> readTags) throws IOException {
 			super(file, indexFileRange, totalNumberOfReads, wholeAssemblyTags,
 					consensusTags, readTags);
 			FileChannel channel = new RandomAccessFile(file,"r").getChannel();
@@ -623,8 +623,8 @@ final class IndexedAceFileDataStore{
 
 		protected LargeIndexedAceFileDataStore(File file,
 				Map<String, Range> indexFileRange, long totalNumberOfReads,
-				List<DefaultWholeAssemblyAceTag> wholeAssemblyTags,
-				List<ConsensusAceTag> consensusTags, List<DefaultReadAceTag> readTags) {
+				List<WholeAssemblyAceTag> wholeAssemblyTags,
+				List<ConsensusAceTag> consensusTags, List<ReadAceTag> readTags) {
 			super(file, indexFileRange, totalNumberOfReads, wholeAssemblyTags,
 					consensusTags, readTags);
 		}

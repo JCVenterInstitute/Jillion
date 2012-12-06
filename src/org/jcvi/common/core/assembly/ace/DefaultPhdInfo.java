@@ -24,7 +24,14 @@
 package org.jcvi.common.core.assembly.ace;
 
 import java.util.Date;
-
+/**
+ * {@code PhdInfo} is a value class
+ * that contains information
+ * to link an ace read
+ * to a record in the corresponding
+ * phd file.
+ * @author dkatzel
+ */
 public class DefaultPhdInfo implements PhdInfo {
 
     private final String traceName, phdName;
@@ -34,17 +41,40 @@ public class DefaultPhdInfo implements PhdInfo {
         this.phdName = phdName;
         this.phdDate = new Date(phdDate.getTime());
     }
+    /**
+     * Get the {@link Date}
+     * that this phd file was
+     * last modified.
+     * @return a {@link Date};
+     * never null.The implementations
+     * of method
+     * might return new (but equal) 
+     * Date instances
+     * each time it is called.
+     */
     @Override
     public Date getPhdDate() {
         //defensive copy
         return new Date(phdDate.getTime());
     }
-
+    /**
+     * Get the name of the phd file
+     * that contains information
+     * for this read.
+     * @return a String; never null.
+     */
     @Override
     public String getPhdName() {
         return phdName;
     }
-
+    /**
+	 * Get the name of the trace
+	 * in the phd file.  This is usually
+	 * the read id or a variation
+	 * of the read id.
+	 * @return a String;
+	 * never null.
+	 */
     @Override
     public String getTraceName() {
         return traceName;

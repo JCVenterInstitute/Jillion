@@ -43,7 +43,7 @@ public abstract class AbstractAceTagsFromAceFileDataStore {
     ResourceFileServer RESOURCES = new ResourceFileServer(AbstractAceTagsFromAceFileDataStore.class);
     String fileName = "files/sample.ace";
     
-    DefaultWholeAssemblyAceTag expectedWholeAssemblyTag = new DefaultWholeAssemblyAceTag(
+    WholeAssemblyAceTag expectedWholeAssemblyTag = new WholeAssemblyAceTag(
             "phrap_params", "phrap", 
             new DateTime(1999, 6, 21,16, 19, 47, 0).toDate(), 
             "/usr/local/genome/bin/phrap standard.fasta.screen -new_ace -view \nphrap version 0.990319");
@@ -85,7 +85,7 @@ public abstract class AbstractAceTagsFromAceFileDataStore {
             false)
             .appendData("3\n<-gap\nggcctcgggg\n")
             .build();
-    DefaultReadAceTag readTag1 = new DefaultReadAceTag("djs14_680.s1", "matchElsewhereLowQual",
+    ReadAceTag readTag1 = new ReadAceTag("djs14_680.s1", "matchElsewhereLowQual",
     		"phrap", new DateTime(1999, 8, 23, 11, 43, 56, 0).toDate(), 
     		Range.of(903,932)
     		, true);
@@ -106,16 +106,16 @@ public abstract class AbstractAceTagsFromAceFileDataStore {
     }
     @Test
     public void wholeAssemblyTag() throws DataStoreException{
-        List<DefaultWholeAssemblyAceTag> tags = toList(sut.getWholeAssemblyTagIterator());
+        List<WholeAssemblyAceTag> tags = toList(sut.getWholeAssemblyTagIterator());
         assertEquals(1,tags.size());
-        final DefaultWholeAssemblyAceTag wholeAssemblyAceTag = tags.get(0);
+        final WholeAssemblyAceTag wholeAssemblyAceTag = tags.get(0);
         assertEquals(expectedWholeAssemblyTag, wholeAssemblyAceTag);
     }
     @Test
     public void readTag() throws DataStoreException{
-        List<DefaultReadAceTag> tags = toList(sut.getReadTagIterator());
+        List<ReadAceTag> tags = toList(sut.getReadTagIterator());
         assertEquals(1,tags.size());
-        final DefaultReadAceTag readTag = tags.get(0);
+        final ReadAceTag readTag = tags.get(0);
         assertEquals(readTag1, readTag);
     }
     @Test

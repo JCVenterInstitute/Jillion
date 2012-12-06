@@ -50,20 +50,20 @@ public interface AceFileContigDataStore extends ContigDataStore<AceAssembledRead
 	long getNumberOfTotalReads() throws DataStoreException;
 	 /**
      * Get a new instance of a {@link StreamingIterator}
-     * of all the {@link DefaultWholeAssemblyAceTag}s
+     * of all the {@link WholeAssemblyAceTag}s
      * in the ace file in the order they are
      * declared in the file.
      * @return a new {@link StreamingIterator}; never null.
      */
-	StreamingIterator<DefaultWholeAssemblyAceTag> getWholeAssemblyTagIterator() throws DataStoreException;
+	StreamingIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() throws DataStoreException;
 	/**
      * Get a new instance of a {@link StreamingIterator}
-     * of all the {@link DefaultReadAceTag}s
+     * of all the {@link ReadAceTag}s
      * in the ace file in the order they are
      * declared in the file.
      * @return a new {@link StreamingIterator}; never null.
      */
-	StreamingIterator<DefaultReadAceTag> getReadTagIterator() throws DataStoreException;
+	StreamingIterator<ReadAceTag> getReadTagIterator() throws DataStoreException;
 	/**
      * Get a new instance of a {@link StreamingIterator}
      * of all the {@link ConsensusAceTag}s

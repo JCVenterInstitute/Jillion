@@ -27,21 +27,21 @@ import java.util.Date;
 
 import org.jcvi.common.core.Rangeable;
 /**
- * {@code DefaultReadAceTag} is an {@link AceTag}
+ * {@code ReadAceTag} is an {@link AceTag}
  * that maps to a particular location on a specific
  * read of a contig in an ace file.
  * @author dkatzel
  */
-public class DefaultReadAceTag extends AbstractDefaultPlacedAceTag{
+public final class ReadAceTag extends AbstractDefaultPlacedAceTag{
 
-    public DefaultReadAceTag(String id, String type, String creator,
+    public ReadAceTag(String id, String type, String creator,
             Date creationDate, Rangeable location, boolean isTransient) {
         super(id, type, creator, creationDate, location, null, isTransient);
     }
 
 	@Override
 	public String toString() {
-		return "DefaultReadAceTag [getId()=" + getId() + ", getType()="
+		return "ReadAceTag [getId()=" + getId() + ", getType()="
 				+ getType() + ", getCreator()=" + getCreator()
 				+ ", getCreationDate()=" + getCreationDate() + ", asRange()="
 				+ asRange() + ", getData()=" + getData() + ", isTransient()="
@@ -58,7 +58,7 @@ public class DefaultReadAceTag extends AbstractDefaultPlacedAceTag{
 		if(!super.equals(obj)){
 			return false;
 		}
-		return obj instanceof DefaultReadAceTag;
+		return obj instanceof ReadAceTag;
 	}
     
     
