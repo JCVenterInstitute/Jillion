@@ -35,8 +35,6 @@ public interface ConsensusAceTag extends RangeableAceTag {
     /**
      * Get the Id of contig
      * this tag references.
-     * <p/>
-     * {@inheritDoc}
      */
     String getId();
     /**

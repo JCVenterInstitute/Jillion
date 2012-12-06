@@ -38,6 +38,14 @@ public final class ReadAceTag extends AbstractDefaultPlacedAceTag{
             Date creationDate, Rangeable location, boolean isTransient) {
         super(id, type, creator, creationDate, location, null, isTransient);
     }
+    /**
+     * Get the read id that this tag references.
+     */
+	@Override
+	public String getId() {
+		// TODO Auto-generated method stub
+		return super.getId();
+	}
 
 	@Override
 	public String toString() {
