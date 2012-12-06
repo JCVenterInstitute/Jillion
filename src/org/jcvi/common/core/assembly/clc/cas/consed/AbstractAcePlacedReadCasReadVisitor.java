@@ -147,7 +147,7 @@ public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasRea
     @Override
     protected void visitMatch(CasMatch match, PhdReadRecord readRecord,
             CasPlacedRead placedRead) throws Exception {
-        AceAssembledRead acePlacedRead = new AceAssembledReadAdapter(placedRead, readRecord.getPhdInfo());
+        AceAssembledRead acePlacedRead = new AceAssembledReadAdapter(placedRead, readRecord.getDefaultPhdInfo());
         int casReferenceId = (int)match.getChosenAlignment().contigSequenceId();
         visitMatch(acePlacedRead,readRecord.getPhd(),casReferenceId);
         

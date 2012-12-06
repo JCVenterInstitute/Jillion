@@ -63,7 +63,7 @@ public abstract class AbstractAceAdaptedContigFileDataStore extends AbstractCont
     protected void visitRead(String readId, int offset, Range validRange,
     		NucleotideSequence basecalls, Direction dir) {
         
-        PhdInfo info =new DefaultPhdInfo(readId, readId+".phd.1", phdDate);
+        PhdInfo info =new PhdInfo(readId, readId+".phd.1", phdDate);
         try {
             contigBuilder.addRead(readId, new NucleotideSequenceBuilder(basecalls).build() ,offset, dir, 
                     validRange ,info,

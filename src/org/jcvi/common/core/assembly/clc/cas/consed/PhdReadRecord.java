@@ -26,5 +26,5 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 public interface PhdReadRecord extends Read{
 
 	Phd getPhd();
-	PhdInfo getPhdInfo();
+	PhdInfo getDefaultPhdInfo();
 }

@@ -23,7 +23,7 @@ public class AbstractTestPhdAdaptedIterator {
 				basecalls, 
 				quals,
 				PhdUtil.createPhdTimeStampCommentFor(phdDate));
-		PhdInfo info = ConsedUtil.generatePhdInfoFor(traceFile, id, phdDate);
+		PhdInfo info = ConsedUtil.generateDefaultPhdInfoFor(traceFile, id, phdDate);
 		
 		return new DefaultPhdReadRecord(phd, info);
 	}

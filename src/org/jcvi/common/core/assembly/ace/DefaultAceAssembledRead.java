@@ -57,7 +57,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
 		return placedRead.getReadInfo();
 	}
 	@Override
-    public PhdInfo getPhdInfo() {
+    public PhdInfo getDefaultPhdInfo() {
         return phdInfo;
     }
 
@@ -272,7 +272,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
         * {@inheritDoc}
         */
         @Override
-        public PhdInfo getPhdInfo() {
+        public PhdInfo getDefaultPhdInfo() {
             return phdInfo;
         }
 

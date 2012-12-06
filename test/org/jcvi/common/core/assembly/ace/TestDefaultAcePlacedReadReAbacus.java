@@ -19,16 +19,13 @@
 
 package org.jcvi.common.core.assembly.ace;
 
-import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.util.Date;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.ace.AceAssembledReadBuilder;
-import org.jcvi.common.core.assembly.ace.DefaultAceAssembledRead;
-import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Before;
@@ -44,7 +41,7 @@ public class TestDefaultAcePlacedReadReAbacus {
     Range validRange= Range.of(15,25);
     int ungappedFullLength =30;
     Direction dir = Direction.FORWARD;
-    PhdInfo phdInfo = createMock(PhdInfo.class);
+    PhdInfo phdInfo = new PhdInfo("traceName","phdName",new Date());
     
     int originalStartOffset=5;
     NucleotideSequence consensus = new NucleotideSequenceBuilder("NNNNACGTTACGTTT").build();
@@ -66,7 +63,7 @@ public class TestDefaultAcePlacedReadReAbacus {
         assertEquals(readId, sut.getId());
         assertEquals(originalStartOffset, sut.getBegin());
         assertEquals(dir, sut.getDirection());
-        assertEquals(phdInfo, sut.getPhdInfo());
+        assertEquals(phdInfo, sut.getDefaultPhdInfo());
         assertEquals(ungappedFullLength, sut.getUngappedFullLength());
         assertEquals(originalSequence, sut.getNucleotideSequenceBuilder().build());
         assertEquals(validRange, sut.getClearRange());
@@ -79,7 +76,7 @@ public class TestDefaultAcePlacedReadReAbacus {
         
         assertEquals(readId, sut.getId());
         assertEquals(dir, sut.getDirection());
-        assertEquals(phdInfo, sut.getPhdInfo());
+        assertEquals(phdInfo, sut.getDefaultPhdInfo());
         assertEquals(ungappedFullLength, sut.getUngappedFullLength());
         assertEquals(originalSequence, sut.getNucleotideSequenceBuilder().build());
         assertEquals(validRange, sut.getClearRange());

@@ -60,7 +60,7 @@ public class FastqConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 				nextFastq.getQualitySequence(),
 				requiredComments);
 		
-		PhdInfo info = ConsedUtil.generatePhdInfoFor(fastqFile, id, phdDate);
+		PhdInfo info = ConsedUtil.generateDefaultPhdInfoFor(fastqFile, id, phdDate);
 		return new DefaultPhdReadRecord(phd, info);
 	}
 

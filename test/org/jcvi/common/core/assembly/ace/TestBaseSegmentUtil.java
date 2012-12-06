@@ -1,6 +1,9 @@
 package org.jcvi.common.core.assembly.ace;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.jcvi.common.core.Direction;
@@ -8,18 +11,16 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.BaseSegmentUtil.NoReadMatchesConsensusException;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 public class TestBaseSegmentUtil {
 
-	PhdInfo mockPhdInfo = createMock(PhdInfo.class);
+	PhdInfo phdInfo = new PhdInfo("traceName","phdName",new Date());
 	@Test
 	public void oneReadCoversConsensusExactly(){
 		AceContig contig = new AceContigBuilder("contig", "ACGTACGT")
 							.addRead("read1", new NucleotideSequenceBuilder("ACGTACGT").build(),
 									0,
 									Direction.FORWARD, 
-									Range.of(0,7), mockPhdInfo, 8)
+									Range.of(0,7), phdInfo, 8)
 							.build();
 		
 		List<AceBaseSegment> actual =BaseSegmentUtil.computeBestSegmentsFor(contig);
@@ -34,11 +35,11 @@ public class TestBaseSegmentUtil {
 							.addRead("read1", new NucleotideSequenceBuilder("ACGTACGT").build(),
 									0,
 									Direction.FORWARD, 
-									Range.of(0,7), mockPhdInfo, 8)
+									Range.of(0,7), phdInfo, 8)
 								.addRead("read2", new NucleotideSequenceBuilder("ACGTACGT").build(),
 									0,
 									Direction.FORWARD, 
-									Range.of(0,7), mockPhdInfo, 8)
+									Range.of(0,7), phdInfo, 8)
 							.build();
 		
 		List<AceBaseSegment> actual =BaseSegmentUtil.computeBestSegmentsFor(contig);
@@ -53,11 +54,11 @@ public class TestBaseSegmentUtil {
 							.addRead("read1", new NucleotideSequenceBuilder("ACGTA").build(),
 									0,
 									Direction.FORWARD, 
-									Range.of(0,4), mockPhdInfo, 5)
+									Range.of(0,4), phdInfo, 5)
 								.addRead("read2", new NucleotideSequenceBuilder("ACGT").build(),
 									4,
 									Direction.FORWARD, 
-									Range.of(0,3), mockPhdInfo, 4)
+									Range.of(0,3), phdInfo, 4)
 							.build();
 		
 		List<AceBaseSegment> actual =BaseSegmentUtil.computeBestSegmentsFor(contig);
@@ -75,11 +76,11 @@ public class TestBaseSegmentUtil {
 							.addRead("read1", new NucleotideSequenceBuilder("ACG-ACGT").build(),
 									0,
 									Direction.FORWARD, 
-									Range.of(0,7), mockPhdInfo, 8)
+									Range.of(0,7), phdInfo, 8)
 								.addRead("read2", new NucleotideSequenceBuilder("ACGTACGT").build(),
 									0,
 									Direction.FORWARD, 
-									Range.of(0,7), mockPhdInfo, 8)
+									Range.of(0,7), phdInfo, 8)
 							.build();
 		
 		List<AceBaseSegment> actual =BaseSegmentUtil.computeBestSegmentsFor(contig);
@@ -95,11 +96,11 @@ public class TestBaseSegmentUtil {
 							.addRead("read1", new NucleotideSequenceBuilder("ACG-ACGT").build(),
 									0,
 									Direction.FORWARD, 
-									Range.of(0,7), mockPhdInfo, 8)
+									Range.of(0,7), phdInfo, 8)
 								.addRead("read2", new NucleotideSequenceBuilder("ACGTAC-T").build(),
 									0,
 									Direction.FORWARD, 
-									Range.of(0,7), mockPhdInfo, 8)
+									Range.of(0,7), phdInfo, 8)
 							.build();
 		
 		List<AceBaseSegment> actual =BaseSegmentUtil.computeBestSegmentsFor(contig);
@@ -117,11 +118,11 @@ public class TestBaseSegmentUtil {
 							.addRead("read1", new NucleotideSequenceBuilder("ACGTACGT").build(),
 									0,
 									Direction.FORWARD, 
-									Range.of(0,7), mockPhdInfo, 8)
+									Range.of(0,7), phdInfo, 8)
 								.addRead("read2", new NucleotideSequenceBuilder("ACGAACGT").build(),
 									0,
 									Direction.FORWARD, 
-									Range.of(0,7), mockPhdInfo, 8)
+									Range.of(0,7), phdInfo, 8)
 							.build();
 		
 		BaseSegmentUtil.computeBestSegmentsFor(contig);

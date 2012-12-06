@@ -33,10 +33,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.ace.AceAssembledRead;
-import org.jcvi.common.core.assembly.ace.DefaultAceFileDataStore;
-import org.jcvi.common.core.assembly.ace.DefaultPhdInfo;
-import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -61,47 +57,47 @@ public class TestAceParserPhdInfo {
     public void setupMap() throws ParseException{
         phdInfoMap = new HashMap<String, PhdInfo>();
         phdInfoMap.put("K26-217c", 
-                    new DefaultPhdInfo("K26-217c", "K26-217c.phd.1",
+                    new PhdInfo("K26-217c", "K26-217c.phd.1",
                                 DATE_TIME_FORMATTER.parse(
                                         "Thu Sep 12 15:42:38 1996")));
         phdInfoMap.put("K26-526t", 
-                new DefaultPhdInfo("K26-526t", "K26-526t.phd.1",
+                new PhdInfo("K26-526t", "K26-526t.phd.1",
                             DATE_TIME_FORMATTER.parse(
                                     "Thu Sep 12 15:42:33 1996")));
         phdInfoMap.put("K26-961c", 
-                new DefaultPhdInfo("K26-961c", "K26-961c.phd.1",
+                new PhdInfo("K26-961c", "K26-961c.phd.1",
                             DATE_TIME_FORMATTER.parse(
                                     "Thu Sep 12 15:42:37 1996")));
         phdInfoMap.put("K26-394c", 
-                new DefaultPhdInfo("K26-394c", "K26-394c.phd.1",
+                new PhdInfo("K26-394c", "K26-394c.phd.1",
                             DATE_TIME_FORMATTER.parse(
                                     "Thu Sep 12 15:42:32 1996")));
         phdInfoMap.put("K26-291s", 
-                new DefaultPhdInfo("K26-291s", "K26-291s.phd.1",
+                new PhdInfo("K26-291s", "K26-291s.phd.1",
                             DATE_TIME_FORMATTER.parse(
                                     "Thu Sep 12 15:42:31 1996")));
         phdInfoMap.put("K26-822c", 
-                new DefaultPhdInfo("K26-822c", "K26-822c.phd.1",
+                new PhdInfo("K26-822c", "K26-822c.phd.1",
                             DATE_TIME_FORMATTER.parse(
                                     "Thu Sep 12 15:42:36 1996")));
         phdInfoMap.put("K26-572c", 
-                new DefaultPhdInfo("K26-572c", "K26-572c.phd.1",
+                new PhdInfo("K26-572c", "K26-572c.phd.1",
                             DATE_TIME_FORMATTER.parse(
                                     "Thu Sep 12 15:42:34 1996")));
         phdInfoMap.put("K26-766c", 
-                new DefaultPhdInfo("K26-766c", "K26-766c.phd.1",
+                new PhdInfo("K26-766c", "K26-766c.phd.1",
                             DATE_TIME_FORMATTER.parse(
                                     "Thu Sep 12 15:42:35 1996")));       
     }
     
     @Test
-    public void assertPhdInfosCorrect(){
+    public void assertDefaultPhdInfosCorrect(){
     	StreamingIterator<AceAssembledRead> iter=null;
     	try{
     		iter = actualContig.getReadIterator();
     		while(iter.hasNext()){
     			AceAssembledRead read = iter.next();
-    			 assertEquals(phdInfoMap.get(read.getId()), read.getPhdInfo());
+    			 assertEquals(phdInfoMap.get(read.getId()), read.getDefaultPhdInfo());
     		}
     	}finally{
     		IOUtil.closeAndIgnoreErrors(iter);

@@ -39,7 +39,7 @@ public class DefaultPhdReadRecord implements PhdReadRecord {
 	}
 
 	@Override
-	public PhdInfo getPhdInfo() {
+	public PhdInfo getDefaultPhdInfo() {
 		return phdInfo;
 	}
 

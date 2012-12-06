@@ -19,18 +19,18 @@
 
 package org.jcvi.common.core.assembly.ace.consed;
 
-import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Date;
 import java.util.SortedMap;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.AceContig;
-import org.jcvi.common.core.assembly.ace.AceContigTestUtil;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
+import org.jcvi.common.core.assembly.ace.AceContigTestUtil;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -49,6 +49,8 @@ public class TestConsedUtil_Split0xNoGaps {
     private final String originalId="origId";
     private final String referenceConsensus = "AACGTACGTAAACGTACGTAA";
     
+    private final PhdInfo read1PhdInfo= new PhdInfo("read1","read1.phd.1",new Date());
+    private final PhdInfo read2PhdInfo= new PhdInfo("read2","read2.phd.1",new Date());
     
     @Test
     public void contigWithNo0xRegionsShouldNotTrim(){       
@@ -58,13 +60,13 @@ public class TestConsedUtil_Split0xNoGaps {
         		0, 
                 Direction.FORWARD, 
                 Range.of(0, 10), 
-                createMock(PhdInfo.class),
+                read1PhdInfo,
                 20)
         .addRead("read2", new NucleotideSequenceBuilder(referenceConsensus.substring(10)).build(),
         		10,
                 Direction.FORWARD, 
                 Range.of(0, 11), 
-                createMock(PhdInfo.class),
+                read2PhdInfo,
                 20);
         
         final SortedMap<Range,AceContig> actualcontigs = ConsedUtil.split0xContig(contigBuilder, false);
@@ -74,13 +76,13 @@ public class TestConsedUtil_Split0xNoGaps {
 							        	        		0, 
 							        	                Direction.FORWARD, 
 							        	                Range.of(0, 10), 
-							        	                createMock(PhdInfo.class),
+							        	                read1PhdInfo,
 							        	                20)
 							        	        .addRead("read2", new NucleotideSequenceBuilder(referenceConsensus.substring(10)).build(),
 							        	        		10,
 							        	                Direction.FORWARD, 
 							        	                Range.of(0, 11), 
-							        	                createMock(PhdInfo.class),
+							        	                read2PhdInfo,
 							        	                20)
                                         .build();
         Range expectedRange = Range.of(0,20);
@@ -100,13 +102,13 @@ public class TestConsedUtil_Split0xNoGaps {
         		4, 
                 Direction.FORWARD, 
                 Range.of(0, 10), 
-                createMock(PhdInfo.class),
+                read1PhdInfo,
                 20)
         .addRead("read2", new NucleotideSequenceBuilder(referenceConsensus.substring(10)).build(),
         		14,
                 Direction.FORWARD, 
                 Range.of(0, 11), 
-                createMock(PhdInfo.class),
+                read2PhdInfo,
                 20);
         
         final SortedMap<Range,AceContig> actualcontigs = ConsedUtil.split0xContig(contigBuilder, false);
@@ -116,13 +118,13 @@ public class TestConsedUtil_Split0xNoGaps {
 							        	        		0, 
 							        	                Direction.FORWARD, 
 							        	                Range.of(0, 10), 
-							        	                createMock(PhdInfo.class),
+							        	                read1PhdInfo,
 							        	                20)
 							        	        .addRead("read2", new NucleotideSequenceBuilder(referenceConsensus.substring(10)).build(),
 							        	        		10,
 							        	                Direction.FORWARD, 
 							        	                Range.of(0, 11), 
-							        	                createMock(PhdInfo.class),
+							        	                read2PhdInfo,
 							        	                20)
                                         .build();
         Range expectedRange = Range.of(4,24);
@@ -135,21 +137,19 @@ public class TestConsedUtil_Split0xNoGaps {
     
     @Test
     public void one0xRegionShouldSplitContigIn2(){
-        final PhdInfo read1Phd = createMock(PhdInfo.class);
-        final PhdInfo read2Phd = createMock(PhdInfo.class);
 
         AceContigBuilder contig = new AceContigBuilder(originalId,referenceConsensus)
 		        .addRead("read1", new NucleotideSequenceBuilder(referenceConsensus.substring(0, 11)).build(), 
 		        		0, 
 		                Direction.FORWARD, 
 		                Range.of(0, 10), 
-		                read1Phd,
+		                read1PhdInfo,
 		                20)
 		        .addRead("read2", new NucleotideSequenceBuilder(referenceConsensus.substring(12)).build(),
 		        		12, 
 		                Direction.FORWARD, 
 		                Range.of(0, 9), 
-		                read2Phd,
+		                read2PhdInfo,
 		                20);
 		       
     
@@ -162,7 +162,7 @@ public class TestConsedUtil_Split0xNoGaps {
                             		0, 
                                     Direction.FORWARD, 
                                     Range.of(0, 10), 
-                                    read1Phd,
+                                    read1PhdInfo,
                                     20)
                                     .build();
         AceContig expectedSecondContig = new AceContigBuilder(
@@ -171,7 +171,7 @@ public class TestConsedUtil_Split0xNoGaps {
                         		0, 
                                 Direction.FORWARD, 
                                 Range.of(0, 9), 
-                                read2Phd,
+                                read2PhdInfo,
                                 20)
                                     .build();
         assertContigsEqual(expectedFirstContig, splitContigs.get(Range.of(0,10)));
@@ -180,22 +180,19 @@ public class TestConsedUtil_Split0xNoGaps {
     
     @Test
     public void contigIdAlreadyHasCoordinatesAtTheEnd_ShouldModifyThoseCoordinates(){
-
-        final PhdInfo read1Phd = createMock(PhdInfo.class);
-        final PhdInfo read2Phd = createMock(PhdInfo.class);
         AceContigBuilder contig = new AceContigBuilder("id_1_12",referenceConsensus)
         
 		        .addRead("read1", new NucleotideSequenceBuilder(referenceConsensus.substring(0, 11)).build(),
 		        		0, 
 		                Direction.FORWARD, 
 		                Range.of(0, 10), 
-		                read1Phd,
+		                read1PhdInfo,
 		                20)
 		        .addRead("read2", new NucleotideSequenceBuilder(referenceConsensus.substring(12)).build(),
 		        		12, 
 		                Direction.FORWARD, 
 		                Range.of(0, 9), 
-		                read2Phd,
+		                read2PhdInfo,
 		                20);
         SortedMap<Range,AceContig> splitContigs = ConsedUtil.split0xContig(contig, true);
         
@@ -207,7 +204,7 @@ public class TestConsedUtil_Split0xNoGaps {
                             		0, 
                                     Direction.FORWARD, 
                                     Range.of(0, 10), 
-                                    read1Phd,
+                                    read1PhdInfo,
                                     20)
                                     .build();
         AceContig expectedSecondContig = new AceContigBuilder(
@@ -216,7 +213,7 @@ public class TestConsedUtil_Split0xNoGaps {
                         		0, 
                                 Direction.FORWARD, 
                                 Range.of(0, 9), 
-                                read2Phd,
+                                read2PhdInfo,
                                 20)
                                     .build();
         assertContigsEqual(expectedFirstContig, splitContigs.get(Range.of(0,10)));
@@ -226,9 +223,6 @@ public class TestConsedUtil_Split0xNoGaps {
     
     @Test
     public void contigIdAlreadyHasCoordinatesThatTakeIntoAccountMissing5primeAtTheEnd_ShouldModifyThoseCoordinates(){
-
-        final PhdInfo read1Phd = createMock(PhdInfo.class);
-        final PhdInfo read2Phd = createMock(PhdInfo.class);
         AceContigBuilder contig = new AceContigBuilder("id_5_12",
         		new NucleotideSequenceBuilder(referenceConsensus)
         								.prepend("NNNN")
@@ -238,13 +232,13 @@ public class TestConsedUtil_Split0xNoGaps {
 		        		4, 
 		                Direction.FORWARD, 
 		                Range.of(0, 10), 
-		                read1Phd,
+		                read1PhdInfo,
 		                20)
 		        .addRead("read2", new NucleotideSequenceBuilder(referenceConsensus.substring(12)).build(),
 		        		16, 
 		                Direction.FORWARD, 
 		                Range.of(0, 9), 
-		                read2Phd,
+		                read2PhdInfo,
 		                20);
         SortedMap<Range,AceContig> splitContigs = ConsedUtil.split0xContig(contig, true);
         
@@ -256,7 +250,7 @@ public class TestConsedUtil_Split0xNoGaps {
                             		0, 
                                     Direction.FORWARD, 
                                     Range.of(0, 10), 
-                                    read1Phd,
+                                    read1PhdInfo,
                                     20)
                                     .build();
         AceContig expectedSecondContig = new AceContigBuilder(
@@ -265,7 +259,7 @@ public class TestConsedUtil_Split0xNoGaps {
                         		0, 
                                 Direction.FORWARD, 
                                 Range.of(0, 9), 
-                                read2Phd,
+                                read2PhdInfo,
                                 20)
                                     .build();
         assertContigsEqual(expectedFirstContig, splitContigs.get(Range.of(4,14)));
@@ -300,7 +294,7 @@ public class TestConsedUtil_Split0xNoGaps {
         assertEquals("offset",expected.getGappedStartOffset(),actual.getGappedStartOffset());
         assertEquals("direction",expected.getDirection(),actual.getDirection());
         
-        assertEquals("phdInfo",expected.getPhdInfo(),actual.getPhdInfo());
+        assertEquals("phdInfo",expected.getDefaultPhdInfo(),actual.getDefaultPhdInfo());
         assertEquals("basecalls",expected.getNucleotideSequence(),actual.getNucleotideSequence());
         assertEquals("validRange",expected.getReadInfo().getValidRange(),actual.getReadInfo().getValidRange());
     }

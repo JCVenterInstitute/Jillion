@@ -42,7 +42,7 @@ public class AceAssembledReadAdapter implements AceAssembledRead{
      */
     public AceAssembledReadAdapter(AssembledRead placedRead,Date phdDate, File traceFile) {
       this(placedRead,
-    		  ConsedUtil.generatePhdInfoFor(traceFile, placedRead.getId(), phdDate));
+    		  ConsedUtil.generateDefaultPhdInfoFor(traceFile, placedRead.getId(), phdDate));
     }
     public AceAssembledReadAdapter(AssembledRead placedRead,PhdInfo info) {
         this.placedRead = placedRead;
@@ -51,7 +51,7 @@ public class AceAssembledReadAdapter implements AceAssembledRead{
 	
 
     @Override
-    public PhdInfo getPhdInfo() {
+    public PhdInfo getDefaultPhdInfo() {
         return phdInfo;
     }
     @Override
