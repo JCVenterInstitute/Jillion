@@ -26,7 +26,7 @@ package org.jcvi.common.core.assembly.ace;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Rangeable;
 /**
- * {@code PlacedAceTag} is a version of an 
+ * {@code RangeableAceTag} is a version of an 
  * {@link AceTag} that maps to a particular location
  * on a genomic element in the assembly.
  * @author dkatzel
@@ -40,7 +40,6 @@ public interface RangeableAceTag extends AceTag, Rangeable {
     String getId();
     /**
      * Gapped Range.
-     * {@inheritDoc}
      */
     @Override
     Range asRange();
