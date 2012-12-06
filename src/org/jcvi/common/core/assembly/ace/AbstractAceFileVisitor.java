@@ -93,26 +93,26 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
      * {@inheritDoc}
      */
     @Override
-    public synchronized void visitAlignedReadInfo(String readId,
+    public void visitAlignedReadInfo(String readId,
             Direction dir, int gappedStartOffset) {
         throwExceptionIfInitialized();
         fireVisitNewContigIfWeHaventAlready();
         final AlignedReadInfo assembledFromObj = new AlignedReadInfo(gappedStartOffset, dir);
         currentAlignedReadInfoMap.put(readId, assembledFromObj);
     }
-    protected synchronized void setAlignedInfoMap(Map<String, AlignedReadInfo> currentAlignedInfoMap){
+    protected void setAlignedInfoMap(Map<String, AlignedReadInfo> currentAlignedInfoMap){
     	this.currentAlignedReadInfoMap = currentAlignedInfoMap;
     }
     
     
-	protected final synchronized  Map<String, AlignedReadInfo> getAlignedInfoMap() {
+	protected final Map<String, AlignedReadInfo> getAlignedInfoMap() {
 		//defensive copy
 		int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(currentAlignedReadInfoMap.size());
 		Map<String, AlignedReadInfo> copy = new HashMap<String, AlignedReadInfo>(capacity);
 		copy.putAll(currentAlignedReadInfoMap);
 		return copy;
 	}
-	private synchronized void fireVisitNewContigIfWeHaventAlready() {
+	private void fireVisitNewContigIfWeHaventAlready() {
 		if(readingConsensus){
             readingConsensus=false;
            visitNewContig(currentContigId, 
@@ -175,7 +175,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
 	 * @see #shouldParseContig(String, int, int, int, boolean)
 	 */
     @Override
-    public final synchronized BeginContigReturnCode visitBeginContig(String contigId, int numberOfBases,
+    public final BeginContigReturnCode visitBeginContig(String contigId, int numberOfBases,
             int numberOfReads, int numberOfBaseSegments,
             boolean reverseComplimented) {
     	//reset all temporary data that contains contig specific information.
@@ -370,7 +370,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     }
 
     @Override
-    public synchronized void visitBeginConsensusTag(String id, String type, String creator,
+    public void visitBeginConsensusTag(String id, String type, String creator,
             long gappedStart, long gappedEnd, Date creationDate,
             boolean isTransient) {
         throwExceptionIfInitialized();
