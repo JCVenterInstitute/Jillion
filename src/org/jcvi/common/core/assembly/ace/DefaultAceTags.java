@@ -38,8 +38,8 @@ import java.util.List;
 final class DefaultAceTags implements AceTags{
 
     private final List<ConsensusAceTag> consensusTags = new ArrayList<ConsensusAceTag>();
-    private final List<ReadAceTag> readTags = new ArrayList<ReadAceTag>();
-    private final List<WholeAssemblyAceTag> wholeAssemblyTags = new ArrayList<WholeAssemblyAceTag>();
+    private final List<DefaultReadAceTag> readTags = new ArrayList<DefaultReadAceTag>();
+    private final List<DefaultWholeAssemblyAceTag> wholeAssemblyTags = new ArrayList<DefaultWholeAssemblyAceTag>();
     /**
      * Singleton instance of an {@link AceTags} implementation where all the getXXXTags()
      * methods return empty lists.
@@ -55,15 +55,15 @@ final class DefaultAceTags implements AceTags{
      * therefore any modifications to the input lists will not affect this object.
      * @param consensusTags the list of {@link ConsensusAceTag}s; can not be null but may
      * be empty.
-     * @param readTags the list of {@link ReadAceTag}s; can not be null but may
+     * @param readTags the list of {@link DefaultReadAceTag}s; can not be null but may
      * be empty.
-     * @param wholeAssemblyTags the list of {@link WholeAssemblyAceTag}s; can not be null but may
+     * @param wholeAssemblyTags the list of {@link DefaultWholeAssemblyAceTag}s; can not be null but may
      * be empty.
      * @throws NullPointerException if any of the input lists are null.
      */
     private DefaultAceTags(List<ConsensusAceTag> consensusTags,
-            List<ReadAceTag> readTags,
-            List<WholeAssemblyAceTag> wholeAssemblyTags){
+            List<DefaultReadAceTag> readTags,
+            List<DefaultWholeAssemblyAceTag> wholeAssemblyTags){
         this.consensusTags.addAll(consensusTags);
         this.readTags.addAll(readTags);
         this.wholeAssemblyTags.addAll(wholeAssemblyTags);
@@ -81,7 +81,7 @@ final class DefaultAceTags implements AceTags{
      * @return an unmodifiable list
      */
     @Override
-    public List<ReadAceTag> getReadTags() {
+    public List<DefaultReadAceTag> getReadTags() {
         return Collections.unmodifiableList(readTags);
     }
     /**
@@ -89,7 +89,7 @@ final class DefaultAceTags implements AceTags{
      * @return an unmodifiable list
      */
     @Override
-    public List<WholeAssemblyAceTag> getWholeAssemblyTags() {
+    public List<DefaultWholeAssemblyAceTag> getWholeAssemblyTags() {
         return Collections.unmodifiableList(wholeAssemblyTags);
     }
 
@@ -129,8 +129,8 @@ final class DefaultAceTags implements AceTags{
 
     private static class Builder implements AceTagsBuilder {
         private final List<ConsensusAceTag> consensusTags = new ArrayList<ConsensusAceTag>();
-        private final List<ReadAceTag> readTags = new ArrayList<ReadAceTag>();
-        private final List<WholeAssemblyAceTag> wholeAssemblyTags = new ArrayList<WholeAssemblyAceTag>();
+        private final List<DefaultReadAceTag> readTags = new ArrayList<DefaultReadAceTag>();
+        private final List<DefaultWholeAssemblyAceTag> wholeAssemblyTags = new ArrayList<DefaultWholeAssemblyAceTag>();
         @Override
         public DefaultAceTags build() {
             return new DefaultAceTags(consensusTags, readTags, wholeAssemblyTags);
@@ -152,7 +152,7 @@ final class DefaultAceTags implements AceTags{
         /**
          * {@inheritDoc}
          */
-        public Builder addWholeAssemblyTag(WholeAssemblyAceTag tag){
+        public Builder addWholeAssemblyTag(DefaultWholeAssemblyAceTag tag){
             checkNotNull(tag);
             wholeAssemblyTags.add(tag);
             return this;
@@ -160,7 +160,7 @@ final class DefaultAceTags implements AceTags{
         /**
          * {@inheritDoc}
          */
-        public Builder addReadTag(ReadAceTag tag){
+        public Builder addReadTag(DefaultReadAceTag tag){
             checkNotNull(tag);
             readTags.add(tag);
             return this;
@@ -183,8 +183,8 @@ final class DefaultAceTags implements AceTags{
         */
         @Override
         public AceTagsBuilder addAllWholeAssemblyTags(
-                Collection<? extends WholeAssemblyAceTag> tags) {
-            for(WholeAssemblyAceTag tag : tags){
+                Collection<? extends DefaultWholeAssemblyAceTag> tags) {
+            for(DefaultWholeAssemblyAceTag tag : tags){
                 addWholeAssemblyTag(tag);
             }
             return this;
@@ -194,9 +194,9 @@ final class DefaultAceTags implements AceTags{
         * {@inheritDoc}
         */
         @Override
-        public AceTagsBuilder addAllReadAceTags(
-                Collection<? extends ReadAceTag> tags) {
-            for(ReadAceTag tag : tags){
+        public AceTagsBuilder addAllDefaultReadAceTags(
+                Collection<? extends DefaultReadAceTag> tags) {
+            for(DefaultReadAceTag tag : tags){
                 addReadTag(tag);
             }
             return this;

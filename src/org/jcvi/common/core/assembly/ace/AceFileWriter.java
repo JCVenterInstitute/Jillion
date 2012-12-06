@@ -19,14 +19,14 @@ public interface AceFileWriter extends Closeable{
 	 */
 	void write(AceContig contig) throws IOException;
 	/**
-	 * Writes the given {@link ReadAceTag}.
+	 * Writes the given {@link DefaultReadAceTag}.
 	 * @param tag the tag to write;
 	 * can not be null.
 	 * @throws IOException if there is a problem
 	 * writing out the tag.
 	 * @throws NullPointerException if the tag is null.
 	 */
-	void write(ReadAceTag tag) throws IOException;
+	void write(DefaultReadAceTag tag) throws IOException;
 	/**
 	 * Writes the given {@link ConsensusAceTag}.
 	 * @param tag the tag to write;
@@ -37,14 +37,14 @@ public interface AceFileWriter extends Closeable{
 	 */
 	void write(ConsensusAceTag tag) throws IOException;
 	/**
-	 * Writes the given {@link WholeAssemblyAceTag}.
+	 * Writes the given {@link DefaultWholeAssemblyAceTag}.
 	 * @param tag the tag to write;
 	 * can not be null.
 	 * @throws IOException if there is a problem
 	 * writing out the tag.
 	 * @throws NullPointerException if the tag is null.
 	 */
-	void write(WholeAssemblyAceTag tag) throws IOException;
+	void write(DefaultWholeAssemblyAceTag tag) throws IOException;
 	/**
 	 * Finish writing the ace formatted data.
 	 * This must always be called since

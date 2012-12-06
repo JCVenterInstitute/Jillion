@@ -59,12 +59,12 @@ import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitor;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileUtil;
 import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
-import org.jcvi.common.core.assembly.ace.DefaultConsensusAceTagBuilder;
+import org.jcvi.common.core.assembly.ace.ConsensusAceTagBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultReadAceTag;
 import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
-import org.jcvi.common.core.assembly.ace.ReadAceTag;
-import org.jcvi.common.core.assembly.ace.WholeAssemblyAceTag;
+import org.jcvi.common.core.assembly.ace.DefaultReadAceTag;
+import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.internal.command.grid.JcviQueue;
@@ -211,7 +211,7 @@ public class GridReAbacusAce {
         private final ByteArrayOutputStream tagOutputStream = new ByteArrayOutputStream();
         private final File aceFile;
         private final File outputAceFile;
-        private DefaultConsensusAceTagBuilder consensusTagBuilder;
+        private ConsensusAceTagBuilder consensusTagBuilder;
         private final String projectCode;
         private final Session session;
         private final List<SimpleGridJob> jobs = new ArrayList<SimpleGridJob>();
@@ -262,7 +262,7 @@ public class GridReAbacusAce {
                  long gappedStart, long gappedEnd, Date creationDate,
                  boolean isTransient) {
              super.visitReadTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
-             ReadAceTag tag =new DefaultReadAceTag(id, type, creator, creationDate, 
+             DefaultReadAceTag tag =new DefaultReadAceTag(id, type, creator, creationDate, 
                      Range.of(gappedStart,gappedEnd), isTransient);
              
              try {
@@ -277,7 +277,7 @@ public class GridReAbacusAce {
          public void visitWholeAssemblyTag(String type, String creator,
                  Date creationDate, String data) {
              super.visitWholeAssemblyTag(type, creator, creationDate, data);
-             WholeAssemblyAceTag tag = new DefaultWholeAssemblyAceTag(type, creator, creationDate, data);
+             DefaultWholeAssemblyAceTag tag = new DefaultWholeAssemblyAceTag(type, creator, creationDate, data);
              try {
             	 AceFileUtil.writeWholeAssemblyTag(tag, tagOutputStream);
              } catch (IOException e) {
@@ -290,7 +290,7 @@ public class GridReAbacusAce {
                  long gappedStart, long gappedEnd, Date creationDate,
                  boolean isTransient) {
              super.visitBeginConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
-             consensusTagBuilder = new DefaultConsensusAceTagBuilder(id, 
+             consensusTagBuilder = new ConsensusAceTagBuilder(id, 
                      type, creator, creationDate, Range.of(gappedStart, gappedEnd), isTransient);
 
          }

@@ -44,9 +44,9 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
 	private Long numberOfContigs = null;
 	private Long totalNumberOfReads =null;
 	
-	private List<WholeAssemblyAceTag> wholeAssemblyTags =null;
+	private List<DefaultWholeAssemblyAceTag> wholeAssemblyTags =null;
     private List<ConsensusAceTag> consensusTags= null;
-    private List<ReadAceTag> readTags=null;
+    private List<DefaultReadAceTag> readTags=null;
     
 	private final DataStoreFilter contigIdFilter;
 	 private volatile boolean isClosed;
@@ -165,7 +165,7 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
 	
 	
 	@Override
-	public synchronized StreamingIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator()
+	public synchronized StreamingIterator<DefaultWholeAssemblyAceTag> getWholeAssemblyTagIterator()
 			throws DataStoreException {
 		throwExceptionIfClosed();
 		if( wholeAssemblyTags==null){
@@ -174,7 +174,7 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
 		return IteratorUtil.createStreamingIterator(wholeAssemblyTags.iterator());
 	}
 	@Override
-	public synchronized StreamingIterator<ReadAceTag> getReadTagIterator()
+	public synchronized StreamingIterator<DefaultReadAceTag> getReadTagIterator()
 			throws DataStoreException {
 		throwExceptionIfClosed();
 		if( readTags==null){
