@@ -43,17 +43,17 @@ interface AceTags {
     /**
      * Get all the read tags for this 
      * assembly.
-     * @return a List of {@link ReadAceTag}s
+     * @return a List of {@link DefaultReadAceTag}s
      * if no tags exists, then return an empty
      * list; never null.
      */
-    List<ReadAceTag> getReadTags();
+    List<DefaultReadAceTag> getReadTags();
     /**
      * Get all the assembly tags for this 
      * assembly.
-     * @return a List of {@link WholeAssemblyAceTag}s
+     * @return a List of {@link DefaultWholeAssemblyAceTag}s
      * if no tags exists, then return an empty
      * list; never null.
      */
-    List<WholeAssemblyAceTag> getWholeAssemblyTags();
+    List<DefaultWholeAssemblyAceTag> getWholeAssemblyTags();
 }

@@ -34,8 +34,8 @@ import java.util.Locale;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
-import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
@@ -277,7 +277,7 @@ public final class AceFileUtil {
     
     
     public static void writeWholeAssemblyTag(
-            WholeAssemblyAceTag wholeAssemblyTag, OutputStream out) throws IOException {
+            DefaultWholeAssemblyAceTag wholeAssemblyTag, OutputStream out) throws IOException {
         writeString(String.format("WA{%n%s %s %s%n%s%n}%n", 
                 wholeAssemblyTag.getType(),
                 wholeAssemblyTag.getCreator(),                
@@ -309,7 +309,7 @@ public final class AceFileUtil {
                         tagBodyBuilder.toString()), out);
         
     }
-    public static void writeReadTag(ReadAceTag readTag, OutputStream out) throws IOException {
+    public static void writeReadTag(DefaultReadAceTag readTag, OutputStream out) throws IOException {
         Range range = readTag.asRange();
     	writeString(String.format("RT{%n%s %s %s %d %d %s%n}%n", 
                         readTag.getId(),

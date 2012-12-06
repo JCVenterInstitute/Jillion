@@ -54,13 +54,11 @@ import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileUtil;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
-import org.jcvi.common.core.assembly.ace.DefaultConsensusAceTagBuilder;
+import org.jcvi.common.core.assembly.ace.ConsensusAceTagBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultReadAceTag;
 import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.ace.HighLowAceContigPhdDatastore;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
-import org.jcvi.common.core.assembly.ace.ReadAceTag;
-import org.jcvi.common.core.assembly.ace.WholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationParser;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationVisitor;
 import org.jcvi.common.core.assembly.ace.consed.ConsensusNavigationElement;
@@ -265,7 +263,7 @@ public class MultiThreadedReAbacusAce {
 
    private static class TagWriter extends AbstractAceFileVisitor{
        private final ByteArrayOutputStream tagOutputStream = new ByteArrayOutputStream();
-       private DefaultConsensusAceTagBuilder consensusTagBuilder;
+       private ConsensusAceTagBuilder consensusTagBuilder;
        private final OutputStream aceOut;
        
        
@@ -301,7 +299,7 @@ public class MultiThreadedReAbacusAce {
                 long gappedStart, long gappedEnd, Date creationDate,
                 boolean isTransient) {
             super.visitReadTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
-            ReadAceTag tag =new DefaultReadAceTag(id, type, creator, creationDate, 
+            DefaultReadAceTag tag =new DefaultReadAceTag(id, type, creator, creationDate, 
                     Range.of(gappedStart,gappedEnd), isTransient);
             
             try {
@@ -316,7 +314,7 @@ public class MultiThreadedReAbacusAce {
         public void visitWholeAssemblyTag(String type, String creator,
                 Date creationDate, String data) {
             super.visitWholeAssemblyTag(type, creator, creationDate, data);
-            WholeAssemblyAceTag tag = new DefaultWholeAssemblyAceTag(type, creator, creationDate, data);
+            DefaultWholeAssemblyAceTag tag = new DefaultWholeAssemblyAceTag(type, creator, creationDate, data);
             try {
             	AceFileUtil.writeWholeAssemblyTag(tag, tagOutputStream);
             } catch (IOException e) {
@@ -329,7 +327,7 @@ public class MultiThreadedReAbacusAce {
                 long gappedStart, long gappedEnd, Date creationDate,
                 boolean isTransient) {
             super.visitBeginConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
-            consensusTagBuilder = new DefaultConsensusAceTagBuilder(id, 
+            consensusTagBuilder = new ConsensusAceTagBuilder(id, 
                     type, creator, creationDate, Range.of(gappedStart, gappedEnd), isTransient);
 
         }
