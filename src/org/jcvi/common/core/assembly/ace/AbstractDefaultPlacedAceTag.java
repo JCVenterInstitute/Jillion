@@ -51,7 +51,10 @@ abstract class AbstractDefaultPlacedAceTag extends AbstractDefaultAceTag impleme
     }
 
    
-
+    /**
+     * Get the Id of read
+     * this tag references.
+     */
     @Override
     public String getId() {
         return id;

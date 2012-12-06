@@ -28,8 +28,17 @@ import java.util.Date;
 import java.util.List;
 
 import org.jcvi.common.core.Rangeable;
-
-public final class DefaultConsensusAceTagBuilder implements org.jcvi.common.core.util.Builder<ConsensusAceTag>{
+import org.jcvi.common.core.util.Builder;
+/**
+ * {@code ConsensusAceTagBuilder} is a Builder
+ * that builds a new instance of {@link ConsensusAceTag}.
+ * We usually need a builder because we don't often have
+ * the complete metadata for the comment and private data
+ * when parsing an ace file line by line.
+ * @author dkatzel
+ *
+ */
+public final class ConsensusAceTagBuilder implements Builder<ConsensusAceTag>{
         private final List<String> comments = new ArrayList<String>();
         private final String id;
         
@@ -50,7 +59,7 @@ public final class DefaultConsensusAceTagBuilder implements org.jcvi.common.core
          * @param isTransient
          * @param data
          */
-        public DefaultConsensusAceTagBuilder(String id, String type, String creator,
+        public ConsensusAceTagBuilder(String id, String type, String creator,
                 Date creationDate, Rangeable location, boolean isTransient) {
             this.id = id;
             this.location = location;
@@ -60,12 +69,12 @@ public final class DefaultConsensusAceTagBuilder implements org.jcvi.common.core
             this.creationDate = new Date(creationDate.getTime());
         }
 
-        public DefaultConsensusAceTagBuilder appendData(String data){
+        public ConsensusAceTagBuilder appendData(String data){
             dataBuilder.append(data);
             return this;
         }
 
-        public DefaultConsensusAceTagBuilder addComment(String comment){
+        public ConsensusAceTagBuilder addComment(String comment){
             comments.add(comment);
             return this;
         }

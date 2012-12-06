@@ -17,7 +17,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 /**
- * {@code DefaultAceFileWriterBuilder} 
+ * {@code AceFileWriterBuilder} 
  * is a builder
  * for creating new
  * {@link AceFileWriter} instances
@@ -31,12 +31,11 @@ import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
  * is written, this implementation will first
  * write out data to a temporary file.
  * The location of the temporary file
- * can be configured via the builder.
+ * can be configured via {@link #tmpDir(File)}.
  * @author dkatzel
- * @see {@link DefaultAceFileWriterBuilder.Builder}
  *
  */
-public final class DefaultAceFileWriterBuilder{
+public final class AceFileWriterBuilder{
 	
 		private boolean createBsRecords=false;
 		private final PhdDataStore phdDataStore;
@@ -46,7 +45,7 @@ public final class DefaultAceFileWriterBuilder{
 		/**
 		 * Create a new Builder instance
 		 * which will build a new instance of 
-		 * DefaultAceFileWriter with the given required
+		 * {@link AceFileWriterBuilder} with the given required
 		 * parameters.
 		 * @param outputAceFile a {@link File} representating
 		 * the path to the output of the ace file to write.
@@ -63,7 +62,7 @@ public final class DefaultAceFileWriterBuilder{
 		 * upper vs lowercase letters respectively.
 		 * @throws IOException 
 		 */
-		public DefaultAceFileWriterBuilder(File outputAceFile,PhdDataStore datastore) throws IOException{
+		public AceFileWriterBuilder(File outputAceFile,PhdDataStore datastore) throws IOException{
 			if(outputAceFile ==null){
 				throw new NullPointerException("output ace file can not be null");	
 			}
@@ -88,7 +87,7 @@ public final class DefaultAceFileWriterBuilder{
 		 * @throws IllegalArgumentException if tmpDir exists but is not
 		 * a directory.
 		 */
-		public DefaultAceFileWriterBuilder tmpDir(File tmpDir) throws IOException{
+		public AceFileWriterBuilder tmpDir(File tmpDir) throws IOException{
 			if(tmpDir==null){
 				throw new NullPointerException("tmp dir path can not be null");
 			}
@@ -115,7 +114,7 @@ public final class DefaultAceFileWriterBuilder{
 		 * "human edited high quality". 
 		 * @return this
 		 */
-		public DefaultAceFileWriterBuilder computeConsensusQualities(){
+		public AceFileWriterBuilder computeConsensusQualities(){
 			computeConsensusQualities=true;
 			return this;
 		}
@@ -133,12 +132,12 @@ public final class DefaultAceFileWriterBuilder{
 		 * is an ambiguity).
 		 * @return this.
 		 */
-		public DefaultAceFileWriterBuilder includeBaseSegments(){
+		public AceFileWriterBuilder includeBaseSegments(){
 			createBsRecords=true;
 			return this;
 		}
 		/**
-		 * Create a new instance of {@link DefaultAceFileWriterBuilder}
+		 * Create a new instance of {@link AceFileWriterBuilder}
 		 * with the given paramters.
 		 * @return a new instance; never null.
 		 * @throws IOException if there is a problem
@@ -153,7 +152,11 @@ public final class DefaultAceFileWriterBuilder{
 					computeConsensusQualities);
 		}
 
-	
+/**
+ * Private implementation of {@link AceFileWriter}.
+ * @author dkatzel
+ *
+ */
 private static final class DefaultAceFileWriter extends AbstractAceFileWriter{
 	
 	private final PhdDataStore phdDatastore;
@@ -219,7 +222,7 @@ private static final class DefaultAceFileWriter extends AbstractAceFileWriter{
 	
 	
 	@Override
-	public void write(ReadAceTag readTag) throws IOException {
+	public void write(DefaultReadAceTag readTag) throws IOException {
 		Range range = readTag.asRange();
     	String formattedTag =String.format("RT{\n%s %s %s %d %d %s\n}\n", 
                         readTag.getId(),
@@ -259,7 +262,7 @@ private static final class DefaultAceFileWriter extends AbstractAceFileWriter{
 	}
 
 	@Override
-	public void write(WholeAssemblyAceTag wholeAssemblyTag) throws IOException {
+	public void write(DefaultWholeAssemblyAceTag wholeAssemblyTag) throws IOException {
 		String formattedTag =String.format("WA{\n%s %s %s\n%s\n}\n", 
                 wholeAssemblyTag.getType(),
                 wholeAssemblyTag.getCreator(),                

@@ -35,7 +35,7 @@ import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileWriter;
-import org.jcvi.common.core.assembly.ace.DefaultAceFileWriterBuilder;
+import org.jcvi.common.core.assembly.ace.AceFileWriterBuilder;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.ace.consed.PhdDirQualityDataStore;
 import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
@@ -197,7 +197,7 @@ public class RecallAceConsensus {
             //by new AcecontigBuilder.recallConsensus() method which will also be more efficient and cleaner
             
             */
-            final AceFileWriter aceWriter = new DefaultAceFileWriterBuilder(outputAceFile, masterPhdDataStore)
+            final AceFileWriter aceWriter = new AceFileWriterBuilder(outputAceFile, masterPhdDataStore)
             									.build();
             AbstractAceFileVisitorContigBuilder visitorBuilder = new AbstractAceFileVisitorContigBuilder(){
 

@@ -50,7 +50,7 @@ import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
-import org.jcvi.common.core.assembly.ace.DefaultAceFileWriterBuilder;
+import org.jcvi.common.core.assembly.ace.AceFileWriterBuilder;
 import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.clc.cas.AbstractCasFileVisitor;
@@ -260,7 +260,7 @@ public class Cas2Consed3 {
             	 throw new IOException("Could not create temp directory: " + tmpDir.getAbsolutePath());
              }
              File ace = new File(editDir, prefix+".ace.1");
-             AceFileWriter aceWriter = new DefaultAceFileWriterBuilder(ace, phdDataStore)
+             AceFileWriter aceWriter = new AceFileWriterBuilder(ace, phdDataStore)
              							.tmpDir(tmpDir)
              							.build();
              File consensusFile = consedOutputDir.createNewFile(prefix+ ".ace.1.consensus.fasta");

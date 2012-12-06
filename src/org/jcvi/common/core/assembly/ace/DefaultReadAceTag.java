@@ -26,8 +26,13 @@ package org.jcvi.common.core.assembly.ace;
 import java.util.Date;
 
 import org.jcvi.common.core.Rangeable;
-
-public class DefaultReadAceTag extends AbstractDefaultPlacedAceTag implements ReadAceTag{
+/**
+ * {@code DefaultReadAceTag} is an {@link AceTag}
+ * that maps to a particular location on a specific
+ * read of a contig in an ace file.
+ * @author dkatzel
+ */
+public class DefaultReadAceTag extends AbstractDefaultPlacedAceTag{
 
     public DefaultReadAceTag(String id, String type, String creator,
             Date creationDate, Rangeable location, boolean isTransient) {
@@ -41,6 +46,19 @@ public class DefaultReadAceTag extends AbstractDefaultPlacedAceTag implements Re
 				+ ", getCreationDate()=" + getCreationDate() + ", asRange()="
 				+ asRange() + ", getData()=" + getData() + ", isTransient()="
 				+ isTransient() + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(!super.equals(obj)){
+			return false;
+		}
+		return obj instanceof DefaultReadAceTag;
 	}
     
     

@@ -22,7 +22,13 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-
+/**
+ * {@code AbstractAceFileWriter}
+ * handles most of the work of writing
+ * out an Ace formatted file.
+ * @author dkatzel
+ *
+ */
 abstract class AbstractAceFileWriter implements AceFileWriter{
 	protected static final String CR = "\n";
 	
