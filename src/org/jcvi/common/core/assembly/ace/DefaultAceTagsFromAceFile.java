@@ -123,7 +123,7 @@ final class DefaultAceTagsFromAceFile {
     public void visitWholeAssemblyTag(String type, String creator,
             Date creationDate, String data) {
         super.visitWholeAssemblyTag(type, creator, creationDate, data);
-        aceTagsBuilder.addWholeAssemblyTag(new DefaultWholeAssemblyAceTag(type, creator, creationDate, data.trim()));
+        aceTagsBuilder.addWholeAssemblyTag(new WholeAssemblyAceTag(type, creator, creationDate, data.trim()));
     }
     
 
@@ -157,7 +157,7 @@ final class DefaultAceTagsFromAceFile {
             long gappedStart, long gappedEnd, Date creationDate,
             boolean isTransient) {
         super.visitReadTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
-        aceTagsBuilder.addReadTag(new DefaultReadAceTag(id, type, creator, creationDate, 
+        aceTagsBuilder.addReadTag(new ReadAceTag(id, type, creator, creationDate, 
                 Range.of(gappedStart,gappedEnd), isTransient));
 
     }

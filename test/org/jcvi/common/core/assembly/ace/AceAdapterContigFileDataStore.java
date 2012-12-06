@@ -108,11 +108,11 @@ public class AceAdapterContigFileDataStore extends AbstractAceAdaptedContigFileD
 		return totalNumberOfReads;
 	}
 	@Override
-	public StreamingIterator<DefaultWholeAssemblyAceTag> getWholeAssemblyTagIterator() {
+	public StreamingIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() {
 		return IteratorUtil.createEmptyStreamingIterator();
 	}
 	@Override
-	public StreamingIterator<DefaultReadAceTag> getReadTagIterator() {
+	public StreamingIterator<ReadAceTag> getReadTagIterator() {
 		return IteratorUtil.createEmptyStreamingIterator();
 	}
 	@Override

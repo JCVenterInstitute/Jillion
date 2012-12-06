@@ -222,7 +222,7 @@ private static final class DefaultAceFileWriter extends AbstractAceFileWriter{
 	
 	
 	@Override
-	public void write(DefaultReadAceTag readTag) throws IOException {
+	public void write(ReadAceTag readTag) throws IOException {
 		Range range = readTag.asRange();
     	String formattedTag =String.format("RT{\n%s %s %s %d %d %s\n}\n", 
                         readTag.getId(),
@@ -262,7 +262,7 @@ private static final class DefaultAceFileWriter extends AbstractAceFileWriter{
 	}
 
 	@Override
-	public void write(DefaultWholeAssemblyAceTag wholeAssemblyTag) throws IOException {
+	public void write(WholeAssemblyAceTag wholeAssemblyTag) throws IOException {
 		String formattedTag =String.format("WA{\n%s %s %s\n%s\n}\n", 
                 wholeAssemblyTag.getType(),
                 wholeAssemblyTag.getCreator(),                

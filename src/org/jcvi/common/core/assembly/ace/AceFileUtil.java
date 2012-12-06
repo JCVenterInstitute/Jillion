@@ -277,7 +277,7 @@ public final class AceFileUtil {
     
     
     public static void writeWholeAssemblyTag(
-            DefaultWholeAssemblyAceTag wholeAssemblyTag, OutputStream out) throws IOException {
+            WholeAssemblyAceTag wholeAssemblyTag, OutputStream out) throws IOException {
         writeString(String.format("WA{%n%s %s %s%n%s%n}%n", 
                 wholeAssemblyTag.getType(),
                 wholeAssemblyTag.getCreator(),                
@@ -309,7 +309,7 @@ public final class AceFileUtil {
                         tagBodyBuilder.toString()), out);
         
     }
-    public static void writeReadTag(DefaultReadAceTag readTag, OutputStream out) throws IOException {
+    public static void writeReadTag(ReadAceTag readTag, OutputStream out) throws IOException {
         Range range = readTag.asRange();
     	writeString(String.format("RT{%n%s %s %s %d %d %s%n}%n", 
                         readTag.getId(),

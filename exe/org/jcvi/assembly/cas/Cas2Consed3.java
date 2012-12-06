@@ -51,7 +51,7 @@ import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceFileWriterBuilder;
-import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
+import org.jcvi.common.core.assembly.ace.WholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.clc.cas.AbstractCasFileVisitor;
 import org.jcvi.common.core.assembly.clc.cas.CasFileInfo;
@@ -330,7 +330,7 @@ public class Cas2Consed3 {
                  IOUtil.deleteIgnoreError(phdFile);
              }
              else{
-            	 aceWriter.write(new DefaultWholeAssemblyAceTag("phdBall", "consed",
+            	 aceWriter.write(new WholeAssemblyAceTag("phdBall", "consed",
                         DateUtil.getCurrentDate(), "../phdball_dir/"+phdFile.getName()));
                 
              }

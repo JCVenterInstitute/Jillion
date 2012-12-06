@@ -55,8 +55,8 @@ import org.jcvi.common.core.assembly.ace.AceFileUtil;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
 import org.jcvi.common.core.assembly.ace.ConsensusAceTagBuilder;
-import org.jcvi.common.core.assembly.ace.DefaultReadAceTag;
-import org.jcvi.common.core.assembly.ace.DefaultWholeAssemblyAceTag;
+import org.jcvi.common.core.assembly.ace.ReadAceTag;
+import org.jcvi.common.core.assembly.ace.WholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.ace.HighLowAceContigPhdDatastore;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationParser;
@@ -299,7 +299,7 @@ public class MultiThreadedReAbacusAce {
                 long gappedStart, long gappedEnd, Date creationDate,
                 boolean isTransient) {
             super.visitReadTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
-            DefaultReadAceTag tag =new DefaultReadAceTag(id, type, creator, creationDate, 
+            ReadAceTag tag =new ReadAceTag(id, type, creator, creationDate, 
                     Range.of(gappedStart,gappedEnd), isTransient);
             
             try {
@@ -314,7 +314,7 @@ public class MultiThreadedReAbacusAce {
         public void visitWholeAssemblyTag(String type, String creator,
                 Date creationDate, String data) {
             super.visitWholeAssemblyTag(type, creator, creationDate, data);
-            DefaultWholeAssemblyAceTag tag = new DefaultWholeAssemblyAceTag(type, creator, creationDate, data);
+            WholeAssemblyAceTag tag = new WholeAssemblyAceTag(type, creator, creationDate, data);
             try {
             	AceFileUtil.writeWholeAssemblyTag(tag, tagOutputStream);
             } catch (IOException e) {

@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly.ace;
 
 import java.util.Date;
 /**
- * A {@link DefaultWholeAssemblyAceTag} is an {@link AceTag}
+ * A {@link WholeAssemblyAceTag} is an {@link AceTag}
  * that applies to the entire assembly in the ace file
  * usually these types of tags refer to things like
  * where the phdball is located. Other uses of 
@@ -35,7 +35,7 @@ import java.util.Date;
  *
  *
  */
-public final class DefaultWholeAssemblyAceTag extends AbstractDefaultAceTag {
+public final class WholeAssemblyAceTag extends AbstractDefaultAceTag {
 
     
     /**
@@ -44,7 +44,7 @@ public final class DefaultWholeAssemblyAceTag extends AbstractDefaultAceTag {
      * @param creationDate
      * @param data
      */
-    public DefaultWholeAssemblyAceTag(String type, String creator,
+    public WholeAssemblyAceTag(String type, String creator,
             Date creationDate, String data) {
         super(type, creator, creationDate, data);
     }
@@ -66,7 +66,7 @@ public final class DefaultWholeAssemblyAceTag extends AbstractDefaultAceTag {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof DefaultWholeAssemblyAceTag)) {
+        if (!(obj instanceof WholeAssemblyAceTag)) {
             return false;
         }
         return super.equals(obj);
