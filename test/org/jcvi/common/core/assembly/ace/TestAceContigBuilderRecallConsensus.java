@@ -24,7 +24,7 @@ public class TestAceContigBuilderRecallConsensus {
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
 	
-	private PhdInfo phdInfo = new DefaultPhdInfo("traceName", "phdName", new Date());
+	private PhdInfo phdInfo = new PhdInfo("traceName", "phdName", new Date());
 	
 	@Test
 	public void recallingConsensusNowWithoutSettingConsensusCallerShouldThrowException(){

@@ -58,7 +58,7 @@ public class FlowgramConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 				nextFlowgram.getQualitySequence(),
 				requiredComments);
 		
-		PhdInfo phdInfo = ConsedUtil.generatePhdInfoFor(sffFile, id, phdDate);
+		PhdInfo phdInfo = ConsedUtil.generateDefaultPhdInfoFor(sffFile, id, phdDate);
 		return new DefaultPhdReadRecord(phd,phdInfo);
 	}
 

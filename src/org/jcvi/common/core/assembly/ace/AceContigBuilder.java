@@ -260,7 +260,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     		 (int)acePlacedRead.getGappedStartOffset(),
     		 acePlacedRead.getDirection(),
     		 acePlacedRead.getReadInfo().getValidRange(),
-    		 acePlacedRead.getPhdInfo(),
+    		 acePlacedRead.getDefaultPhdInfo(),
     		 acePlacedRead.getReadInfo().getUngappedFullLength());
     }
     
@@ -555,7 +555,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
             			(int)(readBuilder.getBegin() - rangeTokeep.getBegin()), 
             			readBuilder.getDirection(), 
             			readBuilder.getClearRange(), 
-            			readBuilder.getPhdInfo(), 
+            			readBuilder.getDefaultPhdInfo(), 
             			readBuilder.getUngappedFullLength());
             }
             splitContigs.put(rangeTokeep, splitContig);

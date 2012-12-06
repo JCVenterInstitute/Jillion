@@ -42,7 +42,7 @@ import org.jcvi.common.core.assembly.ace.AceAssembledReadBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
 import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
-import org.jcvi.common.core.assembly.ace.DefaultPhdInfo;
+import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
@@ -103,7 +103,7 @@ public final class ConsedUtil {
     public static String convertContigGapstoAceGaps(String basecallsWithAceGaps) {
         return basecallsWithAceGaps.replace('-', '*');
     }
-    public static PhdInfo generatePhdInfoFor(File traceFile, String readId,
+    public static PhdInfo generateDefaultPhdInfoFor(File traceFile, String readId,
 			Date phdDate) {
 		final String id;
         if(traceFile ==null){
@@ -120,7 +120,7 @@ public final class ConsedUtil {
                 id= readId;
             }
         }
-        return new DefaultPhdInfo(id, readId+".phd.1", phdDate);
+        return new PhdInfo(id, readId+".phd.1", phdDate);
 	}
     /**
      * Split a contig which may contain zero coverage areas (0x)

@@ -68,7 +68,7 @@ public class TestDefaultAceContig {
         		0, 
         		Direction.FORWARD, 
         		Range.of(2, 18),
-        		new DefaultPhdInfo("traceName", "phdName", new Date()),
+        		new PhdInfo("traceName", "phdName", new Date()),
         		18);
         
         try{

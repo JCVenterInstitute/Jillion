@@ -53,7 +53,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     private Map<String, AlignedReadInfo> currentAssembledFromMap;
     private boolean readingConsensus=true;
     private NucleotideSequenceBuilder currentBasecalls = new NucleotideSequenceBuilder();
-    private PhdInfo currentPhdInfo;
+    private PhdInfo currentDefaultPhdInfo;
     private Range currentClearRange;
     private int currentOffset;
     private NucleotideSequence currentValidBases;
@@ -300,10 +300,10 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
             Date date) {
         throwExceptionIfInitialized();
         if(!skipCurrentRead){
-            currentPhdInfo =new DefaultPhdInfo(traceName, phdName, date);
+            currentDefaultPhdInfo =new PhdInfo(traceName, phdName, date);
             AlignedReadInfo assembledFrom = currentAssembledFromMap.get(currentReadId);
             visitAceRead(currentReadId, currentValidBases ,currentOffset, assembledFrom.getDirection(), 
-                    currentClearRange ,currentPhdInfo,currentReadUngappedFullLength);
+                    currentClearRange ,currentDefaultPhdInfo,currentReadUngappedFullLength);
         }
         skipCurrentRead=false;
     }

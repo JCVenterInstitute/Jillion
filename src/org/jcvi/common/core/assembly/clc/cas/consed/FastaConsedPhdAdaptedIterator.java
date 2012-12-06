@@ -66,7 +66,7 @@ public class FastaConsedPhdAdaptedIterator implements PhdReadRecordIterator{
 		Properties comments = createAdditionalCommentsFor(id,requiredComments);
 		Phd phd =createPhdRecordFor(nextFasta, comments);
 		
-		PhdInfo info = ConsedUtil.generatePhdInfoFor(fastaFile, id, phdDate);
+		PhdInfo info = ConsedUtil.generateDefaultPhdInfoFor(fastaFile, id, phdDate);
 		return new DefaultPhdReadRecord(phd, info);
 	}
 	

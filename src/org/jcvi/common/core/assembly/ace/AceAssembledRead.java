@@ -34,8 +34,8 @@ public interface AceAssembledRead extends AssembledRead{
      * Get the {@link PhdInfo} associated with this
      * read.
      * @return a {@link PhdInfo} should never be null
-     * since PhdInfo is required for an ace read.
+     * since DefaultPhdInfo is required for an ace read.
      */
-    PhdInfo getPhdInfo();
+    PhdInfo getDefaultPhdInfo();
     
 }

@@ -23,19 +23,21 @@
  */
 package org.jcvi.common.core.assembly.ace;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Date;
 
-import org.jcvi.common.core.assembly.ace.DefaultPhdInfo;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestDefaultPhdInfo {
 
     Date date = new Date(123456789L);
     Date differentDate = new Date(0L);
     String phdName = "phdName";
     String traceName = "traceName";
-    DefaultPhdInfo sut = new DefaultPhdInfo(traceName, phdName, date);
+    PhdInfo sut = new PhdInfo(traceName, phdName, date);
     @Test
     public void constructor(){
         assertEquals(phdName, sut.getPhdName());
@@ -56,42 +58,48 @@ public class TestDefaultPhdInfo {
     }
     @Test
     public void equalsSameValues(){
-        DefaultPhdInfo sameValues = new DefaultPhdInfo(traceName, phdName, date);
+        PhdInfo sameValues = new PhdInfo(traceName, phdName, date);
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);
     }
     
     @Test
     public void differentTraceNameShouldNotBeEqual(){
-        DefaultPhdInfo differentTraceName = new DefaultPhdInfo("different"+traceName, phdName, date);
+        PhdInfo differentTraceName = new PhdInfo("different"+traceName, phdName, date);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentTraceName);
     }
     
     @Test
-    public void nullTraceNameShouldNotBeEqual(){
-        DefaultPhdInfo nullTraceName = new DefaultPhdInfo(null, phdName, date);
-        TestUtil.assertNotEqualAndHashcodeDifferent(sut, nullTraceName);
+    public void nullTraceNameShouldThrowNPE(){
+    	try{
+        new PhdInfo(null, phdName, date);
+    	}catch(NullPointerException e){
+    		assertTrue(e.getMessage().contains("trace name"));
+    	}
     }
     
     @Test
     public void differentPhdNameShouldNotBeEqual(){
-        DefaultPhdInfo differentPhdName = new DefaultPhdInfo(traceName, "different"+phdName, date);
+        PhdInfo differentPhdName = new PhdInfo(traceName, "different"+phdName, date);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentPhdName);
     }
     
     @Test
-    public void nullPhdNameShouldNotBeEqual(){
-        DefaultPhdInfo nullPhdName = new DefaultPhdInfo(traceName, null, date);
-        TestUtil.assertNotEqualAndHashcodeDifferent(sut, nullPhdName);
+    public void nullPhdNameShouldNotBeEqual(){        
+        try{
+            new PhdInfo(traceName, null, date);
+    	}catch(NullPointerException e){
+    		assertTrue(e.getMessage().contains("phd name"));
+    	}
     }
     
     @Test
     public void differentDateShouldNotBeEqual(){
-        DefaultPhdInfo hasDifferentDate = new DefaultPhdInfo(traceName, phdName, differentDate);
+        PhdInfo hasDifferentDate = new PhdInfo(traceName, phdName, differentDate);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasDifferentDate);
     }
     
     @Test(expected = NullPointerException.class)
     public void nullDateShouldThrowNPE(){
-        new DefaultPhdInfo(traceName, phdName, null);
+        new PhdInfo(traceName, phdName, null);
     }
 }

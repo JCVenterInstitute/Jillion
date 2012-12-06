@@ -19,8 +19,9 @@
 
 package org.jcvi.common.core.assembly.ace;
 
-import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
+
+import java.util.Date;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
@@ -33,17 +34,16 @@ import org.junit.Test;
  *
  */
 public class TestDefaultAceContigBuilderReAbacus {
-    PhdInfo read1PhdInfo = createMock(PhdInfo.class);
-   
+    PhdInfo phdInfo = new PhdInfo("traceName","phdName",new Date());
     
     @Test
     public void abacus(){
     	AceContigBuilder sut =  new AceContigBuilder("id",
                           "ACGT-----ACGT")
         
-        .addRead("read1",   new NucleotideSequenceBuilder("GT-T---ACG").build(), 2, Direction.FORWARD, Range.of(2,7), read1PhdInfo, 10)
-        .addRead("read2", new NucleotideSequenceBuilder("ACGT--T--AC").build(), 0, Direction.FORWARD, Range.of(2,8), read1PhdInfo, 10)
-        .addRead("read3",    new NucleotideSequenceBuilder("T---T-ACGT").build(), 3, Direction.FORWARD, Range.of(2,8), read1PhdInfo, 10);
+        .addRead("read1",   new NucleotideSequenceBuilder("GT-T---ACG").build(), 2, Direction.FORWARD, Range.of(2,7), phdInfo, 10)
+        .addRead("read2", new NucleotideSequenceBuilder("ACGT--T--AC").build(), 0, Direction.FORWARD, Range.of(2,8), phdInfo, 10)
+        .addRead("read3",    new NucleotideSequenceBuilder("T---T-ACGT").build(), 3, Direction.FORWARD, Range.of(2,8), phdInfo, 10);
         
         sut.getAssembledReadBuilder("read1").reAbacus(Range.of(2,6), asSequence("T"));
         sut.getAssembledReadBuilder("read2").reAbacus(Range.of(4,8), asSequence("T"));
@@ -75,10 +75,10 @@ public class TestDefaultAceContigBuilderReAbacus {
 		AceContigBuilder sut =  new AceContigBuilder("id",
                           "ACGT-----ACGT")
         
-        .addRead("read1",   new NucleotideSequenceBuilder("GT-T---ACG").build(), 2, Direction.FORWARD, Range.of(2,7), read1PhdInfo, 10)
-        .addRead("read2", new NucleotideSequenceBuilder("ACGT--T--AC").build(), 0, Direction.FORWARD, Range.of(2,8), read1PhdInfo, 10)
-        .addRead("read3",    new NucleotideSequenceBuilder("T---T-ACGT").build(), 3, Direction.FORWARD, Range.of(2,8), read1PhdInfo, 10)
-        .addRead("read4",          new NucleotideSequenceBuilder("ACGT").build(), 9, Direction.FORWARD, Range.of(2,4), read1PhdInfo, 10);
+        .addRead("read1",   new NucleotideSequenceBuilder("GT-T---ACG").build(), 2, Direction.FORWARD, Range.of(2,7), phdInfo, 10)
+        .addRead("read2", new NucleotideSequenceBuilder("ACGT--T--AC").build(), 0, Direction.FORWARD, Range.of(2,8), phdInfo, 10)
+        .addRead("read3",    new NucleotideSequenceBuilder("T---T-ACGT").build(), 3, Direction.FORWARD, Range.of(2,8), phdInfo, 10)
+        .addRead("read4",          new NucleotideSequenceBuilder("ACGT").build(), 9, Direction.FORWARD, Range.of(2,4), phdInfo, 10);
         
         sut.getAssembledReadBuilder("read1").reAbacus(Range.of(2,6), asSequence("T"));
         sut.getAssembledReadBuilder("read2").reAbacus(Range.of(4,8), asSequence("T"));
