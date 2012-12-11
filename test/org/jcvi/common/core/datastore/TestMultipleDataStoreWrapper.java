@@ -23,20 +23,23 @@
  */
 package org.jcvi.common.core.datastore;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
 import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
 @SuppressWarnings("unchecked")
 public class TestMultipleDataStoreWrapper {
 
@@ -50,8 +53,12 @@ public class TestMultipleDataStoreWrapper {
     public void setup(){
         datastore1 = createMock(DataStore.class);
         datastore2 = createMock(DataStore.class);
-        sut = MultipleDataStoreWrapper.createMultipleDataStoreWrapper(DataStore.class,datastore1, datastore2);
+        sut = createSut(DataStore.class,datastore1,datastore2);
     }
+
+	protected <T, D extends DataStore<T>> D createSut(Class<D> clazz, D...dataStores) {
+		return MultipleDataStoreWrapper.createMultipleDataStoreWrapper(clazz,dataStores);
+	}
     
     @Test
     public void voidMethodShouldGetCalledForAll() throws IOException{
@@ -125,8 +132,7 @@ public class TestMultipleDataStoreWrapper {
     }
     @Test
     public void getShouldGetFirstDoesNotContainIdSecondDoes() throws DataStoreException{
-        expect(datastore1.contains(id)).andReturn(false);
-        expect(datastore2.contains(id)).andReturn(true);
+        expect(datastore1.get(id)).andReturn(null);
         expect(datastore2.get(id)).andReturn(id);
         replay(datastore1, datastore2);
         assertEquals(id, sut.get(id));
@@ -134,7 +140,6 @@ public class TestMultipleDataStoreWrapper {
     }
     @Test
     public void getShouldGetFirstValidFirstFirstHasIt() throws DataStoreException{
-        expect(datastore1.contains(id)).andReturn(true);
         expect(datastore1.get(id)).andReturn(id);
         replay(datastore1, datastore2);
         assertEquals(id, sut.get(id));
@@ -142,8 +147,8 @@ public class TestMultipleDataStoreWrapper {
     }
     @Test
     public void getShouldGetFirstValidAllDoNotContainIdShouldReturnNull() throws DataStoreException{
-        expect(datastore1.contains(id)).andReturn(false);
-        expect(datastore2.contains(id)).andReturn(false);
+        expect(datastore1.get(id)).andReturn(null);
+        expect(datastore2.get(id)).andReturn(null);
         replay(datastore1, datastore2);
         assertNull(id, sut.get(id));
         verify(datastore1, datastore2);
@@ -151,7 +156,6 @@ public class TestMultipleDataStoreWrapper {
     
     @Test
     public void getFirstDataStorethatContainsIdThrowsExceptionShouldTossUp() throws DataStoreException{
-        expect(datastore1.contains(id)).andReturn(true);
         expect(datastore1.get(id)).andThrow(datastoreException);
         replay(datastore1, datastore2);
         try{
@@ -164,63 +168,15 @@ public class TestMultipleDataStoreWrapper {
     
     @Test(expected = IllegalArgumentException.class)
     public void noDelegatesShouldThrowIllegalArgumentException(){
-        MultipleDataStoreWrapper.createMultipleDataStoreWrapper(DataStore.class);
+        createSut(DataStore.class);
     }
     
     @Test(expected = NullPointerException.class)
     public void nullDelegatesShouldThrowNullPointerException(){
-        MultipleDataStoreWrapper.createMultipleDataStoreWrapper(DataStore.class,datastore1,null,datastore2);
+        createSut(DataStore.class,datastore1,null,datastore2);
     }
     
-    public static interface ExtendedDataStore extends DataStore{
-        Object someOtherMethod() throws DataStoreException;
-    }
     
-    @Test
-    public void nonGetMethodThatReturnsAnObject() throws DataStoreException{
-        ExtendedDataStore mock1 = createMock(ExtendedDataStore.class);
-        ExtendedDataStore mock2 = createMock(ExtendedDataStore.class);
-        Object expected = new Object();
-        expect(mock1.someOtherMethod()).andReturn(null);
-        expect(mock2.someOtherMethod()).andReturn(expected);
-        replay(mock1,mock2);
-        ExtendedDataStore sut =MultipleDataStoreWrapper.createMultipleDataStoreWrapper(ExtendedDataStore.class, mock1,mock2);
-    
-        assertEquals(expected, sut.someOtherMethod());
-        verify(mock1,mock2);
-    
-    }
-    @Test
-    public void nonGetMethodAllDelegatesReturnNullShouldReturnNull() throws DataStoreException{
-        ExtendedDataStore mock1 = createMock(ExtendedDataStore.class);
-        ExtendedDataStore mock2 = createMock(ExtendedDataStore.class);
-        expect(mock1.someOtherMethod()).andReturn(null);
-        expect(mock2.someOtherMethod()).andReturn(null);
-        replay(mock1,mock2);
-        ExtendedDataStore sut =MultipleDataStoreWrapper.createMultipleDataStoreWrapper(ExtendedDataStore.class, mock1,mock2);
-    
-        assertNull(sut.someOtherMethod());
-        verify(mock1,mock2);
-    
-    }
-    @Test
-    public void nonGetMethodThatReturnsAnObjectThrowsExceptionShouldWrapInDataStoreException() throws DataStoreException{
-        IllegalArgumentException expectedException = new IllegalArgumentException("expected");
-        ExtendedDataStore mock1 = createMock(ExtendedDataStore.class);
-        expect(mock1.someOtherMethod()).andThrow(expectedException);
-        replay(mock1);
-        ExtendedDataStore sut =MultipleDataStoreWrapper.createMultipleDataStoreWrapper(ExtendedDataStore.class, mock1);
-    
-        try{
-            sut.someOtherMethod();
-        }catch(DataStoreException e){
-            assertEquals("error invoking delegate datastore", e.getMessage());
-            assertTrue(e.getCause() instanceof InvocationTargetException);
-            assertEquals(expectedException, e.getCause().getCause());
-        }
-        verify(mock1);
-    
-    }
     
     
 }
