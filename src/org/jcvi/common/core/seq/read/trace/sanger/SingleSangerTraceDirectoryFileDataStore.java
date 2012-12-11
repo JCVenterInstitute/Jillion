@@ -23,9 +23,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.jcvi.common.core.datastore.AbstractDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
+import org.jcvi.common.core.datastore.impl.AbstractDataStore;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.FileIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;

@@ -21,10 +21,12 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.datastore;
+package org.jcvi.common.core.datastore.impl;
 
 import java.io.IOException;
 
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code AbstractDataStore} is an abstract implementation

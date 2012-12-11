@@ -101,11 +101,6 @@ public final class MultipleDataStoreWrapper<T, D extends DataStore<T>> implement
     @Override
     public Object invoke(Object proxy, Method method, Object[] args)
             throws Throwable {
-        //special case for get
-        if("get".equals(method.getName()) && Arrays.equals(GET_PARAMETERS,method.getParameterTypes())){
-            return invokeGet((String)args[0]);
-            
-        } 
         final Class<?> returnType = method.getReturnType();
         if(void.class.equals(returnType)){
             return handleVoidMethod(method, args);            
@@ -128,26 +123,7 @@ public final class MultipleDataStoreWrapper<T, D extends DataStore<T>> implement
     }
     
    
-    /**
-     * Special case to handle gets where we will check
-     * if the delegate contains the id before we try
-     * to invoke the get.  This avoids problems
-     * where we assume an exception thrown from the get
-     * means the datastore does not have the id which
-     * could swallow a legitimate error.
-     * @param id the id to get from the datastores.
-     * @return the object from the first delegate that contains the id;
-     * or {@code null} if no delegates have it.
-     * @throws DataStoreException
-     */
-    private Object invokeGet(String id) throws DataStoreException {
-        for(D delegate : delegates){
-            if(delegate.contains(id)){
-                return delegate.get(id);
-            }
-        }
-        return null;
-    }
+    
     private Object returnFirstValidResult(Method method, Object[] args) throws DataStoreException {
         for(D delegate : delegates){
             try {
@@ -160,9 +136,11 @@ public final class MultipleDataStoreWrapper<T, D extends DataStore<T>> implement
             } catch (IllegalAccessException e) {
                 throw new DataStoreException("error invoking delegate datastore",e);
             } catch (InvocationTargetException e) {
+            	if(e.getCause() instanceof DataStoreException){
+            		throw (DataStoreException)e.getCause();
+            	}
                 throw new DataStoreException("error invoking delegate datastore",e);
-            }
-                        
+            }      
         }
         return null;
         
