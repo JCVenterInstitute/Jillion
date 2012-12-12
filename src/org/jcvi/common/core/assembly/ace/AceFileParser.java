@@ -40,7 +40,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor.BeginContigReturnCode;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor.EndContigReturnCode;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.TextLineParser;
+import org.jcvi.common.core.io.impl.TextLineParser;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 /**
  * {@code AceFileParser} contains methods for parsing
