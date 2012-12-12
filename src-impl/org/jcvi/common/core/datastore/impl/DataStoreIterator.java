@@ -21,13 +21,29 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.datastore;
+package org.jcvi.common.core.datastore.impl;
 
 import java.io.IOException;
 
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-
+/**
+ * {@code DataStoreIterator}
+ * is a simple {@link StreamingIterator}
+ * implementations meant for use by DataStores
+ * to iterate over its contents using the same
+ * order as {@link DataStore#idIterator()}.
+ * This class uses the id iterator to get the next
+ * id and then calls {@link DataStore#get(String)}
+ * with that id; it is not an efficient algorithm
+ * but is acceptable if a DataStore implementation
+ * does not have a better way to create the iterator.
+ * @author dkatzel
+ *
+ * @param <T>
+ */
 public final class DataStoreIterator<T> implements StreamingIterator<T>{
     private StreamingIterator<String> ids; 
     private final DataStore<T> dataStore;
