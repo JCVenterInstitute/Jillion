@@ -30,8 +30,8 @@ import java.util.Properties;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.DataStoreIterator;
 import org.jcvi.common.core.datastore.impl.AbstractDataStore;
+import org.jcvi.common.core.datastore.impl.DataStoreIterator;
 import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;

@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.DataStoreIterator;
+import org.jcvi.common.core.datastore.impl.DataStoreIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 abstract class AbstractFragmentDataStore implements Frg2Visitor, FragmentDataStore{

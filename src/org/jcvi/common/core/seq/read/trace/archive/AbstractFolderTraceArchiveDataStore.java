@@ -26,7 +26,7 @@ package org.jcvi.common.core.seq.read.trace.archive;
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.DataStoreIterator;
+import org.jcvi.common.core.datastore.impl.DataStoreIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public abstract class AbstractFolderTraceArchiveDataStore implements TraceArchiveDataStore<TraceArchiveTrace> {
