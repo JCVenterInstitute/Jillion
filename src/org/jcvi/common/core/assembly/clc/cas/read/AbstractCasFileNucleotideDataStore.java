@@ -30,11 +30,10 @@ import java.util.List;
 import org.jcvi.common.core.assembly.clc.cas.AbstractOnePassCasFileVisitor;
 import org.jcvi.common.core.assembly.clc.cas.CasFileInfo;
 import org.jcvi.common.core.assembly.clc.cas.CasMatch;
-import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePassCasFileVisitor implements CasNucleotideDataStore {
@@ -42,7 +41,7 @@ public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePass
     private final List<NucleotideSequenceDataStore> nucleotideDataStores = new ArrayList<NucleotideSequenceDataStore>();
     
     private final CasDataStoreFactory casDataStoreFactory;
-    private DataStore<NucleotideSequence> delegate;
+    private NucleotideSequenceDataStore delegate;
    
     /**
      * @param casDataStoreFactory
@@ -62,13 +61,11 @@ public abstract class AbstractCasFileNucleotideDataStore extends AbstractOnePass
             }
         }
     }
-    
-    @SuppressWarnings("unchecked")
 	@Override
     public synchronized void visitEndOfFile() {
         super.visitEndOfFile();
         delegate =  
-                MultipleDataStoreWrapper.createMultipleDataStoreWrapper(DataStore.class, (List)nucleotideDataStores);
+                DataStoreUtil.chain(NucleotideSequenceDataStore.class, nucleotideDataStores);
     }
 
     @Override

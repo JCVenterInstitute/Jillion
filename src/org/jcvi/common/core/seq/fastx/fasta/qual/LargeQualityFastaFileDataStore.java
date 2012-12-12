@@ -25,10 +25,10 @@ package org.jcvi.common.core.seq.fastx.fasta.qual;
 
 import java.io.File;
 
-import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
-import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
+import org.jcvi.common.core.datastore.DataStoreUtil;
+import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractLargeFastaFileDataStore;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -40,7 +40,8 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * in memory except it's size (which is lazy loaded).
  * This means that each get() or contain() requires re-parsing the fastq file
  * which can take some time.  It is recommended that instances are wrapped
- * in {@link CachedDataStore}.
+ * in  a cached datastore using
+ * {@link DataStoreUtil#createNewCachedDataStore(Class, org.jcvi.common.core.datastore.DataStore, int)}.
  * @author dkatzel
  *
  *

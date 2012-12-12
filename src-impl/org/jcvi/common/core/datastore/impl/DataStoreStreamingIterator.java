@@ -1,8 +1,10 @@
-package org.jcvi.common.core.datastore;
+package org.jcvi.common.core.datastore.impl;
 
 import java.io.IOException;
 import java.util.Iterator;
 
+import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.common.core.datastore.DataStoreClosedException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;

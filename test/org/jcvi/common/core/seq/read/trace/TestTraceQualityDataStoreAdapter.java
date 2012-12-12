@@ -1,5 +1,10 @@
 package org.jcvi.common.core.seq.read.trace;
 
+import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -7,12 +12,10 @@ import java.util.Map;
 import org.easymock.EasyMockSupport;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.junit.Before;
 import org.junit.Test;
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 public class TestTraceQualityDataStoreAdapter extends EasyMockSupport{
 	QualitySequence expectedQualities = createMock(QualitySequence.class);
 	String id = "id";
@@ -24,7 +27,7 @@ public class TestTraceQualityDataStoreAdapter extends EasyMockSupport{
 		
 		Map<String,Trace> map = new HashMap<String, Trace>();
 		map.put(id, mockTrace);
-		DataStore<Trace> datastore = MapDataStoreAdapter.adapt(map);
+		DataStore<Trace> datastore = DataStoreUtil.adapt(map);
 		
 		sut = TraceQualityDataStoreAdapter.adapt(datastore);
 		

@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.util.Builder;
 /**
  * {@code DefaultFastqDataStoreBuilder} is a {@link Builder}
@@ -70,6 +70,6 @@ final class DefaultFastqDataStoreBuilder implements Builder<FastqDataStore>{
         }
         @Override
         public FastqDataStore build() {
-            return MapDataStoreAdapter.adapt(FastqDataStore.class, map);
+            return DataStoreUtil.adapt(FastqDataStore.class, map);
         }
 }

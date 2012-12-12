@@ -30,7 +30,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.seq.read.trace.frg.FragmentDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -132,7 +132,7 @@ public final class DefaultUnitigDataStore{
         @Override
         public UnitigDataStore build(){
             clearRanges.clear();
-            DataStore<AsmUnitig> datastore = MapDataStoreAdapter.adapt(unitigMap);
+            DataStore<AsmUnitig> datastore = DataStoreUtil.adapt(unitigMap);
             return new UnitigDataStoreImpl(datastore);
         }
         

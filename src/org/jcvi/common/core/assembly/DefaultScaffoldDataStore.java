@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jcvi.common.core.DirectedRange;
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.util.MapUtil;
 
 public final class DefaultScaffoldDataStore {
@@ -27,7 +27,7 @@ public final class DefaultScaffoldDataStore {
 			for(Entry<String, ScaffoldBuilder> entry : builders.entrySet()){
 				scaffolds.put(entry.getKey(), entry.getValue().build());
 			}
-			return MapDataStoreAdapter.adapt(ScaffoldDataStore.class, scaffolds);
+			return DataStoreUtil.adapt(ScaffoldDataStore.class, scaffolds);
 		}
 
 		@Override

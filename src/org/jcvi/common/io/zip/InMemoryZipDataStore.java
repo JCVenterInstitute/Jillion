@@ -38,8 +38,8 @@ import java.util.zip.ZipInputStream;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreIterator;
-import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.common.core.datastore.impl.AbstractDataStore;
+import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**

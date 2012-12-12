@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 
 public class DefaultTraceArchiveInfoBuilder implements TraceArchiveInfoBuilder<TraceArchiveRecord>{
     private final Map<String, TraceArchiveRecord> map = new LinkedHashMap<String, TraceArchiveRecord>();
@@ -61,7 +61,7 @@ public class DefaultTraceArchiveInfoBuilder implements TraceArchiveInfoBuilder<T
     }
 	@Override
 	public TraceArchiveInfo build() {
-		return MapDataStoreAdapter.adapt(TraceArchiveInfo.class,map);
+		return DataStoreUtil.adapt(TraceArchiveInfo.class,map);
 	}
 
 

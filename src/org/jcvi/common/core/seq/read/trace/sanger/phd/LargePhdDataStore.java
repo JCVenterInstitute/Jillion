@@ -27,8 +27,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
@@ -36,8 +36,9 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  * to be used a very large phd files or phdballs.  No data contained in this
  * phd file is stored in memory except the number of phd records (which is lazy loaded).
  * This means that each get() or contain() requires re-parsing the phd file
- * which can take some time.  It is recommended that instances of 
- * {@link LargePhdDataStore} are wrapped by {@link CachedDataStore}
+ * which can take some time.  It is recommended that instances are wrapped
+ * in  a cached datastore using
+ * {@link DataStoreUtil#createNewCachedDataStore(Class, org.jcvi.common.core.datastore.DataStore, int)}.
  * @author dkatzel
  *
  *

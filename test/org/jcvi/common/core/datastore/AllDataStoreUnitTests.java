@@ -39,7 +39,7 @@ import org.junit.runners.Suite.SuiteClasses;
      TestCachedDataStore.class,
      TestMapDataStoreAdapter.class,
      TestMapDataStoreAdapterProxy.class,
-     TestMultipleDataStoreWrapper.class
+     TestChainedDataStore.class
      
     }
     )

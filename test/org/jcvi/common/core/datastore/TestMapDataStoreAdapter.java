@@ -23,17 +23,18 @@
  */
 package org.jcvi.common.core.datastore;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestMapDataStoreAdapter {
 
     private static final Map<String, Integer> MAP = new HashMap<String, Integer>();
@@ -45,7 +46,7 @@ public class TestMapDataStoreAdapter {
     private DataStore<Integer> sut;
     @Before
     public void setup(){
-        sut = MapDataStoreAdapter.adapt(MAP);
+        sut = DataStoreUtil.adapt(MAP);
     }
     
     @Test

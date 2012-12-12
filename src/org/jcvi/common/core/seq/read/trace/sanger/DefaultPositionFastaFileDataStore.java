@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaFileDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
@@ -71,7 +71,7 @@ public final class DefaultPositionFastaFileDataStore {
 		private final Map<String, PositionSequenceFastaRecord> map = new LinkedHashMap<String, PositionSequenceFastaRecord>();
 		@Override
 		public PositionSequenceFastaDataStore build() {
-			return MapDataStoreAdapter.adapt(PositionSequenceFastaDataStore.class,map);
+			return DataStoreUtil.adapt(PositionSequenceFastaDataStore.class,map);
 		}
 
 		@Override

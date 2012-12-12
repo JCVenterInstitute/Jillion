@@ -25,12 +25,12 @@ package org.jcvi.common.core.assembly.ctg;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
+import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
-import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.datastore.DataStoreAdapter;
 import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
@@ -57,8 +57,8 @@ public abstract class AbstractContigFileVisitorBuilder extends AbstractContigFil
     
     @SuppressWarnings("unchecked")
 	public AbstractContigFileVisitorBuilder(NucleotideSequenceDataStore fullLengthSequenceDataStore){
-    	this.fullRangeLengthDataStore = (DataStore<Long>)DataStoreAdapter.adapt(DataStore.class, fullLengthSequenceDataStore, 
-    			new DataStoreAdapter.AdapterCallback<NucleotideSequence, Long>() {
+    	this.fullRangeLengthDataStore = (DataStore<Long>)DataStoreUtil.adapt(DataStore.class, fullLengthSequenceDataStore, 
+    			new DataStoreUtil.AdapterCallback<NucleotideSequence, Long>() {
 
 					@Override
 					public Long get(NucleotideSequence from) {
@@ -70,8 +70,8 @@ public abstract class AbstractContigFileVisitorBuilder extends AbstractContigFil
     
     @SuppressWarnings("unchecked")
 	public AbstractContigFileVisitorBuilder(QualitySequenceDataStore fullLengthQualityDataStore){
-    	this.fullRangeLengthDataStore = (DataStore<Long>)DataStoreAdapter.adapt(DataStore.class, fullLengthQualityDataStore, 
-    			new DataStoreAdapter.AdapterCallback<QualitySequence, Long>() {
+    	this.fullRangeLengthDataStore = (DataStore<Long>)DataStoreUtil.adapt(DataStore.class, fullLengthQualityDataStore, 
+    			new DataStoreUtil.AdapterCallback<QualitySequence, Long>() {
 
 					@Override
 					public Long get(QualitySequence from) {
@@ -82,8 +82,8 @@ public abstract class AbstractContigFileVisitorBuilder extends AbstractContigFil
     }
     @SuppressWarnings("unchecked")
 	public AbstractContigFileVisitorBuilder(NucleotideSequenceFastaDataStore fullLengthSequenceDataStore){
-    	this.fullRangeLengthDataStore = (DataStore<Long>)DataStoreAdapter.adapt(DataStore.class, fullLengthSequenceDataStore, 
-    			new DataStoreAdapter.AdapterCallback<NucleotideSequenceFastaRecord, Long>() {
+    	this.fullRangeLengthDataStore = (DataStore<Long>)DataStoreUtil.adapt(DataStore.class, fullLengthSequenceDataStore, 
+    			new DataStoreUtil.AdapterCallback<NucleotideSequenceFastaRecord, Long>() {
 
 					@Override
 					public Long get(NucleotideSequenceFastaRecord from) {
@@ -95,8 +95,8 @@ public abstract class AbstractContigFileVisitorBuilder extends AbstractContigFil
     
     @SuppressWarnings("unchecked")
 	public AbstractContigFileVisitorBuilder(QualitySequenceFastaDataStore fullLengthQualityDataStore){
-    	this.fullRangeLengthDataStore = (DataStore<Long>)DataStoreAdapter.adapt(DataStore.class, fullLengthQualityDataStore, 
-    			new DataStoreAdapter.AdapterCallback<QualitySequenceFastaRecord, Long>() {
+    	this.fullRangeLengthDataStore = (DataStore<Long>)DataStoreUtil.adapt(DataStore.class, fullLengthQualityDataStore, 
+    			new DataStoreUtil.AdapterCallback<QualitySequenceFastaRecord, Long>() {
 
 					@Override
 					public Long get(QualitySequenceFastaRecord from) {
