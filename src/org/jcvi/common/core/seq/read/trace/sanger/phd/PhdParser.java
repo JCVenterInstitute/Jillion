@@ -34,7 +34,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.TextLineParser;
+import org.jcvi.common.core.io.impl.TextLineParser;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 /**

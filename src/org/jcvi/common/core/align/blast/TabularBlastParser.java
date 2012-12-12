@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.TextLineParser;
+import org.jcvi.common.core.io.impl.TextLineParser;
 
 /**
  * Parse TablularBlast output ( created using the "-m 8" option in blast).

@@ -30,7 +30,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.ace.consed.NavigationElement.Type;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.TextLineParser;
+import org.jcvi.common.core.io.impl.TextLineParser;
 
 /**
  * @author dkatzel

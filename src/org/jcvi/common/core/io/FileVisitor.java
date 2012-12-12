@@ -26,8 +26,8 @@ package org.jcvi.common.core.io;
  * {@code FileVisitor} is an base interface
  * which uses the "push approach" to walk
  * over complicated File structures. 
- * This is similar to the Visitor Design 
- * Pattern where each method follows
+ * This is similar to the Event and Visitor Design 
+ * Patterns where each method follows
  * the format visitXXX.  It is up
  * to the implementor of this interface
  * to determine what to do during

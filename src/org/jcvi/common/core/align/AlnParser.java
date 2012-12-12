@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 
 import org.jcvi.common.core.align.AlnVisitor.ConservationInfo;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.TextLineParser;
+import org.jcvi.common.core.io.impl.TextLineParser;
 
 /**
  * {@code AlnParser} is a utility class that can 
