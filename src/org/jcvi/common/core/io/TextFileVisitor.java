@@ -33,7 +33,7 @@ public interface TextFileVisitor extends FileVisitor {
      * Visit a new line.  
      * @param line the line being visited; this line
      * contains all whitespace originally present in the line
-     * including the {@code \n}
+     * including the end of line characters.
      */
     void visitLine(String line);
 }

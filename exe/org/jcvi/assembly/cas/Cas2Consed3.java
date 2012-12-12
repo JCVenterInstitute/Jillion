@@ -20,11 +20,13 @@
 package org.jcvi.assembly.cas;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -72,7 +74,6 @@ import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStoreUtil;
 import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.TextLineParser;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
@@ -565,14 +566,14 @@ public class Cas2Consed3 {
 	    private static final Pattern TRIM_PATTERN = Pattern.compile("^(\\S+)\\s+(\\d+)\\s+(\\d+)\\s*$");
 		
 		public static TrimPointsDataStore createTrimPointsDataStoreFromFile(File trimpointsFile) throws IOException{
-			 TextLineParser scanner = null;
+			BufferedReader scanner = null;
 			 int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(countNumberOfLines(trimpointsFile));
 			 Map<String,Range> map = new HashMap<String, Range>(capacity);
 		     InputStream in = new FileInputStream(trimpointsFile);   
 			try {
-				scanner = new TextLineParser(in);
-				while (scanner.hasNextLine()) {
-					String line = scanner.nextLine();
+				scanner = new BufferedReader(new InputStreamReader(in));
+				String line=null;
+				while ((line =scanner.readLine())!=null) {
 					Matcher matcher = TRIM_PATTERN.matcher(line);
 					if (matcher.matches()) {
 						String id = matcher.group(1);
