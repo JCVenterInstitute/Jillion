@@ -30,10 +30,9 @@ import java.util.Set;
 import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.assembly.asm.AsmVisitor.NestedContigMessageTypes;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.seq.read.trace.frg.FragmentDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -260,7 +259,7 @@ public final class DefaultAsmContigDataStore implements AsmContigDataStore{
         @Override
         public AsmContigDataStore build(){
             clearRanges.clear();
-            DataStore<AsmContig> datastore = MapDataStoreAdapter.adapt(asmMap);
+            DataStore<AsmContig> datastore = DataStoreUtil.adapt(asmMap);
             return new DefaultAsmContigDataStore(datastore);
         }
 

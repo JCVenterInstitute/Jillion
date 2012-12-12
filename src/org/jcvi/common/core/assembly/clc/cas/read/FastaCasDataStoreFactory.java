@@ -27,9 +27,9 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.common.core.assembly.clc.cas.CasTrimMap;
-import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
@@ -74,7 +74,7 @@ public class FastaCasDataStoreFactory extends AbstractCasDataStoreFactory
     @Override
     public NucleotideSequenceDataStore getNucleotideDataStoreFor(File pathToDataStore, DataStoreFilter filter) throws CasDataStoreFactoryException {  
         try {
-			return CachedDataStore.create(NucleotideSequenceDataStore.class, 
+			return DataStoreUtil.createNewCachedDataStore(NucleotideSequenceDataStore.class, 
 			             FastaRecordDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, 
 			            		 new NucleotideSequenceFastaFileDataStoreBuilder(pathToDataStore)
 			             				.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
@@ -88,7 +88,7 @@ public class FastaCasDataStoreFactory extends AbstractCasDataStoreFactory
     public QualitySequenceDataStore getQualityDataStoreFor(
             File fastaFile,DataStoreFilter filter) throws CasDataStoreFactoryException { 
         try {
-			return CachedDataStore.create(QualitySequenceDataStore.class, 
+			return DataStoreUtil.createNewCachedDataStore(QualitySequenceDataStore.class, 
 					FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, 
 							new QualitySequenceFastaFileDataStoreBuilder(fastaFile)
 									.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)

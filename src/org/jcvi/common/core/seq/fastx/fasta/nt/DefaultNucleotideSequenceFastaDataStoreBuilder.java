@@ -3,7 +3,7 @@ package org.jcvi.common.core.seq.fastx.fasta.nt;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 /**
  * {@code DefaultNucleotideFastaDataStoreBuilder} is a {@link NucleotideSequenceFastaDataStoreBuilder}
  * that stores all {@link NucleotideSequenceFastaRecord} added to it via the {@link #addFastaRecord(NucleotideSequenceFastaRecord)}
@@ -17,7 +17,7 @@ final class DefaultNucleotideSequenceFastaDataStoreBuilder implements Nucleotide
 	private final Map<String, NucleotideSequenceFastaRecord> map = new LinkedHashMap<String, NucleotideSequenceFastaRecord>();
 	@Override
 	public NucleotideSequenceFastaDataStore build() {
-		return MapDataStoreAdapter.adapt(NucleotideSequenceFastaDataStore.class,map);
+		return DataStoreUtil.adapt(NucleotideSequenceFastaDataStore.class,map);
 	}
 
 	@Override

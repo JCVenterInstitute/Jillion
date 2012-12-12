@@ -3,7 +3,7 @@ package org.jcvi.common.core.seq.fastx.fasta.qual;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 /**
  * {@code DefaultQualityFastaDataStoreBuilder} is a {@link QualitySequenceFastaDataStoreBuilder}
  * that stores all {@link QualitySequenceFastaRecord} added to it via the {@link #addFastaRecord(QualitySequenceFastaRecord)}
@@ -17,7 +17,7 @@ public class DefaultQualityFastaDataStoreBuilder implements QualitySequenceFasta
 	private final Map<String, QualitySequenceFastaRecord> map = new LinkedHashMap<String, QualitySequenceFastaRecord>();
 	@Override
 	public QualitySequenceFastaDataStore build() {
-		return MapDataStoreAdapter.adapt(QualitySequenceFastaDataStore.class,map);
+		return DataStoreUtil.adapt(QualitySequenceFastaDataStore.class,map);
 	}
 
 	@Override

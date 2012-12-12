@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 /**
  * {@code DefaultReferenceVariationsDataStore} is an 
  * implementation of {@link ReferenceVariationsDataStore}
@@ -46,7 +46,7 @@ public final class DefaultReferenceVariationsDataStore {
 	    
 	    @Override
 		public ReferenceVariationsDataStore build() {
-			return MapDataStoreAdapter.adapt(ReferenceVariationsDataStore.class,map);
+			return DataStoreUtil.adapt(ReferenceVariationsDataStore.class,map);
 		}
 
 		/**

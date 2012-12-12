@@ -23,17 +23,17 @@
  */
 package org.jcvi.common.core.datastore;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 
-import org.jcvi.common.core.datastore.CachedDataStore.Cacheable;
-import org.jcvi.common.core.datastore.CachedDataStore;
-import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.datastore.DataStoreException;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 
 public class TestCachedDataStore {
 
@@ -49,7 +49,7 @@ public class TestCachedDataStore {
     @Before
     public void setup(){
         delegate = createMock(DataStoreSubInterface.class);
-        cache = CachedDataStore.create(DataStoreSubInterface.class, delegate, 2);
+        cache = DataStoreUtil.createNewCachedDataStore(DataStoreSubInterface.class, delegate, 2);
         
     }
     
@@ -98,12 +98,12 @@ public class TestCachedDataStore {
     
     @Test
     public void clearCacheEarly() throws DataStoreException{
-        assertTrue(cache instanceof Cacheable);
+        assertTrue(DataStoreUtil.isACachedDataStore(cache));
         expect(delegate.get(id_1)).andReturn(value1).times(2);
         replay(delegate);
         assertEquals(value1,cache.get(id_1));
         assertEquals(value1,cache.get(id_1));
-        CachedDataStore.clearCacheFrom(cache);
+        DataStoreUtil.clearCacheFrom(cache);
         assertEquals(value1,cache.get(id_1));
         verify(delegate);
     }

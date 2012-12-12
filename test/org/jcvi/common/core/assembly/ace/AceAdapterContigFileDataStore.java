@@ -33,7 +33,7 @@ import java.util.Map;
 import org.jcvi.common.core.assembly.ctg.ContigFileParser;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -62,7 +62,7 @@ public class AceAdapterContigFileDataStore extends AbstractAceAdaptedContigFileD
     @Override
     public void visitEndOfFile() {
         super.visitEndOfFile();
-        dataStore = MapDataStoreAdapter.adapt(map);
+        dataStore = DataStoreUtil.adapt(map);
         map.clear();
     }
 

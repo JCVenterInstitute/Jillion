@@ -22,9 +22,9 @@ package org.jcvi.common.primer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 
 /**
  * @author dkatzel
@@ -38,6 +38,6 @@ public final class TestPrimerTrimmerUtil {
         for(int i=0; i<primers.length; i++){
             map.put("primer_"+i, primers[i]);
         }
-        return MapDataStoreAdapter.adapt(NucleotideSequenceDataStore.class,map);
+        return DataStoreUtil.adapt(NucleotideSequenceDataStore.class,map);
     }
 }

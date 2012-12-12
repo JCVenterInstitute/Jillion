@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
@@ -74,7 +74,7 @@ public final class DefaultTasmFileContigDataStore {
         
         @Override
 		public TasmContigDataStore build() {
-			return MapDataStoreAdapter.adapt(TasmContigDataStore.class, contigs);
+			return DataStoreUtil.adapt(TasmContigDataStore.class, contigs);
 		}
 
 		/**

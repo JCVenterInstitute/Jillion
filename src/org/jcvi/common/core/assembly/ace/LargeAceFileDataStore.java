@@ -10,11 +10,11 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil.ClipPointsType;
-import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
-import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
+import org.jcvi.common.core.datastore.DataStoreUtil;
+import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.util.Builder;
@@ -33,8 +33,9 @@ import org.jcvi.common.core.util.iter.impl.AbstractBlockingStreamingIterator;
  * Since each method call involves re-parsing the ace file,
  * that file must not be modified or moved during the
  * entire lifetime of the instance.
- * It is recommended that instances of {@link LargeAceFileDataStore}
- * are wrapped by {@link CachedDataStore}.
+ * It is recommended that instances are wrapped
+ * in  a cached datastore using
+ * {@link DataStoreUtil#createNewCachedDataStore(Class, org.jcvi.common.core.datastore.DataStore, int)}.
  * @author dkatzel
  *
  */

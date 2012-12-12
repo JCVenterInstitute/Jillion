@@ -24,9 +24,9 @@
 package org.jcvi.common.core.seq.read.trace;
 
 import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.datastore.DataStoreAdapter;
-import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 /**
  * {@code TraceQualityDataStoreAdapter} adapts a {@link TraceDataStore} into
  * a {@link QualitySequenceDataStore} by delegating all the get() calls
@@ -46,7 +46,7 @@ public final class TraceQualityDataStoreAdapter<T extends Trace>{
 	 * @throws NullPointerException if delegate is null.
 	 */
     public static <T extends Trace> QualitySequenceDataStore adapt(DataStore<T> delegate){
-    	return DataStoreAdapter.adapt(QualitySequenceDataStore.class, delegate, new DataStoreAdapter.AdapterCallback<T, QualitySequence>() {
+    	return DataStoreUtil.adapt(QualitySequenceDataStore.class, delegate, new DataStoreUtil.AdapterCallback<T, QualitySequence>() {
 
 			@Override
 			public QualitySequence get(T from) {

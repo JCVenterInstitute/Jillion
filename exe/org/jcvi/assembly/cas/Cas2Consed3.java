@@ -48,8 +48,8 @@ import org.jcvi.common.core.assembly.DefaultScaffold;
 import org.jcvi.common.core.assembly.ScaffoldBuilder;
 import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.AceContig;
-import org.jcvi.common.core.assembly.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
+import org.jcvi.common.core.assembly.ace.AceFileWriter;
 import org.jcvi.common.core.assembly.ace.AceFileWriterBuilder;
 import org.jcvi.common.core.assembly.ace.WholeAssemblyAceTag;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
@@ -69,8 +69,7 @@ import org.jcvi.common.core.assembly.util.slice.consensus.ConicConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.MostFrequentBasecallConsensusCaller;
 import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStoreUtil;
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
-import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.TextLineParser;
@@ -550,7 +549,7 @@ public class Cas2Consed3 {
         	if(delegates.isEmpty()){
         		return TrimPointsDataStoreUtil.createEmptyTrimPointsDataStore();
         	}
-            TrimPointsDataStore datastore= MultipleDataStoreWrapper.createMultipleDataStoreWrapper(TrimPointsDataStore.class, delegates);
+            TrimPointsDataStore datastore= DataStoreUtil.chain(TrimPointsDataStore.class, delegates);
             delegates = null;
             return datastore;
         }
@@ -589,7 +588,7 @@ public class Cas2Consed3 {
 			} finally {
 				IOUtil.closeAndIgnoreErrors(in, scanner);
 			}
-			return MapDataStoreAdapter.adapt(TrimPointsDataStore.class, map);
+			return DataStoreUtil.adapt(TrimPointsDataStore.class, map);
 		}
 		private static long countNumberOfLines(File trimpointsFile) throws IOException {
 			InputStream is = new BufferedInputStream(new FileInputStream(trimpointsFile));

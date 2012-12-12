@@ -42,7 +42,7 @@ import org.jcvi.common.core.assembly.clc.cas.read.DefaultCasPlacedReadFromCasAli
 import org.jcvi.common.core.assembly.clc.cas.read.FastaCasDataStoreFactory;
 import org.jcvi.common.core.assembly.clc.cas.read.ReferenceCasFileNucleotideDataStore;
 import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
-import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.IOUtil.Endian;
@@ -338,7 +338,7 @@ public final class CasUtil {
                
            };
            CasParser.parseOnlyMetaData(casFile, sffTrimDataStoreVisitor);
-           multiTrimDataStore =MultipleDataStoreWrapper.createMultipleDataStoreWrapper(
+           multiTrimDataStore =DataStoreUtil.chain(
                    TrimPointsDataStore.class, trimDataStores);
            
            traceDetails = new TraceDetails.Builder(fastqQualityCodec)

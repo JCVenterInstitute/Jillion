@@ -84,6 +84,8 @@ public enum DataStoreProviderHint{
 	 * it is recommended that instances of that use 
 	 * this hint
 	 * are wrapped by a {@link CachedDataStore}
+	 *  wrapped in  a cached datastore using
+	 * {@link DataStoreUtil#createNewCachedDataStore(Class, org.jcvi.common.core.datastore.DataStore, int)}.
 	 * if random access will be used.
 	 */
 	OPTIMIZE_ITERATION

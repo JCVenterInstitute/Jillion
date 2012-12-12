@@ -1,15 +1,18 @@
 package org.jcvi.common.core.datastore;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestMapDataStoreAdapterProxy {
 
 	Map<String, NucleotideSequence> map = new HashMap<String, NucleotideSequence>();
@@ -25,7 +28,7 @@ public class TestMapDataStoreAdapterProxy {
 	}
 	@Before
 	public void createSut(){
-		sut = MapDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, map);
+		sut = DataStoreUtil.adapt(NucleotideSequenceDataStore.class, map);
 	}
 	@Test
 	public void instanceOf(){

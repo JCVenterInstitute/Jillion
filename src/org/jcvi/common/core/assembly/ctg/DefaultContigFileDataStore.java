@@ -28,9 +28,9 @@ import java.io.FileNotFoundException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+import org.jcvi.common.core.assembly.Contig;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.util.Builder;
@@ -80,7 +80,7 @@ public final class DefaultContigFileDataStore {
 
 		@Override
 		public CtgContigDataStore build() {
-			return MapDataStoreAdapter.adapt(CtgContigDataStore.class, map);
+			return DataStoreUtil.adapt(CtgContigDataStore.class, map);
 		}
     	 
     	 

@@ -30,12 +30,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.jcvi.common.core.datastore.CachedDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
-import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.datastore.impl.AbstractDataStore;
+import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
@@ -46,8 +46,9 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *  No data contained in this
  * sff file is stored in memory except it's size (which is lazy loaded).
  * This means that each get() or contain() requires re-parsing the sff file
- * which can take some time.  It is recommended that instances of 
- * {@link LargeSffFileDataStore} are wrapped by {@link CachedDataStore}
+ * which can take some time.  It is recommended that instances are wrapped
+ * in  a cached datastore using
+ * {@link DataStoreUtil#createNewCachedDataStore(Class, org.jcvi.common.core.datastore.DataStore, int)}.
  * @author dkatzel
  *
  */

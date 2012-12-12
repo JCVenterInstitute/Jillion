@@ -37,7 +37,7 @@ import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreIterator;
-import org.jcvi.common.core.datastore.DataStoreStreamingIterator;
+import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;

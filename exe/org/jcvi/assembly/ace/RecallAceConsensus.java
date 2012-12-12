@@ -21,6 +21,7 @@ package org.jcvi.assembly.ace;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -43,7 +44,7 @@ import org.jcvi.common.core.assembly.util.slice.consensus.ConicConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.NoAmbiguityConsensusCaller;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.MultipleDataStoreWrapper;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
@@ -144,7 +145,7 @@ public class RecallAceConsensus {
             //final OutputStream out = new FileOutputStream(outputAceFile);
             PhdDataStore phdballDataStore = new PhdDirQualityDataStore(phdballDir);
             PhdDataStore phdDataStore = new PhdDirQualityDataStore(phdDir);
-            PhdDataStore masterPhdDataStore= MultipleDataStoreWrapper.createMultipleDataStoreWrapper(PhdDataStore.class, phdDataStore,phdballDataStore);
+            PhdDataStore masterPhdDataStore= DataStoreUtil.chain(PhdDataStore.class, Arrays.asList(phdDataStore,phdballDataStore));
             final QualitySequenceDataStore qualityDataStore = TraceQualityDataStoreAdapter.adapt(masterPhdDataStore); 
             final ConsensusCaller consensusCaller = createConsensusCaller(RecallType.parse(commandLine.getOptionValue("recall_with")), PhredQuality.valueOf(30));
            /*

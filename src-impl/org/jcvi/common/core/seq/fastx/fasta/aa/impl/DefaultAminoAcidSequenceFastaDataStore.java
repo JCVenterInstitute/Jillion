@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaDataStoreBuilder;
@@ -66,7 +66,7 @@ public final class DefaultAminoAcidSequenceFastaDataStore{
 
 		@Override
 		public AminoAcidSequenceFastaDataStore build() {
-			return MapDataStoreAdapter.adapt(AminoAcidSequenceFastaDataStore.class,fastaRecords);
+			return DataStoreUtil.adapt(AminoAcidSequenceFastaDataStore.class,fastaRecords);
 		}
 
 

@@ -27,10 +27,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.util.Builder;
 
 /**
@@ -79,7 +79,7 @@ public final class GappedNucleotideAlignmentDataStore {
             	}
 	            builders.clear();
             }
-            return MapDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, map);
+            return DataStoreUtil.adapt(NucleotideSequenceDataStore.class, map);
         }
 
         /**

@@ -22,7 +22,7 @@ package org.jcvi.common.core.assembly.util.trim;
 import java.util.Collections;
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 
 /**
  * Utility class for working
@@ -42,7 +42,7 @@ public final class TrimPointsDataStoreUtil {
      * contains no data.
      */
     public static TrimPointsDataStore createEmptyTrimPointsDataStore(){
-    	return MapDataStoreAdapter.adapt(TrimPointsDataStore.class, 
+    	return DataStoreUtil.adapt(TrimPointsDataStore.class, 
     															Collections.<String,Range>emptyMap());
     }
 }

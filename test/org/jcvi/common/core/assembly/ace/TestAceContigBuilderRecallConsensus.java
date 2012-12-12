@@ -11,7 +11,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConicConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.MostFrequentBasecallConsensusCaller;
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
@@ -106,7 +106,7 @@ public class TestAceContigBuilderRecallConsensus {
 		//read2 has a lower quality
 		qualityMap.put("read2", new QualitySequenceBuilder(new byte[]{15,20,10,25}).build());
 		
-		QualitySequenceDataStore qualities = MapDataStoreAdapter.adapt(QualitySequenceDataStore.class, qualityMap);
+		QualitySequenceDataStore qualities = DataStoreUtil.adapt(QualitySequenceDataStore.class, qualityMap);
 		
 		sut.recallConsensus(new ConicConsensusCaller(PhredQuality.valueOf(30)), qualities, GapQualityValueStrategies.LOWEST_FLANKING);
 		//should pick the A because read1 is higher quality

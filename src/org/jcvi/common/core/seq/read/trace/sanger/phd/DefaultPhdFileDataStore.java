@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.datastore.MapDataStoreAdapter;
+import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
@@ -127,7 +127,7 @@ public final class DefaultPhdFileDataStore{
 
         @Override
         public PhdDataStore build() {
-            return MapDataStoreAdapter.adapt(PhdDataStore.class,map);
+            return DataStoreUtil.adapt(PhdDataStore.class,map);
         }
 
         /**
