@@ -591,7 +591,7 @@ public final class DataStoreUtil {
      *
      *
      */
-    public static interface CacheableDataStore<T> extends DataStore<T>{
+    public interface CacheableDataStore<T> extends DataStore<T>{
         /**
          * Clears the cache without
          * closing the datastore.
