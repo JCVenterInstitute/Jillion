@@ -8,6 +8,7 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -155,13 +156,12 @@ public final class DataStoreUtil {
     }
     
     /**
-     * /**
      * Create a new DataStore instance of the given
      * type T using the data of the given DataStore which
      * contains records of the correct type.
      * This factory method uses the Java Proxy classes
      * to create a new implementation of the given interface
-     * which then delegates all cals to the given datastore.  This factory class
+     * which then delegates all calls to the given datastore.  This factory class
      * can only implement methods that conform to the DataStore interface,
      * if the given interface has extension methods that do
      * not exist in the given delegated DataStore, then trying to call
@@ -189,10 +189,47 @@ public final class DataStoreUtil {
     
     
     
-    
-    public static <T,D extends DataStore<T>> D chain(Class<D> classType,Collection<D> delegates){
-	       DataStore<T> wrappedDataStore = new WrapperDataStore<T,D>(delegates);
-	       return adapt(classType, wrappedDataStore);
+    /**
+     * Create a new DataStore that contains the entire contents of each of the 
+     * input DataStores.  The order of the input DataStores is the order
+     * that these DataStores will be chained together.  This results in the following
+     * contract: 
+     * <ul>
+     * <li> Calls to {@link DataStore#get(String)} or {@link DataStore#contains(String)}
+     * will check each DataStore for the given record until the record is found
+     * or all DataStores are checked.</li>
+     * <li> Calls to {@link DataStore#getNumberOfRecords()}
+     * will return a combined total over all the datastores.</li>
+     * <li> Calls to {@link DataStore#iterator()} and {@link DataStore#idIterator()}
+     * will chain the iterators of each DataStore one after the other.  When the first datastore's
+     * iterator is finished, then {@link Iterator#next()} will move onto the iterator
+     * from the next DataStore etc.  </li>
+     * <li>Closing the returned DataStore will close all the input DataStores</li>
+     * 
+     * <p/>
+     * This is a useful method for combining several different DataStore objects to appear
+     * as a single DataStore.  For example combining several sequence input files (possibly in different
+     * file formats) which have been parsed into DataStores can be adapted into a single 
+     * chained DataStore for processing.  The fact that the sequence data comes from multiple
+     * files (objects) has been abstracted away.
+     * <p/>
+     * This factory method uses the Java Proxy classes
+     * to create a new implementation of the given interface
+     * which then delegates all calls to the given datastore.  This factory class
+     * can only implement methods that conform to the DataStore interface,
+     * if the given interface has extension methods that do
+     * not exist in the given delegated DataStore, then trying to call
+     * those methods will throw an illegalArgumentException.
+     * @param datastoreInterface the interface to proxy;
+     * can not be null.
+     * @param datastores the datastores to chain together; can not be null or empty.
+     * @param <T> the type of record both the input and output dataStores.
+     * @param <D> the type of DataStore to return (created using a dynamic proxy)
+     * @return a new instance of type D.
+     */
+    public static <T,D extends DataStore<T>> D chain(Class<D> datastoreInterface,Collection<D> datastores){
+	       DataStore<T> wrappedDataStore = new WrapperDataStore<T,D>(datastores);
+	       return adapt(datastoreInterface, wrappedDataStore);
 	    }
     
     
@@ -223,12 +260,12 @@ public final class DataStoreUtil {
     
     
     /**
-     * Clears the cache from a DataStore created by this utilty
-     * class.
+     * Clears the cache from a DataStore created by this utility
+     * class if it has a cache; This method does nothing
+     * if the given datastore is not a {@link CacheableDataStore}.
      * @param cachedDataStore a DataStore that was created by this
      * utility (implements {@link CacheableDataStore}.
-     * @throws IllegalArgumentException if the datastore is not
-     * {@link CacheableDataStore}.
+     * @see DataStoreUtil#isACachedDataStore(DataStore)
      */
     public static void clearCacheFrom(DataStore<?> cachedDataStore){
         if(isACachedDataStore(cachedDataStore)){
@@ -236,12 +273,13 @@ public final class DataStoreUtil {
         }
     }
     /**
-     * Clears the cache from a DataStore created by this utilty
-     * class.
-     * @param cachedDataStore a DataStore that was created by this
+     * Is the given DataStore a Cached DataStore created by
+     * {@link DataStoreUtil#createNewCachedDataStore(Class, DataStore, int)}.
+     * @param cachedDataStore a DataStore that may or may not have
+     * been created by this
      * utility (implements {@link CacheableDataStore}.
-     * @throws IllegalArgumentException if the datastore is not
-     * {@link CacheableDataStore}.
+     * @return {@code true} if this is a {@link CacheableDataStore};
+     * {@code false} otherwise.
      */
     public static boolean isACachedDataStore(DataStore<?> cachedDataStore){
         return cachedDataStore instanceof CacheableDataStore;
@@ -327,8 +365,6 @@ public final class DataStoreUtil {
 				
 			};
 		}
-    	
-    	
     }
 	
 	private static class DataStoreInvocationHandler<T> implements InvocationHandler{
@@ -567,11 +603,13 @@ public final class DataStoreUtil {
 		            }
 		            
 		            Object obj =method.invoke(delegate, args);
-		            //TODO what should we do if the get returned null?
-		            //should we put it in the map
-		            //which might kickout something else
-		            //and cause us to refetch anyway
-		            //since we assume a null value means it's not in the cache?
+		            if(obj==null){
+		            	//we don't put nulls in our cache because
+			            //it might kickout something else
+			            //and cause us to refetch anyway
+			            //since we assume a null value means it's not in the cache.
+		            	return null;
+		            }		            
 		            cache.put(id, obj);
 		            return obj;
 		        }
@@ -583,13 +621,11 @@ public final class DataStoreUtil {
 	    
 	}
 	/**
-     * {@code Cacheable} is an interface that is used
-     * for Cached objects created by {@link CachedDataStore}.
+     * {@code CacheableDataStore} is an interface that is used
+     * for Cached objects created by {@link DataStoreUtil#createNewCachedDataStore(Class, DataStore, int)}.
      * This way it is possible to determine
-     * at runtime if a given datastore has a cache.
+     * at runtime if a given {@link DataStore} has a cache.
      * @author dkatzel
-     *
-     *
      */
     public interface CacheableDataStore<T> extends DataStore<T>{
         /**
