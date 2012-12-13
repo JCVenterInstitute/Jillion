@@ -31,7 +31,7 @@ import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaDataStore;
 
 public class TestDefaultContigFileDataStore extends AbstractTestContigFileDataStore{
    

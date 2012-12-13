@@ -13,9 +13,9 @@ import java.nio.charset.Charset;
 import java.util.Iterator;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.FastaRecordWriter;
-import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
+import org.jcvi.common.core.seq.fasta.FastaRecord;
+import org.jcvi.common.core.seq.fasta.FastaRecordWriter;
+import org.jcvi.common.core.seq.fasta.FastaUtil;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.Symbol;
 

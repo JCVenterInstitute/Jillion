@@ -1,6 +1,6 @@
 package org.jcvi.common.core.seq.fasta.impl;
 
-import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
+import org.jcvi.common.core.seq.fasta.FastaRecord;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.Symbol;
 /**

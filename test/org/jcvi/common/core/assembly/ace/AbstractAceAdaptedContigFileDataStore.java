@@ -29,7 +29,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ctg.AbstractContigFileVisitor;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
+import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 

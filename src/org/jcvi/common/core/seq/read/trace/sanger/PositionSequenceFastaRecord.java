@@ -1,7 +1,7 @@
 package org.jcvi.common.core.seq.read.trace.sanger;
 
 
-import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
+import org.jcvi.common.core.seq.fasta.FastaRecord;
 import org.jcvi.common.core.util.ObjectsUtil;
 
 

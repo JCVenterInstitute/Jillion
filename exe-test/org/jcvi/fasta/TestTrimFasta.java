@@ -26,8 +26,8 @@ import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
+import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Rule;

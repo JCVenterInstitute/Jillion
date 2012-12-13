@@ -29,10 +29,10 @@ import java.util.Date;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
-import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
+import org.jcvi.common.core.seq.fasta.FastaRecordDataStoreAdapter;
+import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
+import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaDataStore;
+import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificalPhdDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;

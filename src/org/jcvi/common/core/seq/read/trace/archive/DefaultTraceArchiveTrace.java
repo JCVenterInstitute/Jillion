@@ -27,12 +27,12 @@ import java.io.File;
 import java.io.InputStream;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
-import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecord;
+import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
+import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaDataStore;
+import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
+import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.DefaultPositionFastaFileDataStore;
 import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceFastaDataStore;

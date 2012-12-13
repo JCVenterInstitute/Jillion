@@ -30,9 +30,9 @@ import org.jcvi.common.core.assembly.clc.cas.CasTrimMap;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.datastore.DataStoreUtil;
-import org.jcvi.common.core.seq.fastx.fasta.FastaRecordDataStoreAdapter;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
-import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
+import org.jcvi.common.core.seq.fasta.FastaRecordDataStoreAdapter;
+import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
+import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 /**

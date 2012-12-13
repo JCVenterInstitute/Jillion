@@ -8,10 +8,10 @@ import java.util.TreeSet;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
+import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
+import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public class SortFasta {

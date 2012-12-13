@@ -44,8 +44,8 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
+import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 

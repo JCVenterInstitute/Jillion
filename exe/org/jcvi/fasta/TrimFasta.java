@@ -34,12 +34,12 @@ import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordBuilder;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fasta.AbstractFastaVisitor;
+import org.jcvi.common.core.seq.fasta.FastaFileParser;
+import org.jcvi.common.core.seq.fasta.FastaFileVisitor;
+import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordBuilder;
+import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 

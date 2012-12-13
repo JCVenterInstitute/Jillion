@@ -32,8 +32,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.common.core.assembly.clc.cas.align.CasScoringScheme;
-import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
+import org.jcvi.common.core.seq.fasta.AbstractFastaVisitor;
+import org.jcvi.common.core.seq.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fastq.FastqFileParser;
 import org.jcvi.common.core.seq.fastx.fastq.FastqFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffCommonHeader;

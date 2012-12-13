@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFile;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhd;

@@ -5,8 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.FastaRecordWriter;
+import org.jcvi.common.core.seq.fasta.FastaRecord;
+import org.jcvi.common.core.seq.fasta.FastaRecordWriter;
 import org.jcvi.common.core.symbol.residue.Residue;
 import org.jcvi.common.core.symbol.residue.ResidueSequence;
 
