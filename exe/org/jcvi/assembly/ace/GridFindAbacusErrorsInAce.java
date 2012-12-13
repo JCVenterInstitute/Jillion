@@ -27,7 +27,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -60,14 +59,9 @@ import org.jcvi.common.core.assembly.ace.AceFileDataStoreBuilder;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationWriter;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.io.idReader.DefaultFileIdReader;
-import org.jcvi.common.io.idReader.IdReader;
-import org.jcvi.common.io.idReader.IdReaderException;
-import org.jcvi.common.io.idReader.StringIdParser;
 
 /**
  * @author dkatzel
@@ -163,7 +157,7 @@ public class GridFindAbacusErrorsInAce {
             final GridJobExecutorService builtExecutor = executor;
             List<SimpleGridJob> jobs = new ArrayList<SimpleGridJob>();
             File aceFile = new File(commandLine.getOptionValue("a"));
-            final DataStoreFilter filter = getDataStoreFilter(commandLine);
+            final DataStoreFilter filter = CommandLineUtils.createDataStoreFilter(commandLine);
             AceFileContigDataStore datastore = new AceFileDataStoreBuilder(aceFile)
 													.hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY)
 													.build();
@@ -258,27 +252,6 @@ public class GridFindAbacusErrorsInAce {
             session.exit();
         }
     }
-    private static DataStoreFilter getDataStoreFilter(CommandLine commandLine)
-                                                        throws IdReaderException {
-        final DataStoreFilter filter;
-        File idFile;
-        if(commandLine.hasOption("i")){
-            idFile =new File(commandLine.getOptionValue("i"));
-            Set<String> includeList=parseIdsFrom(idFile);
-            if(commandLine.hasOption("e")){
-                Set<String> excludeList=parseIdsFrom(new File(commandLine.getOptionValue("e")));
-                includeList.removeAll(excludeList);
-            }
-            filter = DataStoreFilters.newIncludeFilter(includeList);
-            
-        }else if(commandLine.hasOption("e")){
-            idFile =new File(commandLine.getOptionValue("e"));
-            filter = DataStoreFilters.newExcludeFilter(parseIdsFrom(idFile));
-        }else{
-            filter = DataStoreFilters.alwaysAccept();
-        }
-        return filter;
-    }
     
     private static void printHelp(Options options) {
         HelpFormatter formatter = new HelpFormatter();
@@ -288,15 +261,6 @@ public class GridFindAbacusErrorsInAce {
                 options,
                "Created by Danny Katzel"
                   );
-    }
-    private static Set<String> parseIdsFrom(final File idFile)   throws IdReaderException {
-        IdReader<String> idReader = new DefaultFileIdReader<String>(idFile,new StringIdParser());
-        Set<String> ids = new HashSet<String>();
-        Iterator<String> iter =idReader.getIds();
-        while(iter.hasNext()){
-            ids.add(iter.next());
-        }
-        return ids;
     }
     
     private static final File getPathToAbacusWorker() throws IOException{

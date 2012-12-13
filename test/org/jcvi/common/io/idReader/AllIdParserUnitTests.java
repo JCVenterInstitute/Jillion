@@ -30,10 +30,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestIntegerIdParser.class,
-        TestLongIdParser.class,
-        TestStringIdParser.class,
-        TestFirstWordStringIdParser.class
+        TestStringIdParser.class
     }
     )
 public class AllIdParserUnitTests {

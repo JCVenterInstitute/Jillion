@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Scanner;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -25,14 +27,11 @@ import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqUtil;
+import org.jcvi.common.core.util.MapUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.io.idReader.DefaultFileIdReader;
-import org.jcvi.common.io.idReader.FirstWordStringIdParser;
-import org.jcvi.common.io.idReader.IdReader;
-import org.jcvi.common.io.idReader.IdReaderException;
 
 public class FastqFile2 {
-
+	private static final Pattern FIRST_WORD_PATTERN = Pattern.compile("(\\S+)");
 	/**
 	 * @param args
 	 * @throws DataStoreException 
@@ -148,18 +147,27 @@ public class FastqFile2 {
    
 
 	private static Set<String> parseIdsFrom(final File idFile, Integer numberOfIds)
-            throws IdReaderException {
-        IdReader<String> idReader = new DefaultFileIdReader<String>(idFile,new FirstWordStringIdParser());
+            throws IOException {
         final Set<String> ids; 
         if(numberOfIds ==null){
             ids= new HashSet<String>();
         }else{
-            ids= new HashSet<String>(numberOfIds.intValue(),1F);
+            ids= new HashSet<String>(MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfIds.intValue()));
         }
-        Iterator<String> iter =idReader.getIds();
-        while(iter.hasNext()){
-            ids.add(iter.next());
-        }
+        
+        Scanner scanner=null;
+		try {
+			scanner = new Scanner(idFile);
+			while(scanner.hasNextLine()){
+				String line =scanner.nextLine();
+				Matcher matcher = FIRST_WORD_PATTERN.matcher(line);
+				if(matcher.find()){
+					ids.add(matcher.group(1));
+				}
+			}
+		}finally{
+			 IOUtil.closeAndIgnoreErrors(scanner);
+		}
         return ids;
     }
     
