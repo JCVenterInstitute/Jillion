@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
@@ -59,13 +58,7 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 				
 				@Override
 				protected boolean visitRecord(String id, String comment, String entireBody) {
-					boolean accept;
-					if(filter instanceof FastXFilter){
-						accept=((FastXFilter)filter).accept(id, comment);
-					}else{
-						accept = filter.accept(id);
-					}
-					if(accept){
+					if(filter.accept(id)){
 						NucleotideSequenceFastaRecord fastaRecord = new NucleotideSequenceFastaRecordBuilder(id, entireBody)
 																		.comment(comment)
 																		.build();

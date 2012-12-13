@@ -34,7 +34,6 @@ import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
-import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -290,11 +289,7 @@ final class LargeFastqFileDataStore implements FastqDataStore {
 							String id, String optionalComment) {
 						currentId = id;
 						currentComment = optionalComment;
-						if(filter instanceof FastXFilter){
-							if(((FastXFilter) filter).accept(id, optionalComment)){
-								return FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD;
-							}
-						}else if (filter.accept(id)) {
+						if (filter.accept(id)) {
 							return FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD;
 						}
 						return FastXFileVisitor.DeflineReturnCode.SKIP_CURRENT_RECORD;

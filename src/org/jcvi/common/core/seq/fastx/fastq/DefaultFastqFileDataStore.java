@@ -29,7 +29,6 @@ import java.io.InputStream;
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
-import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**
@@ -240,13 +239,7 @@ final class DefaultFastqFileDataStore{
 
 		@Override
 		public DeflineReturnCode visitDefline(String id, String optionalComment) {
-			final boolean accept;
-			if(filter instanceof FastXFilter){
-				accept =((FastXFilter)filter).accept(id,optionalComment);
-			}else {
-				accept = filter.accept(id);
-			}
-			if(accept){
+			if(filter.accept(id)){
 				currentId=id;
 				currentComment = optionalComment;
 				return DeflineReturnCode.VISIT_CURRENT_RECORD;
