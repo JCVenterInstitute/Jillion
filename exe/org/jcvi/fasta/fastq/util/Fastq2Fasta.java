@@ -42,7 +42,6 @@ import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.io.idReader.IdReaderException;
 
 /**
  * {@code Fastq2Fasta} is a program that parses a Fastq file and
@@ -61,7 +60,7 @@ public class Fastq2Fasta {
      * @throws IdReaderException 
      * @throws DataStoreException 
      */
-    public static void main(String[] args) throws IOException, IdReaderException, DataStoreException {
+    public static void main(String[] args) throws IOException, DataStoreException {
         
         Options options = new Options();
         options.addOption(new CommandLineOptionBuilder("s", 
