@@ -24,7 +24,6 @@
 package org.jcvi.common.core.seq.fastx.fastq;
 
 import org.jcvi.common.core.io.TextFileVisitor;
-import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**
  * {@code FastQFileVisitor} is a {@link TextFileVisitor}
@@ -33,7 +32,85 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  *
  *
  */
-public interface FastqFileVisitor extends FastXFileVisitor{
+public interface FastqFileVisitor extends TextFileVisitor{
+	
+	
+	/**
+	 * Allowable return values
+	 * for {@link visitDefline(String)}
+	 * which tell the parser
+	 * how to proceed now that 
+	 * the current def line has been visited.
+	 * @author dkatzel
+	 *
+	 */
+	enum DeflineReturnCode{
+		/**
+		 * Skip the current fasta record.
+		 * Calls to {@link visitLine(String)}
+		 * will still be called but
+		 * {@link visitBodyLine(String)}
+		 * and {@link visitEndOfBody()}
+		 * will not be called.
+		 */
+		SKIP_CURRENT_RECORD,
+		/**
+		 * Parse the current fasta record and 
+		 * make appropriate calls to
+		 * {@link visitBodyLine(String)}
+		 * and {@link visitEndOfBody()}.
+		 * Calls to {@link visitLine(String)}
+		 * will also still be called.
+		 */
+		VISIT_CURRENT_RECORD,
+		/**
+		 * Halt parsing this file
+		 * and jump immediately
+		 * to {@link visitEndOfFile()}.
+		 */
+		STOP_PARSING
+	}
+	/**
+	 * Allowable return values
+	 * for {@link visitEndOfBody()}
+	 * which tell the parser how to proceed
+	 * now that a complete fasta record has been visited.
+	 * @author dkatzel
+	 *
+	 */
+	enum EndOfBodyReturnCode{
+		/**
+		 * Continue parsing the file,
+		 * if there are still more records
+		 * to be parsed then
+		 * {@link visitDefline(String)}
+		 * will get called next;
+		 * otherwise {@link visitEndOfFile()}.
+		 * will get called if we have reached the end 
+		 * of the file.
+		 */
+		KEEP_PARSING,
+		/**
+		 * Halt parsing this file
+		 * and jump immediately
+		 * to {@link visitEndOfFile()}.
+		 */
+		STOP_PARSING
+	}
+	
+	/**
+     * The current fasta record body has been completely
+     * visited.  This method is only called
+     * if {@link #visitDefline(String)}
+     * returns {@link DeflineReturnCode#VISIT_CURRENT_RECORD}.
+     * @return a non-null instance of {@link EndOfBodyReturnCode}
+     * which tells the parser how it should proceed.
+     * Returning null will throw an {@link IllegalStateException}.
+     * @see EndOfBodyReturnCode
+     */
+    EndOfBodyReturnCode visitEndOfBody();
+	
+	
     /**
      * Visit the defline of a given fastq record.
      * <strong>Note: </strong>if the Fastq records were created using 
@@ -45,8 +122,15 @@ public interface FastqFileVisitor extends FastXFileVisitor{
      * Duplicate ids will break any applications that combine all the reads
      * from multiple fastq files so it was decided that {@link FastqRecord} id
      * contain both the template and mate information to guarantee uniqueness.
-     * <p/>
-     * {@inheritDoc}
+     * 
+     * @param id the id of this record as a String
+     * @param optionalComment the comment for this record.  This comment
+     * may have white space.  If no comment exists, then this
+     * parameter will be null.
+     * @return a non-null instance of {@link DeflineReturnCode}
+     * telling the parser how it should proceed. 
+     * Returning null will throw an {@link IllegalStateException}.
+     * @see DeflineReturnCode
      */
 	DeflineReturnCode visitDefline(String id, String optionalComment);
     /**

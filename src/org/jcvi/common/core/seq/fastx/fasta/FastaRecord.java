@@ -21,7 +21,6 @@
  */
 package org.jcvi.common.core.seq.fastx.fasta;
 
-import org.jcvi.common.core.seq.fastx.FastXRecord;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.Symbol;
 
@@ -34,16 +33,26 @@ import org.jcvi.common.core.symbol.Symbol;
  * @author jsitz
  * @author dkatzel
  */
-public interface FastaRecord<S extends Symbol,T extends Sequence<S>> extends FastXRecord<S,T>
+public interface FastaRecord<S extends Symbol,T extends Sequence<S>>
 {
 
-    /**
-     * Delegates to {@link #toFormattedString()}.
-     * @return a correctly formatted FASTA record
-     * as a String.
+	 /**
+     * Get the Id of this record.
+     * @return A <code>String</code>.
      */
-    @Override
-    String toString();
+    String getId();
+
+    /**
+     * Get the comment (if any) associated with this record.
+     * @return A <code>String</code> of the comment
+     * or {@code null} if there is no comment.
+     */
+    String getComment();
+    /**
+     * Get the Sequence associated with this record.
+     * @return a Sequence, never null.
+     */
+    T getSequence();
     /**
      * Two FastaRecords are equal
      * if they both have the same id

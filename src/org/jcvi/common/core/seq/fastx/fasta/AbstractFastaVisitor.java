@@ -23,7 +23,6 @@
  */
 package org.jcvi.common.core.seq.fastx.fasta;
 
-import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
 
 
 public abstract class AbstractFastaVisitor implements FastaFileVisitor{
@@ -66,7 +65,7 @@ public abstract class AbstractFastaVisitor implements FastaFileVisitor{
 	@Override
 	public EndOfBodyReturnCode visitEndOfBody() {
 		boolean keepParsing = visitRecord(currentId, currentComment, currentBody.toString().trim());
-		return keepParsing? FastXFileVisitor.EndOfBodyReturnCode.KEEP_PARSING : FastXFileVisitor.EndOfBodyReturnCode.STOP_PARSING;
+		return keepParsing? FastaFileVisitor.EndOfBodyReturnCode.KEEP_PARSING : FastaFileVisitor.EndOfBodyReturnCode.STOP_PARSING;
 	}
 
 	 /**
