@@ -16,27 +16,33 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+/*
+ * Created on Oct 9, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.common.core.seq.trace.fastq;
 
-package org.jcvi.common.core.seq;
+import org.jcvi.common.core.seq.trace.fastq.FastqQualityCodec;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
+import org.junit.Test;
+import static org.junit.Assert.*;
+public class TestSangerFastQQualityCodecActual {
 
-import org.jcvi.common.core.seq.fasta.AllFastaUnitTests;
-import org.jcvi.common.core.seq.plate.AllPlateUnitTests;
-import org.jcvi.common.core.seq.read.trace.AllTraceUnitTests;
-import org.jcvi.common.core.seq.trace.fastq.AllFastqUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-    	AllFastaUnitTests.class,
-        AllFastqUnitTests.class,
-        
-        AllTraceUnitTests.class,
-        AllPlateUnitTests.class
+     FastqQualityCodec sut = FastqQualityCodec.SANGER;
+    String encodedqualities = "I9IG9IC";
+    byte[] qualities = 
+            new byte[]{40,24,40,38,24,40,34};
+    QualitySequence qualitySequence = new QualitySequenceBuilder(qualities).build();
+	
+    @Test
+    public void decode(){       
+        assertEquals(qualitySequence, sut.decode(encodedqualities));
     }
-    )
-public class AllSeqUnitTests {
-
+    @Test
+    public void encode(){       
+        assertEquals(encodedqualities, sut.encode(
+        		 qualitySequence));
+    }
 }

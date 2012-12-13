@@ -22,7 +22,7 @@ package org.jcvi.common.core.assembly.clc.cas;
 import java.io.File;
 import java.util.Date;
 
-import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
+import org.jcvi.common.core.seq.trace.fastq.FastqQualityCodec;
 import org.jcvi.common.core.util.DateUtil;
 
 /**

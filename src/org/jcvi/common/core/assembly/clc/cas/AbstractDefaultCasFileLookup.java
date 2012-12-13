@@ -34,13 +34,13 @@ import java.util.Map;
 import org.jcvi.common.core.assembly.clc.cas.align.CasScoringScheme;
 import org.jcvi.common.core.seq.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fasta.FastaFileParser;
-import org.jcvi.common.core.seq.fastx.fastq.FastqFileParser;
-import org.jcvi.common.core.seq.fastx.fastq.FastqFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffCommonHeader;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileParser;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffFileVisitor;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadData;
 import org.jcvi.common.core.seq.read.trace.pyro.sff.SffReadHeader;
+import org.jcvi.common.core.seq.trace.fastq.FastqFileParser;
+import org.jcvi.common.core.seq.trace.fastq.FastqFileVisitor;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasFileVisitor{

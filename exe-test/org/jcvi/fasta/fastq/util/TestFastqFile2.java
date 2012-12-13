@@ -29,9 +29,9 @@ import java.io.PrintWriter;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
-import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
-import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreBuilder;
-import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
+import org.jcvi.common.core.seq.trace.fastq.FastqDataStore;
+import org.jcvi.common.core.seq.trace.fastq.FastqFileDataStoreBuilder;
+import org.jcvi.common.core.seq.trace.fastq.FastqQualityCodec;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Rule;
