@@ -33,7 +33,6 @@ import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -285,14 +284,14 @@ final class LargeFastqFileDataStore implements FastqDataStore {
             	    private QualitySequence qualities;
             	    
             	    @Override
-					public FastXFileVisitor.DeflineReturnCode visitDefline(
+					public FastqFileVisitor.DeflineReturnCode visitDefline(
 							String id, String optionalComment) {
 						currentId = id;
 						currentComment = optionalComment;
 						if (filter.accept(id)) {
-							return FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD;
+							return FastqFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD;
 						}
-						return FastXFileVisitor.DeflineReturnCode.SKIP_CURRENT_RECORD;
+						return FastqFileVisitor.DeflineReturnCode.SKIP_CURRENT_RECORD;
 					}
             	    
             	    @Override
@@ -304,12 +303,12 @@ final class LargeFastqFileDataStore implements FastqDataStore {
             	    	this.qualities = qualityCodec.decode(encodedQualities);        
             	    }
             	    @Override
-            	    public FastXFileVisitor.EndOfBodyReturnCode visitEndOfBody() {
+            	    public FastqFileVisitor.EndOfBodyReturnCode visitEndOfBody() {
             	    	 FastqRecord record = new FastqRecordBuilder(currentId,nucleotides, qualities)
             	    	 						.comment(currentComment)
             	    	 						.build();
                	         blockingPut(record);
-               	         return LargeFastqFileIterator.this.isClosed() ? FastXFileVisitor.EndOfBodyReturnCode.STOP_PARSING : FastXFileVisitor.EndOfBodyReturnCode.KEEP_PARSING;
+               	         return LargeFastqFileIterator.this.isClosed() ? FastqFileVisitor.EndOfBodyReturnCode.STOP_PARSING : FastqFileVisitor.EndOfBodyReturnCode.KEEP_PARSING;
                	  
             	    }
             	    @Override

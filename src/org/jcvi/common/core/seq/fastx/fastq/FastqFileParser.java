@@ -31,11 +31,9 @@ import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.impl.TextLineParser;
-import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
-import org.jcvi.common.core.seq.fastx.FastXFileVisitor.EndOfBodyReturnCode;
+import org.jcvi.common.core.seq.fastx.fastq.FastqFileVisitor.EndOfBodyReturnCode;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 /**
@@ -113,14 +111,14 @@ public final class FastqFileParser {
 		String deflineText = parser.nextLine();
 		visitor.visitLine(deflineText);
 		Defline defline = Defline.parse(deflineText);
-        FastXFileVisitor.DeflineReturnCode deflineRet= visitor.visitDefline(defline.getId(), defline.getComment());
+        FastqFileVisitor.DeflineReturnCode deflineRet= visitor.visitDefline(defline.getId(), defline.getComment());
         if(deflineRet ==null){
         	throw new IllegalStateException("defline return value can not be null");
         }
-        if(deflineRet == FastXFileVisitor.DeflineReturnCode.STOP_PARSING){
+        if(deflineRet == FastqFileVisitor.DeflineReturnCode.STOP_PARSING){
         	return false;
         }
-        boolean visitBody = deflineRet==FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD;
+        boolean visitBody = deflineRet==FastqFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD;
         long numberOfQualities =parseSequence(visitor, parser,visitBody);
         parseQualities(visitor, parser, numberOfQualities,visitBody);
         return handleEndOfBody(visitor, visitBody);

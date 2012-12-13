@@ -19,14 +19,16 @@
 
 package org.jcvi.common.core.seq.fastx.fastq;
 
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
-import static org.easymock.EasyMock.*;
-
-import org.jcvi.common.core.seq.fastx.FastXFileVisitor;
 
 /**
  * Casava 1.8 changes the fastq mated read names
@@ -45,8 +47,8 @@ public class TestCasava18 {
     public void parseMateInfoCorrectly() throws FileNotFoundException, IOException{
         FastqFileVisitor visitor = createNiceMock(FastqFileVisitor.class);
         expect(visitor.visitDefline("EAS139:136:FC706VJ:2:5:1000:12850 1:Y:18:ATCACG",null))
-            .andReturn(FastXFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD);
-        expect(visitor.visitEndOfBody()).andReturn(FastXFileVisitor.EndOfBodyReturnCode.KEEP_PARSING);
+            .andReturn(FastqFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD);
+        expect(visitor.visitEndOfBody()).andReturn(FastqFileVisitor.EndOfBodyReturnCode.KEEP_PARSING);
         replay(visitor);
         ResourceFileServer resources = new ResourceFileServer(TestCasava18.class);
         FastqFileParser.parse(resources.getFile("files/casava1.8.fastq"), visitor);

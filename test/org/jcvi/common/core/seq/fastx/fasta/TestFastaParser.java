@@ -19,21 +19,22 @@
 
 package org.jcvi.common.core.seq.fastx.fasta;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
-import org.jcvi.common.core.seq.fastx.FastXFileVisitor.DeflineReturnCode;
-import org.jcvi.common.core.seq.fastx.FastXFileVisitor.EndOfBodyReturnCode;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor.DeflineReturnCode;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor.EndOfBodyReturnCode;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.easymock.EasyMock.*;
 /**
  * @author dkatzel
  *
