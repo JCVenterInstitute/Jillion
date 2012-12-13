@@ -8,7 +8,6 @@ import java.util.Map;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreUtil;
-import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
@@ -52,13 +51,7 @@ public final class DefaultAminoAcidSequenceFastaDataStore{
 		@Override
 		public FastaDataStoreBuilder<AminoAcid, AminoAcidSequence, AminoAcidSequenceFastaRecord, AminoAcidSequenceFastaDataStore> addFastaRecord(
 				AminoAcidSequenceFastaRecord fastaRecord) {
-			final boolean accept;
-			if(filter instanceof FastXFilter){
-				accept =((FastXFilter)filter).accept(fastaRecord.getId(), fastaRecord.getComment());
-			}else{
-				accept = filter.accept(fastaRecord.getId());
-			}
-			if(accept){
+			if(filter.accept(fastaRecord.getId())){
 				fastaRecords.put(fastaRecord.getId(), fastaRecord);
 			}
 			return this;

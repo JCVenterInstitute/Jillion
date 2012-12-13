@@ -7,7 +7,6 @@ import java.util.Map;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreBuilderVisitor;
@@ -79,13 +78,7 @@ public abstract class AbstractIndexedFastaDataStoreBuilderVisitor<S extends Symb
 		throwErrorIfDone();
 		lastId = id;
 		long endOfRecord = currentOffset -1;
-		final boolean accept;
-		if(filter instanceof FastXFilter){
-			accept =((FastXFilter)filter).accept(id, comment);
-		}else{
-			accept = filter.accept(id);
-		}
-		if(accept){
+		if(filter.accept(id)){
 			index.put(id, Range.of(currentStartOffset, endOfRecord));
 		}
 		currentStartOffset = endOfRecord+1;

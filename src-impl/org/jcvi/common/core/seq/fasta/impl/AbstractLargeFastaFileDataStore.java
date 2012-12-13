@@ -10,7 +10,6 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.FastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
@@ -119,13 +118,7 @@ public abstract class AbstractLargeFastaFileDataStore<T extends Symbol,S extends
 		    Matcher matcher = FastaUtil.ID_LINE_PATTERN.matcher(line);
 		    if(matcher.find()){
 		    	String id = matcher.group(1);
-		    	final boolean accept;
-		    	if(filter instanceof FastXFilter){
-		    		accept = ((FastXFilter)filter).accept(id, matcher.group(2));
-		    	}else{
-		    		accept = filter.accept(id);
-		    	}
-		    	if(accept){
+		    	if(filter.accept(id)){
 		    		counter++;
 		    	}
 		    }

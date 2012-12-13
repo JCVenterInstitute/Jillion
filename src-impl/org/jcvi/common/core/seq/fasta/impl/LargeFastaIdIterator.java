@@ -24,7 +24,6 @@ import java.io.FileNotFoundException;
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
-import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
 import org.jcvi.common.core.util.iter.impl.AbstractBlockingStreamingIterator;
@@ -72,13 +71,7 @@ public final class LargeFastaIdIterator extends AbstractBlockingStreamingIterato
     	FastaFileVisitor visitor = new FastaFileVisitor() {
     		@Override
 			public DeflineReturnCode visitDefline(String id, String comment) {
-    			final boolean accept;
-    			if(filter instanceof FastXFilter){
-    				accept =((FastXFilter)filter).accept(id, comment);
-    			}else{
-    				accept = filter.accept(id);
-    			}
-    			if(accept){
+    			if(filter.accept(id)){
     				LargeFastaIdIterator.this.blockingPut(id);
     			}
 				return DeflineReturnCode.SKIP_CURRENT_RECORD;

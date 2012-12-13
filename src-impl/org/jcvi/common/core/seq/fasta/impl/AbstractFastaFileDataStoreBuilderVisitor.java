@@ -2,7 +2,6 @@ package org.jcvi.common.core.seq.fasta.impl;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
-import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreBuilderVisitor;
@@ -52,11 +51,7 @@ public abstract class AbstractFastaFileDataStoreBuilderVisitor<S extends Symbol,
 
 	@Override
 	public <E extends F> FastaDataStoreBuilder<S, T, F, D>  addFastaRecord(E fastaRecord) {
-		if(filter instanceof FastXFilter){
-			if(((FastXFilter)filter).accept(fastaRecord.getId(), fastaRecord.getComment())){
-				builder.addFastaRecord(fastaRecord);
-			}
-		}else if(filter.accept(fastaRecord.getId())){
+		if(filter.accept(fastaRecord.getId())){
 			builder.addFastaRecord(fastaRecord);
 		}
 		return this;

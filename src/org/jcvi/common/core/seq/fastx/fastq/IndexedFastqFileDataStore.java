@@ -32,7 +32,6 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.FastXFilter;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
@@ -281,11 +280,7 @@ final class IndexedFastqFileDataStore implements FastqDataStore{
 		public DeflineReturnCode visitDefline(String id, String optionalComment) {
 			checkNotFinished();
 			currentId = id;
-			if(filter instanceof FastXFilter){
-				includeCurrentRecord= ((FastXFilter)filter).accept(id, optionalComment);
-			}else{
-				includeCurrentRecord= filter.accept(id);
-			}
+			includeCurrentRecord= filter.accept(id);
 			
 			if(includeCurrentRecord){
 				return DeflineReturnCode.VISIT_CURRENT_RECORD;
