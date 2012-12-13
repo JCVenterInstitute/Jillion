@@ -23,17 +23,28 @@
  */
 package org.jcvi.common.core.seq.read.trace;
 
-import org.jcvi.common.core.seq.read.Read;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**
- * A {@code Trace} is {@link Read}
- * that also has an associated
- *  {@link QualitySequence}.
+ * A {@code Trace} is an abstraction of a piece of
+ * genomic sequence data that has been
+ * sequenced on some kind of sequencing machine.
  * @author dkatzel
  *
  *
  */
-public interface Trace extends Read{
+public interface Trace{
+	/**
+     * Get the id of this read.
+     * @return the id as a String; will never be null.
+     */
+    String getId();
+    /**
+     * Get the {@link NucleotideSequence} of this read.
+     * @return the {@link NucleotideSequence} of this read; will
+     * never be null.
+     */
+    NucleotideSequence getNucleotideSequence();
     /**
      * Get the quality data of this trace as a {@link QualitySequence}.
      * @return a {@link QualitySequence}, should never be null.
