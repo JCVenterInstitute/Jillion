@@ -5,8 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecordWriter;
-import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecordWriter.AbstractBuilder;
+import org.jcvi.common.core.seq.fasta.impl.AbstractFastaRecordWriter;
+import org.jcvi.common.core.seq.fasta.impl.AbstractFastaRecordWriter.AbstractBuilder;
 
 public final class PositionSequenceFastaRecordWriterBuilder extends AbstractBuilder<Position, PositionSequence, PositionSequenceFastaRecord, PositionSequenceFastaRecordWriter> {
 		/**

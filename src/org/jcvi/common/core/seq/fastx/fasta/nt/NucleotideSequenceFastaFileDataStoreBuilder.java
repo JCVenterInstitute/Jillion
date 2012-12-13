@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
-import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaFileDataStoreBuilder;
+import org.jcvi.common.core.seq.fasta.impl.AbstractFastaFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.FastaDataStore;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;

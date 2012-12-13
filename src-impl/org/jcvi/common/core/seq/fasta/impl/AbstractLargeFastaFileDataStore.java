@@ -1,4 +1,4 @@
-package org.jcvi.common.core.seq.fastx.fasta;
+package org.jcvi.common.core.seq.fasta.impl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,6 +11,9 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
+import org.jcvi.common.core.seq.fastx.fasta.FastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.util.iter.StreamingIterator;

@@ -1,6 +1,6 @@
 package org.jcvi.common.core.seq.fastx.fasta.aa;
 
-import org.jcvi.common.core.seq.fastx.fasta.aa.impl.CommentedAminoAcidSequenceFastaRecord;
+import org.jcvi.common.core.seq.fasta.aa.impl.CommentedAminoAcidSequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 
 public class TestCommentedAminoAcidSequenceFastaRecord extends AbstractTestAminoAcidSequenceFastaRecord{

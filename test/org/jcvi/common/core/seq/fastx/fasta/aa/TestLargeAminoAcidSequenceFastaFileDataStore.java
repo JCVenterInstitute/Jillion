@@ -2,7 +2,7 @@ package org.jcvi.common.core.seq.fastx.fasta.aa;
 
 import java.io.File;
 
-import org.jcvi.common.core.seq.fastx.fasta.aa.impl.LargeAminoAcidSequenceFastaFileDataStore;
+import org.jcvi.common.core.seq.fasta.aa.impl.LargeAminoAcidSequenceFastaFileDataStore;
 
 public class TestLargeAminoAcidSequenceFastaFileDataStore  extends AbstractTestAminoAcidSequenceFastaDataStore{
 

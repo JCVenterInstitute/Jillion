@@ -29,7 +29,7 @@ import java.io.InputStream;
 
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaFileDataStoreBuilderVisitor;
+import org.jcvi.common.core.seq.fasta.impl.AbstractFastaFileDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;

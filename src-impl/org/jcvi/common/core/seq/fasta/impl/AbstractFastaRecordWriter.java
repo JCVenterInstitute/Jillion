@@ -1,4 +1,4 @@
-package org.jcvi.common.core.seq.fastx.fasta;
+package org.jcvi.common.core.seq.fasta.impl;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -13,6 +13,8 @@ import java.nio.charset.Charset;
 import java.util.Iterator;
 
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
+import org.jcvi.common.core.seq.fastx.fasta.FastaRecordWriter;
 import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.Symbol;

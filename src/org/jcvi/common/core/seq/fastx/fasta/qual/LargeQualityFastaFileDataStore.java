@@ -29,7 +29,7 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
-import org.jcvi.common.core.seq.fastx.fasta.AbstractLargeFastaFileDataStore;
+import org.jcvi.common.core.seq.fasta.impl.AbstractLargeFastaFileDataStore;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;

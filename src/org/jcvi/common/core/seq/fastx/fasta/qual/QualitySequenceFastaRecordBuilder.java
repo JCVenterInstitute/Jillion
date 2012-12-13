@@ -2,7 +2,7 @@ package org.jcvi.common.core.seq.fastx.fasta.qual;
 
 import java.util.Scanner;
 
-import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecordBuilder;
+import org.jcvi.common.core.seq.fasta.impl.AbstractFastaRecordBuilder;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
