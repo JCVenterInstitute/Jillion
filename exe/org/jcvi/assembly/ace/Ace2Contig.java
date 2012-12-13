@@ -36,7 +36,6 @@ import org.jcvi.common.core.assembly.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.ctg.CtgFileWriter;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.io.idReader.IdReaderException;
 
 /**
  * {@code Ace2Contig} parses a .ace file
@@ -55,7 +54,7 @@ public class Ace2Contig {
      * @throws IOException 
      * @throws IdReaderException 
      */
-    public static void main(String[] args) throws IOException, IdReaderException {
+    public static void main(String[] args) throws IOException {
         Options options = new Options();
         options.addOption(new CommandLineOptionBuilder("a", "path to ace file")
                 .longName("ace")

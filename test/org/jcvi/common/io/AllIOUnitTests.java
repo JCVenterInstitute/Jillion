@@ -21,7 +21,6 @@ package org.jcvi.common.io;
 
 import org.jcvi.common.io.ansi.AllAnsiUnitTests;
 import org.jcvi.common.io.fileServer.AllFileServerUnitTests;
-import org.jcvi.common.io.idReader.AllIdReaderUnitTests;
 import org.jcvi.common.io.zip.AllZipDataStoreUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -31,7 +30,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
     	AllZipDataStoreUnitTests.class,
-        AllIdReaderUnitTests.class,
         AllAnsiUnitTests.class,
         AllFileServerUnitTests.class
        

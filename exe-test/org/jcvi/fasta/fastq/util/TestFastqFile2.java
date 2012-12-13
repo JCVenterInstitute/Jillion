@@ -33,7 +33,6 @@ import org.jcvi.common.core.seq.fastx.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
-import org.jcvi.common.io.idReader.IdReaderException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -66,7 +65,7 @@ public class TestFastqFile2 {
     
    
     @Test
-    public void includeOnlyIdsThatAreSpecified() throws IOException, IdReaderException, DataStoreException{
+    public void includeOnlyIdsThatAreSpecified() throws IOException,  DataStoreException{
         
         FastqDataStore originalDataStore = new FastqFileDataStoreBuilder(fastQFile).hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED).qualityCodec(FastqQualityCodec.ILLUMINA).build();
         FastqFile2.main(new String[]{"-i",ids.getAbsolutePath(),
@@ -79,7 +78,7 @@ public class TestFastqFile2 {
     }
     
     @Test
-    public void includeOnlyIdsThatAreSpecifiedUsingFileWithExtraTextOnEachLine() throws IOException, IdReaderException, DataStoreException{
+    public void includeOnlyIdsThatAreSpecifiedUsingFileWithExtraTextOnEachLine() throws IOException,  DataStoreException{
         
     	File idsExtra =folder.newFile("idsExtra.lst");
         PrintWriter writer = new PrintWriter(idsExtra);
@@ -97,7 +96,7 @@ public class TestFastqFile2 {
     }
     
     @Test
-    public void excludeIdsThatAreSpecified() throws IOException, IdReaderException, DataStoreException{
+    public void excludeIdsThatAreSpecified() throws IOException,  DataStoreException{
         File fastQFile = RESOURCES.getFile("files/example.fastq");
         FastqDataStore originalDataStore = new FastqFileDataStoreBuilder(fastQFile).hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED).qualityCodec(FastqQualityCodec.ILLUMINA).build();
         FastqFile2.main(new String[]{"-e",ids.getAbsolutePath(),
@@ -112,7 +111,7 @@ public class TestFastqFile2 {
     }
     
     @Test
-    public void noFilteringShouldIncludeAll() throws IOException, IdReaderException, DataStoreException{
+    public void noFilteringShouldIncludeAll() throws IOException,  DataStoreException{
         File fastQFile = RESOURCES.getFile("files/example.fastq");
         FastqDataStore originalDataStore = new FastqFileDataStoreBuilder(fastQFile).hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED).qualityCodec(FastqQualityCodec.ILLUMINA).build();
         FastqFile2.main(new String[]{
@@ -129,7 +128,7 @@ public class TestFastqFile2 {
     }
     
     @Test
-    public void reEncodeQualityToSanger() throws IOException, IdReaderException, DataStoreException{
+    public void reEncodeQualityToSanger() throws IOException,  DataStoreException{
         File fastQFile = RESOURCES.getFile("files/example.fastq");
         FastqDataStore originalDataStore = new FastqFileDataStoreBuilder(fastQFile).hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED).qualityCodec(FastqQualityCodec.ILLUMINA).build();
         FastqFile2.main(new String[]{
@@ -147,7 +146,7 @@ public class TestFastqFile2 {
     }
     
     @Test
-    public void reEncodeQualityToIllumina() throws IOException, IdReaderException, DataStoreException{
+    public void reEncodeQualityToIllumina() throws IOException,  DataStoreException{
         File fastQFile = RESOURCES.getFile("files/sanger.fastq");
         FastqDataStore originalDataStore = new FastqFileDataStoreBuilder(fastQFile).hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED).qualityCodec(FastqQualityCodec.SANGER).build();
         FastqFile2.main(new String[]{

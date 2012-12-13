@@ -42,7 +42,6 @@ import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriterBuilder;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.io.idReader.IdReaderException;
 
 /**
  * @author dkatzel
@@ -57,7 +56,7 @@ public class Fasta2Fastq {
      * @throws DataStoreException 
      * @throws IdReaderException 
      */
-    public static void main(String[] args) throws IOException, DataStoreException, IdReaderException {
+    public static void main(String[] args) throws IOException, DataStoreException {
         Options options = new Options();
         options.addOption(new CommandLineOptionBuilder("s", 
                                     "input sequence FASTA file")

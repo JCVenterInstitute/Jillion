@@ -42,7 +42,6 @@ import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.jcvi.common.core.testUtil.TestUtil.TriedToExitException;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
-import org.jcvi.common.io.idReader.IdReaderException;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -105,7 +104,7 @@ public class TestFastQ2FastaEnd2End {
  		System.setErr(new PrintStream(stdErrBytes));
      }
      @Test
-     public void ifNoFiltersThenIncludeAllIds() throws IOException, IdReaderException, DataStoreException{
+     public void ifNoFiltersThenIncludeAllIds() throws IOException,  DataStoreException{
          
          FastqDataStore originalDataStore = new FastqFileDataStoreBuilder(fastQFile).hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED).qualityCodec(FastqQualityCodec.ILLUMINA).build();
          Fastq2Fasta.main(new String[]{
@@ -125,7 +124,7 @@ public class TestFastQ2FastaEnd2End {
        
      }
      @Test
-     public void supportSangerEncodedFastQWithDashSangerOption() throws IOException, IdReaderException, DataStoreException{
+     public void supportSangerEncodedFastQWithDashSangerOption() throws IOException,  DataStoreException{
         File sangerFastQFile = RESOURCES.getFile("files/sanger.fastq");
         FastqDataStore originalDataStore = new FastqFileDataStoreBuilder(sangerFastQFile).hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED).qualityCodec(FastqQualityCodec.SANGER).build();
         Fastq2Fasta.main(new String[]{
@@ -146,7 +145,7 @@ public class TestFastQ2FastaEnd2End {
   
      }
      @Test
-     public void noWritersSpecifiedShouldThrowError() throws IOException, IdReaderException, DataStoreException{
+     public void noWritersSpecifiedShouldThrowError() throws IOException,  DataStoreException{
         File sangerFastQFile = RESOURCES.getFile("files/sanger.fastq");
         try{
 	        Fastq2Fasta.main(new String[]{
@@ -160,7 +159,7 @@ public class TestFastQ2FastaEnd2End {
         }
      }
      @Test
-     public void includeOnlyIdsThatAreSpecified() throws IOException, IdReaderException, DataStoreException{
+     public void includeOnlyIdsThatAreSpecified() throws IOException,  DataStoreException{
          
          FastqDataStore originalDataStore = new FastqFileDataStoreBuilder(fastQFile).hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED).qualityCodec(FastqQualityCodec.ILLUMINA).build();
          Fastq2Fasta.main(new String[]{"-i",ids.getAbsolutePath(),
@@ -180,7 +179,7 @@ public class TestFastQ2FastaEnd2End {
      }
      
      @Test
-     public void onlywriteOutSeqIfOnlyUseSOption() throws IOException, IdReaderException, DataStoreException{
+     public void onlywriteOutSeqIfOnlyUseSOption() throws IOException,  DataStoreException{
          
          FastqDataStore originalDataStore = new FastqFileDataStoreBuilder(fastQFile).hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED).qualityCodec(FastqQualityCodec.ILLUMINA).build();
          Fastq2Fasta.main(new String[]{"-i",ids.getAbsolutePath(),
@@ -196,7 +195,7 @@ public class TestFastQ2FastaEnd2End {
      }
      
      @Test
-     public void onlywriteOutQualIfOnlyUseQOption() throws IOException, IdReaderException, DataStoreException{
+     public void onlywriteOutQualIfOnlyUseQOption() throws IOException,  DataStoreException{
          
          FastqDataStore originalDataStore = new FastqFileDataStoreBuilder(fastQFile).hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED).qualityCodec(FastqQualityCodec.ILLUMINA).build();
          Fastq2Fasta.main(new String[]{"-i",ids.getAbsolutePath(),
@@ -212,7 +211,7 @@ public class TestFastQ2FastaEnd2End {
      }
      
      @Test
-     public void excludeIdsThatAreSpecified() throws IOException, IdReaderException, DataStoreException{
+     public void excludeIdsThatAreSpecified() throws IOException,  DataStoreException{
          File fastQFile = RESOURCES.getFile("files/example.fastq");
          FastqDataStore originalDataStore =  new FastqFileDataStoreBuilder(fastQFile).hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED).qualityCodec(FastqQualityCodec.ILLUMINA).build();
          Fastq2Fasta.main(new String[]{"-e",ids.getAbsolutePath(),
