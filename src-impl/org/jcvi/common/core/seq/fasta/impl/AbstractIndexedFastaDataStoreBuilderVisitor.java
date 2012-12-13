@@ -1,4 +1,4 @@
-package org.jcvi.common.core.seq.fastx.fasta;
+package org.jcvi.common.core.seq.fasta.impl;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -8,6 +8,10 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.seq.fastx.FastXFilter;
+import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
+import org.jcvi.common.core.seq.fastx.fasta.FastaDataStore;
+import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreBuilderVisitor;
+import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.Symbol;
 /**

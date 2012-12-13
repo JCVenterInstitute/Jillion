@@ -1,4 +1,4 @@
-package org.jcvi.common.core.seq.fastx.fasta.aa.impl;
+package org.jcvi.common.core.seq.fasta.aa.impl;
 
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 

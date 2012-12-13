@@ -1,4 +1,4 @@
-package org.jcvi.common.core.seq.fastx.fasta.aa.impl;
+package org.jcvi.common.core.seq.fasta.aa.impl;
 
 
 import java.io.File;
@@ -7,7 +7,7 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
-import org.jcvi.common.core.seq.fastx.fasta.AbstractLargeFastaFileDataStore;
+import org.jcvi.common.core.seq.fasta.impl.AbstractLargeFastaFileDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.aa.AminoAcidSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fastx.fasta.aa.AminoAcidSequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;

@@ -1,6 +1,6 @@
 package org.jcvi.common.core.seq.fastx.fasta.nt;
 
-import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaRecordBuilder;
+import org.jcvi.common.core.seq.fasta.impl.AbstractFastaRecordBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
