@@ -19,6 +19,10 @@
 
 package org.jcvi.fasta.fastq.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -34,8 +38,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
@@ -43,7 +45,7 @@ import static org.junit.Assert.*;
  */
 public class TestFastqFile2 {
 
-    private final ResourceFileServer RESOURCES = new ResourceFileServer(TestFastQFile.class);
+    private final ResourceFileServer RESOURCES = new ResourceFileServer(TestFastqFile2.class);
     String id = "SOLEXA1:4:1:12:1692#0/1";
     String otherId = "SOLEXA1:4:1:12:1489#0/1";
     File ids;
@@ -75,6 +77,25 @@ public class TestFastqFile2 {
         assertFalse(filteredDataStore.contains(otherId));
         assertEquals(originalDataStore.get(id),filteredDataStore.get(id));
     }
+    
+    @Test
+    public void includeOnlyIdsThatAreSpecifiedUsingFileWithExtraTextOnEachLine() throws IOException, IdReaderException, DataStoreException{
+        
+    	File idsExtra =folder.newFile("idsExtra.lst");
+        PrintWriter writer = new PrintWriter(idsExtra);
+        writer.println(id+"\tblah");
+        writer.close();
+    	
+        FastqDataStore originalDataStore = new FastqFileDataStoreBuilder(fastQFile).hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED).qualityCodec(FastqQualityCodec.ILLUMINA).build();
+        FastqFile2.main(new String[]{"-i",ids.getAbsolutePath(),
+                "-o", outputFile.getAbsolutePath(),
+                fastQFile.getAbsolutePath()});
+        FastqDataStore filteredDataStore = new FastqFileDataStoreBuilder(outputFile).hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED).qualityCodec(FastqQualityCodec.ILLUMINA).build();
+        assertEquals(1, filteredDataStore.getNumberOfRecords());
+        assertFalse(filteredDataStore.contains(otherId));
+        assertEquals(originalDataStore.get(id),filteredDataStore.get(id));
+    }
+    
     @Test
     public void excludeIdsThatAreSpecified() throws IOException, IdReaderException, DataStoreException{
         File fastQFile = RESOURCES.getFile("files/example.fastq");

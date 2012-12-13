@@ -23,9 +23,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -35,7 +32,6 @@ import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
@@ -46,10 +42,7 @@ import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.io.idReader.DefaultFileIdReader;
-import org.jcvi.common.io.idReader.IdReader;
 import org.jcvi.common.io.idReader.IdReaderException;
-import org.jcvi.common.io.idReader.StringIdParser;
 
 /**
  * {@code Fastq2Fasta} is a program that parses a Fastq file and
@@ -119,23 +112,7 @@ public class Fastq2Fasta {
             if(seqOut ==null && qualOut ==null){
                 throw new ParseException("must specify at least either -s or -q");
             }
-            final File idFile;
-            final DataStoreFilter filter;
-            if(commandLine.hasOption("i")){
-                idFile =new File(commandLine.getOptionValue("i"));
-                Set<String> includeList=parseIdsFrom(idFile);
-                if(commandLine.hasOption("e")){
-                    Set<String> excludeList=parseIdsFrom(new File(commandLine.getOptionValue("e")));
-                    includeList.removeAll(excludeList);
-                }
-                filter = DataStoreFilters.newIncludeFilter(includeList);
-                
-            }else if(commandLine.hasOption("e")){
-                idFile =new File(commandLine.getOptionValue("e"));
-                filter = DataStoreFilters.newExcludeFilter(parseIdsFrom(idFile));
-            }else{
-                filter = DataStoreFilters.alwaysAccept();
-            }
+            final DataStoreFilter filter = CommandLineUtils.createDataStoreFilter(commandLine);           
             final FastqQualityCodec fastqQualityCodec;
             if(commandLine.hasOption("sanger")){
                 fastqQualityCodec = FastqQualityCodec.SANGER;
@@ -184,15 +161,7 @@ public class Fastq2Fasta {
             IOUtil.closeAndIgnoreErrors(qualOut);
         }
     }
-    private static Set<String> parseIdsFrom(final File idFile)   throws IdReaderException {
-        IdReader<String> idReader = new DefaultFileIdReader<String>(idFile,new StringIdParser());
-        Set<String> ids = new HashSet<String>();
-        Iterator<String> iter =idReader.getIds();
-        while(iter.hasNext()){
-            ids.add(iter.next());
-        }
-        return ids;
-    }
+   
         
     private static void printHelp(Options options) {
         HelpFormatter formatter = new HelpFormatter();

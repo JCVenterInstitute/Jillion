@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -33,21 +34,18 @@ import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriter;
-import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecordWriterBuilder;
+import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.fastx.fasta.qual.QualitySequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceFastaRecordWriter;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
+import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramBuilderVisitor;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFactory;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
 import org.jcvi.common.io.fileServer.DirectoryFileServer.ReadWriteDirectoryFileServer;
-import org.jcvi.common.io.idReader.DefaultFileIdReader;
-import org.jcvi.common.io.idReader.IdReader;
-import org.jcvi.common.io.idReader.StringIdParser;
 
 /**
  * {@code Chromatogram2fasta} is a program that will convert a list 
@@ -142,7 +140,7 @@ public class Chromatogram2fasta implements Closeable{
         ReadWriteDirectoryFileServer outputFileServer = DirectoryFileServer.createReadWriteDirectoryFileServer(outputDirPath);
         String prefix = commandLine.hasOption("prefix")? commandLine.getOptionValue("prefix"):DEFAULT_FASTA_PREFIX;
         File inFile = new File(commandLine.getOptionValue("i"));
-        IdReader<String> chromatogramFiles = new DefaultFileIdReader<String>(inFile, new StringIdParser());
+        List<String> chromatogramFiles = CommandLineUtils.getLinesFromFile(inFile);
         final OutputStream seqOut = commandLine.hasOption("s")? 
                         new FileOutputStream(outputFileServer.createNewFile(prefix +".seq"))
                         : null;

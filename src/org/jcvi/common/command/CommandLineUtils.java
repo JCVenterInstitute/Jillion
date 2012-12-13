@@ -23,9 +23,15 @@
  */
 package org.jcvi.common.command;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
@@ -36,10 +42,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
-import org.jcvi.common.io.idReader.DefaultFileIdReader;
-import org.jcvi.common.io.idReader.IdReader;
-import org.jcvi.common.io.idReader.IdReaderException;
-import org.jcvi.common.io.idReader.StringIdParser;
+import org.jcvi.common.core.io.IOUtil;
 /**
  * Utility class for commandline parsing.
  * @author dkatzel
@@ -81,32 +84,24 @@ public final class CommandLineUtils {
 
     }
     public static DataStoreFilter createDataStoreFilter(
-            CommandLine commandLine) throws IdReaderException {
+            CommandLine commandLine) throws IOException {
         final DataStoreFilter filter;
         if(commandLine.hasOption(INCLUDE_FLAG)){
-            Set<String> includeList=parseIdsFrom(new File(commandLine.getOptionValue(INCLUDE_FLAG)));
+            Set<String> includeList=getUniqueLinesFromFile(new File(commandLine.getOptionValue(INCLUDE_FLAG)));
             if(commandLine.hasOption(EXCLUDE_FLAG)){
-                Set<String> excludeList=parseIdsFrom(new File(commandLine.getOptionValue(EXCLUDE_FLAG)));
+                Set<String> excludeList=getUniqueLinesFromFile(new File(commandLine.getOptionValue(EXCLUDE_FLAG)));
                 includeList.removeAll(excludeList);
             }
             filter = DataStoreFilters.newIncludeFilter(includeList);
             
         }else if(commandLine.hasOption(EXCLUDE_FLAG)){
-            filter = DataStoreFilters.newExcludeFilter(parseIdsFrom(new File(commandLine.getOptionValue(EXCLUDE_FLAG))));
+            filter = DataStoreFilters.newExcludeFilter(getUniqueLinesFromFile(new File(commandLine.getOptionValue(EXCLUDE_FLAG))));
         }else{
             filter = DataStoreFilters.alwaysAccept();
         }
         return filter;
     }
-    private static Set<String> parseIdsFrom(final File idFile)   throws IdReaderException {
-        IdReader<String> idReader = new DefaultFileIdReader<String>(idFile,new StringIdParser());
-        Set<String> ids = new HashSet<String>();
-        Iterator<String> iter =idReader.getIds();
-        while(iter.hasNext()){
-            ids.add(iter.next());
-        }
-        return ids;
-    }
+   
     /**
      * Create a new {@link Option}
      * that will "show this message" if {@code -h} or {@code --h}
@@ -141,4 +136,41 @@ public final class CommandLineUtils {
         return false;
     }
    
+    public static List<String> getLinesFromFile(File textFile) throws IOException{
+		return getLinesFromFile(textFile, Charset.defaultCharset());
+	}
+	public static List<String> getLinesFromFile(File textFile, Charset charSet) throws IOException{
+		List<String> lines = new ArrayList<String>();
+		BufferedReader reader=null;
+		try {
+			reader = new BufferedReader(new InputStreamReader(new FileInputStream(textFile),charSet));
+			String line=null;
+			while( (line = reader.readLine())!=null){
+				lines.add(line);
+			}
+			return lines;
+		} finally{
+			IOUtil.closeAndIgnoreErrors(reader);
+		}
+		
+	}
+	
+	public static Set<String> getUniqueLinesFromFile(File textFile) throws IOException{
+		return getUniqueLinesFromFile(textFile, Charset.defaultCharset());
+	}
+	public static Set<String> getUniqueLinesFromFile(File textFile, Charset charSet) throws IOException{
+		Set<String> lines = new LinkedHashSet<String>();
+		BufferedReader reader=null;
+		try {
+			reader = new BufferedReader(new InputStreamReader(new FileInputStream(textFile),charSet));
+			String line=null;
+			while( (line = reader.readLine())!=null){
+				lines.add(line);
+			}
+			return lines;
+		} finally{
+			IOUtil.closeAndIgnoreErrors(reader);
+		}
+		
+	}
 }

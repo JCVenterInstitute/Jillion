@@ -21,9 +21,6 @@ package org.jcvi.fasta.fastq.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -34,7 +31,6 @@ import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
@@ -48,10 +44,6 @@ import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
 import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriterBuilder;
 import org.jcvi.common.core.util.DateUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.io.idReader.DefaultFileIdReader;
-import org.jcvi.common.io.idReader.IdReader;
-import org.jcvi.common.io.idReader.IdReaderException;
-import org.jcvi.common.io.idReader.StringIdParser;
 
 /**
  * {@code SortedFasta2Fastq} is a another fasta to fastq conversion tool
@@ -119,31 +111,8 @@ public class SortedFasta2Fastq {
             boolean useSanger = commandLine.hasOption("sanger");
             final File qualFile = new File(commandLine.getOptionValue("q"));
             final File seqFile = new File(commandLine.getOptionValue("s"));
-            
-            
-            final File idFile;
-            final DataStoreFilter filter;
-            if(commandLine.hasOption("i")){
-                idFile =new File(commandLine.getOptionValue("i"));
-                Set<String> includeList=parseIdsFrom(idFile);
-                if(commandLine.hasOption("e")){
-                    Set<String> excludeList=parseIdsFrom(new File(commandLine.getOptionValue("e")));
-                    includeList.removeAll(excludeList);
-                }
-                filter = DataStoreFilters.newIncludeFilter(includeList);
-                
-            }else if(commandLine.hasOption("e")){
-                idFile =new File(commandLine.getOptionValue("e"));
-                filter = DataStoreFilters.newExcludeFilter(parseIdsFrom(idFile));
-            }else{
-                filter = DataStoreFilters.alwaysAccept();
-            }
-            final int bufferSize;
-            if(commandLine.hasOption("b")){
-                bufferSize = Integer.parseInt(commandLine.getOptionValue("b"));
-            }else{
-                bufferSize = DEFAULT_QUEUE_SIZE;
-            }
+
+            final DataStoreFilter filter = CommandLineUtils.createDataStoreFilter(commandLine);
             
             final FastqQualityCodec fastqQualityCodec = useSanger? FastqQualityCodec.SANGER: FastqQualityCodec.ILLUMINA;
             final FastqRecordWriter writer = new FastqRecordWriterBuilder(new File(commandLine.getOptionValue("o")))
@@ -213,15 +182,7 @@ public class SortedFasta2Fastq {
                "Created by Danny Katzel"
                   );
     }
-    private static Set<String> parseIdsFrom(final File idFile)   throws IdReaderException {
-        IdReader<String> idReader = new DefaultFileIdReader<String>(idFile,new StringIdParser());
-        Set<String> ids = new HashSet<String>();
-        Iterator<String> iter =idReader.getIds();
-        while(iter.hasNext()){
-            ids.add(iter.next());
-        }
-        return ids;
-    }
+    
 
 
 }
