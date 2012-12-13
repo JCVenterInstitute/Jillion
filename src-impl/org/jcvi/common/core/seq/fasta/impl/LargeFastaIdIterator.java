@@ -24,8 +24,8 @@ import java.io.FileNotFoundException;
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileParser;
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileVisitor;
+import org.jcvi.common.core.seq.fasta.FastaFileParser;
+import org.jcvi.common.core.seq.fasta.FastaFileVisitor;
 import org.jcvi.common.core.util.iter.impl.AbstractBlockingStreamingIterator;
 
 /**

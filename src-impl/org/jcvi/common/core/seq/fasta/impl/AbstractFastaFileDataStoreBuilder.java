@@ -7,8 +7,8 @@ import java.io.IOException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
-import org.jcvi.common.core.seq.fastx.fasta.FastaDataStore;
-import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
+import org.jcvi.common.core.seq.fasta.FastaDataStore;
+import org.jcvi.common.core.seq.fasta.FastaRecord;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.Symbol;
 

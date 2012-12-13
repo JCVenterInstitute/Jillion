@@ -2,8 +2,8 @@ package org.jcvi.common.core.seq.fasta.aa.impl;
 
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.seq.fastx.fasta.FastaUtil;
-import org.jcvi.common.core.seq.fastx.fasta.aa.AminoAcidSequenceFastaRecord;
+import org.jcvi.common.core.seq.fasta.FastaUtil;
+import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 import org.jcvi.common.core.util.ObjectsUtil;
 /**

@@ -2,10 +2,10 @@ package org.jcvi.common.core.seq.fasta.impl;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
-import org.jcvi.common.core.seq.fastx.fasta.AbstractFastaVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.FastaDataStoreBuilder;
-import org.jcvi.common.core.seq.fastx.fasta.FastaFileDataStoreBuilderVisitor;
-import org.jcvi.common.core.seq.fastx.fasta.FastaRecord;
+import org.jcvi.common.core.seq.fasta.AbstractFastaVisitor;
+import org.jcvi.common.core.seq.fasta.FastaDataStoreBuilder;
+import org.jcvi.common.core.seq.fasta.FastaFileDataStoreBuilderVisitor;
+import org.jcvi.common.core.seq.fasta.FastaRecord;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.Symbol;
 

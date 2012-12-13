@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fastx.fasta.nt.NucleotideSequenceFastaRecordBuilder;
+import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordBuilder;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.util.DateUtil;
