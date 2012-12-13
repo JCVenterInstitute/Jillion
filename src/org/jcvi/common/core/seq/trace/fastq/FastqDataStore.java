@@ -16,27 +16,21 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+/*
+ * Created on Dec 16, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.common.core.seq.trace.fastq;
 
-package org.jcvi.common.core.seq;
-
-import org.jcvi.common.core.seq.fasta.AllFastaUnitTests;
-import org.jcvi.common.core.seq.plate.AllPlateUnitTests;
-import org.jcvi.common.core.seq.read.trace.AllTraceUnitTests;
-import org.jcvi.common.core.seq.trace.fastq.AllFastqUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-    	AllFastaUnitTests.class,
-        AllFastqUnitTests.class,
-        
-        AllTraceUnitTests.class,
-        AllPlateUnitTests.class
-    }
-    )
-public class AllSeqUnitTests {
+import org.jcvi.common.core.datastore.DataStore;
+/**
+ * {@code FastqDataStore} is a
+ * marker-interface for a {@link DataStore}
+ * of {@link FastqRecord}s.
+ * @author dkatzel
+ *
+ */
+public interface FastqDataStore extends DataStore<FastqRecord>{
 
 }

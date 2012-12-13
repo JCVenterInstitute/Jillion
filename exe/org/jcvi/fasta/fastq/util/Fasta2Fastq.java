@@ -37,9 +37,9 @@ import org.jcvi.common.core.seq.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
-import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
-import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
-import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriterBuilder;
+import org.jcvi.common.core.seq.trace.fastq.FastqQualityCodec;
+import org.jcvi.common.core.seq.trace.fastq.FastqRecordWriter;
+import org.jcvi.common.core.seq.trace.fastq.FastqRecordWriterBuilder;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 

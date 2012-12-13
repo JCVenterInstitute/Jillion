@@ -21,12 +21,12 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.fastx.fastq.FastqFileDataStoreBuilder;
-import org.jcvi.common.core.seq.fastx.fastq.FastqQualityCodec;
-import org.jcvi.common.core.seq.fastx.fastq.FastqRecord;
-import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriter;
-import org.jcvi.common.core.seq.fastx.fastq.FastqRecordWriterBuilder;
-import org.jcvi.common.core.seq.fastx.fastq.FastqUtil;
+import org.jcvi.common.core.seq.trace.fastq.FastqFileDataStoreBuilder;
+import org.jcvi.common.core.seq.trace.fastq.FastqQualityCodec;
+import org.jcvi.common.core.seq.trace.fastq.FastqRecord;
+import org.jcvi.common.core.seq.trace.fastq.FastqRecordWriter;
+import org.jcvi.common.core.seq.trace.fastq.FastqRecordWriterBuilder;
+import org.jcvi.common.core.seq.trace.fastq.FastqUtil;
 import org.jcvi.common.core.util.MapUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 

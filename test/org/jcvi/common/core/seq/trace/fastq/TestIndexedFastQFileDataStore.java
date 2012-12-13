@@ -17,26 +17,26 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.seq;
+package org.jcvi.common.core.seq.trace.fastq;
 
-import org.jcvi.common.core.seq.fasta.AllFastaUnitTests;
-import org.jcvi.common.core.seq.plate.AllPlateUnitTests;
-import org.jcvi.common.core.seq.read.trace.AllTraceUnitTests;
-import org.jcvi.common.core.seq.trace.fastq.AllFastqUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.io.File;
+import java.io.IOException;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-    	AllFastaUnitTests.class,
-        AllFastqUnitTests.class,
-        
-        AllTraceUnitTests.class,
-        AllPlateUnitTests.class
+import org.jcvi.common.core.seq.trace.fastq.FastqDataStore;
+import org.jcvi.common.core.seq.trace.fastq.FastqQualityCodec;
+import org.jcvi.common.core.seq.trace.fastq.IndexedFastqFileDataStore;
+
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public class TestIndexedFastQFileDataStore extends AbstractTestFastQFileDataStore{
+
+    @Override
+    protected FastqDataStore createFastQFileDataStore(File file,
+            FastqQualityCodec qualityCodec) throws IOException {
+        return IndexedFastqFileDataStore.create(file, qualityCodec);
     }
-    )
-public class AllSeqUnitTests {
 
 }
