@@ -21,7 +21,6 @@ package org.jcvi.common.core.assembly.clc.cas.consed;
 
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
 public class DefaultPhdReadRecord implements PhdReadRecord {
 
@@ -97,20 +96,6 @@ public class DefaultPhdReadRecord implements PhdReadRecord {
         return getPhd().getId();
     }
 
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public String getId() {
-        return phd.getId();
-    }
-
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public NucleotideSequence getNucleotideSequence() {
-        return phd.getNucleotideSequence();
-    }
+    
 
 }

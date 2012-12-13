@@ -24,7 +24,6 @@ import java.io.IOException;
 
 import org.jcvi.common.core.assembly.ace.AceAssembledRead;
 import org.jcvi.common.core.assembly.ace.AceAssembledReadAdapter;
-import org.jcvi.common.core.assembly.clc.cas.AbstractCasReadVisitor;
 import org.jcvi.common.core.assembly.clc.cas.CasInfo;
 import org.jcvi.common.core.assembly.clc.cas.CasMatch;
 import org.jcvi.common.core.assembly.clc.cas.TraceDetails;
@@ -45,7 +44,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  *
  */
-public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasReadVisitor<PhdReadRecord>{
+public abstract class AbstractAcePlacedReadCasReadVisitor extends AbstractCasReadVisitor{
 
     public AbstractAcePlacedReadCasReadVisitor(CasInfo casInfo) {
         super(casInfo);

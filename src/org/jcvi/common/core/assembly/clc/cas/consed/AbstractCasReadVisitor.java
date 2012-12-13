@@ -17,19 +17,27 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.assembly.clc.cas;
+package org.jcvi.common.core.assembly.clc.cas.consed;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jcvi.common.core.assembly.clc.cas.AbstractOnePassCasFileVisitor;
+import org.jcvi.common.core.assembly.clc.cas.CasFileInfo;
+import org.jcvi.common.core.assembly.clc.cas.CasInfo;
+import org.jcvi.common.core.assembly.clc.cas.CasMatch;
+import org.jcvi.common.core.assembly.clc.cas.CasTrimMap;
+import org.jcvi.common.core.assembly.clc.cas.CasUtil;
+import org.jcvi.common.core.assembly.clc.cas.ReadFileType;
+import org.jcvi.common.core.assembly.clc.cas.TraceDetails;
 import org.jcvi.common.core.assembly.clc.cas.align.CasScoringScheme;
 import org.jcvi.common.core.assembly.clc.cas.read.CasPlacedRead;
 import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.read.Read;
+import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
@@ -40,14 +48,14 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  *
  *
  */
-public abstract class AbstractCasReadVisitor<R extends Read> extends AbstractOnePassCasFileVisitor {
+public abstract class AbstractCasReadVisitor extends AbstractOnePassCasFileVisitor {
 
     private final File workingDir;
     private final CasTrimMap trimMap;
-    private StreamingIterator<R> readIterator;
+    private StreamingIterator<PhdReadRecord> readIterator;
     private final List<NucleotideSequence> orderedGappedReferences;
     private final TrimPointsDataStore validRangeDataStore;
-    private final List<StreamingIterator<R>> iterators = new ArrayList<StreamingIterator<R>>();
+    private final List<StreamingIterator<PhdReadRecord>> iterators = new ArrayList<StreamingIterator<PhdReadRecord>>();
     private final TraceDetails traceDetails;
     private AbstractCasReadVisitor(File workingDir, CasTrimMap trimMap,
             List<NucleotideSequence> orderedGappedReferences,
@@ -76,13 +84,13 @@ public abstract class AbstractCasReadVisitor<R extends Read> extends AbstractOne
     public TrimPointsDataStore getValidRangeDataStore() {
         return validRangeDataStore;
     }
-    public abstract StreamingIterator<R>  createFastqIterator(File illuminaFile, TraceDetails traceDetails) throws DataStoreException;
+    public abstract StreamingIterator<PhdReadRecord>  createFastqIterator(File illuminaFile, TraceDetails traceDetails) throws DataStoreException;
     
-    public abstract StreamingIterator<R>  createSffIterator(File sffFile, TraceDetails traceDetails) throws DataStoreException;
+    public abstract StreamingIterator<PhdReadRecord>  createSffIterator(File sffFile, TraceDetails traceDetails) throws DataStoreException;
     
-    public abstract StreamingIterator<R>  createFastaIterator(File fastaFile, TraceDetails traceDetails) throws DataStoreException;
+    public abstract StreamingIterator<PhdReadRecord>  createFastaIterator(File fastaFile, TraceDetails traceDetails) throws DataStoreException;
     
-    public abstract StreamingIterator<R>  createChromatogramIterator(File chromatogramFile, TraceDetails traceDetails) throws DataStoreException;
+    public abstract StreamingIterator<PhdReadRecord>  createChromatogramIterator(File chromatogramFile, TraceDetails traceDetails) throws DataStoreException;
     
     @Override
     public final synchronized void visitReadFileInfo(CasFileInfo readFileInfo) {
@@ -96,7 +104,7 @@ public abstract class AbstractCasReadVisitor<R extends Read> extends AbstractOne
     protected void handleReadFileInfo(CasFileInfo readFileInfo){
     	//no-op
     }
-    private StreamingIterator<R> createIteratorFor(String filename){
+    private StreamingIterator<PhdReadRecord> createIteratorFor(String filename){
     	 File file;
          try {
              file = getTrimmedFileFor(filename);
@@ -121,7 +129,7 @@ public abstract class AbstractCasReadVisitor<R extends Read> extends AbstractOne
 	            }
          }catch(Exception e){
          	//close any blocking iterators
-         	for(StreamingIterator<R> iter : iterators){
+         	for(StreamingIterator<PhdReadRecord> iter : iterators){
          		IOUtil.closeAndIgnoreErrors(iter);
          	}
          	throw new RuntimeException(e);
@@ -150,15 +158,16 @@ public abstract class AbstractCasReadVisitor<R extends Read> extends AbstractOne
     		 //wrap with more helpful error message
              throw new IllegalStateException("no more reads in input file(s) even though .cas file thinks there are");
     	}
-    	R readRecord =readIterator.next();
+    	PhdReadRecord readRecord =readIterator.next();
         try {
         	
             if(match.matchReported()){
-                String recordId = readRecord.getId();
+            	Phd phd = readRecord.getPhd();
+                String recordId = phd.getId();
                 int casReferenceId = (int)match.getChosenAlignment().contigSequenceId();
                 NucleotideSequence gappedReference =orderedGappedReferences.get(casReferenceId);
                 CasPlacedRead placedRead = CasUtil.createCasPlacedRead(match, recordId, 
-                        readRecord.getNucleotideSequence(), 
+                        phd.getNucleotideSequence(), 
                         validRangeDataStore.get(recordId), gappedReference);
                 visitMatch(match, readRecord, placedRead);              
             }else{
@@ -169,8 +178,8 @@ public abstract class AbstractCasReadVisitor<R extends Read> extends AbstractOne
             throw new IllegalStateException("error getting parsing data for " + readRecord, e);
         }
     }
-    protected abstract void visitUnMatched(R readRecord) throws Exception;
-    protected abstract void visitMatch(CasMatch match, R readRecord, CasPlacedRead placedRead)
+    protected abstract void visitUnMatched(PhdReadRecord readRecord) throws Exception;
+    protected abstract void visitMatch(CasMatch match, PhdReadRecord readRecord, CasPlacedRead placedRead)
             throws Exception;
     
 
