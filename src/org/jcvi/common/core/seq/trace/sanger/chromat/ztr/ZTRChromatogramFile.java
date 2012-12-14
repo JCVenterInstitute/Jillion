@@ -45,19 +45,19 @@ public final class ZTRChromatogramFile{
     }
     /**
      * {@code ZTRChromatogramFileBuilderVisitor} is a helper class
-     * that wraps a {@link ZTRChromatogramBuilder} by a {@link ZTRChromatogramFileVisitor}.
+     * that wraps a {@link ZtrChromatogramBuilder} by a {@link ZtrChromatogramFileVisitor}.
      * This way when a part of the ZTR is visited, its corresponding objects get built 
      * by the builder.
      * @author dkatzel
      *
      *
      */
-    public static final class ZTRChromatogramFileBuilderVisitor implements ZTRChromatogramFileVisitor, Builder<ZTRChromatogram>{
-        private final ZTRChromatogramBuilder builder ;
+    public static final class ZTRChromatogramFileBuilderVisitor implements ZtrChromatogramFileVisitor, Builder<ZtrChromatogram>{
+        private final ZtrChromatogramBuilder builder ;
         private boolean built;
         
         private ZTRChromatogramFileBuilderVisitor(String id){
-        	builder = new ZTRChromatogramBuilder(id);
+        	builder = new ZtrChromatogramBuilder(id);
         }
         
         private void checkNotYetBuilt(){
@@ -200,9 +200,9 @@ public final class ZTRChromatogramFile{
         * {@inheritDoc}
         */
         @Override
-        public ZTRChromatogram build() {
+        public ZtrChromatogram build() {
             checkNotYetBuilt();
-            ZTRChromatogram result= builder.build();
+            ZtrChromatogram result= builder.build();
             built =false;
             return result;
         }
@@ -210,36 +210,36 @@ public final class ZTRChromatogramFile{
         
     }
     /**
-     * Create a new {@link ZTRChromatogram} instance from the given
+     * Create a new {@link ZtrChromatogram} instance from the given
      * ZTR encoded file.
      * @param ztrFile the ZTR encoded file to parse
-     * @return a new {@link ZTRChromatogram} instance containing data
+     * @return a new {@link ZtrChromatogram} instance containing data
      * from the given ZTR file.
      * @throws FileNotFoundException if the file does not exist
      * @throws TraceDecoderException if the file is not correctly encoded.
      */
-    public static ZTRChromatogram create(File ztrFile) throws FileNotFoundException, TraceDecoderException{
+    public static ZtrChromatogram create(File ztrFile) throws FileNotFoundException, TraceDecoderException{
         ZTRChromatogramFileBuilderVisitor visitor = createNewBuilderVisitor(ztrFile.getName());
-        ZTRChromatogramFileParser.parse(ztrFile, visitor);
+        ZtrChromatogramFileParser.parse(ztrFile, visitor);
         return visitor.build();
     }
     
     /**
-     * Create a new {@link ZTRChromatogram} instance from the given
+     * Create a new {@link ZtrChromatogram} instance from the given
      * ZTR encoded InputStream, This method will close the input stream regardless
      * if this method returns or throws an exception.
      * @param id the id of the chromatogram to be built.
      * @param ztrInputStream the ZTR encoded input stream to parse
-     * @return a new {@link ZTRChromatogram} instance containing data
+     * @return a new {@link ZtrChromatogram} instance containing data
      * from the given ZTR file.
      * @throws FileNotFoundException if the file does not exist
      * @throws TraceDecoderException if the file is not correctly encoded.
      * @throws NullPointerException if id is null.
      */
-    public static ZTRChromatogram create(String id, InputStream ztrInputStream) throws FileNotFoundException, TraceDecoderException{
+    public static ZtrChromatogram create(String id, InputStream ztrInputStream) throws FileNotFoundException, TraceDecoderException{
         try{
             ZTRChromatogramFileBuilderVisitor visitor = createNewBuilderVisitor(id);
-            ZTRChromatogramFileParser.parse(ztrInputStream, visitor);
+            ZtrChromatogramFileParser.parse(ztrInputStream, visitor);
             return visitor.build();
         }finally{
             IOUtil.closeAndIgnoreErrors(ztrInputStream);

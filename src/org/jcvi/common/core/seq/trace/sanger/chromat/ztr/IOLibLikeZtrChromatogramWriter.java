@@ -28,10 +28,10 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DeltaEncodedD
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.ShrinkToEightBitData;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl.DefaultZTRChromatogramWriterBuilder;
 /**
- * {@code IOLibLikeZTRChromatogramWriter} is a {@link ZTRChromatogramWriter}
+ * {@code IOLibLikeZtrChromatogramWriter} is a {@link ZtrChromatogramWriter}
  * implementation that performs the same encoding operations in the same order
  * as the staden IO_Lib C module.  Experiments have shown that 
- *  IOLibLikeZTRChromatogramWriter
+ *  {@link IOLibLikeZtrChromatogramWriter}
  * will encode valid ZTR files that have about a 5% larger file size.
  * This is probably due to the standard Java implementation of zip does not allow
  * changing the "windowbits" size which could result in better
@@ -39,9 +39,10 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl.DefaultZTRChromato
  * of encoding zipped data might enable smaller output file sizes
  * but that would cause an unnecessary dependency.
  * @author dkatzel
+ * @see <a href ="http://staden.sourceforge.net/"> Staden Package Website</a>
  *
  */
-public enum IOLibLikeZTRChromatogramWriter implements ZTRChromatogramWriter{
+public enum IOLibLikeZtrChromatogramWriter implements ZtrChromatogramWriter{
 	/**
 	 * Singleton instance of {@link IOLibLikeZTRChromatogramWriter}.
 	 */
@@ -51,7 +52,7 @@ public enum IOLibLikeZTRChromatogramWriter implements ZTRChromatogramWriter{
 	 * encoding its confidence values.
 	 */
 	public static final byte IO_LIB_CONFIDENCE_RUN_LENGTH_GUARD_VALUE = (byte)77;
-	private final ZTRChromatogramWriter writer;
+	private final ZtrChromatogramWriter writer;
 	
 	{
 		//these are the same encoders with the same parameters

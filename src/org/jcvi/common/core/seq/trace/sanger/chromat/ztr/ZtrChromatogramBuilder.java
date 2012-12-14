@@ -36,13 +36,13 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 
 /**
- * <code>ZTRChromatogramBuilder</code> uses the Builder Pattern
- * to build a {@link ZTRChromatogram} instance.
+ * <code>ZtrChromatogramBuilder</code> uses the Builder Pattern
+ * to build a {@link ZtrChromatogram} instance.
  * @author dkatzel
  *
  *
  */
-public final class ZTRChromatogramBuilder implements Builder<ZTRChromatogram>{
+public final class ZtrChromatogramBuilder implements Builder<ZtrChromatogram>{
     
     /**
      * Hints for valid range of this sequence.
@@ -52,14 +52,14 @@ public final class ZTRChromatogramBuilder implements Builder<ZTRChromatogram>{
     private final BasicChromatogramBuilder basicBuilder;
     
     
-    public ZTRChromatogramBuilder(String id){
+    public ZtrChromatogramBuilder(String id){
         basicBuilder = new BasicChromatogramBuilder(id);
     }
     
-    public ZTRChromatogramBuilder(Chromatogram copy){
+    public ZtrChromatogramBuilder(Chromatogram copy){
        basicBuilder = new BasicChromatogramBuilder(copy);        
     }
-    public ZTRChromatogramBuilder(ZTRChromatogram copy){
+    public ZtrChromatogramBuilder(ZtrChromatogram copy){
         this((Chromatogram)copy);
         clip(copy.getClip());
      }
@@ -75,7 +75,7 @@ public final class ZTRChromatogramBuilder implements Builder<ZTRChromatogram>{
      * @param clip the clip to set.
      * @return this.
      */
-    public final ZTRChromatogramBuilder clip(Range clip) {
+    public final ZtrChromatogramBuilder clip(Range clip) {
         this.clip = clip;
         return this;
     }
@@ -84,7 +84,7 @@ public final class ZTRChromatogramBuilder implements Builder<ZTRChromatogram>{
     * {@inheritDoc}
      */
     @Override
-    public ZTRChromatogram build() {
+    public ZtrChromatogram build() {
         return new ZTRChromatogramImpl(basicBuilder.build(),
                 clip());
     }
@@ -93,7 +93,7 @@ public final class ZTRChromatogramBuilder implements Builder<ZTRChromatogram>{
         return basicBuilder.peaks();
     }
 
-    public ZTRChromatogramBuilder peaks(short[] peaks) {
+    public ZtrChromatogramBuilder peaks(short[] peaks) {
         basicBuilder.peaks(new PositionSequenceBuilder(peaks).build());
         return this;
     }
@@ -102,7 +102,7 @@ public final class ZTRChromatogramBuilder implements Builder<ZTRChromatogram>{
         return basicBuilder.basecalls();
     }
 
-    public ZTRChromatogramBuilder basecalls(NucleotideSequence basecalls) {
+    public ZtrChromatogramBuilder basecalls(NucleotideSequence basecalls) {
         basicBuilder.basecalls(basecalls);
         return this;
     }
@@ -111,7 +111,7 @@ public final class ZTRChromatogramBuilder implements Builder<ZTRChromatogram>{
         return basicBuilder.aConfidence();
     }
 
-    public final ZTRChromatogramBuilder aConfidence(byte[] confidence) {
+    public final ZtrChromatogramBuilder aConfidence(byte[] confidence) {
         basicBuilder.aConfidence(confidence);
         return this;
     }
@@ -120,7 +120,7 @@ public final class ZTRChromatogramBuilder implements Builder<ZTRChromatogram>{
         return basicBuilder.cConfidence();
     }
 
-    public final ZTRChromatogramBuilder cConfidence(byte[] confidence) {
+    public final ZtrChromatogramBuilder cConfidence(byte[] confidence) {
         basicBuilder.cConfidence(confidence);
         return this;
     }
@@ -129,7 +129,7 @@ public final class ZTRChromatogramBuilder implements Builder<ZTRChromatogram>{
         return basicBuilder.gConfidence();
     }
 
-    public final ZTRChromatogramBuilder gConfidence(byte[] confidence) {
+    public final ZtrChromatogramBuilder gConfidence(byte[] confidence) {
         basicBuilder.gConfidence(confidence);
         return this;
     }
@@ -138,7 +138,7 @@ public final class ZTRChromatogramBuilder implements Builder<ZTRChromatogram>{
         return basicBuilder.tConfidence();
     }
 
-    public final ZTRChromatogramBuilder tConfidence(byte[] confidence) {
+    public final ZtrChromatogramBuilder tConfidence(byte[] confidence) {
         basicBuilder.tConfidence(confidence);
         return this;
     }
@@ -147,7 +147,7 @@ public final class ZTRChromatogramBuilder implements Builder<ZTRChromatogram>{
         return basicBuilder.aPositions();
     }
 
-    public final ZTRChromatogramBuilder aPositions(short[] positions) {
+    public final ZtrChromatogramBuilder aPositions(short[] positions) {
         basicBuilder.aPositions(positions);
         return this;
     }
@@ -156,7 +156,7 @@ public final class ZTRChromatogramBuilder implements Builder<ZTRChromatogram>{
         return basicBuilder.cPositions();
     }
 
-    public final ZTRChromatogramBuilder cPositions(short[] positions) {
+    public final ZtrChromatogramBuilder cPositions(short[] positions) {
         basicBuilder.cPositions(positions);
         return this;
     }
@@ -165,7 +165,7 @@ public final class ZTRChromatogramBuilder implements Builder<ZTRChromatogram>{
         return basicBuilder.gPositions();
     }
 
-    public final ZTRChromatogramBuilder gPositions(short[] positions) {
+    public final ZtrChromatogramBuilder gPositions(short[] positions) {
         basicBuilder.gPositions(positions);
         return this;
     }
@@ -174,7 +174,7 @@ public final class ZTRChromatogramBuilder implements Builder<ZTRChromatogram>{
         return basicBuilder.tPositions();
     }
 
-    public final ZTRChromatogramBuilder tPositions(short[] positions) {
+    public final ZtrChromatogramBuilder tPositions(short[] positions) {
         basicBuilder.tPositions(positions);
         return this;
     }
@@ -183,7 +183,7 @@ public final class ZTRChromatogramBuilder implements Builder<ZTRChromatogram>{
         return basicBuilder.properties();
     }
 
-    public final ZTRChromatogramBuilder properties(Map<String,String> properties) {
+    public final ZtrChromatogramBuilder properties(Map<String,String> properties) {
         basicBuilder.properties(properties);
         return this;
     }

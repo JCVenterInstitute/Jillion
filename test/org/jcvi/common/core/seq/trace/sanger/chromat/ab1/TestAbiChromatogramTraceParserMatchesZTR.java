@@ -29,7 +29,7 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.BasicChromatogramFile;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.Ab1FileParser;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.AbiChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.DefaultAbiChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFileParser;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramFileParser;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,7 +46,7 @@ public class TestAbiChromatogramTraceParserMatchesZTR {
     @Before
     public void setup() throws FileNotFoundException, TraceDecoderException, IOException{
         expectedZTR = new BasicChromatogramFile(id);
-        ZTRChromatogramFileParser.parse(RESOURCES.getFile("files/SDBHD01T00PB1A1672F.ztr"), expectedZTR);
+        ZtrChromatogramFileParser.parse(RESOURCES.getFile("files/SDBHD01T00PB1A1672F.ztr"), expectedZTR);
     }
     
     @Test

@@ -17,7 +17,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.seq.read.trace.archive2.TraceArchiveWriter.TraceArchiveRecordDataException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFile;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
@@ -98,7 +98,7 @@ public class TestTraceArchiveWriter {
 		assertEquals("traces/I11.ztr", i11.getAttribute(TraceInfoField.TRACE_FILE));
 		TestUtil.contentsAreEqual(i11TraceFile, new File(outputDir, "trace/I11.ztr"));
 		
-		ZTRChromatogram i11Chromo = ZTRChromatogramFile.create(i11TraceFile);
+		ZtrChromatogram i11Chromo = ZTRChromatogramFile.create(i11TraceFile);
 		
 		File k18FastaFile = new File(rootInputDir, "base/1119369014798.base");
 		assertEquals("fasta/I11.fasta", i11.getAttribute(TraceInfoField.BASE_FILE));

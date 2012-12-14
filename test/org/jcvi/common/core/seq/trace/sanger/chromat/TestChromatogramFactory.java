@@ -29,7 +29,7 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.AbiChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.DefaultAbiChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFile;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
@@ -45,8 +45,8 @@ public class TestChromatogramFactory {
     @Test
     public void parseZTR() throws TraceDecoderException, IOException{    	
         File ztrFile = RESOURCES.getFile(ZTR_FILE);
-        ZTRChromatogram expected = ZTRChromatogramFile.create(ztrFile);
-        ZTRChromatogram actual = (ZTRChromatogram) ChromatogramFactory.create(ztrFile);       
+        ZtrChromatogram expected = ZTRChromatogramFile.create(ztrFile);
+        ZtrChromatogram actual = (ZtrChromatogram) ChromatogramFactory.create(ztrFile);       
         assertEquals(expected, actual);
     }
     @Test

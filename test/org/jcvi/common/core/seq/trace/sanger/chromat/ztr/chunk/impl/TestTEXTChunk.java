@@ -30,8 +30,8 @@ import java.util.Map.Entry;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.TraceEncoderException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl.Chunk;
 import org.junit.Test;
 
@@ -72,14 +72,14 @@ public class TestTEXTChunk {
     @Test
     public void parse() throws TraceDecoderException{
         
-        ZTRChromatogramBuilder struct = new ZTRChromatogramBuilder("id");
+        ZtrChromatogramBuilder struct = new ZtrChromatogramBuilder("id");
         sut.parseData(encodedBytes, struct);
         assertEquals(struct.properties(), expected);
     }
 
     	@Test
         public void encode() throws TraceEncoderException, TraceDecoderException{
-        	ZTRChromatogram mockChromatogram = createMock(ZTRChromatogram.class);
+        	ZtrChromatogram mockChromatogram = createMock(ZtrChromatogram.class);
         	expect(mockChromatogram.getComments()).andReturn(expected);
         	
         	replay(mockChromatogram);

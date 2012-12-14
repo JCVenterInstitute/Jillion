@@ -28,8 +28,8 @@ import java.nio.ByteBuffer;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.TraceEncoderException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl.Chunk;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -56,14 +56,14 @@ public class TestClipChunk {
     public void validParse() throws TraceDecoderException{
        
         
-        ZTRChromatogramBuilder mockStruct = new ZTRChromatogramBuilder("id");
+        ZtrChromatogramBuilder mockStruct = new ZtrChromatogramBuilder("id");
         sut.parseData(encodedClip,mockStruct);
         assertEquals(expectedClip, mockStruct.clip());
     }
     
     @Test
     public void encode() throws TraceEncoderException{
-    	ZTRChromatogram mockChromatogram = createMock(ZTRChromatogram.class);
+    	ZtrChromatogram mockChromatogram = createMock(ZtrChromatogram.class);
     	expect(mockChromatogram.getClip()).andReturn(expectedClip);
     	replay(mockChromatogram);
     	byte[] actual =sut.encodeChunk(mockChromatogram);
@@ -72,7 +72,7 @@ public class TestClipChunk {
     }
     @Test
     public void encodeNullClipShouldEncodeZeroZero() throws TraceEncoderException{
-    	ZTRChromatogram mockChromatogram = createMock(ZTRChromatogram.class);
+    	ZtrChromatogram mockChromatogram = createMock(ZtrChromatogram.class);
     	expect(mockChromatogram.getClip()).andReturn(null);
     	replay(mockChromatogram);
     	byte[] actual =sut.encodeChunk(mockChromatogram);
@@ -82,7 +82,7 @@ public class TestClipChunk {
     @Test
     public void invalidLengthTooSmallShouldThrowTraceDecoderException(){
         try{
-            sut.parseData(new byte[8], (ZTRChromatogramBuilder)null);
+            sut.parseData(new byte[8], (ZtrChromatogramBuilder)null);
             fail("should throw exception if array length < 9");
         }catch(TraceDecoderException e){
             assertEquals("Invalid DefaultClip size, num of bytes = 8", e.getMessage());
@@ -91,7 +91,7 @@ public class TestClipChunk {
     @Test
     public void invalidLengthTooBigShouldThrowTraceDecoderException(){
         try{
-            sut.parseData(new byte[10], (ZTRChromatogramBuilder)null);
+            sut.parseData(new byte[10], (ZtrChromatogramBuilder)null);
             fail("should throw exception if array length > 9");
         }catch(TraceDecoderException e){
             assertEquals("Invalid DefaultClip size, num of bytes = 10", e.getMessage());
