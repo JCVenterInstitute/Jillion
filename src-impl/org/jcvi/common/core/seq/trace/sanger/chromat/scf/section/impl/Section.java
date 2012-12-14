@@ -27,7 +27,7 @@ package org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl;
 /**
  * SCF files are broken down into different Sections.
  * Each Section contains different parts of the
- * {@link SCFChromatogram} data.
+ * {@link ScfChromatogram} data.
  * @author dkatzel
  *
  *

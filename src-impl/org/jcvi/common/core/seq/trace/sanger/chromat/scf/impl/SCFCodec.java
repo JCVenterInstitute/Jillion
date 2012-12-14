@@ -29,17 +29,17 @@ import java.io.InputStream;
 
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramWriter;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFDecoderException;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfDecoderException;
 
 /**
- * <code>SCFCodec</code> is used to encode and decode {@link SCFChromatogram}s.
+ * <code>SCFCodec</code> is used to encode and decode {@link ScfChromatogram}s.
  * @author dkatzel
  *
  *
  */
 public interface SCFCodec extends ChromatogramWriter{
     
-    void parse(InputStream in, ChromatogramFileVisitor visitor) throws SCFDecoderException;
-    void parse(File scfFile, ChromatogramFileVisitor visitor) throws IOException,SCFDecoderException;
+    void parse(InputStream in, ChromatogramFileVisitor visitor) throws ScfDecoderException;
+    void parse(File scfFile, ChromatogramFileVisitor visitor) throws IOException,ScfDecoderException;
 }

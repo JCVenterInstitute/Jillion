@@ -26,7 +26,7 @@ package org.jcvi.common.core.seq.trace.sanger.chromat.scf.section;
 import java.io.IOException;
 
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.PrivateData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.PrivateDataImpl;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.EncodedSection;
@@ -43,11 +43,11 @@ public class TestPrivateDataEncoder {
     private PrivateDataImpl privateData = new PrivateDataImpl(data);
     SectionEncoder sut = new PrivateDataCodec();
     SCFHeader mockHeader;
-    SCFChromatogram c;
+    ScfChromatogram c;
     @Before
     public void setup(){
         mockHeader = createMock(SCFHeader.class);
-        c = createMock(SCFChromatogram.class);
+        c = createMock(ScfChromatogram.class);
     }
     @Test
     public void valid() throws IOException{

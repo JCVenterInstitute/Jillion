@@ -26,7 +26,7 @@ package org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl;
 import java.io.DataInputStream;
 
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.DefaultSCFHeader;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
 /**
@@ -39,7 +39,7 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
 public interface SectionDecoder {
     /**
      * Decode a {@link Section} of the SCF Data Stream, will set any Section specific
-     * data in the given {@link DefaultSCFHeader} and {@link SCFChromatogram}.
+     * data in the given {@link DefaultSCFHeader} and {@link ScfChromatogram}.
      * @param in SCF Data Stream.
      * @param currentOffset the current offset into the SCF DataStream.
      * @param header the {@link DefaultSCFHeader} that explains where the Section data is for this
@@ -48,11 +48,11 @@ public interface SectionDecoder {
      * @return the new currentOffset after decoding of this {@link Section} is complete.
      * @throws SectionDecoderException if there are any problems decoding this {@link Section}.
      */
-    long decode(DataInputStream in, long currentOffset,SCFHeader header, SCFChromatogramBuilder c) throws SectionDecoderException;
+    long decode(DataInputStream in, long currentOffset,SCFHeader header, ScfChromatogramBuilder c) throws SectionDecoderException;
 
     /**
      * Decode a {@link Section} of the SCF Data Stream, will set any Section specific
-     * data in the given {@link DefaultSCFHeader} and {@link SCFChromatogram}.
+     * data in the given {@link DefaultSCFHeader} and {@link ScfChromatogram}.
      * @param in SCF Data Stream.
      * @param currentOffset the current offset into the SCF DataStream.
      * @param header the {@link DefaultSCFHeader} that explains where the Section data is for this

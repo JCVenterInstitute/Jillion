@@ -30,7 +30,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFChromatogramImpl;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFCodec;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFCodecs;
@@ -49,10 +49,10 @@ public class TestConvertZtr2Scf {
         Chromatogram decodedZTR = ZTRChromatogramFile.create(
                 RESOURCES.getFile("ztr/files/GBKAK82TF.ztr"));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        scfCodec.write(new SCFChromatogramBuilder(decodedZTR).build(), out);
+        scfCodec.write(new ScfChromatogramBuilder(decodedZTR).build(), out);
 
         
-        Chromatogram encodedScf = new SCFChromatogramBuilder("id", new ByteArrayInputStream(out.toByteArray()))
+        Chromatogram encodedScf = new ScfChromatogramBuilder("id", new ByteArrayInputStream(out.toByteArray()))
 								.build();
 
         assertEquals(decodedZTR, encodedScf);
@@ -60,7 +60,7 @@ public class TestConvertZtr2Scf {
     
     @Test
     public void scfequalsZtr() throws TraceDecoderException, IOException{
-        Chromatogram decodedScf = new SCFChromatogramBuilder("id", RESOURCES.getFile("scf/files/GBKAK82TF.scf"))
+        Chromatogram decodedScf = new ScfChromatogramBuilder("id", RESOURCES.getFile("scf/files/GBKAK82TF.scf"))
         							.build();
         Chromatogram decodedZTR = ZTRChromatogramFile.create(
                 RESOURCES.getFile("ztr/files/GBKAK82TF.ztr"));
@@ -80,7 +80,7 @@ public class TestConvertZtr2Scf {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         scfCodec.write(new SCFChromatogramImpl(ztr), out);
         
-        Chromatogram encodedScf = new SCFChromatogramBuilder("id", new ByteArrayInputStream(out.toByteArray()))
+        Chromatogram encodedScf = new ScfChromatogramBuilder("id", new ByteArrayInputStream(out.toByteArray()))
 										.build();
         
         int numberOfBases = (int)encodedScf.getNucleotideSequence().getLength();

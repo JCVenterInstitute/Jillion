@@ -32,7 +32,7 @@ import org.jcvi.common.core.seq.trace.TraceDecoderException;
  *
  *
  */
-public class SCFDecoderException extends TraceDecoderException {
+public class ScfDecoderException extends TraceDecoderException {
 
     /**
      *
@@ -43,14 +43,14 @@ public class SCFDecoderException extends TraceDecoderException {
      * @param message
      * @param cause
      */
-    public SCFDecoderException(String message, Throwable cause) {
+    public ScfDecoderException(String message, Throwable cause) {
         super(message, cause);
     }
 
     /**
      * @param message
      */
-    public SCFDecoderException(String message) {
+    public ScfDecoderException(String message) {
         super(message);
     }
 

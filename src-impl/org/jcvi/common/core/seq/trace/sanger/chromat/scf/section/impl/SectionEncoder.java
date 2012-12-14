@@ -25,10 +25,10 @@ package org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl;
 
 import java.io.IOException;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
 
 public interface SectionEncoder {
 
-    EncodedSection encode(SCFChromatogram c, SCFHeader header) throws IOException;
+    EncodedSection encode(ScfChromatogram c, SCFHeader header) throws IOException;
 }

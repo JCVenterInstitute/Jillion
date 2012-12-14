@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFile;
 import org.jcvi.common.core.seq.trace.sanger.phd.SinglePhdFile;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -51,7 +51,7 @@ public class TestSangerTraceParser {
     @Test
     public void parseSCF_v3() throws TraceDecoderException, IOException{
         SangerTrace actual =sut.decode("GBKAK82TF.scf",RESOURCES.getFileAsStream(SCF3_FILE));
-        SangerTrace expected = new SCFChromatogramBuilder("GBKAK82TF.scf", RESOURCES.getFile(SCF3_FILE))
+        SangerTrace expected = new ScfChromatogramBuilder("GBKAK82TF.scf", RESOURCES.getFile(SCF3_FILE))
 									.build();
         assertEquals(expected, actual);
     }

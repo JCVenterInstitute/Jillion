@@ -42,12 +42,12 @@ import org.jcvi.common.core.util.Builder;
 
 /**
  * {@code SCFChromatogramBuilder} uses the Builder pattern
- * to create a new {@link SCFChromatogram} instance.
+ * to create a new {@link ScfChromatogram} instance.
  * @author dkatzel
  *
  *
  */
-public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
+public final class ScfChromatogramBuilder implements Builder<ScfChromatogram>{
 
     
     private QualitySequence substitutionConfidence;
@@ -60,7 +60,7 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
     /**
      * Create a new ScfChromatogramBuilder instance with
      * all fields except for the id unset.  In order
-     * to successfully build a valid {@link SCFChromatogram}
+     * to successfully build a valid {@link ScfChromatogram}
      * object please use
      * the various setter methods
      * in this class to set everything
@@ -69,7 +69,7 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
      * can not be null.
      * @throws NullPointerException if either field is null.
      */
-    public SCFChromatogramBuilder(String id){
+    public ScfChromatogramBuilder(String id){
         basicBuilder = new BasicChromatogramBuilder(id);
     }
     /**
@@ -84,10 +84,10 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
      * the given file is not a valid scf encoded file.
      * @throws NullPointerException if either field is null.
      */
-    public SCFChromatogramBuilder(String id, File scfFile) throws IOException{
+    public ScfChromatogramBuilder(String id, File scfFile) throws IOException{
 		this(id);
 		SCFChromatogramFileBuilderVisitor visitor = new SCFChromatogramFileBuilderVisitor(this);
-	    SCFChromatogramFileParser.parse(scfFile, visitor);       
+	    ScfChromatogramFileParser.parse(scfFile, visitor);       
     }
     /**
      * Create a new ScfChromatogramBuilder instance
@@ -104,10 +104,10 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
      * if the {@link InputStream} does not contain valid scf encoded data.
      * @throws NullPointerException if either field is null.
      */
-    public SCFChromatogramBuilder(String id, InputStream scfInputStream) throws IOException{
+    public ScfChromatogramBuilder(String id, InputStream scfInputStream) throws IOException{
 		this(id);
 		SCFChromatogramFileBuilderVisitor visitor = new SCFChromatogramFileBuilderVisitor(this);
-	    SCFChromatogramFileParser.parse(scfInputStream, visitor);       
+	    ScfChromatogramFileParser.parse(scfInputStream, visitor);       
     }
     /**
      * Create a new instance of ScfChromatogramBuilder
@@ -121,21 +121,21 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
      * new Builder; can not be null;
      * @throws NullPointerException if copy is null.
      */
-    public SCFChromatogramBuilder(Chromatogram copy){
+    public ScfChromatogramBuilder(Chromatogram copy){
        basicBuilder = new BasicChromatogramBuilder(copy);        
     }
     /**
      * Create a new instance of ScfChromatogramBuilder
-     * using the given {@link SCFChromatogram} instance 
+     * using the given {@link ScfChromatogram} instance 
      * to set all the initial fields. All the fields 
-     * in the {@link SCFChromatogram} interface including
+     * in the {@link ScfChromatogram} interface including
      * scf specific fields will be copied.
-     * @param copy a {@link SCFChromatogram} object
+     * @param copy a {@link ScfChromatogram} object
      * whose fields are used as the initial values of this
      * new Builder; can not be null;
      * @throws NullPointerException if copy is null.
      */
-    public SCFChromatogramBuilder(SCFChromatogram copy){
+    public ScfChromatogramBuilder(ScfChromatogram copy){
         this((Chromatogram)copy);
         this.substitutionConfidence =copy.getSubstitutionConfidence();
         this.deletionConfidence =copy.getDeletionConfidence();
@@ -152,7 +152,7 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
     /**
      * @param substitutionConfidence the substitutionConfidence to set
      */
-    public SCFChromatogramBuilder substitutionConfidence(byte[] substitutionConfidence) {
+    public ScfChromatogramBuilder substitutionConfidence(byte[] substitutionConfidence) {
         this.substitutionConfidence = substitutionConfidence ==null
         		? null
         		: new QualitySequenceBuilder(substitutionConfidence).build();
@@ -169,7 +169,7 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
     /**
      * @param insertionConfidence the insertionConfidence to set
      */
-    public SCFChromatogramBuilder insertionConfidence(byte[] insertionConfidence) {
+    public ScfChromatogramBuilder insertionConfidence(byte[] insertionConfidence) {
         this.insertionConfidence = insertionConfidence ==null
         		? null
         	:  	new QualitySequenceBuilder(insertionConfidence).build();
@@ -186,7 +186,7 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
     /**
      * @param deletionConfidence the deletionConfidence to set
      */
-    public SCFChromatogramBuilder deletionConfidence(byte[] deletionConfidence) {
+    public ScfChromatogramBuilder deletionConfidence(byte[] deletionConfidence) {
         this.deletionConfidence = deletionConfidence ==null?null:
         	new QualitySequenceBuilder(deletionConfidence).build();
         
@@ -203,12 +203,12 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
     /**
      * @param privateData the privateData to set
      */
-    public SCFChromatogramBuilder privateData(byte[] privateData) {
+    public ScfChromatogramBuilder privateData(byte[] privateData) {
         this.privateData = privateData==null? null:Arrays.copyOf(privateData, privateData.length);
         return this;
     }
 
-    public SCFChromatogram build() {
+    public ScfChromatogram build() {
         Chromatogram basicChromo = basicBuilder.build();
         return new SCFChromatogramImpl(basicChromo,
                 substitutionConfidence(),
@@ -228,7 +228,7 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
         return basicBuilder.peaks();
     }
 
-    public SCFChromatogramBuilder peaks(short[] peaks) {
+    public ScfChromatogramBuilder peaks(short[] peaks) {
         basicBuilder.peaks(new PositionSequenceBuilder(peaks).build());
         return this;
     }
@@ -237,7 +237,7 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
         return basicBuilder.basecalls();
     }
 
-    public SCFChromatogramBuilder basecalls(NucleotideSequence basecalls) {
+    public ScfChromatogramBuilder basecalls(NucleotideSequence basecalls) {
         basicBuilder.basecalls(basecalls);
         return this;
     }
@@ -246,7 +246,7 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
         return basicBuilder.aConfidence();
     }
 
-    public final SCFChromatogramBuilder aConfidence(byte[] confidence) {
+    public final ScfChromatogramBuilder aConfidence(byte[] confidence) {
         basicBuilder.aConfidence(confidence);
         return this;
     }
@@ -255,7 +255,7 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
         return basicBuilder.cConfidence();
     }
 
-    public final SCFChromatogramBuilder cConfidence(byte[] confidence) {
+    public final ScfChromatogramBuilder cConfidence(byte[] confidence) {
         basicBuilder.cConfidence(confidence);
         return this;
     }
@@ -264,7 +264,7 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
         return basicBuilder.gConfidence();
     }
 
-    public final SCFChromatogramBuilder gConfidence(byte[] confidence) {
+    public final ScfChromatogramBuilder gConfidence(byte[] confidence) {
         basicBuilder.gConfidence(confidence);
         return this;
     }
@@ -273,7 +273,7 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
         return basicBuilder.tConfidence();
     }
 
-    public final SCFChromatogramBuilder tConfidence(byte[] confidence) {
+    public final ScfChromatogramBuilder tConfidence(byte[] confidence) {
         basicBuilder.tConfidence(confidence);
         return this;
     }
@@ -282,7 +282,7 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
         return basicBuilder.aPositions();
     }
 
-    public final SCFChromatogramBuilder aPositions(short[] positions) {
+    public final ScfChromatogramBuilder aPositions(short[] positions) {
         basicBuilder.aPositions(positions);
         return this;
     }
@@ -291,7 +291,7 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
         return basicBuilder.cPositions();
     }
 
-    public final SCFChromatogramBuilder cPositions(short[] positions) {
+    public final ScfChromatogramBuilder cPositions(short[] positions) {
         basicBuilder.cPositions(positions);
         return this;
     }
@@ -300,7 +300,7 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
         return basicBuilder.gPositions();
     }
 
-    public final SCFChromatogramBuilder gPositions(short[] positions) {
+    public final ScfChromatogramBuilder gPositions(short[] positions) {
         basicBuilder.gPositions(positions);
         return this;
     }
@@ -309,7 +309,7 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
         return basicBuilder.tPositions();
     }
 
-    public final SCFChromatogramBuilder tPositions(short[] positions) {
+    public final ScfChromatogramBuilder tPositions(short[] positions) {
         basicBuilder.tPositions(positions);
         return this;
     }
@@ -318,23 +318,23 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
         return basicBuilder.properties();
     }
 
-    public final SCFChromatogramBuilder properties(Map<String,String> properties) {
+    public final ScfChromatogramBuilder properties(Map<String,String> properties) {
         basicBuilder.properties(properties);
         return this;
     }
 
     /**
      * {@code SCFChromatogramFileBuilderVisitor} is a helper class
-     * that wraps a {@link SCFChromatogramBuilder} by a {@link SCFChromatogramFileVisitor}.
+     * that wraps a {@link ScfChromatogramBuilder} by a {@link ScfChromatogramFileVisitor}.
      * This way when a part of the SCF is visited, its corresponding objects get built 
      * by the builder.
      * @author dkatzel
      *
      *
      */
-    private static final class SCFChromatogramFileBuilderVisitor implements SCFChromatogramFileVisitor{
-        private final SCFChromatogramBuilder builder;
-        private SCFChromatogramFileBuilderVisitor(SCFChromatogramBuilder builder){
+    private static final class SCFChromatogramFileBuilderVisitor implements ScfChromatogramFileVisitor{
+        private final ScfChromatogramBuilder builder;
+        private SCFChromatogramFileBuilderVisitor(ScfChromatogramBuilder builder){
         	this.builder = builder;
         }
         

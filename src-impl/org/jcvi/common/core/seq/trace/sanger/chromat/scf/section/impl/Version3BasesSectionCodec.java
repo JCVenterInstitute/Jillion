@@ -33,9 +33,9 @@ import org.jcvi.common.core.seq.trace.sanger.Position;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramFileVisitor;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramFileVisitor;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
@@ -45,7 +45,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
 
     @Override
-    protected void readBasesData(DataInputStream in, SCFChromatogramBuilder c,
+    protected void readBasesData(DataInputStream in, ScfChromatogramBuilder c,
             int numberOfBases) throws IOException {
         c.peaks( parsePeaks(in, numberOfBases));
         setConfidences(c, parseConfidenceData(in, numberOfBases));
@@ -72,8 +72,8 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
          visitor.visitTConfidence(confidences[3]);
          visitor.visitBasecalls(parseBasecalls(in, numberOfBases));
          
-         if(visitor instanceof SCFChromatogramFileVisitor){
-             SCFChromatogramFileVisitor scfVisitor = (SCFChromatogramFileVisitor) visitor;
+         if(visitor instanceof ScfChromatogramFileVisitor){
+             ScfChromatogramFileVisitor scfVisitor = (ScfChromatogramFileVisitor) visitor;
              scfVisitor.visitSubstitutionConfidence(parseSpareConfidence(in, numberOfBases).array());
              scfVisitor.visitInsertionConfidence(parseSpareConfidence(in, numberOfBases).array());
              scfVisitor.visitDeletionConfidence(parseSpareConfidence(in, numberOfBases).array());
@@ -139,7 +139,7 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
     }
 
     @Override
-    protected void writeBasesDataToBuffer(ByteBuffer buffer, SCFChromatogram c,
+    protected void writeBasesDataToBuffer(ByteBuffer buffer, ScfChromatogram c,
             int numberOfBases) {
         final ChannelGroup channelGroup = c.getChannelGroup();
         bulkPutPeaks(buffer, c.getPositionSequence());

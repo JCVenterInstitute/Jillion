@@ -27,20 +27,20 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
 
 public class NullSectionCodec implements SectionCodec{
 
     @Override
     public long decode(DataInputStream in, long currentOffset, SCFHeader header,
-            SCFChromatogramBuilder c) throws SectionDecoderException {
+            ScfChromatogramBuilder c) throws SectionDecoderException {
         return currentOffset;
     }
 
     @Override
-    public EncodedSection encode(SCFChromatogram c, SCFHeader header)
+    public EncodedSection encode(ScfChromatogram c, SCFHeader header)
             throws IOException {
         // TODO Auto-generated method stub
         return null;

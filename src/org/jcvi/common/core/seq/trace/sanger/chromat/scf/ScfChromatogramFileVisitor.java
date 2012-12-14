@@ -22,13 +22,13 @@ package org.jcvi.common.core.seq.trace.sanger.chromat.scf;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
 
 /**
- * {@code SCFChromatogramFileVisitor} is a {@link ChromatogramFileVisitor}
+ * {@code ScfChromatogramFileVisitor} is a {@link ChromatogramFileVisitor}
  * that has additional visitXXX methods for SCF specific fields.
  * @author dkatzel
  *
  *
  */
-public interface SCFChromatogramFileVisitor extends ChromatogramFileVisitor{
+public interface ScfChromatogramFileVisitor extends ChromatogramFileVisitor{
     /**
      * Visit the private data section of an SCF chromatogram 
      * file.

@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFChromatogramImpl;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.CommentSectionCodec;
@@ -38,7 +38,7 @@ import org.junit.Before;
 public class AbstractTestCommentSection {
     CommentSectionCodec sut = new CommentSectionCodec();
     SCFHeader mockHeader;
-    SCFChromatogramBuilder chromaStruct;
+    ScfChromatogramBuilder chromaStruct;
     SCFChromatogramImpl mockChroma;
     int currentOffset = 0;
     Map<String,String> expectedComments;
@@ -46,7 +46,7 @@ public class AbstractTestCommentSection {
     @Before
     public void setup(){
         mockHeader = createMock(SCFHeader.class);
-        chromaStruct = new SCFChromatogramBuilder(id);
+        chromaStruct = new ScfChromatogramBuilder(id);
         mockChroma = createMock(SCFChromatogramImpl.class);
         expectedComments = new HashMap<String,String>();
         expectedComments.put("key","value");

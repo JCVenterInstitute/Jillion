@@ -26,11 +26,11 @@ package org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl;
 import org.jcvi.common.core.seq.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.PrivateData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.util.ObjectsUtil;
 
-public class SCFChromatogramImpl extends BasicChromatogram implements SCFChromatogram {
+public class SCFChromatogramImpl extends BasicChromatogram implements ScfChromatogram {
 
     private PrivateData privateData;
 
@@ -111,10 +111,10 @@ public class SCFChromatogramImpl extends BasicChromatogram implements SCFChromat
         if (!super.equals(obj)){
             return false;
         }
-        if (!(obj instanceof SCFChromatogram)){
+        if (!(obj instanceof ScfChromatogram)){
             return false;
         }
-        final SCFChromatogram other = (SCFChromatogram) obj;
+        final ScfChromatogram other = (ScfChromatogram) obj;
         return ObjectsUtil.nullSafeEquals(getDeletionConfidence(), other.getDeletionConfidence())
             && ObjectsUtil.nullSafeEquals(getInsertionConfidence(), other.getInsertionConfidence())
             && ObjectsUtil.nullSafeEquals(getSubstitutionConfidence(), other.getSubstitutionConfidence())

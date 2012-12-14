@@ -32,9 +32,9 @@ import java.util.Iterator;
 import org.jcvi.common.core.seq.trace.sanger.Position;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramFileVisitor;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramFileVisitor;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -44,7 +44,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
 
     @Override
-    protected void readBasesData(DataInputStream in, SCFChromatogramBuilder c,
+    protected void readBasesData(DataInputStream in, ScfChromatogramBuilder c,
             int numberOfBases) throws IOException {
         ShortBuffer peaks = ShortBuffer.allocate(numberOfBases);
         byte[][] probability = new byte[4][numberOfBases];
@@ -89,7 +89,7 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
 
 
 
-    protected void writeBasesDataToBuffer(ByteBuffer buffer, SCFChromatogram c, int numberOfBases) {
+    protected void writeBasesDataToBuffer(ByteBuffer buffer, ScfChromatogram c, int numberOfBases) {
         
      
         Iterator<Position> peaks = c.getPositionSequence().iterator();
@@ -177,8 +177,8 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
 
         visitor.visitPeaks(peaks.array());
         visitor.visitBasecalls(bases.build());
-        if(visitor instanceof SCFChromatogramFileVisitor){
-            SCFChromatogramFileVisitor scfVisitor = (SCFChromatogramFileVisitor) visitor;
+        if(visitor instanceof ScfChromatogramFileVisitor){
+            ScfChromatogramFileVisitor scfVisitor = (ScfChromatogramFileVisitor) visitor;
             scfVisitor.visitSubstitutionConfidence(substitutionConfidence.array());
             scfVisitor.visitInsertionConfidence(insertionConfidence.array());
             scfVisitor.visitDeletionConfidence(deletionConfidence.array());

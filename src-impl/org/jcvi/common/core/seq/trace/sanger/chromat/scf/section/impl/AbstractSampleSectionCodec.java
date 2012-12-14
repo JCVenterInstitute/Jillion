@@ -34,8 +34,8 @@ import org.jcvi.common.core.seq.trace.sanger.Position;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.pos.impl.PositionStrategy;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.pos.impl.PositionStrategyFactory;
@@ -44,7 +44,7 @@ public abstract class AbstractSampleSectionCodec implements SectionCodec{
 
     @Override
     public long decode(DataInputStream in, long currentOffset, SCFHeader header,
-            SCFChromatogramBuilder c) throws SectionDecoderException {
+            ScfChromatogramBuilder c) throws SectionDecoderException {
         int numberOfSamples = header.getNumberOfSamples();
         PositionStrategy positionStrategy = PositionStrategyFactory.getPositionStrategy(header);
         long bytesToSkip = Math.max(0, header.getSampleOffset() - currentOffset);
@@ -98,7 +98,7 @@ public abstract class AbstractSampleSectionCodec implements SectionCodec{
     protected abstract void extractActualPositions(PositionStrategy positionStrategy,
             short[][] positions) ;
 
-    private void setPositions(SCFChromatogramBuilder c, short[][] positions) {
+    private void setPositions(ScfChromatogramBuilder c, short[][] positions) {
         c.aPositions(positions[0])
         .cPositions(positions[1])
         .gPositions(positions[2])
@@ -109,11 +109,11 @@ public abstract class AbstractSampleSectionCodec implements SectionCodec{
             int numberOfSamples, PositionStrategy positionStrategy)
             throws IOException ;
 
-    protected PositionStrategy getPositionStrategyFor(SCFChromatogram c){
+    protected PositionStrategy getPositionStrategyFor(ScfChromatogram c){
         return PositionStrategyFactory.getPositionStrategy(getMaxPositionsValue(c));
     }
 
-    private int getMaxPositionsValue(SCFChromatogram c) {
+    private int getMaxPositionsValue(ScfChromatogram c) {
        ChannelGroup group= c.getChannelGroup();
         PositionSequence aPositions =group.getAChannel().getPositions();
         PositionSequence cPositions =group.getCChannel().getPositions();
@@ -140,7 +140,7 @@ public abstract class AbstractSampleSectionCodec implements SectionCodec{
    
 
     @Override
-    public EncodedSection encode(SCFChromatogram c, SCFHeader header)
+    public EncodedSection encode(ScfChromatogram c, SCFHeader header)
             throws IOException {
 
         PositionStrategy positionStrategy =getPositionStrategyFor(c);

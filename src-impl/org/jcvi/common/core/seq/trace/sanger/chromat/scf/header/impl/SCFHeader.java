@@ -27,7 +27,7 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.Section;
 
 /**
  * An SCF Header  describes the location and
- * size of the different {@link Section}s of an {@link SCFChromatogram}.
+ * size of the different {@link Section}s of an {@link ScfChromatogram}.
  * @author dkatzel
  *
  *
