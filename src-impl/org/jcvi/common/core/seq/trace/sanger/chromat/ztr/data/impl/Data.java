@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data;
+package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.TraceEncoderException;

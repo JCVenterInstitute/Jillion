@@ -21,13 +21,13 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk;
+package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl;
 
 import java.io.InputStream;
 
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.Chunk;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.ChunkException;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl.Chunk;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl.ChunkException;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

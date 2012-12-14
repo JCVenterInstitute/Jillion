@@ -24,6 +24,13 @@
 package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DataFactory;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DeltaEncodedData;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.FollowData;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.RawData;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.RunLengthEncodedData;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.ShrinkToEightBitData;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.ZLibData;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDataFactory {

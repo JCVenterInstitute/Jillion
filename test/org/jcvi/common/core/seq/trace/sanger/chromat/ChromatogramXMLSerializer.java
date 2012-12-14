@@ -49,7 +49,7 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.DefaultChannelGroup;
 import org.jcvi.common.core.seq.trace.sanger.chromat.EncodedShortData;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFChromatogramImpl;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramImpl;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl.ZTRChromatogramImpl;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;

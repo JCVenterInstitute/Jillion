@@ -35,7 +35,7 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.DefaultAbiChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFUtils;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFile;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRUtil;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl.ZTRUtil;
 import org.jcvi.common.core.seq.trace.sanger.phd.SinglePhdFile;
 /**
  * {@code SangerTraceParser} is a SangerTraceCodec singleton

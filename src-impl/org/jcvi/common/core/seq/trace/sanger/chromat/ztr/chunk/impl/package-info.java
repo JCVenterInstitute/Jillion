@@ -20,9 +20,9 @@
  * The chunk package implements all the possible Chunk formats in the 
  * ZTR 1.2 specification.
  * Each Chunk has a type which contains the data of a certain member of a 
- * {@link org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramImpl}.
+ * {@link org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl.ZTRChromatogramImpl}.
  *
  *@author dkatzel
  *@see <a href="http://staden.sourceforge.net/ztr.html">ZTR SPEC v1.2</a>
  */
-package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk;
+package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl;

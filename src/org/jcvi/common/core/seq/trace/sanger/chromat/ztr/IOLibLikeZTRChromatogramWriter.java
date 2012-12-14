@@ -24,15 +24,15 @@ import java.io.OutputStream;
 import org.jcvi.common.core.seq.trace.TraceEncoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.DefaultZTRChromatogramWriter.DefaultZTRChromatogramWriterBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.DeltaEncodedData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.ShrinkToEightBitData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.DeltaEncodedData.Level;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DeltaEncodedData;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DeltaEncodedData.Level;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.ShrinkToEightBitData;
 /**
  * {@code IOLibLikeZTRChromatogramWriter} is a {@link ZTRChromatogramWriter}
  * implementation that performs the same encoding operations in the same order
  * as the staden IO_Lib C module.  Experiments have shown that 
  *  IOLibLikeZTRChromatogramWriter
- * will encode valid ZTR files that have about a 5% larger filesize.
+ * will encode valid ZTR files that have about a 5% larger file size.
  * This is probably due to the standard Java implementation of zip does not allow
  * changing the "windowbits" size which could result in better
  * compression.

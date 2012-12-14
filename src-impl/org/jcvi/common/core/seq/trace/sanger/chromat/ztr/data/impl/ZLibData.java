@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data;
+package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl;
 
 
 import java.nio.ByteBuffer;
@@ -33,7 +33,7 @@ import java.util.zip.DataFormatException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.TraceEncoderException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRUtil;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl.ZTRUtil;
 
 /**
  * <code>ZLibData</code> is the {@link Data} implementation

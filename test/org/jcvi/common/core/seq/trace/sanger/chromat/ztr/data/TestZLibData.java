@@ -30,6 +30,7 @@ import java.util.zip.Deflater;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.TraceEncoderException;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.ZLibData;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk;
+package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl;
 
 import java.util.HashMap;
 import java.util.Map;

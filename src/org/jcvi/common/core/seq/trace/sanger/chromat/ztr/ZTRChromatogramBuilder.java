@@ -31,6 +31,7 @@ import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.BasicChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl.ZTRChromatogramImpl;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 

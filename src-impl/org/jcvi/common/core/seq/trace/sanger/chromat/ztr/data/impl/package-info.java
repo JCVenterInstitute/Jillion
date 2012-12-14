@@ -28,4 +28,4 @@
  *@author dkatzel
  *@see <a href="http://staden.sourceforge.net/ztr.html">ZTR SPEC v1.2</a>
  */
-package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data;
+package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl;

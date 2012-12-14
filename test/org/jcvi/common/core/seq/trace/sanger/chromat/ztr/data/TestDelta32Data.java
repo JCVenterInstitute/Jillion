@@ -26,6 +26,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.Arrays;
 
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DeltaEncodedData;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDelta32Data {

@@ -21,11 +21,12 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.trace.sanger.chromat.ztr;
+package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogram;
 
 public class ZTRChromatogramImpl extends BasicChromatogram implements ZTRChromatogram{
 
