@@ -25,7 +25,7 @@ package org.jcvi.common.core.seq.read.trace.pyro;
 
 
 import org.jcvi.common.core.Range;
-import org.jcvi.common.core.seq.read.trace.Trace;
+import org.jcvi.common.core.seq.trace.Trace;
 /**
  * A {@code Flowgram} is a next-generation trace
  * created using pyrosequencing.

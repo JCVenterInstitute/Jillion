@@ -15,7 +15,7 @@ import java.io.Writer;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
+import org.jcvi.common.core.seq.trace.sanger.phd.PhdDataStore;
 /**
  * {@code AceFileWriterBuilder} 
  * is a builder

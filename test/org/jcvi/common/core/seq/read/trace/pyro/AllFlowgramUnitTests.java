@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.read.trace.pyro;
 
-import org.jcvi.common.core.seq.read.trace.pyro.sff.AllSFFUnitTests;
+import org.jcvi.common.core.seq.trace.sff.AllSFFUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

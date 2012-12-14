@@ -24,7 +24,7 @@
 package org.jcvi.common.core.seq.read.trace.pyro;
 
 import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.seq.read.trace.TraceDataStore;
+import org.jcvi.common.core.seq.trace.TraceDataStore;
 /**
  * Marker interface for a {@link DataStore} of 
  * {@link Flowgram}s.
