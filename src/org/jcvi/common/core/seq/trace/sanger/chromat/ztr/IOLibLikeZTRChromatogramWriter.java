@@ -23,10 +23,10 @@ import java.io.OutputStream;
 
 import org.jcvi.common.core.seq.trace.TraceEncoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.DefaultZTRChromatogramWriter.DefaultZTRChromatogramWriterBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DeltaEncodedData;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DeltaEncodedData.Level;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.ShrinkToEightBitData;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl.DefaultZTRChromatogramWriterBuilder;
 /**
  * {@code IOLibLikeZTRChromatogramWriter} is a {@link ZTRChromatogramWriter}
  * implementation that performs the same encoding operations in the same order
@@ -35,7 +35,9 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.ShrinkToEight
  * will encode valid ZTR files that have about a 5% larger file size.
  * This is probably due to the standard Java implementation of zip does not allow
  * changing the "windowbits" size which could result in better
- * compression.
+ * compression.  Adding a 3rd party library that allows more configuration
+ * of encoding zipped data might enable smaller output file sizes
+ * but that would cause an unnecessary dependency.
  * @author dkatzel
  *
  */
@@ -46,16 +48,14 @@ public enum IOLibLikeZTRChromatogramWriter implements ZTRChromatogramWriter{
 	INSTANCE;
 	/**
 	 * This is the guard value that IO_Lib uses for run length
-	 * encoding its confidence values, I guess
-	 * it assumes no traces will ever
-	 * get a quality value of 77.
+	 * encoding its confidence values.
 	 */
 	public static final byte IO_LIB_CONFIDENCE_RUN_LENGTH_GUARD_VALUE = (byte)77;
 	private final ZTRChromatogramWriter writer;
 	
 	{
 		//these are the same encoders with the same parameters
-		//with in the same order as the stadden IO_Lib C library's
+		//in the same order as the staden IO_Lib C library's
 		//ZTR 1.2 writer.
 		DefaultZTRChromatogramWriterBuilder builder = new DefaultZTRChromatogramWriterBuilder();
 		builder.forBasecallChunkEncoder()

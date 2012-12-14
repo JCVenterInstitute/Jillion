@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.seq.trace.sanger.chromat.ztr;
+package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -28,89 +28,132 @@ import java.util.List;
 
 import org.jcvi.common.core.seq.trace.TraceEncoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramWriter;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl.Chunk;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl.ChunkType;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.Data;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DeltaEncodedData;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DeltaEncodedData.Level;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.FollowData;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.RunLengthEncodedData;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.ShrinkToEightBitData;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.ZLibData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DeltaEncodedData.Level;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl.ZTRUtil;
 import org.jcvi.common.core.util.Builder;
 
+
 /**
- * {@code DefaultZTRChromatogramWriter} is an implementation
- * of ZTRChromatogramWriter.  Use {@link DefaultZTRChromatogramWriterBuilder}
- * to customize the encoding options.
+ * {@code DefaultZTRChromatogramWriterBuilder} is a Builder for
+ * {@link ZTRChromatogramWriter}s that allows total control
+ * over what encoders are used in which order for every different
+ * field in a {@link ZTRChromatogram}.
+ * 
+ * <p/>
+ * For example: here is how to build a ZTRChromatogramWriter
+ * that encodes the same as the staden IO_Lib module:
+ * <pre/> 
+ 	DefaultZTRChromatogramWriterBuilder builder = new DefaultZTRChromatogramWriterBuilder();
+	builder.forBasecallChunkEncoder()
+    			.addEncoder(ZLibData.INSTANCE);
+	builder.forPositionsChunkEncoder()
+		.addDeltaEncoder(DeltaEncodedData.SHORT, Level.DELTA_LEVEL_3)
+		.addEncoder(ShrinkToEightBitData.SHORT_TO_BYTE)
+		.addEncoder(FollowData.INSTANCE)
+		.addRunLengthEncoder()
+		.addEncoder(ZLibData.INSTANCE);
+	builder.forConfidenceChunkEncoder()
+		.addDeltaEncoder(DeltaEncodedData.BYTE, Level.DELTA_LEVEL_1)
+		.addRunLengthEncoder((byte)77)
+		.addEncoder(ZLibData.INSTANCE);
+	builder.forPeaksChunkEncoder()
+		.addDeltaEncoder(DeltaEncodedData.INTEGER, Level.DELTA_LEVEL_1)
+		.addEncoder(ShrinkToEightBitData.INTEGER_TO_BYTE)
+		.addEncoder(ZLibData.INSTANCE);
+	builder.forCommentsChunkEncoder()
+		.addEncoder(ZLibData.INSTANCE);
+		
+	ZTRChromatogramWriter writer = builder.build();
+	<pre/>
+ * <p/>
  * @author dkatzel
- * @see <a href="http://staden.sourceforge.net/ztr.html">ZTR 1.2 Spec</a>
+ *
  */
-public final class DefaultZTRChromatogramWriter implements ZTRChromatogramWriter{
-	
+public final class DefaultZTRChromatogramWriterBuilder implements Builder<ZTRChromatogramWriter>{
+
+	private final ChunkEncoderBuilder basecallEncoder = new ChunkEncoderBuilder(Chunk.BASE, ChunkType.BASECALLS);
+	private final ChunkEncoderBuilder positionsEncoder= new ChunkEncoderBuilder(Chunk.SMP4, ChunkType.SAMPLES);
+	private final ChunkEncoderBuilder confidenceEncoder= new ChunkEncoderBuilder(Chunk.CONFIDENCES, ChunkType.CONFIDENCE);
+	private final ChunkEncoderBuilder commentsEncoder= new ChunkEncoderBuilder(Chunk.COMMENTS, ChunkType.COMMENTS);
+	private final ChunkEncoderBuilder clipEncoder= new ChunkEncoderBuilder(Chunk.CLIP, ChunkType.CLIP);
+	private final ChunkEncoderBuilder peaksEncoder= new ChunkEncoderBuilder(Chunk.POSITIONS, ChunkType.POSITIONS);
 	/**
-	 * Specifies that this is chromatogram
-	 * is encoded using ZTR 1.2 spec.
+	 * Get the {@link ChunkEncoderBuilder} for the basecalls
+	 * chunk.  
+	 * @return a {@link ChunkEncoderBuilder} for the basecalls
+	 * chunk of the ZTR.
 	 */
-	private static final byte[] ZTR_VERSION =new byte[]{1,2};
-	private final ChunkEncoder basecallEncoder;
-	private final ChunkEncoder peaksEncoder;
-	private final ChunkEncoder positionsEncoder;
-	private final ChunkEncoder confidenceEncoder;
-	private final ChunkEncoder commentsEncoder;
-	private final ChunkEncoder clipEncoder;
-	
-	
-	private DefaultZTRChromatogramWriter(ChunkEncoder basecallEncoder,
-			ChunkEncoder positionsEncoder, ChunkEncoder confidenceEncoder,
-			ChunkEncoder commentsEncoder, ChunkEncoder clipEncoder, ChunkEncoder peaksEncoder) {
-		this.basecallEncoder = basecallEncoder;
-		this.positionsEncoder = positionsEncoder;
-		this.confidenceEncoder = confidenceEncoder;
-		this.commentsEncoder = commentsEncoder;
-		this.clipEncoder = clipEncoder;
-		this.peaksEncoder = peaksEncoder;
+	public ChunkEncoderBuilder forBasecallChunkEncoder(){
+		return basecallEncoder;
 	}
 	/**
-	 * Encode the given chromatogram and write it
-	 * to the given outputStream.  The stream
-	 * WILL NOT be closed when this method completes.
-	 * @param chromatogram the ZTR chromatogram to 
-	 * encode and write; may not be null.
-	 * @param out the OutputStream to write the encoded
-	 * ZTR to.
-	 * @throws TraceEncoderException if there is a problem
-	 * encoding the ZTR chromatogram.
-	 * @throws NullPointerException if chromatogram or out
-	 * are null.
+	 * Get the {@link ChunkEncoderBuilder} for the positions
+	 * chunk.  
+	 * @return a {@link ChunkEncoderBuilder} for the positions
+	 * chunk of the ZTR.
+	 */
+	public ChunkEncoderBuilder forPositionsChunkEncoder(){
+		return positionsEncoder;
+	}
+	/**
+	 * Get the {@link ChunkEncoderBuilder} for the confidence
+	 * (quality)
+	 * chunk.  
+	 * @return a {@link ChunkEncoderBuilder} for the confidence
+	 * chunk of the ZTR.
+	 */
+	public ChunkEncoderBuilder forConfidenceChunkEncoder(){
+		return confidenceEncoder;
+	}
+	/**
+	 * Get the {@link ChunkEncoderBuilder} for the comments
+	 * chunk.  
+	 * @return a {@link ChunkEncoderBuilder} for the comments
+	 * chunk of the ZTR.
+	 */
+	public ChunkEncoderBuilder forCommentsChunkEncoder(){
+		return commentsEncoder;
+	}
+	/**
+	 * Get the {@link ChunkEncoderBuilder} for the clip points
+	 * chunk.  
+	 * @return a {@link ChunkEncoderBuilder} for the clip points
+	 * chunk of the ZTR.
+	 */
+	public ChunkEncoderBuilder forClipPointsChunkEncoder(){
+		return clipEncoder;
+	}
+	/**
+	 * Get the {@link ChunkEncoderBuilder} for the peaks
+	 * chunk.  
+	 * @return a {@link ChunkEncoderBuilder} for the peaks
+	 * chunk of the ZTR.
+	 */
+	public ChunkEncoderBuilder forPeaksChunkEncoder(){
+		return peaksEncoder;
+	}
+	/**
+	 * Creates a new ZTRChromatogramWriter
+	 * using the encoding settings that have been given.
 	 */
 	@Override
-	public void write(Chromatogram chromatogram, OutputStream out)
-			throws TraceEncoderException {
-		if(chromatogram ==null){
-			throw new NullPointerException("chromatogram can not be null");
-		}
-		
-		try {
-			out.write(ZTRUtil.getMagicNumber());
-			out.write(ZTR_VERSION);
-			//this is the order that staden IO_Lib uses
-			//some chunks are required before
-			//other chunks can be parsed
-			//(ex basecalls) so the order
-			//should not be changed.
-			out.write(positionsEncoder.encode(chromatogram));
-			out.write(basecallEncoder.encode(chromatogram));
-			out.write(peaksEncoder.encode(chromatogram));
-			out.write(confidenceEncoder.encode(chromatogram));			
-			out.write(commentsEncoder.encode(chromatogram));
-			out.write(clipEncoder.encode(chromatogram));
-			
-		} catch (IOException e) {
-			throw new TraceEncoderException("error writing ZTR", e);
-		}
-		
+	public ZTRChromatogramWriter build() {
+		return new DefaultZTRChromatogramWriter(
+				basecallEncoder.build(), 
+				positionsEncoder.build(), 
+				confidenceEncoder.build(), 
+				commentsEncoder.build(), 
+				clipEncoder.build(),
+				peaksEncoder.build());
 	}
 
 	private static final class DataEncoder{
@@ -276,119 +319,79 @@ public final class DefaultZTRChromatogramWriter implements ZTRChromatogramWriter
 		}
 	}
 	
+	
 	/**
-	 * {@code DefaultZTRChromatogramWriterBuilder} is a Builder for
-	 * {@link ZTRChromatogramWriter}s that allows total control
-	 * over what encoders are used in which order for every different
-	 * field in a {@link ZTRChromatogram}.
-	 * 
-	 * <p/>
-	 * For example: here is how to build a ZTRChromatogramWriter
-	 * that encodes the same as the staden IO_Lib module:
-	 * <pre/> 
-	 	DefaultZTRChromatogramWriterBuilder builder = new DefaultZTRChromatogramWriterBuilder();
-		builder.forBasecallChunkEncoder()
-        			.addEncoder(ZLibData.INSTANCE);
-		builder.forPositionsChunkEncoder()
-			.addDeltaEncoder(DeltaEncodedData.SHORT, Level.DELTA_LEVEL_3)
-			.addEncoder(ShrinkToEightBitData.SHORT_TO_BYTE)
-			.addEncoder(FollowData.INSTANCE)
-			.addRunLengthEncoder()
-			.addEncoder(ZLibData.INSTANCE);
-		builder.forConfidenceChunkEncoder()
-			.addDeltaEncoder(DeltaEncodedData.BYTE, Level.DELTA_LEVEL_1)
-			.addRunLengthEncoder((byte)77)
-			.addEncoder(ZLibData.INSTANCE);
-		builder.forPeaksChunkEncoder()
-			.addDeltaEncoder(DeltaEncodedData.INTEGER, Level.DELTA_LEVEL_1)
-			.addEncoder(ShrinkToEightBitData.INTEGER_TO_BYTE)
-			.addEncoder(ZLibData.INSTANCE);
-		builder.forCommentsChunkEncoder()
-			.addEncoder(ZLibData.INSTANCE);
-			
-		ZTRChromatogramWriter writer = builder.build();
-		<pre/>
-	 * <p/>
+	 * {@code DefaultZTRChromatogramWriter} is an implementation
+	 * of ZTRChromatogramWriter.  Use {@link DefaultZTRChromatogramWriterBuilder}
+	 * to customize the encoding options.
 	 * @author dkatzel
-	 *
+	 * @see <a href="http://staden.sourceforge.net/ztr.html">ZTR 1.2 Spec</a>
 	 */
-	public static class DefaultZTRChromatogramWriterBuilder implements Builder<DefaultZTRChromatogramWriter>{
-
-		private final ChunkEncoderBuilder basecallEncoder = new ChunkEncoderBuilder(Chunk.BASE, ChunkType.BASECALLS);
-		private final ChunkEncoderBuilder positionsEncoder= new ChunkEncoderBuilder(Chunk.SMP4, ChunkType.SAMPLES);
-		private final ChunkEncoderBuilder confidenceEncoder= new ChunkEncoderBuilder(Chunk.CONFIDENCES, ChunkType.CONFIDENCE);
-		private final ChunkEncoderBuilder commentsEncoder= new ChunkEncoderBuilder(Chunk.COMMENTS, ChunkType.COMMENTS);
-		private final ChunkEncoderBuilder clipEncoder= new ChunkEncoderBuilder(Chunk.CLIP, ChunkType.CLIP);
-		private final ChunkEncoderBuilder peaksEncoder= new ChunkEncoderBuilder(Chunk.POSITIONS, ChunkType.POSITIONS);
+	private static final class DefaultZTRChromatogramWriter implements ZTRChromatogramWriter{
+		
 		/**
-		 * Get the {@link ChunkEncoderBuilder} for the basecalls
-		 * chunk.  
-		 * @return a {@link ChunkEncoderBuilder} for the basecalls
-		 * chunk of the ZTR.
+		 * Specifies that this is chromatogram
+		 * is encoded using ZTR 1.2 spec.
 		 */
-		public ChunkEncoderBuilder forBasecallChunkEncoder(){
-			return basecallEncoder;
+		private static final byte[] ZTR_VERSION =new byte[]{1,2};
+		private final ChunkEncoder basecallEncoder;
+		private final ChunkEncoder peaksEncoder;
+		private final ChunkEncoder positionsEncoder;
+		private final ChunkEncoder confidenceEncoder;
+		private final ChunkEncoder commentsEncoder;
+		private final ChunkEncoder clipEncoder;
+		
+		
+		private DefaultZTRChromatogramWriter(ChunkEncoder basecallEncoder,
+				ChunkEncoder positionsEncoder, ChunkEncoder confidenceEncoder,
+				ChunkEncoder commentsEncoder, ChunkEncoder clipEncoder, ChunkEncoder peaksEncoder) {
+			this.basecallEncoder = basecallEncoder;
+			this.positionsEncoder = positionsEncoder;
+			this.confidenceEncoder = confidenceEncoder;
+			this.commentsEncoder = commentsEncoder;
+			this.clipEncoder = clipEncoder;
+			this.peaksEncoder = peaksEncoder;
 		}
 		/**
-		 * Get the {@link ChunkEncoderBuilder} for the positions
-		 * chunk.  
-		 * @return a {@link ChunkEncoderBuilder} for the positions
-		 * chunk of the ZTR.
-		 */
-		public ChunkEncoderBuilder forPositionsChunkEncoder(){
-			return positionsEncoder;
-		}
-		/**
-		 * Get the {@link ChunkEncoderBuilder} for the confidence
-		 * (quality)
-		 * chunk.  
-		 * @return a {@link ChunkEncoderBuilder} for the confidence
-		 * chunk of the ZTR.
-		 */
-		public ChunkEncoderBuilder forConfidenceChunkEncoder(){
-			return confidenceEncoder;
-		}
-		/**
-		 * Get the {@link ChunkEncoderBuilder} for the comments
-		 * chunk.  
-		 * @return a {@link ChunkEncoderBuilder} for the comments
-		 * chunk of the ZTR.
-		 */
-		public ChunkEncoderBuilder forCommentsChunkEncoder(){
-			return commentsEncoder;
-		}
-		/**
-		 * Get the {@link ChunkEncoderBuilder} for the clip points
-		 * chunk.  
-		 * @return a {@link ChunkEncoderBuilder} for the clip points
-		 * chunk of the ZTR.
-		 */
-		public ChunkEncoderBuilder forClipPointsChunkEncoder(){
-			return clipEncoder;
-		}
-		/**
-		 * Get the {@link ChunkEncoderBuilder} for the peaks
-		 * chunk.  
-		 * @return a {@link ChunkEncoderBuilder} for the peaks
-		 * chunk of the ZTR.
-		 */
-		public ChunkEncoderBuilder forPeaksChunkEncoder(){
-			return peaksEncoder;
-		}
-		/**
-		 * Creates a new ZTRChromatogramWriter
-		 * using the encoding settings that have been given.
+		 * Encode the given chromatogram and write it
+		 * to the given outputStream.  The stream
+		 * WILL NOT be closed when this method completes.
+		 * @param chromatogram the ZTR chromatogram to 
+		 * encode and write; may not be null.
+		 * @param out the OutputStream to write the encoded
+		 * ZTR to.
+		 * @throws TraceEncoderException if there is a problem
+		 * encoding the ZTR chromatogram.
+		 * @throws NullPointerException if chromatogram or out
+		 * are null.
 		 */
 		@Override
-		public DefaultZTRChromatogramWriter build() {
-			return new DefaultZTRChromatogramWriter(
-					basecallEncoder.build(), 
-					positionsEncoder.build(), 
-					confidenceEncoder.build(), 
-					commentsEncoder.build(), 
-					clipEncoder.build(),
-					peaksEncoder.build());
+		public void write(Chromatogram chromatogram, OutputStream out)
+				throws TraceEncoderException {
+			if(chromatogram ==null){
+				throw new NullPointerException("chromatogram can not be null");
+			}
+			
+			try {
+				out.write(ZTRUtil.getMagicNumber());
+				out.write(ZTR_VERSION);
+				//this is the order that staden IO_Lib uses
+				//some chunks are required before
+				//other chunks can be parsed
+				//(ex basecalls) so the order
+				//should not be changed.
+				out.write(positionsEncoder.encode(chromatogram));
+				out.write(basecallEncoder.encode(chromatogram));
+				out.write(peaksEncoder.encode(chromatogram));
+				out.write(confidenceEncoder.encode(chromatogram));			
+				out.write(commentsEncoder.encode(chromatogram));
+				out.write(clipEncoder.encode(chromatogram));
+				
+			} catch (IOException e) {
+				throw new TraceEncoderException("error writing ZTR", e);
+			}
+			
 		}
-		
 	}
+	
 }
