@@ -2,7 +2,7 @@ package org.jcvi.common.core.assembly.asm;
 
 import java.io.File;
 
-import org.jcvi.common.core.seq.read.trace.frg.FragmentDataStore;
+import org.jcvi.common.core.seq.trace.frg.FragmentDataStore;
 
 public class TestIndexedUnitigDataStore extends AbstractTestAsmUnitigDataStore{
 

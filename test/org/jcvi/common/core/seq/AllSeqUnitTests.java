@@ -21,7 +21,7 @@ package org.jcvi.common.core.seq;
 
 import org.jcvi.common.core.seq.fasta.AllFastaUnitTests;
 import org.jcvi.common.core.seq.plate.AllPlateUnitTests;
-import org.jcvi.common.core.seq.read.trace.AllTraceUnitTests;
+import org.jcvi.common.core.seq.trace.AllTraceUnitTests;
 import org.jcvi.common.core.seq.trace.fastq.AllFastqUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
