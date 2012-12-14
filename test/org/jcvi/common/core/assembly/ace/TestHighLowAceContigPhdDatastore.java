@@ -26,9 +26,9 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.read.trace.sanger.phd.ArtificialPhd;
-import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
-import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
+import org.jcvi.common.core.seq.trace.sanger.phd.ArtificialPhd;
+import org.jcvi.common.core.seq.trace.sanger.phd.Phd;
+import org.jcvi.common.core.seq.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
