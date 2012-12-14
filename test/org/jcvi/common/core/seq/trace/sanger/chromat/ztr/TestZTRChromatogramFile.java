@@ -19,17 +19,16 @@
 
 package org.jcvi.common.core.seq.trace.sanger.chromat.ztr;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramXMLSerializer;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFile;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl.ZTRChromatogramImpl;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
@@ -50,7 +49,7 @@ public class TestZTRChromatogramFile {
     @Test
     public void parseZtrFile() throws IOException, TraceDecoderException{
         File ztrFile = RESOURCES.getFile("files/GBKAK82TF.ztr");
-        ZtrChromatogram actual = ZTRChromatogramFile.create(ztrFile);
+        ZtrChromatogram actual = new ZtrChromatogramBuilder("GBKAK82TF.ztr",ztrFile).build();
         assertEquals(EXPECTED_ZTR, actual);
     }
     

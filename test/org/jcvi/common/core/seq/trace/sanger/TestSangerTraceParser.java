@@ -29,7 +29,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFile;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.phd.SinglePhdFile;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
@@ -45,7 +45,7 @@ public class TestSangerTraceParser {
     @Test
     public void parseZTR() throws TraceDecoderException, IOException{
         SangerTrace actual =sut.decode("GBKAK82TF.ztr",RESOURCES.getFileAsStream(ZTR_FILE));
-        SangerTrace expected = ZTRChromatogramFile.create(RESOURCES.getFile(ZTR_FILE));
+        SangerTrace expected = new ZtrChromatogramBuilder("GBKAK82TF.ztr", RESOURCES.getFile(ZTR_FILE)).build();
         assertEquals(expected, actual);
     }
     @Test
