@@ -23,6 +23,9 @@
  */
 package org.jcvi.common.core.seq.trace.sanger.chromat.scf;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -54,14 +57,84 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
     private byte[] privateData;
    
     private final BasicChromatogramBuilder basicBuilder;
-
+    /**
+     * Create a new ScfChromatogramBuilder instance with
+     * all fields except for the id unset.  In order
+     * to successfully build a valid {@link SCFChromatogram}
+     * object please use
+     * the various setter methods
+     * in this class to set everything
+     * before calling {@link #build()}.
+     * @param id the id for this {@link Chromatogram} object to have;
+     * can not be null.
+     * @throws NullPointerException if either field is null.
+     */
     public SCFChromatogramBuilder(String id){
         basicBuilder = new BasicChromatogramBuilder(id);
     }
-    
+    /**
+     * Create a new ScfChromatogramBuilder instance
+     * with the given id and all fields initially set
+     * to the the values encoded in the given scf file.
+     * @param id the id for this {@link Chromatogram} object to have;
+     * can not be null. 
+     * @param scfFile a SCF encoded file that contains the initial values
+     * that this builder should have; can not be null.
+     * @throws IOException if there is a problem reading the file or if
+     * the given file is not a valid scf encoded file.
+     * @throws NullPointerException if either field is null.
+     */
+    public SCFChromatogramBuilder(String id, File scfFile) throws IOException{
+		this(id);
+		SCFChromatogramFileBuilderVisitor visitor = new SCFChromatogramFileBuilderVisitor(this);
+	    SCFChromatogramFileParser.parse(scfFile, visitor);       
+    }
+    /**
+     * Create a new ScfChromatogramBuilder instance
+     * with the given id and all fields initially set
+     * to the the values encoded in the given scf encoded inputStream.
+     * The {@link InputStream} will NOT be closed by this constructor,
+     * client code must close the stream themselves after returning 
+     * from this method (preferably in a finally block).
+     * @param id the id for this {@link Chromatogram} object to have;
+     * can not be null. 
+     * @param scfInputStream a SCF encoded {@link InputStream} that contains the initial values
+     * that this builder should have; can not be null.
+     * @throws IOException if there is a problem reading the file or
+     * if the {@link InputStream} does not contain valid scf encoded data.
+     * @throws NullPointerException if either field is null.
+     */
+    public SCFChromatogramBuilder(String id, InputStream scfInputStream) throws IOException{
+		this(id);
+		SCFChromatogramFileBuilderVisitor visitor = new SCFChromatogramFileBuilderVisitor(this);
+	    SCFChromatogramFileParser.parse(scfInputStream, visitor);       
+    }
+    /**
+     * Create a new instance of ScfChromatogramBuilder
+     * using the given {@link Chromatogram} instance 
+     * to set all the initial fields. Only the fields 
+     * in the {@link Chromatogram} interface will be copied,
+     * any scf specific fields will be null.  Use the various
+     * scf specific setter methods to set those values.
+     * @param copy a {@link Chromatogram} object
+     * whose fields are used as the initial values of this
+     * new Builder; can not be null;
+     * @throws NullPointerException if copy is null.
+     */
     public SCFChromatogramBuilder(Chromatogram copy){
        basicBuilder = new BasicChromatogramBuilder(copy);        
     }
+    /**
+     * Create a new instance of ScfChromatogramBuilder
+     * using the given {@link SCFChromatogram} instance 
+     * to set all the initial fields. All the fields 
+     * in the {@link SCFChromatogram} interface including
+     * scf specific fields will be copied.
+     * @param copy a {@link SCFChromatogram} object
+     * whose fields are used as the initial values of this
+     * new Builder; can not be null;
+     * @throws NullPointerException if copy is null.
+     */
     public SCFChromatogramBuilder(SCFChromatogram copy){
         this((Chromatogram)copy);
         this.substitutionConfidence =copy.getSubstitutionConfidence();
@@ -250,4 +323,176 @@ public final class SCFChromatogramBuilder implements Builder<SCFChromatogram>{
         return this;
     }
 
+    /**
+     * {@code SCFChromatogramFileBuilderVisitor} is a helper class
+     * that wraps a {@link SCFChromatogramBuilder} by a {@link SCFChromatogramFileVisitor}.
+     * This way when a part of the SCF is visited, its corresponding objects get built 
+     * by the builder.
+     * @author dkatzel
+     *
+     *
+     */
+    private static final class SCFChromatogramFileBuilderVisitor implements SCFChromatogramFileVisitor{
+        private final SCFChromatogramBuilder builder;
+        private SCFChromatogramFileBuilderVisitor(SCFChromatogramBuilder builder){
+        	this.builder = builder;
+        }
+        
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized void visitAConfidence(byte[] confidence) {
+            builder.aConfidence(confidence);            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized void visitCConfidence(byte[] confidence) {
+            builder.cConfidence(confidence);            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized void visitGConfidence(byte[] confidence) {
+            builder.gConfidence(confidence);            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized void visitTConfidence(byte[] confidence) {
+            builder.tConfidence(confidence);            
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+         @Override
+         public synchronized void visitNewTrace() { 
+       	  	//no-op
+         }
+         /**
+         * {@inheritDoc}
+         */
+         @Override
+         public synchronized void visitEndOfTrace() { 
+       	  	//no-op
+         }
+         
+         /**
+          * {@inheritDoc}
+          */
+          @Override
+          public synchronized void visitEndOfFile() {
+        	  //no-op
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public synchronized void visitBasecalls(NucleotideSequence basecalls) {  
+              builder.basecalls(basecalls);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public synchronized void visitPeaks(short[] peaks) {  
+              builder.peaks(peaks);              
+          }
+
+         
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public synchronized void visitComments(Map<String,String> comments) {  
+              builder.properties(comments);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public synchronized void visitAPositions(short[] positions) {  
+              builder.aPositions(positions);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public synchronized void visitCPositions(short[] positions) {  
+             builder.cPositions(positions);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public synchronized void visitGPositions(short[] positions) {  
+              builder.gPositions(positions);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public synchronized void visitTPositions(short[] positions) {  
+              builder.tPositions(positions);              
+          }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized void visitFile() {
+        	//no-op
+        }
+
+       
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized void visitPrivateData(byte[] privateData) {
+            builder.privateData(privateData);             
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized void visitSubstitutionConfidence(byte[] confidence) {
+            builder.substitutionConfidence(confidence);             
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized void visitInsertionConfidence(byte[] confidence) {
+            builder.insertionConfidence(confidence);
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized void visitDeletionConfidence(byte[] confidence) {
+            builder.deletionConfidence(confidence);
+        }
+
+        
+    }
 }

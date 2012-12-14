@@ -32,7 +32,7 @@ import org.jcvi.common.core.io.impl.MagicNumberInputStream;
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.AbiUtil;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.DefaultAbiChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramFile;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFUtils;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFile;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRUtil;
@@ -60,7 +60,7 @@ public enum SangerTraceParser {
 	        }else if(ZTRUtil.isMagicNumber(magicNumber)){
 	        	return ZTRChromatogramFile.create(id,mIn);
 	        }else if(SCFUtils.isMagicNumber(magicNumber)){
-	        	return SCFChromatogramFile.create(id,mIn);
+	        	return new SCFChromatogramBuilder(id, mIn).build();
 	        }else{
 	        	//not a chromatogram file, try phd
 	        	try{
@@ -86,7 +86,7 @@ public enum SangerTraceParser {
 	        }else if(ZTRUtil.isMagicNumber(magicNumber)){
 	        	return ZTRChromatogramFile.create(id,mIn);
 	        }else if(SCFUtils.isMagicNumber(magicNumber)){
-	        	return SCFChromatogramFile.create(id,mIn);
+	        	return new SCFChromatogramBuilder(id, mIn).build();
 	        }else{
 	        	//not a chromatogram file, try phd
 	        	return SinglePhdFile.create(mIn);

@@ -23,17 +23,16 @@
  */
 package org.jcvi.common.core.seq.trace.sanger;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.trace.sanger.SangerTrace;
-import org.jcvi.common.core.seq.trace.sanger.SangerTraceParser;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramFile;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFile;
 import org.jcvi.common.core.seq.trace.sanger.phd.SinglePhdFile;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestSangerTraceParser {
 
     private static final String ZTR_FILE = "chromat/ztr/files/GBKAK82TF.ztr";
@@ -52,7 +51,8 @@ public class TestSangerTraceParser {
     @Test
     public void parseSCF_v3() throws TraceDecoderException, IOException{
         SangerTrace actual =sut.decode("GBKAK82TF.scf",RESOURCES.getFileAsStream(SCF3_FILE));
-        SangerTrace expected = SCFChromatogramFile.create(RESOURCES.getFile(SCF3_FILE));
+        SangerTrace expected = new SCFChromatogramBuilder("GBKAK82TF.scf", RESOURCES.getFile(SCF3_FILE))
+									.build();
         assertEquals(expected, actual);
     }
     @Test
