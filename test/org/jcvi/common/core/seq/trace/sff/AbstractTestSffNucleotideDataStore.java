@@ -26,7 +26,6 @@ package org.jcvi.common.core.seq.trace.sff;
 import java.io.File;
 import java.util.Iterator;
 
-import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.seq.trace.sff.DefaultSffFileDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.junit.Test;

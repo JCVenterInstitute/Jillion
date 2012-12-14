@@ -26,10 +26,10 @@ import java.util.Properties;
 
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
-import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
 import org.jcvi.common.core.seq.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.trace.sanger.phd.PhdUtil;
+import org.jcvi.common.core.seq.trace.sff.Flowgram;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 public class FlowgramConsedPhdAdaptedIterator implements PhdReadRecordIterator{

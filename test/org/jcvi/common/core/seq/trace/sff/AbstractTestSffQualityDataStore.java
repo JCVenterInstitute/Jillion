@@ -28,7 +28,6 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.util.Iterator;
 
-import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.seq.trace.sff.DefaultSffFileDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.junit.Test;

@@ -2,7 +2,6 @@ package org.jcvi.common.core.seq.trace.sff;
 
 import java.io.IOException;
 
-import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.seq.trace.sff.Indexed454SffFileDataStore;
 import org.jcvi.common.core.seq.trace.sff.IndexedSffFileDataStore;
 import org.jcvi.common.core.seq.trace.sff.IndexedSffFileDataStore.FullPassIndexedSffFileDataStore;
