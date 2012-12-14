@@ -30,8 +30,8 @@ import org.jcvi.common.core.seq.trace.TraceEncoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Channel;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.trace.sanger.chromat.DefaultChannelGroup;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl.Chunk;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -66,7 +66,7 @@ public class TestSMP4Chunk {
     @Test
     public void parse() throws TraceDecoderException{
         
-        ZTRChromatogramBuilder struct = new ZTRChromatogramBuilder("id");
+        ZtrChromatogramBuilder struct = new ZtrChromatogramBuilder("id");
 
         sut.parseData(encodedBytes, struct);
         assertArrayEquals(struct.aPositions(),aTraces);
@@ -77,7 +77,7 @@ public class TestSMP4Chunk {
     
     @Test
     public void encode() throws TraceEncoderException{
-    	ZTRChromatogram mockChromatogram = createMock(ZTRChromatogram.class);
+    	ZtrChromatogram mockChromatogram = createMock(ZtrChromatogram.class);
     	ChannelGroup channelGroup = new DefaultChannelGroup(
     			new Channel(new byte[0],aTraces), 
     			new Channel(new byte[0],cTraces), 

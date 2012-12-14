@@ -28,8 +28,8 @@ import java.util.List;
 
 import org.jcvi.common.core.seq.trace.TraceEncoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramWriter;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramWriter;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl.Chunk;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl.ChunkType;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.Data;
@@ -44,9 +44,9 @@ import org.jcvi.common.core.util.Builder;
 
 /**
  * {@code DefaultZTRChromatogramWriterBuilder} is a Builder for
- * {@link ZTRChromatogramWriter}s that allows total control
+ * {@link ZtrChromatogramWriter}s that allows total control
  * over what encoders are used in which order for every different
- * field in a {@link ZTRChromatogram}.
+ * field in a {@link ZtrChromatogram}.
  * 
  * <p/>
  * For example: here is how to build a ZTRChromatogramWriter
@@ -78,7 +78,7 @@ import org.jcvi.common.core.util.Builder;
  * @author dkatzel
  *
  */
-public final class DefaultZTRChromatogramWriterBuilder implements Builder<ZTRChromatogramWriter>{
+public final class DefaultZTRChromatogramWriterBuilder implements Builder<ZtrChromatogramWriter>{
 
 	private final ChunkEncoderBuilder basecallEncoder = new ChunkEncoderBuilder(Chunk.BASE, ChunkType.BASECALLS);
 	private final ChunkEncoderBuilder positionsEncoder= new ChunkEncoderBuilder(Chunk.SMP4, ChunkType.SAMPLES);
@@ -146,7 +146,7 @@ public final class DefaultZTRChromatogramWriterBuilder implements Builder<ZTRChr
 	 * using the encoding settings that have been given.
 	 */
 	@Override
-	public ZTRChromatogramWriter build() {
+	public ZtrChromatogramWriter build() {
 		return new DefaultZTRChromatogramWriter(
 				basecallEncoder.build(), 
 				positionsEncoder.build(), 
@@ -327,7 +327,7 @@ public final class DefaultZTRChromatogramWriterBuilder implements Builder<ZTRChr
 	 * @author dkatzel
 	 * @see <a href="http://staden.sourceforge.net/ztr.html">ZTR 1.2 Spec</a>
 	 */
-	private static final class DefaultZTRChromatogramWriter implements ZTRChromatogramWriter{
+	private static final class DefaultZTRChromatogramWriter implements ZtrChromatogramWriter{
 		
 		/**
 		 * Specifies that this is chromatogram

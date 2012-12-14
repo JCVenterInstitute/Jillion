@@ -35,7 +35,7 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramFileParser;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFUtils;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFile;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFileParser;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramFileParser;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl.ZTRUtil;
 
 public final class ChromatogramFactory {
@@ -91,7 +91,7 @@ public final class ChromatogramFactory {
 		if(AbiUtil.isABIMagicNumber(magicNumber)){
 			Ab1FileParser.parse(mIn, visitor);
 		}else if(ZTRUtil.isMagicNumber(magicNumber)){
-			ZTRChromatogramFileParser.parse(mIn, visitor);
+			ZtrChromatogramFileParser.parse(mIn, visitor);
 		}else if(SCFUtils.isMagicNumber(magicNumber)){
 			ScfChromatogramFileParser.parse(mIn, visitor);
 		}else{

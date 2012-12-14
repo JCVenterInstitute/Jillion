@@ -53,9 +53,9 @@ import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFileVisitor;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramFileVisitor;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.Data;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DataFactory;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.RawData;
@@ -81,7 +81,7 @@ public enum Chunk {
      */
     BASE{
         @Override
-        protected void parseData(byte[] unEncodedData, ZTRChromatogramBuilder builder)
+        protected void parseData(byte[] unEncodedData, ZtrChromatogramBuilder builder)
                 throws TraceDecoderException {
             //first byte is padding
             final int numberOfBases = unEncodedData.length -1;
@@ -134,7 +134,7 @@ public enum Chunk {
      */
     POSITIONS{
         @Override
-        protected void parseData(byte[] unEncodedData, ZTRChromatogramBuilder builder)
+        protected void parseData(byte[] unEncodedData, ZtrChromatogramBuilder builder)
                 throws org.jcvi.common.core.seq.trace.TraceDecoderException {
             final int numberOfBases = (unEncodedData.length -1)/4;
             ShortBuffer peaks = ShortBuffer.allocate(numberOfBases);
@@ -190,7 +190,7 @@ public enum Chunk {
      */
     CLIP{
         @Override
-        protected void parseData(byte[] unEncodedData, ZTRChromatogramBuilder builder)
+        protected void parseData(byte[] unEncodedData, ZtrChromatogramBuilder builder)
                 throws TraceDecoderException {
             if(unEncodedData.length !=9){
                 throw new TraceDecoderException("Invalid DefaultClip size, num of bytes = " +unEncodedData.length );
@@ -209,8 +209,8 @@ public enum Chunk {
             ByteBuffer buf = ByteBuffer.wrap(unEncodedData);
             buf.position(1); //skip padding
             Range clipRange = Range.of(buf.getInt(), buf.getInt());
-            if(visitor instanceof ZTRChromatogramFileVisitor){
-                ((ZTRChromatogramFileVisitor)visitor).visitClipRange(clipRange);
+            if(visitor instanceof ZtrChromatogramFileVisitor){
+                ((ZtrChromatogramFileVisitor)visitor).visitClipRange(clipRange);
             }
             
             return basecalls;
@@ -223,8 +223,8 @@ public enum Chunk {
 		public byte[] encodeChunk(Chromatogram ztrChromatogram)
 				throws TraceEncoderException {
 		    Range clip=null;
-		    if(ztrChromatogram instanceof ZTRChromatogram){
-		        clip =((ZTRChromatogram)ztrChromatogram).getClip();
+		    if(ztrChromatogram instanceof ZtrChromatogram){
+		        clip =((ZtrChromatogram)ztrChromatogram).getClip();
 		    }
 			
 			if(clip ==null){
@@ -282,7 +282,7 @@ public enum Chunk {
 		}
 		
         @Override
-        protected void parseData(byte[] unEncodedData, ZTRChromatogramBuilder builder)
+        protected void parseData(byte[] unEncodedData, ZtrChromatogramBuilder builder)
                 throws TraceDecoderException {
             NucleotideSequence basecalls = new NucleotideSequenceBuilder(builder.basecalls()).build();
             int numberOfBases = (int)basecalls.getLength();
@@ -428,7 +428,7 @@ public enum Chunk {
     */
     SMP4{
         @Override
-        public void parseData(byte[] unEncodedData,ZTRChromatogramBuilder builder) throws TraceDecoderException {
+        public void parseData(byte[] unEncodedData,ZtrChromatogramBuilder builder) throws TraceDecoderException {
         //read first 2 byte is padded bytes?
             
             ShortBuffer buf = ByteBuffer.wrap(unEncodedData).asShortBuffer();
@@ -538,7 +538,7 @@ public enum Chunk {
         * {@inheritDoc}
          */
         @Override
-        protected void parseData(byte[] decodedData, ZTRChromatogramBuilder builder)
+        protected void parseData(byte[] decodedData, ZtrChromatogramBuilder builder)
                 throws TraceDecoderException {
             InputStream in = new ByteArrayInputStream(decodedData);
             builder.properties(parseText(in));
@@ -645,7 +645,7 @@ public enum Chunk {
         return CHUNK_MAP.get(ChunkType.getChunkFor(chunkHeader));
     }
     
-    public void parseChunk(ZTRChromatogramBuilder builder, InputStream inputStream) throws TraceDecoderException{
+    public void parseChunk(ZtrChromatogramBuilder builder, InputStream inputStream) throws TraceDecoderException{
         if(inputStream ==null){
             throw new TraceDecoderException("inputStream can not be null");
         }
@@ -723,7 +723,7 @@ public enum Chunk {
      * This method calls parseData to interpret
      * the data and returns the result.
      */
-    private void readData(ZTRChromatogramBuilder builder,InputStream inputStream)throws TraceDecoderException{
+    private void readData(ZtrChromatogramBuilder builder,InputStream inputStream)throws TraceDecoderException{
         int length = readLength(inputStream);
 
         //the data may be encoded
@@ -747,13 +747,13 @@ public enum Chunk {
     /**
      * Performs the actual conversion from the data stored in the chunk
      * into the appropriate format and SETS the data to the given
-     * {@link ZTRChromatogramBuilder} object.
+     * {@link ZtrChromatogramBuilder} object.
      * @param unEncodedData the actual bytes to parse
      * (including any formating bytes).
-     * @param builder the {@link ZTRChromatogramBuilder} to set the data to.
+     * @param builder the {@link ZtrChromatogramBuilder} to set the data to.
      * @throws TraceDecoderException if there are any problems parsing the data.
      */
-    protected abstract void parseData(byte[] unEncodedData, ZTRChromatogramBuilder builder) throws TraceDecoderException;
+    protected abstract void parseData(byte[] unEncodedData, ZtrChromatogramBuilder builder) throws TraceDecoderException;
     protected abstract NucleotideSequence parseData(byte[] unEncodedData, ChromatogramFileVisitor visitor, NucleotideSequence basecalls) throws TraceDecoderException;
 
     public abstract byte[] encodeChunk(Chromatogram ztrChromatogram) throws TraceEncoderException;

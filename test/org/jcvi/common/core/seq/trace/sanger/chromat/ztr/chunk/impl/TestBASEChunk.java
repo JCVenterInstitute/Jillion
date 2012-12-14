@@ -27,8 +27,8 @@ import java.nio.ByteBuffer;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.TraceEncoderException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl.Chunk;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
@@ -51,14 +51,14 @@ public class TestBASEChunk {
     @Test
     public void valid() throws TraceDecoderException{
        
-        ZTRChromatogramBuilder builder = new ZTRChromatogramBuilder("id");
+        ZtrChromatogramBuilder builder = new ZtrChromatogramBuilder("id");
         sut.parseData(encodedBases, builder);        
         assertEquals(decodedBases, builder.basecalls().toString());
     }
     
     @Test
     public void encode() throws TraceEncoderException, TraceDecoderException{
-    	ZTRChromatogram mockChromatogram = createMock(ZTRChromatogram.class);
+    	ZtrChromatogram mockChromatogram = createMock(ZtrChromatogram.class);
     	NucleotideSequence basecalls = new NucleotideSequenceBuilder(decodedBases).build();
     	expect(mockChromatogram.getNucleotideSequence()).andReturn(basecalls);
     	

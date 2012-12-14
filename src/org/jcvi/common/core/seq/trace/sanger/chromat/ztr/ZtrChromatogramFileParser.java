@@ -41,9 +41,9 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
  *
  *
  */
-public final class ZTRChromatogramFileParser {
+public final class ZtrChromatogramFileParser {
    
-	private ZTRChromatogramFileParser(){
+	private ZtrChromatogramFileParser(){
 		//can not instantiate
 	}
     /**

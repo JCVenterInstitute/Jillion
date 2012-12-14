@@ -25,10 +25,16 @@ package org.jcvi.common.core.seq.trace.sanger.chromat.ztr;
 
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
-
-public interface ZTRChromatogram extends Chromatogram{
+/**
+ * {@code ZtrChromatogram} is a ZTR
+ * specific implementation {@link Chromatogram}
+ * that has an extra field for the clip points.
+ * @author dkatzel
+ *
+ */
+public interface ZtrChromatogram extends Chromatogram{
     /**
-     * Gets the ZTR Specific clip.
+     * Gets the ZTR Specific clip points as a {@link Range}.
      * @return a clip, may be null or empty.
      */
     Range getClip();

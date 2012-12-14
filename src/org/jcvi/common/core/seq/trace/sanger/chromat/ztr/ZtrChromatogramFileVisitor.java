@@ -29,7 +29,7 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
  *
  *
  */
-public interface ZTRChromatogramFileVisitor extends ChromatogramFileVisitor{
+public interface ZtrChromatogramFileVisitor extends ChromatogramFileVisitor{
 
   
     /**

@@ -24,7 +24,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramXMLSerializer;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFile;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl.ZTRChromatogramImpl;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -50,7 +50,7 @@ public class TestZTRChromatogramFile {
     @Test
     public void parseZtrFile() throws IOException, TraceDecoderException{
         File ztrFile = RESOURCES.getFile("files/GBKAK82TF.ztr");
-        ZTRChromatogram actual = ZTRChromatogramFile.create(ztrFile);
+        ZtrChromatogram actual = ZTRChromatogramFile.create(ztrFile);
         assertEquals(EXPECTED_ZTR, actual);
     }
     
