@@ -29,8 +29,8 @@ import java.io.IOException;
 
 import org.jcvi.common.core.seq.trace.sanger.chromat.Channel;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.AbstractSampleSectionCodec;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.EncodedSection;
@@ -45,7 +45,7 @@ public abstract class AbstractTestSamplesSection {
     protected short[] gSamples = new short[]{50,40,30,50};
     protected short[] tSamples = new short[]{0,5,0,3};
     protected static final byte[] EMPTY_CONFIDENCE = new byte[]{};
-    SCFChromatogram chromatogram;
+    ScfChromatogram chromatogram;
     AbstractSampleSectionCodec sut;
     ChannelGroup mockChannelGroup;
     protected abstract AbstractSampleSectionCodec createSectionHandler();
@@ -54,7 +54,7 @@ public abstract class AbstractTestSamplesSection {
     protected abstract byte[] encodeShortPositions();
 
     public AbstractTestSamplesSection(){
-        chromatogram = createMock(SCFChromatogram.class);
+        chromatogram = createMock(ScfChromatogram.class);
         mockChannelGroup = createMock(ChannelGroup.class);
         expect(mockChannelGroup.getCChannel()).andStubReturn(new Channel(EMPTY_CONFIDENCE, cSamples));
         expect(mockChannelGroup.getGChannel()).andStubReturn(new Channel(EMPTY_CONFIDENCE, gSamples));
@@ -83,27 +83,27 @@ public abstract class AbstractTestSamplesSection {
         return actualEncodedSection;
     }
 
-    protected SCFChromatogramBuilder setUpData(int currentOffset, byte size,
+    protected ScfChromatogramBuilder setUpData(int currentOffset, byte size,
             SCFHeader mockHeader, float version) {
         expect(mockHeader.getSampleSize()).andReturn(size).times(2);
         expect(mockHeader.getSampleOffset()).andReturn(currentOffset);
         expect(mockHeader.getNumberOfSamples()).andReturn(aSamplesAsBytes.length);
         expect(mockHeader.getVersion()).andStubReturn(version);
-        SCFChromatogramBuilder c = new SCFChromatogramBuilder("id");
+        ScfChromatogramBuilder c = new ScfChromatogramBuilder("id");
         replay(mockHeader);
         return c;
     }
 
-    protected void assertChromatogramBytePositions(SCFChromatogramBuilder c) {
+    protected void assertChromatogramBytePositions(ScfChromatogramBuilder c) {
         assertArrayEquals(aSamplesAsBytes, c.aPositions());
         assertOtherChannelPositionsCorrect(c);
     }
-    protected void assertChromatogramShortPositions(SCFChromatogramBuilder c) {
+    protected void assertChromatogramShortPositions(ScfChromatogramBuilder c) {
         assertArrayEquals(aSamplesAsShorts, c.aPositions());
         assertOtherChannelPositionsCorrect(c);
     }
 
-    protected void assertOtherChannelPositionsCorrect(SCFChromatogramBuilder c) {
+    protected void assertOtherChannelPositionsCorrect(ScfChromatogramBuilder c) {
         assertArrayEquals(cSamples, c.cPositions());
         assertArrayEquals(gSamples, c.gPositions());
         assertArrayEquals(tSamples, c.tPositions());

@@ -23,17 +23,17 @@
  */
 package org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFDecoderException;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfDecoderException;
 
 /**
  * <code>SCFHeaderParserException</code> is a subclass of
- * {@link SCFDecoderException} which is used if an SCF
+ * {@link ScfDecoderException} which is used if an SCF
  * Header fails to parse.
  * @author dkatzel
  *
  *
  */
-public class SCFHeaderDecoderException extends SCFDecoderException {
+public class SCFHeaderDecoderException extends ScfDecoderException {
 
     /**
      *

@@ -35,13 +35,13 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeaderCo
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFCodecs;
 
 /**
- * {@code SCFChromatogramFileParser} is a utility class 
+ * {@code ScfChromatogramFileParser} is a utility class 
  * for parsing SCF encoded chromatogram files.
  * @author dkatzel
  *
  *
  */
-public final class SCFChromatogramFileParser {
+public final class ScfChromatogramFileParser {
 
     /**
      * 
@@ -49,7 +49,7 @@ public final class SCFChromatogramFileParser {
     private static final float THREE = 3F;
     private static final SCFHeaderCodec HEADER_CODEC =DefaultSCFHeaderCodec.INSTANCE;
     
-    private SCFChromatogramFileParser(){}
+    private ScfChromatogramFileParser(){}
     /**
      * Parse the given SCF encoded chromatogram file
      * and call the appropriate visitXXX methods of the given

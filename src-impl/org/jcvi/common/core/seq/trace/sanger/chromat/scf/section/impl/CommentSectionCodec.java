@@ -36,8 +36,8 @@ import java.util.Map.Entry;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
 
 
@@ -45,7 +45,7 @@ public class CommentSectionCodec implements SectionCodec {
 
     private static final String NULL ="\0";
     @Override
-    public long decode(DataInputStream in,long currentOffset, SCFHeader header, SCFChromatogramBuilder c)
+    public long decode(DataInputStream in,long currentOffset, SCFHeader header, ScfChromatogramBuilder c)
             throws SectionDecoderException {
         long bytesToSkip = Math.max(0, header.getCommentOffset() - currentOffset);
         try {
@@ -77,7 +77,7 @@ public class CommentSectionCodec implements SectionCodec {
     }
 
     @Override
-    public EncodedSection encode(SCFChromatogram c, SCFHeader header)
+    public EncodedSection encode(ScfChromatogram c, SCFHeader header)
             throws IOException {
         Map<String,String> props =c.getComments();
         if(props ==null){

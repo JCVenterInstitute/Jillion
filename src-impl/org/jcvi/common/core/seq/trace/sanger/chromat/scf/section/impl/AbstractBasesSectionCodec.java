@@ -29,14 +29,14 @@ import java.nio.ByteBuffer;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
 
 public abstract class AbstractBasesSectionCodec implements SectionCodec{
     @Override
     public long decode(DataInputStream in, long currentOffset, SCFHeader header,
-            SCFChromatogramBuilder c) throws SectionDecoderException {
+            ScfChromatogramBuilder c) throws SectionDecoderException {
         long bytesToSkip = Math.max(0, header.getBasesOffset() - currentOffset);
         int numberOfBases = header.getNumberOfBases();
         try{
@@ -71,12 +71,12 @@ public abstract class AbstractBasesSectionCodec implements SectionCodec{
 
 
 
-    protected abstract void readBasesData(DataInputStream in, SCFChromatogramBuilder c,
+    protected abstract void readBasesData(DataInputStream in, ScfChromatogramBuilder c,
             int numberOfBases) throws IOException;
     protected abstract void readBasesData(DataInputStream in, ChromatogramFileVisitor c,
             int numberOfBases) throws IOException;
 
-    protected static SCFChromatogramBuilder setConfidences(SCFChromatogramBuilder c, byte[][] probability) {
+    protected static ScfChromatogramBuilder setConfidences(ScfChromatogramBuilder c, byte[][] probability) {
 
         return c.aConfidence(probability[0])
             .cConfidence(probability[1])
@@ -85,7 +85,7 @@ public abstract class AbstractBasesSectionCodec implements SectionCodec{
     }
 
     @Override
-    public EncodedSection encode(SCFChromatogram c, SCFHeader header)
+    public EncodedSection encode(ScfChromatogram c, SCFHeader header)
             throws IOException {
         final int numberOfBases = (int)c.getNucleotideSequence().getLength();
         header.setNumberOfBases(numberOfBases);
@@ -95,5 +95,5 @@ public abstract class AbstractBasesSectionCodec implements SectionCodec{
         return new EncodedSection(buffer, Section.BASES);
     }
 
-    protected abstract void writeBasesDataToBuffer(ByteBuffer buffer, SCFChromatogram c,int numberOfBases);
+    protected abstract void writeBasesDataToBuffer(ByteBuffer buffer, ScfChromatogram c,int numberOfBases);
 }

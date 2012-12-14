@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.PrivateData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.PrivateDataImpl;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.PrivateDataCodec;
@@ -45,12 +45,12 @@ public class TestPrivateDataDecoder {
     private PrivateData expectedPrivateData = new PrivateDataImpl(data);
     SectionDecoder sut = new PrivateDataCodec();
     SCFHeader mockHeader;
-    SCFChromatogramBuilder c;
+    ScfChromatogramBuilder c;
     DataInputStream in;
     @Before
     public void setup(){
         mockHeader = createMock(SCFHeader.class);
-        c = new SCFChromatogramBuilder("id");
+        c = new ScfChromatogramBuilder("id");
         in = new DataInputStream(new ByteArrayInputStream(data));
     }
 

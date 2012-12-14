@@ -43,9 +43,9 @@ public class TestSCFChromatogramWithGaps {
     private static final String File_path = "files/containsGaps.scf";
     
     @Test
-    public void parse() throws SCFDecoderException, IOException{
-    	SCFChromatogramBuilder builder = new SCFChromatogramBuilder("id", RESOURCES.getFile(File_path));
-    	SCFChromatogram actual = builder.build();
+    public void parse() throws ScfDecoderException, IOException{
+    	ScfChromatogramBuilder builder = new ScfChromatogramBuilder("id", RESOURCES.getFile(File_path));
+    	ScfChromatogram actual = builder.build();
         assertEquals(actual.getNucleotideSequence().toString(), "-----");
         
     }

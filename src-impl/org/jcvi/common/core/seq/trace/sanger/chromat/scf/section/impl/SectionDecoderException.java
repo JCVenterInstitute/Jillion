@@ -23,16 +23,16 @@
  */
 package org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFDecoderException;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfDecoderException;
 /**
  * <code>SectionDecoderException</code> is a subclass
- * of {@link SCFDecoderException} that will be thrown
+ * of {@link ScfDecoderException} that will be thrown
  * if there is a problem parsing an SCF {@link Section}.
  * @author dkatzel
  *
  *
  */
-public class SectionDecoderException extends SCFDecoderException {
+public class SectionDecoderException extends ScfDecoderException {
 
     /**
      *

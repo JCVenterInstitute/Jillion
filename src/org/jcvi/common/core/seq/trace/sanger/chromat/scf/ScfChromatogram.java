@@ -26,19 +26,19 @@ package org.jcvi.common.core.seq.trace.sanger.chromat.scf;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 /**
- * <code>SCFChromatogram</code> is a SCF specific implementation
- * of {@link Chromatogram}.  SCF Chromatograms have additional
+ * <code>ScfChromatogram</code> is a SCF specific implementation
+ * of {@link Chromatogram}.  ScfChromatograms have additional
  * data such as Substitution, Insertion, and Deletion confidence at each
  * base call.  There is also the possibility of additional "private data".
  * @author dkatzel
  *
  *
  */
-public interface SCFChromatogram extends Chromatogram{
+public interface ScfChromatogram extends Chromatogram{
 
 
     /**
-     * {@link SCFChromatogram}s may have additional PrivateData.
+     * {@link ScfChromatogram}s may have additional PrivateData.
      * @return the privateData; or <code>null</code> if there
      * is no {@link PrivateData}.
      */

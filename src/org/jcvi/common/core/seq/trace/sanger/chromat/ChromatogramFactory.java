@@ -31,8 +31,8 @@ import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.Ab1FileParser;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.AbiUtil;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.DefaultAbiChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramFileParser;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramFileParser;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFUtils;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFile;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFileParser;
@@ -69,7 +69,7 @@ public final class ChromatogramFactory {
 		}else if(ZTRUtil.isMagicNumber(magicNumber)){
 			return ZTRChromatogramFile.create(id, mIn);
 		}else if(SCFUtils.isMagicNumber(magicNumber)){
-			return new SCFChromatogramBuilder(id, mIn).build();
+			return new ScfChromatogramBuilder(id, mIn).build();
 		}else{
 			throw new IOException("unknown chromatogram format (not ab1, scf or ztr)");
 		}
@@ -93,7 +93,7 @@ public final class ChromatogramFactory {
 		}else if(ZTRUtil.isMagicNumber(magicNumber)){
 			ZTRChromatogramFileParser.parse(mIn, visitor);
 		}else if(SCFUtils.isMagicNumber(magicNumber)){
-			SCFChromatogramFileParser.parse(mIn, visitor);
+			ScfChromatogramFileParser.parse(mIn, visitor);
 		}else{
 			throw new IOException("unknown chromatogram format (not ab1, scf or ztr)");
 		}

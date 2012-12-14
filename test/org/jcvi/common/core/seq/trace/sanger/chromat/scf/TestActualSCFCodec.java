@@ -39,13 +39,13 @@ public class TestActualSCFCodec {
 	   
     private SCFCodec sut = SCFCodecs.VERSION_3;
     @Test
-    public void decodeAndEncodeMatch() throws SCFDecoderException, IOException{
-        SCFChromatogram decoded = new SCFChromatogramBuilder("id", RESOURCES.getFile("files/GBKAK82TF.scf"))
+    public void decodeAndEncodeMatch() throws ScfDecoderException, IOException{
+        ScfChromatogram decoded = new ScfChromatogramBuilder("id", RESOURCES.getFile("files/GBKAK82TF.scf"))
         							.build();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         sut.write(decoded, out);
-        SCFChromatogramBuilder builder = new SCFChromatogramBuilder("id", new ByteArrayInputStream(out.toByteArray()));
-    	SCFChromatogram decodedAgain = builder.build();        
+        ScfChromatogramBuilder builder = new ScfChromatogramBuilder("id", new ByteArrayInputStream(out.toByteArray()));
+    	ScfChromatogram decodedAgain = builder.build();        
         assertEquals(decoded, decodedAgain);
         
     }

@@ -30,13 +30,13 @@ import java.nio.ByteBuffer;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.PrivateData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramFileVisitor;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramFileVisitor;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
 /**
  * <code>PrivateDataCodec</code> is the SectionCodec implementation
- * that will encode/ decode the {@link PrivateData} of an {@link SCFChromatogram}.
+ * that will encode/ decode the {@link PrivateData} of an {@link ScfChromatogram}.
  * @author dkatzel
  *
  *
@@ -45,7 +45,7 @@ public class PrivateDataCodec implements SectionCodec{
 
     private static final byte[] EMPTY = new byte[0];
     @Override
-    public EncodedSection encode(SCFChromatogram c, SCFHeader header)
+    public EncodedSection encode(ScfChromatogram c, SCFHeader header)
             throws IOException {
         PrivateData privateData=c.getPrivateData();
         if(privateData ==null|| privateData.getBytes()==null){
@@ -61,7 +61,7 @@ public class PrivateDataCodec implements SectionCodec{
 
     @Override
     public long decode(DataInputStream in, long currentOffset,
-            SCFHeader header, SCFChromatogramBuilder c) throws SectionDecoderException {
+            SCFHeader header, ScfChromatogramBuilder c) throws SectionDecoderException {
         
         long bytesToSkip =Math.max(0,  header.getPrivateDataOffset() - currentOffset);
         
@@ -102,8 +102,8 @@ public class PrivateDataCodec implements SectionCodec{
                 if(bytesRead != privateDataSize){
                     throw new SectionDecoderException("could not read entire private data section");
                 }
-                if(c instanceof SCFChromatogramFileVisitor){
-                    ((SCFChromatogramFileVisitor) c).visitPrivateData(privateData);
+                if(c instanceof ScfChromatogramFileVisitor){
+                    ((ScfChromatogramFileVisitor) c).visitPrivateData(privateData);
                 }
                 
             }

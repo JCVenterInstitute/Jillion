@@ -41,9 +41,9 @@ import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.SangerTrace;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFDecoderException;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.DefaultSCFHeader;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.DefaultSCFHeaderCodec;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
@@ -70,7 +70,7 @@ public enum SCFCodecs implements SCFCodec{
     VERSION_3{
         @Override
         public void encode(Chromatogram c, OutputStream out) throws IOException {
-            this.encode(out, (SCFChromatogram)c, 3);
+            this.encode(out, (ScfChromatogram)c, 3);
         }
     },
     /**
@@ -79,7 +79,7 @@ public enum SCFCodecs implements SCFCodec{
     VERSION_2{
         @Override
         public void encode(Chromatogram c, OutputStream out) throws IOException {
-            this.encode(out, (SCFChromatogram)c, 2);
+            this.encode(out, (ScfChromatogram)c, 2);
         }
     };
     private SectionCodecFactory sectionCodecFactory;
@@ -98,10 +98,10 @@ public enum SCFCodecs implements SCFCodec{
      *
     * {@inheritDoc}
      */
-    private SCFChromatogram decode(String id, InputStream in) throws SCFDecoderException{
+    private ScfChromatogram decode(String id, InputStream in) throws ScfDecoderException{
            DataInputStream dataIn = new DataInputStream(in);
            SCFHeader header= headerCodec.decode(dataIn);
-           SCFChromatogramBuilder builder = new SCFChromatogramBuilder(id);
+           ScfChromatogramBuilder builder = new ScfChromatogramBuilder(id);
            SortedMap<Integer, Section> sectionsByOffset = createSectionsByOffsetMap(header);
            long currentOffset =HEADER_SIZE;
            for(Entry<Integer, Section> entry: sectionsByOffset.entrySet()){
@@ -126,7 +126,7 @@ public enum SCFCodecs implements SCFCodec{
     
     @Override
     public void parse(InputStream in, ChromatogramFileVisitor visitor)
-            throws SCFDecoderException {
+            throws ScfDecoderException {
         visitor.visitFile();
         
         DataInputStream dataIn = new DataInputStream(in);
@@ -136,7 +136,7 @@ public enum SCFCodecs implements SCFCodec{
     }
     @Override
     public void parse(File scfFile, ChromatogramFileVisitor visitor)
-            throws SCFDecoderException, FileNotFoundException {
+            throws ScfDecoderException, FileNotFoundException {
         InputStream in = null;
         try{
             in = new FileInputStream(scfFile);
@@ -184,15 +184,15 @@ public enum SCFCodecs implements SCFCodec{
     }
     protected abstract void encode(Chromatogram c, OutputStream out) throws IOException;
     /**
-     * Encodes the given {@link SCFChromatogram} into SCF version specific
+     * Encodes the given {@link ScfChromatogram} into SCF version specific
      * format.
-     * @param out the OutputStream to write the encoded {@link SCFChromatogram}.
-     * @param c the {@link SCFChromatogram} to write.
+     * @param out the OutputStream to write the encoded {@link ScfChromatogram}.
+     * @param c the {@link ScfChromatogram} to write.
      * @param version which SCF format version spec to encode.
      * @throws IOException f there are any problems encoding the chromatogram
      * or any problems writing to the {@link OutputStream}.
      */
-    protected final void encode(OutputStream out, SCFChromatogram c, int version) throws IOException{
+    protected final void encode(OutputStream out, ScfChromatogram c, int version) throws IOException{
         SCFHeader header = new DefaultSCFHeader();
         header.setVersion(version);
         int currentOffset = HEADER_SIZE;

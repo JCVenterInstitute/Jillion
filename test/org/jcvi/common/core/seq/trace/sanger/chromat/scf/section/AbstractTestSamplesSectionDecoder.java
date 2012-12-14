@@ -32,7 +32,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.SectionDecoderException;
 import org.junit.Before;
@@ -53,7 +53,7 @@ public abstract class AbstractTestSamplesSectionDecoder {
     public void parseShorts() throws SectionDecoderException{
         Integer currentOffset = 0;
         byte[] encodedBytes = sut.encodeShortPositions();
-        SCFChromatogramBuilder c = sut.setUpData(currentOffset, (byte)2, mockHeader, getVersion());
+        ScfChromatogramBuilder c = sut.setUpData(currentOffset, (byte)2, mockHeader, getVersion());
         sut.getHandler().decode(new DataInputStream(new ByteArrayInputStream(encodedBytes)), currentOffset, mockHeader, c);
         verify(mockHeader);
         sut.assertChromatogramShortPositions(c);
@@ -66,7 +66,7 @@ public abstract class AbstractTestSamplesSectionDecoder {
         Integer currentOffset = 0;
 
         byte[] encodedBytes = sut.encodeBytePositions();
-        SCFChromatogramBuilder c = sut.setUpData(currentOffset, (byte)1, mockHeader, getVersion());
+        ScfChromatogramBuilder c = sut.setUpData(currentOffset, (byte)1, mockHeader, getVersion());
         sut.getHandler().decode(new DataInputStream(new ByteArrayInputStream(encodedBytes)), currentOffset, mockHeader, c);
         verify(mockHeader);
         sut.assertChromatogramBytePositions(c);
@@ -75,7 +75,7 @@ public abstract class AbstractTestSamplesSectionDecoder {
     @Test
     public void parseThrowsIOExceptionShouldWrapInSectionParserException() throws IOException{
         InputStream in = createMock(InputStream.class);
-        SCFChromatogramBuilder c = sut.setUpData(0, (byte)1, mockHeader, getVersion());
+        ScfChromatogramBuilder c = sut.setUpData(0, (byte)1, mockHeader, getVersion());
         IOException expectedIOException = new IOException("expected");
         expect(in.read()).andThrow(expectedIOException);
         replay(in);
