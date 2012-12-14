@@ -30,9 +30,9 @@ import java.io.InputStream;
 
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramFile;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFCodec;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFCodecs;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFDecoderException;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFCodec;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFCodecs;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 import static org.junit.Assert.*;

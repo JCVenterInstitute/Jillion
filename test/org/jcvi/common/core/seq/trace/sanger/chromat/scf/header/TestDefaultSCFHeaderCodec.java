@@ -29,11 +29,11 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.DefaultSCFHeader;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.DefaultSCFHeaderCodec;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.SCFHeader;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.SCFHeaderCodec;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.SCFHeaderDecoderException;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.DefaultSCFHeader;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.DefaultSCFHeaderCodec;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeaderCodec;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeaderDecoderException;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

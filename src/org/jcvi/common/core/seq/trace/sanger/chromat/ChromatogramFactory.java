@@ -33,7 +33,7 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.AbiUtil;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.DefaultAbiChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramFile;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramFileParser;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFUtils;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFUtils;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFile;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFileParser;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRUtil;

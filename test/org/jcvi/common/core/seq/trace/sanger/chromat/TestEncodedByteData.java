@@ -25,7 +25,7 @@ package org.jcvi.common.core.seq.trace.sanger.chromat;
 
 import java.util.Arrays;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.EncodedByteData;
+import org.jcvi.common.core.seq.read.trace.sanger.chromat.EncodedByteData;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;

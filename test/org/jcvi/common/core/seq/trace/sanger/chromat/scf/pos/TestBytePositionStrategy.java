@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.pos.BytePositionStrategy;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.pos.impl.BytePositionStrategy;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;

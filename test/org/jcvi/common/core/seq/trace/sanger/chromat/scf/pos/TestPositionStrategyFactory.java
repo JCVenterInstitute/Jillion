@@ -23,11 +23,11 @@
  */
 package org.jcvi.common.core.seq.trace.sanger.chromat.scf.pos;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.SCFHeader;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.pos.BytePositionStrategy;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.pos.PositionStrategy;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.pos.PositionStrategyFactory;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.pos.ShortPositionStrategy;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.pos.impl.BytePositionStrategy;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.pos.impl.PositionStrategy;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.pos.impl.PositionStrategyFactory;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.pos.impl.ShortPositionStrategy;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

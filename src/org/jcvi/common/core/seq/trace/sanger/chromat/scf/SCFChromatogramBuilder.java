@@ -30,6 +30,8 @@ import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.BasicChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.PrivateDataImpl;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFChromatogramImpl;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
