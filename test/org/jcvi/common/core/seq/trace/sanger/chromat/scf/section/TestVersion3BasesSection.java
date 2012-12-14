@@ -29,8 +29,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.AbstractBasesSectionCodec;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.Version3BasesSectionCodec;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.AbstractBasesSectionCodec;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.Version3BasesSectionCodec;
 import org.jcvi.common.core.testUtil.EasyMockUtil;
 
 

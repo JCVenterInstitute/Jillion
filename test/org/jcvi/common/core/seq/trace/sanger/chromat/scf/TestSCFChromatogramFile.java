@@ -29,7 +29,7 @@ import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramXMLSerializer;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramFile;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramImpl;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFChromatogramImpl;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
 

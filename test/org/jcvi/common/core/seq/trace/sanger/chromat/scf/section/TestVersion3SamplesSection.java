@@ -25,9 +25,9 @@ package org.jcvi.common.core.seq.trace.sanger.chromat.scf.section;
 
 import java.nio.ByteBuffer;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFUtils;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.AbstractSampleSectionCodec;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.Version3SampleSectionCodec;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFUtils;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.AbstractSampleSectionCodec;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.Version3SampleSectionCodec;
 
 public class TestVersion3SamplesSection  extends AbstractTestSamplesSection{
     @Override

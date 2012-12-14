@@ -31,9 +31,9 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.Channel;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.SCFHeader;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.AbstractSampleSectionCodec;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.EncodedSection;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.AbstractSampleSectionCodec;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.EncodedSection;
 
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;

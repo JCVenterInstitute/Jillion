@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFUtils;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

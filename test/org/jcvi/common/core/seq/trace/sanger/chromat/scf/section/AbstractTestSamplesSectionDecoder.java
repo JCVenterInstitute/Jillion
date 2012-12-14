@@ -33,8 +33,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.SCFHeader;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.SectionDecoderException;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.SectionDecoderException;
 import org.junit.Before;
 import org.junit.Test;
 

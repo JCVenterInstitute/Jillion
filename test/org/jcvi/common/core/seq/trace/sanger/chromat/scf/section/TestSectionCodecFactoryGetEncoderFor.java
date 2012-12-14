@@ -26,16 +26,16 @@ package org.jcvi.common.core.seq.trace.sanger.chromat.scf.section;
 import static org.junit.Assert.*;
 
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.CommentSectionCodec;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.DefaultSectionCodecFactory;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.PrivateDataCodec;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.Section;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.SectionCodecFactory;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.SectionEncoder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.Version2BasesSectionCodec;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.Version2SampleSectionCodec;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.Version3BasesSectionCodec;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.Version3SampleSectionCodec;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.CommentSectionCodec;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.DefaultSectionCodecFactory;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.PrivateDataCodec;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.Section;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.SectionCodecFactory;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.SectionEncoder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.Version2BasesSectionCodec;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.Version2SampleSectionCodec;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.Version3BasesSectionCodec;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.Version3SampleSectionCodec;
 import org.junit.Test;
 
 public class TestSectionCodecFactoryGetEncoderFor {
