@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
+import org.jcvi.common.core.seq.trace.sff.Flowgram;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.DateUtil;

@@ -29,8 +29,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
-import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.junit.Test;

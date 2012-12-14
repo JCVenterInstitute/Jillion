@@ -4,9 +4,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStoreUtil;
-import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
-import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
-import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStoreBuilder;
 
 final class DefaultSffDataStoreBuilder implements FlowgramDataStoreBuilder{
 

@@ -29,8 +29,6 @@ import java.io.IOException;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
-import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sff.DefaultSffFileDataStore;
 import org.jcvi.common.core.seq.trace.sff.SffFlowgram;

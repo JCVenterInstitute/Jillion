@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.read.trace.pyro;
+package org.jcvi.common.core.seq.trace.sff;
 
 
 import org.jcvi.common.core.Range;

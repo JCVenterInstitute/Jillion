@@ -14,8 +14,6 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
-import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.util.MapUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**

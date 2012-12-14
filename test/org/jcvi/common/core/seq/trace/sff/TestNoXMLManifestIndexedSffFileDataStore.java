@@ -2,8 +2,6 @@ package org.jcvi.common.core.seq.trace.sff;
 
 import java.io.File;
 
-import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
-import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.seq.trace.sff.Indexed454SffFileDataStore;
 
 public class TestNoXMLManifestIndexedSffFileDataStore extends TestReadExampleSffFile{

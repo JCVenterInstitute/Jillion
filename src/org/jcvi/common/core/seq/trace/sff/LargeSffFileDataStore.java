@@ -37,8 +37,6 @@ import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.datastore.impl.AbstractDataStore;
 import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
-import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 /**
  * {@code LargeSffFileDataStore} is a {@link FlowgramDataStore}

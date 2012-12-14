@@ -7,8 +7,6 @@ import java.io.IOException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
-import org.jcvi.common.core.seq.read.trace.pyro.Flowgram;
-import org.jcvi.common.core.seq.read.trace.pyro.FlowgramDataStore;
 import org.jcvi.common.core.seq.trace.fastq.FastqRecord;
 import org.jcvi.common.core.util.Builder;
 /**
