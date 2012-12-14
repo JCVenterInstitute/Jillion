@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data;
+package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl;
 
 /**
  * {@code DataHeader} contains the various supported ZTR 1.2

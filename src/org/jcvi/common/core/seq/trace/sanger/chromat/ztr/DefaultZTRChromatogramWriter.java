@@ -28,15 +28,16 @@ import java.util.List;
 
 import org.jcvi.common.core.seq.trace.TraceEncoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.Chunk;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.ChunkType;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.Data;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.DeltaEncodedData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.FollowData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.RunLengthEncodedData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.ShrinkToEightBitData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.ZLibData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.DeltaEncodedData.Level;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl.Chunk;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl.ChunkType;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.Data;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DeltaEncodedData;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.FollowData;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.RunLengthEncodedData;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.ShrinkToEightBitData;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.ZLibData;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DeltaEncodedData.Level;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl.ZTRUtil;
 import org.jcvi.common.core.util.Builder;
 
 /**

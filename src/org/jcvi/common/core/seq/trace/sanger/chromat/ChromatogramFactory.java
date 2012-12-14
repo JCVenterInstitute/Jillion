@@ -36,7 +36,7 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramFilePars
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFUtils;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFile;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFileParser;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRUtil;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl.ZTRUtil;
 
 public final class ChromatogramFactory {
 

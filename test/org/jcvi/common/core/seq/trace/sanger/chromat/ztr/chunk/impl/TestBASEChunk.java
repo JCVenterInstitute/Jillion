@@ -21,48 +21,50 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk;
+package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl;
 
 import java.nio.ByteBuffer;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.TraceEncoderException;
-import org.jcvi.common.core.seq.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.Chunk;
-import org.junit.Test;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl.Chunk;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 
+import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
-public class TestBPOSChunk {
-
-    private static final short[] decodedPeaks = new short[]{10,20,30,41,53,60,68};
-    Chunk sut =Chunk.POSITIONS;
-
-    private static final byte[] encodedPositions;
-    static{
-    	ByteBuffer buf = ByteBuffer.allocate(decodedPeaks.length*4 + 4);
-        buf.putInt(0); //padding
-        for(int i=0; i< decodedPeaks.length; i++){
-            buf.putInt(decodedPeaks[i]);
-        }
-        encodedPositions = buf.array();
-    }
+public class TestBASEChunk {
+   
+    private static final String decodedBases = "ACGTACGTNW-";
+   Chunk sut =Chunk.BASE;
+   private static final byte[] encodedBases;
+	static{
+		ByteBuffer buf = ByteBuffer.allocate(decodedBases.length()+1);
+	    buf.put((byte)0 ); //padding
+	    buf.put(decodedBases.getBytes());
+	    encodedBases = buf.array();
+	}
+	
     @Test
-    public void valid() throws TraceDecoderException{        
-        ZTRChromatogramBuilder mockStruct = new ZTRChromatogramBuilder("id");
-        sut.parseData(encodedPositions, mockStruct);
-        assertEquals(new PositionSequenceBuilder(decodedPeaks).build(), mockStruct.peaks());
+    public void valid() throws TraceDecoderException{
+       
+        ZTRChromatogramBuilder builder = new ZTRChromatogramBuilder("id");
+        sut.parseData(encodedBases, builder);        
+        assertEquals(decodedBases, builder.basecalls().toString());
     }
     
     @Test
-    public void encode() throws TraceEncoderException{
-    	ZTRChromatogram chromatogram = createMock(ZTRChromatogram.class);
-    	expect(chromatogram.getPositionSequence()).andReturn(new PositionSequenceBuilder(decodedPeaks).build());
-    	replay(chromatogram);
-    	byte[] actual =sut.encodeChunk(chromatogram);
-    	assertArrayEquals(encodedPositions, actual);
-    	verify(chromatogram);
+    public void encode() throws TraceEncoderException, TraceDecoderException{
+    	ZTRChromatogram mockChromatogram = createMock(ZTRChromatogram.class);
+    	NucleotideSequence basecalls = new NucleotideSequenceBuilder(decodedBases).build();
+    	expect(mockChromatogram.getNucleotideSequence()).andReturn(basecalls);
+    	
+    	replay(mockChromatogram);
+    	byte[] actual =sut.encodeChunk(mockChromatogram);
+    	assertArrayEquals(encodedBases, actual);
+    	verify(mockChromatogram);
     }
 }

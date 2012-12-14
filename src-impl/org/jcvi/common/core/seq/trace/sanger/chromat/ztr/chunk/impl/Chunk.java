@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk;
+package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl;
 
 
 import java.io.ByteArrayInputStream;
@@ -56,10 +56,10 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFileVisitor;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRUtil;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.Data;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.DataFactory;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.RawData;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.Data;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DataFactory;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.RawData;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl.ZTRUtil;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;

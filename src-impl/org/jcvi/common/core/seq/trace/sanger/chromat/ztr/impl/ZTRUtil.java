@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.trace.sanger.chromat.ztr;
+package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl;
 
 import java.util.Arrays;
 

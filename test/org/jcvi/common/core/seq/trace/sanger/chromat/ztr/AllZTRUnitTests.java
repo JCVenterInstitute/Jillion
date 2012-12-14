@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.trace.sanger.chromat.ztr;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.AllChunkUnitTests;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl.AllChunkUnitTests;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.AllDataUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk;
+package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl;
 
 import java.nio.ByteBuffer;
 import java.util.LinkedHashMap;
@@ -32,7 +32,7 @@ import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.TraceEncoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.Chunk;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl.Chunk;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.createMock;
