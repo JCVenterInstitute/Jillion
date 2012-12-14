@@ -19,28 +19,27 @@
 
 package org.jcvi.common.core.seq.trace.sanger.chromat.ztr;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.TraceEncoderException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.IOLibLikeZtrChromatogramWriter;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFile;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestIOLibZTRChromatogramWriter {
 
 	ResourceFileServer RESOURCES = new ResourceFileServer(TestIOLibZTRChromatogramWriter.class);
 
 	@Test
 	public void testEncodeAndDecode() throws FileNotFoundException, TraceDecoderException, IOException, TraceEncoderException{
-		ZtrChromatogram chromatogram = ZTRChromatogramFile.create(RESOURCES.getFile("files/GBKAK82TF.ztr"));
+		ZtrChromatogram chromatogram = new ZtrChromatogramBuilder("id",RESOURCES.getFile("files/GBKAK82TF.ztr")).build();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		IOLibLikeZtrChromatogramWriter.INSTANCE.write(chromatogram, out);
-		ZtrChromatogram reParsed = ZTRChromatogramFile.create("id",new ByteArrayInputStream(out.toByteArray()));
+		ZtrChromatogram reParsed = new ZtrChromatogramBuilder("id",new ByteArrayInputStream(out.toByteArray())).build();
 		
 		assertEquals(chromatogram, reParsed);
 		

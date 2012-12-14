@@ -24,6 +24,9 @@
 package org.jcvi.common.core.seq.trace.sanger.chromat.ztr;
 
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 import org.jcvi.common.core.Range;
@@ -51,14 +54,84 @@ public final class ZtrChromatogramBuilder implements Builder<ZtrChromatogram>{
 
     private final BasicChromatogramBuilder basicBuilder;
     
-    
+    /**
+     * Create a new {@link ZtrChromatogramBuilder} instance with
+     * all fields except for the id unset.  In order
+     * to successfully build a valid {@link ZtrChromatogram}
+     * object please use
+     * the various setter methods
+     * in this class to set everything
+     * before calling {@link #build()}.
+     * @param id the id for this {@link Chromatogram} object to have;
+     * can not be null.
+     * @throws NullPointerException if either field is null.
+     */
     public ZtrChromatogramBuilder(String id){
         basicBuilder = new BasicChromatogramBuilder(id);
     }
-    
+    /**
+     * Create a new {@link ZtrChromatogramBuilder} instance
+     * with the given id and all fields initially set
+     * to the the values encoded in the given ztr file.
+     * @param id the id for this {@link Chromatogram} object to have;
+     * can not be null. 
+     * @param ztrFile a ZTR encoded file that contains the initial values
+     * that this builder should have; can not be null.
+     * @throws IOException if there is a problem reading the file or if
+     * the given file is not a valid ztr encoded file.
+     * @throws NullPointerException if either field is null.
+     */
+    public ZtrChromatogramBuilder(String id, File ztrFile) throws IOException{
+        this(id);
+        ZTRChromatogramFileBuilderVisitor visitor = new ZTRChromatogramFileBuilderVisitor(this);
+        ZtrChromatogramFileParser.parse(ztrFile, visitor); 
+    }
+    /**
+     * Create a new {@link ZtrChromatogramBuilder} instance
+     * with the given id and all fields initially set
+     * to the the values encoded in the given ztr encoded inputStream.
+     * The {@link InputStream} will NOT be closed by this constructor,
+     * client code must close the stream themselves after returning 
+     * from this method (preferably in a finally block).
+     * @param id the id for this {@link Chromatogram} object to have;
+     * can not be null. 
+     * @param ztrStream a ZTR encoded {@link InputStream} that contains the initial values
+     * that this builder should have; can not be null.
+     * @throws IOException if there is a problem reading the file or
+     * if the {@link InputStream} does not contain valid ztr encoded data.
+     * @throws NullPointerException if either field is null.
+     */
+    public ZtrChromatogramBuilder(String id, InputStream ztrStream) throws IOException{
+        this(id);
+        ZTRChromatogramFileBuilderVisitor visitor = new ZTRChromatogramFileBuilderVisitor(this);
+        ZtrChromatogramFileParser.parse(ztrStream, visitor); 
+    }
+    /**
+     * Create a new instance of {@link ZtrChromatogramBuilder}
+     * using the given {@link Chromatogram} instance 
+     * to set all the initial fields. Only the fields 
+     * in the {@link Chromatogram} interface will be copied,
+     * any ztr specific fields will be null.  Use the various
+     * ztr specific setter methods to set those values.
+     * @param copy a {@link Chromatogram} object
+     * whose fields are used as the initial values of this
+     * new Builder; can not be null;
+     * @throws NullPointerException if copy is null.
+     */
     public ZtrChromatogramBuilder(Chromatogram copy){
        basicBuilder = new BasicChromatogramBuilder(copy);        
     }
+    /**
+     * Create a new instance of ZtrChromatogramBuilder
+     * using the given {@link ZtrChromatogram} instance 
+     * to set all the initial fields. All the fields 
+     * in the {@link ZtrChromatogram} interface including
+     * ztr specific fields will be copied.
+     * @param copy a {@link ZtrChromatogram} object
+     * whose fields are used as the initial values of this
+     * new Builder; can not be null;
+     * @throws NullPointerException if copy is null.
+     */
     public ZtrChromatogramBuilder(ZtrChromatogram copy){
         this((Chromatogram)copy);
         clip(copy.getClip());
@@ -186,5 +259,161 @@ public final class ZtrChromatogramBuilder implements Builder<ZtrChromatogram>{
     public final ZtrChromatogramBuilder properties(Map<String,String> properties) {
         basicBuilder.properties(properties);
         return this;
+    }
+    
+    /**
+     * {@code ZTRChromatogramFileBuilderVisitor} is a helper class
+     * that wraps a {@link ZtrChromatogramBuilder} by a {@link ZtrChromatogramFileVisitor}.
+     * This way when a part of the ZTR is visited, its corresponding objects get built 
+     * by the builder.
+     * @author dkatzel
+     *
+     *
+     */
+    private static final class ZTRChromatogramFileBuilderVisitor implements ZtrChromatogramFileVisitor{
+        private final ZtrChromatogramBuilder builder ;
+        
+        private ZTRChromatogramFileBuilderVisitor(ZtrChromatogramBuilder builder){
+        	this.builder = builder;
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitAConfidence(byte[] confidence) {
+            builder.aConfidence(confidence);            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitCConfidence(byte[] confidence) {
+
+            builder.cConfidence(confidence);            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitGConfidence(byte[] confidence) {
+
+            builder.gConfidence(confidence);            
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitTConfidence(byte[] confidence) {
+
+            builder.tConfidence(confidence);            
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+         @Override
+         public void visitNewTrace() {
+        	 //no-op
+         }
+         /**
+         * {@inheritDoc}
+         */
+         @Override
+         public void visitEndOfTrace() {
+        	 //no-op
+         }
+         
+         /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitEndOfFile() {
+        	  //no-op
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitBasecalls(NucleotideSequence basecalls) {
+  
+              builder.basecalls(basecalls);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitPeaks(short[] peaks) {
+  
+              builder.peaks(peaks);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitClipRange(Range clipRange) {
+  
+              builder.clip(clipRange);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitComments(Map<String,String> comments) {
+  
+              builder.properties(comments);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitAPositions(short[] positions) {
+  
+              builder.aPositions(positions);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitCPositions(short[] positions) {
+  
+             builder.cPositions(positions);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitGPositions(short[] positions) {
+  
+              builder.gPositions(positions);              
+          }
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitTPositions(short[] positions) {
+  
+              builder.tPositions(positions);              
+          }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitFile() { 
+        	//no-op
+        }
+
     }
 }

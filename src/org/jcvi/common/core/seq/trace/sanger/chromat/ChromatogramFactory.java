@@ -34,7 +34,7 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.DefaultAbiChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramFileParser;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFUtils;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFile;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramFileParser;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl.ZTRUtil;
 
@@ -67,7 +67,7 @@ public final class ChromatogramFactory {
 		if(AbiUtil.isABIMagicNumber(magicNumber)){
 			return DefaultAbiChromatogram.create(id, mIn);
 		}else if(ZTRUtil.isMagicNumber(magicNumber)){
-			return ZTRChromatogramFile.create(id, mIn);
+			return new ZtrChromatogramBuilder(id, mIn).build();
 		}else if(SCFUtils.isMagicNumber(magicNumber)){
 			return new ScfChromatogramBuilder(id, mIn).build();
 		}else{

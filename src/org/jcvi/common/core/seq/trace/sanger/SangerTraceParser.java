@@ -34,7 +34,7 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.AbiUtil;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.DefaultAbiChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFUtils;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFile;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl.ZTRUtil;
 import org.jcvi.common.core.seq.trace.sanger.phd.SinglePhdFile;
 /**
@@ -58,7 +58,7 @@ public enum SangerTraceParser {
 	        if(AbiUtil.isABIMagicNumber(magicNumber)){
 	            return DefaultAbiChromatogram.create(id,mIn);
 	        }else if(ZTRUtil.isMagicNumber(magicNumber)){
-	        	return ZTRChromatogramFile.create(id,mIn);
+	        	return new ZtrChromatogramBuilder(id, mIn).build();
 	        }else if(SCFUtils.isMagicNumber(magicNumber)){
 	        	return new ScfChromatogramBuilder(id, mIn).build();
 	        }else{
@@ -84,7 +84,7 @@ public enum SangerTraceParser {
 	        if(AbiUtil.isABIMagicNumber(magicNumber)){
 	            return DefaultAbiChromatogram.create(id,mIn);
 	        }else if(ZTRUtil.isMagicNumber(magicNumber)){
-	        	return ZTRChromatogramFile.create(id,mIn);
+	        	return new ZtrChromatogramBuilder(id, mIn).build();
 	        }else if(SCFUtils.isMagicNumber(magicNumber)){
 	        	return new ScfChromatogramBuilder(id, mIn).build();
 	        }else{

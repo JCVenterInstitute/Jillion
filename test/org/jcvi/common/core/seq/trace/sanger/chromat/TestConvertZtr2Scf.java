@@ -34,7 +34,7 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFChromatogramImpl;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFCodec;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFCodecs;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFile;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -46,8 +46,8 @@ public class TestConvertZtr2Scf {
     @Test
     public void ztr2scf() throws TraceDecoderException, IOException{
         
-        Chromatogram decodedZTR = ZTRChromatogramFile.create(
-                RESOURCES.getFile("ztr/files/GBKAK82TF.ztr"));
+        Chromatogram decodedZTR = new ZtrChromatogramBuilder("GBKAK82TF.ztr", RESOURCES.getFile("ztr/files/GBKAK82TF.ztr"))
+        											.build();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         scfCodec.write(new ScfChromatogramBuilder(decodedZTR).build(), out);
 
@@ -62,8 +62,8 @@ public class TestConvertZtr2Scf {
     public void scfequalsZtr() throws TraceDecoderException, IOException{
         Chromatogram decodedScf = new ScfChromatogramBuilder("id", RESOURCES.getFile("scf/files/GBKAK82TF.scf"))
         							.build();
-        Chromatogram decodedZTR = ZTRChromatogramFile.create(
-                RESOURCES.getFile("ztr/files/GBKAK82TF.ztr"));
+        Chromatogram decodedZTR = new ZtrChromatogramBuilder("GBKAK82TF.ztr", RESOURCES.getFile("ztr/files/GBKAK82TF.ztr"))
+											.build();
         assertEquals(decodedZTR, decodedScf);        
     }
     /**
@@ -75,8 +75,8 @@ public class TestConvertZtr2Scf {
      */
     @Test
     public void ztrWithNoQualitiesShouldGetPaddedQualitiesInScf() throws TraceDecoderException, IOException{
-        Chromatogram ztr = ZTRChromatogramFile.create(
-                RESOURCES.getFile("ztr/files/515866_G07_AFIXF40TS_026.ab1.afg.trash.ztr"));
+        Chromatogram ztr = new ZtrChromatogramBuilder("GBKAK82TF.ztr", RESOURCES.getFile("ztr/files/515866_G07_AFIXF40TS_026.ab1.afg.trash.ztr"))
+												.build();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         scfCodec.write(new SCFChromatogramImpl(ztr), out);
         
