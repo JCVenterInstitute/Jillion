@@ -27,8 +27,6 @@ import java.io.IOException;
 import org.jcvi.common.core.seq.trace.Trace;
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramXMLSerializer;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramFile;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFChromatogramImpl;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
@@ -54,14 +52,16 @@ public class TestSCFChromatogramFile {
     @Test
     public void parseScfFile() throws IOException, TraceDecoderException{
         File scfFile = RESOURCES.getFile("files/GBKAK82TF.scf");
-        SCFChromatogram actual = SCFChromatogramFile.create(scfFile);
+        SCFChromatogram actual = new SCFChromatogramBuilder(scfFile.getName(), scfFile)
+									.build();
         assertEquals(EXPECTED_SCF, actual);
     }
     
     @Test
     public void scfWithGaps() throws IOException, TraceDecoderException{
         File scfFile = RESOURCES.getFile("files/containsGaps.scf");
-        SCFChromatogram actual = SCFChromatogramFile.create(scfFile);
+        SCFChromatogram actual = new SCFChromatogramBuilder(scfFile.getName(), scfFile)
+									.build();
         assertEquals(actual.getNucleotideSequence().toString(), "-----");
         
     }

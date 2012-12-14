@@ -31,7 +31,7 @@ import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.Ab1FileParser;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.AbiUtil;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.DefaultAbiChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramFile;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramFileParser;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFUtils;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFile;
@@ -69,7 +69,7 @@ public final class ChromatogramFactory {
 		}else if(ZTRUtil.isMagicNumber(magicNumber)){
 			return ZTRChromatogramFile.create(id, mIn);
 		}else if(SCFUtils.isMagicNumber(magicNumber)){
-			return SCFChromatogramFile.create(id, mIn);
+			return new SCFChromatogramBuilder(id, mIn).build();
 		}else{
 			throw new IOException("unknown chromatogram format (not ab1, scf or ztr)");
 		}

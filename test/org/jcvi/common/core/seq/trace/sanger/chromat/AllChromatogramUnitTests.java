@@ -41,7 +41,6 @@ import org.junit.runners.Suite.SuiteClasses;
         AllSCFUnitTests.class,        
         AllZTRUnitTests.class,        
         TestConvertZtr2Scf.class,
-        TestMixAndMatchChromatogramParsers.class,
         AllAbiUnitTests.class,
         TestChromatogramFactory.class
              

@@ -23,14 +23,12 @@
  */
 package org.jcvi.common.core.seq.trace.sanger.chromat.scf;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramFile;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFDecoderException;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
-import static org.junit.Assert.*;
 /**
  * Tests to see if SCF parser can handle 
  * data that is not A,C,G or T.  SCF spec
@@ -46,8 +44,8 @@ public class TestSCFChromatogramWithGaps {
     
     @Test
     public void parse() throws SCFDecoderException, IOException{
-        SCFChromatogram actual =SCFChromatogramFile.create("id",
-        		RESOURCES.getFileAsStream(File_path));
+    	SCFChromatogramBuilder builder = new SCFChromatogramBuilder("id", RESOURCES.getFile(File_path));
+    	SCFChromatogram actual = builder.build();
         assertEquals(actual.getNucleotideSequence().toString(), "-----");
         
     }

@@ -25,11 +25,10 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFactory;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.AbiChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.DefaultAbiChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramFile;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZTRChromatogramFile;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
@@ -53,7 +52,8 @@ public class TestChromatogramFactory {
     @Test
     public void parseSCF3() throws TraceDecoderException, IOException{    	
         File scfFile = RESOURCES.getFile(SCF3_FILE);
-        SCFChromatogram expected = SCFChromatogramFile.create(scfFile);
+        SCFChromatogram expected = new SCFChromatogramBuilder(scfFile.getName(), scfFile)
+									.build();
         SCFChromatogram actual = (SCFChromatogram) ChromatogramFactory.create(scfFile);
         assertEquals(expected, actual);
     }

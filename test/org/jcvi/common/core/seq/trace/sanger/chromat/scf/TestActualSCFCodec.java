@@ -23,19 +23,16 @@
  */
 package org.jcvi.common.core.seq.trace.sanger.chromat.scf;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramFile;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFCodec;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFCodecs;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestActualSCFCodec {
 
 	 private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestActualSCFCodec.class);
@@ -43,12 +40,12 @@ public class TestActualSCFCodec {
     private SCFCodec sut = SCFCodecs.VERSION_3;
     @Test
     public void decodeAndEncodeMatch() throws SCFDecoderException, IOException{
-        InputStream in = RESOURCES.getFileAsStream("files/GBKAK82TF.scf");
-        SCFChromatogram decoded = SCFChromatogramFile.create("id",in);
+        SCFChromatogram decoded = new SCFChromatogramBuilder("id", RESOURCES.getFile("files/GBKAK82TF.scf"))
+        							.build();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         sut.write(decoded, out);
-        SCFChromatogram decodedAgain = SCFChromatogramFile.create("id",new ByteArrayInputStream(out.toByteArray()));
-
+        SCFChromatogramBuilder builder = new SCFChromatogramBuilder("id", new ByteArrayInputStream(out.toByteArray()));
+    	SCFChromatogram decodedAgain = builder.build();        
         assertEquals(decoded, decodedAgain);
         
     }

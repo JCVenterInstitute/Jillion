@@ -23,13 +23,14 @@
  */
 package org.jcvi.common.core.seq.trace.sanger.chromat;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramFile;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFChromatogramImpl;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFCodec;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFCodecs;
@@ -38,7 +39,6 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestConvertZtr2Scf {
     private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestConvertZtr2Scf.class);
     SCFCodec scfCodec = SCFCodecs.VERSION_3;
@@ -49,16 +49,19 @@ public class TestConvertZtr2Scf {
         Chromatogram decodedZTR = ZTRChromatogramFile.create(
                 RESOURCES.getFile("ztr/files/GBKAK82TF.ztr"));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        scfCodec.write(new SCFChromatogramImpl(decodedZTR), out);
+        scfCodec.write(new SCFChromatogramBuilder(decodedZTR).build(), out);
+
         
-        Chromatogram encodedScf = SCFChromatogramFile.create("id",new ByteArrayInputStream(out.toByteArray()));
+        Chromatogram encodedScf = new SCFChromatogramBuilder("id", new ByteArrayInputStream(out.toByteArray()))
+								.build();
+
         assertEquals(decodedZTR, encodedScf);
     }
     
     @Test
     public void scfequalsZtr() throws TraceDecoderException, IOException{
-        Chromatogram decodedScf = SCFChromatogramFile.create("id",
-        		RESOURCES.getFileAsStream("scf/files/GBKAK82TF.scf"));
+        Chromatogram decodedScf = new SCFChromatogramBuilder("id", RESOURCES.getFile("scf/files/GBKAK82TF.scf"))
+        							.build();
         Chromatogram decodedZTR = ZTRChromatogramFile.create(
                 RESOURCES.getFile("ztr/files/GBKAK82TF.ztr"));
         assertEquals(decodedZTR, decodedScf);        
@@ -77,7 +80,8 @@ public class TestConvertZtr2Scf {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         scfCodec.write(new SCFChromatogramImpl(ztr), out);
         
-        Chromatogram encodedScf = SCFChromatogramFile.create("id",new ByteArrayInputStream(out.toByteArray()));
+        Chromatogram encodedScf = new SCFChromatogramBuilder("id", new ByteArrayInputStream(out.toByteArray()))
+										.build();
         
         int numberOfBases = (int)encodedScf.getNucleotideSequence().getLength();
         QualitySequence expectedQualities = new QualitySequenceBuilder(new byte[numberOfBases]).build();

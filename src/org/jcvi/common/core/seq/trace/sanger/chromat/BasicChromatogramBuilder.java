@@ -56,7 +56,9 @@ public final class BasicChromatogramBuilder {
         
         private String id;
         /**
-         * empty constructor.
+         * Set the id of this Builder.
+         * @param id the id of this Builder; can not be null.
+         * @throws NullPointerException if id is null.
          */
         public BasicChromatogramBuilder(String id){
         	if(id ==null){
