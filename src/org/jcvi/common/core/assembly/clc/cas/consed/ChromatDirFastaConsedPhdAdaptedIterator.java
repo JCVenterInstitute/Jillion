@@ -25,10 +25,10 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.scf.SCFChromatogramFile;
-import org.jcvi.common.core.seq.read.trace.sanger.phd.DefaultPhd;
-import org.jcvi.common.core.seq.read.trace.sanger.phd.Phd;
+import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.scf.SCFChromatogramFile;
+import org.jcvi.common.core.seq.trace.sanger.phd.DefaultPhd;
+import org.jcvi.common.core.seq.trace.sanger.phd.Phd;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 

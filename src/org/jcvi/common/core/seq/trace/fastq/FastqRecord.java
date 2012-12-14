@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.trace.fastq;
 
-import org.jcvi.common.core.seq.read.trace.Trace;
+import org.jcvi.common.core.seq.trace.Trace;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 /**

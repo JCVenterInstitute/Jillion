@@ -76,7 +76,7 @@ import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordBuilder;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
-import org.jcvi.common.core.seq.read.trace.sanger.phd.PhdDataStore;
+import org.jcvi.common.core.seq.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;

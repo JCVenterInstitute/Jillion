@@ -33,7 +33,7 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreUtil;
-import org.jcvi.common.core.seq.read.trace.frg.FragmentDataStore;
+import org.jcvi.common.core.seq.trace.frg.FragmentDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;

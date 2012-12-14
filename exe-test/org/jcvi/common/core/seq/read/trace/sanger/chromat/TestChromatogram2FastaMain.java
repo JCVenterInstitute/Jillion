@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.read.trace.TraceDecoderException;
+import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.jcvi.common.core.testUtil.TestUtil.TriedToExitException;
 import org.jcvi.trace.sanger.chromatogram.Chromatogram2fasta;

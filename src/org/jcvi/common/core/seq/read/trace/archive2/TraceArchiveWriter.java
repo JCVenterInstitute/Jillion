@@ -25,11 +25,11 @@ import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaRecordWriterBuilder;
-import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceFastaRecordWriter;
-import org.jcvi.common.core.seq.read.trace.sanger.PositionSequenceFastaRecordWriterBuilder;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.BasicChromatogramBuilderVisitor;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.ChromatogramFactory;
+import org.jcvi.common.core.seq.trace.sanger.PositionSequenceFastaRecordWriter;
+import org.jcvi.common.core.seq.trace.sanger.PositionSequenceFastaRecordWriterBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.BasicChromatogramBuilderVisitor;
+import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFactory;
 import org.jcvi.common.core.util.DateUtil;
 
 /**

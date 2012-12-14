@@ -28,9 +28,9 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.seq.read.trace.sanger.PositionSequence;
-import org.jcvi.common.core.seq.read.trace.sanger.SangerTrace;
-import org.jcvi.common.core.seq.read.trace.sanger.SangerTraceParser;
+import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
+import org.jcvi.common.core.seq.trace.sanger.SangerTrace;
+import org.jcvi.common.core.seq.trace.sanger.SangerTraceParser;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 
