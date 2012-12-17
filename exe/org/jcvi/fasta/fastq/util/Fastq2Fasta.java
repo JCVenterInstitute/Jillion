@@ -20,7 +20,6 @@
 package org.jcvi.fasta.fastq.util;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -56,8 +55,7 @@ public class Fastq2Fasta {
    
     /**
      * @param args
-     * @throws FileNotFoundException 
-     * @throws IdReaderException 
+     * @throws IOException 
      * @throws DataStoreException 
      */
     public static void main(String[] args) throws IOException, DataStoreException {
