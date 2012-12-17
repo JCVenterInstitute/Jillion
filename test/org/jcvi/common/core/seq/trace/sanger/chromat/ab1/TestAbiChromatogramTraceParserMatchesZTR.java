@@ -19,58 +19,44 @@
 
 package org.jcvi.common.core.seq.trace.sanger.chromat.ab1;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.BasicChromatogramFile;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.Ab1FileParser;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.AbiChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.DefaultAbiChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramFileParser;
+import org.jcvi.common.core.seq.trace.sanger.chromat.abi.AbiChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.abi.AbiChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
-import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
  *
  */
 public class TestAbiChromatogramTraceParserMatchesZTR {
-    private static ResourceFileServer RESOURCES = new ResourceFileServer(TestAbiChromatogramTraceParserMatchesZTR.class);
-    BasicChromatogramFile expectedZTR;
-    String id = "id";
-    @Before
-    public void setup() throws FileNotFoundException, TraceDecoderException, IOException{
-        expectedZTR = new BasicChromatogramFile(id);
-        ZtrChromatogramFileParser.parse(RESOURCES.getFile("files/SDBHD01T00PB1A1672F.ztr"), expectedZTR);
-    }
-    
-    @Test
-    public void abiVisitorMatchesZTR() throws FileNotFoundException, TraceDecoderException, IOException{
-        BasicChromatogramFile actualAbi = new BasicChromatogramFile(id);
-        Ab1FileParser.parse(RESOURCES.getFile("files/SDBHD01T00PB1A1672F.ab1"), actualAbi);
+    private ResourceFileServer resources = new ResourceFileServer(TestAbiChromatogramTraceParserMatchesZTR.class);
 
-        assertEquals(expectedZTR.getNucleotideSequence(), actualAbi.getNucleotideSequence());
-        assertEquals(expectedZTR.getPositionSequence(), actualAbi.getPositionSequence());
-        assertEquals(expectedZTR.getQualitySequence(), actualAbi.getQualitySequence());
-        assertEquals(expectedZTR.getChannelGroup(), actualAbi.getChannelGroup());
-        assertEquals(expectedZTR.getNumberOfTracePositions(), actualAbi.getNumberOfTracePositions());
-        assertCommentsCorrect(expectedZTR.getComments(), actualAbi.getComments());
-    }
+   
 
     @Test
-    public void ab1ChromoMatchesZTRChromo() throws FileNotFoundException, TraceDecoderException, IOException{
-    	AbiChromatogram actualAbi = DefaultAbiChromatogram.of(RESOURCES.getFile("files/SDBHD01T00PB1A1672F.ab1"));
-    	assertEquals(expectedZTR.getNucleotideSequence(), actualAbi.getNucleotideSequence());
-        assertEquals(expectedZTR.getPositionSequence(), actualAbi.getPositionSequence());
-        assertEquals(expectedZTR.getQualitySequence(), actualAbi.getQualitySequence());
-        assertEquals(expectedZTR.getChannelGroup(), actualAbi.getChannelGroup());
-        assertEquals(expectedZTR.getNumberOfTracePositions(), actualAbi.getNumberOfTracePositions());
-        assertCommentsCorrect(expectedZTR.getComments(), actualAbi.getComments());
+    public void ab1DataMatchesZtrData() throws FileNotFoundException, TraceDecoderException, IOException{
+    	String id = "SDBHD01T00PB1A1672F";
+    	ZtrChromatogram ztr = new ZtrChromatogramBuilder(id, resources.getFile("files/SDBHD01T00PB1A1672F.ztr"))
+    										.build();
+    	AbiChromatogram abi = new AbiChromatogramBuilder("SDBHD01T00PB1A1672F", resources.getFile("files/SDBHD01T00PB1A1672F.ab1"))
+    										.build();
+    	assertEquals(ztr.getNucleotideSequence(), abi.getNucleotideSequence());
+        assertEquals(ztr.getPositionSequence(), abi.getPositionSequence());
+        assertEquals(ztr.getQualitySequence(), abi.getQualitySequence());
+        assertEquals(ztr.getChannelGroup(), abi.getChannelGroup());
+        assertEquals(ztr.getNumberOfTracePositions(), abi.getNumberOfTracePositions());
+        assertCommentsCorrect(ztr.getComments(), abi.getComments());
   
     }
     

@@ -25,8 +25,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.AbiChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.DefaultAbiChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.abi.AbiChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.abi.AbiChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
@@ -60,7 +60,8 @@ public class TestChromatogramFactory {
     @Test
     public void parseAB1() throws TraceDecoderException, IOException{    	
         File ab1File = RESOURCES.getFile(AB1_FILE);
-        AbiChromatogram expected = DefaultAbiChromatogram.of(ab1File);
+        AbiChromatogram expected = new AbiChromatogramBuilder(ab1File.getName(),ab1File)
+        							.build();
         AbiChromatogram actual = (AbiChromatogram) ChromatogramFactory.create(ab1File);        
         assertEquals(expected, actual);
     }
