@@ -28,9 +28,9 @@ import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.impl.MagicNumberInputStream;
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.Ab1FileParser;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.AbiUtil;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.DefaultAbiChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.impl.AbiUtil;
+import org.jcvi.common.core.seq.trace.sanger.chromat.abi.AbiChromatogramBuilder;
+import org.jcvi.common.core.seq.trace.sanger.chromat.abi.AbiFileParser;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramFileParser;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFUtils;
@@ -65,7 +65,7 @@ public final class ChromatogramFactory {
 		byte[] magicNumber = mIn.peekMagicNumber();
 		
 		if(AbiUtil.isABIMagicNumber(magicNumber)){
-			return DefaultAbiChromatogram.create(id, mIn);
+			return new AbiChromatogramBuilder(id, mIn).build();
 		}else if(ZTRUtil.isMagicNumber(magicNumber)){
 			return new ZtrChromatogramBuilder(id, mIn).build();
 		}else if(SCFUtils.isMagicNumber(magicNumber)){
@@ -89,7 +89,7 @@ public final class ChromatogramFactory {
 			IOException {
 		byte[] magicNumber = mIn.peekMagicNumber();
 		if(AbiUtil.isABIMagicNumber(magicNumber)){
-			Ab1FileParser.parse(mIn, visitor);
+			AbiFileParser.parse(mIn, visitor);
 		}else if(ZTRUtil.isMagicNumber(magicNumber)){
 			ZtrChromatogramFileParser.parse(mIn, visitor);
 		}else if(SCFUtils.isMagicNumber(magicNumber)){
