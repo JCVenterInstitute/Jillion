@@ -45,10 +45,14 @@ public final class ChromatogramFactory {
 	}
 	
 	public static Chromatogram create(File chromatogramFile) throws IOException{
+		String id = FileUtil.getBaseName(chromatogramFile);
+		return create(id,chromatogramFile);
+	}
+	
+	public static Chromatogram create(String id, File chromatogramFile) throws IOException{		
 		MagicNumberInputStream mIn =null;
         try{
-        	mIn= new MagicNumberInputStream(chromatogramFile);	  
-        	String id = FileUtil.getBaseName(chromatogramFile);
+        	mIn= new MagicNumberInputStream(chromatogramFile); 
         	return detectATypendCreateChromatogram(mIn, id);
         }finally{
         	IOUtil.closeAndIgnoreErrors(mIn);

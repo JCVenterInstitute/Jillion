@@ -27,7 +27,8 @@ import java.util.regex.Pattern;
 /**
  * {@code SignalStrength} contains 
  * chromatogram signal strength metadata which is 
- * included in some chromatogram file encodings.
+ * included in some chromatogram file encodings
+ * as a comment with the key tag 'SIGN'.
  * @author dkatzel
  *
  *

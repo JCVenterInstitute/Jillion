@@ -27,9 +27,9 @@ import java.nio.ByteBuffer;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.TraceEncoderException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.Channel;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
-import org.jcvi.common.core.seq.trace.sanger.chromat.DefaultChannelGroup;
+import org.jcvi.common.core.seq.trace.sanger.chromat.impl.DefaultChannel;
+import org.jcvi.common.core.seq.trace.sanger.chromat.impl.DefaultChannelGroup;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.chunk.impl.Chunk;
@@ -79,10 +79,10 @@ public class TestSMP4Chunk {
     public void encode() throws TraceEncoderException{
     	ZtrChromatogram mockChromatogram = createMock(ZtrChromatogram.class);
     	ChannelGroup channelGroup = new DefaultChannelGroup(
-    			new Channel(new byte[0],aTraces), 
-    			new Channel(new byte[0],cTraces), 
-    			new Channel(new byte[0],gTraces), 
-    			new Channel(new byte[0],tTraces));
+    			new DefaultChannel(new byte[0],aTraces), 
+    			new DefaultChannel(new byte[0],cTraces), 
+    			new DefaultChannel(new byte[0],gTraces), 
+    			new DefaultChannel(new byte[0],tTraces));
     	expect(mockChromatogram.getNumberOfTracePositions()).andReturn(aTraces.length);
     	expect(mockChromatogram.getChannelGroup()).andReturn(channelGroup);
     	replay(mockChromatogram);

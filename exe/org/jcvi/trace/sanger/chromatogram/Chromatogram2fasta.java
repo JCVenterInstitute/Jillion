@@ -41,7 +41,6 @@ import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaRecordWriterBuild
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceFastaRecordWriterBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.BasicChromatogramBuilderVisitor;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFactory;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
@@ -158,12 +157,11 @@ public class Chromatogram2fasta implements Closeable{
                     continue;
                 }
                 File chromatogramFile = new File(chromatogramFilePath);
+                Chromatogram chromo =ChromatogramFactory.create(chromatogramFile);                
                 
                 String id = FileUtil.getBaseName(chromatogramFile);
-                BasicChromatogramBuilderVisitor builder = new BasicChromatogramBuilderVisitor(id);
-                ChromatogramFactory.parse(chromatogramFile, builder);
                 
-                chromo2Fasta.writeChromatogram(id, builder.build());
+                chromo2Fasta.writeChromatogram(id, chromo);
                
             }
         }finally{

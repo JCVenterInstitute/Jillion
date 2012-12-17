@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.trace.sanger.chromat;
+package org.jcvi.common.core.seq.trace.sanger.chromat.impl;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,6 +29,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
+import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
@@ -257,10 +259,10 @@ public final class BasicChromatogramBuilder {
         
         public Chromatogram build() {
             final ChannelGroup channelGroup = new DefaultChannelGroup(
-                    new Channel(aConfidence(),aPositions()),
-                    new Channel(cConfidence(),cPositions()),
-                    new Channel(gConfidence(),gPositions()),
-                    new Channel(tConfidence(),tPositions()));
+                    new DefaultChannel(aConfidence(),aPositions()),
+                    new DefaultChannel(cConfidence(),cPositions()),
+                    new DefaultChannel(gConfidence(),gPositions()),
+                    new DefaultChannel(tConfidence(),tPositions()));
             
             return new BasicChromatogram(id,
                     basecalls(),

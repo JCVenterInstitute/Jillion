@@ -27,8 +27,8 @@ package org.jcvi.common.core.seq.trace.sanger.chromat.scf.section;
 
 import java.io.IOException;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.Channel;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
+import org.jcvi.common.core.seq.trace.sanger.chromat.impl.DefaultChannel;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
@@ -56,20 +56,20 @@ public abstract class AbstractTestSamplesSection {
     public AbstractTestSamplesSection(){
         chromatogram = createMock(ScfChromatogram.class);
         mockChannelGroup = createMock(ChannelGroup.class);
-        expect(mockChannelGroup.getCChannel()).andStubReturn(new Channel(EMPTY_CONFIDENCE, cSamples));
-        expect(mockChannelGroup.getGChannel()).andStubReturn(new Channel(EMPTY_CONFIDENCE, gSamples));
-        expect(mockChannelGroup.getTChannel()).andStubReturn(new Channel(EMPTY_CONFIDENCE, tSamples));
+        expect(mockChannelGroup.getCChannel()).andStubReturn(new DefaultChannel(EMPTY_CONFIDENCE, cSamples));
+        expect(mockChannelGroup.getGChannel()).andStubReturn(new DefaultChannel(EMPTY_CONFIDENCE, gSamples));
+        expect(mockChannelGroup.getTChannel()).andStubReturn(new DefaultChannel(EMPTY_CONFIDENCE, tSamples));
         expect(chromatogram.getChannelGroup()).andStubReturn(mockChannelGroup);
         sut = createSectionHandler();
     }
 
     protected void makeChromatogramsHaveShorts() {
-        expect(mockChannelGroup.getAChannel()).andStubReturn(new Channel(EMPTY_CONFIDENCE, aSamplesAsShorts));
+        expect(mockChannelGroup.getAChannel()).andStubReturn(new DefaultChannel(EMPTY_CONFIDENCE, aSamplesAsShorts));
         replay(mockChannelGroup);
     }
 
     protected void makeChromatogramsHaveBytes() {
-        expect(mockChannelGroup.getAChannel()).andStubReturn(new Channel(EMPTY_CONFIDENCE, aSamplesAsBytes));
+        expect(mockChannelGroup.getAChannel()).andStubReturn(new DefaultChannel(EMPTY_CONFIDENCE, aSamplesAsBytes));
         replay(mockChannelGroup);
     }
 

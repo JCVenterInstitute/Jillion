@@ -28,7 +28,6 @@ import java.util.Map;
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.BasicChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.impl.tag.Ab1LocalDate;
@@ -43,6 +42,7 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.impl.tag.TimeTaggedData
 import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.impl.tag.UserDefinedTaggedDataRecord;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.impl.tag.rate.ScanRate;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.impl.tag.rate.ScanRateTaggedDataType;
+import org.jcvi.common.core.seq.trace.sanger.chromat.impl.BasicChromatogramBuilder;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;

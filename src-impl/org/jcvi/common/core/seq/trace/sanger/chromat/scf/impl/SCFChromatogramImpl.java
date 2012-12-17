@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.impl.BasicChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.PrivateData;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
 import org.jcvi.common.core.symbol.qual.QualitySequence;

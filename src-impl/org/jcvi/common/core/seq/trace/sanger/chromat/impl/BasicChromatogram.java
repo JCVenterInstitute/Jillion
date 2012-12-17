@@ -21,13 +21,15 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.trace.sanger.chromat;
+package org.jcvi.common.core.seq.trace.sanger.chromat.impl;
 
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
+import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
