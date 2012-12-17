@@ -31,10 +31,10 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.BasicChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.Channel;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
-import org.jcvi.common.core.seq.trace.sanger.chromat.DefaultChannelGroup;
+import org.jcvi.common.core.seq.trace.sanger.chromat.impl.BasicChromatogram;
+import org.jcvi.common.core.seq.trace.sanger.chromat.impl.DefaultChannel;
+import org.jcvi.common.core.seq.trace.sanger.chromat.impl.DefaultChannelGroup;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFChromatogramImpl;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.AbstractBasesSectionCodec;
@@ -71,10 +71,10 @@ public abstract class AbstractTestBasesSection {
     public AbstractTestBasesSection(){
         mockHeader = createMock(SCFHeader.class);
         ChannelGroup channelGroup = new DefaultChannelGroup(
-                new Channel(aConfidence,positions),
-                new Channel(cConfidence,positions),
-                new Channel(gConfidence,positions),
-                new Channel(tConfidence,positions));
+                new DefaultChannel(aConfidence,positions),
+                new DefaultChannel(cConfidence,positions),
+                new DefaultChannel(gConfidence,positions),
+                new DefaultChannel(tConfidence,positions));
         BasicChromatogram basicChromatogram = new BasicChromatogram(
                 "id",encodedBases,encodedQualities,
                 new PositionSequenceBuilder(peaks).build(),

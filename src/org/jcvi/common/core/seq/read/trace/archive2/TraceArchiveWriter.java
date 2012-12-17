@@ -27,7 +27,6 @@ import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceFastaRecordWriterBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.BasicChromatogramBuilderVisitor;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFactory;
 import org.jcvi.common.core.util.DateUtil;
@@ -288,9 +287,7 @@ public final class TraceArchiveWriter implements Closeable{
 	}
 	
 	private Chromatogram parseChromatogram(String traceName, File traceFile) throws IOException {
-		BasicChromatogramBuilderVisitor chromoBuilder = new BasicChromatogramBuilderVisitor(traceName);
-		ChromatogramFactory.parse(traceFile, chromoBuilder);
-		return chromoBuilder.build();
+		return ChromatogramFactory.create(traceName,traceFile);
 	}
 	/**
 	 * {@code TraceArchiveRecordCallback} is a way to add

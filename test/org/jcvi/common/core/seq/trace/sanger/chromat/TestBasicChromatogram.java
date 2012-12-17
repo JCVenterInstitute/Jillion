@@ -28,8 +28,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
-import org.jcvi.common.core.seq.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
+import org.jcvi.common.core.seq.trace.sanger.chromat.impl.BasicChromatogram;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.testUtil.TestUtil;

@@ -23,6 +23,7 @@
  */
 package org.jcvi.common.core.seq.trace.sanger.chromat;
 
+import org.jcvi.common.core.seq.trace.sanger.chromat.impl.DefaultChannel;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 /**
  * {@code ChannelGroup} is a composite of all 4 {@link Channel}s
@@ -56,9 +57,14 @@ public interface ChannelGroup {
      * Get the {@link Channel} for a particular {@link Nucleotide}.
      * For example {@link #getChannel(Nucleotide) getChannel(NucleotideGlyph.Adenine)}
      * is the same as {@link #getAChannel()}.
-     * @param nucleotide the nucleotide channel to get.
-     * @return the {@link Channel} for that {@link Nucleotide}.
+     * @param channelToGet the nucleotide channel to get; can not be null.
+     * To follow some Chromatogram format requirements, 
+     * passing in an ambiguous nucleotide such as an N 
+     * will return the T channel since some formats
+     * put non A,C,G data in the T channel.
+     * @return the {@link DefaultChannel} for that {@link Nucleotide}.
+     * @throws NullPointerException if channelToGet is null.
      */
-    Channel getChannel(Nucleotide nucleotide);
+    Channel getChannel(Nucleotide channelToGet);
 
 }

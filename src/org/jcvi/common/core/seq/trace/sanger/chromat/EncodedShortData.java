@@ -65,7 +65,7 @@ the same array could be serialized as:
 using this method, the size of a serialized XML representation of an {@link Trace} can be reduced by 90%.
 * @author dkatzel
 */
-class EncodedShortData {
+final class EncodedShortData {
     private short data[];
 
     private static short[] decodeData(String encodedData){

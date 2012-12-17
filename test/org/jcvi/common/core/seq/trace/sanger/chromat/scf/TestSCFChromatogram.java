@@ -27,8 +27,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
-import org.jcvi.common.core.seq.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
+import org.jcvi.common.core.seq.trace.sanger.chromat.impl.BasicChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.PrivateData;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFChromatogramImpl;
 import org.jcvi.common.core.symbol.qual.QualitySequence;

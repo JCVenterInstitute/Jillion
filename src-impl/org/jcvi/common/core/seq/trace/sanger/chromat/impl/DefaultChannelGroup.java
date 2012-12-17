@@ -21,17 +21,19 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.trace.sanger.chromat;
+package org.jcvi.common.core.seq.trace.sanger.chromat.impl;
 
+import org.jcvi.common.core.seq.trace.sanger.chromat.Channel;
+import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.util.ObjectsUtil;
 
 public class DefaultChannelGroup implements ChannelGroup {
 
-    private final Channel aChannel;
-    private final Channel cChannel;
-    private final Channel gChannel;
-    private final Channel tChannel;
+    private final DefaultChannel aChannel;
+    private final DefaultChannel cChannel;
+    private final DefaultChannel gChannel;
+    private final DefaultChannel tChannel;
 
 
     /**
@@ -40,8 +42,8 @@ public class DefaultChannelGroup implements ChannelGroup {
      * @param channel3
      * @param channel4
      */
-    public DefaultChannelGroup(Channel aChannel, Channel cChannel, Channel gChannel,
-            Channel tChannel) {
+    public DefaultChannelGroup(DefaultChannel aChannel, DefaultChannel cChannel, DefaultChannel gChannel,
+            DefaultChannel tChannel) {
 
 
         this.aChannel = aChannel;
@@ -82,25 +84,25 @@ public class DefaultChannelGroup implements ChannelGroup {
     /**
      * @return the aChannel
      */
-    public Channel getAChannel() {
+    public DefaultChannel getAChannel() {
         return aChannel;
     }
     /**
      * @return the cChannel
      */
-    public Channel getCChannel() {
+    public DefaultChannel getCChannel() {
         return cChannel;
     }
     /**
      * @return the gChannel
      */
-    public Channel getGChannel() {
+    public DefaultChannel getGChannel() {
         return gChannel;
     }
     /**
      * @return the tChannel
      */
-    public Channel getTChannel() {
+    public DefaultChannel getTChannel() {
         return tChannel;
     }
     /**
@@ -135,14 +137,17 @@ public class DefaultChannelGroup implements ChannelGroup {
 
     }
     @Override
-    public Channel getChannel(Nucleotide nucleotide) {
-        if(nucleotide == Nucleotide.Adenine){
+    public Channel getChannel(Nucleotide channelToGet) {
+    	if(channelToGet==null){
+    		throw new NullPointerException("channel to get can not be null");
+    	}
+        if(channelToGet == Nucleotide.Adenine){
            return getAChannel();
         }
-        if(nucleotide == Nucleotide.Cytosine){
+        if(channelToGet == Nucleotide.Cytosine){
             return getCChannel();
          }
-        if(nucleotide == Nucleotide.Guanine){
+        if(channelToGet == Nucleotide.Guanine){
             return getGChannel();
          }
         //anything else is considered a T

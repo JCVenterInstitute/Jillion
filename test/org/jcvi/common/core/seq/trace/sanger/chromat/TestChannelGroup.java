@@ -24,30 +24,33 @@
 package org.jcvi.common.core.seq.trace.sanger.chromat;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
+
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.Channel;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
-import org.jcvi.common.core.seq.trace.sanger.chromat.DefaultChannelGroup;
+import org.jcvi.common.core.seq.trace.sanger.chromat.impl.DefaultChannel;
+import org.jcvi.common.core.seq.trace.sanger.chromat.impl.DefaultChannelGroup;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
+import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestChannelGroup {
 
 
     private byte[] differentLengthQualities = new byte[]{40,40,40};
     private short[] differentLengthPositions = new short[]{100,200,300};
 
-    private Channel aChannel = new Channel(new byte[]{20,20,20,20},
+    private DefaultChannel aChannel = new DefaultChannel(new byte[]{20,20,20,20},
                                             new short[]{10,20,30,40});
 
-    private Channel cChannel = new Channel(new byte[]{22,22,22,22},
+    private DefaultChannel cChannel = new DefaultChannel(new byte[]{22,22,22,22},
                                             new short[]{11,21,31,41});
 
-    private Channel gChannel = new Channel(new byte[]{30,30,30,30},
+    private DefaultChannel gChannel = new DefaultChannel(new byte[]{30,30,30,30},
                                 new short[]{15,25,35,45});
 
-    private Channel tChannel = new Channel(new byte[]{40,40,40,40},
+    private DefaultChannel tChannel = new DefaultChannel(new byte[]{40,40,40,40},
                                 new short[]{17,27,37,47});
 
     private ChannelGroup sut = new DefaultChannelGroup(aChannel, cChannel, gChannel, tChannel);
@@ -60,6 +63,37 @@ public class TestChannelGroup {
         assertEquals(tChannel, sut.getTChannel());
     }
 
+    @Test
+    public void getAChannel(){
+    	assertEquals(aChannel, sut.getChannel(Nucleotide.Adenine));
+    }
+    
+    @Test
+    public void getCChannel(){
+    	assertEquals(cChannel, sut.getChannel(Nucleotide.Cytosine));
+    }
+    @Test
+    public void getGChannel(){
+    	assertEquals(gChannel, sut.getChannel(Nucleotide.Guanine));
+    }
+    @Test
+    public void getTChannel(){
+    	assertEquals(tChannel, sut.getChannel(Nucleotide.Thymine));
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void passingNullToGetChannelShouldThrowNPE(){
+    	sut.getChannel(null);
+    }
+    
+    @Test
+    public void passingAmbiguousBaseShouldReturnTChannel(){
+    	for(Nucleotide n : Nucleotide.values()){
+    		if(n.isAmbiguity()){
+    			assertEquals(n.getName(),tChannel, sut.getChannel(n));
+    		}
+    	}
+    }
     @Test
     public void nullAChannelShouldThrowNullPointerException(){
         try{
@@ -106,7 +140,7 @@ public class TestChannelGroup {
     @Test
     public void AConfidenceDifferentLengthShouldThrowIllegalArgumentException(){
         try{
-            Channel differentConfidenceLength = new Channel(new QualitySequenceBuilder(differentLengthQualities).build(),
+            DefaultChannel differentConfidenceLength = new DefaultChannel(new QualitySequenceBuilder(differentLengthQualities).build(),
                                         aChannel.getPositions());
             new DefaultChannelGroup(differentConfidenceLength, cChannel, gChannel, tChannel);
             fail("should throw IllegalArgumentException when a channel confidence is different length");
@@ -119,7 +153,7 @@ public class TestChannelGroup {
     @Test
     public void CConfidenceDifferentLengthShouldThrowIllegalArgumentException(){
         try{
-            Channel differentConfidenceLength = new Channel(
+            DefaultChannel differentConfidenceLength = new DefaultChannel(
             		new QualitySequenceBuilder(differentLengthQualities).build(),
                                         aChannel.getPositions());
             new DefaultChannelGroup(aChannel, differentConfidenceLength, gChannel, tChannel);
@@ -133,7 +167,7 @@ public class TestChannelGroup {
     @Test
     public void GConfidenceDifferentLengthShouldThrowIllegalArgumentException(){
         try{
-            Channel differentConfidenceLength = new Channel(new QualitySequenceBuilder(differentLengthQualities).build(),
+            DefaultChannel differentConfidenceLength = new DefaultChannel(new QualitySequenceBuilder(differentLengthQualities).build(),
                                         aChannel.getPositions());
             new DefaultChannelGroup(aChannel, cChannel, differentConfidenceLength, tChannel);
             fail("should throw IllegalArgumentException when a channel confidence is different length");
@@ -146,7 +180,7 @@ public class TestChannelGroup {
     @Test
     public void TConfidenceDifferentLengthShouldThrowIllegalArgumentException(){
         try{
-            Channel differentConfidenceLength = new Channel(new QualitySequenceBuilder(differentLengthQualities).build(),
+            DefaultChannel differentConfidenceLength = new DefaultChannel(new QualitySequenceBuilder(differentLengthQualities).build(),
                                         aChannel.getPositions());
             new DefaultChannelGroup(aChannel, cChannel, gChannel, differentConfidenceLength);
             fail("should throw IllegalArgumentException when a channel confidence is different length");
@@ -158,7 +192,7 @@ public class TestChannelGroup {
     @Test
     public void APositionDifferentLengthShouldThrowIllegalArgumentException(){
         try{
-            Channel differentConfidenceLength = new Channel(aChannel.getConfidence(),
+            DefaultChannel differentConfidenceLength = new DefaultChannel(aChannel.getConfidence(),
                                                 new PositionSequenceBuilder(differentLengthPositions).build());
             new DefaultChannelGroup(differentConfidenceLength, cChannel, gChannel, tChannel);
             fail("should throw IllegalArgumentException when a channel position is different length");
@@ -170,7 +204,7 @@ public class TestChannelGroup {
     @Test
     public void CPositionDifferentLengthShouldThrowIllegalArgumentException(){
         try{
-            Channel differentConfidenceLength = new Channel(aChannel.getConfidence(),
+            DefaultChannel differentConfidenceLength = new DefaultChannel(aChannel.getConfidence(),
             		 new PositionSequenceBuilder(differentLengthPositions).build());
             new DefaultChannelGroup(aChannel,differentConfidenceLength, gChannel, tChannel);
             fail("should throw IllegalArgumentException when a channel position is different length");
@@ -183,7 +217,7 @@ public class TestChannelGroup {
     @Test
     public void GPositionDifferentLengthShouldThrowIllegalArgumentException(){
         try{
-            Channel differentConfidenceLength = new Channel(aChannel.getConfidence(),
+            DefaultChannel differentConfidenceLength = new DefaultChannel(aChannel.getConfidence(),
             		 new PositionSequenceBuilder(differentLengthPositions).build());
             new DefaultChannelGroup(aChannel,gChannel,differentConfidenceLength, tChannel);
             fail("should throw IllegalArgumentException when a channel position is different length");
@@ -197,7 +231,7 @@ public class TestChannelGroup {
     @Test
     public void TPositionDifferentLengthShouldThrowIllegalArgumentException(){
         try{
-            Channel differentConfidenceLength = new Channel(aChannel.getConfidence(),
+            DefaultChannel differentConfidenceLength = new DefaultChannel(aChannel.getConfidence(),
             		 new PositionSequenceBuilder(differentLengthPositions).build());
             new DefaultChannelGroup(aChannel, cChannel, gChannel, differentConfidenceLength);
             fail("should throw IllegalArgumentException when a channel position is different length");

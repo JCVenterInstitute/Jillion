@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 import org.jcvi.common.core.seq.trace.sanger.Position;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.Channel;
+import org.jcvi.common.core.seq.trace.sanger.chromat.impl.DefaultChannel;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
@@ -41,7 +41,7 @@ public class TestChannel {
     private byte[] qualities = new byte[]{10,12,14,15,20,20,20,20,20};
     QualitySequence qualitySequence = new QualitySequenceBuilder(qualities).build();
     PositionSequence positionSequence = new PositionSequenceBuilder(positions).build();
-    Channel sut = new Channel(qualities, positions);
+    Channel sut = new DefaultChannel(qualities, positions);
 
 
     @Test
@@ -52,7 +52,7 @@ public class TestChannel {
 
     @Test
     public void sequenceConstructor(){
-    	 Channel channel = new Channel(qualitySequence, positionSequence);
+    	 Channel channel = new DefaultChannel(qualitySequence, positionSequence);
     	 assertEquals(qualitySequence, channel.getConfidence());
          assertEquals(positionSequence, channel.getPositions());
     }
@@ -73,7 +73,7 @@ public class TestChannel {
     }
     @Test
     public void equalsSameValues(){
-        Channel sameValues = new Channel(
+        Channel sameValues = new DefaultChannel(
         		new QualitySequenceBuilder(qualitySequence).build(), 
         		new PositionSequenceBuilder(positions).build());
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);
@@ -81,7 +81,7 @@ public class TestChannel {
 
     @Test
     public void notEqualsDifferentConfidence(){
-        Channel hasDifferentConfidence = new Channel(
+        Channel hasDifferentConfidence = new DefaultChannel(
         		new QualitySequenceBuilder(qualitySequence)
         				.replace(2, PhredQuality.valueOf(99))
         				.build(),
@@ -90,7 +90,7 @@ public class TestChannel {
     }
     @Test
     public void notEqualsDifferentPositions(){
-        Channel hasDifferentConfidence = new Channel(
+        Channel hasDifferentConfidence = new DefaultChannel(
         		qualitySequence,
         		
         		new PositionSequenceBuilder(positionSequence)
@@ -100,20 +100,20 @@ public class TestChannel {
     }
     @Test(expected = NullPointerException.class)
     public void nullQualitySequenceShouldthrowNPE(){
-        new Channel(null, positionSequence);
+        new DefaultChannel(null, positionSequence);
     }
     @Test(expected = NullPointerException.class)
     public void nullPositionSequenceShouldthrowNPE(){
-        new Channel(qualitySequence, null);
+        new DefaultChannel(qualitySequence, null);
     }
     
     @Test(expected = NullPointerException.class)
     public void nullQualityArrayShouldthrowNPE(){
-        new Channel(null, positions);
+        new DefaultChannel(null, positions);
     }
     @Test(expected = NullPointerException.class)
     public void nullPositionArrayShouldthrowNPE(){
-        new Channel(qualities, null);
+        new DefaultChannel(qualities, null);
     }
    
    
