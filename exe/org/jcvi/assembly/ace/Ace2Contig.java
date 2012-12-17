@@ -52,7 +52,6 @@ public class Ace2Contig {
     /**
      * @param args
      * @throws IOException 
-     * @throws IdReaderException 
      */
     public static void main(String[] args) throws IOException {
         Options options = new Options();

@@ -54,7 +54,6 @@ public class Fasta2Fastq {
      * @param args
      * @throws IOException 
      * @throws DataStoreException 
-     * @throws IdReaderException 
      */
     public static void main(String[] args) throws IOException, DataStoreException {
         Options options = new Options();
