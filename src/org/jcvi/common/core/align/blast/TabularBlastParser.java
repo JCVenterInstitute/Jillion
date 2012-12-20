@@ -33,7 +33,7 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.impl.TextLineParser;
 
 /**
- * Parse TablularBlast output ( created using the "-m 8" option in blast).
+ * Parse TablularBlast output ( created using the "-m 8" or "-m 9" options in blast).
  * 
  * @author dkatzel
  *
