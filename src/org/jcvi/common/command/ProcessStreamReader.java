@@ -101,7 +101,7 @@ public class ProcessStreamReader implements Runnable{
 		try {
 			while((line = br.readLine()) !=null){
 				if(buffer !=null){
-					buffer.append(line);
+					buffer.append(line).append('\n');
 				}
 			}
 		} catch (IOException e) {
