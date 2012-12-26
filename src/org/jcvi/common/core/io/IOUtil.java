@@ -117,13 +117,13 @@ public final class IOUtil {
      * result to indicate success or failure instead of 
      * throwing an exception.  If the file does not exist,
      * then this method will not do anything.
-     * @param file the file to be deleted.
+     * @param file the file to be deleted; if this parameter
+     * is null, then method does nothing.
      * @throws IOException if there is a problem deleting the file.
-     * @throws NullPointerException if file is null.
      * @see #deleteIgnoreError(File)
      */
     public static void delete(File file) throws IOException{
-        if(file.exists() && !file.delete()){
+        if(file !=null && file.exists() && !file.delete()){
             throw new IOException("unable to delete "+ file);
         }
     }
@@ -133,8 +133,8 @@ public final class IOUtil {
      * This is the same as calling {@link File#delete()}
      * without checking the return value.   If the file does not exist,
      * then this method will not do anything.
-     * @param file the file to delete.
-     * @throws NullPointerException if file is null.
+     * @param file the file to delete; if this parameter
+     * is null, then method does nothing.
      */
     public static void deleteIgnoreError(File file){
     	//This method exists solely so we don't
@@ -143,7 +143,7 @@ public final class IOUtil {
     	//programs like FindBugs will flag these
     	//statements as bad code since we don't check return value
     	//so I would rather have only 1 such warning instead of dozens.
-    	if(file.exists()){
+    	if(file!=null && file.exists()){
     		file.delete();
     	}
     }

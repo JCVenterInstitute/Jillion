@@ -81,7 +81,7 @@ public final class XmlBlastParser {
         private static final String HIT_FROM = "Hsp_hit-from";
         private static final String HIT_TO = "Hsp_hit-to";
         private static final String MIDLINE = "Hsp_midline";
-        private static final String QUERY_ID = "Iteration_query-def";
+        private static final String QUERY_ID = "BlastOutput_query-def";
         private static final String QUERY_SEQUENCE = "Hsp_qseq";
         private static final String SUBJECT_SEQUENCE = "Hsp_hseq";
         
@@ -89,7 +89,9 @@ public final class XmlBlastParser {
         private HspBuilder hspBuilder;
         private final BlastVisitor visitor;
         private String tempVal=null;
+        private StringBuilder tempBuilder =null;
         private Integer queryStart, queryEnd, subjectStart,subjectEnd;
+        private String queryId;
         int misMatches=0,numberOfGapOpenings=0;
         NucleotideSequence querySequence, subjectSequence;
         SaxBlastParser(BlastVisitor visitor){
@@ -101,11 +103,11 @@ public final class XmlBlastParser {
         @Override
         public void startElement(String uri, String localName, String qName,
                 Attributes attributes) throws SAXException {
-            tempVal = null;           
+        	tempBuilder = new StringBuilder();           
             
         }
         public void characters(char[] ch, int start, int length) throws SAXException {
-            tempVal = new String(ch,start,length);
+        	tempBuilder.append( new String(ch,start,length));
         }
 
         /**
@@ -114,10 +116,12 @@ public final class XmlBlastParser {
         @Override
         public void endElement(String uri, String localName, String qName)
                 throws SAXException {
+        	tempVal = tempBuilder.toString();
             if(QUERY_ID.equals(qName)){                
-                hspBuilder = HspBuilder.create(tempVal);
+               queryId = tempVal;
             }
             if(START_HIT.equals(qName)){
+            	hspBuilder = HspBuilder.create(queryId);
                 hspBuilder.subject(tempVal);
             }else if(END_HIT.equals(qName)){
                 hspBuilder.queryRange(DirectedRange.parse(queryStart, queryEnd, CoordinateSystem.RESIDUE_BASED));
