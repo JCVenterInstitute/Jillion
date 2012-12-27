@@ -586,7 +586,7 @@ final class IndexedAceFileDataStore{
 	}
 	
 	private static class MemoryMappedIndexedAceFileDataStore extends AbstractIndexedAceFileDataStoreImpl{
-		private final MappedByteBuffer buffer;
+		private  MappedByteBuffer buffer;
 		protected MemoryMappedIndexedAceFileDataStore(File file,
 				Map<String, Range> indexFileRange, long totalNumberOfReads,
 				List<WholeAssemblyAceTag> wholeAssemblyTags,
@@ -594,7 +594,12 @@ final class IndexedAceFileDataStore{
 			super(file, indexFileRange, totalNumberOfReads, wholeAssemblyTags,
 					consensusTags, readTags);
 			FileChannel channel = new RandomAccessFile(file,"r").getChannel();
-			buffer = channel.map(MapMode.READ_ONLY, 0, (int)file.length());
+			try{
+				buffer = channel.map(MapMode.READ_ONLY, 0, (int)file.length());
+			}finally{
+				channel.close();
+			}
+			
 		}
 
 		@Override
@@ -616,6 +621,18 @@ final class IndexedAceFileDataStore{
 			}
             return visitorBuilder.build();
 		}
+
+		@Override
+		public void close() throws IOException {
+			super.close();
+			//not sure if I need to null out
+			//the memory mapped buffer but
+			//this will make eligible to get garbage collected
+			//which I think is the only way to free the 
+			//virtual memory
+			buffer=null;
+		}
+		
 		
 	}
 	

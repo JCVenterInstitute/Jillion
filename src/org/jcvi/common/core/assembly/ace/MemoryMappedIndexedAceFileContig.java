@@ -42,7 +42,11 @@ class MemoryMappedIndexedAceFileContig extends AbstractIndexedAceFileContig{
 				aceFile, contigStartFileOffset, maxCoverage, aceFileHasSortedReads);
 		
 		FileChannel channel = new RandomAccessFile(aceFile, "r").getChannel();
-		buffer =channel.map(MapMode.READ_ONLY, contigStartFileOffset, numberOfBytesInContig);
+		try{
+			buffer =channel.map(MapMode.READ_ONLY, contigStartFileOffset, numberOfBytesInContig);
+		}finally{
+			channel.close();
+		}
 	}
 	
 	@Override
