@@ -20,19 +20,21 @@
 package org.jcvi.common.core.seq.trace.fastq;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.common.core.util.VariableWidthInteger;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 
 /**
@@ -47,7 +49,7 @@ import org.jcvi.common.core.util.iter.StreamingIterator;
  */
 final class IndexedFastqFileDataStore implements FastqDataStore{
 
-    private final Map<String, Range> indexFileRange;
+    private final Map<String, VariableWidthInteger> indexFileRange;
     private final FastqQualityCodec qualityCodec;
     private final File file;
     private final DataStoreFilter filter;
@@ -175,7 +177,7 @@ final class IndexedFastqFileDataStore implements FastqDataStore{
      * @param file
      * @throws FileNotFoundException 
      */
-    private IndexedFastqFileDataStore(File file,FastqQualityCodec qualityCodec,Map<String,Range> indexFileRange,DataStoreFilter filter){
+    private IndexedFastqFileDataStore(File file,FastqQualityCodec qualityCodec,Map<String,VariableWidthInteger> indexFileRange,DataStoreFilter filter){
         this.file = file;
         this.qualityCodec = qualityCodec;
         this.indexFileRange = indexFileRange;
@@ -191,15 +193,17 @@ final class IndexedFastqFileDataStore implements FastqDataStore{
     @Override
     public FastqRecord get(String id) throws DataStoreException {
     	throwExceptionIfClosed();
-        Range range =indexFileRange.get(id);
+    	VariableWidthInteger range =indexFileRange.get(id);
         if(range ==null){
         	throw new DataStoreException(id +" does not exist in datastore");
         }
         InputStream in =null;
         try {
-            in = IOUtil.createInputStreamFromFile(file,(int)range.getBegin(), (int)range.getLength());
-            FastqDataStore datastore = DefaultFastqFileDataStore.create(in, qualityCodec);
-            return datastore.get(id);
+        	in = new FileInputStream(file);
+        	IOUtil.blockingSkip(in, range.getValue());
+        	SingleFastqRecordVisitor visitor = new SingleFastqRecordVisitor();
+        	FastqFileParser.parse(in, visitor);
+        	return visitor.getRecord();
         } catch (IOException e) {
             throw new DataStoreException("error reading fastq file",e);
         }finally{
@@ -249,6 +253,64 @@ final class IndexedFastqFileDataStore implements FastqDataStore{
     public boolean isClosed() {
         return closed;
     }
+    
+    private final class SingleFastqRecordVisitor implements FastqFileVisitor{
+    	private String currentId;
+    	private String currentComment;
+    	private NucleotideSequence currentNucleotideSequence;
+    	private QualitySequence currentQualitySequence;
+    	
+    	private FastqRecord record;
+    	
+    	
+		public final FastqRecord getRecord() {
+			return record;
+		}
+
+		@Override
+		public void visitLine(String line) {
+			//no-op			
+		}
+
+		@Override
+		public void visitFile() {
+			//no-op			
+		}
+
+		@Override
+		public void visitEndOfFile() {
+			//no-op
+		}
+
+		@Override
+		public EndOfBodyReturnCode visitEndOfBody() {
+			//only parse one record
+			record = new FastqRecordBuilder(currentId, currentNucleotideSequence, currentQualitySequence)
+								.comment(currentComment)
+								.build();
+			return EndOfBodyReturnCode.STOP_PARSING;
+		}
+
+		@Override
+		public DeflineReturnCode visitDefline(String id, String optionalComment) {
+			this.currentId = id;
+			this.currentComment = optionalComment;
+			return DeflineReturnCode.VISIT_CURRENT_RECORD;
+		}
+
+		@Override
+		public void visitNucleotides(NucleotideSequence nucleotides) {
+			currentNucleotideSequence = nucleotides;
+			
+		}
+
+		@Override
+		public void visitEncodedQualities(String encodedQualities) {
+			currentQualitySequence = qualityCodec.decode(encodedQualities);
+			
+		}
+    	
+    }
     /**
      * Implementation of {@link FastqFileDataStoreBuilderVisitor}
      * that only stores the file offsets for each record.
@@ -256,7 +318,7 @@ final class IndexedFastqFileDataStore implements FastqDataStore{
      *
      */
     private static final class IndexedFastqFileDataStoreBuilderVisitor implements FastqFileDataStoreBuilderVisitor{
-    	private final Map<String,Range> indexFileRange=new LinkedHashMap<String, Range>();
+    	private final Map<String,VariableWidthInteger> indexFileRange=new LinkedHashMap<String, VariableWidthInteger>();
         private final FastqQualityCodec qualityCodec;
         private final File file;
         private long currentStartOffset=0;
@@ -304,7 +366,7 @@ final class IndexedFastqFileDataStore implements FastqDataStore{
 		public EndOfBodyReturnCode visitEndOfBody() {
 			checkNotFinished();
 			if(includeCurrentRecord){
-				indexFileRange.put(currentId, Range.of(currentStartOffset, currentEndOffset));
+				indexFileRange.put(currentId, VariableWidthInteger.valueOf(currentStartOffset));
 			}
 			currentStartOffset=currentEndOffset+1;
 			return EndOfBodyReturnCode.KEEP_PARSING;
