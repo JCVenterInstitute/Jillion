@@ -87,7 +87,8 @@ class ReAbacusAceFileVisitor implements AceFileVisitor{
 	}
 
 	@Override
-	public void visitReadHeader(String readId, int gappedLength) {
+	public BeginReadReturnCode visitBeginRead(String readId, int gappedLength) {
+		return BeginReadReturnCode.VISIT_CURRENT_READ;
 	}
 
 	@Override

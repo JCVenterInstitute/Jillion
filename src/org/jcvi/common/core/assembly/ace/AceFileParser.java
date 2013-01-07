@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor.BeginContigReturnCode;
+import org.jcvi.common.core.assembly.ace.AceFileVisitor.BeginReadReturnCode;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor.EndContigReturnCode;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.impl.TextLineParser;
@@ -264,6 +265,7 @@ public final class AceFileParser {
             parser.close();
             
         }
+
     }
     /**
      * Each Section of an ACE file needs to be handled 
@@ -373,7 +375,13 @@ public final class AceFileParser {
                 if(parserState.parseCurrentContig()){
                     String readId = readMatcher.group(1);
                     int fullLength = Integer.parseInt(readMatcher.group(2));
-                    parserState.visitor.visitReadHeader(readId, fullLength);
+                    BeginReadReturnCode retCode =parserState.visitor.visitBeginRead(readId, fullLength);
+                    if(retCode ==null){
+                		throw new NullPointerException("BeginReadReturnCode can not be null");
+                	}
+                	if(retCode==BeginReadReturnCode.STOP_PARSING){
+                		parserState= parserState.stopParsing();
+                    }
                 }
                 return parserState;
             } 

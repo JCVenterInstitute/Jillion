@@ -54,6 +54,10 @@ public abstract class VariableWidthInteger {
 	public abstract long getValue();
 	
 	@Override
+	public String toString() {
+		return Long.toString(getValue());
+	}
+	@Override
 	public boolean equals(Object obj){
 		if(obj ==null){
 			return false;

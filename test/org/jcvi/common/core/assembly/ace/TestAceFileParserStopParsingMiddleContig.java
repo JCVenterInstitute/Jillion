@@ -1,5 +1,7 @@
 package org.jcvi.common.core.assembly.ace;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -9,8 +11,6 @@ import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 public class TestAceFileParserStopParsingMiddleContig {
 
 	private final File aceFile;
@@ -23,8 +23,7 @@ public class TestAceFileParserStopParsingMiddleContig {
 	public void topParsingAfterFirstContig() throws IOException{
 		AceFileVisitor visitor = new AbstractAceFileVisitor() {
 			@Override
-			public EndContigReturnCode visitEndOfContig() {
-				super.visitEndOfContig();
+			public EndContigReturnCode handleEndOfContig() {
 				return EndContigReturnCode.STOP_PARSING;
 			}
 
@@ -77,8 +76,7 @@ public class TestAceFileParserStopParsingMiddleContig {
 				boolean keepParsing =true;
 			
 				@Override
-				public EndContigReturnCode visitEndOfContig() {
-					super.visitEndOfContig();
+				public EndContigReturnCode handleEndOfContig() {
 					return keepParsing ? EndContigReturnCode.KEEP_PARSING : EndContigReturnCode.STOP_PARSING;
 				}
 
