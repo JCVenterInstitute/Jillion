@@ -26,6 +26,7 @@ import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ReadInfo;
+import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 /**
  * {@code TasmAssembledReadAdapter} is a Adapter which allows
@@ -59,13 +60,13 @@ public final class TasmAssembledReadAdapter implements TasmAssembledRead{
 	private Map<TasmReadAttribute, String> generateAttributes() {
 		Map<TasmReadAttribute, String> attributes = new EnumMap<TasmReadAttribute, String>(TasmReadAttribute.class);
 		attributes.put(TasmReadAttribute.NAME, getId());
+		NucleotideSequence consensus =delegatePlacedRead.getNucleotideSequence().getReferenceSequence();
 		
-		//TODO is asm_lend / asm_rend ungapped or gapped?
-		//try ungapped?
-		int asmLend =1+ getNucleotideSequence().getUngappedOffsetFor((int)getGappedStartOffset());
-		int asmRend =1+ getNucleotideSequence().getUngappedOffsetFor((int)getGappedEndOffset());
-		attributes.put(TasmReadAttribute.CONTIG_LEFT, ""+asmLend);
-		attributes.put(TasmReadAttribute.CONTIG_RIGHT, ""+asmRend);
+		
+		int ungappedConsensusStart =1+ consensus.getUngappedOffsetFor((int)getGappedStartOffset());
+		int ungappedConsensusEnd =1+ consensus.getUngappedOffsetFor((int)getGappedEndOffset());
+		attributes.put(TasmReadAttribute.CONTIG_LEFT, ""+ungappedConsensusStart);
+		attributes.put(TasmReadAttribute.CONTIG_RIGHT, ""+ungappedConsensusEnd);
 		attributes.put(TasmReadAttribute.CONTIG_START_OFFSET, ""+(this.getGappedStartOffset()));
 		attributes.put(TasmReadAttribute.GAPPED_SEQUENCE, this.getNucleotideSequence().toString());
 		

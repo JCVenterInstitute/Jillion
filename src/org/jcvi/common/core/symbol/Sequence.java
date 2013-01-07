@@ -41,11 +41,14 @@ public interface Sequence<T extends Symbol> extends Iterable<T>{
    
     /**
      * Gets the specific {@link Symbol} at the specified index.
-     * @param index the index of the {@link Symbol} to get.
+     * @param offset the 0-based offset of the {@link Symbol} to get.
      * @return the {@link Symbol} at the specified index;
      * will never be null.
+     * @throws IndexOutOfBoundsException if the given offset
+     * is negative or beyond the last offset in
+     * the sequence.
      */
-    T get(long index);
+    T get(long offset);
     /**
      * Get the number of {@link Symbol}s that are in
      * this sequence.

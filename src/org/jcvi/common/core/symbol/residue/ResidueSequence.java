@@ -55,9 +55,12 @@ public interface ResidueSequence<R extends Residue> extends Sequence<R> {
      * this sequence for the given
      * gapped offset.
      * @param gappedOffset the offset into the gapped coordinate
-     * system of the desired nucleotide.
+     * system of the desired nucleotide.  This value must be
+     * a non-negative value that is less than the sequence length.
      * @return the corresponding offset for the equivalent
      * location in the ungapped sequence.
+     * @throws IndexOutOfBoundsException if the gappedOffset
+     * is negative or beyond the sequence length.
      */
     int getUngappedOffsetFor(int gappedOffset);
     /**
@@ -67,9 +70,13 @@ public interface ResidueSequence<R extends Residue> extends Sequence<R> {
      * calling this method passing in a value of {@code 0}
      * will return the number of leading gaps in this sequence.
      * @param ungappedOffset the offset into the ungapped coordinate
-     * system of the desired nucleotide.
+     * system of the desired nucleotide.  This value must be
+     * a non-negative value that is less than the sequence ungapped length.
      * @return the corresponding offset for the equivalent
      * location in the gapped sequence.
+     * @throws IndexOutOfBoundsException if the ungappedOffset
+     * is negative or if the computed
+     * gapped offset would extend beyond the sequence length.
      */
     int getGappedOffsetFor(int ungappedOffset);
     /**

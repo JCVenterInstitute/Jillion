@@ -19,20 +19,21 @@
 
 package org.jcvi.common.core.assembly.tasm;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Map.Entry;
 
 import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.Range;
 import org.jcvi.common.core.Range.CoordinateSystem;
-import org.jcvi.common.core.assembly.DefaultAssembledRead;
 import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.assembly.tasm.TasmAssembledReadAdapter;
-import org.jcvi.common.core.assembly.tasm.TasmReadAttribute;
+import org.jcvi.common.core.assembly.DefaultAssembledRead;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestTigrAssemblerPlacedReadAdapter {
 
 	 
@@ -96,10 +97,13 @@ public class TestTigrAssemblerPlacedReadAdapter {
 		assertFalse(sut.hasAttribute(TasmReadAttribute.COMMENT));
 		assertFalse(sut.hasAttribute(TasmReadAttribute.DB));
 		
+		NucleotideSequence consensus =delegate.getNucleotideSequence().getReferenceSequence();
+		
 		assertEquals(sut.getAttributeValue(TasmReadAttribute.NAME),delegate.getId());
-		assertEquals(sut.getAttributeValue(TasmReadAttribute.CONTIG_START_OFFSET),""+delegate.getGappedStartOffset());
-		assertEquals(sut.getAttributeValue(TasmReadAttribute.CONTIG_LEFT),""+(delegate.getGappedStartOffset()));
-		assertEquals(sut.getAttributeValue(TasmReadAttribute.CONTIG_RIGHT),""+(delegate.getGappedEndOffset()));
+		long readGappedStartOffset = delegate.getGappedStartOffset();
+		assertEquals(sut.getAttributeValue(TasmReadAttribute.CONTIG_START_OFFSET),""+readGappedStartOffset);
+		assertEquals(sut.getAttributeValue(TasmReadAttribute.CONTIG_LEFT),""+(consensus.getUngappedOffsetFor((int)readGappedStartOffset) +1));
+		assertEquals(sut.getAttributeValue(TasmReadAttribute.CONTIG_RIGHT),""+(consensus.getUngappedOffsetFor((int)delegate.getGappedEndOffset()) +1));
 		assertEquals(sut.getAttributeValue(TasmReadAttribute.GAPPED_SEQUENCE),
 				gappedBasecalls.toString());
 		

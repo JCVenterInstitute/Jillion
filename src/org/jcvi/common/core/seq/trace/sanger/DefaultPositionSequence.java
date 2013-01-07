@@ -23,7 +23,7 @@ public class DefaultPositionSequence implements PositionSequence{
 
 	@Override
 	public Position get(long index) {
-		return Position.valueOf(IOUtil.toUnsignedShort(data[(int)index]));
+		return Position.valueOf(IOUtil.toUnsignedShort(data[(int)index]));		
 	}
 
 	@Override

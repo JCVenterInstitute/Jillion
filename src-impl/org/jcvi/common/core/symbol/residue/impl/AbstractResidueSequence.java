@@ -48,14 +48,33 @@ public abstract class AbstractResidueSequence<R extends Residue> implements Resi
     * {@inheritDoc}
     */
     @Override
-    public int getUngappedOffsetFor(int gappedIndex) {
-        return gappedIndex - getNumberOfGapsUntil(gappedIndex);
+    public int getUngappedOffsetFor(int gappedOffset) {
+    	checkPositiveOffset(gappedOffset);
+    	long length = getLength();
+    	if(gappedOffset> length-1){
+        	throw new IndexOutOfBoundsException("gapped offset " + gappedOffset + " extends beyond sequence length "+ length);
+        }
+        return gappedOffset - getNumberOfGapsUntil(gappedOffset);
     }
     /**
     * {@inheritDoc}
     */
     @Override
-    public int getGappedOffsetFor(int ungappedIndex) {
-        return ungappedIndex +computeNumberOfInclusiveGapsInUngappedValidRangeUntil(ungappedIndex);
+    public int getGappedOffsetFor(int ungappedOffset) {
+    	checkPositiveOffset(ungappedOffset);
+    	long length = getLength();
+    	
+        int gappedOffset= ungappedOffset +computeNumberOfInclusiveGapsInUngappedValidRangeUntil(ungappedOffset);
+        if(gappedOffset> length-1){
+        	throw new IndexOutOfBoundsException("ungapped offset " + ungappedOffset + "extends beyond sequence length "+ length);
+        }
+        return gappedOffset;
     }
+    
+    private void checkPositiveOffset(int offset){
+    	if(offset<0){
+    		throw new IndexOutOfBoundsException("offset can not be negative");
+    	}
+    }
+	
 }
