@@ -131,7 +131,7 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
 		if(!contigIdFilter.accept(id)){
 			throw new DataStoreException(String.format("contig id %s not allowed by filter", id));
 		}
-		IndexedSingleContigVisitor visitor = new IndexedSingleContigVisitor(aceFile, id);
+		IndexedSingleContigVisitor visitor = new IndexedSingleContigVisitor(id);
 
 		try {
 			AceFileParser.parse(aceFile, visitor);
@@ -314,8 +314,8 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
 		}
 
 		@Override
-		public void visitReadHeader(String readId, int gappedLength) {
-			//no-op
+		public BeginReadReturnCode visitBeginRead(String readId, int gappedLength) {
+			return BeginReadReturnCode.VISIT_CURRENT_READ;
 			
 		}
 
@@ -434,20 +434,16 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
     }
     private static final class IndexedSingleContigVisitor implements AceFileVisitor, Builder<AceContig>{
 
-    	LargeIndexedAceFileContig.IndexedContigVisitorBuilder visitorBuilder;
+    	private SingleAceContigBuilderVisitor visitorBuilder;
     	private final String contigIdToGet;
-    	private final File aceFile;
-    	private long startOffset=0L;
     	private String currentLine;
-		public IndexedSingleContigVisitor(File aceFile, String contigIdToGet) {
+		public IndexedSingleContigVisitor(String contigIdToGet) {
 			this.contigIdToGet = contigIdToGet;
-			this.aceFile = aceFile;
 		}
 
 		@Override
 		public void visitLine(String line) {
 			if(visitorBuilder==null){
-				startOffset+=line.length();
 				currentLine = line;
 			}else{				
 				visitorBuilder.visitLine(line);
@@ -478,7 +474,7 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
 				boolean reverseComplimented) {
 			
 			if(contigIdToGet.equals(contigId)){
-				visitorBuilder = new LargeIndexedAceFileContig.IndexedContigVisitorBuilder(startOffset-currentLine.length(), aceFile);
+				visitorBuilder = new SingleAceContigBuilderVisitor();
 				visitorBuilder.visitLine(currentLine);
 				return visitorBuilder.visitBeginContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented);
 			}
@@ -506,11 +502,11 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
 		}
 
 		@Override
-		public void visitReadHeader(String readId, int gappedLength) {
+		public BeginReadReturnCode visitBeginRead(String readId, int gappedLength) {
 			if(visitorBuilder!=null){
-				visitorBuilder.visitReadHeader(readId, gappedLength);
+				visitorBuilder.visitBeginRead(readId, gappedLength);
 			}
-			
+			return BeginReadReturnCode.VISIT_CURRENT_READ;
 		}
 
 		@Override
@@ -585,7 +581,7 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
 
 		@Override
 		public AceContig build() {
-			return visitorBuilder.build();
+			return visitorBuilder.getContig();
 		}
     	
     }
@@ -654,8 +650,8 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
 			}
 
 			@Override
-			public void visitReadHeader(String readId, int gappedLength) {
-				//no-op
+			public BeginReadReturnCode visitBeginRead(String readId, int gappedLength) {
+				return BeginReadReturnCode.VISIT_CURRENT_READ;
 				
 			}
 

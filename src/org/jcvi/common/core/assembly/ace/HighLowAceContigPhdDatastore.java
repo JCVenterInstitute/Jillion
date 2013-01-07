@@ -213,7 +213,7 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
         * {@inheritDoc}
         */
         @Override
-        public synchronized EndContigReturnCode visitEndOfContig() {
+        public synchronized EndContigReturnCode handleEndOfContig() {
             
             if(contigId==null){
                 return EndContigReturnCode.KEEP_PARSING;
@@ -243,12 +243,12 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
         * {@inheritDoc}
         */
         @Override
-        public synchronized void visitReadHeader(String readId,
+        public synchronized BeginReadReturnCode visitBeginRead(String readId,
                 int gappedLength) {
             if(contigOfInterest){
                 currentHiLowQualities = new QualitySequenceBuilder(gappedLength);
             }
-            super.visitReadHeader(readId, gappedLength);
+            return super.visitBeginRead(readId, gappedLength);
         }
         /**
         * {@inheritDoc}

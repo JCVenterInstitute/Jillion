@@ -672,8 +672,8 @@ public class ReAbacusAceContigWorker {
 			
 		}
 		@Override
-		public void visitReadHeader(String readId, int gappedLength) {
-			// TODO Auto-generated method stub
+		public  BeginReadReturnCode visitBeginRead(String readId, int gappedLength) {
+			return BeginReadReturnCode.VISIT_CURRENT_READ;
 			
 		}
 		@Override

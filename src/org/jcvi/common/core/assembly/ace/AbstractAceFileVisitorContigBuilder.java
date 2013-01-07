@@ -54,18 +54,23 @@ public abstract class AbstractAceFileVisitorContigBuilder extends AbstractAceFil
      * @param contigBuilder an {@link AceContigBuilder} instance; never null.
      */
     protected abstract void visitContig(final AceContigBuilder contigBuilder);
+        
+    
     
     @Override
-    public EndContigReturnCode visitEndOfContig() {
-        if(contigBuilder !=null){
+	protected final EndContigReturnCode handleEndOfContig() {
+    	if(contigBuilder !=null){
             visitContig(contigBuilder);
             contigBuilder=null;
         }
-        return EndContigReturnCode.KEEP_PARSING;
+        return getEndContigReturnCode();
+	}
+
+    protected EndContigReturnCode getEndContigReturnCode(){
+    	return EndContigReturnCode.KEEP_PARSING;
     }
     
-    
-    @Override
+	@Override
     protected void visitNewContig(String contigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean complemented) {
         contigBuilder= new AceContigBuilder(contigId, consensus);
         contigBuilder.setComplemented(complemented);

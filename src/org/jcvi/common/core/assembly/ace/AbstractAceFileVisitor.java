@@ -64,6 +64,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     private int numberOfReadsInCurrentContig;
     private boolean currentContigIsComplimented=false;
     private volatile boolean initialized;
+    private boolean skipCurrentContig=false;
     
     protected final String getCurrentFullLengthBasecalls(){
         return currentFullLengthBases;
@@ -113,7 +114,7 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
 		return copy;
 	}
 	private void fireVisitNewContigIfWeHaventAlready() {
-		if(readingConsensus){
+		if(!skipCurrentContig && readingConsensus){
             readingConsensus=false;
            visitNewContig(currentContigId, 
                    currentBasecalls.build(),
@@ -188,8 +189,10 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
         numberOfBasesInCurrentContig = numberOfBases;
         numberOfReadsInCurrentContig = numberOfReads;
         if(shouldParseContig(contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplimented)){
+        	skipCurrentContig=false;
         	return BeginContigReturnCode.VISIT_CURRENT_CONTIG;
         }else{
+        	skipCurrentContig=true;
         	return BeginContigReturnCode.SKIP_CURRENT_CONTIG;
         }
     }
@@ -310,11 +313,12 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
     }
 
     @Override
-    public void visitReadHeader(String readId, int gappedLength) {
+    public BeginReadReturnCode visitBeginRead(String readId, int gappedLength) {
         throwExceptionIfInitialized();
         currentReadId = readId;
         currentReadGappedFullLength = gappedLength;
         currentBasecalls = new NucleotideSequenceBuilder();
+        return BeginReadReturnCode.VISIT_CURRENT_READ;
     }
 
     @Override
@@ -413,13 +417,24 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
      * {@inheritDoc}
      */
      @Override
-     public EndContigReturnCode visitEndOfContig() {
+     public final EndContigReturnCode visitEndOfContig() {
          //if the contig has 0 reads
          //then we don't have AF records
          //so we need to check if we need to call
          //visit new contig here as well.
          fireVisitNewContigIfWeHaventAlready();
-         return EndContigReturnCode.KEEP_PARSING;
+         return handleEndOfContig();
      
+     }
+     /**
+      * Set the {@link EndContigReturnCode} value for
+      * when the current contig being visited is finished.
+      * This method will set the return value of {@link #visitEndOfContig()}
+      * (which is final).
+      * @return an instance of {@link EndContigReturnCode}
+      * can not be null.
+      */
+     protected EndContigReturnCode handleEndOfContig(){
+    	 return EndContigReturnCode.KEEP_PARSING;
      }
 }

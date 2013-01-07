@@ -300,8 +300,8 @@ final class IndexedAceFileDataStore{
         * {@inheritDoc}
         */
         @Override
-        public void visitReadHeader(String readId, int gappedLength) {
-        	//no-op
+        public BeginReadReturnCode visitBeginRead(String readId, int gappedLength) {
+        	return BeginReadReturnCode.VISIT_CURRENT_READ;
         }
 
         /**
@@ -434,6 +434,12 @@ final class IndexedAceFileDataStore{
 			builtRead= DefaultAceAssembledRead.createBuilder(consensus, readId, validBasecalls, offset, dir, validRange, phdInfo, ungappedFullLength)
 					.build();
 			
+		}
+
+		@Override
+		public BeginReadReturnCode visitBeginRead(String readId, int gappedLength) {
+			super.visitBeginRead(readId, gappedLength);
+			return builtRead==null?BeginReadReturnCode.VISIT_CURRENT_READ : BeginReadReturnCode.STOP_PARSING;
 		}
 		
 		
@@ -609,17 +615,16 @@ final class IndexedAceFileDataStore{
 			ByteBuffer copyOfBuffer = buffer.duplicate();
 			copyOfBuffer.position((int)fileRange.getBegin());
 			copyOfBuffer.limit((int)fileRange.getEnd());
-			
+			SingleAceContigBuilderVisitor builder = new SingleAceContigBuilderVisitor();
 			InputStream in = new ByteBufferInputStream(copyOfBuffer);
-			LargeIndexedAceFileContig.IndexedContigVisitorBuilder visitorBuilder = new LargeIndexedAceFileContig.IndexedContigVisitorBuilder(fileRange.getBegin(), getFile());
 			try {
-				AceFileParser.parse(in, visitorBuilder);
+				AceFileParser.parse(in, builder);
 			} catch (IOException e) {
 				 throw new DataStoreException("error trying to get contig "+ contigId,e);
 			}finally{
 				IOUtil.closeAndIgnoreErrors(in);				
 			}
-            return visitorBuilder.build();
+            return builder.getContig();
 		}
 
 		@Override
@@ -651,10 +656,10 @@ final class IndexedAceFileDataStore{
 			File file = getFile();
 			InputStream inputStream=null;
 	        try {
-	        	LargeIndexedAceFileContig.IndexedContigVisitorBuilder visitorBuilder = new LargeIndexedAceFileContig.IndexedContigVisitorBuilder(range.getBegin(), file);
-	            inputStream = IOUtil.createInputStreamFromFile(file,range.getBegin(), (int)range.getLength());
-	            AceFileParser.parse(inputStream, visitorBuilder);
-	            return visitorBuilder.build();
+	        	inputStream = IOUtil.createInputStreamFromFile(file,range.getBegin(), (int)range.getLength());
+	            SingleAceContigBuilderVisitor builder = new SingleAceContigBuilderVisitor();
+	            AceFileParser.parse(inputStream, builder);
+	            return builder.getContig();
 	        } catch (Exception e) {
 	            throw new DataStoreException("error trying to get contig "+ contigId,e);
 	        }finally{
