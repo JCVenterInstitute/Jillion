@@ -126,13 +126,13 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
     private byte getEncodedByteForGlyph(byte[] encodedGlyphs, long index) {
         final int encodedIndex = computeEncodedIndexForGlyph(index);
         if(encodedIndex >= encodedGlyphs.length){
-            throw new ArrayIndexOutOfBoundsException("index "+index + " corresponds to encodedIndex "+encodedIndex + "  encodedglyph length is "+encodedGlyphs.length);
+            throw new IndexOutOfBoundsException("index "+index + " corresponds to encodedIndex "+encodedIndex + "  encodedglyph length is "+encodedGlyphs.length);
         }
         return  encodedGlyphs[encodedIndex];
     }
     private int computeEncodedIndexForGlyph(long index) {
         if(index<0){
-            throw new ArrayIndexOutOfBoundsException("index can not be negative: "+index);
+            throw new IndexOutOfBoundsException("index can not be negative: "+index);
         }
         return (int)(HEADER_LENGTH+index/2);
     }

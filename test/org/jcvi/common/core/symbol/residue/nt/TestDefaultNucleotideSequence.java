@@ -98,6 +98,46 @@ public class TestDefaultNucleotideSequence {
         assertEquals("after all gaps", 17, sut.getGappedOffsetFor(15));
     }
     
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void getGappedOffsetBeyondLengthShouldThrowException(){
+    	sut.getGappedOffsetFor(100);
+    }
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void getGappedOffsetEqualToLengthShouldThrowException(){
+    	sut.getGappedOffsetFor((int)sut.getUngappedLength());
+    }
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void getGappedOffsetWithNegativeValueShouldThrowException(){
+    	sut.getGappedOffsetFor(-1);
+    }
+    
+    
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void getUngappedOffsetBeyondLengthShouldThrowException(){
+    	sut.getUngappedOffsetFor(100);
+    }
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void getUngappedOffsetEqualToLengthShouldThrowException(){
+    	sut.getUngappedOffsetFor((int)sut.getLength());
+    }
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void getUngappedOffsetWithNegativeValueShouldThrowException(){
+    	sut.getUngappedOffsetFor(-1);
+    }
+    
+    @Test
+    public void get(){
+    	List<Nucleotide> list = asList(sut);
+    	for(int i=0; i<list.size(); i++){
+    		assertEquals(list.get(i), sut.get(i));
+    	}
+    }
+    
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void getWithNegativeValueShouldThrowException(){
+    	sut.get(-1);
+    }
+    
     @Test
     public void iterator(){
         Iterator<Nucleotide> expected = Nucleotides.parse(gappedBasecalls).iterator();

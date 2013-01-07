@@ -34,14 +34,42 @@ import java.util.Map;
  *
  */
 public enum TasmReadAttribute {
+	//dkatzel- these java doc comments
+	//explaining what each tasm attribute means
+	//comes from javadoc from cloe's TDBAssemblySequence object so
+	//I assume it's correct...
 	NAME("seq_name"),
+	/**
+	 * The assembly left end (1-based position of the ungapped
+     * consensus at which this sequence begins to provide coverage)
+	 */
 	CONTIG_LEFT("asm_lend"),
+	/**
+	 * The assembly right end (1-based final position of the ungapped
+     * consensus for which this sequence provides coverage)
+	 */
 	CONTIG_RIGHT("asm_rend"),
+	/**
+	 * 1-based position of the left end of the valid range of this
+     * ungapped sequence.  The value returned will be greater than
+     * what would be returned by {@link #SEQUENCE_RIGHT} if this
+     * sequence has been reverse complemented in the assembly.
+	 */
 	SEQUENCE_LEFT("seq_lend"),
+	/**
+	 * 1-based position of the right end of the valid range of this
+     * ungapped sequence.  The value returned will be less than
+     * what would be returned by {@link #SEQUENCE_LEFT} if this
+     * sequence has been reverse complemented in the assembly.
+	 */
 	SEQUENCE_RIGHT("seq_rend"),
 	BEST("best"),
 	COMMENT("comment"),
 	DB("db"),
+	/**
+	 * The <b>zero-based</b> offset of this sequence within the
+     * <b>gapped</b> consensus
+	 */
 	CONTIG_START_OFFSET("offset"),
 	GAPPED_SEQUENCE("lsequence"),
 	

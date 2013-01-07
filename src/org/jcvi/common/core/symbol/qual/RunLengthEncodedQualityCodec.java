@@ -97,19 +97,19 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
 		//should not happen, any method that calls this
 		//should have done bounds checking but this
 		//is required to get it to compile.
-		throw new IllegalStateException("could not find index "+index);
+		throw new IndexOutOfBoundsException("could not find index "+index);
     }
 
    
     @Override
     public PhredQuality decode(byte[] encodedGlyphs, long index) {
     	 if(index <0){
-         	throw new IllegalArgumentException("can not have negative length");
+         	throw new IndexOutOfBoundsException("can not have negative length");
          }
         ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
         int length=buf.getInt();       
         if(index >=length){
-        	throw new IllegalArgumentException("can not have index beyond length");
+        	throw new IndexOutOfBoundsException("can not have index beyond length");
         }
         byte guard = buf.get();
         return get(buf,guard,index);
