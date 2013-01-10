@@ -23,7 +23,6 @@
  */
 package org.jcvi.assembly.contig;
 
-import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapUtil;
@@ -36,6 +35,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.glyph.qualClass.QualityClass;
+import org.jcvi.jillion.core.Direction;
 
 public class DefaultContigQualityClassComputer implements QualityClassComputer{
    private final QualityValueStrategy qualityValueStrategy;

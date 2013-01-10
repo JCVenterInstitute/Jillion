@@ -27,8 +27,8 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.EncodedSection;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.Section;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.EncodedSection;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.Section;
 import org.junit.Before;
 import org.junit.Test;
 

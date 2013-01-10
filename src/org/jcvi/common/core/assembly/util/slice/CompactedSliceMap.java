@@ -22,7 +22,6 @@ package org.jcvi.common.core.assembly.util.slice;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.datastore.DataStoreException;
@@ -32,6 +31,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.Direction;
 
 /**
  * @author dkatzel

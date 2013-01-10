@@ -26,8 +26,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sff.DefaultSffFileDataStore;
@@ -35,6 +33,8 @@ import org.jcvi.common.core.seq.trace.sff.SffFlowgram;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.junit.Test;
 /**
  * In rare cases the index of a flow is more than 127, 

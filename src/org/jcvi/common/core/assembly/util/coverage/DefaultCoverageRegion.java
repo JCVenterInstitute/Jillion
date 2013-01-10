@@ -30,11 +30,11 @@ import java.util.Iterator;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Rangeable;
 
 final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegion<T> {
     private final Collection<T> elements;

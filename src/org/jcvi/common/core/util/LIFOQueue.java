@@ -26,7 +26,7 @@ package org.jcvi.common.core.util;
 import java.util.Deque;
 import java.util.Queue;
 
-import org.jcvi.common.core.util.impl.AbstractFOQueue;
+import org.jcvi.jillion.core.internal.util.AbstractFOQueue;
 
 /**
  * {@code LIFOQueue} is a Last In First Out {@link Queue} that

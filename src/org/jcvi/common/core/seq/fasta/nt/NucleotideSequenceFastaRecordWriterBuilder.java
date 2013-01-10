@@ -6,9 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-import org.jcvi.common.core.seq.fasta.impl.AbstractResidueSequenceFastaRecordWriter;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.internal.seq.fasta.AbstractResidueSequenceFastaRecordWriter;
 /**
  * {@code NucleotideSequenceFastaRecordWriterBuilder} is a Builder
  * class that will create a new instance of 

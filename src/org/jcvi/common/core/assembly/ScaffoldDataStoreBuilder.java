@@ -1,7 +1,7 @@
 package org.jcvi.common.core.assembly;
 
-import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.util.Builder;
+import org.jcvi.jillion.core.DirectedRange;
 
 public interface ScaffoldDataStoreBuilder extends Builder<ScaffoldDataStore>{
 

@@ -29,11 +29,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.impl.DefaultChannel;
-import org.jcvi.common.core.seq.trace.sanger.chromat.impl.DefaultChannelGroup;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.testUtil.TestUtil;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.DefaultChannel;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.DefaultChannelGroup;
 import org.junit.Test;
 public class TestChannelGroup {
 

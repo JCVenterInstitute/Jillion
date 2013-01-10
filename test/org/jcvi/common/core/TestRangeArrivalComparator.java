@@ -20,7 +20,7 @@ package org.jcvi.common.core;
 
 import java.util.Comparator;
 
-import org.jcvi.common.core.Range;
+import org.jcvi.jillion.core.Range;
 import org.junit.Assert;
 import org.junit.Test;
 

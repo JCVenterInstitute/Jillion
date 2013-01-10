@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.trace.sff;
 
-import org.jcvi.common.core.Range;
+import org.jcvi.jillion.core.Range;
 /**
  * {@code SffReadHeader} contains
  * the information about the a specific

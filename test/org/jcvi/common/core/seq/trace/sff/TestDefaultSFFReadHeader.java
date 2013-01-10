@@ -23,9 +23,9 @@
  */
 package org.jcvi.common.core.seq.trace.sff;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.trace.sff.DefaultSffReadHeader;
 import org.jcvi.common.core.testUtil.TestUtil;
+import org.jcvi.jillion.core.Range;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

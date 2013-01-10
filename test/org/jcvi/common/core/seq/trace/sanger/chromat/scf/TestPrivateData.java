@@ -24,8 +24,8 @@
 package org.jcvi.common.core.seq.trace.sanger.chromat.scf;
 
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.PrivateData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.PrivateDataImpl;
 import org.jcvi.common.core.testUtil.TestUtil;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.PrivateDataImpl;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestPrivateData {

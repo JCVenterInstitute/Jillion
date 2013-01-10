@@ -8,10 +8,10 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaRecord;
-import org.jcvi.common.core.seq.fasta.aa.impl.UnCommentedAminoAcidSequenceFastaRecord;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.seq.fasta.aa.UnCommentedAminoAcidSequenceFastaRecord;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public abstract class AbstractTestAminoAcidSequenceFastaDataStore {

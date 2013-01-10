@@ -8,14 +8,14 @@ import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
-import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.MapUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.datastore.DataStoreStreamingIterator;
 /**
  * {@code IndexedSffFileDataStore} is an implementation 
  * of {@link FlowgramDataStore} that only stores an index containing

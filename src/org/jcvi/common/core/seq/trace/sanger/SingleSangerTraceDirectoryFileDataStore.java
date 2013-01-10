@@ -24,12 +24,12 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.impl.AbstractDataStore;
-import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.FileIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.DirectoryFileServer;
+import org.jcvi.jillion.core.internal.datastore.AbstractDataStore;
+import org.jcvi.jillion.core.internal.datastore.DataStoreStreamingIterator;
 
 /**
  * {@code SingleSangerTraceDirectoryFileDataStore} is a {@link SangerFileDataStore}

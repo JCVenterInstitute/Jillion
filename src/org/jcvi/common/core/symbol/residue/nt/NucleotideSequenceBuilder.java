@@ -25,8 +25,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.ResidueSequenceBuilder;
+import org.jcvi.jillion.core.Range;
 
 /**
  * {@code NucleotideSequenceBuilder}  is a way to

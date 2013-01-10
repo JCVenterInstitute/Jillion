@@ -19,10 +19,10 @@
 
 package org.jcvi.common.core.assembly.ace.consed;
 
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 
 /**
  * {@code ReadNavigationElement} is a {@link NavigationElement}

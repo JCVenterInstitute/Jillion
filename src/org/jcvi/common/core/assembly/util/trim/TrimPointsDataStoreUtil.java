@@ -21,8 +21,8 @@ package org.jcvi.common.core.assembly.util.trim;
 
 import java.util.Collections;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreUtil;
+import org.jcvi.jillion.core.Range;
 
 /**
  * Utility class for working

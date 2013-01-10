@@ -12,7 +12,7 @@ import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.seq.fasta.FastaDataStoreBuilder;
 import org.jcvi.common.core.seq.fasta.FastaFileParser;
-import org.jcvi.common.core.seq.fasta.impl.AbstractFastaFileDataStoreBuilderVisitor;
+import org.jcvi.jillion.core.internal.seq.fasta.AbstractFastaFileDataStoreBuilderVisitor;
 
 public final class DefaultPositionFastaFileDataStore {
 	

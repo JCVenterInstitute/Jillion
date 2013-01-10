@@ -29,11 +29,11 @@ import static org.easymock.EasyMock.replay;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.EncodedSection;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.Section;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.SCFHeader;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.EncodedSection;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.Section;
 import org.junit.Before;
 import org.junit.Test;
 

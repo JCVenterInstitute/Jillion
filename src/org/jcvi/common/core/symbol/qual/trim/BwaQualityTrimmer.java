@@ -2,10 +2,10 @@ package org.jcvi.common.core.symbol.qual.trim;
 
 import java.util.Iterator;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.Range;
 /**
  * {@code BwaQualityTrimmer} is a {@link QualityTrimmer}
  * implementation that uses the algorithm 

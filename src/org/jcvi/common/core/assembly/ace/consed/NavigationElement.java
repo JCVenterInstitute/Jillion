@@ -19,8 +19,8 @@
 
 package org.jcvi.common.core.assembly.ace.consed;
 
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
 
 /**
  * {@code NavigationElement} is an interface

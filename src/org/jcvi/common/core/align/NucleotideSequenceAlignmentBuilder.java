@@ -1,9 +1,9 @@
 package org.jcvi.common.core.align;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.Range;
 
 public class NucleotideSequenceAlignmentBuilder extends AbstractSequenceAlignmentBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment, NucleotideSequenceBuilder>{
 

@@ -19,9 +19,9 @@
 
 package org.jcvi.common.core.assembly.ace.consed;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.Contig;
+import org.jcvi.jillion.core.Range;
 
 /**
  * 

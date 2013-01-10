@@ -1,8 +1,8 @@
 package org.jcvi.common.core.symbol.residue;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.SequenceBuilder;
+import org.jcvi.jillion.core.Range;
 
 public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>> extends SequenceBuilder<R,S> {
 

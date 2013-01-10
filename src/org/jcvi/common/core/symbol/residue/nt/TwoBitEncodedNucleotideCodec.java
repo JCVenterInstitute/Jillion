@@ -30,10 +30,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.impl.ValueSizeStrategy;
 import org.jcvi.common.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.io.ValueSizeStrategy;
 
 
 /**

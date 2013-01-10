@@ -1,12 +1,12 @@
 package org.jcvi.common.core.assembly.asm;
 
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AbstractTestAssembledReadBuilder;
 import org.jcvi.common.core.assembly.asm.AsmAssembledRead;
 import org.jcvi.common.core.assembly.asm.AsmAssembledReadBuilder;
 import org.jcvi.common.core.assembly.asm.DefaultAsmPlacedRead;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 
 public class TestDefaultAsmAssembledReadBuilder extends AbstractTestAssembledReadBuilder<AsmAssembledRead>{
 	@Override

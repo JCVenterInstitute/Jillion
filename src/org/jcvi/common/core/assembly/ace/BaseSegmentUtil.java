@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
@@ -17,6 +16,7 @@ import org.jcvi.common.core.util.MapValueComparator;
 import org.jcvi.common.core.util.iter.IteratorUtil;
 import org.jcvi.common.core.util.iter.PeekableIterator;
 import org.jcvi.common.core.util.iter.PeekableStreamingIterator;
+import org.jcvi.jillion.core.Range;
 /**
  * Utility class for working with {@link AceBaseSegment}s.
  * @author dkatzel

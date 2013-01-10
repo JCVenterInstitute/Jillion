@@ -34,21 +34,20 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
-import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.ace.AceAssembledReadBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
-import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
 import org.jcvi.common.core.assembly.ace.AceContigBuilder;
-import org.jcvi.common.core.assembly.ace.PhdInfo;
+import org.jcvi.common.core.assembly.ace.ConsensusAceTag;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Ranges;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
 
 /**
  * This class contains utility scripts for
@@ -143,6 +142,11 @@ public final class ConsedUtil {
     public static SortedMap<Range,AceContig> split0xContig(AceContigBuilder contigBuilder, boolean adjustIdCoordinates){
         List<Range> coveredRegions = new ArrayList<Range>();
         NucleotideSequence unSplitConsensus = contigBuilder.getConsensusBuilder().build();
+        String contigId = contigBuilder.getContigId();
+        if(contigId.equals("NS")){
+        	System.out.println("here  " + unSplitConsensus.getGappedOffsetFor(611));
+        	
+        }
         CoverageMap<AceAssembledReadBuilder> coverageMap = CoverageMapFactory.create(contigBuilder.getAllAssembledReadBuilders());
         for(CoverageRegion<AceAssembledReadBuilder> region : coverageMap){
             if(region.getCoverageDepth()>0){

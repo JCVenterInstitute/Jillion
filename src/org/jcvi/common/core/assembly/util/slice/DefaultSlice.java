@@ -28,9 +28,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.Direction;
 
 public final class DefaultSlice implements IdedSlice{
 	public static final DefaultSlice EMPTY = new Builder().build();

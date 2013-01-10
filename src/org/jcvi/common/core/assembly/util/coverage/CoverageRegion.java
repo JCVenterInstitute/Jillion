@@ -24,8 +24,8 @@
 package org.jcvi.common.core.assembly.util.coverage;
 
 
-import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.Rangeable;
 /**
  * A {@link CoverageRegion} is a contiguious 
  * portion of a {@link CoverageMap} which 

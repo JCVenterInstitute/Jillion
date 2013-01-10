@@ -23,16 +23,16 @@
  */
 package org.jcvi.common.core.assembly.util.slice;
 
-import static org.jcvi.common.core.Direction.FORWARD;
+import static org.jcvi.jillion.core.Direction.FORWARD;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.util.slice.DefaultSlice;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.Direction;
 
 public final class TestSliceUtil {
     private TestSliceUtil(){}

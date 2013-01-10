@@ -19,9 +19,9 @@
 
 package org.jcvi.common.core.assembly.asm;
 
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ContigBuilder;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 
 /**
  * @author dkatzel

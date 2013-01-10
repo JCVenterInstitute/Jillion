@@ -21,20 +21,20 @@ package org.jcvi.common.core.seq.trace.sanger.chromat.abi;
 import java.util.List;
 
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.impl.tag.Ab1LocalDate;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.impl.tag.Ab1LocalTime;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.impl.tag.ByteArrayTaggedDataRecord;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.impl.tag.DateTaggedDataRecord;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.impl.tag.FloatArrayTaggedDataRecord;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.impl.tag.IntArrayTaggedDataRecord;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.impl.tag.ShortArrayTaggedDataRecord;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.impl.tag.StringTaggedDataRecord;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.impl.tag.TimeTaggedDataRecord;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.impl.tag.UserDefinedTaggedDataRecord;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.impl.tag.rate.ScanRate;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.impl.tag.rate.ScanRateTaggedDataType;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.Ab1LocalDate;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.Ab1LocalTime;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.ByteArrayTaggedDataRecord;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.DateTaggedDataRecord;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.FloatArrayTaggedDataRecord;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.IntArrayTaggedDataRecord;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.ShortArrayTaggedDataRecord;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.StringTaggedDataRecord;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.TimeTaggedDataRecord;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.UserDefinedTaggedDataRecord;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.rate.ScanRate;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.rate.ScanRateTaggedDataType;
 /**
  * {@code AbiChromatogramFileVisitor} is an ABI
  * Chromatogram specific implementation of 

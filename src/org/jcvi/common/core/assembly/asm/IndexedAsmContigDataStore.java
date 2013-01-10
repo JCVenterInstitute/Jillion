@@ -28,12 +28,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.jcvi.common.core.DirectedRange;
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.asm.AsmVisitor.NestedContigMessageTypes;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.trace.frg.FragmentDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
@@ -41,6 +37,10 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.MapUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.DirectedRange;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.datastore.DataStoreStreamingIterator;
 
 /**
  * {@code IndexedAsmContigDataStore} is an {@link AsmContigDataStore}

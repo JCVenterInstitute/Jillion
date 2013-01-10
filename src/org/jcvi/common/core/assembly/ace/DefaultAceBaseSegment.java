@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.ace;
 
-import org.jcvi.common.core.Range;
+import org.jcvi.jillion.core.Range;
 
 class DefaultAceBaseSegment implements AceBaseSegment{
 

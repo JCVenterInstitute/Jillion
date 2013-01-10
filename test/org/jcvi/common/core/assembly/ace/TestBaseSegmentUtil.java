@@ -6,10 +6,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.BaseSegmentUtil.NoReadMatchesConsensusException;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 import org.junit.Test;
 public class TestBaseSegmentUtil {
 

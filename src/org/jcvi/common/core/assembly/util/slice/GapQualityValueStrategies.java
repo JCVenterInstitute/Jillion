@@ -19,13 +19,13 @@
 
 package org.jcvi.common.core.assembly.util.slice;
 
-import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.Direction;
 
 /**
  * {@code GapQualityValueStrategies} are {@link QualityValueStrategy}

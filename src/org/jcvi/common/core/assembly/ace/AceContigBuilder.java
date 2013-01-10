@@ -35,8 +35,6 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.ContigBuilder;
 import org.jcvi.common.core.assembly.DefaultContig;
@@ -58,6 +56,8 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 /**
  * {@code AceContigBuilder} is a {@link Builder}
  * for {@link AceContig}s that allows

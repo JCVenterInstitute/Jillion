@@ -24,7 +24,7 @@
 package org.jcvi.common.core.util;
 
 import org.jcvi.common.core.testUtil.TestUtil;
-import org.jcvi.common.core.util.impl.RunLength;
+import org.jcvi.jillion.core.internal.util.RunLength;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestRunLength {

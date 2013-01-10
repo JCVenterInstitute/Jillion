@@ -26,12 +26,12 @@ package org.jcvi.common.core.assembly;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.Assert;
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.DefaultPlacedContig;
 import org.jcvi.common.core.assembly.DefaultScaffold;
 import org.jcvi.common.core.assembly.PlacedContig;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 
 import static org.junit.Assert.assertEquals;
 

@@ -3,7 +3,6 @@ package org.jcvi.common.core.symbol.qual.trim;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.io.IOUtil;
@@ -17,6 +16,7 @@ import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.Range;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

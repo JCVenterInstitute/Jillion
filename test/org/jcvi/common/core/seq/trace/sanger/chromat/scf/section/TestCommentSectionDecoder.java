@@ -28,8 +28,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.SectionDecoderException;
 import org.jcvi.common.core.testUtil.EasyMockUtil;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.SectionDecoderException;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;

@@ -1,9 +1,9 @@
 package org.jcvi.common.core.align.pairwise;
 
-import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.align.SequenceAlignment;
 import org.jcvi.common.core.symbol.Sequence;
 import org.jcvi.common.core.symbol.residue.Residue;
+import org.jcvi.jillion.core.DirectedRange;
 
 public final class PairwiseSequenceAlignmentWrapper<R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>> implements PairwiseSequenceAlignment<R, S>{
 	

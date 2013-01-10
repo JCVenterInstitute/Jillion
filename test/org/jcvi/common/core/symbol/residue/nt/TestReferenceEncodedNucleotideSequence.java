@@ -29,13 +29,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.symbol.impl.GlyphCodec;
 import org.jcvi.common.core.symbol.residue.nt.DefaultNucleotideCodec;
 import org.jcvi.common.core.symbol.residue.nt.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.symbol.GlyphCodec;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestReferenceEncodedNucleotideSequence {

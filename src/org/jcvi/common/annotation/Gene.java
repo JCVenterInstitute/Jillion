@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Ranges;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Ranges;
 
 public final class Gene {
 

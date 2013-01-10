@@ -31,8 +31,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.impl.DataStoreIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.internal.datastore.DataStoreIterator;
 
 /**
  * {@code ZipFileDataStore} is an implementation

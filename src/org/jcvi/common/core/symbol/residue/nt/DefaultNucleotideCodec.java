@@ -34,8 +34,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.symbol.impl.GlyphCodec;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.symbol.GlyphCodec;
 /**
  * <code>DefaultNucleotideGlyphCodec</code> is the implementation
  * of {@link GlyphCodec} that can converts {@link Nucleotide}s

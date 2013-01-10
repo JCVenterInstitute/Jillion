@@ -23,10 +23,10 @@
  */
 package org.jcvi.glyph.qualClass;
 
-import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.glyph.qualClass.QualityClass;
+import org.jcvi.jillion.core.Direction;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

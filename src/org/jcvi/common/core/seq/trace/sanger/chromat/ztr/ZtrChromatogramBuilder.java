@@ -29,14 +29,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.impl.BasicChromatogramBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl.ZTRChromatogramImpl;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.BasicChromatogramBuilder;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.ZTRChromatogramImpl;
 
 /**
  * <code>ZtrChromatogramBuilder</code> uses the Builder Pattern

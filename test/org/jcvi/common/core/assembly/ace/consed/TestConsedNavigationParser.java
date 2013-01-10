@@ -22,13 +22,13 @@ package org.jcvi.common.core.assembly.ace.consed;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationParser;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationVisitor;
 import org.jcvi.common.core.assembly.ace.consed.ConsensusNavigationElement;
 import org.jcvi.common.core.assembly.ace.consed.ReadNavigationElement;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
 /**

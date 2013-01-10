@@ -26,7 +26,6 @@ package org.jcvi.common.core.seq.trace.frg;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.trace.frg.Distance;
 import org.jcvi.common.core.seq.trace.frg.Frg2Parser;
 import org.jcvi.common.core.seq.trace.frg.Frg2Visitor;
@@ -34,6 +33,7 @@ import org.jcvi.common.core.seq.trace.frg.MateOrientation;
 import org.jcvi.common.core.seq.trace.frg.Frg2Visitor.FrgAction;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.Range;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.*;

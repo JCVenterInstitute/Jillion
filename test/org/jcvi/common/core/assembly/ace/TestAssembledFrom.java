@@ -23,9 +23,9 @@
  */
 package org.jcvi.common.core.assembly.ace;
 
-import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.ace.AlignedReadInfo;
 import org.jcvi.common.core.testUtil.TestUtil;
+import org.jcvi.jillion.core.Direction;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestAssembledFrom {

@@ -21,8 +21,8 @@ package org.jcvi.common.core.align.blast;
 
 import java.math.BigDecimal;
 
-import org.jcvi.common.core.DirectedRange;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.DirectedRange;
 
 /**
  * @author dkatzel

@@ -26,13 +26,13 @@ package org.jcvi.common.core.seq.trace.sff;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.seq.trace.sff.SffFlowgram;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.io.fileServer.FileServer;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
 
 public abstract class AbstractTestExampleSffFile{
     protected static final FileServer RESOURCES = new ResourceFileServer(AbstractTestExampleSffFile.class);

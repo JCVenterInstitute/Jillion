@@ -7,7 +7,7 @@ import java.util.BitSet;
 import java.util.Collection;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.symbol.impl.GlyphCodec;
+import org.jcvi.jillion.core.internal.symbol.GlyphCodec;
 /**
  * {@code CompactAminoAcidSequenceCodec} is able to store
  * {@link AminoAcid} in a byte array where each {@link AminoAcid}

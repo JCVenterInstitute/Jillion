@@ -19,8 +19,8 @@
 
 package org.jcvi.common.core.assembly;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.Range;
 
 /**
  * @author dkatzel

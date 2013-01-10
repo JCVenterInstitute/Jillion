@@ -26,9 +26,9 @@ package org.jcvi.common.core.assembly.ace;
 import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 import org.junit.Before;
 import org.junit.Test;
 public class TestAceContigBuilderInvalidRead {

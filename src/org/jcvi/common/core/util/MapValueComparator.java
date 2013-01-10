@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.jcvi.common.core.util.impl.ComparableComparator;
+import org.jcvi.jillion.core.internal.util.ComparableComparator;
 
 /**
  * {@code MapValueComparator} is a {@link Comparator}

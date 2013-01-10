@@ -26,11 +26,11 @@ import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.ace.consed.NavigationElement.Type;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.impl.TextLineParser;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.internal.io.TextLineParser;
 
 /**
  * @author dkatzel

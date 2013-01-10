@@ -25,11 +25,11 @@ package org.jcvi.common.core.assembly.ace;
 
 import java.util.Date;
 
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.FileVisitor;
 import org.jcvi.common.core.io.TextFileVisitor;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 /**
  * {@code AceFileVisitor} is a {@link FileVisitor}
  * implementation for Ace Files.

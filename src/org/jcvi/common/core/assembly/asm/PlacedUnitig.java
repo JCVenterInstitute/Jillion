@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.assembly.asm;
 
-import org.jcvi.common.core.Rangeable;
+import org.jcvi.jillion.core.Rangeable;
 
 /**
  * @author dkatzel

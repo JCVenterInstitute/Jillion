@@ -26,7 +26,7 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.seq.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fasta.FastaFileVisitor;
-import org.jcvi.common.core.util.iter.impl.AbstractBlockingStreamingIterator;
+import org.jcvi.jillion.core.internal.util.iter.AbstractBlockingStreamingIterator;
 
 /**
  * @author dkatzel

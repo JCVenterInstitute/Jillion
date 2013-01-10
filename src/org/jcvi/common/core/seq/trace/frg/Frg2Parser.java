@@ -34,12 +34,12 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.impl.TextLineParser;
 import org.jcvi.common.core.seq.trace.frg.Frg2Visitor.FrgAction;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.io.TextLineParser;
 
 public class Frg2Parser {
     

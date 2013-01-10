@@ -28,11 +28,11 @@ import java.io.File;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreUtil;
-import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
-import org.jcvi.common.core.seq.fasta.impl.AbstractLargeFastaFileDataStore;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.internal.datastore.DataStoreStreamingIterator;
+import org.jcvi.jillion.core.internal.seq.fasta.AbstractLargeFastaFileDataStore;
 /**
  * {@code LargeQualityFastaFileDataStore} is an implementation
  * of {@link QualitySequenceFastaDataStore} which does not

@@ -31,10 +31,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nt.DefaultNucleotideCodec;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotides;
+import org.jcvi.jillion.core.Range;
 import org.junit.Test;
 public class TestDefaultNucleotideCodec {
     List<Nucleotide> evenBases = Nucleotides.parse("ACGTACGTWS-NACGT");
