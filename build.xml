@@ -214,15 +214,6 @@
 			  <test name="org.jcvi.AllUnitTests"/>
 				<classpath refid = "test.classpath" />
 			</junit>
-		<junit haltonfailure="no" showoutput="yes"
-						errorproperty="internal-unit.test.failed"
-						failureproperty="internal-unit.test.failed"
-			fork="true">		
-						<formatter type="xml"/>
-						
-					  <test name="org.jcvi.AllInternalUnitTests"/>
-						<classpath refid = "test.classpath" />
-					</junit>
 		
 		
 		
@@ -259,10 +250,6 @@
 		<fail if= "net.test.failed">
 									Net Unit tests failed.
 								</fail>
-		
-		<fail if= "internal-integration.test.failed">
-							Internal Integration tests failed.
-						</fail>
 		<fail if= "exe.test.failed">
 							Exe tests failed.
 						</fail>
@@ -288,6 +275,7 @@
 	
 	<target name="javadoc" description = "generate javadoc from source">
 			<javadoc packagenames ="org.jcvi.*"
+				excludepackagenames="*.internal.*"
 					sourcepathref = "javadoc.sourcepath"
 					author ="true"
 					destdir = "javadoc"
