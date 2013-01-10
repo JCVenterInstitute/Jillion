@@ -27,8 +27,8 @@ import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 
 import org.jcvi.common.core.seq.trace.TraceEncoderException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DeltaEncodedData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DeltaEncodedData.Level;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.DeltaEncodedData;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.DeltaEncodedData.Level;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDelta8Data {

@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.impl.AbstractBlockingStreamingIterator;
+import org.jcvi.jillion.core.internal.util.iter.AbstractBlockingStreamingIterator;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

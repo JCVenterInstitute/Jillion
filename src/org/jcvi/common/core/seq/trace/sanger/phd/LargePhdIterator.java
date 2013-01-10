@@ -27,7 +27,7 @@ import java.util.Properties;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.util.iter.impl.AbstractBlockingStreamingIterator;
+import org.jcvi.jillion.core.internal.util.iter.AbstractBlockingStreamingIterator;
 
 /**
  * {@code LargePhdIterator} is a {@link CloseableIterator}

@@ -21,13 +21,13 @@ package org.jcvi.common.core.assembly.scaffold.agp;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import org.jcvi.common.core.DirectedRange;
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.DefaultScaffoldDataStore;
 import org.jcvi.common.core.assembly.Scaffold;
 import org.jcvi.common.core.assembly.ScaffoldDataStore;
 import org.jcvi.common.core.assembly.ScaffoldDataStoreBuilder;
+import org.jcvi.jillion.core.DirectedRange;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 
 
 

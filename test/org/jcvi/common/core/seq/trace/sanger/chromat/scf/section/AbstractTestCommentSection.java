@@ -30,9 +30,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFChromatogramImpl;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.CommentSectionCodec;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFChromatogramImpl;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.SCFHeader;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.CommentSectionCodec;
 import org.junit.Before;
 
 public class AbstractTestCommentSection {

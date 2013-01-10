@@ -27,7 +27,7 @@ import java.nio.ByteBuffer;
 import java.util.Collection;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.symbol.impl.GlyphCodec;
+import org.jcvi.jillion.core.internal.symbol.GlyphCodec;
 
 
 enum DefaultPositionCodec implements GlyphCodec<Position>{

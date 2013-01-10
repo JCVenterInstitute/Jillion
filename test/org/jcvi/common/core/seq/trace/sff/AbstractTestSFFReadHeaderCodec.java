@@ -23,11 +23,11 @@
  */
 package org.jcvi.common.core.seq.trace.sff;
 
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.seq.trace.sff.DefaultSffReadHeader;
 import org.jcvi.common.core.seq.trace.sff.DefaultSffReadHeaderDecoder;
 import org.jcvi.common.core.seq.trace.sff.SffUtil;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
 
 public class AbstractTestSFFReadHeaderCodec {
     protected int numberOfBases=100;

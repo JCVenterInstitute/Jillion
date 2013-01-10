@@ -27,7 +27,7 @@ import java.util.Map;
 
 import static org.jcvi.glyph.qualClass.QualityClass.*;
 
-import org.jcvi.common.core.Direction;
+import org.jcvi.jillion.core.Direction;
 final class QualityState{
     
    

@@ -32,14 +32,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.core.util.iter.impl.AbstractBlockingStreamingIterator;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.datastore.DataStoreStreamingIterator;
+import org.jcvi.jillion.core.internal.util.iter.AbstractBlockingStreamingIterator;
 /**
  * {@code IndexedFragmentDataStore} is an implementation of 
  * {@link FragmentDataStore} that only stores an index containing

@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.assembly.ace;
 
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Rangeable;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Rangeable;
 /**
  * {@code RangeableAceTag} is a version of an 
  * {@link AceTag} that maps to a particular location

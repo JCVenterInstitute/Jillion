@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.ace;
 
-import org.jcvi.common.core.Direction;
+import org.jcvi.jillion.core.Direction;
 
 /**
  * {@code AlignedReadInfo} defines where on the contig

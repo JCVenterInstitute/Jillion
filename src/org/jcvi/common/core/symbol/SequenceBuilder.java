@@ -3,10 +3,10 @@ package org.jcvi.common.core.symbol;
 
 import java.util.Iterator;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.Residue;
 import org.jcvi.common.core.symbol.residue.ResidueSequenceBuilder;
 import org.jcvi.common.core.util.Builder;
+import org.jcvi.jillion.core.Range;
 
 public interface SequenceBuilder <T extends Symbol, S extends Sequence<T>> extends Builder<S> , Iterable<T> {
 	/**

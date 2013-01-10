@@ -47,10 +47,6 @@ import org.jcvi.assembly.contig.QualityClassMap;
 import org.jcvi.assembly.contig.QualityClassRegion;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
-import org.jcvi.common.core.Rangeable;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.Contig;
@@ -75,6 +71,10 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.glyph.qualClass.QualityClass;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Rangeable;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
 
 public class QualityClassContigTrimmer{
 

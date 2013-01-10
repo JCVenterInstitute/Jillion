@@ -21,7 +21,7 @@ package org.jcvi.common.examples;
 
 import java.math.BigDecimal;
 
-import org.jcvi.common.core.util.iter.impl.AbstractBlockingStreamingIterator;
+import org.jcvi.jillion.core.internal.util.iter.AbstractBlockingStreamingIterator;
 
 /**
  * Example of using a {@link BlockableStreamingIterator}

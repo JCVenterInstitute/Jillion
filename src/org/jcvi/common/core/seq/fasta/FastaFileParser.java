@@ -34,9 +34,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.impl.TextLineParser;
 import org.jcvi.common.core.seq.fasta.FastaFileVisitor.DeflineReturnCode;
 import org.jcvi.common.core.seq.fasta.FastaFileVisitor.EndOfBodyReturnCode;
+import org.jcvi.jillion.core.internal.io.TextLineParser;
 /**
  * {@code FastaParser} is a utility class
  * to parse Fasta formated files.

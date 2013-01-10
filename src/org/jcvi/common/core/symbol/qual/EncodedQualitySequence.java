@@ -20,8 +20,9 @@
 package org.jcvi.common.core.symbol.qual;
 
 import java.util.Collection;
-import org.jcvi.common.core.symbol.impl.EncodedSequence;
-import org.jcvi.common.core.symbol.impl.GlyphCodec;
+
+import org.jcvi.jillion.core.internal.symbol.EncodedSequence;
+import org.jcvi.jillion.core.internal.symbol.GlyphCodec;
 
 /**
  * {@code DefaultEncodedQualitySequence} 

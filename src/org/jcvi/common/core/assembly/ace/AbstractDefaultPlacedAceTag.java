@@ -25,8 +25,8 @@ package org.jcvi.common.core.assembly.ace;
 
 import java.util.Date;
 
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Rangeable;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Rangeable;
 
 abstract class AbstractDefaultPlacedAceTag extends AbstractDefaultAceTag implements RangeableAceTag{
     private final String id;

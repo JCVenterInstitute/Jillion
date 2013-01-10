@@ -25,7 +25,7 @@ package org.jcvi.common.core.symbol;
 
 import java.util.Iterator;
 
-import org.jcvi.common.core.Range;
+import org.jcvi.jillion.core.Range;
 /**
  * {@code Sequence} is an interface for an
  * ordered list of {@link Symbol}s.  How

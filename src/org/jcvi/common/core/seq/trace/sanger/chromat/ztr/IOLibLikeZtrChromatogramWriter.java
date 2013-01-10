@@ -23,10 +23,10 @@ import java.io.OutputStream;
 
 import org.jcvi.common.core.seq.trace.TraceEncoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DeltaEncodedData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DeltaEncodedData.Level;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.ShrinkToEightBitData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl.DefaultZTRChromatogramWriterBuilder;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.DefaultZTRChromatogramWriterBuilder;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.DeltaEncodedData;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.ShrinkToEightBitData;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.DeltaEncodedData.Level;
 /**
  * {@code IOLibLikeZtrChromatogramWriter} is a {@link ZtrChromatogramWriter}
  * implementation that performs the same encoding operations in the same order

@@ -36,13 +36,13 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.Direction;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor.BeginContigReturnCode;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor.BeginReadReturnCode;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor.EndContigReturnCode;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.impl.TextLineParser;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.internal.io.TextLineParser;
 /**
  * {@code AceFileParser} contains methods for parsing
  * ACE formatted files.

@@ -23,10 +23,10 @@
  */
 package org.jcvi.common.core.assembly.ctg;
 
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.io.TextFileVisitor;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 /**
  * {@code ContigFileVisitor} is a {@link TextFileVisitor}
  * that visits files that contain {@link Contig} data.

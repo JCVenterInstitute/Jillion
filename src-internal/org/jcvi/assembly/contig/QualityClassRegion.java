@@ -23,9 +23,9 @@
  */
 package org.jcvi.assembly.contig;
 
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Rangeable;
 import org.jcvi.glyph.qualClass.QualityClass;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Rangeable;
 
 public class QualityClassRegion implements Rangeable{
 

@@ -46,9 +46,6 @@ import org.apache.commons.cli.ParseException;
 import org.jcvi.common.command.Command;
 import org.jcvi.common.command.CommandLineOptionBuilder;
 import org.jcvi.common.command.CommandLineUtils;
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitorContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceAssembledReadBuilder;
 import org.jcvi.common.core.assembly.ace.AceContig;
@@ -83,6 +80,9 @@ import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Ranges;
 
 /**
  * @author dkatzel

@@ -29,8 +29,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.AssemblyTestUtil;
 import org.jcvi.common.core.assembly.Contig;
@@ -38,6 +36,8 @@ import org.jcvi.common.core.assembly.DefaultAssembledRead;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 import org.junit.Test;
 
 public abstract class TestAbstractContigFileParser {

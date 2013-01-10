@@ -32,7 +32,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.clc.cas.align.CasAlignment;
 import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentRegion;
 import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentRegionType;
@@ -51,6 +50,7 @@ import org.jcvi.common.core.seq.trace.sff.SffUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.MultipleWrapper;
+import org.jcvi.jillion.core.Range;
 /**
  * {@code CasUtil} is a utility class for dealing with the binary
  * encodings inside a .cas file.

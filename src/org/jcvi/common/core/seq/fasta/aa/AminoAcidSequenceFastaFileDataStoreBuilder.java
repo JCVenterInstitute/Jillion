@@ -6,12 +6,12 @@ import java.io.IOException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.seq.fasta.FastaDataStore;
-import org.jcvi.common.core.seq.fasta.aa.impl.DefaultAminoAcidSequenceFastaDataStore;
-import org.jcvi.common.core.seq.fasta.aa.impl.IndexedAminoAcidSequenceFastaFileDataStore;
-import org.jcvi.common.core.seq.fasta.aa.impl.LargeAminoAcidSequenceFastaFileDataStore;
-import org.jcvi.common.core.seq.fasta.impl.AbstractFastaFileDataStoreBuilder;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
+import org.jcvi.jillion.core.internal.seq.fasta.AbstractFastaFileDataStoreBuilder;
+import org.jcvi.jillion.core.internal.seq.fasta.aa.DefaultAminoAcidSequenceFastaDataStore;
+import org.jcvi.jillion.core.internal.seq.fasta.aa.IndexedAminoAcidSequenceFastaFileDataStore;
+import org.jcvi.jillion.core.internal.seq.fasta.aa.LargeAminoAcidSequenceFastaFileDataStore;
 
 
 /**

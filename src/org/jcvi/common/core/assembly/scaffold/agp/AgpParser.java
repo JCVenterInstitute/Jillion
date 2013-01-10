@@ -32,9 +32,9 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 /**
  * 
  * @author dkatzel

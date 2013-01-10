@@ -1,10 +1,10 @@
 package org.jcvi.common.core.align;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequenceBuilder;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcids;
+import org.jcvi.jillion.core.Range;
 
 public class AminoAcidSequenceAlignmentBuilder extends AbstractSequenceAlignmentBuilder<AminoAcid, AminoAcidSequence, AminoAcidSequenceAlignment, AminoAcidSequenceBuilder>{
 

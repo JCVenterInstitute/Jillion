@@ -22,10 +22,10 @@ package org.jcvi.common.core.align.blast;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-import org.jcvi.common.core.DirectedRange;
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.DirectedRange;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.junit.Before;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;

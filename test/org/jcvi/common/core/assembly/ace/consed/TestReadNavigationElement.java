@@ -23,11 +23,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.consed.ConsensusNavigationElement;
 import org.jcvi.common.core.assembly.ace.consed.ReadNavigationElement;
 import org.jcvi.common.core.assembly.ace.consed.NavigationElement.Type;
 import org.jcvi.common.core.testUtil.TestUtil;
+import org.jcvi.jillion.core.Range;
 import org.junit.Test;
 
 /**

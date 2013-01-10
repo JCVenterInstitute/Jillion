@@ -26,12 +26,12 @@ package org.jcvi.common.core.assembly.ace;
 import java.io.File;
 import java.util.Date;
 
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
 import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 
 public class AceAssembledReadAdapter implements AceAssembledRead{
 

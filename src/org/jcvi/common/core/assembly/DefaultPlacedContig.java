@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.assembly;
 
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 
 public class DefaultPlacedContig implements PlacedContig{
     private final String contigId;

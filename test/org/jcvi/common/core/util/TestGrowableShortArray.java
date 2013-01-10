@@ -3,8 +3,8 @@ package org.jcvi.common.core.util;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.util.impl.GrowableShortArray;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.util.GrowableShortArray;
 import org.junit.Test;
 
 public class TestGrowableShortArray {

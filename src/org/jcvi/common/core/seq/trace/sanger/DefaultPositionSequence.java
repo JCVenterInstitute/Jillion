@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.jillion.core.Range;
 
 public class DefaultPositionSequence implements PositionSequence{
 

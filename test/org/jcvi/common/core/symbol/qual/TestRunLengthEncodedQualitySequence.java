@@ -4,8 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.testUtil.TestUtil;
+import org.jcvi.jillion.core.Range;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestRunLengthEncodedQualitySequence {

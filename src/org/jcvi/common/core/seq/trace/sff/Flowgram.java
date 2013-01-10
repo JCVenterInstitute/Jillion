@@ -24,8 +24,8 @@
 package org.jcvi.common.core.seq.trace.sff;
 
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.trace.Trace;
+import org.jcvi.jillion.core.Range;
 /**
  * A {@code Flowgram} is a next-generation trace
  * created using pyrosequencing.

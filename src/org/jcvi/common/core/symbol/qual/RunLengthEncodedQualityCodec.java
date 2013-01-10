@@ -31,8 +31,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.util.impl.RunLength;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.util.RunLength;
 /**
  * {@code RunLengthEncodedQualityCodec} is a {@link QualitySymbolCodec}
  * that encodes {@link PhredQuality} values in a run-length encoding.

@@ -27,7 +27,7 @@ import java.util.Arrays;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.TraceEncoderException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.RawData;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.RawData;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestRawData {

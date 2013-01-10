@@ -22,12 +22,12 @@ package org.jcvi.common.core.assembly.ace.consed;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationWriter;
 import org.jcvi.common.core.assembly.ace.consed.ConsensusNavigationElement;
 import org.jcvi.common.core.assembly.ace.consed.ReadNavigationElement;
 import org.jcvi.common.core.assembly.ace.consed.NavigationElement.Type;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

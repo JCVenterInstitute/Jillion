@@ -26,17 +26,17 @@ import java.io.InputStream;
 
 import org.jcvi.common.core.io.FileUtil;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.impl.MagicNumberInputStream;
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ab1.impl.AbiUtil;
 import org.jcvi.common.core.seq.trace.sanger.chromat.abi.AbiChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.abi.AbiFileParser;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramFileParser;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFUtils;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramFileParser;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.impl.ZTRUtil;
+import org.jcvi.jillion.core.internal.io.MagicNumberInputStream;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.AbiUtil;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFUtils;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.ZTRUtil;
 
 public final class ChromatogramFactory {
 

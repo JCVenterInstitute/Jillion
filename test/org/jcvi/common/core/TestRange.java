@@ -33,8 +33,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Ranges;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.junit.Test;
 
 public class TestRange{

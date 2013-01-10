@@ -19,8 +19,8 @@
 
 package org.jcvi.common.core.assembly.util.trim;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.jillion.core.Range;
 
 /**
  * {@code TrimDataStore} is a marker interface

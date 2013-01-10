@@ -24,13 +24,13 @@
 package org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DataFactory;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.DeltaEncodedData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.FollowData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.RawData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.RunLengthEncodedData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.ShrinkToEightBitData;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.ZLibData;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.DataFactory;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.DeltaEncodedData;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.FollowData;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.RawData;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.RunLengthEncodedData;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.ShrinkToEightBitData;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.ZLibData;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDataFactory {

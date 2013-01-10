@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.symbol.qual;
 
-import org.jcvi.common.core.symbol.impl.GlyphCodec;
+import org.jcvi.jillion.core.internal.symbol.GlyphCodec;
 
 /**
  * @author dkatzel

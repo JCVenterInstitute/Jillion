@@ -3,6 +3,7 @@ package org.jcvi.common.core;
 import java.util.Collections;
 import java.util.List;
 
+import org.jcvi.jillion.core.Range;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestRangeWithEdgeCases {

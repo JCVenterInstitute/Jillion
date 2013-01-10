@@ -30,12 +30,12 @@ import java.io.InputStream;
 
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.PrivateData;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.PrivateDataImpl;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.PrivateDataCodec;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.SectionDecoder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.SectionDecoderException;
 import org.jcvi.common.core.testUtil.EasyMockUtil;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.PrivateDataImpl;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.SCFHeader;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.PrivateDataCodec;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.SectionDecoder;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.SectionDecoderException;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

@@ -1,6 +1,9 @@
 package org.jcvi.common.core;
 
 import org.jcvi.common.core.testUtil.TestUtil;
+import org.jcvi.jillion.core.DirectedRange;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDirectedRange {

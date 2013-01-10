@@ -19,8 +19,8 @@
 
 package org.jcvi.common.core.seq.trace.sanger.chromat.ztr;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
+import org.jcvi.jillion.core.Range;
 
 /**
  * {@code ZTRChromatogramFileVisitor} is a {@link ChromatogramFileVisitor}

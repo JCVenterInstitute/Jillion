@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly.ace;
 
 import java.util.Date;
 
-import org.jcvi.common.core.Rangeable;
+import org.jcvi.jillion.core.Rangeable;
 /**
  * {@code ReadAceTag} is an {@link AceTag}
  * that maps to a particular location on a specific

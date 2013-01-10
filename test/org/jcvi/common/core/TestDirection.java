@@ -21,13 +21,13 @@ package org.jcvi.common.core;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.jcvi.common.core.Direction;
+import org.jcvi.jillion.core.Direction;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import static org.junit.Assert.*;
-import static org.jcvi.common.core.Direction.*;
+import static org.jcvi.jillion.core.Direction.*;
 @RunWith(Parameterized.class)
 public class TestDirection {
 

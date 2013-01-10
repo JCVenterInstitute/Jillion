@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.seq.trace.frg;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.seq.trace.Trace;
+import org.jcvi.jillion.core.Range;
 
 public interface Fragment extends Trace{
 

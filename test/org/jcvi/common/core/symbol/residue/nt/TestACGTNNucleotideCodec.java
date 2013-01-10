@@ -30,10 +30,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.residue.nt.ACGTNNucloetideCodec;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideCodec;
+import org.jcvi.jillion.core.Range;
 import org.junit.Test;
 
 /**

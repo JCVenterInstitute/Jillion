@@ -5,9 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-import org.jcvi.common.core.seq.fasta.impl.AbstractResidueSequenceFastaRecordWriter;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
 import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
+import org.jcvi.jillion.core.internal.seq.fasta.AbstractResidueSequenceFastaRecordWriter;
 /**
  * {@code AminoAcidSequenceFastaRecordWriterBuilder} is a Builder
  * class that will create a new instance of 

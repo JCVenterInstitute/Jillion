@@ -18,9 +18,9 @@
  ******************************************************************************/
 package org.jcvi.common.core.assembly.scaffold.agp;
 
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.io.TextFileVisitor;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 
 /**
  * User: aresnick

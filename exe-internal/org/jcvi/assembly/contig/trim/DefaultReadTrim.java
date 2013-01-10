@@ -27,7 +27,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.Range;
+import org.jcvi.jillion.core.Range;
 
 public class DefaultReadTrim implements ReadTrim {
 

@@ -24,8 +24,8 @@ import java.io.IOException;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFCodecs;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFCodecs;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**

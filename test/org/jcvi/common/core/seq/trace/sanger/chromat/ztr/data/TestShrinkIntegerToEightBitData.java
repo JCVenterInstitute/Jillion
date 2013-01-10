@@ -28,8 +28,8 @@ import java.util.Arrays;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.TraceEncoderException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.Data;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.data.impl.ShrinkToEightBitData;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.ShrinkToEightBitData;
+import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestShrinkIntegerToEightBitData {

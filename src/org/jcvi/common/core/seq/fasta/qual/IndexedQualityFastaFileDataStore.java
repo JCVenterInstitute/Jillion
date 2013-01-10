@@ -6,19 +6,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
-import org.jcvi.common.core.datastore.impl.DataStoreStreamingIterator;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fasta.FastaRecord;
-import org.jcvi.common.core.seq.fasta.impl.AbstractIndexedFastaDataStoreBuilderVisitor;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.datastore.DataStoreStreamingIterator;
+import org.jcvi.jillion.core.internal.seq.fasta.AbstractIndexedFastaDataStoreBuilderVisitor;
 /**
  * {@code IndexedQualityFastaFileDataStore} is an implementation of 
  * {@link QualitySequenceFastaDataStore} that only stores an index containing

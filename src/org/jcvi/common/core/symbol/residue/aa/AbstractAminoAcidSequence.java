@@ -5,11 +5,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.impl.EncodedSequence;
-import org.jcvi.common.core.symbol.impl.GlyphCodec;
-import org.jcvi.common.core.symbol.residue.impl.AbstractResidueSequence;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.symbol.EncodedSequence;
+import org.jcvi.jillion.core.internal.symbol.GlyphCodec;
+import org.jcvi.jillion.core.internal.symbol.residue.AbstractResidueSequence;
 
 public abstract class AbstractAminoAcidSequence extends AbstractResidueSequence<AminoAcid> implements AminoAcidSequence {
 

@@ -25,14 +25,14 @@ package org.jcvi.common.core.assembly.scaffold.agp;
 
 import java.io.IOException;
 
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.DefaultScaffold;
 import org.jcvi.common.core.assembly.Scaffold;
 import org.jcvi.common.core.assembly.ScaffoldDataStore;
 import org.jcvi.common.core.assembly.scaffold.agp.AgpParser;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestAgpParser {

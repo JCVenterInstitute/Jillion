@@ -28,12 +28,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageRegion;
 import org.jcvi.common.core.testUtil.TestUtil;
+import org.jcvi.jillion.core.Range;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultCoverageMap {

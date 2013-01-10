@@ -28,12 +28,12 @@ package org.jcvi.common.core.seq.trace.sanger.chromat.scf.section;
 import java.io.IOException;
 
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
-import org.jcvi.common.core.seq.trace.sanger.chromat.impl.DefaultChannel;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.header.impl.SCFHeader;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.AbstractSampleSectionCodec;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.section.impl.EncodedSection;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.DefaultChannel;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.SCFHeader;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.AbstractSampleSectionCodec;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.EncodedSection;
 
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;

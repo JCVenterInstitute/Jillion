@@ -6,10 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-import org.jcvi.common.core.seq.fasta.impl.AbstractFastaRecordWriter;
-import org.jcvi.common.core.seq.fasta.impl.AbstractFastaRecordWriter.AbstractBuilder;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.jillion.core.internal.seq.fasta.AbstractFastaRecordWriter;
+import org.jcvi.jillion.core.internal.seq.fasta.AbstractFastaRecordWriter.AbstractBuilder;
 
 public final class QualitySequenceFastaRecordWriterBuilder extends AbstractBuilder<PhredQuality, QualitySequence, QualitySequenceFastaRecord,QualitySequenceFastaRecordWriter> {
 	/**

@@ -6,10 +6,10 @@ import java.io.PrintWriter;
 import java.util.Date;
 import java.util.Set;
 
-import org.jcvi.common.core.Direction;
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 
 class ReAbacusAceFileVisitor implements AceFileVisitor{
 	private final File tempOutputDir;

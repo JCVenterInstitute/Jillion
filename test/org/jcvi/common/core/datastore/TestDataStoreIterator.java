@@ -37,8 +37,8 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
-import org.jcvi.common.core.datastore.impl.DataStoreIterator;
 import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.internal.datastore.DataStoreIterator;
 import org.junit.Before;
 import org.junit.Test;
 public class TestDataStoreIterator {

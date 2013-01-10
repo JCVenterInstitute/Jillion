@@ -29,9 +29,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFCodec;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.impl.SCFCodecs;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFCodec;
+import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFCodecs;
 import org.junit.Test;
 public class TestActualSCFCodec {
 

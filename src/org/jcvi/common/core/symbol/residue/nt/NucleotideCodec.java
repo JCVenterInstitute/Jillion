@@ -22,8 +22,8 @@ package org.jcvi.common.core.symbol.residue.nt;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.symbol.impl.GlyphCodec;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.symbol.GlyphCodec;
 
 /**
  * @author dkatzel

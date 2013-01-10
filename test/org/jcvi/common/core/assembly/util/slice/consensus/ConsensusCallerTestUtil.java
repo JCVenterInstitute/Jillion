@@ -41,9 +41,9 @@ import org.jcvi.common.core.assembly.util.slice.consensus.DefaultConsensusResult
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.util.MapValueComparator;
 
-import static org.jcvi.common.core.Direction.FORWARD;
-import static org.jcvi.common.core.Direction.REVERSE;
 import static org.jcvi.common.core.assembly.util.slice.TestSliceUtil.*;
+import static org.jcvi.jillion.core.Direction.FORWARD;
+import static org.jcvi.jillion.core.Direction.REVERSE;
 public final class ConsensusCallerTestUtil {
 
     

@@ -23,7 +23,7 @@
  */
 package org.jcvi.assembly.contig.trim;
 
-import org.jcvi.common.core.Range;
+import org.jcvi.jillion.core.Range;
 
 public interface ReadTrim {
 

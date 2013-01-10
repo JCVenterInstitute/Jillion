@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.io.impl.MagicNumberInputStream;
+import org.jcvi.jillion.core.internal.io.MagicNumberInputStream;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**

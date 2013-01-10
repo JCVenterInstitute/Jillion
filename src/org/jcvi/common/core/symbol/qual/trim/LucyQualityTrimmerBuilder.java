@@ -27,10 +27,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.jcvi.common.core.Range;
-import org.jcvi.common.core.Ranges;
 import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Ranges;
 
 
 

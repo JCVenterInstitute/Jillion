@@ -24,10 +24,10 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.Range;
 import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore.AbstractIndexedAceFileDataStoreImpl;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.Range;
 import org.junit.BeforeClass;
 import org.junit.Test;
 /**
