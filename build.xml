@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="JavaCommon" default="unit.tests" basedir=".">
+<project name="Jillion" default="unit.tests" basedir=".">
 	
-	<property name="version" value="3.9" />
+	<property name="version" value="4.0" />
 	<property name="project-name" value="JCVI-JavaCommon" />
 	<property name="bin" value ="bin_ant"/>
 	<property name="reports" value ="reports"/>
 	<property name="src" value ="src"/>
 	<property name="src-impl" value ="src-impl"/>
-	<property name="src-internal" value ="src-internal"/>
 	<property name="test" value ="test"/>
-	<property name="test-internal" value ="test-internal"/>
 	<property name ="test-lib" value="test-lib"/>
 	<property name ="exe" value="exe"/>
-	<property name ="exe-internal" value="exe-internal"/>
 	<property name ="exe-test" value="exe-test"/>
 	<property name ="command-lib" value="command-lib"/>
 	
@@ -69,7 +66,6 @@
 
 	<path id="javadoc.sourcepath">
         <pathelement location="${src}"/>
-    	<pathelement location="${src-internal}"/>
     </path>
     <path id="classpath">
     	<fileset dir="${command-lib}" includes="**/*.jar"/>
@@ -100,9 +96,7 @@
 		<!-- source already compiled so only compile tests -->
 		<javac debug="true" destdir="${bin}"  classpathref="test.classpath" includeantruntime="false">
 					<src path="${test}"/>
-					<src path="${test-internal}"/>
 					<src path="${exe}"/>
-					<src path="${exe-internal}"/>
 					<src path="${exe-test}"/>
 					<src path="${integration-test}"/>
 			
@@ -110,9 +104,7 @@
 		
 		<copy todir="${bin}">
 			<fileset dir="${test}" excludes="**/*.java"/>
-			<fileset dir="${test-internal}" excludes="**/*.java"/>
 			<fileset dir="${exe}" excludes="**/*.java"/>
-			<fileset dir="${exe-internal}" excludes="**/*.java"/>
 			<fileset dir="${exe-test}" excludes="**/*.java"/>
 			<fileset dir="${integration-test}" excludes="**/*.java"/>
 		</copy>
@@ -153,9 +145,7 @@
 					 this avoids the need for emma filters-->
 				<!-- debug = true required for emma reports to see line coverage and link to source-->
 				<javac debug="true" destdir="${bin}"  classpathref="classpath" includeantruntime="false">
-					<src path="${src-internal}"/>	
 					<src path="${exe}"/>
-					<src path="${exe-internal}"/>
 					<compilerarg line="-Xlint:all"/>
 			  	</javac>
 				<emma enabled="${emma.enabled}" >
@@ -169,7 +159,6 @@
 							  	    </emma>
 		
 			<copy todir="${bin}">
-						<fileset dir="${src-internal}" excludes="**/*.java"/>
 						<fileset dir="${exe}" excludes="**/*.java"/>
 					</copy>
 		 </target>

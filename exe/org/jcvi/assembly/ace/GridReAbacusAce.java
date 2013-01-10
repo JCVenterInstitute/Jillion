@@ -51,6 +51,7 @@ import org.jcvi.common.command.grid.GridJob.MemoryUnit;
 import org.jcvi.common.command.grid.GridJobBuilder;
 import org.jcvi.common.command.grid.GridJobBuilders;
 import org.jcvi.common.command.grid.GridJobExecutorService;
+import org.jcvi.common.command.grid.JcviQueue;
 import org.jcvi.common.command.grid.PostExecutionHook;
 import org.jcvi.common.command.grid.SimpleGridJob;
 import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitor;
@@ -65,7 +66,6 @@ import org.jcvi.common.core.assembly.ace.ReadAceTag;
 import org.jcvi.common.core.assembly.ace.WholeAssemblyAceTag;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.internal.command.grid.JcviQueue;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 
