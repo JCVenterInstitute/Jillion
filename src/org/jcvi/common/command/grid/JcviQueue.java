@@ -17,7 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.internal.command.grid;
+package org.jcvi.common.command.grid;
 
 import java.util.HashMap;
 import java.util.Map;

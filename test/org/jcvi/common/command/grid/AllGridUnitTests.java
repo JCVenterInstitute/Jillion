@@ -30,7 +30,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestGridUtils.class,
         TestGridJobFuture.class,
         TestGridJobExecutorService.class,
-        TestSimpleGridJobBuilder.class
+        TestSimpleGridJobBuilder.class,
+        TestJcviQueue.class
     }
     )
 public class AllGridUnitTests {
