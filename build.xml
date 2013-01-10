@@ -127,7 +127,7 @@
 								      <instr instrpath="${bin}"
 								             mode="overwrite"
 								      		merge="false"
-								      	filter ="+org.jcvi.common*"
+								      	filter ="+org.jcvi.common*,+org.jcvi.jillion*"
 								      >
 						      		</instr>
 						  	    </emma>
@@ -152,7 +152,7 @@
 									      <instr instrpath="${bin}"
 									             mode="overwrite"
 									      		merge="true"
-									      	filter ="+org.jcvi.common*"
+									      	filter ="+org.jcvi.common*,+org.jcvi.jillion*"
 									      >
 									      	
 							      		</instr>
@@ -348,7 +348,7 @@
 	<target name="jar-module-core" description="jar of all core classes" depends= "revision, source.only.bin">
 		
 		    <jar jarfile="${project-name}-module-core-${version}-r${revision}.jar">
-		        <fileset dir="${bin}/org/jcvi/common/core"/>	
+		        <fileset dir="${bin}/org/jcvi/"/>	
 		    	<manifest>
 		    		<attribute name ="Sealed" value ="true"/>
 		    	</manifest>
