@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
 /**
  * {@code Variation} represents a single row in 

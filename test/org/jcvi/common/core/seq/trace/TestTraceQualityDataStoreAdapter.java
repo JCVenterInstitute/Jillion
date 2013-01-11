@@ -15,7 +15,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.seq.trace.Trace;
 import org.jcvi.common.core.seq.trace.TraceQualityDataStoreAdapter;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequence;
 import org.junit.Before;
 import org.junit.Test;
 public class TestTraceQualityDataStoreAdapter extends EasyMockSupport{

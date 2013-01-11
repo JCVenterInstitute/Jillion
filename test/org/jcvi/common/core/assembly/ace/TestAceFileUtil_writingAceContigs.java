@@ -35,10 +35,10 @@ import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.seq.trace.sanger.phd.ArtificalPhdDataStore;
 import org.jcvi.common.core.seq.trace.sanger.phd.PhdDataStore;
-import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.junit.Test;
 /**
  * @author dkatzel

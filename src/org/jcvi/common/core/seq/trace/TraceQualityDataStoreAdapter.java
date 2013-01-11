@@ -25,8 +25,8 @@ package org.jcvi.common.core.seq.trace;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreUtil;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 /**
  * {@code TraceQualityDataStoreAdapter} adapts a {@link TraceDataStore} into
  * a {@link QualitySequenceDataStore} by delegating all the get() calls

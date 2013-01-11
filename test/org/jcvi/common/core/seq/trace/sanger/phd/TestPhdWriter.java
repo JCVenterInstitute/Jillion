@@ -31,7 +31,7 @@ import org.jcvi.common.core.seq.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.seq.trace.sanger.phd.PhdDataStoreBuilder;
 import org.jcvi.common.core.seq.trace.sanger.phd.PhdParser;
 import org.jcvi.common.core.seq.trace.sanger.phd.PhdWriter;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**

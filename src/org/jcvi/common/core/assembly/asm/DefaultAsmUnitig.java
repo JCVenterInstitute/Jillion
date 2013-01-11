@@ -22,8 +22,8 @@ package org.jcvi.common.core.assembly.asm;
 import java.util.Set;
 
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 /**
  * @author dkatzel

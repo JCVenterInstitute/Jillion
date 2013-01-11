@@ -31,7 +31,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestNucleotideDataStoreFastaAdatper extends AbstractTestSequenceFastaDataStoreWithNoComment{

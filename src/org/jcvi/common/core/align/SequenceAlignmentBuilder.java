@@ -1,8 +1,8 @@
 package org.jcvi.common.core.align;
 
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.residue.Residue;
 import org.jcvi.common.core.util.Builder;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.residue.Residue;
 /**
  * {@code SequenceAlignmentBuilder} is a {@link Builder}
  * that is used to build {@link SequenceAlignment}s.

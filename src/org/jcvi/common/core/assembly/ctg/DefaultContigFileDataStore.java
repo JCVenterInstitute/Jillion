@@ -32,8 +32,8 @@ import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.util.Builder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 
 
 public final class DefaultContigFileDataStore {

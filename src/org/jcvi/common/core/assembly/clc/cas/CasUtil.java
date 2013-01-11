@@ -47,10 +47,10 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.io.IOUtil.Endian;
 import org.jcvi.common.core.seq.trace.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.trace.sff.SffUtil;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.MultipleWrapper;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@code CasUtil} is a utility class for dealing with the binary
  * encodings inside a .cas file.

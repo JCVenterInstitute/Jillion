@@ -30,8 +30,8 @@ import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.trace.sanger.phd.PhdTag;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.junit.Before;
 import org.junit.Test;
 

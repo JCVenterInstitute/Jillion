@@ -3,8 +3,8 @@ package org.jcvi.common.core.seq.fasta.nt;
 import java.io.IOException;
 
 import org.jcvi.common.core.seq.fasta.FastaRecordWriter;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@code NucleotideSequenceFastaRecordWriter} is a interface
  * that handles how {@link NucleotideSequenceFastaRecord}s

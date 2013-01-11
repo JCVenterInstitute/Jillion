@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.junit.Before;
 import org.junit.Test;
 public class TestMapDataStoreAdapterProxy {

@@ -32,13 +32,13 @@ import org.jcvi.common.core.seq.trace.sff.SffReadData;
 import org.jcvi.common.core.seq.trace.sff.SffReadHeader;
 import org.jcvi.common.core.seq.trace.sff.SffUtil;
 import org.jcvi.common.core.seq.trace.sff.SffWriter;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**

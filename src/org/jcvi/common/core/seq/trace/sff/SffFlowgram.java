@@ -26,15 +26,15 @@ package org.jcvi.common.core.seq.trace.sff;
 import java.util.Arrays;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.ObjectsUtil;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.internal.util.GrowableShortArray;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 
 final class SffFlowgram implements Flowgram {
     private final String id;

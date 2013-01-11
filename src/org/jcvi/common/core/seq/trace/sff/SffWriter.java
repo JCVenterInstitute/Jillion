@@ -24,10 +24,10 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 /**
  * {@code SffWriter} writes Sff formated data to an OutputStream.

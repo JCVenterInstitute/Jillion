@@ -1,8 +1,8 @@
 package org.jcvi.common.core.align;
 
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.residue.Residue;
 import org.jcvi.jillion.core.DirectedRange;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.residue.Residue;
 /**
  * {@code SequenceAlignment} is an interface that describes
  * an alignment between two {@link Sequence}s.

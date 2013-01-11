@@ -33,8 +33,8 @@ import java.util.Properties;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@code DefaultPhdFileDataStore} is a {@link PhdDataStore}
  * implementation that will store all {@link Phd} records

@@ -1,8 +1,8 @@
 package org.jcvi.common.core.seq.fasta;
 
 import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.Symbol;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.Symbol;
 /**
  * A {@code FastaFileDataStoreBuilderVisitor} is a 
  * {@link FastaDataStoreBuilder} that also implements

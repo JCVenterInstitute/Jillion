@@ -1,6 +1,6 @@
 package org.jcvi.common.core.seq.fasta.qual;
 
-import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequence;
 
 class UncommentedQualitySequenceFastaRecord implements QualitySequenceFastaRecord{
 	private final String id;

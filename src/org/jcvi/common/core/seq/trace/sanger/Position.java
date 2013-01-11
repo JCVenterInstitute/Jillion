@@ -1,6 +1,6 @@
 package org.jcvi.common.core.seq.trace.sanger;
 
-import org.jcvi.common.core.symbol.Symbol;
+import org.jcvi.jillion.core.Symbol;
 
 public final class Position implements Symbol{
 	private static final int INITIAL_CACHE_SIZE = 1024;

@@ -9,8 +9,8 @@ import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.seq.fasta.FastaDataStore;
 import org.jcvi.common.core.seq.fasta.FastaRecord;
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.Symbol;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.Symbol;
 
 public abstract class AbstractFastaFileDataStoreBuilder<T extends Symbol, S extends Sequence<T>, F extends FastaRecord<T,S>, D extends FastaDataStore<T,S, F>> {
 

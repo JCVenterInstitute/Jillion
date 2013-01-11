@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.seq.trace.sanger.chromat;
 
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.DefaultChannel;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 /**
  * {@code ChannelGroup} is a composite of all 4 {@link Channel}s
  * of a Sanger sequenced trace.

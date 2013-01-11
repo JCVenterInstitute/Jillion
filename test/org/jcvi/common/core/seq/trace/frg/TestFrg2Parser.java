@@ -31,9 +31,9 @@ import org.jcvi.common.core.seq.trace.frg.Frg2Parser;
 import org.jcvi.common.core.seq.trace.frg.Frg2Visitor;
 import org.jcvi.common.core.seq.trace.frg.MateOrientation;
 import org.jcvi.common.core.seq.trace.frg.Frg2Visitor.FrgAction;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.*;

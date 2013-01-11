@@ -9,12 +9,12 @@ import org.jcvi.common.core.align.NucleotideSequenceAlignment;
 import org.jcvi.common.core.align.NucleotideSequenceAlignmentBuilder;
 import org.jcvi.common.core.align.SequenceAlignment;
 import org.jcvi.common.core.align.SequenceAlignmentBuilder;
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.residue.Residue;
-import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
-import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
+import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@code ResiduePairwiseStrategy} uses the Strategy Pattern
  * to provide {@link Residue} specific implementations

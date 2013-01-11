@@ -26,12 +26,12 @@ package org.jcvi.common.core.seq.trace.sff;
 import java.util.Arrays;
 
 import org.jcvi.common.core.seq.trace.sff.DefaultSffReadData;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.jcvi.common.core.util.MathUtil;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

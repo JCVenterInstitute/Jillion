@@ -32,18 +32,18 @@ import java.nio.ByteBuffer;
 
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.DefaultChannel;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.DefaultChannelGroup;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFChromatogramImpl;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.AbstractBasesSectionCodec;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 
 
 public abstract class AbstractTestBasesSection {

@@ -3,9 +3,9 @@ package org.jcvi.common.annotation.hmm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.util.LIFOQueue;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 /**
  * {@code ViterbiPathDecoder} uses the Viterbi algorithm
  * to find the most probable path through an {@link Hmm}

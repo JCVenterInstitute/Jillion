@@ -27,7 +27,7 @@ import java.io.File;
 import java.util.Iterator;
 
 import org.jcvi.common.core.seq.trace.sff.DefaultSffFileDataStore;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public abstract class AbstractTestSffNucleotideDataStore extends AbstractTestExampleSffFile{

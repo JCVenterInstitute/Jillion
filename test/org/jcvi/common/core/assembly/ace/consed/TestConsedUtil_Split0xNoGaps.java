@@ -31,10 +31,10 @@ import org.jcvi.common.core.assembly.ace.AceContigBuilder;
 import org.jcvi.common.core.assembly.ace.AceContigTestUtil;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
 /**
  * Tests Split 0x regions if

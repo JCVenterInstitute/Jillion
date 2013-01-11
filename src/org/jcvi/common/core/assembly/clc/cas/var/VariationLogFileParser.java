@@ -26,7 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.assembly.clc.cas.var.Variation.Type;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
 /**
  * {@code VariationLogFileParser} is a parser for 

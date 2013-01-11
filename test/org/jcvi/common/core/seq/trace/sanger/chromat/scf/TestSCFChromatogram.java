@@ -29,11 +29,11 @@ import java.util.Map;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.PrivateData;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFChromatogramImpl;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

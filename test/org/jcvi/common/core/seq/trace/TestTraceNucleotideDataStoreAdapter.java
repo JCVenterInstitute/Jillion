@@ -15,8 +15,8 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.seq.trace.Trace;
 import org.jcvi.common.core.seq.trace.TraceNucleotideDataStoreAdapter;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.junit.Before;
 import org.junit.Test;
 

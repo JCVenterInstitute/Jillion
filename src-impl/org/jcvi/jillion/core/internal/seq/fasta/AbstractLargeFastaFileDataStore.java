@@ -12,9 +12,9 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fasta.FastaDataStore;
 import org.jcvi.common.core.seq.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fasta.FastaUtil;
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.Symbol;
 import org.jcvi.jillion.core.internal.datastore.DataStoreStreamingIterator;
 
 public abstract class AbstractLargeFastaFileDataStore<T extends Symbol,S extends Sequence<T>, F extends FastaRecord<T, S>> implements FastaDataStore<T,S,F>{

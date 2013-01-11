@@ -55,13 +55,13 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramFileVisitor;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.ZTRUtil;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.DataFactory;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.RawData;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
 
 /**

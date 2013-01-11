@@ -29,7 +29,7 @@ import java.io.File;
 import java.util.Iterator;
 
 import org.jcvi.common.core.seq.trace.sff.DefaultSffFileDataStore;
-import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
+import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.junit.Test;
 
 public abstract class AbstractTestSffQualityDataStore extends AbstractTestExampleSffFile{

@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.common.annotation.hmm.ViterbiPathDecoder;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

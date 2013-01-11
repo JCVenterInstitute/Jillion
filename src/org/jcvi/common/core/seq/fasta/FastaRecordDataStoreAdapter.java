@@ -25,8 +25,8 @@ package org.jcvi.common.core.seq.fasta;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreUtil;
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.Symbol;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.Symbol;
 /**
  * {@code FastaRecordDataStoreAdapter} adapts a {@link DataStore} of {@link FastaRecord}s
  * into a {@link DataStore} of the value returned by {@link FastaRecord#getSequence()}.

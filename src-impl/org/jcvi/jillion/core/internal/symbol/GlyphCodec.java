@@ -25,7 +25,7 @@ package org.jcvi.jillion.core.internal.symbol;
 
 import java.util.Collection;
 
-import org.jcvi.common.core.symbol.Symbol;
+import org.jcvi.jillion.core.Symbol;
 
 /**
  * {@code GlyphCodec} is an interface

@@ -26,7 +26,7 @@ package org.jcvi.common.core.assembly.util.slice.consensus;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
 public final class ConsensusUtil {
     

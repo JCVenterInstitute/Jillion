@@ -7,9 +7,9 @@ import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitor;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.ace.PhdInfo;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 public class OnlyPrintForwardReadsOfASpecificContig {
 

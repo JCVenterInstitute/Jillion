@@ -8,11 +8,11 @@ import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaRecord;
-import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
-import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.internal.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.core.internal.seq.fasta.AbstractLargeFastaFileDataStore;
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
+import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 
 /**
  * {@code LargeAminoAcidSequenceFastaFileDataStore} is an implementation

@@ -28,11 +28,11 @@ import java.io.File;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreUtil;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.internal.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.core.internal.seq.fasta.AbstractLargeFastaFileDataStore;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@code LargeNucleotideSequenceFastaFileDataStore} is an implementation
  * of {@link NucleotideSequenceFastaDataStore} which does not

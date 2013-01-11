@@ -21,9 +21,9 @@ package org.jcvi.common.core.align.pairwise;
 
 
 import org.jcvi.common.core.align.SequenceAlignment;
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.residue.Residue;
 import org.jcvi.common.core.util.MathUtil;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.residue.Residue;
 
 /**
  * {@code AbstractSmithWatermanAligner} 

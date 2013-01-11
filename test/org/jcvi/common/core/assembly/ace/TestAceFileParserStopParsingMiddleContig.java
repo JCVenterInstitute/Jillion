@@ -6,10 +6,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.junit.Test;
 public class TestAceFileParserStopParsingMiddleContig {
 

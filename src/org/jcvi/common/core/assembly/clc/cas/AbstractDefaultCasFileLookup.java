@@ -41,7 +41,7 @@ import org.jcvi.common.core.seq.trace.sff.SffFileParser;
 import org.jcvi.common.core.seq.trace.sff.SffFileVisitor;
 import org.jcvi.common.core.seq.trace.sff.SffReadData;
 import org.jcvi.common.core.seq.trace.sff.SffReadHeader;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasFileVisitor{
 

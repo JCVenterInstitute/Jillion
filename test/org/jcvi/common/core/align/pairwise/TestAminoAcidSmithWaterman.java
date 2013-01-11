@@ -2,8 +2,8 @@ package org.jcvi.common.core.align.pairwise;
 
 import org.jcvi.common.core.align.AminoAcidSequenceAlignmentBuilder;
 import org.jcvi.common.core.align.pairwise.blosom.BlosomMatrices;
-import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
-import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequenceBuilder;
+import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
+import org.jcvi.jillion.core.residue.aa.AminoAcidSequenceBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestAminoAcidSmithWaterman {

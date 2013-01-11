@@ -1,6 +1,6 @@
 package org.jcvi.common.core.align.pairwise;
 
-import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
 
 public interface AminoAcidScoringMatrix extends ScoringMatrix<AminoAcid>{
 

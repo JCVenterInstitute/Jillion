@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
 public class ViterbiTrainer implements HmmTrainer<Nucleotide>{
 

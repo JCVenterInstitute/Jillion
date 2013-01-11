@@ -25,10 +25,10 @@ package org.jcvi.common.core.seq.trace.fastq;
 
 import java.nio.ByteBuffer;
 
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 /**
  * {@code FastqQualityCodec} is a can encode and decode
  * The different ways a FASTQ file can be encode

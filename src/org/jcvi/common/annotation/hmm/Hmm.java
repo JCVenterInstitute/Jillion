@@ -2,7 +2,7 @@ package org.jcvi.common.annotation.hmm;
 
 import java.util.Set;
 
-import org.jcvi.common.core.symbol.Symbol;
+import org.jcvi.jillion.core.Symbol;
 
 public interface Hmm<S extends Symbol> {
 

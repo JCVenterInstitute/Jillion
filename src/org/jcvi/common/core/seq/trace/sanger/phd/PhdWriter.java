@@ -30,8 +30,8 @@ import java.util.Map.Entry;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.trace.sanger.Position;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
 public final class PhdWriter {
     private static final String BEGIN_SEQUENCE = "BEGIN_SEQUENCE";

@@ -1,8 +1,8 @@
 package org.jcvi.common.core.seq.trace.fastq;
 
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@code FastqRecordBuilder} is a {@link Builder} implementation
  * that can create new instances of {@link FastqRecord}s.

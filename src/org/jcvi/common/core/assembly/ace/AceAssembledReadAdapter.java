@@ -29,9 +29,9 @@ import java.util.Date;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.assembly.ace.consed.ConsedUtil;
-import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 
 public class AceAssembledReadAdapter implements AceAssembledRead{
 

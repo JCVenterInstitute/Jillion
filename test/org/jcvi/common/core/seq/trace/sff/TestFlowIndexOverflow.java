@@ -30,11 +30,11 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sff.DefaultSffFileDataStore;
 import org.jcvi.common.core.seq.trace.sff.SffFlowgram;
-import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
 /**
  * In rare cases the index of a flow is more than 127, 

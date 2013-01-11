@@ -33,7 +33,7 @@ import org.jcvi.common.core.assembly.util.slice.Slice;
 import org.jcvi.common.core.assembly.util.slice.consensus.BasicChurchillWatermanConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusResult;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.PhredQuality;
 import org.junit.runners.Parameterized.Parameters;
 
 public class TestBasicChurchillWatermanConsensusCaller extends

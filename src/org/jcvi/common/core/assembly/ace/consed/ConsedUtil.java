@@ -44,10 +44,10 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.io.FileUtil;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 /**
  * This class contains utility scripts for

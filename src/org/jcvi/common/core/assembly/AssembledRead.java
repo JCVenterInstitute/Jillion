@@ -23,11 +23,11 @@
  */
 package org.jcvi.common.core.assembly;
 
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 /**
  * A {@code AssembledRead} is a read
  * that has been assembled

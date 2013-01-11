@@ -36,11 +36,11 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramFileVisitor;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 
 public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
 

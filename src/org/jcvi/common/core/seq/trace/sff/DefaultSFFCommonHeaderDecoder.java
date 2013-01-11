@@ -30,8 +30,8 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 
 enum DefaultSFFCommonHeaderDecoder implements SffCommonHeaderDecoder {
 	/**

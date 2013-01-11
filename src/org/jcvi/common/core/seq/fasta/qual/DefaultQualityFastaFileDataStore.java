@@ -30,9 +30,9 @@ import java.io.InputStream;
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.seq.fasta.FastaFileParser;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.jillion.core.internal.seq.fasta.AbstractFastaFileDataStoreBuilderVisitor;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
 /**
  * {@code DefaultQualityFastaFileDataStore} is the default implementation
  * of {@link AbstractQualityFastaFileDataStore} which stores

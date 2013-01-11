@@ -24,8 +24,8 @@ import java.io.File;
 import org.jcvi.common.core.assembly.clc.cas.CasTrimMap;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
-import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 
 /**
  * {@code AbstractCasDataStoreFactory} is an abstract
