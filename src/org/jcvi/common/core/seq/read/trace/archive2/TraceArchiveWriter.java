@@ -99,10 +99,8 @@ public final class TraceArchiveWriter implements Closeable{
 	 */
 	public TraceArchiveWriter(File rootDir,Map<TraceInfoField, String> commonFields, TraceArchiveRecordCallback recordCallback) throws IOException {
 		//delete pre-existing files if any
-		if(rootDir !=null && rootDir.exists()){
-			for(File child : rootDir.listFiles()){
-				IOUtil.recursiveDelete(child);
-			}
+		if(rootDir !=null){
+			IOUtil.recursiveDelete(rootDir);
 		}
 		IOUtil.mkdirs(rootDir);
 		if(recordCallback ==null){

@@ -34,7 +34,14 @@ public class TestTraceArchiveWriter {
 	
 	@BeforeClass
 	public static void createOutputDir() throws IOException{
-		outputDir = File.createTempFile("temp", null);
+		File tempFile = File.createTempFile("temp", null);
+		//now that we have a new empty file
+        //we need to delete it and then create it again, but this
+        //time as a directory
+        if(!tempFile.delete() || !tempFile.mkdir()){
+            throw new IOException("Could not create temp directory: " + tempFile.getAbsolutePath());
+        }
+        outputDir = tempFile;
 	}
 	
 	@AfterClass
