@@ -19,22 +19,18 @@
 
 package org.jcvi.common.core.assembly.tasm;
 
-import org.jcvi.common.core.assembly.Contig;
+import static org.junit.Assert.assertEquals;
+
 import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
-import org.jcvi.common.core.assembly.tasm.DefaultTasmFileContigDataStore;
-import org.jcvi.common.core.assembly.tasm.TasmContig;
-import org.jcvi.common.core.assembly.tasm.TasmContigAdapter;
-import org.jcvi.common.core.assembly.tasm.TasmContigAttribute;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.io.fileServer.FileServer;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes {
 
-	 private static final FileServer RESOURCES = new ResourceFileServer(TestTigrAssemblerContigDataStore.class);
+	 private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestTigrAssemblerContigDataStore.class);
 	    
 	    private static final ContigDataStore<AssembledRead, Contig<AssembledRead>> contigDataStore;
 	    private static final TasmContigDataStore tasmDataStore;

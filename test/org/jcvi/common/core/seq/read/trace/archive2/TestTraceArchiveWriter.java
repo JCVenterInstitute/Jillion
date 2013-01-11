@@ -20,7 +20,6 @@ import org.jcvi.common.core.seq.read.trace.archive2.TraceArchiveWriter.TraceArch
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
 import org.jcvi.common.core.testUtil.TestUtil;
-import org.jcvi.common.io.fileServer.DirectoryFileServer;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -35,7 +34,7 @@ public class TestTraceArchiveWriter {
 	
 	@BeforeClass
 	public static void createOutputDir() throws IOException{
-		outputDir = DirectoryFileServer.createTemporaryDirectoryFileServer().getRootDir();
+		outputDir = File.createTempFile("temp", null);
 	}
 	
 	@AfterClass

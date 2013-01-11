@@ -1,15 +1,16 @@
 package org.jcvi.common.core.assembly.tasm;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.io.fileServer.FileServer;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestAnnotationTasmParsing {
-	 private static final FileServer RESOURCES = new ResourceFileServer(TestAnnotationTasmParsing.class);
+	 private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestAnnotationTasmParsing.class);
 	 
 	 private final TasmContigDataStore datastore;
 	 public TestAnnotationTasmParsing() throws FileNotFoundException, IOException{
