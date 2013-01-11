@@ -39,8 +39,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestDefaultCasGappedReferenceMap.class,
         AllCasAlignmentUnitTests.class,
         AllVarUnitTests.class,
-        AllPhdAdaptedIteratorTests.class,
-        TestCas2Consed3.class
+        AllPhdAdaptedIteratorTests.class
     }
     )
 public class AllCasUnitTests {
