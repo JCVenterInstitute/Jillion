@@ -9,8 +9,6 @@
 	<property name="src-impl" value ="src-impl"/>
 	<property name="test" value ="test"/>
 	<property name ="test-lib" value="test-lib"/>
-	<property name ="exe" value="exe"/>
-	<property name ="exe-test" value="exe-test"/>
 	<property name ="command-lib" value="command-lib"/>
 	
 	<!-- non-core packages -->
@@ -92,20 +90,16 @@
 		</target>
 	
 	<target name="bin"
-	         description="Compile Java source and test files" depends="internal.source.only.bin">
+	         description="Compile Java source and test files" depends="source.only.bin">
 		<!-- source already compiled so only compile tests -->
 		<javac debug="true" destdir="${bin}"  classpathref="test.classpath" includeantruntime="false">
 					<src path="${test}"/>
-					<src path="${exe}"/>
-					<src path="${exe-test}"/>
 					<src path="${integration-test}"/>
 			
 	  	</javac>
 		
 		<copy todir="${bin}">
 			<fileset dir="${test}" excludes="**/*.java"/>
-			<fileset dir="${exe}" excludes="**/*.java"/>
-			<fileset dir="${exe-test}" excludes="**/*.java"/>
 			<fileset dir="${integration-test}" excludes="**/*.java"/>
 		</copy>
 
@@ -138,30 +132,7 @@
 
 		 </target>
 		
-	<target name="internal.source.only.bin"
-			         description="Compile only Java source files" depends="source.only.bin">
-				
-				<!-- copile source separately so we can instrument with emma simply
-					 this avoids the need for emma filters-->
-				<!-- debug = true required for emma reports to see line coverage and link to source-->
-				<javac debug="true" destdir="${bin}"  classpathref="classpath" includeantruntime="false">
-					<src path="${exe}"/>
-					<compilerarg line="-Xlint:all"/>
-			  	</javac>
-				<emma enabled="${emma.enabled}" >
-									      <instr instrpath="${bin}"
-									             mode="overwrite"
-									      		merge="true"
-									      	filter ="+org.jcvi.common*,+org.jcvi.jillion*"
-									      >
-									      	
-							      		</instr>
-							  	    </emma>
-		
-			<copy todir="${bin}">
-						<fileset dir="${exe}" excludes="**/*.java"/>
-					</copy>
-		 </target>
+	
 	
 	<target name="emma" description="turns on EMMA's on-the-fly instrumentation mode" >
 	    <property name="emma.enabled" value="true" />
@@ -231,15 +202,6 @@
 		
 		
 		
-		<junit haltonfailure="no" showoutput="yes"
-			errorproperty="exe.test.failed"
-										failureproperty="exe.test.failed"
-			fork="true">		
-								<formatter type="xml"/>
-								
-							  <test name="org.jcvi.AllExeTests"/>
-								<classpath refid = "test.classpath" />
-							</junit>
 		
 		<fail if= "unit.test.failed">
 			Unit tests failed.
@@ -250,9 +212,7 @@
 		<fail if= "net.test.failed">
 									Net Unit tests failed.
 								</fail>
-		<fail if= "exe.test.failed">
-							Exe tests failed.
-						</fail>
+		
 		</target>
 	
 	<target name = "report.emma" description = "generates emma report for instrumented classes">
@@ -328,7 +288,7 @@
 		    	</manifest>
 		    </jarjar>
 	</target>
-	<target name="jar-src-core" description="jar of all source files" depends= "revision, internal.source.only.bin">
+	<target name="jar-src-core" description="jar of all source files" depends= "revision, source.only.bin">
 		
 		    <jarjar jarfile="${project-name}-core-${version}-r${revision}.jar">
 		        <fileset dir="${bin}"/>	
@@ -389,7 +349,7 @@
 		jar-module-annotation"
 	/>
 
-	<target name="jdepend" description= "runs JDepend on source" depends = "internal.source.only.bin">
+	<target name="jdepend" description= "runs JDepend on source" depends = "source.only.bin">
 
 	  <jdepend  format="xml" outputfile="jdepend-report.xml">
 	      <exclude name="java.*"/>
