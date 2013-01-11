@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 /**
  * {@code ConsensusProbabilities} contains the probabilities
  * that each non-ambiguous base is the consensus.

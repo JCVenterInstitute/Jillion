@@ -2,8 +2,8 @@ package org.jcvi.common.annotation.hmm;
 
 import java.util.Collection;
 
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.Symbol;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.Symbol;
 
 public interface HmmTrainer<S extends Symbol> {
 

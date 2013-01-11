@@ -1,7 +1,7 @@
 package org.jcvi.common.core.seq.trace.fastq;
 
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@link FastqRecord} implementation that doesn't
  * have a comment (so {@link #getComment()} returns null).

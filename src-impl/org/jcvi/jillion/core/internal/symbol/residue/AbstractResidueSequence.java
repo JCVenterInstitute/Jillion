@@ -1,7 +1,7 @@
 package org.jcvi.jillion.core.internal.symbol.residue;
 
-import org.jcvi.common.core.symbol.residue.Residue;
-import org.jcvi.common.core.symbol.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
 
 /**
  * {@code AbstractResidueSequence} is an abstract implementation of 

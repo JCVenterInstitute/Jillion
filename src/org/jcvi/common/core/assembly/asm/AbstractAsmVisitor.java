@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 /**
  * {@code AbstractAsmVisitor} is an {@link AsmVisitor}

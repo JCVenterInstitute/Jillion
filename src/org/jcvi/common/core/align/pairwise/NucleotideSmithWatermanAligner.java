@@ -1,9 +1,9 @@
 package org.jcvi.common.core.align.pairwise;
 
 import org.jcvi.common.core.align.NucleotideSequenceAlignment;
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@code NucleotideSmithWatermanAligner} can perform 
  * a pair-wise alignment of two {@link NucleotideSequence}s

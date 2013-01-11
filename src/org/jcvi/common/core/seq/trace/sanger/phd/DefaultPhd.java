@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 public class DefaultPhd implements Phd {
 

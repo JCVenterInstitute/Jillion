@@ -27,9 +27,9 @@ import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordBuilder;
 import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaRecordBuilder;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.testUtil.TestUtil;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestQualitySequenceFastaRecordBuilder {

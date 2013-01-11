@@ -26,9 +26,9 @@ package org.jcvi.common.core.seq.trace.frg;
 import java.util.List;
 
 import org.jcvi.common.core.io.TextFileVisitor;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 public interface Frg2Visitor extends TextFileVisitor{
     

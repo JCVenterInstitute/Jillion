@@ -25,10 +25,10 @@ package org.jcvi.common.core.assembly;
 
 import org.jcvi.common.core.assembly.DefaultAssembledRead;
 import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.symbol.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

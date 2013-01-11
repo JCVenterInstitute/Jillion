@@ -10,9 +10,9 @@ import org.jcvi.common.core.seq.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fasta.FastaDataStore;
 import org.jcvi.common.core.seq.fasta.FastaFileDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fasta.FastaRecord;
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.Symbol;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.Symbol;
 /**
  * {@code AbstractIndexedFastaDataStoreBuilderVisitor} is an
  * abstract implementation of {@link FastaFileDataStoreBuilderVisitor}

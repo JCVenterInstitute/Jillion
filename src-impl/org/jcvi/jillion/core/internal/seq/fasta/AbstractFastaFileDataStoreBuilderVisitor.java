@@ -6,8 +6,8 @@ import org.jcvi.common.core.seq.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fasta.FastaDataStoreBuilder;
 import org.jcvi.common.core.seq.fasta.FastaFileDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fasta.FastaRecord;
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.Symbol;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.Symbol;
 
 public abstract class AbstractFastaFileDataStoreBuilderVisitor<S extends Symbol, T extends Sequence<S>, F extends FastaRecord<S, T>, D extends DataStore<F>> extends AbstractFastaVisitor implements FastaFileDataStoreBuilderVisitor<S,T,F,D>{
 	private final FastaDataStoreBuilder<S,T,F,D> builder;

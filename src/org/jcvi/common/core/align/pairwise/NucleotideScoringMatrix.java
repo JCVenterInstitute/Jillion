@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.align.pairwise;
 
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
 /**
  * @author dkatzel

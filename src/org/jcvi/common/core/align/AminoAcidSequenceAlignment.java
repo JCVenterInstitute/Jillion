@@ -1,7 +1,7 @@
 package org.jcvi.common.core.align;
 
-import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
-import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
+import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 /**
  * {@code AminoAcidSequenceAlignment} is a marker interface for a
  * {@link SequenceAlignment} of {@link AminoAcid}s.

@@ -24,8 +24,8 @@
 package org.jcvi.common.core.symbol;
 
 
-import org.jcvi.common.core.symbol.qual.AllPhredQualityTests;
-import org.jcvi.common.core.symbol.residue.AllResidueUnitTests;
+import org.jcvi.jillion.core.qual.AllPhredQualityTests;
+import org.jcvi.jillion.core.residue.AllResidueUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

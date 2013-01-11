@@ -31,8 +31,8 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.trace.sanger.SangerTrace;
 import org.jcvi.common.core.seq.trace.sanger.SangerTraceParser;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 public class TraceFileTraceArchiveTrace extends AbstractTraceArchiveTrace {
     

@@ -21,8 +21,8 @@ package org.jcvi.common.annotation.hmm;
 
 import java.util.List;
 
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
 /**
  * {@code LabeledSequence} an object

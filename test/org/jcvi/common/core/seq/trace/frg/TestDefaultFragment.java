@@ -26,10 +26,10 @@ package org.jcvi.common.core.seq.trace.frg;
 import org.jcvi.common.core.seq.trace.Trace;
 import org.jcvi.common.core.seq.trace.frg.DefaultFragment;
 import org.jcvi.common.core.seq.trace.frg.Library;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.testUtil.TestUtil;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.junit.Before;
 import org.junit.Test;
 

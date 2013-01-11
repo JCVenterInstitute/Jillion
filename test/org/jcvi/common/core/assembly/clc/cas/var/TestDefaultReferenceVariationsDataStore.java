@@ -7,9 +7,9 @@ import java.util.Iterator;
 
 import org.jcvi.common.core.assembly.clc.cas.var.Variation.Type;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

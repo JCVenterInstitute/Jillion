@@ -24,8 +24,8 @@
 package org.jcvi.common.core.assembly.util.slice;
 
 import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
 
 public interface QualityValueStrategy {
 

@@ -30,9 +30,6 @@ import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.BasicChromatogramBuilder;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.Ab1LocalDate;
@@ -47,6 +44,9 @@ import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.TimeTagge
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.UserDefinedTaggedDataRecord;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.rate.ScanRate;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.rate.ScanRateTaggedDataType;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 /**
  * @author dkatzel

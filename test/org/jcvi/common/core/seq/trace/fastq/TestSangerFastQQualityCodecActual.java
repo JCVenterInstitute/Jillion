@@ -24,8 +24,8 @@
 package org.jcvi.common.core.seq.trace.fastq;
 
 import org.jcvi.common.core.seq.trace.fastq.FastqQualityCodec;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestSangerFastQQualityCodecActual {

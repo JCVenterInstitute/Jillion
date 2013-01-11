@@ -20,7 +20,7 @@
 package org.jcvi.common.core.seq.trace.sff;
 
 import org.jcvi.common.core.seq.trace.sff.SffUtil;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**

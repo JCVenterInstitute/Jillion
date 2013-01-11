@@ -1,8 +1,8 @@
 package org.jcvi.common.core.seq.fasta.nt;
 
 import org.jcvi.common.core.seq.fasta.FastaDataStoreBuilder;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@code NucleotideSequenceFastaDataStoreBuilder} is a {@link FastaDataStoreBuilder}
  * that builds a {@link NucleotideSequenceFastaDataStore}.

@@ -44,15 +44,15 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.EncodedShortData;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.DefaultChannel;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.DefaultChannelGroup;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFChromatogramImpl;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.ZTRChromatogramImpl;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 
 
 

@@ -24,7 +24,7 @@
 package org.jcvi.common.core.assembly.util.slice.consensus;
 
 import org.jcvi.common.core.assembly.util.slice.Slice;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 /**
  * {@code ConsensusResult} is the base call
  * and quality value that best represents

@@ -1,7 +1,7 @@
 package org.jcvi.common.core.align.pairwise.blosom;
 
 import org.jcvi.common.core.align.pairwise.AminoAcidScoringMatrix;
-import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestBlosom50 {

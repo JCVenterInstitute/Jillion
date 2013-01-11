@@ -1,7 +1,7 @@
 package org.jcvi.common.core.seq.trace.frg;
 
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 
 public final class FrgTestUtil {
 

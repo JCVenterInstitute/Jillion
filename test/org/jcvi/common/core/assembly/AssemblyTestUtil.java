@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly;
 
 import static org.junit.Assert.assertEquals;
 
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 public class AssemblyTestUtil {
 

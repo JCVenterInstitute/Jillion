@@ -30,9 +30,9 @@ import java.io.InputStream;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fasta.FastaFileParser;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.internal.seq.fasta.AbstractFastaFileDataStoreBuilderVisitor;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@code DefaultNucleotideFastaFileDataStore} is the default implementation
  * of {@link NucleotideSequenceFastaDataStore} which stores

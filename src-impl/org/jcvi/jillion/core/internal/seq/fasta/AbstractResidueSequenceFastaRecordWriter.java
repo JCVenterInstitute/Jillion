@@ -7,8 +7,8 @@ import java.nio.charset.Charset;
 
 import org.jcvi.common.core.seq.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fasta.FastaRecordWriter;
-import org.jcvi.common.core.symbol.residue.Residue;
-import org.jcvi.common.core.symbol.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
 
 /**
  * {@code AbstractResidueSequenceFastaRecordWriter} is an abstract

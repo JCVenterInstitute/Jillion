@@ -16,8 +16,8 @@ import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fasta.FastaRecordWriter;
 import org.jcvi.common.core.seq.fasta.FastaUtil;
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.Symbol;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.Symbol;
 
 
 public  abstract class AbstractFastaRecordWriter<S extends Symbol, T extends Sequence<S>, F extends FastaRecord<S,T>> implements FastaRecordWriter<S, T, F>{

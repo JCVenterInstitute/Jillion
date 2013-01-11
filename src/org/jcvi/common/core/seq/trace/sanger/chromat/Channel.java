@@ -1,7 +1,7 @@
 package org.jcvi.common.core.seq.trace.sanger.chromat;
 
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequence;
 /**
  * <code>Channel</code> represents the
  * data from a single trace channel (lane).

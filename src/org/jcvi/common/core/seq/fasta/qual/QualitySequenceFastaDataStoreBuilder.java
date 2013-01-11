@@ -1,8 +1,8 @@
 package org.jcvi.common.core.seq.fasta.qual;
 
 import org.jcvi.common.core.seq.fasta.FastaDataStoreBuilder;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
 /**
  * {@code QualityFastaDataStoreBuilder} is a {@link FastaDataStoreBuilder}
  * that builds a {@link QualitySequenceFastaDataStore}.

@@ -20,8 +20,8 @@
 package org.jcvi.common.core.assembly.util;
 
 import org.jcvi.common.core.assembly.AssemblyUtil;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**

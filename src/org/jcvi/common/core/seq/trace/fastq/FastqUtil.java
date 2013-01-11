@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.MapValueComparator;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 /**
  * {@code FastqUtil} is a utility class for working with 

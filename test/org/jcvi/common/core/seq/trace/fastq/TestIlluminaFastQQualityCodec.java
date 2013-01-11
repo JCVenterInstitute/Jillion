@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.jcvi.common.core.seq.trace.fastq.FastqQualityCodec;
-import org.jcvi.common.core.symbol.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.PhredQuality;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

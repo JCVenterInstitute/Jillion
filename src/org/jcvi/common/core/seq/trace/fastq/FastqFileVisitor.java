@@ -24,7 +24,7 @@
 package org.jcvi.common.core.seq.trace.fastq;
 
 import org.jcvi.common.core.io.TextFileVisitor;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@code FastQFileVisitor} is a {@link TextFileVisitor}
  * implementation for FASTQ files.

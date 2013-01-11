@@ -2,11 +2,11 @@ package org.jcvi.common.core.align;
 
 import java.util.Iterator;
 
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.residue.Residue;
-import org.jcvi.common.core.symbol.residue.ResidueSequenceBuilder;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 /**
  * {@code AbstractSequenceAlignmentBuilder} is 
  * an abstract implementation of {@link SequenceAlignmentBuilder}

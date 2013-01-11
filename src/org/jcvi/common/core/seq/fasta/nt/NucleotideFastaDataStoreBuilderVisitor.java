@@ -3,8 +3,8 @@ package org.jcvi.common.core.seq.fasta.nt;
 import org.jcvi.common.core.seq.fasta.FastaFileDataStoreBuilderVisitor;
 import org.jcvi.common.core.seq.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fasta.FastaFileVisitor;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 /**
  * A {@code NucleotideFastaDataStoreBuilderVisitor} is a 

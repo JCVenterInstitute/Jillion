@@ -21,8 +21,8 @@ package org.jcvi.common.core.assembly.asm;
 
 import java.util.List;
 
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 
 /**
  * {@code AsmUtil} is a utility class for working

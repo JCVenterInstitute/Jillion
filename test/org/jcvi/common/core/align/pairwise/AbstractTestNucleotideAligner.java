@@ -3,9 +3,9 @@ package org.jcvi.common.core.align.pairwise;
 import java.util.Iterator;
 
 import org.jcvi.common.core.align.NucleotideSequenceAlignmentBuilder;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 
 public class AbstractTestNucleotideAligner {
 

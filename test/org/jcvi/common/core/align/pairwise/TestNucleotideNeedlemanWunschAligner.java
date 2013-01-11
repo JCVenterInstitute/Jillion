@@ -3,8 +3,8 @@ package org.jcvi.common.core.align.pairwise;
 import static org.junit.Assert.assertEquals;
 
 import org.jcvi.common.core.align.NucleotideSequenceAlignmentBuilder;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
 
 public class TestNucleotideNeedlemanWunschAligner extends AbstractTestNucleotideAligner{

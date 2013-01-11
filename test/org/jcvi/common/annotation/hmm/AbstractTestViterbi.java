@@ -1,6 +1,6 @@
 package org.jcvi.common.annotation.hmm;
 
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.junit.BeforeClass;
 
 public abstract class AbstractTestViterbi {

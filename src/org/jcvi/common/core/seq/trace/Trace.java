@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.seq.trace;
 
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * A {@code Trace} is an abstraction of a piece of
  * genomic sequence data that has been

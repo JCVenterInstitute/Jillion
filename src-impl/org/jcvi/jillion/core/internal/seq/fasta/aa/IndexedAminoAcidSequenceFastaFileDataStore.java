@@ -15,12 +15,12 @@ import org.jcvi.common.core.seq.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaRecord;
-import org.jcvi.common.core.symbol.residue.aa.AminoAcid;
-import org.jcvi.common.core.symbol.residue.aa.AminoAcidSequence;
 import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.internal.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.core.internal.seq.fasta.AbstractIndexedFastaDataStoreBuilderVisitor;
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
+import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 
 /**
  * {@code IndexedAminoAcidSequenceFastaFileDataStore} is an implementation of 

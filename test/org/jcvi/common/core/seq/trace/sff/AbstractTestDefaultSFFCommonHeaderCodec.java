@@ -28,8 +28,8 @@ import java.math.BigInteger;
 import org.jcvi.common.core.seq.trace.sff.DefaultSFFCommonHeaderDecoder;
 import org.jcvi.common.core.seq.trace.sff.DefaultSffCommonHeader;
 import org.jcvi.common.core.seq.trace.sff.SffUtil;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 
 public class AbstractTestDefaultSFFCommonHeaderCodec {
 

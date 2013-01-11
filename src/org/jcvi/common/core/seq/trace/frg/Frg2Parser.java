@@ -36,10 +36,10 @@ import java.util.regex.Pattern;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.trace.frg.Frg2Visitor.FrgAction;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.internal.io.TextLineParser;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 public class Frg2Parser {
     

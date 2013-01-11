@@ -10,9 +10,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.util.Builder;
 import org.jcvi.common.core.util.JoinedStringBuilder;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
 public class NucleotideHmmBuilder implements Builder<Hmm<Nucleotide>>{
 

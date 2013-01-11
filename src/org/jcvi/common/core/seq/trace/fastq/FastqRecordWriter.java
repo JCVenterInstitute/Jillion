@@ -3,8 +3,8 @@ package org.jcvi.common.core.seq.trace.fastq;
 import java.io.Closeable;
 import java.io.IOException;
 
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@code FastqRecordWriter} is an interface
  * that handles writing out {@link FastqRecord}s.

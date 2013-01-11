@@ -3,8 +3,8 @@ package org.jcvi.common.core.seq.fasta;
 import java.io.Closeable;
 import java.io.IOException;
 
-import org.jcvi.common.core.symbol.Sequence;
-import org.jcvi.common.core.symbol.Symbol;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.Symbol;
 /**
  * {@code FastaRecordWriter} is a interface
  * that handles how {@link FastaRecord}s

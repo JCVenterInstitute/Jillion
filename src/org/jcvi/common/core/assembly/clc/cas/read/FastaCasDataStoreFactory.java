@@ -33,8 +33,8 @@ import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.seq.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
-import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 /**
  * {@code FastaCasDataStoreFactory} is a {@link CasDataStoreFactory}
  * implementation for .fasta files.

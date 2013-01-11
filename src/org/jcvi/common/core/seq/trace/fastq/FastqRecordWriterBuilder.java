@@ -13,10 +13,10 @@ import java.nio.charset.Charset;
 import java.util.Iterator;
 
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.util.Builder;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@code FastqRecordWriterBuilder}
  * is a {@link Builder} that 

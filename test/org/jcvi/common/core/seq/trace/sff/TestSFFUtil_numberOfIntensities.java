@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.common.core.seq.trace.sff.SffUtil;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestSFFUtil_numberOfIntensities {

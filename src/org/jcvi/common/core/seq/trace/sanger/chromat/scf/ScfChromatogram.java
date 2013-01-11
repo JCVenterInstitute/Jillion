@@ -24,7 +24,7 @@
 package org.jcvi.common.core.seq.trace.sanger.chromat.scf;
 
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequence;
 /**
  * <code>ScfChromatogram</code> is a SCF specific implementation
  * of {@link Chromatogram}.  ScfChromatograms have additional

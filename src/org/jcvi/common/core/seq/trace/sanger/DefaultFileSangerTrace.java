@@ -25,8 +25,8 @@ package org.jcvi.common.core.seq.trace.sanger;
 
 import java.io.File;
 import java.io.IOException;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 public class DefaultFileSangerTrace implements FileSangerTrace {
 

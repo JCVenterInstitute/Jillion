@@ -3,7 +3,7 @@ package org.jcvi.common.annotation.hmm;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.jcvi.common.core.symbol.Symbol;
+import org.jcvi.jillion.core.Symbol;
 
 public interface HmmState<S extends Symbol> extends Comparable<HmmState<S>>{
 	/**

@@ -32,12 +32,12 @@ import java.io.IOException;
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
-import org.jcvi.common.core.symbol.qual.QualitySequence;
-import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFChromatogramImpl;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFCodec;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFCodecs;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.junit.Test;
 public class TestConvertZtr2Scf {
     private static final ResourceHelper RESOURCES = new ResourceHelper(TestConvertZtr2Scf.class);

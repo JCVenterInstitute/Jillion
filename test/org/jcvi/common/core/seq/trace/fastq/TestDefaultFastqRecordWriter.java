@@ -13,9 +13,9 @@ import org.jcvi.common.core.seq.trace.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.trace.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.trace.fastq.FastqRecordWriter;
 import org.jcvi.common.core.seq.trace.fastq.FastqRecordWriterBuilder;
-import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
 
 public class TestDefaultFastqRecordWriter {

@@ -33,9 +33,9 @@ import java.util.regex.Pattern;
 
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.trace.fastq.FastqFileVisitor.EndOfBodyReturnCode;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.internal.io.TextLineParser;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 /**
  * {@code FastqFileParser} parses FASTQ encoded files
  * and calls callback methods

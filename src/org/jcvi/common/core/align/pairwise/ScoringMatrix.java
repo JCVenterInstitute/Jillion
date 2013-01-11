@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.align.pairwise;
 
-import org.jcvi.common.core.symbol.residue.Residue;
+import org.jcvi.jillion.core.residue.Residue;
 
 /**
  * {@code ScoringMatrix} is a matrix 

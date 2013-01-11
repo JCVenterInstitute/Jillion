@@ -30,8 +30,8 @@ import java.util.Map.Entry;
 
 import org.jcvi.common.core.assembly.util.slice.Slice;
 import org.jcvi.common.core.assembly.util.slice.SliceElement;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.util.MapValueComparator;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 /**
  * {@code MostFrequentBasecallConsensusCaller} is a {@link ConsensusCaller}
  * implementation that will return the most frequent basecall in

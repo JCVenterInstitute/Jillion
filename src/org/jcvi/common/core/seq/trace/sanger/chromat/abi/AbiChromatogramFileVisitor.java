@@ -21,8 +21,6 @@ package org.jcvi.common.core.seq.trace.sanger.chromat.abi;
 import java.util.List;
 
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
-import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
-import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.Ab1LocalDate;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.Ab1LocalTime;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.ByteArrayTaggedDataRecord;
@@ -35,6 +33,8 @@ import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.TimeTagge
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.UserDefinedTaggedDataRecord;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.rate.ScanRate;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.rate.ScanRateTaggedDataType;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@code AbiChromatogramFileVisitor} is an ABI
  * Chromatogram specific implementation of 
