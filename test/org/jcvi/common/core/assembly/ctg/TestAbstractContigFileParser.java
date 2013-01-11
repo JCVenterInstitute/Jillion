@@ -35,9 +35,9 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultAssembledRead;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 
 public abstract class TestAbstractContigFileParser {
@@ -45,7 +45,7 @@ public abstract class TestAbstractContigFileParser {
     int contig_id=925;
     int contig_length = 21249;
     int numberOfReads= 210;
-    ResourceFileServer RESOURCES = new ResourceFileServer(TestAbstractContigFileParser.class);
+    ResourceHelper RESOURCES = new ResourceHelper(TestAbstractContigFileParser.class);
 
                         NucleotideSequence contigConsensus = new NucleotideSequenceBuilder(
         "TAAAGTGGCCACTAAATATGTTAAGAAGGTTACTGGCAAACTAGCCGTGCGCTTTAAGGC" +

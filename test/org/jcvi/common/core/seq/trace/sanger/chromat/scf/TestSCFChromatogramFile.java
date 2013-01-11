@@ -27,7 +27,7 @@ import java.io.IOException;
 import org.jcvi.common.core.seq.trace.Trace;
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramXMLSerializer;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFChromatogramImpl;
 import org.junit.Test;
 
@@ -38,7 +38,7 @@ import org.junit.Test;
  */
 public class TestSCFChromatogramFile {
 
-    private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestSCFChromatogramFile.class);
+    private static final ResourceHelper RESOURCES = new ResourceHelper(TestSCFChromatogramFile.class);
     private static final SCFChromatogramImpl EXPECTED_SCF;
     static{
         try {

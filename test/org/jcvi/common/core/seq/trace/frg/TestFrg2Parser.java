@@ -32,8 +32,8 @@ import org.jcvi.common.core.seq.trace.frg.Frg2Visitor;
 import org.jcvi.common.core.seq.trace.frg.MateOrientation;
 import org.jcvi.common.core.seq.trace.frg.Frg2Visitor.FrgAction;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.*;
@@ -41,7 +41,7 @@ public class TestFrg2Parser {
 
     private static final String FILE = "files/example.frg2";
     
-    private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestFrg2Parser.class);
+    private final static ResourceHelper RESOURCES = new ResourceHelper(TestFrg2Parser.class);
     
     
     @Test

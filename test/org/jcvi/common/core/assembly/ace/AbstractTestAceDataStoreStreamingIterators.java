@@ -10,7 +10,7 @@ import org.jcvi.common.core.datastore.DataStoreClosedException;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +21,7 @@ public abstract class AbstractTestAceDataStoreStreamingIterators {
 	private final File aceFile;
 	
 	public AbstractTestAceDataStoreStreamingIterators(){
-		ResourceFileServer resources = new ResourceFileServer(AbstractTestAceDataStoreStreamingIterators.class);
+		ResourceHelper resources = new ResourceHelper(AbstractTestAceDataStoreStreamingIterators.class);
 		try {
 			aceFile = resources.getFile("files/fluSample.ace");
 		} catch (IOException e) {

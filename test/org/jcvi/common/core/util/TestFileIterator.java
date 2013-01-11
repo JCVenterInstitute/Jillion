@@ -34,12 +34,12 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.util.FileIterator;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 
 public class TestFileIterator {
 
-    ResourceFileServer fileServer = new ResourceFileServer(TestFileIterator.class);
+    ResourceHelper fileServer = new ResourceHelper(TestFileIterator.class);
     
     
     @Test

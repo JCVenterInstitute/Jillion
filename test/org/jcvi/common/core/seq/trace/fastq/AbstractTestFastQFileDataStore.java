@@ -40,7 +40,7 @@ import org.jcvi.common.core.seq.trace.fastq.FastqRecordBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.ObjectsUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,7 +48,7 @@ public abstract class AbstractTestFastQFileDataStore {
     static final FastqQualityCodec QUALITY_CODEC = FastqQualityCodec.ILLUMINA;
     DataStore<FastqRecord> sut;
     String file = "files/example.fastq";
-    ResourceFileServer resources = new ResourceFileServer(
+    ResourceHelper resources = new ResourceHelper(
             TestDefaultFastQFileDataStore.class);
     FastqRecord solexa_1489 = new FastqRecordBuilder(
             "SOLEXA1:4:1:12:1489#0/1",

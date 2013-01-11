@@ -38,7 +38,7 @@ import org.jcvi.common.core.seq.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,7 +50,7 @@ import org.junit.rules.TemporaryFolder;
  */
 public class TestDefaultAceFileWriter {
 
-    private final ResourceFileServer resources = new ResourceFileServer(TestAceFileUtil_writingAceContigs.class);
+    private final ResourceHelper resources = new ResourceHelper(TestAceFileUtil_writingAceContigs.class);
     private File tmpDir;
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();

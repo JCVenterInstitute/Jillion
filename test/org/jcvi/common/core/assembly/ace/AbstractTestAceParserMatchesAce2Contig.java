@@ -39,13 +39,13 @@ import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.After;
 import org.junit.Test;
 
 public abstract class  AbstractTestAceParserMatchesAce2Contig {
     ContigDataStore<AssembledRead, Contig<AssembledRead>> expectedContigDataStore;
-    ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestAceParserMatchesAce2Contig.class);
+    ResourceHelper RESOURCES = new ResourceHelper(AbstractTestAceParserMatchesAce2Contig.class);
     private final String pathToAceFile;
     
     private final AceFileContigDataStore sut;

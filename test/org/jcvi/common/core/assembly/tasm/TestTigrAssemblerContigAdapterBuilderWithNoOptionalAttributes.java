@@ -26,11 +26,11 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 public class TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes {
 
-	 private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestTigrAssemblerContigDataStore.class);
+	 private static final ResourceHelper RESOURCES = new ResourceHelper(TestTigrAssemblerContigDataStore.class);
 	    
 	    private static final ContigDataStore<AssembledRead, Contig<AssembledRead>> contigDataStore;
 	    private static final TasmContigDataStore tasmDataStore;

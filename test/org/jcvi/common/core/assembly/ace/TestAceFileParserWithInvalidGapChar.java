@@ -24,7 +24,7 @@ import java.io.IOException;
 import org.jcvi.common.core.assembly.ace.AceFileParser;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor.BeginContigReturnCode;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
@@ -38,7 +38,7 @@ public class TestAceFileParserWithInvalidGapChar {
     @Test
     public void basecallInReadContainDashInsteadOfStar() throws IOException{
         String problemLine = "agccgaaggagg*ttttggaaacaccaaggg-g*ggtcagaccccaacgc\n";
-        ResourceFileServer resources = new ResourceFileServer(TestAceFileParserWithInvalidGapChar.class);
+        ResourceHelper resources = new ResourceHelper(TestAceFileParserWithInvalidGapChar.class);
         AceFileVisitor mockVisitor = createNiceMock(AceFileVisitor.class);
         expect(mockVisitor.visitBeginContig(isA(String.class), anyInt(), anyInt(), anyInt(), anyBoolean()))
         			.andReturn(BeginContigReturnCode.SKIP_CURRENT_CONTIG);

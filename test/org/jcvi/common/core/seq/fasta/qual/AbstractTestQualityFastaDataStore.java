@@ -42,7 +42,7 @@ import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaRecordBuilder;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public abstract class AbstractTestQualityFastaDataStore {
@@ -181,7 +181,7 @@ public abstract class AbstractTestQualityFastaDataStore {
                                         33, 33, 35, 44, 44, 22, 16, 9, 7, 7
                                 }).build())
     						.build();
-    ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestQualityFastaDataStore.class);
+    ResourceHelper RESOURCES = new ResourceHelper(AbstractTestQualityFastaDataStore.class);
     @Test
     public void parseFile() throws IOException, DataStoreException{
     	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);

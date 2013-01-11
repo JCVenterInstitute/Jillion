@@ -29,11 +29,11 @@ import org.jcvi.common.core.seq.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.common.primer.PrimerDetector;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,7 +43,7 @@ import org.junit.Test;
  *
  */
 public class TestPrimerDetector_ActualData {
-    private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestPrimerDetector_ActualData.class);
+    private static final ResourceHelper RESOURCES = new ResourceHelper(TestPrimerDetector_ActualData.class);
     
     private NucleotideSequenceDataStore primerDataStore;
     private NucleotideSequence sequence;

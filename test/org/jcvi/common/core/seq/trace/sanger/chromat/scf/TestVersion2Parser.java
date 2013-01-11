@@ -24,7 +24,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFCodecs;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  */
 public class TestVersion2Parser {
 
-    private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestVersion2Parser.class);
+    private static final ResourceHelper RESOURCES = new ResourceHelper(TestVersion2Parser.class);
     
     @Test
     public void version2MatchesVersion3() throws TraceDecoderException, FileNotFoundException, IOException{

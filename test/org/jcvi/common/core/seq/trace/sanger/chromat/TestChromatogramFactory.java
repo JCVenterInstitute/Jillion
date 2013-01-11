@@ -31,7 +31,7 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 
 public class TestChromatogramFactory {
@@ -40,7 +40,7 @@ public class TestChromatogramFactory {
     private static final String SCF3_FILE = "scf/files/GBKAK82TF.scf";
     private static final String AB1_FILE = "ab1/files/SDBHD01T00PB1A1672F.ab1";
   
-    private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestChromatogramFactory.class);
+    private final static ResourceHelper RESOURCES = new ResourceHelper(TestChromatogramFactory.class);
     
     @Test
     public void parseZTR() throws TraceDecoderException, IOException{    	

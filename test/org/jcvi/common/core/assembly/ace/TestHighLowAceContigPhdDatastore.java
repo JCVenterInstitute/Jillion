@@ -32,7 +32,7 @@ import org.jcvi.common.core.seq.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +44,7 @@ import org.junit.Test;
 public class TestHighLowAceContigPhdDatastore {
 
 	PhdDataStore sut;
-    ResourceFileServer rs = new ResourceFileServer(TestHighLowAceContigPhdDatastore.class);
+    ResourceHelper rs = new ResourceHelper(TestHighLowAceContigPhdDatastore.class);
     @Before
     public void setup() throws IOException{
         File ace = rs.getFile("files/sample.ace");

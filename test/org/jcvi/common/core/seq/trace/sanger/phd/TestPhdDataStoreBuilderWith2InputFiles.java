@@ -29,7 +29,7 @@ import org.jcvi.common.core.seq.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.seq.trace.sanger.phd.PhdDataStoreBuilder;
 import org.jcvi.common.core.seq.trace.sanger.phd.PhdParser;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**
@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  *
  */
 public class TestPhdDataStoreBuilderWith2InputFiles extends AbstractTestPhd{
-    private static final ResourceFileServer RESOURCE = new ResourceFileServer(TestPhdDataStoreBuilderWith2InputFiles.class);
+    private static final ResourceHelper RESOURCE = new ResourceHelper(TestPhdDataStoreBuilderWith2InputFiles.class);
     
     @Test
     public void testCanReadMultiplePhdFiles() throws FileNotFoundException, IOException, DataStoreException{

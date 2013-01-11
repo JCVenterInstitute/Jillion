@@ -16,7 +16,7 @@ import org.jcvi.common.core.seq.trace.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.trace.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.trace.fastq.FastqRecord;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 /**
  * The fastq spec actually allows
@@ -33,7 +33,7 @@ import org.junit.Test;
  */
 public abstract class TestAbstractMultiLineFastqRecordsInDataStore {
 
-	private final ResourceFileServer resources = new ResourceFileServer(TestAbstractMultiLineFastqRecordsInDataStore.class);
+	private final ResourceHelper resources = new ResourceHelper(TestAbstractMultiLineFastqRecordsInDataStore.class);
 	
 	protected abstract FastqDataStore createFastqDataStoreFor(File fastq, FastqQualityCodec qualityCodec) throws IOException;
 	

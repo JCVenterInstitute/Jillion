@@ -33,7 +33,7 @@ import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public abstract class AbstractTestSequenceFastaDataStore {
@@ -148,7 +148,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
             .build();
     
     
-    ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestSequenceFastaDataStore.class);
+    ResourceHelper RESOURCES = new ResourceHelper(AbstractTestSequenceFastaDataStore.class);
     protected File getFile() throws IOException {
         return RESOURCES.getFile(FASTA_FILE_PATH);
     }

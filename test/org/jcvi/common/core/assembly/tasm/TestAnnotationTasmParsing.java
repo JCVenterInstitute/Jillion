@@ -7,10 +7,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 public class TestAnnotationTasmParsing {
-	 private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestAnnotationTasmParsing.class);
+	 private static final ResourceHelper RESOURCES = new ResourceHelper(TestAnnotationTasmParsing.class);
 	 
 	 private final TasmContigDataStore datastore;
 	 public TestAnnotationTasmParsing() throws FileNotFoundException, IOException{

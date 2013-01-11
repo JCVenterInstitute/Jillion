@@ -32,15 +32,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
 public abstract class AbstractAceTagsFromAceFileDataStore {
 
-    ResourceFileServer RESOURCES = new ResourceFileServer(AbstractAceTagsFromAceFileDataStore.class);
+    ResourceHelper RESOURCES = new ResourceHelper(AbstractAceTagsFromAceFileDataStore.class);
     String fileName = "files/sample.ace";
     
     WholeAssemblyAceTag expectedWholeAssemblyTag = new WholeAssemblyAceTag(

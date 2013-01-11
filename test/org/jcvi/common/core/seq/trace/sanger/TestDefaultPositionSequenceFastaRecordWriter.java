@@ -13,7 +13,7 @@ import org.jcvi.common.core.seq.trace.sanger.DefaultPositionFastaFileDataStore;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceFastaRecord;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceFastaRecordWriterBuilder;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultPositionSequenceFastaRecordWriter {
@@ -21,7 +21,7 @@ public class TestDefaultPositionSequenceFastaRecordWriter {
 	private final File peakFile;
 	private final PositionSequenceFastaRecord fasta;
 	public TestDefaultPositionSequenceFastaRecordWriter() throws IOException, DataStoreException{
-		ResourceFileServer resources = new ResourceFileServer(TestDefaultPositionSequenceFastaRecordWriter.class);
+		ResourceHelper resources = new ResourceHelper(TestDefaultPositionSequenceFastaRecordWriter.class);
 		peakFile = resources.getFile("1119369023656.peak");
 		
 		fasta = DefaultPositionFastaFileDataStore.create(peakFile).get("1119369023656");

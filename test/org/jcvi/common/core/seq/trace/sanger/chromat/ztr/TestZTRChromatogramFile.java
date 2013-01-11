@@ -26,7 +26,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramXMLSerializer;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.ZTRChromatogramImpl;
 import org.junit.Test;
 /**
@@ -36,7 +36,7 @@ import org.junit.Test;
  */
 public class TestZTRChromatogramFile {
 
-    private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestZTRChromatogramFile.class);
+    private static final ResourceHelper RESOURCES = new ResourceHelper(TestZTRChromatogramFile.class);
     private static final ZTRChromatogramImpl EXPECTED_ZTR;
     static{
         try {

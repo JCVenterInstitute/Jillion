@@ -29,7 +29,7 @@ import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Before;
 
 public abstract class AbstractTestPhd {
@@ -79,7 +79,7 @@ public abstract class AbstractTestPhd {
              ).build();
     protected Properties expectedProperties;
     
-    protected static final ResourceFileServer RESOURCE = new ResourceFileServer(AbstractTestPhd.class);
+    protected static final ResourceHelper RESOURCE = new ResourceHelper(AbstractTestPhd.class);
     
      
      @Before

@@ -32,7 +32,7 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.abi.AbiChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.abi.AbiChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 /**
  * @author dkatzel
@@ -40,7 +40,7 @@ import org.junit.Test;
  *
  */
 public class TestAbiChromatogramTraceParserMatchesZTR {
-    private ResourceFileServer resources = new ResourceFileServer(TestAbiChromatogramTraceParserMatchesZTR.class);
+    private ResourceHelper resources = new ResourceHelper(TestAbiChromatogramTraceParserMatchesZTR.class);
 
    
 

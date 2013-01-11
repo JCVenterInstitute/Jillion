@@ -3,7 +3,7 @@ package org.jcvi.common.core.seq.read.trace.archive2;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestXmlTraceInfoFactory {
@@ -11,7 +11,7 @@ public class TestXmlTraceInfoFactory {
 	private final TraceArchiveInfo sut;
 	private final File rootDir;
 	public TestXmlTraceInfoFactory() throws IOException{
-		ResourceFileServer resources = new ResourceFileServer(TestXmlTraceInfoFactory.class);
+		ResourceHelper resources = new ResourceHelper(TestXmlTraceInfoFactory.class);
 		sut = XmlTraceArchiveInfoFactory.create(resources.getFile("files/exampleTraceArchive/TRACEINFO.xml"));
 		rootDir = resources.getFile("files/exampleTraceArchive");
 	}

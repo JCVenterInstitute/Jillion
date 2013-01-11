@@ -29,13 +29,13 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 public class TestFakePhdReadParser {
 
     private static final String PHD_FILE = "files/fake.phd";
     
-    private static ResourceFileServer RESOURCES = new ResourceFileServer(TestFakePhdReadParser.class);
+    private static ResourceHelper RESOURCES = new ResourceHelper(TestFakePhdReadParser.class);
 
     @Test
     public void parseFakeReads() throws IOException, DataStoreException{

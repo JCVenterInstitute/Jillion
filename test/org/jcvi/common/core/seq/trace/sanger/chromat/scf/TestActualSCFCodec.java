@@ -29,13 +29,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFCodec;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFCodecs;
 import org.junit.Test;
 public class TestActualSCFCodec {
 
-	 private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestActualSCFCodec.class);
+	 private final static ResourceHelper RESOURCES = new ResourceHelper(TestActualSCFCodec.class);
 	   
     private SCFCodec sut = SCFCodecs.VERSION_3;
     @Test

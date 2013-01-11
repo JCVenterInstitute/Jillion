@@ -36,7 +36,7 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,7 +44,7 @@ import org.junit.Test;
 public class TestAceParserPhdInfo {
     private static final String ACE_FILE = "files/sample.ace";
     private static final DateFormat DATE_TIME_FORMATTER = new SimpleDateFormat("EEE MMM dd kk:mm:ss yyyy");
-    private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestAceParserPhdInfo.class);
+    private static final ResourceHelper RESOURCES = new ResourceHelper(TestAceParserPhdInfo.class);
     private static Contig<AceAssembledRead> actualContig;
     
     Map<String, PhdInfo> phdInfoMap;

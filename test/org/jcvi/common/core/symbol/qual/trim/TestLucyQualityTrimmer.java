@@ -30,9 +30,9 @@ import org.jcvi.common.core.seq.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.symbol.qual.QualitySequence;
 import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,7 +42,7 @@ import org.junit.Test;
  *
  */
 public class TestLucyQualityTrimmer {
-    private final ResourceFileServer resources;
+    private final ResourceHelper resources;
     private QualitySequenceDataStore qualities;
     
     QualityTrimmer sut = new LucyQualityTrimmerBuilder(30)
@@ -51,7 +51,7 @@ public class TestLucyQualityTrimmer {
                             .build();
     
     public TestLucyQualityTrimmer(){
-    	resources = new ResourceFileServer(TestLucyQualityTrimmer.class);
+    	resources = new ResourceHelper(TestLucyQualityTrimmer.class);
     }
     @Before
     public void setup() throws  IOException{

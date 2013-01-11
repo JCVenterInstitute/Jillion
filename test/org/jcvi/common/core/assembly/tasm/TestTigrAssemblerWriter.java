@@ -31,10 +31,10 @@ import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 public class TestTigrAssemblerWriter {
-	private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestTigrAssemblerWriter.class);
+	private static final ResourceHelper RESOURCES = new ResourceHelper(TestTigrAssemblerWriter.class);
 	   
 	private static final TasmContigDataStore tasmDataStore;
 	static{	         
