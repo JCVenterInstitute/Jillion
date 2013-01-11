@@ -34,7 +34,7 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**
@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
  */
 public abstract class AbstractTestFilteredAceDataStore{
 
-    ResourceFileServer resources = new ResourceFileServer(AbstractTestFilteredAceDataStore.class);
+    ResourceHelper resources = new ResourceHelper(AbstractTestFilteredAceDataStore.class);
     @Test
     public void skipSelectedContig() throws IOException, DataStoreException{
         String contigIdToSkip = "22934-PB1";

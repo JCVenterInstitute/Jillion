@@ -20,7 +20,7 @@ import org.jcvi.common.core.seq.read.trace.archive2.TraceArchiveWriter.TraceArch
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
 import org.jcvi.common.core.testUtil.TestUtil;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,7 +44,7 @@ public class TestTraceArchiveWriter {
 	
 	
 	public TestTraceArchiveWriter() throws IOException, TraceArchiveRecordDataException{
-		ResourceFileServer resources = new ResourceFileServer(TestTraceArchiveWriter.class);
+		ResourceHelper resources = new ResourceHelper(TestTraceArchiveWriter.class);
 		rootInputDir = resources.getFile("files/exampleTraceArchive");
 		
 		writeTraceArchive();

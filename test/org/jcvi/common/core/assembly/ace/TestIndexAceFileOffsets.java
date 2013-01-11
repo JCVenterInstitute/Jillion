@@ -26,8 +26,8 @@ import java.io.IOException;
 
 import org.jcvi.common.core.assembly.ace.IndexedAceFileDataStore.AbstractIndexedAceFileDataStoreImpl;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.BeforeClass;
 import org.junit.Test;
 /**
@@ -37,7 +37,7 @@ import org.junit.Test;
  */
 public class TestIndexAceFileOffsets {
 
-    private static ResourceFileServer resources = new ResourceFileServer(TestIndexAceFileOffsets.class);
+    private static ResourceHelper resources = new ResourceHelper(TestIndexAceFileOffsets.class);
     private static AbstractIndexedAceFileDataStoreImpl sut;
     @BeforeClass
     public static void setup() throws IOException{

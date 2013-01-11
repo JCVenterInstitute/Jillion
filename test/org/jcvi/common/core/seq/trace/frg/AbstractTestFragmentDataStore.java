@@ -36,8 +36,8 @@ import org.jcvi.common.core.seq.trace.frg.FragmentDataStore;
 import org.jcvi.common.core.seq.trace.frg.Library;
 import org.jcvi.common.core.seq.trace.frg.MateOrientation;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -99,7 +99,7 @@ public abstract class  AbstractTestFragmentDataStore {
         );
     FragmentDataStore sut;
     
-    ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestFragmentDataStore.class);
+    ResourceHelper RESOURCES = new ResourceHelper(AbstractTestFragmentDataStore.class);
     
     @Before
     public void setup() throws Exception{

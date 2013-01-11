@@ -28,12 +28,12 @@ import java.io.IOException;
 
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 
 public abstract class AbstractTestExampleSffFile{
-    protected static final ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestExampleSffFile.class);
+    protected static final ResourceHelper RESOURCES = new ResourceHelper(AbstractTestExampleSffFile.class);
     protected static File SFF_FILE ; 
     protected static File SFF_FILE_NO_XML ; 
     protected static File SFF_FILE_NO_INDEX ; 

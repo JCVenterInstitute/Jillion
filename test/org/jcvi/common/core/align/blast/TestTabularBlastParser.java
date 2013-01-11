@@ -22,10 +22,10 @@ package org.jcvi.common.core.align.blast;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
@@ -36,7 +36,7 @@ import static org.easymock.EasyMock.*;
  */
 public class TestTabularBlastParser {
 
-    ResourceFileServer resources = new ResourceFileServer(TestTabularBlastParser.class);
+    ResourceHelper resources = new ResourceHelper(TestTabularBlastParser.class);
     BlastVisitor sut;
     @Before
     public void setup(){

@@ -11,7 +11,7 @@ import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -20,7 +20,7 @@ public class TestFastaSequenceDataStoreAdapter {
 	private final File fastaFile;
 	private NucleotideSequenceDataStore sut;
 	public TestFastaSequenceDataStoreAdapter() throws IOException{
-		ResourceFileServer resources = new ResourceFileServer(TestFastaSequenceDataStoreAdapter.class);
+		ResourceHelper resources = new ResourceHelper(TestFastaSequenceDataStoreAdapter.class);
 		fastaFile = resources.getFile("files/19150.fasta");
 	}
 	

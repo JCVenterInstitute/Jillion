@@ -30,14 +30,14 @@ import org.jcvi.common.core.assembly.Scaffold;
 import org.jcvi.common.core.assembly.ScaffoldDataStore;
 import org.jcvi.common.core.assembly.scaffold.agp.AgpParser;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestAgpParser {
 
-    ResourceFileServer resourceFS = new ResourceFileServer(TestAgpParser.class);
+    ResourceHelper resourceFS = new ResourceHelper(TestAgpParser.class);
     @Test
     public void parseScaffold() throws IOException, DataStoreException{
         ScaffoldDataStoreBuilderAgpVisitor builderVisitor = DefaultAgpScaffoldDataStore.createBuilder();

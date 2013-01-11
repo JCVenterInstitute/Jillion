@@ -28,11 +28,11 @@ import java.io.IOException;
 
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.TraceEncoderException;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 public class TestIOLibZTRChromatogramWriter {
 
-	ResourceFileServer RESOURCES = new ResourceFileServer(TestIOLibZTRChromatogramWriter.class);
+	ResourceHelper RESOURCES = new ResourceHelper(TestIOLibZTRChromatogramWriter.class);
 
 	@Test
 	public void testEncodeAndDecode() throws FileNotFoundException, TraceDecoderException, IOException, TraceEncoderException{

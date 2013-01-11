@@ -31,7 +31,7 @@ import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.phd.SinglePhdFile;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 public class TestSangerTraceParser {
 
@@ -40,7 +40,7 @@ public class TestSangerTraceParser {
     private static final String PHD_FILE = "phd/files/1095595674585.phd.1";
     
     SangerTraceParser sut = SangerTraceParser.INSTANCE;
-    private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestSangerTraceParser.class);
+    private final static ResourceHelper RESOURCES = new ResourceHelper(TestSangerTraceParser.class);
     
     @Test
     public void parseZTR() throws TraceDecoderException, IOException{

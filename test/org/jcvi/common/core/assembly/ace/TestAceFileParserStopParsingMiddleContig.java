@@ -7,16 +7,16 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 public class TestAceFileParserStopParsingMiddleContig {
 
 	private final File aceFile;
 	
 	public TestAceFileParserStopParsingMiddleContig() throws IOException{
-		ResourceFileServer resources = new ResourceFileServer(TestAceFileParserStopParsingMiddleContig.class);
+		ResourceHelper resources = new ResourceHelper(TestAceFileParserStopParsingMiddleContig.class);
 		aceFile = resources.getFile("files/fluSample.ace");
 	}
 	@Test

@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 /**
  * Tests to see if SCF parser can handle 
@@ -38,7 +38,7 @@ import org.junit.Test;
  *
  */
 public class TestSCFChromatogramWithGaps {
-	 private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestSCFChromatogramWithGaps.class);
+	 private final static ResourceHelper RESOURCES = new ResourceHelper(TestSCFChromatogramWithGaps.class);
 		
     private static final String File_path = "files/containsGaps.scf";
     

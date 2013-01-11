@@ -32,9 +32,9 @@ import org.jcvi.common.core.seq.trace.sff.DefaultSffFileDataStore;
 import org.jcvi.common.core.seq.trace.sff.SffFlowgram;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 /**
  * In rare cases the index of a flow is more than 127, 
@@ -49,7 +49,7 @@ public class TestFlowIndexOverflow{
 
     private static final String FILE = "files/indexOverflow.sff";
     
-    private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestFlowIndexOverflow.class);
+    private final static ResourceHelper RESOURCES = new ResourceHelper(TestFlowIndexOverflow.class);
    
     private final SffFlowgram FCPRO0N01A48YO = new SffFlowgram("FCPRO0N01A48YO",
     		new NucleotideSequenceBuilder(

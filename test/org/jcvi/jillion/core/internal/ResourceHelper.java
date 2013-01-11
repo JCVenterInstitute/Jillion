@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.io.fileServer;
+package org.jcvi.jillion.core.internal;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,13 +37,13 @@ import org.jcvi.common.core.io.FileUtil;
  * @author dkatzel
  *
  */
-public class ResourceFileServer{
+public class ResourceHelper{
 
     
     private final Class<?> clazz;
     private final String relativeStartPath;
     
-    public ResourceFileServer(Class<?> clazz){
+    public ResourceHelper(Class<?> clazz){
     	this.clazz = clazz;
     	relativeStartPath=null;
     }
@@ -55,7 +55,7 @@ public class ResourceFileServer{
      * may be null
      * @throws IOException 
      */
-    public ResourceFileServer(Class<?> clazz, File rootDir) throws IOException{
+    public ResourceHelper(Class<?> clazz, File rootDir) throws IOException{
         this.clazz = clazz;
         if(rootDir==null){
         	relativeStartPath=null;

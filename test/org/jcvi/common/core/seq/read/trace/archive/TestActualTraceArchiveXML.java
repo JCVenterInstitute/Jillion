@@ -32,13 +32,13 @@ import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveRecord;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveRecordIdGenerator;
 import org.jcvi.common.core.seq.read.trace.archive.TraceInfoField;
 import org.jcvi.common.core.seq.read.trace.archive.TraceInfoXMLTraceArchiveInfoBuilder;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestActualTraceArchiveXML {
     private static final String FOLDER_ROOT_DIR = "files/exampleTraceArchive";
     private static final TraceArchiveRecordIdGenerator ID_GENERATOR= new NameTagTraceArchiveRecordIdGenerator();
-    private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestActualTraceArchiveXML.class);
+    private final static ResourceHelper RESOURCES = new ResourceHelper(TestActualTraceArchiveXML.class);
 	
     @Test
     public void parseTraceInfo() throws IOException, DataStoreException{

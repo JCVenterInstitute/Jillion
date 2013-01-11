@@ -6,7 +6,7 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequence;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -15,7 +15,7 @@ public class TestGappedNucleotideAlignmentDataStore {
 	private final NucleotideSequenceDataStore sut;
 	
 	public TestGappedNucleotideAlignmentDataStore() throws IOException{
-		ResourceFileServer resources = new ResourceFileServer(TestGappedNucleotideAlignmentDataStore.class);
+		ResourceHelper resources = new ResourceHelper(TestGappedNucleotideAlignmentDataStore.class);
 	    sut = GappedNucleotideAlignmentDataStore.createFromAlnFile(resources.getFile("files/example.aln"));
 	}
 	@Test

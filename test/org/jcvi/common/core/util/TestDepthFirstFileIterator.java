@@ -31,11 +31,11 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.util.FileIterator;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 
 public class TestDepthFirstFileIterator {
-    ResourceFileServer fileServer = new ResourceFileServer(TestDepthFirstFileIterator.class);
+    ResourceHelper fileServer = new ResourceHelper(TestDepthFirstFileIterator.class);
     
   
     

@@ -29,7 +29,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.seq.trace.fastq.FastqFileParser;
 import org.jcvi.common.core.seq.trace.fastq.FastqFileVisitor;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 
 /**
@@ -52,7 +52,7 @@ public class TestCasava18 {
             .andReturn(FastqFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD);
         expect(visitor.visitEndOfBody()).andReturn(FastqFileVisitor.EndOfBodyReturnCode.KEEP_PARSING);
         replay(visitor);
-        ResourceFileServer resources = new ResourceFileServer(TestCasava18.class);
+        ResourceHelper resources = new ResourceHelper(TestCasava18.class);
         FastqFileParser.parse(resources.getFile("files/casava1.8.fastq"), visitor);
         verify(visitor);
     }

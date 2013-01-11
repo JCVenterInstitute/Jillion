@@ -34,7 +34,7 @@ import org.jcvi.common.core.seq.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fasta.FastaFileVisitor;
 import org.jcvi.common.core.seq.fasta.FastaFileVisitor.DeflineReturnCode;
 import org.jcvi.common.core.seq.fasta.FastaFileVisitor.EndOfBodyReturnCode;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.Test;
 /**
@@ -44,7 +44,7 @@ import org.junit.Test;
  */
 public class TestFastaParser {
 
-    private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestFastaParser.class);
+    private static final ResourceHelper RESOURCES = new ResourceHelper(TestFastaParser.class);
     
     FastaFileVisitor mockVisitor;
     

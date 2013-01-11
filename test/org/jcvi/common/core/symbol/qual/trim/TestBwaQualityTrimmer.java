@@ -15,8 +15,8 @@ import org.jcvi.common.core.symbol.qual.PhredQuality;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -25,7 +25,7 @@ public class TestBwaQualityTrimmer {
 	private final FastqDataStore inputFastq, outputFastq;
 	private final BwaQualityTrimmer sut = new BwaQualityTrimmer(PhredQuality.valueOf(20));
 	public TestBwaQualityTrimmer() throws FileNotFoundException, IOException{
-		ResourceFileServer resources = new ResourceFileServer(TestBwaQualityTrimmer.class);
+		ResourceHelper resources = new ResourceHelper(TestBwaQualityTrimmer.class);
 		inputFastq = new FastqFileDataStoreBuilder(resources.getFile("files/bwa_input.fastq"))
 							.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
 							.qualityCodec(FastqQualityCodec.SANGER)

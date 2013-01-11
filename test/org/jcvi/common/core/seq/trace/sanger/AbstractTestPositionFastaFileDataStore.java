@@ -30,7 +30,7 @@ import java.io.File;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceFastaDataStore;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceFastaRecord;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 
 public abstract class AbstractTestPositionFastaFileDataStore {
@@ -151,7 +151,7 @@ public abstract class AbstractTestPositionFastaFileDataStore {
 									9371, 9379, 9391, 9401, 9417, 9427, 9438,
 									9448, 9463, 9475, 9490, 9502, 9519, 9532,
 									9551, 9563, 9580, 9598, 9612, }).build());
-	ResourceFileServer RESOURCES = new ResourceFileServer(
+	ResourceHelper RESOURCES = new ResourceHelper(
 			AbstractTestPositionFastaFileDataStore.class);
 
 	@Test

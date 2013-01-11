@@ -34,7 +34,7 @@ import org.jcvi.common.core.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,7 +44,7 @@ public class TestContigFileWriter {
     CtgFileWriter sut;
     static CtgContigDataStore dataStore;
     private static String pathToFile = "files/gcv_23918.contig";
-    private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestContigFileWriter.class);
+    private final static ResourceHelper RESOURCES = new ResourceHelper(TestContigFileWriter.class);
     
     @BeforeClass
     public static void parseContigs() throws IOException{

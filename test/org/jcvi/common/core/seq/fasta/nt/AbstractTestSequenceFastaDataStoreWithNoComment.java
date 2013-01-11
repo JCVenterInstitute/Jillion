@@ -30,11 +30,11 @@ import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 
 public  abstract class AbstractTestSequenceFastaDataStoreWithNoComment {
     static final String FASTA_FILE_PATH = "files/noComment.fasta";
-    ResourceFileServer RESOURCES = new ResourceFileServer(AbstractTestSequenceFastaMapWithNoComment.class);
+    ResourceHelper RESOURCES = new ResourceHelper(AbstractTestSequenceFastaMapWithNoComment.class);
     
     NucleotideSequenceFastaRecord hrv_61 = new NucleotideSequenceFastaRecordBuilder("hrv-61",
         new NucleotideSequenceBuilder("TTAAAACTGGGTCTGGGTTGCTCCCACCCAGACCACCCATGTGGTGTTGTACACTGTTAT" +

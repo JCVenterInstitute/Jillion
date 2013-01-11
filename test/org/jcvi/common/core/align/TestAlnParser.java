@@ -26,7 +26,7 @@ import java.util.List;
 
 import org.jcvi.common.core.align.AlnVisitor.ConservationInfo;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
@@ -37,7 +37,7 @@ import static org.easymock.EasyMock.*;
  */
 public class TestAlnParser {
 
-    private final ResourceFileServer resources = new ResourceFileServer(TestAlnParser.class);
+    private final ResourceHelper resources = new ResourceHelper(TestAlnParser.class);
     private AlnVisitor sut;
     @Before
     public void setup(){

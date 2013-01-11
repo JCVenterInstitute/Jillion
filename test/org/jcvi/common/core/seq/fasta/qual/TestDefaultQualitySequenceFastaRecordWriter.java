@@ -22,7 +22,7 @@ import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaRecordWriterBuilder;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 
 public class TestDefaultQualitySequenceFastaRecordWriter {
@@ -135,7 +135,7 @@ public class TestDefaultQualitySequenceFastaRecordWriter {
 	
 	@Test
 	public void parseAndWriteShouldMatch() throws IOException, DataStoreException{
-		ResourceFileServer resources = new ResourceFileServer(TestDefaultQualitySequenceFastaRecordWriter.class);
+		ResourceHelper resources = new ResourceHelper(TestDefaultQualitySequenceFastaRecordWriter.class);
 		File expectedFasta = resources.getFile("files/19150.qual");
 		QualitySequenceFastaDataStore datastore = LargeQualityFastaFileDataStore.create(expectedFasta);
 		

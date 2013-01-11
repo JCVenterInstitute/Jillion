@@ -38,7 +38,7 @@ import org.jcvi.common.core.seq.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.symbol.qual.QualitySequenceDataStore;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 /**
  * @author dkatzel
@@ -47,7 +47,7 @@ import org.junit.Test;
  */
 public class TestAceFileUtil_writingAceContigs {
 
-    private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestAceFileUtil_writingAceContigs.class);
+    private static final ResourceHelper RESOURCES = new ResourceHelper(TestAceFileUtil_writingAceContigs.class);
     
     @Test
     public void writeAndReParse() throws IOException, DataStoreException{

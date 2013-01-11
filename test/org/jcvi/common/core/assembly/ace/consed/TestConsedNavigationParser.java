@@ -26,9 +26,9 @@ import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationParser;
 import org.jcvi.common.core.assembly.ace.consed.ConsedNavigationVisitor;
 import org.jcvi.common.core.assembly.ace.consed.ConsensusNavigationElement;
 import org.jcvi.common.core.assembly.ace.consed.ReadNavigationElement;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
 /**
@@ -38,7 +38,7 @@ import static org.easymock.EasyMock.*;
  */
 public class TestConsedNavigationParser {
 
-    ResourceFileServer resources = new ResourceFileServer(TestConsedNavigationParser.class);
+    ResourceHelper resources = new ResourceHelper(TestConsedNavigationParser.class);
     
     @Test
     public void parseNavFile() throws IOException{

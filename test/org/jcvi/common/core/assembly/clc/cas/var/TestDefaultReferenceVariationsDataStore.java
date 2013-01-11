@@ -9,7 +9,7 @@ import org.jcvi.common.core.assembly.clc.cas.var.Variation.Type;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.symbol.residue.nt.Nucleotide;
 import org.jcvi.common.core.util.iter.StreamingIterator;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -17,7 +17,7 @@ public class TestDefaultReferenceVariationsDataStore {
 
 	private ReferenceVariationsDataStore sut;
 	public TestDefaultReferenceVariationsDataStore() throws IOException{
-		ResourceFileServer resources = new ResourceFileServer(TestDefaultReferenceVariationsDataStore.class);
+		ResourceHelper resources = new ResourceHelper(TestDefaultReferenceVariationsDataStore.class);
 	
 		File logFile =resources.getFile("giv3_AK_30279_hybrid_edited_refs_find_variations.log");
 		sut = DefaultReferenceVariationsDataStore.createFromLogFile(logFile);

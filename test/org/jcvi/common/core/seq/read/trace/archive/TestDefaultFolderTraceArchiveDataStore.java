@@ -33,7 +33,7 @@ import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveInfo;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveRecordIdGenerator;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveTrace;
 import org.jcvi.common.core.seq.read.trace.archive.TraceInfoXMLTraceArchiveInfoBuilder;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,7 +46,7 @@ public class TestDefaultFolderTraceArchiveDataStore {
     private static final TraceArchiveRecordIdGenerator ID_GENERATOR= new NameTagTraceArchiveRecordIdGenerator();
     private TraceArchiveInfo traceInfo ;
     private String absoluteRootPath;
-    private final static ResourceFileServer RESOURCES = new ResourceFileServer(TestDefaultFolderTraceArchiveDataStore.class);
+    private final static ResourceHelper RESOURCES = new ResourceHelper(TestDefaultFolderTraceArchiveDataStore.class);
 	
     @Before
     public void setup() throws IOException{

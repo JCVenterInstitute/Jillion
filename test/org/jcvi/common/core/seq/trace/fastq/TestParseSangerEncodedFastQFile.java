@@ -26,7 +26,7 @@ import org.jcvi.common.core.seq.trace.fastq.DefaultFastqFileDataStore;
 import org.jcvi.common.core.seq.trace.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.trace.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.trace.fastq.FastqRecord;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -39,7 +39,7 @@ public class TestParseSangerEncodedFastQFile {
 
     static final FastqQualityCodec QUALITY_CODEC = FastqQualityCodec.SANGER;
     String file = "files/sanger.fastq";
-    ResourceFileServer resources = new ResourceFileServer(
+    ResourceHelper resources = new ResourceHelper(
             TestDefaultFastQFileDataStore.class);
     FastqDataStore sut;
     @Before

@@ -15,7 +15,7 @@ import org.jcvi.common.core.seq.trace.fastq.FastqRecordWriter;
 import org.jcvi.common.core.seq.trace.fastq.FastqRecordWriterBuilder;
 import org.jcvi.common.core.symbol.qual.QualitySequenceBuilder;
 import org.jcvi.common.core.symbol.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.common.io.fileServer.ResourceFileServer;
+import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 
 public class TestDefaultFastqRecordWriter {
@@ -23,7 +23,7 @@ public class TestDefaultFastqRecordWriter {
 	private final FastqDataStore datastore;
 	
 	public TestDefaultFastqRecordWriter() throws IOException{
-		ResourceFileServer RESOURCES = new ResourceFileServer(TestDefaultFastqRecordWriter.class);
+		ResourceHelper RESOURCES = new ResourceHelper(TestDefaultFastqRecordWriter.class);
 		datastore = DefaultFastqFileDataStore.create(RESOURCES.getFile("files/example.fastq"),FastqQualityCodec.ILLUMINA);
 	}
 	
