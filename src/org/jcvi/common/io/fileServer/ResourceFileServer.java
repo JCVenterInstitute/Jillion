@@ -37,7 +37,7 @@ import org.jcvi.common.core.io.FileUtil;
  * @author dkatzel
  *
  */
-public class ResourceFileServer extends AbstractFileServer {
+public class ResourceFileServer{
 
     
     private final Class<?> clazz;
@@ -71,9 +71,7 @@ public class ResourceFileServer extends AbstractFileServer {
     					fileId);
     }
 
-    @Override
     public File getFile(String fileId) throws IOException {
-        verifyNotClosed();
 
 	        String relativePath = getRelativePath(fileId);
 			URL url = clazz.getResource(relativePath);
@@ -85,18 +83,11 @@ public class ResourceFileServer extends AbstractFileServer {
         
     }
 
-    @Override
     public InputStream getFileAsStream(String fileId) throws IOException {
         return clazz.getResourceAsStream(getRelativePath(fileId));
     }
 
-    
-    @Override
-    public boolean supportsGettingFileObjects() {
-        return true;
-    }
-
-    @Override
+  
     public boolean contains(String fileId) throws IOException {
         return getFile(fileId) !=null;
     }

@@ -19,20 +19,22 @@
 
 package org.jcvi.common.core.assembly.tasm;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.jcvi.common.core.assembly.tasm.DefaultTasmFileContigDataStore;
-import org.jcvi.common.core.assembly.tasm.TasmContigDataStore;
-import org.jcvi.common.core.assembly.tasm.TasmFileWriter;
+
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.io.fileServer.FileServer;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
 public class TestTigrAssemblerWriter {
-	private static final FileServer RESOURCES = new ResourceFileServer(TestTigrAssemblerWriter.class);
+	private static final ResourceFileServer RESOURCES = new ResourceFileServer(TestTigrAssemblerWriter.class);
 	   
 	private static final TasmContigDataStore tasmDataStore;
 	static{	         

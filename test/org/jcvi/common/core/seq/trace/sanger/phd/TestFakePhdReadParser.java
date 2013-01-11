@@ -23,24 +23,19 @@
  */
 package org.jcvi.common.core.seq.trace.sanger.phd;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.seq.trace.sanger.phd.DefaultPhdFileDataStore;
-import org.jcvi.common.core.seq.trace.sanger.phd.Phd;
-import org.jcvi.common.core.seq.trace.sanger.phd.PhdDataStore;
-import org.jcvi.common.core.seq.trace.sanger.phd.PhdDataStoreBuilder;
-import org.jcvi.common.core.seq.trace.sanger.phd.PhdParser;
-import org.jcvi.common.core.seq.trace.sanger.phd.PhdTag;
-import org.jcvi.common.io.fileServer.FileServer;
 import org.jcvi.common.io.fileServer.ResourceFileServer;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestFakePhdReadParser {
 
     private static final String PHD_FILE = "files/fake.phd";
     
-    private static FileServer RESOURCES = new ResourceFileServer(TestFakePhdReadParser.class);
+    private static ResourceFileServer RESOURCES = new ResourceFileServer(TestFakePhdReadParser.class);
 
     @Test
     public void parseFakeReads() throws IOException, DataStoreException{
