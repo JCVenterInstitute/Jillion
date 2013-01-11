@@ -24,7 +24,6 @@
 package org.jcvi.common.core.assembly.clc.cas;
 
 import org.jcvi.common.core.assembly.clc.cas.align.AllCasAlignmentUnitTests;
-import org.jcvi.common.core.assembly.clc.cas.consed.AllPhdAdaptedIteratorTests;
 import org.jcvi.common.core.assembly.clc.cas.var.AllVarUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -38,8 +37,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestDifferentFileCasIdLookupAdapter.class,
         TestDefaultCasGappedReferenceMap.class,
         AllCasAlignmentUnitTests.class,
-        AllVarUnitTests.class,
-        AllPhdAdaptedIteratorTests.class
+        AllVarUnitTests.class
     }
     )
 public class AllCasUnitTests {
