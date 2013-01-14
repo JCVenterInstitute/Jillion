@@ -26,10 +26,6 @@ package org.jcvi.common.core.assembly.ctg;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.DefaultContig;
-import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaDataStore;
-import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStore;
@@ -39,6 +35,10 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.jillion.fasta.qual.QualitySequenceFastaDataStore;
+import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecord;
 
 public abstract class AbstractContigFileVisitorBuilder extends AbstractContigFileVisitor{
 

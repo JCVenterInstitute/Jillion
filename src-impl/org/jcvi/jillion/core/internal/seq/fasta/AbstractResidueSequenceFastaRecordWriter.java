@@ -5,10 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-import org.jcvi.common.core.seq.fasta.FastaRecord;
-import org.jcvi.common.core.seq.fasta.FastaRecordWriter;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.fasta.FastaRecord;
+import org.jcvi.jillion.fasta.FastaRecordWriter;
 
 /**
  * {@code AbstractResidueSequenceFastaRecordWriter} is an abstract

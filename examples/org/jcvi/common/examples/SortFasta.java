@@ -5,14 +5,14 @@ import java.io.IOException;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
-import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordWriter;
-import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordWriter;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 
 public class SortFasta {
 

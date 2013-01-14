@@ -12,8 +12,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.easymock.IAnswer;
-import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.core.seq.read.trace.archive2.TraceArchiveWriter.TraceArchiveRecordDataException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
@@ -21,6 +19,8 @@ import org.jcvi.common.core.testUtil.TestUtil;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

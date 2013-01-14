@@ -12,12 +12,12 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 
-import org.jcvi.common.core.seq.fasta.FastaRecord;
-import org.jcvi.common.core.seq.fasta.FastaRecordWriter;
-import org.jcvi.common.core.seq.fasta.FastaUtil;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.Symbol;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.fasta.FastaRecord;
+import org.jcvi.jillion.fasta.FastaRecordWriter;
+import org.jcvi.jillion.fasta.FastaUtil;
 
 
 public  abstract class AbstractFastaRecordWriter<S extends Symbol, T extends Sequence<S>, F extends FastaRecord<S,T>> implements FastaRecordWriter<S, T, F>{

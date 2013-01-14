@@ -30,10 +30,10 @@ import java.util.Map;
 
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
 
 
 public final class DefaultContigFileDataStore {

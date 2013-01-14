@@ -1,13 +1,13 @@
 package org.jcvi.jillion.core.internal.seq.fasta;
-import org.jcvi.common.core.seq.fasta.AbstractFastaVisitor;
-import org.jcvi.common.core.seq.fasta.FastaDataStoreBuilder;
-import org.jcvi.common.core.seq.fasta.FastaFileDataStoreBuilderVisitor;
-import org.jcvi.common.core.seq.fasta.FastaRecord;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.Symbol;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
+import org.jcvi.jillion.fasta.AbstractFastaVisitor;
+import org.jcvi.jillion.fasta.FastaDataStoreBuilder;
+import org.jcvi.jillion.fasta.FastaFileDataStoreBuilderVisitor;
+import org.jcvi.jillion.fasta.FastaRecord;
 
 public abstract class AbstractFastaFileDataStoreBuilderVisitor<S extends Symbol, T extends Sequence<S>, F extends FastaRecord<S, T>, D extends DataStore<F>> extends AbstractFastaVisitor implements FastaFileDataStoreBuilderVisitor<S,T,F,D>{
 	private final FastaDataStoreBuilder<S,T,F,D> builder;
