@@ -21,7 +21,7 @@ package org.jcvi.common.core.seq.trace.sanger;
 
 import java.util.Map;
 
-import org.jcvi.common.core.io.FileVisitor;
+import org.jcvi.jillion.core.io.FileVisitor;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 /**

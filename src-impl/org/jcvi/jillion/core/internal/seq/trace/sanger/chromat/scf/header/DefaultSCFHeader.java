@@ -23,7 +23,7 @@
  */
 package org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header;
 
-import org.jcvi.common.core.util.ObjectsUtil;
+import org.jcvi.jillion.core.util.ObjectsUtil;
 
 /**
  * <code>DefaultSCFHeader</code> is an object representation of

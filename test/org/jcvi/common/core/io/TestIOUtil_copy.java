@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import static org.junit.Assert.*;
 
 import org.easymock.IAnswer;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
 public class TestIOUtil_copy {

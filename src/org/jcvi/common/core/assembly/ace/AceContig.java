@@ -24,7 +24,7 @@
 package org.jcvi.common.core.assembly.ace;
 
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
  * an {@code AceContig} is a {@link Contig}
  * from an ace file.  Each {@link AceContig}

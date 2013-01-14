@@ -39,7 +39,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.jcvi.common.core.util.MapUtil;
+import org.jcvi.jillion.core.util.MapUtil;
 
 /**
  * <code>Caches</code> is a utility class which contains various 

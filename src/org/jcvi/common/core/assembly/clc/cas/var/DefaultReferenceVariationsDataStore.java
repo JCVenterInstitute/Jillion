@@ -38,7 +38,7 @@ public final class DefaultReferenceVariationsDataStore {
 	}
 	
 	
-	private static class Builder implements VariationLogFileVisitor, org.jcvi.common.core.util.Builder<ReferenceVariationsDataStore> {
+	private static class Builder implements VariationLogFileVisitor, org.jcvi.jillion.core.util.Builder<ReferenceVariationsDataStore> {
 
 	    private SortedMap<Long, Variation> currentMap=null;
 	    private final Map<String, ReferenceVariations> map = new LinkedHashMap<String, ReferenceVariations>();

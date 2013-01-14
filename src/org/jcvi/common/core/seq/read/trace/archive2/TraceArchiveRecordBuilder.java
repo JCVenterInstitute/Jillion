@@ -2,7 +2,7 @@ package org.jcvi.common.core.seq.read.trace.archive2;
 
 import java.util.Map;
 
-import org.jcvi.common.core.util.Builder;
+import org.jcvi.jillion.core.util.Builder;
 
 
 public interface TraceArchiveRecordBuilder extends Builder<TraceArchiveRecord>{

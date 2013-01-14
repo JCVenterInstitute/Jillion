@@ -25,7 +25,7 @@ package org.jcvi.jillion.core.internal.io;
 
 import java.nio.ByteBuffer;
 
-import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.jillion.core.io.IOUtil;
 
 
 /**

@@ -36,11 +36,11 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.internal.io.ValueSizeStrategy;
 import org.jcvi.jillion.core.internal.symbol.residue.AbstractResidueSequence;
+import org.jcvi.jillion.core.io.IOUtil;
 
 final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSequence<Nucleotide> implements ReferenceMappedNucleotideSequence{
 

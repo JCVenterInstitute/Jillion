@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.fasta;
 
-import org.jcvi.common.core.io.TextFileVisitor;
+import org.jcvi.jillion.core.io.TextFileVisitor;
 /**
  * {@code FastaFileVisitor} is a {@link TextFileVisitor}
  * that is used to visit Fasta Records.

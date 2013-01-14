@@ -12,12 +12,12 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fasta.FastaRecordWriter;
 import org.jcvi.common.core.seq.fasta.FastaUtil;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.Symbol;
+import org.jcvi.jillion.core.io.IOUtil;
 
 
 public  abstract class AbstractFastaRecordWriter<S extends Symbol, T extends Sequence<S>, F extends FastaRecord<S,T>> implements FastaRecordWriter<S, T, F>{
@@ -128,7 +128,7 @@ public  abstract class AbstractFastaRecordWriter<S extends Symbol, T extends Seq
    
     protected abstract int numberOfCharsFor(int numberOfSymbols);
     
-    public abstract static class AbstractBuilder<S extends Symbol, T extends Sequence<S>,F extends FastaRecord<S,T>, W extends FastaRecordWriter<S, T, F>> implements org.jcvi.common.core.util.Builder<W>{
+    public abstract static class AbstractBuilder<S extends Symbol, T extends Sequence<S>,F extends FastaRecord<S,T>, W extends FastaRecordWriter<S, T, F>> implements org.jcvi.jillion.core.util.Builder<W>{
 		
 		private static final Charset DEFAULT_CHARSET = IOUtil.UTF_8;
 		private final OutputStream out;

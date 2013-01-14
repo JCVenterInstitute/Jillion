@@ -23,7 +23,7 @@ import java.io.File;
 import java.util.Date;
 
 import org.jcvi.common.core.seq.trace.fastq.FastqQualityCodec;
-import org.jcvi.common.core.util.DateUtil;
+import org.jcvi.jillion.core.util.DateUtil;
 
 /**
  * @author dkatzel
@@ -36,7 +36,7 @@ public final class TraceDetails {
     private final Date phdDate;
     private final FastqQualityCodec fastqQualityCodec;
     
-    public static class Builder implements org.jcvi.common.core.util.Builder<TraceDetails>{
+    public static class Builder implements org.jcvi.jillion.core.util.Builder<TraceDetails>{
         private boolean hasFastaEdits=false;
         private File chromatDir;
         private Date phdDate =null;

@@ -43,14 +43,14 @@ final class DefaultAceTagsFromAceFile {
      * {@code AceTagsFromFileBuilder} is an {@link AceFileVisitor}
      * that will populate an {@link AceTags} object
      * as the ace file is parsed.  As with all
-     * {@link org.jcvi.common.core.util.Builder}s, the
+     * {@link org.jcvi.jillion.core.util.Builder}s, the
      * {@link #build()} method must be called
      * to actually create the immutable instance.
      * @author dkatzel
      *
      *
      */
-    public interface AceTagsFromFileBuilder extends AceFileVisitor, org.jcvi.common.core.util.Builder<AceTags>{
+    public interface AceTagsFromFileBuilder extends AceFileVisitor, org.jcvi.jillion.core.util.Builder<AceTags>{
         
     }
 

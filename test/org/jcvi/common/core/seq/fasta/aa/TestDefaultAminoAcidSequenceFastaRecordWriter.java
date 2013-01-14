@@ -8,11 +8,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaRecord;
 import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaRecordBuilder;
 import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaRecordWriterBuilder;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultAminoAcidSequenceFastaRecordWriter {

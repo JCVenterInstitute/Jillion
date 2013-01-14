@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.jcvi.common.core.util.MapUtil;
 import org.jcvi.jillion.core.Symbol;
 import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.util.MapUtil;
 
 /**
  * {@code AminoAcid} is a {@link Symbol} representation 

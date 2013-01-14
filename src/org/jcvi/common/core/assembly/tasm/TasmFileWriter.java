@@ -25,8 +25,8 @@ import java.nio.charset.Charset;
 import java.util.Iterator;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
  * {@code TasmFileWriter} writes out TIGR Assembler
  * formated files (.tasm).  This assembly format 

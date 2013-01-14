@@ -12,11 +12,11 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 
-import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.Builder;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.Builder;
 /**
  * {@code FastqRecordWriterBuilder}
  * is a {@link Builder} that 

@@ -1,9 +1,9 @@
 package org.jcvi.common.core.align.pairwise;
 
 import org.jcvi.common.core.align.SequenceAlignment;
-import org.jcvi.common.core.util.MathUtil;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.util.MathUtil;
 /**
  * {@code AbstractNeedlemanWunschAligner} 
  * implements methods in {@link AbstractPairwiseAligner} 

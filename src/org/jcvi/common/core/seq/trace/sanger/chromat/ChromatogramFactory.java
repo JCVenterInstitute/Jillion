@@ -24,8 +24,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.common.core.io.FileUtil;
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.abi.AbiChromatogramBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.abi.AbiFileParser;
@@ -37,6 +35,8 @@ import org.jcvi.jillion.core.internal.io.MagicNumberInputStream;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.AbiUtil;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFUtils;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.ZTRUtil;
+import org.jcvi.jillion.core.io.FileUtil;
+import org.jcvi.jillion.core.io.IOUtil;
 
 public final class ChromatogramFactory {
 

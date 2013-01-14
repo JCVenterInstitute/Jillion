@@ -21,7 +21,7 @@ package org.jcvi.common.core.align;
 
 import java.util.List;
 
-import org.jcvi.common.core.io.TextFileVisitor;
+import org.jcvi.jillion.core.io.TextFileVisitor;
 
 /**
  * {@code AlnVisitor} is a visitor

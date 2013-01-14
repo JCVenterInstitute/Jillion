@@ -26,8 +26,8 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 /**
  * {@code AbstractBlockingStreamingIterator}

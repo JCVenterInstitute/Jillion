@@ -27,7 +27,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.Scanner;
 
-import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;

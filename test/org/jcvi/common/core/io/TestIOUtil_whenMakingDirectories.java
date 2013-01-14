@@ -22,7 +22,7 @@ package org.jcvi.common.core.io;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.junit.Before;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;

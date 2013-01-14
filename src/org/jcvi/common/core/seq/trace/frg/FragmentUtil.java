@@ -23,8 +23,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.io.TextFileVisitor;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.io.TextFileVisitor;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;

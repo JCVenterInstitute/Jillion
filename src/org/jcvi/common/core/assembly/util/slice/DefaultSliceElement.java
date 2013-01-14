@@ -23,10 +23,10 @@
  */
 package org.jcvi.common.core.assembly.util.slice;
 
-import org.jcvi.common.core.util.ObjectsUtil;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.util.ObjectsUtil;
 
 public class DefaultSliceElement implements IdedSliceElement {
     private final Nucleotide base;

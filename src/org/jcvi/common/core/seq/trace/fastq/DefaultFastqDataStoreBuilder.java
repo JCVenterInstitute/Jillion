@@ -28,7 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.datastore.DataStoreUtil;
-import org.jcvi.common.core.util.Builder;
+import org.jcvi.jillion.core.util.Builder;
 /**
  * {@code DefaultFastqDataStoreBuilder} is a {@link Builder}
  * implementation that creates a new

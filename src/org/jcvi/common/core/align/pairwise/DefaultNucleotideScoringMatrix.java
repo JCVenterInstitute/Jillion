@@ -28,7 +28,7 @@ public final class DefaultNucleotideScoringMatrix implements NucleotideScoringMa
 		return matrix[ordinalOfBase1][ordinalOfBase2];
 	}
 	
-	public static final class Builder implements org.jcvi.common.core.util.Builder<DefaultNucleotideScoringMatrix>{
+	public static final class Builder implements org.jcvi.jillion.core.util.Builder<DefaultNucleotideScoringMatrix>{
 		private final float[][] matrix;
 		
 		public Builder(float defaultScore){

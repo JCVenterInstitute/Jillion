@@ -36,10 +36,10 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.trace.sff.SffFileVisitor.CommonHeaderReturnCode;
 import org.jcvi.common.core.seq.trace.sff.SffFileVisitor.ReadDataReturnCode;
 import org.jcvi.common.core.seq.trace.sff.SffFileVisitor.ReadHeaderReturnCode;
+import org.jcvi.jillion.core.io.IOUtil;
 /**
  * {@code SffFileParser} contains
  * methods for parsing sff encoded

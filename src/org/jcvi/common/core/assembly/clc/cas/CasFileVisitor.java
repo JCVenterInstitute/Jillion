@@ -24,7 +24,7 @@
 package org.jcvi.common.core.assembly.clc.cas;
 
 import org.jcvi.common.core.assembly.clc.cas.align.CasScoringScheme;
-import org.jcvi.common.core.io.FileVisitor;
+import org.jcvi.jillion.core.io.FileVisitor;
 /**
  * {@code CasFileVisitor} is a {@link FileVisitor} implementation
  * for visiting CLC Bio's .cas assembly files.

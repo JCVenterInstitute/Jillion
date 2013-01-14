@@ -23,7 +23,7 @@
  */
 package org.jcvi.jillion.core.internal.util;
 
-import org.jcvi.common.core.util.ObjectsUtil;
+import org.jcvi.jillion.core.util.ObjectsUtil;
 
 
 public final class RunLength<T> {

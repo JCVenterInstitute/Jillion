@@ -24,8 +24,8 @@
 package org.jcvi.common.core.assembly;
 
 import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusCaller;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
  * A {@code Contig} is a CONTIGuous region of genomic data.
  * Contigs are assembled by overlapping reads to form a consensus.

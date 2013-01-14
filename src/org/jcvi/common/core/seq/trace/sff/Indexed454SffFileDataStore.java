@@ -14,9 +14,9 @@ import java.util.Map;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
-import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.MapUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.util.MapUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
  * 454 includes an optional index at the 
  * end of their {@literal .sff} files that contains

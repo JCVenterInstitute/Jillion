@@ -5,19 +5,19 @@ import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.trace.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.trace.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.common.core.seq.trace.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.trace.fastq.FastqRecord;
 import org.jcvi.common.core.seq.trace.fastq.FastqRecordBuilder;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.qual.trim.BwaQualityTrimmer;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

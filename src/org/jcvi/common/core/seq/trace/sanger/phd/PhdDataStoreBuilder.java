@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.seq.trace.sanger.phd;
 
-import org.jcvi.common.core.util.Builder;
+import org.jcvi.jillion.core.util.Builder;
 
 /**
  * {@code PhdDataStoreBuilder} will build a PhdDataStore up 

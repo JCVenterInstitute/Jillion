@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.align.blast;
 
-import org.jcvi.common.core.io.TextFileVisitor;
+import org.jcvi.jillion.core.io.TextFileVisitor;
 
 /**
  * @author dkatzel

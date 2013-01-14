@@ -38,7 +38,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.AbiUtil;
@@ -61,6 +60,7 @@ import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.TimeTagge
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.UserDefinedTaggedDataRecord;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.rate.ScanRateTaggedDataType;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.rate.ScanRateUtils;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;

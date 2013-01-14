@@ -4,8 +4,8 @@ import java.util.regex.Pattern;
 
 import org.jcvi.common.core.seq.fasta.FastaUtil;
 import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaRecord;
-import org.jcvi.common.core.util.ObjectsUtil;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
+import org.jcvi.jillion.core.util.ObjectsUtil;
 /**
  * {@code UnCommentedAminoAcidSequenceFastaRecord} is an implementation
  * of {@link AminoAcidSequenceFastaRecord} that saves

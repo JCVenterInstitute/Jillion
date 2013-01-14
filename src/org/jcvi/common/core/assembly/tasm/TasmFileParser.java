@@ -28,10 +28,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.common.core.assembly.ctg.ContigFileVisitor;
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.io.IOUtil;
 
 /**
  * {@code TasmFileParser} parses TIGR Assembler contig files

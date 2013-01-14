@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.assembly.asm;
 
-import org.jcvi.common.core.util.Builder;
+import org.jcvi.jillion.core.util.Builder;
 
 /**
  * @author dkatzel

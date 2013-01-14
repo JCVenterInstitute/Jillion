@@ -8,7 +8,7 @@ import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.seq.trace.fastq.FastqRecord;
-import org.jcvi.common.core.util.Builder;
+import org.jcvi.jillion.core.util.Builder;
 /**
  * {@code SffFileDataStoreBuilder}
  * is a {@link Builder} that can create new instances

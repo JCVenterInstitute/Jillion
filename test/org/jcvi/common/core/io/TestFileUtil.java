@@ -3,7 +3,7 @@ package org.jcvi.common.core.io;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.io.FileUtil;
+import org.jcvi.jillion.core.io.FileUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestFileUtil {

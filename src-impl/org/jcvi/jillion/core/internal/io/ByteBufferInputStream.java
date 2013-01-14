@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.jillion.core.io.IOUtil;
 /**
  * {@code ByteBufferInputStream} is an {@link InputStream}
  * that delegates reads to a {@link ByteBuffer}.

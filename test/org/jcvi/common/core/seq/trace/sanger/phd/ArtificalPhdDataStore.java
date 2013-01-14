@@ -35,12 +35,12 @@ import org.jcvi.common.core.seq.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.seq.trace.sanger.phd.PhdTag;
 import org.jcvi.common.core.seq.trace.sanger.phd.PhdUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.internal.datastore.AbstractDataStore;
 import org.jcvi.jillion.core.internal.datastore.DataStoreIterator;
 import org.jcvi.jillion.core.internal.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
  * {@code ArtificialPhdDataStore} is a {@link DataStore} of
  * Nucleotide and PhredQuality data that has been adapted to 

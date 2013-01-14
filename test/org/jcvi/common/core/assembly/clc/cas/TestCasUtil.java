@@ -30,8 +30,8 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
 import org.jcvi.common.core.assembly.clc.cas.CasUtil;
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.testUtil.EasyMockUtil;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;

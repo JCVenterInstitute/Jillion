@@ -26,10 +26,10 @@ package org.jcvi.common.core.seq.trace.sff;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-import org.jcvi.common.core.util.ObjectsUtil;
-import org.jcvi.common.core.util.MathUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.MathUtil;
+import org.jcvi.jillion.core.util.ObjectsUtil;
 
 final class DefaultSffReadData implements SffReadData {
 

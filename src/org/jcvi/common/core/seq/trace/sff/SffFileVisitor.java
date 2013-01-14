@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.trace.sff;
 
-import org.jcvi.common.core.io.FileVisitor;
+import org.jcvi.jillion.core.io.FileVisitor;
 /**
  * {@code SffFileVisitor} is a {@link FileVisitor}
  * implementation for {@literal .sff} binary encoded files.

@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.assembly.clc.cas.var;
 
-import org.jcvi.common.core.io.TextFileVisitor;
+import org.jcvi.jillion.core.io.TextFileVisitor;
 
 /**
  * {@code VariationLogFileVisitor} is a {@link TextFileVisitor}

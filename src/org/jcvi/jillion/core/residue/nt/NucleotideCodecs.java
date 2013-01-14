@@ -21,7 +21,7 @@ package org.jcvi.jillion.core.residue.nt;
 
 import java.util.Collection;
 
-import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.jillion.core.io.IOUtil;
 
 /**
  * @author dkatzel

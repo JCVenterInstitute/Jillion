@@ -27,7 +27,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
-import org.jcvi.common.core.util.ObjectsUtil;
+import org.jcvi.jillion.core.util.ObjectsUtil;
 
 public abstract class AbstractTraceArchiveTrace implements TraceArchiveTrace {
 

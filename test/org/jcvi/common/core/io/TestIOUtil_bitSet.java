@@ -3,6 +3,7 @@ package org.jcvi.common.core.io;
 import java.math.BigInteger;
 import java.util.BitSet;
 
+import org.jcvi.jillion.core.io.IOUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestIOUtil_bitSet {

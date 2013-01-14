@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.assembly.ace.consed;
 
-import org.jcvi.common.core.io.TextFileVisitor;
+import org.jcvi.jillion.core.io.TextFileVisitor;
 
 /**
  * @author dkatzel

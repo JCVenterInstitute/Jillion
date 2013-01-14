@@ -29,7 +29,6 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.trace.sanger.Position;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
@@ -39,6 +38,7 @@ import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.pos.PositionStrategy;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.pos.PositionStrategyFactory;
+import org.jcvi.jillion.core.io.IOUtil;
 
 public abstract class AbstractSampleSectionCodec implements SectionCodec{
 

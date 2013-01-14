@@ -28,10 +28,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jcvi.common.core.datastore.DataStoreUtil;
-import org.jcvi.common.core.util.Builder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.jillion.core.util.Builder;
 
 /**
  * @author dkatzel

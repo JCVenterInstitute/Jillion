@@ -25,10 +25,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
-import org.jcvi.common.core.io.TextFileVisitor;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.io.TextFileVisitor;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 

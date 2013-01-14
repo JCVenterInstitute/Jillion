@@ -21,7 +21,7 @@ package org.jcvi.common.core.assembly.ace;
 
 import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 /**
  * {@code AceFileContigDataStore} is a {@link ContigDataStore}

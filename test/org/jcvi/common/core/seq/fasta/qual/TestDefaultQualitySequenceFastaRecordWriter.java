@@ -13,16 +13,16 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fasta.qual.LargeQualityFastaFileDataStore;
 import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaRecordBuilder;
 import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaRecordWriterBuilder;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.junit.Test;
 
 public class TestDefaultQualitySequenceFastaRecordWriter {

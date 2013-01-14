@@ -27,10 +27,10 @@ import java.nio.ShortBuffer;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.trace.sanger.Position;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.Section;
+import org.jcvi.jillion.core.io.IOUtil;
 
 /**
  * <code>SCFUtils</code> is an Utility class

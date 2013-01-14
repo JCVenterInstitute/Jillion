@@ -36,7 +36,7 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 
 /**
  * {@code LucyLikeQualityTrimmerBuilder} 
- * is a {@link org.jcvi.common.core.util.Builder}
+ * is a {@link org.jcvi.jillion.core.util.Builder}
  * that can create a {@link QualityTrimmer}
  * that  trims {@link QualitySequence}s
  * using the same algorithm as the TIGR program
@@ -73,7 +73,7 @@ import org.jcvi.jillion.core.qual.QualitySequence;
  *
  * @see <a href ="http://www.ncbi.nlm.nih.gov/pubmed/11751217">Chou HH, Holmes MH. DNA sequence quality trimming and vector removal. Bioinformatics. 2001;17:1093-1104. doi: 10.1093/bioinformatics/17.12.1093.<a>
  */
-public final class LucyQualityTrimmerBuilder implements org.jcvi.common.core.util.Builder<QualityTrimmer>{
+public final class LucyQualityTrimmerBuilder implements org.jcvi.jillion.core.util.Builder<QualityTrimmer>{
 
         public static final Window DEFAULT_BRACKET_WINDOW = new Window(10, 0.02D);
         private static final List<Window> DEFAULT_TRIM_WINDOWS = Arrays.asList(

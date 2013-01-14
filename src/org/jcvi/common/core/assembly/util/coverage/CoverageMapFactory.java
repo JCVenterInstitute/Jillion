@@ -35,12 +35,12 @@ import java.util.List;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.IteratorUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 /**
  * {@code CoverageMapFactory} is a factory class

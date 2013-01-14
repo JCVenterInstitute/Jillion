@@ -28,9 +28,9 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fasta.FastaFileParser;
 import org.jcvi.jillion.core.internal.seq.fasta.AbstractFastaFileDataStoreBuilderVisitor;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**

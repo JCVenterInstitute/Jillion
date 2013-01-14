@@ -1,8 +1,8 @@
 package org.jcvi.common.core.assembly;
 
-import org.jcvi.common.core.util.Builder;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.util.Builder;
 /**
  * {@code ScaffoldBuilder} is a {@link Builder}
  * that builds a single {@link Scaffold}.

@@ -27,7 +27,7 @@ import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
  * {@code AbstractDataStore} is an abstract implementation
  * of {@link DataStore} that manages

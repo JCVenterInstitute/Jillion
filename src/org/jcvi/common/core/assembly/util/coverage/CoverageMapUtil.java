@@ -3,10 +3,10 @@ package org.jcvi.common.core.assembly.util.coverage;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 public final class CoverageMapUtil {
 

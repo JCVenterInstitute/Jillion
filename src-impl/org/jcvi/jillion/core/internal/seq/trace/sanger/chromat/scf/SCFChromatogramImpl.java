@@ -26,9 +26,9 @@ package org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.PrivateData;
 import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
-import org.jcvi.common.core.util.ObjectsUtil;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.util.ObjectsUtil;
 
 public class SCFChromatogramImpl extends BasicChromatogram implements ScfChromatogram {
 

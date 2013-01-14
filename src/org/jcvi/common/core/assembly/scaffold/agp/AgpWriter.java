@@ -7,9 +7,9 @@ import org.jcvi.common.core.assembly.PlacedContig;
 import org.jcvi.common.core.assembly.Scaffold;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.io.IOUtil;
 
 public final class AgpWriter {
 

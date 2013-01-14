@@ -2,8 +2,8 @@ package org.jcvi.common.core.assembly.clc.cas.var;
 
 import java.util.SortedMap;
 
-import org.jcvi.common.core.util.iter.IteratorUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 public class DefaultReferenceVariations implements ReferenceVariations{
 

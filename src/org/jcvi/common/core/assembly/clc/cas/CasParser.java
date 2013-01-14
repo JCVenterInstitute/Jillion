@@ -43,7 +43,7 @@ import org.jcvi.common.core.assembly.clc.cas.align.CasScoringScheme;
 import org.jcvi.common.core.assembly.clc.cas.align.DefaultCasAlignment;
 import org.jcvi.common.core.assembly.clc.cas.align.DefaultCasMatch;
 import org.jcvi.common.core.assembly.clc.cas.align.DefaultCasScoringScheme;
-import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.jillion.core.io.IOUtil;
 
 public final class CasParser {
 	
