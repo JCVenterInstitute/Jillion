@@ -5,13 +5,13 @@ import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
-import org.jcvi.jillion.core.internal.seq.fasta.AbstractFastaFileDataStoreBuilder;
-import org.jcvi.jillion.core.internal.seq.fasta.aa.DefaultAminoAcidSequenceFastaDataStore;
-import org.jcvi.jillion.core.internal.seq.fasta.aa.IndexedAminoAcidSequenceFastaFileDataStore;
-import org.jcvi.jillion.core.internal.seq.fasta.aa.LargeAminoAcidSequenceFastaFileDataStore;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 import org.jcvi.jillion.fasta.FastaDataStore;
+import org.jcvi.jillion.internal.fasta.AbstractFastaFileDataStoreBuilder;
+import org.jcvi.jillion.internal.fasta.aa.DefaultAminoAcidSequenceFastaDataStore;
+import org.jcvi.jillion.internal.fasta.aa.IndexedAminoAcidSequenceFastaFileDataStore;
+import org.jcvi.jillion.internal.fasta.aa.LargeAminoAcidSequenceFastaFileDataStore;
 
 
 /**

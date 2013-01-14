@@ -36,13 +36,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.seq.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.trace.sanger.SangerTrace;
-import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfDecoderException;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.DefaultSCFHeader;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.DefaultSCFHeaderCodec;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.SCFHeader;
@@ -55,6 +48,13 @@ import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.Secti
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.SectionDecoderException;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.SectionEncoder;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.trace.TraceDecoderException;
+import org.jcvi.jillion.trace.sanger.SangerTrace;
+import org.jcvi.jillion.trace.sanger.chromat.Chromatogram;
+import org.jcvi.jillion.trace.sanger.chromat.ChromatogramFileVisitor;
+import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogram;
+import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogramBuilder;
+import org.jcvi.jillion.trace.sanger.chromat.scf.ScfDecoderException;
 /**
  * {@code SCFCodecs} contains singleton implementations
  * of various {@link SCFCodec}s to parse each 

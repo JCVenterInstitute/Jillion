@@ -29,10 +29,10 @@ import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.internal.datastore.DataStoreStreamingIterator;
-import org.jcvi.jillion.core.internal.seq.fasta.AbstractLargeFastaFileDataStore;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.fasta.AbstractLargeFastaFileDataStore;
 /**
  * {@code LargeQualityFastaFileDataStore} is an implementation
  * of {@link QualitySequenceFastaDataStore} which does not

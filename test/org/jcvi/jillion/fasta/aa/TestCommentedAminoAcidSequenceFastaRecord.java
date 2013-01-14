@@ -1,8 +1,8 @@
 package org.jcvi.jillion.fasta.aa;
 
-import org.jcvi.jillion.core.internal.seq.fasta.aa.CommentedAminoAcidSequenceFastaRecord;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecord;
+import org.jcvi.jillion.internal.fasta.aa.CommentedAminoAcidSequenceFastaRecord;
 
 public class TestCommentedAminoAcidSequenceFastaRecord extends AbstractTestAminoAcidSequenceFastaRecord{
 

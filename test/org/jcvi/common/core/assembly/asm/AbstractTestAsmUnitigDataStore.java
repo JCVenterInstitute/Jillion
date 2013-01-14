@@ -5,9 +5,6 @@ import java.io.File;
 import java.util.Arrays;
 
 import org.jcvi.common.core.assembly.AssemblyUtil;
-import org.jcvi.common.core.seq.trace.frg.Fragment;
-import org.jcvi.common.core.seq.trace.frg.FragmentDataStore;
-import org.jcvi.common.core.seq.trace.frg.IndexedFragmentDataStore;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
@@ -15,6 +12,9 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.trace.frg.Fragment;
+import org.jcvi.jillion.trace.frg.FragmentDataStore;
+import org.jcvi.jillion.trace.frg.IndexedFragmentDataStore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

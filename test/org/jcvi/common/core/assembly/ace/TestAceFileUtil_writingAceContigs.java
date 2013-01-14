@@ -27,8 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
-import org.jcvi.common.core.seq.trace.sanger.phd.ArtificalPhdDataStore;
-import org.jcvi.common.core.seq.trace.sanger.phd.PhdDataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -39,6 +37,8 @@ import org.jcvi.jillion.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.jillion.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.jillion.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
+import org.jcvi.jillion.trace.sanger.phd.ArtificalPhdDataStore;
+import org.jcvi.jillion.trace.sanger.phd.PhdDataStore;
 import org.junit.Test;
 /**
  * @author dkatzel

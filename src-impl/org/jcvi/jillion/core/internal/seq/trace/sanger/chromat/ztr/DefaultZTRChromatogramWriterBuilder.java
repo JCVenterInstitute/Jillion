@@ -26,10 +26,6 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.common.core.seq.trace.TraceEncoderException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramWriter;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.chunk.Chunk;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.chunk.ChunkType;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.DeltaEncodedData;
@@ -40,6 +36,10 @@ import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.ZLibData
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.DeltaEncodedData.Level;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
+import org.jcvi.jillion.trace.TraceEncoderException;
+import org.jcvi.jillion.trace.sanger.chromat.Chromatogram;
+import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogram;
+import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogramWriter;
 
 
 /**

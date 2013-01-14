@@ -2,8 +2,8 @@ package org.jcvi.jillion.fasta.aa;
 
 import java.io.File;
 
-import org.jcvi.jillion.core.internal.seq.fasta.aa.LargeAminoAcidSequenceFastaFileDataStore;
 import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaDataStore;
+import org.jcvi.jillion.internal.fasta.aa.LargeAminoAcidSequenceFastaFileDataStore;
 
 public class TestLargeAminoAcidSequenceFastaFileDataStore  extends AbstractTestAminoAcidSequenceFastaDataStore{
 

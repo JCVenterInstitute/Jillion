@@ -26,10 +26,6 @@ package org.jcvi.common.core.seq.read.trace.archive;
 import java.io.File;
 import java.io.InputStream;
 
-import org.jcvi.common.core.seq.trace.sanger.DefaultPositionFastaFileDataStore;
-import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
-import org.jcvi.common.core.seq.trace.sanger.PositionSequenceFastaDataStore;
-import org.jcvi.common.core.seq.trace.sanger.PositionSequenceFastaRecord;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -40,6 +36,10 @@ import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.jillion.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.jillion.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
 import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecord;
+import org.jcvi.jillion.trace.sanger.DefaultPositionFastaFileDataStore;
+import org.jcvi.jillion.trace.sanger.PositionSequence;
+import org.jcvi.jillion.trace.sanger.PositionSequenceFastaDataStore;
+import org.jcvi.jillion.trace.sanger.PositionSequenceFastaRecord;
 
 public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
     

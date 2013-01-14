@@ -23,8 +23,8 @@
  */
 package org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data;
 
-import org.jcvi.common.core.seq.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.trace.TraceEncoderException;
+import org.jcvi.jillion.trace.TraceDecoderException;
+import org.jcvi.jillion.trace.TraceEncoderException;
 
 
 

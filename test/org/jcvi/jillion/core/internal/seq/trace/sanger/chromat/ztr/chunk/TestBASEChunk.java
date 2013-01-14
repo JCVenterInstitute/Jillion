@@ -25,13 +25,13 @@ package org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.chunk;
 
 import java.nio.ByteBuffer;
 
-import org.jcvi.common.core.seq.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.trace.TraceEncoderException;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.chunk.Chunk;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.trace.TraceDecoderException;
+import org.jcvi.jillion.trace.TraceEncoderException;
+import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogram;
+import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

@@ -27,10 +27,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramWriter;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfDecoderException;
+import org.jcvi.jillion.trace.sanger.chromat.ChromatogramFileVisitor;
+import org.jcvi.jillion.trace.sanger.chromat.ChromatogramWriter;
+import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogram;
+import org.jcvi.jillion.trace.sanger.chromat.scf.ScfDecoderException;
 
 /**
  * <code>SCFCodec</code> is used to encode and decode {@link ScfChromatogram}s.

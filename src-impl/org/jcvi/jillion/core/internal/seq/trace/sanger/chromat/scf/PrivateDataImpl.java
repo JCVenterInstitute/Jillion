@@ -25,7 +25,7 @@ package org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf;
 
 import java.util.Arrays;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.PrivateData;
+import org.jcvi.jillion.trace.sanger.chromat.scf.PrivateData;
 
 /**
  * PrivateData is a wrapper around a byte array
