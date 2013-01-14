@@ -28,7 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.common.core.assembly.ctg.IndexedContigFileDataStore;
-import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
 
 public class TestIndexedContigFileDataStore extends AbstractTestContigFileDataStore{
    

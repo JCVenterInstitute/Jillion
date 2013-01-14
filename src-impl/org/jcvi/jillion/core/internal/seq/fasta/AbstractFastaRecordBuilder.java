@@ -1,8 +1,8 @@
 package org.jcvi.jillion.core.internal.seq.fasta;
 
-import org.jcvi.common.core.seq.fasta.FastaRecord;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.Symbol;
+import org.jcvi.jillion.fasta.FastaRecord;
 /**
  * {@code AbstractFastaRecordBuilder} is an abstract
  * class that handles all the boilerplate code for building

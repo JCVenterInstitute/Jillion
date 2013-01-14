@@ -3,12 +3,12 @@ package org.jcvi.jillion.core.internal.seq.fasta.aa;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import org.jcvi.common.core.seq.fasta.AbstractFastaVisitor;
-import org.jcvi.common.core.seq.fasta.FastaFileParser;
-import org.jcvi.common.core.seq.fasta.FastaFileVisitor;
-import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaRecord;
-import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaRecordBuilder;
 import org.jcvi.jillion.core.internal.util.iter.AbstractBlockingStreamingIterator;
+import org.jcvi.jillion.fasta.AbstractFastaVisitor;
+import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaFileVisitor;
+import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecord;
+import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecordBuilder;
 
 final class LargeAminoAcidSequenceFastaIterator extends AbstractBlockingStreamingIterator<AminoAcidSequenceFastaRecord>{
 

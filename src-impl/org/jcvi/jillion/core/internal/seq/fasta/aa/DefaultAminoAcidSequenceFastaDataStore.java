@@ -5,17 +5,17 @@ import java.io.FileNotFoundException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.seq.fasta.AbstractFastaVisitor;
-import org.jcvi.common.core.seq.fasta.FastaDataStoreBuilder;
-import org.jcvi.common.core.seq.fasta.FastaFileParser;
-import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaDataStore;
-import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaRecord;
-import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaRecordBuilder;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
+import org.jcvi.jillion.fasta.AbstractFastaVisitor;
+import org.jcvi.jillion.fasta.FastaDataStoreBuilder;
+import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaDataStore;
+import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecord;
+import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecordBuilder;
 
 public final class DefaultAminoAcidSequenceFastaDataStore{
 	

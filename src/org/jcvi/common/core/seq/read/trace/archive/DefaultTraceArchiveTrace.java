@@ -26,12 +26,6 @@ package org.jcvi.common.core.seq.read.trace.archive;
 import java.io.File;
 import java.io.InputStream;
 
-import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
-import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaDataStore;
-import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
-import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.common.core.seq.trace.sanger.DefaultPositionFastaFileDataStore;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceFastaDataStore;
@@ -40,6 +34,12 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.jillion.fasta.qual.QualitySequenceFastaDataStore;
+import org.jcvi.jillion.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecord;
 
 public class DefaultTraceArchiveTrace extends AbstractTraceArchiveTrace {
     

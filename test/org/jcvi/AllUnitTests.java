@@ -24,7 +24,7 @@
 package org.jcvi;
 
 import org.jcvi.common.AllCommonUnitTests;
-
+import org.jcvi.jillion.fasta.AllFastaUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -34,7 +34,8 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         
         
-        AllCommonUnitTests.class
+        AllCommonUnitTests.class,
+        AllFastaUnitTests.class
     }
 )
 public class AllUnitTests {

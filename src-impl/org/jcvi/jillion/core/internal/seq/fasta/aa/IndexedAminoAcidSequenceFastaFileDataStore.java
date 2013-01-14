@@ -6,11 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.jcvi.common.core.seq.fasta.FastaFileParser;
-import org.jcvi.common.core.seq.fasta.FastaFileVisitor;
-import org.jcvi.common.core.seq.fasta.FastaRecord;
-import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaDataStore;
-import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaRecord;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
@@ -21,6 +16,11 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaFileVisitor;
+import org.jcvi.jillion.fasta.FastaRecord;
+import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaDataStore;
+import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecord;
 
 /**
  * {@code IndexedAminoAcidSequenceFastaFileDataStore} is an implementation of 

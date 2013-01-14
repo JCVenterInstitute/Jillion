@@ -31,12 +31,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.assembly.ctg.ContigFileParser;
-import org.jcvi.common.core.seq.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.fasta.qual.QualitySequenceFastaDataStore;
 
 public class AceAdapterContigFileDataStore extends AbstractAceAdaptedContigFileDataStore implements AceFileContigDataStore{
 

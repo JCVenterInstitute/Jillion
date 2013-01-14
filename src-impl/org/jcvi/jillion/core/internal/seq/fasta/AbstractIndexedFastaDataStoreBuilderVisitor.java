@@ -4,15 +4,15 @@ import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.seq.fasta.AbstractFastaVisitor;
-import org.jcvi.common.core.seq.fasta.FastaDataStore;
-import org.jcvi.common.core.seq.fasta.FastaFileDataStoreBuilderVisitor;
-import org.jcvi.common.core.seq.fasta.FastaRecord;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.Symbol;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
+import org.jcvi.jillion.fasta.AbstractFastaVisitor;
+import org.jcvi.jillion.fasta.FastaDataStore;
+import org.jcvi.jillion.fasta.FastaFileDataStoreBuilderVisitor;
+import org.jcvi.jillion.fasta.FastaRecord;
 /**
  * {@code AbstractIndexedFastaDataStoreBuilderVisitor} is an
  * abstract implementation of {@link FastaFileDataStoreBuilderVisitor}

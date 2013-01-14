@@ -19,7 +19,6 @@
 
 package org.jcvi.common.core.seq;
 
-import org.jcvi.common.core.seq.fasta.AllFastaUnitTests;
 import org.jcvi.common.core.seq.plate.AllPlateUnitTests;
 import org.jcvi.common.core.seq.trace.AllTraceUnitTests;
 import org.jcvi.common.core.seq.trace.fastq.AllFastqUnitTests;
@@ -30,7 +29,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-    	AllFastaUnitTests.class,
         AllFastqUnitTests.class,
         
         AllTraceUnitTests.class,

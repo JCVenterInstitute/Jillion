@@ -24,8 +24,6 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.util.List;
 
-import org.jcvi.common.core.seq.fasta.FastaRecordDataStoreAdapter;
-import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.common.primer.PrimerDetector;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Direction;
@@ -34,6 +32,8 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.jillion.fasta.FastaRecordDataStoreAdapter;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
