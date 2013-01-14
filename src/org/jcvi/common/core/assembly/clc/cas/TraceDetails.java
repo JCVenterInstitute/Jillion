@@ -22,8 +22,8 @@ package org.jcvi.common.core.assembly.clc.cas;
 import java.io.File;
 import java.util.Date;
 
-import org.jcvi.common.core.seq.trace.fastq.FastqQualityCodec;
 import org.jcvi.jillion.core.util.DateUtil;
+import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
 
 /**
  * @author dkatzel

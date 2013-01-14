@@ -32,16 +32,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.common.core.assembly.clc.cas.align.CasScoringScheme;
-import org.jcvi.common.core.seq.trace.fastq.FastqFileParser;
-import org.jcvi.common.core.seq.trace.fastq.FastqFileVisitor;
-import org.jcvi.common.core.seq.trace.sff.SffCommonHeader;
-import org.jcvi.common.core.seq.trace.sff.SffFileParser;
-import org.jcvi.common.core.seq.trace.sff.SffFileVisitor;
-import org.jcvi.common.core.seq.trace.sff.SffReadData;
-import org.jcvi.common.core.seq.trace.sff.SffReadHeader;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.fasta.AbstractFastaVisitor;
 import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.trace.fastq.FastqFileParser;
+import org.jcvi.jillion.trace.fastq.FastqFileVisitor;
+import org.jcvi.jillion.trace.sff.SffCommonHeader;
+import org.jcvi.jillion.trace.sff.SffFileParser;
+import org.jcvi.jillion.trace.sff.SffFileVisitor;
+import org.jcvi.jillion.trace.sff.SffReadData;
+import org.jcvi.jillion.trace.sff.SffReadHeader;
 
 public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasFileVisitor{
 

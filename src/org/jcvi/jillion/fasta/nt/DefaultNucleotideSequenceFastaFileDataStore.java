@@ -28,11 +28,11 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
-import org.jcvi.jillion.core.internal.seq.fasta.AbstractFastaFileDataStoreBuilderVisitor;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.internal.fasta.AbstractFastaFileDataStoreBuilderVisitor;
 /**
  * {@code DefaultNucleotideFastaFileDataStore} is the default implementation
  * of {@link NucleotideSequenceFastaDataStore} which stores

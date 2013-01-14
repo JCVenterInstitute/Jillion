@@ -25,8 +25,8 @@ package org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section;
 
 import java.io.IOException;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.SCFHeader;
+import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogram;
 
 public interface SectionEncoder {
 

@@ -1,7 +1,7 @@
 package org.jcvi.common.core.seq.trace.sff.visitor;
 
-import org.jcvi.common.core.seq.trace.sff.SffCommonHeader;
-import org.jcvi.common.core.seq.trace.sff.SffReadHeader;
+import org.jcvi.jillion.trace.sff.SffCommonHeader;
+import org.jcvi.jillion.trace.sff.SffReadHeader;
 
 public interface SffFileVisitor2{
 

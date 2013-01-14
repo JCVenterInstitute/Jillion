@@ -2,10 +2,10 @@ package org.jcvi.jillion.fasta.qual;
 
 import java.util.Scanner;
 
-import org.jcvi.jillion.core.internal.seq.fasta.AbstractFastaRecordBuilder;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.internal.fasta.AbstractFastaRecordBuilder;
 /**
  * {@code QualitySequenceFastaRecordBuilder} is a factory class
  * that makes instances of {@link QualitySequenceFastaRecord}s.

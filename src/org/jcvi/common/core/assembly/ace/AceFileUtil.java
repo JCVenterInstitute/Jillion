@@ -34,8 +34,6 @@ import java.util.Locale;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.AssemblyUtil;
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.seq.trace.sanger.phd.Phd;
-import org.jcvi.common.core.seq.trace.sanger.phd.PhdDataStore;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
@@ -47,6 +45,8 @@ import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.trace.sanger.phd.Phd;
+import org.jcvi.jillion.trace.sanger.phd.PhdDataStore;
 
 /**
  * {@code AceFileUtil} is a utility class to perform 

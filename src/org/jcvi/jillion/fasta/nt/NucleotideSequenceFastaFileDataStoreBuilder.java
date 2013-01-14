@@ -5,10 +5,10 @@ import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
-import org.jcvi.jillion.core.internal.seq.fasta.AbstractFastaFileDataStoreBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.fasta.FastaDataStore;
+import org.jcvi.jillion.internal.fasta.AbstractFastaFileDataStoreBuilder;
 /**
  * {@code NucleotideSequenceFastaFileDataStoreFactory}
  * is a factory class that can create new instances

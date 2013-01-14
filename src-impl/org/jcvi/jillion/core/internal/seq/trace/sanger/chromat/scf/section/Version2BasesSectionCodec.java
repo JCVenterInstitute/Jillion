@@ -29,17 +29,17 @@ import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.Iterator;
 
-import org.jcvi.common.core.seq.trace.sanger.Position;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramFileVisitor;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.trace.sanger.Position;
+import org.jcvi.jillion.trace.sanger.chromat.ChannelGroup;
+import org.jcvi.jillion.trace.sanger.chromat.ChromatogramFileVisitor;
+import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogram;
+import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogramBuilder;
+import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogramFileVisitor;
 
 public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
 

@@ -28,9 +28,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.testUtil.EasyMockUtil;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.chunk.Chunk;
+import org.jcvi.jillion.trace.TraceDecoderException;
 import org.junit.Before;
 import org.junit.Test;
 

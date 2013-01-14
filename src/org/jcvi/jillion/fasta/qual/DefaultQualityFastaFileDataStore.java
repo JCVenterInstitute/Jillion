@@ -29,10 +29,10 @@ import java.io.InputStream;
 
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
-import org.jcvi.jillion.core.internal.seq.fasta.AbstractFastaFileDataStoreBuilderVisitor;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.internal.fasta.AbstractFastaFileDataStoreBuilderVisitor;
 /**
  * {@code DefaultQualityFastaFileDataStore} is the default implementation
  * of {@link AbstractQualityFastaFileDataStore} which stores

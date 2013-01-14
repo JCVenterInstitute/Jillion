@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.read.trace.archive;
 
-import org.jcvi.common.core.seq.trace.sanger.SangerFileDataStore;
+import org.jcvi.jillion.trace.sanger.SangerFileDataStore;
 
 public interface TraceArchiveDataStore<T extends TraceArchiveTrace> extends SangerFileDataStore<T>{
 

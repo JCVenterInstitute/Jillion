@@ -1,9 +1,9 @@
 package org.jcvi.jillion.fasta.nt;
 
-import org.jcvi.jillion.core.internal.seq.fasta.AbstractFastaRecordBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.internal.fasta.AbstractFastaRecordBuilder;
 /**
  * {@code NucleotideSequenceFastaRecordBuilder} is a builder class
  * that makes instances of {@link NucleotideSequenceFastaRecord}s.

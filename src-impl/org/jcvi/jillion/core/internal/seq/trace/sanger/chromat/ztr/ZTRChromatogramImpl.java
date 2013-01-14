@@ -23,10 +23,10 @@
  */
 package org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.BasicChromatogram;
+import org.jcvi.jillion.trace.sanger.chromat.Chromatogram;
+import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogram;
 
 public class ZTRChromatogramImpl extends BasicChromatogram implements ZtrChromatogram{
 

@@ -30,11 +30,11 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 import java.util.zip.DataFormatException;
 
-import org.jcvi.common.core.seq.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.trace.TraceEncoderException;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.ZTRUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
+import org.jcvi.jillion.trace.TraceDecoderException;
+import org.jcvi.jillion.trace.TraceEncoderException;
 
 /**
  * <code>ZLibData</code> is the {@link Data} implementation

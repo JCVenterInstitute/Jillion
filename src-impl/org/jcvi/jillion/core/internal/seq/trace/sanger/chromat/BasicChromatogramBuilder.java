@@ -28,14 +28,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
-import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.trace.sanger.PositionSequence;
+import org.jcvi.jillion.trace.sanger.chromat.ChannelGroup;
+import org.jcvi.jillion.trace.sanger.chromat.Chromatogram;
 
 public final class BasicChromatogramBuilder {
     

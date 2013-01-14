@@ -1,9 +1,9 @@
 package org.jcvi.common.core.seq.trace.sff.visitor;
 
-import org.jcvi.common.core.seq.trace.sff.SffCommonHeader;
-import org.jcvi.common.core.seq.trace.sff.SffReadHeader;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.trace.sff.SffCommonHeader;
+import org.jcvi.jillion.trace.sff.SffReadHeader;
 
 public class ParseUntilFindParticularRead implements SffFileVisitor2{
 	private final String id;

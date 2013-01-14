@@ -26,9 +26,9 @@ package org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import org.jcvi.common.core.seq.trace.TraceEncoderException;
 import org.jcvi.jillion.core.internal.io.ValueSizeStrategy;
 import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
+import org.jcvi.jillion.trace.TraceEncoderException;
 
 /**
  * <code>AbstractDeltaData</code> is an abstract

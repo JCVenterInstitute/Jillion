@@ -2,9 +2,9 @@ package org.jcvi.common.core.assembly.asm;
 
 import java.io.File;
 
-import org.jcvi.common.core.seq.trace.frg.FragmentDataStore;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.trace.frg.FragmentDataStore;
 
 public abstract class AbstractTestAsmDataStore<D extends DataStore> {
 

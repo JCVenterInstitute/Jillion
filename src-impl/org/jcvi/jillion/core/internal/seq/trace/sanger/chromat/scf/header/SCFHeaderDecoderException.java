@@ -23,7 +23,7 @@
  */
 package org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header;
 
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfDecoderException;
+import org.jcvi.jillion.trace.sanger.chromat.scf.ScfDecoderException;
 
 /**
  * <code>SCFHeaderParserException</code> is a subclass of

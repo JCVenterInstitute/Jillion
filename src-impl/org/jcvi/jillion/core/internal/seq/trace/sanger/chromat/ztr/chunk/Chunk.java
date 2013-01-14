@@ -44,16 +44,6 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.seq.trace.TraceDecoderException;
-import org.jcvi.common.core.seq.trace.TraceEncoderException;
-import org.jcvi.common.core.seq.trace.sanger.Position;
-import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
-import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ztr.ZtrChromatogramFileVisitor;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.ZTRUtil;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.DataFactory;
@@ -63,6 +53,16 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
+import org.jcvi.jillion.trace.TraceDecoderException;
+import org.jcvi.jillion.trace.TraceEncoderException;
+import org.jcvi.jillion.trace.sanger.Position;
+import org.jcvi.jillion.trace.sanger.PositionSequence;
+import org.jcvi.jillion.trace.sanger.chromat.ChannelGroup;
+import org.jcvi.jillion.trace.sanger.chromat.Chromatogram;
+import org.jcvi.jillion.trace.sanger.chromat.ChromatogramFileVisitor;
+import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogram;
+import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
+import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogramFileVisitor;
 
 /**
  * The Chunk is the basic unit of the ZTR Structure.
@@ -135,7 +135,7 @@ public enum Chunk {
     POSITIONS{
         @Override
         protected void parseData(byte[] unEncodedData, ZtrChromatogramBuilder builder)
-                throws org.jcvi.common.core.seq.trace.TraceDecoderException {
+                throws org.jcvi.jillion.trace.TraceDecoderException {
             final int numberOfBases = (unEncodedData.length -1)/4;
             ShortBuffer peaks = ShortBuffer.allocate(numberOfBases);
             ByteBuffer input = ByteBuffer.wrap(unEncodedData);

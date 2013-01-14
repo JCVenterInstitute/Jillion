@@ -29,16 +29,16 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.jcvi.common.core.seq.trace.sanger.Position;
-import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
-import org.jcvi.common.core.seq.trace.sanger.chromat.ChromatogramFileVisitor;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogram;
-import org.jcvi.common.core.seq.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.pos.PositionStrategy;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.pos.PositionStrategyFactory;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.trace.sanger.Position;
+import org.jcvi.jillion.trace.sanger.PositionSequence;
+import org.jcvi.jillion.trace.sanger.chromat.ChannelGroup;
+import org.jcvi.jillion.trace.sanger.chromat.ChromatogramFileVisitor;
+import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogram;
+import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 
 public abstract class AbstractSampleSectionCodec implements SectionCodec{
 

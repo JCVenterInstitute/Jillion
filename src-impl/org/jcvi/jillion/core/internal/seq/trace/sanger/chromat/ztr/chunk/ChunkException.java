@@ -23,7 +23,7 @@
  */
 package org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.chunk;
 
-import org.jcvi.common.core.seq.trace.TraceDecoderException;
+import org.jcvi.jillion.trace.TraceDecoderException;
 /**
  * <code>ChunkException</code> is the Exception that should
  * be thrown whenver a problem encoding/decoding a {@link Chunk}
