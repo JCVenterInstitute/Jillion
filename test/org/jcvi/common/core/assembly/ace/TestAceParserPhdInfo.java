@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;

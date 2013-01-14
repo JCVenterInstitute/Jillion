@@ -19,7 +19,7 @@
 package org.jcvi.common.core.assembly;
 
 
-import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStore;
 
 
 public interface ScaffoldDataStore extends DataStore<Scaffold> {

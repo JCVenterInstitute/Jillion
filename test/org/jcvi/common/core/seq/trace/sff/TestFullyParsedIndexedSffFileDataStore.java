@@ -2,8 +2,8 @@ package org.jcvi.common.core.seq.trace.sff;
 
 import java.io.File;
 
-import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.seq.trace.sff.IndexedSffFileDataStore;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
 
 public class TestFullyParsedIndexedSffFileDataStore extends TestReadExampleSffFile{
 

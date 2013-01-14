@@ -1,6 +1,6 @@
 package org.jcvi.common.core.seq.trace.sanger;
 
-import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStore;
 
 public interface PositionSequenceFastaDataStore extends DataStore<PositionSequenceFastaRecord>{
 

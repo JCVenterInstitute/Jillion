@@ -34,7 +34,7 @@ import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentRegionType;
 import org.jcvi.common.core.assembly.clc.cas.align.DefaultCasAlignment;
 import org.jcvi.common.core.assembly.clc.cas.align.DefaultCasMatch;
 import org.jcvi.common.core.assembly.clc.cas.read.CasNucleotideDataStore;
-import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Before;

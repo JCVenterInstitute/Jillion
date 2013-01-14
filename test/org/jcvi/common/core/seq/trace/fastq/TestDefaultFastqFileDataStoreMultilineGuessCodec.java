@@ -5,11 +5,11 @@ import static org.junit.Assert.assertSame;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.seq.trace.fastq.DefaultFastqFileDataStore;
 import org.jcvi.common.core.seq.trace.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.trace.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.trace.fastq.FastqUtil;
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
 
 public class TestDefaultFastqFileDataStoreMultilineGuessCodec extends TestAbstractMultiLineFastqRecordsInDataStore{
 

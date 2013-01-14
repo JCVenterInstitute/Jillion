@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.seq.trace.sff;
 
-import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.trace.TraceDataStore;
+import org.jcvi.jillion.core.datastore.DataStore;
 /**
  * Marker interface for a {@link DataStore} of 
  * {@link Flowgram}s.

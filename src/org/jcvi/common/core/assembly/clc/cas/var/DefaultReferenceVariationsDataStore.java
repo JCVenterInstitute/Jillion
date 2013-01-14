@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.jcvi.common.core.datastore.DataStoreUtil;
+import org.jcvi.jillion.core.datastore.DataStoreUtil;
 /**
  * {@code DefaultReferenceVariationsDataStore} is an 
  * implementation of {@link ReferenceVariationsDataStore}

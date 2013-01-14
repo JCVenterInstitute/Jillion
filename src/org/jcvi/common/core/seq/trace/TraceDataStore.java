@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.trace;
 
-import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStore;
 
 public interface TraceDataStore<T extends Trace> extends DataStore<T> {
 }

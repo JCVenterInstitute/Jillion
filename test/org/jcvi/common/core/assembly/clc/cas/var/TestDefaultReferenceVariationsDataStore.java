@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import org.jcvi.common.core.assembly.clc.cas.var.Variation.Type;
-import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;

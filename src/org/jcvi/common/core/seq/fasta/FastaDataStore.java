@@ -23,9 +23,9 @@
  */
 package org.jcvi.common.core.seq.fasta;
 
-import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.Symbol;
+import org.jcvi.jillion.core.datastore.DataStore;
 /**
  * {@code FastaDataStore} is a marker interface
  * for a {@link DataStore} for {@link FastaRecord}s.

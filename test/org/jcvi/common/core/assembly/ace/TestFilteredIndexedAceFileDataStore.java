@@ -3,7 +3,7 @@ package org.jcvi.common.core.assembly.ace;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.datastore.DataStoreFilter;
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
 
 public class TestFilteredIndexedAceFileDataStore extends AbstractTestFilteredAceDataStore{
 

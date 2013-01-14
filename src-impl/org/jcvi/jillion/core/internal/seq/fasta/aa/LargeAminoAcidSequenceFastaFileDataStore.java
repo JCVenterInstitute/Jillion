@@ -3,11 +3,11 @@ package org.jcvi.jillion.core.internal.seq.fasta.aa;
 
 import java.io.File;
 
-import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.datastore.DataStoreFilters;
-import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fasta.aa.AminoAcidSequenceFastaRecord;
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
+import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.internal.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.core.internal.seq.fasta.AbstractLargeFastaFileDataStore;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;

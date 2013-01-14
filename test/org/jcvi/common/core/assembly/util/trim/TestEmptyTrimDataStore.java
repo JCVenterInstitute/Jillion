@@ -8,8 +8,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.junit.Test;
 public class TestEmptyTrimDataStore {
 

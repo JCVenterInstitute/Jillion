@@ -41,10 +41,10 @@ import org.jcvi.common.core.assembly.clc.cas.read.DefaultCasPlacedReadFromCasAli
 import org.jcvi.common.core.assembly.clc.cas.read.FastaCasDataStoreFactory;
 import org.jcvi.common.core.assembly.clc.cas.read.ReferenceCasFileNucleotideDataStore;
 import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
-import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.seq.trace.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.trace.sff.SffUtil;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.io.IOUtil.Endian;

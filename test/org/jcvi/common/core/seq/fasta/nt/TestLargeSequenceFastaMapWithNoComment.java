@@ -26,9 +26,9 @@ package org.jcvi.common.core.seq.fasta.nt;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.seq.fasta.nt.LargeNucleotideSequenceFastaFileDataStore;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.jillion.core.datastore.DataStore;
 
 public class TestLargeSequenceFastaMapWithNoComment extends AbstractTestSequenceFastaMapWithNoComment{
 

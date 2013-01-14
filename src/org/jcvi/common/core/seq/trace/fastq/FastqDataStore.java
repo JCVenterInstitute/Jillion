@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.seq.trace.fastq;
 
-import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStore;
 /**
  * {@code FastqDataStore} is a
  * marker-interface for a {@link DataStore}

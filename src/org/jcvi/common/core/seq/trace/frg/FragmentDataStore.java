@@ -24,8 +24,8 @@
 package org.jcvi.common.core.seq.trace.frg;
 
 
-import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 
 public interface FragmentDataStore extends DataStore<Fragment>{
 

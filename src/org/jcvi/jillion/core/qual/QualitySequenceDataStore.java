@@ -23,7 +23,7 @@
  */
 package org.jcvi.jillion.core.qual;
 
-import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStore;
 /**
  * {@code QualitySequenceDataStore} is a marker
  * interface for a {@link DataStore}

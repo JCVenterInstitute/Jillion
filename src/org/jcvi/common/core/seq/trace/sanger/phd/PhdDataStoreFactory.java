@@ -25,7 +25,7 @@ package org.jcvi.common.core.seq.trace.sanger.phd;
 
 import java.io.File;
 
-import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 /**
  * {@code PhdDataStoreFactory} is a Factory that can create
  * implementations of {@link PhdDataStore}s.

@@ -25,7 +25,7 @@ package org.jcvi.common.core.seq.read.trace.archive;
 
 import java.io.IOException;
 
-import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.internal.datastore.DataStoreIterator;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 

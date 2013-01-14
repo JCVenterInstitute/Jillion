@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.datastore.DataStoreUtil;
+import org.jcvi.jillion.core.datastore.DataStoreUtil;
 
 public class DefaultTraceArchiveInfoBuilder implements TraceArchiveInfoBuilder<TraceArchiveRecord>{
     private final Map<String, TraceArchiveRecord> map = new LinkedHashMap<String, TraceArchiveRecord>();
