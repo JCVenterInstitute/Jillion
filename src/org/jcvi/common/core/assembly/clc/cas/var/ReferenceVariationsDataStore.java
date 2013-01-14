@@ -1,6 +1,6 @@
 package org.jcvi.common.core.assembly.clc.cas.var;
 
-import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStore;
 /**
  * {@code ReferenceVariationsDataStore} is a marker
  * interface for a {@link DataStore}

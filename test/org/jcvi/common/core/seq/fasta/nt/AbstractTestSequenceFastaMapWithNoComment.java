@@ -27,9 +27,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.junit.Test;
 
 public abstract class AbstractTestSequenceFastaMapWithNoComment extends AbstractTestSequenceFastaDataStoreWithNoComment{

@@ -25,10 +25,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.trace.sanger.phd.PhdDataStore;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;

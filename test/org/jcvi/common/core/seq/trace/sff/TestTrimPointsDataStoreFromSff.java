@@ -3,8 +3,8 @@ package org.jcvi.common.core.seq.trace.sff;
 import java.io.IOException;
 
 import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
-import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.trace.sff.SffUtil;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestTrimPointsDataStoreFromSff extends AbstractTestExampleSffFile{

@@ -28,13 +28,13 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Properties;
 
-import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.trace.sanger.phd.PhdDataStore;
 import org.jcvi.common.core.seq.trace.sanger.phd.PhdTag;
 import org.jcvi.common.core.seq.trace.sanger.phd.PhdUtil;
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.internal.datastore.AbstractDataStore;
 import org.jcvi.jillion.core.internal.datastore.DataStoreIterator;
 import org.jcvi.jillion.core.internal.datastore.DataStoreStreamingIterator;

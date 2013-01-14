@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.DirectedRange;
+import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.util.MapUtil;
 
 public final class DefaultScaffoldDataStore {

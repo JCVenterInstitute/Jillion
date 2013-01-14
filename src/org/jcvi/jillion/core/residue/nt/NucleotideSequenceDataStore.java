@@ -23,7 +23,7 @@
  */
 package org.jcvi.jillion.core.residue.nt;
 
-import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStore;
 
 public interface NucleotideSequenceDataStore extends DataStore<NucleotideSequence>{
 

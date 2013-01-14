@@ -6,12 +6,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.trace.fastq.DefaultFastqFileDataStore;
 import org.jcvi.common.core.seq.trace.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.trace.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.trace.fastq.FastqRecordWriter;
 import org.jcvi.common.core.seq.trace.fastq.FastqRecordWriterBuilder;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;

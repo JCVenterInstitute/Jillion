@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly;
 
-import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStore;
 /**
  * {@code ContigDataStore} is a marker
  * interface for a {@link DataStore}

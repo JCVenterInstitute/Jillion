@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.clc.cas.read;
 
-import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 /**

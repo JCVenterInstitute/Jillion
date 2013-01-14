@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.assembly.asm;
 
-import org.jcvi.common.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStore;
 
 /**
  * @author dkatzel

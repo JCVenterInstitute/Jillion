@@ -20,7 +20,7 @@
 package org.jcvi.common.core.assembly.ace;
 
 import org.jcvi.common.core.assembly.ContigDataStore;
-import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 /**

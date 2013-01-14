@@ -22,8 +22,8 @@ package org.jcvi.common.core.seq.trace.sanger.phd;
 import java.util.List;
 import java.util.Properties;
 
-import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
 
 
 /**

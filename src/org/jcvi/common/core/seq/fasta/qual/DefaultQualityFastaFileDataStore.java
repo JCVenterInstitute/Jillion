@@ -28,8 +28,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 
-import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.seq.fasta.FastaFileParser;
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.internal.seq.fasta.AbstractFastaFileDataStoreBuilderVisitor;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;

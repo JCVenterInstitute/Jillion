@@ -22,7 +22,7 @@ package org.jcvi.common.primer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.datastore.DataStoreUtil;
+import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 

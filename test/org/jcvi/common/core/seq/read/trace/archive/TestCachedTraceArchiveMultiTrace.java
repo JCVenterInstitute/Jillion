@@ -26,10 +26,10 @@ package org.jcvi.common.core.seq.read.trace.archive;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.read.trace.archive.CachedTraceArchiveDataStore;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveDataStore;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveTrace;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.junit.Before;

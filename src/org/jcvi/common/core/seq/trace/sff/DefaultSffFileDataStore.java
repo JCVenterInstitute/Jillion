@@ -26,8 +26,8 @@ package org.jcvi.common.core.seq.trace.sff;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.datastore.DataStoreFilters;
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
 /**
  {@code DefaultSffFileDataStore} creates {@link FlowgramDataStore}
  * instances that store all the {@link Flowgram}s

@@ -23,7 +23,7 @@ import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.slice.CompactedSliceMap;
 import org.jcvi.common.core.assembly.util.slice.SliceMap;
-import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 
 /**

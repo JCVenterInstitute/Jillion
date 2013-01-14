@@ -22,10 +22,10 @@ package org.jcvi.common.core.seq.fasta.nt;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.seq.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fasta.FastaFileVisitor;
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.internal.util.iter.AbstractBlockingStreamingIterator;
 
 /**

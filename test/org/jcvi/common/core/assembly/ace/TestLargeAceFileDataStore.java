@@ -4,7 +4,7 @@ import java.io.File;
 
 import java.io.IOException;
 
-import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 
 public class TestLargeAceFileDataStore extends TestAbstractAceParserMatchesAce2ContigMultipleContigs{
 

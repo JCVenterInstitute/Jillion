@@ -27,9 +27,9 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.trace.sanger.phd.PhdDataStore;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.junit.Before;
 import org.junit.Test;
 

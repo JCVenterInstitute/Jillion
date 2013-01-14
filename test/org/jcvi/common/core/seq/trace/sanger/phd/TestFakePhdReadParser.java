@@ -28,7 +28,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
-import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.junit.Test;
 public class TestFakePhdReadParser {

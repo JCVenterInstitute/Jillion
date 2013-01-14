@@ -4,13 +4,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.datastore.DataStoreFilters;
-import org.jcvi.common.core.datastore.DataStoreProviderHint;
 import org.jcvi.common.core.seq.fasta.FastaDataStore;
 import org.jcvi.common.core.seq.fasta.FastaRecord;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.Symbol;
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
+import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 
 public abstract class AbstractFastaFileDataStoreBuilder<T extends Symbol, S extends Sequence<T>, F extends FastaRecord<T,S>, D extends FastaDataStore<T,S, F>> {
 

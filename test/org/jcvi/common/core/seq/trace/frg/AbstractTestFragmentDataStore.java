@@ -27,7 +27,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.trace.frg.DefaultFragment;
 import org.jcvi.common.core.seq.trace.frg.DefaultLibrary;
 import org.jcvi.common.core.seq.trace.frg.Distance;
@@ -36,6 +35,7 @@ import org.jcvi.common.core.seq.trace.frg.FragmentDataStore;
 import org.jcvi.common.core.seq.trace.frg.Library;
 import org.jcvi.common.core.seq.trace.frg.MateOrientation;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Before;

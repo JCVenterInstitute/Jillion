@@ -22,8 +22,8 @@ package org.jcvi.common.core.assembly.clc.cas.read;
 import java.io.File;
 
 import org.jcvi.common.core.assembly.clc.cas.CasTrimMap;
-import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.datastore.DataStoreFilters;
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 

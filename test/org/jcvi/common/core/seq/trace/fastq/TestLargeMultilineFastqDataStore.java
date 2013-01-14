@@ -3,10 +3,10 @@ package org.jcvi.common.core.seq.trace.fastq;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.seq.trace.fastq.FastqDataStore;
 import org.jcvi.common.core.seq.trace.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.trace.fastq.LargeFastqFileDataStore;
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
 
 public class TestLargeMultilineFastqDataStore extends TestAbstractMultiLineFastqRecordsInDataStore{
 

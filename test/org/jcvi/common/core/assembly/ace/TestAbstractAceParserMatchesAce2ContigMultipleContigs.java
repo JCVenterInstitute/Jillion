@@ -25,7 +25,7 @@ package org.jcvi.common.core.assembly.ace;
 
 import java.io.IOException;
 
-import org.jcvi.common.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 
 public abstract class TestAbstractAceParserMatchesAce2ContigMultipleContigs extends AbstractTestAceParserMatchesAce2Contig{
     private static final String ACE_FILE = "files/fluSample.ace";

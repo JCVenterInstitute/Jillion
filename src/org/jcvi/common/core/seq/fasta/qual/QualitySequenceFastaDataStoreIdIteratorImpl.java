@@ -3,11 +3,11 @@ package org.jcvi.common.core.seq.fasta.qual;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.datastore.DataStoreClosedException;
 import org.jcvi.common.core.seq.fasta.AbstractFastaVisitor;
 import org.jcvi.common.core.seq.fasta.FastaFileParser;
 import org.jcvi.common.core.seq.fasta.FastaFileVisitor;
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.internal.util.iter.AbstractBlockingStreamingIterator;
 
 class QualitySequenceFastaDataStoreIdIteratorImpl extends AbstractBlockingStreamingIterator<String>{
