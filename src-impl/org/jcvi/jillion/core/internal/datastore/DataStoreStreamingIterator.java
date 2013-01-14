@@ -5,9 +5,9 @@ import java.util.Iterator;
 
 import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreClosedException;
-import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.IteratorUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
  * {@linkplain DataStoreStreamingIterator} is a {@link StreamingIterator}
  * implementation for a {@link DataStore}.

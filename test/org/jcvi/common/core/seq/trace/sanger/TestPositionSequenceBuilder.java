@@ -3,11 +3,11 @@ package org.jcvi.common.core.seq.trace.sanger;
 import java.nio.ShortBuffer;
 import java.util.Iterator;
 
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.trace.sanger.Position;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.io.IOUtil;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

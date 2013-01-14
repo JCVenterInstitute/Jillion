@@ -25,8 +25,8 @@ package org.jcvi.common.core.assembly.util.coverage;
 
 import java.util.Collection;
 
-import org.jcvi.common.core.util.Builder;
 import org.jcvi.jillion.core.Rangeable;
+import org.jcvi.jillion.core.util.Builder;
 
 interface CoverageRegionBuilder<P extends Rangeable> extends Builder<CoverageRegion<P>> {
 

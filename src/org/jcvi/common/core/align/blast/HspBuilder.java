@@ -29,7 +29,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  *
  *
  */
-public final class HspBuilder implements org.jcvi.common.core.util.Builder<Hsp>{
+public final class HspBuilder implements org.jcvi.jillion.core.util.Builder<Hsp>{
 
     private static final double ONE_HUNDRED = 100.0D;
 

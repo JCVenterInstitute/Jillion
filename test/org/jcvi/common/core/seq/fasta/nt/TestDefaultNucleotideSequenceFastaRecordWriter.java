@@ -7,11 +7,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordBuilder;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultNucleotideSequenceFastaRecordWriter {

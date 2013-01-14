@@ -34,12 +34,12 @@ import java.util.TreeSet;
 
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
  * {@code CtgFileWriter} will write out {@link Contig}
  * objects in ctg format.

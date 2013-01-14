@@ -25,8 +25,8 @@ package org.jcvi.jillion.core.internal.seq.trace.sanger.chromat;
 
 import org.jcvi.common.core.seq.trace.sanger.chromat.Channel;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
-import org.jcvi.common.core.util.ObjectsUtil;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.util.ObjectsUtil;
 
 public class DefaultChannelGroup implements ChannelGroup {
 

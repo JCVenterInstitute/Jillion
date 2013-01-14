@@ -31,14 +31,14 @@ import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.seq.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.common.core.seq.trace.sanger.phd.Phd;
 import org.jcvi.common.core.seq.trace.sanger.phd.PhdDataStore;
-import org.jcvi.common.core.util.MapUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.MapUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 /**
  * {@code HighLowAceContigPhdDatastore} is a PhdDataStore

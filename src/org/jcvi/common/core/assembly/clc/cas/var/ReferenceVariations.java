@@ -1,6 +1,6 @@
 package org.jcvi.common.core.assembly.clc.cas.var;
 
-import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
  * {@code ReferenceVariations} is an object representation
  * of all the {@link Variation}s found by the {@code find_variations}

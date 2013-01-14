@@ -30,8 +30,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.junit.Test;
 public class TestTigrAssemblerWriter {
 	private static final ResourceHelper RESOURCES = new ResourceHelper(TestTigrAssemblerWriter.class);

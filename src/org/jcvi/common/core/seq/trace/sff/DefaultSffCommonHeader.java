@@ -25,9 +25,9 @@ package org.jcvi.common.core.seq.trace.sff;
 
 import java.math.BigInteger;
 
-import org.jcvi.common.core.util.ObjectsUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.ObjectsUtil;
 
 final class DefaultSffCommonHeader implements SffCommonHeader {
 
@@ -145,7 +145,7 @@ final class DefaultSffCommonHeader implements SffCommonHeader {
                 + "]";
     }
     
-    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultSffCommonHeader>{
+    public static class Builder implements org.jcvi.jillion.core.util.Builder<DefaultSffCommonHeader>{
 
         private BigInteger indexOffset;
         private long indexLength;

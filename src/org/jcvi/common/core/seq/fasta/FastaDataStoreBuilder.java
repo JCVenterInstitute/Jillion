@@ -1,9 +1,9 @@
 package org.jcvi.common.core.seq.fasta;
 
 import org.jcvi.common.core.datastore.DataStore;
-import org.jcvi.common.core.util.Builder;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.Symbol;
+import org.jcvi.jillion.core.util.Builder;
 /**
  * {@code FastaDataStoreBuilder} is a {@link Builder}
  * for {@link DataStore}s of {@link FastaRecord}s.

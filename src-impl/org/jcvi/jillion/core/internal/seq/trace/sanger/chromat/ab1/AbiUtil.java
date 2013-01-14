@@ -20,7 +20,7 @@ package org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1;
 
 import java.util.Arrays;
 
-import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.jillion.core.io.IOUtil;
 /**
  * Utility class for working
  * with Abi chromatogram files.

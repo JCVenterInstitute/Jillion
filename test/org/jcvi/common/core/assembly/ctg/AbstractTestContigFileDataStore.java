@@ -33,9 +33,9 @@ import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.ContigDataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.junit.After;
 import org.junit.Test;
 public abstract class AbstractTestContigFileDataStore extends TestAbstractContigFileParser{

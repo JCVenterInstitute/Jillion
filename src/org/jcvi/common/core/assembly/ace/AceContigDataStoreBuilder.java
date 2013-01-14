@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.assembly.ace;
 
-import org.jcvi.common.core.util.Builder;
+import org.jcvi.jillion.core.util.Builder;
 
 /**
  * {@code AceContigDataStoreBuilder} will build up an 

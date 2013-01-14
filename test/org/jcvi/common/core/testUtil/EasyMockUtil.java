@@ -32,7 +32,7 @@ import java.math.BigInteger;
 
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
-import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.jillion.core.io.IOUtil;
 
 /**
  * {@code EasyMockUtil} is utility class

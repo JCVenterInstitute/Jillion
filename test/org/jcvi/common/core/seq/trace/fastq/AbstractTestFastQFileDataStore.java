@@ -37,10 +37,10 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.trace.fastq.FastqQualityCodec;
 import org.jcvi.common.core.seq.trace.fastq.FastqRecord;
 import org.jcvi.common.core.seq.trace.fastq.FastqRecordBuilder;
-import org.jcvi.common.core.util.ObjectsUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.ObjectsUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.junit.Before;
 import org.junit.Test;
 

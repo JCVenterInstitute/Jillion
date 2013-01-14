@@ -26,7 +26,7 @@ import org.jcvi.common.core.io.AllCoreIOUnitTests;
 import org.jcvi.common.core.seq.AllSeqUnitTests;
 import org.jcvi.common.core.symbol.AllGlyphUnitTests;
 import org.jcvi.common.core.testUtil.TestTestUtilSuite;
-import org.jcvi.common.core.util.AllUtilUnitTests;
+import org.jcvi.jillion.core.util.AllUtilUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

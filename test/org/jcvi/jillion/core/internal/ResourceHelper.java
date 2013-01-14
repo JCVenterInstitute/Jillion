@@ -30,7 +30,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 
-import org.jcvi.common.core.io.FileUtil;
+import org.jcvi.jillion.core.io.FileUtil;
 /**
  * {@code ResourceFileServer} is a {@link FileServer}
  * that wraps a Class's classLoader's getResource methods.

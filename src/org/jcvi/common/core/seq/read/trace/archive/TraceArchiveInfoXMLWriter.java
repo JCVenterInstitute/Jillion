@@ -31,8 +31,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 
 public class TraceArchiveInfoXMLWriter implements TraceArchiveInfoWriter {

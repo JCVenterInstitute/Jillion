@@ -21,7 +21,7 @@ package org.jcvi.common.core.assembly.ace;
 
 import java.util.Collection;
 
-import org.jcvi.common.core.util.Builder;
+import org.jcvi.jillion.core.util.Builder;
 
 /**
  * {@code AceTagsBuilder} is a {@link Builder} implementation

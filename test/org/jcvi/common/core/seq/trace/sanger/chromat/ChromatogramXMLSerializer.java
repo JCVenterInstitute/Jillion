@@ -34,7 +34,6 @@ import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.Map;
 
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.read.trace.sanger.chromat.EncodedByteData;
 import org.jcvi.common.core.seq.trace.Trace;
 import org.jcvi.common.core.seq.trace.sanger.Position;
@@ -50,6 +49,7 @@ import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.DefaultChannel;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.DefaultChannelGroup;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFChromatogramImpl;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.ZTRChromatogramImpl;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;

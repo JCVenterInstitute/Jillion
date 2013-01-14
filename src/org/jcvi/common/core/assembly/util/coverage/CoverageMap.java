@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.assembly.util.coverage;
 
-import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.Rangeable;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 /**
  * A {@code CoverageMap}

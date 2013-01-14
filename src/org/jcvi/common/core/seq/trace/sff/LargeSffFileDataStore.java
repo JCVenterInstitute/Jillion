@@ -34,10 +34,10 @@ import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
 import org.jcvi.common.core.datastore.DataStoreFilters;
 import org.jcvi.common.core.datastore.DataStoreUtil;
-import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.internal.datastore.AbstractDataStore;
 import org.jcvi.jillion.core.internal.datastore.DataStoreStreamingIterator;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
  * {@code LargeSffFileDataStore} is a {@link FlowgramDataStore}
  * implementation that doesn't store any read information in memory.

@@ -30,7 +30,6 @@ import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.util.Builder;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.BasicChromatogramBuilder;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.Ab1LocalDate;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.Ab1LocalTime;
@@ -47,6 +46,7 @@ import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.rate.Scan
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.Builder;
 
 /**
  * @author dkatzel

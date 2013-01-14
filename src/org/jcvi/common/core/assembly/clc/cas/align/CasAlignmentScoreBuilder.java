@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.clc.cas.align;
 
-import org.jcvi.common.core.util.Builder;
+import org.jcvi.jillion.core.util.Builder;
 
 public class CasAlignmentScoreBuilder implements Builder<CasAlignmentScore>{
     private int firstInsertion, insertionExtension,

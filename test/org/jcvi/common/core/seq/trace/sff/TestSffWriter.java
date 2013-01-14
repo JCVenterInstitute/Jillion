@@ -23,7 +23,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.trace.sff.DefaultSffCommonHeader;
 import org.jcvi.common.core.seq.trace.sff.DefaultSffReadData;
 import org.jcvi.common.core.seq.trace.sff.DefaultSffReadHeader;
@@ -34,6 +33,7 @@ import org.jcvi.common.core.seq.trace.sff.SffUtil;
 import org.jcvi.common.core.seq.trace.sff.SffWriter;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;

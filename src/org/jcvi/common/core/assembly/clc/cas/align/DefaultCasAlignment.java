@@ -128,7 +128,7 @@ public class DefaultCasAlignment implements CasAlignment {
 
 
 
-    public static final class Builder implements org.jcvi.common.core.util.Builder<DefaultCasAlignment>{
+    public static final class Builder implements org.jcvi.jillion.core.util.Builder<DefaultCasAlignment>{
         private final long contigSequenceId;
         private final long startOfMatch;
         private final boolean readIsReversed;

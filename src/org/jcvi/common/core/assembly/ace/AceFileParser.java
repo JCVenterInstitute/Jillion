@@ -39,9 +39,9 @@ import java.util.regex.Pattern;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor.BeginContigReturnCode;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor.BeginReadReturnCode;
 import org.jcvi.common.core.assembly.ace.AceFileVisitor.EndContigReturnCode;
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.internal.io.TextLineParser;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 /**
  * {@code AceFileParser} contains methods for parsing

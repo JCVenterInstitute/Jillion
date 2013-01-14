@@ -44,7 +44,6 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
 import org.jcvi.common.core.seq.trace.TraceEncoderException;
 import org.jcvi.common.core.seq.trace.sanger.Position;
@@ -59,6 +58,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.ZTRUtil;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.DataFactory;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.RawData;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;

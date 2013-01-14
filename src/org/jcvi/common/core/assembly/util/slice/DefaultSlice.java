@@ -92,7 +92,7 @@ public final class DefaultSlice implements IdedSlice{
         return elements.get(elementId);
     }
     
-    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultSlice>{
+    public static class Builder implements org.jcvi.jillion.core.util.Builder<DefaultSlice>{
         private final Map<String,IdedSliceElement> elements = new LinkedHashMap<String, IdedSliceElement>();
         
         public Builder add(String id, Nucleotide base, PhredQuality quality, Direction dir){

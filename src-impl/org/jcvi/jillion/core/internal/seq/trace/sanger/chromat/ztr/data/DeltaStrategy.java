@@ -27,8 +27,8 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.util.MapUtil;
 import org.jcvi.jillion.core.internal.io.ValueSizeStrategy;
+import org.jcvi.jillion.core.util.MapUtil;
 /**
  * There are several different possible Delta strategies
  * that can be used to compute the delta between 2 consecutive

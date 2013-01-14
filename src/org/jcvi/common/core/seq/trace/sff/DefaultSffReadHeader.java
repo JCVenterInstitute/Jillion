@@ -23,8 +23,8 @@
  */
 package org.jcvi.common.core.seq.trace.sff;
 
-import org.jcvi.common.core.util.ObjectsUtil;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.util.ObjectsUtil;
 
 final class DefaultSffReadHeader implements SffReadHeader {
     private final int numberOfBases;
@@ -105,7 +105,7 @@ final class DefaultSffReadHeader implements SffReadHeader {
     }
 
 
-    public static class Builder implements org.jcvi.common.core.util.Builder<DefaultSffReadHeader>{
+    public static class Builder implements org.jcvi.jillion.core.util.Builder<DefaultSffReadHeader>{
         private  final int numberOfBases;
         private  Range qualityClip;
         private  final Range adapterClip;

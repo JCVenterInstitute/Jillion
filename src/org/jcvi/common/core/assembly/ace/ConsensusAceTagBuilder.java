@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.jcvi.common.core.util.Builder;
 import org.jcvi.jillion.core.Rangeable;
+import org.jcvi.jillion.core.util.Builder;
 /**
  * {@code ConsensusAceTagBuilder} is a Builder
  * that builds a new instance of {@link ConsensusAceTag}.

@@ -30,7 +30,7 @@ import java.util.NoSuchElementException;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.seq.trace.TraceDecoderException;
-import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

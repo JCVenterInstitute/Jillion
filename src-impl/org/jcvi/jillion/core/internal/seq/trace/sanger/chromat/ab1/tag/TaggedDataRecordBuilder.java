@@ -21,7 +21,7 @@ package org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag.rate.DefaultScanRateTaggedDataType;
 
 
-public class TaggedDataRecordBuilder implements org.jcvi.common.core.util.Builder<TaggedDataRecord>{
+public class TaggedDataRecordBuilder implements org.jcvi.jillion.core.util.Builder<TaggedDataRecord>{
 	private final TaggedDataName name;
 	private final long number;
 	private TaggedDataType dataType;

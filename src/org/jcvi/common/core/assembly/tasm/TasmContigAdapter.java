@@ -30,12 +30,12 @@ import java.util.Map;
 
 import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.io.IOUtil;
-import org.jcvi.common.core.util.iter.IteratorUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 /**
  * {@code TasmContigAdapter} is an adapter to convert a 
@@ -216,7 +216,7 @@ public final class TasmContigAdapter implements TasmContig{
 	 * @author dkatzel
 	 *
 	 */
-	public static class Builder implements org.jcvi.common.core.util.Builder<TasmContigAdapter>{
+	public static class Builder implements org.jcvi.jillion.core.util.Builder<TasmContigAdapter>{
 
 		//03/05/10 01:52:31 PM
 		/**

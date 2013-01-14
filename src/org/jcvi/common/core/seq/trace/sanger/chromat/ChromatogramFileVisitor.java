@@ -19,8 +19,8 @@
 
 package org.jcvi.common.core.seq.trace.sanger.chromat;
 
-import org.jcvi.common.core.io.FileVisitor;
 import org.jcvi.common.core.seq.trace.sanger.SangerTraceFileVisitor;
+import org.jcvi.jillion.core.io.FileVisitor;
 
 /**
  * {@code ChromatogramFileVisitor} is a {@link FileVisitor}

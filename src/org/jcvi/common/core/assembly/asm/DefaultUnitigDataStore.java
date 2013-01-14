@@ -29,14 +29,14 @@ import org.jcvi.common.core.datastore.DataStore;
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreUtil;
 import org.jcvi.common.core.seq.trace.frg.FragmentDataStore;
-import org.jcvi.common.core.util.Builder;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 /**
  * @author dkatzel

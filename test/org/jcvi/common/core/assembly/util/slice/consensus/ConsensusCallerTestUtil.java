@@ -38,8 +38,8 @@ import org.jcvi.common.core.assembly.util.slice.IdedSliceElement;
 import org.jcvi.common.core.assembly.util.slice.SliceElement;
 import org.jcvi.common.core.assembly.util.slice.consensus.ConsensusResult;
 import org.jcvi.common.core.assembly.util.slice.consensus.DefaultConsensusResult;
-import org.jcvi.common.core.util.MapValueComparator;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.util.MapValueComparator;
 
 import static org.jcvi.common.core.assembly.util.slice.TestSliceUtil.*;
 import static org.jcvi.jillion.core.Direction.FORWARD;

@@ -21,8 +21,8 @@ package org.jcvi.common.core.assembly;
 
 import java.util.Collection;
 
-import org.jcvi.common.core.util.Builder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.Builder;
 
 /**
  * {@code ContigBuilder} is a {@link Builder}

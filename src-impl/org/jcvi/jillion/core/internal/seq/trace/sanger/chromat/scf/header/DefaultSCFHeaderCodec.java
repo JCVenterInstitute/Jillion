@@ -28,8 +28,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFUtils;
+import org.jcvi.jillion.core.io.IOUtil;
 
 /**
  * <code>DefaultSCFHeaderHandler</code> can both encode

@@ -19,7 +19,7 @@
 
 package org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.tag;
 
-import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.jillion.core.io.IOUtil;
 
 public class DefaultAsciiTaggedDataRecord extends AbstractTaggedDataRecord<StringTaggedDataRecord,String> implements AsciiTaggedDataRecord{
 

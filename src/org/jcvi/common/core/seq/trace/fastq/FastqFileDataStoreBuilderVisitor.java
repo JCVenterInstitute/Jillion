@@ -1,6 +1,6 @@
 package org.jcvi.common.core.seq.trace.fastq;
 
-import org.jcvi.common.core.util.Builder;
+import org.jcvi.jillion.core.util.Builder;
 /**
  * {@code FastqFileDataStoreBuilderVisitor} is a {@link FastqFileVisitor}
  * that will build a {@link FastqDataStore}

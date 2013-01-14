@@ -13,8 +13,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.jcvi.common.core.util.iter.IteratorUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.junit.Before;
 import org.junit.Test;
 @SuppressWarnings("unchecked")

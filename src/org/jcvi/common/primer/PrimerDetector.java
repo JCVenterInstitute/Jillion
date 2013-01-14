@@ -8,17 +8,17 @@ import org.jcvi.common.core.align.pairwise.NucleotidePairwiseSequenceAlignment;
 import org.jcvi.common.core.align.pairwise.NucleotideSmithWatermanAligner;
 import org.jcvi.common.core.align.pairwise.ScoringMatrix;
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.common.core.seq.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
  * {@code PrimerDetector} scans a {@link NucleotideSequence}
  * against a {@link NucleotideSequenceDataStore} of primer/vector sequences

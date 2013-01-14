@@ -8,14 +8,14 @@ import java.util.regex.Matcher;
 
 import org.jcvi.common.core.datastore.DataStoreException;
 import org.jcvi.common.core.datastore.DataStoreFilter;
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.fasta.FastaDataStore;
 import org.jcvi.common.core.seq.fasta.FastaRecord;
 import org.jcvi.common.core.seq.fasta.FastaUtil;
-import org.jcvi.common.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.Symbol;
 import org.jcvi.jillion.core.internal.datastore.DataStoreStreamingIterator;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 public abstract class AbstractLargeFastaFileDataStore<T extends Symbol,S extends Sequence<T>, F extends FastaRecord<T, S>> implements FastaDataStore<T,S,F>{
 

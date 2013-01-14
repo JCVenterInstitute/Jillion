@@ -3,9 +3,9 @@ package org.jcvi.jillion.core;
 
 import java.util.Iterator;
 
-import org.jcvi.common.core.util.Builder;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
+import org.jcvi.jillion.core.util.Builder;
 
 public interface SequenceBuilder <T extends Symbol, S extends Sequence<T>> extends Builder<S> , Iterable<T> {
 	/**

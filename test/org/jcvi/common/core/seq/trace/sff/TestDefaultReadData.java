@@ -27,11 +27,11 @@ import java.util.Arrays;
 
 import org.jcvi.common.core.seq.trace.sff.DefaultSffReadData;
 import org.jcvi.common.core.testUtil.TestUtil;
-import org.jcvi.common.core.util.MathUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.MathUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

@@ -142,7 +142,7 @@ public final class CompactedSlice implements IdedSlice{
         return new CompactedSliceElement(elementId, qual, dirAndNuc);
     }
     
-    public static final class Builder implements org.jcvi.common.core.util.Builder<CompactedSlice>{
+    public static final class Builder implements org.jcvi.jillion.core.util.Builder<CompactedSlice>{
 
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         List<String> ids = new ArrayList<String>();

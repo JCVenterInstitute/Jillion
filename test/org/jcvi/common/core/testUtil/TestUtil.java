@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.Permission;
 
-import org.jcvi.common.core.io.IOUtil;
+import org.jcvi.jillion.core.io.IOUtil;
 
 
 public final class TestUtil {

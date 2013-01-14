@@ -25,7 +25,7 @@ package org.jcvi.common.core.datastore;
 
 import java.io.Closeable;
 
-import org.jcvi.common.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
  * A {@code DataStore} is an interface which represents a 
  * repository of entity records which can be  fetched by

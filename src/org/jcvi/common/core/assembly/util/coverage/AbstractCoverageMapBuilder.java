@@ -31,9 +31,9 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
-import org.jcvi.common.core.util.Builder;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
+import org.jcvi.jillion.core.util.Builder;
 
 
 abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builder<CoverageMap<P>> {

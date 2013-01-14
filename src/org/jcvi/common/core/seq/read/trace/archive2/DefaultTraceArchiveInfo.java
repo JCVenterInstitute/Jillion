@@ -34,7 +34,7 @@ public final class DefaultTraceArchiveInfo implements TraceArchiveInfo{
 		return records.get(traceName);
 	}
 
-	public static class Builder implements org.jcvi.common.core.util.Builder<TraceArchiveInfo>{
+	public static class Builder implements org.jcvi.jillion.core.util.Builder<TraceArchiveInfo>{
 
 		private final Map<String,TraceArchiveRecord> records = new LinkedHashMap<String,TraceArchiveRecord>();
 		private final Map<TraceInfoField, String> commonFields = new LinkedHashMap<TraceInfoField, String>();

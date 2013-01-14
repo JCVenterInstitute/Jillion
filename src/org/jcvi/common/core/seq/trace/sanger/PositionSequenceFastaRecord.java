@@ -2,7 +2,7 @@ package org.jcvi.common.core.seq.trace.sanger;
 
 
 import org.jcvi.common.core.seq.fasta.FastaRecord;
-import org.jcvi.common.core.util.ObjectsUtil;
+import org.jcvi.jillion.core.util.ObjectsUtil;
 
 
 public final class PositionSequenceFastaRecord implements FastaRecord<Position, PositionSequence>{

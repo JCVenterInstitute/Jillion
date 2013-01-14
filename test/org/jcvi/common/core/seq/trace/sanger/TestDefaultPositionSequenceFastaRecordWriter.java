@@ -8,12 +8,12 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 
 import org.jcvi.common.core.datastore.DataStoreException;
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.trace.sanger.DefaultPositionFastaFileDataStore;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceFastaRecord;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceFastaRecordWriter;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceFastaRecordWriterBuilder;
 import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultPositionSequenceFastaRecordWriter {

@@ -21,7 +21,7 @@ package org.jcvi.common.core.assembly.clc.cas;
 
 import java.io.File;
 
-import org.jcvi.common.core.io.FileUtil;
+import org.jcvi.jillion.core.io.FileUtil;
 
 /**
  * @author dkatzel

@@ -27,9 +27,9 @@ package org.jcvi.jillion.core.internal.seq.trace.sanger.chromat;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Channel;
-import org.jcvi.common.core.util.ObjectsUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.util.ObjectsUtil;
 
 
 /**

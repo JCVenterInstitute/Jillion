@@ -32,13 +32,13 @@ import java.util.Map;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequence;
 import org.jcvi.common.core.seq.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.common.core.seq.trace.sanger.chromat.Chromatogram;
-import org.jcvi.common.core.util.Builder;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.BasicChromatogramBuilder;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.PrivateDataImpl;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFChromatogramImpl;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.Builder;
 
 /**
  * {@code SCFChromatogramBuilder} uses the Builder pattern

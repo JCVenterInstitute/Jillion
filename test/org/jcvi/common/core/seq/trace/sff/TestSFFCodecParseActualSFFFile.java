@@ -27,9 +27,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.common.core.io.IOUtil;
 import org.jcvi.common.core.seq.trace.sff.DefaultSffFileDataStore;
 import org.jcvi.common.core.seq.trace.sff.SffDecoderException;
+import org.jcvi.jillion.core.io.IOUtil;
 
 public class TestSFFCodecParseActualSFFFile extends AbstractTestSffFileDataStore{
 
