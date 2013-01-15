@@ -17,21 +17,20 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.jillion.assembly;
+package org.jcvi.jillion.assembly.clc.cas.var;
 
-import org.jcvi.jillion.assembly.agp.AllAgpUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.Map;
+import java.util.Set;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {  
-     TestDefaultScaffold.class,
-     
-     AllAgpUnitTests.class
-    }
-    )
-public class AllScaffoldUnitTests {
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public interface VariationLog {
+
+    Set<String> getContigIds();
+
+    Map<Long, Variation> getVariationsFor(String contigId);
 
 }

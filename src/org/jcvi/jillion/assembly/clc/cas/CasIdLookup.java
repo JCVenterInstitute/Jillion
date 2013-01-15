@@ -16,22 +16,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+/*
+ * Created on Oct 30, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.clc.cas;
 
-package org.jcvi.jillion.assembly;
+import java.io.Closeable;
+import java.io.File;
+import java.util.List;
 
-import org.jcvi.jillion.assembly.agp.AllAgpUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+public interface CasIdLookup extends Closeable{
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {  
-     TestDefaultScaffold.class,
-     
-     AllAgpUnitTests.class
-    }
-    )
-public class AllScaffoldUnitTests {
-
+    
+    String getLookupIdFor(long casReadId);
+    long getCasIdFor(String lookupId);
+    List<File> getFiles();
+    int getNumberOfIds();
+    File getFileFor(String lookupId);
+    File getFileFor(long casReadId);
+    
 }

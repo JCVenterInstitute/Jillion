@@ -16,22 +16,30 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-
-package org.jcvi.jillion.assembly;
-
-import org.jcvi.jillion.assembly.agp.AllAgpUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {  
-     TestDefaultScaffold.class,
-     
-     AllAgpUnitTests.class
-    }
-    )
-public class AllScaffoldUnitTests {
-
+/*
+ * Created on Oct 27, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.clc.cas;
+/**
+ * {@code CasContigDescription} is an interface
+ * which explains details about a contig
+ * (reference).
+ * @author dkatzel
+ *
+ *
+ */
+public interface CasReferenceDescription {
+    /**
+     * Get the length of this reference sequence.
+     * @return the length of this reference as a positive long.
+     */
+    long getContigLength();
+    /**
+     * Is this reference circular.
+     * @return {@code true} if this reference is circular;
+     * {@code false} otherwise.
+     */
+    boolean isCircular();
 }

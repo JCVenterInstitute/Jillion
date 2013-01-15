@@ -17,21 +17,25 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.jillion.assembly;
+package org.jcvi.jillion.assembly.clc.cas.var;
 
-import org.jcvi.jillion.assembly.agp.AllAgpUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+/**
+ * @author dkatzel
+ *
+ *
+ */
 @RunWith(Suite.class)
 @SuiteClasses(
-    {  
-     TestDefaultScaffold.class,
-     
-     AllAgpUnitTests.class
+    {
+        TestDefaultVariation.class,
+        TestVariationType.class,
+        TestDefaultReferenceVariationsDataStore.class
     }
     )
-public class AllScaffoldUnitTests {
+public class AllVarUnitTests {
 
 }

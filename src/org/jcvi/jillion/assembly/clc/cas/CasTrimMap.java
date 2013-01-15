@@ -17,21 +17,24 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.jillion.assembly;
+package org.jcvi.jillion.assembly.clc.cas;
 
-import org.jcvi.jillion.assembly.agp.AllAgpUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.io.File;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {  
-     TestDefaultScaffold.class,
-     
-     AllAgpUnitTests.class
-    }
-    )
-public class AllScaffoldUnitTests {
-
+/**
+ * {@code CasTrimMap} is a mapping from a Trimmed sequence
+ * file to its corresponding untrimmed sequence file.
+ * @author dkatzel
+ *
+ *
+ */
+public interface CasTrimMap {
+    /**
+     * Get the untrimmed sequence file for the given
+     * trimmed file.
+     * @param trimmedFile the file to get the untrimmed version of.
+     * @return a File for the untrimmed version, if no untrimmed
+     * version exists, then returns the trimmedFile given as input.
+     */
+    File getUntrimmedFileFor(File trimmedFile);
 }

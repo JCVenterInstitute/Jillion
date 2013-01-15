@@ -17,21 +17,33 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.jillion.assembly;
+package org.jcvi.jillion.assembly.clc.cas.var;
 
-import org.jcvi.jillion.assembly.agp.AllAgpUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.jillion.core.io.TextFileVisitor;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {  
-     TestDefaultScaffold.class,
-     
-     AllAgpUnitTests.class
-    }
-    )
-public class AllScaffoldUnitTests {
-
+/**
+ * {@code VariationLogFileVisitor} is a {@link TextFileVisitor}
+ * for visiting CLC variation log files produced by the
+ * {@code find_variations} program.
+ * 
+ * @author dkatzel
+ *
+ *
+ */
+public interface VariationLogFileVisitor extends TextFileVisitor{
+	/**
+	 * Visit a new reference contained in the CLC .cas file.
+	 * @param id the reference id in the input to the assembly.
+	 * @return {@code true} if the variations for this
+	 * reference should be read; {@code false}
+	 * otherwise.
+	 */
+    boolean visitReference(String id);
+    /**
+     * Visit a single {@link Variation} entry
+     * that was found for the current reference 
+     * verses the assembled data.
+     * @param variation the variation found; will never be null.
+     */
+    void visitVariation(Variation variation);
 }

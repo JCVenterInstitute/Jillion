@@ -16,22 +16,23 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+/*
+ * Created on Jan 20, 2010
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.clc.cas.align;
 
-package org.jcvi.jillion.assembly;
+import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentType;
+import org.junit.Test;
+import static org.junit.Assert.*;
+public class TestCasAlignmentType {
 
-import org.jcvi.jillion.assembly.agp.AllAgpUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {  
-     TestDefaultScaffold.class,
-     
-     AllAgpUnitTests.class
+    @Test
+    public void valueOf(){
+        assertSame(CasAlignmentType.LOCAL, CasAlignmentType.valueOf((byte)0));
+        assertSame(CasAlignmentType.SEMI_LOCAL, CasAlignmentType.valueOf((byte)1));
+        assertSame(CasAlignmentType.REVERSE_SEMI_LOCAL, CasAlignmentType.valueOf((byte)2));
+        assertSame(CasAlignmentType.GLOBAL, CasAlignmentType.valueOf((byte)3));
     }
-    )
-public class AllScaffoldUnitTests {
-
 }

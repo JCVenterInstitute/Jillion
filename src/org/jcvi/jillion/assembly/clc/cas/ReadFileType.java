@@ -17,21 +17,38 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.jillion.assembly;
+package org.jcvi.jillion.assembly.clc.cas;
 
-import org.jcvi.jillion.assembly.agp.AllAgpUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.io.File;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {  
-     TestDefaultScaffold.class,
-     
-     AllAgpUnitTests.class
+import org.jcvi.jillion.core.io.FileUtil;
+
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public enum ReadFileType {
+
+    SFF,
+    FASTQ,
+    FASTA,
+    SANGER;
+    
+    public static ReadFileType getTypeFromFile(File readFile){
+        return getTypeFromFile(readFile.getName());
     }
-    )
-public class AllScaffoldUnitTests {
-
+    public static ReadFileType getTypeFromFile(String readFileName){
+        String extension =FileUtil.getExtension(readFileName);
+        if("fastq".equals(extension) || readFileName.matches("\\S*/?s_+\\d+_sequence\\.txt")){
+           return FASTQ;
+        }if("sff".equals(extension)){
+            return SFF;
+        }
+        if("fasta".equals(extension) || "fna".equals(extension) || "fa".equals(extension) || "seq".equals(extension)){
+            return FASTA;
+        }
+        return SANGER;
+    }
+    
 }

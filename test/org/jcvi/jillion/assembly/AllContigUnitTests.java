@@ -19,9 +19,9 @@
 
 package org.jcvi.jillion.assembly;
 
-import org.jcvi.common.core.assembly.clc.cas.AllCasUnitTests;
 import org.jcvi.jillion.assembly.ace.AllAceUnitTests;
 import org.jcvi.jillion.assembly.asm.AllAsmUnitTests;
+import org.jcvi.jillion.assembly.clc.cas.AllCasUnitTests;
 import org.jcvi.jillion.assembly.ctg.AllCtgUnitTests;
 import org.jcvi.jillion.assembly.tasm.AllTasmUnitTests;
 import org.junit.runner.RunWith;

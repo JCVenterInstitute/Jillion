@@ -16,22 +16,42 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+/*
+ * Created on Oct 27, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.clc.cas.align;
 
-package org.jcvi.jillion.assembly;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.jcvi.jillion.assembly.agp.AllAgpUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+public enum CasScoreType {
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {  
-     TestDefaultScaffold.class,
-     
-     AllAgpUnitTests.class
+    NO_SCORE((byte)0),
+    BASIC_SCORE((byte)1),
+    ALIGNMENT_SCORE((byte)2),
+    COLOR_SPACE_SCORE((byte)3),
+    ;
+    private static Map<Byte, CasScoreType> MAP;
+    
+    static{
+        MAP = new HashMap<Byte, CasScoreType>();
+        for(CasScoreType type : values()){
+            MAP.put(type.getType(), type);
+        }
     }
-    )
-public class AllScaffoldUnitTests {
-
+    
+    private final byte type; 
+    private CasScoreType(byte type){
+        this.type = type;
+    }
+    public byte getType() {
+        return type;
+    }
+    
+    public static CasScoreType valueOf(byte type){
+        return MAP.get(Byte.valueOf(type));
+    }
+    
 }

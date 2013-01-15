@@ -16,22 +16,33 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+/*
+ * Created on Nov 4, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.clc.cas.read;
 
-package org.jcvi.jillion.assembly;
+public class CasDataStoreFactoryException extends Exception {
 
-import org.jcvi.jillion.assembly.agp.AllAgpUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3969710068574868585L;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {  
-     TestDefaultScaffold.class,
-     
-     AllAgpUnitTests.class
+    /**
+     * @param message
+     * @param cause
+     */
+    public CasDataStoreFactoryException(String message, Throwable cause) {
+        super(message, cause);
     }
-    )
-public class AllScaffoldUnitTests {
+
+    /**
+     * @param message
+     */
+    public CasDataStoreFactoryException(String message) {
+        super(message);
+    }
 
 }

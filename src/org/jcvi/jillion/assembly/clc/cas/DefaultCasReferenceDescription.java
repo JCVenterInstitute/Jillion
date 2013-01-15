@@ -16,22 +16,41 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+/*
+ * Created on Oct 28, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.clc.cas;
 
-package org.jcvi.jillion.assembly;
-
-import org.jcvi.jillion.assembly.agp.AllAgpUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {  
-     TestDefaultScaffold.class,
-     
-     AllAgpUnitTests.class
+public class DefaultCasReferenceDescription implements CasReferenceDescription {
+    private final boolean isCircular;
+    private final long contigLength;
+    
+    
+    /**
+     * @param contigLength
+     * @param isCircular
+     */
+    public DefaultCasReferenceDescription(long contigLength, boolean isCircular) {
+        this.contigLength = contigLength;
+        this.isCircular = isCircular;
     }
-    )
-public class AllScaffoldUnitTests {
+
+    @Override
+    public long getContigLength() {
+        return contigLength;
+    }
+
+    @Override
+    public boolean isCircular() {
+        return isCircular;
+    }
+
+    @Override
+    public String toString() {
+        return "DefaultCasContigDescription [contigLength=" + contigLength
+                + ", isCircular=" + isCircular + "]";
+    }
 
 }
