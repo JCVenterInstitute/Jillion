@@ -34,7 +34,6 @@ import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.Map;
 
-import org.jcvi.common.core.seq.read.trace.sanger.chromat.EncodedByteData;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.BasicChromatogram;
 import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.DefaultChannel;

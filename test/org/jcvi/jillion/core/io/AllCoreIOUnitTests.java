@@ -17,10 +17,8 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.seq;
+package org.jcvi.jillion.core.io;
 
-import org.jcvi.jillion.plate.AllPlateUnitTests;
-import org.jcvi.jillion.trace.AllTraceUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -28,12 +26,29 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-
+        TestIOUtil_closeAndIgnore.class,
+        TestIOUtil_blockingSkip.class,
+        TestIOUtil_readByteArray.class,
+        TestIOUtil_readShortArray.class,
+        TestIOUtil_convertSignedToUnsigned.class,
+        TestIOUtil_UnsignedByteArray.class,
+        TestIOUtil_deleteDir.class,
+        TestIOUtil_convertToUnsignedByteArray.class,
+        TestIOUtil_whenMakingDirectories.class,
+        TestIOUtil_unsignedByteToSignedByte.class,
+        TestIOUtil_unsignedShortToSignedShort.class,
+        TestIOUtil_unsignedIntToSignedInt.class,
+        TestIOUtil_getUnsignedBitAndByteCount.class,
+        TestIOUtil_bitSet.class,
+        TestIOUtil_copy.class,
+        TestIOUtil_toByteArray.class,
+        TestIOUtil_toString.class,
         
-        AllTraceUnitTests.class,
-        AllPlateUnitTests.class
+        
+        TestFileUtil.class,
+        TestMagicNumberInputStream.class
     }
     )
-public class AllSeqUnitTests {
+public class AllCoreIOUnitTests {
 
 }

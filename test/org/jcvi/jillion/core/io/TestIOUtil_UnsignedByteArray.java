@@ -17,45 +17,43 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /*
- * Created on Oct 7, 2008
+ * Created on May 27, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.io;
+package org.jcvi.jillion.core.io;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
-public class TestIOUtil_readByteArray {
+public class TestIOUtil_UnsignedByteArray {
 
-    byte[] array = new byte[]{20,15,30,40};
-
+    private short[] expectedShortArray = new short[]{255, 200, 0, 14, 128,56,254,127};
+   
     @Test
-    public void valid() throws IOException{
-        InputStream in = new ByteArrayInputStream(array);
-        byte[] actualArray = IOUtil.toByteArray(in, array.length);
-        assertTrue(Arrays.equals(array, actualArray));
-    }
-    @Test
-    public void didNotReadEnough() throws IOException{
-        InputStream mockInputStream = createMock(InputStream.class);
-        expect(mockInputStream.read(isA(byte[].class), eq(0), eq(array.length+1))).andReturn(array.length);
-        expect(mockInputStream.read(isA(byte[].class), eq(array.length), eq(1))).andReturn(-1);
-        replay(mockInputStream);
-        try {
-            IOUtil.toByteArray(mockInputStream, array.length+1);
-            fail("if did not read exected length should throw IOException");
-        } catch (IOException e) {
-            String expectedMessage = "end of file after only "
-                + array.length + " bytes read (expected "+ (array.length+1) +")";
-            assertEquals(expectedMessage, e.getMessage());
+    public void read() throws IOException{
+        ByteBuffer buf = ByteBuffer.allocate(expectedShortArray.length);
+        for(int i=0; i<expectedShortArray.length; i++){
+            buf.put((byte) expectedShortArray[i]);
         }
-
+        short[] actualShortArray = IOUtil.readUnsignedByteArray(new ByteArrayInputStream(buf.array()), expectedShortArray.length);
+        assertTrue(Arrays.equals(expectedShortArray, actualShortArray));
+    }
+    
+    @Test
+    public void put(){
+        ByteBuffer mockBuffer = createMock(ByteBuffer.class);
+        for(int i=0; i<expectedShortArray.length; i++){
+            expect(mockBuffer.put((byte) expectedShortArray[i])).andReturn(mockBuffer);
+        }
+        replay(mockBuffer);
+        IOUtil.putUnsignedByteArray(mockBuffer, expectedShortArray);
+        verify(mockBuffer);
     }
 }

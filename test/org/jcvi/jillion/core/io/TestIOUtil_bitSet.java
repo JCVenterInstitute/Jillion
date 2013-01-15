@@ -1,4 +1,4 @@
-package org.jcvi.common.core.io;
+package org.jcvi.jillion.core.io;
 
 import java.math.BigInteger;
 import java.util.BitSet;

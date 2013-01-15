@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.seq.read.trace.sanger.chromat;
+package org.jcvi.jillion.trace.sanger.chromat;
 
 import java.util.Arrays;
 

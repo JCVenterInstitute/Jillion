@@ -19,12 +19,12 @@
 
 package org.jcvi.jillion.trace;
 
-import org.jcvi.common.core.seq.read.trace.pyro.All454UnitTests;
 import org.jcvi.jillion.trace.archive.AllTraceArchiveUnitTests;
 import org.jcvi.jillion.trace.archive2.AllTraceArchive2UnitTests;
 import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
 import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
 import org.jcvi.jillion.trace.sanger.AllSangerTraceUnitTests;
+import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -36,7 +36,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestTraceNucleotideDataStoreAdapter.class,
         
         AllFastqUnitTests.class,
-        All454UnitTests.class,
+        AllSFFUnitTests.class,
         AllSangerTraceUnitTests.class,
         AllFrgUnitTests.class  ,
         AllTraceArchiveUnitTests.class,
