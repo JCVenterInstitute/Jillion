@@ -17,23 +17,26 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.seq;
+package org.jcvi.jillion.plate;
 
-import org.jcvi.jillion.plate.AllPlateUnitTests;
-import org.jcvi.jillion.trace.AllTraceUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+/**
+ * @author dkatzel
+ *
+ *
+ */
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-
-        
-        AllTraceUnitTests.class,
-        AllPlateUnitTests.class
+        TestWellFactories.class,
+        TestWell.class,
+        TestWellQuadrant.class,
+        TestPlatePopulator.class
     }
     )
-public class AllSeqUnitTests {
+public class AllPlateUnitTests {
 
 }

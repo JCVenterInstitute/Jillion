@@ -16,34 +16,53 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Mar 30, 2009
- *
+
+package org.jcvi.jillion.plate;
+
+/**
+ * {@code PlateFormat} is the the format for the
+ * plate wells used for sanger based sequencing.
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.jillion.trace.sanger;
+public enum PlateFormat {
+    /**
+     * A 384 well plate.
+     */
+    _384(384,24),
+    /**
+     * A 96 well plate.
+     */
+    _96(96,12);
+    private final int numberOfWells;
 
-import org.jcvi.jillion.trace.sanger.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.sanger.phd.AllPhdUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+    private final int numberOfColumns;
+    private final int numberOfRows;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-    	TestPosition.class,
-    	TestDefaultPositionCodec.class,
-    	TestPositionSequenceBuilder.class,
-    	TestDefaultPositionFastaFileDataStore.class,
-    	TestDefaultPositionSequenceFastaRecordWriter.class,
-    	
-        AllPhdUnitTests.class,
-        AllChromatogramUnitTests.class,
-        TestSangerTraceParser.class
-        
+    /**
+     * @param numberOfColumns
+     */
+    PlateFormat(int numberOfWells,int numberOfColumns) {
+        this.numberOfWells = numberOfWells;
+        this.numberOfColumns = numberOfColumns;
+        this.numberOfRows =  numberOfWells/numberOfColumns;
     }
-    )
-public class AllSangerTraceUnitTests {
 
+    public int getNumberOfWells() {
+        return numberOfWells;
+    }
+
+    public int getNumberOfColumns() {
+        return numberOfColumns;
+    }
+
+    public int getNumberOfRows() {
+        return numberOfRows;
+    } 
+    
+    public int getNumberOfWellsPerQuadrant(){
+        return numberOfWells/4;
+    }
+    
 }
