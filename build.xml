@@ -2,7 +2,7 @@
 <project name="Jillion" default="unit.tests" basedir=".">
 	
 	<property name="version" value="4.0" />
-	<property name="project-name" value="JCVI-JavaCommon" />
+	<property name="project-name" value="Jillion" />
 	<property name="bin" value ="bin_ant"/>
 	<property name="reports" value ="reports"/>
 	<property name="src" value ="src"/>
@@ -242,7 +242,7 @@
 		</checkstyle>
 		</target>
 	
-	<target name="testability" depends="jar-include-dependencies">
+	<target name="testability" depends="jar">
 		<testability filter= "org.jcvi" print ="xml" resultfile="testabilityexplorer.xml">
 
 			<classpath>
@@ -252,31 +252,10 @@
 		    </classpath>
 	   </testability>	   
 	</target>
-	<target name="jar-include-dependencies" description="jar of all class files AND all 3rd party dependent classes" depends= "revision, bin">
+	
+	<target name="jar" description="jar of all source files" depends= "revision, source.only.bin">
 		
-		    <jarjar jarfile="${project-name}-all-${version}-r${revision}.jar">
-		        <fileset dir="${bin}"/>
-		    	
-		    	
-		    	
-		    	
-		    	<zipfileset src="${command-lib}/commons-cli-1.2.jar"/>
-		    	<zipfileset src="${command-lib}/drmaa.jar"/>
-		    	
-		    	<zipfileset src="${test-lib}/easymock-3.1.jar"/>
-		    	<zipfileset src="${test-lib}/objenesis-1.2.jar"/>		    	
-		    	<zipfileset src="${test-lib}/cglib-nodep.jar"/>	
-		    	<zipfileset src="${test-lib}/junit-4.10.jar"/>
-		    	<zipfileset src="${test-lib}/joda-time-2.0.jar"/>
-		    	
-		    	<manifest>
-		    		<attribute name ="Sealed" value ="true"/>
-		    	</manifest>
-		    </jarjar>
-	</target>
-	<target name="jar-src-core" description="jar of all source files" depends= "revision, source.only.bin">
-		
-		    <jarjar jarfile="${project-name}-core-${version}-r${revision}.jar">
+		    <jarjar jarfile="${project-name}-${version}-r${revision}.jar">
 		        <fileset dir="${bin}"/>	
 		    	<manifest>
 		    		<attribute name ="Sealed" value ="true"/>
@@ -291,49 +270,6 @@
 
 	</target>
 	
-	<target name="jar-module-core" description="jar of all core classes" depends= "revision, source.only.bin">
-		
-		    <jar jarfile="${project-name}-module-core-${version}-r${revision}.jar">
-		        <fileset dir="${bin}/org/jcvi/"/>	
-		    	<manifest>
-		    		<attribute name ="Sealed" value ="true"/>
-		    	</manifest>
-		    </jar>
-	</target>
-	<target name="jar-module-annotation" description="jar of all annotation classes (experimental)" depends= "revision, source.only.bin">
-		
-		    <jar jarfile="${project-name}-module-annotation-${version}-r${revision}.jar">
-		        <fileset dir="${bin}/org/jcvi/common/annotation"/>	
-		    	<manifest>
-		    		<attribute name ="Sealed" value ="true"/>
-		    	</manifest>
-		    </jar>
-	</target>
-	<target name="jar-module-net" description="jar of all net related classes" depends= "revision, source.only.bin">
-			
-		    <jar jarfile="${project-name}-module-annotation-${version}-r${revision}.jar">
-		        <fileset dir="${bin}/org/jcvi/common/net"/>	
-		    	<manifest>
-		    		<attribute name ="Sealed" value ="true"/>
-		    	</manifest>
-		    </jar>
-	</target>
-	<target name="jar-module-io" description="jar of all non-core I/O classes" depends= "revision, source.only.bin">
-				
-		    <jar jarfile="${project-name}-module-annotation-${version}-r${revision}.jar">
-		        <fileset dir="${bin}/org/jcvi/common/io"/>	
-		    	<manifest>
-		    		<attribute name ="Sealed" value ="true"/>
-		    	</manifest>
-		    </jar>
-	</target>
-	
-	<target name ="release" description = "creates jars for all modules" depends = "unit.tests, 
-		jar-module-core,
-		jar-module-net,
-		jar-module-io,
-		jar-module-annotation"
-	/>
 
 	<target name="jdepend" description= "runs JDepend on source" depends = "source.only.bin">
 
