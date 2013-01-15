@@ -23,7 +23,6 @@
  */
 package org.jcvi;
 
-import org.jcvi.common.annotation.AllAnnotationUnitTests;
 import org.jcvi.jillion.core.AllCoreUnitTests;
 import org.jcvi.jillion.fasta.AllFastaUnitTests;
 import org.jcvi.jillion.plate.AllPlateUnitTests;
@@ -37,8 +36,7 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         
         
-    	 AllCoreUnitTests.class,
-         AllAnnotationUnitTests.class,
+    	 AllCoreUnitTests.class,         
          AllPrimerUnitTests.class,
         AllPlateUnitTests.class,
         AllFastaUnitTests.class
