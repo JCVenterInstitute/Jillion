@@ -17,15 +17,8 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.jillion.core;
+package org.jcvi.jillion.align.blast;
 
-import org.jcvi.jillion.align.AllAlignUnitTests;
-import org.jcvi.jillion.assembly.AllAssemblyUnitTests;
-import org.jcvi.jillion.core.datastore.AllDataStoreUnitTests;
-import org.jcvi.jillion.core.io.AllCoreIOUnitTests;
-import org.jcvi.jillion.core.testUtil.TestTestUtilSuite;
-import org.jcvi.jillion.core.util.AllUtilUnitTests;
-import org.jcvi.jillion.trace.AllTraceUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -33,22 +26,10 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestDirection.class,
-        AllRangeTests.class,
-        
-        
-        TestTestUtilSuite.class,
-        AllUtilUnitTests.class,
-        AllCoreIOUnitTests.class,
-        AllSequenceUnitTests.class,
-        AllTraceUnitTests.class,
-       
-        AllDataStoreUnitTests.class,
-        AllAssemblyUnitTests.class,
-        AllAlignUnitTests.class
-        
+        TestBlastHit.class,
+        TestTabularBlastParser.class
     }
     )
-public class AllCoreUnitTests {
+public class AllBlastUnitTests {
 
 }

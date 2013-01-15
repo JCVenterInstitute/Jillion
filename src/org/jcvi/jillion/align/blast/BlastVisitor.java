@@ -16,33 +16,17 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 4, 2008
- *
+
+package org.jcvi.jillion.align.blast;
+
+import org.jcvi.jillion.core.io.TextFileVisitor;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi;
+public interface BlastVisitor extends TextFileVisitor{
 
-import org.jcvi.common.annotation.AllAnnotationUnitTests;
-import org.jcvi.jillion.core.AllCoreUnitTests;
-import org.jcvi.jillion.fasta.AllFastaUnitTests;
-import org.jcvi.jillion.plate.AllPlateUnitTests;
-import org.jcvi.jillion.primer.AllPrimerUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        
-        
-    	 AllCoreUnitTests.class,
-         AllAnnotationUnitTests.class,
-         AllPrimerUnitTests.class,
-        AllPlateUnitTests.class,
-        AllFastaUnitTests.class
-    }
-)
-public class AllUnitTests {
+    void visitHsp(Hsp hsp);
 }
