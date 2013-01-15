@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright 2010 J. Craig Venter Institute
  * 
- * 	This file is part of JCVI Java Common
+ *  This file is part of JCVI Java Common
  * 
  *     JCVI Java Common is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -16,22 +16,9 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-
-package org.jcvi.jillion.assembly;
-
-import org.jcvi.jillion.assembly.agp.AllAgpUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {  
-     TestDefaultScaffold.class,
-     
-     AllAgpUnitTests.class
-    }
-    )
-public class AllScaffoldUnitTests {
-
-}
+/**
+ * This package contains classes for handling contigs stored in CLC Bio's
+ * .cas file format. 
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.clc.cas;

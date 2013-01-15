@@ -16,22 +16,31 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+package org.jcvi.jillion.assembly.agp;
 
-package org.jcvi.jillion.assembly;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.io.TextFileVisitor;
 
-import org.jcvi.jillion.assembly.agp.AllAgpUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {  
-     TestDefaultScaffold.class,
-     
-     AllAgpUnitTests.class
-    }
-    )
-public class AllScaffoldUnitTests {
-
+/**
+ * User: aresnick
+ * Date: Sep 9, 2009
+ * Time: 2:36:28 PM
+ * <p/>
+ * $HeadURL$
+ * $LastChangedRevision$
+ * $LastChangedBy$
+ * $LastChangedDate$
+ * <p/>
+ * Description:
+ */
+public interface AgpFileVisitor extends TextFileVisitor {
+    /**
+     *
+     * @param scaffoldId
+     * @param contigRange
+     * @param contigId
+     * @param dir
+     */
+    void visitContigEntry(String scaffoldId, Range contigRange, String contigId, Direction dir);
 }

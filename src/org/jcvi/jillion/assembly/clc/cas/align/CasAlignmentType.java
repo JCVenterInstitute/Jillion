@@ -16,22 +16,43 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+/*
+ * Created on Oct 27, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.clc.cas.align;
 
-package org.jcvi.jillion.assembly;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.jcvi.jillion.assembly.agp.AllAgpUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+public enum CasAlignmentType {
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {  
-     TestDefaultScaffold.class,
-     
-     AllAgpUnitTests.class
+    LOCAL((byte) 0),
+    SEMI_LOCAL((byte)1),
+    REVERSE_SEMI_LOCAL((byte)2),
+    GLOBAL((byte)3)
+    ;
+    
+    private static Map<Byte, CasAlignmentType> MAP;
+    
+    static{
+        MAP = new HashMap<Byte, CasAlignmentType>();
+        for(CasAlignmentType type : values()){
+            MAP.put(type.getValue(), type);
+        }
     }
-    )
-public class AllScaffoldUnitTests {
+    private final byte value;
+    
+    private CasAlignmentType(byte value){
+        this.value =value;
+    }
 
+    public byte getValue() {
+        return value;
+    }
+    
+    public static CasAlignmentType valueOf(byte value){
+        return MAP.get(Byte.valueOf(value));
+    }
 }

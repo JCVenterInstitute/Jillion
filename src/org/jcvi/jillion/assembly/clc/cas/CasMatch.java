@@ -16,22 +16,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+/*
+ * Created on Oct 27, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.clc.cas;
 
-package org.jcvi.jillion.assembly;
 
-import org.jcvi.jillion.assembly.agp.AllAgpUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.jillion.assembly.clc.cas.align.CasAlignment;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {  
-     TestDefaultScaffold.class,
-     
-     AllAgpUnitTests.class
-    }
-    )
-public class AllScaffoldUnitTests {
+public interface CasMatch {
 
+    boolean matchReported();
+    boolean readHasMutlipleMatches();
+    boolean hasMultipleAlignments();
+    boolean readIsPartOfAPair();
+    CasAlignment getChosenAlignment();
+    long getNumberOfMatches();
+    long getNumberOfReportedAlignments();
+    int getScore();
+    
 }

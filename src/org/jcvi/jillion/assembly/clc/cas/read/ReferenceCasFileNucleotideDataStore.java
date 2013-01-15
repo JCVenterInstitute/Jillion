@@ -16,22 +16,35 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+/*
+ * Created on Jan 14, 2010
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.clc.cas.read;
 
-package org.jcvi.jillion.assembly;
+import org.jcvi.jillion.assembly.clc.cas.CasFileInfo;
+import org.jcvi.jillion.assembly.clc.cas.CasMatch;
 
-import org.jcvi.jillion.assembly.agp.AllAgpUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+public class ReferenceCasFileNucleotideDataStore  extends AbstractCasFileNucleotideDataStore {
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {  
-     TestDefaultScaffold.class,
-     
-     AllAgpUnitTests.class
+    public ReferenceCasFileNucleotideDataStore(
+            CasDataStoreFactory casDataStoreFactory) {
+        super(casDataStoreFactory);
     }
-    )
-public class AllScaffoldUnitTests {
 
+
+    @Override
+    public synchronized void visitReferenceFileInfo(CasFileInfo contigFileInfo) {
+        super.visitReferenceFileInfo(contigFileInfo);
+        loadNucleotidesFrom(contigFileInfo);
+    }
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     protected void visitMatch(CasMatch match, long readCounter) {
+         // no-op
+         
+     }
 }

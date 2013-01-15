@@ -17,21 +17,34 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.jillion.assembly;
+package org.jcvi.jillion.assembly.clc.cas;
 
-import org.jcvi.jillion.assembly.agp.AllAgpUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.io.File;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {  
-     TestDefaultScaffold.class,
-     
-     AllAgpUnitTests.class
+/**
+ * {@code EmptyCasTrimMap} is a {@link CasTrimMap}
+ * implementation that does not have any
+ * mappings.
+ * @author dkatzel
+ *
+ *
+ */
+public final class EmptyCasTrimMap implements CasTrimMap{
+
+    private static EmptyCasTrimMap INSTANCE = new EmptyCasTrimMap();
+    
+    public static EmptyCasTrimMap getInstance(){
+        return INSTANCE;
     }
-    )
-public class AllScaffoldUnitTests {
+    private EmptyCasTrimMap(){}
+    /**
+     * Always returns trimmedFile.
+     * @param trimmedFile the trimmed file.
+     * @return the same trimmedFile as given.
+     */
+    @Override
+    public File getUntrimmedFileFor(File trimmedFile) {
+        return trimmedFile;
+    }
 
 }
