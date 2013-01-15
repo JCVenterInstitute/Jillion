@@ -32,9 +32,9 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.assembly.AssemblyUtil;
-import org.jcvi.common.core.assembly.Contig;
+import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.AssemblyUtil;
+import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
 import org.jcvi.jillion.core.io.IOUtil;

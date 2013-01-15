@@ -23,10 +23,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.easymock.EasyMockSupport;
-import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.assembly.ReadInfo;
-import org.jcvi.common.core.assembly.ReadInfo;
 import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
+import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.ReadInfo;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.PhredQuality;

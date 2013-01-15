@@ -23,9 +23,9 @@
  */
 package org.jcvi.jillion.fasta.qual;
 
-import org.jcvi.common.core.testUtil.TestUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordBuilder;
 import org.junit.Test;

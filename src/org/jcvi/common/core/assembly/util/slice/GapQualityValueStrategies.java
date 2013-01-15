@@ -19,8 +19,8 @@
 
 package org.jcvi.common.core.assembly.util.slice;
 
-import org.jcvi.common.core.assembly.AssemblyUtil;
-import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.AssemblyUtil;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;

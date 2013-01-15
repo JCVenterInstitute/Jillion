@@ -3,9 +3,9 @@ package org.jcvi.common.core.assembly.util.coverage;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.DefaultContig;
+import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.Contig;
+import org.jcvi.jillion.assembly.DefaultContig;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;

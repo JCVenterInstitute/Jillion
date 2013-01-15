@@ -3,10 +3,10 @@ package org.jcvi.common.examples;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.common.core.assembly.ace.AbstractAceFileVisitor;
-import org.jcvi.common.core.assembly.ace.AceFileParser;
-import org.jcvi.common.core.assembly.ace.AceFileVisitor;
-import org.jcvi.common.core.assembly.ace.PhdInfo;
+import org.jcvi.jillion.assembly.ace.AbstractAceFileVisitor;
+import org.jcvi.jillion.assembly.ace.AceFileParser;
+import org.jcvi.jillion.assembly.ace.AceFileVisitor;
+import org.jcvi.jillion.assembly.ace.PhdInfo;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;

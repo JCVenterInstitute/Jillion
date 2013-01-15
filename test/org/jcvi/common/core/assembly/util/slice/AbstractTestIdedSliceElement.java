@@ -20,10 +20,10 @@
 package org.jcvi.common.core.assembly.util.slice;
 
 import org.jcvi.common.core.assembly.util.slice.SliceElement;
-import org.jcvi.common.core.testUtil.TestUtil;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

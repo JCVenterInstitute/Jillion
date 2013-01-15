@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.jcvi.common.core.testUtil.TestUtil;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.DefaultQualitySymbolCodec;
 import org.jcvi.jillion.core.qual.EncodedQualitySequence;
@@ -12,6 +11,7 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.RunLengthEncodedQualityCodec;
 import org.jcvi.jillion.core.qual.RunLengthEncodedQualitySequence;
+import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestRunLengthEncodedQualitySequence {

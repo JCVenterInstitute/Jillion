@@ -25,10 +25,10 @@ package org.jcvi.common.core.assembly.scaffold.agp;
 
 import java.io.IOException;
 
-import org.jcvi.common.core.assembly.DefaultScaffold;
-import org.jcvi.common.core.assembly.Scaffold;
-import org.jcvi.common.core.assembly.ScaffoldDataStore;
 import org.jcvi.common.core.assembly.scaffold.agp.AgpParser;
+import org.jcvi.jillion.assembly.DefaultScaffold;
+import org.jcvi.jillion.assembly.Scaffold;
+import org.jcvi.jillion.assembly.ScaffoldDataStore;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;

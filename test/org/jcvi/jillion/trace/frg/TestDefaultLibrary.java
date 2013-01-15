@@ -25,7 +25,7 @@ package org.jcvi.jillion.trace.frg;
 
 import static org.junit.Assert.*;
 
-import org.jcvi.common.core.testUtil.TestUtil;
+import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.trace.frg.DefaultLibrary;
 import org.jcvi.jillion.trace.frg.Distance;
 import org.jcvi.jillion.trace.frg.Library;

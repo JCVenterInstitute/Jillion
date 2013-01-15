@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.assembly.util;
 
-import org.jcvi.common.core.assembly.AssemblyUtil;
+import org.jcvi.jillion.assembly.AssemblyUtil;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;

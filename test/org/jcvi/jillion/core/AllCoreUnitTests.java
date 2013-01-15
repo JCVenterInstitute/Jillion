@@ -20,11 +20,11 @@
 package org.jcvi.jillion.core;
 
 import org.jcvi.common.core.align.AllAlignUnitTests;
-import org.jcvi.common.core.assembly.AllAssemblyUnitTests;
 import org.jcvi.common.core.io.AllCoreIOUnitTests;
 import org.jcvi.common.core.seq.AllSeqUnitTests;
-import org.jcvi.common.core.testUtil.TestTestUtilSuite;
+import org.jcvi.jillion.assembly.AllAssemblyUnitTests;
 import org.jcvi.jillion.core.datastore.AllDataStoreUnitTests;
+import org.jcvi.jillion.core.testUtil.TestTestUtilSuite;
 import org.jcvi.jillion.core.util.AllUtilUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

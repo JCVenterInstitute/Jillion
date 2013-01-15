@@ -32,8 +32,8 @@ import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.common.core.assembly.util.coverage.DefaultCoverageRegion;
-import org.jcvi.common.core.testUtil.TestUtil;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultCoverageMap {

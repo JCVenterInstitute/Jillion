@@ -21,10 +21,10 @@ package org.jcvi.common.core.align.blast;
 
 import java.math.BigDecimal;
 
-import org.jcvi.common.core.testUtil.TestUtil;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
