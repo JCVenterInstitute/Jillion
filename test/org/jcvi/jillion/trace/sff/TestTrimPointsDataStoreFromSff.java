@@ -2,7 +2,7 @@ package org.jcvi.jillion.trace.sff;
 
 import java.io.IOException;
 
-import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
+import org.jcvi.jillion.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.trace.sff.SffUtil;
 import org.junit.Test;

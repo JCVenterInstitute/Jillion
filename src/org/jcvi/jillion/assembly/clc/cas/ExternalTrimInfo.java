@@ -19,8 +19,8 @@
 
 package org.jcvi.jillion.assembly.clc.cas;
 
-import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStoreUtil;
-import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
+import org.jcvi.jillion.assembly.util.trim.TrimPointsDataStore;
+import org.jcvi.jillion.assembly.util.trim.TrimPointsDataStoreUtil;
 
 /**
  * @author dkatzel

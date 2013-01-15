@@ -34,15 +34,15 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
-import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.jillion.assembly.AssemblyUtil;
 import org.jcvi.jillion.assembly.ace.AceAssembledReadBuilder;
 import org.jcvi.jillion.assembly.ace.AceContig;
 import org.jcvi.jillion.assembly.ace.AceContigBuilder;
 import org.jcvi.jillion.assembly.ace.ConsensusAceTag;
 import org.jcvi.jillion.assembly.ace.PhdInfo;
+import org.jcvi.jillion.assembly.util.coverage.CoverageMap;
+import org.jcvi.jillion.assembly.util.coverage.CoverageMapFactory;
+import org.jcvi.jillion.assembly.util.coverage.CoverageRegion;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.Range.CoordinateSystem;

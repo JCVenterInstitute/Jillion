@@ -22,7 +22,7 @@ package org.jcvi.jillion.assembly.clc.cas;
 import java.io.File;
 import java.util.List;
 
-import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
+import org.jcvi.jillion.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 /**
