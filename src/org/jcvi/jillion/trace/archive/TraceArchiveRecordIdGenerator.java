@@ -16,24 +16,15 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+/*
+ * Created on Jun 25, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.trace.archive;
 
-package org.jcvi.common.core.seq;
 
-import org.jcvi.jillion.plate.AllPlateUnitTests;
-import org.jcvi.jillion.trace.AllTraceUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+public interface TraceArchiveRecordIdGenerator{
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-
-        
-        AllTraceUnitTests.class,
-        AllPlateUnitTests.class
-    }
-    )
-public class AllSeqUnitTests {
-
+	String generateIdFor(TraceArchiveRecord input);
 }

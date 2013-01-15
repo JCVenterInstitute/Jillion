@@ -19,8 +19,9 @@
 
 package org.jcvi.jillion.trace;
 
-import org.jcvi.common.core.seq.read.trace.archive2.AllTraceArchive2UnitTests;
 import org.jcvi.common.core.seq.read.trace.pyro.All454UnitTests;
+import org.jcvi.jillion.trace.archive.AllTraceArchiveUnitTests;
+import org.jcvi.jillion.trace.archive2.AllTraceArchive2UnitTests;
 import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
 import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
 import org.jcvi.jillion.trace.sanger.AllSangerTraceUnitTests;
@@ -38,7 +39,9 @@ import org.junit.runners.Suite.SuiteClasses;
         All454UnitTests.class,
         AllSangerTraceUnitTests.class,
         AllFrgUnitTests.class  ,
+        AllTraceArchiveUnitTests.class,
         AllTraceArchive2UnitTests.class
+        
    
     }
     )

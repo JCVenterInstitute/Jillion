@@ -16,11 +16,13 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+/*
+ * Created on Jun 26, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.trace.archive2;
 
-package org.jcvi.common.core.seq;
-
-import org.jcvi.jillion.plate.AllPlateUnitTests;
-import org.jcvi.jillion.trace.AllTraceUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -28,12 +30,12 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-
-        
-        AllTraceUnitTests.class,
-        AllPlateUnitTests.class
+        TestDefaultTraceArchiveRecord.class,
+        TestDefaultTraceArchiveRecordBuilder.class,
+        TestXmlTraceInfoFactory.class,
+        TestTraceArchiveWriter.class
     }
     )
-public class AllSeqUnitTests {
+public class AllTraceArchive2UnitTests {
 
 }

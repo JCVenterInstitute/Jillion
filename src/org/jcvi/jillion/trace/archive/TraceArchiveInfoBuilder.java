@@ -16,24 +16,28 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+/*
+ * Created on Jun 25, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.trace.archive;
 
-package org.jcvi.common.core.seq;
+import java.util.Collection;
+import java.util.Map;
 
-import org.jcvi.jillion.plate.AllPlateUnitTests;
-import org.jcvi.jillion.trace.AllTraceUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+public interface TraceArchiveInfoBuilder<T extends TraceArchiveRecord>{
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-
-        
-        AllTraceUnitTests.class,
-        AllPlateUnitTests.class
-    }
-    )
-public class AllSeqUnitTests {
-
+    TraceArchiveInfoBuilder put(String id, T record);
+    
+    TraceArchiveInfoBuilder putAll(Map<String, T> map);
+    
+    TraceArchiveInfoBuilder remove(String id);
+    
+    TraceArchiveInfoBuilder removeAll(Collection<String> id);
+    
+    Map<String, T> getTraceArchiveRecordMap();
+    
+    TraceArchiveInfo build();
+    
 }
