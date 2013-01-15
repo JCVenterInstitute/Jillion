@@ -17,9 +17,7 @@
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package org.jcvi.common.core.io;
-
-import static org.junit.Assert.assertEquals;
+package org.jcvi.jillion.core.io;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,43 +28,43 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
+import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
  *
  */
 @RunWith(Parameterized.class)
-public class TestIOUtil_unsignedShortToSignedShort {
+public class TestIOUtil_unsignedByteToSignedByte {
 
     @Parameters
     public static Collection<?> data(){
         List<Object[]> data = new ArrayList<Object[]>();
-        data.add(new Object[]{0, (short)0});
-        data.add(new Object[]{50, (short)50});
-        data.add(new Object[]{100, (short)100});
-        data.add(new Object[]{Short.MAX_VALUE+1, Short.MIN_VALUE});
-        data.add(new Object[]{Short.MAX_VALUE+4, (short)(Short.MIN_VALUE+3)});
-        data.add(new Object[]{Short.MAX_VALUE+100, (short)(Short.MIN_VALUE+99)});
-        data.add(new Object[]{Byte.MAX_VALUE, (short)Byte.MAX_VALUE});
-        data.add(new Object[]{Short.MAX_VALUE+Byte.MIN_VALUE, (short)(Short.MIN_VALUE+Byte.MIN_VALUE-1)});
-        
+        data.add(new Object[]{0, (byte)0});
+        data.add(new Object[]{50, (byte)50});
+        data.add(new Object[]{100, (byte)100});
+        data.add(new Object[]{255, (byte)-1});
+        data.add(new Object[]{252, (byte)-4});
+        data.add(new Object[]{156, (byte)-100});
+        data.add(new Object[]{Byte.MAX_VALUE, Byte.MAX_VALUE});
+        data.add(new Object[]{128, Byte.MIN_VALUE});
         return data;
     }
     
     private final int unsigned;
-    private final short signed;
+    private final byte signed;
     /**
      * @param unsigned
      * @param signed
      */
-    public TestIOUtil_unsignedShortToSignedShort(int unsigned, short signed) {
+    public TestIOUtil_unsignedByteToSignedByte(int unsigned, byte signed) {
         this.unsigned = unsigned;
         this.signed = signed;
     }
     
     @Test
     public void convertUnsignedToSigned(){
-        assertEquals(IOUtil.toSignedShort(unsigned), signed);
+        assertEquals(IOUtil.toSignedByte(unsigned), signed);
     }
+    
 }

@@ -1,4 +1,4 @@
-package org.jcvi.common.core.io;
+package org.jcvi.jillion.core.io;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

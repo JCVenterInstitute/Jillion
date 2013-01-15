@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.common.core.io;
+package org.jcvi.jillion.core.io;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.junit.Test;
