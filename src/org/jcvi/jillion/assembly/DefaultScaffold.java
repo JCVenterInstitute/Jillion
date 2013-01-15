@@ -35,8 +35,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
-import org.jcvi.common.core.assembly.util.coverage.CoverageMapFactory;
+import org.jcvi.jillion.assembly.util.coverage.CoverageMap;
+import org.jcvi.jillion.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;

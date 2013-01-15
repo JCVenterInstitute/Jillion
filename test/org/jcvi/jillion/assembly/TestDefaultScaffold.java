@@ -26,12 +26,12 @@ package org.jcvi.jillion.assembly;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.Assert;
-import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
 import org.jcvi.jillion.assembly.DefaultPlacedContig;
 import org.jcvi.jillion.assembly.DefaultScaffold;
 import org.jcvi.jillion.assembly.PlacedContig;
 import org.jcvi.jillion.assembly.Scaffold;
 import org.jcvi.jillion.assembly.ScaffoldBuilder;
+import org.jcvi.jillion.assembly.util.coverage.CoverageRegion;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 

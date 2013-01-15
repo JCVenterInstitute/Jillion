@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.common.core.assembly.util.trim.TrimPointsDataStore;
+import org.jcvi.jillion.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;

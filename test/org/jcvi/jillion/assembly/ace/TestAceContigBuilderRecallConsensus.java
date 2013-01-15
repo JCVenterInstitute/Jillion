@@ -6,11 +6,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.assembly.util.slice.GapQualityValueStrategies;
-import org.jcvi.common.core.assembly.util.slice.consensus.ConicConsensusCaller;
-import org.jcvi.common.core.assembly.util.slice.consensus.MostFrequentBasecallConsensusCaller;
 import org.jcvi.jillion.assembly.ace.AceContigBuilder;
 import org.jcvi.jillion.assembly.ace.PhdInfo;
+import org.jcvi.jillion.assembly.util.slice.GapQualityValueStrategies;
+import org.jcvi.jillion.assembly.util.slice.consensus.ConicConsensusCaller;
+import org.jcvi.jillion.assembly.util.slice.consensus.MostFrequentBasecallConsensusCaller;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
