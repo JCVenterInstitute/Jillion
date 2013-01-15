@@ -9,7 +9,6 @@
 	<property name="src-impl" value ="src-impl"/>
 	<property name="test" value ="test"/>
 	<property name ="test-lib" value="test-lib"/>
-	<property name ="command-lib" value="command-lib"/>
 	
 	<!-- non-core packages -->
 	
@@ -65,13 +64,10 @@
 	<path id="javadoc.sourcepath">
         <pathelement location="${src}"/>
     </path>
-    <path id="classpath">
-    	<fileset dir="${command-lib}" includes="**/*.jar"/>
-    </path>
+
 	<path id ="test.classpath">
 		<fileset dir="${test-lib}" includes="**/*.jar"/>		
 		<fileset dir="${analysis}" includes="**/*.jar"/>
-		<fileset dir="${command-lib}" includes="**/*.jar"/>
 		<pathelement path= "${bin}"/>
 		</path>
 
@@ -111,7 +107,7 @@
 			<!-- copile source separately so we can instrument with emma simply
 				 this avoids the need for emma filters-->
 			<!-- debug = true required for emma reports to see line coverage and link to source-->
-			<javac debug="true" destdir="${bin}"  classpathref="classpath" includeantruntime="false">
+			<javac debug="true" destdir="${bin}"  includeantruntime="false">
 				<src path="${src}"/>
 				<src path="${src-impl}"/>
 				<compilerarg line="-Xlint:all"/>
