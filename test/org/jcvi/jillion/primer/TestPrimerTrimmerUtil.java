@@ -16,33 +16,28 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 4, 2008
- *
+
+package org.jcvi.jillion.primer;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jcvi.jillion.core.datastore.DataStoreUtil;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
+
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi;
+public final class TestPrimerTrimmerUtil {
 
-import org.jcvi.common.annotation.AllAnnotationUnitTests;
-import org.jcvi.jillion.core.AllCoreUnitTests;
-import org.jcvi.jillion.fasta.AllFastaUnitTests;
-import org.jcvi.jillion.plate.AllPlateUnitTests;
-import org.jcvi.jillion.primer.AllPrimerUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        
-        
-    	 AllCoreUnitTests.class,
-         AllAnnotationUnitTests.class,
-         AllPrimerUnitTests.class,
-        AllPlateUnitTests.class,
-        AllFastaUnitTests.class
+    public static NucleotideSequenceDataStore createDataStoreFor(NucleotideSequence...primers){
+        Map<String, NucleotideSequence> map = new HashMap<String, NucleotideSequence>();
+        for(int i=0; i<primers.length; i++){
+            map.put("primer_"+i, primers[i]);
+        }
+        return DataStoreUtil.adapt(NucleotideSequenceDataStore.class,map);
     }
-)
-public class AllUnitTests {
 }

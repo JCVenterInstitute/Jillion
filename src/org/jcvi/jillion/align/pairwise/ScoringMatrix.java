@@ -16,33 +16,29 @@
  *     You should have received a copy of the GNU General Public License
  *     along with JCVI Java Common.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-/*
- * Created on Apr 4, 2008
- *
+
+package org.jcvi.jillion.align.pairwise;
+
+import org.jcvi.jillion.core.residue.Residue;
+
+/**
+ * {@code ScoringMatrix} is a matrix 
+ * that describes a score assigned to each possible
+ * pairing of Residue.  Types of Scoring matrices might
+ * include distance matrices, substitution matrices etc.
+ * 
  * @author dkatzel
  */
-package org.jcvi;
-
-import org.jcvi.common.annotation.AllAnnotationUnitTests;
-import org.jcvi.jillion.core.AllCoreUnitTests;
-import org.jcvi.jillion.fasta.AllFastaUnitTests;
-import org.jcvi.jillion.plate.AllPlateUnitTests;
-import org.jcvi.jillion.primer.AllPrimerUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        
-        
-    	 AllCoreUnitTests.class,
-         AllAnnotationUnitTests.class,
-         AllPrimerUnitTests.class,
-        AllPlateUnitTests.class,
-        AllFastaUnitTests.class
-    }
-)
-public class AllUnitTests {
+public interface ScoringMatrix<R extends Residue> {
+	/**
+	 * Get the score between the given pair of 
+	 * {@link Residue}s.
+	 * @param a the first residue.
+	 * @param b the second residue.
+	 * @return the score as a float, could be positive,
+	 * negative, zero, whole numbers or fractional numbers
+	 * depending on which type of matrix is used and 
+	 * the values in that matrix.
+	 */
+	float getScore(R a, R b);
 }
