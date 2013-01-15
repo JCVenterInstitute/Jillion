@@ -24,9 +24,9 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.DefaultContig;
+import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.Contig;
+import org.jcvi.jillion.assembly.DefaultContig;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;

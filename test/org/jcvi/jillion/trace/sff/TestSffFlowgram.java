@@ -23,12 +23,12 @@
  */
 package org.jcvi.jillion.trace.sff;
 
-import org.jcvi.common.core.testUtil.TestUtil;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.trace.sff.SffFlowgram;
 import org.jcvi.jillion.trace.sff.SffUtil;
 import org.junit.Before;

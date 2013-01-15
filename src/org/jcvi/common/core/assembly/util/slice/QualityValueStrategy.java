@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.util.slice;
 
-import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 

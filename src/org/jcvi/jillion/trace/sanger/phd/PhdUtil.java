@@ -22,7 +22,7 @@ package org.jcvi.jillion.trace.sanger.phd;
 import java.util.Date;
 import java.util.Properties;
 
-import org.jcvi.common.core.assembly.ace.AceFileUtil;
+import org.jcvi.jillion.assembly.ace.AceFileUtil;
 
 /**
  * {@code PhdUtil} is a Utility class for Phred Phd data.

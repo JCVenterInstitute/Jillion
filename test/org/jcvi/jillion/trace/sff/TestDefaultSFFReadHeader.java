@@ -23,8 +23,8 @@
  */
 package org.jcvi.jillion.trace.sff;
 
-import org.jcvi.common.core.testUtil.TestUtil;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.trace.sff.DefaultSffReadHeader;
 import org.junit.Test;
 

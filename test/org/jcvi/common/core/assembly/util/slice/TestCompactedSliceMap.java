@@ -19,10 +19,10 @@
 
 package org.jcvi.common.core.assembly.util.slice;
 
-import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.AssembledRead;
 import org.jcvi.common.core.assembly.util.slice.CompactedSliceMap;
 import org.jcvi.common.core.assembly.util.slice.SliceMap;
+import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 

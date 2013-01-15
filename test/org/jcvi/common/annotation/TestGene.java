@@ -3,8 +3,8 @@ package org.jcvi.common.annotation;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.common.core.testUtil.TestUtil;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

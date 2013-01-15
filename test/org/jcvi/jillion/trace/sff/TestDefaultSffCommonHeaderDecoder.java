@@ -28,7 +28,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.common.core.testUtil.EasyMockUtil;
+import org.jcvi.jillion.core.testUtil.EasyMockUtil;
 import org.jcvi.jillion.trace.sff.SffCommonHeader;
 import org.jcvi.jillion.trace.sff.SffDecoderException;
 import org.jcvi.jillion.trace.sff.SffUtil;

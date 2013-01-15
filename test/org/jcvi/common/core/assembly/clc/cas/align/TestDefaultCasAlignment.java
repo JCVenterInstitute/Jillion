@@ -27,7 +27,7 @@ import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentRegion;
 import org.jcvi.common.core.assembly.clc.cas.align.CasAlignmentRegionType;
 import org.jcvi.common.core.assembly.clc.cas.align.DefaultCasAlignment;
 import org.jcvi.common.core.assembly.clc.cas.align.DefaultCasAlignmentRegion;
-import org.jcvi.common.core.testUtil.TestUtil;
+import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Test;
 /**
  * @author dkatzel

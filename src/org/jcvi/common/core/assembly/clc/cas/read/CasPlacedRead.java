@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.clc.cas.read;
 
-import org.jcvi.common.core.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.AssembledRead;
 
 
 public interface CasPlacedRead extends AssembledRead {

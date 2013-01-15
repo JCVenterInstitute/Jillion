@@ -27,13 +27,13 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.common.core.testUtil.EasyMockUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.testUtil.EasyMockUtil;
 import org.jcvi.jillion.trace.sff.DefaultSffReadData;
 import org.jcvi.jillion.trace.sff.DefaultSffReadDataDecoder;
 import org.jcvi.jillion.trace.sff.SffDecoderException;

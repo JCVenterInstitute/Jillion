@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 import org.jcvi.common.core.seq.read.trace.archive.DefaultTraceArchiveRecord;
 import org.jcvi.common.core.seq.read.trace.archive.TraceArchiveRecord;
 import org.jcvi.common.core.seq.read.trace.archive.TraceInfoField;
-import org.jcvi.common.core.testUtil.TestUtil;
+import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultTraceArchiveRecord {

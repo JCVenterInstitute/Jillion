@@ -27,11 +27,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.assembly.Contig;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMap;
 import org.jcvi.common.core.assembly.util.coverage.CoverageMapUtil;
 import org.jcvi.common.core.assembly.util.coverage.CoverageRegion;
+import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;

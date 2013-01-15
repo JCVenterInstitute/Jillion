@@ -29,14 +29,14 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.common.core.testUtil.EasyMockUtil;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.testUtil.EasyMockUtil;
 import org.jcvi.jillion.trace.sff.SffDecoderException;
 import org.jcvi.jillion.trace.sff.SffReadHeader;
 import org.jcvi.jillion.trace.sff.SffUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.jcvi.common.core.testUtil.EasyMockUtil.*;
+import static org.jcvi.jillion.core.testUtil.EasyMockUtil.*;
 import static org.easymock.EasyMock.*;
 public class TestSffeadHeaderDecoder extends AbstractTestSFFReadHeaderCodec{
 

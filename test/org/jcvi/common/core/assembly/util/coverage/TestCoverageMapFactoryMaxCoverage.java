@@ -1,8 +1,8 @@
 package org.jcvi.common.core.assembly.util.coverage;
 
-import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.assembly.Contig;
-import org.jcvi.common.core.assembly.DefaultContig;
+import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.Contig;
+import org.jcvi.jillion.assembly.DefaultContig;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestCoverageMapFactoryMaxCoverage {

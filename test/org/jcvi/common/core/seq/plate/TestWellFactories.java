@@ -19,7 +19,7 @@
 
 package org.jcvi.common.core.seq.plate;
 
-import org.jcvi.common.core.testUtil.TestUtil;
+import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**

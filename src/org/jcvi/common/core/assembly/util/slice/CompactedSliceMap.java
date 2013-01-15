@@ -22,8 +22,8 @@ package org.jcvi.common.core.assembly.util.slice;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.jcvi.common.core.assembly.AssembledRead;
-import org.jcvi.common.core.assembly.Contig;
+import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;

@@ -23,7 +23,7 @@
  */
 package org.jcvi.common.core.assembly.clc.cas.read;
 
-import org.jcvi.common.core.assembly.ReadInfo;
+import org.jcvi.jillion.assembly.ReadInfo;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
