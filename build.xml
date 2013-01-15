@@ -12,9 +12,6 @@
 	
 	<!-- non-core packages -->
 	
-	
-	<property name ="integration-test" value="integration-test"/>
-	
 	<property name ="release" value ="release"/>
 	<property name ="scripts" value = "scripts"/>
 	
@@ -90,13 +87,11 @@
 		<!-- source already compiled so only compile tests -->
 		<javac debug="true" destdir="${bin}"  classpathref="test.classpath" includeantruntime="false">
 					<src path="${test}"/>
-					<src path="${integration-test}"/>
 			
 	  	</javac>
 		
 		<copy todir="${bin}">
 			<fileset dir="${test}" excludes="**/*.java"/>
-			<fileset dir="${integration-test}" excludes="**/*.java"/>
 		</copy>
 
 	 </target>
