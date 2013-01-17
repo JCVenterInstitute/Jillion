@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.internal.util.GrowableByteArray;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
+import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 
 public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<AminoAcid,AminoAcidSequence>{
 	private static final AminoAcid[] AMINO_ACID_VALUES = AminoAcid.values();

@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.ZLibData;
+import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.data.ZLibData;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.TraceEncoderException;
 import org.junit.Before;

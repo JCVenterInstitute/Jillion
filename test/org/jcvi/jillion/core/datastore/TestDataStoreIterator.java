@@ -39,8 +39,8 @@ import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.datastore.DataStoreIterator;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.core.datastore.DataStoreIterator;
 import org.junit.Before;
 import org.junit.Test;
 public class TestDataStoreIterator {

@@ -12,9 +12,9 @@ import org.jcvi.jillion.assembly.clc.cas.var.ReferenceVariationsDataStore;
 import org.jcvi.jillion.assembly.clc.cas.var.Variation;
 import org.jcvi.jillion.assembly.clc.cas.var.Variation.Type;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

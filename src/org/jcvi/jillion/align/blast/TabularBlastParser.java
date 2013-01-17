@@ -29,8 +29,8 @@ import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
-import org.jcvi.jillion.core.internal.io.TextLineParser;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.core.io.TextLineParser;
 
 /**
  * Parse TablularBlast output ( created using the "-m 8" or "-m 9" options in blast).

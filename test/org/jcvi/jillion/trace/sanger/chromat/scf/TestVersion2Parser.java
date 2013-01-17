@@ -22,8 +22,8 @@ package org.jcvi.jillion.trace.sanger.chromat.scf;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.jcvi.jillion.core.internal.ResourceHelper;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFCodecs;
+import org.jcvi.jillion.internal.ResourceHelper;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.SCFCodecs;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.sanger.chromat.Chromatogram;
 import org.junit.Test;

@@ -12,8 +12,8 @@ import org.jcvi.jillion.assembly.ace.AceFileVisitor;
 import org.jcvi.jillion.assembly.ace.PhdInfo;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 public class TestAceFileParserStopParsingMiddleContig {
 

@@ -30,11 +30,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaFileVisitor;
 import org.jcvi.jillion.fasta.FastaFileVisitor.DeflineReturnCode;
 import org.jcvi.jillion.fasta.FastaFileVisitor.EndOfBodyReturnCode;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.Test;
 /**

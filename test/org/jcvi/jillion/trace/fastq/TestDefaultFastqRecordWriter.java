@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.fastq.DefaultFastqFileDataStore;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;

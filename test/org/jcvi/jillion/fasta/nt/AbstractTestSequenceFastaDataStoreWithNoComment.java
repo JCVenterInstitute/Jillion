@@ -27,10 +27,10 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStore;
-import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordBuilder;
+import org.jcvi.jillion.internal.ResourceHelper;
 
 public  abstract class AbstractTestSequenceFastaDataStoreWithNoComment {
     static final String FASTA_FILE_PATH = "files/noComment.fasta";

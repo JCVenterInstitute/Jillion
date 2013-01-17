@@ -14,13 +14,13 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
-import org.jcvi.jillion.core.internal.datastore.DataStoreStreamingIterator;
-import org.jcvi.jillion.core.internal.util.iter.AbstractBlockingStreamingIterator;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
+import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 /**
  * {@code LargeAceFileDataStore} is an {@link AceFileContigDataStore}
  * implementation that doesn't store any contig or 

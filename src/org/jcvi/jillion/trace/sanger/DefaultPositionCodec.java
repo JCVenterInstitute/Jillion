@@ -26,8 +26,8 @@ package org.jcvi.jillion.trace.sanger;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 
-import org.jcvi.jillion.core.internal.symbol.GlyphCodec;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.core.GlyphCodec;
 
 
 enum DefaultPositionCodec implements GlyphCodec<Position>{

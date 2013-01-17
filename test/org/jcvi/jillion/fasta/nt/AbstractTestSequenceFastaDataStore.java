@@ -29,11 +29,11 @@ import java.util.Iterator;
 
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordBuilder;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public abstract class AbstractTestSequenceFastaDataStore {

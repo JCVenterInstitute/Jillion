@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.sanger.chromat.abi.AbiChromatogram;
 import org.jcvi.jillion.trace.sanger.chromat.abi.AbiChromatogramBuilder;

@@ -10,7 +10,7 @@ import org.jcvi.jillion.assembly.tasm.DefaultTasmFileContigDataStore;
 import org.jcvi.jillion.assembly.tasm.TasmContig;
 import org.jcvi.jillion.assembly.tasm.TasmContigDataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 public class TestAnnotationTasmParsing {
 	 private static final ResourceHelper RESOURCES = new ResourceHelper(TestAnnotationTasmParsing.class);

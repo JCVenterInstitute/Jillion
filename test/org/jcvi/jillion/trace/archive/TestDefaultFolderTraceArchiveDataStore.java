@@ -26,7 +26,7 @@ package org.jcvi.jillion.trace.archive;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.archive.DefaultFolderTraceArchiveDataStore;
 import org.jcvi.jillion.trace.archive.DefaultTraceArchiveTrace;
 import org.jcvi.jillion.trace.archive.NameTagTraceArchiveRecordIdGenerator;

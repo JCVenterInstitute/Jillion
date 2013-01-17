@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
-import org.jcvi.jillion.core.internal.symbol.EncodedSequence;
-import org.jcvi.jillion.core.internal.symbol.GlyphCodec;
-import org.jcvi.jillion.core.internal.symbol.residue.AbstractResidueSequence;
+import org.jcvi.jillion.internal.core.EncodedSequence;
+import org.jcvi.jillion.internal.core.GlyphCodec;
+import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 
 public abstract class AbstractAminoAcidSequence extends AbstractResidueSequence<AminoAcid> implements AminoAcidSequence {
 

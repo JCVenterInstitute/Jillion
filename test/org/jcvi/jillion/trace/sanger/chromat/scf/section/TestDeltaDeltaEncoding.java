@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFUtils;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.SCFUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

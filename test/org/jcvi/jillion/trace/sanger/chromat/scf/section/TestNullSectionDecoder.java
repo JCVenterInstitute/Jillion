@@ -25,8 +25,8 @@ package org.jcvi.jillion.trace.sanger.chromat.scf.section;
 
 import org.junit.Assert;
 
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.NullSectionCodec;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.SectionDecoderException;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.NullSectionCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.SectionDecoderException;
 import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogramFileVisitor;
 import org.junit.Test;
 

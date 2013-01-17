@@ -23,7 +23,7 @@
  */
 package org.jcvi.jillion.trace.sanger.chromat.ztr;
 
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.chunk.AllChunkUnitTests;
+import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.chunk.AllChunkUnitTests;
 import org.jcvi.jillion.trace.sanger.chromat.ztr.data.AllDataUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

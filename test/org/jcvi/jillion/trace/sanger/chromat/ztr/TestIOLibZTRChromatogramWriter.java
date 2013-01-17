@@ -26,7 +26,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.TraceEncoderException;
 import org.jcvi.jillion.trace.sanger.chromat.ztr.IOLibLikeZtrChromatogramWriter;

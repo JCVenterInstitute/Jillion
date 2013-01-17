@@ -8,8 +8,8 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.sanger.DefaultPositionFastaFileDataStore;
 import org.jcvi.jillion.trace.sanger.PositionSequenceFastaRecord;
 import org.jcvi.jillion.trace.sanger.PositionSequenceFastaRecordWriter;

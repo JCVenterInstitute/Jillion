@@ -29,9 +29,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFChromatogramImpl;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.SCFHeader;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.CommentSectionCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.SCFChromatogramImpl;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.header.SCFHeader;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.CommentSectionCodec;
 import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.junit.Before;
 

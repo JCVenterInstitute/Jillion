@@ -35,9 +35,9 @@ import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.assembly.DefaultAssembledRead;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 
 public abstract class TestAbstractContigFileParser {

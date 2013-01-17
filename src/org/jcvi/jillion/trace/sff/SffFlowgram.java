@@ -27,7 +27,6 @@ import java.util.Arrays;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
-import org.jcvi.jillion.core.internal.util.GrowableShortArray;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -35,6 +34,7 @@ import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.ObjectsUtil;
+import org.jcvi.jillion.internal.core.util.GrowableShortArray;
 
 final class SffFlowgram implements Flowgram {
     private final String id;

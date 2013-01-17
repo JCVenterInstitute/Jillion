@@ -23,8 +23,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.jillion.core.internal.util.iter.AbstractBlockingStreamingIterator;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

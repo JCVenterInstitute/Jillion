@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 
-import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.jillion.trace.sanger.PositionSequenceFastaDataStore;
 import org.jcvi.jillion.trace.sanger.PositionSequenceFastaRecord;

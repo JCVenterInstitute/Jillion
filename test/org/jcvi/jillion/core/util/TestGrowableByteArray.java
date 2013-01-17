@@ -1,7 +1,7 @@
 package org.jcvi.jillion.core.util;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.internal.util.GrowableByteArray;
+import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestGrowableByteArray {

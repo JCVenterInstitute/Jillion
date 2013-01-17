@@ -34,8 +34,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.jillion.core.internal.util.Caches;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.core.util.Caches;
 
 
 /**

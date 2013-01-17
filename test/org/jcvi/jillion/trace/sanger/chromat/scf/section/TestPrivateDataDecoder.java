@@ -28,12 +28,12 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.PrivateDataImpl;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.SCFHeader;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.PrivateDataCodec;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.SectionDecoder;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.SectionDecoderException;
 import org.jcvi.jillion.core.testUtil.EasyMockUtil;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.PrivateDataImpl;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.header.SCFHeader;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.PrivateDataCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.SectionDecoder;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.SectionDecoderException;
 import org.jcvi.jillion.trace.sanger.chromat.scf.PrivateData;
 import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.junit.Before;

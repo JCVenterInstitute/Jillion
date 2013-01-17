@@ -29,7 +29,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.sanger.phd.DefaultPhdFileDataStore;
 import org.jcvi.jillion.trace.sanger.phd.Phd;
 import org.jcvi.jillion.trace.sanger.phd.PhdDataStore;

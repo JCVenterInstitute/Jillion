@@ -21,10 +21,10 @@ package org.jcvi.jillion.trace.sanger.chromat.ztr;
 
 import java.io.OutputStream;
 
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.DefaultZTRChromatogramWriterBuilder;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.DeltaEncodedData;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.ShrinkToEightBitData;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.DeltaEncodedData.Level;
+import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.DefaultZTRChromatogramWriterBuilder;
+import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.data.DeltaEncodedData;
+import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.data.ShrinkToEightBitData;
+import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.data.DeltaEncodedData.Level;
 import org.jcvi.jillion.trace.TraceEncoderException;
 import org.jcvi.jillion.trace.sanger.chromat.Chromatogram;
 /**

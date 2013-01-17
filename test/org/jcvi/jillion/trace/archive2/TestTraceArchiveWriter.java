@@ -13,11 +13,11 @@ import java.io.IOException;
 
 import org.easymock.IAnswer;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.archive2.TraceArchiveInfo;
 import org.jcvi.jillion.trace.archive2.TraceArchiveRecord;
 import org.jcvi.jillion.trace.archive2.TraceArchiveRecordBuilder;

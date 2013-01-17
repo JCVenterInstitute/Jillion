@@ -31,7 +31,7 @@ import org.jcvi.jillion.assembly.tasm.TasmContigAdapter;
 import org.jcvi.jillion.assembly.tasm.TasmContigAttribute;
 import org.jcvi.jillion.assembly.tasm.TasmContigDataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 public class TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes {
 

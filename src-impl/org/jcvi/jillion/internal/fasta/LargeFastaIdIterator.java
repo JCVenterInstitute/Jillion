@@ -24,9 +24,9 @@ import java.io.FileNotFoundException;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
-import org.jcvi.jillion.core.internal.util.iter.AbstractBlockingStreamingIterator;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaFileVisitor;
+import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 
 /**
  * @author dkatzel

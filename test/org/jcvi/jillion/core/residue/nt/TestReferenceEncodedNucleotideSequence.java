@@ -30,13 +30,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.internal.symbol.GlyphCodec;
 import org.jcvi.jillion.core.residue.nt.DefaultNucleotideCodec;
 import org.jcvi.jillion.core.residue.nt.DefaultReferenceEncodedNucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
+import org.jcvi.jillion.internal.core.GlyphCodec;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestReferenceEncodedNucleotideSequence {

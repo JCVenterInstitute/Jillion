@@ -36,12 +36,12 @@ import org.jcvi.jillion.assembly.ContigDataStore;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.datastore.DataStoreIterator;
-import org.jcvi.jillion.core.internal.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.jillion.internal.core.datastore.DataStoreIterator;
+import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 /**
  * {@code IndexedContigFileDataStore} is an implementation of 
  * {@link ContigDataStore} that only stores an index containing

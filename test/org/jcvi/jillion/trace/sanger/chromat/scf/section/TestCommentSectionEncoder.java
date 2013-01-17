@@ -25,8 +25,8 @@ package org.jcvi.jillion.trace.sanger.chromat.scf.section;
 
 import java.io.IOException;
 
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.EncodedSection;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.Section;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.EncodedSection;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.Section;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;

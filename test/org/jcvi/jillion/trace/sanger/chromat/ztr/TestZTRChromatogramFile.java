@@ -24,8 +24,8 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.jillion.core.internal.ResourceHelper;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.ZTRChromatogramImpl;
+import org.jcvi.jillion.internal.ResourceHelper;
+import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.ZTRChromatogramImpl;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.sanger.chromat.ChromatogramXMLSerializer;
 import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogram;

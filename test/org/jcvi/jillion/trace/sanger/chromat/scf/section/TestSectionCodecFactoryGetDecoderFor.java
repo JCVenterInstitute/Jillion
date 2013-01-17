@@ -23,17 +23,17 @@
  */
 package org.jcvi.jillion.trace.sanger.chromat.scf.section;
 
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.SCFHeader;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.CommentSectionCodec;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.DefaultSectionCodecFactory;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.PrivateDataCodec;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.Section;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.SectionCodecFactory;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.SectionDecoder;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.Version2BasesSectionCodec;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.Version2SampleSectionCodec;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.Version3BasesSectionCodec;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.Version3SampleSectionCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.header.SCFHeader;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.CommentSectionCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.DefaultSectionCodecFactory;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.PrivateDataCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.Section;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.SectionCodecFactory;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.SectionDecoder;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.Version2BasesSectionCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.Version2SampleSectionCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.Version3BasesSectionCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.Version3SampleSectionCodec;
 import org.junit.Before;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;

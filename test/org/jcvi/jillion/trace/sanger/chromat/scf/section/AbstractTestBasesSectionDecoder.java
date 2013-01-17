@@ -34,11 +34,11 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import org.jcvi.jillion.core.Sequence;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.SCFHeader;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.SectionDecoderException;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.util.ObjectsUtil;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.header.SCFHeader;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.SectionDecoderException;
 import org.jcvi.jillion.trace.sanger.PositionSequence;
 import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogram;

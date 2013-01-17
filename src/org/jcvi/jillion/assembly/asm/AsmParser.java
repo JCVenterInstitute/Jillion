@@ -41,12 +41,12 @@ import static org.jcvi.jillion.assembly.asm.AsmVisitor.*;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
-import org.jcvi.jillion.core.internal.io.TextLineParser;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.internal.core.io.TextLineParser;
 
 /**
  * @author dkatzel

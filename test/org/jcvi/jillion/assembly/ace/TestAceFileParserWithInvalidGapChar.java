@@ -24,7 +24,7 @@ import java.io.IOException;
 import org.jcvi.jillion.assembly.ace.AceFileParser;
 import org.jcvi.jillion.assembly.ace.AceFileVisitor;
 import org.jcvi.jillion.assembly.ace.AceFileVisitor.BeginContigReturnCode;
-import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;

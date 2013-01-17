@@ -27,7 +27,7 @@ import static org.easymock.EasyMock.verify;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.fastq.FastqFileParser;
 import org.jcvi.jillion.trace.fastq.FastqFileVisitor;
 import org.junit.Test;

@@ -23,8 +23,8 @@ import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.jillion.core.internal.io.ValueSizeStrategy;
-import org.jcvi.jillion.core.internal.symbol.GlyphCodec;
+import org.jcvi.jillion.internal.core.GlyphCodec;
+import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 
 /**
  * {@code TwoBitEncodedNucleotideCodec} is a {@link GlyphCodec}

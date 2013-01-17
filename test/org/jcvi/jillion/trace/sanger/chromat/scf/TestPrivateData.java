@@ -23,8 +23,8 @@
  */
 package org.jcvi.jillion.trace.sanger.chromat.scf;
 
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.PrivateDataImpl;
 import org.jcvi.jillion.core.testUtil.TestUtil;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.PrivateDataImpl;
 import org.jcvi.jillion.trace.sanger.chromat.scf.PrivateData;
 import org.junit.Test;
 import static org.junit.Assert.*;
