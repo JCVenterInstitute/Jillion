@@ -20,12 +20,14 @@
 package org.jcvi.jillion.internal.fasta;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
-import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaFileVisitor;
+import org.jcvi.jillion.fasta.FastaFileParser2;
+import org.jcvi.jillion.fasta.FastaFileVisitor2;
+import org.jcvi.jillion.fasta.FastaRecordVisitor;
+import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 
 /**
@@ -68,46 +70,27 @@ public final class LargeFastaIdIterator extends AbstractBlockingStreamingIterato
     */
     @Override
     protected void backgroundThreadRunMethod() {
-    	FastaFileVisitor visitor = new FastaFileVisitor() {
-    		@Override
-			public DeflineReturnCode visitDefline(String id, String comment) {
-    			if(filter.accept(id)){
+    	FastaFileVisitor2 visitor = new FastaFileVisitor2() {
+
+			@Override
+			public FastaRecordVisitor visitDefline(
+					FastaVisitorCallback callback, String id,
+					String optionalComment) {
+				if(filter.accept(id)){
     				LargeFastaIdIterator.this.blockingPut(id);
     			}
-				return DeflineReturnCode.SKIP_CURRENT_RECORD;
+				return null;
 			}
 
 			@Override
-			public void visitLine(String line) {
+			public void visitEnd() {
 				//no-op
+				
 			}
-
-			@Override
-			public void visitFile() {
-				//no-op
-			}
-
-			@Override
-			public void visitEndOfFile() {
-				//no-op
-			}
-
-			
-			@Override
-			public void visitBodyLine(String bodyLine) {
-				//no-op
-			}
-
-			@Override
-			public EndOfBodyReturnCode visitEndOfBody() {
-				return EndOfBodyReturnCode.KEEP_PARSING;
-			}
-            
-            
         };
         try {
-            FastaFileParser.parse(fastaFile, visitor);
-        } catch (FileNotFoundException e) {
+        	new FastaFileParser2(fastaFile).accept(visitor);
+        } catch (IOException e) {
             throw new RuntimeException("fasta file does not exist",e);
         }
         
