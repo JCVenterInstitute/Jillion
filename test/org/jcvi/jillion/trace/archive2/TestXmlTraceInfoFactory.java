@@ -3,7 +3,7 @@ package org.jcvi.jillion.trace.archive2;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.archive2.TraceArchiveInfo;
 import org.jcvi.jillion.trace.archive2.TraceArchiveRecord;
 import org.jcvi.jillion.trace.archive2.TraceInfoField;

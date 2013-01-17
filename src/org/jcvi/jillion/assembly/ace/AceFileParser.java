@@ -40,9 +40,9 @@ import org.jcvi.jillion.assembly.ace.AceFileVisitor.BeginContigReturnCode;
 import org.jcvi.jillion.assembly.ace.AceFileVisitor.BeginReadReturnCode;
 import org.jcvi.jillion.assembly.ace.AceFileVisitor.EndContigReturnCode;
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.internal.io.TextLineParser;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.internal.core.io.TextLineParser;
 /**
  * {@code AceFileParser} contains methods for parsing
  * ACE formatted files.

@@ -28,9 +28,9 @@ import java.io.IOException;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
-import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.sff.SffFlowgram;
 
 public abstract class AbstractTestExampleSffFile{

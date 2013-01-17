@@ -38,7 +38,7 @@ import org.jcvi.jillion.assembly.ace.ReadAceTag;
 import org.jcvi.jillion.assembly.ace.WholeAssemblyAceTag;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;

@@ -38,9 +38,9 @@ import org.jcvi.jillion.assembly.ace.AceContig;
 import org.jcvi.jillion.assembly.ace.AceFileContigDataStore;
 import org.jcvi.jillion.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.After;
 import org.junit.Test;
 

@@ -6,7 +6,7 @@ import java.io.IOException;
 import org.jcvi.jillion.assembly.ace.AbstractAceFileVisitorContigBuilder;
 import org.jcvi.jillion.assembly.ace.AceContigBuilder;
 import org.jcvi.jillion.assembly.ace.AceFileParser;
-import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 
 public class TestParseInvalidAceNotAnAceFile {

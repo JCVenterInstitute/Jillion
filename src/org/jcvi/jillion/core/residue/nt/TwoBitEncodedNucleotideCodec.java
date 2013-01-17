@@ -31,9 +31,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.internal.io.ValueSizeStrategy;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 
 
 /**

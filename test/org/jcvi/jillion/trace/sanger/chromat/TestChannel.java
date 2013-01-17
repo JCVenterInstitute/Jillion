@@ -24,11 +24,11 @@
 package org.jcvi.jillion.trace.sanger.chromat;
 import static org.junit.Assert.*;
 
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.DefaultChannel;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.testUtil.TestUtil;
+import org.jcvi.jillion.internal.trace.sanger.chromat.DefaultChannel;
 import org.jcvi.jillion.trace.sanger.Position;
 import org.jcvi.jillion.trace.sanger.PositionSequence;
 import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;

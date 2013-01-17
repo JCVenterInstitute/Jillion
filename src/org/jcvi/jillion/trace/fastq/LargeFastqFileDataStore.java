@@ -31,12 +31,12 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
-import org.jcvi.jillion.core.internal.datastore.DataStoreStreamingIterator;
-import org.jcvi.jillion.core.internal.util.iter.AbstractBlockingStreamingIterator;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
+import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 /**
  * {@code LargeFastqFileDataStore} is a {@link FastqDataStore} implementation
  * to be used a very large Fastq Files.  No data contained in this

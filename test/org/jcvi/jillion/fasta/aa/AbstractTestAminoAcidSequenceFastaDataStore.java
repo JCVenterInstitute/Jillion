@@ -5,12 +5,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaDataStore;
 import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecord;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.internal.fasta.aa.UnCommentedAminoAcidSequenceFastaRecord;
 import org.junit.Test;
 import static org.junit.Assert.*;

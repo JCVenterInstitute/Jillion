@@ -25,12 +25,12 @@ package org.jcvi.jillion.trace.sanger.chromat.scf.section;
 
 import java.io.IOException;
 
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.PrivateDataImpl;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.SCFHeader;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.EncodedSection;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.PrivateDataCodec;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.Section;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.SectionEncoder;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.PrivateDataImpl;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.header.SCFHeader;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.EncodedSection;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.PrivateDataCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.Section;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.SectionEncoder;
 import org.jcvi.jillion.trace.sanger.chromat.scf.PrivateData;
 import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogram;
 import org.junit.Before;

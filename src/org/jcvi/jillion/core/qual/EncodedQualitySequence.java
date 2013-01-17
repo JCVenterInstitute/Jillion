@@ -21,8 +21,8 @@ package org.jcvi.jillion.core.qual;
 
 import java.util.Collection;
 
-import org.jcvi.jillion.core.internal.symbol.EncodedSequence;
-import org.jcvi.jillion.core.internal.symbol.GlyphCodec;
+import org.jcvi.jillion.internal.core.EncodedSequence;
+import org.jcvi.jillion.internal.core.GlyphCodec;
 
 /**
  * {@code DefaultEncodedQualitySequence} 

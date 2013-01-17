@@ -33,8 +33,8 @@ import org.jcvi.jillion.assembly.tasm.DefaultTasmFileContigDataStore;
 import org.jcvi.jillion.assembly.tasm.TasmContigDataStore;
 import org.jcvi.jillion.assembly.tasm.TasmFileWriter;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 public class TestTigrAssemblerWriter {
 	private static final ResourceHelper RESOURCES = new ResourceHelper(TestTigrAssemblerWriter.class);

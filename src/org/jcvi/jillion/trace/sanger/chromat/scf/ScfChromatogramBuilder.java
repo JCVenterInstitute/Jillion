@@ -29,13 +29,13 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.BasicChromatogramBuilder;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.PrivateDataImpl;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFChromatogramImpl;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.internal.trace.sanger.chromat.BasicChromatogramBuilder;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.PrivateDataImpl;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.SCFChromatogramImpl;
 import org.jcvi.jillion.trace.sanger.PositionSequence;
 import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.jillion.trace.sanger.chromat.Chromatogram;

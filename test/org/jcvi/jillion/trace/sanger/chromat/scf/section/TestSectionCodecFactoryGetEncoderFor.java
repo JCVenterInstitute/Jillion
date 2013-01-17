@@ -26,16 +26,16 @@ package org.jcvi.jillion.trace.sanger.chromat.scf.section;
 import static org.junit.Assert.*;
 
 
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.CommentSectionCodec;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.DefaultSectionCodecFactory;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.PrivateDataCodec;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.Section;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.SectionCodecFactory;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.SectionEncoder;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.Version2BasesSectionCodec;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.Version2SampleSectionCodec;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.Version3BasesSectionCodec;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.Version3SampleSectionCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.CommentSectionCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.DefaultSectionCodecFactory;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.PrivateDataCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.Section;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.SectionCodecFactory;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.SectionEncoder;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.Version2BasesSectionCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.Version2SampleSectionCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.Version3BasesSectionCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.Version3SampleSectionCodec;
 import org.junit.Test;
 
 public class TestSectionCodecFactoryGetEncoderFor {

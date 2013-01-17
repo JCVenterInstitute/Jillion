@@ -29,8 +29,8 @@ import java.util.Iterator;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.frg.DefaultFragment;
 import org.jcvi.jillion.trace.frg.DefaultLibrary;
 import org.jcvi.jillion.trace.frg.Distance;

@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.internal.util.RunLength;
+import org.jcvi.jillion.internal.core.util.RunLength;
 /**
  * {@code RunLengthEncodedQualityCodec} is a {@link QualitySymbolCodec}
  * that encodes {@link PhredQuality} values in a run-length encoding.

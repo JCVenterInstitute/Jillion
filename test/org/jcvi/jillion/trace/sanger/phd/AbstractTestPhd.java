@@ -25,9 +25,9 @@ package org.jcvi.jillion.trace.sanger.phd;
 
 import java.util.Properties;
 
-import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.sanger.PositionSequence;
 import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;
 import org.junit.Before;

@@ -28,7 +28,7 @@ import org.jcvi.jillion.assembly.ace.IndexedAceFileDataStore;
 import org.jcvi.jillion.assembly.ace.IndexedAceFileDataStore.AbstractIndexedAceFileDataStoreImpl;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.BeforeClass;
 import org.junit.Test;
 /**

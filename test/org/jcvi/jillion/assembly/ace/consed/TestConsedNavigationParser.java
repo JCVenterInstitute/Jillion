@@ -24,7 +24,7 @@ import java.io.IOException;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
-import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;
 /**

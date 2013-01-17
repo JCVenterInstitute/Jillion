@@ -25,7 +25,7 @@ package org.jcvi.jillion.trace.sanger.chromat.ztr.data;
 
 import java.util.Arrays;
 
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.RawData;
+import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.data.RawData;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.TraceEncoderException;
 import org.junit.Test;

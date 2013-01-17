@@ -35,10 +35,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.internal.io.TextLineParser;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.internal.core.io.TextLineParser;
 import org.jcvi.jillion.trace.frg.Frg2Visitor.FrgAction;
 
 public class Frg2Parser {

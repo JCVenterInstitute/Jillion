@@ -26,8 +26,8 @@ package org.jcvi.jillion.trace.sanger.chromat.ztr.data;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.DeltaEncodedData;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.data.DeltaEncodedData.Level;
+import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.data.DeltaEncodedData;
+import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.data.DeltaEncodedData.Level;
 import org.jcvi.jillion.trace.TraceEncoderException;
 import org.junit.Test;
 import static org.junit.Assert.*;

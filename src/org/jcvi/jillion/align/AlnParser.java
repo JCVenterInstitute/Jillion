@@ -29,8 +29,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.jillion.align.AlnVisitor.ConservationInfo;
-import org.jcvi.jillion.core.internal.io.TextLineParser;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.core.io.TextLineParser;
 
 /**
  * {@code AlnParser} is a utility class that can 

@@ -27,11 +27,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.jillion.core.internal.io.MagicNumberInputStream;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ab1.AbiUtil;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFUtils;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.ZTRUtil;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.core.io.MagicNumberInputStream;
+import org.jcvi.jillion.internal.trace.sanger.chromat.abi.AbiUtil;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.SCFUtils;
+import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.ZTRUtil;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.sanger.chromat.abi.AbiChromatogramBuilder;
 import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogramBuilder;

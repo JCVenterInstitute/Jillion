@@ -29,9 +29,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.jcvi.jillion.core.internal.ResourceHelper;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFCodec;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFCodecs;
+import org.jcvi.jillion.internal.ResourceHelper;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.SCFCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.SCFCodecs;
 import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogram;
 import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.jillion.trace.sanger.chromat.scf.ScfDecoderException;

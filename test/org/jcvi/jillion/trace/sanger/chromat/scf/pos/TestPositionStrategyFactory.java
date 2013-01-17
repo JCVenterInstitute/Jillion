@@ -23,11 +23,11 @@
  */
 package org.jcvi.jillion.trace.sanger.chromat.scf.pos;
 
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.SCFHeader;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.pos.BytePositionStrategy;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.pos.PositionStrategy;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.pos.PositionStrategyFactory;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.pos.ShortPositionStrategy;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.header.SCFHeader;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.header.pos.BytePositionStrategy;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.header.pos.PositionStrategy;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.header.pos.PositionStrategyFactory;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.header.pos.ShortPositionStrategy;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

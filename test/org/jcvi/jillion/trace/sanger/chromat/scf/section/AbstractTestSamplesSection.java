@@ -27,10 +27,10 @@ package org.jcvi.jillion.trace.sanger.chromat.scf.section;
 
 import java.io.IOException;
 
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.DefaultChannel;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.header.SCFHeader;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.AbstractSampleSectionCodec;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.EncodedSection;
+import org.jcvi.jillion.internal.trace.sanger.chromat.DefaultChannel;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.header.SCFHeader;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.AbstractSampleSectionCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.EncodedSection;
 import org.jcvi.jillion.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogram;
 import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogramBuilder;

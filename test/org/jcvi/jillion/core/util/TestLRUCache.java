@@ -25,7 +25,7 @@ package org.jcvi.jillion.core.util;
 
 import java.util.Map;
 
-import org.jcvi.jillion.core.internal.util.Caches;
+import org.jcvi.jillion.internal.core.util.Caches;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

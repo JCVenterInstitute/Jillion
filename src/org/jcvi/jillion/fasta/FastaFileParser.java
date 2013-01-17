@@ -33,10 +33,10 @@ import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.jillion.core.internal.io.TextLineParser;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.fasta.FastaFileVisitor.DeflineReturnCode;
 import org.jcvi.jillion.fasta.FastaFileVisitor.EndOfBodyReturnCode;
+import org.jcvi.jillion.internal.core.io.TextLineParser;
 /**
  * {@code FastaParser} is a utility class
  * to parse Fasta formated files.

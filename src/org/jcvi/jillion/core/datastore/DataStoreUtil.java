@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jcvi.jillion.core.internal.datastore.DataStoreStreamingIterator;
-import org.jcvi.jillion.core.internal.util.Caches;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
+import org.jcvi.jillion.internal.core.util.Caches;
 /**
  * Utility class containing static
  * factory methods to  adapt {@link DataStore}s

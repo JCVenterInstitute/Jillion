@@ -23,8 +23,8 @@
  */
 package org.jcvi.jillion.core.util;
 
-import org.jcvi.jillion.core.internal.util.RunLength;
 import org.jcvi.jillion.core.testUtil.TestUtil;
+import org.jcvi.jillion.internal.core.util.RunLength;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestRunLength {

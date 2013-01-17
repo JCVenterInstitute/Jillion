@@ -27,8 +27,8 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.frg.Distance;
 import org.jcvi.jillion.trace.frg.Frg2Parser;
 import org.jcvi.jillion.trace.frg.Frg2Visitor;

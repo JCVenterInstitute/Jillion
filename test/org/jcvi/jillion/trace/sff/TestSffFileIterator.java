@@ -22,7 +22,7 @@ package org.jcvi.jillion.trace.sff;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
-import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.sff.SffFileIterator;
 import org.junit.Test;
 import static org.junit.Assert.*;

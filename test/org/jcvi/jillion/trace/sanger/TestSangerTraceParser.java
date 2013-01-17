@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.sanger.SangerTrace;
 import org.jcvi.jillion.trace.sanger.SangerTraceParser;

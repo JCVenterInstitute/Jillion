@@ -29,8 +29,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.AbstractBasesSectionCodec;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.section.Version2BasesSectionCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.AbstractBasesSectionCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.Version2BasesSectionCodec;
 
 public class TestVersion2BasesSection extends AbstractTestBasesSection{
 

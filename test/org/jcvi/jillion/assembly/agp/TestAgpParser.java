@@ -34,7 +34,7 @@ import org.jcvi.jillion.assembly.agp.ScaffoldDataStoreBuilderAgpVisitor;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestAgpParser {

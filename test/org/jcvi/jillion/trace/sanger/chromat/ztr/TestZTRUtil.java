@@ -26,8 +26,8 @@ package org.jcvi.jillion.trace.sanger.chromat.ztr;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.ztr.ZTRUtil;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.ZTRUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestZTRUtil {

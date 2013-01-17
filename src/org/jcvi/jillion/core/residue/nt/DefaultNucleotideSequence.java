@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.internal.symbol.residue.AbstractResidueSequence;
+import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 
 /**
  * {@code DefaultNucleotideSequence} is the default

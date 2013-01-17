@@ -27,8 +27,8 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.util.Caches;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.core.util.Caches;
 /**
  * {@code CachedTraceArchiveDataStore} is a {@link TraceArchiveDataStore}
  * implementation which cache's {@link TraceArchiveTrace} records

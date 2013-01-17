@@ -28,13 +28,13 @@ import java.io.IOException;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.qual.trim.LucyQualityTrimmerBuilder;
 import org.jcvi.jillion.core.qual.trim.QualityTrimmer;
 import org.jcvi.jillion.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.jillion.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.Test;
 

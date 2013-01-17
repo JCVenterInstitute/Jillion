@@ -29,12 +29,12 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.jcvi.jillion.core.internal.ResourceHelper;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFChromatogramImpl;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFCodec;
-import org.jcvi.jillion.core.internal.seq.trace.sanger.chromat.scf.SCFCodecs;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.internal.ResourceHelper;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.SCFChromatogramImpl;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.SCFCodec;
+import org.jcvi.jillion.internal.trace.sanger.chromat.scf.SCFCodecs;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.sanger.chromat.Chromatogram;
 import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogramBuilder;

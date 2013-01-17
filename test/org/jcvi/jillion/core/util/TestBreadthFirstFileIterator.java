@@ -28,8 +28,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.jcvi.jillion.core.internal.ResourceHelper;
 import org.jcvi.jillion.core.util.FileIterator;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestBreadthFirstFileIterator {

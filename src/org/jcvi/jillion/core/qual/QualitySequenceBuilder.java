@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.SequenceBuilder;
-import org.jcvi.jillion.core.internal.util.GrowableByteArray;
+import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 /**
  * {@code QualitySequenceBuilder} is a 
  * is a way to

@@ -28,7 +28,7 @@ import org.jcvi.jillion.align.blast.TabularBlastParser;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
-import org.jcvi.jillion.core.internal.ResourceHelper;
+import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;

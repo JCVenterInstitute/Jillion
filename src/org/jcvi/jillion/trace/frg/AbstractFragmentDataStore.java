@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.internal.datastore.DataStoreIterator;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.core.datastore.DataStoreIterator;
 
 abstract class AbstractFragmentDataStore implements Frg2Visitor, FragmentDataStore{
 
