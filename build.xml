@@ -10,11 +10,6 @@
 	<property name="test" value ="test"/>
 	<property name ="test-lib" value="test-lib"/>
 	
-	<!-- non-core packages -->
-	
-	<property name ="release" value ="release"/>
-	<property name ="scripts" value = "scripts"/>
-	
 	<property name ="analysis" value="build-lib"/>
   
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
@@ -135,7 +130,6 @@
 	<target name="clean"
          description="Clean generated files">
 		<delete dir="${bin}"/>
-		<delete dir="${release}"/>
  	</target>
 
 
