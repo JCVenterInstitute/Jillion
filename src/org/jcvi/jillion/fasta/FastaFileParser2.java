@@ -20,20 +20,32 @@ public class FastaFileParser2 {
 	
 	
 	public FastaFileParser2(File fastaFile) throws IOException {
+		if(fastaFile==null){
+			throw new NullPointerException("fasta file can not be null");
+		}
 		this.fastaFile = fastaFile;
 		this.inputStream = new BufferedInputStream(new FileInputStream(fastaFile));
 	}
 	public FastaFileParser2(InputStream inputStream) throws IOException {
+		if(inputStream==null){
+			throw new NullPointerException("inputStream can not be null");
+		}
 		this.fastaFile = null;
 		this.inputStream = inputStream;
 	}
 	
 	public void accept(FastaFileVisitor2 visitor) throws IOException{
+		checkNotNull(visitor);
 		TextLineParser parser = new TextLineParser(inputStream);
 		try{
 			parseFile(parser, 0L, visitor);
 		}finally{
 			IOUtil.closeAndIgnoreErrors(inputStream);
+		}
+	}
+	protected void checkNotNull(FastaFileVisitor2 visitor) {
+		if(visitor==null){
+			throw new NullPointerException("visitor can not be null");
 		}
 	}
 	public void accept(Memento memento, FastaFileVisitor2 visitor) throws IOException{
@@ -64,7 +76,19 @@ public class FastaFileParser2 {
 				if(matcher.find()){
 					if(recordVisitor !=null){
 						recordVisitor.visitEnd();
+						//need to check again the keep parsing flag 
+						//incase the callback was used to stop in the previous
+						//called to visitEnd()
+						keepParsing=callback.keepParsing();
+						if(!keepParsing){
+							//need to set recordVisitor to null
+							//so we don't call visitEnd() again
+							recordVisitor=null;
+							continue;
+						}
 					}
+					
+					
 					String id = matcher.group(1);
 		            String comment = matcher.group(3);		            
 		            callback.updateOffset(currentOffset);

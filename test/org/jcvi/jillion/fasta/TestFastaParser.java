@@ -20,23 +20,23 @@
 package org.jcvi.jillion.fasta;
 
 import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaFileVisitor;
-import org.jcvi.jillion.fasta.FastaFileVisitor.DeflineReturnCode;
-import org.jcvi.jillion.fasta.FastaFileVisitor.EndOfBodyReturnCode;
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.junit.Before;
 import org.junit.Test;
+
 /**
  * @author dkatzel
  *
@@ -45,52 +45,81 @@ import org.junit.Test;
 public class TestFastaParser {
 
     private static final ResourceHelper RESOURCES = new ResourceHelper(TestFastaParser.class);
-    
-    FastaFileVisitor mockVisitor;
-    
-    @Before
-    public void setup(){
-        mockVisitor = createMock(FastaFileVisitor.class);
-    }
+
     
     @Test(expected = NullPointerException.class)
-    public void nullFileShouldThrowNPE() throws FileNotFoundException{
-        FastaFileParser.parse((File)null, mockVisitor);
+    public void nullFileShouldThrowNPE() throws IOException{
+        new FastaFileParser2((File)null);
     }
     @Test(expected = NullPointerException.class)
-    public void nullInputStreamShouldThrowNPE(){
-        FastaFileParser.parse((InputStream)null, mockVisitor);
+    public void nullInputStreamShouldThrowNPE() throws IOException{
+    	 new FastaFileParser2((InputStream)null);
     }
     @Test(expected = NullPointerException.class)
-    public void nullVisitorFileConstructorShouldThrowNPE() throws IOException{
-        FastaFileParser.parse(getFastaFile() , null);
+    public void nullVisitorShouldThrowNPE() throws IOException{
+    	 new FastaFileParser2(getFastaFile()).accept(null);
     }
-    @Test(expected = NullPointerException.class)
-    public void nullVisitorStreamConstructorShouldThrowNPE() throws IOException{
-        FastaFileParser.parse(new ByteArrayInputStream(new byte[0]) , null);
+    
+    @Test
+    public void skipAllRecords() throws IOException{
+    	
+    	FastaFileVisitor2 visitor = new FastaFileVisitor2() {
+			int count=0;
+			@Override
+			public void visitEnd() {
+				assertEquals(2, count);
+				
+			}
+			
+			@Override
+			public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
+					String id, String optionalComment) {
+				count++;
+				return null;
+			}
+		};
+		
+		new FastaFileParser2(getFastaFile()).accept(visitor);
     }
+    
+    
     @Test
     public void parseAllRecords() throws FileNotFoundException, IOException{
         
-        mockVisitor.visitFile();        
-        visitLinesForFirstRecord();
-        visitLinesForSecondRecord();
-        
-        visitDeflineOfFirstRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
-        visitBodyOfFirstRecord();
-        visitEndOfBodyAndReturn(EndOfBodyReturnCode.KEEP_PARSING);
-        
-
-        visitDeflineOfSecondRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
-        visitBodyOfSecondRecord();
-        visitEndOfBodyAndReturn(EndOfBodyReturnCode.KEEP_PARSING);
-        
-        mockVisitor.visitEndOfFile();
-        
-        replay(mockVisitor);
-        parseFastaWithVisitor();
-        verify(mockVisitor);
+       FastaFileVisitor2 visitor = new FastaFileVisitor2() {
+			boolean visitedFirst=false;
+			boolean visitedLast=false;
+			@Override
+			public void visitEnd() {
+				assertTrue(visitedFirst);
+				assertTrue(visitedLast);
+				
+			}
+			
+			@Override
+			public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
+					String id, String optionalComment) {
+				if(matchesFirstRecord(id,optionalComment)){
+					visitedFirst=true;
+					return new FirstRecordVisitor();
+				}else if (matchesSecondRecord(id,optionalComment)){
+					visitedLast=true;
+					return new SecondRecordVisitor();
+				}
+				throw new AssertionError("def line did not match first or second record");
+			}
+	
+			
+		};
+		new FastaFileParser2(getFastaFile()).accept(visitor);
     }
+    
+    private boolean matchesFirstRecord(String id, String optionalComment) {
+    	return "IWKNA01T07A01PB2A1101R".equals(id) && "comment1".equals(optionalComment);
+	}
+    private boolean matchesSecondRecord(String id, String optionalComment) {
+    	return "IWKNA01T07A01PB2A1F".equals(id) && "another comment".equals(optionalComment);
+	}
     /**
      * Should be the same visits as if we
      * parsed all records.
@@ -100,297 +129,298 @@ public class TestFastaParser {
     @Test
     public void stopAfterLastRecord() throws FileNotFoundException, IOException{
         
-        mockVisitor.visitFile();        
-        visitLinesForFirstRecord();
-        visitLinesForSecondRecord();
-        
-        visitDeflineOfFirstRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
-        visitBodyOfFirstRecord();
-        visitEndOfBodyAndReturn(EndOfBodyReturnCode.KEEP_PARSING);
-        
+    	FastaFileVisitor2 visitor = new FastaFileVisitor2() {
+			boolean visitedFirst=false;
+			boolean visitedLast=false;
+			@Override
+			public void visitEnd() {
+				assertTrue(visitedFirst);
+				assertTrue(visitedLast);
+				
+			}
+			
+			@Override
+			public FastaRecordVisitor visitDefline(final FastaVisitorCallback callback,
+					String id, String optionalComment) {
+				if(matchesFirstRecord(id,optionalComment)){
+					visitedFirst=true;
+					return new FirstRecordVisitor();
+				}else if (matchesSecondRecord(id,optionalComment)){
+					visitedLast=true;
+					return new SecondRecordVisitor(){
 
-        visitDeflineOfSecondRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
-        visitBodyOfSecondRecord();
-        visitEndOfBodyAndReturn(EndOfBodyReturnCode.STOP_PARSING);
-        
-        mockVisitor.visitEndOfFile();
-        
-        replay(mockVisitor);
-        parseFastaWithVisitor();
-        verify(mockVisitor);
+						@Override
+						public void visitEnd() {
+							super.visitEnd();
+							callback.stopParsing();
+						}
+						
+					};
+				}
+				throw new AssertionError("def line did not match first or second record");
+			}
+	
+			
+		};
+		new FastaFileParser2(getFastaFile()).accept(visitor);
     }
+  
     
-    @Test(expected = IllegalStateException.class)
-    public void returnNullOnLastVisitEndOfBodyShouldThrowIllegalStateException() throws FileNotFoundException, IOException{
-        
-        mockVisitor.visitFile();        
-        visitLinesForFirstRecord();
-        visitLinesForSecondRecord();
-        
-        visitDeflineOfFirstRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
-        visitBodyOfFirstRecord();
-        visitEndOfBodyAndReturn(EndOfBodyReturnCode.KEEP_PARSING);
-        
-
-        visitDeflineOfSecondRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
-        visitBodyOfSecondRecord();
-        visitEndOfBodyAndReturn(null);
-        
-        replay(mockVisitor);
-        parseFastaWithVisitor();
-    }
+    
+    
     @Test
     public void skipFirstRecord() throws FileNotFoundException, IOException{
         
-        mockVisitor.visitFile();        
-        visitLinesForFirstRecord();
-        visitLinesForSecondRecord();
-        
-        visitDeflineOfFirstRecordAndReturn(DeflineReturnCode.SKIP_CURRENT_RECORD);
-        
-
-        visitDeflineOfSecondRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
-        visitBodyOfSecondRecord();
-        visitEndOfBodyAndReturn(EndOfBodyReturnCode.KEEP_PARSING);
-        
-        mockVisitor.visitEndOfFile();
-        
-        replay(mockVisitor);
-        parseFastaWithVisitor();
-        verify(mockVisitor);
+    	FastaFileVisitor2 visitor = new FastaFileVisitor2() {
+			boolean visitedFirst=false;
+			boolean visitedLast=false;
+			@Override
+			public void visitEnd() {
+				assertTrue(visitedFirst);
+				assertTrue(visitedLast);
+				
+			}
+			
+			@Override
+			public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
+					String id, String optionalComment) {
+				if(matchesFirstRecord(id,optionalComment)){
+					visitedFirst=true;
+					return null;
+				}else if (matchesSecondRecord(id,optionalComment)){
+					visitedLast=true;
+					return new SecondRecordVisitor();
+				}
+				throw new AssertionError("def line did not match first or second record");
+			}
+	
+			
+		};
+		new FastaFileParser2(getFastaFile()).accept(visitor);
     }
     
     @Test
     public void skipLastRecord() throws FileNotFoundException, IOException{
         
-        mockVisitor.visitFile();        
-        visitLinesForFirstRecord();
-        visitLinesForSecondRecord();
-        
-        visitDeflineOfFirstRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
-        visitBodyOfFirstRecord();
-        visitEndOfBodyAndReturn(EndOfBodyReturnCode.KEEP_PARSING);
-        
-
-        visitDeflineOfSecondRecordAndReturn(DeflineReturnCode.SKIP_CURRENT_RECORD);
-        
-        mockVisitor.visitEndOfFile();
-        
-        replay(mockVisitor);
-        parseFastaWithVisitor();
-        verify(mockVisitor);
+    	FastaFileVisitor2 visitor = new FastaFileVisitor2() {
+			boolean visitedFirst=false;
+			boolean visitedLast=false;
+			@Override
+			public void visitEnd() {
+				assertTrue(visitedFirst);
+				assertTrue(visitedLast);
+				
+			}
+			
+			@Override
+			public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
+					String id, String optionalComment) {
+				if(matchesFirstRecord(id,optionalComment)){
+					visitedFirst=true;
+					return new FirstRecordVisitor();
+				}else if (matchesSecondRecord(id,optionalComment)){
+					visitedLast=true;
+					return null;
+				}
+				throw new AssertionError("def line did not match first or second record");
+			}
+	
+			
+		};
+		new FastaFileParser2(getFastaFile()).accept(visitor);
     }
     
-    @Test
-    public void skipAllRecords() throws FileNotFoundException, IOException{
-        
-        mockVisitor.visitFile();        
-        visitLinesForFirstRecord();
-        visitLinesForSecondRecord();
-        
-        visitDeflineOfFirstRecordAndReturn(DeflineReturnCode.SKIP_CURRENT_RECORD);
-        
-
-        visitDeflineOfSecondRecordAndReturn(DeflineReturnCode.SKIP_CURRENT_RECORD);
-        
-        mockVisitor.visitEndOfFile();
-        
-        replay(mockVisitor);
-        parseFastaWithVisitor();
-        verify(mockVisitor);
-    }
+   
     
     @Test
     public void stopAfterFirstDeflineRecords() throws FileNotFoundException, IOException{
         
-        mockVisitor.visitFile();        
-        visitLineForFirstDefline();
-        
-        visitDeflineOfFirstRecordAndReturn(DeflineReturnCode.STOP_PARSING);
-        
-        mockVisitor.visitEndOfFile();
-        
-        replay(mockVisitor);
-        parseFastaWithVisitor();
-        verify(mockVisitor);
+    	FastaFileVisitor2 visitor = new FastaFileVisitor2() {
+			boolean visitedFirst=false;
+			boolean visitedLast=false;
+			@Override
+			public void visitEnd() {
+				assertTrue(visitedFirst);
+				assertFalse(visitedLast);
+				
+			}
+			
+			@Override
+			public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
+					String id, String optionalComment) {
+				if(matchesFirstRecord(id,optionalComment)){
+					visitedFirst=true;
+					callback.stopParsing();
+					return null;
+				}
+				throw new AssertionError("def line did not match first");
+			}
+	
+			
+		};
+		new FastaFileParser2(getFastaFile()).accept(visitor);
     }
     
-    @Test(expected = IllegalStateException.class)
-    public void returnNullOnVisitDeflineShouldThrowIllegalStateException() throws FileNotFoundException, IOException{
-        
-        mockVisitor.visitFile();        
-        visitLineForFirstDefline();
-        
-        visitDeflineOfFirstRecordAndReturn(null);
-        
-        replay(mockVisitor);
-        parseFastaWithVisitor();
-    }
+   
     @Test
     public void stopAfterFirstRecord() throws FileNotFoundException, IOException{
         
-        mockVisitor.visitFile();        
-        visitLinesForFirstRecord();
-        
-        visitDeflineOfFirstRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
-        visitBodyOfFirstRecord();
-        visitEndOfBodyAndReturn(EndOfBodyReturnCode.STOP_PARSING);
-        
-        mockVisitor.visitEndOfFile();
-        
-        replay(mockVisitor);
-        parseFastaWithVisitor();
-        verify(mockVisitor);
+    	FastaFileVisitor2 visitor = new FastaFileVisitor2() {
+			boolean visitedFirst=false;
+			boolean visitedLast=false;
+			@Override
+			public void visitEnd() {
+				assertTrue(visitedFirst);
+				assertFalse(visitedLast);
+				
+			}
+			
+			@Override
+			public FastaRecordVisitor visitDefline(final FastaVisitorCallback callback,
+					String id, String optionalComment) {
+				if(matchesFirstRecord(id,optionalComment)){
+					visitedFirst=true;					
+					return new FirstRecordVisitor(){
+
+						@Override
+						public void visitEnd() {
+							super.visitEnd();
+							callback.stopParsing();
+						}
+						
+					};
+				}
+				throw new AssertionError("def line did not match first");
+			}
+	
+			
+		};
+		new FastaFileParser2(getFastaFile()).accept(visitor);
     }
     
     
     
-    @Test(expected = IllegalStateException.class)
-    public void returningNullOnVisitEndOfBodyShouldThrowIllegalStateException() throws FileNotFoundException, IOException{
-        
-        mockVisitor.visitFile();        
-        visitLinesForFirstRecord();
-        
-        visitDeflineOfFirstRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
-        visitBodyOfFirstRecord();
-        visitEndOfBodyAndReturn(null);
-        
-      
-        
-        replay(mockVisitor);
-        parseFastaWithVisitor();
-    }
+    
     @Test
     public void stopAfterSecondDefline() throws FileNotFoundException, IOException{
         
-        mockVisitor.visitFile();        
-        visitLinesForFirstRecord();
-        
-        visitDeflineOfFirstRecordAndReturn(DeflineReturnCode.VISIT_CURRENT_RECORD);
-        visitBodyOfFirstRecord();
-        visitEndOfBodyAndReturn(EndOfBodyReturnCode.KEEP_PARSING);
-        
-        visitLineForSecondDefline();
-        visitDeflineOfSecondRecordAndReturn(DeflineReturnCode.STOP_PARSING);
-        
-        mockVisitor.visitEndOfFile();
-        
-        replay(mockVisitor);
-        parseFastaWithVisitor();
-        verify(mockVisitor);
+    	FastaFileVisitor2 visitor = new FastaFileVisitor2() {
+			boolean visitedFirst=false;
+			boolean visitedLast=false;
+			@Override
+			public void visitEnd() {
+				assertTrue(visitedFirst);
+				assertTrue(visitedLast);
+				
+			}
+			
+			@Override
+			public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
+					String id, String optionalComment) {
+				if(matchesFirstRecord(id,optionalComment)){
+					visitedFirst=true;
+					return new FirstRecordVisitor();
+				}else if (matchesSecondRecord(id,optionalComment)){
+					visitedLast=true;
+					callback.stopParsing();
+					return null;
+				}
+				throw new AssertionError("def line did not match first or second record");
+			}
+	
+			
+		};
+		new FastaFileParser2(getFastaFile()).accept(visitor);
     }
 
-	private void parseFastaWithVisitor() throws FileNotFoundException,
-			IOException {
-		FastaFileParser.parse(getFastaFile(), mockVisitor);
-	}
+	
 
 	private File getFastaFile() throws IOException {
 		return RESOURCES.getFile("files/seqs.fasta");
 	}
 
     
-    private void visitEndOfBodyAndReturn(EndOfBodyReturnCode ret){
-    	 expect(mockVisitor.visitEndOfBody()).andReturn(ret);         
-    }
     
-    private void visitDeflineOfFirstRecordAndReturn(DeflineReturnCode ret){
-    	expect(mockVisitor.visitDefline("IWKNA01T07A01PB2A1101R", "comment1")).andReturn(ret);
-    }
-    private void visitDeflineOfSecondRecordAndReturn(DeflineReturnCode ret){
-    	expect(mockVisitor.visitDefline("IWKNA01T07A01PB2A1F",  "another comment")).andReturn(ret);
-    }
-	private void visitBodyOfFirstRecord() {
-		mockVisitor.visitBodyLine("CCTCATGTACTCTTACTTTCAATGTTTGGAGGTTGCCCGTAAGCACTTCTTCTTCCCAAT");
-        mockVisitor.visitBodyLine("AACTGACGACCCACTTGTTCTTTTGAAAGTGAATCCACCAAAGCTGAAAGATGAGCTAAT");
-        mockVisitor.visitBodyLine("CCTTAAGCCCATTGCTGCCTTGCATATGTCCACAGCTTGTTCCTCAGTTGGATTTTGTCG");
-        mockVisitor.visitBodyLine("AAGAATGTCTACCATCCTTATTCCCCCAATCTGTGTGCTATGGCACATCTCCAATAAAGA");
-        mockVisitor.visitBodyLine("TGCTAGTGGGTCTGCTGATACCGTTGCTCTTCTTACTATGTTCCTGGCAGCAATAATCAA");
-        mockVisitor.visitBodyLine("GCTTTGGTCAACATCATCATTTCTCACCTCCCCTCCTGGAGTATACATTTGCTCCCAGCA");
-        mockVisitor.visitBodyLine("TGTTCCCTGGGTCAAATGCAGCACTTCAATATAGACACTGCTTGTTCCACCAGCCACTGG");
-        mockVisitor.visitBodyLine("GAGGAATCTCGTTTTGCGGACCAACTCTCTTTCTAGCATGTATGCAACCATTAAGGGGGC");
-        mockVisitor.visitBodyLine("AATTTTGCAGTCCTGGAGTTCTTCCTTCTTCTCTTTTGTTATCGTCAGCTGTGATTCCGA");
-        mockVisitor.visitBodyLine("TGTTAGTATTCTAGCTCCCACTTCATTTGGGAAAACAACTTCCATGATTACATCCTGCGC");
-        mockVisitor.visitBodyLine("CTCTTTGGCACTGAGGTCTGCGTGGCCAGGGTTTATGTCAACCCTCCGTCTTATTTTAAC");
-        mockVisitor.visitBodyLine("TTGATTTCTGAAGTGGACAGGGCCAAAGGTCCCGTGTTTCAATCTTTCGACTTTTTCAAA");
-        mockVisitor.visitBodyLine("ATAAGTTTTATATACCTTTGGGTAGTGAACTGTACTTGTTGTTGGTCCATTCCTATTCCA");
-        mockVisitor.visitBodyLine("CCATGTTACAGCTAGAGGTGATACCATTACTCGGTCTGAGCCGGCA");
-	}
 
-	private void visitBodyOfSecondRecord() {
-		mockVisitor.visitBodyLine("ATAAAAGAACTAAGAGATCTAATGTCGCAGTCTCGCACCCGCGAGATACTAACCAAAACC");
-        mockVisitor.visitBodyLine("ACTGTGGACCACATGGCCATAATCAAAAAATACACATCAGGAAGACAAGAGAAGAACCCC");
-        mockVisitor.visitBodyLine("GCACTCAGGATGAAGTGGATGATGGCAATGAAATATCCAATTACAGCAGATAAAAGAATA");
-        mockVisitor.visitBodyLine("ATGGAAATGATTCCCGAAAGGAATGAACAAGGACAAACCCTCTGGAGTAAAACAAACGAT");
-        mockVisitor.visitBodyLine("GCCGGCTCAGACCGAGTAATGGTATCACCTCTAGCTGTAACATGGTGGAATAGGAATGGA");
-        mockVisitor.visitBodyLine("CCAACAACAAGTACAGTTCACTACCCAAAGGTATATAAAACTTATTTTGAAAAAGTCGAA");
-        mockVisitor.visitBodyLine("AGATTGAAACACGGGACCTTTGGCCCTGTCCACTTCAGAAATCAAGTTAAAATAAGACGG");
-        mockVisitor.visitBodyLine("AGGGTTGACATAAACCCTGGCCACGCAGACCTCAGTGCCAAAGAGGCGCAGGATGTAATC");
-        mockVisitor.visitBodyLine("ATGGAAGTTGTTTTCCCAAATGAAGTGGGAGCTAGAATACTAACATCGGAATCACAGCTG");
-        mockVisitor.visitBodyLine("ACGATAACAAAAGAGAAGAAGGAAGAACTCCAGGACTGCAAAATTGCCCCCTTAATGGTT");
-        mockVisitor.visitBodyLine("GCATACATGCTAGAAAGAGAGTTGGTCCGCAAAACGAGATTCCTCCCAGTGGCTGGTGGA");
-        mockVisitor.visitBodyLine("ACAAGCAGTGTCTATATTGAAGTGCTGCATTTGACCCAGGGAACATGCTGGGAGCAAATG");
-        mockVisitor.visitBodyLine("TATACTCCAGGAGGGGAGGTGAGAAATGATGATGTTGACCAAAGCTTGATTATTGCTGCC");
-        mockVisitor.visitBodyLine("AGGAACATAGTAAGAAGAGCAACGGTATCAGCAGACCCACTAGCATCTCTATTGGAGATG");
-        mockVisitor.visitBodyLine("TGCCATAGCACACAGATGGGGGAATAAGGATGGTAGACATTCTTCGACAAAATCCAACTG");
-        mockVisitor.visitBodyLine("AGGAACAAGCTGTGGACATATGCAAGGCAGCAATGGGCTTAAGGATTAGCTCATCTTTCA");
-        mockVisitor.visitBodyLine("GCTTTGGTGGATTCACT");
-	}
+	
+	private static class FirstRecordVisitor implements FastaRecordVisitor{
+		private final List<String> expectedLines = new ArrayList<String>();
+		private final List<String> actualLines = new ArrayList<String>();
+		public FirstRecordVisitor(){
+			expectedLines.add("CCTCATGTACTCTTACTTTCAATGTTTGGAGGTTGCCCGTAAGCACTTCTTCTTCCCAAT\n");
+	        expectedLines.add("AACTGACGACCCACTTGTTCTTTTGAAAGTGAATCCACCAAAGCTGAAAGATGAGCTAAT\n");
+	        expectedLines.add("CCTTAAGCCCATTGCTGCCTTGCATATGTCCACAGCTTGTTCCTCAGTTGGATTTTGTCG\n");
+	        expectedLines.add("AAGAATGTCTACCATCCTTATTCCCCCAATCTGTGTGCTATGGCACATCTCCAATAAAGA\n");
+	        expectedLines.add("TGCTAGTGGGTCTGCTGATACCGTTGCTCTTCTTACTATGTTCCTGGCAGCAATAATCAA\n");
+	        expectedLines.add("GCTTTGGTCAACATCATCATTTCTCACCTCCCCTCCTGGAGTATACATTTGCTCCCAGCA\n");
+	        expectedLines.add("TGTTCCCTGGGTCAAATGCAGCACTTCAATATAGACACTGCTTGTTCCACCAGCCACTGG\n");
+	        expectedLines.add("GAGGAATCTCGTTTTGCGGACCAACTCTCTTTCTAGCATGTATGCAACCATTAAGGGGGC\n");
+	        expectedLines.add("AATTTTGCAGTCCTGGAGTTCTTCCTTCTTCTCTTTTGTTATCGTCAGCTGTGATTCCGA\n");
+	        expectedLines.add("TGTTAGTATTCTAGCTCCCACTTCATTTGGGAAAACAACTTCCATGATTACATCCTGCGC\n");
+	        expectedLines.add("CTCTTTGGCACTGAGGTCTGCGTGGCCAGGGTTTATGTCAACCCTCCGTCTTATTTTAAC\n");
+	        expectedLines.add("TTGATTTCTGAAGTGGACAGGGCCAAAGGTCCCGTGTTTCAATCTTTCGACTTTTTCAAA\n");
+	        expectedLines.add("ATAAGTTTTATATACCTTTGGGTAGTGAACTGTACTTGTTGTTGGTCCATTCCTATTCCA\n");
+	        expectedLines.add("CCATGTTACAGCTAGAGGTGATACCATTACTCGGTCTGAGCCGGCA\n");
+		}
+		@Override
+		public void visitBodyLine(String line) {
+			actualLines.add(line);
+			
+		}
 
-	private void visitLinesForSecondRecord() {
-		visitLineForSecondDefline();
-        mockVisitor.visitLine("ATAAAAGAACTAAGAGATCTAATGTCGCAGTCTCGCACCCGCGAGATACTAACCAAAACC\n");
-        mockVisitor.visitLine("ACTGTGGACCACATGGCCATAATCAAAAAATACACATCAGGAAGACAAGAGAAGAACCCC\n");
-        mockVisitor.visitLine("GCACTCAGGATGAAGTGGATGATGGCAATGAAATATCCAATTACAGCAGATAAAAGAATA\n");
-        mockVisitor.visitLine("ATGGAAATGATTCCCGAAAGGAATGAACAAGGACAAACCCTCTGGAGTAAAACAAACGAT\n");
-        mockVisitor.visitLine("GCCGGCTCAGACCGAGTAATGGTATCACCTCTAGCTGTAACATGGTGGAATAGGAATGGA\n");
-        mockVisitor.visitLine("CCAACAACAAGTACAGTTCACTACCCAAAGGTATATAAAACTTATTTTGAAAAAGTCGAA\n");
-        mockVisitor.visitLine("AGATTGAAACACGGGACCTTTGGCCCTGTCCACTTCAGAAATCAAGTTAAAATAAGACGG\n");
-        mockVisitor.visitLine("AGGGTTGACATAAACCCTGGCCACGCAGACCTCAGTGCCAAAGAGGCGCAGGATGTAATC\n");
-        mockVisitor.visitLine("ATGGAAGTTGTTTTCCCAAATGAAGTGGGAGCTAGAATACTAACATCGGAATCACAGCTG\n");
-        mockVisitor.visitLine("ACGATAACAAAAGAGAAGAAGGAAGAACTCCAGGACTGCAAAATTGCCCCCTTAATGGTT\n");
-        mockVisitor.visitLine("GCATACATGCTAGAAAGAGAGTTGGTCCGCAAAACGAGATTCCTCCCAGTGGCTGGTGGA\n");
-        mockVisitor.visitLine("ACAAGCAGTGTCTATATTGAAGTGCTGCATTTGACCCAGGGAACATGCTGGGAGCAAATG\n");
-        mockVisitor.visitLine("TATACTCCAGGAGGGGAGGTGAGAAATGATGATGTTGACCAAAGCTTGATTATTGCTGCC\n");
-        mockVisitor.visitLine("AGGAACATAGTAAGAAGAGCAACGGTATCAGCAGACCCACTAGCATCTCTATTGGAGATG\n");
-        mockVisitor.visitLine("TGCCATAGCACACAGATGGGGGAATAAGGATGGTAGACATTCTTCGACAAAATCCAACTG\n");
-        mockVisitor.visitLine("AGGAACAAGCTGTGGACATATGCAAGGCAGCAATGGGCTTAAGGATTAGCTCATCTTTCA\n");
-        mockVisitor.visitLine("GCTTTGGTGGATTCACT\n");
+		@Override
+		public void visitEnd() {
+			assertEquals(expectedLines, actualLines);
+			
+		}
+		
 	}
+	
+	private static class SecondRecordVisitor implements FastaRecordVisitor{
+		private final List<String> expectedLines = new ArrayList<String>();
+		private final List<String> actualLines = new ArrayList<String>();
+		public SecondRecordVisitor(){
+			 expectedLines.add("ATAAAAGAACTAAGAGATCTAATGTCGCAGTCTCGCACCCGCGAGATACTAACCAAAACC\n");
+		        expectedLines.add("ACTGTGGACCACATGGCCATAATCAAAAAATACACATCAGGAAGACAAGAGAAGAACCCC\n");
+		        expectedLines.add("GCACTCAGGATGAAGTGGATGATGGCAATGAAATATCCAATTACAGCAGATAAAAGAATA\n");
+		        expectedLines.add("ATGGAAATGATTCCCGAAAGGAATGAACAAGGACAAACCCTCTGGAGTAAAACAAACGAT\n");
+		        expectedLines.add("GCCGGCTCAGACCGAGTAATGGTATCACCTCTAGCTGTAACATGGTGGAATAGGAATGGA\n");
+		        expectedLines.add("CCAACAACAAGTACAGTTCACTACCCAAAGGTATATAAAACTTATTTTGAAAAAGTCGAA\n");
+		        expectedLines.add("AGATTGAAACACGGGACCTTTGGCCCTGTCCACTTCAGAAATCAAGTTAAAATAAGACGG\n");
+		        expectedLines.add("AGGGTTGACATAAACCCTGGCCACGCAGACCTCAGTGCCAAAGAGGCGCAGGATGTAATC\n");
+		        expectedLines.add("ATGGAAGTTGTTTTCCCAAATGAAGTGGGAGCTAGAATACTAACATCGGAATCACAGCTG\n");
+		        expectedLines.add("ACGATAACAAAAGAGAAGAAGGAAGAACTCCAGGACTGCAAAATTGCCCCCTTAATGGTT\n");
+		        expectedLines.add("GCATACATGCTAGAAAGAGAGTTGGTCCGCAAAACGAGATTCCTCCCAGTGGCTGGTGGA\n");
+		        expectedLines.add("ACAAGCAGTGTCTATATTGAAGTGCTGCATTTGACCCAGGGAACATGCTGGGAGCAAATG\n");
+		        expectedLines.add("TATACTCCAGGAGGGGAGGTGAGAAATGATGATGTTGACCAAAGCTTGATTATTGCTGCC\n");
+		        expectedLines.add("AGGAACATAGTAAGAAGAGCAACGGTATCAGCAGACCCACTAGCATCTCTATTGGAGATG\n");
+		        expectedLines.add("TGCCATAGCACACAGATGGGGGAATAAGGATGGTAGACATTCTTCGACAAAATCCAACTG\n");
+		        expectedLines.add("AGGAACAAGCTGTGGACATATGCAAGGCAGCAATGGGCTTAAGGATTAGCTCATCTTTCA\n");
+		        expectedLines.add("GCTTTGGTGGATTCACT\n");
+		}
+		@Override
+		public void visitBodyLine(String line) {
+			actualLines.add(line);
+			
+		}
 
-	private void visitLineForSecondDefline() {
-		mockVisitor.visitLine(">IWKNA01T07A01PB2A1F  another comment\n");
+		@Override
+		public void visitEnd() {
+			assertEquals(expectedLines, actualLines);
+			
+		}
+		
 	}
-
-	private void visitLinesForFirstRecord() {
-		visitLineForFirstDefline();
-        mockVisitor.visitLine("CCTCATGTACTCTTACTTTCAATGTTTGGAGGTTGCCCGTAAGCACTTCTTCTTCCCAAT\n");
-        mockVisitor.visitLine("AACTGACGACCCACTTGTTCTTTTGAAAGTGAATCCACCAAAGCTGAAAGATGAGCTAAT\n");
-        mockVisitor.visitLine("CCTTAAGCCCATTGCTGCCTTGCATATGTCCACAGCTTGTTCCTCAGTTGGATTTTGTCG\n");
-        mockVisitor.visitLine("AAGAATGTCTACCATCCTTATTCCCCCAATCTGTGTGCTATGGCACATCTCCAATAAAGA\n");
-        mockVisitor.visitLine("TGCTAGTGGGTCTGCTGATACCGTTGCTCTTCTTACTATGTTCCTGGCAGCAATAATCAA\n");
-        mockVisitor.visitLine("GCTTTGGTCAACATCATCATTTCTCACCTCCCCTCCTGGAGTATACATTTGCTCCCAGCA\n");
-        mockVisitor.visitLine("TGTTCCCTGGGTCAAATGCAGCACTTCAATATAGACACTGCTTGTTCCACCAGCCACTGG\n");
-        mockVisitor.visitLine("GAGGAATCTCGTTTTGCGGACCAACTCTCTTTCTAGCATGTATGCAACCATTAAGGGGGC\n");
-        mockVisitor.visitLine("AATTTTGCAGTCCTGGAGTTCTTCCTTCTTCTCTTTTGTTATCGTCAGCTGTGATTCCGA\n");
-        mockVisitor.visitLine("TGTTAGTATTCTAGCTCCCACTTCATTTGGGAAAACAACTTCCATGATTACATCCTGCGC\n");
-        mockVisitor.visitLine("CTCTTTGGCACTGAGGTCTGCGTGGCCAGGGTTTATGTCAACCCTCCGTCTTATTTTAAC\n");
-        mockVisitor.visitLine("TTGATTTCTGAAGTGGACAGGGCCAAAGGTCCCGTGTTTCAATCTTTCGACTTTTTCAAA\n");
-        mockVisitor.visitLine("ATAAGTTTTATATACCTTTGGGTAGTGAACTGTACTTGTTGTTGGTCCATTCCTATTCCA\n");
-        mockVisitor.visitLine("CCATGTTACAGCTAGAGGTGATACCATTACTCGGTCTGAGCCGGCA\n");
-	}
-
-	private void visitLineForFirstDefline() {
-		mockVisitor.visitLine(">IWKNA01T07A01PB2A1101R comment1\n");
-	}
+	
+	
     
     @Test
-    public void parseEmptyFile(){
-        mockVisitor.visitFile();
-        mockVisitor.visitEndOfFile();
+    public void parseEmptyFile() throws IOException{
+        FastaFileVisitor2 visitor = createMock(FastaFileVisitor2.class);
+        visitor.visitEnd();
         
-        replay(mockVisitor);
-        FastaFileParser.parse(new ByteArrayInputStream(new byte[]{}), mockVisitor);
-        verify(mockVisitor);
+        replay(visitor);
+        new FastaFileParser2(new ByteArrayInputStream(new byte[]{})).accept(visitor);
+        verify(visitor);
     }
 }
