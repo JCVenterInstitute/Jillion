@@ -1,5 +1,6 @@
 package org.jcvi.jillion.fasta.qual;
 
+import org.jcvi.jillion.fasta.AbstractFastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 /**
  * {@code AbstractQualityFastaRecordVisitor} is an abstract
@@ -17,33 +18,24 @@ import org.jcvi.jillion.fasta.FastaRecordVisitor;
  * @author dkatzel
  *
  */
-public abstract class AbstractQualityFastaRecordVisitor  implements FastaRecordVisitor{
-	
-	private final String id;
-	private final String comment;
-	private final StringBuilder sequenceBuilder = new StringBuilder();
+public abstract class AbstractQualityFastaRecordVisitor  extends AbstractFastaRecordVisitor{
 	
 	
 	public AbstractQualityFastaRecordVisitor(String id, String comment) {
-		this.id = id;
-		this.comment = comment;
+		super(id,comment);
 	}
-
+	
 	@Override
-	public final void visitBodyLine(String line) {
-		sequenceBuilder.append(line);
-		
-	}
-
-	@Override
-	public final void visitEnd() {
-		QualitySequenceFastaRecord record = new QualitySequenceFastaRecordBuilder(id, sequenceBuilder.toString())
+	protected void visitRecord(String id, String comment,
+			String fullBody) {
+		QualitySequenceFastaRecord record = new QualitySequenceFastaRecordBuilder(id, fullBody)
 												.comment(comment)
 												.build();
 		visitRecord(record);
 		
 	}
-	
+
+
 	protected abstract void visitRecord(QualitySequenceFastaRecord fastaRecord);
 	
 
