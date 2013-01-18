@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.jillion.core.Range;
@@ -11,14 +12,15 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaFileVisitor;
+import org.jcvi.jillion.fasta.FastaFileParser2;
+import org.jcvi.jillion.fasta.FastaFileVisitor2;
 import org.jcvi.jillion.fasta.FastaRecord;
+import org.jcvi.jillion.fasta.FastaRecordVisitor;
+import org.jcvi.jillion.fasta.FastaVisitorCallback;
+import org.jcvi.jillion.fasta.FastaVisitorCallback.Memento;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
-import org.jcvi.jillion.internal.fasta.AbstractIndexedFastaDataStoreBuilderVisitor;
 /**
  * {@code IndexedNucleotideFastaFileDataStore} is an implementation of 
  * {@link NucleotideSequenceFastaDataStore} that only stores an index containing
@@ -42,12 +44,12 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 	 * for.
 	 * @return a new instance of {@link IndexedNucleotideSequenceFastaFileDataStore};
 	 * never null.
-	 * @throws FileNotFoundException if the input fasta file does not exist.
+	 * @throws IOException 
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static NucleotideSequenceFastaDataStore create(File fastaFile) throws FileNotFoundException{
-		NucleotideFastaDataStoreBuilderVisitor builder = createBuilder(fastaFile);
-		FastaFileParser.parse(fastaFile, builder);
+	public static NucleotideSequenceFastaDataStore create(File fastaFile) throws IOException{
+		IndexedNucleotideSequenceFastaDataStoreBuilderVisitor2 builder = createBuilder(fastaFile);
+		builder.initialize();
 		return builder.build();
 	}
 	/**
@@ -58,54 +60,50 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 	 * @param filter the {@link DataStoreFilter} to use to filter the records from the fasta file.
 	 * @return a new instance of {@link IndexedNucleotideSequenceFastaFileDataStore};
 	 * never null.
-	 * @throws FileNotFoundException if the input fasta file does not exist.
+	 * @throws IOException 
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static NucleotideSequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws FileNotFoundException{
-		NucleotideFastaDataStoreBuilderVisitor builder = createBuilder(fastaFile, filter);
-		FastaFileParser.parse(fastaFile, builder);
+	public static NucleotideSequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
+		IndexedNucleotideSequenceFastaDataStoreBuilderVisitor2 builder = createBuilder(fastaFile, filter);
+		builder.initialize();
 		return builder.build();
 	}
 	/**
-	 * Creates a new {@link NucleotideFastaDataStoreBuilderVisitor}
+	 * Creates a new {@link IndexedNucleotideSequenceFastaDataStoreBuilderVisitor2}
 	 * instance that will build an {@link IndexedNucleotideSequenceFastaFileDataStore}
-	 * using the given fastaFile.  This implementation of {@link NucleotideFastaDataStoreBuilderVisitor}
-	 * can only be used to parse a single fasta file (the one given) and does not support
-	 * {@link NucleotideFastaDataStoreBuilderVisitor#addFastaRecord(DefaultNucleotideSequenceFastaRecord)}.
-	 * This builder visitor can only build the datastore via the visitXXX methods in the {@link FastaFileVisitor}
-	 * interface.
+	 * using the given fastaFile.  This implementation of {@link IndexedNucleotideSequenceFastaDataStoreBuilderVisitor2}
+	 * can only be used to parse a single fasta file (the one given).  
 	 * @param fastaFile the fasta to create an {@link IndexedNucleotideSequenceFastaFileDataStore}
 	 * for.
-	 * @return a new instance of {@link NucleotideFastaDataStoreBuilderVisitor};
+	 * @return a new instance of {@link IndexedNucleotideSequenceFastaDataStoreBuilderVisitor2};
 	 * never null.
-	 * @throws FileNotFoundException if the input fasta file does not exist.
+	 * @throws IOException 
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static NucleotideFastaDataStoreBuilderVisitor createBuilder(File fastaFile) throws FileNotFoundException{
+	public static IndexedNucleotideSequenceFastaDataStoreBuilderVisitor2 createBuilder(File fastaFile) throws IOException{
 		if(fastaFile ==null){
 			throw new NullPointerException("fasta file can not be null");
 		}
 		if(!fastaFile.exists()){
 			throw new FileNotFoundException(fastaFile.getAbsolutePath());
 		}
-		return new IndexedNucleotideFastaDataStoreBuilderVisitor(fastaFile, DataStoreFilters.alwaysAccept());
+		return new IndexedNucleotideSequenceFastaDataStoreBuilderVisitor2(fastaFile, DataStoreFilters.alwaysAccept());
 	}
 	/**
-	 * Creates a new {@link NucleotideFastaDataStoreBuilderVisitor}
+	 * Creates a new {@link IndexedNucleotideSequenceFastaDataStoreBuilderVisitor2}
 	 * instance that will build an {@link IndexedNucleotideSequenceFastaFileDataStore}
-	 * using the given fastaFile.  This implementation of {@link NucleotideFastaDataStoreBuilderVisitor}
-	 * can only be used to parse a single fasta file (the one given) and does not support
-	 * {@link NucleotideFastaDataStoreBuilderVisitor#addFastaRecord(DefaultNucleotideSequenceFastaRecord)}.
-	 * This builder visitor can only build the datastore via the visitXXX methods in the {@link FastaFileVisitor}
-	 * interface.
+	 * using the given fastaFile.  This implementation of {@link IndexedNucleotideSequenceFastaDataStoreBuilderVisitor2}
+	 * can only be used to parse a single fasta file (the one given).  
 	 * @param fastaFile the fasta to create an {@link IndexedNucleotideSequenceFastaFileDataStore}
 	 * for.
-	 * @return a new instance of {@link NucleotideFastaDataStoreBuilderVisitor};
+	 * @param filter an instance of {@link DataStoreFilter} to filter out records from the fasta file;
+	 * can not be null.
+	 * @return a new instance of {@link IndexedNucleotideSequenceFastaDataStoreBuilderVisitor2};
 	 * never null.
-	 * @throws FileNotFoundException if the input fasta file does not exist.
-	 * @throws NullPointerException if the input fasta file is null.
+	 * @throws IOException if the given ffasta file does not exist.
+	 * @throws NullPointerException if the input fasta file or filter are null.
 	 */
-	public static NucleotideFastaDataStoreBuilderVisitor createBuilder(File fastaFile, DataStoreFilter filter) throws FileNotFoundException{
+	private static IndexedNucleotideSequenceFastaDataStoreBuilderVisitor2 createBuilder(File fastaFile, DataStoreFilter filter) throws IOException{
 		if(fastaFile ==null){
 			throw new NullPointerException("fasta file can not be null");
 		}
@@ -115,7 +113,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 		if(filter ==null){
 			throw new NullPointerException("filter can not be null");
 		}
-		return new IndexedNucleotideFastaDataStoreBuilderVisitor(fastaFile,filter);
+		return new IndexedNucleotideSequenceFastaDataStoreBuilderVisitor2(fastaFile,filter);
 	}
 	
 	
@@ -185,22 +183,150 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 		return DataStoreStreamingIterator.create(this,LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile,filter));
 	}
 	
-	private static final class IndexedNucleotideFastaDataStoreBuilderVisitor
-			extends
-			AbstractIndexedFastaDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>
-			implements NucleotideFastaDataStoreBuilderVisitor {
+	private static final class IndexedNucleotideSequenceFastaDataStoreBuilderVisitor2 implements FastaFileVisitor2, Builder<NucleotideSequenceFastaDataStore> {
 		
-		private IndexedNucleotideFastaDataStoreBuilderVisitor(File fastaFile, DataStoreFilter filter) {
-			super(fastaFile, filter);
+		private final DataStoreFilter filter;
+		private final FastaFileParser2 parser;
+		private final File fastaFile;
+		
+		private final Map<String, FastaVisitorCallback.Memento> mementos = new LinkedHashMap<String, FastaVisitorCallback.Memento>();
+		private IndexedNucleotideSequenceFastaDataStoreBuilderVisitor2(File fastaFile, DataStoreFilter filter) throws IOException {
+			this.fastaFile = fastaFile;
+			this.filter = filter;
+			this.parser = new FastaFileParser2(fastaFile);
+
+		}
+
+		public void initialize() throws IOException {
+			parser.accept(this);
+			
 		}
 
 		@Override
-		protected NucleotideSequenceFastaDataStore createDataStore(
-				Map<String,Range> index, File fastaFile) {
-			return new IndexedNucleotideSequenceFastaFileDataStore(index, fastaFile, getFilter());
+		public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
+				String id, String optionalComment) {
+			if(filter.accept(id)){
+				if(!callback.canCreateMemento()){
+					throw new IllegalStateException("must be able to create memento");
+				}
+				mementos.put(id, callback.createMemento());
+			}
+			//always skip records since we don't care about the details of any records
+			//during the initial parse
+			return null;
 		}
 
+		@Override
+		public void visitEnd() {
+			//no-op
+			
+		}
 
-}
+		@Override
+		public NucleotideSequenceFastaDataStore build() {
+			return new IndexedNucleotideSequenceFastaFileDataStore2(fastaFile,parser,filter,mementos);
+		}
+	
+	}
+	
+	public static final class IndexedNucleotideSequenceFastaFileDataStore2 implements NucleotideSequenceFastaDataStore {
+		private volatile boolean closed =false;
+		private final File fastaFile;
+		private final FastaFileParser2 parser;
+		private final DataStoreFilter filter;
+		private final Map<String, FastaVisitorCallback.Memento> mementos;
+		
+		
+		public IndexedNucleotideSequenceFastaFileDataStore2(File fastaFile,
+				FastaFileParser2 parser, DataStoreFilter filter, Map<String, Memento> mementos) {
+			this.fastaFile = fastaFile;
+			this.parser = parser;
+			this.mementos = mementos;
+			this.filter = filter;
+		}
+
+		@Override
+		public StreamingIterator<String> idIterator() throws DataStoreException {
+			throwExceptionIfClosed();
+			return DataStoreStreamingIterator.create(this,mementos.keySet().iterator());
+		}
+
+		@Override
+		public NucleotideSequenceFastaRecord get(String id)
+				throws DataStoreException {
+			throwExceptionIfClosed();
+			if(!mementos.containsKey(id)){
+				return null;
+			}
+			SingleRecordVisitor visitor = new SingleRecordVisitor();
+			try {
+				parser.accept(mementos.get(id), visitor);
+				return visitor.fastaRecord;
+			} catch (IOException e) {
+				throw new DataStoreException("error reading fasta file",e);
+			}
+		}
+
+		@Override
+		public StreamingIterator<NucleotideSequenceFastaRecord> iterator() throws DataStoreException {
+			throwExceptionIfClosed();
+			return DataStoreStreamingIterator.create(this,
+					LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile,filter ));
+		}
+		private void throwExceptionIfClosed() throws DataStoreException{
+			if(closed){
+				throw new IllegalStateException("datastore is closed");
+			}
+		}
+		public boolean contains(String id) throws DataStoreException {
+			throwExceptionIfClosed();
+			return mementos.containsKey(id);
+		}
+
+		@Override
+		public long getNumberOfRecords() throws DataStoreException {
+			throwExceptionIfClosed();
+			return mementos.size();
+		}
+
+		@Override
+		public boolean isClosed(){
+			return closed;
+		}
+
+		@Override
+		public void close() {
+			closed=true;
+			
+		}
+
+	}
+
+	private static class SingleRecordVisitor implements FastaFileVisitor2{
+		private NucleotideSequenceFastaRecord fastaRecord=null;
+		@Override
+		public FastaRecordVisitor visitDefline(final FastaVisitorCallback callback,
+				String id, String optionalComment) {
+			if(fastaRecord !=null){
+				callback.stopParsing();
+				return null;
+			}
+			return new AbstractNucleotideFastaRecordVisitor(id, optionalComment) {
+				
+				@Override
+				protected void visitRecord(NucleotideSequenceFastaRecord fastaRecord) {
+					SingleRecordVisitor.this.fastaRecord = fastaRecord;
+					
+				}
+			};
+		}
+
+		@Override
+		public void visitEnd() {
+			//no-op
+			
+		}
+		
+	}
 
 }

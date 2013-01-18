@@ -20,12 +20,13 @@
 package org.jcvi.jillion.fasta.nt;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
-import org.jcvi.jillion.fasta.AbstractFastaVisitor;
-import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaFileVisitor;
+import org.jcvi.jillion.fasta.FastaFileParser2;
+import org.jcvi.jillion.fasta.FastaFileVisitor2;
+import org.jcvi.jillion.fasta.FastaRecordVisitor;
+import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 
 /**
@@ -54,24 +55,41 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 	    */
 	    @Override
 	    protected void backgroundThreadRunMethod() {
-	        FastaFileVisitor visitor = new AbstractFastaVisitor() {
-				
+	    	FastaFileVisitor2 visitor = new FastaFileVisitor2(){
+
 				@Override
-				protected boolean visitRecord(String id, String comment, String entireBody) {
-					if(filter.accept(id)){
-						NucleotideSequenceFastaRecord fastaRecord = new NucleotideSequenceFastaRecordBuilder(id, entireBody)
-																		.comment(comment)
-																		.build();
-						blockingPut(fastaRecord);
+				public FastaRecordVisitor visitDefline(
+						final FastaVisitorCallback callback, String id,
+						String optionalComment) {
+					if(!filter.accept(id)){
+						return null;
 					}
-	                return !LargeNucleotideSequenceFastaIterator.this.isClosed();
+					
+					return new AbstractNucleotideFastaRecordVisitor(id, optionalComment) {
+						
+						@Override
+						protected void visitRecord(NucleotideSequenceFastaRecord fastaRecord) {
+							blockingPut(fastaRecord);
+							if(LargeNucleotideSequenceFastaIterator.this.isClosed()){
+								callback.stopParsing();
+							}
+							
+						}
+					};
 				}
-			};
-	        try {
-	            FastaFileParser.parse(fastaFile, visitor);
-	        } catch (FileNotFoundException e) {
-	            throw new RuntimeException("fasta file does not exist",e);
-	        }
-	        
+
+				@Override
+				public void visitEnd() {
+					//no-op
+					
+				}
+	    		
+	    	};
+	    	
+	    	try {
+				new FastaFileParser2(fastaFile).accept(visitor);
+			} catch (IOException e) {
+				throw new RuntimeException("can not parse fasta file",e);
+			}
 	    }
 }

@@ -24,15 +24,20 @@
 package org.jcvi.jillion.fasta.nt;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
+import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.internal.fasta.AbstractFastaFileDataStoreBuilderVisitor;
+import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.fasta.FastaFileParser2;
+import org.jcvi.jillion.fasta.FastaFileVisitor2;
+import org.jcvi.jillion.fasta.FastaRecordVisitor;
+import org.jcvi.jillion.fasta.FastaVisitorCallback;
 /**
  * {@code DefaultNucleotideFastaFileDataStore} is the default implementation
  * of {@link NucleotideSequenceFastaDataStore} which stores
@@ -47,29 +52,27 @@ final class DefaultNucleotideSequenceFastaFileDataStore{
 	private DefaultNucleotideSequenceFastaFileDataStore(){
 		//can not instantiate.
 	}
-	public static NucleotideFastaDataStoreBuilderVisitor createBuilder(){
-		return createBuilder(null);
-	}
-	public static NucleotideFastaDataStoreBuilderVisitor createBuilder(DataStoreFilter filter){
-		return new NucleotideFastaDataStoreBuilderVisitorImpl(filter);
+
+	private static NucleotideFastaDataStoreBuilderVisitorImpl2 createBuilder(DataStoreFilter filter){
+		return new NucleotideFastaDataStoreBuilderVisitorImpl2(filter);
 	}
 	
-	public static NucleotideSequenceFastaDataStore create(File fastaFile) throws FileNotFoundException{
-		return create(fastaFile,null);
+	public static NucleotideSequenceFastaDataStore create(File fastaFile) throws IOException{
+		return create(fastaFile,DataStoreFilters.alwaysAccept());
 	}
-	public static NucleotideSequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws FileNotFoundException{
-		NucleotideFastaDataStoreBuilderVisitor builder = createBuilder(filter);
-		FastaFileParser.parse(fastaFile, builder);
+	public static NucleotideSequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
+		NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter);
+		new FastaFileParser2(fastaFile).accept(builder);
 		return builder.build();
 	}
 	
-	public static NucleotideSequenceFastaDataStore create(InputStream in) throws FileNotFoundException{
-		return create(in,null);
+	public static NucleotideSequenceFastaDataStore create(InputStream in) throws IOException{
+		return create(in,DataStoreFilters.alwaysAccept());
 	}
-	public static NucleotideSequenceFastaDataStore create(InputStream in, DataStoreFilter filter) throws FileNotFoundException{
+	public static NucleotideSequenceFastaDataStore create(InputStream in, DataStoreFilter filter) throws IOException{
 		try{
-			NucleotideFastaDataStoreBuilderVisitor builder = createBuilder(filter);
-			FastaFileParser.parse(in, builder);
+			NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter);
+			new FastaFileParser2(in).accept(builder);
 			return builder.build();
 		}finally{
 			IOUtil.closeAndIgnoreErrors(in);
@@ -77,29 +80,42 @@ final class DefaultNucleotideSequenceFastaFileDataStore{
 	}
     
 
-    private static class NucleotideFastaDataStoreBuilderVisitorImpl extends AbstractFastaFileDataStoreBuilderVisitor<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>implements NucleotideFastaDataStoreBuilderVisitor{
+    
+    private static final class NucleotideFastaDataStoreBuilderVisitorImpl2 implements FastaFileVisitor2, Builder<NucleotideSequenceFastaDataStore>{
+
+		private final Map<String, NucleotideSequenceFastaRecord> fastaRecords = new LinkedHashMap<String, NucleotideSequenceFastaRecord>();
+		
+		private final DataStoreFilter filter;
+		
+		public NucleotideFastaDataStoreBuilderVisitorImpl2(DataStoreFilter filter){
+			this.filter = filter;
+		}
+		@Override
+		public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
+				final String id, String optionalComment) {
+			if(!filter.accept(id)){
+				return null;
+			}
+			return new AbstractNucleotideFastaRecordVisitor(id,optionalComment){
+
+				@Override
+				protected void visitRecord(
+						NucleotideSequenceFastaRecord fastaRecord) {
+					fastaRecords.put(id, fastaRecord);
+					
+				}
+				
+			};
+		}
 
 		@Override
-		public NucleotideFastaDataStoreBuilderVisitor addFastaRecord(
-				NucleotideSequenceFastaRecord fastaRecord) {
-			super.addFastaRecord(fastaRecord);
-			return this;
+		public void visitEnd() {
+			//no-op			
 		}
-
-		public NucleotideFastaDataStoreBuilderVisitorImpl() {
-			super(new DefaultNucleotideSequenceFastaDataStoreBuilder());
-		}
-		public NucleotideFastaDataStoreBuilderVisitorImpl(DataStoreFilter filter) {
-			super(new DefaultNucleotideSequenceFastaDataStoreBuilder(), filter);
-		}
-
 		@Override
-		protected NucleotideSequenceFastaRecord createFastaRecord(String id,
-				String comment, String entireBody) {
-			return new NucleotideSequenceFastaRecordBuilder(id, entireBody)
-						.comment(comment)
-						.build();
+		public NucleotideSequenceFastaDataStore build() {
+			return DataStoreUtil.adapt(NucleotideSequenceFastaDataStore.class,fastaRecords);
 		}
-    	
-    }
+		
+	}
 }

@@ -140,7 +140,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 
 		@Override
 		public AminoAcidSequenceFastaDataStore build() {
-			return new IndexedAminoAcidSequenceFastaFileDataStore2(fastaFile,parser, mementos);
+			return new IndexedAminoAcidSequenceFastaFileDataStore2(fastaFile,parser, filter,mementos);
 		}
 	
 	}
@@ -149,14 +149,16 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 		private volatile boolean closed =false;
 		private final File fastaFile;
 		private final FastaFileParser2 parser;
+		private final DataStoreFilter filter;
 		private final Map<String, FastaVisitorCallback.Memento> mementos;
 		
 		
 		public IndexedAminoAcidSequenceFastaFileDataStore2(File fastaFile,
-				FastaFileParser2 parser, Map<String, Memento> mementos) {
+				FastaFileParser2 parser, DataStoreFilter filter, Map<String, Memento> mementos) {
 			this.fastaFile = fastaFile;
 			this.parser = parser;
 			this.mementos = mementos;
+			this.filter = filter;
 		}
 
 		@Override
@@ -185,7 +187,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 		public StreamingIterator<AminoAcidSequenceFastaRecord> iterator() throws DataStoreException {
 			throwExceptionIfClosed();
 			return DataStoreStreamingIterator.create(this,
-					LargeAminoAcidSequenceFastaIterator.createNewIteratorFor(fastaFile));
+					LargeAminoAcidSequenceFastaIterator.createNewIteratorFor(fastaFile,filter));
 		}
 		private void throwExceptionIfClosed() throws DataStoreException{
 			if(closed){

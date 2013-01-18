@@ -56,28 +56,23 @@ public class FastaFileParser2 {
 		FastaRecordVisitor recordVisitor =null;
 		while(keepParsing && parser.hasNextLine()){
 			String line=parser.nextLine();
-			Matcher matcher = DEFLINE_LINE_PATTERN.matcher(line);
-			if(matcher.find()){
-				if(recordVisitor !=null){
-					recordVisitor.visitEnd();
-				}
-				String id = matcher.group(1);
-	            String comment = matcher.group(3);
-	            if(comment !=null){
-	            	comment = comment.trim();
-	            	//consider a comment of only whitespace to 
-	            	//be not a comment
-	            	if(comment.isEmpty()){
-	            		comment=null;
-	            	}
-	            }
-	            AbstractFastaVisitorCallback callback = createNewCallback(currentOffset);
-	            recordVisitor = visitor.visitDefline(callback, id, comment);
-	            keepParsing=callback.keepParsing();
-			}else{
-				//not a defline use current record visitor
-				if(recordVisitor !=null){
-					recordVisitor.visitBodyLine(line);
+			String trimmedLine = line.trim();
+			if(!trimmedLine.isEmpty()){
+				Matcher matcher = DEFLINE_LINE_PATTERN.matcher(trimmedLine);
+				if(matcher.find()){
+					if(recordVisitor !=null){
+						recordVisitor.visitEnd();
+					}
+					String id = matcher.group(1);
+		            String comment = matcher.group(3);		            
+		            AbstractFastaVisitorCallback callback = createNewCallback(currentOffset);
+		            recordVisitor = visitor.visitDefline(callback, id, comment);
+		            keepParsing=callback.keepParsing();
+				}else{
+					//not a defline use current record visitor
+					if(recordVisitor !=null){
+						recordVisitor.visitBodyLine(line);
+					}
 				}
 			}
 			currentOffset +=line.length();

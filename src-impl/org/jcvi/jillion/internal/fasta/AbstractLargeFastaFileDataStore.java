@@ -1,10 +1,7 @@
 package org.jcvi.jillion.internal.fasta;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Scanner;
-import java.util.regex.Matcher;
 
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.Symbol;
@@ -13,8 +10,11 @@ import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaDataStore;
+import org.jcvi.jillion.fasta.FastaFileParser2;
+import org.jcvi.jillion.fasta.FastaFileVisitor2;
 import org.jcvi.jillion.fasta.FastaRecord;
-import org.jcvi.jillion.fasta.FastaUtil;
+import org.jcvi.jillion.fasta.FastaRecordVisitor;
+import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 
 public abstract class AbstractLargeFastaFileDataStore<T extends Symbol,S extends Sequence<T>, F extends FastaRecord<T, S>> implements FastaDataStore<T,S,F>{
@@ -101,30 +101,35 @@ public abstract class AbstractLargeFastaFileDataStore<T extends Symbol,S extends
         checkNotYetClosed();
         if(size ==null){
             try {
-                size= countFilteredIds();            
-            } catch (FileNotFoundException e) {
+            	FastaFileVisitor2 visitor = new FastaFileVisitor2(){
+        			long numDeflines=0L;
+        			@Override
+        			public FastaRecordVisitor visitDefline(
+        					FastaVisitorCallback callback, String id,
+        					String optionalComment) {
+        				if(filter.accept(id)){
+        					numDeflines++;
+        				}
+        				//always skip since we only count deflines
+        				return null;
+        			}
+
+        			@Override
+        			public void visitEnd() {
+        				//no-op
+        				size = Long.valueOf(numDeflines);
+        			}
+        			
+        		};      
+        		new FastaFileParser2(fastaFile).accept(visitor);
+            } catch (IOException e) {
                 throw new IllegalStateException("could not get record count");
             }
         }   
         return size;
 
     }
-	private long countFilteredIds() throws FileNotFoundException {
-		Scanner scanner = new Scanner(fastaFile, IOUtil.UTF_8_NAME);
-		long counter =0;
-		while(scanner.hasNextLine()){
-		    String line = scanner.nextLine();
-		    
-		    Matcher matcher = FastaUtil.ID_LINE_PATTERN.matcher(line);
-		    if(matcher.find()){
-		    	String id = matcher.group(1);
-		    	if(filter.accept(id)){
-		    		counter++;
-		    	}
-		    }
-		}
-		return counter;
-	}
+	
 
     @Override
     public final StreamingIterator<F> iterator() {
