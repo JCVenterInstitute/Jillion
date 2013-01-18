@@ -35,8 +35,8 @@ import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.Builder;
-import org.jcvi.jillion.fasta.FastaFileParser2;
-import org.jcvi.jillion.fasta.FastaFileVisitor2;
+import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaFileVisitor;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 /**
@@ -63,7 +63,7 @@ final class DefaultNucleotideSequenceFastaFileDataStore{
 	}
 	public static NucleotideSequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
 		NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter);
-		new FastaFileParser2(fastaFile).accept(builder);
+		new FastaFileParser(fastaFile).accept(builder);
 		return builder.build();
 	}
 	
@@ -73,7 +73,7 @@ final class DefaultNucleotideSequenceFastaFileDataStore{
 	public static NucleotideSequenceFastaDataStore create(InputStream in, DataStoreFilter filter) throws IOException{
 		try{
 			NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter);
-			new FastaFileParser2(in).accept(builder);
+			new FastaFileParser(in).accept(builder);
 			return builder.build();
 		}finally{
 			IOUtil.closeAndIgnoreErrors(in);
@@ -82,7 +82,7 @@ final class DefaultNucleotideSequenceFastaFileDataStore{
     
 
     
-    private static final class NucleotideFastaDataStoreBuilderVisitorImpl2 implements FastaFileVisitor2, Builder<NucleotideSequenceFastaDataStore>{
+    private static final class NucleotideFastaDataStoreBuilderVisitorImpl2 implements FastaFileVisitor, Builder<NucleotideSequenceFastaDataStore>{
 
 		private final Map<String, NucleotideSequenceFastaRecord> fastaRecords = new LinkedHashMap<String, NucleotideSequenceFastaRecord>();
 		

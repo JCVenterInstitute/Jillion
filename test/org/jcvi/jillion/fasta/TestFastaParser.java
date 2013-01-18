@@ -49,21 +49,21 @@ public class TestFastaParser {
     
     @Test(expected = NullPointerException.class)
     public void nullFileShouldThrowNPE() throws IOException{
-        new FastaFileParser2((File)null);
+        new FastaFileParser((File)null);
     }
     @Test(expected = NullPointerException.class)
     public void nullInputStreamShouldThrowNPE() throws IOException{
-    	 new FastaFileParser2((InputStream)null);
+    	 new FastaFileParser((InputStream)null);
     }
     @Test(expected = NullPointerException.class)
     public void nullVisitorShouldThrowNPE() throws IOException{
-    	 new FastaFileParser2(getFastaFile()).accept(null);
+    	 new FastaFileParser(getFastaFile()).accept(null);
     }
     
     @Test
     public void skipAllRecords() throws IOException{
     	
-    	FastaFileVisitor2 visitor = new FastaFileVisitor2() {
+    	FastaFileVisitor visitor = new FastaFileVisitor() {
 			int count=0;
 			@Override
 			public void visitEnd() {
@@ -79,14 +79,14 @@ public class TestFastaParser {
 			}
 		};
 		
-		new FastaFileParser2(getFastaFile()).accept(visitor);
+		new FastaFileParser(getFastaFile()).accept(visitor);
     }
     
     
     @Test
     public void parseAllRecords() throws FileNotFoundException, IOException{
         
-       FastaFileVisitor2 visitor = new FastaFileVisitor2() {
+       FastaFileVisitor visitor = new FastaFileVisitor() {
 			boolean visitedFirst=false;
 			boolean visitedLast=false;
 			@Override
@@ -111,7 +111,7 @@ public class TestFastaParser {
 	
 			
 		};
-		new FastaFileParser2(getFastaFile()).accept(visitor);
+		new FastaFileParser(getFastaFile()).accept(visitor);
     }
     
     private boolean matchesFirstRecord(String id, String optionalComment) {
@@ -129,7 +129,7 @@ public class TestFastaParser {
     @Test
     public void stopAfterLastRecord() throws FileNotFoundException, IOException{
         
-    	FastaFileVisitor2 visitor = new FastaFileVisitor2() {
+    	FastaFileVisitor visitor = new FastaFileVisitor() {
 			boolean visitedFirst=false;
 			boolean visitedLast=false;
 			@Override
@@ -162,7 +162,7 @@ public class TestFastaParser {
 	
 			
 		};
-		new FastaFileParser2(getFastaFile()).accept(visitor);
+		new FastaFileParser(getFastaFile()).accept(visitor);
     }
   
     
@@ -171,7 +171,7 @@ public class TestFastaParser {
     @Test
     public void skipFirstRecord() throws FileNotFoundException, IOException{
         
-    	FastaFileVisitor2 visitor = new FastaFileVisitor2() {
+    	FastaFileVisitor visitor = new FastaFileVisitor() {
 			boolean visitedFirst=false;
 			boolean visitedLast=false;
 			@Override
@@ -196,13 +196,13 @@ public class TestFastaParser {
 	
 			
 		};
-		new FastaFileParser2(getFastaFile()).accept(visitor);
+		new FastaFileParser(getFastaFile()).accept(visitor);
     }
     
     @Test
     public void skipLastRecord() throws FileNotFoundException, IOException{
         
-    	FastaFileVisitor2 visitor = new FastaFileVisitor2() {
+    	FastaFileVisitor visitor = new FastaFileVisitor() {
 			boolean visitedFirst=false;
 			boolean visitedLast=false;
 			@Override
@@ -227,7 +227,7 @@ public class TestFastaParser {
 	
 			
 		};
-		new FastaFileParser2(getFastaFile()).accept(visitor);
+		new FastaFileParser(getFastaFile()).accept(visitor);
     }
     
    
@@ -235,7 +235,7 @@ public class TestFastaParser {
     @Test
     public void stopAfterFirstDeflineRecords() throws FileNotFoundException, IOException{
         
-    	FastaFileVisitor2 visitor = new FastaFileVisitor2() {
+    	FastaFileVisitor visitor = new FastaFileVisitor() {
 			boolean visitedFirst=false;
 			boolean visitedLast=false;
 			@Override
@@ -258,14 +258,14 @@ public class TestFastaParser {
 	
 			
 		};
-		new FastaFileParser2(getFastaFile()).accept(visitor);
+		new FastaFileParser(getFastaFile()).accept(visitor);
     }
     
    
     @Test
     public void stopAfterFirstRecord() throws FileNotFoundException, IOException{
         
-    	FastaFileVisitor2 visitor = new FastaFileVisitor2() {
+    	FastaFileVisitor visitor = new FastaFileVisitor() {
 			boolean visitedFirst=false;
 			boolean visitedLast=false;
 			@Override
@@ -295,7 +295,7 @@ public class TestFastaParser {
 	
 			
 		};
-		new FastaFileParser2(getFastaFile()).accept(visitor);
+		new FastaFileParser(getFastaFile()).accept(visitor);
     }
     
     
@@ -304,7 +304,7 @@ public class TestFastaParser {
     @Test
     public void stopAfterSecondDefline() throws FileNotFoundException, IOException{
         
-    	FastaFileVisitor2 visitor = new FastaFileVisitor2() {
+    	FastaFileVisitor visitor = new FastaFileVisitor() {
 			boolean visitedFirst=false;
 			boolean visitedLast=false;
 			@Override
@@ -330,7 +330,7 @@ public class TestFastaParser {
 	
 			
 		};
-		new FastaFileParser2(getFastaFile()).accept(visitor);
+		new FastaFileParser(getFastaFile()).accept(visitor);
     }
 
 	
@@ -416,11 +416,11 @@ public class TestFastaParser {
     
     @Test
     public void parseEmptyFile() throws IOException{
-        FastaFileVisitor2 visitor = createMock(FastaFileVisitor2.class);
+        FastaFileVisitor visitor = createMock(FastaFileVisitor.class);
         visitor.visitEnd();
         
         replay(visitor);
-        new FastaFileParser2(new ByteArrayInputStream(new byte[]{})).accept(visitor);
+        new FastaFileParser(new ByteArrayInputStream(new byte[]{})).accept(visitor);
         verify(visitor);
     }
 }

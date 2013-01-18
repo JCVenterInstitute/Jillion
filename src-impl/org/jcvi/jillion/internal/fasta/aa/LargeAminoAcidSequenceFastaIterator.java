@@ -5,8 +5,8 @@ import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
-import org.jcvi.jillion.fasta.FastaFileParser2;
-import org.jcvi.jillion.fasta.FastaFileVisitor2;
+import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaFileVisitor;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.aa.AbstractAminoAcidFastaRecordVisitor;
@@ -36,7 +36,7 @@ final class LargeAminoAcidSequenceFastaIterator extends AbstractBlockingStreamin
 	    */
 	    @Override
 	    protected void backgroundThreadRunMethod() {
-	    	FastaFileVisitor2 visitor = new FastaFileVisitor2(){
+	    	FastaFileVisitor visitor = new FastaFileVisitor(){
 
 				@Override
 				public FastaRecordVisitor visitDefline(
@@ -68,7 +68,7 @@ final class LargeAminoAcidSequenceFastaIterator extends AbstractBlockingStreamin
 	    	};
 	    	
 	    	try {
-				new FastaFileParser2(fastaFile).accept(visitor);
+				new FastaFileParser(fastaFile).accept(visitor);
 			} catch (IOException e) {
 				throw new RuntimeException("can not parse fasta file",e);
 			}

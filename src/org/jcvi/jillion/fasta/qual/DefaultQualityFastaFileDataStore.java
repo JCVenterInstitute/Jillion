@@ -29,7 +29,7 @@ import java.io.InputStream;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
-import org.jcvi.jillion.fasta.FastaFileParser2;
+import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.internal.fasta.qual.DefaultQualityFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.fasta.qual.LargeQualityFastaFileDataStore;
 /**
@@ -52,7 +52,7 @@ final class DefaultQualityFastaFileDataStore {
     
     public static QualitySequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
     	DefaultQualityFastaFileDataStoreBuilder builder = createBuilder(filter);
-    	new FastaFileParser2(fastaFile).accept(builder);
+    	new FastaFileParser(fastaFile).accept(builder);
     	return builder.build();
     }
     
@@ -61,7 +61,7 @@ final class DefaultQualityFastaFileDataStore {
     }
     public static QualitySequenceFastaDataStore create(InputStream fastaStream, DataStoreFilter filter) throws IOException{
     	DefaultQualityFastaFileDataStoreBuilder builder = createBuilder(filter);
-    	new FastaFileParser2(fastaStream).accept(builder);
+    	new FastaFileParser(fastaStream).accept(builder);
     	return builder.build();
     }
 

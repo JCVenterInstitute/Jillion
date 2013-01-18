@@ -24,8 +24,8 @@ import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.fasta.FastaFileParser2;
-import org.jcvi.jillion.fasta.FastaFileVisitor2;
+import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaFileVisitor;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
@@ -56,7 +56,7 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 	    */
 	    @Override
 	    protected void backgroundThreadRunMethod() {
-	    	FastaFileVisitor2 visitor = new FastaFileVisitor2(){
+	    	FastaFileVisitor visitor = new FastaFileVisitor(){
 	    		NucleotideFastaRecordVisitor recordVisitor = new NucleotideFastaRecordVisitor();
 		    	
 				@Override
@@ -79,7 +79,7 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 	    	};
 	    	
 	    	try {
-				new FastaFileParser2(fastaFile).accept(visitor);
+				new FastaFileParser(fastaFile).accept(visitor);
 			} catch (IOException e) {
 				throw new RuntimeException("can not parse fasta file",e);
 			}

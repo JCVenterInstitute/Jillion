@@ -11,22 +11,28 @@ import java.util.regex.Pattern;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.fasta.FastaVisitorCallback.Memento;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
-
-public class FastaFileParser2 {
+/**
+ * {@code FastaFileParser} will parse a single 
+ * fasta encoded file and call the appropriate
+ * visitXXX methods on the given {@link FastaFileVisitor}.
+ * @author dkatzel
+ *
+ */
+public class FastaFileParser {
 	private static final Pattern DEFLINE_LINE_PATTERN = Pattern.compile("^>(\\S+)(\\s+(.*))?");
 	 
 	private final File fastaFile;	
 	private InputStream inputStream;
 	
 	
-	public FastaFileParser2(File fastaFile) throws IOException {
+	public FastaFileParser(File fastaFile) throws IOException {
 		if(fastaFile==null){
 			throw new NullPointerException("fasta file can not be null");
 		}
 		this.fastaFile = fastaFile;
 		this.inputStream = new BufferedInputStream(new FileInputStream(fastaFile));
 	}
-	public FastaFileParser2(InputStream inputStream) throws IOException {
+	public FastaFileParser(InputStream inputStream) throws IOException {
 		if(inputStream==null){
 			throw new NullPointerException("inputStream can not be null");
 		}
@@ -34,7 +40,7 @@ public class FastaFileParser2 {
 		this.inputStream = inputStream;
 	}
 	
-	public void accept(FastaFileVisitor2 visitor) throws IOException{
+	public void accept(FastaFileVisitor visitor) throws IOException{
 		checkNotNull(visitor);
 		TextLineParser parser = new TextLineParser(inputStream);
 		try{
@@ -43,12 +49,12 @@ public class FastaFileParser2 {
 			IOUtil.closeAndIgnoreErrors(inputStream);
 		}
 	}
-	protected void checkNotNull(FastaFileVisitor2 visitor) {
+	protected void checkNotNull(FastaFileVisitor visitor) {
 		if(visitor==null){
 			throw new NullPointerException("visitor can not be null");
 		}
 	}
-	public void accept(Memento memento, FastaFileVisitor2 visitor) throws IOException{
+	public void accept(Memento memento, FastaFileVisitor visitor) throws IOException{
 		if(!(memento instanceof OffsetMemento)){
 			throw new IllegalStateException("unknown memento instance : "+memento);
 		}
@@ -64,7 +70,7 @@ public class FastaFileParser2 {
 	}
 	
 	private void parseFile(TextLineParser parser, long currentOffset,
-			FastaFileVisitor2 visitor) throws IOException {
+			FastaFileVisitor visitor) throws IOException {
 		boolean keepParsing=true;
 		FastaRecordVisitor recordVisitor =null;
 		AbstractFastaVisitorCallback callback = createNewCallback();
@@ -87,8 +93,6 @@ public class FastaFileParser2 {
 							continue;
 						}
 					}
-					
-					
 					String id = matcher.group(1);
 		            String comment = matcher.group(3);		            
 		            callback.updateOffset(currentOffset);
