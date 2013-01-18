@@ -1,87 +1,78 @@
 package org.jcvi.jillion.trace.sanger;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
-import org.jcvi.jillion.fasta.FastaDataStoreBuilder;
-import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.internal.fasta.AbstractFastaFileDataStoreBuilderVisitor;
+import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.fasta.FastaFileParser2;
+import org.jcvi.jillion.fasta.FastaFileVisitor2;
+import org.jcvi.jillion.fasta.FastaRecordVisitor;
+import org.jcvi.jillion.fasta.FastaVisitorCallback;
 
 public final class DefaultPositionFastaFileDataStore {
 	
 	private DefaultPositionFastaFileDataStore(){
 		//can not instantiate
 	}
-	public static PositionSequenceFastaDataStore create(File positionFastaFile, DataStoreFilter filter) throws FileNotFoundException{
-		PositionFastaFileVisitor builder = new PositionFastaFileVisitor(filter);
-		FastaFileParser.parse(positionFastaFile, builder);
-		return builder.build();
+	public static PositionSequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
+		DefaultQualityFastaFileDataStoreBuilder builder = new DefaultQualityFastaFileDataStoreBuilder(filter);
+		new FastaFileParser2(fastaFile).accept(builder);
+    	return builder.build();
 	}
-	public static PositionSequenceFastaDataStore create(InputStream positionFastaInputStream, DataStoreFilter filter) throws FileNotFoundException{
-		PositionFastaFileVisitor builder = new PositionFastaFileVisitor(filter);
-		FastaFileParser.parse(positionFastaInputStream, builder);
-		return builder.build();
+	public static PositionSequenceFastaDataStore create(InputStream positionFastaInputStream, DataStoreFilter filter) throws IOException{
+		DefaultQualityFastaFileDataStoreBuilder builder = new DefaultQualityFastaFileDataStoreBuilder(filter);
+		new FastaFileParser2(positionFastaInputStream).accept(builder);
+    	return builder.build();
 	}
-	public static PositionSequenceFastaDataStore create(File positionFastaFile) throws FileNotFoundException{
+	public static PositionSequenceFastaDataStore create(File positionFastaFile) throws IOException{
 		return create(positionFastaFile, DataStoreFilters.alwaysAccept());
 	}
-	public static PositionSequenceFastaDataStore create(InputStream positionFastaInputStream) throws FileNotFoundException{
+	public static PositionSequenceFastaDataStore create(InputStream positionFastaInputStream) throws IOException{
 		return create(positionFastaInputStream, DataStoreFilters.alwaysAccept());
 	}
+
 	
+	private static class DefaultQualityFastaFileDataStoreBuilder implements FastaFileVisitor2, Builder<PositionSequenceFastaDataStore>{
 
-	private static class PositionFastaFileVisitor extends AbstractFastaFileDataStoreBuilderVisitor<Position, PositionSequence, PositionSequenceFastaRecord, PositionSequenceFastaDataStore>{
-		/**
-		 * Default capacity for position builder {@value}
-		 * should be large enough to handle
-		 * most sanger reads, and the builder
-		 * will grow to accommodate larger reads.
-		 */
-		private static final int DEFAULT_INITIAL_CAPACITY = 900;
-
-
-		public PositionFastaFileVisitor(DataStoreFilter filter) {
-			super(new DefaultPositionFastaDataStoreBuilder(), filter);
+		private final Map<String, PositionSequenceFastaRecord> fastaRecords = new LinkedHashMap<String, PositionSequenceFastaRecord>();
+		
+		private final DataStoreFilter filter;
+		
+		public DefaultQualityFastaFileDataStoreBuilder(DataStoreFilter filter){
+			this.filter = filter;
 		}
+		@Override
+		public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
+				final String id, String optionalComment) {
+			if(!filter.accept(id)){
+				return null;
+			}
+			return new AbstractPositionSequenceFastaRecordVisitor(id,optionalComment){
 
+				@Override
+				protected void visitRecord(
+						PositionSequenceFastaRecord fastaRecord) {
+					fastaRecords.put(id, fastaRecord);
+					
+				}
+				
+			};
+		}
 
 		@Override
-		protected PositionSequenceFastaRecord createFastaRecord(String id,
-				String comment, String entireBody) {
-			PositionSequenceBuilder builder = new PositionSequenceBuilder(DEFAULT_INITIAL_CAPACITY);
-			Scanner scanner = new Scanner(entireBody);
-	        while(scanner.hasNextShort()){
-	        	builder.append(scanner.nextShort());
-	        }
-			scanner.close();
-			return new PositionSequenceFastaRecord(id, comment, builder.build());
+		public void visitEnd() {
+			//no-op			
 		}
-		
-	}
-	
-	private static class DefaultPositionFastaDataStoreBuilder implements FastaDataStoreBuilder<Position,PositionSequence,PositionSequenceFastaRecord,PositionSequenceFastaDataStore>{
-
-		private final Map<String, PositionSequenceFastaRecord> map = new LinkedHashMap<String, PositionSequenceFastaRecord>();
 		@Override
 		public PositionSequenceFastaDataStore build() {
-			return DataStoreUtil.adapt(PositionSequenceFastaDataStore.class,map);
+			return DataStoreUtil.adapt(PositionSequenceFastaDataStore.class,fastaRecords);
 		}
-
-		@Override
-		public DefaultPositionFastaDataStoreBuilder addFastaRecord(
-				PositionSequenceFastaRecord fastaRecord) {
-			if(fastaRecord ==null){
-				throw new NullPointerException("fasta record can not be null");
-			}
-			map.put(fastaRecord.getId(), fastaRecord);
-			return this;
-		}
+		
 	}
 }

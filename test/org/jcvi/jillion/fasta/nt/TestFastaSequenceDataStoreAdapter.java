@@ -1,7 +1,10 @@
 package org.jcvi.jillion.fasta.nt;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -10,11 +13,9 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaRecordDataStoreAdapter;
-import org.jcvi.jillion.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestFastaSequenceDataStoreAdapter {
 
 	private final File fastaFile;
@@ -25,7 +26,7 @@ public class TestFastaSequenceDataStoreAdapter {
 	}
 	
 	@Before
-	public void createDataStore() throws FileNotFoundException{
+	public void createDataStore() throws IOException{
 		sut = FastaRecordDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, DefaultNucleotideSequenceFastaFileDataStore.create(fastaFile));
 	}
 	@Test

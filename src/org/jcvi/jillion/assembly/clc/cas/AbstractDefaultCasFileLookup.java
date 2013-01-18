@@ -33,8 +33,10 @@ import java.util.Map;
 
 import org.jcvi.jillion.assembly.clc.cas.align.CasScoringScheme;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.fasta.AbstractFastaVisitor;
-import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaFileParser2;
+import org.jcvi.jillion.fasta.FastaFileVisitor2;
+import org.jcvi.jillion.fasta.FastaRecordVisitor;
+import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.trace.fastq.FastqFileParser;
 import org.jcvi.jillion.trace.fastq.FastqFileVisitor;
 import org.jcvi.jillion.trace.sff.SffCommonHeader;
@@ -128,7 +130,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
         }
         else{
           //try as fasta...
-            FastaFileParser.parse(file, new FastaReadOrder(file));
+            new FastaFileParser2(file).accept(new FastaReadOrder(file));
            
         }
     }
@@ -274,16 +276,22 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
         }
         
     }
-    private final class FastaReadOrder extends AbstractFastaVisitor{
+    private final class FastaReadOrder implements FastaFileVisitor2{
         private final File file;
         FastaReadOrder(File file){
             this.file =file;
         }
-        @Override
-        public boolean visitRecord(String id, String comment, String entireBody) {
-            addRead(id,file);
-            return true;
-        }
+		@Override
+		public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
+				String id, String optionalComment) {
+			addRead(id,file);
+			return null;
+		}
+		@Override
+		public void visitEnd() {
+			//no-op
+			
+		}
         
     }
     private final class FastqReadOrder implements FastqFileVisitor{
