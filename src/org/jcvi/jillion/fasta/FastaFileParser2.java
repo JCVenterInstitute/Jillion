@@ -1,5 +1,6 @@
 package org.jcvi.jillion.fasta;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -20,7 +21,7 @@ public class FastaFileParser2 {
 	
 	public FastaFileParser2(File fastaFile) throws IOException {
 		this.fastaFile = fastaFile;
-		this.inputStream = new FileInputStream(fastaFile);
+		this.inputStream = new BufferedInputStream(new FileInputStream(fastaFile));
 	}
 	public FastaFileParser2(InputStream inputStream) throws IOException {
 		this.fastaFile = null;
