@@ -9,7 +9,7 @@ import org.jcvi.jillion.fasta.FastaFileParser2;
 import org.jcvi.jillion.fasta.FastaFileVisitor2;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
-import org.jcvi.jillion.fasta.aa.AbstractFastaRecordVisitor;
+import org.jcvi.jillion.fasta.aa.AbstractAminoAcidFastaRecordVisitor;
 import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecord;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 
@@ -46,7 +46,7 @@ final class LargeAminoAcidSequenceFastaIterator extends AbstractBlockingStreamin
 						return null;
 					}
 					
-					return new AbstractFastaRecordVisitor(id, optionalComment) {
+					return new AbstractAminoAcidFastaRecordVisitor(id, optionalComment) {
 						
 						@Override
 						protected void visitRecord(AminoAcidSequenceFastaRecord fastaRecord) {

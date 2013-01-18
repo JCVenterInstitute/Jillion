@@ -63,6 +63,14 @@ public class FastaFileParser2 {
 				}
 				String id = matcher.group(1);
 	            String comment = matcher.group(3);
+	            if(comment !=null){
+	            	comment = comment.trim();
+	            	//consider a comment of only whitespace to 
+	            	//be not a comment
+	            	if(comment.isEmpty()){
+	            		comment=null;
+	            	}
+	            }
 	            AbstractFastaVisitorCallback callback = createNewCallback(currentOffset);
 	            recordVisitor = visitor.visitDefline(callback, id, comment);
 	            keepParsing=callback.keepParsing();

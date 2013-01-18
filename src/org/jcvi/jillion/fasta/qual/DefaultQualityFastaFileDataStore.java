@@ -24,15 +24,14 @@
 package org.jcvi.jillion.fasta.qual;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
-
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
-import org.jcvi.jillion.core.qual.PhredQuality;
-import org.jcvi.jillion.core.qual.QualitySequence;
-import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.internal.fasta.AbstractFastaFileDataStoreBuilderVisitor;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
+import org.jcvi.jillion.fasta.FastaFileParser2;
+import org.jcvi.jillion.internal.fasta.qual.DefaultQualityFastaFileDataStoreBuilder;
+import org.jcvi.jillion.internal.fasta.qual.LargeQualityFastaFileDataStore;
 /**
  * {@code DefaultQualityFastaFileDataStore} is the default implementation
  * of {@link AbstractQualityFastaFileDataStore} which stores
@@ -47,48 +46,27 @@ final class DefaultQualityFastaFileDataStore {
 	private DefaultQualityFastaFileDataStore(){
 		//can not instantiate
 	}
-    public static QualitySequenceFastaDataStore create(File fastaFile) throws FileNotFoundException{
-    	return create(fastaFile,null);
+    public static QualitySequenceFastaDataStore create(File fastaFile) throws IOException{
+    	return create(fastaFile,DataStoreFilters.alwaysAccept());
     }
     
-    public static QualitySequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws FileNotFoundException{
-    	QualityFastaDataStoreBuilderVisitor builder = createBuilder(filter);
-    	FastaFileParser.parse(fastaFile, builder);
+    public static QualitySequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
+    	DefaultQualityFastaFileDataStoreBuilder builder = createBuilder(filter);
+    	new FastaFileParser2(fastaFile).accept(builder);
     	return builder.build();
     }
     
-    public static QualitySequenceFastaDataStore create(InputStream fastaStream) throws FileNotFoundException{
-    	return create(fastaStream,null);
+    public static QualitySequenceFastaDataStore create(InputStream fastaStream) throws IOException{
+    	return create(fastaStream,DataStoreFilters.alwaysAccept());
     }
-    public static QualitySequenceFastaDataStore create(InputStream fastaStream, DataStoreFilter filter) throws FileNotFoundException{
-    	QualityFastaDataStoreBuilderVisitor builder = createBuilder(filter);
-    	FastaFileParser.parse(fastaStream, builder);
+    public static QualitySequenceFastaDataStore create(InputStream fastaStream, DataStoreFilter filter) throws IOException{
+    	DefaultQualityFastaFileDataStoreBuilder builder = createBuilder(filter);
+    	new FastaFileParser2(fastaStream).accept(builder);
     	return builder.build();
     }
-    public static QualityFastaDataStoreBuilderVisitor createBuilder(){
-    	return createBuilder(null);
-    }
-    public static QualityFastaDataStoreBuilderVisitor createBuilder(DataStoreFilter filter){
-    	return new DefaultQualityFastaDataStoreBuilderVisitor(filter);
-    }
-    
-    
-    private static class DefaultQualityFastaDataStoreBuilderVisitor 
-    				extends AbstractFastaFileDataStoreBuilderVisitor<PhredQuality, QualitySequence, QualitySequenceFastaRecord, QualitySequenceFastaDataStore>
-    		implements QualityFastaDataStoreBuilderVisitor{
-		
-		public DefaultQualityFastaDataStoreBuilderVisitor(DataStoreFilter filter){
-			super(new DefaultQualityFastaDataStoreBuilder(),filter);
-		}
 
-		@Override
-		protected QualitySequenceFastaRecord createFastaRecord(String id,
-				String comment, String entireBody) {
-			return new QualitySequenceFastaRecordBuilder(id, entireBody)
-											.comment(comment)
-											.build();
-		}
-    	
+    private static DefaultQualityFastaFileDataStoreBuilder createBuilder(DataStoreFilter filter){
+    	return new DefaultQualityFastaFileDataStoreBuilder(filter);
     }
 
 }

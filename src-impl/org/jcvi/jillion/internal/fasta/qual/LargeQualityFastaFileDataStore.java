@@ -21,7 +21,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.fasta.qual;
+package org.jcvi.jillion.internal.fasta.qual;
 
 import java.io.File;
 
@@ -31,6 +31,8 @@ import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.fasta.qual.QualitySequenceFastaDataStore;
+import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.fasta.AbstractLargeFastaFileDataStore;
 /**
@@ -46,7 +48,7 @@ import org.jcvi.jillion.internal.fasta.AbstractLargeFastaFileDataStore;
  *
  *
  */
-final class LargeQualityFastaFileDataStore extends AbstractLargeFastaFileDataStore<PhredQuality, QualitySequence, QualitySequenceFastaRecord> implements QualitySequenceFastaDataStore{
+public final class LargeQualityFastaFileDataStore extends AbstractLargeFastaFileDataStore<PhredQuality, QualitySequence, QualitySequenceFastaRecord> implements QualitySequenceFastaDataStore{
 
     
     public static QualitySequenceFastaDataStore create(File fastaFile){
@@ -62,8 +64,7 @@ final class LargeQualityFastaFileDataStore extends AbstractLargeFastaFileDataSto
 	@Override
 	protected StreamingIterator<QualitySequenceFastaRecord> createNewIterator(
 			File fastaFile) {
-		QualitySequenceFastaDataStoreIteratorImpl iter = new QualitySequenceFastaDataStoreIteratorImpl(fastaFile);
-        iter.start();
+		StreamingIterator<QualitySequenceFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(fastaFile, this.getFilter());
         
         return DataStoreStreamingIterator.create(this,iter);
 	}
