@@ -17,6 +17,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.ResourceHelper;
+import org.jcvi.jillion.internal.fasta.qual.LargeQualityFastaFileDataStore;
 import org.junit.Test;
 
 public class TestDefaultQualitySequenceFastaRecordWriter {

@@ -9,6 +9,8 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.fasta.FastaDataStore;
 import org.jcvi.jillion.internal.fasta.AbstractFastaFileDataStoreBuilder;
+import org.jcvi.jillion.internal.fasta.qual.IndexedQualityFastaFileDataStore;
+import org.jcvi.jillion.internal.fasta.qual.LargeQualityFastaFileDataStore;
 
 /**
  * {@code QualitySequenceFastaFileDataStoreFactory}

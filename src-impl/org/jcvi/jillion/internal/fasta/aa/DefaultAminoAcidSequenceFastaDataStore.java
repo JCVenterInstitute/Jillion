@@ -8,19 +8,14 @@ import java.util.Map;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
-import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 import org.jcvi.jillion.core.util.Builder;
-import org.jcvi.jillion.fasta.AbstractFastaVisitor;
-import org.jcvi.jillion.fasta.FastaDataStoreBuilder;
 import org.jcvi.jillion.fasta.FastaFileParser2;
 import org.jcvi.jillion.fasta.FastaFileVisitor2;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
-import org.jcvi.jillion.fasta.aa.AbstractFastaRecordVisitor;
+import org.jcvi.jillion.fasta.aa.AbstractAminoAcidFastaRecordVisitor;
 import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaDataStore;
 import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecord;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecordBuilder;
 
 public final class DefaultAminoAcidSequenceFastaDataStore{
 	
@@ -63,7 +58,7 @@ public final class DefaultAminoAcidSequenceFastaDataStore{
 			if(!filter.accept(id)){
 				return null;
 			}
-			return new AbstractFastaRecordVisitor(id,optionalComment){
+			return new AbstractAminoAcidFastaRecordVisitor(id,optionalComment){
 
 				@Override
 				protected void visitRecord(
@@ -83,42 +78,6 @@ public final class DefaultAminoAcidSequenceFastaDataStore{
 		public AminoAcidSequenceFastaDataStore build() {
 			return DataStoreUtil.adapt(AminoAcidSequenceFastaDataStore.class,fastaRecords);
 		}
-		
-	}
-	
-	private static final class DefaultAminoAcidSequenceFastaDataStoreBuilder extends AbstractFastaVisitor implements AminoAcidSequenceFastaDataStoreBuilderVisitor{
-		private final Map<String, AminoAcidSequenceFastaRecord> fastaRecords = new LinkedHashMap<String, AminoAcidSequenceFastaRecord>();
-		
-		private final DataStoreFilter filter;
-		
-		public DefaultAminoAcidSequenceFastaDataStoreBuilder(DataStoreFilter filter){
-			this.filter = filter;
-		}
-		
-		
-		@Override
-		public FastaDataStoreBuilder<AminoAcid, AminoAcidSequence, AminoAcidSequenceFastaRecord, AminoAcidSequenceFastaDataStore> addFastaRecord(
-				AminoAcidSequenceFastaRecord fastaRecord) {
-			if(filter.accept(fastaRecord.getId())){
-				fastaRecords.put(fastaRecord.getId(), fastaRecord);
-			}
-			return this;
-		}
-
-		@Override
-		public AminoAcidSequenceFastaDataStore build() {
-			return DataStoreUtil.adapt(AminoAcidSequenceFastaDataStore.class,fastaRecords);
-		}
-
-
-		@Override
-		public boolean visitRecord(String id, String comment, String entireBody) {
-			addFastaRecord(new AminoAcidSequenceFastaRecordBuilder(id, entireBody)
-								.comment(comment)
-								.build());
-			return true;
-		}
-
 		
 	}
 	

@@ -26,6 +26,8 @@ package org.jcvi.jillion.fasta.qual;
 import java.io.File;
 import java.io.IOException;
 
+import org.jcvi.jillion.internal.fasta.qual.LargeQualityFastaFileDataStore;
+
 
 
 public class TestLargeQualityFastaDataStore extends AbstractTestQualityFastaDataStore{
