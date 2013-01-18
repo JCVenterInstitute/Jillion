@@ -54,6 +54,7 @@ public class FastaFileParser2 {
 			FastaFileVisitor2 visitor) throws IOException {
 		boolean keepParsing=true;
 		FastaRecordVisitor recordVisitor =null;
+		AbstractFastaVisitorCallback callback = createNewCallback();
 		while(keepParsing && parser.hasNextLine()){
 			String line=parser.nextLine();
 			String trimmedLine = line.trim();
@@ -65,7 +66,7 @@ public class FastaFileParser2 {
 					}
 					String id = matcher.group(1);
 		            String comment = matcher.group(3);		            
-		            AbstractFastaVisitorCallback callback = createNewCallback(currentOffset);
+		            callback.updateOffset(currentOffset);
 		            recordVisitor = visitor.visitDefline(callback, id, comment);
 		            keepParsing=callback.keepParsing();
 				}else{
@@ -83,14 +84,14 @@ public class FastaFileParser2 {
 		visitor.visitEnd();
 	}
 
-	private AbstractFastaVisitorCallback createNewCallback(long currentOffset) {
+	private AbstractFastaVisitorCallback createNewCallback() {
 		if(fastaFile==null){
-			return new NoMementoCallback();
+			return NoMementoCallback.INSTANCE;
 		}
-		return new MementoCallback(currentOffset);
+		return new MementoCallback();
 	}
 	
-	private abstract class AbstractFastaVisitorCallback implements FastaVisitorCallback{
+	private static abstract class AbstractFastaVisitorCallback implements FastaVisitorCallback{
 		private volatile boolean keepParsing=true;
 		
 		@Override
@@ -102,10 +103,13 @@ public class FastaFileParser2 {
 		public final boolean keepParsing() {
 			return keepParsing;
 		}
+		abstract void updateOffset(long offset);
 	}
 	
-	private class NoMementoCallback extends AbstractFastaVisitorCallback{
+	private static class NoMementoCallback extends AbstractFastaVisitorCallback{
 
+		private static NoMementoCallback INSTANCE = new NoMementoCallback();
+		
 		
 		@Override
 		public boolean canCreateMemento() {
@@ -116,14 +120,20 @@ public class FastaFileParser2 {
 		public Memento createMemento() {
 			throw new UnsupportedOperationException("can not create memento");
 		}
+
+		@Override
+		void updateOffset(long offset) {
+			//no-op			
+		}
 		
 	}
 	
 	private class MementoCallback extends AbstractFastaVisitorCallback{
 
-		private final long offset;
+		private long offset=0L;
 		
-		public MementoCallback(long offset) {
+		@Override
+		public void updateOffset(long offset) {
 			this.offset = offset;
 		}
 

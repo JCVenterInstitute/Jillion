@@ -9,9 +9,10 @@ import org.jcvi.jillion.fasta.FastaFileParser2;
 import org.jcvi.jillion.fasta.FastaFileVisitor2;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
-import org.jcvi.jillion.fasta.qual.AbstractQualityFastaRecordVisitor;
 import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecord;
+import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecordBuilder;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
+import org.jcvi.jillion.internal.fasta.AbstractResuseableFastaRecordVisitor;
 
 public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingStreamingIterator<QualitySequenceFastaRecord>{
 	
@@ -35,7 +36,23 @@ public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingS
     * {@inheritDoc}
     */
     @Override
-    protected void backgroundThreadRunMethod() {	    	
+    protected void backgroundThreadRunMethod() {
+    	
+    	final AbstractResuseableFastaRecordVisitor recordVisitor = new AbstractResuseableFastaRecordVisitor(){
+
+			@Override
+			public void visitRecord(String id, String optionalComment,
+					String fullBody) {
+				QualitySequenceFastaRecord record = new QualitySequenceFastaRecordBuilder(id,fullBody)
+														.comment(optionalComment)
+														.build();
+				blockingPut(record);
+				
+			}
+
+		
+    		
+    	};
         FastaFileVisitor2 visitor = new FastaFileVisitor2() {
 			
 			@Override
@@ -50,13 +67,8 @@ public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingS
 				if(!filter.accept(id)){
 					return null;
 				}
-				return new AbstractQualityFastaRecordVisitor(id,optionalComment) {
-					
-					@Override
-					protected void visitRecord(QualitySequenceFastaRecord fastaRecord) {
-						blockingPut(fastaRecord);							
-					}
-				};
+				recordVisitor.prepareNewRecord(id, optionalComment);
+				return recordVisitor;
 			}
 		};
         try {
@@ -64,10 +76,9 @@ public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingS
         } catch (IOException e) {
             throw new RuntimeException("fasta file does not exist",e);
         }
-        
-
 
     }
     
+   
     
 }
