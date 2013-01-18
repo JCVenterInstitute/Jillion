@@ -10,8 +10,8 @@ import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.util.Builder;
-import org.jcvi.jillion.fasta.FastaFileParser2;
-import org.jcvi.jillion.fasta.FastaFileVisitor2;
+import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaFileVisitor;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 
@@ -22,12 +22,12 @@ public final class DefaultPositionFastaFileDataStore {
 	}
 	public static PositionSequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
 		DefaultQualityFastaFileDataStoreBuilder builder = new DefaultQualityFastaFileDataStoreBuilder(filter);
-		new FastaFileParser2(fastaFile).accept(builder);
+		new FastaFileParser(fastaFile).accept(builder);
     	return builder.build();
 	}
 	public static PositionSequenceFastaDataStore create(InputStream positionFastaInputStream, DataStoreFilter filter) throws IOException{
 		DefaultQualityFastaFileDataStoreBuilder builder = new DefaultQualityFastaFileDataStoreBuilder(filter);
-		new FastaFileParser2(positionFastaInputStream).accept(builder);
+		new FastaFileParser(positionFastaInputStream).accept(builder);
     	return builder.build();
 	}
 	public static PositionSequenceFastaDataStore create(File positionFastaFile) throws IOException{
@@ -38,7 +38,7 @@ public final class DefaultPositionFastaFileDataStore {
 	}
 
 	
-	private static class DefaultQualityFastaFileDataStoreBuilder implements FastaFileVisitor2, Builder<PositionSequenceFastaDataStore>{
+	private static class DefaultQualityFastaFileDataStoreBuilder implements FastaFileVisitor, Builder<PositionSequenceFastaDataStore>{
 
 		private final Map<String, PositionSequenceFastaRecord> fastaRecords = new LinkedHashMap<String, PositionSequenceFastaRecord>();
 		

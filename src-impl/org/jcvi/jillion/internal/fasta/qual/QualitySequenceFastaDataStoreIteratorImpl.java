@@ -5,8 +5,8 @@ import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.FastaFileParser2;
-import org.jcvi.jillion.fasta.FastaFileVisitor2;
+import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaFileVisitor;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecord;
@@ -53,7 +53,7 @@ public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingS
 		
     		
     	};
-        FastaFileVisitor2 visitor = new FastaFileVisitor2() {
+        FastaFileVisitor visitor = new FastaFileVisitor() {
 			
 			@Override
 			public void visitEnd() {
@@ -72,7 +72,7 @@ public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingS
 			}
 		};
         try {
-            new FastaFileParser2(fastaFile).accept(visitor);
+            new FastaFileParser(fastaFile).accept(visitor);
         } catch (IOException e) {
             throw new RuntimeException("fasta file does not exist",e);
         }

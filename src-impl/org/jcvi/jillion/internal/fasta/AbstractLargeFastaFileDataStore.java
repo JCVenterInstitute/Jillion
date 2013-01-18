@@ -10,8 +10,8 @@ import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaDataStore;
-import org.jcvi.jillion.fasta.FastaFileParser2;
-import org.jcvi.jillion.fasta.FastaFileVisitor2;
+import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaFileVisitor;
 import org.jcvi.jillion.fasta.FastaRecord;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
@@ -101,7 +101,7 @@ public abstract class AbstractLargeFastaFileDataStore<T extends Symbol,S extends
         checkNotYetClosed();
         if(size ==null){
             try {
-            	FastaFileVisitor2 visitor = new FastaFileVisitor2(){
+            	FastaFileVisitor visitor = new FastaFileVisitor(){
         			long numDeflines=0L;
         			@Override
         			public FastaRecordVisitor visitDefline(
@@ -121,7 +121,7 @@ public abstract class AbstractLargeFastaFileDataStore<T extends Symbol,S extends
         			}
         			
         		};      
-        		new FastaFileParser2(fastaFile).accept(visitor);
+        		new FastaFileParser(fastaFile).accept(visitor);
             } catch (IOException e) {
                 throw new IllegalStateException("could not get record count");
             }

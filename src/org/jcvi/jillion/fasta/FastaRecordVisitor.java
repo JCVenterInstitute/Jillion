@@ -1,6 +1,12 @@
 package org.jcvi.jillion.fasta;
 
-
+/**
+ * {@code FastaRecordVisitor} is a visitor
+ * interface to visit a single fasta record
+ * inside of a fasta file.
+ * @author dkatzel
+ *
+ */
 public interface FastaRecordVisitor {
 	/**
      * Visit a line of the body of the fasta record.

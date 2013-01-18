@@ -1,7 +1,14 @@
 package org.jcvi.jillion.fasta;
 
-
-public interface FastaFileVisitor2 {
+/**
+ * {@code FastaFileVisitor} is a visitor
+ * interface to visit components of a single
+ * fasta file.
+ * 
+ * @author dkatzel
+ *
+ */
+public interface FastaFileVisitor {
 
 	/**
      * Visit the definition line of the current fasta record.
@@ -14,6 +21,8 @@ public interface FastaFileVisitor2 {
      * to skip the current record.
      */
 	FastaRecordVisitor visitDefline(FastaVisitorCallback callback, String id, String optionalComment);
-	
+	/**
+	 * Visit the end of the fasta file.
+	 */
 	void visitEnd();
 }

@@ -14,8 +14,8 @@ import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.FastaFileParser2;
-import org.jcvi.jillion.fasta.FastaFileVisitor2;
+import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaFileVisitor;
 import org.jcvi.jillion.fasta.FastaRecord;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
@@ -183,17 +183,17 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 		return DataStoreStreamingIterator.create(this,LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile,filter));
 	}
 	
-	private static final class IndexedNucleotideSequenceFastaDataStoreBuilderVisitor2 implements FastaFileVisitor2, Builder<NucleotideSequenceFastaDataStore> {
+	private static final class IndexedNucleotideSequenceFastaDataStoreBuilderVisitor2 implements FastaFileVisitor, Builder<NucleotideSequenceFastaDataStore> {
 		
 		private final DataStoreFilter filter;
-		private final FastaFileParser2 parser;
+		private final FastaFileParser parser;
 		private final File fastaFile;
 		
 		private final Map<String, FastaVisitorCallback.Memento> mementos = new LinkedHashMap<String, FastaVisitorCallback.Memento>();
 		private IndexedNucleotideSequenceFastaDataStoreBuilderVisitor2(File fastaFile, DataStoreFilter filter) throws IOException {
 			this.fastaFile = fastaFile;
 			this.filter = filter;
-			this.parser = new FastaFileParser2(fastaFile);
+			this.parser = new FastaFileParser(fastaFile);
 
 		}
 
@@ -232,13 +232,13 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 	public static final class IndexedNucleotideSequenceFastaFileDataStore2 implements NucleotideSequenceFastaDataStore {
 		private volatile boolean closed =false;
 		private final File fastaFile;
-		private final FastaFileParser2 parser;
+		private final FastaFileParser parser;
 		private final DataStoreFilter filter;
 		private final Map<String, FastaVisitorCallback.Memento> mementos;
 		
 		
 		public IndexedNucleotideSequenceFastaFileDataStore2(File fastaFile,
-				FastaFileParser2 parser, DataStoreFilter filter, Map<String, Memento> mementos) {
+				FastaFileParser parser, DataStoreFilter filter, Map<String, Memento> mementos) {
 			this.fastaFile = fastaFile;
 			this.parser = parser;
 			this.mementos = mementos;
@@ -302,7 +302,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 
 	}
 
-	private static class SingleRecordVisitor implements FastaFileVisitor2{
+	private static class SingleRecordVisitor implements FastaFileVisitor{
 		private NucleotideSequenceFastaRecord fastaRecord=null;
 		@Override
 		public FastaRecordVisitor visitDefline(final FastaVisitorCallback callback,

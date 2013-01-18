@@ -11,8 +11,8 @@ import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.FastaFileParser2;
-import org.jcvi.jillion.fasta.FastaFileVisitor2;
+import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaFileVisitor;
 import org.jcvi.jillion.fasta.FastaRecord;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
@@ -73,7 +73,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 	 * using the given fastaFile.  This implementation of {@link AminoAcidSequenceFastaDataStoreBuilderVisitor}
 	 * can only be used to parse a single fasta file (the one given) and does not support
 	 * {@link AminoAcidSequenceFastaDataStoreBuilderVisitor#addFastaRecord(AminoAcidSequenceFastaRecord)}.
-	 * This builder visitor can only build the datastore via the visitXXX methods in the {@link FastaFileVisitor2}
+	 * This builder visitor can only build the datastore via the visitXXX methods in the {@link FastaFileVisitor}
 	 * interface.
 	 * @param fastaFile the fasta to create an {@link IndexedAminoAcidSequenceFastaFileDataStore}
 	 * for.
@@ -98,17 +98,17 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 	
 	
 	
-	private static final class IndexedAminoAcidSequenceFastaDataStoreBuilderVisitor2 implements FastaFileVisitor2, Builder<AminoAcidSequenceFastaDataStore> {
+	private static final class IndexedAminoAcidSequenceFastaDataStoreBuilderVisitor2 implements FastaFileVisitor, Builder<AminoAcidSequenceFastaDataStore> {
 	
 		private final DataStoreFilter filter;
-		private final FastaFileParser2 parser;
+		private final FastaFileParser parser;
 		private final File fastaFile;
 		
 		private final Map<String, FastaVisitorCallback.Memento> mementos = new LinkedHashMap<String, FastaVisitorCallback.Memento>();
 		private IndexedAminoAcidSequenceFastaDataStoreBuilderVisitor2(File fastaFile, DataStoreFilter filter) throws IOException {
 			this.fastaFile = fastaFile;
 			this.filter = filter;
-			this.parser = new FastaFileParser2(fastaFile);
+			this.parser = new FastaFileParser(fastaFile);
 
 		}
 
@@ -147,13 +147,13 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 	public static final class IndexedAminoAcidSequenceFastaFileDataStore2 implements AminoAcidSequenceFastaDataStore {
 		private volatile boolean closed =false;
 		private final File fastaFile;
-		private final FastaFileParser2 parser;
+		private final FastaFileParser parser;
 		private final DataStoreFilter filter;
 		private final Map<String, FastaVisitorCallback.Memento> mementos;
 		
 		
 		public IndexedAminoAcidSequenceFastaFileDataStore2(File fastaFile,
-				FastaFileParser2 parser, DataStoreFilter filter, Map<String, Memento> mementos) {
+				FastaFileParser parser, DataStoreFilter filter, Map<String, Memento> mementos) {
 			this.fastaFile = fastaFile;
 			this.parser = parser;
 			this.mementos = mementos;
@@ -217,7 +217,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 
 	}
 
-	private static class SingleRecordVisitor implements FastaFileVisitor2{
+	private static class SingleRecordVisitor implements FastaFileVisitor{
 		private AminoAcidSequenceFastaRecord fastaRecord=null;
 		@Override
 		public FastaRecordVisitor visitDefline(final FastaVisitorCallback callback,
