@@ -33,6 +33,7 @@ import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.fasta.FastaFileParser2;
 import org.jcvi.jillion.fasta.FastaFileVisitor2;
@@ -86,7 +87,7 @@ final class DefaultNucleotideSequenceFastaFileDataStore{
 		private final Map<String, NucleotideSequenceFastaRecord> fastaRecords = new LinkedHashMap<String, NucleotideSequenceFastaRecord>();
 		
 		private final DataStoreFilter filter;
-		
+		private NucleotideFastaRecordVisitor currentVisitor = new NucleotideFastaRecordVisitor();
 		public NucleotideFastaDataStoreBuilderVisitorImpl2(DataStoreFilter filter){
 			this.filter = filter;
 		}
@@ -96,16 +97,9 @@ final class DefaultNucleotideSequenceFastaFileDataStore{
 			if(!filter.accept(id)){
 				return null;
 			}
-			return new AbstractNucleotideFastaRecordVisitor(id,optionalComment){
-
-				@Override
-				protected void visitRecord(
-						NucleotideSequenceFastaRecord fastaRecord) {
-					fastaRecords.put(id, fastaRecord);
-					
-				}
-				
-			};
+			currentVisitor.prepareNewRecord(id, optionalComment);
+			return currentVisitor;
+			
 		}
 
 		@Override
@@ -116,6 +110,33 @@ final class DefaultNucleotideSequenceFastaFileDataStore{
 		public NucleotideSequenceFastaDataStore build() {
 			return DataStoreUtil.adapt(NucleotideSequenceFastaDataStore.class,fastaRecords);
 		}
-		
+		 private class NucleotideFastaRecordVisitor implements FastaRecordVisitor{
+			private String currentId;
+			private String currentComment;
+			private NucleotideSequenceBuilder builder;
+			
+			public void prepareNewRecord(String id, String optionalComment){
+				this.currentId = id;
+				this.currentComment = optionalComment;
+				builder = new NucleotideSequenceBuilder();
+			}
+			@Override
+			public void visitBodyLine(String line) {
+				builder.append(line);
+				
+			}
+
+			@Override
+			public void visitEnd() {
+				NucleotideSequenceFastaRecord record = new NucleotideSequenceFastaRecordBuilder(currentId,builder.build())
+														.comment(currentComment)
+														.build();
+				fastaRecords.put(currentId, record);
+				
+			}
+		    	
+	    }
 	}
+    
+   
 }

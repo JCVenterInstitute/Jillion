@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.fasta.FastaFileParser2;
 import org.jcvi.jillion.fasta.FastaFileVisitor2;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
@@ -56,7 +57,8 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 	    @Override
 	    protected void backgroundThreadRunMethod() {
 	    	FastaFileVisitor2 visitor = new FastaFileVisitor2(){
-
+	    		NucleotideFastaRecordVisitor recordVisitor = new NucleotideFastaRecordVisitor();
+		    	
 				@Override
 				public FastaRecordVisitor visitDefline(
 						final FastaVisitorCallback callback, String id,
@@ -64,18 +66,8 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 					if(!filter.accept(id)){
 						return null;
 					}
-					
-					return new AbstractNucleotideFastaRecordVisitor(id, optionalComment) {
-						
-						@Override
-						protected void visitRecord(NucleotideSequenceFastaRecord fastaRecord) {
-							blockingPut(fastaRecord);
-							if(LargeNucleotideSequenceFastaIterator.this.isClosed()){
-								callback.stopParsing();
-							}
-							
-						}
-					};
+					recordVisitor.prepareNewRecord(callback, id, optionalComment);
+					return recordVisitor;
 				}
 
 				@Override
@@ -91,5 +83,35 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 			} catch (IOException e) {
 				throw new RuntimeException("can not parse fasta file",e);
 			}
+	    }
+	    
+	    private class NucleotideFastaRecordVisitor implements FastaRecordVisitor{
+			private String currentId;
+			private String currentComment;
+			private NucleotideSequenceBuilder builder;
+			private FastaVisitorCallback callback;
+			public void prepareNewRecord(FastaVisitorCallback callback, String id, String optionalComment){
+				this.currentId = id;
+				this.currentComment = optionalComment;
+				builder = new NucleotideSequenceBuilder();
+			}
+			@Override
+			public void visitBodyLine(String line) {
+				builder.append(line);
+				
+			}
+
+			@Override
+			public void visitEnd() {
+				NucleotideSequenceFastaRecord fastaRecord = new NucleotideSequenceFastaRecordBuilder(currentId,builder.build())
+														.comment(currentComment)
+														.build();
+				blockingPut(fastaRecord);
+				if(LargeNucleotideSequenceFastaIterator.this.isClosed()){
+					callback.stopParsing();
+				}
+				
+			}
+		    	
 	    }
 }
