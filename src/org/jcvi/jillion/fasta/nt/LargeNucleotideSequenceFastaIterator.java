@@ -93,6 +93,7 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 			public void prepareNewRecord(FastaVisitorCallback callback, String id, String optionalComment){
 				this.currentId = id;
 				this.currentComment = optionalComment;
+				this.callback = callback;
 				builder = new NucleotideSequenceBuilder();
 			}
 			@Override
