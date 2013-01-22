@@ -73,7 +73,7 @@ public class FastaFileParser {
 			FastaFileVisitor visitor) throws IOException {
 		boolean keepParsing=true;
 		FastaRecordVisitor recordVisitor =null;
-		AbstractFastaVisitorCallback callback = createNewCallback();
+		AbstractFastaVisitorCallback callback = createNewCallback(currentOffset);
 		while(keepParsing && parser.hasNextLine()){
 			String line=parser.nextLine();
 			String trimmedLine = line.trim();
@@ -95,7 +95,7 @@ public class FastaFileParser {
 					}
 					String id = matcher.group(1);
 		            String comment = matcher.group(3);		            
-		            callback.updateOffset(currentOffset);
+		            callback = createNewCallback(currentOffset);
 		            recordVisitor = visitor.visitDefline(callback, id, comment);
 		            keepParsing=callback.keepParsing();
 				}else{
@@ -113,11 +113,11 @@ public class FastaFileParser {
 		visitor.visitEnd();
 	}
 
-	private AbstractFastaVisitorCallback createNewCallback() {
+	private AbstractFastaVisitorCallback createNewCallback(long currentOffset) {
 		if(fastaFile==null){
 			return NoMementoCallback.INSTANCE;
 		}
-		return new MementoCallback();
+		return new MementoCallback(currentOffset);
 	}
 	
 	private static abstract class AbstractFastaVisitorCallback implements FastaVisitorCallback{
@@ -132,7 +132,6 @@ public class FastaFileParser {
 		public final boolean keepParsing() {
 			return keepParsing;
 		}
-		abstract void updateOffset(long offset);
 	}
 	
 	private static class NoMementoCallback extends AbstractFastaVisitorCallback{
@@ -149,20 +148,14 @@ public class FastaFileParser {
 		public Memento createMemento() {
 			throw new UnsupportedOperationException("can not create memento");
 		}
-
-		@Override
-		void updateOffset(long offset) {
-			//no-op			
-		}
 		
 	}
 	
 	private class MementoCallback extends AbstractFastaVisitorCallback{
 
-		private long offset=0L;
+		private final long offset;
 		
-		@Override
-		public void updateOffset(long offset) {
+		public MementoCallback(long offset){
 			this.offset = offset;
 		}
 
