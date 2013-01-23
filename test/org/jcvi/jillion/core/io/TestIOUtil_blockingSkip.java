@@ -25,16 +25,23 @@
  */
 package org.jcvi.jillion.core.io;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.jillion.core.io.IOUtil;
 import org.junit.Before;
 import org.junit.Test;
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 public class TestIOUtil_blockingSkip {
     InputStream mockStream;
+    private static final int NOT_EOF = 1;
     @Before
     public void setup(){
         mockStream = createMock(InputStream.class);
@@ -48,7 +55,8 @@ public class TestIOUtil_blockingSkip {
     @Test
     public void fullSkip() throws IOException{
         long bytesToSkip = 12345L;
-        expect(mockStream.skip(bytesToSkip)).andReturn(bytesToSkip);
+        expect(mockStream.read()).andReturn(NOT_EOF);
+        expect(mockStream.skip(bytesToSkip-1)).andReturn(bytesToSkip-1);
         replay(mockStream);
         IOUtil.blockingSkip(mockStream, bytesToSkip);
         verify(mockStream);
@@ -58,7 +66,8 @@ public class TestIOUtil_blockingSkip {
     public void throwsIOException() throws IOException{
         long bytesToSkip = 12345L;
         IOException expected = new IOException("expected");
-        expect(mockStream.skip(bytesToSkip)).andThrow(expected);
+        expect(mockStream.read()).andReturn(NOT_EOF);
+        expect(mockStream.skip(bytesToSkip-1)).andThrow(expected);
         replay(mockStream);
         try {
             IOUtil.blockingSkip(mockStream, bytesToSkip);
@@ -72,13 +81,27 @@ public class TestIOUtil_blockingSkip {
     @Test
     public void block() throws IOException{
         long totalbytesToSkip = 12345L;
-        long half = totalbytesToSkip/2;
-        long rest = totalbytesToSkip-half;
-        expect(mockStream.skip(totalbytesToSkip)).andReturn(half);
+        long half = (totalbytesToSkip-1)/2;
+        long rest = totalbytesToSkip-2-half;
+        expect(mockStream.read()).andReturn(NOT_EOF);
+        expect(mockStream.skip(totalbytesToSkip-1)).andReturn(half);
+        expect(mockStream.read()).andReturn(NOT_EOF);
         expect(mockStream.skip(rest)).andReturn(rest);
         replay(mockStream);
         IOUtil.blockingSkip(mockStream, totalbytesToSkip);
         verify(mockStream);
     }
 
+    @Test
+    public void skipPastEOFShouldThrowIOException(){
+    	byte[] buf = new byte[10];
+    	ByteArrayInputStream in = new ByteArrayInputStream(buf);
+    	try {
+			IOUtil.blockingSkip(in, buf.length+5);
+			fail("should throw IOException if skip past end of file");
+		} catch (IOException e) {
+			//expected
+			assertTrue(e.getMessage().contains("end of file"));
+		}
+    }
 }

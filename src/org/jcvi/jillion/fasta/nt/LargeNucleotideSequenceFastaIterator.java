@@ -80,7 +80,7 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 	    	};
 	    	
 	    	try {
-				new FastaFileParser(fastaFile).accept(visitor);
+				FastaFileParser.create(fastaFile).accept(visitor);
 			} catch (IOException e) {
 				throw new RuntimeException("can not parse fasta file",e);
 			}
