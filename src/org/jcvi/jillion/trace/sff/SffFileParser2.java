@@ -29,21 +29,21 @@ public class SffFileParser2 {
 		}
 	}
 	
-	public void accept(SffFileVisitor2 visitor, SffFileMemento momento) throws IOException{
+	public void accept(SffFileVisitor2 visitor, SffFileMemento memento) throws IOException{
 		
-		if(!(momento instanceof AbstractSffFileMomento)){
-			throw new IllegalArgumentException("don't know how to handle this momento");
+		if(!(memento instanceof AbstractSffFileMemento)){
+			throw new IllegalArgumentException("don't know how to handle this memento");
 		}
 		InputStream in = null;
 		try{
 			in = new BufferedInputStream(new FileInputStream(sffFile));
 			
-			if(momento instanceof ReadRecordSffFileMomento){
-				ReadRecordSffFileMomento readRecordSffFileMomento = (ReadRecordSffFileMomento)momento;
-				ParserState parserState = new ParserState(readRecordSffFileMomento.getPosition());
+			if(memento instanceof ReadRecordSffFileMemento){
+				ReadRecordSffFileMemento readRecordSffFileMemento = (ReadRecordSffFileMemento)memento;
+				ParserState parserState = new ParserState(readRecordSffFileMemento.getPosition());
 				IOUtil.blockingSkip(in, parserState.position);
 				DataInputStream dataIn = new DataInputStream(in);
-				for(int i=readRecordSffFileMomento.readCount; parserState.keepParsing && i<header.getNumberOfReads(); i++){
+				for(int i=readRecordSffFileMemento.readCount; parserState.keepParsing && i<header.getNumberOfReads(); i++){
 					parserState = handleSingleRead(visitor, dataIn, header,
 							header.getNumberOfFlowsPerRead(), parserState,i);
 				    
@@ -164,7 +164,7 @@ public class SffFileParser2 {
 
 			@Override
 			public SffFileMemento createMemento() {
-				return new ReadRecordSffFileMomento(parserState.position, readCount);
+				return new ReadRecordSffFileMemento(parserState.position, readCount);
 			}
 
 			@Override
@@ -197,10 +197,10 @@ public class SffFileParser2 {
     }
 	
 	
-	private static abstract class AbstractSffFileMomento implements SffFileMemento{
+	private static abstract class AbstractSffFileMemento implements SffFileMemento{
 		private final long position;
 
-		public AbstractSffFileMomento(long position) {
+		public AbstractSffFileMemento(long position) {
 			this.position = position;
 		}
 
@@ -211,16 +211,16 @@ public class SffFileParser2 {
 		
 	}
 	
-	private static class ReadRecordSffFileMomento extends AbstractSffFileMomento{
+	private static class ReadRecordSffFileMemento extends AbstractSffFileMemento{
 		private final int readCount;
-		public ReadRecordSffFileMomento(long position, int readCount) {
+		public ReadRecordSffFileMemento(long position, int readCount) {
 			super(position);
 			this.readCount = readCount;
 		}
 		
 	}
 	
-	private static class BeginningSffFileMomento extends AbstractSffFileMomento{
+	private static class BeginningSffFileMomento extends AbstractSffFileMemento{
 
 		public BeginningSffFileMomento() {
 			super(0L);
