@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.trace.sff.SffFileParserCallback.SffFileMomento;
+import org.jcvi.jillion.trace.sff.SffFileParserCallback.SffFileMemento;
 
 public class SffFileParser2 {
 
@@ -29,7 +29,7 @@ public class SffFileParser2 {
 		}
 	}
 	
-	public void accept(SffFileVisitor2 visitor, SffFileMomento momento) throws IOException{
+	public void accept(SffFileVisitor2 visitor, SffFileMemento momento) throws IOException{
 		
 		if(!(momento instanceof AbstractSffFileMomento)){
 			throw new IllegalArgumentException("don't know how to handle this momento");
@@ -85,12 +85,12 @@ public class SffFileParser2 {
     	return new SffFileParserCallback(){
 
 			@Override
-			public boolean momentoSupported() {
+			public boolean mementoSupported() {
 				return true;
 			}
 
 			@Override
-			public SffFileMomento createMomento() {
+			public SffFileMemento createMemento() {
 				return new BeginningSffFileMomento();
 			}
 
@@ -159,12 +159,12 @@ public class SffFileParser2 {
     	return new SffFileParserCallback(){
 
 			@Override
-			public boolean momentoSupported() {
+			public boolean mementoSupported() {
 				return true;
 			}
 
 			@Override
-			public SffFileMomento createMomento() {
+			public SffFileMemento createMemento() {
 				return new ReadRecordSffFileMomento(parserState.position, header, readCount);
 			}
 
@@ -180,12 +180,12 @@ public class SffFileParser2 {
     	return new SffFileParserCallback(){
 
 			@Override
-			public boolean momentoSupported() {
+			public boolean mementoSupported() {
 				return false;
 			}
 
 			@Override
-			public SffFileMomento createMomento() {
+			public SffFileMemento createMemento() {
 				throw new UnsupportedOperationException("can not create Momento inside of read record"); 
 			}
 
@@ -198,7 +198,7 @@ public class SffFileParser2 {
     }
 	
 	
-	private static abstract class AbstractSffFileMomento implements SffFileMomento{
+	private static abstract class AbstractSffFileMomento implements SffFileMemento{
 		private final long position;
 
 		public AbstractSffFileMomento(long position) {

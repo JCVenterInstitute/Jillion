@@ -2,13 +2,13 @@ package org.jcvi.jillion.trace.sff;
 
 public interface SffFileParserCallback {
 
-	interface SffFileMomento{
+	interface SffFileMemento{
 		
 	}
 	
-	boolean momentoSupported();
+	boolean mementoSupported();
 	
-	SffFileMomento createMomento();
+	SffFileMemento createMemento();
 	
 	void stopParsing();
 }
