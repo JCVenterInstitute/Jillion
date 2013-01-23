@@ -15,6 +15,9 @@ import org.jcvi.jillion.core.datastore.DataStoreFilters;
 */
 class DefaultSffFileDataStore {
 
+	private DefaultSffFileDataStore(){
+		//can not instantiate
+	}
 	/**
 	 * Create a new {@link FlowgramDataStore} by parsing
 	 * the entire given sff file and include all

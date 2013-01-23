@@ -222,7 +222,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
 
 					@Override
 					public void endSffFile() {
-						
+						//no-op
 					}
 
 					

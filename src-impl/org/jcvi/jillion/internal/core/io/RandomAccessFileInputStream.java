@@ -39,6 +39,7 @@ public class RandomAccessFileInputStream extends InputStream{
 	 */
 	@Override
 	public void close() throws IOException {
+		//no-op
 	}
 
 	

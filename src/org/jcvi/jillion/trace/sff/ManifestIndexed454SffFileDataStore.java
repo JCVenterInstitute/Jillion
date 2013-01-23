@@ -267,7 +267,7 @@ final class ManifestIndexed454SffFileDataStore implements FlowgramDataStore{
 			this.commonHeader = header;
 			BigInteger offsetToIndex =commonHeader.getIndexOffset();
 			if(offsetToIndex.longValue() !=0L){
-				tryToParseManifest(commonHeader, offsetToIndex);
+				tryToParseManifest(offsetToIndex);
 			}
 			callback.stopParsing();
 		}
@@ -283,8 +283,7 @@ final class ManifestIndexed454SffFileDataStore implements FlowgramDataStore{
 		}
 		
 
-		private void tryToParseManifest(SffCommonHeader commonHeader,
-				BigInteger offsetToIndex) {
+		private void tryToParseManifest(BigInteger offsetToIndex) {
 			RandomAccessFile randomAccessFile = createRandomAccessFileFromSff();
 			InputStream in=null;
 			try {
