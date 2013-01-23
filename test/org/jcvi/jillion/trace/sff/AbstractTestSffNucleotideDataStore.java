@@ -25,14 +25,13 @@
  */
 package org.jcvi.jillion.trace.sff;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.util.Iterator;
 
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
-import org.jcvi.jillion.trace.sff.DefaultSffFileDataStore;
-import org.jcvi.jillion.trace.sff.FlowgramDataStore;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public abstract class AbstractTestSffNucleotideDataStore extends AbstractTestExampleSffFile{
 
     private final FlowgramDataStore dataStore;

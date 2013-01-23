@@ -15,12 +15,45 @@ import org.jcvi.jillion.trace.sff.SffFileParserCallback.SffFileMemento;
 
 
 
-
-public class IndexedSffFileDataStore2 {
-	
+/**
+ * {@code IndexedSffFileDataStore} is an implementation 
+ * of {@link FlowgramDataStore} that only stores an index containing
+ * byte offsets to the various {@link Flowgram}s contained
+ * in a single sff file.  This allows for large files to provide
+ * random access without taking up much memory. The down side is each flowgram
+ * must be re-parsed each time and the sff file must exist and not
+ * get altered during the entire lifetime of this object.
+ * @author dkatzel
+ *
+ */
+class IndexedSffFileDataStore2 {
+	/**
+	 * Create a new {@link FlowgramDataStore} instance which only indexes
+	 * byte offsets for each read.
+	 * @param sffFile the sff file to create a datastore for.
+	 * @return a new {@link FlowgramDataStore} instance; never null.
+	 * @throws IOException if there is a problem reading the file.
+	 * @throws IllegalArgumentException if the given sffFile
+	 * has more than {@link Integer#MAX_VALUE} reads.
+	 * @throws NullPointerException if sffFile is null.
+	 * @throws IllegalArgumentException if sffFile does not exist.
+	 * @see #canCreateIndexedDataStore(File)
+	 */
 	public static FlowgramDataStore create(File sffFile) throws IOException{
 		return create(sffFile, DataStoreFilters.alwaysAccept());
 	}
+	/**
+	 * Create a new {@link FlowgramDataStore} instance which only indexes
+	 * byte offsets for each read that is accepted by the given {@link DataStoreFilter}.
+	 * @param sffFile the sff file to create a datastore for.
+	 * @return a new {@link FlowgramDataStore} instance; never null.
+	 * @throws IOException if there is a problem reading the file.
+	 * @throws IllegalArgumentException if the given sffFile
+	 * has more than {@link Integer#MAX_VALUE} reads.
+	 * @throws NullPointerException if sffFile is null.
+	 * @throws IllegalArgumentException if sffFile does not exist.
+	 * @see #canCreateIndexedDataStore(File)
+	 */
 	public static FlowgramDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
 		Visitor visitor = new Visitor(filter);
 		SffFileParser2 parser = new SffFileParser2(sffFile);

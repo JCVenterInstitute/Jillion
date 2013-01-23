@@ -59,40 +59,47 @@ public final class SffFileIterator extends AbstractBlockingStreamingIterator<Flo
 	@Override
 	protected void backgroundThreadRunMethod() {
 		 try {
-         	SffFileVisitor visitor = new SffFileVisitor() {
-         		private SffReadHeader currentReadHeader;
-         		@Override
-         		public void visitFile() {
-         			//no-op
-         		}
-
+         	SffFileVisitor2 visitor = new SffFileVisitor2() {
+         		
          		
          		@Override
-         		public void visitEndOfFile() {
-         			//no-op
-         		}
+				public void visitHeader(SffFileParserCallback callback,
+						SffCommonHeader header) {
+					//no-op					
+				}
 
-         		@Override
-         		public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {
-         			return CommonHeaderReturnCode.PARSE_READS;
-         		}
 
-         		@Override
-         		public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
-         			if(filter.accept(readHeader.getId())){
-	         			this.currentReadHeader = readHeader;
-	         			return ReadHeaderReturnCode.PARSE_READ_DATA;
-         			}
-         			return ReadHeaderReturnCode.SKIP_CURRENT_READ;
-         		}
+				@Override
+				public SffFileReadVisitor visitRead(
+						SffFileParserCallback callback, final SffReadHeader readHeader) {
+					if(filter.accept(readHeader.getId())){
+						return new SffFileReadVisitor() {
+							
+							@Override
+							public void visitReadData(SffFileParserCallback callback,
+									SffReadData readData) {
+								SffFileIterator.this.blockingPut(SffFlowgram.create(readHeader, readData));
+								
+							}
+							
+							@Override
+							public void visitEndOfRead(SffFileParserCallback callback) {
+								//no-op
+								
+							}
+						};
+					}
+					return null;
+				}
 
-         		@Override
-         		public ReadDataReturnCode visitReadData(SffReadData readData) {
-         			SffFileIterator.this.blockingPut(SffFlowgram.create(currentReadHeader, readData));
-         			return ReadDataReturnCode.PARSE_NEXT_READ;
-         		}
+
+				@Override
+				public void endSffFile() {
+					//no-op
+					
+				}
          	};
-             SffFileParser.parse(sffFile, visitor);
+             new SffFileParser2(sffFile).accept(visitor);
          } catch (IOException e) {
              //should never happen
              throw new RuntimeException(e);

@@ -42,9 +42,10 @@ import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.trace.fastq.FastqFileParser;
 import org.jcvi.jillion.trace.fastq.FastqFileVisitor;
 import org.jcvi.jillion.trace.sff.SffCommonHeader;
-import org.jcvi.jillion.trace.sff.SffFileParser;
-import org.jcvi.jillion.trace.sff.SffFileVisitor;
-import org.jcvi.jillion.trace.sff.SffReadData;
+import org.jcvi.jillion.trace.sff.SffFileParser2;
+import org.jcvi.jillion.trace.sff.SffFileParserCallback;
+import org.jcvi.jillion.trace.sff.SffFileReadVisitor;
+import org.jcvi.jillion.trace.sff.SffFileVisitor2;
 import org.jcvi.jillion.trace.sff.SffReadHeader;
 
 public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasFileVisitor{
@@ -125,7 +126,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
     private void parse(File file) throws IOException {
         String fileName = file.getName();
         if(fileName.endsWith("sff")){
-          SffFileParser.parse(file, new SffReadOrder(file));                
+          new SffFileParser2(file).accept(new SffReadOrder(file));                
         }
         else if(fileName.endsWith("fastq") || fileName.matches("\\S*\\.fastq\\S*")){
             FastqFileParser.parse(file, new FastqReadOrder(file));
@@ -246,36 +247,36 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
         readCounter++;
     }
     
-    private final class SffReadOrder implements SffFileVisitor{
+    private final class SffReadOrder implements SffFileVisitor2{
         private final File file;
         SffReadOrder(File file){
             this.file =file;
         }
+      
+        
         @Override
-        public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {
-            return CommonHeaderReturnCode.PARSE_READS;
-        }
+		public void visitHeader(SffFileParserCallback callback,
+				SffCommonHeader header) {
+			//no-op
+			
+		}
 
-        @Override
-        public ReadDataReturnCode visitReadData(SffReadData readData) {
-            return ReadDataReturnCode.PARSE_NEXT_READ;
-        }
 
-        @Override
-        public void visitEndOfFile() {
-        	//no-op
-        }
-
-        @Override
-        public void visitFile() {
-        	//no-op
-        }
-        @Override
-        public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
-            final String name = readHeader.getId();
+		@Override
+		public SffFileReadVisitor visitRead(SffFileParserCallback callback,
+				SffReadHeader readHeader) {
+			final String name = readHeader.getId();
             addRead(name,file);
-            return ReadHeaderReturnCode.SKIP_CURRENT_READ;
-        }
+            //always skip underlying read data
+			return null;
+		}
+
+
+		@Override
+		public void endSffFile() {
+			//no-op
+			
+		}
         
     }
     private final class FastaReadOrder implements FastaFileVisitor{
