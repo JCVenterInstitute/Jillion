@@ -1,7 +1,7 @@
 package org.jcvi.jillion.trace.sff;
 
 
-public interface SffFileVisitor2 {
+public interface SffFileVisitor {
 
 	void visitHeader(SffFileParserCallback callback, SffCommonHeader header);
 	

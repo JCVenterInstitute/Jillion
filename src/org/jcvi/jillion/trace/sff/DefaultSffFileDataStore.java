@@ -13,7 +13,7 @@ import org.jcvi.jillion.core.datastore.DataStoreFilters;
 * for large sff files.
 * @author dkatzel
 */
-class DefaultSffFileDataStore2 {
+class DefaultSffFileDataStore {
 
 	/**
 	 * Create a new {@link FlowgramDataStore} by parsing
@@ -44,7 +44,7 @@ class DefaultSffFileDataStore2 {
 	 */
 	public static FlowgramDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
 		Visitor visitor = new Visitor(filter);
-		SffFileParser2 parser = new SffFileParser2(sffFile);
+		SffFileParser parser = new SffFileParser(sffFile);
 		parser.accept(visitor);
 		
 		return visitor.builder.build();
@@ -52,13 +52,13 @@ class DefaultSffFileDataStore2 {
 	
 	
 	/**
-	 * {@link SffFileVisitor2} implementation 
+	 * {@link SffFileVisitor} implementation 
 	 * that puts flowgrams into a datastore
 	 * as each record is visited.
 	 * @author dkatzel
 	 *
 	 */
-	private static final class Visitor implements SffFileVisitor2{
+	private static final class Visitor implements SffFileVisitor{
 		private DefaultSffDataStoreBuilder builder;
 		
 		private final DataStoreFilter filter;

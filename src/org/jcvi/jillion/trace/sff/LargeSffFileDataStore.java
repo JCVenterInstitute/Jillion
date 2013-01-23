@@ -123,7 +123,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
 		}
 		try{
         	SingleFlowgramVisitor singleVisitor = new SingleFlowgramVisitor(id);
-        	new SffFileParser2(sffFile).accept(singleVisitor);
+        	new SffFileParser(sffFile).accept(singleVisitor);
         	return singleVisitor.getFlowgram();
         } catch (IOException e) {
             throw new DataStoreException("could not read sffFile ",e);
@@ -199,7 +199,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
     	@Override
     	protected void backgroundThreadRunMethod() {
     		 try {
-             	SffFileVisitor2 visitor = new SffFileVisitor2() {
+             	SffFileVisitor visitor = new SffFileVisitor() {
              		
 
              		@Override
@@ -227,7 +227,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
 
 					
              	};
-                 new SffFileParser2(sffFile).accept(visitor);
+                 new SffFileParser(sffFile).accept(visitor);
              } catch (IOException e) {
                  //should never happen
                  throw new RuntimeException(e);
@@ -240,7 +240,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
     }
     
     
-    private static final class SingleFlowgramVisitor implements SffFileVisitor2{
+    private static final class SingleFlowgramVisitor implements SffFileVisitor{
         private final String idToFind;
         private Flowgram flowgram=null;
         private SingleFlowgramVisitor(String idToFind) {
