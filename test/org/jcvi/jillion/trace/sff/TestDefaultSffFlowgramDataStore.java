@@ -27,22 +27,13 @@ package org.jcvi.jillion.trace.sff;
 
 import java.io.File;
 
-public class TestDefaultSffFlowgramDataStore extends TestReadExampleSffFile{
+public class TestDefaultSffFlowgramDataStore extends AbstractTestSffFileDataStore{
 
-    private FlowgramDataStore dataStore;
-    @Override
-    protected Flowgram getFlowgram(String id) throws Exception {
-        return dataStore.get(id);
-    }
 
-    @Override
-    protected long getNumberOfFlowgrams() throws Exception {
-        return dataStore.getNumberOfRecords();
-    }
-
-    @Override
-    protected void parseSff(File f) throws Exception {
-    	dataStore = DefaultSffFileDataStore2.create(f);
-    }
+	@Override
+	protected FlowgramDataStore parseDataStore(File f) throws Exception {
+		return DefaultSffFileDataStore.create(f);
+	}
+    
 
 }

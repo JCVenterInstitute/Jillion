@@ -35,14 +35,14 @@ public class TestIndexedSffFileDataStore extends AbstractTestExampleSffFile{
 		FlowgramDataStore datastore = new SffFileDataStoreBuilder(SFF_FILE)
 										.hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY)
 										.build();
-		assertTrue(datastore instanceof Indexed454SffFileDataStore);
+		assertTrue(datastore instanceof ManifestIndexed454SffFileDataStore);
 	}
 	@Test
 	public void returnManifestIndexedInstanceIfManifestWithNoXMLIsPresent() throws IOException{
 		FlowgramDataStore datastore = new SffFileDataStoreBuilder(SFF_FILE_NO_XML)
 												.hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY)
 												.build();
-		assertTrue(datastore instanceof Indexed454SffFileDataStore);
+		assertTrue(datastore instanceof ManifestIndexed454SffFileDataStore);
 	}
 	
 	@Test
@@ -51,6 +51,6 @@ public class TestIndexedSffFileDataStore extends AbstractTestExampleSffFile{
 												.hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY)
 												.build();
 		assertNotNull(datastore);
-		assertFalse(datastore instanceof Indexed454SffFileDataStore);
+		assertFalse(datastore instanceof ManifestIndexed454SffFileDataStore);
 	}
 }
