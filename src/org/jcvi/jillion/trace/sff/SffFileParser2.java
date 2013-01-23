@@ -13,7 +13,7 @@ import org.jcvi.jillion.trace.sff.SffFileParserCallback.SffFileMemento;
 public class SffFileParser2 {
 
 	private final File sffFile;
-	
+	private SffCommonHeader header;
 	
 	public SffFileParser2(File sffFile){
 		this.sffFile = sffFile;
@@ -40,7 +40,6 @@ public class SffFileParser2 {
 			
 			if(momento instanceof ReadRecordSffFileMomento){
 				ReadRecordSffFileMomento readRecordSffFileMomento = (ReadRecordSffFileMomento)momento;
-				SffCommonHeader header = readRecordSffFileMomento.header;
 				ParserState parserState = new ParserState(readRecordSffFileMomento.getPosition());
 				IOUtil.blockingSkip(in, parserState.position);
 				DataInputStream dataIn = new DataInputStream(in);
@@ -70,13 +69,13 @@ public class SffFileParser2 {
     private  void accept(InputStream in, SffFileVisitor2 visitor) throws IOException{
         DataInputStream dataIn = new DataInputStream(in);
 
-        SffCommonHeader commonHeader =DefaultSFFCommonHeaderDecoder.INSTANCE.decodeHeader(dataIn);
+        header =DefaultSFFCommonHeaderDecoder.INSTANCE.decodeHeader(dataIn);
         ParserState parserState = new ParserState();
-        visitor.visitHeader(createCommonHeaderCallback(parserState), commonHeader);
+        visitor.visitHeader(createCommonHeaderCallback(parserState), header);
         if(!parserState.keepParsing){
         	return;
         }
-        parseReads(visitor, dataIn, commonHeader);
+        parseReads(visitor, dataIn, header);
         visitor.endSffFile();
         
     }
@@ -122,7 +121,7 @@ public class SffFileParser2 {
 	private ParserState handleSingleRead(SffFileVisitor2 visitor,
 			DataInputStream dataIn, SffCommonHeader commonHeader,
 			final int numberOfFlowsPerRead,  ParserState parserState, int readCount) throws IOException {
-		SffFileParserCallback readHeaderCallback = createReadHeaderCallback(this, parserState, commonHeader,readCount);
+		SffFileParserCallback readHeaderCallback = createReadHeaderCallback(this, parserState, readCount);
 		SffReadHeader readHeader = DefaultSffReadHeaderDecoder.INSTANCE.decodeReadHeader(dataIn);
    
 		
@@ -155,7 +154,7 @@ public class SffFileParser2 {
 	}
 	
 	
-	private SffFileParserCallback createReadHeaderCallback(final SffFileParser2 parser,final ParserState parserState, final SffCommonHeader header, final int readCount){
+	private SffFileParserCallback createReadHeaderCallback(final SffFileParser2 parser,final ParserState parserState, final int readCount){
     	return new SffFileParserCallback(){
 
 			@Override
@@ -165,7 +164,7 @@ public class SffFileParser2 {
 
 			@Override
 			public SffFileMemento createMemento() {
-				return new ReadRecordSffFileMomento(parserState.position, header, readCount);
+				return new ReadRecordSffFileMomento(parserState.position, readCount);
 			}
 
 			@Override
@@ -213,11 +212,9 @@ public class SffFileParser2 {
 	}
 	
 	private static class ReadRecordSffFileMomento extends AbstractSffFileMomento{
-		private final SffCommonHeader header;
 		private final int readCount;
-		public ReadRecordSffFileMomento(long position,SffCommonHeader header, int readCount) {
+		public ReadRecordSffFileMomento(long position, int readCount) {
 			super(position);
-			this.header = header;
 			this.readCount = readCount;
 		}
 		
