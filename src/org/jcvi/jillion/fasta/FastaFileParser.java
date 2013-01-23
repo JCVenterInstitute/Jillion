@@ -25,11 +25,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.fasta.FastaVisitorCallback.Memento;
+import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 /**
  * {@code FastaFileParser} will parse a single 
@@ -74,18 +76,23 @@ public class FastaFileParser {
 			throw new NullPointerException("visitor can not be null");
 		}
 	}
-	public void accept(Memento memento, FastaFileVisitor visitor) throws IOException{
+	public void accept(FastaFileVisitor visitor, Memento memento) throws IOException{
 		if(!(memento instanceof OffsetMemento)){
 			throw new IllegalStateException("unknown memento instance : "+memento);
 		}
-		inputStream = new FileInputStream(fastaFile);
+		
 		long startOffset = ((OffsetMemento)memento).getOffset();
-		IOUtil.blockingSkip(inputStream, startOffset);
-		TextLineParser parser = new TextLineParser(inputStream);
+		RandomAccessFile randomAccessFile = null;
+		
+		
 		try{
+			randomAccessFile = new RandomAccessFile(fastaFile, "r");
+			randomAccessFile.seek(startOffset);
+			inputStream = new BufferedInputStream(new RandomAccessFileInputStream(randomAccessFile));
+			TextLineParser parser = new TextLineParser(inputStream);
 			parseFile(parser, startOffset, visitor);
 		}finally{
-			IOUtil.closeAndIgnoreErrors(inputStream);
+			IOUtil.closeAndIgnoreErrors(inputStream,randomAccessFile);
 		}
 	}
 	
