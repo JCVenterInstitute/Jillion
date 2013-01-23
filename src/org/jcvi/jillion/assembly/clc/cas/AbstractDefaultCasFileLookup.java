@@ -42,10 +42,10 @@ import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.trace.fastq.FastqFileParser;
 import org.jcvi.jillion.trace.fastq.FastqFileVisitor;
 import org.jcvi.jillion.trace.sff.SffCommonHeader;
-import org.jcvi.jillion.trace.sff.SffFileParser2;
+import org.jcvi.jillion.trace.sff.SffFileParser;
 import org.jcvi.jillion.trace.sff.SffFileParserCallback;
 import org.jcvi.jillion.trace.sff.SffFileReadVisitor;
-import org.jcvi.jillion.trace.sff.SffFileVisitor2;
+import org.jcvi.jillion.trace.sff.SffFileVisitor;
 import org.jcvi.jillion.trace.sff.SffReadHeader;
 
 public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasFileVisitor{
@@ -126,7 +126,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
     private void parse(File file) throws IOException {
         String fileName = file.getName();
         if(fileName.endsWith("sff")){
-          new SffFileParser2(file).accept(new SffReadOrder(file));                
+          new SffFileParser(file).accept(new SffReadOrder(file));                
         }
         else if(fileName.endsWith("fastq") || fileName.matches("\\S*\\.fastq\\S*")){
             FastqFileParser.parse(file, new FastqReadOrder(file));
@@ -247,7 +247,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
         readCounter++;
     }
     
-    private final class SffReadOrder implements SffFileVisitor2{
+    private final class SffReadOrder implements SffFileVisitor{
         private final File file;
         SffReadOrder(File file){
             this.file =file;

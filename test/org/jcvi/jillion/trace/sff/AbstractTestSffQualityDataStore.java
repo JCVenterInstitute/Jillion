@@ -40,7 +40,7 @@ public abstract class AbstractTestSffQualityDataStore extends AbstractTestExampl
     {
         
         try {
-        	dataStore = DefaultSffFileDataStore2.create(SFF_FILE);
+        	dataStore = DefaultSffFileDataStore.create(SFF_FILE);
         } catch (Exception e) {
             throw new IllegalStateException("could not parse sff file");
         } 

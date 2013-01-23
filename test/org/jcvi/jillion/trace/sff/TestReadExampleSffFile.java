@@ -25,13 +25,12 @@
  */
 package org.jcvi.jillion.trace.sff;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 
-import org.jcvi.jillion.trace.sff.Flowgram;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public abstract class  TestReadExampleSffFile extends AbstractTestExampleSffFile{
     
@@ -55,6 +54,7 @@ public abstract class  TestReadExampleSffFile extends AbstractTestExampleSffFile
         assertEquals(FF585OX02GMGGN, getFlowgram("FF585OX02GMGGN"));
         assertEquals(FF585OX02FHO5X,getFlowgram("FF585OX02FHO5X"));
     }
+    
     protected abstract long getNumberOfFlowgrams() throws Exception;
    protected abstract Flowgram getFlowgram(String id) throws Exception;
    protected abstract void parseSff(File f) throws Exception;

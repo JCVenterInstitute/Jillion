@@ -39,7 +39,7 @@ public class TestSFFCodecParseActualSFFFile extends AbstractTestSffFileDataStore
         InputStream in=null;
         try {
             
-            return DefaultSffFileDataStore2.create(file);
+            return DefaultSffFileDataStore.create(file);
         } catch (IOException e) {
             throw new RuntimeException("could not open file ",e);
          }
