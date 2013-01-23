@@ -25,6 +25,17 @@
  */
 package org.jcvi.jillion.trace.sanger.chromat.scf.section;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -40,8 +51,6 @@ import org.jcvi.jillion.trace.sanger.chromat.scf.PrivateData;
 import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
 public class TestPrivateDataDecoder {
     private byte[] data = new byte[]{20,30,40, -20, -67,125};
     private PrivateData expectedPrivateData = new PrivateDataImpl(data);
@@ -64,7 +73,8 @@ public class TestPrivateDataDecoder {
     public void validWithSkip() throws SectionDecoderException, IOException{
         InputStream mockInputStream = createMock(InputStream.class);
         int bytesToSkip = 100;
-        expect(mockInputStream.skip(bytesToSkip)).andReturn((long)bytesToSkip);
+        expect(mockInputStream.read()).andReturn(1);
+        expect(mockInputStream.skip(bytesToSkip-1)).andReturn((long)(bytesToSkip-1));
         expect(mockInputStream.read(isA(byte[].class), eq(0),eq(data.length)))
                 .andAnswer(EasyMockUtil.writeArrayToInputStream(data));
         replay(mockInputStream);

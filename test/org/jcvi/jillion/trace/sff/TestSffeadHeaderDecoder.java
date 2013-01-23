@@ -27,19 +27,24 @@ package org.jcvi.jillion.trace.sff;
 
 
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.jcvi.jillion.core.testUtil.EasyMockUtil.putInt;
+import static org.jcvi.jillion.core.testUtil.EasyMockUtil.putShort;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.testUtil.EasyMockUtil;
-import org.jcvi.jillion.trace.sff.SffDecoderException;
-import org.jcvi.jillion.trace.sff.SffReadHeader;
-import org.jcvi.jillion.trace.sff.SffUtil;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.jcvi.jillion.core.testUtil.EasyMockUtil.*;
-import static org.easymock.EasyMock.*;
 public class TestSffeadHeaderDecoder extends AbstractTestSFFReadHeaderCodec{
 
     @Test
@@ -100,8 +105,8 @@ public class TestSffeadHeaderDecoder extends AbstractTestSFFReadHeaderCodec{
         putShort(mockInputStream,(short)readHeader.getAdapterClip().getEnd(CoordinateSystem.RESIDUE_BASED));
         expect(mockInputStream.read(isA(byte[].class), eq(0),eq(nameLength)))
             .andAnswer(EasyMockUtil.writeArrayToInputStream(seqName.getBytes()));
-        
-        expect(mockInputStream.skip(padds)).andReturn(padds);
+        expect(mockInputStream.read()).andReturn(1);
+        expect(mockInputStream.skip(padds-1)).andReturn(padds-1);
     }
     void encodeHeaderWithWrongSequenceLength(InputStream mockInputStream, SffReadHeader readHeader) throws IOException{
         final String seqName = readHeader.getId();

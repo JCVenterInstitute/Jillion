@@ -25,7 +25,8 @@
  */
 package org.jcvi.jillion.trace.sanger.chromat.scf.section;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -87,7 +88,8 @@ public class TestVersion2BasesSection extends AbstractTestBasesSection{
     private InputStream createValidMockInputStream(long skipDistance,
             boolean includeOptionalConfidence) throws IOException {
         InputStream mockInputStream = createMock(InputStream.class);
-        expect(mockInputStream.skip(skipDistance)).andReturn(skipDistance);
+        expect(mockInputStream.read()).andReturn(1);
+        expect(mockInputStream.skip(skipDistance-1)).andReturn(skipDistance-1);
 
         for(int i=0; i<encodedBases.getLength(); i++){
             expectRead(mockInputStream, i,includeOptionalConfidence);

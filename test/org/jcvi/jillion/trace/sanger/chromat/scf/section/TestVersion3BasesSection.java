@@ -25,7 +25,10 @@
  */
 package org.jcvi.jillion.trace.sanger.chromat.scf.section;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,7 +59,8 @@ public class TestVersion3BasesSection extends AbstractTestBasesSection{
     protected InputStream createValidMockInputStreamWithoutOptionalConfidence(long skipDistance)
     throws IOException {
         InputStream mockInputStream = createMock(InputStream.class);
-         expect(mockInputStream.skip(skipDistance)).andReturn(skipDistance);
+        expect(mockInputStream.read()).andReturn(1);
+         expect(mockInputStream.skip(skipDistance-1)).andReturn(skipDistance-1);
          //do peaks
          expectPeakReads(mockInputStream);
          expectRequiredConfidenceReads(mockInputStream);
@@ -71,7 +75,8 @@ public class TestVersion3BasesSection extends AbstractTestBasesSection{
     protected InputStream createValidMockInputStreamWithOptionalConfidence(long skipDistance)
     throws IOException {
         InputStream mockInputStream = createMock(InputStream.class);
-         expect(mockInputStream.skip(skipDistance)).andReturn(skipDistance);
+        expect(mockInputStream.read()).andReturn(1);
+         expect(mockInputStream.skip(skipDistance-1)).andReturn(skipDistance-1);
          //do peaks
          expectPeakReads(mockInputStream);
          expectRequiredConfidenceReads(mockInputStream);

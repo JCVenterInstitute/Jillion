@@ -25,6 +25,15 @@
  */
 package org.jcvi.jillion.trace.sff;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,14 +45,7 @@ import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.testUtil.EasyMockUtil;
-import org.jcvi.jillion.trace.sff.DefaultSffReadData;
-import org.jcvi.jillion.trace.sff.DefaultSffReadDataDecoder;
-import org.jcvi.jillion.trace.sff.SffDecoderException;
-import org.jcvi.jillion.trace.sff.SffReadData;
-import org.jcvi.jillion.trace.sff.SffUtil;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
 public class TestDefaultSffReadDataDecoder {
 
     protected int numberOfFlows = 5;
@@ -107,7 +109,9 @@ public class TestDefaultSffReadDataDecoder {
         .andAnswer(EasyMockUtil.writeArrayToInputStream(readData.getNucleotideSequence().toString().getBytes(IOUtil.UTF_8)));
         expect(mockInputStream.read(isA(byte[].class), eq(0),eq(basesLength)))
         .andAnswer(EasyMockUtil.writeArrayToInputStream(PhredQuality.toArray(readData.getQualitySequence())));
-        expect(mockInputStream.skip(padding)).andReturn(padding);
+        
+        expect(mockInputStream.read()).andReturn(1);
+        expect(mockInputStream.skip(padding-1)).andReturn(padding-1);
 
     }
 

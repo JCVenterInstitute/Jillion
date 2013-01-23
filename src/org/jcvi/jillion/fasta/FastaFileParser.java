@@ -203,7 +203,7 @@ public abstract class FastaFileParser {
 		
 	}
 	
-	private class MementoCallback extends AbstractFastaVisitorCallback{
+	private static class MementoCallback extends AbstractFastaVisitorCallback{
 
 		private final long offset;
 		
