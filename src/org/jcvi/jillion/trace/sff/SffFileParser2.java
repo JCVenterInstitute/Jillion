@@ -34,6 +34,12 @@ public class SffFileParser2 {
 		if(!(memento instanceof AbstractSffFileMemento)){
 			throw new IllegalArgumentException("don't know how to handle this memento");
 		}
+		//if the header is null,
+		//then we haven't yet parsed the file,
+		//therefore we don't have a valid memento
+		if(header ==null){
+			throw new IllegalStateException("parser has not yet been initialized, must call accept(visitor) method first");
+		}
 		InputStream in = null;
 		try{
 			in = new BufferedInputStream(new FileInputStream(sffFile));
