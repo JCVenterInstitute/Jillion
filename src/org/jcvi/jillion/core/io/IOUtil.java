@@ -271,19 +271,30 @@ public final class IOUtil {
         }        
     }
     /**
-     * Skip <code>numberOfBytes</code> in the input stream 
+     * Skip <code>numberOfBytes</code> in the {@link InputStream} 
      * and block until those bytes have been skipped. {@link InputStream#skip(long)}
      * will only skip as many bytes as it can without blocking.
      * @param in InputStream to skip.
      * @param numberOfBytes number of bytes to skip.
-     * @throws IOException
+     * @throws IOException if there is a problem reading the inputstream
+     * or if the end of file is reached before the number of bytes to skip
+     * has been reached.
      */
     public static void blockingSkip(InputStream in, long numberOfBytes) throws IOException{
 
         long leftToSkip = numberOfBytes;
         while(leftToSkip >0){
-            long actuallySkipped=in.skip(leftToSkip);
-            leftToSkip -= actuallySkipped;
+        	//need to do a read() to see if we
+        	//are at EOF yet. otherwise we loop forever
+        	//since skip will return 0.
+        	//this also is the reason for the -1 and +1 
+        	//sprinkled around the leftToSkip computation.
+        	int value =in.read();
+        	if(value == -1){ 
+        		//EOF
+        		throw new IOException("end of file reached before entire block was skipped");
+        	}
+        	leftToSkip -= in.skip(leftToSkip-1) +1;
         }
 
     }

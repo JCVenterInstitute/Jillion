@@ -133,7 +133,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
         }
         else{
           //try as fasta...
-            new FastaFileParser(file).accept(new FastaReadOrder(file));
+        	FastaFileParser.create(file).accept(new FastaReadOrder(file));
            
         }
     }

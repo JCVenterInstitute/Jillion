@@ -52,7 +52,7 @@ public final class DefaultAminoAcidSequenceFastaDataStore{
 	}
 	
 	private static AminoAcidSequenceFastaDataStore parseFile(File fastaFile, DefaultAminoAcidSequenceFastaDataStoreBuilder2 visitor) throws IOException{
-		FastaFileParser parser = new FastaFileParser(fastaFile);
+		FastaFileParser parser = FastaFileParser.create(fastaFile);
 		parser.accept(visitor);
 		return visitor.build();
 	}

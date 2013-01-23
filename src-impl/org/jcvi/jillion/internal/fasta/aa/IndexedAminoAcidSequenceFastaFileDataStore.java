@@ -36,7 +36,7 @@ import org.jcvi.jillion.fasta.FastaFileVisitor;
 import org.jcvi.jillion.fasta.FastaRecord;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
-import org.jcvi.jillion.fasta.FastaVisitorCallback.Memento;
+import org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento;
 import org.jcvi.jillion.fasta.aa.AbstractAminoAcidFastaRecordVisitor;
 import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaDataStore;
 import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecord;
@@ -124,11 +124,11 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 		private final FastaFileParser parser;
 		private final File fastaFile;
 		
-		private final Map<String, FastaVisitorCallback.Memento> mementos = new LinkedHashMap<String, FastaVisitorCallback.Memento>();
+		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos = new LinkedHashMap<String, FastaVisitorCallback.FastaVisitorMemento>();
 		private IndexedAminoAcidSequenceFastaDataStoreBuilderVisitor2(File fastaFile, DataStoreFilter filter) throws IOException {
 			this.fastaFile = fastaFile;
 			this.filter = filter;
-			this.parser = new FastaFileParser(fastaFile);
+			this.parser = FastaFileParser.create(fastaFile);
 
 		}
 
@@ -169,11 +169,11 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 		private final File fastaFile;
 		private final FastaFileParser parser;
 		private final DataStoreFilter filter;
-		private final Map<String, FastaVisitorCallback.Memento> mementos;
+		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos;
 		
 		
 		public IndexedAminoAcidSequenceFastaFileDataStore2(File fastaFile,
-				FastaFileParser parser, DataStoreFilter filter, Map<String, Memento> mementos) {
+				FastaFileParser parser, DataStoreFilter filter, Map<String, FastaVisitorMemento> mementos) {
 			this.fastaFile = fastaFile;
 			this.parser = parser;
 			this.mementos = mementos;
@@ -195,7 +195,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 			}
 			SingleRecordVisitor visitor = new SingleRecordVisitor();
 			try {
-				parser.accept(mementos.get(id), visitor);
+				parser.accept(visitor, mementos.get(id));
 				return visitor.fastaRecord;
 			} catch (IOException e) {
 				throw new DataStoreException("error reading fasta file",e);

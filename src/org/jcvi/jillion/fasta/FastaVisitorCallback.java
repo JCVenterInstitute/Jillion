@@ -22,13 +22,13 @@ package org.jcvi.jillion.fasta;
 
 public interface FastaVisitorCallback {
 
-	interface Memento{
+	interface FastaVisitorMemento{
 		
 	}
 	
 	boolean canCreateMemento();
 	
-	Memento createMemento();
+	FastaVisitorMemento createMemento();
 	
 	void stopParsing();
 }
