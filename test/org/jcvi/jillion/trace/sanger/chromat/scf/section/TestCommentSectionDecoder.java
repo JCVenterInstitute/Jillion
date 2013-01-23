@@ -25,6 +25,16 @@
  */
 package org.jcvi.jillion.trace.sanger.chromat.scf.section;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -33,8 +43,6 @@ import java.io.InputStream;
 import org.jcvi.jillion.core.testUtil.EasyMockUtil;
 import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.SectionDecoderException;
 import org.junit.Test;
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 public class TestCommentSectionDecoder extends AbstractTestCommentSection{
 
 
@@ -60,7 +68,8 @@ public class TestCommentSectionDecoder extends AbstractTestCommentSection{
         final String scfCommentAsString = convertPropertiesToSCFComment(expectedComments);
         int distanceToSkip=200;
         InputStream mockInputStream = createMock(InputStream.class);
-        expect(mockInputStream.skip(distanceToSkip)).andReturn((long)distanceToSkip);
+        expect(mockInputStream.read()).andReturn(1);
+        expect(mockInputStream.skip(distanceToSkip-1)).andReturn((long)(distanceToSkip-1));
         //we need to manually fill in the array for this test
         expect(mockInputStream.read(isA(byte[].class), eq(0), eq(scfCommentAsString.length()))).andAnswer(
                 EasyMockUtil.writeArrayToInputStream(scfCommentAsString.getBytes()));

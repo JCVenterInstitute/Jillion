@@ -195,11 +195,11 @@ public class SffFileParser {
 			final int numberOfBases = readHeader.getNumberOfBases();
 			SffReadData readData = DefaultSffReadDataDecoder.INSTANCE.decode(dataIn, numberOfFlowsPerRead, numberOfBases);
 
-			SffFileParserCallback readDataCallback = createReadDataCallback(parserState);
+			SffFileParserCallback readDataCallback = createReadDataCallback(updatedParserState);
 			readVisitor.visitReadData(readDataCallback, readData);
 			readVisitor.visitEndOfRead(readDataCallback);
 		}
-		updatedParserState= parserState.incrementPosition(readDataLength+readDataPadding);
+		updatedParserState= updatedParserState.incrementPosition(readDataLength+readDataPadding);
 		return updatedParserState;
 	}
 	

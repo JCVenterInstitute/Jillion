@@ -24,19 +24,23 @@
  * @author dkatzel
  */
 package org.jcvi.jillion.internal.trace.sanger.chromat.ztr.chunk;
-import static org.junit.Assert.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import org.jcvi.jillion.core.testUtil.EasyMockUtil;
-import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.chunk.Chunk;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.easymock.EasyMock.*;
 public class TestChunk {
 
     Chunk sut= Chunk.BASE;
@@ -104,7 +108,8 @@ public class TestChunk {
         buf.putInt(lengthToSkip);
         expect(mockInputStream.read(isA(byte[].class),eq(0),eq(4)))
                     .andAnswer(EasyMockUtil.writeArrayToInputStream(buf.array()));
-        expect(mockInputStream.skip(lengthToSkip)).andReturn((long)lengthToSkip);
+        expect(mockInputStream.read()).andReturn(1);
+        expect(mockInputStream.skip(lengthToSkip-1)).andReturn((long)lengthToSkip-1);
         replay(mockInputStream);
         sut.readMetaData(mockInputStream);
         verify(mockInputStream);
@@ -116,7 +121,7 @@ public class TestChunk {
         buf.putInt(lengthToSkip);
         expect(mockInputStream.read(isA(byte[].class),eq(0),eq(4)))
                     .andAnswer(EasyMockUtil.writeArrayToInputStream(buf.array()));
-        expect(mockInputStream.skip(lengthToSkip)).andThrow(expectedException);
+        expect(mockInputStream.read()).andThrow(expectedException);
         replay(mockInputStream);
         try{
             sut.readMetaData(mockInputStream);
