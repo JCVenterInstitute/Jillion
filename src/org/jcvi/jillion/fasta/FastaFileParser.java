@@ -126,11 +126,12 @@ public abstract class FastaFileParser {
 	 */
 	public abstract void accept(FastaFileVisitor visitor, FastaVisitorMemento memento) throws IOException;
 	
-	protected final void parseFile(TextLineParser parser, long currentOffset,
+	protected final void parseFile(TextLineParser parser, long startOffset,
 			FastaFileVisitor visitor) throws IOException {
 		boolean keepParsing=true;
 		FastaRecordVisitor recordVisitor =null;
-		AbstractFastaVisitorCallback callback = createNewCallback(currentOffset);
+		AbstractFastaVisitorCallback callback = createNewCallback(startOffset);
+		long currentOffset=startOffset;
 		while(keepParsing && parser.hasNextLine()){
 			String line=parser.nextLine();
 			String trimmedLine = line.trim();
@@ -188,7 +189,7 @@ public abstract class FastaFileParser {
 	
 	private static class NoMementoCallback extends AbstractFastaVisitorCallback{
 
-		private static NoMementoCallback INSTANCE = new NoMementoCallback();
+		static NoMementoCallback INSTANCE = new NoMementoCallback();
 		
 		
 		@Override
@@ -277,7 +278,7 @@ public abstract class FastaFileParser {
 		
 	}
 	private static class InputStreamFastaParser extends FastaFileParser{
-		private PushbackInputStream inputStream;
+		private final PushbackInputStream inputStream;
 
 		public InputStreamFastaParser(InputStream inputStream) {
 			if(inputStream==null){
