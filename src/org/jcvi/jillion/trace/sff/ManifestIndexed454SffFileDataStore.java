@@ -51,7 +51,7 @@ import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
  * file offsets for each read without having
  * to parse the entire file (so it is much
  * faster to create a DataStore instance than
- * {@link IndexedSffFileDataStore2} which
+ * {@link CompletelyParsedIndexedSffFileDataStore} which
  * does have to parse the entire file.
  * <p/>
  * This class supports two index encodings.
@@ -66,7 +66,7 @@ import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
  * @author dkatzel
  *
  */
-final class Indexed454SffFileDataStore implements FlowgramDataStore{
+final class ManifestIndexed454SffFileDataStore implements FlowgramDataStore{
 	
 	private final RandomAccessFile randomAccessFile;
 	private final File sffFile;
@@ -110,10 +110,10 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 	 */
 	public static FlowgramDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
 		ManifestCreatorVisitor visitor = new ManifestCreatorVisitor(sffFile, filter);
-		new SffFileParser2(sffFile).accept(visitor);
+		new SffFileParser(sffFile).accept(visitor);
 		//there is a valid sff formatted manifest inside the sff file
 		if(visitor.isUseableManifest()){
-			return new Indexed454SffFileDataStore(visitor);
+			return new ManifestIndexed454SffFileDataStore(visitor);
 		}
 		//no manifest delegate to iterating thru
 		return null;
@@ -121,7 +121,7 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 	}
 	
 	
-	private Indexed454SffFileDataStore(ManifestCreatorVisitor visitor) throws FileNotFoundException{
+	private ManifestIndexed454SffFileDataStore(ManifestCreatorVisitor visitor) throws FileNotFoundException{
 		this.map = visitor.map;
 		this.sffFile =visitor.sffFile;
 		this.randomAccessFile = new RandomAccessFile(visitor.sffFile, "r");
@@ -223,7 +223,7 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 		}
 	}
 
-	private static final class ManifestCreatorVisitor implements SffFileVisitor2{
+	private static final class ManifestCreatorVisitor implements SffFileVisitor{
 		/**
 		 * 454 sff encoded names that follow the 454 spec
 		 * should only be 14 characters long.

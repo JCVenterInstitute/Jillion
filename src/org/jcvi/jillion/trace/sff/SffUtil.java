@@ -210,11 +210,11 @@ public final class SffUtil {
      */
     public static TrimPointsDataStore createTrimPointsDataStoreFrom(File sffFile) throws IOException{
     	SffTrimDataStoreBuilder builder = new SffTrimDataStoreBuilder();
-    	new SffFileParser2(sffFile).accept(builder);
+    	new SffFileParser(sffFile).accept(builder);
     	return builder.build();
     }
     
-    private static final class SffTrimDataStoreBuilder implements SffFileVisitor2, Builder<TrimPointsDataStore>{
+    private static final class SffTrimDataStoreBuilder implements SffFileVisitor, Builder<TrimPointsDataStore>{
 
         private final Map<String, Range> trimRanges = new LinkedHashMap<String, Range>();
        

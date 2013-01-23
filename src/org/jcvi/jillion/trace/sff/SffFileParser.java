@@ -10,16 +10,16 @@ import java.io.InputStream;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.trace.sff.SffFileParserCallback.SffFileMemento;
 
-public class SffFileParser2 {
+public class SffFileParser {
 
 	private final File sffFile;
 	private SffCommonHeader header;
 	
-	public SffFileParser2(File sffFile){
+	public SffFileParser(File sffFile){
 		this.sffFile = sffFile;
 	}
 	
-	public void accept(SffFileVisitor2 visitor) throws IOException{
+	public void accept(SffFileVisitor visitor) throws IOException{
 		InputStream in = null;
 		try{
 			in = new BufferedInputStream(new FileInputStream(sffFile));
@@ -29,7 +29,7 @@ public class SffFileParser2 {
 		}
 	}
 	
-	public void accept(SffFileVisitor2 visitor, SffFileMemento memento) throws IOException{
+	public void accept(SffFileVisitor visitor, SffFileMemento memento) throws IOException{
 		
 		if(!(memento instanceof AbstractSffFileMemento)){
 			throw new IllegalArgumentException("don't know how to handle this memento");
@@ -72,7 +72,7 @@ public class SffFileParser2 {
      * @throws SffDecoderException if there is a problem parsing the sff data.
      * @throws NullPointerException if the inputstream or visitor are null.
      */
-    private  void accept(InputStream in, SffFileVisitor2 visitor) throws IOException{
+    private  void accept(InputStream in, SffFileVisitor visitor) throws IOException{
         DataInputStream dataIn = new DataInputStream(in);
 
         header =DefaultSFFCommonHeaderDecoder.INSTANCE.decodeHeader(dataIn);
@@ -106,7 +106,7 @@ public class SffFileParser2 {
     		
     	};
     }
-	private  void parseReads(SffFileVisitor2 visitor,
+	private  void parseReads(SffFileVisitor visitor,
 			DataInputStream dataIn, SffCommonHeader commonHeader)
 			throws IOException {
 		final long numberOfReads = commonHeader.getNumberOfReads();
@@ -124,7 +124,7 @@ public class SffFileParser2 {
 		}
 	}
 
-	private ParserState handleSingleRead(SffFileVisitor2 visitor,
+	private ParserState handleSingleRead(SffFileVisitor visitor,
 			DataInputStream dataIn, SffCommonHeader commonHeader,
 			final int numberOfFlowsPerRead,  ParserState parserState, int readCount) throws IOException {
 		SffFileParserCallback readHeaderCallback = createReadHeaderCallback(this, parserState, readCount);
@@ -160,7 +160,7 @@ public class SffFileParser2 {
 	}
 	
 	
-	private SffFileParserCallback createReadHeaderCallback(final SffFileParser2 parser,final ParserState parserState, final int readCount){
+	private SffFileParserCallback createReadHeaderCallback(final SffFileParser parser,final ParserState parserState, final int readCount){
     	return new SffFileParserCallback(){
 
 			@Override
@@ -181,7 +181,7 @@ public class SffFileParser2 {
     	};
     }
 	
-	private SffFileParserCallback createReadDataCallback(final SffFileParser2 parser, final ParserState parserState){
+	private SffFileParserCallback createReadDataCallback(final SffFileParser parser, final ParserState parserState){
     	return new SffFileParserCallback(){
 
 			@Override

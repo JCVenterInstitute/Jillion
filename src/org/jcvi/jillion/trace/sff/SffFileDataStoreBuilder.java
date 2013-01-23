@@ -137,7 +137,7 @@ public class SffFileDataStoreBuilder {
 	public FlowgramDataStore build() throws IOException {
 		switch(hint){
 			case OPTIMIZE_RANDOM_ACCESS_SPEED:
-				return DefaultSffFileDataStore2.create(sffFile,filter);
+				return DefaultSffFileDataStore.create(sffFile,filter);
 			case OPTIMIZE_RANDOM_ACCESS_MEMORY:
 				return handleIndexedSffFileDataStore();
 			case OPTIMIZE_ITERATION:
@@ -149,11 +149,11 @@ public class SffFileDataStoreBuilder {
 	}
 	
 	private FlowgramDataStore handleIndexedSffFileDataStore() throws IOException{
-		FlowgramDataStore manifestDataStore = Indexed454SffFileDataStore.create(sffFile, filter);
+		FlowgramDataStore manifestDataStore = ManifestIndexed454SffFileDataStore.create(sffFile, filter);
 		if(manifestDataStore!=null){
 			return manifestDataStore;
 		}
 		//no manifest
-		return IndexedSffFileDataStore2.create(sffFile, filter);
+		return CompletelyParsedIndexedSffFileDataStore.create(sffFile, filter);
 	}
 }

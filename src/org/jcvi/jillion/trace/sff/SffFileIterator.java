@@ -59,7 +59,7 @@ public final class SffFileIterator extends AbstractBlockingStreamingIterator<Flo
 	@Override
 	protected void backgroundThreadRunMethod() {
 		 try {
-         	SffFileVisitor2 visitor = new SffFileVisitor2() {
+         	SffFileVisitor visitor = new SffFileVisitor() {
          		
          		
          		@Override
@@ -99,7 +99,7 @@ public final class SffFileIterator extends AbstractBlockingStreamingIterator<Flo
 					
 				}
          	};
-             new SffFileParser2(sffFile).accept(visitor);
+             new SffFileParser(sffFile).accept(visitor);
          } catch (IOException e) {
              //should never happen
              throw new RuntimeException(e);

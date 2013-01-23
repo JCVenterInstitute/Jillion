@@ -26,7 +26,7 @@ import org.jcvi.jillion.trace.sff.SffFileParserCallback.SffFileMemento;
  * @author dkatzel
  *
  */
-class IndexedSffFileDataStore2 {
+class CompletelyParsedIndexedSffFileDataStore {
 	/**
 	 * Create a new {@link FlowgramDataStore} instance which only indexes
 	 * byte offsets for each read.
@@ -56,7 +56,7 @@ class IndexedSffFileDataStore2 {
 	 */
 	public static FlowgramDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
 		Visitor visitor = new Visitor(filter);
-		SffFileParser2 parser = new SffFileParser2(sffFile);
+		SffFileParser parser = new SffFileParser(sffFile);
 		parser.accept(visitor);
 		
 		return visitor.build(parser);
@@ -64,7 +64,7 @@ class IndexedSffFileDataStore2 {
 	
 	
 	
-	private static final class Visitor implements SffFileVisitor2{
+	private static final class Visitor implements SffFileVisitor{
 		private Map<String, SffFileMemento> mementos;
 		
 		private final DataStoreFilter filter;
@@ -97,7 +97,7 @@ class IndexedSffFileDataStore2 {
 			
 		}
 	
-		FlowgramDataStore build(SffFileParser2 parser){
+		FlowgramDataStore build(SffFileParser parser){
 			return new DataStoreImpl(parser, mementos);
 		}
 		
@@ -105,12 +105,12 @@ class IndexedSffFileDataStore2 {
 	
 	
 	private static class DataStoreImpl implements FlowgramDataStore{
-		private final SffFileParser2 parser; //parser has the file ref
+		private final SffFileParser parser; //parser has the file ref
 		private volatile boolean closed=false;
 		
 		private final Map<String, SffFileMemento> momentos;
 
-		public DataStoreImpl(SffFileParser2 parser,
+		public DataStoreImpl(SffFileParser parser,
 				Map<String, SffFileMemento> momentos) {
 			this.parser = parser;
 			this.momentos = momentos;
@@ -178,7 +178,7 @@ class IndexedSffFileDataStore2 {
 		
 	}
 	
-	private static class SingleRecordVisitor implements SffFileVisitor2{
+	private static class SingleRecordVisitor implements SffFileVisitor{
 		private Flowgram flowgram;
 		@Override
 		public void visitHeader(SffFileParserCallback callback,
