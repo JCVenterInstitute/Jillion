@@ -46,7 +46,7 @@ public class TestDefaultSffFlowgramDataStore extends TestReadExampleSffFile{
 
     @Override
     protected void parseSff(File f) throws Exception {
-    	dataStore = DefaultSffFileDataStore.create(f);
+    	dataStore = DefaultSffFileDataStore2.create(f);
     }
 
 }
