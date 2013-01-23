@@ -11,7 +11,7 @@ import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreIterator;
-import org.jcvi.jillion.trace.sff.SffFileParserCallback.SffFileMomento;
+import org.jcvi.jillion.trace.sff.SffFileParserCallback.SffFileMemento;
 
 
 
@@ -32,7 +32,7 @@ public class IndexedSffFileDataStore2 {
 	
 	
 	private static final class Visitor implements SffFileVisitor2{
-		private Map<String, SffFileMomento> momentos;
+		private Map<String, SffFileMemento> mementos;
 		
 		private final DataStoreFilter filter;
 		
@@ -44,7 +44,7 @@ public class IndexedSffFileDataStore2 {
 		@Override
 		public void visitHeader(SffFileParserCallback callback,
 				SffCommonHeader header) {
-			momentos = new LinkedHashMap<>((int)header.getNumberOfReads());
+			mementos = new LinkedHashMap<String,SffFileMemento>((int)header.getNumberOfReads());
 			
 		}
 
@@ -52,7 +52,7 @@ public class IndexedSffFileDataStore2 {
 		public SffFileReadVisitor visitRead(SffFileParserCallback callback,
 				final SffReadHeader readHeader) {
 			if(filter.accept(readHeader.getId())){
-				momentos.put(readHeader.getId(), callback.createMomento());
+				mementos.put(readHeader.getId(), callback.createMemento());
 			}
 			//always skip read data we'll read it later
 			return null;
@@ -65,7 +65,7 @@ public class IndexedSffFileDataStore2 {
 		}
 	
 		FlowgramDataStore build(SffFileParser2 parser){
-			return new DataStoreImpl(parser, momentos);
+			return new DataStoreImpl(parser, mementos);
 		}
 		
 	}
@@ -75,10 +75,10 @@ public class IndexedSffFileDataStore2 {
 		private final SffFileParser2 parser; //parser has the file ref
 		private volatile boolean closed=false;
 		
-		private final Map<String, SffFileMomento> momentos;
+		private final Map<String, SffFileMemento> momentos;
 
 		public DataStoreImpl(SffFileParser2 parser,
-				Map<String, SffFileMomento> momentos) {
+				Map<String, SffFileMemento> momentos) {
 			this.parser = parser;
 			this.momentos = momentos;
 		}
@@ -92,7 +92,7 @@ public class IndexedSffFileDataStore2 {
 		@Override
 		public Flowgram get(String id) throws DataStoreException {
 			checkNotYetClosed();
-			SffFileMomento momento = momentos.get(id);
+			SffFileMemento momento = momentos.get(id);
 			if(momento == null){
 				return null;
 			}
