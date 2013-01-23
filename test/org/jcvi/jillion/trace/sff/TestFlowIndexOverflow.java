@@ -35,10 +35,6 @@ import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.sff.DefaultSffFileDataStore;
-import org.jcvi.jillion.trace.sff.Flowgram;
-import org.jcvi.jillion.trace.sff.FlowgramDataStore;
-import org.jcvi.jillion.trace.sff.SffFlowgram;
 import org.junit.Test;
 /**
  * In rare cases the index of a flow is more than 127, 

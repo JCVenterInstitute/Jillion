@@ -30,9 +30,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.trace.sff.DefaultSffFileDataStore;
-import org.jcvi.jillion.trace.sff.FlowgramDataStore;
-import org.jcvi.jillion.trace.sff.SffDecoderException;
 
 public class TestSFFCodecParseActualSFFFile extends AbstractTestSffFileDataStore{
 

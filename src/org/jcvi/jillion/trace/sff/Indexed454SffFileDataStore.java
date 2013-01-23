@@ -20,12 +20,14 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.sff;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,13 +39,20 @@ import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 /**
  * 454 includes an optional index at the 
  * end of their {@literal .sff} files that contains
  * and encoded file offset for each record
  * in the file.  The actual format is not 
  * specified in the 454 manual or file specification
- * so it had to be reverse engineered.
+ * so it had to be reverse engineered.  This class
+ * can parse the optional index to get the 
+ * file offsets for each read without having
+ * to parse the entire file (so it is much
+ * faster to create a DataStore instance than
+ * {@link IndexedSffFileDataStore2} which
+ * does have to parse the entire file.
  * <p/>
  * This class supports two index encodings.
  * <ol>
@@ -59,6 +68,7 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
  */
 final class Indexed454SffFileDataStore implements FlowgramDataStore{
 	
+	private final RandomAccessFile randomAccessFile;
 	private final File sffFile;
 	private final SffCommonHeader commonHeader;
 	/**
@@ -85,9 +95,22 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 	public static FlowgramDataStore create(File sffFile) throws IOException{
 		return create(sffFile, DataStoreFilters.alwaysAccept());
 	}
+	/**
+	 * Try to create a {@link FlowgramDataStore} by only parsing
+	 * the 454 index at the end of the sff file.
+	 * If there is no index or it is encoded
+	 * in an unknown format, then this method will
+	 * return null.
+	 * @param sffFile
+	 * @param DataStoreFilter filter
+	 * @return an {@link FlowgramDataStore} if successfully
+	 * parsed; or {@code null} if the index can't
+	 * be parsed.
+	 * @throws IOException if there is a problem reading the file.
+	 */
 	public static FlowgramDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
 		ManifestCreatorVisitor visitor = new ManifestCreatorVisitor(sffFile, filter);
-		SffFileParser.parse(sffFile, visitor);
+		new SffFileParser2(sffFile).accept(visitor);
 		//there is a valid sff formatted manifest inside the sff file
 		if(visitor.isUseableManifest()){
 			return new Indexed454SffFileDataStore(visitor);
@@ -98,9 +121,10 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 	}
 	
 	
-	private Indexed454SffFileDataStore(ManifestCreatorVisitor visitor){
+	private Indexed454SffFileDataStore(ManifestCreatorVisitor visitor) throws FileNotFoundException{
 		this.map = visitor.map;
-		this.sffFile = visitor.sffFile;
+		this.sffFile =visitor.sffFile;
+		this.randomAccessFile = new RandomAccessFile(visitor.sffFile, "r");
 		this.commonHeader = visitor.commonHeader;
 		this.filter = visitor.filter;
 	}
@@ -124,21 +148,21 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 			return null;
 		}
 		
-		SffFileVisitorDataStoreBuilder builder = DefaultSffFileDataStore.createVisitorBuilder();
-		builder.visitFile();
 		InputStream in=null;
 		try {
-			in = new FileInputStream(sffFile);
-			IOUtil.blockingSkip(in, offset);
-			DataInputStream dataIn = new DataInputStream(in);
-			 SffReadHeader readHeader = DefaultSffReadHeaderDecoder.INSTANCE.decodeReadHeader(dataIn);
-			 final int numberOfBases = readHeader.getNumberOfBases();
-             SffReadData readData = DefaultSffReadDataDecoder.INSTANCE.decode(dataIn,
-                             commonHeader.getNumberOfFlowsPerRead(),
-                             numberOfBases);
-             builder.visitReadHeader(readHeader);
-             builder.visitReadData(readData);
-             return builder.build().get(id);
+			//need to synchronize on the random access file
+			//since we seek and read from it
+			synchronized(randomAccessFile){
+				randomAccessFile.seek(offset);
+				in = new BufferedInputStream(new RandomAccessFileInputStream(randomAccessFile));
+				DataInputStream dataIn = new DataInputStream(in);
+				 SffReadHeader readHeader = DefaultSffReadHeaderDecoder.INSTANCE.decodeReadHeader(dataIn);
+				 final int numberOfBases = readHeader.getNumberOfBases();
+	             SffReadData readData = DefaultSffReadDataDecoder.INSTANCE.decode(dataIn,
+	                             commonHeader.getNumberOfFlowsPerRead(),
+	                             numberOfBases);
+	             return SffFlowgram.create(readHeader, readData);
+			}
 		} catch (IOException e) {
 			throw new DataStoreException("error trying to get flowgram "+ id,e);
 		}finally{
@@ -190,7 +214,7 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 	public synchronized  void close() throws IOException {
 		isClosed =true;
 		map.clear();
-		
+		randomAccessFile.close();
 	}
 	
 	private synchronized void throwErrorIfClosed(){
@@ -199,7 +223,12 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 		}
 	}
 
-	private static final class ManifestCreatorVisitor implements SffFileVisitor{
+	private static final class ManifestCreatorVisitor implements SffFileVisitor2{
+		/**
+		 * 454 sff encoded names that follow the 454 spec
+		 * should only be 14 characters long.
+		 */
+		private static final int INITIAL_NAME_SIZE = 14;
 		/**
 		 * 255 ^ 3 = {@value}.
 		 */
@@ -225,15 +254,7 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 			this.filter = filter;
 			
 		}
-		@Override
-		public void visitFile() {
-			//no-op
-		}
-
-		@Override
-		public void visitEndOfFile() {
-			//no-op
-		}
+		
 
 		public boolean isUseableManifest() {
 			return useableManifest;
@@ -241,22 +262,34 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 		
 
 		@Override
-		public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {
-			this.commonHeader = commonHeader;
+		public void visitHeader(SffFileParserCallback callback,
+				SffCommonHeader header) {
+			this.commonHeader = header;
 			BigInteger offsetToIndex =commonHeader.getIndexOffset();
 			if(offsetToIndex.longValue() !=0L){
 				tryToParseManifest(commonHeader, offsetToIndex);
 			}
-			//stop parsing file
-			return CommonHeaderReturnCode.STOP_PARSING;
+			callback.stopParsing();
 		}
+		@Override
+		public SffFileReadVisitor visitRead(SffFileParserCallback callback,
+				SffReadHeader readHeader) {
+			//should never get this far but skip just in case.
+			return null;
+		}
+		@Override
+		public void endSffFile() {
+			//no-op			
+		}
+		
 
 		private void tryToParseManifest(SffCommonHeader commonHeader,
 				BigInteger offsetToIndex) {
-			int indexLength =(int)commonHeader.getIndexLength();
+			RandomAccessFile randomAccessFile = createRandomAccessFileFromSff();
 			InputStream in=null;
 			try {
-				in = IOUtil.createInputStreamFromFile(sffFile, offsetToIndex.intValue(),indexLength);
+				seekToManifest(randomAccessFile, offsetToIndex);
+				in=new BufferedInputStream(new RandomAccessFileInputStream(randomAccessFile));
 				
 			    //pseudocode:
 				//skip xml manifest if present
@@ -303,8 +336,31 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 			} catch (IOException e) {
 				throw new RuntimeException("error parsing manifest", e);
 			}finally{
-				IOUtil.closeAndIgnoreErrors(in);
+				IOUtil.closeAndIgnoreErrors(in,randomAccessFile);
 			}
+		}
+
+
+		protected void seekToManifest(RandomAccessFile randomAccessFile,
+				BigInteger offsetToIndex) {
+			try {
+				randomAccessFile.seek(offsetToIndex.longValue());
+			} catch (IOException e1) {
+				throw new RuntimeException("error seeking to sff manifest", e1);
+			}
+		}
+
+
+		protected RandomAccessFile createRandomAccessFileFromSff() {
+			RandomAccessFile randomAccessFile=null;
+			try {
+				randomAccessFile = new RandomAccessFile(sffFile, "r");
+			} catch (FileNotFoundException e1) {
+				//this shouldn't happen under normal circumstances since 
+				//in order to get this far we had the file has to exist.
+				throw new RuntimeException("the sff file no longer exists", e1);
+			}
+			return randomAccessFile;
 		}
 
 		private long convertFromBase255(byte[] values){
@@ -331,15 +387,14 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 					//signed int to save space
 					map.put(id,IOUtil.toSignedInt(offset));
 				}
-				//skip the read data since we only care about names
-				//at the moment.  The read data will be
-				//reparsed during a call to DataStore#get()
+				//next byte is a separator
+				//between entries so we can skip it
 				in.read();
 			}
 		}
 
 		private String parseNextId(InputStream in) throws IOException {
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			ByteArrayOutputStream out = new ByteArrayOutputStream(INITIAL_NAME_SIZE);
 			byte nextByte =(byte)in.read();
 			if(nextByte==-1){
 				return null;
@@ -350,17 +405,5 @@ final class Indexed454SffFileDataStore implements FlowgramDataStore{
 			}while(nextByte !=0);
 			return new String(out.toByteArray(), IOUtil.UTF_8);
 		}
-
-		@Override
-		public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
-	
-			return ReadHeaderReturnCode.STOP_PARSING;
-		}
-
-		@Override
-		public ReadDataReturnCode visitReadData(SffReadData readData) {
-			return ReadDataReturnCode.STOP_PARSING;
-		}
-		
 	}
 }

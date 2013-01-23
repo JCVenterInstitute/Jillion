@@ -38,7 +38,7 @@ import org.jcvi.jillion.trace.fastq.FastqRecord;
  *
  */
 public class SffFileDataStoreBuilder {
-	private final File fastqFile;
+	private final File sffFile;
 	
 	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
 	//by default store everything in memory
@@ -62,7 +62,7 @@ public class SffFileDataStoreBuilder {
 		if(!sffFile.canRead()){
 			throw new IOException("sff file is not readable");
 		}
-		this.fastqFile = sffFile;
+		this.sffFile = sffFile;
 	}
 	/**
 	 * Only include the {@link FastqRecord}s which pass
@@ -137,14 +137,23 @@ public class SffFileDataStoreBuilder {
 	public FlowgramDataStore build() throws IOException {
 		switch(hint){
 			case OPTIMIZE_RANDOM_ACCESS_SPEED:
-				return DefaultSffFileDataStore2.create(fastqFile,filter);
+				return DefaultSffFileDataStore2.create(sffFile,filter);
 			case OPTIMIZE_RANDOM_ACCESS_MEMORY:
-				return IndexedSffFileDataStore2.create(fastqFile, filter);
+				return handleIndexedSffFileDataStore();
 			case OPTIMIZE_ITERATION:
-				return LargeSffFileDataStore.create(fastqFile, filter);
+				return LargeSffFileDataStore.create(sffFile, filter);
 			default:
 				//can not happen
 				throw new IllegalArgumentException("unknown provider hint : "+ hint);
 		}
+	}
+	
+	private FlowgramDataStore handleIndexedSffFileDataStore() throws IOException{
+		FlowgramDataStore manifestDataStore = Indexed454SffFileDataStore.create(sffFile, filter);
+		if(manifestDataStore!=null){
+			return manifestDataStore;
+		}
+		//no manifest
+		return IndexedSffFileDataStore2.create(sffFile, filter);
 	}
 }

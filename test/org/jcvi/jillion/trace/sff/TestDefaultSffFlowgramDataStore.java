@@ -27,10 +27,6 @@ package org.jcvi.jillion.trace.sff;
 
 import java.io.File;
 
-import org.jcvi.jillion.trace.sff.DefaultSffFileDataStore;
-import org.jcvi.jillion.trace.sff.Flowgram;
-import org.jcvi.jillion.trace.sff.FlowgramDataStore;
-
 public class TestDefaultSffFlowgramDataStore extends TestReadExampleSffFile{
 
     private FlowgramDataStore dataStore;

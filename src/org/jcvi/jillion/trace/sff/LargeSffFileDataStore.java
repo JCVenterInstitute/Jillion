@@ -25,12 +25,12 @@
  */
 package org.jcvi.jillion.trace.sff;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
@@ -40,6 +40,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.AbstractDataStore;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
+import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 /**
  * {@code LargeSffFileDataStore} is a {@link FlowgramDataStore}
  * implementation that doesn't store any read information in memory.
@@ -94,7 +95,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
     private static void verifyIsValidSff(File f) throws IOException {
     	DataInputStream in=null;
     	try{
-    		in = new DataInputStream(new FileInputStream(f));
+    		in = new DataInputStream(new BufferedInputStream(new FileInputStream(f)));
     		//don't care about return value
     		//this will throw IOException if the file isn't valid
     		DefaultSFFCommonHeaderDecoder.INSTANCE.decodeHeader(in);
@@ -122,7 +123,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
 		}
 		try{
         	SingleFlowgramVisitor singleVisitor = new SingleFlowgramVisitor(id);
-        	SffFileParser.parse(sffFile, singleVisitor);
+        	new SffFileParser2(sffFile).accept(singleVisitor);
         	return singleVisitor.getFlowgram();
         } catch (IOException e) {
             throw new DataStoreException("could not read sffFile ",e);
@@ -157,7 +158,8 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
 	@Override
 	protected StreamingIterator<String> idIteratorImpl()
 			throws DataStoreException {
-		return new SffIdIterator(this.iterator());
+		SffFileIdIterator iter = SffFileIdIterator.createNewIteratorFor(sffFile,filter);
+		return DataStoreStreamingIterator.create(this, iter);
 	}
 	@Override
 	protected StreamingIterator<Flowgram> iteratorImpl()
@@ -176,52 +178,70 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
 		
 	}
 	
-    /**
-     * {@code SffIdIterator} is a {@link StreamingIterator}
-     * that wraps the Iterator of Flowgrams and returns just
-     * the id of each record when {@link Iterator#next()}
-     * is called.
-     * @author dkatzel
-     *
-     */
-    private static final class SffIdIterator implements StreamingIterator<String>{
-        
-        private final StreamingIterator<Flowgram> iter;
-       
-        SffIdIterator(StreamingIterator<Flowgram> iter){
-        	this.iter= iter;
-        }
-        
-        @Override
-        public boolean hasNext() {
-            return iter.hasNext();
-        }
+    private static final class SffFileIdIterator extends AbstractBlockingStreamingIterator<String>{
 
-        @Override
-        public String next() {
-            return iter.next().getId();
-        }
+    	private final File sffFile;
+    	private final DataStoreFilter filter;
 
-        @Override
-        public void remove() {
-            iter.remove();            
+        public static SffFileIdIterator createNewIteratorFor(File sffFile, DataStoreFilter filter){
+        	SffFileIdIterator iter = new SffFileIdIterator(sffFile,filter);
+			iter.start();
+    		
+        	
+        	return iter;
         }
+    	
+    	private SffFileIdIterator(File sffFile, DataStoreFilter filter){
+    		this.sffFile = sffFile;
+    		 this.filter =filter;
+    	}
 
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public void close() throws IOException {
-            iter.close();
-            
-        }
-        
+    	@Override
+    	protected void backgroundThreadRunMethod() {
+    		 try {
+             	SffFileVisitor2 visitor = new SffFileVisitor2() {
+             		
+
+             		@Override
+					public void visitHeader(SffFileParserCallback callback,
+							SffCommonHeader header) {
+						//no-op						
+					}
+
+					@Override
+					public SffFileReadVisitor visitRead(
+							SffFileParserCallback callback,
+							SffReadHeader readHeader) {
+						String readId = readHeader.getId();
+						if(filter.accept(readId)){
+							SffFileIdIterator.this.blockingPut(readId);
+						}
+						//always skip underlying read data
+						return null;
+					}
+
+					@Override
+					public void endSffFile() {
+						
+					}
+
+					
+             	};
+                 new SffFileParser2(sffFile).accept(visitor);
+             } catch (IOException e) {
+                 //should never happen
+                 throw new RuntimeException(e);
+             }
+    		
+    	}
+    	
+    	
+
     }
     
     
-    private static final class SingleFlowgramVisitor implements SffFileVisitor{
+    private static final class SingleFlowgramVisitor implements SffFileVisitor2{
         private final String idToFind;
-        private SffReadHeader readHeader=null;
         private Flowgram flowgram=null;
         private SingleFlowgramVisitor(String idToFind) {
 			this.idToFind = idToFind;
@@ -232,34 +252,38 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
 		}
 
 		@Override
-        public ReadDataReturnCode visitReadData(SffReadData readData) {
-            flowgram = SffFlowgram.create(readHeader, readData);
-            return ReadDataReturnCode.STOP_PARSING;
-        }
-        
-        @Override
-        public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {
-            return CommonHeaderReturnCode.PARSE_READS;
-        }
+		public void visitHeader(SffFileParserCallback callback,
+				SffCommonHeader header) {
+			//no-op			
+		}
 
-        @Override
-        public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
-        	if(readHeader.getId().equals(idToFind)){
-        		this.readHeader = readHeader;
-        		return ReadHeaderReturnCode.PARSE_READ_DATA;
-        	}
-        	return ReadHeaderReturnCode.SKIP_CURRENT_READ;
-        }
+		@Override
+		public SffFileReadVisitor visitRead(SffFileParserCallback callback,
+				final SffReadHeader readHeader) {
+			if(readHeader.getId().equals(idToFind)){
+				return new SffFileReadVisitor() {
+					
+					@Override
+					public void visitReadData(SffFileParserCallback callback,
+							SffReadData readData) {
+						flowgram = SffFlowgram.create(readHeader, readData);
+						
+					}
+					
+					@Override
+					public void visitEndOfRead(SffFileParserCallback callback) {
+						callback.stopParsing();
+						
+					}
+				};
+			}
+			return null;
+		}
 
-        @Override
-        public void visitEndOfFile() {
-        	//no-op
-        }
-
-        @Override
-        public void visitFile() {
-        	//no-op
-        }
+		@Override
+		public void endSffFile() {
+			//no-op			
+		}
     }
     
 }

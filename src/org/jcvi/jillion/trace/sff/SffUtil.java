@@ -210,56 +210,38 @@ public final class SffUtil {
      */
     public static TrimPointsDataStore createTrimPointsDataStoreFrom(File sffFile) throws IOException{
     	SffTrimDataStoreBuilder builder = new SffTrimDataStoreBuilder();
-    	SffFileParser.parse(sffFile, builder);
+    	new SffFileParser2(sffFile).accept(builder);
     	return builder.build();
     }
     
-    private static final class SffTrimDataStoreBuilder implements SffFileVisitor, Builder<TrimPointsDataStore>{
+    private static final class SffTrimDataStoreBuilder implements SffFileVisitor2, Builder<TrimPointsDataStore>{
 
         private final Map<String, Range> trimRanges = new LinkedHashMap<String, Range>();
        
        
 
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public void visitEndOfFile() {
-        	//no-op
-        }
 
-        /**
-        * {@inheritDoc}
-        */
+        
         @Override
-        public void visitFile() {
-        	//no-op
-        }
+		public void visitHeader(SffFileParserCallback callback,
+				SffCommonHeader header) {
+			//no-op
+			
+		}
 
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public CommonHeaderReturnCode visitCommonHeader(SffCommonHeader commonHeader) {
-            return CommonHeaderReturnCode.PARSE_READS;
-        }
+		@Override
+		public SffFileReadVisitor visitRead(SffFileParserCallback callback,
+				SffReadHeader readHeader) {
+			trimRanges.put(readHeader.getId(), SffUtil.getTrimRangeFor(readHeader));
+			//always skip underlying read data
+			return null;
+		}
 
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public ReadDataReturnCode visitReadData(SffReadData readData) {
-            return ReadDataReturnCode.PARSE_NEXT_READ;
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public ReadHeaderReturnCode visitReadHeader(SffReadHeader readHeader) {
-            trimRanges.put(readHeader.getId(), SffUtil.getTrimRangeFor(readHeader));
-            return ReadHeaderReturnCode.SKIP_CURRENT_READ;
-        }
+		@Override
+		public void endSffFile() {
+			//no-op
+			
+		}
 
         /**
         * {@inheritDoc}

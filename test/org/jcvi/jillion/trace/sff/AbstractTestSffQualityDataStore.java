@@ -31,8 +31,6 @@ import java.io.File;
 import java.util.Iterator;
 
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
-import org.jcvi.jillion.trace.sff.DefaultSffFileDataStore;
-import org.jcvi.jillion.trace.sff.FlowgramDataStore;
 import org.junit.Test;
 
 public abstract class AbstractTestSffQualityDataStore extends AbstractTestExampleSffFile{
