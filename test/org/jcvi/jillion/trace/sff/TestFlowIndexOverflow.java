@@ -66,7 +66,7 @@ public class TestFlowIndexOverflow{
     
     @Test
     public void validDecode() throws TraceDecoderException, DataStoreException, IOException{
-        FlowgramDataStore dataStore = DefaultSffFileDataStore.create(RESOURCES.getFile(FILE));
+        FlowgramDataStore dataStore = DefaultSffFileDataStore2.create(RESOURCES.getFile(FILE));
         assertEquals(1, dataStore.getNumberOfRecords());
         
         Flowgram actual =dataStore.get("FCPRO0N01A48YO");

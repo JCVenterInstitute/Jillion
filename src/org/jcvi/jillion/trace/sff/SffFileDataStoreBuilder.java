@@ -137,9 +137,9 @@ public class SffFileDataStoreBuilder {
 	public FlowgramDataStore build() throws IOException {
 		switch(hint){
 			case OPTIMIZE_RANDOM_ACCESS_SPEED:
-				return DefaultSffFileDataStore.create(fastqFile,filter);
+				return DefaultSffFileDataStore2.create(fastqFile,filter);
 			case OPTIMIZE_RANDOM_ACCESS_MEMORY:
-				return IndexedSffFileDataStore.create(fastqFile, filter);
+				return IndexedSffFileDataStore2.create(fastqFile, filter);
 			case OPTIMIZE_ITERATION:
 				return LargeSffFileDataStore.create(fastqFile, filter);
 			default:

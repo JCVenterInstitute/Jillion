@@ -34,6 +34,10 @@ final class DefaultSffDataStoreBuilder implements FlowgramDataStoreBuilder{
 		map = new LinkedHashMap<String, Flowgram>();
 	}
 	
+	public DefaultSffDataStoreBuilder(int initialCapacity){
+		map = new LinkedHashMap<String, Flowgram>(initialCapacity);
+	}
+	
 	@Override
 	public FlowgramDataStore build() {
 		return DataStoreUtil.adapt(FlowgramDataStore.class,map);
