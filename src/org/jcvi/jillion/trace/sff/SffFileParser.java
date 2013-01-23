@@ -96,8 +96,8 @@ public class SffFileParser {
 				in = new BufferedInputStream(new RandomAccessFileInputStream(randomAccessFile));
 				DataInputStream dataIn = new DataInputStream(in);
 				for(int i=readRecordSffFileMemento.readCount; parserState.keepParsing && i<header.getNumberOfReads(); i++){
-					parserState = handleSingleRead(visitor, dataIn, header,
-							header.getNumberOfFlowsPerRead(), parserState,i);
+					parserState = handleSingleRead(visitor, dataIn, parserState,
+							i);
 				    
 				}
 			}else{
@@ -157,7 +157,7 @@ public class SffFileParser {
 			DataInputStream dataIn, SffCommonHeader commonHeader)
 			throws IOException {
 		final long numberOfReads = commonHeader.getNumberOfReads();
-		final int numberOfFlowsPerRead = commonHeader.getNumberOfFlowsPerRead();
+		
 		int keyLength = (int)commonHeader.getKeySequence().getLength();
         int size = 31+commonHeader.getNumberOfFlowsPerRead()+ keyLength;
         int padding =SffUtil.caclulatePaddedBytes(size);
@@ -165,16 +165,16 @@ public class SffFileParser {
         
         ParserState parserState  = new ParserState(commonHeaderLength);
 		for(int i=0;parserState.keepParsing && i<numberOfReads; i++){
-			parserState = handleSingleRead(visitor, dataIn, commonHeader,
-					numberOfFlowsPerRead, parserState,i);
+			parserState = handleSingleRead(visitor, dataIn, parserState,
+					i);
 		    
 		}
 	}
 
 	private ParserState handleSingleRead(SffFileVisitor visitor,
-			DataInputStream dataIn, SffCommonHeader commonHeader,
-			final int numberOfFlowsPerRead,  ParserState parserState, int readCount) throws IOException {
-		SffFileParserCallback readHeaderCallback = createReadHeaderCallback(this, parserState, readCount);
+			DataInputStream dataIn, ParserState parserState,
+			int readCount) throws IOException {
+		SffFileParserCallback readHeaderCallback = createReadHeaderCallback(parserState, readCount);
 		SffReadHeader readHeader = DefaultSffReadHeaderDecoder.INSTANCE.decodeReadHeader(dataIn);
    
 		
@@ -184,30 +184,27 @@ public class SffFileParser {
 		int readHeaderPadding = SffUtil.caclulatePaddedBytes(unpaddedHeaderLength);
 		int paddedHeaderLength = unpaddedHeaderLength+readHeaderPadding;
 		ParserState updatedParserState= parserState.incrementPosition(paddedHeaderLength);
-		
+		int numberOfFlowsPerRead = header.getNumberOfFlowsPerRead();
 		int readDataLength = SffUtil.getReadDataLength(numberOfFlowsPerRead, readHeader.getNumberOfBases());
 		int readDataPadding =SffUtil.caclulatePaddedBytes(readDataLength);
 		
-		if(readVisitor!=null){
-		    final int numberOfBases = readHeader.getNumberOfBases();
-		    SffReadData readData = DefaultSffReadDataDecoder.INSTANCE.decode(dataIn,
-		                    numberOfFlowsPerRead,
-		                    numberOfBases);
-		    
-		    SffFileParserCallback readDataCallback = createReadDataCallback(this,parserState);
-			readVisitor.visitReadData(readDataCallback, readData);
-		    readVisitor.visitEndOfRead(readDataCallback);
-		    
-		}else{
+		if(readVisitor==null){
 			//skip read data	    	
-			IOUtil.blockingSkip(dataIn, readDataLength+readDataPadding);
+			IOUtil.blockingSkip(dataIn, readDataLength+readDataPadding);		    
+		}else{
+			final int numberOfBases = readHeader.getNumberOfBases();
+			SffReadData readData = DefaultSffReadDataDecoder.INSTANCE.decode(dataIn, numberOfFlowsPerRead, numberOfBases);
+
+			SffFileParserCallback readDataCallback = createReadDataCallback(parserState);
+			readVisitor.visitReadData(readDataCallback, readData);
+			readVisitor.visitEndOfRead(readDataCallback);
 		}
 		updatedParserState= parserState.incrementPosition(readDataLength+readDataPadding);
 		return updatedParserState;
 	}
 	
 	
-	private SffFileParserCallback createReadHeaderCallback(final SffFileParser parser,final ParserState parserState, final int readCount){
+	private SffFileParserCallback createReadHeaderCallback(final ParserState parserState,final int readCount){
     	return new SffFileParserCallback(){
 
 			@Override
@@ -228,7 +225,7 @@ public class SffFileParser {
     	};
     }
 	
-	private SffFileParserCallback createReadDataCallback(final SffFileParser parser, final ParserState parserState){
+	private SffFileParserCallback createReadDataCallback(final ParserState parserState){
     	return new SffFileParserCallback(){
 
 			@Override
@@ -250,7 +247,7 @@ public class SffFileParser {
     }
 	
 	
-	private static abstract class AbstractSffFileMemento implements SffFileMemento{
+	private abstract static class AbstractSffFileMemento implements SffFileMemento{
 		private final long position;
 
 		public AbstractSffFileMemento(long position) {
@@ -282,7 +279,7 @@ public class SffFileParser {
 	}
 	
 	private static class ParserState{
-		private long position;
+		private final long position;
 		private boolean keepParsing=true;
 		
 		public ParserState(){
@@ -297,7 +294,7 @@ public class SffFileParser {
 		}
 
 		public ParserState incrementPosition(long increment){
-			return new ParserState(this.position +=increment, keepParsing);
+			return new ParserState(this.position +increment, keepParsing);
 		}
 		
 		public void stop(){

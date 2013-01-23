@@ -27,6 +27,10 @@ import org.jcvi.jillion.trace.sff.SffFileParserCallback.SffFileMemento;
  *
  */
 class CompletelyParsedIndexedSffFileDataStore {
+	
+	private CompletelyParsedIndexedSffFileDataStore(){
+		//can not instantiate
+	}
 	/**
 	 * Create a new {@link FlowgramDataStore} instance which only indexes
 	 * byte offsets for each read.
@@ -108,24 +112,24 @@ class CompletelyParsedIndexedSffFileDataStore {
 		private final SffFileParser parser; //parser has the file ref
 		private volatile boolean closed=false;
 		
-		private final Map<String, SffFileMemento> momentos;
+		private final Map<String, SffFileMemento> mementos;
 
 		public DataStoreImpl(SffFileParser parser,
-				Map<String, SffFileMemento> momentos) {
+				Map<String, SffFileMemento> mementos) {
 			this.parser = parser;
-			this.momentos = momentos;
+			this.mementos = mementos;
 		}
 
 		@Override
 		public StreamingIterator<String> idIterator() throws DataStoreException {
 			checkNotYetClosed();
-			return IteratorUtil.createStreamingIterator(momentos.keySet().iterator());
+			return IteratorUtil.createStreamingIterator(mementos.keySet().iterator());
 		}
 
 		@Override
 		public Flowgram get(String id) throws DataStoreException {
 			checkNotYetClosed();
-			SffFileMemento momento = momentos.get(id);
+			SffFileMemento momento = mementos.get(id);
 			if(momento == null){
 				return null;
 			}
@@ -135,19 +139,19 @@ class CompletelyParsedIndexedSffFileDataStore {
 			} catch (IOException e) {
 				throw new DataStoreException("error reparsing file", e);
 			}
-			return visitor.flowgram;
+			return visitor.getFlowgram();
 		}
 
 		@Override
 		public boolean contains(String id) throws DataStoreException {
 			checkNotYetClosed();
-			return momentos.containsKey(id);
+			return mementos.containsKey(id);
 		}
 
 		@Override
 		public long getNumberOfRecords() throws DataStoreException {
 			checkNotYetClosed();
-			return momentos.size();
+			return mementos.size();
 		}
 
 		@Override
@@ -183,7 +187,7 @@ class CompletelyParsedIndexedSffFileDataStore {
 		@Override
 		public void visitHeader(SffFileParserCallback callback,
 				SffCommonHeader header) {
-			// TODO Auto-generated method stub
+			//no-op
 			
 		}
 
@@ -211,8 +215,12 @@ class CompletelyParsedIndexedSffFileDataStore {
 
 		@Override
 		public void endSffFile() {
-			// TODO Auto-generated method stub
+			//no-op
 			
+		}
+
+		public final Flowgram getFlowgram() {
+			return flowgram;
 		}
 		
 	}
