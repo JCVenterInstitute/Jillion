@@ -255,7 +255,7 @@ final class LargeFastqFileDataStore implements FastqDataStore {
 					}
 				};
     			
-                FastqFileParser2.create(fastQFile).accept(visitor);
+                FastqFileParser.create(fastQFile).accept(visitor);
            } catch (IOException e) {
                 
                 //should never happen
@@ -316,7 +316,7 @@ final class LargeFastqFileDataStore implements FastqDataStore {
 					}
 				};
     			
-                FastqFileParser2.create(fastQFile).accept(visitor);
+                FastqFileParser.create(fastQFile).accept(visitor);
            } catch (IOException e) {
                 
                 //should never happen

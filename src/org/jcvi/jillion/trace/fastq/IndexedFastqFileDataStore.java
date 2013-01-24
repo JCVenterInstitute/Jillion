@@ -87,7 +87,7 @@ final class IndexedFastqFileDataStore{
    	 */
     public static FastqDataStore create(File file,FastqQualityCodec qualityCodec,DataStoreFilter filter) throws IOException{
     	IndexedFastqFileDataStoreBuilderVisitor2 visitor = new IndexedFastqFileDataStoreBuilderVisitor2(file, qualityCodec, filter);
-    	FastqFileParser2 parser = FastqFileParser2.create(file);
+    	FastqFileParser parser = FastqFileParser.create(file);
     	parser.accept(visitor);
     	return visitor.build(parser);
     }
@@ -109,7 +109,7 @@ final class IndexedFastqFileDataStore{
 			this.qualityCodec = qualityCodec;
 			this.filter = filter;
 		}
-		public FastqDataStore build(FastqFileParser2 parser) {
+		public FastqDataStore build(FastqFileParser parser) {
 			return new IndexedFastqFileDataStore2(file, qualityCodec, parser, filter, mementos);
 		}
 		@Override
@@ -135,14 +135,14 @@ final class IndexedFastqFileDataStore{
     	private final Map<String, FastqVisitorMemento> mementos;
     	private final FastqQualityCodec qualityCodec;
     	 private final File file;
-    	 private final FastqFileParser2 parser;
+    	 private final FastqFileParser parser;
     	 private final DataStoreFilter filter;
     	 private volatile boolean closed;
     	 
     	 
     	public IndexedFastqFileDataStore2(File file,
 				FastqQualityCodec qualityCodec,
-				FastqFileParser2 parser,
+				FastqFileParser parser,
 				DataStoreFilter filter,
 				Map<String, FastqVisitorMemento> mementos) {
 			this.file = file;

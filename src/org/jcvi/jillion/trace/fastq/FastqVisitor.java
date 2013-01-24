@@ -21,12 +21,12 @@ public interface FastqVisitor {
 	public interface FastqVisitorCallback{
 		/**
 		 * {@code FastqVisitorMemento} is a marker
-		 * interface that {@link FastqFileParser2}
+		 * interface that {@link FastqFileParser}
 		 * instances can use to "rewind" back
 		 * to the position in its fastq file
 		 * in order to revisit portions of the fastq file. 
 		 * {@link FastqVisitorMemento} should only be used
-		 * by the {@link FastqFileParser2} instance that
+		 * by the {@link FastqFileParser} instance that
 		 * generated it.
 		 * @author dkatzel
 		 *
@@ -52,7 +52,7 @@ public interface FastqVisitor {
 		 */
 		FastqVisitorMemento createMemento();
 		/**
-		 * Tell the {@link FastqFileParser2} to stop parsing
+		 * Tell the {@link FastqFileParser} to stop parsing
 		 * the fastq file.  {@link FastqVisitor#visitEnd()}
 		 * will still be called.
 		 */
