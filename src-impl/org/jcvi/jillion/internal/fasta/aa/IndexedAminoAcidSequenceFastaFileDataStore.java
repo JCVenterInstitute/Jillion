@@ -32,7 +32,7 @@ import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaFileVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaRecord;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
@@ -93,7 +93,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 	 * using the given fastaFile.  This implementation of {@link AminoAcidSequenceFastaDataStoreBuilderVisitor}
 	 * can only be used to parse a single fasta file (the one given) and does not support
 	 * {@link AminoAcidSequenceFastaDataStoreBuilderVisitor#addFastaRecord(AminoAcidSequenceFastaRecord)}.
-	 * This builder visitor can only build the datastore via the visitXXX methods in the {@link FastaFileVisitor}
+	 * This builder visitor can only build the datastore via the visitXXX methods in the {@link FastaVisitor}
 	 * interface.
 	 * @param fastaFile the fasta to create an {@link IndexedAminoAcidSequenceFastaFileDataStore}
 	 * for.
@@ -118,7 +118,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 	
 	
 	
-	private static final class IndexedAminoAcidSequenceFastaDataStoreBuilderVisitor2 implements FastaFileVisitor, Builder<AminoAcidSequenceFastaDataStore> {
+	private static final class IndexedAminoAcidSequenceFastaDataStoreBuilderVisitor2 implements FastaVisitor, Builder<AminoAcidSequenceFastaDataStore> {
 	
 		private final DataStoreFilter filter;
 		private final FastaFileParser parser;
@@ -237,7 +237,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 
 	}
 
-	private static class SingleRecordVisitor implements FastaFileVisitor{
+	private static class SingleRecordVisitor implements FastaVisitor{
 		private AminoAcidSequenceFastaRecord fastaRecord=null;
 		@Override
 		public FastaRecordVisitor visitDefline(final FastaVisitorCallback callback,

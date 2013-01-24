@@ -36,7 +36,7 @@ import java.util.Map;
 import org.jcvi.jillion.assembly.clc.cas.align.CasScoringScheme;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaFileVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.trace.fastq.FastqFileParser;
@@ -279,7 +279,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
 		}
         
     }
-    private final class FastaReadOrder implements FastaFileVisitor{
+    private final class FastaReadOrder implements FastaVisitor{
         private final File file;
         FastaReadOrder(File file){
             this.file =file;

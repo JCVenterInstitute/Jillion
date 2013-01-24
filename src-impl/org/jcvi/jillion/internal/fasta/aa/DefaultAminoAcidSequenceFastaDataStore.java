@@ -30,7 +30,7 @@ import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaFileVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.aa.AbstractAminoAcidFastaRecordVisitor;
@@ -63,7 +63,7 @@ public final class DefaultAminoAcidSequenceFastaDataStore{
 		//return new DefaultAminoAcidSequenceFastaDataStoreBuilder(filter);
 		return new DefaultAminoAcidSequenceFastaDataStoreBuilder2(filter);
 	}
-	private static final class DefaultAminoAcidSequenceFastaDataStoreBuilder2 implements FastaFileVisitor, Builder<AminoAcidSequenceFastaDataStore>{
+	private static final class DefaultAminoAcidSequenceFastaDataStoreBuilder2 implements FastaVisitor, Builder<AminoAcidSequenceFastaDataStore>{
 
 		private final Map<String, AminoAcidSequenceFastaRecord> fastaRecords = new LinkedHashMap<String, AminoAcidSequenceFastaRecord>();
 		

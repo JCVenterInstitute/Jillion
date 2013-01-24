@@ -26,7 +26,7 @@ import java.io.IOException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaFileVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecord;
@@ -73,7 +73,7 @@ public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingS
 		
     		
     	};
-        FastaFileVisitor visitor = new FastaFileVisitor() {
+        FastaVisitor visitor = new FastaVisitor() {
 			
 			@Override
 			public void visitEnd() {

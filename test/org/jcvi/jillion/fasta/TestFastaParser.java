@@ -64,7 +64,7 @@ public class TestFastaParser {
     @Test
     public void skipAllRecords() throws IOException{
     	
-    	FastaFileVisitor visitor = new FastaFileVisitor() {
+    	FastaVisitor visitor = new FastaVisitor() {
 			int count=0;
 			@Override
 			public void visitEnd() {
@@ -87,7 +87,7 @@ public class TestFastaParser {
     @Test
     public void parseAllRecords() throws FileNotFoundException, IOException{
         
-       FastaFileVisitor visitor = new FastaFileVisitor() {
+       FastaVisitor visitor = new FastaVisitor() {
 			boolean visitedFirst=false;
 			boolean visitedLast=false;
 			@Override
@@ -130,7 +130,7 @@ public class TestFastaParser {
     @Test
     public void stopAfterLastRecord() throws FileNotFoundException, IOException{
         
-    	FastaFileVisitor visitor = new FastaFileVisitor() {
+    	FastaVisitor visitor = new FastaVisitor() {
 			boolean visitedFirst=false;
 			boolean visitedLast=false;
 			@Override
@@ -172,7 +172,7 @@ public class TestFastaParser {
     @Test
     public void skipFirstRecord() throws FileNotFoundException, IOException{
         
-    	FastaFileVisitor visitor = new FastaFileVisitor() {
+    	FastaVisitor visitor = new FastaVisitor() {
 			boolean visitedFirst=false;
 			boolean visitedLast=false;
 			@Override
@@ -203,7 +203,7 @@ public class TestFastaParser {
     @Test
     public void skipLastRecord() throws FileNotFoundException, IOException{
         
-    	FastaFileVisitor visitor = new FastaFileVisitor() {
+    	FastaVisitor visitor = new FastaVisitor() {
 			boolean visitedFirst=false;
 			boolean visitedLast=false;
 			@Override
@@ -236,7 +236,7 @@ public class TestFastaParser {
     @Test
     public void stopAfterFirstDeflineRecords() throws FileNotFoundException, IOException{
         
-    	FastaFileVisitor visitor = new FastaFileVisitor() {
+    	FastaVisitor visitor = new FastaVisitor() {
 			boolean visitedFirst=false;
 			boolean visitedLast=false;
 			@Override
@@ -266,7 +266,7 @@ public class TestFastaParser {
     @Test
     public void stopAfterFirstRecord() throws FileNotFoundException, IOException{
         
-    	FastaFileVisitor visitor = new FastaFileVisitor() {
+    	FastaVisitor visitor = new FastaVisitor() {
 			boolean visitedFirst=false;
 			boolean visitedLast=false;
 			@Override
@@ -305,7 +305,7 @@ public class TestFastaParser {
     @Test
     public void stopAfterSecondDefline() throws FileNotFoundException, IOException{
         
-    	FastaFileVisitor visitor = new FastaFileVisitor() {
+    	FastaVisitor visitor = new FastaVisitor() {
 			boolean visitedFirst=false;
 			boolean visitedLast=false;
 			@Override
@@ -417,7 +417,7 @@ public class TestFastaParser {
     
     @Test
     public void parseEmptyFile() throws IOException{
-        FastaFileVisitor visitor = createMock(FastaFileVisitor.class);
+        FastaVisitor visitor = createMock(FastaVisitor.class);
         visitor.visitEnd();
         
         replay(visitor);

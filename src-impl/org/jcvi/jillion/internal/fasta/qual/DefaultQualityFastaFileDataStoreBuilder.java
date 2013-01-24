@@ -26,14 +26,14 @@ import java.util.Map;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.util.Builder;
-import org.jcvi.jillion.fasta.FastaFileVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.qual.AbstractQualityFastaRecordVisitor;
 import org.jcvi.jillion.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecord;
 
-public class DefaultQualityFastaFileDataStoreBuilder implements FastaFileVisitor, Builder<QualitySequenceFastaDataStore>{
+public class DefaultQualityFastaFileDataStoreBuilder implements FastaVisitor, Builder<QualitySequenceFastaDataStore>{
 
 	private final Map<String, QualitySequenceFastaRecord> fastaRecords = new LinkedHashMap<String, QualitySequenceFastaRecord>();
 	

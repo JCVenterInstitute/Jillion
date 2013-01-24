@@ -35,7 +35,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaFileVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaRecord;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
@@ -203,7 +203,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 		return DataStoreStreamingIterator.create(this,LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile,filter));
 	}
 	
-	private static final class IndexedNucleotideSequenceFastaDataStoreBuilderVisitor2 implements FastaFileVisitor, Builder<NucleotideSequenceFastaDataStore> {
+	private static final class IndexedNucleotideSequenceFastaDataStoreBuilderVisitor2 implements FastaVisitor, Builder<NucleotideSequenceFastaDataStore> {
 		
 		private final DataStoreFilter filter;
 		private final FastaFileParser parser;
@@ -322,7 +322,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 
 	}
 
-	private static class SingleRecordVisitor implements FastaFileVisitor{
+	private static class SingleRecordVisitor implements FastaVisitor{
 		private NucleotideSequenceFastaRecord fastaRecord=null;
 		@Override
 		public FastaRecordVisitor visitDefline(final FastaVisitorCallback callback,
