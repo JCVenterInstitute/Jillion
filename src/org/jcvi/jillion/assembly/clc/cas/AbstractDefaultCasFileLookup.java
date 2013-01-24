@@ -34,13 +34,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.jillion.assembly.clc.cas.align.CasScoringScheme;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
-import org.jcvi.jillion.trace.fastq.FastqFileParser;
-import org.jcvi.jillion.trace.fastq.FastqFileVisitor;
+import org.jcvi.jillion.trace.fastq.FastqFileParser2;
+import org.jcvi.jillion.trace.fastq.FastqRecordVisitor;
+import org.jcvi.jillion.trace.fastq.FastqVisitor;
 import org.jcvi.jillion.trace.sff.SffCommonHeader;
 import org.jcvi.jillion.trace.sff.SffFileParser;
 import org.jcvi.jillion.trace.sff.SffFileParserCallback;
@@ -129,7 +129,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
           SffFileParser.create(file).accept(new SffReadOrder(file));                
         }
         else if(fileName.endsWith("fastq") || fileName.matches("\\S*\\.fastq\\S*")){
-            FastqFileParser.parse(file, new FastqReadOrder(file));
+            FastqFileParser2.create(file).accept(new FastqReadOrder(file));
         }
         else{
           //try as fasta...
@@ -297,41 +297,24 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
 		}
         
     }
-    private final class FastqReadOrder implements FastqFileVisitor{
+    private final class FastqReadOrder implements FastqVisitor{
         private final File file;
         FastqReadOrder(File file){
             this.file =file;
         }
+        
 		@Override
-		public DeflineReturnCode visitDefline(String id, String optionalComment) {
+		public FastqRecordVisitor visitDefline(FastqVisitorCallback callback,
+				String id, String optionalComment) {
 			addRead(id,file);
-			return DeflineReturnCode.SKIP_CURRENT_RECORD;
+			return null;
 		}
+
 		@Override
-		public EndOfBodyReturnCode visitEndOfBody() {
-			return EndOfBodyReturnCode.KEEP_PARSING;
-		}
-		@Override
-		public void visitLine(String line) {
+		public void visitEnd() {
 			//no-op
+			
 		}
-		@Override
-		public void visitFile() {
-			//no-op
-		}
-		@Override
-		public void visitEndOfFile() {
-			//no-op
-		}
-		@Override
-		public void visitNucleotides(NucleotideSequence nucleotides) {
-			//no-op
-		}
-		@Override
-		public void visitEncodedQualities(String encodedQualities) {
-			//no-op
-		}
-       
     }
 
    

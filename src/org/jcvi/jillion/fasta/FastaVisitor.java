@@ -32,6 +32,8 @@ public interface FastaVisitor {
 
 	/**
      * Visit the definition line of the current fasta record.
+     * @param callback a {@link FastaVisitorCallback} that can be used
+     * to communicate with the parser object.
      * @param id the id of this record as a String
      * @param optionalComment the comment for this record.  This comment
      * may have white space.  If no comment exists, then this

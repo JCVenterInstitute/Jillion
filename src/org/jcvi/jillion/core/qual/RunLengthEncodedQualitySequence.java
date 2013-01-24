@@ -93,6 +93,19 @@ class RunLengthEncodedQualitySequence implements QualitySequence{
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder((int)getLength());
+		Iterator<PhredQuality> iter = iterator();
+        while(iter.hasNext()){
+        	if(builder.length()>0){
+    			builder.append(" ,");
+    		}
+        	builder.append(iter.next());
+        }
+		return builder.toString();
+	}
+
 	
 
 	

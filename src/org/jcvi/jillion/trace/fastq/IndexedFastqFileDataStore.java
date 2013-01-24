@@ -21,22 +21,17 @@
 package org.jcvi.jillion.trace.fastq;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
-import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.qual.QualitySequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
-import org.jcvi.jillion.internal.core.util.VariableWidthInteger;
+import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisitorMemento;
 
 /**
  * {@code IndexedFastqFileDataStore} is an implementation of 
@@ -48,46 +43,8 @@ import org.jcvi.jillion.internal.core.util.VariableWidthInteger;
  * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
-final class IndexedFastqFileDataStore implements FastqDataStore{
+final class IndexedFastqFileDataStore{
 
-    private final Map<String, VariableWidthInteger> indexFileRange;
-    private final FastqQualityCodec qualityCodec;
-    private final File file;
-    private final DataStoreFilter filter;
-    private volatile boolean closed;
-    /**
-	 * Creates a new {@link FastqFileDataStoreBuilderVisitor}
-	 * instance that will build an {@link IndexedFastqFileDataStore}
-	 * using the given fastq file.  In order to build a {@link FastqDataStore},
-	 * the returned instance must be passed to the fastq parser and once
-	 * the entire fastq file has been visited, the {@link FastqDataStore}
-	 * can be built using the {@link FastqFileDataStoreBuilderVisitor#build()}
-	 * method like this:
-	 * <pre>
-	 * FastqFileDataStoreBuilderVisitor builder = createBuilder(fastqFile, qualityCodec);
-	 * FastqFileParser.parse(fastqFile, builder);
-	 * FastqDataStore datastore = builder.build();
-	 * </pre>
-	 * This implementation of {@link FastqFileDataStoreBuilderVisitor}
-	 * can only be used to parse a single fastq file (the one given)
-	 * This builder visitor will construct the datastore based
-	 * on various visitXXX methods in the {@link FastqFileVisitor}
-	 * interface.  In this case, the indexed implementation will combine
-	 * callbacks for parts of each fastq record along with the 
-	 * corresponding calls to {@link FastqFileVisitor#visitLine(String)} 
-	 * to compute the file offsets for each record.
-	 * @param file the fastq to create an {@link FastqFileDataStoreBuilderVisitor}
-	 * for using an indexed implementation.
-	 * @param qualityCodec the {@link FastqQualityCodec} that should
-	 * be used to decode the encoded qualities of each record in the file.
-	 * @return a new instance of {@link FastqFileDataStoreBuilderVisitor};
-	 * never null.
-	 * @throws FileNotFoundException if the input fasta file does not exist.
-	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
-	 */
-    public static FastqFileDataStoreBuilderVisitor createBuilder(File file,FastqQualityCodec qualityCodec){
-    	return new IndexedFastqFileDataStoreBuilderVisitor(qualityCodec, file, DataStoreFilters.alwaysAccept());
-    }
     /**
 	 * Creates a new {@link IndexedFastqFileDataStore}
 	 * instance using the given fastqFile which uses has its quality
@@ -104,48 +61,7 @@ final class IndexedFastqFileDataStore implements FastqDataStore{
 	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
 	 */
     public static FastqDataStore create(File file,FastqQualityCodec qualityCodec) throws IOException{
-    	FastqFileDataStoreBuilderVisitor builderVisitor = createBuilder(file, qualityCodec);
-    	FastqFileParser.parse(file, builderVisitor);
-    	return builderVisitor.build();
-    }
-    /**
-   	 * Creates a new {@link FastqFileDataStoreBuilderVisitor}
-   	 * instance that will build an {@link IndexedFastqFileDataStore}
-   	 * using the given fastq file which only contains the records
-   	 * in the file that are accepted by the given filter.  In order to build a {@link FastqDataStore},
-   	 * the returned instance must be passed to the fastq parser and once
-   	 * the entire fastq file has been visited, the {@link FastqDataStore}
-   	 * can be built using the {@link FastqFileDataStoreBuilderVisitor#build()}
-   	 * method like this:
-   	 * <pre>
-   	 * FastqFileDataStoreBuilderVisitor builder = createBuilder(fastqFile, qualityCodec, filter);
-   	 * FastqFileParser.parse(fastqFile, builder);
-   	 * FastqDataStore datastore = builder.build();
-   	 * </pre>
-   	 * This implementation of {@link FastqFileDataStoreBuilderVisitor}
-   	 * can only be used to parse a single fastq file (the one given)
-   	 * This builder visitor will construct the datastore based
-   	 * on various visitXXX methods in the {@link FastqFileVisitor}
-   	 * interface.  In this case, the indexed implementation will combine
-   	 * callbacks for parts of each fastq record along with the 
-   	 * corresponding calls to {@link FastqFileVisitor#visitLine(String)} 
-   	 * to compute the file offsets for each record.
-   	 * @param file the fastq to create an {@link FastqFileDataStoreBuilderVisitor}
-   	 * for using an indexed implementation.
-   	 * @param qualityCodec the {@link FastqQualityCodec} that should
-	 * be used to decode the encoded qualities of each record in the file.
-   	 * @param filter a {@link FastXFilter} that will be used
-	 * to filter out some (possibly all or none) of the records from
-	 * the fastq file so they will not be included in the {@link FastqDataStore}.
-	 * Only records which cause {@link FastXFilter#accept(String, String)}
-	 * to return {@code true} will be added to this datastore.
-   	 * @return a new instance of {@link FastqFileDataStoreBuilderVisitor};
-   	 * never null.
-   	 * @throws FileNotFoundException if the input fasta file does not exist.
-   	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
-   	 */
-    public static FastqFileDataStoreBuilderVisitor createBuilder(File file,FastqQualityCodec qualityCodec, DataStoreFilter filter){
-    	return new IndexedFastqFileDataStoreBuilderVisitor(qualityCodec, file, filter);
+    	return create(file, qualityCodec, DataStoreFilters.alwaysAccept());
     }
     
     /**
@@ -170,239 +86,164 @@ final class IndexedFastqFileDataStore implements FastqDataStore{
    	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
    	 */
     public static FastqDataStore create(File file,FastqQualityCodec qualityCodec,DataStoreFilter filter) throws IOException{
-    	FastqFileDataStoreBuilderVisitor builderVisitor = createBuilder(file, qualityCodec,filter);
-    	FastqFileParser.parse(file, builderVisitor);
-    	return builderVisitor.build();
+    	IndexedFastqFileDataStoreBuilderVisitor2 visitor = new IndexedFastqFileDataStoreBuilderVisitor2(file, qualityCodec, filter);
+    	FastqFileParser2 parser = FastqFileParser2.create(file);
+    	parser.accept(visitor);
+    	return visitor.build(parser);
     }
-    /**
-     * @param file
-     * @throws FileNotFoundException 
-     */
-    private IndexedFastqFileDataStore(File file,FastqQualityCodec qualityCodec,Map<String,VariableWidthInteger> indexFileRange,DataStoreFilter filter){
-        this.file = file;
-        this.qualityCodec = qualityCodec;
-        this.indexFileRange = indexFileRange;
-        this.filter = filter;
-    }
-   
-   
-    @Override
-    public StreamingIterator<String> idIterator() throws DataStoreException {
-    	throwExceptionIfClosed();
-        return DataStoreStreamingIterator.create(this,indexFileRange.keySet().iterator());
-    }
-    @Override
-    public FastqRecord get(String id) throws DataStoreException {
-    	throwExceptionIfClosed();
-    	VariableWidthInteger range =indexFileRange.get(id);
-        if(range ==null){
-        	throw new DataStoreException(id +" does not exist in datastore");
-        }
-        InputStream in =null;
-        try {
-        	in = new FileInputStream(file);
-        	IOUtil.blockingSkip(in, range.getValue());
-        	SingleFastqRecordVisitor visitor = new SingleFastqRecordVisitor();
-        	FastqFileParser.parse(in, visitor);
-        	return visitor.getRecord();
-        } catch (IOException e) {
-            throw new DataStoreException("error reading fastq file",e);
-        }finally{
-            IOUtil.closeAndIgnoreErrors(in);
-        }
-    }
-    @Override
-    public boolean contains(String id) throws DataStoreException {
-    	throwExceptionIfClosed();
-        return indexFileRange.containsKey(id);
-    }
-    @Override
-    public long getNumberOfRecords() throws DataStoreException {
-    	throwExceptionIfClosed();
-        return indexFileRange.size();
-    }
-    @Override
-    public void close(){
-    	closed=true;
-        
-    }
+
     
-    private void throwExceptionIfClosed(){
-    	if(closed){
-    		throw new IllegalStateException("datastore is closed");
-    	}
-    }
-    @Override
-    public StreamingIterator<FastqRecord> iterator() throws DataStoreException {
-    	throwExceptionIfClosed();
-    	try {
-    		StreamingIterator<FastqRecord> iter = LargeFastqFileDataStore.create(file, filter, qualityCodec)
-					.iterator();
-    		//iter has a different lifecylce than this datastore
-    		//so wrap it
-    		return DataStoreStreamingIterator.create(this,iter);
-		} catch (FileNotFoundException e) {
-			throw new IllegalStateException("fastq file no longer exists! : "+ file.getAbsolutePath());
-		}
-       
-        
-    }
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public boolean isClosed() {
-        return closed;
-    }
     
-    private final class SingleFastqRecordVisitor implements FastqFileVisitor{
-    	private String currentId;
-    	private String currentComment;
-    	private NucleotideSequence currentNucleotideSequence;
-    	private QualitySequence currentQualitySequence;
-    	
-    	private FastqRecord record;
-    	
-    	
-		public final FastqRecord getRecord() {
-			return record;
-		}
-
-		@Override
-		public void visitLine(String line) {
-			//no-op			
-		}
-
-		@Override
-		public void visitFile() {
-			//no-op			
-		}
-
-		@Override
-		public void visitEndOfFile() {
-			//no-op
-		}
-
-		@Override
-		public EndOfBodyReturnCode visitEndOfBody() {
-			//only parse one record
-			record = new FastqRecordBuilder(currentId, currentNucleotideSequence, currentQualitySequence)
-								.comment(currentComment)
-								.build();
-			return EndOfBodyReturnCode.STOP_PARSING;
-		}
-
-		@Override
-		public DeflineReturnCode visitDefline(String id, String optionalComment) {
-			this.currentId = id;
-			this.currentComment = optionalComment;
-			return DeflineReturnCode.VISIT_CURRENT_RECORD;
-		}
-
-		@Override
-		public void visitNucleotides(NucleotideSequence nucleotides) {
-			currentNucleotideSequence = nucleotides;
-			
-		}
-
-		@Override
-		public void visitEncodedQualities(String encodedQualities) {
-			currentQualitySequence = qualityCodec.decode(encodedQualities);
-			
-		}
-    	
-    }
-    /**
-     * Implementation of {@link FastqFileDataStoreBuilderVisitor}
-     * that only stores the file offsets for each record.
-     * @author dkatzel
-     *
-     */
-    private static final class IndexedFastqFileDataStoreBuilderVisitor implements FastqFileDataStoreBuilderVisitor{
-    	private final Map<String,VariableWidthInteger> indexFileRange=new LinkedHashMap<String, VariableWidthInteger>();
-        private final FastqQualityCodec qualityCodec;
-        private final File file;
-        private long currentStartOffset=0;
-        private long currentEndOffset=-1L;
-        private String currentId;
-        private final DataStoreFilter filter;
-        private boolean includeCurrentRecord;
-        private volatile boolean finishedVisitingFile=false;
-		private IndexedFastqFileDataStoreBuilderVisitor(
-				FastqQualityCodec qualityCodec, File file, DataStoreFilter filter) {
-			
-			if(qualityCodec ==null){
-				throw new NullPointerException("quality codec can not be null");
-			}
-			this.qualityCodec = qualityCodec;
+    
+    
+    private static final class IndexedFastqFileDataStoreBuilderVisitor2 implements FastqVisitor{
+    	private final Map<String, FastqVisitorMemento> mementos = new LinkedHashMap<String,FastqVisitorMemento>();
+    	private final FastqQualityCodec qualityCodec;
+    	 private final File file;
+    	 private final DataStoreFilter filter;
+    	 
+    	 
+		public IndexedFastqFileDataStoreBuilderVisitor2(File file,
+				FastqQualityCodec qualityCodec, DataStoreFilter filter) {
 			this.file = file;
+			this.qualityCodec = qualityCodec;
 			this.filter = filter;
 		}
-
+		public FastqDataStore build(FastqFileParser2 parser) {
+			return new IndexedFastqFileDataStore2(file, qualityCodec, parser, filter, mementos);
+		}
 		@Override
-		public DeflineReturnCode visitDefline(String id, String optionalComment) {
-			checkNotFinished();
-			currentId = id;
-			includeCurrentRecord= filter.accept(id);
-			
-			if(includeCurrentRecord){
-				return DeflineReturnCode.VISIT_CURRENT_RECORD;
+		public FastqRecordVisitor visitDefline(FastqVisitorCallback callback,
+				String id, String optionalComment) {
+			if(filter.accept(id)){
+				if(!callback.canCreateMemento()){
+					throw new IllegalStateException("can not create memento for " + id);
+				}
+				FastqVisitorMemento createMemento = callback.createMemento();
+				mementos.put(id, createMemento);
 			}
-			return DeflineReturnCode.SKIP_CURRENT_RECORD;
-		}
-
-		@Override
-		public void visitNucleotides(NucleotideSequence nucleotides) {
-			checkNotFinished();
-			
-		}
-
-		@Override
-		public void visitEncodedQualities(String encodedQualities) {
-			checkNotFinished();
-			
-		}
-
-		@Override
-		public EndOfBodyReturnCode visitEndOfBody() {
-			checkNotFinished();
-			if(includeCurrentRecord){
-				indexFileRange.put(currentId, VariableWidthInteger.valueOf(currentStartOffset));
-			}
-			currentStartOffset=currentEndOffset+1;
-			return EndOfBodyReturnCode.KEEP_PARSING;
-		}
-
-		@Override
-		public void visitLine(String line) {
-			checkNotFinished();
-			currentEndOffset+=line.length();
-		}
-		private void checkNotFinished(){
-			if(finishedVisitingFile){
-				throw new IllegalStateException("already visitied entire file");
-			}
+			//always skip record bodies
+			return null;
 		}
 		@Override
-		public void visitFile() {
-			checkNotFinished();
-			
+		public void visitEnd() {
+			//no-op			
 		}
-
-		@Override
-		public void visitEndOfFile() {
-			checkNotFinished();
-			finishedVisitingFile=true;
-		}
-
-		@Override
-		public FastqDataStore build() {
-			if(!finishedVisitingFile){
-				throw new IllegalStateException("not yet finished visiting file");
-			}
-			return new IndexedFastqFileDataStore(file, qualityCodec, indexFileRange,filter);
-		}
-    	
     }
     
+    private static final class IndexedFastqFileDataStore2 implements FastqDataStore{
+    	private final Map<String, FastqVisitorMemento> mementos;
+    	private final FastqQualityCodec qualityCodec;
+    	 private final File file;
+    	 private final FastqFileParser2 parser;
+    	 private final DataStoreFilter filter;
+    	 private volatile boolean closed;
+    	 
+    	 
+    	public IndexedFastqFileDataStore2(File file,
+				FastqQualityCodec qualityCodec,
+				FastqFileParser2 parser,
+				DataStoreFilter filter,
+				Map<String, FastqVisitorMemento> mementos) {
+			this.file = file;
+			this.qualityCodec = qualityCodec;
+			this.parser = parser;
+			this.mementos = mementos;
+			this.filter=filter;
+		}
+		@Override
+        public StreamingIterator<String> idIterator() throws DataStoreException {
+        	throwExceptionIfClosed();
+            return DataStoreStreamingIterator.create(this,mementos.keySet().iterator());
+        }
+        @Override
+        public FastqRecord get(String id) throws DataStoreException {
+        	throwExceptionIfClosed();
+        	FastqVisitorMemento memento =mementos.get(id);
+            if(memento ==null){
+            	throw new DataStoreException(id +" does not exist in datastore");
+            }
+            SingleFastqRecordVistior visitor = new SingleFastqRecordVistior();
+            try {
+				parser.accept(visitor, memento);
+			} catch (IOException e) {
+				 throw new DataStoreException("error reading fastq file",e);
+			}
+           return visitor.getRecord();            
+        }
+        @Override
+        public boolean contains(String id) throws DataStoreException {
+        	throwExceptionIfClosed();
+            return mementos.containsKey(id);
+        }
+        @Override
+        public long getNumberOfRecords() throws DataStoreException {
+        	throwExceptionIfClosed();
+            return mementos.size();
+        }
+        @Override
+        public void close(){
+        	closed=true;
+            
+        }
+        
+        private void throwExceptionIfClosed(){
+        	if(closed){
+        		throw new IllegalStateException("datastore is closed");
+        	}
+        }
+        @Override
+        public StreamingIterator<FastqRecord> iterator() throws DataStoreException {
+        	throwExceptionIfClosed();
+        	try {
+        		StreamingIterator<FastqRecord> iter = LargeFastqFileDataStore.create(file, filter, qualityCodec)
+    					.iterator();
+        		//iter has a different lifecylce than this datastore
+        		//so wrap it
+        		return DataStoreStreamingIterator.create(this,iter);
+    		} catch (FileNotFoundException e) {
+    			throw new IllegalStateException("fastq file no longer exists! : "+ file.getAbsolutePath());
+    		}
+           
+            
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public boolean isClosed() {
+            return closed;
+        }
+        
+        private class SingleFastqRecordVistior implements FastqVisitor{
+        	private FastqRecord record;
+    		@Override
+    		public FastqRecordVisitor visitDefline(final FastqVisitorCallback callback,
+    				String id, String optionalComment) {
+    			//we assume the first record we get to
+    			//is the one we want.
+    			return new AbstractFastqRecordVisitor(id,optionalComment,qualityCodec) {
+    				
+    				@Override
+    				protected void visitRecord(FastqRecord record) {
+    					setRecord(record);
+    					callback.stopParsing();    					
+    				}
+    			};
+    		}
+
+    		@Override
+    		public void visitEnd() {
+    			//no-op			
+    		}
+
+			public final FastqRecord getRecord() {
+				return record;
+			}
+
+			public final void setRecord(FastqRecord record) {
+				this.record = record;
+			}        	
+        }
+    }
 }
