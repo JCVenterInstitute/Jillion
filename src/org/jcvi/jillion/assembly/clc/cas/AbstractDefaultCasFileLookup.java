@@ -38,7 +38,7 @@ import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
-import org.jcvi.jillion.trace.fastq.FastqFileParser2;
+import org.jcvi.jillion.trace.fastq.FastqFileParser;
 import org.jcvi.jillion.trace.fastq.FastqRecordVisitor;
 import org.jcvi.jillion.trace.fastq.FastqVisitor;
 import org.jcvi.jillion.trace.sff.SffCommonHeader;
@@ -129,7 +129,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
           SffFileParser.create(file).accept(new SffReadOrder(file));                
         }
         else if(fileName.endsWith("fastq") || fileName.matches("\\S*\\.fastq\\S*")){
-            FastqFileParser2.create(file).accept(new FastqReadOrder(file));
+            FastqFileParser.create(file).accept(new FastqReadOrder(file));
         }
         else{
           //try as fasta...

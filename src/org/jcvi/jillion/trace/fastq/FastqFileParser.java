@@ -25,7 +25,7 @@ import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisit
  * @author dkatzel
  *
  */
-public abstract class FastqFileParser2 {
+public abstract class FastqFileParser {
 
 	private static final Pattern CASAVA_1_8_DEFLINE_PATTERN = Pattern.compile("^@(\\S+\\s+\\d:[N|Y]:\\d+:\\S+)\\s*$");
 	/**
@@ -36,7 +36,7 @@ public abstract class FastqFileParser2 {
 	 * @throws IOException if there is a problem opening the file.
 	 * @throws NullPointerException if fastqFile is null.
 	 */
-	public static FastqFileParser2 create(File fastqFile){
+	public static FastqFileParser create(File fastqFile){
 		return new FileBasedFastqFileParser(fastqFile);
 	}
 	/**
@@ -50,10 +50,10 @@ public abstract class FastqFileParser2 {
 	 * @throws NullPointerException if inputstream is null.
 	 * @see #accept(FastqFileVisitor, FastqVisitorMemento).
 	 */
-	public static FastqFileParser2 create(InputStream in){
+	public static FastqFileParser create(InputStream in){
 		return new InputStreamFastqFileParser(in);
 	}
-	private FastqFileParser2(){
+	private FastqFileParser(){
 		//can not instantiate outside of this class file.
 	}
 	
@@ -259,7 +259,7 @@ public abstract class FastqFileParser2 {
 		}
 	}
 	
-	private static class FileBasedFastqFileParser extends FastqFileParser2{
+	private static class FileBasedFastqFileParser extends FastqFileParser{
 		private final File fastqFile;
 		
 		
@@ -313,7 +313,7 @@ public abstract class FastqFileParser2 {
 		}		
 	}
 	
-	private static class InputStreamFastqFileParser extends FastqFileParser2{
+	private static class InputStreamFastqFileParser extends FastqFileParser{
 		private final InputStream in;
 		
 		public InputStreamFastqFileParser(InputStream in) {

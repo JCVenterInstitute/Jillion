@@ -125,7 +125,7 @@ public final class FastqUtil {
     		throw new IllegalArgumentException("number of reads to inspect must be >=1");
     	}
     	FastqQualityCodecDetectorVisitor detectorVisitor =new FastqQualityCodecDetectorVisitor(numberOfReadsToInspect);
-    	FastqFileParser2.create(fastqFile).accept(detectorVisitor);
+    	FastqFileParser.create(fastqFile).accept(detectorVisitor);
     	return detectorVisitor.getDetectedCodec();
     }
     /**

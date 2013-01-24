@@ -97,7 +97,7 @@ final class DefaultFastqFileDataStore{
 	 */
    public static FastqDataStore create(File fastqFile, DataStoreFilter filter,FastqQualityCodec qualityCodec) throws IOException{
 	   DefaultFastqFileDataStoreBuilderVisitor2 visitor = new DefaultFastqFileDataStoreBuilderVisitor2(qualityCodec,filter);
-	   FastqFileParser2.create(fastqFile).accept(visitor);
+	   FastqFileParser.create(fastqFile).accept(visitor);
 
 	   return visitor.build();
    }
