@@ -125,7 +125,7 @@ public final class FastqUtil {
     		throw new IllegalArgumentException("number of reads to inspect must be >=1");
     	}
     	FastqQualityCodecDetectorVisitor detectorVisitor =new FastqQualityCodecDetectorVisitor(numberOfReadsToInspect);
-    	FastqFileParser.parse(fastqFile, detectorVisitor);
+    	FastqFileParser2.create(fastqFile).accept(detectorVisitor);
     	return detectorVisitor.getDetectedCodec();
     }
     /**
@@ -184,7 +184,6 @@ public final class FastqUtil {
     	
     	return FastqQualityCodec.ILLUMINA;
     }
-    
     /**
      * Inner class that visits the first X reads of a fastq file
      * and notes the {@link FastqQualityCodec} that can be used.
@@ -193,61 +192,49 @@ public final class FastqUtil {
      * @author dkatzel
      *
      */
-    private static final class FastqQualityCodecDetectorVisitor implements FastqFileVisitor{
-    	
+    private static final class FastqQualityCodecDetectorVisitor implements FastqVisitor{
     	private int numberOfRecordsVisited=0;
     	private final int maxNumberOfRecordsToVisit;
-    	private int numSanger=0;
-    	private int numIllumina=0;
-    	private int numSolexa=0;
-    	
-    	
-		private FastqQualityCodec detectedCodec=null;
+    	private FastqQualityCodec detectedCodec=null;
 		
-		
-		private FastqQualityCodecDetectorVisitor(int maxNumberOfRecordsToVisit) {
+    	FastqQualityCodecDetectorRecordVisitor recordVisitor = new FastqQualityCodecDetectorRecordVisitor();
+    	
+		public FastqQualityCodecDetectorVisitor(int maxNumberOfRecordsToVisit) {
 			this.maxNumberOfRecordsToVisit = maxNumberOfRecordsToVisit;
 		}
 		public FastqQualityCodec getDetectedCodec() {
 			return detectedCodec;
 		}
 		@Override
-		public EndOfBodyReturnCode visitEndOfBody() {
-			if(numberOfRecordsVisited < maxNumberOfRecordsToVisit){
-				return EndOfBodyReturnCode.KEEP_PARSING;
+		public FastqRecordVisitor visitDefline(FastqVisitorCallback callback,
+				String id, String optionalComment) {
+			if(numberOfRecordsVisited<maxNumberOfRecordsToVisit){
+				numberOfRecordsVisited++;
+				return recordVisitor;
 			}
-			return EndOfBodyReturnCode.STOP_PARSING;
+			callback.stopParsing();
+			return null;
 		}
+
 		@Override
-		public void visitLine(String line) {
-			//no-op
-		}
-		@Override
-		public void visitFile() {
-			//no-op
-		}
-		@Override
-		public void visitEndOfFile() {
-			if(numberOfRecordsVisited==0){
-				throw new IllegalStateException("fastq file must not be empty");
-			}
-			Map<FastqQualityCodec, Integer> map = new EnumMap<FastqQualityCodec, Integer>(FastqQualityCodec.class);
-	        map.put(FastqQualityCodec.SANGER, Integer.valueOf(numSanger));
-	        map.put(FastqQualityCodec.SOLEXA, Integer.valueOf(numSolexa));
-	        map.put(FastqQualityCodec.ILLUMINA, Integer.valueOf(numIllumina));
-	        SortedMap<FastqQualityCodec, Integer> sortedMap = MapValueComparator.sortDescending(map);
-	        detectedCodec= sortedMap.firstKey();
+		public void visitEnd() {
+			
+	        detectedCodec= recordVisitor.getMostFrequentCodec();
 			
 		}
-		@Override
-		public DeflineReturnCode visitDefline(String id, String optionalComment) {			
-			return DeflineReturnCode.VISIT_CURRENT_RECORD;			
-		}
+    	
+    }
+    
+    private static final class FastqQualityCodecDetectorRecordVisitor implements FastqRecordVisitor{
+    	private int numSanger=0;
+    	private int numIllumina=0;
+    	private int numSolexa=0;
+    	
 		@Override
 		public void visitNucleotides(NucleotideSequence nucleotides) {
-			//no-op
-			
+			//no-op			
 		}
+
 		@Override
 		public void visitEncodedQualities(String encodedQualities) {
 			FastqQualityCodec codec =FastqUtil.guessQualityCodecUsed(encodedQualities);
@@ -261,8 +248,27 @@ public final class FastqUtil {
 				default:
 					throw new IllegalArgumentException("unknown codec: "+ codec);
             }
-            numberOfRecordsVisited++;
+			
+		}
+
+		@Override
+		public void visitEnd() {
+			//no-op			
 		}
     	
+		public FastqQualityCodec getMostFrequentCodec(){
+			if(numSanger==0 && numSolexa==0 && numIllumina==0){
+				throw new IllegalStateException("fastq file must not be empty");
+			}
+			Map<FastqQualityCodec, Integer> map = new EnumMap<FastqQualityCodec, Integer>(FastqQualityCodec.class);
+	        map.put(FastqQualityCodec.SANGER, Integer.valueOf(numSanger));
+	        map.put(FastqQualityCodec.SOLEXA, Integer.valueOf(numSolexa));
+	        map.put(FastqQualityCodec.ILLUMINA, Integer.valueOf(numIllumina));
+	        SortedMap<FastqQualityCodec, Integer> sortedMap = MapValueComparator.sortDescending(map);
+	        return sortedMap.firstKey();
+		}
     }
+    
+    
+   
 }

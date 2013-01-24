@@ -73,7 +73,7 @@ public abstract class FastaFileParser {
 	 * @throws NullPointerException if fastaFile is null.
 	 * @see #accept(FastaFileVisitor, FastaVisitorMemento).
 	 */
-	public static FastaFileParser create(InputStream inputStream) throws IOException{
+	public static FastaFileParser create(InputStream inputStream){
 		return new InputStreamFastaParser(inputStream);
 	}
 	/**
@@ -294,7 +294,7 @@ public abstract class FastaFileParser {
 		}
 
 		@Override
-		public synchronized void accept(FastaVisitor visitor, FastaVisitorMemento memento)
+		public void accept(FastaVisitor visitor, FastaVisitorMemento memento)
 				throws IOException {
 			//we probably will never see this in real usage
 			//since inputstream implementation can't make mementors...

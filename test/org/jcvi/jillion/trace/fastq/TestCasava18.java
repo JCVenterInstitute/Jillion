@@ -19,18 +19,12 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 package org.jcvi.jillion.trace.fastq;
-
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.jcvi.jillion.trace.fastq.FastqFileParser;
-import org.jcvi.jillion.trace.fastq.FastqFileVisitor;
 import org.junit.Test;
 
 /**
@@ -48,13 +42,25 @@ public class TestCasava18 {
     
     @Test
     public void parseMateInfoCorrectly() throws FileNotFoundException, IOException{
-        FastqFileVisitor visitor = createNiceMock(FastqFileVisitor.class);
-        expect(visitor.visitDefline("EAS139:136:FC706VJ:2:5:1000:12850 1:Y:18:ATCACG",null))
-            .andReturn(FastqFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD);
-        expect(visitor.visitEndOfBody()).andReturn(FastqFileVisitor.EndOfBodyReturnCode.KEEP_PARSING);
-        replay(visitor);
+    	
+    	
+        FastqVisitor visitor = new FastqVisitor() {
+			
+			@Override
+			public void visitEnd() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public FastqRecordVisitor visitDefline(FastqVisitorCallback callback,
+					String id, String optionalComment) {
+				assertEquals("EAS139:136:FC706VJ:2:5:1000:12850 1:Y:18:ATCACG", id);
+				return null;
+			}
+		};
+
         ResourceHelper resources = new ResourceHelper(TestCasava18.class);
-        FastqFileParser.parse(resources.getFile("files/casava1.8.fastq"), visitor);
-        verify(visitor);
+        FastqFileParser2.create(resources.getFile("files/casava1.8.fastq")).accept(visitor);
     }
 }

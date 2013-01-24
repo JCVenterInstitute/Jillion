@@ -34,8 +34,6 @@ import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.qual.QualitySequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
@@ -67,7 +65,7 @@ final class LargeFastqFileDataStore implements FastqDataStore {
      * {@link FastqQualityCodec} to decode the qualities of the fastq record
      * (if provided)This should return
      * the same data store implementation as
-     * {@link #create(File, FastXFilter, FastqQualityCodec) create(fastqFile, qualityCodec, null)}
+     * {@link #create(File, DataStoreFilter, FastqQualityCodec) create(fastqFile, qualityCodec, DataStoreFilters.alwaysAccept())}
      * @param fastqFile the fastq file to create a {@link FastqDataStore}
      * for (can not be null, and must exist).
      * @param qualityCodec the {@link FastqQualityCodec} that should be used
@@ -77,10 +75,10 @@ final class LargeFastqFileDataStore implements FastqDataStore {
      * @return a new {@link FastqDataStore} instance, will never be null.
      * @throws FileNotFoundException if the given Fastq file does not exist.
      * @throws NullPointerException if fastqFile is null.
-     * @see #create(File, FastXFilter, FastqQualityCodec)
+     * @see #create(File, DataStoreFilter, FastqQualityCodec)
      */
     public static FastqDataStore create(File fastqFile, FastqQualityCodec qualityCodec) throws FileNotFoundException{
-    	return new LargeFastqFileDataStore(fastqFile, qualityCodec,null);
+    	return new LargeFastqFileDataStore(fastqFile, qualityCodec,DataStoreFilters.alwaysAccept());
     }
     /**
      * Create a new {@link FastqDataStore} instance for the given
@@ -117,10 +115,10 @@ final class LargeFastqFileDataStore implements FastqDataStore {
     		throw new FileNotFoundException("could not find " + fastQFile.getAbsolutePath());
     	}
     	if(filter==null){
-    		this.filter = DataStoreFilters.alwaysAccept();
-    	}else{
-    		this.filter = filter;
+    		throw new NullPointerException("filter can not be null");
     	}
+    	
+    	this.filter = filter;
         this.qualityCodec = qualityCodec;
         this.fastQFile = fastQFile;        
     }
@@ -189,7 +187,9 @@ final class LargeFastqFileDataStore implements FastqDataStore {
     @Override
     public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
         throwExceptionIfClosed();
-        return DataStoreStreamingIterator.create(this,new FastqIdIterator());        
+        FastqIdIterator iterator = new FastqIdIterator(filter);
+        iterator.start();
+		return DataStoreStreamingIterator.create(this,iterator);        
     }
 
     @Override
@@ -218,40 +218,51 @@ final class LargeFastqFileDataStore implements FastqDataStore {
     }
     
     
-    private final class FastqIdIterator implements StreamingIterator<String>{
-        private final StreamingIterator<FastqRecord> iter;
-        private FastqIdIterator(){
-                iter = iterator();
-        }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public boolean hasNext() {
-            return iter.hasNext();
-        }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public String next() {
-            return iter.next().getId();
-        }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public void remove() {
-        	throw new UnsupportedOperationException();	           
-        }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public void close() throws IOException {
-            iter.close();            
-        }
-        
+    private final class FastqIdIterator extends AbstractBlockingStreamingIterator<String> implements StreamingIterator<String>{
+
+    	private final DataStoreFilter filter;
+    	
+
+    	public FastqIdIterator(DataStoreFilter filter) {
+			this.filter = filter;
+		}
+
+
+		@Override
+    	protected void backgroundThreadRunMethod() {
+    		try {
+    			
+    			FastqVisitor visitor = new FastqVisitor() {
+					
+					@Override
+					public void visitEnd() {
+						//no-op						
+					}
+					
+					@Override
+					public FastqRecordVisitor visitDefline(final FastqVisitorCallback callback,
+							String id, String optionalComment) {
+						if(FastqIdIterator.this.isClosed()){
+							callback.stopParsing();							
+						}
+						if (filter.accept(id)) {
+							blockingPut(id);
+						}
+						if(FastqIdIterator.this.isClosed()){
+							callback.stopParsing();							
+						}
+						return null;
+					}
+				};
+    			
+                FastqFileParser2.create(fastQFile).accept(visitor);
+           } catch (IOException e) {
+                
+                //should never happen
+                throw new RuntimeException(e);
+            }
+    		
+    	}
     }
     
     /**
@@ -274,61 +285,38 @@ final class LargeFastqFileDataStore implements FastqDataStore {
 		@Override
     	protected void backgroundThreadRunMethod() {
     		try {
-    			/**
-    			 * This visitor implementation will put each
-    			 * non-filtered record into the blocking queue.
-    			 * 
-    			 */
-            	FastqFileVisitor visitor = new FastqFileVisitor() {
-            		private String currentId, currentComment;
-
-            	    private NucleotideSequence nucleotides;
-            	    private QualitySequence qualities;
-            	    
-            	    @Override
-					public FastqFileVisitor.DeflineReturnCode visitDefline(
-							String id, String optionalComment) {
-						currentId = id;
-						currentComment = optionalComment;
-						if (filter.accept(id)) {
-							return FastqFileVisitor.DeflineReturnCode.VISIT_CURRENT_RECORD;
-						}
-						return FastqFileVisitor.DeflineReturnCode.SKIP_CURRENT_RECORD;
+    			
+    			FastqVisitor visitor = new FastqVisitor() {
+					
+					@Override
+					public void visitEnd() {
+						//no-op						
 					}
-            	    
-            	    @Override
-            	    public void visitNucleotides(NucleotideSequence nucleotides) {
-            	        this.nucleotides = nucleotides;            	        
-            	    }
-            	    @Override
-            	    public void visitEncodedQualities(String encodedQualities) {
-            	    	this.qualities = qualityCodec.decode(encodedQualities);        
-            	    }
-            	    @Override
-            	    public FastqFileVisitor.EndOfBodyReturnCode visitEndOfBody() {
-            	    	 FastqRecord record = new FastqRecordBuilder(currentId,nucleotides, qualities)
-            	    	 						.comment(currentComment)
-            	    	 						.build();
-               	         blockingPut(record);
-               	         return LargeFastqFileIterator.this.isClosed() ? FastqFileVisitor.EndOfBodyReturnCode.STOP_PARSING : FastqFileVisitor.EndOfBodyReturnCode.KEEP_PARSING;
-               	  
-            	    }
-            	    @Override
-            	    public void visitEndOfFile() { 
-            	    	//no-op
-            	    }
-
-            	    @Override
-            	    public void visitLine(String line) {
-            	    	//no-op
-            	    }
-
-            	    @Override
-            	    public void visitFile() {       
-            	    	//no-op
-            	    }
-            	};
-                FastqFileParser.parse(fastQFile, visitor);
+					
+					@Override
+					public FastqRecordVisitor visitDefline(final FastqVisitorCallback callback,
+							String id, String optionalComment) {
+						if(LargeFastqFileIterator.this.isClosed()){
+							callback.stopParsing();
+							return null;
+						}
+						if (filter.accept(id)) {
+							return new AbstractFastqRecordVisitor(id,optionalComment,qualityCodec) {
+								
+								@Override
+								protected void visitRecord(FastqRecord record) {
+									blockingPut(record);
+									if(LargeFastqFileIterator.this.isClosed()){
+										callback.stopParsing();
+									}
+								}
+							};
+						}
+						return null;
+					}
+				};
+    			
+                FastqFileParser2.create(fastQFile).accept(visitor);
            } catch (IOException e) {
                 
                 //should never happen
