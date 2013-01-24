@@ -192,20 +192,19 @@ class CompletelyParsedIndexedSffFileDataStore {
 		}
 
 		@Override
-		public SffFileReadVisitor visitRead(SffFileParserCallback callback,
+		public SffFileReadVisitor visitRead(final SffFileParserCallback callback,
 				final SffReadHeader readHeader) {
 			//we should only see the read we care about
 			return new SffFileReadVisitor(){
 
 				@Override
-				public void visitReadData(SffFileParserCallback callback,
-						SffReadData readData) {
+				public void visitReadData(SffReadData readData) {
 					flowgram =SffFlowgram.create(readHeader, readData);
 					
 				}
 
 				@Override
-				public void visitEndOfRead(SffFileParserCallback callback) {
+				public void visitEnd() {
 					callback.stopParsing();
 					
 				}

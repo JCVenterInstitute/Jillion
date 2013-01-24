@@ -76,14 +76,13 @@ public final class SffFileIterator extends AbstractBlockingStreamingIterator<Flo
 						return new SffFileReadVisitor() {
 							
 							@Override
-							public void visitReadData(SffFileParserCallback callback,
-									SffReadData readData) {
+							public void visitReadData(SffReadData readData) {
 								SffFileIterator.this.blockingPut(SffFlowgram.create(readHeader, readData));
 								
 							}
 							
 							@Override
-							public void visitEndOfRead(SffFileParserCallback callback) {
+							public void visitEnd() {
 								//no-op
 								
 							}

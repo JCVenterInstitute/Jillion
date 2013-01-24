@@ -258,20 +258,19 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
 		}
 
 		@Override
-		public SffFileReadVisitor visitRead(SffFileParserCallback callback,
+		public SffFileReadVisitor visitRead(final SffFileParserCallback callback,
 				final SffReadHeader readHeader) {
 			if(readHeader.getId().equals(idToFind)){
 				return new SffFileReadVisitor() {
 					
 					@Override
-					public void visitReadData(SffFileParserCallback callback,
-							SffReadData readData) {
+					public void visitReadData(SffReadData readData) {
 						flowgram = SffFlowgram.create(readHeader, readData);
 						
 					}
 					
 					@Override
-					public void visitEndOfRead(SffFileParserCallback callback) {
+					public void visitEnd() {
 						callback.stopParsing();
 						
 					}
