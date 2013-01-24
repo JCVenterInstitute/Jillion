@@ -26,13 +26,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PushbackInputStream;
 import java.io.RandomAccessFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento;
+import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 /**
@@ -278,13 +278,10 @@ public abstract class FastaFileParser {
 		
 	}
 	private static class InputStreamFastaParser extends FastaFileParser{
-		private final PushbackInputStream inputStream;
+		private final OpenAwareInputStream inputStream;
 
 		public InputStreamFastaParser(InputStream inputStream) {
-			if(inputStream==null){
-				throw new NullPointerException("inputStream can not be null");
-			}
-			this.inputStream = new PushbackInputStream(inputStream);
+			this.inputStream = new OpenAwareInputStream(inputStream);
 		}
 		protected AbstractFastaVisitorCallback createNewCallback(long currentOffset) {
 			return NoMementoCallback.INSTANCE;
@@ -306,22 +303,10 @@ public abstract class FastaFileParser {
 
 		@Override
 		protected InputStream getInputStream() throws IOException {
-			//this is a hack to see if we 
-			//have data left in the inputstream
-			//inputStream#available is not guaranteed
-			//to return a valid answer
-			//so we need to actually read a byte
-			//then push it back if we get something
-			try {
-				int value =inputStream.read();
-				//put it back so we can read it again later
-				inputStream.unread(value);
+			if(inputStream.isOpen()){
 				return inputStream;
-			} catch (IOException e) {
-				//error reading inputstream so it must
-				//be closed
-				throw new IOException("inputstream is closed?",e);
 			}
+			throw new IOException("inputstream is closed");			
 		}
 	}
 }

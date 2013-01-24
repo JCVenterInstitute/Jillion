@@ -126,7 +126,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
     private void parse(File file) throws IOException {
         String fileName = file.getName();
         if(fileName.endsWith("sff")){
-          new SffFileParser(file).accept(new SffReadOrder(file));                
+          SffFileParser.create(file).accept(new SffReadOrder(file));                
         }
         else if(fileName.endsWith("fastq") || fileName.matches("\\S*\\.fastq\\S*")){
             FastqFileParser.parse(file, new FastqReadOrder(file));

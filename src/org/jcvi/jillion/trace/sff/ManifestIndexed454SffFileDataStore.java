@@ -110,7 +110,7 @@ final class ManifestIndexed454SffFileDataStore implements FlowgramDataStore{
 	 */
 	public static FlowgramDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
 		ManifestCreatorVisitor visitor = new ManifestCreatorVisitor(sffFile, filter);
-		new SffFileParser(sffFile).accept(visitor);
+		SffFileParser.create(sffFile).accept(visitor);
 		//there is a valid sff formatted manifest inside the sff file
 		if(visitor.isUseableManifest()){
 			return new ManifestIndexed454SffFileDataStore(visitor);

@@ -58,7 +58,8 @@ import java.util.Scanner;
  *
  */
 public final class IOUtil {
-    /**
+    private static final int EOF = -1;
+	/**
      * Some methods need to use Log base 2
      * a lot so it's easier to factor this out as a constant.
      */
@@ -290,8 +291,7 @@ public final class IOUtil {
         	//this also is the reason for the -1 and +1 
         	//sprinkled around the leftToSkip computation.
         	int value =in.read();
-        	if(value == -1){ 
-        		//EOF
+        	if(value == EOF){ 
         		throw new IOException("end of file reached before entire block was skipped");
         	}
         	leftToSkip -= in.skip(leftToSkip-1) +1;
@@ -340,7 +340,7 @@ public final class IOUtil {
                 break;
             }
         }
-        if(currentBytesRead ==-1){
+        if(currentBytesRead ==EOF){
             throw new EOFException(String.format("end of file after only %d bytes read (expected %d)",totalBytesRead,length));
         }
     }
@@ -770,7 +770,7 @@ public final class IOUtil {
     	long numBytesCopied=0;
     	while(true){
     		int numBytesRead =in.read(buf);
-    		if(numBytesRead ==-1){
+    		if(numBytesRead ==EOF){
     			break;
     		}
     		numBytesCopied+=numBytesRead;
@@ -822,7 +822,7 @@ public final class IOUtil {
     	char[] buf = new char[1024];
     	while(true){
     		int numBytesRead =reader.read(buf);
-    		if(numBytesRead ==-1){
+    		if(numBytesRead ==EOF){
     			break;
     		}
     		writer.write(buf, 0, numBytesRead);
@@ -896,4 +896,5 @@ public final class IOUtil {
         }
         return array;
     }
+    
 }

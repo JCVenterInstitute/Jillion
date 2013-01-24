@@ -47,7 +47,7 @@ class DefaultSffFileDataStore {
 	 */
 	public static FlowgramDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
 		Visitor visitor = new Visitor(filter);
-		SffFileParser parser = new SffFileParser(sffFile);
+		SffFileParser parser = SffFileParser.create(sffFile);
 		parser.accept(visitor);
 		
 		return visitor.builder.build();

@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.core.io;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -60,7 +61,7 @@ public final class MagicNumberInputStream extends InputStream{
     }
     
     public MagicNumberInputStream(File file) throws IOException{
-        this(new FileInputStream(file),4);
+        this(new BufferedInputStream(new FileInputStream(file),4));
     }
     /**
      * Wraps the given {@link InputStream} and reads the 

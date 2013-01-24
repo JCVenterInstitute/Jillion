@@ -210,7 +210,7 @@ public final class SffUtil {
      */
     public static TrimPointsDataStore createTrimPointsDataStoreFrom(File sffFile) throws IOException{
     	SffTrimDataStoreBuilder builder = new SffTrimDataStoreBuilder();
-    	new SffFileParser(sffFile).accept(builder);
+    	SffFileParser.create(sffFile).accept(builder);
     	return builder.build();
     }
     
