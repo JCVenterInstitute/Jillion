@@ -48,7 +48,7 @@ import org.junit.runners.Suite.SuiteClasses;
         
         TestFileUtil.class,
         TestMagicNumberInputStream.class,
-        TestOpenAwareInputStream.class,
+        TestOpenAwareInputStream.class
     }
     )
 public class AllCoreIOUnitTests {
