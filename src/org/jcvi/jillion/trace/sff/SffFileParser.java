@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
@@ -95,7 +96,7 @@ public class SffFileParser {
 				randomAccessFile.seek(parserState.position);
 				in = new BufferedInputStream(new RandomAccessFileInputStream(randomAccessFile));
 				DataInputStream dataIn = new DataInputStream(in);
-				for(int i=readRecordSffFileMemento.readCount; parserState.keepParsing && i<header.getNumberOfReads(); i++){
+				for(int i=readRecordSffFileMemento.readCount; parserState.keepParsing() && i<header.getNumberOfReads(); i++){
 					parserState = handleSingleRead(visitor, dataIn, parserState,
 							i);
 				    
@@ -125,7 +126,7 @@ public class SffFileParser {
         header =DefaultSFFCommonHeaderDecoder.INSTANCE.decodeHeader(dataIn);
         ParserState parserState = new ParserState();
         visitor.visitHeader(createCommonHeaderCallback(parserState), header);
-        if(!parserState.keepParsing){
+        if(!parserState.keepParsing()){
         	return;
         }
         parseReads(visitor, dataIn, header);
@@ -164,7 +165,7 @@ public class SffFileParser {
         int commonHeaderLength = size+padding;
         
         ParserState parserState  = new ParserState(commonHeaderLength);
-		for(int i=0;parserState.keepParsing && i<numberOfReads; i++){
+		for(int i=0;parserState.keepParsing() && i<numberOfReads; i++){
 			parserState = handleSingleRead(visitor, dataIn, parserState,
 					i);
 		    
@@ -194,10 +195,8 @@ public class SffFileParser {
 		}else{
 			final int numberOfBases = readHeader.getNumberOfBases();
 			SffReadData readData = DefaultSffReadDataDecoder.INSTANCE.decode(dataIn, numberOfFlowsPerRead, numberOfBases);
-
-			SffFileParserCallback readDataCallback = createReadDataCallback(updatedParserState);
-			readVisitor.visitReadData(readDataCallback, readData);
-			readVisitor.visitEndOfRead(readDataCallback);
+			readVisitor.visitReadData(readData);
+			readVisitor.visitEnd();
 		}
 		updatedParserState= updatedParserState.incrementPosition(readDataLength+readDataPadding);
 		return updatedParserState;
@@ -225,26 +224,7 @@ public class SffFileParser {
     	};
     }
 	
-	private SffFileParserCallback createReadDataCallback(final ParserState parserState){
-    	return new SffFileParserCallback(){
-
-			@Override
-			public boolean mementoSupported() {
-				return false;
-			}
-
-			@Override
-			public SffFileMemento createMemento() {
-				throw new UnsupportedOperationException("can not create Momento inside of read record"); 
-			}
-
-			@Override
-			public void stopParsing() {
-				parserState.stop();				
-			}
-    		
-    	};
-    }
+	
 	
 	
 	private abstract static class AbstractSffFileMemento implements SffFileMemento{
@@ -280,7 +260,10 @@ public class SffFileParser {
 	
 	private static class ParserState{
 		private final long position;
-		private boolean keepParsing=true;
+		//keepParsing is an object instead of a primitive
+		//so we can pass around the same reference to each
+		//ParserState object at increment call
+		private AtomicBoolean keepParsing= new AtomicBoolean(true);
 		
 		public ParserState(){
 			this(0L);
@@ -288,7 +271,7 @@ public class SffFileParser {
 		public ParserState(long initialPosition){
 			this.position = initialPosition;
 		}
-		private ParserState(long position, boolean keepParsing) {
+		private ParserState(long position, AtomicBoolean keepParsing) {
 			this.position = position;
 			this.keepParsing = keepParsing;
 		}
@@ -298,8 +281,11 @@ public class SffFileParser {
 		}
 		
 		public void stop(){
-			keepParsing=false;
+			keepParsing.set(false);
 		}
 		
+		public boolean keepParsing(){
+			return keepParsing.get();
+		}
 	}
 }

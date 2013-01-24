@@ -207,12 +207,15 @@ final class SffFlowgram implements Flowgram {
         		return false;
         	}
         }
-        return true;
-        
-       
-        
+        return true;        
     }
 
+	@Override
+	public String toString() {
+		return "SffFlowgram [id=" + id + "]";
+	}
+
+    
     
 
     
