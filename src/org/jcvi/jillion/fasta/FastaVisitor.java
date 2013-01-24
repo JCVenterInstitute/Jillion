@@ -28,7 +28,7 @@ package org.jcvi.jillion.fasta;
  * @author dkatzel
  *
  */
-public interface FastaFileVisitor {
+public interface FastaVisitor {
 
 	/**
      * Visit the definition line of the current fasta record.

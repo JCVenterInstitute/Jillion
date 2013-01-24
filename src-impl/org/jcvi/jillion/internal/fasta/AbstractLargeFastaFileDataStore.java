@@ -31,7 +31,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaDataStore;
 import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaFileVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaRecord;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
@@ -121,7 +121,7 @@ public abstract class AbstractLargeFastaFileDataStore<T extends Symbol,S extends
         checkNotYetClosed();
         if(size ==null){
             try {
-            	FastaFileVisitor visitor = new FastaFileVisitor(){
+            	FastaVisitor visitor = new FastaVisitor(){
         			long numDeflines=0L;
         			@Override
         			public FastaRecordVisitor visitDefline(

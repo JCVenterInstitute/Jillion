@@ -31,7 +31,7 @@ import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaFileVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 
@@ -58,7 +58,7 @@ public final class DefaultPositionFastaFileDataStore {
 	}
 
 	
-	private static class DefaultQualityFastaFileDataStoreBuilder implements FastaFileVisitor, Builder<PositionSequenceFastaDataStore>{
+	private static class DefaultQualityFastaFileDataStoreBuilder implements FastaVisitor, Builder<PositionSequenceFastaDataStore>{
 
 		private final Map<String, PositionSequenceFastaRecord> fastaRecords = new LinkedHashMap<String, PositionSequenceFastaRecord>();
 		

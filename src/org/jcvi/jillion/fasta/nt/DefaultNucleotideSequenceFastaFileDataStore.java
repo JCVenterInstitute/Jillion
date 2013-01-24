@@ -38,7 +38,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaFileVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 /**
@@ -84,7 +84,7 @@ final class DefaultNucleotideSequenceFastaFileDataStore{
     
 
     
-    private static final class NucleotideFastaDataStoreBuilderVisitorImpl2 implements FastaFileVisitor, Builder<NucleotideSequenceFastaDataStore>{
+    private static final class NucleotideFastaDataStoreBuilderVisitorImpl2 implements FastaVisitor, Builder<NucleotideSequenceFastaDataStore>{
 
 		private final Map<String, NucleotideSequenceFastaRecord> fastaRecords = new LinkedHashMap<String, NucleotideSequenceFastaRecord>();
 		

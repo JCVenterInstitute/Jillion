@@ -38,7 +38,7 @@ import org.jcvi.jillion.internal.core.io.TextLineParser;
 /**
  * {@code FastaFileParser} will parse a single 
  * fasta encoded file and call the appropriate
- * visitXXX methods on the given {@link FastaFileVisitor}.
+ * visitXXX methods on the given {@link FastaVisitor}.
  * @author dkatzel
  *
  */
@@ -66,7 +66,7 @@ public abstract class FastaFileParser {
 	 * that will parse the given fasta encoded
 	 * inputStream.  Please Note that inputStream implementations
 	 * of the FastaFileParser can not create {@link FastaVisitorMemento}s
-	 * or use {@link #accept(FastaFileVisitor, FastaVisitorMemento)}
+	 * or use {@link #accept(FastaVisitor, FastaVisitorMemento)}
 	 * method.
 	 * @param fastaFile the file to parse.
 	 * @throws IOException if there is a problem opening the file.
@@ -79,13 +79,13 @@ public abstract class FastaFileParser {
 	/**
 	 * Parse the fasta file starting from the beginning 
 	 * of the file (or {@link InputStream}) and call the appropriate
-	 * visit methods on the given {@link FastaFileVisitor}.
-	 * @param visitor the {@link FastaFileVisitor} instance to call
+	 * visit methods on the given {@link FastaVisitor}.
+	 * @param visitor the {@link FastaVisitor} instance to call
 	 * visit methods on; can not be null;
 	 * @throws IOException if there is a problem parsing the fasta file.
 	 * @throws NullPointerException if visitor is null.
 	 */
-	public void accept(FastaFileVisitor visitor) throws IOException{
+	public void accept(FastaVisitor visitor) throws IOException{
 		checkNotNull(visitor);
 		InputStream in = null;		
 		try{
@@ -104,7 +104,7 @@ public abstract class FastaFileParser {
 	 */
 	protected abstract InputStream getInputStream()  throws IOException;
 	
-	protected void checkNotNull(FastaFileVisitor visitor) {
+	protected void checkNotNull(FastaVisitor visitor) {
 		if(visitor==null){
 			throw new NullPointerException("visitor can not be null");
 		}
@@ -112,8 +112,8 @@ public abstract class FastaFileParser {
 	/**
 	 * Parse the fasta file starting from the beginning 
 	 * of the file (or {@link InputStream}) and call the appropriate
-	 * visit methods on the given {@link FastaFileVisitor}.
-	 * @param visitor the {@link FastaFileVisitor} instance to call
+	 * visit methods on the given {@link FastaVisitor}.
+	 * @param visitor the {@link FastaVisitor} instance to call
 	 * visit methods on; can not be null;
 	 * @param memento the {@link FastaVisitorMemento} instance
 	 * to tell the parser where to start parsing from;
@@ -124,10 +124,10 @@ public abstract class FastaFileParser {
 	 * parser implementation (for example when parsing an {@link InputStream}
 	 * instead of a {@link File}).
 	 */
-	public abstract void accept(FastaFileVisitor visitor, FastaVisitorMemento memento) throws IOException;
+	public abstract void accept(FastaVisitor visitor, FastaVisitorMemento memento) throws IOException;
 	
 	protected final void parseFile(TextLineParser parser, long startOffset,
-			FastaFileVisitor visitor) throws IOException {
+			FastaVisitor visitor) throws IOException {
 		boolean keepParsing=true;
 		FastaRecordVisitor recordVisitor =null;
 		AbstractFastaVisitorCallback callback = createNewCallback(startOffset);
@@ -250,7 +250,7 @@ public abstract class FastaFileParser {
 		protected AbstractFastaVisitorCallback createNewCallback(long currentOffset) {
 			return new MementoCallback(currentOffset);
 		}
-		public void accept(FastaFileVisitor visitor, FastaVisitorMemento memento) throws IOException{
+		public void accept(FastaVisitor visitor, FastaVisitorMemento memento) throws IOException{
 			if(!(memento instanceof OffsetMemento)){
 				throw new IllegalStateException("unknown memento instance : "+memento);
 			}
@@ -287,14 +287,14 @@ public abstract class FastaFileParser {
 			return NoMementoCallback.INSTANCE;
 		}
 		@Override
-		public synchronized void accept(FastaFileVisitor visitor) throws IOException {
+		public synchronized void accept(FastaVisitor visitor) throws IOException {
 			//wrap in synchronized block so we only
 			//can parse one visitor at a time (probably at all)
 			super.accept(visitor);
 		}
 
 		@Override
-		public synchronized void accept(FastaFileVisitor visitor, FastaVisitorMemento memento)
+		public synchronized void accept(FastaVisitor visitor, FastaVisitorMemento memento)
 				throws IOException {
 			//we probably will never see this in real usage
 			//since inputstream implementation can't make mementors...

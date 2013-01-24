@@ -32,7 +32,7 @@ import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaFileVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaRecord;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
@@ -96,7 +96,7 @@ public final class IndexedQualityFastaFileDataStore{
 	 * using the given fastaFile.  This implementation of {@link AminoAcidSequenceFastaDataStoreBuilderVisitor}
 	 * can only be used to parse a single fasta file (the one given) and does not support
 	 * {@link AminoAcidSequenceFastaDataStoreBuilderVisitor#addFastaRecord(AminoAcidSequenceFastaRecord)}.
-	 * This builder visitor can only build the datastore via the visitXXX methods in the {@link FastaFileVisitor}
+	 * This builder visitor can only build the datastore via the visitXXX methods in the {@link FastaVisitor}
 	 * interface.
 	 * @param fastaFile the fasta to create an {@link IndexedAminoAcidSequenceFastaFileDataStore}
 	 * for.
@@ -121,7 +121,7 @@ public final class IndexedQualityFastaFileDataStore{
 	
 	
 	
-	private static final class IndexedQualitySequenceFastaDataStoreBuilderVisitor2 implements FastaFileVisitor, Builder<QualitySequenceFastaDataStore> {
+	private static final class IndexedQualitySequenceFastaDataStoreBuilderVisitor2 implements FastaVisitor, Builder<QualitySequenceFastaDataStore> {
 	
 		private final DataStoreFilter filter;
 		private final FastaFileParser parser;
@@ -241,7 +241,7 @@ public final class IndexedQualityFastaFileDataStore{
 
 	}
 
-	private static class SingleRecordVisitor implements FastaFileVisitor{
+	private static class SingleRecordVisitor implements FastaVisitor{
 		private QualitySequenceFastaRecord fastaRecord=null;
 		@Override
 		public FastaRecordVisitor visitDefline(final FastaVisitorCallback callback,
