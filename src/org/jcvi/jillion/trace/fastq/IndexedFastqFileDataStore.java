@@ -184,6 +184,7 @@ final class IndexedFastqFileDataStore{
         @Override
         public void close(){
         	closed=true;
+        	mementos.clear();
             
         }
         

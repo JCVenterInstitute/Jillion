@@ -15,6 +15,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
+import org.jcvi.jillion.internal.core.util.VariableWidthInteger;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisitorMemento;
 /**
@@ -221,23 +222,13 @@ public abstract class FastqFileParser2 {
 
 		@Override
 		public FastqVisitorMemento createMemento() {
-			return new OffsetMemento(getParserState().getCurrentOffset());
+			return OffsetMemento.valueOf(getParserState().getCurrentOffset());
+			//return new LongOffsetMemento(getParserState().getCurrentOffset());
 		}
 		
 	}
+
 	
-	private static class OffsetMemento implements FastqVisitorMemento{
-		private final long offset;
-
-		public OffsetMemento(long offset) {
-			this.offset = offset;
-		}
-
-		public final long getOffset() {
-			return offset;
-		}
-		
-	}
 	
 	private static class ParserState{
 		private final long currentOffset;
@@ -308,7 +299,7 @@ public abstract class FastqFileParser2 {
 			if(visitor ==null){
 				throw new NullPointerException("visitor can not be null");
 			}
-			long startOffset = ((OffsetMemento)memento).getOffset();
+			long startOffset = ((OffsetMemento)memento).getValue();
 			RandomAccessFile randomAccessFile = new RandomAccessFile(fastqFile, "r");
 			InputStream in = null;
 			try{
@@ -361,5 +352,129 @@ public abstract class FastqFileParser2 {
 			return new NoMementoCallback(parserState);
 		}
 		
+	}
+	
+	public abstract static class OffsetMemento implements FastqVisitorMemento {
+		private static final long UNSIGNED_MAX_BYTE = 0xFF;
+		private static final long UNSIGNED_MAX_SHORT = 0xFFFF;
+		//need the "L" at the end to make the value a long otherwise it's an int with value -1 !
+		private static final long UNSIGNED_MAX_INT = 0xFFFFFFFFL;
+		/**
+		 * Create a new instance of a {@link VariableWidthInteger}
+		 * which will wrap the given value.
+		 * @param value the value to wrap; may
+		 * be negative.
+		 * @return a VariableWidthInteger instance that
+		 * wraps the given value in as few bytes as possible.
+		 */
+		public static OffsetMemento valueOf(long value){
+			//TODO: should we do caching to return 
+			//already created instances (flyweight)?
+			//This is probably going to be used mostly
+			//for file offsets. If we wrap
+			//several fastq files, each of which have
+			//the same number of bases we might get a lot of
+			//duplicate instances...
+			
+			if(value <0){
+				throw new IllegalArgumentException("can not have negative offset");
+			}
+			if(value <=UNSIGNED_MAX_BYTE){
+				return new ByteWidthOffsetMemento(value);
+			}else if(value <=UNSIGNED_MAX_SHORT){
+				return new ShortWidthOffsetMemento(value);
+			}
+			else if(value <=UNSIGNED_MAX_INT){
+				return new IntWidthOffsetMemento(value);
+			}
+			return new LongWidthOffsetMemento(value);
+		}
+		/**
+		 * Get the wrapped value as a long.
+		 * @return the value; may be negative.
+		 */
+		public abstract long getValue();
+		
+		@Override
+		public String toString() {
+			return Long.toString(getValue());
+		}
+		@Override
+		public boolean equals(Object obj){
+			if(obj ==null){
+				return false;
+			}
+			if(obj instanceof OffsetMemento){
+				return getValue()==((OffsetMemento)obj).getValue();
+			}
+			return false;
+		}
+		
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			long value = getValue();
+			return prime * (int) (value ^ (value >>> 32));
+		}
+		
+		
+	}
+	
+	private static class ByteWidthOffsetMemento extends OffsetMemento{
+		
+		private byte value;
+
+		public ByteWidthOffsetMemento(long value) {
+			this.value = IOUtil.toSignedByte((int)value);
+		}
+
+		@Override
+		public long getValue() {
+			return IOUtil.toUnsignedByte(value);
+		}
+		
+	}
+	
+	private static class ShortWidthOffsetMemento extends OffsetMemento{
+		
+		private short value;
+
+		public ShortWidthOffsetMemento(long value) {
+			this.value = IOUtil.toSignedShort((int)value);
+		}
+
+		@Override
+		public long getValue() {
+			return IOUtil.toUnsignedShort(value);
+		}
+		
+	}
+	
+	private static class IntWidthOffsetMemento extends OffsetMemento{
+		
+		private int value;
+
+		public IntWidthOffsetMemento(long value) {
+			this.value = IOUtil.toSignedInt(value);
+		}
+
+		@Override
+		public long getValue() {
+			return IOUtil.toUnsignedInt(value);
+		}
+		
+	}
+	private static class LongWidthOffsetMemento extends OffsetMemento{
+		
+		private long value;
+
+		public LongWidthOffsetMemento(long value) {
+			this.value = value;
+		}
+
+		@Override
+		public long getValue() {
+			return value;
+		}	
 	}
 }
