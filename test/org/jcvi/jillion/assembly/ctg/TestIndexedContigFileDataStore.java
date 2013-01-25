@@ -29,10 +29,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.jcvi.jillion.assembly.ctg.IndexedContigFileDataStore;
+import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.Contig;
+import org.jcvi.jillion.assembly.ContigDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
 
-public class TestIndexedContigFileDataStore extends AbstractTestContigFileDataStore{
+public class TestIndexedContigFileDataStore extends AbstractTestContigFileDataStore<AssembledRead, Contig<AssembledRead>, ContigDataStore<AssembledRead, Contig<AssembledRead>>>{
    
     public TestIndexedContigFileDataStore() throws FileNotFoundException,
 			IOException {

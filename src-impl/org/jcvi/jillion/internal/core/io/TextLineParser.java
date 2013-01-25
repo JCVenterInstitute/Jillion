@@ -33,8 +33,8 @@ import org.jcvi.jillion.core.util.FIFOQueue;
  * will include the end of line characters in the {@link #getNextLine()}
  * methods.  Most JDK classes chop off these characters and the few classes
  * that could could be configured to include these characters are slow.
- * This class considers a line to be terminated by either '\n'
- * (UNIX format) or '\r\n' (Windows/DOS). 
+ * This class considers a line to be terminated by either '\n',
+ * (UNIX format) or '\r\n' (Windows/DOS) or '\r' (Apple family until Mac OS 9). 
  * <p/>This class is not Thread-safe
  * @author dkatzel
  *
@@ -81,6 +81,7 @@ public final class TextLineParser implements Closeable{
 					builder.append(LF);
 				}else if(nextChar !=-1){
 					//not windows formatted line
+					//could be Mac 0S 9 which only uses '\r'
 					//put that value back
 					in.unread(nextChar);
 				}

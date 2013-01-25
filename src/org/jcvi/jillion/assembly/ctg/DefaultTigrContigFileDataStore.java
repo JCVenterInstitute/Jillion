@@ -1,0 +1,60 @@
+package org.jcvi.jillion.assembly.ctg;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
+import org.jcvi.jillion.core.datastore.DataStoreUtil;
+
+public class DefaultTigrContigFileDataStore {
+
+	public static TigrContigDataStore create(File contigFile, DataStore<Long> fullLengthSequenceDataStore, DataStoreFilter filter) throws IOException{
+		DataStoreBuilder visitor = new DataStoreBuilder(fullLengthSequenceDataStore, filter);
+		TigrContigFileParser.create(contigFile).accept(visitor);
+		return DataStoreUtil.adapt(TigrContigDataStore.class, visitor.contigs);
+	}
+	
+	
+	private static final class DataStoreBuilder implements TigrContigFileVisitor{
+
+		private final Map<String, TigrContig> contigs = new LinkedHashMap<String, TigrContig>();
+		private final DataStoreFilter filter;
+		private final DataStore<Long> fullLengthSequenceDataStore;
+		
+		public DataStoreBuilder(DataStore<Long> fullLengthSequenceDataStore,DataStoreFilter filter) {
+			this.filter = filter;
+			this.fullLengthSequenceDataStore = fullLengthSequenceDataStore;
+		}
+
+		@Override
+		public TigrContigVisitor visitContig(TigrContigVisitorCallback callback,final String contigId) {
+			if(!filter.accept(contigId)){
+				return null;
+			}
+			return new AbstractTigrContigVisitor(contigId,fullLengthSequenceDataStore) {
+				
+				@Override
+				protected void visitContig(TigrContig contig) {
+					contigs.put(contigId, contig);
+					
+				}
+			};
+		}
+
+		@Override
+		public void visitIncompleteEnd() {
+			//no-op
+			
+		}
+
+		@Override
+		public void visitEnd() {
+			//no-op
+			
+		}
+		
+	}
+}

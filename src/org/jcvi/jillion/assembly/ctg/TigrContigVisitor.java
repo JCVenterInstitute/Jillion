@@ -9,5 +9,6 @@ public interface TigrContigVisitor {
 	
 	TigrContigReadVisitor visitRead(String readId, long gappedStartOffset, Direction dir);
 	
+	void visitIncompleteEnd();
 	void visitEnd();
 }

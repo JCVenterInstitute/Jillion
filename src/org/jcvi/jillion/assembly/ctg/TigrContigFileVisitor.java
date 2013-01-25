@@ -44,7 +44,9 @@ public interface TigrContigFileVisitor {
 	}
 	
 	
-	TigrContigVisitor visitContig(String contigId);
+	TigrContigVisitor visitContig(TigrContigVisitorCallback callback, String contigId);
+	
+	void visitIncompleteEnd();
 	
 	void visitEnd();
 }
