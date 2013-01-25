@@ -40,7 +40,11 @@ import org.junit.runners.Suite.SuiteClasses;
      TestLargeSequenceFastaMapWithNoComment.class,
      TestNucleotideDataStoreFastaAdatper.class,
      TestFastaSequenceDataStoreAdapter.class,
-     TestStreamingDefaultSequenceDataStore.class
+     TestStreamingDefaultSequenceDataStore.class,
+     
+     TestDefaultUnixAndDosDataStoresParsedCorrectly.class,
+     TestIndexedUnixAndDosDataStoresParsedCorrectly.class,
+     TestLargeUnixAndDosDataStoresParsedCorrectly.class
     }
     )
 public class AllNucleotideSequenceFastaTests {

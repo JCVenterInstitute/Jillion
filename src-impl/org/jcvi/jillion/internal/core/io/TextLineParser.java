@@ -23,6 +23,7 @@ package org.jcvi.jillion.internal.core.io;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PushbackInputStream;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.FIFOQueue;
@@ -32,6 +33,8 @@ import org.jcvi.jillion.core.util.FIFOQueue;
  * will include the end of line characters in the {@link #getNextLine()}
  * methods.  Most JDK classes chop off these characters and the few classes
  * that could could be configured to include these characters are slow.
+ * This class considers a line to be terminated by either '\n'
+ * (UNIX format) or '\r\n' (Windows/DOS). 
  * <p/>This class is not Thread-safe
  * @author dkatzel
  *
@@ -39,22 +42,22 @@ import org.jcvi.jillion.core.util.FIFOQueue;
  */
 public final class TextLineParser implements Closeable{
 
-	private int endOfLine;
-	private InputStream in;
+	private static final char LF = '\n';
+	private static final char CR = '\r';
+	
+	private PushbackInputStream in;
 	private final Object endOfFile = new Object();
 	private final FIFOQueue<Object> nextQueue = new FIFOQueue<Object>();
 	boolean doneFile = false;
+	
 	public TextLineParser(InputStream in) throws IOException{
-		this(in,'\n');
-	}
-	public TextLineParser(InputStream in,char endOfLine) throws IOException {
 		if(in ==null){
 			throw new NullPointerException("inputStream can not be null");
 		}
-		this.endOfLine = endOfLine;
-		this.in = in;
+		this.in = new PushbackInputStream(in);
 		getNextLine();
 	}
+	
 	private void getNextLine() throws IOException{
 		if(doneFile){
 			return;
@@ -69,9 +72,21 @@ public final class TextLineParser implements Closeable{
 				close();
 				break;
 			}
-			
 			builder.append((char)value);
-			if(value == endOfLine){
+			if(value == CR){
+				//check if next value is LF
+				//since CR+LF is how Windows represents an end of line
+				int nextChar = in.read();
+				if(nextChar == LF){
+					builder.append(LF);
+				}else if(nextChar !=-1){
+					//not windows formatted line
+					//put that value back
+					in.unread(nextChar);
+				}
+				break;
+			}
+			if(value == LF){
 				break;
 			}
 			value = in.read();
