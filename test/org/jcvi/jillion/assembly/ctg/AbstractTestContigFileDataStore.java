@@ -33,17 +33,17 @@ import java.io.IOException;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.ContigDataStore;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.junit.After;
 import org.junit.Test;
-public abstract class AbstractTestContigFileDataStore extends TestAbstractContigFileParser{
+public abstract class AbstractTestContigFileDataStore<R extends AssembledRead, C extends Contig<R>, D extends DataStore<C>> extends TestAbstractContigFileParser{
 
 	protected final NucleotideSequenceFastaDataStore fullLengthSequences;
-	private ContigDataStore<AssembledRead, Contig<AssembledRead>> dataStore;
+	private D dataStore;
 	
 	public AbstractTestContigFileDataStore() throws FileNotFoundException, IOException{
 		fullLengthSequences = new NucleotideSequenceFastaFileDataStoreBuilder(RESOURCES.getFile("files/gcv_23918.raw.seq.fasta.fasta")).build();
@@ -58,15 +58,15 @@ public abstract class AbstractTestContigFileDataStore extends TestAbstractContig
         assertEquals(4, dataStore.getNumberOfRecords());
     }
     @Override
-    protected Contig getContig925From(File file) throws FileNotFoundException {
+    protected C getContig925From(File file) throws FileNotFoundException {
         return getContig(dataStore, "925");
     }
     @Override
-    protected Contig getContig928From(File file) throws Exception{
+    protected C getContig928From(File file) throws Exception{
         return getContig(dataStore, "928");
     }
-    private Contig getContig(
-            ContigDataStore<AssembledRead, Contig<AssembledRead>> dataStore, String id) {
+    private C getContig(
+            D dataStore, String id) {
         try {
             return dataStore.get(id);
         } catch (DataStoreException e) {
@@ -74,7 +74,7 @@ public abstract class AbstractTestContigFileDataStore extends TestAbstractContig
             throw new RuntimeException("error getting contig "+id,e);
         }
     }
-    protected abstract ContigDataStore<AssembledRead, Contig<AssembledRead>> buildContigFileDataStore(
-    		NucleotideSequenceFastaDataStore fullLengthSequences, File contigFile) throws FileNotFoundException;
+    protected abstract D buildContigFileDataStore(
+    		NucleotideSequenceFastaDataStore fullLengthSequences, File contigFile) throws IOException;
 
 }
