@@ -187,15 +187,13 @@ public class TigrContigFileDataStoreBuilder {
 	 */
 	public TigrContigDataStore build() throws IOException {
 		switch(hint){
-			default:
+		case OPTIMIZE_RANDOM_ACCESS_SPEED:
 				return DefaultTigrContigFileDataStore.create(contigFile, fullSeqLengthDataStore, filter);
-			/*case OPTIMIZE_RANDOM_ACCESS_SPEED: return DefaultAceFileDataStore.create(contigFile,filter);
-			case OPTIMIZE_RANDOM_ACCESS_MEMORY: return IndexedAceFileDataStore.create(contigFile,filter);
-			case OPTIMIZE_ITERATION: return LargeAceFileDataStore.create(contigFile,filter);
+		case OPTIMIZE_RANDOM_ACCESS_MEMORY: return IndexedTigrContigFileDataStore.create(contigFile,fullSeqLengthDataStore, filter);
+		//	case OPTIMIZE_ITERATION: return LargeAceFileDataStore.create(contigFile,filter);
 			default:
 				//can not happen
 				throw new IllegalArgumentException("unknown provider hint : "+ hint);
-				*/
 		}
 	}
 }

@@ -37,7 +37,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestContigFileWriter.class,
         TestDefaultContigFileDataStore.class,
         TestIndexedContigFileDataStore.class ,
-        TestDefaultTigrContigFileDataStore.class
+        TestDefaultTigrContigFileDataStore.class,
+        TestIndexedTigrContigFileDataStore.class,
     }
     )
 public class AllCtgUnitTests {

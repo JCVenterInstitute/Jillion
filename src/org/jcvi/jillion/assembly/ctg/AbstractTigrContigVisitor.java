@@ -29,20 +29,10 @@ public abstract class AbstractTigrContigVisitor implements TigrContigVisitor{
 
 	@Override
 	public TigrContigReadVisitor visitRead(final String readId,
-			final long gappedStartOffset, final Direction dir) {
+			final long gappedStartOffset, final Direction dir, final Range validRange) {
 		return new TigrContigReadVisitor() {
 			private NucleotideSequence gappedBasecalls;
-			private Range validRange;
-			@Override
-			public void visitValidRange(Range validRange) {
-				this.validRange = validRange;				
-			}
 			
-			@Override
-			public void visitIncompleteEnd() {
-				// TODO Auto-generated method stub
-				
-			}
 			
 			@Override
 			public void visitEnd() {
