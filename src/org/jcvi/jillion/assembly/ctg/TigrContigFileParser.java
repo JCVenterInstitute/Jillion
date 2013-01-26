@@ -38,7 +38,7 @@ public abstract class TigrContigFileParser {
 	}
 	
 	public void accept(TigrContigFileVisitor visitor) throws IOException{
-		InputStream inputStream = getInputStream();
+		TextLineParser inputStream =new TextLineParser(getInputStream());
 		try{
 			parse(visitor, inputStream, 0L);
 		}finally{
@@ -49,8 +49,7 @@ public abstract class TigrContigFileParser {
 	public abstract void accept(TigrContigFileVisitor visitor,TigrContigVisitorMemento memento) throws IOException;
 
 	protected final void parse(TigrContigFileVisitor visitor,
-			InputStream inputStream, long currentOffset) throws IOException {
-		TextLineParser parser = new TextLineParser(inputStream);
+			TextLineParser parser, long initialOffset) throws IOException {
 		boolean inConsensus =true;
 		TigrContigVisitor contigVisitor=null;
 		TigrContigReadVisitor readVisitor=null;
@@ -58,6 +57,7 @@ public abstract class TigrContigFileParser {
 		
 		boolean keepParsing=true;
 		AbstractTigrContigVisitorCallback callback=null;
+		long currentOffset = initialOffset;
 		while(keepParsing && parser.hasNextLine()){
 			String line = parser.nextLine();
 			Matcher newContigMatcher = NEW_CONTIG_PATTERN.matcher(line);
@@ -66,15 +66,25 @@ public abstract class TigrContigFileParser {
 					readVisitor.visitBasecalls(currentBasesBuilder.build());
 					readVisitor.visitEnd();
 				}
-				if(contigVisitor !=null){
+				if(callback !=null){
+					keepParsing = callback.keepParsing();
+				}
+				if(keepParsing && contigVisitor !=null){
 					contigVisitor.visitEnd();
 				}
-				inConsensus = true;
-				String contigId = newContigMatcher.group(1);
-				callback = createCallback(currentOffset);
-				contigVisitor = visitor.visitContig(callback, contigId);
-				currentBasesBuilder = new NucleotideSequenceBuilder();
-				readVisitor=null;				
+				if(callback !=null){
+					keepParsing = callback.keepParsing();
+				}
+				readVisitor=null;	
+				contigVisitor =null;
+				if(keepParsing){
+					inConsensus = true;
+					String contigId = newContigMatcher.group(1);
+					callback = createCallback(currentOffset);
+					contigVisitor = visitor.visitContig(callback, contigId);
+					currentBasesBuilder = new NucleotideSequenceBuilder();
+				}
+							
 			} else {
 				Matcher newSequenceMatcher = NEW_READ_PATTERN.matcher(line);
 				if (newSequenceMatcher.find()) {
@@ -104,8 +114,6 @@ public abstract class TigrContigFileParser {
 			if(keepParsing){
 				readVisitor.visitBasecalls(currentBasesBuilder.build());
 				readVisitor.visitEnd();
-			}else{
-				readVisitor.visitIncompleteEnd();
 			}
 		}
 		if(contigVisitor !=null){
@@ -131,12 +139,9 @@ public abstract class TigrContigFileParser {
         String seqId = newSequenceMatcher.group(1);
         int offset = Integer.parseInt(newSequenceMatcher.group(2));
         Direction dir= parseComplimentedFlag(newSequenceMatcher)?Direction.REVERSE: Direction.FORWARD;
-        TigrContigReadVisitor readVisitor =contigVisitor.visitRead(seqId, offset, dir);
-        if(readVisitor !=null){
-        	 Range validRange = parseValidRange(newSequenceMatcher, dir);
-        	 readVisitor.visitValidRange(validRange);
-        }
-       return readVisitor;
+        Range validRange = parseValidRange(newSequenceMatcher, dir);
+   	 	
+        return contigVisitor.visitRead(seqId, offset, dir, validRange);
  }
 	
 	 private static Range parseValidRange(Matcher newSequenceMatcher,
@@ -214,10 +219,10 @@ public abstract class TigrContigFileParser {
 			}
 			long startOffset = ((OffsetMemento)memento).getOffset();
 			RandomAccessFile randomAccessFile = new RandomAccessFile(contigFile, "r");
-			InputStream in=null;
+			TextLineParser in=null;
 			try{
 				randomAccessFile.seek(startOffset);
-				in = new RandomAccessFileInputStream(randomAccessFile);
+				in = new TextLineParser(new RandomAccessFileInputStream(randomAccessFile));
 				parse(visitor, in, startOffset);
 			}finally{
 				IOUtil.closeAndIgnoreErrors(in, randomAccessFile);
