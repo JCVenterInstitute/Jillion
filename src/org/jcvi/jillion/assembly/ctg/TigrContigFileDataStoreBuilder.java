@@ -190,7 +190,7 @@ public class TigrContigFileDataStoreBuilder {
 		case OPTIMIZE_RANDOM_ACCESS_SPEED:
 				return DefaultTigrContigFileDataStore.create(contigFile, fullSeqLengthDataStore, filter);
 		case OPTIMIZE_RANDOM_ACCESS_MEMORY: return IndexedTigrContigFileDataStore.create(contigFile,fullSeqLengthDataStore, filter);
-		//	case OPTIMIZE_ITERATION: return LargeAceFileDataStore.create(contigFile,filter);
+		case OPTIMIZE_ITERATION: return new LargeTigrContigFileDataStore(contigFile, fullSeqLengthDataStore, filter);
 			default:
 				//can not happen
 				throw new IllegalArgumentException("unknown provider hint : "+ hint);
