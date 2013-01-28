@@ -110,11 +110,9 @@ public abstract class TigrContigFileParser {
 			currentOffset +=line.length();
 		}
 		
-		if (readVisitor != null) {
-			if(keepParsing){
-				readVisitor.visitBasecalls(currentBasesBuilder.build());
-				readVisitor.visitEnd();
-			}
+		if (readVisitor != null && keepParsing){
+			readVisitor.visitBasecalls(currentBasesBuilder.build());
+			readVisitor.visitEnd();
 		}
 		if(contigVisitor !=null){
 			if(keepParsing){
