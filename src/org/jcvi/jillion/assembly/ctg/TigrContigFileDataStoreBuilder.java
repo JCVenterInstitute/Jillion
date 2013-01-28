@@ -24,7 +24,7 @@ public class TigrContigFileDataStoreBuilder {
 	//by default store everything in memory
 	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED;
 	
-	private DataStore<Long> fullSeqLengthDataStore;
+	private final DataStore<Long> fullSeqLengthDataStore;
 	
 	/**
 	 * Create a new instance of {@code TigrContigFileDataStoreBuilder}

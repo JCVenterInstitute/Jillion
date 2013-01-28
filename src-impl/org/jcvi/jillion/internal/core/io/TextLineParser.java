@@ -45,7 +45,7 @@ public final class TextLineParser implements Closeable{
 	private static final char LF = '\n';
 	private static final char CR = '\r';
 	
-	private PushbackInputStream in;
+	private final PushbackInputStream in;
 	private final Object endOfFile = new Object();
 	private final FIFOQueue<Object> nextQueue = new FIFOQueue<Object>();
 	boolean doneFile = false;
