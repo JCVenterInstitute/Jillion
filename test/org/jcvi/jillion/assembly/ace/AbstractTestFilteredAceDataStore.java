@@ -20,16 +20,15 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.ace;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
-import org.jcvi.jillion.assembly.AssembledRead;
-import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.ContigDataStore;
-import org.jcvi.jillion.assembly.ace.AceContig;
-import org.jcvi.jillion.assembly.ace.AceFileContigDataStore;
-import org.jcvi.jillion.assembly.ctg.DefaultContigFileDataStore;
+import org.jcvi.jillion.assembly.ctg.TigrContig;
+import org.jcvi.jillion.assembly.ctg.TigrContigDataStore;
+import org.jcvi.jillion.assembly.ctg.TigrContigFileDataStoreBuilder;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
@@ -37,7 +36,6 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
@@ -54,13 +52,15 @@ public abstract class AbstractTestFilteredAceDataStore{
         AceFileContigDataStore datastore = create(aceFile, filter);
         assertEquals(7, datastore.getNumberOfRecords());
         assertEquals(499 , datastore.getNumberOfTotalReads());
-        ContigDataStore<AssembledRead, Contig<AssembledRead>> contigDataStore = DefaultContigFileDataStore.create(resources.getFile("files/fluSample.contig"));
+        TigrContigDataStore contigDataStore = new TigrContigFileDataStoreBuilder(resources.getFile("files/fluSample.contig"),
+        									AceContigTestUtil.createFullLengthSeqDataStoreFrom(aceFile))
+																				.build();
         assertEquals(8,contigDataStore.getNumberOfRecords());
         StreamingIterator<AceContig> iter = datastore.iterator();
         try{
 	    	 while(iter.hasNext()){
 	        	AceContig aceContig = iter.next();
-	            Contig<AssembledRead> contig = contigDataStore.get(aceContig.getId());
+	            TigrContig contig = contigDataStore.get(aceContig.getId());
 	            AceContigTestUtil.assertContigsEqual(contig, aceContig);
 	    	 }
         }finally{

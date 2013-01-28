@@ -28,10 +28,12 @@ import java.util.Map;
 
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
 
 /**
  * {@code DefaultTigrAssemblerFileContigDataStore} is an implemenation
@@ -45,8 +47,8 @@ import org.jcvi.jillion.core.util.Builder;
 public final class DefaultTasmFileContigDataStore {
 
     
-    public static TasmContigDataStore create(File tasmFile) throws FileNotFoundException{ 
-    	BuilderImpl builder = new BuilderImpl();
+    public static TasmContigDataStore create(File tasmFile, NucleotideSequenceFastaDataStore fullLengthFastas) throws FileNotFoundException{ 
+    	BuilderImpl builder = new BuilderImpl(fullLengthFastas);
     	 TasmFileParser.parse(tasmFile, builder);
     	 return builder.build();
     }
@@ -71,9 +73,15 @@ public final class DefaultTasmFileContigDataStore {
         
         private String currentReadBasecalls;
         private final Map<String, TasmContig> contigs = new LinkedHashMap<String, TasmContig>();
+        private final NucleotideSequenceFastaDataStore fullLengthFastas;
+       
        
         
-        @Override
+        public BuilderImpl(NucleotideSequenceFastaDataStore fullLengthFastas) {
+        	this.fullLengthFastas = fullLengthFastas;
+        }
+
+		@Override
 		public TasmContigDataStore build() {
 			return DataStoreUtil.adapt(TasmContigDataStore.class, contigs);
 		}
@@ -207,9 +215,13 @@ public final class DefaultTasmFileContigDataStore {
         public void visitEndReadBlock() {
         	if(currentReadId !=null){
 	            this.currentBuilder.addReadAttributes(currentReadId, currentReadAttributes);
-	            this.currentBuilder.addRead(currentReadId, currentOffset, currentValidRange,
-	                    currentReadBasecalls, currentDirection,
-	                    (int)currentValidRange.getEnd());
+	            try {
+					this.currentBuilder.addRead(currentReadId, currentOffset, currentValidRange,
+					        currentReadBasecalls, currentDirection,
+					        (int)fullLengthFastas.get(currentReadId).getSequence().getLength());
+				} catch (DataStoreException e) {
+					throw new IllegalStateException("error getting full length sequence fasta for "+ currentReadId, e);
+				}
         	}
         }
        

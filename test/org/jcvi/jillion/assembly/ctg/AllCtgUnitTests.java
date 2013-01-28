@@ -35,8 +35,6 @@ import org.junit.runners.Suite.SuiteClasses;
     {  
     	TestDefaultAssembledReadBuilder.class,    	
         TestContigFileWriter.class,
-        TestDefaultContigFileDataStore.class,
-        TestIndexedContigFileDataStore.class ,
         TestDefaultTigrContigFileDataStore.class,
         TestIndexedTigrContigFileDataStore.class,
         TestLargeTigrContigFileDataStore.class

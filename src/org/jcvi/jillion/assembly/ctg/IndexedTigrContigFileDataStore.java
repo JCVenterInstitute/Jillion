@@ -11,7 +11,17 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
-
+/**
+ * {@code IndexedTigrContigFileDataStore} is an implementation of 
+ * {@link TigrContigDataStore} that only stores an index containing
+ * {@link TigrContigVisitorMemento}s to the various contigs contained
+ * inside a contig file.  This allows large files to provide random 
+ * access without taking up much memory.  The downside is each contig
+ * must be re-parsed each time.
+ * @author dkatzel
+ *
+ *
+ */
 final class IndexedTigrContigFileDataStore implements TigrContigDataStore {
 
 	public static TigrContigDataStore create(File contigFile, DataStore<Long> fullLengthSequences, DataStoreFilter filter) throws IOException{

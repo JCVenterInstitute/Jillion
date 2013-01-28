@@ -30,11 +30,11 @@ import static org.junit.Assert.fail;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.jcvi.jillion.assembly.tasm.DefaultTasmFileContigDataStore;
-import org.jcvi.jillion.assembly.tasm.TasmContigDataStore;
-import org.jcvi.jillion.assembly.tasm.TasmFileWriter;
 import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 public class TestTigrAssemblerWriter {
@@ -43,7 +43,10 @@ public class TestTigrAssemblerWriter {
 	private static final TasmContigDataStore tasmDataStore;
 	static{	         
         try {
-            tasmDataStore= DefaultTasmFileContigDataStore.create(RESOURCES.getFile("files/giv-15050.tasm"));
+        	NucleotideSequenceFastaDataStore fullLengthFastas = new NucleotideSequenceFastaFileDataStoreBuilder(RESOURCES.getFile("files/giv-15050.fasta"))
+														.hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY)
+														.build();
+            tasmDataStore= DefaultTasmFileContigDataStore.create(RESOURCES.getFile("files/giv-15050.tasm"),fullLengthFastas);
         } catch (Exception e) {
             throw new IllegalStateException("could not parse contig file",e);
         } 

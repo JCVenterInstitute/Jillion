@@ -25,33 +25,35 @@
  */
 package org.jcvi.jillion.assembly.ctg;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.jillion.assembly.AssembledRead;
-import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.ctg.CtgContigDataStore;
-import org.jcvi.jillion.assembly.ctg.CtgFileWriter;
-import org.jcvi.jillion.assembly.ctg.DefaultContigFileDataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestContigFileWriter {
     ByteArrayOutputStream out;
     CtgFileWriter sut;
-    static CtgContigDataStore dataStore;
+    static TigrContigDataStore dataStore;
     private static String pathToFile = "files/gcv_23918.contig";
     private final static ResourceHelper RESOURCES = new ResourceHelper(TestContigFileWriter.class);
     
     @BeforeClass
     public static void parseContigs() throws IOException{
-       dataStore = DefaultContigFileDataStore.create(RESOURCES.getFile(pathToFile));
+    	NucleotideSequenceFastaDataStore fullLengthReads = new NucleotideSequenceFastaFileDataStoreBuilder(RESOURCES.getFile("files/gcv_23918.raw.seq.fasta.fasta"))
+    															.build();
+       dataStore = new TigrContigFileDataStoreBuilder(RESOURCES.getFile(pathToFile), fullLengthReads)
+       						.build();
+       
     }
     @Before
     public void setup(){
@@ -61,14 +63,14 @@ public class TestContigFileWriter {
     
     @Test
     public void write() throws IOException, DataStoreException{
-    	StreamingIterator<Contig<AssembledRead>> iter = dataStore.iterator();
+    	StreamingIterator<TigrContig> iter = dataStore.iterator();
     	try{
         while(iter.hasNext()){
-        	Contig<AssembledRead> contig = iter.next();
+        	TigrContig contig = iter.next();
             sut.write(contig);
         }
     	}finally{
-    		IOUtil.closeAndIgnoreErrors(iter);
+    		IOUtil.closeAndIgnoreErrors(iter,sut);
     	}
         InputStream inputStream=null;
         try{

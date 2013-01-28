@@ -25,7 +25,9 @@
  */
 package org.jcvi.jillion.assembly.ace;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,12 +35,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.jillion.assembly.AssembledRead;
-import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.ContigDataStore;
-import org.jcvi.jillion.assembly.ace.AceContig;
-import org.jcvi.jillion.assembly.ace.AceFileContigDataStore;
-import org.jcvi.jillion.assembly.ctg.DefaultContigFileDataStore;
+import org.jcvi.jillion.assembly.ctg.TigrContig;
+import org.jcvi.jillion.assembly.ctg.TigrContigDataStore;
+import org.jcvi.jillion.assembly.ctg.TigrContigFileDataStoreBuilder;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -47,7 +46,7 @@ import org.junit.After;
 import org.junit.Test;
 
 public abstract class  AbstractTestAceParserMatchesAce2Contig {
-    ContigDataStore<AssembledRead, Contig<AssembledRead>> expectedContigDataStore;
+    TigrContigDataStore expectedContigDataStore;
     ResourceHelper RESOURCES = new ResourceHelper(AbstractTestAceParserMatchesAce2Contig.class);
     private final String pathToAceFile;
     
@@ -65,7 +64,10 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
 			);
     
     AbstractTestAceParserMatchesAce2Contig(String aceFile, String contigFile) throws IOException, DataStoreException{
-        this.expectedContigDataStore = DefaultContigFileDataStore.create(RESOURCES.getFile(contigFile));
+       
+    	
+    	this.expectedContigDataStore = new TigrContigFileDataStoreBuilder(RESOURCES.getFile(contigFile),AceContigTestUtil.createFullLengthSeqDataStoreFrom(RESOURCES.getFile(aceFile)))
+											.build();
         pathToAceFile = aceFile;
         sut = createDataStoreFor(RESOURCES.getFile(aceFile));
     }
@@ -112,7 +114,7 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
     		while(iter.hasNext()){
     			AceContig actualContig = iter.next();
     			assertTrue(expectedContigDataStore.contains(actualContig.getId()));
-			  Contig<AssembledRead> expectedContig = expectedContigDataStore.get(actualContig.getId());
+			  TigrContig expectedContig = expectedContigDataStore.get(actualContig.getId());
     	      AceContigTestUtil.assertContigsEqual(expectedContig, actualContig);
     	       
     		}
@@ -126,7 +128,7 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
     	
     	
     	for(String id : IDS){
-    		Contig<AssembledRead> expected = expectedContigDataStore.get(id);
+    		TigrContig expected = expectedContigDataStore.get(id);
     		AceContig actual = sut.get(id);
     		AceContigTestUtil.assertContigsEqual(expected, actual);
     	}

@@ -28,13 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
-import org.jcvi.jillion.assembly.ace.AceAssembledRead;
-import org.jcvi.jillion.assembly.ace.AceContig;
-import org.jcvi.jillion.assembly.ace.AceContigDataStoreBuilder;
-import org.jcvi.jillion.assembly.ace.AceFileContigDataStore;
-import org.jcvi.jillion.assembly.ace.AceFileParser;
-import org.jcvi.jillion.assembly.ace.AceFileUtil;
-import org.jcvi.jillion.assembly.ace.DefaultAceFileDataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
@@ -70,7 +63,7 @@ public class TestAceFileUtil_writingAceContigs {
         
         PhdDataStore phdDataStore = new ArtificalPhdDataStore(nucleotideDataStore, qualityDataStore, phdDate);
        
-        AceFileContigDataStore aceDataStore = new AceAdapterContigFileDataStore(qualityFastaDataStore,phdDate,contigFile);
+        AceFileContigDataStore aceDataStore = AceAdapterContigFileDataStore.create(qualityFastaDataStore,phdDate,contigFile);
         
         
         ByteArrayOutputStream out = new ByteArrayOutputStream();
