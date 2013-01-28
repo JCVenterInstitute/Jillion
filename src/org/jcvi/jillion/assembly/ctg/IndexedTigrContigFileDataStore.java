@@ -24,55 +24,7 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
  */
 final class IndexedTigrContigFileDataStore implements TigrContigDataStore {
 
-	public static TigrContigDataStore create(File contigFile, DataStore<Long> fullLengthSequences, DataStoreFilter filter) throws IOException{
-		TigrContigFileParser parser =TigrContigFileParser.create(contigFile);
-		IndexedDataStorBuilder visitor = new IndexedDataStorBuilder(filter);
-		parser.accept(visitor);
-		return visitor.build(contigFile, fullLengthSequences, parser);
-	}
 	
-	
-	private static final class IndexedDataStorBuilder implements TigrContigFileVisitor{
-		private final DataStoreFilter filter;
-		private final Map<String, TigrContigVisitorMemento> mementos = new LinkedHashMap<String, TigrContigVisitorMemento>();
-		
-		
-		private IndexedDataStorBuilder(DataStoreFilter filter) {
-			this.filter = filter;
-		}
-
-		@Override
-		public TigrContigVisitor visitContig(
-				TigrContigVisitorCallback callback, String contigId) {
-			if(filter.accept(contigId)){
-				if(!callback.canCreateMemento()){
-					throw new IllegalStateException("indexed datastore needs to create mementos");
-				}
-				mementos.put(contigId, callback.createMemento());
-			}
-			//always skip actual contig data
-			return null;
-		}
-
-		@Override
-		public void visitIncompleteEnd() {
-			//no-op			
-		}
-
-		@Override
-		public void visitEnd() {
-			//no-op			
-		}
-		
-		public TigrContigDataStore build(File contigFile,
-				DataStore<Long> fullLengthSequences,
-				TigrContigFileParser parser){
-			return new IndexedTigrContigFileDataStore(contigFile,
-					filter,
-					fullLengthSequences,
-					parser, mementos);
-		}
-	}
 
 	private final Map<String, TigrContigVisitorMemento> mementos;
 	private final DataStore<Long> fullLengthSequences;
@@ -80,6 +32,13 @@ final class IndexedTigrContigFileDataStore implements TigrContigDataStore {
 	private final File contigFile;
 	private volatile boolean closed=false;
 	private final TigrContigFileParser parser;
+	
+	public static TigrContigDataStore create(File contigFile, DataStore<Long> fullLengthSequences, DataStoreFilter filter) throws IOException{
+		TigrContigFileParser parser =TigrContigFileParser.create(contigFile);
+		IndexedDataStorBuilder visitor = new IndexedDataStorBuilder(filter);
+		parser.accept(visitor);
+		return visitor.build(contigFile, fullLengthSequences, parser);
+	}
 	
 	
 	private IndexedTigrContigFileDataStore(File contigFile,
@@ -186,5 +145,51 @@ final class IndexedTigrContigFileDataStore implements TigrContigDataStore {
 			//no-op			
 		}
 		
+	}
+	
+	
+	
+	
+	
+	private static final class IndexedDataStorBuilder implements TigrContigFileVisitor{
+		private final DataStoreFilter filter;
+		private final Map<String, TigrContigVisitorMemento> mementos = new LinkedHashMap<String, TigrContigVisitorMemento>();
+		
+		
+		private IndexedDataStorBuilder(DataStoreFilter filter) {
+			this.filter = filter;
+		}
+
+		@Override
+		public TigrContigVisitor visitContig(
+				TigrContigVisitorCallback callback, String contigId) {
+			if(filter.accept(contigId)){
+				if(!callback.canCreateMemento()){
+					throw new IllegalStateException("indexed datastore needs to create mementos");
+				}
+				mementos.put(contigId, callback.createMemento());
+			}
+			//always skip actual contig data
+			return null;
+		}
+
+		@Override
+		public void visitIncompleteEnd() {
+			//no-op			
+		}
+
+		@Override
+		public void visitEnd() {
+			//no-op			
+		}
+		
+		public TigrContigDataStore build(File contigFile,
+				DataStore<Long> fullLengthSequences,
+				TigrContigFileParser parser){
+			return new IndexedTigrContigFileDataStore(contigFile,
+					filter,
+					fullLengthSequences,
+					parser, mementos);
+		}
 	}
 }

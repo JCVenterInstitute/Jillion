@@ -422,7 +422,7 @@ public abstract class FastqFileParser {
 	
 	private static class ByteWidthOffsetMemento extends OffsetMemento{
 		
-		private byte value;
+		private final byte value;
 
 		public ByteWidthOffsetMemento(long value) {
 			this.value = IOUtil.toSignedByte((int)value);
@@ -437,7 +437,7 @@ public abstract class FastqFileParser {
 	
 	private static class ShortWidthOffsetMemento extends OffsetMemento{
 		
-		private short value;
+		private final short value;
 
 		public ShortWidthOffsetMemento(long value) {
 			this.value = IOUtil.toSignedShort((int)value);
@@ -452,7 +452,7 @@ public abstract class FastqFileParser {
 	
 	private static class IntWidthOffsetMemento extends OffsetMemento{
 		
-		private int value;
+		private final int value;
 
 		public IntWidthOffsetMemento(long value) {
 			this.value = IOUtil.toSignedInt(value);
@@ -466,7 +466,7 @@ public abstract class FastqFileParser {
 	}
 	private static class LongWidthOffsetMemento extends OffsetMemento{
 		
-		private long value;
+		private final long value;
 
 		public LongWidthOffsetMemento(long value) {
 			this.value = value;

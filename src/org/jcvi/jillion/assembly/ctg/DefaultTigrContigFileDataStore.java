@@ -8,8 +8,14 @@ import java.util.Map;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
-
-public class DefaultTigrContigFileDataStore {
+/**
+ * {@code DefaultTigrContigFileDataStore} is
+ * a {@link TigrContigDataStore} implementation
+ * that stores all {@link TigrContig}s in memory.
+ * @author dkatzel
+ *
+ */
+final class DefaultTigrContigFileDataStore {
 
 	public static TigrContigDataStore create(File contigFile, DataStore<Long> fullLengthSequenceDataStore, DataStoreFilter filter) throws IOException{
 		DataStoreBuilder visitor = new DataStoreBuilder(fullLengthSequenceDataStore, filter);
@@ -17,6 +23,9 @@ public class DefaultTigrContigFileDataStore {
 		return DataStoreUtil.adapt(TigrContigDataStore.class, visitor.contigs);
 	}
 	
+	private DefaultTigrContigFileDataStore(){
+		//can not instantiate
+	}
 	
 	private static final class DataStoreBuilder implements TigrContigFileVisitor{
 

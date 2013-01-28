@@ -12,6 +12,7 @@ import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterato
 
 final class LargeTigrContigFileDataStore implements TigrContigDataStore{
 
+	private static final String ERROR_PARSING_CONTIG_FILE = "error parsing contig file";
 	private final DataStoreFilter filter;
 	private final File contigFile;
 	private final DataStore<Long> fullLengthSequences;
@@ -55,7 +56,7 @@ final class LargeTigrContigFileDataStore implements TigrContigDataStore{
 			TigrContigFileParser.create(contigFile).accept(visitor);
 			return visitor.getContig();
 		} catch (IOException e) {
-			throw new DataStoreException("error parsing contig file", e);
+			throw new DataStoreException(ERROR_PARSING_CONTIG_FILE, e);
 		}
 	}
 
@@ -71,7 +72,7 @@ final class LargeTigrContigFileDataStore implements TigrContigDataStore{
 			TigrContigFileParser.create(contigFile).accept(visitor);
 			return visitor.contains();
 		} catch (IOException e) {
-			throw new DataStoreException("error parsing contig file", e);
+			throw new DataStoreException(ERROR_PARSING_CONTIG_FILE, e);
 		}
 	}
 
@@ -83,7 +84,7 @@ final class LargeTigrContigFileDataStore implements TigrContigDataStore{
 				TigrContigFileParser.create(contigFile).accept(visitor);
 				size = visitor.getSize();
 			} catch (IOException e) {
-				throw new DataStoreException("error parsing contig file", e);
+				throw new DataStoreException(ERROR_PARSING_CONTIG_FILE, e);
 			}
 		}
 		return size.longValue();
@@ -137,12 +138,12 @@ final class LargeTigrContigFileDataStore implements TigrContigDataStore{
 			try {
 				TigrContigFileParser.create(contigFile).accept(visitor);
 			} catch (IOException e) {
-				throw new RuntimeException("error parsing contig file",e);
+				throw new RuntimeException(ERROR_PARSING_CONTIG_FILE,e);
 			}
 		}
 	}
 	
-	private class ContainsVisitor implements TigrContigFileVisitor{
+	private static final class ContainsVisitor implements TigrContigFileVisitor{
 		private final String id;
 		private boolean contains=false;
 		

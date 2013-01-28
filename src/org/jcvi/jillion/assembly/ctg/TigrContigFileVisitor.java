@@ -2,7 +2,7 @@ package org.jcvi.jillion.assembly.ctg;
 
 public interface TigrContigFileVisitor {
 
-	public interface TigrContigVisitorCallback{
+	interface TigrContigVisitorCallback{
 		/**
 		 * {@code TigrContigVisitorMemento} is a marker
 		 * interface that {@link TigrContigFileParser}
@@ -15,7 +15,7 @@ public interface TigrContigFileVisitor {
 		 * @author dkatzel
 		 *
 		 */
-		public interface TigrContigVisitorMemento{
+		interface TigrContigVisitorMemento{
 			
 		}
 		/**
