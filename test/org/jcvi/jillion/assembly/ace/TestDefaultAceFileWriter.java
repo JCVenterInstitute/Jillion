@@ -28,16 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
-import org.jcvi.jillion.assembly.ace.AceAssembledRead;
-import org.jcvi.jillion.assembly.ace.AceContig;
-import org.jcvi.jillion.assembly.ace.AceFileContigDataStore;
-import org.jcvi.jillion.assembly.ace.AceFileWriter;
-import org.jcvi.jillion.assembly.ace.AceFileWriterBuilder;
-import org.jcvi.jillion.assembly.ace.ConsensusAceTag;
-import org.jcvi.jillion.assembly.ace.DefaultAceFileDataStore;
-import org.jcvi.jillion.assembly.ace.HighLowAceContigPhdDatastore;
-import org.jcvi.jillion.assembly.ace.ReadAceTag;
-import org.jcvi.jillion.assembly.ace.WholeAssemblyAceTag;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
@@ -84,7 +74,7 @@ public class TestDefaultAceFileWriter {
         
         PhdDataStore phdDataStore = new ArtificalPhdDataStore(nucleotideDataStore, qualityDataStore, phdDate);
        
-        AceFileContigDataStore aceDataStore = new AceAdapterContigFileDataStore(qualityFastaDataStore,phdDate,contigFile);
+        AceFileContigDataStore aceDataStore = AceAdapterContigFileDataStore.create(qualityFastaDataStore,phdDate,contigFile);
 
         File outputFile = folder.newFile();
         
@@ -111,7 +101,7 @@ public class TestDefaultAceFileWriter {
         
         PhdDataStore phdDataStore = new ArtificalPhdDataStore(nucleotideDataStore, qualityDataStore, phdDate);
        
-        AceFileContigDataStore aceDataStore = new AceAdapterContigFileDataStore(qualityFastaDataStore,phdDate,contigFile);
+        AceFileContigDataStore aceDataStore = AceAdapterContigFileDataStore.create(qualityFastaDataStore,phdDate,contigFile);
 
         File outputFile = folder.newFile();
         
@@ -138,7 +128,7 @@ public class TestDefaultAceFileWriter {
         
         PhdDataStore phdDataStore = new ArtificalPhdDataStore(nucleotideDataStore, qualityDataStore, phdDate);
        
-        AceFileContigDataStore aceDataStore = new AceAdapterContigFileDataStore(qualityFastaDataStore,phdDate,contigFile);
+        AceFileContigDataStore aceDataStore = AceAdapterContigFileDataStore.create(qualityFastaDataStore,phdDate,contigFile);
 
         File outputFile = folder.newFile();
         

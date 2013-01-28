@@ -22,9 +22,20 @@ package org.jcvi.jillion.assembly.ace;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 /**
@@ -35,7 +46,38 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 public final class AceContigTestUtil {
 
    
-
+	/**
+	 * Pull out the full length sequences (which are stored in the 
+	 * ace file) for all reads and return it as a {@link NucleotideSequenceDataStore}.
+	 * @param aceFile
+	 * @return
+	 * @throws IOException
+	 */
+	public static final NucleotideSequenceDataStore createFullLengthSeqDataStoreFrom(File aceFile) throws IOException{
+		final Map<String,NucleotideSequence> fullSequences = new HashMap<String, NucleotideSequence>();
+		AbstractAceFileVisitor visitor =new AbstractAceFileVisitor() {
+			
+			@Override
+			protected void visitNewContig(String contigId,
+					NucleotideSequence consensus, int numberOfBases, int numberOfReads,
+					boolean isComplemented) {
+				//no-op
+				
+			}
+			
+			@Override
+			protected void visitAceRead(String readId,
+					NucleotideSequence validBasecalls, int offset, Direction dir,
+					Range validRange, PhdInfo phdInfo, int ungappedFullLength) {
+				fullSequences.put(readId, new NucleotideSequenceBuilder(this.getCurrentFullLengthBasecalls())
+											.build());
+				
+			}
+		};
+		
+		AceFileParser.parse(aceFile, visitor);
+		return DataStoreUtil.adapt(NucleotideSequenceDataStore.class, fullSequences);
+	}
     
     public static  void assertContigsEqual(Contig<? extends AssembledRead> expected, Contig<? extends AssembledRead> actual) {
         assertEquals(expected.getId(), actual.getId()); 

@@ -22,40 +22,38 @@ package org.jcvi.jillion.assembly.tasm;
 
 import static org.junit.Assert.assertEquals;
 
-import org.jcvi.jillion.assembly.AssembledRead;
-import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.ContigDataStore;
-import org.jcvi.jillion.assembly.ctg.DefaultContigFileDataStore;
-import org.jcvi.jillion.assembly.tasm.DefaultTasmFileContigDataStore;
-import org.jcvi.jillion.assembly.tasm.TasmContig;
-import org.jcvi.jillion.assembly.tasm.TasmContigAdapter;
-import org.jcvi.jillion.assembly.tasm.TasmContigAttribute;
-import org.jcvi.jillion.assembly.tasm.TasmContigDataStore;
+import org.jcvi.jillion.assembly.ctg.TigrContig;
+import org.jcvi.jillion.assembly.ctg.TigrContigDataStore;
+import org.jcvi.jillion.assembly.ctg.TigrContigFileDataStoreBuilder;
 import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 public class TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes {
 
 	 private static final ResourceHelper RESOURCES = new ResourceHelper(TestTigrAssemblerContigDataStore.class);
 	    
-	    private static final ContigDataStore<AssembledRead, Contig<AssembledRead>> contigDataStore;
+	    private static final TigrContigDataStore contigDataStore;
 	    private static final TasmContigDataStore tasmDataStore;
 	    static{
 	        try {
-	            contigDataStore= DefaultContigFileDataStore.create(RESOURCES.getFile("files/giv-15050.contig"));
+	        	NucleotideSequenceFastaDataStore fullLengthFastas = new NucleotideSequenceFastaFileDataStoreBuilder(RESOURCES.getFile("files/giv-15050.fasta"))
+									.hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY)
+									.build();
+				contigDataStore= new TigrContigFileDataStoreBuilder(RESOURCES.getFile("files/giv-15050.contig"),fullLengthFastas)
+									.build();
+				 tasmDataStore= DefaultTasmFileContigDataStore.create(RESOURCES.getFile("files/giv-15050.tasm"), fullLengthFastas);
 	        } catch (Exception e) {
 	            throw new IllegalStateException("could not parse contig file",e);
 	        } 
-	        try {
-	            tasmDataStore= DefaultTasmFileContigDataStore.create(RESOURCES.getFile("files/giv-15050.tasm"));
-	        } catch (Exception e) {
-	            throw new IllegalStateException("could not parse contig file",e);
-	        } 
+	        
 	    }
 	    
 	    @Test
 	    public void adaptPB2() throws DataStoreException{
-	    	Contig<AssembledRead> contig =contigDataStore.get("15044");
+	    	TigrContig contig =contigDataStore.get("15044");
 	    	TasmContig tasm =tasmDataStore.get("1122071329926");
 	    	
 	    	TasmContigAdapter sut = new TasmContigAdapter.Builder(contig)

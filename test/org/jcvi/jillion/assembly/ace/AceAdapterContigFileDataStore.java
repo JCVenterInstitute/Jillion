@@ -26,18 +26,14 @@
 package org.jcvi.jillion.assembly.ace;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.jillion.assembly.ace.AceContig;
-import org.jcvi.jillion.assembly.ace.AceFileContigDataStore;
-import org.jcvi.jillion.assembly.ace.ConsensusAceTag;
-import org.jcvi.jillion.assembly.ace.ReadAceTag;
-import org.jcvi.jillion.assembly.ace.WholeAssemblyAceTag;
-import org.jcvi.jillion.assembly.ctg.ContigFileParser;
+import org.jcvi.jillion.assembly.ctg.TigrContigFileParser;
+import org.jcvi.jillion.assembly.ctg.TigrContigFileVisitor;
+import org.jcvi.jillion.assembly.ctg.TigrContigVisitor;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
@@ -45,34 +41,50 @@ import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.qual.QualitySequenceFastaDataStore;
 
-public class AceAdapterContigFileDataStore extends AbstractAceAdaptedContigFileDataStore implements AceFileContigDataStore{
+public class AceAdapterContigFileDataStore implements AceFileContigDataStore{
 
     private final Map<String, AceContig> map = new HashMap<String, AceContig>();
     private DataStore<AceContig> dataStore;
     private long totalNumberOfReads=0L;
-    /**
-     * @param phdDate
-     */
-    public AceAdapterContigFileDataStore(QualitySequenceFastaDataStore fullLengthFastXDataStore,Date phdDate) {
-        super(fullLengthFastXDataStore,phdDate);
-    }
-    public AceAdapterContigFileDataStore(QualitySequenceFastaDataStore fullLengthFastXDataStore, Date phdDate, File contigFile) throws FileNotFoundException{
-        this(fullLengthFastXDataStore,phdDate);
-        ContigFileParser.parse(contigFile, this);
-    }
-    @Override
-    protected void visitAceContig(AceContig aceContig) {
-        map.put(aceContig.getId(), aceContig);  
-        totalNumberOfReads += aceContig.getNumberOfReads();
-    }
 
-    @Override
-    public void visitEndOfFile() {
-        super.visitEndOfFile();
-        dataStore = DataStoreUtil.adapt(map);
-        map.clear();
+    public static AceFileContigDataStore create(final QualitySequenceFastaDataStore fullLengthFastXDataStore, final Date phdDate, File contigFile) throws IOException{
+    	final AceAdapterContigFileDataStore datastore = new AceAdapterContigFileDataStore();
+    	TigrContigFileVisitor visitor =new TigrContigFileVisitor() {
+			
+			@Override
+			public void visitIncompleteEnd() {
+				//no-op
+				
+			}
+			
+			@Override
+			public void visitEnd() {
+				datastore.dataStore = DataStoreUtil.adapt(datastore.map);
+			    datastore.map.clear();
+				
+			}
+			
+			@Override
+			public TigrContigVisitor visitContig(TigrContigVisitorCallback callback,
+					String contigId) {
+				return new AbstractAceAdaptedContigVisitor(contigId,fullLengthFastXDataStore, phdDate) {
+					
+					@Override
+					protected void visitContig(AceContig contig) {
+						datastore.map.put(contig.getId(), contig);  
+						datastore.totalNumberOfReads += contig.getNumberOfReads();
+						
+					}
+				};
+			}
+		};
+		
+		TigrContigFileParser.create(contigFile).accept(visitor);
+		return datastore;
     }
-
+    
+    
+   
     @Override
     public boolean contains(String id) throws DataStoreException {
         return dataStore.contains(id);

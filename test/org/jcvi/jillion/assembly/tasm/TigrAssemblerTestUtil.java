@@ -20,11 +20,13 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.tasm;
 
-import static org.junit.Assert.assertEquals;
+import java.io.IOException;
 
 import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.AssemblyTestUtil;
 import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.tasm.TasmContig;
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
@@ -32,16 +34,63 @@ public final class TigrAssemblerTestUtil {
 
 	private TigrAssemblerTestUtil(){}
 	
-	public static void assertAllReadsCorrectlyPlaced(Contig<AssembledRead> expected, TasmContig actual){
+	public static void assertAllReadsCorrectlyPlaced(Contig<? extends AssembledRead> expected, TasmContig actual){
 		StreamingIterator<? extends AssembledRead> iter=null;
 		try{
 			iter = expected.getReadIterator();
 			while(iter.hasNext()){
 				AssembledRead expectedRead = iter.next();
-				assertEquals(expectedRead, actual.getRead(expectedRead.getId()));
+				AssemblyTestUtil.assertPlacedReadCorrect(expectedRead, actual.getRead(expectedRead.getId()));
 			}
 		}finally{
 			IOUtil.closeAndIgnoreErrors(iter);
 		}
 	}
+	
+	public static enum FakeFullLengthDataStore implements DataStore<Long>{
+
+    	INSTANCE;
+    	
+		@Override
+		public void close() throws IOException {
+			//no-op
+			
+		}
+
+		@Override
+		public StreamingIterator<String> idIterator() throws DataStoreException {
+			//isn't used so we can throw exception
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Long get(String id) throws DataStoreException {
+			//always return the same long length should be long enough for sanger reads
+			return Long.valueOf(1200);
+		}
+
+		@Override
+		public boolean contains(String id) throws DataStoreException {
+			//fake 
+			return true;
+		}
+
+		@Override
+		public long getNumberOfRecords() throws DataStoreException {
+			//fake
+			return Integer.MAX_VALUE;
+		}
+
+		@Override
+		public boolean isClosed() {
+			return false;
+		}
+
+		@Override
+		public StreamingIterator<Long> iterator() throws DataStoreException {
+			//isn't used so we can throw exception
+			throw new UnsupportedOperationException();
+		}
+    	
+    }
 }
