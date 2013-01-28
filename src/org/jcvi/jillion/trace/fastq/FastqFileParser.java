@@ -110,7 +110,7 @@ public abstract class FastqFileParser {
         //now parse the qualities
         int expectedQualities =  (int)sequence.getLength();
 		 
-        StringBuilder qualityBuilder = new StringBuilder((int)expectedQualities);
+        StringBuilder qualityBuilder = new StringBuilder(expectedQualities);
         
     	while(qualityBuilder.length() < expectedQualities){
     		line = parser.nextLine();
