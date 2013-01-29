@@ -39,6 +39,9 @@ public enum TasmReadAttribute {
 	//explaining what each tasm attribute means
 	//comes from javadoc from cloe's TDBAssemblySequence object so
 	//I assume it's correct...
+	/**
+	 * The name of the sequence
+	 */
 	NAME("seq_name"),
 	/**
 	 * The assembly left end (1-based position of the ungapped
@@ -64,14 +67,42 @@ public enum TasmReadAttribute {
      * sequence has been reverse complemented in the assembly.
 	 */
 	SEQUENCE_RIGHT("seq_rend"),
+	/**
+	 * A 1 bit flag denoting if this is the best
+	 * read (?). 
+	 * 
+	 * @deprecated This field isn't used anymore
+	 * and defaults to 0.  
+	 */
+	@Deprecated
 	BEST("best"),
+	/**
+	 * Comment about this read. 
+	 * 
+	 * @deprecated This field isn't
+	 * used anymore and defaults to NULL.
+	 */
+	@Deprecated
 	COMMENT("comment"),
+	/**
+	 * What database this read is in.  
+	 * 
+	 * @deprecated This field
+	 * isn't used anymore since the TIGR
+	 * Project database separated out reads in different
+	 * databases so this field should always be NULL.
+	 */
+	@Deprecated
 	DB("db"),
 	/**
 	 * The <b>zero-based</b> offset of this sequence within the
      * <b>gapped</b> consensus
 	 */
 	CONTIG_START_OFFSET("offset"),
+	/**
+	 * The gapped VALID sequence of this read.  Only the trimmed portion
+	 * of this read that is used in the contig is included.
+	 */
 	GAPPED_SEQUENCE("lsequence"),
 	
 ;

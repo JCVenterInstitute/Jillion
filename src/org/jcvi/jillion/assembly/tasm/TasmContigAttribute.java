@@ -26,27 +26,126 @@ import java.util.Map;
 public enum TasmContigAttribute {
 	//ordinal order is the order in .tasm file
 	//not sure if we need to keep this order
-	//for bcp to work in Project database
+	//for bcp to work in TIGR Project database
+	/**
+	 * The ungapped consensus sequence as a string.
+	 */
 	UNGAPPED_CONSENSUS("sequence"),
+	/**
+	 * The gapped consensus sequence
+	 * as a string. Gaps are denoted by '-'s.
+	 */
 	GAPPED_CONSENSUS("lsequence"),
+	/**
+	 * The primary key (an int) of this contig
+	 * in the TIGR project database.
+	 */
 	ASMBL_ID("asmbl_id"),
-	CA_CONTIG_ID("ca_contig_id"),	
+	/**
+	 * A GUID of the corresponding
+	 * id from Celera Assembler.
+	 * If Celera Assembler was not 
+	 * used, then this field is either 
+	 * set to NULL or a new GUID should be generated
+	 * for it.
+	 */
+	CA_CONTIG_ID("ca_contig_id"),
+	/**
+	 * Comment explaining what this contig is
+	 * might include the name of the chromosome or
+	 * segment this contig belongs.
+	 */
 	COMMENT("comment"),	
+	/**
+	 * @deprecated No longer used.  This value
+	 * is always NULL.
+	 */
+	@Deprecated
 	SEQ_ID("seq_id"),
+	/**
+	 * Common name for this contig.
+	 * Often this value is a combination 
+	 * of the comment and bac id.
+	 */
 	COM_NAME("com_name"),	
+	/**
+	 * @deprecated No longer used.  This value
+	 * is always NULL.
+	 */
+	@Deprecated
 	TYPE("type"),
+	/**
+	 * The method used to create this
+	 * contig.  This value is often
+	 * the name of the assembler used
+	 * or the software program
+	 * that generated this contig.
+	 */
 	METHOD("method"),
+	/**
+	 * @deprecated No longer used.  This value
+	 * is always 0.
+	 */
+	@Deprecated
 	EDIT_STATUS("ed_status"),
+	/**
+	 * Average coverage of this contig 
+	 * as a floating point number,
+	 * usually to two decimal places.
+	 */
 	AVG_COVERAGE("redundancy"),
+	/**
+	 *  The number of Ns
+	 *  rounded to the nearest hundredth percent.
+	 *  This is usually not calculated and set to 0.0
+	 *  since most TIGR tools hardly ever call N's.
+	 */
 	PERCENT_N("perc_N"),
+	/**
+	 * Number of reads in this contig.
+	 */
 	NUMBER_OF_READS("seq#"),
+	/**
+	 * @deprecated Not used anymore seems to default to {@code 2}.
+	 */
+	@Deprecated
 	FULL_CDS("full_cds"),
+	/**
+	 * @deprecated Not used anymore seems to default to NULL.
+	 */
+	@Deprecated
 	CDS_START("cds_start"),
+	/**
+	 * @deprecated Not used anymore seems to default to NULL.
+	 */
+	@Deprecated
 	CDS_END("cds_end"),
+	/**
+	 * The username of the last person to edit 
+	 * this contig.
+	 */
 	EDIT_PERSON("ed_pn"),
+	/**
+	 * The date of the last edit to this contig.
+	 */
 	EDIT_DATE("ed_date"),
+	/**
+	 * @deprecated Not used anymore seems to default to NULL.
+	 */
+	@Deprecated
 	FRAME_SHIFT("frameshift"),
+	/**
+	 * Is this contig circular.
+	 */
 	IS_CIRCULAR("is_circular"),
+	/**
+	 * The bac id (sample id) that this contig belongs.
+	 * Since the TIGR project database was created 
+	 * projects moved away from being BAC based so
+	 * even though this id is named "bac id" 
+	 * it usually doesn't refer to a Bacterial Artifical
+	 * Chromosome, but just a sample id.
+	 */
 	BAC_ID("bac_id")
 	;
 	
