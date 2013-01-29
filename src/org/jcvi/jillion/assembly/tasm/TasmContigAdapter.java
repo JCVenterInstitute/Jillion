@@ -111,8 +111,6 @@ public final class TasmContigAdapter implements TasmContig{
 	}
 
 	private double computePercentNFor(Contig<? extends AssembledRead> delegate) {
-		// TODO is this supposed to be %N in reads or %N in consensus or both?
-		//going with consensus for now since its the assembly table
 		int numberOfNs =0;
 		for(Nucleotide g: delegate.getConsensusSequence()){
 			if(g == Nucleotide.Unknown){
@@ -243,25 +241,6 @@ public final class TasmContigAdapter implements TasmContig{
 			return EDIT_DATE_FORMATTER.format(editDate);
 		}
 		/**
-		 * Sets the {@link TasmContigAttribute#TYPE}
-		 * attribute for this adapted contig.  Calling this method
-		 * multiple times will overwrite previous entries with the current
-		 * entry. Setting the value to {@code null} will remove the current
-		 * entry (the type can later be re-added by calling this method 
-		 * again with a non-null value).
-		 * @param type the value of the type to set;
-		 * if this value is null, then the contig should not
-		 * have this attribute.
-		 * @return this.
-		 */
-		public Builder withType(String type){
-			if(type ==null){
-				optionalAttributes.remove(TasmContigAttribute.TYPE);
-			}
-			optionalAttributes.put(TasmContigAttribute.TYPE,type);
-			return this;
-		}
-		/**
          * Sets the {@link TasmContigAttribute#COMMENT}
          * attribute for this adapted contig.  Calling this method
          * multiple times will overwrite previous entries with the current
@@ -358,84 +337,7 @@ public final class TasmContigAdapter implements TasmContig{
 			optionalAttributes.put(TasmContigAttribute.METHOD,method);
 			return this;
 		}
-		/**
-		 * Sets the {@link TasmContigAttribute#EDIT_STATUS}
-		 * attribute for this adapted contig.  Calling this method
-		 * multiple times will overwrite previous entries with the current
-		 * entry. Setting the value to {@code null} will remove the current
-		 * entry (the edit status can later be re-added by calling this method 
-		 * again with a non-null value).
-		 * @param editStatus the value of the edit status to set;
-		 * if this value is null, then the contig should not
-		 * have this attribute.
-		 * @return this.
-		 */
-		public Builder withEditStatus(String editStatus){
-			if(editStatus ==null){
-				optionalAttributes.remove(TasmContigAttribute.EDIT_STATUS);
-			}
-			optionalAttributes.put(TasmContigAttribute.EDIT_STATUS,editStatus);
-			return this;
-		}
-		/**
-		 * Sets the {@link TasmContigAttribute#FULL_CDS}
-		 * attribute for this adapted contig.  Calling this method
-		 * multiple times will overwrite previous entries with the current
-		 * entry. Setting the value to {@code null} will remove the current
-		 * entry (the attribute can later be re-added by calling this method 
-		 * again with a non-null value).
-		 * @param fullCDS the value of the fullCDS to set;
-		 * if this value is null, then the contig should not
-		 * have this attribute.
-		 * @return this.
-		 */
-		public Builder withFullCDS(String fullCDS){
-			if(fullCDS ==null){
-				optionalAttributes.remove(TasmContigAttribute.FULL_CDS);
-			}
-			optionalAttributes.put(TasmContigAttribute.FULL_CDS,fullCDS);
-			return this;
-		}
-		/**
-		 * Sets the {@link TasmContigAttribute#CDS_START}
-		 * attribute for this adapted contig.  Calling this method
-		 * multiple times will overwrite previous entries with the current
-		 * entry. Setting the value to {@code null} will remove the current
-		 * entry (the attribute can later be re-added by calling this method 
-		 * again with a non-null value).
-		 * @param cdsStart the value of the cds start to set;
-		 * if this value is null, then the contig should not
-		 * have this attribute.
-		 * @return this.
-		 */
-		public Builder withCDSStart(Integer cdsStart){
-			if(cdsStart ==null){
-				optionalAttributes.remove(TasmContigAttribute.CDS_START);
-			}else{
-			    optionalAttributes.put(TasmContigAttribute.CDS_START,cdsStart.toString());
-			}
-			return this;
-		}
-		/**
-		 * Sets the {@link TasmContigAttribute#CDS_END}
-		 * attribute for this adapted contig.  Calling this method
-		 * multiple times will overwrite previous entries with the current
-		 * entry. Setting the value to {@code null} will remove the current
-		 * entry (the attribute can later be re-added by calling this method 
-		 * again with a non-null value).
-		 * @param cdsEnd the value of the cds end to set;
-		 * if this value is null, then the contig should not
-		 * have this attribute.
-		 * @return this.
-		 */
-		public Builder withCDSEnd(Integer cdsEnd){
-			if(cdsEnd ==null){
-				optionalAttributes.remove(TasmContigAttribute.CDS_END);
-			}else{
-			    optionalAttributes.put(TasmContigAttribute.CDS_END,cdsEnd.toString());
-			}
-			return this;
-		}
+
 		/**
 		 * Sets the edit person and edit date attributes for this contig.
 		 * Calling this method
@@ -458,25 +360,7 @@ public final class TasmContigAdapter implements TasmContig{
 			optionalAttributes.put(TasmContigAttribute.EDIT_DATE, formatEditDate(editDate));
 			return this;
 		}
-		/**
-		 * Sets the {@link TasmContigAttribute#FRAME_SHIFT}
-		 * attribute for this adapted contig.  Calling this method
-		 * multiple times will overwrite previous entries with the current
-		 * entry. Setting the value to {@code null} will remove the current
-		 * entry (the attribute can later be re-added by calling this method 
-		 * again with a non-null value).
-		 * @param frameShift the value of the frameShift to set;
-		 * if this value is null, then the contig should not
-		 * have this attribute.
-		 * @return this.
-		 */
-		public Builder withFrameShift(String frameShift){
-			if(frameShift ==null){
-				optionalAttributes.remove(TasmContigAttribute.FRAME_SHIFT);
-			}
-			optionalAttributes.put(TasmContigAttribute.FRAME_SHIFT,frameShift);
-			return this;
-		}
+
 		/**
 		 * Constructs a new TigrAssemblerContigAdapter with which
 		 * will adapt the given contig with the given
