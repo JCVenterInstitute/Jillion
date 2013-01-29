@@ -212,6 +212,7 @@
 					destdir = "javadoc"
 					windowtitle = "${project-name} API"
 					linksource= "yes"
+					overview="overview-summary.html"
 				access="public">
 			</javadoc>
 		</target>
