@@ -55,6 +55,7 @@
 
 	<path id="javadoc.sourcepath">
         <pathelement location="${src}"/>
+		<pathelement location="${src-impl}"/>
     </path>
 
 	<path id ="test.classpath">
