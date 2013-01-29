@@ -19,7 +19,7 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 /**
- * JCVI-JavaCommon is a library used at the J&#46; Craig Venter Institute
+ * Jillion is a library used at the J&#46; Craig Venter Institute
  * to analyze and manipulate Genomic Sequence Data.
  */
 package org.jcvi;

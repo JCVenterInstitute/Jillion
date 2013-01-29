@@ -22,11 +22,27 @@ package org.jcvi.jillion.assembly.tasm;
 
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+ * {@code TasmContigAttribute} 
+ * of all possible attribute keys
+ * that can be attributed to 
+ * a {@link TasmContig}.
+ * These values are fixed since the attributes
+ * correspond to the legacy TIGR
+ * internal database columns that used
+ * to store this information.
+ * <p/>
+ * The ordinal order of these attributes
+ * is the order they are listed
+ * in a TIGR Assembler {@literal .tasm}
+ * file.
+ * @author dkatzel
+ *
+ */
 public enum TasmContigAttribute {
 	//ordinal order is the order in .tasm file
 	//not sure if we need to keep this order
-	//for bcp to work in TIGR Project database
+	//for bcp and aloader to work in TIGR Project database
 	/**
 	 * The ungapped consensus sequence as a string.
 	 */
