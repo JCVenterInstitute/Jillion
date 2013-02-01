@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.tasm;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
@@ -232,7 +233,16 @@ public final class DefaultTasmContig implements TasmContig{
        
        
        
-        public Builder addAttribute(TasmContigAttribute attribute, String value){
+        @Override
+		public Collection<TasmAssembledReadBuilder> getAllAssembledReadBuilders() {
+			return (Collection<TasmAssembledReadBuilder>) super.getAllAssembledReadBuilders();
+		}
+		@Override
+		public TasmAssembledReadBuilder getAssembledReadBuilder(
+				String readId) {
+			return (TasmAssembledReadBuilder)super.getAssembledReadBuilder(readId);
+		}
+		public Builder addAttribute(TasmContigAttribute attribute, String value){
             this.contigAttributes.put(attribute, value);
             return this;
         }
@@ -252,7 +262,11 @@ public final class DefaultTasmContig implements TasmContig{
         }
     
         public Builder addReadAttributes(String id, EnumMap<TasmReadAttribute, String> readAttributes) {
-            readAttributeMaps.put(id, readAttributes);
+           if(readAttributeMaps.containsKey(id)){
+        	   readAttributeMaps.get(id).putAll(readAttributes);
+           }else{
+        	   readAttributeMaps.put(id, readAttributes);
+           }
             return this;
         }
         
