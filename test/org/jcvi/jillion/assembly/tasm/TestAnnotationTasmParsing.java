@@ -39,7 +39,8 @@ public class TestAnnotationTasmParsing {
 	 private final TasmContigDataStore datastore;
 	 public TestAnnotationTasmParsing() throws FileNotFoundException, IOException{
 		 NucleotideSequenceFastaDataStore empty = DataStoreUtil.adapt(NucleotideSequenceFastaDataStore.class, Collections.<String,NucleotideSequenceFastaRecord>emptyMap());
-		 datastore = DefaultTasmFileContigDataStore.create(RESOURCES.getFile("files/annotation.tasm"),empty);
+		 datastore = new TasmContigFileDataStoreBuilder(RESOURCES.getFile("files/annotation.tasm"),empty)
+		 							.build();
 			
 	 }
 	 @Test
@@ -102,5 +103,6 @@ public class TestAnnotationTasmParsing {
 		 
 		 TasmContig contig = datastore.get("1122071329927");
 		assertEquals(gappedConsensusOf927, contig.getConsensusSequence().toString());
+		assertEquals(0, contig.getNumberOfReads());
 	 }
 }

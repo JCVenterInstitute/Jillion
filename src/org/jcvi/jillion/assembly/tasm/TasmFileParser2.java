@@ -49,7 +49,7 @@ public abstract class TasmFileParser2 {
     	long currentOffset=initialOffset;
     	long currentBeginContigOffset = initialOffset;
          ContigState currentContigState=new ContigState();
-         ReadState currentReadState = new ReadState();
+         ReadState currentReadState = null;
          AbstractCallback callback=null;
          TasmContigVisitor contigVisitor=null;
          
@@ -70,59 +70,39 @@ public abstract class TasmFileParser2 {
             	 if(currentContigState!=null){
             		 callback = createCallback(currentBeginContigOffset);
             		 contigVisitor =visitor.visitContig(callback, currentContigState.contigId);
-            		 if(callback.keepParsing() && contigVisitor !=null){
-            			 contigVisitor.visitConsensus(currentContigState.consensus);
-            			 if(callback.keepParsing() && currentContigState.caContigId !=null){
-            				 contigVisitor.visitCeleraId(currentContigState.caContigId);
-            			 }else{
-            				 contigVisitor.visitIncompleteEnd();
-            			 }
-            			 if(callback.keepParsing()){
-            				 contigVisitor.visitComments(
-	            					 currentContigState.bacId, 
-	            					 currentContigState.comment, 
-	            					 currentContigState.comName, 
-	            					 currentContigState.assemblyMethod, 
-	            					 currentContigState.isCircular);
-            			 }else{
-            				 contigVisitor.visitIncompleteEnd();
-            			 }
-            			 if(callback.keepParsing()){
-            				 contigVisitor.visitCoverageData(currentContigState.numberOfReads, currentContigState.avgCoverage);
-            			 }else{
-            				 contigVisitor.visitIncompleteEnd();
-            			 }
-            			 if(callback.keepParsing()){
-            				 contigVisitor.visitLastEdited(currentContigState.editPerson, new Date(currentContigState.editDate));
-            			 }else{
-            				 contigVisitor.visitIncompleteEnd();
-            			 }
-            			 
-            			 
-            		 }
-            		 currentContigState=null;
-            		 currentReadState = new ReadState();
-            	 }else{
-            		 boolean endOfRecord = isEndOfRecord(line);
-            		 boolean endOfContig = isEndOfContig(line);
-            		 if(endOfRecord || endOfContig){                    
-                         handleRead(currentReadState, callback, contigVisitor);
-	            		 if(endOfContig){
-	            			 if(contigVisitor !=null){
-		            			 if(callback.keepParsing()){
-		            				 contigVisitor.visitEnd();
-		            			 }else{
-		            				 contigVisitor.visitIncompleteEnd();
-		            			 }
+            		 handleContigHeader(currentContigState, callback, contigVisitor);
+            		 currentReadState=null;
+            	 }
+            	 currentContigState=null;
+        		 boolean endOfRecord = isEndOfRecord(line);
+        		 boolean endOfContig = isEndOfContig(line);
+        		 if(endOfRecord || endOfContig){                    
+                     handleRead(currentReadState, callback, contigVisitor);
+            		 if(endOfContig){
+            			 if(contigVisitor !=null){
+	            			 if(callback.keepParsing()){
+	            				 contigVisitor.visitEnd();
+	            			 }else{
+	            				 contigVisitor.visitIncompleteEnd();
 	            			 }
+            			 }
+            			 if(callback.keepParsing()){
 	            			 currentContigState=new ContigState();
 	            			 currentBeginContigOffset = currentOffset;
-	            		 }
+            			 }
             		 }
-            	 } 
+            		 if(endOfRecord){
+            			 currentReadState = new ReadState();
+            		 }
+        		 }
              }
              
          }
+         if(currentContigState!=null){
+    		 callback = createCallback(currentBeginContigOffset);
+    		 contigVisitor =visitor.visitContig(callback, currentContigState.contigId);
+    		 handleContigHeader(currentContigState, callback, contigVisitor);
+    	 }
          handleRead(currentReadState, callback, contigVisitor);
          if(contigVisitor !=null){
 			 if(callback.keepParsing()){
@@ -134,6 +114,37 @@ public abstract class TasmFileParser2 {
          visitor.visitEnd();
         
     }
+	protected void handleContigHeader(ContigState currentContigState,
+			AbstractCallback callback, TasmContigVisitor contigVisitor) {
+		if(callback.keepParsing() && contigVisitor !=null){
+			 contigVisitor.visitConsensus(currentContigState.consensus);
+			 if(callback.keepParsing() && currentContigState.caContigId !=null){
+				 contigVisitor.visitCeleraId(currentContigState.caContigId);
+			 }else{
+				 contigVisitor.visitIncompleteEnd();
+			 }
+			 if(callback.keepParsing()){
+				 contigVisitor.visitComments(
+						 currentContigState.bacId, 
+						 currentContigState.comment, 
+						 currentContigState.comName, 
+						 currentContigState.assemblyMethod, 
+						 currentContigState.isCircular);
+			 }else{
+				 contigVisitor.visitIncompleteEnd();
+			 }
+			 if(callback.keepParsing()){
+				 contigVisitor.visitCoverageData(currentContigState.numberOfReads, currentContigState.avgCoverage);
+			 }else{
+				 contigVisitor.visitIncompleteEnd();
+			 }
+			 if(callback.keepParsing()){
+				 contigVisitor.visitLastEdited(currentContigState.editPerson, new Date(currentContigState.editDate));
+			 }else{
+				 contigVisitor.visitIncompleteEnd();
+			 }
+		 }
+	}
 
 	protected void handleRead(ReadState currentReadState,
 			AbstractCallback callback, TasmContigVisitor contigVisitor) {
