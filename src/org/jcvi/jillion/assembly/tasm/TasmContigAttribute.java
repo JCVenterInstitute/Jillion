@@ -159,7 +159,7 @@ public enum TasmContigAttribute {
 	 * Since the TIGR project database was created 
 	 * projects moved away from being BAC based so
 	 * even though this id is named "bac id" 
-	 * it usually doesn't refer to a Bacterial Artifical
+	 * it usually doesn't refer to a Bacterial Artificial
 	 * Chromosome, but just a sample id.
 	 */
 	BAC_ID("bac_id")

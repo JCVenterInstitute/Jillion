@@ -37,7 +37,7 @@ public interface TigrContigFileVisitor {
 		TigrContigVisitorMemento createMemento();
 		/**
 		 * Tell the {@link TigrContigFileParser} to stop parsing
-		 * the fastq file.  {@link TigrContigFileVisitor#visitEnd()}
+		 * the contig file.  {@link TigrContigFileVisitor#visitEnd()}
 		 * will still be called.
 		 */
 		void stopParsing();

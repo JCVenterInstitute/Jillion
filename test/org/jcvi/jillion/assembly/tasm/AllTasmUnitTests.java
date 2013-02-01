@@ -38,7 +38,11 @@ import org.junit.runners.Suite.SuiteClasses;
        TestTigrAssemblerWriter.class,
        TestTigrAssemblerPlacedReadAdapter.class,
        TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes.class,
-       TestAnnotationTasmParsing.class
+       TestAnnotationTasmParsing.class,
+       
+       TestDefaultTasmDataStore.class,
+       TestIndexedTasmDataStore.class,
+       TestLargeTasmDataStore.class
     }
     )
 public class AllTasmUnitTests {
