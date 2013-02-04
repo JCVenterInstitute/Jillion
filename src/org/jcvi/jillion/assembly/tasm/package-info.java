@@ -22,12 +22,12 @@
  * This package contains classes to handle  
  * TIGR Assembler formatted assembly files.
  * Files of this type are produced by
- * the legacy  TIGR Assembler
- * and usually have a file extension of .tasm
- * or .asm.  The .asm extension has been deprecated
+ * the legacy  TIGR Assembler program
+ * and usually have a file extension of {@literal .tasm}
+ * or {@literal .asm}.  The {@literal .asm} extension has been deprecated
  * since it can be easily confused with TIGR Assembler's
  * replacement, Celera Assembler, which also produces
- * assembly files with a .asm file extension although the data
+ * assembly files with a {@literal .asm} file extension although the data
  * is encoded completely differently.
  */
 package org.jcvi.jillion.assembly.tasm;

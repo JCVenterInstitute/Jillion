@@ -23,7 +23,22 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
-
+/**
+ * {@code TasmFileParser} can create
+ * parser objects that can parse
+ * TIGR Assembler encoded files ({@literal .tasm} files).
+ * Files of this type are produced by
+ * the legacy  TIGR Assembler program
+ * and usually have a file extension of {@literal .tasm} 
+ * or {@literal .asm}.  The {@literal .asm} extension has been deprecated
+ * since it can be easily confused with TIGR Assembler's
+ * replacement, Celera Assembler, which also produces
+ * assembly files with a {@literal .asm} file extension although the data
+ * is encoded completely differently.
+ * 
+ * @author dkatzel
+ *
+ */
 public abstract class TasmFileParser {
     /**
      * Each contig data is separated by a pipe ('|').

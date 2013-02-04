@@ -33,6 +33,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
+    	TestTasmUtil.class,
+    	
        TestDefaultTigrAssemblerAssembledReadBuilder.class,
        TestTigrAssemblerWriter.class,
        TestTigrAssemblerPlacedReadAdapter.class,
