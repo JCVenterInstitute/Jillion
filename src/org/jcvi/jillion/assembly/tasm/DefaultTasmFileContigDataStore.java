@@ -10,7 +10,7 @@ import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 /**
- * {@code DefaultTasmFileContigDataStore2}
+ * {@code DefaultTasmFileContigDataStore}
  * is a {@link TasmContigDataStore}
  * implementation that stores all {@link TasmContig}s
  * from a tasm file
@@ -18,7 +18,7 @@ import org.jcvi.jillion.core.datastore.DataStoreUtil;
  * @author dkatzel
  *
  */
-final class DefaultTasmFileContigDataStore2 {
+final class DefaultTasmFileContigDataStore {
 
 	public static TasmContigDataStore create(File tasmFile, DataStore<Long> fullLengthSequenceDataStore, DataStoreFilter filter) throws IOException{
 		Visitor visitor = new Visitor(filter,fullLengthSequenceDataStore);
@@ -26,7 +26,7 @@ final class DefaultTasmFileContigDataStore2 {
 		return DataStoreUtil.adapt(TasmContigDataStore.class, visitor.contigs);
 	}
 	
-	private DefaultTasmFileContigDataStore2(){
+	private DefaultTasmFileContigDataStore(){
 		//can not instantiate.
 	}
 	
