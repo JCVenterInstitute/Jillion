@@ -33,7 +33,7 @@ import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 public class TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes {
 
-	 private static final ResourceHelper RESOURCES = new ResourceHelper(TestTigrAssemblerContigDataStore.class);
+	 private static final ResourceHelper RESOURCES = new ResourceHelper(TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes.class);
 	    
 	    private static final TigrContigDataStore contigDataStore;
 	    private static final TasmContigDataStore tasmDataStore;

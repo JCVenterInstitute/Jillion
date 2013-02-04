@@ -11,7 +11,7 @@ import org.jcvi.jillion.internal.ResourceHelper;
 public class TestIndexedTasmDataStore extends AbstractTestTasmDataStore{
 
 	static{
-		ResourceHelper resources = new ResourceHelper(TestTigrAssemblerContigDataStore.class);
+		ResourceHelper resources = new ResourceHelper(TestIndexedTasmDataStore.class);
 
 		NucleotideSequenceFastaDataStore fullLengthFastas;
 		try {
