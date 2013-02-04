@@ -9,17 +9,28 @@ import org.jcvi.jillion.assembly.tasm.DefaultTasmContig.Builder;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
-
+/**
+ * {@code DefaultTasmFileContigDataStore2}
+ * is a {@link TasmContigDataStore}
+ * implementation that stores all {@link TasmContig}s
+ * from a tasm file
+ * in a {@link Map}.
+ * @author dkatzel
+ *
+ */
 final class DefaultTasmFileContigDataStore2 {
 
 	public static TasmContigDataStore create(File tasmFile, DataStore<Long> fullLengthSequenceDataStore, DataStoreFilter filter) throws IOException{
 		Visitor visitor = new Visitor(filter,fullLengthSequenceDataStore);
-		TasmFileParser2.create(tasmFile).accept(visitor);
+		TasmFileParser.create(tasmFile).accept(visitor);
 		return DataStoreUtil.adapt(TasmContigDataStore.class, visitor.contigs);
 	}
 	
+	private DefaultTasmFileContigDataStore2(){
+		//can not instantiate.
+	}
 	
-	private static final class Visitor implements TasmFileVisitor2{
+	private static final class Visitor implements TasmFileVisitor{
 		private final DataStoreFilter filter;
 		private final DataStore<Long> fullLengthSequenceDataStore;
 		private final Map<String, TasmContig> contigs = new LinkedHashMap<String, TasmContig>();

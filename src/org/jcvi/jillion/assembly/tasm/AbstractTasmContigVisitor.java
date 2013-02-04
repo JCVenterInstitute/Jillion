@@ -56,7 +56,7 @@ public abstract class  AbstractTasmContigVisitor implements TasmContigVisitor{
 	@Override
 	public void visitLastEdited(String username, Date editDate) {
 		builder.addAttribute(TasmContigAttribute.EDIT_PERSON, username);
-		builder.addAttribute(TasmContigAttribute.EDIT_DATE, TasmUtil.EDIT_DATE_FORMAT.format(editDate));
+		builder.addAttribute(TasmContigAttribute.EDIT_DATE, TasmUtil.formatEditDate(editDate));
 	}
 
 	@Override

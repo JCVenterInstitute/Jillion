@@ -3,36 +3,49 @@ package org.jcvi.jillion.assembly.tasm;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.jcvi.jillion.assembly.tasm.DefaultTasmContig.Builder;
-import org.jcvi.jillion.assembly.tasm.TasmFileVisitor2.TasmContigVisitorCallback.TasmContigVisitorMemento;
+import org.jcvi.jillion.assembly.tasm.TasmFileVisitor.TasmContigVisitorCallback.TasmContigVisitorMemento;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
-
-public class IndexedTasmFileDataStore implements TasmContigDataStore{
+/**
+ * {@code IndexedTasmFileDataStore} is a {@link TasmContigDataStore}
+ * implementation that only stores the 
+ * {@link TasmContigVisitorMemento}s for the 
+ * contig ids in a tasm file 
+ * that match the given {@link DataStoreFilter}.
+ * This will keep memory usage small put require
+ * additional I/O opperations to seek
+ * to the specified location and reparse the contig during
+ * calls to {@link #get(String)}.
+ * @author dkatzel
+ *
+ */
+final class IndexedTasmFileDataStore implements TasmContigDataStore{
 
 	private final DataStore<Long> fullLengthSequenceDataStore;
-	private final TasmFileParser2 parser;
+	private final TasmFileParser parser;
 	
-	private final LinkedHashMap<String, TasmContigVisitorMemento> mementos;
+	private final Map<String, TasmContigVisitorMemento> mementos;
 	
 	private volatile boolean closed=false;
 	
 	
 	public static TasmContigDataStore create(File tasmFile, DataStore<Long> fullLengthSequenceDataStore, DataStoreFilter filter) throws IOException{
 		IndexVisitor visitor = new IndexVisitor(filter);
-		TasmFileParser2 parser = TasmFileParser2.create(tasmFile);
+		TasmFileParser parser = TasmFileParser.create(tasmFile);
 		parser.accept(visitor);
 		return new IndexedTasmFileDataStore(parser, fullLengthSequenceDataStore, visitor.mementos);
 	}
 	
-	private IndexedTasmFileDataStore(TasmFileParser2 parser,
+	private IndexedTasmFileDataStore(TasmFileParser parser,
 			DataStore<Long> fullLengthSequenceDataStore,
-			LinkedHashMap<String, TasmContigVisitorMemento> mementos) {
+			Map<String, TasmContigVisitorMemento> mementos) {
 		this.parser = parser;
 		this.fullLengthSequenceDataStore = fullLengthSequenceDataStore;
 		this.mementos = mementos;
@@ -107,9 +120,9 @@ public class IndexedTasmFileDataStore implements TasmContigDataStore{
 
 
 
-	private static final class IndexVisitor implements TasmFileVisitor2{
+	private static final class IndexVisitor implements TasmFileVisitor{
 		private final DataStoreFilter filter;
-		private final LinkedHashMap<String, TasmContigVisitorMemento> mementos = new LinkedHashMap<String, TasmContigVisitorMemento>();
+		private final Map<String, TasmContigVisitorMemento> mementos = new LinkedHashMap<String, TasmContigVisitorMemento>();
 		
 		public IndexVisitor(DataStoreFilter filter) {
 			this.filter = filter;
@@ -142,7 +155,7 @@ public class IndexedTasmFileDataStore implements TasmContigDataStore{
 		
 	}
 
-	private class SingleContigVisitor implements TasmFileVisitor2{
+	private class SingleContigVisitor implements TasmFileVisitor{
 		private TasmContig contig;
 		@Override
 		public TasmContigVisitor visitContig(
