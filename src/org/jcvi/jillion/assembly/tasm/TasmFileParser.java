@@ -186,8 +186,7 @@ public abstract class TasmFileParser {
     	
     	@Override
 		public void stopParsing() {
-    		keepParsing = false;
-			
+    		keepParsing = false;			
 		}
 
 
@@ -196,7 +195,15 @@ public abstract class TasmFileParser {
     		return keepParsing;
     	}
     }
-
+    /**
+     * {@code ParserState} is an object
+     * that maintains the current {@link ContigState},
+     * {@link ReadState}, {@link TasmContigVisitor}
+     * and {@link TasmContigVisitorCallback}s
+     * to simplify code and reduce cyclomatic complexity.
+     * @author dkatzel
+     *
+     */
     private class ParserState{
     	 ContigState currentContigState=new ContigState();
          ReadState currentReadState = null;
@@ -235,34 +242,30 @@ public abstract class TasmFileParser {
          }
          
          protected void fireEndOfRead() {
-     		if(!keepParsing() || currentReadState ==null){
+     		if(!keepParsing() || currentReadState ==null || contigVisitor==null ){
      			return;
      		}
-     		//end of current read
-     		 if(contigVisitor!=null){
-     			 final Direction dir;
-     			 final Range validRange;
-     			 if(currentReadState.seqRight < currentReadState.seqLeft){
-     				 dir = Direction.REVERSE;
-     				 validRange = Range.of(CoordinateSystem.RESIDUE_BASED, currentReadState.seqRight, currentReadState.seqLeft);
-     			 }else{
-     				 dir = Direction.FORWARD;
-     				 validRange = Range.of(CoordinateSystem.RESIDUE_BASED, currentReadState.seqLeft, currentReadState.seqRight);
-     			 }
-     			 TasmContigReadVisitor readVisitor = contigVisitor.visitRead(currentReadState.id, currentReadState.gappedStartOffset, 
-     					 									dir, validRange);
-     			 if(readVisitor !=null && callback.keepParsing()){
-     				 readVisitor.visitBasecalls(currentReadState.sequence);
-     				 readVisitor.visitEnd();
-     			 }
-     		 }
+ 			 final Direction dir;
+ 			 final Range validRange;
+ 			 if(currentReadState.seqRight < currentReadState.seqLeft){
+ 				 dir = Direction.REVERSE;
+ 				 validRange = Range.of(CoordinateSystem.RESIDUE_BASED, currentReadState.seqRight, currentReadState.seqLeft);
+ 			 }else{
+ 				 dir = Direction.FORWARD;
+ 				 validRange = Range.of(CoordinateSystem.RESIDUE_BASED, currentReadState.seqLeft, currentReadState.seqRight);
+ 			 }
+ 			 TasmContigReadVisitor readVisitor = contigVisitor.visitRead(currentReadState.id, currentReadState.gappedStartOffset, 
+ 					 									dir, validRange);
+ 			 if(readVisitor !=null && callback.keepParsing()){
+ 				 readVisitor.visitBasecalls(currentReadState.sequence);
+ 				 readVisitor.visitEnd();
+ 			 }
      	}
          
          public void fireEndOfContigHeader(){
         	 if(currentContigState!=null){
-        		 callback = createCallback(beginContigHeaderOffset);
-        		 contigVisitor =visitor.visitContig(callback, currentContigState.contigId);
-        		 handleContigHeader(currentContigState, callback, contigVisitor);
+        		 callback = createCallback(beginContigHeaderOffset);        		 
+        		 contigVisitor= currentContigState.handleContigHeader(callback, visitor);
         		 currentReadState=null;
         	 }
         	 currentContigState=null;
@@ -278,39 +281,18 @@ public abstract class TasmFileParser {
     		 }
          }
          
-         private  void handleContigHeader(ContigState currentContigState,
-     			AbstractCallback callback, TasmContigVisitor contigVisitor) {
-     		if(callback.keepParsing() && contigVisitor !=null){
-     			 contigVisitor.visitConsensus(currentContigState.consensus);
-     			 if(callback.keepParsing() && currentContigState.caContigId !=null){
-     				 contigVisitor.visitCeleraId(currentContigState.caContigId);
-     			 }else{
-     				 contigVisitor.visitIncompleteEnd();
-     			 }
-     			 if(callback.keepParsing()){
-     				 contigVisitor.visitComments(
-     						 currentContigState.bacId, 
-     						 currentContigState.comment, 
-     						 currentContigState.comName, 
-     						 currentContigState.assemblyMethod, 
-     						 currentContigState.isCircular);
-     			 }else{
-     				 contigVisitor.visitIncompleteEnd();
-     			 }
-     			 if(callback.keepParsing()){
-     				 contigVisitor.visitCoverageData(currentContigState.numberOfReads, currentContigState.avgCoverage);
-     			 }else{
-     				 contigVisitor.visitIncompleteEnd();
-     			 }
-     			 if(callback.keepParsing()){
-     				 contigVisitor.visitLastEdited(currentContigState.editPerson, new Date(currentContigState.editDate));
-     			 }else{
-     				 contigVisitor.visitIncompleteEnd();
-     			 }
-     		 }
-     	}
+        
     }
-
+    /**
+     * {@code ContigState} keeps track of the current
+     * contig attributes parsed so far.
+     * when the entire contig header has been
+     * parsed (we start seeing read data or end of file for annotation contigs)
+     * we can we can use the data collected as parameters
+     * in the visit contig methods.
+     * @author dkatzel
+     *
+     */
 	private static class ContigState{
     	private String contigId;
     	private float avgCoverage=0F;
@@ -356,8 +338,77 @@ public abstract class TasmFileParser {
 				default : //do nothing
     		}
     	}
+    	
+    	
+    	
+    	public TasmContigVisitor handleContigHeader(AbstractCallback callback, TasmFileVisitor visitor) {
+     		
+    		TasmContigVisitor contigVisitor =visitor.visitContig(callback, contigId);
+    		if(callback.keepParsing() && contigVisitor !=null){
+     			 contigVisitor.visitConsensus(consensus);
+     			 visitCaId(callback, contigVisitor);
+     			 visitComments(callback, contigVisitor);
+     			 visitCoverage(callback, contigVisitor);
+     			 visitEnd(callback, contigVisitor);
+     		 }
+    		return contigVisitor;
+     	}
+
+
+		private void visitEnd(AbstractCallback callback,
+				TasmContigVisitor contigVisitor) {
+			if(callback.keepParsing()){
+				 contigVisitor.visitLastEdited(editPerson, new Date(editDate));
+			 }else{
+				 contigVisitor.visitIncompleteEnd();
+			 }
+		}
+
+
+		private void visitCoverage(AbstractCallback callback,
+				TasmContigVisitor contigVisitor) {
+			if(callback.keepParsing()){
+				 contigVisitor.visitCoverageData(numberOfReads, avgCoverage);
+			 }else{
+				 contigVisitor.visitIncompleteEnd();
+			 }
+		}
+
+
+		private void visitComments(AbstractCallback callback,
+				TasmContigVisitor contigVisitor) {
+			if(callback.keepParsing()){
+				 contigVisitor.visitComments(
+						 bacId, 
+						 comment, 
+						 comName, 
+						 assemblyMethod, 
+						 isCircular);
+			 }else{
+				 contigVisitor.visitIncompleteEnd();
+			 }
+		}
+
+
+		private void visitCaId(AbstractCallback callback,
+				TasmContigVisitor contigVisitor) {
+			if(callback.keepParsing() && caContigId !=null){
+				 contigVisitor.visitCeleraId(caContigId);
+			 }else{
+				 contigVisitor.visitIncompleteEnd();
+			 }
+		}
     }
-    
+	/**
+     * {@code ReadState} keeps track of the current
+     * read attributes parsed so far.
+     * when the entire read has been
+     * parsed (we start seeing the next read data or next contig or end of file)
+     * we can we can use the data collected as parameters
+     * in the visit read methods.
+     * @author dkatzel
+     *
+     */
 	private static class ReadState{
 		private NucleotideSequence sequence;
 		private String id;
