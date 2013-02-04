@@ -189,7 +189,7 @@ public class TasmContigFileDataStoreBuilder {
 	public TasmContigDataStore build() throws IOException {
 		switch(hint){
 		case OPTIMIZE_RANDOM_ACCESS_SPEED:
-			return DefaultTasmFileContigDataStore2.create(contigFile, fullSeqLengthDataStore, filter);
+			return DefaultTasmFileContigDataStore.create(contigFile, fullSeqLengthDataStore, filter);
 	case OPTIMIZE_RANDOM_ACCESS_MEMORY: return IndexedTasmFileDataStore.create(contigFile,fullSeqLengthDataStore, filter);
 	case OPTIMIZE_ITERATION: return new LargeTasmContigFileDataStore(contigFile, fullSeqLengthDataStore, filter);
 		default:
