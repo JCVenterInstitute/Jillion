@@ -5,8 +5,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
-public final class TasmUtil {
+/**
+ * Utility class for working with tasm files.
+ * @author dkatzel
+ *
+ */
+final class TasmUtil {
 
 	//03/05/10 01:52:31 PM
 	/**
@@ -19,12 +23,34 @@ public final class TasmUtil {
 	 private TasmUtil(){
 		 //can not instantiate
 	 }
-	 
-	 public synchronized static Date parseEditDate(String editDate) throws ParseException{
+	 /**
+	  * Parse the given string encoded
+	  * Tasm edit date.
+	  * @param editDate the edit date value from a tasm file.
+	  * @return the edit date as a {@link Date} object;
+	  * will never be null.
+	  * @throws ParseException if the edit date is not formatted
+	  * in the proper way for tasm files.
+	  * @throws NullPointerException if editDate is null.
+	  */
+	 public static synchronized  Date parseEditDate(String editDate) throws ParseException{
+		 if(editDate==null){
+			 throw new NullPointerException("edit date can not be null");
+		 }
 		 return TasmUtil.EDIT_DATE_FORMAT.parse(editDate);
 	 }
-	 
-	 public synchronized static String formatEditDate(Date editDate){
+	 /**
+	  * Format a {@link Date} in the correct String format
+	  * to it can be used in a tasm file.
+	  * @param editDate the {@link Date}; can not be null.
+	  * @return a String in the correct tasm edit date format;
+	  * will not be null.
+	  * @throws NullPointerException if editDate is null.
+	  */
+	 public static synchronized String formatEditDate(Date editDate){
+		 if(editDate==null){
+			 throw new NullPointerException("edit date can not be null");
+		 }
 		 return TasmUtil.EDIT_DATE_FORMAT.format(editDate);
 	 }
 }
