@@ -1,7 +1,22 @@
 package org.jcvi.jillion.assembly.ctg;
-
+/**
+ * {@code TigrContigFileVisitor} is a 
+ * visitor interface to visit
+ * contigs of a TIGR {@literal .contig}
+ * encoded file.
+ * @author dkatzel
+ *
+ */
 public interface TigrContigFileVisitor {
-
+	/**
+	 * {@code TigrContigVisitorCallback}
+	 * is a callback mechanism to allow the
+	 * {@link TigrContigVisitor} instances
+	 * to communicate with the parser
+	 * that is parsing the contig file.
+	 * @author dkatzel
+	 *
+	 */
 	interface TigrContigVisitorCallback{
 		/**
 		 * {@code TigrContigVisitorMemento} is a marker
@@ -43,10 +58,27 @@ public interface TigrContigFileVisitor {
 		void stopParsing();
 	}
 	
-	
+	/**
+	 * A new Contig has been detected in the contig file.
+	 * @param callback an instance of {@link TigrContigVisitorCallback};
+	 * will never be null.
+	 * @param contigId the contig id of this contig.
+	 * @return a {@link TigrContigVisitor} instance
+	 * if this contig should be visited;
+	 * if {@code null} is returned, then
+	 * this contig will not be visited.
+	 */
 	TigrContigVisitor visitContig(TigrContigVisitorCallback callback, String contigId);
-	
+	/**
+	 * The parser has stopped 
+	 * parsing but has not
+	 * actually finished the parsing the file,
+	 * this will happen only if 
+	 * a visitor calls {@link TigrContigVisitorCallback#stopParsing()}.
+	 */
 	void visitIncompleteEnd();
-	
+	/**
+	 * The entire file was visited.
+	 */
 	void visitEnd();
 }
