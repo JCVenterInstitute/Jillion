@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.nt;
 
-import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.Iterator;
@@ -131,13 +130,24 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * into a {@link Nucleotide}.
      */
     public NucleotideSequenceBuilder(String sequence){
+    	if(sequence ==null){
+    		throw new NullPointerException("sequence can not be null");
+    	}
     	NewValues newValues = new NewValues(sequence);
         this.bits = newValues.getBits();
         codecDecider = new CodecDecider(newValues);
         this.tail = newValues.getLength()*NUM_BITS_PER_VALUE;  
     }
-
+    /**
+     * Creates a new NucleotideSequenceBuilder instance
+     * which currently contains the given single nucleotide.
+     * @param singleNucleotide the initial nucleotide sequence.
+     * @throws NullPointerException if singleNucleotide is null.
+     */
     public NucleotideSequenceBuilder(Nucleotide singleNucleotide){
+    	if(singleNucleotide ==null){
+    		throw new NullPointerException("singleNucleotide can not be null");
+    	}
     	NewValues newValues = new NewValues(singleNucleotide);
         this.bits = newValues.getBits();
         codecDecider = new CodecDecider(newValues);
@@ -225,6 +235,9 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws NullPointerException if sequence is null.
      */
     public NucleotideSequenceBuilder append(String sequence){
+    	if(sequence ==null){
+    		throw new NullPointerException("sequence can not be null");
+    	}
         return append(new NewValues(sequence));
     }
     /**
@@ -1093,7 +1106,10 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     		this.bits = encodedBits;
     	}
     	public NewValues(Nucleotide nucleotide){
-    		this(Arrays.asList(nucleotide));
+    		bits = new BitSet();
+            int offset=0;
+            handle(nucleotide, offset);
+        	offset+=NUM_BITS_PER_VALUE;
     	}
     	public NewValues(String sequence){
     		bits = new BitSet();
