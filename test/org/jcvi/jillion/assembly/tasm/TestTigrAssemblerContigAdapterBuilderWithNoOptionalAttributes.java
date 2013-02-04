@@ -44,7 +44,8 @@ public class TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes {
 									.build();
 				contigDataStore= new TigrContigFileDataStoreBuilder(RESOURCES.getFile("files/giv-15050.contig"),fullLengthFastas)
 									.build();
-				 tasmDataStore= DefaultTasmFileContigDataStore.create(RESOURCES.getFile("files/giv-15050.tasm"), fullLengthFastas);
+				 tasmDataStore= new TasmContigFileDataStoreBuilder(RESOURCES.getFile("files/giv-15050.tasm"),	fullLengthFastas)
+													.build();
 	        } catch (Exception e) {
 	            throw new IllegalStateException("could not parse contig file",e);
 	        } 
@@ -75,7 +76,7 @@ public class TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes {
 	    	assertAttributeValueEquals(TasmContigAttribute.NUMBER_OF_READS,expected, actual);
 	    	assertAttributeValueEquals(TasmContigAttribute.IS_CIRCULAR,expected, actual);
 	    	
-	    	//avg coverage is actually computed by java common and estimated by legacy TIGR tools
+	    	//avg coverage is actually computed by jillion and estimated by legacy TIGR tools
 	    	//so be flexible with rounding errors
 	    	assertEquals(Float.parseFloat(expected.getAttributeValue(TasmContigAttribute.AVG_COVERAGE)), 
 	    			Float.parseFloat(actual.getAttributeValue(TasmContigAttribute.AVG_COVERAGE)),

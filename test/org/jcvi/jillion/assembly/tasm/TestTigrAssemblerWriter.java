@@ -46,7 +46,8 @@ public class TestTigrAssemblerWriter {
         	NucleotideSequenceFastaDataStore fullLengthFastas = new NucleotideSequenceFastaFileDataStoreBuilder(RESOURCES.getFile("files/giv-15050.fasta"))
 														.hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY)
 														.build();
-            tasmDataStore= DefaultTasmFileContigDataStore.create(RESOURCES.getFile("files/giv-15050.tasm"),fullLengthFastas);
+            tasmDataStore= new TasmContigFileDataStoreBuilder(RESOURCES.getFile("files/giv-15050.tasm"),	fullLengthFastas)
+									.build();
         } catch (Exception e) {
             throw new IllegalStateException("could not parse contig file",e);
         } 
@@ -66,7 +67,7 @@ public class TestTigrAssemblerWriter {
     public void whenDataStoreThrowsExceptionShouldWrapInIOException() throws DataStoreException{
     	TasmContigDataStore mockDataStore = createMock(TasmContigDataStore.class);
     	DataStoreException expectedException = new DataStoreException("expected");
-    	expect(mockDataStore.idIterator()).andThrow(expectedException);
+    	expect(mockDataStore.iterator()).andThrow(expectedException);
     	replay(mockDataStore);
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
     	try {
@@ -80,6 +81,7 @@ public class TestTigrAssemblerWriter {
     @Test
     public void rewrittenTasmShouldMatchOriginalByteForByte() throws IOException{
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
+    	
     	TasmFileWriter.write(tasmDataStore,out);
     	byte[] expected = IOUtil.toByteArray(RESOURCES.getFileAsStream("files/giv-15050.tasm"));
     	assertArrayEquals(expected, out.toByteArray());

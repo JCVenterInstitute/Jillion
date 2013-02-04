@@ -233,7 +233,8 @@ public final class DefaultTasmContig implements TasmContig{
        
        
        
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
 		public Collection<TasmAssembledReadBuilder> getAllAssembledReadBuilders() {
 			return (Collection<TasmAssembledReadBuilder>) super.getAllAssembledReadBuilders();
 		}

@@ -30,7 +30,8 @@ public interface TasmContigVisitor {
 	 * projects moved away from being BAC based so
 	 * even though this id is named "bac id" 
 	 * it usually doesn't refer to a Bacterial Artificial
-	 * Chromosome, but just a sample id.
+	 * Chromosome, but just a sample id. If this value
+	 * is null, then there is no bac id for this contig.
 	 * @param comment a String describing the chromosome or segment
 	 * this contig is part of.  ; will not be null or
 	 * empty. 
@@ -38,13 +39,14 @@ public interface TasmContigVisitor {
 	 * explains what this contig is. Often
 	 * this value includes the part of the comment
 	 * from and additional ids (for example bac id).
+	 * May be null which means no comment.
 	 * @param assemblyMethod a String explaining the method 
 	 * used to create this contig.
 	 * This value is often
 	 * the name and version of the assembler or software program.
 	 * @param isCircular is this contig circular.
 	 */
-	void visitComments(int bacId, String comment, String commonName, String assemblyMethod, boolean isCircular);
+	void visitComments(Integer bacId, String comment, String commonName, String assemblyMethod, boolean isCircular);
 
 	/**
 	 * Visit coverage information about this contig.
