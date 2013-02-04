@@ -30,7 +30,7 @@ final class TasmContigFileContigIterator extends AbstractBlockingStreamingIterat
 
 	@Override
 	protected void backgroundThreadRunMethod() throws RuntimeException {
-		TasmFileVisitor2 visitor = new TasmFileVisitor2() {
+		TasmFileVisitor visitor = new TasmFileVisitor() {
 			
 			@Override
 			public void visitIncompleteEnd() {
@@ -60,7 +60,7 @@ final class TasmContigFileContigIterator extends AbstractBlockingStreamingIterat
 		};
 		
 		try {
-			TasmFileParser2.create(contigFile).accept(visitor);
+			TasmFileParser.create(contigFile).accept(visitor);
 		} catch (IOException e) {
 			throw new RuntimeException("error parsing contig file",e);
 		}

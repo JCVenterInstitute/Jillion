@@ -1,7 +1,7 @@
 package org.jcvi.jillion.assembly.tasm;
 
 
-public interface TasmFileVisitor2 {
+public interface TasmFileVisitor {
 	
 	interface TasmContigVisitorCallback{
 		/**

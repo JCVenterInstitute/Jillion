@@ -9,7 +9,17 @@ import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
-
+/**
+ * {@code LargeTasmContigFileDataStore}
+ * is a {@link TasmContigDataStore}
+ * implementation that does not store
+ * any records in memory.  This keeps
+ * memory usage very low at the cost
+ * of having the reparse the file each 
+ * time a contig is requested.
+ * @author dkatzel
+ *
+ */
 final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 
 	private static final String ERROR_PARSING_CONTIG_FILE = "error parsing contig file";
@@ -53,7 +63,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 		}
 		GetVisitor visitor = new GetVisitor(id);
 		try {
-			TasmFileParser2.create(contigFile).accept(visitor);
+			TasmFileParser.create(contigFile).accept(visitor);
 			return visitor.getContig();
 		} catch (IOException e) {
 			throw new DataStoreException(ERROR_PARSING_CONTIG_FILE, e);
@@ -69,7 +79,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 		}
 		ContainsVisitor visitor = new ContainsVisitor(id);
 		try {
-			TasmFileParser2.create(contigFile).accept(visitor);
+			TasmFileParser.create(contigFile).accept(visitor);
 			return visitor.contains();
 		} catch (IOException e) {
 			throw new DataStoreException(ERROR_PARSING_CONTIG_FILE, e);
@@ -81,7 +91,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 		if(size ==null){
 			SizeVisitor visitor = new SizeVisitor();
 			try {
-				TasmFileParser2.create(contigFile).accept(visitor);
+				TasmFileParser.create(contigFile).accept(visitor);
 				size = visitor.getSize();
 			} catch (IOException e) {
 				throw new DataStoreException(ERROR_PARSING_CONTIG_FILE, e);
@@ -113,7 +123,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 		
 		@Override
 		protected void backgroundThreadRunMethod() throws RuntimeException {
-			TasmFileVisitor2 visitor = new TasmFileVisitor2() {
+			TasmFileVisitor visitor = new TasmFileVisitor() {
 				
 				@Override
 				public void visitIncompleteEnd() {
@@ -136,14 +146,14 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 			};
 			
 			try {
-				TasmFileParser2.create(contigFile).accept(visitor);
+				TasmFileParser.create(contigFile).accept(visitor);
 			} catch (IOException e) {
 				throw new RuntimeException(ERROR_PARSING_CONTIG_FILE,e);
 			}
 		}
 	}
 	
-	private static final class ContainsVisitor implements TasmFileVisitor2{
+	private static final class ContainsVisitor implements TasmFileVisitor{
 		private final String id;
 		private boolean contains=false;
 		
@@ -177,7 +187,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 		
 	}
 	
-	private class GetVisitor implements TasmFileVisitor2{
+	private class GetVisitor implements TasmFileVisitor{
 		private final String id;
 		
 		private TasmContig contig;
@@ -222,7 +232,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 	
 	
 	
-	private class SizeVisitor implements TasmFileVisitor2{
+	private class SizeVisitor implements TasmFileVisitor{
 		private long size = 0L;
 
 		@Override
