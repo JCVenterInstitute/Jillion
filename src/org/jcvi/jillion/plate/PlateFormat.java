@@ -50,6 +50,19 @@ public enum PlateFormat {
         this.numberOfRows =  numberOfWells/numberOfColumns;
     }
 
+    public static PlateFormat getFormatFor(int numberOfWells){
+    	
+    	if(numberOfWells <1){
+    		throw new IllegalArgumentException("number of wells must be positive");
+    	}
+    	for(PlateFormat f : values()){
+    		if(numberOfWells ==f.getNumberOfRows()){
+    			return f;
+    		}
+    	}
+    	throw new IllegalArgumentException("no plate format for " + numberOfWells);
+    }
+    
     public int getNumberOfWells() {
         return numberOfWells;
     }
