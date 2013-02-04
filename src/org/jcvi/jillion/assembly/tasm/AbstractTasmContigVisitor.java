@@ -24,7 +24,7 @@ public abstract class  AbstractTasmContigVisitor implements TasmContigVisitor{
 	@Override
 	public void visitConsensus(NucleotideSequence consensus) {
 		builder = new DefaultTasmContig.Builder(contigId, consensus);
-		
+		builder.addAttribute(TasmContigAttribute.ASMBL_ID, contigId);
 	}
 
 	@Override
@@ -34,10 +34,14 @@ public abstract class  AbstractTasmContigVisitor implements TasmContigVisitor{
 	}
 
 	@Override
-	public void visitComments(int bacId, String comment, String commonName,
+	public void visitComments(Integer bacId, String comment, String commonName,
 			String assemblyMethod, boolean isCircular) {
-		builder.addAttribute(TasmContigAttribute.BAC_ID, Integer.toString(bacId));
-		builder.addAttribute(TasmContigAttribute.COM_NAME, commonName);
+		if(bacId !=null){
+			builder.addAttribute(TasmContigAttribute.BAC_ID, bacId.toString());
+		}
+		if(commonName !=null){
+			builder.addAttribute(TasmContigAttribute.COM_NAME, commonName);
+		}
 		builder.addAttribute(TasmContigAttribute.METHOD, assemblyMethod);
 		builder.addAttribute(TasmContigAttribute.IS_CIRCULAR, isCircular?"1":"0");
 	}
@@ -81,7 +85,7 @@ public abstract class  AbstractTasmContigVisitor implements TasmContigVisitor{
 				readAttributes.put(TasmReadAttribute.NAME, readId);
 				readAttributes.put(TasmReadAttribute.CONTIG_START_OFFSET, Long.toString(gappedStartOffset));
 				readAttributes.put(TasmReadAttribute.GAPPED_SEQUENCE, gappedSequence);
-				final long seqleft,seqRight, asmLeft,asmRight;
+				final long seqleft,seqRight;
 				if(dir == Direction.FORWARD){
 					seqleft = validRange.getBegin(CoordinateSystem.RESIDUE_BASED);
 					seqRight = validRange.getEnd(CoordinateSystem.RESIDUE_BASED);
@@ -92,7 +96,6 @@ public abstract class  AbstractTasmContigVisitor implements TasmContigVisitor{
 				
 				readAttributes.put(TasmReadAttribute.SEQUENCE_LEFT, Long.toString(seqleft));
 				readAttributes.put(TasmReadAttribute.SEQUENCE_RIGHT, Long.toString(seqRight));
-				readAttributes.put(TasmReadAttribute.CONTIG_LEFT, Long.toString(seqRight));
 				
 				builder.addReadAttributes(readId, readAttributes);
 				
@@ -114,6 +117,7 @@ public abstract class  AbstractTasmContigVisitor implements TasmContigVisitor{
 	@Override
 	public void visitEnd() {
 		populateAsmLeftAndRight();
+		setConsensusAttributes();
 		visitRecord(builder);
 		builder=null;
 		
@@ -131,6 +135,15 @@ public abstract class  AbstractTasmContigVisitor implements TasmContigVisitor{
 			readBuilder.addAllAttributes(readAttributes);
 		}
 		
+	}
+
+	protected void setConsensusAttributes() {
+		builder.addAttribute(TasmContigAttribute.GAPPED_CONSENSUS, builder.getConsensusBuilder().toString());
+		builder.addAttribute(TasmContigAttribute.UNGAPPED_CONSENSUS, builder.getConsensusBuilder()
+																			.copy()
+																			.ungap().toString());
+		float percentNs = builder.getConsensusBuilder().getNumNs() / (float)builder.getConsensusBuilder().getLength();
+		builder.addAttribute(TasmContigAttribute.PERCENT_N, String.format("%.2f",percentNs));
 	}
 
 	protected abstract void visitRecord(DefaultTasmContig.Builder builder);

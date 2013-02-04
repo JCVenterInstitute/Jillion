@@ -23,7 +23,6 @@ package org.jcvi.jillion.assembly.tasm;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.util.Iterator;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -52,19 +51,21 @@ public final class TasmFileWriter {
 		if(datastore==null){
 			throw new NullPointerException("data store can not be null");
 		}
-		Iterator<String> contigIds;
+		StreamingIterator<TasmContig> iter=null;
 		try {
-			contigIds = datastore.idIterator();
+			iter = datastore.iterator();
 			
-			while(contigIds.hasNext()){
-				TasmContig contig =datastore.get(contigIds.next());
+			while(iter.hasNext()){
+				TasmContig contig =iter.next();
 				write(contig,out);
-				if(contigIds.hasNext()){
+				if(iter.hasNext()){
 					out.write(CONTIG_SEPARATOR);
 				}
 			}
 		} catch (DataStoreException e) {
 			throw new IOException("error writing tasm file",e);
+		}finally{
+			IOUtil.closeAndIgnoreErrors(iter);
 		}
 		
 	}

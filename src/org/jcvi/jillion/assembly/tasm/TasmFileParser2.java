@@ -259,7 +259,7 @@ public abstract class TasmFileParser2 {
     	private long editDate;
     	private boolean isCircular=false;
     	private int numberOfReads=0;
-    	private int bacId;
+    	private Integer bacId;
     	
     	public void handleAttribute(String key, String value) throws IOException{
     		 if("asmbl_id".equals(key)){
