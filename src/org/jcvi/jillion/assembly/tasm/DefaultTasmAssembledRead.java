@@ -20,12 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.tasm;
 
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.NoSuchElementException;
-
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
 import org.jcvi.jillion.assembly.DefaultAssembledRead;
@@ -43,8 +37,6 @@ import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
  *
  */
 final class DefaultTasmAssembledRead implements TasmAssembledRead{
-
-    private final Map<TasmReadAttribute,String> attributes;
     private final AssembledRead delegate;
     
     
@@ -54,6 +46,7 @@ final class DefaultTasmAssembledRead implements TasmAssembledRead{
             int ungappedFullLength){
         return new Builder(reference, readId, validBases, offset, dir, clearRange, ungappedFullLength);
     }
+
     /**
      * @param read
      * @param start
@@ -61,34 +54,9 @@ final class DefaultTasmAssembledRead implements TasmAssembledRead{
      */
     private DefaultTasmAssembledRead(
             AssembledRead read) {
-        this(read, new EnumMap<TasmReadAttribute,String>(TasmReadAttribute.class));
+        this.delegate = read;      
     }
-    /**
-     * @param read
-     * @param start
-     * @param sequenceDirection
-     */
-    private DefaultTasmAssembledRead(
-            AssembledRead read, Map<TasmReadAttribute, String> attributes) {
-        this.delegate = read;
-        Map<TasmReadAttribute, String> map = new EnumMap<TasmReadAttribute, String>(attributes);
-        this.attributes = Collections.unmodifiableMap(map);
-    }
-    @Override
-    public Map<TasmReadAttribute, String> getAttributes() {
-        return attributes;
-    }
-	@Override
-	public String getAttributeValue(TasmReadAttribute attribute) {
-		if(!hasAttribute(attribute)){
-			throw new NoSuchElementException("read does not contain attribute "+attribute);
-		}
-		return attributes.get(attribute);
-	}
-	@Override
-	public boolean hasAttribute(TasmReadAttribute attribute) {
-		return attributes.containsKey(attribute);
-	}
+  
 	
 	
     @Override
@@ -173,8 +141,6 @@ final class DefaultTasmAssembledRead implements TasmAssembledRead{
         final int prime = 31;
         int result = 1;
         result = prime * result
-                + ((attributes == null) ? 0 : attributes.hashCode());
-        result = prime * result
                 + ((delegate == null) ? 0 : delegate.hashCode());
         return result;
     }
@@ -193,13 +159,7 @@ final class DefaultTasmAssembledRead implements TasmAssembledRead{
             return false;
         }
         DefaultTasmAssembledRead other = (DefaultTasmAssembledRead) obj;
-        if (attributes == null) {
-            if (other.attributes != null) {
-                return false;
-            }
-        } else if (!attributes.equals(other.attributes)) {
-            return false;
-        }
+        
         if (delegate == null) {
             if (other.delegate != null) {
                 return false;
@@ -212,7 +172,6 @@ final class DefaultTasmAssembledRead implements TasmAssembledRead{
 	
     private static class Builder implements TasmAssembledReadBuilder{
 
-        private final Map<TasmReadAttribute, String> map =new EnumMap<TasmReadAttribute,String>(TasmReadAttribute.class);
         private final AssembledReadBuilder<AssembledRead> delegate;
         
         
@@ -224,7 +183,6 @@ final class DefaultTasmAssembledRead implements TasmAssembledRead{
         }
         private Builder(Builder copy){
           	 this.delegate = copy.delegate.copy();
-          	 this.map.putAll(copy.map);
           }
           
         @Override
@@ -236,17 +194,7 @@ final class DefaultTasmAssembledRead implements TasmAssembledRead{
    		public TasmAssembledReadBuilder copy() {
    			return new Builder(this);
    		}
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public TasmAssembledReadBuilder addAllAttributes(
-                Map<TasmReadAttribute, String> map) {
-            for(Entry<TasmReadAttribute, String> entry : map.entrySet()){
-                addAttribute(entry.getKey(), entry.getValue());
-            }
-            return this;
-        }
+       
 
         /**
         * {@inheritDoc}
@@ -324,7 +272,7 @@ final class DefaultTasmAssembledRead implements TasmAssembledRead{
         */
         @Override
         public TasmAssembledRead build() {
-            return new DefaultTasmAssembledRead(delegate.build(), map);
+            return new DefaultTasmAssembledRead(delegate.build());
         }
 
         /**
@@ -482,7 +430,6 @@ final class DefaultTasmAssembledRead implements TasmAssembledRead{
             int result = 1;
             result = prime * result
                     + ((delegate == null) ? 0 : delegate.hashCode());
-            result = prime * result + ((map == null) ? 0 : map.hashCode());
             return result;
         }
 
@@ -508,34 +455,8 @@ final class DefaultTasmAssembledRead implements TasmAssembledRead{
             } else if (!delegate.equals(other.delegate)) {
                 return false;
             }
-            if (map == null) {
-                if (other.map != null) {
-                    return false;
-                }
-            } else if (!map.equals(other.map)) {
-                return false;
-            }
+           
             return true;
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public TasmAssembledReadBuilder addAttribute(
-                TasmReadAttribute key, String value) {
-            map.put(key, value);
-            return this;
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public TasmAssembledReadBuilder removeAttribute(
-                TasmReadAttribute key) {
-            map.remove(key);
-            return this;
         }
         
     }

@@ -20,8 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.tasm;
 
-import java.util.Map;
-
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
 
 /**
@@ -31,9 +29,4 @@ import org.jcvi.jillion.assembly.AssembledReadBuilder;
  */
 public interface TasmAssembledReadBuilder extends AssembledReadBuilder<TasmAssembledRead>{
 
-    TasmAssembledReadBuilder addAttribute(TasmReadAttribute key, String value);
-    
-    TasmAssembledReadBuilder removeAttribute(TasmReadAttribute key);
-    
-    TasmAssembledReadBuilder addAllAttributes(Map<TasmReadAttribute,String> map);
 }

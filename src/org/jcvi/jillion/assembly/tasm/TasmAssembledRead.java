@@ -20,8 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.tasm;
 
-import java.util.Map;
-
 import org.jcvi.jillion.assembly.AssembledRead;
 
 /**
@@ -30,15 +28,5 @@ import org.jcvi.jillion.assembly.AssembledRead;
  *
  */
 public interface TasmAssembledRead extends AssembledRead{
-    /**
-     * Get the Tigr Assembler properties associated with this
-     * Read.
-     * @return a non-null {@link Map} containing all
-     * the attributes of this read as Key Value pairs.
-     */
-    Map<TasmReadAttribute,String> getAttributes();
-    
-    boolean hasAttribute(TasmReadAttribute attribute);
-    
-    String getAttributeValue(TasmReadAttribute attribute);
+
 }

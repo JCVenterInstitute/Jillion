@@ -68,21 +68,14 @@ public class TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes {
 	    
 	    private void assertRequiredAttributesAreEqual(TasmContig expected, TasmContigAdapter actual){
 	    	//apparently pull_contig sets the asmb_id to the ca_contig_id if present which will throw off our
-	    	//asmbl_id check
-	    	//	assertAttributeValueEquals(TigrAssemblerContigAttribute.ASMBL_ID,expected, actual);
-	    	assertAttributeValueEquals(TasmContigAttribute.UNGAPPED_CONSENSUS,expected, actual);
-	    	assertAttributeValueEquals(TasmContigAttribute.GAPPED_CONSENSUS,expected, actual);
-	    	assertAttributeValueEquals(TasmContigAttribute.PERCENT_N,expected, actual);
-	    	assertAttributeValueEquals(TasmContigAttribute.NUMBER_OF_READS,expected, actual);
-	    	assertAttributeValueEquals(TasmContigAttribute.IS_CIRCULAR,expected, actual);
+	    	//asmbl_id check	    	
+	    	assertEquals(expected.isCircular(), actual.isCircular());
 	    	
 	    	//avg coverage is actually computed by jillion and estimated by legacy TIGR tools
 	    	//so be flexible with rounding errors
-	    	assertEquals(Float.parseFloat(expected.getAttributeValue(TasmContigAttribute.AVG_COVERAGE)), 
-	    			Float.parseFloat(actual.getAttributeValue(TasmContigAttribute.AVG_COVERAGE)),
-	    			.1F);
+	    	assertEquals(expected.getAvgCoverage(), 
+	    			actual.getAvgCoverage(),
+	    			.1D);
 	    }
-	    private void assertAttributeValueEquals(TasmContigAttribute attribute,TasmContig expected,TasmContig actual ){
-	    	assertEquals(expected.getAttributeValue(attribute), actual.getAttributeValue(attribute));
-	    }
+
 }
