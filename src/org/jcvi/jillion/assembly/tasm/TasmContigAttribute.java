@@ -39,7 +39,7 @@ import java.util.Map;
  * @author dkatzel
  *
  */
-public enum TasmContigAttribute {
+enum TasmContigAttribute {
 	//ordinal order is the order in .tasm file
 	//not sure if we need to keep this order
 	//for bcp and aloader to work in TIGR Project database

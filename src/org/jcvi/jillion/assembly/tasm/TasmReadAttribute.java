@@ -34,7 +34,7 @@ import java.util.Map;
  * @author dkatzel
  *
  */
-public enum TasmReadAttribute {
+enum TasmReadAttribute {
 	//dkatzel- these java doc comments
 	//explaining what each tasm attribute means
 	//comes from javadoc from cloe's TDBAssemblySequence object so
