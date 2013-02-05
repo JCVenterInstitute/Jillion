@@ -20,21 +20,14 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.tasm;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
-import java.util.EnumMap;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
@@ -50,126 +43,102 @@ public final class TasmContigAdapter implements TasmContig{
 
 	private final Contig<? extends AssembledRead> delegate;
 	private final Map<String, TasmAssembledRead> adaptedReads = new LinkedHashMap<String, TasmAssembledRead>();
-	private final Map<TasmContigAttribute,String> attributes;
+	private final Long celeraAssemblerId;
+	private final String comment, commonName;
+	private final Integer sampleId;
+	private final Long asmblId;
+	
+	private final String editPerson;
+	private final Date editDate;
+	private final String assemblyMethod;
+	private final double avgCoverage;
+	private final boolean isCircular;
+	
 	/**
 	 * Private constructor only called by the Builder.
 	 * @param delegate
 	 * @param optionalAttributes
 	 * @see Builder
 	 */
-	private TasmContigAdapter(Contig<? extends AssembledRead> delegate, Map<TasmContigAttribute, String> optionalAttributes) {
+	private TasmContigAdapter(Contig<? extends AssembledRead> delegate,
+			Builder builder
+			) {
 		this.delegate = delegate;
 		StreamingIterator<? extends AssembledRead> iter = null;
+		long totalNumberOfReadBases=0L;
 		try{
 			iter = delegate.getReadIterator();
 			while(iter.hasNext()){
 				AssembledRead read = iter.next();
+				totalNumberOfReadBases += read.getNucleotideSequence().getUngappedLength();
 				adaptedReads.put(read.getId(), new TasmAssembledReadAdapter(read));
 			}
 		}finally{
 			IOUtil.closeAndIgnoreErrors(iter);
 		}
-		attributes = createNonConsensusAttributes(delegate,optionalAttributes);
-	}
-	/**
-	 * It's silly to store the gapped and ungapped consensus as
-	 * Strings when we have encoded glyph representations
-	 * so we will store all the other attributes
-	 * but generate the consensus attributes 
-	 * only when needed.
-	 * @param delegate
-	 * @param optionalAttributes
-	 * @return a Map containing all the adapted
-	 * attributes except for gapped and ungapped consensus.
-	 */
-	private Map<TasmContigAttribute,String> createNonConsensusAttributes(
-			Contig<? extends AssembledRead> delegate, Map<TasmContigAttribute, String> optionalAttributes) {
-		Map<TasmContigAttribute,String> map = new EnumMap<TasmContigAttribute,String>(TasmContigAttribute.class);
-		map.put(TasmContigAttribute.ASMBL_ID, delegate.getId());
-		map.put(TasmContigAttribute.NUMBER_OF_READS, ""+delegate.getNumberOfReads());
-		
-		map.put(TasmContigAttribute.IS_CIRCULAR, "0");
-		
-		double averageCoverage = computeAvgCoverageFor(delegate);
-		map.put(TasmContigAttribute.AVG_COVERAGE,String.format("%.2f",averageCoverage));
-		double percentN = computePercentNFor(delegate);
-		map.put(TasmContigAttribute.PERCENT_N,String.format("%.2f",percentN));
-		
-		map.putAll(optionalAttributes);
-		return map;
-	}
-	
-	private Map<TasmContigAttribute,String> generateConsensusAttributes(){
-		Map<TasmContigAttribute,String> map = new EnumMap<TasmContigAttribute,String>(TasmContigAttribute.class);
-		map.put(TasmContigAttribute.GAPPED_CONSENSUS, delegate.getConsensusSequence().toString());
-	
-		map.put(TasmContigAttribute.UNGAPPED_CONSENSUS, new NucleotideSequenceBuilder(delegate.getConsensusSequence())
-																	.ungap()
-																	.toString());
-		
-		return map;
-	}
-
-	private double computePercentNFor(Contig<? extends AssembledRead> delegate) {
-		int numberOfNs =0;
-		for(Nucleotide g: delegate.getConsensusSequence()){
-			if(g == Nucleotide.Unknown){
-				numberOfNs++;
-			}
-		}
-		return numberOfNs/(double)delegate.getConsensusSequence().getLength();
-	}
-
-	private double computeAvgCoverageFor(Contig<? extends AssembledRead> delegate) {
-		long ungappedConsensusLength=delegate.getConsensusSequence().getUngappedLength();
-		long bases=0;
-		StreamingIterator<? extends AssembledRead> iter =null;
-		try{
-			iter = delegate.getReadIterator();
-			while(iter.hasNext()){
-				AssembledRead read = iter.next();
-				bases+=read.getNucleotideSequence().getUngappedLength();
-			}
-		}finally{
-			IOUtil.closeAndIgnoreErrors(iter);
-		}		
-		return ((double)bases/ungappedConsensusLength);
+		avgCoverage = totalNumberOfReadBases/(double) delegate.getConsensusSequence().getUngappedLength();
+		this.sampleId = builder.sampleId;
+		this.celeraAssemblerId = builder.celeraAssemblerId;
+		this.editDate = builder.editDate;
+		this.editPerson = builder.editPerson;
+		this.comment = builder.comment;
+		this.commonName = builder.commonName;
+		this.assemblyMethod = builder.assemblyMethod;
+		this.isCircular = builder.isCircular;
+		this.asmblId = builder.asmblId;
 	}
 
 	@Override
-	public String getAttributeValue(TasmContigAttribute attribute) {
-		switch(attribute){
-		case UNGAPPED_CONSENSUS:
-		case GAPPED_CONSENSUS:
-			return generateConsensusAttributes().get(attribute);
-		default : 
-			return attributes.get(attribute);
-		}
-	}
-
-	private Map<TasmContigAttribute, String> createAllAttributes(){
-		Map<TasmContigAttribute,String> map = new EnumMap<TasmContigAttribute,String>(TasmContigAttribute.class);
-		map.putAll(attributes);
-		map.putAll(generateConsensusAttributes());
-		return map;
-		
+	public double getAvgCoverage() {
+		return avgCoverage;
 	}
 	@Override
-	public Map<TasmContigAttribute, String> getAttributes() {
-		return Collections.unmodifiableMap(createAllAttributes());
+	public Integer getSampleId() {
+		return sampleId;
 	}
 
-	
 	@Override
-	public boolean hasAttribute(TasmContigAttribute attribute) {
-		switch(attribute){
-		case UNGAPPED_CONSENSUS:
-		case GAPPED_CONSENSUS:
-			return true;
-		default : 
-			return attributes.containsKey(attribute);
-		}
+	public Long getCeleraAssemblerId() {
+		return celeraAssemblerId;
 	}
+
+	@Override
+	public Long getTigrProjectAssemblyId() {
+		return asmblId;
+	}
+
+	@Override
+	public String getAssemblyMethod() {
+		return assemblyMethod;
+	}
+
+	@Override
+	public String getComment() {
+		return comment;
+	}
+
+	@Override
+	public String getCommonName() {
+		return commonName;
+	}
+
+	@Override
+	public String getEditPerson() {
+		return editPerson;
+	}
+
+
+	@Override
+	public Date getEditDate() {
+		return editDate;
+	}
+	@Override
+	public boolean isCircular() {
+		return isCircular;
+	}
+
+
+
 
 	@Override
 	public boolean containsRead(String placedReadId) {
@@ -204,6 +173,8 @@ public final class TasmContigAdapter implements TasmContig{
 	}
 
 	
+	
+	
 	/**
 	 * {@code Builder} is a Builder object for making 
 	 * TigrAssemblerContigAdapter instances.  Some {@link TasmContigAttribute}s
@@ -217,18 +188,19 @@ public final class TasmContigAdapter implements TasmContig{
 	 */
 	public static class Builder implements org.jcvi.jillion.core.util.Builder<TasmContigAdapter>{
 
-		//03/05/10 01:52:31 PM
-		/**
-		 * This is the format that dates should be set as Strings
-		 * in the TIGR Project DB database.
-		 */
-		private static final DateFormat EDIT_DATE_FORMATTER =
-			new SimpleDateFormat("MM/dd/yy hh:mm:ss aa", Locale.US);
-		
-		
-		
+	
 		private final Contig<? extends AssembledRead> contig;
-		private final Map<TasmContigAttribute, String> optionalAttributes = new EnumMap<TasmContigAttribute, String>(TasmContigAttribute.class);
+		
+		
+		private Long celeraAssemblerId;
+		private String comment, commonName;
+		private Integer sampleId;
+		private String editPerson;
+		private Date editDate;
+		private String assemblyMethod;
+		private Long asmblId;
+		private boolean isCircular=false;
+		
 		/**
 		 * Adapts the given contig object into a TigrAssemblerContig.
 		 * @param contig the contig to adapt.
@@ -236,10 +208,7 @@ public final class TasmContigAdapter implements TasmContig{
 		public Builder(Contig<? extends AssembledRead> contig) {
 			this.contig = contig;
 		}
-		
-		private synchronized String formatEditDate(Date editDate){
-			return EDIT_DATE_FORMATTER.format(editDate);
-		}
+
 		/**
          * Sets the {@link TasmContigAttribute#COMMENT}
          * attribute for this adapted contig.  Calling this method
@@ -253,10 +222,7 @@ public final class TasmContigAdapter implements TasmContig{
          * @return this.
          */
         public Builder withComment(String comment){
-            if(comment ==null){
-                optionalAttributes.remove(TasmContigAttribute.COMMENT);
-            }
-            optionalAttributes.put(TasmContigAttribute.COMMENT,comment);
+           this.comment=comment;
             return this;
         }
         /**
@@ -272,10 +238,7 @@ public final class TasmContigAdapter implements TasmContig{
          * @return this.
          */
         public Builder withCommonName(String commonName){
-            if(commonName ==null){
-                optionalAttributes.remove(TasmContigAttribute.COM_NAME);
-            }
-            optionalAttributes.put(TasmContigAttribute.COM_NAME,commonName);
+           this.commonName = commonName;
             return this;
         }
         /**
@@ -292,34 +255,17 @@ public final class TasmContigAdapter implements TasmContig{
          * @return this.
          */
         public Builder withCeleraAssemblerContigId(String caId){
-            if(caId ==null){
-                optionalAttributes.remove(TasmContigAttribute.CA_CONTIG_ID);
-            }
-            optionalAttributes.put(TasmContigAttribute.CA_CONTIG_ID,caId);
+        	if(caId==null){
+        		this.celeraAssemblerId = null;
+        	}else{
+        		this.celeraAssemblerId = Long.parseLong(caId);
+        	}
             return this;
         }
         
-        /**
-         * Sets the {@link TasmContigAttribute#ASMBL_ID}
-         * attribute for this adapted contig.  Calling this method
-         * multiple times will overwrite previous entries with the current
-         * entry. Setting the value to {@code null} will remove the current
-         * entry (the type can later be re-added by calling this method 
-         * again with a non-null value). 
-         * @param asmblId the value of the asmbl_id to set;
-         * if this value is null, then the contig will default
-         * to the value returned by the adapted {@link Contig#getId()}
-         * @return this.
-         */
-        public Builder withAssembleId(String asmblId){
-            if(asmblId ==null){
-                optionalAttributes.remove(TasmContigAttribute.ASMBL_ID);
-            }
-            optionalAttributes.put(TasmContigAttribute.ASMBL_ID,asmblId);
-            return this;
-        }
+       
 		/**
-		 * Sets the {@link TasmContigAttribute#METHOD}
+		 * Sets the assembly method
 		 * attribute for this adapted contig.  Calling this method
 		 * multiple times will overwrite previous entries with the current
 		 * entry. Setting the value to {@code null} will remove the current
@@ -331,10 +277,7 @@ public final class TasmContigAdapter implements TasmContig{
 		 * @return this.
 		 */
 		public Builder withMethod(String method){
-			if(method ==null){
-				optionalAttributes.remove(TasmContigAttribute.METHOD);
-			}
-			optionalAttributes.put(TasmContigAttribute.METHOD,method);
+			this.assemblyMethod = method;
 			return this;
 		}
 
@@ -353,14 +296,35 @@ public final class TasmContigAdapter implements TasmContig{
 		 */
 		public Builder withEditInfo(String editPerson, Date editDate){
 			if(editPerson ==null || editDate ==null){
-				optionalAttributes.remove(TasmContigAttribute.EDIT_PERSON);
-				optionalAttributes.remove(TasmContigAttribute.EDIT_DATE);
+				this.editPerson = null;
+				this.editDate = null;
 			}
-			optionalAttributes.put(TasmContigAttribute.EDIT_PERSON,editPerson);
-			optionalAttributes.put(TasmContigAttribute.EDIT_DATE, formatEditDate(editDate));
+			this.editDate = new Date(editDate.getTime());
+			this.editPerson = editPerson;
 			return this;
 		}
 
+		public Builder isCircular(boolean isCircular){
+			this.isCircular = isCircular;
+			return this;
+		}
+		 /**
+         * Sets the {@link TasmContigAttribute#ASMBL_ID}
+         * attribute for this adapted contig.  Calling this method
+         * multiple times will overwrite previous entries with the current
+         * entry. Setting the value to {@code null} will remove the current
+         * entry (the type can later be re-added by calling this method 
+         * again with a non-null value). 
+         * @param asmblId the value of the asmbl_id to set;
+         * if this value is null, then the contig will default
+         * to the value returned by the adapted {@link Contig#getId()}
+         * @return this.
+         */
+		public Builder setTigrProjectAssemblyId(Long asmblId){
+			this.asmblId = asmblId;
+			return this;
+		}
+		
 		/**
 		 * Constructs a new TigrAssemblerContigAdapter with which
 		 * will adapt the given contig with the given
@@ -368,7 +332,7 @@ public final class TasmContigAdapter implements TasmContig{
 		 */
 		@Override
 		public TasmContigAdapter build() {
-			return new TasmContigAdapter(contig, optionalAttributes);
+			return new TasmContigAdapter(contig, this);
 		}
 		
 	}

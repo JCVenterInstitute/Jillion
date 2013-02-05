@@ -20,14 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.tasm;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.ReadInfo;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 /**
  * {@code TasmAssembledReadAdapter} is a Adapter which allows
@@ -51,58 +47,8 @@ public final class TasmAssembledReadAdapter implements TasmAssembledRead{
 			throw new NullPointerException("adapted read can not be null");
 		}
 		this.delegatePlacedRead = read;
-		generateAttributes();
 	}
-	/**
-	 * Rather than waste memory, we will regenerate
-	 * attributes on the fly
-	 * @return
-	 */
-	private Map<TasmReadAttribute, String> generateAttributes() {
-		Map<TasmReadAttribute, String> attributes = new EnumMap<TasmReadAttribute, String>(TasmReadAttribute.class);
-		attributes.put(TasmReadAttribute.NAME, getId());
-		NucleotideSequence consensus =delegatePlacedRead.getNucleotideSequence().getReferenceSequence();
-		
-		
-		int ungappedConsensusStart =1+ consensus.getUngappedOffsetFor((int)getGappedStartOffset());
-		int ungappedConsensusEnd =1+ consensus.getUngappedOffsetFor((int)getGappedEndOffset());
-		attributes.put(TasmReadAttribute.CONTIG_LEFT, ""+ungappedConsensusStart);
-		attributes.put(TasmReadAttribute.CONTIG_RIGHT, ""+ungappedConsensusEnd);
-		attributes.put(TasmReadAttribute.CONTIG_START_OFFSET, ""+(this.getGappedStartOffset()));
-		attributes.put(TasmReadAttribute.GAPPED_SEQUENCE, this.getNucleotideSequence().toString());
-		
-		Range validRange = this.getReadInfo().getValidRange();
-		if(this.getDirection()== Direction.FORWARD){
-			attributes.put(TasmReadAttribute.SEQUENCE_LEFT, ""+(validRange.getBegin()+1));
-			attributes.put(TasmReadAttribute.SEQUENCE_RIGHT, ""+(validRange.getEnd()+1));
-		}else{
-			//reverse gets left and right flipped
-			attributes.put(TasmReadAttribute.SEQUENCE_RIGHT, ""+(validRange.getBegin()+1));
-			attributes.put(TasmReadAttribute.SEQUENCE_LEFT, ""+(validRange.getEnd()+1));
-		}
-		return attributes;
-	}
-
-	@Override
-	public String getAttributeValue(TasmReadAttribute attribute) {
-		return generateAttributes().get(attribute);
-	}
-
-	@Override
-	public Map<TasmReadAttribute, String> getAttributes() {
-		return generateAttributes();
-	}
-
-	@Override
-	public boolean hasAttribute(TasmReadAttribute attribute) {
-		switch( attribute){
-			case BEST :
-			case COMMENT:
-			case DB: return false;
-			default :
-				return true;
-		}		
-	}
+	
 
 	@Override
 	public long toGappedValidRangeOffset(long referenceIndex) {
@@ -183,10 +129,9 @@ public final class TasmAssembledReadAdapter implements TasmAssembledRead{
 		}
 		
 		if (!(obj instanceof TasmAssembledRead)) {
-			return true;
+			return false;
 		}
-		TasmAssembledRead otherTigrRead = (TasmAssembledRead) obj;
-		return !generateAttributes().equals(otherTigrRead.getAttributes());
+		return true;
 	}
     /**
     * {@inheritDoc}
