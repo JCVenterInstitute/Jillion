@@ -49,7 +49,7 @@ public final class TasmContigAdapter implements TasmContig{
 	private final Long asmblId;
 	
 	private final String editPerson;
-	private final Date editDate;
+	private final Long editDate;
 	private final String assemblyMethod;
 	private final double avgCoverage;
 	private final boolean isCircular;
@@ -130,7 +130,9 @@ public final class TasmContigAdapter implements TasmContig{
 
 	@Override
 	public Date getEditDate() {
-		return editDate;
+		//create new Date everytime
+		//since Date is mutable
+		return new Date(editDate);
 	}
 	@Override
 	public boolean isCircular() {
@@ -196,7 +198,7 @@ public final class TasmContigAdapter implements TasmContig{
 		private String comment, commonName;
 		private Integer sampleId;
 		private String editPerson;
-		private Date editDate;
+		private Long editDate;
 		private String assemblyMethod;
 		private Long asmblId;
 		private boolean isCircular=false;
@@ -298,9 +300,10 @@ public final class TasmContigAdapter implements TasmContig{
 			if(editPerson ==null || editDate ==null){
 				this.editPerson = null;
 				this.editDate = null;
+			}else{
+				this.editDate = editDate.getTime();
+				this.editPerson = editPerson;
 			}
-			this.editDate = new Date(editDate.getTime());
-			this.editPerson = editPerson;
 			return this;
 		}
 
@@ -335,5 +338,25 @@ public final class TasmContigAdapter implements TasmContig{
 			return new TasmContigAdapter(contig, this);
 		}
 		
+		 /**
+         * Sets the {@link TasmContigAttribute#BAC_ID}
+         * attribute for this adapted contig.  Calling this method
+         * multiple times will overwrite previous entries with the current
+         * entry. Setting the value to {@code null} will remove the current
+         * entry (the type can later be re-added by calling this method 
+         * again with a non-null value). 
+         * @param sampleId the value of the sample id to set;
+         * may be null if this contig does not have a 
+         * sample id.
+         * @return this.
+         */
+        public Builder setSampleId(String sampleId){
+           if(sampleId==null){
+        	   this.sampleId = null;
+           }else{
+        	   this.sampleId = Integer.parseInt(sampleId);
+           }
+            return this;
+        }
 	}
 }
