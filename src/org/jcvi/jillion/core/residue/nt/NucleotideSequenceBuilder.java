@@ -1107,9 +1107,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	}
     	public NewValues(Nucleotide nucleotide){
     		bits = new BitSet();
-            int offset=0;
-            handle(nucleotide, offset);
-        	offset+=NUM_BITS_PER_VALUE;
+            handle(nucleotide, 0);
     	}
     	public NewValues(String sequence){
     		bits = new BitSet();

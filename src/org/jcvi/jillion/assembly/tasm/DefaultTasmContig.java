@@ -291,7 +291,7 @@ public final class DefaultTasmContig implements TasmContig{
 			if (other.getEditDate() != null) {
 				return false;
 			}
-		} else if (!editDate.equals(other.getEditDate())) {
+		} else if (editDate.longValue()!=other.getEditDate().getTime()) {
 			return false;
 		}
 		if (editPerson == null) {
@@ -501,9 +501,10 @@ public final class DefaultTasmContig implements TasmContig{
 			if(editPerson ==null || editDate ==null){
 				this.editPerson = null;
 				this.editDate = null;
+			}else{
+				this.editDate = Long.valueOf(editDate.getTime());
+				this.editPerson = editPerson;
 			}
-			this.editDate = Long.valueOf(editDate.getTime());
-			this.editPerson = editPerson;
 			return this;
 		}
 
