@@ -40,7 +40,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestDefaultQualitySequence.class,
         TestRunLengthEncodedQualitySequenceImpl.class,
         TestQualitySequenceBuilder.class,
-        
+        TestReallyLongRunLength.class,
         AllQualityTrimmerTests.class
     }
     )
