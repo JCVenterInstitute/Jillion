@@ -32,7 +32,7 @@ import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
  * @author dkatzel
  *
  */
-public final class TasmAssembledReadAdapter implements TasmAssembledRead{
+final class TasmAssembledReadAdapter implements TasmAssembledRead{
 
 	private final AssembledRead delegatePlacedRead;
 	
@@ -119,7 +119,7 @@ public final class TasmAssembledReadAdapter implements TasmAssembledRead{
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof AssembledRead)) {
+		if (!(obj instanceof TasmAssembledRead)) {
 			return false;
 		}
 		AssembledRead other = (AssembledRead) obj;
@@ -128,9 +128,7 @@ public final class TasmAssembledReadAdapter implements TasmAssembledRead{
 			return false;
 		}
 		
-		if (!(obj instanceof TasmAssembledRead)) {
-			return false;
-		}
+		
 		return true;
 	}
     /**

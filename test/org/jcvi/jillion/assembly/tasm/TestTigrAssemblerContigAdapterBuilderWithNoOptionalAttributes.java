@@ -57,16 +57,17 @@ public class TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes {
 	    	TigrContig contig =contigDataStore.get("15044");
 	    	TasmContig tasm =tasmDataStore.get("1122071329926");
 	    	
-	    	TasmContigAdapter sut = new TasmContigAdapter.Builder(contig)
+	    	TasmContig sut = new DefaultTasmContig.Builder(contig)
 	    									.build();
 	    	assertEquals(contig.getId(), sut.getId());
+	    	assertEquals(15044, sut.getTigrProjectAssemblyId().intValue());
 	    	assertEquals(contig.getConsensusSequence(), sut.getConsensusSequence());
 	    	assertEquals(contig.getNumberOfReads(), contig.getNumberOfReads());
 	    	TigrAssemblerTestUtil.assertAllReadsCorrectlyPlaced(contig, tasm);
 	    	assertRequiredAttributesAreEqual(tasm, sut);
 	    }
 	    
-	    private void assertRequiredAttributesAreEqual(TasmContig expected, TasmContigAdapter actual){
+	    private void assertRequiredAttributesAreEqual(TasmContig expected, TasmContig actual){
 	    	//apparently pull_contig sets the asmb_id to the ca_contig_id if present which will throw off our
 	    	//asmbl_id check	    	
 	    	assertEquals(expected.isCircular(), actual.isCircular());
