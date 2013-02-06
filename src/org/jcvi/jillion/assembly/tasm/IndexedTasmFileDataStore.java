@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.jillion.assembly.tasm.DefaultTasmContig.Builder;
 import org.jcvi.jillion.assembly.tasm.TasmFileVisitor.TasmContigVisitorCallback.TasmContigVisitorMemento;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -164,7 +163,7 @@ final class IndexedTasmFileDataStore implements TasmContigDataStore{
 			return new AbstractTasmContigVisitor(contigId, fullLengthSequenceDataStore) {
 				
 				@Override
-				protected void visitRecord(Builder builder) {
+				protected void visitRecord(TasmContigBuilder builder) {
 					contig= builder.build();
 					callback.stopParsing();
 				}

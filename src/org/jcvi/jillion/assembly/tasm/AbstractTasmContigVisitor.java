@@ -10,7 +10,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 public abstract class  AbstractTasmContigVisitor implements TasmContigVisitor{
 
-	private DefaultTasmContig.Builder builder;
+	private TasmContigBuilder builder;
 	private final String contigId;
 	private final DataStore<Long> fullRangeLengthDataStore;
 	
@@ -21,7 +21,7 @@ public abstract class  AbstractTasmContigVisitor implements TasmContigVisitor{
 	
 	@Override
 	public void visitConsensus(NucleotideSequence consensus) {
-		builder = new DefaultTasmContig.Builder(contigId, consensus);
+		builder = new TasmContigBuilder(contigId, consensus);
 	}
 
 	@Override
@@ -99,7 +99,13 @@ public abstract class  AbstractTasmContigVisitor implements TasmContigVisitor{
 	
 	
 
-
-	protected abstract void visitRecord(DefaultTasmContig.Builder builder);
+	/**
+	 * Visit a populated {@link TasmContigBuilder} instance
+	 * that has been created using the data from a single 
+	 * contig record in a tasm file.
+	 * @param builder a {@link TasmContigBuilder} instance;
+	 * never null.
+	 */
+	protected abstract void visitRecord(TasmContigBuilder builder);
 
 }

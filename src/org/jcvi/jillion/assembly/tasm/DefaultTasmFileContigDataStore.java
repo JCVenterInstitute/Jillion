@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.jillion.assembly.tasm.DefaultTasmContig.Builder;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
@@ -49,7 +48,7 @@ final class DefaultTasmFileContigDataStore {
 			return new AbstractTasmContigVisitor(contigId, fullLengthSequenceDataStore) {
 				
 				@Override
-				protected void visitRecord(Builder builder) {
+				protected void visitRecord(TasmContigBuilder builder) {
 					contigs.put(contigId, builder.build());
 					
 				}
