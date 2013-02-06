@@ -25,14 +25,15 @@
  */
 package org.jcvi.jillion.core.qual;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import java.nio.ByteBuffer;
 import java.util.List;
 
-import org.jcvi.jillion.core.qual.PhredQuality;
-import org.jcvi.jillion.core.qual.RunLengthEncodedQualityCodec;
+import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestRunLengthEncodedGlyphCodec {
 
     static private byte guard = Byte.valueOf((byte)70);
@@ -48,27 +49,29 @@ public class TestRunLengthEncodedGlyphCodec {
         int numberOfGuards =3;
         int numberOfRepeatedValues = 1;
         int numberOfNonRepeatedValues = 8;
-        final int expectedSize = 4+1+ numberOfNonRepeatedValues + 
-                                (numberOfGuards *3) +  (numberOfRepeatedValues *4);
+        //longest runlength can easily fit in byte
+        final int expectedSize = 6+ numberOfNonRepeatedValues + 
+                                (numberOfGuards *2) +  (numberOfRepeatedValues *3);
         ByteBuffer buf = ByteBuffer.allocate(expectedSize);
         buf.putInt(decodedValues.size());
         buf.put(guard);
+        buf.put((byte)ValueSizeStrategy.BYTE.ordinal());
         buf.put((byte)10);
         buf.put((byte)20);
         buf.put((byte)30);
         buf.put(guard);
-        buf.putShort((short)6);
+        buf.put((byte)6);
         buf.put((byte)40);
         buf.put((byte)50);
         buf.put((byte)6);
         buf.put(guard);
-        buf.putShort((short)0);
+        buf.put((byte)0);
         buf.put((byte)12);
         buf.put((byte)15);
         buf.put(guard);
-        buf.putShort((short)0);
+        buf.put((byte)0);
         buf.put(guard);
-        buf.putShort((short)0);
+        buf.put((byte)0);
         buf.put((byte)30);
         
         expected = buf.array();

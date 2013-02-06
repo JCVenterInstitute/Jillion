@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 import org.jcvi.jillion.internal.core.util.RunLength;
 /**
  * {@code RunLengthEncodedQualityCodec} is a {@link QualitySymbolCodec}
@@ -60,7 +61,8 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
     	  ByteBuffer buf = ByteBuffer.wrap(encodedData);
           int size = buf.getInt();
           byte guard = buf.get();
-          return new RunLengthIterator(buf, guard, size);
+          ValueSizeStrategy valueSizeStrategy = ValueSizeStrategy.values()[buf.get()];
+          return new RunLengthIterator(buf, guard,valueSizeStrategy, size);
     }
     public Iterator<PhredQuality> iterator(byte[] encodedData, Range r){
   	  ByteBuffer buf = ByteBuffer.wrap(encodedData);
@@ -70,16 +72,17 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
         			String.format("can not iterate over %s when sequence is only %d long", r, size));
         }
         byte guard = buf.get();
-        return new RunLengthIterator(buf, guard, r.getEnd()+1, r.getBegin());
+        ValueSizeStrategy valueSizeStrategy = ValueSizeStrategy.values()[buf.get()];
+        return new RunLengthIterator(buf, guard,valueSizeStrategy, r.getEnd()+1, r.getBegin());
   }
     
-    private PhredQuality get(ByteBuffer buf, byte guard,  long index){
+    private PhredQuality get(ByteBuffer buf, byte guard,  ValueSizeStrategy valueSizeStrategy, long index){
     	int currentOffset=0;
 		while(buf.hasRemaining()){
             byte runLengthCode = buf.get(); 
             byte currentValue;
             if( runLengthCode == guard){                                  
-            	int count = buf.getShort();            	 
+            	int count = valueSizeStrategy.getNext(buf);            	 
             	if(count==0){
             		currentOffset++;
             		currentValue = guard;
@@ -114,7 +117,8 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
         	throw new IndexOutOfBoundsException("can not have index beyond length");
         }
         byte guard = buf.get();
-        return get(buf,guard,index);
+        ValueSizeStrategy valueSizeStrategy = ValueSizeStrategy.values()[buf.get()];
+        return get(buf,guard,valueSizeStrategy, index);
     }
 
     @Override
@@ -126,31 +130,7 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
     @Override
     public byte[] encode(Collection<PhredQuality> glyphs) {
         List<RunLength<PhredQuality>> runLengthList = runLengthEncode(glyphs);
-        int size = computeSize(runLengthList);
-        ByteBuffer buf = ByteBuffer.allocate(size);
-        buf.putInt(glyphs.size());
-        buf.put(guard);
-        for(RunLength<PhredQuality> runLength : runLengthList){
-            if(runLength.getValue().getQualityScore() == guard){
-                
-                for(int repeatCount = 0; repeatCount<runLength.getLength(); repeatCount++){
-                    buf.put(guard);
-                    buf.putShort((byte)0);
-                }
-               
-            }
-            else{
-                if(runLength.getLength() ==1){
-                    buf.put(runLength.getValue().getQualityScore());
-                }
-                else{
-                    buf.put(guard);
-                    buf.putShort((short)runLength.getLength());
-                    buf.put(runLength.getValue().getQualityScore());
-                }
-            }
-        }
-        return buf.array();
+        return createEncodedByteArray(glyphs.size(), runLengthList);
     }
     
     public byte[] encode(byte[] qualities){
@@ -163,16 +143,18 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
     }
 	private byte[] createEncodedByteArray(int numberOfQualities,
 			List<RunLength<PhredQuality>> runLengthList) {
-		int size = computeSize(runLengthList);
-        ByteBuffer buf = ByteBuffer.allocate(size);
+		Metrics metrics = new Metrics(runLengthList);
+		ValueSizeStrategy sizeStrategy = metrics.getSizeStrategy();
+        ByteBuffer buf = ByteBuffer.allocate(metrics.computeEncodingSize());
         buf.putInt(numberOfQualities);
         buf.put(guard);
+        buf.put((byte)sizeStrategy.ordinal());
         for(RunLength<PhredQuality> runLength : runLengthList){
             if(runLength.getValue().getQualityScore() == guard){
                 
                 for(int repeatCount = 0; repeatCount<runLength.getLength(); repeatCount++){
                     buf.put(guard);
-                    buf.putShort((byte)0);
+                    sizeStrategy.put(buf, 0);
                 }
                
             }
@@ -182,7 +164,7 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
                 }
                 else{
                     buf.put(guard);
-                    buf.putShort((short)runLength.getLength());
+                    sizeStrategy.put(buf, runLength.getLength());
                     buf.put(runLength.getValue().getQualityScore());
                 }
             }
@@ -190,25 +172,7 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
         return buf.array();
 	}
 
-    private int computeSize(List<RunLength<PhredQuality>> runLengthList) {
-        int numGuards=0;
-        int singletons=0;
-        int nonSingletons=0;
-        for(RunLength<PhredQuality> runLength : runLengthList){
-            if(runLength.getValue().getQualityScore() == guard){
-                numGuards+=runLength.getLength();
-            }
-            else if(runLength.getLength() ==1){
-                singletons++;
-            }
-            else{
-                nonSingletons++;
-            }
-            
-        }
-        
-        return 4+1+(numGuards *3)+ singletons+(nonSingletons *4);
-    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -287,13 +251,15 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
 		private final long length;
 		private PhredQuality currentQuality;
 		private int currentRunEndOffset;
+		private final ValueSizeStrategy valueSizeStrategy;
 		
-		RunLengthIterator(ByteBuffer buf, byte guard, long length){
-			this(buf,guard,length,0L);
+		RunLengthIterator(ByteBuffer buf, byte guard,ValueSizeStrategy valueSizeStrategy, long length){
+			this(buf,guard,valueSizeStrategy, length,0L);
 		}
-		RunLengthIterator(ByteBuffer buf, byte guard, long length, long startOffset){
+		RunLengthIterator(ByteBuffer buf, byte guard, ValueSizeStrategy valueSizeStrategy,long length, long startOffset){
 			this.buf = buf;
 			this.guard =guard;
+			this.valueSizeStrategy = valueSizeStrategy;
 			currentOffset=startOffset;
 			this.length = length;
 			populateCurrentRun();
@@ -329,7 +295,7 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
 			byte runLengthCode = buf.get(); 
             byte currentValue;
             if( runLengthCode == guard){                                  
-            	int count = buf.getShort();            	 
+            	int count = valueSizeStrategy.getNext(buf);          	 
             	if(count==0){
             		currentRunEndOffset++;
             		currentValue = guard;
@@ -345,4 +311,55 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
             currentQuality = PhredQuality.valueOf(currentValue);
 		}
 	}
+    
+    private class Metrics{
+    	private int numGuards=0;
+    	private int singletons=0;
+    	private int nonSingletons=0;
+        
+    	private int maxRunLength=0;
+        
+    	private final ValueSizeStrategy sizeStrategy;
+    	public Metrics(List<RunLength<PhredQuality>> runLengthList){
+    		for(RunLength<PhredQuality> runLength : runLengthList){
+    			int length = runLength.getLength();
+    			if(length > maxRunLength){
+    				maxRunLength = length;
+    			}
+                if(runLength.getValue().getQualityScore() == guard){
+                    numGuards+=length;
+                }
+                else if(length ==1){
+                    singletons++;
+                }
+                else{
+                    nonSingletons++;
+                }
+                
+            }
+    		
+    		sizeStrategy = ValueSizeStrategy.getStrategyFor(maxRunLength);
+    	}
+    	
+    	public int computeEncodingSize() {
+    		//each qual value is 1 byte 
+            
+            int bytesPerLength = sizeStrategy.getNumberOfBytesPerValue();
+            //header is 4 bytes for length + 1 byte for guard + 1 byte for size strategy
+			int header = 6;
+			//each guarded entry is sizeStrategy + qual value
+			int sizeOfGuardedSections = numGuards *(bytesPerLength +1);
+			//each singleton is a qual value
+			int sizeOfSingletons = singletons;
+			//each non-singleton is sizeStrategy + qual value + guard
+			int sizeOfNonSingletons = nonSingletons * (bytesPerLength + 2);
+			return header+sizeOfGuardedSections+ sizeOfSingletons+sizeOfNonSingletons;
+        }
+
+		public final ValueSizeStrategy getSizeStrategy() {
+			return sizeStrategy;
+		}
+    	
+    	
+    }
 }
