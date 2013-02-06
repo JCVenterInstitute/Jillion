@@ -25,7 +25,7 @@ package org.jcvi.jillion.internal.trace.sanger.chromat.abi.tag.rate;
  *
  *
  */
-public final class DefaultScanRate implements ScanRate{
+final class DefaultScanRate implements ScanRate{
 
     private final int time, period, line;
     

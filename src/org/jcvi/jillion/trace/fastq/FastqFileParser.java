@@ -15,7 +15,6 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
-import org.jcvi.jillion.internal.core.util.VariableWidthInteger;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisitorMemento;
 /**
@@ -360,11 +359,12 @@ public abstract class FastqFileParser {
 		//need the "L" at the end to make the value a long otherwise it's an int with value -1 !
 		private static final long UNSIGNED_MAX_INT = 0xFFFFFFFFL;
 		/**
-		 * Create a new instance of a {@link VariableWidthInteger}
-		 * which will wrap the given value.
+		 * Create a new instance of a {@link OffsetMemento}
+		 * which will wrap the given value but use
+		 * as few bytes as possible.
 		 * @param value the value to wrap; may
 		 * be negative.
-		 * @return a VariableWidthInteger instance that
+		 * @return a n{@link OffsetMemento} instance that
 		 * wraps the given value in as few bytes as possible.
 		 */
 		public static OffsetMemento valueOf(long value){
