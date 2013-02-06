@@ -38,7 +38,20 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
         private final NucleotideSequenceBuilder consensus;
         private String id;
         private final Map<String, AssembledReadBuilder<P>> reads;
+        /**
+         * Create a new Builder instance with the given id and consensus.
+         * @param id can not be null.
+         * @param consensus can not be null.
+         * @throws NullPointerException if either id or consensus
+         * are null.
+         */
         public AbstractContigBuilder(String id, NucleotideSequence consensus){
+        	if(id==null){
+        		throw new NullPointerException("id can not be null");
+        	}
+        	if(consensus==null){
+        		throw new NullPointerException("consensus can not be null");
+        	}
             this.id = id;
             this.consensus = new NucleotideSequenceBuilder(consensus);
             reads = new LinkedHashMap<String,AssembledReadBuilder<P>>();

@@ -26,6 +26,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.jcvi.jillion.assembly.AbstractContigBuilder;
+import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.assembly.DefaultContig;
@@ -318,7 +319,7 @@ public final class DefaultTasmContig implements TasmContig{
 
 
 
-	public static class Builder extends AbstractContigBuilder<TasmAssembledRead, TasmContig>{
+	public static final class Builder extends AbstractContigBuilder<TasmAssembledRead, TasmContig>{
 		private Long celeraAssemblerId;
 		private String comment, commonName;
 		private Integer sampleId;
@@ -330,8 +331,18 @@ public final class DefaultTasmContig implements TasmContig{
 		private boolean isCircular;
 		
         /**
-         * @param id
-         * @param consensus
+         * Create a new Builder instance setting the
+         * contig id and contig consensus.  If the contig id
+         * is a positive numeric, then the TigrProjectAssemblyId
+         * will also be set to the contig id.  This can
+         * be changed by calling {@link #setTigrProjectAssemblyId(Long)}.
+         * All other {@link TasmContig} optional specific attributes
+         * will be set to the default values of {@code null}
+         * or {@code false}.
+         * @param id the contig id; can not be null.
+         * @param consensus the contig consensus; can not be null.
+         * @throws NullPointerException if either id or consensus
+         * are null.
          */
         public Builder(String id, NucleotideSequence consensus) {
         	super(id,consensus);
@@ -344,7 +355,45 @@ public final class DefaultTasmContig implements TasmContig{
         		//must not be an assemble id
         	}
         }
-
+        /**
+         * Create a new Builder instance setting the
+         * initial contig state to have 
+         * the same contig, id, and underlying reads
+         * as the given contig. If the contig id
+         * is a positive numeric, then the TigrProjectAssemblyId
+         * will also be set to the contig id.  This can
+         * be changed by calling {@link #setTigrProjectAssemblyId(Long)}.
+         * All other {@link TasmContig} optional specific attributes
+         * will be set to the default values of {@code null}
+         * or {@code false}.
+         * @param copy the contig to copy; can not be null.
+         * @throws NullPointerException if copy is null.
+         */
+        public  Builder(Contig<? extends AssembledRead> copy){
+        	this(copy.getId(), copy.getConsensusSequence());
+            StreamingIterator<? extends AssembledRead> iter =null;
+            try{
+            	 iter = copy.getReadIterator();
+            	 while(iter.hasNext()){
+            		 AssembledRead read = iter.next();
+            		 addRead(new TasmAssembledReadAdapter(read));
+            	 }
+            }finally{
+            	IOUtil.closeAndIgnoreErrors(iter);
+            }
+        }
+        /**
+         * Create a new Builder instance with
+         * the initial state of a copy of the given {@link TasmContig}.
+         * The contig id, consensus, underlying reads and all tasm
+         * specific attributes will be identical to the values
+         * of the input {@link TasmContig}.  These initial 
+         * values may be changed by the mutator methods
+         * of this class.
+         * 
+         * @param copy the TasmContig to copy; can not be null.
+         * @throws NullPointerException if copy is null.
+         */
         public  Builder(TasmContig copy){
             this(copy.getId(), copy.getConsensusSequence());
             StreamingIterator<TasmAssembledRead> iter =null;
