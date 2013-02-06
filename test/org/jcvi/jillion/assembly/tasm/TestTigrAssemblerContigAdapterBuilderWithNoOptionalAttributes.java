@@ -57,8 +57,7 @@ public class TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes {
 	    	TigrContig contig =contigDataStore.get("15044");
 	    	TasmContig tasm =tasmDataStore.get("1122071329926");
 	    	
-	    	TasmContig sut = new DefaultTasmContig.Builder(contig)
-	    									.build();
+	    	TasmContig sut = new TasmContigBuilder(contig).build();
 	    	assertEquals(contig.getId(), sut.getId());
 	    	assertEquals(15044, sut.getTigrProjectAssemblyId().intValue());
 	    	assertEquals(contig.getConsensusSequence(), sut.getConsensusSequence());

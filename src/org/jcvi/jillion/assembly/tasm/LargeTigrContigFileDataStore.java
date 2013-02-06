@@ -203,7 +203,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 				return new AbstractTasmContigVisitor(contigId, fullLengthSequences) {
 					
 					@Override
-					protected void visitRecord(DefaultTasmContig.Builder builder) {
+					protected void visitRecord(TasmContigBuilder builder) {
 						GetVisitor.this.contig = builder.build();
 						callback.stopParsing();
 					}

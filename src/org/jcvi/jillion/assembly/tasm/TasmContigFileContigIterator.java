@@ -49,7 +49,7 @@ final class TasmContigFileContigIterator extends AbstractBlockingStreamingIterat
 					return new AbstractTasmContigVisitor(contigId, fullLengthSequences) {
 						
 						@Override
-						protected void visitRecord(DefaultTasmContig.Builder contig) {
+						protected void visitRecord(TasmContigBuilder contig) {
 							blockingPut(contig);
 							
 						}
