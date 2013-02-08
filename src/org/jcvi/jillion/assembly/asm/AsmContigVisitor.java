@@ -3,14 +3,28 @@ package org.jcvi.jillion.assembly.asm;
 import java.util.List;
 import java.util.SortedSet;
 
-import org.jcvi.jillion.assembly.asm.AsmVisitor2.UnitigLayoutType;
+import org.jcvi.jillion.assembly.asm.AsmVisitor.AsmVisitorCallback;
+import org.jcvi.jillion.assembly.asm.AsmVisitor.UnitigLayoutType;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-
-public interface AsmContigVisitor extends AsmXtigVisitor{
-
+/**
+ * {@code AsmContigVisitor} is a visitor interface
+ * to visit a single contig in an ASM file.
+ * 
+ * @author dkatzel
+ * @see AsmVisitor#visitContig(AsmVisitorCallback, String, long, boolean, NucleotideSequence, QualitySequence, long, long, long)
+ * 
+ */
+public interface AsmContigVisitor{
+	/**
+	 * {@code VariantRecord} is an alternative sequence
+	 * for a specific region in a contig.
+	 * @author dkatzel
+	 * @see AsmContigVisitor#visitVariance(Range, long, long, long, long, SortedSet).
+	 */
 	interface VariantRecord extends Comparable<VariantRecord>{
         /**
          * The internal read ids that contribute to this variant.
@@ -30,6 +44,29 @@ public interface AsmContigVisitor extends AsmXtigVisitor{
          */
         NucleotideSequence getVariantSequence();
     }
+	
+	/**
+     * Visit one read layout onto the the current contig.
+     * @param readType the type of the read, usually 'R' for
+     * random read.  This is the same type as from the frg file.
+     * @param externalReadId the read id.
+     * @param readRange the {@link DirectedRange} which has the gapped 
+     * range on the contig that this read
+     * aligns to and the {@link Direction} of the read on this contig.
+     * @param gapOffsets the gap offsets of this read onto the frg sequence.
+     */
+    void visitReadLayout(char readType, String externalReadId, 
+            DirectedRange readRange, List<Integer> gapOffsets);
+    /**
+     * Visiting this contig has been halted
+     * by a call to {@link AsmVisitorCallback#haltParsing()}.
+     */
+	void halted();
+	/**
+	 * The current contig  has been completely visited.
+	 */
+	void visitEnd();	
+	
     /**
      * A Variance message indicates alternative sequence(s) for small
      * regions of the contig consensus.  A variant whose sequence

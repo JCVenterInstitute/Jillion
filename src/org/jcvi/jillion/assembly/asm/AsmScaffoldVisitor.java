@@ -1,7 +1,16 @@
 package org.jcvi.jillion.assembly.asm;
 
-import org.jcvi.jillion.assembly.asm.AsmVisitor2.LinkOrientation;
-
+import org.jcvi.jillion.assembly.asm.AsmVisitor.AsmVisitorCallback;
+import org.jcvi.jillion.assembly.asm.AsmVisitor.LinkOrientation;
+/**
+ * {@code AsmScaffoldVisitor} is a visitor interface
+ * to visit a single scaffold in an ASM file
+ * that contains more than one contig.
+ * 
+ * @author dkatzel
+ * @see AsmVisitor#visitScaffold(AsmVisitorCallback, String, long, int).
+ * 
+ */
 public interface AsmScaffoldVisitor {
 
 	 /**
@@ -20,6 +29,13 @@ public interface AsmScaffoldVisitor {
     void visitContigPair(String externalContigId1,String externalContigId2, 
             float meanDistance, float stddev, LinkOrientation orientation);
     
-	void visitIncompleteEnd();
+    /**
+     * Visiting this scaffold has been halted
+     * by a call to {@link AsmVisitorCallback#haltParsing()}.
+     */
+	void halted();
+	/**
+	 * The current scaffold  has been completely visited.
+	 */
 	void visitEnd();
 }

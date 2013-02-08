@@ -230,7 +230,7 @@ public final class DefaultAsmContig implements AsmContig{
           public AsmContigBuilder addRead(String readId, String validBases,
                   int offset, Direction dir, Range clearRange,
                   int ungappedFullLength, boolean isSurrogate) {
-              aceReadBuilderMap.put(readId, DefaultAsmPlacedRead.createBuilder(
+              aceReadBuilderMap.put(readId, DefaultAsmAssembledRead.createBuilder(
                       this.fullConsensus, readId, validBases, offset, dir, clearRange, ungappedFullLength, isSurrogate));
               return this;
           }

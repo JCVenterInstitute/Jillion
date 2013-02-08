@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -34,27 +33,19 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  * {@code AsmVisitor} is a visitor implementation
  * to traverse a Celera Assembler .ASM file.
  * <p/>
- * The ASM file is the sole output of the 
+ * The ASM file is the output of the 
  * Celera Assembler pipeline.  It provides a precise description
  * of the assembly as a hierarchical data structure.  The messages
  * are visited in a "definition before reference" order.  Every
  * identifier is defined in a visit message before it is referenced.
  * For example, both reads will be visited before the visit
  * method that defines these reads as a mate pair.
- * <p/>
- * Many messages in an ASM file are nested so context is important.
- * A {@link #visitReadLayout(char, String, Range, Direction, List)}
- * might explain a read layout for a unitig or contig
- * depending on if that call was made from inside a
- * {@link #visitUnitig(String, long, float, float, UnitigStatus, NucleotideSequence, List, int)}
- * block or a 
- * {@link #visitContig(String, long, boolean, NucleotideSequence, List, int, int, int)}
- * block.
+ * 
  * @author dkatzel
  *
  *
  */
-public interface AsmVisitor2{
+public interface AsmVisitor{
 	
 	
 	/*
@@ -117,13 +108,13 @@ public interface AsmVisitor2{
 		 */
 		AsmVisitorMemento createMemento();
 		/**
-		 * Tell the {@link AsmFileParser} to stop parsing
+		 * Tell the {@link AsmFileParser} to halt parsing
 		 * the ASM file. If the ASM file is not completely
 		 * parsed, then any visitors still being visited
-		 * will have their visitIncompleteEnd() methods
+		 * will have their halted() methods
 		 * called instead of their visitEnd() methods. 
 		 */
-		void stopParsing();
+		void haltParsing();
 	}
 	
     /**
@@ -648,12 +639,9 @@ public interface AsmVisitor2{
      * @param consensusQualities the consensus qualities of this unitig.
      * @param numberOfReads number of reads in the unitig, should always
      * be >=1.
-     * @return {@code true} if the read layouts of this unitig
-     * should be visited {@code false} otherwise.  If a unitig's
-     * read layouts are to be visited, then the {@link #visitReadLayout(char, long, Range, Direction, List)}
-     * will be called {@code numberOfReads} times followed by {@link #visitEndOfUnitig()}.
-     * If the read layouts are not to be visited, then the next visit call 
-     * (aside from many {@link #visitLine(String)}s) will be {@link #visitEndOfUnitig()}.
+     * @return an instance of {@link AsmUnitigVisitor} to be used
+     * to visit this unitig; if a {@code null} value
+     * is returned, then this unitig is skipped by the parser.
      */
     AsmUnitigVisitor visitUnitig(AsmVisitorCallback callback, String externalId, long internalId, float aStat, float measureOfPolymorphism,
             UnitigStatus status, NucleotideSequence consensusSequence, QualitySequence consensusQualities,
@@ -718,20 +706,16 @@ public interface AsmVisitor2{
      * laid out in this contig.
      * @param numberOfVariants the number of variant (alternate allele)
      * consensus regions.
-     * @return A Set of {@link NestedContigMessageTypes} to visit for this contig;
-     * can not be null.  If no nested messages should be visited, then 
-     * return an empty set. Regardless of the return value, {@link #visitEndOfContig()}
-     * will be called after any nested messages (if any) are visited.   Ithe read and unitig layouts as well
-     * as the variant records for this contig; {@code false} otherwise. If a contig's
-     * layouts are to be visited then calls to {@link #visitReadLayout(char, String, Range, Direction, List)}
-     * will be called {@code numberOfReads} times, before the call to {@link #visitEndOfContig()}.
+     * @return an instance of {@link AsmContigVisitor} to be used
+     * to visit this contig; if a {@code null} value
+     * is returned, then this contig is skipped by the parser.
      */
     AsmContigVisitor visitContig(AsmVisitorCallback callback, String externalId, long internalId, boolean isDegenerate,
             NucleotideSequence consensusSequence, QualitySequence consensusQualities,
             long numberOfReads, long numberOfUnitigs, long numberOfVariants);
 
     /**
-     * Scaffold Messages define one scaffold per message.  A scaffold
+     * Visit a scaffold that is made up of multiple contigs. A scaffold
      * is the maximal unit of contiguous sequence output
      * by Celera Assembler.
      * A scaffold may consist of one contig or multiple contigs
@@ -745,15 +729,29 @@ public interface AsmVisitor2{
      * when numberOfContigPairs = 0, then this scaffold consists of exactly one contig.
      * When numberOfContigPairs >0, then the scaffold consists of multiple contigs whose
      * order, orientation and separation are derived from mate pairs.
-     * @return {@code true} to visit the contig pair messages of this scaffold;
-     * {@code false} otherwise.
+     * @return an instance of {@link AsmScaffoldVisitor} that will be used
+     * to visit the underlying scaffold data.  If a {@code null}
+     * is returned, then this scaffold will be skipped.
      */
     AsmScaffoldVisitor visitScaffold(AsmVisitorCallback callback, String externalId, long internalId, int numberOfContigPairs);
     /**
-     * This contig is the only contig in this scaffold.
+     * Visit a scaffold that is only made up of one contig. A scaffold
+     * is the maximal unit of contiguous sequence output
+     * by Celera Assembler.
+     * A scaffold may consist of one contig or multiple contigs
+     * and their relative coordinates.
+     * 
+     * This method returns void since there is no underlying data
+     * for this scaffold since it only contains a single
+     * contig that has already been fully described.
+     * 
      * @param callback the {@link AsmVisitorCallback} instance
      * which can be used to callback to the parser.
-     * @param externalContigId the contig external id.
+     * @param externalId the unique external id of this scaffold.
+     * @param internalId an internal integer value that associates this scaffold with
+     * future messages visited further on in the assembly pipeline. 
+     * @param externalContigId the contig external id that is the only contig
+     * in this scaffold.
      */
     void visitScaffold(AsmVisitorCallback callback, String externalId, long internalId, String externalContigId);
 
@@ -782,8 +780,15 @@ public interface AsmVisitor2{
     void visitScaffoldLink(String externalScaffoldId1,String externalScaffoldId2, LinkOrientation orientation,
             OverlapType overlapType, OverlapStatus status, int numberOfEdges,
             float meanDistance, float stddev, Set<MatePairEvidence> matePairEvidence);
-    
+    /**
+     * The end of the ASM file has been reached.
+     */
     void visitEnd();
-    
-    void visitIncompleteEnd();
+    /**
+     * The parser has stopped parsing the ASM file
+     * due to {@link AsmVisitorCallback#haltParsing()}
+     * being called. the end of the ASM file was
+     * not yet reached.
+     */
+    void halted();
 }

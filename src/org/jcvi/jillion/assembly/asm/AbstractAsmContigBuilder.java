@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
-import org.jcvi.jillion.assembly.asm.AsmVisitor2.UnitigLayoutType;
+import org.jcvi.jillion.assembly.asm.AsmVisitor.UnitigLayoutType;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
@@ -94,7 +94,7 @@ public abstract class AbstractAsmContigBuilder implements AsmContigVisitor{
 	}
 
 	@Override
-	public void visitIncompleteEnd() {
+	public void halted() {
 		//no-op
 		
 	}
