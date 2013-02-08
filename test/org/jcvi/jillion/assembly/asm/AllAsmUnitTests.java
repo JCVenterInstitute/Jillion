@@ -35,7 +35,11 @@ import org.junit.runners.Suite.SuiteClasses;
      TestDefaultAsmAssembledReadBuilder.class,
      
      TestDefaultUnitigDataStore.class,
-     TestIndexedUnitigDataStore.class
+     TestIndexedUnitigDataStore.class,
+     
+     TestDefaultAsmFileContigDataStore2.class,
+     TestIndexedAsmFileContigDataStore.class,
+     
     }
     )
 public class AllAsmUnitTests {

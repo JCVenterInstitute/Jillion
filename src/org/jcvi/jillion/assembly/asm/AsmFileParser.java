@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -56,6 +57,7 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 
 /**
@@ -89,7 +91,9 @@ public abstract class AsmFileParser {
 	
 	public abstract void accept(AsmVisitor2 visitor) throws IOException;
 	
-    
+	public abstract void accept(AsmVisitor2 visitor, AsmVisitorMemento memento) throws IOException;
+	
+	
     protected void  parseAsm(ParserState parserState, AsmVisitor2 visitor) throws IOException{       
         AsmMessageHandler.parse(parserState, visitor);
     }
@@ -736,6 +740,11 @@ public abstract class AsmFileParser {
                         }
                     }
                 }
+            }
+            if(parserState.keepParsing()){
+            	visitor.visitEnd();
+            }else{
+            	visitor.visitIncompleteEnd();
             }
         }
         
@@ -1570,8 +1579,34 @@ public abstract class AsmFileParser {
 	        }
 			
 		}
-    	
-		
+
+		@Override
+		public void accept(AsmVisitor2 visitor, AsmVisitorMemento memento)
+				throws IOException {
+			if( !(memento instanceof OffsetMemento)){
+				throw new IllegalArgumentException("unknown memento type "+ memento + " must use instance created by this parser");
+			}
+			
+			long offset = ((OffsetMemento)memento).getOffset();
+			RandomAccessFile randomAccessFile = new RandomAccessFile(asmFile, "r");
+			InputStream in =null;
+			try{
+				randomAccessFile.seek(offset);
+				in = new BufferedInputStream(new RandomAccessFileInputStream(randomAccessFile));
+				ParserState parserState = new ParserState(in, offset){
+
+					@Override
+					public CallBack createCallback() {
+						return new MementoedCallback(keepParsing, markedOffset);
+					}
+	            	
+	            };
+	            parseAsm(parserState,visitor);
+			}finally{
+				IOUtil.closeAndIgnoreErrors(in, randomAccessFile);
+			}
+		}
     	
     }
+   
 }
