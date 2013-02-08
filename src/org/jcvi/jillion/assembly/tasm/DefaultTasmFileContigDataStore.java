@@ -45,7 +45,7 @@ final class DefaultTasmFileContigDataStore {
 			if(!filter.accept(contigId)){
 				return null;
 			}
-			return new AbstractTasmContigVisitor(contigId, fullLengthSequenceDataStore) {
+			return new AbstractTasmContigBuilderVisitor(contigId, fullLengthSequenceDataStore) {
 				
 				@Override
 				protected void visitRecord(TasmContigBuilder builder) {
@@ -56,7 +56,7 @@ final class DefaultTasmFileContigDataStore {
 		}
 
 		@Override
-		public void visitIncompleteEnd() {
+		public void halted() {
 			//no-op
 			
 		}

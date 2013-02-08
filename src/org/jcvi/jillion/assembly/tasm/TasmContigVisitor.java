@@ -2,6 +2,7 @@ package org.jcvi.jillion.assembly.tasm;
 
 import java.util.Date;
 
+import org.jcvi.jillion.assembly.tasm.TasmFileVisitor.TasmContigVisitorCallback;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -64,6 +65,16 @@ public interface TasmContigVisitor {
 	
 	TasmContigReadVisitor visitRead(String readId, long gappedStartOffset, Direction dir, Range validRange);
 	
-	void visitIncompleteEnd();
+	/**
+	 * The parser has stopped 
+	 * parsing but has not
+	 * actually finished the parsing this contig,
+	 * this will happen only if 
+	 * a visitor calls {@link TasmContigVisitorCallback#haltParsing()}.
+	 */
+	void halted();
+	/**
+	 * The entire contig has been visited.
+	 */
 	void visitEnd();
 }

@@ -126,7 +126,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 			TasmFileVisitor visitor = new TasmFileVisitor() {
 				
 				@Override
-				public void visitIncompleteEnd() {
+				public void halted() {
 					//no-op				
 				}
 				
@@ -166,7 +166,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 				TasmContigVisitorCallback callback, String contigId) {
 			if(id.equals(contigId)){
 				contains=true;
-				callback.stopParsing();
+				callback.halt();
 			}
 			return null;
 		}
@@ -176,7 +176,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 		}
 
 		@Override
-		public void visitIncompleteEnd() {
+		public void halted() {
 			//no-op
 		}
 
@@ -200,12 +200,12 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 		public TasmContigVisitor visitContig(
 				final TasmContigVisitorCallback callback, String contigId) {
 			if(id.equals(contigId)){
-				return new AbstractTasmContigVisitor(contigId, fullLengthSequences) {
+				return new AbstractTasmContigBuilderVisitor(contigId, fullLengthSequences) {
 					
 					@Override
 					protected void visitRecord(TasmContigBuilder builder) {
 						GetVisitor.this.contig = builder.build();
-						callback.stopParsing();
+						callback.halt();
 					}
 				};
 			}
@@ -219,7 +219,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 		}
 
 		@Override
-		public void visitIncompleteEnd() {
+		public void halted() {
 			//no-op
 		}
 
@@ -253,7 +253,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 
 
 		@Override
-		public void visitIncompleteEnd() {
+		public void halted() {
 			//no-op			
 		}
 

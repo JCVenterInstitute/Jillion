@@ -41,9 +41,9 @@ public interface TigrContigVisitor {
 	 * parsing but has not
 	 * actually finished the parsing this contig,
 	 * this will happen only if 
-	 * a visitor calls {@link TigrContigVisitorCallback#stopParsing()}.
+	 * a visitor calls {@link TigrContigVisitorCallback#haltParsing()}.
 	 */
-	void visitIncompleteEnd();
+	void halted();
 	/**
 	 * The entire contig has been visited.
 	 */

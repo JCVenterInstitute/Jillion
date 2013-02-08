@@ -3,7 +3,6 @@ package org.jcvi.jillion.assembly.ctg;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.jillion.assembly.ctg.TigrContigFileVisitor.TigrContigVisitorCallback;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -34,7 +33,7 @@ final class TigrContigFileContigIterator extends AbstractBlockingStreamingIterat
 		TigrContigFileVisitor visitor = new TigrContigFileVisitor() {
 			
 			@Override
-			public void visitIncompleteEnd() {
+			public void halted() {
 				//no-op				
 			}
 			
@@ -47,11 +46,11 @@ final class TigrContigFileContigIterator extends AbstractBlockingStreamingIterat
 			public TigrContigVisitor visitContig(TigrContigVisitorCallback callback,
 					String contigId) {
 				if(filter.accept(contigId)){
-					return new AbstractTigrContigVisitor(contigId, fullLengthSequences) {
+					return new AbstractTigrContigBuilderVisitor(contigId, fullLengthSequences) {
 						
 						@Override
-						protected void visitContig(TigrContig contig) {
-							blockingPut(contig);
+						protected void visitContig(TigrContigBuilder builder) {
+							blockingPut(builder.build());
 							
 						}
 					};
