@@ -118,13 +118,13 @@ public abstract class TigrContigFileParser {
 			if(keepParsing){
 				contigVisitor.visitEnd();
 			}else{
-				contigVisitor.visitIncompleteEnd();
+				contigVisitor.halted();
 			}
 		}
 		if(keepParsing){
 			visitor.visitEnd();
 		}else{
-			visitor.visitIncompleteEnd();
+			visitor.halted();
 		}
 	}
 	
@@ -234,7 +234,7 @@ public abstract class TigrContigFileParser {
 		private volatile boolean keepParsing=true;
 		
 		@Override
-		public void stopParsing() {
+		public void haltParsing() {
 			keepParsing=false;
 			
 		}

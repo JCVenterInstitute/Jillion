@@ -200,7 +200,7 @@ public abstract class TasmFileParser {
     	private volatile boolean keepParsing=true;   	
     	
     	@Override
-		public void stopParsing() {
+		public void halt() {
     		keepParsing = false;			
 		}
 
@@ -291,7 +291,7 @@ public abstract class TasmFileParser {
     			 if(callback.keepParsing()){
     				 contigVisitor.visitEnd();
     			 }else{
-    				 contigVisitor.visitIncompleteEnd();
+    				 contigVisitor.halted();
     			 }
     		 }
          }
@@ -375,7 +375,7 @@ public abstract class TasmFileParser {
 			if(callback.keepParsing()){
 				 contigVisitor.visitLastEdited(editPerson, new Date(editDate));
 			 }else{
-				 contigVisitor.visitIncompleteEnd();
+				 contigVisitor.halted();
 			 }
 		}
 
@@ -385,7 +385,7 @@ public abstract class TasmFileParser {
 			if(callback.keepParsing()){
 				 contigVisitor.visitCoverageData(numberOfReads, avgCoverage);
 			 }else{
-				 contigVisitor.visitIncompleteEnd();
+				 contigVisitor.halted();
 			 }
 		}
 
@@ -400,7 +400,7 @@ public abstract class TasmFileParser {
 						 assemblyMethod, 
 						 isCircular);
 			 }else{
-				 contigVisitor.visitIncompleteEnd();
+				 contigVisitor.halted();
 			 }
 		}
 
@@ -410,7 +410,7 @@ public abstract class TasmFileParser {
 			if(callback.keepParsing() && caContigId !=null){
 				 contigVisitor.visitCeleraId(caContigId);
 			 }else{
-				 contigVisitor.visitIncompleteEnd();
+				 contigVisitor.halted();
 			 }
 		}
     }

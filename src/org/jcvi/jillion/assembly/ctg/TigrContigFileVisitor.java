@@ -52,10 +52,10 @@ public interface TigrContigFileVisitor {
 		TigrContigVisitorMemento createMemento();
 		/**
 		 * Tell the {@link TigrContigFileParser} to stop parsing
-		 * the contig file.  {@link TigrContigFileVisitor#visitEnd()}
-		 * will still be called.
+		 * the contig file this will cause {@link TigrContigFileVisitor#halted()}
+		 * to be called but no other visit methods will be called.
 		 */
-		void stopParsing();
+		void haltParsing();
 	}
 	
 	/**
@@ -74,9 +74,9 @@ public interface TigrContigFileVisitor {
 	 * parsing but has not
 	 * actually finished the parsing the file,
 	 * this will happen only if 
-	 * a visitor calls {@link TigrContigVisitorCallback#stopParsing()}.
+	 * a visitor calls {@link TigrContigVisitorCallback#haltParsing()}.
 	 */
-	void visitIncompleteEnd();
+	void halted();
 	/**
 	 * The entire file was visited.
 	 */

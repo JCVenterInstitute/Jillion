@@ -43,18 +43,18 @@ final class DefaultTigrContigFileDataStore {
 			if(!filter.accept(contigId)){
 				return null;
 			}
-			return new AbstractTigrContigVisitor(contigId,fullLengthSequenceDataStore) {
+			return new AbstractTigrContigBuilderVisitor(contigId,fullLengthSequenceDataStore) {
 				
 				@Override
-				protected void visitContig(TigrContig contig) {
-					contigs.put(contigId, contig);
+				protected void visitContig(TigrContigBuilder builder) {
+					contigs.put(contigId, builder.build());
 					
 				}
 			};
 		}
 
 		@Override
-		public void visitIncompleteEnd() {
+		public void halted() {
 			//no-op
 			
 		}

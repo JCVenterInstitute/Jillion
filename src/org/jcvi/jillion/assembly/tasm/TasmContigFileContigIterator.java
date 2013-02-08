@@ -33,7 +33,7 @@ final class TasmContigFileContigIterator extends AbstractBlockingStreamingIterat
 		TasmFileVisitor visitor = new TasmFileVisitor() {
 			
 			@Override
-			public void visitIncompleteEnd() {
+			public void halted() {
 				//no-op				
 			}
 			
@@ -46,7 +46,7 @@ final class TasmContigFileContigIterator extends AbstractBlockingStreamingIterat
 			public TasmContigVisitor visitContig(TasmContigVisitorCallback callback,
 					String contigId) {
 				if(filter.accept(contigId)){
-					return new AbstractTasmContigVisitor(contigId, fullLengthSequences) {
+					return new AbstractTasmContigBuilderVisitor(contigId, fullLengthSequences) {
 						
 						@Override
 						protected void visitRecord(TasmContigBuilder contig) {

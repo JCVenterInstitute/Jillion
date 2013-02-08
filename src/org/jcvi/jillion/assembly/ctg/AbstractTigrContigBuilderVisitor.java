@@ -5,8 +5,14 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-
-public abstract class AbstractTigrContigVisitor implements TigrContigVisitor{
+/**
+ * {@code AbstractTigrContigBuilderVisitor} is a {@link TigrContigVisitor}
+ * that will create a {@link TigrContigBuilder} and populate it using the
+ * visit calls. 
+ * @author dkatzel
+ *
+ */
+public abstract class AbstractTigrContigBuilderVisitor implements TigrContigVisitor{
 
 	private final DataStore<Long> fullRangeLengthDataStore;
 	
@@ -14,7 +20,7 @@ public abstract class AbstractTigrContigVisitor implements TigrContigVisitor{
     
     private final String contigId;
     
-	public AbstractTigrContigVisitor(String contigId, DataStore<Long> fullLengthSequenceDataStore){
+	public AbstractTigrContigBuilderVisitor(String contigId, DataStore<Long> fullLengthSequenceDataStore){
     	this.fullRangeLengthDataStore = fullLengthSequenceDataStore;
     	this.contigId = contigId;
     }
@@ -59,18 +65,34 @@ public abstract class AbstractTigrContigVisitor implements TigrContigVisitor{
 	}
 
 	@Override
-	public void visitIncompleteEnd() {
-		// TODO Auto-generated method stub
+	public void halted() {
+		//no-op
 		
 	}
-
+	/**
+	 * Calls {@link #visitContig(TigrContigBuilder)}
+	 * with the populated internal {@link TigrContigBuilder}.
+	 * @throws IllegalStateException if {@link #visitConsensus(NucleotideSequence)}
+	 * has not yet been called.
+	 * <p/>
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void visitEnd() {
-		TigrContig contig = currentContigBuilder.build();
+	public final void visitEnd() {		
+		if(currentContigBuilder==null){
+			throw new IllegalStateException("contig does not contain any consensus or read data");
+		}
+		visitContig(currentContigBuilder);
 		currentContigBuilder=null;
-		visitContig(contig);
 	}
-    
-	protected abstract void visitContig(TigrContig contig);
+    /**
+     * The entire contig has been visited.  This method
+     * will only be called from inside {@link #visitEnd()}.
+     * Subclasses may modify the builder as they see fit.
+     * @param builder a completely populated {@link TigrContigBuilder}
+     * instance containing all the contig data gathered from
+     * the visit methods; will never be null.
+     */
+	protected abstract void visitContig(TigrContigBuilder builder);
     
 }

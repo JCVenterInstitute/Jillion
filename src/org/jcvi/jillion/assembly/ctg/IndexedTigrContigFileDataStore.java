@@ -125,18 +125,18 @@ final class IndexedTigrContigFileDataStore implements TigrContigDataStore {
 		public TigrContigVisitor visitContig(
 				final TigrContigVisitorCallback callback, String contigId) {
 			//assume the first contig we see is the one we want
-			return new AbstractTigrContigVisitor(contigId, fullLengthSequences) {
+			return new AbstractTigrContigBuilderVisitor(contigId, fullLengthSequences) {
 				
 				@Override
-				protected void visitContig(TigrContig contig) {
-					SingleContigVisitor.this.contig = contig;
-					callback.stopParsing();
+				protected void visitContig(TigrContigBuilder builder) {
+					SingleContigVisitor.this.contig = builder.build();
+					callback.haltParsing();
 				}
 			};
 		}
 
 		@Override
-		public void visitIncompleteEnd() {
+		public void halted() {
 			//no-op			
 		}
 
@@ -174,7 +174,7 @@ final class IndexedTigrContigFileDataStore implements TigrContigDataStore {
 		}
 
 		@Override
-		public void visitIncompleteEnd() {
+		public void halted() {
 			//no-op			
 		}
 

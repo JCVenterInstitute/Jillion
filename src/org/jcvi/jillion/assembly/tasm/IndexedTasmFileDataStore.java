@@ -141,7 +141,7 @@ final class IndexedTasmFileDataStore implements TasmContigDataStore{
 		}
 
 		@Override
-		public void visitIncompleteEnd() {
+		public void halted() {
 			//no-op
 			
 		}
@@ -160,18 +160,18 @@ final class IndexedTasmFileDataStore implements TasmContigDataStore{
 		public TasmContigVisitor visitContig(
 				final TasmContigVisitorCallback callback, String contigId) {
 			//assume first visit is the one we want
-			return new AbstractTasmContigVisitor(contigId, fullLengthSequenceDataStore) {
+			return new AbstractTasmContigBuilderVisitor(contigId, fullLengthSequenceDataStore) {
 				
 				@Override
 				protected void visitRecord(TasmContigBuilder builder) {
 					contig= builder.build();
-					callback.stopParsing();
+					callback.halt();
 				}
 			};
 		}
 
 		@Override
-		public void visitIncompleteEnd() {
+		public void halted() {
 			//no-op
 			
 		}

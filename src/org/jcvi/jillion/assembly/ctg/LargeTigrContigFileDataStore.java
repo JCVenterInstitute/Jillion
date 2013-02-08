@@ -116,7 +116,7 @@ final class LargeTigrContigFileDataStore implements TigrContigDataStore{
 			TigrContigFileVisitor visitor = new TigrContigFileVisitor() {
 				
 				@Override
-				public void visitIncompleteEnd() {
+				public void halted() {
 					//no-op				
 				}
 				
@@ -156,7 +156,7 @@ final class LargeTigrContigFileDataStore implements TigrContigDataStore{
 				TigrContigVisitorCallback callback, String contigId) {
 			if(id.equals(contigId)){
 				contains=true;
-				callback.stopParsing();
+				callback.haltParsing();
 			}
 			return null;
 		}
@@ -166,7 +166,7 @@ final class LargeTigrContigFileDataStore implements TigrContigDataStore{
 		}
 
 		@Override
-		public void visitIncompleteEnd() {
+		public void halted() {
 			//no-op
 		}
 
@@ -190,12 +190,12 @@ final class LargeTigrContigFileDataStore implements TigrContigDataStore{
 		public TigrContigVisitor visitContig(
 				final TigrContigVisitorCallback callback, String contigId) {
 			if(id.equals(contigId)){
-				return new AbstractTigrContigVisitor(contigId, fullLengthSequences) {
+				return new AbstractTigrContigBuilderVisitor(contigId, fullLengthSequences) {
 					
 					@Override
-					protected void visitContig(TigrContig contig) {
-						GetVisitor.this.contig = contig;
-						callback.stopParsing();
+					protected void visitContig(TigrContigBuilder builder) {
+						GetVisitor.this.contig = builder.build();
+						callback.haltParsing();
 					}
 				};
 			}
@@ -209,7 +209,7 @@ final class LargeTigrContigFileDataStore implements TigrContigDataStore{
 		}
 
 		@Override
-		public void visitIncompleteEnd() {
+		public void halted() {
 			//no-op
 		}
 
@@ -243,7 +243,7 @@ final class LargeTigrContigFileDataStore implements TigrContigDataStore{
 
 
 		@Override
-		public void visitIncompleteEnd() {
+		public void halted() {
 			//no-op			
 		}
 

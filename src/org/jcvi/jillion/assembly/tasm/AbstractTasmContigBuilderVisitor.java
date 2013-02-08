@@ -8,13 +8,13 @@ import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
-public abstract class  AbstractTasmContigVisitor implements TasmContigVisitor{
+public abstract class  AbstractTasmContigBuilderVisitor implements TasmContigVisitor{
 
 	private TasmContigBuilder builder;
 	private final String contigId;
 	private final DataStore<Long> fullRangeLengthDataStore;
 	
-	public AbstractTasmContigVisitor(String contigId, DataStore<Long> fullRangeLengthDataStore){
+	public AbstractTasmContigBuilderVisitor(String contigId, DataStore<Long> fullRangeLengthDataStore){
 		this.contigId = contigId;
 		this.fullRangeLengthDataStore = fullRangeLengthDataStore;
 	}
@@ -85,7 +85,7 @@ public abstract class  AbstractTasmContigVisitor implements TasmContigVisitor{
 	}
 
 	@Override
-	public void visitIncompleteEnd() {
+	public void halted() {
 		//no-op
 		
 	}

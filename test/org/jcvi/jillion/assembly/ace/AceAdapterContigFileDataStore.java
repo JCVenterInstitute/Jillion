@@ -52,7 +52,7 @@ public class AceAdapterContigFileDataStore implements AceFileContigDataStore{
     	TigrContigFileVisitor visitor =new TigrContigFileVisitor() {
 			
 			@Override
-			public void visitIncompleteEnd() {
+			public void halted() {
 				//no-op
 				
 			}
