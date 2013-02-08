@@ -25,7 +25,7 @@ public class DefaultAsmContigDataStore2 {
 	}
 	
 	
-	private static class VisitorBuilder implements AsmVisitor2{
+	private static class VisitorBuilder implements AsmVisitor{
 		private final Map<String,Range> validRanges = new HashMap<String, Range>();
 		private final  DataStore<NucleotideSequence> fullLengthSequences;
 		private final DataStoreFilter filter;
@@ -135,7 +135,7 @@ public class DefaultAsmContigDataStore2 {
 		}
 
 		@Override
-		public void visitIncompleteEnd() {
+		public void halted() {
 			//no-op
 			
 		}

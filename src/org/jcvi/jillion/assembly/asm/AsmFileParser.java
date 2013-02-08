@@ -40,15 +40,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.jillion.assembly.asm.AsmContigVisitor.VariantRecord;
-import org.jcvi.jillion.assembly.asm.AsmVisitor2.AsmVisitorCallback;
-import org.jcvi.jillion.assembly.asm.AsmVisitor2.AsmVisitorCallback.AsmVisitorMemento;
-import org.jcvi.jillion.assembly.asm.AsmVisitor2.LinkOrientation;
-import org.jcvi.jillion.assembly.asm.AsmVisitor2.MatePairEvidence;
-import org.jcvi.jillion.assembly.asm.AsmVisitor2.MateStatus;
-import org.jcvi.jillion.assembly.asm.AsmVisitor2.OverlapStatus;
-import org.jcvi.jillion.assembly.asm.AsmVisitor2.OverlapType;
-import org.jcvi.jillion.assembly.asm.AsmVisitor2.UnitigLayoutType;
-import org.jcvi.jillion.assembly.asm.AsmVisitor2.UnitigStatus;
+import org.jcvi.jillion.assembly.asm.AsmVisitor.AsmVisitorCallback;
+import org.jcvi.jillion.assembly.asm.AsmVisitor.AsmVisitorCallback.AsmVisitorMemento;
+import org.jcvi.jillion.assembly.asm.AsmVisitor.LinkOrientation;
+import org.jcvi.jillion.assembly.asm.AsmVisitor.MatePairEvidence;
+import org.jcvi.jillion.assembly.asm.AsmVisitor.MateStatus;
+import org.jcvi.jillion.assembly.asm.AsmVisitor.OverlapStatus;
+import org.jcvi.jillion.assembly.asm.AsmVisitor.OverlapType;
+import org.jcvi.jillion.assembly.asm.AsmVisitor.UnitigLayoutType;
+import org.jcvi.jillion.assembly.asm.AsmVisitor.UnitigStatus;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
@@ -89,12 +89,12 @@ public abstract class AsmFileParser {
 		return new FileBasedAsmFileParser(asmFile);
 	}
 	
-	public abstract void accept(AsmVisitor2 visitor) throws IOException;
+	public abstract void accept(AsmVisitor visitor) throws IOException;
 	
-	public abstract void accept(AsmVisitor2 visitor, AsmVisitorMemento memento) throws IOException;
+	public abstract void accept(AsmVisitor visitor, AsmVisitorMemento memento) throws IOException;
 	
 	
-    protected void  parseAsm(ParserState parserState, AsmVisitor2 visitor) throws IOException{       
+    protected void  parseAsm(ParserState parserState, AsmVisitor visitor) throws IOException{       
         AsmMessageHandler.parse(parserState, visitor);
     }
     
@@ -154,7 +154,7 @@ public abstract class AsmFileParser {
             private final Pattern maxPattern = Pattern.compile("max:(\\d+)");
             private final Pattern histogramBucketPattern = Pattern.compile("buc:(\\d+)");
             @Override
-            protected void handle(ParserState parserState, AsmVisitor2 visitor) throws IOException {
+            protected void handle(ParserState parserState, AsmVisitor visitor) throws IOException {
                 IdTuple idTuple = parseIds(parserState, visitor, refIdPattern);
                 float mean = parseMean(parserState, visitor);                
                 float stdDev = parseStdDev(parserState, visitor);                
@@ -167,7 +167,7 @@ public abstract class AsmFileParser {
                         mean, stdDev, min, max, histogram);
             }
            
-            private float parseStdDev(ParserState parserState, AsmVisitor2 visitor) throws IOException {
+            private float parseStdDev(ParserState parserState, AsmVisitor visitor) throws IOException {
                 String stdDevLine = parserState.getNextLine();
                 Matcher stdDevMatcher = STD_DEV_PATTERN.matcher(stdDevLine);
                 if(!stdDevMatcher.find()){
@@ -175,7 +175,7 @@ public abstract class AsmFileParser {
                 }
                 return  Float.parseFloat(stdDevMatcher.group(1));
             }
-            private float parseMean(ParserState parserState, AsmVisitor2 visitor) throws IOException {
+            private float parseMean(ParserState parserState, AsmVisitor visitor) throws IOException {
                 String meanLine = parserState.getNextLine();
                 Matcher meanMatcher = MEAN_PATTERN.matcher(meanLine);
                 if(!meanMatcher.find()){
@@ -184,7 +184,7 @@ public abstract class AsmFileParser {
                 return Float.parseFloat(meanMatcher.group(1));
             }
             
-            private long parseMin(ParserState parserState, AsmVisitor2 visitor) throws IOException {
+            private long parseMin(ParserState parserState, AsmVisitor visitor) throws IOException {
                 String minLine = parserState.getNextLine();
                 Matcher meanMatcher = minPattern.matcher(minLine);
                 if(!meanMatcher.find()){
@@ -192,7 +192,7 @@ public abstract class AsmFileParser {
                 }
                 return Long.parseLong(meanMatcher.group(1));
             }
-            private long parseMax(ParserState parserState, AsmVisitor2 visitor) throws IOException {
+            private long parseMax(ParserState parserState, AsmVisitor visitor) throws IOException {
                 String maxLine = parserState.getNextLine();
                 Matcher meanMatcher = maxPattern.matcher(maxLine);
                 if(!meanMatcher.find()){
@@ -201,7 +201,7 @@ public abstract class AsmFileParser {
                 return Long.parseLong(meanMatcher.group(1));
             }
             
-            private List<Long> parseHistogram(ParserState parserState, AsmVisitor2 visitor) throws IOException {
+            private List<Long> parseHistogram(ParserState parserState, AsmVisitor visitor) throws IOException {
                 String histLine =parserState.getNextLine();
                 Matcher bucketMatcher = histogramBucketPattern.matcher(histLine);
                 if(!bucketMatcher.find()){
@@ -238,7 +238,7 @@ public abstract class AsmFileParser {
             private final Pattern clearRangePattern = Pattern.compile("clr:(\\d+,\\d+)");
             
             @Override
-            protected void handle(ParserState parserState, AsmVisitor2 visitor)
+            protected void handle(ParserState parserState, AsmVisitor visitor)
                     throws IOException {
                 IdTuple idTuple =parseIds(parserState, visitor, ACCESSION_PATTERN);
                 //old asm files used to have a scn block 
@@ -264,7 +264,7 @@ public abstract class AsmFileParser {
             }
 
             private Range parseClearRange(ParserState parserState,
-                    AsmVisitor2 visitor) throws IOException {
+                    AsmVisitor visitor) throws IOException {
                 String line = parserState.getNextLine();
                 Matcher matcher = clearRangePattern.matcher(line);
                 if(!matcher.find()){
@@ -278,7 +278,7 @@ public abstract class AsmFileParser {
              * Is singleton if chaff value is set to 1; 0 otherwise.
              */
             private boolean parseIsSingleton(ParserState parserState,
-                    AsmVisitor2 visitor) throws IOException {
+                    AsmVisitor visitor) throws IOException {
                 String line = parserState.getNextLine();
                 Matcher matcher = isSingletonPattern.matcher(line);
                 if(!matcher.find()){
@@ -291,7 +291,7 @@ public abstract class AsmFileParser {
         MATE_PAIR("AMP"){
             private final Pattern frgIdPattern = Pattern.compile("frg:(\\S+)");
             @Override
-            protected void handle(ParserState parserState, AsmVisitor2 visitor)
+            protected void handle(ParserState parserState, AsmVisitor visitor)
                     throws IOException {
                 String id1 = parseReadId(parserState);
                 String id2 = parseReadId(parserState);
@@ -313,7 +313,7 @@ public abstract class AsmFileParser {
         UNITIG("UTG"){
             
             @Override
-            protected void handle(ParserState parserState, AsmVisitor2 visitor)
+            protected void handle(ParserState parserState, AsmVisitor visitor)
                     throws IOException {
                 IdTuple idTuple =parseIds(parserState, visitor, ACCESSION_PATTERN);
                 String nextLine = parserState.getNextLine();
@@ -379,7 +379,7 @@ public abstract class AsmFileParser {
 		                parseEndOfMessage(parserState, this.getMessageCode());
 		                asmUnitigVisitor.visitEnd();
 	                }else{
-	                	asmUnitigVisitor.visitIncompleteEnd();
+	                	asmUnitigVisitor.halted();
 	                }
                 }
             }
@@ -420,17 +420,17 @@ public abstract class AsmFileParser {
             private final Pattern unitigIdPattern = Pattern.compile("ut\\d:(\\S+)");
             
             @Override
-            protected void handle(ParserState parserState, AsmVisitor2 visitor) throws IOException{
+            protected void handle(ParserState parserState, AsmVisitor visitor) throws IOException{
                 handle(parserState, visitor,true);
             }
             
             @Override
-            protected void handle(ParserState parserState, AsmVisitor2 visitor, boolean shouldParse)
+            protected void handle(ParserState parserState, AsmVisitor visitor, boolean shouldParse)
                     throws IOException {
                 parseLinkMessage(parserState, visitor, shouldParse, unitigIdPattern);
             }
             @Override
-            protected void visitLink(AsmVisitor2 visitor, String unitig1,
+            protected void visitLink(AsmVisitor visitor, String unitig1,
                     String unitig2, LinkOrientation orientation,
                     OverlapType overlapType, boolean isPossibleChimera,
                     float mean, float stdDev, int numberOfContributingEdges,
@@ -446,7 +446,7 @@ public abstract class AsmFileParser {
             private final Pattern degeneratePattern = Pattern.compile("pla:(\\S)");
             
             @Override
-            protected void handle(ParserState parserState, AsmVisitor2 visitor)
+            protected void handle(ParserState parserState, AsmVisitor visitor)
                     throws IOException {
                 IdTuple idTuple =parseIds(parserState, visitor, ACCESSION_PATTERN);
                 boolean isDegenerate = parseIsDegenerateFlag(parserState, visitor);
@@ -503,7 +503,7 @@ public abstract class AsmFileParser {
 	                	 parseEndOfMessage(parserState, this.getMessageCode());
 	                	 contigVisitor.visitEnd();
                 	}else{
-                		contigVisitor.visitIncompleteEnd();
+                		contigVisitor.halted();
                 	}
                 }
                 
@@ -513,7 +513,7 @@ public abstract class AsmFileParser {
             }
 
             private boolean parseIsDegenerateFlag(ParserState parserState,
-                    AsmVisitor2 visitor) throws IOException {
+                    AsmVisitor visitor) throws IOException {
                 String line = parserState.getNextLine();
                 Matcher matcher = degeneratePattern.matcher(line);
                 if(!matcher.find()){
@@ -531,17 +531,17 @@ public abstract class AsmFileParser {
             private final Pattern contigIdPattern = Pattern.compile("co\\d:(\\S+)");
             
             @Override
-            protected void handle(ParserState parserState, AsmVisitor2 visitor) throws IOException{
+            protected void handle(ParserState parserState, AsmVisitor visitor) throws IOException{
                 handle(parserState, visitor,true);
             }
             
             @Override
-            protected void handle(ParserState parserState, AsmVisitor2 visitor, boolean shouldParse)
+            protected void handle(ParserState parserState, AsmVisitor visitor, boolean shouldParse)
                     throws IOException {
                 parseLinkMessage(parserState, visitor, shouldParse, contigIdPattern);
             }
             @Override
-            protected void visitLink(AsmVisitor2 visitor, String id1,
+            protected void visitLink(AsmVisitor visitor, String id1,
                     String id2, LinkOrientation orientation,
                     OverlapType overlapType, boolean isPossibleChimera,
                     float mean, float stdDev, int numberOfContributingEdges,
@@ -555,17 +555,17 @@ public abstract class AsmFileParser {
             private final Pattern scaffoldIdPattern = Pattern.compile("sc\\d:(\\S+)");
             
             @Override
-            protected void handle(ParserState parserState, AsmVisitor2 visitor) throws IOException{
+            protected void handle(ParserState parserState, AsmVisitor visitor) throws IOException{
                 handle(parserState, visitor,true);
             }
             
             @Override
-            protected void handle(ParserState parserState, AsmVisitor2 visitor, boolean shouldParse)
+            protected void handle(ParserState parserState, AsmVisitor visitor, boolean shouldParse)
                     throws IOException {
                 parseLinkMessage(parserState, visitor, shouldParse, scaffoldIdPattern);
             }
             @Override
-            protected void visitLink(AsmVisitor2 visitor, String id1,
+            protected void visitLink(AsmVisitor visitor, String id1,
                     String id2, LinkOrientation orientation,
                     OverlapType overlapType, boolean isPossibleChimera,
                     float mean, float stdDev, int numberOfContributingEdges,
@@ -585,7 +585,7 @@ public abstract class AsmFileParser {
             final Pattern numPairsPattern = Pattern.compile("noc:(\\d+)");
             final Pattern contigIdPattern = Pattern.compile("ct\\d:(\\S+)");
             @Override
-            protected void handle(ParserState parserState, AsmVisitor2 visitor)
+            protected void handle(ParserState parserState, AsmVisitor visitor)
                     throws IOException {
             	CallBack callback = parserState.createCallback();
                 IdTuple idTuple = parseIds(parserState, visitor, ACCESSION_PATTERN);
@@ -604,14 +604,14 @@ public abstract class AsmFileParser {
 	                    	parseEndOfMessage(parserState, this.getMessageCode());
 	                    	scaffoldVisitor.visitEnd();
 	                    }else{
-	                    	scaffoldVisitor.visitIncompleteEnd();
+	                    	scaffoldVisitor.halted();
 	                    }
                     }
                 }
             }
             
             private void handleSingleContig(CallBack callback, ParserState parserState,IdTuple idTuple,
-            		AsmVisitor2 visitor) throws IOException {
+            		AsmVisitor visitor) throws IOException {
                 parsePairStart(parserState);
                 String contigId = parseContigId(parserState);
                 //ids should be the same
@@ -719,12 +719,12 @@ public abstract class AsmFileParser {
             }
             return null;
         }
-        protected abstract void handle(ParserState parserState, AsmVisitor2 visitor) throws IOException;
+        protected abstract void handle(ParserState parserState, AsmVisitor visitor) throws IOException;
         
-        protected void handle(ParserState parserState, AsmVisitor2 visitor, boolean shouldVisitRecord) throws IOException{
+        protected void handle(ParserState parserState, AsmVisitor visitor, boolean shouldVisitRecord) throws IOException{
             handle(parserState, visitor);
         }
-        public static void parse(ParserState parserState, AsmVisitor2 visitor) throws IOException{
+        public static void parse(ParserState parserState, AsmVisitor visitor) throws IOException{
             while(parserState.hasNextLine()){
             	parserState.markCurrentOffset();
                 String line =parserState.getNextLine();
@@ -744,13 +744,13 @@ public abstract class AsmFileParser {
             if(parserState.keepParsing()){
             	visitor.visitEnd();
             }else{
-            	visitor.visitIncompleteEnd();
+            	visitor.halted();
             }
         }
         
         
         
-        IdTuple parseIds(ParserState parserState, AsmVisitor2 visitor, Pattern pattern) throws IOException {
+        IdTuple parseIds(ParserState parserState, AsmVisitor visitor, Pattern pattern) throws IOException {
             String idLine =parserState.getNextLine();
             Matcher idMatcher = pattern.matcher(idLine);
             if(!idMatcher.find()){
@@ -923,7 +923,7 @@ public abstract class AsmFileParser {
             return matcher.group(1);
         }
 
-        void parseLinkMessage(ParserState parserState, AsmVisitor2 visitor,
+        void parseLinkMessage(ParserState parserState, AsmVisitor visitor,
                 boolean shouldParse, Pattern idPattern) throws IOException {
             String unitig1 = getUnitigId(idPattern, parserState);
             String unitig2 = getUnitigId(idPattern, parserState);
@@ -952,7 +952,7 @@ public abstract class AsmFileParser {
             }
         }
         
-        protected void visitLink(AsmVisitor2 visitor, String unitig1,
+        protected void visitLink(AsmVisitor visitor, String unitig1,
                 String unitig2, LinkOrientation orientation,
                 OverlapType overlapType, boolean isPossibleChimera,
                 float mean, float stdDev, int numberOfContributingEdges,
@@ -1196,7 +1196,29 @@ public abstract class AsmFileParser {
             return this.messageCode.equals(messageCode);
         }
    
-        public void handleReadLayout(ParserState parserState, AsmXtigVisitor visitor) throws IOException {
+        public void handleReadLayout(ParserState parserState, AsmUnitigVisitor visitor) throws IOException {
+            if(visitor !=null){
+               char type = parseReadType(parserState);
+               String readId = parseReadId(parserState);
+               String nextLine = parserState.getNextLine();
+               //CA <= 5 had a src block which should be ignored
+               //CA 6+ doesn't have it anymore so need to handle
+               //both cases.
+               if(nextLine.startsWith("src")){
+                   skipReservedSource(parserState);
+                   nextLine = parserState.getNextLine();
+               }
+               
+               DirectedRange directedRange = parseDirectedRange(nextLine);
+               List<Integer> gapOffsets = parseGapOffsets(parserState);
+               parseEndOfMessage(parserState, messageCode);                   
+               visitor.visitReadLayout(type, readId, directedRange, gapOffsets);
+            }else{
+                skipCurrentBlock(parserState);
+            }
+        }
+        
+        public void handleReadLayout(ParserState parserState, AsmContigVisitor visitor) throws IOException {
             if(visitor !=null){
                char type = parseReadType(parserState);
                String readId = parseReadId(parserState);
@@ -1514,7 +1536,7 @@ public abstract class AsmFileParser {
 		}
 
 		@Override
-		public void stopParsing() {
+		public void haltParsing() {
 			keepParsing.set(false);			
 		}
     	
@@ -1561,7 +1583,7 @@ public abstract class AsmFileParser {
 		}
 
 		@Override
-		public void accept(AsmVisitor2 visitor) throws IOException {
+		public void accept(AsmVisitor visitor) throws IOException {
 			InputStream in =null;
 	        try{
 	            in= new BufferedInputStream(new FileInputStream(asmFile));
@@ -1581,7 +1603,7 @@ public abstract class AsmFileParser {
 		}
 
 		@Override
-		public void accept(AsmVisitor2 visitor, AsmVisitorMemento memento)
+		public void accept(AsmVisitor visitor, AsmVisitorMemento memento)
 				throws IOException {
 			if( !(memento instanceof OffsetMemento)){
 				throw new IllegalArgumentException("unknown memento type "+ memento + " must use instance created by this parser");

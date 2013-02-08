@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
-import org.jcvi.jillion.assembly.asm.AsmVisitor2.AsmVisitorCallback.AsmVisitorMemento;
+import org.jcvi.jillion.assembly.asm.AsmVisitor.AsmVisitorCallback.AsmVisitorMemento;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStore;
@@ -134,7 +134,7 @@ public class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 	}
 	
 	
-	private static class VisitorBuilder implements AsmVisitor2{
+	private static class VisitorBuilder implements AsmVisitor{
 		private final Map<String,AsmVisitorMemento> mementos = new LinkedHashMap<String, AsmVisitorMemento>();
 		private final DataStoreFilter filter;
 		public VisitorBuilder(DataStoreFilter filter) {
@@ -224,7 +224,7 @@ public class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 		}
 
 		@Override
-		public void visitIncompleteEnd() {
+		public void halted() {
 			//no-op
 			
 		}
@@ -234,7 +234,7 @@ public class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 		}
 	}
 
-	private static class ContigReadIdCollector implements AsmVisitor2{
+	private static class ContigReadIdCollector implements AsmVisitor{
 		private Set<String> readsInContig;
 		private final String contigId;
 		
@@ -307,7 +307,7 @@ public class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 					}
 					
 					@Override
-					public void visitIncompleteEnd() {
+					public void halted() {
 						//no-op						
 					}
 					
@@ -315,7 +315,7 @@ public class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 					public void visitEnd() {
 						//we finished the current contig
 						//halt parsing
-						callback.stopParsing();					
+						callback.haltParsing();					
 					}
 					
 					@Override
@@ -366,7 +366,7 @@ public class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 		}
 
 		@Override
-		public void visitIncompleteEnd() {
+		public void halted() {
 			//no-op
 			
 		}
@@ -378,7 +378,7 @@ public class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 		}
 	}
 	
-	private class ValidRangeVisitor implements AsmVisitor2{
+	private static class ValidRangeVisitor implements AsmVisitor{
 		private final Set<String> readsInContig;
 		private final Map<String,Range> validRanges;
 		
@@ -420,7 +420,7 @@ public class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 				NucleotideSequence consensusSequence,
 				QualitySequence consensusQualities, long numberOfReads) {
 			//if we get here stop parsing
-			callback.stopParsing();
+			callback.haltParsing();
 			return null;
 		}
 
@@ -451,7 +451,7 @@ public class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 				QualitySequence consensusQualities, long numberOfReads,
 				long numberOfUnitigs, long numberOfVariants) {
 			//if we get here stop parsing
-			callback.stopParsing();
+			callback.haltParsing();
 			return null;
 		}
 
@@ -459,7 +459,7 @@ public class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 		public AsmScaffoldVisitor visitScaffold(AsmVisitorCallback callback,
 				String externalId, long internalId, int numberOfContigPairs) {
 			//if we get here stop parsing
-			callback.stopParsing();
+			callback.haltParsing();
 			return null;
 		}
 
@@ -467,7 +467,7 @@ public class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 		public void visitScaffold(AsmVisitorCallback callback,
 				String externalId, long internalId, String externalContigId) {
 			//if we get here stop parsing
-			callback.stopParsing();			
+			callback.haltParsing();			
 		}
 
 		@Override
@@ -486,13 +486,13 @@ public class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 		}
 
 		@Override
-		public void visitIncompleteEnd() {
+		public void halted() {
 			//no-op
 			
 		}
 	}
 	
-	private class SingleContigVisitorBuilder implements AsmVisitor2{
+	private class SingleContigVisitorBuilder implements AsmVisitor{
 		private final Map<String, Range> validRanges;
 		private AsmContigBuilder builder;
 		
@@ -563,7 +563,7 @@ public class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 				@Override
 				protected void visitContig(AsmContigBuilder builder) {
 					SingleContigVisitorBuilder.this.builder = builder;
-					callback.stopParsing();
+					callback.haltParsing();
 				}
 			};
 		}
@@ -598,7 +598,7 @@ public class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 		}
 
 		@Override
-		public void visitIncompleteEnd() {
+		public void halted() {
 			//no-op			
 		}
 

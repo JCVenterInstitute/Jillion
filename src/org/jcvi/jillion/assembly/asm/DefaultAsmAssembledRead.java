@@ -38,7 +38,7 @@ import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
  *
  *
  */
-public final class DefaultAsmPlacedRead implements AsmAssembledRead{
+final class DefaultAsmAssembledRead implements AsmAssembledRead{
     private final boolean isSurrogate;
     private final AssembledRead placedRead;
     
@@ -51,7 +51,7 @@ public final class DefaultAsmPlacedRead implements AsmAssembledRead{
                 offset, dir, clearRange, ungappedFullLength,isSurrogate);
     }
     
-    private DefaultAsmPlacedRead(AssembledRead placedRead, boolean isSurrogate) {
+    private DefaultAsmAssembledRead(AssembledRead placedRead, boolean isSurrogate) {
         this.placedRead = placedRead;
         this.isSurrogate = isSurrogate;
     }
@@ -169,10 +169,10 @@ public final class DefaultAsmPlacedRead implements AsmAssembledRead{
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof DefaultAsmPlacedRead)) {
+        if (!(obj instanceof DefaultAsmAssembledRead)) {
             return false;
         }
-        DefaultAsmPlacedRead other = (DefaultAsmPlacedRead) obj;
+        DefaultAsmAssembledRead other = (DefaultAsmAssembledRead) obj;
         if (isSurrogate != other.isSurrogate) {
             return false;
         }
@@ -286,8 +286,8 @@ public final class DefaultAsmPlacedRead implements AsmAssembledRead{
         * {@inheritDoc}
         */
         @Override
-        public DefaultAsmPlacedRead build(){
-            return new DefaultAsmPlacedRead(delegateBuilder.build(),isSurrogate);
+        public DefaultAsmAssembledRead build(){
+            return new DefaultAsmAssembledRead(delegateBuilder.build(),isSurrogate);
         }
         /**
         * {@inheritDoc}

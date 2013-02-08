@@ -21,14 +21,12 @@
 package org.jcvi.jillion.assembly.asm;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.util.Arrays;
 
 import org.jcvi.jillion.assembly.AssemblyUtil;
-import org.jcvi.jillion.assembly.asm.AsmAssembledRead;
-import org.jcvi.jillion.assembly.asm.AsmContig;
-import org.jcvi.jillion.assembly.asm.AsmContigDataStore;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
@@ -83,7 +81,9 @@ public abstract class AbstractTestAsmContigDataStore extends AbstractTestAsmData
 	private void verifyAForwardGappedRead(AsmContig contig,
 			FragmentDataStore frg) throws DataStoreException {
 		AsmAssembledRead read =contig.getRead("1099820534711");
-		assertEquals(Range.of(33,990), read.asRange());
+		Range expectedGappedContigRange = Range.of(33,990);
+		assertEquals(expectedGappedContigRange, read.asRange());
+		assertEquals(expectedGappedContigRange, read.getGappedContigRange());
 		assertEquals(Direction.FORWARD, read.getDirection());
 		
 		assertEquals(Arrays.asList(47, 82, 193 ,771 ),
@@ -108,7 +108,9 @@ public abstract class AbstractTestAsmContigDataStore extends AbstractTestAsmData
 
 	private void verifyAReverseGappedRead(AsmContig contig, FragmentDataStore frg) throws DataStoreException {
 		AsmAssembledRead read =contig.getRead("1100010859106");
-		assertEquals(Range.of(0,730), read.asRange());
+		Range expectedContigRange = Range.of(0,730);
+		assertEquals(expectedContigRange, read.asRange());
+		assertEquals(expectedContigRange, read.getGappedContigRange());
 		assertEquals(Direction.REVERSE, read.getDirection());
 		
 		assertEquals(Arrays.asList(80,115,226),
@@ -129,5 +131,7 @@ public abstract class AbstractTestAsmContigDataStore extends AbstractTestAsmData
 									.build();
 		
 		assertEquals(expectedGappedSequence.toString(), read.getNucleotideSequence().toString());
+		assertFalse(read.isRepeatSurrogate());
+		
 	}
 }
