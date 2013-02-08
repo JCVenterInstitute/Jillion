@@ -24,12 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
-import org.jcvi.jillion.core.DirectedRange;
+import org.jcvi.jillion.assembly.asm.AsmVisitor.NestedContigMessageTypes;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.io.TextFileVisitor;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
@@ -57,7 +55,78 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  *
  *
  */
-public interface AsmVisitor extends TextFileVisitor{
+public interface AsmVisitor2{
+	
+	
+	/*
+	 * ASM message order:
+	 * MDI + (library)
+	 * AFG + (read)
+	 * AMP + (mate pair info)
+	 * UTG +
+	 * ----MPS (unitig read placement)
+	 * ULK + (unitig links?)
+	 * CCO +
+	 * ----VAR + (variant record)
+	 * ----MPS + (contig read placement)
+	 * ----UPS + (unitig mapping to cotig)
+	 * CLK + (contig links)
+	 * SCF + (scaffold)
+	 * ----CTP + (contig pair
+	 * SLK + (scaffold links)
+	 */
+	/**
+	 * {@code AsmVisitorCallback}
+	 * is a callback mechanism to allow the
+	 * {@link AsmVisitor} instances
+	 * to communicate with the parser
+	 * that is parsing the ASM file.
+	 * @author dkatzel
+	 *
+	 */
+	interface AsmVisitorCallback{
+		/**
+		 * {@code AsmVisitorMemento} is a marker
+		 * interface that {@link AsmFileParser}
+		 * instances can use to "rewind" back
+		 * to the position in its ASM file
+		 * in order to revisit portions of the ASM file. 
+		 * {@link AsmVisitorMemento} should only be used
+		 * by the {@link AsmFileParser} instance that
+		 * generated it.
+		 * @author dkatzel
+		 *
+		 */
+		interface AsmVisitorMemento{
+			
+		}
+		/**
+		 * Is this callback capable of
+		 * creating {@link AsmVisitorMemento}s
+		 * via {@link #createMemento()}.
+		 * @return {@code true} if this callback
+		 * can create mementos; {@code false} otherwise.
+		 */
+		boolean canCreateMemento();
+		/**
+		 * Create a {@link AsmVisitorMemento}
+		 * 
+		 * @return a {@link AsmVisitorMemento}; never null.
+		 * @see #canCreateMemento()
+		 * @throws UnsupportedOperationException if {@link #canCreateMemento()}
+		 * returns {@code false}.
+		 */
+		AsmVisitorMemento createMemento();
+		/**
+		 * Tell the {@link AsmFileParser} to stop parsing
+		 * the ASM file. If the ASM file is not completely
+		 * parsed, then any visitors still being visited
+		 * will have their visitIncompleteEnd() methods
+		 * called instead of their visitEnd() methods. 
+		 */
+		void stopParsing();
+	}
+	
     /**
      * {@code MateStatus} indicates the
      * relative positioning of the mate
@@ -437,44 +506,7 @@ public interface AsmVisitor extends TextFileVisitor{
         
     }
     
-    /**
-     * {@code NestedContigMessageTypes}
-     * is an enum of all the possible 
-     * nested messages inside a contig message
-     * in an asm file.
-     * @author dkatzel
-     *
-     *
-     */
-    public enum NestedContigMessageTypes{
-        /**
-         * Visit all the reads that map to this contig.
-         * Including this as part of the Set returned by 
-         * {@link AsmVisitor#visitContig(String, long, boolean, NucleotideSequence, QualitySequence, int, int, int)}
-         * will make this visitor call
-         * {@link AsmVisitor#visitReadLayout(char, String, Range, Direction, List)}
-         * n times where n is the number of reads in the contig currently being visited.
-         */
-        READ_MAPPING,
-        /**
-         * Visit all the unitigs that map to this contig.
-         * Including this as part of the Set returned by 
-         * {@link AsmVisitor#visitContig(String, long, boolean, NucleotideSequence, QualitySequence, int, int, int)}
-         * will make this visitor call
-         * {@link AsmVisitor#visitUnitigLayout(UnitigLayoutType, String, DirectedRange, List)
-         * n times where n is the number of unitigs in the contig currently being visited.
-         */
-        UNITIG_MAPPING,
-        /**
-         * Visit all the variant messages of this contig.
-         * Including this as part of the Set returned by 
-         * {@link AsmVisitor#visitContig(String, long, boolean, NucleotideSequence, QualitySequence, int, int, int)}
-         * will make this visitor call
-         * {@link AsmVisitor#visitVariance(Range, int, int, long, long, SortedSet)
-         * n times where n is the number of variant records in the contig currently being visited.
-         */
-        VARIANTS
-    }
+    
     
     interface MatePairEvidence{
         String getRead1();
@@ -571,7 +603,7 @@ public interface AsmVisitor extends TextFileVisitor{
      */
     void visitLibraryStatistics(String externalId, long internalId,
             float meanOfDistances, float stdDev,
-            int min, int max, List<Integer> histogram);
+            long min, long max, List<Long> histogram);
     
     /**
      * Visit one read and get its status in the assembly.
@@ -599,6 +631,8 @@ public interface AsmVisitor extends TextFileVisitor{
      * unitigs are themselves a contig.  Some unitigs will be generated by splitting in the scaffold module;
      * those unitigs will appear in a later message
      * generated by the scaffold.
+     * @param callback the {@link AsmVisitorCallback} instance
+     * which can be used to callback to the parser.
      * @param externalId the unique external id of this unitig.
      * @param internalId an internal integer value that associates this unitig with
      * future messages visited further on in the assembly pipeline. 
@@ -622,41 +656,9 @@ public interface AsmVisitor extends TextFileVisitor{
      * If the read layouts are not to be visited, then the next visit call 
      * (aside from many {@link #visitLine(String)}s) will be {@link #visitEndOfUnitig()}.
      */
-    boolean visitUnitig(String externalId, long internalId, float aStat, float measureOfPolymorphism,
+    AsmUnitigVisitor visitUnitig(AsmVisitorCallback callback, String externalId, long internalId, float aStat, float measureOfPolymorphism,
             UnitigStatus status, NucleotideSequence consensusSequence, QualitySequence consensusQualities,
-            int numberOfReads);
-    /**
-     * The current unitig has been completely visited.
-     */
-    void visitEndOfUnitig();
-    /**
-     * Visit one read layout onto the the current unitig or contig
-     * depending on if the visitor is currently visiting
-     * a unitig or a contig.
-     * @param readType the type of the read, usually 'R' for
-     * random read.  This is the same type as from the frg file.
-     * @param externalReadId the read id.
-     * @param readRange the {@link DirectedRange} which has the gapped range on the unitig or contig that this read
-     * aligns to and the {@link Direction} of the read on this unitig or contig.
-     * @param gapOffsets the gap offsets of this read onto the frg sequence.
-     */
-    void visitReadLayout(char readType, String externalReadId, 
-            DirectedRange readRange, List<Integer> gapOffsets);
-    
-    /**
-     * Visit one unitig layout onto the the current contig.
-     * @param type the {@link UnitigLayoutType} that explains
-     * why the unitig is layed out here.
-     * @param unitigExternalId the external id of this unitig.
-     * @param unitigRange the gapped {@link DirectedRange} on the contig that this unitig
-     * aligns to in the {@link Direction} of the unitig on the contig.
-     * If direction is {@link Direction#REVERSE}, then the contig uses the 
-     * reverse complement of the unitig's consensus sequence.
-     * @param gapOffsets the gap offsets of this layed out unitig onto the unitig consensus sequence
-     * (after reverse complementing?).
-     */
-    void visitUnitigLayout(UnitigLayoutType type, String unitigExternalId, 
-            DirectedRange unitigRange, List<Integer> gapOffsets);
+            long numberOfReads);
     /**
      * Indicates connections between unitigs.  They summarize the edges in the unitig graph whose nodes
      * are unitigs.  The graph's edges are induced by mate pairs that have one read
@@ -704,6 +706,8 @@ public interface AsmVisitor extends TextFileVisitor{
      * Describes one contig.  A contig represents a contiguous span
      * of the target genome.  The contig contains a layout of reads, a layout of unitigs
      * and any variants found in the underlying reads.
+     * @param callback the {@link AsmVisitorCallback} instance
+     * which can be used to callback to the parser.
      * @param externalId the unique external id of this contig.
      * @param internalId an internal integer value that associates this contig with
      * future messages visited further on in the assembly pipeline. 
@@ -723,60 +727,18 @@ public interface AsmVisitor extends TextFileVisitor{
      * layouts are to be visited then calls to {@link #visitReadLayout(char, String, Range, Direction, List)}
      * will be called {@code numberOfReads} times, before the call to {@link #visitEndOfContig()}.
      */
-    Set<NestedContigMessageTypes> visitContig(String externalId, long internalId, boolean isDegenerate,
+    AsmContigVisitor visitContig(AsmVisitorCallback callback, String externalId, long internalId, boolean isDegenerate,
             NucleotideSequence consensusSequence, QualitySequence consensusQualities,
-            int numberOfReads, int numberOfUnitigs, int numberOfVariants);
-    
-    interface VariantRecord extends Comparable<VariantRecord>{
-        /**
-         * The internal read ids that contribute to this variant.
-         * @return a list of IIDs 
-         */
-        List<Long> getContributingReadIIDs();
-        /**
-         * The weight of this variant, the greater
-         * the number the more major this variant is.
-         * @return
-         */
-        int getWeight();
-        /**
-         * The {@link NucleotideSequence}
-         * of this variant.
-         * @return
-         */
-        NucleotideSequence getVariantSequence();
-    }
-    /**
-     * A Variance message indicates alternative sequence(s) for small
-     * regions of the contig consensus.  A variant whose sequence
-     * length is 1 is commonly known as a SNP.
-     * @param range the location of this variant on the contig consensus sequence.
-     * @param numberOfSpanningReads the number of reads that give 
-     * coverage at the variant positions. Some spanning reads may not have contributed to the consensus
-     * due to poor quality or lack of confirmation in the other reads.
-     * @param anchorSize Ancor size used to detect variants, Currently, Celera Assembler
-     * defaults to 11.
-     * @param internalAccessionId the internal accession id of this variant.
-     * @param accessionForPhasedVariant the accession for a different variant
-     * that is phased with this one.  If set to a negative number, then
-     * this variant has not related to another variant? Linking all the variants that are phased
-     * with one another can be used to dephase mixed (or diploid?) sequence.
-     * @param variantRecords a list of {@link VariantRecord} objects
-     * that explain all the details of each part of the SNP.
-     */
-    void visitVariance(Range range, int numberOfSpanningReads,
-            int anchorSize,long internalAccessionId, long accessionForPhasedVariant,
-            SortedSet<VariantRecord> variantRecords);
-    /**
-     * There are no more nested messages for the current contig.
-     */
-    void visitEndOfContig();
+            long numberOfReads, long numberOfUnitigs, long numberOfVariants);
+
     /**
      * Scaffold Messages define one scaffold per message.  A scaffold
      * is the maximal unit of contiguous sequence output
      * by Celera Assembler.
      * A scaffold may consist of one contig or multiple contigs
      * and their relative coordinates.
+     * @param callback the {@link AsmVisitorCallback} instance
+     * which can be used to callback to the parser.
      * @param externalId the unique external id of this scaffold.
      * @param internalId an internal integer value that associates this scaffold with
      * future messages visited further on in the assembly pipeline. 
@@ -787,32 +749,15 @@ public interface AsmVisitor extends TextFileVisitor{
      * @return {@code true} to visit the contig pair messages of this scaffold;
      * {@code false} otherwise.
      */
-    boolean visitScaffold(String externalId, long internalId, int numberOfContigPairs);
+    AsmScaffoldVisitor visitScaffold(AsmVisitorCallback callback, String externalId, long internalId, int numberOfContigPairs);
     /**
-     * This contig is the only contig in this scaffold (as previously determined
-     * by {@link #visitScaffold(String, long, int)} having a numberOfContigPairs = 0.
+     * This contig is the only contig in this scaffold.
+     * @param callback the {@link AsmVisitorCallback} instance
+     * which can be used to callback to the parser.
      * @param externalContigId the contig external id.
      */
-    void visitSingleContigInScaffold(String externalContigId);
-    /**
-     * A contig pair message defines a pair of contigs that belong to a scaffold.
-     * A scaffold with three contigs {1,2,3} would be represented by two pair message
-     * (1,2) and (2,3).  Note that the first contig of a pair can have a reverse orientation
-     * to preserve its orientation in the previous contig pair message.
-     * @param externalContigId1 the external id of one of the contigs in this pair.
-     * @param externalContigId2 the external id of the other contig in this pair.
-     * @param meanDistance the the predicted number of bases in the gap between contigs.  A negative
-     * distance indicates that the contigs overlap (according to mate pairs)
-     * but their consensus sequences do not align.
-     * @param stddev standard deviation of the distance distribution of the mates that span the contigs.
-     * @param orientation the relative {@link LinkOrientation} of the two contigs.
-     */
-    void visitContigPair(String externalContigId1,String externalContigId2, 
-            float meanDistance, float stddev, LinkOrientation orientation);
-    /**
-     * There are no more nested messages for the current scaffold.
-     */
-    void visitEndOfScaffold();
+    void visitScaffold(AsmVisitorCallback callback, String externalId, long internalId, String externalContigId);
+
     
     /**
      * Indicates connections between scaffolds.   
