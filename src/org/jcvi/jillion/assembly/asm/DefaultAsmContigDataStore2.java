@@ -129,6 +129,17 @@ public class DefaultAsmContigDataStore2 {
 		}
 		
 		
+		@Override
+		public void visitEnd() {
+			//no-op			
+		}
+
+		@Override
+		public void visitIncompleteEnd() {
+			//no-op
+			
+		}
+
 		public AsmContigDataStore build(){
 			return DataStoreUtil.adapt(AsmContigDataStore.class, contigs);
 		}

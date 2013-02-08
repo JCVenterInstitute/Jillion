@@ -783,4 +783,8 @@ public interface AsmVisitor2{
     void visitScaffoldLink(String externalScaffoldId1,String externalScaffoldId2, LinkOrientation orientation,
             OverlapType overlapType, OverlapStatus status, int numberOfEdges,
             float meanDistance, float stddev, Set<MatePairEvidence> matePairEvidence);
+    
+    void visitEnd();
+    
+    void visitIncompleteEnd();
 }
