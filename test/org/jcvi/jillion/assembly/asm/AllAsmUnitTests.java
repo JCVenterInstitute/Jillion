@@ -34,7 +34,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
      
      TestDefaultAsmFileContigDataStore2.class,
-     TestIndexedAsmFileContigDataStore.class,
+     TestIndexedAsmFileContigDataStore.class
      
     }
     )
