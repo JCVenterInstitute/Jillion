@@ -22,7 +22,15 @@ import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
-
+/**
+ * {@code IndexedAsmContigDataStore} is an {@link AsmContigDataStore}
+ * implementation that only stores indexes and range offsets
+ * of contigs in the input asm file.  This allows large files to provide random 
+ * access without taking up much memory.  The downside is each contig
+ * must be re-parsed each time and the asm file must exist and not
+ * get altered during the entire lifetime of this object.
+ * @author dkatzel
+ */
 public class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 
 	
