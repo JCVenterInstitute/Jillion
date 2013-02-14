@@ -139,6 +139,10 @@ final class DefaultFastqFileDataStore{
 			//no-op
 		}
 		@Override
+		public void halted() {
+			//no-op			
+		}
+		@Override
 		public FastqDataStore build() {
 			return builder.build();
 		}

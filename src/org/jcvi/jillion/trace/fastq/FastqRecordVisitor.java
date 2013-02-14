@@ -1,6 +1,7 @@
 package org.jcvi.jillion.trace.fastq;
 
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback;
 /**
  * {@code FastqRecordVisitor} is a visitor
  * interface to visit a single fastq record
@@ -28,6 +29,20 @@ public interface FastqRecordVisitor {
      * @see FastqQualityCodec
      */
     void visitEncodedQualities(String encodedQualities);
-    
+    /**
+	 * Visit the end of the 
+	 * current fastq record.
+	 */
     void visitEnd();
+    
+    /**
+     * The parser has stopped parsing the 
+     * current fastq record
+     * due to {@link FastqVisitorCallback#haltParsing()}
+     * being called. The end of the fastq record was
+     * not yet reached.
+     */
+    void halted();
+    
+    
 }

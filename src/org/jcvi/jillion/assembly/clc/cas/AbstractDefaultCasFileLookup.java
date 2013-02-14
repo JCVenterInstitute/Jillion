@@ -314,8 +314,11 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
 
 		@Override
 		public void visitEnd() {
-			//no-op
-			
+			//no-op			
+		}
+		@Override
+		public void halted() {
+			//no-op			
 		}
     }
 

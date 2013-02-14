@@ -36,8 +36,12 @@ public abstract class AbstractFastqRecordVisitor implements FastqRecordVisitor{
 	public final void visitEnd() {
 		visitRecord(new FastqRecordBuilder(id, currentBasecalls, currentQualities)
 									.comment(optionalComment)
-									.build());
-		
+									.build());		
+	}
+	
+	@Override
+	public void halted() {
+		//no-op			
 	}
 
 	protected abstract void visitRecord(FastqRecord record);

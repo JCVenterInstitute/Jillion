@@ -48,10 +48,12 @@ public class TestCasava18 {
 			
 			@Override
 			public void visitEnd() {
-				// TODO Auto-generated method stub
-				
+				//no-op				
 			}
-			
+			@Override
+			public void halted(){
+				//no-op
+	    	}
 			@Override
 			public FastqRecordVisitor visitDefline(FastqVisitorCallback callback,
 					String id, String optionalComment) {
