@@ -129,6 +129,10 @@ final class IndexedFastqFileDataStore{
 		public void visitEnd() {
 			//no-op			
 		}
+		@Override
+		public void halted(){
+			//no-op
+    	}
     }
     
     private static final class IndexedFastqFileDataStore2 implements FastqDataStore{
@@ -237,7 +241,10 @@ final class IndexedFastqFileDataStore{
     		public void visitEnd() {
     			//no-op			
     		}
-
+    		@Override
+    		public void halted(){
+    			//no-op
+    		}
 			public final FastqRecord getRecord() {
 				return record;
 			}

@@ -65,7 +65,11 @@ public abstract class FastqFileParser {
 		while(parserState.keepParsing() && parser.hasNextLine()){
 			parserState=parseNextRecord(visitor, parser, parserState);
 		}
-		visitor.visitEnd();
+		if(parserState.keepParsing()){
+			visitor.visitEnd();
+		}else{
+			visitor.halted();
+		}
 	}
 	
 	private ParserState parseNextRecord(FastqVisitor visitor, TextLineParser parser, ParserState parserState) throws IOException{
@@ -99,11 +103,15 @@ public abstract class FastqFileParser {
         		sequenceBuilder.append(line);
         	}
         }while(inBasecallBlock);
+        
         NucleotideSequence sequence = sequenceBuilder.build();
         if(recordVisitor!=null){
         	recordVisitor.visitNucleotides(sequence);
         }
         if(!parserState.keepParsing()){
+        	if(recordVisitor!=null){
+            	recordVisitor.halted();
+            }
         	return parserState.incrementOffset(numBytesRead);
         }
         //now parse the qualities
@@ -124,11 +132,12 @@ public abstract class FastqFileParser {
     		recordVisitor.visitEncodedQualities(qualityBuilder.toString());
     	}
     	ParserState endParserState = parserState.incrementOffset(numBytesRead);
-		 if(!endParserState.keepParsing()){
-			 return endParserState;
-	        }
 		 if(recordVisitor !=null){
-			 recordVisitor.visitEnd();
+			 if(endParserState.keepParsing()){
+				 recordVisitor.visitEnd();
+			 }else{
+				 recordVisitor.halted();
+			 }
 		 }
 		return endParserState;
 	}

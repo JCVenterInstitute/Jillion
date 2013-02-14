@@ -238,7 +238,10 @@ final class LargeFastqFileDataStore implements FastqDataStore {
 					public void visitEnd() {
 						//no-op						
 					}
-					
+					@Override
+					public void halted(){
+						//no-op
+			    	}
 					@Override
 					public FastqRecordVisitor visitDefline(final FastqVisitorCallback callback,
 							String id, String optionalComment) {
@@ -292,7 +295,10 @@ final class LargeFastqFileDataStore implements FastqDataStore {
 					public void visitEnd() {
 						//no-op						
 					}
-					
+					@Override
+					public void halted(){
+						//no-op
+			    	}
 					@Override
 					public FastqRecordVisitor visitDefline(final FastqVisitorCallback callback,
 							String id, String optionalComment) {

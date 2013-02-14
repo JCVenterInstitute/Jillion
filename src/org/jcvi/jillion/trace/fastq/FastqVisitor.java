@@ -1,6 +1,7 @@
 package org.jcvi.jillion.trace.fastq;
 
 
+
 /**
  * {@code FastqVisitor} is a visitor
  * interface to visit components of a single
@@ -87,4 +88,12 @@ public interface FastqVisitor {
 	 * Visit the end of the fastq file.
 	 */
 	void visitEnd();
+	
+	 /**
+     * The parser has stopped parsing the fastq file
+     * due to {@link FastqVisitorCallback#haltParsing()}
+     * being called. The end of the fastq file was
+     * not yet reached.
+     */
+    void halted();
 }

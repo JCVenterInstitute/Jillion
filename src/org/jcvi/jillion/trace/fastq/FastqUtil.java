@@ -215,12 +215,26 @@ public final class FastqUtil {
 			callback.haltParsing();
 			return null;
 		}
-
+		/**
+		 * This method will be the most frequently
+		 * one called since most fastq files
+		 * are huge so {@link FastqVisitorCallback#haltParsing()} will get called
+		 * 
+		 */
 		@Override
-		public void visitEnd() {
-			
-	        detectedCodec= recordVisitor.getMostFrequentCodec();
-			
+		public void halted() {
+			detectedCodec= recordVisitor.getMostFrequentCodec();			
+		}
+		/**
+		 * It is possible that the fastq
+		 * file is so small that 
+		 * {@link FastqVisitorCallback#haltParsing()}
+		 * will not get called.
+		 * 
+		 */
+		@Override
+		public void visitEnd() {			
+	        detectedCodec= recordVisitor.getMostFrequentCodec();			
 		}
     	
     }
@@ -256,6 +270,11 @@ public final class FastqUtil {
 			//no-op			
 		}
     	
+		@Override
+		public void halted() {
+			//no-op			
+		}
+		
 		public FastqQualityCodec getMostFrequentCodec(){
 			if(numSanger==0 && numSolexa==0 && numIllumina==0){
 				throw new IllegalStateException("fastq file must not be empty");
