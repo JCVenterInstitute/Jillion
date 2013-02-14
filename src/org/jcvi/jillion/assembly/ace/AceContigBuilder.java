@@ -73,6 +73,8 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
  * reads to be modified before
  * the creation of the {@link AceContig} instance
  * (which is immutable).
+ * <p/>
+ * This class is not thread-safe.
  * @author dkatzel
  *
  *
@@ -226,6 +228,8 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     		throw new NullPointerException("consensus caller can not be null");
     	}
     	this.consensusCaller=consensusCaller;
+    	this.qualityDataStore = null;
+    	this.qualityValueStrategy = null;
     	return this;
     }
     /**
@@ -477,6 +481,8 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
 				if(fullQualities==null){
 					quality = DEFAULT_QUALITY;
 				}else{					
+					//if fullQualities is not null then
+					//qualityValueStrategy must be non-null as well
 					quality= qualityValueStrategy.getQualityFor(tempRead, fullQualities, i);
 				}
 				if(builders[start+i] ==null){
@@ -488,6 +494,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     	}
     	for(int i=0; i<builders.length; i++){
     		CompactedSlice.Builder builder = builders[i];
+    		//a null builder implies 0x
     		if(builder !=null){
 				Slice<?> slice = builder.build();            
 	    		mutableConsensus.replace(i,consensusCaller.callConsensus(slice).getConsensus());
@@ -500,7 +507,10 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      * Split the contents of the current ContigBuilder into possibly multiple
      * new ContigBuilders.  The returned ContigBuilders will be new
      * instances which only contain the reads and consensus of the initial
-     * contig that intersects the input rangesToKeep.
+     * contig that intersects the input rangesToKeep.  If a {@link ConsensusCaller}
+     * and related {@link QualitySequenceDataStore} and {@link QualityValueStrategy}
+     * were set via {@link #recallConsensus(ConsensusCaller)} or {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}
+     * then those values are copied as well.
      * @param rangesToKeep The {@link Range}s of the contig to make into new
      * contigs.  For each range given, a new ContigBuilder instance is created
      * which contains only the reads and portion of the consensus sequence
@@ -528,6 +538,10 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
 												.trim(rangeTokeep)
 												.build();
             AceContigBuilder splitContig = new AceContigBuilder(contigId, contigConsensus);
+            splitContig.consensusCaller = this.consensusCaller;
+            splitContig.qualityDataStore = this.qualityDataStore;
+            splitContig.qualityValueStrategy = this.qualityValueStrategy;
+            
             Set<String> contigReads = new HashSet<String>();            
             for(CoverageRegion<AceAssembledReadBuilder> region : CoverageMapUtil.getRegionsWhichIntersect(coverageMap, rangeTokeep)){
                 for(AceAssembledReadBuilder read : region){

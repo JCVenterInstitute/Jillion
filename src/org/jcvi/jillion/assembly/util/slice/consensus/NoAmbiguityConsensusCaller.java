@@ -25,11 +25,15 @@
  */
 package org.jcvi.jillion.assembly.util.slice.consensus;
 
+import static org.jcvi.jillion.core.residue.nt.Nucleotide.Adenine;
+import static org.jcvi.jillion.core.residue.nt.Nucleotide.Cytosine;
+import static org.jcvi.jillion.core.residue.nt.Nucleotide.Gap;
+import static org.jcvi.jillion.core.residue.nt.Nucleotide.Guanine;
+import static org.jcvi.jillion.core.residue.nt.Nucleotide.Thymine;
+
 import org.jcvi.jillion.assembly.util.slice.Slice;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
-
-import static org.jcvi.jillion.core.residue.nt.Nucleotide.*;
 /**
  * <code>NoAmbiguityConsensusCaller</code>
  * will always return the non-ambiguous base
