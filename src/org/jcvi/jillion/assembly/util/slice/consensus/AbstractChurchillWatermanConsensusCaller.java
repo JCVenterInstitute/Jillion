@@ -34,8 +34,8 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.jcvi.jillion.assembly.util.slice.Slice;
 import org.jcvi.jillion.assembly.util.slice.SliceElement;
@@ -63,7 +63,13 @@ public abstract class AbstractChurchillWatermanConsensusCaller extends AbstractC
         super(highQualityThreshold);
     }
     
-
+    /**
+     * Get the consensus for the given Slice which
+     * is guaranteed to have coverage.
+     * @param normalizedErrorProbabilityStruct
+     * @param slice
+     * @return
+     */
     protected abstract Nucleotide getConsensus(ConsensusProbabilities normalizedErrorProbabilityStruct,Slice<?> slice) ;
  
     

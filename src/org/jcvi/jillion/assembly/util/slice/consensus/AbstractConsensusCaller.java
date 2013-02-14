@@ -59,7 +59,13 @@ public abstract class AbstractConsensusCaller implements ConsensusCaller{
         return callConsensusWithCoverage(slice);
     }
 
-
+    /**
+     * Compute the Consensus for the given Slice which
+     * is guaranteed to have coverage.
+     * @param slice a Slice object, will never be null
+     * and will always have at least 1x coverage.
+     * @return a {@link ConsensusResult} should never be null.
+     */
     protected abstract ConsensusResult callConsensusWithCoverage(Slice<?> slice);
 
 
