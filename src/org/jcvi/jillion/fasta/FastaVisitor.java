@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta;
 
+
 /**
  * {@code FastaFileVisitor} is a visitor
  * interface to visit components of a single
@@ -47,4 +48,12 @@ public interface FastaVisitor {
 	 * Visit the end of the fasta file.
 	 */
 	void visitEnd();
+	
+	 /**
+     * The parser has stopped parsing the fasta file
+     * due to {@link FastaVisitorCallback#haltParsing()}
+     * being called. The end of the fasta file was
+     * not yet reached.
+     */
+    void halted();
 }

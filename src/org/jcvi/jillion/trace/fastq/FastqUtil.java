@@ -212,7 +212,7 @@ public final class FastqUtil {
 				numberOfRecordsVisited++;
 				return recordVisitor;
 			}
-			callback.stopParsing();
+			callback.haltParsing();
 			return null;
 		}
 

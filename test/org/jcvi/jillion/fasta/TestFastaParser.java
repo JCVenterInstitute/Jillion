@@ -68,8 +68,11 @@ public class TestFastaParser {
 			int count=0;
 			@Override
 			public void visitEnd() {
-				assertEquals(2, count);
-				
+				assertEquals(2, count);				
+			}
+			@Override
+			public void halted() {
+				throw new IllegalStateException("parsing was halted");		
 			}
 			
 			@Override
@@ -96,7 +99,10 @@ public class TestFastaParser {
 				assertTrue(visitedLast);
 				
 			}
-			
+			@Override
+			public void halted() {
+				throw new IllegalStateException("parsing was halted");		
+			}
 			@Override
 			public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
 					String id, String optionalComment) {
@@ -134,10 +140,13 @@ public class TestFastaParser {
 			boolean visitedFirst=false;
 			boolean visitedLast=false;
 			@Override
-			public void visitEnd() {
+			public void visitEnd() {				
+				throw new IllegalStateException("parsing was NOT halted");	
+			}
+			@Override
+			public void halted() {
 				assertTrue(visitedFirst);
-				assertTrue(visitedLast);
-				
+				assertTrue(visitedLast);	
 			}
 			
 			@Override
@@ -153,7 +162,7 @@ public class TestFastaParser {
 						@Override
 						public void visitEnd() {
 							super.visitEnd();
-							callback.stopParsing();
+							callback.haltParsing();
 						}
 						
 					};
@@ -180,6 +189,10 @@ public class TestFastaParser {
 				assertTrue(visitedFirst);
 				assertTrue(visitedLast);
 				
+			}
+			@Override
+			public void halted() {
+				throw new IllegalStateException("parsing was halted");
 			}
 			
 			@Override
@@ -209,8 +222,12 @@ public class TestFastaParser {
 			@Override
 			public void visitEnd() {
 				assertTrue(visitedFirst);
-				assertTrue(visitedLast);
-				
+				assertTrue(visitedLast);				
+			}
+			
+			@Override
+			public void halted() {
+				throw new IllegalStateException("parsing was halted");
 			}
 			
 			@Override
@@ -240,10 +257,13 @@ public class TestFastaParser {
 			boolean visitedFirst=false;
 			boolean visitedLast=false;
 			@Override
-			public void visitEnd() {
+			public void visitEnd() {					
+				throw new IllegalStateException("parsing was NOT halted");
+			}
+			@Override
+			public void halted() {
 				assertTrue(visitedFirst);
-				assertFalse(visitedLast);
-				
+				assertFalse(visitedLast);		
 			}
 			
 			@Override
@@ -251,7 +271,7 @@ public class TestFastaParser {
 					String id, String optionalComment) {
 				if(matchesFirstRecord(id,optionalComment)){
 					visitedFirst=true;
-					callback.stopParsing();
+					callback.haltParsing();
 					return null;
 				}
 				throw new AssertionError("def line did not match first");
@@ -270,10 +290,13 @@ public class TestFastaParser {
 			boolean visitedFirst=false;
 			boolean visitedLast=false;
 			@Override
-			public void visitEnd() {
+			public void visitEnd() {					
+				throw new IllegalStateException("parsing was NOT halted");
+			}
+			@Override
+			public void halted() {
 				assertTrue(visitedFirst);
-				assertFalse(visitedLast);
-				
+				assertFalse(visitedLast);		
 			}
 			
 			@Override
@@ -286,7 +309,7 @@ public class TestFastaParser {
 						@Override
 						public void visitEnd() {
 							super.visitEnd();
-							callback.stopParsing();
+							callback.haltParsing();
 						}
 						
 					};
@@ -309,12 +332,15 @@ public class TestFastaParser {
 			boolean visitedFirst=false;
 			boolean visitedLast=false;
 			@Override
-			public void visitEnd() {
-				assertTrue(visitedFirst);
-				assertTrue(visitedLast);
-				
+			public void visitEnd() {					
+				throw new IllegalStateException("parsing was NOT halted");
 			}
 			
+			@Override
+			public void halted() {
+				assertTrue(visitedFirst);
+				assertTrue(visitedLast);				
+			}
 			@Override
 			public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
 					String id, String optionalComment) {
@@ -323,11 +349,14 @@ public class TestFastaParser {
 					return new FirstRecordVisitor();
 				}else if (matchesSecondRecord(id,optionalComment)){
 					visitedLast=true;
-					callback.stopParsing();
+					callback.haltParsing();
 					return null;
 				}
 				throw new AssertionError("def line did not match first or second record");
 			}
+
+
+			
 	
 			
 		};
@@ -371,8 +400,11 @@ public class TestFastaParser {
 
 		@Override
 		public void visitEnd() {
-			assertEquals(expectedLines, actualLines);
-			
+			assertEquals(expectedLines, actualLines);			
+		}
+		@Override
+		public void halted() {
+			throw new IllegalStateException("visitor should not be halted");				
 		}
 		
 	}
@@ -410,7 +442,10 @@ public class TestFastaParser {
 			assertEquals(expectedLines, actualLines);
 			
 		}
-		
+		@Override
+		public void halted() {
+			throw new IllegalStateException("visitor should not be halted");				
+		}
 	}
 	
 	

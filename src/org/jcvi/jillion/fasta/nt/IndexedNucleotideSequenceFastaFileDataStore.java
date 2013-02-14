@@ -237,8 +237,11 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 
 		@Override
 		public void visitEnd() {
-			//no-op
-			
+			//no-op			
+		}
+		@Override
+		public void halted() {
+			//no-op			
 		}
 
 		@Override
@@ -327,7 +330,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 		public FastaRecordVisitor visitDefline(final FastaVisitorCallback callback,
 				String id, String optionalComment) {
 			if(fastaRecord !=null){
-				callback.stopParsing();
+				callback.haltParsing();
 				return null;
 			}
 			return new AbstractNucleotideFastaRecordVisitor(id, optionalComment) {
@@ -345,7 +348,10 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 			//no-op
 			
 		}
-		
+		@Override
+		public void halted() {
+			//no-op			
+		}
 	}
 
 }

@@ -56,7 +56,7 @@ public interface FastqVisitor {
 		 * the fastq file.  {@link FastqVisitor#visitEnd()}
 		 * will still be called.
 		 */
-		void stopParsing();
+		void haltParsing();
 	}
 	/**
      * Visit the defline of a the current fastq record.

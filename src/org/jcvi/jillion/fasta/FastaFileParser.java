@@ -27,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -128,11 +129,11 @@ public abstract class FastaFileParser {
 	
 	protected final void parseFile(TextLineParser parser, long startOffset,
 			FastaVisitor visitor) throws IOException {
-		boolean keepParsing=true;
+		AtomicBoolean keepParsing=new AtomicBoolean(true);
 		FastaRecordVisitor recordVisitor =null;
-		AbstractFastaVisitorCallback callback = createNewCallback(startOffset);
+		AbstractFastaVisitorCallback callback = createNewCallback(startOffset, keepParsing);
 		long currentOffset=startOffset;
-		while(keepParsing && parser.hasNextLine()){
+		while(keepParsing.get() && parser.hasNextLine()){
 			String line=parser.nextLine();
 			String trimmedLine = line.trim();
 			if(!trimmedLine.isEmpty()){
@@ -143,8 +144,7 @@ public abstract class FastaFileParser {
 						//need to check again the keep parsing flag 
 						//incase the callback was used to stop in the previous
 						//called to visitEnd()
-						keepParsing=callback.keepParsing();
-						if(!keepParsing){
+						if(!keepParsing.get()){
 							//need to set recordVisitor to null
 							//so we don't call visitEnd() again
 							recordVisitor=null;
@@ -153,9 +153,8 @@ public abstract class FastaFileParser {
 					}
 					String id = matcher.group(1);
 		            String comment = matcher.group(3);		            
-		            callback = createNewCallback(currentOffset);
+		            callback = createNewCallback(currentOffset, keepParsing);
 		            recordVisitor = visitor.visitDefline(callback, id, comment);
-		            keepParsing=callback.keepParsing();
 				}else{
 					//not a defline use current record visitor
 					if(recordVisitor !=null){
@@ -165,33 +164,51 @@ public abstract class FastaFileParser {
 			}
 			currentOffset +=line.length();
 		}
+		
 		if(recordVisitor !=null){
-			recordVisitor.visitEnd();
+			if(keepParsing.get()){
+				recordVisitor.visitEnd();
+			}else{
+				recordVisitor.halted();
+			}
 		}
-		visitor.visitEnd();
+		//need to check keep parsing flag
+		//for record visitor and visitor
+		//separately in case the recordVisitor.visitEnd()
+		//calls haltParsing
+		if(keepParsing.get()){
+			visitor.visitEnd();
+		}else{
+			visitor.halted();
+		}
+
 	}
 
-	protected abstract AbstractFastaVisitorCallback createNewCallback(long currentOffset);
+	protected abstract AbstractFastaVisitorCallback createNewCallback(long currentOffset, AtomicBoolean keepParsing);
 	
 	private static abstract class AbstractFastaVisitorCallback implements FastaVisitorCallback{
-		private volatile boolean keepParsing=true;
+		private final AtomicBoolean keepParsing;
 		
+		public AbstractFastaVisitorCallback(AtomicBoolean keepParsing) {
+			this.keepParsing = keepParsing;
+		}
+
 		@Override
-		public void stopParsing() {
-			keepParsing=false;
+		public void haltParsing() {
+			keepParsing.set(false);
 			
 		}
 
-		public final boolean keepParsing() {
-			return keepParsing;
-		}
 	}
 	
 	private static class NoMementoCallback extends AbstractFastaVisitorCallback{
 
-		static NoMementoCallback INSTANCE = new NoMementoCallback();
 		
 		
+		public NoMementoCallback(AtomicBoolean keepParsing) {
+			super(keepParsing);
+		}
+
 		@Override
 		public boolean canCreateMemento() {
 			return false;
@@ -208,7 +225,8 @@ public abstract class FastaFileParser {
 
 		private final long offset;
 		
-		public MementoCallback(long offset){
+		public MementoCallback(long offset, AtomicBoolean keepParsing){
+			super(keepParsing);
 			this.offset = offset;
 		}
 
@@ -247,8 +265,8 @@ public abstract class FastaFileParser {
 			}
 			this.fastaFile = fastaFile;
 		}
-		protected AbstractFastaVisitorCallback createNewCallback(long currentOffset) {
-			return new MementoCallback(currentOffset);
+		protected AbstractFastaVisitorCallback createNewCallback(long currentOffset, AtomicBoolean keepParsing) {
+			return new MementoCallback(currentOffset, keepParsing);
 		}
 		public void accept(FastaVisitor visitor, FastaVisitorMemento memento) throws IOException{
 			if(!(memento instanceof OffsetMemento)){
@@ -283,8 +301,8 @@ public abstract class FastaFileParser {
 		public InputStreamFastaParser(InputStream inputStream) {
 			this.inputStream = new OpenAwareInputStream(inputStream);
 		}
-		protected AbstractFastaVisitorCallback createNewCallback(long currentOffset) {
-			return NoMementoCallback.INSTANCE;
+		protected AbstractFastaVisitorCallback createNewCallback(long currentOffset, AtomicBoolean keepParsing) {
+			return new NoMementoCallback(keepParsing);
 		}
 		@Override
 		public synchronized void accept(FastaVisitor visitor) throws IOException {

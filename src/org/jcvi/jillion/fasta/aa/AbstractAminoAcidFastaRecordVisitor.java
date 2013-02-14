@@ -61,6 +61,10 @@ public abstract class AbstractAminoAcidFastaRecordVisitor implements FastaRecord
 												.build();
 		visitRecord(record);		
 	}
+	@Override
+	public void halted() {
+		//no-op				
+	}
 	
 	protected abstract void visitRecord(AminoAcidSequenceFastaRecord fastaRecord);
 	

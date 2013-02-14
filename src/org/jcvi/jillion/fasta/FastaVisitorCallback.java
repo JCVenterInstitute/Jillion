@@ -20,15 +20,55 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta;
 
-public interface FastaVisitorCallback {
+import org.jcvi.jillion.trace.fastq.FastqVisitor;
 
+
+
+/**
+ * {@code FastqVisitorCallback}
+ * is a callback mechanism for the {@link FastaVisitor}
+ * instance to communicate with the parser
+ * that is parsing the fasta data.
+ * @author dkatzel
+ *
+ */
+public interface FastaVisitorCallback {
+	/**
+	 * {@code FastaVisitorMemento} is a marker
+	 * interface that {@link FastaFileParser}
+	 * instances can use to "rewind" back
+	 * to the position in its fasta file
+	 * in order to revisit portions of the fasta file. 
+	 * {@link FastaVisitorMemento} should only be used
+	 * by the {@link FastaFileParser} instance that
+	 * generated it.
+	 * @author dkatzel
+	 *
+	 */
 	interface FastaVisitorMemento{
 		
 	}
-	
+	/**
+	 * Is this callback capabable of
+	 * creating {@link FastaVisitorMemento}s
+	 * via {@link #createMemento()}.
+	 * @return {@code true} if this callback
+	 * can create mementos; {@code false} otherwise.
+	 */
 	boolean canCreateMemento();
-	
+	/**
+	 * Create a {@link FastaVisitorMemento}
+	 * 
+	 * @return a {@link FastaVisitorMemento}; never null.
+	 * @see #canCreateMemento()
+	 * @throws UnsupportedOperationException if {@link #canCreateMemento()}
+	 * returns {@code false}.
+	 */
 	FastaVisitorMemento createMemento();
-	
-	void stopParsing();
+	/**
+	 * Tell the {@link FastaFileParser} to stop parsing
+	 * the fasta file.  {@link FastqVisitor#visitEnd()}
+	 * will still be called.
+	 */
+	void haltParsing();
 }

@@ -32,9 +32,9 @@ import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaRecord;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento;
 import org.jcvi.jillion.fasta.aa.AbstractAminoAcidFastaRecordVisitor;
@@ -156,6 +156,10 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 			//no-op
 			
 		}
+		@Override
+		public void halted() {
+			//no-op			
+		}
 
 		@Override
 		public AminoAcidSequenceFastaDataStore build() {
@@ -243,7 +247,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 		public FastaRecordVisitor visitDefline(final FastaVisitorCallback callback,
 				String id, String optionalComment) {
 			if(fastaRecord !=null){
-				callback.stopParsing();
+				callback.haltParsing();
 				return null;
 			}
 			return new AbstractAminoAcidFastaRecordVisitor(id, optionalComment) {
@@ -258,10 +262,12 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 
 		@Override
 		public void visitEnd() {
-			// TODO Auto-generated method stub
-			
+			//no-op			
 		}
-		
+		@Override
+		public void halted() {
+			//no-op			
+		}
 	}
 }
 

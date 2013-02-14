@@ -39,4 +39,13 @@ public interface FastaRecordVisitor {
 	 * Visit the end of the current fasta record;
 	 */
 	void visitEnd();
+	
+	 /**
+     * The parser has stopped parsing the current
+     * fasta record
+     * due to {@link FastaVisitorCallback#haltParsing()}
+     * being called. The end of the fasta record was
+     * not yet reached.
+     */
+    void halted();
 }
