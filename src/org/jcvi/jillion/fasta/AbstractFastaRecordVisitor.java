@@ -43,5 +43,8 @@ public abstract class AbstractFastaRecordVisitor implements FastaRecordVisitor{
 	}
 	
 	protected abstract void visitRecord(String id, String optionalComment, String fullBody);
-
+	@Override
+	public void halted() {
+		//no-op				
+	}
 }

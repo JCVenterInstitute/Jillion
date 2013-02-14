@@ -32,9 +32,9 @@ import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaRecord;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento;
 import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaDataStore;
@@ -156,8 +156,12 @@ public final class IndexedQualityFastaFileDataStore{
 
 		@Override
 		public void visitEnd() {
-			//no-op
-			
+			//no-op			
+		}
+		
+		@Override
+		public void halted() {
+			//no-op			
 		}
 
 		@Override
@@ -247,7 +251,7 @@ public final class IndexedQualityFastaFileDataStore{
 		public FastaRecordVisitor visitDefline(final FastaVisitorCallback callback,
 				String id, String optionalComment) {
 			if(fastaRecord !=null){
-				callback.stopParsing();
+				callback.haltParsing();
 				return null;
 			}
 			return new AbstractQualityFastaRecordVisitor(id, optionalComment) {
@@ -262,10 +266,12 @@ public final class IndexedQualityFastaFileDataStore{
 
 		@Override
 		public void visitEnd() {
-			// TODO Auto-generated method stub
-			
+			//no-op			
 		}
-		
+		@Override
+		public void halted() {
+			//no-op			
+		}
 	}
 }
 

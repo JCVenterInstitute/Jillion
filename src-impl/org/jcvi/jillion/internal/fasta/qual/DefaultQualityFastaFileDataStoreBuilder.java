@@ -26,8 +26,8 @@ import java.util.Map;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.util.Builder;
-import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.qual.AbstractQualityFastaRecordVisitor;
 import org.jcvi.jillion.fasta.qual.QualitySequenceFastaDataStore;
@@ -62,6 +62,10 @@ public class DefaultQualityFastaFileDataStoreBuilder implements FastaVisitor, Bu
 
 	@Override
 	public void visitEnd() {
+		//no-op			
+	}
+	@Override
+	public void halted() {
 		//no-op			
 	}
 	@Override

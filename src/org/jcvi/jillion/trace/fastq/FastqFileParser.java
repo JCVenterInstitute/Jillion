@@ -176,7 +176,7 @@ public abstract class FastqFileParser {
 		}
 
 		@Override
-		public void stopParsing() {
+		public void haltParsing() {
 			parserState.stopParsing();
 			
 		}

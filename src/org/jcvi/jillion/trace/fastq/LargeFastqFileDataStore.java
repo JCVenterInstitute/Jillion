@@ -243,13 +243,13 @@ final class LargeFastqFileDataStore implements FastqDataStore {
 					public FastqRecordVisitor visitDefline(final FastqVisitorCallback callback,
 							String id, String optionalComment) {
 						if(FastqIdIterator.this.isClosed()){
-							callback.stopParsing();							
+							callback.haltParsing();							
 						}
 						if (filter.accept(id)) {
 							blockingPut(id);
 						}
 						if(FastqIdIterator.this.isClosed()){
-							callback.stopParsing();							
+							callback.haltParsing();							
 						}
 						return null;
 					}
@@ -297,7 +297,7 @@ final class LargeFastqFileDataStore implements FastqDataStore {
 					public FastqRecordVisitor visitDefline(final FastqVisitorCallback callback,
 							String id, String optionalComment) {
 						if(LargeFastqFileIterator.this.isClosed()){
-							callback.stopParsing();
+							callback.haltParsing();
 							return null;
 						}
 						if (filter.accept(id)) {
@@ -307,7 +307,7 @@ final class LargeFastqFileDataStore implements FastqDataStore {
 								protected void visitRecord(FastqRecord record) {
 									blockingPut(record);
 									if(LargeFastqFileIterator.this.isClosed()){
-										callback.stopParsing();
+										callback.haltParsing();
 									}
 								}
 							};

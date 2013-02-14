@@ -53,10 +53,12 @@ public abstract class AbstractResuseableFastaRecordVisitor implements FastaRecor
 
 	@Override
 	public final void visitEnd() {
-		visitRecord(currentId, currentComment, builder.toString());
-		
+		visitRecord(currentId, currentComment, builder.toString());		
 	}
-    
+	@Override
+	public void halted() {
+		//no-op				
+	}
 	public abstract void visitRecord(String id, String optionalComment, String fullBody);
 }
 

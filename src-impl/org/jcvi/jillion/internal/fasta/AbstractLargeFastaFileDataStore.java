@@ -31,9 +31,9 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaDataStore;
 import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaRecord;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 
@@ -139,7 +139,15 @@ public abstract class AbstractLargeFastaFileDataStore<T extends Symbol,S extends
         				//no-op
         				size = Long.valueOf(numDeflines);
         			}
-        			
+        			@Override
+        			public void halted() {
+        				//this shouldn't happen
+        				//throw an exception so we don't
+        				//return a null value or try 
+        				//to reparse the size 
+        				//next time it's asked 
+        				throw new IllegalStateException("parser was halted when trying to compute size");		
+        			}
         		};      
         		FastaFileParser.create(fastaFile).accept(visitor);
             } catch (IOException e) {

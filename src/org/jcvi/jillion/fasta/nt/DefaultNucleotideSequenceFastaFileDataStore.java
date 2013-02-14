@@ -38,8 +38,8 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 /**
  * {@code DefaultNucleotideFastaFileDataStore} is the default implementation
@@ -109,6 +109,10 @@ final class DefaultNucleotideSequenceFastaFileDataStore{
 			//no-op			
 		}
 		@Override
+		public void halted() {
+			//no-op			
+		}
+		@Override
 		public NucleotideSequenceFastaDataStore build() {
 			return DataStoreUtil.adapt(NucleotideSequenceFastaDataStore.class,fastaRecords);
 		}
@@ -136,6 +140,11 @@ final class DefaultNucleotideSequenceFastaFileDataStore{
 				fastaRecords.put(currentId, record);
 				
 			}
+			@Override
+			public void halted() {
+				//no-op				
+			}
+			
 		    	
 	    }
 	}

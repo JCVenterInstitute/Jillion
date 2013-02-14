@@ -30,8 +30,8 @@ import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.aa.AbstractAminoAcidFastaRecordVisitor;
 import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaDataStore;
@@ -92,6 +92,10 @@ public final class DefaultAminoAcidSequenceFastaDataStore{
 
 		@Override
 		public void visitEnd() {
+			//no-op			
+		}
+		@Override
+		public void halted() {
 			//no-op			
 		}
 		@Override

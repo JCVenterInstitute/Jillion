@@ -228,7 +228,7 @@ final class IndexedFastqFileDataStore{
     				@Override
     				protected void visitRecord(FastqRecord record) {
     					setRecord(record);
-    					callback.stopParsing();    					
+    					callback.haltParsing();    					
     				}
     			};
     		}

@@ -26,8 +26,8 @@ import java.io.IOException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 
@@ -85,8 +85,11 @@ public final class LargeFastaIdIterator extends AbstractBlockingStreamingIterato
 
 			@Override
 			public void visitEnd() {
-				//no-op
-				
+				//no-op				
+			}
+			@Override
+			public void halted() {
+				//no-op					
 			}
         };
         try {
