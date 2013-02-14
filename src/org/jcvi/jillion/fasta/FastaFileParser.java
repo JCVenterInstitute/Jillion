@@ -165,6 +165,11 @@ public abstract class FastaFileParser {
 			currentOffset +=line.length();
 		}
 		
+		handleEndOfFile(visitor, keepParsing, recordVisitor);
+
+	}
+	protected void handleEndOfFile(FastaVisitor visitor,
+			AtomicBoolean keepParsing, FastaRecordVisitor recordVisitor) {
 		if(recordVisitor !=null){
 			if(keepParsing.get()){
 				recordVisitor.visitEnd();
@@ -181,12 +186,11 @@ public abstract class FastaFileParser {
 		}else{
 			visitor.halted();
 		}
-
 	}
 
 	protected abstract AbstractFastaVisitorCallback createNewCallback(long currentOffset, AtomicBoolean keepParsing);
 	
-	private static abstract class AbstractFastaVisitorCallback implements FastaVisitorCallback{
+	private abstract static class AbstractFastaVisitorCallback implements FastaVisitorCallback{
 		private final AtomicBoolean keepParsing;
 		
 		public AbstractFastaVisitorCallback(AtomicBoolean keepParsing) {
