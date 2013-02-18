@@ -19,7 +19,7 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 /**
- * JCVI-JavaCommon Core package contains common
+ * The Jillion Core package contains common
  * genomic objects that are useful to all genomic
  * investigations.  This is the primary
  * module of this library.
