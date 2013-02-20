@@ -57,7 +57,7 @@ public class TestSFFUtil_getTrimRange {
         expect(flowgram.getAdapterClip()).andReturn(NOT_SET);
         replay(flowgram);
         Range expectedRange = Range.of(CoordinateSystem.RESIDUE_BASED, 1,numberOfBases);
-        assertEquals(expectedRange, SffUtil.getTrimRangeFor(flowgram));
+        assertEquals(expectedRange, SffUtil.computeTrimRangeFor(flowgram));
         verify(flowgram);
     }
     @Test
@@ -66,7 +66,7 @@ public class TestSFFUtil_getTrimRange {
         expect(flowgram.getQualityClip()).andReturn(qualityClip);
         expect(flowgram.getAdapterClip()).andReturn(NOT_SET);
         replay(flowgram);
-       assertEquals(qualityClip, SffUtil.getTrimRangeFor(flowgram));
+       assertEquals(qualityClip, SffUtil.computeTrimRangeFor(flowgram));
         verify(flowgram);
     }
     @Test
@@ -75,7 +75,7 @@ public class TestSFFUtil_getTrimRange {
         expect(flowgram.getQualityClip()).andReturn(NOT_SET);
         expect(flowgram.getAdapterClip()).andReturn(adapterClip);
         replay(flowgram);
-       assertEquals(adapterClip, SffUtil.getTrimRangeFor(flowgram));
+       assertEquals(adapterClip, SffUtil.computeTrimRangeFor(flowgram));
         verify(flowgram);
     }
     @Test
@@ -86,7 +86,7 @@ public class TestSFFUtil_getTrimRange {
         expect(flowgram.getAdapterClip()).andReturn(adapterClip);
         replay(flowgram);
         Range expectedRange = qualityClip.intersection(adapterClip);
-       assertEquals(expectedRange, SffUtil.getTrimRangeFor(flowgram));
+       assertEquals(expectedRange, SffUtil.computeTrimRangeFor(flowgram));
         verify(flowgram);
     }
     @Test
@@ -97,7 +97,7 @@ public class TestSFFUtil_getTrimRange {
         expect(flowgram.getAdapterClip()).andReturn(adapterClip);
         replay(flowgram);
         Range expectedRange = qualityClip.intersection(adapterClip);
-       assertEquals(expectedRange, SffUtil.getTrimRangeFor(flowgram));
+       assertEquals(expectedRange, SffUtil.computeTrimRangeFor(flowgram));
         verify(flowgram);
     }
 }

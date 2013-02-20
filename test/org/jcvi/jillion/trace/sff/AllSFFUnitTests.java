@@ -45,7 +45,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestFlowIndexOverflow.class,
         TestDefaultSffFlowgramDataStore.class,
         TestSFFUtil_getTrimRange.class,
-        TestSffWriter.class,
+        TestSffWriterUtil.class,
         TestIndexed454SffFileDataStore.class,
         TestNoXMLManifestIndexedSffFileDataStore.class,
         TestIndexedSffFileDataStore.class,

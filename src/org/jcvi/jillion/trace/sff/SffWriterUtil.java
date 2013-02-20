@@ -36,9 +36,9 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  *
  *
  */
-public final class SffWriter {
+final class SffWriterUtil {
 	
-	private SffWriter(){
+	private SffWriterUtil(){
 		//can not instantaite
 	}
    

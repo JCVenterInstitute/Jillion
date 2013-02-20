@@ -39,7 +39,7 @@ import org.jcvi.jillion.trace.sff.SffCommonHeader;
 import org.jcvi.jillion.trace.sff.SffReadData;
 import org.jcvi.jillion.trace.sff.SffReadHeader;
 import org.jcvi.jillion.trace.sff.SffUtil;
-import org.jcvi.jillion.trace.sff.SffWriter;
+import org.jcvi.jillion.trace.sff.SffWriterUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**
@@ -47,7 +47,7 @@ import static org.junit.Assert.*;
  *
  *
  */
-public class TestSffWriter {
+public class TestSffWriterUtil {
     int numberOfBases=123;
     Range qualityClip = Range.of(10, 20);
     Range adapterClip = Range.of(4, 122);
@@ -82,7 +82,7 @@ public class TestSffWriter {
                                         .put(new byte[3])
                                         .array();
         ByteArrayOutputStream actual = new ByteArrayOutputStream(paddedHeaderLength);
-        SffWriter.writeCommonHeader(header, actual);
+        SffWriterUtil.writeCommonHeader(header, actual);
         assertArrayEquals(expected, actual.toByteArray());
     }
     
@@ -125,7 +125,7 @@ public class TestSffWriter {
                 qualityClip, adapterClip, name);
         byte[] expectedEncodedBytes = encodeReadHeader(readHeader);
         ByteArrayOutputStream actual = new ByteArrayOutputStream();
-        SffWriter.writeReadHeader(readHeader, actual);
+        SffWriterUtil.writeReadHeader(readHeader, actual);
         assertArrayEquals(expectedEncodedBytes, actual.toByteArray());
     }
     @Test
@@ -134,7 +134,7 @@ public class TestSffWriter {
                 qualityClip, null, name);
         byte[] expectedEncodedBytes = encodeReadHeader(nullAdpaterClip);
         ByteArrayOutputStream actual = new ByteArrayOutputStream();
-        SffWriter.writeReadHeader(nullAdpaterClip, actual);
+        SffWriterUtil.writeReadHeader(nullAdpaterClip, actual);
         assertArrayEquals(expectedEncodedBytes, actual.toByteArray());
 
     }
@@ -144,7 +144,7 @@ public class TestSffWriter {
                 null, adapterClip, name);
         byte[] expectedEncodedBytes = encodeReadHeader(nullQualityClip);
         ByteArrayOutputStream actual = new ByteArrayOutputStream();
-        SffWriter.writeReadHeader(nullQualityClip, actual);
+        SffWriterUtil.writeReadHeader(nullQualityClip, actual);
         assertArrayEquals(expectedEncodedBytes, actual.toByteArray());
 
     }
@@ -160,7 +160,7 @@ public class TestSffWriter {
                                                 qualities);
         byte[] expected = encodeExpectedReadData(readData);
         ByteArrayOutputStream actual = new ByteArrayOutputStream();
-        SffWriter.writeReadData(readData, actual);
+        SffWriterUtil.writeReadData(readData, actual);
         assertArrayEquals(expected, actual.toByteArray());
         
     }
