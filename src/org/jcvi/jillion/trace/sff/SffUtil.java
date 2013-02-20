@@ -169,32 +169,70 @@ public final class SffUtil {
         return count;
         
     }
-    
-    public static Range getTrimRangeFor(Flowgram flowgram){
-        Range qualityClip = flowgram.getQualityClip();
-        Range adapterClip = flowgram.getAdapterClip();
-        long numberOfBases = flowgram.getNucleotideSequence().getLength();
-        long firstBaseOfInsert = Math.max(1,
-                        Math.max(qualityClip.getBegin(CoordinateSystem.RESIDUE_BASED), 
-                                adapterClip.getBegin(CoordinateSystem.RESIDUE_BASED)));
-        long lastBaseOfInsert = Math.min(
-                qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED)==0?numberOfBases:qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED), 
-                        adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED)==0?numberOfBases:adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED));
-        
-        return Range.of(CoordinateSystem.RESIDUE_BASED, firstBaseOfInsert, lastBaseOfInsert);
+    /**
+     * Compute the trim {@link Range} that should be used
+     * for this {@link Flowgram}.  This method
+     * uses the values from both {@link Flowgram#getQualityClip()} 
+     * and {@link Flowgram#getAdapterClip()} using
+     * the algorithm described in the sff file format
+     * documentation:
+     * <pre>
+     * (pseudocode)
+     * trimRange =   
+     *      Range.of(CoordinateSystem.RESIDUE_BASED,
+     *           max(1, max(clip_qual_left, clip_adapter_left)),
+     *           min( (clip_qual_right == 0 ? number_of_bases : clip_qual_right), (clip_adapter_right == 0 ? number_of_bases : clip_adapter_right) )
+     * </pre>
+     * @param flowgram the {@link Flowgram} to get the trim range of;
+     * can not be null.
+     * @return a {@link Range} representing the trimRange to use.
+     * @throws NullPointerException if flowgram is null.
+     * @see <a href="http://www.ncbi.nlm.nih.gov/Traces/trace.cgi?cmd=show&f=formats&m=doc&s=formats#sff">
+     	sff file specification</a>
+     */
+    public static Range computeTrimRangeFor(Flowgram flowgram){
+
+        return getTrimRangeFor(flowgram.getQualityClip(), flowgram.getAdapterClip(), 
+        		flowgram.getNucleotideSequence().getLength());
     }
-    public static Range getTrimRangeFor(SffReadHeader readHeader){
-        Range qualityClip = readHeader.getQualityClip();
-        Range adapterClip = readHeader.getAdapterClip();
-        long numberOfBases = readHeader.getNumberOfBases();
-        long firstBaseOfInsert = Math.max(1,
+    
+	private static Range getTrimRangeFor(Range qualityClip, Range adapterClip,
+			long fullSequenceLength) {
+		long firstBaseOfInsert = Math.max(1,
                         Math.max(qualityClip.getBegin(CoordinateSystem.RESIDUE_BASED), 
                                 adapterClip.getBegin(CoordinateSystem.RESIDUE_BASED)));
         long lastBaseOfInsert = Math.min(
-                qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED)==0?numberOfBases:qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED), 
-                        adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED)==0?numberOfBases:adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED));
+                qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED)==0?fullSequenceLength:qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED), 
+                        adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED)==0?fullSequenceLength:adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED));
         
         return Range.of(CoordinateSystem.RESIDUE_BASED, firstBaseOfInsert, lastBaseOfInsert);
+	}
+	 /**
+     * Compute the trim {@link Range} that should be used
+     * for this {@link SffReadHeader}.  This method
+     * uses the values from both {@link SffReadHeader#getQualityClip()} 
+     * and {@link SffReadHeader#getAdapterClip()} using
+     * the algorithm described in the sff file format
+     * documentation:
+     * <pre>
+     * (pseudocode)
+     * trimRange =   
+     *      Range.of(CoordinateSystem.RESIDUE_BASED,
+     *           max(1, max(clip_qual_left, clip_adapter_left)),
+     *           min( (clip_qual_right == 0 ? number_of_bases : clip_qual_right), (clip_adapter_right == 0 ? number_of_bases : clip_adapter_right) )
+     * </pre>
+     * @param readHeader the {@link SffReadHeader} to get the trim range of;
+     * can not be null.
+     * @return a {@link Range} representing the trimRange to use.
+     * @throws NullPointerException if readHeader is null.
+     * @see <a href="http://www.ncbi.nlm.nih.gov/Traces/trace.cgi?cmd=show&f=formats&m=doc&s=formats#sff">
+     	sff file specification</a>
+     */
+    public static Range computeTrimRangeFor(SffReadHeader readHeader){
+
+        return getTrimRangeFor(readHeader.getQualityClip(), 
+        						readHeader.getAdapterClip(), 
+    							readHeader.getNumberOfBases());
     }
     
     
@@ -232,7 +270,7 @@ public final class SffUtil {
 		@Override
 		public SffFileReadVisitor visitRead(SffFileParserCallback callback,
 				SffReadHeader readHeader) {
-			trimRanges.put(readHeader.getId(), SffUtil.getTrimRangeFor(readHeader));
+			trimRanges.put(readHeader.getId(), SffUtil.computeTrimRangeFor(readHeader));
 			//always skip underlying read data
 			return null;
 		}
