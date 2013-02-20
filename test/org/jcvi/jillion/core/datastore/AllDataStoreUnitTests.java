@@ -36,6 +36,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestInverseDataStoreFilter.class,
         TestDefaultIncludeDataStoreFilter.class,
         TestDefaultExcludeDataStoreFilter.class,
+        TestPatternDataStoreFilter.class,
+        
         TestDataStoreIterator.class,
     
      TestCachedDataStore.class,
