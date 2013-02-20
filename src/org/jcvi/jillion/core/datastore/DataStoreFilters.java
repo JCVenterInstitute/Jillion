@@ -21,6 +21,8 @@
 package org.jcvi.jillion.core.datastore;
 
 import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 /**
  * {@code DataStoreFilters} is a utility class
  * that contains factory methods to create several
@@ -112,6 +114,32 @@ public final class DataStoreFilters {
 			throw new NullPointerException("filter can not be null");
 		}
 		return new InverseDataStoreFilter(filter);
+	}
+	
+	/**
+	 * Create a new {@link DataStoreFilter} instance
+	 * whose {@link DataStoreFilter#accept(String)}
+	 * returns {@code true}
+	 * if and only if the id matches the given 
+	 * {@link Pattern} completely.
+	 * The accept method of the returned
+	 * filter should return identically values
+	 * as returned by
+	 * {@code pattern.matcher(id).matches();}.
+	 * 
+	 * @param pattern a {@link Pattern} that
+	 * will be used to match ids;
+	 * can not be null.
+	 * @return a new instance; never null.
+	 * @throws NullPointerException if pattern is null.
+	 * 
+	 * @see Matcher#matches()
+	 */
+	public static DataStoreFilter newMatchFilter(Pattern pattern){
+		if(pattern ==null){
+			throw new NullPointerException("pattern can not be null");
+		}
+		return new PatternDataStoreFilter(pattern);
 	}
 	
 	private static final class IncludeDataStoreFilter implements DataStoreFilter{
@@ -262,5 +290,19 @@ public final class DataStoreFilters {
 	    ;
 	}
 
-	    
+	private static class PatternDataStoreFilter implements DataStoreFilter{
+
+		private final Pattern pattern;
+		
+		public PatternDataStoreFilter(Pattern pattern) {
+			this.pattern = pattern;
+		}
+
+		@Override
+		public boolean accept(String id) {
+			Matcher matcher =pattern.matcher(id);
+			return matcher.matches();
+		}
+		
+	}
 }
