@@ -41,7 +41,7 @@ public final class FastqFileDataStoreBuilder{
 	
 	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
 	//by default store everything in memory
-	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED;
+	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_FAST_RANDOM_ACCESS;
 	
 	private FastqQualityCodec codec=null;
 	
@@ -178,11 +178,11 @@ public final class FastqFileDataStoreBuilder{
 			codec = FastqUtil.guessQualityCodecUsed(fastqFile);
 		}
 		switch(hint){
-			case OPTIMIZE_RANDOM_ACCESS_SPEED:
+			case OPTIMIZE_FAST_RANDOM_ACCESS:
 				return DefaultFastqFileDataStore.create(fastqFile,filter, codec);
-			case OPTIMIZE_RANDOM_ACCESS_MEMORY:
+			case OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS:
 				return IndexedFastqFileDataStore.create(fastqFile, codec, filter);
-			case OPTIMIZE_ITERATION:
+			case ITERATION_ONLY:
 				return LargeFastqFileDataStore.create(fastqFile, filter, codec);
 			default:
 				//can not happen

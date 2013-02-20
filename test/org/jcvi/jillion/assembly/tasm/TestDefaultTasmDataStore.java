@@ -17,7 +17,7 @@ public class TestDefaultTasmDataStore extends AbstractTestTasmDataStore{
 		try {
 			fullLengthFastas = new NucleotideSequenceFastaFileDataStoreBuilder(
 					resources.getFile("files/giv-15050.fasta")).hint(
-					DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY)
+					DataStoreProviderHint.OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS)
 					.build();
 			
 			contigDataStore = new TigrContigFileDataStoreBuilder(

@@ -44,7 +44,7 @@ public class TestTigrAssemblerWriter {
 	static{	         
         try {
         	NucleotideSequenceFastaDataStore fullLengthFastas = new NucleotideSequenceFastaFileDataStoreBuilder(RESOURCES.getFile("files/giv-15050.fasta"))
-														.hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY)
+														.hint(DataStoreProviderHint.OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS)
 														.build();
             tasmDataStore= new TasmContigFileDataStoreBuilder(RESOURCES.getFile("files/giv-15050.tasm"),	fullLengthFastas)
 									.build();

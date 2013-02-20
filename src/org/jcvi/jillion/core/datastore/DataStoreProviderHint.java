@@ -57,14 +57,16 @@ public enum DataStoreProviderHint{
 	 * for {@link DataStore}s that contain many records
 	 * or for {@link DataStore}s whose records take up lots of memory.
 	 */
-	OPTIMIZE_RANDOM_ACCESS_SPEED,
+	OPTIMIZE_FAST_RANDOM_ACCESS,
 	/**
 	 * Use a {@link DataStore} implementation
 	 * that requires randomly accessing records
 	 * using {@link DataStore#get(String)} or {@link DataStore#contains(String)}
 	 * but has been optimized to take up as little
-	 * memory as possible but might take more time to access records
-	 * than {@link #OPTIMIZE_RANDOM_ACCESS_SPEED}.
+	 * memory as possible. The implementation
+	 * chosen will probably take more time to access records
+	 * than {@link #OPTIMIZE_FAST_RANDOM_ACCESS} but the {@link DataStore}
+	 * will take up less total memory.
 	 * <p/> 
 	 * For example, if the input to this {@link DataStore} was 
 	 * some kind of file containing record data, then perhaps
@@ -76,27 +78,32 @@ public enum DataStoreProviderHint{
 	 * and re-parse the data each time 
 	 * a call to {@link DataStore#get(String)} or {@link DataStore#contains(String)}
 	 * is called.
-	 * another limitation to such an implementation is
+	 * Another limitation to such an implementation is
 	 * the input of the data must exist and not
 	 * get altered during the entire lifetime of this object.
 	 */
-	OPTIMIZE_RANDOM_ACCESS_MEMORY,
+	OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS,
 	/**
-	 * 
-	 * Use a {@link DataStore} implementation that
-	 * has been optimized for iterating over records
+	 * Choose this option if the only methods
+	 * in the {@link DataStore} that will be called
+	 * are {@link DataStore#iterator()} and/or {@link DataStore#idIterator()}.
+	 * The {@link DataStore} implementation returned
+	 * will be optimized for iterating over records
 	 * using {@link DataStore#iterator()} and {@link DataStore#idIterator()}
 	 * possibly at the expense of poor performance of 
 	 * randomly accessing records
 	 * with {@link DataStore#get(String)} or {@link DataStore#contains(String)}.
-	 * Such an implementation is ideal for datastores
-	 * that contain so many records that storing them in memory would
-	 * cause out of memory errors or if the number of records exceeds
-	 * {@link Integer#MAX_VALUE} or for use cases
-	 * where the contents of the input
+	 * Such an implementation is ideal 
+	 * for use cases
+	 * where the contents of the datastore
 	 * will only be iterated over in a single pass.
 	 * For example, iterating over each record only once 
-	 * using {@link DataStore#iterator()}. 
+	 * using {@link DataStore#iterator()} inorder to perform
+	 * a processing task.  This implementation choice
+	 * is also an option for datastores
+	 * that contain so many records that storing them in memory would
+	 * cause out of memory errors or if the number of records exceeds
+	 * {@link Integer#MAX_VALUE}. 
 	 * <p/>
 	 * Since calls to
 	 * {@link DataStore#get(String)} or {@link DataStore#contains(String)}
@@ -104,10 +111,8 @@ public enum DataStoreProviderHint{
 	 * it is recommended that instances of that use 
 	 * this hint
 	 * are wrapped by a {@link CachedDataStore}
-	 *  wrapped in  a cached datastore using
-	 * {@link DataStoreUtil#createNewCachedDataStore(Class, org.jcvi.common.core.datastore.DataStore, int)}.
 	 * if random access will be used.
 	 */
-	OPTIMIZE_ITERATION
+	ITERATION_ONLY
 	;
 }

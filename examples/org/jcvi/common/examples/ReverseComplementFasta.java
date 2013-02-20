@@ -42,7 +42,7 @@ public class ReverseComplementFasta {
 		File reverseComplimentOutputFasta = new File("/path/to/output.sorted.fasta");
 		
 		NucleotideSequenceFastaDataStore dataStore = new NucleotideSequenceFastaFileDataStoreBuilder(inputFasta)
-														.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+														.hint(DataStoreProviderHint.ITERATION_ONLY)
 														.build();
 		NucleotideSequenceFastaRecordWriter out = new NucleotideSequenceFastaRecordWriterBuilder(reverseComplimentOutputFasta)
 															.build();

@@ -40,7 +40,7 @@ public class TestTigrAssemblerContigAdapterBuilderWithNoOptionalAttributes {
 	    static{
 	        try {
 	        	NucleotideSequenceFastaDataStore fullLengthFastas = new NucleotideSequenceFastaFileDataStoreBuilder(RESOURCES.getFile("files/giv-15050.fasta"))
-									.hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY)
+									.hint(DataStoreProviderHint.OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS)
 									.build();
 				contigDataStore= new TigrContigFileDataStoreBuilder(RESOURCES.getFile("files/giv-15050.contig"),fullLengthFastas)
 									.build();

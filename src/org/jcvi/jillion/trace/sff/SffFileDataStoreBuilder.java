@@ -42,7 +42,7 @@ public class SffFileDataStoreBuilder {
 	
 	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
 	//by default store everything in memory
-	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED;
+	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_FAST_RANDOM_ACCESS;
 	
 	/**
 	 * Create a new instance of {@code SffFileDataStoreBuilder}
@@ -136,11 +136,11 @@ public class SffFileDataStoreBuilder {
 	 */
 	public FlowgramDataStore build() throws IOException {
 		switch(hint){
-			case OPTIMIZE_RANDOM_ACCESS_SPEED:
+			case OPTIMIZE_FAST_RANDOM_ACCESS:
 				return DefaultSffFileDataStore.create(sffFile,filter);
-			case OPTIMIZE_RANDOM_ACCESS_MEMORY:
+			case OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS:
 				return handleIndexedSffFileDataStore();
-			case OPTIMIZE_ITERATION:
+			case ITERATION_ONLY:
 				return LargeSffFileDataStore.create(sffFile, filter);
 			default:
 				//can not happen
