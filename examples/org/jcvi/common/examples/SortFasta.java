@@ -46,7 +46,7 @@ public class SortFasta {
 		File sortedOutputFasta = new File("path/to/sorted/output.fasta");
 		
 		NucleotideSequenceFastaDataStore dataStore = new NucleotideSequenceFastaFileDataStoreBuilder(inputFasta)
-														.hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY)
+														.hint(DataStoreProviderHint.OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS)
 														.build();
 		SortedSet<String> sortedIds = new TreeSet<String>();
 		StreamingIterator<String> iter=null;

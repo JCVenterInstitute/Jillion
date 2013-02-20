@@ -32,7 +32,7 @@ public class AceTagsFromIndexedAceFileDataStore extends AbstractAceTagsFromAceFi
 	@Override
 	protected AceFileContigDataStore createDataStoreFor(File aceFile) throws IOException {
 		return new AceFileDataStoreBuilder(aceFile)
-		.hint(DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_MEMORY)
+		.hint(DataStoreProviderHint.OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS)
 		.build();
 	}
 

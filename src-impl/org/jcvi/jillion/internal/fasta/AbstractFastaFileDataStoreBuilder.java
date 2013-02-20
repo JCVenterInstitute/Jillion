@@ -36,7 +36,7 @@ public abstract class AbstractFastaFileDataStoreBuilder<T extends Symbol, S exte
 
 	protected final File fastaFile;
 	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
-	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED;
+	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_FAST_RANDOM_ACCESS;
 	/**
 	 * Create a new Builder instance of 
 	 * which will build a {@link FastaDataStore} for the given

@@ -22,7 +22,7 @@ public class TigrContigFileDataStoreBuilder {
 	
 	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
 	//by default store everything in memory
-	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED;
+	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_FAST_RANDOM_ACCESS;
 	
 	private final DataStore<Long> fullSeqLengthDataStore;
 	
@@ -187,10 +187,10 @@ public class TigrContigFileDataStoreBuilder {
 	 */
 	public TigrContigDataStore build() throws IOException {
 		switch(hint){
-		case OPTIMIZE_RANDOM_ACCESS_SPEED:
+		case OPTIMIZE_FAST_RANDOM_ACCESS:
 				return DefaultTigrContigFileDataStore.create(contigFile, fullSeqLengthDataStore, filter);
-		case OPTIMIZE_RANDOM_ACCESS_MEMORY: return IndexedTigrContigFileDataStore.create(contigFile,fullSeqLengthDataStore, filter);
-		case OPTIMIZE_ITERATION: return new LargeTigrContigFileDataStore(contigFile, fullSeqLengthDataStore, filter);
+		case OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS: return IndexedTigrContigFileDataStore.create(contigFile,fullSeqLengthDataStore, filter);
+		case ITERATION_ONLY: return new LargeTigrContigFileDataStore(contigFile, fullSeqLengthDataStore, filter);
 			default:
 				//can not happen
 				throw new IllegalArgumentException("unknown provider hint : "+ hint);

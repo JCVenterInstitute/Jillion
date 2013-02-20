@@ -48,12 +48,12 @@ public class TestBwaQualityTrimmer {
 	public TestBwaQualityTrimmer() throws FileNotFoundException, IOException{
 		ResourceHelper resources = new ResourceHelper(TestBwaQualityTrimmer.class);
 		inputFastq = new FastqFileDataStoreBuilder(resources.getFile("files/bwa_input.fastq"))
-							.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+							.hint(DataStoreProviderHint.ITERATION_ONLY)
 							.qualityCodec(FastqQualityCodec.SANGER)
 							.build();
 			
 		outputFastq = new FastqFileDataStoreBuilder(resources.getFile("files/bwa_output.fastq"))
-							.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+							.hint(DataStoreProviderHint.ITERATION_ONLY)
 							.qualityCodec(FastqQualityCodec.SANGER)
 							.build();
 		

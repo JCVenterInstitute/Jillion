@@ -56,7 +56,7 @@ public class ReEncodeFastq {
 		//but other factory methods can auto-detect the quality encoding
 		//for us for a minor performance penalty.
 		FastqDataStore datastore = new FastqFileDataStoreBuilder(fastqFile)
-										.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+										.hint(DataStoreProviderHint.ITERATION_ONLY)
 										.qualityCodec(FastqQualityCodec.SANGER)
 										.filter(filter)
 										.build();

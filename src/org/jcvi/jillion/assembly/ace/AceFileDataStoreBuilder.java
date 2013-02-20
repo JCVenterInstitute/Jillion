@@ -45,7 +45,7 @@ public final class AceFileDataStoreBuilder {
 	
 	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
 	//by default store everything in memory
-	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_RANDOM_ACCESS_SPEED;
+	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_FAST_RANDOM_ACCESS;
 	
 	/**
 	 * Create a new instance of {@code AceFileDataStoreBuilder}
@@ -139,9 +139,9 @@ public final class AceFileDataStoreBuilder {
 	 */
 	public AceFileContigDataStore build() throws IOException {
 		switch(hint){
-			case OPTIMIZE_RANDOM_ACCESS_SPEED: return DefaultAceFileDataStore.create(aceFile,filter);
-			case OPTIMIZE_RANDOM_ACCESS_MEMORY: return IndexedAceFileDataStore.create(aceFile,filter);
-			case OPTIMIZE_ITERATION: return LargeAceFileDataStore.create(aceFile,filter);
+			case OPTIMIZE_FAST_RANDOM_ACCESS: return DefaultAceFileDataStore.create(aceFile,filter);
+			case OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS: return IndexedAceFileDataStore.create(aceFile,filter);
+			case ITERATION_ONLY: return LargeAceFileDataStore.create(aceFile,filter);
 			default:
 				//can not happen
 				throw new IllegalArgumentException("unknown provider hint : "+ hint);

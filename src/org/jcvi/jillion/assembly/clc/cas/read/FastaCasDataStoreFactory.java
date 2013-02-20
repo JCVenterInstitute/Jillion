@@ -79,7 +79,7 @@ public class FastaCasDataStoreFactory extends AbstractCasDataStoreFactory
 			return DataStoreUtil.createNewCachedDataStore(NucleotideSequenceDataStore.class, 
 			             FastaRecordDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, 
 			            		 new NucleotideSequenceFastaFileDataStoreBuilder(pathToDataStore)
-			             				.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+			             				.hint(DataStoreProviderHint.ITERATION_ONLY)
 			             				.build()),
 			             cacheSize);
 		} catch (IOException e) {
@@ -93,7 +93,7 @@ public class FastaCasDataStoreFactory extends AbstractCasDataStoreFactory
 			return DataStoreUtil.createNewCachedDataStore(QualitySequenceDataStore.class, 
 					FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, 
 							new QualitySequenceFastaFileDataStoreBuilder(fastaFile)
-									.hint(DataStoreProviderHint.OPTIMIZE_ITERATION)
+									.hint(DataStoreProviderHint.ITERATION_ONLY)
 									.build()),
 			        cacheSize);
 		} catch (IOException e) {

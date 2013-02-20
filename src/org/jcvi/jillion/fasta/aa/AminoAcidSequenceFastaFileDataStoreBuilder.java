@@ -61,9 +61,9 @@ public final class AminoAcidSequenceFastaFileDataStoreBuilder extends AbstractFa
 	protected AminoAcidSequenceFastaDataStore createNewInstance(File fastaFile, DataStoreProviderHint hint, DataStoreFilter filter)
 			throws IOException {
 		switch(hint){
-			case OPTIMIZE_RANDOM_ACCESS_SPEED: return DefaultAminoAcidSequenceFastaDataStore.create(fastaFile,filter);
-			case OPTIMIZE_RANDOM_ACCESS_MEMORY: return IndexedAminoAcidSequenceFastaFileDataStore.create(fastaFile,filter);
-			case OPTIMIZE_ITERATION: return LargeAminoAcidSequenceFastaFileDataStore.create(fastaFile,filter);
+			case OPTIMIZE_FAST_RANDOM_ACCESS: return DefaultAminoAcidSequenceFastaDataStore.create(fastaFile,filter);
+			case OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS: return IndexedAminoAcidSequenceFastaFileDataStore.create(fastaFile,filter);
+			case ITERATION_ONLY: return LargeAminoAcidSequenceFastaFileDataStore.create(fastaFile,filter);
 			default:
 				throw new IllegalArgumentException("unknown provider hint :"+ hint);
 		}
