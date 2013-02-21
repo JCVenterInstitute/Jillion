@@ -103,7 +103,7 @@ public abstract class SffFileParser {
         	return;
         }
         parseReads(visitor, dataIn, header);
-        visitor.endSffFile();
+        visitor.end();
         
     }
     

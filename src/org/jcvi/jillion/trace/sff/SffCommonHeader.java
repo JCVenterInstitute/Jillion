@@ -75,13 +75,13 @@ public interface SffCommonHeader {
      * The {@link NucleotideSequence} used for each flow of each read.
      * the length of this sequence should be equal 
      * to {@link #getNumberOfFlowsPerRead()}.
-     * @return a non-null String.
+     * @return a non-null {@link NucleotideSequence}.
      */
     NucleotideSequence getFlowSequence();
     /**
-     * The nucleotide bases of the key seuqence used for these
+     * The nucleotide bases of the key sequence used for these
      * reads.
-     * @return a non-null String, usually 4 bases long.
+     * @return a non-null {@link NucleotideSequence}, usually 4 bases long.
      */
     NucleotideSequence getKeySequence();
 

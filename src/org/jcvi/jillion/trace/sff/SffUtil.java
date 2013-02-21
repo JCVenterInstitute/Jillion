@@ -36,6 +36,7 @@ import org.jcvi.jillion.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
@@ -67,6 +68,19 @@ public final class SffUtil {
         0,
         1,
     };
+    
+    /**
+	 * 255 ^ 3 = {@value}.
+	 */
+	private static final int POW_3 = 16581375;
+	/**
+	 * 255 ^ 2 = {@value}.
+	 */
+	private static final int POW_2 = 65025;
+	/**
+	 * 255 ^ 1 = {@value}.
+	 */
+	private static final int POW_1 = 255;
     /**
      * Currently SFF only has 1 format code which has a value of <code>1</code>.
      */
@@ -127,6 +141,50 @@ public final class SffUtil {
        
        
    }
+   /**
+    * Parse the byte array whose first 4 bytes
+    * contain an encoded 454 sff file index offset
+    * for a single read.
+    * @param values
+    * @return the file offset into the sff file
+    * for the read.
+    */
+   public static long parseSffIndexOffsetValue(byte[] values){
+		return IOUtil.toUnsignedByte(values[3]) 
+				+ POW_1	* IOUtil.toUnsignedByte(values[2]) 
+				+ POW_2	* IOUtil.toUnsignedByte(values[1])
+				+ POW_3	* IOUtil.toUnsignedByte(values[0]);
+	}
+   
+   
+   /**
+    * Parse the byte array whose first 4 bytes
+    * contain an encoded 454 sff file index offset
+    * for a single read.
+    * @param values
+    * @return the file offset into the sff file
+    * for the read.
+    */
+   public static byte[] toSffIndexOffsetValue(long offset){
+	   long currentOffset = offset;
+	   byte[] values = new byte[4];
+	   short place4 = (short)(currentOffset / POW_3);
+	   values[0] = IOUtil.toSignedByte(place4);
+	   currentOffset -= place4 *POW_3;
+	   
+	   short place3 = (short)(currentOffset / POW_2);
+	   values[1] = IOUtil.toSignedByte(place3);
+	   currentOffset -= place3 *POW_2;
+	   
+	   short place2 = (short)(currentOffset / POW_1);
+	   values[2] = IOUtil.toSignedByte(place2);
+	   currentOffset -= place2*POW_1;
+	   
+	   values[3] = IOUtil.toSignedByte((short)(currentOffset));
+
+		return values;
+	}
+   
      public static int caclulatePaddedBytes(int bytesReadInSection){
          final int remainder = bytesReadInSection % 8;
          if(remainder ==0){
@@ -276,7 +334,7 @@ public final class SffUtil {
 		}
 
 		@Override
-		public void endSffFile() {
+		public void end() {
 			//no-op
 			
 		}

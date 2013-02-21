@@ -37,6 +37,7 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
@@ -196,6 +197,16 @@ final class ManifestIndexed454SffFileDataStore implements FlowgramDataStore{
 	}
 
 	@Override
+	public NucleotideSequence getKeySequence() {
+		throwErrorIfClosed();
+		return commonHeader.getKeySequence();
+	}
+	@Override
+	public NucleotideSequence getFlowSequence() {
+		throwErrorIfClosed();
+		return commonHeader.getFlowSequence();
+	}
+	@Override
 	public synchronized boolean isClosed(){
 		return isClosed;
 	}
@@ -229,18 +240,7 @@ final class ManifestIndexed454SffFileDataStore implements FlowgramDataStore{
 		 * should only be 14 characters long.
 		 */
 		private static final int INITIAL_NAME_SIZE = 14;
-		/**
-		 * 255 ^ 3 = {@value}.
-		 */
-		private static final int POW_3 = 16581375;
-		/**
-		 * 255 ^ 2 = {@value}.
-		 */
-		private static final int POW_2 = 65025;
-		/**
-		 * 255 ^ 1 = {@value}.
-		 */
-		private static final int POW_1 = 255;
+
 		
 		private final File sffFile;
 		private SffCommonHeader commonHeader;
@@ -278,7 +278,7 @@ final class ManifestIndexed454SffFileDataStore implements FlowgramDataStore{
 			return null;
 		}
 		@Override
-		public void endSffFile() {
+		public void end() {
 			//no-op			
 		}
 		
@@ -362,12 +362,7 @@ final class ManifestIndexed454SffFileDataStore implements FlowgramDataStore{
 			return randomAccessFile;
 		}
 
-		private long convertFromBase255(byte[] values){
-			return IOUtil.toUnsignedByte(values[0]) 
-					+ POW_1	* IOUtil.toUnsignedByte(values[1]) 
-					+ POW_2	* IOUtil.toUnsignedByte(values[2])
-					+ POW_3	* IOUtil.toUnsignedByte(values[3]);
-		}
+		
 		private void populateOffsetMap(InputStream in) throws IOException {
 			int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(commonHeader.getNumberOfReads());
 			map = new HashMap<String, Integer>(mapSize);
@@ -381,8 +376,7 @@ final class ManifestIndexed454SffFileDataStore implements FlowgramDataStore{
 				IOUtil.blockingRead(in, index);
 				//only include id in index if we care about it.
 				if(filter.accept(id)){
-					index =IOUtil.switchEndian(index);
-					long offset =convertFromBase255(index);
+					long offset =SffUtil.parseSffIndexOffsetValue(index);
 					//signed int to save space
 					map.put(id,IOUtil.toSignedInt(offset));
 				}

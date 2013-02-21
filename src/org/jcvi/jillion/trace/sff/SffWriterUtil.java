@@ -51,25 +51,31 @@ final class SffWriterUtil {
      * @throws NullPointerException if either parameter is null.
      */
     public static int writeCommonHeader(SffCommonHeader header, OutputStream out) throws IOException{
-        int keyLength = (int)header.getKeySequence().getLength();
+    	int keyLength = (int)header.getKeySequence().getLength();
         int size = 31+header.getNumberOfFlowsPerRead()+ keyLength;
         int padding =SffUtil.caclulatePaddedBytes(size);
         int headerLength = size+padding;
-        out.write(SffUtil.SFF_MAGIC_NUMBER);
-        out.write(IOUtil.convertUnsignedLongToByteArray(header.getIndexOffset()));
-        out.write(IOUtil.convertUnsignedIntToByteArray(header.getIndexLength()));
-        out.write(IOUtil.convertUnsignedIntToByteArray(header.getNumberOfReads()));
-        out.write(IOUtil.convertUnsignedShortToByteArray(headerLength));
-        out.write(IOUtil.convertUnsignedShortToByteArray(keyLength));
-        out.write(IOUtil.convertUnsignedShortToByteArray(header.getNumberOfFlowsPerRead()));
-        out.write(SffUtil.FORMAT_CODE);
-        out.write(header.getFlowSequence().toString().getBytes(IOUtil.UTF_8));
-        out.write(header.getKeySequence().toString().getBytes(IOUtil.UTF_8));
-        out.write(new byte[padding]);
-        out.flush();
+        //write everything to an in memory byteBuffer
+        //then perform a single write operation to the outputStream
+        ByteBuffer temp = ByteBuffer.allocate(headerLength);
+        
+        temp.put(SffUtil.SFF_MAGIC_NUMBER);
+        temp.put(IOUtil.convertUnsignedLongToByteArray(header.getIndexOffset()));
+        temp.put(IOUtil.convertUnsignedIntToByteArray(header.getIndexLength()));
+        temp.put(IOUtil.convertUnsignedIntToByteArray(header.getNumberOfReads()));
+        temp.put(IOUtil.convertUnsignedShortToByteArray(headerLength));
+        temp.put(IOUtil.convertUnsignedShortToByteArray(keyLength));
+        temp.put(IOUtil.convertUnsignedShortToByteArray(header.getNumberOfFlowsPerRead()));
+        temp.put(SffUtil.FORMAT_CODE);
+        temp.put(header.getFlowSequence().toString().getBytes(IOUtil.UTF_8));
+        temp.put(header.getKeySequence().toString().getBytes(IOUtil.UTF_8));
+        temp.put(new byte[padding]);
+        
+        out.write(temp.array(), 0, headerLength);
         
         return headerLength;
     }
+    
     /**
      * Get the number of bytes (plus padding) that a {@link SffCommonHeader}
      * will take up in an sff encoded file.
@@ -101,15 +107,18 @@ final class SffWriterUtil {
         int unpaddedHeaderLength = 16+nameLength;
         int padding = SffUtil.caclulatePaddedBytes(unpaddedHeaderLength);
         int paddedHeaderLength = unpaddedHeaderLength+padding;
-        out.write(IOUtil.convertUnsignedShortToByteArray(paddedHeaderLength));
+        
+        ByteBuffer temp = ByteBuffer.allocate(paddedHeaderLength);
+        
+        temp.put(IOUtil.convertUnsignedShortToByteArray(paddedHeaderLength));
        
-        out.write(IOUtil.convertUnsignedShortToByteArray(nameLength));
-        out.write(IOUtil.convertUnsignedIntToByteArray(readHeader.getNumberOfBases()));
-        writeClip(readHeader.getQualityClip(),out);
-        writeClip(readHeader.getAdapterClip(), out);
-        out.write(name.getBytes(IOUtil.UTF_8));
-        out.write(new byte[padding]);
-        out.flush();
+        temp.put(IOUtil.convertUnsignedShortToByteArray(nameLength));
+        temp.put(IOUtil.convertUnsignedIntToByteArray(readHeader.getNumberOfBases()));
+        writeClip(readHeader.getQualityClip(),temp);
+        writeClip(readHeader.getAdapterClip(), temp);
+        temp.put(name.getBytes(IOUtil.UTF_8));
+        temp.put(new byte[padding]);
+        out.write(temp.array(),0,paddedHeaderLength);
         return paddedHeaderLength;
     }
     /**
@@ -130,20 +139,26 @@ final class SffWriterUtil {
     		
     public static int writeReadData(SffReadData readData, OutputStream out) throws IOException{
         final short[] flowgramValues = readData.getFlowgramValues();
-        ByteBuffer flowValues= ByteBuffer.allocate(flowgramValues.length*2);
-        for(int i=0; i<flowgramValues.length; i++){
-            flowValues.putShort(flowgramValues[i]);
-        }
-        out.write(flowValues.array());
-        out.write(readData.getFlowIndexPerBase());
         final NucleotideSequence basecalls = readData.getNucleotideSequence();
-        out.write(basecalls.toString().getBytes(IOUtil.UTF_8));
-        out.write(PhredQuality.toArray(readData.getQualitySequence()));
         int readDataLength = SffUtil.getReadDataLength(flowgramValues.length, (int)basecalls.getLength());
         int padding =SffUtil.caclulatePaddedBytes(readDataLength);
-        out.write(new byte[padding]);
-        out.flush();
-        return readDataLength+padding;
+        
+        int totalLength = readDataLength + padding;
+        ByteBuffer temp= ByteBuffer.allocate(totalLength);
+        for(int i=0; i<flowgramValues.length; i++){
+        	temp.putShort(flowgramValues[i]);
+        }
+        
+        
+       
+        temp.put(readData.getFlowIndexPerBase());
+        
+        temp.put(basecalls.toString().getBytes(IOUtil.UTF_8));
+        temp.put(PhredQuality.toArray(readData.getQualitySequence()));
+        
+        temp.put(new byte[padding]);
+        out.write(temp.array(), 0, totalLength);
+        return totalLength;
     }
     
     public static int getNumberOfBytesFor(SffReadData readData){
@@ -152,14 +167,14 @@ final class SffWriterUtil {
          return readDataLength+padding;
     }
     
-    private static void writeClip(Range clip, OutputStream out) throws IOException{
+    private static void writeClip(Range clip, ByteBuffer out) throws IOException{
         if(clip==null){
-            out.write(SffUtil.EMPTY_CLIP_BYTES);
+            out.put(SffUtil.EMPTY_CLIP_BYTES);
          }
          else{
         
-            out.write(IOUtil.convertUnsignedShortToByteArray((int)clip.getBegin(CoordinateSystem.RESIDUE_BASED)));
-            out.write(IOUtil.convertUnsignedShortToByteArray((int)clip.getEnd(CoordinateSystem.RESIDUE_BASED)));
+            out.put(IOUtil.convertUnsignedShortToByteArray((int)clip.getBegin(CoordinateSystem.RESIDUE_BASED)));
+            out.put(IOUtil.convertUnsignedShortToByteArray((int)clip.getEnd(CoordinateSystem.RESIDUE_BASED)));
         }
         
     }

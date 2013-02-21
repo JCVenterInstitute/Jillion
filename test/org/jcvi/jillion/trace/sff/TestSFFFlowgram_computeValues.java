@@ -25,55 +25,31 @@
  */
 package org.jcvi.jillion.trace.sff;
 
-import org.jcvi.jillion.trace.sff.SffFlowgram;
-import org.jcvi.jillion.trace.sff.SffReadData;
-import org.junit.Before;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 public class TestSFFFlowgram_computeValues {
 
     short[] encodedValues = new short[]{213,0,2, 97, 120};
     byte[] indexes = new byte[]{1,2,1,1};
 
     short[] expectedValues = new short[]{213,2,97, 120};
-    SffReadData mockReadData;
-
-    @Before
-    public void setup(){
-        mockReadData = createMock(SffReadData.class);
-    }
 
     @Test
     public void valid(){
-        expect(mockReadData.getFlowIndexPerBase()).andReturn(indexes);
-        expect(mockReadData.getFlowgramValues()).andReturn(encodedValues);
-        replay(mockReadData);
-        short[] actualValues = SffFlowgram.computeValues(mockReadData);
+        short[] actualValues = SffFlowgram.computeValues(indexes, encodedValues);
         assertArrayEquals(expectedValues, actualValues);
-        verify(mockReadData);
     }
     @Test
     public void emptyIndexesShouldReturnEmptyList(){
-        expect(mockReadData.getFlowIndexPerBase()).andReturn(new byte[]{});
-        expect(mockReadData.getFlowgramValues()).andReturn(encodedValues);
-        replay(mockReadData);
-        assertEquals(0,SffFlowgram.computeValues(mockReadData).length);
-        verify(mockReadData);
-    }
-    @Test
-    public void emptyValuesShouldThrowIllegalArguementException(){
-        expect(mockReadData.getFlowIndexPerBase()).andReturn(indexes);
-        expect(mockReadData.getFlowgramValues()).andReturn(new short[]{});
-        replay(mockReadData);
-        try{
-        	SffFlowgram.computeValues(mockReadData);
-            fail("should throw array index out of bounds exception when no flowgram values");
-        }catch(IllegalArgumentException expected){
-            assertEquals("read data must contain Flowgram values", expected.getMessage());
-        }
+        assertEquals(0,SffFlowgram.computeValues(new byte[]{}, encodedValues).length);
 
-        verify(mockReadData);
+    }
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void emptyValuesShouldThrowIllegalArguementException(){
+        SffFlowgram.computeValues(indexes, new short[]{});        
+
     }
 
     

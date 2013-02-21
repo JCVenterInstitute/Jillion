@@ -78,5 +78,19 @@ public interface Flowgram extends Trace {
      * the index is outside the number of flows
      * specified by {@link #getNumberOfFlows()}.
      */
-    float getFlowValue(int index);
+    float getCalledFlowValue(int index);
+    
+    /**
+     * Get the raw  flow indexes in the array returned
+     * by {@link #getRawEncodedFlowValues() }
+     * @return a new byte array; never null
+     */
+    byte[] getRawIndexes();
+    /**
+     * Get the raw flowgram values which contains
+     * the homopolymer stretch estimates for each flow of the read.
+     * This is equivalent to the {@link SffReadData#getFlowgramValues()}.
+     * @return a new short array; never null
+     */
+    short[] getRawEncodedFlowValues();
 }

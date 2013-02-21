@@ -37,6 +37,7 @@ import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.AbstractDataStore;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
@@ -58,7 +59,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
     private final File sffFile;
     private Long size=null;
     private final DataStoreFilter filter;
-    
+    private NucleotideSequence keySequence,flowSequence;
     /**
      * Create a new instance of {@link LargeSffFileDataStore}.
      * @param sffFile the sff file to parse.
@@ -106,13 +107,53 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
 	}
 	/**
      * @param sffFile
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
      */
-    private LargeSffFileDataStore(File sffFile, DataStoreFilter filter) {
+    private LargeSffFileDataStore(File sffFile, DataStoreFilter filter) throws FileNotFoundException, IOException {
         this.sffFile = sffFile;
         this.filter = filter;
+        SffFileParser.create(sffFile).accept(new SffFileVisitor() {
+			
+			@Override
+			public SffFileReadVisitor visitRead(SffFileParserCallback callback,
+					SffReadHeader readHeader) {
+				//skip
+				return null;
+			}
+			
+			@Override
+			public void visitHeader(SffFileParserCallback callback,
+					SffCommonHeader header) {
+				LargeSffFileDataStore.this.keySequence = header.getKeySequence();
+				LargeSffFileDataStore.this.flowSequence = header.getFlowSequence();
+				callback.stopParsing();
+				
+			}
+			
+			@Override
+			public void end() {
+				//no-op
+				
+			}
+		});
+        
+        if(keySequence ==null || flowSequence ==null){
+        	throw new IOException("could not parse key sequence or flow sequence");
+        }
     }
 
     @Override
+	public NucleotideSequence getKeySequence() {
+		return keySequence;
+	}
+
+	@Override
+	public NucleotideSequence getFlowSequence() {
+		return flowSequence;
+	}
+
+	@Override
 	protected boolean containsImpl(String id) throws DataStoreException {
 		return get(id)!=null;
 	}
@@ -221,7 +262,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
 					}
 
 					@Override
-					public void endSffFile() {
+					public void end() {
 						//no-op
 					}
 
@@ -280,7 +321,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
 		}
 
 		@Override
-		public void endSffFile() {
+		public void end() {
 			//no-op			
 		}
     }

@@ -74,7 +74,7 @@ class DefaultSffFileDataStore {
 		@Override
 		public void visitHeader(SffFileParserCallback callback,
 				SffCommonHeader header) {
-			builder = new DefaultSffDataStoreBuilder((int)header.getNumberOfReads());
+			builder = new DefaultSffDataStoreBuilder(header.getKeySequence(), header.getFlowSequence(), (int)header.getNumberOfReads());
 			
 		}
 
@@ -102,7 +102,7 @@ class DefaultSffFileDataStore {
 		}
 
 		@Override
-		public void endSffFile() {
+		public void end() {
 			//no-op
 			
 		}
