@@ -8,6 +8,7 @@ import java.util.Map;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreIterator;
@@ -72,7 +73,7 @@ class CompletelyParsedIndexedSffFileDataStore {
 		private Map<String, SffFileMemento> mementos;
 		
 		private final DataStoreFilter filter;
-		
+		private NucleotideSequence keySequence,flowSequence;
 		
 		public Visitor(DataStoreFilter filter) {
 			this.filter = filter;
@@ -82,7 +83,8 @@ class CompletelyParsedIndexedSffFileDataStore {
 		public void visitHeader(SffFileParserCallback callback,
 				SffCommonHeader header) {
 			mementos = new LinkedHashMap<String,SffFileMemento>((int)header.getNumberOfReads());
-			
+			keySequence = header.getKeySequence();
+			flowSequence = header.getFlowSequence();
 		}
 
 		@Override
@@ -96,13 +98,13 @@ class CompletelyParsedIndexedSffFileDataStore {
 		}
 
 		@Override
-		public void endSffFile() {
+		public void end() {
 			//no-op
 			
 		}
 	
 		FlowgramDataStore build(SffFileParser parser){
-			return new DataStoreImpl(parser, mementos);
+			return new DataStoreImpl(parser, keySequence, flowSequence, mementos);
 		}
 		
 	}
@@ -111,15 +113,33 @@ class CompletelyParsedIndexedSffFileDataStore {
 	private static class DataStoreImpl implements FlowgramDataStore{
 		private final SffFileParser parser; //parser has the file ref
 		private volatile boolean closed=false;
-		
+		private final NucleotideSequence keySequence,flowSequence;
 		private final Map<String, SffFileMemento> mementos;
 
 		public DataStoreImpl(SffFileParser parser,
+				NucleotideSequence keySequence, NucleotideSequence flowSequence,
 				Map<String, SffFileMemento> mementos) {
 			this.parser = parser;
 			this.mementos = mementos;
+			if(keySequence ==null){
+				throw new NullPointerException("key sequence can not be null");
+			}
+			if(flowSequence ==null){
+				throw new NullPointerException("flow sequence can not be null");
+			}
+			this.keySequence = keySequence;
+			this.flowSequence = flowSequence;
+		}
+		
+		@Override
+		public NucleotideSequence getKeySequence() {
+			return keySequence;
 		}
 
+		@Override
+		public NucleotideSequence getFlowSequence() {
+			return flowSequence;
+		}
 		@Override
 		public StreamingIterator<String> idIterator() throws DataStoreException {
 			checkNotYetClosed();
@@ -213,7 +233,7 @@ class CompletelyParsedIndexedSffFileDataStore {
 		}
 
 		@Override
-		public void endSffFile() {
+		public void end() {
 			//no-op
 			
 		}

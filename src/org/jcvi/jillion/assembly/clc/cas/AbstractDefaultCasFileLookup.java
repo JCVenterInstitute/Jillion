@@ -273,7 +273,7 @@ public abstract class AbstractDefaultCasFileLookup  implements CasIdLookup, CasF
 
 
 		@Override
-		public void endSffFile() {
+		public void end() {
 			//no-op
 			
 		}

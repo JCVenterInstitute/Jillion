@@ -49,7 +49,10 @@ import org.junit.runners.Suite.SuiteClasses;
         TestIndexed454SffFileDataStore.class,
         TestNoXMLManifestIndexedSffFileDataStore.class,
         TestIndexedSffFileDataStore.class,
-        TestNoManifestIndexedSffFileDataStore.class
+        TestNoManifestIndexedSffFileDataStore.class,
+        
+        TestSffWriterNoManifest.class,
+        TestSffWriterWithIndex.class
     }
     )
 public class AllSFFUnitTests {

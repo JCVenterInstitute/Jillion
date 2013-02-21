@@ -57,7 +57,8 @@ public class TestFlowIndexOverflow{
                       new QualitySequenceBuilder(new byte[]{36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,38,36,38,38,38,37,36,36,34,33,33,31,36,36,31,31,31,31,31,31,23,23,23,23,31,36,37,35,31,26,20,20,35,35,35,36,36,36,36,36,0}).build(),
                         new short[]{ 101, 101, 102, 103, 106, 109, 87, 106,  103, 102, 103, 99, 101, 98, 101, 96, 95, 103,  114, 106, 103, 105, 96, 100, 94, 188, 101,  95, 110, 110, 123, 66, 95, 194, 86, 113, 68, 73, 110,  121, 237, 240, 84, 96, 80, 102, 109, 56, 484, 102, 110, 103, 222, 8},
                         Range.of(CoordinateSystem.RESIDUE_BASED, 25,62),
-                Range.of(CoordinateSystem.RESIDUE_BASED,0,0)
+                Range.of(CoordinateSystem.RESIDUE_BASED,0,0),
+                new byte[0], new short[0]
         );
     
     @Test

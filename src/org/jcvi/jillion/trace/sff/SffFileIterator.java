@@ -93,7 +93,7 @@ public final class SffFileIterator extends AbstractBlockingStreamingIterator<Flo
 
 
 				@Override
-				public void endSffFile() {
+				public void end() {
 					//no-op
 					
 				}

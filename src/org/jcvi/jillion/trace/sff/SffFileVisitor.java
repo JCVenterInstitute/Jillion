@@ -7,5 +7,5 @@ public interface SffFileVisitor {
 	
 	SffFileReadVisitor visitRead(SffFileParserCallback callback, SffReadHeader readHeader);
 	
-	void endSffFile();
+	void end();
 }
