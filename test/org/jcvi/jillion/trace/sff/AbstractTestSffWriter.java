@@ -100,7 +100,7 @@ public abstract class AbstractTestSffWriter {
 			byte[] actual =IOUtil.toByteArray(actualInputStream);
 			assertArrayEquals(expected, actual);
 		}finally{
-			IOUtil.closeAndIgnoreErrors(expectedInputStream);
+			IOUtil.closeAndIgnoreErrors(actualInputStream, expectedInputStream);
 		}
 	}
 }
