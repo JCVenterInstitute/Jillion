@@ -113,34 +113,15 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
     private LargeSffFileDataStore(File sffFile, DataStoreFilter filter) throws FileNotFoundException, IOException {
         this.sffFile = sffFile;
         this.filter = filter;
-        SffFileParser.create(sffFile).accept(new SffFileVisitor() {
-			
-			@Override
-			public SffFileReadVisitor visitRead(SffFileParserCallback callback,
-					SffReadHeader readHeader) {
-				//skip
-				return null;
-			}
-			
-			@Override
-			public void visitHeader(SffFileParserCallback callback,
-					SffCommonHeader header) {
-				LargeSffFileDataStore.this.keySequence = header.getKeySequence();
-				LargeSffFileDataStore.this.flowSequence = header.getFlowSequence();
-				callback.stopParsing();
-				
-			}
-			
-			@Override
-			public void end() {
-				//no-op
-				
-			}
-		});
-        
-        if(keySequence ==null || flowSequence ==null){
-        	throw new IOException("could not parse key sequence or flow sequence");
+        HeaderVisitor visitor = new HeaderVisitor();
+        SffFileParser.create(sffFile).accept(visitor);
+        SffCommonHeader header = visitor.getHeader();
+        if(header ==null){
+        	throw new IOException("could not parse sff header");
         }
+        this.keySequence = header.getKeySequence();
+        this.flowSequence = header.getFlowSequence();
+        
     }
 
     @Override
@@ -325,5 +306,35 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
 			//no-op			
 		}
     }
+    
+   private static final class HeaderVisitor implements SffFileVisitor {
+		private SffCommonHeader header;
+		@Override
+		public SffFileReadVisitor visitRead(SffFileParserCallback callback,
+				SffReadHeader readHeader) {
+			//skip
+			return null;
+		}
+		
+		@Override
+		public void visitHeader(SffFileParserCallback callback,
+				SffCommonHeader header) {
+			this.header = header;
+			callback.stopParsing();
+			
+		}
+		
+		@Override
+		public void end() {
+			//no-op
+			
+		}
+
+		public final SffCommonHeader getHeader() {
+			return header;
+		}
+		
+		
+	}
     
 }
