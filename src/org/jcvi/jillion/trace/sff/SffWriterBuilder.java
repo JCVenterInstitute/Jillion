@@ -118,17 +118,19 @@ public class SffWriterBuilder {
 		private static final byte READ_SEPARATOR = (byte)0xFF;
 		private final File outputFile;
 		private final OutputStream out;
-		private boolean includeIndex;
+		private final boolean includeIndex;
 		
 		private long numberOfReads=0L;
 		private boolean closed=false;
 		private long currentOffset=0L;
 		/**
-		 * Sff indexes are in alphabetical order
+		 * Sff indexes are stored in alphabetical order
 		 * so we need to collect the name-offset pairs
-		 * in a sorted map.
+		 * in a sorted map and write them out to the 
+		 * file later when {@link #close()} is called.
 		 */
-		private SortedMap<String, Long> indexMap = new TreeMap<String, Long>();
+		private final SortedMap<String, Long> indexMap = new TreeMap<String, Long>();
+		
 		public SffWriterImpl(File outputFile, boolean includeIndex,NucleotideSequence keySequence,NucleotideSequence flowSequence) throws IOException {
 			this.outputFile = outputFile;
 			this.includeIndex = includeIndex;
@@ -179,6 +181,7 @@ public class SffWriterBuilder {
 				f.seek(20);
 				f.write(IOUtil.convertUnsignedIntToByteArray(numberOfReads));
 			}
+			closed=true;
 		}
 
 		@Override

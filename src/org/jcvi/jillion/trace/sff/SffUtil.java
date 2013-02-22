@@ -72,15 +72,15 @@ public final class SffUtil {
     /**
 	 * 255 ^ 3 = {@value}.
 	 */
-	private static final int POW_3 = 16581375;
+	private static final long POW_3 = 16581375;
 	/**
 	 * 255 ^ 2 = {@value}.
 	 */
-	private static final int POW_2 = 65025;
+	private static final long POW_2 = 65025;
 	/**
 	 * 255 ^ 1 = {@value}.
 	 */
-	private static final int POW_1 = 255;
+	private static final long POW_1 = 255;
     /**
      * Currently SFF only has 1 format code which has a value of <code>1</code>.
      */
