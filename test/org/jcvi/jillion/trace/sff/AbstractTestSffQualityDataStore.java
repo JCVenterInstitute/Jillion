@@ -35,7 +35,7 @@ import org.junit.Test;
 
 public abstract class AbstractTestSffQualityDataStore extends AbstractTestExampleSffFile{
 
-    private final FlowgramDataStore dataStore;
+    private final SffFileDataStore dataStore;
     
     {
         

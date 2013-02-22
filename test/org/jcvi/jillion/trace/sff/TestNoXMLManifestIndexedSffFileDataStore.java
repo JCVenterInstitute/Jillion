@@ -30,7 +30,7 @@ public class TestNoXMLManifestIndexedSffFileDataStore extends AbstractTestSffFil
 	}
 
 	@Override
-	protected FlowgramDataStore parseDataStore(File f) throws Exception {
+	protected SffFileDataStore parseDataStore(File f) throws Exception {
 		return ManifestIndexed454SffFileDataStore.create(f);
 	}
 

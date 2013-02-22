@@ -28,7 +28,7 @@ package org.jcvi.jillion.trace.sff;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.trace.sff.Flowgram;
+import org.jcvi.jillion.trace.sff.SffFlowgram;
 import org.jcvi.jillion.trace.sff.SffUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,12 +39,12 @@ public class TestSFFUtil_getTrimRange {
 
     private static final Range NOT_SET = Range.of(CoordinateSystem.RESIDUE_BASED,0,0);
 
-    Flowgram flowgram;
+    SffFlowgram flowgram;
     long numberOfBases = 100L;
     NucleotideSequence mockBasecalls;
     @Before
     public void setup(){
-        flowgram = createMock(Flowgram.class);
+        flowgram = createMock(SffFlowgram.class);
         mockBasecalls = createMock(NucleotideSequence.class);
         expect(mockBasecalls.getLength()).andStubReturn(numberOfBases);
         expect(flowgram.getNucleotideSequence()).andReturn(mockBasecalls);

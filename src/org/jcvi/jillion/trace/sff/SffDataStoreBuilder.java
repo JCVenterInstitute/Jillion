@@ -30,25 +30,25 @@ import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
-final class DefaultSffDataStoreBuilder implements FlowgramDataStoreBuilder{
+final class SffDataStoreBuilder{
 
 	private final NucleotideSequence keySequence,flowSequence;
 	
-	private final Map<String, Flowgram> map;
+	private final Map<String, SffFlowgram> map;
 	
-	public DefaultSffDataStoreBuilder(NucleotideSequence keySequence, NucleotideSequence flowSequence){
+	public SffDataStoreBuilder(NucleotideSequence keySequence, NucleotideSequence flowSequence){
 		if(keySequence==null){
 			throw new NullPointerException("key sequence can not be null");
 		}
 		if(flowSequence==null){
 			throw new NullPointerException("flow sequence can not be null");
 		}
-		map = new LinkedHashMap<String, Flowgram>();
+		map = new LinkedHashMap<String, SffFlowgram>();
 		this.keySequence = keySequence;
 		this.flowSequence = flowSequence;
 	}
 	
-	public DefaultSffDataStoreBuilder(NucleotideSequence keySequence, NucleotideSequence flowSequence, int initialCapacity){
+	public SffDataStoreBuilder(NucleotideSequence keySequence, NucleotideSequence flowSequence, int initialCapacity){
 		
 		if(keySequence==null){
 			throw new NullPointerException("key sequence can not be null");
@@ -56,31 +56,29 @@ final class DefaultSffDataStoreBuilder implements FlowgramDataStoreBuilder{
 		if(flowSequence==null){
 			throw new NullPointerException("flow sequence can not be null");
 		}
-		map = new LinkedHashMap<String, Flowgram>(initialCapacity);
+		map = new LinkedHashMap<String, SffFlowgram>(initialCapacity);
 		this.keySequence = keySequence;
 		this.flowSequence = flowSequence;
 	}
-	
-	@Override
-	public FlowgramDataStore build() {
+
+	public SffFileDataStore build() {
 		return new DefaultSffFileDataStore(keySequence, flowSequence, 
-				DataStoreUtil.adapt(FlowgramDataStore.class,map));
+				DataStoreUtil.adapt(SffFileDataStore.class,map));
 	}
 
-	@Override
-	public FlowgramDataStoreBuilder addFlowgram(Flowgram flowgram) {
+	public SffDataStoreBuilder addFlowgram(SffFlowgram flowgram) {
 		map.put(flowgram.getId(), flowgram);
 		return this;
 	}
 	
-	private static final class DefaultSffFileDataStore implements FlowgramDataStore{
+	private static final class DefaultSffFileDataStore implements SffFileDataStore{
 		private final NucleotideSequence keySequence,flowSequence;
-		private final DataStore<Flowgram> delegate;
+		private final DataStore<SffFlowgram> delegate;
 		
 		
 		
 		public DefaultSffFileDataStore(NucleotideSequence keySequence,
-				NucleotideSequence flowSequence, DataStore<Flowgram> delegate) {
+				NucleotideSequence flowSequence, DataStore<SffFlowgram> delegate) {
 			this.keySequence = keySequence;
 			this.flowSequence = flowSequence;
 			this.delegate = delegate;
@@ -92,7 +90,7 @@ final class DefaultSffDataStoreBuilder implements FlowgramDataStoreBuilder{
 		}
 
 		@Override
-		public Flowgram get(String id) throws DataStoreException {
+		public SffFlowgram get(String id) throws DataStoreException {
 			return delegate.get(id);
 		}
 
@@ -112,7 +110,7 @@ final class DefaultSffDataStoreBuilder implements FlowgramDataStoreBuilder{
 		}
 
 		@Override
-		public StreamingIterator<Flowgram> iterator() throws DataStoreException {
+		public StreamingIterator<SffFlowgram> iterator() throws DataStoreException {
 			return delegate.iterator();
 		}
 

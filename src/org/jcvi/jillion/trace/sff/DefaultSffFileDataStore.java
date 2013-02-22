@@ -6,8 +6,8 @@ import java.io.IOException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 /**
-* {@code DefaultSffFileDataStore} creates {@link FlowgramDataStore}
-* instances that store all the {@link Flowgram}s
+* {@code DefaultSffFileDataStore} creates {@link SffFileDataStore}
+* instances that store all the {@link SffFlowgram}s
 * in a Map.  This implementation is not very 
 * memory efficient and therefore should not be used
 * for large sff files.
@@ -19,33 +19,33 @@ class DefaultSffFileDataStore {
 		//can not instantiate
 	}
 	/**
-	 * Create a new {@link FlowgramDataStore} by parsing
+	 * Create a new {@link SffFileDataStore} by parsing
 	 * the entire given sff file and include all
 	 * the reads in the DataStore.
 	 * @param sffFile the sff encoded file to parse.
-	 * @return a new {@link FlowgramDataStore} containing
+	 * @return a new {@link SffFileDataStore} containing
 	 * all the reads in the sff file; never null.
 	 * @throws IOException if there is a problem
 	 * parsing the file.
 	 * @throws NullPointerException if either the sffFile is null.
 	 */
-	public static FlowgramDataStore create(File sffFile) throws IOException{
+	public static SffFileDataStore create(File sffFile) throws IOException{
 		return create(sffFile, DataStoreFilters.alwaysAccept());
 	}
 	/**
-	 * Create a new {@link FlowgramDataStore} by parsing
+	 * Create a new {@link SffFileDataStore} by parsing
 	 * the entire given sff file but include only
 	 * the reads that are accepted by the given {@link DataStoreFilter}.
 	 * @param sffFile the sff encoded file to parse.
 	 * @param filter the {@link DataStoreFilter} to use
 	 * to filter out any reads in the sff file; can not be null.
-	 * @return a new {@link FlowgramDataStore} containing
+	 * @return a new {@link SffFileDataStore} containing
 	 * only the reads accepted by the given filter; never null.
 	 * @throws IOException if there is a problem
 	 * parsing the file.
 	 * @throws NullPointerException if either the sffFile or filter are null.
 	 */
-	public static FlowgramDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
+	public static SffFileDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
 		Visitor visitor = new Visitor(filter);
 		SffFileParser parser = SffFileParser.create(sffFile);
 		parser.accept(visitor);
@@ -62,7 +62,7 @@ class DefaultSffFileDataStore {
 	 *
 	 */
 	private static final class Visitor implements SffFileVisitor{
-		private DefaultSffDataStoreBuilder builder;
+		private SffDataStoreBuilder builder;
 		
 		private final DataStoreFilter filter;
 		
@@ -74,7 +74,7 @@ class DefaultSffFileDataStore {
 		@Override
 		public void visitHeader(SffFileParserCallback callback,
 				SffCommonHeader header) {
-			builder = new DefaultSffDataStoreBuilder(header.getKeySequence(), header.getFlowSequence(), (int)header.getNumberOfReads());
+			builder = new SffDataStoreBuilder(header.getKeySequence(), header.getFlowSequence(), (int)header.getNumberOfReads());
 			
 		}
 
@@ -86,7 +86,7 @@ class DefaultSffFileDataStore {
 
 					@Override
 					public void visitReadData(SffReadData readData) {
-						 builder.addFlowgram(SffFlowgram.create(readHeader, readData));
+						 builder.addFlowgram(SffFlowgramImpl.create(readHeader, readData));
 						
 					}
 

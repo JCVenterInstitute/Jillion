@@ -51,7 +51,7 @@ public class TestFlowIndexOverflow{
     
     private final static ResourceHelper RESOURCES = new ResourceHelper(TestFlowIndexOverflow.class);
    
-    private final SffFlowgram FCPRO0N01A48YO = new SffFlowgram("FCPRO0N01A48YO",
+    private final SffFlowgramImpl FCPRO0N01A48YO = new SffFlowgramImpl("FCPRO0N01A48YO",
     		new NucleotideSequenceBuilder(
                       "TCAGCGATACACATAGCGCGTACATCCACATCGTGGCGTCTCAAGGCACACAGGGGGATAGGN").build(),
                       new QualitySequenceBuilder(new byte[]{36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,38,36,38,38,38,37,36,36,34,33,33,31,36,36,31,31,31,31,31,31,23,23,23,23,31,36,37,35,31,26,20,20,35,35,35,36,36,36,36,36,0}).build(),
@@ -63,10 +63,10 @@ public class TestFlowIndexOverflow{
     
     @Test
     public void validDecode() throws TraceDecoderException, DataStoreException, IOException{
-        FlowgramDataStore dataStore = DefaultSffFileDataStore.create(RESOURCES.getFile(FILE));
+        SffFileDataStore dataStore = DefaultSffFileDataStore.create(RESOURCES.getFile(FILE));
         assertEquals(1, dataStore.getNumberOfRecords());
         
-        Flowgram actual =dataStore.get("FCPRO0N01A48YO");
+        SffFlowgram actual =dataStore.get("FCPRO0N01A48YO");
         assertEquals(FCPRO0N01A48YO, actual);
     }
 

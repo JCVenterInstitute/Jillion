@@ -34,7 +34,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.junit.Test;
 public abstract class AbstractTestSffNucleotideDataStore extends AbstractTestExampleSffFile{
 
-    private final FlowgramDataStore dataStore;
+    private final SffFileDataStore dataStore;
     
     {
         

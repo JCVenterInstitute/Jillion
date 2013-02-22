@@ -67,7 +67,7 @@ import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
  * @author dkatzel
  *
  */
-final class ManifestIndexed454SffFileDataStore implements FlowgramDataStore{
+final class ManifestIndexed454SffFileDataStore implements SffFileDataStore{
 	
 	private final RandomAccessFile randomAccessFile;
 	private final File sffFile;
@@ -82,34 +82,34 @@ final class ManifestIndexed454SffFileDataStore implements FlowgramDataStore{
 	private boolean isClosed=false;
 	private final DataStoreFilter filter;
 	/**
-	 * Try to create a {@link FlowgramDataStore} by only parsing
+	 * Try to create a {@link SffFileDataStore} by only parsing
 	 * the 454 index at the end of the sff file.
 	 * If there is no index or it is encoded
 	 * in an unknown format, then this method will
 	 * return null.
 	 * @param sffFile
-	 * @return an {@link FlowgramDataStore} if successfully
+	 * @return an {@link SffFileDataStore} if successfully
 	 * parsed; or {@code null} if the index can't
 	 * be parsed.
 	 * @throws IOException if there is a problem reading the file.
 	 */
-	public static FlowgramDataStore create(File sffFile) throws IOException{
+	public static SffFileDataStore create(File sffFile) throws IOException{
 		return create(sffFile, DataStoreFilters.alwaysAccept());
 	}
 	/**
-	 * Try to create a {@link FlowgramDataStore} by only parsing
+	 * Try to create a {@link SffFileDataStore} by only parsing
 	 * the 454 index at the end of the sff file.
 	 * If there is no index or it is encoded
 	 * in an unknown format, then this method will
 	 * return null.
 	 * @param sffFile
 	 * @param DataStoreFilter filter
-	 * @return an {@link FlowgramDataStore} if successfully
+	 * @return an {@link SffFileDataStore} if successfully
 	 * parsed; or {@code null} if the index can't
 	 * be parsed.
 	 * @throws IOException if there is a problem reading the file.
 	 */
-	public static FlowgramDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
+	public static SffFileDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
 		ManifestCreatorVisitor visitor = new ManifestCreatorVisitor(sffFile, filter);
 		SffFileParser.create(sffFile).accept(visitor);
 		//there is a valid sff formatted manifest inside the sff file
@@ -142,7 +142,7 @@ final class ManifestIndexed454SffFileDataStore implements FlowgramDataStore{
 	}
 
 	@Override
-	public Flowgram get(String id) throws DataStoreException {
+	public SffFlowgram get(String id) throws DataStoreException {
 		throwErrorIfClosed();
 		Long offset = getOffsetFor(id);
 		if(offset ==null){
@@ -162,7 +162,7 @@ final class ManifestIndexed454SffFileDataStore implements FlowgramDataStore{
 	             SffReadData readData = DefaultSffReadDataDecoder.INSTANCE.decode(dataIn,
 	                             commonHeader.getNumberOfFlowsPerRead(),
 	                             numberOfBases);
-	             return SffFlowgram.create(readHeader, readData);
+	             return SffFlowgramImpl.create(readHeader, readData);
 			}
 		} catch (IOException e) {
 			throw new DataStoreException("error trying to get flowgram "+ id,e);
@@ -212,7 +212,7 @@ final class ManifestIndexed454SffFileDataStore implements FlowgramDataStore{
 	}
 
 	@Override
-	public StreamingIterator<Flowgram> iterator() throws DataStoreException {
+	public StreamingIterator<SffFlowgram> iterator() throws DataStoreException {
 		throwErrorIfClosed();
 		try {
 			return LargeSffFileDataStore.create(sffFile,filter).iterator();

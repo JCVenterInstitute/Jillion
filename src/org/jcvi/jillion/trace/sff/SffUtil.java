@@ -229,9 +229,9 @@ public final class SffUtil {
     }
     /**
      * Compute the trim {@link Range} that should be used
-     * for this {@link Flowgram}.  This method
-     * uses the values from both {@link Flowgram#getQualityClip()} 
-     * and {@link Flowgram#getAdapterClip()} using
+     * for this {@link SffFlowgram}.  This method
+     * uses the values from both {@link SffFlowgram#getQualityClip()} 
+     * and {@link SffFlowgram#getAdapterClip()} using
      * the algorithm described in the sff file format
      * documentation:
      * <pre>
@@ -241,14 +241,14 @@ public final class SffUtil {
      *           max(1, max(clip_qual_left, clip_adapter_left)),
      *           min( (clip_qual_right == 0 ? number_of_bases : clip_qual_right), (clip_adapter_right == 0 ? number_of_bases : clip_adapter_right) )
      * </pre>
-     * @param flowgram the {@link Flowgram} to get the trim range of;
+     * @param flowgram the {@link SffFlowgram} to get the trim range of;
      * can not be null.
      * @return a {@link Range} representing the trimRange to use.
      * @throws NullPointerException if flowgram is null.
      * @see <a href="http://www.ncbi.nlm.nih.gov/Traces/trace.cgi?cmd=show&f=formats&m=doc&s=formats#sff">
      	sff file specification</a>
      */
-    public static Range computeTrimRangeFor(Flowgram flowgram){
+    public static Range computeTrimRangeFor(SffFlowgram flowgram){
 
         return getTrimRangeFor(flowgram.getQualityClip(), flowgram.getAdapterClip(), 
         		flowgram.getNucleotideSequence().getLength());

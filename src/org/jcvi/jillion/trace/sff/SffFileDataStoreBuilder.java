@@ -32,7 +32,7 @@ import org.jcvi.jillion.trace.fastq.FastqRecord;
 /**
  * {@code SffFileDataStoreBuilder}
  * is a {@link Builder} that can create new instances
- * of {@link FlowgramDataStore}s
+ * of {@link SffFileDataStore}s
  * using data from a given input sff file.
  * @author dkatzel
  *
@@ -46,9 +46,9 @@ public class SffFileDataStoreBuilder {
 	
 	/**
 	 * Create a new instance of {@code SffFileDataStoreBuilder}
-	 * which will build a {@link FlowgramDataStore} for the given
+	 * which will build a {@link SffFileDataStore} for the given
 	 * sff file.
-	 * @param sffFile the sff file make a {@link FlowgramDataStore} with. 
+	 * @param sffFile the sff file make a {@link SffFileDataStore} with. 
 	 * @throws IOException if the sff file does not exist, or can not be read.
 	 * @throws NullPointerException if sff is null.
 	 */
@@ -69,7 +69,7 @@ public class SffFileDataStoreBuilder {
 	 * the given {@link DataStoreFilter}.  If a filter
 	 * is not given to this builder, then all records
 	 * in the sff file will be included in the built
-	 * {@link FlowgramDataStore}.
+	 * {@link SffFileDataStore}.
 	 * @param filter a {@link DataStoreFilter} instance that can be
 	 * used to filter out specified flowgram records; can not be null. 
 	 * @return this.
@@ -90,7 +90,7 @@ public class SffFileDataStoreBuilder {
 	 * which may cause an Exception if there isn't enough memory.
 	 * The {@link DataStoreProviderHint}  is just a guideline 
 	 * and may be ignored by this builder when determining
-	 * which {@link FlowgramDataStore} implementation to chose
+	 * which {@link SffFileDataStore} implementation to chose
 	 * to build in {@link #build()}.
 	 * @param hint an instance of {@link DataStoreProviderHint};
 	 * can not be null.
@@ -109,7 +109,7 @@ public class SffFileDataStoreBuilder {
 	
 	/**
 	 * Parse the given sff file and return
-	 * a new instance of a {@link FlowgramDataStore}
+	 * a new instance of a {@link SffFileDataStore}
 	 * using all the input parameters given so far.  
 	 * If not all optional parameters are set then default
 	 * values will be used:
@@ -117,24 +117,24 @@ public class SffFileDataStoreBuilder {
 	 * <li>
 	 * If no {@link DataStoreFilter} has been specified
 	 * by {@link #filter(DataStoreFilter)},
-	 * then all {@link Flowgram}s will be included in this {@link FlowgramDataStore}.
+	 * then all {@link SffFlowgram}s will be included in this {@link SffFileDataStore}.
 	 * </li>
 	 * <li>
 	 * If no {@link DataStoreProviderHint} has been specified
 	 * by {@link #hint(DataStoreProviderHint)},
 	 * then this builder will try to store all the 
-	 * {@link Flowgram}s that meet the {@link DataStoreFilter}
+	 * {@link SffFlowgram}s that meet the {@link DataStoreFilter}
 	 * requirements in memory.  This may cause out of memory errors
 	 * if there is not enough memory available.
 	 * </li>
 	 * </ul>
-	 * @return a new {@link FlowgramDataStore} instance;
+	 * @return a new {@link SffFileDataStore} instance;
 	 * never null.
 	 * @throws IOException if there is a problem parsing the 
 	 * sff file. 
 	 * @see #hint(DataStoreProviderHint)
 	 */
-	public FlowgramDataStore build() throws IOException {
+	public SffFileDataStore build() throws IOException {
 		switch(hint){
 			case OPTIMIZE_FAST_RANDOM_ACCESS:
 				return DefaultSffFileDataStore.create(sffFile,filter);
@@ -148,8 +148,8 @@ public class SffFileDataStoreBuilder {
 		}
 	}
 	
-	private FlowgramDataStore handleIndexedSffFileDataStore() throws IOException{
-		FlowgramDataStore manifestDataStore = ManifestIndexed454SffFileDataStore.create(sffFile, filter);
+	private SffFileDataStore handleIndexedSffFileDataStore() throws IOException{
+		SffFileDataStore manifestDataStore = ManifestIndexed454SffFileDataStore.create(sffFile, filter);
 		if(manifestDataStore!=null){
 			return manifestDataStore;
 		}

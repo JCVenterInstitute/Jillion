@@ -38,17 +38,17 @@ public class TestSFFFlowgram_computeValues {
 
     @Test
     public void valid(){
-        short[] actualValues = SffFlowgram.computeValues(indexes, encodedValues);
+        short[] actualValues = SffFlowgramImpl.computeValues(indexes, encodedValues);
         assertArrayEquals(expectedValues, actualValues);
     }
     @Test
     public void emptyIndexesShouldReturnEmptyList(){
-        assertEquals(0,SffFlowgram.computeValues(new byte[]{}, encodedValues).length);
+        assertEquals(0,SffFlowgramImpl.computeValues(new byte[]{}, encodedValues).length);
 
     }
     @Test(expected = IndexOutOfBoundsException.class)
     public void emptyValuesShouldThrowIllegalArguementException(){
-        SffFlowgram.computeValues(indexes, new short[]{});        
+        SffFlowgramImpl.computeValues(indexes, new short[]{});        
 
     }
 
