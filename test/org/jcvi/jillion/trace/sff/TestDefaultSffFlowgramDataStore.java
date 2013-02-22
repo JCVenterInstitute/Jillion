@@ -31,7 +31,7 @@ public class TestDefaultSffFlowgramDataStore extends AbstractTestSffFileDataStor
 
 
 	@Override
-	protected FlowgramDataStore parseDataStore(File f) throws Exception {
+	protected SffFileDataStore parseDataStore(File f) throws Exception {
 		return DefaultSffFileDataStore.create(f);
 	}
     

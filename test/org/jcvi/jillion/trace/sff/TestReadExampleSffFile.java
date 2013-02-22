@@ -56,6 +56,6 @@ public abstract class  TestReadExampleSffFile extends AbstractTestExampleSffFile
     }
     
     protected abstract long getNumberOfFlowgrams() throws Exception;
-   protected abstract Flowgram getFlowgram(String id) throws Exception;
+   protected abstract SffFlowgram getFlowgram(String id) throws Exception;
    protected abstract void parseSff(File f) throws Exception;
 }

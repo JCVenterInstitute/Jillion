@@ -32,14 +32,14 @@ public class TestIndexedSffFileDataStore extends AbstractTestExampleSffFile{
 
 	@Test
 	public void returnManifestIndexedInstanceIfManifestIsPresent() throws IOException{
-		FlowgramDataStore datastore = new SffFileDataStoreBuilder(SFF_FILE)
+		SffFileDataStore datastore = new SffFileDataStoreBuilder(SFF_FILE)
 										.hint(DataStoreProviderHint.OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS)
 										.build();
 		assertTrue(datastore instanceof ManifestIndexed454SffFileDataStore);
 	}
 	@Test
 	public void returnManifestIndexedInstanceIfManifestWithNoXMLIsPresent() throws IOException{
-		FlowgramDataStore datastore = new SffFileDataStoreBuilder(SFF_FILE_NO_XML)
+		SffFileDataStore datastore = new SffFileDataStoreBuilder(SFF_FILE_NO_XML)
 												.hint(DataStoreProviderHint.OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS)
 												.build();
 		assertTrue(datastore instanceof ManifestIndexed454SffFileDataStore);
@@ -47,7 +47,7 @@ public class TestIndexedSffFileDataStore extends AbstractTestExampleSffFile{
 	
 	@Test
 	public void returnFullyParsedIndexedInstanceIfNoIndexIsPresent() throws IOException{
-		FlowgramDataStore datastore = new SffFileDataStoreBuilder(SFF_FILE_NO_INDEX)
+		SffFileDataStore datastore = new SffFileDataStoreBuilder(SFF_FILE_NO_INDEX)
 												.hint(DataStoreProviderHint.OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS)
 												.build();
 		assertNotNull(datastore);

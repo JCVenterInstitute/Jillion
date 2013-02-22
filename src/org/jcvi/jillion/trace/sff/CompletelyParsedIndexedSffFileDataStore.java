@@ -18,8 +18,8 @@ import org.jcvi.jillion.trace.sff.SffFileParserCallback.SffFileMemento;
 
 /**
  * {@code IndexedSffFileDataStore} is an implementation 
- * of {@link FlowgramDataStore} that only stores an index containing
- * byte offsets to the various {@link Flowgram}s contained
+ * of {@link SffFileDataStore} that only stores an index containing
+ * byte offsets to the various {@link SffFlowgram}s contained
  * in a single sff file.  This allows for large files to provide
  * random access without taking up much memory. The down side is each flowgram
  * must be re-parsed each time and the sff file must exist and not
@@ -33,10 +33,10 @@ class CompletelyParsedIndexedSffFileDataStore {
 		//can not instantiate
 	}
 	/**
-	 * Create a new {@link FlowgramDataStore} instance which only indexes
+	 * Create a new {@link SffFileDataStore} instance which only indexes
 	 * byte offsets for each read.
 	 * @param sffFile the sff file to create a datastore for.
-	 * @return a new {@link FlowgramDataStore} instance; never null.
+	 * @return a new {@link SffFileDataStore} instance; never null.
 	 * @throws IOException if there is a problem reading the file.
 	 * @throws IllegalArgumentException if the given sffFile
 	 * has more than {@link Integer#MAX_VALUE} reads.
@@ -44,14 +44,14 @@ class CompletelyParsedIndexedSffFileDataStore {
 	 * @throws IllegalArgumentException if sffFile does not exist.
 	 * @see #canCreateIndexedDataStore(File)
 	 */
-	public static FlowgramDataStore create(File sffFile) throws IOException{
+	public static SffFileDataStore create(File sffFile) throws IOException{
 		return create(sffFile, DataStoreFilters.alwaysAccept());
 	}
 	/**
-	 * Create a new {@link FlowgramDataStore} instance which only indexes
+	 * Create a new {@link SffFileDataStore} instance which only indexes
 	 * byte offsets for each read that is accepted by the given {@link DataStoreFilter}.
 	 * @param sffFile the sff file to create a datastore for.
-	 * @return a new {@link FlowgramDataStore} instance; never null.
+	 * @return a new {@link SffFileDataStore} instance; never null.
 	 * @throws IOException if there is a problem reading the file.
 	 * @throws IllegalArgumentException if the given sffFile
 	 * has more than {@link Integer#MAX_VALUE} reads.
@@ -59,7 +59,7 @@ class CompletelyParsedIndexedSffFileDataStore {
 	 * @throws IllegalArgumentException if sffFile does not exist.
 	 * @see #canCreateIndexedDataStore(File)
 	 */
-	public static FlowgramDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
+	public static SffFileDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
 		Visitor visitor = new Visitor(filter);
 		SffFileParser parser = SffFileParser.create(sffFile);
 		parser.accept(visitor);
@@ -103,14 +103,14 @@ class CompletelyParsedIndexedSffFileDataStore {
 			
 		}
 	
-		FlowgramDataStore build(SffFileParser parser){
+		SffFileDataStore build(SffFileParser parser){
 			return new DataStoreImpl(parser, keySequence, flowSequence, mementos);
 		}
 		
 	}
 	
 	
-	private static class DataStoreImpl implements FlowgramDataStore{
+	private static class DataStoreImpl implements SffFileDataStore{
 		private final SffFileParser parser; //parser has the file ref
 		private volatile boolean closed=false;
 		private final NucleotideSequence keySequence,flowSequence;
@@ -147,7 +147,7 @@ class CompletelyParsedIndexedSffFileDataStore {
 		}
 
 		@Override
-		public Flowgram get(String id) throws DataStoreException {
+		public SffFlowgram get(String id) throws DataStoreException {
 			checkNotYetClosed();
 			SffFileMemento momento = mementos.get(id);
 			if(momento == null){
@@ -180,10 +180,10 @@ class CompletelyParsedIndexedSffFileDataStore {
 		}
 
 		@Override
-		public StreamingIterator<Flowgram> iterator() throws DataStoreException {
+		public StreamingIterator<SffFlowgram> iterator() throws DataStoreException {
 			checkNotYetClosed();
 			// too lazy to write faster implementation for now
-			return new DataStoreIterator<Flowgram>(this);
+			return new DataStoreIterator<SffFlowgram>(this);
 		}
 
 		@Override
@@ -203,7 +203,7 @@ class CompletelyParsedIndexedSffFileDataStore {
 	}
 	
 	private static class SingleRecordVisitor implements SffFileVisitor{
-		private Flowgram flowgram;
+		private SffFlowgram flowgram;
 		@Override
 		public void visitHeader(SffFileParserCallback callback,
 				SffCommonHeader header) {
@@ -219,7 +219,7 @@ class CompletelyParsedIndexedSffFileDataStore {
 
 				@Override
 				public void visitReadData(SffReadData readData) {
-					flowgram =SffFlowgram.create(readHeader, readData);
+					flowgram =SffFlowgramImpl.create(readHeader, readData);
 					
 				}
 
@@ -238,7 +238,7 @@ class CompletelyParsedIndexedSffFileDataStore {
 			
 		}
 
-		public final Flowgram getFlowgram() {
+		public final SffFlowgram getFlowgram() {
 			return flowgram;
 		}
 		

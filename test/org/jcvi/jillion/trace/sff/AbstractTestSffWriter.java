@@ -30,7 +30,7 @@ public abstract class AbstractTestSffWriter {
     
     File outputFile,inputSff;
 
-    private FlowgramDataStore expected, actual;
+    private SffFileDataStore expected, actual;
    
     @Before
     public void setup() throws IOException, DataStoreException{
@@ -41,11 +41,11 @@ public abstract class AbstractTestSffWriter {
 		expected = createDataStore(inputSff);
 		
 		SffWriter writer = createWriter(outputFile, expected.getKeySequence(), expected.getFlowSequence());
-		StreamingIterator<Flowgram> iter =null;
+		StreamingIterator<SffFlowgram> iter =null;
 		try{
 			iter = expected.iterator();
 			while(iter.hasNext()){
-				Flowgram next = iter.next();
+				SffFlowgram next = iter.next();
 				writer.write(next);
 			}
 		}finally{
@@ -63,7 +63,7 @@ public abstract class AbstractTestSffWriter {
     }
     protected abstract String getPathToFile();
     
-    protected abstract FlowgramDataStore createDataStore(File inputSff) throws IOException;
+    protected abstract SffFileDataStore createDataStore(File inputSff) throws IOException;
     
     protected abstract SffWriter createWriter(File outputFile, NucleotideSequence keySequence, NucleotideSequence flowSequence) throws IOException;
     
@@ -77,8 +77,8 @@ public abstract class AbstractTestSffWriter {
 		
 		
 		assertEquals(expected.getNumberOfRecords(), actual.getNumberOfRecords());
-		StreamingIterator<Flowgram> iter =null;
-		StreamingIterator<Flowgram> actualIter =null;
+		StreamingIterator<SffFlowgram> iter =null;
+		StreamingIterator<SffFlowgram> actualIter =null;
 		try{
 			iter = expected.iterator();
 			actualIter = actual.iterator();

@@ -13,7 +13,7 @@ public class TestSffWriterNoManifest extends AbstractTestSffWriter{
 	}
 
 	@Override
-	protected FlowgramDataStore createDataStore(File inputSff) throws IOException {
+	protected SffFileDataStore createDataStore(File inputSff) throws IOException {
 		return new SffFileDataStoreBuilder(inputSff)
 									.build();
 	}

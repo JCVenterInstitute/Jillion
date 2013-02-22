@@ -30,12 +30,12 @@ import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterato
 
 /**
  * {@code SffFileIterator} is a {@link StreamingIterator}
- * that can iterate over {@link Flowgram}s contained
+ * that can iterate over {@link SffFlowgram}s contained
  * in a sff file.
  * @author dkatzel
  *
  */
-public final class SffFileIterator extends AbstractBlockingStreamingIterator<Flowgram>{
+public final class SffFileIterator extends AbstractBlockingStreamingIterator<SffFlowgram>{
 
 	private final File sffFile;
 	private final DataStoreFilter filter;
@@ -77,7 +77,7 @@ public final class SffFileIterator extends AbstractBlockingStreamingIterator<Flo
 							
 							@Override
 							public void visitReadData(SffReadData readData) {
-								SffFileIterator.this.blockingPut(SffFlowgram.create(readHeader, readData));
+								SffFileIterator.this.blockingPut(SffFlowgramImpl.create(readHeader, readData));
 								
 							}
 							

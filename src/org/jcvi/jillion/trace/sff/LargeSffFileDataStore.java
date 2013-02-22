@@ -43,7 +43,7 @@ import org.jcvi.jillion.internal.core.datastore.AbstractDataStore;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 /**
- * {@code LargeSffFileDataStore} is a {@link FlowgramDataStore}
+ * {@code LargeSffFileDataStore} is a {@link SffFileDataStore}
  * implementation that doesn't store any read information in memory.
  *  No data contained in this
  * sff file is stored in memory except it's size (which is lazy loaded).
@@ -54,7 +54,7 @@ import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterato
  * @author dkatzel
  *
  */
-final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements FlowgramDataStore{
+final class LargeSffFileDataStore extends AbstractDataStore<SffFlowgram> implements SffFileDataStore{
 
     private final File sffFile;
     private Long size=null;
@@ -67,7 +67,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
      * @throws NullPointerException if sffFile is null.
      * @throws IOException if sffFile does not exist or is not a valid sff file.
      */
-    public static FlowgramDataStore create(File sffFile) throws IOException{
+    public static SffFileDataStore create(File sffFile) throws IOException{
     	return create(sffFile, DataStoreFilters.alwaysAccept());
     }
     
@@ -78,7 +78,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
      * @throws NullPointerException if sffFile is null.
      * @throws IOException if sffFile does not exist or is not a valid sff file.
      */
-    public static FlowgramDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
+    public static SffFileDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
     	verifyFileExists(sffFile);
     	verifyIsValidSff(sffFile);
     	
@@ -139,7 +139,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
 		return get(id)!=null;
 	}
 	@Override
-	protected Flowgram getImpl(String id) throws DataStoreException {
+	protected SffFlowgram getImpl(String id) throws DataStoreException {
 		if(!filter.accept(id)){
 			return null;
 		}
@@ -158,7 +158,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
 			//accept everything we can't just
 			//look at the value in the common header
 			//must iterate through everything
-			StreamingIterator<Flowgram> iter=null;
+			StreamingIterator<SffFlowgram> iter=null;
 			
         	
         	try{
@@ -184,7 +184,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
 		return DataStoreStreamingIterator.create(this, iter);
 	}
 	@Override
-	protected StreamingIterator<Flowgram> iteratorImpl()
+	protected StreamingIterator<SffFlowgram> iteratorImpl()
 			throws DataStoreException {
 		return DataStoreStreamingIterator.create(this,
 				SffFileIterator.createNewIteratorFor(sffFile,filter));
@@ -264,12 +264,12 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
     
     private static final class SingleFlowgramVisitor implements SffFileVisitor{
         private final String idToFind;
-        private Flowgram flowgram=null;
+        private SffFlowgram flowgram=null;
         private SingleFlowgramVisitor(String idToFind) {
 			this.idToFind = idToFind;
 		}
 
-		public Flowgram getFlowgram() {
+		public SffFlowgram getFlowgram() {
 			return flowgram;
 		}
 
@@ -287,7 +287,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<Flowgram> implements
 					
 					@Override
 					public void visitReadData(SffReadData readData) {
-						flowgram = SffFlowgram.create(readHeader, readData);
+						flowgram = SffFlowgramImpl.create(readHeader, readData);
 						
 					}
 					

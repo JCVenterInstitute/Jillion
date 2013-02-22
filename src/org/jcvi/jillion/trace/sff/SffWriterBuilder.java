@@ -185,7 +185,7 @@ public class SffWriterBuilder {
 		}
 
 		@Override
-		public synchronized void write(Flowgram flowgram) throws IOException {
+		public synchronized void write(SffFlowgram flowgram) throws IOException {
 			checkNotClosed();
 			NucleotideSequence seq = flowgram.getNucleotideSequence();
 			SffReadHeader header = new DefaultSffReadHeader((int)seq.getLength(), flowgram.getQualityClip(), flowgram.getAdapterClip(), flowgram.getId());

@@ -10,7 +10,7 @@ public class TestNoManifestIndexedSffFileDataStore extends AbstractTestSffFileDa
 	}
 
 	@Override
-	protected FlowgramDataStore parseDataStore(File f) throws Exception {
+	protected SffFileDataStore parseDataStore(File f) throws Exception {
 		return CompletelyParsedIndexedSffFileDataStore.create(f);
 	}
 

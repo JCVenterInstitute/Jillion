@@ -34,7 +34,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 public class TestSFFCodecParseActualSFFFile extends AbstractTestSffFileDataStore{
 
     @Override
-    protected FlowgramDataStore parseDataStore(File file) throws SffDecoderException{
+    protected SffFileDataStore parseDataStore(File file) throws SffDecoderException{
         
         InputStream in=null;
         try {

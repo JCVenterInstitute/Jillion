@@ -33,23 +33,23 @@ import java.util.NoSuchElementException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.sff.Flowgram;
-import org.jcvi.jillion.trace.sff.FlowgramDataStore;
+import org.jcvi.jillion.trace.sff.SffFlowgram;
+import org.jcvi.jillion.trace.sff.SffFileDataStore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 public abstract class AbstractTestSffFileDataStore extends TestReadExampleSffFile{  
 
-    private FlowgramDataStore dataStore;
+    private SffFileDataStore dataStore;
     @Override
     protected void parseSff(File file) throws Exception{
         dataStore = parseDataStore(file);
     }
     
-    protected abstract FlowgramDataStore parseDataStore(File f) throws Exception;
+    protected abstract SffFileDataStore parseDataStore(File f) throws Exception;
     
     @Override
-    protected Flowgram getFlowgram(String id) throws TraceDecoderException, DataStoreException {
+    protected SffFlowgram getFlowgram(String id) throws TraceDecoderException, DataStoreException {
         return dataStore.get(id);
     }
     @Override
@@ -69,7 +69,7 @@ public abstract class AbstractTestSffFileDataStore extends TestReadExampleSffFil
     
     @Test
     public void iterator() throws DataStoreException{
-        Iterator<Flowgram> iter = dataStore.iterator();
+        Iterator<SffFlowgram> iter = dataStore.iterator();
         assertTrue(iter.hasNext());
         boolean foundFF585OX02HCMO2 =false;
         boolean foundFF585OX02HCD8G =false;
@@ -77,7 +77,7 @@ public abstract class AbstractTestSffFileDataStore extends TestReadExampleSffFil
         boolean foundFF585OX02GMGGN =false;
         boolean foundFF585OX02FHO5X =false;
         while(iter.hasNext()){
-        	Flowgram flow =iter.next();
+        	SffFlowgram flow =iter.next();
             if(!foundFF585OX02HCMO2 && FF585OX02HCMO2.equals(flow)){
                 foundFF585OX02HCMO2=true;
             }else if(!foundFF585OX02HCD8G && FF585OX02HCD8G.equals(flow)){
@@ -129,7 +129,7 @@ public abstract class AbstractTestSffFileDataStore extends TestReadExampleSffFil
     
     @Test
     public void closeIteratorEarly() throws IOException, DataStoreException{
-        StreamingIterator<Flowgram> iter = dataStore.iterator();
+        StreamingIterator<SffFlowgram> iter = dataStore.iterator();
         assertTrue(iter.hasNext());
         iter.next();
         iter.close();

@@ -27,14 +27,14 @@ package org.jcvi.jillion.trace.sff;
 
 import java.io.File;
 
-import org.jcvi.jillion.trace.sff.FlowgramDataStore;
+import org.jcvi.jillion.trace.sff.SffFileDataStore;
 import org.jcvi.jillion.trace.sff.LargeSffFileDataStore;
 
 
 public class TestLargeSffFileDataStore extends AbstractTestSffFileDataStore{
 
     @Override
-    protected FlowgramDataStore parseDataStore(File in) throws Exception {
+    protected SffFileDataStore parseDataStore(File in) throws Exception {
         
         return LargeSffFileDataStore.create(in);
     }

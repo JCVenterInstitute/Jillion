@@ -18,11 +18,25 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
+/*
+ * Created on Dec 16, 2009
+ *
+ * @author dkatzel
+ */
 package org.jcvi.jillion.trace.sff;
 
-import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.trace.TraceDataStore;
+/**
+ * Marker interface for a {@link DataStore} of 
+ * {@link SffFlowgram}s.
+ * @author dkatzel
+ *
+ */
+public interface SffFileDataStore extends TraceDataStore<SffFlowgram>{
 
-public interface FlowgramDataStoreBuilder extends Builder<FlowgramDataStore> {
+	NucleotideSequence getKeySequence();
 
-	FlowgramDataStoreBuilder addFlowgram(Flowgram flowgram);
+	NucleotideSequence getFlowSequence();
 }

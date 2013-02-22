@@ -17,7 +17,7 @@ public interface SffWriter extends Closeable{
 	 * @throws IOException if there is a problem writing this 
 	 * flowgram to the writer.
 	 */
-	void write(Flowgram flowgram) throws IOException;
+	void write(SffFlowgram flowgram) throws IOException;
 	/**
 	 * Write out an encoded Flowgram using the data
 	 * contained in the given {@link SffReadHeader} and {@link SffReadData}.
