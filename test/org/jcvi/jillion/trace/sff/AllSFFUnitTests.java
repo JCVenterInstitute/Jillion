@@ -52,7 +52,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestNoManifestIndexedSffFileDataStore.class,
         
         TestSffWriterNoManifest.class,
-        TestSffWriterWithIndex.class
+        TestSffWriterWithIndex.class,
+        TestSffWriterVisitor.class
     }
     )
 public class AllSFFUnitTests {
