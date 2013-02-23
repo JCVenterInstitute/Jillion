@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.Sequence;
-import org.jcvi.jillion.core.Symbol;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -37,7 +36,7 @@ import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 
-public abstract class AbstractLargeFastaFileDataStore<T extends Symbol,S extends Sequence<T>, F extends FastaRecord<T, S>> implements FastaDataStore<T,S,F>{
+public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F extends FastaRecord<T, S>> implements FastaDataStore<T,S,F>{
 
     private final File fastaFile;
     private final DataStoreFilter filter;

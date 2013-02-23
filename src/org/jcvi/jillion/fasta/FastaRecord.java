@@ -24,7 +24,6 @@
 package org.jcvi.jillion.fasta;
 
 import org.jcvi.jillion.core.Sequence;
-import org.jcvi.jillion.core.Symbol;
 
 
 
@@ -35,7 +34,7 @@ import org.jcvi.jillion.core.Symbol;
  * @author jsitz
  * @author dkatzel
  */
-public interface FastaRecord<S extends Symbol,T extends Sequence<S>>
+public interface FastaRecord<S,T extends Sequence<S>>
 {
 
 	 /**

@@ -20,9 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.sanger;
 
-import org.jcvi.jillion.core.Symbol;
 
-public final class Position implements Symbol{
+public final class Position{
 	private static final int INITIAL_CACHE_SIZE = 1024;
 	private static final Position[] CACHE;
 
@@ -56,11 +55,6 @@ public final class Position implements Symbol{
 	
 	public int getValue() {
 		return value;
-	}
-
-	@Override
-	public String getName() {
-		return Integer.toString(value);
 	}
 
 	@Override

@@ -30,15 +30,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jcvi.jillion.core.Symbol;
 /**
- * {@code PhredQuality} is a {@link Symbol} representation of
+ * {@code PhredQuality} is a representation of
  * a Phred quality score.
  * @author dkatzel
  *
  *
  */
-public final class PhredQuality implements Symbol, Comparable<PhredQuality>{
+public final class PhredQuality implements Comparable<PhredQuality>{
     //127 should be good enough for anybody
 	/**
 	 * Max allowed Phred Quality score, currently set to
@@ -181,10 +180,6 @@ public final class PhredQuality implements Symbol, Comparable<PhredQuality>{
         return String.format("Q%02d",value);
     }
 
-	@Override
-	public String getName() {
-		return Byte.toString(value);
-	}
 
 	@Override
 	public int hashCode() {

@@ -32,7 +32,6 @@ import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
-import org.jcvi.jillion.core.Symbol;
 /**
  * {@code EncodedSequence} is a composite object
  * containing a byte representation of data and an {@link GlyphCodec}
@@ -41,7 +40,7 @@ import org.jcvi.jillion.core.Symbol;
  * possible for a given situation.
  * @author dkatzel
  */
-public class  EncodedSequence<T extends Symbol> implements Sequence<T> {
+public class  EncodedSequence<T> implements Sequence<T> {
     /**
      * codec used to decode the data.
      */

@@ -24,7 +24,6 @@ import java.io.Closeable;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.Sequence;
-import org.jcvi.jillion.core.Symbol;
 /**
  * {@code FastaRecordWriter} is a interface
  * that handles how {@link FastaRecord}s
@@ -32,7 +31,7 @@ import org.jcvi.jillion.core.Symbol;
  * @author dkatzel
  *
  */
-public interface FastaRecordWriter<S extends Symbol, T extends Sequence<S>, F extends FastaRecord<S, T>> extends Closeable{
+public interface FastaRecordWriter<S, T extends Sequence<S>, F extends FastaRecord<S, T>> extends Closeable{
 	/**
 	 * Write the given {@link FastaRecord}
 	 * (including the optionalComment if there is one).
