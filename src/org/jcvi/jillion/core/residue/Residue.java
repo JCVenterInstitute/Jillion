@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue;
 
-import org.jcvi.jillion.core.Symbol;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
 /**
@@ -28,7 +27,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
  *
  *
  */
-public interface Residue extends Symbol{
+public interface Residue{
 
 	byte getOrdinalAsByte();
 	

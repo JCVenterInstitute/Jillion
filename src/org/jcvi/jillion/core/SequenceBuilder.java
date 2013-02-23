@@ -27,7 +27,7 @@ import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 import org.jcvi.jillion.core.util.Builder;
 
-public interface SequenceBuilder <T extends Symbol, S extends Sequence<T>> extends Builder<S> , Iterable<T> {
+public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> , Iterable<T> {
 	/**
      * Appends the given symbol to the end
      * of the builder's mutable sequence.

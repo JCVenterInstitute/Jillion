@@ -27,8 +27,6 @@ package org.jcvi.jillion.internal.core;
 
 import java.util.Collection;
 
-import org.jcvi.jillion.core.Symbol;
-
 /**
  * {@code GlyphCodec} is an interface
  * that allows Glyphs to be encoded and decoded
@@ -38,7 +36,7 @@ import org.jcvi.jillion.core.Symbol;
  * @param <T> the Type of Glyph to be
  * encoded and or decoded.
  */
-public interface GlyphCodec<T extends Symbol> {
+public interface GlyphCodec<T> {
 	/**
 	 * Encode the given collection of glyphs
 	 * into a byte array.

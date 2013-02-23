@@ -26,7 +26,6 @@
 package org.jcvi.jillion.fasta;
 
 import org.jcvi.jillion.core.Sequence;
-import org.jcvi.jillion.core.Symbol;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 /**
@@ -48,7 +47,7 @@ public final class FastaRecordDataStoreAdapter{
      * @param datastoreOfFastaRecords the DataStore of F to wrap.
      * @return a new {@code DataStore<T>} which wraps the given datastore. 
      */
-    public static <S extends Symbol,T extends Sequence<S>,F extends FastaRecord<S,T>, D extends DataStore<T>> D adapt(Class<D> datastoreToMimic, DataStore<F> datastoreOfFastaRecords){
+    public static <S,T extends Sequence<S>,F extends FastaRecord<S,T>, D extends DataStore<T>> D adapt(Class<D> datastoreToMimic, DataStore<F> datastoreOfFastaRecords){
        return DataStoreUtil.adapt(datastoreToMimic, datastoreOfFastaRecords, new DataStoreUtil.AdapterCallback<F, T>() {
 
 		@Override

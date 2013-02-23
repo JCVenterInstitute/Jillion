@@ -21,7 +21,6 @@
 package org.jcvi.jillion.fasta;
 
 import org.jcvi.jillion.core.Sequence;
-import org.jcvi.jillion.core.Symbol;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.util.Builder;
 /**
@@ -29,12 +28,12 @@ import org.jcvi.jillion.core.util.Builder;
  * for {@link DataStore}s of {@link FastaRecord}s.
  * @author dkatzel
  *
- * @param <S> the type of {@link Symbol} in the sequence of the fasta.
+ * @param <S> the type of object in the sequence of the fasta.
  * @param <T> the {@link Sequence} of the fasta.
  * @param <F> the {@link FastaRecord} type.
  * @param <D> the {@link DataStore} type to build.
  */
-public interface FastaDataStoreBuilder<S extends Symbol, T extends Sequence<S>, F extends FastaRecord<S, T>, D extends DataStore<F>> extends Builder<D>{
+public interface FastaDataStoreBuilder<S, T extends Sequence<S>, F extends FastaRecord<S, T>, D extends DataStore<F>> extends Builder<D>{
 	/**
 	 * Add the given {@link FastaRecord} to this builder.
 	 * If a FastaRecord with the same id already exists in this builder

@@ -21,7 +21,6 @@
 package org.jcvi.jillion.internal.fasta;
 
 import org.jcvi.jillion.core.Sequence;
-import org.jcvi.jillion.core.Symbol;
 import org.jcvi.jillion.fasta.FastaRecord;
 /**
  * {@code AbstractFastaRecordBuilder} is an abstract
@@ -33,7 +32,7 @@ import org.jcvi.jillion.fasta.FastaRecord;
  * @param <S>
  * @param <F>
  */
-public abstract class AbstractFastaRecordBuilder<T extends Symbol, S extends Sequence<T>, F extends FastaRecord<T, S>> {
+public abstract class AbstractFastaRecordBuilder<T, S extends Sequence<T>, F extends FastaRecord<T, S>> {
 
 	private final String id;
 	private final S sequence;

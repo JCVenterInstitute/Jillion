@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.jcvi.jillion.core.Symbol;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.util.MapUtil;
 
@@ -121,7 +120,6 @@ public enum AminoAcid implements Residue{
     * Get the full name of this Amino Acid, the name may 
     * contain spaces if the full name is more than 1 word.
     */
-    @Override
     public String getName() {
         return name;
     }

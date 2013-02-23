@@ -29,7 +29,7 @@ import java.util.Iterator;
 
 /**
  * {@code Sequence} is an interface for an
- * ordered list of {@link Symbol}s.  How
+ * ordered list of objects.  How
  * this sequence is stored is abstracted
  * away so that different implementations
  * may encode or compress the symbols
@@ -38,7 +38,7 @@ import java.util.Iterator;
  *
  *
  */
-public interface Sequence<T extends Symbol> extends Iterable<T>{
+public interface Sequence<T> extends Iterable<T>{
    
     /**
      * Gets the specific {@link Symbol} at the specified index.

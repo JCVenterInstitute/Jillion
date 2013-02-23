@@ -33,10 +33,9 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import org.jcvi.jillion.core.Symbol;
 import org.jcvi.jillion.core.residue.Residue;
 /**
- * {@code Nucleotide} is a {@link Symbol}
+ * {@code Nucleotide} is a {@link Residue}
  * implementation for DNA Nucleotides.
  * @author dkatzel
  *
@@ -149,10 +148,7 @@ public enum Nucleotide implements Residue {
     public Character getCharacter() {
         return c;
     }
-    @Override
-    public String getName() {
-        return toString();
-    }
+
     /**
      * Get the complement this {@link Nucleotide}.
      * @return the complement of this.

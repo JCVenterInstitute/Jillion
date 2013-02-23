@@ -26,18 +26,17 @@
 package org.jcvi.jillion.fasta;
 
 import org.jcvi.jillion.core.Sequence;
-import org.jcvi.jillion.core.Symbol;
 import org.jcvi.jillion.core.datastore.DataStore;
 /**
  * {@code FastaDataStore} is a marker interface
  * for a {@link DataStore} for {@link FastaRecord}s.
  * @author dkatzel
  *
- * @param <S> the type of {@link Symbol} in the fasta encoding.
- * @param <T> the type of {@link Sequence} of {@link Symbol}s in the fasta.
+ * @param <S> the type of object in the sequence encoding.
+ * @param <T> the type of {@link Sequence} of in the fasta.
  * @param <F> the type of {@link FastaRecord} in the datastore.
  */
-public interface FastaDataStore<S extends Symbol, T extends Sequence<S>,F extends FastaRecord<S,T>> extends DataStore<F>{
+public interface FastaDataStore<S, T extends Sequence<S>,F extends FastaRecord<S,T>> extends DataStore<F>{
 
     
 
