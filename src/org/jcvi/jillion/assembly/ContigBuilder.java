@@ -22,6 +22,11 @@ package org.jcvi.jillion.assembly;
 
 import java.util.Collection;
 
+import org.jcvi.jillion.assembly.ace.AceContig;
+import org.jcvi.jillion.assembly.ace.AceContigBuilder;
+import org.jcvi.jillion.assembly.util.slice.QualityValueStrategy;
+import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusCaller;
+import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.Builder;
 
@@ -116,6 +121,71 @@ public interface ContigBuilder<R extends AssembledRead,C extends Contig<R>> exte
      * contig's consensus, never null.
      */
     NucleotideSequenceBuilder getConsensusBuilder();
+    
+    /**
+     * Recall the consensus using the given
+     * {@link ConsensusCaller} and {@link QualitySequenceDataStore}
+     * which contains the quality data for all of the reads in this contig.
+     * The consensus will get recalled inside the {@link #build()}
+     * and {@link #recallConsensusNow()}.
+     * method before the {@link Contig} instance is created.
+     * @param consensusCaller the {@link ConsensusCaller}  instance to use
+     * to recall the consensus of this contig; can not be null.
+     * @param qualityDataStore the {@link QualitySequenceDataStore}
+     * which contains all the quality data for all of the reads
+     * in this contig; can not be null.
+     * @return this.
+     * @throws NullPointerException if any parameter is null.
+     */
+    public ContigBuilder<R, C> recallConsensus(ConsensusCaller consensusCaller, 
+    		QualitySequenceDataStore qualityDataStore,
+    		QualityValueStrategy qualityValueStrategy);
+    
+    /**
+     * Recall the consensus using the given
+     * {@link ConsensusCaller} using faked quality data
+     * where all basecalls (and gaps) all get the same quality value.
+     * The consensus will get recalled inside the {@link #build()}
+     * and from {@link #recallConsensusNow()}.
+     * method before the {@link Contig} instance is created.
+     * @param consensusCaller the {@link ConsensusCaller}  instance to use
+     * to recall the consensus of this contig; can not be null.
+     * @return this.
+     * @throws NullPointerException if any parameter is null.
+     */
+    public ContigBuilder<R, C> recallConsensus(ConsensusCaller consensusCaller);
+    
+    /**
+     * Recompute the contig
+     * consensus now using the current reads in the contig
+     * using the {@link ConsensusCaller} and optional quality data
+     * that was set by
+     * {@link #recallConsensus(ConsensusCaller)} or
+     * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}.
+     * Only regions of the contig that have read coverage 
+     * get recalled.  The Consensus of "0x" regions
+     * remains unchanged.
+     * 
+     * If this method is called without first
+     * setting a {@link ConsensusCaller}, then this
+     * method will throw an {@link IllegalStateException}.
+     * <p/>
+     * Recomputing the contig consensus may be computationally
+     * expensive and time consuming.  So this method
+     * should not be called on a regular basis.
+     * Also, the contig consensus will always
+     * get recalled during {@link #build()}
+     * even if this method has already been called
+     * since it is too hard to track if any underlying read changes occurred
+     * in between.
+     * @return this.
+     * @throws IllegalStateException if a consensus caller
+     * was not first set using {@link #recallConsensus(ConsensusCaller)} or
+     * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}.
+     * @see #build()
+     */
+    public ContigBuilder<R, C> recallConsensusNow();
+    
     /**
      * {@inheritDoc}
      * <p/>
