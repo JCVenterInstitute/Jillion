@@ -24,8 +24,17 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.jcvi.jillion.assembly.util.slice.CompactedSlice;
+import org.jcvi.jillion.assembly.util.slice.QualityValueStrategy;
+import org.jcvi.jillion.assembly.util.slice.Slice;
+import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 
@@ -38,6 +47,28 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
         private final NucleotideSequenceBuilder consensus;
         private String id;
         private final Map<String, AssembledReadBuilder<P>> reads;
+        
+        
+        /**
+         * default quality value that every basecall will get
+         * if consensus caller is used to recall the consensus
+         * but no {@link QualitySequenceDataStore} is given.
+         */
+        private static final PhredQuality DEFAULT_QUALITY = PhredQuality.valueOf(30);
+    	/**
+    	 * {@link ConsensusCaller} used to update the
+    	 * consensus during {@link #build()}.  If set to {@code null},
+    	 * then no recalling is to be done (null by default).
+    	 */
+    	protected ConsensusCaller consensusCaller =null;
+    	/**
+    	 * {@link QualitySequenceDataStore} used during
+    	 * consensus recalling.  Set to null if 
+    	 * no recalling is to be done. (null by default).
+    	 */
+    	private QualitySequenceDataStore qualityDataStore =null;
+    	
+    	private QualityValueStrategy qualityValueStrategy=null;
         /**
          * Create a new Builder instance with the given id and consensus.
          * @param id can not be null.
@@ -72,6 +103,144 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
             this.id = id;
             return this;
         }
+        
+        
+        /**
+         * Recall the consensus using the given
+         * {@link ConsensusCaller} and {@link QualitySequenceDataStore}
+         * which contains the quality data for all of the reads in this contig.
+         * The consensus will get recalled inside the {@link #build()}
+         * and {@link #recallConsensusNow()}.
+         * method before the {@link Contig} instance is created.
+         * @param consensusCaller the {@link ConsensusCaller}  instance to use
+         * to recall the consensus of this contig; can not be null.
+         * @param qualityDataStore the {@link QualitySequenceDataStore}
+         * which contains all the quality data for all of the reads
+         * in this contig; can not be null.
+         * @return this.
+         * @throws NullPointerException if any parameter is null.
+         */
+        @Override
+        public ContigBuilder<P, C> recallConsensus(ConsensusCaller consensusCaller, 
+        		QualitySequenceDataStore qualityDataStore,
+        		QualityValueStrategy qualityValueStrategy){
+        	if(consensusCaller ==null){
+        		throw new NullPointerException("consensus caller can not be null");
+        	}
+        	if(qualityDataStore ==null){
+        		throw new NullPointerException("quality datastore can not be null");
+        	}
+        	this.consensusCaller=consensusCaller;
+        	this.qualityDataStore = qualityDataStore;
+        	this.qualityValueStrategy = qualityValueStrategy;
+        	return this;
+        }
+        /**
+         * Recall the consensus using the given
+         * {@link ConsensusCaller} using faked quality data
+         * where all basecalls (and gaps) all get the same quality value.
+         * The consensus will get recalled inside the {@link #build()}
+         * and from {@link #recallConsensusNow()}.
+         * method before the {@link Contig} instance is created.
+         * @param consensusCaller the {@link ConsensusCaller}  instance to use
+         * to recall the consensus of this contig; can not be null.
+         * @return this.
+         * @throws NullPointerException if any parameter is null.
+         */
+        public ContigBuilder<P, C> recallConsensus(ConsensusCaller consensusCaller){
+        	if(consensusCaller ==null){
+        		throw new NullPointerException("consensus caller can not be null");
+        	}
+        	this.consensusCaller=consensusCaller;
+        	this.qualityDataStore = null;
+        	this.qualityValueStrategy = null;
+        	return this;
+        }
+        
+        /**
+         * Recompute the contig
+         * consensus now using the current reads in the contig
+         * using the {@link ConsensusCaller} and optional quality data
+         * that was set by
+         * {@link #recallConsensus(ConsensusCaller)} or
+         * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}.
+         * Only regions of the contig that have read coverage 
+         * get recalled.  The Consensus of "0x" regions
+         * remains unchanged.
+         * 
+         * If this method is called without first
+         * setting a {@link ConsensusCaller}, then this
+         * method will throw an {@link IllegalStateException}.
+         * <p/>
+         * Recomputing the contig consensus may be computationally
+         * expensive and time consuming.  So this method
+         * should not be called on a regular basis.
+         * Also, the contig consensus will always
+         * get recalled during {@link #build()}
+         * even if this method has already been called
+         * since it is too hard to track if any underlying read changes occurred
+         * in between.
+         * @return this.
+         * @throws IllegalStateException if a consensus caller
+         * was not first set using {@link #recallConsensus(ConsensusCaller)} or
+         * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}.
+         * @see #build()
+         */
+        @Override
+        public ContigBuilder<P, C> recallConsensusNow() {
+        	if(consensusCaller==null){
+        		throw new IllegalStateException("must set consensus caller");
+        	}
+        	CompactedSlice.Builder builders[] = new CompactedSlice.Builder[(int)consensus.getLength()];
+        	
+        	for( AssembledReadBuilder<P> readBuilder : reads.values()){
+        		int start = (int)readBuilder.getBegin();
+    			int i=0;
+    			String id =readBuilder.getId();
+    			Direction dir = readBuilder.getDirection();
+    			QualitySequence fullQualities =null;
+    			P tempRead=null;
+    			if(qualityDataStore!=null){
+    				try {
+    					fullQualities = qualityDataStore.get(id);
+    				} catch (DataStoreException e) {
+    					throw new IllegalStateException("error recalling consensus",e);
+    				}
+    				//should be able to call build multiple times
+    				tempRead = readBuilder.build();
+        			if(fullQualities ==null){
+        				throw new NullPointerException("could not get qualities for "+id);
+        			}
+    			}
+    			
+    			
+    			for(Nucleotide base : readBuilder.getCurrentNucleotideSequence()){
+    				
+    				final PhredQuality quality;
+    				if(fullQualities==null){
+    					quality = DEFAULT_QUALITY;
+    				}else{					
+    					//if fullQualities is not null then
+    					//qualityValueStrategy must be non-null as well
+    					quality= qualityValueStrategy.getQualityFor(tempRead, fullQualities, i);
+    				}
+    				if(builders[start+i] ==null){
+    					builders[start+i] = new CompactedSlice.Builder();
+    				}
+    				builders[start+i].addSliceElement(id, base, quality, dir);
+    				i++;
+    			}
+        	}
+        	for(int i=0; i<builders.length; i++){
+        		CompactedSlice.Builder builder = builders[i];
+        		//a null builder implies 0x
+        		if(builder !=null){
+    				Slice<?> slice = builder.build();            
+    	    		consensus.replace(i,consensusCaller.callConsensus(slice).getConsensus());
+        		}
+        	}
+        	return this;
+    	}
         
         /**
          * 

@@ -197,6 +197,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      * @return this.
      * @throws NullPointerException if any parameter is null.
      */
+    @Override
     public AceContigBuilder recallConsensus(ConsensusCaller consensusCaller, 
     		QualitySequenceDataStore qualityDataStore,
     		QualityValueStrategy qualityValueStrategy){
@@ -223,6 +224,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      * @return this.
      * @throws NullPointerException if any parameter is null.
      */
+    @Override
     public AceContigBuilder recallConsensus(ConsensusCaller consensusCaller){
     	if(consensusCaller ==null){
     		throw new NullPointerException("consensus caller can not be null");
@@ -448,6 +450,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}.
      * @see #build()
      */
+    @Override
     public AceContigBuilder recallConsensusNow() {
     	if(consensusCaller==null){
     		throw new IllegalStateException("must set consensus caller");

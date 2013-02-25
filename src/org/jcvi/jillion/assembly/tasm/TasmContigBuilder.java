@@ -282,6 +282,9 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
 	}
     @Override
     public DefaultTasmContig build() {
+    	 if(consensusCaller !=null){
+ 			recallConsensusNow();
+         }
         Set<TasmAssembledRead> reads = new LinkedHashSet<TasmAssembledRead>();
         for(AssembledReadBuilder<TasmAssembledRead> builder : getAllAssembledReadBuilders()){              
             reads.add(builder.build());

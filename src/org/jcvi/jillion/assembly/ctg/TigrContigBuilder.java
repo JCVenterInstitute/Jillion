@@ -47,6 +47,9 @@ public class TigrContigBuilder extends AbstractContigBuilder<TigrContigRead, Tig
 
 	@Override
 	public TigrContig build() {
+		 if(consensusCaller !=null){
+				recallConsensusNow();
+	        }
 		Set<TigrContigRead> reads = new LinkedHashSet<TigrContigRead>();
         for(AssembledReadBuilder<TigrContigRead> builder : getAllAssembledReadBuilders()){          
             reads.add(builder.build());
