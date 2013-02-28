@@ -259,7 +259,40 @@ final class LargeAceFileDataStore2 implements AceFileContigDataStore{
 	
 
 	private final class SizeVisitor implements AceFileVisitor2{
-
+private final AceContigReadVisitor readVisitor = new AceContigReadVisitor() {
+			
+			@Override
+			public void visitTraceDescriptionLine(String traceName, String phdName,
+					Date date) {
+				//no-op								
+			}
+			
+			@Override
+			public void visitQualityLine(int qualLeft, int qualRight, int alignLeft,
+					int alignRight) {
+				 ClipPointsType clipPointsType = ConsedUtil.ClipPointsType.getType(qualLeft, qualRight, alignLeft, alignRight);
+		     		if(clipPointsType !=ClipPointsType.VALID){
+		     			//ignore read
+		     			totalNumberOfReads--;
+		     		}
+				
+			}
+			
+			@Override
+			public void visitEnd() {
+				//no-op								
+			}
+			
+			@Override
+			public void visitBasesLine(String mixedCaseBasecalls) {
+				//no-op								
+			}
+			
+			@Override
+			public void halted() {
+				//no-op								
+			}
+		}; 
 		private long size=0L;
 		private long totalNumberOfReads=0L;
 		
@@ -357,68 +390,8 @@ final class LargeAceFileDataStore2 implements AceFileContigDataStore{
 			//no-op		
 		}
 
-		/*
-		@Override
-		public BeginContigReturnCode visitBeginContig(String contigId, int numberOfBases,
-				int numberOfReads, int numberOfBaseSegments,
-				boolean reverseComplimented) {
-			if(contigIdFilter.accept(contigId)){
-				size++;
-				totalNumberOfReads+=numberOfReads;
-				return BeginContigReturnCode.VISIT_CURRENT_CONTIG;
-			}
-			return BeginContigReturnCode.SKIP_CURRENT_CONTIG;
-			
-		}
 
 		
-		@Override
-		public void visitQualityLine(int qualLeft, int qualRight,
-				int alignLeft, int alignRight) {
-			 ClipPointsType clipPointsType = ConsedUtil.ClipPointsType.getType(qualLeft, qualRight, alignLeft, alignRight);
-	     		if(clipPointsType !=ClipPointsType.VALID){
-	     			//ignore read
-	     			totalNumberOfReads--;
-	     		}
-			
-		}
-
-		*/
-
-		private final AceContigReadVisitor readVisitor = new AceContigReadVisitor() {
-			
-			@Override
-			public void visitTraceDescriptionLine(String traceName, String phdName,
-					Date date) {
-				//no-op								
-			}
-			
-			@Override
-			public void visitQualityLine(int qualLeft, int qualRight, int alignLeft,
-					int alignRight) {
-				 ClipPointsType clipPointsType = ConsedUtil.ClipPointsType.getType(qualLeft, qualRight, alignLeft, alignRight);
-		     		if(clipPointsType !=ClipPointsType.VALID){
-		     			//ignore read
-		     			totalNumberOfReads--;
-		     		}
-				
-			}
-			
-			@Override
-			public void visitEnd() {
-				//no-op								
-			}
-			
-			@Override
-			public void visitBasesLine(String mixedCaseBasecalls) {
-				//no-op								
-			}
-			
-			@Override
-			public void halted() {
-				//no-op								
-			}
-		}; 
 	}
 	/**
      * Special implementation of a {@link StreamingIterator}

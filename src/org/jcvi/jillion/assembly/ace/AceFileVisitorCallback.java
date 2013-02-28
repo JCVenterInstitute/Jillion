@@ -14,7 +14,7 @@ public interface AceFileVisitorCallback {
 	 * @author dkatzel
 	 *
 	 */
-	public interface AceFileVisitorMemento{
+	interface AceFileVisitorMemento{
 		
 	}
 	/**
