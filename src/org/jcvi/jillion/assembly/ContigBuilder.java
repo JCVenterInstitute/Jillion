@@ -22,8 +22,6 @@ package org.jcvi.jillion.assembly;
 
 import java.util.Collection;
 
-import org.jcvi.jillion.assembly.ace.AceContig;
-import org.jcvi.jillion.assembly.ace.AceContigBuilder;
 import org.jcvi.jillion.assembly.util.slice.QualityValueStrategy;
 import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
@@ -137,7 +135,7 @@ public interface ContigBuilder<R extends AssembledRead,C extends Contig<R>> exte
      * @return this.
      * @throws NullPointerException if any parameter is null.
      */
-    public ContigBuilder<R, C> recallConsensus(ConsensusCaller consensusCaller, 
+    ContigBuilder<R, C> recallConsensus(ConsensusCaller consensusCaller, 
     		QualitySequenceDataStore qualityDataStore,
     		QualityValueStrategy qualityValueStrategy);
     
@@ -153,7 +151,7 @@ public interface ContigBuilder<R extends AssembledRead,C extends Contig<R>> exte
      * @return this.
      * @throws NullPointerException if any parameter is null.
      */
-    public ContigBuilder<R, C> recallConsensus(ConsensusCaller consensusCaller);
+    ContigBuilder<R, C> recallConsensus(ConsensusCaller consensusCaller);
     
     /**
      * Recompute the contig
@@ -184,7 +182,7 @@ public interface ContigBuilder<R extends AssembledRead,C extends Contig<R>> exte
      * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}.
      * @see #build()
      */
-    public ContigBuilder<R, C> recallConsensusNow();
+    ContigBuilder<R, C> recallConsensusNow();
     
     /**
      * {@inheritDoc}

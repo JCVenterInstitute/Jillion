@@ -45,7 +45,7 @@ public interface FastaVisitorCallback {
 	 * @author dkatzel
 	 *
 	 */
-	public interface FastaVisitorMemento{
+	interface FastaVisitorMemento{
 		
 	}
 	/**
