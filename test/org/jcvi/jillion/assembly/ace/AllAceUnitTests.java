@@ -78,6 +78,8 @@ import org.junit.runners.Suite.SuiteClasses;
        AceTagsFromLargeAceFileDataStore.class,
        
        TestDefaultAceFileDataStore2.class,
+       TestIndexedAceFileDataStore2.class,
+       TestLargeAceFileDataStore2.class,
        
        AllConsedUnitTests.class
     }
