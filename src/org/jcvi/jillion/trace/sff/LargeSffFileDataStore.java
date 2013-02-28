@@ -59,7 +59,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<SffFlowgram> impleme
     private final File sffFile;
     private Long size=null;
     private final DataStoreFilter filter;
-    private NucleotideSequence keySequence,flowSequence;
+    private final NucleotideSequence keySequence,flowSequence;
     /**
      * Create a new instance of {@link LargeSffFileDataStore}.
      * @param sffFile the sff file to parse.
