@@ -2355,6 +2355,9 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	public Builder(){
     		this(0);
     	}
+    	public Builder(Builder copy){
+    		this(copy.inputCoordinateSystem, copy.begin, copy.end);
+    	}
     	/**
     	 * Create a new Builder instance
     	 * which is initialized to the given
@@ -2526,6 +2529,15 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	public Builder expandEnd(long units){
     		end +=units;
     		return this;
+    	}
+    	/**
+    	 * Create a copy of this Builder using the current values.
+    	 * Any futher modifications to either the original Builder
+    	 * or the copy will not affect the other.
+    	 * @return a new instance.
+    	 */
+    	public Builder copy(){
+    		return new Builder(this);
     	}
     	/**
     	 * Use the current begin, end and length
