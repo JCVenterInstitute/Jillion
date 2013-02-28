@@ -25,16 +25,9 @@
  */
 package org.jcvi.jillion.assembly.ace;
 
-import java.io.IOException;
-
-import org.jcvi.jillion.core.datastore.DataStoreException;
 
 public abstract class TestAbstractAceParserMatchesAce2ContigMultipleContigs extends AbstractTestAceParserMatchesAce2Contig{
-    private static final String ACE_FILE = "files/fluSample.ace";
-    private static final String CONTIG_FILE = "files/fluSample.contig";
-    public TestAbstractAceParserMatchesAce2ContigMultipleContigs() throws IOException, DataStoreException {
-        super(ACE_FILE,CONTIG_FILE);
-       
-    }
+	
+   
 
 }
