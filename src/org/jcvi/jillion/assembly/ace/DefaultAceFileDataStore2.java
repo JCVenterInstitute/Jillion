@@ -16,7 +16,7 @@ import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 
-public class DefaultAceFileDataStore2 implements AceFileContigDataStore{
+final class DefaultAceFileDataStore2 implements AceFileContigDataStore{
 
 	/**
 	 * {@link DataStore} wrapper of our {@link AceContig}s.

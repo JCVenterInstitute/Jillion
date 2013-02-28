@@ -30,7 +30,7 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
  * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
-class IndexedAceFileDataStore2 implements AceFileContigDataStore{
+final class IndexedAceFileDataStore2 implements AceFileContigDataStore{
 	
 	private final Map<String, AceFileVisitorMemento> mementos;
 	private final List<WholeAssemblyAceTag> wholeAssemblyTags;
@@ -38,7 +38,7 @@ class IndexedAceFileDataStore2 implements AceFileContigDataStore{
     private final List<ReadAceTag> readTags;
    
     private final AceFileParser2 parser;
-    private long totalNumberOfReads;
+    private final long totalNumberOfReads;
     
     private volatile boolean closed=false;
     

@@ -111,7 +111,7 @@ public abstract class AceFileParser2 {
 		while(!parserState.done()){
             parserState.parseNextSection();
         }
-        handleEndOfParsing(visitor, parserState);
+        handleEndOfParsing(parserState);
         visitor.visitEnd();
 	}
     /**
@@ -119,12 +119,9 @@ public abstract class AceFileParser2 {
      * to call {@link AceFileVisitor#visitEndOfContig()}
      * or not and might also close the {@link AceParserState}
      * (which should close the stream)
-     * 
-     * @param visitor
      * @param parserState
      */
-    private static void handleEndOfParsing(AceFileVisitor2 visitor,
-            AceParserState parserState) {
+    private static void handleEndOfParsing(AceParserState parserState) {
         if(!parserState.stopParsing.get() && parserState.inAContig()){        
         	parserState.handleEndOfContig();
         }else{
@@ -177,7 +174,7 @@ public abstract class AceFileParser2 {
         	return create(new TextLineParser(new BufferedInputStream(in)), visitor, callbackFactory);        	
         }
         public static AceParserState create(TextLineParser parser, AceFileVisitor2 visitor, AceFileVisitorCallbackFactory callbackFactory) throws IOException{  	
-             return new AceParserState(visitor,parser,false,false,0,0, callbackFactory);
+             return new AceParserState(visitor,parser,false,0,0,callbackFactory);
         }
        
 
@@ -221,8 +218,7 @@ public abstract class AceFileParser2 {
             SectionHandler.handleSection(lineWithCR, this);
         }
         AceParserState(AceFileVisitor2 visitor, TextLineParser parser,
-               boolean stopParsing, boolean inAContig, int numberOfExpectedReads, int numberOfReadsSeen,
-               AceFileVisitorCallbackFactory callbackFactory) {
+               boolean inAContig, int numberOfExpectedReads, int numberOfReadsSeen, AceFileVisitorCallbackFactory callbackFactory) {
             this.fileVisitor = visitor;
             this.parser = parser;
             this.inAContig = inAContig;
@@ -296,10 +292,10 @@ public abstract class AceFileParser2 {
 
 		public void visitBasesLine(String mixedCaseBasecalls) {
 			if(currentContigVisitor!=null){
-				if(currentReadVisitor !=null){
-					currentReadVisitor.visitBasesLine(mixedCaseBasecalls);
-				}else{
+				if(currentReadVisitor ==null){
 					currentContigVisitor.visitBasesLine(mixedCaseBasecalls);
+				}else{
+					currentReadVisitor.visitBasesLine(mixedCaseBasecalls);
 				}
 			}
 			
@@ -362,7 +358,7 @@ public abstract class AceFileParser2 {
             @Override
             void handle(Matcher matcher, AceParserState parserState, String line) {
                 if(parserState.parseCurrentContig()){
-                	parserState = parserState.inConsensusQualities(true);
+                	parserState.inConsensusQualities(true);
                 }
             }
         },
@@ -855,7 +851,7 @@ public abstract class AceFileParser2 {
 	    }
     }
     
-    private static interface AceFileVisitorCallbackFactory{
+    private interface AceFileVisitorCallbackFactory{
     	AceFileVisitorCallback newCallback(long fileOffset, AtomicBoolean stopParsing, boolean inContig);
     }
     
