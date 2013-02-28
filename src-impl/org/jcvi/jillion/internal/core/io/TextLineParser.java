@@ -35,7 +35,8 @@ import org.jcvi.jillion.core.util.FIFOQueue;
  * that could could be configured to include these characters are slow.
  * This class considers a line to be terminated by either '\n',
  * (UNIX format) or '\r\n' (Windows/DOS) or '\r' (Apple family until Mac OS 9). 
- * <p/>This class is not Thread-safe
+ * <p/>
+ * This class is not Thread-safe
  * @author dkatzel
  *
  *
@@ -50,6 +51,9 @@ public final class TextLineParser implements Closeable{
 	private final FIFOQueue<Object> nextQueue = new FIFOQueue<Object>();
 	boolean doneFile = false;
 	
+	private long position=0L;
+	private long numberOfBytesInNextLine;
+	
 	public TextLineParser(InputStream in) throws IOException{
 		if(in ==null){
 			throw new NullPointerException("inputStream can not be null");
@@ -63,7 +67,7 @@ public final class TextLineParser implements Closeable{
 			return;
 		}
 		StringBuilder builder = new StringBuilder(200);
-		
+		numberOfBytesInNextLine=0L;
 		int value;
 		value = in.read();
 		while(true){	
@@ -72,6 +76,7 @@ public final class TextLineParser implements Closeable{
 				close();
 				break;
 			}
+			numberOfBytesInNextLine++;
 			builder.append((char)value);
 			if(value == CR){
 				//check if next value is LF
@@ -84,6 +89,7 @@ public final class TextLineParser implements Closeable{
 					//could be Mac 0S 9 which only uses '\r'
 					//put that value back
 					in.unread(nextChar);
+					numberOfBytesInNextLine--;
 				}
 				break;
 			}
@@ -100,6 +106,20 @@ public final class TextLineParser implements Closeable{
 		}
 		
 	}
+	
+	/**
+	 * Get the number of bytes returned by
+	 * {@link #getNextLine()} so far.
+	 * The value returned is not affected
+	 * by how much looking ahead or 
+	 * buffering has been done to the
+	 * underlying input stream.
+	 * @return a number >=0.
+	 */
+	public long getPosition() {
+		return position;
+	}
+
 	/**
 	 * Does the inputStream have another line
 	 * to read.  If there are no more lines to read,
@@ -126,6 +146,7 @@ public final class TextLineParser implements Closeable{
 		if(next == endOfFile){
 			return null;
 		}
+		position+=numberOfBytesInNextLine;
 		getNextLine();
 		return (String)next;
 	}
