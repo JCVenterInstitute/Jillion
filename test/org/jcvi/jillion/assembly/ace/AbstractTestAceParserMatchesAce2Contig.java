@@ -42,15 +42,19 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public abstract class  AbstractTestAceParserMatchesAce2Contig {
-    TigrContigDataStore expectedContigDataStore;
-    ResourceHelper RESOURCES = new ResourceHelper(AbstractTestAceParserMatchesAce2Contig.class);
-    private final String pathToAceFile;
-    
-    private final AceFileContigDataStore sut;
+    private static TigrContigDataStore expectedContigDataStore;
+
+    /**
+     * Subclasses need to set this field directory in static initializer
+     */
+    protected static AceFileContigDataStore sut=null;
+    protected static File ACE_FILE = null;
+    protected static File CONTIG_FILE = null;
     
     private static final List<String> IDS = Arrays.asList(
 			"22934-PB2",
@@ -62,27 +66,28 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
 			"22934-MP",
 			"22934-NS"
 			);
-    
-    AbstractTestAceParserMatchesAce2Contig(String aceFile, String contigFile) throws IOException, DataStoreException{
-       
+
+   
+    @BeforeClass
+    public static void createDataStores() throws IOException{
     	
-    	this.expectedContigDataStore = new TigrContigFileDataStoreBuilder(RESOURCES.getFile(contigFile),AceContigTestUtil.createFullLengthSeqDataStoreFrom(RESOURCES.getFile(aceFile)))
-											.build();
-        pathToAceFile = aceFile;
-        sut = createDataStoreFor(RESOURCES.getFile(aceFile));
+    	ResourceHelper RESOURCES = new ResourceHelper(AbstractTestAceParserMatchesAce2Contig.class);
+    	CONTIG_FILE = RESOURCES.getFile("files/fluSample.contig");
+    	ACE_FILE =  RESOURCES.getFile("files/fluSample.ace");
+    	expectedContigDataStore = new TigrContigFileDataStoreBuilder(CONTIG_FILE,
+    											AceContigTestUtil.createFullLengthSeqDataStoreFrom(ACE_FILE))
+										.build();
     }
-   
-   @After
-   public void closeDataStore() throws IOException{
-	   sut.close();
-   }
-    protected File getAceFile() throws IOException{
-    	return RESOURCES.getFile(pathToAceFile);
+    
+    @AfterClass
+    public static void closeDataStores() throws IOException{
+    	expectedContigDataStore.close();
+    	expectedContigDataStore = null;
+    	
+    	sut.close();
+    	sut = null;
     }
 
-   
-
-    protected abstract AceFileContigDataStore createDataStoreFor(File aceFile) throws IOException;
     
     @Test
     public void numberOfContigs() throws DataStoreException{

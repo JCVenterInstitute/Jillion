@@ -25,24 +25,15 @@
  */
 package org.jcvi.jillion.assembly.ace;
 
-import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.jillion.assembly.ace.AceFileContigDataStore;
-import org.jcvi.jillion.assembly.ace.IndexedAceFileDataStore;
-import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.junit.BeforeClass;
 
 public class TestMemoryMappedIndexedAceFileDataStore extends TestAbstractAceParserMatchesAce2ContigMultipleContigs{
 
-    public TestMemoryMappedIndexedAceFileDataStore() throws IOException, DataStoreException {
-        super();        
-    }
-
-
-	@Override
-	protected AceFileContigDataStore createDataStoreFor(File aceFile)
+	@BeforeClass
+	public static void createAceDataStoreFor()
 			throws IOException {
-		return IndexedAceFileDataStore.create(aceFile);
+		sut= IndexedAceFileDataStore.create(ACE_FILE);
 	}
-
 }
