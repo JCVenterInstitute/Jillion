@@ -30,9 +30,19 @@ import org.jcvi.jillion.assembly.AssembledReadBuilder;
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.assembly.ContigBuilder;
 import org.jcvi.jillion.assembly.DefaultContig;
+import org.jcvi.jillion.assembly.ace.AceContig;
+import org.jcvi.jillion.assembly.util.slice.CompactedSlice;
+import org.jcvi.jillion.assembly.util.slice.QualityValueStrategy;
+import org.jcvi.jillion.assembly.util.slice.Slice;
+import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -170,10 +180,32 @@ public final class DefaultAsmContig implements AsmContig{
 
     private static class DefaultAsmContigBuilder implements AsmContigBuilder{
 
+    	/**
+         * default quality value that every basecall will get
+         * if consensus caller is used to recall the consensus
+         * but no {@link QualitySequenceDataStore} is given.
+         */
+        private static final PhredQuality DEFAULT_QUALITY = PhredQuality.valueOf(30);
+    	/**
+    	 * {@link ConsensusCaller} used to update the
+    	 * consensus during {@link #build()}.  If set to {@code null},
+    	 * then no recalling is to be done (null by default).
+    	 */
+    	private ConsensusCaller consensusCaller =null;
+    	/**
+    	 * {@link QualitySequenceDataStore} used during
+    	 * consensus recalling.  Set to null if 
+    	 * no recalling is to be done. (null by default).
+    	 */
+    	private QualitySequenceDataStore qualityDataStore =null;
+    	
+    	private QualityValueStrategy qualityValueStrategy=null;
+    	
+    	
         private final NucleotideSequence fullConsensus;
         private final NucleotideSequenceBuilder mutableConsensus;
         private String contigId;
-        private final Map<String, AsmAssembledReadBuilder>aceReadBuilderMap = new HashMap<String, AsmAssembledReadBuilder>();
+        private final Map<String, AsmAssembledReadBuilder>asmReadBuilderMap = new HashMap<String, AsmAssembledReadBuilder>();
    
         boolean isDegenerate;
         DefaultAsmContigBuilder(String id, NucleotideSequence consensus,boolean isDegenerate){
@@ -204,7 +236,7 @@ public final class DefaultAsmContig implements AsmContig{
         */
         @Override
         public int numberOfReads() {
-            return aceReadBuilderMap.size();
+            return asmReadBuilderMap.size();
         }
 
         /**
@@ -230,7 +262,7 @@ public final class DefaultAsmContig implements AsmContig{
           public AsmContigBuilder addRead(String readId, String validBases,
                   int offset, Direction dir, Range clearRange,
                   int ungappedFullLength, boolean isSurrogate) {
-              aceReadBuilderMap.put(readId, DefaultAsmAssembledRead.createBuilder(
+              asmReadBuilderMap.put(readId, DefaultAsmAssembledRead.createBuilder(
                       this.fullConsensus, readId, validBases, offset, dir, clearRange, ungappedFullLength, isSurrogate));
               return this;
           }
@@ -252,7 +284,7 @@ public final class DefaultAsmContig implements AsmContig{
         @Override
         public Collection<? extends AssembledReadBuilder<AsmAssembledRead>> getAllAssembledReadBuilders() {
            
-            return aceReadBuilderMap.values();
+            return asmReadBuilderMap.values();
         }
 
         /**
@@ -260,7 +292,7 @@ public final class DefaultAsmContig implements AsmContig{
         */
         @Override
         public AssembledReadBuilder<AsmAssembledRead> getAssembledReadBuilder(String readId) {
-            return aceReadBuilderMap.get(readId);
+            return asmReadBuilderMap.get(readId);
         }
 
         /**
@@ -268,7 +300,7 @@ public final class DefaultAsmContig implements AsmContig{
         */
         @Override
         public ContigBuilder<AsmAssembledRead, AsmContig> removeRead(String readId) {
-            aceReadBuilderMap.remove(readId);   
+            asmReadBuilderMap.remove(readId);   
             return this;
         }
 
@@ -279,17 +311,158 @@ public final class DefaultAsmContig implements AsmContig{
         public NucleotideSequenceBuilder getConsensusBuilder() {
             return mutableConsensus;
         }
-
+        /**
+         * Recall the consensus using the given
+         * {@link ConsensusCaller} and {@link QualitySequenceDataStore}
+         * which contains the quality data for all of the reads in this ace contig.
+         * The consensus will get recalled inside the {@link #build()}
+         * and {@link #recallConsensusNow()}.
+         * method before the {@link AceContig} instance is created.
+         * @param consensusCaller the {@link ConsensusCaller}  instance to use
+         * to recall the consensus of this contig; can not be null.
+         * @param qualityDataStore the {@link QualitySequenceDataStore}
+         * which contains all the quality data for all of the reads
+         * in this contig; can not be null.
+         * @return this.
+         * @throws NullPointerException if any parameter is null.
+         */
+        @Override
+        public AsmContigBuilder recallConsensus(ConsensusCaller consensusCaller, 
+        		QualitySequenceDataStore qualityDataStore,
+        		QualityValueStrategy qualityValueStrategy){
+        	if(consensusCaller ==null){
+        		throw new NullPointerException("consensus caller can not be null");
+        	}
+        	if(qualityDataStore ==null){
+        		throw new NullPointerException("quality datastore can not be null");
+        	}
+        	this.consensusCaller=consensusCaller;
+        	this.qualityDataStore = qualityDataStore;
+        	this.qualityValueStrategy = qualityValueStrategy;
+        	return this;
+        }
+        /**
+         * Recall the consensus using the given
+         * {@link ConsensusCaller} using faked quality data
+         * where all basecalls (and gaps) all get the same quality value.
+         * The consensus will get recalled inside the {@link #build()}
+         * and from {@link #recallConsensusNow()}.
+         * method before the {@link AceContig} instance is created.
+         * @param consensusCaller the {@link ConsensusCaller}  instance to use
+         * to recall the consensus of this contig; can not be null.
+         * @return this.
+         * @throws NullPointerException if any parameter is null.
+         */
+        @Override
+        public AsmContigBuilder recallConsensus(ConsensusCaller consensusCaller){
+        	if(consensusCaller ==null){
+        		throw new NullPointerException("consensus caller can not be null");
+        	}
+        	this.consensusCaller=consensusCaller;
+        	this.qualityDataStore = null;
+        	this.qualityValueStrategy = null;
+        	return this;
+        }
+        
+        
+        /**
+         * Recompute the contig
+         * consensus now using the current reads in the contig
+         * using the {@link ConsensusCaller} and optional quality data
+         * that was set by
+         * {@link #recallConsensus(ConsensusCaller)} or
+         * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}.
+         * Only regions of the contig that have read coverage 
+         * get recalled.  The Consensus of "0x" regions
+         * remains unchanged.
+         * 
+         * If this method is called without first
+         * setting a {@link ConsensusCaller}, then this
+         * method will throw an {@link IllegalStateException}.
+         * <p/>
+         * Recomputing the contig consensus may be computationally
+         * expensive and time consuming.  So this method
+         * should not be called on a regular basis.
+         * Also, the contig consensus will always
+         * get recalled during {@link #build()}
+         * even if this method has already been called
+         * since it is too hard to track if any underlying read changes occurred
+         * in between.
+         * @return this.
+         * @throws IllegalStateException if a consensus caller
+         * was not first set using {@link #recallConsensus(ConsensusCaller)} or
+         * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}.
+         * @see #build()
+         */
+        @Override
+        public AsmContigBuilder recallConsensusNow() {
+        	if(consensusCaller==null){
+        		throw new IllegalStateException("must set consensus caller");
+        	}
+        	CompactedSlice.Builder builders[] = new CompactedSlice.Builder[(int)mutableConsensus.getLength()];
+        	
+        	for(AsmAssembledReadBuilder asmReadBuilder : asmReadBuilderMap.values()){
+        		int start = (int)asmReadBuilder.getBegin();
+    			int i=0;
+    			String id =asmReadBuilder.getId();
+    			Direction dir = asmReadBuilder.getDirection();
+    			QualitySequence fullQualities =null;
+    			AsmAssembledRead tempRead=null;
+    			if(qualityDataStore!=null){
+    				try {
+    					fullQualities = qualityDataStore.get(id);
+    				} catch (DataStoreException e) {
+    					throw new IllegalStateException("error recalling consensus",e);
+    				}
+    				//should be able to call build multiple times
+    				tempRead = asmReadBuilder.build();
+        			if(fullQualities ==null){
+        				throw new NullPointerException("could not get qualities for "+id);
+        			}
+    			}
+    			
+    			
+    			for(Nucleotide base : asmReadBuilder.getCurrentNucleotideSequence()){
+    				
+    				final PhredQuality quality;
+    				if(fullQualities==null){
+    					quality = DEFAULT_QUALITY;
+    				}else{					
+    					//if fullQualities is not null then
+    					//qualityValueStrategy must be non-null as well
+    					quality= qualityValueStrategy.getQualityFor(tempRead, fullQualities, i);
+    				}
+    				if(builders[start+i] ==null){
+    					builders[start+i] = new CompactedSlice.Builder();
+    				}
+    				builders[start+i].addSliceElement(id, base, quality, dir);
+    				i++;
+    			}
+        	}
+        	for(int i=0; i<builders.length; i++){
+        		CompactedSlice.Builder builder = builders[i];
+        		//a null builder implies 0x
+        		if(builder !=null){
+    				Slice<?> slice = builder.build();            
+    	    		mutableConsensus.replace(i,consensusCaller.callConsensus(slice).getConsensus());
+        		}
+        	}
+        	return this;
+    	}
         /**
         * {@inheritDoc}
         */
         @Override
         public AsmContig build() {
-            Set<AsmAssembledRead> reads = new HashSet<AsmAssembledRead>(aceReadBuilderMap.size()+1);
-            for(AsmAssembledReadBuilder builder : aceReadBuilderMap.values()){
+        	if(consensusCaller !=null){
+    			recallConsensusNow();
+            }
+        	
+            Set<AsmAssembledRead> reads = new HashSet<AsmAssembledRead>(asmReadBuilderMap.size()+1);
+            for(AsmAssembledReadBuilder builder : asmReadBuilderMap.values()){
                 reads.add(builder.build());
             }
-            aceReadBuilderMap.clear();
+            asmReadBuilderMap.clear();
             return new DefaultAsmContig(contigId,mutableConsensus.build(),reads, isDegenerate);
         }
 
