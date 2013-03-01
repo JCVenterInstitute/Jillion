@@ -22,9 +22,6 @@ package org.jcvi.jillion.assembly.ace;
 
 import java.io.IOException;
 
-import org.jcvi.jillion.assembly.ace.AceFileParser;
-import org.jcvi.jillion.assembly.ace.AceFileVisitor;
-import org.jcvi.jillion.assembly.ace.AceFileVisitor.BeginContigReturnCode;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -40,12 +37,10 @@ public class TestAceFileParserWithInvalidGapChar {
     public void basecallInReadContainDashInsteadOfStar() throws IOException{
         String problemLine = "agccgaaggagg*ttttggaaacaccaaggg-g*ggtcagaccccaacgc\n";
         ResourceHelper resources = new ResourceHelper(TestAceFileParserWithInvalidGapChar.class);
-        AceFileVisitor mockVisitor = createNiceMock(AceFileVisitor.class);
-        expect(mockVisitor.visitBeginContig(isA(String.class), anyInt(), anyInt(), anyInt(), anyBoolean()))
-        			.andReturn(BeginContigReturnCode.SKIP_CURRENT_CONTIG);
+        AceFileVisitor2 mockVisitor = createNiceMock(AceFileVisitor2.class);
         replay(mockVisitor);
         try{
-            AceFileParser.parse(resources.getFile("files/invalidAceFileWithDash.ace"), mockVisitor);
+            AceFileParser2.create(resources.getFile("files/invalidAceFileWithDash.ace")).accept(mockVisitor);
             fail("should error out");
         }catch(IllegalStateException e){
             assertEquals(
