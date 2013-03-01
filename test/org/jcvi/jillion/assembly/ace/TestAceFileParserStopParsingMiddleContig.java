@@ -20,7 +20,12 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.ace;
 
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,18 +33,8 @@ import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.easymock.IAnswer;
-import org.jcvi.jillion.assembly.ace.AbstractAceFileVisitor;
-import org.jcvi.jillion.assembly.ace.AceFileParser;
-import org.jcvi.jillion.assembly.ace.AceFileVisitor;
-import org.jcvi.jillion.assembly.ace.PhdInfo;
-import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.qual.QualitySequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 public class TestAceFileParserStopParsingMiddleContig {
 
 	private final File aceFile;
@@ -120,56 +115,76 @@ public class TestAceFileParserStopParsingMiddleContig {
 	}
 	@Test
 	public void stopParsingAtFinalContigShouldSkipTags() throws IOException{
-			AceFileVisitor visitor = new AbstractAceFileVisitor() {
-				boolean keepParsing =true;
-			
-				@Override
-				public EndContigReturnCode handleEndOfContig() {
-					return keepParsing ? EndContigReturnCode.KEEP_PARSING : EndContigReturnCode.STOP_PARSING;
-				}
-
-				@Override
-				protected void visitNewContig(String contigId,
-						NucleotideSequence consensus, int numberOfBases, int numberOfReads,
-						boolean isComplemented) {
-					//only the first contig is valid
-					keepParsing = !"22934-NS".equals(contigId);
-				}
+		final AtomicBoolean visitHalted = new AtomicBoolean(false);
+		AceFileVisitor2 visitor2 = new AceFileVisitor2(){
+			@Override
+			public void visitHeader(int numberOfContigs, long totalNumberOfReads) {
+				//no-op
 				
-				@Override
-				protected void visitAceRead(String readId,
-						NucleotideSequence validBasecalls, int offset, Direction dir,
-						Range validRange, PhdInfo phdInfo, int ungappedFullLength) {
-					// TODO Auto-generated method stub
-					
-				}
+			}
 
-				@Override
-				public synchronized void visitBeginConsensusTag(String id,
-						String type, String creator, long gappedStart,
-						long gappedEnd, Date creationDate, boolean isTransient) {
-					//any tags should not be visited?
-					throw new IllegalStateException("should not visit tags if stop parsing");
-				}
+			@Override
+			public AceContigVisitor visitContig(
+					final AceFileVisitorCallback callback, String contigId,
+					int numberOfBases, int numberOfReads,
+					int numberOfBaseSegments, boolean reverseComplemented) {
+				//last contig
+				if("22934-NS".equals(contigId)){
+					AceContigVisitor lastContigVisitor = createNiceMock(AceContigVisitor.class);
+					lastContigVisitor.visitEnd();
+					expectLastCall().andAnswer(new IAnswer<Object>() {
 
-				@Override
-				public void visitWholeAssemblyTag(String type, String creator,
-						Date creationDate, String data) {
-					//any tags should not be visited?
-					throw new IllegalStateException("should not visit tags if stop parsing");
+						@Override
+						public Object answer() throws Throwable {
+							callback.haltParsing();
+							return null; //needed to compile
+						}
+						
+					});
+					replay(lastContigVisitor);
+					return lastContigVisitor;
 				}
+				return null;
+			}
 
-				@Override
-				public void visitReadTag(String id, String type, String creator,
-						long gappedStart, long gappedEnd, Date creationDate,
-						boolean isTransient) {
-					//any tags should not be visited?
-					throw new IllegalStateException("should not visit tags if stop parsing");
-				}
+			@Override
+			public void visitReadTag(String id, String type, String creator,
+					long gappedStart, long gappedEnd, Date creationDate,
+					boolean isTransient) {
+				fail("should not get to tags");				
+			}
+
+			@Override
+			public AceConsensusTagVisitor visitConsensusTag(String id,
+					String type, String creator, long gappedStart,
+					long gappedEnd, Date creationDate, boolean isTransient) {
+				fail("should not get to tags");	
+				return null; // need return to compile
+			}
+
+			@Override
+			public void visitWholeAssemblyTag(String type, String creator,
+					Date creationDate, String data) {
+				fail("should not get to tags");					
+			}
+
+			@Override
+			public void visitEnd() {
+				fail("should not call visitEnd on halt");	
 				
-			};
+			}
+
+
+			@Override
+			public void halted() {
+				visitHalted.set(true);				
+			}
 			
-			AceFileParser.parse(aceFile, visitor);
+		};
+			
+			
+		AceFileParser2.create(aceFile).accept(visitor2);
+		assertTrue(visitHalted.get());
 	}
 
 }

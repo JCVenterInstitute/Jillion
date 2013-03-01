@@ -23,17 +23,18 @@ package org.jcvi.jillion.assembly.ace;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.jillion.assembly.ace.consed.ConsedUtil;
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -60,6 +61,9 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
     public static PhdDataStore create(File aceContigFile, final String contigId) throws IOException{
         return new HighLowAceContigPhdDatastore(aceContigFile, contigId);
     }
+    public static PhdDataStore create(File aceContigFile,DataStoreFilter filter) throws IOException{
+        return new HighLowAceContigPhdDatastore(aceContigFile, filter,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
+    }
     public static PhdDataStore create(File aceContigFile) throws IOException{
         return new HighLowAceContigPhdDatastore(aceContigFile,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
     }
@@ -74,35 +78,44 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
     }
     private HighLowAceContigPhdDatastore(File aceContigFile, final String contigId, 
             final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
-        FullLengthPhdParser visitor = new FullLengthPhdParser(contigId, lowQuality,highQuality);
+        FullLengthPhdParser2 visitor = new FullLengthPhdParser2(contigId, lowQuality,highQuality);
         
-        AceFileParser.parse(aceContigFile, visitor);
-        delegate = DataStoreUtil.adapt(PhdDataStore.class, DataStoreUtil.adapt(visitor.getPhds()));
+        AceFileParser2.create(aceContigFile).accept(visitor);
+        delegate = DataStoreUtil.adapt(PhdDataStore.class, visitor.getPhds());
+        
+    }
+    
+    private HighLowAceContigPhdDatastore(File aceContigFile, DataStoreFilter filter, 
+            final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
+        FullLengthPhdParser2 visitor = new FullLengthPhdParser2(filter,null, lowQuality,highQuality);
+        
+        AceFileParser2.create(aceContigFile).accept(visitor);
+        delegate = DataStoreUtil.adapt(PhdDataStore.class, visitor.getPhds());
         
     }
     private HighLowAceContigPhdDatastore(InputStream aceContigFile,
             final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
-        FullLengthPhdParser visitor = new FullLengthPhdParser(lowQuality,highQuality);
+        FullLengthPhdParser2 visitor = new FullLengthPhdParser2(lowQuality,highQuality);
         
-        AceFileParser.parse(aceContigFile, visitor);
-        delegate = DataStoreUtil.adapt(PhdDataStore.class, DataStoreUtil.adapt(visitor.getPhds()));
+        AceFileParser2.create(aceContigFile).accept(visitor);
+        delegate = DataStoreUtil.adapt(PhdDataStore.class, visitor.getPhds());
         
     }
     private HighLowAceContigPhdDatastore(InputStream aceContigFile, String contigId,
             final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
-        FullLengthPhdParser visitor = new FullLengthPhdParser(contigId,lowQuality,highQuality);
+        FullLengthPhdParser2 visitor = new FullLengthPhdParser2(contigId,lowQuality,highQuality);
         
-        AceFileParser.parse(aceContigFile, visitor);
-        delegate = DataStoreUtil.adapt(PhdDataStore.class, DataStoreUtil.adapt(visitor.getPhds()));
+        AceFileParser2.create(aceContigFile).accept(visitor);
+        delegate = DataStoreUtil.adapt(PhdDataStore.class, visitor.getPhds());
         
     }
     
     private HighLowAceContigPhdDatastore(File aceContigFile, 
             final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
-        FullLengthPhdParser visitor = new FullLengthPhdParser(lowQuality,highQuality);
+        FullLengthPhdParser2 visitor = new FullLengthPhdParser2(lowQuality,highQuality);
         
-        AceFileParser.parse(aceContigFile, visitor);
-        delegate = DataStoreUtil.adapt(PhdDataStore.class, DataStoreUtil.adapt(visitor.getPhds()));
+        AceFileParser2.create(aceContigFile).accept(visitor);
+        delegate = DataStoreUtil.adapt(PhdDataStore.class, visitor.getPhds());
         
     }
 
@@ -163,40 +176,34 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
         return delegate.iterator();
     }
     
+   
+    
     /**
      * {@code FullLengthPhdParser} will parse full length
      * basecalls from an ace file and infer if the basecalls
      * are high or low quality based on upper vs lower case basecalls.
      * @author dkatzel
      */
-    private static final class FullLengthPhdParser extends AbstractAceFileVisitor {
-        private boolean contigOfInterest=false;
-        private QualitySequenceBuilder currentHiLowQualities;
-        private Map<String, Phd> phds=null;
-        private final String contigId;
+    private static final class FullLengthPhdParser2 extends AbstractAceFileVisitor2{
+
+    	private Map<String, Phd> phds=null;
+        private final DataStoreFilter filter;
+        private final String singleContigId;
         private final byte lowQuality;
         private final byte highQuality;
-        private FullLengthPhdParser(final PhredQuality lowQuality, final PhredQuality highQuality) {
-            this(null,lowQuality,highQuality);
+        
+        
+        private FullLengthPhdParser2(final PhredQuality lowQuality, final PhredQuality highQuality) {
+            this(DataStoreFilters.alwaysAccept(),null,lowQuality,highQuality);
         }
-        private FullLengthPhdParser(String contigId,final PhredQuality lowQuality, final PhredQuality highQuality) {
-            this.contigId = contigId;
+        private FullLengthPhdParser2(String contigId, final PhredQuality lowQuality, final PhredQuality highQuality) {
+            this(DataStoreFilters.newIncludeFilter(Collections.singleton(contigId)),contigId,lowQuality,highQuality);
+        }
+        private FullLengthPhdParser2(DataStoreFilter filter,String contigId, final PhredQuality lowQuality, final PhredQuality highQuality) {
+            this.filter = filter;
+            this.singleContigId = contigId;
             this.lowQuality = lowQuality.getQualityScore();
             this.highQuality = highQuality.getQualityScore();
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public synchronized void visitHeader(int numberOfContigs,
-                int totalNumberOfReads) {
-            if(contigId==null){
-            	int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(totalNumberOfReads);
-                phds = new HashMap<String, Phd>(mapSize);
-                contigOfInterest=true;
-            }
-            super.visitHeader(numberOfContigs, totalNumberOfReads);
         }
         /**
          * @return the phds
@@ -204,103 +211,101 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
         public Map<String, Phd> getPhds() {
             return phds;
         }
-
-        @Override
-        protected void visitNewContig(String aceContigId, NucleotideSequence consensus, int numberOfBases, int numberOfReads, boolean complemented) {
-            //no-op
-        }
         
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public synchronized EndContigReturnCode handleEndOfContig() {
-            
-            if(contigId==null){
-                return EndContigReturnCode.KEEP_PARSING;
+		@Override
+		public void visitHeader(int numberOfContigs, long totalNumberOfReads) {
+			if(singleContigId==null){
+            	int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(totalNumberOfReads);
+                phds = new HashMap<String, Phd>(mapSize);
             }
-            //keep parsing until we finish 
-            //our contig of interest
-            return contigOfInterest? EndContigReturnCode.STOP_PARSING:EndContigReturnCode.KEEP_PARSING;
-        }
-
-        @Override
-		public synchronized boolean shouldParseContig(String aceContigId, int numberOfBases,
-				int numberOfReads, int numberOfBaseSegments,
-				boolean reverseComplimented) {
-        	if(contigId !=null){
-                contigOfInterest =aceContigId.equals(contigId);
-                if(contigOfInterest){
-                	int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads);
-                    phds = new HashMap<String, Phd>(mapSize);                    
-                }
-                return contigOfInterest;
-            }
-			return true;
 		}
+		@Override
+		public AceContigVisitor visitContig(final AceFileVisitorCallback callback,
+				String contigId, int numberOfBases, final int numberOfReads,
+				int numberOfBaseSegments, boolean reverseComplemented) {
+			if(filter.accept(contigId)){
+				//visit if this is our contig or we want all contigs
+				if(this.singleContigId!=null){
+					int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads);
+	                phds = new HashMap<String, Phd>(mapSize);
+				}
+				return new AbstractAceContigVisitor() {
+					int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads);
+					final Map<String, Direction> directions = new HashMap<String, Direction>(mapSize);
+					
+					
+					@Override
+					public void visitAlignedReadInfo(String readId,
+							Direction dir, int gappedStartOffset) {
+						directions.put(readId, dir);
+					}
+
+					@Override
+					public void visitEnd() {
+						//we have finished the current contig
+						//if this is the only contig we care about
+						//halt parsing
+						if(FullLengthPhdParser2.this.singleContigId!=null){
+							callback.haltParsing();
+						}
+					}
+
+					@Override
+					public AceContigReadVisitor visitBeginRead(String readId, int gappedLength) {
+						return new IndividualReadPhdBuilderVisitor(readId, gappedLength, directions.get(readId));
+					}
+					
+				};
+			}
+			//else skip
+			return null;
+		}    			
 		
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public synchronized BeginReadReturnCode visitBeginRead(String readId,
-                int gappedLength) {
-            if(contigOfInterest){
-                currentHiLowQualities = new QualitySequenceBuilder(gappedLength);
-            }
-            return super.visitBeginRead(readId, gappedLength);
-        }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public synchronized void visitBasesLine(String bases) {
-            if(contigOfInterest && currentHiLowQualities !=null){
-            	addQualitiesToBuilder(bases.trim());               
-            }
-            super.visitBasesLine(bases);
-        }
-
-        private void addQualitiesToBuilder(String bases){
-        	
-            String ungappedGappedBases =ConsedUtil.convertAceGapsToContigGaps(bases).replaceAll("-", "");
-            char[] chars = ungappedGappedBases.toCharArray();
-            byte[] qualities = new byte[chars.length];
-            for(int i=0; i<chars.length; i++){
-                if(Character.isUpperCase(chars[i])){
-                    qualities[i]=highQuality;
-                }else{
-                	qualities[i]=lowQuality;
-                }
-            }
-            currentHiLowQualities.append(qualities);
-        }
-        /**
-         * If this is a read we care about, get the full length
-         * mixed-case basecalls via {@link #getCurrentFullLengthBasecalls()}
-         * and use those to figure out high vs low quality.
-         * {@inheritDoc}
-         */
-        @Override
-        protected synchronized void visitAceRead(String readId, NucleotideSequence ignored,
-                int offset, Direction dir, Range validRange,
-                PhdInfo phdInfo, int ungappedFullLength) {
-            if(contigOfInterest){
-                NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(getCurrentFullLengthBasecalls())
-                									.ungap();
-               
-                if(dir==Direction.REVERSE){
-                   currentHiLowQualities.reverse();
-                    builder.reverseComplement();
-                }
-                Phd phd = new ArtificialPhd(readId, 
-                		 builder.build(),
-                		 currentHiLowQualities.build(),19);
+		private class IndividualReadPhdBuilderVisitor extends AbstractAceContigReadVisitor{
+			private final QualitySequenceBuilder highLowQualities;
+			private final NucleotideSequenceBuilder sequenceBuilder;
+			private final Direction dir;
+			private final String readId;
+			
+			public IndividualReadPhdBuilderVisitor(String readId, int gappedLength, Direction dir){
+				this.readId = readId;
+				this.dir = dir;
+				highLowQualities = new QualitySequenceBuilder(gappedLength);
+				sequenceBuilder = new NucleotideSequenceBuilder(gappedLength);
+			}
+			
+			@Override
+			public void visitBasesLine(String mixedCaseBasecalls) {
+				highLowQualities.append(toHighLowQualities(mixedCaseBasecalls));
+				sequenceBuilder.append(mixedCaseBasecalls);
+			}
+			
+			private byte[] toHighLowQualities(String bases){
+	        	
+	            String ungappedGappedBases =ConsedUtil.convertAceGapsToContigGaps(bases).replaceAll("-", "");
+	            char[] chars = ungappedGappedBases.toCharArray();
+	            byte[] qualities = new byte[chars.length];
+	            for(int i=0; i<chars.length; i++){
+	                if(Character.isUpperCase(chars[i])){
+	                    qualities[i]=highQuality;
+	                }else{
+	                	qualities[i]=lowQuality;
+	                }
+	            }
+	           return qualities;
+	        }
+			@Override
+			public void visitEnd() {
+				sequenceBuilder.ungap();
+				if(dir==Direction.REVERSE){
+					sequenceBuilder.reverseComplement();
+					highLowQualities.reverse();
+				}
+				 Phd phd = new ArtificialPhd(readId, 
+						 sequenceBuilder.build(),
+						 highLowQualities.build(),19);
                  phds.put(readId,phd);
-                 currentHiLowQualities=null;
-            }
-        }
+			}
+		}
     }
-    
 }

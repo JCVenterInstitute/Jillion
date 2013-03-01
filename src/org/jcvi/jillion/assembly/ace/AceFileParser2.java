@@ -44,6 +44,7 @@ import org.jcvi.jillion.assembly.ace.AceFileVisitorCallback.AceFileVisitorMement
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 /**
@@ -60,6 +61,17 @@ public abstract class AceFileParser2 {
 	
 	public static AceFileParser2 create(File aceFile){
 		return new FileBasedParser(aceFile);
+	}
+	/**
+	 * Create a new Parser object that will parse
+	 * the given inputStream.
+	 * the inputStream will be closed at the end
+	 * of the first call to {@link #accept(AceFileVisitor2)}.
+	 * @param aceFileStream 
+	 * @return
+	 */
+	public static AceFileParser2 create(InputStream aceFileStream){
+		return new InputStreamParser(aceFileStream);
 	}
     /**
      * Parse the given aceFile and call the appropriate methods on the given AceFileVisitor.
@@ -316,7 +328,7 @@ public abstract class AceFileParser2 {
 		public void visitBeginContig(String contigId,
 				int numberOfBases, int numberOfReads, int numberOfBaseSegments,
 				boolean reverseComplemented) {
-			AceFileVisitorCallback callback =callbackFactory.newCallback(startPositionOfCurrentSection, stopParsing, this.inAContig);
+			AceFileVisitorCallback callback =callbackFactory.newCallback(startPositionOfCurrentSection, stopParsing);
 			AceContigVisitor contigVisitor =fileVisitor.visitContig(callback, contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplemented);
 			handleNewContig(contigVisitor, numberOfReads,numberOfBases);
 		}
@@ -808,7 +820,7 @@ public abstract class AceFileParser2 {
 		private final class MementoCallbackFactory implements AceFileVisitorCallbackFactory{
 
 			@Override
-			public AceFileVisitorCallback newCallback(final long fileOffset, final AtomicBoolean stopParsing,final  boolean inContig) {
+			public AceFileVisitorCallback newCallback(final long fileOffset, final AtomicBoolean stopParsing) {
 				return new AceFileVisitorCallback() {
 					
 					@Override
@@ -818,7 +830,7 @@ public abstract class AceFileParser2 {
 					
 					@Override
 					public AceFileVisitorMemento createMemento() {
-						return new AceFileMemento(fileOffset, inContig);
+						return new AceFileMemento(fileOffset);
 					}
 					
 					@Override
@@ -831,19 +843,13 @@ public abstract class AceFileParser2 {
 	    
 	    private class AceFileMemento implements AceFileVisitorMemento{
 	    	private final long startOffset;
-	    	private final boolean inContig;
 	    	
-			public AceFileMemento(long startOffset, boolean inContig) {
+			public AceFileMemento(long startOffset) {
 				this.startOffset = startOffset;
-				this.inContig = inContig;
 			}
 
 			public final long getStartOffset() {
 				return startOffset;
-			}
-	    	
-			public final boolean isInContig() {
-				return inContig;
 			}
 
 			AceFileParser2 getParentParser(){
@@ -853,14 +859,50 @@ public abstract class AceFileParser2 {
 	    }
     }
     
+    private static final class InputStreamParser extends AceFileParser2 {
+
+    	private final OpenAwareInputStream in;
+    	
+		public InputStreamParser(InputStream in) {
+			if(in ==null){
+				throw new NullPointerException("input stream can not be null");
+			}
+			this.in = new OpenAwareInputStream(new BufferedInputStream(in));
+		}
+		@Override
+		public void accept(AceFileVisitor2 visitor) throws IOException{
+			if(visitor ==null){
+				throw new NullPointerException("visitor can not be null");
+			}
+			if(!in.isOpen()){
+				throw new IllegalStateException("inputstream has been closed");
+			}
+	        
+	        try{
+	        	TextLineParser parser = new TextLineParser(in);
+	             AceFileVisitorCallbackFactory callbackFactory = new NoMementoCallbackFactory();
+	             AceParserState parserState= AceParserState.create(parser,visitor, callbackFactory);
+	             parseAceData(parserState, visitor);
+	        }finally{
+	            IOUtil.closeAndIgnoreErrors(in);
+	        }
+	    }
+		
+		@Override
+		public void accept(AceFileVisitor2 visitor, AceFileVisitorMemento memento) throws IOException{
+	        throw new UnsupportedOperationException("mementos not supported");
+	    }
+		
+    }
+    
     private interface AceFileVisitorCallbackFactory{
-    	AceFileVisitorCallback newCallback(long fileOffset, AtomicBoolean stopParsing, boolean inContig);
+    	AceFileVisitorCallback newCallback(long fileOffset, AtomicBoolean stopParsing);
     }
     
     private static final class NoMementoCallbackFactory implements AceFileVisitorCallbackFactory{
 
 		@Override
-		public AceFileVisitorCallback newCallback(long fileOffset, final AtomicBoolean stopParsing, boolean inContig) {
+		public AceFileVisitorCallback newCallback(long fileOffset, final AtomicBoolean stopParsing) {
 			return new AceFileVisitorCallback() {
 				
 				@Override

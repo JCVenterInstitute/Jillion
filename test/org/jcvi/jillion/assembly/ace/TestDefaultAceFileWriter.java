@@ -84,7 +84,7 @@ public class TestDefaultAceFileWriter {
         writeContigs(aceDataStore, sut);
         sut.close();
         
-        AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore.create(outputFile);
+        AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore2.create(outputFile);
         assertContigsAreEqual(aceDataStore, reparsedAceDataStore);
     }
     
@@ -111,7 +111,7 @@ public class TestDefaultAceFileWriter {
         						.build();
         writeContigs(aceDataStore, sut);
         sut.close();
-        AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore.create(outputFile);
+        AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore2.create(outputFile);
         assertContigsAreEqual(aceDataStore, reparsedAceDataStore);
     }
     
@@ -144,7 +144,7 @@ public class TestDefaultAceFileWriter {
         sut.write(aceDataStore.get("95"));
         sut.close();       
         
-        AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore.create(outputFile);
+        AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore2.create(outputFile);
         assertContigHasSameRecords(aceDataStore.get("98"), reparsedAceDataStore.get("98"));
         assertContigHasSameRecords(aceDataStore.get("97"), reparsedAceDataStore.get("97"));
         assertContigHasSameRecords(aceDataStore.get("96"), reparsedAceDataStore.get("96"));
@@ -213,7 +213,7 @@ public class TestDefaultAceFileWriter {
          AceFileWriter sut = new AceFileWriterBuilder(outputFile,phdDataStore)
          						.tmpDir(tmpDir)
          						.build();
-         AceFileContigDataStore datastore = DefaultAceFileDataStore.create(originalAce);
+         AceFileContigDataStore datastore = DefaultAceFileDataStore2.create(originalAce);
          
          //lets write out the tags first to make sure they get put at the end correctly
          writeReadTags(datastore,sut);
@@ -223,7 +223,7 @@ public class TestDefaultAceFileWriter {
          writeContigs(datastore, sut);
          
          sut.close();
-         AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore.create(outputFile);
+         AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore2.create(outputFile);
          assertContigsAreEqual(datastore, reparsedAceDataStore);
          
          assertWholeReadTagsAreEqual(datastore, reparsedAceDataStore);

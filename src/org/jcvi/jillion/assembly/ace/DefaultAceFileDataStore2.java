@@ -2,6 +2,7 @@ package org.jcvi.jillion.assembly.ace;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -12,10 +13,20 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
-
+/**
+ * {@code DefaultAceFileDataStore} is a AceContigDataStore
+ * implementation that stores all the {@link AceContig}s
+ * in a Map.  This implementation is not very 
+ * memory efficient and therefore should not be used
+ * for large ace files.
+ * @author dkatzel
+ *
+ *
+ */
 final class DefaultAceFileDataStore2 implements AceFileContigDataStore{
 
 	/**
@@ -46,6 +57,19 @@ final class DefaultAceFileDataStore2 implements AceFileContigDataStore{
      */
     private final List<ReadAceTag> readTags;
     
+    public static AceFileContigDataStore create(InputStream aceFileStream) throws IOException{
+    	return create(aceFileStream, DataStoreFilters.alwaysAccept());
+    }
+    
+    public static AceFileContigDataStore create(InputStream aceFileStream, DataStoreFilter filter) throws IOException{
+    	Visitor builder = new Visitor(filter);
+    	AceFileParser2 parser = AceFileParser2.create(aceFileStream);
+    	parser.accept(builder);
+    	return new DefaultAceFileDataStore2(builder);
+    }
+    public static AceFileContigDataStore create(File aceFile) throws IOException{
+    	return create(aceFile, DataStoreFilters.alwaysAccept());
+    }
     public static AceFileContigDataStore create(File aceFile, DataStoreFilter filter) throws IOException{
     	Visitor builder = new Visitor(filter);
     	AceFileParser2 parser = AceFileParser2.create(aceFile);
@@ -175,7 +199,6 @@ final class DefaultAceFileDataStore2 implements AceFileContigDataStore{
 
 		@Override
 		public void visitHeader(int numberOfContigs, long totalNumberOfReads) {
-			this.totalNumberOfReads = totalNumberOfReads;
 			this.map = new LinkedHashMap<String, AceContig>(numberOfContigs);
 		}
 
@@ -188,6 +211,7 @@ final class DefaultAceFileDataStore2 implements AceFileContigDataStore{
 					
 					@Override
 					protected void visitContig(AceContigBuilder builder) {
+						totalNumberOfReads += builder.numberOfReads();
 						map.put(contigId, builder.build());
 						
 					}

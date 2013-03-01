@@ -23,13 +23,13 @@ package org.jcvi.common.examples;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.jillion.assembly.ace.AbstractAceFileVisitor;
-import org.jcvi.jillion.assembly.ace.AceFileParser;
-import org.jcvi.jillion.assembly.ace.AceFileVisitor;
-import org.jcvi.jillion.assembly.ace.PhdInfo;
+import org.jcvi.jillion.assembly.ace.AbstractAceContigVisitor;
+import org.jcvi.jillion.assembly.ace.AbstractAceFileVisitor2;
+import org.jcvi.jillion.assembly.ace.AceContigVisitor;
+import org.jcvi.jillion.assembly.ace.AceFileParser2;
+import org.jcvi.jillion.assembly.ace.AceFileVisitor2;
+import org.jcvi.jillion.assembly.ace.AceFileVisitorCallback;
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 public class OnlyPrintForwardReadsOfASpecificContig {
 
@@ -41,40 +41,35 @@ public class OnlyPrintForwardReadsOfASpecificContig {
 		
 		
 		File aceFile = new File("path/to/ace/file");
+		final String contigIdToPrint = "myContigId";
 
-		AceFileVisitor visitor = new AbstractAceFileVisitor() {
-			String contigIdToPrint = "myContigId";
-			//we only want to visit the contig with 
-			//the id we care about
+		AceFileVisitor2 visitor = new AbstractAceFileVisitor2() {
+
 			@Override
-			public boolean shouldParseContig(String contigId,
+			public AceContigVisitor visitContig(
+					AceFileVisitorCallback callback, String contigId,
 					int numberOfBases, int numberOfReads,
-					int numberOfBaseSegments, boolean reverseComplimented) {
-				return contigIdToPrint.equals(contigId);
-			}
+					int numberOfBaseSegments, boolean reverseComplemented) {
+				if(contigId.equals(contigIdToPrint)){
+					return new AbstractAceContigVisitor() {
 
-			
-			
-			@Override
-			protected void visitAceRead(String readId,
-					NucleotideSequence validBasecalls, int offset, Direction dir,
-					Range validRange, PhdInfo phdInfo, int ungappedFullLength) {
-				if(dir == Direction.REVERSE){
-					System.out.printf("%s starts at offset %d%n",readId, offset);
+						@Override
+						public void visitAlignedReadInfo(String readId,
+								Direction dir, int gappedStartOffset) {
+							if(dir == Direction.REVERSE){
+								System.out.printf("%s starts at offset %d%n",readId, gappedStartOffset);
+							}
+						}
+						
+					};
 				}
-				
+				//otherwise skip
+				return null;				
 			}
 			
-			@Override
-			protected void visitNewContig(String contigId,
-					NucleotideSequence consensus, int numberOfBases, int numberOfReads,
-					boolean isComplimented) {
-				//no-op
-				
-			}
 		};
 		
-		AceFileParser.parse(aceFile, visitor);
+		AceFileParser2.create(aceFile).accept(visitor);
 	}
 
 }
