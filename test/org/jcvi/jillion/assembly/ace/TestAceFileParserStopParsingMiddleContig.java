@@ -25,16 +25,21 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.easymock.IAnswer;
 import org.jcvi.jillion.assembly.ace.AbstractAceFileVisitor;
 import org.jcvi.jillion.assembly.ace.AceFileParser;
 import org.jcvi.jillion.assembly.ace.AceFileVisitor;
 import org.jcvi.jillion.assembly.ace.PhdInfo;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
 public class TestAceFileParserStopParsingMiddleContig {
 
 	private final File aceFile;
@@ -45,54 +50,73 @@ public class TestAceFileParserStopParsingMiddleContig {
 	}
 	@Test
 	public void topParsingAfterFirstContig() throws IOException{
-		AceFileVisitor visitor = new AbstractAceFileVisitor() {
+		final AtomicBoolean visitedHalted= new AtomicBoolean(false);
+		AceFileVisitor2 visitor = new AceFileVisitor2(){
+
 			@Override
-			public EndContigReturnCode handleEndOfContig() {
-				return EndContigReturnCode.STOP_PARSING;
+			public void visitHeader(int numberOfContigs, long totalNumberOfReads) {
+				//no-op				
 			}
 
 			@Override
-			protected void visitNewContig(String contigId,
-					NucleotideSequence consensus, int numberOfBases, int numberOfReads,
-					boolean isComplemented) {
+			public AceContigVisitor visitContig(
+					final AceFileVisitorCallback callback, String contigId,
+					int numberOfBases, int numberOfReads,
+					int numberOfBaseSegments, boolean reverseComplemented) {
 				//only the first contig is valid
 				assertEquals("22934-PB2",contigId);
-			}
-			
-			@Override
-			protected void visitAceRead(String readId,
-					NucleotideSequence validBasecalls, int offset, Direction dir,
-					Range validRange, PhdInfo phdInfo, int ungappedFullLength) {
-				// TODO Auto-generated method stub
+				AceContigVisitor mock = createNiceMock(AceContigVisitor.class);
+				mock.visitEnd();
+				expectLastCall().andAnswer(new IAnswer<Void>() {
+
+					@Override
+					public Void answer() throws Throwable {
+						callback.haltParsing();
+						return null;
+					}
+					
+				});
 				
-			}
-
-			@Override
-			public synchronized void visitBeginConsensusTag(String id,
-					String type, String creator, long gappedStart,
-					long gappedEnd, Date creationDate, boolean isTransient) {
-				//any tags should not be visited?
-				throw new IllegalStateException("should not visit tags if stop parsing");
-			}
-
-			@Override
-			public void visitWholeAssemblyTag(String type, String creator,
-					Date creationDate, String data) {
-				//any tags should not be visited?
-				throw new IllegalStateException("should not visit tags if stop parsing");
+				replay(mock);
+				return mock;
 			}
 
 			@Override
 			public void visitReadTag(String id, String type, String creator,
 					long gappedStart, long gappedEnd, Date creationDate,
 					boolean isTransient) {
-				//any tags should not be visited?
-				throw new IllegalStateException("should not visit tags if stop parsing");
+				fail("should not get to tags");				
+			}
+
+			@Override
+			public AceConsensusTagVisitor visitConsensusTag(String id,
+					String type, String creator, long gappedStart,
+					long gappedEnd, Date creationDate, boolean isTransient) {
+				fail("should not get to tags");	
+				return null; // need return to compile
+			}
+
+			@Override
+			public void visitWholeAssemblyTag(String type, String creator,
+					Date creationDate, String data) {
+				fail("should not get to tags");					
+			}
+
+			@Override
+			public void visitEnd() {
+				fail("should not call visitEnd on halt");	
+				
+			}
+
+			@Override
+			public void halted() {
+				visitedHalted.set(true);				
 			}
 			
 		};
 		
-		AceFileParser.parse(aceFile, visitor);
+		AceFileParser2.create(aceFile).accept(visitor);
+		assertTrue(visitedHalted.get());
 	}
 	@Test
 	public void stopParsingAtFinalContigShouldSkipTags() throws IOException{

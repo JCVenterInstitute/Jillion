@@ -111,26 +111,10 @@ public abstract class AceFileParser2 {
 		while(!parserState.done()){
             parserState.parseNextSection();
         }
-        handleEndOfParsing(parserState);
-        visitor.visitEnd();
+        parserState.handleEndOfParsing();
+       // visitor.visitEnd();
 	}
-    /**
-     * This method figures out if we need
-     * to call {@link AceFileVisitor#visitEndOfContig()}
-     * or not and might also close the {@link AceParserState}
-     * (which should close the stream)
-     * @param parserState
-     */
-    private static void handleEndOfParsing(AceParserState parserState) {
-        if(!parserState.stopParsing.get() && parserState.inAContig()){        
-        	parserState.handleEndOfContig();
-        }else{
-            //if parser state reached the end of the file
-            //then we have already closed our stream
-            //this will force it if we haven't
-            IOUtil.closeAndIgnoreErrors(parserState);
-        }
-    }
+   
     /**
      * {@code ParserState} keeps track of the where
      * we are in an ace file (in the first contig, 
@@ -265,9 +249,27 @@ public abstract class AceFileParser2 {
             }
         	if(currentContigVisitor !=null){        		
         		currentContigVisitor.visitEnd();
-        	}
-        	
+        	}        	
 		}
+        
+        void handleEndOfParsing(){
+        	if(stopParsing.get()){
+        		//halted
+        		if(currentContigVisitor !=null){
+        			if(currentReadVisitor !=null){
+        				currentReadVisitor.halted();
+        			}
+        			currentContigVisitor.halted();
+        		}
+        		fileVisitor.halted();
+        		IOUtil.closeAndIgnoreErrors(this);
+        	}else{
+        		if(inAContig){
+        			handleEndOfContig();
+        		}
+        		fileVisitor.visitEnd();
+        	}
+        }
         /**
          * Returns new ParserStruct instance but which
          * states that a different contig is being visited. 
