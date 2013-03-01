@@ -35,9 +35,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.ace.AceAssembledRead;
-import org.jcvi.jillion.assembly.ace.DefaultAceFileDataStore;
-import org.jcvi.jillion.assembly.ace.PhdInfo;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -55,7 +52,7 @@ public class TestAceParserPhdInfo {
     Map<String, PhdInfo> phdInfoMap;
     @BeforeClass
     public static void parseContig() throws DataStoreException, IOException{
-        actualContig =DefaultAceFileDataStore.create(RESOURCES.getFile(ACE_FILE))
+        actualContig =DefaultAceFileDataStore2.create(RESOURCES.getFile(ACE_FILE))
                             .get("Contig1");
     }
     @Before

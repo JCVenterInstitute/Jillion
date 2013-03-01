@@ -23,6 +23,7 @@ package org.jcvi.jillion.assembly.ace;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
@@ -40,13 +41,20 @@ import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
  *
  */
 public final class AceFileDataStoreBuilder {
-
+	/**
+	 * Reference to ace file to be visited,
+	 * will be null if we use an inputStream instead. 
+	 */
 	private final File aceFile;
 	
 	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
 	//by default store everything in memory
 	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_FAST_RANDOM_ACCESS;
-	
+	/**
+	 * Reference to the {@link InputStream} of ace data to be visited,
+	 * will be null if we use an file instead. 
+	 */
+	private final InputStream aceStream;
 	/**
 	 * Create a new instance of {@code AceFileDataStoreBuilder}
 	 * which will build a {@link AceFileContigDataStore} for the given
@@ -66,6 +74,24 @@ public final class AceFileDataStoreBuilder {
 			throw new IOException("ace file is not readable");
 		}
 		this.aceFile = aceFile;
+		this.aceStream = null;
+	}
+	
+	/**
+	 * Create a new instance of {@code AceFileDataStoreBuilder}
+	 * which will build a {@link AceFileContigDataStore} for the given
+	 * {@link InputStream} containing .ace encoded data.
+	 * @param aceStream the {@link InputStream} that will
+	 * be used to make a {@link AceFileContigDataStore}.
+	 * The stream must be uncompressed.
+	 * @throws NullPointerException if aceFile is aceStream.
+	 */
+	public AceFileDataStoreBuilder(InputStream aceStream) throws IOException{
+		if(aceStream ==null){
+			throw new NullPointerException("inputstream can not be null");
+		}		
+		this.aceFile = null;
+		this.aceStream = aceStream;
 	}
 	/**
 	 * Only include the {@link AceContig}s which pass
@@ -138,10 +164,21 @@ public final class AceFileDataStoreBuilder {
 	 * @see #hint(DataStoreProviderHint)
 	 */
 	public AceFileContigDataStore build() throws IOException {
+		if(aceStream ==null){
+			return buildFromFile();
+		}
+		//since it's a stream we won't be able to re-seek so any
+		//request will require a storing everything in memory.
+		return DefaultAceFileDataStore2.create(aceStream,filter);
+
+	}
+
+	private AceFileContigDataStore buildFromFile() throws IOException,
+			FileNotFoundException {
 		switch(hint){
-			case OPTIMIZE_FAST_RANDOM_ACCESS: return DefaultAceFileDataStore.create(aceFile,filter);
-			case OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS: return IndexedAceFileDataStore.create(aceFile,filter);
-			case ITERATION_ONLY: return LargeAceFileDataStore.create(aceFile,filter);
+			case OPTIMIZE_FAST_RANDOM_ACCESS: return DefaultAceFileDataStore2.create(aceFile,filter);
+			case OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS: return IndexedAceFileDataStore2.create(aceFile,filter);
+			case ITERATION_ONLY: return LargeAceFileDataStore2.create(aceFile,filter);
 			default:
 				//can not happen
 				throw new IllegalArgumentException("unknown provider hint : "+ hint);

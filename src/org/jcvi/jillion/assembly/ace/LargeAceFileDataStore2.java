@@ -23,6 +23,7 @@ package org.jcvi.jillion.assembly.ace;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -213,10 +214,14 @@ final class LargeAceFileDataStore2 implements AceFileContigDataStore{
 	}
 	private void setTagLists() throws DataStoreException {
 		try {
-			AceTags aceTags = DefaultAceTagsFromAceFile.create(aceFile);
-			wholeAssemblyTags = aceTags.getWholeAssemblyTags();
-			consensusTags = aceTags.getConsensusTags();
-			readTags = aceTags.getReadTags();
+			AceTagsVisitor visitor = new AceTagsVisitor();
+			AceFileParser2.create(aceFile).accept(visitor);
+			if(!visitor.isCompletlyParsed()){
+				throw new DataStoreException("could not completely parse tags from ace file");
+			}
+			wholeAssemblyTags = visitor.getWholeAssemblyTags();
+			consensusTags = visitor.getConsensusTags();
+			readTags = visitor.getReadTags();
 		} catch (IOException e) {
 			throw new DataStoreException("error parsing ace tags from ace file", e);
 		}
@@ -605,5 +610,98 @@ private final AceContigReadVisitor readVisitor = new AceContigReadVisitor() {
             }
             
         }
+    }
+    
+    private class AceTagsVisitor implements AceFileVisitor2{
+
+    	/**
+	     * List of all the {@link WholeAssemblyAceTag}s
+	     * in the ace file in the order they are
+	     * declared in the file.
+	     */
+	    private final List<WholeAssemblyAceTag> wholeAssemblyTags = new ArrayList<WholeAssemblyAceTag>();
+	    /**
+	     * List of all the {@link ConsensusAceTag}s
+	     * in the ace file in the order they are
+	     * declared in the file.
+	     */
+	    private final List<ConsensusAceTag> consensusTags = new ArrayList<ConsensusAceTag>();
+	    /**
+	     * List of all the {@link ReadAceTag}s
+	     * in the ace file in the order they are
+	     * declared in the file.
+	     */
+	    private final List<ReadAceTag> readTags = new ArrayList<ReadAceTag>();
+	    
+	    private boolean completlyParsed=false;
+	    
+		@Override
+		public void visitHeader(int numberOfContigs, long totalNumberOfReads) {
+			//no-op
+			
+		}
+		@Override
+		public AceContigVisitor visitContig(AceFileVisitorCallback callback,
+				String contigId, int numberOfBases, int numberOfReads,
+				int numberOfBaseSegments, boolean reverseComplemented) {
+			//always skip
+			return null;
+		}
+		@Override
+		public void visitReadTag(String id, String type, String creator,
+				long gappedStart, long gappedEnd, Date creationDate,
+				boolean isTransient) {
+			readTags.add(new ReadAceTag(id, type, creator, creationDate, 
+                    Range.of(gappedStart,gappedEnd), isTransient));
+			
+		}
+
+		@Override
+		public AceConsensusTagVisitor visitConsensusTag(String id, String type,
+				String creator, long gappedStart, long gappedEnd,
+				Date creationDate, boolean isTransient) {
+			if(contigIdFilter.accept(id)){
+				return new AbstractAceConsensusTagVisitor(id, type,creator, 
+						gappedStart, gappedEnd, creationDate, isTransient) {
+					
+					@Override
+					protected void visitConsensusTag(ConsensusAceTag consensusTag) {
+						consensusTags.add(consensusTag);						
+					}
+				};
+			}
+			//skip
+			return null;
+		}
+
+		@Override
+		public void visitWholeAssemblyTag(String type, String creator,
+				Date creationDate, String data) {
+			wholeAssemblyTags.add(new WholeAssemblyAceTag(type, creator, creationDate, data.trim()));
+			
+		}
+		@Override
+		public void visitEnd() {
+			completlyParsed = true;
+			
+		}
+		@Override
+		public void halted() {
+			//no-op			
+		}
+		public final List<WholeAssemblyAceTag> getWholeAssemblyTags() {
+			return wholeAssemblyTags;
+		}
+		public final List<ConsensusAceTag> getConsensusTags() {
+			return consensusTags;
+		}
+		public final List<ReadAceTag> getReadTags() {
+			return readTags;
+		}
+		public final boolean isCompletlyParsed() {
+			return completlyParsed;
+		}
+	    
+	    
     }
 }

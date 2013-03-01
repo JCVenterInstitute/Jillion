@@ -222,7 +222,7 @@ private static final class DefaultAceFileWriter extends AbstractAceFileWriter{
 	private void copyTempFileData() throws FileNotFoundException, IOException {
 		InputStream in = new FileInputStream(tempFile);
 		try{
-		IOUtil.copy(in, out);
+			IOUtil.copy(in, out);
 		}finally{
 			IOUtil.closeAndIgnoreErrors(in);
 		}

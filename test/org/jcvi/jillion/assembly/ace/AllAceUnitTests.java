@@ -50,12 +50,6 @@ import org.junit.runners.Suite.SuiteClasses;
        TestDefaultAceBestSegment.class,
        TestAcePlacedReadAdapter.class,
        
-       TestDefaultAceFileDataStore.class,
-       TestIndexAceFileOffsets.class,
-       TestMemoryMappedIndexedAceFileDataStore.class,
-       TestLargeIndexedAceFileDataStore.class,
-       TestLargeAceFileDataStore.class,
-       
        TestDefaultAceFileDataStoreStreamingIterators.class,
        TestIndexedAceDataStoreStreamingIterators.class,
        TestLargeAceFileDataStoreStreamingIterators.class,

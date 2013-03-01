@@ -29,8 +29,6 @@ import java.util.Map;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -55,27 +53,44 @@ public final class AceContigTestUtil {
 	 */
 	public static final NucleotideSequenceDataStore createFullLengthSeqDataStoreFrom(File aceFile) throws IOException{
 		final Map<String,NucleotideSequence> fullSequences = new HashMap<String, NucleotideSequence>();
-		AbstractAceFileVisitor visitor =new AbstractAceFileVisitor() {
-			
+		
+		AceFileVisitor2 visitor2 = new AbstractAceFileVisitor2(){
+
 			@Override
-			protected void visitNewContig(String contigId,
-					NucleotideSequence consensus, int numberOfBases, int numberOfReads,
-					boolean isComplemented) {
-				//no-op
-				
+			public AceContigVisitor visitContig(
+					AceFileVisitorCallback callback, String contigId,
+					int numberOfBases, int numberOfReads,
+					int numberOfBaseSegments, boolean reverseComplemented) {
+
+				return new AbstractAceContigVisitor() {
+					@Override
+					public AceContigReadVisitor visitBeginRead(final String readId,
+							final int gappedLength) {
+						return new AbstractAceContigReadVisitor() {
+							NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(gappedLength);
+							@Override
+							public void visitBasesLine(String mixedCaseBasecalls) {
+								builder.append(mixedCaseBasecalls);
+							}
+
+							@Override
+							public void visitEnd() {
+								//full length means ungapped right?
+								builder.ungap();
+								fullSequences.put(readId, builder.build());
+							}
+							
+						};
+					}
+					
+				};
 			}
 			
-			@Override
-			protected void visitAceRead(String readId,
-					NucleotideSequence validBasecalls, int offset, Direction dir,
-					Range validRange, PhdInfo phdInfo, int ungappedFullLength) {
-				fullSequences.put(readId, new NucleotideSequenceBuilder(this.getCurrentFullLengthBasecalls())
-											.build());
-				
-			}
 		};
 		
-		AceFileParser.parse(aceFile, visitor);
+		
+		
+		AceFileParser2.create(aceFile).accept(visitor2);
 		return DataStoreUtil.adapt(NucleotideSequenceDataStore.class, fullSequences);
 	}
     
