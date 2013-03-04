@@ -75,7 +75,12 @@ import org.junit.runners.Suite.SuiteClasses;
        TestIndexedAceFileDataStore2.class,
        TestLargeAceFileDataStore2.class,
        
+       TestAceTestUtil.class,
+       TestAceContigVisitorAdapter.class,
+       TestAceContigVisitorAdapterRemoveReadsFromContig.class,
+       
        AllConsedUnitTests.class
+       
     }
 )
 public class AllAceUnitTests {

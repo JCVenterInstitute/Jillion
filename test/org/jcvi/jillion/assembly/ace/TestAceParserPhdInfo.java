@@ -99,7 +99,7 @@ public class TestAceParserPhdInfo {
     		iter = actualContig.getReadIterator();
     		while(iter.hasNext()){
     			AceAssembledRead read = iter.next();
-    			 assertEquals(phdInfoMap.get(read.getId()), read.getDefaultPhdInfo());
+    			 assertEquals(phdInfoMap.get(read.getId()), read.getPhdInfo());
     		}
     	}finally{
     		IOUtil.closeAndIgnoreErrors(iter);

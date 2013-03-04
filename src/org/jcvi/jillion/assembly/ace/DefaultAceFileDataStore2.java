@@ -63,7 +63,7 @@ final class DefaultAceFileDataStore2 implements AceFileContigDataStore{
     
     public static AceFileContigDataStore create(InputStream aceFileStream, DataStoreFilter filter) throws IOException{
     	Visitor builder = new Visitor(filter);
-    	AceFileParser2 parser = AceFileParser2.create(aceFileStream);
+    	AceHandler parser = AceFileParser2.create(aceFileStream);
     	parser.accept(builder);
     	return new DefaultAceFileDataStore2(builder);
     }
@@ -72,7 +72,7 @@ final class DefaultAceFileDataStore2 implements AceFileContigDataStore{
     }
     public static AceFileContigDataStore create(File aceFile, DataStoreFilter filter) throws IOException{
     	Visitor builder = new Visitor(filter);
-    	AceFileParser2 parser = AceFileParser2.create(aceFile);
+    	AceHandler parser = AceFileParser2.create(aceFile);
     	parser.accept(builder);
     	return new DefaultAceFileDataStore2(builder);
     }

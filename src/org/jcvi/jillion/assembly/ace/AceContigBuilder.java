@@ -268,7 +268,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     		 (int)acePlacedRead.getGappedStartOffset(),
     		 acePlacedRead.getDirection(),
     		 acePlacedRead.getReadInfo().getValidRange(),
-    		 acePlacedRead.getDefaultPhdInfo(),
+    		 acePlacedRead.getPhdInfo(),
     		 acePlacedRead.getReadInfo().getUngappedFullLength());
     }
     

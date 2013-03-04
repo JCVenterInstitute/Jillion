@@ -37,7 +37,7 @@ final class IndexedAceFileDataStore2 implements AceFileContigDataStore{
     private final List<ConsensusAceTag> consensusTags;
     private final List<ReadAceTag> readTags;
    
-    private final AceFileParser2 parser;
+    private final AceHandler parser;
     private final long totalNumberOfReads;
     
     private volatile boolean closed=false;
@@ -46,13 +46,13 @@ final class IndexedAceFileDataStore2 implements AceFileContigDataStore{
     	if(filter==null){
     		throw new NullPointerException("filter can not be null");
     	}
-    	AceFileParser2 parser = AceFileParser2.create(aceFile);
+    	AceHandler parser = AceFileParser2.create(aceFile);
     	VisitorBuilder visitorBuilder = new VisitorBuilder(filter);
     	parser.accept(visitorBuilder);
     	return new IndexedAceFileDataStore2(visitorBuilder, parser);
     }
     
-    private IndexedAceFileDataStore2(VisitorBuilder builder, AceFileParser2 parser){    	
+    private IndexedAceFileDataStore2(VisitorBuilder builder, AceHandler parser){    	
     	this.parser = parser;
     	this.mementos = builder.mementos;
     	this.wholeAssemblyTags = builder.wholeAssemblyTags;

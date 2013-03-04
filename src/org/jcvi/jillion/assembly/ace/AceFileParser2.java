@@ -53,13 +53,13 @@ import org.jcvi.jillion.internal.core.io.TextLineParser;
  * @author dkatzel
  * @see <a href = "http://www.phrap.org/consed/distributions/README.20.0.txt">Consed documentation which contains the ACE FILE FORMAT</a>
  */
-public abstract class AceFileParser2 {
+public abstract class AceFileParser2 implements AceHandler {
 	private static Pattern HEADER_PATTERN = Pattern.compile("^AS\\s+(\\d+)\\s+(\\d+)");
 	private AceFileParser2(){
 		//private constructor.
 	}
 	
-	public static AceFileParser2 create(File aceFile){
+	public static AceHandler create(File aceFile){
 		return new FileBasedParser(aceFile);
 	}
 	/**
@@ -70,25 +70,21 @@ public abstract class AceFileParser2 {
 	 * @param aceFileStream 
 	 * @return
 	 */
-	public static AceFileParser2 create(InputStream aceFileStream){
+	public static AceHandler create(InputStream aceFileStream){
 		return new InputStreamParser(aceFileStream);
 	}
     /**
-     * Parse the given aceFile and call the appropriate methods on the given AceFileVisitor.
-     * The given ace file must be a complete, fully formatted ace file
-     * including all ace header information.  For parsing
-     * partial ace files use {@link #parse(InputStream, AceFileVisitor2)}.
-     * @param aceFile the ace file to parse, can not be null.
-     * @param visitor the visitor to be visited, can not be null.
-     * @throws IOException if the ace file does not exist or 
-     * if there is a problem reading the ace file .
-     * @throws NullPointerException if either the aceFile or the visitor are {@code null}.
-     * @see #parse(InputStream, AceFileVisitor2)
-     */
-    public abstract void accept(AceFileVisitor2 visitor) throws IOException;
+	 * {@inheritDoc}
+	 */
+    @Override
+	public abstract void accept(AceFileVisitor2 visitor) throws IOException;
     
     
     
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public abstract void accept(AceFileVisitor2 visitor, AceFileVisitorMemento memento) throws IOException;
      
     /**
@@ -456,7 +452,16 @@ public abstract class AceFileParser2 {
             private final Pattern phdFilePattern = Pattern.compile("PHD_FILE:\\s+(\\S+)\\s+");
             private final Pattern timePattern = Pattern.compile("TIME:\\s+(.+:\\d\\d\\s+\\d\\d\\d\\d)");
             private final Pattern sffFakeChromatogramPattern = Pattern.compile("sff:(\\S+)?\\.sff:(\\S+)");
-             
+            
+           //TODO : consed docs says chem is always required but consed seems to work anyway?
+            private final Pattern chemPattern = Pattern.compile("CHEM:\\s+(\\S+)\\s+");
+          //TODO : consed docs says these fields are required for sanger but consed seems to work anyway?
+            
+            private final Pattern dyePattern = Pattern.compile("DYE:\\s+(\\S+)\\s+");
+            private final Pattern templatePattern = Pattern.compile("TEMPLATE:\\s+(\\S+)\\s+");
+            private final Pattern dirPattern = Pattern.compile("DIR:\\s+(\\S+)\\s+");
+            
+            
             @Override
             void handle(Matcher qualityMatcher, AceParserState parserState, String line) throws IOException {
                 if(parserState.parseCurrentRead()){
@@ -852,7 +857,7 @@ public abstract class AceFileParser2 {
 				return startOffset;
 			}
 
-			AceFileParser2 getParentParser(){
+			AceHandler getParentParser(){
 				return FileBasedParser.this;
 			}
 	    	

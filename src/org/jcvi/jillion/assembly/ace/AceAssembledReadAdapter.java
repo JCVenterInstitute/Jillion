@@ -53,7 +53,7 @@ public class AceAssembledReadAdapter implements AceAssembledRead{
 	
 
     @Override
-    public PhdInfo getDefaultPhdInfo() {
+    public PhdInfo getPhdInfo() {
         return phdInfo;
     }
     @Override

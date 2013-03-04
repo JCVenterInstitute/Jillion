@@ -13,6 +13,7 @@ import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.MapUtil;
 /**
  * {@code AbstractAceContigBuilderVisitor} is an {@link AceContigVisitor}
  * that will create a {@link AceContigBuilder} and populate it using the
@@ -26,11 +27,21 @@ public abstract class AbstractAceContigBuilderVisitor implements AceContigVisito
 	private final NucleotideSequenceBuilder consensusBuilder;
 	private AceContigBuilder builder;
 	private final Map<String, AlignedReadInfo> currentAlignedReadInfoMap;
-	
+	/**
+	 * Create a new instance of {@link AbstractAceContigBuilderVisitor} that will
+	 * populate an {@link AceContigBuilder} as visit methods are called.
+	 * @param contigId the contig id of the contig to build.
+	 * @param consensusLength the expected initial consensus length; must be >1.
+	 * @param numberOfReads the expected initial number of reads that will be in this builder;
+	 * must be >=0.  This value is only used to initialize the size of internal hashes,
+	 * the number of reads actually visited may be greater or less than this value.
+	 * @throws IllegalArgumentException if consensusLength <1 or numberOfReads <0.
+	 */
 	public AbstractAceContigBuilderVisitor(String contigId, int consensusLength, int numberOfReads) {
 		this.contigId = contigId;
 		consensusBuilder = new NucleotideSequenceBuilder(consensusLength);
-		currentAlignedReadInfoMap = new HashMap<String, AlignedReadInfo>(numberOfReads);
+		int mapCapacity = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads);
+		currentAlignedReadInfoMap = new HashMap<String, AlignedReadInfo>(mapCapacity);
 	}
 
 	@Override
