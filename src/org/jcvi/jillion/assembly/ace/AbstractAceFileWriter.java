@@ -205,7 +205,7 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
         return AceFileUtil.createAcePlacedReadRecord(
                 read.getId(),read,
                 phd, 
-                read.getDefaultPhdInfo());
+                read.getPhdInfo());
         
     }
 	 private void writeFakeUngappedConsensusQualities(Writer tempWriter, NucleotideSequence consensus) throws IOException {

@@ -34,14 +34,13 @@ public interface AceContigVisitor {
     void visitConsensusQualities(QualitySequence ungappedConsensusQualities);
     /**
      * Visit a line that defines the location of a 
-     * read within a contig.  This method will only
-     * get called if the current contig is being parsed which is determined
-     * by the return value of {@link #visitContig(String, int, int, int, boolean)}.
+     * read within a contig. This is equivalent to an AF line
+     * in ace file.
      * @param readId id of read.
      * @param dir {@link Direction} of read inside contig.
-     * @param gappedStartOffset gapped start offset of read inside contig.
+     * @param gappedStartPosition gapped start position (1's based) of read inside contig.
      */
-    void visitAlignedReadInfo(String readId, Direction dir, int gappedStartOffset);
+    void visitAlignedReadInfo(String readId, Direction dir, int gappedStartPosition);
     /**
      * Base Segments indicate reads phrap has chosen to be the consensus
      * at a particular position.  This method will only

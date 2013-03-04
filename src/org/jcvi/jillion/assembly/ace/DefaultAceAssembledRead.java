@@ -59,7 +59,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
 		return placedRead.getReadInfo();
 	}
 	@Override
-    public PhdInfo getDefaultPhdInfo() {
+    public PhdInfo getPhdInfo() {
         return phdInfo;
     }
 

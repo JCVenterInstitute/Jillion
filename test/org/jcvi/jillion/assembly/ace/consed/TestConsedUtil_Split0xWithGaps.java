@@ -293,7 +293,7 @@ public class TestConsedUtil_Split0xWithGaps {
         assertEquals("offset",expected.getGappedStartOffset(),actual.getGappedStartOffset());
         assertEquals("direction",expected.getDirection(),actual.getDirection());
         
-        assertEquals("phdInfo",expected.getDefaultPhdInfo(),actual.getDefaultPhdInfo());
+        assertEquals("phdInfo",expected.getPhdInfo(),actual.getPhdInfo());
         assertEquals("basecalls",expected.getNucleotideSequence(),actual.getNucleotideSequence());
         assertEquals("validRange",expected.getReadInfo().getValidRange(),actual.getReadInfo().getValidRange());
     }

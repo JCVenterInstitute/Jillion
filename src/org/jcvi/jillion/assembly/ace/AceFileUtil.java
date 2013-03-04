@@ -408,7 +408,7 @@ public final class AceFileUtil {
         return AceFileUtil.createAcePlacedReadRecord(
                 read.getId(),read,
                 phd, 
-                read.getDefaultPhdInfo());
+                read.getPhdInfo());
         
     }
     private static final class IdAlignedReadInfo implements Comparable<IdAlignedReadInfo>{

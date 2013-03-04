@@ -61,7 +61,7 @@ public class TestAcePlacedReadAdapter {
     
     @Test
     public void constructor(){
-        assertEquals(phdInfo,sut.getDefaultPhdInfo());
+        assertEquals(phdInfo,sut.getPhdInfo());
     }
     @Test
     public void convertReferenceIndexToValidRangeIndex() {
