@@ -22,7 +22,7 @@ package org.jcvi.jillion.assembly;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.SortedMap;
 
 import org.easymock.EasyMockSupport;
 import org.jcvi.jillion.assembly.AssembledRead;
@@ -191,7 +191,7 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
 		}
 
 		@Override
-		public Map<Integer, Nucleotide> getDifferenceMap() {
+		public SortedMap<Integer, Nucleotide> getDifferenceMap() {
 			throw new UnsupportedOperationException("invalid for adapted sequence");
 		}
 

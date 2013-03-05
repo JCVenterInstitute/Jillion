@@ -25,7 +25,7 @@
  */
 package org.jcvi.jillion.core.residue.nt;
 
-import java.util.Map;
+import java.util.SortedMap;
 /**
  * {@code ReferenceMappedNucleotideSequence} is
  * a NucleotideSequence that has been mapped
@@ -54,12 +54,13 @@ public interface ReferenceMappedNucleotideSequence extends NucleotideSequence{
      * of this read compared to the reference.
      * All coordinates are 0-based gapped offset locations in the read coordinate system;
      * so if a difference is located in the first base of the read,
-     * then its integer will be zero.
+     * then its integer will be zero.  The Map is sorted by 
+     * offset, increasing from smallest offset to largest.
      * @return a Map of all the differences between
-     * this sequence and its reference; will never be null
+     * this sequence and its reference; will never be null 
      * but may be empty if there are no differences.
      */
-    Map<Integer, Nucleotide> getDifferenceMap();
+    SortedMap<Integer, Nucleotide> getDifferenceMap();
     /**
      * Get the Reference sequence that this
      * sequence is mapped to.
