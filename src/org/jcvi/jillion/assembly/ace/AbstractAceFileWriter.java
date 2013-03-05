@@ -34,10 +34,11 @@ import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.trace.sanger.phd.Phd;
@@ -119,71 +120,40 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 	}
 	
 	private void computeConsensusQualities(Writer tempWriter, AceContig contig,PhdDataStore phdDataStore) throws IOException {
-		NucleotideSequence consensusSequence = contig.getConsensusSequence();
-		double[] qualities = new double[(int)consensusSequence.getUngappedLength()];
-		StreamingIterator<AceAssembledRead> readIterator = contig.getReadIterator();
-		try{
-			while(readIterator.hasNext()){
-				AceAssembledRead read = readIterator.next();
-				int startOffset = consensusSequence.getUngappedOffsetFor((int)read.getGappedStartOffset());
-				QualitySequence ungappedQualities;
-				try {
-					ungappedQualities = AssemblyUtil.getUngappedComplementedValidRangeQualities(read,phdDataStore.get(read.getId()).getQualitySequence());
-				} catch (DataStoreException e) {
-					throw new IOException("error computing consensus qualities when examining read "+read.getId(),e);
-				}
-				Iterator<Nucleotide> basesIterator = read.getNucleotideSequence().iterator();
-				Iterator<PhredQuality> qualIterator = ungappedQualities.iterator();
-				int i=0;
-				Iterator<Nucleotide> consensusIterator = consensusSequence.iterator(read.asRange());
-				while(basesIterator.hasNext()){
-					Nucleotide consensus = consensusIterator.next();
-					Nucleotide base = basesIterator.next();
-					double qualValue;
-					if(base.isGap()){
-						qualValue=0D;
-					}else{						
-						qualValue =qualIterator.next().getErrorProbability();
-					}
-					if(!consensus.isGap()){
-						if(base == consensus){
-							qualities[startOffset+i] -=qualValue;
-						}else{
-							qualities[startOffset+i] +=qualValue;
-						}
-						i++;	
-					}
-				}
-			}
-		}finally{
-			IOUtil.closeAndIgnoreErrors(readIterator);
-		}
-        int numberOfLines = qualities.length/50+1;
-		StringBuilder formattedString = new StringBuilder(3+ 3* qualities.length+numberOfLines);
-		formattedString.append("BQ\n");
-		for(int i=1; i<qualities.length;i++){
-			formattedString.append(getNormalizedQualValueAsString(qualities, i-1));
-			if(i%50==0){
-				formattedString.append(CR);
-			}else{
-				formattedString.append(' ');
-			}
-		}
-		formattedString.append(getNormalizedQualValueAsString(qualities, qualities.length-1));
-		formattedString.append(CR);
-		tempWriter.write(formattedString.toString());
 		
-	}
+		QualitySequenceDataStore qualityDataStore =DataStoreUtil.adapt(QualitySequenceDataStore.class, phdDataStore, new DataStoreUtil.AdapterCallback<Phd, QualitySequence>(){
 
-	private String getNormalizedQualValueAsString(double[] qualities, int i) {
-		int value;
-		if(qualities[i]<=0){
-			value = PhredQuality.MAX_VALUE;
-		}else{
-			value = PhredQuality.computeQualityScore(qualities[i]);
+			@Override
+			public QualitySequence get(Phd from) {
+				return from.getQualitySequence();
+			}
+			  
+		});
+		try {
+			QualitySequence consensusQualities = AceFileUtil.computeConsensusQualities(contig, qualityDataStore);
+			int qualityLength = (int)consensusQualities.getLength();
+			int numberOfLines = qualityLength/50+1;
+			StringBuilder formattedString = new StringBuilder(3+ 3* qualityLength+numberOfLines);
+			formattedString.append("BQ\n");
+			Iterator<PhredQuality> iter = consensusQualities.iterator();
+			int i=1;
+			while(i <qualityLength){
+				formattedString.append(String.format("%02d",iter.next().getQualityScore()));
+				if(i%50==0){
+					formattedString.append(CR);
+				}else{
+					formattedString.append(' ');
+				}
+				i++;
+			}
+			//last quality handled specially so we don't add an extra CR
+			formattedString.append(String.format("%02d",iter.next().getQualityScore()));
+			formattedString.append(CR);
+			tempWriter.write(formattedString.toString());
+		} catch (DataStoreException e) {
+			throw new IOException("error computing consensus qualities", e);
 		}
-		value = Math.min(value, 99);
-		return String.format("%02d",value);
+		
 	}
 
 	private String createAssembledFromRecord(AceAssembledRead read, long fullLength){

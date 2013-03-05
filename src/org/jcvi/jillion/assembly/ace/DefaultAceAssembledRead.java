@@ -274,7 +274,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
         * {@inheritDoc}
         */
         @Override
-        public PhdInfo getDefaultPhdInfo() {
+        public PhdInfo getPhdInfo() {
             return phdInfo;
         }
 

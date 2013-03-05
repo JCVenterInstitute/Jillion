@@ -43,7 +43,7 @@ public interface AceAssembledReadBuilder extends AssembledReadBuilder<AceAssembl
      * @return the phdInfo
      * (never null).
      */
-    PhdInfo getDefaultPhdInfo();
+    PhdInfo getPhdInfo();
     /**
      * 
      * {@inheritDoc}

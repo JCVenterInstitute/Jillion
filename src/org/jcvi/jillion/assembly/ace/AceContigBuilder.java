@@ -574,7 +574,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
             			(int)(readBuilder.getBegin() - rangeTokeep.getBegin()), 
             			readBuilder.getDirection(), 
             			readBuilder.getClearRange(), 
-            			readBuilder.getDefaultPhdInfo(), 
+            			readBuilder.getPhdInfo(), 
             			readBuilder.getUngappedFullLength());
             }
             splitContigs.put(rangeTokeep, splitContig);

@@ -67,7 +67,7 @@ public class TestDefaultAcePlacedReadReAbacus {
         assertEquals(readId, sut.getId());
         assertEquals(originalStartOffset, sut.getBegin());
         assertEquals(dir, sut.getDirection());
-        assertEquals(phdInfo, sut.getDefaultPhdInfo());
+        assertEquals(phdInfo, sut.getPhdInfo());
         assertEquals(ungappedFullLength, sut.getUngappedFullLength());
         assertEquals(originalSequence, sut.getNucleotideSequenceBuilder().build());
         assertEquals(validRange, sut.getClearRange());
@@ -80,7 +80,7 @@ public class TestDefaultAcePlacedReadReAbacus {
         
         assertEquals(readId, sut.getId());
         assertEquals(dir, sut.getDirection());
-        assertEquals(phdInfo, sut.getDefaultPhdInfo());
+        assertEquals(phdInfo, sut.getPhdInfo());
         assertEquals(ungappedFullLength, sut.getUngappedFullLength());
         assertEquals(originalSequence, sut.getNucleotideSequenceBuilder().build());
         assertEquals(validRange, sut.getClearRange());
