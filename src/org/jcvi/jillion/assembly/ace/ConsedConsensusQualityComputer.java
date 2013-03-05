@@ -161,8 +161,8 @@ final class ConsedConsensusQualityComputer {
 	    			if(notAGap(readGaps, i)){
 		    			PhredQuality qual =qualIter.next();
 		    			int consensusOffset = (int)(i+start);
-		    			if(notAGap(consensusGapsArray, consensusOffset) &&
-		    					readMatchesWindow(consensusGapsArray, consensusLength, read, start, differenceArray, i)){
+		    			if(notAGap(consensusGapsArray, consensusOffset) 
+		    					&& readMatchesWindow(consensusGapsArray, consensusLength, read, start, differenceArray, i)){
 		    				addQualityToConsensusConsideratino(
 									forwardQualitiesTowardsConsensus,
 									reverseQualitiesTowardsConsensus, start,
