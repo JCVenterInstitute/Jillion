@@ -129,9 +129,9 @@ public final class AceFileWriterBuilder{
 		 * If this method is not called,
 		 * then the contig consensus will get 
 		 * set to a default value of
-		 * "99" for each non-gap base which 
+		 * "90" for each non-gap base which 
 		 * consed interprets as 
-		 * "human edited high quality". 
+		 * the highest "non-human edited quality". 
 		 * @return this
 		 */
 		public AceFileWriterBuilder computeConsensusQualities(){

@@ -35,6 +35,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         TestAceFileUtil.class,
+        TestConsedConsensusQualityComputer.class,
+        
        TestDefaultPhdInfo.class,
        TestAssembledFrom.class,
        TestAceParserPhdInfo.class,
