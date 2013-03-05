@@ -31,10 +31,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -97,22 +95,22 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
     
     
     @Override
-	public Map<Integer, Nucleotide> getDifferenceMap() {
+	public SortedMap<Integer, Nucleotide> getDifferenceMap() {
     	if(encodedSnpsInfo==null){
-    		return Collections.emptyMap();
+    		return new TreeMap<Integer, Nucleotide>();
     	}
         ByteBuffer buf = ByteBuffer.wrap(encodedSnpsInfo);
         ValueSizeStrategy numSnpsSizeStrategy = ValueSizeStrategy.values()[buf.get()];
 		int size = numSnpsSizeStrategy.getNext(buf);
         ValueSizeStrategy snpSizeStrategy = ValueSizeStrategy.values()[buf.get()];
     	BitSet bits = getSnpBitSet(numSnpsSizeStrategy, size, snpSizeStrategy);
-    	Map<Integer, Nucleotide> differenceMap = new HashMap<Integer, Nucleotide>();
+    	SortedMap<Integer, Nucleotide> differenceMap = new TreeMap<Integer, Nucleotide>();
     	for(int i=0; i<size; i++){        	
             Integer offset = snpSizeStrategy.getNext(buf);
             differenceMap.put(offset, getSnpValueFrom(bits, i));
 			
         }
-		return Collections.unmodifiableMap(differenceMap);
+		return differenceMap;
 	}
 
 

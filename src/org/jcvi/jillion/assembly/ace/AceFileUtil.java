@@ -26,11 +26,13 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssemblyUtil;
@@ -43,6 +45,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -493,6 +496,156 @@ public final class AceFileUtil {
 	        }
 	        return getId().compareTo(o.getId());
 	    }
+    	
+    }
+    
+    /**
+     * Compute the consensus quality sequence as computed by the same algorithm consed uses.
+     * @param contig the contig to compute the consensus qualities for; can not be null.
+     * @return a {@link QualitySequence} can not be null.
+     * @throws DataStoreException 
+     * @throws NullPointerException if contig is null.
+     */
+    public static QualitySequence computeConsensusQualities(Contig<? extends AssembledRead> contig, QualitySequenceDataStore readQualities) throws DataStoreException{
+    	if(contig ==null){
+    		throw new NullPointerException("contig can not be null");
+    	}
+    	
+    	//The algorithm that consed uses was explained to dkatzel
+    	//by David Gordon, the author of Consed, via several phone calls and emails 
+    	//in March 2013
+    	//
+    	//Here is the basic algorithm:
+    	//
+    	//For each consensus position, look at all underlying reads that match
+    	//and sum the highest forward quality and the highest reverse quality
+    	//if there is extra coverage (even if only in one dir) then add an additional 5 qv.
+    	//max value allowed is 90.
+    	//
+    	//To filter which reads are considered, Consed uses a flanking window of 2bp on each side
+    	//the entire window must match the consensus in order for the read to be considered at 
+    	//the consensus position.
+    	//
+    	//below are some more details from emails from David Gordon:
+    	//
+    	//OK, I looked at the code for computing the consensus qualities. 
+    	//It only uses reads that agree with the consensus in a window about the base in question:
+    	//
+    	//    ...CCBCC...    consensus
+    	//    ...ccbcc...    read
+    	//
+    	// so in a column, if any of ccbcc disagrees with CCBCC,
+    	// this read is not used for the purpose of calculating the consensus quality of B.
+    	//
+    	// at the ends of contigs, then the window is one-sided.  For
+        // example, at the left end the window looks like this:
+    	//
+        //    BCC...
+        //    bcc...
+    	//
+        //  (even if the read extends further to the left).
+    	//
+    	// And all of the bases much not be pads.  So if there is a column of
+    	// pads, the window is larger:
+    	//
+    	//      ...C*CCBCC...
+    	//       ...c*ccbcc...
+    	//
+    	// If this window isn't completely contained within the read's aligned
+    	// region, then this read isn't used.
+    	//
+    	// The whole window business is to not allow mis-aligned reads to be used
+    	// in the calculation.
+    	//
+    	// Requiring the window decreases the chance that the read is misaligned
+    	// (at this location).  When you look at it this way, then these rules
+    	// make sense.
+    	//
+    	//
+    	// The +5 is used only once--not once for each strand.
+    	//
+    	// There is also an issue of library duplicates. 
+    	// If 2 reads have the same starting location, they are suspected
+    	// of being library duplicates and thus are not allowed to 
+    	// confirm each other so no +5 boost is given.  
+    	// For example, suppose you have 50 reads all top strand,
+    	// but they all start at the same location, 
+    	// then there is no +5 of the quality because it is likely 
+    	// they were all PCR'd from the same piece of DNA.
+    	//
+    	// Quality values are not allowed to be greater than 90--I just cut it off there. 
+    	// (Quality 98 and 99 have special meanings.)
+    	
+    	NucleotideSequence consensusSequence = contig.getConsensusSequence();
+    	int consensusLength = (int)consensusSequence.getLength();
+		List<List<QualityPosition>> qualitiesTowardsConsensus = new ArrayList<List<QualityPosition>>((int)consensusSequence.getLength());
+    	for(int i=0; i< consensusLength; i++){
+    		qualitiesTowardsConsensus.add(new ArrayList<QualityPosition>());
+    	}
+		
+		StreamingIterator<? extends AssembledRead> iter= contig.getReadIterator();
+    	try{
+	    	while(iter.hasNext()){
+	    		AssembledRead read = iter.next();
+	    		long start =read.getGappedStartOffset();
+	    		Map<Integer, Nucleotide> differences =read.getNucleotideSequence().getDifferenceMap();
+	    		
+	    		int[] differenceArray = new int[differences.size()];
+	    		Iterator<Integer> diffIter = differences.keySet().iterator();
+	    		for(int i=0;  diffIter.hasNext(); i++){
+	    			differenceArray[i]=diffIter.next().intValue();
+	    		}
+	    		
+	    		Range validRange = read.getReadInfo().getValidRange();
+	    		Direction dir = read.getDirection();
+	    		if(dir ==Direction.REVERSE){
+	    			validRange = AssemblyUtil.reverseComplementValidRange(validRange, read.getReadInfo().getUngappedFullLength());
+	    		}
+	    		QualitySequence validQualities = AssemblyUtil.getUngappedComplementedValidRangeQualities(read, readQualities.get(read.getId()));
+
+	    		Iterator<PhredQuality> qualIter = validQualities.iterator();
+	    		int i=0;
+	    		while(qualIter.hasNext()){
+	    			PhredQuality qual =qualIter.next();
+	    			boolean windowMatches = Arrays.binarySearch(differenceArray, i) <0;
+	    			for(int j= i-2; windowMatches && j>=0 && j<i; j++){
+	    				windowMatches = Arrays.binarySearch(differenceArray, j) <0;
+	    			}
+	    			for(int j= i+1; windowMatches && j<=i+2 && j<read.getGappedLength(); j++){
+	    				windowMatches = Arrays.binarySearch(differenceArray, j) <0;
+	    			}
+	    			if(windowMatches){
+	    				QualityPosition position = new QualityPosition(qual, start, dir);
+	    				qualitiesTowardsConsensus.get(i).add(position);
+	    				//window matches 
+	    			}
+	    		}
+	    	}
+    	}finally{
+    		IOUtil.closeAndIgnoreErrors(iter);
+    	}
+    	
+    	
+    	return null;
+    }
+    
+    private static class QualityPosition implements Comparable<QualityPosition>{
+    	private byte quality;
+    	private long startOffset;
+    	private byte Direction;
+    	
+		public QualityPosition(PhredQuality quality, long startOffset, Direction direction) {
+			this.quality = quality.getQualityScore();
+			this.startOffset = startOffset;
+			Direction = (byte)direction.ordinal();
+		}
+
+		@Override
+		public int compareTo(QualityPosition other) {			
+			return Byte.compare(quality, other.quality);
+		}
+    	
+    	
     	
     }
     
