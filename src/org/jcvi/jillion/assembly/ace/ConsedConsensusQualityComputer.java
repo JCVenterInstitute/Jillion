@@ -161,15 +161,12 @@ final class ConsedConsensusQualityComputer {
 	    			if(notAGap(readGaps, i)){
 		    			PhredQuality qual =qualIter.next();
 		    			int consensusOffset = (int)(i+start);
-		    			if(notAGap(consensusGapsArray, consensusOffset)){
-			    			if(readMatchesWindow(consensusGapsArray, consensusLength, read, start, differenceArray, i)){
-			    				QualityPosition position = new QualityPosition(qual, start);
-			    				if(dir==Direction.FORWARD){
-			    					forwardQualitiesTowardsConsensus.get(consensusOffset).add(position);
-			    				}else{
-			    					reverseQualitiesTowardsConsensus.get(consensusOffset).add(position);
-			    				}
-			    			}
+		    			if(notAGap(consensusGapsArray, consensusOffset) &&
+		    					readMatchesWindow(consensusGapsArray, consensusLength, read, start, differenceArray, i)){
+		    				addQualityToConsensusConsideratino(
+									forwardQualitiesTowardsConsensus,
+									reverseQualitiesTowardsConsensus, start,
+									dir, qual, consensusOffset);			    			
 		    			}
 	    			}
 	    			i++;
@@ -187,6 +184,17 @@ final class ConsedConsensusQualityComputer {
     		IOUtil.closeAndIgnoreErrors(iter);
     	}
     }
+	public void addQualityToConsensusConsideratino(
+			List<List<QualityPosition>> forwardQualitiesTowardsConsensus,
+			List<List<QualityPosition>> reverseQualitiesTowardsConsensus,
+			long start, Direction dir, PhredQuality qual, int consensusOffset) {
+		QualityPosition position = new QualityPosition(qual, start);
+		if(dir==Direction.FORWARD){
+			forwardQualitiesTowardsConsensus.get(consensusOffset).add(position);
+		}else{
+			reverseQualitiesTowardsConsensus.get(consensusOffset).add(position);
+		}
+	}
 	private void removeConsensusGaps(
 			QualitySequenceBuilder consensusQualitiesBuilder,
 			int[] consensusGapsArray) {
@@ -294,8 +302,8 @@ final class ConsedConsensusQualityComputer {
 		return false;
 	}
 	private static final class QualityPosition implements Comparable<QualityPosition>{
-    	private byte quality;
-    	private long startOffset;
+    	private final byte quality;
+    	private final long startOffset;
     	
 		public QualityPosition(PhredQuality quality, long startOffset) {
 			this.quality = quality.getQualityScore();
@@ -304,7 +312,42 @@ final class ConsedConsensusQualityComputer {
 
 		@Override
 		public int compareTo(QualityPosition other) {			
-			return quality- other.quality;
+			int qualCmp= quality- other.quality;
+			if(qualCmp !=0){
+				return qualCmp;
+			}
+			return (int)(startOffset - other.startOffset);
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + quality;
+			result = prime * result
+					+ (int) (startOffset ^ (startOffset >>> 32));
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (!(obj instanceof QualityPosition)) {
+				return false;
+			}
+			QualityPosition other = (QualityPosition) obj;
+			if (quality != other.quality) {
+				return false;
+			}
+			if (startOffset != other.startOffset) {
+				return false;
+			}
+			return true;
 		}
     	
     }
