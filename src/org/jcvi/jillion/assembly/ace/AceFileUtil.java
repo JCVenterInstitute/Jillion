@@ -507,8 +507,7 @@ public final class AceFileUtil {
      * @throws NullPointerException if contig is null.
      */
     public static QualitySequence computeConsensusQualities(Contig<? extends AssembledRead> contig, QualitySequenceDataStore readQualities) throws DataStoreException{
-    	ConsedConsensusQualityComputer computer = new ConsedConsensusQualityComputer(contig, readQualities);
-    	return computer.computeConsensusQualities();
+    	return ConsedConsensusQualityComputer.computeConsensusQualities(contig, readQualities);
     }
     
     

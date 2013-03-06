@@ -25,6 +25,7 @@
  */
 package org.jcvi.jillion.assembly.ace;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -54,6 +55,7 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -109,6 +111,9 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     private int contigRight = -1;
     private volatile boolean built=false;
     private boolean complemented=false;
+    private boolean computeConsensusQualities=false;
+    
+    private QualitySequenceBuilder mutableConsensusQualities;
     /**
      * Create a new {@link AceContigBuilder} for a contig with the given
      * contig id and starting with the given consensus.  Both the contig id
@@ -123,6 +128,18 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
        this(contigId,                   
     		   new NucleotideSequenceBuilder(initialConsensus).build()
         );
+    }
+    
+    public AceContigBuilder setInitialConsensusQualities(QualitySequence consensusQualities){
+    	this.mutableConsensusQualities = new QualitySequenceBuilder(consensusQualities);
+    	return this;
+    }
+    
+    private QualitySequenceBuilder createDefaultQualitySequenceBuilder(){
+    	int ungappedConsensusLength = (int)mutableConsensus.getUngappedLength();
+    	byte[] quals = new byte[ungappedConsensusLength];
+    	Arrays.fill(quals, DEFAULT_QUALITY.getQualityScore());
+    	return new QualitySequenceBuilder(quals);
     }
     /**
      * Create a new {@link AceContigBuilder} for a contig with the given
@@ -193,7 +210,10 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      * to recall the consensus of this contig; can not be null.
      * @param qualityDataStore the {@link QualitySequenceDataStore}
      * which contains all the quality data for all of the reads
-     * in this contig; can not be null.
+     * in this contig; can not be null. This value will override
+     * the quality datastore set by {@link #computeConsensusQualities(QualitySequenceDataStore)}
+     * and vice versa, last one called wins. (This is more for user's
+     * convenience in case they don't want to do one or the other).
      * @return this.
      * @throws NullPointerException if any parameter is null.
      */
@@ -210,6 +230,49 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     	this.consensusCaller=consensusCaller;
     	this.qualityDataStore = qualityDataStore;
     	this.qualityValueStrategy = qualityValueStrategy;
+    	return this;
+    }
+    /**
+     * Compute the consensus Qualities using the same
+     * algorithm that consed uses.    The read quality values
+     * will be taken from the {@link QualitySequenceDataStore} set by
+     * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}.
+     * If you do not wish to recall consensus, then use 
+     * {@link #computeConsensusQualities(QualitySequenceDataStore)}.
+     * If this method is not specified
+     * AND {@link #setInitialConsensusQualities(QualitySequence)} is not
+     * called, then the consensus qualities will be set to a dummy value
+     * of all 30.
+     * @return this
+     * @see {@link #computeConsensusQualities(QualitySequenceDataStore)}
+     */
+    public AceContigBuilder computeConsensusQualities(){
+    	this.computeConsensusQualities = true;
+    	return this;
+    }
+    /**
+     * Compute the consensus Qualities using the same
+     * algorithm that consed uses.    The read quality values
+     * will be taken from the given {@link QualitySequenceDataStore}.
+     * If this method is not specified
+     * AND {@link #setInitialConsensusQualities(QualitySequence)} is not
+     * called, then the consensus qualities will be set to a dummy value
+     * of all 30.
+     * @param readQualityDataStore the {@link QualitySequenceDataStore}
+     * to use to compute consensus qualities.  This value will override
+     * the quality datastore set by {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}
+     * and vice versa, last one called wins. (This is more for user's
+     * convenience in case they don't want to do one or the other).
+     * @return this
+     * @throws NullPointerException if readQualityDataStore is null.
+     */
+    public AceContigBuilder computeConsensusQualities(QualitySequenceDataStore readQualityDataStore){
+    	if(readQualityDataStore ==null){
+    		throw new NullPointerException("read quality datastore can not be null");
+    	}
+    	this.computeConsensusQualities = true;
+    	
+    	this.qualityDataStore = readQualityDataStore;
     	return this;
     }
     /**
@@ -390,11 +453,15 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
         if(numberOfReads()==0){
             //force empty contig if no reads...
         	 built=true;
-            return new DefaultAceContigImpl(contigId, new NucleotideSequenceBuilder().build(),Collections.<AceAssembledRead>emptySet(),complemented);
+            return new DefaultAceContigImpl(contigId, new NucleotideSequenceBuilder().build(),
+            		Collections.<AceAssembledRead>emptySet(),complemented,
+            		new QualitySequenceBuilder().build());
         }
         if(consensusCaller !=null){
 			recallConsensusNow();
         }
+        
+        
         SortedSet<AceAssembledRead> placedReads = new TreeSet<AceAssembledRead>(ConsedReadComparator.INSTANCE);
         //contig left (and right) might be beyond consensus depending on how
         //trimmed the data is and what assembler/consensus caller is used.
@@ -406,20 +473,50 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
         contigRight = Math.min(contigRight,(int)mutableConsensus.getLength()-1);
         //here only include the gapped valid range consensus bases
         //throw away the rest            
-        NucleotideSequence validConsensus = mutableConsensus
+        Range contigTrimRange = Range.of(contigLeft, contigRight);
+		NucleotideSequence validConsensus = mutableConsensus
         		.copy()
-        		.trim(Range.of(contigLeft, contigRight))
+        		.trim(contigTrimRange)
         		.build();
         for(AceAssembledReadBuilder aceReadBuilder : aceReadBuilderMap.values()){
             int newOffset = (int)aceReadBuilder.getBegin() - contigLeft;
             aceReadBuilder.reference(validConsensus,newOffset);
             placedReads.add(aceReadBuilder.build());                
         } 
+       
+        if(mutableConsensusQualities ==null){
+        	//no consensus qualities set
+        	if(computeConsensusQualities){
+        		if(qualityDataStore ==null){
+        			throw new NullPointerException("quality datastore can not be null");
+        		}
+        		try {
+					mutableConsensusQualities = new QualitySequenceBuilder(ConsedConsensusQualityComputer.computeConsensusQualities(mutableConsensus.build(), placedReads, qualityDataStore));
+				} catch (DataStoreException e) {
+					throw new IllegalStateException("error computing consensus quality sequence",e);
+				}
+        	}else{
+        		mutableConsensusQualities = createDefaultQualitySequenceBuilder();
+        	}
+        }else{
+        	//make sure consensus quality length matches consensus ungapped length
+        	long qualLength =mutableConsensusQualities.getLength();
+        	long ungappedLength = mutableConsensus.getUngappedLength();
+        	if(qualLength != ungappedLength){
+        		throw new IllegalStateException("given consensus quality length does not match ungapped consensus length");
+        	}
+        }
+        NucleotideSequence fullConsensus = mutableConsensus.build();
+        Range ungappedContigTrimRange = Range.of(fullConsensus.getUngappedOffsetFor(contigLeft),
+        										fullConsensus.getUngappedOffsetFor(contigRight));
+        QualitySequence consensusQualitySequence = mutableConsensusQualities
+								        		.trim(ungappedContigTrimRange)
+								    			.build();
         built=true;
         aceReadBuilderMap.clear();
         initialConsensus = null;
         
-        return new DefaultAceContigImpl(contigId, validConsensus,placedReads,complemented);
+        return new DefaultAceContigImpl(contigId, validConsensus,placedReads,complemented, consensusQualitySequence);
     }
     /**
      * Recompute the contig
@@ -607,16 +704,27 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
 
     	
         private final boolean complemented;
+        private final QualitySequence consensusQualities;
+        
         private final Contig<AceAssembledRead> contig;
         private DefaultAceContigImpl(String id, NucleotideSequence consensus,
-                Set<AceAssembledRead> reads,boolean complemented) {
+                Set<AceAssembledRead> reads,boolean complemented,
+                QualitySequence consensusQualities) {
             contig = new DefaultContig<AceAssembledRead>(id, consensus, reads);
             this.complemented = complemented;
+            this.consensusQualities = consensusQualities;
         }
        
         
         
-        /**
+        @Override
+		public QualitySequence getConsensusQualitySequence() {
+			return consensusQualities;
+		}
+
+
+
+		/**
         * {@inheritDoc}
         */
         @Override
