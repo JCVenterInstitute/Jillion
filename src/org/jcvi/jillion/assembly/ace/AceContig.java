@@ -26,6 +26,7 @@
 package org.jcvi.jillion.assembly.ace;
 
 import org.jcvi.jillion.assembly.Contig;
+import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
  * an {@code AceContig} is a {@link Contig}
@@ -40,6 +41,13 @@ public interface AceContig extends Contig<AceAssembledRead>{
      * is complemented; {@code false} otherwise.
      */
     boolean isComplemented();
+    /**
+     * Get the {@link QualitySequence}
+     * for the UNGAPPED consensus sequence.
+     * @return a {@link QualitySequence},
+     * may be null if the consensus qualities are unavailable.
+     */
+    QualitySequence getConsensusQualitySequence();
     
     /**
      * The order of the reads returned by this

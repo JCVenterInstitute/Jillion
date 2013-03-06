@@ -19,6 +19,7 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 final class ConsedConsensusQualityComputer {
@@ -103,19 +104,38 @@ final class ConsedConsensusQualityComputer {
 	
 	private static final int NUMBER_OF_NON_GAPS_IN_WINDOW =2;
 	
-	private final Contig<? extends AssembledRead> contig;
-	private final QualitySequenceDataStore readQualities;
-	
-	
-	ConsedConsensusQualityComputer(Contig<? extends AssembledRead> contig, QualitySequenceDataStore readQualities){
+	/**
+     * Compute the consensus quality sequence as computed by the same algorithm consed uses.
+     * @param contig the contig to compute the consensus qualities for; can not be null.
+     * @return a {@link QualitySequence} can not be null.
+     * @throws DataStoreException  if there is a problem fetching read quality data
+     * @throws NullPointerException if contig is null.
+     */
+	public static QualitySequence computeConsensusQualities(Contig<? extends AssembledRead> contig, QualitySequenceDataStore readQualities) throws DataStoreException{
 		if(contig ==null){
     		throw new NullPointerException("contig can not be null");
     	}
 		if(readQualities ==null){
 			throw new NullPointerException("read quality datastore can not be null");
 		}
-		this.contig = contig;
-		this.readQualities = readQualities;
+		return computeConsensusQualities(contig.getConsensusSequence(), contig.getReadIterator(), readQualities);
+	}
+	
+	/**
+     * Compute the consensus quality sequence as computed by the same algorithm consed uses.
+     * @param contig the contig to compute the consensus qualities for; can not be null.
+     * @return a {@link QualitySequence} can not be null.
+     * @throws DataStoreException  if there is a problem fetching read quality data
+     * @throws NullPointerException if contig is null.
+     */
+	public static QualitySequence computeConsensusQualities(NucleotideSequence contig, Iterable<? extends AssembledRead> reads, QualitySequenceDataStore readQualities) throws DataStoreException{
+		if(contig ==null){
+    		throw new NullPointerException("consensus can not be null");
+    	}
+		if(readQualities ==null){
+			throw new NullPointerException("read quality datastore can not be null");
+		}
+		return computeConsensusQualities(contig, IteratorUtil.createStreamingIterator(reads.iterator()), readQualities);
 	}
 	/**
      * Compute the consensus quality sequence as computed by the same algorithm consed uses.
@@ -124,24 +144,24 @@ final class ConsedConsensusQualityComputer {
      * @throws DataStoreException 
      * @throws NullPointerException if contig is null.
      */
-    public QualitySequence computeConsensusQualities() throws DataStoreException{
+    private static QualitySequence computeConsensusQualities(NucleotideSequence consensusSequence, 
+    		StreamingIterator<? extends AssembledRead> iter,
+    		QualitySequenceDataStore readQualities) throws DataStoreException{
     	
     	
-    	
-    	NucleotideSequence consensusSequence = contig.getConsensusSequence();
-    	int[] consensusGapsArray = toIntArray(consensusSequence.getGapOffsets());
-    	
-    	int consensusLength = (int)consensusSequence.getLength();
-		List<List<QualityPosition>> forwardQualitiesTowardsConsensus = new ArrayList<List<QualityPosition>>((int)consensusSequence.getLength());
-		List<List<QualityPosition>> reverseQualitiesTowardsConsensus = new ArrayList<List<QualityPosition>>((int)consensusSequence.getLength());
-    	
-		for(int i=0; i< consensusLength; i++){
-    		forwardQualitiesTowardsConsensus.add(new ArrayList<QualityPosition>());
-    		reverseQualitiesTowardsConsensus.add(new ArrayList<QualityPosition>());
-    	}
-		
-		StreamingIterator<? extends AssembledRead> iter= contig.getReadIterator();
     	try{
+	    	int[] consensusGapsArray = toIntArray(consensusSequence.getGapOffsets());
+	    	
+	    	int consensusLength = (int)consensusSequence.getLength();
+			List<List<QualityPosition>> forwardQualitiesTowardsConsensus = new ArrayList<List<QualityPosition>>((int)consensusSequence.getLength());
+			List<List<QualityPosition>> reverseQualitiesTowardsConsensus = new ArrayList<List<QualityPosition>>((int)consensusSequence.getLength());
+	    	
+			for(int i=0; i< consensusLength; i++){
+	    		forwardQualitiesTowardsConsensus.add(new ArrayList<QualityPosition>());
+	    		reverseQualitiesTowardsConsensus.add(new ArrayList<QualityPosition>());
+	    	}
+		
+		
 	    	while(iter.hasNext()){
 	    		AssembledRead read = iter.next();
 	    		long start =read.getGappedStartOffset();
@@ -184,7 +204,7 @@ final class ConsedConsensusQualityComputer {
     		IOUtil.closeAndIgnoreErrors(iter);
     	}
     }
-	public void addQualityToConsensusConsideratino(
+	private static void addQualityToConsensusConsideratino(
 			List<List<QualityPosition>> forwardQualitiesTowardsConsensus,
 			List<List<QualityPosition>> reverseQualitiesTowardsConsensus,
 			long start, Direction dir, PhredQuality qual, int consensusOffset) {
@@ -195,7 +215,7 @@ final class ConsedConsensusQualityComputer {
 			reverseQualitiesTowardsConsensus.get(consensusOffset).add(position);
 		}
 	}
-	private void removeConsensusGaps(
+	private static void removeConsensusGaps(
 			QualitySequenceBuilder consensusQualitiesBuilder,
 			int[] consensusGapsArray) {
 		//iterate backwards to preserve offset order
@@ -205,14 +225,14 @@ final class ConsedConsensusQualityComputer {
 		
 	}
 	
-	private boolean notDifferentThan(int[] differenceArray, int offset){
+	private static boolean notDifferentThan(int[] differenceArray, int offset){
 		return notAGap(differenceArray, offset);
 	}
-	private boolean notAGap(int[] consensusGapsArray,
+	private static boolean notAGap(int[] consensusGapsArray,
 			int consensusOffset) {
 		return Arrays.binarySearch(consensusGapsArray, consensusOffset)<0;
 	}
-	private int computeConsensusQuality(
+	private static int computeConsensusQuality(
 			List<List<QualityPosition>> forwardQualitiesTowardsConsensus,
 			List<List<QualityPosition>> reverseQualitiesTowardsConsensus, int i) {
 		List<QualityPosition> forwards = forwardQualitiesTowardsConsensus.get(i);
@@ -230,7 +250,7 @@ final class ConsedConsensusQualityComputer {
 		}
 		return Math.min(sum, MAX_CONSED_COMPUTED_QUALITY);
 	}
-	public boolean readMatchesWindow(int[] consensusGapsArray,
+	public static boolean readMatchesWindow(int[] consensusGapsArray,
 			int consensusLength, AssembledRead read, long start,
 			int[] differenceArray, int i) {
 		boolean windowMatches = notDifferentThan(differenceArray, i);
@@ -248,7 +268,7 @@ final class ConsedConsensusQualityComputer {
 		}
 		return windowMatches;
 	}
-    private int[] toIntArray(Collection<Integer> ints){
+    private static int[] toIntArray(Collection<Integer> ints){
     	int[] array = new int[ints.size()];
 		Iterator<Integer> iter = ints.iterator();
 		for(int i=0;  iter.hasNext(); i++){
@@ -256,7 +276,7 @@ final class ConsedConsensusQualityComputer {
 		}
 		return array;
     }
-    private int computeWindowLeft(int[] consensusGapsArray, long startPosition) {
+    private static int computeWindowLeft(int[] consensusGapsArray, long startPosition) {
 		int numberOfBasesInWindow=0;
 		int position = (int)startPosition-1;
 		while(position >=0 && numberOfBasesInWindow < NUMBER_OF_NON_GAPS_IN_WINDOW){
@@ -270,7 +290,7 @@ final class ConsedConsensusQualityComputer {
 		return numberOfBasesInWindow;
 	}
     
-    private int computeWindowRight(int[] consensusGapsArray, long startPosition, int consensusLength) {
+    private static int computeWindowRight(int[] consensusGapsArray, long startPosition, int consensusLength) {
 		int numberOfBasesInWindow=0;
 		int position = (int)startPosition+1;
 		int numberOfNonGapsInWindow=0;
@@ -287,7 +307,7 @@ final class ConsedConsensusQualityComputer {
 	}
     
     
-	private boolean hasBonusCoverage(List<QualityPosition> forwards) {
+	private static boolean hasBonusCoverage(List<QualityPosition> forwards) {
 		if(forwards.isEmpty()){
 			return false;
 		}
