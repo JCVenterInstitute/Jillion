@@ -394,7 +394,13 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      */
     public AceContigBuilder addRead(String readId, NucleotideSequence validBases, int offset,
             Direction dir, Range clearRange,PhdInfo phdInfo,int ungappedFullLength) {
-        //contig left (and right) might be beyond consensus depending on how
+        if(readId ==null){
+        	throw new NullPointerException("readId can not be null");
+        }
+    	if(validBases ==null){
+    		throw new NullPointerException("valid bases can not be null");
+    	}
+    	//contig left (and right) might be beyond consensus depending on how
         //trimmed the data is and what assembly/consensus caller is used.
         //force contig left and right to be within the called consensus
         //BCISD-211
