@@ -123,12 +123,12 @@ public class TestDefaultAceFileWriter {
 				nucleotideDataStore, qualityDataStore, phdDate);
 
 		AceFileContigDataStore aceDataStore = AceAdapterContigFileDataStore
-				.create(qualityFastaDataStore, phdDate, contigFile);
+				.create(qualityFastaDataStore, phdDate, contigFile,true);
 
 		File outputFile = folder.newFile();
 
 		AceFileWriter sut = new AceFileWriterBuilder(outputFile, phdDataStore)
-				.tmpDir(tmpDir).computeConsensusQualities().build();
+				.tmpDir(tmpDir).build();
 		writeContigs(aceDataStore, sut);
 		sut.close();
 

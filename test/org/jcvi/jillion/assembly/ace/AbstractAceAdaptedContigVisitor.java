@@ -7,8 +7,8 @@ import org.jcvi.jillion.assembly.ctg.TigrContigVisitor;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.fasta.qual.QualitySequenceFastaDataStore;
 /**
  * {@code AbstractAceAdaptedContigVisitor} is a {@link TigrContigVisitor}
  * that will build an {@link AceContig} from the visitXXX calls.
@@ -19,7 +19,7 @@ abstract class AbstractAceAdaptedContigVisitor implements TigrContigVisitor{
 
 	 private AceContigBuilder contigBuilder;
 	 private final Date phdDate;
-	 private final QualitySequenceFastaDataStore fullLengthQualityDataStore;
+	 private final QualitySequenceDataStore fullLengthQualityDataStore;
 	 private final String contigId;
 	 
 	 
@@ -28,7 +28,7 @@ abstract class AbstractAceAdaptedContigVisitor implements TigrContigVisitor{
      * Create a new AceAdapted Contig File DataStore using the given phdDate.
      * @param phdDate the date all faked phd files should be timestamped with.
      */
-    public AbstractAceAdaptedContigVisitor(String contigId, QualitySequenceFastaDataStore fullLengthFastXDataStore,Date phdDate) {
+    public AbstractAceAdaptedContigVisitor(String contigId, QualitySequenceDataStore fullLengthFastXDataStore,Date phdDate) {
         this.phdDate = new Date(phdDate.getTime());
         this.fullLengthQualityDataStore = fullLengthFastXDataStore;
         this.contigId = contigId;
@@ -52,7 +52,7 @@ abstract class AbstractAceAdaptedContigVisitor implements TigrContigVisitor{
 				 PhdInfo phdInfo =new PhdInfo(readId, readId+".phd.1", phdDate);
 				 int ungappedFullLength;
 				try {
-					ungappedFullLength = (int)fullLengthQualityDataStore.get(readId).getSequence().getLength();
+					ungappedFullLength = (int)fullLengthQualityDataStore.get(readId).getLength();
 				} catch (DataStoreException e) {
 					 throw new IllegalStateException("error getting full length trace for "+ readId);
 				}
@@ -76,9 +76,9 @@ abstract class AbstractAceAdaptedContigVisitor implements TigrContigVisitor{
 
 	@Override
 	public void visitEnd() {
-		visitContig(contigBuilder.build());
+		visitContig(contigBuilder);
 		
 	}
 
-	protected abstract void visitContig(AceContig contig);
+	protected abstract void visitContig(AceContigBuilder contigBuilder);
 }
