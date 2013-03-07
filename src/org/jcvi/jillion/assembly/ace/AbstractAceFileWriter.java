@@ -34,11 +34,9 @@ import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
-import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.trace.sanger.phd.Phd;
@@ -54,11 +52,9 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 	protected static final String CR = "\n";
 	
 	protected static final int DEFAULT_BUFFER_SIZE = 2<<14; 
-	private final boolean computeConsensusQualities;
 	private final boolean createBsRecords;
 	
-	 protected AbstractAceFileWriter(boolean computeConsensusQualities,boolean createBsRecords) {
-		this.computeConsensusQualities = computeConsensusQualities;
+	 protected AbstractAceFileWriter(boolean createBsRecords) {
 		this.createBsRecords = createBsRecords;
 	}
 
@@ -83,11 +79,8 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
                 0,
                 contig.isComplemented());
         tempWriter.write(String.format("%s\n\n\n",AceFileUtil.convertToAcePaddedBasecalls(consensus)));
-        if(computeConsensusQualities){
-        	computeConsensusQualities(tempWriter,contig,phdDataStore);
-        }else{
-        	writeFakeUngappedConsensusQualities(tempWriter,consensus);
-        }
+        writeConsensusQualities(tempWriter,contig.getConsensusQualitySequence());
+       
         tempWriter.write(CR);
         List<IdAlignedReadInfo> assembledFroms = IdAlignedReadInfo.getSortedAssembledFromsFor(contig);
         StringBuilder assembledFromBuilder = new StringBuilder();
@@ -119,18 +112,10 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 		
 	}
 	
-	private void computeConsensusQualities(Writer tempWriter, AceContig contig,PhdDataStore phdDataStore) throws IOException {
-		
-		QualitySequenceDataStore qualityDataStore =DataStoreUtil.adapt(QualitySequenceDataStore.class, phdDataStore, new DataStoreUtil.AdapterCallback<Phd, QualitySequence>(){
-
-			@Override
-			public QualitySequence get(Phd from) {
-				return from.getQualitySequence();
+	private void writeConsensusQualities(Writer tempWriter, QualitySequence consensusQualities) throws IOException {
+			if(consensusQualities ==null){
+				throw new NullPointerException("consensus qualities can not be null");
 			}
-			  
-		});
-		try {
-			QualitySequence consensusQualities = AceFileUtil.computeConsensusQualities(contig, qualityDataStore);
 			int qualityLength = (int)consensusQualities.getLength();
 			int numberOfLines = qualityLength/50+1;
 			StringBuilder formattedString = new StringBuilder(3+ 3* qualityLength+numberOfLines);
@@ -150,9 +135,6 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 			formattedString.append(String.format("%02d",iter.next().getQualityScore()));
 			formattedString.append(CR);
 			tempWriter.write(formattedString.toString());
-		} catch (DataStoreException e) {
-			throw new IOException("error computing consensus qualities", e);
-		}
 		
 	}
 
@@ -178,30 +160,6 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
                 read.getPhdInfo());
         
     }
-	 private void writeFakeUngappedConsensusQualities(Writer tempWriter, NucleotideSequence consensus) throws IOException {
-
-	        int length = (int)consensus.getUngappedLength();
-	        int numberOfLines = length/50+1;
-	        StringBuilder result = new StringBuilder(3+3*length+numberOfLines);	      
-	        result.append("BQ\n");
-			for(int i=1; i<= length-1; i++){
-	            result.append("99");
-	            if(i%50==0){
-	                result.append(CR);
-	            }else{
-	            	result.append(' ');
-	            }
-	        }
-			result.append("99\n");
-			
-	        tempWriter.write(result.toString());
-	    }
-	
-
-	
-
-	
-	
 	
 	private static final class IdAlignedReadInfo implements Comparable<IdAlignedReadInfo>{
     	private static final int TO_STRING_BUFFER_SIZE = 30;

@@ -61,7 +61,6 @@ public final class AceFileWriterBuilder{
 		private final PhdDataStore phdDataStore;
 		private final OutputStream out;
 		private File tmpDir;
-		private boolean computeConsensusQualities=false;
 		/**
 		 * Create a new Builder instance
 		 * which will build a new instance of 
@@ -118,26 +117,7 @@ public final class AceFileWriterBuilder{
 			this.tmpDir = tmpDir;
 			return this;
 		}
-		/**
-		 * Compute the actual consensus qualities
-		 * for each non-gap consensus basecall.
-		 * This is a computationally intense 
-		 * algorithm that requires reading the full length
-		 * qualities 
-		 * for each read in each contig
-		 * from the given {@link PhdDataStore}.
-		 * If this method is not called,
-		 * then the contig consensus will get 
-		 * set to a default value of
-		 * "90" for each non-gap base which 
-		 * consed interprets as 
-		 * the highest "non-human edited quality". 
-		 * @return this
-		 */
-		public AceFileWriterBuilder computeConsensusQualities(){
-			computeConsensusQualities=true;
-			return this;
-		}
+		
 		/**
 		 * Legacy versions of consed
 		 * required ace contigs to include information
@@ -168,8 +148,7 @@ public final class AceFileWriterBuilder{
 		public AceFileWriter build() throws IOException {
 			return new DefaultAceFileWriter(out, phdDataStore, 
 					tmpDir,
-					createBsRecords,
-					computeConsensusQualities);
+					createBsRecords);
 		}
 
 /**
@@ -189,8 +168,8 @@ private static final class DefaultAceFileWriter extends AbstractAceFileWriter{
 	ByteArrayOutputStream tagOutputStream = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
 	
 	private DefaultAceFileWriter(OutputStream out, PhdDataStore phdDatastore,File tmpDir,
-			boolean createBsRecords, boolean computeConsensusQualities) throws IOException {
-		super(computeConsensusQualities, createBsRecords);
+			boolean createBsRecords) throws IOException {
+		super(createBsRecords);
 		this.out = new BufferedOutputStream(out,DEFAULT_BUFFER_SIZE);
 		this.phdDatastore = phdDatastore;
 		IOUtil.mkdirs(tmpDir);

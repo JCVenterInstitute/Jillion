@@ -37,9 +37,12 @@ import org.jcvi.jillion.assembly.ctg.TigrContigVisitor;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.qual.QualitySequenceFastaDataStore;
+import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecord;
 
 public class AceAdapterContigFileDataStore implements AceFileContigDataStore{
 
@@ -47,7 +50,10 @@ public class AceAdapterContigFileDataStore implements AceFileContigDataStore{
     private DataStore<AceContig> dataStore;
     private long totalNumberOfReads=0L;
 
-    public static AceFileContigDataStore create(final QualitySequenceFastaDataStore fullLengthFastXDataStore, final Date phdDate, File contigFile) throws IOException{
+    public static AceFileContigDataStore create(final QualitySequenceFastaDataStore fullLengthQualityDataStore, final Date phdDate, File contigFile) throws IOException{
+        return create(fullLengthQualityDataStore, phdDate, contigFile,false);
+    }
+    public static AceFileContigDataStore create(final QualitySequenceFastaDataStore fullLengthQualityDataStore, final Date phdDate, File contigFile, final boolean computeConsedConsensusQualities) throws IOException{
     	final AceAdapterContigFileDataStore datastore = new AceAdapterContigFileDataStore();
     	TigrContigFileVisitor visitor =new TigrContigFileVisitor() {
 			
@@ -67,10 +73,25 @@ public class AceAdapterContigFileDataStore implements AceFileContigDataStore{
 			@Override
 			public TigrContigVisitor visitContig(TigrContigVisitorCallback callback,
 					String contigId) {
-				return new AbstractAceAdaptedContigVisitor(contigId,fullLengthFastXDataStore, phdDate) {
+				final QualitySequenceDataStore qualitySequences = DataStoreUtil.adapt(QualitySequenceDataStore.class, 
+						fullLengthQualityDataStore, 
+						new DataStoreUtil.AdapterCallback<QualitySequenceFastaRecord, QualitySequence>() {
+
+							@Override
+							public QualitySequence get(
+									QualitySequenceFastaRecord from) {
+								return from.getSequence();
+							}
+					
+				});
+				return new AbstractAceAdaptedContigVisitor(contigId,qualitySequences, phdDate) {
 					
 					@Override
-					protected void visitContig(AceContig contig) {
+					protected void visitContig(AceContigBuilder contigBuilder) {
+						if(computeConsedConsensusQualities){
+							contigBuilder.computeConsensusQualities(qualitySequences);
+						}
+						AceContig contig = contigBuilder.build();
 						datastore.map.put(contig.getId(), contig);  
 						datastore.totalNumberOfReads += contig.getNumberOfReads();
 						
