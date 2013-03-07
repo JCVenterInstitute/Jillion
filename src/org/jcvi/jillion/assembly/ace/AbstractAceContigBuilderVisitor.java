@@ -158,7 +158,7 @@ public abstract class AbstractAceContigBuilderVisitor implements AceContigVisito
 		private int currentOffset;
 		private Range currentClearRange;
 		
-		private PhdInfo currentDefaultPhdInfo;
+		private PhdInfo currentPhdInfo;
 		
 		
 		public ReadVisitor(String readId, int fullGappedLength,AlignedReadInfo alignedInfo){
@@ -241,7 +241,7 @@ public abstract class AbstractAceContigBuilderVisitor implements AceContigVisito
 		@Override
 		public void visitTraceDescriptionLine(String traceName, String phdName,
 				Date date) {
-			currentDefaultPhdInfo =new PhdInfo(traceName, phdName, date);			
+			currentPhdInfo =new PhdInfo(traceName, phdName, date);			
 		}
 
 		@Override
@@ -255,8 +255,14 @@ public abstract class AbstractAceContigBuilderVisitor implements AceContigVisito
 			if(skipCurrentRead){
 				return;
 			}
+			if(validSequence ==null){
+				throw new IllegalStateException(String.format("Incomplete visitation : did not visit quality line for read %s",readId));
+			}
+			if(currentPhdInfo ==null){
+				throw new IllegalStateException(String.format("Incomplete visitation : did not visit trace line for read %s",readId));
+			}
 			builder.addRead(readId, validSequence, currentOffset, alignedInfo.getDirection(), 
-					currentClearRange, currentDefaultPhdInfo, ungappedFullLength);
+					currentClearRange, currentPhdInfo, ungappedFullLength);
 		}
 
 		@Override
