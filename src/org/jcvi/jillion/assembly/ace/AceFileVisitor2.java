@@ -27,7 +27,6 @@ package org.jcvi.jillion.assembly.ace;
 
 import java.util.Date;
 
-import org.jcvi.jillion.assembly.ace.AceFileVisitor.BeginContigReturnCode;
 /**
  * {@code AceFileVisitor} is a Visitor
  * implementation for .ace encoded assembly files.

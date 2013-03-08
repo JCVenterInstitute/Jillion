@@ -1,7 +1,5 @@
 package org.jcvi.jillion.assembly.ace;
 
-import org.jcvi.jillion.assembly.ace.AceFileVisitor.BeginContigReturnCode;
-import org.jcvi.jillion.assembly.ace.AceFileVisitor.EndContigReturnCode;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.QualitySequence;
