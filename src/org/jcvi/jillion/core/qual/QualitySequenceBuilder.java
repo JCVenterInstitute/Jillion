@@ -272,6 +272,10 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 
 	@Override
 	public QualitySequenceBuilder trim(Range range) {
+		if(range.isEmpty()){
+			builder.remove(Range.ofLength(builder.getCurrentLength()));
+			return this;
+		}
 		Range right = Range.of(range.getEnd()+1, builder.getCurrentLength()-1);
 		Range left = Range.of(0,range.getBegin()-1);
 		builder.remove(right);

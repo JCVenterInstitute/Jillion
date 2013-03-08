@@ -25,10 +25,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Test;
 /**
@@ -453,6 +449,14 @@ public class TestNucleotideSequenceBuilder {
     	 assertEquals("CG",
                  new NucleotideSequenceBuilder("ACGT")
     	 					.trim(Range.of(1,2))
+                         .build().toString());
+    }
+    
+    @Test
+    public void trimEmptyDeletesEntireSequence(){
+    	 assertEquals("",
+                 new NucleotideSequenceBuilder("ACGT")
+    	 					.trim(new Range.Builder(0).shift(-1).build())
                          .build().toString());
     }
     @Test

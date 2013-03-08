@@ -20,17 +20,15 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.sanger;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import java.nio.ShortBuffer;
 import java.util.Iterator;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.trace.sanger.Position;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
-import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;
-
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestPositionSequenceBuilder {
 	
 	private short[] toShortArray(PositionSequence s){
@@ -197,6 +195,14 @@ public class TestPositionSequenceBuilder {
 		PositionSequenceBuilder sut = new PositionSequenceBuilder(new short[]{10,20,30,40});
 		sut.trim(Range.of(1,2));	
 		assertArrayEquals(new short[]{20,30},
+				toShortArray(sut.build()));
+	}
+	
+	@Test
+	public void trimEmptyRangeShouldRemoveEntireSequence(){
+		PositionSequenceBuilder sut = new PositionSequenceBuilder(new short[]{10,20,30,40});
+		sut.trim(new Range.Builder(0).shift(-1).build());	
+		assertArrayEquals(new short[0],
 				toShortArray(sut.build()));
 	}
 	

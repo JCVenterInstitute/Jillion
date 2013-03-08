@@ -20,10 +20,18 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.ace.consed;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.jcvi.jillion.assembly.ace.ConsensusAceTag;
+import org.jcvi.jillion.assembly.ace.consed.ConsedUtil.ClipPointsType;
 import org.junit.Test;
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
@@ -97,4 +105,25 @@ public class TestConsedUtil {
         }
         verify(tag);
     }
+    
+    @Test
+    public void clipPointTypeAllLowQuality(){
+    	assertEquals(ClipPointsType.ALL_LOW_QUALITY, ClipPointsType.getType(-1, -1, 0, 50));
+    }
+    
+    @Test
+    public void clipPointTypeAllNegativeValidRange(){
+    	assertEquals(ClipPointsType.NEGATIVE_VALID_RANGE, ClipPointsType.getType(20, 10, 0, 50));
+    }
+    
+    @Test
+    public void clipPointTypeNoIntersectionOfGoodQualityAndAlignRange(){
+    	assertEquals(ClipPointsType.NO_HIGH_QUALITY_ALIGNMENT_INTERSECTION, ClipPointsType.getType(634,649, 851, 1758));
+    }
+    
+    @Test
+    public void clipPointTypeNegativeAlignRange(){
+    	assertEquals(ClipPointsType.NO_HIGH_QUALITY_ALIGNMENT_INTERSECTION, ClipPointsType.getType(16, 219, -1, -1 ));
+    }
+    
 }

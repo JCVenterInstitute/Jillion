@@ -701,6 +701,9 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      */
     @Override
     public NucleotideSequenceBuilder trim(Range range){
+    	if(range.isEmpty()){
+    		return delete(Range.ofLength(this.getLength()));
+    	}
     	Range bitRange = convertBaseRangeIntoBitRange(range);
         int numberOfBitsUsed = (int)bitRange.getLength();
 		BitSet subBits = bits.get((int)bitRange.getBegin(), (int)bitRange.getEnd()+1);

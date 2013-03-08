@@ -110,7 +110,8 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
      * within the given Range.  
      * If the range extends beyond the current
      * sequence, then this will keep all the symbols until the end of
-     * the sequence. 
+     * the sequence. If the trim range is empty, then the entire sequence
+     * will be trimmed.
      * 
      * @param range the range of residues to keep (gapped).
      * @return this.

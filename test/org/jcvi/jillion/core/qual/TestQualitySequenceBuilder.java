@@ -20,16 +20,16 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.qual;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Arrays;
 import java.util.Iterator;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.qual.PhredQuality;
-import org.jcvi.jillion.core.qual.QualitySequence;
-import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
-import org.jcvi.jillion.core.qual.RunLengthEncodedQualitySequence;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestQualitySequenceBuilder {
 
 	private byte[] toByteArray(QualitySequence s){
@@ -100,6 +100,17 @@ public class TestQualitySequenceBuilder {
 		QualitySequence seq =sut.build();
 		assertArrayEquals(
 				new byte[]{13,13,13,13},
+				toByteArray(seq));
+	}
+	
+	@Test
+	public void trimEmptyRangeShouldRemoveEntireSequence(){
+		QualitySequenceBuilder sut = new QualitySequenceBuilder(new byte[]{10,12,13,13,13,13,13,13,8});
+		sut.trim(new Range.Builder(0).build());
+		assertEquals(0, sut.getLength());
+		QualitySequence seq =sut.build();
+		assertArrayEquals(
+				new byte[0],
 				toByteArray(seq));
 	}
 	@Test
