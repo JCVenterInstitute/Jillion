@@ -164,9 +164,9 @@ public abstract class AbstractAceContigBuilderVisitor implements AceContigVisito
 		public ReadVisitor(String readId, int fullGappedLength,AlignedReadInfo alignedInfo){
 			this.readId = readId;
 			this.alignedInfo = alignedInfo;
-			fullLengthSequenceBuilder = new NucleotideSequenceBuilder(fullGappedLength);
-			
+			fullLengthSequenceBuilder = new NucleotideSequenceBuilder(fullGappedLength);			
 		}
+		
 		@Override
 		public void visitQualityLine(int qualLeft, int qualRight,
 				int alignLeft, int alignRight) {
