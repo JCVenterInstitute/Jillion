@@ -37,10 +37,10 @@ public class TestAceFileParserWithInvalidGapChar {
     public void basecallInReadContainDashInsteadOfStar() throws IOException{
         String problemLine = "agccgaaggagg*ttttggaaacaccaaggg-g*ggtcagaccccaacgc\n";
         ResourceHelper resources = new ResourceHelper(TestAceFileParserWithInvalidGapChar.class);
-        AceFileVisitor2 mockVisitor = createNiceMock(AceFileVisitor2.class);
+        AceFileVisitor mockVisitor = createNiceMock(AceFileVisitor.class);
         replay(mockVisitor);
         try{
-            AceFileParser2.create(resources.getFile("files/invalidAceFileWithDash.ace")).accept(mockVisitor);
+            AceFileParser.create(resources.getFile("files/invalidAceFileWithDash.ace")).accept(mockVisitor);
             fail("should error out");
         }catch(IllegalStateException e){
             assertEquals(

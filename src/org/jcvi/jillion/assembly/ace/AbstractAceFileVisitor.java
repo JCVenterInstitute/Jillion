@@ -9,7 +9,7 @@ import java.util.Date;
  * @author dkatzel
  *
  */
-public abstract class AbstractAceFileVisitor2 implements AceFileVisitor2{
+public abstract class AbstractAceFileVisitor implements AceFileVisitor{
 
 	@Override
 	public void visitHeader(int numberOfContigs, long totalNumberOfReads) {

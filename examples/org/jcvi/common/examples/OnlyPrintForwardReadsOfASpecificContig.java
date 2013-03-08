@@ -24,10 +24,10 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.assembly.ace.AbstractAceContigVisitor;
-import org.jcvi.jillion.assembly.ace.AbstractAceFileVisitor2;
+import org.jcvi.jillion.assembly.ace.AbstractAceFileVisitor;
 import org.jcvi.jillion.assembly.ace.AceContigVisitor;
-import org.jcvi.jillion.assembly.ace.AceFileParser2;
-import org.jcvi.jillion.assembly.ace.AceFileVisitor2;
+import org.jcvi.jillion.assembly.ace.AceFileParser;
+import org.jcvi.jillion.assembly.ace.AceFileVisitor;
 import org.jcvi.jillion.assembly.ace.AceFileVisitorCallback;
 import org.jcvi.jillion.core.Direction;
 
@@ -43,7 +43,7 @@ public class OnlyPrintForwardReadsOfASpecificContig {
 		File aceFile = new File("path/to/ace/file");
 		final String contigIdToPrint = "myContigId";
 
-		AceFileVisitor2 visitor = new AbstractAceFileVisitor2() {
+		AceFileVisitor visitor = new AbstractAceFileVisitor() {
 
 			@Override
 			public AceContigVisitor visitContig(
@@ -69,7 +69,7 @@ public class OnlyPrintForwardReadsOfASpecificContig {
 			
 		};
 		
-		AceFileParser2.create(aceFile).accept(visitor);
+		AceFileParser.create(aceFile).accept(visitor);
 	}
 
 }

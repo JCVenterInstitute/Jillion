@@ -46,7 +46,7 @@ public class TestAceFileParserStopParsingMiddleContig {
 	@Test
 	public void topParsingAfterFirstContig() throws IOException{
 		final AtomicBoolean visitedHalted= new AtomicBoolean(false);
-		AceFileVisitor2 visitor = new AceFileVisitor2(){
+		AceFileVisitor visitor = new AceFileVisitor(){
 
 			@Override
 			public void visitHeader(int numberOfContigs, long totalNumberOfReads) {
@@ -110,13 +110,13 @@ public class TestAceFileParserStopParsingMiddleContig {
 			
 		};
 		
-		AceFileParser2.create(aceFile).accept(visitor);
+		AceFileParser.create(aceFile).accept(visitor);
 		assertTrue(visitedHalted.get());
 	}
 	@Test
 	public void stopParsingAtFinalContigShouldSkipTags() throws IOException{
 		final AtomicBoolean visitHalted = new AtomicBoolean(false);
-		AceFileVisitor2 visitor2 = new AceFileVisitor2(){
+		AceFileVisitor visitor2 = new AceFileVisitor(){
 			@Override
 			public void visitHeader(int numberOfContigs, long totalNumberOfReads) {
 				//no-op
@@ -183,7 +183,7 @@ public class TestAceFileParserStopParsingMiddleContig {
 		};
 			
 			
-		AceFileParser2.create(aceFile).accept(visitor2);
+		AceFileParser.create(aceFile).accept(visitor2);
 		assertTrue(visitHalted.get());
 	}
 

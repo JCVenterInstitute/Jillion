@@ -13,9 +13,9 @@ public interface AceHandler {
 	 * the ace data.
 	 * @throws NullPointerException if either the visitor is {@code null}.
 	 */
-	void accept(AceFileVisitor2 visitor) throws IOException;
+	void accept(AceFileVisitor visitor) throws IOException;
 
-	void accept(AceFileVisitor2 visitor, AceFileVisitorMemento memento)
+	void accept(AceFileVisitor visitor, AceFileVisitorMemento memento)
 			throws IOException;
 
 }

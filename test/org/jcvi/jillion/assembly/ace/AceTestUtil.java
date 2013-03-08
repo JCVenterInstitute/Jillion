@@ -29,7 +29,7 @@ public class AceTestUtil {
 		}
 
 		@Override
-		public void accept(AceFileVisitor2 visitor) throws IOException {
+		public void accept(AceFileVisitor visitor) throws IOException {
 			if(visitor==null){
 				throw new NullPointerException("visitor can not be null");
 			}
@@ -46,7 +46,7 @@ public class AceTestUtil {
 		}
 
 		@Override
-		public void accept(AceFileVisitor2 visitor,
+		public void accept(AceFileVisitor visitor,
 				AceFileVisitorMemento memento) throws IOException {
 			throw new UnsupportedOperationException();
 			
@@ -89,7 +89,7 @@ public class AceTestUtil {
 			this.callback = callback;
 		}
 		
-		public void accept(AceFileVisitor2 visitor){
+		public void accept(AceFileVisitor visitor){
 			NucleotideSequence consensus = contig.getConsensusSequence();
 			long numberOfReads = contig.getNumberOfReads();
 		 

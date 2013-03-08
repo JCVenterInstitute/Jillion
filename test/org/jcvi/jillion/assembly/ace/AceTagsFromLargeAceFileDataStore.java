@@ -27,7 +27,7 @@ public class AceTagsFromLargeAceFileDataStore extends AbstractAceTagsFromAceFile
 
 	@Override
 	protected AceFileContigDataStore createDataStoreFor(File aceFile) throws IOException {
-		return LargeAceFileDataStore2.create(aceFile);
+		return LargeAceFileDataStore.create(aceFile);
 	}
 
 }

@@ -57,7 +57,7 @@ public class TestAceFileParserWithNegativeReadAlignValues {
 		ByteArrayInputStream in = new ByteArrayInputStream((fakeContigHeader+readRecord).getBytes(IOUtil.UTF_8));
 	
 		AceContigVisitor contigVisitor = createMock(AceContigVisitor.class);
-		AceFileVisitor2 aceVisitor = createMock(AceFileVisitor2.class);
+		AceFileVisitor aceVisitor = createMock(AceFileVisitor.class);
 		expect(aceVisitor.visitContig(isA(AceFileVisitorCallback.class), eq("contig"), eq(1), eq(1), eq(0), eq(false)))
 				.andReturn(contigVisitor);
 		
@@ -65,6 +65,6 @@ public class TestAceFileParserWithNegativeReadAlignValues {
 		contigVisitor.visitEnd();
 		aceVisitor.visitEnd();
 		replay(aceVisitor, contigVisitor, readVisitor);
-		AceFileParser2.create(in).accept(aceVisitor);
+		AceFileParser.create(in).accept(aceVisitor);
 	}
 }

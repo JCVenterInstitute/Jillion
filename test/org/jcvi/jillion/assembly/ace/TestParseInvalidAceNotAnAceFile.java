@@ -33,7 +33,7 @@ public class TestParseInvalidAceNotAnAceFile {
 	public void tryingToParseNonAceFileShouldThrowIOException() throws IOException{
 		ResourceHelper resources = new ResourceHelper(TestParseInvalidAceNotAnAceFile.class);
 		File nonAce = resources.getFile("files/sample.contig");
-		AceFileParser2.create(nonAce).accept( new AbstractAceFileVisitor2() {
+		AceFileParser.create(nonAce).accept( new AbstractAceFileVisitor() {
 
 			@Override
 			public void visitHeader(int numberOfContigs, long totalNumberOfReads) {

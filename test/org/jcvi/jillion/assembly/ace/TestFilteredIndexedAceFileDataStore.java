@@ -29,7 +29,7 @@ public class TestFilteredIndexedAceFileDataStore extends AbstractTestFilteredAce
 
 	@Override
 	protected AceFileContigDataStore create(File aceFile, DataStoreFilter filter) throws IOException {
-		return IndexedAceFileDataStore2.create(aceFile, filter);
+		return IndexedAceFileDataStore.create(aceFile, filter);
 	}
 
 }

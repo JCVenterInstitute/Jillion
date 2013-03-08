@@ -97,7 +97,7 @@ public class TestDefaultAceFileWriter {
 		writeContigs(aceDataStore, sut);
 		sut.close();
 
-		AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore2
+		AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore
 				.create(outputFile);
 		assertContigsAreEqual(aceDataStore, reparsedAceDataStore);
 	}
@@ -134,7 +134,7 @@ public class TestDefaultAceFileWriter {
 
 		final Map<String, QualitySequence> actualConsensusQualities = new HashMap<String, QualitySequence>();
 
-		AceFileVisitor2 visitor = new AbstractAceFileVisitor2() {
+		AceFileVisitor visitor = new AbstractAceFileVisitor() {
 
 			@Override
 			public AceContigVisitor visitContig(
@@ -155,12 +155,12 @@ public class TestDefaultAceFileWriter {
 
 		};
 
-		AceFileParser2.create(outputFile).accept(visitor);
+		AceFileParser.create(outputFile).accept(visitor);
 
 		Map<String, QualitySequence> expectedConsensusQualities = getExpectedConsensusQualities();
 		assertEquals(expectedConsensusQualities, actualConsensusQualities);
 
-		AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore2
+		AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore
 				.create(outputFile);
 		assertContigsAreEqual(aceDataStore, reparsedAceDataStore);
 	}
@@ -220,7 +220,7 @@ public class TestDefaultAceFileWriter {
 		sut.write(aceDataStore.get("95"));
 		sut.close();
 
-		AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore2
+		AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore
 				.create(outputFile);
 		assertContigHasSameRecords(aceDataStore.get("98"),
 				reparsedAceDataStore.get("98"));
@@ -308,7 +308,7 @@ public class TestDefaultAceFileWriter {
 
 		AceFileWriter sut = new AceFileWriterBuilder(outputFile, phdDataStore)
 				.tmpDir(tmpDir).build();
-		AceFileContigDataStore datastore = DefaultAceFileDataStore2
+		AceFileContigDataStore datastore = DefaultAceFileDataStore
 				.create(originalAce);
 
 		// lets write out the tags first to make sure they get put at the end
@@ -320,7 +320,7 @@ public class TestDefaultAceFileWriter {
 		writeContigs(datastore, sut);
 
 		sut.close();
-		AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore2
+		AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore
 				.create(outputFile);
 		assertContigsAreEqual(datastore, reparsedAceDataStore);
 

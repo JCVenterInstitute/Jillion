@@ -10,9 +10,9 @@ import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.QualitySequence;
 
-public class MultiAceFileVisitorAdapter implements AceFileVisitor2{
+public class MultiAceFileVisitorAdapter implements AceFileVisitor{
 
-	private final List<AceFileVisitor2> visitors;
+	private final List<AceFileVisitor> visitors;
 	
 	private List<AceContigVisitor> currentContigVisitors;
 	private List<AceContigReadVisitor> currentReadVisitors;
@@ -21,15 +21,15 @@ public class MultiAceFileVisitorAdapter implements AceFileVisitor2{
 	private List<AceFileVisitorCallbackAdapter> currentCallbacks;
 	
 	private AceFileVisitorCallback ourCallback;
-	public MultiAceFileVisitorAdapter(AceFileVisitor2...visitors){
+	public MultiAceFileVisitorAdapter(AceFileVisitor...visitors){
 		this(Arrays.asList(visitors));
 	}
-	public MultiAceFileVisitorAdapter(Collection<? extends AceFileVisitor2> visitors) {
+	public MultiAceFileVisitorAdapter(Collection<? extends AceFileVisitor> visitors) {
 		if(visitors.isEmpty()){
 			throw new IllegalArgumentException("must provide at least one visitor");
 		}
-		this.visitors = new ArrayList<AceFileVisitor2>(visitors.size());
-		for(AceFileVisitor2 visitor : visitors){
+		this.visitors = new ArrayList<AceFileVisitor>(visitors.size());
+		for(AceFileVisitor visitor : visitors){
 			if(visitor ==null){
 				throw new NullPointerException("visitor can not be null");
 			}
@@ -66,7 +66,7 @@ public class MultiAceFileVisitorAdapter implements AceFileVisitor2{
 					}
 				}
 				
-				AceFileVisitor2 visitor = visitors.remove(i);
+				AceFileVisitor visitor = visitors.remove(i);
 				visitor.halted();
 				currentCallbacks.remove(i);
 			}
@@ -84,7 +84,7 @@ public class MultiAceFileVisitorAdapter implements AceFileVisitor2{
 	}
 	@Override
 	public void visitHeader(int numberOfContigs, long totalNumberOfReads) {
-		for(AceFileVisitor2 visitor : visitors){
+		for(AceFileVisitor visitor : visitors){
 			visitor.visitHeader(numberOfContigs, totalNumberOfReads);
 			
 		}
@@ -98,7 +98,7 @@ public class MultiAceFileVisitorAdapter implements AceFileVisitor2{
 		currentCallbacks = new ArrayList<AceFileVisitorCallbackAdapter>(visitors.size());
 		currentContigVisitors = new ArrayList<AceContigVisitor>(visitors.size());
 		boolean skipContig = true;
-		for(AceFileVisitor2 visitor : visitors){
+		for(AceFileVisitor visitor : visitors){
 			AceFileVisitorCallbackAdapter adaptedCallback = new AceFileVisitorCallbackAdapter(callback);
 			currentCallbacks.add(adaptedCallback);
 			AceContigVisitor contigVisitor = visitor.visitContig(adaptedCallback, contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplemented);
@@ -123,7 +123,7 @@ public class MultiAceFileVisitorAdapter implements AceFileVisitor2{
 	public void visitReadTag(String id, String type, String creator,
 			long gappedStart, long gappedEnd, Date creationDate,
 			boolean isTransient) {
-		for(AceFileVisitor2 visitor : visitors){
+		for(AceFileVisitor visitor : visitors){
 			visitor.visitReadTag(id, type, creator, 
 				gappedStart, gappedEnd, creationDate, 
 				isTransient);
@@ -138,7 +138,7 @@ public class MultiAceFileVisitorAdapter implements AceFileVisitor2{
 			Date creationDate, boolean isTransient) {
 		currentConsensusTagVisitors = new ArrayList<AceConsensusTagVisitor>(visitors.size());
 		boolean skipTag=true;
-		for(AceFileVisitor2 visitor : visitors){
+		for(AceFileVisitor visitor : visitors){
 			AceConsensusTagVisitor tagVisitor = visitor.visitConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
 			currentConsensusTagVisitors.add(tagVisitor);
 			if(tagVisitor !=null){
@@ -156,7 +156,7 @@ public class MultiAceFileVisitorAdapter implements AceFileVisitor2{
 	@Override
 	public void visitWholeAssemblyTag(String type, String creator,
 			Date creationDate, String data) {
-		for(AceFileVisitor2 visitor : visitors){
+		for(AceFileVisitor visitor : visitors){
 			visitor.visitWholeAssemblyTag(type, creator, creationDate, data);
 		}
 		
@@ -164,7 +164,7 @@ public class MultiAceFileVisitorAdapter implements AceFileVisitor2{
 
 	@Override
 	public void visitEnd() {
-		for(AceFileVisitor2 visitor : visitors){
+		for(AceFileVisitor visitor : visitors){
 			visitor.visitEnd();
 		}
 		
@@ -190,7 +190,7 @@ public class MultiAceFileVisitorAdapter implements AceFileVisitor2{
 				tagVisitor.halted();
 			}
 		}
-		for(AceFileVisitor2 visitor : visitors){
+		for(AceFileVisitor visitor : visitors){
 			visitor.halted();
 		}
 		

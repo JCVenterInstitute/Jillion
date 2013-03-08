@@ -29,7 +29,7 @@ public class AceTagsFromDefaultAceFileDataStore extends AbstractAceTagsFromAceFi
 
 	@Override
 	protected AceFileContigDataStore createDataStoreFor(File aceFile) throws IOException {
-		return DefaultAceFileDataStore2.create(aceFile, DataStoreFilters.alwaysAccept());
+		return DefaultAceFileDataStore.create(aceFile, DataStoreFilters.alwaysAccept());
 	}
 
 }

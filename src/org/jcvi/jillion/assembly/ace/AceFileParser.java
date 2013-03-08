@@ -53,9 +53,9 @@ import org.jcvi.jillion.internal.core.io.TextLineParser;
  * @author dkatzel
  * @see <a href = "http://www.phrap.org/consed/distributions/README.20.0.txt">Consed documentation which contains the ACE FILE FORMAT</a>
  */
-public abstract class AceFileParser2 implements AceHandler {
+public abstract class AceFileParser implements AceHandler {
 	private static Pattern HEADER_PATTERN = Pattern.compile("^AS\\s+(\\d+)\\s+(\\d+)");
-	private AceFileParser2(){
+	private AceFileParser(){
 		//private constructor.
 	}
 	
@@ -66,7 +66,7 @@ public abstract class AceFileParser2 implements AceHandler {
 	 * Create a new Parser object that will parse
 	 * the given inputStream.
 	 * the inputStream will be closed at the end
-	 * of the first call to {@link #accept(AceFileVisitor2)}.
+	 * of the first call to {@link #accept(AceFileVisitor)}.
 	 * @param aceFileStream 
 	 * @return
 	 */
@@ -77,7 +77,7 @@ public abstract class AceFileParser2 implements AceHandler {
 	 * {@inheritDoc}
 	 */
     @Override
-	public abstract void accept(AceFileVisitor2 visitor) throws IOException;
+	public abstract void accept(AceFileVisitor visitor) throws IOException;
     
     
     
@@ -85,7 +85,7 @@ public abstract class AceFileParser2 implements AceHandler {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public abstract void accept(AceFileVisitor2 visitor, AceFileVisitorMemento memento) throws IOException;
+	public abstract void accept(AceFileVisitor visitor, AceFileVisitorMemento memento) throws IOException;
      
     /**
      * Parse the given {@link InputStream} containing ace encoded data
@@ -101,7 +101,7 @@ public abstract class AceFileParser2 implements AceHandler {
      * @throws IOException if there is a problem reading the ace file.
      * @throws NullPointerException if either the aceFile or the visitor are {@code null}.
      */
-    public void accept(InputStream inputStream, AceFileVisitor2 visitor) throws IOException{
+    public void accept(InputStream inputStream, AceFileVisitor visitor) throws IOException{
         if(inputStream ==null){
             throw new NullPointerException("input stream can not be null");
         }
@@ -115,7 +115,7 @@ public abstract class AceFileParser2 implements AceHandler {
     
     
 	protected final void parseAceData(AceParserState parserState,
-			AceFileVisitor2 visitor) throws IOException {
+			AceFileVisitor visitor) throws IOException {
 		while(!parserState.done()){
             parserState.parseNextSection();
         }
@@ -136,7 +136,7 @@ public abstract class AceFileParser2 implements AceHandler {
      */
     private static class AceParserState implements Closeable{
     	
-        final AceFileVisitor2 fileVisitor;
+        final AceFileVisitor fileVisitor;
         private AceContigVisitor currentContigVisitor;
         private AceContigReadVisitor currentReadVisitor;
         
@@ -155,17 +155,17 @@ public abstract class AceFileParser2 implements AceHandler {
          */
         private long startPositionOfCurrentSection=0L;
         
-        public static AceParserState create(InputStream in, AceFileVisitor2 visitor, AceFileVisitorCallbackFactory callbackFactory, long startOffset) throws IOException{
+        public static AceParserState create(InputStream in, AceFileVisitor visitor, AceFileVisitorCallbackFactory callbackFactory, long startOffset) throws IOException{
         	
         	AceParserState parserState= create(new TextLineParser(new BufferedInputStream(in)), visitor, callbackFactory);        	
         	parserState.startPositionOfCurrentSection = startOffset;
         	return parserState;
         }
-        public static AceParserState create(InputStream in, AceFileVisitor2 visitor, AceFileVisitorCallbackFactory callbackFactory) throws IOException{
+        public static AceParserState create(InputStream in, AceFileVisitor visitor, AceFileVisitorCallbackFactory callbackFactory) throws IOException{
         	
         	return create(new TextLineParser(new BufferedInputStream(in)), visitor, callbackFactory);        	
         }
-        public static AceParserState create(TextLineParser parser, AceFileVisitor2 visitor, AceFileVisitorCallbackFactory callbackFactory) throws IOException{  	
+        public static AceParserState create(TextLineParser parser, AceFileVisitor visitor, AceFileVisitorCallbackFactory callbackFactory) throws IOException{  	
              return new AceParserState(visitor,parser,false,0,0,callbackFactory);
         }
        
@@ -209,7 +209,7 @@ public abstract class AceFileParser2 implements AceHandler {
 
             SectionHandler.handleSection(lineWithCR, this);
         }
-        AceParserState(AceFileVisitor2 visitor, TextLineParser parser,
+        AceParserState(AceFileVisitor visitor, TextLineParser parser,
                boolean inAContig, int numberOfExpectedReads, int numberOfReadsSeen, AceFileVisitorCallbackFactory callbackFactory) {
             this.fileVisitor = visitor;
             this.parser = parser;
@@ -753,7 +753,7 @@ public abstract class AceFileParser2 implements AceHandler {
     }
     
     
-    private static final class FileBasedParser extends AceFileParser2 {
+    private static final class FileBasedParser extends AceFileParser {
 
     	private final File aceFile;
     	
@@ -764,7 +764,7 @@ public abstract class AceFileParser2 implements AceHandler {
 			this.aceFile = aceFile;
 		}
 		@Override
-		public void accept(AceFileVisitor2 visitor) throws IOException{
+		public void accept(AceFileVisitor visitor) throws IOException{
 			if(visitor ==null){
 				throw new NullPointerException("visitor can not be null");
 			}
@@ -791,7 +791,7 @@ public abstract class AceFileParser2 implements AceHandler {
 	    }
 		
 		@Override
-		public void accept(AceFileVisitor2 visitor, AceFileVisitorMemento memento) throws IOException{
+		public void accept(AceFileVisitor visitor, AceFileVisitorMemento memento) throws IOException{
 	        if(memento ==null){
 	            throw new NullPointerException("memento can not be null");
 	        }
@@ -864,7 +864,7 @@ public abstract class AceFileParser2 implements AceHandler {
 	    }
     }
     
-    private static final class InputStreamParser extends AceFileParser2 {
+    private static final class InputStreamParser extends AceFileParser {
 
     	private final OpenAwareInputStream in;
     	
@@ -875,7 +875,7 @@ public abstract class AceFileParser2 implements AceHandler {
 			this.in = new OpenAwareInputStream(new BufferedInputStream(in));
 		}
 		@Override
-		public void accept(AceFileVisitor2 visitor) throws IOException{
+		public void accept(AceFileVisitor visitor) throws IOException{
 			if(visitor ==null){
 				throw new NullPointerException("visitor can not be null");
 			}
@@ -894,7 +894,7 @@ public abstract class AceFileParser2 implements AceHandler {
 	    }
 		
 		@Override
-		public void accept(AceFileVisitor2 visitor, AceFileVisitorMemento memento) throws IOException{
+		public void accept(AceFileVisitor visitor, AceFileVisitorMemento memento) throws IOException{
 	        throw new UnsupportedOperationException("mementos not supported");
 	    }
 		

@@ -37,7 +37,7 @@ import java.util.Date;
  *
  *
  */
-public interface AceFileVisitor2 {
+public interface AceFileVisitor {
 	
 	
     /**

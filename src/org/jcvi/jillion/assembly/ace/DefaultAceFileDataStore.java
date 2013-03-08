@@ -27,7 +27,7 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
  *
  *
  */
-final class DefaultAceFileDataStore2 implements AceFileContigDataStore{
+final class DefaultAceFileDataStore implements AceFileContigDataStore{
 
 	/**
 	 * {@link DataStore} wrapper of our {@link AceContig}s.
@@ -63,21 +63,21 @@ final class DefaultAceFileDataStore2 implements AceFileContigDataStore{
     
     public static AceFileContigDataStore create(InputStream aceFileStream, DataStoreFilter filter) throws IOException{
     	Visitor builder = new Visitor(filter);
-    	AceHandler parser = AceFileParser2.create(aceFileStream);
+    	AceHandler parser = AceFileParser.create(aceFileStream);
     	parser.accept(builder);
-    	return new DefaultAceFileDataStore2(builder);
+    	return new DefaultAceFileDataStore(builder);
     }
     public static AceFileContigDataStore create(File aceFile) throws IOException{
     	return create(aceFile, DataStoreFilters.alwaysAccept());
     }
     public static AceFileContigDataStore create(File aceFile, DataStoreFilter filter) throws IOException{
     	Visitor builder = new Visitor(filter);
-    	AceHandler parser = AceFileParser2.create(aceFile);
+    	AceHandler parser = AceFileParser.create(aceFile);
     	parser.accept(builder);
-    	return new DefaultAceFileDataStore2(builder);
+    	return new DefaultAceFileDataStore(builder);
     }
     
-	private DefaultAceFileDataStore2(Visitor builder) {
+	private DefaultAceFileDataStore(Visitor builder) {
 		if(!builder.completed){
 			throw new IllegalStateException("did not completely parse ace file");
 		}
@@ -162,7 +162,7 @@ final class DefaultAceFileDataStore2 implements AceFileContigDataStore{
 	}
 
 
-	private static final class Visitor implements AceFileVisitor2{
+	private static final class Visitor implements AceFileVisitor{
 
 		private final DataStoreFilter filter;
 		

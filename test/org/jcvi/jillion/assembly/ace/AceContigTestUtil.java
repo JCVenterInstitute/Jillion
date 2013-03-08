@@ -54,7 +54,7 @@ public final class AceContigTestUtil {
 	public static final NucleotideSequenceDataStore createFullLengthSeqDataStoreFrom(File aceFile) throws IOException{
 		final Map<String,NucleotideSequence> fullSequences = new HashMap<String, NucleotideSequence>();
 		
-		AceFileVisitor2 visitor2 = new AbstractAceFileVisitor2(){
+		AceFileVisitor visitor2 = new AbstractAceFileVisitor(){
 
 			@Override
 			public AceContigVisitor visitContig(
@@ -90,7 +90,7 @@ public final class AceContigTestUtil {
 		
 		
 		
-		AceFileParser2.create(aceFile).accept(visitor2);
+		AceFileParser.create(aceFile).accept(visitor2);
 		return DataStoreUtil.adapt(NucleotideSequenceDataStore.class, fullSequences);
 	}
     
