@@ -59,7 +59,7 @@ import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterato
  * @author dkatzel
  *
  */
-final class LargeAceFileDataStore2 implements AceFileContigDataStore{
+final class LargeAceFileDataStore implements AceFileContigDataStore{
 
 	private final File aceFile;
 	private Long numberOfContigs = null;
@@ -81,7 +81,7 @@ final class LargeAceFileDataStore2 implements AceFileContigDataStore{
 	 * @throws NullPointerException if aceFile is null.
 	 */
 	public static AceFileContigDataStore create(File aceFile) throws FileNotFoundException{
-		return new LargeAceFileDataStore2(aceFile, DataStoreFilters.alwaysAccept());
+		return new LargeAceFileDataStore(aceFile, DataStoreFilters.alwaysAccept());
 	}
 	/**
 	 * Create a new instance of {@link LargeAceFileDataStore}
@@ -103,11 +103,11 @@ final class LargeAceFileDataStore2 implements AceFileContigDataStore{
 	 * @throws NullPointerException if aceFile is null.
 	 */
 	public static AceFileContigDataStore create(File aceFile, DataStoreFilter contigIdFilter) throws FileNotFoundException{
-		return new LargeAceFileDataStore2(aceFile, contigIdFilter);
+		return new LargeAceFileDataStore(aceFile, contigIdFilter);
 	}
 	
 	
-	private LargeAceFileDataStore2(File aceFile, DataStoreFilter contigIdFilter) throws FileNotFoundException {
+	private LargeAceFileDataStore(File aceFile, DataStoreFilter contigIdFilter) throws FileNotFoundException {
 		if(contigIdFilter ==null){
 			throw new NullPointerException("filter can not be null");
 		}
@@ -154,7 +154,7 @@ final class LargeAceFileDataStore2 implements AceFileContigDataStore{
 		SingleContigVisitor visitor = new SingleContigVisitor(id);
 
 		try {
-			AceFileParser2.create(aceFile).accept(visitor);
+			AceFileParser.create(aceFile).accept(visitor);
 		} catch (IOException e) {
 			throw new DataStoreException("error parsing ace file",e);
 		}
@@ -215,7 +215,7 @@ final class LargeAceFileDataStore2 implements AceFileContigDataStore{
 	private void setTagLists() throws DataStoreException {
 		try {
 			AceTagsVisitor visitor = new AceTagsVisitor();
-			AceFileParser2.create(aceFile).accept(visitor);
+			AceFileParser.create(aceFile).accept(visitor);
 			if(!visitor.isCompletlyParsed()){
 				throw new DataStoreException("could not completely parse tags from ace file");
 			}
@@ -246,7 +246,7 @@ final class LargeAceFileDataStore2 implements AceFileContigDataStore{
 		//haven't parsed num contigs yet 
 		SizeVisitor visitor = new SizeVisitor();
 		try {
-			AceFileParser2.create(aceFile).accept(visitor);
+			AceFileParser.create(aceFile).accept(visitor);
 		} catch (IOException e) {
 			throw new DataStoreException("error parsing number of contigs",e);
 		}
@@ -263,7 +263,7 @@ final class LargeAceFileDataStore2 implements AceFileContigDataStore{
 	}
 	
 
-	private final class SizeVisitor implements AceFileVisitor2{
+	private final class SizeVisitor implements AceFileVisitor{
 private final AceContigReadVisitor readVisitor = new AceContigReadVisitor() {
 			
 			@Override
@@ -411,7 +411,7 @@ private final AceContigReadVisitor readVisitor = new AceContigReadVisitor() {
         */
         @Override
         protected void backgroundThreadRunMethod() {
-            AceFileVisitor2 visitor = new AceFileVisitor2() {
+            AceFileVisitor visitor = new AceFileVisitor() {
 
 				@Override
 				public void visitHeader(int numberOfContigs,
@@ -469,7 +469,7 @@ private final AceContigReadVisitor readVisitor = new AceContigReadVisitor() {
 
             };
             try {
-                AceFileParser2.create(aceFile).accept(visitor);
+                AceFileParser.create(aceFile).accept(visitor);
             } catch (Exception e) {
                 //some kind of exception occured while we were parsing the ace file
                 throw new RuntimeException("error while iterating over ace file",e);
@@ -477,7 +477,7 @@ private final AceContigReadVisitor readVisitor = new AceContigReadVisitor() {
             
         }
     }
-    private static final class SingleContigVisitor implements AceFileVisitor2{
+    private static final class SingleContigVisitor implements AceFileVisitor{
 
     	private AceContig contig;
     	private final String contigIdToGet;
@@ -545,7 +545,7 @@ private final AceContigReadVisitor readVisitor = new AceContigReadVisitor() {
     	
     
     private final class IdIteratorImpl extends AbstractBlockingStreamingIterator<String>{
-    	private class InnerVisitor implements AceFileVisitor2{
+    	private class InnerVisitor implements AceFileVisitor{
 
 			@Override
 			public void visitHeader(int numberOfContigs, long totalNumberOfReads) {
@@ -601,9 +601,9 @@ private final AceContigReadVisitor readVisitor = new AceContigReadVisitor() {
         */
         @Override
         protected void backgroundThreadRunMethod() {
-        	AceFileVisitor2 builder = new InnerVisitor();
+        	AceFileVisitor builder = new InnerVisitor();
             try {
-                AceFileParser2.create(aceFile).accept(builder);
+                AceFileParser.create(aceFile).accept(builder);
             } catch (Exception e) {
                 //some kind of exception occured while we were parsing the ace file
                 throw new RuntimeException("error while iterating over ace file",e);
@@ -612,7 +612,7 @@ private final AceContigReadVisitor readVisitor = new AceContigReadVisitor() {
         }
     }
     
-    private class AceTagsVisitor implements AceFileVisitor2{
+    private class AceTagsVisitor implements AceFileVisitor{
 
     	/**
 	     * List of all the {@link WholeAssemblyAceTag}s

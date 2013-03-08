@@ -29,7 +29,7 @@ public class TestFilteredLargeIndexedAceFileDataStore extends AbstractTestFilter
 
 	@Override
 	protected AceFileContigDataStore create(File aceFile, DataStoreFilter filter) throws IOException {
-		return LargeAceFileDataStore2.create(aceFile, filter);
+		return LargeAceFileDataStore.create(aceFile, filter);
 	}
 
 }

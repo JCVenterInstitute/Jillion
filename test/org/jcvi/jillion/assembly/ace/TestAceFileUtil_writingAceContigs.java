@@ -72,7 +72,7 @@ public class TestAceFileUtil_writingAceContigs {
         AceFileUtil.writeAceFileHeader(numberOfContigs, numberOfReads, out);
         writeAceContigs(phdDataStore, aceDataStore, out);
         
-        AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore2.create(new ByteArrayInputStream(out.toByteArray()));
+        AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore.create(new ByteArrayInputStream(out.toByteArray()));
         assertEquals("# contigs", aceDataStore.getNumberOfRecords(), reparsedAceDataStore.getNumberOfRecords());
         StreamingIterator<AceContig> contigIter = aceDataStore.iterator();
         try{

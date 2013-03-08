@@ -11,7 +11,7 @@ public class TestDefaultAceFileDataStore2 extends TestAbstractAceParserMatchesAc
 	@BeforeClass
 	public static void createAceDataStoreFor()
 			throws IOException {
-		sut= DefaultAceFileDataStore2.create(ACE_FILE,DataStoreFilters.alwaysAccept());
+		sut= DefaultAceFileDataStore.create(ACE_FILE,DataStoreFilters.alwaysAccept());
 	}
 
 

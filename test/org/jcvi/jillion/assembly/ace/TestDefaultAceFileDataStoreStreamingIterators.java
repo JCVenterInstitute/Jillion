@@ -28,7 +28,7 @@ public class TestDefaultAceFileDataStoreStreamingIterators extends AbstractTestA
 	@Override
 	protected AceFileContigDataStore createDataStore(File aceFile)
 			throws IOException {
-		return DefaultAceFileDataStore2.create(aceFile);
+		return DefaultAceFileDataStore.create(aceFile);
 	}
 
 }

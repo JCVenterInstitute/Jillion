@@ -21,7 +21,7 @@ public class TestAceTestUtil {
 		
 		AceHandler sut = AceTestUtil.createAceHandlerFor(expected);
 		
-		sut.accept(new AbstractAceFileVisitor2() {
+		sut.accept(new AbstractAceFileVisitor() {
 
 			@Override
 			public AceContigVisitor visitContig(

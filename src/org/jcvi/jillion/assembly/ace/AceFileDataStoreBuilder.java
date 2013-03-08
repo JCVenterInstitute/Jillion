@@ -169,16 +169,16 @@ public final class AceFileDataStoreBuilder {
 		}
 		//since it's a stream we won't be able to re-seek so any
 		//request will require a storing everything in memory.
-		return DefaultAceFileDataStore2.create(aceStream,filter);
+		return DefaultAceFileDataStore.create(aceStream,filter);
 
 	}
 
 	private AceFileContigDataStore buildFromFile() throws IOException,
 			FileNotFoundException {
 		switch(hint){
-			case OPTIMIZE_FAST_RANDOM_ACCESS: return DefaultAceFileDataStore2.create(aceFile,filter);
-			case OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS: return IndexedAceFileDataStore2.create(aceFile,filter);
-			case ITERATION_ONLY: return LargeAceFileDataStore2.create(aceFile,filter);
+			case OPTIMIZE_FAST_RANDOM_ACCESS: return DefaultAceFileDataStore.create(aceFile,filter);
+			case OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS: return IndexedAceFileDataStore.create(aceFile,filter);
+			case ITERATION_ONLY: return LargeAceFileDataStore.create(aceFile,filter);
 			default:
 				//can not happen
 				throw new IllegalArgumentException("unknown provider hint : "+ hint);

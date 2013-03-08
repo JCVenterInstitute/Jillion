@@ -13,7 +13,7 @@ public class TestDefaultAceFileDataStoreUsingInputStream extends TestAbstractAce
 	public static void createAceDataStoreFor()
 			throws IOException {
 		InputStream in = new FileInputStream(ACE_FILE);
-		sut= DefaultAceFileDataStore2.create(in);
+		sut= DefaultAceFileDataStore.create(in);
 	}
 
 }

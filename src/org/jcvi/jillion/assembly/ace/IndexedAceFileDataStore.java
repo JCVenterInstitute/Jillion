@@ -30,7 +30,7 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
  * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
-final class IndexedAceFileDataStore2 implements AceFileContigDataStore{
+final class IndexedAceFileDataStore implements AceFileContigDataStore{
 	
 	private final Map<String, AceFileVisitorMemento> mementos;
 	private final List<WholeAssemblyAceTag> wholeAssemblyTags;
@@ -46,13 +46,13 @@ final class IndexedAceFileDataStore2 implements AceFileContigDataStore{
     	if(filter==null){
     		throw new NullPointerException("filter can not be null");
     	}
-    	AceHandler parser = AceFileParser2.create(aceFile);
+    	AceHandler parser = AceFileParser.create(aceFile);
     	VisitorBuilder visitorBuilder = new VisitorBuilder(filter);
     	parser.accept(visitorBuilder);
-    	return new IndexedAceFileDataStore2(visitorBuilder, parser);
+    	return new IndexedAceFileDataStore(visitorBuilder, parser);
     }
     
-    private IndexedAceFileDataStore2(VisitorBuilder builder, AceHandler parser){    	
+    private IndexedAceFileDataStore(VisitorBuilder builder, AceHandler parser){    	
     	this.parser = parser;
     	this.mementos = builder.mementos;
     	this.wholeAssemblyTags = builder.wholeAssemblyTags;
@@ -151,7 +151,7 @@ final class IndexedAceFileDataStore2 implements AceFileContigDataStore{
 
 
 
-	private static class VisitorBuilder implements AceFileVisitor2{
+	private static class VisitorBuilder implements AceFileVisitor{
 		private final List<WholeAssemblyAceTag> wholeAssemblyTags = new ArrayList<WholeAssemblyAceTag>();
         private final List<ConsensusAceTag> consensusTags = new ArrayList<ConsensusAceTag>();
         private final List<ReadAceTag> readTags = new ArrayList<ReadAceTag>();
@@ -230,7 +230,7 @@ final class IndexedAceFileDataStore2 implements AceFileContigDataStore{
         
 	}
 	
-	public static final class SingleAceFileVisitor implements AceFileVisitor2 {
+	public static final class SingleAceFileVisitor implements AceFileVisitor {
 
 		private AceContig contig;
 		

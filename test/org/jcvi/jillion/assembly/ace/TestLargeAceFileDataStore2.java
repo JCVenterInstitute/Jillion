@@ -11,7 +11,7 @@ public class TestLargeAceFileDataStore2  extends TestAbstractAceParserMatchesAce
 	@BeforeClass
 	public static void createAceDataStoreFor()
 			throws IOException {
-		sut= LargeAceFileDataStore2.create(ACE_FILE,DataStoreFilters.alwaysAccept());
+		sut= LargeAceFileDataStore.create(ACE_FILE,DataStoreFilters.alwaysAccept());
 	}
 
 }

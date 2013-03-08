@@ -80,7 +80,7 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
             final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
         FullLengthPhdParser2 visitor = new FullLengthPhdParser2(contigId, lowQuality,highQuality);
         
-        AceFileParser2.create(aceContigFile).accept(visitor);
+        AceFileParser.create(aceContigFile).accept(visitor);
         delegate = DataStoreUtil.adapt(PhdDataStore.class, visitor.getPhds());
         
     }
@@ -89,7 +89,7 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
             final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
         FullLengthPhdParser2 visitor = new FullLengthPhdParser2(filter,null, lowQuality,highQuality);
         
-        AceFileParser2.create(aceContigFile).accept(visitor);
+        AceFileParser.create(aceContigFile).accept(visitor);
         delegate = DataStoreUtil.adapt(PhdDataStore.class, visitor.getPhds());
         
     }
@@ -97,7 +97,7 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
             final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
         FullLengthPhdParser2 visitor = new FullLengthPhdParser2(lowQuality,highQuality);
         
-        AceFileParser2.create(aceContigFile).accept(visitor);
+        AceFileParser.create(aceContigFile).accept(visitor);
         delegate = DataStoreUtil.adapt(PhdDataStore.class, visitor.getPhds());
         
     }
@@ -105,7 +105,7 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
             final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
         FullLengthPhdParser2 visitor = new FullLengthPhdParser2(contigId,lowQuality,highQuality);
         
-        AceFileParser2.create(aceContigFile).accept(visitor);
+        AceFileParser.create(aceContigFile).accept(visitor);
         delegate = DataStoreUtil.adapt(PhdDataStore.class, visitor.getPhds());
         
     }
@@ -114,7 +114,7 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
             final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
         FullLengthPhdParser2 visitor = new FullLengthPhdParser2(lowQuality,highQuality);
         
-        AceFileParser2.create(aceContigFile).accept(visitor);
+        AceFileParser.create(aceContigFile).accept(visitor);
         delegate = DataStoreUtil.adapt(PhdDataStore.class, visitor.getPhds());
         
     }
@@ -184,7 +184,7 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
      * are high or low quality based on upper vs lower case basecalls.
      * @author dkatzel
      */
-    private static final class FullLengthPhdParser2 extends AbstractAceFileVisitor2{
+    private static final class FullLengthPhdParser2 extends AbstractAceFileVisitor{
 
     	private Map<String, Phd> phds=null;
         private final DataStoreFilter filter;

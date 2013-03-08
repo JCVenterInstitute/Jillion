@@ -26,7 +26,7 @@ public class TestAceContigVisitorAdapterRemoveReadsFromContig {
 		
 		AceHandler handler = AceTestUtil.createAceHandlerFor(contig);
 		final AtomicBoolean visitedContig = new AtomicBoolean(false);
-		handler.accept(new AbstractAceFileVisitor2() {
+		handler.accept(new AbstractAceFileVisitor() {
 
 			@Override
 			public AceContigVisitor visitContig(

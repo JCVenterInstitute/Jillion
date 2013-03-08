@@ -29,7 +29,7 @@ public class TestIndexedAceDataStoreStreamingIterators extends AbstractTestAceDa
 
 	@Override
 	protected AceFileContigDataStore createDataStore(File aceFile) throws IOException {
-		return IndexedAceFileDataStore2.create(aceFile, DataStoreFilters.alwaysAccept());
+		return IndexedAceFileDataStore.create(aceFile, DataStoreFilters.alwaysAccept());
 	}
 
 }
