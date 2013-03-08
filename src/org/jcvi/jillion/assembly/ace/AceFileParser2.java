@@ -433,7 +433,7 @@ public abstract class AceFileParser2 implements AceHandler {
                 }
             } 
         },
-        READ_QUALITY("^QA\\s+(-?\\d+)\\s+(-?\\d+)\\s+(\\d+)\\s+(\\d+)"){
+        READ_QUALITY("^QA\\s+(-?\\d+)\\s+(-?\\d+)\\s+(-?\\d+)\\s+(-?\\d+)"){
             @Override
             void handle(Matcher qualityMatcher, AceParserState parserState, String line) {
                 if(parserState.parseCurrentRead()){
