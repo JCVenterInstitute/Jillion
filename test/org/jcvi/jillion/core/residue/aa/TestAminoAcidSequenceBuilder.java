@@ -20,15 +20,14 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 
-import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
-import org.jcvi.jillion.core.residue.aa.AminoAcidSequenceBuilder;
-import org.jcvi.jillion.core.residue.aa.AminoAcids;
-import org.jcvi.jillion.core.residue.aa.UngappedAminoAcidSequence;
+import org.jcvi.jillion.core.Range;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestAminoAcidSequenceBuilder {
 
 	@Test
@@ -82,6 +81,24 @@ public class TestAminoAcidSequenceBuilder {
 		assertEquals(5L, sut.getLength());
 	}
 	
+	@Test
+	public void trim(){
+		AminoAcidSequenceBuilder sut = new AminoAcidSequenceBuilder("IKFTW");
+		sut.trim(Range.of(1,3));
+		
+		assertEquals(0, sut.getNumGaps());
+		assertEquals(3L, sut.getLength());
+		assertEquals("KFT", AminoAcids.asString(sut.build()));
+	}
+	@Test
+	public void trimEmptyRangeShouldRemoveEntireSequence(){
+		AminoAcidSequenceBuilder sut = new AminoAcidSequenceBuilder("IKFTW");
+		sut.trim(new Range.Builder(0).build());
+		
+		assertEquals(0, sut.getNumGaps());
+		assertEquals(0L, sut.getLength());
+		assertEquals("", AminoAcids.asString(sut.build()));
+	}
 	@Test
 	public void multipleAppendsString(){
 		AminoAcidSequenceBuilder sut = new AminoAcidSequenceBuilder("IKFTW");

@@ -788,8 +788,8 @@ public abstract class Range implements Rangeable,Iterable<Long>
      * Calculates the intersection of this {@link Range} and a second one.
      * 
      * <p>
-     * The intersection of an empty list with any other list is always the
-     * empty list.
+     * The intersection of an empty Range with any other Range is always the
+     * empty Range.
      *
      * @param other The second {@link Range} to compare
      * @return A {@link Range} object spanning only the range of values covered
