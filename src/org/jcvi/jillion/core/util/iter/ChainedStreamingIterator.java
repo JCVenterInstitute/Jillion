@@ -41,17 +41,18 @@ import org.jcvi.jillion.core.io.IOUtil;
  */
 final class ChainedStreamingIterator<T> implements StreamingIterator<T>{
 
-    private final List<StreamingIterator<T>> delegates;
-    private final Iterator<T> iterator;
+    private final List<StreamingIterator<? extends T>> delegates;
+    private final Iterator<? extends T> iterator;
     
     /**
      * @param delegates
      */
-    public ChainedStreamingIterator(Collection<? extends StreamingIterator<T>> delegates) {
+    public ChainedStreamingIterator(Collection<? extends StreamingIterator<? extends T>> delegates) {
     	if(delegates.contains(null)){
             throw new NullPointerException("can not contain null iterator");
         }
-        this.delegates = new ArrayList<StreamingIterator<T>>(delegates);
+        this.delegates = new ArrayList<StreamingIterator<? extends T>>(delegates);
+        
         this.iterator = ChainedIterator.create(delegates);
     }
 
@@ -61,7 +62,7 @@ final class ChainedStreamingIterator<T> implements StreamingIterator<T>{
     */
     @Override
     public void close() throws IOException {
-      for(StreamingIterator<T> delegate : delegates){
+      for(StreamingIterator<? extends T> delegate : delegates){
             IOUtil.closeAndIgnoreErrors(delegate);
         }
     }
