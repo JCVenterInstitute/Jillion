@@ -36,8 +36,8 @@ import java.util.NoSuchElementException;
  */
 final class ChainedIterator<T> implements Iterator<T>{
   
-    private final Iterator<? extends Iterator<T>> chain;
-    private Iterator<T> currentIterator;
+    private final Iterator<? extends Iterator<? extends T>> chain;
+    private Iterator<? extends T> currentIterator;
     private final Object endOfIterating= new Object();
    
     private final Object needToGetNext = new Object();
@@ -50,11 +50,11 @@ final class ChainedIterator<T> implements Iterator<T>{
      * @return a new ChainedIterator instance; never null.
      * @throws NullPointerException if iterators is null or contains a null.
      */
-    public static <T> ChainedIterator<T> create(Collection<? extends Iterator<T>> iterators){
+    public static <T> ChainedIterator<T> create(Collection<? extends Iterator<? extends T>> iterators){
         return new ChainedIterator<T>(iterators);
     }
     
-    private ChainedIterator(Collection<? extends Iterator<T>> iterators){
+    private ChainedIterator(Collection<? extends Iterator<? extends T>> iterators){
         if(iterators.contains(null)){
             throw new NullPointerException("can not contain null iterator");
         }

@@ -314,6 +314,24 @@ public final class IOUtil {
     public static void blockingRead(InputStream in, byte[] buf) throws IOException{
     	blockingRead(in, buf, 0, buf.length);
     }
+    
+    /**
+     * Reads {@code buf.length} bytes of the given {@link RandomAccessFile}
+     * starting at the current file pointer and
+     * puts them into the given byte array starting at the given offset.
+     * Will keep reading until length number of bytes have been read (possibly blocking). 
+     * This is the same as {@link #blockingRead(RandomAccessFile, byte[], int, int) blockingRead(in,buf,0, buf.length)}
+     * @param file the {@link RandomAccessFile} to read; can not be null.
+     * @param buf the byte array to write the data from the stream to; can not be null.
+     * @throws EOFException if EOF is unexpectedly reached.
+     * @throws IOException if there is a problem reading the stream.
+     * @throws NullPointerException if either inputStream  or buf are null.
+     * @throws IllegalArgumentException if either offset  or length are negative.
+     * @see #blockingRead(RandomAccessFile, byte[], int, int)
+     */
+    public static void blockingRead(RandomAccessFile file, byte[] buf) throws IOException{
+    	blockingRead(file, buf, 0, buf.length);
+    }
     /**
      * Reads up to length number of bytes of the given inputStream and
      * puts them into the given byte array starting at the given offset.
@@ -344,6 +362,39 @@ public final class IOUtil {
             throw new EOFException(String.format("end of file after only %d bytes read (expected %d)",totalBytesRead,length));
         }
     }
+    
+    
+    /**
+     * Reads up to length number of bytes of the given {@link RandomAccessFile} 
+     * starting at the current file pointer and
+     * puts them into the given byte array starting at the given offset.
+     * Will keep reading until length number of bytes have been read (possibly blocking). 
+     * @param file the {@link RandomAccessFile} to read; can not be null.
+     * @param buf the byte array to write the data from the stream to; can not be null.
+     * @param offset the offset into the byte array to begin writing 
+     * bytes to must be {@code >= 0}.
+     * @param length the maximum number of bytes to read, must be {@code >= 0}.
+     * This number of bytes will be read unless the inputStream ends prematurely
+     * (which will throw an IOException). 
+     * @throws EOFException if EOF is unexpectedly reached.
+     * @throws IOException if there is a problem reading the stream.
+     * @throws NullPointerException if either inputStream  or buf are null.
+     * @throws IllegalArgumentException if either offset  or length are negative.
+     */
+    public static void blockingRead(RandomAccessFile file, byte[] buf, int offset, int length) throws IOException{
+        checkBlockingReadInputsAreOK(file, buf, offset, length);
+    	int currentBytesRead=0;
+        int totalBytesRead=0;
+        while((currentBytesRead =file.read(buf, offset+totalBytesRead, length-totalBytesRead))>0){
+            totalBytesRead+=currentBytesRead;
+            if(totalBytesRead == length){
+                break;
+            }
+        }
+        if(currentBytesRead ==EOF){
+            throw new EOFException(String.format("end of file after only %d bytes read (expected %d)",totalBytesRead,length));
+        }
+    }
 	private static void checkBlockingReadInputsAreOK(InputStream in,
 			byte[] buf, int offset, int length) {
 		if(buf ==null){
@@ -359,7 +410,21 @@ public final class IOUtil {
         	throw new IllegalArgumentException("length must be >= 0");
         }
 	}
-
+	private static void checkBlockingReadInputsAreOK(RandomAccessFile in,
+			byte[] buf, int offset, int length) {
+		if(buf ==null){
+        	throw new NullPointerException("byte array can not be null");
+        }
+        if(in ==null){
+        	throw new NullPointerException("inputstream can not be null");
+        }
+        if(offset <0){
+        	throw new IllegalArgumentException("offset must be >= 0");
+        }
+        if(length <0){
+        	throw new IllegalArgumentException("length must be >= 0");
+        }
+	}
    
     public static short[] readUnsignedByteArray(InputStream in, int expectedLength) throws IOException {
         short[] array = new short[expectedLength];
@@ -896,5 +961,6 @@ public final class IOUtil {
         }
         return array;
     }
+    
     
 }

@@ -115,7 +115,7 @@ public final class IteratorUtil {
      * @throws NullPointerException if the input collection
      * is null or if any element in the collection is null.
      */
-    public static <E> StreamingIterator<E> createChainedStreamingIterator(Collection<? extends StreamingIterator<E>> iterators){
+    public static <E> StreamingIterator<E> createChainedStreamingIterator(Collection<? extends StreamingIterator<? extends E>> iterators){
     	return new ChainedStreamingIterator<E>(iterators);
     }
     private static class PeekableIteratorImpl<T> implements PeekableIterator<T>{

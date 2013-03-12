@@ -14,24 +14,24 @@ import java.io.RandomAccessFile;
  */
 public class RandomAccessFileInputStream extends InputStream{
 
-	private final RandomAccessFile buffer;
+	private final RandomAccessFile randomAcessFile;
 	
 	public RandomAccessFileInputStream(RandomAccessFile file){
 		if(file ==null){
 			throw new NullPointerException("file can not be null");
 		}
-		this.buffer = file;
+		this.randomAcessFile = file;
 	}
 	
 	@Override
 	public synchronized int read() throws IOException {
-		return buffer.read();
+		return randomAcessFile.read();
 
 	}
 
 	@Override
 	public synchronized int read(byte[] b, int off, int len) throws IOException {
-		return buffer.read(b, off, len);
+		return randomAcessFile.read(b, off, len);
 	}
 	/**
 	 * This method does nothing, the RandomAccessFile

@@ -216,14 +216,16 @@ public final class CasUtil {
     /**
      * Get the java File object for a filepath in a cas file.
      * @param workingDir the working directory this cas file was
-     * created in (usually the same location as the cas file itself).
+     * created in (usually the same location as the cas file itself);
+     * If workingDir is {@code null}, then the working dir is the 
+     * current directory.
      * @param filePath the path to the file which may or may not
      * be relative.
      * @return a new File object that represents the file.
      * @throws FileNotFoundException if the file does not exist.
      */
     public static File getFileFor(File workingDir,String filePath) throws FileNotFoundException {
-        boolean isAbsolutePath = filePath.charAt(0) == File.separatorChar;
+        boolean isAbsolutePath = filePath !=null && filePath.charAt(0) == File.separatorChar;
         final File dataStoreFile;
         if(isAbsolutePath){
             dataStoreFile = new File(filePath);
