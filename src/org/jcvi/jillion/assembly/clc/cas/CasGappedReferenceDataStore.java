@@ -9,4 +9,6 @@ public interface CasGappedReferenceDataStore extends NucleotideSequenceDataStore
 	NucleotideSequence getReferenceByIndex(long index) throws DataStoreException;
 	
 	String getIdByIndex(long index);
+	
+	long getIndexById(String id);
 }

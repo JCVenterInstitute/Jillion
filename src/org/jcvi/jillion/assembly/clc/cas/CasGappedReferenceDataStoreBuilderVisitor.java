@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -283,13 +284,22 @@ public class CasGappedReferenceDataStoreBuilderVisitor implements CasFileVisitor
 
 		 private final DataStore<NucleotideSequence> delegate;
 		 private final Map<Long, String> refIndexToIdMap;
-		 
+		 private final Map<String, Long> Id2IndexMap;
 		 
 		public CasGappedReferenceDataStoreImpl(
 				DataStore<NucleotideSequence> delegate,
 				Map<Long, String> refIndexToIdMap) {
 			this.delegate = delegate;
 			this.refIndexToIdMap = refIndexToIdMap;
+			Id2IndexMap = new HashMap<String, Long>(refIndexToIdMap.size());
+			for(Entry<Long, String> entry : refIndexToIdMap.entrySet()){
+				Id2IndexMap.put(entry.getValue(), entry.getKey());
+			}
+		}
+
+		@Override
+		public long getIndexById(String id) {
+			return Id2IndexMap.get(id);
 		}
 
 		@Override
