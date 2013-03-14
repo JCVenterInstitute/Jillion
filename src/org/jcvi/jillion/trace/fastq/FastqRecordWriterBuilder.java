@@ -23,7 +23,6 @@ package org.jcvi.jillion.trace.fastq;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -76,17 +75,17 @@ public final class FastqRecordWriterBuilder implements Builder<FastqRecordWriter
 	 * the given File to write
 	 * out the fastq records.  Any contents
 	 * that previously existed in this file
-	 * will be overwritten.
+	 * will be overwritten.  If the path for the given
+	 * File does not yet exist, then it will be created.
 	 * @param outputFile the File to use;
 	 * can not be null.
 	 * @throws NullPointerException if outputFile is null.
-	 * @throws FileNotFoundException if the file exists but 
-	 * is a directory rather than a regular file, 
-	 * does not exist but cannot be created, 
+	 * @throws IOException if there is a problem creating the new file. 
 	 * or cannot be opened for any other reason.
 	 */
-	public FastqRecordWriterBuilder(File outputFile) throws FileNotFoundException{
-		this(new BufferedOutputStream(new FileOutputStream(outputFile)));
+	public FastqRecordWriterBuilder(File outputFile) throws IOException{
+		IOUtil.mkdirs(outputFile.getParentFile());
+		this.out =new BufferedOutputStream(new FileOutputStream(outputFile));
 	}
 	/**
 	 * Change the {@link Charset} used

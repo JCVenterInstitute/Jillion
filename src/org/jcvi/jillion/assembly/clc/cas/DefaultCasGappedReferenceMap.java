@@ -78,7 +78,7 @@ public class DefaultCasGappedReferenceMap extends AbstractOnePassCasFileVisitor 
             
             
             CasAlignment alignment =match.getChosenAlignment();
-            Long referenceId = alignment.contigSequenceId();
+            Long referenceId = alignment.getReferenceIndex();
             if(!gapsByReferenceId.containsKey(referenceId)){
                 gapsByReferenceId.put(referenceId, new TreeMap<Long,Insertion>());
             }

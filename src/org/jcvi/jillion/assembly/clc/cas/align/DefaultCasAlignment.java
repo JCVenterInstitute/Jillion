@@ -56,7 +56,7 @@ public class DefaultCasAlignment implements CasAlignment {
     }
 
     @Override
-    public long contigSequenceId() {
+    public long getReferenceIndex() {
         return contigSequenceId;
     }
 
@@ -151,7 +151,7 @@ public class DefaultCasAlignment implements CasAlignment {
             resetCurrentRegion();
         }
         public Builder(CasAlignment copy) {
-            this.contigSequenceId = copy.contigSequenceId();
+            this.contigSequenceId = copy.getReferenceIndex();
             this.startOfMatch = copy.getStartOfMatch();
             this.readIsReversed = copy.readIsReversed();
             for(CasAlignmentRegion region : copy.getAlignmentRegions()){
