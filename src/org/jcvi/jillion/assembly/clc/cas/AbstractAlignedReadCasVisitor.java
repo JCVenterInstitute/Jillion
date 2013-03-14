@@ -52,6 +52,10 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 		this.gappedReferenceDataStore = gappedReferenceDataStore;
 	}
 
+	public final CasGappedReferenceDataStore getGappedReferenceDataStore() {
+		return gappedReferenceDataStore;
+	}
+
 	@Override
 	public final void visitReadFileInfo(CasFileInfo readFileInfo) {
 		for(String filePath :readFileInfo.getFileNames()){
