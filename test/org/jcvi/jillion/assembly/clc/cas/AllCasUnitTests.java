@@ -26,6 +26,7 @@
 package org.jcvi.jillion.assembly.clc.cas;
 
 import org.jcvi.jillion.assembly.clc.cas.align.AllCasAlignmentUnitTests;
+import org.jcvi.jillion.assembly.clc.cas.consed.AllCas2ConsedTests;
 import org.jcvi.jillion.assembly.clc.cas.var.AllVarUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -36,8 +37,10 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         TestReadFileType.class,
         TestCasUtil.class,
-        TestDifferentFileCasIdLookupAdapter.class,
-        TestDefaultCasGappedReferenceMap.class,
+        TestCasGappedReferenceDataStoreBuilderVisitor.class,
+
+        AllCas2ConsedTests.class,
+        
         AllCasAlignmentUnitTests.class,
         AllVarUnitTests.class
     }

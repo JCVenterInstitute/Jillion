@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +29,7 @@ import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
 
 public class CasGappedReferenceDataStoreBuilderVisitor implements CasFileVisitor2{
 
-	private final SortedMap<Long, SortedMap<Long,Insertion>> gapsByReferenceId = new TreeMap<Long, SortedMap<Long,Insertion>>();
-	private final Map<String, Long> refIdToIndexMap = new HashMap<String, Long>();
+	private final SortedMap<Long, SortedMap<Long,Insertion>> gapsByReferenceIndex = new TreeMap<Long, SortedMap<Long,Insertion>>();
 	private final Map<Long, String> refIndexToIdMap = new TreeMap<Long, String>();
 	
 	private final Map<Long, NucleotideSequenceBuilder> gappedReferenceBuilders = new TreeMap<Long, NucleotideSequenceBuilder>();
@@ -86,9 +84,10 @@ public class CasGappedReferenceDataStoreBuilderVisitor implements CasFileVisitor
             			NucleotideSequenceFastaRecord next = iter.next();
             			String id = next.getId();
             			Long index =Long.valueOf(refCounter);
+            			
             			refIndexToIdMap.put(index, id);
-            			refIdToIndexMap.put(id, index);
             			gappedReferenceBuilders.put(index, new NucleotideSequenceBuilder(next.getSequence()));
+            			refCounter++;
             		}
             	}finally{
         			IOUtil.closeAndIgnoreErrors(iter, datastore);
@@ -132,7 +131,8 @@ public class CasGappedReferenceDataStoreBuilderVisitor implements CasFileVisitor
         	
         	NucleotideSequenceBuilder gappedSequenceBuilder = entry.getValue();
         	//iterates in reverse to keep offsets in sync
-        	for(Entry<Long, Insertion> insertionEntry : gapsByReferenceId.get(refIndex).entrySet()){
+        	SortedMap<Long, Insertion> sortedMap = gapsByReferenceIndex.get(refIndex);
+			for(Entry<Long, Insertion> insertionEntry : sortedMap.entrySet()){
         		int offset = insertionEntry.getKey().intValue();
         		int maxGapSize = (int)insertionEntry.getValue().getSize();
         		gappedSequenceBuilder.insert(offset, createGapStringOf(maxGapSize));
@@ -196,9 +196,13 @@ public class CasGappedReferenceDataStoreBuilderVisitor implements CasFileVisitor
 		            
 		            
 		            CasAlignment alignment =match.getChosenAlignment();
-		            Long referenceId = alignment.contigSequenceId();
-		            if(!gapsByReferenceId.containsKey(referenceId)){
-		                gapsByReferenceId.put(referenceId, new TreeMap<Long,Insertion>(DescendingOffsetComparator.INSTANCE));
+		            Long referenceIndex = alignment.getReferenceIndex();		            
+		            
+		            if(!gapsByReferenceIndex.containsKey(referenceIndex)){
+		            	if(!refIndexToIdMap.containsKey(referenceIndex)){
+		            		throw new IllegalStateException("reference file does not contain a reference with index "+ referenceIndex);
+		            	}
+		                gapsByReferenceIndex.put(referenceIndex, new TreeMap<Long,Insertion>(DescendingOffsetComparator.INSTANCE));
 		            }
 		            
 		            List<CasAlignmentRegion> regionsToConsider = getAlignmentRegionsToConsider(alignment);
@@ -212,7 +216,7 @@ public class CasGappedReferenceDataStoreBuilderVisitor implements CasFileVisitor
 		                if(!outsideValidRange){
 		                    
 		                    if(region.getType() == CasAlignmentRegionType.INSERT){
-		                        Map<Long,Insertion> insertions =gapsByReferenceId.get(referenceId);
+		                        Map<Long,Insertion> insertions =gapsByReferenceIndex.get(referenceIndex);
 		                        if(insertions.containsKey(currentOffset)){
 		                            insertions.get(currentOffset).updateSize(region.getLength());
 		                        }

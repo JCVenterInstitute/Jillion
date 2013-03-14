@@ -25,12 +25,18 @@
  */
 package org.jcvi.jillion.assembly.clc.cas;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.jillion.assembly.clc.cas.CasIdLookup;
-import org.jcvi.jillion.assembly.clc.cas.CasMatch;
-import org.jcvi.jillion.assembly.clc.cas.DefaultCasGappedReferenceMap;
+import org.jcvi.jillion.assembly.clc.cas.CasFileVisitor2.CasVisitorCallback;
 import org.jcvi.jillion.assembly.clc.cas.align.CasAlignment;
 import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentRegionType;
 import org.jcvi.jillion.assembly.clc.cas.align.DefaultCasAlignment;
@@ -39,26 +45,38 @@ import org.jcvi.jillion.assembly.clc.cas.read.CasNucleotideDataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordWriter;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
-public class TestDefaultCasGappedReferenceMap {
+import org.junit.rules.TemporaryFolder;
+public class TestCasGappedReferenceDataStoreBuilderVisitor {
 
-    private static final String REFERENCE_CALLS_AS_STRING = "GTTCAAATTG";
     CasNucleotideDataStore referenceNucleotideDataStore;
     CasIdLookup contigNameLookup;
-    DefaultCasGappedReferenceMap sut;
+    CasGappedReferenceDataStoreBuilderVisitor sut;
     long referenceId= 0;
     String referenceName = "refName";
-    NucleotideSequence referenceCalls = new NucleotideSequenceBuilder(REFERENCE_CALLS_AS_STRING).build();
+    NucleotideSequence referenceCalls = new NucleotideSequenceBuilder("GTTCAAATTG").build();
+    
+    CasMatchVisitor matchVisitor;
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+    
     @Before
-    public void setup() throws DataStoreException{
-        referenceNucleotideDataStore = createMock(CasNucleotideDataStore.class);
-        contigNameLookup = createMock(CasIdLookup.class);
-        sut = new DefaultCasGappedReferenceMap(referenceNucleotideDataStore, contigNameLookup);
-        expect(referenceNucleotideDataStore.get(referenceName)).andReturn(referenceCalls);
-        expect(contigNameLookup.getLookupIdFor(referenceId)).andReturn(referenceName);
+    public void setup() throws DataStoreException, IOException{
+    	File refFasta = folder.newFile("ref.fasta");
+    	NucleotideSequenceFastaRecordWriter fastaWriter = new NucleotideSequenceFastaRecordWriterBuilder(refFasta)
+    															.build();
+    	fastaWriter.write(referenceName, new NucleotideSequenceBuilder("GTTCAAATTG").build());
+       fastaWriter.close();
+        sut = new CasGappedReferenceDataStoreBuilderVisitor(folder.getRoot());
+        CasFileInfo refInfo = createMock(CasFileInfo.class);
+        expect(refInfo.getFileNames()).andReturn(Arrays.asList(refFasta.getName()));
+        replay(refInfo);
+        sut.visitReferenceFileInfo(refInfo);
+        matchVisitor = sut.visitMatches(createMock(CasVisitorCallback.class));
     }
     
     private List<CasMatch> createMatchesFor(CasAlignment... alignments){
@@ -69,85 +87,75 @@ public class TestDefaultCasGappedReferenceMap {
         return matches;
     }
     @Test
-    public void oneReadNoInsertsShouldNotAddAnyGaps(){
+    public void oneReadNoInsertsShouldNotAddAnyGaps() throws DataStoreException{
         CasAlignment alignment = new DefaultCasAlignment.Builder(referenceId,0,false)
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 10)
                                                 .build();
-        replay(referenceNucleotideDataStore, contigNameLookup);
         for(CasMatch match : createMatchesFor(alignment)){
-            sut.visitMatch(match);
+        	matchVisitor.visitMatch(match);
         }
-        sut.visitEndOfFile();
-        assertEquals(referenceCalls,sut.getGappedReferenceFor(referenceId));
-        verify(referenceNucleotideDataStore, contigNameLookup);        
+        assertBuiltGappedReferenceEquals(referenceCalls);       
     }
+
+	private void assertBuiltGappedReferenceEquals(
+			NucleotideSequence expectedSequence) throws DataStoreException {
+		matchVisitor.visitEnd();
+        sut.visitEnd();
+        CasGappedReferenceDataStore actual = sut.build();
+        assertEquals(expectedSequence,actual.get(referenceName));
+        assertEquals(expectedSequence,actual.getReferenceByIndex(referenceId));
+	}
     
     @Test(expected = IllegalStateException.class)
     public void dataStoreExceptionShouldThrowIllegalStateException() throws DataStoreException{
-        CasAlignment alignment = new DefaultCasAlignment.Builder(referenceId,0,false)
+    	long invalidReferenceId = referenceId +1;
+        CasAlignment alignment = new DefaultCasAlignment.Builder(invalidReferenceId,0,false)
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 10)
                                                 .build();
-        reset(referenceNucleotideDataStore);
         for(CasMatch match : createMatchesFor(alignment)){
-            sut.visitMatch(match);
+        	matchVisitor.visitMatch(match);
         }
-        DataStoreException expectedDataStoreException = new DataStoreException("expected");
-        expect(referenceNucleotideDataStore.get(referenceName)).andThrow(expectedDataStoreException);
-        replay(referenceNucleotideDataStore, contigNameLookup);
-        for(CasMatch match : createMatchesFor(alignment)){
-            sut.visitMatch(match);
-        }
-        sut.visitEndOfFile();
              
     }
     @Test
-    public void ifLastAlignmentIsInsertShouldBeIgnored(){
+    public void ifLastAlignmentIsInsertShouldBeIgnored() throws DataStoreException{
         CasAlignment alignment = new DefaultCasAlignment.Builder(referenceId,0,false)
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 10)
                                                 .addRegion(CasAlignmentRegionType.INSERT, 10)
                                                 .build();
-        replay(referenceNucleotideDataStore, contigNameLookup);
         for(CasMatch match : createMatchesFor(alignment)){
-            sut.visitMatch(match);
+        	matchVisitor.visitMatch(match);
         }
-        sut.visitEndOfFile();
-        assertEquals(referenceCalls,sut.getGappedReferenceFor(referenceId));
-        verify(referenceNucleotideDataStore, contigNameLookup);        
+        assertBuiltGappedReferenceEquals(referenceCalls);       
     }
     @Test
-    public void twoReadsNoInsertsShouldNotAddAnyGaps(){
+    public void twoReadsNoInsertsShouldNotAddAnyGaps() throws DataStoreException{
         CasAlignment alignment1 = new DefaultCasAlignment.Builder(referenceId,0,false)
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 10)
                                                 .build();
         CasAlignment alignment2 = new DefaultCasAlignment.Builder(referenceId,0,false)
                                             .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 5)
                                             .build();
-        replay(referenceNucleotideDataStore, contigNameLookup);
         for(CasMatch match : createMatchesFor(alignment1, alignment2)){
-            sut.visitMatch(match);
+            matchVisitor.visitMatch(match);
         }
-        sut.visitEndOfFile();
-        assertEquals(referenceCalls,sut.getGappedReferenceFor(referenceId));
-        verify(referenceNucleotideDataStore, contigNameLookup);        
+        assertBuiltGappedReferenceEquals(referenceCalls);     
     }
     @Test
-    public void oneReadOneInsertShouldAddOneGap(){
+    public void oneReadOneInsertShouldAddOneGap() throws DataStoreException{
         CasAlignment alignment = new DefaultCasAlignment.Builder(referenceId,0,false)
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 4)
                                                 .addRegion(CasAlignmentRegionType.INSERT, 1)
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 6)
                                                 .build();
-        replay(referenceNucleotideDataStore, contigNameLookup);
         for(CasMatch match : createMatchesFor(alignment)){
-            sut.visitMatch(match);
+            matchVisitor.visitMatch(match);
         }
-        sut.visitEndOfFile();
-        assertEquals("GTTC-AAATTG",
-        		sut.getGappedReferenceFor(referenceId).toString());
-        verify(referenceNucleotideDataStore, contigNameLookup);        
+        NucleotideSequence expected = new NucleotideSequenceBuilder("GTTC-AAATTG").build();
+        assertBuiltGappedReferenceEquals(expected);      
     }
     @Test
-    public void twoReadsOneHasInsertShouldAddOneGap(){
+    public void twoReadsOneHasInsertShouldAddOneGap() throws DataStoreException{
         CasAlignment alignment = new DefaultCasAlignment.Builder(referenceId,0,false)
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 4)
                                                 .addRegion(CasAlignmentRegionType.INSERT, 1)
@@ -156,17 +164,15 @@ public class TestDefaultCasGappedReferenceMap {
         CasAlignment alignment2 = new DefaultCasAlignment.Builder(referenceId,0,false)
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 5)
                                                 .build();
-        replay(referenceNucleotideDataStore, contigNameLookup);
+
         for(CasMatch match : createMatchesFor(alignment, alignment2)){
-            sut.visitMatch(match);
+            matchVisitor.visitMatch(match);
         }
-        sut.visitEndOfFile();
-        assertEquals("GTTC-AAATTG",
-                sut.getGappedReferenceFor(referenceId).toString());
-        verify(referenceNucleotideDataStore, contigNameLookup);        
+        NucleotideSequence expected = new NucleotideSequenceBuilder("GTTC-AAATTG").build();
+        assertBuiltGappedReferenceEquals(expected);      
     }
     @Test
-    public void twoReadsBothHaveSameInsertShouldAddOneGap(){
+    public void twoReadsBothHaveSameInsertShouldAddOneGap() throws DataStoreException{
         CasAlignment alignment = new DefaultCasAlignment.Builder(referenceId,0,false)
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 4)
                                                 .addRegion(CasAlignmentRegionType.INSERT, 1)
@@ -177,17 +183,14 @@ public class TestDefaultCasGappedReferenceMap {
                                                 .addRegion(CasAlignmentRegionType.INSERT, 1)
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 1)
                                                 .build();
-        replay(referenceNucleotideDataStore, contigNameLookup);
         for(CasMatch match : createMatchesFor(alignment, alignment2)){
-            sut.visitMatch(match);
+            matchVisitor.visitMatch(match);
         }
-        sut.visitEndOfFile();
-        assertEquals("GTTC-AAATTG",
-        		sut.getGappedReferenceFor(referenceId).toString());
-        verify(referenceNucleotideDataStore, contigNameLookup);        
+        NucleotideSequence expected = new NucleotideSequenceBuilder("GTTC-AAATTG").build();
+        assertBuiltGappedReferenceEquals(expected);          
     }
     @Test
-    public void twoReadsBothHavedifferentInsertShouldAddTwoGaps(){
+    public void twoReadsBothHavedifferentInsertShouldAddTwoGaps() throws DataStoreException{
         CasAlignment alignment = new DefaultCasAlignment.Builder(referenceId,0,false)
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 4)
                                                 .addRegion(CasAlignmentRegionType.INSERT, 1)
@@ -198,17 +201,14 @@ public class TestDefaultCasGappedReferenceMap {
                                                 .addRegion(CasAlignmentRegionType.INSERT, 1)
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 3)
                                                 .build();
-        replay(referenceNucleotideDataStore, contigNameLookup);
         for(CasMatch match : createMatchesFor(alignment, alignment2)){
-            sut.visitMatch(match);
+            matchVisitor.visitMatch(match);
         }
-        sut.visitEndOfFile();
-        assertEquals("GTTC-AAA-TTG",
-        		sut.getGappedReferenceFor(referenceId).toString());
-        verify(referenceNucleotideDataStore, contigNameLookup);        
+        NucleotideSequence expected = new NucleotideSequenceBuilder("GTTC-AAA-TTG").build();
+        assertBuiltGappedReferenceEquals(expected);        
     }
     @Test
-    public void twoReadsBothHaveDifferentLengthInsertAtSameLocationShouldAddLongestGap(){
+    public void twoReadsBothHaveDifferentLengthInsertAtSameLocationShouldAddLongestGap() throws DataStoreException{
         CasAlignment alignment = new DefaultCasAlignment.Builder(referenceId,0,false)
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 4)
                                                 .addRegion(CasAlignmentRegionType.INSERT, 1)
@@ -219,13 +219,11 @@ public class TestDefaultCasGappedReferenceMap {
                                                 .addRegion(CasAlignmentRegionType.INSERT, 2)
                                                 .addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 3)
                                                 .build();
-        replay(referenceNucleotideDataStore, contigNameLookup);
+
         for(CasMatch match : createMatchesFor(alignment, alignment2)){
-            sut.visitMatch(match);
+            matchVisitor.visitMatch(match);
         }
-        sut.visitEndOfFile();
-        assertEquals("GTTC--AAATTG",
-        		sut.getGappedReferenceFor(referenceId).toString());
-        verify(referenceNucleotideDataStore, contigNameLookup);        
+        NucleotideSequence expected = new NucleotideSequenceBuilder("GTTC--AAATTG").build();
+        assertBuiltGappedReferenceEquals(expected);        
     }
 }

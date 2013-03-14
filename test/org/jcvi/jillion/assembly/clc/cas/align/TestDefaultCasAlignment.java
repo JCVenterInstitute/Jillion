@@ -53,7 +53,7 @@ public class TestDefaultCasAlignment {
     
     @Test
     public void getContigSequenceId(){
-        assertEquals(contigSequenceId,sut.contigSequenceId());
+        assertEquals(contigSequenceId,sut.getReferenceIndex());
     }
     
     @Test

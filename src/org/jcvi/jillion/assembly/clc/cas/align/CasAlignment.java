@@ -29,7 +29,7 @@ import java.util.List;
 
 public interface CasAlignment {
 
-    long contigSequenceId();
+    long getReferenceIndex();
     long getStartOfMatch();
     boolean readIsReversed();
     

@@ -84,64 +84,64 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
    }
 
 
-	    public StreamingIterator<? extends Trace> createFastqIterator(File illuminaFile) throws DataStoreException {
-			try {
-				FastqDataStore datastore = new FastqFileDataStoreBuilder(illuminaFile)
-												.hint(DataStoreProviderHint.ITERATION_ONLY)
-												.build();
-				return datastore.iterator();
-			} catch (IOException e) {
-				throw new IllegalStateException("fastq file no longer exists! : "+ illuminaFile.getAbsolutePath());
-			}
+    protected StreamingIterator<? extends Trace> createFastqIterator(File illuminaFile) throws DataStoreException {
+		try {
+			FastqDataStore datastore = new FastqFileDataStoreBuilder(illuminaFile)
+											.hint(DataStoreProviderHint.ITERATION_ONLY)
+											.build();
+			return datastore.iterator();
+		} catch (IOException e) {
+			throw new IllegalStateException("fastq file no longer exists! : "+ illuminaFile.getAbsolutePath());
+		}
+		
+    }
+
+    protected StreamingIterator<? extends Trace> createSffIterator(File sffFile) throws DataStoreException{
+        return SffFileIterator.createNewIteratorFor(sffFile);
+    }
+
+    protected StreamingIterator<? extends Trace> createFastaIterator(File fastaFile) throws DataStoreException{        
+        try {
+			NucleotideSequenceFastaDataStore datastore = new NucleotideSequenceFastaFileDataStoreBuilder(fastaFile)
+															.hint(DataStoreProviderHint.ITERATION_ONLY)
+															.build();
 			
-	    }
+			@SuppressWarnings("unchecked")
+			TraceDataStore<Trace> fakeQualities = DataStoreUtil.adapt(TraceDataStore.class, datastore, 
+					new DataStoreUtil.AdapterCallback<NucleotideSequenceFastaRecord, Trace>() {
 
-	    public StreamingIterator<? extends Trace> createSffIterator(File sffFile) throws DataStoreException{
-	        return SffFileIterator.createNewIteratorFor(sffFile);
-	    }
+						@Override
+						public Trace get(final NucleotideSequenceFastaRecord from) {
+						        int numberOfQualities =(int) from.getSequence().getLength();
+								byte[] qualities = new byte[numberOfQualities];
+								Arrays.fill(qualities, PhredQuality.valueOf(30).getQualityScore());
+						        final QualitySequence qualSequence = new QualitySequenceBuilder(qualities).build();
+							return new Trace() {
+								
+								@Override
+								public QualitySequence getQualitySequence() {
+									return qualSequence;
+								}
+								
+								@Override
+								public NucleotideSequence getNucleotideSequence() {
 
-	    public StreamingIterator<? extends Trace> createFastaIterator(File fastaFile) throws DataStoreException{        
-	        try {
-				NucleotideSequenceFastaDataStore datastore = new NucleotideSequenceFastaFileDataStoreBuilder(fastaFile)
-																.hint(DataStoreProviderHint.ITERATION_ONLY)
-																.build();
+									return from.getSequence();
+								}
+								
+								@Override
+								public String getId() {
+									return from.getId();
+								}
+							};
+						}
 				
-				@SuppressWarnings("unchecked")
-				TraceDataStore<Trace> fakeQualities = DataStoreUtil.adapt(TraceDataStore.class, datastore, 
-						new DataStoreUtil.AdapterCallback<NucleotideSequenceFastaRecord, Trace>() {
-
-							@Override
-							public Trace get(final NucleotideSequenceFastaRecord from) {
-							        int numberOfQualities =(int) from.getSequence().getLength();
-									byte[] qualities = new byte[numberOfQualities];
-									Arrays.fill(qualities, PhredQuality.valueOf(30).getQualityScore());
-							        final QualitySequence qualSequence = new QualitySequenceBuilder(qualities).build();
-								return new Trace() {
-									
-									@Override
-									public QualitySequence getQualitySequence() {
-										return qualSequence;
-									}
-									
-									@Override
-									public NucleotideSequence getNucleotideSequence() {
-
-										return from.getSequence();
-									}
-									
-									@Override
-									public String getId() {
-										return from.getId();
-									}
-								};
-							}
-					
-				});
-				return fakeQualities.iterator();
-	        } catch (IOException e) {
-				throw new DataStoreException("error reading fasta file "+ fastaFile.getAbsolutePath(),e);
-			}
-	    }
+			});
+			return fakeQualities.iterator();
+        } catch (IOException e) {
+			throw new DataStoreException("error reading fasta file "+ fastaFile.getAbsolutePath(),e);
+		}
+    }
 	    
     protected abstract void visitUnMatched(Trace currentTrace);
 
@@ -172,8 +172,9 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 			Trace currentTrace = chainedTraceIterator.next();
 			if(match.matchReported()){
 				CasAlignment alignment = match.getChosenAlignment();
-				long refIndex = alignment.contigSequenceId();
+				long refIndex = alignment.getReferenceIndex();
 				String refId = gappedReferenceDataStore.getIdByIndex(refIndex);
+				CasPlacedRead read =null;
 				try {
 					if(refId ==null){
 						closeIterator();
@@ -199,12 +200,12 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 			            null);
 			        
 			        readBuilder.addAlignmentRegions(regionsToConsider, gappedReference);
-			        CasPlacedRead read = readBuilder.build();
+			        read = readBuilder.build();
 			        
 			        AbstractAlignedReadCasVisitor.this.visitMatch(refId, read, currentTrace);
-				} catch (DataStoreException e) {
+				} catch (Throwable e) {
 					closeIterator();
-					throw new IllegalStateException("could not get get gapped reference for "+ refId, e);
+					throw new IllegalStateException("processing read " + read + " for reference "+ refId, e);
 				
 				}
 			}else{
