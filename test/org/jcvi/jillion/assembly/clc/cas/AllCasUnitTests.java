@@ -27,7 +27,6 @@ package org.jcvi.jillion.assembly.clc.cas;
 
 import org.jcvi.jillion.assembly.clc.cas.align.AllCasAlignmentUnitTests;
 import org.jcvi.jillion.assembly.clc.cas.consed.AllCas2ConsedTests;
-import org.jcvi.jillion.assembly.clc.cas.var.AllVarUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -42,7 +41,6 @@ import org.junit.runners.Suite.SuiteClasses;
         AllCas2ConsedTests.class,
         
         AllCasAlignmentUnitTests.class,
-        AllVarUnitTests.class
     }
     )
 public class AllCasUnitTests {
