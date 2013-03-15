@@ -11,6 +11,7 @@ import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentRegion;
 import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentRegionType;
 import org.jcvi.jillion.assembly.clc.cas.read.CasPlacedRead;
 import org.jcvi.jillion.assembly.clc.cas.read.DefaultCasPlacedReadFromCasAlignmentBuilder;
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
@@ -29,6 +30,8 @@ import org.jcvi.jillion.trace.TraceDataStore;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.jillion.trace.sff.SffFileIterator;
+import org.jcvi.jillion.trace.sff.SffFlowgram;
+import org.jcvi.jillion.trace.sff.SffUtil;
 
 public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisitor2{
 
@@ -57,7 +60,7 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 	}
 
 	@Override
-	public final void visitReadFileInfo(CasFileInfo readFileInfo) {
+	public void visitReadFileInfo(CasFileInfo readFileInfo) {
 		for(String filePath :readFileInfo.getFileNames()){
 			try {
 				File file = CasUtil.getFileFor(workingDir, filePath);
@@ -179,6 +182,7 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 				long refIndex = alignment.getReferenceIndex();
 				String refId = gappedReferenceDataStore.getIdByIndex(refIndex);
 				CasPlacedRead read =null;
+				String readId = currentTrace.getId();
 				try {
 					if(refId ==null){
 						closeIterator();
@@ -196,12 +200,19 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 			        }
 			        
 			        NucleotideSequence sequence = currentTrace.getNucleotideSequence();
-			        String readId = currentTrace.getId();
+			        
+			        Range trimRange = match.getTrimRange();
+			        if(trimRange ==null && currentTrace instanceof SffFlowgram){
+			        	//CLC uses the trimmed flowgrams when aligning
+			        	//if the trimRange for this match isn't explicitly set
+			        	//and the read is a flowgram, then use it's trim range 
+			        	trimRange = SffUtil.computeTrimRangeFor((SffFlowgram)currentTrace);
+			        }
 			        DefaultCasPlacedReadFromCasAlignmentBuilder readBuilder= new DefaultCasPlacedReadFromCasAlignmentBuilder(readId,
 			       		 gappedReference,
 			       		sequence, 
 			       		alignment.readIsReversed(), gappedStartOffset,
-			            null);
+			       		trimRange);
 			        
 			        readBuilder.addAlignmentRegions(regionsToConsider, gappedReference);
 			        read = readBuilder.build();
@@ -209,7 +220,7 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 			        AbstractAlignedReadCasVisitor.this.visitMatch(refId, read, currentTrace);
 				} catch (Throwable e) {
 					closeIterator();
-					throw new IllegalStateException("processing read " + read + " for reference "+ refId, e);
+					throw new IllegalStateException("processing read " + readId + " for reference "+ refId, e);
 				
 				}
 			}else{

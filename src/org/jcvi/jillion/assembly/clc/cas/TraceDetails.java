@@ -24,7 +24,6 @@ import java.io.File;
 import java.util.Date;
 
 import org.jcvi.jillion.core.util.DateUtil;
-import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
 
 /**
  * @author dkatzel
@@ -32,22 +31,15 @@ import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
  *
  */
 public final class TraceDetails {
-    private final boolean hasFastaEdits;
+
     private final File chromatDir;
     private final Date phdDate;
-    private final FastqQualityCodec fastqQualityCodec;
     
     public static class Builder implements org.jcvi.jillion.core.util.Builder<TraceDetails>{
-        private boolean hasFastaEdits=false;
+
         private File chromatDir;
         private Date phdDate =null;
-        private final FastqQualityCodec fastqQualityCodec;
-        public Builder(FastqQualityCodec fastqQualityCodec){
-            if(fastqQualityCodec==null){
-                throw new NullPointerException("can not be null");
-            }
-            this.fastqQualityCodec = fastqQualityCodec;
-        }
+       
         /**
         * {@inheritDoc}
         */
@@ -56,12 +48,9 @@ public final class TraceDetails {
             if(phdDate ==null){
                 phdDate = DateUtil.getCurrentDate();
             }
-            return new TraceDetails(chromatDir, phdDate, fastqQualityCodec, hasFastaEdits);
+            return new TraceDetails(chromatDir, phdDate);
         }
-        public Builder hasEdits(boolean hasEdits){
-            this.hasFastaEdits = hasEdits;
-            return this;
-        }
+       
         public Builder phdDate(Date phdDate){
             this.phdDate = new Date(phdDate.getTime());
             return this;
@@ -71,19 +60,11 @@ public final class TraceDetails {
             return this;
         }
     }
-    private TraceDetails(File chromatDir, Date phdDate,
-            FastqQualityCodec fastqQualityCodec, boolean hasFastaEdits) {
+    private TraceDetails(File chromatDir, Date phdDate) {
         this.chromatDir = chromatDir;
         this.phdDate = phdDate;
-        this.fastqQualityCodec = fastqQualityCodec;
-        this.hasFastaEdits = hasFastaEdits;
     }
-    /**
-     * @return the hasFastaEdits
-     */
-    public boolean hasFastaEdits() {
-        return hasFastaEdits;
-    }
+   
     /**
      * @return the chromatDir
      */
@@ -96,12 +77,7 @@ public final class TraceDetails {
     public Date getPhdDate() {
         return new Date(phdDate.getTime());
     }
-    /**
-     * @return the fastqQualityCodec
-     */
-    public FastqQualityCodec getFastqQualityCodec() {
-        return fastqQualityCodec;
-    }
+
     
     public boolean hasChromatDir(){
         return chromatDir !=null;
