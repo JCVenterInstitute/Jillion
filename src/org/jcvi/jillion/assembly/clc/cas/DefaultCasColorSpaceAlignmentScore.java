@@ -23,9 +23,9 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.clc.cas.align;
+package org.jcvi.jillion.assembly.clc.cas;
 
-public class DefaultCasColorSpaceAlignmentScore implements CasColorSpaceAlignmentScore{
+final class DefaultCasColorSpaceAlignmentScore implements CasColorSpaceAlignmentScore{
 
     private final CasAlignmentScore delegate;
     

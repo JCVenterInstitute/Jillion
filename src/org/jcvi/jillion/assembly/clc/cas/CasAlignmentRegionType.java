@@ -19,22 +19,16 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 /*
- * Created on Jan 20, 2010
+ * Created on Oct 29, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.clc.cas.align;
+package org.jcvi.jillion.assembly.clc.cas;
 
-import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentType;
-import org.junit.Test;
-import static org.junit.Assert.*;
-public class TestCasAlignmentType {
-
-    @Test
-    public void valueOf(){
-        assertSame(CasAlignmentType.LOCAL, CasAlignmentType.valueOf((byte)0));
-        assertSame(CasAlignmentType.SEMI_LOCAL, CasAlignmentType.valueOf((byte)1));
-        assertSame(CasAlignmentType.REVERSE_SEMI_LOCAL, CasAlignmentType.valueOf((byte)2));
-        assertSame(CasAlignmentType.GLOBAL, CasAlignmentType.valueOf((byte)3));
-    }
+public enum CasAlignmentRegionType {
+    
+    MATCH_MISMATCH,
+    INSERT,
+    DELETION,
+    PHASE_CHANGE
 }

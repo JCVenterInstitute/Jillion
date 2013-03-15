@@ -23,9 +23,9 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.clc.cas.align;
+package org.jcvi.jillion.assembly.clc.cas;
 
-public class DefaultCasAlignmentScore implements CasAlignmentScore {
+final class DefaultCasAlignmentScore implements CasAlignmentScore {
 
     private final int firstInsertion, insertionExtension,
                 firstDeletion, deletionExtension,

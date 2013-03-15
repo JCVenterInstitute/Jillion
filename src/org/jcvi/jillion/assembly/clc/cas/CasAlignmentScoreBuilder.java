@@ -23,7 +23,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.clc.cas.align;
+package org.jcvi.jillion.assembly.clc.cas;
 
 import org.jcvi.jillion.core.util.Builder;
 

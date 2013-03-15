@@ -28,8 +28,8 @@ package org.jcvi.jillion.assembly.clc.cas.read;
 import java.util.List;
 
 import org.jcvi.jillion.assembly.AssemblyUtil;
-import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentRegion;
-import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentRegionType;
+import org.jcvi.jillion.assembly.clc.cas.CasAlignmentRegion;
+import org.jcvi.jillion.assembly.clc.cas.CasAlignmentRegionType;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;

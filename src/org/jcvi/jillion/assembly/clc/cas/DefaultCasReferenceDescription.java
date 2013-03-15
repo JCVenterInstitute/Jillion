@@ -25,7 +25,7 @@
  */
 package org.jcvi.jillion.assembly.clc.cas;
 
-public class DefaultCasReferenceDescription implements CasReferenceDescription {
+final class DefaultCasReferenceDescription implements CasReferenceDescription {
     private final boolean isCircular;
     private final long contigLength;
     

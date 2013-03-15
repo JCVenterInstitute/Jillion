@@ -19,22 +19,41 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 /*
- * Created on Jan 20, 2010
+ * Created on Oct 27, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.clc.cas.align;
+package org.jcvi.jillion.assembly.clc.cas;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.HashMap;
+import java.util.Map;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestCasAlignmentType.class
+public enum CasScoreType {
+
+    NO_SCORE((byte)0),
+    BASIC_SCORE((byte)1),
+    ALIGNMENT_SCORE((byte)2),
+    COLOR_SPACE_SCORE((byte)3),
+    ;
+    private static Map<Byte, CasScoreType> MAP;
+    
+    static{
+        MAP = new HashMap<Byte, CasScoreType>();
+        for(CasScoreType type : values()){
+            MAP.put(type.getType(), type);
+        }
     }
-    )
-public class AllCasScoreUnitTests {
-
+    
+    private final byte type; 
+    private CasScoreType(byte type){
+        this.type = type;
+    }
+    public byte getType() {
+        return type;
+    }
+    
+    public static CasScoreType valueOf(byte type){
+        return MAP.get(Byte.valueOf(type));
+    }
+    
 }

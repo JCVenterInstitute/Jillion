@@ -23,15 +23,9 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.clc.cas.align;
+package org.jcvi.jillion.assembly.clc.cas;
 
-import java.util.List;
+public interface CasColorSpaceAlignmentScore extends CasAlignmentScore{
 
-public interface CasAlignment {
-
-    long getReferenceIndex();
-    long getStartOfMatch();
-    boolean readIsReversed();
-    
-    List<CasAlignmentRegion> getAlignmentRegions();
+    int getColorSpaceErrorCost();
 }

@@ -18,10 +18,10 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.assembly.clc.cas.align;
+package org.jcvi.jillion.assembly.clc.cas;
 
-import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentRegionType;
-import org.jcvi.jillion.assembly.clc.cas.align.PhaseChangeCasAlignmentRegion;
+import org.jcvi.jillion.assembly.clc.cas.CasAlignmentRegionType;
+import org.jcvi.jillion.assembly.clc.cas.PhaseChangeCasAlignmentRegion;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Test;
 import static org.junit.Assert.*;

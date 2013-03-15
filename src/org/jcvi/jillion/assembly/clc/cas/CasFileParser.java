@@ -38,16 +38,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jcvi.jillion.assembly.clc.cas.CasFileVisitor.CasVisitorCallback;
-import org.jcvi.jillion.assembly.clc.cas.align.CasAlignment;
-import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentRegionType;
-import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentScore;
-import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentScoreBuilder;
-import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentType;
-import org.jcvi.jillion.assembly.clc.cas.align.CasScoreType;
-import org.jcvi.jillion.assembly.clc.cas.align.CasScoringScheme;
-import org.jcvi.jillion.assembly.clc.cas.align.DefaultCasAlignment;
-import org.jcvi.jillion.assembly.clc.cas.align.DefaultCasMatch;
-import org.jcvi.jillion.assembly.clc.cas.align.DefaultCasScoringScheme;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertSame;
 
 import org.easymock.EasyMockSupport;
 import org.jcvi.jillion.assembly.clc.cas.CasFileVisitor.CasVisitorCallback;
-import org.jcvi.jillion.assembly.clc.cas.align.CasScoringScheme;
 import org.junit.Test;
 public class TestCasFileVisitorAdapter extends EasyMockSupport{
 

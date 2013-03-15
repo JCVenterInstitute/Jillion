@@ -25,7 +25,6 @@
  */
 package org.jcvi.jillion.assembly.clc.cas;
 
-import org.jcvi.jillion.assembly.clc.cas.align.CasScoringScheme;
 import org.jcvi.jillion.core.io.FileVisitor;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.trace.fastq.FastqVisitor;

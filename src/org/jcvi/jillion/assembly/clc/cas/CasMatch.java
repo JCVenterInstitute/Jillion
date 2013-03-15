@@ -26,7 +26,6 @@
 package org.jcvi.jillion.assembly.clc.cas;
 
 
-import org.jcvi.jillion.assembly.clc.cas.align.CasAlignment;
 import org.jcvi.jillion.core.Range;
 
 public interface CasMatch {

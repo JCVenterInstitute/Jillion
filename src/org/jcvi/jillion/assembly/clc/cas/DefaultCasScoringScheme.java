@@ -23,11 +23,11 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.clc.cas.align;
+package org.jcvi.jillion.assembly.clc.cas;
 
 
 
-public class DefaultCasScoringScheme implements CasScoringScheme{
+final class DefaultCasScoringScheme implements CasScoringScheme{
 
     private final CasAlignmentScore alignmentScore;
     private final CasScoreType scoreType;

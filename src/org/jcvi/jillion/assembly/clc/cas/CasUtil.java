@@ -34,9 +34,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.jillion.assembly.clc.cas.align.CasAlignment;
-import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentRegion;
-import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentRegionType;
 import org.jcvi.jillion.assembly.clc.cas.read.CasPlacedRead;
 import org.jcvi.jillion.assembly.clc.cas.read.DefaultCasPlacedReadFromCasAlignmentBuilder;
 import org.jcvi.jillion.core.Range;

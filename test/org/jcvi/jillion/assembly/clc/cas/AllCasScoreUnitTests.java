@@ -19,15 +19,22 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 /*
- * Created on Oct 29, 2009
+ * Created on Jan 20, 2010
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.clc.cas.align;
+package org.jcvi.jillion.assembly.clc.cas;
 
-public interface CasAlignmentRegion {
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
-    CasAlignmentRegionType getType();
-    
-    long getLength();
+@RunWith(Suite.class)
+@SuiteClasses(
+    {
+        TestCasAlignmentType.class
+    }
+    )
+public class AllCasScoreUnitTests {
+
 }

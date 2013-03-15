@@ -29,7 +29,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DefaultCasFileInfo implements CasFileInfo{
+final class DefaultCasFileInfo implements CasFileInfo{
 
     private final List<String> names;
     private final BigInteger numberOfResidues;

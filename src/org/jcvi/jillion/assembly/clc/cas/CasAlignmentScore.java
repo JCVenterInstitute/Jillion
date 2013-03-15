@@ -23,13 +23,29 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.clc.cas.align;
+package org.jcvi.jillion.assembly.clc.cas;
 
+public interface CasAlignmentScore {
 
-
-public interface CasScoringScheme {
-
-    CasScoreType getScoreType();
-    CasAlignmentType getAlignmentType();
-    CasAlignmentScore getAlignmentScore();
+    int getFirstInsertionCost();
+    
+    int getInsertionExtensionCost();
+    
+    int getFirstDeletionCost();
+    
+    int getDeletionExtensionCost();
+    
+    int getMatchScore();
+    /**
+     * A <=> G or C <=> T.
+     * @return
+     */
+    int getTransitionScore();
+    /**
+     * score of other differences that aren't transitions.
+     * @return
+     */
+    int getTransversionScore();
+    
+    int getUnknownScore();
 }
