@@ -385,7 +385,7 @@ public class MultiAceFileVisitorAdapter implements AceFileVisitor{
 	}
 	
 	
-	private class AceFileVisitorCallbackAdapter implements AceFileVisitorCallback{
+	private static class AceFileVisitorCallbackAdapter implements AceFileVisitorCallback{
 		private final AceFileVisitorCallback callback;
 		private volatile boolean halt;
 		
