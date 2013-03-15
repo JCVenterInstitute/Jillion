@@ -37,21 +37,12 @@ import java.util.List;
 import org.jcvi.jillion.assembly.clc.cas.align.CasAlignment;
 import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentRegion;
 import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentRegionType;
-import org.jcvi.jillion.assembly.clc.cas.read.AbstractCasFileNucleotideDataStore;
 import org.jcvi.jillion.assembly.clc.cas.read.CasPlacedRead;
 import org.jcvi.jillion.assembly.clc.cas.read.DefaultCasPlacedReadFromCasAlignmentBuilder;
-import org.jcvi.jillion.assembly.clc.cas.read.FastaCasDataStoreFactory;
-import org.jcvi.jillion.assembly.clc.cas.read.ReferenceCasFileNucleotideDataStore;
-import org.jcvi.jillion.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
-import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.io.IOUtil.Endian;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.util.Builder;
-import org.jcvi.jillion.core.util.MultipleWrapper;
-import org.jcvi.jillion.trace.sff.SffUtil;
 /**
  * {@code CasUtil} is a utility class for dealing with the binary
  * encodings inside a .cas file.
@@ -236,162 +227,5 @@ public final class CasUtil {
             throw new FileNotFoundException(dataStoreFile.getAbsolutePath());
         }
         return dataStoreFile;
-    }
-    public static CasInfoBuilder createCasInfoBuilder(File casFile){
-        return new CasInfoBuilder(casFile);
-    }
-    
-    public static final class CasInfoBuilder implements Builder<CasInfo>{
-        private final File casFile;
-
-        private ExternalTrimInfo externalTrimInfo = ExternalTrimInfo.createEmptyInfo();
-        private File chromatDir = null;
-        
-        
-        private CasInfoBuilder(File casFile){
-            if(casFile ==null){
-                throw new NullPointerException("cas file can not be null");
-            }
-            this.casFile = casFile;
-        }
-        
-       
-        public CasInfoBuilder externalTrimInfo(ExternalTrimInfo externalTrimInfo){
-            if(externalTrimInfo ==null){
-                throw new NullPointerException("externalTrimInfo can not be null");
-            }
-            this.externalTrimInfo = externalTrimInfo;
-            return this;
-        }
-        public CasInfoBuilder chromatDir(File chromatDir){            
-            this.chromatDir = chromatDir;
-            return this;
-        }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public CasInfo build() {
-            try {
-                return new CasInfoImpl(casFile, externalTrimInfo, chromatDir);
-            } catch (IOException e) {
-                throw new IllegalStateException("error building cas info",e);
-            }
-        }
-        
-    }
-    
-    private static final class CasInfoImpl implements CasInfo{
-
-        private final TrimPointsDataStore multiTrimDataStore;
-        private final TraceDetails traceDetails;
-        private final File workingDirectory;
-        private final List<NucleotideSequence> orderedGappedReferences;
-        private final CasTrimMap casTrimMap;
-        private final CasIdLookup referenceIdLookup;
-        
-        private CasInfoImpl(File casFile, ExternalTrimInfo externalTrimInfo,
-                File chromatDir) throws IOException{
-            final File casWorkingDirectory = casFile.getParentFile();
-            final AbstractDefaultCasFileLookup referenceIdLookup = new DefaultReferenceCasFileLookup(casWorkingDirectory);
-            
-            
-            AbstractCasFileNucleotideDataStore referenceNucleotideDataStore = new ReferenceCasFileNucleotideDataStore(
-                    new FastaCasDataStoreFactory(casWorkingDirectory,externalTrimInfo.getCasTrimMap(),10));
-            DefaultCasGappedReferenceMap gappedReferenceMap = new DefaultCasGappedReferenceMap(referenceNucleotideDataStore, referenceIdLookup);
-            CasParser.parseCas(casFile, 
-                    MultipleWrapper.createMultipleWrapper(CasFileVisitor.class,
-                    referenceIdLookup,referenceNucleotideDataStore,gappedReferenceMap
-                    ));
-           
-            final List<TrimPointsDataStore> trimDataStores = new ArrayList<TrimPointsDataStore>();
-            trimDataStores.add(externalTrimInfo.getTrimDataStore());
-            CasFileVisitor sffTrimDataStoreVisitor  =new AbstractOnePassCasFileVisitor() {
-               
-               @Override
-               protected void visitMatch(CasMatch match, long readCounter) {
-                   //no-op
-               }
-
-               @Override
-               public synchronized void visitReadFileInfo(CasFileInfo readFileInfo) {
-                   super.visitReadFileInfo(readFileInfo);
-                   for(String readFilename : readFileInfo.getFileNames()){
-                           String extension =FileUtil.getExtension(readFilename);
-                           if("sff".equals(extension)){
-                               try {
-                            	   trimDataStores.add(SffUtil.createTrimPointsDataStoreFrom(new File(casWorkingDirectory,readFilename)));
-                               } catch (Exception e) {
-                                   throw new IllegalStateException("error trying to read sff file " + readFilename,e);
-                               } 
-                           }
-                       }
-                   }
-               
-           };
-           CasParser.parseOnlyMetaData(casFile, sffTrimDataStoreVisitor);
-           multiTrimDataStore =DataStoreUtil.chain(
-                   TrimPointsDataStore.class, trimDataStores);
-           
-           traceDetails = new TraceDetails.Builder()
-                       .chromatDir(chromatDir)
-                       .build();
-           this.orderedGappedReferences = gappedReferenceMap.getOrderedList();
-           this.workingDirectory = casWorkingDirectory;
-           this.casTrimMap = externalTrimInfo.getCasTrimMap();
-           this.referenceIdLookup = referenceIdLookup;
-        }
-       
-        
-        /**
-         * @return the multiTrimDataStore
-         */
-        @Override
-        public TrimPointsDataStore getTrimDataStore() {
-            return multiTrimDataStore;
-        }
-        /**
-         * @return the traceDetails
-         */
-        @Override
-        public TraceDetails getTraceDetails() {
-            return traceDetails;
-        }
-
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public List<NucleotideSequence> getOrderedGappedReferenceList() {
-            return orderedGappedReferences;
-        }
-
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public File getCasWorkingDirectory() {
-            return workingDirectory;
-        }
-
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public CasTrimMap getCasTrimMap() {
-            return casTrimMap;
-        }
-
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public CasIdLookup getReferenceIdLookup() {
-            return referenceIdLookup;
-        }
     }
 }
