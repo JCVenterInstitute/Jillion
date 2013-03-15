@@ -29,7 +29,7 @@ public class HighLowPhdAceContigVisitor extends AbstractAceContigVisitor{
     }
     
     public HighLowPhdAceContigVisitor(int expectedNumberOfReads,
-    		byte lowQuality, byte highQuality){
+    		int lowQuality, int highQuality){
     	if(expectedNumberOfReads<1){
     		throw new IllegalArgumentException("expected number of reads must be >=1");
     	}
@@ -46,8 +46,8 @@ public class HighLowPhdAceContigVisitor extends AbstractAceContigVisitor{
         phds = new LinkedHashMap<String, Phd>(mapSize);
         directions = new HashMap<String, Direction>(mapSize);
 		
-        this.lowQuality = lowQuality;
-        this.highQuality = highQuality;
+        this.lowQuality = (byte)lowQuality;
+        this.highQuality = (byte)highQuality;
     }
     
     @Override
