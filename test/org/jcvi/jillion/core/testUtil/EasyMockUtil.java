@@ -25,7 +25,10 @@
  */
 package org.jcvi.jillion.core.testUtil;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.getCurrentArguments;
+import static org.easymock.EasyMock.isA;
 
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
@@ -44,7 +47,11 @@ import org.jcvi.jillion.core.io.IOUtil;
  *
  *
  */
-public class EasyMockUtil {
+public final class EasyMockUtil {
+	
+	private EasyMockUtil(){
+		//can not instantiate
+	}
     /**
      * Argument matcher for EasyMock to allow easyMock to
      * correctly expect {@link Throwable}s.

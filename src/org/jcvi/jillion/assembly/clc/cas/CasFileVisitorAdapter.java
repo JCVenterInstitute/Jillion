@@ -1,19 +1,40 @@
 package org.jcvi.jillion.assembly.clc.cas;
 
 import org.jcvi.jillion.assembly.clc.cas.align.CasScoringScheme;
-
+/**
+ * {@code CasFileVisitorAdapter} is a {@link CasFileVisitor}
+ * that wraps another {@link CasFileVisitor} and delegates
+ * all visitXXX methods to the wrapped instance.
+ * 
+ * Subclasses may override any visit methods to modify
+ * the visit messages before the wrapped instance receives them.
+ * 
+ * @author dkatzel
+ *
+ */
 public class CasFileVisitorAdapter implements CasFileVisitor{
 
 	private final CasFileVisitor delegate;
 	
-	
+	/**
+	 * Create a new instance of CasFileVisitorAdapter
+	 * which will wrap the given {@link CasFileVisitor}.
+	 * @param delegate the {@link CasFileVisitor} to wrap;
+	 * may not be null.
+	 * @throws NullPointerException if delegate is null.
+	 */
 	public CasFileVisitorAdapter(CasFileVisitor delegate) {
 		if(delegate ==null){
 			throw new NullPointerException("delegate can not be null");
 		}
 		this.delegate = delegate;
 	}
-
+	/**
+	 * Get the {@link CasFileVisitor} instance
+	 * that will is being wrapped.
+	 * @return the delegate that was provided in the constructor;
+	 * will never be null.
+	 */
 	protected final CasFileVisitor getDelegate(){
 		return delegate;
 	}
