@@ -37,7 +37,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.jcvi.jillion.assembly.clc.cas.CasFileVisitor2.CasVisitorCallback;
+import org.jcvi.jillion.assembly.clc.cas.CasFileVisitor.CasVisitorCallback;
 import org.jcvi.jillion.assembly.clc.cas.align.CasAlignment;
 import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentRegionType;
 import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentScore;
@@ -83,7 +83,7 @@ public final class CasFileParser {
     	this.casFile = file;
     }
     
-    public void accept(CasFileVisitor2 visitor) throws IOException{
+    public void accept(CasFileVisitor visitor) throws IOException{
     	parseMetaData(visitor);
     	CasVisitorCallbackImpl callback = new CasVisitorCallbackImpl();
     	CasMatchVisitor matchVisitor = visitor.visitMatches(callback);
@@ -164,7 +164,7 @@ public final class CasFileParser {
         }
         
     }
-    private void parseMetaData(CasFileVisitor2 visitor) throws IOException {
+    private void parseMetaData(CasFileVisitor visitor) throws IOException {
     	RandomAccessFile randomAccessFile = new RandomAccessFile(casFile,"r");
     	RandomAccessFileInputStream in=null;
     	try{

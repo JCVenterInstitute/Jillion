@@ -22,7 +22,6 @@ package org.jcvi.jillion.assembly.util;
 
 import org.jcvi.jillion.assembly.util.coverage.AllCoverageUnitTests;
 import org.jcvi.jillion.assembly.util.slice.AllSliceUnitTests;
-import org.jcvi.jillion.assembly.util.trim.TestEmptyTrimDataStore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -30,7 +29,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {   
-       TestEmptyTrimDataStore.class,
         
         AllCoverageUnitTests.class,
         AllSliceUnitTests.class

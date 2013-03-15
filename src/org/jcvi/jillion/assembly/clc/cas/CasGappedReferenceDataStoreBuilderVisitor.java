@@ -29,7 +29,7 @@ import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
 
-public class CasGappedReferenceDataStoreBuilderVisitor implements CasFileVisitor2{
+public class CasGappedReferenceDataStoreBuilderVisitor implements CasFileVisitor{
 
 	private final SortedMap<Long, SortedMap<Long,Insertion>> gapsByReferenceIndex = new TreeMap<Long, SortedMap<Long,Insertion>>();
 	private final Map<Long, String> refIndexToIdMap = new TreeMap<Long, String>();

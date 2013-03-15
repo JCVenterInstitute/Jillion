@@ -36,7 +36,7 @@ import org.jcvi.jillion.trace.fastq.FastqVisitor;
  *
  *
  */
-public interface CasFileVisitor2{
+public interface CasFileVisitor{
     
     public interface CasVisitorCallback {
     	/**

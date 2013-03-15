@@ -36,8 +36,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestSFFFlowgram_computeValues.class,
         TestSFFUtil_numberOfIntensities.class,
         TestSffUtil_Linkers.class,
-        TestSff454NameUtil.class,
-        TestTrimPointsDataStoreFromSff.class
+        TestSff454NameUtil.class
     }
     )
 public class AllSFFUtilUnitTests {

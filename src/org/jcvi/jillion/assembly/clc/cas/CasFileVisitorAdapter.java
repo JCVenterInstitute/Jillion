@@ -2,19 +2,19 @@ package org.jcvi.jillion.assembly.clc.cas;
 
 import org.jcvi.jillion.assembly.clc.cas.align.CasScoringScheme;
 
-public class CasFileVisitorAdapter implements CasFileVisitor2{
+public class CasFileVisitorAdapter implements CasFileVisitor{
 
-	private final CasFileVisitor2 delegate;
+	private final CasFileVisitor delegate;
 	
 	
-	public CasFileVisitorAdapter(CasFileVisitor2 delegate) {
+	public CasFileVisitorAdapter(CasFileVisitor delegate) {
 		if(delegate ==null){
 			throw new NullPointerException("delegate can not be null");
 		}
 		this.delegate = delegate;
 	}
 
-	protected final CasFileVisitor2 getDelegate(){
+	protected final CasFileVisitor getDelegate(){
 		return delegate;
 	}
 	@Override
