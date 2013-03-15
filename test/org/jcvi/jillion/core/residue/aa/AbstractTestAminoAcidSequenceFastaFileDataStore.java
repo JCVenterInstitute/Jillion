@@ -44,6 +44,7 @@ public abstract class AbstractTestAminoAcidSequenceFastaFileDataStore {
 	@AfterClass
 	public static void closeDataStore() throws IOException{
 		sut.close();
+		sut=null;
 	}
 	
 	private static AminoAcidSequenceFastaDataStore getSut() throws IOException{
