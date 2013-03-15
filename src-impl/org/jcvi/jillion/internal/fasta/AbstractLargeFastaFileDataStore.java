@@ -64,14 +64,7 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
             throw new IllegalStateException("already closed");
         }
     }
-    
-    /**
-	 * Get the {@link DataStoreFilter} used by this builder.
-	 * @return a {@link DataStoreFilter} instance, never null.
-	 */
-	protected final DataStoreFilter getFilter() {
-		return filter;
-	}
+
 
 	@Override
     public  void close() throws IOException {
@@ -161,11 +154,11 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
     @Override
     public final StreamingIterator<F> iterator() {
         checkNotYetClosed();
-        return createNewIterator(fastaFile);
+        return createNewIterator(fastaFile,filter);
        
     }
 
-	protected abstract StreamingIterator<F> createNewIterator(File fastaFile);
+	protected abstract StreamingIterator<F> createNewIterator(File fastaFile,DataStoreFilter filter);
    
 
 

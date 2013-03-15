@@ -76,8 +76,8 @@ final class LargeNucleotideSequenceFastaFileDataStore extends AbstractLargeFasta
 	
 	@Override
 	protected StreamingIterator<NucleotideSequenceFastaRecord> createNewIterator(
-			File fastaFile) {
+			File fastaFile, DataStoreFilter filter) {
 		 return DataStoreStreamingIterator.create(this,
-	        		LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile,getFilter()));
+	        		LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile,filter));
 	}
 }

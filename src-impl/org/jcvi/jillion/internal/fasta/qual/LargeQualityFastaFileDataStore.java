@@ -65,8 +65,8 @@ public final class LargeQualityFastaFileDataStore extends AbstractLargeFastaFile
 
 	@Override
 	protected StreamingIterator<QualitySequenceFastaRecord> createNewIterator(
-			File fastaFile) {
-		StreamingIterator<QualitySequenceFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(fastaFile, this.getFilter());
+			File fastaFile, DataStoreFilter filter) {
+		StreamingIterator<QualitySequenceFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(fastaFile, filter);
         
         return DataStoreStreamingIterator.create(this,iter);
 	}

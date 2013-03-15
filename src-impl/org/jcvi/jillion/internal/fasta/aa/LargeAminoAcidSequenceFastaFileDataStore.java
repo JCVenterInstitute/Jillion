@@ -76,8 +76,8 @@ public final class LargeAminoAcidSequenceFastaFileDataStore extends AbstractLarg
 
 	@Override
 	protected StreamingIterator<AminoAcidSequenceFastaRecord> createNewIterator(
-			File fastaFile) {
-		return DataStoreStreamingIterator.create(this,LargeAminoAcidSequenceFastaIterator.createNewIteratorFor(fastaFile));
+			File fastaFile, DataStoreFilter filter) {
+		return DataStoreStreamingIterator.create(this,LargeAminoAcidSequenceFastaIterator.createNewIteratorFor(fastaFile, filter));
 	       
 	}
    
