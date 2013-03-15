@@ -41,7 +41,6 @@ import org.jcvi.jillion.assembly.clc.cas.align.CasAlignment;
 import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentRegionType;
 import org.jcvi.jillion.assembly.clc.cas.align.DefaultCasAlignment;
 import org.jcvi.jillion.assembly.clc.cas.align.DefaultCasMatch;
-import org.jcvi.jillion.assembly.clc.cas.read.CasNucleotideDataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
@@ -53,8 +52,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 public class TestCasGappedReferenceDataStoreBuilderVisitor {
 
-    CasNucleotideDataStore referenceNucleotideDataStore;
-    CasIdLookup contigNameLookup;
     CasGappedReferenceDataStoreBuilderVisitor sut;
     long referenceId= 0;
     String referenceName = "refName";
