@@ -47,7 +47,6 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
     private final NucleotideSequence allBases;
     private final NucleotideSequenceBuilder gappedSequenceBuilder = new NucleotideSequenceBuilder();
     private final Direction dir;
-    private int numberOfGaps=0;
     private long referenceOffset;
     private final long fullUngappedLength;
     private final  NucleotideSequence gappedReference;

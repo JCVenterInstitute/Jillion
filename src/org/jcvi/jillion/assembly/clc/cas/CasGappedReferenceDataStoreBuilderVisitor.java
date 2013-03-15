@@ -3,6 +3,7 @@ package org.jcvi.jillion.assembly.clc.cas;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -153,9 +154,9 @@ public class CasGappedReferenceDataStoreBuilderVisitor implements CasFileVisitor
 	}
 	
 	public String createGapStringOf(int maxGapSize) {
-		byte[] gaps = new byte[maxGapSize];
-		String gapString = new String(gaps).replace('\0', '-');
-		return gapString;
+		char[] gaps = new char[maxGapSize];
+		Arrays.fill(gaps, '-');
+		return new String(gaps);
 	}
 
 	@Override
