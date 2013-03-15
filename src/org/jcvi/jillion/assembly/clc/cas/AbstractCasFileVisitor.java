@@ -1,8 +1,17 @@
 package org.jcvi.jillion.assembly.clc.cas;
 
 import org.jcvi.jillion.assembly.clc.cas.align.CasScoringScheme;
-
-public abstract class AbstractCasFileVisitor2 implements CasFileVisitor2{
+/**
+ * {@code AbstractCasFileVisitor} is a 
+ * {@link CasFileVisitor} implementation that
+ * implements each method with a default empty stub.
+ * This allows subclasses to only override the methods
+ * they care about without cluttering up the subclass with 
+ * many empty methods.
+ * @author dkatzel
+ *
+ */
+public abstract class AbstractCasFileVisitor implements CasFileVisitor{
 
 	@Override
 	public void visitAssemblyProgramInfo(String name, String version,

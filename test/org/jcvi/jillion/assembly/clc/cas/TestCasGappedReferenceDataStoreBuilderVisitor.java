@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.jillion.assembly.clc.cas.CasFileVisitor2.CasVisitorCallback;
+import org.jcvi.jillion.assembly.clc.cas.CasFileVisitor.CasVisitorCallback;
 import org.jcvi.jillion.assembly.clc.cas.align.CasAlignment;
 import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentRegionType;
 import org.jcvi.jillion.assembly.clc.cas.align.DefaultCasAlignment;

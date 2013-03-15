@@ -33,7 +33,7 @@ import org.jcvi.jillion.trace.sff.SffFileIterator;
 import org.jcvi.jillion.trace.sff.SffFlowgram;
 import org.jcvi.jillion.trace.sff.SffUtil;
 
-public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisitor2{
+public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisitor{
 
 	private final CasGappedReferenceDataStore gappedReferenceDataStore;
 

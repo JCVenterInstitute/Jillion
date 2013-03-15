@@ -25,22 +25,15 @@
  */
 package org.jcvi.jillion.trace.sff;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.jillion.assembly.util.trim.TrimPointsDataStore;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.core.util.Builder;
 
 /**
  * Utility class for working with sff
@@ -295,57 +288,5 @@ public final class SffUtil {
     
     
     
-    /**
-     * Create a new {@link TrimPointsDataStore} which contains
-     * trim points of all the reads contained in the given sff file.
-     * Each read's trim points will be the clip points set in the sff file.
-     * @param sffFile the sffFile to parse.
-     * @return a new {@link TrimPointsDataStore}; never null but could be empty
-     * if there are no reads in the given sff file.
-     * @throws IOException if there is a problem parsing the file.
-     */
-    public static TrimPointsDataStore createTrimPointsDataStoreFrom(File sffFile) throws IOException{
-    	SffTrimDataStoreBuilder builder = new SffTrimDataStoreBuilder();
-    	SffFileParser.create(sffFile).accept(builder);
-    	return builder.build();
-    }
     
-    private static final class SffTrimDataStoreBuilder implements SffFileVisitor, Builder<TrimPointsDataStore>{
-
-        private final Map<String, Range> trimRanges = new LinkedHashMap<String, Range>();
-       
-       
-
-
-        
-        @Override
-		public void visitHeader(SffFileParserCallback callback,
-				SffCommonHeader header) {
-			//no-op
-			
-		}
-
-		@Override
-		public SffFileReadVisitor visitRead(SffFileParserCallback callback,
-				SffReadHeader readHeader) {
-			trimRanges.put(readHeader.getId(), SffUtil.computeTrimRangeFor(readHeader));
-			//always skip underlying read data
-			return null;
-		}
-
-		@Override
-		public void end() {
-			//no-op
-			
-		}
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public TrimPointsDataStore build() {
-        	return DataStoreUtil.adapt(TrimPointsDataStore.class,trimRanges);
-        }
-
-    }
 }
