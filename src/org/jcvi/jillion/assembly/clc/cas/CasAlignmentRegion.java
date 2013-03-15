@@ -19,15 +19,15 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 /*
- * Created on Dec 31, 2009
+ * Created on Oct 29, 2009
  *
  * @author dkatzel
  */
 package org.jcvi.jillion.assembly.clc.cas;
 
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+public interface CasAlignmentRegion {
 
-public interface CasGappedReferenceMap {
-
-    NucleotideSequence getGappedReferenceFor(long referenceId);
+    CasAlignmentRegionType getType();
+    
+    long getLength();
 }

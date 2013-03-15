@@ -37,10 +37,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.jillion.assembly.clc.cas.CasFileVisitor.CasVisitorCallback;
-import org.jcvi.jillion.assembly.clc.cas.align.CasAlignment;
-import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentRegionType;
-import org.jcvi.jillion.assembly.clc.cas.align.DefaultCasAlignment;
-import org.jcvi.jillion.assembly.clc.cas.align.DefaultCasMatch;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;

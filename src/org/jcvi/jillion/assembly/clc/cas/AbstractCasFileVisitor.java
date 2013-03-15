@@ -1,6 +1,5 @@
 package org.jcvi.jillion.assembly.clc.cas;
 
-import org.jcvi.jillion.assembly.clc.cas.align.CasScoringScheme;
 /**
  * {@code AbstractCasFileVisitor} is a 
  * {@link CasFileVisitor} implementation that

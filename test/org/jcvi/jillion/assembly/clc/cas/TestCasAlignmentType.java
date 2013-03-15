@@ -19,41 +19,22 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 /*
- * Created on Oct 27, 2009
+ * Created on Jan 20, 2010
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.clc.cas.align;
+package org.jcvi.jillion.assembly.clc.cas;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.jcvi.jillion.assembly.clc.cas.CasAlignmentType;
+import org.junit.Test;
+import static org.junit.Assert.*;
+public class TestCasAlignmentType {
 
-public enum CasScoreType {
-
-    NO_SCORE((byte)0),
-    BASIC_SCORE((byte)1),
-    ALIGNMENT_SCORE((byte)2),
-    COLOR_SPACE_SCORE((byte)3),
-    ;
-    private static Map<Byte, CasScoreType> MAP;
-    
-    static{
-        MAP = new HashMap<Byte, CasScoreType>();
-        for(CasScoreType type : values()){
-            MAP.put(type.getType(), type);
-        }
+    @Test
+    public void valueOf(){
+        assertSame(CasAlignmentType.LOCAL, CasAlignmentType.valueOf((byte)0));
+        assertSame(CasAlignmentType.SEMI_LOCAL, CasAlignmentType.valueOf((byte)1));
+        assertSame(CasAlignmentType.REVERSE_SEMI_LOCAL, CasAlignmentType.valueOf((byte)2));
+        assertSame(CasAlignmentType.GLOBAL, CasAlignmentType.valueOf((byte)3));
     }
-    
-    private final byte type; 
-    private CasScoreType(byte type){
-        this.type = type;
-    }
-    public byte getType() {
-        return type;
-    }
-    
-    public static CasScoreType valueOf(byte type){
-        return MAP.get(Byte.valueOf(type));
-    }
-    
 }

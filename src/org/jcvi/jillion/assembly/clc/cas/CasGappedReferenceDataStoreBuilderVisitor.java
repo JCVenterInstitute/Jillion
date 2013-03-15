@@ -13,10 +13,6 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.jcvi.jillion.assembly.clc.cas.align.CasAlignment;
-import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentRegion;
-import org.jcvi.jillion.assembly.clc.cas.align.CasAlignmentRegionType;
-import org.jcvi.jillion.assembly.clc.cas.align.CasScoringScheme;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -29,7 +25,40 @@ import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
 
-public class CasGappedReferenceDataStoreBuilderVisitor implements CasFileVisitor{
+/**
+ * {@code CasGappedReferenceDataStoreBuilderVisitor}
+ * is a {@link CasFileVisitor} that will create a 
+ * {@link CasGappedReferenceDataStore} when it visits a {@literal .cas}
+ * encoded file.
+ * 
+ * <p/>
+ * CLC {@literal .cas} files don't store the final gapped assembly
+ * consensus sequences.  In order to correctly build valid
+ * contig objects, the gapped consensus must be calculated for each
+ * reference by visiting all the alignment information of all the input reads.
+ * 
+ * <p/>
+ * Once the entire cas file has been visited, the {@link #build()}
+ * method can be called to return the {@link CasGappedReferenceDataStore}.
+ * 
+ * <p/>
+ * Here is how this class should be used:
+ * <pre>
+ * File casFile = ...
+ CasGappedReferenceDataStoreBuilderVisitor gappedRefVisitor = new CasGappedReferenceDataStoreBuilderVisitor(casFile.getParentFile());
+ 
+ CasFileParser casFileParser = new CasFileParser(casFile);
+ casFileParser.accept(gappedRefVisitor);
+ 
+ CasGappedReferenceDataStore gappedReferenceDataStore = gappedRefVisitor.build();
+        </pre>
+ * 
+ * 
+ * 
+ * @author dkatzel
+ *
+ */
+public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileVisitor{
 
 	private final SortedMap<Long, SortedMap<Long,Insertion>> gapsByReferenceIndex = new TreeMap<Long, SortedMap<Long,Insertion>>();
 	private final Map<Long, String> refIndexToIdMap = new TreeMap<Long, String>();
@@ -299,7 +328,7 @@ public class CasGappedReferenceDataStoreBuilderVisitor implements CasFileVisitor
 		}
 
 		@Override
-		public long getIndexById(String id) {
+		public Long getIndexById(String id) {
 			return Id2IndexMap.get(id);
 		}
 

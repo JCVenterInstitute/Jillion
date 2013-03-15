@@ -23,7 +23,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.clc.cas.align;
+package org.jcvi.jillion.assembly.clc.cas;
 
 public class PhaseChangeCasAlignmentRegion implements CasAlignmentRegion{
     private final byte phaseChange;

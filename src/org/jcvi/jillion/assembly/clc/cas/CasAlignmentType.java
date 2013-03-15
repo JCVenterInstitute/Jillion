@@ -19,25 +19,42 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 /*
- * Created on Jan 20, 2010
+ * Created on Oct 27, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.clc.cas.align;
+package org.jcvi.jillion.assembly.clc.cas;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.HashMap;
+import java.util.Map;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestDefaultCasAlignmentRegion.class,
-        TestPhaseChangeCasAlignmentRegion.class,
-        TestDefaultCasAlignment.class,
-       AllCasScoreUnitTests.class 
+public enum CasAlignmentType {
+
+    LOCAL((byte) 0),
+    SEMI_LOCAL((byte)1),
+    REVERSE_SEMI_LOCAL((byte)2),
+    GLOBAL((byte)3)
+    ;
+    
+    private static Map<Byte, CasAlignmentType> MAP;
+    
+    static{
+        MAP = new HashMap<Byte, CasAlignmentType>();
+        for(CasAlignmentType type : values()){
+            MAP.put(type.getValue(), type);
+        }
     }
-    )
-public class AllCasAlignmentUnitTests {
+    private final byte value;
+    
+    private CasAlignmentType(byte value){
+        this.value =value;
+    }
 
+    public byte getValue() {
+        return value;
+    }
+    
+    public static CasAlignmentType valueOf(byte value){
+        return MAP.get(Byte.valueOf(value));
+    }
 }

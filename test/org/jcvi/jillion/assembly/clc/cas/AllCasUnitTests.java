@@ -25,7 +25,6 @@
  */
 package org.jcvi.jillion.assembly.clc.cas;
 
-import org.jcvi.jillion.assembly.clc.cas.align.AllCasAlignmentUnitTests;
 import org.jcvi.jillion.assembly.clc.cas.consed.AllCas2ConsedTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

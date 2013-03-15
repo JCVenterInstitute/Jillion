@@ -23,9 +23,9 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.clc.cas.align;
+package org.jcvi.jillion.assembly.clc.cas;
 
-public class DefaultCasAlignmentRegion implements CasAlignmentRegion{
+final class DefaultCasAlignmentRegion implements CasAlignmentRegion{
 
     private final CasAlignmentRegionType type;
     private final long length;

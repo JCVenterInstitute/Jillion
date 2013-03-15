@@ -23,12 +23,11 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.clc.cas.align;
+package org.jcvi.jillion.assembly.clc.cas;
 
-import org.jcvi.jillion.assembly.clc.cas.CasMatch;
 import org.jcvi.jillion.core.Range;
 
-public class DefaultCasMatch implements CasMatch{
+final class DefaultCasMatch implements CasMatch{
     private final boolean hasMatch,
      isPartOfPair;
     private final CasAlignment alignment;

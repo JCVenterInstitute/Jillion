@@ -23,13 +23,13 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.clc.cas.align;
+package org.jcvi.jillion.assembly.clc.cas;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DefaultCasAlignment implements CasAlignment {
+final class DefaultCasAlignment implements CasAlignment {
 
     private final long contigSequenceId;
     private final long startOfMatch;

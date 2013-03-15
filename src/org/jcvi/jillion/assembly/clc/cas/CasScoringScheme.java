@@ -19,16 +19,17 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 /*
- * Created on Oct 29, 2009
+ * Created on Oct 27, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.clc.cas.align;
+package org.jcvi.jillion.assembly.clc.cas;
 
-public enum CasAlignmentRegionType {
-    
-    MATCH_MISMATCH,
-    INSERT,
-    DELETION,
-    PHASE_CHANGE
+
+
+public interface CasScoringScheme {
+
+    CasScoreType getScoreType();
+    CasAlignmentType getAlignmentType();
+    CasAlignmentScore getAlignmentScore();
 }
