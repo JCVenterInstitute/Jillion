@@ -27,6 +27,7 @@ package org.jcvi.jillion.assembly.clc.cas;
 
 
 import org.jcvi.jillion.assembly.clc.cas.align.CasAlignment;
+import org.jcvi.jillion.core.Range;
 
 public interface CasMatch {
 
@@ -38,5 +39,15 @@ public interface CasMatch {
     long getNumberOfMatches();
     long getNumberOfReportedAlignments();
     int getScore();
+    /**
+     * Get the Range of the read used
+     * in the CLC mapping.
+     * Sometimes, the input read has been processed 
+     * before CLC mapped the data. 
+     * @return a {@link Range} representing the good region
+     * of the full length read that was included in the mapping assembly;
+     * or {@code null} if no trim range exists or is known.
+     */
+    Range getTrimRange();
     
 }

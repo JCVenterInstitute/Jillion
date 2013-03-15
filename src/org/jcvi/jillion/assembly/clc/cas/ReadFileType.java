@@ -41,12 +41,12 @@ public enum ReadFileType {
     }
     public static ReadFileType getTypeFromFile(String readFileName){
         String extension =FileUtil.getExtension(readFileName);
-        if("fastq".equals(extension) || readFileName.matches("\\S*/?s_+\\d+_sequence\\.txt")){
+        if("fastq".equals(extension) || readFileName.matches("\\S*/?s_+\\d+_sequence\\.txt") || readFileName.endsWith(".fastq.untrimmed")){
            return FASTQ;
         }if("sff".equals(extension)){
             return SFF;
         }
-        if("fasta".equals(extension) || "fna".equals(extension) || "fa".equals(extension) || "seq".equals(extension)){
+        if("fasta".equals(extension) || "fna".equals(extension) || "fa".equals(extension) || "seq".equals(extension) || readFileName.endsWith(".fasta.untrimmed")){
             return FASTA;
         }
         return SANGER;

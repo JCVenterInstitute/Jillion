@@ -26,6 +26,7 @@
 package org.jcvi.jillion.assembly.clc.cas.align;
 
 import org.jcvi.jillion.assembly.clc.cas.CasMatch;
+import org.jcvi.jillion.core.Range;
 
 public class DefaultCasMatch implements CasMatch{
     private final boolean hasMatch,
@@ -33,24 +34,36 @@ public class DefaultCasMatch implements CasMatch{
     private final CasAlignment alignment;
     private final long numberOfMatches,numberOfReportedAlignments;
     private final int score;
-    /**
-     * @param hasMatch
-     * @param hasMultipleMatches
-     * @param hasMultipleAlignments
-     * @param isPartOfPair
-     */
+    private final Range trimRange;
+  
     public DefaultCasMatch(boolean hasMatch, long numberOfMatches,
             long numberOfReportedAlignments,
              boolean isPartOfPair,CasAlignment chosenAlignment, int score) {
+       this(hasMatch, numberOfMatches, numberOfMatches, isPartOfPair, chosenAlignment, score, null);
+    }
+    
+ 
+    public DefaultCasMatch(boolean hasMatch, long numberOfMatches,
+            long numberOfReportedAlignments,
+             boolean isPartOfPair,CasAlignment chosenAlignment, int score,
+             Range trimRange) {
         this.hasMatch = hasMatch;
         this.numberOfMatches = numberOfMatches;
         this.numberOfReportedAlignments = numberOfReportedAlignments;
         this.isPartOfPair = isPartOfPair;
         this.alignment = chosenAlignment;
         this.score = score;
+        this.trimRange = trimRange;
     }
 
+    
     @Override
+	public Range getTrimRange() {
+		return trimRange;
+	}
+
+
+	@Override
     public boolean hasMultipleAlignments() {
         return numberOfReportedAlignments>1;
     }

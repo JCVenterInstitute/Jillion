@@ -36,6 +36,7 @@ import org.jcvi.jillion.trace.Trace;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.jillion.trace.sanger.phd.IndexedPhdFileDataStore;
+import org.jcvi.jillion.trace.sanger.phd.Phd;
 import org.jcvi.jillion.trace.sanger.phd.PhdDataStore;
 import org.jcvi.jillion.trace.sanger.phd.PhdWriter;
 import org.jcvi.jillion.trace.sff.SffFileIterator;
@@ -48,7 +49,7 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 	
 	private final OutputStream phdOut;
 	
-	private final File chromatDir = null;
+	private File chromatDir = null;
 	private final File phdFile;
 	
 	private String prefix;
@@ -92,6 +93,14 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 		phdOut = new BufferedOutputStream(new FileOutputStream(phdFile));
 	}
 
+	public final File getPhdBallFile() {
+		return phdFile;
+	}
+
+	public final void setChromatDir(File chromatDir) {
+		this.chromatDir = chromatDir;
+	}
+
 	@Override
 	protected void visitUnMatched(Trace currentTrace) {
 		//no-op
@@ -99,7 +108,7 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 	}
 
 	@Override
-	protected void visitMatch(String referenceId, CasPlacedRead read,
+	protected final void visitMatch(String referenceId, CasPlacedRead read,
 			Trace traceOfRead) {
 		AceContigBuilder builder = contigBuilders.get(referenceId);
 		if(!(traceOfRead instanceof PhdReadRecord)){
@@ -118,8 +127,20 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 		} catch (IOException e) {
 			throw new IllegalStateException("error writing out phd record for  " + traceOfRead, e);
 		}
+		afterVisitMatch(referenceId, read,	phdReadRecord.getPhd(), phdInfo);
 	}
 
+	protected void afterVisitMatch(String referenceId, CasPlacedRead read,	Phd phd, PhdInfo phdInfo){
+		//no-op by default
+	}
+	
+	protected void postProcess(AceContigBuilder builder){
+		//no-op by default
+	}
+	
+	protected void visitAce(Range scaffoldRange, AceContig contig){
+		//no-op
+	}
 	
 	@Override
 	public void visitEnd() {
@@ -133,20 +154,25 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 			//TODO customize ace writer?
 			AceFileWriter aceWriter = new AceFileWriterBuilder(aceFile, phdDataStore)
 										.build();
+			Iterator<Entry<String, AceContigBuilder>> referenceEntryIter = contigBuilders.entrySet().iterator();
 			
-			Iterator<AceContigBuilder> builderIterator = contigBuilders.values().iterator();
-			while(builderIterator.hasNext()){
-				AceContigBuilder contigBuilder = builderIterator.next();
+			
+			while(referenceEntryIter.hasNext()){
+				Entry<String, AceContigBuilder> refEntry = referenceEntryIter.next();
+				AceContigBuilder contigBuilder = refEntry.getValue();
 				contigBuilder.recallConsensus(MostFrequentBasecallConsensusCaller.INSTANCE);
-				//TODO add hook to post process contig builder? add consensus recall, quality computation etc?
-				
+				postProcess(contigBuilder);
+				visitBeginReference(refEntry.getKey());
 				for(Entry<Range,AceContig> entry : ConsedUtil.split0xContig(contigBuilder,true).entrySet()){
                     AceContig splitContig = entry.getValue();
-                    //TODO use the range and contig to give to writer listeners 
+                    
+                    visitAce(entry.getKey(), splitContig);
+                    
 					aceWriter.write(splitContig);
                 }
+				visitEndReference();
 				//allows seen builders to be garbage collected if needed
-				builderIterator.remove();
+				referenceEntryIter.remove();
 			}
 			aceWriter.write(new WholeAssemblyAceTag("phdBall", "consed",
                     DateUtil.getCurrentDate(), "../phdball_dir/"+phdFile.getName()));
@@ -155,6 +181,16 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+	}
+
+	protected void visitBeginReference(String key) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	protected void visitEndReference() {
+		// TODO Auto-generated method stub
 		
 	}
 

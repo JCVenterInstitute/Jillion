@@ -51,7 +51,6 @@ import org.jcvi.jillion.core.io.IOUtil.Endian;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.MultipleWrapper;
-import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
 import org.jcvi.jillion.trace.sff.SffUtil;
 /**
  * {@code CasUtil} is a utility class for dealing with the binary
@@ -244,9 +243,8 @@ public final class CasUtil {
     
     public static final class CasInfoBuilder implements Builder<CasInfo>{
         private final File casFile;
-        private FastqQualityCodec fastqQualityCodec = FastqQualityCodec.SANGER;
+
         private ExternalTrimInfo externalTrimInfo = ExternalTrimInfo.createEmptyInfo();
-        private boolean hasEdits=false;
         private File chromatDir = null;
         
         
@@ -257,13 +255,7 @@ public final class CasUtil {
             this.casFile = casFile;
         }
         
-        public CasInfoBuilder fastQQualityCodec(FastqQualityCodec fastqQualityCodec){
-            if(fastqQualityCodec ==null){
-                throw new NullPointerException("fastq quality codec can not be null");
-            }
-            this.fastqQualityCodec = fastqQualityCodec;
-            return this;
-        }
+       
         public CasInfoBuilder externalTrimInfo(ExternalTrimInfo externalTrimInfo){
             if(externalTrimInfo ==null){
                 throw new NullPointerException("externalTrimInfo can not be null");
@@ -275,17 +267,13 @@ public final class CasUtil {
             this.chromatDir = chromatDir;
             return this;
         }
-        public CasInfoBuilder hasEdits(boolean hasEdits){
-            this.hasEdits = hasEdits;
-            return this;
-        }
         /**
         * {@inheritDoc}
         */
         @Override
         public CasInfo build() {
             try {
-                return new CasInfoImpl(casFile, fastqQualityCodec, externalTrimInfo, chromatDir, hasEdits);
+                return new CasInfoImpl(casFile, externalTrimInfo, chromatDir);
             } catch (IOException e) {
                 throw new IllegalStateException("error building cas info",e);
             }
@@ -302,8 +290,8 @@ public final class CasUtil {
         private final CasTrimMap casTrimMap;
         private final CasIdLookup referenceIdLookup;
         
-        private CasInfoImpl(File casFile, FastqQualityCodec fastqQualityCodec, ExternalTrimInfo externalTrimInfo,
-                File chromatDir, boolean hasEdits) throws IOException{
+        private CasInfoImpl(File casFile, ExternalTrimInfo externalTrimInfo,
+                File chromatDir) throws IOException{
             final File casWorkingDirectory = casFile.getParentFile();
             final AbstractDefaultCasFileLookup referenceIdLookup = new DefaultReferenceCasFileLookup(casWorkingDirectory);
             
@@ -345,9 +333,8 @@ public final class CasUtil {
            multiTrimDataStore =DataStoreUtil.chain(
                    TrimPointsDataStore.class, trimDataStores);
            
-           traceDetails = new TraceDetails.Builder(fastqQualityCodec)
+           traceDetails = new TraceDetails.Builder()
                        .chromatDir(chromatDir)
-                       .hasEdits(hasEdits)
                        .build();
            this.orderedGappedReferences = gappedReferenceMap.getOrderedList();
            this.workingDirectory = casWorkingDirectory;
