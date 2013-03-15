@@ -213,9 +213,13 @@ public final class CasUtil {
      * be relative.
      * @return a new File object that represents the file.
      * @throws FileNotFoundException if the file does not exist.
+     * @throws NullPointerException if filePath is null.
      */
     public static File getFileFor(File workingDir,String filePath) throws FileNotFoundException {
-        boolean isAbsolutePath = filePath !=null && filePath.charAt(0) == File.separatorChar;
+    	if(filePath ==null){
+    		throw new NullPointerException("filePath can not be null");
+    	}
+        boolean isAbsolutePath = filePath.charAt(0) == File.separatorChar;
         final File dataStoreFile;
         if(isAbsolutePath){
             dataStoreFile = new File(filePath);
