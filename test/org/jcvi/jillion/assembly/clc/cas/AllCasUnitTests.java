@@ -40,7 +40,9 @@ import org.junit.runners.Suite.SuiteClasses;
 
         AllCas2ConsedTests.class,
         
-        AllCasAlignmentUnitTests.class
+        AllCasAlignmentUnitTests.class,
+        TestCasFileVisitorAdapter.class,
+        TestCasMatchVisitorAdapter.class
     }
     )
 public class AllCasUnitTests {
