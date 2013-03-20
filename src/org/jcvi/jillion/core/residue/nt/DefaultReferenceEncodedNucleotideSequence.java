@@ -33,6 +33,7 @@ import java.util.BitSet;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -113,64 +114,57 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 		return differenceMap;
 	}
 
-
+    public DefaultReferenceEncodedNucleotideSequence(NucleotideSequence reference,
+            String toBeEncoded, int startOffset){
+    	this(reference, new NucleotideSequenceBuilder(toBeEncoded), startOffset);
+    }
 
 	public DefaultReferenceEncodedNucleotideSequence(NucleotideSequence reference,
-            String toBeEncoded, int startOffset){
+            NucleotideSequenceBuilder toBeEncoded, int startOffset){
         List<Integer> tempGapList = new ArrayList<Integer>();     
         this.startOffset = startOffset;
-        this.length = toBeEncoded.length();
+        this.length = (int)toBeEncoded.getLength();
         this.reference = reference;
         SortedMap<Integer, Nucleotide> differentGlyphMap = populateFields(reference, toBeEncoded, startOffset, tempGapList);
         
         int numSnps = differentGlyphMap.size();
-        if(numSnps >0){
-       
-        	ValueSizeStrategy snpSizeStrategy = ValueSizeStrategy.getStrategyFor(differentGlyphMap.lastKey().intValue());
-	        int length = computeNumberOfBytesToStore(numSnps,snpSizeStrategy);
-	        ValueSizeStrategy numSnpsStrategy = ValueSizeStrategy.getStrategyFor(length);
-	        int bufferSize = numSnpsStrategy.getNumberOfBytesPerValue()+ length;
-	        ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
-	        
-	        buffer.put((byte)numSnpsStrategy.ordinal());
-			numSnpsStrategy.put(buffer, numSnps);
-	        
-	        buffer.put((byte)snpSizeStrategy.ordinal());
-	        try{
-		        for(Integer offset : differentGlyphMap.keySet()){
-		        	snpSizeStrategy.put(buffer, offset.intValue());
-		        }
-	        }catch(Exception e){
-	        	throw new RuntimeException(e);
-	        }
-	        int nbits = BITS_PER_SNP_VALUE*numSnps;
-			BitSet bits = new BitSet(nbits);
-	        int i=0;
-	        for(Nucleotide n : differentGlyphMap.values()){
-	        	
-	        	byte ordinal = n.getOrdinalAsByte();
-				BitSet temp = IOUtil.toBitSet(ordinal);
-				for(int j =0; j< BITS_PER_SNP_VALUE; j++){
-					if(temp.get(j)){
-						bits.set(i+j);
-					}
-				}
-	        	
-	        	i+=BITS_PER_SNP_VALUE;
-	            
-	        }
-	        byte[] byteArray = IOUtil.toByteArray(bits,nbits);
-	        try{
-			buffer.put(byteArray);
-	        }catch(Exception e){
-	        	throw new RuntimeException(e);
-	        }
-	        encodedSnpsInfo = buffer.array();
-        }else{
+        if(numSnps ==0){
         	//no snps
-        	 encodedSnpsInfo = null;
+        	encodedSnpsInfo =null;
+        	return;
         }
        
+    	ValueSizeStrategy snpSizeStrategy = ValueSizeStrategy.getStrategyFor(differentGlyphMap.lastKey().intValue());
+        int snpByteLength = computeNumberOfBytesToStore(numSnps,snpSizeStrategy);
+        ValueSizeStrategy numSnpsStrategy = ValueSizeStrategy.getStrategyFor(snpByteLength);
+        int bufferSize = numSnpsStrategy.getNumberOfBytesPerValue()+ snpByteLength;
+        ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
+        
+        buffer.put((byte)numSnpsStrategy.ordinal());
+		numSnpsStrategy.put(buffer, numSnps);
+        
+        buffer.put((byte)snpSizeStrategy.ordinal());
+        int nbits = BITS_PER_SNP_VALUE*numSnps;
+		BitSet bits = new BitSet(nbits);
+        int i=0;
+        
+    	for(Entry<Integer, Nucleotide> entry : differentGlyphMap.entrySet()){
+        
+        	snpSizeStrategy.put(buffer, entry.getKey().intValue());
+        	byte ordinal = entry.getValue().getOrdinalAsByte();
+        	BitSet temp = IOUtil.toBitSet(ordinal);
+        	for(int j =0; j< BITS_PER_SNP_VALUE; j++){
+				if(temp.get(j)){
+					bits.set(i+j);
+				}
+			}	        	
+        	i+=BITS_PER_SNP_VALUE;
+        }
+        
+        byte[] byteArray = IOUtil.toByteArray(bits,nbits);
+		buffer.put(byteArray);	        
+        encodedSnpsInfo = buffer.array();
+    
     }
     
     
@@ -182,37 +176,38 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 	}
 
 
-	private SortedMap<Integer, Nucleotide> populateFields(Sequence<Nucleotide> reference,
-            String toBeEncoded, int startOffset, List<Integer> tempGapList) {
+	private SortedMap<Integer, Nucleotide> populateFields(
+			NucleotideSequence reference,
+            NucleotideSequenceBuilder toBeEncoded, int startOffset, List<Integer> tempGapList) {
         handleBeforeReference(startOffset);
         handleAfterReference(reference, toBeEncoded, startOffset);
         TreeMap<Integer, Nucleotide> differentGlyphMap = new TreeMap<Integer, Nucleotide>();
         
-        int startReferenceEncodingOffset =0;
-        int endReferenceEncodingOffset = toBeEncoded.length();
-        
-        for(int i=startReferenceEncodingOffset; i<endReferenceEncodingOffset; i++){
-            //get the corresponding index to this reference
-            int referenceIndex = i + startOffset;
-            Nucleotide g = Nucleotide.parse(toBeEncoded.charAt(i));
-            final Nucleotide referenceGlyph = reference.get(referenceIndex);            
-            
-            final Integer indexAsInteger = Integer.valueOf(i);
+       Iterator<Nucleotide> readIterator = toBeEncoded.iterator();
+       Iterator<Nucleotide> refIterator = reference.iterator(new Range.Builder(length)
+    		   													.shift(startOffset)
+    		   													.build());
+       int i=0;
+       while(readIterator.hasNext()){
+            Nucleotide g = readIterator.next();
+            final Nucleotide referenceGlyph = refIterator.next();            
+           
             if(g.isGap()){
-                tempGapList.add(indexAsInteger);
+                tempGapList.add(Integer.valueOf(i));
             }
             if(isDifferent(g, referenceGlyph)){
-                    differentGlyphMap.put(indexAsInteger, g);
+                    differentGlyphMap.put(Integer.valueOf(i), g);
             }
+            i++;
         }
         return differentGlyphMap;
     }
 
     private void handleAfterReference(Sequence<Nucleotide> reference,
-            String toBeEncoded, int startOffset) {
-        int lastOffsetOfSequence = toBeEncoded.length()+startOffset;
+            NucleotideSequenceBuilder toBeEncoded, int startOffset) {
+        int lastOffsetOfSequence = (int)toBeEncoded.getLength()+startOffset;
         if(lastOffsetOfSequence > reference.getLength()){
-            int overhang = (int)(toBeEncoded.length()+startOffset - reference.getLength());
+            int overhang = (int)(toBeEncoded.getLength()+startOffset - reference.getLength());
             throw new IllegalArgumentException(String.format("sequences extends beyond reference by %d bases", overhang));
         }
     }
