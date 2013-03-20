@@ -25,6 +25,8 @@
  */
 package org.jcvi.jillion.core.residue.nt;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,15 +34,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.residue.nt.DefaultNucleotideCodec;
-import org.jcvi.jillion.core.residue.nt.DefaultReferenceEncodedNucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.jillion.internal.core.GlyphCodec;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestReferenceEncodedNucleotideSequence {
     GlyphCodec<Nucleotide> codec = DefaultNucleotideCodec.INSTANCE;
     String referenceAsString = "ACGTACGTACGTACGTACGTACGTACGT";
@@ -51,6 +46,34 @@ public class TestReferenceEncodedNucleotideSequence {
     public void oneGapNoDifferences(){
         int offset=5;
         String sequenceAsString = "CGTACGT-CGT";
+        assertDecodedCorrectly(offset, sequenceAsString);
+       
+    }
+    @Test
+    public void oneDifferences(){
+        int offset=5;
+        String sequenceAsString = "CGTACGTRCGT";
+        assertDecodedCorrectly(offset, sequenceAsString);
+       
+    }
+    @Test
+    public void twoGapsNoDifferences(){
+        int offset=5;
+        String sequenceAsString = "CGTACG--CGT";
+        assertDecodedCorrectly(offset, sequenceAsString);
+       
+    }
+    @Test
+    public void twoDifferences(){
+        int offset=5;
+        String sequenceAsString = "CGTACGWRCGT";
+        assertDecodedCorrectly(offset, sequenceAsString);
+       
+    }
+    @Test
+    public void threeDifferences(){
+        int offset=5;
+        String sequenceAsString = "CSTACGWRCGT";
         assertDecodedCorrectly(offset, sequenceAsString);
        
     }

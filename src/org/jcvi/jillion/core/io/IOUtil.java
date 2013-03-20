@@ -786,7 +786,7 @@ public final class IOUtil {
      */
     public static BitSet toBitSet(ByteBuffer buffer){
     	final BitSet bits;
-    	bits = new BitSet();
+    	bits = new BitSet(8*buffer.remaining());
     	int j=0;
     	while(buffer.remaining() >0){
     		byte value = buffer.get();

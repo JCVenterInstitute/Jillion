@@ -34,6 +34,17 @@ public final class CoverageMapUtil {
 		//can not instantiate
 		
 	}
+	
+	public static double computeAvgCoverage(CoverageMap<?> coverageMap){
+        long totalLength = 0L;
+        long totalCoverage =0L;
+        for(CoverageRegion<?> region : coverageMap){
+        	Range range = region.asRange();
+			totalLength +=range.getLength();
+        	totalCoverage += region.getCoverageDepth() * region.asRange().getLength();
+        }
+        return totalCoverage/(double)totalLength;
+}
 	public static long getLastCoveredOffsetIn(CoverageMap<?> coverageMap){
 	        if(coverageMap.isEmpty()){
 	            return -1L;
