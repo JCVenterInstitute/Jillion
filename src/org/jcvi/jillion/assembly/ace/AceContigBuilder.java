@@ -61,6 +61,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
  * {@code AceContigBuilder} is a {@link Builder}
@@ -106,7 +107,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     private NucleotideSequence initialConsensus;
     private final NucleotideSequenceBuilder mutableConsensus;
     private String contigId;
-    private final Map<String, AceAssembledReadBuilder>aceReadBuilderMap = new HashMap<String, AceAssembledReadBuilder>();
+    private final Map<String, AceAssembledReadBuilder> aceReadBuilderMap;
     private int contigLeft= -1;
     private int contigRight = -1;
     private volatile boolean built=false;
@@ -161,6 +162,37 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     	this.initialConsensus = initialConsensus;
     	 this.contigId = contigId;
     	 this.mutableConsensus = new NucleotideSequenceBuilder(initialConsensus);
+    	 aceReadBuilderMap = new HashMap<String, AceAssembledReadBuilder>();
+    }
+    
+    /**
+     * Create a new {@link AceContigBuilder} for a contig with the given
+     * contig id and starting with the given consensus.  Both the contig id
+     * and the consensus can be changed by calling methods on the returned
+     * builder.
+     * @param contigId the initial contig id to use for this contig (may later be changed)
+     * @param initialConsensus the initial contig consensus for this contig (may be changed later)
+     * @param estimatedNumberOfReads expected number of reads that will be added to this
+     * contig.  This value is only used to allocate the initial map sizes for internal
+     * data structures as a performance optimization.  Must be >=0.
+     * @return a new {@link AceContigBuilder} instance; never null.
+     * @throws NullPointerException if contigId or consensus are null.
+     * @throws IllegalArgumentException if estimatedNumberOfReads
+     * is <0
+     */
+    public AceContigBuilder(String contigId, NucleotideSequence initialConsensus,
+    		int estimatedNumberOfReads){
+        if(contigId ==null){
+            throw new NullPointerException("contig id can not be null");
+        }
+        if(initialConsensus ==null){
+            throw new NullPointerException("consensus can not be null");
+        }
+    	this.initialConsensus = initialConsensus;
+    	 this.contigId = contigId;
+    	 this.mutableConsensus = new NucleotideSequenceBuilder(initialConsensus);
+    	 int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(estimatedNumberOfReads);
+    	 aceReadBuilderMap = new HashMap<String, AceAssembledReadBuilder>(capacity);
     }
     /**
      * Create a new instance of DefaultAceContigBuilder
@@ -174,6 +206,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     	this.contigId=copy.getId();
     	this.initialConsensus = copy.getConsensusSequence();
     	this.mutableConsensus = new NucleotideSequenceBuilder(initialConsensus);
+    	aceReadBuilderMap = new HashMap<String, AceAssembledReadBuilder>(MapUtil.computeMinHashMapSizeWithoutRehashing(copy.getNumberOfReads()));
     	StreamingIterator<AceAssembledRead> readIter =null;
     	try{
     		readIter = copy.getReadIterator();
@@ -484,8 +517,9 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
         		.copy()
         		.trim(contigTrimRange)
         		.build();
+		
         for(AceAssembledReadBuilder aceReadBuilder : aceReadBuilderMap.values()){
-            int newOffset = (int)aceReadBuilder.getBegin() - contigLeft;
+        	int newOffset = (int)aceReadBuilder.getBegin() - contigLeft;
             aceReadBuilder.reference(validConsensus,newOffset);
             placedReads.add(aceReadBuilder.build());                
         } 

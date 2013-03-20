@@ -20,11 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.nt;
 
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -32,8 +30,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 
 
@@ -50,7 +46,9 @@ import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
  *
  */
 abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
-        /*
+	private static final int END_OF_ITER = Integer.MIN_VALUE;
+        private static final ValueSizeStrategy[] VALUE_SIZE_STRATEGIES = ValueSizeStrategy.values();
+		/*
          * Implementation Details:
          * ====================================
          * We store everything as a single byte array which
@@ -81,96 +79,31 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
          * We can store ACGTs as 2 bits so that's 4 per byte.
          */
         private static final int NUCLEOTIDES_PER_BYTE =4;
-
-        private static final int UNSIGNED_BYTE_MAX = 255;
-        
-        private static final int UNSIGNED_SHORT_MAX = 65531;
         /**
          * This is a sentinel value for a gap.  Since we 
          * can only store 2 bits per base, a byte of 5 is too big.
          * 
          */
         private static final byte GAP_BYTE = 5;
-        
+        /**
+         * This is the 5th {@link Nucleotide} of our 2 bit encoding
+         * usually a "-" or "N".  These 5th bases will occasionally occur
+         * but infrequently enough that we should still use our
+         * 2 bit encoding for all sequences.
+         */
         private final Nucleotide sententialBase;
         protected TwoBitEncodedNucleotideCodec(Nucleotide sententialBase){
             this.sententialBase = sententialBase;
         }
-        /**
-         * We can compress our data more if the length
-         * is small enough that any possible
-         * gap index will fit in only 1/2 or 4 bytes.
-         * @param length the length of the nucleotide sequence
-         * to encode.
-         * @return 1 2 or 4 depending on how many
-         * bytes are required to store each offset for the length.
-         */
-        protected final int computeBytesPerSentinelOffset(int length){
-            if(length<= UNSIGNED_BYTE_MAX){
-                return 1;
-            }
-            if(length<= UNSIGNED_SHORT_MAX){
-                return 2;
-            }
-            return 4;
-        }
+        
+       private Nucleotide getNucleotide2(byte encodedByte, int index){
+    	   //endian is backwards
+    	   int j = (3-index%4)*2;
+    	   return getGlyphFor((byte)((encodedByte>>j) &0x3));
+       }
        
-		protected final NucleotideSequenceBuilder populateNucleotideSequenceBuilderFrom(
-				byte[] encodedGlyphs) {
-			ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
-			ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
-            int length =offsetStrategy.getNext(buf);
-            final Iterator<Integer> sentinelIterator = parseSentinelOffsetsIteratorFrom(buf,offsetStrategy);
-            NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(length);
-            BitSet bits =IOUtil.toBitSet(buf);
-            Integer nextSentinel = getNextSentinel(sentinelIterator);
-            for(int i=0; i<length; i++){
-            	if(nextSentinel !=null && nextSentinel.intValue() == i){
-            		builder.append(sententialBase);
-            		nextSentinel = getNextSentinel(sentinelIterator);
-            	}else{
-            		final Nucleotide nextBase = getNucletotide(bits, i);
-            		builder.append(nextBase);
-            	}
-            }
-			return builder;
-		}
-		private Nucleotide getNucletotide(BitSet bits, int i) {
-			final Nucleotide nextBase;
-			//endian is backwards
-			int j = (3-i%4)*2;
-			int offsetOfByte = (i/4)*8 ;
-			BitSet bitset = bits.get(offsetOfByte+j, offsetOfByte+j+2);
-			if(bitset.isEmpty()){
-				nextBase =getGlyphFor((byte)0);            			
-			}else{
-				byte[] byteArray = IOUtil.toByteArray(bitset,2);
-				
-				byte byteValue = new BigInteger(byteArray).byteValue();
-				nextBase = getGlyphFor(byteValue);
-			}
-			return nextBase;
-		}
-		private Iterator<Integer> parseSentinelOffsetsIteratorFrom(
-				ByteBuffer buf, ValueSizeStrategy offsetStrategy) {
-			ValueSizeStrategy sentinelStrategy = ValueSizeStrategy.values()[buf.get()];
-            final Iterator<Integer> sentinelIterator;
-            if(sentinelStrategy == ValueSizeStrategy.NONE){
-            	sentinelIterator=IteratorUtil.createEmptyIterator();
-            }else{            	
-            	//there are gaps
-            	int numberOfSentinels = sentinelStrategy.getNext(buf);
-            	List<Integer> sentinelOffsets = new ArrayList<Integer>(numberOfSentinels);
-            	for(int i = 0; i< numberOfSentinels; i++){
-            		sentinelOffsets.add(Integer.valueOf(offsetStrategy.getNext(buf)));
-            	}
-            	sentinelIterator = sentinelOffsets.iterator();
-            }
-			return sentinelIterator;
-		}
-		
 		protected List<Integer> getSentinelOffsetsFrom(ByteBuffer buf, ValueSizeStrategy offsetStrategy){
-			ValueSizeStrategy sentinelStrategy = ValueSizeStrategy.values()[buf.get()];
+			ValueSizeStrategy sentinelStrategy = VALUE_SIZE_STRATEGIES[buf.get()];
             if(sentinelStrategy == ValueSizeStrategy.NONE){
             	return Collections.<Integer>emptyList();
             }else{            	
@@ -184,29 +117,8 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
             }
 
 		}
-        private Integer getNextSentinel(Iterator<Integer> sentinelIterator) {
-			if(sentinelIterator.hasNext()){
-				return sentinelIterator.next();
-			}
-			return null;
-		}
+        
 		
-        protected final int[] getSentinelOffsets(ByteBuffer buf, int bytesPerOffset){
-            buf.position(4);
-            int[] sentinels = new int[buf.getInt()];
-            
-            for(int i=0; i<sentinels.length; i++){
-                switch(bytesPerOffset){
-                    case 1 : sentinels[i] =IOUtil.toUnsignedByte(buf.get());
-                            break;
-                    case 2 : sentinels[i] =IOUtil.toUnsignedShort(buf.getShort());
-                            break; 
-                    default : sentinels[i] =buf.getInt();
-                            break;
-                }
-            }
-            return sentinels;
-        }
         
        
         @Override
@@ -215,7 +127,7 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
         		throw new IndexOutOfBoundsException(String.format("offset %d can not be negative ", index));
         	}
         	ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
-            ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
+            ValueSizeStrategy offsetStrategy = VALUE_SIZE_STRATEGIES[buf.get()];
             int length=offsetStrategy.getNext(buf);
             if(index >=length){
             	throw new IndexOutOfBoundsException(String.format("offset %d is >= length (%d)", index,length));
@@ -226,14 +138,13 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
             int currentPosition =buf.position();
             int bytesToSkip = (int)(index/4);
             buf.position(currentPosition+ bytesToSkip);
-            
-            BitSet bits =IOUtil.toBitSet(buf.get());
+
             int offsetIntoBitSet = (int)(index%4);
-            return getNucletotide(bits, offsetIntoBitSet);
+            return getNucleotide2(buf.get(), offsetIntoBitSet);
         
         }
         private boolean isSentinelOffset(ByteBuffer buf, ValueSizeStrategy offsetStrategy, int index) {
-        	ValueSizeStrategy sentinelStrategy = ValueSizeStrategy.values()[buf.get()];
+        	ValueSizeStrategy sentinelStrategy = VALUE_SIZE_STRATEGIES[buf.get()];
         	if(sentinelStrategy == ValueSizeStrategy.NONE){
         		return false;
         	}
@@ -408,7 +319,7 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
         @Override
         public int decodedLengthOf(byte[] encodedGlyphs) {
             ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
-            return ValueSizeStrategy.values()[buf.get()].getNext(buf);
+            return VALUE_SIZE_STRATEGIES[buf.get()].getNext(buf);
         }
 		@Override
 		public Iterator<Nucleotide> iterator(byte[] encodedData) {
@@ -430,37 +341,67 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
 		}
 
 		private final class IteratorImpl implements Iterator<Nucleotide>{
+			
 			private final int length;
-			private final Iterator<Integer> sentinelIterator;
-			private final BitSet bits;
-			private Integer nextSentinel;
+			private final int[] sentinelArray;
+			
+			private int nextSentinel;
 			private int currentOffset=0;
+			private int sentinelIndex=0;
+			private final byte[] encodedBytes;
 			
 			public IteratorImpl(byte[] encodedGlyphs){
 				ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
-				ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
+				ValueSizeStrategy offsetStrategy = VALUE_SIZE_STRATEGIES[buf.get()];
 	            this.length =offsetStrategy.getNext(buf);
-	            this.sentinelIterator = parseSentinelOffsetsIteratorFrom(buf,offsetStrategy);
-	            this.bits =IOUtil.toBitSet(buf);
-	            this.nextSentinel = getNextSentinel(sentinelIterator);	           
+	            this.sentinelArray = parseSentinelOffsetsIteratorFrom(buf,offsetStrategy);
+	            this.encodedBytes =new byte[buf.remaining()];
+	            buf.get(encodedBytes);
+	            this.nextSentinel = getNextSentinel();	           
 			}
 			
 			public IteratorImpl(byte[] encodedGlyphs, Range range){
 				ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
-				ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
+				ValueSizeStrategy offsetStrategy = VALUE_SIZE_STRATEGIES[buf.get()];
 	            int sequenceLength =offsetStrategy.getNext(buf);
 	            if(range.getBegin()<0 || range.getEnd()>=sequenceLength){
 					throw new IndexOutOfBoundsException("range "+range +" is out of range of sequence which is only "+ new Range.Builder(sequenceLength).build());
 				}
 	            this.length = (int)range.getEnd()+1;
-	            this.sentinelIterator = parseSentinelOffsetsIteratorFrom(buf,offsetStrategy);
-	            this.nextSentinel = getNextSentinel(sentinelIterator);
+	            this.sentinelArray = parseSentinelOffsetsIteratorFrom(buf,offsetStrategy);
+	            this.nextSentinel = getNextSentinel();
 	            currentOffset = (int)range.getBegin();
-	            while(nextSentinel!=null && nextSentinel.intValue() < currentOffset){
-	            	this.nextSentinel = getNextSentinel(sentinelIterator);
+	            while(nextSentinel!=END_OF_ITER && nextSentinel < currentOffset){
+	            	this.nextSentinel = getNextSentinel();
 	            }
-	            this.bits =IOUtil.toBitSet(buf);
+	            this.encodedBytes =new byte[buf.remaining()];
+	            buf.get(encodedBytes);
 	           	           
+			}
+			
+			private int[] parseSentinelOffsetsIteratorFrom(
+					ByteBuffer buf, ValueSizeStrategy offsetStrategy) {
+				ValueSizeStrategy sentinelStrategy = VALUE_SIZE_STRATEGIES[buf.get()];
+	            //no sentinels (no gaps or N's)
+	            if(sentinelStrategy == ValueSizeStrategy.NONE){
+	            	return new int[0];
+	            }else{            	
+	            	int numberOfSentinels = sentinelStrategy.getNext(buf);
+	            	//
+	            	int[] sentinelArray = new int[numberOfSentinels];
+	            	
+	            	for(int i = 0; i< numberOfSentinels; i++){
+	            		sentinelArray[i] =offsetStrategy.getNext(buf);
+	            	}
+	            	return sentinelArray;
+	            }
+			}
+			
+			private int getNextSentinel() {
+				if(sentinelIndex>= sentinelArray.length){
+					return END_OF_ITER;
+				}
+				return sentinelArray[sentinelIndex++];
 			}
 			@Override
 			public boolean hasNext() {
@@ -472,12 +413,12 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
 				if(!hasNext()){
 					throw new NoSuchElementException("no more elements");
 				}
-				if(nextSentinel !=null && nextSentinel.intValue() == currentOffset){
-            		nextSentinel = getNextSentinel(sentinelIterator);
+				if(nextSentinel !=END_OF_ITER && nextSentinel == currentOffset){
+            		nextSentinel = getNextSentinel();
             		currentOffset++;
             		return sententialBase;
 				}
-				Nucleotide next= getNucletotide(bits, currentOffset);
+				Nucleotide next= getNucleotide2(encodedBytes[currentOffset/4], currentOffset%4);
 				currentOffset++;
 				return next;
 			}

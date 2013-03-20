@@ -36,6 +36,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
@@ -54,10 +55,26 @@ public final class DefaultContig<T extends AssembledRead> implements Contig<T>{
     	}
         this.id = id;
         this.consensus = consensus;
-        mapById = new LinkedHashMap<String, T>(assembledReads.size()+1, 1F);
+        int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(assembledReads.size());
+        mapById = new LinkedHashMap<String, T>(capacity);
         for(T r : assembledReads){
             mapById.put(r.getId(), r);
         }
+       
+    }
+    public DefaultContig(String id, NucleotideSequence consensus, Map<String, T> assembledReads){
+    	if(id==null){
+    		throw new NullPointerException("id can not be null");
+    	}
+    	if(consensus==null){
+    		throw new NullPointerException("consensus can not be null");
+    	}
+    	if(assembledReads ==null){
+    		throw new NullPointerException("assembled read map can not be null");
+    	}
+        this.id = id;
+        this.consensus = consensus;
+        mapById = assembledReads;
        
     }
 

@@ -25,11 +25,9 @@
  */
 package org.jcvi.jillion.core.residue.nt;
 
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -39,13 +37,12 @@ import java.util.TreeMap;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
-import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 
 final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSequence<Nucleotide> implements ReferenceMappedNucleotideSequence{
 
-	private static final int BITS_PER_SNP_VALUE=4;
+	private static final Nucleotide[] NUCLEOTIDE_ORDINALS = Nucleotide.values();
     private final int length;
     private final int startOffset;
     private final NucleotideSequence reference;
@@ -104,11 +101,17 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
         ValueSizeStrategy numSnpsSizeStrategy = ValueSizeStrategy.values()[buf.get()];
 		int size = numSnpsSizeStrategy.getNext(buf);
         ValueSizeStrategy snpSizeStrategy = ValueSizeStrategy.values()[buf.get()];
-    	BitSet bits = getSnpBitSet(numSnpsSizeStrategy, size, snpSizeStrategy);
+    	byte[] snps = getSnpArray(numSnpsSizeStrategy, size, snpSizeStrategy);
     	SortedMap<Integer, Nucleotide> differenceMap = new TreeMap<Integer, Nucleotide>();
     	for(int i=0; i<size; i++){        	
             Integer offset = snpSizeStrategy.getNext(buf);
-            differenceMap.put(offset, getSnpValueFrom(bits, i));
+            int index = i/2;
+        	if(i%2==0){
+        		int temp1 = snps[index]>>4;
+				differenceMap.put(offset, NUCLEOTIDE_ORDINALS[temp1 & 0x0F]);
+        	}else{
+        		differenceMap.put(offset,NUCLEOTIDE_ORDINALS[snps[index] & 0x0F]);
+        	}
 			
         }
 		return differenceMap;
@@ -126,7 +129,6 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
         this.length = (int)toBeEncoded.getLength();
         this.reference = reference;
         SortedMap<Integer, Nucleotide> differentGlyphMap = populateFields(reference, toBeEncoded, startOffset, tempGapList);
-        
         int numSnps = differentGlyphMap.size();
         if(numSnps ==0){
         	//no snps
@@ -144,25 +146,23 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 		numSnpsStrategy.put(buffer, numSnps);
         
         buffer.put((byte)snpSizeStrategy.ordinal());
-        int nbits = BITS_PER_SNP_VALUE*numSnps;
-		BitSet bits = new BitSet(nbits);
         int i=0;
-        
+        byte[] snpValues = new byte[(numSnps+1)/2];
     	for(Entry<Integer, Nucleotide> entry : differentGlyphMap.entrySet()){
         
         	snpSizeStrategy.put(buffer, entry.getKey().intValue());
         	byte ordinal = entry.getValue().getOrdinalAsByte();
-        	BitSet temp = IOUtil.toBitSet(ordinal);
-        	for(int j =0; j< BITS_PER_SNP_VALUE; j++){
-				if(temp.get(j)){
-					bits.set(i+j);
-				}
-			}	        	
-        	i+=BITS_PER_SNP_VALUE;
+        	int index = i/2;
+        	if(i%2==0){
+        		snpValues[index] = (byte)(ordinal<<4 & 0xF0);
+        	}else{
+        		snpValues[index] = (byte)(snpValues[index] | ordinal);
+        	}
+        	  	
+        	i++;
         }
-        
-        byte[] byteArray = IOUtil.toByteArray(bits,nbits);
-		buffer.put(byteArray);	        
+    	
+		buffer.put(snpValues);	        
         encodedSnpsInfo = buffer.array();
     
     }
@@ -277,10 +277,15 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 	        ValueSizeStrategy numSnpsSizeStrategy = ValueSizeStrategy.values()[buf.get()];
 			int size = numSnpsSizeStrategy.getNext(buf);
 	        ValueSizeStrategy sizeStrategy = ValueSizeStrategy.values()[buf.get()];
-	        BitSet bits = getSnpBitSet(numSnpsSizeStrategy, size, sizeStrategy);
+	        byte[] snps = getSnpArray(numSnpsSizeStrategy, size, sizeStrategy);
 	        for(int i=0; i<size; i++){        	
-	            int index = sizeStrategy.getNext(buf);
-				array[index]=getSnpValueFrom(bits, i);	            
+	            int index = sizeStrategy.getNext(buf); 
+				int snpIndex = i/2;
+				if(i%2==0){
+					array[index]= NUCLEOTIDE_ORDINALS[snps[snpIndex]>>4 &0x0F];
+				}else{
+					array[index]= NUCLEOTIDE_ORDINALS[snps[snpIndex] & 0x0F];
+				}
 	        }
         }
 		return array;
@@ -300,11 +305,17 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 	        ValueSizeStrategy numSnpsSizeStrategy = ValueSizeStrategy.values()[buf.get()];
 			int size = numSnpsSizeStrategy.getNext(buf);
 	        ValueSizeStrategy sizeStrategy = ValueSizeStrategy.values()[buf.get()];
-	        BitSet bits = getSnpBitSet(numSnpsSizeStrategy, size, sizeStrategy);
+	        byte[] snps = getSnpArray(numSnpsSizeStrategy, size, sizeStrategy);
 	        for(int i=0; i<size; i++){        	
 	            int nextValue = sizeStrategy.getNext(buf);
-				if(index ==nextValue){            	
-					return getSnpValueFrom(bits, i);
+				if(index ==nextValue){
+					int snpIndex = i/2;
+					if(i%2==0){
+						return NUCLEOTIDE_ORDINALS[snps[snpIndex]>>4 &0x0F];
+					}else{
+						return NUCLEOTIDE_ORDINALS[snps[snpIndex] & 0x0F];
+					}
+
 	            }
 	        }
         }
@@ -314,19 +325,12 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 
 
 
-	private BitSet getSnpBitSet(ValueSizeStrategy numSnpsSizeStrategy,
+	private byte[] getSnpArray(ValueSizeStrategy numSnpsSizeStrategy,
 			int size, ValueSizeStrategy sizeStrategy) {
 		int from = numSnpsSizeStrategy.getNumberOfBytesPerValue()+2+size*sizeStrategy.getNumberOfBytesPerValue();
-		byte[] snpSubArray = Arrays.copyOfRange(encodedSnpsInfo, from, encodedSnpsInfo.length);
-		return IOUtil.toBitSet(snpSubArray);
+		return Arrays.copyOfRange(encodedSnpsInfo, from, encodedSnpsInfo.length);
 	}
 
-	private Nucleotide getSnpValueFrom(BitSet bits, int offset) {
-		int i = offset*BITS_PER_SNP_VALUE;
-		byte[] byteArray = IOUtil.toByteArray(bits.get(i, i+BITS_PER_SNP_VALUE),8);
-		final int ordinal =new BigInteger(byteArray).intValue();
-		return Nucleotide.values()[ordinal];
-	}
 
     @Override
     public boolean isGap(int index) {
@@ -369,10 +373,16 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 		if(buf.hasRemaining()){
 			int numBytesRemaining =buf.remaining();
 			
-			 byte[] snpSubArray = Arrays.copyOfRange(encodedSnpsInfo, encodedSnpsInfo.length- numBytesRemaining, encodedSnpsInfo.length);
-		     BitSet bits = IOUtil.toBitSet(snpSubArray);
+			 byte[] snpArray = Arrays.copyOfRange(encodedSnpsInfo, encodedSnpsInfo.length- numBytesRemaining, encodedSnpsInfo.length);
 		     for(int i=0; i<size; i++){
-		    	 if(Nucleotide.Gap == getSnpValueFrom(bits, i)){
+		    	 int snpIndex = i/2;
+		    	 final Nucleotide snp;
+					if(i%2==0){
+						snp= NUCLEOTIDE_ORDINALS[snpArray[snpIndex]>>4 &0x0F];
+					}else{
+						snp= NUCLEOTIDE_ORDINALS[snpArray[snpIndex] & 0x0F];
+					}
+		    	 if(Nucleotide.Gap == snp){
 		    		 gaps.add(snps.get(i));
 		    	 }
 		     }

@@ -311,7 +311,6 @@ final class ManifestIndexed454SffFileDataStore implements SffFileDataStore{
 					long xmlLength =IOUtil.readUnsignedInt(in);
 					//skip 4 bytes for the datalength
 					IOUtil.blockingSkip(in, 4 + xmlLength);
-					//System.out.println("sorted manifest\n" + IOUtil.toString(in, IOUtil.UTF_8_NAME).replaceAll("\0", "\\0") + "\n<end of sorted>");
 					populateOffsetMap(in); 
 					useableManifest=true;
 				}
@@ -327,7 +326,6 @@ final class ManifestIndexed454SffFileDataStore implements SffFileDataStore{
 					}
 					
 					
-					//System.out.println("sorted manifest\n" + IOUtil.toString(in, IOUtil.UTF_8_NAME).replaceAll("\0", "\\0") + "\n<end of sorted>");
 					populateOffsetMap(in); 
 					useableManifest=true;
 				}

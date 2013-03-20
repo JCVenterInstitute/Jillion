@@ -323,9 +323,15 @@ public final class DefaultAssembledRead implements AssembledRead {
         * {@inheritDoc}
         */
         @Override
-        public AssembledRead build(){
-        	
-            ReferenceMappedNucleotideSequence updatedEncodedBasecalls = new NucleotideSequenceBuilder(currentBasecallsAsString())
+        public synchronized AssembledRead build(){
+        	final NucleotideSequenceBuilder finalBuilder;
+        
+        	if(originalSequence !=null){
+        		finalBuilder = new NucleotideSequenceBuilder(originalSequence);
+        	}else{
+        		finalBuilder = basesBuilder;
+        	}
+            ReferenceMappedNucleotideSequence updatedEncodedBasecalls = finalBuilder
             																.setReferenceHint(reference, offset)
             																.buildReferenceEncodedNucleotideSequence();
             return new DefaultAssembledRead(readId, 

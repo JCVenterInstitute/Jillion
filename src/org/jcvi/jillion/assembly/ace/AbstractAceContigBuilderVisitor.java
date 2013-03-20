@@ -72,7 +72,7 @@ public abstract class AbstractAceContigBuilderVisitor implements AceContigVisito
 
 	private void createContigBuilderIfNeeded() {
 		if(builder ==null){
-			builder = new AceContigBuilder(contigId, consensusBuilder.build());
+			builder = new AceContigBuilder(contigId, consensusBuilder.build(), currentAlignedReadInfoMap.size());
 		}
 	}
 	/**

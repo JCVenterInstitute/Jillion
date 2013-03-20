@@ -123,19 +123,19 @@ final class ConsedConsensusQualityComputer {
 	
 	/**
      * Compute the consensus quality sequence as computed by the same algorithm consed uses.
-     * @param contig the contig to compute the consensus qualities for; can not be null.
+     * @param consensusSequence the contig consensus sequence to compute the consensus qualities for; can not be null.
      * @return a {@link QualitySequence} can not be null.
      * @throws DataStoreException  if there is a problem fetching read quality data
-     * @throws NullPointerException if contig is null.
+     * @throws NullPointerException if contig consensus seuquence is null.
      */
-	public static QualitySequence computeConsensusQualities(NucleotideSequence contig, Iterable<? extends AssembledRead> reads, QualitySequenceDataStore readQualities) throws DataStoreException{
-		if(contig ==null){
+	public static QualitySequence computeConsensusQualities(NucleotideSequence consensusSequence, Iterable<? extends AssembledRead> reads, QualitySequenceDataStore readQualities) throws DataStoreException{
+		if(consensusSequence ==null){
     		throw new NullPointerException("consensus can not be null");
     	}
 		if(readQualities ==null){
 			throw new NullPointerException("read quality datastore can not be null");
 		}
-		return computeConsensusQualities(contig, IteratorUtil.createStreamingIterator(reads.iterator()), readQualities);
+		return computeConsensusQualities(consensusSequence, IteratorUtil.createStreamingIterator(reads.iterator()), readQualities);
 	}
 	/**
      * Compute the consensus quality sequence as computed by the same algorithm consed uses.

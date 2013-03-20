@@ -573,15 +573,18 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     */
     @Override
     public NucleotideSequence build() {    
-    	
+    		
         	if(codecDecider.hasAlignedReference()){
         		return new DefaultReferenceEncodedNucleotideSequence(
-        				codecDecider.alignedReference.reference, toString(), codecDecider.alignedReference.offset);
+        				codecDecider.alignedReference.reference, this, codecDecider.alignedReference.offset);
+        	
         	}
         	
         	NucleotideCodec optimalCodec = codecDecider.getOptimalCodec();
         	byte[] encodedBytes =optimalCodec.encode(codecDecider.currentLength, iterator());
-			return new DefaultNucleotideSequence(optimalCodec, encodedBytes);
+        	NucleotideSequence seq= new DefaultNucleotideSequence(optimalCodec, encodedBytes);
+        	
+        	return seq;
 
     }
     @Override
@@ -724,11 +727,12 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		return NUCLEOTIDE_VALUES[ordinal];
 	}
 	private byte getNucleotideOrdinalFor(BitSet bits, int bitStartOffset) {
-		int bit3 =bits.get(bitStartOffset)?1:0; 
-		int bit2 =bits.get(bitStartOffset+1)?1:0; 
-		int bit1 =bits.get(bitStartOffset+2)?1:0; 
+		
+		int bit3 =bits.get(bitStartOffset)?8:0; 
+		int bit2 =bits.get(bitStartOffset+1)?4:0; 
+		int bit1 =bits.get(bitStartOffset+2)?2:0; 
 		int bit0 =bits.get(bitStartOffset+3)?1:0;
-		return (byte)((bit3 <<3 ) | (bit2 <<2 ) | (bit1 <<1 ) | bit0);
+		return (byte)(bit3+bit2+bit1+bit0);
 	}
 	private byte getNucleotideOrdinalFor(int bitStartOffset) {
 		return getNucleotideOrdinalFor(bits, bitStartOffset);
@@ -1103,8 +1107,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	
     	public NewValues(BitSet encodedBits, int numberOfBitsUsed){
     		for(int i=0; i< numberOfBitsUsed; i+=NUM_BITS_PER_VALUE){
-    			BitSet subBits = encodedBits.get(i, i+NUM_BITS_PER_VALUE);
-    			handleOrdinal( getNucleotideOrdinalFor(subBits,0));    			
+    			handleOrdinal(getNucleotideOrdinalFor(encodedBits,i));    			
     		}
     		this.bits = encodedBits;
     	}
@@ -1152,12 +1155,14 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 
 		private void handleOrdinal(byte ordinal) {
 			length++;
-			if(ordinal == GAP_VALUE){
+			//order of if statements has been optimized using profiler 
+			
+			if (ordinal == A_VALUE || ordinal == C_VALUE || ordinal == G_VALUE|| ordinal == T_VALUE){
+				numberOfACGTs++;
+			}else if(ordinal == GAP_VALUE){
 				numberOfGaps++;
 			}else if(ordinal ==N_VALUE){
 				numberOfNs++;
-			}else if (ordinal == A_VALUE || ordinal == C_VALUE || ordinal == G_VALUE|| ordinal == T_VALUE){
-				numberOfACGTs++;
 			}
 		}
 
