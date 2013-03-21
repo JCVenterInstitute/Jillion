@@ -29,9 +29,8 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
-import java.util.TreeMap;
+import java.util.Set;
 
 import org.jcvi.jillion.core.residue.Residue;
 /**
@@ -61,38 +60,13 @@ public enum Nucleotide implements Residue {
     Thymine(Character.valueOf('T')),
     
     ;
-    
-    private static final Map<Nucleotide,Nucleotide> COMPLEMENT_MAP;
+
     private static final Map<Nucleotide,Set<Nucleotide>> AMBIGUITY_TO_CONSTIUENT;
     private static final Map<Nucleotide,Set<Nucleotide>> CONSTIUENT_TO_AMBIGUITY;
-    private static final Map<Character,Nucleotide> CHARACTER_MAP;
+   
     static{
-        COMPLEMENT_MAP = new EnumMap<Nucleotide, Nucleotide>(Nucleotide.class);
-        COMPLEMENT_MAP.put(Adenine, Thymine);
-        COMPLEMENT_MAP.put(Thymine, Adenine);
-        COMPLEMENT_MAP.put(Guanine, Cytosine);
-        COMPLEMENT_MAP.put(Cytosine, Guanine);
-        COMPLEMENT_MAP.put(Pyrimidine, Purine);
-        COMPLEMENT_MAP.put(Purine, Pyrimidine);        
-        COMPLEMENT_MAP.put(Keto, Amino);
-        COMPLEMENT_MAP.put(Amino, Keto);
-        COMPLEMENT_MAP.put(NotCytosine, NotGuanine);
-        COMPLEMENT_MAP.put(NotGuanine, NotCytosine);
-        COMPLEMENT_MAP.put(NotThymine, NotAdenine);
-        COMPLEMENT_MAP.put(NotAdenine, NotThymine);
-        COMPLEMENT_MAP.put(Weak, Weak);
-        COMPLEMENT_MAP.put(Strong, Strong);
-        COMPLEMENT_MAP.put(Gap, Gap);
-        COMPLEMENT_MAP.put(Unknown, Unknown);  
         
-        CHARACTER_MAP = new TreeMap<Character, Nucleotide>();
-        for(Nucleotide n: Nucleotide.values()){
-            CHARACTER_MAP.put(n.getCharacter(), n);
-        }
-        //add support for X which some systems use instead of N
-        CHARACTER_MAP.put(Character.valueOf('X'), Unknown);
-      //add support for * which consed uses instead of -
-        CHARACTER_MAP.put(Character.valueOf('*'), Gap);
+       
         AMBIGUITY_TO_CONSTIUENT = new EnumMap<Nucleotide, Set<Nucleotide>>(Nucleotide.class);
        
         AMBIGUITY_TO_CONSTIUENT.put(Unknown, EnumSet.of(Adenine,Cytosine,Guanine,Thymine));
@@ -154,7 +128,42 @@ public enum Nucleotide implements Residue {
      * @return the complement of this.
      */
     public Nucleotide complement() {
-       return COMPLEMENT_MAP.get(this);
+    	Nucleotide ret=null;
+    	switch(this){
+    		case Unknown : ret = Unknown;
+							break;
+    		case NotThymine : ret = NotAdenine;
+    						break;
+    		case NotGuanine : ret = NotCytosine;
+    						break;
+    		case NotCytosine : ret = NotGuanine;
+								break;
+    		case NotAdenine : ret = NotThymine;
+							break; 
+    		case Weak : ret = Weak;
+								break; 		
+    		case Amino : ret = Keto;
+							break; 
+    		case Purine : ret = Pyrimidine;
+								break; 
+    		case Strong : ret = Strong;
+							break; 
+    		case Pyrimidine : ret = Purine;
+							break; 
+    		case Keto : ret = Amino;
+							break; 
+    		case Gap : ret = Gap;
+							break;				
+    		case Adenine : ret = Thymine;
+    						break;
+    		case Cytosine : ret = Guanine;
+								break;
+    		case Guanine : ret = Cytosine;
+								break;
+    		case Thymine : ret = Adenine;
+    						break;
+    	}
+       return ret;
     }
     
     /**
@@ -171,7 +180,7 @@ public enum Nucleotide implements Residue {
      * character can not be mapped to a {@link Nucleotide}.
      */
     public static Nucleotide parse(String base){
-        return parse(base.trim().charAt(0));
+        return parse(base.charAt(0));
     }
     /**
      * Get the {@link Nucleotide} for the given
@@ -185,12 +194,238 @@ public enum Nucleotide implements Residue {
      * character can not be mapped to a {@link Nucleotide}.
      */
     public static Nucleotide parse(char base){
-        
-        Character upperCased = Character.toUpperCase(base);
-        if(CHARACTER_MAP.containsKey(upperCased)){
-            return CHARACTER_MAP.get(upperCased);
-        }
+        //dkatzel - 2013-03-21
+    	//profiling indicated that parsing to Nucleotides was slow.
+    	//changed auto-boxed Map lookup to switch statement.
+    	//This switch includes all characters upper and lowercase
+    	//that can be a Nucleotide 
+    	//AND ALL CHARACTERS IN BETWEEN.
+    	//This is an optimization to allow the 
+    	//compiler to use a tableswitch opcode
+    	//instead of the more general purpose
+    	//lookupswitch opcode.
+    	//tableswitch is an O(1) lookup
+    	//while lookupswitch is O(n) where n
+    	//is the number of case statements in the switch.
+    	//tableswitch requires consecutive case values.
+    	//DO NOT CHANGE THE ORDER OF THE CASE STATEMENTS
+    	//the cases have to be in ascii order
+    	//so the JVM can do offset arithmetic
+    	//to jump immediately to the correct case
+    	//for an O(1) lookup, changing the order
+    	//might not allow that. 
+    	//(not sure if compiler is smart enough to re-order)
+    	//
+    	//for more information:
+    	//The book Beautiful Code Chapter 6
+    	//or
+    	//http://www.artima.com/underthehood/flowP.html
+    	final Nucleotide ret;
+    	switch(base){
+    	//we support gap characters from both consed and TIGR
+    	//so we need to start with special characters
+    		case '*': ret = Gap;
+					break;
+    		case '+': ret = null;
+						break;
+    		case ',': ret = null;
+					break;
+    		case '-': ret = Gap;
+					break;		
+    		case '.': ret = null;
+						break;	
+    		case '/': ret = null;
+						break;	
+			//numbers
+    		case '0': ret = null;
+						break;	
+    		case '1': ret = null;
+						break;
+    		case '2': ret = null;
+						break;
+    		case '3': ret = null;
+						break;
+    		case '4': ret = null;
+						break;
+    		case '5': ret = null;
+						break;
+    		case '6': ret = null;
+						break;
+    		case '7': ret = null;
+						break;
+    		case '8': ret = null;
+						break;
+    		case '9': ret = null;
+						break;
+    		case ':': ret = null;
+						break;
+    		case ';': ret = null;
+						break;
+    		case '<': ret = null;
+						break;
+    		case '=': ret = null;
+						break;
+    		case '>': ret = null;
+						break;
+    		case '?': ret = null;
+						break;
+			//uppercase letters
+			case 'A':
+				ret = Adenine;
+				break;
+			case 'B':
+				ret = NotAdenine;
+				break;
+			case 'C':
+				ret = Cytosine;
+				break;
+			case 'D':
+				ret = NotCytosine;
+				break;
+			case 'E':
+				ret = null;
+				break;
+			case 'F':
+				ret = null;
+				break;
+			case 'G':
+				ret = Guanine;
+				break;
+			case 'H':
+				ret = NotGuanine;
+				break;
+			case 'I':
+				ret = null;
+				break;
+			case 'J':
+				ret = null;
+				break;
+			case 'K':
+				ret = Keto;
+				break;
+			case 'L':
+				ret = null;
+				break;
+			case 'M':
+				ret = Amino;
+				break;
+			case 'N':
+				ret = Unknown;
+				break;
+			case 'O':
+				ret = null;
+				break;
+			case 'P':
+				ret = null;
+				break;
+			case 'Q':
+				ret = null;
+				break;
+			case 'R':
+				ret = Purine;
+				break;
+			case 'S':
+				ret = Strong;
+				break;
+			case 'T':
+				ret = Thymine;
+				break;
+			case 'U':
+				ret = null;
+				break;
+			case 'V':
+				ret = NotThymine;
+				break;
+			case 'W':
+				ret = Weak;
+				break;
+			case 'X':
+				ret = Unknown;
+				break;
+			case 'Y':
+				ret = Pyrimidine;
+				break;
+			case 'Z':
+				ret = null;
+				break;
+			//have to include all special characters in between
+			case '[':
+				ret = null;
+				break;
+			case '\\':
+				ret = null;
+				break;
+			case ']':
+				ret = null;
+				break;
+			case '^':
+				ret = null;
+				break;
+			case '_':
+				ret = null;
+				break;
+			case '`':
+				ret = null;
+				break;
+    	//lowercase
+    		case 'a' : ret = Adenine;
+    					break;
+    		case 'b' : ret = NotAdenine;
+    					break;
+    		case 'c' : ret =Cytosine;
+    					break;
+    		case 'd' : ret = NotCytosine;
+    					break;
+    		case 'e' : ret = null;
+    					break;
+    		case 'f' : ret = null;
+						break;
+    		case 'g' : ret = Guanine;
+						break;	
+    		case 'h' : ret = NotGuanine;
+						break;
+    		case 'i' : ret = null;
+						break;
+    		case 'j' : ret = null;
+						break;	
+    		case 'k' : ret = Keto;
+						break;
+    		case 'l' : ret = null;
+						break;
+    		case 'm' : ret = Amino;
+						break;
+    		case 'n' : ret = Unknown;
+						break;
+    		case 'o' : ret = null;
+						break;
+    		case 'p' : ret = null;
+						break;
+    		case 'q' : ret = null;
+						break;
+    		case 'r' : ret = Purine;
+						break;
+    		case 's' : ret = Strong;
+						break;
+    		case 't' : ret = Thymine;
+						break;
+    		case 'u' : ret = null;
+						break;
+    		case 'v' : ret = NotThymine;
+						break;
+    		case 'w' : ret = Weak;
+						break;
+    		case 'x' : ret = Unknown;
+						break;
+    		case 'y' : ret = Pyrimidine;
+						break;
+			default : ret = null;
+						break;
+			
+    	}
+        if(ret==null){
         throw new IllegalArgumentException("invalid character " + base + " ascii value " + (int)base);
+        }
+        return ret;
     }
     /**
      * Returns this Nucleotide as a single character String.  For example {@link #Adenine} 
@@ -198,7 +433,7 @@ public enum Nucleotide implements Residue {
      */
     @Override
     public String toString() {
-        return getCharacter().toString();
+        return c.toString();
     }
     /**
      * Is This Nucleotide a gap?
