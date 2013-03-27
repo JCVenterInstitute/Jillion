@@ -56,7 +56,9 @@ import org.junit.runners.Suite.SuiteClasses;
         TestAbstractBlockingClosableIteratorExceptions.class,
         TestDateUtilElapsedTime.class,
         TestGrowableByteArray.class,
-        TestGrowableShortArray.class
+        TestGrowableShortArray.class,
+        TestGrowableIntArray.class,
+        TestGrowableLongArray.class
     }
     )
 public class AllUtilUnitTests {
