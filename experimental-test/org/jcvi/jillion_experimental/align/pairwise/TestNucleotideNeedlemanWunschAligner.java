@@ -22,9 +22,9 @@ package org.jcvi.jillion_experimental.align.pairwise;
 
 import static org.junit.Assert.assertEquals;
 
-import org.jcvi.jillion.align.NucleotideSequenceAlignmentBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion_experimental.align.NucleotideSequenceAlignmentBuilder;
 import org.jcvi.jillion_experimental.align.pairwise.NucleotideNeedlemanWunschAligner;
 import org.jcvi.jillion_experimental.align.pairwise.NucleotidePairwiseSequenceAlignment;
 import org.jcvi.jillion_experimental.align.pairwise.NucleotidePairwiseSequenceAlignmentImpl;

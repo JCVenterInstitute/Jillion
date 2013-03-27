@@ -25,11 +25,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.jillion.align.AlnParser;
-import org.jcvi.jillion.align.AlnVisitor;
-import org.jcvi.jillion.align.AlnVisitor.ConservationInfo;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.ResourceHelper;
+import org.jcvi.jillion_experimental.align.AlnVisitor.ConservationInfo;
 import org.junit.Before;
 import org.junit.Test;
 import static org.easymock.EasyMock.*;

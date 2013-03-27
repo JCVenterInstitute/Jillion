@@ -18,7 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.align;
+package org.jcvi.jillion_experimental.align;
 
 import java.util.List;
 

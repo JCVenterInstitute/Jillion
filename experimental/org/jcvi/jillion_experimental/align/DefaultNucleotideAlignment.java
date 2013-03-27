@@ -18,8 +18,8 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-/**
- * This package contains classes used to create
- * or parse alignments.
- */
-package org.jcvi.jillion.align;
+package org.jcvi.jillion_experimental.align;
+
+public class DefaultNucleotideAlignment {
+
+}

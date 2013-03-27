@@ -18,7 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.align;
+package org.jcvi.jillion_experimental.align;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,9 +29,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.jillion.align.AlnVisitor.ConservationInfo;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
+import org.jcvi.jillion_experimental.align.AlnVisitor.ConservationInfo;
 
 /**
  * {@code AlnParser} is a utility class that can 

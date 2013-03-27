@@ -25,10 +25,10 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.List;
 
-import org.jcvi.jillion.align.SequenceAlignment;
-import org.jcvi.jillion.align.SequenceAlignmentBuilder;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion_experimental.align.SequenceAlignment;
+import org.jcvi.jillion_experimental.align.SequenceAlignmentBuilder;
 /**
  * {@code AbstractPairwiseAligner} is an abstract 
  * implementation of a dynamic programming

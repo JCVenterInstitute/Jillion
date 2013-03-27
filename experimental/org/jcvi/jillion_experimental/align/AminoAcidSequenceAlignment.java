@@ -18,11 +18,16 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.align;
+package org.jcvi.jillion_experimental.align;
 
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-
-public interface NucleotideSequenceAlignment extends SequenceAlignment<Nucleotide,NucleotideSequence>{
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
+import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
+/**
+ * {@code AminoAcidSequenceAlignment} is a marker interface for a
+ * {@link SequenceAlignment} of {@link AminoAcid}s.
+ * @author dkatzel
+ *
+ */
+public interface AminoAcidSequenceAlignment extends SequenceAlignment<AminoAcid, AminoAcidSequence>{
 
 }

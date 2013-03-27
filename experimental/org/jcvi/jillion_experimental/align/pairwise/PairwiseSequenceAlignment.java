@@ -20,9 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion_experimental.align.pairwise;
 
-import org.jcvi.jillion.align.SequenceAlignment;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion_experimental.align.SequenceAlignment;
 /**
  * {@code PairwiseSequenceAlignment} is a {@link SequenceAlignment}
  * between two {@link Sequence}s.

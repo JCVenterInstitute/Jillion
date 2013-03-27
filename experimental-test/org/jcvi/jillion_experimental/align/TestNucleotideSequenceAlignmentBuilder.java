@@ -20,8 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion_experimental.align;
 
-import org.jcvi.jillion.align.NucleotideSequenceAlignment;
-import org.jcvi.jillion.align.NucleotideSequenceAlignmentBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Before;

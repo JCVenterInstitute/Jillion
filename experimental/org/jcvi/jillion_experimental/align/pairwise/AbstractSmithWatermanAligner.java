@@ -21,10 +21,10 @@
 package org.jcvi.jillion_experimental.align.pairwise;
 
 
-import org.jcvi.jillion.align.SequenceAlignment;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.util.MathUtil;
+import org.jcvi.jillion_experimental.align.SequenceAlignment;
 
 /**
  * {@code AbstractSmithWatermanAligner} 
