@@ -20,10 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion_experimental.align.pairwise;
 
-import org.jcvi.jillion.align.NucleotideSequenceAlignmentBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion_experimental.align.NucleotideSequenceAlignmentBuilder;
 import org.jcvi.jillion_experimental.align.pairwise.NucleotidePairwiseSequenceAlignment;
 import org.jcvi.jillion_experimental.align.pairwise.NucleotidePairwiseSequenceAlignmentImpl;
 import org.jcvi.jillion_experimental.align.pairwise.NucleotideSmithWatermanAligner;

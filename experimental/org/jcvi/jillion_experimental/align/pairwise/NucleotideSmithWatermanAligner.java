@@ -20,10 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion_experimental.align.pairwise;
 
-import org.jcvi.jillion.align.NucleotideSequenceAlignment;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion_experimental.align.NucleotideSequenceAlignment;
 /**
  * {@code NucleotideSmithWatermanAligner} can perform 
  * a pair-wise alignment of two {@link NucleotideSequence}s

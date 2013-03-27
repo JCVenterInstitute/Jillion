@@ -18,8 +18,11 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.align;
+package org.jcvi.jillion_experimental.align;
 
-public class DefaultNucleotideAlignment {
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+
+public interface NucleotideSequenceAlignment extends SequenceAlignment<Nucleotide,NucleotideSequence>{
 
 }

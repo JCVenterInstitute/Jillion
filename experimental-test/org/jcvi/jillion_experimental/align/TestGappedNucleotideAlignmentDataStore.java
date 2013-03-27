@@ -22,7 +22,6 @@ package org.jcvi.jillion_experimental.align;
 
 import java.io.IOException;
 
-import org.jcvi.jillion.align.GappedNucleotideAlignmentDataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;

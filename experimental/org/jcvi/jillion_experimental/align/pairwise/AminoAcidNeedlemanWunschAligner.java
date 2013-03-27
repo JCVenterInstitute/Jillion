@@ -20,10 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion_experimental.align.pairwise;
 
-import org.jcvi.jillion.align.AminoAcidSequenceAlignment;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
+import org.jcvi.jillion_experimental.align.AminoAcidSequenceAlignment;
 
 /**
  * {@code AminoAcidNeedlemanWunschAligner} can perform 

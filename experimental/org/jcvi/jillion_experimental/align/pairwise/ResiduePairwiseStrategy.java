@@ -23,18 +23,18 @@ package org.jcvi.jillion_experimental.align.pairwise;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.jillion.align.AminoAcidSequenceAlignment;
-import org.jcvi.jillion.align.AminoAcidSequenceAlignmentBuilder;
-import org.jcvi.jillion.align.NucleotideSequenceAlignment;
-import org.jcvi.jillion.align.NucleotideSequenceAlignmentBuilder;
-import org.jcvi.jillion.align.SequenceAlignment;
-import org.jcvi.jillion.align.SequenceAlignmentBuilder;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion_experimental.align.AminoAcidSequenceAlignment;
+import org.jcvi.jillion_experimental.align.AminoAcidSequenceAlignmentBuilder;
+import org.jcvi.jillion_experimental.align.NucleotideSequenceAlignment;
+import org.jcvi.jillion_experimental.align.NucleotideSequenceAlignmentBuilder;
+import org.jcvi.jillion_experimental.align.SequenceAlignment;
+import org.jcvi.jillion_experimental.align.SequenceAlignmentBuilder;
 /**
  * {@code ResiduePairwiseStrategy} uses the Strategy Pattern
  * to provide {@link Residue} specific implementations

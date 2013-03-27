@@ -18,16 +18,8 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.align;
-
-import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 /**
- * {@code AminoAcidSequenceAlignment} is a marker interface for a
- * {@link SequenceAlignment} of {@link AminoAcid}s.
- * @author dkatzel
- *
+ * This package contains classes used to create
+ * or parse alignments.
  */
-public interface AminoAcidSequenceAlignment extends SequenceAlignment<AminoAcid, AminoAcidSequence>{
-
-}
+package org.jcvi.jillion_experimental.align;

@@ -20,9 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion_experimental.align.pairwise;
 
-import org.jcvi.jillion.align.AminoAcidSequenceAlignmentBuilder;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequenceBuilder;
+import org.jcvi.jillion_experimental.align.AminoAcidSequenceAlignmentBuilder;
 import org.jcvi.jillion_experimental.align.pairwise.AminoAcidPairwiseSequenceAlignment;
 import org.jcvi.jillion_experimental.align.pairwise.AminoAcidPairwiseSequenceAlignmentImpl;
 import org.jcvi.jillion_experimental.align.pairwise.AminoAcidScoringMatrix;
