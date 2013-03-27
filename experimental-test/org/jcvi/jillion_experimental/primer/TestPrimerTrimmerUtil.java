@@ -18,36 +18,27 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.core;
+package org.jcvi.jillion_experimental.primer;
 
-import org.jcvi.jillion.core.datastore.AllDataStoreUnitTests;
-import org.jcvi.jillion.core.io.AllCoreIOUnitTests;
-import org.jcvi.jillion.core.testUtil.TestTestUtilSuite;
-import org.jcvi.jillion.core.util.AllUtilUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.HashMap;
+import java.util.Map;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestDirection.class,
-        AllRangeTests.class,
-        
-        
-        TestTestUtilSuite.class,
-        AllUtilUnitTests.class,
-        AllCoreIOUnitTests.class,
-        AllSequenceUnitTests.class,
-        
-       
-        AllDataStoreUnitTests.class
-        
-        
-        
-        
+import org.jcvi.jillion.core.datastore.DataStoreUtil;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
+
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public final class TestPrimerTrimmerUtil {
+
+    public static NucleotideSequenceDataStore createDataStoreFor(NucleotideSequence...primers){
+        Map<String, NucleotideSequence> map = new HashMap<String, NucleotideSequence>();
+        for(int i=0; i<primers.length; i++){
+            map.put("primer_"+i, primers[i]);
+        }
+        return DataStoreUtil.adapt(NucleotideSequenceDataStore.class,map);
     }
-    )
-public class AllCoreUnitTests {
-
 }

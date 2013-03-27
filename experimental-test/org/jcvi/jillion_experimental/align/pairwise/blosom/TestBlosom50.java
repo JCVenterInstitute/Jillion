@@ -18,36 +18,31 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.core;
+package org.jcvi.jillion_experimental.align.pairwise.blosom;
 
-import org.jcvi.jillion.core.datastore.AllDataStoreUnitTests;
-import org.jcvi.jillion.core.io.AllCoreIOUnitTests;
-import org.jcvi.jillion.core.testUtil.TestTestUtilSuite;
-import org.jcvi.jillion.core.util.AllUtilUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
+import org.jcvi.jillion_experimental.align.pairwise.AminoAcidScoringMatrix;
+import org.jcvi.jillion_experimental.align.pairwise.blosom.BlosomMatrices;
+import org.junit.Test;
+import static org.junit.Assert.*;
+public class TestBlosom50 {
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestDirection.class,
-        AllRangeTests.class,
-        
-        
-        TestTestUtilSuite.class,
-        AllUtilUnitTests.class,
-        AllCoreIOUnitTests.class,
-        AllSequenceUnitTests.class,
-        
-       
-        AllDataStoreUnitTests.class
-        
-        
-        
-        
-    }
-    )
-public class AllCoreUnitTests {
-
+	@Test
+	public void spotCheck(){
+		AminoAcidScoringMatrix blosom50 = BlosomMatrices.getMatrix(50);
+		assertEquals(5F,
+				blosom50.getScore(AminoAcid.Alanine, AminoAcid.Alanine),
+				0F);
+		
+		assertEquals(10F,
+				blosom50.getScore(AminoAcid.Proline, AminoAcid.Proline),
+				0F);
+		
+		assertEquals(-3F,
+				blosom50.getScore(AminoAcid.Proline, AminoAcid.Valine),
+				0F);
+		assertEquals(0F,
+				blosom50.getScore(AminoAcid.Valine, AminoAcid.Threonine),
+				0F);
+	}
 }

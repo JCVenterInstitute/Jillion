@@ -25,10 +25,11 @@
  */
 package org.jcvi;
 
+import org.jcvi.jillion.assembly.AllAssemblyUnitTests;
 import org.jcvi.jillion.core.AllCoreUnitTests;
 import org.jcvi.jillion.fasta.AllFastaUnitTests;
-import org.jcvi.jillion.plate.AllPlateUnitTests;
-import org.jcvi.jillion.primer.AllPrimerUnitTests;
+import org.jcvi.jillion.trace.AllTraceUnitTests;
+import org.jcvi.jillion_experimental.AllExperimentalTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -39,9 +40,11 @@ import org.junit.runners.Suite.SuiteClasses;
         
         
     	 AllCoreUnitTests.class,         
-         AllPrimerUnitTests.class,
-        AllPlateUnitTests.class,
-        AllFastaUnitTests.class
+        AllFastaUnitTests.class,
+        AllTraceUnitTests.class,
+        AllAssemblyUnitTests.class,
+        
+        AllExperimentalTests.class
     }
 )
 public class AllUnitTests {
