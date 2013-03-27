@@ -10,6 +10,9 @@
 	<property name="test" value ="test"/>
 	<property name ="test-lib" value="test-lib"/>
 	
+	<property name="experimental" value ="experimental"/>
+		<property name ="experimental-test" value="experimental-test"/>
+	
 	<property name ="analysis" value="build-lib"/>
   
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
@@ -83,11 +86,16 @@
 		<!-- source already compiled so only compile tests -->
 		<javac debug="true" destdir="${bin}"  classpathref="test.classpath" includeantruntime="false">
 					<src path="${test}"/>
+			<src path="${experimental}"/>
+			<src path="${experimental-test}"/>
+			
 			
 	  	</javac>
 		
 		<copy todir="${bin}">
 			<fileset dir="${test}" excludes="**/*.java"/>
+			<fileset dir="${experimental}" excludes="**/*.java"/>
+			<fileset dir="${experimental-test}" excludes="**/*.java"/>
 		</copy>
 
 	 </target>
