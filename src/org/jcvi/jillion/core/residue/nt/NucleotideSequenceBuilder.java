@@ -195,7 +195,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     }
 	private NucleotideSequenceBuilder append(NewValues newValues) {
 		BitSet newBits = newValues.getBits();
-        for(int i=0; i<newBits.length(); i++){
+        int length = newBits.length();
+		for(int i=0; i<length; i++){
         	if(newBits.get(i)){
         		bits.set(tail+i);
         	}
