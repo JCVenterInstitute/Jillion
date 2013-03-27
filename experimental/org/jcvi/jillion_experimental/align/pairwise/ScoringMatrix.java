@@ -18,36 +18,28 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.core;
+package org.jcvi.jillion_experimental.align.pairwise;
 
-import org.jcvi.jillion.core.datastore.AllDataStoreUnitTests;
-import org.jcvi.jillion.core.io.AllCoreIOUnitTests;
-import org.jcvi.jillion.core.testUtil.TestTestUtilSuite;
-import org.jcvi.jillion.core.util.AllUtilUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.jillion.core.residue.Residue;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestDirection.class,
-        AllRangeTests.class,
-        
-        
-        TestTestUtilSuite.class,
-        AllUtilUnitTests.class,
-        AllCoreIOUnitTests.class,
-        AllSequenceUnitTests.class,
-        
-       
-        AllDataStoreUnitTests.class
-        
-        
-        
-        
-    }
-    )
-public class AllCoreUnitTests {
-
+/**
+ * {@code ScoringMatrix} is a matrix 
+ * that describes a score assigned to each possible
+ * pairing of Residue.  Types of Scoring matrices might
+ * include distance matrices, substitution matrices etc.
+ * 
+ * @author dkatzel
+ */
+public interface ScoringMatrix<R extends Residue> {
+	/**
+	 * Get the score between the given pair of 
+	 * {@link Residue}s.
+	 * @param a the first residue.
+	 * @param b the second residue.
+	 * @return the score as a float, could be positive,
+	 * negative, zero, whole numbers or fractional numbers
+	 * depending on which type of matrix is used and 
+	 * the values in that matrix.
+	 */
+	float getScore(R a, R b);
 }

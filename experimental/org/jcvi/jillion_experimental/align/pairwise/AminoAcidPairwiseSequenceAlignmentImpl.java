@@ -18,36 +18,33 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.core;
+package org.jcvi.jillion_experimental.align.pairwise;
 
-import org.jcvi.jillion.core.datastore.AllDataStoreUnitTests;
-import org.jcvi.jillion.core.io.AllCoreIOUnitTests;
-import org.jcvi.jillion.core.testUtil.TestTestUtilSuite;
-import org.jcvi.jillion.core.util.AllUtilUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
+import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestDirection.class,
-        AllRangeTests.class,
-        
-        
-        TestTestUtilSuite.class,
-        AllUtilUnitTests.class,
-        AllCoreIOUnitTests.class,
-        AllSequenceUnitTests.class,
-        
-       
-        AllDataStoreUnitTests.class
-        
-        
-        
-        
-    }
-    )
-public class AllCoreUnitTests {
+class AminoAcidPairwiseSequenceAlignmentImpl extends AbstractPairwiseSequenceAlignment<AminoAcid, AminoAcidSequence> implements AminoAcidPairwiseSequenceAlignment{
 
+	public AminoAcidPairwiseSequenceAlignmentImpl(
+			PairwiseSequenceAlignment<AminoAcid, AminoAcidSequence> delegate) {
+		super(delegate);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof AminoAcidPairwiseSequenceAlignment){
+			return super.equals(obj);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		//override hashcode 
+		//to make programs like PMD happy that I override
+		//equals and hashcode
+		return super.hashCode();
+	}
+	
+	
 }

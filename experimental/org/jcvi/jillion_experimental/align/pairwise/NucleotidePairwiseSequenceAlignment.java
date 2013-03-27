@@ -18,36 +18,17 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.core;
+package org.jcvi.jillion_experimental.align.pairwise;
 
-import org.jcvi.jillion.core.datastore.AllDataStoreUnitTests;
-import org.jcvi.jillion.core.io.AllCoreIOUnitTests;
-import org.jcvi.jillion.core.testUtil.TestTestUtilSuite;
-import org.jcvi.jillion.core.util.AllUtilUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestDirection.class,
-        AllRangeTests.class,
-        
-        
-        TestTestUtilSuite.class,
-        AllUtilUnitTests.class,
-        AllCoreIOUnitTests.class,
-        AllSequenceUnitTests.class,
-        
-       
-        AllDataStoreUnitTests.class
-        
-        
-        
-        
-    }
-    )
-public class AllCoreUnitTests {
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+/**
+ * {@code NucleotidePairwiseSequenceAlignment}
+ * is a marker interface for a {@link PairwiseSequenceAlignment}
+ * for {@link Nucleotide}s.
+ * @author dkatzel
+ *
+ */
+public interface NucleotidePairwiseSequenceAlignment extends PairwiseSequenceAlignment<Nucleotide, NucleotideSequence>{
 
 }

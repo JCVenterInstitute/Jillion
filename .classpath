@@ -4,6 +4,8 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="examples"/>
 	<classpathentry kind="src" path="src-impl"/>
+	<classpathentry kind="src" path="experimental"/>
+	<classpathentry kind="src" path="experimental-test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="test-lib/cglib-nodep.jar"/>
 	<classpathentry exported="true" kind="lib" path="test-lib/easymock-3.1.jar">
