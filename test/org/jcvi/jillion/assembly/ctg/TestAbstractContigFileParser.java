@@ -34,12 +34,12 @@ import java.io.IOException;
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssemblyTestUtil;
 import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.DefaultAssembledRead;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
+import org.jcvi.jillion.internal.assembly.DefaultAssembledRead;
 import org.junit.Test;
 
 public abstract class TestAbstractContigFileParser {

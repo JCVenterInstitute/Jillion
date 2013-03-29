@@ -22,9 +22,9 @@ package org.jcvi.jillion.assembly.util.coverage;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.DefaultContig;
 import org.jcvi.jillion.assembly.util.coverage.CoverageMap;
 import org.jcvi.jillion.assembly.util.coverage.CoverageMapFactory;
+import org.jcvi.jillion.internal.assembly.DefaultContig;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestCoverageMapFactoryMaxCoverage {

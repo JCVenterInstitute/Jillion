@@ -26,11 +26,11 @@
 package org.jcvi.jillion.assembly;
 
 import org.jcvi.jillion.assembly.AssembledRead;
-import org.jcvi.jillion.assembly.DefaultAssembledRead;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.jillion.core.testUtil.TestUtil;
+import org.jcvi.jillion.internal.assembly.DefaultAssembledRead;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

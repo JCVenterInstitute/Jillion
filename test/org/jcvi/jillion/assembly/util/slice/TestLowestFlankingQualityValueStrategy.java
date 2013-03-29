@@ -27,12 +27,12 @@ package org.jcvi.jillion.assembly.util.slice;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.DefaultContig;
 import org.jcvi.jillion.assembly.util.slice.GapQualityValueStrategies;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.internal.assembly.DefaultContig;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityValueStrategies{

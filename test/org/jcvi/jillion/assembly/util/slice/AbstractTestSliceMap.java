@@ -27,7 +27,6 @@ import java.util.Map;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.DefaultContig;
 import org.jcvi.jillion.assembly.util.slice.GapQualityValueStrategies;
 import org.jcvi.jillion.assembly.util.slice.QualityValueStrategy;
 import org.jcvi.jillion.assembly.util.slice.SliceMap;
@@ -35,6 +34,7 @@ import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
+import org.jcvi.jillion.internal.assembly.DefaultContig;
 import org.junit.Before;
 import org.junit.Test;
 /**
