@@ -30,13 +30,13 @@ import java.io.IOException;
 import org.jcvi.jillion.assembly.DefaultScaffold;
 import org.jcvi.jillion.assembly.Scaffold;
 import org.jcvi.jillion.assembly.ScaffoldDataStore;
-import org.jcvi.jillion.assembly.agp.AgpParser;
-import org.jcvi.jillion.assembly.agp.DefaultAgpScaffoldDataStore;
-import org.jcvi.jillion.assembly.agp.ScaffoldDataStoreBuilderAgpVisitor;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.internal.ResourceHelper;
+import org.jcvi.jillion_experimental.assembly.agp.AgpParser;
+import org.jcvi.jillion_experimental.assembly.agp.DefaultAgpScaffoldDataStore;
+import org.jcvi.jillion_experimental.assembly.agp.ScaffoldDataStoreBuilderAgpVisitor;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestAgpParser {

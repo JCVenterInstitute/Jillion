@@ -18,34 +18,31 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+package org.jcvi.jillion_experimental.assembly.agp;
 
-import org.jcvi.jillion.trace.archive2.AllTraceArchive2UnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sanger.AllSangerTraceUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.jcvi.jillion_experimental.trace.archive.AllTraceArchiveUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.io.TextFileVisitor;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllSangerTraceUnitTests.class,
-        AllFrgUnitTests.class  ,
-        AllTraceArchiveUnitTests.class,
-        AllTraceArchive2UnitTests.class
-        
-   
-    }
-    )
-public class AllTraceUnitTests {
-
+/**
+ * User: aresnick
+ * Date: Sep 9, 2009
+ * Time: 2:36:28 PM
+ * <p/>
+ * $HeadURL$
+ * $LastChangedRevision$
+ * $LastChangedBy$
+ * $LastChangedDate$
+ * <p/>
+ * Description:
+ */
+public interface AgpFileVisitor extends TextFileVisitor {
+    /**
+     *
+     * @param scaffoldId
+     * @param contigRange
+     * @param contigId
+     * @param dir
+     */
+    void visitContigEntry(String scaffoldId, Range contigRange, String contigId, Direction dir);
 }

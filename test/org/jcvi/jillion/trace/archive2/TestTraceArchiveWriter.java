@@ -44,6 +44,7 @@ import org.jcvi.jillion.trace.archive2.TraceArchiveRecordBuilder;
 import org.jcvi.jillion.trace.archive2.TraceArchiveWriter;
 import org.jcvi.jillion.trace.archive2.TraceInfoField;
 import org.jcvi.jillion.trace.archive2.XmlTraceArchiveInfoFactory;
+import org.jcvi.jillion.trace.archive2.TraceArchiveWriter.TraceArchiveRecordCallback;
 import org.jcvi.jillion.trace.archive2.TraceArchiveWriter.TraceArchiveRecordDataException;
 import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogram;
 import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
