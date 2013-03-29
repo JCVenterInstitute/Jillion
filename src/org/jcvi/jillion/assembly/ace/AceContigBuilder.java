@@ -40,7 +40,6 @@ import java.util.TreeSet;
 
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.assembly.ContigBuilder;
-import org.jcvi.jillion.assembly.DefaultContig;
 import org.jcvi.jillion.assembly.util.coverage.CoverageMap;
 import org.jcvi.jillion.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.jillion.assembly.util.coverage.CoverageMapUtil;
@@ -63,6 +62,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.assembly.DefaultContig;
 /**
  * {@code AceContigBuilder} is a {@link Builder}
  * for {@link AceContig}s that allows
@@ -664,7 +664,9 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      * contig ids so that the final contigs meet the desired 
      * uniqueness constraints </strong>   
      * @return a new Map, sorted by Range arrival, each entry value in the map is a new contigBuilder
-     * which contains only the portion of this contig at that particular entry key range.
+     * which contains only the portion of this contig at that particular entry key range.  The same id
+     * is used for all the returned split contigBuilders so be sure to rename them using 
+     * {@link #setContigId(String)} to make them unique.
      */
     public SortedMap<Range, AceContigBuilder> split(Collection<Range> rangesToKeep){
     	SortedMap<Range, AceContigBuilder> splitContigs = new TreeMap<Range, AceContigBuilder>(Range.Comparators.ARRIVAL);

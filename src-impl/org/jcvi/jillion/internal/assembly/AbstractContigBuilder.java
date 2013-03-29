@@ -18,12 +18,16 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.assembly;
+package org.jcvi.jillion.internal.assembly;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.AssembledReadBuilder;
+import org.jcvi.jillion.assembly.Contig;
+import org.jcvi.jillion.assembly.ContigBuilder;
 import org.jcvi.jillion.assembly.util.slice.CompactedSlice;
 import org.jcvi.jillion.assembly.util.slice.QualityValueStrategy;
 import org.jcvi.jillion.assembly.util.slice.Slice;
@@ -39,22 +43,29 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 
 /**
+ * {@code AbstractContigBuilder} implements the
+ * {@link ContigBuilder} interface
+ * 
  * @author dkatzel
  *
  *
  */
 public abstract class AbstractContigBuilder<P extends AssembledRead, C extends Contig<P>> implements ContigBuilder<P,C>{
-        private final NucleotideSequenceBuilder consensus;
+	    
+		/**
+	     * default quality value that every basecall will get
+	     * if consensus caller is used to recall the consensus
+	     * but no {@link QualitySequenceDataStore} is given.
+	     */
+	    private static final PhredQuality DEFAULT_QUALITY = PhredQuality.valueOf(30);
+		
+		private final NucleotideSequenceBuilder consensus;
+		
         private String id;
         private final Map<String, AssembledReadBuilder<P>> reads;
         
         
-        /**
-         * default quality value that every basecall will get
-         * if consensus caller is used to recall the consensus
-         * but no {@link QualitySequenceDataStore} is given.
-         */
-        private static final PhredQuality DEFAULT_QUALITY = PhredQuality.valueOf(30);
+      
     	/**
     	 * {@link ConsensusCaller} used to update the
     	 * consensus during {@link #build()}.  If set to {@code null},
@@ -76,7 +87,7 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
          * @throws NullPointerException if either id or consensus
          * are null.
          */
-        public AbstractContigBuilder(String id, NucleotideSequence consensus){
+        protected AbstractContigBuilder(String id, NucleotideSequence consensus){
         	if(id==null){
         		throw new NullPointerException("id can not be null");
         	}
@@ -97,13 +108,7 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
         }
         protected abstract AssembledReadBuilder<P> createPlacedReadBuilder(P read);
         protected abstract AssembledReadBuilder<P> createPlacedReadBuilder(String id, int offset,Range validRange, String basecalls, Direction dir, int fullUngappedLength);
-      
-       
-        public AbstractContigBuilder<P,C> setId(String id){
-            this.id = id;
-            return this;
-        }
-        
+
         
         /**
          * Recall the consensus using the given

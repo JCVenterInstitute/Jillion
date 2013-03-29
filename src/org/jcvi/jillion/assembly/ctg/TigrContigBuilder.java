@@ -23,12 +23,9 @@ package org.jcvi.jillion.assembly.ctg;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.jcvi.jillion.assembly.AbstractContigBuilder;
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
 import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.DefaultAssembledRead;
-import org.jcvi.jillion.assembly.DefaultContig;
 import org.jcvi.jillion.assembly.ReadInfo;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
@@ -37,6 +34,9 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.assembly.AbstractContigBuilder;
+import org.jcvi.jillion.internal.assembly.DefaultAssembledRead;
+import org.jcvi.jillion.internal.assembly.DefaultContig;
 
 public class TigrContigBuilder extends AbstractContigBuilder<TigrContigRead, TigrContig>{
 

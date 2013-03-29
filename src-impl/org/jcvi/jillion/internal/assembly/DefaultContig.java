@@ -23,7 +23,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly;
+package org.jcvi.jillion.internal.assembly;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -31,6 +31,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.AssembledReadBuilder;
+import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;

@@ -23,10 +23,13 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly;
+package org.jcvi.jillion.internal.assembly;
 
 import java.util.Map;
 
+import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.AssembledReadBuilder;
+import org.jcvi.jillion.assembly.ReadInfo;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
@@ -59,7 +62,7 @@ public final class DefaultAssembledRead implements AssembledRead {
                  clearRange, ungappedFullLength);
     }
     
-    DefaultAssembledRead(String id, ReferenceMappedNucleotideSequence sequence, long start, Direction sequenceDirection, int ungappedFullLength, Range validRange){
+    public DefaultAssembledRead(String id, ReferenceMappedNucleotideSequence sequence, long start, Direction sequenceDirection, int ungappedFullLength, Range validRange){
        this.id = id;
        this.sequence = sequence;
         this.start= start;
@@ -410,12 +413,7 @@ public final class DefaultAssembledRead implements AssembledRead {
             }
             return basesBuilder.build();
         }
-        private synchronized String currentBasecallsAsString(){
-            if(originalSequence !=null){
-                return originalSequence.toString();
-            }
-            return basesBuilder.toString();
-        }
+       
 
         @Override
 		public Builder append(Nucleotide base) {

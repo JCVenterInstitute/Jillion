@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.DefaultContig;
 import org.jcvi.jillion.assembly.util.coverage.CoverageMap;
 import org.jcvi.jillion.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.jillion.assembly.util.coverage.CoverageMapUtil;
@@ -33,6 +32,7 @@ import org.jcvi.jillion.assembly.util.coverage.CoverageRegion;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.assembly.DefaultContig;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

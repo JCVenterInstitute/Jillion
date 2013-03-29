@@ -29,7 +29,6 @@ import java.util.Set;
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.assembly.ContigBuilder;
-import org.jcvi.jillion.assembly.DefaultContig;
 import org.jcvi.jillion.assembly.ace.AceContig;
 import org.jcvi.jillion.assembly.util.slice.CompactedSlice;
 import org.jcvi.jillion.assembly.util.slice.QualityValueStrategy;
@@ -46,6 +45,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.assembly.DefaultContig;
 
 /**
  * @author dkatzel

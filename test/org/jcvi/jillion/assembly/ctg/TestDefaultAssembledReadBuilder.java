@@ -23,10 +23,10 @@ package org.jcvi.jillion.assembly.ctg;
 import org.jcvi.jillion.assembly.AbstractTestAssembledReadBuilder;
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
-import org.jcvi.jillion.assembly.DefaultAssembledRead;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.internal.assembly.DefaultAssembledRead;
 
 public class TestDefaultAssembledReadBuilder extends AbstractTestAssembledReadBuilder<AssembledRead>{
 
