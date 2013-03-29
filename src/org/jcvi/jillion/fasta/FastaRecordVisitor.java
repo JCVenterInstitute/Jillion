@@ -30,7 +30,7 @@ package org.jcvi.jillion.fasta;
 public interface FastaRecordVisitor {
 	/**
      * Visit a line of the body of the fasta record.
-     * @param bodyLine the current line as a String (including
+     * @param line the current line as a String (including
      * white space).  Will never be null and shouldn't
      * be empty.
      */

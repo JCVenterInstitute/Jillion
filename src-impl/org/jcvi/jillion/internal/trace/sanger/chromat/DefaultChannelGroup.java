@@ -39,10 +39,10 @@ public class DefaultChannelGroup implements ChannelGroup {
 
 
     /**
-     * @param channel
-     * @param channel2
-     * @param channel3
-     * @param channel4
+     * @param aChannel
+     * @param cChannel
+     * @param gChannel
+     * @param tChannel
      */
     public DefaultChannelGroup(DefaultChannel aChannel, DefaultChannel cChannel, DefaultChannel gChannel,
             DefaultChannel tChannel) {

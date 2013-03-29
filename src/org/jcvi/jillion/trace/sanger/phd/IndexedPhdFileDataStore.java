@@ -75,7 +75,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
      * does not exist.
      * @throws NullPointerException if phdBall is null.
      */
-    public static PhdDataStoreBuilder createBuilder(File phdBall){
+    private static PhdDataStoreBuilder createBuilder(File phdBall){
         return new IndexedPhdDataStoreBuilder(phdBall);
     }
     /**
@@ -95,7 +95,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
      * @throws NullPointerException if phdBall is null.
      * @throws IllegalArgumentException if {@code initialCapacity < 0}
      */
-    public static PhdDataStoreBuilder createBuilder(File phdBall,int initialCapacity){
+    private static PhdDataStoreBuilder createBuilder(File phdBall,int initialCapacity){
         return new IndexedPhdDataStoreBuilder(phdBall,initialCapacity);
     }
     /**
@@ -112,7 +112,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
      * does not exist.
      * @throws NullPointerException if phdBall or filter are null.
      */
-    public static PhdDataStoreBuilder createBuilder(File phdBall, DataStoreFilter filter){
+    private static PhdDataStoreBuilder createBuilder(File phdBall, DataStoreFilter filter){
         return new IndexedPhdDataStoreBuilder(phdBall, filter);
     }
     /**
@@ -134,17 +134,14 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
      * @throws NullPointerException if phdBall or filter are null.
      * @throws IllegalArgumentException if {@code initialCapacity < 0}
      */
-    public static PhdDataStoreBuilder createBuilder(File phdBall, DataStoreFilter filter, int initialCapacity){
+    private static PhdDataStoreBuilder createBuilder(File phdBall, DataStoreFilter filter, int initialCapacity){
         return new IndexedPhdDataStoreBuilder(phdBall, filter,initialCapacity);
     }
     /**
      * Create a new {@link PhdDataStore} for the given
      * {@literal phd.ball} file.
      * @param phdBall the {@literal phd.ball} to parse.
-     * @param initialCapacity the initial capacity of the index used
-     * to store/lookup file offsets into the phd file.  If the initialCapacity
-     * is larger than the number of phd records parsed, then there will be no
-     * performance hit to resize the index.
+     *
      * @return a new IndexedPhdFileDataStore; never null.
      * @throws FileNotFoundException if the given file
      * does not exist.

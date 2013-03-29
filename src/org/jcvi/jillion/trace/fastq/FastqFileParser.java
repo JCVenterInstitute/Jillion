@@ -23,6 +23,7 @@ package org.jcvi.jillion.trace.fastq;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -52,10 +53,10 @@ public abstract class FastqFileParser {
 	 * that will parse the given fastq encoded
 	 * file.
 	 * @param fastqFile the file to parse.
-	 * @throws IOException if there is a problem opening the file.
+	 * @throws FileNotFoundException  if the file does not exist.
 	 * @throws NullPointerException if fastqFile is null.
 	 */
-	public static FastqFileParser create(File fastqFile){
+	public static FastqFileParser create(File fastqFile) throws FileNotFoundException{
 		return new FileBasedFastqFileParser(fastqFile);
 	}
 	/**
@@ -67,7 +68,6 @@ public abstract class FastqFileParser {
 	 * method.
 	 * @param in the fastq encoded inputstream to parse.
 	 * @throws NullPointerException if inputstream is null.
-	 * @see #accept(FastqFileVisitor, FastqVisitorMemento).
 	 */
 	public static FastqFileParser create(InputStream in){
 		return new InputStreamFastqFileParser(in);
@@ -291,7 +291,10 @@ public abstract class FastqFileParser {
 		private final File fastqFile;
 		
 		
-		public FileBasedFastqFileParser(File fastqFile) {
+		public FileBasedFastqFileParser(File fastqFile) throws FileNotFoundException {
+			if(!fastqFile.exists()){
+				throw new FileNotFoundException(fastqFile.getAbsolutePath() + " does not exist");
+			}
 			this.fastqFile = fastqFile;
 		}
 

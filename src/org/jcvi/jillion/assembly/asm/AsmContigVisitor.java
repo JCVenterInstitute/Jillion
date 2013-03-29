@@ -43,7 +43,7 @@ public interface AsmContigVisitor{
 	 * {@code VariantRecord} is an alternative sequence
 	 * for a specific region in a contig.
 	 * @author dkatzel
-	 * @see AsmContigVisitor#visitVariance(Range, long, long, long, long, SortedSet).
+	 * @see AsmContigVisitor#visitVariance(Range, long, long, long, long, SortedSet)
 	 */
 	interface VariantRecord extends Comparable<VariantRecord>{
         /**

@@ -28,12 +28,12 @@ public interface TasmFileVisitor {
 	interface TasmContigVisitorCallback{
 		/**
 		 * {@code TasmContigVisitorMemento} is a marker
-		 * interface that {@link TasmContigFileParser}
+		 * interface that {@link TasmFileParser}
 		 * instances can use to "rewind" back
 		 * to the position in its contig file
 		 * in order to revisit portions of the contig file. 
 		 * {@link TasmContigVisitorMemento} should only be used
-		 * by the {@link TasmContigFileParser} instance that
+		 * by the {@link TasmFileParser} instance that
 		 * generated it.
 		 * @author dkatzel
 		 *
@@ -83,7 +83,7 @@ public interface TasmFileVisitor {
 	 * parsing but has not
 	 * actually finished the parsing this tasm file.
 	 * This will happen only if 
-	 * a visitor calls {@link TasmContigVisitorCallback#haltParsing()}.
+	 * a visitor calls {@link TasmContigVisitorCallback#halt()}.
 	 */
 	void halted();
 	/**

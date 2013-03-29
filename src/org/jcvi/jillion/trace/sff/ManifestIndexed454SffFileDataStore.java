@@ -103,7 +103,7 @@ final class ManifestIndexed454SffFileDataStore implements SffFileDataStore{
 	 * in an unknown format, then this method will
 	 * return null.
 	 * @param sffFile
-	 * @param DataStoreFilter filter
+	 * @param filter
 	 * @return an {@link SffFileDataStore} if successfully
 	 * parsed; or {@code null} if the index can't
 	 * be parsed.

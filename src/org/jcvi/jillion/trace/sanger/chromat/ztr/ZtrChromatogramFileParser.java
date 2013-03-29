@@ -57,7 +57,7 @@ public final class ZtrChromatogramFileParser {
      * (can not be null).
      * @throws TraceDecoderException if there is  a problem
      * parsing the ZTR file.
-     * @throws IOException if there is a problem reading the file.
+     * @throws FileNotFoundException if the file does not exist.
      * @throws NullPointerException if visitor is null.
      */
     public static void parse(File ztrFile, ChromatogramFileVisitor visitor) throws FileNotFoundException, TraceDecoderException{
@@ -73,16 +73,15 @@ public final class ZtrChromatogramFileParser {
         
     }
     /**
-     * Parse the given ZTR encoded chromatogram inputStream
+     * Parse the given ZTR encoded chromatogram {@link InputStream}
      * and call the appropriate visitXXX methods of the given
      * visitor while parsing.
-     * @param ztrFile the ZTR chromatogram input stream
+     * @param ztrStream the ZTR chromatogram {@link InputStream}
      * to parse.
      * @param visitor the visitor instance to call visitXXX methods on
      * (can not be null).
      * @throws TraceDecoderException if there is  a problem
      * parsing the ZTR file.
-     * @throws IOException if there is a problem reading the file.
      * @throws NullPointerException if visitor is null.
      */
     public static void parse(InputStream ztrStream, ChromatogramFileVisitor visitor) throws TraceDecoderException{

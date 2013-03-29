@@ -162,7 +162,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 	 * @throws IOException 
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static BuilderVisitor createBuilder(File fastaFile) throws IOException{
+	private static BuilderVisitor createBuilder(File fastaFile) throws IOException{
 		if(fastaFile ==null){
 			throw new NullPointerException("fasta file can not be null");
 		}

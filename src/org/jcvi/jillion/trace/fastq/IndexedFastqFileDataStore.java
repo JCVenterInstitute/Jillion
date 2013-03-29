@@ -77,7 +77,7 @@ final class IndexedFastqFileDataStore{
 	 * @param filter a {@link DataStoreFilter} that will be used
 	 * to filter out some (possibly all or none) of the records from
 	 * the fastq file so they will not be included in the {@link FastqDataStore}.
-	 * Only records which cause {@link FastXFilter#accept(String, String)}
+	 * Only records which cause {@link DataStoreFilter#accept(String)}
 	 * to return {@code true} will be added to this datastore.
    	 * @return a new instance of {@link FastqDataStore};
    	 * never null.

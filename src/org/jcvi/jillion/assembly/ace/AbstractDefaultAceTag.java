@@ -35,11 +35,9 @@ abstract class AbstractDefaultAceTag implements AceTag{
     private final String data;
     
     /**
-     * @param id
      * @param type
      * @param creator
      * @param creationDate
-     * @param location
      * @param data
      */
     public AbstractDefaultAceTag(String type, String creator,

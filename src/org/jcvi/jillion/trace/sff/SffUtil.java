@@ -151,10 +151,9 @@ public final class SffUtil {
    
    
    /**
-    * Parse the byte array whose first 4 bytes
-    * contain an encoded 454 sff file index offset
+    * Convert a file offset into P encoded 454 sff file index offset
     * for a single read.
-    * @param values
+    * @param offset the 454 byte offset to convert into a byte array.
     * @return the file offset into the sff file
     * for the read.
     */

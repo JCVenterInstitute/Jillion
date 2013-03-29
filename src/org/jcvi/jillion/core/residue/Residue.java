@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue;
 
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
 /**
  * @author dkatzel
@@ -32,10 +31,8 @@ public interface Residue{
 	byte getOrdinalAsByte();
 	
 	 /**
-     * Return the Character equivalent of this
-     * {@link Nucleotide}.  For example
-     * calling this method for {@link #Adenine}
-     * will return 'A'.
+     * Return the single Character equivalent of this
+     * {@link Residue}.  
      * @return the Character equivalent of this.
      */
     public Character getCharacter();

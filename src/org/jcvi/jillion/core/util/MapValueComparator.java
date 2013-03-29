@@ -48,7 +48,7 @@ public final class MapValueComparator<K extends Comparable<? super K>,V> impleme
      * @param <K> The Comparable type of Key contained in the map.
      * @param <V> The type of the values contained in the map (does not have to be comparable).
      * @param unsorted the unsorted Map to be sorted.
-     * @param the {@link Comparator} used to sort the values in this map.
+     * @param comparator the {@link Comparator} used to sort the values in this map.
      * @return a sorted map sorted by the values in ascending order; never null.
      */
     public static <K extends Comparable<? super K>,V> SortedMap<K,V> sortAscending(Map<K, V> unsorted, Comparator<V> comparator){
@@ -63,7 +63,7 @@ public final class MapValueComparator<K extends Comparable<? super K>,V> impleme
      * @param <K> The Comparable type of Key contained in the map.
      * @param <V> The type of the values contained in the map (does not have to be comparable).
      * @param unsorted the unsorted Map to be sorted.
-     * @param the {@link Comparator} used to sort the values in this map.
+     * @param comparator the {@link Comparator} used to sort the values in this map.
      * @return a sorted map sorted by the values in ascending order; never null.
      */
     public static <K extends Comparable<? super K>,V> SortedMap<K,V> sortDescending(Map<K, V> unsorted, Comparator<V> comparator){

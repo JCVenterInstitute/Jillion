@@ -160,7 +160,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * 
      * @param offset the <strong>gapped</strong> offset into this mutable sequence
      * to begin insertion.
-     * @param otherBuilderthe {@link ResidueSequenceBuilder} whose current
+     * @param otherBuilder the {@link ResidueSequenceBuilder} whose current
      * residues are to be inserted at the given offset.
      * @return this
      * @throws NullPointerException if otherBuilder is null.
@@ -204,7 +204,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * of this builder's mutable sequence.
      * This is the same as calling 
      * {@link #insert(int, ResidueSequenceBuilder) insert(0,otherBuilder)}
-     * @param otherBuilder{@link ResidueSequenceBuilder} whose current
+     * @param otherBuilder {@link ResidueSequenceBuilder} whose current
      * nucleotides are to be inserted at the beginning.
      * @return this.
      * @throws NullPointerException if otherBuilder is null.

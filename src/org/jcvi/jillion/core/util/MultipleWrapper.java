@@ -70,7 +70,7 @@ public final class  MultipleWrapper<T> implements InvocationHandler{
      * they will be called.
      * @return a new instance of T that wraps the delegates.
      * @throws IllegalArgumentException if no delegates are given
-     * @throws NullpointerException if classType ==null or policy ==null or any delegate ==null.
+     * @throws NullPointerException if classType ==null or policy ==null or any delegate ==null.
      */
     @SuppressWarnings("unchecked")
     public static <T, I extends T> T createMultipleWrapper(Class<T> classType,ReturnPolicy policy, Iterable<I> delegates){

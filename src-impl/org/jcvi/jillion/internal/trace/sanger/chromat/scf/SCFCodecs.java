@@ -33,9 +33,9 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.trace.sanger.chromat.scf.header.DefaultSCFHeader;
@@ -95,10 +95,7 @@ public enum SCFCodecs implements SCFCodec{
     }
     
 
-    /**
-     *
-    * {@inheritDoc}
-     */
+   
     private ScfChromatogram decode(String id, InputStream in) throws ScfDecoderException{
            DataInputStream dataIn = new DataInputStream(in);
            SCFHeader header= headerCodec.decode(dataIn);

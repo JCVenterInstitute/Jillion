@@ -43,8 +43,6 @@ class UncommentedFastqRecord implements FastqRecord{
 	     * associated with this record.
 	     * @param qualities the {@link QualitySequence}
 	     * associated with this record, can not be null.
-	     * @param comments the comments for this record, may
-	     * be set to null to indicate that there are no comments.
 	     * @throw NullPointerException if either id, nucleotides or qualities
 	     * is set to null.
 	     */

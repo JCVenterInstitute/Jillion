@@ -143,7 +143,7 @@ public final class FastqRecordWriterBuilder implements Builder<FastqRecordWriter
 	 * If this method is not called,
 	 * then then the each nucleotide and quality sequence will
 	 * be written out on one line each.
-	 * @param numberPerLine the basesPerLine to use
+	 * @param basesPerLine the basesPerLine to use
 	 * must be >=1.
 	 * @return this.
 	 * @throws IllegalArgumentException if basesPerLine <1.

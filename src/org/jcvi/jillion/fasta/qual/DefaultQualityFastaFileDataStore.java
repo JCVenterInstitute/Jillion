@@ -36,7 +36,7 @@ import org.jcvi.jillion.internal.fasta.qual.DefaultQualityFastaFileDataStoreBuil
 import org.jcvi.jillion.internal.fasta.qual.LargeQualityFastaFileDataStore;
 /**
  * {@code DefaultQualityFastaFileDataStore} is the default implementation
- * of {@link AbstractQualityFastaFileDataStore} which stores
+ * of {@link QualitySequenceFastaDataStore} which stores
  * all fasta records in memory.  This is only recommended for small fasta
  * files that won't take up too much memory.
  * @author dkatzel

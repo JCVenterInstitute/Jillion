@@ -28,8 +28,7 @@ import org.jcvi.jillion_experimental.align.SequenceAlignment;
 
 /**
  * {@code AbstractSmithWatermanAligner} 
- * implements methods in {@link AbstractPairwiseAligner} 
- * with  Smith-Waterman (with Gotoh improvements) specific implementations.
+ * implements Smith-Waterman (with Gotoh improvements) specific implementations.
  * 
  * @author dkatzel
  *
@@ -82,7 +81,7 @@ abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Sequenc
 		return TracebackDirection.TERMINAL;
 	}
 	/**
-	 * Returns a {@link WalkBack} using the max of the 3 input values and 
+	 * Returns a {@link org.jcvi.jillion_experimental.align.pairwise.AbstractPairwiseAligner.WalkBack} using the max of the 3 input values and 
 	 * zero.  The value Zero denotes a terminal traceback so 
 	 * no chosen score can ever be less than that.
 	 * <p/>
@@ -106,7 +105,7 @@ abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Sequenc
 			return new WalkBack(bestScore, dir);
 	}
 	/**
-	 * Only update the current {@link StartPoint}
+	 * Only update the current {@link org.jcvi.jillion_experimental.align.pairwise.AbstractPairwiseAligner.StartPoint}
 	 * if the given score is greater than the 
 	 * current starting point's score.
 	 * <p/>

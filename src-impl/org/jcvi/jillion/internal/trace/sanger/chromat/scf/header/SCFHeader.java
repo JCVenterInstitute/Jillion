@@ -26,6 +26,7 @@
 package org.jcvi.jillion.internal.trace.sanger.chromat.scf.header;
 
 import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.Section;
+import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogram;
 
 /**
  * An SCF Header  describes the location and

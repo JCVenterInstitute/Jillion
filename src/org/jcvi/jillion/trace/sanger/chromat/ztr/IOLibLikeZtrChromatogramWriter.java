@@ -24,8 +24,8 @@ import java.io.OutputStream;
 
 import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.DefaultZTRChromatogramWriterBuilder;
 import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.data.DeltaEncodedData;
-import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.data.ShrinkToEightBitData;
 import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.data.DeltaEncodedData.Level;
+import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.data.ShrinkToEightBitData;
 import org.jcvi.jillion.trace.TraceEncoderException;
 import org.jcvi.jillion.trace.sanger.chromat.Chromatogram;
 /**
@@ -45,7 +45,7 @@ import org.jcvi.jillion.trace.sanger.chromat.Chromatogram;
  */
 public enum IOLibLikeZtrChromatogramWriter implements ZtrChromatogramWriter{
 	/**
-	 * Singleton instance of {@link IOLibLikeZTRChromatogramWriter}.
+	 * Singleton instance of {@link IOLibLikeZtrChromatogramWriter}.
 	 */
 	INSTANCE;
 	/**

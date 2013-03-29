@@ -99,7 +99,6 @@ public abstract class TasmFileParser {
      * that is not able to create mementos;
      * will not be null.
      * @throws NullPointerException if tasmFile is null.
-     * @throws IOException if tasmFile does not exist
      * or is not readable.
      */
     public static TasmFileParser create(InputStream in){

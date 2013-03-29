@@ -62,7 +62,6 @@ class CompletelyParsedIndexedSffFileDataStore {
 	 * has more than {@link Integer#MAX_VALUE} reads.
 	 * @throws NullPointerException if sffFile is null.
 	 * @throws IllegalArgumentException if sffFile does not exist.
-	 * @see #canCreateIndexedDataStore(File)
 	 */
 	public static SffFileDataStore create(File sffFile) throws IOException{
 		return create(sffFile, DataStoreFilters.alwaysAccept());
@@ -77,7 +76,6 @@ class CompletelyParsedIndexedSffFileDataStore {
 	 * has more than {@link Integer#MAX_VALUE} reads.
 	 * @throws NullPointerException if sffFile is null.
 	 * @throws IllegalArgumentException if sffFile does not exist.
-	 * @see #canCreateIndexedDataStore(File)
 	 */
 	public static SffFileDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
 		Visitor visitor = new Visitor(filter);

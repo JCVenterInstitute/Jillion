@@ -44,7 +44,8 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
     private volatile boolean closed=false;
     
     /**
-     * Construct a {@link LargeNucleotideSequenceFastaFileDataStore}
+     * Construct a {@link AbstractLargeFastaFileDataStore} using
+     * the given fasta file and filter.
      * @param fastaFile the Fasta File to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */

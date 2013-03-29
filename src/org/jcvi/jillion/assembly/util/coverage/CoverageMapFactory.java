@@ -114,7 +114,7 @@ public final class CoverageMapFactory {
     /**
      * Create a coverage map in <strong>ungapped consensus coordinate space</strong>
      * of the given reads aligned to the given consensus.
-     * @param consensus the gapped consensus the reads aligned to.
+     * @param gappedConsensus the gapped consensus the reads aligned to.
      * @param reads the reads to generate a coverage map for.
      * @return a new {@link CoverageMap} but where the coordinates in the coverage map
      * refer to ungapped coordinates instead of gapped coordinates.

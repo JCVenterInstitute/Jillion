@@ -46,12 +46,12 @@ public enum SaltCorrectionStrategy {
 	 * @see <a href="http://www.ncbi.nlm.nih.gov/pubmed/8639506">
 	 SantaLucia J Jr, Allawi HT, Seneviratne PA.
 	 Improved nearest-neighbor parameters for predicting DNA duplex stability.
-	Biochemistry. 1996 Mar 19;35(11):3555-62; PMID 8639506 
+	Biochemistry. 1996 Mar 19;35(11):3555-62; PMID 8639506 </a>
 	 */
 	SANTALUCIA_1996(12.5D),
 	/**
 	 * No Salt Correction,
-	 * {@link #adjustTm(double, double)}
+	 * {@link #adjustTemperature(double, double)}
 	 * returns the initial uncorrected temperature.
 	 */
 	NONE(0D){

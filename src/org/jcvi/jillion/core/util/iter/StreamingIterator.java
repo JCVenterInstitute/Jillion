@@ -29,11 +29,11 @@ import java.util.NoSuchElementException;
  * {@code StreamingIterator} is an
  * {@link Iterator} 
  * that might not have its next element
- * loaded into memory.  {@link #StreamingIterator}s
+ * loaded into memory.  {@link StreamingIterator}s
  * are useful when iterating over elements that are 
  * resource intensive so that only as few as the
  * current element need to actually be loaded into memory
- * at one time.  {@link #StreamingIterator}s are
+ * at one time.  {@link StreamingIterator}s are
  * often used to iterate over records stored in files.
  * Client code must explicitly 
  * {@link #close()} this iterator when done iterating
@@ -43,7 +43,7 @@ import java.util.NoSuchElementException;
  * <strong>and</strong> not calling {@link #close()} could in some implementations 
  * cause memory leaks,
  * deadlocks and/or permanently blocked background threads.
- * Closing a {@link #StreamingIterator} before it has
+ * Closing a {@link StreamingIterator} before it has
  * finished iterating over all the records
  * will cause {@link #hasNext()}
  * to return {@code false} and {@link #next()}

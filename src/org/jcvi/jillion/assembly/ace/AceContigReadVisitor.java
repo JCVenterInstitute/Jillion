@@ -25,9 +25,7 @@ import java.util.Date;
 public interface AceContigReadVisitor {
 
 	/**
-     * Visit quality line of currently visited read.  This method will only
-     * get called if the current contig is being parsed which is determined
-     * by the return value of {@link #visitContig(String, int, int, int, boolean)}.
+     * Visit quality line of currently visited read.
      * @param qualLeft left position(1-based)  of clear range.
      * @param qualRight right position(1-based) of clear range.
      * @param alignLeft left alignment(1-based) position. 
@@ -37,9 +35,7 @@ public interface AceContigReadVisitor {
     /**
      * Visit Trace Description line of currently visited read.
      * @param traceName name of trace file corresponding
-     * to currently visited read.  This method will only
-     * get called if the current contig is being parsed which is determined
-     * by the return value of {@link #visitContig(String, int, int, int, boolean)}.
+     * to currently visited read.
      * @param phdName name of phd file.
      * @param date date phd file created.
      */
@@ -49,9 +45,7 @@ public interface AceContigReadVisitor {
      * probably has several lines of basecalls.  The characters in the bases
      * could be mixed case.  Consed differentiates high quality basecalls
      * vs low quality basecalls by using upper and lowercase letters respectively.
-     * This method will only
-     * get called if the current contig is being parsed which is determined
-     * by the return value of {@link #visitContig(String, int, int, int, boolean)}.
+     * 
      * @param mixedCaseBasecalls (some of) the basecalls of the currently visited read
      * or consensus which might have both upper and lower case letters to denote
      * high vs low quality.

@@ -89,7 +89,6 @@ public final class ScfChromatogramFileParser {
      * (can not be null).
      * @throws TraceDecoderException if there is  a problem
      * parsing the SCF file.
-     * @throws IOException if there is a problem reading the file.
      * @throws NullPointerException if visitor is null.
      */
     public static void parse(InputStream in, ChromatogramFileVisitor visitor) throws TraceDecoderException{

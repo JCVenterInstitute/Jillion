@@ -42,9 +42,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -527,8 +527,8 @@ public enum Chunk {
     },
     /**
      * Implementation of the ZTR TEXT Chunk.
-     * Any information decoded from this chunk will be set as Trace Properties
-     * which can be obtained via {@link Trace#getProperties()}.
+     * Any information decoded from this chunk will be set as Trace comment
+     * which can be obtained via {@link Chromatogram#getComments()}.
      * @author dkatzel
      * @see <a href="http://staden.sourceforge.net/ztr.html">ZTR SPEC v1.2</a>
      *
@@ -685,7 +685,6 @@ public enum Chunk {
 
     /**
      * @return
-     * @throws IOException
      * @throws TraceDecoderException
      * @throws NumberFormatException
      */

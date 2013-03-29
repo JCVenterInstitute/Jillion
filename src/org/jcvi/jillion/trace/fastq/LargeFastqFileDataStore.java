@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
@@ -46,7 +47,7 @@ import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterato
  * which can take some time.  
  * It is recommended that instances are wrapped
  * in  a cached datastore using
- * {@link DataStoreUtil#createNewCachedDataStore(Class, org.jcvi.common.core.datastore.DataStore, int)}.
+ * {@link DataStoreUtil#createNewCachedDataStore(Class, DataStore, int)}.
  * @author dkatzel
  *
  *
@@ -89,7 +90,7 @@ final class LargeFastqFileDataStore implements FastqDataStore {
      * (if provided)
      * @param fastqFile the fastq file to create a {@link FastqDataStore}
      * for (can not be null, and must exist).
-     * @param filter the {@link FastXFilter} used to filter out records
+     * @param filter the {@link DataStoreFilter} used to filter out records
      * from the datastore. If this value is null,
      * then all records in the file will be included in the datastore.
      * @param qualityCodec the {@link FastqQualityCodec} that should be used

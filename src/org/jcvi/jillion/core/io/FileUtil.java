@@ -176,7 +176,7 @@ public final class FileUtil {
 	 * if the given filepath is to a file named "Readme.txt" or
 	 * "/path/to/Readme.txt" 
 	 * then this method will return "Readme".
-	 * @param filepath the filepath to get the base name for.  If this
+	 * @param filename the filepath to get the base name for.  If this
 	 * value is null, then null will be returned.
 	 * @return the String of the base name, or null
 	 * if filepath is null, or the empty string "" if there is no basepath.

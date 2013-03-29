@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.trace.sanger.PositionSequence;
@@ -123,15 +122,14 @@ public class ArtificialPhd implements Phd{
     * peak {@code numberOfPositionsForEachPeak} apart.
     * This Phd will have no comments and no {@link PhdTag}s.
     * This method is the same as calling
-    * {@link #buildArtificalPhd(NucleotideSequence, Sequence, Properties, List, int)
-    * buildArtificalPhd(basecalls, qualities, new Properties(),Collections.<PhdTag>emptyList(),numberOfPositionsForEachPeak)}
+    * {@link #ArtificialPhd(String, NucleotideSequence, QualitySequence, Properties, List, int)
+    * new ArtificalPhd(basecalls, qualities, new Properties(),Collections.<PhdTag>emptyList(),numberOfPositionsForEachPeak)}
     * @param id the id for this Phd.
     * @param basecalls the basecalls for this Phd.
     * @param qualities the qualities for this Phd.
     * @param numberOfPositionsForEachPeak number of positions each
     * peak should be separated as.
-    * @return a new DefaultPhd using the given values.
-    * @see #buildArtificalPhd(NucleotideSequence, Sequence, Properties, List, int)
+    * @see #ArtificialPhd(String, NucleotideSequence, QualitySequence, Properties, List, int)
     */
    public ArtificialPhd(String id,
 		   NucleotideSequence basecalls,
@@ -151,7 +149,6 @@ public class ArtificialPhd implements Phd{
     * @param tags the {@link PhdTag}s for this Phd.
     * @param numberOfPositionsForEachPeak number of positions each
     * peak should be separated as.
-    * @return a new DefaultPhd using the given values.
     */
     public ArtificialPhd(String id, NucleotideSequence basecalls,
             QualitySequence qualities,
@@ -172,7 +169,6 @@ public class ArtificialPhd implements Phd{
      * @param tags the {@link PhdTag}s for this Phd.
      * @param numberOfPositionsForEachPeak number of positions each
      * peak should be separated as.
-     * @return a new DefaultPhd using the given values.
      */
      public ArtificialPhd(String id, NucleotideSequence basecalls,
              QualitySequence qualities,

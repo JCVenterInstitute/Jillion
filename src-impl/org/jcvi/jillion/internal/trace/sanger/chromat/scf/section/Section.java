@@ -25,6 +25,8 @@
  */
 package org.jcvi.jillion.internal.trace.sanger.chromat.scf.section;
 
+import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogram;
+
 
 /**
  * SCF files are broken down into different Sections.
@@ -41,8 +43,8 @@ public enum Section {
          */
         SAMPLES,
         /**
-         * Bases is the section where the basecalls, {@link Peaks},
-         * and {@link Confidence} data is stored.
+         * Bases is the section where the basecalls, peaks and quality,
+         * data is stored.
          */
         BASES,
         /**

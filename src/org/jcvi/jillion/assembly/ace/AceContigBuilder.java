@@ -122,7 +122,6 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      * builder.
      * @param contigId the initial contig id to use for this contig (may later be changed)
      * @param initialConsensus the initial contig consensus for this contig (may be changed later)
-     * @return a new {@link AceContigBuilder} instance; never null.
      * @throws NullPointerException if contigId or consensus are null.
      */
     public AceContigBuilder(String contigId, String initialConsensus){
@@ -149,7 +148,6 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      * builder.
      * @param contigId the initial contig id to use for this contig (may later be changed)
      * @param initialConsensus the initial contig consensus for this contig (may be changed later)
-     * @return a new {@link AceContigBuilder} instance; never null.
      * @throws NullPointerException if contigId or consensus are null.
      */
     public AceContigBuilder(String contigId, NucleotideSequence initialConsensus){
@@ -175,7 +173,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      * @param estimatedNumberOfReads expected number of reads that will be added to this
      * contig.  This value is only used to allocate the initial map sizes for internal
      * data structures as a performance optimization.  Must be >=0.
-     * @return a new {@link AceContigBuilder} instance; never null.
+     * 
      * @throws NullPointerException if contigId or consensus are null.
      * @throws IllegalArgumentException if estimatedNumberOfReads
      * is <0
@@ -277,7 +275,8 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      * called, then the consensus qualities will be set to a dummy value
      * of all 30.
      * @return this
-     * @see {@link #computeConsensusQualities(QualitySequenceDataStore)}
+     * @see #computeConsensusQualities(QualitySequenceDataStore)
+     * 
      */
     public AceContigBuilder computeConsensusQualities(){
     	this.computeConsensusQualities = true;

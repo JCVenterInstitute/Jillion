@@ -33,9 +33,7 @@ package org.jcvi.jillion.assembly.util.slice;
  */
 public interface Slice<T extends SliceElement> extends Iterable<T>{
     /**
-     * Get the coverage depth of this Slice.  this 
-     * should be the same as the size of the
-     * List returned from {@link #getSliceElements()}.
+     * Get the coverage depth of this Slice.
      * @return the coverage depth of this slice, will
      * always be {@code >= 0}.
      */

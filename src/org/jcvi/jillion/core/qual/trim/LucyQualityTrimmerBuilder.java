@@ -72,7 +72,8 @@ import org.jcvi.jillion.core.qual.QualitySequence;
  * </ol>
  * @author dkatzel
  *
- * @see <a href ="http://www.ncbi.nlm.nih.gov/pubmed/11751217">Chou HH, Holmes MH. DNA sequence quality trimming and vector removal. Bioinformatics. 2001;17:1093-1104. doi: 10.1093/bioinformatics/17.12.1093.<a>
+ * @see <a href ="http://www.ncbi.nlm.nih.gov/pubmed/11751217">
+ Chou HH, Holmes MH. DNA sequence quality trimming and vector removal. Bioinformatics. 2001;17:1093-1104. doi: 10.1093/bioinformatics/17.12.1093.</a>
  */
 public final class LucyQualityTrimmerBuilder implements org.jcvi.jillion.core.util.Builder<QualityTrimmer>{
 
@@ -91,7 +92,7 @@ public final class LucyQualityTrimmerBuilder implements org.jcvi.jillion.core.ut
         private final Set<Window> trimWindows = new TreeSet<Window>();
         /**
          * Create a new instance of {@code LucyLikeQualityTrimmerBuilder}
-         * which is initialized to default max average error {@value DEFAULT_max
+         * which is initialized to default max average error {@value #DEFAULT_MAX_AVG_ERROR}
          * @param minGoodLength the minimum good quality length of the sequences
          * to be trimmed. If after trimming by 
          * {@link QualityTrimmer#trim(QualitySequence)},
@@ -411,7 +412,7 @@ public final class LucyQualityTrimmerBuilder implements org.jcvi.jillion.core.ut
             private final double maxErrorRate;
             /**
              * @param size
-             * @param minAvgQuality
+             * @param maxErrorRate
              */
             public Window(int size, double maxErrorRate) {
                 this.size = size;

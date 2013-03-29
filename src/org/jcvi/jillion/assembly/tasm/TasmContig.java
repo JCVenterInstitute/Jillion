@@ -112,7 +112,7 @@ public interface TasmContig extends Contig<TasmAssembledRead>{
     * @return the {@link Date}
     * when this contig was last edited;
     * or null if no edit information is available.
-    * @see #getEditPerson().
+    * @see #getEditPerson()
     */
    Date getEditDate();
    /**

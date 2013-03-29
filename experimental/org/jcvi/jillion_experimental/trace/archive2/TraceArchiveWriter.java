@@ -146,7 +146,7 @@ public final class TraceArchiveWriter implements Closeable{
 	 * @param traceFile
 	 * @throws IOException if there is an exception parsing the given
 	 * traceFile.
-	 * @param NullPointerException if traceName or traceFile are null.
+	 * @throws NullPointerException if traceName or traceFile are null.
 	 * @throws TraceArchiveRecordDataException 
 	 * @throws IllegalArgumentException if a trace with the given traceName
 	 * has already been added.

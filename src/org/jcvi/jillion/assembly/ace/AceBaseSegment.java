@@ -47,7 +47,7 @@ interface AceBaseSegment {
      */
     Range  getGappedConsensusRange();
     /**
-     * Two {@link AceBaseSegment}s are equal
+     * Two AceBaseSegments are equal
      * if they have the same read name and gapped consensus range.
      * @param obj
      */

@@ -200,8 +200,9 @@ public abstract class AceFileParser implements AceHandler {
         	return this;
         }
         /**
-         * @return
-         * @throws IOException 
+         * Parse the next section in the ace file which may
+         * be several thousands of lines long.
+         * @throws IOException if there is a problem reading the ace file.
          */
         public void parseNextSection() throws IOException {
         	startPositionOfCurrentSection = parser.getPosition();
@@ -227,11 +228,9 @@ public abstract class AceFileParser implements AceHandler {
         }
         
         /**
-         * Returns new ParserStruct instance but which
-         * states that a different contig is being visited. 
-         * @return a new ParserStruct object with the same 
-         * values except {@link #isFirstContigInFile} is now
-         * set to {@code false}.
+         * changed state to mark that
+         * that a new contig is being visited. 
+         * 
          */
         void handleNewContig(AceContigVisitor contigVisitor, int numberOfExpectedReads, int numberOfConsensusBases){
         	
@@ -279,11 +278,9 @@ public abstract class AceFileParser implements AceHandler {
         	}
         }
         /**
-         * Returns new ParserStruct instance but which
-         * states that a different contig is being visited. 
-         * @return a new ParserStruct object with the same 
-         * values except {@link #isFirstContigInFile} is now
-         * set to {@code false}.
+         * Changes state to say that a contig
+         * is no longer being parsed.
+         * @return this.
          */
         AceParserState notInAContig(){
             inAContig = false;

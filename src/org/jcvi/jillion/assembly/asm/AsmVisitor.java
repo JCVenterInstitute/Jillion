@@ -611,7 +611,7 @@ public interface AsmVisitor{
     /**
      * This is duplicated information provided for convenience.
      * @param externalIdOfRead1 the unique id for one read.
-     * @param externalIdOfRead2the unique id for the other read.
+     * @param externalIdOfRead2 the unique id for the other read.
      * @param mateStatus the combined status of the individual reads.
      */
     void visitMatePair(String externalIdOfRead1,String externalIdOfRead2, MateStatus mateStatus);

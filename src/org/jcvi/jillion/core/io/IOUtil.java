@@ -779,7 +779,7 @@ public final class IOUtil {
      * For some reason {@link BitSet}
      * Java API thru java 6 does not include methods for converting
      * to and from a byte array.
-     * @param bytes the byte array to convert.
+     * @param buffer the {@link ByteBuffer} to convert.
      * @return a new {@link BitSet} containing the same data as
      * the given byte array.
      * @throws NullPointerException if bytes is null.
@@ -939,7 +939,7 @@ public final class IOUtil {
      * Copy the numberOfBytesToRead of the given {@link InputStream}
      * and return it as a byte[] using the given {@link Endian}
      * order.
-     * @param input the inputStream to convert into a byte[].  
+     * @param in the inputStream to convert into a byte[].  
      * This stream is not closed when the method finishes.
      * @param numberOfBytesToRead the number of bytes to read from the stream;
      * if there aren't enough bytes, then this method will block until

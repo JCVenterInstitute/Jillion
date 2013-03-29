@@ -230,9 +230,9 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		}
 		
 		/**
-		 * Create a new instance of {@link NucleotideSequenceFastaRecordWriter}
+		 * Create a new {@link FastaRecordWriter} instance
 		 * which uses the parameters supplied to this builder.
-		 * @return a new instance of {@link NucleotideSequenceFastaRecordWriter}. 
+		 * @return a new instance of {@link FastaRecordWriter}. 
 		 */
 		@Override
 		public final W build() {

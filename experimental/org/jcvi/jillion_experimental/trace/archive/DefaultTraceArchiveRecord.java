@@ -28,8 +28,8 @@ package org.jcvi.jillion_experimental.trace.archive;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public class DefaultTraceArchiveRecord implements TraceArchiveRecord {
    private final Map<TraceInfoField,String> map;
@@ -115,7 +115,7 @@ public class DefaultTraceArchiveRecord implements TraceArchiveRecord {
          * Puts an attribute with the given key and value.  If 
          * an attribute already exists with the given
          * key, it will be overwritten with the new value.
-         * @param key the key to add.
+         * @param traceInfoField the {@link TraceInfoField} to add.
          * @param value the value associated with the given key.
          * @return {@code this}
          */
