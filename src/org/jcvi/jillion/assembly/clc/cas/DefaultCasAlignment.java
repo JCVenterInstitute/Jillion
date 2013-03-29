@@ -39,9 +39,6 @@ final class DefaultCasAlignment implements CasAlignment {
     
     /**
      * @param contigSequenceId
-     * @param numberOfDeletions
-     * @param numberOfInserts
-     * @param numberOfMatchesAndMismatches
      * @param startOfMatch
      * @param readIsReversed
      * @param alignmentRegions

@@ -69,10 +69,8 @@ public abstract class FastaFileParser {
 	 * of the FastaFileParser can not create {@link FastaVisitorMemento}s
 	 * or use {@link #accept(FastaVisitor, FastaVisitorMemento)}
 	 * method.
-	 * @param fastaFile the file to parse.
-	 * @throws IOException if there is a problem opening the file.
-	 * @throws NullPointerException if fastaFile is null.
-	 * @see #accept(FastaFileVisitor, FastaVisitorMemento).
+	 * @param inputStream the {@link InputStream} to parse.
+	 * @throws NullPointerException if inputStream is null.
 	 */
 	public static FastaFileParser create(InputStream inputStream){
 		return new InputStreamFastaParser(inputStream);

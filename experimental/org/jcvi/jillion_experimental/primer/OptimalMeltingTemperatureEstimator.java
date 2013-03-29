@@ -84,8 +84,8 @@ public enum OptimalMeltingTemperatureEstimator {
 	 * is does not matter.  This
 	 * estimation and is not recommended for
 	 * large primers.
-	 * @see <a href=http://www.ncbi.nlm.nih.gov/pmc/articles/PMC327955/">
-	RB Wallace, et al. Nucleic Acids Res. 1979;6:3543.</a> 
+	 * @see <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC327955/"> 
+	 * RB Wallace, et al. Nucleic Acids Res. 1979;6:3543.</a> 
 	 */
 	WALLACE{
 		/**
@@ -125,12 +125,12 @@ public enum OptimalMeltingTemperatureEstimator {
 	 * that primer3 uses.
 	 * @see <a href ="http://www.ncbi.nlm.nih.gov/pubmed/3459152">
 	Breslauer KJ et al. Predicting DNA duplex stability from the base sequence.
-	Proc Natl Acad Sci U S A. 1986 Jun;83(11):3746-50; PMID 3459152<a>
+	Proc Natl Acad Sci U S A. 1986 Jun;83(11):3746-50; PMID 3459152</a>
 	
 	 * @see <a href= "http://www.ncbi.nlm.nih.gov/pubmed/2432595">
 	 Freier SM et al
 	 Improved free-energy parameters for predictions of RNA duplex stability.
-	 Proc Natl Acad Sci U S A. 1986 Dec;83(24):9373-7.
+	 Proc Natl Acad Sci U S A. 1986 Dec;83(24):9373-7.</a>
 	 */
 	BRESLAUR{
 		private final LookupTable deltaS = new LookupTable.Builder()
@@ -298,7 +298,7 @@ nearest-neighbor thermodynamics.
 	 *  @see <a href="http://www.ncbi.nlm.nih.gov/pubmed/8639506">
 	 SantaLucia J Jr, Allawi HT, Seneviratne PA.
 	 Improved nearest-neighbor parameters for predicting DNA duplex stability.
-	Biochemistry. 1996 Mar 19;35(11):3555-62; PMID 8639506 
+	Biochemistry. 1996 Mar 19;35(11):3555-62; PMID 8639506 </a>
 	 */
 	SANTALUCIA_1996{
 			

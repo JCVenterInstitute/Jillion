@@ -44,9 +44,9 @@ import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;
  * implementation that will keep track of all
  * the data associated with the current {@link Phd}
  * record being visited.  Once an entire Phd record
- * has been visited, this class with make a call to {@link #visitPhd(String, List, List, PositionSequence, Properties, List)}.
+ * has been visited, this class with make a call to {@link #visitPhd(String, NucleotideSequence, QualitySequence, PositionSequence, Properties, List)}.
  * 
- * @see #visitPhd(String, List, List, PositionSequence, Properties, List)
+ * @see #visitPhd(String, NucleotideSequence, QualitySequence, PositionSequence, Properties, List)
  * @author dkatzel
  *
  *
@@ -74,7 +74,7 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
     /**
      * Create a new AbstractPhdFileVisitor with the given filter.  Any
      * phd records that are not accepted by this filter will not get
-     * the {@link #visitPhd(String, List, List, PositionSequence, Properties, List)}
+     * the {@link #visitPhd(String, NucleotideSequence, QualitySequence, PositionSequence, Properties, List)}
      * method called on it.
      * @param filter the DataStoreFilter to use; can not be null.
      * @throws NullPointerException if filter is null.

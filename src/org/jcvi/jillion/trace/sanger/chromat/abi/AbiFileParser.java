@@ -797,7 +797,7 @@ public final class AbiFileParser {
 	 * {@code Noise} contains the noise factor for
 	 * each channel.
 	 * @author dkatzel
-	 * @see SignalScalingFactor.
+	 * @see SignalScalingFactor
 	 *
 	 */
 	private static class Noise{

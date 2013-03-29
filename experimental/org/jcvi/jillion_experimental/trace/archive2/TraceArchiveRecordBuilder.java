@@ -31,7 +31,7 @@ public interface TraceArchiveRecordBuilder extends Builder<TraceArchiveRecord>{
 	 * Puts an attribute with the given key and value.  If 
 	 * an attribute already exists with the given
 	 * key, it will be overwritten with the new value.
-	 * @param key the key to add.
+	 * @param traceInfoField the {@link TraceInfoField} to add.
 	 * @param value the value associated with the given key.
 	 * @return {@code this}
 	 */

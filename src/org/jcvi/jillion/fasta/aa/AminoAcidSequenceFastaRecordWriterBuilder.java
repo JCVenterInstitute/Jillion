@@ -36,17 +36,7 @@ import org.jcvi.jillion.internal.fasta.AbstractResidueSequenceFastaRecordWriter;
  *
  */
 public final class AminoAcidSequenceFastaRecordWriterBuilder extends AbstractResidueSequenceFastaRecordWriter.Builder<AminoAcid, AminoAcidSequence, AminoAcidSequenceFastaRecord,AminoAcidSequenceFastaRecordWriter> {
-	/**
-	 * Create a new Builder that will use
-	 * the given {@link OutputStream} to write
-	 * out the fasta records.
-	 * @param out the {@link OutputStream} to use;
-	 * can not be null.
-	 * @throws NullPointerException if out is null.
-	 */
-	public AminoAcidSequenceFastaRecordWriterBuilder(File outputFile) throws FileNotFoundException {
-		super(outputFile);
-	}
+	
 	/**
 	 * Create a new Builder that will use
 	 * the given File to write
@@ -60,6 +50,17 @@ public final class AminoAcidSequenceFastaRecordWriterBuilder extends AbstractRes
 	 * is a directory rather than a regular file, 
 	 * does not exist but cannot be created, 
 	 * or cannot be opened for any other reason.
+	 */
+	public AminoAcidSequenceFastaRecordWriterBuilder(File outputFile) throws FileNotFoundException {
+		super(outputFile);
+	}
+	/**
+	 * Create a new Builder that will use
+	 * the given {@link OutputStream} to write
+	 * out the fasta records.
+	 * @param out the {@link OutputStream} to use;
+	 * can not be null.
+	 * @throws NullPointerException if out is null.
 	 */
 	public AminoAcidSequenceFastaRecordWriterBuilder(OutputStream out) {
 		super(out);

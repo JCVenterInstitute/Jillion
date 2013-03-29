@@ -303,10 +303,10 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	 * Get the gap scores that represent when 
 	 * the first base of the query does not align to the subject
 	 * and vice versa.
-	 * @param length
-	 * @param openGapPenalty
-	 * @param extendGapPenalty
-	 * @return
+	 * @param length the length of the gap score array to create
+	 * @param openGapPenalty the penalty value for a new (open) gap.
+	 * @param extendGapPenalty the penalty for extending an already open gap.
+	 * @return a float array of the gap scores.
 	 */
 	protected abstract float[] getInitialGapScores(int length, float openGapPenalty,
 			float extendGapPenalty);
@@ -481,7 +481,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	 * the a score and the {@link TracebackDirection}
 	 * to use in the traceback for the current cell
 	 * in the traceback matrix.
-	 * This class is used internally by {@link AbstractPairwiseAligner#computeBestWalkBack(float, float, float)}
+	 * This class is used internally by {@link #computeBestWalkBack(float, float, float)}
 	 * to allow subclasses to determine the which score is the best
 	 * in an implementation specific way.
 	 * @author dkatzel

@@ -36,7 +36,6 @@ final class DefaultSffReadHeader implements SffReadHeader {
 
 
     /**
-     * @param headerLength
      * @param numberOfBases
      * @param qualityClip
      * @param adapterClip

@@ -98,9 +98,10 @@ public final class Distance {
      * have values that conform to Celera Assembler Standard Deviation
      * Distance constraints.  If no transformation is needed, 
      * this method will return the same object that was passed in.
-     * @param min
-     * @param max
-     * @return
+     * @param distance a {@link Distance} containing the library distance information;
+     * can not be null.
+     * @return a new {@link Distance} that conforms to the CA distance constraints.
+     * @throws NullPointerException if distance is null.
      */
     public static Distance transformIntoCeleraAssemblerDistance(Distance distance){
         float mean = distance.getMean();

@@ -133,7 +133,6 @@ public abstract class AbstractBlockingStreamingIterator<T> implements StreamingI
      * This starts the visiting in a separate thread.
      * This method must be called before a client may call
      * {@link #hasNext()} or {@link #next()}.
-     * @throws InterruptedException
      */
     public void start(){
       final IteratorThread iteratorThread =new IteratorThread();
@@ -161,7 +160,7 @@ public abstract class AbstractBlockingStreamingIterator<T> implements StreamingI
      * thread using the iterator the next time
      * {@link #next()} or {@link #hasNext()}
      * is used.
-     * @throws RunTimeException - any exception not caught or handled by this background
+     * @throws RuntimeException - any exception not caught or handled by this background
      * thread should throw a RunTimeException which will be thrown
      * on the next call to {@link #next()} or {@link #hasNext()}.
      * 

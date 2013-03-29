@@ -26,8 +26,7 @@ import org.jcvi.jillion.core.util.MathUtil;
 import org.jcvi.jillion_experimental.align.SequenceAlignment;
 /**
  * {@code AbstractNeedlemanWunschAligner} 
- * implements methods in {@link AbstractPairwiseAligner} 
- * with  Needleman-Wunsch (with Gotoh improvements) specific implementations.
+ * implements Needleman-Wunsch (with Gotoh improvements) specific implementations.
  * 
  * @author dkatzel
  *
@@ -87,7 +86,7 @@ abstract class AbstractNeedlemanWunschAligner <R extends Residue, S extends Sequ
 		return TracebackDirection.VERTICAL;
 	}
 	/**
-	 * Returns a {@link WalkBack} using the max of the 3 input values.
+	 * Returns a {@link org.jcvi.jillion_experimental.align.pairwise.AbstractPairwiseAligner.WalkBack} using the max of the 3 input values.
 	 * <p/>
 	 * {@inheritDoc}
 	 */

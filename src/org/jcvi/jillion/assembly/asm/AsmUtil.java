@@ -41,7 +41,7 @@ public final  class AsmUtil {
 	 * Add gaps to the given
 	 * {@link NucleotideSequenceBuilder} which 
 	 * represents an ASM read's ungapped valid range sequence.
-	 * @param ungappedSequence a {@link NucleotideSequenceBuilder} of the ungapped
+	 * @param ungappedSequenceBuilder a {@link NucleotideSequenceBuilder} of the ungapped
 	 * valid range sequence to be gapped; this sequence should already
 	 * be complemented into the correct orientation.
 	 * @param asmEncodedGaps the List of Integers of the ASM del encoded

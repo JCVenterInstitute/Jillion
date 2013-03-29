@@ -486,7 +486,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * 
      * @param offset the <strong>gapped</strong> offset into this mutable sequence
      * to begin insertion.
-     * @param otherBuilderthe {@link NucleotideSequenceBuilder} whose current
+     * @param otherBuilder the {@link NucleotideSequenceBuilder} whose current
      * nucleotides are to be inserted at the given offset.
      * @return this
      * @throws NullPointerException if otherBuilder is null.
@@ -551,12 +551,12 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * to the beginning
      * of this builder's mutable sequence.
      * This is the same as calling 
-     * {@link #insert(int, NucleotideSequenceBuilder) insert(0,otherBuilder)}
-     * @param otherBuilder{@link NucleotideSequenceBuilder} whose current
+     * {@link #insert(int, ResidueSequenceBuilder) insert(0,otherBuilder)}
+     * @param otherBuilder {@link NucleotideSequenceBuilder} whose current
      * nucleotides are to be inserted at the beginning.
      * @return this.
      * @throws NullPointerException if otherBuilder is null.
-     * @see #insert(int, NucleotideSequenceBuilder)
+     * @see #insert(int, ResidueSequenceBuilder)
      */
     public NucleotideSequenceBuilder prepend(ResidueSequenceBuilder<Nucleotide, NucleotideSequence> otherBuilder){
         return insert(0, otherBuilder);
@@ -1002,10 +1002,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 			numberOfAmbiguities -= newValues.getnumberOfAmiguities();
 		}
 
-		/**
-         * @param offset
-         * @param value
-         */
+		
         public void replace(byte oldValue, byte newValue) {
             handleValue(oldValue,false);
             handleValue(newValue,true);

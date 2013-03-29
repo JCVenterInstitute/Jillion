@@ -40,12 +40,12 @@ public interface CasFileVisitor{
     public interface CasVisitorCallback {
     	/**
     	 * {@code FastaVisitorMemento} is a marker
-    	 * interface that {@link CasParser}
+    	 * interface that {@link CasFileParser}
     	 * instances can use to "rewind" back
     	 * to the position in its cas file
     	 * in order to revisit portions of the cas file. 
     	 * {@link CasVisitorMemento} should only be used
-    	 * by the {@link CasParser} instance that
+    	 * by the {@link CasFileParser} instance that
     	 * generated it.
     	 * @author dkatzel
     	 *
@@ -133,7 +133,8 @@ public interface CasFileVisitor{
      * used in this assembly.  This method will be called
      * n times where n is the number of references used in this 
      * cas file.
-     * @param description
+     * @param description the {@link CasReferenceDescription};
+     * will never be null.
      */
     void visitReferenceDescription(CasReferenceDescription description);
     /**
@@ -141,7 +142,7 @@ public interface CasFileVisitor{
      * assembly so this method will not get called
      * however it is a place holder for when it is eventually
      * included.
-     * @param contigPair
+     * @param contigPair the {@link CasContigPair}; will never be null.
      */
     void visitContigPair(CasContigPair contigPair);
     

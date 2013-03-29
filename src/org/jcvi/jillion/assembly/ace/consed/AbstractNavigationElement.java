@@ -69,7 +69,7 @@ public abstract class AbstractNavigationElement implements NavigationElement{
      * {@link #AbstractNavigationElement(org.jcvi.jillion.assembly.ace.consed.NavigationElement.Type, String, Range, String)
      * new AbstractNavigationElement(type, elementId, ungappedPositionRange, null)}
      * @param type the Type of the element; cannot be null.
-     * @param targetId the id of the target of that is to be navigated.
+     * @param elementId the id of the element of that is to be navigated.
      * @param ungappedPositionRange the ungapped position
      * range of this element; cannot be null.
      * @throws NullPointerException if type, targetId or 

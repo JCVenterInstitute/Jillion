@@ -71,8 +71,6 @@ public final class XmlTraceArchiveInfoFactory {
        
         /**
          * Default Constructor.  
-         * @param inputStream the inputStream where the TraceInfo.xml data resides.
-         * @throws IOException 
          */
         public TraceInfoParser(DefaultTraceArchiveInfo.Builder instance) {
             

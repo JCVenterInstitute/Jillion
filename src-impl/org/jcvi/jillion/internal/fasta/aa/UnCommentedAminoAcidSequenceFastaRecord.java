@@ -107,9 +107,7 @@ public class UnCommentedAminoAcidSequenceFastaRecord implements AminoAcidSequenc
     
     /**
      * 
-    * Gets the entire formatted fasta record as a String,
-    * same as {@link #toFormattedString()}.
-    * @see #toFormattedString()
+    * Gets the entire formatted fasta record as a String.
      */
     @Override
     public final String toString()

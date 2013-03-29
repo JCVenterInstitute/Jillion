@@ -37,7 +37,7 @@ public final class ConsensusNavigationElement extends AbstractNavigationElement{
 
     /**
      * Constructs a new {@link ConsensusNavigationElement}.
-     * @param targetId the id of the target of that is to be navigated.
+     * @param contigId the id of the contig of that is to be navigated.
      * @param ungappedPositionRange the ungapped position
      * range of this element; cannot be null.
      * @param comment a comment that describes why this element exists
@@ -51,7 +51,7 @@ public final class ConsensusNavigationElement extends AbstractNavigationElement{
     }
     /**
      * Constructs a new {@link ConsensusNavigationElement}.
-     * @param targetId the id of the target of that is to be navigated.
+     * @param contigId the id of the contig of that is to be navigated.
      * @param ungappedPositionRange the ungapped position
      * range of this element; cannot be null.
      * @throws NullPointerException if type, targetId or 

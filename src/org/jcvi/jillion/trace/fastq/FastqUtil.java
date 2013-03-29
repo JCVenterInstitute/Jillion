@@ -218,7 +218,7 @@ public final class FastqUtil {
 		/**
 		 * This method will be the most frequently
 		 * one called since most fastq files
-		 * are huge so {@link FastqVisitorCallback#haltParsing()} will get called
+		 * are huge so {@link org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback#haltParsing()} will get called
 		 * 
 		 */
 		@Override
@@ -228,7 +228,7 @@ public final class FastqUtil {
 		/**
 		 * It is possible that the fastq
 		 * file is so small that 
-		 * {@link FastqVisitorCallback#haltParsing()}
+		 * {@link org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback#haltParsing()}
 		 * will not get called.
 		 * 
 		 */

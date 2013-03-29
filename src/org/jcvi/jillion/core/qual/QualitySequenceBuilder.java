@@ -315,7 +315,7 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
      * of this builder's mutable sequence.
      * This is the same as calling 
      * {@link #insert(int, PhredQuality) insert(0,PhredQuality.valueOf(qualityScore))}
-     * @param qualityScore the quality value to
+     * @param qualityScores the quality value to
      * be inserted at the beginning of the sequence.
      * @return this.
      * @throws IllegalArgumentException if qualityScore < 0.

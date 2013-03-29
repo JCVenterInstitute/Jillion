@@ -27,11 +27,12 @@ import java.util.Properties;
 
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 import org.jcvi.jillion.trace.sanger.PositionSequence;
 
 /**
- * {@code LargePhdIterator} is a {@link CloseableIterator}
+ * {@code LargePhdIterator} is a {@link StreamingIterator}
  * implementation that iterates over a phd ball (potentially large)
  * file while parsing it.  This should be the fastest and most
  * memory efficient way to iterate over a phd ball file.

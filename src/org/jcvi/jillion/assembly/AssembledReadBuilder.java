@@ -49,7 +49,7 @@ public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable
      * @param newOffset the new gapped start offset of this read
      * against the new reference in reference coordinate space.
      * @return this.
-     * @throws NulPointerException if reference is null.
+     * @throws NullPointerException if reference is null.
      */
     AssembledReadBuilder<R> reference(NucleotideSequence reference, int newOffset);
     /**

@@ -38,7 +38,6 @@ public final class NucleotideSequenceFastaRecordBuilder extends AbstractFastaRec
 	 * instance that has the given id and sequence.  
 	 * @param id the id of the fasta record can not be null.
 	 * @param sequence the sequence of the fasta record; can not be null.
-	 * @return a new instance, will never be null.
 	 * @throws NullPointerException if either id or sequence are null.
 	 */
 	public NucleotideSequenceFastaRecordBuilder(String id,

@@ -31,18 +31,6 @@ final class DefaultCasColorSpaceAlignmentScore implements CasColorSpaceAlignment
     
     private final int colorSpaceError;
 
-    /**
-     * @param firstInsertion
-     * @param insertionExtension
-     * @param firstDeletion
-     * @param deletionExtension
-     * @param match
-     * @param transition
-     * @param transversion
-     * @param unknown
-     * @param delegate
-     * @param colorSpaceError
-     */
     public DefaultCasColorSpaceAlignmentScore(CasAlignmentScore delegate, int colorSpaceError) {
         this.delegate = delegate;
         this.colorSpaceError = colorSpaceError;

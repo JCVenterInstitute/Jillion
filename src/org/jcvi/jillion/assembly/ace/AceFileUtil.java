@@ -65,7 +65,6 @@ public final class AceFileUtil {
      * high quality bases are represented by uppercase
      * letters and low quality by lowercase letters.
      * Currently that value is set to 26.
-     * @return a {@link PhredQuality} object for quality 26.
      */
     public static final PhredQuality ACE_DEFAULT_HIGH_QUALITY_THRESHOLD = PhredQuality.valueOf(26);
     /**
@@ -141,7 +140,7 @@ public final class AceFileUtil {
         return convertToAcePaddedBasecalls(basecalls,null);
      }
     /**
-     * Convert a {@link List} of {@link Nucleotides} into a string
+     * Convert a {@link NucleotideSequence} into a string
      * where the gaps are represented by '*'s like ace files require.
      * If the optional qualities list is provided, then the returned 
      * String will return a basecalls in both upper and lowercase

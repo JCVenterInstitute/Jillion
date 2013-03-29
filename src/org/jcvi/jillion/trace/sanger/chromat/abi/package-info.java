@@ -27,8 +27,8 @@
  * of the ABI PRISM 377 DNA Sequencer" which paritally reverse engineered
  * the Applied Biosystems 377 DNA Sequencer AB1 file format.
  * @author dkatzel
- * @see <a href = "http://www-2.cs.cmu.edu/afs/cs/project/genome/WWW/Papers/clark.html"
- * Raw Data File Formats and the Digital and Analog Raw Data Streams
- * of the ABI PRISM 377 DNA Sequencer</a>
+ * @see <a href = "http://www-2.cs.cmu.edu/afs/cs/project/genome/WWW/Papers/clark.html">
+  Raw Data File Formats and the Digital and Analog Raw Data Streams
+  of the ABI PRISM 377 DNA Sequencer</a>
  */
 package org.jcvi.jillion.trace.sanger.chromat.abi;

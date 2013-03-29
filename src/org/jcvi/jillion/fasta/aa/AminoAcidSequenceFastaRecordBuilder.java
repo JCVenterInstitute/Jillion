@@ -38,7 +38,7 @@ public final class AminoAcidSequenceFastaRecordBuilder extends AbstractFastaReco
 	/**
 	 * Convenience constructor that converts a String into
 	 * a {@link AminoAcidSequence}.  This is the same
-	 * as {@link #AminoAcidSequenceBuilder(String, AminoAcidSequence)
+	 * as {@link #AminoAcidSequenceFastaRecordBuilder(String, AminoAcidSequence)
 	 * new AminoAcidSequenceBuilder(id, new AminoAcidSequenceBuilder(sequence).build())}.
 	 * @param id the id of the fasta record can not be null.
 	 * @param sequence the amino acid sequence as a string.  May contain whitespace
@@ -58,7 +58,7 @@ public final class AminoAcidSequenceFastaRecordBuilder extends AbstractFastaReco
 	 * instance that has the given id and sequence.  
 	 * @param id the id of the fasta record can not be null.
 	 * @param sequence the sequence of the fasta record; can not be null.
-	 * @return a new instance, will never be null.
+	 *
 	 * @throws NullPointerException if either id or sequence are null.
 	 */
 	public AminoAcidSequenceFastaRecordBuilder(String id,

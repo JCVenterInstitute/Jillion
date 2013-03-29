@@ -59,7 +59,6 @@ public final class ConsensusAceTagBuilder implements Builder<ConsensusAceTag>{
          * @param creationDate
          * @param location
          * @param isTransient
-         * @param data
          */
         public ConsensusAceTagBuilder(String id, String type, String creator,
                 Date creationDate, Rangeable location, boolean isTransient) {

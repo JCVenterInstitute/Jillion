@@ -41,9 +41,9 @@ import java.util.Iterator;
 public interface Sequence<T> extends Iterable<T>{
    
     /**
-     * Gets the specific {@link Symbol} at the specified index.
-     * @param offset the 0-based offset of the {@link Symbol} to get.
-     * @return the {@link Symbol} at the specified index;
+     * Gets the specific element at the specified index.
+     * @param offset the 0-based offset of the element to get.
+     * @return the element at the specified index;
      * will never be null.
      * @throws IndexOutOfBoundsException if the given offset
      * is negative or beyond the last offset in
@@ -51,7 +51,7 @@ public interface Sequence<T> extends Iterable<T>{
      */
     T get(long offset);
     /**
-     * Get the number of {@link Symbol}s that are in
+     * Get the number of elements that are in
      * this sequence.
      * @return the length, will never
      * be less than {@code 0}.
@@ -63,7 +63,7 @@ public interface Sequence<T> extends Iterable<T>{
      * Two sequences should be equal
      * if they are both the same
      * length and contain the same 
-     * {@link Symbol}s in the same order.
+     * elements in the same order.
      */
     @Override
     boolean equals(Object obj);

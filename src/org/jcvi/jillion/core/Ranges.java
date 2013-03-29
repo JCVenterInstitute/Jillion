@@ -72,7 +72,7 @@ public final class Ranges {
      * For example 2 ranges [0-2] and [1-4] could be merged into a single
      * range [0-4].
      * @param rangesToMerge the ranges to be merged together.
-     * @param clusterDistance the maximum distance between the end of one range
+     * @param maxClusterDistance the maximum distance between the end of one range
      * and the start of another in order
      * to be merged.
      * @return a new list of merged Ranges.

@@ -47,7 +47,6 @@ final class DefaultSffCommonHeader implements SffCommonHeader {
      * @param numberOfFlowsPerRead
      * @param flow
      * @param keySequence
-     * @param headerLength
      */
     DefaultSffCommonHeader(BigInteger indexOffset, long indexLength,
             long numberOfReads, int numberOfFlowsPerRead, NucleotideSequence flow,

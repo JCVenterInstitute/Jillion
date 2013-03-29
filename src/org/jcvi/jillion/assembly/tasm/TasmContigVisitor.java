@@ -90,7 +90,7 @@ public interface TasmContigVisitor {
 	 * parsing but has not
 	 * actually finished the parsing this contig,
 	 * this will happen only if 
-	 * a visitor calls {@link TasmContigVisitorCallback#haltParsing()}.
+	 * a visitor calls {@link TasmContigVisitorCallback#halt()}.
 	 */
 	void halted();
 	/**

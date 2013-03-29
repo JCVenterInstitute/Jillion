@@ -32,11 +32,11 @@ import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
 import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.chunk.Chunk;
 import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.chunk.ChunkType;
 import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.data.DeltaEncodedData;
+import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.data.DeltaEncodedData.Level;
 import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.data.FollowData;
 import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.data.RunLengthEncodedData;
 import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.data.ShrinkToEightBitData;
 import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.data.ZLibData;
-import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.data.DeltaEncodedData.Level;
 import org.jcvi.jillion.trace.TraceEncoderException;
 import org.jcvi.jillion.trace.sanger.chromat.Chromatogram;
 import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogram;
@@ -246,7 +246,7 @@ public final class DefaultZTRChromatogramWriterBuilder implements Builder<ZtrChr
 		/**
 		 * Adds a runLength Encoder using the default
 		 * guard value.  This is the same as
-		 * {@link #addRunLengthEncoder(byte), addRunLengthEncoder(RunLengthEncodedData.DEFAULT_GUARD)}
+		 * {@link #addRunLengthEncoder(byte) addRunLengthEncoder(RunLengthEncodedData.DEFAULT_GUARD)}
 		 * @return this
 		 * @see RunLengthEncodedData#DEFAULT_GUARD
 		 * @see #addRunLengthEncoder()

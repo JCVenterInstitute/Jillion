@@ -437,7 +437,7 @@ public final class Well implements Comparable<Well>{
         /**
          * Well order for an Applied Biosystems
          * 3130 machine using 16 capillaries at a time.
-         * Only {@link WellType#_96} is supported.
+         * Only {@link PlateFormat#_96} is supported.
          * <p>
          * Ex: A01, A02, B01, B02,...H02, A03, A04, B03, B04....
          */

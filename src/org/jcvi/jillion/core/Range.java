@@ -98,7 +98,7 @@ import org.jcvi.jillion.internal.core.util.Caches;
  * @author jsitz@jcvi.org
  * 
  * @see CoordinateSystem
- * @see {@link Builder Range.Builder} 
+ * @see #Range.Builder
  * 
  */
 public abstract class Range implements Rangeable,Iterable<Long>
@@ -402,7 +402,7 @@ public abstract class Range implements Rangeable,Iterable<Long>
     /**
      * Factory method to get a {@link Range} object in
      * the {@link CoordinateSystem#ZERO_BASED} coordinate system.
-     * If end == start -1 then this method will return an {@link EmptyRange}.
+     * If end == start -1 then this method will return an empty range.
      * This method is not guaranteed to return new instances and may return
      * a cached instance instead (flyweight pattern).
      * @param start start coordinate inclusive.
@@ -2453,7 +2453,6 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	 * then the begin and end coordinates will be decreased.
     	 * A value of 0 will cause no changes.
     	 * @return this.
-    	 * @see #shiftLeft(long)
     	 */
     	public Builder shift(long units){
     		begin+=units;

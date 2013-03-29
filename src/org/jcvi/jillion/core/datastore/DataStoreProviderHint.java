@@ -110,8 +110,11 @@ public enum DataStoreProviderHint{
 	 * may be so expensive,
 	 * it is recommended that instances of that use 
 	 * this hint
-	 * are wrapped by a {@link CachedDataStore}
+	 * are wrapped by a cached datastore using
+	 * {@link DataStoreUtil#createNewCachedDataStore(Class, DataStore, int)}
 	 * if random access will be used.
+	 * 
+	 * @see DataStoreUtil#createNewCachedDataStore(Class, DataStore, int) }
 	 */
 	ITERATION_ONLY
 	;

@@ -58,10 +58,9 @@ public interface AceFileVisitor {
      * which indicate reads phrap has chosen to be the consensus
      * at a particular position.
      * @param reverseComplemented is this contig reverse complemented
-     * @return a non-null instance of {@link BeginContigReturnCode}
-     * which will tell the parser how to proceed with the current contig.
-     * If the returned value is null, then the parser will throw
-     * a {@link NullPointerException}.
+     * @return an instance of {@link AceContigVisitor} which will
+     * get its visitXXX methods called for this particular contig;
+     * or {@code null} if this contig should be skipped.
      */
     AceContigVisitor visitContig(AceFileVisitorCallback callback, String contigId, int numberOfBases, int numberOfReads, int numberOfBaseSegments, boolean reverseComplemented);
     
@@ -110,8 +109,13 @@ public interface AceFileVisitor {
      * multiple lines depending on what the tag is for.
      */
     void visitWholeAssemblyTag(String type, String creator, Date creationDate, String data);
-    
+    /**
+     * The end of the ace file as been reached.
+     */
     void visitEnd();
-    
+    /**
+     * Visiting the ace has been prematurely halted
+     * probably by a call to {@link AceFileVisitorCallback#haltParsing()}.
+     */
     void halted();
 }

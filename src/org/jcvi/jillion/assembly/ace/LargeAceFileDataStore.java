@@ -55,7 +55,7 @@ import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterato
  * entire lifetime of the instance.
  * It is recommended that instances are wrapped
  * in  a cached datastore using
- * {@link DataStoreUtil#createNewCachedDataStore(Class, org.jcvi.common.core.datastore.DataStore, int)}.
+ * {@link DataStoreUtil#createNewCachedDataStore(Class, org.jcvi.jillion.core.datastore.DataStore, int)}.
  * @author dkatzel
  *
  */

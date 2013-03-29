@@ -29,7 +29,7 @@ import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.util.MapUtil;
 
 /**
- * {@code AminoAcid} is a {@link Symbol} representation 
+ * {@code AminoAcid} is a {@link Residue} representation 
  * of the 20 Amino Acids that are encoded by genetic code.
  * A Gap has also been included to support gapped
  * amino acid sequences.
@@ -87,7 +87,7 @@ public enum AminoAcid implements Residue{
     /**
      * Get the AminoAcid which is represented by the given single character
      * abbreviation.  This is the same as {@link #parse(String)} parse(aminoAcidAbbreviation.toString()
-     * @param aminoAcid the single character abbreviation of a aminoAcid.
+     * @param aminoAcidAbbreviation the single character abbreviation of a aminoAcid.
      * @return an {@link AminoAcid} (not null).
      * @throws NullPointerException if aminoAcidAbbreviation is null.
      * @throws IllegalArgumentException if the given abbreviation is not
@@ -125,7 +125,7 @@ public enum AminoAcid implements Residue{
     }
     
     /**
-     * Returns this glyph as a single character String.  For example {@link #Adenine} 
+     * Returns this glyph as a single character String.  For example {@link #Alanine} 
      * will return "A".
      */
     @Override

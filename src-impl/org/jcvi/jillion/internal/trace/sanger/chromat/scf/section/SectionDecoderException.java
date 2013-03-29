@@ -50,7 +50,6 @@ public class SectionDecoderException extends ScfDecoderException {
     }
     /**
      * @param message
-     * @param cause
      */
     public SectionDecoderException(String message) {
         super(message);

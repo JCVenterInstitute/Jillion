@@ -80,7 +80,7 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
     /**
      * Create a new {@link FileIteratorBuilder} instance that will create
      * a file iterator that will only iterate files in the given directory
-     * @param rootDir the directory iterate.
+     * @param dir the directory iterate.
      * @return a new FileIteratorBuilder instance (will never be null)
      */
     public static FileIteratorBuilder createNonRecursiveFileIteratorBuilder(File dir){

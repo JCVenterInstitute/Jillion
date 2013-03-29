@@ -57,7 +57,7 @@ public interface FastqRecordWriter extends Closeable{
 	 * and {@link QualitySequence}
 	 * out as a {@link FastqRecord} along with the optional comment.
 	 * @param id the id of the record to be written.
-	 * @param nucleotides the {@link NucleotideSequence} to be written.
+	 * @param sequence the {@link NucleotideSequence} to be written.
 	 * @param qualities the {@link QualitySequence} to be written.
 	 * @param optionalComment comment to write, if this value is null,
 	 * then no comment will be written.

@@ -49,8 +49,6 @@ import org.jcvi.jillion.core.util.MapUtil;
  * policy (LRU) some implementations use {@link SoftReference}s or {@link WeakReference}s
  * to avoid memory leaks.  
  * 
- * @param <K> The key type.
- * @param <V> The value Type.
  * 
  * @author dkatzel
  * @author jsitz@jcvi.org
@@ -75,8 +73,6 @@ public final class Caches
      * in the map until capacity is exceeded.
      * @param <K> the (strongly reference) key type
      * @param <V> the (strongly reference) value type
-     * @param maxSize the max size of this cache before it should start removing
-     * the least recently used.
      * @return a new Map instance with default capacity {@value #DEFAULT_CAPACITY}.
      */
     public static <K,V> Map<K,V> createLRUCache(){
@@ -264,8 +260,6 @@ public final class Caches
      * </ol> 
      * @param <K> the (strongly reference) key type
      * @param <V> the softly referenced value type
-     * @param maxSize the max size of this cache before it should start removing
-     * the least recently used.
      * @return a new Map instance with default capacity
      */
     public static <K,V> Map<K,V> createWeakReferencedValueCache(){
@@ -340,8 +334,8 @@ public final class Caches
         private final ReferenceQueue<V> referenceQueue = new ReferenceQueue<V>();
         private final Map<Reference<? extends V>, K> referenceKeyMap;
         /**
+         * @param map
          * @param initialCapacity
-         * @param loadFactor
          */
         AbstractReferencedCache(Map<K,R> map, int initialCapacity) {
             cache = map;
@@ -493,8 +487,7 @@ public final class Caches
        
        
         /**
-         * @param maxAllowedSize
-         * @param loadFactor
+         * @param initialCapacity
          */
         public SoftReferenceCache(int initialCapacity) {
         	super(Caches.<K,SoftReference<V>>createNonLRUMap(initialCapacity), initialCapacity);
@@ -522,8 +515,7 @@ public final class Caches
        
        
         /**
-         * @param maxAllowedSize
-         * @param loadFactor
+         * @param maxSize
          */
         public SoftReferenceLRUCache(int maxSize) {
           super(
@@ -555,8 +547,7 @@ public final class Caches
         
         
         /**
-         * @param maxAllowedSize
-         * @param loadFactor
+         * @param maxSize
          */
         public WeakReferenceLRUCache(int maxSize) {
             super(new LRUCache<K,WeakReference<V>>(maxSize, DEFAULT_LOAD_FACTOR), maxSize);
@@ -583,8 +574,7 @@ public final class Caches
         
         
         /**
-         * @param maxAllowedSize
-         * @param loadFactor
+         * @param maxSize
          */
         public WeakReferenceCache(int maxSize) {
         	super(Caches.<K,WeakReference<V>>createNonLRUMap(maxSize), maxSize);

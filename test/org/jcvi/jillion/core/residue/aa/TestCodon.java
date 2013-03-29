@@ -20,19 +20,18 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.jcvi.jillion.core.residue.aa.Codon;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
@@ -74,12 +73,7 @@ public class TestCodon {
         }
     
     
-    /**
-     * @param expectedBasecalls
-     * @param expectedAminoAcid
-     * @param isStartCodon
-     * @param isStopCodon
-     */
+ 
     public TestCodon(Codon sut,List<Nucleotide> actualBases,
             AminoAcid expectedAminoAcid, boolean isStartCodon,
             boolean isStopCodon) {

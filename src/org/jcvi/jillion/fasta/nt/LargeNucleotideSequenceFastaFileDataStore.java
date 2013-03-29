@@ -43,7 +43,7 @@ import org.jcvi.jillion.internal.fasta.AbstractLargeFastaFileDataStore;
  * This means that each get() or contain() requires re-parsing the fasta file
  * which can take some time.  It is recommended that instances are wrapped
  * in  a cached datastore using
- * {@link DataStoreUtil#createNewCachedDataStore(Class, org.jcvi.common.core.datastore.DataStore, int)}.
+ * {@link DataStoreUtil#createNewCachedDataStore(Class, org.jcvi.jillion.core.datastore.DataStore, int)}.
  * @author dkatzel
  */
 final class LargeNucleotideSequenceFastaFileDataStore extends AbstractLargeFastaFileDataStore<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord> implements NucleotideSequenceFastaDataStore{
@@ -51,7 +51,6 @@ final class LargeNucleotideSequenceFastaFileDataStore extends AbstractLargeFasta
      * Construct a {@link LargeNucleotideSequenceFastaFileDataStore}
      * for the given Fasta file.
      * @param fastaFile the Fasta File to use, can not be null.
-     * @param fastaRecordFactory the NucleotideFastaRecordFactory implementation to use.
      * @throws NullPointerException if fastaFile is null.
      */
 	public static NucleotideSequenceFastaDataStore create(File fastaFile){
@@ -61,7 +60,6 @@ final class LargeNucleotideSequenceFastaFileDataStore extends AbstractLargeFasta
      * Construct a {@link LargeNucleotideSequenceFastaFileDataStore}
      * for the given Fasta file.
      * @param fastaFile the Fasta File to use, can not be null.
-     * @param fastaRecordFactory the NucleotideFastaRecordFactory implementation to use.
      * @throws NullPointerException if fastaFile is null.
      */
 	public static NucleotideSequenceFastaDataStore create(File fastaFile, DataStoreFilter filter){

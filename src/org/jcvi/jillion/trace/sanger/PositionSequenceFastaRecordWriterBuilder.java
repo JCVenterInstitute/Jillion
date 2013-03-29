@@ -29,17 +29,7 @@ import org.jcvi.jillion.internal.fasta.AbstractFastaRecordWriter;
 import org.jcvi.jillion.internal.fasta.AbstractFastaRecordWriter.AbstractBuilder;
 
 public final class PositionSequenceFastaRecordWriterBuilder extends AbstractBuilder<Position, PositionSequence, PositionSequenceFastaRecord, PositionSequenceFastaRecordWriter> {
-		/**
-		 * Create a new Builder that will use
-		 * the given {@link OutputStream} to write
-		 * out the fasta records.
-		 * @param out the {@link OutputStream} to use;
-		 * can not be null.
-		 * @throws NullPointerException if out is null.
-		 */
-		public PositionSequenceFastaRecordWriterBuilder(File outputFile) throws FileNotFoundException {
-			super(outputFile);
-		}
+		
 		/**
 		 * Create a new Builder that will use
 		 * the given File to write
@@ -53,6 +43,17 @@ public final class PositionSequenceFastaRecordWriterBuilder extends AbstractBuil
 		 * is a directory rather than a regular file, 
 		 * does not exist but cannot be created, 
 		 * or cannot be opened for any other reason.
+		 */
+		public PositionSequenceFastaRecordWriterBuilder(File outputFile) throws FileNotFoundException {
+			super(outputFile);
+		}
+		/**
+		 * Create a new Builder that will use
+		 * the given {@link OutputStream} to write
+		 * out the fasta records.
+		 * @param out the {@link OutputStream} to use;
+		 * can not be null.
+		 * @throws NullPointerException if out is null.
 		 */
 		public PositionSequenceFastaRecordWriterBuilder(OutputStream out) {
 			super(out);

@@ -28,7 +28,7 @@ import org.jcvi.jillion.assembly.asm.AsmVisitor.LinkOrientation;
  * that contains more than one contig.
  * 
  * @author dkatzel
- * @see AsmVisitor#visitScaffold(AsmVisitorCallback, String, long, int).
+ * @see AsmVisitor#visitScaffold(AsmVisitorCallback, String, long, int)
  * 
  */
 public interface AsmScaffoldVisitor {

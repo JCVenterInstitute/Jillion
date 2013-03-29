@@ -30,9 +30,6 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
 public class QualitySequenceExample {
 
-	/**
-	 * @param args
-	 */
 	@Test
 	public void test(){
 		QualitySequence quals = new QualitySequenceBuilder(new byte[]{20,30,40,40,50,60})

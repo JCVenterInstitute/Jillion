@@ -155,8 +155,6 @@ public final class DataStoreUtil {
      * @param datastoreInterface the interface to proxy;
      * can not be null.
      * @param delegate the original {@link DataStore} to adapt into a different type of {@link DataStore}.
-     * @return a new DataStore instance which implements the given datastoreInterface;
-     * can not be null.
      * @throws NullPointerException if datastoreInterface is null, delegate is null.
      * @return a new DataStore instance which implements the given datastoreInterface and contains
      * the records in the input DataStore.
@@ -239,8 +237,6 @@ public final class DataStoreUtil {
      * if the given interface has extension methods that do
      * not exist in the given delegated DataStore, then trying to call
      * those methods will throw an illegalArgumentException.
-     * @param datastoreInterface the interface to proxy;
-     * can not be null.
      * @param datastores the datastores to chain together; can not be null or empty.
      * @param <T> the type of record both the input and output dataStores.
      * @param <D> the type of DataStore to return (created using a dynamic proxy)

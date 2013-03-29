@@ -41,9 +41,10 @@ import org.jcvi.jillion.trace.sanger.chromat.Chromatogram;
 
 
 /**
- * <code>Chromatgoram</code> is an implementation
- * of {@link Trace} which is used to reference Sanger
- * Chromatograms.
+ * <code>BasicChromatogram</code> is an implementation
+ * of {@link Chromatogram} that contains all the common base attributes
+ * of a Chroamtogram object.  Subclasses may extend this class to add additional
+ * format specific methods.
  * @author dkatzel
  *
  *

@@ -38,7 +38,7 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
      * Get a List of all the offsets into this
      * sequence which are gaps.  This list SHOULD be
      * sorted by offset in ascending order.  The size of the returned list should be
-     * the same as the value returned by {@link #getNumberOfGaps()}.
+     * the same as the value returned by {@link #getNumberOfGaps(byte[])}.
      * @return a List of gap offsets as Integers.
      */
     List<Integer> getGapOffsets(byte[] encodedData);    
@@ -71,7 +71,7 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
     /**
      * Get the ungapped offset equivalent of the 
      * given gapped offset.
-     * @param encodedGlyphs the encoded bytes which contain
+     * @param encodedData the encoded bytes which contain
      * all the nucleotides.
      * @param gappedOffset the gapped offset to use 
      * to compute the ungapped offset.
@@ -82,7 +82,7 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
     /**
      * Get the gapped offset equivalent of the 
      * given ungapped offset.
-     * @param encodedGlyphs the encoded bytes which contain
+     * @param encodedData the encoded bytes which contain
      * all the nucleotides.
      * @param ungappedOffset the ungapped offset to use 
      * to compute the gapped offset.

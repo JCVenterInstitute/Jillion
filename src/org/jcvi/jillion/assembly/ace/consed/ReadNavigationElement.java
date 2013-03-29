@@ -37,7 +37,7 @@ public class ReadNavigationElement extends AbstractNavigationElement{
 
     /**
      * Constructs a new {@link ReadNavigationElement}.
-     * @param targetId the id of the target of that is to be navigated.
+     * @param readId the id of the target of that is to be navigated.
      * @param ungappedPositionRange the ungapped position
      * range of this element; cannot be null.
      * @param comment a comment that describes why this element exists
@@ -51,7 +51,7 @@ public class ReadNavigationElement extends AbstractNavigationElement{
     }
     /**
      * Constructs a new {@link ReadNavigationElement}.
-     * @param targetId the id of the target of that is to be navigated.
+     * @param readId the id of the target of that is to be navigated.
      * @param ungappedPositionRange the ungapped position
      * range of this element; cannot be null.
      * @throws NullPointerException if type, targetId or 
@@ -70,7 +70,7 @@ public class ReadNavigationElement extends AbstractNavigationElement{
      * buildReadNavigationElementFrom(read, gappedFeatureValidRange, fullLength,null)}
      * @param read the read to make a {@link ReadNavigationElement}
      * for; cannot be null.
-     * @param gappedFeatureRange the gapped feature range coordinates; cannot be null.
+     * @param gappedFeatureValidRange the gapped feature range coordinates; cannot be null.
      * @return a new ReadNavigationElement.
      * @see #buildReadNavigationElement(AssembledRead, Range, int,String)
      */
@@ -86,7 +86,7 @@ public class ReadNavigationElement extends AbstractNavigationElement{
      * range into an ungapped range and reverse complementing required by the consed.
      * @param read the read to make a {@link ReadNavigationElement}
      * for; cannot be null.
-     * @param gappedFeatureRange the gapped feature range coordinates; cannot be null.
+     * @param gappedFeatureValidRange the gapped feature range coordinates; cannot be null.
      * @param comment a comment that describes why this element exists
      * (may be null).
      * @return a new ReadNavigationElement.

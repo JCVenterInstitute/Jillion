@@ -25,6 +25,7 @@
  */
 package org.jcvi.jillion.core.util;
 import java.util.Deque;
+import java.util.Queue;
 
 import org.jcvi.jillion.internal.core.util.AbstractFOQueue;
 

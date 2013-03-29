@@ -30,7 +30,7 @@ import org.jcvi.jillion.core.util.FIFOQueue;
 /**
  * {@code TextLineParser} can read lines from on {@link InputStream}.  The main
  * difference between TextLineParser and other similar JDK classes is TextLineParser
- * will include the end of line characters in the {@link #getNextLine()}
+ * will include the end of line characters in the {@link #nextLine()}
  * methods.  Most JDK classes chop off these characters and the few classes
  * that could could be configured to include these characters are slow.
  * This class considers a line to be terminated by either '\n',
@@ -109,7 +109,7 @@ public final class TextLineParser implements Closeable{
 	
 	/**
 	 * Get the number of bytes returned by
-	 * {@link #getNextLine()} so far.
+	 * {@link #nextLine()} so far.
 	 * The value returned is not affected
 	 * by how much looking ahead or 
 	 * buffering has been done to the

@@ -136,7 +136,7 @@ public enum DeltaEncodedData implements Data {
         return 0;
     }
     /**
-     * Same as {@link #encodeData(byte[], byte), encodeData(data,DEFAULT_LEVEL)}
+     * Same as {@link #encodeData(byte[], byte) encodeData(data,DEFAULT_LEVEL)}
      * @see #encodeData(byte[], byte)
      */
 	@Override

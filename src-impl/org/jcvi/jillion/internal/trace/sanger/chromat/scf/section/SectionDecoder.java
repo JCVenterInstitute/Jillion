@@ -30,6 +30,7 @@ import java.io.DataInputStream;
 import org.jcvi.jillion.internal.trace.sanger.chromat.scf.header.DefaultSCFHeader;
 import org.jcvi.jillion.internal.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.jillion.trace.sanger.chromat.ChromatogramFileVisitor;
+import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogram;
 import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 /**
  * <code>SectionDecoder</code> is an interface that parses
