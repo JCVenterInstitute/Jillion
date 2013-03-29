@@ -20,12 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace;
 
-import org.jcvi.jillion.trace.archive2.AllTraceArchive2UnitTests;
 import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
 import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
 import org.jcvi.jillion.trace.sanger.AllSangerTraceUnitTests;
 import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.jcvi.jillion_experimental.trace.archive.AllTraceArchiveUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -39,9 +37,7 @@ import org.junit.runners.Suite.SuiteClasses;
         AllFastqUnitTests.class,
         AllSFFUnitTests.class,
         AllSangerTraceUnitTests.class,
-        AllFrgUnitTests.class  ,
-        AllTraceArchiveUnitTests.class,
-        AllTraceArchive2UnitTests.class
+        AllFrgUnitTests.class
         
    
     }

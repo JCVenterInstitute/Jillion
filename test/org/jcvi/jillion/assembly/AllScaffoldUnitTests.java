@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly;
 
-import org.jcvi.jillion.assembly.agp.AllAgpUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -28,9 +27,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {  
-     TestDefaultScaffold.class,
-     
-     AllAgpUnitTests.class
+     TestDefaultScaffold.class
     }
     )
 public class AllScaffoldUnitTests {

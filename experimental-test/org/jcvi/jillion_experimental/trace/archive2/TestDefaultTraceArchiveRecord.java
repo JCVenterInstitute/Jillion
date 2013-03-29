@@ -23,7 +23,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.trace.archive2;
+package org.jcvi.jillion_experimental.trace.archive2;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,9 +31,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jcvi.jillion.core.testUtil.TestUtil;
-import org.jcvi.jillion.trace.archive2.DefaultTraceArchiveRecord;
-import org.jcvi.jillion.trace.archive2.TraceArchiveRecord;
-import org.jcvi.jillion.trace.archive2.TraceInfoField;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultTraceArchiveRecord {

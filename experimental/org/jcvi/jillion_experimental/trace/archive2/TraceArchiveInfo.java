@@ -18,7 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace.archive2;
+package org.jcvi.jillion_experimental.trace.archive2;
 
 import java.util.List;
 import java.util.Map;
