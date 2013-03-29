@@ -154,8 +154,6 @@ public abstract class Range implements Rangeable,Iterable<Long>
          * In the case of two ranges having identical start coordinates, the one
          * with the lower end coordinate (the shorter range) will be ranked lower.
          * 
-         * @author jsitz@jcvi.org
-         * @author dkatzel
          */
         ARRIVAL{
             @Override
@@ -189,8 +187,6 @@ public abstract class Range implements Rangeable,Iterable<Long>
          * In the case of two ranges having identical end coordinates, the one
          * with the lower start coordinate (the longer range) will be ranked lower.
          * 
-         * @author jsitz@jcvi.org
-         * @author dkatzel
          */
         DEPARTURE{
             @Override
@@ -222,7 +218,6 @@ public abstract class Range implements Rangeable,Iterable<Long>
          * Compares Ranges by length
          * and orders them longest to shortest. Ranges
          * of the same length are considered equal.
-         * @author dkatzel
          */
         LONGEST_TO_SHORTEST{
 
@@ -237,7 +232,6 @@ public abstract class Range implements Rangeable,Iterable<Long>
          * and orders them shortest to longest.
          * Ranges
          * of the same length are considered equal.
-         * @author dkatzel
          */
         SHORTEST_TO_LONGEST{
 
