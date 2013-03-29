@@ -18,7 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace.archive2;
+package org.jcvi.jillion_experimental.trace.archive2;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
@@ -38,16 +38,10 @@ import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.jcvi.jillion.trace.archive2.TraceArchiveInfo;
-import org.jcvi.jillion.trace.archive2.TraceArchiveRecord;
-import org.jcvi.jillion.trace.archive2.TraceArchiveRecordBuilder;
-import org.jcvi.jillion.trace.archive2.TraceArchiveWriter;
-import org.jcvi.jillion.trace.archive2.TraceInfoField;
-import org.jcvi.jillion.trace.archive2.XmlTraceArchiveInfoFactory;
-import org.jcvi.jillion.trace.archive2.TraceArchiveWriter.TraceArchiveRecordCallback;
-import org.jcvi.jillion.trace.archive2.TraceArchiveWriter.TraceArchiveRecordDataException;
 import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogram;
 import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
+import org.jcvi.jillion_experimental.trace.archive2.TraceArchiveWriter.TraceArchiveRecordCallback;
+import org.jcvi.jillion_experimental.trace.archive2.TraceArchiveWriter.TraceArchiveRecordDataException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

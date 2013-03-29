@@ -23,7 +23,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.agp;
+package org.jcvi.jillion_experimental.assembly.agp;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

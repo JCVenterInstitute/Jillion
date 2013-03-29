@@ -18,16 +18,12 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace.archive2;
+package org.jcvi.jillion_experimental.trace.archive2;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.jcvi.jillion.trace.archive2.TraceArchiveInfo;
-import org.jcvi.jillion.trace.archive2.TraceArchiveRecord;
-import org.jcvi.jillion.trace.archive2.TraceInfoField;
-import org.jcvi.jillion.trace.archive2.XmlTraceArchiveInfoFactory;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestXmlTraceInfoFactory {

@@ -23,7 +23,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.agp;
+package org.jcvi.jillion_experimental.assembly.agp;
 
 import java.io.IOException;
 

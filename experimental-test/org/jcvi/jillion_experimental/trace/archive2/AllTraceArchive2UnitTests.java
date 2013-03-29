@@ -18,29 +18,26 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace.archive2;
+/*
+ * Created on Jun 26, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion_experimental.trace.archive2;
 
-import java.util.Map;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
-import org.jcvi.jillion.core.util.Builder;
-
-
-public interface TraceArchiveRecordBuilder extends Builder<TraceArchiveRecord>{
-
-	/**
-	 * Puts an attribute with the given key and value.  If 
-	 * an attribute already exists with the given
-	 * key, it will be overwritten with the new value.
-	 * @param key the key to add.
-	 * @param value the value associated with the given key.
-	 * @return {@code this}
-	 */
-	TraceArchiveRecordBuilder put(TraceInfoField traceInfoField, String value);
-
-	TraceArchiveRecordBuilder putExtendedData(String key, String value);
-
-	TraceArchiveRecordBuilder putAll(Map<TraceInfoField, String> map);
-	@Override
-	TraceArchiveRecord build();
+@RunWith(Suite.class)
+@SuiteClasses(
+    {
+        TestDefaultTraceArchiveRecord.class,
+        TestDefaultTraceArchiveRecordBuilder.class,
+        TestXmlTraceInfoFactory.class,
+        TestTraceArchiveWriter.class
+    }
+    )
+public class AllTraceArchive2UnitTests {
 
 }
