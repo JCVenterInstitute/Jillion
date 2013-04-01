@@ -29,6 +29,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
@@ -37,11 +38,12 @@ import org.junit.Test;
 public class TestRunLengthEncodedGlyphCodec {
 
     static private byte guard = Byte.valueOf((byte)70);
+
+	private static final byte[] QUALITY_BYTES = new byte[]{10,20,30,40,40,40,40,40,40,50,6,guard,12,15,guard,guard,30};
     
     RunLengthEncodedQualityCodec sut = new RunLengthEncodedQualityCodec(guard);
     
-    static List<PhredQuality> decodedValues = PhredQuality.valueOf(
-            new byte[]{10,20,30,40,40,40,40,40,40,50,6,guard,12,15,guard,guard,30});
+    static List<PhredQuality> decodedValues = asList(QUALITY_BYTES);
     static byte[] expected;
     
     @BeforeClass
@@ -53,7 +55,7 @@ public class TestRunLengthEncodedGlyphCodec {
         final int expectedSize = 6+ numberOfNonRepeatedValues + 
                                 (numberOfGuards *2) +  (numberOfRepeatedValues *3);
         ByteBuffer buf = ByteBuffer.allocate(expectedSize);
-        buf.putInt(decodedValues.size());
+        buf.putInt(QUALITY_BYTES.length);
         buf.put(guard);
         buf.put((byte)ValueSizeStrategy.BYTE.ordinal());
         buf.put((byte)10);
@@ -93,5 +95,13 @@ public class TestRunLengthEncodedGlyphCodec {
         for(int i=0; i< decodedValues.size(); i++){
             assertEquals(Integer.toString(i),decodedValues.get(i), sut.decode(expected, i));
         }
+    }
+    
+    public static List<PhredQuality> asList(byte[] bytes){
+        List<PhredQuality> list = new ArrayList<PhredQuality>(bytes.length);
+        for(int i=0; i<bytes.length; i++){
+            list.add(PhredQuality.valueOf(bytes[i]));
+        }
+        return list;
     }
 }
