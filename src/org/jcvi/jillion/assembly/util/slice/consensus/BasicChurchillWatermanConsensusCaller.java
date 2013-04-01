@@ -44,9 +44,9 @@ public class BasicChurchillWatermanConsensusCaller extends AbstractChurchillWate
 
     @Override
     protected Nucleotide getConsensus(
-            ConsensusProbabilities normalizedErrorProbabilityStruct,
+            ConsensusProbabilities normalizedConsensusProbabilities,
             Slice slice) {
-        final Set<Nucleotide> basesUsedTowardsAmbiguity = getBasesUsedTowardsAmbiguity(normalizedErrorProbabilityStruct,
+        final Set<Nucleotide> basesUsedTowardsAmbiguity = getBasesUsedTowardsAmbiguity(normalizedConsensusProbabilities,
                         MAX_NUMBER_OF_BASES_TOWARDS_AMBIGUITY);
         return Nucleotide.getAmbiguityFor(basesUsedTowardsAmbiguity);
         

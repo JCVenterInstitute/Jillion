@@ -25,20 +25,22 @@
  */
 package org.jcvi.jillion.internal.trace.sanger.chromat.ztr.chunk;
 
+
+import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertArrayEquals;
+
 import java.nio.ByteBuffer;
 
-import org.jcvi.jillion.internal.trace.sanger.chromat.DefaultChannel;
-import org.jcvi.jillion.internal.trace.sanger.chromat.DefaultChannelGroup;
-import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.chunk.Chunk;
+import org.easymock.EasyMockSupport;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.TraceEncoderException;
+import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;
+import org.jcvi.jillion.trace.sanger.chromat.Channel;
 import org.jcvi.jillion.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogram;
 import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
-public class TestSMP4Chunk {
+public class TestSMP4Chunk extends EasyMockSupport{
 
     private static short[] aTraces = new short[]{0,0,2,4,5,3,2,0,0,0,1};
     private static short[] cTraces = new short[]{7,5,2,0,1,0,2,1,1,0,1};
@@ -80,17 +82,37 @@ public class TestSMP4Chunk {
     @Test
     public void encode() throws TraceEncoderException{
     	ZtrChromatogram mockChromatogram = createMock(ZtrChromatogram.class);
-    	ChannelGroup channelGroup = new DefaultChannelGroup(
-    			new DefaultChannel(new byte[0],aTraces), 
-    			new DefaultChannel(new byte[0],cTraces), 
-    			new DefaultChannel(new byte[0],gTraces), 
-    			new DefaultChannel(new byte[0],tTraces));
+    	ChannelGroup channelGroup = createMockChannelGroup();
+    	
     	expect(mockChromatogram.getNumberOfTracePositions()).andReturn(aTraces.length);
     	expect(mockChromatogram.getChannelGroup()).andReturn(channelGroup);
-    	replay(mockChromatogram);
+    	replayAll();
     	byte[] actual =sut.encodeChunk(mockChromatogram);
     	assertArrayEquals(encodedBytes, actual);
-    	verify(mockChromatogram);
+    	verifyAll();
     
+    }
+    
+    private ChannelGroup createMockChannelGroup(){
+    	ChannelGroup channelGroup = createMock(ChannelGroup.class);
+    	
+    	final Channel aChannel = createMock(Channel.class);
+    	expect(aChannel.getPositions()).andStubReturn(new PositionSequenceBuilder(aTraces).build());
+    	
+    	final Channel cChannel = createMock(Channel.class);
+    	expect(cChannel.getPositions()).andStubReturn(new PositionSequenceBuilder(cTraces).build());
+    	
+    	final Channel gChannel = createMock(Channel.class);
+    	expect(gChannel.getPositions()).andStubReturn(new PositionSequenceBuilder(gTraces).build());
+    	
+    	final Channel tChannel = createMock(Channel.class);
+    	expect(tChannel.getPositions()).andStubReturn(new PositionSequenceBuilder(tTraces).build());
+    	
+    	expect(channelGroup.getAChannel()).andStubReturn(aChannel);
+    	expect(channelGroup.getCChannel()).andStubReturn(cChannel);
+    	expect(channelGroup.getGChannel()).andStubReturn(gChannel);
+    	expect(channelGroup.getTChannel()).andStubReturn(tChannel);
+
+    	return channelGroup;
     }
 }

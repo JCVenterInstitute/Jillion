@@ -241,10 +241,15 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		/**
 		 * Create a new instance of a {@link FastaRecordWriter}
 		 * with the given non-null parameters.
-		 * @param out
-		 * @param numberOfResiduesPerLine
-		 * @param charSet
-		 * @return
+		 * @param out the OutputStream that the new writer will use
+		 * to output the fasta data; will never be null.
+		 * @param numberOfResiduesPerLine the number of residues per line 
+		 * that should be written to the file.  If a sequence length
+		 * is more than this number, then the sequence should be split
+		 * over several lines, each line never exceeding this value.
+		 * @param charSet the {@link Charset} to encode the output to,
+		 * usually UTF-8.
+		 * @return a new {@link FastaRecordWriter}; can not be null.
 		 */
 		protected abstract W create(OutputStream out, int numberOfResiduesPerLine, Charset charSet);
 	}

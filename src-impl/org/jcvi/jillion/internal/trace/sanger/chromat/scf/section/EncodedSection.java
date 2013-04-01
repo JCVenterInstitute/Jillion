@@ -30,10 +30,7 @@ import java.nio.ByteBuffer;
 public class EncodedSection {
     private final ByteBuffer data;
     private final Section section;
-    /**
-     * @param data
-     * @param section
-     */
+    
     public EncodedSection(ByteBuffer data, Section section) {
         this.data = data;
         this.section = section;

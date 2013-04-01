@@ -39,7 +39,7 @@ public interface ScanRate {
     /**
      * The scan line of the first line 
      * of a new rate.
-     * @return
+     * @return the scan line as an int.
      */
     int getFirstScanLine();
 }

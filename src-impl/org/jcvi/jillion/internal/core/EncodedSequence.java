@@ -54,16 +54,21 @@ public class  EncodedSequence<T> implements Sequence<T> {
     /**
      * Convenience constructor.  This is
      * the same as calling 
-     * <code>new DefaultEncodedGlyphs(codec, codec.encode(glyphsToEncode));</code>
-     * @param codec
-     * @param glyphsToEncode
+     * <code>new EncodedSequence(codec, codec.encode(glyphsToEncode));</code>
+     * @param codec codec the {@link GlyphCodec} to use to encode/decode
+     * the sequence data.
+     * @param glyphsToEncode the glyphs to be encoded by this GlyphCodec.
+     * @throws NullPointerException if codec is null.
      */
     public EncodedSequence(GlyphCodec<T> codec, Collection<T> glyphsToEncode) {
         this(codec, codec.encode(glyphsToEncode));
     }
     /**
-     * @param codec
-     * @param data
+     * Create a new EncodedSequence instance.
+     * @param codec the {@link GlyphCodec} to use to encode/decode
+     * the sequence data.
+     * @param data the encoded data for this sequence that has already
+     * been encoded by the same {@link GlyphCodec}.
      */
     public EncodedSequence(GlyphCodec<T> codec, byte[] data) {
         this.codec = codec;

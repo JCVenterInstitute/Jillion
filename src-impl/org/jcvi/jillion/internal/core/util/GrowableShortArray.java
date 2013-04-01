@@ -99,7 +99,9 @@ public final class GrowableShortArray {
 	 * Any future modifications to either the original
 	 * instance or the copy will NOT be reflected 
 	 * in the other.
-	 * @return
+	 * @return a new instance of GrowableShortArray
+	 * that contains the same data as this instance
+	 * currently does.
 	 */
 	public GrowableShortArray copy(){
 		return new GrowableShortArray(this);

@@ -66,11 +66,14 @@ public abstract class AbstractChurchillWatermanConsensusCaller extends AbstractC
     /**
      * Get the consensus for the given Slice which
      * is guaranteed to have coverage.
-     * @param normalizedErrorProbabilityStruct
-     * @param slice
-     * @return
+     * @param normalizedConsensusProbabilities the {@link ConsensusProbabilities}
+     * containing the probabilities of each non-ambiguous base
+     * normalized to total 100%.
+     * @param slice the {@link Slice} to compute the consensus of.
+     * @return a {@link Nucleotide} that is the consensus of all the bases in this
+     * slice; the return may be an ambiguous {@link Nucleotide}.
      */
-    protected abstract Nucleotide getConsensus(ConsensusProbabilities normalizedErrorProbabilityStruct,Slice<?> slice) ;
+    protected abstract Nucleotide getConsensus(ConsensusProbabilities normalizedConsensusProbabilities,Slice<?> slice) ;
  
     
     @Override

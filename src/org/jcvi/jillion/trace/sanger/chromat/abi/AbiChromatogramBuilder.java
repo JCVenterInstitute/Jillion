@@ -87,8 +87,7 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
     /**
      * Changes the id of both
      * the current and original trace ids.
-     * @param id
-     * @return
+     * @param id the id of this chromatogram, usually the read name.
      */
     public AbiChromatogramBuilder id(String id){
     	this.id = id;

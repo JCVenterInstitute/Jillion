@@ -33,16 +33,7 @@ import org.jcvi.jillion.internal.trace.sanger.chromat.abi.tag.TaggedDataType;
  */
 public class DefaultScanRateTaggedDataType extends AbstractTaggedDataRecord<ScanRateTaggedDataType, ScanRate> implements ScanRateTaggedDataType{
 
-    /**
-     * @param name
-     * @param number
-     * @param dataType
-     * @param elementLength
-     * @param numberOfElements
-     * @param recordLength
-     * @param dataRecord
-     * @param crypticValue
-     */
+ 
     public DefaultScanRateTaggedDataType(TaggedDataName name, long number,
             TaggedDataType dataType, int elementLength, long numberOfElements,
             long recordLength, long dataRecord, long crypticValue) {

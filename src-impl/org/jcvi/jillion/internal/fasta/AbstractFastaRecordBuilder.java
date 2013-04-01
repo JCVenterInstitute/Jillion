@@ -28,9 +28,9 @@ import org.jcvi.jillion.fasta.FastaRecord;
  * a {@link FastaRecord}.
  * @author dkatzel
  *
- * @param <T>
- * @param <S>
- * @param <F>
+ * @param <T> The type of element in the sequence.
+ * @param <S> the type of {@link Sequence}
+ * @param <F> the type of {@link FastaRecord}
  */
 public abstract class AbstractFastaRecordBuilder<T, S extends Sequence<T>, F extends FastaRecord<T, S>> {
 
@@ -79,7 +79,7 @@ public abstract class AbstractFastaRecordBuilder<T, S extends Sequence<T>, F ext
 	 * @param comment the optional comment
 	 * of the fasta record. May be null or contain white spaces. If the comment is null,
 	 * then there is no comment.
-	 * @return
+	 * @return a new {@link FastaRecord} instance; can not be null.
 	 */
 	protected abstract F createNewInstance(String id, S sequence, String comment);
 

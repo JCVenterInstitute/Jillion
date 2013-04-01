@@ -27,16 +27,7 @@ package org.jcvi.jillion.internal.trace.sanger.chromat.abi.tag;
  */
 public class DefaultUserDefinedTaggedDataRecord extends DefaultTaggedDataRecord implements UserDefinedTaggedDataRecord<ByteArrayTaggedDataRecord,byte[]>{
 
-    /**
-     * @param name
-     * @param number
-     * @param dataType
-     * @param elementLength
-     * @param numberOfElements
-     * @param recordLength
-     * @param dataRecord
-     * @param crypticValue
-     */
+  
     public DefaultUserDefinedTaggedDataRecord(TaggedDataName name, long number,
             TaggedDataType dataType, int elementLength, long numberOfElements,
             long recordLength, long dataRecord, long crypticValue) {

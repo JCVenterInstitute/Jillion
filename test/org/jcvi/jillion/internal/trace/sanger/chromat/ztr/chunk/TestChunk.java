@@ -31,8 +31,10 @@ import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -94,9 +96,8 @@ public class TestChunk {
         }
         catch(TraceDecoderException e){
             assertEquals("error reading chunk length", e.getMessage());
-            TraceDecoderException cause = (TraceDecoderException)e.getCause();
-           
-            assertEquals("invalid metaData length", cause.getMessage());
+            assertTrue(e.getCause() instanceof EOFException);
+          
         }
         verify(mockInputStream);
     }
