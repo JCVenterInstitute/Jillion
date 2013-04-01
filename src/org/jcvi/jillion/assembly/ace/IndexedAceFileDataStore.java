@@ -82,9 +82,9 @@ final class IndexedAceFileDataStore implements AceFileContigDataStore{
     }
 	
     
-    private void checkNotYetClosed() throws DataStoreException{
+    private void checkNotYetClosed(){
     	if(closed){
-    		throw new DataStoreException("closed");
+    		throw new IllegalStateException("closed");
     	}
     }
     
@@ -110,7 +110,7 @@ final class IndexedAceFileDataStore implements AceFileContigDataStore{
 		try{
 			parser.accept(singleAceFileVisitor, memento);
 			return singleAceFileVisitor.getContig();
-		}catch(Throwable e){
+		}catch(IOException e){
 			throw new DataStoreException("error re-parsing contig "+ id ,e);
 		}
 	}

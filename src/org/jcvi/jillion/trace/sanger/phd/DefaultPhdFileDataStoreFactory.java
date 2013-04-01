@@ -26,7 +26,7 @@
 package org.jcvi.jillion.trace.sanger.phd;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 /**
@@ -43,7 +43,7 @@ public class DefaultPhdFileDataStoreFactory implements PhdDataStoreFactory {
             throws DataStoreException {
         try {
             return DefaultPhdFileDataStore.create(phdBall);
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             throw new DataStoreException("could not parse phd ball", e);
         }
         

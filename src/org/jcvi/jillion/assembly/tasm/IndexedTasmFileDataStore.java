@@ -70,9 +70,9 @@ final class IndexedTasmFileDataStore implements TasmContigDataStore{
 		this.mementos = mementos;
 	}
 
-	private void checkNotYetClosed() throws DataStoreException{
+	private void checkNotYetClosed(){
 		if(closed){
-			throw new DataStoreException("closed");
+			throw new IllegalStateException("closed");
 		}
 	}
 

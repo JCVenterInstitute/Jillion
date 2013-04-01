@@ -51,9 +51,9 @@ final class LargeTigrContigFileDataStore implements TigrContigDataStore{
 		this.filter = filter;
 	}
 
-	private void checkNotClosed() throws DataStoreException{
+	private void checkNotClosed(){
 		if(closed){
-			throw new DataStoreException("datastore is closed");
+			throw new IllegalStateException("datastore is closed");
 		}
 	}
 	@Override

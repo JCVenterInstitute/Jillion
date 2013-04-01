@@ -165,7 +165,8 @@ final class IndexedFastqFileDataStore{
         	throwExceptionIfClosed();
         	FastqVisitorMemento memento =mementos.get(id);
             if(memento ==null){
-            	throw new DataStoreException(id +" does not exist in datastore");
+            	//not in datastore
+            	return null;
             }
             SingleFastqRecordVistior visitor = new SingleFastqRecordVistior();
             try {

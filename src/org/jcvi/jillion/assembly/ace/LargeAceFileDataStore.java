@@ -149,7 +149,9 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
 	public AceContig get(String id) throws DataStoreException {
 		throwExceptionIfClosed();
 		if(!contigIdFilter.accept(id)){
-			throw new DataStoreException(String.format("contig id %s not allowed by filter", id));
+			//if the id isn't accepted by the filter
+			//then there is no way it's in this datastore.
+			return null;
 		}
 		SingleContigVisitor visitor = new SingleContigVisitor(id);
 
@@ -167,7 +169,9 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
 		}
 		throwExceptionIfClosed();
 		if(!contigIdFilter.accept(id)){
-			throw new DataStoreException(String.format("contig id %s not allowed by filter", id));
+			//if the id isn't accepted by the filter
+			//then there is no way it's in this datastore
+			return false;
 		}
 
 		StreamingIterator<String> ids = idIterator();

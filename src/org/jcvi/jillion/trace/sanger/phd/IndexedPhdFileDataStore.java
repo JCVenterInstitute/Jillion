@@ -308,7 +308,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
         try{
             Range range = recordLocations.get(id);
             if(range ==null){
-            	 throw new DataStoreException(id +" does not exist");
+            	 return null;
             }
             in = IOUtil.createInputStreamFromFile(phdBall, (int)range.getBegin(), (int)range.getLength());  
             

@@ -81,9 +81,9 @@ public class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 		this.contigMementos = contigMementos;
 	}
 
-	private void checkNotClosed() throws DataStoreException{
+	private void checkNotClosed(){
 		if(closed){
-			throw new DataStoreException("datastore is closed");
+			throw new IllegalStateException("datastore is closed");
 		}
 	}
 	
@@ -116,7 +116,7 @@ public class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 			SingleContigVisitorBuilder contigBuilder = new SingleContigVisitorBuilder(validRangeVisitor.getValidRanges());
 			parser.accept(contigBuilder, memento);
 			return contigBuilder.build();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			throw new DataStoreException("error parsing asm file", e);
 		}		
 	}

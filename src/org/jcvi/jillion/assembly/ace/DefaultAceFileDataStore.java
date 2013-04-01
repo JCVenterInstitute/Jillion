@@ -153,9 +153,9 @@ final class DefaultAceFileDataStore implements AceFileContigDataStore{
 
 
 	@Override
-	public long getNumberOfTotalReads() throws DataStoreException {
+	public long getNumberOfTotalReads(){
 		if(isClosed()){
-			throw new DataStoreException("closed");
+			throw new IllegalStateException("closed");
 		}
 		return totalNumberOfReads;
 	}
