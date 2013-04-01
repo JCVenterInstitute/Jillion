@@ -20,20 +20,17 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.qual;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.qual.DefaultQualitySymbolCodec;
-import org.jcvi.jillion.core.qual.EncodedQualitySequence;
-import org.jcvi.jillion.core.qual.PhredQuality;
-import org.jcvi.jillion.core.qual.QualitySequence;
-import org.jcvi.jillion.core.qual.RunLengthEncodedQualityCodec;
-import org.jcvi.jillion.core.qual.RunLengthEncodedQualitySequence;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestRunLengthEncodedQualitySequence {
 
 	static private byte guard = Byte.valueOf((byte)70);
@@ -42,8 +39,7 @@ public class TestRunLengthEncodedQualitySequence {
     
     RunLengthEncodedQualityCodec CODEC = new RunLengthEncodedQualityCodec(guard);
     
-    static List<PhredQuality> decodedValues = PhredQuality.valueOf(
-            QUALITIES_BYTES);
+    static List<PhredQuality> decodedValues = asList(QUALITIES_BYTES);
    
     private byte[] encodedData;
     QualitySequence sut;
@@ -100,4 +96,13 @@ public class TestRunLengthEncodedQualitySequence {
 				DefaultQualitySymbolCodec.INSTANCE, decodedValues);
 		TestUtil.assertEqualAndHashcodeSame(sut, notRunLengthEncoded);
 	}
+	
+	
+    public static List<PhredQuality> asList(byte[] bytes){
+        List<PhredQuality> list = new ArrayList<PhredQuality>(bytes.length);
+        for(int i=0; i<bytes.length; i++){
+            list.add(PhredQuality.valueOf(bytes[i]));
+        }
+        return list;
+    }
 }

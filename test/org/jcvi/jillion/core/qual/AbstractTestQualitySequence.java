@@ -20,14 +20,16 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.qual;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Iterator;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.qual.PhredQuality;
-import org.jcvi.jillion.core.qual.QualitySequence;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public abstract class AbstractTestQualitySequence {
 
 	
@@ -97,6 +99,11 @@ public abstract class AbstractTestQualitySequence {
 					.append(", ");
 		}
 		expected.append(qualities[qualities.length-1]);
+	}
+	
+	@Test
+	public void toArray(){
+		assertArrayEquals(qualities, sut.toArray());
 	}
 	
 }

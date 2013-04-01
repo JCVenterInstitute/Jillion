@@ -30,8 +30,6 @@ import static org.jcvi.jillion.core.Direction.FORWARD;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.jillion.assembly.util.slice.DefaultSlice;
-import org.jcvi.jillion.assembly.util.slice.IdedSlice;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
@@ -47,17 +45,17 @@ public final class TestSliceUtil {
         }
         return builder.build();
     }
-    public static IdedSlice createSliceFrom(List<Nucleotide> nucleotides, List<PhredQuality> qualities, List<Direction> directions){
+    public static IdedSlice createSliceFrom(List<Nucleotide> nucleotides, byte[] qualities, List<Direction> directions){
         DefaultSlice.Builder builder = new DefaultSlice.Builder();
         for(int i=0; i<nucleotides.size(); i++){
-            builder.add("read_"+i,nucleotides.get(i), qualities.get(i), directions.get(i));
+            builder.add("read_"+i,nucleotides.get(i), PhredQuality.valueOf(qualities[i]), directions.get(i));
         }
         return builder.build();
     }
     public static IdedSlice createSliceFrom(String nucleotides, byte[] qualities, List<Direction> directions){
         
         return createSliceFrom(asList(new NucleotideSequenceBuilder(nucleotides)),
-                PhredQuality.valueOf(qualities), directions);
+                qualities, directions);
     }
     private static List<Nucleotide> asList(NucleotideSequenceBuilder builder){
     	List<Nucleotide> list = new ArrayList<Nucleotide>((int)builder.getLength());

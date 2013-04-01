@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.qual;
 
+import java.nio.ByteBuffer;
 import java.util.Iterator;
 
 import org.jcvi.jillion.core.Range;
@@ -107,8 +108,16 @@ class RunLengthEncodedQualitySequence implements QualitySequence{
         }
 		return builder.toString();
 	}
-
-	
+	/**
+	 * {@inheritDoc}
+	 */
+	public byte[] toArray(){
+        ByteBuffer buf = ByteBuffer.allocate((int)getLength());
+        for(PhredQuality quality : this){
+            buf.put(quality.getQualityScore());
+        }
+        return buf.array();
+    }
 
 	
 }

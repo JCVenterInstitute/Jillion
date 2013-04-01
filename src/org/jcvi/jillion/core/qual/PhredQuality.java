@@ -26,13 +26,13 @@
 package org.jcvi.jillion.core.qual;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * {@code PhredQuality} is a representation of
  * a Phred quality score.
+ * <p/>
+ * PhredQuality uses the flyweight pattern to reuse the same
+ * objects for the same quality score.  So  
  * @author dkatzel
  *
  *
@@ -124,7 +124,8 @@ public final class PhredQuality implements Comparable<PhredQuality>{
      * Get the corresponding {@link PhredQuality} instance
      * with the given quality score.
      * @param qualityScore the quality score
-     * @return
+     * @return the {@link PhredQuality} instance that represents
+     * the given qualityScore.
      * @throws IllegalArgumentException if qualityScore < 0 or > {@link Byte#MAX_VALUE}.
      */
     public static PhredQuality valueOf(int qualityScore){
@@ -134,32 +135,8 @@ public final class PhredQuality implements Comparable<PhredQuality>{
          return CACHE[qualityScore];
     }
    
-    /**
-     * 
-     * @param bytes
-     * @return
-     * @throws IllegalArgumentException if  any of the qualityScores are < 0 or > {@link Byte#MAX_VALUE}.
-     */
-    public static List<PhredQuality> valueOf(byte[] bytes){
-        List<PhredQuality> list = new ArrayList<PhredQuality>(bytes.length);
-        for(int i=0; i<bytes.length; i++){
-            list.add(valueOf(bytes[i]));
-        }
-        return list;
-    }
-    /**
-     * Create an array of bytes which correspond to the 
-     * input collection of {@link PhredQuality}s.
-     * @param qualities a collection of PhredQuality values.
-     * @return a new byte array, never null.
-     */
-    public static byte[] toArray(Collection<PhredQuality> qualities){
-        ByteBuffer buf = ByteBuffer.allocate(qualities.size());
-        for(PhredQuality quality : qualities){
-            buf.put(quality.value);
-        }
-        return buf.array();
-    }
+    
+   
     /**
      * Create an array of bytes which correspond to the 
      * input {@link QualitySequence}.

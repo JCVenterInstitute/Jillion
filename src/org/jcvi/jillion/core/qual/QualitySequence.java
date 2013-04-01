@@ -21,8 +21,6 @@
 package org.jcvi.jillion.core.qual;
 
 import org.jcvi.jillion.core.Sequence;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 /**
  * {@code QualitySequence} is a marker interface
@@ -35,8 +33,8 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 public interface QualitySequence extends Sequence<PhredQuality>{
 
 	/**
-     * Two {@link NucleotideSequence}s are equal
-     * if they contain the same {@link Nucleotide}s 
+     * Two {@link QualitySequence}s are equal
+     * if they contain the same {@link PhredQuality}s 
      * in the same order.
      * <p/>
      * {@inheritDoc}
@@ -49,4 +47,14 @@ public interface QualitySequence extends Sequence<PhredQuality>{
      */
     @Override
     int hashCode();
+    
+    
+    /**
+     * Create an new array of bytes of length {@link #getLength()}
+     * where index in the array is the ith quality score stored
+     * as a byte.  This method may be expensive to perform
+     * depending on the size of the sequence and the encoding used.
+     * @return a new byte array, never null.
+     */
+    byte[] toArray();
 }

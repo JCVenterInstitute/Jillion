@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.qual;
 
+import java.nio.ByteBuffer;
 import java.util.Collection;
 
 import org.jcvi.jillion.internal.core.EncodedSequence;
@@ -62,5 +63,16 @@ final class EncodedQualitySequence extends EncodedSequence<PhredQuality> impleme
         	return false;
         }
         return super.equals(obj);
+    }
+    
+    /**
+	 * {@inheritDoc}
+	 */
+	public byte[] toArray(){
+        ByteBuffer buf = ByteBuffer.allocate((int)getLength());
+        for(PhredQuality quality : this){
+            buf.put(quality.getQualityScore());
+        }
+        return buf.array();
     }
 }
