@@ -27,7 +27,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-    	TestCas2Consed.class
+    	TestCas2Consed.class,
+    	AllPhdAdaptedIteratorTests.class
     }
 )
 public class AllCas2ConsedTests {
