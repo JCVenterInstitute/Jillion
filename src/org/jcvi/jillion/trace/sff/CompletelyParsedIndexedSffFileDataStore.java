@@ -210,9 +210,9 @@ class CompletelyParsedIndexedSffFileDataStore {
 			
 		}
 		
-		private void checkNotYetClosed() throws DataStoreException{
+		private void checkNotYetClosed(){
 			if(closed){
-				throw new DataStoreException("datastore is closed");
+				throw new IllegalStateException("datastore is closed");
 			}
 		}
 		

@@ -92,7 +92,8 @@ public final class LargePhdDataStore implements PhdDataStore{
                 return phd;
             }
         }
-        throw new DataStoreException("could not find phd for "+id);
+        //not found
+        return null;
         
     }
 

@@ -181,8 +181,8 @@ final class LargeFastqFileDataStore implements FastqDataStore {
         }finally{
         	IOUtil.closeAndIgnoreErrors(iter);
         }
-        
-        throw new DataStoreException("could not find fastq record for "+id);
+        //not found
+       return null;
     }
 
     @Override
