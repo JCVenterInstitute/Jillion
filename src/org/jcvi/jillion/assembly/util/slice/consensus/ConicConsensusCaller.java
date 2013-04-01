@@ -146,7 +146,7 @@ public class ConicConsensusCaller extends AbstractChurchillWatermanConsensusCall
 
     @Override
     protected Nucleotide getConsensus(
-            ConsensusProbabilities normalizedErrorProbabilityStruct, Slice<?> slice) {
+            ConsensusProbabilities normalizedConsensusProbabilities, Slice<?> slice) {
        
         Map<Nucleotide, Integer> qualityValueSumMap = generateQualityValueSumMap(slice);        
         MaxQualityStruct maxQualityStruct = createMaxQualityStruct(qualityValueSumMap);

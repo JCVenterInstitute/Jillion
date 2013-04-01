@@ -50,26 +50,26 @@ public class NoAmbiguityConsensusCaller extends AbstractChurchillWatermanConsens
 
     @Override
     protected Nucleotide getConsensus(
-            ConsensusProbabilities normalizedErrorProbabilityStruct, Slice slice) {
+            ConsensusProbabilities normalizedConsensusProbabilities, Slice slice) {
       //assume A is the answer initially
         Nucleotide result = Adenine;
-        double lowestErrorProbability = normalizedErrorProbabilityStruct.getProbabilityFor(Adenine);
+        double lowestErrorProbability = normalizedConsensusProbabilities.getProbabilityFor(Adenine);
         
-        if(normalizedErrorProbabilityStruct.getProbabilityFor(Cytosine).compareTo(lowestErrorProbability) <0){
+        if(normalizedConsensusProbabilities.getProbabilityFor(Cytosine).compareTo(lowestErrorProbability) <0){
             result = Cytosine;
-            lowestErrorProbability = normalizedErrorProbabilityStruct.getProbabilityFor(Cytosine);
+            lowestErrorProbability = normalizedConsensusProbabilities.getProbabilityFor(Cytosine);
         }
-        if(normalizedErrorProbabilityStruct.getProbabilityFor(Guanine).compareTo(lowestErrorProbability) <0){
+        if(normalizedConsensusProbabilities.getProbabilityFor(Guanine).compareTo(lowestErrorProbability) <0){
             result = Guanine;
-            lowestErrorProbability = normalizedErrorProbabilityStruct.getProbabilityFor(Guanine);
+            lowestErrorProbability = normalizedConsensusProbabilities.getProbabilityFor(Guanine);
         }
-        if(normalizedErrorProbabilityStruct.getProbabilityFor(Thymine).compareTo(lowestErrorProbability) <0){
+        if(normalizedConsensusProbabilities.getProbabilityFor(Thymine).compareTo(lowestErrorProbability) <0){
             result = Thymine;
-            lowestErrorProbability = normalizedErrorProbabilityStruct.getProbabilityFor(Thymine);
+            lowestErrorProbability = normalizedConsensusProbabilities.getProbabilityFor(Thymine);
         }
-        if(normalizedErrorProbabilityStruct.getProbabilityFor(Gap).compareTo(lowestErrorProbability) <0){
+        if(normalizedConsensusProbabilities.getProbabilityFor(Gap).compareTo(lowestErrorProbability) <0){
             result = Gap;
-            lowestErrorProbability = normalizedErrorProbabilityStruct.getProbabilityFor(Gap);
+            lowestErrorProbability = normalizedConsensusProbabilities.getProbabilityFor(Gap);
         }
         return result;
     }

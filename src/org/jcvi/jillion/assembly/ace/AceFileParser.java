@@ -67,8 +67,11 @@ public abstract class AceFileParser implements AceHandler {
 	 * the given inputStream.
 	 * the inputStream will be closed at the end
 	 * of the first call to {@link #accept(AceFileVisitor)}.
-	 * @param aceFileStream 
-	 * @return
+	 * @param aceFileStream  the {@link InputStream} to parse;
+	 * should never be null.
+	 * @return a new {@link AceFileParser} instance;
+	 * will never be null.
+	 * @throws NullPointerException if aceFileStream is null.
 	 */
 	public static AceHandler create(InputStream aceFileStream){
 		return new InputStreamParser(aceFileStream);

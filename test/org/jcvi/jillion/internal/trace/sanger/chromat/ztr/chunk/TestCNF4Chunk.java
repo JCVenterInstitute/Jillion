@@ -25,21 +25,26 @@
  */
 package org.jcvi.jillion.internal.trace.sanger.chromat.ztr.chunk;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.getCurrentArguments;
+import static org.easymock.EasyMock.isA;
+import static org.junit.Assert.assertArrayEquals;
+
 import java.nio.ByteBuffer;
 
+import org.easymock.EasyMockSupport;
+import org.easymock.IAnswer;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.internal.trace.sanger.chromat.DefaultChannel;
-import org.jcvi.jillion.internal.trace.sanger.chromat.DefaultChannelGroup;
-import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.chunk.Chunk;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.TraceEncoderException;
+import org.jcvi.jillion.trace.sanger.chromat.Channel;
 import org.jcvi.jillion.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogram;
 import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
-public class TestCNF4Chunk {
+public class TestCNF4Chunk extends EasyMockSupport{
 
     private static final String bases = "ACGT-";
     private static final byte[] aconf = new byte[]{40,0,0,0,0};
@@ -97,19 +102,51 @@ public class TestCNF4Chunk {
     @Test
     public void encode() throws TraceEncoderException{
     	ZtrChromatogram chromatogram = createMock(ZtrChromatogram.class);
-    	ChannelGroup channelGroup = new DefaultChannelGroup(
-    			new DefaultChannel(aconf,new short[0]), 
-    			new DefaultChannel(cconf,new short[0]), 
-    			new DefaultChannel(gconf,new short[0]), 
-    			new DefaultChannel(tconf,new short[0]));
+    	ChannelGroup channelGroup = createMockChannelGroup();
 
     	expect(chromatogram.getNucleotideSequence()).andReturn(new NucleotideSequenceBuilder(bases).build());
     	expect(chromatogram.getChannelGroup()).andReturn(channelGroup);
     
-    	replay(chromatogram);
+    	replayAll();
     	byte[] actual =sut.encodeChunk(chromatogram);
     	assertArrayEquals(encodedBytes, actual);
-    	verify(chromatogram);
+    	verifyAll();
     }
     
+    private ChannelGroup createMockChannelGroup(){
+    	ChannelGroup channelGroup = createMock(ChannelGroup.class);
+    	
+    	final Channel aChannel = createMock(Channel.class);
+    	expect(aChannel.getConfidence()).andStubReturn(new QualitySequenceBuilder(aconf).build());
+    	
+    	final Channel cChannel = createMock(Channel.class);
+    	expect(cChannel.getConfidence()).andStubReturn(new QualitySequenceBuilder(cconf).build());
+    	
+    	final Channel gChannel = createMock(Channel.class);
+    	expect(gChannel.getConfidence()).andStubReturn(new QualitySequenceBuilder(gconf).build());
+    	
+    	final Channel tChannel = createMock(Channel.class);
+    	expect(tChannel.getConfidence()).andStubReturn(new QualitySequenceBuilder(tconf).build());
+    	
+    	expect(channelGroup.getChannel(isA(Nucleotide.class))).andStubAnswer(
+    			new IAnswer<Channel>() {
+
+					@Override
+					public Channel answer() throws Throwable {
+						Nucleotide n = (Nucleotide)getCurrentArguments()[0];
+						switch(n){
+							case Adenine: return aChannel;
+							case Cytosine: return cChannel;
+							case Guanine: return gChannel;
+							//anything else is T
+							default: return tChannel;
+	
+						}
+	
+					}
+    				
+		});
+
+    	return channelGroup;
+    }
 }

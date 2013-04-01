@@ -27,13 +27,21 @@ package org.jcvi.jillion.internal.core.util;
 
 import org.jcvi.jillion.core.util.ObjectsUtil;
 
-
+/**
+ * {@code RunLength} is an object reprsentation
+ * of a portion of run length encoded data.
+ * @author dkatzel
+ *
+ * @param <T> the Type of object being encoded.
+ */
 public final class RunLength<T> {
     private final int length;
     private final  T value;
     /**
-     * @param length
-     * @param value
+     * Create a new RunLength instance which represents the given value
+     * repeated {@code length} times.
+     * @param length the length of this run should be >=1.
+     * @param value the value of this object.
      */
     public RunLength(T value,int length) {
         this.length = length;

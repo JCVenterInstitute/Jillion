@@ -41,16 +41,11 @@ public class SectionDecoderException extends ScfDecoderException {
      */
     private static final long serialVersionUID = 7865788143804921065L;
 
-    /**
-     * @param message
-     * @param cause
-     */
+  
     public SectionDecoderException(String message, Throwable cause) {
         super(message, cause);
     }
-    /**
-     * @param message
-     */
+ 
     public SectionDecoderException(String message) {
         super(message);
     }

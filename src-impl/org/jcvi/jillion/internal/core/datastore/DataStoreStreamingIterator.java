@@ -36,7 +36,7 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
  * if the given {@link DataStore} is closed.
  * @author dkatzel
  *
- * @param <T>
+ * @param <T> the Type of element returned by each call to {@link Iterator#next()}
  */
 public final class DataStoreStreamingIterator<T> implements StreamingIterator<T>{
 

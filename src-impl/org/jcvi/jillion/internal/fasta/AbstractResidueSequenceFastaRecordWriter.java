@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
+import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.fasta.FastaRecord;
@@ -36,11 +37,11 @@ import org.jcvi.jillion.fasta.FastaRecordWriter;
  * writes {@link ResidueSequence}s.
  * @author dkatzel
  *
- * @param <R>
- * @param <T>
- * @param <F>
+ * @param <R> the type of {@link Residue}
+ * @param <S> the type of {@link Sequence}
+ * @param <F> the Type of {@link FastaRecord}
  */
-public abstract class AbstractResidueSequenceFastaRecordWriter<R extends Residue, T extends ResidueSequence<R>, F extends FastaRecord<R,T>> extends  AbstractFastaRecordWriter<R, T, F>{
+public abstract class AbstractResidueSequenceFastaRecordWriter<R extends Residue, S extends ResidueSequence<R>, F extends FastaRecord<R,S>> extends  AbstractFastaRecordWriter<R, S, F>{
 
 	
 	protected AbstractResidueSequenceFastaRecordWriter(OutputStream out,
@@ -68,15 +69,17 @@ public abstract class AbstractResidueSequenceFastaRecordWriter<R extends Residue
 	}
 
 	/**
-	 * 
+	 * Builder creates a builder instance that will build a {@link FastaRecordWriter}
+	 * using the given {@link OutputStream}
+	 *  and any additional configuration given.
 	 * @author dkatzel
 	 *
-	 * @param <R>
-	 * @param <T>
-	 * @param <F>
-	 * @param <W>
+	 * @param <R> the type of {@link Residue}
+	 * @param <S> the type of {@link Sequence}
+	 * @param <F> the Type of {@link FastaRecord}
+	 * @param <W> the Type of {@link FastaRecordWriter} that will be built.
 	 */
-	public abstract static class Builder<R extends Residue, T extends ResidueSequence<R>,F extends FastaRecord<R,T>, W extends FastaRecordWriter<R, T, F>> extends AbstractBuilder<R,T,F,W>{
+	public abstract static class Builder<R extends Residue, S extends ResidueSequence<R>,F extends FastaRecord<R,S>, W extends FastaRecordWriter<R, S, F>> extends AbstractBuilder<R,S,F,W>{
 		protected static final int DEFAULT_RESIDUES_PER_LINE = 60;
 		   
 		public Builder(File outputFile)

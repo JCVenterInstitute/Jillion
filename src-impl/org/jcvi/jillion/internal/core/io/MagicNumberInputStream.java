@@ -79,8 +79,9 @@ public final class MagicNumberInputStream extends InputStream{
     }
     /**
      * Gets the entire magic number without advancing the
-     * {@link InputStream}.
-     * @return
+     * {@link InputStream}.  If the stream has already read past
+     * the magic number, it is cached for later retrieval.
+     * @return the magic number of this inputStream as a byte array.
      */
     public byte[] peekMagicNumber(){
         return Arrays.copyOf(magicNumber, magicNumber.length);

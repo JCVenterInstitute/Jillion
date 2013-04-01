@@ -77,7 +77,7 @@ public final class SCFUtils {
      * Get the magic number that all SCF encoded
      * files need to have in its header
      * to declare itself an SCF encoded file.
-     * @return
+     * @return the magic number as a byte array.
      */
     public static final byte[] getMagicNumber(){
     	//defensive copy since java arrays are mutable even if declared final
@@ -88,7 +88,7 @@ public final class SCFUtils {
     }
     /**
      * Is the given byte array a valid SCF magic number?
-     * @param magicNumber
+     * @param magicNumber the magic number as a byte array.
      * @return {@code true} if the magic number is correct;
      * {@code false} otherwise.
      */
@@ -110,7 +110,7 @@ public final class SCFUtils {
             &nbsp;&nbsp;&nbsp;p_sample2  = samples[i];
         }
         </pre>
-     * @param positions
+     * @param positions the positions data to be encoded.
      */
     public static void deltaDeltaDecode(short[] positions) {
         //special cases when i<2;

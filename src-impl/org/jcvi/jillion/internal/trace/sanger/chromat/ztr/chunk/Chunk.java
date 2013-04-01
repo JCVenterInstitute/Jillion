@@ -684,9 +684,10 @@ public enum Chunk {
     }
 
     /**
-     * @return
-     * @throws TraceDecoderException
-     * @throws NumberFormatException
+     * Get the length of the current chunk.
+     * @param inputStream the {@link InputStream} to read; should not be null.
+     * @throws TraceDecoderException if there is a problem reading the chunk length
+     * @return the number of bytes in the chunk.
      */
     protected int readLength(InputStream inputStream) throws TraceDecoderException{
        try{
@@ -701,20 +702,16 @@ public enum Chunk {
 
         return  (int)length;
        }
-       catch(Exception e){
+       catch(IOException e){
            throw new TraceDecoderException("error reading chunk length", e);
        }
 
     }
 
     private byte[] readLengthFromInputStream(InputStream inputStream)
-            throws IOException, TraceDecoderException {
+            throws IOException {
         byte[] lengthArray = new byte[4];
-        try{
-        	IOUtil.blockingRead(inputStream, lengthArray);
-        }catch(EOFException e){
-             throw new TraceDecoderException("invalid metaData length", e);
-        }        
+        IOUtil.blockingRead(inputStream, lengthArray);    
         return lengthArray;
     }
 

@@ -26,6 +26,7 @@
 package org.jcvi.jillion.internal.core.datastore;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -44,7 +45,7 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
  * does not have a better way to create the iterator.
  * @author dkatzel
  *
- * @param <T>
+ * @param <T> the Type of element returned by each call to {@link Iterator#next()}
  */
 public final class DataStoreIterator<T> implements StreamingIterator<T>{
     private StreamingIterator<String> ids; 

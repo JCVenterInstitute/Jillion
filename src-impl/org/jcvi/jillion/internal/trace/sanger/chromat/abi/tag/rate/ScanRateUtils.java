@@ -35,8 +35,9 @@ public final class ScanRateUtils {
     /**
      * Get the Sampling Rate (Hz) that is displayed in the
      * Seq Analysis annotation report.
-     * @param scanRate
-     * @return
+     * @param scanRate the scan rate to compute; can not be null.
+     * @return the sampling rate for the given scan rate.
+     * @throws NullPointerException if scanRate is null.
      */
     public static float getSamplingRateFor(ScanRate scanRate){
         return ONE_THOUSAND/scanRate.getScanPeriod();

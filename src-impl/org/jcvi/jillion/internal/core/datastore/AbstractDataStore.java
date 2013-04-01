@@ -53,7 +53,7 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
  * </pre>
  * @author dkatzel
  *
- * @param <T>
+ * @param <T> the type of element in the DataStore.
  */
 public abstract class  AbstractDataStore<T> implements DataStore<T>{
     private volatile boolean isClosed;

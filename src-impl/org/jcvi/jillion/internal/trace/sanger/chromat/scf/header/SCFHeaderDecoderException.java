@@ -42,17 +42,12 @@ public class SCFHeaderDecoderException extends ScfDecoderException {
      */
     private static final long serialVersionUID = 3355691805761753118L;
 
-    /**
-     * @param message
-     * @param cause
-     */
+    
     public SCFHeaderDecoderException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    /**
-     * @param message
-     */
+   
     public SCFHeaderDecoderException(String message) {
         super(message);
     }

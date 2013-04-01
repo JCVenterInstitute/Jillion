@@ -37,15 +37,23 @@ public class ZTRChromatogramImpl extends BasicChromatogram implements ZtrChromat
      */
     private Range clip;
     /**
-     * Constructor that takes a Chromatogram without
-     * ztr specific paramters.
-     * @param c
+     * Constructor that takes a {@link Chromatogram} without
+     * ztr specific parameters.
+     * @param c the {@link Chromatogram} instance to wrap;
+     * can not be null.
+     * @throws NullPointerException if c is null.
      */
     public ZTRChromatogramImpl(Chromatogram c){
         this(c, null);
     }
     /**
-     * @param c
+     * Constructor that takes a {@link Chromatogram} and a ZTR clip
+     * point as a Range.
+     * @param c the {@link Chromatogram} instance to wrap;
+     * can not be null.
+     * @param clip the ZTR clip points as  {@link Range};
+     * may be null (which means no clip points have been set).
+     * @throws NullPointerException if c is null.
      */
     public ZTRChromatogramImpl(Chromatogram c, Range clip) {
         super(c);

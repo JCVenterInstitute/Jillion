@@ -334,8 +334,9 @@ public final class Caches
         private final ReferenceQueue<V> referenceQueue = new ReferenceQueue<V>();
         private final Map<Reference<? extends V>, K> referenceKeyMap;
         /**
-         * @param map
-         * @param initialCapacity
+         * Creates a new AbstractReferencedCache instance using the given map
+         * @param map the map of {@link Reference}s mapped by a Key.
+         * @param initialCapacity the initial size of the references.
          */
         AbstractReferencedCache(Map<K,R> map, int initialCapacity) {
             cache = map;
@@ -487,7 +488,9 @@ public final class Caches
        
        
         /**
-         * @param initialCapacity
+         * Create a new SoftReferenceCache with the given capacity.
+         * @param initialCapacity the number of references to store in the map;
+         * should be >=1.
          */
         public SoftReferenceCache(int initialCapacity) {
         	super(Caches.<K,SoftReference<V>>createNonLRUMap(initialCapacity), initialCapacity);
@@ -513,9 +516,12 @@ public final class Caches
      */
     private static class SoftReferenceLRUCache<K,V> extends AbstractReferencedCache<K,V, SoftReference<V>>{
        
-       
-        /**
-         * @param maxSize
+    	 /**
+         * Create a new SoftReferenceLRUCache with the given max capacity.
+         * If the map ever grows beyond the max capacity, then the least
+         * recently used element will be removed to make room.
+         * @param maxSize the max number of references to store in the map;
+         * should be >=1.
          */
         public SoftReferenceLRUCache(int maxSize) {
           super(
@@ -546,8 +552,12 @@ public final class Caches
     private static class WeakReferenceLRUCache<K,V> extends AbstractReferencedCache<K,V, WeakReference<V>>{
         
         
-        /**
-         * @param maxSize
+    	 /**
+         * Create a new WeakReferenceLRUCache with the given max capacity.
+         * If the map ever grows beyond the max capacity, then the least
+         * recently used element will be removed to make room.
+         * @param maxSize the max number of references to store in the map;
+         * should be >=1.
          */
         public WeakReferenceLRUCache(int maxSize) {
             super(new LRUCache<K,WeakReference<V>>(maxSize, DEFAULT_LOAD_FACTOR), maxSize);
@@ -564,7 +574,7 @@ public final class Caches
     }
     
     /**
-     * {@code WeakReferenceLRUCache} creates an LRUCache which uses
+     * {@code WeakReferenceCache} creates an Cache which uses
      * {@link WeakReference}s for the values.
      * @author dkatzel
      * @see WeakReference
@@ -573,11 +583,13 @@ public final class Caches
     private static class WeakReferenceCache<K,V> extends AbstractReferencedCache<K,V, WeakReference<V>>{
         
         
-        /**
-         * @param maxSize
+    	/**
+         * Create a new WeakReferenceCache with the given capacity.
+         * @param initialCapacity the number of references to store in the map;
+         * should be >=1.
          */
-        public WeakReferenceCache(int maxSize) {
-        	super(Caches.<K,WeakReference<V>>createNonLRUMap(maxSize), maxSize);
+        public WeakReferenceCache(int initialCapacity) {
+        	super(Caches.<K,WeakReference<V>>createNonLRUMap(initialCapacity), initialCapacity);
         }
         
         /**

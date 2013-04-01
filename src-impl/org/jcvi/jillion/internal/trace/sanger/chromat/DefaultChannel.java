@@ -85,29 +85,38 @@ public final class DefaultChannel implements Channel{
      * <p>
      *  In other words, this method returns an {@link DefaultChannel} object equal to the value of:
      * <br>
-     * <code>new Channel(ByteBuffer.wrap(confidence), ShortBuffer.wrap(positions))</code>
+     * <code>new Channel(new QualitySequenceBuilder(qualities).build(), 
+     * new PositionSequenceBuilder(positions).build())</code>
      * </p>
-     * @param confidence
-     * @param positions
+     * @param qualities the qualities of this channel stored as
+     * as one quality value per byte in a byte array; 
+     * can not be null.
+     * @param positions the sanger positions of this channel stored as
+     * as one position value per short in a short array; 
+     * can not be null.
+     * @throws NullPointerException if either parameter is null.
      */
-    public DefaultChannel(byte[] confidence, short[] positions){
-        this(new QualitySequenceBuilder(confidence).build(),
+    public DefaultChannel(byte[] qualities, short[] positions){
+        this(new QualitySequenceBuilder(qualities).build(),
         		new PositionSequenceBuilder(positions).build());
     }
     /**
      * Constructs a newly allocated {@link DefaultChannel} with the provided
      * values for confidence and positions.
-     * @param confidence
-     * @param positions
+     * @param qualities the {@link QualitySequence} for this channel,
+     * can not be null.
+     * @param positions the {@link PositionSequence} for this channel,
+     * can not be null.
+     * @throws NullPointerException if either parameter is null.
      */
-    public DefaultChannel(QualitySequence confidence, PositionSequence positions) {
-    	if(confidence ==null){
+    public DefaultChannel(QualitySequence qualities, PositionSequence positions) {
+    	if(qualities ==null){
     		throw new NullPointerException("qualities can not be null");
     	}
     	if(positions ==null){
     		throw new NullPointerException("positions can not be null");
     	}
-        this.confidence = confidence;
+        this.confidence = qualities;
         this.positions = positions;
     }
     /**

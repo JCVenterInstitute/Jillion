@@ -29,23 +29,35 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.util.ObjectsUtil;
 import org.jcvi.jillion.trace.sanger.chromat.Channel;
 import org.jcvi.jillion.trace.sanger.chromat.ChannelGroup;
-
+/**
+ * {@code DefaultChannelGroup} is a default implementation
+ * of {@link ChannelGroup}.
+ * 
+ * For internal use only.
+ * @author dkatzel
+ *
+ */
 public class DefaultChannelGroup implements ChannelGroup {
 
-    private final DefaultChannel aChannel;
-    private final DefaultChannel cChannel;
-    private final DefaultChannel gChannel;
-    private final DefaultChannel tChannel;
+    private final Channel aChannel;
+    private final Channel cChannel;
+    private final Channel gChannel;
+    private final Channel tChannel;
 
 
     /**
-     * @param aChannel
-     * @param cChannel
-     * @param gChannel
-     * @param tChannel
+     * Create a new DefaultChannelGroup instance with the given Channels.
+     * @param aChannel the {@link Channel} representing the "A" track.
+     * @param cChannel the {@link Channel} representing the "C" track.
+     * @param gChannel the {@link Channel} representing the "G" track.
+     * @param tChannel the {@link Channel} representing the "T" track.
+     * @throws NullPointerException if any channel is null.
+     * @throws IllegalArgumentException if all the qualities in all the tracks
+     * are not the same length, or if all the positions in the all the tracks
+     * are not the same length.
      */
-    public DefaultChannelGroup(DefaultChannel aChannel, DefaultChannel cChannel, DefaultChannel gChannel,
-            DefaultChannel tChannel) {
+    public DefaultChannelGroup(Channel aChannel, Channel cChannel, Channel gChannel,
+    		Channel tChannel) {
 
 
         this.aChannel = aChannel;
@@ -86,25 +98,25 @@ public class DefaultChannelGroup implements ChannelGroup {
     /**
      * @return the aChannel
      */
-    public DefaultChannel getAChannel() {
+    public Channel getAChannel() {
         return aChannel;
     }
     /**
      * @return the cChannel
      */
-    public DefaultChannel getCChannel() {
+    public Channel getCChannel() {
         return cChannel;
     }
     /**
      * @return the gChannel
      */
-    public DefaultChannel getGChannel() {
+    public Channel getGChannel() {
         return gChannel;
     }
     /**
      * @return the tChannel
      */
-    public DefaultChannel getTChannel() {
+    public Channel getTChannel() {
         return tChannel;
     }
     /**

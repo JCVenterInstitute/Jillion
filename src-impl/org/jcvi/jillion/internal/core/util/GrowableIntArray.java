@@ -99,7 +99,9 @@ public final class GrowableIntArray {
 	 * Any future modifications to either the original
 	 * instance or the copy will NOT be reflected 
 	 * in the other.
-	 * @return
+	 * @return a new instance of GrowableIntArray
+	 * that contains the same data as this instance
+	 * currently does.
 	 */
 	public GrowableIntArray copy(){
 		return new GrowableIntArray(this);
