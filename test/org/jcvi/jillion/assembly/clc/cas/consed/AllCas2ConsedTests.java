@@ -28,6 +28,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
     	TestCas2Consed.class,
+    	TestPhdReadRecord.class,
     	AllPhdAdaptedIteratorTests.class
     }
 )
