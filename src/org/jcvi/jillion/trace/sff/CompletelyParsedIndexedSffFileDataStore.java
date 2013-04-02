@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
@@ -212,7 +213,7 @@ class CompletelyParsedIndexedSffFileDataStore {
 		
 		private void checkNotYetClosed(){
 			if(closed){
-				throw new IllegalStateException("datastore is closed");
+				throw new DataStoreClosedException("datastore is closed");
 			}
 		}
 		

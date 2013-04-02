@@ -38,6 +38,7 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -330,7 +331,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
 
     private void throwExceptionIfClosed(){
     	if(closed){
-    		throw new IllegalStateException("datastore is closed");
+    		throw new DataStoreClosedException("datastore is closed");
     	}
     }
     @Override

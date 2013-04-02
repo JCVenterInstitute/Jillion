@@ -31,6 +31,7 @@ import java.util.Map;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
@@ -155,7 +156,7 @@ final class DefaultAceFileDataStore implements AceFileContigDataStore{
 	@Override
 	public long getNumberOfTotalReads(){
 		if(isClosed()){
-			throw new IllegalStateException("closed");
+			throw new DataStoreClosedException("closed");
 		}
 		return totalNumberOfReads;
 	}

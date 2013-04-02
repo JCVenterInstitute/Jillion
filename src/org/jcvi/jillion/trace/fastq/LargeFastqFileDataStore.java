@@ -29,11 +29,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
@@ -160,7 +159,7 @@ final class LargeFastqFileDataStore implements FastqDataStore {
     }
     private void throwExceptionIfClosed(){
         if(closed){
-            throw new IllegalStateException("datastore is closed");
+            throw new DataStoreClosedException("datastore is closed");
         }
     }
     @Override

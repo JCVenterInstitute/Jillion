@@ -28,7 +28,6 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -505,7 +504,7 @@ public final class DataStoreUtil {
 		 
 		    protected final void throwExceptionIfClosed() {
 		        if(isClosed){
-		            throw new IllegalStateException("DataStore is closed");
+		            throw new DataStoreClosedException("DataStore is closed");
 		        }
 		    }
 

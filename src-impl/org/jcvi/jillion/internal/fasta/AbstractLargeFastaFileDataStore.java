@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -62,7 +63,7 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
     
     private void checkNotYetClosed(){
         if(closed){
-            throw new IllegalStateException("already closed");
+            throw new DataStoreClosedException("already closed");
         }
     }
 

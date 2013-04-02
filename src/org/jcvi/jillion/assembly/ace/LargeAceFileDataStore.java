@@ -31,10 +31,10 @@ import org.jcvi.jillion.assembly.ace.consed.ConsedUtil;
 import org.jcvi.jillion.assembly.ace.consed.ConsedUtil.ClipPointsType;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
@@ -126,7 +126,7 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
 	    
     protected final void throwExceptionIfClosed() {
         if(isClosed){
-            throw new IllegalStateException("DataStore is closed");
+            throw new DataStoreClosedException("DataStore is closed");
         }
     }
     

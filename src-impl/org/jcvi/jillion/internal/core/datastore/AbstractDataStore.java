@@ -28,6 +28,7 @@ package org.jcvi.jillion.internal.core.datastore;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
@@ -60,7 +61,7 @@ public abstract class  AbstractDataStore<T> implements DataStore<T>{
     
     private final void throwExceptionIfClosed() {
         if(isClosed){
-            throw new IllegalStateException("DataStore is closed");
+            throw new DataStoreClosedException("DataStore is closed");
         }
     }
     /**

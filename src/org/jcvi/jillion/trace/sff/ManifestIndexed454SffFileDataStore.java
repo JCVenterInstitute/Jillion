@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
@@ -230,7 +231,7 @@ final class ManifestIndexed454SffFileDataStore implements SffFileDataStore{
 	
 	private synchronized void throwErrorIfClosed(){
 		if(isClosed){
-			throw new IllegalStateException("closed");
+			throw new DataStoreClosedException("closed");
 		}
 	}
 
