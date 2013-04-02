@@ -58,7 +58,6 @@
 
 	<path id="javadoc.sourcepath">
         <pathelement location="${src}"/>
-		<pathelement location="${src-impl}"/>
     </path>
 
 	<path id ="test.classpath">
@@ -215,15 +214,17 @@
 	
 	<target name="javadoc" description = "generate javadoc from source">
 		<delete dir="javadoc"/>
-			<javadoc packagenames ="org.jcvi.jillion.*"
-				excludepackagenames="*.internal.*"
+			<javadoc packagenames ="org.jcvi.jillion.*"				
 					sourcepathref = "javadoc.sourcepath"
 					author ="true"
 					destdir = "javadoc"
 					windowtitle = "${project-name} API"
 					linksource= "yes"
 					overview="${src}/overview-summary.html"
-				access="public">
+				access="public">					
+
+
+
 			</javadoc>
 		</target>
 	
