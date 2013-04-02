@@ -32,6 +32,12 @@ class PhdReadRecord implements Trace{
 	private final PhdInfo phdInfo;
 	
 	public PhdReadRecord(Phd phd, PhdInfo phdInfo) {
+		if(phd==null){
+			throw new NullPointerException("phd can not be null");
+		}
+		if(phdInfo==null){
+			throw new NullPointerException("phd can not be null");
+		}
 		this.phd = phd;
 		this.phdInfo = phdInfo;
 	}
@@ -54,8 +60,8 @@ class PhdReadRecord implements Trace{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((phd == null) ? 0 : phd.hashCode());
-		result = prime * result + ((phdInfo == null) ? 0 : phdInfo.hashCode());
+		result = prime * result + phd.hashCode();
+		result = prime * result + phdInfo.hashCode();
 		return result;
 	}
 
@@ -74,18 +80,10 @@ class PhdReadRecord implements Trace{
 			return false;
 		}
 		PhdReadRecord other = (PhdReadRecord) obj;
-		if (phd == null) {
-			if (other.phd != null) {
-				return false;
-			}
-		} else if (!phd.equals(other.phd)) {
+		if (!phd.equals(other.phd)) {
 			return false;
 		}
-		if (phdInfo == null) {
-			if (other.phdInfo != null) {
-				return false;
-			}
-		} else if (!phdInfo.equals(other.phdInfo)) {
+		if (!phdInfo.equals(other.phdInfo)) {
 			return false;
 		}
 		return true;

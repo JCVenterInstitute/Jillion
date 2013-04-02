@@ -36,14 +36,29 @@ import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.jillion.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.jillion.trace.sanger.phd.Phd;
 import org.jcvi.jillion.trace.sanger.phd.PhdUtil;
-
+/**
+ * {@code FastaConsedPhdAdaptedIterator} is a PhdReadRecord generator
+ * for chromatograms.  Since CLC's reference mappers don't handle chromatograms,
+ * they have to be passed in as fasta files.  This class will find the chromatogram in the 
+ * chromat_dir folder with the same name as the current read id in the fasta and create a {@link PhdReadRecord}
+ * with the correct sequence, qualities and postions from the chromatogram as well
+ * as a correctly formatted {@link PhdInfo} so consed can correctly display the chromatogram
+ * wave forms.
+ * @author dkatzel
+ *
+ */
 public class FastaConsedPhdAdaptedIterator implements StreamingIterator<PhdReadRecord>{
-
+	/**
+	 * Empty Properties instance that we will use over and over again.
+	 */
+	private static final Properties EMPTY_PROPERTIES = new Properties();
+	
 	private final StreamingIterator<NucleotideSequenceFastaRecord> fastaIterator;
 	private final Properties requiredComments;
 	private final byte defaultQualityValue;
 	private final Date phdDate;
 	private final File fastaFile;
+	
 	public FastaConsedPhdAdaptedIterator(
 			StreamingIterator<NucleotideSequenceFastaRecord> fastaIterator,
 			File fastaFile,
@@ -64,8 +79,15 @@ public class FastaConsedPhdAdaptedIterator implements StreamingIterator<PhdReadR
 	public PhdReadRecord next() {
 		NucleotideSequenceFastaRecord nextFasta = fastaIterator.next();
 		String id = nextFasta.getId();
-		Properties comments = createAdditionalCommentsFor(id,requiredComments);
-		Phd phd =createPhdRecordFor(nextFasta, comments);
+		//Properties constructor "new Properties(Properties)"
+		//doesn't actually put those values in the map,
+		//they are only used for "defaults" 
+		//so we have to manually add them using put methods.
+		Properties comments = new Properties();
+		comments.putAll(requiredComments);
+		requiredComments.putAll( createAdditionalCommentsFor(id));
+
+		Phd phd =createPhdRecordFor(nextFasta, requiredComments);
 		
 		PhdInfo info = ConsedUtil.generateDefaultPhdInfoFor(fastaFile, id, phdDate);
 		return new PhdReadRecord(phd, info);
@@ -77,14 +99,12 @@ public class FastaConsedPhdAdaptedIterator implements StreamingIterator<PhdReadR
      * any more comments.  Subclasses
      * may override this method to add new values.
      * @param id the id of this sequence
-     * @param preExistingComments comments that already exist
      * @return a {@link Properties} object which contains
-     * any pre-existing comments and any new ones;
-     * can not be null.
+     * any new comments to be included for the current read with the given id;
+     * can not be null but may be empty.
      */
-    protected Properties createAdditionalCommentsFor(String id,
-            Properties preExistingComments) {
-        return preExistingComments;
+    protected Properties createAdditionalCommentsFor(String id) {
+        return EMPTY_PROPERTIES;
     }
     protected Phd createPhdRecordFor(NucleotideSequenceFastaRecord nextFasta, Properties requiredComments ){
 	    String id = nextFasta.getId();
