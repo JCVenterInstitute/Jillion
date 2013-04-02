@@ -214,7 +214,8 @@
 	
 	
 	<target name="javadoc" description = "generate javadoc from source">
-			<javadoc packagenames ="org.jcvi.*"
+		<delete dir="javadoc"/>
+			<javadoc packagenames ="org.jcvi.jillion.*"
 				excludepackagenames="*.internal.*"
 					sourcepathref = "javadoc.sourcepath"
 					author ="true"
@@ -257,6 +258,19 @@
 		    	</manifest>
 		    </jarjar>
 	</target>
+	
+	<target name="release" description="jar of all source files" depends= "source.only.bin">
+			
+			    <jarjar jarfile="${project-name}-${version}.jar">
+			        <fileset dir="${bin}">
+			        	<exclude name="**/*jillion_experimental*/*.java"/>
+			        	</fileset>
+			    	<manifest>
+			    		<attribute name ="Sealed" value ="true"/>
+			    	</manifest>
+			    </jarjar>
+		</target>
+	
 	<target name ="javancss" description ="run javancss on source">
 		<javancss  srcdir="${src}" includes ="**/*.java"
 		            generateReport="true"
