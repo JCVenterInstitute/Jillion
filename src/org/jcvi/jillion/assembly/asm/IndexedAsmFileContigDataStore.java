@@ -34,6 +34,7 @@ import org.jcvi.jillion.assembly.asm.AsmVisitor.AsmVisitorCallback.AsmVisitorMem
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -83,7 +84,7 @@ public class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 
 	private void checkNotClosed(){
 		if(closed){
-			throw new IllegalStateException("datastore is closed");
+			throw new DataStoreClosedException("datastore is closed");
 		}
 	}
 	

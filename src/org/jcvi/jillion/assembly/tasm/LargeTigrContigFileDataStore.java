@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -63,7 +64,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 
 	private void checkNotClosed(){
 		if(closed){
-			throw new IllegalStateException("datastore is closed");
+			throw new DataStoreClosedException("datastore is closed");
 		}
 	}
 	@Override

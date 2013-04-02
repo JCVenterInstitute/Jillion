@@ -30,6 +30,7 @@ import java.util.Map;
 
 import org.jcvi.jillion.assembly.ace.AceFileVisitorCallback.AceFileVisitorMemento;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.util.MapUtil;
@@ -84,7 +85,7 @@ final class IndexedAceFileDataStore implements AceFileContigDataStore{
     
     private void checkNotYetClosed(){
     	if(closed){
-    		throw new IllegalStateException("closed");
+    		throw new DataStoreClosedException("closed");
     	}
     }
     

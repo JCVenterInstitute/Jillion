@@ -26,24 +26,21 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaRecord;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaDataStore;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecord;
 import org.jcvi.jillion.fasta.qual.AbstractQualityFastaRecordVisitor;
 import org.jcvi.jillion.fasta.qual.QualitySequenceFastaDataStore;
 import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecord;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
-import org.jcvi.jillion.internal.fasta.aa.IndexedAminoAcidSequenceFastaFileDataStore;
 
 /**
  * {@code IndexedAminoAcidSequenceFastaFileDataStore} is an implementation of 
@@ -218,7 +215,7 @@ public final class IndexedQualityFastaFileDataStore{
 		}
 		private void throwExceptionIfClosed() throws DataStoreException{
 			if(closed){
-				throw new IllegalStateException("datastore is closed");
+				throw new DataStoreClosedException("datastore is closed");
 			}
 		}
 		public boolean contains(String id) throws DataStoreException {

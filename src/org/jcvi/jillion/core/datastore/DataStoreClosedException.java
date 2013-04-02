@@ -20,18 +20,20 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.datastore;
 /**
- * {@code DataStoreClosedException} is a {@link RuntimeException}
+ * {@code DataStoreClosedException} is a {@link IllegalStateException}
  * that is thrown if an operation that requires the {@link DataStore}
  * to be open is called on a closed {@link DataStore}.
  * @author dkatzel
  *
  */
-public final class DataStoreClosedException extends RuntimeException {
+public final class DataStoreClosedException extends IllegalStateException {
+
 
 	/**
-	 * 
+	 * auto-generated serialVersion id
 	 */
-	private static final long serialVersionUID = 4092998958360325365L;
+	private static final long serialVersionUID = -4221044131514655440L;
+
 	/**
 	 * Create a new instance of DataStoreClosedException
 	 * with the given error message.

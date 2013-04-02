@@ -26,13 +26,13 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.fasta.FastaRecord;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
@@ -95,7 +95,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 	}
 	private void throwExceptionIfClosed() throws DataStoreException{
 		if(closed){
-			throw new IllegalStateException("datastore is closed");
+			throw new DataStoreClosedException("datastore is closed");
 		}
 	}
 	public boolean contains(String id) throws DataStoreException {
@@ -297,7 +297,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 		}
 		private void throwExceptionIfClosed() throws DataStoreException{
 			if(closed){
-				throw new IllegalStateException("datastore is closed");
+				throw new DataStoreClosedException("datastore is closed");
 			}
 		}
 		public boolean contains(String id) throws DataStoreException {

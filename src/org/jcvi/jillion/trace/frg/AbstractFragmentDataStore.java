@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreIterator;
@@ -53,7 +54,7 @@ abstract class AbstractFragmentDataStore implements Frg2Visitor, FragmentDataSto
     
     protected void throwErrorIfClosed() {
         if(isClosed()){
-            throw new IllegalStateException("datastore is closed");
+            throw new DataStoreClosedException("datastore is closed");
         }
         
     }

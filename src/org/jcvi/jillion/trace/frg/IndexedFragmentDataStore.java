@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -94,7 +95,7 @@ public final class IndexedFragmentDataStore extends AbstractFragmentDataStore{
     
     protected void throwErrorIfClosed() {
         if(isClosed()){
-            throw new IllegalStateException("datastore is closed");
+            throw new DataStoreClosedException("datastore is closed");
         }
         
     }

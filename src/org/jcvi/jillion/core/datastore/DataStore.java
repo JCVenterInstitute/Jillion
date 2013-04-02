@@ -78,7 +78,7 @@ public interface DataStore<T> extends Closeable{
      * but could be empty if {@link #getNumberOfRecords()} == 0.
      * @throws DataStoreException if there is a 
      * problem creating this iterator.
-     * @throws IllegalStateException if this {@link DataStore} is closed.
+     * @throws DataStoreClosedException if this {@link DataStore} is closed.
      */
     StreamingIterator<String> idIterator() throws DataStoreException;
     /**
@@ -88,7 +88,7 @@ public interface DataStore<T> extends Closeable{
      * {@link #contains(String) contains(id)} is false.
      * @throws DataStoreException if there is a problem fetching the
      * data from this {@link DataStore}.
-     * @throws IllegalStateException if this {@link DataStore} is closed.
+     * @throws DataStoreClosedException if this {@link DataStore} is closed.
      */
     T get(String id) throws DataStoreException;
     /**
@@ -98,7 +98,7 @@ public interface DataStore<T> extends Closeable{
      * otherwise.
      * @throws DataStoreException if there is a problem fetching the
      * data from this {@link DataStore}.
-     * @throws IllegalStateException if this {@link DataStore} is closed.
+     * @throws DataStoreClosedException if this {@link DataStore} is closed.
      */
     boolean contains(String id) throws DataStoreException;
     /**
@@ -106,7 +106,7 @@ public interface DataStore<T> extends Closeable{
      * @return the number of objects in this DataStore; always >=0.
      * @throws DataStoreException if there is a problem fetching the
      * data from this {@link DataStore}.
-     * @throws IllegalStateException if this {@link DataStore} is closed.
+     * @throws DataStoreClosedException if this {@link DataStore} is closed.
      */
     long getNumberOfRecords() throws DataStoreException;
     /**
@@ -135,7 +135,7 @@ public interface DataStore<T> extends Closeable{
      * however the returned instance may be empty if {@link #getNumberOfRecords()} ==0.
      * @throws DataStoreException if there is a 
      * problem creating this iterator.
-     * @throws IllegalStateException if this {@link DataStore} is closed.
+     * @throws DataStoreClosedException if this {@link DataStore} is closed.
      */
     StreamingIterator<T> iterator() throws DataStoreException;
     

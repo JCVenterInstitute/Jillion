@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.jcvi.jillion.assembly.tasm.TasmFileVisitor.TasmContigVisitorCallback.TasmContigVisitorMemento;
 import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -72,7 +73,7 @@ final class IndexedTasmFileDataStore implements TasmContigDataStore{
 
 	private void checkNotYetClosed(){
 		if(closed){
-			throw new IllegalStateException("closed");
+			throw new DataStoreClosedException("closed");
 		}
 	}
 

@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
@@ -195,7 +196,7 @@ final class IndexedFastqFileDataStore{
         
         private void throwExceptionIfClosed(){
         	if(closed){
-        		throw new IllegalStateException("datastore is closed");
+        		throw new DataStoreClosedException("datastore is closed");
         	}
         }
         @Override

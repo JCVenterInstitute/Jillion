@@ -29,8 +29,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
@@ -64,7 +64,7 @@ public final class LargePhdDataStore implements PhdDataStore{
 
     private void checkIfClosed(){
         if(closed){
-            throw new IllegalStateException("datastore is closed");
+            throw new DataStoreClosedException("datastore is closed");
         }
     }
     @Override
