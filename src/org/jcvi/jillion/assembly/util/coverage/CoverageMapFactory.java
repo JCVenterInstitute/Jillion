@@ -170,7 +170,15 @@ public final class CoverageMapFactory {
 
         @Override
         public int compare(T o1, T o2) {           
-            return Long.valueOf(o1.asRange().getBegin()).compareTo(o2.asRange().getBegin());
+        	 long o1End= o1.asRange().getBegin();
+             long o2End = o2.asRange().getBegin();
+             if(o1End ==o2End){
+             	return 0;
+             }
+             if(o1End < o2End){
+             	return -1;
+             }
+             return 1;
         }
 
     }
@@ -182,8 +190,17 @@ public final class CoverageMapFactory {
         private static final long serialVersionUID = 5135449151100427846L;
 
         @Override
-        public int compare(T o1, T o2) {           
-            return Long.valueOf(o1.asRange().getEnd()).compareTo(o2.asRange().getEnd());
+        public int compare(T o1, T o2) {    
+        	
+            long o1End= o1.asRange().getEnd();
+            long o2End = o2.asRange().getEnd();
+            if(o1End ==o2End){
+            	return 0;
+            }
+            if(o1End < o2End){
+            	return -1;
+            }
+            return 1;
         }
             
     }
