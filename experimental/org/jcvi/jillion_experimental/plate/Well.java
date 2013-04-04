@@ -25,6 +25,8 @@ import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.jillion.internal.core.util.JillionUtil;
+
 /**
  * {@code Well} is a class that represents a single well
  * in a reaction plate.
@@ -528,9 +530,7 @@ public final class Well implements Comparable<Well>{
 
         @Override
         public int compare(Well o1, Well o2) {
-            final int o1Index =o1.getWellIndex(type, order);
-            final int o2Index=o2.getWellIndex(type, order);           
-            return Integer.valueOf(o1Index).compareTo(o2Index);
+            return JillionUtil.compare(o1.getWellIndex(type, order), o2.getWellIndex(type, order));
         }
         
         

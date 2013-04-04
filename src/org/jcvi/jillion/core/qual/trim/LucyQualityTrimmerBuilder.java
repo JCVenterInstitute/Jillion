@@ -32,6 +32,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.internal.core.util.JillionUtil;
 
 
 
@@ -469,12 +470,12 @@ public final class LucyQualityTrimmerBuilder implements org.jcvi.jillion.core.ut
             */
             @Override
             public int compareTo(Window o) {
-                int sizeCmp= Integer.valueOf(o.getSize()).compareTo(size);
+            	
+                int sizeCmp= JillionUtil.compare(o.getSize(),size);
                 if(sizeCmp !=0){
                     return sizeCmp;
                 }
-               
-                return Double.valueOf(o.getMaxErrorRate()).compareTo(maxErrorRate);
+                return Double.compare(o.getMaxErrorRate(), maxErrorRate);
             }
             
         }

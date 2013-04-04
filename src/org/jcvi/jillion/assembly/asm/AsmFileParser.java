@@ -59,6 +59,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
+import org.jcvi.jillion.internal.core.util.JillionUtil;
 
 /**
  * @author dkatzel
@@ -1441,7 +1442,7 @@ public abstract class AsmFileParser {
         */
         @Override
         public int compareTo(VariantRecord o) {
-            return Integer.valueOf(weight).compareTo(o.getWeight());
+        	return JillionUtil.compare(weight, o.getWeight());			
         }
 
         /**

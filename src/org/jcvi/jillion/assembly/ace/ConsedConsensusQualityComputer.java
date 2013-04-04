@@ -41,6 +41,7 @@ import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.core.util.JillionUtil;
 
 final class ConsedConsensusQualityComputer {
 
@@ -351,12 +352,8 @@ final class ConsedConsensusQualityComputer {
 		}
 
 		@Override
-		public int compareTo(QualityPosition other) {			
-			int qualCmp= quality- other.quality;
-			if(qualCmp !=0){
-				return qualCmp;
-			}
-			return (int)(startOffset - other.startOffset);
+		public int compareTo(QualityPosition other) {
+			return JillionUtil.compare(quality, other.quality);
 		}
 
 		@Override

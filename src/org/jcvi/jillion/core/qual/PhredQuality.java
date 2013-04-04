@@ -27,6 +27,8 @@ package org.jcvi.jillion.core.qual;
 
 import java.nio.ByteBuffer;
 
+import org.jcvi.jillion.internal.core.util.JillionUtil;
+
 /**
  * {@code PhredQuality} is a representation of
  * a Phred quality score.
@@ -73,7 +75,7 @@ public final class PhredQuality implements Comparable<PhredQuality>{
     
     @Override
     public int compareTo(PhredQuality o) {
-        return value - o.value;
+        return JillionUtil.compare(value, o.value);
     }
     /**
      * Get the {@link PhredQuality} with the given

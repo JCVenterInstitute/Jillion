@@ -39,6 +39,7 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.core.util.JillionUtil;
 import org.jcvi.jillion.trace.sanger.phd.Phd;
 import org.jcvi.jillion.trace.sanger.phd.PhdDataStore;
 /**
@@ -254,11 +255,8 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 	    */
 	    @Override
 	    public int compareTo(IdAlignedReadInfo o) {
-	        int cmp= Integer.valueOf(getStartOffset()).compareTo(o.getStartOffset());
-	        if(cmp !=0){
-	            return cmp;
-	        }
-	        return getId().compareTo(o.getId());
+	    	return JillionUtil.compare(getStartOffset(), o.getStartOffset());	    	     
+	        
 	    }
     	
     }
