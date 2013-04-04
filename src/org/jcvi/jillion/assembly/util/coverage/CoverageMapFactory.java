@@ -213,7 +213,7 @@ public final class CoverageMapFactory {
 	        return regions.length;
 	    }
 	    @Override
-	    public CoverageRegion<V> getRegion(int i) {
+	    public CoverageRegion<V> getRegion(int i) {	    	
 	        return regions[i];
 	    }
 	    
@@ -223,11 +223,15 @@ public final class CoverageMapFactory {
 		    	long totalLength = 0L;
 		        long totalCoverage =0L;
 		        for(CoverageRegion<?> region : this){
-		        	Range range = region.asRange();
-					totalLength +=range.getLength();
-		        	totalCoverage += region.getCoverageDepth() * region.asRange().getLength();
+		        	long regionLength = region.asRange().getLength();
+					totalLength +=regionLength;
+					totalCoverage += region.getCoverageDepth() * regionLength;
 		        }
-		        avgCoverage = totalCoverage/(double)totalLength;
+		        if(totalLength==0L){
+		        	avgCoverage=0D;
+		        }else{
+		        	avgCoverage = totalCoverage/(double)totalLength;
+		        }
 	        }
 	        return avgCoverage;
 	    }
@@ -305,13 +309,6 @@ public final class CoverageMapFactory {
 	        return Arrays.asList(regions).iterator();
 	    }
 	
-	    
-	    
-	    @Override
-		public StreamingIterator<CoverageRegion<V>> getRegionIterator() {
-			return IteratorUtil.createStreamingIterator(iterator());
-		}
-		
 	   
 	    /**
 	    * {@inheritDoc}

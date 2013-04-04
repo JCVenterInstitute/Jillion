@@ -27,9 +27,8 @@ package org.jcvi.jillion.assembly.util.coverage;
 
 
 import org.jcvi.jillion.core.Rangeable;
-import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
- * A {@link CoverageRegion} is a contiguious 
+ * A {@link CoverageRegion} is a contiguous 
  * portion of a {@link CoverageMap} which 
  * has exactly the same elements (and therefore
  * the same depth of coverage). If any elements
@@ -49,6 +48,4 @@ public interface CoverageRegion<T extends Rangeable> extends Rangeable, Iterable
      * @return an integer {@code >= 0}.
      */
     int getCoverageDepth();    
-    
-    StreamingIterator<T> getElementIterator();
 }

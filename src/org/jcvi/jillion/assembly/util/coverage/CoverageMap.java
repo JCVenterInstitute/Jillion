@@ -29,24 +29,68 @@ import java.util.List;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
-import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 /**
- * A {@code CoverageMap}
+ * A {@code CoverageMap} is an Object that contains coverage information
+ * for a contiguous range of offset values. Coverage is defined
+ * as the number of elements that are span a given offset.
+ * The coverage at each offset
+ * may be different since a different number of objects may 
+ * span different locations.  Since adjacent offsets often 
+ * have the same coverage information, contiguous regions that contain the same exact
+ * elements (and therefore the same exact coverage) are combined into 
+ * {@link CoverageRegion} objects. Adjacent {@link CoverageRegion}s may
+ * have the same depth of coverage but will not contain the same exact
+ * elements.
+ * <p/>
+ * For example, a CoverageMap of a  {@link org.jcvi.jillion.assembly.Contig} 
+ * will show where each of its {@link org.jcvi.jillion.assembly.AssembledRead}s align
+ * to the contig consensus. Each consensus offset will have a different level of coverage
+ * because each consensus offset will have a different number of reads aligned to it.
  * @author dkatzel
  *
- * @param <T>
+ * @param <T> The Type of element in the coverage map.
  */
 public interface CoverageMap <T extends Rangeable> extends Iterable<CoverageRegion<T>>{
-
+	/**
+	 * Get the number of {@link CoverageRegion}s.
+	 * @return the number of regions will always be 
+	 * >=0.
+	 */
     int getNumberOfRegions();
-
+    /**
+     * Get the ith {@link CoverageRegion}.
+     * @param i the index into this coverage map;
+     * where 0 <= i <= {@link #getNumberOfRegions()} -1
+     * @return the ith {@link CoverageRegion} will never be null
+     * but may have 0 depth of coverage. 
+     * @throws IndexOutOfBoundsException if i <0 or i > {@link #getNumberOfRegions()} -1
+     */
     CoverageRegion<T> getRegion(int i);
-    
+    /**
+     * Does this CoverageMap have any CoverageRegions.
+     * @return {@code true} if {@link #getNumberOfRegions()}>0;
+     * {@code false} otherwise.
+     */
     boolean isEmpty();
-    
-    StreamingIterator<CoverageRegion<T>> getRegionIterator();
-   
+
+    /**
+     * Get the average coverage depth at each offset
+     * in the coverage map. This is the same as (but may be more
+     * efficient than):
+     * <pre>
+     	long totalLength = 0L;
+     	long totalCoverage =0L;
+     	for(CoverageRegion<?> region : this){
+        	long rangeLength =region.asRange().getLength();
+        	totalLength += rangeLength;
+        	totalCoverage += region.getCoverageDepth() * rangeLength;
+        }
+        avgCoverage = totalLength==0? 0D : totalCoverage/(double)totalLength;
+        </pre>
+     * @return the average coverage depth will always be 
+     * >=0.
+     */
     double getAverageCoverage();
     /**
      * Get a List of all the {@link CoverageRegion}s in this CoverageMap

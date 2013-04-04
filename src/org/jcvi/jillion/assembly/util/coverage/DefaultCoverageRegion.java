@@ -34,9 +34,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
-import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.util.iter.IteratorUtil;
-import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegion<T> {
     private final Collection<T> elements;
@@ -63,10 +60,7 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
 	public Iterator<T> iterator() {
 		return elements.iterator();
 	}
-	@Override
-	public StreamingIterator<T> getElementIterator() {
-		return IteratorUtil.createStreamingIterator(elements.iterator());
-	}
+    
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder(50);
@@ -107,26 +101,21 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
      * @return
      */
     private boolean elementsAreEqual(CoverageRegion<?> otherRegion){
-    	StreamingIterator<?> otherIterator=null, iter=null;
-    	try{
-	    	otherIterator = otherRegion.getElementIterator();
-	    	iter = getElementIterator();
-	    	while(iter.hasNext() && otherIterator.hasNext()){
-	    		if(!iter.next().equals(otherIterator.next())){
-	    			return false;
-	    		}
-	    	}
-	    	if(
-	    			(iter.hasNext() && !otherIterator.hasNext())
-	    			||
-	    			(!iter.hasNext() && otherIterator.hasNext())
-	    			){
-	    		return false;
-	    	}
-	    	return true;
-    	}finally{
-    		IOUtil.closeAndIgnoreErrors(iter, otherIterator);
+		Iterator<?> otherIterator = otherRegion.iterator();
+		Iterator<?> iter = iterator();
+    	while(iter.hasNext() && otherIterator.hasNext()){
+    		if(!iter.next().equals(otherIterator.next())){
+    			return false;
+    		}
     	}
+    	if(
+    			(iter.hasNext() && !otherIterator.hasNext())
+    			||
+    			(!iter.hasNext() && otherIterator.hasNext())
+    			){
+    		return false;
+    	}
+    	return true;
     }
     @Override
     public boolean equals(Object obj) {
