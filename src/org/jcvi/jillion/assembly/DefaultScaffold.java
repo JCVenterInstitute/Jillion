@@ -38,7 +38,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.jcvi.jillion.assembly.util.coverage.CoverageMap;
-import org.jcvi.jillion.assembly.util.coverage.CoverageMapFactory;
+import org.jcvi.jillion.assembly.util.coverage.CoverageMapBuilder;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
@@ -80,7 +80,7 @@ public final class DefaultScaffold  implements Scaffold{
             ranges.add(Range.of(contig.getBegin(), contig.getEnd()));
         }
         length = Ranges.createInclusiveRange(ranges).getLength();
-        contigMap =CoverageMapFactory.create(placedContigs);
+        contigMap =new CoverageMapBuilder<PlacedContig>(placedContigs).build();
     }
     @Override
     public PlacedContig getPlacedContig(String id) {

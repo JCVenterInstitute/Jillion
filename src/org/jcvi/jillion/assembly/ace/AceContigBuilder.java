@@ -41,7 +41,7 @@ import java.util.TreeSet;
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.assembly.ContigBuilder;
 import org.jcvi.jillion.assembly.util.coverage.CoverageMap;
-import org.jcvi.jillion.assembly.util.coverage.CoverageMapFactory;
+import org.jcvi.jillion.assembly.util.coverage.CoverageMapBuilder;
 import org.jcvi.jillion.assembly.util.coverage.CoverageRegion;
 import org.jcvi.jillion.assembly.util.slice.CompactedSlice;
 import org.jcvi.jillion.assembly.util.slice.QualityValueStrategy;
@@ -668,7 +668,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     public SortedMap<Range, AceContigBuilder> split(Collection<Range> rangesToKeep){
     	SortedMap<Range, AceContigBuilder> splitContigs = new TreeMap<Range, AceContigBuilder>(Range.Comparators.ARRIVAL);
     	
-    	CoverageMap<AceAssembledReadBuilder> coverageMap = CoverageMapFactory.create(aceReadBuilderMap.values());
+    	CoverageMap<AceAssembledReadBuilder> coverageMap = new CoverageMapBuilder<AceAssembledReadBuilder>(aceReadBuilderMap.values()).build();
     	
     	for(Range rangeTokeep :rangesToKeep){
     		

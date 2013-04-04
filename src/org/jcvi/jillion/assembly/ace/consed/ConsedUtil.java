@@ -43,7 +43,7 @@ import org.jcvi.jillion.assembly.ace.AceContigBuilder;
 import org.jcvi.jillion.assembly.ace.ConsensusAceTag;
 import org.jcvi.jillion.assembly.ace.PhdInfo;
 import org.jcvi.jillion.assembly.util.coverage.CoverageMap;
-import org.jcvi.jillion.assembly.util.coverage.CoverageMapFactory;
+import org.jcvi.jillion.assembly.util.coverage.CoverageMapBuilder;
 import org.jcvi.jillion.assembly.util.coverage.CoverageRegion;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
@@ -144,7 +144,8 @@ public final class ConsedUtil {
     public static SortedMap<Range,AceContig> split0xContig(AceContigBuilder contigBuilder, boolean adjustIdCoordinates){
         List<Range> coveredRegions = new ArrayList<Range>();
         NucleotideSequence unSplitConsensus = contigBuilder.getConsensusBuilder().build();
-        CoverageMap<AceAssembledReadBuilder> coverageMap = CoverageMapFactory.create(contigBuilder.getAllAssembledReadBuilders());
+        CoverageMap<AceAssembledReadBuilder> coverageMap = new CoverageMapBuilder<AceAssembledReadBuilder>(contigBuilder.getAllAssembledReadBuilders())
+        															.build();
         for(CoverageRegion<AceAssembledReadBuilder> region : coverageMap){
             if(region.getCoverageDepth()>0){
                 
