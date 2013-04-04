@@ -282,6 +282,47 @@ public final class CoverageMapFactory {
 	    	if(range ==null){
 	    		throw new NullPointerException("range can not be null");
 	    	}
+	    	if(range.isEmpty()){
+	    		//empty ranges never intersect anything
+	    		return Collections.emptyList();
+	    	}
+	    	if(regions[0].asRange().getBegin() > range.getEnd()){
+	    		//region is entirely before coverage map
+	    		return Collections.emptyList();
+	    	}
+	    	if(regions[regions.length-1].asRange().getEnd() < range.getBegin()){
+	    		//region is entirely after coverage map
+	    		return Collections.emptyList();
+	    	}
+	    	CoverageRegion<V> fakeRegion = new DefaultCoverageRegion.Builder<V>(range.getBegin(), Collections.<V>emptyList())
+	    											.end(range.getEnd())
+	    											.build();
+	    	
+	    	int beginIndex =Arrays.binarySearch(regions, fakeRegion, CoverageRegionComparators.BY_BEGIN);
+	    	int endIndex =Arrays.binarySearch(regions, fakeRegion, CoverageRegionComparators.BY_END);
+	    	
+	    	
+	    	//Arrays.binarySearch will return a negative
+	    	//index if the key isn't found but the 
+	    	//absolute value is where the key 
+	    	//WOULD be if it was in the array
+	    	//which is good enough for our intersection
+	    	//so we need to either add or subtract 1 to get
+	    	//the flanking region to be included
+	    	int correctedBeginIndex = Math.max(0, beginIndex<0? Math.abs(beginIndex) -2 : beginIndex);
+	    	int correctedEndIndex = Math.min(regions.length -1, endIndex <0? Math.abs(endIndex)-1  : endIndex);
+	    	
+	    	
+	    	int numberOfRegionsIntersected = correctedEndIndex-correctedBeginIndex +1;
+	    	
+	    	List<CoverageRegion<V>> intersectedRegions = new ArrayList<CoverageRegion<V>>(numberOfRegionsIntersected);
+	    	for(int i=correctedBeginIndex; i<=correctedEndIndex; i++){
+	    		if(i< regions.length){
+	    			intersectedRegions.add(regions[i]);
+	    		}
+	    	}
+	    	return intersectedRegions;
+	    	/*
 	    	List<CoverageRegion<V>> selectedRegions = new ArrayList<CoverageRegion<V>>();
 	    	for(CoverageRegion<V> region : this.regions){	        
         		Range regionRange = region.asRange();
@@ -293,6 +334,7 @@ public final class CoverageMapFactory {
                 }
         	}
 	        return selectedRegions;      
+	        */
 	    }
 	    @Override
 	    public CoverageRegion<V> getRegionWhichCovers(long consensusIndex) {
@@ -318,6 +360,58 @@ public final class CoverageMapFactory {
 	        return regions.length==0;
 	    }
 
+    }
+    
+    
+    private static enum CoverageRegionComparators implements Comparator<CoverageRegion<?>>{
+		//Comparators can't use the Range Comparators 
+    	//because those comparators use not only being and end
+    	//coordinates but range length as well to determine 
+    	//if comparator returns 0
+    	BY_BEGIN(new Comparator<Range>(){
+
+			@Override
+			public int compare(Range o1, Range o2) {
+				long l1 =o1.getBegin();
+				long l2 =o2.getBegin();
+				if(l1 ==l2){
+					return 0;
+				}
+				if(l1< l2){
+					return -1;
+				}
+				return 1;
+			}			
+		}
+		),
+		BY_END(new Comparator<Range>(){
+
+			@Override
+			public int compare(Range o1, Range o2) {
+				long l1 =o1.getEnd();
+				long l2 =o2.getEnd();
+				if(l1 ==l2){
+					return 0;
+				}
+				if(l1< l2){
+					return -1;
+				}
+				return 1;
+			}			
+		})
+    	;
+    	private final Comparator<Range> rangeComparator;
+    	
+    	private CoverageRegionComparators(Comparator<Range> comparator){
+    		this.rangeComparator = comparator;
+    	}
+    	
+    	@Override
+		public int compare(CoverageRegion<?> o1, CoverageRegion<?> o2) {
+			return rangeComparator.compare(o1.asRange(), o2.asRange());
+		}
+    	
+    	
     }
     
     private static  class Builder<P extends Rangeable> extends AbstractCoverageMapBuilder<P>{

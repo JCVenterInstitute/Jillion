@@ -25,7 +25,6 @@
  */
 package org.jcvi.jillion.core;
 
-import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -752,7 +751,8 @@ public abstract class Range implements Rangeable,Iterable<Long>
 
     /**
      * Checks to see if the given {@link Range} intersects this one.
-     *
+     * An empty range will never intersect any other range
+     * (even itself)
      * @param target The {@link Range} to check.
      * @return <code>true</code> if the coordinates of the two ranges overlap
      * each other in at least one point.
