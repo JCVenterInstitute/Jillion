@@ -42,6 +42,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.core.util.JillionUtil;
 /**
  * {@code CtgFileWriter} will write out {@link Contig}
  * objects in ctg format.
@@ -145,15 +146,16 @@ public class CtgFileWriter implements Closeable{
          */
         @Override
         public int compare(AssembledRead o1, AssembledRead o2) {
-            int startComparison = Long.valueOf(o1.getGappedStartOffset()).compareTo(Long.valueOf(o2.getGappedStartOffset()));
+        	
+            int startComparison = JillionUtil.compare(o1.getGappedStartOffset(), o2.getGappedStartOffset());
             if(startComparison !=0){
                 return startComparison;
             }
-            int lengthComparison= Long.valueOf(o1.getGappedLength()).compareTo(Long.valueOf(o2.getGappedLength()));
+            int lengthComparison= JillionUtil.compare(o1.getGappedLength(), o2.getGappedLength());
             if(lengthComparison !=0){
                 return lengthComparison;
             }
-            int idLengthComparison =  Long.valueOf(o1.getId().length()).compareTo(Long.valueOf(o2.getId().length()));
+            int idLengthComparison =  JillionUtil.compare(o1.getId().length(), o2.getId().length());
             if(idLengthComparison !=0){
                 return idLengthComparison;
             }
