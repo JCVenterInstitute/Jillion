@@ -36,7 +36,6 @@ import java.util.List;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssemblyUtil;
-import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -80,51 +79,7 @@ final class CoverageMapFactory {
             create(Collection<R> elements, int maxAllowedCoverage){
         return new Builder<R>(elements,maxAllowedCoverage).build();
     }
-    /**
-     * Create a new coverage map of the {@link AssembledRead}s
-     * from the given contig.  The {@link CoverageRegion}'s coordinates
-     * will be consensus gapped coordinates.
-     * @param contig the contig to build a {@link CoverageMap} of.
-     * @param <R> the type of {@link AssembledRead}s used in the contig.
-     * @param <C> the type of {@link Contig}
-     * @return a new {@link CoverageMap}; never null.
-     */
-    public static <R extends AssembledRead,C extends Contig<R>> CoverageMap<R> 
-        createGappedCoverageMapFromContig(C contig){
-            return new Builder<R>(contig.getReadIterator()).build();
-    }
-    /**
-     * Create a coverage map in <strong>ungapped consensus coordinate space</strong>
-     * of the given contig.
-     * @param <R> the type of {@link AssembledRead}s used in the contig.
-     * @param <C> the type of {@link Contig}
-     * @param contig the contig to create an ungapped coverage map for.
-     * @return a new {@link CoverageMap} but where the coordinates in the coverage map
-     * refer to ungapped consensus coordinates instead of gapped coordinates.
-     */
-    public static <R extends AssembledRead,C extends Contig<R>> CoverageMap<R> 
-    createUngappedCoverageMapFromContig(C contig){
-    	CoverageMap<R> gappedCoverageMap = createGappedCoverageMapFromContig(contig);
-    	if(contig.getConsensusSequence().getNumberOfGaps()==0){
-    		//no gaps so we don't need to recompute anything
-    		return gappedCoverageMap;
-    	}
-    	return createUngappedCoverageMap(contig.getConsensusSequence(), gappedCoverageMap);
-    }
-    /**
-     * Create a coverage map in <strong>ungapped consensus coordinate space</strong>
-     * of the given reads aligned to the given consensus.
-     * @param gappedConsensus the gapped consensus the reads aligned to.
-     * @param reads the reads to generate a coverage map for.
-     * @return a new {@link CoverageMap} but where the coordinates in the coverage map
-     * refer to ungapped coordinates instead of gapped coordinates.
-     * @param <R> the type of {@link AssembledRead}s used in the contig.
-     */
-    public static <R extends AssembledRead> CoverageMap<R> 
-    createUngappedCoverageMap(NucleotideSequence gappedConsensus, Collection<R> reads){
-    	CoverageMap<R> gappedCoverageMap = create(reads);
-    	return createUngappedCoverageMap(gappedConsensus, gappedCoverageMap);
-    }
+
     public static <R extends AssembledRead> CoverageMap<R> createUngappedCoverageMap(
             NucleotideSequence consensus, CoverageMap<R> gappedCoverageMap) {
         List<CoverageRegion<R>> ungappedCoverageRegions = new ArrayList<CoverageRegion<R>>();
@@ -144,23 +99,7 @@ final class CoverageMapFactory {
         
         return new CoverageMapImpl<R>(ungappedCoverageRegions);
     }
-    /**
-     * Create a new coverage map of the {@link AssembledRead}s
-     * from the given contig but limiting the max coverage
-	 * in the map to {@code maxAllowedCoverage}.  The {@link CoverageRegion}'s coordinates
-     * will be consensus gapped coordinates.
-     * @param contig the contig to build a {@link CoverageMap} of.
-     * @param maxAllowedCoverage Any
-	 * elements that would cause the max coverage to exceed this threshold
-	 * will be ignored.
-     * @param <R> the type of {@link AssembledRead}s used in the contig.
-     * @param <C> the type of {@link Contig}
-     * @return a new {@link CoverageMap}; never null.
-     */
-    public static <R extends AssembledRead,C extends Contig<R>> CoverageMap<R>    
-        createGappedCoverageMapFromContig(C contig, int maxAllowedCoverage){
-            return new Builder<R>(contig.getReadIterator(),maxAllowedCoverage).build();
-    }
+
     private static class RangeableStartComparator <T extends Rangeable> implements Comparator<T>,Serializable {       
         /**
          * 
@@ -434,13 +373,7 @@ final class CoverageMapFactory {
             
         }
         
-        public Builder(StreamingIterator<P> elements, int maxAllowedCoverage){
-            super(maxAllowedCoverage);
-            initialize(elements);
-        }
-        public Builder(StreamingIterator<P> elements) {
-            initialize(elements);
-        }
+       
         private final void initialize(Collection<P> collection){
         	initialize(IteratorUtil.createStreamingIterator(collection.iterator()));
         }
