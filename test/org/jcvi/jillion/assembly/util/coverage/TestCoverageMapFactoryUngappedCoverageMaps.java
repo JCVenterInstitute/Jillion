@@ -29,8 +29,6 @@ import java.util.List;
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.assembly.DefaultContig;
 import org.junit.Test;
 public class TestCoverageMapFactoryUngappedCoverageMaps {
@@ -69,16 +67,10 @@ public class TestCoverageMapFactoryUngappedCoverageMaps {
 		assertEquals(Range.of(4,6), coverageRegion.asRange());
 		assertEquals(2, coverageRegion.getCoverageDepth());
 		List<String> actualReads = new ArrayList<String>();
-		StreamingIterator<AssembledRead> readIter = null;
-		try{
-			readIter = coverageRegion.getElementIterator();
-			coverageRegion.getElementIterator();
-			while(readIter.hasNext()){
-				actualReads.add(readIter.next().getId());
-			}
-		}finally{
-			IOUtil.closeAndIgnoreErrors(readIter);
+		for(AssembledRead read : coverageRegion){
+			actualReads.add(read.getId());
 		}
+		
 		assertTrue(actualReads.contains("read1"));
 		assertTrue(actualReads.contains("read2"));
 	
