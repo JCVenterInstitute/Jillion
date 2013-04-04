@@ -40,8 +40,10 @@ public class TestCoverageMapFactoryUngappedCoverageMaps {
 										.addRead("read2", 4, "ACGT")
 										.build();
 		
-		CoverageMap<AssembledRead> gappedCoverageMap = CoverageMapFactory.createGappedCoverageMapFromContig(contig);
-		CoverageMap<AssembledRead> ungappedCoverageMap = CoverageMapFactory.createUngappedCoverageMapFromContig(contig);
+		CoverageMap<AssembledRead> gappedCoverageMap = new ContigCoverageMapBuilder<AssembledRead>(contig).build();
+		CoverageMap<AssembledRead> ungappedCoverageMap = new ContigCoverageMapBuilder<AssembledRead>(contig)
+																.useUngappedCoordinates()
+																.build();
 		
 		assertEquals(gappedCoverageMap, ungappedCoverageMap);
 	}
@@ -53,8 +55,11 @@ public class TestCoverageMapFactoryUngappedCoverageMaps {
 											.addRead("read2", 4, "AC-T")
 											.build();
 
-		CoverageMap<AssembledRead> gappedCoverageMap = CoverageMapFactory.createGappedCoverageMapFromContig(contig);
-		CoverageMap<AssembledRead> ungappedCoverageMap = CoverageMapFactory.createUngappedCoverageMapFromContig(contig);
+		CoverageMap<AssembledRead> gappedCoverageMap = new ContigCoverageMapBuilder<AssembledRead>(contig)
+															.build();
+		CoverageMap<AssembledRead> ungappedCoverageMap = new ContigCoverageMapBuilder<AssembledRead>(contig)
+															.useUngappedCoordinates()
+															.build();
 		
 		assertEquals("ungapped length should be less than gapped length",
 				getLastCoveredOffsetIn(gappedCoverageMap), 
