@@ -27,8 +27,10 @@ package org.jcvi.jillion.assembly.util.coverage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -42,7 +44,7 @@ public class TestDefaultCoverageMap {
     Range seq_0_9 = Range.of(0, 9);
     Range seq_0_12 =Range.of(0, 12);
     Range seq_5_14 =Range.of(5, 14);
-    Range seq_5_5 = new Range.Builder().build();
+    Range seq_5_empty = new Range.Builder(0).shift(5).build();
     Range seq_8_12 =Range.of(8, 12);
     
     Range seq_10_12 =Range.of(10, 12);
@@ -79,7 +81,7 @@ public class TestDefaultCoverageMap {
     @Test
     public void ignoreSequenceOfZeroSize(){
 
-        CoverageMap<Range> map =CoverageMapFactory.create(Arrays.asList(seq_5_5));
+        CoverageMap<Range> map =CoverageMapFactory.create(Arrays.asList(seq_5_empty));
         assertEquals(0, map.getNumberOfRegions());
         assertEquals(-1,getLastCoveredOffsetIn(map));
         assertTrue(map.isEmpty());
@@ -265,7 +267,24 @@ public class TestDefaultCoverageMap {
 
     }
     
-  
+    @Test
+    public void getRegionsWhichIntersectNoIntersectionsReturnEmptyList(){
+        CoverageMap<Range> map = CoverageMapFactory.create(
+                Arrays.asList(seq_0_9,seq_5_14,seq_0_12));
+        
+        assertTrue(map.getRegionsWhichIntersect(Range.of(-5,-1)).isEmpty());
+      
+        assertTrue(map.getRegionsWhichIntersect(Range.of(15,17)).isEmpty());
+    }
+    @Test
+    public void getRegionsWhichCoversNoIntersectionsReturnNull(){
+        CoverageMap<Range> map = CoverageMapFactory.create(
+                Arrays.asList(seq_0_9,seq_5_14,seq_0_12));
+        
+        assertNull(map.getRegionWhichCovers(-1));
+      
+        assertNull(map.getRegionWhichCovers(15));
+    }
     
     @Test
     public void getRegionsWhichIntersect(){
@@ -277,6 +296,58 @@ public class TestDefaultCoverageMap {
         assertEquals(createCoverageRegion(5,9,seq_0_9,seq_0_12,seq_5_14 ), regions.get(0));
         assertEquals(createCoverageRegion(10,12,seq_0_12,seq_5_14 ), regions.get(1));
 
+    }
+    
+    @Test
+    public void getRegionsWhichIntersectAllCombinations(){
+        CoverageMap<Range> map = CoverageMapFactory.create(
+                Arrays.asList(seq_0_9,seq_5_14,seq_0_12));
+        
+        long lastCoordinate = map.getRegion(map.getNumberOfRegions() -1).asRange().getEnd();
+        //test every possible range including empty ranges
+        for(long i=0; i<= lastCoordinate; i++){
+        	for(long j=i-1; j<=lastCoordinate; j++){
+        		Range range = Range.of(i,j);
+        		assertEquals("range = " + range, computeExpectedCoverageIntersections(map, range),
+        				map.getRegionsWhichIntersect(range));
+        	}
+        }
+
+    }
+    
+    /**
+     * Compute intersection the simple but inefficient way,
+     * since CoverageMap implementations might do something
+     * more complicated but more efficient.
+     */
+    private List<CoverageRegion<Range>> computeExpectedCoverageIntersections(CoverageMap<Range> map, Range range){
+    	List<CoverageRegion<Range>> ret = new ArrayList<CoverageRegion<Range>>();
+    	for(CoverageRegion<Range> region : map){
+    		Range regionRange = region.asRange();
+    		if(range.intersects(regionRange)){
+    			ret.add(region);
+    		}
+    	}
+    	return ret;
+    }
+    @Test
+    public void getRegionsWhichCovers(){
+        CoverageMap<Range> map = CoverageMapFactory.create(
+                Arrays.asList(seq_0_9,seq_5_14,seq_0_12));
+        
+        for(int i=0; i<5; i++){
+        	assertEquals("offset "+ i, map.getRegion(0), map.getRegionWhichCovers(i));
+        }
+        for(int i=5; i<=9; i++){
+        	assertEquals("offset "+ i, map.getRegion(1), map.getRegionWhichCovers(i));
+        }
+        for(int i=10; i<=12; i++){
+        	assertEquals("offset "+ i, map.getRegion(2), map.getRegionWhichCovers(i));
+        }
+        for(int i=13; i<=14; i++){
+        	assertEquals("offset "+ i, map.getRegion(3), map.getRegionWhichCovers(i));
+        }
+       
     }
     
     private static long getLastCoveredOffsetIn(CoverageMap<?> coverageMap){
