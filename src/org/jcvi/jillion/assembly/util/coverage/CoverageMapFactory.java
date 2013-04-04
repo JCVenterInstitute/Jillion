@@ -193,6 +193,13 @@ public final class CoverageMapFactory {
     private static final class CoverageMapImpl<V extends Rangeable> implements CoverageMap<V>{
 	    private final CoverageRegion<V>[] regions;
 	    /**
+	     * The avg coverage of this coverage map
+	     * we will lazy load this value
+	     * since it could be expensive to compute.
+	     */
+	    private Double avgCoverage =null;
+	    
+	    /**
 	     *
 	     * Creates a new <code>CoverageMapImpl</code>.
 	     * @param amplicons A {@link Collection} of {@link Coordinated}s.
@@ -209,7 +216,21 @@ public final class CoverageMapFactory {
 	    public CoverageRegion<V> getRegion(int i) {
 	        return regions[i];
 	    }
-	
+	    
+	    @Override
+	    public synchronized double getAverageCoverage(){
+	        if(avgCoverage ==null){
+		    	long totalLength = 0L;
+		        long totalCoverage =0L;
+		        for(CoverageRegion<?> region : this){
+		        	Range range = region.asRange();
+					totalLength +=range.getLength();
+		        	totalCoverage += region.getCoverageDepth() * region.asRange().getLength();
+		        }
+		        avgCoverage = totalCoverage/(double)totalLength;
+	        }
+	        return avgCoverage;
+	    }
 	  
 	    @Override
 	    public boolean equals(Object obj) {
@@ -251,6 +272,32 @@ public final class CoverageMapFactory {
 	            buf.append('\n');
 	        }
 	        return buf.toString();
+	    }
+	    @Override
+	    public List<CoverageRegion<V>> getRegionsWhichIntersect(Range range) {
+	    	if(range ==null){
+	    		throw new NullPointerException("range can not be null");
+	    	}
+	    	List<CoverageRegion<V>> selectedRegions = new ArrayList<CoverageRegion<V>>();
+	    	for(CoverageRegion<V> region : this.regions){	        
+        		Range regionRange = region.asRange();
+        		if(range.endsBefore(regionRange)){
+                    break;
+                }
+        		if(regionRange.intersects(range)){
+                    selectedRegions.add(region);
+                }
+        	}
+	        return selectedRegions;      
+	    }
+	    @Override
+	    public CoverageRegion<V> getRegionWhichCovers(long consensusIndex) {
+	        Range range = Range.of(consensusIndex, consensusIndex);
+	        final List<CoverageRegion<V>> intersectedRegion = getRegionsWhichIntersect(range);
+	        if(intersectedRegion.isEmpty()){
+	            return null;
+	        }
+	        return intersectedRegion.get(0);
 	    }
 	    
 	    @Override

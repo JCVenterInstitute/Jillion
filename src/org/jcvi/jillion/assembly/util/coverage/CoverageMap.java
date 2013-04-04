@@ -25,6 +25,9 @@
  */
 package org.jcvi.jillion.assembly.util.coverage;
 
+import java.util.List;
+
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
@@ -44,4 +47,27 @@ public interface CoverageMap <T extends Rangeable> extends Iterable<CoverageRegi
     
     StreamingIterator<CoverageRegion<T>> getRegionIterator();
    
+    double getAverageCoverage();
+    /**
+     * Get a List of all the {@link CoverageRegion}s in this CoverageMap
+     * that intersect the given {@link Range}.
+     * @param range the Range to get all the coverageRegions for.
+     * @return A List of CoverageRegions; if the coverage map does not contain
+     * any CoverageRegions that intersect the given range, then the returned
+     * List will be empty.  Will never return null.  It is possible that
+     * CoverageRegions returned may have 0 depth of coverage.
+     * @throws NullPointerException if range is null.
+     */
+    List<CoverageRegion<T>> getRegionsWhichIntersect(Range range);
+    /**
+     * Get the {@link CoverageRegion} that provides coverage
+     * for the given offset (in 0-based).  If this coverage map
+     * includes the given offset, then the returned {@link CoverageRegion}'s
+     * {@link Range} will intersect the given offset.
+     * @param offset the offset to 
+     * @return a CoverageRegion if this CoverageMap contains this offset;
+     * or {@code null} if this coverage map does not contain this offset. 
+     * It is possible for the returned CoverageRegion to have 0 depth of coverage.
+     */
+    CoverageRegion<T> getRegionWhichCovers(long offset);
 }
