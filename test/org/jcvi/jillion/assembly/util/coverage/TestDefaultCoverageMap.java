@@ -25,20 +25,18 @@
  */
 package org.jcvi.jillion.assembly.util.coverage;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.jillion.assembly.util.coverage.CoverageMap;
-import org.jcvi.jillion.assembly.util.coverage.CoverageMapFactory;
-import org.jcvi.jillion.assembly.util.coverage.CoverageMapUtil;
-import org.jcvi.jillion.assembly.util.coverage.CoverageRegion;
-import org.jcvi.jillion.assembly.util.coverage.DefaultCoverageRegion;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestDefaultCoverageMap {
 
     Range seq_0_9 = Range.of(0, 9);
@@ -68,7 +66,7 @@ public class TestDefaultCoverageMap {
     public void emptyListShouldReturnEmptyCoverageMap(){
         CoverageMap<Range> map =CoverageMapFactory.create(Collections.<Range>emptyList());
         assertEquals(0, map.getNumberOfRegions());
-        assertEquals(-1,CoverageMapUtil.getLastCoveredOffsetIn(map));
+        assertEquals(-1,getLastCoveredOffsetIn(map));
         assertTrue(map.isEmpty());
     }
     @Test
@@ -76,14 +74,14 @@ public class TestDefaultCoverageMap {
         Range read = Range.of(0, 0);
         CoverageMap<Range> map =CoverageMapFactory.create(Arrays.asList(read));
         assertEquals(1, map.getNumberOfRegions());
-        assertEquals(0, CoverageMapUtil.getLastCoveredOffsetIn(map));
+        assertEquals(0, getLastCoveredOffsetIn(map));
     }
     @Test
     public void ignoreSequenceOfZeroSize(){
 
         CoverageMap<Range> map =CoverageMapFactory.create(Arrays.asList(seq_5_5));
         assertEquals(0, map.getNumberOfRegions());
-        assertEquals(-1,CoverageMapUtil.getLastCoveredOffsetIn(map));
+        assertEquals(-1,getLastCoveredOffsetIn(map));
         assertTrue(map.isEmpty());
 
     }
@@ -95,7 +93,7 @@ public class TestDefaultCoverageMap {
         assertEquals(1, map.getNumberOfRegions());
         CoverageRegion<Range> expectedRegion = createCoverageRegion(0,9,seq_0_9 );
         assertEquals(expectedRegion,map.getRegion(0));
-        assertEquals(9, CoverageMapUtil.getLastCoveredOffsetIn(map));
+        assertEquals(9, getLastCoveredOffsetIn(map));
         assertFalse(map.isEmpty());
     }
     
@@ -108,7 +106,7 @@ public class TestDefaultCoverageMap {
         assertEquals(createCoverageRegion(0,4,seq_0_9 ), map.getRegion(0));
         assertEquals(createCoverageRegion(5,9,seq_0_9,seq_5_14 ), map.getRegion(1));
         assertEquals(createCoverageRegion(10,14,seq_5_14 ), map.getRegion(2));
-        assertEquals(14, CoverageMapUtil.getLastCoveredOffsetIn(map));
+        assertEquals(14, getLastCoveredOffsetIn(map));
         assertFalse(map.isEmpty());
     }
     
@@ -122,7 +120,7 @@ public class TestDefaultCoverageMap {
         assertEquals(createCoverageRegion(5,9,seq_0_9,seq_0_12,seq_5_14 ), map.getRegion(1));
         assertEquals(createCoverageRegion(10,12,seq_0_12,seq_5_14 ), map.getRegion(2));
         assertEquals(createCoverageRegion(13,14,seq_5_14 ), map.getRegion(3));
-        assertEquals(14, CoverageMapUtil.getLastCoveredOffsetIn(map));
+        assertEquals(14, getLastCoveredOffsetIn(map));
         assertFalse(map.isEmpty());
     }
     
@@ -134,7 +132,7 @@ public class TestDefaultCoverageMap {
         assertEquals(2, map.getNumberOfRegions());
         assertEquals(createCoverageRegion(0,9,seq_0_9 ), map.getRegion(0));
         assertEquals(createCoverageRegion(10,12,seq_10_12 ), map.getRegion(1));
-        assertEquals(12, CoverageMapUtil.getLastCoveredOffsetIn(map));
+        assertEquals(12, getLastCoveredOffsetIn(map));
         assertFalse(map.isEmpty());
     }
     
@@ -151,7 +149,7 @@ public class TestDefaultCoverageMap {
         //zero coverage region
         assertEquals(createCoverageRegion(15,15 ), map.getRegion(4));
         assertEquals(createCoverageRegion(16,20,seq_16_20 ), map.getRegion(5));
-        assertEquals(20, CoverageMapUtil.getLastCoveredOffsetIn(map));
+        assertEquals(20, getLastCoveredOffsetIn(map));
         assertFalse(map.isEmpty());
     }
     
@@ -166,7 +164,7 @@ public class TestDefaultCoverageMap {
         assertEquals(createCoverageRegion(10,10,seq_0_12,seq_8_12, seq_10_12), map.getRegion(2));
         assertEquals(createCoverageRegion(11,12,seq_0_12, seq_8_12,seq_10_12,seq_11_15), map.getRegion(3));
         assertEquals(createCoverageRegion(13,15,seq_11_15), map.getRegion(4));
-        assertEquals(15, CoverageMapUtil.getLastCoveredOffsetIn(map));
+        assertEquals(15, getLastCoveredOffsetIn(map));
         assertFalse(map.isEmpty());
     }
     
@@ -185,7 +183,7 @@ public class TestDefaultCoverageMap {
         assertEquals(createCoverageRegion(13,15,seq_11_15,seq_12_18), map.getRegion(5));
         assertEquals(createCoverageRegion(16,18,seq_12_18), map.getRegion(6));
         
-        assertEquals(18, CoverageMapUtil.getLastCoveredOffsetIn(map));
+        assertEquals(18, getLastCoveredOffsetIn(map));
         assertFalse(map.isEmpty());
     }
     
@@ -201,7 +199,7 @@ public class TestDefaultCoverageMap {
         assertEquals(createCoverageRegion(16,18,seq_11_18,seq_11_20), map.getRegion(3));
         assertEquals(createCoverageRegion(19,20,seq_11_20), map.getRegion(4));
         
-        assertEquals(20, CoverageMapUtil.getLastCoveredOffsetIn(map));
+        assertEquals(20, getLastCoveredOffsetIn(map));
         assertFalse(map.isEmpty());
     }
    
@@ -274,12 +272,17 @@ public class TestDefaultCoverageMap {
         CoverageMap<Range> map = CoverageMapFactory.create(
                 Arrays.asList(seq_0_9,seq_5_14,seq_0_12));
         
-        List<CoverageRegion<Range>> regions = CoverageMapUtil.getRegionsWhichIntersect(map, Range.of(6, 11));
+        List<CoverageRegion<Range>> regions = map.getRegionsWhichIntersect(Range.of(6, 11));
         assertEquals(2, regions.size());
         assertEquals(createCoverageRegion(5,9,seq_0_9,seq_0_12,seq_5_14 ), regions.get(0));
         assertEquals(createCoverageRegion(10,12,seq_0_12,seq_5_14 ), regions.get(1));
 
     }
     
-    
+    private static long getLastCoveredOffsetIn(CoverageMap<?> coverageMap){
+        if(coverageMap.isEmpty()){
+            return -1L;
+        }
+        return coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).asRange().getEnd();
+    }
 }
