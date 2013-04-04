@@ -52,7 +52,7 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
  * @author dkatzel
  *
  */
-public final class CoverageMapFactory {
+final class CoverageMapFactory {
 
 	/**
 	 * Create a new {@link CoverageMap} using the given
@@ -119,14 +119,13 @@ public final class CoverageMapFactory {
      * @return a new {@link CoverageMap} but where the coordinates in the coverage map
      * refer to ungapped coordinates instead of gapped coordinates.
      * @param <R> the type of {@link AssembledRead}s used in the contig.
-     * @param <C> the type of {@link Contig}
      */
-    public static <R extends AssembledRead,C extends Contig<R>> CoverageMap<R> 
+    public static <R extends AssembledRead> CoverageMap<R> 
     createUngappedCoverageMap(NucleotideSequence gappedConsensus, Collection<R> reads){
     	CoverageMap<R> gappedCoverageMap = create(reads);
     	return createUngappedCoverageMap(gappedConsensus, gappedCoverageMap);
     }
-    private static <R extends AssembledRead,C extends Contig<R>> CoverageMap<R> createUngappedCoverageMap(
+    public static <R extends AssembledRead> CoverageMap<R> createUngappedCoverageMap(
             NucleotideSequence consensus, CoverageMap<R> gappedCoverageMap) {
         List<CoverageRegion<R>> ungappedCoverageRegions = new ArrayList<CoverageRegion<R>>();
         for(CoverageRegion<R> gappedCoverageRegion : gappedCoverageMap){

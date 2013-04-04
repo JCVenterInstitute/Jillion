@@ -22,10 +22,6 @@ package org.jcvi.jillion.assembly.util.slice;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.util.coverage.CoverageMapFactory;
-import org.jcvi.jillion.assembly.util.slice.DefaultSliceMap;
-import org.jcvi.jillion.assembly.util.slice.QualityValueStrategy;
-import org.jcvi.jillion.assembly.util.slice.SliceMap;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 
