@@ -172,10 +172,10 @@ public abstract class Range implements Rangeable,Iterable<Long>
                  * Compare first by the start values, then by the end values, if the ranges start
                  * in the same place.
                  */
-                final int startComparison = Long.valueOf(first.getBegin()).compareTo(Long.valueOf(second.getBegin()));
+                final int startComparison = longComparator(first.getBegin(),second.getBegin());
                 if (startComparison == 0)
                 {
-                    return Long.valueOf(first.getEnd()).compareTo(Long.valueOf(second.getEnd()));
+                    return longComparator(first.getEnd(), second.getEnd());
                 }
                 return startComparison;
             }
@@ -205,10 +205,10 @@ public abstract class Range implements Rangeable,Iterable<Long>
                  * Compare first by the end values, then by the start values, if the ranges end
                  * in the same place.
                  */
-                final int endComparison = Long.valueOf(first.getEnd()).compareTo(Long.valueOf(second.getEnd()));
+                final int endComparison = longComparator(first.getEnd(),second.getEnd());
                 if (endComparison == 0)
                 {
-                    return Long.valueOf(first.getBegin()).compareTo(Long.valueOf(second.getBegin()));
+                    return longComparator(first.getBegin(),second.getBegin());
                 }
                 return endComparison;
             }
@@ -222,7 +222,7 @@ public abstract class Range implements Rangeable,Iterable<Long>
 
             @Override
             public int compare(Range o1, Range o2) {
-                return -1 * Long.valueOf(o1.getLength()).compareTo(o2.getLength());
+                return -1 * longComparator(o1.getLength(), o2.getLength());
             }
             
         },
@@ -236,11 +236,27 @@ public abstract class Range implements Rangeable,Iterable<Long>
 
             @Override
             public int compare(Range o1, Range o2) {
-                return Long.valueOf(o1.getLength()).compareTo(o2.getLength());
+                return longComparator(o1.getLength(),o2.getLength());
             }
             
         }
         ;
+        /**
+         * The same as {@link Long#compareTo(Long)} but does 
+         * not require boxing so it should be faster.
+         * @param value1
+         * @param value2
+         * @return
+         */
+        int longComparator(long value1, long value2){
+        	if(value1==value2){
+        		return 0;
+        	}
+        	if(value1 < value2){
+        		return -1;
+        	}
+        	return 1;
+        }
     }
     /**
      * Enumeration of available range coordinate systems.
