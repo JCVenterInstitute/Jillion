@@ -42,7 +42,6 @@ import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.assembly.ContigBuilder;
 import org.jcvi.jillion.assembly.util.coverage.CoverageMap;
 import org.jcvi.jillion.assembly.util.coverage.CoverageMapFactory;
-import org.jcvi.jillion.assembly.util.coverage.CoverageMapUtil;
 import org.jcvi.jillion.assembly.util.coverage.CoverageRegion;
 import org.jcvi.jillion.assembly.util.slice.CompactedSlice;
 import org.jcvi.jillion.assembly.util.slice.QualityValueStrategy;
@@ -59,7 +58,6 @@ import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.assembly.DefaultContig;
@@ -684,7 +682,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
             splitContig.qualityValueStrategy = this.qualityValueStrategy;
             
             Set<String> contigReads = new HashSet<String>();            
-            for(CoverageRegion<AceAssembledReadBuilder> region : CoverageMapUtil.getRegionsWhichIntersect(coverageMap, rangeTokeep)){
+            for(CoverageRegion<AceAssembledReadBuilder> region : coverageMap.getRegionsWhichIntersect(rangeTokeep)){
                 for(AceAssembledReadBuilder read : region){
                     contigReads.add(read.getId());
                 }

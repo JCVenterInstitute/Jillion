@@ -23,10 +23,27 @@ package org.jcvi.jillion.core;
 
 import java.util.Iterator;
 
-import org.jcvi.jillion.core.residue.Residue;
-import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 import org.jcvi.jillion.core.util.Builder;
-
+/**
+ * {@code NucleotideSequenceBuilder}  is a way to
+ * construct a {@link Sequence}
+ * similar to how a {@link StringBuilder} can be used
+ * to create a String.  The contents of the Sequence
+ * can be changed by method calls. 
+ * <p/>
+ *  {@link SequenceBuilder} uses method chaining to make combining
+ *  several operations easier to read.
+ *  
+ *  The {@link #build()} method will return an instance of the {@link Sequence}.
+ *  <p/>
+ *  Implementations of {@link SequenceBuilder} are probably
+ *  not thread safe unless thread safety is explicitly mentioned.
+ * 
+ * @author dkatzel
+ *
+ * @param <T> the Type of element in the sequence
+ * @param <S> the Type of Sequence to be built.
+ */
 public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> , Iterable<T> {
 	/**
      * Appends the given symbol to the end

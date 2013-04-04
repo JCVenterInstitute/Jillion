@@ -32,7 +32,6 @@ import java.util.List;
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.assembly.util.coverage.CoverageMap;
-import org.jcvi.jillion.assembly.util.coverage.CoverageMapUtil;
 import org.jcvi.jillion.assembly.util.coverage.CoverageRegion;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
@@ -106,7 +105,7 @@ public class DefaultSliceMap extends AbstractSliceMap{
     protected DefaultSliceMap(CoverageMap<? extends AssembledRead> coverageMap, 
             QualitySequenceDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality){
-    	int lengthOfMap = (int)CoverageMapUtil.getLastCoveredOffsetIn(coverageMap)+1;
+    	int lengthOfMap = (int)getLastCoveredOffsetIn(coverageMap)+1;
     	this.slices = new IdedSlice[lengthOfMap];
         this.defaultQuality = defaultQuality;
         for(CoverageRegion<?  extends AssembledRead> region : coverageMap){
@@ -121,7 +120,12 @@ public class DefaultSliceMap extends AbstractSliceMap{
         }
     }
 
-    
+    private static long getLastCoveredOffsetIn(CoverageMap<?> coverageMap){
+        if(coverageMap.isEmpty()){
+            return -1L;
+        }
+        return coverageMap.getRegion(coverageMap.getNumberOfRegions()-1).asRange().getEnd();
+}
     
     /**
      * @return the defaultQuality
