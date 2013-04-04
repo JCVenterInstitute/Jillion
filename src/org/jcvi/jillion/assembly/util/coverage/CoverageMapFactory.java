@@ -303,12 +303,16 @@ public final class CoverageMapFactory {
 	    	
 	    	
 	    	//Arrays.binarySearch will return a negative
-	    	//index if the key isn't found but the 
-	    	//absolute value is where the key 
+	    	//(index+1) if the key isn't found but the 
+	    	//absolute value -1 is where the key 
 	    	//WOULD be if it was in the array
 	    	//which is good enough for our intersection
-	    	//so we need to either add or subtract 1 to get
+	    	//so we need to adjust the offset by either 1 if it's
+	    	//the end index or 2
+	    	//if its the beginIndex
+	    	//to get
 	    	//the flanking region to be included
+	    	
 	    	int correctedBeginIndex = Math.max(0, beginIndex<0? Math.abs(beginIndex) -2 : beginIndex);
 	    	int correctedEndIndex = Math.min(regions.length -1, endIndex <0? Math.abs(endIndex)-1  : endIndex);
 	    	
@@ -321,20 +325,7 @@ public final class CoverageMapFactory {
 	    			intersectedRegions.add(regions[i]);
 	    		}
 	    	}
-	    	return intersectedRegions;
-	    	/*
-	    	List<CoverageRegion<V>> selectedRegions = new ArrayList<CoverageRegion<V>>();
-	    	for(CoverageRegion<V> region : this.regions){	        
-        		Range regionRange = region.asRange();
-        		if(range.endsBefore(regionRange)){
-                    break;
-                }
-        		if(regionRange.intersects(range)){
-                    selectedRegions.add(region);
-                }
-        	}
-	        return selectedRegions;      
-	        */
+	    	return intersectedRegions;	    	
 	    }
 	    @Override
 	    public CoverageRegion<V> getRegionWhichCovers(long consensusIndex) {
