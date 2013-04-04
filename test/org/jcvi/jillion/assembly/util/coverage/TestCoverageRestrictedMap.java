@@ -20,14 +20,13 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.util.coverage;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.jillion.assembly.util.coverage.CoverageMap;
-import org.jcvi.jillion.assembly.util.coverage.CoverageMapFactory;
 import org.jcvi.jillion.core.Range;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class TestCoverageRestrictedMap {
 
@@ -39,8 +38,9 @@ public class TestCoverageRestrictedMap {
 				Range.of(6,10)
 		);
 		
-		CoverageMap<Range> coverageMap = 
-							CoverageMapFactory.create(ranges, 2);
+		CoverageMap<Range> coverageMap = new CoverageMapBuilder<Range>(ranges)
+												.maxAllowedCoverage(2)
+												.build();
 		assertEquals(4,coverageMap.getNumberOfRegions());
 		assertEquals(coverageMap.getRegion(0).asRange(), Range.of(0,1));
 		assertEquals(1, coverageMap.getRegion(0).getCoverageDepth());
@@ -60,8 +60,9 @@ public class TestCoverageRestrictedMap {
 				Range.of(6,10)
 		);
 		
-		CoverageMap<Range> coverageMap = 
-							CoverageMapFactory.create(ranges, 3);
+		CoverageMap<Range> coverageMap = new CoverageMapBuilder<Range>(ranges)
+											.maxAllowedCoverage(3)
+											.build();
 		assertEquals(4,coverageMap.getNumberOfRegions());
 		assertEquals(coverageMap.getRegion(0).asRange(), Range.of(0,1));
 		assertEquals(1, coverageMap.getRegion(0).getCoverageDepth());
@@ -82,8 +83,9 @@ public class TestCoverageRestrictedMap {
 				Range.of(6,10)
 		);
 		
-		CoverageMap<Range> coverageMap = 
-							CoverageMapFactory.create(ranges, 2);
+		CoverageMap<Range> coverageMap = new CoverageMapBuilder<Range>(ranges)
+											.maxAllowedCoverage(2)
+											.build();
 		assertEquals(4,coverageMap.getNumberOfRegions());
 		assertEquals(coverageMap.getRegion(0).asRange(), Range.of(0,1));
 		assertEquals(1, coverageMap.getRegion(0).getCoverageDepth());
@@ -104,8 +106,9 @@ public class TestCoverageRestrictedMap {
 				Range.of(9,10)
 		);
 		
-		CoverageMap<Range> coverageMap = 
-							CoverageMapFactory.create(ranges, 2);
+		CoverageMap<Range> coverageMap = new CoverageMapBuilder<Range>(ranges)
+													.maxAllowedCoverage(2)
+													.build();
 		assertEquals(5,coverageMap.getNumberOfRegions());
 		assertEquals(coverageMap.getRegion(0).asRange(), Range.of(0,1));
 		assertEquals(1, coverageMap.getRegion(0).getCoverageDepth());
@@ -130,8 +133,9 @@ public class TestCoverageRestrictedMap {
 				Range.of(10,15)
 		);
 		
-		CoverageMap<Range> coverageMap = 
-							CoverageMapFactory.create(ranges, 2);
+		CoverageMap<Range> coverageMap = new CoverageMapBuilder<Range>(ranges)
+											.maxAllowedCoverage(2)
+											.build();
 		assertEquals(6,coverageMap.getNumberOfRegions());
 		assertEquals(coverageMap.getRegion(0).asRange(), Range.of(0,1));
 		assertEquals(1, coverageMap.getRegion(0).getCoverageDepth());
@@ -156,8 +160,9 @@ public class TestCoverageRestrictedMap {
                 Range.of(0,5)
         );
         
-        CoverageMap<Range> coverageMap = 
-                            CoverageMapFactory.create(ranges, 2);
+        CoverageMap<Range> coverageMap =  new CoverageMapBuilder<Range>(ranges)
+				                            		.maxAllowedCoverage(2)
+				                            		.build();
         assertEquals(2,coverageMap.getNumberOfRegions());
         assertEquals(coverageMap.getRegion(0).asRange(), Range.of(0,5));
         assertEquals(2, coverageMap.getRegion(0).getCoverageDepth());

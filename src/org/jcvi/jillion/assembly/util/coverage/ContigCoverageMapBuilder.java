@@ -25,6 +25,17 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
  */
 public final class ContigCoverageMapBuilder<R extends AssembledRead> {
 
+	
+	private static final int NOT_SET = -1;
+	private final Contig<R> contig;
+	
+	private ReadFilter<R> filter = null;
+	
+	private int maxCoverage=NOT_SET;
+	
+	private boolean useUngappedCoordinates=false;
+	
+
 	/**
 	 * A ReadFilter can be used to include/exclude
 	 * individual reads from the {@link CoverageMap}.
@@ -46,16 +57,6 @@ public final class ContigCoverageMapBuilder<R extends AssembledRead> {
 		 */
 		boolean accept(R read);
 	}
-	
-	private static final int NOT_SET = -1;
-	private final Contig<R> contig;
-	
-	private ReadFilter<R> filter = null;
-	
-	private int maxCoverage=NOT_SET;
-	
-	private boolean useUngappedCoordinates=false;
-	
 	/**
 	 * Create a new Builder instance that will
 	 * use the given contig to eventually
