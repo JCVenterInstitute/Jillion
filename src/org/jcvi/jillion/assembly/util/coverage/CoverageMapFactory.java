@@ -153,7 +153,18 @@ final class CoverageMapFactory {
 	     * since it could be expensive to compute.
 	     */
 	    private Double avgCoverage =null;
-	    
+	    /**
+	     * The min coverage of this coverage map
+	     * we will lazy load this value
+	     * since it could be expensive to compute.
+	     */
+	    private Integer minCoverage =null;
+	    /**
+	     * The max coverage of this coverage map
+	     * we will lazy load this value
+	     * since it could be expensive to compute.
+	     */
+	    private Integer maxCoverage =null;
 	    /**
 	     *
 	     * Creates a new <code>CoverageMapImpl</code>.
@@ -175,23 +186,64 @@ final class CoverageMapFactory {
 	    @Override
 	    public synchronized double getAverageCoverage(){
 	        if(avgCoverage ==null){
-		    	long totalLength = 0L;
-		        long totalCoverage =0L;
-		        for(CoverageRegion<?> region : this){
-		        	long regionLength = region.asRange().getLength();
-					totalLength +=regionLength;
-					totalCoverage += region.getCoverageDepth() * regionLength;
-		        }
-		        if(totalLength==0L){
-		        	avgCoverage=0D;
-		        }else{
-		        	avgCoverage = totalCoverage/(double)totalLength;
-		        }
+		    	computeMinMaxAndAvgCoverage();
 	        }
 	        return avgCoverage;
 	    }
+		public synchronized void computeMinMaxAndAvgCoverage() {
+			
+			if(isEmpty()){
+				avgCoverage = 0D;
+				minCoverage = 0;
+				maxCoverage = 0;
+				return;
+			}
+			long totalLength = 0L;
+			long totalCoverage =0L;
+			
+			int minCoverage = Integer.MAX_VALUE;
+			int maxCoverage = Integer.MIN_VALUE;
+			
+			for(CoverageRegion<?> region : this){
+				long regionLength = region.asRange().getLength();
+				totalLength +=regionLength;
+				int coverageDepth = region.getCoverageDepth();
+				totalCoverage += coverageDepth * regionLength;
+				if(coverageDepth < minCoverage){
+					minCoverage = coverageDepth;
+				}
+				if(coverageDepth > maxCoverage){
+					maxCoverage = coverageDepth;
+				}
+			}
+			if(totalLength==0L){
+				avgCoverage=0D;
+				minCoverage = 0;
+				maxCoverage = 0;
+			}else{
+				avgCoverage = totalCoverage/(double)totalLength;
+				this.minCoverage = minCoverage;
+				this.maxCoverage = maxCoverage;
+			}
+		}
 	  
+	    
+	    
 	    @Override
+		public synchronized int getMinCoverage() {
+	    	if(minCoverage ==null){
+		    	computeMinMaxAndAvgCoverage();
+	        }
+			return minCoverage;
+		}
+		@Override
+		public synchronized int getMaxCoverage() {
+	    	if(maxCoverage ==null){
+		    	computeMinMaxAndAvgCoverage();
+	        }
+			return maxCoverage;
+		}
+		@Override
 	    public boolean equals(Object obj) {
 	        if(this == obj){
 	            return true;

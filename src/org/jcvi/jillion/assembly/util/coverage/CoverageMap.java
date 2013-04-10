@@ -93,6 +93,18 @@ public interface CoverageMap <T extends Rangeable> extends Iterable<CoverageRegi
      */
     double getAverageCoverage();
     /**
+     * Get the lowest coverage depth of 
+     * any {@link CoverageRegion}
+     * in the coverage map.
+     */
+    int getMinCoverage();
+    /**
+     * Get the highest coverage depth of 
+     * any {@link CoverageRegion}
+     * in the coverage map.
+     */
+    int getMaxCoverage();
+    /**
      * Get a List of all the {@link CoverageRegion}s in this CoverageMap
      * that intersect the given {@link Range}.
      * @param range the Range to get all the coverageRegions for.
