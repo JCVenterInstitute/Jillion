@@ -70,6 +70,9 @@ public class TestDefaultCoverageMap {
         assertEquals(0, map.getNumberOfRegions());
         assertEquals(-1,getLastCoveredOffsetIn(map));
         assertTrue(map.isEmpty());
+        assertEquals(0D, map.getAverageCoverage(), 0);
+        assertEquals(0, map.getMinCoverage());
+        assertEquals(0, map.getMaxCoverage());
     }
     @Test
     public void sizeOf1(){
@@ -77,6 +80,9 @@ public class TestDefaultCoverageMap {
         CoverageMap<Range> map =new CoverageMapBuilder<Range>(Arrays.asList(read)).build();
         assertEquals(1, map.getNumberOfRegions());
         assertEquals(0, getLastCoveredOffsetIn(map));
+        assertEquals(1D, map.getAverageCoverage(), 0);
+        assertEquals(1, map.getMinCoverage());
+        assertEquals(1, map.getMaxCoverage());
     }
     @Test
     public void ignoreSequenceOfZeroSize(){
@@ -85,6 +91,9 @@ public class TestDefaultCoverageMap {
         assertEquals(0, map.getNumberOfRegions());
         assertEquals(-1,getLastCoveredOffsetIn(map));
         assertTrue(map.isEmpty());
+        assertEquals(0D, map.getAverageCoverage(), 0);
+        assertEquals(0, map.getMinCoverage());
+        assertEquals(0, map.getMaxCoverage());
 
     }
     @Test
@@ -97,6 +106,9 @@ public class TestDefaultCoverageMap {
         assertEquals(expectedRegion,map.getRegion(0));
         assertEquals(9, getLastCoveredOffsetIn(map));
         assertFalse(map.isEmpty());
+        assertEquals(1D, map.getAverageCoverage(), 0);
+        assertEquals(1, map.getMinCoverage());
+        assertEquals(1, map.getMaxCoverage());
     }
     
     @Test
@@ -110,6 +122,10 @@ public class TestDefaultCoverageMap {
         assertEquals(createCoverageRegion(10,14,seq_5_14 ), map.getRegion(2));
         assertEquals(14, getLastCoveredOffsetIn(map));
         assertFalse(map.isEmpty());
+        
+        assertEquals("avg cov", 20D/15, map.getAverageCoverage(), 0.001D);
+        assertEquals("min cov", 1, map.getMinCoverage());
+        assertEquals("max cov", 2, map.getMaxCoverage());
     }
     
     @Test
@@ -124,6 +140,10 @@ public class TestDefaultCoverageMap {
         assertEquals(createCoverageRegion(13,14,seq_5_14 ), map.getRegion(3));
         assertEquals(14, getLastCoveredOffsetIn(map));
         assertFalse(map.isEmpty());
+        
+        assertEquals("avg cov", 33D/15, map.getAverageCoverage(), 0.001D);
+        assertEquals("min cov", 1, map.getMinCoverage());
+        assertEquals("max cov", 3, map.getMaxCoverage());
     }
     
     @Test
@@ -136,6 +156,10 @@ public class TestDefaultCoverageMap {
         assertEquals(createCoverageRegion(10,12,seq_10_12 ), map.getRegion(1));
         assertEquals(12, getLastCoveredOffsetIn(map));
         assertFalse(map.isEmpty());
+        
+        assertEquals("avg cov", 1D, map.getAverageCoverage(), 0.001D);
+        assertEquals("min cov", 1, map.getMinCoverage());
+        assertEquals("max cov", 1, map.getMaxCoverage());
     }
     
     @Test
@@ -153,6 +177,10 @@ public class TestDefaultCoverageMap {
         assertEquals(createCoverageRegion(16,20,seq_16_20 ), map.getRegion(5));
         assertEquals(20, getLastCoveredOffsetIn(map));
         assertFalse(map.isEmpty());
+        
+        assertEquals("avg cov", 41D/21, map.getAverageCoverage(), 0.001D);
+        assertEquals("min cov", 0, map.getMinCoverage());
+        assertEquals("max cov", 3, map.getMaxCoverage());
     }
     
     @Test
@@ -168,6 +196,10 @@ public class TestDefaultCoverageMap {
         assertEquals(createCoverageRegion(13,15,seq_11_15), map.getRegion(4));
         assertEquals(15, getLastCoveredOffsetIn(map));
         assertFalse(map.isEmpty());
+        
+        assertEquals("avg cov", 26D/16, map.getAverageCoverage(), 0.001D);
+        assertEquals("min cov", 1, map.getMinCoverage());
+        assertEquals("max cov", 4, map.getMaxCoverage());
     }
     
     @Test
@@ -187,6 +219,10 @@ public class TestDefaultCoverageMap {
         
         assertEquals(18, getLastCoveredOffsetIn(map));
         assertFalse(map.isEmpty());
+        
+        assertEquals("avg cov", 33D/19, map.getAverageCoverage(), 0.001D);
+        assertEquals("min cov", 1, map.getMinCoverage());
+        assertEquals("max cov", 5, map.getMaxCoverage());
     }
     
     @Test
@@ -203,6 +239,10 @@ public class TestDefaultCoverageMap {
         
         assertEquals(20, getLastCoveredOffsetIn(map));
         assertFalse(map.isEmpty());
+        
+        assertEquals("avg cov", 36D/21, map.getAverageCoverage(), 0.001D);
+        assertEquals("min cov", 1, map.getMinCoverage());
+        assertEquals("max cov", 4, map.getMaxCoverage());
     }
    
     
