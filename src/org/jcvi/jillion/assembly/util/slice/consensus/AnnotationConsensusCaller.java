@@ -55,7 +55,7 @@ public class AnnotationConsensusCaller extends AbstractChurchillWatermanConsensu
      */
     @Override
     protected Nucleotide getConsensus(
-            ConsensusProbabilities normalizedConsensusProbabilities, Slice<?> slice) {
+            ConsensusProbabilities normalizedConsensusProbabilities, Slice slice) {
         Set<Nucleotide> basesTowardsAmbiguity = getCWBasesTowardsAmbiguity(normalizedConsensusProbabilities, slice);
         basesTowardsAmbiguity.addAll(findAllHighQualityBases(slice));
         return Nucleotide.getAmbiguityFor(basesTowardsAmbiguity);
@@ -64,12 +64,12 @@ public class AnnotationConsensusCaller extends AbstractChurchillWatermanConsensu
 
     private Set<Nucleotide> getCWBasesTowardsAmbiguity(
             ConsensusProbabilities normalizedErrorProbabilityStruct,
-            Slice<?> slice) {
+            Slice slice) {
         int numberOfDifferentBasesInSlice = generateBasecallHistogramMap(slice).size();        
         return getBasesUsedTowardsAmbiguity(normalizedErrorProbabilityStruct, numberOfDifferentBasesInSlice);
     }
 
-    private Set<Nucleotide> findAllHighQualityBases(Slice<?> slice) {
+    private Set<Nucleotide> findAllHighQualityBases(Slice slice) {
         Set<Nucleotide> highQualityDiffs = EnumSet.noneOf(Nucleotide.class);
         for(SliceElement sliceElement : slice){
             if(sliceElement.getQuality().compareTo(getHighQualityThreshold()) >=0){

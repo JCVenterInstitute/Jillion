@@ -27,8 +27,8 @@ import java.util.List;
 
 
 import org.jcvi.jillion.assembly.util.slice.DefaultSliceElement;
-import org.jcvi.jillion.assembly.util.slice.IdedSlice;
-import org.jcvi.jillion.assembly.util.slice.IdedSliceElement;
+import org.jcvi.jillion.assembly.util.slice.Slice;
+import org.jcvi.jillion.assembly.util.slice.SliceElement;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
@@ -42,30 +42,30 @@ import static org.junit.Assert.*;
  */
 public abstract class AbstractTestSlice {
 
-	IdedSlice sut;
-    protected abstract IdedSlice createNew(List<IdedSliceElement> elements);
+	Slice sut;
+    protected abstract Slice createNew(List<SliceElement> elements);
     
     
     @Test
     public void emptySlice(){
-        sut = createNew(Collections.<IdedSliceElement>emptyList());
+        sut = createNew(Collections.<SliceElement>emptyList());
         assertEquals(0,sut.getCoverageDepth());
     }
     
     @Test
     public void oneElement(){
-        List<IdedSliceElement> elements = new ArrayList<IdedSliceElement>();
+        List<SliceElement> elements = new ArrayList<SliceElement>();
         elements.add(new DefaultSliceElement("name1", Nucleotide.Adenine, PhredQuality.valueOf(42), Direction.FORWARD));
     
         sut = createNew(elements);
         assertEquals(elements.size(),sut.getCoverageDepth());
-        for(IdedSliceElement element : elements){
+        for(SliceElement element : elements){
             assertEquals(element, sut.getSliceElement(element.getId()));
         }
     }
     @Test
     public void manyElements(){
-        List<IdedSliceElement> elements = new ArrayList<IdedSliceElement>();
+        List<SliceElement> elements = new ArrayList<SliceElement>();
         elements.add(
                 new DefaultSliceElement("name1", Nucleotide.Adenine, PhredQuality.valueOf(42), Direction.FORWARD));
     
@@ -74,13 +74,13 @@ public abstract class AbstractTestSlice {
     
         sut = createNew(elements);
         assertEquals(elements.size(),sut.getCoverageDepth());
-        for(IdedSliceElement element : elements){
+        for(SliceElement element : elements){
             assertEquals(element, sut.getSliceElement(element.getId()));
         }
     }
     @Test
     public void iterator(){
-        List<IdedSliceElement> elements = new ArrayList<IdedSliceElement>();
+        List<SliceElement> elements = new ArrayList<SliceElement>();
         elements.add(
                 new DefaultSliceElement("name1", Nucleotide.Adenine, PhredQuality.valueOf(42), Direction.FORWARD));
     
@@ -88,8 +88,8 @@ public abstract class AbstractTestSlice {
                 new DefaultSliceElement("name2", Nucleotide.Cytosine, PhredQuality.valueOf(2), Direction.REVERSE));
     
         sut = createNew(elements);
-        Iterator<IdedSliceElement> expected = elements.iterator();
-        Iterator<IdedSliceElement> actual = sut.iterator();
+        Iterator<SliceElement> expected = elements.iterator();
+        Iterator<SliceElement> actual = sut.iterator();
         while(expected.hasNext()){
             assertTrue(actual.hasNext());
             assertEquals(expected.next(), actual.next());

@@ -26,7 +26,6 @@
 package org.jcvi.jillion.assembly.util.slice.consensus;
 
 import org.jcvi.jillion.assembly.util.slice.Slice;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
 /**
  * <code>ConsensusCaller</code> compute the
  * {@link ConsensusResult} for the given Slice.
@@ -42,5 +41,5 @@ public interface ConsensusCaller {
      * @return a {@link ConsensusResult} will never be <code>null</code>
      * @throws NullPointerException if slice is null.
      */
-    ConsensusResult callConsensus(Slice<?> slice);
+    ConsensusResult callConsensus(Slice slice);
 }

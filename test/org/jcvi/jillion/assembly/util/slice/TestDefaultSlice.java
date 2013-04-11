@@ -23,8 +23,8 @@ package org.jcvi.jillion.assembly.util.slice;
 import java.util.List;
 
 import org.jcvi.jillion.assembly.util.slice.DefaultSlice;
-import org.jcvi.jillion.assembly.util.slice.IdedSlice;
-import org.jcvi.jillion.assembly.util.slice.IdedSliceElement;
+import org.jcvi.jillion.assembly.util.slice.Slice;
+import org.jcvi.jillion.assembly.util.slice.SliceElement;
 
 /**
  * @author dkatzel
@@ -37,7 +37,7 @@ public class TestDefaultSlice extends AbstractTestSlice{
     * {@inheritDoc}
     */
     @Override
-    protected IdedSlice createNew(List<IdedSliceElement> elements) {
+    protected Slice createNew(List<SliceElement> elements) {
         return new DefaultSlice.Builder().addAll(elements).build();
     }
 

@@ -633,7 +633,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     		CompactedSlice.Builder builder = builders[i];
     		//a null builder implies 0x
     		if(builder !=null){
-				Slice<?> slice = builder.build();            
+				Slice slice = builder.build();            
 	    		mutableConsensus.replace(i,consensusCaller.callConsensus(slice).getConsensus());
     		}
     	}

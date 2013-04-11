@@ -30,7 +30,7 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.util.ObjectsUtil;
 
-public class DefaultSliceElement implements IdedSliceElement {
+public class DefaultSliceElement implements SliceElement {
     private final Nucleotide base;
     private final PhredQuality quality;
     private final Direction direction;
@@ -70,10 +70,10 @@ public class DefaultSliceElement implements IdedSliceElement {
         if (this == obj){
             return true;
         }
-        if (!(obj instanceof IdedSliceElement)){
+        if (!(obj instanceof SliceElement)){
             return false;
         }
-        IdedSliceElement other = (IdedSliceElement) obj;
+        SliceElement other = (SliceElement) obj;
         return 
         ObjectsUtil.nullSafeEquals(getId(), other.getId()) 
         && ObjectsUtil.nullSafeEquals(getBase(), other.getBase())

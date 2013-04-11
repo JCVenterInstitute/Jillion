@@ -20,8 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.util.slice;
 
-import org.jcvi.jillion.assembly.util.slice.CompactedSliceElement;
-import org.jcvi.jillion.assembly.util.slice.IdedSliceElement;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
@@ -31,13 +29,13 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
  *
  *
  */
-public class TestCompactedSliceElement extends AbstractTestIdedSliceElement{
+public class TestCompactedSliceElement extends AbstractTestSliceElement{
 
     /**
     * {@inheritDoc}
     */
     @Override
-    protected IdedSliceElement create(String id, Nucleotide base,
+    protected SliceElement create(String id, Nucleotide base,
             PhredQuality qual, Direction dir) {
         return new CompactedSliceElement(id, base, qual, dir);
     }

@@ -39,11 +39,11 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
 public abstract class  AbstractSliceMap implements SliceMap{
 
-    protected List<IdedSliceElement> createSliceElementsFor(
+    protected List<SliceElement> createSliceElementsFor(
             CoverageRegion<? extends AssembledRead> region,
             long offset, QualitySequenceDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy) {
-        List<IdedSliceElement> sliceElements = new ArrayList<IdedSliceElement>(region.getCoverageDepth());
+        List<SliceElement> sliceElements = new ArrayList<SliceElement>(region.getCoverageDepth());
         for(AssembledRead read : region){
             
             QualitySequence qualities;
@@ -56,7 +56,7 @@ public abstract class  AbstractSliceMap implements SliceMap{
                 }
                 
                 int indexIntoRead = (int) (offset - read.getGappedStartOffset());
-                final IdedSliceElement sliceElement = createSliceElementFor(
+                final SliceElement sliceElement = createSliceElementFor(
                         qualityValueStrategy, indexIntoRead, read,
                          qualities);
                 sliceElements.add(sliceElement);
@@ -67,7 +67,7 @@ public abstract class  AbstractSliceMap implements SliceMap{
         }
         return sliceElements;
     }
-    protected IdedSliceElement createSliceElementFor(
+    protected SliceElement createSliceElementFor(
             QualityValueStrategy qualityValueStrategy, int gappedIndex,
             AssembledRead realRead,
             final QualitySequence qualities) {
@@ -83,7 +83,7 @@ public abstract class  AbstractSliceMap implements SliceMap{
         }
         }
     
-    static class  SliceIterator implements Iterator<IdedSlice>{
+    static class  SliceIterator implements Iterator<Slice>{
         private final Iterator<Long> iter;
         private final SliceMap sliceMap;
         SliceIterator(Iterator<Long> offsetIterator,SliceMap sliceMap){
@@ -96,7 +96,7 @@ public abstract class  AbstractSliceMap implements SliceMap{
         }
 
         @Override
-        public IdedSlice next() {
+        public Slice next() {
             return sliceMap.getSlice(iter.next());
         }
 

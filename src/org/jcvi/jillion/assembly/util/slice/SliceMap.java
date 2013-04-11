@@ -25,8 +25,8 @@
  */
 package org.jcvi.jillion.assembly.util.slice;
 
-public interface SliceMap extends Iterable<IdedSlice>{
+public interface SliceMap extends Iterable<Slice>{
 
-	IdedSlice getSlice(long offset);
+	Slice getSlice(long offset);
     long getSize();
 }
