@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.util.slice;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +28,7 @@ import java.util.NoSuchElementException;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.internal.core.util.GrowableShortArray;
 
 /**
  * @author dkatzel
@@ -37,7 +37,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
  */
 public final class CompactedSlice implements Slice{
 
-    private final byte[] elements;
+    private final short[] elements;
     private final String[] ids;
     
     public static final CompactedSlice EMPTY = new Builder().build();
@@ -46,7 +46,7 @@ public final class CompactedSlice implements Slice{
      * @param elements
      * @param ids
      */
-    private CompactedSlice(byte[] elements, List<String> ids) {
+    private CompactedSlice(short[] elements, List<String> ids) {
         this.elements = elements;
         this.ids = ids.toArray(new String[ids.size()]);
     }
@@ -69,12 +69,8 @@ public final class CompactedSlice implements Slice{
             	if(!hasNext()){
             		throw new NoSuchElementException();
             	}
-            	String id = ids[i];
-            	int offset = i*2;
-                byte dirAndNuc =elements[offset];
-                byte qual = elements[offset+1];
-                i++;
-                return new CompactedSliceElement(id, qual, dirAndNuc);
+            	//i++ returns old value of i
+                return getElement(i++);
             }
 
             @Override
@@ -85,7 +81,14 @@ public final class CompactedSlice implements Slice{
             
         };
     }
-
+    
+    private CompactedSliceElement getElement(int i){
+    	String id = ids[i];
+    	short value =elements[i];
+        byte dirAndNuc =(byte)((value >>>8) &0xFF);
+        byte qual = (byte)(value & 0xFF);
+        return new CompactedSliceElement(id, qual, dirAndNuc);
+    }
     /**
     * {@inheritDoc}
     */
@@ -137,15 +140,12 @@ public final class CompactedSlice implements Slice{
         if(index<0){
             throw new IllegalArgumentException(elementId + " not in slice");
         }
-        int offset = index*2;
-        byte dirAndNuc =elements[offset];
-        byte qual = elements[offset+1];
-        return new CompactedSliceElement(elementId, qual, dirAndNuc);
+        return getElement(index);
     }
     
     public static final class Builder implements org.jcvi.jillion.core.util.Builder<CompactedSlice>{
 
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        GrowableShortArray bytes = new GrowableShortArray(1024);
         List<String> ids = new ArrayList<String>();
         public Builder addSliceElement(SliceElement element){            
             return addSliceElement(element.getId(),element.getBase(), element.getQuality(), element.getSequenceDirection());
@@ -158,8 +158,9 @@ public final class CompactedSlice implements Slice{
         }
         public Builder addSliceElement(String id, Nucleotide base, PhredQuality quality, Direction dir){
         	CompactedSliceElement compacted = new CompactedSliceElement(id, base, quality, dir);
-            bytes.write(compacted.getEncodedDirAndNucleotide());
-            bytes.write(compacted.getEncodedQuality());
+        	int value = compacted.getEncodedDirAndNucleotide() <<8;
+        	value |= compacted.getEncodedQuality();
+            bytes.append((short)value);
             
             ids.add(id);
             return this;
@@ -169,7 +170,7 @@ public final class CompactedSlice implements Slice{
         */
         @Override
         public CompactedSlice build() {
-            return new CompactedSlice(bytes.toByteArray(), ids);
+            return new CompactedSlice(bytes.toArray(), ids);
         }
         
     }
