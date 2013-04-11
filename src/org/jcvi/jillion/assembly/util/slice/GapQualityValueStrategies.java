@@ -20,6 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.util.slice;
 
+import java.util.List;
+
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssemblyUtil;
 import org.jcvi.jillion.core.Direction;
@@ -27,6 +29,7 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 
 /**
  * {@code GapQualityValueStrategies} are {@link QualityValueStrategy}
@@ -42,16 +45,7 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
      * non-gap quality value that flanks the gap.
      */
     LOWEST_FLANKING{
-        
-        @Override
-        protected PhredQuality getQualityValueIfReadEndsWithGap() {
-            return LOWEST_QUALITY;
-        }
-
-        @Override
-        protected PhredQuality getQualityValueIfReadStartsWithGap() {
-            return LOWEST_QUALITY;
-        }
+       
 
         @Override
         protected PhredQuality computeQualityValueForGap(
@@ -75,20 +69,38 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
             return PhredQuality.valueOf(0);
         }
 
-        @Override
-        protected PhredQuality getQualityValueIfReadEndsWithGap() {
-            return PhredQuality.valueOf(0);
-        }
-
-        @Override
-        protected PhredQuality getQualityValueIfReadStartsWithGap() {
-            return PhredQuality.valueOf(0);
-        }   
     }
     ;
     
-    private static final PhredQuality LOWEST_QUALITY = PhredQuality.valueOf(1);
+  //  private static final PhredQuality LOWEST_QUALITY = PhredQuality.valueOf(1);
     
+    
+    public QualitySequence getGappedValidRangeQualitySequenceFor(AssembledRead placedRead,
+            QualitySequence fullQualities){
+    	QualitySequence ungappedComplementedValidRangeQualities = AssemblyUtil.getUngappedComplementedValidRangeQualities(placedRead, fullQualities);
+		QualitySequenceBuilder gappedValidRangeQualityBuilder = new QualitySequenceBuilder(ungappedComplementedValidRangeQualities);
+
+    	ReferenceMappedNucleotideSequence sequence = placedRead.getNucleotideSequence();
+		List<Integer> gapOffsets=sequence.getGapOffsets();
+    	//reverse the list so we insert qualities backwards
+    	//this will let us keep the offsets in seq and qual in sync
+    //	Collections.reverse(gapOffsets);
+    	for(Integer gapOffset : gapOffsets){
+    		int offset = gapOffset.intValue();
+    		int leftFlankingNonGapIndex = sequence.getUngappedOffsetFor(AssemblyUtil.getLeftFlankingNonGapIndex(sequence,offset));
+            int rightFlankingNonGapIndex = sequence.getUngappedOffsetFor(AssemblyUtil.getRightFlankingNonGapIndex(sequence,offset));
+            
+            PhredQuality leftQuality =ungappedComplementedValidRangeQualities.get(leftFlankingNonGapIndex);
+            PhredQuality rightQuality =ungappedComplementedValidRangeQualities.get(rightFlankingNonGapIndex);
+            
+            PhredQuality gappedQuality = computeQualityValueForGap(rightFlankingNonGapIndex - leftFlankingNonGapIndex, 
+            		offset -leftFlankingNonGapIndex , 
+            		leftQuality, rightQuality);
+            gappedValidRangeQualityBuilder.insert(offset, gappedQuality);
+    	}
+    	return gappedValidRangeQualityBuilder.build();
+    	
+    }
     @Override
     public PhredQuality getQualityFor(AssembledRead placedRead,
             QualitySequence fullQualities,
@@ -116,21 +128,14 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
         
         return qualityOfGap;
     }
-    protected abstract PhredQuality getQualityValueIfReadStartsWithGap();
-    protected abstract PhredQuality getQualityValueIfReadEndsWithGap();
-    
+   
     protected abstract PhredQuality computeQualityValueForGap(int numberOfGapsBetweenFlanks, int ithGapToCompute,
             PhredQuality leftFlankingQuality, PhredQuality rightFlankingQuality);
     
     private PhredQuality getQualityValueForGap(int leftFlankingNonGapIndex,
             int rightFlankingNonGapIndex, AssembledRead placedRead,
             QualitySequence unComplimentedQualities,int indexOfGap) {
-        if(leftFlankingNonGapIndex <0){
-            return getQualityValueIfReadStartsWithGap();
-        }
-        if(rightFlankingNonGapIndex> placedRead.getGappedLength()-1){
-            return getQualityValueIfReadEndsWithGap();
-        }        
+          
         PhredQuality leftFlankingQuality = getQualityForNonGapBase(placedRead, unComplimentedQualities, leftFlankingNonGapIndex);
         PhredQuality rightFlankingQuality = getQualityForNonGapBase(placedRead, unComplimentedQualities, rightFlankingNonGapIndex);
         int ithGapToCompute = indexOfGap - leftFlankingNonGapIndex-1;
@@ -141,12 +146,8 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
 
     protected PhredQuality getQualityForNonGapBase(AssembledRead placedRead, QualitySequence uncomplementedQualities,
             int gappedReadIndexForNonGapBase) {
-        try{
-            int ungappedFullRangeIndex = AssemblyUtil.convertToUngappedFullRangeOffset(placedRead, (int)uncomplementedQualities.getLength(),gappedReadIndexForNonGapBase);            
-            return uncomplementedQualities.get(ungappedFullRangeIndex);
-        }
-        catch(Exception e){
-            throw new IllegalArgumentException("could not get quality for read " + placedRead +" at gapped index " +gappedReadIndexForNonGapBase,e);
-        }
+        int ungappedFullRangeIndex = AssemblyUtil.convertToUngappedFullRangeOffset(placedRead, (int)uncomplementedQualities.getLength(),gappedReadIndexForNonGapBase);            
+        
+        return uncomplementedQualities.get(ungappedFullRangeIndex);
     }
 }

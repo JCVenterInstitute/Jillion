@@ -24,8 +24,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.util.slice.GapQualityValueStrategies;
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
@@ -48,26 +48,48 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
         return GapQualityValueStrategies.ALWAYS_ZERO;
     }
     
-    @Test
-    public void readEndsWithGapShouldReturnQualityValue0(){
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void fullLengthReadEndsWithGapShouldThrowException(){
         Contig<AssembledRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
         .addRead("readId", 0, "ACGT-")
         .build();
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{11,12,13,14}).build();
         
-        assertEquals(ZERO,sut.getQualityFor(read, qualities, 4));
+        sut.getQualityFor(read, qualities, 4);
     }
     
-    @Test
-    public void readStartsEndsWithGapShouldReturnQualityValue0(){
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void fullLengthReadStartsWithGapShouldThrowException(){
         Contig<AssembledRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
         .addRead("readId", 0, "-ACGT")
         .build();
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities = new QualitySequenceBuilder(new byte[]{11,12,13,14}).build();
         
-        assertEquals(ZERO,sut.getQualityFor(read, qualities, 0));
+        sut.getQualityFor(read, qualities, 0);
+    }
+    
+    @Test
+    public void readEndsWithGapButHasOtherBasesInTrimmedOffPortionShouldReturn0(){
+        Contig<AssembledRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
+        .addRead("readId", 0, Range.of(0,3), "ACGT-", Direction.FORWARD, 6)
+        .build();
+        AssembledRead read = contig.getRead("readId");
+        QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{11,12,13,14,5,6}).build();
+        
+        assertEquals(ZERO, sut.getQualityFor(read, qualities, 4));
+    }
+    
+    @Test
+    public void fullLengthReadStartsEndsWithGapButHasOtherBasesInTrimmedOffPortionShouldReturn0(){
+        Contig<AssembledRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
+        .addRead("readId", 0, Range.of(2,5), "-ACGT", Direction.FORWARD, 6)
+        .build();
+        AssembledRead read = contig.getRead("readId");
+        QualitySequence qualities = new QualitySequenceBuilder(new byte[]{5,6,11,12,13,14,}).build();
+        
+        assertEquals(ZERO, sut.getQualityFor(read, qualities, 0));
     }
     
     @Test

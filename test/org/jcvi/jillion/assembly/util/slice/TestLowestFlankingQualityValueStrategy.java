@@ -25,41 +25,40 @@
  */
 package org.jcvi.jillion.assembly.util.slice;
 
+import static org.junit.Assert.assertEquals;
+
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.util.slice.GapQualityValueStrategies;
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.internal.assembly.DefaultContig;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityValueStrategies{
 
 
     GapQualityValueStrategies sut = GapQualityValueStrategies.LOWEST_FLANKING;
 
-    @Test
-    public void readEndsWithGapShouldReturnQualityValue1(){
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void fullLengthReadEndsWithGapShouldThrowException(){
         Contig<AssembledRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
         .addRead("readId", 0, "ACGT-")
         .build();
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{11,12,13,14}).build();
         
-        assertEquals(PhredQuality.valueOf(1),sut.getQualityFor(read, qualities, 4));
+        sut.getQualityFor(read, qualities, 4);
     }
     
-    @Test
-    public void readStartsEndsWithGapShouldReturnQualityValue1(){
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void fullLengthReadStartsWithGapShouldThrowException(){
         Contig<AssembledRead> contig = new DefaultContig.Builder("1234", "ACGTACGT")
         .addRead("readId", 0, "-ACGT")
         .build();
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{11,12,13,14}).build();
         
-        assertEquals(PhredQuality.valueOf(1),sut.getQualityFor(read, qualities, 0));
+       sut.getQualityFor(read, qualities, 0);
     }
    
     /**

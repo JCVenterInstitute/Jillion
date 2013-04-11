@@ -116,6 +116,11 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 		return b;
 	}
 	
+	@Override
+	public PhredQuality get(int offset) {
+		assertInsertOffsetValid(offset);
+		return PhredQuality.valueOf(builder.get(offset));
+	}
 	/**
 	 * 
 	 * {@inheritDoc}

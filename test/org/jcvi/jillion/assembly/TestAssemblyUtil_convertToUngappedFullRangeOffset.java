@@ -20,14 +20,15 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly;
 
+import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
 
 import org.easymock.EasyMockSupport;
-import org.jcvi.jillion.assembly.AssembledRead;
-import org.jcvi.jillion.assembly.AssemblyUtil;
-import org.jcvi.jillion.assembly.ReadInfo;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
@@ -36,8 +37,6 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.jillion.core.util.Builder;
 import org.junit.Test;
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
@@ -79,11 +78,12 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
     @Test
     public void reverseSequenceNoGapsValidRangeIsSubsetOfFullLength(){
         AssembledRead mockRead = new MockPlacedReadBuilder("ACGTT",8)
+        //validRange = 2..6/0B
                                 .validRange(validRange)
                                 .direction(Direction.REVERSE)
                                 .build();
         replayAll();
-        assertEquals(3, AssemblyUtil.convertToUngappedFullRangeOffset(mockRead,2));
+        assertEquals(4, AssemblyUtil.convertToUngappedFullRangeOffset(mockRead,2));
     }
     
     @Test
@@ -120,7 +120,7 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
                                 .direction(Direction.REVERSE)
                                 .build();
         replayAll();
-        assertEquals(3, AssemblyUtil.convertToUngappedFullRangeOffset(mockRead,2));
+        assertEquals(4, AssemblyUtil.convertToUngappedFullRangeOffset(mockRead,2));
     }
     
     private static class NucleotideSequenceReferenceEncodedAdapter implements ReferenceMappedNucleotideSequence{
