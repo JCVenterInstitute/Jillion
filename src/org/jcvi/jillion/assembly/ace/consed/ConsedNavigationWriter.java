@@ -50,7 +50,7 @@ public final class ConsedNavigationWriter implements Closeable{
         return new ConsedNavigationWriter(title, out);
     }
     /**
-     * Create a partial consed navigiation file without a title.
+     * Create a partial consed navigation file without a title.
      * This should only be used if the navigation file creation is being split up 
      * into multiple pieces to be combined downstream.
      * @param out
@@ -63,13 +63,28 @@ public final class ConsedNavigationWriter implements Closeable{
     /**
      * Creates a new ConsedNavigationWriter which will
      * write out navigation data to the given {@link OutputStream}.
-     * @param title the title of this navigation file.
+     * The navigation file will not contain a title.
+     * @param out the OutputStream to write to.
+     * @throws NullPointerException if out is {@code null}.
+     */
+    public ConsedNavigationWriter(OutputStream out) throws IOException{
+        if(out ==null){
+            throw new NullPointerException("output stream can not be null");
+        }        
+        this.out= out;
+        
+    }
+    /**
+     * Creates a new ConsedNavigationWriter which will
+     * write out navigation data to the given {@link OutputStream}.
+     * @param title the title of this navigation file;
+     * if title is null, then no title will be written.
      * @param out the OutputStream to write to.
      * @throws IOException if there is a problem writing
      * to the outputStream.
-     * @throws NullPointerException if title or outputStream are {@code null}.
+     * @throws NullPointerException if out is {@code null}.
      */
-    private ConsedNavigationWriter(String title, OutputStream out) throws IOException{
+    public ConsedNavigationWriter(String title, OutputStream out) throws IOException{
         if(out ==null){
             throw new NullPointerException("output stream can not be null");
         }

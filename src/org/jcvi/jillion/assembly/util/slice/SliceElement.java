@@ -35,6 +35,15 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
  *
  */
 public interface SliceElement {
+	
+	/**
+     * Get the Id of this element.  Each element in a single Slice must
+     * have a different Id, although SliceElements from 
+     * different Slices can have the same Id.  This Id is usually the 
+     * read Id.
+     * @return the Id of this slice element.
+     */
+    String getId();
     /**
      * Get the {@link Nucleotide} of this SliceElement.
      * @return

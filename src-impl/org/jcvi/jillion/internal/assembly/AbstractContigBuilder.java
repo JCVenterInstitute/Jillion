@@ -240,7 +240,7 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
         		CompactedSlice.Builder builder = builders[i];
         		//a null builder implies 0x
         		if(builder !=null){
-    				Slice<?> slice = builder.build();            
+    				Slice slice = builder.build();            
     	    		consensus.replace(i,consensusCaller.callConsensus(slice).getConsensus());
         		}
         	}

@@ -45,7 +45,7 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 public class DefaultSliceMap extends AbstractSliceMap{
 	
-	private final IdedSlice[] slices;
+	private final Slice[] slices;
     protected PhredQuality defaultQuality;
 	    
     public static <R extends AssembledRead, C extends Contig<R>> SliceMap create(C contig, QualitySequenceDataStore qualityDataStore,
@@ -90,7 +90,7 @@ public class DefaultSliceMap extends AbstractSliceMap{
     			}
     		}
     		//done building
-    		this.slices = new IdedSlice[builders.length];
+    		this.slices = new Slice[builders.length];
     		for(int i=0; i<slices.length; i++){
     			if(builders[i] ==null){
     				slices[i] = DefaultSlice.EMPTY;
@@ -106,12 +106,12 @@ public class DefaultSliceMap extends AbstractSliceMap{
             QualitySequenceDataStore qualityDataStore,
             QualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality){
     	int lengthOfMap = (int)getLastCoveredOffsetIn(coverageMap)+1;
-    	this.slices = new IdedSlice[lengthOfMap];
+    	this.slices = new Slice[lengthOfMap];
         this.defaultQuality = defaultQuality;
         for(CoverageRegion<?  extends AssembledRead> region : coverageMap){
         	Range range = region.asRange();
             for(long i=range.getBegin(); i<=range.getEnd(); i++ ){
-                List<IdedSliceElement> sliceElements = createSliceElementsFor(region, i, qualityDataStore, qualityValueStrategy);
+                List<SliceElement> sliceElements = createSliceElementsFor(region, i, qualityDataStore, qualityValueStrategy);
                 slices[(int)i] =new DefaultSlice.Builder()
                                             .addAll(sliceElements)
                                             .build();
@@ -134,14 +134,14 @@ public class DefaultSliceMap extends AbstractSliceMap{
         return defaultQuality;
     }
 
-    public DefaultSliceMap(List<IdedSlice> slices){
-    	this.slices = new IdedSlice[slices.size()];
+    public DefaultSliceMap(List<Slice> slices){
+    	this.slices = new Slice[slices.size()];
         for(int i=0; i< this.slices.length; i++){
         	this.slices[i] = slices.get(i);
         }
     }
     @Override
-    public IdedSlice getSlice(long offset) {
+    public Slice getSlice(long offset) {
         return slices[(int)offset];
     }
     @Override
@@ -149,8 +149,8 @@ public class DefaultSliceMap extends AbstractSliceMap{
         return slices.length;
     }
     @Override
-    public Iterator<IdedSlice> iterator() {
-        return Arrays.<IdedSlice>asList(slices).iterator();
+    public Iterator<Slice> iterator() {
+        return Arrays.<Slice>asList(slices).iterator();
     }
 
     

@@ -49,9 +49,9 @@ public abstract class AbstractTestConsensusCaller {
     
     protected abstract ConsensusCaller getConsensusCaller();
     
-    public List<ConsensusResult> computeConsensus(List<Slice<?>> slices){
+    public List<ConsensusResult> computeConsensus(List<Slice> slices){
         List<ConsensusResult> consensus = new ArrayList<ConsensusResult>();
-        for(Slice<?> slice : slices){
+        for(Slice slice : slices){
             consensus.add(consensusCaller.callConsensus(slice));
         }
         return consensus;
@@ -60,10 +60,10 @@ public abstract class AbstractTestConsensusCaller {
     
 
     
-    private List<Slice<?>> slices;
+    private List<Slice> slices;
     private  List<ConsensusResult> expectedConsensus;
     
-    public AbstractTestConsensusCaller(List<Slice<?>> slices, List<ConsensusResult> expectedConsensus){
+    public AbstractTestConsensusCaller(List<Slice> slices, List<ConsensusResult> expectedConsensus){
         this.slices = slices;
         this.expectedConsensus = expectedConsensus;
     }

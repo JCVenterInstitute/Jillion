@@ -20,28 +20,27 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.util.slice;
 
-import org.jcvi.jillion.assembly.util.slice.IdedSliceElement;
-import org.jcvi.jillion.assembly.util.slice.SliceElement;
+import static org.junit.Assert.assertEquals;
+
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
  *
  */
-public abstract class AbstractTestIdedSliceElement {
+public abstract class AbstractTestSliceElement {
 
     String id = "id";
     Nucleotide base = Nucleotide.Adenine;
     PhredQuality quality = PhredQuality.valueOf(50);
     Direction dir = Direction.FORWARD;
-    IdedSliceElement sut;
-    protected abstract IdedSliceElement create(String id, Nucleotide base, PhredQuality qual,Direction dir);
+    SliceElement sut;
+    protected abstract SliceElement create(String id, Nucleotide base, PhredQuality qual,Direction dir);
     
     @Before
     public void setup(){

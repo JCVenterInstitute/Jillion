@@ -49,7 +49,7 @@ public enum MostFrequentBasecallConsensusCaller implements ConsensusCaller{
 	INSTANCE;
 	
     @Override
-    public ConsensusResult callConsensus(Slice<?> slice) {
+    public ConsensusResult callConsensus(Slice slice) {
         if(slice==null){
             return new DefaultConsensusResult(Nucleotide.Unknown, 0);
         }

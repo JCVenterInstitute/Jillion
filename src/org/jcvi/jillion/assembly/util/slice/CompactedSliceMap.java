@@ -46,9 +46,6 @@ public final class CompactedSliceMap implements SliceMap {
     public static <PR extends AssembledRead> CompactedSliceMap create(Contig<PR> contig,QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
         return new CompactedSliceMap(contig, qualityDataStore, qualityValueStrategy);
     }
-    public static <PR extends AssembledRead> CompactedSliceMap create(StreamingIterator<PR> readIterator, int consensusLength,QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
-        return new CompactedSliceMap(readIterator,consensusLength, qualityDataStore, qualityValueStrategy);
-    }
    
    
     private <PR extends AssembledRead, C extends Contig<PR>>  CompactedSliceMap(
@@ -112,15 +109,15 @@ public final class CompactedSliceMap implements SliceMap {
      * {@inheritDoc}
      */
     @Override
-    public Iterator<IdedSlice> iterator() {
-        return Arrays.<IdedSlice>asList(slices).iterator();
+    public Iterator<Slice> iterator() {
+        return Arrays.<Slice>asList(slices).iterator();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IdedSlice getSlice(long offset) {
+    public Slice getSlice(long offset) {
         return slices[(int) offset];
     }
 

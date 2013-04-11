@@ -38,21 +38,21 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 public final class TestSliceUtil {
     private TestSliceUtil(){}
     
-    public static IdedSlice createIsolatedSliceFrom(String bases, int... qualities){
+    public static Slice createIsolatedSliceFrom(String bases, int... qualities){
         DefaultSlice.Builder builder = new DefaultSlice.Builder();
         for(int i =0; i< qualities.length; i++){
             builder.add("read_"+i,Nucleotide.parse(bases.charAt(i)), PhredQuality.valueOf(qualities[i]), FORWARD);
         }
         return builder.build();
     }
-    public static IdedSlice createSliceFrom(List<Nucleotide> nucleotides, byte[] qualities, List<Direction> directions){
+    public static Slice createSliceFrom(List<Nucleotide> nucleotides, byte[] qualities, List<Direction> directions){
         DefaultSlice.Builder builder = new DefaultSlice.Builder();
         for(int i=0; i<nucleotides.size(); i++){
             builder.add("read_"+i,nucleotides.get(i), PhredQuality.valueOf(qualities[i]), directions.get(i));
         }
         return builder.build();
     }
-    public static IdedSlice createSliceFrom(String nucleotides, byte[] qualities, List<Direction> directions){
+    public static Slice createSliceFrom(String nucleotides, byte[] qualities, List<Direction> directions){
         
         return createSliceFrom(asList(new NucleotideSequenceBuilder(nucleotides)),
                 qualities, directions);
@@ -64,8 +64,8 @@ public final class TestSliceUtil {
     	}
     	return list;
     }
-    public static List<IdedSlice> createSlicesFrom(List<String> nucleotides, byte[][] qualities, List<Direction> directions){
-        List<IdedSlice> slices = new ArrayList<IdedSlice>();
+    public static List<Slice> createSlicesFrom(List<String> nucleotides, byte[][] qualities, List<Direction> directions){
+        List<Slice> slices = new ArrayList<Slice>();
         for(int j=0; j< nucleotides.get(0).length(); j++){
             StringBuilder sliceBases = new StringBuilder();
             byte[] sliceQualities = new byte[nucleotides.size()];

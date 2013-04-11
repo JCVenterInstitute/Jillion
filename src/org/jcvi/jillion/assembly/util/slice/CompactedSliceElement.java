@@ -30,7 +30,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
  *
  *
  */
-final class CompactedSliceElement implements IdedSliceElement{
+final class CompactedSliceElement implements SliceElement{
 	
     private static final Nucleotide[] NUCLEOTIDE_VALUES = Nucleotide.values();
 	private final String id;
@@ -135,10 +135,10 @@ final class CompactedSliceElement implements IdedSliceElement{
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof IdedSliceElement)) {
+        if (!(obj instanceof SliceElement)) {
             return false;
         }
-        IdedSliceElement other = (IdedSliceElement) obj;
+        SliceElement other = (SliceElement) obj;
         if (!id.equals(other.getId())) {
             return false;
         }

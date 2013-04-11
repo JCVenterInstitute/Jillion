@@ -73,11 +73,11 @@ public abstract class AbstractChurchillWatermanConsensusCaller extends AbstractC
      * @return a {@link Nucleotide} that is the consensus of all the bases in this
      * slice; the return may be an ambiguous {@link Nucleotide}.
      */
-    protected abstract Nucleotide getConsensus(ConsensusProbabilities normalizedConsensusProbabilities,Slice<?> slice) ;
+    protected abstract Nucleotide getConsensus(ConsensusProbabilities normalizedConsensusProbabilities,Slice slice) ;
  
     
     @Override
-    public final ConsensusResult callConsensusWithCoverage(Slice<?> slice) {
+    public final ConsensusResult callConsensusWithCoverage(Slice slice) {
         Map<Nucleotide, Integer> qualityValueSumMap = generateQualityValueSumMap(slice);
         ConsensusProbabilities normalizedErrorProbabilityStruct = generateNormalizedProbabilityStruct(qualityValueSumMap);
         Nucleotide consensus=  getConsensus(normalizedErrorProbabilityStruct,slice);
@@ -90,7 +90,7 @@ public abstract class AbstractChurchillWatermanConsensusCaller extends AbstractC
 
     private int getErrorProbability(
             ConsensusProbabilities normalizedErrorProbabilityStruct,
-            Slice<?> slice) {
+            Slice slice) {
         double normalizedProbability= getProbabilityFor(normalizedErrorProbabilityStruct);
         if(normalizedProbability == 0.0D){
             //special case if we only have matches, then sum slice qualities

@@ -23,8 +23,8 @@ package org.jcvi.jillion.assembly.util.slice;
 import java.util.List;
 
 import org.jcvi.jillion.assembly.util.slice.CompactedSlice;
-import org.jcvi.jillion.assembly.util.slice.IdedSlice;
-import org.jcvi.jillion.assembly.util.slice.IdedSliceElement;
+import org.jcvi.jillion.assembly.util.slice.Slice;
+import org.jcvi.jillion.assembly.util.slice.SliceElement;
 
 /**
  * @author dkatzel
@@ -34,9 +34,9 @@ import org.jcvi.jillion.assembly.util.slice.IdedSliceElement;
 public class TestCompactedSlice extends AbstractTestSlice{
 
     @Override
-    protected IdedSlice createNew(List<IdedSliceElement> elements) {
+    protected Slice createNew(List<SliceElement> elements) {
         CompactedSlice.Builder builder = new CompactedSlice.Builder();
-        for(IdedSliceElement element : elements){
+        for(SliceElement element : elements){
             builder.addSliceElement(element);
         }
         return builder.build();
