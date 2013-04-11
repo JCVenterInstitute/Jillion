@@ -42,20 +42,23 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 public final class CompactedSliceMap implements SliceMap {
     private static final PhredQuality DEFAULT_QUALITY = PhredQuality.valueOf(30);
 	private final CompactedSlice[] slices;
+	
 
     public static <PR extends AssembledRead> CompactedSliceMap create(Contig<PR> contig,QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
-        return new CompactedSliceMap(contig, qualityDataStore, qualityValueStrategy);
+        return new CompactedSliceMap(contig, qualityDataStore, qualityValueStrategy, DEFAULT_QUALITY);
+    }
+    public static <PR extends AssembledRead> CompactedSliceMap create(Contig<PR> contig,PhredQuality defaultQuality,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
+        return new CompactedSliceMap(contig, null, qualityValueStrategy, defaultQuality);
     }
    
-   
     private <PR extends AssembledRead, C extends Contig<PR>>  CompactedSliceMap(
-            C contig, QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
+            C contig, QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality) throws DataStoreException {
 		this(contig.getReadIterator(), (int)contig.getConsensusSequence().getLength(), qualityDataStore,
-				qualityValueStrategy);
+				qualityValueStrategy,defaultQuality);
     }
     private <PR extends AssembledRead, C extends Contig<PR>>  CompactedSliceMap(StreamingIterator<PR> readIter,
 			int consensusLength, QualitySequenceDataStore qualityDataStore,
-			QualityValueStrategy qualityValueStrategy)
+			QualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality)
 			throws DataStoreException {
 		CompactedSlice.Builder builders[] = new CompactedSlice.Builder[consensusLength];
     
@@ -79,7 +82,7 @@ public final class CompactedSliceMap implements SliceMap {
     				
     				final PhredQuality quality;
     				if(fullQualities==null){
-    					quality = DEFAULT_QUALITY;
+    					quality = defaultQuality;
     				}else{
     					quality= qualityValueStrategy.getQualityFor(read, fullQualities, i);
     				}

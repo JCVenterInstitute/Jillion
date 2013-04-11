@@ -20,24 +20,22 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.util.slice;
 
-import java.util.Arrays;
-import java.util.List;
+import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertEquals;
 
 import org.easymock.EasyMockSupport;
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.ReadInfo;
-import org.jcvi.jillion.assembly.util.slice.GapQualityValueStrategies;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
-import org.jcvi.jillion.core.util.Builder;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
 /**
  * @author dkatzel
  *
@@ -72,8 +70,10 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
         int fullIndex = 22;
         expect(placedRead.getNucleotideSequence()).andReturn(sequence).anyTimes();
         expect(sequence.isGap(gappedReadIndex)).andReturn(false);
+       
         expect(placedRead.getDirection()).andStubReturn(Direction.FORWARD);
         Range validRange = Range.of(10,100);
+        expect(sequence.getLength()).andReturn(validRange.getLength());
         int fullLength = (int)(validRange.getEnd()+validRange.getBegin());
         ReadInfo readInfo = new ReadInfo(validRange, fullLength);
         expect(placedRead.getReadInfo()).andStubReturn(readInfo);
@@ -99,10 +99,12 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
         expect(sequence.isGap(gappedReadIndex)).andReturn(false);
         expect(sequence.getUngappedOffsetFor(gappedReadIndex)).andReturn(ungappedReadOffset);
         ReadInfo readInfo = new ReadInfo(validRange, fullLength);
+        expect(sequence.getLength()).andReturn(validRange.getLength());
         expect(placedRead.getReadInfo()).andStubReturn(readInfo);
         
         QualitySequence qualities =new QualitySequenceBuilder(new byte[fullLength])
-        						.replace((int)(fullLength-1-validRange.getEnd() +ungappedReadOffset), expectedQuality)
+        						.reverse()
+        						.replace((int)(ungappedReadOffset + validRange.getBegin()), expectedQuality)
         						.reverse()
         						.build();
                                 
@@ -112,6 +114,61 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
         verifyAll();
     }
     
+    @Test
+    public void testGappedValidRangeQualitySequence(){
+    	QualitySequenceBuilder fullLengthQualities = new QualitySequenceBuilder();
+    	for(int i =0; i<15; i++){
+    		fullLengthQualities.append(i+1);
+    	}
+    	NucleotideSequence seq = new NucleotideSequenceBuilder("AA-A-AAAA--AA-A")
+    									.build();
+    	
+    	ReferenceMappedNucleotideSequence readSeq = new NucleotideSequenceBuilder(seq)
+    													.setReferenceHint(seq, 0)
+    													.buildReferenceEncodedNucleotideSequence();
+    	
+    	expect(placedRead.getNucleotideSequence()).andStubReturn(readSeq);
+    	expect(placedRead.getReadInfo()).andStubReturn(new ReadInfo(Range.of(2,11), 15));
+    	expect(placedRead.getDirection()).andStubReturn(Direction.FORWARD);
+    	expect(placedRead.getGappedLength()).andStubReturn(seq.getLength());
+    	replayAll();
+    	QualitySequence fullLengthUngappedQualities = fullLengthQualities.build();
+    	
+    	QualitySequence fullLengthGappedQualities = sut.getGappedValidRangeQualitySequenceFor(placedRead, fullLengthUngappedQualities);
     
+    	for(int i=0; i<seq.getLength(); i++){
+    		assertEquals(""+i, fullLengthGappedQualities.get(i), 
+    				sut.getQualityFor(placedRead, fullLengthUngappedQualities, i));
+    	}
+    }
+    
+    @Test
+    public void testGappedValidRangeQualityReverseSequence(){
+    	QualitySequenceBuilder fullLengthQualities = new QualitySequenceBuilder();
+    	for(int i =0; i<15; i++){
+    		fullLengthQualities.append(i+1);
+    	}
+    	NucleotideSequence seq = new NucleotideSequenceBuilder("AA-A-AAAA--AA-A")
+    									.build();
+    	
+    	ReferenceMappedNucleotideSequence readSeq = new NucleotideSequenceBuilder(seq)
+    													.setReferenceHint(seq, 0)
+    													.buildReferenceEncodedNucleotideSequence();
+    	
+    	expect(placedRead.getNucleotideSequence()).andStubReturn(readSeq);
+    	expect(placedRead.getReadInfo()).andStubReturn(new ReadInfo(Range.of(2,11), 15));
+    	expect(placedRead.getDirection()).andStubReturn(Direction.REVERSE);
+    	expect(placedRead.getGappedLength()).andStubReturn(seq.getLength());
+    	replayAll();
+    	QualitySequence fullLengthUngappedQualities = fullLengthQualities.build();
+    	
+    	QualitySequence fullLengthGappedQualities = sut.getGappedValidRangeQualitySequenceFor(placedRead, fullLengthUngappedQualities);
+    
+    	
+    	for(int i=0; i<seq.getLength(); i++){
+    		assertEquals(""+i, fullLengthGappedQualities.get(i), 
+    				sut.getQualityFor(placedRead, fullLengthUngappedQualities, i));
+    	}
+    }
     
 }

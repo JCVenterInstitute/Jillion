@@ -54,6 +54,7 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
      */
 	SequenceBuilder<T,S> append(T symbol);
 
+	T get(int offset);
    
     /**
      * Get the current length of the mutable

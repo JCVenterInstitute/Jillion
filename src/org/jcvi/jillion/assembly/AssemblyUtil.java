@@ -29,7 +29,6 @@ import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 /**
@@ -126,11 +125,18 @@ public final class AssemblyUtil {
        
         
         NucleotideSequence nucleotideSequence = placedRead.getNucleotideSequence();
-        int ungappedOffset=nucleotideSequence.getUngappedOffsetFor(gappedOffset);
-        if(placedRead.getDirection() == Direction.REVERSE){            
-            int numberOfLeadingBasesTrimmed = fullLength-1 - (int)validRange.getEnd();
-            return numberOfLeadingBasesTrimmed + ungappedOffset;
+        final int ungappedOffset;
+        if(gappedOffset ==-1){
+        	ungappedOffset =-1;
+        }else if(gappedOffset == nucleotideSequence.getLength()){
+        	ungappedOffset = (int)(nucleotideSequence.getUngappedLength()+1);
+        }else{
+        	ungappedOffset=nucleotideSequence.getUngappedOffsetFor(gappedOffset);
         }
+     /*   if(placedRead.getDirection() == Direction.REVERSE){            
+            int numberOfLeadingBasesTrimmed = fullLength - (int)(validRange.getEnd()+1);
+            return numberOfLeadingBasesTrimmed + ungappedOffset;
+        }*/
         return ungappedOffset + (int)validRange.getBegin();
     }
    

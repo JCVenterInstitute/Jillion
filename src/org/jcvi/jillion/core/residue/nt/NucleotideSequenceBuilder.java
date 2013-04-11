@@ -392,7 +392,18 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		this.bits = shrunkBits;
 	}
     
-    public int getNumGaps(){
+    @Override
+	public Nucleotide get(int offset) {
+    	if(offset<0){
+            throw new IllegalArgumentException("offset can not have negatives coordinates: "+ offset);
+        }
+        if(offset> getLength()){
+            throw new IllegalArgumentException(
+                    String.format("offset can not start beyond current length (%d) : %d", getLength(),offset));
+        }
+		return NUCLEOTIDE_VALUES[getNucleotideOrdinalFor(bits,offset)];
+	}
+	public int getNumGaps(){
         return codecDecider.getNumberOfGaps();
     }
     

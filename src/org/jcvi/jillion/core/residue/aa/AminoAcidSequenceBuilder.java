@@ -100,6 +100,12 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 		return this;
 	}
 
+	
+	@Override
+	public AminoAcid get(int offset) {
+		return AMINO_ACID_VALUES[builder.get(offset)];
+	}
+
 	@Override
 	public long getLength() {
 		return builder.getCurrentLength();
