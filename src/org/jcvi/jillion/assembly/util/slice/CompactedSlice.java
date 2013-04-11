@@ -159,7 +159,7 @@ public final class CompactedSlice implements Slice{
         public Builder addSliceElement(String id, Nucleotide base, PhredQuality quality, Direction dir){
         	CompactedSliceElement compacted = new CompactedSliceElement(id, base, quality, dir);
         	int value = compacted.getEncodedDirAndNucleotide() <<8;
-        	value |= compacted.getEncodedQuality();
+        	value |= (compacted.getEncodedQuality() &0xFF);
             bytes.append((short)value);
             
             ids.add(id);
