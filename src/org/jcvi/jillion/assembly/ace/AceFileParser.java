@@ -149,6 +149,8 @@ public abstract class AceFileParser implements AceHandler {
         private int expectedNumberOfReads;
         private int numberOfReadsSeen;
         private boolean inConsensusQualities=false;
+        private boolean readReadPoritionOfContig=false;
+        
         private QualitySequenceBuilder currentQualitySequenceBuilder;
         
         private final AceFileVisitorCallbackFactory callbackFactory;
@@ -243,10 +245,12 @@ public abstract class AceFileParser implements AceHandler {
             currentQualitySequenceBuilder = new QualitySequenceBuilder(numberOfConsensusBases);
             currentContigVisitor = contigVisitor;
             currentReadVisitor = null;
+            readReadPoritionOfContig=false;
 
         }
         
         void handleNewRead(String readId, int fulllLength){
+        	readReadPoritionOfContig=true;
         	if(currentContigVisitor !=null){        		
         		this.currentReadVisitor = currentContigVisitor.visitBeginRead(readId, fulllLength);
         	}
@@ -302,10 +306,13 @@ public abstract class AceFileParser implements AceHandler {
 
 		public void visitBasesLine(String mixedCaseBasecalls) {
 			if(currentContigVisitor!=null){
-				if(currentReadVisitor ==null){
-					currentContigVisitor.visitBasesLine(mixedCaseBasecalls);
+				if(readReadPoritionOfContig){
+					if(currentReadVisitor !=null){
+						currentReadVisitor.visitBasesLine(mixedCaseBasecalls);
+					}
 				}else{
-					currentReadVisitor.visitBasesLine(mixedCaseBasecalls);
+					currentContigVisitor.visitBasesLine(mixedCaseBasecalls);
+					
 				}
 			}
 			

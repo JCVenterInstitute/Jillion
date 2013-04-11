@@ -43,6 +43,8 @@ import org.junit.runners.Suite.SuiteClasses;
        
        TestParseInvalidAceNotAnAceFile.class,
        
+       TestSkippingReadsDoesntSendBasecallsToConsensusInstead.class,
+       
        TestDefaultAceContig.class,
        TestAceContigBuilderInvalidRead.class,
        TestAceContigBuilderRecallConsensus.class,
