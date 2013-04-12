@@ -183,10 +183,13 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
         	NucleotideSequenceBuilder gappedSequenceBuilder = entry.getValue();
         	//iterates in reverse to keep offsets in sync
         	SortedMap<Long, Insertion> sortedMap = gapsByReferenceIndex.get(refIndex);
-			for(Entry<Long, Insertion> insertionEntry : sortedMap.entrySet()){
-        		int offset = insertionEntry.getKey().intValue();
-        		int maxGapSize = (int)insertionEntry.getValue().getSize();
-        		gappedSequenceBuilder.insert(offset, createGapStringOf(maxGapSize));
+        	//VHTNGS-603 - if no reads mapped to the reference then sortedMap is null
+        	if(sortedMap !=null){
+				for(Entry<Long, Insertion> insertionEntry : sortedMap.entrySet()){
+	        		int offset = insertionEntry.getKey().intValue();
+	        		int maxGapSize = (int)insertionEntry.getValue().getSize();
+	        		gappedSequenceBuilder.insert(offset, createGapStringOf(maxGapSize));
+	        	}
         	}
         	gappedSequenceMap.put(refIndexToIdMap.get(refIndex), gappedSequenceBuilder.build());
         }
