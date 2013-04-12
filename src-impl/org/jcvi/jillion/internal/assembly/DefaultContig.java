@@ -215,6 +215,9 @@ public final class DefaultContig<T extends AssembledRead> implements Contig<T>{
         
        
         public DefaultContig<AssembledRead> build(){
+        	 if(consensusCaller !=null){
+      			recallConsensusNow();
+              }
             Set<AssembledRead> reads = new LinkedHashSet<AssembledRead>();
             for(AssembledReadBuilder<AssembledRead> builder : getAllAssembledReadBuilders()){
                 reads.add(builder.build());

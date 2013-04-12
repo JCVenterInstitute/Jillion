@@ -87,7 +87,8 @@ public class TestPhdReadRecord {
 		PhdReadRecord different = new PhdReadRecord(phd, 
 					new PhdInfo("traceName2", "phdName2", date)
 				);
-		
+		expect(phd.getId()).andStubReturn("traceName2");
+		replay(phd);
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, different);
 	}
 	
