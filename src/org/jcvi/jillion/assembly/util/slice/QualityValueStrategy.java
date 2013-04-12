@@ -33,4 +33,10 @@ public interface QualityValueStrategy {
 
     PhredQuality getQualityFor(AssembledRead placedRead, QualitySequence fullQualities,
             int gappedReadIndex);
+    
+   
+    QualitySequence getGappedValidRangeQualitySequenceFor(AssembledRead placedRead,
+            QualitySequence fullQualities);
+    
+    
 }

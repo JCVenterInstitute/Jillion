@@ -28,7 +28,6 @@ package org.jcvi.jillion.assembly.util.slice;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
@@ -62,14 +61,19 @@ public final class DefaultSlice implements Slice{
             return false;
         }
         Slice other = (Slice) obj;
-        for(Entry<String,SliceElement> entry : elements.entrySet()){
-            if(!other.containsElement(entry.getKey())){
-                return false;
-            }
-            if(!entry.getValue().equals(other.getSliceElement(entry.getKey()))){
-                return false;
-            }
-        }
+        Iterator<SliceElement> iter = iterator();
+        Iterator<SliceElement> otherIter = other.iterator();
+        while(iter.hasNext()){
+			if(!otherIter.hasNext()){
+				return false;
+			}
+			if(!iter.next().equals(otherIter.next())){
+				return false;
+			}
+		}
+		if(otherIter.hasNext()){
+			return false;
+		}
        return true;
             
     }

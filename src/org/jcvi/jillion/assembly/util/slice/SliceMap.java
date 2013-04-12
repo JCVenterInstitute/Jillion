@@ -29,4 +29,17 @@ public interface SliceMap extends Iterable<Slice>{
 
 	Slice getSlice(long offset);
     long getSize();
+    
+    /**
+     * Two SliceMaps are equal if they contain
+     * the exact same {@link Slice}s in the exact same
+     * order.
+     * @param other the other {@link SliceMap}.
+     * @return {@code true} if both {@link SliceMap}s
+     * have the same number of Slices and each 
+     * Slice is equal to the corresponding Slice in the other
+     * {@link SliceMap}; or {@code false} otherwise.
+     */
+    @Override
+    boolean equals(Object other);
 }

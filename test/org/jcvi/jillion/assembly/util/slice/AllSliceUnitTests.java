@@ -33,14 +33,19 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     { 
-        
+    	AllQualityValueStrategyUnitTests.class,
+    	
         TestDefaultSliceElement.class,
         TestCompactedSliceElement.class,
         TestDefaultSlice.class,
         TestCompactedSlice.class,
         TestDefaultSliceMap.class,
         TestCompactedSliceMap.class,
-        AllQualityValueStrategyUnitTests.class,
+        TestSliceMapBuilderUsingQualityDataStore.class,
+        TestSliceMapBuilderUsingDefaultQualities.class,
+        
+        TestSliceMapBuilderReadFilter.class,
+        
         AllConsensusUnitTests.class
         
     }
