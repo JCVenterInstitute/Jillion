@@ -50,6 +50,17 @@ public final class CompactedSliceMap implements SliceMap {
     public static <PR extends AssembledRead> CompactedSliceMap create(Contig<PR> contig,PhredQuality defaultQuality,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
         return new CompactedSliceMap(contig, null, qualityValueStrategy, defaultQuality);
     }
+    
+    public static <PR extends AssembledRead> CompactedSliceMap create(
+    		StreamingIterator<PR> iter, int consensusSequenceLength,
+    		QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
+        return new CompactedSliceMap(iter, consensusSequenceLength, qualityDataStore, qualityValueStrategy, DEFAULT_QUALITY);
+    }
+    public static <PR extends AssembledRead> CompactedSliceMap create(
+    		StreamingIterator<PR> iter, int consensusSequenceLength,
+    		PhredQuality defaultQuality,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
+        return new CompactedSliceMap(iter, consensusSequenceLength, null, qualityValueStrategy, defaultQuality);
+    }
    
     private <PR extends AssembledRead, C extends Contig<PR>>  CompactedSliceMap(
             C contig, QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality) throws DataStoreException {
@@ -69,23 +80,24 @@ public final class CompactedSliceMap implements SliceMap {
     			int i=0;
     			String id =read.getId();
     			Direction dir = read.getDirection();
-    			QualitySequence fullQualities =null;
+    			Iterator<PhredQuality> validRangeGappedQualitiesIterator =null;
     			if(qualityDataStore!=null){
-    				fullQualities = qualityDataStore.get(id);
+    				QualitySequence fullQualities = qualityDataStore.get(id);
         			
         			if(fullQualities ==null){
         				throw new NullPointerException("could not get qualities for "+id);
         			}
+        			validRangeGappedQualitiesIterator = qualityValueStrategy.getGappedValidRangeQualitySequenceFor(read, fullQualities)
+        													.iterator();
+        			
+    			}else{
+    				validRangeGappedQualitiesIterator = createNewDefaultQualityIterator(defaultQuality);
     			}
+    			Iterator<Nucleotide> baseIterator = read.getNucleotideSequence().iterator();
+    			while(baseIterator.hasNext()){
+    				Nucleotide base = baseIterator.next();
+    				PhredQuality quality = validRangeGappedQualitiesIterator.next();    			
     			
-    			for(Nucleotide base : read.getNucleotideSequence()){
-    				
-    				final PhredQuality quality;
-    				if(fullQualities==null){
-    					quality = defaultQuality;
-    				}else{
-    					quality= qualityValueStrategy.getQualityFor(read, fullQualities, i);
-    				}
     				if(builders[start+i] ==null){
     					builders[start+i] = new CompactedSlice.Builder();
     				}
@@ -108,7 +120,29 @@ public final class CompactedSliceMap implements SliceMap {
 	}
 
 
-    /**
+    private Iterator<PhredQuality> createNewDefaultQualityIterator(
+			final PhredQuality defaultQuality) {
+		return new Iterator<PhredQuality>(){
+
+			@Override
+			public boolean hasNext() {
+				//always return true
+				return true;
+			}
+
+			@Override
+			public PhredQuality next() {
+				return defaultQuality;
+			}
+
+			@Override
+			public void remove() {
+				//no-op				
+			}
+			
+		};
+	}
+	/**
      * {@inheritDoc}
      */
     @Override
@@ -131,5 +165,41 @@ public final class CompactedSliceMap implements SliceMap {
     public long getSize() {
         return slices.length;
     }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(slices);
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof SliceMap)) {
+			return false;
+		}
+		SliceMap other = (SliceMap) obj;
+		Iterator<Slice> iter = iterator();
+		Iterator<Slice> otherIter = other.iterator();
+		while(iter.hasNext()){
+			if(!otherIter.hasNext()){
+				return false;
+			}
+			if(!iter.next().equals(otherIter.next())){
+				return false;
+			}
+		}
+		if(otherIter.hasNext()){
+			return false;
+		}
+		
+		return true;
+	}
 
+    
 }

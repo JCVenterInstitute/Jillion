@@ -153,6 +153,43 @@ public class DefaultSliceMap extends AbstractSliceMap{
         return Arrays.<Slice>asList(slices).iterator();
     }
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(slices);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof SliceMap)) {
+			return false;
+		}
+		SliceMap other = (SliceMap) obj;
+		Iterator<Slice> iter = iterator();
+		Iterator<Slice> otherIter = other.iterator();
+		while(iter.hasNext()){
+			if(!otherIter.hasNext()){
+				return false;
+			}
+			if(!iter.next().equals(otherIter.next())){
+				return false;
+			}
+		}
+		if(otherIter.hasNext()){
+			return false;
+		}
+		
+		return true;
+	}
+
     
    
 }

@@ -21,6 +21,7 @@
 package org.jcvi.jillion.assembly.util.slice;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -80,6 +81,45 @@ public final class CompactedSlice implements Slice{
             }
             
         };
+    }
+    
+    
+    @Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(elements);
+		result = prime * result + Arrays.hashCode(ids);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+        if (this == obj){
+            return true;
+        }
+        if (obj == null){
+            return false;
+        }
+        if (!(obj instanceof Slice)){
+            return false;
+        }
+        Slice other = (Slice) obj;
+		Iterator<SliceElement> iter = iterator();
+		Iterator<SliceElement> otherIter = other.iterator();
+		while(iter.hasNext()){
+			if(!otherIter.hasNext()){
+				return false;
+			}
+			if(!iter.next().equals(otherIter.next())){
+				return false;
+			}
+		}
+		if(otherIter.hasNext()){
+			return false;
+		}   
+       return true;
+            
     }
     
     private CompactedSliceElement getElement(int i){

@@ -25,7 +25,9 @@
  */
 package org.jcvi.jillion.core.testUtil;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -50,7 +52,7 @@ public final class TestUtil {
         assertFalse(obj1.equals(obj2));
         assertFalse(obj1.hashCode()== obj2.hashCode());
 
-        assertFalse(obj2.equals(obj1));
+        assertFalse(obj2 + " vs " + obj1, obj2.equals(obj1));
         assertFalse(obj2.hashCode()== obj1.hashCode());
     }
     /**

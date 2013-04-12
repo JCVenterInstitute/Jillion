@@ -21,19 +21,18 @@
 package org.jcvi.jillion.assembly.util.slice;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.util.slice.GapQualityValueStrategies;
-import org.jcvi.jillion.assembly.util.slice.QualityValueStrategy;
-import org.jcvi.jillion.assembly.util.slice.SliceMap;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
+import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.internal.assembly.DefaultContig;
 import org.junit.Before;
 import org.junit.Test;
@@ -160,4 +159,51 @@ public abstract class AbstractTestSliceMap {
                 sut.getSlice(7));
     }
     
+    @Test
+    public void sameSliceMapIsEqualToItself(){
+    	Contig<AssembledRead> contig = new DefaultContig.Builder("contigId", "ACGTACGT")
+        .addRead("read_0", 0, "ACGTACGT")
+        .addRead("read_1", 0, "RCGTA-GT")
+        .addRead("read_2", 2,   "G-AC")
+        .build();
+    	
+    	SliceMap sut = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategies.LOWEST_FLANKING);
+        
+    	assertTrue(sut.equals(sut));
+    }
+    
+    @Test
+    public void sameSliceMapIsEqualToSameValues(){
+    	Contig<AssembledRead> contig = new DefaultContig.Builder("contigId", "ACGTACGT")
+        .addRead("read_0", 0, "ACGTACGT")
+        .addRead("read_1", 0, "RCGTA-GT")
+        .addRead("read_2", 2,   "G-AC")
+        .build();
+    	
+    	SliceMap sut1 = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategies.LOWEST_FLANKING);
+    	SliceMap sut2 = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategies.LOWEST_FLANKING);
+        
+    	TestUtil.assertEqualAndHashcodeSame(sut1, sut2);
+    	
+    }
+    
+    @Test
+    public void differentSliceMapsNotEqual(){
+    	Contig<AssembledRead> contig1 = new DefaultContig.Builder("contigId", "ACGTACGT")
+							        .addRead("read_0", 0, "ACGTACGT")
+							        .addRead("read_1", 0, "RCGTA-GT")
+							        .addRead("read_2", 2,   "G-AC")
+							        .build();
+    	
+    	Contig<AssembledRead> contig2 = new DefaultContig.Builder("contigId", "ACGTACGT")
+							        .addRead("read_0", 0, "ACGTACGT")
+							        .addRead("read_1", 0, "RCGTA-GT")
+							        .build();
+    	
+    	SliceMap sut1 = createSliceMapFor(contig1, qualityDataStore,GapQualityValueStrategies.LOWEST_FLANKING);
+    	SliceMap sut2 = createSliceMapFor(contig2, qualityDataStore,GapQualityValueStrategies.LOWEST_FLANKING);
+        
+    	TestUtil.assertNotEqualAndHashcodeDifferent(sut1, sut2);
+    	
+    }
 }

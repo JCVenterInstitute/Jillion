@@ -74,7 +74,7 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
     
   //  private static final PhredQuality LOWEST_QUALITY = PhredQuality.valueOf(1);
     
-    
+    @Override
     public QualitySequence getGappedValidRangeQualitySequenceFor(AssembledRead placedRead,
             QualitySequence fullQualities){
     	QualitySequence ungappedComplementedValidRangeQualities = AssemblyUtil.getUngappedComplementedValidRangeQualities(placedRead, fullQualities);
