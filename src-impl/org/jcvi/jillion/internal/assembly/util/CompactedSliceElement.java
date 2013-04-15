@@ -18,9 +18,10 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.assembly.util.slice;
+package org.jcvi.jillion.internal.assembly.util;
 
 
+import org.jcvi.jillion.assembly.util.slice.SliceElement;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
@@ -30,7 +31,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
  *
  *
  */
-final class CompactedSliceElement implements SliceElement{
+public final class CompactedSliceElement implements SliceElement{
 	
     private static final Nucleotide[] NUCLEOTIDE_VALUES = Nucleotide.values();
 	private final String id;

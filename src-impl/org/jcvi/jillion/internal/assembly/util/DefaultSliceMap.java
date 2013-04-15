@@ -23,7 +23,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.util.slice;
+package org.jcvi.jillion.internal.assembly.util;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -33,6 +33,10 @@ import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.assembly.util.coverage.CoverageMap;
 import org.jcvi.jillion.assembly.util.coverage.CoverageRegion;
+import org.jcvi.jillion.assembly.util.slice.GapQualityValueStrategy;
+import org.jcvi.jillion.assembly.util.slice.Slice;
+import org.jcvi.jillion.assembly.util.slice.SliceElement;
+import org.jcvi.jillion.assembly.util.slice.SliceMap;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -49,11 +53,11 @@ public class DefaultSliceMap extends AbstractSliceMap{
     protected PhredQuality defaultQuality;
 	    
     public static <R extends AssembledRead, C extends Contig<R>> SliceMap create(C contig, QualitySequenceDataStore qualityDataStore,
-                        QualityValueStrategy qualityValueStrategy) throws DataStoreException{
+                        GapQualityValueStrategy qualityValueStrategy) throws DataStoreException{
         return new DefaultSliceMap(contig, qualityDataStore, qualityValueStrategy);
     }
     
-    public static <PR extends AssembledRead> DefaultSliceMap create(CoverageMap<PR> coverageMap,QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy){
+    public static <PR extends AssembledRead> DefaultSliceMap create(CoverageMap<PR> coverageMap,QualitySequenceDataStore qualityDataStore,GapQualityValueStrategy qualityValueStrategy){
         return new DefaultSliceMap(coverageMap, qualityDataStore, qualityValueStrategy);
     }
 
@@ -62,12 +66,12 @@ public class DefaultSliceMap extends AbstractSliceMap{
     
     private DefaultSliceMap(CoverageMap<? extends AssembledRead> coverageMap, 
                         QualitySequenceDataStore qualityDataStore,
-                        QualityValueStrategy qualityValueStrategy){
+                        GapQualityValueStrategy qualityValueStrategy){
         this(coverageMap,qualityDataStore, qualityValueStrategy,null);
     }
     
     private <PR extends AssembledRead,C extends Contig<PR>>  DefaultSliceMap(
-            C contig, QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException {
+            C contig, QualitySequenceDataStore qualityDataStore,GapQualityValueStrategy qualityValueStrategy) throws DataStoreException {
     	DefaultSlice.Builder builders[] = new DefaultSlice.Builder[(int)contig.getConsensusSequence().getLength()];
     	StreamingIterator<PR> readIter = null;
     	try{
@@ -104,7 +108,7 @@ public class DefaultSliceMap extends AbstractSliceMap{
     }
     protected DefaultSliceMap(CoverageMap<? extends AssembledRead> coverageMap, 
             QualitySequenceDataStore qualityDataStore,
-            QualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality){
+            GapQualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality){
     	int lengthOfMap = (int)getLastCoveredOffsetIn(coverageMap)+1;
     	this.slices = new Slice[lengthOfMap];
         this.defaultQuality = defaultQuality;

@@ -37,7 +37,7 @@ import org.junit.Test;
 public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityValueStrategies{
 
 
-    GapQualityValueStrategies sut = GapQualityValueStrategies.LOWEST_FLANKING;
+    GapQualityValueStrategy sut = GapQualityValueStrategy.LOWEST_FLANKING;
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void fullLengthReadEndsWithGapShouldThrowException(){
@@ -65,8 +65,8 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
     * {@inheritDoc}
     */
     @Override
-    protected GapQualityValueStrategies getGapQualityValueStrategies() {
-        return GapQualityValueStrategies.LOWEST_FLANKING;
+    protected GapQualityValueStrategy getGapQualityValueStrategies() {
+        return GapQualityValueStrategy.LOWEST_FLANKING;
     }
     
     @Test

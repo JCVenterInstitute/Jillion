@@ -43,7 +43,7 @@ import org.junit.Test;
  */
 public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
 
-    GapQualityValueStrategies sut;
+    GapQualityValueStrategy sut;
     private AssembledRead placedRead;
     private ReferenceMappedNucleotideSequence sequence;
     PhredQuality expectedQuality = PhredQuality.valueOf(42);
@@ -54,7 +54,7 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
         sequence = createMock(ReferenceMappedNucleotideSequence.class);
     }
     
-    protected abstract GapQualityValueStrategies getGapQualityValueStrategies();
+    protected abstract GapQualityValueStrategy getGapQualityValueStrategies();
     
     @Test(expected = NullPointerException.class)
     public void nullQualitiesShouldThrowNPE(){

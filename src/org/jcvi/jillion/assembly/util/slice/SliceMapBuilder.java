@@ -7,10 +7,12 @@ import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.assembly.util.ReadFilter;
 import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.assembly.util.CompactedSliceMap;
 
 public final class SliceMapBuilder<R extends AssembledRead> implements Builder<SliceMap>{
 
@@ -18,7 +20,7 @@ public final class SliceMapBuilder<R extends AssembledRead> implements Builder<S
 	private QualitySequenceDataStore qualities;
 	
 	private PhredQuality defaultQuality;
-	private GapQualityValueStrategies qualityValueStrategy = GapQualityValueStrategies.LOWEST_FLANKING;
+	private GapQualityValueStrategy qualityValueStrategy = GapQualityValueStrategy.LOWEST_FLANKING;
 	
 	private ReadFilter<R> filter=null;
 	
@@ -44,7 +46,7 @@ public final class SliceMapBuilder<R extends AssembledRead> implements Builder<S
 		this.qualities = readQualities;
 	}
 	
-	public SliceMapBuilder<R> gapQualityValueStrategy(GapQualityValueStrategies strategy){
+	public SliceMapBuilder<R> gapQualityValueStrategy(GapQualityValueStrategy strategy){
 		if(strategy==null){
 			throw new NullPointerException("GapQualityValueStrategies can not be null");
 		}
@@ -74,8 +76,8 @@ public final class SliceMapBuilder<R extends AssembledRead> implements Builder<S
 	
 	@Override
 	public SliceMap build() {
-		try {
-			final StreamingIterator<R> iter;
+		StreamingIterator<R> iter=null;
+		try {			
 			if(filter ==null){
 				iter = contig.getReadIterator();
 			}else{
@@ -88,6 +90,8 @@ public final class SliceMapBuilder<R extends AssembledRead> implements Builder<S
 			return CompactedSliceMap.create(iter,(int)contig.getConsensusSequence().getLength(), qualities, qualityValueStrategy );
 		} catch (DataStoreException e) {
 			throw new IllegalStateException("error building SliceMap",e);
+		}finally{
+			IOUtil.closeAndIgnoreErrors(iter);
 		}
 	}
 

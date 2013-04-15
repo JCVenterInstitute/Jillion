@@ -43,7 +43,7 @@ import org.junit.Test;
  */
 public abstract class AbstractTestSliceMap {
 
-    protected abstract SliceMap createSliceMapFor(Contig<AssembledRead> contig, QualitySequenceDataStore qualityDatastore, QualityValueStrategy qualityValueStrategy);
+    protected abstract SliceMap createSliceMapFor(Contig<AssembledRead> contig, QualitySequenceDataStore qualityDatastore, GapQualityValueStrategy qualityValueStrategy);
     private QualitySequenceDataStore qualityDataStore;
     @Before
     public void setup(){
@@ -59,7 +59,7 @@ public abstract class AbstractTestSliceMap {
                                     .addRead("read_0", 0, "ACGTACGT")
                                     .addRead("read_1", 0, "ACGTACGT")
                                     .build();
-        SliceMap sut = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategies.LOWEST_FLANKING);
+        SliceMap sut = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategy.LOWEST_FLANKING);
         assertEquals(8L, sut.getSize());
         assertEquals(TestSliceUtil.createIsolatedSliceFrom("AA", 10,1),
                     sut.getSlice(0));
@@ -85,7 +85,7 @@ public abstract class AbstractTestSliceMap {
                                     .addRead("read_1", 0, "ACGTACGT")
                                     .addRead("read_2", 2,   "GTAC")
                                     .build();
-        SliceMap sut = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategies.LOWEST_FLANKING);
+        SliceMap sut = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategy.LOWEST_FLANKING);
         assertEquals(8L, sut.getSize());
         assertEquals(TestSliceUtil.createIsolatedSliceFrom("AA", 10,1),
                     sut.getSlice(0));
@@ -112,7 +112,7 @@ public abstract class AbstractTestSliceMap {
                                     .addRead("read_1", 0, "RCGTACGT")
                                     .addRead("read_2", 2,   "GWAC")
                                     .build();
-        SliceMap sut = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategies.LOWEST_FLANKING);
+        SliceMap sut = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategy.LOWEST_FLANKING);
         assertEquals(8L, sut.getSize());
         assertEquals(TestSliceUtil.createIsolatedSliceFrom("AR", 10,1),
                     sut.getSlice(0));
@@ -139,7 +139,7 @@ public abstract class AbstractTestSliceMap {
                                     .addRead("read_1", 0, "RCGTA-GT")
                                     .addRead("read_2", 2,   "G-AC")
                                     .build();
-        SliceMap sut = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategies.LOWEST_FLANKING);
+        SliceMap sut = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategy.LOWEST_FLANKING);
         assertEquals(8L, sut.getSize());
         assertEquals(TestSliceUtil.createIsolatedSliceFrom("AR", 10,1),
                     sut.getSlice(0));
@@ -167,7 +167,7 @@ public abstract class AbstractTestSliceMap {
         .addRead("read_2", 2,   "G-AC")
         .build();
     	
-    	SliceMap sut = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategies.LOWEST_FLANKING);
+    	SliceMap sut = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategy.LOWEST_FLANKING);
         
     	assertTrue(sut.equals(sut));
     }
@@ -180,8 +180,8 @@ public abstract class AbstractTestSliceMap {
         .addRead("read_2", 2,   "G-AC")
         .build();
     	
-    	SliceMap sut1 = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategies.LOWEST_FLANKING);
-    	SliceMap sut2 = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategies.LOWEST_FLANKING);
+    	SliceMap sut1 = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategy.LOWEST_FLANKING);
+    	SliceMap sut2 = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategy.LOWEST_FLANKING);
         
     	TestUtil.assertEqualAndHashcodeSame(sut1, sut2);
     	
@@ -200,8 +200,8 @@ public abstract class AbstractTestSliceMap {
 							        .addRead("read_1", 0, "RCGTA-GT")
 							        .build();
     	
-    	SliceMap sut1 = createSliceMapFor(contig1, qualityDataStore,GapQualityValueStrategies.LOWEST_FLANKING);
-    	SliceMap sut2 = createSliceMapFor(contig2, qualityDataStore,GapQualityValueStrategies.LOWEST_FLANKING);
+    	SliceMap sut1 = createSliceMapFor(contig1, qualityDataStore,GapQualityValueStrategy.LOWEST_FLANKING);
+    	SliceMap sut2 = createSliceMapFor(contig2, qualityDataStore,GapQualityValueStrategy.LOWEST_FLANKING);
         
     	TestUtil.assertNotEqualAndHashcodeDifferent(sut1, sut2);
     	

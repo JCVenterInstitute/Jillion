@@ -18,13 +18,16 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.assembly.util.slice;
+package org.jcvi.jillion.internal.assembly.util;
 
 import java.util.Arrays;
 import java.util.Iterator;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
+import org.jcvi.jillion.assembly.util.slice.GapQualityValueStrategy;
+import org.jcvi.jillion.assembly.util.slice.Slice;
+import org.jcvi.jillion.assembly.util.slice.SliceMap;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -44,32 +47,32 @@ public final class CompactedSliceMap implements SliceMap {
 	private final CompactedSlice[] slices;
 	
 
-    public static <PR extends AssembledRead> CompactedSliceMap create(Contig<PR> contig,QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
+    public static <PR extends AssembledRead> CompactedSliceMap create(Contig<PR> contig,QualitySequenceDataStore qualityDataStore,GapQualityValueStrategy qualityValueStrategy) throws DataStoreException{
         return new CompactedSliceMap(contig, qualityDataStore, qualityValueStrategy, DEFAULT_QUALITY);
     }
-    public static <PR extends AssembledRead> CompactedSliceMap create(Contig<PR> contig,PhredQuality defaultQuality,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
+    public static <PR extends AssembledRead> CompactedSliceMap create(Contig<PR> contig,PhredQuality defaultQuality,GapQualityValueStrategy qualityValueStrategy) throws DataStoreException{
         return new CompactedSliceMap(contig, null, qualityValueStrategy, defaultQuality);
     }
     
     public static <PR extends AssembledRead> CompactedSliceMap create(
     		StreamingIterator<PR> iter, int consensusSequenceLength,
-    		QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
+    		QualitySequenceDataStore qualityDataStore,GapQualityValueStrategy qualityValueStrategy) throws DataStoreException{
         return new CompactedSliceMap(iter, consensusSequenceLength, qualityDataStore, qualityValueStrategy, DEFAULT_QUALITY);
     }
     public static <PR extends AssembledRead> CompactedSliceMap create(
     		StreamingIterator<PR> iter, int consensusSequenceLength,
-    		PhredQuality defaultQuality,QualityValueStrategy qualityValueStrategy) throws DataStoreException{
+    		PhredQuality defaultQuality,GapQualityValueStrategy qualityValueStrategy) throws DataStoreException{
         return new CompactedSliceMap(iter, consensusSequenceLength, null, qualityValueStrategy, defaultQuality);
     }
    
     private <PR extends AssembledRead, C extends Contig<PR>>  CompactedSliceMap(
-            C contig, QualitySequenceDataStore qualityDataStore,QualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality) throws DataStoreException {
+            C contig, QualitySequenceDataStore qualityDataStore,GapQualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality) throws DataStoreException {
 		this(contig.getReadIterator(), (int)contig.getConsensusSequence().getLength(), qualityDataStore,
 				qualityValueStrategy,defaultQuality);
     }
     private <PR extends AssembledRead, C extends Contig<PR>>  CompactedSliceMap(StreamingIterator<PR> readIter,
 			int consensusLength, QualitySequenceDataStore qualityDataStore,
-			QualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality)
+			GapQualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality)
 			throws DataStoreException {
 		CompactedSlice.Builder builders[] = new CompactedSlice.Builder[consensusLength];
     

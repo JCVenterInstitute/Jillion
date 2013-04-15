@@ -23,29 +23,29 @@ package org.jcvi.jillion.assembly.asm;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.assembly.ContigBuilder;
-import org.jcvi.jillion.assembly.ace.AceContig;
-import org.jcvi.jillion.assembly.util.slice.CompactedSlice;
-import org.jcvi.jillion.assembly.util.slice.QualityValueStrategy;
+import org.jcvi.jillion.assembly.util.slice.GapQualityValueStrategy;
 import org.jcvi.jillion.assembly.util.slice.Slice;
+import org.jcvi.jillion.assembly.util.slice.SliceMap;
 import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
-import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.assembly.DefaultContig;
+import org.jcvi.jillion.internal.assembly.util.CompactedSliceMap;
 
 /**
  * @author dkatzel
@@ -199,7 +199,7 @@ public final class DefaultAsmContig implements AsmContig{
     	 */
     	private QualitySequenceDataStore qualityDataStore =null;
     	
-    	private QualityValueStrategy qualityValueStrategy=null;
+    	private GapQualityValueStrategy qualityValueStrategy=null;
     	
     	
         private final NucleotideSequence fullConsensus;
@@ -329,7 +329,7 @@ public final class DefaultAsmContig implements AsmContig{
         @Override
         public AsmContigBuilder recallConsensus(ConsensusCaller consensusCaller, 
         		QualitySequenceDataStore qualityDataStore,
-        		QualityValueStrategy qualityValueStrategy){
+        		GapQualityValueStrategy qualityValueStrategy){
         	if(consensusCaller ==null){
         		throw new NullPointerException("consensus caller can not be null");
         	}
@@ -371,7 +371,7 @@ public final class DefaultAsmContig implements AsmContig{
          * using the {@link ConsensusCaller} and optional quality data
          * that was set by
          * {@link #recallConsensus(ConsensusCaller)} or
-         * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}.
+         * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, GapQualityValueStrategy)}.
          * Only regions of the contig that have read coverage 
          * get recalled.  The Consensus of "0x" regions
          * remains unchanged.
@@ -391,7 +391,7 @@ public final class DefaultAsmContig implements AsmContig{
          * @return this.
          * @throws IllegalStateException if a consensus caller
          * was not first set using {@link #recallConsensus(ConsensusCaller)} or
-         * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}.
+         * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, GapQualityValueStrategy)}.
          * @see #build()
          */
         @Override
@@ -399,56 +399,54 @@ public final class DefaultAsmContig implements AsmContig{
         	if(consensusCaller==null){
         		throw new IllegalStateException("must set consensus caller");
         	}
-        	CompactedSlice.Builder builders[] = new CompactedSlice.Builder[(int)mutableConsensus.getLength()];
         	
-        	for(AsmAssembledReadBuilder asmReadBuilder : asmReadBuilderMap.values()){
-        		int start = (int)asmReadBuilder.getBegin();
-    			int i=0;
-    			String id =asmReadBuilder.getId();
-    			Direction dir = asmReadBuilder.getDirection();
-    			QualitySequence fullQualities =null;
-    			AsmAssembledRead tempRead=null;
-    			if(qualityDataStore!=null){
-    				try {
-    					fullQualities = qualityDataStore.get(id);
-    				} catch (DataStoreException e) {
-    					throw new IllegalStateException("error recalling consensus",e);
-    				}
-    				//should be able to call build multiple times
-    				tempRead = asmReadBuilder.build();
-        			if(fullQualities ==null){
-        				throw new NullPointerException("could not get qualities for "+id);
-        			}
-    			}
-    			
-    			
-    			for(Nucleotide base : asmReadBuilder.getCurrentNucleotideSequence()){
-    				
-    				final PhredQuality quality;
-    				if(fullQualities==null){
-    					quality = DEFAULT_QUALITY;
-    				}else{					
-    					//if fullQualities is not null then
-    					//qualityValueStrategy must be non-null as well
-    					quality= qualityValueStrategy.getQualityFor(tempRead, fullQualities, i);
-    				}
-    				if(builders[start+i] ==null){
-    					builders[start+i] = new CompactedSlice.Builder();
-    				}
-    				builders[start+i].addSliceElement(id, base, quality, dir);
-    				i++;
-    			}
+        	final SliceMap sliceMap;
+        	try{
+        	if(qualityDataStore==null){
+        		sliceMap= CompactedSliceMap.create(createStreamingReadIterator(),
+        			(int)mutableConsensus.getLength(),DEFAULT_QUALITY, qualityValueStrategy);
+        	}else{
+        		sliceMap= CompactedSliceMap.create(createStreamingReadIterator(),
+            			(int)mutableConsensus.getLength(),qualityDataStore, qualityValueStrategy);
         	}
-        	for(int i=0; i<builders.length; i++){
-        		CompactedSlice.Builder builder = builders[i];
-        		//a null builder implies 0x
-        		if(builder !=null){
-    				Slice slice = builder.build();            
-    	    		mutableConsensus.replace(i,consensusCaller.callConsensus(slice).getConsensus());
+        	}catch(DataStoreException e){
+        		throw new IllegalStateException("error getting quality values from datastore",e);
+        	}
+        	
+        	for(int i=0; i<sliceMap.getSize(); i++){
+        		Slice slice = sliceMap.getSlice(i);
+        		if(slice.getCoverageDepth() !=0){
+        			mutableConsensus.replace(i,consensusCaller.callConsensus(slice).getConsensus());
         		}
         	}
+        	
         	return this;
     	}
+        
+        
+        private StreamingIterator<AsmAssembledRead> createStreamingReadIterator(){
+        	
+        	return IteratorUtil.createStreamingIterator(new Iterator<AsmAssembledRead>() {
+        		Iterator<AsmAssembledReadBuilder> builderIterator = asmReadBuilderMap.values().iterator();
+				@Override
+				public boolean hasNext() {
+					return builderIterator.hasNext();
+				}
+
+				@Override
+				public AsmAssembledRead next() {
+					//should be able to call build multiple times
+					return builderIterator.next().build();
+				}
+
+				@Override
+				public void remove() {
+					throw new UnsupportedOperationException();					
+				}
+        		
+			});
+        }
+        	
         /**
         * {@inheritDoc}
         */
