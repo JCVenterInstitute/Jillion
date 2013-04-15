@@ -9,9 +9,9 @@ public class TestSliceMapBuilderUsingQualityDataStore extends AbstractTestSliceM
 	@Override
 	protected SliceMap createSliceMapFor(Contig<AssembledRead> contig,
 			QualitySequenceDataStore qualityDatastore,
-			QualityValueStrategy qualityValueStrategy) {
+			GapQualityValueStrategy qualityValueStrategy) {
 		return new SliceMapBuilder<AssembledRead>(contig, qualityDatastore)
-					.gapQualityValueStrategy((GapQualityValueStrategies)qualityValueStrategy)
+					.gapQualityValueStrategy((GapQualityValueStrategy)qualityValueStrategy)
 					.build();
 	}
 

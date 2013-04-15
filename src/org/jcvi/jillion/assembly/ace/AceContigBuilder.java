@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -43,9 +44,9 @@ import org.jcvi.jillion.assembly.ContigBuilder;
 import org.jcvi.jillion.assembly.util.coverage.CoverageMap;
 import org.jcvi.jillion.assembly.util.coverage.CoverageMapBuilder;
 import org.jcvi.jillion.assembly.util.coverage.CoverageRegion;
-import org.jcvi.jillion.assembly.util.slice.CompactedSlice;
-import org.jcvi.jillion.assembly.util.slice.QualityValueStrategy;
+import org.jcvi.jillion.assembly.util.slice.GapQualityValueStrategy;
 import org.jcvi.jillion.assembly.util.slice.Slice;
+import org.jcvi.jillion.assembly.util.slice.SliceMap;
 import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
@@ -55,12 +56,13 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.MapUtil;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.assembly.DefaultContig;
+import org.jcvi.jillion.internal.assembly.util.CompactedSliceMap;
 /**
  * {@code AceContigBuilder} is a {@link Builder}
  * for {@link AceContig}s that allows
@@ -100,7 +102,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
 	 */
 	private QualitySequenceDataStore qualityDataStore =null;
 	
-	private QualityValueStrategy qualityValueStrategy=null;
+	private GapQualityValueStrategy qualityValueStrategy=null;
 	
     private NucleotideSequence initialConsensus;
     private final NucleotideSequenceBuilder mutableConsensus;
@@ -249,7 +251,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     @Override
     public AceContigBuilder recallConsensus(ConsensusCaller consensusCaller, 
     		QualitySequenceDataStore qualityDataStore,
-    		QualityValueStrategy qualityValueStrategy){
+    		GapQualityValueStrategy qualityValueStrategy){
     	if(consensusCaller ==null){
     		throw new NullPointerException("consensus caller can not be null");
     	}
@@ -265,7 +267,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      * Compute the consensus Qualities using the same
      * algorithm that consed uses.    The read quality values
      * will be taken from the {@link QualitySequenceDataStore} set by
-     * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}.
+     * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, GapQualityValueStrategy)}.
      * If you do not wish to recall consensus, then use 
      * {@link #computeConsensusQualities(QualitySequenceDataStore)}.
      * If this method is not specified
@@ -290,7 +292,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      * of all 30.
      * @param readQualityDataStore the {@link QualitySequenceDataStore}
      * to use to compute consensus qualities.  This value will override
-     * the quality datastore set by {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}
+     * the quality datastore set by {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, GapQualityValueStrategy)}
      * and vice versa, last one called wins. (This is more for user's
      * convenience in case they don't want to do one or the other).
      * @return this
@@ -561,7 +563,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      * using the {@link ConsensusCaller} and optional quality data
      * that was set by
      * {@link #recallConsensus(ConsensusCaller)} or
-     * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}.
+     * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, GapQualityValueStrategy)}.
      * Only regions of the contig that have read coverage 
      * get recalled.  The Consensus of "0x" regions
      * remains unchanged.
@@ -581,7 +583,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      * @return this.
      * @throws IllegalStateException if a consensus caller
      * was not first set using {@link #recallConsensus(ConsensusCaller)} or
-     * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}.
+     * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, GapQualityValueStrategy)}.
      * @see #build()
      */
     @Override
@@ -589,64 +591,59 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     	if(consensusCaller==null){
     		throw new IllegalStateException("must set consensus caller");
     	}
-    	CompactedSlice.Builder builders[] = new CompactedSlice.Builder[(int)mutableConsensus.getLength()];
     	
-    	for(AceAssembledReadBuilder aceReadBuilder : aceReadBuilderMap.values()){
-    		int start = (int)aceReadBuilder.getBegin();
-			int i=0;
-			String id =aceReadBuilder.getId();
-			Direction dir = aceReadBuilder.getDirection();
-			QualitySequence fullQualities =null;
-			AceAssembledRead tempRead=null;
-			if(qualityDataStore!=null){
-				try {
-					fullQualities = qualityDataStore.get(id);
-				} catch (DataStoreException e) {
-					throw new IllegalStateException("error recalling consensus",e);
-				}
-				//should be able to call build multiple times
-				tempRead = aceReadBuilder.build();
-    			if(fullQualities ==null){
-    				throw new NullPointerException("could not get qualities for "+id);
-    			}
-			}
-			
-			
-			for(Nucleotide base : aceReadBuilder.getCurrentNucleotideSequence()){
-				
-				final PhredQuality quality;
-				if(fullQualities==null){
-					quality = DEFAULT_QUALITY;
-				}else{					
-					//if fullQualities is not null then
-					//qualityValueStrategy must be non-null as well
-					quality= qualityValueStrategy.getQualityFor(tempRead, fullQualities, i);
-				}
-				if(builders[start+i] ==null){
-					builders[start+i] = new CompactedSlice.Builder();
-				}
-				builders[start+i].addSliceElement(id, base, quality, dir);
-				i++;
-			}
+    	final SliceMap sliceMap;
+    	try{
+    	if(qualityDataStore==null){
+    		sliceMap= CompactedSliceMap.create(createStreamingReadIterator(),
+    			(int)mutableConsensus.getLength(),DEFAULT_QUALITY, qualityValueStrategy);
+    	}else{
+    		sliceMap= CompactedSliceMap.create(createStreamingReadIterator(),
+        			(int)mutableConsensus.getLength(),qualityDataStore, qualityValueStrategy);
     	}
-    	for(int i=0; i<builders.length; i++){
-    		CompactedSlice.Builder builder = builders[i];
-    		//a null builder implies 0x
-    		if(builder !=null){
-				Slice slice = builder.build();            
-	    		mutableConsensus.replace(i,consensusCaller.callConsensus(slice).getConsensus());
+    	}catch(DataStoreException e){
+    		throw new IllegalStateException("error getting quality values from datastore",e);
+    	}
+    	
+    	for(int i=0; i<sliceMap.getSize(); i++){
+    		Slice slice = sliceMap.getSlice(i);
+    		if(slice.getCoverageDepth() !=0){
+    			mutableConsensus.replace(i,consensusCaller.callConsensus(slice).getConsensus());
     		}
     	}
+    	
+    	
     	return this;
 	}
-    
+    private StreamingIterator<AceAssembledRead> createStreamingReadIterator(){
+    	
+    	return IteratorUtil.createStreamingIterator(new Iterator<AceAssembledRead>() {
+    		Iterator<AceAssembledReadBuilder> builderIterator = aceReadBuilderMap.values().iterator();
+			@Override
+			public boolean hasNext() {
+				return builderIterator.hasNext();
+			}
+
+			@Override
+			public AceAssembledRead next() {
+				//should be able to call build multiple times
+				return builderIterator.next().build();
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();					
+			}
+    		
+		});
+    }
     /**
      * Split the contents of the current ContigBuilder into possibly multiple
      * new ContigBuilders.  The returned ContigBuilders will be new
      * instances which only contain the reads and consensus of the initial
      * contig that intersects the input rangesToKeep.  If a {@link ConsensusCaller}
-     * and related {@link QualitySequenceDataStore} and {@link QualityValueStrategy}
-     * were set via {@link #recallConsensus(ConsensusCaller)} or {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}
+     * and related {@link QualitySequenceDataStore} and {@link GapQualityValueStrategy}
+     * were set via {@link #recallConsensus(ConsensusCaller)} or {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, GapQualityValueStrategy)}
      * then those values are copied as well.
      * @param rangesToKeep The {@link Range}s of the contig to make into new
      * contigs.  For each range given, a new ContigBuilder instance is created

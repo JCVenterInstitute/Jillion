@@ -28,7 +28,7 @@ import java.util.Map;
 
 import org.jcvi.jillion.assembly.ace.AceContigBuilder;
 import org.jcvi.jillion.assembly.ace.PhdInfo;
-import org.jcvi.jillion.assembly.util.slice.GapQualityValueStrategies;
+import org.jcvi.jillion.assembly.util.slice.GapQualityValueStrategy;
 import org.jcvi.jillion.assembly.util.slice.consensus.ConicConsensusCaller;
 import org.jcvi.jillion.assembly.util.slice.consensus.MostFrequentBasecallConsensusCaller;
 import org.jcvi.jillion.core.Direction;
@@ -130,7 +130,7 @@ public class TestAceContigBuilderRecallConsensus {
 		
 		QualitySequenceDataStore qualities = DataStoreUtil.adapt(QualitySequenceDataStore.class, qualityMap);
 		
-		sut.recallConsensus(new ConicConsensusCaller(PhredQuality.valueOf(30)), qualities, GapQualityValueStrategies.LOWEST_FLANKING);
+		sut.recallConsensus(new ConicConsensusCaller(PhredQuality.valueOf(30)), qualities, GapQualityValueStrategy.LOWEST_FLANKING);
 		//should pick the A because read1 is higher quality
 		assertEquals("ACAT", sut.build().getConsensusSequence().toString());
 	}

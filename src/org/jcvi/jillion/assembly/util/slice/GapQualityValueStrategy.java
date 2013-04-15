@@ -32,14 +32,14 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 
 /**
- * {@code GapQualityValueStrategies} are {@link QualityValueStrategy}
+ * {@code GapQualityValueStrategies} are {@link GapQualityValueStrategy}
  * implementations that differ on what the quality value 
  * of a gap will be.
  * @author dkatzel
  *
  *
  */
-public enum GapQualityValueStrategies implements QualityValueStrategy{
+public enum GapQualityValueStrategy{
     /**
      * {@code LOWEST_FLANKING} will find the lowest
      * non-gap quality value that flanks the gap.
@@ -72,9 +72,7 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
     }
     ;
     
-  //  private static final PhredQuality LOWEST_QUALITY = PhredQuality.valueOf(1);
-    
-    @Override
+ 
     public QualitySequence getGappedValidRangeQualitySequenceFor(AssembledRead placedRead,
             QualitySequence fullQualities){
     	QualitySequence ungappedComplementedValidRangeQualities = AssemblyUtil.getUngappedComplementedValidRangeQualities(placedRead, fullQualities);
@@ -82,9 +80,7 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
 
     	ReferenceMappedNucleotideSequence sequence = placedRead.getNucleotideSequence();
 		List<Integer> gapOffsets=sequence.getGapOffsets();
-    	//reverse the list so we insert qualities backwards
-    	//this will let us keep the offsets in seq and qual in sync
-    //	Collections.reverse(gapOffsets);
+		
     	for(Integer gapOffset : gapOffsets){
     		int offset = gapOffset.intValue();
     		int leftFlankingNonGapIndex = sequence.getUngappedOffsetFor(AssemblyUtil.getLeftFlankingNonGapIndex(sequence,offset));
@@ -101,7 +97,7 @@ public enum GapQualityValueStrategies implements QualityValueStrategy{
     	return gappedValidRangeQualityBuilder.build();
     	
     }
-    @Override
+
     public PhredQuality getQualityFor(AssembledRead placedRead,
             QualitySequence fullQualities,
             int gappedReadIndex) {

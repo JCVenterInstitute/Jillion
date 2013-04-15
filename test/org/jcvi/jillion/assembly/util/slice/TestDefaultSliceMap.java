@@ -24,6 +24,7 @@ import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
+import org.jcvi.jillion.internal.assembly.util.DefaultSliceMap;
 
 /**
  * @author dkatzel
@@ -37,7 +38,7 @@ public class TestDefaultSliceMap extends AbstractTestSliceMap{
     */
     @Override
     protected SliceMap createSliceMapFor(Contig<AssembledRead> contig,
-            QualitySequenceDataStore qualityDatastore, QualityValueStrategy qualityValueStrategy) {
+            QualitySequenceDataStore qualityDatastore, GapQualityValueStrategy qualityValueStrategy) {
         try {
 			return DefaultSliceMap.create(contig,
 			        qualityDatastore, qualityValueStrategy);

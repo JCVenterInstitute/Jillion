@@ -22,7 +22,7 @@ package org.jcvi.jillion.assembly;
 
 import java.util.Collection;
 
-import org.jcvi.jillion.assembly.util.slice.QualityValueStrategy;
+import org.jcvi.jillion.assembly.util.slice.GapQualityValueStrategy;
 import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
@@ -137,7 +137,7 @@ public interface ContigBuilder<R extends AssembledRead,C extends Contig<R>> exte
      */
     ContigBuilder<R, C> recallConsensus(ConsensusCaller consensusCaller, 
     		QualitySequenceDataStore qualityDataStore,
-    		QualityValueStrategy qualityValueStrategy);
+    		GapQualityValueStrategy qualityValueStrategy);
     
     /**
      * Recall the consensus using the given
@@ -159,7 +159,7 @@ public interface ContigBuilder<R extends AssembledRead,C extends Contig<R>> exte
      * using the {@link ConsensusCaller} and optional quality data
      * that was set by
      * {@link #recallConsensus(ConsensusCaller)} or
-     * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}.
+     * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, GapQualityValueStrategy)}.
      * Only regions of the contig that have read coverage 
      * get recalled.  The Consensus of "0x" regions
      * remains unchanged.
@@ -179,7 +179,7 @@ public interface ContigBuilder<R extends AssembledRead,C extends Contig<R>> exte
      * @return this.
      * @throws IllegalStateException if a consensus caller
      * was not first set using {@link #recallConsensus(ConsensusCaller)} or
-     * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, QualityValueStrategy)}.
+     * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, GapQualityValueStrategy)}.
      * @see #build()
      */
     ContigBuilder<R, C> recallConsensusNow();

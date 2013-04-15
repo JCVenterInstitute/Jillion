@@ -22,9 +22,9 @@ package org.jcvi.jillion.assembly.util.slice;
 
 import java.util.List;
 
-import org.jcvi.jillion.assembly.util.slice.CompactedSlice;
 import org.jcvi.jillion.assembly.util.slice.Slice;
 import org.jcvi.jillion.assembly.util.slice.SliceElement;
+import org.jcvi.jillion.internal.assembly.util.CompactedSlice;
 
 /**
  * @author dkatzel

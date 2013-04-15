@@ -22,11 +22,11 @@ package org.jcvi.jillion.assembly.util.slice;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.util.slice.CompactedSliceMap;
-import org.jcvi.jillion.assembly.util.slice.QualityValueStrategy;
+import org.jcvi.jillion.assembly.util.slice.GapQualityValueStrategy;
 import org.jcvi.jillion.assembly.util.slice.SliceMap;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
+import org.jcvi.jillion.internal.assembly.util.CompactedSliceMap;
 
 /**
  * @author dkatzel
@@ -41,7 +41,7 @@ public class TestCompactedSliceMap extends AbstractTestSliceMap{
     @Override
     protected SliceMap createSliceMapFor(Contig<AssembledRead> contig,
             QualitySequenceDataStore qualityDatastore,
-            QualityValueStrategy qualityValueStrategy) {
+            GapQualityValueStrategy qualityValueStrategy) {
 
         try {
             return CompactedSliceMap.create(contig, qualityDatastore, qualityValueStrategy);

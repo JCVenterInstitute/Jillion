@@ -26,12 +26,12 @@ import java.util.Iterator;
 import java.util.List;
 
 
-import org.jcvi.jillion.assembly.util.slice.DefaultSliceElement;
 import org.jcvi.jillion.assembly.util.slice.Slice;
 import org.jcvi.jillion.assembly.util.slice.SliceElement;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.internal.assembly.util.DefaultSliceElement;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

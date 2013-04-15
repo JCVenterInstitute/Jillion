@@ -44,8 +44,8 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
     * {@inheritDoc}
     */
     @Override
-    protected GapQualityValueStrategies getGapQualityValueStrategies() {
-        return GapQualityValueStrategies.ALWAYS_ZERO;
+    protected GapQualityValueStrategy getGapQualityValueStrategies() {
+        return GapQualityValueStrategy.ALWAYS_ZERO;
     }
     
     @Test(expected = IndexOutOfBoundsException.class)
