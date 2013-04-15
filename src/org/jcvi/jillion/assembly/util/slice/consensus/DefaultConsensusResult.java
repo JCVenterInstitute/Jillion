@@ -27,7 +27,7 @@ package org.jcvi.jillion.assembly.util.slice.consensus;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
-public class DefaultConsensusResult implements ConsensusResult {
+class DefaultConsensusResult implements ConsensusResult {
 
     private final Nucleotide consensus;
     private final int consensusQuality;

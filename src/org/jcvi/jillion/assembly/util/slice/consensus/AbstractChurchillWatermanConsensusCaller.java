@@ -52,7 +52,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
  *
  *
  */
-public abstract class AbstractChurchillWatermanConsensusCaller extends AbstractConsensusCaller{
+abstract class AbstractChurchillWatermanConsensusCaller extends AbstractConsensusCaller{
     
    
    

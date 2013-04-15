@@ -25,7 +25,7 @@
  */
 package org.jcvi.jillion.assembly.util.slice;
 /**
- * A {@code Slice} is a one base wide cut of an assembly from zero 
+ * A {@code Slice} is a one base wide vertical cut of an assembly containing zero 
  * or more {@link SliceElement}s.
  * @author dkatzel
  *

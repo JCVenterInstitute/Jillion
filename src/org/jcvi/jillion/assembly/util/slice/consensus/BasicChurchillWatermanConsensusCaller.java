@@ -30,7 +30,7 @@ import java.util.Set;
 import org.jcvi.jillion.assembly.util.slice.Slice;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
-public class BasicChurchillWatermanConsensusCaller extends AbstractChurchillWatermanConsensusCaller{
+public final class BasicChurchillWatermanConsensusCaller extends AbstractChurchillWatermanConsensusCaller{
 
     private static final int MAX_NUMBER_OF_BASES_TOWARDS_AMBIGUITY = 5;
 
