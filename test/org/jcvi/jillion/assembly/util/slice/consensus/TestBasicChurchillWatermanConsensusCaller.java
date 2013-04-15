@@ -32,7 +32,7 @@ import java.util.Map.Entry;
 
 import org.jcvi.jillion.assembly.util.slice.Slice;
 import org.jcvi.jillion.assembly.util.slice.Slice;
-import org.jcvi.jillion.assembly.util.slice.consensus.BasicChurchillWatermanConsensusCaller;
+import org.jcvi.jillion.assembly.util.slice.consensus.ChurchillWatermanConsensusCaller;
 import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusResult;
 import org.jcvi.jillion.core.qual.PhredQuality;
@@ -47,7 +47,7 @@ public class TestBasicChurchillWatermanConsensusCaller extends
     }
     @Override
     protected ConsensusCaller getConsensusCaller() {
-        return new BasicChurchillWatermanConsensusCaller(PhredQuality.valueOf(30));
+        return new ChurchillWatermanConsensusCaller(PhredQuality.valueOf(30));
     }
     
     

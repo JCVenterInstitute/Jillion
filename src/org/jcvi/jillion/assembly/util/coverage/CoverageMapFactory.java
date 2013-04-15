@@ -289,10 +289,11 @@ final class CoverageMapFactory {
 	    	if(range ==null){
 	    		throw new NullPointerException("range can not be null");
 	    	}
-	    	if(range.isEmpty()){
+	    	if(this.isEmpty() || range.isEmpty()){
+	    		//empty coverage map or
 	    		//empty ranges never intersect anything
 	    		return Collections.emptyList();
-	    	}
+	    	}	    	
 	    	if(regions[0].asRange().getBegin() > range.getEnd()){
 	    		//region is entirely before coverage map
 	    		return Collections.emptyList();
