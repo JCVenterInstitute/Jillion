@@ -84,7 +84,10 @@ public final class CompactedSliceMap implements SliceMap {
     			String id =read.getId();
     			Direction dir = read.getDirection();
     			Iterator<PhredQuality> validRangeGappedQualitiesIterator =null;
-    			if(qualityDataStore!=null){
+    			if(qualityDataStore==null){
+    				validRangeGappedQualitiesIterator = createNewDefaultQualityIterator(defaultQuality);
+
+    			}else{
     				QualitySequence fullQualities = qualityDataStore.get(id);
         			
         			if(fullQualities ==null){
@@ -93,8 +96,6 @@ public final class CompactedSliceMap implements SliceMap {
         			validRangeGappedQualitiesIterator = qualityValueStrategy.getGappedValidRangeQualitySequenceFor(read, fullQualities)
         													.iterator();
         			
-    			}else{
-    				validRangeGappedQualitiesIterator = createNewDefaultQualityIterator(defaultQuality);
     			}
     			Iterator<Nucleotide> baseIterator = read.getNucleotideSequence().iterator();
     			while(baseIterator.hasNext()){
