@@ -30,12 +30,25 @@ import java.util.Set;
 import org.jcvi.jillion.assembly.util.slice.Slice;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
-public final class BasicChurchillWatermanConsensusCaller extends AbstractChurchillWatermanConsensusCaller{
+/**
+ * {@code ChurchillWatermanConsensusCaller} is a {@link ConsensusCaller}
+ * that uses calculates  a {@link ConsensusResult}
+ *  for a slice using the Bayes formula and the procedure from
+ * <pre>
+ * Churchill, G.A. and Waterman, M.S.
+ * "The accuracy of DNA sequences: Estimating sequence quality."
+ * Genomics 14, pp.89-98 (1992)
+ * </pre>
+ * @author dkatzel
+ *
+ *
+ */
+public final class ChurchillWatermanConsensusCaller extends AbstractChurchillWatermanConsensusCaller{
 
     private static final int MAX_NUMBER_OF_BASES_TOWARDS_AMBIGUITY = 5;
 
 
-    public BasicChurchillWatermanConsensusCaller(
+    public ChurchillWatermanConsensusCaller(
             PhredQuality highQualityThreshold) {
         super(highQualityThreshold);
     }
