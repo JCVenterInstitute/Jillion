@@ -135,6 +135,7 @@
 		<delete file="coverage.ec"></delete>
 		<delete file="coverage.em"></delete>
 	  </target>
+	
 	<target name="clean"
          description="Clean generated files">
 		<delete dir="${bin}"/>
@@ -213,19 +214,19 @@
 	
 	
 	<target name="javadoc" description = "generate javadoc from source">
-		<delete dir="javadoc"/>
-			<javadoc packagenames ="org.jcvi.jillion.*"				
-					sourcepathref = "javadoc.sourcepath"
-					author ="true"
-					destdir = "javadoc"
-					windowtitle = "${project-name} API"
-					linksource= "yes"
-					overview="${src}/overview-summary.html"
-				access="public">					
+		<delete dir="javadoc" verbose ="true"/>
+		<javadoc packagenames ="org.jcvi.jillion.*"				
+				sourcepathref = "javadoc.sourcepath"
+				author ="true"
+				destdir = "javadoc"
+				windowtitle = "${project-name} API"
+				linksource= "yes"
+				overview="${src}/overview-summary.html"
+			access="public">					
 
 
 
-			</javadoc>
+		</javadoc>
 		</target>
 	
 	<target name = "checkstyle" description = "generates checkstyle report on source">
