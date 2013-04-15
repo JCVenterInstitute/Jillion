@@ -327,6 +327,23 @@ public class TestDefaultCoverageMap {
     }
     
     @Test
+    public void emptyCoverageMapWillNeverCover(){
+        CoverageMap<Range> map = new CoverageMapBuilder<Range>(
+                Collections.<Range>emptyList()).build();
+        
+        assertNull(map.getRegionWhichCovers(-1));
+      
+        assertNull(map.getRegionWhichCovers(15));
+    }
+    @Test
+    public void emptyCoverageMapWillNeverIntesect(){
+        CoverageMap<Range> map = new CoverageMapBuilder<Range>(
+                Collections.<Range>emptyList()).build();
+        
+        assertTrue(map.getRegionsWhichIntersect(Range.of(0,10)).isEmpty());
+      
+    }
+    @Test
     public void getRegionsWhichIntersect(){
         CoverageMap<Range> map = new CoverageMapBuilder<Range>(
                 Arrays.asList(seq_0_9,seq_5_14,seq_0_12)).build();
