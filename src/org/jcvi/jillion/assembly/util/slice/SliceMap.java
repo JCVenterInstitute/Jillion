@@ -24,7 +24,27 @@
  * @author dkatzel
  */
 package org.jcvi.jillion.assembly.util.slice;
-
+/**
+ * A {@code SliceMap} is a contiguous
+ * group of {@link Slice}s of a contig. 
+ * If you consider the traditional contig view of an assembly 
+ * to be "horizontal", meaning the assembly is oriented towards 
+ * the rows of bases in reads and the consensus, 
+ * then the slice view of an assembly is "vertical", 
+ * meaning the assembly is oriented towards the tiling 
+ * at each assembly position. With this picture in mind it is 
+ * easy to understand that the contig view and the slice view 
+ * is purely a shift in representation, and there is no change in information.
+ * <p/>
+ * Operations that are difficult to perform within a contig representation may trivial 
+ * to perform with a slice representation.
+ * <p/>
+ * The Slice concept was originally created at The Institute for Genomic
+ * Research (TIGR) which has since merged with other affiliated
+ * organizations to form JCVI. 
+ * @author dkatzel
+ * @see <a href="http://slicetools.sourceforge.net">Slice Tools</a>
+ */
 public interface SliceMap extends Iterable<Slice>{
 
 	Slice getSlice(long offset);

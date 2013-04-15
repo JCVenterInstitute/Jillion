@@ -30,7 +30,7 @@ import java.util.List;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
-public final class ConsensusUtil {
+final class ConsensusUtil {
     
     
     /**

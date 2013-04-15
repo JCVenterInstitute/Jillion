@@ -30,8 +30,8 @@ import static org.jcvi.jillion.assembly.util.slice.consensus.ConsensusUtil.BASES
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 /**
@@ -41,7 +41,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
  *
  *
  */
-public final class ConsensusProbabilities{
+final class ConsensusProbabilities{
 
     private static final double ONE_TENTH = 0.1D;
 

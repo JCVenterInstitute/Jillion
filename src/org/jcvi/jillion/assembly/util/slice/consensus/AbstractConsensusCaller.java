@@ -36,7 +36,7 @@ import org.jcvi.jillion.assembly.util.slice.SliceElement;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
-public abstract class AbstractConsensusCaller implements ConsensusCaller{
+abstract class AbstractConsensusCaller implements ConsensusCaller{
  private final PhredQuality highQualityThreshold;
     
     public AbstractConsensusCaller(PhredQuality highQualityThreshold){

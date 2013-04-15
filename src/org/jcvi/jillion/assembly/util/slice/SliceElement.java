@@ -29,7 +29,10 @@ import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 /**
- * {@code SliceElement} is 
+ * {@code SliceElement} is a single
+ * position of a read contained
+ * in a {@link Slice}. Each read
+ * in the slice contributes a base, quality value, and direction.
  * @author dkatzel
  *
  *
