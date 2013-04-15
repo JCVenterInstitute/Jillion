@@ -42,7 +42,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
  * for each base call are represented by vectors, if the resulting vector
  * falls within the region of ambiguity, then the consensus is ambiguous.
  * Geometric symmetry allows the math
- * to be simplified to only 2 dimensions
+ * to be simplified to only 2 dimensions.
  * 
  * @author dkatzel
  * @see <a href= "http://slicetools.sourceforge.net/libSlice/conic.html">
@@ -69,8 +69,12 @@ public class ConicConsensusCaller extends AbstractChurchillWatermanConsensusCall
     private static final double MAX_EFFECTIVE_ANGLE = 45D;
     /**
      * This was the angle that was found to most often match
-     * expert human consensus callers in experiments performed in 2003
+     * expert human consensus callers in TIGR experiments performed in 2003
      * on Sanger data.
+     * <p/>
+     * TIGR data to validate the conic model and was used to come up with 
+     * this angle is available http://slicetools.sourceforge.net/libSlice/worksheet.xls
+     * and http://slicetools.sourceforge.net/libSlice/results.xls
      */
     public static final double DEFAULT_CONIC_AMBIGUITY_ANGLE = 36.8698977D;
 
