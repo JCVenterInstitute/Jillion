@@ -23,7 +23,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.util.slice.consensus;
+package org.jcvi.jillion.assembly.util.consensus;
 
 
 import java.util.ArrayList;
@@ -36,9 +36,9 @@ import java.util.SortedMap;
 
 import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.SliceElement;
-import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusResult;
-import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusUtil;
-import org.jcvi.jillion.assembly.util.slice.consensus.DefaultConsensusResult;
+import org.jcvi.jillion.assembly.util.consensus.ConsensusResult;
+import org.jcvi.jillion.assembly.util.consensus.ConsensusUtil;
+import org.jcvi.jillion.assembly.util.consensus.DefaultConsensusResult;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.util.MapValueComparator;
 import org.jcvi.jillion.internal.assembly.util.DefaultSlice;

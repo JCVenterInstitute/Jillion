@@ -41,7 +41,7 @@ import org.jcvi.jillion.assembly.ace.consed.ConsedUtil;
 import org.jcvi.jillion.assembly.clc.cas.AbstractAlignedReadCasVisitor;
 import org.jcvi.jillion.assembly.clc.cas.CasGappedReferenceDataStore;
 import org.jcvi.jillion.assembly.clc.cas.read.CasPlacedRead;
-import org.jcvi.jillion.assembly.util.slice.consensus.MostFrequentBasecallConsensusCaller;
+import org.jcvi.jillion.assembly.util.consensus.MostFrequentBasecallConsensusCaller;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;

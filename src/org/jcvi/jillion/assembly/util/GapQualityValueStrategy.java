@@ -32,9 +32,16 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 
 /**
- * {@code GapQualityValueStrategies} are {@link GapQualityValueStrategy}
- * implementations that differ on what the quality value 
- * of a gap will be.
+ * {@code GapQualityValueStrategies} are different 
+ * strategy implementations on how to assign
+ * quality values to gaps in a sequence.  Usually,
+ * sequence machines create ungapped sequences along 
+ * with associated quality scores.  Once a sequence has been 
+ * assembled, there might be gaps introduced that won't have a corresponding
+ * quality value associated with them.  This class
+ * has different implementations that can compute the quality values
+ * for these gaps differently.
+ * 
  * @author dkatzel
  *
  *

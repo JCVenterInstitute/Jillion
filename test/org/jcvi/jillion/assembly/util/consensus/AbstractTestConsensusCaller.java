@@ -23,14 +23,14 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.util.slice.consensus;
+package org.jcvi.jillion.assembly.util.consensus;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.jillion.assembly.util.Slice;
-import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusCaller;
-import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusResult;
+import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
+import org.jcvi.jillion.assembly.util.consensus.ConsensusResult;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

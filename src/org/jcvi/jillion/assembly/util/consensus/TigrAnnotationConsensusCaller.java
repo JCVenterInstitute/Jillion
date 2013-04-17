@@ -23,7 +23,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.util.slice.consensus;
+package org.jcvi.jillion.assembly.util.consensus;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -42,9 +42,9 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
  *
  *
  */
-public class AnnotationConsensusCaller extends AbstractChurchillWatermanConsensusCaller{
+public class TigrAnnotationConsensusCaller extends AbstractChurchillWatermanConsensusCaller{
 
-    public AnnotationConsensusCaller(PhredQuality highQualityThreshold) {
+    public TigrAnnotationConsensusCaller(PhredQuality highQualityThreshold) {
         super(highQualityThreshold);
     }
 

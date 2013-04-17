@@ -23,7 +23,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.util.slice.consensus;
+package org.jcvi.jillion.assembly.util.consensus;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,9 +31,9 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.jcvi.jillion.assembly.util.Slice;
-import org.jcvi.jillion.assembly.util.slice.consensus.ConicConsensusCaller;
-import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusCaller;
-import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusResult;
+import org.jcvi.jillion.assembly.util.consensus.ConicConsensusCaller;
+import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
+import org.jcvi.jillion.assembly.util.consensus.ConsensusResult;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.junit.runners.Parameterized.Parameters;
 public class TestConicConsensusCaller extends AbstractTestConsensusCaller{

@@ -18,12 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-/*
- * Created on Jun 8, 2009
- *
- * @author dkatzel
- */
-package org.jcvi.jillion.assembly.util.slice.consensus;
+package org.jcvi.jillion.assembly.util.consensus;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,32 +26,30 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.jcvi.jillion.assembly.util.Slice;
-import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
+import org.jcvi.jillion.assembly.util.consensus.ConsensusResult;
+import org.jcvi.jillion.assembly.util.consensus.MostFrequentBasecallConsensusCaller;
 import org.junit.runners.Parameterized.Parameters;
 
-public class TestNoAmbiguityConsensusCaller extends AbstractTestConsensusCaller{
-   
-    public TestNoAmbiguityConsensusCaller(List<Slice> slices,
-            List<ConsensusResult> expectedConsensus) {
-        super(slices, expectedConsensus);
-    }
-    
-    @Parameters
+public class TestMostFrequentBasecallConsensusCaller extends AbstractTestConsensusCaller{
+
+	public TestMostFrequentBasecallConsensusCaller(List<Slice> slices,
+			List<ConsensusResult> expectedConsensus) {
+		super(slices, expectedConsensus);
+	}
+
+	@Override
+	protected ConsensusCaller getConsensusCaller() {
+		return MostFrequentBasecallConsensusCaller.INSTANCE;
+	}
+	@Parameters
     public static Collection<?> data(){
        List<Object[]> data = new ArrayList<Object[]>();
-       for(Entry<List<Slice>, List<ConsensusResult>> entry: ConsensusCallerTestUtil.generateNoAmbiguityData().entrySet()){
+       for(Entry<List<Slice>, List<ConsensusResult>> entry: ConsensusCallerTestUtil.generateMostCommonBasecallData().entrySet()){
            data.add(new Object[]{entry.getKey(), entry.getValue()});
        }
         
         return data;
         
     }
-   
-
-    @Override
-    protected ConsensusCaller getConsensusCaller() {
-        return new NoAmbiguityConsensusCaller(PhredQuality.valueOf(30));
-    }    
-    
 }
-

@@ -47,7 +47,7 @@ import org.jcvi.jillion.assembly.util.CoverageRegion;
 import org.jcvi.jillion.assembly.util.GapQualityValueStrategy;
 import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.SliceMap;
-import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusCaller;
+import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;

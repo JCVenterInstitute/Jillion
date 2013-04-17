@@ -18,8 +18,27 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-/**
- * This package contains classes for  generating 
- * and working with coverage maps.
+/*
+ * Created on Jun 5, 2009
+ *
+ * @author dkatzel
  */
-package org.jcvi.jillion.assembly.util.coverage;
+package org.jcvi.jillion.assembly.util.consensus;
+
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
+@RunWith(Suite.class)
+@SuiteClasses(
+    { 
+        TestConicConsensusCaller.class,
+        TestBasicChurchillWatermanConsensusCaller.class,
+        TestAnnotationConsensusCaller.class,
+        TestNoAmbiguityConsensusCaller.class,
+        TestMostFrequentBasecallConsensusCaller.class
+    }
+    )
+public class AllConsensusUnitTests {
+
+}

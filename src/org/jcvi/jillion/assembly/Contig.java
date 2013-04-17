@@ -25,7 +25,7 @@
  */
 package org.jcvi.jillion.assembly;
 
-import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusCaller;
+import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
