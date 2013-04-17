@@ -128,4 +128,11 @@ public class DefaultPositionSequence implements PositionSequence{
 		
 		
 	}
+
+	@Override
+	public String toString() {
+		return Arrays.toString(data);
+	}
+	
+	
 }
