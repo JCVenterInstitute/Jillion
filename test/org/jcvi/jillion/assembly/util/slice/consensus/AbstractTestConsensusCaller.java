@@ -28,7 +28,7 @@ package org.jcvi.jillion.assembly.util.slice.consensus;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.jillion.assembly.util.slice.Slice;
+import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusResult;
 import org.junit.Before;

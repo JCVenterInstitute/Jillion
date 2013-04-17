@@ -28,7 +28,7 @@ import java.util.Map;
 
 import org.jcvi.jillion.assembly.ace.AceContigBuilder;
 import org.jcvi.jillion.assembly.ace.PhdInfo;
-import org.jcvi.jillion.assembly.util.slice.GapQualityValueStrategy;
+import org.jcvi.jillion.assembly.util.GapQualityValueStrategy;
 import org.jcvi.jillion.assembly.util.slice.consensus.ConicConsensusCaller;
 import org.jcvi.jillion.assembly.util.slice.consensus.MostFrequentBasecallConsensusCaller;
 import org.jcvi.jillion.core.Direction;

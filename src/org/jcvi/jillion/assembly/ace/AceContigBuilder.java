@@ -41,12 +41,12 @@ import java.util.TreeSet;
 
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.assembly.ContigBuilder;
-import org.jcvi.jillion.assembly.util.coverage.CoverageMap;
-import org.jcvi.jillion.assembly.util.coverage.CoverageMapBuilder;
-import org.jcvi.jillion.assembly.util.coverage.CoverageRegion;
-import org.jcvi.jillion.assembly.util.slice.GapQualityValueStrategy;
-import org.jcvi.jillion.assembly.util.slice.Slice;
-import org.jcvi.jillion.assembly.util.slice.SliceMap;
+import org.jcvi.jillion.assembly.util.CoverageMap;
+import org.jcvi.jillion.assembly.util.CoverageMapBuilder;
+import org.jcvi.jillion.assembly.util.CoverageRegion;
+import org.jcvi.jillion.assembly.util.GapQualityValueStrategy;
+import org.jcvi.jillion.assembly.util.Slice;
+import org.jcvi.jillion.assembly.util.SliceMap;
 import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;

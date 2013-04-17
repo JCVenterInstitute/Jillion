@@ -25,8 +25,8 @@ import java.io.OutputStream;
 
 import org.jcvi.jillion.assembly.PlacedContig;
 import org.jcvi.jillion.assembly.Scaffold;
-import org.jcvi.jillion.assembly.util.coverage.CoverageMap;
-import org.jcvi.jillion.assembly.util.coverage.CoverageRegion;
+import org.jcvi.jillion.assembly.util.CoverageMap;
+import org.jcvi.jillion.assembly.util.CoverageRegion;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.io.IOUtil;

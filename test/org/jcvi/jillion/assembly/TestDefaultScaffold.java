@@ -33,7 +33,7 @@ import org.jcvi.jillion.assembly.DefaultScaffold;
 import org.jcvi.jillion.assembly.PlacedContig;
 import org.jcvi.jillion.assembly.Scaffold;
 import org.jcvi.jillion.assembly.ScaffoldBuilder;
-import org.jcvi.jillion.assembly.util.coverage.CoverageRegion;
+import org.jcvi.jillion.assembly.util.CoverageRegion;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 

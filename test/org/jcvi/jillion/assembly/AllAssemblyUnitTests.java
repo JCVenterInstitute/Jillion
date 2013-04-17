@@ -26,7 +26,7 @@
 package org.jcvi.jillion.assembly;
 
 import org.jcvi.jillion.assembly.util.AllAssemblyUtilUnitTests;
-import org.jcvi.jillion.assembly.util.coverage.AllCoverageUnitTests;
+import org.jcvi.jillion.assembly.util.AllCoverageUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

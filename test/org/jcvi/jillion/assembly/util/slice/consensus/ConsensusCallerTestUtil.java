@@ -34,9 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
-import org.jcvi.jillion.assembly.util.slice.Slice;
-import org.jcvi.jillion.assembly.util.slice.SliceElement;
-import org.jcvi.jillion.assembly.util.slice.SliceElement;
+import org.jcvi.jillion.assembly.util.Slice;
+import org.jcvi.jillion.assembly.util.SliceElement;
 import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusResult;
 import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusUtil;
 import org.jcvi.jillion.assembly.util.slice.consensus.DefaultConsensusResult;
@@ -44,7 +43,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.util.MapValueComparator;
 import org.jcvi.jillion.internal.assembly.util.DefaultSlice;
 
-import static org.jcvi.jillion.assembly.util.slice.TestSliceUtil.*;
+import static org.jcvi.jillion.assembly.util.TestSliceUtil.*;
 import static org.jcvi.jillion.core.Direction.FORWARD;
 import static org.jcvi.jillion.core.Direction.REVERSE;
 public final class ConsensusCallerTestUtil {

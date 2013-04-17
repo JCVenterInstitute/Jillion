@@ -25,7 +25,7 @@
  */
 package org.jcvi.jillion.assembly.util.slice.consensus;
 
-import org.jcvi.jillion.assembly.util.slice.Slice;
+import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 /**
  * {@code ConsensusResult} is the base call

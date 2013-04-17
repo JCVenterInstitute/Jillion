@@ -27,7 +27,7 @@ package org.jcvi.jillion.assembly.util.slice.consensus;
 
 import java.util.Set;
 
-import org.jcvi.jillion.assembly.util.slice.Slice;
+import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 /**
