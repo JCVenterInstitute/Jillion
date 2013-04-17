@@ -26,7 +26,7 @@
 package org.jcvi.jillion.trace.sanger.phd;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +46,7 @@ import org.jcvi.jillion.trace.sanger.PositionSequence;
  *
  *
  */
-public final class DefaultPhdFileDataStore{
+final class DefaultPhdFileDataStore{
 	
 	private DefaultPhdFileDataStore(){
 		//can not instantiate
@@ -60,7 +60,7 @@ public final class DefaultPhdFileDataStore{
      * does not exist.
      * @throws NullPointerException if phdBall is null.
      */
-    public static PhdDataStore create(File phdBall) throws FileNotFoundException{
+    public static PhdDataStore create(File phdBall) throws IOException{
         if(phdBall ==null){
             throw new NullPointerException("phdball can not be null");
         }
@@ -81,7 +81,7 @@ public final class DefaultPhdFileDataStore{
      * @throws NullPointerException if the given phdBall OR the given filter
      * is null.
      */
-    public static PhdDataStore create(File phdBall,DataStoreFilter filter) throws FileNotFoundException{
+    public static PhdDataStore create(File phdBall,DataStoreFilter filter) throws IOException{
         PhdDataStoreBuilder builder =createBuilder(filter);
         PhdParser.parsePhd(phdBall, builder);
         return builder.build();

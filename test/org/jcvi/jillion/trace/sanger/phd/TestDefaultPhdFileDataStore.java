@@ -26,16 +26,13 @@
 package org.jcvi.jillion.trace.sanger.phd;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-
-import org.jcvi.jillion.trace.sanger.phd.DefaultPhdFileDataStore;
-import org.jcvi.jillion.trace.sanger.phd.PhdDataStore;
+import java.io.IOException;
 
 
 public class TestDefaultPhdFileDataStore extends AbstractTestPhdDataStore{
 
     @Override
-    protected PhdDataStore createPhdDataStore(File phdfile) throws FileNotFoundException{
+    protected PhdDataStore createPhdDataStore(File phdfile) throws IOException{
         return DefaultPhdFileDataStore.create(phdfile);
     }
 }

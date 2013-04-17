@@ -28,7 +28,6 @@ package org.jcvi.jillion.trace.sanger.phd;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -70,7 +69,7 @@ public final class PhdParser {
      * parsing.
      * @throws FileNotFoundException if the phdFile given does not exist.
      */
-    public static void parsePhd(File phdFile, PhdFileVisitor visitor) throws FileNotFoundException{
+    public static void parsePhd(File phdFile, PhdFileVisitor visitor) throws IOException{
           InputStream in = new FileInputStream(phdFile);
             try{
                 parsePhd(in,visitor);
@@ -86,110 +85,109 @@ public final class PhdParser {
      * @param visitor the {@link PhdFileVisitor} to visit during
      * parsing.
      */
-    public static void parsePhd(InputStream in, PhdFileVisitor visitor){
+    public static void parsePhd(InputStream in, PhdFileVisitor visitor) throws IOException{
         if(in ==null){
             throw new NullPointerException("input stream can not be null");
         }
-        TextLineParser parser;
-        try {
-            parser = new TextLineParser(new BufferedInputStream(in));
-        } catch (IOException e1) {
-            e1.printStackTrace();
-            throw new IllegalStateException("error reading file");
-            
+        TextLineParser parser=null;
+        try{
+	        parser =new TextLineParser(new BufferedInputStream(in));
+	        
+	        visitor.visitFile();
+	        Properties currentComments=null;
+	        boolean inComments=false;
+	        boolean keepParsing=true;
+	        boolean parseCurrentPhd=true;
+	        boolean firstRecord=true;
+	        while(keepParsing && parser.hasNextLine()){
+	            String line;
+	            try {
+	            	line = parser.nextLine();
+	            } catch (IOException e) {
+	                throw new IllegalStateException("error reading file");
+	            }
+	            
+	            Matcher beginSeqMatcher = BEGIN_SEQUENCE_PATTERN.matcher(line);
+	            if(beginSeqMatcher.find()){
+	                if(!firstRecord){
+	                    keepParsing = visitor.visitEndPhd();                    
+	                }
+	                if(keepParsing){
+	                	visitor.visitLine(line);
+	                    firstRecord=false;
+	                    String id = beginSeqMatcher.group(1);
+	                    parseCurrentPhd = visitor.visitBeginPhd(id);
+	                    if(parseCurrentPhd){
+	                        visitor.visitBeginSequence(id);
+	                    }
+	                }
+	            }else{
+	            	visitor.visitLine(line);
+	            	if(line.startsWith(BEGIN_COMMENT)){
+	                    inComments=true;
+	                    currentComments = new Properties();
+	                }
+	                else if(line.startsWith(END_COMMENT)){
+	                    inComments=false;
+	                    if(parseCurrentPhd){
+	                        visitor.visitComment(currentComments);
+	                    }
+	                }
+	                else if(line.startsWith(BEGIN_DNA)){   
+	                    if(parseCurrentPhd){
+	                        visitor.visitBeginDna();
+	                    }
+	                }
+	                else if(line.startsWith(END_DNA)){
+	                    if(parseCurrentPhd){
+	                        visitor.visitEndDna();
+	                    }
+	                }
+	                else if(line.startsWith(END_SEQUENCE)){
+	                    if(parseCurrentPhd){
+	                        visitor.visitEndSequence();
+	                    }
+	                }
+	                
+	                else if(line.startsWith(END_ITEM)){
+	                    if(parseCurrentPhd){
+	                        visitor.visitEndTag();
+	                    }
+	                }
+	                else{
+	                    Matcher infoPattern = CALLED_INFO_PATTERN.matcher(line);
+	                
+	                    if(infoPattern.find()){
+	                        if(parseCurrentPhd){
+	                            visitor.visitBasecall(
+	                                Nucleotide.parse(infoPattern.group(1).charAt(0)),
+	                                PhredQuality.valueOf(Byte.parseByte(infoPattern.group(2))),
+	                                Integer.parseInt(infoPattern.group(3)));
+	                        }
+	                    }
+	                    else{
+	                        Matcher commentMatcher = COMMENT_PATTERN.matcher(line);
+	                        if(inComments && commentMatcher.find()){
+	                            if(parseCurrentPhd){
+	                                currentComments.put(commentMatcher.group(1), commentMatcher.group(2));
+	                            }
+	                        }
+	                        else{
+	                            Matcher tagMatcher = BEGIN_TAG_PATTERN.matcher(line);
+	                            if(tagMatcher.find() && parseCurrentPhd){
+	                                    visitor.visitBeginTag(tagMatcher.group(1));
+	                            }
+	                        }
+	                    }
+	                    
+	                }
+	            }
+	            }
+	            
+	        visitor.visitEndPhd();
+	        visitor.visitEndOfFile();
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(parser);
         }
-        visitor.visitFile();
-        Properties currentComments=null;
-        boolean inComments=false;
-        boolean keepParsing=true;
-        boolean parseCurrentPhd=true;
-        boolean firstRecord=true;
-        while(keepParsing && parser.hasNextLine()){
-            String line;
-            try {
-            	line = parser.nextLine();
-            } catch (IOException e) {
-                throw new IllegalStateException("error reading file");
-            }
-            
-            Matcher beginSeqMatcher = BEGIN_SEQUENCE_PATTERN.matcher(line);
-            if(beginSeqMatcher.find()){
-                if(!firstRecord){
-                    keepParsing = visitor.visitEndPhd();                    
-                }
-                if(keepParsing){
-                	visitor.visitLine(line);
-                    firstRecord=false;
-                    String id = beginSeqMatcher.group(1);
-                    parseCurrentPhd = visitor.visitBeginPhd(id);
-                    if(parseCurrentPhd){
-                        visitor.visitBeginSequence(id);
-                    }
-                }
-            }else{
-            	visitor.visitLine(line);
-            	if(line.startsWith(BEGIN_COMMENT)){
-                    inComments=true;
-                    currentComments = new Properties();
-                }
-                else if(line.startsWith(END_COMMENT)){
-                    inComments=false;
-                    if(parseCurrentPhd){
-                        visitor.visitComment(currentComments);
-                    }
-                }
-                else if(line.startsWith(BEGIN_DNA)){   
-                    if(parseCurrentPhd){
-                        visitor.visitBeginDna();
-                    }
-                }
-                else if(line.startsWith(END_DNA)){
-                    if(parseCurrentPhd){
-                        visitor.visitEndDna();
-                    }
-                }
-                else if(line.startsWith(END_SEQUENCE)){
-                    if(parseCurrentPhd){
-                        visitor.visitEndSequence();
-                    }
-                }
-                
-                else if(line.startsWith(END_ITEM)){
-                    if(parseCurrentPhd){
-                        visitor.visitEndTag();
-                    }
-                }
-                else{
-                    Matcher infoPattern = CALLED_INFO_PATTERN.matcher(line);
-                
-                    if(infoPattern.find()){
-                        if(parseCurrentPhd){
-                            visitor.visitBasecall(
-                                Nucleotide.parse(infoPattern.group(1).charAt(0)),
-                                PhredQuality.valueOf(Byte.parseByte(infoPattern.group(2))),
-                                Integer.parseInt(infoPattern.group(3)));
-                        }
-                    }
-                    else{
-                        Matcher commentMatcher = COMMENT_PATTERN.matcher(line);
-                        if(inComments && commentMatcher.find()){
-                            if(parseCurrentPhd){
-                                currentComments.put(commentMatcher.group(1), commentMatcher.group(2));
-                            }
-                        }
-                        else{
-                            Matcher tagMatcher = BEGIN_TAG_PATTERN.matcher(line);
-                            if(tagMatcher.find() && parseCurrentPhd){
-                                    visitor.visitBeginTag(tagMatcher.group(1));
-                            }
-                        }
-                    }
-                    
-                }
-            }
-            }
-            
-        visitor.visitEndPhd();
-        visitor.visitEndOfFile();
     }
 }

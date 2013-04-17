@@ -27,7 +27,6 @@ package org.jcvi.jillion.trace.sanger.phd;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
@@ -60,9 +59,10 @@ import org.jcvi.jillion.trace.sanger.PositionSequence;
  * @author dkatzel
  *
  */
-public final class IndexedPhdFileDataStore implements PhdDataStore{
+final class IndexedPhdFileDataStore implements PhdDataStore{
     private final Map<String, Range> recordLocations;   
     private final File phdBall;
+    private final DataStoreFilter filter;
     private volatile boolean closed;
     /**
      * Create a new {@link PhdDataStoreBuilder} for the given
@@ -148,7 +148,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
      * does not exist.
      * @throws NullPointerException if phdBall is null.
      */
-    public static PhdDataStore create(File phdBall) throws FileNotFoundException{
+    public static PhdDataStore create(File phdBall) throws IOException{
         PhdDataStoreBuilder builder = createBuilder(phdBall);
         PhdParser.parsePhd(phdBall, builder);
         return builder.build();
@@ -167,7 +167,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
      * @throws NullPointerException if phdBall is null.
      * @throws IllegalArgumentException if {@code initialCapacity < 0}
      */
-    public static PhdDataStore create(File phdBall, int initialCapacity) throws FileNotFoundException{
+    public static PhdDataStore create(File phdBall, int initialCapacity) throws IOException{
         PhdDataStoreBuilder builder = createBuilder(phdBall,initialCapacity);
         PhdParser.parsePhd(phdBall, builder);
         return builder.build();
@@ -184,7 +184,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
      * does not exist.
      * @throws NullPointerException if phdBall or filter are null.
      */
-    public static PhdDataStore create(File phdBall,DataStoreFilter filter) throws FileNotFoundException{
+    public static PhdDataStore create(File phdBall,DataStoreFilter filter) throws IOException{
         PhdDataStoreBuilder builder = createBuilder(phdBall,filter);
         PhdParser.parsePhd(phdBall, builder);
         return builder.build();
@@ -206,15 +206,16 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
      * @throws NullPointerException if phdBall or filter are null.
      * @throws IllegalArgumentException if {@code initialCapacity < 0}
      */
-    public static PhdDataStore create(File phdBall,DataStoreFilter filter, int initialCapacity) throws FileNotFoundException{
+    public static PhdDataStore create(File phdBall,DataStoreFilter filter, int initialCapacity) throws IOException{
         PhdDataStoreBuilder builder = createBuilder(phdBall,filter,initialCapacity);
         PhdParser.parsePhd(phdBall, builder);
         return builder.build();
     }
     
-    private IndexedPhdFileDataStore(File phdBall,Map<String,Range> recordLocations){
+    private IndexedPhdFileDataStore(File phdBall,Map<String,Range> recordLocations, DataStoreFilter filter){
         this.recordLocations = recordLocations;
         this.phdBall = phdBall;        
+        this.filter = filter;
     }
     
     private static final class IndexedPhdDataStoreBuilder extends AbstractPhdDataStoreBuilder{
@@ -285,7 +286,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
         */
         @Override
         public PhdDataStore build() {
-            return new IndexedPhdFileDataStore(phdBall, recordLocations);
+            return new IndexedPhdFileDataStore(phdBall, recordLocations, getFilter());
         }
         
         
@@ -372,7 +373,7 @@ public final class IndexedPhdFileDataStore implements PhdDataStore{
      * @author dkatzel
      */
     private class IndexedIterator implements StreamingIterator<Phd>{
-        private final LargePhdIterator iterator = LargePhdIterator.createNewIterator(phdBall);
+        private final LargePhdIterator iterator = LargePhdIterator.createNewIterator(phdBall, filter);
         private final Object endOfIterator= new Object();
         private Object next;
         

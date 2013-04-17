@@ -31,6 +31,8 @@ import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
@@ -50,16 +52,27 @@ public final class LargePhdDataStore implements PhdDataStore{
     static final Pattern BEGIN_SEQUENCE_PATTERN = Pattern.compile("BEGIN_SEQUENCE\\s+(\\S+)");
     private final File phdFile;
     private Long size=null;
-    boolean closed = false;
+    private volatile boolean closed = false;
+    private DataStoreFilter filter;
     
+    public static LargePhdDataStore create(File phdFile, DataStoreFilter filter){
+    	if(filter==null){
+    		return new LargePhdDataStore(phdFile);
+    	}
+    	return new LargePhdDataStore(phdFile, filter);
+    }
+    private LargePhdDataStore(File phdFile){
+    	this(phdFile, DataStoreFilters.alwaysAccept());
+    }
     /**
      * @param phdFile
      */
-    public LargePhdDataStore(File phdFile) {
+    private LargePhdDataStore(File phdFile, DataStoreFilter filter) {
         if(!phdFile.exists()){
             throw new IllegalArgumentException("phd file does not exists "+ phdFile.getAbsolutePath());
         }
         this.phdFile = phdFile;
+        this.filter = filter;
     }
 
     private void checkIfClosed(){
@@ -70,30 +83,46 @@ public final class LargePhdDataStore implements PhdDataStore{
     @Override
     public synchronized boolean contains(String id) throws DataStoreException {
         checkIfClosed();
-        StreamingIterator<Phd> iter = iterator();
-        while(iter.hasNext()){
-            Phd phd = iter.next();
-            if(phd.getId().equals(id)){
-                IOUtil.closeAndIgnoreErrors(iter);
-                return true;
-            }
+        if(!filter.accept(id)){
+        	return false;
         }
-        return false;
+        
+        StreamingIterator<Phd> iter=null;
+        try{
+	        iter= iterator();
+	        
+	        while(iter.hasNext()){
+	            Phd phd = iter.next();
+	            if(phd.getId().equals(id)){
+	                return true;
+	            }
+	        }
+	        return false;
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(iter);
+        }
     }
 
     @Override
     public synchronized Phd get(String id) throws DataStoreException {
         checkIfClosed();
-        StreamingIterator<Phd> iter = iterator();
-        while(iter.hasNext()){
-            Phd phd = iter.next();
-            if(phd.getId().equals(id)){
-                IOUtil.closeAndIgnoreErrors(iter);
-                return phd;
-            }
+        if(!filter.accept(id)){
+        	return null;
         }
-        //not found
-        return null;
+        StreamingIterator<Phd> iter =null;
+        try{
+	        iter =iterator();
+	        while(iter.hasNext()){
+	            Phd phd = iter.next();
+	            if(phd.getId().equals(id)){
+	                return phd;
+	            }
+	        }
+	        //not found
+	        return null;
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(iter);
+        }
         
     }
 
@@ -128,7 +157,7 @@ public final class LargePhdDataStore implements PhdDataStore{
     @Override
     public synchronized StreamingIterator<Phd> iterator() {
         checkIfClosed();
-        return LargePhdIterator.createNewIterator(phdFile);
+        return LargePhdIterator.createNewIterator(phdFile, filter);
     }
 
     

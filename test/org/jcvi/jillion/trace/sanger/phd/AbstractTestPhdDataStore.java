@@ -20,17 +20,17 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.sanger.phd;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.trace.sanger.phd.Phd;
-import org.jcvi.jillion.trace.sanger.phd.PhdDataStore;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,7 +41,7 @@ import org.junit.Test;
  */
 public abstract class AbstractTestPhdDataStore extends AbstractTestPhd{
 
-    protected abstract PhdDataStore createPhdDataStore(File phdfile) throws FileNotFoundException;
+    protected abstract PhdDataStore createPhdDataStore(File phdfile) throws IOException;
     PhdDataStore sut;
     @Before
     public void createPhdDataStore() throws IOException{
