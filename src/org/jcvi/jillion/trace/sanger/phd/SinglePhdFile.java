@@ -26,7 +26,7 @@
 package org.jcvi.jillion.trace.sanger.phd;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,13 +54,13 @@ public final class SinglePhdFile implements  Phd{
     private StringBuilder currentTagValueBuilder;
     private final Phd delegatePhd;
     
-    public static Phd create(File singlePhdFile) throws FileNotFoundException{
+    public static Phd create(File singlePhdFile) throws IOException{
     	return new SinglePhdFile(singlePhdFile);
     }
-    public static Phd create(InputStream singlePhdFileStream) throws FileNotFoundException{
+    public static Phd create(InputStream singlePhdFileStream) throws IOException{
     	return new SinglePhdFile(singlePhdFileStream);
     }
-    private SinglePhdFile(File singlePhdFile) throws FileNotFoundException {
+    private SinglePhdFile(File singlePhdFile) throws IOException {
     	PhdParser.parsePhd(singlePhdFile, new SinglePhdFileVisitor());
     	
 		this.delegatePhd = new DefaultPhd(id, 
@@ -70,7 +70,7 @@ public final class SinglePhdFile implements  Phd{
 					comments,
 					tags);
 	}
-    private SinglePhdFile(InputStream singlePhdStream) {
+    private SinglePhdFile(InputStream singlePhdStream) throws IOException {
     	PhdParser.parsePhd(singlePhdStream, new SinglePhdFileVisitor());
     	
 		this.delegatePhd = new DefaultPhd(id, 

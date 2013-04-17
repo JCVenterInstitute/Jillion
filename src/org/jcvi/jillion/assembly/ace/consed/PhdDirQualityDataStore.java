@@ -22,15 +22,14 @@ package org.jcvi.jillion.assembly.ace.consed;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.trace.sanger.phd.DefaultPhdFileDataStore;
 import org.jcvi.jillion.trace.sanger.phd.Phd;
 import org.jcvi.jillion.trace.sanger.phd.PhdDataStore;
+import org.jcvi.jillion.trace.sanger.phd.PhdFileDataStoreBuilder;
 
 /**
  * @author dkatzel
@@ -64,13 +63,14 @@ public class PhdDirQualityDataStore implements PhdDataStore{
      * @param phdDir
      * @throws FileNotFoundException 
      */
-    public PhdDirQualityDataStore(File phdDir) throws FileNotFoundException {
+    public PhdDirQualityDataStore(File phdDir) throws IOException {
         this.phdDir = phdDir;
         File phdBall = getPhdFileFor("phd.ball");
         if(phdBall ==null){
             phdBallDataStore = null;
         }else{
-            phdBallDataStore = DefaultPhdFileDataStore.create(phdBall);
+            phdBallDataStore = new PhdFileDataStoreBuilder(phdBall)
+									.build();
         }
     }
 
@@ -112,11 +112,8 @@ public class PhdDirQualityDataStore implements PhdDataStore{
             }
             return phdBallDataStore.get(id);
         }
-        try {
-            return DefaultPhdFileDataStore.create(phdFile).get(id);
-        } catch (IOException e) {
-            throw new DataStoreException("could not get phd file for "+id,e);
-        }
+        return new PhdFileDataStoreBuilder(phdFile).build().get(id);
+        
     }
     /**
     * {@inheritDoc}

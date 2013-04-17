@@ -25,7 +25,7 @@
  */
 package org.jcvi.jillion.trace.sanger.phd;
 
-public class DefaultPhdTag implements PhdTag{
+class DefaultPhdTag implements PhdTag{
 
     private final String name;
     private final String value;

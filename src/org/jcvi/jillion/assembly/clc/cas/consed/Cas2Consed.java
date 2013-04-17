@@ -55,9 +55,9 @@ import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
 import org.jcvi.jillion.trace.Trace;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
-import org.jcvi.jillion.trace.sanger.phd.IndexedPhdFileDataStore;
 import org.jcvi.jillion.trace.sanger.phd.Phd;
 import org.jcvi.jillion.trace.sanger.phd.PhdDataStore;
+import org.jcvi.jillion.trace.sanger.phd.PhdFileDataStoreBuilder;
 import org.jcvi.jillion.trace.sanger.phd.PhdWriter;
 import org.jcvi.jillion.trace.sff.SffFileIterator;
 
@@ -168,7 +168,9 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 		//time to write out the data
 		try {
 			phdOut.close();
-			PhdDataStore phdDataStore = IndexedPhdFileDataStore.create(phdFile);
+			PhdDataStore phdDataStore = new PhdFileDataStoreBuilder(phdFile)
+										.hint(DataStoreProviderHint.OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS)
+										.build();
 			File editDir = new File(consedOutputDir, "edit_dir");
 			File aceFile = new File(editDir, prefix + ".ace.1");
 			//TODO customize ace writer?

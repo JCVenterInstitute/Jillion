@@ -85,6 +85,8 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
         }
         this.filter= filter;
     }
+    
+    
     /**
      * Visit the current Phd record that is being visited.  Only phds
      * that are accepted by the DataStoreFilter (if any)

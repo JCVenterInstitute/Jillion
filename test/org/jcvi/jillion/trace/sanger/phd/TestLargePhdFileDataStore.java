@@ -21,10 +21,9 @@
 package org.jcvi.jillion.trace.sanger.phd;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
-import org.jcvi.jillion.trace.sanger.phd.LargePhdDataStore;
-import org.jcvi.jillion.trace.sanger.phd.PhdDataStore;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
 
 /**
  * @author dkatzel
@@ -35,8 +34,8 @@ public class TestLargePhdFileDataStore extends AbstractTestPhdDataStore{
 
     @Override
     protected PhdDataStore createPhdDataStore(File phdfile)
-            throws FileNotFoundException {
-        return new LargePhdDataStore(phdfile);
+            throws IOException {
+        return LargePhdDataStore.create(phdfile, DataStoreFilters.alwaysAccept());
     }
 
 }

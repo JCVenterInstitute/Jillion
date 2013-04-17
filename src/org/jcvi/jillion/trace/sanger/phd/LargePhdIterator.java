@@ -21,13 +21,13 @@
 package org.jcvi.jillion.trace.sanger.phd;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 import org.jcvi.jillion.trace.sanger.PositionSequence;
 
@@ -41,16 +41,17 @@ import org.jcvi.jillion.trace.sanger.PositionSequence;
  */
 public final class LargePhdIterator extends AbstractBlockingStreamingIterator<Phd>{
     private final File phdFile;
-        
+    private final DataStoreFilter filter;
     
     
-    public static LargePhdIterator createNewIterator(File phdFile){
-        LargePhdIterator iter= new LargePhdIterator(phdFile);
+    public static LargePhdIterator createNewIterator(File phdFile, DataStoreFilter filter){
+        LargePhdIterator iter= new LargePhdIterator(phdFile, filter);
         iter.start();
         return iter;
     }
-    private LargePhdIterator(File phdFile) {
+    private LargePhdIterator(File phdFile, DataStoreFilter filter) {
         this.phdFile = phdFile;
+        this.filter = filter;
     }
 
 
@@ -59,7 +60,7 @@ public final class LargePhdIterator extends AbstractBlockingStreamingIterator<Ph
     */
     @Override
     protected void backgroundThreadRunMethod() {
-        PhdFileVisitor visitor = new AbstractPhdFileVisitor() {
+        PhdFileVisitor visitor = new AbstractPhdFileVisitor(filter) {
             
             @Override
 			protected boolean visitPhd(String id, NucleotideSequence bases,
@@ -81,7 +82,7 @@ public final class LargePhdIterator extends AbstractBlockingStreamingIterator<Ph
         
         try {
             PhdParser.parsePhd(phdFile, visitor);
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
            throw new RuntimeException(
                    String.format("phd file %s does not exist",phdFile.getAbsolutePath()),
                    e);

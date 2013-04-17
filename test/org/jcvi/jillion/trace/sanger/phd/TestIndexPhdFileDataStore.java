@@ -21,10 +21,7 @@
 package org.jcvi.jillion.trace.sanger.phd;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-
-import org.jcvi.jillion.trace.sanger.phd.IndexedPhdFileDataStore;
-import org.jcvi.jillion.trace.sanger.phd.PhdDataStore;
+import java.io.IOException;
 
 /**
  * @author dkatzel
@@ -35,7 +32,7 @@ public class TestIndexPhdFileDataStore extends AbstractTestPhdDataStore{
 
     @Override
     protected PhdDataStore createPhdDataStore(File phdfile)
-            throws FileNotFoundException {
+            throws IOException {
         return IndexedPhdFileDataStore.create(phdfile);
     }
 
