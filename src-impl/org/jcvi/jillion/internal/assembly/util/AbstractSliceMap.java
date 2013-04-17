@@ -30,11 +30,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.jillion.assembly.AssembledRead;
-import org.jcvi.jillion.assembly.util.coverage.CoverageRegion;
-import org.jcvi.jillion.assembly.util.slice.GapQualityValueStrategy;
-import org.jcvi.jillion.assembly.util.slice.Slice;
-import org.jcvi.jillion.assembly.util.slice.SliceElement;
-import org.jcvi.jillion.assembly.util.slice.SliceMap;
+import org.jcvi.jillion.assembly.util.CoverageRegion;
+import org.jcvi.jillion.assembly.util.GapQualityValueStrategy;
+import org.jcvi.jillion.assembly.util.Slice;
+import org.jcvi.jillion.assembly.util.SliceElement;
+import org.jcvi.jillion.assembly.util.SliceMap;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;

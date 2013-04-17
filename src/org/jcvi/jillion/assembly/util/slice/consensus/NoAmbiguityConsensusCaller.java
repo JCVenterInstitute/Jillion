@@ -31,7 +31,7 @@ import static org.jcvi.jillion.core.residue.nt.Nucleotide.Gap;
 import static org.jcvi.jillion.core.residue.nt.Nucleotide.Guanine;
 import static org.jcvi.jillion.core.residue.nt.Nucleotide.Thymine;
 
-import org.jcvi.jillion.assembly.util.slice.Slice;
+import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 /**

@@ -30,8 +30,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.jcvi.jillion.assembly.util.slice.Slice;
-import org.jcvi.jillion.assembly.util.slice.Slice;
+import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.slice.consensus.ConicConsensusCaller;
 import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusCaller;
 import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusResult;

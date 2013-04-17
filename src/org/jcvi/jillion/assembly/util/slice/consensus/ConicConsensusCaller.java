@@ -29,7 +29,7 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.jcvi.jillion.assembly.util.slice.Slice;
+import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 

@@ -28,7 +28,7 @@ package org.jcvi.jillion.assembly;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.jcvi.jillion.assembly.util.coverage.CoverageMap;
+import org.jcvi.jillion.assembly.util.CoverageMap;
 import org.jcvi.jillion.core.Range;
 /**
  * A scaffold (also known as a super-contig) is a layout
