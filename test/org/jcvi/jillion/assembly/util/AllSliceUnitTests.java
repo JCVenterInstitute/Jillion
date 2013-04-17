@@ -25,7 +25,7 @@
  */
 package org.jcvi.jillion.assembly.util;
 
-import org.jcvi.jillion.assembly.util.slice.consensus.AllConsensusUnitTests;
+import org.jcvi.jillion.assembly.util.consensus.AllConsensusUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

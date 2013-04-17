@@ -23,7 +23,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.util.slice.consensus;
+package org.jcvi.jillion.assembly.util.consensus;
 
 import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;

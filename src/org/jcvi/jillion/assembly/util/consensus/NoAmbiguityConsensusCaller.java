@@ -23,7 +23,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.util.slice.consensus;
+package org.jcvi.jillion.assembly.util.consensus;
 
 import static org.jcvi.jillion.core.residue.nt.Nucleotide.Adenine;
 import static org.jcvi.jillion.core.residue.nt.Nucleotide.Cytosine;

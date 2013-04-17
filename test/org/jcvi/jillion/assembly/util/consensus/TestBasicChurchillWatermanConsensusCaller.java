@@ -18,7 +18,12 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.assembly.util.slice.consensus;
+/*
+ * Created on Jun 8, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.util.consensus;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,26 +31,29 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.jcvi.jillion.assembly.util.Slice;
-import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusCaller;
-import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusResult;
-import org.jcvi.jillion.assembly.util.slice.consensus.MostFrequentBasecallConsensusCaller;
+import org.jcvi.jillion.assembly.util.consensus.ChurchillWatermanConsensusCaller;
+import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
+import org.jcvi.jillion.assembly.util.consensus.ConsensusResult;
+import org.jcvi.jillion.core.qual.PhredQuality;
 import org.junit.runners.Parameterized.Parameters;
 
-public class TestMostFrequentBasecallConsensusCaller extends AbstractTestConsensusCaller{
+public class TestBasicChurchillWatermanConsensusCaller extends
+        TestConicConsensusCaller {
 
-	public TestMostFrequentBasecallConsensusCaller(List<Slice> slices,
-			List<ConsensusResult> expectedConsensus) {
-		super(slices, expectedConsensus);
-	}
-
-	@Override
-	protected ConsensusCaller getConsensusCaller() {
-		return MostFrequentBasecallConsensusCaller.INSTANCE;
-	}
-	@Parameters
+    public TestBasicChurchillWatermanConsensusCaller(List<Slice> slices,
+            List<ConsensusResult> expectedConsensus) {
+        super(slices, expectedConsensus);
+    }
+    @Override
+    protected ConsensusCaller getConsensusCaller() {
+        return new ChurchillWatermanConsensusCaller(PhredQuality.valueOf(30));
+    }
+    
+    
+    @Parameters
     public static Collection<?> data(){
        List<Object[]> data = new ArrayList<Object[]>();
-       for(Entry<List<Slice>, List<ConsensusResult>> entry: ConsensusCallerTestUtil.generateMostCommonBasecallData().entrySet()){
+       for(Entry<List<Slice>, List<ConsensusResult>> entry: ConsensusCallerTestUtil.generateChurchillWatermanData().entrySet()){
            data.add(new Object[]{entry.getKey(), entry.getValue()});
        }
         

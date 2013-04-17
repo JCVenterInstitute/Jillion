@@ -19,26 +19,32 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 /*
- * Created on Jun 5, 2009
+ * Created on Jun 8, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.util.slice.consensus;
+package org.jcvi.jillion.assembly.util.consensus;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.Arrays;
+import java.util.List;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    { 
-        TestConicConsensusCaller.class,
-        TestBasicChurchillWatermanConsensusCaller.class,
-        TestAnnotationConsensusCaller.class,
-        TestNoAmbiguityConsensusCaller.class,
-        TestMostFrequentBasecallConsensusCaller.class
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+
+final class ConsensusUtil {
+    
+    
+    /**
+     * These are the only bases that should be used
+     * to consider consensus.
+     */
+    public static final List<Nucleotide> BASES_TO_CONSIDER = Arrays.asList(Nucleotide.Adenine,
+																Nucleotide.Cytosine,
+																Nucleotide.Guanine,
+																Nucleotide.Thymine,
+																Nucleotide.Gap);
+    
+    private ConsensusUtil(){
+        throw new RuntimeException("should never be instantiated");
     }
-    )
-public class AllConsensusUnitTests {
-
+    
 }

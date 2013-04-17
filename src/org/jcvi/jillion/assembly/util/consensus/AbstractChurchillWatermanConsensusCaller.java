@@ -23,9 +23,9 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.util.slice.consensus;
+package org.jcvi.jillion.assembly.util.consensus;
 
-import static org.jcvi.jillion.assembly.util.slice.consensus.ConsensusUtil.BASES_TO_CONSIDER;
+import static org.jcvi.jillion.assembly.util.consensus.ConsensusUtil.BASES_TO_CONSIDER;
 
 import java.util.ArrayList;
 import java.util.Collections;

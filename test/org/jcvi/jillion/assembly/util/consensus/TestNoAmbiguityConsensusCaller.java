@@ -23,7 +23,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.util.slice.consensus;
+package org.jcvi.jillion.assembly.util.consensus;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,15 +31,15 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.jcvi.jillion.assembly.util.Slice;
-import org.jcvi.jillion.assembly.util.slice.consensus.AnnotationConsensusCaller;
-import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusCaller;
-import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusResult;
+import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
+import org.jcvi.jillion.assembly.util.consensus.ConsensusResult;
+import org.jcvi.jillion.assembly.util.consensus.NoAmbiguityConsensusCaller;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.junit.runners.Parameterized.Parameters;
 
-public class TestAnnotationConsensusCaller extends AbstractTestConsensusCaller{
+public class TestNoAmbiguityConsensusCaller extends AbstractTestConsensusCaller{
    
-    public TestAnnotationConsensusCaller(List<Slice> slices,
+    public TestNoAmbiguityConsensusCaller(List<Slice> slices,
             List<ConsensusResult> expectedConsensus) {
         super(slices, expectedConsensus);
     }
@@ -47,7 +47,7 @@ public class TestAnnotationConsensusCaller extends AbstractTestConsensusCaller{
     @Parameters
     public static Collection<?> data(){
        List<Object[]> data = new ArrayList<Object[]>();
-       for(Entry<List<Slice>, List<ConsensusResult>> entry: ConsensusCallerTestUtil.generateAnnotationData().entrySet()){
+       for(Entry<List<Slice>, List<ConsensusResult>> entry: ConsensusCallerTestUtil.generateNoAmbiguityData().entrySet()){
            data.add(new Object[]{entry.getKey(), entry.getValue()});
        }
         
@@ -58,6 +58,8 @@ public class TestAnnotationConsensusCaller extends AbstractTestConsensusCaller{
 
     @Override
     protected ConsensusCaller getConsensusCaller() {
-        return new AnnotationConsensusCaller(PhredQuality.valueOf(30));
-    }
+        return new NoAmbiguityConsensusCaller(PhredQuality.valueOf(30));
+    }    
+    
 }
+

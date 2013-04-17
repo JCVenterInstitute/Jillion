@@ -19,27 +19,8 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 /**
- * This package is a Java Representation of assembly slice data.
- * The Slice concept was originally created at The Institute for Genomic
- * Research (TIGR) which has since merged with other affiliated
- * organizations to form JCVI.
- * 
- * A Slice is a one base wide cut of an assembly from zero or more reads. 
- * Each read in the slice contributes a base, quality value, and direction. 
- * Operations 
- * that are difficult to perform within a contig representation may trivial 
- * to perform with a slice representation. 
- * <p>
- * If you consider the traditional contig view of an assembly 
- * to be "horizontal", meaning the assembly is oriented towards 
- * the rows of bases in reads and the consensus, 
- * then the slice view of an assembly is "vertical", 
- * meaning the assembly is oriented towards the tiling 
- * at each assembly position. With this picture in mind it is 
- * easy to understand that the contig view and the slice view 
- * is purely a shift in representation, and there is no change in information.
- *  
- * @author dkatzel
- * @see <a href="http://slicetools.sourceforge.net">Slice Tools</a>
+ * The Assembly util package contains utility classes that are useful 
+ * for working with general assembly data regardless of what assembler
+ * was used or file format the data is in.
  */
 package org.jcvi.jillion.assembly.util;

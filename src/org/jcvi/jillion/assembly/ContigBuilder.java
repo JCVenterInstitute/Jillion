@@ -23,7 +23,7 @@ package org.jcvi.jillion.assembly;
 import java.util.Collection;
 
 import org.jcvi.jillion.assembly.util.GapQualityValueStrategy;
-import org.jcvi.jillion.assembly.util.slice.consensus.ConsensusCaller;
+import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.Builder;

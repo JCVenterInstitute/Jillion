@@ -19,32 +19,27 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 /*
- * Created on Jun 8, 2009
+ * Created on Jun 3, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.util.slice.consensus;
+package org.jcvi.jillion.assembly.util.consensus;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
-
-final class ConsensusUtil {
-    
-    
+import org.jcvi.jillion.assembly.util.Slice;
+/**
+ * <code>ConsensusCaller</code> compute the
+ * {@link ConsensusResult} for the given Slice.
+ * @author dkatzel
+ *
+ *
+ */
+public interface ConsensusCaller {
     /**
-     * These are the only bases that should be used
-     * to consider consensus.
+     * compute the consensus
+     * {@link Nucleotide} for the given Slice.
+     * @param slice the Slice to compute the consensus for.
+     * @return a {@link ConsensusResult} will never be <code>null</code>
+     * @throws NullPointerException if slice is null.
      */
-    public static final List<Nucleotide> BASES_TO_CONSIDER = Arrays.asList(Nucleotide.Adenine,
-																Nucleotide.Cytosine,
-																Nucleotide.Guanine,
-																Nucleotide.Thymine,
-																Nucleotide.Gap);
-    
-    private ConsensusUtil(){
-        throw new RuntimeException("should never be instantiated");
-    }
-    
+    ConsensusResult callConsensus(Slice slice);
 }
