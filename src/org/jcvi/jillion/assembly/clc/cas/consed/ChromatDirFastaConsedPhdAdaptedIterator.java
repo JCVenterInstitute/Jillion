@@ -22,7 +22,8 @@ package org.jcvi.jillion.assembly.clc.cas.consed;
 
 import java.io.File;
 import java.util.Date;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -58,8 +59,8 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends QualFastaConsedPhdA
      * Adds the property "CHROMAT_FILE" with the value of the read id.
      */
     @Override
-    protected Properties createAdditionalCommentsFor(String id) {
-        Properties props = new Properties();        
+    protected  Map<String,String> createAdditionalCommentsFor(String id) {
+    	 Map<String,String> props = new HashMap<String, String>();        
         props.put("CHROMAT_FILE", id);
         return props;
     }
@@ -67,7 +68,7 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends QualFastaConsedPhdA
 
     @Override
     protected Phd createPhdRecordFor(NucleotideSequenceFastaRecord fasta,
-            Properties requiredComments) {
+    		 Map<String,String> requiredComments) {
     	Chromatogram chromo = tryToParseFromChromatDir(fasta.getId());
         if(chromo !=null){
         	 return createPhd(requiredComments, fasta, chromo);
@@ -102,7 +103,7 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends QualFastaConsedPhdA
 		return null;
 	}
 
-    protected Phd createPhd(Properties requiredComments, NucleotideSequenceFastaRecord fasta,
+    protected Phd createPhd( Map<String,String> requiredComments, NucleotideSequenceFastaRecord fasta,
             Chromatogram chromo) {
         final String id = fasta.getId();
         return new DefaultPhd(id, chromo.getNucleotideSequence(), chromo.getQualitySequence(), chromo.getPositionSequence(), requiredComments);

@@ -25,26 +25,27 @@
  */
 package org.jcvi.jillion.trace.sanger.phd;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.trace.sanger.PositionSequence;
-import org.jcvi.jillion.trace.sanger.phd.ArtificialPhd;
-import org.jcvi.jillion.trace.sanger.phd.Phd;
-import org.jcvi.jillion.trace.sanger.phd.PhdTag;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
 
 public class TestBuildArtificialPhd {
 
     NucleotideSequence mockBasecalls;
     QualitySequence mockQualities;
-    Properties mockProperties;
+    Map<String,String> mockProperties;
     List<PhdTag> mockTags;
     String id = "phdId";
     long lengthOfBases= 5;
@@ -54,7 +55,7 @@ public class TestBuildArtificialPhd {
     public void setup(){
         mockBasecalls = createMock(NucleotideSequence.class);
         mockQualities = createMock(QualitySequence.class); 
-        mockProperties = createMock(Properties.class); 
+        mockProperties = createMock(Map.class); 
         mockTags = createMock(List.class); 
     }
     

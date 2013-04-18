@@ -23,7 +23,9 @@ package org.jcvi.jillion.assembly.clc.cas.consed;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Map;
 import java.util.Properties;
 
 import org.jcvi.jillion.assembly.ace.PhdInfo;
@@ -48,13 +50,9 @@ import org.jcvi.jillion.trace.sanger.phd.PhdUtil;
  *
  */
 public class FastaConsedPhdAdaptedIterator implements StreamingIterator<PhdReadRecord>{
-	/**
-	 * Empty Properties instance that we will use over and over again.
-	 */
-	private static final Properties EMPTY_PROPERTIES = new Properties();
 	
 	private final StreamingIterator<NucleotideSequenceFastaRecord> fastaIterator;
-	private final Properties requiredComments;
+	private final Map<String,String> requiredComments;
 	private final byte defaultQualityValue;
 	private final Date phdDate;
 	private final File fastaFile;
@@ -103,10 +101,10 @@ public class FastaConsedPhdAdaptedIterator implements StreamingIterator<PhdReadR
      * any new comments to be included for the current read with the given id;
      * can not be null but may be empty.
      */
-    protected Properties createAdditionalCommentsFor(String id) {
-        return EMPTY_PROPERTIES;
+    protected  Map<String,String> createAdditionalCommentsFor(String id) {
+        return Collections.emptyMap();
     }
-    protected Phd createPhdRecordFor(NucleotideSequenceFastaRecord nextFasta, Properties requiredComments ){
+    protected Phd createPhdRecordFor(NucleotideSequenceFastaRecord nextFasta,  Map<String,String> requiredComments ){
 	    String id = nextFasta.getId();
         QualitySequence qualities = getQualitiesFor(nextFasta);
         return ArtificialPhd.createNewbler454Phd(

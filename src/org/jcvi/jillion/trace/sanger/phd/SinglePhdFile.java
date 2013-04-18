@@ -29,7 +29,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.jcvi.jillion.core.qual.PhredQuality;
@@ -47,7 +50,7 @@ public final class SinglePhdFile implements  Phd{
     private final PositionSequenceBuilder positions = new PositionSequenceBuilder();
     
     private final List<PhdTag> tags = new ArrayList<PhdTag>();
-    private Properties comments=null;
+    private Map<String,String> comments=null;
     private String id=null;
     private boolean inTag =false;
     private String currentTag;
@@ -135,7 +138,7 @@ public final class SinglePhdFile implements  Phd{
 		return delegatePhd.getId();
 	}
 	@Override
-	public Properties getComments() {
+	public Map<String,String> getComments() {
 		return delegatePhd.getComments();
 	}
 	@Override
@@ -200,7 +203,10 @@ public final class SinglePhdFile implements  Phd{
 
 	    @Override
 	    public synchronized void visitComment(Properties comments) {
-	        SinglePhdFile.this.comments = comments;
+	        SinglePhdFile.this.comments = new LinkedHashMap<String, String>();
+	        for(Entry<Object, Object> entry : comments.entrySet()){
+	        	SinglePhdFile.this.comments.put((String)entry.getKey(), (String)entry.getValue());
+	        }
 	    }
 
 

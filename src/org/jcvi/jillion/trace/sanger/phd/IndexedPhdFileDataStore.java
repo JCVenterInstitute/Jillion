@@ -34,7 +34,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Properties;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
@@ -274,7 +273,7 @@ final class IndexedPhdFileDataStore implements PhdDataStore{
         @Override
         protected synchronized boolean visitPhd(String id, NucleotideSequence bases,
                 QualitySequence qualities, PositionSequence positions,
-                Properties comments, List<PhdTag> tags) {
+                Map<String,String> comments, List<PhdTag> tags) {
             long endOfOldRecord = currentOffset-currentLineLength-1;
             recordLocations.put(id, Range.of(currentStartOffset,endOfOldRecord));
             currentStartOffset=endOfOldRecord;

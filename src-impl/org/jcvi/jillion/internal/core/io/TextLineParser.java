@@ -51,13 +51,21 @@ public final class TextLineParser implements Closeable{
 	private final FIFOQueue<Object> nextQueue = new FIFOQueue<Object>();
 	boolean doneFile = false;
 	
-	private long position=0L;
+	private long position;
 	private long numberOfBytesInNextLine;
 	
 	public TextLineParser(InputStream in) throws IOException{
+		this(in, 0L);
+	}
+	
+	public TextLineParser(InputStream in, long initialPosition) throws IOException{
 		if(in ==null){
 			throw new NullPointerException("inputStream can not be null");
 		}
+		if(initialPosition <0){
+			throw new IllegalArgumentException("initial position must be >=0");
+		}
+		this.position = initialPosition;
 		this.in = new PushbackInputStream(in);
 		getNextLine();
 	}

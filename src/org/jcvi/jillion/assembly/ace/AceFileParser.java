@@ -807,7 +807,7 @@ public abstract class AceFileParser implements AceHandler {
 	        }
 	        
 	        if(!(memento instanceof AceFileMemento)){
-	        	throw new IllegalArgumentException("unknown memento");
+	        	throw new IllegalArgumentException("unknown memento type "+ memento);
 	        }
 	        AceFileMemento aceFileMemento = (AceFileMemento)memento;
 	        if(aceFileMemento.getParentParser() !=this){

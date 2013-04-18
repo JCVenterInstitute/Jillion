@@ -28,7 +28,8 @@ package org.jcvi.jillion.trace.sanger.phd;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -38,11 +39,6 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.AbstractDataStore;
 import org.jcvi.jillion.internal.core.datastore.DataStoreIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
-import org.jcvi.jillion.trace.sanger.phd.ArtificialPhd;
-import org.jcvi.jillion.trace.sanger.phd.Phd;
-import org.jcvi.jillion.trace.sanger.phd.PhdDataStore;
-import org.jcvi.jillion.trace.sanger.phd.PhdTag;
-import org.jcvi.jillion.trace.sanger.phd.PhdUtil;
 /**
  * {@code ArtificialPhdDataStore} is a {@link DataStore} of
  * Nucleotide and PhredQuality data that has been adapted to 
@@ -54,7 +50,7 @@ import org.jcvi.jillion.trace.sanger.phd.PhdUtil;
 public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements PhdDataStore{
     private final DataStore<NucleotideSequence> seqDataStore;
     private final DataStore<QualitySequence> qualDataStore;
-    private final Properties comments = new Properties();
+    private final Map<String,String> comments = new HashMap<String, String>();
 
     /**
      * @param seqDataStore

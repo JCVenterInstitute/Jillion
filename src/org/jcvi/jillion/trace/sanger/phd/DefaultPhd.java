@@ -26,8 +26,9 @@
 package org.jcvi.jillion.trace.sanger.phd;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -39,12 +40,12 @@ public class DefaultPhd implements Phd {
     private final NucleotideSequence basecalls;
     private final QualitySequence qualities;
     private final PositionSequence peaks;
-    private final Properties comments;
+    private final Map<String,String> comments;
     private final List<PhdTag> tags;
     
     public DefaultPhd(String id, NucleotideSequence basecalls,
             QualitySequence qualities,
-            PositionSequence peaks, Properties comments,
+            PositionSequence peaks, Map<String,String> comments,
             List<PhdTag> tags){
     	this.id = id;
         this.basecalls = basecalls;
@@ -55,17 +56,17 @@ public class DefaultPhd implements Phd {
     }
     public DefaultPhd(String id, NucleotideSequence basecalls,
             QualitySequence qualities,
-            PositionSequence peaks,Properties comments){
+            PositionSequence peaks,Map<String,String> comments){
         this(id,basecalls, qualities, peaks, comments,Collections.<PhdTag>emptyList());
     }
     public DefaultPhd(String id, NucleotideSequence basecalls,
             QualitySequence qualities,
             PositionSequence peaks){
-        this(id,basecalls, qualities, peaks, new Properties());
+        this(id,basecalls, qualities, peaks, new HashMap<String,String>());
     }
     
     @Override
-    public Properties getComments() {
+    public Map<String,String> getComments() {
         return comments;
     }
 

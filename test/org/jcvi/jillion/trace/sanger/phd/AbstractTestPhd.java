@@ -25,7 +25,8 @@
  */
 package org.jcvi.jillion.trace.sanger.phd;
 
-import java.util.Properties;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
@@ -79,14 +80,14 @@ public abstract class AbstractTestPhd {
                      17 , 18 , 11 , 9 , 9 , 9 , 11 , 11 , 14 , 10 , 10 , 9 , 9 , 13 , 16 , 20 , 14 , 13 , 12 , 11 , 11 , 11 , 18 , 12 , 13 , 12 , 10 , 11 , 10 , 9 , 9 , 9 , 9 , 9 , 9 , 9 , 9 , 10 , 9 , 11 , 10 , 11 , 9 , 9 , 9 , 6 , 9 , 9 , 9 , 9 , 9 , 9 , 10 , 9 , 10 , 9 , 10 , 10 , 10 , 13 , 
                      10 , 10 , 9 , 10 , 10 }
              ).build();
-    protected Properties expectedProperties;
+    protected Map<String,String> expectedProperties;
     
     protected static final ResourceHelper RESOURCE = new ResourceHelper(AbstractTestPhd.class);
     
      
      @Before
      public void setup(){
-         expectedProperties = new Properties();
+         expectedProperties = new LinkedHashMap<String,String>();
          expectedProperties.put("TIME", "Tue Dec 18 10:50:48 2007");
          expectedProperties.put("CHEM", "term");
          expectedProperties.put("DYE", "big");

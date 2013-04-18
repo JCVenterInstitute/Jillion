@@ -26,7 +26,10 @@
 package org.jcvi.jillion.trace.sanger.phd;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
@@ -57,7 +60,7 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
     private QualitySequenceBuilder currentQualities = new QualitySequenceBuilder();
     private PositionSequenceBuilder currentPositions = new PositionSequenceBuilder();
     private List<PhdTag> tags = new ArrayList<PhdTag>();
-    private Properties currentComments;
+    private  Map<String,String> currentComments;
     private String currentId; 
     private String currentTag;
     private boolean inTag=false;
@@ -106,7 +109,7 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
             NucleotideSequence bases,
             QualitySequence qualities,
             PositionSequence positions, 
-            Properties comments,
+            Map<String,String> comments,
             List<PhdTag> tags);
     
     @Override
@@ -142,7 +145,10 @@ public abstract class AbstractPhdFileVisitor implements PhdFileVisitor{
 
     @Override
     public synchronized void visitComment(Properties comments) {
-        this.currentComments = comments;
+        this.currentComments =new LinkedHashMap<String, String>();
+        for(Entry<Object, Object> entry :comments.entrySet()){
+        	currentComments.put((String)entry.getKey(), (String)entry.getValue());
+        }
     }
 
 
