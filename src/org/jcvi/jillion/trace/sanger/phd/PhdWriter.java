@@ -33,7 +33,6 @@ import java.util.Map.Entry;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.trace.sanger.Position;
 
 public final class PhdWriter {
     private static final String BEGIN_SEQUENCE = "BEGIN_SEQUENCE";
@@ -113,7 +112,7 @@ public final class PhdWriter {
         
         comments.append( BEGIN_COMMENT+"\n");
         comments.append( String.format("%n"));
-        for(Entry<Object, Object> entry :phd.getComments().entrySet()){
+        for(Entry<String, String> entry :phd.getComments().entrySet()){
             comments.append(String.format("%s: %s%n",entry.getKey(),entry.getValue()));
         }
         comments.append(String.format("%n"));

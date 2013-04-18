@@ -27,7 +27,7 @@ package org.jcvi.jillion.trace.sanger.phd;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -48,7 +48,7 @@ public class ArtificialPhd implements Phd{
     
     private final NucleotideSequence basecalls;
     private final QualitySequence qualities;
-   private final Properties comments;
+   private final Map<String,String> comments;
    private final List<PhdTag> tags;
    private PositionSequence fakePositions=null;
    private final int numberOfPositionsForEachPeak;
@@ -73,7 +73,7 @@ public class ArtificialPhd implements Phd{
 		   String id,
 		   NucleotideSequence basecalls,
            QualitySequence qualities,
-           Properties comments, List<PhdTag> tags){
+           Map<String,String> comments, List<PhdTag> tags){
        return new ArtificialPhd(id,basecalls, qualities, comments, tags, NEWBLER_454_START_POSITION,NEWBLER_454_PEAK_SPACING);
    }
    /**
@@ -93,7 +93,7 @@ public class ArtificialPhd implements Phd{
 		   String id,
 		   NucleotideSequence basecalls,
            QualitySequence qualities,
-           Properties comments){
+           Map<String,String> comments){
 	   return ArtificialPhd.createNewbler454Phd(id,basecalls, qualities, 
                comments,Collections.<PhdTag>emptyList());
    }
@@ -113,7 +113,7 @@ public class ArtificialPhd implements Phd{
 		   NucleotideSequence basecalls,
            QualitySequence qualities){
        return ArtificialPhd.createNewbler454Phd(id,basecalls, qualities, 
-               new Properties(),Collections.<PhdTag>emptyList());
+               Collections.<String,String>emptyMap(),Collections.<PhdTag>emptyList());
    }
    /**
     * {@code buildArtificalPhd} creates a {@link DefaultPhd}
@@ -135,7 +135,7 @@ public class ArtificialPhd implements Phd{
 		   NucleotideSequence basecalls,
            QualitySequence qualities,
            int numberOfPositionsForEachPeak){
-       this(id,basecalls, qualities, new Properties(),Collections.<PhdTag>emptyList(),numberOfPositionsForEachPeak);
+       this(id,basecalls, qualities, Collections.<String,String>emptyMap(),Collections.<PhdTag>emptyList(),numberOfPositionsForEachPeak);
    }
    /**
     * {@code buildArtificalPhd} creates a {@link DefaultPhd}
@@ -152,7 +152,7 @@ public class ArtificialPhd implements Phd{
     */
     public ArtificialPhd(String id, NucleotideSequence basecalls,
             QualitySequence qualities,
-           Properties comments, List<PhdTag> tags,int numberOfPositionsForEachPeak){
+            Map<String,String> comments, List<PhdTag> tags,int numberOfPositionsForEachPeak){
        this(id,basecalls, qualities,comments, tags,numberOfPositionsForEachPeak,numberOfPositionsForEachPeak);
         
         
@@ -172,7 +172,7 @@ public class ArtificialPhd implements Phd{
      */
      public ArtificialPhd(String id, NucleotideSequence basecalls,
              QualitySequence qualities,
-            Properties comments, List<PhdTag> tags,int positionOfFirstPeak,int numberOfPositionsForEachPeak){
+            Map<String,String> comments, List<PhdTag> tags,int positionOfFirstPeak,int numberOfPositionsForEachPeak){
          this.id = id;
     	 this.basecalls = basecalls;
          this.qualities = qualities;
@@ -184,7 +184,7 @@ public class ArtificialPhd implements Phd{
          
      }
     @Override
-    public Properties getComments() {
+    public Map<String,String> getComments() {
         return comments;
     }
 

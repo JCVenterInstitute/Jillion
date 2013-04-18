@@ -23,7 +23,7 @@ package org.jcvi.jillion.assembly.clc.cas.consed;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Properties;
+import java.util.Map;
 
 import org.jcvi.jillion.assembly.ace.PhdInfo;
 import org.jcvi.jillion.assembly.ace.consed.ConsedUtil;
@@ -37,7 +37,7 @@ import org.jcvi.jillion.trace.sanger.phd.PhdUtil;
 class FastqConsedPhdAdaptedIterator implements StreamingIterator<PhdReadRecord>{
 
 	private final StreamingIterator<? extends FastqRecord> fastqIterator;
-	private final Properties requiredComments;
+	private final Map<String,String> requiredComments;
 	private final Date phdDate;
 	private final File fastqFile;
 	public FastqConsedPhdAdaptedIterator(StreamingIterator<? extends FastqRecord> fastqIterator,  File fastqFile,Date phdDate ){

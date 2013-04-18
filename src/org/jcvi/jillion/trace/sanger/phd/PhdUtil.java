@@ -20,8 +20,13 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.sanger.phd;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import org.jcvi.jillion.assembly.ace.AceFileUtil;
 
@@ -33,10 +38,20 @@ import org.jcvi.jillion.assembly.ace.AceFileUtil;
  */
 public final class PhdUtil {
 	
+	private static final DateFormat PHD_TAG_DATE_FORMATTER = new SimpleDateFormat("MM/dd/yy HH:mm:ss", Locale.US);
+	   
+	
 	private PhdUtil(){
 		//can not instantiate
 	}
     
+	public synchronized static Date parseReadTagDate(String dateString) throws ParseException{
+		return PHD_TAG_DATE_FORMATTER.parse(dateString);
+	}
+	
+	public synchronized static String formatReadTagDate(Date date){
+		return PHD_TAG_DATE_FORMATTER.format(date);
+	}
     /**
      * Phd records must include a date time stamp as a comment,
      * this method will create the correctly formatted Phd {@code TIME}
@@ -46,8 +61,8 @@ public final class PhdUtil {
      * @return a Properties object (not null) that contains
      * a single property, TIME.
      */
-    public static Properties createPhdTimeStampCommentFor(Date phdDate){
-        Properties comments = new Properties();
+    public static Map<String,String> createPhdTimeStampCommentFor(Date phdDate){
+    	Map<String,String> comments = new HashMap<String, String>();
         comments.put("TIME", AceFileUtil.formatPhdDate(phdDate));        
         return comments;
     }
@@ -61,8 +76,8 @@ public final class PhdUtil {
      * @return a Properties object (not null) that contains
      * a single property, TIME.
      */
-    public static Properties createPhdTimeStampAndChromatFileCommentsFor(Date phdDate, String filename){
-        Properties comments = new Properties();
+    public static Map<String,String> createPhdTimeStampAndChromatFileCommentsFor(Date phdDate, String filename){
+    	Map<String,String> comments = new HashMap<String, String>();
         comments.put("TIME", AceFileUtil.formatPhdDate(phdDate));    
         comments.put("CHROMAT_FILE", filename);  
         return comments;

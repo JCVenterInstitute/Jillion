@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
@@ -138,7 +137,7 @@ final class DefaultPhdFileDataStore{
         @Override
         protected boolean visitPhd(String id, NucleotideSequence bases,
                 QualitySequence qualities, PositionSequence positions,
-                Properties comments, List<PhdTag> tags) {
+                Map<String,String> comments, List<PhdTag> tags) {
         	
             map.put(id, new DefaultPhd(id,
                    bases,

@@ -23,7 +23,7 @@ package org.jcvi.jillion.trace.sanger.phd;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -65,7 +65,7 @@ public final class LargePhdIterator extends AbstractBlockingStreamingIterator<Ph
             @Override
 			protected boolean visitPhd(String id, NucleotideSequence bases,
 					QualitySequence qualities, PositionSequence positions,
-					Properties comments, List<PhdTag> tags) {
+					Map<String,String> comments, List<PhdTag> tags) {
             	 Phd phd = new DefaultPhd(id,
                  		bases,
                          qualities,

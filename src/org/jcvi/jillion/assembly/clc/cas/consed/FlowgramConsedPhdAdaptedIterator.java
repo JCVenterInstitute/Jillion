@@ -23,7 +23,7 @@ package org.jcvi.jillion.assembly.clc.cas.consed;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Properties;
+import java.util.Map;
 
 import org.jcvi.jillion.assembly.ace.PhdInfo;
 import org.jcvi.jillion.assembly.ace.consed.ConsedUtil;
@@ -35,7 +35,7 @@ import org.jcvi.jillion.trace.sff.SffFlowgram;
 
 class FlowgramConsedPhdAdaptedIterator implements StreamingIterator<PhdReadRecord>{
 	private final StreamingIterator<? extends SffFlowgram> flowgramIterator;
-	private final Properties requiredComments;
+	private final Map<String,String> requiredComments;
 	private final Date phdDate;
 	private final File sffFile;
 	public FlowgramConsedPhdAdaptedIterator(StreamingIterator<? extends SffFlowgram> flowgramIterator, File sffFile, Date phdDate ){

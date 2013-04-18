@@ -26,12 +26,12 @@
 package org.jcvi.jillion.trace.sanger.phd;
 
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import org.jcvi.jillion.trace.sanger.SangerTrace;
 
 public interface Phd extends SangerTrace {
 	String getId();
-    Properties getComments();
+    Map<String,String> getComments();
     List<PhdTag> getTags();
 }
