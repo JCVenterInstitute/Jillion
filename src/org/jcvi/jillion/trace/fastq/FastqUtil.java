@@ -38,12 +38,7 @@ import org.jcvi.jillion.core.util.MapValueComparator;
  *
  */
 public final class FastqUtil {
-	/**
-	 * {@value}
-	 * - Default number of reads to visit to determine the {@link FastqQualityCodec}
-	 * used in {@link #guessQualityCodecUsed(File, int)}.
-	 */
-    public static final int DEFAULT_NUMBER_OF_READS_TO_VISIT = 1000;
+
 
     /**
      * This is the {@link Pattern} to parse
@@ -74,9 +69,9 @@ public final class FastqUtil {
      * read getting inspected.  Since all the different quality encodings have
      * overlapping values the {@link FastqQualityCodec} used for the entire file
      * can not always be determined from just analyzing a few reads.
-     * Therefore, this method must
-     * parse hundreds of records in the fastq file in order to get
-     * large enough sampling size to confidently return a {@link FastqQualityCodec}.
+     * Therefore, this method might have to parse
+     * ALL records in the fastq file to guarantee that the
+     * correct {@link FastqQualityCodec} is returned.
      * @param fastqFile a fastq File, must exist and can not be null.
      * @return an instance of {@link FastqQualityCodec} which is the one
      * that is most likely able to decode the quality values for all the reads
@@ -90,7 +85,7 @@ public final class FastqUtil {
      * any records.
      */
     public static FastqQualityCodec guessQualityCodecUsed(File fastqFile) throws IOException{
-    	return guessQualityCodecUsed(fastqFile, DEFAULT_NUMBER_OF_READS_TO_VISIT);
+    	return guessQualityCodecUsed(fastqFile, Integer.MAX_VALUE);
     }
     
     /**
