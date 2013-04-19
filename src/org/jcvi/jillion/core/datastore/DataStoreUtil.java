@@ -482,11 +482,17 @@ public final class DataStoreUtil {
 	    }
 	    @Override
 	    public boolean contains(String id) throws DataStoreException {
+	    	if(id ==null){
+	    		throw new NullPointerException("id can not be null");
+	    	}
 	    	throwExceptionIfClosed();
 	        return map.containsKey(id);
 	    }
 	    @Override
 	    public T get(String id) throws DataStoreException {
+	    	if(id ==null){
+	    		throw new NullPointerException("id can not be null");
+	    	}
 	    	throwExceptionIfClosed();
 	        return map.get(id);
 	    }
@@ -565,6 +571,9 @@ public final class DataStoreUtil {
 
 		@Override
 		public T get(String id) throws DataStoreException {
+			if(id ==null){
+	    		throw new NullPointerException("id can not be null");
+	    	}
 			for(DataStore<T> delegate : delegates){
 				T ret= delegate.get(id);
 				if(ret !=null){

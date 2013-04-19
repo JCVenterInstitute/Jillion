@@ -165,6 +165,9 @@ public abstract class  AbstractDataStore<T> implements DataStore<T>{
      */
     @Override
     public final boolean contains(String id) throws DataStoreException {
+    	if(id ==null){
+    		throw new NullPointerException("id can not be null");
+    	}
         throwExceptionIfClosed();
         return containsImpl(id);
     }
@@ -174,6 +177,9 @@ public abstract class  AbstractDataStore<T> implements DataStore<T>{
      */
     @Override
     public final T get(String id) throws DataStoreException {
+    	if(id ==null){
+    		throw new NullPointerException("id can not be null");
+    	}
         throwExceptionIfClosed();
         return getImpl(id);
     }

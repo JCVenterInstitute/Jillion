@@ -83,22 +83,24 @@ public interface DataStore<T> extends Closeable{
     StreamingIterator<String> idIterator() throws DataStoreException;
     /**
      * Get the record in this {@link DataStore} with the given id.
-     * @param id the id of the object to fetch.
+     * @param id the id of the object to fetch; may not be null.
      * @return the object being fetched, will be null if
      * {@link #contains(String) contains(id)} is false.
      * @throws DataStoreException if there is a problem fetching the
      * data from this {@link DataStore}.
      * @throws DataStoreClosedException if this {@link DataStore} is closed.
+     * @throws NullPointerException if id is null.
      */
     T get(String id) throws DataStoreException;
     /**
      * Does this DataStore contain an object with the given id.
-     * @param id the id of the object to check for containment.
+     * @param id the id of the object to check for containment; may not be null.
      * @return {@code true} if an object with this id exists; {@code false}
      * otherwise.
      * @throws DataStoreException if there is a problem fetching the
      * data from this {@link DataStore}.
      * @throws DataStoreClosedException if this {@link DataStore} is closed.
+     * @throws NullPointerException if id is null.
      */
     boolean contains(String id) throws DataStoreException;
     /**
