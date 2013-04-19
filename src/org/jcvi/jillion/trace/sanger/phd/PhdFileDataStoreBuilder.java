@@ -47,11 +47,11 @@ public final class PhdFileDataStoreBuilder implements Builder<PhdDataStore>{
 		try{
 		switch(hint){
 			case OPTIMIZE_FAST_RANDOM_ACCESS : 
-				return DefaultPhdFileDataStore.create(phdFile, filter);
+				return DefaultPhdDataStore2.create(phdFile, filter);
 			case OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS:
-				return IndexedPhdFileDataStore.create(phdFile, filter);
+				return IndexedPhdDataStore2.create(phdFile, filter);
 			case ITERATION_ONLY:
-				return LargePhdDataStore.create(phdFile, filter);
+				return new LargePhdballDataStore2(phdFile, filter);
 			default: throw new IllegalStateException("unknown hint "+ hint);
 			}
 		}catch(IOException e){

@@ -11,7 +11,7 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.trace.sanger.PositionSequence;
 
-public class DefaultPhdDataStore2{
+final class DefaultPhdDataStore2{
 
 	
 
