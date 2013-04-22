@@ -24,6 +24,12 @@ import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 import org.jcvi.jillion.trace.sanger.phd.PhdBallVisitorCallback.PhdBallVisitorMemento;
 
+/**
+ * {@code PhdBallParser} can parse
+ * {@literal phd.ball} files and individual phd files.
+ * @author dkatzel
+ *
+ */
 public abstract class PhdBallParser {
 
 	 private static final String BEGIN_COMMENT = "BEGIN_COMMENT";
@@ -44,7 +50,12 @@ public abstract class PhdBallParser {
 
     private static final Pattern FILE_COMMENT_PATTERN = Pattern.compile("^#(.*)\\s*$");
 	
-	
+	/**
+	 * 
+	 * @param phdBall
+	 * @return
+	 * @throws FileNotFoundException
+	 */
 	public static PhdBallParser create(File phdBall) throws FileNotFoundException{
 		return new FileBasedPhdBallParser(phdBall);
 	}
@@ -52,17 +63,20 @@ public abstract class PhdBallParser {
 		return new InputStreamBasedPhdBallParser(phdBallStream);
 	}
 
+	private PhdBallParser(){
+		//can not instantiate outside of this .java file
+	}
 	
 	
-	public abstract void accept(PhdBallVisitor2 visitor) throws IOException;
+	public abstract void accept(PhdBallVisitor visitor) throws IOException;
 	
 	
-	public abstract void accept(PhdBallVisitor2 visitor, PhdBallVisitorMemento memento) throws IOException;
+	public abstract void accept(PhdBallVisitor visitor, PhdBallVisitorMemento memento) throws IOException;
 	
-	protected void accept(TextLineParser parser, PhdBallVisitor2 visitor) throws IOException{
+	protected void accept(TextLineParser parser, PhdBallVisitor visitor) throws IOException{
 		ParserState parserState = new ParserState();
 		boolean seenFileComment=false;
-		 PhdVisitor2 phdVisitor =null;
+		 PhdVisitor phdVisitor =null;
 		while(parser.hasNextLine() && parserState.keepParsing()){
 			
 			long currentOffset = parser.getPosition();
@@ -84,7 +98,7 @@ public abstract class PhdBallParser {
 				String optionalVersion = beginSequenceMatcher.group(2);
 				PhdBallVisitorCallback callback = createCallback(parserState,currentOffset);
 				if(optionalVersion ==null){
-					phdVisitor = visitor.visitPhd(callback, readId);
+					phdVisitor = visitor.visitPhd(callback, readId, null);
 				}else{
 					phdVisitor =visitor.visitPhd(callback, readId, Integer.parseInt(optionalVersion));
 				}
@@ -131,7 +145,7 @@ public abstract class PhdBallParser {
 	protected abstract  PhdBallVisitorCallback createCallback(ParserState parserState, long offset);
 
 	private void handleWholeReadTag(ParserState parserState,
-			TextLineParser parser, PhdVisitor2 visitor) throws IOException {
+			TextLineParser parser, PhdVisitor visitor) throws IOException {
 		final PhdWholeReadItemVisitor itemVisitor;
 		if(visitor ==null){
 			itemVisitor=null;
@@ -158,7 +172,7 @@ public abstract class PhdBallParser {
 
 
 	private void handleSequence(ParserState parserState, TextLineParser parser,
-			PhdVisitor2 visitor) throws IOException {
+			PhdVisitor visitor) throws IOException {
 		//format of each sequence is:
 		//BEGIN_COMMENT
 		//<comments>
@@ -193,7 +207,7 @@ public abstract class PhdBallParser {
 	}
 
 	private void parseTags(ParserState parserState, TextLineParser parser,
-			PhdVisitor2 visitor) throws IOException {
+			PhdVisitor visitor) throws IOException {
 		while(parser.hasNextLine() && parserState.keepParsing()){
 			String line = parser.nextLine();
 			if(line.startsWith(END_SEQUENCE)){
@@ -211,7 +225,7 @@ public abstract class PhdBallParser {
 
 
 	private void parseSingleTag(ParserState parserState, TextLineParser parser,
-			PhdReadTagVisitor2 visitor) throws IOException {
+			PhdReadTagVisitor visitor) throws IOException {
 		boolean inTag=true;
 		do{
 			String line = parser.nextLine();
@@ -277,7 +291,7 @@ public abstract class PhdBallParser {
 		return comment.toString();
 	}
 
-	private void parseReadData(ParserState parserState, TextLineParser parser, PhdVisitor2 visitor) throws IOException {
+	private void parseReadData(ParserState parserState, TextLineParser parser, PhdVisitor visitor) throws IOException {
 		boolean inDnaBlock =false;
 		while(!inDnaBlock && parser.hasNextLine()){
 			String line = parser.nextLine();
@@ -291,8 +305,7 @@ public abstract class PhdBallParser {
 				Nucleotide base = Nucleotide.parse(matcher.group(1).charAt(0));
 				PhredQuality qual = PhredQuality.valueOf(Integer.parseInt(matcher.group(2)));
 				if(matcher.group(3)==null){
-					//no trace position
-					visitor.visitBasecall(base, qual);
+					visitor.visitBasecall(base, qual, null);
 				}else{
 					visitor.visitBasecall(base, qual, Integer.parseInt(matcher.group(3)));
 				}
@@ -303,7 +316,7 @@ public abstract class PhdBallParser {
 	}
 
 
-	private void parseCommentBlock(TextLineParser parser, PhdVisitor2 visitor) throws IOException {
+	private void parseCommentBlock(TextLineParser parser, PhdVisitor visitor) throws IOException {
 		boolean inCommentBlock =false;
 		while(!inCommentBlock && parser.hasNextLine()){
 			String line = parser.nextLine();
@@ -311,7 +324,7 @@ public abstract class PhdBallParser {
 		}
 		Map<String, String> comments = parseComments(parser);
 		
-		visitor.visitComment(comments);
+		visitor.visitComments(comments);
 	}
 
 
@@ -428,7 +441,7 @@ public abstract class PhdBallParser {
 			this.phdBall = phdBall;
 		}
 		
-		public void accept(PhdBallVisitor2 visitor) throws IOException{
+		public void accept(PhdBallVisitor visitor) throws IOException{
 			if(visitor==null){
 				throw new NullPointerException("visitor can not be null");
 			}
@@ -442,7 +455,7 @@ public abstract class PhdBallParser {
 		}
 		
 		
-		public void accept(PhdBallVisitor2 visitor, PhdBallVisitorMemento memento) throws IOException{
+		public void accept(PhdBallVisitor visitor, PhdBallVisitorMemento memento) throws IOException{
 			if(visitor ==null){
 	            throw new NullPointerException("visitor can not be null");
 	        }
@@ -485,7 +498,7 @@ public abstract class PhdBallParser {
 		}
 
 		@Override
-		public void accept(PhdBallVisitor2 visitor) throws IOException {
+		public void accept(PhdBallVisitor visitor) throws IOException {
 			if(visitor==null){
 				throw new NullPointerException("visitor can not be null");
 			}
@@ -503,7 +516,7 @@ public abstract class PhdBallParser {
 		}
 
 		@Override
-		public void accept(PhdBallVisitor2 visitor,
+		public void accept(PhdBallVisitor visitor,
 				PhdBallVisitorMemento memento) throws IOException {
 			throw new UnsupportedOperationException("mementos not supported");
 			

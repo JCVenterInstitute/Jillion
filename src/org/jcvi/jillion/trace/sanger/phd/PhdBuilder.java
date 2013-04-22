@@ -58,10 +58,8 @@ public final class PhdBuilder implements Builder<Phd>{
 	}
 
 	public PhdBuilder peaks(PositionSequence peaks){
-		if(peaks!=null){
-			if(peaks.getLength() !=qualities.getLength()){
-				throw new IllegalStateException("peaks and qualities have unequal lengths");
-			}
+		if(peaks!=null && peaks.getLength() !=qualities.getLength()){
+			throw new IllegalStateException("peaks and qualities have unequal lengths");
 		}
 		this.peaks = peaks;
 		

@@ -32,7 +32,7 @@ import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterato
 import org.jcvi.jillion.trace.sanger.PositionSequence;
 
 /**
- * {@code PhdBallIterator2} is a {@link StreamingIterator}
+ * {@code PhdBallIterator} is a {@link StreamingIterator}
  * implementation that iterates over a phd ball (potentially large)
  * file while parsing it.  This should be the fastest and most
  * memory efficient way to iterate over a phd ball file that is not
@@ -40,17 +40,17 @@ import org.jcvi.jillion.trace.sanger.PositionSequence;
  * @author dkatzel
  *
  */
-final class PhdBallIterator2 extends AbstractBlockingStreamingIterator<Phd>{
+final class PhdBallIterator extends AbstractBlockingStreamingIterator<Phd>{
     private final File phdFile;
     private final DataStoreFilter filter;
     
     
-    public static PhdBallIterator2 createNewIterator(File phdFile, DataStoreFilter filter){
-    	PhdBallIterator2 iter= new PhdBallIterator2(phdFile, filter);
+    public static PhdBallIterator createNewIterator(File phdFile, DataStoreFilter filter){
+    	PhdBallIterator iter= new PhdBallIterator(phdFile, filter);
         iter.start();
         return iter;
     }
-    private PhdBallIterator2(File phdFile, DataStoreFilter filter) {
+    private PhdBallIterator(File phdFile, DataStoreFilter filter) {
         this.phdFile = phdFile;
         this.filter = filter;
     }
@@ -61,19 +61,15 @@ final class PhdBallIterator2 extends AbstractBlockingStreamingIterator<Phd>{
     */
     @Override
     protected void backgroundThreadRunMethod() {
-        PhdBallVisitor2 visitor = new AbstractPhdBallVisitor2() {
+        PhdBallVisitor visitor = new AbstractPhdBallVisitor() {
             
-           @Override
-			public PhdVisitor2 visitPhd(PhdBallVisitorCallback callback,
-					String id) {
-				return handlePhd(callback, id);
-			}
-
-			private PhdVisitor2 handlePhd(PhdBallVisitorCallback callback, String id) {
-				if(!PhdBallIterator2.this.filter.accept(id)){
+        
+        	@Override
+			public PhdVisitor visitPhd(PhdBallVisitorCallback callback, String id, Integer version) {
+				if(!PhdBallIterator.this.filter.accept(id)){
 					return null;
 				}
-				return new AbstractPhdVisitor2(id) {
+				return new AbstractPhdVisitor(id, version) {
 					
 					@Override
 					protected void visitPhd(String id, Integer version,
@@ -94,11 +90,7 @@ final class PhdBallIterator2 extends AbstractBlockingStreamingIterator<Phd>{
 				};
 			}
 
-			@Override
-			public PhdVisitor2 visitPhd(PhdBallVisitorCallback callback,
-					String id, int version) {
-				return handlePhd(callback, id);
-			}
+			
         };
         
         try {

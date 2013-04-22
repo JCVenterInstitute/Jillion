@@ -9,6 +9,6 @@ public class TestDefaultPhdDataStore2 extends AbstractTestPhdDataStore{
 
     @Override
     protected PhdDataStore createPhdDataStore(File phdfile) throws IOException{
-        return DefaultPhdDataStore2.create(phdfile, DataStoreFilters.alwaysAccept());
+        return DefaultPhdDataStore.create(phdfile, DataStoreFilters.alwaysAccept());
     }
 }

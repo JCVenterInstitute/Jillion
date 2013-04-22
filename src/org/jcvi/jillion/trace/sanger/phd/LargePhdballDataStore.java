@@ -11,7 +11,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 
-final class LargePhdballDataStore2 implements PhdDataStore{
+final class LargePhdballDataStore implements PhdDataStore{
 
 	
 
@@ -21,7 +21,7 @@ final class LargePhdballDataStore2 implements PhdDataStore{
 	
 	private Long numberOfRecords =null;
 	
-	public LargePhdballDataStore2(File phdFile, DataStoreFilter filter) throws FileNotFoundException {
+	public LargePhdballDataStore(File phdFile, DataStoreFilter filter) throws FileNotFoundException {
 		if(!phdFile.exists()){
 			throw new FileNotFoundException(phdFile.getAbsolutePath());
 		}
@@ -36,7 +36,7 @@ final class LargePhdballDataStore2 implements PhdDataStore{
 	public StreamingIterator<String> idIterator() throws DataStoreException {
 		verifyNotClosed();
 		return DataStoreStreamingIterator.create(this,
-				PhdBallIdIterator2.createNewIterator(phdFile, filter));
+				PhdBallIdIterator.createNewIterator(phdFile, filter));
 	}
 
 	@Override
@@ -109,7 +109,7 @@ final class LargePhdballDataStore2 implements PhdDataStore{
 	public StreamingIterator<Phd> iterator() throws DataStoreException {
 		verifyNotClosed();
 		return DataStoreStreamingIterator.create(this,
-				PhdBallIterator2.createNewIterator(phdFile, filter));
+				PhdBallIterator.createNewIterator(phdFile, filter));
 	}
 
 	@Override

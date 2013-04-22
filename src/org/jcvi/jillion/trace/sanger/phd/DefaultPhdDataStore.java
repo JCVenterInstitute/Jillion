@@ -13,7 +13,7 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.trace.sanger.PositionSequence;
 
-final class DefaultPhdDataStore2{
+final class DefaultPhdDataStore{
 
 	
 
@@ -32,7 +32,7 @@ final class DefaultPhdDataStore2{
 		return visitor.build();
 	}
 	
-	public static class DefaultPhdDataStoreBuilderVisitor implements PhdBallVisitor2 {
+	public static class DefaultPhdDataStoreBuilderVisitor implements PhdBallVisitor {
 		
 		private final DataStoreFilter filter;
 		
@@ -49,21 +49,16 @@ final class DefaultPhdDataStore2{
 		}
 		
 		@Override
-		public PhdVisitor2 visitPhd(PhdBallVisitorCallback callback, String id) {
-			return handlePhd(id);
+		public PhdVisitor visitPhd(PhdBallVisitorCallback callback, String id,
+				Integer version) {
+			return handlePhd(id, version);
 		}
 		
-		@Override
-		public PhdVisitor2 visitPhd(PhdBallVisitorCallback callback, String id,
-				int version) {
-			return handlePhd(id);
-		}
-		
-		private PhdVisitor2 handlePhd(String id){
+		private PhdVisitor handlePhd(String id, Integer version){
 			if(!filter.accept(id)){
 				return null;
 			}
-			return new AbstractPhdVisitor2(id) {
+			return new AbstractPhdVisitor(id, version) {
 				
 				@Override
 				protected void visitPhd(String id, Integer version,
@@ -74,12 +69,6 @@ final class DefaultPhdDataStore2{
 					
 				}
 			};
-		}
-		
-		@Override
-		public PhdWholeReadItemVisitor visitReadTag() {
-			// TODO Auto-generated method stub
-			return null;
 		}
 		
 		@Override

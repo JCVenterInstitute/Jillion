@@ -9,7 +9,7 @@ public class TestLargePhdDataStore2 extends AbstractTestPhdDataStore{
 
     @Override
     protected PhdDataStore createPhdDataStore(File phdfile) throws IOException{
-        return new LargePhdballDataStore2(phdfile, DataStoreFilters.alwaysAccept());
+        return new LargePhdballDataStore(phdfile, DataStoreFilters.alwaysAccept());
     }
 
 }

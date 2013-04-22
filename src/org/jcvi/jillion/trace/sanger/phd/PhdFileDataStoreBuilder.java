@@ -60,16 +60,16 @@ public final class PhdFileDataStoreBuilder implements Builder<PhdDataStore>{
 		try{
 			if(inputStream!=null){
 				//need to store everything in memory?
-				return DefaultPhdDataStore2.create(inputStream, filter);
+				return DefaultPhdDataStore.create(inputStream, filter);
 			}
 			
 			switch(hint){
 				case OPTIMIZE_FAST_RANDOM_ACCESS : 
-					return DefaultPhdDataStore2.create(phdFile, filter);
+					return DefaultPhdDataStore.create(phdFile, filter);
 				case OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS:
-					return IndexedPhdDataStore2.create(phdFile, filter);
+					return IndexedPhdDataStore.create(phdFile, filter);
 				case ITERATION_ONLY:
-					return new LargePhdballDataStore2(phdFile, filter);
+					return new LargePhdballDataStore(phdFile, filter);
 				default: throw new IllegalStateException("unknown hint "+ hint);
 			}
 		}catch(IOException e){

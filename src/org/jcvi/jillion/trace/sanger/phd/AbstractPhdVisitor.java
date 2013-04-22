@@ -15,8 +15,20 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.trace.sanger.PositionSequence;
 import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;
-
-public abstract class AbstractPhdVisitor2 implements PhdVisitor2{
+/**
+ * {@code AbstractPhdVisitor} is an abstract
+ * implementation of {@link PhdVisitor}
+ * that collects all the information about a single
+ * phd record.
+ * Subclasses are required to implement the abstract
+ * method {@link #visitPhd(String, Integer, NucleotideSequence, QualitySequence, PositionSequence, Map, List, List)}
+ * which will be called when all the information has been collected
+ * (when {@link #visitEnd()} is called).
+ * 
+ * @author dkatzel
+ *
+ */
+public abstract class AbstractPhdVisitor implements PhdVisitor{
 
 	private final String id;
 	private final Integer version;
@@ -26,59 +38,43 @@ public abstract class AbstractPhdVisitor2 implements PhdVisitor2{
 	private final NucleotideSequenceBuilder sequenceBuilder = new NucleotideSequenceBuilder(1024);
 	private final QualitySequenceBuilder qualityBuilder = new QualitySequenceBuilder(1024);
 	private final PositionSequenceBuilder positionBuilder = new PositionSequenceBuilder(1024);
-	private boolean hasPositions=true;
 	
 	private final List<PhdWholeReadItem> wholeReadItems = new ArrayList<PhdWholeReadItem>();
 	
 	private final List<PhdReadTag> readTags = new ArrayList<PhdReadTag>();
 	
-	public AbstractPhdVisitor2(String id) {
+	
+	
+	public AbstractPhdVisitor(String id, Integer version){
 		if(id ==null){
 			throw new NullPointerException("id can not be null");
 		}
-		this.id = id;
-		version = null;
-	}
-	
-	public AbstractPhdVisitor2(String id, int version){
-		if(id ==null){
-			throw new NullPointerException("id can not be null");
+		if(version !=null && version.intValue() < 1){
+			throw new IllegalArgumentException("version must be >=1 : " + version);
 		}
 		this.id = id;
 		this.version = version;
 	}
 
 	@Override
-	public void visitComment(Map<String, String> comments) {
+	public final void visitComments(Map<String, String> comments) {
 		this.comments.putAll(comments);		
 	}
 
+	
+
 	@Override
-	public void visitBasecall(Nucleotide base, PhredQuality quality) {
+	public final void visitBasecall(Nucleotide base, PhredQuality quality,
+			Integer tracePosition) {
 		sequenceBuilder.append(base);
 		qualityBuilder.append(quality);
-		hasPositions=false;
+		if(tracePosition !=null){
+			positionBuilder.append(tracePosition.intValue());
+		}
 	}
 
 	@Override
-	public void visitBasecall(Nucleotide base, PhredQuality quality,
-			int tracePosition) {
-		if(!hasPositions){
-			throw new IllegalStateException("this phd has some basecalls with and without positions");
-		}
-		sequenceBuilder.append(base);
-		qualityBuilder.append(quality);
-		positionBuilder.append(tracePosition);		
-	}
-	/**
-	 * Ignores readTags, override this
-	 * method if you want to deal with
-	 * readTags;
-	 * @return null.
-	 */
-	@Override
-	public PhdReadTagVisitor2 visitReadTag() {
-		//ignores read tag 
+	public final PhdReadTagVisitor visitReadTag() {
 		return new AbstractPhdReadTagVisitor(){
 
 			@Override
@@ -93,7 +89,7 @@ public abstract class AbstractPhdVisitor2 implements PhdVisitor2{
 	}
 
 	@Override
-	public PhdWholeReadItemVisitor visitWholeReadItem() {
+	public final PhdWholeReadItemVisitor visitWholeReadItem() {
 		return new PhdWholeReadItemVisitor() {
 			List<String> lines = new ArrayList<String>();
 			@Override
@@ -115,7 +111,10 @@ public abstract class AbstractPhdVisitor2 implements PhdVisitor2{
 	}
 
 	@Override
-	public void visitEnd() {
+	public final void visitEnd() {
+		if(positionBuilder.getLength()>0 && positionBuilder.getLength() != sequenceBuilder.getLength()){
+			throw new IllegalStateException("not all basecalls have positions set");
+		}
 		visitPhd(id, version, 
 				sequenceBuilder.build(), qualityBuilder.build(), positionBuilder==null?null : positionBuilder.build(),
 				comments, wholeReadItems,readTags);
@@ -128,6 +127,11 @@ public abstract class AbstractPhdVisitor2 implements PhdVisitor2{
 			List<PhdWholeReadItem> wholeReadItems,
 			List<PhdReadTag> readTags);
 	
+	/**
+	 * Ignored by default, please
+	 * override to get halted notification.
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void halted() {
 		//no-op		

@@ -9,7 +9,7 @@ public class TestIndexedPhdDataStore2 extends AbstractTestPhdDataStore{
 
     @Override
     protected PhdDataStore createPhdDataStore(File phdfile) throws IOException{
-        return IndexedPhdDataStore2.create(phdfile, DataStoreFilters.alwaysAccept());
+        return IndexedPhdDataStore.create(phdfile, DataStoreFilters.alwaysAccept());
     }
 
 }
