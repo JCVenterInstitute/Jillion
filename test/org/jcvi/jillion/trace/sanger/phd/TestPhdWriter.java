@@ -59,21 +59,13 @@ public class TestPhdWriter extends AbstractTestPhd{
         assertEquals(expected.get(id),visitor.phd);
     }
     
-    private static class SinglePhdVisitor extends AbstractPhdBallVisitor2{
+    private static class SinglePhdVisitor extends AbstractPhdBallVisitor{
     	private Phd phd;
-		@Override
-		public PhdVisitor2 visitPhd(PhdBallVisitorCallback callback, String id) {
-			return handlePhd(id);
-		}
 
 		@Override
-		public PhdVisitor2 visitPhd(PhdBallVisitorCallback callback, String id,
-				int version) {
-			return handlePhd(id);
-		}
-		
-		private PhdVisitor2 handlePhd(String id){
-			return new AbstractPhdVisitor2(id) {
+		public PhdVisitor visitPhd(PhdBallVisitorCallback callback, String id,
+				Integer version) {
+			return new AbstractPhdVisitor(id, version) {
 				
 				@Override
 				protected void visitPhd(String id, Integer version,
@@ -84,8 +76,8 @@ public class TestPhdWriter extends AbstractTestPhd{
 					
 				}
 			};
-			
 		}
+		
     	
     }
 }

@@ -19,7 +19,7 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.trace.sanger.PositionSequence;
 import org.jcvi.jillion.trace.sanger.phd.PhdBallVisitorCallback.PhdBallVisitorMemento;
 
-final class IndexedPhdDataStore2 implements PhdDataStore{
+final class IndexedPhdDataStore implements PhdDataStore{
 
 	
 
@@ -39,7 +39,7 @@ final class IndexedPhdDataStore2 implements PhdDataStore{
 		return visitor.build();
 	}
 	
-	private IndexedPhdDataStore2(PhdBallParser parser,
+	private IndexedPhdDataStore(PhdBallParser parser,
 			File phdFile,
 			Map<String, PhdBallVisitorMemento> mementos,
 			DataStoreFilter filter) {
@@ -100,7 +100,7 @@ final class IndexedPhdDataStore2 implements PhdDataStore{
 		//instead of using out get(id) which requires a parse and seek
 		//for each record
 		return DataStoreStreamingIterator.create(this,
-				PhdBallIterator2.createNewIterator(phdFile, filter));
+				PhdBallIterator.createNewIterator(phdFile, filter));
 	}
 
 	@Override
@@ -109,7 +109,7 @@ final class IndexedPhdDataStore2 implements PhdDataStore{
 	}
 	
 	
-	private static final class BuilderVisitor implements PhdBallVisitor2{
+	private static final class BuilderVisitor implements PhdBallVisitor{
 		private static final int INITIAL_MAP_SIZE = MapUtil.computeMinHashMapSizeWithoutRehashing(8192);
 		
 		private final Map<String, PhdBallVisitorMemento> mementos = new LinkedHashMap<String, PhdBallVisitorCallback.PhdBallVisitorMemento>(INITIAL_MAP_SIZE);
@@ -133,28 +133,15 @@ final class IndexedPhdDataStore2 implements PhdDataStore{
 		}
 
 		@Override
-		public PhdVisitor2 visitPhd(PhdBallVisitorCallback callback, String id) {
-			return handlePhd(callback, id);
-		}
-
-		@Override
-		public PhdVisitor2 visitPhd(PhdBallVisitorCallback callback, String id,
-				int version) {
-			return handlePhd(callback, id);
-		}
-		
-		private PhdVisitor2 handlePhd(PhdBallVisitorCallback callback, String id){
+		public PhdVisitor visitPhd(PhdBallVisitorCallback callback, String id,
+				Integer version) {
 			if(filter.accept(id)){
 				mementos.put(id, callback.createMemento());
 			}
 			return null;
 		}
+		
 
-		@Override
-		public PhdWholeReadItemVisitor visitReadTag() {
-			//always ignore
-			return null;
-		}
 
 		@Override
 		public void visitEnd() {
@@ -171,12 +158,12 @@ final class IndexedPhdDataStore2 implements PhdDataStore{
 			if(!visitedEntireFile){
 				throw new IllegalStateException("did not visit entire file");
 			}
-			return new IndexedPhdDataStore2(parser,phdBall, mementos, filter);
+			return new IndexedPhdDataStore(parser,phdBall, mementos, filter);
 		}
 		
 	}
 	
-	public static class SinglePhdVisitor extends AbstractPhdBallVisitor2{
+	public static class SinglePhdVisitor extends AbstractPhdBallVisitor{
 
 		private Phd phd;
 		private final String idWeWant;
@@ -186,25 +173,17 @@ final class IndexedPhdDataStore2 implements PhdDataStore{
 			this.idWeWant = idWeWant;
 		}
 
-		@Override
-		public PhdVisitor2 visitPhd(PhdBallVisitorCallback callback, String id) {
-			return handlePhd(callback, id);
-		}
 
 		@Override
-		public PhdVisitor2 visitPhd(PhdBallVisitorCallback callback, String id,
-				int version) {
-			return handlePhd(callback, id);
-		}
-		
-		private PhdVisitor2 handlePhd(final PhdBallVisitorCallback callback, String id){
+		public PhdVisitor visitPhd(final PhdBallVisitorCallback callback, String id,
+				Integer version) {
 			if(phd !=null){
 				throw new IllegalStateException("should only see one phd");
 			}
 			if(!idWeWant.equals(id)){
 				throw new IllegalStateException("did not visit correct id: expected "+ idWeWant + " but was "+ id);
 			}
-			return new AbstractPhdVisitor2(id) {
+			return new AbstractPhdVisitor(id, version) {
 				
 				@Override
 				protected void visitPhd(String id, Integer version,
@@ -216,6 +195,7 @@ final class IndexedPhdDataStore2 implements PhdDataStore{
 				}
 			};
 		}
+		
 
 	}
 

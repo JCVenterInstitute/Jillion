@@ -29,10 +29,43 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.jillion.trace.sanger.SangerTrace;
-
+/**
+ * {@code Phd} is an object representation
+ * of a single read from a phd file or a phd.ball file.
+ * @author dkatzel
+ *
+ */
 public interface Phd extends SangerTrace {
-	String getId();
+
+	/**
+	 * Get the optional comments associated
+	 * with this phd.
+	 * @return a {@link Map} where
+	 * the keys and values are both 
+	 * Strings; if this phd does not
+	 * contain any comments, then
+	 * this method returns an empty map.
+	 * Will never return null.
+	 */
     Map<String,String> getComments();
+    /**
+	 * Get the optional whole read items associated
+	 * with this phd that are contained in the phd file.
+	 * @return a {@link List} of {@link PhdWholeReadItem}s
+	 * if this phd does not
+	 * contain any whole read items, then
+	 * this method returns an empty list.
+	 * Will never return null.
+	 */
     List<PhdWholeReadItem> getWholeReadItems();
+    /**
+   	 * Get the optional whole read tags associated
+   	 * with this phd that are contained in the phd file.
+   	 * @return a {@link List} of {@link PhdReadTag}s
+   	 * if this phd does not
+   	 * contain any whole read items, then
+   	 * this method returns an empty list.
+   	 * Will never return null.
+   	 */
     List<PhdReadTag> getReadTags();
 }
