@@ -33,7 +33,7 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.trace.sanger.PositionSequence;
 
-public class DefaultPhd implements Phd {
+final class DefaultPhd implements Phd {
 
     private final String id;
     private final NucleotideSequence basecalls;
@@ -103,7 +103,7 @@ public class DefaultPhd implements Phd {
                 + basecalls.hashCode();
         result = prime * result
                 + comments.hashCode();
-        result = prime * result + peaks.hashCode();
+        result = prime * result + (peaks==null? 0: peaks.hashCode());
         result = prime * result
                 + qualities.hashCode();
         return result;
@@ -130,7 +130,11 @@ public class DefaultPhd implements Phd {
         if (!comments.equals(other.getComments())){
             return false;
         }
-        if (!peaks.equals(other.getPositionSequence())){
+        if(peaks==null){
+        	if(other.getPositionSequence() !=null){
+        		return false;
+        	}
+        }else if (!peaks.equals(other.getPositionSequence())){
             return false;
         }
         if (!qualities.equals(other.getQualitySequence())){
@@ -146,6 +150,9 @@ public class DefaultPhd implements Phd {
 
     @Override
     public int getNumberOfTracePositions() {
+    	if(peaks==null){
+    		return 0;
+    	}
     	int length = (int)peaks.getLength();
     	return peaks.get(length-1).getValue();        
     }

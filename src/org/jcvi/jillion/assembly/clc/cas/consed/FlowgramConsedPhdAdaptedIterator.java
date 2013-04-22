@@ -28,8 +28,8 @@ import java.util.Map;
 import org.jcvi.jillion.assembly.ace.PhdInfo;
 import org.jcvi.jillion.assembly.ace.consed.ConsedUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.jillion.trace.sanger.phd.Phd;
+import org.jcvi.jillion.trace.sanger.phd.PhdBuilder;
 import org.jcvi.jillion.trace.sanger.phd.PhdUtil;
 import org.jcvi.jillion.trace.sff.SffFlowgram;
 
@@ -53,11 +53,10 @@ class FlowgramConsedPhdAdaptedIterator implements StreamingIterator<PhdReadRecor
 	public PhdReadRecord next() {
 		SffFlowgram nextFlowgram = flowgramIterator.next();
 		String id = nextFlowgram.getId();
-		Phd phd= ArtificialPhd.createNewbler454Phd(
-				id, 
-				nextFlowgram.getNucleotideSequence(), 
-				nextFlowgram.getQualitySequence(),
-				requiredComments);
+		Phd phd= new PhdBuilder(id, nextFlowgram.getNucleotideSequence(), nextFlowgram.getQualitySequence())
+						.comments(requiredComments)
+						.fakePeaks()
+						.build();
 		
 		PhdInfo phdInfo = ConsedUtil.generateDefaultPhdInfoFor(sffFile, id, phdDate);
 		return new PhdReadRecord(phd,phdInfo);

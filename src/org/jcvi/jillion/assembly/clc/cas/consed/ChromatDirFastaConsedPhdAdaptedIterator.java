@@ -30,8 +30,8 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
 import org.jcvi.jillion.trace.sanger.chromat.Chromatogram;
 import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogramBuilder;
-import org.jcvi.jillion.trace.sanger.phd.DefaultPhd;
 import org.jcvi.jillion.trace.sanger.phd.Phd;
+import org.jcvi.jillion.trace.sanger.phd.PhdBuilder;
 
 /**
  * @author dkatzel
@@ -106,7 +106,12 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends QualFastaConsedPhdA
     protected Phd createPhd( Map<String,String> requiredComments, NucleotideSequenceFastaRecord fasta,
             Chromatogram chromo) {
         final String id = fasta.getId();
-        return new DefaultPhd(id, chromo.getNucleotideSequence(), chromo.getQualitySequence(), chromo.getPositionSequence(), requiredComments);
+       
+        return new PhdBuilder(id, chromo.getNucleotideSequence(), chromo.getQualitySequence())
+        						.peaks(chromo.getPositionSequence())
+        						.comments(requiredComments)
+        						.build();
+    
     }
 
 

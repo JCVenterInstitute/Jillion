@@ -11,18 +11,17 @@ import org.jcvi.jillion.assembly.ace.PhdInfo;
 import org.jcvi.jillion.assembly.ace.consed.ConsedUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.jillion.trace.sanger.phd.Phd;
+import org.jcvi.jillion.trace.sanger.phd.PhdBuilder;
 import org.jcvi.jillion.trace.sanger.phd.PhdUtil;
 
 public class AbstractTestPhdAdaptedIterator {
 
 	protected final PhdReadRecord createExpectedPhdReadRecord(File traceFile,String id, NucleotideSequence basecalls, QualitySequence quals, Date phdDate){
-		Phd phd=  ArtificialPhd.createNewbler454Phd(
-				id, 
-				basecalls, 
-				quals,
-				PhdUtil.createPhdTimeStampCommentFor(phdDate));
+		Phd phd=  new PhdBuilder(id, basecalls, quals)
+					.comments(PhdUtil.createPhdTimeStampCommentFor(phdDate))
+					.fakePeaks()
+					.build();
 		PhdInfo info = ConsedUtil.generateDefaultPhdInfoFor(traceFile, id, phdDate);
 		
 		return new PhdReadRecord(phd, info);

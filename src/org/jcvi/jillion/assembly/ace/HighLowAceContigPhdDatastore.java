@@ -38,8 +38,8 @@ import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.jillion.trace.sanger.phd.Phd;
+import org.jcvi.jillion.trace.sanger.phd.PhdBuilder;
 import org.jcvi.jillion.trace.sanger.phd.PhdDataStore;
 
 /**
@@ -301,9 +301,11 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
 					sequenceBuilder.reverseComplement();
 					highLowQualities.reverse();
 				}
-				 Phd phd = new ArtificialPhd(readId, 
+				 Phd phd = new PhdBuilder(readId, 
 						 sequenceBuilder.build(),
-						 highLowQualities.build(),19);
+						 highLowQualities.build())
+				 				.fakePeaks()
+				 				.build();
                  phds.put(readId,phd);
 			}
 		}

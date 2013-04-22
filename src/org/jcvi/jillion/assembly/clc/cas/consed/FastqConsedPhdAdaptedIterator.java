@@ -29,8 +29,8 @@ import org.jcvi.jillion.assembly.ace.PhdInfo;
 import org.jcvi.jillion.assembly.ace.consed.ConsedUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
-import org.jcvi.jillion.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.jillion.trace.sanger.phd.Phd;
+import org.jcvi.jillion.trace.sanger.phd.PhdBuilder;
 import org.jcvi.jillion.trace.sanger.phd.PhdUtil;
 
 
@@ -55,11 +55,10 @@ class FastqConsedPhdAdaptedIterator implements StreamingIterator<PhdReadRecord>{
 	public PhdReadRecord next() {
 		FastqRecord nextFastq = fastqIterator.next();
 		String id = nextFastq.getId();
-		Phd phd = ArtificialPhd.createNewbler454Phd(
-				id, 
-				nextFastq.getNucleotideSequence(), 
-				nextFastq.getQualitySequence(),
-				requiredComments);
+		Phd phd = new PhdBuilder(id, nextFastq.getNucleotideSequence(),nextFastq.getQualitySequence())
+							.comments(requiredComments)
+							.fakePeaks()
+							.build();
 		
 		PhdInfo info = ConsedUtil.generateDefaultPhdInfoFor(fastqFile, id, phdDate);
 		return new PhdReadRecord(phd, info);

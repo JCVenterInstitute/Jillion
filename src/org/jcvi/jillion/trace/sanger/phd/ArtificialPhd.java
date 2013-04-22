@@ -34,7 +34,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.trace.sanger.PositionSequence;
 import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;
 
-public class ArtificialPhd implements Phd{
+final class ArtificialPhd implements Phd{
     /**
      * The Position of the first peak in a Newbler created
      * fake 454 phd record.
