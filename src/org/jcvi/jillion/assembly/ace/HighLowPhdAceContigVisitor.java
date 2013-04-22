@@ -30,8 +30,8 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.MapUtil;
-import org.jcvi.jillion.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.jillion.trace.sanger.phd.Phd;
+import org.jcvi.jillion.trace.sanger.phd.PhdBuilder;
 
 public class HighLowPhdAceContigVisitor extends AbstractAceContigVisitor{
 
@@ -128,9 +128,11 @@ public class HighLowPhdAceContigVisitor extends AbstractAceContigVisitor{
 				sequenceBuilder.reverseComplement();
 				highLowQualities.reverse();
 			}
-			 Phd phd = new ArtificialPhd(readId, 
+			 Phd phd = new PhdBuilder(readId, 
 					 sequenceBuilder.build(),
-					 highLowQualities.build(),19);
+					 highLowQualities.build())
+			 			.fakePeaks()
+			 			.build();
              phds.put(readId,phd);
 		}
 	}

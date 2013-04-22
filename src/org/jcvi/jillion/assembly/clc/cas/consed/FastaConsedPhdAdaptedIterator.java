@@ -35,8 +35,8 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.jillion.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.jillion.trace.sanger.phd.Phd;
+import org.jcvi.jillion.trace.sanger.phd.PhdBuilder;
 import org.jcvi.jillion.trace.sanger.phd.PhdUtil;
 /**
  * {@code FastaConsedPhdAdaptedIterator} is a PhdReadRecord generator
@@ -107,11 +107,10 @@ public class FastaConsedPhdAdaptedIterator implements StreamingIterator<PhdReadR
     protected Phd createPhdRecordFor(NucleotideSequenceFastaRecord nextFasta,  Map<String,String> requiredComments ){
 	    String id = nextFasta.getId();
         QualitySequence qualities = getQualitiesFor(nextFasta);
-        return ArtificialPhd.createNewbler454Phd(
-                id, 
-                nextFasta.getSequence(), 
-                qualities,
-                requiredComments);
+        return new PhdBuilder(id, nextFasta.getSequence(), qualities)
+        				.comments(requiredComments)
+        				.fakePeaks()
+        				.build();
 	}
 	
     protected QualitySequence getQualitiesFor(

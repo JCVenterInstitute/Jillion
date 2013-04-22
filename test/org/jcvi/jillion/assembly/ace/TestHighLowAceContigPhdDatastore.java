@@ -26,14 +26,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.jcvi.jillion.assembly.ace.HighLowAceContigPhdDatastore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.jcvi.jillion.trace.sanger.phd.ArtificialPhd;
 import org.jcvi.jillion.trace.sanger.phd.Phd;
+import org.jcvi.jillion.trace.sanger.phd.PhdBuilder;
 import org.jcvi.jillion.trace.sanger.phd.PhdDataStore;
 import org.junit.After;
 import org.junit.Before;
@@ -83,7 +82,7 @@ public class TestHighLowAceContigPhdDatastore {
         addLowQualities(expectedQualities, "ccacatctcacaaccctgggcagcagagaaggggtttaaaggccaggggggtattaagccgaaggaggttttggaaacaccaaggggggtcagaccccaacgccagtttccccaaaaaggggcattcaaatttttttctcagagattttctttccttttttgggccccgggaaccttttttaaaaaatgggggattgggcccccttggcccccctc".length());
         
         
-        Phd expected = new ArtificialPhd("K26-217c", 
+        Phd expected = new PhdBuilder("K26-217c", 
                 new NucleotideSequenceBuilder("tcccCgtgagatcatcctgaAGTGGAGGGCATGGGGCTTGGCTGGGCTTA" +
                 "GAGCTAACATACACAGGATGCTGAAAAAGAACAACACAAgntGTGTGGAG" +
                 "CAAAGGAAAGGGAAATCAGCTTGAAGCTGATGTTAGTGTGCTTGGGCTGA" +
@@ -97,8 +96,10 @@ public class TestHighLowAceContigPhdDatastore {
                 "ccttttttgggccccgggaaccttttttaaaaaatgggggattgggcccc" +
                 "cttggcccccctc").build(),
                 
-                expectedQualities.build(),
-                19);
+                expectedQualities.build())
+        			.fakePeaks()
+        			.build();
+
         Phd actual = sut.get("K26-217c");
         assertEquals(expected.getNucleotideSequence(),actual.getNucleotideSequence());
         assertEquals(expected.getQualitySequence(),actual.getQualitySequence());
@@ -159,10 +160,10 @@ public class TestHighLowAceContigPhdDatastore {
         addLowQualities(expectedQualities, "ccggaaccacacg".length());
         
         expectedQualities.reverse();
-        Phd expected = new ArtificialPhd(id,
-                
-                reverseComplimented,expectedQualities.build(),
-                19);
+        Phd expected = new PhdBuilder(id,                
+                reverseComplimented,expectedQualities.build())
+                .fakePeaks()
+    			.build();
         Phd actual = sut.get(id);
         assertEquals(expected.getNucleotideSequence(),actual.getNucleotideSequence());
         assertEquals(expected.getQualitySequence(),actual.getQualitySequence());
