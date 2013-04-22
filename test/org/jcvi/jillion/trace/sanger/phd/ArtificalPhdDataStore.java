@@ -82,7 +82,7 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
 	    return ArtificialPhd.createNewbler454Phd(id,
 	    			basecalls, 
 	                qualities,
-	                comments,Collections.<PhdTag>emptyList());
+	                comments,Collections.<PhdWholeReadItem>emptyList());
 	}
 
 	@Override

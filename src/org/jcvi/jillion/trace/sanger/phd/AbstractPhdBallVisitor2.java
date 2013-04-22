@@ -22,7 +22,7 @@ public class AbstractPhdBallVisitor2 implements PhdBallVisitor2 {
 	}
 
 	@Override
-	public PhdWholeReadTagVisitor visitReadTag() {
+	public PhdWholeReadItemVisitor visitReadTag() {
 		//always skip
 		return null;
 	}

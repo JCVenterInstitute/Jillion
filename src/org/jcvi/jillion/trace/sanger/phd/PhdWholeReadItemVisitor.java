@@ -1,6 +1,6 @@
 package org.jcvi.jillion.trace.sanger.phd;
 
-public interface PhdWholeReadTagVisitor {
+public interface PhdWholeReadItemVisitor {
 
 	void visitLine(String line);
 	

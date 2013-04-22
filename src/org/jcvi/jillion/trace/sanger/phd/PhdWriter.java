@@ -33,6 +33,7 @@ import java.util.Map.Entry;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.util.JoinedStringBuilder;
 
 public final class PhdWriter {
     private static final String BEGIN_SEQUENCE = "BEGIN_SEQUENCE";
@@ -66,8 +67,11 @@ public final class PhdWriter {
 
     private static StringBuilder createTags(Phd phd) {
         StringBuilder tags = new StringBuilder();
-        for(PhdTag tag : phd.getTags()){
-            tags.append(String.format("%s{%n%s%n}%n",tag.getTagName(), tag.getTagValue()));
+        for(PhdWholeReadItem tag : phd.getWholeReadItems()){
+        	String lines = new JoinedStringBuilder(tag.getLines())
+        						.glue(String.format("%n"))
+        						.build();
+            tags.append(String.format("WR{%n%s%n}%n",lines));
         }
         return tags;
         

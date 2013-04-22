@@ -29,13 +29,12 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.sanger.SangerTrace;
-import org.jcvi.jillion.trace.sanger.SangerTraceParser;
 import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
-import org.jcvi.jillion.trace.sanger.phd.SinglePhdFile;
+import org.jcvi.jillion.trace.sanger.phd.PhdFileDataStoreBuilder;
 import org.junit.Test;
 public class TestSangerTraceParser {
 
@@ -60,9 +59,9 @@ public class TestSangerTraceParser {
         assertEquals(expected, actual);
     }
     @Test
-    public void parsePhd() throws TraceDecoderException, IOException{
+    public void parsePhd() throws TraceDecoderException, IOException, DataStoreException{
         SangerTrace actual =sut.decode("1095595674585.phd.1",RESOURCES.getFileAsStream(PHD_FILE));
-        SangerTrace expected = SinglePhdFile.create(RESOURCES.getFile(PHD_FILE));
+        SangerTrace expected = new PhdFileDataStoreBuilder(RESOURCES.getFile(PHD_FILE)).build().get("1095595674585");
         assertEquals(expected, actual);
     }
 }

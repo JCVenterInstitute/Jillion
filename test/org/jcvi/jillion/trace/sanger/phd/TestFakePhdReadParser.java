@@ -32,12 +32,6 @@ import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.jcvi.jillion.trace.sanger.phd.DefaultPhdFileDataStore;
-import org.jcvi.jillion.trace.sanger.phd.Phd;
-import org.jcvi.jillion.trace.sanger.phd.PhdDataStore;
-import org.jcvi.jillion.trace.sanger.phd.PhdDataStoreBuilder;
-import org.jcvi.jillion.trace.sanger.phd.PhdParser;
-import org.jcvi.jillion.trace.sanger.phd.PhdTag;
 import org.junit.Test;
 public class TestFakePhdReadParser {
 
@@ -47,9 +41,7 @@ public class TestFakePhdReadParser {
 
     @Test
     public void parseFakeReads() throws IOException, DataStoreException{
-        PhdDataStoreBuilder builder = DefaultPhdFileDataStore.createBuilder();        
-        PhdParser.parsePhd(RESOURCES.getFileAsStream(PHD_FILE), builder);
-        PhdDataStore dataStore = builder.build();
+        PhdDataStore dataStore =  new PhdFileDataStoreBuilder(RESOURCES.getFile(PHD_FILE)).build();
         Phd fakePhd = dataStore.get("HA");
         assertIsFake(fakePhd);
         assertEquals(1738, fakePhd.getNucleotideSequence().getLength());
@@ -65,13 +57,13 @@ public class TestFakePhdReadParser {
 
     private void assertIsFake(Phd fakePhd) {
         boolean isFake=false;
-       for(PhdTag tag :fakePhd.getTags()){
-           if("WR".equals(tag.getTagName())){
-               if(tag.getTagValue().contains("type: fake")){
+       for(PhdWholeReadItem tag :fakePhd.getWholeReadItems()){
+    	   for(String line : tag.getLines()){
+               if(line.contains("type: fake")){
                    isFake=true;
                    break;
                }
-           }
+    	   }
        }
        assertTrue(isFake);
     }

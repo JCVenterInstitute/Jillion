@@ -14,7 +14,7 @@ public interface PhdBallVisitor2 {
 	
 	PhdVisitor2 visitPhd(PhdBallVisitorCallback callback, String id, int version);
 	
-	PhdWholeReadTagVisitor visitReadTag();
+	PhdWholeReadItemVisitor visitReadTag();
 	
 	void visitEnd();
 	
