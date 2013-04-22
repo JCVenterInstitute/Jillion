@@ -25,7 +25,7 @@ public abstract class AbstractPhdVisitor2 implements PhdVisitor2{
 	
 	private final NucleotideSequenceBuilder sequenceBuilder = new NucleotideSequenceBuilder(1024);
 	private final QualitySequenceBuilder qualityBuilder = new QualitySequenceBuilder(1024);
-	private PositionSequenceBuilder positionBuilder = new PositionSequenceBuilder(1024);
+	private final PositionSequenceBuilder positionBuilder = new PositionSequenceBuilder(1024);
 	private boolean hasPositions=true;
 	
 	private final List<PhdWholeReadItem> wholeReadItems = new ArrayList<PhdWholeReadItem>();

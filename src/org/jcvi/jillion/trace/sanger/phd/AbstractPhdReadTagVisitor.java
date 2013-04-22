@@ -11,7 +11,7 @@ public abstract class AbstractPhdReadTagVisitor implements PhdReadTagVisitor2{
 	private Range ungappedRange;
 	private Date date;
 	private String comment;
-	private StringBuilder freeFormDataBuilder;
+	private StringBuilder freeFormDataBuilder = new StringBuilder();
 	
 	@Override
 	public void visitType(String type) {
