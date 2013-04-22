@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.io.MagicNumberInputStream;
 import org.jcvi.jillion.internal.trace.sanger.chromat.abi.AbiUtil;
 import org.jcvi.jillion.internal.trace.sanger.chromat.scf.SCFUtils;
@@ -38,7 +39,9 @@ import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.sanger.chromat.abi.AbiChromatogramBuilder;
 import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
-import org.jcvi.jillion.trace.sanger.phd.SinglePhdFile;
+import org.jcvi.jillion.trace.sanger.phd.Phd;
+import org.jcvi.jillion.trace.sanger.phd.PhdDataStore;
+import org.jcvi.jillion.trace.sanger.phd.PhdFileDataStoreBuilder;
 /**
  * {@code SangerTraceParser} is a SangerTraceCodec singleton
  * that can decode both ZTR and SCF trace files.
@@ -66,7 +69,21 @@ public enum SangerTraceParser {
 	        }else{
 	        	//not a chromatogram file, try phd
 	        	try{
-	        		return SinglePhdFile.create(traceFile);
+	        		PhdDataStore phdDataStore = new PhdFileDataStoreBuilder(traceFile)
+	        										.build();
+	        		//should only have 1 record
+	        		StreamingIterator<Phd> iter = null;
+	        		try{
+	        			iter = phdDataStore.iterator();
+	        			if(!iter.hasNext()){
+	        				//no phd
+	        				//must not be a valid phd?
+	    	        		throw new TraceDecoderException("unknown trace format");
+	        			}
+	        			return iter.next();
+	        		}finally{
+	        			IOUtil.closeAndIgnoreErrors(iter,phdDataStore);
+	        		}
 	        	}catch(IOException ioException){
 	        		throw ioException;
 	        	}catch(Exception e){
@@ -91,7 +108,21 @@ public enum SangerTraceParser {
 	        	return new ScfChromatogramBuilder(id, mIn).build();
 	        }else{
 	        	//not a chromatogram file, try phd
-	        	return SinglePhdFile.create(mIn);
+        		PhdDataStore phdDataStore = new PhdFileDataStoreBuilder(mIn)
+        										.build();
+        		//should only have 1 record
+        		StreamingIterator<Phd> iter = null;
+        		try{
+        			iter = phdDataStore.iterator();
+        			if(!iter.hasNext()){
+        				//no phd
+        				//must not be a valid phd?
+    	        		throw new TraceDecoderException("unknown trace format");
+        			}
+        			return iter.next();
+        		}finally{
+        			IOUtil.closeAndIgnoreErrors(iter,phdDataStore);
+        		}
 	        	
 	        }
         }catch(Exception e){

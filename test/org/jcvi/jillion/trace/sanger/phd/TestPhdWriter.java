@@ -20,21 +20,20 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.sanger.phd;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.trace.sanger.phd.DefaultPhd;
-import org.jcvi.jillion.trace.sanger.phd.DefaultPhdFileDataStore;
-import org.jcvi.jillion.trace.sanger.phd.Phd;
-import org.jcvi.jillion.trace.sanger.phd.PhdDataStore;
-import org.jcvi.jillion.trace.sanger.phd.PhdDataStoreBuilder;
-import org.jcvi.jillion.trace.sanger.phd.PhdParser;
-import org.jcvi.jillion.trace.sanger.phd.PhdWriter;
+import org.jcvi.jillion.trace.sanger.PositionSequence;
 import org.junit.Test;
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
@@ -52,9 +51,41 @@ public class TestPhdWriter extends AbstractTestPhd{
                 expectedProperties);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PhdWriter.writePhd(phd, out);
-        PhdDataStore expected = DefaultPhdFileDataStore.create(RESOURCE.getFile(PHD_FILE));
-        PhdDataStoreBuilder actual = DefaultPhdFileDataStore.createBuilder();
-        PhdParser.parsePhd(new ByteArrayInputStream(out.toByteArray()), actual);
-        assertEquals(expected.get(id),actual.build().get(id));
+        PhdDataStore expected =  new PhdFileDataStoreBuilder(RESOURCE.getFile(PHD_FILE)).build();
+        
+        SinglePhdVisitor visitor = new SinglePhdVisitor();
+        PhdBallParser.create(new ByteArrayInputStream(out.toByteArray())).accept(visitor);
+
+        assertEquals(expected.get(id),visitor.phd);
+    }
+    
+    private static class SinglePhdVisitor extends AbstractPhdBallVisitor2{
+    	private Phd phd;
+		@Override
+		public PhdVisitor2 visitPhd(PhdBallVisitorCallback callback, String id) {
+			return handlePhd(id);
+		}
+
+		@Override
+		public PhdVisitor2 visitPhd(PhdBallVisitorCallback callback, String id,
+				int version) {
+			return handlePhd(id);
+		}
+		
+		private PhdVisitor2 handlePhd(String id){
+			return new AbstractPhdVisitor2(id) {
+				
+				@Override
+				protected void visitPhd(String id, Integer version,
+						NucleotideSequence basecalls, QualitySequence qualities,
+						PositionSequence positions, Map<String, String> comments,
+						List<PhdWholeReadItem> wholeReadItems, List<PhdReadTag> readTags) {
+					phd = new DefaultPhd(id, basecalls, qualities, positions, comments,wholeReadItems, readTags);
+					
+				}
+			};
+			
+		}
+    	
     }
 }

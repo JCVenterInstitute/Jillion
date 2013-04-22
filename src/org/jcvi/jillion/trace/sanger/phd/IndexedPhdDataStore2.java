@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
@@ -150,7 +151,7 @@ final class IndexedPhdDataStore2 implements PhdDataStore{
 		}
 
 		@Override
-		public PhdWholeReadTagVisitor visitReadTag() {
+		public PhdWholeReadItemVisitor visitReadTag() {
 			//always ignore
 			return null;
 		}
@@ -208,8 +209,9 @@ final class IndexedPhdDataStore2 implements PhdDataStore{
 				@Override
 				protected void visitPhd(String id, Integer version,
 						NucleotideSequence basecalls, QualitySequence qualities,
-						PositionSequence positions, Map<String, String> comments) {
-					SinglePhdVisitor.this.phd = new DefaultPhd(id, basecalls, qualities, positions, comments); 
+						PositionSequence positions, Map<String, String> comments,
+						List<PhdWholeReadItem> wholeReadItems, List<PhdReadTag> readTags) {
+					SinglePhdVisitor.this.phd = new DefaultPhd(id, basecalls, qualities, positions, comments, wholeReadItems,readTags); 
 					callback.haltParsing();
 				}
 			};

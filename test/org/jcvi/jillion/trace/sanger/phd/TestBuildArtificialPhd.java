@@ -46,7 +46,9 @@ public class TestBuildArtificialPhd {
     NucleotideSequence mockBasecalls;
     QualitySequence mockQualities;
     Map<String,String> mockProperties;
-    List<PhdTag> mockTags;
+    List<PhdWholeReadItem> mockReadItems;
+    List<PhdReadTag> mockReadTags;
+    
     String id = "phdId";
     long lengthOfBases= 5;
     int numberOfPositionsForEachPeak = 13;
@@ -56,7 +58,8 @@ public class TestBuildArtificialPhd {
         mockBasecalls = createMock(NucleotideSequence.class);
         mockQualities = createMock(QualitySequence.class); 
         mockProperties = createMock(Map.class); 
-        mockTags = createMock(List.class); 
+        mockReadItems = createMock(List.class); 
+        mockReadTags = createMock(List.class);
     }
     
     @Test
@@ -78,14 +81,15 @@ public class TestBuildArtificialPhd {
     }
     private void assertCommentsAndTagsAreEmpty(Phd phd){
         assertTrue(phd.getComments().isEmpty());
-        assertTrue(phd.getTags().isEmpty());
+        assertTrue(phd.getWholeReadItems().isEmpty());
+        assertTrue(phd.getReadTags().isEmpty());
     }
     
     @Test
     public void withProperties(){
         expect(mockBasecalls.getLength()).andReturn(lengthOfBases);
-        replay(mockBasecalls, mockQualities, mockProperties, mockTags);
-        Phd phd =new ArtificialPhd(id,mockBasecalls, mockQualities, mockProperties, mockTags,numberOfPositionsForEachPeak);
+        replay(mockBasecalls, mockQualities, mockProperties, mockReadItems);
+        Phd phd =new ArtificialPhd(id,mockBasecalls, mockQualities, mockProperties, mockReadItems,mockReadTags, numberOfPositionsForEachPeak);
         assertEquals(id, phd.getId());
         assertEquals(mockBasecalls, phd.getNucleotideSequence());
         assertEquals(mockQualities, phd.getQualitySequence());
@@ -95,7 +99,8 @@ public class TestBuildArtificialPhd {
             		, actualPeaks.get(i).getValue());
         }
         assertEquals(mockProperties, phd.getComments());
-        assertEquals(mockTags, phd.getTags());
-        verify(mockBasecalls, mockQualities,mockProperties, mockTags);
+        assertEquals(mockReadItems, phd.getWholeReadItems());
+        assertEquals(mockReadTags, phd.getReadTags());
+        verify(mockBasecalls, mockQualities,mockProperties, mockReadItems);
     }
 }

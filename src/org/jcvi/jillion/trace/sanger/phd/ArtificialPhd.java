@@ -49,7 +49,10 @@ public class ArtificialPhd implements Phd{
     private final NucleotideSequence basecalls;
     private final QualitySequence qualities;
    private final Map<String,String> comments;
-   private final List<PhdTag> tags;
+   private final List<PhdWholeReadItem> wholeReadItems;
+   
+   private final List<PhdReadTag> readTags;
+   
    private PositionSequence fakePositions=null;
    private final int numberOfPositionsForEachPeak;
    private final int numberOfBases;
@@ -73,8 +76,10 @@ public class ArtificialPhd implements Phd{
 		   String id,
 		   NucleotideSequence basecalls,
            QualitySequence qualities,
-           Map<String,String> comments, List<PhdTag> tags){
-       return new ArtificialPhd(id,basecalls, qualities, comments, tags, NEWBLER_454_START_POSITION,NEWBLER_454_PEAK_SPACING);
+           Map<String,String> comments, List<PhdWholeReadItem> wholeReadItems){
+       return new ArtificialPhd(id,basecalls, qualities, comments, wholeReadItems, 
+    		   Collections.<PhdReadTag>emptyList(),
+    		   NEWBLER_454_START_POSITION,NEWBLER_454_PEAK_SPACING);
    }
    /**
     * Create an {@link ArtificialPhd} record that matches
@@ -95,7 +100,7 @@ public class ArtificialPhd implements Phd{
            QualitySequence qualities,
            Map<String,String> comments){
 	   return ArtificialPhd.createNewbler454Phd(id,basecalls, qualities, 
-               comments,Collections.<PhdTag>emptyList());
+               comments,Collections.<PhdWholeReadItem>emptyList());
    }
    /**
     * Create an {@link ArtificialPhd} record that matches
@@ -113,7 +118,7 @@ public class ArtificialPhd implements Phd{
 		   NucleotideSequence basecalls,
            QualitySequence qualities){
        return ArtificialPhd.createNewbler454Phd(id,basecalls, qualities, 
-               Collections.<String,String>emptyMap(),Collections.<PhdTag>emptyList());
+               Collections.<String,String>emptyMap(),Collections.<PhdWholeReadItem>emptyList());
    }
    /**
     * {@code buildArtificalPhd} creates a {@link DefaultPhd}
@@ -135,7 +140,11 @@ public class ArtificialPhd implements Phd{
 		   NucleotideSequence basecalls,
            QualitySequence qualities,
            int numberOfPositionsForEachPeak){
-       this(id,basecalls, qualities, Collections.<String,String>emptyMap(),Collections.<PhdTag>emptyList(),numberOfPositionsForEachPeak);
+       this(id,basecalls, qualities, 
+    		   Collections.<String,String>emptyMap(),
+    		   Collections.<PhdWholeReadItem>emptyList(),
+    		   Collections.<PhdReadTag>emptyList(),
+    		   numberOfPositionsForEachPeak);
    }
    /**
     * {@code buildArtificalPhd} creates a {@link DefaultPhd}
@@ -146,14 +155,18 @@ public class ArtificialPhd implements Phd{
     * @param basecalls the basecalls for this Phd.
     * @param qualities the qualities for this Phd.
     * @param comments the comments for this Phd.
-    * @param tags the {@link PhdTag}s for this Phd.
+    * @param readTags the {@link PhdReadTag}s for this Phd.
+    * @param wholeReadItems the {@link PhdWholeReadItem}s for this Phd.
     * @param numberOfPositionsForEachPeak number of positions each
     * peak should be separated as.
     */
     public ArtificialPhd(String id, NucleotideSequence basecalls,
             QualitySequence qualities,
-            Map<String,String> comments, List<PhdTag> tags,int numberOfPositionsForEachPeak){
-       this(id,basecalls, qualities,comments, tags,numberOfPositionsForEachPeak,numberOfPositionsForEachPeak);
+            Map<String,String> comments, 
+            List<PhdWholeReadItem> wholeReadItems,
+            List<PhdReadTag> readTags,
+            int numberOfPositionsForEachPeak){
+       this(id,basecalls, qualities,comments, wholeReadItems,readTags, numberOfPositionsForEachPeak,numberOfPositionsForEachPeak);
         
         
     }
@@ -172,15 +185,18 @@ public class ArtificialPhd implements Phd{
      */
      public ArtificialPhd(String id, NucleotideSequence basecalls,
              QualitySequence qualities,
-            Map<String,String> comments, List<PhdTag> tags,int positionOfFirstPeak,int numberOfPositionsForEachPeak){
+            Map<String,String> comments, List<PhdWholeReadItem> wholeReadItems,
+            List<PhdReadTag> readTags,
+            int positionOfFirstPeak,int numberOfPositionsForEachPeak){
          this.id = id;
     	 this.basecalls = basecalls;
          this.qualities = qualities;
-         this.tags = tags;
+         this.wholeReadItems = wholeReadItems;
          this.comments = comments;
          this.numberOfBases = (int)basecalls.getLength();
          this.numberOfPositionsForEachPeak = numberOfPositionsForEachPeak;
          this.positionOfFirstPeak = positionOfFirstPeak;
+         this.readTags = readTags;
          
      }
     @Override
@@ -189,11 +205,14 @@ public class ArtificialPhd implements Phd{
     }
 
     @Override
-    public List<PhdTag> getTags() {
-        return tags;
-    }
-
-    @Override
+	public List<PhdReadTag> getReadTags() {
+		return readTags;
+	}
+	@Override
+	public List<PhdWholeReadItem> getWholeReadItems() {
+		return wholeReadItems;
+	}
+	@Override
     public String getId(){
     	return id;
     }
@@ -240,7 +259,7 @@ public class ArtificialPhd implements Phd{
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((qualities == null) ? 0 : qualities.hashCode());
-		result = prime * result + ((tags == null) ? 0 : tags.hashCode());
+		result = prime * result + ((wholeReadItems == null) ? 0 : wholeReadItems.hashCode());
 		return result;
 	}
 	@Override
@@ -290,11 +309,11 @@ public class ArtificialPhd implements Phd{
 		} else if (!qualities.equals(other.qualities)) {
 			return false;
 		}
-		if (tags == null) {
-			if (other.tags != null) {
+		if (wholeReadItems == null) {
+			if (other.wholeReadItems != null) {
 				return false;
 			}
-		} else if (!tags.equals(other.tags)) {
+		} else if (!wholeReadItems.equals(other.wholeReadItems)) {
 			return false;
 		}
 		return true;

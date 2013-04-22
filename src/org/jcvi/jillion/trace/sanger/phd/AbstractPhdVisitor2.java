@@ -1,8 +1,12 @@
 package org.jcvi.jillion.trace.sanger.phd;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
@@ -23,6 +27,10 @@ public abstract class AbstractPhdVisitor2 implements PhdVisitor2{
 	private final QualitySequenceBuilder qualityBuilder = new QualitySequenceBuilder(1024);
 	private PositionSequenceBuilder positionBuilder = new PositionSequenceBuilder(1024);
 	private boolean hasPositions=true;
+	
+	private final List<PhdWholeReadItem> wholeReadItems = new ArrayList<PhdWholeReadItem>();
+	
+	private final List<PhdReadTag> readTags = new ArrayList<PhdReadTag>();
 	
 	public AbstractPhdVisitor2(String id) {
 		if(id ==null){
@@ -71,20 +79,54 @@ public abstract class AbstractPhdVisitor2 implements PhdVisitor2{
 	@Override
 	public PhdReadTagVisitor2 visitReadTag() {
 		//ignores read tag 
-		return null;
+		return new AbstractPhdReadTagVisitor(){
+
+			@Override
+			protected void visitPhdReadTag(String type, String source,
+					Range ungappedRange, Date date, String comment,
+					String freeFormData) {
+				readTags.add(new DefaultPhdReadTag(type, source, ungappedRange, date, comment, freeFormData));
+				
+			}
+			
+		};
+	}
+
+	@Override
+	public PhdWholeReadItemVisitor visitWholeReadItem() {
+		return new PhdWholeReadItemVisitor() {
+			List<String> lines = new ArrayList<String>();
+			@Override
+			public void visitLine(String line) {
+				lines.add(line);				
+			}
+			
+			@Override
+			public void visitEnd() {
+				wholeReadItems.add(new DefaultPhdWholeReadItem(lines));
+				
+			}
+			
+			@Override
+			public void halted() {
+				//no-op				
+			}
+		};
 	}
 
 	@Override
 	public void visitEnd() {
 		visitPhd(id, version, 
 				sequenceBuilder.build(), qualityBuilder.build(), positionBuilder==null?null : positionBuilder.build(),
-				comments);
+				comments, wholeReadItems,readTags);
 		
 	}
 
 	protected abstract void visitPhd(String id, Integer version,
 			NucleotideSequence basescalls, QualitySequence qualities, PositionSequence positions,
-			Map<String,String> comments);
+			Map<String,String> comments,
+			List<PhdWholeReadItem> wholeReadItems,
+			List<PhdReadTag> readTags);
 	
 	@Override
 	public void halted() {

@@ -19,11 +19,12 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 import org.jcvi.jillion.trace.sanger.phd.PhdBallVisitorCallback.PhdBallVisitorMemento;
 
-public final class PhdBallParser {
+public abstract class PhdBallParser {
 
 	 private static final String BEGIN_COMMENT = "BEGIN_COMMENT";
     private static final String END_SEQUENCE = "END_SEQUENCE";
@@ -43,76 +44,45 @@ public final class PhdBallParser {
 
     private static final Pattern FILE_COMMENT_PATTERN = Pattern.compile("^#(.*)\\s*$");
 	
-	private final File phdBall;
 	
 	public static PhdBallParser create(File phdBall) throws FileNotFoundException{
-		return new PhdBallParser(phdBall);
+		return new FileBasedPhdBallParser(phdBall);
 	}
-	
-	
-	private PhdBallParser(File phdBall) throws FileNotFoundException{
-		if(phdBall ==null){
-			throw new NullPointerException("phdball can not be null");
-		}
-		if(!phdBall.exists()){
-			throw new FileNotFoundException("phdball must exist");
-		}
-		this.phdBall = phdBall;
+	public static PhdBallParser create(InputStream phdBallStream) throws FileNotFoundException{
+		return new InputStreamBasedPhdBallParser(phdBallStream);
 	}
-	
-	public void accept(PhdBallVisitor2 visitor) throws IOException{
-		if(visitor==null){
-			throw new NullPointerException("visitor can not be null");
-		}
-		TextLineParser parser =null;
-		try{
-			parser = new TextLineParser(new BufferedInputStream(new FileInputStream(phdBall)));
-			accept(parser, visitor);
-		}finally{
-			IOUtil.closeAndIgnoreErrors(parser);
-		}
-	}
+
 	
 	
-	public void accept(PhdBallVisitor2 visitor, PhdBallVisitorMemento memento) throws IOException{
-		if(visitor ==null){
-            throw new NullPointerException("visitor can not be null");
-        }
-        if(memento ==null){
-            throw new NullPointerException("memento can not be null");
-        }
-	    if(!(memento instanceof PhdBallVisitorMementoImpl)){
-	    	throw new IllegalArgumentException("unknown memento type " + memento);
-	    }
-	    long offset = ((PhdBallVisitorMementoImpl)memento).getOffset();
-	    //TODO add check to make sure its the same parser object?
-	    RandomAccessFile randomAccessFile=null;
-        TextLineParser parser=null;
-        try{
-	        randomAccessFile= new RandomAccessFile(phdBall,"r");
-	        randomAccessFile.seek(offset);
-	        InputStream in = new RandomAccessFileInputStream(randomAccessFile);
-	        
-	        parser = new TextLineParser(in, offset);
-	        accept(parser, visitor);
-        }finally{
-        	IOUtil.closeAndIgnoreErrors(randomAccessFile, parser);
-        }
-	}
+	public abstract void accept(PhdBallVisitor2 visitor) throws IOException;
 	
-	private void accept(TextLineParser parser, PhdBallVisitor2 visitor) throws IOException{
+	
+	public abstract void accept(PhdBallVisitor2 visitor, PhdBallVisitorMemento memento) throws IOException;
+	
+	protected void accept(TextLineParser parser, PhdBallVisitor2 visitor) throws IOException{
 		ParserState parserState = new ParserState();
 		boolean seenFileComment=false;
+		 PhdVisitor2 phdVisitor =null;
 		while(parser.hasNextLine() && parserState.keepParsing()){
 			
 			long currentOffset = parser.getPosition();
 			String line = parser.nextLine();
 			Matcher beginSequenceMatcher = BEGIN_SEQUENCE_PATTERN.matcher(line);
 			if(beginSequenceMatcher.matches()){
+				if(phdVisitor !=null){
+					phdVisitor.visitEnd();
+				}
+				//if the previous phdVisitor's visitEnd()
+				//was just called, it may have used a callback
+				//to halt parsing so check flag to see 
+				//if we should still continue parsing/visiting
+				if(!parserState.keepParsing()){
+					phdVisitor=null; //set to null to avoid calling visitEnd() twice
+					break;
+				}
 				String readId = beginSequenceMatcher.group(1);
 				String optionalVersion = beginSequenceMatcher.group(2);
 				PhdBallVisitorCallback callback = createCallback(parserState,currentOffset);
-				final PhdVisitor2 phdVisitor;
 				if(optionalVersion ==null){
 					phdVisitor = visitor.visitPhd(callback, readId);
 				}else{
@@ -125,7 +95,7 @@ public final class PhdBallParser {
 				}
 			}else{				
 				if(line.startsWith(BEGIN_WR)){
-					handleWholeReadTag(parserState, parser, visitor.visitReadTag());
+					handleWholeReadTag(parserState, parser, phdVisitor);
 				}else if(!seenFileComment){
 					Matcher fileCommentMatcher = FILE_COMMENT_PATTERN.matcher(line);
 					if(fileCommentMatcher.matches()){
@@ -136,8 +106,14 @@ public final class PhdBallParser {
 			}
 		}
 		if(parserState.keepParsing()){
+			if(phdVisitor !=null){
+				phdVisitor.visitEnd();
+			}
 			visitor.visitEnd();
 		}else{
+			if(phdVisitor !=null){
+				phdVisitor.halted();
+			}
 			visitor.halted();
 		}
 	}
@@ -152,26 +128,30 @@ public final class PhdBallParser {
 	}
 
 
-	private PhdBallVisitorCallback createCallback(ParserState parserState, long offset) {
-		return new PhdBallVisitorCallbackImpl(offset, parserState);
-	}
-
+	protected abstract  PhdBallVisitorCallback createCallback(ParserState parserState, long offset);
 
 	private void handleWholeReadTag(ParserState parserState,
-			TextLineParser parser, PhdWholeReadTagVisitor visitor) throws IOException {
+			TextLineParser parser, PhdVisitor2 visitor) throws IOException {
+		final PhdWholeReadItemVisitor itemVisitor;
+		if(visitor ==null){
+			itemVisitor=null;
+		}else{
+			itemVisitor =visitor.visitWholeReadItem();
+		}
+		
 		while(parser.hasNextLine() && parserState.keepParsing()){
 			String line = parser.nextLine();
 			if(line.startsWith(END_WR)){
-				if(visitor!=null){
-					visitor.visitEnd();
+				if(itemVisitor!=null){
+					itemVisitor.visitEnd();
 				}
 				break;
 			}
-			if(visitor !=null){
-				visitor.visitLine(line);
+			if(itemVisitor !=null){
+				itemVisitor.visitLine(line);
 			}
 		}
-		if(visitor !=null && !parserState.keepParsing()){
+		if(itemVisitor !=null && !parserState.keepParsing()){
 			visitor.halted();
 		}
 	}
@@ -209,11 +189,7 @@ public final class PhdBallParser {
 			visitor.halted();
 			return;
 		}
-		visitor.visitEnd();
-		//TODO : 
-		//individual phd files (not phd.ball) 
-		//may have read tags AFTER the END_SEQUENCE
-		//should we check for that?
+		
 	}
 
 	private void parseTags(ParserState parserState, TextLineParser parser,
@@ -372,12 +348,12 @@ public final class PhdBallParser {
 		}
 	}
 	
-	private static class PhdBallVisitorCallbackImpl implements PhdBallVisitorCallback{
+	private static class MementoedPhdBallVisitorCallbackImpl implements PhdBallVisitorCallback{
 
 		private final long byteOffset;
 		private final ParserState parserState;
 		
-		public PhdBallVisitorCallbackImpl(long byteOffset,
+		public MementoedPhdBallVisitorCallbackImpl(long byteOffset,
 				ParserState parserState) {
 			this.byteOffset = byteOffset;
 			this.parserState = parserState;
@@ -400,6 +376,31 @@ public final class PhdBallParser {
 		
 	}
 	
+	private static class NoMementoPhdBallVisitorCallbackImpl implements PhdBallVisitorCallback{
+
+		private final ParserState parserState;
+		
+		public NoMementoPhdBallVisitorCallbackImpl(ParserState parserState) {
+			this.parserState = parserState;
+		}
+
+		@Override
+		public boolean canCreateMemento() {
+			return false;
+		}
+
+		@Override
+		public PhdBallVisitorMemento createMemento() {
+			throw new UnsupportedOperationException("can not create mementos from inputstream");
+		}
+
+		@Override
+		public void haltParsing() {
+			parserState.haltParsing();			
+		}
+		
+	}
+	
 	private static class PhdBallVisitorMementoImpl implements PhdBallVisitorMemento{
 		private final long offset;
 
@@ -412,5 +413,109 @@ public final class PhdBallParser {
 			return offset;
 		}
 
+	}
+	
+	private static class FileBasedPhdBallParser extends PhdBallParser{
+		private final File phdBall;
+		
+		private FileBasedPhdBallParser(File phdBall) throws FileNotFoundException{
+			if(phdBall ==null){
+				throw new NullPointerException("phdball can not be null");
+			}
+			if(!phdBall.exists()){
+				throw new FileNotFoundException("phdball must exist");
+			}
+			this.phdBall = phdBall;
+		}
+		
+		public void accept(PhdBallVisitor2 visitor) throws IOException{
+			if(visitor==null){
+				throw new NullPointerException("visitor can not be null");
+			}
+			TextLineParser parser =null;
+			try{
+				parser = new TextLineParser(new BufferedInputStream(new FileInputStream(phdBall)));
+				accept(parser, visitor);
+			}finally{
+				IOUtil.closeAndIgnoreErrors(parser);
+			}
+		}
+		
+		
+		public void accept(PhdBallVisitor2 visitor, PhdBallVisitorMemento memento) throws IOException{
+			if(visitor ==null){
+	            throw new NullPointerException("visitor can not be null");
+	        }
+	        if(memento ==null){
+	            throw new NullPointerException("memento can not be null");
+	        }
+		    if(!(memento instanceof PhdBallVisitorMementoImpl)){
+		    	throw new IllegalArgumentException("unknown memento type " + memento);
+		    }
+		    long offset = ((PhdBallVisitorMementoImpl)memento).getOffset();
+		    //TODO add check to make sure its the same parser object?
+		    RandomAccessFile randomAccessFile=null;
+	        TextLineParser parser=null;
+	        try{
+		        randomAccessFile= new RandomAccessFile(phdBall,"r");
+		        randomAccessFile.seek(offset);
+		        InputStream in = new RandomAccessFileInputStream(randomAccessFile);
+		        
+		        parser = new TextLineParser(in, offset);
+		        accept(parser, visitor);
+	        }finally{
+	        	IOUtil.closeAndIgnoreErrors(randomAccessFile, parser);
+	        }
+		}
+		
+		protected PhdBallVisitorCallback createCallback(ParserState parserState, long offset) {
+			return new MementoedPhdBallVisitorCallbackImpl(offset, parserState);
+		}
+	}
+	
+	private static final class InputStreamBasedPhdBallParser extends PhdBallParser{
+
+		private final OpenAwareInputStream in;
+    	
+		public InputStreamBasedPhdBallParser(InputStream in) {
+			if(in ==null){
+				throw new NullPointerException("input stream can not be null");
+			}
+			this.in = new OpenAwareInputStream(new BufferedInputStream(in));
+		}
+
+		@Override
+		public void accept(PhdBallVisitor2 visitor) throws IOException {
+			if(visitor==null){
+				throw new NullPointerException("visitor can not be null");
+			}
+			if(!in.isOpen()){
+				throw new IllegalStateException("inputstream has been closed");
+			}
+			TextLineParser parser =null;
+			try{
+				parser = new TextLineParser(in);
+				accept(parser, visitor);
+			}finally{
+				IOUtil.closeAndIgnoreErrors(parser);
+			}
+			
+		}
+
+		@Override
+		public void accept(PhdBallVisitor2 visitor,
+				PhdBallVisitorMemento memento) throws IOException {
+			throw new UnsupportedOperationException("mementos not supported");
+			
+		}
+
+		@Override
+		protected PhdBallVisitorCallback createCallback(
+				ParserState parserState, long offset) {
+			return new NoMementoPhdBallVisitorCallbackImpl(parserState);
+		}
+		
+		
+		
 	}
 }

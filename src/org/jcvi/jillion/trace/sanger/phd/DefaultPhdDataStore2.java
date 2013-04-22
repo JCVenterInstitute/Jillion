@@ -2,7 +2,9 @@ package org.jcvi.jillion.trace.sanger.phd;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
@@ -22,7 +24,13 @@ final class DefaultPhdDataStore2{
 		parser.accept(visitor);
 		return visitor.build();
 	}
-	
+	public static PhdDataStore create(InputStream inputStream, DataStoreFilter filter) throws IOException {
+		PhdBallParser parser = PhdBallParser.create(inputStream);
+		
+		DefaultPhdDataStoreBuilderVisitor visitor = new DefaultPhdDataStoreBuilderVisitor(filter);
+		parser.accept(visitor);
+		return visitor.build();
+	}
 	
 	public static class DefaultPhdDataStoreBuilderVisitor implements PhdBallVisitor2 {
 		
@@ -60,15 +68,16 @@ final class DefaultPhdDataStore2{
 				@Override
 				protected void visitPhd(String id, Integer version,
 						NucleotideSequence basescalls, QualitySequence qualities,
-						PositionSequence positions, Map<String, String> comments) {
-					phds.put(id, new DefaultPhd(id, basescalls, qualities, positions,comments));
+						PositionSequence positions, Map<String, String> comments,
+						List<PhdWholeReadItem> wholeReadItems, List<PhdReadTag> readTags) {
+					phds.put(id, new DefaultPhd(id, basescalls, qualities, positions,comments,wholeReadItems,readTags));
 					
 				}
 			};
 		}
 		
 		@Override
-		public PhdWholeReadTagVisitor visitReadTag() {
+		public PhdWholeReadItemVisitor visitReadTag() {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -90,4 +99,7 @@ final class DefaultPhdDataStore2{
 		}
 		
 		}
+
+
+	
 }

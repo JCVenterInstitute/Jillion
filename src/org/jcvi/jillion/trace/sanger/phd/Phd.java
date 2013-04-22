@@ -33,5 +33,6 @@ import org.jcvi.jillion.trace.sanger.SangerTrace;
 public interface Phd extends SangerTrace {
 	String getId();
     Map<String,String> getComments();
-    List<PhdTag> getTags();
+    List<PhdWholeReadItem> getWholeReadItems();
+    List<PhdReadTag> getReadTags();
 }

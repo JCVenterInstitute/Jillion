@@ -15,6 +15,8 @@ public interface PhdVisitor2 {
 	
 	PhdReadTagVisitor2 visitReadTag();
 	
+	PhdWholeReadItemVisitor visitWholeReadItem();
+	
 	void visitEnd();
 	
 

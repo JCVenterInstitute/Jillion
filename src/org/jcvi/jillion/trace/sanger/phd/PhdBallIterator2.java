@@ -22,6 +22,7 @@ package org.jcvi.jillion.trace.sanger.phd;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
@@ -77,12 +78,15 @@ final class PhdBallIterator2 extends AbstractBlockingStreamingIterator<Phd>{
 					@Override
 					protected void visitPhd(String id, Integer version,
 							NucleotideSequence basecalls, QualitySequence qualities,
-							PositionSequence positions, Map<String, String> comments) {
+							PositionSequence positions, Map<String, String> comments,
+							List<PhdWholeReadItem> wholeReadItems, List<PhdReadTag> readTags) {
 						Phd phd = new DefaultPhd(id,
 								basecalls,
 		                         qualities,
 		                         positions,
-		                         comments
+		                         comments,
+		                         wholeReadItems,
+		                         readTags
 		                         );
 		                 blockingPut(phd);
 						

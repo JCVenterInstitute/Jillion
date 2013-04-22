@@ -32,16 +32,13 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-     TestDefaultPhdFileDataStore.class,
-     TestIndexPhdFileDataStore.class,
-     TestLargePhdFileDataStore.class,
+
      TestFakePhdReadParser.class,
      
      TestDefaultPhdDataStore2.class,
      TestIndexedPhdDataStore2.class,
      TestLargePhdDataStore2.class,
      
-     TestPhdDataStoreBuilderWith2InputFiles.class,
      TestBuildArtificialPhd.class,
      TestPhdWriter.class
     }

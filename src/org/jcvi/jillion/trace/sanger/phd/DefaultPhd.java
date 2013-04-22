@@ -26,7 +26,6 @@
 package org.jcvi.jillion.trace.sanger.phd;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,28 +40,33 @@ public class DefaultPhd implements Phd {
     private final QualitySequence qualities;
     private final PositionSequence peaks;
     private final Map<String,String> comments;
-    private final List<PhdTag> tags;
+    private final List<PhdWholeReadItem> wrs;
+    private final List<PhdReadTag> readTags;
     
     public DefaultPhd(String id, NucleotideSequence basecalls,
             QualitySequence qualities,
             PositionSequence peaks, Map<String,String> comments,
-            List<PhdTag> tags){
+            List<PhdWholeReadItem> wholeReadItems,
+            List<PhdReadTag> readTags){
     	this.id = id;
         this.basecalls = basecalls;
         this.qualities = qualities;
         this.peaks = peaks;
         this.comments = comments;
-        this.tags = tags;
+        this.wrs = wholeReadItems;
+        this.readTags = readTags;
+        
     }
     public DefaultPhd(String id, NucleotideSequence basecalls,
             QualitySequence qualities,
             PositionSequence peaks,Map<String,String> comments){
-        this(id,basecalls, qualities, peaks, comments,Collections.<PhdTag>emptyList());
+        this(id,basecalls, qualities, peaks, comments,Collections.<PhdWholeReadItem>emptyList(),
+        		Collections.<PhdReadTag>emptyList());
     }
     public DefaultPhd(String id, NucleotideSequence basecalls,
             QualitySequence qualities,
             PositionSequence peaks){
-        this(id,basecalls, qualities, peaks, new HashMap<String,String>());
+        this(id,basecalls, qualities, peaks, Collections.<String,String>emptyMap());
     }
     
     @Override
@@ -145,11 +149,17 @@ public class DefaultPhd implements Phd {
     	int length = (int)peaks.getLength();
     	return peaks.get(length-1).getValue();        
     }
+	@Override
+	public List<PhdWholeReadItem> getWholeReadItems() {
+		//defensive copy
+		return Collections.unmodifiableList(wrs);
+	}
+	@Override
+	public List<PhdReadTag> getReadTags() {
+		//defensive copy
+		return Collections.unmodifiableList(readTags);
+	}
 
-    @Override
-    public List<PhdTag> getTags() {
-        return tags;
-    }
     
     
     
