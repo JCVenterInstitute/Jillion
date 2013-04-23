@@ -20,11 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.clc.cas.consed;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -56,6 +53,7 @@ import org.jcvi.jillion.trace.Trace;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.jillion.trace.sanger.phd.Phd;
+import org.jcvi.jillion.trace.sanger.phd.PhdBallWriter;
 import org.jcvi.jillion.trace.sanger.phd.PhdDataStore;
 import org.jcvi.jillion.trace.sanger.phd.PhdFileDataStoreBuilder;
 import org.jcvi.jillion.trace.sanger.phd.PhdWriter;
@@ -67,7 +65,7 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 	private final File consedOutputDir;
 	private Date phdDate = new Date();
 	
-	private final OutputStream phdOut;
+	private final PhdWriter phdOut;
 	
 	private File chromatDir = null;
 	private final File phdFile;
@@ -110,7 +108,7 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 		
 		phdFile = new File(phdDir, "phd.ball.1");
 		IOUtil.mkdirs(phdDir);
-		phdOut = new BufferedOutputStream(new FileOutputStream(phdFile));
+		phdOut = new PhdBallWriter(phdFile);
 	}
 
 	public final File getPhdBallFile() {
@@ -143,7 +141,7 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 		
 		//write out phd record to phdball
 		try {
-			PhdWriter.writePhd(phdReadRecord.getPhd(), phdOut);
+			phdOut.write(phdReadRecord.getPhd());
 		} catch (IOException e) {
 			throw new IllegalStateException("error writing out phd record for  " + traceOfRead, e);
 		}

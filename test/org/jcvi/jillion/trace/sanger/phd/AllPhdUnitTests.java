@@ -41,7 +41,9 @@ import org.junit.runners.Suite.SuiteClasses;
      TestLargePhdDataStore2.class,
      
      TestBuildArtificialPhd.class,
-     TestPhdWriter.class
+     
+     TestPhdBallWriter.class,
+     TestSinglePhdWriter.class
     }
     )
 public class AllPhdUnitTests {
