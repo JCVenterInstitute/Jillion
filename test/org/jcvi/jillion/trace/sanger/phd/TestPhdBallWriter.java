@@ -28,18 +28,73 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.trace.sanger.PositionSequence;
+import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;
 import org.junit.Test;
 /**
  * @author dkatzel
  *
  *
  */
-public class TestPhdWriter extends AbstractTestPhd{
+public class TestPhdBallWriter extends AbstractTestPhd{
     private String id = "1095595674585";
+    
+    @Test
+    public void writeComment() throws IOException{
+    	String fileComment = "path to fastq = /path/to/fastq";
+    	ByteArrayOutputStream out = new ByteArrayOutputStream();
+    	PhdWriter writer = new PhdBallWriter(out, fileComment);
+    	writer.close();
+    	FileCommentVisitor visitor = new FileCommentVisitor();
+    	 PhdBallParser.create(new ByteArrayInputStream(out.toByteArray())).accept(visitor);
+
+ 		assertEquals(fileComment,visitor.fileComment);
+    }
+    
+    @Test
+    public void writeMultiplePhds() throws IOException, DataStoreException{
+    	Phd phd1 = new PhdBuilder(expectedId, 
+				new NucleotideSequenceBuilder(expectedBasecalls).build(), expectedQualities)
+				.peaks(expectedPositions)
+				.comments(expectedProperties)
+				.build();
+    	
+    	Range trimRange = Range.of(300,600);
+    	
+    	Phd phd2 = new PhdBuilder(expectedId+"trimmed", 
+				new NucleotideSequenceBuilder(expectedBasecalls)
+    						.trim(trimRange).build(),
+    			new QualitySequenceBuilder(expectedQualities)
+    						.trim(trimRange).build())
+				.peaks(new PositionSequenceBuilder(expectedPositions)
+							.trim(trimRange).build())
+				.comments(expectedProperties)
+				.build();
+    	ByteArrayOutputStream out = new ByteArrayOutputStream();
+    	PhdWriter writer = new PhdBallWriter(out);
+    	writer.write(phd1);
+    	writer.write(phd2);
+    	writer.close();
+    	
+    	PhdDataStore datastore = new PhdFileDataStoreBuilder(new ByteArrayInputStream(out.toByteArray()))
+									.build();
+    	try{
+    	assertEquals(2, datastore.getNumberOfRecords());
+    	assertEquals(phd1, datastore.get(phd1.getId()));
+    	assertEquals(phd2, datastore.get(phd2.getId()));
+    	}finally{
+    		IOUtil.closeAndIgnoreErrors(datastore);
+    	}
+    	
+    }
+    
     @Test
     public void write() throws IOException, DataStoreException{
        
@@ -51,7 +106,9 @@ public class TestPhdWriter extends AbstractTestPhd{
         
         Phd phd = new PhdBuilder(expectedPhd).build();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        PhdWriter.writePhd(phd, out);
+        PhdWriter writer = new SinglePhdWriter(out);
+        writer.write(phd);
+        writer.close();
         
         SinglePhdVisitor visitor = new SinglePhdVisitor();
         PhdBallParser.create(new ByteArrayInputStream(out.toByteArray())).accept(visitor);
@@ -78,6 +135,17 @@ public class TestPhdWriter extends AbstractTestPhd{
 			};
 		}
 		
+    	
+    }
+    
+    private static class FileCommentVisitor extends AbstractPhdBallVisitor{
+    	private String fileComment =null;
+
+		@Override
+		public void visitFileComment(String comment) {
+			this.fileComment = comment;
+		}
+    	
     	
     }
 }
