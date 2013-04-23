@@ -254,8 +254,8 @@ final class ArtificialPhd implements Phd{
 				+ ((basecalls == null) ? 0 : basecalls.hashCode());
 		result = prime * result
 				+ ((comments == null) ? 0 : comments.hashCode());
-		result = prime * result
-				+ ((fakePositions == null) ? 0 : fakePositions.hashCode());
+		PositionSequence positions = getPositionSequence();
+		result = prime * result + positions.hashCode();
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((qualities == null) ? 0 : qualities.hashCode());
@@ -270,54 +270,33 @@ final class ArtificialPhd implements Phd{
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof ArtificialPhd)) {
+		if (!(obj instanceof Phd)) {
 			return false;
 		}
-		ArtificialPhd other = (ArtificialPhd) obj;
-		if (basecalls == null) {
-			if (other.basecalls != null) {
-				return false;
-			}
-		} else if (!basecalls.equals(other.basecalls)) {
+		Phd other = (Phd) obj;
+		if (!id.equals(other.getId())) {
 			return false;
 		}
-		if (comments == null) {
-			if (other.comments != null) {
-				return false;
-			}
-		} else if (!comments.equals(other.comments)) {
+		if (!basecalls.equals(other.getNucleotideSequence())) {
 			return false;
 		}
-		if (fakePositions == null) {
-			if (other.fakePositions != null) {
-				return false;
-			}
-		} else if (!fakePositions.equals(other.fakePositions)) {
+		if (!comments.equals(other.getComments())) {
 			return false;
 		}
-		if (id == null) {
-			if (other.id != null) {
-				return false;
-			}
-		} else if (!id.equals(other.id)) {
+		if (!getPositionSequence().equals(other.getPositionSequence())) {
 			return false;
 		}
-		if (qualities == null) {
-			if (other.qualities != null) {
-				return false;
-			}
-		} else if (!qualities.equals(other.qualities)) {
+		
+		if (!qualities.equals(other.getQualitySequence())) {
 			return false;
 		}
-		if (wholeReadItems == null) {
-			if (other.wholeReadItems != null) {
-				return false;
-			}
-		} else if (!wholeReadItems.equals(other.wholeReadItems)) {
+		if (!wholeReadItems.equals(other.getWholeReadItems())) {
+			return false;
+		}
+		if (!readTags.equals(other.getReadTags())) {
 			return false;
 		}
 		return true;
 	}
-    
     
 }

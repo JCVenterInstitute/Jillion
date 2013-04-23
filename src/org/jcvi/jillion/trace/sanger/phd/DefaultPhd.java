@@ -140,15 +140,22 @@ final class DefaultPhd implements Phd {
         if (!qualities.equals(other.getQualitySequence())){
             return false;
         }
+        if (!wrs.equals(other.getWholeReadItems())){
+            return false;
+        }
+        if (!readTags.equals(other.getReadTags())){
+            return false;
+        }
         return true;
     }
 
-    @Override
-    public String toString() {
-        return basecalls.toString();
-    }
+    
 
     @Override
+	public String toString() {
+		return "DefaultPhd [id=" + id + "]";
+	}
+	@Override
     public int getNumberOfTracePositions() {
     	if(peaks==null){
     		return 0;

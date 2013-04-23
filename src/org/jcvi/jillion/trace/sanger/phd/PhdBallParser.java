@@ -50,6 +50,8 @@ public abstract class PhdBallParser {
 
     private static final Pattern FILE_COMMENT_PATTERN = Pattern.compile("^#(.*)\\s*$");
 	
+    
+    private static final Pattern RIGHT_TRIM_PATTERN = Pattern.compile("(.*)\\s+$");
 	/**
 	 * 
 	 * @param phdBall
@@ -162,7 +164,7 @@ public abstract class PhdBallParser {
 				break;
 			}
 			if(itemVisitor !=null){
-				itemVisitor.visitLine(line);
+				itemVisitor.visitLine(rightTrim(line));
 			}
 		}
 		if(itemVisitor !=null && !parserState.keepParsing()){
@@ -170,6 +172,11 @@ public abstract class PhdBallParser {
 		}
 	}
 
+	private String rightTrim(String line){
+		Matcher matcher = RIGHT_TRIM_PATTERN.matcher(line);
+		matcher.find();
+		return matcher.group(1);
+	}
 
 	private void handleSequence(ParserState parserState, TextLineParser parser,
 			PhdVisitor visitor) throws IOException {
@@ -257,7 +264,7 @@ public abstract class PhdBallParser {
 					}else{
 						//unrecognized key-value pair
 						//could be free-form misc data that happened to be in key:value format?
-						visitor.visitFreeFormData(line);
+						visitor.visitFreeFormData(rightTrim(line));
 					}
 				}else{
 					//not a key value pair
@@ -265,7 +272,7 @@ public abstract class PhdBallParser {
 						visitor.visitComment( parseReadTagComment(parser));
 					}else{
 						//free form misc data?
-						visitor.visitFreeFormData(line);
+						visitor.visitFreeFormData(rightTrim(line));
 					}
 				}
 			}
