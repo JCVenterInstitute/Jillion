@@ -50,6 +50,80 @@ class DefaultPhdReadTag implements PhdReadTag {
 	public final String getFreeFormData() {
 		return freeFormData;
 	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((comment == null) ? 0 : comment.hashCode());
+		result = prime * result + ((date == null) ? 0 : date.hashCode());
+		result = prime * result
+				+ ((freeFormData == null) ? 0 : freeFormData.hashCode());
+		result = prime * result + ((source == null) ? 0 : source.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result
+				+ ((ungappedRange == null) ? 0 : ungappedRange.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof DefaultPhdReadTag)) {
+			return false;
+		}
+		DefaultPhdReadTag other = (DefaultPhdReadTag) obj;
+		if (comment == null) {
+			if (other.comment != null) {
+				return false;
+			}
+		} else if (!comment.equals(other.comment)) {
+			return false;
+		}
+		if (date == null) {
+			if (other.date != null) {
+				return false;
+			}
+		} else if (!date.equals(other.date)) {
+			return false;
+		}
+		if (freeFormData == null) {
+			if (other.freeFormData != null) {
+				return false;
+			}
+		} else if (!freeFormData.equals(other.freeFormData)) {
+			return false;
+		}
+		if (source == null) {
+			if (other.source != null) {
+				return false;
+			}
+		} else if (!source.equals(other.source)) {
+			return false;
+		}
+		if (type == null) {
+			if (other.type != null) {
+				return false;
+			}
+		} else if (!type.equals(other.type)) {
+			return false;
+		}
+		if (ungappedRange == null) {
+			if (other.ungappedRange != null) {
+				return false;
+			}
+		} else if (!ungappedRange.equals(other.ungappedRange)) {
+			return false;
+		}
+		return true;
+	}
 	
 	
 	

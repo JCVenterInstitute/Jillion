@@ -112,11 +112,18 @@ public abstract class AbstractPhdVisitor implements PhdVisitor{
 
 	@Override
 	public final void visitEnd() {
-		if(positionBuilder.getLength()>0 && positionBuilder.getLength() != sequenceBuilder.getLength()){
-			throw new IllegalStateException("not all basecalls have positions set");
+		final PositionSequence peaks;
+		//no peaks
+		if(positionBuilder.getLength() ==0){
+			peaks =null;
+		}else{
+			if( positionBuilder.getLength() != sequenceBuilder.getLength()){
+				throw new IllegalStateException("not all basecalls have positions set");
+			}
+			peaks = positionBuilder.build();
 		}
 		visitPhd(id, version, 
-				sequenceBuilder.build(), qualityBuilder.build(), positionBuilder==null?null : positionBuilder.build(),
+				sequenceBuilder.build(), qualityBuilder.build(), peaks,
 				comments, wholeReadItems,readTags);
 		
 	}

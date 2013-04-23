@@ -31,7 +31,6 @@ import java.util.Map;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.trace.sanger.PositionSequence;
 import org.junit.Test;
 /**
@@ -43,20 +42,21 @@ public class TestPhdWriter extends AbstractTestPhd{
     private String id = "1095595674585";
     @Test
     public void write() throws IOException, DataStoreException{
-        Phd phd = new DefaultPhd(
-        		id,
-        		new NucleotideSequenceBuilder(expectedBasecalls).build(), 
-        		expectedQualities, 
-                expectedPositions,
-                expectedProperties);
+       
+      
+        PhdDataStore expected =  new PhdFileDataStoreBuilder(RESOURCE.getFile(PHD_FILE)).build();
+        
+       
+        Phd expectedPhd = expected.get(id);
+        
+        Phd phd = new PhdBuilder(expectedPhd).build();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PhdWriter.writePhd(phd, out);
-        PhdDataStore expected =  new PhdFileDataStoreBuilder(RESOURCE.getFile(PHD_FILE)).build();
         
         SinglePhdVisitor visitor = new SinglePhdVisitor();
         PhdBallParser.create(new ByteArrayInputStream(out.toByteArray())).accept(visitor);
 
-        assertEquals(expected.get(id),visitor.phd);
+		assertEquals(expectedPhd,visitor.phd);
     }
     
     private static class SinglePhdVisitor extends AbstractPhdBallVisitor{
