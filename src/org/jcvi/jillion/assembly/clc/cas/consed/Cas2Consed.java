@@ -63,7 +63,7 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 
 	private final Map<String, AceContigBuilder> contigBuilders;
 	private final File consedOutputDir;
-	private Date phdDate = new Date();
+	private final Date phdDate = new Date();
 	
 	private final PhdWriter phdOut;
 	
