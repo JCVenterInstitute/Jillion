@@ -33,14 +33,16 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
     TestPhdBuilder.class,
-    	
+
+    TestBuildArtificialPhd.class,
      TestFakePhdReadParser.class,
+     
+     TestParsingPhdBallFileWithoutPositions.class,
      
      TestDefaultPhdDataStore2.class,
      TestIndexedPhdDataStore2.class,
      TestLargePhdDataStore2.class,
      
-     TestBuildArtificialPhd.class,
      
      TestPhdBallWriter.class,
      TestSinglePhdWriter.class
