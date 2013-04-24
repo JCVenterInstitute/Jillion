@@ -317,7 +317,7 @@ public abstract class PhdBallParser {
 					visitor.visitBasecall(base, qual, Integer.parseInt(matcher.group(3)));
 				}
 			}else{
-				inDnaBlock = line.startsWith(END_DNA);
+				inDnaBlock = !line.startsWith(END_DNA);
 			}
 		}while(inDnaBlock && parser.hasNextLine() && parserState.keepParsing());
 	}
