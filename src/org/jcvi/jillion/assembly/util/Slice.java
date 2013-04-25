@@ -24,6 +24,11 @@
  * @author dkatzel
  */
 package org.jcvi.jillion.assembly.util;
+
+import java.util.Map;
+
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+
 /**
  * A {@code Slice} is a one base wide vertical cut of an assembly containing zero 
  * or more {@link SliceElement}s.
@@ -54,5 +59,15 @@ public interface Slice extends Iterable<SliceElement>{
      * if there is no {@link SliceElement} for this Slice with that id.
      */
     SliceElement getSliceElement(String elementId);
+    /**
+     * Get a Mapping of how many of each {@link Nucleotide}
+     * is present in this slice.  
+     * @return a new {@link Map} containing just
+     * the the {@link Nucleotide}s in this slice
+     * (there will be no keys with value of 0 );
+     * will never return null, if {@link #getCoverageDepth()} ==0
+     * then this method will return an empty map.
+     */
+    Map<Nucleotide, Integer> getNucleotideCounts();
    
 }

@@ -25,6 +25,7 @@
  */
 package org.jcvi.jillion.internal.assembly.util;
 
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -37,6 +38,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
 public final class DefaultSlice implements Slice{
 	public static final DefaultSlice EMPTY = new Builder().build();
+	private static final Nucleotide[] VALUES = Nucleotide.values();
 	
     private final Map<String,SliceElement> elements;
     
@@ -100,7 +102,29 @@ public final class DefaultSlice implements Slice{
         return elements.get(elementId);
     }
     
-    public static class Builder implements org.jcvi.jillion.core.util.Builder<DefaultSlice>{
+    
+    
+    
+    @Override
+	public Map<Nucleotide, Integer> getNucleotideCounts() {
+    	int[] counts = new int[VALUES.length];
+    	for(SliceElement element : elements.values()){
+    		counts[element.getBase().ordinal()]++;
+    	}
+    	Map<Nucleotide, Integer> map = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
+		for(int i=0; i < counts.length; i++){
+			int count = counts[i];
+			if(count>0){
+				map.put(VALUES[i], count);
+			}
+		}
+		return map;
+	}
+
+
+
+
+	public static class Builder implements org.jcvi.jillion.core.util.Builder<DefaultSlice>{
         private final Map<String,SliceElement> elements = new LinkedHashMap<String, SliceElement>();
         
         public Builder add(String id, Nucleotide base, PhredQuality quality, Direction dir){
@@ -108,7 +132,7 @@ public final class DefaultSlice implements Slice{
         }
         public Builder addAll(Iterable<? extends SliceElement> elements){
             for(SliceElement element : elements){
-                this.elements.put(element.getId(), element);
+                this.add(element);
             }
             return this;
         }
