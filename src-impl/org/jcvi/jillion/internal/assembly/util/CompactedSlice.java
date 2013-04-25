@@ -22,8 +22,10 @@ package org.jcvi.jillion.internal.assembly.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.assembly.util.Slice;
@@ -40,6 +42,8 @@ import org.jcvi.jillion.internal.core.util.GrowableShortArray;
  */
 public final class CompactedSlice implements Slice{
 
+	private static final Nucleotide[] VALUES = Nucleotide.values();
+	
     private final short[] elements;
     private final String[] ids;
     
@@ -87,6 +91,23 @@ public final class CompactedSlice implements Slice{
     
     
     @Override
+	public Map<Nucleotide, Integer> getNucleotideCounts() {
+		int[] counts = new int[VALUES.length];
+		for(int i=0; i < elements.length; i++){
+			int ordinal =(elements[i] >>>8) &0xF;
+			counts[ordinal]++;
+		}
+		Map<Nucleotide, Integer> map = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
+		for(int i=0; i < counts.length; i++){
+			int count = counts[i];
+			if(count>0){
+				map.put(VALUES[i], count);
+			}
+		}
+		return map;
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
