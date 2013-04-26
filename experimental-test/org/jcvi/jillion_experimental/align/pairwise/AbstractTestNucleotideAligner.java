@@ -26,17 +26,12 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion_experimental.align.NucleotideSequenceAlignmentBuilder;
-import org.jcvi.jillion_experimental.align.pairwise.DefaultNucleotideScoringMatrix;
-import org.jcvi.jillion_experimental.align.pairwise.NucleotidePairwiseSequenceAlignment;
-import org.jcvi.jillion_experimental.align.pairwise.NucleotidePairwiseSequenceAlignmentImpl;
-import org.jcvi.jillion_experimental.align.pairwise.NucleotideScoringMatrix;
-import org.jcvi.jillion_experimental.align.pairwise.PairwiseSequenceAlignmentWrapper;
 
 public class AbstractTestNucleotideAligner {
 
 	protected final NucleotideScoringMatrix matrix;
 	public AbstractTestNucleotideAligner(){
-		DefaultNucleotideScoringMatrix.Builder builder = new DefaultNucleotideScoringMatrix.Builder(-1F);
+		NucleotideScoringMatrixBuilder builder = new NucleotideScoringMatrixBuilder(-1F);
 		builder.setMatch(2);
 		matrix = builder.build();
 	}
