@@ -28,17 +28,16 @@ import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.jillion_experimental.align.pairwise.DefaultNucleotideScoringMatrix;
 import org.jcvi.jillion_experimental.align.pairwise.NucleotidePairwiseSequenceAlignment;
+import org.jcvi.jillion_experimental.align.pairwise.NucleotideScoringMatrix;
+import org.jcvi.jillion_experimental.align.pairwise.NucleotideScoringMatrixBuilder;
 import org.jcvi.jillion_experimental.align.pairwise.NucleotideSmithWatermanAligner;
-import org.jcvi.jillion_experimental.align.pairwise.ScoringMatrix;
 /**
  * {@code PrimerDetector} scans a {@link NucleotideSequence}
  * against a {@link NucleotideSequenceDataStore} of primer/vector sequences
@@ -57,10 +56,10 @@ public class PrimerDetector {
     private final Integer maxNumMismatches;
     private int gapOpenPenalty=-200;
     
-    private static final ScoringMatrix<Nucleotide> MATRIX = new DefaultNucleotideScoringMatrix.Builder(0)
-	.setMatch(4)
-	.ambiguityScore(2)
-	.build();
+    private static final NucleotideScoringMatrix MATRIX = new NucleotideScoringMatrixBuilder(0)
+																.setMatch(4)
+																.ambiguityScore(2)
+																.build();
 
     /**
      * @param minLength
