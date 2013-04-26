@@ -20,7 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.ace.consed;
 
+import java.io.BufferedOutputStream;
 import java.io.Closeable;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
@@ -95,6 +98,11 @@ public final class ConsedNavigationWriter implements Closeable{
         this.out= out;
         
     }
+    
+    public ConsedNavigationWriter(String title, File outFile) throws IOException{
+    	this(title, new BufferedOutputStream(new FileOutputStream(outFile)));
+    }
+    
     @Override
     public void close() throws IOException {
         out.close();
