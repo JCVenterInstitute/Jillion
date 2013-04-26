@@ -453,6 +453,30 @@ public class TestNucleotideSequenceBuilder {
     }
     
     @Test
+    public void trimNegativeBeginShouldAdjustTo0(){
+    	 assertEquals("ACG",
+                 new NucleotideSequenceBuilder("ACGT")
+    	 					.trim(Range.of(-1,2))
+                         .build().toString());
+    }
+    
+    @Test
+    public void trimEndBeyondLengthShouldAdjustToEnd(){
+    	 assertEquals("CGT",
+                 new NucleotideSequenceBuilder("ACGT")
+    	 					.trim(Range.of(1,5))
+                         .build().toString());
+    }
+    
+    @Test
+    public void trimEntirelyNegativeRangeShouldRemoveAllBases(){
+         assertEquals(0,        new NucleotideSequenceBuilder("ACGT")
+    	 					.trim(Range.of(-5,-2))
+                         .build().getLength());
+    }
+    
+    
+    @Test
     public void trimEmptyDeletesEntireSequence(){
     	 assertEquals("",
                  new NucleotideSequenceBuilder("ACGT")
