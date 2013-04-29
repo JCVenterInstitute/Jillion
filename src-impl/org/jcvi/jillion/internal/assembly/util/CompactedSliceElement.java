@@ -111,7 +111,7 @@ public final class CompactedSliceElement implements SliceElement{
     * {@inheritDoc}
     */
     @Override
-    public Direction getSequenceDirection() {
+    public Direction getDirection() {
     	if(dirAndNucleotide <0){
     		return Direction.REVERSE;
     	}
@@ -149,7 +149,7 @@ public final class CompactedSliceElement implements SliceElement{
         if(!getBase().equals(other.getBase())){
             return false;
         }
-        if(!getSequenceDirection().equals(other.getSequenceDirection())){
+        if(!getDirection().equals(other.getDirection())){
             return false;
         }
         return true;

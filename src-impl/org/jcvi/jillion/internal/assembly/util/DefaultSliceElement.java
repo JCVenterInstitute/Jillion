@@ -79,7 +79,7 @@ public class DefaultSliceElement implements SliceElement {
         ObjectsUtil.nullSafeEquals(getId(), other.getId()) 
         && ObjectsUtil.nullSafeEquals(getBase(), other.getBase())
         && ObjectsUtil.nullSafeEquals(getQuality(), other.getQuality())
-        && ObjectsUtil.nullSafeEquals(getSequenceDirection(), other.getSequenceDirection());
+        && ObjectsUtil.nullSafeEquals(getDirection(), other.getDirection());
        
     }
 
@@ -94,7 +94,7 @@ public class DefaultSliceElement implements SliceElement {
     }
 
     @Override
-    public Direction getSequenceDirection() {
+    public Direction getDirection() {
         return direction;
     }
 

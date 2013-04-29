@@ -211,7 +211,7 @@ public final class CompactedSlice implements Slice{
         GrowableShortArray bytes = new GrowableShortArray(1024);
         List<String> ids = new ArrayList<String>();
         public Builder addSliceElement(SliceElement element){            
-            return addSliceElement(element.getId(),element.getBase(), element.getQuality(), element.getSequenceDirection());
+            return addSliceElement(element.getId(),element.getBase(), element.getQuality(), element.getDirection());
         }
         public Builder addSliceElements(Iterable<? extends SliceElement> elements){
             for(SliceElement e : elements){
