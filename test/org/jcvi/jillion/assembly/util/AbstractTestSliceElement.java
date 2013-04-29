@@ -51,7 +51,7 @@ public abstract class AbstractTestSliceElement {
         assertEquals(id, sut.getId());
         assertEquals(base, sut.getBase());
         assertEquals(quality, sut.getQuality());
-        assertEquals(dir, sut.getSequenceDirection());
+        assertEquals(dir, sut.getDirection());
     }
     
     @Test

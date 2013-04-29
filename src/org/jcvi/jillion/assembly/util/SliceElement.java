@@ -61,5 +61,5 @@ public interface SliceElement {
      * Get the {@link Direction} of this SliceElement.
      * @return
      */
-    Direction getSequenceDirection();
+    Direction getDirection();
 }
