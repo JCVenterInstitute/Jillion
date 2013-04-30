@@ -63,10 +63,12 @@ public interface Slice extends Iterable<SliceElement>{
      * Get a Mapping of how many of each {@link Nucleotide}
      * is present in this slice.  
      * @return a new {@link Map} containing just
-     * the the {@link Nucleotide}s in this slice
-     * (there will be no keys with value of 0 );
-     * will never return null, if {@link #getCoverageDepth()} ==0
-     * then this method will return an empty map.
+     * the {@link Nucleotide}s counts for this slice
+     * if a Nucleotide is not present in this slice,
+     * then the Map will contain that key with a value of 0.
+     * If {@link #getCoverageDepth()} ==0 then all the Nucletoides
+     * will have values of 0.
+     * Will never return null, 
      */
     Map<Nucleotide, Integer> getNucleotideCounts();
    

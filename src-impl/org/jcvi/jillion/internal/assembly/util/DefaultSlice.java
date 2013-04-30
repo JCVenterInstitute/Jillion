@@ -114,9 +114,7 @@ public final class DefaultSlice implements Slice{
     	Map<Nucleotide, Integer> map = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
 		for(int i=0; i < counts.length; i++){
 			int count = counts[i];
-			if(count>0){
-				map.put(VALUES[i], count);
-			}
+			map.put(VALUES[i], count);
 		}
 		return map;
 	}
