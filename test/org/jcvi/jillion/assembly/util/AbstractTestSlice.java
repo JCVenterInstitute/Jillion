@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,16 @@ public abstract class AbstractTestSlice {
     public void emptySlice(){
         sut = createNew(Collections.<SliceElement>emptyList());
         assertEquals(0,sut.getCoverageDepth());
-        assertTrue(sut.getNucleotideCounts().isEmpty());
+        
+        assertEquals(createCountMapOfAllZeros(),sut.getNucleotideCounts());
+    }
+    
+    private Map<Nucleotide, Integer> createCountMapOfAllZeros(){
+    	Map<Nucleotide,Integer> map = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
+    	for(Nucleotide n : Nucleotide.values()){
+    		map.put(n, Integer.valueOf(0));
+    	}
+    	return map;
     }
     
     @Test
@@ -63,9 +73,11 @@ public abstract class AbstractTestSlice {
         for(SliceElement element : elements){
             assertEquals(element, sut.getSliceElement(element.getId()));
         }
-        Map<Nucleotide, Integer> countsMap =sut.getNucleotideCounts();
-        assertEquals(1, countsMap.size());
-        assertEquals(1, countsMap.get(Nucleotide.Adenine).intValue());
+        
+        Map<Nucleotide, Integer> expectedCountsMap = createCountMapOfAllZeros();
+        expectedCountsMap.put(Nucleotide.Adenine, 1);
+        Map<Nucleotide, Integer> actualCountsMap =sut.getNucleotideCounts();
+        assertEquals(expectedCountsMap, actualCountsMap);
     }
     @Test
     public void manyElements(){
@@ -85,10 +97,11 @@ public abstract class AbstractTestSlice {
             assertEquals(element, sut.getSliceElement(element.getId()));
         }
         
-        Map<Nucleotide, Integer> countsMap =sut.getNucleotideCounts();
-        assertEquals(2, countsMap.size());
-        assertEquals(1, countsMap.get(Nucleotide.Adenine).intValue());
-        assertEquals(2, countsMap.get(Nucleotide.Cytosine).intValue());
+        Map<Nucleotide, Integer> expectedCountsMap = createCountMapOfAllZeros();
+        expectedCountsMap.put(Nucleotide.Adenine, 1);
+        expectedCountsMap.put(Nucleotide.Cytosine, 2);
+        Map<Nucleotide, Integer> actualCountsMap =sut.getNucleotideCounts();
+        assertEquals(expectedCountsMap, actualCountsMap);
     }
     @Test
     public void iterator(){
