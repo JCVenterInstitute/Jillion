@@ -21,7 +21,7 @@ public final class SliceMapBuilder<R extends AssembledRead> implements Builder<S
 	private PhredQuality defaultQuality;
 	private GapQualityValueStrategy qualityValueStrategy = GapQualityValueStrategy.LOWEST_FLANKING;
 	
-	private ReadFilter<R> filter=null;
+	private ReadFilter<? super R> filter=null;
 	
 	public SliceMapBuilder(Contig<R> contig, PhredQuality defaultQuality){
 		if(contig ==null){
@@ -65,7 +65,7 @@ public final class SliceMapBuilder<R extends AssembledRead> implements Builder<S
 	 * @see #maxAllowedCoverage(int)
 	 * @throws NullPointerException if filter is null.
 	 */
-	public SliceMapBuilder<R> filter(ReadFilter<R> filter){
+	public SliceMapBuilder<R> filter(ReadFilter<? super R> filter){
 		if(filter==null){
 			throw new IllegalArgumentException("filter can not be null");
 		}

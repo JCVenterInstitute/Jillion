@@ -29,7 +29,7 @@ public final class ContigCoverageMapBuilder<R extends AssembledRead> {
 	private static final int NOT_SET = -1;
 	private final Contig<R> contig;
 	
-	private ReadFilter<R> filter = null;
+	private ReadFilter<? super R> filter = null;
 	
 	private int maxCoverage=NOT_SET;
 	
@@ -102,7 +102,7 @@ public final class ContigCoverageMapBuilder<R extends AssembledRead> {
 	 * @see #maxAllowedCoverage(int)
 	 * @throws NullPointerException if filter is null.
 	 */
-	public ContigCoverageMapBuilder<R> filter(ReadFilter<R> filter){
+	public ContigCoverageMapBuilder<R> filter(ReadFilter<? super R> filter){
 		if(filter==null){
 			throw new IllegalArgumentException("filter can not be null");
 		}
