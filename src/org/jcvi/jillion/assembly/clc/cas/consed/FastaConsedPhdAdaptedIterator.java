@@ -28,16 +28,16 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 
-import org.jcvi.jillion.assembly.ace.PhdInfo;
-import org.jcvi.jillion.assembly.ace.consed.ConsedUtil;
+import org.jcvi.jillion.assembly.consed.ConsedUtil;
+import org.jcvi.jillion.assembly.consed.ace.PhdInfo;
+import org.jcvi.jillion.assembly.consed.phd.Phd;
+import org.jcvi.jillion.assembly.consed.phd.PhdBuilder;
+import org.jcvi.jillion.assembly.consed.phd.PhdUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.jillion.trace.sanger.phd.Phd;
-import org.jcvi.jillion.trace.sanger.phd.PhdBuilder;
-import org.jcvi.jillion.trace.sanger.phd.PhdUtil;
 /**
  * {@code FastaConsedPhdAdaptedIterator} is a PhdReadRecord generator
  * for chromatograms.  Since CLC's reference mappers don't handle chromatograms,

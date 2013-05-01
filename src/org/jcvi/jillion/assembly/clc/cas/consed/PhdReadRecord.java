@@ -20,11 +20,11 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.clc.cas.consed;
 
-import org.jcvi.jillion.assembly.ace.PhdInfo;
+import org.jcvi.jillion.assembly.consed.ace.PhdInfo;
+import org.jcvi.jillion.assembly.consed.phd.Phd;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.trace.Trace;
-import org.jcvi.jillion.trace.sanger.phd.Phd;
 
 class PhdReadRecord implements Trace{
 
