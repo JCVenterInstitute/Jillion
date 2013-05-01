@@ -18,32 +18,30 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-/*
- * Created on Mar 30, 2009
- *
+package org.jcvi.jillion.assembly.consed.ace;
+
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
+
+import org.jcvi.jillion.assembly.consed.ace.AceFileUtil;
+import org.junit.Test;
+import static org.junit.Assert.*;
+/**
  * @author dkatzel
+ *
+ *
  */
-package org.jcvi.jillion.trace.sanger;
+public class TestAceFileUtil {
 
-import org.jcvi.jillion.trace.sanger.chromat.AllChromatogramUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-    	TestPosition.class,
-    	TestDefaultPositionCodec.class,
-    	TestPositionSequenceBuilder.class,
-    	TestDefaultPositionFastaFileDataStore.class,
-    	TestDefaultPositionSequenceFastaRecordWriter.class,
-    	
-        
-        AllChromatogramUnitTests.class
-        
+    @Test
+    public void parseChromatogramMadeAroundMidnight() throws ParseException{
+        String dateAsString = "Fri Jan 7 00:40:59 2011";
+        Date date =AceFileUtil.parsePhdDate(dateAsString);
+        Calendar calendar =Calendar.getInstance();
+		calendar.setTime(date);
+        assertEquals(0, calendar.get(Calendar.HOUR_OF_DAY));
+        assertEquals(40, calendar.get(Calendar.MINUTE));
+        assertEquals(59, calendar.get(Calendar.SECOND));
     }
-    )
-public class AllSangerTraceUnitTests {
-
 }
