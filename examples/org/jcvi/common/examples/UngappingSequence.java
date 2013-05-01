@@ -29,9 +29,11 @@ public class UngappingSequence {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		NucleotideSequence originalSequence = null;
+		NucleotideSequence ungappedSequence = new NucleotideSequenceBuilder("ACG-ACG--T")
+													.ungap()
+													.build();
 				
-		NucleotideSequence sequence = new NucleotideSequenceBuilder(originalSequence)
+		NucleotideSequence reverseSequence = new NucleotideSequenceBuilder(ungappedSequence)
 											.reverseComplement()
 											.build();
 

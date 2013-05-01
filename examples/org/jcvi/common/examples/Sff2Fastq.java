@@ -23,9 +23,15 @@ package org.jcvi.common.examples;
 import java.io.File;
 import java.io.IOException;
 
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
+import org.jcvi.jillion.trace.fastq.FastqRecordWriter;
+import org.jcvi.jillion.trace.fastq.FastqRecordWriterBuilder;
 import org.jcvi.jillion.trace.sff.SffFileDataStore;
 import org.jcvi.jillion.trace.sff.SffFileDataStoreBuilder;
+import org.jcvi.jillion.trace.sff.SffFlowgram;
 
 public class Sff2Fastq {
 
@@ -33,13 +39,18 @@ public class Sff2Fastq {
 	 * @param args
 	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, DataStoreException {
 		File sffFile = new File("/path/to/input.sff");
 		File fastqFile = new File("/path/to/output.fastq");
 		
 		SffFileDataStore sffDataStore = new SffFileDataStoreBuilder(sffFile)
 												.hint(DataStoreProviderHint.ITERATION_ONLY)
 												.build();
+		
+		FastqRecordWriter writer = new FastqRecordWriterBuilder(fastqFile)
+										.qualityCodec(FastqQualityCodec.SOLEXA)
+										.build();
+		
 		
 		
 

@@ -23,12 +23,12 @@ package org.jcvi.common.examples;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.jillion.assembly.ace.AbstractAceContigVisitor;
-import org.jcvi.jillion.assembly.ace.AbstractAceFileVisitor;
-import org.jcvi.jillion.assembly.ace.AceContigVisitor;
-import org.jcvi.jillion.assembly.ace.AceFileParser;
-import org.jcvi.jillion.assembly.ace.AceFileVisitor;
-import org.jcvi.jillion.assembly.ace.AceFileVisitorCallback;
+import org.jcvi.jillion.assembly.consed.ace.AbstractAceContigVisitor;
+import org.jcvi.jillion.assembly.consed.ace.AbstractAceFileVisitor;
+import org.jcvi.jillion.assembly.consed.ace.AceContigVisitor;
+import org.jcvi.jillion.assembly.consed.ace.AceFileParser;
+import org.jcvi.jillion.assembly.consed.ace.AceFileVisitor;
+import org.jcvi.jillion.assembly.consed.ace.AceFileVisitorCallback;
 import org.jcvi.jillion.core.Direction;
 
 public class OnlyPrintForwardReadsOfASpecificContig {
