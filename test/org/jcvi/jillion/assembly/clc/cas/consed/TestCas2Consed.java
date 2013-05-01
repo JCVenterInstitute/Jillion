@@ -26,13 +26,13 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.assembly.AssembledRead;
-import org.jcvi.jillion.assembly.ace.AceAssembledRead;
-import org.jcvi.jillion.assembly.ace.AceContig;
-import org.jcvi.jillion.assembly.ace.AceFileContigDataStore;
-import org.jcvi.jillion.assembly.ace.AceFileDataStoreBuilder;
 import org.jcvi.jillion.assembly.clc.cas.CasFileParser;
 import org.jcvi.jillion.assembly.clc.cas.CasGappedReferenceDataStore;
 import org.jcvi.jillion.assembly.clc.cas.CasGappedReferenceDataStoreBuilderVisitor;
+import org.jcvi.jillion.assembly.consed.ace.AceAssembledRead;
+import org.jcvi.jillion.assembly.consed.ace.AceContig;
+import org.jcvi.jillion.assembly.consed.ace.AceFileContigDataStore;
+import org.jcvi.jillion.assembly.consed.ace.AceFileDataStoreBuilder;
 import org.jcvi.jillion.assembly.ctg.TigrContig;
 import org.jcvi.jillion.assembly.ctg.TigrContigDataStore;
 import org.jcvi.jillion.assembly.ctg.TigrContigFileDataStoreBuilder;

@@ -18,32 +18,38 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-/*
- * Created on Mar 30, 2009
- *
- * @author dkatzel
- */
-package org.jcvi.jillion.trace.sanger;
+package org.jcvi.jillion.assembly.consed;
 
-import org.jcvi.jillion.trace.sanger.chromat.AllChromatogramUnitTests;
+import org.jcvi.jillion.assembly.consed.ace.AllAceUnitTests;
+import org.jcvi.jillion.assembly.consed.nav.AllConsedNavigationUnitTests;
+import org.jcvi.jillion.assembly.consed.phd.AllPhdUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+/**
+ * @author dkatzel
+ *
+ *
+ */
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-    	TestPosition.class,
-    	TestDefaultPositionCodec.class,
-    	TestPositionSequenceBuilder.class,
-    	TestDefaultPositionFastaFileDataStore.class,
-    	TestDefaultPositionSequenceFastaRecordWriter.class,
-    	
+        TestConsedUtil.class,
+        TestConsedUtil_Split0xNoGaps.class,
+        TestConsedUtil_Split0xWithGaps.class,
+        TestConsedUtilGetNextAceVersion.class,
         
-        AllChromatogramUnitTests.class
+        TestConsedUtilGetLatestAce.class,
+
         
+        AllPhdUnitTests.class,
+        
+        AllAceUnitTests.class,
+        
+        AllConsedNavigationUnitTests.class
     }
     )
-public class AllSangerTraceUnitTests {
+public class AllConsedUnitTests {
 
 }

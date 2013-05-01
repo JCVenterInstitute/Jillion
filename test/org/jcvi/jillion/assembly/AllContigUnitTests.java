@@ -20,9 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly;
 
-import org.jcvi.jillion.assembly.ace.AllAceUnitTests;
 import org.jcvi.jillion.assembly.asm.AllAsmUnitTests;
 import org.jcvi.jillion.assembly.clc.cas.AllCasUnitTests;
+import org.jcvi.jillion.assembly.consed.AllConsedUnitTests;
 import org.jcvi.jillion.assembly.ctg.AllCtgUnitTests;
 import org.jcvi.jillion.assembly.tasm.AllTasmUnitTests;
 import org.junit.runner.RunWith;
@@ -35,7 +35,8 @@ import org.junit.runners.Suite.SuiteClasses;
     TestDefaultPlacedRead.class,
    
     AllCtgUnitTests.class,
-    AllAceUnitTests.class, 
+    AllConsedUnitTests.class,
+    
     AllCasUnitTests.class,
     AllAsmUnitTests.class,
     AllTasmUnitTests.class

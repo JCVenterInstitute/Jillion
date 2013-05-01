@@ -18,32 +18,20 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-/*
- * Created on Mar 30, 2009
- *
- * @author dkatzel
- */
-package org.jcvi.jillion.trace.sanger;
+package org.jcvi.jillion.assembly.consed.ace;
 
-import org.jcvi.jillion.trace.sanger.chromat.AllChromatogramUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.io.File;
+import java.io.IOException;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-    	TestPosition.class,
-    	TestDefaultPositionCodec.class,
-    	TestPositionSequenceBuilder.class,
-    	TestDefaultPositionFastaFileDataStore.class,
-    	TestDefaultPositionSequenceFastaRecordWriter.class,
-    	
-        
-        AllChromatogramUnitTests.class
-        
-    }
-    )
-public class AllSangerTraceUnitTests {
+import org.jcvi.jillion.assembly.consed.ace.AceFileContigDataStore;
+import org.jcvi.jillion.assembly.consed.ace.DefaultAceFileDataStore;
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
+
+public class TestFilteredDefaultAceFileDataStore extends AbstractTestFilteredAceDataStore{
+
+	@Override
+	protected AceFileContigDataStore create(File aceFile, DataStoreFilter filter) throws IOException {
+		return DefaultAceFileDataStore.create(aceFile, filter);
+	}
 
 }

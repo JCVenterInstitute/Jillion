@@ -7,13 +7,13 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.jcvi.jillion.assembly.ace.PhdInfo;
-import org.jcvi.jillion.assembly.ace.consed.ConsedUtil;
+import org.jcvi.jillion.assembly.consed.ConsedUtil;
+import org.jcvi.jillion.assembly.consed.ace.PhdInfo;
+import org.jcvi.jillion.assembly.consed.phd.Phd;
+import org.jcvi.jillion.assembly.consed.phd.PhdBuilder;
+import org.jcvi.jillion.assembly.consed.phd.PhdUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.trace.sanger.phd.Phd;
-import org.jcvi.jillion.trace.sanger.phd.PhdBuilder;
-import org.jcvi.jillion.trace.sanger.phd.PhdUtil;
 
 public class AbstractTestPhdAdaptedIterator {
 

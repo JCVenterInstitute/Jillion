@@ -19,13 +19,12 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 /*
- * Created on Mar 30, 2009
+ * Created on Mar 19, 2009
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.trace.sanger;
+package org.jcvi.jillion.assembly.consed.phd;
 
-import org.jcvi.jillion.trace.sanger.chromat.AllChromatogramUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -33,17 +32,22 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-    	TestPosition.class,
-    	TestDefaultPositionCodec.class,
-    	TestPositionSequenceBuilder.class,
-    	TestDefaultPositionFastaFileDataStore.class,
-    	TestDefaultPositionSequenceFastaRecordWriter.class,
-    	
-        
-        AllChromatogramUnitTests.class
-        
+    TestPhdBuilder.class,
+
+    TestBuildArtificialPhd.class,
+     TestFakePhdReadParser.class,
+     
+     TestParsingPhdBallFileWithoutPositions.class,
+     
+     TestDefaultPhdDataStore2.class,
+     TestIndexedPhdDataStore2.class,
+     TestLargePhdDataStore2.class,
+     
+     
+     TestPhdBallWriter.class,
+     TestSinglePhdWriter.class
     }
     )
-public class AllSangerTraceUnitTests {
+public class AllPhdUnitTests {
 
 }

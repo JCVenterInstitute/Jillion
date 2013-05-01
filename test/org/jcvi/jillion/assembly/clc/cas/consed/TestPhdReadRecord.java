@@ -8,11 +8,11 @@ import static org.junit.Assert.assertFalse;
 
 import java.util.Date;
 
-import org.jcvi.jillion.assembly.ace.PhdInfo;
+import org.jcvi.jillion.assembly.consed.ace.PhdInfo;
+import org.jcvi.jillion.assembly.consed.phd.Phd;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.testUtil.TestUtil;
-import org.jcvi.jillion.trace.sanger.phd.Phd;
 import org.junit.Test;
 public class TestPhdReadRecord {
 
