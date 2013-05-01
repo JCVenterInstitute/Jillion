@@ -38,6 +38,9 @@ import java.util.Map;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.pos.Position;
+import org.jcvi.jillion.core.pos.PositionSequence;
+import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
@@ -47,9 +50,6 @@ import org.jcvi.jillion.internal.trace.sanger.chromat.DefaultChannelGroup;
 import org.jcvi.jillion.internal.trace.sanger.chromat.scf.SCFChromatogramImpl;
 import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.ZTRChromatogramImpl;
 import org.jcvi.jillion.trace.Trace;
-import org.jcvi.jillion.trace.sanger.Position;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
-import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogram;
 
 

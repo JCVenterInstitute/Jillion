@@ -22,6 +22,7 @@ package org.jcvi.jillion.trace.sanger;
 
 import java.util.Scanner;
 
+import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 /**
  * {@code AbstractPositionSequenceFastaRecordVisitor} is an abstract

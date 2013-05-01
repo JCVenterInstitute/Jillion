@@ -30,12 +30,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
+import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.internal.trace.sanger.chromat.DefaultChannel;
 import org.jcvi.jillion.internal.trace.sanger.chromat.DefaultChannelGroup;
-import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.jillion.trace.sanger.chromat.ChannelGroup;
 import org.junit.Test;
 public class TestChannelGroup {

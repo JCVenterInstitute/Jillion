@@ -31,9 +31,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.internal.trace.sanger.chromat.scf.SCFUtils;
 import org.jcvi.jillion.internal.trace.sanger.chromat.scf.header.pos.PositionStrategy;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
 /**
  * SCF Version 3 implementation of Sample Section Parser.  In order to
  * allow for better compression, SCF Version3

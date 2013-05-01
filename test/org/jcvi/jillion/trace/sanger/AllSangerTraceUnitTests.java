@@ -25,6 +25,9 @@
  */
 package org.jcvi.jillion.trace.sanger;
 
+import org.jcvi.jillion.core.pos.TestDefaultPositionCodec;
+import org.jcvi.jillion.core.pos.TestPosition;
+import org.jcvi.jillion.core.pos.TestPositionSequenceBuilder;
 import org.jcvi.jillion.trace.sanger.chromat.AllChromatogramUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

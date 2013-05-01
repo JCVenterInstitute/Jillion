@@ -32,9 +32,9 @@ import static org.junit.Assert.assertArrayEquals;
 import java.nio.ByteBuffer;
 
 import org.easymock.EasyMockSupport;
+import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.TraceEncoderException;
-import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.jillion.trace.sanger.chromat.Channel;
 import org.jcvi.jillion.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogram;

@@ -18,7 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace.sanger;
+package org.jcvi.jillion.core.pos;
 
 import java.util.Iterator;
 

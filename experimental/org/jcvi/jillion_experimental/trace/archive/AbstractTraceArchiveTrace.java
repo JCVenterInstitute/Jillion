@@ -28,8 +28,8 @@ package org.jcvi.jillion_experimental.trace.archive;
 import java.io.File;
 import java.io.IOException;
 
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.util.ObjectsUtil;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
 
 public abstract class AbstractTraceArchiveTrace implements TraceArchiveTrace {
 

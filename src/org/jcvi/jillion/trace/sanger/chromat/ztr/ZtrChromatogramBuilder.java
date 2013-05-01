@@ -32,12 +32,12 @@ import java.io.InputStream;
 import java.util.Map;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.pos.PositionSequence;
+import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.internal.trace.sanger.chromat.BasicChromatogramBuilder;
 import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.ZTRChromatogramImpl;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
-import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.jillion.trace.sanger.chromat.Chromatogram;
 
 /**

@@ -29,11 +29,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.internal.trace.sanger.chromat.BasicChromatogram;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
 import org.jcvi.jillion.trace.sanger.chromat.ChannelGroup;
 import org.junit.Before;
 import org.junit.Test;

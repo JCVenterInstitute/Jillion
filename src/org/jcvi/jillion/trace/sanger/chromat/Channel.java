@@ -20,8 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.sanger.chromat;
 
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.qual.QualitySequence;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
 /**
  * <code>Channel</code> represents the
  * data from a single trace channel (lane).

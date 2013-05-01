@@ -48,6 +48,8 @@ import java.util.Set;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.pos.Position;
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
@@ -57,8 +59,6 @@ import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.data.DataFactory;
 import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.data.RawData;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.TraceEncoderException;
-import org.jcvi.jillion.trace.sanger.Position;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
 import org.jcvi.jillion.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.jillion.trace.sanger.chromat.Chromatogram;
 import org.jcvi.jillion.trace.sanger.chromat.ChromatogramFileVisitor;

@@ -30,9 +30,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.pos.Position;
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.Section;
-import org.jcvi.jillion.trace.sanger.Position;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
 
 /**
  * <code>SCFUtils</code> is an Utility class

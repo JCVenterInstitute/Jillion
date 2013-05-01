@@ -25,7 +25,6 @@
  */
 package org.jcvi.jillion.core.io;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -38,7 +37,6 @@ import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -963,4 +961,19 @@ public final class IOUtil {
     }
     
     
+    /**
+     * Compute the number of bits required to
+     * store the given value. For example
+     * the value 2 requires 2 bits and the value 6 requires 3 bits etc.
+     * @param value the value to get the number of bits 
+     * for.
+     * @return the number of bits needed.
+     */
+	public static int computeNumberOfBitsIn(int value){
+		if(value ==0){
+			//special case
+			return 1;
+		}
+		return Integer.SIZE-Integer.numberOfLeadingZeros(value);
+	}
 }

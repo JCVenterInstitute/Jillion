@@ -25,6 +25,7 @@
  */
 package org.jcvi.jillion.trace.sanger;
 
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.trace.Trace;
 /**
  * A {@code SangerTrace} is a Trace

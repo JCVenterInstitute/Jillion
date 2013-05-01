@@ -18,7 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace.sanger;
+package org.jcvi.jillion.core.pos;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -27,7 +27,7 @@ import java.util.NoSuchElementException;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
 
-public class DefaultPositionSequence implements PositionSequence{
+class DefaultPositionSequence implements PositionSequence{
 
 	private final short[] data;
 	
