@@ -25,13 +25,13 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 
-import org.jcvi.jillion.assembly.ace.PhdInfo;
-import org.jcvi.jillion.assembly.ace.consed.ConsedUtil;
+import org.jcvi.jillion.assembly.consed.ConsedUtil;
+import org.jcvi.jillion.assembly.consed.ace.PhdInfo;
+import org.jcvi.jillion.assembly.consed.phd.Phd;
+import org.jcvi.jillion.assembly.consed.phd.PhdBuilder;
+import org.jcvi.jillion.assembly.consed.phd.PhdUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
-import org.jcvi.jillion.trace.sanger.phd.Phd;
-import org.jcvi.jillion.trace.sanger.phd.PhdBuilder;
-import org.jcvi.jillion.trace.sanger.phd.PhdUtil;
 
 
 class FastqConsedPhdAdaptedIterator implements StreamingIterator<PhdReadRecord>{

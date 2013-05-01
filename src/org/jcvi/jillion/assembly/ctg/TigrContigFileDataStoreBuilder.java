@@ -25,8 +25,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.jillion.assembly.AssembledRead;
-import org.jcvi.jillion.assembly.ace.AceContig;
-import org.jcvi.jillion.assembly.ace.AceFileContigDataStore;
+import org.jcvi.jillion.assembly.consed.ace.AceContig;
+import org.jcvi.jillion.assembly.consed.ace.AceFileContigDataStore;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
