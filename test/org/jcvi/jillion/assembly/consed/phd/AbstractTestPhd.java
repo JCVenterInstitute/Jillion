@@ -28,11 +28,11 @@ package org.jcvi.jillion.assembly.consed.phd;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.jcvi.jillion.core.pos.PositionSequence;
+import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
-import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;
 import org.junit.Before;
 
 public abstract class AbstractTestPhd {

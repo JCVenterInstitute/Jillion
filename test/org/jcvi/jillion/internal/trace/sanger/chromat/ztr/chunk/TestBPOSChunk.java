@@ -27,10 +27,10 @@ package org.jcvi.jillion.internal.trace.sanger.chromat.ztr.chunk;
 
 import java.nio.ByteBuffer;
 
+import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
 import org.jcvi.jillion.internal.trace.sanger.chromat.ztr.chunk.Chunk;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.TraceEncoderException;
-import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogram;
 import org.jcvi.jillion.trace.sanger.chromat.ztr.ZtrChromatogramBuilder;
 import org.junit.Test;

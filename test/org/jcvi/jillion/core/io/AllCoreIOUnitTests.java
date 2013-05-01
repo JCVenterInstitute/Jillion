@@ -44,6 +44,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestIOUtil_copy.class,
         TestIOUtil_toByteArray.class,
         TestIOUtil_toString.class,
+        TestIOUtil_numberOfBitsIn.class,
         
         
         TestFileUtil.class,

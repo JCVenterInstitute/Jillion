@@ -27,6 +27,8 @@ package org.jcvi.jillion.trace.sanger;
 
 import java.io.File;
 import java.io.IOException;
+
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 

@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
 
 /**
  * {@code PhdBallIterator} is a {@link StreamingIterator}

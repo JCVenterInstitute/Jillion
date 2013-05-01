@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
@@ -44,7 +45,6 @@ import org.jcvi.jillion.internal.trace.sanger.chromat.DefaultChannelGroup;
 import org.jcvi.jillion.internal.trace.sanger.chromat.scf.SCFChromatogramImpl;
 import org.jcvi.jillion.internal.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.jillion.internal.trace.sanger.chromat.scf.section.AbstractBasesSectionCodec;
-import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.jillion.trace.sanger.chromat.ChannelGroup;
 
 

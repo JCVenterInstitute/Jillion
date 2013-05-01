@@ -6,10 +6,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.Builder;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
 /**
  * {@code PhdBuilder} is a Builder that will create 
  * a {@link Phd} object using the given values.

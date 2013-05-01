@@ -31,9 +31,9 @@ import java.nio.ByteBuffer;
 import java.util.Iterator;
 
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.pos.Position;
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.internal.trace.sanger.chromat.scf.header.pos.PositionStrategy;
-import org.jcvi.jillion.trace.sanger.Position;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
 
 
 public class Version2SampleSectionCodec extends AbstractSampleSectionCodec {

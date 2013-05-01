@@ -18,7 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace.sanger;
+package org.jcvi.jillion.core.pos;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -28,8 +28,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.jillion.trace.sanger.DefaultPositionCodec;
-import org.jcvi.jillion.trace.sanger.Position;
+import org.jcvi.jillion.core.pos.DefaultPositionCodec;
+import org.jcvi.jillion.core.pos.Position;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

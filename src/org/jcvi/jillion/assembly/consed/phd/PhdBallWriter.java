@@ -15,11 +15,11 @@ import java.util.Scanner;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.JoinedStringBuilder;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
 
 public class PhdBallWriter implements PhdWriter{
 

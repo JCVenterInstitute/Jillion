@@ -28,8 +28,8 @@ package org.jcvi.jillion.assembly.consed.phd;
 import java.util.List;
 import java.util.Map;
 
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.trace.Trace;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
 /**
  * {@code Phd} is an object representation
  * of a single read from a phd file or a phd.ball file.

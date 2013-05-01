@@ -23,7 +23,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.trace.sanger;
+package org.jcvi.jillion.core.pos;
 
 import java.nio.ByteBuffer;
 import java.util.Collection;

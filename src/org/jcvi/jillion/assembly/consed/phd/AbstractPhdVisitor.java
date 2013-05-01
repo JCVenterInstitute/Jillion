@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.pos.PositionSequence;
+import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
-import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;
 /**
  * {@code AbstractPhdVisitor} is an abstract
  * implementation of {@link PhdVisitor}

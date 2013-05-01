@@ -31,13 +31,13 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.pos.Position;
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.trace.sanger.Position;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
 import org.jcvi.jillion.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.jillion.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogram;

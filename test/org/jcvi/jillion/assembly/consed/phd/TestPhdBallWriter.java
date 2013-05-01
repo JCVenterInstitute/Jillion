@@ -46,12 +46,12 @@ import org.jcvi.jillion.assembly.consed.phd.SinglePhdWriter;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.pos.PositionSequence;
+import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
-import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;
 import org.junit.Test;
 /**
  * @author dkatzel

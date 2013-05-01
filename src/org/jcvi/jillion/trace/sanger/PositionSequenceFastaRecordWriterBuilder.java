@@ -25,6 +25,8 @@ import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
+import org.jcvi.jillion.core.pos.Position;
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.internal.fasta.AbstractFastaRecordWriter;
 import org.jcvi.jillion.internal.fasta.AbstractFastaRecordWriter.AbstractBuilder;
 

@@ -26,6 +26,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.jcvi.jillion.core.pos.PositionSequence;
+import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -44,8 +46,6 @@ import org.jcvi.jillion.internal.trace.sanger.chromat.abi.tag.UserDefinedTaggedD
 import org.jcvi.jillion.internal.trace.sanger.chromat.abi.tag.rate.ScanRate;
 import org.jcvi.jillion.internal.trace.sanger.chromat.abi.tag.rate.ScanRateTaggedDataType;
 import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
-import org.jcvi.jillion.trace.sanger.PositionSequenceBuilder;
 import org.jcvi.jillion.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.jillion.trace.sanger.chromat.Chromatogram;
 

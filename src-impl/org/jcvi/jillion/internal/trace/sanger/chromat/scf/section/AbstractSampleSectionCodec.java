@@ -32,11 +32,11 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.pos.Position;
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.internal.trace.sanger.chromat.scf.header.SCFHeader;
 import org.jcvi.jillion.internal.trace.sanger.chromat.scf.header.pos.PositionStrategy;
 import org.jcvi.jillion.internal.trace.sanger.chromat.scf.header.pos.PositionStrategyFactory;
-import org.jcvi.jillion.trace.sanger.Position;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
 import org.jcvi.jillion.trace.sanger.chromat.ChannelGroup;
 import org.jcvi.jillion.trace.sanger.chromat.ChromatogramFileVisitor;
 import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogram;

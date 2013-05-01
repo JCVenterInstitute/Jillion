@@ -21,6 +21,8 @@
 package org.jcvi.jillion.trace.sanger;
 
 
+import org.jcvi.jillion.core.pos.Position;
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.util.ObjectsUtil;
 import org.jcvi.jillion.fasta.FastaRecord;
 

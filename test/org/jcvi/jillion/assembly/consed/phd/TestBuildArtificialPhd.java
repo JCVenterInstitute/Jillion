@@ -39,9 +39,9 @@ import org.jcvi.jillion.assembly.consed.phd.ArtificialPhd;
 import org.jcvi.jillion.assembly.consed.phd.Phd;
 import org.jcvi.jillion.assembly.consed.phd.PhdReadTag;
 import org.jcvi.jillion.assembly.consed.phd.PhdWholeReadItem;
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.trace.sanger.PositionSequence;
 import org.junit.Before;
 import org.junit.Test;
 
