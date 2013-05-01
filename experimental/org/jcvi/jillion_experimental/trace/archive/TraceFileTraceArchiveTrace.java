@@ -34,7 +34,7 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.trace.sanger.PositionSequence;
 import org.jcvi.jillion.trace.sanger.SangerTrace;
-import org.jcvi.jillion.trace.sanger.SangerTraceParser;
+import org.jcvi.jillion.trace.sanger.chromat.ChromatogramFactory;
 
 public class TraceFileTraceArchiveTrace extends AbstractTraceArchiveTrace {
     
@@ -46,7 +46,7 @@ public class TraceFileTraceArchiveTrace extends AbstractTraceArchiveTrace {
         try {
         	File f =getFile();
             inputStream = new FileInputStream(f);
-            trace = SangerTraceParser.INSTANCE.decode(f.getName(),inputStream);
+            trace = ChromatogramFactory.create(f.getName(),inputStream);
         } catch (Exception e) {
            throw new IllegalArgumentException("invalid trace file",e);
         }
