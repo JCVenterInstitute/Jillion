@@ -22,7 +22,8 @@ package org.jcvi.jillion.trace.sanger;
 
 
 public final class Position{
-	private static final int INITIAL_CACHE_SIZE = 1024;
+	//most sanger traces only go to 15k or so
+	private static final int INITIAL_CACHE_SIZE = 20000;
 	private static final Position[] CACHE;
 
 	private final int value;
