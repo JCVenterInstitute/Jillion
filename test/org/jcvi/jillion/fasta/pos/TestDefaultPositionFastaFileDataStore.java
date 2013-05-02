@@ -18,10 +18,19 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace.sanger;
+package org.jcvi.jillion.fasta.pos;
 
-import org.jcvi.jillion.core.datastore.DataStore;
+import java.io.File;
 
-public interface PositionSequenceFastaDataStore extends DataStore<PositionSequenceFastaRecord>{
+import org.jcvi.jillion.fasta.pos.DefaultPositionFastaFileDataStore;
+import org.jcvi.jillion.fasta.pos.PositionSequenceFastaDataStore;
+
+public class TestDefaultPositionFastaFileDataStore extends AbstractTestPositionFastaFileDataStore{
+
+	@Override
+	protected PositionSequenceFastaDataStore createPositionFastaMap(
+			File fastaFile) throws Exception {
+		return DefaultPositionFastaFileDataStore.create(fastaFile);
+	}
 
 }

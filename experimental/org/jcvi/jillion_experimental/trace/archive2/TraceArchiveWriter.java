@@ -44,10 +44,10 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.DateUtil;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordWriter;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
+import org.jcvi.jillion.fasta.pos.PositionSequenceFastaRecordWriter;
+import org.jcvi.jillion.fasta.pos.PositionSequenceFastaRecordWriterBuilder;
 import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecordWriter;
 import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecordWriterBuilder;
-import org.jcvi.jillion.trace.sanger.PositionSequenceFastaRecordWriter;
-import org.jcvi.jillion.trace.sanger.PositionSequenceFastaRecordWriterBuilder;
 import org.jcvi.jillion.trace.sanger.chromat.Chromatogram;
 import org.jcvi.jillion.trace.sanger.chromat.ChromatogramFactory;
 

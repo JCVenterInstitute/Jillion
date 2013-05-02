@@ -23,16 +23,16 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.trace.sanger;
+package org.jcvi.jillion.fasta.pos;
 
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 
 import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
+import org.jcvi.jillion.fasta.pos.PositionSequenceFastaDataStore;
+import org.jcvi.jillion.fasta.pos.PositionSequenceFastaRecord;
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.jcvi.jillion.trace.sanger.PositionSequenceFastaDataStore;
-import org.jcvi.jillion.trace.sanger.PositionSequenceFastaRecord;
 import org.junit.Test;
 
 public abstract class AbstractTestPositionFastaFileDataStore {
