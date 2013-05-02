@@ -285,11 +285,9 @@ final class ManifestIndexed454SffFileDataStore implements SffFileDataStore{
 		
 
 		private void tryToParseManifest(BigInteger offsetToIndex) {
-			RandomAccessFile randomAccessFile = createRandomAccessFileFromSff();
 			InputStream in=null;
 			try {
-				seekToManifest(randomAccessFile, offsetToIndex);
-				in=new BufferedInputStream(new RandomAccessFileInputStream(randomAccessFile));
+				in=new BufferedInputStream(new RandomAccessFileInputStream(sffFile, offsetToIndex.longValue()));
 				
 			    //pseudocode:
 				//skip xml manifest if present
@@ -331,35 +329,17 @@ final class ManifestIndexed454SffFileDataStore implements SffFileDataStore{
 					useableManifest=true;
 				}
 			
-			} catch (IOException e) {
-				throw new RuntimeException("error parsing manifest", e);
-			}finally{
-				IOUtil.closeAndIgnoreErrors(in,randomAccessFile);
-			}
-		}
-
-
-		protected void seekToManifest(RandomAccessFile randomAccessFile,
-				BigInteger offsetToIndex) {
-			try {
-				randomAccessFile.seek(offsetToIndex.longValue());
-			} catch (IOException e1) {
-				throw new RuntimeException("error seeking to sff manifest", e1);
-			}
-		}
-
-
-		protected RandomAccessFile createRandomAccessFileFromSff() {
-			RandomAccessFile randomAccessFile=null;
-			try {
-				randomAccessFile = new RandomAccessFile(sffFile, "r");
-			} catch (FileNotFoundException e1) {
+			}catch (FileNotFoundException e1) {
 				//this shouldn't happen under normal circumstances since 
 				//in order to get this far we had the file has to exist.
 				throw new RuntimeException("the sff file no longer exists", e1);
+			}catch (IOException e) {
+				throw new RuntimeException("error parsing manifest", e);
+			}finally{
+				IOUtil.closeAndIgnoreErrors(in);
 			}
-			return randomAccessFile;
 		}
+
 
 		
 		private void populateOffsetMap(InputStream in) throws IOException {

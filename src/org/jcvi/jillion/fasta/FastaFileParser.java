@@ -26,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -276,17 +275,14 @@ public abstract class FastaFileParser {
 			}
 			
 			long startOffset = ((OffsetMemento)memento).getOffset();
-			RandomAccessFile randomAccessFile = null;
 			InputStream inputStream=null;
 			
 			try{
-				randomAccessFile = new RandomAccessFile(fastaFile, "r");
-				randomAccessFile.seek(startOffset);
-				inputStream = new BufferedInputStream(new RandomAccessFileInputStream(randomAccessFile));
+				inputStream = new BufferedInputStream(new RandomAccessFileInputStream(fastaFile, startOffset));
 				TextLineParser parser = new TextLineParser(inputStream);
 				parseFile(parser, startOffset, visitor);
 			}finally{
-				IOUtil.closeAndIgnoreErrors(inputStream,randomAccessFile);
+				IOUtil.closeAndIgnoreErrors(inputStream);
 			}
 		}
 		@Override

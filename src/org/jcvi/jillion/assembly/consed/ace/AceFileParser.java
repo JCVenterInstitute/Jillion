@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.EnumSet;
@@ -815,17 +814,14 @@ public abstract class AceFileParser implements AceHandler {
 	        }
 	        long offset = aceFileMemento.getStartOffset();
 	        
-	        RandomAccessFile randomAccessFile=null;
 	        InputStream in =null;
 	        try{
-		        randomAccessFile= new RandomAccessFile(aceFile,"r");
-		        randomAccessFile.seek(offset);
-		        in = new RandomAccessFileInputStream(randomAccessFile);
+		        in = new RandomAccessFileInputStream(aceFile, offset);
 		        
 		        AceParserState parserState = AceParserState.create(in, visitor, new MementoCallbackFactory(),offset);
 		        parseAceData(parserState, visitor);
 	        }finally{
-	        	IOUtil.closeAndIgnoreErrors(randomAccessFile, in);
+	        	IOUtil.closeAndIgnoreErrors(in);
 	        }
 	        
 	    }

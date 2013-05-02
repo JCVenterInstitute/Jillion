@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
 import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -474,17 +473,14 @@ public abstract class PhdBallParser {
 		    }
 		    long offset = ((PhdBallVisitorMementoImpl)memento).getOffset();
 		    //TODO add check to make sure its the same parser object?
-		    RandomAccessFile randomAccessFile=null;
 	        TextLineParser parser=null;
 	        try{
-		        randomAccessFile= new RandomAccessFile(phdBall,"r");
-		        randomAccessFile.seek(offset);
-		        InputStream in = new RandomAccessFileInputStream(randomAccessFile);
+		        InputStream in = new RandomAccessFileInputStream(phdBall, offset);
 		        
 		        parser = new TextLineParser(in, offset);
 		        accept(parser, visitor);
 	        }finally{
-	        	IOUtil.closeAndIgnoreErrors(randomAccessFile, parser);
+	        	IOUtil.closeAndIgnoreErrors(parser);
 	        }
 		}
 		
