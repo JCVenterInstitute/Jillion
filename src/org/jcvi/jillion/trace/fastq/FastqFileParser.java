@@ -26,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -331,15 +330,13 @@ public abstract class FastqFileParser {
 				throw new NullPointerException("visitor can not be null");
 			}
 			long startOffset = ((OffsetMemento)memento).getValue();
-			RandomAccessFile randomAccessFile = new RandomAccessFile(fastqFile, "r");
 			InputStream in = null;
 			try{
-				randomAccessFile.seek(startOffset);
-				in = new RandomAccessFileInputStream(randomAccessFile);
+				in = new RandomAccessFileInputStream(fastqFile, startOffset);
 				TextLineParser parser = new TextLineParser(in);
 				parseFastqFile(visitor, parser, startOffset);	
 			}finally{
-				IOUtil.closeAndIgnoreErrors(in,randomAccessFile);
+				IOUtil.closeAndIgnoreErrors(in);
 			}
 		}		
 	}

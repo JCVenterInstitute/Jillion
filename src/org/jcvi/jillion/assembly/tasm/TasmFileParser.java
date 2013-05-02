@@ -26,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -510,15 +509,13 @@ public abstract class TasmFileParser {
 			if(fileLength<=startOffset){
 				throw new IllegalArgumentException("memento seeks beyond file");
 			}
-			RandomAccessFile randomAccessFile = new RandomAccessFile(tasmFile, "r");
 			InputStream in=null;
 			try{
-				randomAccessFile.seek(startOffset);
-				in = new BufferedInputStream( new RandomAccessFileInputStream(randomAccessFile));
+				in = new BufferedInputStream( new RandomAccessFileInputStream(tasmFile, startOffset));
 				TextLineParser parser = new TextLineParser(in);
 				parseTasm(parser, visitor, startOffset);
 			}finally{
-				IOUtil.closeAndIgnoreErrors(in,randomAccessFile);
+				IOUtil.closeAndIgnoreErrors(in);
 			}
 			
 		}

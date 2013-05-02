@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -236,14 +235,12 @@ public abstract class TigrContigFileParser {
 				throw new IllegalArgumentException("unknown memento type, must use instance created by this parser");
 			}
 			long startOffset = ((OffsetMemento)memento).getOffset();
-			RandomAccessFile randomAccessFile = new RandomAccessFile(contigFile, "r");
 			TextLineParser in=null;
 			try{
-				randomAccessFile.seek(startOffset);
-				in = new TextLineParser(new RandomAccessFileInputStream(randomAccessFile));
+				in = new TextLineParser(new RandomAccessFileInputStream(contigFile, startOffset));
 				parse(visitor, in, startOffset);
 			}finally{
-				IOUtil.closeAndIgnoreErrors(in, randomAccessFile);
+				IOUtil.closeAndIgnoreErrors(in);
 			}
 			
 		}

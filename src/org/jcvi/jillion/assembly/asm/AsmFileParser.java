@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -1610,12 +1609,10 @@ public abstract class AsmFileParser {
 				throw new IllegalArgumentException("unknown memento type "+ memento + " must use instance created by this parser");
 			}
 			
-			long offset = ((OffsetMemento)memento).getOffset();
-			RandomAccessFile randomAccessFile = new RandomAccessFile(asmFile, "r");
+			long offset = ((OffsetMemento)memento).getOffset();			
 			InputStream in =null;
 			try{
-				randomAccessFile.seek(offset);
-				in = new BufferedInputStream(new RandomAccessFileInputStream(randomAccessFile));
+				in = new BufferedInputStream(new RandomAccessFileInputStream(asmFile, offset));
 				ParserState parserState = new ParserState(in, offset){
 
 					@Override
@@ -1626,7 +1623,7 @@ public abstract class AsmFileParser {
 	            };
 	            parseAsm(parserState,visitor);
 			}finally{
-				IOUtil.closeAndIgnoreErrors(in, randomAccessFile);
+				IOUtil.closeAndIgnoreErrors(in);
 			}
 		}
     	

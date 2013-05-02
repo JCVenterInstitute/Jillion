@@ -27,7 +27,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jcvi.jillion.core.io.IOUtil;
@@ -376,16 +375,13 @@ public abstract class SffFileParser {
 				throw new IllegalStateException("parser has not yet been initialized, must call accept(visitor) method first");
 			}
 			InputStream in = null;
-			RandomAccessFile randomAccessFile =null;
 			try{
 				
 				if(memento instanceof ReadRecordSffFileMemento){
 					
 					ReadRecordSffFileMemento readRecordSffFileMemento = (ReadRecordSffFileMemento)memento;
 					ParserState parserState = new ParserState(readRecordSffFileMemento.getPosition());
-					randomAccessFile = new RandomAccessFile(sffFile, "r");
-					randomAccessFile.seek(parserState.position);
-					in = new BufferedInputStream(new RandomAccessFileInputStream(randomAccessFile));
+					in = new BufferedInputStream(new RandomAccessFileInputStream(sffFile, parserState.position));
 					DataInputStream dataIn = new DataInputStream(in);
 					for(int i=readRecordSffFileMemento.readCount; parserState.keepParsing() && i<header.getNumberOfReads(); i++){
 						parserState = handleSingleRead(visitor, dataIn, parserState,
@@ -397,7 +393,7 @@ public abstract class SffFileParser {
 					accept(in, visitor);
 				}
 			}finally{
-				IOUtil.closeAndIgnoreErrors(in,randomAccessFile);
+				IOUtil.closeAndIgnoreErrors(in);
 			}
 		}
 		

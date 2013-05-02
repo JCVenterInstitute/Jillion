@@ -25,7 +25,6 @@
  */
 package org.jcvi.jillion.core.io;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.EOFException;
@@ -39,7 +38,6 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -47,6 +45,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.BitSet;
 import java.util.Scanner;
+
+import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 
 /**
  * {@code IOUtil} is a collection of static utility
@@ -660,21 +660,7 @@ public final class IOUtil {
     }
     
     public static InputStream createInputStreamFromFile(File file,long startOffset, int length)throws IOException {
-        FileChannel fastaFileChannel=null;
-       try{
-            fastaFileChannel =new RandomAccessFile(file,"r").getChannel();
-            ByteBuffer buf= ByteBuffer.allocate(length);
-            fastaFileChannel.position(startOffset);
-            int bytesRead =fastaFileChannel.read(buf);
-            if(bytesRead <0){
-                throw new IOException("could not read any bytes from file");
-            }
-            
-            return new ByteArrayInputStream(buf.array());
-        
-       }finally{
-           IOUtil.closeAndIgnoreErrors(fastaFileChannel);
-       }
+       return new RandomAccessFileInputStream(file, startOffset, length);
     }
     /**
      * Get the number of bits required
