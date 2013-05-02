@@ -26,6 +26,7 @@
 package org.jcvi.jillion.core;
 
 
+import org.jcvi.jillion.core.pos.AllPositionUnitTests;
 import org.jcvi.jillion.core.qual.AllPhredQualityTests;
 import org.jcvi.jillion.core.residue.AllResidueUnitTests;
 import org.junit.runner.RunWith;
@@ -37,7 +38,8 @@ import org.junit.runners.Suite.SuiteClasses;
     {
 
         AllResidueUnitTests.class,
-       AllPhredQualityTests.class
+       AllPhredQualityTests.class,
+       AllPositionUnitTests.class
     }
 )
 public class AllSequenceUnitTests {

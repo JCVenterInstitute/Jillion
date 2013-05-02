@@ -18,7 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace.sanger;
+package org.jcvi.jillion.fasta.pos;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -29,11 +29,11 @@ import java.nio.charset.Charset;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.fasta.pos.DefaultPositionFastaFileDataStore;
+import org.jcvi.jillion.fasta.pos.PositionSequenceFastaRecord;
+import org.jcvi.jillion.fasta.pos.PositionSequenceFastaRecordWriter;
+import org.jcvi.jillion.fasta.pos.PositionSequenceFastaRecordWriterBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.jcvi.jillion.trace.sanger.DefaultPositionFastaFileDataStore;
-import org.jcvi.jillion.trace.sanger.PositionSequenceFastaRecord;
-import org.jcvi.jillion.trace.sanger.PositionSequenceFastaRecordWriter;
-import org.jcvi.jillion.trace.sanger.PositionSequenceFastaRecordWriterBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultPositionSequenceFastaRecordWriter {
