@@ -25,7 +25,6 @@
  */
 package org.jcvi.jillion.trace.sff;
 
-import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.trace.TraceDataStore;
 /**

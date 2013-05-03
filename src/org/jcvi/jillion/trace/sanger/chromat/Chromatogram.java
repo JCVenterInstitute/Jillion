@@ -27,6 +27,7 @@ package org.jcvi.jillion.trace.sanger.chromat;
 
 import java.util.Map;
 
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.trace.sanger.SangerTrace;
 /**
  * {@code Chromatogram} is an interface
@@ -39,6 +40,14 @@ import org.jcvi.jillion.trace.sanger.SangerTrace;
  */
 public interface Chromatogram extends SangerTrace{
    
+	PositionSequence getPositionSequence();
+    /**
+     * Get the number of actual trace scan positions
+     * in the trace file.  Most Sanger Trace files
+     * have about 15,000 trace points.
+     * @return 
+     */
+    int getNumberOfTracePositions();
     /**
      * Get the {@link ChannelGroup} of this Chroamtogram.
      * @return a ChannelGroup, never null.
