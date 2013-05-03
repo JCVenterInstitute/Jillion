@@ -24,30 +24,49 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.TraceEncoderException;
-import org.jcvi.jillion.trace.chromat.ztr.IOLibLikeZtrChromatogramWriter;
-import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogram;
-import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramBuilder;
+import org.jcvi.jillion.trace.chromat.ChromatogramWriter2;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 public class TestIOLibZTRChromatogramWriter {
 
 	ResourceHelper RESOURCES = new ResourceHelper(TestIOLibZTRChromatogramWriter.class);
 
+	@Rule
+	public TemporaryFolder folder = new TemporaryFolder();
+	
 	@Test
-	public void testEncodeAndDecode() throws FileNotFoundException, TraceDecoderException, IOException, TraceEncoderException{
+	public void testEncodeAndDecodeStream() throws TraceDecoderException, IOException, TraceEncoderException{
 		ZtrChromatogram chromatogram = new ZtrChromatogramBuilder("id",RESOURCES.getFile("files/GBKAK82TF.ztr")).build();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		IOLibLikeZtrChromatogramWriter.INSTANCE.write(chromatogram, out);
+
+		ChromatogramWriter2 writer = new ZtrChromatogramWriterBuilder(out).build();
+		writer.write(chromatogram);
+		writer.close();
 		ZtrChromatogram reParsed = new ZtrChromatogramBuilder("id",new ByteArrayInputStream(out.toByteArray())).build();
 		
 		assertEquals(chromatogram, reParsed);
 		
 	}
 	
+	@Test
+	public void testEncodeAndDecodeFile() throws TraceDecoderException, IOException, TraceEncoderException{
+		ZtrChromatogram chromatogram = new ZtrChromatogramBuilder("id",RESOURCES.getFile("files/GBKAK82TF.ztr")).build();
+		
+		File ztrFile =folder.newFile();
+		ChromatogramWriter2 writer = new ZtrChromatogramWriterBuilder(ztrFile).build();
+		writer.write(chromatogram);
+		writer.close();
+		ZtrChromatogram reParsed = new ZtrChromatogramBuilder("id",ztrFile).build();
+		
+		assertEquals(chromatogram, reParsed);
+		
+	}
 
 }
