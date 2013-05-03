@@ -18,30 +18,14 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
-
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
-    }
-    )
-public class AllTraceUnitTests {
-
-}
+/**
+ * ZTR Format can store sanger trace data more efficiently than the SCFv3 format.
+ * ZTR format is used by the NCBI Trace Archive.
+ * 
+ *@author dkatzel
+ *@see <a href="http://staden.sourceforge.net/ztr.html">ZTR SPEC v1.2</a>
+ *@see <a href="http://bioinformatics.oxfordjournals.org/cgi/content/abstract/18/1/3">
+ *Bonfield, J.K. and Staden, R. (2002) ZTR: a new format for DNA sequence trace data.
+ *Bioinformatics Vol. 18 no. 1 3-10</a>
+ */
+package org.jcvi.jillion.trace.chromat.ztr;

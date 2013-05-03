@@ -48,8 +48,8 @@ import org.jcvi.jillion.fasta.pos.PositionSequenceFastaRecordWriter;
 import org.jcvi.jillion.fasta.pos.PositionSequenceFastaRecordWriterBuilder;
 import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecordWriter;
 import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecordWriterBuilder;
-import org.jcvi.jillion.trace.sanger.chromat.Chromatogram;
-import org.jcvi.jillion.trace.sanger.chromat.ChromatogramFactory;
+import org.jcvi.jillion.trace.chromat.Chromatogram;
+import org.jcvi.jillion.trace.chromat.ChromatogramFactory;
 
 /**
  * {@code TraceArchiveWriter} is a class

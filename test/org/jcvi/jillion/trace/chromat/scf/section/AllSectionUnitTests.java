@@ -18,30 +18,38 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+/*
+ * Created on Sep 16, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.trace.chromat.scf.section;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
+        TestNullSectionDecoder.class,
+        TestCommentSectionEncoder.class,
+        TestCommentSectionDecoder.class,
+        TestPrivateDataDecoder.class,
+        TestPrivateDataEncoder.class,
+        TestVersion2SamplesSectionEncoder.class,
+        TestVersion2SamplesSectionDecoder.class,
+        TestDeltaDeltaEncoding.class,
+        TestVersion3SamplesSectionEncoder.class,
+        TestVersion3SamplesSectionDecoder.class,
+        TestVersion3BasesSectionEncoder.class,
+        TestVersion3BasesSectionDecoder.class,
+        TestVersion2BasesSectionEncoder.class,
+        TestVersion2BasesSectionDecoder.class,
+
+        TestSectionCodecFactoryGetDecoderFor.class,
+        TestSectionCodecFactoryGetEncoderFor.class
     }
     )
-public class AllTraceUnitTests {
+public class AllSectionUnitTests {
 
 }

@@ -18,30 +18,15 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+package org.jcvi.jillion.trace.chromat.ztr;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.io.OutputStream;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
-    }
-    )
-public class AllTraceUnitTests {
+import org.jcvi.jillion.trace.TraceEncoderException;
+import org.jcvi.jillion.trace.chromat.Chromatogram;
+import org.jcvi.jillion.trace.chromat.ChromatogramWriter;
 
+public interface ZtrChromatogramWriter extends ChromatogramWriter{
+
+	void write(Chromatogram chromatogram, OutputStream out) throws TraceEncoderException;
 }

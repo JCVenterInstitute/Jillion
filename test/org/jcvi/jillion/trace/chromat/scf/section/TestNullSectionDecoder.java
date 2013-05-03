@@ -18,30 +18,27 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+/*
+ * Created on Sep 16, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.trace.chromat.scf.section;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.Assert;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
+import org.jcvi.jillion.internal.trace.chromat.scf.section.NullSectionCodec;
+import org.jcvi.jillion.internal.trace.chromat.scf.section.SectionDecoderException;
+import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramFileVisitor;
+import org.junit.Test;
+
+public class TestNullSectionDecoder {
+
+    @Test
+    public void parseDoesNothing() throws SectionDecoderException{
+        long currentOffset = 123456L;
+        Assert.assertEquals("current offset should not change",
+                currentOffset,
+                new NullSectionCodec().decode(null, currentOffset, null, (ScfChromatogramFileVisitor)null));
     }
-    )
-public class AllTraceUnitTests {
-
 }

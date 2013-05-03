@@ -18,30 +18,17 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
-
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
-    }
-    )
-public class AllTraceUnitTests {
-
-}
+/**
+ * This package can decode Applied Biosystems AB1 formatted
+ * trace files into {@link org.jcvi.jillion.trace.sanger.chromat.Chromatogram} objects.
+ * Most of the code to parse this format 
+ * was based on information from the Clark Tibbetts paper
+ * "Raw Data File Formats and the Digital and Analog Raw Data Streams
+ * of the ABI PRISM 377 DNA Sequencer" which paritally reverse engineered
+ * the Applied Biosystems 377 DNA Sequencer AB1 file format.
+ * @author dkatzel
+ * @see <a href = "http://www-2.cs.cmu.edu/afs/cs/project/genome/WWW/Papers/clark.html">
+  Raw Data File Formats and the Digital and Analog Raw Data Streams
+  of the ABI PRISM 377 DNA Sequencer</a>
+ */
+package org.jcvi.jillion.trace.chromat.abi;

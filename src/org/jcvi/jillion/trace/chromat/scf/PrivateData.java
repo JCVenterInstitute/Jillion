@@ -18,30 +18,34 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+package org.jcvi.jillion.trace.chromat.scf;
+/**
+ * PrivateData is a wrapper around a byte array
+ * for additional optional data in an scf file.
+ * The scf file specification puts no limitations
+ * on what this data can contain and is implementation 
+ * specific.  It is up to different scf writer implementations
+ * to decide what data to put here (if any) and how to encode it. 
+ * 
+ * @author dkatzel
+ *
+ */
+public interface PrivateData {
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+	/**
+	 * @return the data
+	 */
+	byte[] getBytes();
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
-    }
-    )
-public class AllTraceUnitTests {
+	/**
+	 * {@inheritDoc}
+	 */
+	int hashCode();
+
+	/**
+	 * Two PrivateData instances are equal
+	 * if they both contain the same data.
+	 */
+	boolean equals(Object obj);
 
 }

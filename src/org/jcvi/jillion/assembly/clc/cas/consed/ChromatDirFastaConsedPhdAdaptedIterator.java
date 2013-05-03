@@ -30,8 +30,8 @@ import org.jcvi.jillion.assembly.consed.phd.PhdBuilder;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.jillion.trace.sanger.chromat.Chromatogram;
-import org.jcvi.jillion.trace.sanger.chromat.scf.ScfChromatogramBuilder;
+import org.jcvi.jillion.trace.chromat.Chromatogram;
+import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
 
 /**
  * @author dkatzel

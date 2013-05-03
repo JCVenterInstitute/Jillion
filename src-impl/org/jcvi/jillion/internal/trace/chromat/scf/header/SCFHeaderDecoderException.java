@@ -18,30 +18,38 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+/*
+ * Created on Sep 11, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.internal.trace.chromat.scf.header;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.jillion.trace.chromat.scf.ScfDecoderException;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
+/**
+ * <code>SCFHeaderParserException</code> is a subclass of
+ * {@link ScfDecoderException} which is used if an SCF
+ * Header fails to parse.
+ * @author dkatzel
+ *
+ *
+ */
+public class SCFHeaderDecoderException extends ScfDecoderException {
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 3355691805761753118L;
+
+    
+    public SCFHeaderDecoderException(String message, Throwable cause) {
+        super(message, cause);
     }
-    )
-public class AllTraceUnitTests {
+
+   
+    public SCFHeaderDecoderException(String message) {
+        super(message);
+    }
 
 }

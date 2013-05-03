@@ -18,30 +18,21 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+/*
+ * Created on Sep 22, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.trace.chromat.scf.section;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
+public class TestVersion3BasesSectionDecoder extends AbstractTestBasesSectionDecoder {
+
+    @Override
+    protected AbstractTestBasesSection createAbstractTestBasesSection() {
+        return new TestVersion3BasesSection();
     }
-    )
-public class AllTraceUnitTests {
+
+
 
 }

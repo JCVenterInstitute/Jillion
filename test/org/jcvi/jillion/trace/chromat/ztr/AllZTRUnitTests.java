@@ -18,12 +18,15 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+/*
+ * Created on Dec 22, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.trace.chromat.ztr;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
+import org.jcvi.jillion.internal.trace.chromat.ztr.chunk.AllChunkUnitTests;
+import org.jcvi.jillion.trace.chromat.ztr.data.AllDataUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -31,17 +34,14 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
+     TestZTRUtil.class,
+     AllDataUnitTests.class,
+     AllChunkUnitTests.class,
+
+     TestZTRChromatogramFile.class,
+     TestIOLibZTRChromatogramWriter.class
     }
     )
-public class AllTraceUnitTests {
+public class AllZTRUnitTests {
 
 }

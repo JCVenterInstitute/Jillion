@@ -18,30 +18,42 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+/*
+ * Created on Sep 11, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.trace.chromat.scf;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.jillion.trace.TraceDecoderException;
+/**
+ * <code>SCFParserException</code> is a subclass of
+ * {@link TraceDecoderException} which is used if an SCF
+ * file fails to parse.
+ * @author dkatzel
+ *
+ *
+ */
+public class ScfDecoderException extends TraceDecoderException {
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
+    /**
+     *
+     */
+    private static final long serialVersionUID = -8636660736340790019L;
+
+    /**
+     * @param message
+     * @param cause
+     */
+    public ScfDecoderException(String message, Throwable cause) {
+        super(message, cause);
     }
-    )
-public class AllTraceUnitTests {
+
+    /**
+     * @param message
+     */
+    public ScfDecoderException(String message) {
+        super(message);
+    }
 
 }

@@ -18,30 +18,41 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+package org.jcvi.jillion.trace.chromat;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.jillion.core.pos.PositionSequence;
+import org.jcvi.jillion.core.qual.QualitySequence;
+/**
+ * <code>Channel</code> represents the
+ * data from a single trace channel (lane).
+ * @author dkatzel
+ *
+ */
+public interface Channel {
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
-    }
-    )
-public class AllTraceUnitTests {
+	/**
+	 * Two {@link Channel}s are equal
+	 * if they have equal positions and confidences.
+	 * @param obj
+	 * @return
+	 */
+	public boolean equals(Object obj);
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode();
+
+	/**
+	 * Retrieves the phred Confidence values.
+	 * @return the confidence
+	 */
+	public QualitySequence getConfidence();
+
+	/**
+	 * Retrieves the trace sample position data.
+	 * @return the positions
+	 */
+	public PositionSequence getPositions();
 
 }

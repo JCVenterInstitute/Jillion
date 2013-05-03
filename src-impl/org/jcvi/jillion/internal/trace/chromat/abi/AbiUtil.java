@@ -18,30 +18,39 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+package org.jcvi.jillion.internal.trace.chromat.abi;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.Arrays;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
-    }
-    )
-public class AllTraceUnitTests {
+import org.jcvi.jillion.core.io.IOUtil;
+/**
+ * Utility class for working
+ * with Abi chromatogram files.
+ * @author dkatzel
+ *
+ */
+public final class AbiUtil {
 
+
+	/**
+	 * The magic number of an Ab1 file.
+	 */
+	private static final byte[] MAGIC_NUMBER = new byte[]{'A','B','I','F'};
+    
+	public static final int HEADER_SIZE = 30;
+	
+	private AbiUtil(){
+		//can not instantiate
+	}
+	public static String parseASCIIStringFrom(byte[] data){
+		return new String(data,IOUtil.UTF_8);
+	}
+	
+	public static String parsePascalStringFrom(byte[] data){
+		return new String(data,1, data.length-1,IOUtil.UTF_8);
+	}
+	
+	public static boolean isABIMagicNumber(byte[] magicNumber){
+	    return Arrays.equals(AbiUtil.MAGIC_NUMBER, magicNumber);
+	}
 }

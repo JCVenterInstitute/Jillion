@@ -18,30 +18,35 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+/*
+ * Created on Dec 22, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.trace.chromat.ztr.data;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.Arrays;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
+import org.jcvi.jillion.internal.trace.chromat.ztr.data.RawData;
+import org.jcvi.jillion.trace.TraceDecoderException;
+import org.jcvi.jillion.trace.TraceEncoderException;
+import org.junit.Test;
+import static org.junit.Assert.*;
+public class TestRawData {
+
+    byte[] data = new byte[]{1,2,3,4,5,6,7};
+    
+    @Test
+    public void parseReturnsSameDataAsInput() throws TraceDecoderException{
+        assertTrue(Arrays.equals(RawData.INSTANCE.parseData(data), data));
     }
-    )
-public class AllTraceUnitTests {
-
+    @Test
+    public void encode() throws TraceEncoderException{
+    	byte[] actual = RawData.INSTANCE.encodeData(data);
+    	assertEquals("size", actual.length, data.length+1);
+    	assertEquals(actual[0], 0);
+    	for(int i=1; i< actual.length; i++){
+    		assertEquals(actual[i], data[i-1]);
+    	}
+    }
 }

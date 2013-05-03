@@ -18,30 +18,28 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+package org.jcvi.jillion.internal.trace.chromat.abi.tag.rate;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
-    }
-    )
-public class AllTraceUnitTests {
-
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public interface ScanRate {
+    /**
+     * The time when the scan rate changed.
+     * @return the time as an int.
+     */
+    int getTime();
+    /**
+     * The Scan period in milliseconds.
+     * @return the scan period in milliseconds.
+     */
+    int getScanPeriod();
+    /**
+     * The scan line of the first line 
+     * of a new rate.
+     * @return the scan line as an int.
+     */
+    int getFirstScanLine();
 }
