@@ -130,7 +130,6 @@ public final class AbiFileParser {
 	 * parsing the chromatogram.
 	 */
 	public static void parse(InputStream in, ChromatogramFileVisitor visitor) throws TraceDecoderException{
-	        visitor.visitFile();
 			verifyMagicNumber(in);
 			visitor.visitNewTrace();
 			long numberOfTaggedRecords = parseNumTaggedRecords(in);
@@ -154,7 +153,6 @@ public final class AbiFileParser {
 			parseQualityData(groupedDataRecordMap,traceData,basecalls,visitor);
 			parseCommentsFrom(comments,groupedDataRecordMap,channelOrder,traceData,signalScale,basecalls,visitor);
             visitor.visitEndOfTrace();
-			visitor.visitEndOfFile();
 	}
 
 	private static String parseSignalScalingFactor(

@@ -85,7 +85,6 @@ public final class ZtrChromatogramFileParser {
      * @throws NullPointerException if visitor is null.
      */
     public static void parse(InputStream ztrStream, ChromatogramFileVisitor visitor) throws TraceDecoderException{
-        visitor.visitFile();
         parseHeader(ztrStream);
         visitor.visitNewTrace();
         Chunk currentChunk = parseNextChunk(ztrStream);
@@ -96,7 +95,6 @@ public final class ZtrChromatogramFileParser {
             currentChunk = parseNextChunk(ztrStream);
         }
         visitor.visitEndOfTrace();
-        visitor.visitEndOfFile();
     }
     
     /**

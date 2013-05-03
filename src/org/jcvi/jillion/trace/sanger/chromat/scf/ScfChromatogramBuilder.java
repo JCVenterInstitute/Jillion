@@ -386,14 +386,7 @@ public final class ScfChromatogramBuilder implements Builder<ScfChromatogram>{
          public synchronized void visitEndOfTrace() { 
        	  	//no-op
          }
-         
-         /**
-          * {@inheritDoc}
-          */
-          @Override
-          public synchronized void visitEndOfFile() {
-        	  //no-op
-          }
+
 
           /**
           * {@inheritDoc}
@@ -453,14 +446,7 @@ public final class ScfChromatogramBuilder implements Builder<ScfChromatogram>{
               builder.tPositions(positions);              
           }
 
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public synchronized void visitFile() {
-        	//no-op
-        }
-
+      
        
 
         /**

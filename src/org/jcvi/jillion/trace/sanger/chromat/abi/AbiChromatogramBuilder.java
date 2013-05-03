@@ -527,23 +527,7 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
             originalBuilder.properties(comments);
         }
 
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public void visitFile() {
-            // TODO Auto-generated method stub
-            
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public void visitEndOfFile() {
-            // TODO Auto-generated method stub
-            
-        }
+       
 
         /**
         * {@inheritDoc}
