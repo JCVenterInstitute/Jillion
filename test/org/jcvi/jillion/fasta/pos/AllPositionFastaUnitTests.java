@@ -9,7 +9,7 @@ import org.junit.runners.Suite.SuiteClasses;
     {
     	
     	TestDefaultPositionFastaFileDataStore.class,
-    	TestDefaultPositionSequenceFastaRecordWriter.class,
+    	TestDefaultPositionSequenceFastaRecordWriter.class
         
     }
     )
