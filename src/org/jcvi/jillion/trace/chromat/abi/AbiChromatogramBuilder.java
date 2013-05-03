@@ -410,7 +410,7 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
     }
     
     
-    public class AbiChromatogramBuilderVisitor implements AbiChromatogramFileVisitor{
+    public static class AbiChromatogramBuilderVisitor implements AbiChromatogramFileVisitor{
 
         private final BasicChromatogramBuilder currentBuilder;
         private final BasicChromatogramBuilder originalBuilder;
