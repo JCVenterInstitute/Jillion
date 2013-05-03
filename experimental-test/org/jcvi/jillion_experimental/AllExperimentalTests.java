@@ -24,7 +24,6 @@ import org.jcvi.jillion_experimental.align.AllAlignUnitTests;
 import org.jcvi.jillion_experimental.assembly.agp.AllAgpUnitTests;
 import org.jcvi.jillion_experimental.plate.AllPlateUnitTests;
 import org.jcvi.jillion_experimental.primer.AllPrimerUnitTests;
-import org.jcvi.jillion_experimental.trace.archive.AllTraceArchiveUnitTests;
 import org.jcvi.jillion_experimental.trace.archive2.AllTraceArchive2UnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -41,8 +40,7 @@ import org.junit.runners.Suite.SuiteClasses;
         
         
         AllAgpUnitTests.class,
-        
-        AllTraceArchiveUnitTests.class,
+
         AllTraceArchive2UnitTests.class
     }
 )
