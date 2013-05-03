@@ -328,14 +328,7 @@ public final class ZtrChromatogramBuilder implements Builder<ZtrChromatogram>{
          public void visitEndOfTrace() {
         	 //no-op
          }
-         
-         /**
-          * {@inheritDoc}
-          */
-          @Override
-          public void visitEndOfFile() {
-        	  //no-op
-          }
+
 
           /**
           * {@inheritDoc}
@@ -409,13 +402,6 @@ public final class ZtrChromatogramBuilder implements Builder<ZtrChromatogram>{
               builder.tPositions(positions);              
           }
 
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public void visitFile() { 
-        	//no-op
-        }
 
     }
 }

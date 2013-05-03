@@ -119,13 +119,11 @@ public enum SCFCodecs implements SCFCodec{
            currentOffset = sp.decode(dataIn, currentOffset, header, visitor);
         }
         visitor.visitEndOfTrace();
-        visitor.visitEndOfFile();
     }
     
     @Override
     public void parse(InputStream in, ChromatogramFileVisitor visitor)
             throws ScfDecoderException {
-        visitor.visitFile();
         
         DataInputStream dataIn = new DataInputStream(in);
         SCFHeader header= headerCodec.decode(dataIn);

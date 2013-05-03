@@ -20,8 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.sanger.chromat;
 
-import org.jcvi.jillion.core.io.FileVisitor;
-import org.jcvi.jillion.trace.sanger.SangerTraceFileVisitor;
+import java.util.Map;
+
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 /**
  * {@code ChromatogramFileVisitor} is a {@link FileVisitor}
@@ -30,8 +31,37 @@ import org.jcvi.jillion.trace.sanger.SangerTraceFileVisitor;
  *
  *
  */
-public interface ChromatogramFileVisitor extends SangerTraceFileVisitor{
+public interface ChromatogramFileVisitor{
 
+	void visitNewTrace();
+    
+    void visitEndOfTrace();
+	/**
+     * Visit the basecalls in the chromatogram file
+     * being visited.
+     * @param basecalls the basecalls as a {@link NucleotideSequence},
+     * although unlikely, it is possible there are 
+     * gaps.
+     */
+    void visitBasecalls(NucleotideSequence basecalls);
+
+    /**
+     * Visit the raw peak values of the
+     * chromatogram file being visited.
+     * @param peaks the raw peaks as shorts,
+     * may be null.
+     */
+    void visitPeaks(short[] peaks);
+
+    
+    /**
+     * Visit any comments associated with 
+     * this chromatogram. 
+     * @param comments the comments associated
+     * with this chromatogram file stored
+     * as key-value pairs.
+     */
+    void visitComments(Map<String,String> comments);
    
     /**
      * Visit the raw positions of the A channel of the
