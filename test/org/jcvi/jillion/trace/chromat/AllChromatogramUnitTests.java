@@ -36,7 +36,6 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         TestChannel.class,
         TestChannelGroup.class,
-        TestSignalStrength.class,
         TestBasicChromatogram.class,
         TestEncodedByteData.class,
         TestEncodedShortData.class,        
