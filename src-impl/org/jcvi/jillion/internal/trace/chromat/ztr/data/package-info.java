@@ -18,30 +18,16 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
-
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
-    }
-    )
-public class AllTraceUnitTests {
-
-}
+/**
+ * The data package contains all the classes needed to decode the different
+ * data formats in the ZTR specification.  
+ * <p/>
+ * The actual chromatogram data in a ZTR file
+ * is compressed and/or encoded.  There are many different methods
+ * and it is common for different Data encodings to be chained together
+ * to make the data even more compact.
+ * 
+ *@author dkatzel
+ *@see <a href="http://staden.sourceforge.net/ztr.html">ZTR SPEC v1.2</a>
+ */
+package org.jcvi.jillion.internal.trace.chromat.ztr.data;

@@ -18,30 +18,15 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
-
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
-    }
-    )
-public class AllTraceUnitTests {
-
-}
+/**
+ * The SCF package can encode and decode Chromatograms in
+ * SCF format first described in
+ * Dear, S and Staden, R&#46;
+ * "A standard file format for data from DNA sequencing instruments", DNA Sequence 3, 107-110, (1992).
+ * The Current SCF File Format Specification can be viewed
+ * @see <a href="http://staden.sourceforge.net/manual/formats_unix_2.html">
+ * Current SCF File Format Specification</a>
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.trace.chromat.scf;

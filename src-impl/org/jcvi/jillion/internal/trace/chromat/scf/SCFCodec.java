@@ -18,30 +18,30 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+/*
+ * Created on Oct 3, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.internal.trace.chromat.scf;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
-    }
-    )
-public class AllTraceUnitTests {
+import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
+import org.jcvi.jillion.trace.chromat.ChromatogramWriter;
+import org.jcvi.jillion.trace.chromat.scf.ScfChromatogram;
+import org.jcvi.jillion.trace.chromat.scf.ScfDecoderException;
 
+/**
+ * <code>SCFCodec</code> is used to encode and decode {@link ScfChromatogram}s.
+ * @author dkatzel
+ *
+ *
+ */
+public interface SCFCodec extends ChromatogramWriter{
+    
+    void parse(InputStream in, ChromatogramFileVisitor visitor) throws ScfDecoderException;
+    void parse(File scfFile, ChromatogramFileVisitor visitor) throws IOException,ScfDecoderException;
 }

@@ -18,30 +18,26 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+/*
+ * Created on Aug 5, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.trace.chromat.ztr;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
-    }
-    )
-public class AllTraceUnitTests {
-
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.trace.chromat.Chromatogram;
+/**
+ * {@code ZtrChromatogram} is a ZTR
+ * specific implementation {@link Chromatogram}
+ * that has an extra field for the clip points.
+ * @author dkatzel
+ *
+ */
+public interface ZtrChromatogram extends Chromatogram{
+    /**
+     * Gets the ZTR Specific clip points as a {@link Range}.
+     * @return a clip, may be null or empty.
+     */
+    Range getClip();
 }

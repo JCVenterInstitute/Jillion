@@ -18,30 +18,28 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+package org.jcvi.jillion.internal.trace.chromat.abi.tag.rate;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public final class ScanRateUtils {
+    
+    private static final float ONE_THOUSAND = 1000F;
+    
+    private ScanRateUtils(){
+    	//can not instantiate
     }
-    )
-public class AllTraceUnitTests {
-
+    /**
+     * Get the Sampling Rate (Hz) that is displayed in the
+     * Seq Analysis annotation report.
+     * @param scanRate the scan rate to compute; can not be null.
+     * @return the sampling rate for the given scan rate.
+     * @throws NullPointerException if scanRate is null.
+     */
+    public static float getSamplingRateFor(ScanRate scanRate){
+        return ONE_THOUSAND/scanRate.getScanPeriod();
+    }
 }

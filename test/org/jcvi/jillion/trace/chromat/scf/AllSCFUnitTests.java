@@ -18,30 +18,34 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+/*
+ * Created on Sep 18, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.trace.chromat.scf;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
+import org.jcvi.jillion.trace.chromat.scf.header.AllHeaderUnitTests;
+import org.jcvi.jillion.trace.chromat.scf.pos.AllPositionStrategyUnitTests;
+import org.jcvi.jillion.trace.chromat.scf.section.AllSectionUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
+        TestPrivateData.class,
+        TestSCFChromatogram.class,
+       AllHeaderUnitTests.class,
+       AllPositionStrategyUnitTests.class,
+       AllSectionUnitTests.class,
+
+       TestActualSCFCodec.class,
+       TestSCFChromatogramWithGaps.class,
+       TestSCFChromatogramFile.class,
+       TestVersion2Parser.class
     }
     )
-public class AllTraceUnitTests {
+public class AllSCFUnitTests {
 
 }

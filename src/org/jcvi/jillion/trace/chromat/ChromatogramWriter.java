@@ -18,30 +18,28 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+package org.jcvi.jillion.trace.chromat;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.io.IOException;
+import java.io.OutputStream;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
-    }
-    )
-public class AllTraceUnitTests {
-
+/**
+ * {@code ChromatogramWriter} can write
+ * {@link Chromatogram} objects to outputstreams.
+ * Various implementations may encode the chromatogram writer
+ * in various ways.
+ * @author dkatzel
+ *
+ *
+ */
+public interface ChromatogramWriter {
+    /**
+     * Writes the given {@link Chromatogram}
+     * to the given {@link OutputStream}.
+     * @param chromatogram the {@link Chromatogram} to write.
+     * @param out the outputStream to write to.
+     * @throws IOException if there are any problems encoding the chromatogram
+     * or any problems writing to the {@link OutputStream}.
+     */
+    void write(Chromatogram chromatogram, OutputStream out) throws IOException;
 }

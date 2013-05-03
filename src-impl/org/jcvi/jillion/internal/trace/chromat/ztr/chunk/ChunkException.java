@@ -18,30 +18,40 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+/*
+ * Created on Oct 26, 2006
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.internal.trace.chromat.ztr.chunk;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.jillion.trace.TraceDecoderException;
+/**
+ * <code>ChunkException</code> is the Exception that should
+ * be thrown whenver a problem encoding/decoding a {@link Chunk}
+ * occurs.
+ * @author dkatzel
+ *
+ *
+ */
+@SuppressWarnings("serial")
+public class ChunkException extends TraceDecoderException {
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
+    /**
+     * Constructor.
+     * @param message the error message
+     */
+    public ChunkException(String message) {
+        super(message);
     }
-    )
-public class AllTraceUnitTests {
+    /**
+     * Constructor.
+     * @param message the error message
+     * @param cause the cause of the error.
+     */
+    public ChunkException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 
 }

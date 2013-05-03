@@ -18,30 +18,36 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+/*
+ * Created on Sep 18, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.trace.chromat;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.frg.AllFrgUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
+import org.jcvi.jillion.trace.chromat.abi.AllAbiUnitTests;
+import org.jcvi.jillion.trace.chromat.scf.AllSCFUnitTests;
+import org.jcvi.jillion.trace.chromat.ztr.AllZTRUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class,
-        AllFrgUnitTests.class
-        
-   
+        TestChannel.class,
+        TestChannelGroup.class,
+        TestSignalStrength.class,
+        TestBasicChromatogram.class,
+        TestEncodedByteData.class,
+        TestEncodedShortData.class,        
+        AllSCFUnitTests.class,        
+        AllZTRUnitTests.class,        
+        TestConvertZtr2Scf.class,
+        AllAbiUnitTests.class,
+        TestChromatogramFactory.class
+             
     }
     )
-public class AllTraceUnitTests {
+public class AllChromatogramUnitTests {
 
 }
