@@ -28,7 +28,7 @@ package org.jcvi.jillion.trace.sanger.chromat;
 import java.util.Map;
 
 import org.jcvi.jillion.core.pos.PositionSequence;
-import org.jcvi.jillion.trace.sanger.SangerTrace;
+import org.jcvi.jillion.trace.Trace;
 /**
  * {@code Chromatogram} is an interface
  * for SangerTrace objects that also contains
@@ -38,7 +38,7 @@ import org.jcvi.jillion.trace.sanger.SangerTrace;
  *
  *
  */
-public interface Chromatogram extends SangerTrace{
+public interface Chromatogram extends Trace{
    
 	PositionSequence getPositionSequence();
     /**
