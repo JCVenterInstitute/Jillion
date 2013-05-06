@@ -8,13 +8,39 @@ import java.io.OutputStream;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.internal.trace.chromat.ztr.IOLibLikeZtrChromatogramWriter;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.jcvi.jillion.trace.chromat.ChromatogramWriter2;
-
+/**
+ * {@code ZtrChromatogramWriterBuilder} builds a {@link ChromatogramWriter2}
+ * implementation that performs the same encoding operations in the same order
+ * as the Staden IO_Lib C module.  Experiments have shown that 
+ *  this implementation
+ * will encode valid ZTR files that have about a 5% larger file size
+ * than the Staden package.
+ * This is probably due to the standard Java implementation of zip does not allow
+ * changing the "windowbits" size which could result in better
+ * compression.  Adding a 3rd party library that allows more configuration
+ * of encoding zipped data might enable smaller output file sizes
+ * but that would cause an unnecessary dependency.
+ * @author dkatzel
+ * @see <a href ="http://staden.sourceforge.net/"> Staden Package Website</a>
+ *
+ */
 public final class ZtrChromatogramWriterBuilder implements Builder<ChromatogramWriter2>{
 
 	private final File ztrFile; 
 	private final OutputStream out;
+	/**
+	 * Create a new {@link ZtrChromatogramWriterBuilder}
+	 * that will write the ztr file to the given
+	 * output file.  The writer will overwrite
+	 * any previously existing contents
+	 * for the file.
+	 * @param ztrFile the {@link File} to write
+	 * the encoded ztr data into.
+	 * @throws NullPointerException if ztrFile is null.
+	 */
 	public ZtrChromatogramWriterBuilder(File ztrFile){
 		if(ztrFile ==null){
 			throw new NullPointerException("output file can not be null");
@@ -22,7 +48,16 @@ public final class ZtrChromatogramWriterBuilder implements Builder<ChromatogramW
 		this.ztrFile = ztrFile;
 		this.out =null;
 	}
-	
+	/**
+	 * Create a new {@link ZtrChromatogramWriterBuilder}
+	 * that will write the ztr file to the given
+	 * output file.  The writer will overwrite
+	 * any previously existing contents
+	 * for the file.
+	 * @param ztrFile the {@link File} to write
+	 * the encoded ztr data into.
+	 * @throws NullPointerException if ztrFile is null.
+	 */
 	public ZtrChromatogramWriterBuilder(OutputStream out){
 		if(out ==null){
 			throw new NullPointerException("output stream can not be null");
@@ -46,16 +81,22 @@ public final class ZtrChromatogramWriterBuilder implements Builder<ChromatogramW
 	private static class ZtrChromatogramWriterImpl implements ChromatogramWriter2{
 		private final OutputStream out;
 		private volatile boolean closed=false;
+		private final boolean ownOutputStream;
+		
 		public ZtrChromatogramWriterImpl(File ztrFile) throws IOException{
 			IOUtil.mkdirs(ztrFile.getParentFile());
 			out = new BufferedOutputStream(new FileOutputStream(ztrFile));
+			ownOutputStream=true;
 		}
 		public ZtrChromatogramWriterImpl(OutputStream out) throws IOException{
-			this.out = out;;
+			this.out = out;
+			ownOutputStream=false;
 		}
 		@Override
 		public void close() throws IOException {
-			out.close();
+			if(ownOutputStream){
+				out.close();
+			}
 			closed=false;
 			
 		}

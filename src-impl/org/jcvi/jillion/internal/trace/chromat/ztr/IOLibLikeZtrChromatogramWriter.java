@@ -18,11 +18,10 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace.chromat.ztr;
+package org.jcvi.jillion.internal.trace.chromat.ztr;
 
 import java.io.OutputStream;
 
-import org.jcvi.jillion.internal.trace.chromat.ztr.DefaultZTRChromatogramWriterBuilder;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.DeltaEncodedData;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.DeltaEncodedData.Level;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.ShrinkToEightBitData;
@@ -43,7 +42,7 @@ import org.jcvi.jillion.trace.chromat.Chromatogram;
  * @see <a href ="http://staden.sourceforge.net/"> Staden Package Website</a>
  *
  */
-enum IOLibLikeZtrChromatogramWriter implements ZtrChromatogramWriter{
+public enum IOLibLikeZtrChromatogramWriter implements ZtrChromatogramWriter{
 	/**
 	 * Singleton instance of {@link IOLibLikeZtrChromatogramWriter}.
 	 */

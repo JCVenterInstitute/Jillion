@@ -32,15 +32,13 @@ import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
 import org.jcvi.jillion.internal.trace.chromat.ztr.chunk.Chunk;
 import org.jcvi.jillion.internal.trace.chromat.ztr.chunk.ChunkType;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.DeltaEncodedData;
+import org.jcvi.jillion.internal.trace.chromat.ztr.data.DeltaEncodedData.Level;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.FollowData;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.RunLengthEncodedData;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.ShrinkToEightBitData;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.ZLibData;
-import org.jcvi.jillion.internal.trace.chromat.ztr.data.DeltaEncodedData.Level;
 import org.jcvi.jillion.trace.TraceEncoderException;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
-import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogram;
-import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramWriter;
 
 
 /**
@@ -366,7 +364,6 @@ public final class DefaultZTRChromatogramWriterBuilder implements Builder<ZtrChr
 		 * @throws NullPointerException if chromatogram or out
 		 * are null.
 		 */
-		@Override
 		public void write(Chromatogram chromatogram, OutputStream out)
 				throws TraceEncoderException {
 			if(chromatogram ==null){

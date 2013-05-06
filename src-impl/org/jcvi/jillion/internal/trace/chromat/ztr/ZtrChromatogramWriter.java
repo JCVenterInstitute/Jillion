@@ -18,15 +18,14 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace.chromat.ztr;
+package org.jcvi.jillion.internal.trace.chromat.ztr;
 
 import java.io.OutputStream;
 
 import org.jcvi.jillion.trace.TraceEncoderException;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
-import org.jcvi.jillion.trace.chromat.ChromatogramWriter;
 
-public interface ZtrChromatogramWriter extends ChromatogramWriter{
+public interface ZtrChromatogramWriter{
 
 	void write(Chromatogram chromatogram, OutputStream out) throws TraceEncoderException;
 }
