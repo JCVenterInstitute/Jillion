@@ -114,7 +114,7 @@ public enum SCFCodecs implements SCFCodec{
         SortedMap<Integer, Section> sectionsByOffset = createSectionsByOffsetMap(header);
         long currentOffset =HEADER_SIZE;
         for(Entry<Integer, Section> entry: sectionsByOffset.entrySet()){
-           SectionDecoder sp=sectionCodecFactory.getSectionParserFor(entry.getValue(), header);
+        	SectionDecoder sp=sectionCodecFactory.getSectionParserFor(entry.getValue(), header);
            currentOffset = sp.decode(dataIn, currentOffset, header, visitor);
         }
         visitor.visitEndOfTrace();
@@ -197,12 +197,18 @@ public enum SCFCodecs implements SCFCodec{
             SectionEncoder encoder =sectionCodecFactory.getSectionEncoderFor(s, version);
             final EncodedSection encodedSection = encoder.encode(c, header);
             encodedSectionMap.put(s, encodedSection);
-            currentOffset+=encodedSection.getData().limit();
+            ByteBuffer data = encodedSection.getData();
+            if(data !=null){
+            	currentOffset+=data.limit();
+            }
         }
         ByteBuffer result = ByteBuffer.allocate(currentOffset);
         result.put(headerCodec.encode(header));
         for(Section s : ORDER_OF_SECTIONS){
-            result.put(encodedSectionMap.get(s).getData());
+            ByteBuffer data = encodedSectionMap.get(s).getData();
+            if(data !=null){
+            	result.put(data);
+            }
         }
         result.rewind();
         out.write(result.array());

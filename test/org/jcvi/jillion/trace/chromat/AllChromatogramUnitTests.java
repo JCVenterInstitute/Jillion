@@ -41,7 +41,10 @@ import org.junit.runners.Suite.SuiteClasses;
         TestEncodedShortData.class,        
         AllSCFUnitTests.class,        
         AllZTRUnitTests.class,        
-        TestConvertZtr2Scf.class,
+        
+        TestZtr2ScfVersion3.class,
+        TestZtr2ScfVersion2.class,
+        
         AllAbiUnitTests.class,
         TestChromatogramFactory.class
              

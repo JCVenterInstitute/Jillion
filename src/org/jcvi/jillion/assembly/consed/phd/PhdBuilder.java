@@ -10,6 +10,7 @@ import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.trace.chromat.Chromatogram;
 /**
  * {@code PhdBuilder} is a Builder that will create 
  * a {@link Phd} object using the given values.
@@ -68,6 +69,24 @@ public final class PhdBuilder implements Builder<Phd>{
 		this.id = id;
 		this.sequence = sequence;
 		this.qualities = qualities;
+	}
+	/**
+	 * Create a new {@link PhdBuilder} which has its id, sequence,
+	 * qualities and positions
+	 * initialized to the values from the given {@link Chromatogram}.
+	 * @param chromatogram the {@link Chromatogram} to initialize the builder values to;
+	 * can not be null;
+	 * @throws NullPointerException if chromatogram is null.
+	 */
+	public PhdBuilder(Chromatogram chromatogram){
+		if(chromatogram ==null){
+			throw new NullPointerException("chromatogram can not be null");
+		}
+		this.id = chromatogram.getId();
+		this.sequence = chromatogram.getNucleotideSequence();
+		this.qualities = chromatogram.getQualitySequence();
+		this.peaks = chromatogram.getPositionSequence();
+		
 	}
 	/**
 	 * Create a new {@link PhdBuilder} which has its values

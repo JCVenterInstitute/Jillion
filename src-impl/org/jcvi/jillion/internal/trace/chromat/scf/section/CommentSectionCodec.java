@@ -82,7 +82,7 @@ public class CommentSectionCodec implements SectionCodec {
     public EncodedSection encode(ScfChromatogram c, SCFHeader header)
             throws IOException {
         Map<String,String> props =c.getComments();
-        if(props ==null){
+        if(props ==null|| props.isEmpty()){
             header.setCommentSize(0);
             return new EncodedSection(null,Section.COMMENTS);
         }

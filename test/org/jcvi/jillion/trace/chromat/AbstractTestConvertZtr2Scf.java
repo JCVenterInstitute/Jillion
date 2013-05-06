@@ -30,6 +30,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
@@ -40,11 +41,11 @@ import org.jcvi.jillion.internal.trace.chromat.scf.SCFCodecs;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
+import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramWriterBuilder;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramBuilder;
 import org.junit.Test;
-public class TestConvertZtr2Scf {
-    private static final ResourceHelper RESOURCES = new ResourceHelper(TestConvertZtr2Scf.class);
-    SCFCodec scfCodec = SCFCodecs.VERSION_3;
+public abstract class AbstractTestConvertZtr2Scf {
+    private static final ResourceHelper RESOURCES = new ResourceHelper(AbstractTestConvertZtr2Scf.class);
     
     @Test
     public void ztr2scf() throws TraceDecoderException, IOException{
@@ -52,14 +53,18 @@ public class TestConvertZtr2Scf {
         Chromatogram decodedZTR = new ZtrChromatogramBuilder("GBKAK82TF.ztr", RESOURCES.getFile("ztr/files/GBKAK82TF.ztr"))
         											.build();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        scfCodec.write(new ScfChromatogramBuilder(decodedZTR).build(), out);
-
+        ChromatogramWriter2 writer = createScfWriter(out);
+        writer.write(new ScfChromatogramBuilder(decodedZTR).build());
+        writer.close();
+        out.close();
         
         Chromatogram encodedScf = new ScfChromatogramBuilder("id", new ByteArrayInputStream(out.toByteArray()))
 								.build();
 
         assertEquals(decodedZTR, encodedScf);
     }
+
+	protected abstract ChromatogramWriter2 createScfWriter(OutputStream out);
     
     @Test
     public void scfequalsZtr() throws TraceDecoderException, IOException{
@@ -81,7 +86,10 @@ public class TestConvertZtr2Scf {
         Chromatogram ztr = new ZtrChromatogramBuilder("GBKAK82TF.ztr", RESOURCES.getFile("ztr/files/515866_G07_AFIXF40TS_026.ab1.afg.trash.ztr"))
 												.build();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        scfCodec.write(new SCFChromatogramImpl(ztr), out);
+        
+        ChromatogramWriter2 writer = createScfWriter(out);
+        writer.write(new ScfChromatogramBuilder(ztr).build());
+        writer.close();
         
         Chromatogram encodedScf = new ScfChromatogramBuilder("id", new ByteArrayInputStream(out.toByteArray()))
 										.build();
