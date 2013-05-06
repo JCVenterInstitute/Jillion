@@ -249,7 +249,8 @@ public final class ConsedUtil {
      * if no such file exists or if editDir is also {@code null}.
      */
     public static File getLatestAceFile(File editDir, final String filenamePrefix){
-    	if(editDir==null){
+    	//need to also check that it does not exist
+    	if(editDir==null || !editDir.exists()){
     		return null;
     	}
         int highestAceFileVersion=Integer.MIN_VALUE;
