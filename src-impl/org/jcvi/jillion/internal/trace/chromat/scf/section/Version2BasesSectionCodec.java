@@ -109,10 +109,10 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
         final ByteBuffer deletionConfidence = getOptionalField(c.getDeletionConfidence());
         while(bases.hasNext()){
         	buffer.putInt(peaks.next().getValue());
-        	buffer.put(aQualities.next().getQualityScore());
-        	buffer.put(cQualities.next().getQualityScore());
-        	buffer.put(gQualities.next().getQualityScore());
-        	buffer.put(tQualities.next().getQualityScore());
+        	putQualityValue(buffer, aQualities);
+        	putQualityValue(buffer, cQualities);
+        	putQualityValue(buffer, gQualities);
+        	putQualityValue(buffer, tQualities);
         	buffer.put((byte)bases.next().getCharacter().charValue());
 			handleOptionalField(buffer, substitutionConfidence);
 			handleOptionalField(buffer, insertionConfidence);
@@ -122,6 +122,13 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
        
     }
 
+    private void putQualityValue(ByteBuffer dest, Iterator<PhredQuality> iter){
+    	if(iter.hasNext()){
+    		dest.put(iter.next().getQualityScore());
+    	}else{
+    		dest.put((byte)0);
+    	}
+    }
     private ByteBuffer getOptionalField(QualitySequence confidence){
         
         if(confidence !=null){
@@ -145,16 +152,7 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
         }
     }
 
-    /**
-    * {@inheritDoc}
-    */
-    @Override
-    public long decode(DataInputStream in, long currentOffset,
-            SCFHeader header, ChromatogramFileVisitor c)
-            throws SectionDecoderException {
-        // TODO Auto-generated method stub
-        return 0;
-    }
+    
 
     /**
     * {@inheritDoc}
