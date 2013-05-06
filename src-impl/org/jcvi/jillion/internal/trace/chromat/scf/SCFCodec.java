@@ -28,10 +28,10 @@ package org.jcvi.jillion.internal.trace.chromat.scf;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
+import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
-import org.jcvi.jillion.trace.chromat.ChromatogramWriter;
-import org.jcvi.jillion.trace.chromat.scf.ScfChromatogram;
 import org.jcvi.jillion.trace.chromat.scf.ScfDecoderException;
 
 /**
@@ -40,8 +40,9 @@ import org.jcvi.jillion.trace.chromat.scf.ScfDecoderException;
  *
  *
  */
-public interface SCFCodec extends ChromatogramWriter{
+public interface SCFCodec {
     
     void parse(InputStream in, ChromatogramFileVisitor visitor) throws ScfDecoderException;
     void parse(File scfFile, ChromatogramFileVisitor visitor) throws IOException,ScfDecoderException;
+    void write(Chromatogram chromo, OutputStream out) throws IOException;
 }
