@@ -10,9 +10,9 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.internal.trace.chromat.ztr.IOLibLikeZtrChromatogramWriter;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
-import org.jcvi.jillion.trace.chromat.ChromatogramWriter2;
+import org.jcvi.jillion.trace.chromat.ChromatogramWriter;
 /**
- * {@code ZtrChromatogramWriterBuilder} builds a {@link ChromatogramWriter2}
+ * {@code ZtrChromatogramWriterBuilder} builds a {@link ChromatogramWriter}
  * implementation that performs the same encoding operations in the same order
  * as the Staden IO_Lib C module.  Experiments have shown that 
  *  this implementation
@@ -27,7 +27,7 @@ import org.jcvi.jillion.trace.chromat.ChromatogramWriter2;
  * @see <a href ="http://staden.sourceforge.net/"> Staden Package Website</a>
  *
  */
-public final class ZtrChromatogramWriterBuilder implements Builder<ChromatogramWriter2>{
+public final class ZtrChromatogramWriterBuilder implements Builder<ChromatogramWriter>{
 
 	private final File ztrFile; 
 	private final OutputStream out;
@@ -67,7 +67,7 @@ public final class ZtrChromatogramWriterBuilder implements Builder<ChromatogramW
 	}
 
 	@Override
-	public ChromatogramWriter2 build() {
+	public ChromatogramWriter build() {
 		try {
 			if(out==null){
 				return new ZtrChromatogramWriterImpl(ztrFile);
@@ -78,7 +78,7 @@ public final class ZtrChromatogramWriterBuilder implements Builder<ChromatogramW
 		}
 	}
 	
-	private static class ZtrChromatogramWriterImpl implements ChromatogramWriter2{
+	private static class ZtrChromatogramWriterImpl implements ChromatogramWriter{
 		private final OutputStream out;
 		private volatile boolean closed=false;
 		private final boolean ownOutputStream;

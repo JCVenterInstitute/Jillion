@@ -11,9 +11,9 @@ import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.internal.trace.chromat.scf.SCFCodec;
 import org.jcvi.jillion.internal.trace.chromat.scf.SCFCodecs;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
-import org.jcvi.jillion.trace.chromat.ChromatogramWriter2;
+import org.jcvi.jillion.trace.chromat.ChromatogramWriter;
 
-public final class ScfChromatogramWriterBuilder implements Builder<ChromatogramWriter2>{
+public final class ScfChromatogramWriterBuilder implements Builder<ChromatogramWriter>{
 	private final File scfFile; 
 	private final OutputStream out;
 	private SCFCodec codec = SCFCodecs.VERSION_3;
@@ -40,7 +40,7 @@ public final class ScfChromatogramWriterBuilder implements Builder<ChromatogramW
 	}
 
 	@Override
-	public ChromatogramWriter2 build() {
+	public ChromatogramWriter build() {
 		try {
 			if(out==null){
 				return new ScfChromatogramWriterImpl(scfFile, codec);
@@ -51,7 +51,7 @@ public final class ScfChromatogramWriterBuilder implements Builder<ChromatogramW
 		}
 	}
 	
-	private static class ScfChromatogramWriterImpl implements ChromatogramWriter2{
+	private static class ScfChromatogramWriterImpl implements ChromatogramWriter{
 		private final OutputStream out;
 		private volatile boolean closed=false;
 		private final SCFCodec codec;
