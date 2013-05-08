@@ -18,28 +18,24 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+package org.jcvi.jillion.assembly.ca.frg;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class
-        
-   
+public final class FrgTestUtil {
+
+	private FrgTestUtil(){
+		//can not instantiate
+	}
+	
+	public static final int ENCODING_ORIGIN = 0x30;
+    public static  QualitySequence decodeQualitySequence(String encodedValues){
+    	QualitySequenceBuilder builder = new QualitySequenceBuilder(encodedValues.length());
+    	for(int i=0; i<encodedValues.length(); i++){
+    		builder.append(encodedValues.charAt(i) - ENCODING_ORIGIN);
+    	}
+    	
+    	return builder.build();
     }
-    )
-public class AllTraceUnitTests {
-
 }

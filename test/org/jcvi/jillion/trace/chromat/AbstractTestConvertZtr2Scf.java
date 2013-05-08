@@ -53,7 +53,7 @@ public abstract class AbstractTestConvertZtr2Scf {
         Chromatogram decodedZTR = new ZtrChromatogramBuilder("GBKAK82TF.ztr", RESOURCES.getFile("ztr/files/GBKAK82TF.ztr"))
         											.build();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ChromatogramWriter2 writer = createScfWriter(out);
+        ChromatogramWriter writer = createScfWriter(out);
         writer.write(new ScfChromatogramBuilder(decodedZTR).build());
         writer.close();
         out.close();
@@ -64,7 +64,7 @@ public abstract class AbstractTestConvertZtr2Scf {
         assertEquals(decodedZTR, encodedScf);
     }
 
-	protected abstract ChromatogramWriter2 createScfWriter(OutputStream out);
+	protected abstract ChromatogramWriter createScfWriter(OutputStream out);
     
     @Test
     public void scfequalsZtr() throws TraceDecoderException, IOException{
@@ -87,7 +87,7 @@ public abstract class AbstractTestConvertZtr2Scf {
 												.build();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         
-        ChromatogramWriter2 writer = createScfWriter(out);
+        ChromatogramWriter writer = createScfWriter(out);
         writer.write(new ScfChromatogramBuilder(ztr).build());
         writer.close();
         
