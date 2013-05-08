@@ -30,7 +30,7 @@ import org.jcvi.jillion.internal.fasta.qual.IndexedQualityFastaFileDataStore;
 public class TestIndexedQualityFastaFileDataStore extends AbstractTestQualityFastaDataStore{
     
     @Override
-    protected QualitySequenceFastaDataStore createDataStore(File file) throws IOException{
+    protected QualityFastaDataStore createDataStore(File file) throws IOException{
         return IndexedQualityFastaFileDataStore.create(file);
     }
 

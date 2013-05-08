@@ -40,27 +40,27 @@ public final class DefaultPositionFastaFileDataStore {
 	private DefaultPositionFastaFileDataStore(){
 		//can not instantiate
 	}
-	public static PositionSequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
+	public static PositionFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
 		DefaultQualityFastaFileDataStoreBuilder builder = new DefaultQualityFastaFileDataStoreBuilder(filter);
 		FastaFileParser.create(fastaFile).accept(builder);
     	return builder.build();
 	}
-	public static PositionSequenceFastaDataStore create(InputStream positionFastaInputStream, DataStoreFilter filter) throws IOException{
+	public static PositionFastaDataStore create(InputStream positionFastaInputStream, DataStoreFilter filter) throws IOException{
 		DefaultQualityFastaFileDataStoreBuilder builder = new DefaultQualityFastaFileDataStoreBuilder(filter);
 		FastaFileParser.create(positionFastaInputStream).accept(builder);
     	return builder.build();
 	}
-	public static PositionSequenceFastaDataStore create(File positionFastaFile) throws IOException{
+	public static PositionFastaDataStore create(File positionFastaFile) throws IOException{
 		return create(positionFastaFile, DataStoreFilters.alwaysAccept());
 	}
-	public static PositionSequenceFastaDataStore create(InputStream positionFastaInputStream) throws IOException{
+	public static PositionFastaDataStore create(InputStream positionFastaInputStream) throws IOException{
 		return create(positionFastaInputStream, DataStoreFilters.alwaysAccept());
 	}
 
 	
-	private static class DefaultQualityFastaFileDataStoreBuilder implements FastaVisitor, Builder<PositionSequenceFastaDataStore>{
+	private static class DefaultQualityFastaFileDataStoreBuilder implements FastaVisitor, Builder<PositionFastaDataStore>{
 
-		private final Map<String, PositionSequenceFastaRecord> fastaRecords = new LinkedHashMap<String, PositionSequenceFastaRecord>();
+		private final Map<String, PositionFastaRecord> fastaRecords = new LinkedHashMap<String, PositionFastaRecord>();
 		
 		private final DataStoreFilter filter;
 		
@@ -77,7 +77,7 @@ public final class DefaultPositionFastaFileDataStore {
 
 				@Override
 				protected void visitRecord(
-						PositionSequenceFastaRecord fastaRecord) {
+						PositionFastaRecord fastaRecord) {
 					fastaRecords.put(id, fastaRecord);
 					
 				}
@@ -94,8 +94,8 @@ public final class DefaultPositionFastaFileDataStore {
 			//no-op			
 		}
 		@Override
-		public PositionSequenceFastaDataStore build() {
-			return DataStoreUtil.adapt(PositionSequenceFastaDataStore.class,fastaRecords);
+		public PositionFastaDataStore build() {
+			return DataStoreUtil.adapt(PositionFastaDataStore.class,fastaRecords);
 		}
 		
 	}

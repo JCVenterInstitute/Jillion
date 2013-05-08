@@ -40,8 +40,8 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.Rule;
@@ -59,7 +59,7 @@ public class TestCas2Consed {
 	 
 	@Before
     public void setup() throws IOException{
-	 NucleotideSequenceFastaDataStore fastas = new NucleotideSequenceFastaFileDataStoreBuilder(RESOURCES.getFile("../files/15050.fasta"))
+	 NucleotideFastaDataStore fastas = new NucleotideFastaFileDataStoreBuilder(RESOURCES.getFile("../files/15050.fasta"))
 		.build();
         expectedDataStore = new TigrContigFileDataStoreBuilder(RESOURCES.getFile("../files/expected.contig"), fastas)
         						.build();

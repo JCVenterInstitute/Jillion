@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 import org.jcvi.jillion.core.util.ObjectsUtil;
 import org.jcvi.jillion.fasta.FastaUtil;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecord;
+import org.jcvi.jillion.fasta.aa.AminoAcidFastaRecord;
 /**
  * {@code UnCommentedAminoAcidSequenceFastaRecord} is an implementation
  * of {@link AminoAcidSequenceFastaRecord} that saves
@@ -34,7 +34,7 @@ import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecord;
  * @author dkatzel
  *
  */
-public class UnCommentedAminoAcidSequenceFastaRecord implements AminoAcidSequenceFastaRecord{
+public class UnCommentedAminoAcidSequenceFastaRecord implements AminoAcidFastaRecord{
 
 	private static final int NUMBER_OF_BASES_PER_LINE = 60;
 	private static final Pattern LINE_SPLITTER_PATTERN = Pattern.compile(String.format("(.{%s})", NUMBER_OF_BASES_PER_LINE));
@@ -144,10 +144,10 @@ public class UnCommentedAminoAcidSequenceFastaRecord implements AminoAcidSequenc
         if (this == obj){
             return true;
         }
-        if (!(obj instanceof AminoAcidSequenceFastaRecord)){
+        if (!(obj instanceof AminoAcidFastaRecord)){
             return false;
         }
-        AminoAcidSequenceFastaRecord other = (AminoAcidSequenceFastaRecord)obj;
+        AminoAcidFastaRecord other = (AminoAcidFastaRecord)obj;
 		return 
         ObjectsUtil.nullSafeEquals(getSequence(), other.getSequence()) 
         && ObjectsUtil.nullSafeEquals(getId(), other.getId());

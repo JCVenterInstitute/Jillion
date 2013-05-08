@@ -22,17 +22,15 @@ package org.jcvi.jillion.fasta.aa;
 
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
-import org.jcvi.jillion.fasta.FastaRecord;
+import org.jcvi.jillion.fasta.FastaDataStore;
 
 /**
- * {@code AminoAcidSequenceFastaRecord} is an interface for {@link FastaRecord} objects
- * using the {@link AminoAcidSequence}.
-
- * @author naxelrod
+ * {@code AminoAcidFastaDataStore} is a 
+ * marker interface for {@link FastaDataStore}s
+ * of {@link AminoAcidFastaRecord}s.
  * @author dkatzel
+ *
  */
-public interface AminoAcidSequenceFastaRecord extends FastaRecord<AminoAcid,AminoAcidSequence> {
+public interface AminoAcidFastaDataStore extends FastaDataStore<AminoAcid, AminoAcidSequence, AminoAcidFastaRecord> {
 
-	AminoAcidSequence getSequence();
-	
 }

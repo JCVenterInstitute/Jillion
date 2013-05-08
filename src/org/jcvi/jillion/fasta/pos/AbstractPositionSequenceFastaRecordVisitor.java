@@ -76,13 +76,13 @@ public abstract class AbstractPositionSequenceFastaRecordVisitor implements Fast
         	builder.append(scanner.nextShort());
         }
 		scanner.close();
-		PositionSequenceFastaRecord record= new PositionSequenceFastaRecord(id, comment, builder.build());
+		PositionFastaRecord record= new PositionFastaRecord(id, comment, builder.build());
 		visitRecord(record);		
 	}
 	@Override
 	public void halted() {
 		//no-op				
 	}
-	protected abstract void visitRecord(PositionSequenceFastaRecord fastaRecord);
+	protected abstract void visitRecord(PositionFastaRecord fastaRecord);
 	
 }

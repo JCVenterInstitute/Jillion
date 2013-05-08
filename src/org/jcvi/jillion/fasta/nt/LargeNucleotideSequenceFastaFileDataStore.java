@@ -46,14 +46,14 @@ import org.jcvi.jillion.internal.fasta.AbstractLargeFastaFileDataStore;
  * {@link DataStoreUtil#createNewCachedDataStore(Class, org.jcvi.jillion.core.datastore.DataStore, int)}.
  * @author dkatzel
  */
-final class LargeNucleotideSequenceFastaFileDataStore extends AbstractLargeFastaFileDataStore<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord> implements NucleotideSequenceFastaDataStore{
+final class LargeNucleotideSequenceFastaFileDataStore extends AbstractLargeFastaFileDataStore<Nucleotide, NucleotideSequence, NucleotideFastaRecord> implements NucleotideFastaDataStore{
     /**
      * Construct a {@link LargeNucleotideSequenceFastaFileDataStore}
      * for the given Fasta file.
      * @param fastaFile the Fasta File to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-	public static NucleotideSequenceFastaDataStore create(File fastaFile){
+	public static NucleotideFastaDataStore create(File fastaFile){
 		return create(fastaFile, DataStoreFilters.alwaysAccept());
 	}
 	 /**
@@ -62,7 +62,7 @@ final class LargeNucleotideSequenceFastaFileDataStore extends AbstractLargeFasta
      * @param fastaFile the Fasta File to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-	public static NucleotideSequenceFastaDataStore create(File fastaFile, DataStoreFilter filter){
+	public static NucleotideFastaDataStore create(File fastaFile, DataStoreFilter filter){
 		return new LargeNucleotideSequenceFastaFileDataStore(fastaFile, filter);
 	}
    
@@ -73,7 +73,7 @@ final class LargeNucleotideSequenceFastaFileDataStore extends AbstractLargeFasta
 	}
 	
 	@Override
-	protected StreamingIterator<NucleotideSequenceFastaRecord> createNewIterator(
+	protected StreamingIterator<NucleotideFastaRecord> createNewIterator(
 			File fastaFile, DataStoreFilter filter) {
 		 return DataStoreStreamingIterator.create(this,
 	        		LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile,filter));

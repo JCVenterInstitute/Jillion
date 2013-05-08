@@ -27,18 +27,18 @@ import org.jcvi.jillion.internal.fasta.AbstractFastaRecordBuilder;
 import org.jcvi.jillion.internal.fasta.aa.CommentedAminoAcidSequenceFastaRecord;
 import org.jcvi.jillion.internal.fasta.aa.UnCommentedAminoAcidSequenceFastaRecord;
 /**
- * {@code AminoAcidSequenceFastaRecordBuilder} is a Builder class
+ * {@code AminoAcidFastaRecordBuilder} is a Builder class
  * that makes instances of {@link AminoAcidSequenceFastaRecord}s.
  * Depending on the different parameters, this builder might
  * choose to return different implementations.
  * @author dkatzel
  *
  */
-public final class AminoAcidSequenceFastaRecordBuilder extends AbstractFastaRecordBuilder<AminoAcid, AminoAcidSequence, AminoAcidSequenceFastaRecord>{
+public final class AminoAcidFastaRecordBuilder extends AbstractFastaRecordBuilder<AminoAcid, AminoAcidSequence, AminoAcidFastaRecord>{
 	/**
 	 * Convenience constructor that converts a String into
 	 * a {@link AminoAcidSequence}.  This is the same
-	 * as {@link #AminoAcidSequenceFastaRecordBuilder(String, AminoAcidSequence)
+	 * as {@link #AminoAcidFastaRecordBuilder(String, AminoAcidSequence)
 	 * new AminoAcidSequenceBuilder(id, new AminoAcidSequenceBuilder(sequence).build())}.
 	 * @param id the id of the fasta record can not be null.
 	 * @param sequence the amino acid sequence as a string.  May contain whitespace
@@ -49,25 +49,25 @@ public final class AminoAcidSequenceFastaRecordBuilder extends AbstractFastaReco
      * @throws NullPointerException if either id or sequence are null.
      * @see AminoAcidSequenceBuilder
 	 */
-	public AminoAcidSequenceFastaRecordBuilder(String id,
+	public AminoAcidFastaRecordBuilder(String id,
 			String sequence) {
 		this(id, new AminoAcidSequenceBuilder(sequence).build());
 	}
 	/**
-	 * Create a new {@link AminoAcidSequenceFastaRecordBuilder}
+	 * Create a new {@link AminoAcidFastaRecordBuilder}
 	 * instance that has the given id and sequence.  
 	 * @param id the id of the fasta record can not be null.
 	 * @param sequence the sequence of the fasta record; can not be null.
 	 *
 	 * @throws NullPointerException if either id or sequence are null.
 	 */
-	public AminoAcidSequenceFastaRecordBuilder(String id,
+	public AminoAcidFastaRecordBuilder(String id,
 			AminoAcidSequence sequence) {
 		super(id, sequence);
 	}
 
 	@Override
-	protected AminoAcidSequenceFastaRecord createNewInstance(String id,
+	protected AminoAcidFastaRecord createNewInstance(String id,
 			AminoAcidSequence sequence, String optionalComment) {
 		if(optionalComment==null){
 			return new UnCommentedAminoAcidSequenceFastaRecord(id, sequence);

@@ -48,20 +48,20 @@ final class DefaultQualityFastaFileDataStore {
 	private DefaultQualityFastaFileDataStore(){
 		//can not instantiate
 	}
-    public static QualitySequenceFastaDataStore create(File fastaFile) throws IOException{
+    public static QualityFastaDataStore create(File fastaFile) throws IOException{
     	return create(fastaFile,DataStoreFilters.alwaysAccept());
     }
     
-    public static QualitySequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
+    public static QualityFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
     	DefaultQualityFastaFileDataStoreBuilder builder = createBuilder(filter);
     	FastaFileParser.create(fastaFile).accept(builder);
     	return builder.build();
     }
     
-    public static QualitySequenceFastaDataStore create(InputStream fastaStream) throws IOException{
+    public static QualityFastaDataStore create(InputStream fastaStream) throws IOException{
     	return create(fastaStream,DataStoreFilters.alwaysAccept());
     }
-    public static QualitySequenceFastaDataStore create(InputStream fastaStream, DataStoreFilter filter) throws IOException{
+    public static QualityFastaDataStore create(InputStream fastaStream, DataStoreFilter filter) throws IOException{
     	DefaultQualityFastaFileDataStoreBuilder builder = createBuilder(filter);
     	FastaFileParser.create(fastaStream).accept(builder);
     	return builder.build();

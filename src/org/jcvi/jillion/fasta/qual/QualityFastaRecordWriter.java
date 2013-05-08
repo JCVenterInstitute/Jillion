@@ -18,10 +18,12 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.fasta.pos;
+package org.jcvi.jillion.fasta.qual;
 
-import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.fasta.FastaRecordWriter;
 
-public interface PositionSequenceFastaDataStore extends DataStore<PositionSequenceFastaRecord>{
+public interface QualityFastaRecordWriter extends FastaRecordWriter<PhredQuality, QualitySequence, QualityFastaRecord>{
 
 }

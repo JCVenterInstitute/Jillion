@@ -28,15 +28,15 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaDataStore;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecord;
+import org.jcvi.jillion.fasta.aa.AminoAcidFastaDataStore;
+import org.jcvi.jillion.fasta.aa.AminoAcidFastaRecord;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.internal.fasta.aa.UnCommentedAminoAcidSequenceFastaRecord;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public abstract class AbstractTestAminoAcidSequenceFastaDataStore {
 
-	private final AminoAcidSequenceFastaRecord firstRecord = new UnCommentedAminoAcidSequenceFastaRecord(
+	private final AminoAcidFastaRecord firstRecord = new UnCommentedAminoAcidSequenceFastaRecord(
 			"ABN50481.1",
 			new AminoAcidSequenceBuilder("MKAIIVLLLVVTSNADRICTGITSSNSPHVVKTATQGEVNVTGAIPLTTTPTKSHFANLKGTKTRGKLCPTCFN" +
 			"CTDLDVALGRPMCVGITPSAKASILHEVRPVTSGCFPIMHDRTKIRQLPNLLRGYEKIRLSTQNVIDAEKAPGG" +
@@ -47,7 +47,7 @@ public abstract class AbstractTestAminoAcidSequenceFastaDataStore {
 			"VDDLRADTISSQIELAVLLSNEGIINSEDEHLLALERKLKKMLGPSAVDIGNGCFETKHKCNQTCLDRIAAGTF" +
 			"NAGEFSLPTFDSLNITAASLNDDGLDNHTILLYYSTAASSLAVTLMIAIFIVYMISRDNVSCSICL").build());
 	
-	private final AminoAcidSequenceFastaRecord middleRecord = new UnCommentedAminoAcidSequenceFastaRecord(
+	private final AminoAcidFastaRecord middleRecord = new UnCommentedAminoAcidSequenceFastaRecord(
 			"ABR15984.1",
 			new AminoAcidSequenceBuilder("MKAIIVLLMVVTSNADRICTGITSSNSPHVVKTATQGEVNVTGVIPLTTTPTKSYFANLKGTRTRGKLCPDCLN" +
 			"CTDLDVALGRPMCVGTTPSAKASILHEVRPVTSGCFPIMHDRTKIRQLPNLLRGYENIRLSTQNVIDAENAPGG" +
@@ -58,7 +58,7 @@ public abstract class AbstractTestAminoAcidSequenceFastaDataStore {
 			"VDDLRADTISSQIELAVLLSNEGIINSEDEHLLALERKLKKMLGPSAVDIGNGCFETKHKCNQTCLDRIAAGTF" +
 			"NAGEFSLPTFDSLNITAASLNDDGLDNHTILLYYSTAASSLAVTLMLAIFIVYMVSRDNVSCSICL").build());
 	
-	private final AminoAcidSequenceFastaRecord lastRecord = new UnCommentedAminoAcidSequenceFastaRecord(
+	private final AminoAcidFastaRecord lastRecord = new UnCommentedAminoAcidSequenceFastaRecord(
 			"EPI159954",
 			new AminoAcidSequenceBuilder("MKAIIVLLMVVTSNADRICTGITSSNSPHVVKTATQGEVNVTGVIPLTTTPTKSYFANLKGTRTRGKLCPDCLN" +
 			"CTDLDVALGRPMCVGTTPSAKASILHEVRPVTSGCFPIMHDRTKIRQLPNLLRGYENIRLSTQNVIDAEKAPGG" +
@@ -69,14 +69,14 @@ public abstract class AbstractTestAminoAcidSequenceFastaDataStore {
 			"VDDLRADTISSQIELAVLLSNEGIINSENEHLLALERKLKKMLGPSAVDIGNGCFETKHKCNQTCLDRIAAGTF" +
 			"NAGEFSLPTFDSLNITAASLNDDGLDNHTILLYYSTAASSLAVTLMLAIFIVYMVSRDNVSCSICL").build());
 	
-	private final AminoAcidSequenceFastaDataStore sut;
+	private final AminoAcidFastaDataStore sut;
 	
 	public AbstractTestAminoAcidSequenceFastaDataStore() throws Exception{
 		ResourceHelper resources = new ResourceHelper(AbstractTestAminoAcidSequenceFastaDataStore.class);
 		sut = create(resources.getFile("files/example.aa.fasta"));
 	}
 	
-	protected abstract AminoAcidSequenceFastaDataStore create(File fastaFile) throws Exception;
+	protected abstract AminoAcidFastaDataStore create(File fastaFile) throws Exception;
 	
 	@Test
 	public void numberOfRecords() throws DataStoreException{
@@ -136,7 +136,7 @@ public abstract class AbstractTestAminoAcidSequenceFastaDataStore {
 		//and last records are correct and in the 
 		//correct order then the other records
 		//in between are correct as well.
-		StreamingIterator<AminoAcidSequenceFastaRecord> iter= sut.iterator();
+		StreamingIterator<AminoAcidFastaRecord> iter= sut.iterator();
 		
 		try{
 			assertTrue(iter.hasNext());

@@ -30,12 +30,12 @@ import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.qual.AbstractQualityFastaRecordVisitor;
-import org.jcvi.jillion.fasta.qual.QualitySequenceFastaDataStore;
-import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecord;
+import org.jcvi.jillion.fasta.qual.QualityFastaDataStore;
+import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
 
-public class DefaultQualityFastaFileDataStoreBuilder implements FastaVisitor, Builder<QualitySequenceFastaDataStore>{
+public class DefaultQualityFastaFileDataStoreBuilder implements FastaVisitor, Builder<QualityFastaDataStore>{
 
-	private final Map<String, QualitySequenceFastaRecord> fastaRecords = new LinkedHashMap<String, QualitySequenceFastaRecord>();
+	private final Map<String, QualityFastaRecord> fastaRecords = new LinkedHashMap<String, QualityFastaRecord>();
 	
 	private final DataStoreFilter filter;
 	
@@ -52,7 +52,7 @@ public class DefaultQualityFastaFileDataStoreBuilder implements FastaVisitor, Bu
 
 			@Override
 			protected void visitRecord(
-					QualitySequenceFastaRecord fastaRecord) {
+					QualityFastaRecord fastaRecord) {
 				fastaRecords.put(id, fastaRecord);
 				
 			}
@@ -69,8 +69,8 @@ public class DefaultQualityFastaFileDataStoreBuilder implements FastaVisitor, Bu
 		//no-op			
 	}
 	@Override
-	public QualitySequenceFastaDataStore build() {
-		return DataStoreUtil.adapt(QualitySequenceFastaDataStore.class,fastaRecords);
+	public QualityFastaDataStore build() {
+		return DataStoreUtil.adapt(QualityFastaDataStore.class,fastaRecords);
 	}
 	
 }

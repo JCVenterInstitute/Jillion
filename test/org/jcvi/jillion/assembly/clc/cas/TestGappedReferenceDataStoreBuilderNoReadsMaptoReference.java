@@ -12,10 +12,10 @@ import org.jcvi.jillion.assembly.clc.cas.CasFileVisitor.CasVisitorCallback;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordBuilder;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordWriter;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriterBuilder;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,7 +35,7 @@ public class TestGappedReferenceDataStoreBuilderNoReadsMaptoReference extends Ea
 	
 	private CasGappedReferenceDataStoreBuilderVisitor sut;
 	
-	private NucleotideSequenceFastaRecord ref1, ref2;
+	private NucleotideFastaRecord ref1, ref2;
 	
 	private CasFileInfo refFileInfo;
 	
@@ -113,10 +113,10 @@ public class TestGappedReferenceDataStoreBuilderNoReadsMaptoReference extends Ea
 	}
 
 
-	private File createTempFastaFile(NucleotideSequenceFastaRecord...fastaRecords ) throws IOException {
+	private File createTempFastaFile(NucleotideFastaRecord...fastaRecords ) throws IOException {
 		File fasta = folder.newFile("ref.fasta");
-		NucleotideSequenceFastaRecordWriter writer = new NucleotideSequenceFastaRecordWriterBuilder(fasta).build();
-		for(NucleotideSequenceFastaRecord r : fastaRecords){
+		NucleotideFastaRecordWriter writer = new NucleotideFastaRecordWriterBuilder(fasta).build();
+		for(NucleotideFastaRecord r : fastaRecords){
 			writer.write(r);
 		}
 		writer.close();

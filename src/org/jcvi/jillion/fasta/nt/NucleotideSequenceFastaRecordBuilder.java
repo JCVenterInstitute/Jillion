@@ -32,7 +32,7 @@ import org.jcvi.jillion.internal.fasta.AbstractFastaRecordBuilder;
  * @author dkatzel
  *
  */
-public final class NucleotideSequenceFastaRecordBuilder extends AbstractFastaRecordBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord>{
+public final class NucleotideSequenceFastaRecordBuilder extends AbstractFastaRecordBuilder<Nucleotide, NucleotideSequence, NucleotideFastaRecord>{
 	/**
 	 * Create a new {@link NucleotideSequenceFastaRecordBuilder}
 	 * instance that has the given id and sequence.  
@@ -64,7 +64,7 @@ public final class NucleotideSequenceFastaRecordBuilder extends AbstractFastaRec
 	}
 	
 	@Override
-	protected NucleotideSequenceFastaRecord createNewInstance(String id,
+	protected NucleotideFastaRecord createNewInstance(String id,
 			NucleotideSequence sequence, String comment) {
 		if(comment==null){
 			return new UnCommentedNucleotideSequenceFastaRecord(id, sequence);

@@ -30,7 +30,7 @@ public class TestLargeUnixAndDosDataStoresParsedCorrectly extends AbstractTestUn
 	}
 
 	@Override
-	protected NucleotideSequenceFastaDataStore createDataStoreFor(File fastaFile)
+	protected NucleotideFastaDataStore createDataStoreFor(File fastaFile)
 			throws IOException {
 		return LargeNucleotideSequenceFastaFileDataStore.create(fastaFile);
 	}

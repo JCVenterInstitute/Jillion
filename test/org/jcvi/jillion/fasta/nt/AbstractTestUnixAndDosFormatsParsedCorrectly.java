@@ -34,9 +34,9 @@ import org.junit.Test;
 
 public abstract class AbstractTestUnixAndDosFormatsParsedCorrectly {
 
-	private final NucleotideSequenceFastaDataStore unixDataStore,dosDataStore;
+	private final NucleotideFastaDataStore unixDataStore,dosDataStore;
 	
-	protected abstract NucleotideSequenceFastaDataStore createDataStoreFor(File fastaFile) throws IOException;
+	protected abstract NucleotideFastaDataStore createDataStoreFor(File fastaFile) throws IOException;
 	
 	public AbstractTestUnixAndDosFormatsParsedCorrectly() throws IOException{
 		ResourceHelper resources = new ResourceHelper(AbstractTestUnixAndDosFormatsParsedCorrectly.class);
@@ -54,8 +54,8 @@ public abstract class AbstractTestUnixAndDosFormatsParsedCorrectly {
 	
 	@Test
 	public void iteratorsMatch() throws DataStoreException{
-		StreamingIterator<NucleotideSequenceFastaRecord> unixIter = unixDataStore.iterator();
-		StreamingIterator<NucleotideSequenceFastaRecord> dosIter = dosDataStore.iterator();
+		StreamingIterator<NucleotideFastaRecord> unixIter = unixDataStore.iterator();
+		StreamingIterator<NucleotideFastaRecord> dosIter = dosDataStore.iterator();
 		
 		
 		while(unixIter.hasNext()){
@@ -78,11 +78,11 @@ public abstract class AbstractTestUnixAndDosFormatsParsedCorrectly {
 	
 	@Test
 	public void get() throws DataStoreException{
-		StreamingIterator<NucleotideSequenceFastaRecord> unixIter = unixDataStore.iterator();
+		StreamingIterator<NucleotideFastaRecord> unixIter = unixDataStore.iterator();
 		
 		
 		while(unixIter.hasNext()){
-			NucleotideSequenceFastaRecord unix = unixIter.next();
+			NucleotideFastaRecord unix = unixIter.next();
 			assertEquals(unix, dosDataStore.get(unix.getId()));
 		}
 	}

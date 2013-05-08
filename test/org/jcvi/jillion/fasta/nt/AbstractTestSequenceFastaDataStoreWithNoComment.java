@@ -30,7 +30,7 @@ import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
 
@@ -38,7 +38,7 @@ public  abstract class AbstractTestSequenceFastaDataStoreWithNoComment {
     static final String FASTA_FILE_PATH = "files/noComment.fasta";
     ResourceHelper RESOURCES = new ResourceHelper(AbstractTestSequenceFastaMapWithNoComment.class);
     
-    NucleotideSequenceFastaRecord hrv_61 = new NucleotideSequenceFastaRecordBuilder("hrv-61",
+    NucleotideFastaRecord hrv_61 = new NucleotideSequenceFastaRecordBuilder("hrv-61",
         new NucleotideSequenceBuilder("TTAAAACTGGGTCTGGGTTGCTCCCACCCAGACCACCCATGTGGTGTTGTACACTGTTAT" +
         "TCCGGTAACTTTGTACGCCAGTTTTGAACTCCCCTACCCCTTTTGTAACTTAGAAGCTAA" +
         "ACACATCGACCAATAGCAGGCAATCACCCAGATTGCTTATGGTCAAGTACTTCTGTTTCC" +
@@ -162,5 +162,5 @@ public  abstract class AbstractTestSequenceFastaDataStoreWithNoComment {
 
 
 
-protected abstract DataStore<NucleotideSequenceFastaRecord> createDataStore(File file) throws IOException;
+protected abstract DataStore<NucleotideFastaRecord> createDataStore(File file) throws IOException;
 }

@@ -47,8 +47,8 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.qual.QualitySequenceFastaDataStore;
-import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecord;
+import org.jcvi.jillion.fasta.qual.QualityFastaDataStore;
+import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
 
 public class AceAdapterContigFileDataStore implements AceFileContigDataStore{
 
@@ -56,10 +56,10 @@ public class AceAdapterContigFileDataStore implements AceFileContigDataStore{
     private DataStore<AceContig> dataStore;
     private long totalNumberOfReads=0L;
 
-    public static AceFileContigDataStore create(final QualitySequenceFastaDataStore fullLengthQualityDataStore, final Date phdDate, File contigFile) throws IOException{
+    public static AceFileContigDataStore create(final QualityFastaDataStore fullLengthQualityDataStore, final Date phdDate, File contigFile) throws IOException{
         return create(fullLengthQualityDataStore, phdDate, contigFile,false);
     }
-    public static AceFileContigDataStore create(final QualitySequenceFastaDataStore fullLengthQualityDataStore, final Date phdDate, File contigFile, final boolean computeConsedConsensusQualities) throws IOException{
+    public static AceFileContigDataStore create(final QualityFastaDataStore fullLengthQualityDataStore, final Date phdDate, File contigFile, final boolean computeConsedConsensusQualities) throws IOException{
     	final AceAdapterContigFileDataStore datastore = new AceAdapterContigFileDataStore();
     	TigrContigFileVisitor visitor =new TigrContigFileVisitor() {
 			
@@ -81,11 +81,11 @@ public class AceAdapterContigFileDataStore implements AceFileContigDataStore{
 					String contigId) {
 				final QualitySequenceDataStore qualitySequences = DataStoreUtil.adapt(QualitySequenceDataStore.class, 
 						fullLengthQualityDataStore, 
-						new DataStoreUtil.AdapterCallback<QualitySequenceFastaRecord, QualitySequence>() {
+						new DataStoreUtil.AdapterCallback<QualityFastaRecord, QualitySequence>() {
 
 							@Override
 							public QualitySequence get(
-									QualitySequenceFastaRecord from) {
+									QualityFastaRecord from) {
 								return from.getSequence();
 							}
 					

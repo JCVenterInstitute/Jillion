@@ -28,45 +28,45 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordBuilder;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordWriter;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriterBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultNucleotideSequenceFastaRecordWriter {
-	private final NucleotideSequenceFastaRecord record1 = 
+	private final NucleotideFastaRecord record1 = 
 			new NucleotideSequenceFastaRecordBuilder("id_1", "ACGTACGT")
 						.comment("a comment")
 						.build();
 		
-	private final NucleotideSequenceFastaRecord record2 = 
+	private final NucleotideFastaRecord record2 = 
 			new NucleotideSequenceFastaRecordBuilder("id_2","AAAACCCCGGGGTTTT").build();
 	
 	@Test(expected = NullPointerException.class)
 	public void nullOutputStreamShouldThrowNPE(){
-		new NucleotideSequenceFastaRecordWriterBuilder((OutputStream)null);
+		new NucleotideFastaRecordWriterBuilder((OutputStream)null);
 	}
 	@Test(expected = NullPointerException.class)
 	public void nullFileShouldThrowNPE() throws FileNotFoundException{
-		new NucleotideSequenceFastaRecordWriterBuilder((File)null);
+		new NucleotideFastaRecordWriterBuilder((File)null);
 	}
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeBasesPerLineShouldthrowIllegalArgumentException(){
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		new NucleotideSequenceFastaRecordWriterBuilder(out)
+		new NucleotideFastaRecordWriterBuilder(out)
 			.numberPerLine(-1);
 	}
 	@Test(expected = IllegalArgumentException.class)
 	public void zeroBasesPerLineShouldthrowIllegalArgumentException(){
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		new NucleotideSequenceFastaRecordWriterBuilder(out)
+		new NucleotideFastaRecordWriterBuilder(out)
 			.numberPerLine(0);
 	}
 	@Test
 	public void writeFastasWithDefaultOptions() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		NucleotideSequenceFastaRecordWriter sut = new NucleotideSequenceFastaRecordWriterBuilder(out)
+		NucleotideFastaRecordWriter sut = new NucleotideFastaRecordWriterBuilder(out)
 													.build();
 		sut.write(record1);		
 		sut.write(record2);
@@ -81,7 +81,7 @@ public class TestDefaultNucleotideSequenceFastaRecordWriter {
 	@Test
 	public void multiLineFastas() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		NucleotideSequenceFastaRecordWriter sut = new NucleotideSequenceFastaRecordWriterBuilder(out)
+		NucleotideFastaRecordWriter sut = new NucleotideFastaRecordWriterBuilder(out)
 								.numberPerLine(5)											
 								.build();
 		
@@ -100,7 +100,7 @@ public class TestDefaultNucleotideSequenceFastaRecordWriter {
 	@Test
 	public void sequenceEndsAtEndOfLineExactly() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		NucleotideSequenceFastaRecordWriter sut = new NucleotideSequenceFastaRecordWriterBuilder(out)
+		NucleotideFastaRecordWriter sut = new NucleotideFastaRecordWriterBuilder(out)
 								.numberPerLine(4)											
 								.build();
 		
@@ -121,7 +121,7 @@ public class TestDefaultNucleotideSequenceFastaRecordWriter {
 	public void differentCharSet() throws IOException{
 		Charset charSet = Charset.forName("UTF-16");
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		NucleotideSequenceFastaRecordWriter sut = new NucleotideSequenceFastaRecordWriterBuilder(out)
+		NucleotideFastaRecordWriter sut = new NucleotideFastaRecordWriterBuilder(out)
 								.numberPerLine(5)	
 								.charset(charSet)
 								.build();

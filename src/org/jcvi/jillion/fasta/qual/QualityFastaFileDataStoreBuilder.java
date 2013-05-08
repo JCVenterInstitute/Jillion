@@ -27,20 +27,19 @@ import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
-import org.jcvi.jillion.fasta.FastaDataStore;
 import org.jcvi.jillion.internal.fasta.AbstractFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.fasta.qual.IndexedQualityFastaFileDataStore;
 import org.jcvi.jillion.internal.fasta.qual.LargeQualityFastaFileDataStore;
 
 /**
- * {@code QualitySequenceFastaFileDataStoreFactory}
+ * {@code QualityFastaFileDataStoreBuilder}
  * is a factory class that can create new instances
- * of {@link QualitySequenceFastaDataStore}s
+ * of {@link QualityFastaDataStore}s
  * using data from a given input fasta file.
  * @author dkatzel
  *
  */
-public final class QualitySequenceFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<PhredQuality, QualitySequence, QualitySequenceFastaRecord, QualitySequenceFastaDataStore>{
+public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<PhredQuality, QualitySequence, QualityFastaRecord, QualityFastaDataStore>{
 
 	/**
 	 * Create a new Builder instance of 
@@ -50,14 +49,14 @@ public final class QualitySequenceFastaFileDataStoreBuilder extends AbstractFast
 	 * @throws IOException if the fasta file does not exist, or can not be read.
 	 * @throws NullPointerException if fastaFile is null.
 	 */
-	public QualitySequenceFastaFileDataStoreBuilder(File fastaFile)
+	public QualityFastaFileDataStoreBuilder(File fastaFile)
 			throws IOException {
 		super(fastaFile);
 	}
 
 	
 	@Override
-	protected QualitySequenceFastaDataStore createNewInstance(File fastaFile,
+	protected QualityFastaDataStore createNewInstance(File fastaFile,
 			DataStoreProviderHint hint, DataStoreFilter filter)
 			throws IOException {
 		switch(hint){
@@ -74,7 +73,7 @@ public final class QualitySequenceFastaFileDataStoreBuilder extends AbstractFast
 	 * {@inheritDoc}
 	 */
 	@Override
-	public QualitySequenceFastaFileDataStoreBuilder filter(
+	public QualityFastaFileDataStoreBuilder filter(
 			DataStoreFilter filter) {
 		super.filter(filter);
 		return this;
@@ -85,7 +84,7 @@ public final class QualitySequenceFastaFileDataStoreBuilder extends AbstractFast
 	 * {@inheritDoc}
 	 */
 	@Override
-	public QualitySequenceFastaFileDataStoreBuilder hint(
+	public QualityFastaFileDataStoreBuilder hint(
 			DataStoreProviderHint hint) {
 		super.hint(hint);
 		return this;
@@ -96,7 +95,7 @@ public final class QualitySequenceFastaFileDataStoreBuilder extends AbstractFast
 	 * {@inheritDoc}
 	 */
 	@Override
-	public QualitySequenceFastaDataStore build() throws IOException {
+	public QualityFastaDataStore build() throws IOException {
 		return super.build();
 	}
 	

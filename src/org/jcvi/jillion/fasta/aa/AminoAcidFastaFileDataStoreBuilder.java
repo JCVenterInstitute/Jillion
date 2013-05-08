@@ -35,16 +35,16 @@ import org.jcvi.jillion.internal.fasta.aa.LargeAminoAcidSequenceFastaFileDataSto
 
 
 /**
- * {@code AminoAcidSequenceFastaFileDataStoreBuilder}
+ * {@code AminoAcidFastaFileDataStoreBuilder}
  * is a Builder that can create new instances
  * of {@link AminoAcidSequenceFastaDataStore}s
  * using data from a given input fasta file.
  * @author dkatzel
  *
  */
-public final class AminoAcidSequenceFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<AminoAcid, AminoAcidSequence, AminoAcidSequenceFastaRecord, AminoAcidSequenceFastaDataStore> {
+public final class AminoAcidFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<AminoAcid, AminoAcidSequence, AminoAcidFastaRecord, AminoAcidFastaDataStore> {
 
-	public AminoAcidSequenceFastaFileDataStoreBuilder(File fastaFile) throws IOException{
+	public AminoAcidFastaFileDataStoreBuilder(File fastaFile) throws IOException{
 		super(fastaFile);
 	}
 	
@@ -58,7 +58,7 @@ public final class AminoAcidSequenceFastaFileDataStoreBuilder extends AbstractFa
 	 * @throws IOException if there is a problem creating the datastore from the file.
 	 */
 	@Override
-	protected AminoAcidSequenceFastaDataStore createNewInstance(File fastaFile, DataStoreProviderHint hint, DataStoreFilter filter)
+	protected AminoAcidFastaDataStore createNewInstance(File fastaFile, DataStoreProviderHint hint, DataStoreFilter filter)
 			throws IOException {
 		switch(hint){
 			case OPTIMIZE_FAST_RANDOM_ACCESS: return DefaultAminoAcidSequenceFastaDataStore.create(fastaFile,filter);
@@ -73,7 +73,7 @@ public final class AminoAcidSequenceFastaFileDataStoreBuilder extends AbstractFa
 	 * {@inheritDoc}
 	 */
 	@Override
-	public AminoAcidSequenceFastaFileDataStoreBuilder filter(
+	public AminoAcidFastaFileDataStoreBuilder filter(
 			DataStoreFilter filter) {
 		super.filter(filter);
 		return this;
@@ -83,7 +83,7 @@ public final class AminoAcidSequenceFastaFileDataStoreBuilder extends AbstractFa
 	 * {@inheritDoc}
 	 */
 	@Override
-	public AminoAcidSequenceFastaFileDataStoreBuilder hint(
+	public AminoAcidFastaFileDataStoreBuilder hint(
 			DataStoreProviderHint hint) {
 		super.hint(hint);
 		return this;
@@ -93,7 +93,7 @@ public final class AminoAcidSequenceFastaFileDataStoreBuilder extends AbstractFa
 	 * {@inheritDoc}
 	 */
 	@Override
-	public AminoAcidSequenceFastaDataStore build() throws IOException {
+	public AminoAcidFastaDataStore build() throws IOException {
 		return super.build();
 	}
 	

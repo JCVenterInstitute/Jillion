@@ -18,17 +18,32 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-/*
- * Created on Jan 26, 2009
- *
- * @author dkatzel
- */
 package org.jcvi.jillion.fasta.qual;
 
-import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
-import org.jcvi.jillion.fasta.FastaRecord;
 
-public interface QualitySequenceFastaRecord extends FastaRecord<PhredQuality,QualitySequence> {
+class CommentedQualityFastaRecord extends UncommentedQualityFastaRecord{
+	private final String comment;
+	public CommentedQualityFastaRecord(String id,
+			QualitySequence qualities, String comment) {
+		super(id, qualities);
+		this.comment = comment;
+	}
+	@Override
+	public String getComment() {
+		return comment;
+	}
+	@Override
+	public int hashCode() {
+		// delegates to uncommented since comments don't count
+		return super.hashCode();
+	}
+	@Override
+	public boolean equals(Object obj) {
+		// delegates to uncommented since comments don't count
+		return super.equals(obj);
+	}
 
+	
+	
 }

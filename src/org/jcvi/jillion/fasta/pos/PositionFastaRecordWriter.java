@@ -18,19 +18,12 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.fasta.nt;
+package org.jcvi.jillion.fasta.pos;
 
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.fasta.FastaDataStore;
+import org.jcvi.jillion.core.pos.Position;
+import org.jcvi.jillion.core.pos.PositionSequence;
+import org.jcvi.jillion.fasta.FastaRecordWriter;
 
-/**
- * {@code NucleotideFastaDataStore} is a FastaDataStore
- * for storing {@link Nucleotide}s.
- * @author dkatzel
- *
- *
- */
-public interface NucleotideSequenceFastaDataStore extends FastaDataStore<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord>{
+public interface PositionFastaRecordWriter extends FastaRecordWriter<Position, PositionSequence, PositionFastaRecord>{
 
 }

@@ -18,19 +18,25 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.fasta.pos;
+package org.jcvi.jillion.fasta.nt;
+
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-import org.jcvi.jillion.core.pos.Position;
-import org.jcvi.jillion.core.pos.PositionSequence;
-import org.jcvi.jillion.internal.fasta.AbstractFastaRecordWriter;
-import org.jcvi.jillion.internal.fasta.AbstractFastaRecordWriter.AbstractBuilder;
-
-public final class PositionSequenceFastaRecordWriterBuilder extends AbstractBuilder<Position, PositionSequence, PositionSequenceFastaRecord, PositionSequenceFastaRecordWriter> {
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.internal.fasta.AbstractResidueSequenceFastaRecordWriter;
+/**
+ * {@code NucleotideFastaRecordWriterBuilder} is a Builder
+ * class that will create a new instance of 
+ * {@link NucleotideFastaRecordWriter}.
+ * @author dkatzel
+ *
+ */
+public final class NucleotideFastaRecordWriterBuilder extends AbstractResidueSequenceFastaRecordWriter.Builder<Nucleotide, NucleotideSequence, NucleotideFastaRecord,NucleotideFastaRecordWriter> {
 		
 		/**
 		 * Create a new Builder that will use
@@ -46,7 +52,7 @@ public final class PositionSequenceFastaRecordWriterBuilder extends AbstractBuil
 		 * does not exist but cannot be created, 
 		 * or cannot be opened for any other reason.
 		 */
-		public PositionSequenceFastaRecordWriterBuilder(File outputFile) throws FileNotFoundException {
+		public NucleotideFastaRecordWriterBuilder(File outputFile) throws FileNotFoundException {
 			super(outputFile);
 		}
 		/**
@@ -57,46 +63,21 @@ public final class PositionSequenceFastaRecordWriterBuilder extends AbstractBuil
 		 * can not be null.
 		 * @throws NullPointerException if out is null.
 		 */
-		public PositionSequenceFastaRecordWriterBuilder(OutputStream out) {
+		public NucleotideFastaRecordWriterBuilder(OutputStream out) {
 			super(out);
 		}
 
 		@Override
-		protected PositionSequenceFastaRecordWriter create(
+		protected NucleotideFastaRecordWriter create(
 				OutputStream out, int numberOfResiduesPerLine, Charset charSet) {
-			return new PositionSequenceFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet);
+			return new NucleotideSequenceFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet);
 		}
-		@Override
-		protected int getDefaultNumberOfSymbolsPerLine() {
-			return 12;
-		}
-	
-		private static final class PositionSequenceFastaRecordWriterImpl  extends AbstractFastaRecordWriter<Position, PositionSequence, PositionSequenceFastaRecord> implements PositionSequenceFastaRecordWriter{
+		
+		private static final class NucleotideSequenceFastaRecordWriterImpl extends AbstractResidueSequenceFastaRecordWriter<Nucleotide, NucleotideSequence, NucleotideFastaRecord> implements NucleotideFastaRecordWriter{
 
-			private PositionSequenceFastaRecordWriterImpl(OutputStream out,
+			private NucleotideSequenceFastaRecordWriterImpl(OutputStream out,
 					int numberOfResiduesPerLine, Charset charSet) {
 				super(out, numberOfResiduesPerLine, charSet);
 			}
-
-			@Override
-			protected String getStringRepresentationFor(Position symbol) {
-				return String.format("%04d", symbol.getValue());
-			}
-
-			@Override
-			protected boolean hasSymbolSeparator() {
-				return true;
-			}
-
-			@Override
-			protected String getSymbolSeparator() {
-				return " ";
-			}
-
-			@Override
-			protected int numberOfCharsFor(int numberOfSymbols) {
-				return 5*numberOfSymbols;
-			}
 		}
-	}
-
+}

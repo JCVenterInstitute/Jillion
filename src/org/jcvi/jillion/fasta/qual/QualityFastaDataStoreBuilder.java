@@ -18,13 +18,23 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.fasta.aa;
+package org.jcvi.jillion.fasta.qual;
 
-import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.fasta.FastaDataStoreBuilder;
-
-public interface AminoAcidSequenceFastaDataStoreBuilder 
-	extends FastaDataStoreBuilder<AminoAcid, AminoAcidSequence, AminoAcidSequenceFastaRecord, AminoAcidSequenceFastaDataStore>{
-
+/**
+ * {@code QualityFastaDataStoreBuilder} is a {@link FastaDataStoreBuilder}
+ * that builds a {@link QualitySequenceFastaDataStore}.
+ * @author dkatzel
+ *
+ */
+public interface QualityFastaDataStoreBuilder extends FastaDataStoreBuilder<PhredQuality, QualitySequence, QualityFastaRecord, QualityFastaDataStore>{
+	/**
+	 * Adds the given {@link QualitySequenceFastaRecord} to this builder.
+	 * <p/>
+	 * {@inheritDoc}
+	 */
+	@Override
+	QualityFastaDataStoreBuilder addFastaRecord(QualityFastaRecord fastaRecord);
 }

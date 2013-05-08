@@ -28,10 +28,10 @@ import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.jillion.fasta.qual.QualitySequenceFastaDataStore;
-import org.jcvi.jillion.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
-import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecord;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
+import org.jcvi.jillion.fasta.qual.QualityFastaDataStore;
+import org.jcvi.jillion.fasta.qual.QualityFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
 /**
  * {@code QualFastaConsedPhdAdaptedIterator} is a {@link FastaConsedPhdAdaptedIterator}
  * that will try to find a corresponding qual file
@@ -41,16 +41,16 @@ import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecord;
  */
 public class QualFastaConsedPhdAdaptedIterator extends FastaConsedPhdAdaptedIterator{
 
-	private final QualitySequenceFastaDataStore qualIter;
+	private final QualityFastaDataStore qualIter;
 	
 	public QualFastaConsedPhdAdaptedIterator(
-			StreamingIterator<NucleotideSequenceFastaRecord> fastaIterator,
+			StreamingIterator<NucleotideFastaRecord> fastaIterator,
 			File fastaFile, Date phdDate, PhredQuality defaultQualityValue) {
 		super(fastaIterator, fastaFile, phdDate, defaultQualityValue);
 		File qualFile = new File(fastaFile.getParentFile(), FileUtil.getBaseName(fastaFile)+".qual");
 		if(qualFile.exists()){
 			try {
-				qualIter = new QualitySequenceFastaFileDataStoreBuilder(qualFile)
+				qualIter = new QualityFastaFileDataStoreBuilder(qualFile)
 									.build();
 			} catch (Exception e) {
 				throw new IllegalStateException("error parsing corresponding qual file : " + qualFile.getAbsolutePath(), e);
@@ -62,8 +62,8 @@ public class QualFastaConsedPhdAdaptedIterator extends FastaConsedPhdAdaptedIter
 
 	@Override
 	protected QualitySequence getQualitiesFor(
-			NucleotideSequenceFastaRecord nextFasta) {
-		QualitySequenceFastaRecord qualRecord=null;
+			NucleotideFastaRecord nextFasta) {
+		QualityFastaRecord qualRecord=null;
 		
 		if(qualIter !=null){
 			try {

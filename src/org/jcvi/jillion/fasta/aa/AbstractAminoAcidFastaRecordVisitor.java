@@ -26,7 +26,7 @@ import org.jcvi.jillion.fasta.FastaRecordVisitor;
  * {@code AbstractAminoAcidFastaRecordVisitor} is an abstract
  * implementation of {@link FastaRecordVisitor} that will collect
  * the visit methods <strong>for a single fasta record</strong>
- * and build an instance of {@link AminoAcidSequenceFastaRecord}.
+ * and build an instance of {@link AminoAcidFastaRecord}.
  * When {@link FastaRecordVisitor#visitEnd()} is called,
  * the {@link AminoAcidSequenceFastaRecord} is built
  * and the abstract method {@link #visitRecord(AminoAcidSequenceFastaRecord)}
@@ -56,7 +56,7 @@ public abstract class AbstractAminoAcidFastaRecordVisitor implements FastaRecord
 
 	@Override
 	public final void visitEnd() {
-		AminoAcidSequenceFastaRecord record = new AminoAcidSequenceFastaRecordBuilder(id, sequenceBuilder.build())
+		AminoAcidFastaRecord record = new AminoAcidFastaRecordBuilder(id, sequenceBuilder.build())
 												.comment(comment)
 												.build();
 		visitRecord(record);		
@@ -66,6 +66,6 @@ public abstract class AbstractAminoAcidFastaRecordVisitor implements FastaRecord
 		//no-op				
 	}
 	
-	protected abstract void visitRecord(AminoAcidSequenceFastaRecord fastaRecord);
+	protected abstract void visitRecord(AminoAcidFastaRecord fastaRecord);
 	
 }

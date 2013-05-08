@@ -30,16 +30,16 @@ import java.nio.charset.Charset;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.fasta.pos.DefaultPositionFastaFileDataStore;
-import org.jcvi.jillion.fasta.pos.PositionSequenceFastaRecord;
-import org.jcvi.jillion.fasta.pos.PositionSequenceFastaRecordWriter;
-import org.jcvi.jillion.fasta.pos.PositionSequenceFastaRecordWriterBuilder;
+import org.jcvi.jillion.fasta.pos.PositionFastaRecord;
+import org.jcvi.jillion.fasta.pos.PositionFastaRecordWriter;
+import org.jcvi.jillion.fasta.pos.PositionFastaRecordWriterBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultPositionSequenceFastaRecordWriter {
 
 	private final File peakFile;
-	private final PositionSequenceFastaRecord fasta;
+	private final PositionFastaRecord fasta;
 	public TestDefaultPositionSequenceFastaRecordWriter() throws IOException, DataStoreException{
 		ResourceHelper resources = new ResourceHelper(TestDefaultPositionSequenceFastaRecordWriter.class);
 		peakFile = resources.getFile("1119369023656.peak");
@@ -52,7 +52,7 @@ public class TestDefaultPositionSequenceFastaRecordWriter {
 		
 		String asString = asString(peakFile);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		PositionSequenceFastaRecordWriter sut = new PositionSequenceFastaRecordWriterBuilder(out)
+		PositionFastaRecordWriter sut = new PositionFastaRecordWriterBuilder(out)
 												.build();
 		
 		sut.write(fasta);
@@ -65,7 +65,7 @@ public class TestDefaultPositionSequenceFastaRecordWriter {
 		String asString = asString(peakFile);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		Charset charset = Charset.forName("UTF-16");
-		PositionSequenceFastaRecordWriter sut = new PositionSequenceFastaRecordWriterBuilder(out)
+		PositionFastaRecordWriter sut = new PositionFastaRecordWriterBuilder(out)
 												.charset(charset)
 												.build();
 		

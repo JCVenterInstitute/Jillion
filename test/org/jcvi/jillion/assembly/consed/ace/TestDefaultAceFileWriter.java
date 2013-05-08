@@ -56,10 +56,10 @@ import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaRecordDataStoreAdapter;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
-import org.jcvi.jillion.fasta.qual.QualitySequenceFastaDataStore;
-import org.jcvi.jillion.fasta.qual.QualitySequenceFastaFileDataStoreBuilder;
-import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecord;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.qual.QualityFastaDataStore;
+import org.jcvi.jillion.fasta.qual.QualityFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.Rule;
@@ -93,9 +93,9 @@ public class TestDefaultAceFileWriter {
 		final Date phdDate = new Date(0L);
 		NucleotideSequenceDataStore nucleotideDataStore = FastaRecordDataStoreAdapter
 				.adapt(NucleotideSequenceDataStore.class,
-						new NucleotideSequenceFastaFileDataStoreBuilder(seqFile)
+						new NucleotideFastaFileDataStoreBuilder(seqFile)
 								.build());
-		final QualitySequenceFastaDataStore qualityFastaDataStore = new QualitySequenceFastaFileDataStoreBuilder(
+		final QualityFastaDataStore qualityFastaDataStore = new QualityFastaFileDataStoreBuilder(
 				qualFile).build();
 		QualitySequenceDataStore qualityDataStore = FastaRecordDataStoreAdapter
 				.adapt(QualitySequenceDataStore.class, qualityFastaDataStore);
@@ -128,9 +128,9 @@ public class TestDefaultAceFileWriter {
 		final Date phdDate = new Date(0L);
 		NucleotideSequenceDataStore nucleotideDataStore = FastaRecordDataStoreAdapter
 				.adapt(NucleotideSequenceDataStore.class,
-						new NucleotideSequenceFastaFileDataStoreBuilder(seqFile)
+						new NucleotideFastaFileDataStoreBuilder(seqFile)
 								.build());
-		final QualitySequenceFastaDataStore qualityFastaDataStore = new QualitySequenceFastaFileDataStoreBuilder(
+		final QualityFastaDataStore qualityFastaDataStore = new QualityFastaFileDataStoreBuilder(
 				qualFile).build();
 		QualitySequenceDataStore qualityDataStore = FastaRecordDataStoreAdapter
 				.adapt(QualitySequenceDataStore.class, qualityFastaDataStore);
@@ -184,15 +184,15 @@ public class TestDefaultAceFileWriter {
 	private Map<String, QualitySequence> getExpectedConsensusQualities()
 			throws IOException, DataStoreException {
 		File qualFile =resources.getFile("files/expectedConsensus.qual");
-		QualitySequenceFastaDataStore datastore =new QualitySequenceFastaFileDataStoreBuilder(qualFile)
+		QualityFastaDataStore datastore =new QualityFastaFileDataStoreBuilder(qualFile)
 					.hint(DataStoreProviderHint.ITERATION_ONLY)
 					.build();
 		Map<String, QualitySequence> map = new HashMap<String, QualitySequence>();
-		StreamingIterator<QualitySequenceFastaRecord> iter =null;
+		StreamingIterator<QualityFastaRecord> iter =null;
 		try{
 			iter = datastore.iterator();
 			while(iter.hasNext()){
-				QualitySequenceFastaRecord next = iter.next();
+				QualityFastaRecord next = iter.next();
 				map.put(next.getId(), next.getSequence());
 			}
 		}finally{
@@ -211,9 +211,9 @@ public class TestDefaultAceFileWriter {
 		final Date phdDate = new Date(0L);
 		NucleotideSequenceDataStore nucleotideDataStore = FastaRecordDataStoreAdapter
 				.adapt(NucleotideSequenceDataStore.class,
-						new NucleotideSequenceFastaFileDataStoreBuilder(seqFile)
+						new NucleotideFastaFileDataStoreBuilder(seqFile)
 								.build());
-		final QualitySequenceFastaDataStore qualityFastaDataStore = new QualitySequenceFastaFileDataStoreBuilder(
+		final QualityFastaDataStore qualityFastaDataStore = new QualityFastaFileDataStoreBuilder(
 				qualFile).build();
 		QualitySequenceDataStore qualityDataStore = FastaRecordDataStoreAdapter
 				.adapt(QualitySequenceDataStore.class, qualityFastaDataStore);

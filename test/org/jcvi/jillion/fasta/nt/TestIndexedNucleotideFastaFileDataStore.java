@@ -25,12 +25,12 @@ import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.fasta.nt.IndexedNucleotideSequenceFastaFileDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 
 public class TestIndexedNucleotideFastaFileDataStore extends AbstractTestSequenceFastaDataStore {
 
     @Override
-    protected DataStore<NucleotideSequenceFastaRecord> parseFile(File file)
+    protected DataStore<NucleotideFastaRecord> parseFile(File file)
             throws IOException {
         return IndexedNucleotideSequenceFastaFileDataStore.create(file);
     }

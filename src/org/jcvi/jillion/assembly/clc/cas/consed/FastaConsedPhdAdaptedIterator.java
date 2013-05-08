@@ -37,7 +37,7 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 /**
  * {@code FastaConsedPhdAdaptedIterator} is a PhdReadRecord generator
  * for chromatograms.  Since CLC's reference mappers don't handle chromatograms,
@@ -51,14 +51,14 @@ import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
  */
 public class FastaConsedPhdAdaptedIterator implements StreamingIterator<PhdReadRecord>{
 	
-	private final StreamingIterator<NucleotideSequenceFastaRecord> fastaIterator;
+	private final StreamingIterator<NucleotideFastaRecord> fastaIterator;
 	private final Map<String,String> requiredComments;
 	private final byte defaultQualityValue;
 	private final Date phdDate;
 	private final File fastaFile;
 	
 	public FastaConsedPhdAdaptedIterator(
-			StreamingIterator<NucleotideSequenceFastaRecord> fastaIterator,
+			StreamingIterator<NucleotideFastaRecord> fastaIterator,
 			File fastaFile,
 			Date phdDate,
 			PhredQuality defaultQualityValue){
@@ -75,7 +75,7 @@ public class FastaConsedPhdAdaptedIterator implements StreamingIterator<PhdReadR
 
 	@Override
 	public PhdReadRecord next() {
-		NucleotideSequenceFastaRecord nextFasta = fastaIterator.next();
+		NucleotideFastaRecord nextFasta = fastaIterator.next();
 		String id = nextFasta.getId();
 		//Properties constructor "new Properties(Properties)"
 		//doesn't actually put those values in the map,
@@ -104,7 +104,7 @@ public class FastaConsedPhdAdaptedIterator implements StreamingIterator<PhdReadR
     protected  Map<String,String> createAdditionalCommentsFor(String id) {
         return Collections.emptyMap();
     }
-    protected Phd createPhdRecordFor(NucleotideSequenceFastaRecord nextFasta,  Map<String,String> requiredComments ){
+    protected Phd createPhdRecordFor(NucleotideFastaRecord nextFasta,  Map<String,String> requiredComments ){
 	    String id = nextFasta.getId();
         QualitySequence qualities = getQualitiesFor(nextFasta);
         return new PhdBuilder(id, nextFasta.getSequence(), qualities)
@@ -114,7 +114,7 @@ public class FastaConsedPhdAdaptedIterator implements StreamingIterator<PhdReadR
 	}
 	
     protected QualitySequence getQualitiesFor(
-    		NucleotideSequenceFastaRecord nextFasta) {
+    		NucleotideFastaRecord nextFasta) {
         int numberOfQualities =(int) nextFasta.getSequence().getLength();
 		byte[] qualities = new byte[numberOfQualities];
 		Arrays.fill(qualities, defaultQualityValue);

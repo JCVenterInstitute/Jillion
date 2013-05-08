@@ -41,40 +41,40 @@ import org.jcvi.jillion.internal.fasta.qual.LargeQualityFastaFileDataStore;
 import org.junit.Test;
 
 public class TestDefaultQualitySequenceFastaRecordWriter {
-	private final QualitySequenceFastaRecord record1 = new QualitySequenceFastaRecordBuilder("id_1", 
+	private final QualityFastaRecord record1 = new QualityFastaRecordBuilder("id_1", 
 						new QualitySequenceBuilder(new byte[]{8,9,10,11,12,13,14,15}).build())
 						.comment("a comment")
 						.build();
-	private final QualitySequenceFastaRecord record2 = 
-			new QualitySequenceFastaRecordBuilder("id_2", 
+	private final QualityFastaRecord record2 = 
+			new QualityFastaRecordBuilder("id_2", 
 									new QualitySequenceBuilder(new byte[]{20,20,20,20,30,30,30,30,40,40,40,40})
 											.build())
 			.build();
 	
 	@Test(expected = NullPointerException.class)
 	public void nullOutputStreamShouldThrowNPE(){
-		new QualitySequenceFastaRecordWriterBuilder((OutputStream)null);
+		new QualityFastaRecordWriterBuilder((OutputStream)null);
 	}
 	@Test(expected = NullPointerException.class)
 	public void nullFileShouldThrowNPE() throws FileNotFoundException{
-		new QualitySequenceFastaRecordWriterBuilder((File)null);
+		new QualityFastaRecordWriterBuilder((File)null);
 	}
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeBasesPerLineShouldthrowIllegalArgumentException(){
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		new QualitySequenceFastaRecordWriterBuilder(out)
+		new QualityFastaRecordWriterBuilder(out)
 			.numberPerLine(-1);
 	}
 	@Test(expected = IllegalArgumentException.class)
 	public void zeroBasesPerLineShouldthrowIllegalArgumentException(){
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		new QualitySequenceFastaRecordWriterBuilder(out)
+		new QualityFastaRecordWriterBuilder(out)
 			.numberPerLine(0);
 	}
 	@Test
 	public void writeFastasWithDefaultOptions() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		QualitySequenceFastaRecordWriter sut = new QualitySequenceFastaRecordWriterBuilder(out)
+		QualityFastaRecordWriter sut = new QualityFastaRecordWriterBuilder(out)
 													.build();
 		sut.write(record1);		
 		sut.write(record2);
@@ -89,7 +89,7 @@ public class TestDefaultQualitySequenceFastaRecordWriter {
 	@Test
 	public void multiLineFastas() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		QualitySequenceFastaRecordWriter sut = new QualitySequenceFastaRecordWriterBuilder(out)
+		QualityFastaRecordWriter sut = new QualityFastaRecordWriterBuilder(out)
 								.numberPerLine(5)											
 								.build();
 		
@@ -108,7 +108,7 @@ public class TestDefaultQualitySequenceFastaRecordWriter {
 	@Test
 	public void sequenceEndsAtEndOfLineExactly() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		QualitySequenceFastaRecordWriter sut = new QualitySequenceFastaRecordWriterBuilder(out)
+		QualityFastaRecordWriter sut = new QualityFastaRecordWriterBuilder(out)
 								.numberPerLine(4)											
 								.build();
 		
@@ -129,7 +129,7 @@ public class TestDefaultQualitySequenceFastaRecordWriter {
 	public void differentCharSet() throws IOException{
 		Charset charSet = Charset.forName("UTF-16");
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		QualitySequenceFastaRecordWriter sut = new QualitySequenceFastaRecordWriterBuilder(out)
+		QualityFastaRecordWriter sut = new QualityFastaRecordWriterBuilder(out)
 								.numberPerLine(5)	
 								.charset(charSet)
 								.build();
@@ -152,12 +152,12 @@ public class TestDefaultQualitySequenceFastaRecordWriter {
 	public void parseAndWriteShouldMatch() throws IOException, DataStoreException{
 		ResourceHelper resources = new ResourceHelper(TestDefaultQualitySequenceFastaRecordWriter.class);
 		File expectedFasta = resources.getFile("files/19150.qual");
-		QualitySequenceFastaDataStore datastore = LargeQualityFastaFileDataStore.create(expectedFasta);
+		QualityFastaDataStore datastore = LargeQualityFastaFileDataStore.create(expectedFasta);
 		
 		
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		QualitySequenceFastaRecordWriter sut = new QualitySequenceFastaRecordWriterBuilder(out).build();
-		StreamingIterator<QualitySequenceFastaRecord> iter=null;
+		QualityFastaRecordWriter sut = new QualityFastaRecordWriterBuilder(out).build();
+		StreamingIterator<QualityFastaRecord> iter=null;
 		
 		try{
 			iter = datastore.iterator();

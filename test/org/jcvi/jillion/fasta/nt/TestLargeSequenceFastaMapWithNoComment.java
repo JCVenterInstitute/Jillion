@@ -30,12 +30,12 @@ import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.fasta.nt.LargeNucleotideSequenceFastaFileDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 
 public class TestLargeSequenceFastaMapWithNoComment extends AbstractTestSequenceFastaMapWithNoComment{
 
     @Override
-    protected DataStore<NucleotideSequenceFastaRecord> createDataStore(
+    protected DataStore<NucleotideFastaRecord> createDataStore(
             File file) throws IOException {
         return LargeNucleotideSequenceFastaFileDataStore.create(file);
     }

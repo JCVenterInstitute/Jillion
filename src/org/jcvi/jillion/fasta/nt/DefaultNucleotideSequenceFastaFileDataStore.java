@@ -60,19 +60,19 @@ final class DefaultNucleotideSequenceFastaFileDataStore{
 		return new NucleotideFastaDataStoreBuilderVisitorImpl2(filter);
 	}
 	
-	public static NucleotideSequenceFastaDataStore create(File fastaFile) throws IOException{
+	public static NucleotideFastaDataStore create(File fastaFile) throws IOException{
 		return create(fastaFile,DataStoreFilters.alwaysAccept());
 	}
-	public static NucleotideSequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
+	public static NucleotideFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
 		NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter);
 		FastaFileParser.create(fastaFile).accept(builder);
 		return builder.build();
 	}
 	
-	public static NucleotideSequenceFastaDataStore create(InputStream in) throws IOException{
+	public static NucleotideFastaDataStore create(InputStream in) throws IOException{
 		return create(in,DataStoreFilters.alwaysAccept());
 	}
-	public static NucleotideSequenceFastaDataStore create(InputStream in, DataStoreFilter filter) throws IOException{
+	public static NucleotideFastaDataStore create(InputStream in, DataStoreFilter filter) throws IOException{
 		try{
 			NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter);
 			FastaFileParser.create(in).accept(builder);
@@ -84,9 +84,9 @@ final class DefaultNucleotideSequenceFastaFileDataStore{
     
 
     
-    private static final class NucleotideFastaDataStoreBuilderVisitorImpl2 implements FastaVisitor, Builder<NucleotideSequenceFastaDataStore>{
+    private static final class NucleotideFastaDataStoreBuilderVisitorImpl2 implements FastaVisitor, Builder<NucleotideFastaDataStore>{
 
-		private final Map<String, NucleotideSequenceFastaRecord> fastaRecords = new LinkedHashMap<String, NucleotideSequenceFastaRecord>();
+		private final Map<String, NucleotideFastaRecord> fastaRecords = new LinkedHashMap<String, NucleotideFastaRecord>();
 		
 		private final DataStoreFilter filter;
 		private NucleotideFastaRecordVisitor currentVisitor = new NucleotideFastaRecordVisitor();
@@ -113,8 +113,8 @@ final class DefaultNucleotideSequenceFastaFileDataStore{
 			//no-op			
 		}
 		@Override
-		public NucleotideSequenceFastaDataStore build() {
-			return DataStoreUtil.adapt(NucleotideSequenceFastaDataStore.class,fastaRecords);
+		public NucleotideFastaDataStore build() {
+			return DataStoreUtil.adapt(NucleotideFastaDataStore.class,fastaRecords);
 		}
 		 private class NucleotideFastaRecordVisitor implements FastaRecordVisitor{
 			private String currentId;
@@ -134,7 +134,7 @@ final class DefaultNucleotideSequenceFastaFileDataStore{
 
 			@Override
 			public void visitEnd() {
-				NucleotideSequenceFastaRecord record = new NucleotideSequenceFastaRecordBuilder(currentId,builder.build())
+				NucleotideFastaRecord record = new NucleotideSequenceFastaRecordBuilder(currentId,builder.build())
 														.comment(currentComment)
 														.build();
 				fastaRecords.put(currentId, record);

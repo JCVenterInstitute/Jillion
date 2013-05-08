@@ -22,7 +22,7 @@ package org.jcvi.jillion.fasta.aa;
 
 import java.io.File;
 
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaDataStore;
+import org.jcvi.jillion.fasta.aa.AminoAcidFastaDataStore;
 import org.jcvi.jillion.internal.fasta.aa.DefaultAminoAcidSequenceFastaDataStore;
 
 public class TestDefaultAminoAcidSequenceFastaDataStore extends AbstractTestAminoAcidSequenceFastaDataStore{
@@ -33,7 +33,7 @@ public class TestDefaultAminoAcidSequenceFastaDataStore extends AbstractTestAmin
 	}
 
 	@Override
-	protected AminoAcidSequenceFastaDataStore create(File fastaFile) throws Exception{
+	protected AminoAcidFastaDataStore create(File fastaFile) throws Exception{
 		return DefaultAminoAcidSequenceFastaDataStore.create(fastaFile);
 	}
 
