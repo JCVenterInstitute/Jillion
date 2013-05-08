@@ -20,7 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly;
 
-import org.jcvi.jillion.assembly.asm.AllAsmUnitTests;
+import org.jcvi.jillion.assembly.ca.AllCeleraAssemblerTests;
 import org.jcvi.jillion.assembly.clc.cas.AllCasUnitTests;
 import org.jcvi.jillion.assembly.consed.AllConsedUnitTests;
 import org.jcvi.jillion.assembly.ctg.AllCtgUnitTests;
@@ -38,7 +38,8 @@ import org.junit.runners.Suite.SuiteClasses;
     AllConsedUnitTests.class,
     
     AllCasUnitTests.class,
-    AllAsmUnitTests.class,
+   
+    AllCeleraAssemblerTests.class,
     AllTasmUnitTests.class
     }
     )

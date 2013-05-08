@@ -18,28 +18,10 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
-
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class
-        
-   
-    }
-    )
-public class AllTraceUnitTests {
-
-}
+/**
+ * Contains Classes and interfaces to work with 
+ * Celera Assembler data.
+ * 
+ * @see <a href ="http://www.sciencemag.org/content/287/5461/2196.full">Celera Assembler paper : Science 24 March 2000: 287 (5461), 2196-2204. [DOI:10.1126/science.287.5461.2196] </a>
+ */
+package org.jcvi.jillion.assembly.ca.asm;

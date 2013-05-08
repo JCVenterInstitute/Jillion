@@ -18,28 +18,17 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+/*
+ * Created on Mar 26, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.ca.frg;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class
-        
-   
-    }
-    )
-public class AllTraceUnitTests {
+public interface Library {
 
+    String getId();
+    Distance getDistance();
+    MateOrientation getMateOrientation();
 }

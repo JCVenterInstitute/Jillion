@@ -18,28 +18,24 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+/*
+ * Created on Jul 21, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.ca.frg;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.io.File;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class
-        
-   
+import org.jcvi.jillion.assembly.ca.frg.DefaultFragmentDataStore;
+import org.jcvi.jillion.assembly.ca.frg.FragmentDataStore;
+
+public class TestDefaultFragmentDataStore extends AbstractTestFragmentDataStore{
+
+    @Override
+    protected FragmentDataStore createFragmentDataStore(File file)
+            throws Exception {
+        return DefaultFragmentDataStore.create(file);
     }
-    )
-public class AllTraceUnitTests {
 
 }

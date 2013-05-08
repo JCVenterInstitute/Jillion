@@ -18,28 +18,23 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+/*
+ * Created on Jul 21, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.ca.frg;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class
-        
-   
-    }
-    )
-public class AllTraceUnitTests {
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 
+public interface FragmentDataStore extends DataStore<Fragment>{
+
+    boolean containsLibrary(String libraryId) throws DataStoreException;
+    Library getLibrary(String libraryId) throws DataStoreException;
+    
+    Fragment getMateOf(Fragment fragment) throws DataStoreException;
+    boolean hasMate(Fragment fragment) throws DataStoreException;
+    
 }

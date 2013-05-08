@@ -30,7 +30,7 @@ import java.io.IOException;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.TraceEncoderException;
-import org.jcvi.jillion.trace.chromat.ChromatogramWriter2;
+import org.jcvi.jillion.trace.chromat.ChromatogramWriter;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -46,7 +46,7 @@ public class TestIOLibZTRChromatogramWriter {
 		ZtrChromatogram chromatogram = new ZtrChromatogramBuilder("id",RESOURCES.getFile("files/GBKAK82TF.ztr")).build();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-		ChromatogramWriter2 writer = new ZtrChromatogramWriterBuilder(out).build();
+		ChromatogramWriter writer = new ZtrChromatogramWriterBuilder(out).build();
 		writer.write(chromatogram);
 		writer.close();
 		ZtrChromatogram reParsed = new ZtrChromatogramBuilder("id",new ByteArrayInputStream(out.toByteArray())).build();
@@ -60,7 +60,7 @@ public class TestIOLibZTRChromatogramWriter {
 		ZtrChromatogram chromatogram = new ZtrChromatogramBuilder("id",RESOURCES.getFile("files/GBKAK82TF.ztr")).build();
 		
 		File ztrFile =folder.newFile();
-		ChromatogramWriter2 writer = new ZtrChromatogramWriterBuilder(ztrFile).build();
+		ChromatogramWriter writer = new ZtrChromatogramWriterBuilder(ztrFile).build();
 		writer.write(chromatogram);
 		writer.close();
 		ZtrChromatogram reParsed = new ZtrChromatogramBuilder("id",ztrFile).build();

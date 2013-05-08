@@ -18,28 +18,18 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.trace;
+package org.jcvi.jillion.assembly.ca.asm;
 
-import org.jcvi.jillion.trace.chromat.AllChromatogramUnitTests;
-import org.jcvi.jillion.trace.fastq.AllFastqUnitTests;
-import org.jcvi.jillion.trace.sff.AllSFFUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.io.File;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestTraceQualityDataStoreAdapter.class,
-        TestTraceNucleotideDataStoreAdapter.class,
-        
-        AllFastqUnitTests.class,
-        AllSFFUnitTests.class,
-        AllChromatogramUnitTests.class
-        
-   
-    }
-    )
-public class AllTraceUnitTests {
+import org.jcvi.jillion.assembly.ca.frg.FragmentDataStore;
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.internal.ResourceHelper;
 
+public abstract class AbstractTestAsmDataStore<D extends DataStore> {
+
+	ResourceHelper resources = new ResourceHelper(AbstractTestAsmDataStore.class);
+	
+	protected abstract D createDataStore(File asmFile, FragmentDataStore frgDataStore) throws Exception;
+	
 }
