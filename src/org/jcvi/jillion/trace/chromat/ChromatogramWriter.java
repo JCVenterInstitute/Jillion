@@ -12,7 +12,7 @@ import java.io.IOException;
  *
  *
  */
-public interface ChromatogramWriter2 extends Closeable{
+public interface ChromatogramWriter extends Closeable{
 	 /**
      * Writes the given {@link Chromatogram}.
      * @param chromatogram the {@link Chromatogram} to write.
