@@ -34,8 +34,8 @@ import java.io.InputStream;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -49,7 +49,7 @@ public class TestContigFileWriter {
     
     @BeforeClass
     public static void parseContigs() throws IOException{
-    	NucleotideSequenceFastaDataStore fullLengthReads = new NucleotideSequenceFastaFileDataStoreBuilder(RESOURCES.getFile("files/gcv_23918.raw.seq.fasta.fasta"))
+    	NucleotideFastaDataStore fullLengthReads = new NucleotideFastaFileDataStoreBuilder(RESOURCES.getFile("files/gcv_23918.raw.seq.fasta.fasta"))
     															.build();
        dataStore = new TigrContigFileDataStoreBuilder(RESOURCES.getFile(pathToFile), fullLengthReads)
        						.build();

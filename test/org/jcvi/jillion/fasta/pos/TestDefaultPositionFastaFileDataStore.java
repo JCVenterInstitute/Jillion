@@ -23,12 +23,12 @@ package org.jcvi.jillion.fasta.pos;
 import java.io.File;
 
 import org.jcvi.jillion.fasta.pos.DefaultPositionFastaFileDataStore;
-import org.jcvi.jillion.fasta.pos.PositionSequenceFastaDataStore;
+import org.jcvi.jillion.fasta.pos.PositionFastaDataStore;
 
 public class TestDefaultPositionFastaFileDataStore extends AbstractTestPositionFastaFileDataStore{
 
 	@Override
-	protected PositionSequenceFastaDataStore createPositionFastaMap(
+	protected PositionFastaDataStore createPositionFastaMap(
 			File fastaFile) throws Exception {
 		return DefaultPositionFastaFileDataStore.create(fastaFile);
 	}

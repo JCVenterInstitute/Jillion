@@ -33,8 +33,8 @@ import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.qual.QualitySequenceFastaDataStore;
-import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecord;
+import org.jcvi.jillion.fasta.qual.QualityFastaDataStore;
+import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.fasta.AbstractLargeFastaFileDataStore;
 /**
@@ -50,13 +50,13 @@ import org.jcvi.jillion.internal.fasta.AbstractLargeFastaFileDataStore;
  *
  *
  */
-public final class LargeQualityFastaFileDataStore extends AbstractLargeFastaFileDataStore<PhredQuality, QualitySequence, QualitySequenceFastaRecord> implements QualitySequenceFastaDataStore{
+public final class LargeQualityFastaFileDataStore extends AbstractLargeFastaFileDataStore<PhredQuality, QualitySequence, QualityFastaRecord> implements QualityFastaDataStore{
 
     
-    public static QualitySequenceFastaDataStore create(File fastaFile){
+    public static QualityFastaDataStore create(File fastaFile){
     	return create(fastaFile, DataStoreFilters.alwaysAccept());
     }
-    public static QualitySequenceFastaDataStore create(File fastaFile, DataStoreFilter filter){
+    public static QualityFastaDataStore create(File fastaFile, DataStoreFilter filter){
     	return new LargeQualityFastaFileDataStore(fastaFile,filter);
     }
 	protected LargeQualityFastaFileDataStore(File fastaFile, DataStoreFilter filter) {
@@ -64,9 +64,9 @@ public final class LargeQualityFastaFileDataStore extends AbstractLargeFastaFile
 	}
 
 	@Override
-	protected StreamingIterator<QualitySequenceFastaRecord> createNewIterator(
+	protected StreamingIterator<QualityFastaRecord> createNewIterator(
 			File fastaFile, DataStoreFilter filter) {
-		StreamingIterator<QualitySequenceFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(fastaFile, filter);
+		StreamingIterator<QualityFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(fastaFile, filter);
         
         return DataStoreStreamingIterator.create(this,iter);
 	}

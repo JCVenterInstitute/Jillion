@@ -49,8 +49,8 @@ public abstract class AbstractTestQualityFastaDataStore {
     private static final String QUAL_FILE_PATH = "files/19150.qual";
     
     
-    QualitySequenceFastaRecord JGBAA02T21A12PB1A1F = 
-    		new QualitySequenceFastaRecordBuilder(
+    QualityFastaRecord JGBAA02T21A12PB1A1F = 
+    		new QualityFastaRecordBuilder(
                     "JGBAA02T21A12PB1A1F",
                    new QualitySequenceBuilder(
                                     new byte[]{
@@ -96,8 +96,8 @@ public abstract class AbstractTestQualityFastaDataStore {
     				.build();
     
     
-    QualitySequenceFastaRecord JGBAA07T21D08MP605F = 
-    		new QualitySequenceFastaRecordBuilder(
+    QualityFastaRecord JGBAA07T21D08MP605F = 
+    		new QualityFastaRecordBuilder(
                 "JGBAA07T21D08MP605F",
                 new QualitySequenceBuilder(
                                 new byte[]{
@@ -131,8 +131,8 @@ public abstract class AbstractTestQualityFastaDataStore {
     					.build();
     
     
-    QualitySequenceFastaRecord JGBAA01T21H05PB2A2341BRB = 
-        new QualitySequenceFastaRecordBuilder(
+    QualityFastaRecord JGBAA01T21H05PB2A2341BRB = 
+        new QualityFastaRecordBuilder(
                 "JGBAA01T21H05PB2A2341BRB",
                 new QualitySequenceBuilder(
                                 new byte[]{
@@ -184,19 +184,19 @@ public abstract class AbstractTestQualityFastaDataStore {
     @Test
     public void parseFile() throws IOException, DataStoreException{
     	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
-    	QualitySequenceFastaDataStore sut = createDataStore(qualFile);
+    	QualityFastaDataStore sut = createDataStore(qualFile);
         assertEquals(321, sut.getNumberOfRecords());
         assertEquals(JGBAA02T21A12PB1A1F, sut.get("JGBAA02T21A12PB1A1F"));
         assertEquals(JGBAA07T21D08MP605F, sut.get("JGBAA07T21D08MP605F"));
         assertEquals(JGBAA01T21H05PB2A2341BRB, sut.get("JGBAA01T21H05PB2A2341BRB"));
     }
     
-    protected abstract QualitySequenceFastaDataStore createDataStore(File file) throws IOException;
+    protected abstract QualityFastaDataStore createDataStore(File file) throws IOException;
     
     @Test
     public void idIterator() throws IOException, DataStoreException{
     	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
-		QualitySequenceFastaDataStore sut = createDataStore(qualFile);
+		QualityFastaDataStore sut = createDataStore(qualFile);
     	Iterator<String> expectedIdsIter = createExpectedIdsFrom(qualFile);
     	Iterator<String> actual = sut.idIterator();
     	assertTrue(expectedIdsIter.hasNext());
@@ -209,14 +209,14 @@ public abstract class AbstractTestQualityFastaDataStore {
     @Test
     public void iterator() throws IOException, DataStoreException{
     	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
-    	QualitySequenceFastaDataStore sut = createDataStore(qualFile);
-    	Iterator<QualitySequenceFastaRecord> iterator = sut.iterator();
+    	QualityFastaDataStore sut = createDataStore(qualFile);
+    	Iterator<QualityFastaRecord> iterator = sut.iterator();
     	boolean hasJGBAA02T21A12PB1A1F = false;
     	boolean hasJGBAA07T21D08MP605F = false;
     	boolean hasJGBAA01T21H05PB2A2341BRB = false;
     	
     	while(iterator.hasNext()){
-    		QualitySequenceFastaRecord next = iterator.next();
+    		QualityFastaRecord next = iterator.next();
     		if(next.equals(JGBAA02T21A12PB1A1F)){
     			hasJGBAA02T21A12PB1A1F=true;
     		}else if(next.equals(JGBAA07T21D08MP605F)){
@@ -232,8 +232,8 @@ public abstract class AbstractTestQualityFastaDataStore {
     @Test
     public void closingDataStoreAfterIteratingShouldActLikeNoMoreElements() throws IOException, DataStoreException{
     	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
-    	QualitySequenceFastaDataStore sut = createDataStore(qualFile);
-    	StreamingIterator<QualitySequenceFastaRecord> iter = null;
+    	QualityFastaDataStore sut = createDataStore(qualFile);
+    	StreamingIterator<QualityFastaRecord> iter = null;
     	try{
 	    	iter =sut.iterator();
 	    	while(iter.hasNext()){
@@ -254,8 +254,8 @@ public abstract class AbstractTestQualityFastaDataStore {
     @Test
     public void closingDataStoreDuringIterationShouldThrowExceptionOnHasNext() throws IOException, DataStoreException{
     	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
-    	QualitySequenceFastaDataStore sut = createDataStore(qualFile);
-    	StreamingIterator<QualitySequenceFastaRecord> iter = null;
+    	QualityFastaDataStore sut = createDataStore(qualFile);
+    	StreamingIterator<QualityFastaRecord> iter = null;
     	try{
 	    	iter =sut.iterator();
 	    	
@@ -276,8 +276,8 @@ public abstract class AbstractTestQualityFastaDataStore {
     @Test
     public void closingDataStoreDuringIterationShouldThrowExceptionOnNext() throws IOException, DataStoreException{
     	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
-    	QualitySequenceFastaDataStore sut = createDataStore(qualFile);
-    	StreamingIterator<QualitySequenceFastaRecord> iter = null;
+    	QualityFastaDataStore sut = createDataStore(qualFile);
+    	StreamingIterator<QualityFastaRecord> iter = null;
     	try{
 	    	iter =sut.iterator();
 	    	
@@ -298,7 +298,7 @@ public abstract class AbstractTestQualityFastaDataStore {
     @Test
     public void closingIdIteratorDuringIterationShouldThrowExceptionOnNext() throws IOException, DataStoreException{
     	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
-		QualitySequenceFastaDataStore sut = createDataStore(qualFile);
+		QualityFastaDataStore sut = createDataStore(qualFile);
     	StreamingIterator<String> iter = null;
     	try{
 	    	iter =sut.idIterator();
@@ -319,7 +319,7 @@ public abstract class AbstractTestQualityFastaDataStore {
     @Test
     public void closingIdIteratorDuringIterationShouldThrowExceptionOnHasNext() throws IOException, DataStoreException{
     	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
-		QualitySequenceFastaDataStore sut = createDataStore(qualFile);
+		QualityFastaDataStore sut = createDataStore(qualFile);
     	StreamingIterator<String> iter = null;
     	try{
 	    	iter =sut.idIterator();
@@ -341,7 +341,7 @@ public abstract class AbstractTestQualityFastaDataStore {
     @Test
     public void close() throws IOException, DataStoreException{
     	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
-    	QualitySequenceFastaDataStore sut = createDataStore(qualFile);
+    	QualityFastaDataStore sut = createDataStore(qualFile);
     	sut.close();
     	assertTrue(sut.isClosed());
     	

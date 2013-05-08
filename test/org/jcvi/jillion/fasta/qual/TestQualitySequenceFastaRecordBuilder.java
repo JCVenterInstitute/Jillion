@@ -28,7 +28,7 @@ package org.jcvi.jillion.fasta.qual;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.testUtil.TestUtil;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -40,18 +40,18 @@ public class TestQualitySequenceFastaRecordBuilder {
     byte[] bytes = new byte[]{10,20,70,50,60,2,55,1,2,3,4,5,6,7,8,9,10,10,20,30,12,11,2,5};
    
     private QualitySequence qualities = new QualitySequenceBuilder(bytes).build();
-    QualitySequenceFastaRecord sut = new QualitySequenceFastaRecordBuilder(id,qualities)
+    QualityFastaRecord sut = new QualityFastaRecordBuilder(id,qualities)
     										.comment(comment)
     										.build();
     
     
     @Test(expected = NullPointerException.class)
     public void nullIdShouldThrowNPE(){
-    	new QualitySequenceFastaRecordBuilder(null,qualities);
+    	new QualityFastaRecordBuilder(null,qualities);
     }
     @Test(expected = NullPointerException.class)
     public void nullSequenceShouldThrowNPE(){
-    	new QualitySequenceFastaRecordBuilder(id,(QualitySequence)null);
+    	new QualityFastaRecordBuilder(id,(QualitySequence)null);
     }
     @Test
     public void gettersWithComment(){
@@ -61,7 +61,7 @@ public class TestQualitySequenceFastaRecordBuilder {
     }
     @Test
     public void gettersNoComment(){
-    	QualitySequenceFastaRecord noComment = new QualitySequenceFastaRecordBuilder(id,qualities).build();
+    	QualityFastaRecord noComment = new QualityFastaRecordBuilder(id,qualities).build();
         
         assertEquals(id, noComment.getId());
         assertNull(noComment.getComment());
@@ -69,7 +69,7 @@ public class TestQualitySequenceFastaRecordBuilder {
     }
     @Test
     public void gettersNullComment(){
-    	QualitySequenceFastaRecord noComment = new QualitySequenceFastaRecordBuilder(id,qualities)
+    	QualityFastaRecord noComment = new QualityFastaRecordBuilder(id,qualities)
     											.comment(null)
     											.build();
         
@@ -112,26 +112,26 @@ public class TestQualitySequenceFastaRecordBuilder {
     }
     @Test
     public void differrentFastaRecordShouldNotBeEqual(){
-    	NucleotideSequenceFastaRecord seq = new NucleotideSequenceFastaRecordBuilder(id, "ACGTACGT").build();
+    	NucleotideFastaRecord seq = new NucleotideSequenceFastaRecordBuilder(id, "ACGTACGT").build();
         assertFalse(sut.equals(seq));
     }
     @Test
     public void equalsDifferentComment(){
-    	QualitySequenceFastaRecord differentComment = new QualitySequenceFastaRecordBuilder(id,qualities)
+    	QualityFastaRecord differentComment = new QualityFastaRecordBuilder(id,qualities)
     													.comment("different"+comment)
     													.build();
         TestUtil.assertEqualAndHashcodeSame(sut, differentComment);
     }
     @Test
     public void equalsNoComment(){
-    	QualitySequenceFastaRecord differentComment = new QualitySequenceFastaRecordBuilder(id,qualities)
+    	QualityFastaRecord differentComment = new QualityFastaRecordBuilder(id,qualities)
     													.build();
         TestUtil.assertEqualAndHashcodeSame(sut, differentComment);
     }
     
     @Test
     public void notEqualsDifferentId(){
-    	QualitySequenceFastaRecord differentId = new QualitySequenceFastaRecordBuilder("different"+id,qualities)
+    	QualityFastaRecord differentId = new QualityFastaRecordBuilder("different"+id,qualities)
 									    			.comment(comment)
 									    			.build();
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentId);
@@ -139,7 +139,7 @@ public class TestQualitySequenceFastaRecordBuilder {
     
     @Test
     public void notEqualsDifferentSequence(){
-    	QualitySequenceFastaRecord differentId = new QualitySequenceFastaRecordBuilder(id,new QualitySequenceBuilder(new byte[]{1,2,3,4,5}).build())
+    	QualityFastaRecord differentId = new QualityFastaRecordBuilder(id,new QualitySequenceBuilder(new byte[]{1,2,3,4,5}).build())
 		    											.comment(comment)
 		    											.build();
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentId);
@@ -148,7 +148,7 @@ public class TestQualitySequenceFastaRecordBuilder {
     @Test
     public void parseEntireQualitySequenceBody(){
     	String formattedString = convertQualitiesToFormattedString().toString();
-    	QualitySequenceFastaRecord sameRecord = new QualitySequenceFastaRecordBuilder(id,formattedString)
+    	QualityFastaRecord sameRecord = new QualityFastaRecordBuilder(id,formattedString)
     												.comment(comment)
     												.build();
     	TestUtil.assertEqualAndHashcodeSame(sut, sameRecord);

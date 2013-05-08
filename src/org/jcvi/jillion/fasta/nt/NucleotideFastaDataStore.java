@@ -18,19 +18,19 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.fasta.qual;
+package org.jcvi.jillion.fasta.nt;
 
-import org.jcvi.jillion.core.qual.PhredQuality;
-import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.fasta.FastaDataStore;
 
 /**
- * {@code QualityFastaDataStore}is a FastaDataStore
- * for storing {@link PhredQuality}s.
+ * {@code NucleotideFastaDataStore} is a FastaDataStore
+ * for storing {@link Nucleotide}s.
  * @author dkatzel
  *
  *
  */
-public interface QualitySequenceFastaDataStore extends FastaDataStore<PhredQuality, QualitySequence, QualitySequenceFastaRecord>{
+public interface NucleotideFastaDataStore extends FastaDataStore<Nucleotide, NucleotideSequence, NucleotideFastaRecord>{
 
 }

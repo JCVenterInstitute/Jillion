@@ -32,7 +32,7 @@ import java.io.IOException;
 public class TestDefaultQualityFastaDataStore extends AbstractTestQualityFastaDataStore{
     
     @Override
-    protected QualitySequenceFastaDataStore createDataStore(File file) throws IOException{
+    protected QualityFastaDataStore createDataStore(File file) throws IOException{
         return DefaultQualityFastaFileDataStore.create(file);
     }
 }

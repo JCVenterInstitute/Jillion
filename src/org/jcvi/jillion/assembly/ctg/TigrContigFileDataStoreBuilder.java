@@ -34,8 +34,8 @@ import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 
 public class TigrContigFileDataStoreBuilder {
 	private final File contigFile;
@@ -61,7 +61,7 @@ public class TigrContigFileDataStoreBuilder {
 	 * @throws IOException if the ace file does not exist, or can not be read.
 	 * @throws NullPointerException if either contigFile or fullLengthSequenceDataStore are null.
 	 */
-	public TigrContigFileDataStoreBuilder(File contigFile, NucleotideSequenceFastaDataStore fullLengthSequenceDataStore) throws IOException{
+	public TigrContigFileDataStoreBuilder(File contigFile, NucleotideFastaDataStore fullLengthSequenceDataStore) throws IOException{
 		if(contigFile ==null){
 			throw new NullPointerException("contig file can not be null");
 		}
@@ -110,12 +110,12 @@ public class TigrContigFileDataStoreBuilder {
 	}
 
     @SuppressWarnings("unchecked")
-	private DataStore<Long> adapt(NucleotideSequenceFastaDataStore fullLengthSequenceDataStore){
+	private DataStore<Long> adapt(NucleotideFastaDataStore fullLengthSequenceDataStore){
     	return (DataStore<Long>)DataStoreUtil.adapt(DataStore.class, fullLengthSequenceDataStore, 
-    			new DataStoreUtil.AdapterCallback<NucleotideSequenceFastaRecord, Long>() {
+    			new DataStoreUtil.AdapterCallback<NucleotideFastaRecord, Long>() {
 
 					@Override
-					public Long get(NucleotideSequenceFastaRecord from) {
+					public Long get(NucleotideFastaRecord from) {
 						return from.getSequence().getUngappedLength();
 					}
     		

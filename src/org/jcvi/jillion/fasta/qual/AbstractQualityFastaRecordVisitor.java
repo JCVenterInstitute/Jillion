@@ -48,7 +48,7 @@ public abstract class AbstractQualityFastaRecordVisitor  extends AbstractFastaRe
 	@Override
 	protected void visitRecord(String id, String comment,
 			String fullBody) {
-		QualitySequenceFastaRecord record = new QualitySequenceFastaRecordBuilder(id, fullBody)
+		QualityFastaRecord record = new QualityFastaRecordBuilder(id, fullBody)
 												.comment(comment)
 												.build();
 		visitRecord(record);
@@ -56,7 +56,7 @@ public abstract class AbstractQualityFastaRecordVisitor  extends AbstractFastaRe
 	}
 
 
-	protected abstract void visitRecord(QualitySequenceFastaRecord fastaRecord);
+	protected abstract void visitRecord(QualityFastaRecord fastaRecord);
 	
 
 }

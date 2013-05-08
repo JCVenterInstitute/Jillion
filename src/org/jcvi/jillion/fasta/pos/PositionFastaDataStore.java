@@ -18,12 +18,10 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.fasta.aa;
+package org.jcvi.jillion.fasta.pos;
 
-import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
-import org.jcvi.jillion.fasta.FastaRecordWriter;
+import org.jcvi.jillion.core.datastore.DataStore;
 
-public interface AminoAcidSequenceFastaRecordWriter extends FastaRecordWriter<AminoAcid, AminoAcidSequence, AminoAcidSequenceFastaRecord>{
+public interface PositionFastaDataStore extends DataStore<PositionFastaRecord>{
 
 }

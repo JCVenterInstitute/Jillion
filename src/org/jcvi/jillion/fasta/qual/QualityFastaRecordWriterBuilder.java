@@ -18,25 +18,21 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.fasta.aa;
+package org.jcvi.jillion.fasta.qual;
+
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
-import org.jcvi.jillion.internal.fasta.AbstractResidueSequenceFastaRecordWriter;
-/**
- * {@code AminoAcidSequenceFastaRecordWriterBuilder} is a Builder
- * class that will create a new instance of 
- * {@link AminoAcidSequenceFastaRecordWriter}.
- * @author dkatzel
- *
- */
-public final class AminoAcidSequenceFastaRecordWriterBuilder extends AbstractResidueSequenceFastaRecordWriter.Builder<AminoAcid, AminoAcidSequence, AminoAcidSequenceFastaRecord,AminoAcidSequenceFastaRecordWriter> {
-	
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.internal.fasta.AbstractFastaRecordWriter;
+import org.jcvi.jillion.internal.fasta.AbstractFastaRecordWriter.AbstractBuilder;
+
+public final class QualityFastaRecordWriterBuilder extends AbstractBuilder<PhredQuality, QualitySequence, QualityFastaRecord,QualityFastaRecordWriter> {
+
 	/**
 	 * Create a new Builder that will use
 	 * the given File to write
@@ -51,7 +47,7 @@ public final class AminoAcidSequenceFastaRecordWriterBuilder extends AbstractRes
 	 * does not exist but cannot be created, 
 	 * or cannot be opened for any other reason.
 	 */
-	public AminoAcidSequenceFastaRecordWriterBuilder(File outputFile) throws FileNotFoundException {
+	public QualityFastaRecordWriterBuilder(File outputFile) throws FileNotFoundException {
 		super(outputFile);
 	}
 	/**
@@ -62,21 +58,45 @@ public final class AminoAcidSequenceFastaRecordWriterBuilder extends AbstractRes
 	 * can not be null.
 	 * @throws NullPointerException if out is null.
 	 */
-	public AminoAcidSequenceFastaRecordWriterBuilder(OutputStream out) {
+	public QualityFastaRecordWriterBuilder(OutputStream out) {
 		super(out);
 	}
 
 	@Override
-	protected AminoAcidSequenceFastaRecordWriter create(
+	protected QualityFastaRecordWriter create(
 			OutputStream out, int numberOfResiduesPerLine, Charset charSet) {
-		return new AminoAcidSequenceFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet);
+		return new QualitySequenceFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet);
+	}
+	@Override
+	protected int getDefaultNumberOfSymbolsPerLine() {
+		return 17;
 	}
 	
-	private static final class AminoAcidSequenceFastaRecordWriterImpl extends AbstractResidueSequenceFastaRecordWriter<AminoAcid, AminoAcidSequence, AminoAcidSequenceFastaRecord> implements AminoAcidSequenceFastaRecordWriter{
+	private static final class QualitySequenceFastaRecordWriterImpl extends AbstractFastaRecordWriter<PhredQuality, QualitySequence, QualityFastaRecord> implements QualityFastaRecordWriter{
 
-		private AminoAcidSequenceFastaRecordWriterImpl(OutputStream out,
+		private QualitySequenceFastaRecordWriterImpl(OutputStream out,
 				int numberOfResiduesPerLine, Charset charSet) {
 			super(out, numberOfResiduesPerLine, charSet);
+		}
+
+		@Override
+		protected String getStringRepresentationFor(PhredQuality symbol) {
+			return String.format("%02d", symbol.getQualityScore());
+		}
+
+		@Override
+		protected boolean hasSymbolSeparator() {
+			return true;
+		}
+
+		@Override
+		protected String getSymbolSeparator() {
+			return " ";
+		}
+
+		@Override
+		protected int numberOfCharsFor(int numberOfSymbols) {
+			return 3*numberOfSymbols;
 		}
 	}
 }

@@ -48,7 +48,7 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
  * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
-final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSequenceFastaDataStore{
+final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFastaDataStore{
 	
 	private volatile boolean closed =false;
 	private final File fastaFile;
@@ -72,7 +72,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 	}
 
 	@Override
-	public NucleotideSequenceFastaRecord get(String id)
+	public NucleotideFastaRecord get(String id)
 			throws DataStoreException {
 		throwExceptionIfClosed();
 		if(!mementos.containsKey(id)){
@@ -88,7 +88,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 	}
 
 	@Override
-	public StreamingIterator<NucleotideSequenceFastaRecord> iterator() throws DataStoreException {
+	public StreamingIterator<NucleotideFastaRecord> iterator() throws DataStoreException {
 		throwExceptionIfClosed();
 		return DataStoreStreamingIterator.create(this,
 				LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile,filter ));
@@ -129,7 +129,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 	 * @throws IOException 
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static NucleotideSequenceFastaDataStore create(File fastaFile) throws IOException{
+	public static NucleotideFastaDataStore create(File fastaFile) throws IOException{
 		BuilderVisitor builder = createBuilder(fastaFile);
 		builder.initialize();
 		return builder.build();
@@ -145,7 +145,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 	 * @throws IOException 
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static NucleotideSequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
+	public static NucleotideFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
 		BuilderVisitor builder = createBuilder(fastaFile, filter);
 		builder.initialize();
 		return builder.build();
@@ -202,7 +202,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 	
 
 	
-	private static final class BuilderVisitor implements FastaVisitor, Builder<NucleotideSequenceFastaDataStore> {
+	private static final class BuilderVisitor implements FastaVisitor, Builder<NucleotideFastaDataStore> {
 		
 		private final DataStoreFilter filter;
 		private final FastaFileParser parser;
@@ -245,13 +245,13 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 		}
 
 		@Override
-		public NucleotideSequenceFastaDataStore build() {
+		public NucleotideFastaDataStore build() {
 			return new IndexedNucleotideSequenceFastaFileDataStore2(fastaFile,parser,filter,mementos);
 		}
 	
 	}
 	
-	public static final class IndexedNucleotideSequenceFastaFileDataStore2 implements NucleotideSequenceFastaDataStore {
+	public static final class IndexedNucleotideSequenceFastaFileDataStore2 implements NucleotideFastaDataStore {
 		private volatile boolean closed =false;
 		private final File fastaFile;
 		private final FastaFileParser parser;
@@ -274,7 +274,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 		}
 
 		@Override
-		public NucleotideSequenceFastaRecord get(String id)
+		public NucleotideFastaRecord get(String id)
 				throws DataStoreException {
 			throwExceptionIfClosed();
 			if(!mementos.containsKey(id)){
@@ -290,7 +290,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 		}
 
 		@Override
-		public StreamingIterator<NucleotideSequenceFastaRecord> iterator() throws DataStoreException {
+		public StreamingIterator<NucleotideFastaRecord> iterator() throws DataStoreException {
 			throwExceptionIfClosed();
 			return DataStoreStreamingIterator.create(this,
 					LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile,filter ));
@@ -325,7 +325,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 	}
 
 	private static class SingleRecordVisitor implements FastaVisitor{
-		private NucleotideSequenceFastaRecord fastaRecord=null;
+		private NucleotideFastaRecord fastaRecord=null;
 		@Override
 		public FastaRecordVisitor visitDefline(final FastaVisitorCallback callback,
 				String id, String optionalComment) {
@@ -336,7 +336,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideSeq
 			return new AbstractNucleotideFastaRecordVisitor(id, optionalComment) {
 				
 				@Override
-				protected void visitRecord(NucleotideSequenceFastaRecord fastaRecord) {
+				protected void visitRecord(NucleotideFastaRecord fastaRecord) {
 					SingleRecordVisitor.this.fastaRecord = fastaRecord;
 					
 				}

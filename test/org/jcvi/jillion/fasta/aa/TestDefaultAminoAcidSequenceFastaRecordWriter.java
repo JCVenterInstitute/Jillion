@@ -29,42 +29,42 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecord;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecordBuilder;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecordWriter;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecordWriterBuilder;
+import org.jcvi.jillion.fasta.aa.AminoAcidFastaRecord;
+import org.jcvi.jillion.fasta.aa.AminoAcidFastaRecordBuilder;
+import org.jcvi.jillion.fasta.aa.AminoAcidFastaRecordWriter;
+import org.jcvi.jillion.fasta.aa.AminoAcidFastaRecordWriterBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultAminoAcidSequenceFastaRecordWriter {
-	private final AminoAcidSequenceFastaRecord record1 = new AminoAcidSequenceFastaRecordBuilder("id_1", "CVGITPSA")
+	private final AminoAcidFastaRecord record1 = new AminoAcidFastaRecordBuilder("id_1", "CVGITPSA")
 																.comment("a comment")
 																.build();
-	private final AminoAcidSequenceFastaRecord record2 = new AminoAcidSequenceFastaRecordBuilder("id_2", "CVGITPSAKASILHEV").build();
+	private final AminoAcidFastaRecord record2 = new AminoAcidFastaRecordBuilder("id_2", "CVGITPSAKASILHEV").build();
 	
 	@Test(expected = NullPointerException.class)
 	public void nullOutputStreamShouldThrowNPE(){
-		new AminoAcidSequenceFastaRecordWriterBuilder((OutputStream)null);
+		new AminoAcidFastaRecordWriterBuilder((OutputStream)null);
 	}
 	@Test(expected = NullPointerException.class)
 	public void nullFileShouldThrowNPE() throws FileNotFoundException{
-		new AminoAcidSequenceFastaRecordWriterBuilder((File)null);
+		new AminoAcidFastaRecordWriterBuilder((File)null);
 	}
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeBasesPerLineShouldthrowIllegalArgumentException(){
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		new AminoAcidSequenceFastaRecordWriterBuilder(out)
+		new AminoAcidFastaRecordWriterBuilder(out)
 			.numberPerLine(-1);
 	}
 	@Test(expected = IllegalArgumentException.class)
 	public void zeroBasesPerLineShouldthrowIllegalArgumentException(){
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		new AminoAcidSequenceFastaRecordWriterBuilder(out)
+		new AminoAcidFastaRecordWriterBuilder(out)
 			.numberPerLine(0);
 	}
 	@Test
 	public void writeFastasWithDefaultOptions() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		AminoAcidSequenceFastaRecordWriter sut = new AminoAcidSequenceFastaRecordWriterBuilder(out)
+		AminoAcidFastaRecordWriter sut = new AminoAcidFastaRecordWriterBuilder(out)
 													.build();
 		sut.write(record1);		
 		sut.write(record2);
@@ -79,7 +79,7 @@ public class TestDefaultAminoAcidSequenceFastaRecordWriter {
 	@Test
 	public void multiLineFastas() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		AminoAcidSequenceFastaRecordWriter sut = new AminoAcidSequenceFastaRecordWriterBuilder(out)
+		AminoAcidFastaRecordWriter sut = new AminoAcidFastaRecordWriterBuilder(out)
 								.numberPerLine(5)											
 								.build();
 		
@@ -98,7 +98,7 @@ public class TestDefaultAminoAcidSequenceFastaRecordWriter {
 	@Test
 	public void sequenceEndsAtEndOfLineExactly() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		AminoAcidSequenceFastaRecordWriter sut = new AminoAcidSequenceFastaRecordWriterBuilder(out)
+		AminoAcidFastaRecordWriter sut = new AminoAcidFastaRecordWriterBuilder(out)
 								.numberPerLine(4)											
 								.build();
 		
@@ -119,7 +119,7 @@ public class TestDefaultAminoAcidSequenceFastaRecordWriter {
 	public void differentCharSet() throws IOException{
 		Charset charSet = Charset.forName("UTF-16");
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		AminoAcidSequenceFastaRecordWriter sut = new AminoAcidSequenceFastaRecordWriterBuilder(out)
+		AminoAcidFastaRecordWriter sut = new AminoAcidFastaRecordWriterBuilder(out)
 								.numberPerLine(5)	
 								.charset(charSet)
 								.build();

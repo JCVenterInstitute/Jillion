@@ -30,10 +30,10 @@ import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.aa.AbstractAminoAcidFastaRecordVisitor;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecord;
+import org.jcvi.jillion.fasta.aa.AminoAcidFastaRecord;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 
-final class LargeAminoAcidSequenceFastaIterator extends AbstractBlockingStreamingIterator<AminoAcidSequenceFastaRecord>{
+final class LargeAminoAcidSequenceFastaIterator extends AbstractBlockingStreamingIterator<AminoAcidFastaRecord>{
 
 	private final File fastaFile;
 	private final DataStoreFilter filter;
@@ -69,7 +69,7 @@ final class LargeAminoAcidSequenceFastaIterator extends AbstractBlockingStreamin
 					return new AbstractAminoAcidFastaRecordVisitor(id, optionalComment) {
 						
 						@Override
-						protected void visitRecord(AminoAcidSequenceFastaRecord fastaRecord) {
+						protected void visitRecord(AminoAcidFastaRecord fastaRecord) {
 							blockingPut(fastaRecord);
 							if(LargeAminoAcidSequenceFastaIterator.this.isClosed()){
 								callback.haltParsing();

@@ -38,8 +38,8 @@ import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento;
 import org.jcvi.jillion.fasta.aa.AbstractAminoAcidFastaRecordVisitor;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaDataStore;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecord;
+import org.jcvi.jillion.fasta.aa.AminoAcidFastaDataStore;
+import org.jcvi.jillion.fasta.aa.AminoAcidFastaRecord;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 
 /**
@@ -64,7 +64,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 	 * @throws FileNotFoundException if the input fasta file does not exist.
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static AminoAcidSequenceFastaDataStore create(File fastaFile) throws IOException{
+	public static AminoAcidFastaDataStore create(File fastaFile) throws IOException{
 		return create(fastaFile, DataStoreFilters.alwaysAccept());
 	}
 	
@@ -80,7 +80,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 	 * @throws FileNotFoundException if the input fasta file does not exist.
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static AminoAcidSequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
+	public static AminoAcidFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
 		IndexedAminoAcidSequenceFastaDataStoreBuilderVisitor2 builder = createBuilder(fastaFile,filter);
 		builder.initialize();
 		return builder.build();
@@ -118,7 +118,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 	
 	
 	
-	private static final class IndexedAminoAcidSequenceFastaDataStoreBuilderVisitor2 implements FastaVisitor, Builder<AminoAcidSequenceFastaDataStore> {
+	private static final class IndexedAminoAcidSequenceFastaDataStoreBuilderVisitor2 implements FastaVisitor, Builder<AminoAcidFastaDataStore> {
 	
 		private final DataStoreFilter filter;
 		private final FastaFileParser parser;
@@ -162,13 +162,13 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 		}
 
 		@Override
-		public AminoAcidSequenceFastaDataStore build() {
+		public AminoAcidFastaDataStore build() {
 			return new IndexedAminoAcidSequenceFastaFileDataStore2(fastaFile,parser, filter,mementos);
 		}
 	
 	}
 	
-	public static final class IndexedAminoAcidSequenceFastaFileDataStore2 implements AminoAcidSequenceFastaDataStore {
+	public static final class IndexedAminoAcidSequenceFastaFileDataStore2 implements AminoAcidFastaDataStore {
 		private volatile boolean closed =false;
 		private final File fastaFile;
 		private final FastaFileParser parser;
@@ -191,7 +191,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 		}
 
 		@Override
-		public AminoAcidSequenceFastaRecord get(String id)
+		public AminoAcidFastaRecord get(String id)
 				throws DataStoreException {
 			throwExceptionIfClosed();
 			if(!mementos.containsKey(id)){
@@ -207,7 +207,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 		}
 
 		@Override
-		public StreamingIterator<AminoAcidSequenceFastaRecord> iterator() throws DataStoreException {
+		public StreamingIterator<AminoAcidFastaRecord> iterator() throws DataStoreException {
 			throwExceptionIfClosed();
 			return DataStoreStreamingIterator.create(this,
 					LargeAminoAcidSequenceFastaIterator.createNewIteratorFor(fastaFile,filter));
@@ -242,7 +242,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 	}
 
 	private static class SingleRecordVisitor implements FastaVisitor{
-		private AminoAcidSequenceFastaRecord fastaRecord=null;
+		private AminoAcidFastaRecord fastaRecord=null;
 		@Override
 		public FastaRecordVisitor visitDefline(final FastaVisitorCallback callback,
 				String id, String optionalComment) {
@@ -253,7 +253,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 			return new AbstractAminoAcidFastaRecordVisitor(id, optionalComment) {
 				
 				@Override
-				protected void visitRecord(AminoAcidSequenceFastaRecord fastaRecord) {
+				protected void visitRecord(AminoAcidFastaRecord fastaRecord) {
 					SingleRecordVisitor.this.fastaRecord = fastaRecord;
 					
 				}

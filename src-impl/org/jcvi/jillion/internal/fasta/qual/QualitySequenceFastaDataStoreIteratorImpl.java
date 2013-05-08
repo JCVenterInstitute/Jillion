@@ -29,14 +29,14 @@ import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
-import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecord;
-import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecordBuilder;
+import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
+import org.jcvi.jillion.fasta.qual.QualityFastaRecordBuilder;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 import org.jcvi.jillion.internal.fasta.AbstractResuseableFastaRecordVisitor;
 
-public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingStreamingIterator<QualitySequenceFastaRecord>{
+public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingStreamingIterator<QualityFastaRecord>{
 	
-	public static StreamingIterator<QualitySequenceFastaRecord> createIteratorFor(File fastaFile, DataStoreFilter filter){
+	public static StreamingIterator<QualityFastaRecord> createIteratorFor(File fastaFile, DataStoreFilter filter){
 		QualitySequenceFastaDataStoreIteratorImpl iter = new QualitySequenceFastaDataStoreIteratorImpl(fastaFile, filter);
 		iter.start();
 		return iter;
@@ -63,7 +63,7 @@ public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingS
 			@Override
 			public void visitRecord(String id, String optionalComment,
 					String fullBody) {
-				QualitySequenceFastaRecord record = new QualitySequenceFastaRecordBuilder(id,fullBody)
+				QualityFastaRecord record = new QualityFastaRecordBuilder(id,fullBody)
 														.comment(optionalComment)
 														.build();
 				blockingPut(record);

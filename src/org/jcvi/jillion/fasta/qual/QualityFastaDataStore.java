@@ -22,8 +22,15 @@ package org.jcvi.jillion.fasta.qual;
 
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
-import org.jcvi.jillion.fasta.FastaRecordWriter;
+import org.jcvi.jillion.fasta.FastaDataStore;
 
-public interface QualitySequenceFastaRecordWriter extends FastaRecordWriter<PhredQuality, QualitySequence, QualitySequenceFastaRecord>{
+/**
+ * {@code QualityFastaDataStore}is a FastaDataStore
+ * for storing {@link PhredQuality}s.
+ * @author dkatzel
+ *
+ *
+ */
+public interface QualityFastaDataStore extends FastaDataStore<PhredQuality, QualitySequence, QualityFastaRecord>{
 
 }

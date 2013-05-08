@@ -26,22 +26,22 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.fasta.FastaRecordWriter;
 /**
- * {@code NucleotideSequenceFastaRecordWriter} is a interface
- * that handles how {@link NucleotideSequenceFastaRecord}s
+ * {@code NucleotideFastaRecordWriter} is a interface
+ * that handles how {@link NucleotideFastaRecord}s
  * are written.
  * @author dkatzel
  *
  */
-public interface NucleotideSequenceFastaRecordWriter extends FastaRecordWriter<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord>{
+public interface NucleotideFastaRecordWriter extends FastaRecordWriter<Nucleotide, NucleotideSequence, NucleotideFastaRecord>{
 	/**
-	 * Write the given {@link NucleotideSequenceFastaRecord}
+	 * Write the given {@link NucleotideFastaRecord}
 	 * (including the optionalComment if there is one).
 	 * @param record the {@link NucleotideSequenceFastaRecord}
 	 * to write, can not be null.
 	 * @throws IOException if there is a problem writing out the record.
 	 * @throws NullPointerException if record is null.
 	 */
-	void write(NucleotideSequenceFastaRecord record) throws IOException;
+	void write(NucleotideFastaRecord record) throws IOException;
 	/**
 	 * Write the given id and {@link NucleotideSequence}
 	 * out as a NucleotideSequenceFastaRecord without a comment.

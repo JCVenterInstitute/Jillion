@@ -27,16 +27,16 @@ import org.jcvi.jillion.core.util.ObjectsUtil;
 import org.jcvi.jillion.fasta.FastaRecord;
 
 
-public final class PositionSequenceFastaRecord implements FastaRecord<Position, PositionSequence>{
+public final class PositionFastaRecord implements FastaRecord<Position, PositionSequence>{
 	
 	private final String identifier;
 	private final String comments;
     private final PositionSequence positions;
     
-    public PositionSequenceFastaRecord(String id, PositionSequence positions){
+    public PositionFastaRecord(String id, PositionSequence positions){
         this(id, null, positions);
     }
-    public PositionSequenceFastaRecord(String id, String comments, PositionSequence positions){
+    public PositionFastaRecord(String id, String comments, PositionSequence positions){
     	if(id ==null){
     		throw new NullPointerException("id can not be null");
     	}
@@ -88,10 +88,10 @@ public final class PositionSequenceFastaRecord implements FastaRecord<Position, 
         if (this == obj){
             return true;
         }
-        if (!(obj instanceof PositionSequenceFastaRecord)){
+        if (!(obj instanceof PositionFastaRecord)){
             return false;
         }
-        PositionSequenceFastaRecord other = (PositionSequenceFastaRecord)obj;
+        PositionFastaRecord other = (PositionFastaRecord)obj;
 		return 
         
         ObjectsUtil.nullSafeEquals(getId(), other.getId())

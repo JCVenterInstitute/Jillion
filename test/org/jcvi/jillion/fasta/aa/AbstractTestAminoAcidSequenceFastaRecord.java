@@ -24,19 +24,19 @@ import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequenceBuilder;
 import org.jcvi.jillion.core.testUtil.TestUtil;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecord;
+import org.jcvi.jillion.fasta.aa.AminoAcidFastaRecord;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public abstract class AbstractTestAminoAcidSequenceFastaRecord {
 
 	private final AminoAcidSequence seq = new AminoAcidSequenceBuilder("ILMFTWVC").build();
 	private final String id = "id";
-	protected final AminoAcidSequenceFastaRecord sut;
+	protected final AminoAcidFastaRecord sut;
 	private final String comments = "a comment";
 	public AbstractTestAminoAcidSequenceFastaRecord(){
 		sut = createRecord(id, seq,comments);
 	}
-	protected abstract AminoAcidSequenceFastaRecord createRecord(String id, AminoAcidSequence seq, String optionalComment);
+	protected abstract AminoAcidFastaRecord createRecord(String id, AminoAcidSequence seq, String optionalComment);
 	
 	@Test
 	public void getters(){
@@ -50,7 +50,7 @@ public abstract class AbstractTestAminoAcidSequenceFastaRecord {
 	}
 	@Test
 	public void sameValuesShouldBeEqual(){
-		AminoAcidSequenceFastaRecord same = createRecord(id, seq,comments);
+		AminoAcidFastaRecord same = createRecord(id, seq,comments);
 		TestUtil.assertEqualAndHashcodeSame(sut, same);
 	}
 	/**
@@ -58,17 +58,17 @@ public abstract class AbstractTestAminoAcidSequenceFastaRecord {
 	 */
 	@Test
 	public void differentCommentsValuesShouldBeEqual(){
-		AminoAcidSequenceFastaRecord same = createRecord(id, seq,"different"+comments);
+		AminoAcidFastaRecord same = createRecord(id, seq,"different"+comments);
 		TestUtil.assertEqualAndHashcodeSame(sut, same);
 	}
 	@Test
 	public void differentIdShouldNotBeEqual(){
-		AminoAcidSequenceFastaRecord different = createRecord("different"+id, seq,comments);
+		AminoAcidFastaRecord different = createRecord("different"+id, seq,comments);
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, different);
 	}
 	@Test
 	public void differentSeqShouldNotBeEqual(){
-		AminoAcidSequenceFastaRecord different = createRecord(id, new AminoAcidSequenceBuilder(seq)
+		AminoAcidFastaRecord different = createRecord(id, new AminoAcidSequenceBuilder(seq)
 																	.append(AminoAcid.Histidine)
 																	.build()
 																	,comments);

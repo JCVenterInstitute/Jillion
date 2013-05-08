@@ -28,14 +28,14 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.internal.fasta.AbstractFastaRecordBuilder;
 /**
- * {@code QualitySequenceFastaRecordBuilder} is a factory class
- * that makes instances of {@link QualitySequenceFastaRecord}s.
+ * {@code QualityFastaRecordBuilder} is a factory class
+ * that makes instances of {@link QualityFastaRecord}s.
  * Depending on the different parameters, the factory might
  * choose to return different implementations.
  * @author dkatzel
  *
  */
-public final class QualitySequenceFastaRecordBuilder extends AbstractFastaRecordBuilder<PhredQuality, QualitySequence,QualitySequenceFastaRecord> {
+public final class QualityFastaRecordBuilder extends AbstractFastaRecordBuilder<PhredQuality, QualitySequence,QualityFastaRecord> {
 	/**
 	 * Pattern used to pull out individual quality
 	 * values from the body of a string (or fasta file).
@@ -51,7 +51,7 @@ public final class QualitySequenceFastaRecordBuilder extends AbstractFastaRecord
      *  zeros but can not be null.
      *  @throws NullPointerException if either parameter is null.
 	 */
-	public QualitySequenceFastaRecordBuilder(String id, String entireRecordBody){
+	public QualityFastaRecordBuilder(String id, String entireRecordBody){
 		this(id,parseQualitySequence(entireRecordBody));
 	}
 	/**
@@ -71,16 +71,16 @@ public final class QualitySequenceFastaRecordBuilder extends AbstractFastaRecord
 		
     	return builder.build();
 	}
-	public QualitySequenceFastaRecordBuilder(String id, QualitySequence sequence) {
+	public QualityFastaRecordBuilder(String id, QualitySequence sequence) {
 		super(id, sequence);
 	}
 	@Override
-	protected QualitySequenceFastaRecord createNewInstance(String id, QualitySequence sequence,
+	protected QualityFastaRecord createNewInstance(String id, QualitySequence sequence,
 			String comment) {
 		if(comment ==null){
-			return new UncommentedQualitySequenceFastaRecord(id, sequence);
+			return new UncommentedQualityFastaRecord(id, sequence);
 		}
-		return new CommentedQualitySequenceFastaRecord(id, sequence, comment);
+		return new CommentedQualityFastaRecord(id, sequence, comment);
 	}
 	
 	

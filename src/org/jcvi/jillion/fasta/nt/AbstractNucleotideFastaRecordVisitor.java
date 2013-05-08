@@ -21,15 +21,14 @@
 package org.jcvi.jillion.fasta.nt;
 
 import org.jcvi.jillion.fasta.AbstractFastaRecordVisitor;
-import org.jcvi.jillion.fasta.FastaRecordVisitor;
 /**
  * {@code AbstractNucleotideFastaRecordVisitor} is an abstract
  * implementation of {@link FastaRecordVisitor} that will collect
  * the visit methods <strong>for a single fasta record</strong>
- * and build an instance of {@link NucleotideSequenceFastaRecord}.
+ * and build an instance of {@link NucleotideFastaRecord}.
  * When {@link FastaRecordVisitor#visitEnd()} is called,
  * the {@link NucleotideSequenceFastaRecord} is built
- * and the abstract method {@link #visitRecord(NucleotideSequenceFastaRecord)}
+ * and the abstract method {@link #visitRecord(NucleotideFastaRecord)}
  * will be called.  
  * 
  * <p/>
@@ -45,12 +44,12 @@ public abstract class AbstractNucleotideFastaRecordVisitor extends  AbstractFast
 	}
 
 	
-	protected abstract void visitRecord(NucleotideSequenceFastaRecord fastaRecord);
+	protected abstract void visitRecord(NucleotideFastaRecord fastaRecord);
 
 	@Override
 	protected final  void visitRecord(String id, String optionalComment,
 			String fullBody) {
-		NucleotideSequenceFastaRecord record = new NucleotideSequenceFastaRecordBuilder(id, fullBody)
+		NucleotideFastaRecord record = new NucleotideSequenceFastaRecordBuilder(id, fullBody)
 													.comment(optionalComment)
 													.build();
 		visitRecord(record);

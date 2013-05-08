@@ -31,13 +31,13 @@ import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.junit.Test;
 
 public abstract class AbstractTestSequenceFastaMapWithNoComment extends AbstractTestSequenceFastaDataStoreWithNoComment{
     @Test
     public void parseStream() throws IOException, DataStoreException{
-        DataStore<NucleotideSequenceFastaRecord> sut = createDataStore(
+        DataStore<NucleotideFastaRecord> sut = createDataStore(
         		RESOURCES.getFile(FASTA_FILE_PATH));
         assertEquals(1, sut.getNumberOfRecords());
         assertEquals(hrv_61, sut.get("hrv-61"));

@@ -27,7 +27,7 @@ import java.io.InputStream;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 
 /**
  * @author dkatzel
@@ -37,7 +37,7 @@ import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
 public class TestStreamingDefaultSequenceDataStore extends TestDefaultSequenceFastaDataStore{
 
     @Override
-    protected NucleotideSequenceFastaDataStore parseFile(File file)
+    protected NucleotideFastaDataStore parseFile(File file)
             throws IOException {
         InputStream in =null;
         try{

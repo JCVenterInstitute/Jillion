@@ -39,9 +39,9 @@ import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.jcvi.jillion.trace.Trace;
 import org.jcvi.jillion.trace.TraceDataStore;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
@@ -126,16 +126,16 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 
     protected StreamingIterator<? extends Trace> createFastaIterator(File fastaFile) throws DataStoreException{        
         try {
-			NucleotideSequenceFastaDataStore datastore = new NucleotideSequenceFastaFileDataStoreBuilder(fastaFile)
+			NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(fastaFile)
 															.hint(DataStoreProviderHint.ITERATION_ONLY)
 															.build();
 			
 			@SuppressWarnings("unchecked")
 			TraceDataStore<Trace> fakeQualities = DataStoreUtil.adapt(TraceDataStore.class, datastore, 
-					new DataStoreUtil.AdapterCallback<NucleotideSequenceFastaRecord, Trace>() {
+					new DataStoreUtil.AdapterCallback<NucleotideFastaRecord, Trace>() {
 
 						@Override
-						public Trace get(final NucleotideSequenceFastaRecord from) {
+						public Trace get(final NucleotideFastaRecord from) {
 						        int numberOfQualities =(int) from.getSequence().getLength();
 								byte[] qualities = new byte[numberOfQualities];
 								Arrays.fill(qualities, PhredQuality.valueOf(30).getQualityScore());

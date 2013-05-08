@@ -29,13 +29,13 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 
 
 public class TestDefaultSequenceFastaDataStoreWithNoComment extends AbstractTestSequenceFastaMapWithNoComment{
 
     @Override
-    protected NucleotideSequenceFastaDataStore createDataStore(
+    protected NucleotideFastaDataStore createDataStore(
             File file) throws IOException {
         return DefaultNucleotideSequenceFastaFileDataStore.create(file);
     }

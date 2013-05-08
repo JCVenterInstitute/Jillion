@@ -29,11 +29,11 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordWriter;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriterBuilder;
 
 public class ReverseComplementFasta {
 
@@ -41,17 +41,17 @@ public class ReverseComplementFasta {
 		File inputFasta = new File("path/to/input/fasta");
 		File reverseComplimentOutputFasta = new File("/path/to/output.sorted.fasta");
 		
-		NucleotideSequenceFastaDataStore dataStore = new NucleotideSequenceFastaFileDataStoreBuilder(inputFasta)
+		NucleotideFastaDataStore dataStore = new NucleotideFastaFileDataStoreBuilder(inputFasta)
 														.hint(DataStoreProviderHint.ITERATION_ONLY)
 														.build();
-		NucleotideSequenceFastaRecordWriter out = new NucleotideSequenceFastaRecordWriterBuilder(reverseComplimentOutputFasta)
+		NucleotideFastaRecordWriter out = new NucleotideFastaRecordWriterBuilder(reverseComplimentOutputFasta)
 															.build();
 
-		StreamingIterator<NucleotideSequenceFastaRecord> iter=null;
+		StreamingIterator<NucleotideFastaRecord> iter=null;
 		try {
 			iter =dataStore.iterator();
 			while(iter.hasNext()){
-				NucleotideSequenceFastaRecord record =iter.next();
+				NucleotideFastaRecord record =iter.next();
 				NucleotideSequence reverseSequence = new NucleotideSequenceBuilder(record.getSequence())
 															.reverseComplement()
 															.build();

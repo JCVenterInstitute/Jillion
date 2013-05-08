@@ -36,7 +36,7 @@ import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterato
  *
  *
  */
-final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreamingIterator<NucleotideSequenceFastaRecord>{
+final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreamingIterator<NucleotideFastaRecord>{
 
 	private final File fastaFile;
 	private final DataStoreFilter filter;
@@ -107,7 +107,7 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 
 			@Override
 			public void visitEnd() {
-				NucleotideSequenceFastaRecord fastaRecord = new NucleotideSequenceFastaRecordBuilder(currentId,builder.build())
+				NucleotideFastaRecord fastaRecord = new NucleotideSequenceFastaRecordBuilder(currentId,builder.build())
 														.comment(currentComment)
 														.build();
 				blockingPut(fastaRecord);

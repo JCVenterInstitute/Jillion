@@ -29,7 +29,7 @@ import org.jcvi.jillion.assembly.consed.phd.Phd;
 import org.jcvi.jillion.assembly.consed.phd.PhdBuilder;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
 
@@ -48,7 +48,7 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends QualFastaConsedPhdA
      * @param defaultQualityValue
      */
     public ChromatDirFastaConsedPhdAdaptedIterator(
-            StreamingIterator<NucleotideSequenceFastaRecord> fastaIterator,
+            StreamingIterator<NucleotideFastaRecord> fastaIterator,
             File fastaFile, Date phdDate, PhredQuality defaultQualityValue,
             File chromatDir) {
         super(fastaIterator, fastaFile, phdDate, defaultQualityValue);
@@ -67,7 +67,7 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends QualFastaConsedPhdA
 
 
     @Override
-    protected Phd createPhdRecordFor(NucleotideSequenceFastaRecord fasta,
+    protected Phd createPhdRecordFor(NucleotideFastaRecord fasta,
     		 Map<String,String> requiredComments) {
     	Chromatogram chromo = tryToParseFromChromatDir(fasta.getId());
         if(chromo !=null){
@@ -103,7 +103,7 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends QualFastaConsedPhdA
 		return null;
 	}
 
-    protected Phd createPhd( Map<String,String> requiredComments, NucleotideSequenceFastaRecord fasta,
+    protected Phd createPhd( Map<String,String> requiredComments, NucleotideFastaRecord fasta,
             Chromatogram chromo) {
         final String id = fasta.getId();
        

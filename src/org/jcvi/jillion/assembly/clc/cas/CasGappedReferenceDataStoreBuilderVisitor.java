@@ -41,9 +41,9 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 
 /**
  * {@code CasGappedReferenceDataStoreBuilderVisitor}
@@ -125,14 +125,14 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 		for(String filePath: referenceFileInfo.getFileNames()){
             try {
             	File refFile = CasUtil.getFileFor(casDir, filePath);
-            	NucleotideSequenceFastaDataStore datastore = new NucleotideSequenceFastaFileDataStoreBuilder(refFile)
+            	NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(refFile)
             												.hint(DataStoreProviderHint.ITERATION_ONLY)
             												.build();
-            	StreamingIterator<NucleotideSequenceFastaRecord> iter=null;
+            	StreamingIterator<NucleotideFastaRecord> iter=null;
             	try{
             		iter = datastore.iterator();
             		while(iter.hasNext()){
-            			NucleotideSequenceFastaRecord next = iter.next();
+            			NucleotideFastaRecord next = iter.next();
             			String id = next.getId();
             			Long index =Long.valueOf(refCounter);
             			

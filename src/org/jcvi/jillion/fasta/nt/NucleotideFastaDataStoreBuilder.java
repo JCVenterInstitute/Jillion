@@ -18,32 +18,23 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.fasta.qual;
+package org.jcvi.jillion.fasta.nt;
 
-import org.jcvi.jillion.core.qual.QualitySequence;
-
-class CommentedQualitySequenceFastaRecord extends UncommentedQualitySequenceFastaRecord{
-	private final String comment;
-	public CommentedQualitySequenceFastaRecord(String id,
-			QualitySequence qualities, String comment) {
-		super(id, qualities);
-		this.comment = comment;
-	}
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.fasta.FastaDataStoreBuilder;
+/**
+ * {@code NucleotideFastaDataStoreBuilder} is a {@link FastaDataStoreBuilder}
+ * that builds a {@link NucleotideFastaDataStore}.
+ * @author dkatzel
+ *
+ */
+interface NucleotideFastaDataStoreBuilder extends FastaDataStoreBuilder<Nucleotide, NucleotideSequence, NucleotideFastaRecord, NucleotideFastaDataStore>{
+	/**
+	 * Adds the given {@link NucleotideSequenceFastaRecord} to this builder.
+	 * <p/>
+	 * {@inheritDoc}
+	 */
 	@Override
-	public String getComment() {
-		return comment;
-	}
-	@Override
-	public int hashCode() {
-		// delegates to uncommented since comments don't count
-		return super.hashCode();
-	}
-	@Override
-	public boolean equals(Object obj) {
-		// delegates to uncommented since comments don't count
-		return super.equals(obj);
-	}
-
-	
-	
+	NucleotideFastaDataStoreBuilder addFastaRecord(NucleotideFastaRecord fastaRecord);
 }

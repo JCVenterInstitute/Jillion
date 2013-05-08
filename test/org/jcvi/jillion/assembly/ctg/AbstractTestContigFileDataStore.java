@@ -36,17 +36,17 @@ import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
 import org.junit.After;
 import org.junit.Test;
 public abstract class AbstractTestContigFileDataStore<R extends AssembledRead, C extends Contig<R>, D extends DataStore<C>> extends TestAbstractContigFileParser{
 
-	protected final NucleotideSequenceFastaDataStore fullLengthSequences;
+	protected final NucleotideFastaDataStore fullLengthSequences;
 	private D dataStore;
 	
 	public AbstractTestContigFileDataStore() throws FileNotFoundException, IOException{
-		fullLengthSequences = new NucleotideSequenceFastaFileDataStoreBuilder(RESOURCES.getFile("files/gcv_23918.raw.seq.fasta.fasta")).build();
+		fullLengthSequences = new NucleotideFastaFileDataStoreBuilder(RESOURCES.getFile("files/gcv_23918.raw.seq.fasta.fasta")).build();
 		dataStore = buildContigFileDataStore(fullLengthSequences, getFile() );
 	}
 	@After
@@ -75,6 +75,6 @@ public abstract class AbstractTestContigFileDataStore<R extends AssembledRead, C
         }
     }
     protected abstract D buildContigFileDataStore(
-    		NucleotideSequenceFastaDataStore fullLengthSequences, File contigFile) throws IOException;
+    		NucleotideFastaDataStore fullLengthSequences, File contigFile) throws IOException;
 
 }

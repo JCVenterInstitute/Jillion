@@ -38,8 +38,8 @@ import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento;
 import org.jcvi.jillion.fasta.qual.AbstractQualityFastaRecordVisitor;
-import org.jcvi.jillion.fasta.qual.QualitySequenceFastaDataStore;
-import org.jcvi.jillion.fasta.qual.QualitySequenceFastaRecord;
+import org.jcvi.jillion.fasta.qual.QualityFastaDataStore;
+import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 
 /**
@@ -64,7 +64,7 @@ public final class IndexedQualityFastaFileDataStore{
 	 * @throws FileNotFoundException if the input fasta file does not exist.
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static QualitySequenceFastaDataStore create(File fastaFile) throws IOException{
+	public static QualityFastaDataStore create(File fastaFile) throws IOException{
 		return create(fastaFile, DataStoreFilters.alwaysAccept());
 	}
 	
@@ -80,7 +80,7 @@ public final class IndexedQualityFastaFileDataStore{
 	 * @throws FileNotFoundException if the input fasta file does not exist.
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static QualitySequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
+	public static QualityFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
 		IndexedQualitySequenceFastaDataStoreBuilderVisitor2 builder = createBuilder(fastaFile,filter);
 		builder.initialize();
 		return builder.build();
@@ -118,7 +118,7 @@ public final class IndexedQualityFastaFileDataStore{
 	
 	
 	
-	private static final class IndexedQualitySequenceFastaDataStoreBuilderVisitor2 implements FastaVisitor, Builder<QualitySequenceFastaDataStore> {
+	private static final class IndexedQualitySequenceFastaDataStoreBuilderVisitor2 implements FastaVisitor, Builder<QualityFastaDataStore> {
 	
 		private final DataStoreFilter filter;
 		private final FastaFileParser parser;
@@ -162,13 +162,13 @@ public final class IndexedQualityFastaFileDataStore{
 		}
 
 		@Override
-		public QualitySequenceFastaDataStore build() {
+		public QualityFastaDataStore build() {
 			return new IndexedQualitySequenceFastaFileDataStore2(fastaFile,parser,filter, mementos);
 		}
 	
 	}
 	
-	public static final class IndexedQualitySequenceFastaFileDataStore2 implements QualitySequenceFastaDataStore {
+	public static final class IndexedQualitySequenceFastaFileDataStore2 implements QualityFastaDataStore {
 		private volatile boolean closed =false;
 		private final File fastaFile;
 		private final FastaFileParser parser;
@@ -191,7 +191,7 @@ public final class IndexedQualityFastaFileDataStore{
 		}
 
 		@Override
-		public QualitySequenceFastaRecord get(String id)
+		public QualityFastaRecord get(String id)
 				throws DataStoreException {
 			throwExceptionIfClosed();
 			if(!mementos.containsKey(id)){
@@ -207,9 +207,9 @@ public final class IndexedQualityFastaFileDataStore{
 		}
 
 		@Override
-		public StreamingIterator<QualitySequenceFastaRecord> iterator() throws DataStoreException {
+		public StreamingIterator<QualityFastaRecord> iterator() throws DataStoreException {
 			throwExceptionIfClosed();
-			StreamingIterator<QualitySequenceFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(fastaFile, filter);
+			StreamingIterator<QualityFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(fastaFile, filter);
 	        
 			return DataStoreStreamingIterator.create(this, iter);
 		}
@@ -243,7 +243,7 @@ public final class IndexedQualityFastaFileDataStore{
 	}
 
 	private static class SingleRecordVisitor implements FastaVisitor{
-		private QualitySequenceFastaRecord fastaRecord=null;
+		private QualityFastaRecord fastaRecord=null;
 		@Override
 		public FastaRecordVisitor visitDefline(final FastaVisitorCallback callback,
 				String id, String optionalComment) {
@@ -254,7 +254,7 @@ public final class IndexedQualityFastaFileDataStore{
 			return new AbstractQualityFastaRecordVisitor(id, optionalComment) {
 				
 				@Override
-				protected void visitRecord(QualitySequenceFastaRecord fastaRecord) {
+				protected void visitRecord(QualityFastaRecord fastaRecord) {
 					SingleRecordVisitor.this.fastaRecord = fastaRecord;
 					
 				}

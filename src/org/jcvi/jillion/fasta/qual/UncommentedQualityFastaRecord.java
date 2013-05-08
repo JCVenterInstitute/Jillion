@@ -22,11 +22,11 @@ package org.jcvi.jillion.fasta.qual;
 
 import org.jcvi.jillion.core.qual.QualitySequence;
 
-class UncommentedQualitySequenceFastaRecord implements QualitySequenceFastaRecord{
+class UncommentedQualityFastaRecord implements QualityFastaRecord{
 	private final String id;
 	private final QualitySequence qualities;
 
-    public UncommentedQualitySequenceFastaRecord(String id, QualitySequence qualities){
+    public UncommentedQualityFastaRecord(String id, QualitySequence qualities){
         if(id==null){
         	throw new NullPointerException("id can not be null");
         }
@@ -88,10 +88,10 @@ class UncommentedQualitySequenceFastaRecord implements QualitySequenceFastaRecor
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof QualitySequenceFastaRecord)) {
+		if (!(obj instanceof QualityFastaRecord)) {
 			return false;
 		}
-		QualitySequenceFastaRecord other = (QualitySequenceFastaRecord) obj;
+		QualityFastaRecord other = (QualityFastaRecord) obj;
 		if (!id.equals(other.getId())) {
 			return false;
 		}

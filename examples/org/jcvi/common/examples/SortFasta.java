@@ -29,10 +29,10 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordWriter;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordWriterBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriterBuilder;
 
 public class SortFasta {
 
@@ -45,7 +45,7 @@ public class SortFasta {
 		File inputFasta = new File("path/to/input.fasta");
 		File sortedOutputFasta = new File("path/to/sorted/output.fasta");
 		
-		NucleotideSequenceFastaDataStore dataStore = new NucleotideSequenceFastaFileDataStoreBuilder(inputFasta)
+		NucleotideFastaDataStore dataStore = new NucleotideFastaFileDataStoreBuilder(inputFasta)
 														.hint(DataStoreProviderHint.OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS)
 														.build();
 		SortedSet<String> sortedIds = new TreeSet<String>();
@@ -58,7 +58,7 @@ public class SortFasta {
 		} finally{
 			IOUtil.closeAndIgnoreErrors(iter);
 		}
-		NucleotideSequenceFastaRecordWriter out = new NucleotideSequenceFastaRecordWriterBuilder(sortedOutputFasta)
+		NucleotideFastaRecordWriter out = new NucleotideFastaRecordWriterBuilder(sortedOutputFasta)
 												.build();
 		try{
 			for(String id : sortedIds){

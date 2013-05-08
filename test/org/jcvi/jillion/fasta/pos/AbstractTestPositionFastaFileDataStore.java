@@ -30,15 +30,15 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 
 import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
-import org.jcvi.jillion.fasta.pos.PositionSequenceFastaDataStore;
-import org.jcvi.jillion.fasta.pos.PositionSequenceFastaRecord;
+import org.jcvi.jillion.fasta.pos.PositionFastaDataStore;
+import org.jcvi.jillion.fasta.pos.PositionFastaRecord;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 
 public abstract class AbstractTestPositionFastaFileDataStore {
 	private static final String QUAL_FILE_PATH = "1119369023656.peak";
 
-	PositionSequenceFastaRecord expected = new PositionSequenceFastaRecord(
+	PositionFastaRecord expected = new PositionFastaRecord(
 			"1119369023656", new PositionSequenceBuilder(
 							new short[] { 2, 9, 29, 42, 55, 71, 92, 102, 125,
 									140, 163, 184, 194, 207, 220, 235, 248,
@@ -158,12 +158,12 @@ public abstract class AbstractTestPositionFastaFileDataStore {
 
 	@Test
 	public void parseFile() throws Exception {
-		PositionSequenceFastaDataStore sut = createPositionFastaMap(RESOURCES
+		PositionFastaDataStore sut = createPositionFastaMap(RESOURCES
 				.getFile(QUAL_FILE_PATH));
 		assertEquals(1, sut.getNumberOfRecords());
 		assertEquals(expected, sut.get("1119369023656"));
 	}
 
-	protected abstract PositionSequenceFastaDataStore createPositionFastaMap(
+	protected abstract PositionFastaDataStore createPositionFastaMap(
 			File fastaFile) throws Exception;
 }

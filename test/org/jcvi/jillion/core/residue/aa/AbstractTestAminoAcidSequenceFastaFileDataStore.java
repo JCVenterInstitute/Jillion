@@ -34,25 +34,25 @@ import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaDataStore;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaFileDataStoreBuilder;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecord;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecordBuilder;
+import org.jcvi.jillion.fasta.aa.AminoAcidFastaDataStore;
+import org.jcvi.jillion.fasta.aa.AminoAcidFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.aa.AminoAcidFastaRecord;
+import org.jcvi.jillion.fasta.aa.AminoAcidFastaRecordBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.AfterClass;
 import org.junit.Test;
 public abstract class AbstractTestAminoAcidSequenceFastaFileDataStore {
 
-	private static AminoAcidSequenceFastaDataStore sut;
+	private static AminoAcidFastaDataStore sut;
 	private static File fastaFile;
 	private static DataStoreProviderHint hint;
 	
-	private final AminoAcidSequenceFastaRecord last = new AminoAcidSequenceFastaRecordBuilder("read4","SEDDEHIKFTW")
+	private final AminoAcidFastaRecord last = new AminoAcidFastaRecordBuilder("read4","SEDDEHIKFTW")
 																.build();
-	private final AminoAcidSequenceFastaRecord second = new AminoAcidSequenceFastaRecordBuilder("read2","IKFTWMKAILSEDDEH")
+	private final AminoAcidFastaRecord second = new AminoAcidFastaRecordBuilder("read2","IKFTWMKAILSEDDEH")
 																.comment("comment")
 																.build();
-	private final AminoAcidSequenceFastaRecord first = new AminoAcidSequenceFastaRecordBuilder("read1","IKFTW")
+	private final AminoAcidFastaRecord first = new AminoAcidFastaRecordBuilder("read1","IKFTW")
 																	.build();
 	public AbstractTestAminoAcidSequenceFastaFileDataStore(DataStoreProviderHint hint) throws IOException{
 		ResourceHelper helper = new ResourceHelper(AbstractTestAminoAcidSequenceFastaFileDataStore.class);
@@ -67,9 +67,9 @@ public abstract class AbstractTestAminoAcidSequenceFastaFileDataStore {
 		sut=null;
 	}
 	
-	private static AminoAcidSequenceFastaDataStore getSut() throws IOException{
+	private static AminoAcidFastaDataStore getSut() throws IOException{
 		if(sut ==null){
-			sut = new AminoAcidSequenceFastaFileDataStoreBuilder(fastaFile)
+			sut = new AminoAcidFastaFileDataStoreBuilder(fastaFile)
 			.hint(hint)
 			.filter(DataStoreFilters.newExcludeFilter(Arrays.asList("read3")))
 			.build();
@@ -101,9 +101,9 @@ public abstract class AbstractTestAminoAcidSequenceFastaFileDataStore {
 	
 	@Test
 	public void iterator() throws DataStoreException, IOException{
-		Iterator<AminoAcidSequenceFastaRecord> expected = Arrays.asList(first,second,last).iterator();
+		Iterator<AminoAcidFastaRecord> expected = Arrays.asList(first,second,last).iterator();
 		
-		StreamingIterator<AminoAcidSequenceFastaRecord> actual = null;
+		StreamingIterator<AminoAcidFastaRecord> actual = null;
 		try{
 			actual = getSut().iterator();
 			while(expected.hasNext()){

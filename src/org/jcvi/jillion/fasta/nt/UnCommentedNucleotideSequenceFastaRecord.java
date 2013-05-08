@@ -31,7 +31,7 @@ import org.jcvi.jillion.core.util.ObjectsUtil;
  * @author dkatzel
  *
  */
-class UnCommentedNucleotideSequenceFastaRecord implements NucleotideSequenceFastaRecord{
+class UnCommentedNucleotideSequenceFastaRecord implements NucleotideFastaRecord{
 
 	private final NucleotideSequence sequence;
 	private final String id;
@@ -97,10 +97,10 @@ class UnCommentedNucleotideSequenceFastaRecord implements NucleotideSequenceFast
         if (this == obj){
             return true;
         }
-        if (!(obj instanceof NucleotideSequenceFastaRecord)){
+        if (!(obj instanceof NucleotideFastaRecord)){
             return false;
         }
-        NucleotideSequenceFastaRecord other = (NucleotideSequenceFastaRecord)obj;
+        NucleotideFastaRecord other = (NucleotideFastaRecord)obj;
 		return 
         ObjectsUtil.nullSafeEquals(getSequence(), other.getSequence()) 
         && ObjectsUtil.nullSafeEquals(getId(), other.getId());

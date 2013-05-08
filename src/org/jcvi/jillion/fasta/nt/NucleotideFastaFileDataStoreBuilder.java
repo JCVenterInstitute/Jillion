@@ -27,17 +27,16 @@ import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.fasta.FastaDataStore;
 import org.jcvi.jillion.internal.fasta.AbstractFastaFileDataStoreBuilder;
 /**
- * {@code NucleotideSequenceFastaFileDataStoreFactory}
+ * {@code NucleotideFastaFileDataStoreBuilder}
  * is a factory class that can create new instances
- * of {@link NucleotideSequenceFastaDataStore}s
+ * of {@link NucleotideFastaDataStore}s
  * using data from a given input fasta file.
  * @author dkatzel
  *
  */
-public final class NucleotideSequenceFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceFastaRecord, NucleotideSequenceFastaDataStore>{
+public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<Nucleotide, NucleotideSequence, NucleotideFastaRecord, NucleotideFastaDataStore>{
 
 	/**
 	 * Create a new Builder instance of 
@@ -47,14 +46,14 @@ public final class NucleotideSequenceFastaFileDataStoreBuilder extends AbstractF
 	 * @throws IOException if the fasta file does not exist, or can not be read.
 	 * @throws NullPointerException if fastaFile is null.
 	 */
-	public NucleotideSequenceFastaFileDataStoreBuilder(File fastaFile)
+	public NucleotideFastaFileDataStoreBuilder(File fastaFile)
 			throws IOException {
 		super(fastaFile);
 	}
 	
 	
 	@Override
-	protected NucleotideSequenceFastaDataStore createNewInstance(
+	protected NucleotideFastaDataStore createNewInstance(
 			File fastaFile, DataStoreProviderHint providerHint, DataStoreFilter filter)
 			throws IOException {
 		switch(providerHint){
@@ -71,7 +70,7 @@ public final class NucleotideSequenceFastaFileDataStoreBuilder extends AbstractF
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NucleotideSequenceFastaFileDataStoreBuilder filter(
+	public NucleotideFastaFileDataStoreBuilder filter(
 			DataStoreFilter filter) {
 		super.filter(filter);
 		return this;
@@ -82,7 +81,7 @@ public final class NucleotideSequenceFastaFileDataStoreBuilder extends AbstractF
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NucleotideSequenceFastaFileDataStoreBuilder hint(
+	public NucleotideFastaFileDataStoreBuilder hint(
 			DataStoreProviderHint hint) {
 		super.hint(hint);
 		return this;
@@ -93,7 +92,7 @@ public final class NucleotideSequenceFastaFileDataStoreBuilder extends AbstractF
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NucleotideSequenceFastaDataStore build() throws IOException {
+	public NucleotideFastaDataStore build() throws IOException {
 		return super.build();
 	}
 	

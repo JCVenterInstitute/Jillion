@@ -32,8 +32,8 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecord;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.jcvi.jillion_experimental.align.pairwise.NucleotidePairwiseSequenceAlignment;
 import org.jcvi.jillion_experimental.align.pairwise.NucleotideScoringMatrix;
 import org.jcvi.jillion_experimental.align.pairwise.NucleotideScoringMatrixBuilder;
@@ -161,13 +161,13 @@ public class PrimerDetector {
     }
     
     public List<PrimerHit> detect(NucleotideSequence sequence,
-            NucleotideSequenceFastaDataStore primersDataStore) {
+            NucleotideFastaDataStore primersDataStore) {
         List<PrimerHit> hits = new ArrayList<PrimerHit>();
-        StreamingIterator<NucleotideSequenceFastaRecord> iter =null; 
+        StreamingIterator<NucleotideFastaRecord> iter =null; 
         try{
         	iter =primersDataStore.iterator();
         while(iter.hasNext()){
-        	NucleotideSequenceFastaRecord fasta = iter.next();
+        	NucleotideFastaRecord fasta = iter.next();
         	NucleotideSequence primer = fasta.getSequence();
             if(primer.getLength()>=minLength){
             	NucleotidePairwiseSequenceAlignment forwardAlignment = NucleotideSmithWatermanAligner.align(primer, sequence, 

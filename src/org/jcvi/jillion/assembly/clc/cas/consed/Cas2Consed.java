@@ -52,8 +52,8 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.DateUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
 import org.jcvi.jillion.trace.Trace;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
@@ -244,7 +244,7 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 			File file) throws DataStoreException {
 		if(chromatDir ==null){
 			try {
-				NucleotideSequenceFastaDataStore datastore = new NucleotideSequenceFastaFileDataStoreBuilder(file)
+				NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(file)
 																.hint(DataStoreProviderHint.ITERATION_ONLY)
 																.build();
 				return new QualFastaConsedPhdAdaptedIterator(
@@ -258,7 +258,7 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 			try {
 	        	//there should only be a few sanger traces so we can take the memory 
 	        	//hit and store it all in memory
-				NucleotideSequenceFastaDataStore datastore = new NucleotideSequenceFastaFileDataStoreBuilder(file)
+				NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(file)
 															.build();
 				return new ChromatDirFastaConsedPhdAdaptedIterator(
 						datastore.iterator(),

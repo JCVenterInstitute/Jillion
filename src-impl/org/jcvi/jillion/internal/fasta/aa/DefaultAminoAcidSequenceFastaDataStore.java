@@ -34,24 +34,24 @@ import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.aa.AbstractAminoAcidFastaRecordVisitor;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaDataStore;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecord;
+import org.jcvi.jillion.fasta.aa.AminoAcidFastaDataStore;
+import org.jcvi.jillion.fasta.aa.AminoAcidFastaRecord;
 
 public final class DefaultAminoAcidSequenceFastaDataStore{
 	
 	private DefaultAminoAcidSequenceFastaDataStore(){		
 		//can not instantiate
 	}
-	public static AminoAcidSequenceFastaDataStore create(File fastaFile) throws IOException{
+	public static AminoAcidFastaDataStore create(File fastaFile) throws IOException{
 		DefaultAminoAcidSequenceFastaDataStoreBuilder2 builder = createBuilder();
 		return parseFile(fastaFile, builder);
 	}
-	public static AminoAcidSequenceFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
+	public static AminoAcidFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
 		DefaultAminoAcidSequenceFastaDataStoreBuilder2 builder = createBuilder(filter);
 		return parseFile(fastaFile, builder);
 	}
 	
-	private static AminoAcidSequenceFastaDataStore parseFile(File fastaFile, DefaultAminoAcidSequenceFastaDataStoreBuilder2 visitor) throws IOException{
+	private static AminoAcidFastaDataStore parseFile(File fastaFile, DefaultAminoAcidSequenceFastaDataStoreBuilder2 visitor) throws IOException{
 		FastaFileParser parser = FastaFileParser.create(fastaFile);
 		parser.accept(visitor);
 		return visitor.build();
@@ -63,9 +63,9 @@ public final class DefaultAminoAcidSequenceFastaDataStore{
 		//return new DefaultAminoAcidSequenceFastaDataStoreBuilder(filter);
 		return new DefaultAminoAcidSequenceFastaDataStoreBuilder2(filter);
 	}
-	private static final class DefaultAminoAcidSequenceFastaDataStoreBuilder2 implements FastaVisitor, Builder<AminoAcidSequenceFastaDataStore>{
+	private static final class DefaultAminoAcidSequenceFastaDataStoreBuilder2 implements FastaVisitor, Builder<AminoAcidFastaDataStore>{
 
-		private final Map<String, AminoAcidSequenceFastaRecord> fastaRecords = new LinkedHashMap<String, AminoAcidSequenceFastaRecord>();
+		private final Map<String, AminoAcidFastaRecord> fastaRecords = new LinkedHashMap<String, AminoAcidFastaRecord>();
 		
 		private final DataStoreFilter filter;
 		
@@ -82,7 +82,7 @@ public final class DefaultAminoAcidSequenceFastaDataStore{
 
 				@Override
 				protected void visitRecord(
-						AminoAcidSequenceFastaRecord fastaRecord) {
+						AminoAcidFastaRecord fastaRecord) {
 					fastaRecords.put(id, fastaRecord);
 					
 				}
@@ -99,8 +99,8 @@ public final class DefaultAminoAcidSequenceFastaDataStore{
 			//no-op			
 		}
 		@Override
-		public AminoAcidSequenceFastaDataStore build() {
-			return DataStoreUtil.adapt(AminoAcidSequenceFastaDataStore.class,fastaRecords);
+		public AminoAcidFastaDataStore build() {
+			return DataStoreUtil.adapt(AminoAcidFastaDataStore.class,fastaRecords);
 		}
 		
 	}

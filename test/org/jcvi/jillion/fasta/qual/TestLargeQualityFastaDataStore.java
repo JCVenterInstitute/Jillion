@@ -35,7 +35,7 @@ import org.jcvi.jillion.internal.fasta.qual.LargeQualityFastaFileDataStore;
 public class TestLargeQualityFastaDataStore extends AbstractTestQualityFastaDataStore{
 
     @Override
-    protected  QualitySequenceFastaDataStore createDataStore(File file)
+    protected  QualityFastaDataStore createDataStore(File file)
             throws IOException {
         return LargeQualityFastaFileDataStore.create(file);
     }

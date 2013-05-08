@@ -29,8 +29,8 @@ import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaDataStore;
-import org.jcvi.jillion.fasta.aa.AminoAcidSequenceFastaRecord;
+import org.jcvi.jillion.fasta.aa.AminoAcidFastaDataStore;
+import org.jcvi.jillion.fasta.aa.AminoAcidFastaRecord;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.fasta.AbstractLargeFastaFileDataStore;
 
@@ -45,7 +45,7 @@ import org.jcvi.jillion.internal.fasta.AbstractLargeFastaFileDataStore;
  * {@link DataStoreUtil#createNewCachedDataStore(Class, org.jcvi.jillion.core.datastore.DataStore, int)}.
  * @author dkatzel
  */
-public final class LargeAminoAcidSequenceFastaFileDataStore extends AbstractLargeFastaFileDataStore<AminoAcid, AminoAcidSequence, AminoAcidSequenceFastaRecord> implements AminoAcidSequenceFastaDataStore{
+public final class LargeAminoAcidSequenceFastaFileDataStore extends AbstractLargeFastaFileDataStore<AminoAcid, AminoAcidSequence, AminoAcidFastaRecord> implements AminoAcidFastaDataStore{
 	
 	
 	
@@ -55,7 +55,7 @@ public final class LargeAminoAcidSequenceFastaFileDataStore extends AbstractLarg
      * @param fastaFile the Fasta File to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-	public static AminoAcidSequenceFastaDataStore create(File fastaFile){
+	public static AminoAcidFastaDataStore create(File fastaFile){
 		return create(fastaFile, DataStoreFilters.alwaysAccept());
 	}
 	/**
@@ -64,7 +64,7 @@ public final class LargeAminoAcidSequenceFastaFileDataStore extends AbstractLarg
      * @param fastaFile the Fasta File to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-	public static AminoAcidSequenceFastaDataStore create(File fastaFile, DataStoreFilter filter){
+	public static AminoAcidFastaDataStore create(File fastaFile, DataStoreFilter filter){
 		return new LargeAminoAcidSequenceFastaFileDataStore(fastaFile,filter);
 	}
    
@@ -75,7 +75,7 @@ public final class LargeAminoAcidSequenceFastaFileDataStore extends AbstractLarg
 
 
 	@Override
-	protected StreamingIterator<AminoAcidSequenceFastaRecord> createNewIterator(
+	protected StreamingIterator<AminoAcidFastaRecord> createNewIterator(
 			File fastaFile, DataStoreFilter filter) {
 		return DataStoreStreamingIterator.create(this,LargeAminoAcidSequenceFastaIterator.createNewIteratorFor(fastaFile, filter));
 	       
