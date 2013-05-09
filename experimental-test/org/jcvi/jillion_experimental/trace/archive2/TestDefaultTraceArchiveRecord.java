@@ -25,6 +25,11 @@
  */
 package org.jcvi.jillion_experimental.trace.archive2;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +37,6 @@ import java.util.Map.Entry;
 
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestDefaultTraceArchiveRecord {
 
     private static final Map<String, String> EMPTY_EXTENDED_DATA = Collections.<String,String>emptyMap();
@@ -95,7 +99,11 @@ public class TestDefaultTraceArchiveRecord {
     }
     @Test
     public void testToString(){
-        assertEquals(MAP_TWO_ENTRIES.toString(), new DefaultTraceArchiveRecord(MAP_TWO_ENTRIES,EMPTY_EXTENDED_DATA).toString());
+    	StringBuilder builder = new StringBuilder();
+    	for(Entry<TraceInfoField, String> entry : MAP_TWO_ENTRIES.entrySet()){
+    		builder.append(String.format("%s = %s%n", entry.getKey(), entry.getValue()));
+    	}
+        assertEquals(builder.toString(), new DefaultTraceArchiveRecord(MAP_TWO_ENTRIES,EMPTY_EXTENDED_DATA).toString());
     }
 
     private void assertEntriesMatch(TraceArchiveRecord record, Map<TraceInfoField,String> map){

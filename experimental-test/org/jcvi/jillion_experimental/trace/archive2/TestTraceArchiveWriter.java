@@ -40,7 +40,6 @@ import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogram;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramBuilder;
-import org.jcvi.jillion_experimental.trace.archive2.TraceArchiveWriter.TraceArchiveRecordCallback;
 import org.jcvi.jillion_experimental.trace.archive2.TraceArchiveWriter.TraceArchiveRecordDataException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -122,14 +121,14 @@ public class TestTraceArchiveWriter {
 		assertEquals("I11", i11.getAttribute(TraceInfoField.TRACE_NAME));
 		
 		File i11TraceFile = new File(rootInputDir, "trace/P030548_I11_JTC_swineorigininfluenza_1064144673279_1064144673333_040_1119369014702.ztr");
-		assertEquals("traces/I11.ztr", i11.getAttribute(TraceInfoField.TRACE_FILE));
+		assertEquals("./traces/I11.ztr", i11.getAttribute(TraceInfoField.TRACE_FILE));
 		TestUtil.contentsAreEqual(i11TraceFile, new File(outputDir, "trace/I11.ztr"));
 		
 		ZtrChromatogram i11Chromo = new ZtrChromatogramBuilder(i11TraceFile.getName(), i11TraceFile)
 									.build();
 		
 		File k18FastaFile = new File(rootInputDir, "base/1119369014798.base");
-		assertEquals("fasta/I11.fasta", i11.getAttribute(TraceInfoField.BASE_FILE));
+		assertEquals("./fasta/I11.fasta", i11.getAttribute(TraceInfoField.BASE_FILE));
 		NucleotideFastaDataStore expectedFastaDataStore = new NucleotideFastaFileDataStoreBuilder(k18FastaFile).build();
 		NucleotideFastaDataStore actualFastaDataStore = new NucleotideFastaFileDataStoreBuilder(new File(outputDir, "fasta/I11.fasta")).build();
 		assertEquals(expectedFastaDataStore.get("1119369014798").getSequence(), actualFastaDataStore.get("I11").getSequence());
