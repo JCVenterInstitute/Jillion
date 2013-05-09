@@ -18,31 +18,10 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.assembly;
-
-import org.jcvi.jillion.assembly.ca.AllCeleraAssemblerTests;
-import org.jcvi.jillion.assembly.clc.cas.AllCasUnitTests;
-import org.jcvi.jillion.assembly.consed.AllConsedUnitTests;
-import org.jcvi.jillion.assembly.tigr.ctg.AllCtgUnitTests;
-import org.jcvi.jillion.assembly.tigr.tasm.AllTasmUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    { 
-    TestDefaultPlacedRead.class,
-   
-    AllCtgUnitTests.class,
-    AllConsedUnitTests.class,
-    
-    AllCasUnitTests.class,
-   
-    AllCeleraAssemblerTests.class,
-    AllTasmUnitTests.class
-    }
-    )
-public class AllContigUnitTests {
-
-}
+/**
+ * This package contains classes that can read and write
+ * TIGR .contig formatted contig data (also known as .ctg format).
+ * 
+ * @see <a href="http://www.cbcb.umd.edu/research/contig_representation.shtml#contig">.contig format</a>
+ */
+package org.jcvi.jillion.assembly.tigr.contig;

@@ -18,31 +18,27 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.assembly;
+package org.jcvi.jillion.assembly.tigr.ctg;
 
-import org.jcvi.jillion.assembly.ca.AllCeleraAssemblerTests;
-import org.jcvi.jillion.assembly.clc.cas.AllCasUnitTests;
-import org.jcvi.jillion.assembly.consed.AllConsedUnitTests;
-import org.jcvi.jillion.assembly.tigr.ctg.AllCtgUnitTests;
-import org.jcvi.jillion.assembly.tigr.tasm.AllTasmUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.jillion.assembly.AbstractTestAssembledReadBuilder;
+import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.AssembledReadBuilder;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.internal.assembly.DefaultAssembledRead;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    { 
-    TestDefaultPlacedRead.class,
-   
-    AllCtgUnitTests.class,
-    AllConsedUnitTests.class,
-    
-    AllCasUnitTests.class,
-   
-    AllCeleraAssemblerTests.class,
-    AllTasmUnitTests.class
-    }
-    )
-public class AllContigUnitTests {
+public class TestDefaultAssembledReadBuilder extends AbstractTestAssembledReadBuilder<AssembledRead>{
+
+	@Override
+	protected AssembledReadBuilder<AssembledRead> createReadBuilder(
+			NucleotideSequence reference, String readId,
+			NucleotideSequence validBases, int offset, Direction dir,
+			Range clearRange, int ungappedFullLength) {
+		return DefaultAssembledRead.createBuilder(
+				reference, readId, validBases, 
+				offset, dir, clearRange, 
+				ungappedFullLength);
+	}
 
 }

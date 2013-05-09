@@ -18,31 +18,10 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.assembly;
-
-import org.jcvi.jillion.assembly.ca.AllCeleraAssemblerTests;
-import org.jcvi.jillion.assembly.clc.cas.AllCasUnitTests;
-import org.jcvi.jillion.assembly.consed.AllConsedUnitTests;
-import org.jcvi.jillion.assembly.tigr.ctg.AllCtgUnitTests;
-import org.jcvi.jillion.assembly.tigr.tasm.AllTasmUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses(
-    { 
-    TestDefaultPlacedRead.class,
-   
-    AllCtgUnitTests.class,
-    AllConsedUnitTests.class,
-    
-    AllCasUnitTests.class,
-   
-    AllCeleraAssemblerTests.class,
-    AllTasmUnitTests.class
-    }
-    )
-public class AllContigUnitTests {
-
-}
+/**
+ * This package contains objects 
+ * for working with genomic assembly data using
+ * software written at The Institute for Genomic Research
+ * (TIGR).
+ */
+package org.jcvi.jillion.assembly.tigr;
