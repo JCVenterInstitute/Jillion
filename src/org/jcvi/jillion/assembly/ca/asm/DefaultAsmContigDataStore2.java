@@ -36,7 +36,7 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 
-public class DefaultAsmContigDataStore2 {
+final class DefaultAsmContigDataStore2 {
 
 	public static AsmContigDataStore create(File asmFile, DataStore<NucleotideSequence> fullLengthSequences, DataStoreFilter filter) throws IOException{
 		VisitorBuilder visitorBuilder = new VisitorBuilder(filter, fullLengthSequences);

@@ -52,7 +52,7 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
  * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
-public class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
+final class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 
 	
 

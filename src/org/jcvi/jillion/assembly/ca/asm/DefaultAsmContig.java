@@ -52,7 +52,7 @@ import org.jcvi.jillion.internal.assembly.util.CompactedSliceMap;
  *
  *
  */
-public final class DefaultAsmContig implements AsmContig{
+final class DefaultAsmContig implements AsmContig{
 
     private final boolean isDegenerate;
     private final Contig<AsmAssembledRead> contig;
