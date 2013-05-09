@@ -25,8 +25,14 @@
  */
 package org.jcvi.jillion.assembly.ca.frg;
 
-import org.jcvi.jillion.assembly.ca.frg.DefaultFragment;
-import org.jcvi.jillion.assembly.ca.frg.Library;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
+
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -34,9 +40,6 @@ import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.trace.Trace;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 public class TestDefaultFragment {
 
     String id = "fragId";
@@ -84,7 +87,6 @@ public class TestDefaultFragment {
         assertEquals(clearRange, fragment.getVectorClearRange());
         assertEquals(library, fragment.getLibrary());
         assertEquals(comment, fragment.getComment());
-        assertEquals(libraryId, fragment.getLibraryId());
     }
     @Test
     public void constructor(){

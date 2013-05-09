@@ -30,10 +30,8 @@ import org.jcvi.jillion.trace.Trace;
 
 public interface Fragment extends Trace{
 
-    String getId();
     Range getValidRange();
     Range getVectorClearRange();
     String getComment();
     Library getLibrary();
-    String getLibraryId();
 }
