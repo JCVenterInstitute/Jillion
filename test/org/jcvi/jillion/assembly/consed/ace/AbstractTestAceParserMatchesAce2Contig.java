@@ -37,9 +37,9 @@ import java.util.List;
 
 import org.jcvi.jillion.assembly.consed.ace.AceContig;
 import org.jcvi.jillion.assembly.consed.ace.AceFileContigDataStore;
-import org.jcvi.jillion.assembly.ctg.TigrContig;
-import org.jcvi.jillion.assembly.ctg.TigrContigDataStore;
-import org.jcvi.jillion.assembly.ctg.TigrContigFileDataStoreBuilder;
+import org.jcvi.jillion.assembly.tigr.contig.TigrContig;
+import org.jcvi.jillion.assembly.tigr.contig.TigrContigDataStore;
+import org.jcvi.jillion.assembly.tigr.contig.TigrContigFileDataStoreBuilder;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;

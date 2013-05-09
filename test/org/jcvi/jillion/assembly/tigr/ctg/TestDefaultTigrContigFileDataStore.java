@@ -18,31 +18,28 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.assembly;
+package org.jcvi.jillion.assembly.tigr.ctg;
 
-import org.jcvi.jillion.assembly.ca.AllCeleraAssemblerTests;
-import org.jcvi.jillion.assembly.clc.cas.AllCasUnitTests;
-import org.jcvi.jillion.assembly.consed.AllConsedUnitTests;
-import org.jcvi.jillion.assembly.tigr.ctg.AllCtgUnitTests;
-import org.jcvi.jillion.assembly.tigr.tasm.AllTasmUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.io.File;
+import java.io.IOException;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    { 
-    TestDefaultPlacedRead.class,
+import org.jcvi.jillion.assembly.tigr.contig.TigrContig;
+import org.jcvi.jillion.assembly.tigr.contig.TigrContigDataStore;
+import org.jcvi.jillion.assembly.tigr.contig.TigrContigFileDataStoreBuilder;
+import org.jcvi.jillion.assembly.tigr.contig.TigrContigRead;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
+
+public class TestDefaultTigrContigFileDataStore extends AbstractTestContigFileDataStore<TigrContigRead, TigrContig, TigrContigDataStore>{
    
-    AllCtgUnitTests.class,
-    AllConsedUnitTests.class,
-    
-    AllCasUnitTests.class,
-   
-    AllCeleraAssemblerTests.class,
-    AllTasmUnitTests.class
+    public TestDefaultTigrContigFileDataStore() throws IOException {
+		super();
+	}
+
+	@Override
+    protected TigrContigDataStore buildContigFileDataStore(
+    		NucleotideFastaDataStore fullLengthSequences, File file) throws IOException {
+        return new TigrContigFileDataStoreBuilder(file, fullLengthSequences)
+        		.build();
     }
-    )
-public class AllContigUnitTests {
 
 }

@@ -24,8 +24,8 @@ import java.util.Date;
 
 import org.jcvi.jillion.assembly.consed.ace.AceContigBuilder;
 import org.jcvi.jillion.assembly.consed.ace.PhdInfo;
-import org.jcvi.jillion.assembly.ctg.TigrContigReadVisitor;
-import org.jcvi.jillion.assembly.ctg.TigrContigVisitor;
+import org.jcvi.jillion.assembly.tigr.contig.TigrContigReadVisitor;
+import org.jcvi.jillion.assembly.tigr.contig.TigrContigVisitor;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;

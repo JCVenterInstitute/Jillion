@@ -18,31 +18,15 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.assembly;
+package org.jcvi.jillion.assembly.tigr.tasm;
 
-import org.jcvi.jillion.assembly.ca.AllCeleraAssemblerTests;
-import org.jcvi.jillion.assembly.clc.cas.AllCasUnitTests;
-import org.jcvi.jillion.assembly.consed.AllConsedUnitTests;
-import org.jcvi.jillion.assembly.tigr.ctg.AllCtgUnitTests;
-import org.jcvi.jillion.assembly.tigr.tasm.AllTasmUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.jillion.assembly.AssembledReadBuilder;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    { 
-    TestDefaultPlacedRead.class,
-   
-    AllCtgUnitTests.class,
-    AllConsedUnitTests.class,
-    
-    AllCasUnitTests.class,
-   
-    AllCeleraAssemblerTests.class,
-    AllTasmUnitTests.class
-    }
-    )
-public class AllContigUnitTests {
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public interface TasmAssembledReadBuilder extends AssembledReadBuilder<TasmAssembledRead>{
 
 }
