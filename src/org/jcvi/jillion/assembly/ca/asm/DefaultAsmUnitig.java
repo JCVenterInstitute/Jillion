@@ -20,8 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.ca.asm;
 
-import java.util.Set;
-
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -31,7 +29,7 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
  *
  *
  */
-public class DefaultAsmUnitig implements AsmUnitig{
+final class DefaultAsmUnitig implements AsmUnitig{
 
     private final Contig<AsmAssembledRead> delegate;
 
