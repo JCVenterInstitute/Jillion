@@ -96,10 +96,6 @@ public class DefaultFragment implements Fragment{
         return vectorClearRange;
     }
     @Override
-    public String getLibraryId() {
-        return library.getId();
-    }
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

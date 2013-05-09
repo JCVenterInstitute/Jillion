@@ -25,24 +25,20 @@
  */
 package org.jcvi.jillion.assembly.ca.frg;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.jcvi.jillion.assembly.ca.frg.DefaultFragment;
-import org.jcvi.jillion.assembly.ca.frg.DefaultLibrary;
-import org.jcvi.jillion.assembly.ca.frg.Distance;
-import org.jcvi.jillion.assembly.ca.frg.Fragment;
-import org.jcvi.jillion.assembly.ca.frg.FragmentDataStore;
-import org.jcvi.jillion.assembly.ca.frg.Library;
-import org.jcvi.jillion.assembly.ca.frg.MateOrientation;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public abstract class  AbstractTestFragmentDataStore {
     private static final String FILE = "files/example.frg2";
     
@@ -150,7 +146,6 @@ public abstract class  AbstractTestFragmentDataStore {
         assertEquals(expectedFragment.getVectorClearRange(), actualFragment.getVectorClearRange());
         assertEquals(library, actualFragment.getLibrary());
         assertEquals(expectedFragment.getComment(), actualFragment.getComment());
-        assertEquals(expectedFragment.getLibraryId(), actualFragment.getLibraryId());
         
     }
     
