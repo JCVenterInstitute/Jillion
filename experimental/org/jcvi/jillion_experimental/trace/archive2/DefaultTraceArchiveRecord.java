@@ -29,8 +29,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public class DefaultTraceArchiveRecord implements TraceArchiveRecord {
    private final Map<TraceInfoField,String> map;
@@ -81,15 +81,22 @@ public class DefaultTraceArchiveRecord implements TraceArchiveRecord {
             return false;
         }           
         DefaultTraceArchiveRecord other = (DefaultTraceArchiveRecord) obj;
-        return entrySet().equals(other.entrySet());
+        Map<TraceInfoField, String> otherMap = new HashMap<TraceInfoField, String>();
+        for(Entry<TraceInfoField, String> entry : other.entrySet()){
+        	otherMap.put(entry.getKey(), entry.getValue());
+        }
+        return map.equals(otherMap);
     }
 
 
 
     @Override
     public String toString() {
-        
-        return map.toString();
+    	StringBuilder builder = new StringBuilder();
+    	for(Entry<TraceInfoField, String> entry : map.entrySet()){
+    		builder.append(String.format("%s = %s%n", entry.getKey(), entry.getValue()));
+    	}
+        return builder.toString();
     }
 
 
