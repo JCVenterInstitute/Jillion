@@ -49,7 +49,7 @@ public final class AceFileDataStoreBuilder {
 	
 	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
 	//by default store everything in memory
-	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_FAST_RANDOM_ACCESS;
+	private DataStoreProviderHint hint = DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_SPEED;
 	/**
 	 * Reference to the {@link InputStream} of ace data to be visited,
 	 * will be null if we use an file instead. 
@@ -176,8 +176,8 @@ public final class AceFileDataStoreBuilder {
 	private AceFileContigDataStore buildFromFile() throws IOException,
 			FileNotFoundException {
 		switch(hint){
-			case OPTIMIZE_FAST_RANDOM_ACCESS: return DefaultAceFileDataStore.create(aceFile,filter);
-			case OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS: return IndexedAceFileDataStore.create(aceFile,filter);
+			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultAceFileDataStore.create(aceFile,filter);
+			case RANDOM_ACCESS_OPTIMIZE_MEMORY: return IndexedAceFileDataStore.create(aceFile,filter);
 			case ITERATION_ONLY: return LargeAceFileDataStore.create(aceFile,filter);
 			default:
 				//can not happen

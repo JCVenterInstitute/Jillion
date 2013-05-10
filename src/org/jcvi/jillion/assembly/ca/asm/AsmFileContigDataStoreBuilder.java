@@ -18,7 +18,7 @@ public class AsmFileContigDataStoreBuilder implements Builder<AsmContigDataStore
 
 	private final File asmFile;
 	
-	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_FAST_RANDOM_ACCESS;
+	private DataStoreProviderHint hint = DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_SPEED;
 	
 	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
 	
@@ -85,9 +85,9 @@ public class AsmFileContigDataStoreBuilder implements Builder<AsmContigDataStore
 	public AsmContigDataStore build() {
 		try {
 		switch(hint){
-			case OPTIMIZE_FAST_RANDOM_ACCESS:				
+			case RANDOM_ACCESS_OPTIMIZE_SPEED:				
 					return DefaultAsmContigDataStore2.create(asmFile, fullLengthSequences, filter);
-			case OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS:
+			case RANDOM_ACCESS_OPTIMIZE_MEMORY:
 					return IndexedAsmFileContigDataStore.create(asmFile, fullLengthSequences, filter);
 			case ITERATION_ONLY:
 				//no large implementation so return indexed?

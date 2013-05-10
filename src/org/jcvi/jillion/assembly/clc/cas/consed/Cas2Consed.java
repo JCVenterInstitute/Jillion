@@ -167,7 +167,7 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 		try {
 			phdOut.close();
 			PhdDataStore phdDataStore = new PhdFileDataStoreBuilder(phdFile)
-										.hint(DataStoreProviderHint.OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS)
+										.hint(DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_MEMORY)
 										.build();
 			File editDir = new File(consedOutputDir, "edit_dir");
 			File aceFile = new File(editDir, prefix + ".ace.1");

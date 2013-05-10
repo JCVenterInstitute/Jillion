@@ -37,7 +37,7 @@ public class TestSffWriterWithIndex extends AbstractTestSffWriter{
 	protected SffFileDataStore createDataStore(File inputSff)
 			throws IOException {
 		return new SffFileDataStoreBuilder(inputSff)
-						.hint(DataStoreProviderHint.OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS)
+						.hint(DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_MEMORY)
 						.build();
 		
 	}

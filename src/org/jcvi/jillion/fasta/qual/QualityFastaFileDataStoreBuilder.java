@@ -60,8 +60,8 @@ public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDat
 			DataStoreProviderHint hint, DataStoreFilter filter)
 			throws IOException {
 		switch(hint){
-			case OPTIMIZE_FAST_RANDOM_ACCESS: return DefaultQualityFastaFileDataStore.create(fastaFile,filter);
-			case OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS: return IndexedQualityFastaFileDataStore.create(fastaFile,filter);
+			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultQualityFastaFileDataStore.create(fastaFile,filter);
+			case RANDOM_ACCESS_OPTIMIZE_MEMORY: return IndexedQualityFastaFileDataStore.create(fastaFile,filter);
 			case ITERATION_ONLY: return LargeQualityFastaFileDataStore.create(fastaFile,filter);
 			default:
 				throw new IllegalArgumentException("unknown hint : "+ hint);
