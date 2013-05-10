@@ -42,7 +42,7 @@ public class TigrContigFileDataStoreBuilder {
 	
 	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
 	//by default store everything in memory
-	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_FAST_RANDOM_ACCESS;
+	private DataStoreProviderHint hint = DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_SPEED;
 	
 	private final DataStore<Long> fullSeqLengthDataStore;
 	
@@ -207,9 +207,9 @@ public class TigrContigFileDataStoreBuilder {
 	 */
 	public TigrContigDataStore build() throws IOException {
 		switch(hint){
-		case OPTIMIZE_FAST_RANDOM_ACCESS:
+		case RANDOM_ACCESS_OPTIMIZE_SPEED:
 				return DefaultTigrContigFileDataStore.create(contigFile, fullSeqLengthDataStore, filter);
-		case OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS: return IndexedTigrContigFileDataStore.create(contigFile,fullSeqLengthDataStore, filter);
+		case RANDOM_ACCESS_OPTIMIZE_MEMORY: return IndexedTigrContigFileDataStore.create(contigFile,fullSeqLengthDataStore, filter);
 		case ITERATION_ONLY: return new LargeTigrContigFileDataStore(contigFile, fullSeqLengthDataStore, filter);
 			default:
 				//can not happen

@@ -40,7 +40,7 @@ public class TestIndexedTigrContigFileDataStore extends AbstractTestContigFileDa
     protected TigrContigDataStore buildContigFileDataStore(
     		NucleotideFastaDataStore fullLengthSequences, File file) throws IOException {
         return new TigrContigFileDataStoreBuilder(file, fullLengthSequences)
-        		.hint(DataStoreProviderHint.OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS)
+        		.hint(DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_MEMORY)
         		.build();
     }
 

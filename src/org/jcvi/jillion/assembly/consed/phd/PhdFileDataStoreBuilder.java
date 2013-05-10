@@ -16,7 +16,7 @@ public final class PhdFileDataStoreBuilder implements Builder<PhdDataStore>{
 	
 	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
 	
-	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_FAST_RANDOM_ACCESS;
+	private DataStoreProviderHint hint = DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_SPEED;
 	
 	
 	public PhdFileDataStoreBuilder(File phdFile) {
@@ -64,9 +64,9 @@ public final class PhdFileDataStoreBuilder implements Builder<PhdDataStore>{
 			}
 			
 			switch(hint){
-				case OPTIMIZE_FAST_RANDOM_ACCESS : 
+				case RANDOM_ACCESS_OPTIMIZE_SPEED : 
 					return DefaultPhdDataStore.create(phdFile, filter);
-				case OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS:
+				case RANDOM_ACCESS_OPTIMIZE_MEMORY:
 					return IndexedPhdDataStore.create(phdFile, filter);
 				case ITERATION_ONLY:
 					return new LargePhdballDataStore(phdFile, filter);

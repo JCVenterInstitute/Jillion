@@ -82,7 +82,7 @@ public class TestCas2Consed {
 	      File editDir = new File(consedDir, "edit_dir");
 	      File aceFile = new File(editDir, prefix+".ace.1");
 	      AceFileContigDataStore dataStore =new AceFileDataStoreBuilder(aceFile)
-												.hint(DataStoreProviderHint.OPTIMIZE_FAST_RANDOM_ACCESS)
+												.hint(DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_SPEED)
 												.build();
 	        assertEquals("# contigs", expectedDataStore.getNumberOfRecords(), dataStore.getNumberOfRecords());
 	        StreamingIterator<AceContig> iter = dataStore.iterator();

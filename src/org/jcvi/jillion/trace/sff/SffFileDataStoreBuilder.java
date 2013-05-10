@@ -42,7 +42,7 @@ public class SffFileDataStoreBuilder {
 	
 	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
 	//by default store everything in memory
-	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_FAST_RANDOM_ACCESS;
+	private DataStoreProviderHint hint = DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_SPEED;
 	
 	/**
 	 * Create a new instance of {@code SffFileDataStoreBuilder}
@@ -136,9 +136,9 @@ public class SffFileDataStoreBuilder {
 	 */
 	public SffFileDataStore build() throws IOException {
 		switch(hint){
-			case OPTIMIZE_FAST_RANDOM_ACCESS:
+			case RANDOM_ACCESS_OPTIMIZE_SPEED:
 				return DefaultSffFileDataStore.create(sffFile,filter);
-			case OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS:
+			case RANDOM_ACCESS_OPTIMIZE_MEMORY:
 				return handleIndexedSffFileDataStore();
 			case ITERATION_ONLY:
 				return LargeSffFileDataStore.create(sffFile, filter);

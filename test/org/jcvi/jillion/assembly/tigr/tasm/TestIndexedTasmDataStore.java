@@ -38,14 +38,14 @@ public class TestIndexedTasmDataStore extends AbstractTestTasmDataStore{
 		try {
 			fullLengthFastas = new NucleotideFastaFileDataStoreBuilder(
 					resources.getFile("files/giv-15050.fasta")).hint(
-					DataStoreProviderHint.OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS)
+					DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_MEMORY)
 					.build();
 			
 			contigDataStore = new TigrContigFileDataStoreBuilder(
 					resources.getFile("files/giv-15050.contig"),
 					fullLengthFastas).build();
 			tasmDataStore = new TasmContigFileDataStoreBuilder(resources.getFile("files/giv-15050.tasm"),	fullLengthFastas)
-								.hint(DataStoreProviderHint.OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS)						
+								.hint(DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_MEMORY)						
 								.build();
 		} catch (IOException e) {
 			throw new IllegalStateException("error creating datastores",e);

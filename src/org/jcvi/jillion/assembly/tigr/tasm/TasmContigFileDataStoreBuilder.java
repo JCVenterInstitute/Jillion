@@ -43,7 +43,7 @@ public class TasmContigFileDataStoreBuilder {
 	
 	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
 	//by default store everything in memory
-	private DataStoreProviderHint hint = DataStoreProviderHint.OPTIMIZE_FAST_RANDOM_ACCESS;
+	private DataStoreProviderHint hint = DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_SPEED;
 	
 	private final DataStore<Long> fullSeqLengthDataStore;
 	
@@ -208,9 +208,9 @@ public class TasmContigFileDataStoreBuilder {
 	 */
 	public TasmContigDataStore build() throws IOException {
 		switch(hint){
-		case OPTIMIZE_FAST_RANDOM_ACCESS:
+		case RANDOM_ACCESS_OPTIMIZE_SPEED:
 			return DefaultTasmFileContigDataStore.create(contigFile, fullSeqLengthDataStore, filter);
-	case OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS: return IndexedTasmFileDataStore.create(contigFile,fullSeqLengthDataStore, filter);
+	case RANDOM_ACCESS_OPTIMIZE_MEMORY: return IndexedTasmFileDataStore.create(contigFile,fullSeqLengthDataStore, filter);
 	case ITERATION_ONLY: return new LargeTasmContigFileDataStore(contigFile, fullSeqLengthDataStore, filter);
 		default:
 			//can not happen

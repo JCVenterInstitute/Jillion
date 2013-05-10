@@ -27,7 +27,7 @@ import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 public class TestMementoAminoAcidSequenceFastaFileDataStore extends AbstractTestAminoAcidSequenceFastaFileDataStore{
 
 	public TestMementoAminoAcidSequenceFastaFileDataStore() throws IOException {
-		super(DataStoreProviderHint.OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS);
+		super(DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_MEMORY);
 	}
 
 }

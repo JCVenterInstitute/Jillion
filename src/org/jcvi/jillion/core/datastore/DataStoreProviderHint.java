@@ -57,7 +57,7 @@ public enum DataStoreProviderHint{
 	 * for {@link DataStore}s that contain many records
 	 * or for {@link DataStore}s whose records take up lots of memory.
 	 */
-	OPTIMIZE_FAST_RANDOM_ACCESS,
+	RANDOM_ACCESS_OPTIMIZE_SPEED,
 	/**
 	 * Use a {@link DataStore} implementation
 	 * that requires randomly accessing records
@@ -65,7 +65,7 @@ public enum DataStoreProviderHint{
 	 * but has been optimized to take up as little
 	 * memory as possible. The implementation
 	 * chosen will probably take more time to access records
-	 * than {@link #OPTIMIZE_FAST_RANDOM_ACCESS} but the {@link DataStore}
+	 * than {@link #RANDOM_ACCESS_OPTIMIZE_SPEED} but the {@link DataStore}
 	 * will take up less total memory.
 	 * <p/> 
 	 * For example, if the input to this {@link DataStore} was 
@@ -82,7 +82,7 @@ public enum DataStoreProviderHint{
 	 * the input of the data must exist and not
 	 * get altered during the entire lifetime of this object.
 	 */
-	OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS,
+	RANDOM_ACCESS_OPTIMIZE_MEMORY,
 	/**
 	 * Choose this option if the only methods
 	 * in the {@link DataStore} that will be called

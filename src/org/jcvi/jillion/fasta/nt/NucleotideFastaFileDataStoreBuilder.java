@@ -57,8 +57,8 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 			File fastaFile, DataStoreProviderHint providerHint, DataStoreFilter filter)
 			throws IOException {
 		switch(providerHint){
-			case OPTIMIZE_FAST_RANDOM_ACCESS: return DefaultNucleotideSequenceFastaFileDataStore.create(fastaFile,filter);
-			case OPTIMIZE_LOW_MEMORY_RANDOM_ACCESS: return IndexedNucleotideSequenceFastaFileDataStore.create(fastaFile,filter);
+			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultNucleotideSequenceFastaFileDataStore.create(fastaFile,filter);
+			case RANDOM_ACCESS_OPTIMIZE_MEMORY: return IndexedNucleotideSequenceFastaFileDataStore.create(fastaFile,filter);
 			case ITERATION_ONLY: return LargeNucleotideSequenceFastaFileDataStore.create(fastaFile,filter);
 			default:
 				throw new IllegalArgumentException("unknown provider hint : "+ providerHint);
