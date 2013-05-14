@@ -27,6 +27,7 @@ import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.assembly.util.GapQualityValueStrategy;
 import org.jcvi.jillion.assembly.util.Slice;
+import org.jcvi.jillion.assembly.util.SliceBuilder;
 import org.jcvi.jillion.assembly.util.SliceMap;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -44,7 +45,7 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
  */
 public final class CompactedSliceMap implements SliceMap {
     private static final PhredQuality DEFAULT_QUALITY = PhredQuality.valueOf(30);
-	private final CompactedSlice[] slices;
+	private final Slice[] slices;
 	
 
     public static <PR extends AssembledRead> CompactedSliceMap create(Contig<PR> contig,QualitySequenceDataStore qualityDataStore,GapQualityValueStrategy qualityValueStrategy) throws DataStoreException{
@@ -74,7 +75,7 @@ public final class CompactedSliceMap implements SliceMap {
 			int consensusLength, QualitySequenceDataStore qualityDataStore,
 			GapQualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality)
 			throws DataStoreException {
-		CompactedSlice.Builder builders[] = new CompactedSlice.Builder[consensusLength];
+		SliceBuilder builders[] = new SliceBuilder[consensusLength];
     
     	try{
     		while(readIter.hasNext()){
@@ -103,14 +104,14 @@ public final class CompactedSliceMap implements SliceMap {
     				PhredQuality quality = validRangeGappedQualitiesIterator.next();    			
     			
     				if(builders[start+i] ==null){
-    					builders[start+i] = new CompactedSlice.Builder();
+    					builders[start+i] = new SliceBuilder();
     				}
     				builders[start+i].addSliceElement(id, base, quality, dir);
     				i++;
     			}
     		}
     		//done building
-    		this.slices = new CompactedSlice[builders.length];
+    		this.slices = new Slice[builders.length];
     		for(int i=0; i<slices.length; i++){
     			if(builders[i]==null){
     				slices[i] = CompactedSlice.EMPTY;

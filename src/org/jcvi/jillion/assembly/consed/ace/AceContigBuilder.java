@@ -31,7 +31,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -46,7 +45,7 @@ import org.jcvi.jillion.assembly.util.CoverageMapBuilder;
 import org.jcvi.jillion.assembly.util.CoverageRegion;
 import org.jcvi.jillion.assembly.util.GapQualityValueStrategy;
 import org.jcvi.jillion.assembly.util.Slice;
-import org.jcvi.jillion.assembly.util.SliceMap;
+import org.jcvi.jillion.assembly.util.SliceBuilder;
 import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
@@ -56,13 +55,12 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.MapUtil;
-import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.assembly.DefaultContig;
-import org.jcvi.jillion.internal.assembly.util.CompactedSliceMap;
 /**
  * {@code AceContigBuilder} is a {@link Builder}
  * for {@link AceContig}s that allows
@@ -592,51 +590,57 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     		throw new IllegalStateException("must set consensus caller");
     	}
     	
-    	final SliceMap sliceMap;
-    	try{
-    	if(qualityDataStore==null){
-    		sliceMap= CompactedSliceMap.create(createStreamingReadIterator(),
-    			(int)mutableConsensus.getLength(),DEFAULT_QUALITY, qualityValueStrategy);
-    	}else{
-    		sliceMap= CompactedSliceMap.create(createStreamingReadIterator(),
-        			(int)mutableConsensus.getLength(),qualityDataStore, qualityValueStrategy);
-    	}
-    	}catch(DataStoreException e){
-    		throw new IllegalStateException("error getting quality values from datastore",e);
-    	}
+    	SliceBuilder builders[] = new SliceBuilder[(int)mutableConsensus.getLength()];
     	
-    	for(int i=0; i<sliceMap.getSize(); i++){
-    		Slice slice = sliceMap.getSlice(i);
-    		if(slice.getCoverageDepth() !=0){
-    			mutableConsensus.replace(i,consensusCaller.callConsensus(slice).getConsensus());
+    	for(AceAssembledReadBuilder aceReadBuilder : aceReadBuilderMap.values()){
+    		int start = (int)aceReadBuilder.getBegin();
+			int i=0;
+			String id =aceReadBuilder.getId();
+			Direction dir = aceReadBuilder.getDirection();
+			QualitySequence fullQualities =null;
+			AceAssembledRead tempRead=null;
+			if(qualityDataStore!=null){
+				try {
+					fullQualities = qualityDataStore.get(id);
+				} catch (DataStoreException e) {
+					throw new IllegalStateException("error recalling consensus",e);
+				}
+				//should be able to call build multiple times
+				tempRead = aceReadBuilder.build();
+    			if(fullQualities ==null){
+    				throw new NullPointerException("could not get qualities for "+id);
+    			}
+			}
+			
+			
+			for(Nucleotide base : aceReadBuilder.getCurrentNucleotideSequence()){
+				
+				final PhredQuality quality;
+				if(fullQualities==null){
+					quality = DEFAULT_QUALITY;
+				}else{					
+					//if fullQualities is not null then
+					//qualityValueStrategy must be non-null as well
+					quality= qualityValueStrategy.getQualityFor(tempRead, fullQualities, i);
+				}
+				if(builders[start+i] ==null){
+					builders[start+i] = new SliceBuilder();
+				}
+				builders[start+i].addSliceElement(id, base, quality, dir);
+				i++;
+			}
+    	}
+    	for(int i=0; i<builders.length; i++){
+    		SliceBuilder builder = builders[i];
+    		//a null builder implies 0x
+    		if(builder !=null){
+				Slice slice = builder.build();            
+	    		mutableConsensus.replace(i,consensusCaller.callConsensus(slice).getConsensus());
     		}
     	}
-    	
-    	
     	return this;
 	}
-    private StreamingIterator<AceAssembledRead> createStreamingReadIterator(){
-    	
-    	return IteratorUtil.createStreamingIterator(new Iterator<AceAssembledRead>() {
-    		Iterator<AceAssembledReadBuilder> builderIterator = aceReadBuilderMap.values().iterator();
-			@Override
-			public boolean hasNext() {
-				return builderIterator.hasNext();
-			}
-
-			@Override
-			public AceAssembledRead next() {
-				//should be able to call build multiple times
-				return builderIterator.next().build();
-			}
-
-			@Override
-			public void remove() {
-				throw new UnsupportedOperationException();					
-			}
-    		
-		});
-    }
+   
     /**
      * Split the contents of the current ContigBuilder into possibly multiple
      * new ContigBuilders.  The returned ContigBuilders will be new

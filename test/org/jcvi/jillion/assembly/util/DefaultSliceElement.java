@@ -23,7 +23,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.internal.assembly.util;
+package org.jcvi.jillion.assembly.util;
 
 import org.jcvi.jillion.assembly.util.SliceElement;
 import org.jcvi.jillion.core.Direction;

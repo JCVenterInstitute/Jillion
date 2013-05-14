@@ -52,7 +52,7 @@ public final class CompactedSliceElement implements SliceElement{
      * @param quality
      * @param encodedDirAndNucleotide
      */
-    CompactedSliceElement(String id, byte quality, byte encodedDirAndNucleotide){
+    public CompactedSliceElement(String id, byte quality, byte encodedDirAndNucleotide){
         if(id ==null){
             throw new NullPointerException("fields can not be null");
         }
@@ -76,10 +76,10 @@ public final class CompactedSliceElement implements SliceElement{
         }
     }
    
-    byte getEncodedDirAndNucleotide() {
+    public byte getEncodedDirAndNucleotide() {
 		return dirAndNucleotide;
 	}
-    byte getEncodedQuality() {
+    public byte getEncodedQuality() {
 		return quality;
 	}
 	/**

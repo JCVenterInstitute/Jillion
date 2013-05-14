@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.assembly.util;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Iterator;
@@ -29,11 +28,9 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.assembly.util.Slice;
+import org.jcvi.jillion.assembly.util.SliceBuilder;
 import org.jcvi.jillion.assembly.util.SliceElement;
-import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.internal.core.util.GrowableShortArray;
 
 /**
  * @author dkatzel
@@ -47,13 +44,13 @@ public final class CompactedSlice implements Slice{
     private final short[] elements;
     private final String[] ids;
     
-    public static final CompactedSlice EMPTY = new Builder().build();
+    public static final CompactedSlice EMPTY = (CompactedSlice) new SliceBuilder().build();
     
     /**
      * @param elements
      * @param ids
      */
-    private CompactedSlice(short[] elements, List<String> ids) {
+    public CompactedSlice(short[] elements, List<String> ids) {
         this.elements = elements;
         this.ids = ids.toArray(new String[ids.size()]);
     }
@@ -199,41 +196,11 @@ public final class CompactedSlice implements Slice{
     public SliceElement getSliceElement(String elementId) {
         int index= indexOf(elementId);
         if(index<0){
-            throw new IllegalArgumentException(elementId + " not in slice");
+            return null;
         }
         return getElement(index);
     }
     
-    public static final class Builder implements org.jcvi.jillion.core.util.Builder<CompactedSlice>{
-
-        GrowableShortArray bytes = new GrowableShortArray(1024);
-        List<String> ids = new ArrayList<String>();
-        public Builder addSliceElement(SliceElement element){            
-            return addSliceElement(element.getId(),element.getBase(), element.getQuality(), element.getDirection());
-        }
-        public Builder addSliceElements(Iterable<? extends SliceElement> elements){
-            for(SliceElement e : elements){
-                addSliceElement(e);
-            }
-            return this;
-        }
-        public Builder addSliceElement(String id, Nucleotide base, PhredQuality quality, Direction dir){
-        	CompactedSliceElement compacted = new CompactedSliceElement(id, base, quality, dir);
-        	int value = compacted.getEncodedDirAndNucleotide() <<8;
-        	value |= (compacted.getEncodedQuality() &0xFF);
-            bytes.append((short)value);
-            
-            ids.add(id);
-            return this;
-        }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public CompactedSlice build() {
-            return new CompactedSlice(bytes.toArray(), ids);
-        }
-        
-    }
+   
 
 }

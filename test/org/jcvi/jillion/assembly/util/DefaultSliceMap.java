@@ -23,7 +23,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.internal.assembly.util;
+package org.jcvi.jillion.assembly.util;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -46,6 +46,7 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.assembly.util.AbstractSliceMap;
 
 public class DefaultSliceMap extends AbstractSliceMap{
 	
