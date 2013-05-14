@@ -33,7 +33,7 @@ public class TestCompactedSlice extends AbstractTestSlice{
     protected Slice createNew(List<SliceElement> elements) {
         SliceBuilder builder = new SliceBuilder();
         for(SliceElement element : elements){
-            builder.addSliceElement(element);
+            builder.add(element);
         }
         return builder.build();
     }

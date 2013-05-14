@@ -233,7 +233,7 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
     				if(builders[start+i] ==null){
     					builders[start+i] = new SliceBuilder();
     				}
-    				builders[start+i].addSliceElement(id, base, quality, dir);
+    				builders[start+i].add(id, base, quality, dir);
     				i++;
     			}
         	}

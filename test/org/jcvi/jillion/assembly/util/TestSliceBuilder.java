@@ -61,21 +61,21 @@ public class TestSliceBuilder {
 	@Test
 	public void contains(){
 		SliceBuilder builder = new SliceBuilder();
-		assertFalse(builder.containsElement("id"));
-		builder.addSliceElement("id", Nucleotide.Adenine, 
+		assertFalse(builder.containsId("id"));
+		builder.add("id", Nucleotide.Adenine, 
 													PhredQuality.valueOf(30), 
 													Direction.FORWARD);
-		assertTrue(builder.containsElement("id"));
+		assertTrue(builder.containsId("id"));
 	}
 	
 	@Test(expected = NullPointerException.class)
 	public void containsNullShouldThrowNPE(){
-		new SliceBuilder().containsElement(null);
+		new SliceBuilder().containsId(null);
 	}
 	
 	@Test(expected = NullPointerException.class)
 	public void addNullElementShouldThrowNPE(){
-		new SliceBuilder().addSliceElement(null);
+		new SliceBuilder().add(null);
 	}
 	
 	@Test
@@ -83,7 +83,7 @@ public class TestSliceBuilder {
 		SliceElement element = elements.get(0);
 		
 		Slice slice= new SliceBuilder()
-						.addSliceElement(element)
+						.add(element)
 						.build();
 
 		assertEquals(1, slice.getCoverageDepth());
@@ -102,8 +102,8 @@ public class TestSliceBuilder {
 		
 		SliceElement replacementElement = new DefaultSliceElement(element.getId(), Nucleotide.Unknown, PhredQuality.valueOf(0), Direction.REVERSE);
 		Slice slice = new SliceBuilder()
-						.addSliceElement(element)
-						.addSliceElement(replacementElement)
+						.add(element)
+						.add(replacementElement)
 						.build();
 		
 		assertEquals(1, slice.getCoverageDepth());
@@ -121,7 +121,7 @@ public class TestSliceBuilder {
 		SliceBuilder builder= new SliceBuilder();
 		
 		for(SliceElement element : elements){
-			builder.addSliceElement(element);
+			builder.add(element);
 		}
 		Slice slice = builder.build();
 
@@ -158,7 +158,7 @@ public class TestSliceBuilder {
 		
 		SliceBuilder builder= new SliceBuilder();
 		
-		builder.addSliceElements(elements);
+		builder.addAll(elements);
 
 		Slice slice = builder.build();
 
@@ -195,7 +195,7 @@ public class TestSliceBuilder {
 		
 		SliceBuilder builder= new SliceBuilder(elements);
 		
-		builder.removeSliceElement("does not exist");
+		builder.removeById("does not exist");
 
 		Slice slice = builder.build();
 
@@ -233,10 +233,10 @@ public class TestSliceBuilder {
 		SliceBuilder builder= new SliceBuilder();
 		
 		for(SliceElement element : elements){
-			builder.addSliceElement(element);
+			builder.add(element);
 		}
 		
-		builder.removeSliceElement("id2");
+		builder.removeById("id2");
 		Slice slice = builder.build();
 
 		assertEquals(2, slice.getCoverageDepth());
@@ -276,9 +276,9 @@ public class TestSliceBuilder {
 											);
 
 		SliceBuilder builder= new SliceBuilder();
-		builder.addSliceElements(elements);
+		builder.addAll(elements);
 		SliceBuilder copy =builder.copy();
-		copy.removeSliceElement("id2");
+		copy.removeById("id2");
 		
 		Slice modifiedSlice = copy.build();
 		assertEquals(2, modifiedSlice.getCoverageDepth());
@@ -337,7 +337,7 @@ public class TestSliceBuilder {
 		SliceBuilder builder = new SliceBuilder(elements);
 		SliceElement newElement = new DefaultSliceElement("id", Nucleotide.Cytosine, PhredQuality.valueOf(50), Direction.FORWARD);
 		
-		builder.addSliceElement(newElement);
+		builder.add(newElement);
 		
 		Slice slice =builder.build();
 		
@@ -370,7 +370,7 @@ public class TestSliceBuilder {
 		SliceBuilder builder = new SliceBuilder(elements);
 		SliceElement newElement = new DefaultSliceElement("id2", Nucleotide.Cytosine, PhredQuality.valueOf(50), Direction.FORWARD);
 		
-		builder.addSliceElement(newElement);
+		builder.add(newElement);
 		
 		Slice slice =builder.build();
 		
@@ -404,7 +404,7 @@ public class TestSliceBuilder {
 		SliceBuilder builder = new SliceBuilder(elements);
 		SliceElement newElement = new DefaultSliceElement("id3", Nucleotide.Cytosine, PhredQuality.valueOf(50), Direction.FORWARD);
 		
-		builder.addSliceElement(newElement);
+		builder.add(newElement);
 		
 		Slice slice =builder.build();
 		

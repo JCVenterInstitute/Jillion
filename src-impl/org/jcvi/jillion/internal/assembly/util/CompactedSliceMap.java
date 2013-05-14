@@ -106,7 +106,7 @@ public final class CompactedSliceMap implements SliceMap {
     				if(builders[start+i] ==null){
     					builders[start+i] = new SliceBuilder();
     				}
-    				builders[start+i].addSliceElement(id, base, quality, dir);
+    				builders[start+i].add(id, base, quality, dir);
     				i++;
     			}
     		}
