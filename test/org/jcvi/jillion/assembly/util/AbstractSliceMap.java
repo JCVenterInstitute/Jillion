@@ -23,7 +23,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.internal.assembly.util;
+package org.jcvi.jillion.assembly.util;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,7 +31,6 @@ import java.util.List;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.util.CoverageRegion;
-import org.jcvi.jillion.assembly.util.DefaultSliceElement;
 import org.jcvi.jillion.assembly.util.GapQualityValueStrategy;
 import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.SliceElement;
