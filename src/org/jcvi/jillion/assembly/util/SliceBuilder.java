@@ -44,7 +44,7 @@ public final class SliceBuilder implements Builder<Slice>{
     	if(slice ==null){
     		throw new NullPointerException("Slice can not be null");
     	}
-    	addSliceElements(slice);
+    	addAll(slice);
     }
     /**
      * Create a new {@link SliceBuilder}
@@ -61,7 +61,7 @@ public final class SliceBuilder implements Builder<Slice>{
     	if(elements ==null){
     		throw new NullPointerException("Slice can not be null");
     	}
-    	addSliceElements(elements);
+    	addAll(elements);
     }
     
     private SliceBuilder(SliceBuilder copy){
@@ -81,20 +81,20 @@ public final class SliceBuilder implements Builder<Slice>{
      * @return this
      * @throws NullPointerException if element is null.
      */
-    public SliceBuilder addSliceElement(SliceElement element){  
+    public SliceBuilder add(SliceElement element){  
     	if(element ==null){
     		throw new NullPointerException("SliceElement can not be nul");
     	}
-        return addSliceElement(element.getId(),element.getBase(), element.getQuality(), element.getDirection());
+        return add(element.getId(),element.getBase(), element.getQuality(), element.getDirection());
     }
-    public SliceBuilder addSliceElements(Iterable<? extends SliceElement> elements){
+    public SliceBuilder addAll(Iterable<? extends SliceElement> elements){
         for(SliceElement e : elements){
-            addSliceElement(e);
+            add(e);
         }
         return this;
     }
     /**
-     * Add a new SliceElement witht the following values
+     * Add a new SliceElement with the following values
      * to this builder.
      * Adding a SliceElement with the same id
      * as a pre-existing element already
@@ -112,7 +112,7 @@ public final class SliceBuilder implements Builder<Slice>{
      * @return this
      * @throws NullPointerException if any parameter is null.
      */
-    public SliceBuilder addSliceElement(String id, Nucleotide base, PhredQuality quality, Direction dir){
+    public SliceBuilder add(String id, Nucleotide base, PhredQuality quality, Direction dir){
     	
     	CompactedSliceElement compacted = new CompactedSliceElement(id, base, quality, dir);
     	int value = compacted.getEncodedDirAndNucleotide() <<8;
@@ -134,6 +134,7 @@ public final class SliceBuilder implements Builder<Slice>{
         
         return this;
     }
+
     /**
      * Does this builder contain
      * a SliceElement with the given id.
@@ -144,10 +145,7 @@ public final class SliceBuilder implements Builder<Slice>{
      * {@code false} otherwise.
      * @throws NullPointerException if id is null.
      */
-    public boolean containsElement(String id){
-    	return containsId(id);
-    }
-	private boolean containsId(String id) {
+	public boolean containsId(String id) {
 		if(id ==null){
 			throw new NullPointerException("id can not be null");
 		}
@@ -162,7 +160,7 @@ public final class SliceBuilder implements Builder<Slice>{
      * @return this.
      * @throws NullPointerException if id is null.
      */
-    public SliceBuilder removeSliceElement(String id){
+    public SliceBuilder removeById(String id){
     	int index =ids.indexOf(id);
     	if(index !=-1){
     		ids.remove(index);
