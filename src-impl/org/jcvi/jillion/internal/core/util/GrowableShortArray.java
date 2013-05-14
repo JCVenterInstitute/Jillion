@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.core.util;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.jcvi.jillion.core.Range;
@@ -212,6 +211,13 @@ public final class GrowableShortArray {
 		}
 		currentLength-=(int)range.getLength();    
 	}
+	/**
+	 * Removes the value at the given offset
+	 * and shifts all downstream
+	 * elements down by 1.
+	 * @param offset
+	 * @return
+	 */
 	public short remove(int offset){
 		assertValidOffset(offset);
 		short oldValue = data[offset];

@@ -34,7 +34,6 @@ import java.util.Map;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.internal.assembly.util.DefaultSliceElement;
 import org.junit.Test;
 /**
  * @author dkatzel

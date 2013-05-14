@@ -22,8 +22,6 @@ package org.jcvi.jillion.assembly.util;
 
 import java.util.List;
 
-import org.jcvi.jillion.internal.assembly.util.CompactedSlice;
-
 /**
  * @author dkatzel
  *
@@ -33,7 +31,7 @@ public class TestCompactedSlice extends AbstractTestSlice{
 
     @Override
     protected Slice createNew(List<SliceElement> elements) {
-        CompactedSlice.Builder builder = new CompactedSlice.Builder();
+        SliceBuilder builder = new SliceBuilder();
         for(SliceElement element : elements){
             builder.addSliceElement(element);
         }

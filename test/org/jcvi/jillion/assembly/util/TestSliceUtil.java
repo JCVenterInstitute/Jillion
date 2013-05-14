@@ -34,7 +34,6 @@ import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.internal.assembly.util.DefaultSlice;
 
 public final class TestSliceUtil {
     private TestSliceUtil(){}

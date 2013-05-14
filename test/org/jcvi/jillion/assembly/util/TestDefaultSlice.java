@@ -22,7 +22,6 @@ package org.jcvi.jillion.assembly.util;
 
 import java.util.List;
 
-import org.jcvi.jillion.internal.assembly.util.DefaultSlice;
 
 /**
  * @author dkatzel

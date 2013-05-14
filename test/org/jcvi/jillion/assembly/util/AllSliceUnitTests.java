@@ -39,6 +39,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestCompactedSliceElement.class,
         TestDefaultSlice.class,
         TestCompactedSlice.class,
+        TestSliceBuilder.class,
+        
         TestDefaultSliceMap.class,
         TestCompactedSliceMap.class,
         TestSliceMapBuilderUsingQualityDataStore.class,
