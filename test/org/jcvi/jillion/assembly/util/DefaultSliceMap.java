@@ -46,7 +46,6 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.internal.assembly.util.AbstractSliceMap;
 
 public class DefaultSliceMap extends AbstractSliceMap{
 	
