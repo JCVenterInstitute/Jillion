@@ -32,7 +32,6 @@ import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.assembly.AbstractContigBuilder;
 import org.jcvi.jillion.internal.assembly.DefaultContig;
@@ -63,6 +62,8 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
 	private Long editDate;
 	private String assemblyMethod;
 	private boolean isCircular;
+	
+	private Double avgCoverage;
 	
     /**
      * Create a new TasmContigBuilder instance setting the
@@ -150,6 +151,9 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
         this.editDate = Long.valueOf(copy.getEditDate().getTime());
         this.editPerson = copy.getEditPerson();
         this.isCircular = copy.isCircular();
+        if(copy.getNumberOfReads()==0D){
+        	this.avgCoverage = copy.getAvgCoverage();
+        }
      }
    
    
@@ -206,6 +210,30 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
      */
     public TasmContigBuilder withCommonName(String commonName){
        this.commonName = commonName;
+        return this;
+    }
+    
+    /**
+     * Sets the {@link TasmContigAttribute#AVG_COVERAGE}
+     * attribute for this adapted contig.  If this method is not set,
+     * or set to {@code null}, then the average coverage 
+     * will be computed by counting the bases in the
+     * underlying reads.  Calling this method
+     * multiple times will overwrite previous entries with the current
+     * entry. Setting the value to {@code null} will remove the current
+     * entry (the type can later be re-added by calling this method 
+     * again with a non-null value).
+     * @param avgCoverage the value to set as the average coverage
+     * <strong>regardless</strong> of what the actual
+     * underlying reads are.
+     * @return this.
+     * @throws IllegalArgumentException if avgCoverage < 0
+     */
+    public TasmContigBuilder withAvgCoverage(Double avgCoverage){
+    	if(avgCoverage !=null && avgCoverage <0D){
+    		throw new IllegalArgumentException("avg coverage must be >= 0");
+    	}
+       this.avgCoverage = avgCoverage;
         return this;
     }
     /**
@@ -309,7 +337,7 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
         for(AssembledReadBuilder<TasmAssembledRead> builder : getAllAssembledReadBuilders()){              
             reads.add(builder.build());
         }
-        return new DefaultTasmContig(this, reads);
+        return new DefaultTasmContig(this, reads, avgCoverage);
     }
 
     
@@ -372,20 +400,25 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
          * @param placedReads
          * @param circular
          */
-        private DefaultTasmContig(TasmContigBuilder builder, Set<TasmAssembledRead> reads) {
+        private DefaultTasmContig(TasmContigBuilder builder, Set<TasmAssembledRead> reads,
+        		Double userProvidedAvgCoverage) {
             contig = new DefaultContig<TasmAssembledRead>(builder.getContigId(),
             		builder.getConsensusBuilder().build(),reads);
             long numberOfReads = contig.getNumberOfReads();
-            if(numberOfReads >0){
-    	        long totalNumberOfReadBases=0L;
-    	        
-    	        for(TasmAssembledRead read : reads){
-    	        	totalNumberOfReadBases+=read.getNucleotideSequence().getUngappedLength();
-    	        }
-    	       
-    			avgCoverage = totalNumberOfReadBases/(double) contig.getConsensusSequence().getUngappedLength();
+            if(userProvidedAvgCoverage ==null){
+	            if(numberOfReads >0){
+	    	        long totalNumberOfReadBases=0L;
+	    	        
+	    	        for(TasmAssembledRead read : reads){
+	    	        	totalNumberOfReadBases+=read.getNucleotideSequence().getUngappedLength();
+	    	        }
+	    	       
+	    			avgCoverage = totalNumberOfReadBases/(double) contig.getConsensusSequence().getUngappedLength();
+	            }else{
+	            	avgCoverage=0D;
+	            }
             }else{
-            	avgCoverage=0D;
+            	this.avgCoverage = userProvidedAvgCoverage;
             }
     		this.sampleId = builder.sampleId;
     		this.celeraAssemblerId = builder.celeraAssemblerId;

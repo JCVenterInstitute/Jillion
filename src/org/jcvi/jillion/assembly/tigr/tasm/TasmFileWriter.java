@@ -78,8 +78,7 @@ public final class TasmFileWriter {
 		}
 		
 	}
-
-	public static void write(TasmContig contig, OutputStream out) throws IOException {
+	public static void writeAnnotationRecord(TasmContig contig, OutputStream out) throws IOException {
 		Map<TasmContigAttribute, String> currentContigAttributes = createContigAttributes(contig);
 		for(TasmContigAttribute contigAttribute : TasmContigAttribute.values()){
 		    if(currentContigAttributes.containsKey(contigAttribute)){
@@ -96,6 +95,10 @@ public final class TasmFileWriter {
 			}
 			
 		}
+	}
+	public static void write(TasmContig contig, OutputStream out) throws IOException {
+		writeAnnotationRecord(contig,out);
+		
 		if(contig.getNumberOfReads()>0){
     		out.write(BLANK_LINE);
     		
