@@ -192,7 +192,7 @@ public final class IOUtil {
         }
     }
     /**
-     * Close the given {@link Closeable} and ignore any exceptions
+     * Close the given {@link Closeable} and ignore any {@link IOException}s
      * that are thrown.  Passing in a null will do nothing.
      * @param closeable the {@link Closeable} object to close.
      */
@@ -201,7 +201,7 @@ public final class IOUtil {
             if(closeable !=null){
                 closeable.close();
             }
-        } catch (Exception ignore) {
+        } catch (IOException ignore) {
                 //ignored on purpose
         }
     }
