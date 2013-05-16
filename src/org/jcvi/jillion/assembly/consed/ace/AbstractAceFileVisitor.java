@@ -30,20 +30,26 @@ import java.util.Date;
  *
  */
 public abstract class AbstractAceFileVisitor implements AceFileVisitor{
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void visitHeader(int numberOfContigs, long totalNumberOfReads) {
 		//no-op		
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public AceContigVisitor visitContig(AceFileVisitorCallback callback,
-			String contigId, int numberOfBases, int numberOfReads,
+			String contigId, int consensusLength, int numberOfReads,
 			int numberOfBaseSegments, boolean reverseComplemented) {
 		//always skip
 		return null;
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void visitReadTag(String id, String type, String creator,
 			long gappedStart, long gappedEnd, Date creationDate,
@@ -51,7 +57,9 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
 		//no-op
 		
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public AceConsensusTagVisitor visitConsensusTag(String id, String type,
 			String creator, long gappedStart, long gappedEnd,
@@ -59,18 +67,24 @@ public abstract class AbstractAceFileVisitor implements AceFileVisitor{
 		//always skip
 		return null;
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void visitWholeAssemblyTag(String type, String creator,
 			Date creationDate, String data) {
 		//no-op		
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void visitEnd() {
 		//no-op
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void halted() {
 		//no-op
