@@ -37,7 +37,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
- * {@code TasmFileWriter} writes out TIGR Assembler
+ * {@code TasmFileWriterUtil} writes out TIGR Assembler
  * formated files (.tasm).  This assembly format 
  * probably does not have much use outside of 
  * JCVI since the format is specially tailored to the 
@@ -45,12 +45,12 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
  * @author dkatzel
  *
  */
-public final class TasmFileWriter {
+final class TasmFileWriterUtil {
     private static final Charset UTF_8 = Charset.forName("UTF-8");
 	private static final byte[] BLANK_LINE = "\n".getBytes(UTF_8);
 	private static final byte[] CONTIG_SEPARATOR = "|\n".getBytes(UTF_8);
 	private static final String EOL = "\n";
-	private TasmFileWriter(){
+	private TasmFileWriterUtil(){
 		//can not instantiate 
 	}
 	public static void writeContigSeparator(OutputStream out) throws IOException{

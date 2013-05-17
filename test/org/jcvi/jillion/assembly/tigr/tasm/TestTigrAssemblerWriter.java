@@ -32,7 +32,7 @@ import java.io.IOException;
 
 import org.jcvi.jillion.assembly.tigr.tasm.TasmContigDataStore;
 import org.jcvi.jillion.assembly.tigr.tasm.TasmContigFileDataStoreBuilder;
-import org.jcvi.jillion.assembly.tigr.tasm.TasmFileWriter;
+import org.jcvi.jillion.assembly.tigr.tasm.TasmFileWriterUtil;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -60,11 +60,11 @@ public class TestTigrAssemblerWriter {
     @Test(expected = NullPointerException.class)
     public void writeNullDataStoreShouldThrowNullPointerException() throws IOException{
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
-    	TasmFileWriter.write((TasmContigDataStore)null,out);
+    	TasmFileWriterUtil.write((TasmContigDataStore)null,out);
     }
     @Test(expected = NullPointerException.class)
     public void writeNullOutputStreamShouldThrowNullPointerException() throws IOException{
-    	TasmFileWriter.write(tasmDataStore,null);
+    	TasmFileWriterUtil.write(tasmDataStore,null);
     }
     @Test
     public void whenDataStoreThrowsExceptionShouldWrapInIOException() throws DataStoreException{
@@ -74,7 +74,7 @@ public class TestTigrAssemblerWriter {
     	replay(mockDataStore);
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
     	try {
-			TasmFileWriter.write(mockDataStore,out);
+			TasmFileWriterUtil.write(mockDataStore,out);
 			fail("should wrap DataStoreException in IOException");
 		} catch (IOException e) {
 			assertEquals("error writing tasm file", e.getMessage());
@@ -85,7 +85,7 @@ public class TestTigrAssemblerWriter {
     public void rewrittenTasmShouldMatchOriginalByteForByte() throws IOException{
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
     	
-    	TasmFileWriter.write(tasmDataStore,out);
+    	TasmFileWriterUtil.write(tasmDataStore,out);
     	byte[] expected = IOUtil.toByteArray(RESOURCES.getFileAsStream("files/giv-15050.tasm"));
     	assertArrayEquals(expected, out.toByteArray());
     }
