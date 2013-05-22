@@ -26,26 +26,26 @@
 package org.jcvi.jillion.assembly.util.consensus;
 
 
+import static org.jcvi.jillion.assembly.util.TestSliceUtil.createIsolatedSliceFrom;
+import static org.jcvi.jillion.assembly.util.TestSliceUtil.createSlicesFrom;
+import static org.jcvi.jillion.core.Direction.FORWARD;
+import static org.jcvi.jillion.core.Direction.REVERSE;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 
 import org.jcvi.jillion.assembly.util.DefaultSlice;
 import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.SliceElement;
-import org.jcvi.jillion.assembly.util.consensus.ConsensusResult;
-import org.jcvi.jillion.assembly.util.consensus.ConsensusUtil;
-import org.jcvi.jillion.assembly.util.consensus.DefaultConsensusResult;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.util.MapValueComparator;
-
-import static org.jcvi.jillion.assembly.util.TestSliceUtil.*;
-import static org.jcvi.jillion.core.Direction.FORWARD;
-import static org.jcvi.jillion.core.Direction.REVERSE;
 public final class ConsensusCallerTestUtil {
 
     
@@ -644,14 +644,36 @@ public static Map<List<Slice>, List<ConsensusResult>> generateMostCommonBasecall
     			continue;
     		}
     		Map<Nucleotide, Integer> histogram = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
+    		Map<Nucleotide, Integer> qualities = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
+    		
     		for(Nucleotide bases : ConsensusUtil.BASES_TO_CONSIDER){
     			histogram.put(bases, Integer.valueOf(0));
+    			qualities.put(bases, Integer.valueOf(0));
     		}
     		for(SliceElement e : s){
-    			histogram.put(e.getBase(),histogram.get(e.getBase()) +1);
+    			Nucleotide base = e.getBase();
+				histogram.put(base,histogram.get(base) +1);
+				qualities.put(base,qualities.get(base) +e.getQuality().getQualityScore());
     		}
     		SortedMap<Nucleotide, Integer> sortedMap = MapValueComparator.sortDescending(histogram);
-    		Nucleotide mostCommonBase =sortedMap.firstKey();
+    		
+    		Iterator<Entry<Nucleotide, Integer>> iter = sortedMap.entrySet().iterator();
+            //has to have at least one
+            Entry<Nucleotide, Integer> most = iter.next();
+            Nucleotide mostCommonBase = most.getKey();
+            int count = most.getValue();
+            int bestQv = qualities.get(mostCommonBase);
+            while(iter.hasNext()){
+            	Entry<Nucleotide, Integer> next = iter.next();
+            	if(next.getValue().intValue() <count){
+            		break;
+            	}
+            	int currentQv = qualities.get(next.getKey()).intValue();
+    			if(currentQv > bestQv){
+            		bestQv = currentQv;
+            		mostCommonBase = next.getKey();
+            	}
+            }
     		int consensusQuality=0;
     		for(SliceElement e : s){
     			if(e.getBase() == mostCommonBase){

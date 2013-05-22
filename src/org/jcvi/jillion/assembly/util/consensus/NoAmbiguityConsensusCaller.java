@@ -36,8 +36,8 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 /**
  * <code>NoAmbiguityConsensusCaller</code>
- * will always return the non-ambiguous base
- * in the consensus with the lowest error probability.
+ * will always return the either A,C,G, T or gap
+ * as the consensus, whichever has the lowest error probability.
  * @author dkatzel
  *
  *

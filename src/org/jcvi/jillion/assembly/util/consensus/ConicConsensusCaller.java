@@ -68,7 +68,7 @@ public class ConicConsensusCaller extends AbstractChurchillWatermanConsensusCall
      */
     private static final double MAX_EFFECTIVE_ANGLE = 45D;
     /**
-     * This was the angle that was found to most often match
+     * The angle {@value} degrees was the angle that was found to most often match
      * expert human consensus callers in TIGR experiments performed in 2003
      * on Sanger data.
      * <p/>
@@ -79,15 +79,28 @@ public class ConicConsensusCaller extends AbstractChurchillWatermanConsensusCall
     public static final double DEFAULT_CONIC_AMBIGUITY_ANGLE = 36.8698977D;
 
     /**
-     * Create a new instance using the default amiguity angle.
-     * @param highQualityThreshold
+     * Create a new instance using the default ambiguity angle.
+     * @param highQualityThreshold the {@link PhredQuality} that 
+     * represents the Churchill-Waterman consensus
+     * high quality threshold; can not be null.
      */
     public ConicConsensusCaller(PhredQuality highQualityThreshold) {
-       this(DEFAULT_CONIC_AMBIGUITY_ANGLE, highQualityThreshold);
+       this(highQualityThreshold, DEFAULT_CONIC_AMBIGUITY_ANGLE);
         
     }
-    public ConicConsensusCaller(double ambiguityAngle, PhredQuality highQualityThreshold) {
+    /**
+     * Create a new instance using the given ambiguity angle.
+     * @param highQualityThreshold the {@link PhredQuality} that 
+     * represents the Churchill-Waterman consensus
+     * high quality threshold; can not be null.
+     * @param ambiguityAngle the angle to use for the multi-dimensional
+     * cone; must be between 0 and 45.
+     */
+    public ConicConsensusCaller(PhredQuality highQualityThreshold, double ambiguityAngle) {
         super(highQualityThreshold);
+        if(ambiguityAngle <0 || ambiguityAngle > MAX_EFFECTIVE_ANGLE){
+        	throw new IllegalArgumentException("angle must be between 0 and 45");
+        }
         double effectiveAngle = computeEffectiveAngle(ambiguityAngle);
         double lowerRadians = computeLowerRadians(effectiveAngle);
         double upperRadians = computeUpperRadians(effectiveAngle);
