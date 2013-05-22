@@ -25,7 +25,6 @@
  */
 package org.jcvi.jillion.assembly.util.consensus;
 
-import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 /**
  * {@code ConsensusResult} is the base call
@@ -47,7 +46,9 @@ public interface ConsensusResult {
      * Return the quality of the consensus.  This number may be
      * in the hundreds or thousands depending on the depth of
      * coverage.
-     * @return an int; will always be {@code >= 0}
+     * @return an int; will usually be {@code >= 0}
+     * but may be negative depending on the implementation
+     * and what is contained in the Slice.
      */
     int getConsensusQuality();
 }

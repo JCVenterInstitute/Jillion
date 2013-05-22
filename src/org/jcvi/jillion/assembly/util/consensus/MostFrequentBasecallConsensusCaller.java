@@ -26,9 +26,10 @@
 package org.jcvi.jillion.assembly.util.consensus;
 
 import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.Map.Entry;
+import java.util.SortedMap;
 
 import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.SliceElement;
@@ -40,7 +41,9 @@ import org.jcvi.jillion.core.util.MapValueComparator;
  * a Slice and the Consensus Quality is the sum of all the qualities of
  * the reads with that basecall minus the sum of the reads 
  * without that basecall.  If the Slice is empty, then the ConsensusResult
- * is N with 0 quality.
+ * is N with 0 quality.  If multiple bases share the "most frequent basecall count",
+ * then the basecall with the highest cumulative quality value will be picked.
+ *  
  * 
  * @author dkatzel
  *
@@ -58,12 +61,14 @@ public enum MostFrequentBasecallConsensusCaller implements ConsensusCaller{
         for(SliceElement sliceElement : slice){
             Nucleotide base =sliceElement.getBase();
             if(!qualitySums.containsKey(base)){
-                qualitySums.put(base, Integer.valueOf(0));
-            }
-            qualitySums.put(base, qualitySums.get(base) + sliceElement.getQuality().getQualityScore());
-            incrementHistogram(histogramMap, base);
+            	histogramMap.put(base, Integer.valueOf(1));
+                qualitySums.put(base, Integer.valueOf(sliceElement.getQuality().getQualityScore()));
+            }else{
+            	histogramMap.put(base, Integer.valueOf(histogramMap.get(base).intValue()+1));
+            	qualitySums.put(base, qualitySums.get(base) + sliceElement.getQuality().getQualityScore());
+            }           
         }
-        Nucleotide consensus= findMostOccuringBase(histogramMap);
+        Nucleotide consensus= findMostOccuringBaseWithHighestQvs(histogramMap, qualitySums);
         int sum=0;
         for(Entry<Nucleotide, Integer> entry : qualitySums.entrySet()){
             if(entry.getKey() == consensus){
@@ -76,20 +81,39 @@ public enum MostFrequentBasecallConsensusCaller implements ConsensusCaller{
         return new DefaultConsensusResult(consensus, sum);
     }
 
-    private void incrementHistogram(Map<Nucleotide, Integer> histogramMap,
-            Nucleotide base) {
-        if(!histogramMap.containsKey(base)){
-            histogramMap.put(base, Integer.valueOf(0));
-        }
-        histogramMap.put(base, Integer.valueOf(histogramMap.get(base).intValue()+1));
-    }
-
-    private Nucleotide findMostOccuringBase(Map<Nucleotide, Integer> histogramMap){
+    
+    /**
+     * Get the most occurring basecall,
+     * if multiple basecalls have the same highest frequency,
+     * then pick the one with the highest cumulative quality score.
+     * @param histogramMap
+     * @param qualitySums
+     * @return
+     */
+    private Nucleotide findMostOccuringBaseWithHighestQvs(Map<Nucleotide, Integer> histogramMap,Map<Nucleotide, Integer> qualitySums ){
         if(histogramMap.isEmpty()){
             return Nucleotide.Unknown;
         }
         SortedMap<Nucleotide, Integer> sortedMap = MapValueComparator.sortDescending(histogramMap);
-        return sortedMap.firstKey();
+        
+        Iterator<Entry<Nucleotide, Integer>> iter = sortedMap.entrySet().iterator();
+        //has to have at least one
+        Entry<Nucleotide, Integer> most = iter.next();
+        Nucleotide consensus = most.getKey();
+        int count = most.getValue();
+        int bestQv = qualitySums.get(consensus);
+        while(iter.hasNext()){
+        	Entry<Nucleotide, Integer> next = iter.next();
+        	if(next.getValue().intValue() <count){
+        		break;
+        	}
+        	int currentQv = qualitySums.get(next.getKey()).intValue();
+			if(currentQv > bestQv){
+        		bestQv = currentQv;
+        		consensus = next.getKey();
+        	}
+        }
+        return consensus;
        
     }
 }
