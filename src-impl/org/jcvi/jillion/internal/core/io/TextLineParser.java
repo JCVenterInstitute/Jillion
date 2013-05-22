@@ -91,14 +91,18 @@ public final class TextLineParser implements Closeable{
 				//since CR+LF is how Windows represents an end of line
 				int nextChar = in.read();
 				if(nextChar == LF){
+					numberOfBytesInNextLine++;
 					builder.append(LF);
-				}else if(nextChar !=-1){
-					//not windows formatted line
-					//could be Mac 0S 9 which only uses '\r'
-					//put that value back
-					in.unread(nextChar);
-					numberOfBytesInNextLine--;
+				}else{
+					
+					if(nextChar !=-1){
+						//not windows formatted line
+						//could be Mac 0S 9 which only uses '\r'
+						//put that value back
+						in.unread(nextChar);
+					}
 				}
+				
 				break;
 			}
 			if(value == LF){
