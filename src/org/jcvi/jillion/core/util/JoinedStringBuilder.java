@@ -43,6 +43,7 @@ public final class JoinedStringBuilder implements Builder<String>{
     private Object glue;
     private Object prefix;
     private Object suffix;
+    private boolean includeEmptyStrings=false;
     /**
      * Join the given elements together
      * in their iteration order.
@@ -89,6 +90,17 @@ public final class JoinedStringBuilder implements Builder<String>{
         return this;
     }  
     /**
+     * Change the behavior of 
+     * how inner empty strings are handled,
+     * by default, empty strings will be skipped.
+     * @param value 
+     * @return this
+     */
+    public JoinedStringBuilder includeEmptyStrings(boolean value){
+    	includeEmptyStrings = value;
+    	return this;
+    }
+    /**
      * Suffix the objects to be joined with the given
      * suffix.
      * @param suffix the suffix that will
@@ -128,7 +140,7 @@ public final class JoinedStringBuilder implements Builder<String>{
             if (item != null)
             {   
                 String itemString = item.toString();
-                if (glue != null && joined.length() > 0 && itemString.length() > 0)
+                if (glue != null && joined.length() > 0 && (includeEmptyStrings || itemString.length() > 0))
                 {
                     joined.append(glue.toString());
                 }
