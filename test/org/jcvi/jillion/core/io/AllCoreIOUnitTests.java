@@ -50,7 +50,9 @@ import org.junit.runners.Suite.SuiteClasses;
         TestFileUtil.class,
         TestMagicNumberInputStream.class,
         TestOpenAwareInputStream.class,
-        TestRandomAccessFileInputStream.class
+        TestRandomAccessFileInputStream.class,
+        
+        TestTextLineParser.class
     }
     )
 public class AllCoreIOUnitTests {
