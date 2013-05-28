@@ -86,7 +86,7 @@ public final class ZtrChromatogramBuilder implements Builder<ZtrChromatogram>{
     public ZtrChromatogramBuilder(String id, File ztrFile) throws IOException{
         this(id);
         ZTRChromatogramFileBuilderVisitor visitor = new ZTRChromatogramFileBuilderVisitor(this);
-        ZtrChromatogramFileParser.parse(ztrFile, visitor); 
+        ZtrChromatogramParser.create(ztrFile).accept(visitor);
     }
     /**
      * Create a new {@link ZtrChromatogramBuilder} instance
@@ -106,7 +106,8 @@ public final class ZtrChromatogramBuilder implements Builder<ZtrChromatogram>{
     public ZtrChromatogramBuilder(String id, InputStream ztrStream) throws IOException{
         this(id);
         ZTRChromatogramFileBuilderVisitor visitor = new ZTRChromatogramFileBuilderVisitor(this);
-        ZtrChromatogramFileParser.parse(ztrStream, visitor); 
+        ZtrChromatogramParser.create(ztrStream).accept(visitor);
+        
     }
     /**
      * Create a new instance of {@link ZtrChromatogramBuilder}
