@@ -27,7 +27,10 @@ package org.jcvi.jillion.core;
 
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -35,8 +38,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.junit.Test;
 
@@ -48,6 +49,16 @@ public class TestRange{
         assertFalse(range.equals(null));
 
     }
+    
+    @Test(expected = NullPointerException.class)
+    public void getBeinNullCoordinateSystemShouldThrowNPE(){
+    	range.getBegin(null);
+    }
+    @Test(expected = NullPointerException.class)
+    public void getEndNullCoordinateSystemShouldThrowNPE(){
+    	range.getEnd(null);
+    }
+    
     @Test
     public void testEquals_sameRef_notEqual(){
         assertEquals(range,range);
