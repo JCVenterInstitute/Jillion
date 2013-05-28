@@ -8,7 +8,6 @@ public class TestLongRange extends AbstractTestRangeSubclasses{
 	@Override
 	protected Range getDifferentRange(){
 		Range range = Range.of(begin+5L, end+5L);
-		System.out.println(range);
 		return range;
 	}
 	@Override
