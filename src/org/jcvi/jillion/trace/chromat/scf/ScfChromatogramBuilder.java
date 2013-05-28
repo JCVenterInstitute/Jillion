@@ -39,7 +39,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.internal.trace.chromat.BasicChromatogramBuilder;
 import org.jcvi.jillion.internal.trace.chromat.scf.PrivateDataImpl;
-import org.jcvi.jillion.internal.trace.chromat.scf.SCFChromatogramImpl;
+import org.jcvi.jillion.internal.trace.chromat.scf.ScfChromatogramImpl;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
 
 /**
@@ -89,7 +89,7 @@ public final class ScfChromatogramBuilder implements Builder<ScfChromatogram>{
     public ScfChromatogramBuilder(String id, File scfFile) throws IOException{
 		this(id);
 		SCFChromatogramFileBuilderVisitor visitor = new SCFChromatogramFileBuilderVisitor(this);
-	    ScfChromatogramFileParser.parse(scfFile, visitor);       
+	    ScfChromatogramParser.create(scfFile).accept(visitor);       
     }
     /**
      * Create a new ScfChromatogramBuilder instance
@@ -109,7 +109,7 @@ public final class ScfChromatogramBuilder implements Builder<ScfChromatogram>{
     public ScfChromatogramBuilder(String id, InputStream scfInputStream) throws IOException{
 		this(id);
 		SCFChromatogramFileBuilderVisitor visitor = new SCFChromatogramFileBuilderVisitor(this);
-	    ScfChromatogramFileParser.parse(scfInputStream, visitor);       
+		ScfChromatogramParser.create(scfInputStream).accept(visitor);      
     }
     /**
      * Create a new instance of ScfChromatogramBuilder
@@ -212,7 +212,7 @@ public final class ScfChromatogramBuilder implements Builder<ScfChromatogram>{
 
     public ScfChromatogram build() {
         Chromatogram basicChromo = basicBuilder.build();
-        return new SCFChromatogramImpl(basicChromo,
+        return new ScfChromatogramImpl(basicChromo,
                 substitutionConfidence(),
                 insertionConfidence(),
                 deletionConfidence(),

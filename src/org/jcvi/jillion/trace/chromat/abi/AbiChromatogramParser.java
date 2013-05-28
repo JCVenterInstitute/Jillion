@@ -20,9 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.chromat.abi;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -73,9 +73,8 @@ import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
  * @author dkatzel
  *
  */
-public final class AbiFileParser {
+public abstract class AbiChromatogramParser {
 
-	
 	
 	private static final byte ZERO_QUALITY = (byte)0;
 	private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("EEE dd MMM HH:mm:ss yyyy", Locale.US);
@@ -94,30 +93,29 @@ public final class AbiFileParser {
 	 */
 	private static final int CURRENT_VERSION =1;
 	
-	private AbiFileParser() {
-		//can not instantiate
+	
+	public static AbiChromatogramParser create(File abiFile){
+		return new AbiFileChromatogramParser(abiFile);
+	}
+	public static AbiChromatogramParser create(InputStream in){
+		return new InputStreamChromatogramParser(in);
+	}
+	
+	private AbiChromatogramParser() {
+		//can not instantiate outside this file
 	}
 	/**
 	 * Parse the given Applied BioSystems 
 	 * "ab1" formatted chromatogram file
 	 * and call the appropriate visitXXX
 	 * methods on the given {@link ChromatogramFileVisitor}.
-	 * @param ab1File the ab1 file to be parsed.
 	 * @param visitor  {@link ChromatogramFileVisitor} to call visitXXX
 	 * methods on.
-	 * @throws FileNotFoundException if the given File does not exist.
-	 * @throws TraceDecoderException if there are problems 
+	 * @throws IOException if there are problems 
 	 * parsing the chromatogram.
 	 */
-	public static void parse(File ab1File, ChromatogramFileVisitor visitor) throws FileNotFoundException, TraceDecoderException{
-		InputStream in = null;
-		try{
-			in = new FileInputStream(ab1File);
-			parse(in, visitor);
-		}finally{
-			IOUtil.closeAndIgnoreErrors(in);
-		}
-	}
+	public abstract void accept(ChromatogramFileVisitor visitor) throws IOException;
+	
 	/**
 	 * Parse the given Applied BioSystems 
 	 * "ab1" formatted chromatogram InputStream.
@@ -129,7 +127,7 @@ public final class AbiFileParser {
 	 * @throws TraceDecoderException if there are problems 
 	 * parsing the chromatogram.
 	 */
-	public static void parse(InputStream in, ChromatogramFileVisitor visitor) throws TraceDecoderException{
+	private static void parse(InputStream in, ChromatogramFileVisitor visitor) throws TraceDecoderException{
 			verifyMagicNumber(in);
 			visitor.visitNewTrace();
 			long numberOfTaggedRecords = parseNumTaggedRecords(in);
@@ -910,5 +908,51 @@ public final class AbiFileParser {
 	    }
 	}
 	
-	
+	 private static final class AbiFileChromatogramParser  extends AbiChromatogramParser{
+	    	private final File abiFile;
+
+			public AbiFileChromatogramParser(File abiFile) {
+				if(abiFile ==null){
+					throw new NullPointerException("abi file can not be null");
+				}
+				this.abiFile = abiFile;
+			}
+
+			@Override
+			public void accept(ChromatogramFileVisitor visitor) throws IOException {
+				InputStream in = new BufferedInputStream(new FileInputStream(abiFile));
+				try{
+					parse(in, visitor);
+				}finally{
+					IOUtil.closeAndIgnoreErrors(in);
+				}
+				
+			}
+	    	
+	    	
+	    }
+	    
+	    private static final class InputStreamChromatogramParser  extends AbiChromatogramParser{
+	    	private final InputStream in;
+	    	private volatile boolean readAlready=false;
+	    	
+			public InputStreamChromatogramParser(InputStream in) {
+				if(in ==null){
+					throw new NullPointerException("inputstream can not be null");
+				}
+				this.in = in;
+			}
+
+			@Override
+			public synchronized void accept(ChromatogramFileVisitor visitor) throws IOException {
+				if(readAlready){
+					throw new IllegalStateException("already parsed inputstream");
+				}
+				readAlready=true;
+				parse(in, visitor);			
+				
+			}
+	    	
+	    	
+	    }
 }

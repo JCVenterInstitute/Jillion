@@ -47,7 +47,7 @@ import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.internal.trace.chromat.BasicChromatogram;
 import org.jcvi.jillion.internal.trace.chromat.DefaultChannel;
 import org.jcvi.jillion.internal.trace.chromat.DefaultChannelGroup;
-import org.jcvi.jillion.internal.trace.chromat.scf.SCFChromatogramImpl;
+import org.jcvi.jillion.internal.trace.chromat.scf.ScfChromatogramImpl;
 import org.jcvi.jillion.internal.trace.chromat.ztr.ZTRChromatogramImpl;
 import org.jcvi.jillion.trace.Trace;
 import org.jcvi.jillion.trace.chromat.Channel;
@@ -297,7 +297,7 @@ public final class ChromatogramXMLSerializer {
                  ScfChromatogram chromatogram = (ScfChromatogram)oldInstance;
 
                  return new Expression(chromatogram,
-                         SCFChromatogramImpl.class,
+                         ScfChromatogramImpl.class,
                                        "new",
                                        new Object[]{
                      new BasicChromatogram(chromatogram), 
@@ -336,7 +336,7 @@ public final class ChromatogramXMLSerializer {
         e.setPersistenceDelegate(DefaultChannelGroup.class, new ChannelGroupPersistenceDelegate());
         e.setPersistenceDelegate(BasicChromatogram.class, new BasicChromatogramPersistenceDelegate());
         e.setPersistenceDelegate(ZTRChromatogramImpl.class, new ZTRChromatogramPersistenceDelegate());
-        e.setPersistenceDelegate(SCFChromatogramImpl.class, new SCFChromatogramPersistenceDelegate());
+        e.setPersistenceDelegate(ScfChromatogramImpl.class, new SCFChromatogramPersistenceDelegate());
         e.writeObject(chromatogram);
         e.close();
     }

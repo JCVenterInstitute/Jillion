@@ -93,4 +93,19 @@ public interface SffFlowgram extends Trace {
      * @return a new short array; never null
      */
     short[] getRawEncodedFlowValues();
+    
+    /**
+     * Compares this {@link SffFlowgram} with the specified Object for equality.
+     * This method considers two {@link SffFlowgram} objects equal 
+     * only if they are have equal id, basecalls, flowvalues, qualities and clip points.
+     */
+    @Override
+    boolean equals(Object obj);
+    
+    /**
+     * Returns the hash code for this {@link SffFlowgram}.
+     * Hash code based on hashcodes for id, basecalls, flowvalues, qualities and clip points.
+     */
+    @Override
+    public int hashCode();
 }

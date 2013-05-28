@@ -21,7 +21,7 @@
 package org.jcvi.jillion.trace.chromat.abi;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +45,6 @@ import org.jcvi.jillion.internal.trace.chromat.abi.tag.TimeTaggedDataRecord;
 import org.jcvi.jillion.internal.trace.chromat.abi.tag.UserDefinedTaggedDataRecord;
 import org.jcvi.jillion.internal.trace.chromat.abi.tag.rate.ScanRate;
 import org.jcvi.jillion.internal.trace.chromat.abi.tag.rate.ScanRateTaggedDataType;
-import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.chromat.ChannelGroup;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
 
@@ -66,16 +65,16 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
     	this.id = id;
     }
     
-    public AbiChromatogramBuilder(String id, File abiFile) throws FileNotFoundException, TraceDecoderException{
+    public AbiChromatogramBuilder(String id, File abiFile) throws IOException{
     	AbiChromatogramBuilderVisitor visitor = new AbiChromatogramBuilderVisitor(id);
-    	AbiFileParser.parse(abiFile, visitor);
+    	AbiChromatogramParser.create(abiFile).accept(visitor);
     	currentBuilder = visitor.currentBuilder;
     	originalBuilder = visitor.originalBuilder;
     	this.id=id;
     }
-    public AbiChromatogramBuilder(String id, InputStream abiFileStream) throws FileNotFoundException, TraceDecoderException{
+    public AbiChromatogramBuilder(String id, InputStream abiFileStream) throws IOException{
     	AbiChromatogramBuilderVisitor visitor = new AbiChromatogramBuilderVisitor(id);
-    	AbiFileParser.parse(abiFileStream, visitor);
+    	AbiChromatogramParser.create(abiFileStream).accept(visitor);
     	currentBuilder = visitor.currentBuilder;
     	originalBuilder = visitor.originalBuilder;
     	this.id=id;

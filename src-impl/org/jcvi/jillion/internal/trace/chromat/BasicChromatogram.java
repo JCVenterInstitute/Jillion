@@ -135,6 +135,7 @@ public class BasicChromatogram implements Chromatogram {
         final int prime = 31;
         int result = 1;
         result = prime * result + getChannelGroup().hashCode();
+        result = prime * result +  (qualities==null? 0 :qualities.hashCode());
         result = prime * result +  basecalls.hashCode();
         result = prime * result +  positions.hashCode();
         result = prime * result +  properties.hashCode();
@@ -151,8 +152,11 @@ public class BasicChromatogram implements Chromatogram {
         }
         final Chromatogram other = (Chromatogram) obj;
 
-        return ObjectsUtil.nullSafeEquals(getNucleotideSequence(), other.getNucleotideSequence())
-        && ObjectsUtil.nullSafeEquals(getPositionSequence(), other.getPositionSequence())
+        return 
+        		id.equals(other.getId()) && 
+        		ObjectsUtil.nullSafeEquals(getNucleotideSequence(), other.getNucleotideSequence())
+        && ObjectsUtil.nullSafeEquals(getQualitySequence(), other.getQualitySequence())
+        		&& ObjectsUtil.nullSafeEquals(getPositionSequence(), other.getPositionSequence())
         && ObjectsUtil.nullSafeEquals(getChannelGroup(), other.getChannelGroup())
         && ObjectsUtil.nullSafeEquals(getComments(), other.getComments());
     }

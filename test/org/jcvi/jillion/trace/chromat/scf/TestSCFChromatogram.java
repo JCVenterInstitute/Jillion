@@ -33,7 +33,7 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.internal.trace.chromat.BasicChromatogram;
-import org.jcvi.jillion.internal.trace.chromat.scf.SCFChromatogramImpl;
+import org.jcvi.jillion.internal.trace.chromat.scf.ScfChromatogramImpl;
 import org.jcvi.jillion.trace.chromat.ChannelGroup;
 import org.jcvi.jillion.trace.chromat.scf.PrivateData;
 import org.junit.Test;
@@ -56,7 +56,7 @@ public class TestSCFChromatogram {
     BasicChromatogram basicChromatogram = new BasicChromatogram("id",basecalls, qualities,mockPeaks, mockChannelGroup,
             expectedProperties);
 
-    SCFChromatogramImpl sut = new SCFChromatogramImpl(basicChromatogram,
+    ScfChromatogramImpl sut = new ScfChromatogramImpl(basicChromatogram,
             mockSubstitutionConfidence,
             mockInsertionConfidence,
             mockDeletionConfidence,
@@ -98,7 +98,7 @@ public class TestSCFChromatogram {
 
     @Test
     public void equalsSameValues(){
-        SCFChromatogramImpl sameValues = new SCFChromatogramImpl(basicChromatogram,
+        ScfChromatogramImpl sameValues = new ScfChromatogramImpl(basicChromatogram,
                 mockSubstitutionConfidence,
                 mockInsertionConfidence,
                 mockDeletionConfidence,
@@ -109,7 +109,7 @@ public class TestSCFChromatogram {
 
     @Test
     public void notEqualsNullSubstitution(){
-        SCFChromatogramImpl hasNullSubstitution = new SCFChromatogramImpl(basicChromatogram,
+        ScfChromatogramImpl hasNullSubstitution = new ScfChromatogramImpl(basicChromatogram,
                 null,
                 mockInsertionConfidence,
                 mockDeletionConfidence,
@@ -121,7 +121,7 @@ public class TestSCFChromatogram {
     @Test
     public void notEqualsDifferentSubstitution(){
     	QualitySequence differentSub = createMock(QualitySequence.class);
-        SCFChromatogramImpl hasDifferentSubstitution = new SCFChromatogramImpl(basicChromatogram,
+        ScfChromatogramImpl hasDifferentSubstitution = new ScfChromatogramImpl(basicChromatogram,
                 differentSub,
                 mockInsertionConfidence,
                 mockDeletionConfidence,
@@ -132,7 +132,7 @@ public class TestSCFChromatogram {
 
     @Test
     public void notEqualsNullInsertion(){
-        SCFChromatogramImpl hasNullInsertion = new SCFChromatogramImpl(basicChromatogram,
+        ScfChromatogramImpl hasNullInsertion = new ScfChromatogramImpl(basicChromatogram,
                 mockSubstitutionConfidence,
                 null,
                 mockDeletionConfidence,
@@ -144,7 +144,7 @@ public class TestSCFChromatogram {
     @Test
     public void notEqualsDifferentInsertion(){
     	QualitySequence differentInsertion = createMock(QualitySequence.class);
-        SCFChromatogramImpl hasDifferentInsertion = new SCFChromatogramImpl(basicChromatogram,
+        ScfChromatogramImpl hasDifferentInsertion = new ScfChromatogramImpl(basicChromatogram,
                 mockSubstitutionConfidence,
                 differentInsertion,
                 mockDeletionConfidence,
@@ -155,7 +155,7 @@ public class TestSCFChromatogram {
 
     @Test
     public void notEqualsNullDeletion(){
-        SCFChromatogramImpl hasNullDeletion = new SCFChromatogramImpl(basicChromatogram,
+        ScfChromatogramImpl hasNullDeletion = new ScfChromatogramImpl(basicChromatogram,
                 mockSubstitutionConfidence,
                 mockInsertionConfidence,
                 null,
@@ -167,7 +167,7 @@ public class TestSCFChromatogram {
     @Test
     public void notEqualsDifferentDeletion(){
     	QualitySequence differentDeletion = createMock(QualitySequence.class);
-        SCFChromatogramImpl hasDifferentDeletion = new SCFChromatogramImpl(basicChromatogram,
+        ScfChromatogramImpl hasDifferentDeletion = new ScfChromatogramImpl(basicChromatogram,
                 mockSubstitutionConfidence,
                 mockInsertionConfidence,
                 differentDeletion,
@@ -178,7 +178,7 @@ public class TestSCFChromatogram {
 
     @Test
     public void notEqualsNullPrivateData(){
-        SCFChromatogramImpl hasNullPrivateData = new SCFChromatogramImpl(basicChromatogram,
+        ScfChromatogramImpl hasNullPrivateData = new ScfChromatogramImpl(basicChromatogram,
                 mockSubstitutionConfidence,
                 mockInsertionConfidence,
                 mockDeletionConfidence,
@@ -190,7 +190,7 @@ public class TestSCFChromatogram {
     @Test
     public void notEqualsDifferentPrivateData(){
     	PrivateData differentPrivateData = createMock(PrivateData.class);
-        SCFChromatogramImpl hasDifferentPrivateData = new SCFChromatogramImpl(basicChromatogram,
+        ScfChromatogramImpl hasDifferentPrivateData = new ScfChromatogramImpl(basicChromatogram,
                 mockSubstitutionConfidence,
                 mockInsertionConfidence,
                 mockDeletionConfidence,

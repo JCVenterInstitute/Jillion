@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jcvi.jillion.internal.trace.chromat.scf.SCFChromatogramImpl;
+import org.jcvi.jillion.internal.trace.chromat.scf.ScfChromatogramImpl;
 import org.jcvi.jillion.internal.trace.chromat.scf.header.SCFHeader;
 import org.jcvi.jillion.internal.trace.chromat.scf.section.CommentSectionCodec;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
@@ -41,7 +41,7 @@ public class AbstractTestCommentSection {
     CommentSectionCodec sut = new CommentSectionCodec();
     SCFHeader mockHeader;
     ScfChromatogramBuilder chromaStruct;
-    SCFChromatogramImpl mockChroma;
+    ScfChromatogramImpl mockChroma;
     int currentOffset = 0;
     Map<String,String> expectedComments;
     String id = "id";
@@ -49,7 +49,7 @@ public class AbstractTestCommentSection {
     public void setup(){
         mockHeader = createMock(SCFHeader.class);
         chromaStruct = new ScfChromatogramBuilder(id);
-        mockChroma = createMock(SCFChromatogramImpl.class);
+        mockChroma = createMock(ScfChromatogramImpl.class);
         expectedComments = new HashMap<String,String>();
         expectedComments.put("key","value");
         expectedComments.put("test","testing");

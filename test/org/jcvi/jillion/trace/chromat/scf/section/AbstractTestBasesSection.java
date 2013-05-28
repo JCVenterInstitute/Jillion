@@ -42,7 +42,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.trace.chromat.BasicChromatogram;
 import org.jcvi.jillion.internal.trace.chromat.DefaultChannel;
 import org.jcvi.jillion.internal.trace.chromat.DefaultChannelGroup;
-import org.jcvi.jillion.internal.trace.chromat.scf.SCFChromatogramImpl;
+import org.jcvi.jillion.internal.trace.chromat.scf.ScfChromatogramImpl;
 import org.jcvi.jillion.internal.trace.chromat.scf.header.SCFHeader;
 import org.jcvi.jillion.internal.trace.chromat.scf.section.AbstractBasesSectionCodec;
 import org.jcvi.jillion.trace.chromat.ChannelGroup;
@@ -53,7 +53,7 @@ public abstract class AbstractTestBasesSection {
     
     protected NucleotideSequence encodedBases = new NucleotideSequenceBuilder(DECODED_BASES).build();
     protected SCFHeader mockHeader;
-    protected SCFChromatogramImpl chromatogram;
+    protected ScfChromatogramImpl chromatogram;
     protected byte[] calledConfidence = new byte[]{40,40,40,40,63,38,38,38};
     protected QualitySequence encodedQualities =  new QualitySequenceBuilder(calledConfidence).build();
     protected byte[] aConfidence = new byte[]{40,3,4,2,38,0,2,1};
@@ -81,7 +81,7 @@ public abstract class AbstractTestBasesSection {
                 "id",encodedBases,encodedQualities,
                 new PositionSequenceBuilder(peaks).build(),
                 channelGroup);
-        chromatogram = new SCFChromatogramImpl(basicChromatogram);
+        chromatogram = new ScfChromatogramImpl(basicChromatogram);
 
         sut = createAbstractBasesSectionHandler();
     }
@@ -100,7 +100,7 @@ public abstract class AbstractTestBasesSection {
     /**
      * @return the chromatogram
      */
-    public SCFChromatogramImpl getChromatogram() {
+    public ScfChromatogramImpl getChromatogram() {
         return chromatogram;
     }
     /**
@@ -128,14 +128,14 @@ public abstract class AbstractTestBasesSection {
     }
     protected void addOptionalConfidences(){
 
-        chromatogram = new SCFChromatogramImpl(chromatogram,
+        chromatogram = new ScfChromatogramImpl(chromatogram,
                                         new QualitySequenceBuilder(subsitutionConfidence).build(),
                                         new QualitySequenceBuilder(insertionConfidence).build(),
                                         new QualitySequenceBuilder(deletionConfidence).build(),null
                                         );
     }
     protected void removeSubstitutionConfidence() {
-        chromatogram = new SCFChromatogramImpl(chromatogram,
+        chromatogram = new ScfChromatogramImpl(chromatogram,
                 null,
                 new QualitySequenceBuilder(insertionConfidence).build(),
                 new QualitySequenceBuilder(deletionConfidence).build(),null
@@ -143,7 +143,7 @@ public abstract class AbstractTestBasesSection {
 
     }
     protected void removeInsertionConfidence() {
-        chromatogram = new SCFChromatogramImpl(chromatogram,
+        chromatogram = new ScfChromatogramImpl(chromatogram,
                 new QualitySequenceBuilder(subsitutionConfidence).build(),
                 null,
                 new QualitySequenceBuilder(deletionConfidence).build(),null
@@ -151,7 +151,7 @@ public abstract class AbstractTestBasesSection {
 
     }
     protected void removeDeletionConfidence() {
-        chromatogram = new SCFChromatogramImpl(chromatogram,
+        chromatogram = new ScfChromatogramImpl(chromatogram,
                 new QualitySequenceBuilder(subsitutionConfidence).build(),
                 new QualitySequenceBuilder(insertionConfidence).build(),
                 null,null
