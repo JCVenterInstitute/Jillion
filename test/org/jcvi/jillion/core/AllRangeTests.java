@@ -29,6 +29,18 @@ import org.junit.runners.Suite.SuiteClasses;
     {
     	 TestRange.class,
     	 TestRangeWithEdgeCases.class,
+    	 
+    	 
+    	 TestByteRange.class,
+    	 TestEmptyByteRange.class,
+    	 TestEmptyIntRange.class,
+    	 TestEmptyLongRange.class,
+    	 TestEmptyShortRange.class,
+    	 TestIntRange.class,
+    	 TestShortRange.class,
+    	 TestLongRange.class,
+    	 
+    	 
          TestDirectedRange.class,
          TestRangeArrivalComparator.class,
          TestRangeDepartureComparator.class,
@@ -37,6 +49,9 @@ import org.junit.runners.Suite.SuiteClasses;
          TestRangeIterator.class,
          TestRangeComparatorShortestToLongest.class,
          TestRangeComparatorLongestToShortest.class
+         
+        
+         
     }
     )
 public class AllRangeTests {
