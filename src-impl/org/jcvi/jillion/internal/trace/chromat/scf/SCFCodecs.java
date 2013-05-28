@@ -110,14 +110,13 @@ public enum SCFCodecs implements SCFCodec{
        
     }
     public void parse(DataInputStream dataIn,SCFHeader header, ChromatogramFileVisitor visitor) throws SectionDecoderException{
-        visitor.visitNewTrace();
         SortedMap<Integer, Section> sectionsByOffset = createSectionsByOffsetMap(header);
         long currentOffset =HEADER_SIZE;
         for(Entry<Integer, Section> entry: sectionsByOffset.entrySet()){
         	SectionDecoder sp=sectionCodecFactory.getSectionParserFor(entry.getValue(), header);
            currentOffset = sp.decode(dataIn, currentOffset, header, visitor);
         }
-        visitor.visitEndOfTrace();
+        visitor.visitEnd();
     }
     
     @Override

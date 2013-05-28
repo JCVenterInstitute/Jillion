@@ -372,18 +372,11 @@ public final class ScfChromatogramBuilder implements Builder<ScfChromatogram>{
             builder.tConfidence(confidence);            
         }
         
-        /**
-         * {@inheritDoc}
-         */
-         @Override
-         public synchronized void visitNewTrace() { 
-       	  	//no-op
-         }
          /**
          * {@inheritDoc}
          */
          @Override
-         public synchronized void visitEndOfTrace() { 
+         public synchronized void visitEnd() { 
        	  	//no-op
          }
 

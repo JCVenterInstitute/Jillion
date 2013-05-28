@@ -129,7 +129,6 @@ public abstract class AbiChromatogramParser {
 	 */
 	private static void parse(InputStream in, ChromatogramFileVisitor visitor) throws TraceDecoderException{
 			verifyMagicNumber(in);
-			visitor.visitNewTrace();
 			long numberOfTaggedRecords = parseNumTaggedRecords(in);
 			int datablockOffset = parseTaggedRecordOffset(in);
 			//All the record info is actually stored
@@ -150,7 +149,7 @@ public abstract class AbiChromatogramParser {
 			parsePeakData(groupedDataRecordMap,traceData,visitor);
 			parseQualityData(groupedDataRecordMap,traceData,basecalls,visitor);
 			parseCommentsFrom(comments,groupedDataRecordMap,channelOrder,traceData,signalScale,basecalls,visitor);
-            visitor.visitEndOfTrace();
+            visitor.visitEnd();
 	}
 
 	private static String parseSignalScalingFactor(

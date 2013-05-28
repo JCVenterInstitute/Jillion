@@ -32,10 +32,12 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  *
  */
 public interface ChromatogramFileVisitor{
-
-	void visitNewTrace();
-    
-    void visitEndOfTrace();
+    /**
+     * The end of the chromatogram has been 
+     * visited.  There will be no more visitXXX methods
+     * called for this chromatogram.
+     */
+    void visitEnd();
 	/**
      * Visit the basecalls in the chromatogram file
      * being visited.
