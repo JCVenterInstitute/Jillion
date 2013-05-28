@@ -59,9 +59,16 @@ public final class MagicNumberInputStream extends InputStream{
     public MagicNumberInputStream(InputStream in) throws IOException{
         this(in,4);
     }
-    
+    /**
+     * Convenience constructor which defaults to a magic number
+     * size of 4 bytes. 
+     * @param file the File to read as an InputStream.
+     * @throws IOException if there is a problem reading 
+     * the inputStream for {@code sizeOfMagicNumber} bytes.
+     * @see #MagicNumberInputStream(InputStream, int)
+     */
     public MagicNumberInputStream(File file) throws IOException{
-        this(new BufferedInputStream(new FileInputStream(file),4));
+        this(new BufferedInputStream(new FileInputStream(file)),4);
     }
     /**
      * Wraps the given {@link InputStream} and reads the 
