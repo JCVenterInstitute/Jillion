@@ -134,6 +134,7 @@ public class BasicChromatogram implements Chromatogram {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result +  id.hashCode();
         result = prime * result + getChannelGroup().hashCode();
         result = prime * result +  (qualities==null? 0 :qualities.hashCode());
         result = prime * result +  basecalls.hashCode();
