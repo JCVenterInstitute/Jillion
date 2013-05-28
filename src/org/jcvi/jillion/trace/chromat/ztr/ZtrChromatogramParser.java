@@ -77,7 +77,6 @@ public abstract class ZtrChromatogramParser {
      */
     protected void parse(InputStream ztrStream, ChromatogramFileVisitor visitor) throws TraceDecoderException{
         parseHeader(ztrStream);
-        visitor.visitNewTrace();
         Chunk currentChunk = parseNextChunk(ztrStream);
         NucleotideSequence basecalls = null;
         while(currentChunk !=null){
@@ -85,7 +84,7 @@ public abstract class ZtrChromatogramParser {
 
             currentChunk = parseNextChunk(ztrStream);
         }
-        visitor.visitEndOfTrace();
+        visitor.visitEnd();
     }
     
     /**

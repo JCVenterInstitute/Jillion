@@ -314,19 +314,11 @@ public final class ZtrChromatogramBuilder implements Builder<ZtrChromatogram>{
 
             builder.tConfidence(confidence);            
         }
-        
-        /**
-         * {@inheritDoc}
-         */
-         @Override
-         public void visitNewTrace() {
-        	 //no-op
-         }
          /**
          * {@inheritDoc}
          */
          @Override
-         public void visitEndOfTrace() {
+         public void visitEnd() {
         	 //no-op
          }
 

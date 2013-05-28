@@ -486,16 +486,7 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
         * {@inheritDoc}
         */
         @Override
-        public void visitNewTrace() {
-         // TODO Auto-generated method stub
-            
-        }
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public void visitEndOfTrace() {
+        public void visitEnd() {
             // TODO Auto-generated method stub
             
         }
