@@ -38,6 +38,7 @@ import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramFileParser;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramBuilder;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramFileParser;
+import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramParser;
 
 public final class ChromatogramFactory {
 
@@ -96,7 +97,7 @@ public final class ChromatogramFactory {
 		if(AbiUtil.isABIMagicNumber(magicNumber)){
 			AbiFileParser.parse(mIn, visitor);
 		}else if(ZTRUtil.isMagicNumber(magicNumber)){
-			ZtrChromatogramFileParser.parse(mIn, visitor);
+			ZtrChromatogramParser.create(mIn).accept(visitor);
 		}else if(SCFUtils.isMagicNumber(magicNumber)){
 			ScfChromatogramFileParser.parse(mIn, visitor);
 		}else{
