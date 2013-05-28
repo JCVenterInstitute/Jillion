@@ -26,12 +26,10 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.jcvi.jillion.internal.trace.chromat.scf.SCFChromatogramImpl;
+import org.jcvi.jillion.internal.trace.chromat.scf.ScfChromatogramImpl;
 import org.jcvi.jillion.trace.Trace;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.chromat.ChromatogramXMLSerializer;
-import org.jcvi.jillion.trace.chromat.scf.ScfChromatogram;
-import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
 import org.junit.Test;
 
 /**
@@ -42,11 +40,11 @@ import org.junit.Test;
 public class TestSCFChromatogramFile {
 
     private static final ResourceHelper RESOURCES = new ResourceHelper(TestSCFChromatogramFile.class);
-    private static final SCFChromatogramImpl EXPECTED_SCF;
+    private static final ScfChromatogramImpl EXPECTED_SCF;
     static{
         try {
             Trace fromXML = ChromatogramXMLSerializer.fromXML(RESOURCES.getFileAsStream("files/GBKAK82TF.scf.xml"));
-            EXPECTED_SCF= (SCFChromatogramImpl)fromXML;
+            EXPECTED_SCF= (ScfChromatogramImpl)fromXML;
         } catch (Exception e) {
             throw new IllegalStateException("could not parse expected chromatogram",e);
         }
@@ -55,7 +53,7 @@ public class TestSCFChromatogramFile {
     @Test
     public void parseScfFile() throws IOException, TraceDecoderException{
         File scfFile = RESOURCES.getFile("files/GBKAK82TF.scf");
-        ScfChromatogram actual = new ScfChromatogramBuilder(scfFile.getName(), scfFile)
+        ScfChromatogram actual = new ScfChromatogramBuilder("id", scfFile)
 									.build();
         assertEquals(EXPECTED_SCF, actual);
     }
@@ -63,7 +61,7 @@ public class TestSCFChromatogramFile {
     @Test
     public void scfWithGaps() throws IOException, TraceDecoderException{
         File scfFile = RESOURCES.getFile("files/containsGaps.scf");
-        ScfChromatogram actual = new ScfChromatogramBuilder(scfFile.getName(), scfFile)
+        ScfChromatogram actual = new ScfChromatogramBuilder("id", scfFile)
 									.build();
         assertEquals(actual.getNucleotideSequence().toString(), "-----");
         

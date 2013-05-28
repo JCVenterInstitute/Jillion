@@ -35,13 +35,8 @@ import java.io.OutputStream;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.jcvi.jillion.internal.trace.chromat.scf.SCFChromatogramImpl;
-import org.jcvi.jillion.internal.trace.chromat.scf.SCFCodec;
-import org.jcvi.jillion.internal.trace.chromat.scf.SCFCodecs;
 import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
-import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramWriterBuilder;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramBuilder;
 import org.junit.Test;
 public abstract class AbstractTestConvertZtr2Scf {
@@ -50,7 +45,7 @@ public abstract class AbstractTestConvertZtr2Scf {
     @Test
     public void ztr2scf() throws TraceDecoderException, IOException{
         
-        Chromatogram decodedZTR = new ZtrChromatogramBuilder("GBKAK82TF.ztr", RESOURCES.getFile("ztr/files/GBKAK82TF.ztr"))
+        Chromatogram decodedZTR = new ZtrChromatogramBuilder("id", RESOURCES.getFile("ztr/files/GBKAK82TF.ztr"))
         											.build();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ChromatogramWriter writer = createScfWriter(out);
@@ -70,7 +65,7 @@ public abstract class AbstractTestConvertZtr2Scf {
     public void scfequalsZtr() throws TraceDecoderException, IOException{
         Chromatogram decodedScf = new ScfChromatogramBuilder("id", RESOURCES.getFile("scf/files/GBKAK82TF.scf"))
         							.build();
-        Chromatogram decodedZTR = new ZtrChromatogramBuilder("GBKAK82TF.ztr", RESOURCES.getFile("ztr/files/GBKAK82TF.ztr"))
+        Chromatogram decodedZTR = new ZtrChromatogramBuilder("id", RESOURCES.getFile("ztr/files/GBKAK82TF.ztr"))
 											.build();
         assertEquals(decodedZTR, decodedScf);        
     }
@@ -83,7 +78,7 @@ public abstract class AbstractTestConvertZtr2Scf {
      */
     @Test
     public void ztrWithNoQualitiesShouldGetPaddedQualitiesInScf() throws TraceDecoderException, IOException{
-        Chromatogram ztr = new ZtrChromatogramBuilder("GBKAK82TF.ztr", RESOURCES.getFile("ztr/files/515866_G07_AFIXF40TS_026.ab1.afg.trash.ztr"))
+        Chromatogram ztr = new ZtrChromatogramBuilder("id", RESOURCES.getFile("ztr/files/515866_G07_AFIXF40TS_026.ab1.afg.trash.ztr"))
 												.build();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         

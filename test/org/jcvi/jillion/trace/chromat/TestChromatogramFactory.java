@@ -25,9 +25,9 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
 
+import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.chromat.ChromatogramFactory;
 import org.jcvi.jillion.trace.chromat.abi.AbiChromatogram;
 import org.jcvi.jillion.trace.chromat.abi.AbiChromatogramBuilder;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogram;
@@ -45,26 +45,64 @@ public class TestChromatogramFactory {
     private final static ResourceHelper RESOURCES = new ResourceHelper(TestChromatogramFactory.class);
     
     @Test
-    public void parseZTR() throws TraceDecoderException, IOException{    	
+    public void parseZtrGivenName() throws TraceDecoderException, IOException{    	
         File ztrFile = RESOURCES.getFile(ZTR_FILE);
         ZtrChromatogram expected = new ZtrChromatogramBuilder(ztrFile.getName(), ztrFile).build();
+        ZtrChromatogram actual = (ZtrChromatogram) ChromatogramFactory.create(ztrFile.getName(), ztrFile);       
+        assertEquals(expected, actual);
+    }
+    @Test
+    public void parseZtrExtractNameFromFileName() throws TraceDecoderException, IOException{    	
+        File ztrFile = RESOURCES.getFile(ZTR_FILE);
+        String expectedId = extractNameFromFile(ztrFile);
+        ZtrChromatogram expected = new ZtrChromatogramBuilder(expectedId, ztrFile).build();
         ZtrChromatogram actual = (ZtrChromatogram) ChromatogramFactory.create(ztrFile);       
         assertEquals(expected, actual);
     }
     @Test
-    public void parseSCF3() throws TraceDecoderException, IOException{    	
+    public void parseScfGivenName() throws TraceDecoderException, IOException{    	
         File scfFile = RESOURCES.getFile(SCF3_FILE);
         ScfChromatogram expected = new ScfChromatogramBuilder(scfFile.getName(), scfFile)
+									.build();
+        ScfChromatogram actual = (ScfChromatogram) ChromatogramFactory.create(scfFile.getName(),scfFile);
+        assertEquals(expected, actual);
+    }
+    @Test
+    public void parseScfExtractNameFromFileName() throws TraceDecoderException, IOException{    	
+        File scfFile = RESOURCES.getFile(SCF3_FILE);
+        String expectedId = extractNameFromFile(scfFile);
+        ScfChromatogram expected = new ScfChromatogramBuilder(expectedId, scfFile)
 									.build();
         ScfChromatogram actual = (ScfChromatogram) ChromatogramFactory.create(scfFile);
         assertEquals(expected, actual);
     }
     @Test
-    public void parseAB1() throws TraceDecoderException, IOException{    	
+    public void parseAb1GivenName() throws TraceDecoderException, IOException{    	
         File ab1File = RESOURCES.getFile(AB1_FILE);
         AbiChromatogram expected = new AbiChromatogramBuilder(ab1File.getName(),ab1File)
         							.build();
+        AbiChromatogram actual = (AbiChromatogram) ChromatogramFactory.create(ab1File.getName(),ab1File);        
+        assertEquals(expected, actual);
+        
+    }
+    
+    @Test
+    public void parseAb1ExtractNameFromFileName() throws TraceDecoderException, IOException{    	
+        File ab1File = RESOURCES.getFile(AB1_FILE);
+        String expectedId = extractNameFromFile(ab1File);
+        AbiChromatogram expected = new AbiChromatogramBuilder(expectedId,ab1File)
+        							.build();
         AbiChromatogram actual = (AbiChromatogram) ChromatogramFactory.create(ab1File);        
         assertEquals(expected, actual);
+        
+    }
+	public String extractNameFromFile(File file) {
+		String expectedId = FileUtil.getBaseName(file);
+		return expectedId;
+	}
+    
+    @Test(expected = NullPointerException.class)
+    public void nullFileShouldThrowNPE() throws IOException{
+    	ChromatogramFactory.create(null);
     }
 }

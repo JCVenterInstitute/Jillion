@@ -39,7 +39,15 @@ import org.jcvi.jillion.trace.Trace;
  *
  */
 public interface Chromatogram extends Trace{
-   
+	/**
+     * Get the {@link PositionSequence}
+     * of the peak positions from the trace scan positions
+     * in the trace file.  The peaks are the positions
+     * that the basecaller determined are the scan points
+     * positions that are likely to be the bases.
+     * @return a {@link PositionSequence}; will never
+     * be null.
+     */
 	PositionSequence getPositionSequence();
     /**
      * Get the number of actual trace scan positions

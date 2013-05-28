@@ -78,5 +78,17 @@ public interface ScfChromatogram extends Chromatogram{
      * null if no data exists. 
      */
     QualitySequence getDeletionConfidence();
+    /**
+     * Two {@link ScfChromatogram}s are equal
+     * if and only if the ids, NucleotideSequece, 
+     * QualitySequence, PositionSequence,
+     * ChannelGroup, Comments,
+     * DeletionConfidence, InsertionConfidence, SubsitutionConfidence
+     * and PrivateData are all equal.
+     * @return {@code true} if equal; {@code false}
+     * otherwise.
+     */
+    @Override
+    boolean equals(Object obj);
 
 }

@@ -182,7 +182,7 @@ final class SffFlowgramImpl implements SffFlowgram {
 
 	/**
      * Returns the hash code for this {@link SffFlowgramImpl}.
-     * Hash code based on hashcodes for values, qualities, and clip points.
+     * Hash code based on hashcodes for id, basecalls, flowvalues, qualities and clip points.
      */
     @Override
     public int hashCode() {
@@ -200,9 +200,7 @@ final class SffFlowgramImpl implements SffFlowgram {
     /**
      * Compares this {@link SffFlowgramImpl} with the specified Object for equality.
      * This method considers two {@link SffFlowgramImpl} objects equal 
-     * only if they are have equal values, qualities and clip points. 
-     * (basecalls can be derived from the values so basecalls 
-     * are not taken into account).
+     * only if they are have equal id, basecalls, flowvalues, qualities and clip points.
      */
     @Override
     public boolean equals(Object obj) {

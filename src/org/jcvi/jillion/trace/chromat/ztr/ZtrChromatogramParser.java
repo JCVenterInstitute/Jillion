@@ -52,7 +52,7 @@ public abstract class ZtrChromatogramParser {
 		//can not instantiate
 	}
 	 /**
-     * Parse the ZTR encoded chromatogram
+     * Parse the ZTR encoded {@link org.jcvi.jillion.trace.chromat.Chromatogram}
      * and call the appropriate visitXXX methods of the given
      * visitor while parsing.
      * @param visitor the visitor instance to call visitXXX methods on

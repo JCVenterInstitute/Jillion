@@ -32,7 +32,7 @@ import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.jcvi.jillion.trace.chromat.scf.PrivateData;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogram;
 
-public class SCFChromatogramImpl extends BasicChromatogram implements ScfChromatogram {
+public class ScfChromatogramImpl extends BasicChromatogram implements ScfChromatogram {
 
     private PrivateData privateData;
 
@@ -40,10 +40,10 @@ public class SCFChromatogramImpl extends BasicChromatogram implements ScfChromat
     private QualitySequence insertionConfidence;
     private QualitySequence deletionConfidence;
 
-    public SCFChromatogramImpl(Chromatogram c){
+    public ScfChromatogramImpl(Chromatogram c){
         this(c,null,null,null,null);
     }
-    public SCFChromatogramImpl(Chromatogram c,
+    public ScfChromatogramImpl(Chromatogram c,
     		QualitySequence subtitutionConfidence,
     		QualitySequence insertionConfidence,
     		QualitySequence deletConfidence,

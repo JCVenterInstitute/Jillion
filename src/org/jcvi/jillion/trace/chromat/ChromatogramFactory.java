@@ -33,20 +33,50 @@ import org.jcvi.jillion.internal.trace.chromat.scf.SCFUtils;
 import org.jcvi.jillion.internal.trace.chromat.ztr.ZTRUtil;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.chromat.abi.AbiChromatogramBuilder;
-import org.jcvi.jillion.trace.chromat.abi.AbiFileParser;
+import org.jcvi.jillion.trace.chromat.abi.AbiChromatogramParser;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
-import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramFileParser;
+import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramParser;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramBuilder;
-import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramFileParser;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramParser;
-
+/**
+ * {@code ChromatogramFactory} is a Factory object
+ * that will create {@link Chromatogram}
+ * objects using the given encoded
+ * Chromatogram file.  This class
+ * supports ZTR, SCF and AB1 encoded
+ * Chromatograms so users do not 
+ * have to know which encoding the file
+ * uses.
+ * 
+ * @author dkatzel
+ *
+ */
 public final class ChromatogramFactory {
 
 	private ChromatogramFactory(){
 		//can not instantiate
 	}
-	
+	/**
+	 * Create a new {@link Chromatogram} object
+	 * using the given chromatogram file.
+	 * The Value returned by the {@link Chromatogram#getId()}
+	 * will be the chromatogram File's name without the file
+	 * extension.  For example, /path/to/foo.ztr will 
+	 * get an id of "foo".
+	 * 
+	 * @param chromatogramFile the chromatogram file
+	 * to parse and create a {@link Chromatogram}
+	 * object from.
+	 * @return a new {@link Chromatogram}
+	 * object; will never be null.
+	 * @throws IOException if there is a problem parsing
+	 * the file.
+	 * @throws NullPointerException if chromatogramFile is null.
+	 */
 	public static Chromatogram create(File chromatogramFile) throws IOException{
+		if(chromatogramFile== null){
+			throw new NullPointerException("file can not be null");
+		}
 		String id = FileUtil.getBaseName(chromatogramFile);
 		return create(id,chromatogramFile);
 	}
@@ -95,11 +125,11 @@ public final class ChromatogramFactory {
 			IOException {
 		byte[] magicNumber = mIn.peekMagicNumber();
 		if(AbiUtil.isABIMagicNumber(magicNumber)){
-			AbiFileParser.parse(mIn, visitor);
+			AbiChromatogramParser.create(mIn).accept(visitor);
 		}else if(ZTRUtil.isMagicNumber(magicNumber)){
 			ZtrChromatogramParser.create(mIn).accept(visitor);
 		}else if(SCFUtils.isMagicNumber(magicNumber)){
-			ScfChromatogramFileParser.parse(mIn, visitor);
+			ScfChromatogramParser.create(mIn).accept(visitor);
 		}else{
 			throw new IOException("unknown chromatogram format (not ab1, scf or ztr)");
 		}

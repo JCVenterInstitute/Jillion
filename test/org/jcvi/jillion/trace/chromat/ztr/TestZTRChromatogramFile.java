@@ -29,8 +29,6 @@ import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.internal.trace.chromat.ztr.ZTRChromatogramImpl;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.chromat.ChromatogramXMLSerializer;
-import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogram;
-import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramBuilder;
 import org.junit.Test;
 /**
  * @author dkatzel
@@ -52,7 +50,7 @@ public class TestZTRChromatogramFile {
     @Test
     public void parseZtrFile() throws IOException, TraceDecoderException{
         File ztrFile = RESOURCES.getFile("files/GBKAK82TF.ztr");
-        ZtrChromatogram actual = new ZtrChromatogramBuilder("GBKAK82TF.ztr",ztrFile).build();
+        ZtrChromatogram actual = new ZtrChromatogramBuilder("id",ztrFile).build();
         assertEquals(EXPECTED_ZTR, actual);
     }
     
