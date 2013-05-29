@@ -108,7 +108,7 @@ public class ChromatDirFastaConsedPhdAdaptedIterator extends QualFastaConsedPhdA
         final String id = fasta.getId();
        
         return new PhdBuilder(id, chromo.getNucleotideSequence(), chromo.getQualitySequence())
-        						.peaks(chromo.getPositionSequence())
+        						.peaks(chromo.getPeakSequence())
         						.comments(requiredComments)
         						.build();
     

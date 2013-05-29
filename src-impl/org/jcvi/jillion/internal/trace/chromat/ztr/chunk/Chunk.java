@@ -173,7 +173,7 @@ public enum Chunk {
 		@Override
 		public byte[] encodeChunk(Chromatogram ztrChromatogram)
 				throws TraceEncoderException {
-			PositionSequence peaks = ztrChromatogram.getPositionSequence();
+			PositionSequence peaks = ztrChromatogram.getPeakSequence();
 			ByteBuffer buffer = ByteBuffer.allocate((int)peaks.getLength()*4+4);
 			//raw byte + 3 pads
 			buffer.putInt(0);
@@ -302,10 +302,10 @@ public enum Chunk {
             populateConfidenceBuffers(basecalls, aConfidence, cConfidence,
                     gConfidence, tConfidence, calledConfidence, unCalledConfidence);
                
-            builder.aConfidence(aConfidence.array());
+            builder.aQualities(aConfidence.array());
             builder.cConfidence(cConfidence.array());
-            builder.gConfidence(gConfidence.array());
-            builder.tConfidence(tConfidence.array());
+            builder.gQualities(gConfidence.array());
+            builder.tQualities(tConfidence.array());
 
         }
 
@@ -404,10 +404,10 @@ public enum Chunk {
 			ByteBuffer otherConfidences = ByteBuffer.allocate(sequenceLength*3);
 			int i=0;
 			for(Nucleotide base : nucleotideSequence){
-				calledBaseConfidences.put(channelGroup.getChannel(base).getConfidence().get(i).getQualityScore());
+				calledBaseConfidences.put(channelGroup.getChannel(base).getQualitySequence().get(i).getQualityScore());
 				
 				for(Nucleotide other: getOtherChannelsThan(base)){
-					otherConfidences.put(channelGroup.getChannel(other).getConfidence().get(i).getQualityScore());
+					otherConfidences.put(channelGroup.getChannel(other).getQualitySequence().get(i).getQualityScore());
 				}
 				i++;
 			}
@@ -507,16 +507,16 @@ public enum Chunk {
 			ByteBuffer result = ByteBuffer.allocate(8 *numTracePositions+2);
 			//first 2 bytes are padding
 			result.putShort(PADDING_BYTE);
-				for(Position pos : channelGroup.getAChannel().getPositions()){
+				for(Position pos : channelGroup.getAChannel().getPositionSequence()){
 					result.putShort(IOUtil.toSignedShort(pos.getValue()));
 				}
-				for(Position pos : channelGroup.getCChannel().getPositions()){
+				for(Position pos : channelGroup.getCChannel().getPositionSequence()){
 					result.putShort(IOUtil.toSignedShort(pos.getValue()));
 				}
-				for(Position pos : channelGroup.getGChannel().getPositions()){
+				for(Position pos : channelGroup.getGChannel().getPositionSequence()){
 					result.putShort(IOUtil.toSignedShort(pos.getValue()));
 				}
-				for(Position pos : channelGroup.getTChannel().getPositions()){
+				for(Position pos : channelGroup.getTChannel().getPositionSequence()){
 					result.putShort(IOUtil.toSignedShort(pos.getValue()));
 				}
 				
@@ -543,7 +543,7 @@ public enum Chunk {
         protected void parseData(byte[] decodedData, ZtrChromatogramBuilder builder)
                 throws TraceDecoderException {
             InputStream in = new ByteArrayInputStream(decodedData);
-            builder.properties(parseText(in));
+            builder.comments(parseText(in));
         }
 
         protected Map<String,String> parseText(InputStream in)

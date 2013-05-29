@@ -98,16 +98,16 @@ public class TestSMP4Chunk extends EasyMockSupport{
     	ChannelGroup channelGroup = createMock(ChannelGroup.class);
     	
     	final Channel aChannel = createMock(Channel.class);
-    	expect(aChannel.getPositions()).andStubReturn(new PositionSequenceBuilder(aTraces).build());
+    	expect(aChannel.getPositionSequence()).andStubReturn(new PositionSequenceBuilder(aTraces).build());
     	
     	final Channel cChannel = createMock(Channel.class);
-    	expect(cChannel.getPositions()).andStubReturn(new PositionSequenceBuilder(cTraces).build());
+    	expect(cChannel.getPositionSequence()).andStubReturn(new PositionSequenceBuilder(cTraces).build());
     	
     	final Channel gChannel = createMock(Channel.class);
-    	expect(gChannel.getPositions()).andStubReturn(new PositionSequenceBuilder(gTraces).build());
+    	expect(gChannel.getPositionSequence()).andStubReturn(new PositionSequenceBuilder(gTraces).build());
     	
     	final Channel tChannel = createMock(Channel.class);
-    	expect(tChannel.getPositions()).andStubReturn(new PositionSequenceBuilder(tTraces).build());
+    	expect(tChannel.getPositionSequence()).andStubReturn(new PositionSequenceBuilder(tTraces).build());
     	
     	expect(channelGroup.getAChannel()).andStubReturn(aChannel);
     	expect(channelGroup.getCChannel()).andStubReturn(cChannel);

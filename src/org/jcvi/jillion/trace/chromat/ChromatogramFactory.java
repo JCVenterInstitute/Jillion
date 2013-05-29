@@ -33,11 +33,8 @@ import org.jcvi.jillion.internal.trace.chromat.scf.SCFUtils;
 import org.jcvi.jillion.internal.trace.chromat.ztr.ZTRUtil;
 import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.chromat.abi.AbiChromatogramBuilder;
-import org.jcvi.jillion.trace.chromat.abi.AbiChromatogramParser;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
-import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramParser;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramBuilder;
-import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramParser;
 /**
  * {@code ChromatogramFactory} is a Factory object
  * that will create {@link Chromatogram}
@@ -110,30 +107,8 @@ public final class ChromatogramFactory {
 			throw new IOException("unknown chromatogram format (not ab1, scf or ztr)");
 		}
 	}
-	public static void parse(File chromatogramFile, ChromatogramFileVisitor visitor) throws IOException{
-		MagicNumberInputStream mIn =null;
-        try{
-        	mIn= new MagicNumberInputStream(chromatogramFile);	        
-	        parseInputStream(visitor, mIn);
-        }finally{
-        	IOUtil.closeAndIgnoreErrors(mIn);
-        }
-	}
+	
 
-	private static void parseInputStream(ChromatogramFileVisitor visitor,
-			MagicNumberInputStream mIn) throws TraceDecoderException,
-			IOException {
-		byte[] magicNumber = mIn.peekMagicNumber();
-		if(AbiUtil.isABIMagicNumber(magicNumber)){
-			AbiChromatogramParser.create(mIn).accept(visitor);
-		}else if(ZTRUtil.isMagicNumber(magicNumber)){
-			ZtrChromatogramParser.create(mIn).accept(visitor);
-		}else if(SCFUtils.isMagicNumber(magicNumber)){
-			ScfChromatogramParser.create(mIn).accept(visitor);
-		}else{
-			throw new IOException("unknown chromatogram format (not ab1, scf or ztr)");
-		}
-	}
 	
 	
 }

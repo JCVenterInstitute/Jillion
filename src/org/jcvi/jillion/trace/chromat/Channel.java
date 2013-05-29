@@ -36,23 +36,18 @@ public interface Channel {
 	 * @param obj
 	 * @return
 	 */
-	public boolean equals(Object obj);
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	public int hashCode();
+	boolean equals(Object obj);
 
 	/**
 	 * Retrieves the phred Confidence values.
-	 * @return the confidence
+	 * @return the qualities
 	 */
-	public QualitySequence getConfidence();
+	QualitySequence getQualitySequence();
 
 	/**
 	 * Retrieves the trace sample position data.
 	 * @return the positions
 	 */
-	public PositionSequence getPositions();
+	PositionSequence getPositionSequence();
 
 }

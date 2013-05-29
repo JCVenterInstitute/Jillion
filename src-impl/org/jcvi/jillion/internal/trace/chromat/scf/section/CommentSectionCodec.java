@@ -70,7 +70,7 @@ public class CommentSectionCodec implements SectionCodec {
             for(Entry<Object,Object> entry : props.entrySet()){
                 map.put((String)entry.getKey(), (String) entry.getValue());
             }
-            c.properties(map);
+            c.comments(map);
             return currentOffset+bytesToSkip+comments.length;
         } catch (IOException e) {
             throw new SectionDecoderException("error parsing Comment",e);

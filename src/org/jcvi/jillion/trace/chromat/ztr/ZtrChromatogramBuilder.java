@@ -183,39 +183,39 @@ public final class ZtrChromatogramBuilder implements Builder<ZtrChromatogram>{
         return this;
     }
 
-    public final byte[] aConfidence() {
-        return basicBuilder.aConfidence();
+    public final byte[] aQualities() {
+        return basicBuilder.aQualities();
     }
 
-    public final ZtrChromatogramBuilder aConfidence(byte[] confidence) {
-        basicBuilder.aConfidence(confidence);
+    public final ZtrChromatogramBuilder aQualities(byte[] qualities) {
+        basicBuilder.aQualities(qualities);
         return this;
     }
 
-    public final byte[] cConfidence() {
-        return basicBuilder.cConfidence();
+    public final byte[] cQualities() {
+        return basicBuilder.cQualities();
     }
 
-    public final ZtrChromatogramBuilder cConfidence(byte[] confidence) {
-        basicBuilder.cConfidence(confidence);
+    public final ZtrChromatogramBuilder cConfidence(byte[] qualities) {
+        basicBuilder.cQualities(qualities);
         return this;
     }
 
-    public final byte[] gConfidence() {
-        return basicBuilder.gConfidence();
+    public final byte[] gQualities() {
+        return basicBuilder.gQualities();
     }
 
-    public final ZtrChromatogramBuilder gConfidence(byte[] confidence) {
-        basicBuilder.gConfidence(confidence);
+    public final ZtrChromatogramBuilder gQualities(byte[] qualities) {
+        basicBuilder.gQualities(qualities);
         return this;
     }
 
-    public final byte[] tConfidence() {
-        return basicBuilder.tConfidence();
+    public final byte[] tQualities() {
+        return basicBuilder.tQualities();
     }
 
-    public final ZtrChromatogramBuilder tConfidence(byte[] confidence) {
-        basicBuilder.tConfidence(confidence);
+    public final ZtrChromatogramBuilder tQualities(byte[] qualities) {
+        basicBuilder.tQualities(qualities);
         return this;
     }
 
@@ -255,12 +255,12 @@ public final class ZtrChromatogramBuilder implements Builder<ZtrChromatogram>{
         return this;
     }
 
-    public final Map<String,String> properties() {
-        return basicBuilder.properties();
+    public final Map<String,String> comments() {
+        return basicBuilder.comments();
     }
 
-    public final ZtrChromatogramBuilder properties(Map<String,String> properties) {
-        basicBuilder.properties(properties);
+    public final ZtrChromatogramBuilder comments(Map<String,String> comments) {
+        basicBuilder.comments(comments);
         return this;
     }
     
@@ -285,7 +285,7 @@ public final class ZtrChromatogramBuilder implements Builder<ZtrChromatogram>{
         */
         @Override
         public void visitAConfidence(byte[] confidence) {
-            builder.aConfidence(confidence);            
+            builder.aQualities(confidence);            
         }
 
         /**
@@ -303,7 +303,7 @@ public final class ZtrChromatogramBuilder implements Builder<ZtrChromatogram>{
         @Override
         public void visitGConfidence(byte[] confidence) {
 
-            builder.gConfidence(confidence);            
+            builder.gQualities(confidence);            
         }
 
         /**
@@ -312,7 +312,7 @@ public final class ZtrChromatogramBuilder implements Builder<ZtrChromatogram>{
         @Override
         public void visitTConfidence(byte[] confidence) {
 
-            builder.tConfidence(confidence);            
+            builder.tQualities(confidence);            
         }
          /**
          * {@inheritDoc}
@@ -356,7 +356,7 @@ public final class ZtrChromatogramBuilder implements Builder<ZtrChromatogram>{
           @Override
           public void visitComments(Map<String,String> comments) {
   
-              builder.properties(comments);              
+              builder.comments(comments);              
           }
 
           /**

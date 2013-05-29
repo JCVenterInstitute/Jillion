@@ -94,13 +94,13 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
     protected void writeBasesDataToBuffer(ByteBuffer buffer, ScfChromatogram c, int numberOfBases) {
         
      
-        Iterator<Position> peaks = c.getPositionSequence().iterator();
+        Iterator<Position> peaks = c.getPeakSequence().iterator();
         final ChannelGroup channelGroup = c.getChannelGroup();
         
-        Iterator<PhredQuality> aQualities = channelGroup.getAChannel().getConfidence().iterator();
-        Iterator<PhredQuality> cQualities = channelGroup.getCChannel().getConfidence().iterator();
-        Iterator<PhredQuality> gQualities = channelGroup.getGChannel().getConfidence().iterator();
-        Iterator<PhredQuality> tQualities = channelGroup.getTChannel().getConfidence().iterator();
+        Iterator<PhredQuality> aQualities = channelGroup.getAChannel().getQualitySequence().iterator();
+        Iterator<PhredQuality> cQualities = channelGroup.getCChannel().getQualitySequence().iterator();
+        Iterator<PhredQuality> gQualities = channelGroup.getGChannel().getQualitySequence().iterator();
+        Iterator<PhredQuality> tQualities = channelGroup.getTChannel().getQualitySequence().iterator();
       
         Iterator<Nucleotide> bases = c.getNucleotideSequence().iterator();
         

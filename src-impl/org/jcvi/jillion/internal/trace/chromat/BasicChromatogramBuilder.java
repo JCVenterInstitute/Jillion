@@ -26,9 +26,9 @@
 package org.jcvi.jillion.internal.trace.chromat;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.qual.PhredQuality;
@@ -46,17 +46,17 @@ public final class BasicChromatogramBuilder {
         private NucleotideSequence basecalls;
         //default to empty confidences (which may happen if read is really
         //trashy
-        private byte[] aConfidence=EMPTY_BYTE_ARRAY;
-        private byte[] cConfidence=EMPTY_BYTE_ARRAY;
+        private byte[] aQualities=EMPTY_BYTE_ARRAY;
+        private byte[] cQualities=EMPTY_BYTE_ARRAY;
         private byte[] gConfidence=EMPTY_BYTE_ARRAY;
-        private byte[] tConfidence=EMPTY_BYTE_ARRAY;
+        private byte[] tQualities=EMPTY_BYTE_ARRAY;
 
         private short[] aPositions;
         private short[] cPositions;
         private short[] gPositions;
         private short[] tPositions;
 
-        private Map<String,String> properties;
+        private Map<String,String> comments;
         
         private String id;
         /**
@@ -84,18 +84,18 @@ public final class BasicChromatogramBuilder {
         	basecalls(basecalls);
             peaks(peaks);
             channelGroup(channelGroup);           
-            properties(properties);
+            comments(properties);
         }
         
         private void channelGroup(ChannelGroup channelGroup){
-        	 aConfidence =toByteArray(channelGroup.getAChannel().getConfidence());
-             aPositions =channelGroup.getAChannel().getPositions().toArray();            
-             cConfidence= toByteArray(channelGroup.getCChannel().getConfidence());
-             cPositions = channelGroup.getCChannel().getPositions().toArray();
-             gConfidence = toByteArray(channelGroup.getGChannel().getConfidence());
-             gPositions = channelGroup.getGChannel().getPositions().toArray();
-             tConfidence =toByteArray(channelGroup.getTChannel().getConfidence());
-             tPositions = channelGroup.getTChannel().getPositions().toArray();
+        	 aQualities =toByteArray(channelGroup.getAChannel().getQualitySequence());
+             aPositions =channelGroup.getAChannel().getPositionSequence().toArray();            
+             cQualities= toByteArray(channelGroup.getCChannel().getQualitySequence());
+             cPositions = channelGroup.getCChannel().getPositionSequence().toArray();
+             gConfidence = toByteArray(channelGroup.getGChannel().getQualitySequence());
+             gPositions = channelGroup.getGChannel().getPositionSequence().toArray();
+             tQualities =toByteArray(channelGroup.getTChannel().getQualitySequence());
+             tPositions = channelGroup.getTChannel().getPositionSequence().toArray();
         }
         private byte[] toByteArray(QualitySequence sequence){
         	byte[] array = new byte[(int)sequence.getLength()];
@@ -111,7 +111,7 @@ public final class BasicChromatogramBuilder {
         
         public BasicChromatogramBuilder(Chromatogram copy){
 		       this(copy.getId(), copy.getNucleotideSequence(),
-		       copy.getPositionSequence(),
+		       copy.getPeakSequence(),
 		       copy.getChannelGroup(),
 		       copy.getComments()
 		       );
@@ -145,39 +145,39 @@ public final class BasicChromatogramBuilder {
             return this;
         }
 
-        public byte[] aConfidence() {
-            return Arrays.copyOf(aConfidence, aConfidence.length);
+        public byte[] aQualities() {
+            return Arrays.copyOf(aQualities, aQualities.length);
         }
 
-        public final BasicChromatogramBuilder aConfidence(byte[] confidence) {
-            aConfidence = Arrays.copyOf(confidence, confidence.length);
+        public final BasicChromatogramBuilder aQualities(byte[] qualities) {
+            aQualities = Arrays.copyOf(qualities, qualities.length);
             return this;
         }
 
-        public byte[] cConfidence() {
-            return Arrays.copyOf(cConfidence, cConfidence.length);
+        public byte[] cQualities() {
+            return Arrays.copyOf(cQualities, cQualities.length);
         }
 
-        public BasicChromatogramBuilder cConfidence(byte[] confidence) {
-            cConfidence = Arrays.copyOf(confidence, confidence.length);
+        public BasicChromatogramBuilder cQualities(byte[] qualities) {
+            cQualities = Arrays.copyOf(qualities, qualities.length);
             return this;
         }
 
-        public byte[] gConfidence() {
+        public byte[] gQualities() {
             return Arrays.copyOf(gConfidence, gConfidence.length);
         }
 
-        public BasicChromatogramBuilder gConfidence(byte[] confidence) {
-            gConfidence = Arrays.copyOf(confidence, confidence.length);
+        public BasicChromatogramBuilder gQualities(byte[] qualities) {
+            gConfidence = Arrays.copyOf(qualities, qualities.length);
             return this;
         }
 
-        public byte[] tConfidence() {
-            return Arrays.copyOf(tConfidence, tConfidence.length);
+        public byte[] tQualities() {
+            return Arrays.copyOf(tQualities, tQualities.length);
         }
 
-        public BasicChromatogramBuilder tConfidence(byte[] confidence) {
-            tConfidence = Arrays.copyOf(confidence, confidence.length);
+        public BasicChromatogramBuilder tQualities(byte[] qualities) {
+            tQualities = Arrays.copyOf(qualities, qualities.length);
             return this;
         }
 
@@ -229,17 +229,12 @@ public final class BasicChromatogramBuilder {
             return this;
         }
 
-        public Map<String,String> properties() {
-            return properties ==null? null :new HashMap<String, String>(properties);
+        public Map<String,String> comments() {
+            return comments ==null? Collections.<String,String>emptyMap() :new HashMap<String, String>(comments);
         }
 
-        public BasicChromatogramBuilder properties(Map<String,String> properties) {
-            this.properties = new HashMap<String, String>();
-            //need to manually add properties because default implementation
-            //is to use input as "default" but will return empty map!!!
-            for(Entry<String,String> entry : properties.entrySet()){
-                this.properties.put(entry.getKey(), entry.getValue());
-            }
+        public BasicChromatogramBuilder comments(Map<String,String> comments) {
+            this.comments = new HashMap<String, String>(comments);
             return this;
         }
 
@@ -248,7 +243,7 @@ public final class BasicChromatogramBuilder {
             QualitySequenceBuilder builder = new QualitySequenceBuilder(length);
             int i=0;
             for(Nucleotide base : basecalls){
-            	QualitySequence qualitySequence = channelGroup.getChannel(base).getConfidence();
+            	QualitySequence qualitySequence = channelGroup.getChannel(base).getQualitySequence();
             	//only read as many qualities as we have...
                 if(i == qualitySequence.getLength()){
                 	break;
@@ -261,16 +256,16 @@ public final class BasicChromatogramBuilder {
         
         public Chromatogram build() {
             final ChannelGroup channelGroup = new DefaultChannelGroup(
-                    new DefaultChannel(aConfidence(),aPositions()),
-                    new DefaultChannel(cConfidence(),cPositions()),
-                    new DefaultChannel(gConfidence(),gPositions()),
-                    new DefaultChannel(tConfidence(),tPositions()));
+                    new DefaultChannel(aQualities(),aPositions()),
+                    new DefaultChannel(cQualities(),cPositions()),
+                    new DefaultChannel(gQualities(),gPositions()),
+                    new DefaultChannel(tQualities(),tPositions()));
             
             return new BasicChromatogram(id,
                     basecalls(),
                     generateQualities(channelGroup),                        
                         peaks(),
                     channelGroup,
-                    properties());
+                    comments());
         }
 }

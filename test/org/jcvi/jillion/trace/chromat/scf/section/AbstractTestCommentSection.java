@@ -40,7 +40,7 @@ import org.junit.Before;
 public class AbstractTestCommentSection {
     CommentSectionCodec sut = new CommentSectionCodec();
     SCFHeader mockHeader;
-    ScfChromatogramBuilder chromaStruct;
+    ScfChromatogramBuilder builder;
     ScfChromatogramImpl mockChroma;
     int currentOffset = 0;
     Map<String,String> expectedComments;
@@ -48,7 +48,7 @@ public class AbstractTestCommentSection {
     @Before
     public void setup(){
         mockHeader = createMock(SCFHeader.class);
-        chromaStruct = new ScfChromatogramBuilder(id);
+        builder = new ScfChromatogramBuilder(id);
         mockChroma = createMock(ScfChromatogramImpl.class);
         expectedComments = new HashMap<String,String>();
         expectedComments.put("key","value");

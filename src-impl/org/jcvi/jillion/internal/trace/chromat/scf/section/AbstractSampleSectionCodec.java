@@ -117,10 +117,10 @@ public abstract class AbstractSampleSectionCodec implements SectionCodec{
 
     private int getMaxPositionsValue(ScfChromatogram c) {
        ChannelGroup group= c.getChannelGroup();
-        PositionSequence aPositions =group.getAChannel().getPositions();
-        PositionSequence cPositions =group.getCChannel().getPositions();
-        PositionSequence gPositions =group.getGChannel().getPositions();
-        PositionSequence tPositions =group.getTChannel().getPositions();       
+        PositionSequence aPositions =group.getAChannel().getPositionSequence();
+        PositionSequence cPositions =group.getCChannel().getPositionSequence();
+        PositionSequence gPositions =group.getGChannel().getPositionSequence();
+        PositionSequence tPositions =group.getTChannel().getPositionSequence();       
         int max =Collections.max(Arrays.asList(
                     getMaxValueFor(aPositions),
                     getMaxValueFor(cPositions),
@@ -147,10 +147,10 @@ public abstract class AbstractSampleSectionCodec implements SectionCodec{
 
         PositionStrategy positionStrategy =getPositionStrategyFor(c);
         final ChannelGroup channelGroup = c.getChannelGroup();
-        PositionSequence aPositions =channelGroup.getAChannel().getPositions();
-        PositionSequence cPositions =channelGroup.getCChannel().getPositions();
-        PositionSequence gPositions =channelGroup.getGChannel().getPositions();
-        PositionSequence tPositions =channelGroup.getTChannel().getPositions();
+        PositionSequence aPositions =channelGroup.getAChannel().getPositionSequence();
+        PositionSequence cPositions =channelGroup.getCChannel().getPositionSequence();
+        PositionSequence gPositions =channelGroup.getGChannel().getPositionSequence();
+        PositionSequence tPositions =channelGroup.getTChannel().getPositionSequence();
         byte sampleSize =positionStrategy.getSampleSize();
         final int numberOfSamples = (int)aPositions.getLength();
 

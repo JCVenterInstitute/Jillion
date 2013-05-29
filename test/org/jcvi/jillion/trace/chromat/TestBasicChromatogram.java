@@ -65,7 +65,7 @@ public class TestBasicChromatogram {
     @Test
     public void fullConstructor(){
         assertEquals(basecalls, sut.getNucleotideSequence());
-        assertEquals(mockPeaks, sut.getPositionSequence());
+        assertEquals(mockPeaks, sut.getPeakSequence());
         assertEquals(mockChannelGroup, sut.getChannelGroup());
         assertEquals(expectedProperties, sut.getComments());
         assertEquals(qualities, sut.getQualitySequence());
@@ -80,7 +80,7 @@ public class TestBasicChromatogram {
                                                 mockChannelGroup);
 
         assertEquals(basecalls, emptyProps.getNucleotideSequence());
-        assertEquals(mockPeaks, emptyProps.getPositionSequence());
+        assertEquals(mockPeaks, emptyProps.getPeakSequence());
         assertEquals(mockChannelGroup, emptyProps.getChannelGroup());
         assertEquals(qualities, sut.getQualitySequence());
         assertEquals(new Properties(), emptyProps.getComments());
@@ -148,7 +148,7 @@ public class TestBasicChromatogram {
     public void copyConstructor(){
         BasicChromatogram copy = new BasicChromatogram(sut);
         assertEquals(basecalls, copy.getNucleotideSequence());
-        assertEquals(mockPeaks, copy.getPositionSequence());
+        assertEquals(mockPeaks, copy.getPeakSequence());
         assertEquals(mockChannelGroup, copy.getChannelGroup());
         assertEquals(expectedProperties, copy.getComments());
     }

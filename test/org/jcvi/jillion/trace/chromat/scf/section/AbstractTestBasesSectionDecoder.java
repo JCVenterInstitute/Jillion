@@ -196,17 +196,17 @@ public abstract class AbstractTestBasesSectionDecoder {
         assertEquals(chromatogram.getNucleotideSequence(), 
                  c.basecalls());
         PositionSequence encodedPeaks = new PositionSequenceBuilder(c.peaks()).build();
-        assertEquals(chromatogram.getPositionSequence(),
+        assertEquals(chromatogram.getPeakSequence(),
                 encodedPeaks);
         
-        assertEquals(chromatogram.getChannelGroup().getAChannel().getConfidence(),
-                new QualitySequenceBuilder(c.aConfidence()).build());
-        assertEquals(chromatogram.getChannelGroup().getCChannel().getConfidence(),
-        		new QualitySequenceBuilder(c.cConfidence()).build());
-        assertEquals(chromatogram.getChannelGroup().getGChannel().getConfidence(),
-        new QualitySequenceBuilder(c.gConfidence()).build());
-        assertEquals(chromatogram.getChannelGroup().getTChannel().getConfidence(),
-        		new QualitySequenceBuilder(c.tConfidence()).build());
+        assertEquals(chromatogram.getChannelGroup().getAChannel().getQualitySequence(),
+                new QualitySequenceBuilder(c.aQualities()).build());
+        assertEquals(chromatogram.getChannelGroup().getCChannel().getQualitySequence(),
+        		new QualitySequenceBuilder(c.cQualities()).build());
+        assertEquals(chromatogram.getChannelGroup().getGChannel().getQualitySequence(),
+        new QualitySequenceBuilder(c.gQualities()).build());
+        assertEquals(chromatogram.getChannelGroup().getTChannel().getQualitySequence(),
+        		new QualitySequenceBuilder(c.tQualities()).build());
 
         ObjectsUtil.nullSafeEquals(chromatogram.getSubstitutionConfidence(),
                 c.substitutionConfidence());

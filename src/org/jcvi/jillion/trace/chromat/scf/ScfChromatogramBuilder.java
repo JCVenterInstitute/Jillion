@@ -244,39 +244,39 @@ public final class ScfChromatogramBuilder implements Builder<ScfChromatogram>{
         return this;
     }
 
-    public final byte[] aConfidence() {
-        return basicBuilder.aConfidence();
+    public final byte[] aQualities() {
+        return basicBuilder.aQualities();
     }
 
-    public final ScfChromatogramBuilder aConfidence(byte[] confidence) {
-        basicBuilder.aConfidence(confidence);
+    public final ScfChromatogramBuilder aQualities(byte[] qualities) {
+        basicBuilder.aQualities(qualities);
         return this;
     }
 
-    public final byte[] cConfidence() {
-        return basicBuilder.cConfidence();
+    public final byte[] cQualities() {
+        return basicBuilder.cQualities();
     }
 
-    public final ScfChromatogramBuilder cConfidence(byte[] confidence) {
-        basicBuilder.cConfidence(confidence);
+    public final ScfChromatogramBuilder cQualities(byte[] qualities) {
+        basicBuilder.cQualities(qualities);
         return this;
     }
 
-    public final byte[] gConfidence() {
-        return basicBuilder.gConfidence();
+    public final byte[] gQualities() {
+        return basicBuilder.gQualities();
     }
 
-    public final ScfChromatogramBuilder gConfidence(byte[] confidence) {
-        basicBuilder.gConfidence(confidence);
+    public final ScfChromatogramBuilder gQualities(byte[] qualities) {
+        basicBuilder.gQualities(qualities);
         return this;
     }
 
-    public final byte[] tConfidence() {
-        return basicBuilder.tConfidence();
+    public final byte[] tQualities() {
+        return basicBuilder.tQualities();
     }
 
-    public final ScfChromatogramBuilder tConfidence(byte[] confidence) {
-        basicBuilder.tConfidence(confidence);
+    public final ScfChromatogramBuilder tQualities(byte[] qualities) {
+        basicBuilder.tQualities(qualities);
         return this;
     }
 
@@ -316,12 +316,12 @@ public final class ScfChromatogramBuilder implements Builder<ScfChromatogram>{
         return this;
     }
 
-    public final Map<String,String> properties() {
-        return basicBuilder.properties();
+    public final Map<String,String> comments() {
+        return basicBuilder.comments();
     }
 
-    public final ScfChromatogramBuilder properties(Map<String,String> properties) {
-        basicBuilder.properties(properties);
+    public final ScfChromatogramBuilder comments(Map<String,String> properties) {
+        basicBuilder.comments(properties);
         return this;
     }
 
@@ -345,7 +345,7 @@ public final class ScfChromatogramBuilder implements Builder<ScfChromatogram>{
         */
         @Override
         public synchronized void visitAConfidence(byte[] confidence) {
-            builder.aConfidence(confidence);            
+            builder.aQualities(confidence);            
         }
 
         /**
@@ -353,7 +353,7 @@ public final class ScfChromatogramBuilder implements Builder<ScfChromatogram>{
         */
         @Override
         public synchronized void visitCConfidence(byte[] confidence) {
-            builder.cConfidence(confidence);            
+            builder.cQualities(confidence);            
         }
 
         /**
@@ -361,7 +361,7 @@ public final class ScfChromatogramBuilder implements Builder<ScfChromatogram>{
         */
         @Override
         public synchronized void visitGConfidence(byte[] confidence) {
-            builder.gConfidence(confidence);            
+            builder.gQualities(confidence);            
         }
 
         /**
@@ -369,7 +369,7 @@ public final class ScfChromatogramBuilder implements Builder<ScfChromatogram>{
         */
         @Override
         public synchronized void visitTConfidence(byte[] confidence) {
-            builder.tConfidence(confidence);            
+            builder.tQualities(confidence);            
         }
         
          /**
@@ -404,7 +404,7 @@ public final class ScfChromatogramBuilder implements Builder<ScfChromatogram>{
           */
           @Override
           public synchronized void visitComments(Map<String,String> comments) {  
-              builder.properties(comments);              
+              builder.comments(comments);              
           }
 
           /**

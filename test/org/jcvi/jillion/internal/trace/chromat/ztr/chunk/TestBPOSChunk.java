@@ -61,7 +61,7 @@ public class TestBPOSChunk {
     @Test
     public void encode() throws TraceEncoderException{
     	ZtrChromatogram chromatogram = createMock(ZtrChromatogram.class);
-    	expect(chromatogram.getPositionSequence()).andReturn(new PositionSequenceBuilder(decodedPeaks).build());
+    	expect(chromatogram.getPeakSequence()).andReturn(new PositionSequenceBuilder(decodedPeaks).build());
     	replay(chromatogram);
     	byte[] actual =sut.encodeChunk(chromatogram);
     	assertArrayEquals(encodedPositions, actual);

@@ -80,18 +80,18 @@ public class DefaultChannelGroup implements ChannelGroup {
         ObjectsUtil.checkNotNull(tChannel, errorMessage);
     }
     private void positionsMustHaveSameLength() {
-        long posLength = aChannel.getPositions().getLength();
-        if(posLength !=cChannel.getPositions().getLength()
-        		 || posLength !=gChannel.getPositions().getLength()
-        		|| posLength !=tChannel.getPositions().getLength() ){
+        long posLength = aChannel.getPositionSequence().getLength();
+        if(posLength !=cChannel.getPositionSequence().getLength()
+        		 || posLength !=gChannel.getPositionSequence().getLength()
+        		|| posLength !=tChannel.getPositionSequence().getLength() ){
                 throw new IllegalArgumentException("positions must all have the same length");
             }
     }
     private void confidencesMustHaveSameLength() {
-        long confidenceLength = aChannel.getConfidence().getLength();
-        if(confidenceLength !=cChannel.getConfidence().getLength() 
-        	|| confidenceLength !=gChannel.getConfidence().getLength()
-        	|| confidenceLength !=tChannel.getConfidence().getLength() ){
+        long confidenceLength = aChannel.getQualitySequence().getLength();
+        if(confidenceLength !=cChannel.getQualitySequence().getLength() 
+        	|| confidenceLength !=gChannel.getQualitySequence().getLength()
+        	|| confidenceLength !=tChannel.getQualitySequence().getLength() ){
             throw new IllegalArgumentException("confidences must all have the same length");
         }
     }

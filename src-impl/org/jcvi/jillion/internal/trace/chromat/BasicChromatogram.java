@@ -68,7 +68,7 @@ public class BasicChromatogram implements Chromatogram {
         this(c.getId(),
         		c.getNucleotideSequence(),
                 c.getQualitySequence(),
-                c.getPositionSequence(),
+                c.getPeakSequence(),
                c.getChannelGroup(),
                 c.getComments());
     }
@@ -115,7 +115,7 @@ public class BasicChromatogram implements Chromatogram {
     }
 
     @Override
-	public PositionSequence getPositionSequence() {
+	public PositionSequence getPeakSequence() {
 		return positions;
 	}
 	public Map<String,String> getComments() {
@@ -157,7 +157,7 @@ public class BasicChromatogram implements Chromatogram {
         		id.equals(other.getId()) && 
         		ObjectsUtil.nullSafeEquals(getNucleotideSequence(), other.getNucleotideSequence())
         && ObjectsUtil.nullSafeEquals(getQualitySequence(), other.getQualitySequence())
-        		&& ObjectsUtil.nullSafeEquals(getPositionSequence(), other.getPositionSequence())
+        		&& ObjectsUtil.nullSafeEquals(getPeakSequence(), other.getPeakSequence())
         && ObjectsUtil.nullSafeEquals(getChannelGroup(), other.getChannelGroup())
         && ObjectsUtil.nullSafeEquals(getComments(), other.getComments());
     }
@@ -175,7 +175,7 @@ public class BasicChromatogram implements Chromatogram {
     }
     @Override
     public int getNumberOfTracePositions() {
-		return (int)getChannelGroup().getAChannel().getPositions().getLength();
+		return (int)getChannelGroup().getAChannel().getPositionSequence().getLength();
     }
 
 

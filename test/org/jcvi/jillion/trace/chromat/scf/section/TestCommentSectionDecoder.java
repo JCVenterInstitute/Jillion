@@ -25,13 +25,13 @@
  */
 package org.jcvi.jillion.trace.chromat.scf.section;
 
-import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.*;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
@@ -55,9 +55,9 @@ public class TestCommentSectionDecoder extends AbstractTestCommentSection{
         expect(mockHeader.getCommentOffset()).andReturn(currentOffset);
         expect(mockHeader.getCommentSize()).andReturn(scfCommentAsString.length());
         replay(mockHeader);
-        long newOffset =sut.decode(in, currentOffset, mockHeader, chromaStruct);
+        long newOffset =sut.decode(in, currentOffset, mockHeader, builder);
         verify(mockHeader);
-        assertEquals(expectedComments, chromaStruct.properties());
+        assertEquals(expectedComments, builder.comments());
         assertEquals(scfCommentAsString.length(),newOffset);
     }
 
@@ -78,9 +78,9 @@ public class TestCommentSectionDecoder extends AbstractTestCommentSection{
         expect(mockHeader.getCommentOffset()).andReturn(distanceToSkip);
         expect(mockHeader.getCommentSize()).andReturn(scfCommentAsString.length());
         replay(mockHeader,mockInputStream);
-        long newOffset =sut.decode(new DataInputStream(mockInputStream), currentOffset, mockHeader, chromaStruct);
+        long newOffset =sut.decode(new DataInputStream(mockInputStream), currentOffset, mockHeader, builder);
         verify(mockHeader,mockInputStream);
-        assertEquals(expectedComments, chromaStruct.properties());
+        assertEquals(expectedComments, builder.comments());
         assertEquals(scfCommentAsString.length()+distanceToSkip,newOffset);
     }
     @Test
@@ -95,14 +95,14 @@ public class TestCommentSectionDecoder extends AbstractTestCommentSection{
         expect(mockInputStream.read(isA(byte[].class), eq(0), eq(commentLength))).andThrow(expectedException);
         replay(mockHeader,mockInputStream);
         try{
-            sut.decode(new DataInputStream(mockInputStream), currentOffset, mockHeader, chromaStruct);
+            sut.decode(new DataInputStream(mockInputStream), currentOffset, mockHeader, builder);
             fail("should throw SectionParserException on error");
         }
         catch(SectionDecoderException e){
 
         }
         verify(mockHeader);
-        assertNull(chromaStruct.properties());
+        assertTrue(builder.comments().isEmpty());
 
     }
 

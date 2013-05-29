@@ -49,15 +49,15 @@ public class TestChannel {
 
     @Test
     public void arrayConstructor(){
-        assertEquals(qualitySequence, sut.getConfidence());
-        assertEquals(positionSequence, sut.getPositions());
+        assertEquals(qualitySequence, sut.getQualitySequence());
+        assertEquals(positionSequence, sut.getPositionSequence());
     }
 
     @Test
     public void sequenceConstructor(){
     	 Channel channel = new DefaultChannel(qualitySequence, positionSequence);
-    	 assertEquals(qualitySequence, channel.getConfidence());
-         assertEquals(positionSequence, channel.getPositions());
+    	 assertEquals(qualitySequence, channel.getQualitySequence());
+         assertEquals(positionSequence, channel.getPositionSequence());
     }
 
 

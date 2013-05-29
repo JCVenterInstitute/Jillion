@@ -58,8 +58,8 @@ public final class DefaultChannel implements Channel{
            return false;
        }
        Channel other = (Channel) obj;
-      return  ObjectsUtil.nullSafeEquals(getConfidence(), other.getConfidence())
-               && ObjectsUtil.nullSafeEquals(getPositions(), other.getPositions());
+      return  ObjectsUtil.nullSafeEquals(getQualitySequence(), other.getQualitySequence())
+               && ObjectsUtil.nullSafeEquals(getPositionSequence(), other.getPositionSequence());
     }
     
     /* (non-Javadoc)
@@ -72,8 +72,8 @@ public final class DefaultChannel implements Channel{
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (getConfidence() == null? 0: getConfidence().hashCode());
-        result = prime * result + ((getPositions() == null) ? 0 :getPositions().hashCode());
+        result = prime * result + (getQualitySequence() == null? 0: getQualitySequence().hashCode());
+        result = prime * result + ((getPositionSequence() == null) ? 0 :getPositionSequence().hashCode());
 
         return result;
     }
@@ -123,14 +123,14 @@ public final class DefaultChannel implements Channel{
 	 * {@inheritDoc}
 	 */
     @Override
-	public QualitySequence getConfidence() {
+	public QualitySequence getQualitySequence() {
         return confidence;
     }
     /**
 	 * {@inheritDoc}
 	 */
     @Override
-	public PositionSequence getPositions() {
+	public PositionSequence getPositionSequence() {
         return positions;
     }
 
