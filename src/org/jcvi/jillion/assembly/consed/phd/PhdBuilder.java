@@ -85,7 +85,7 @@ public final class PhdBuilder implements Builder<Phd>{
 		this.id = chromatogram.getId();
 		this.sequence = chromatogram.getNucleotideSequence();
 		this.qualities = chromatogram.getQualitySequence();
-		this.peaks = chromatogram.getPositionSequence();
+		this.peaks = chromatogram.getPeakSequence();
 		
 	}
 	/**

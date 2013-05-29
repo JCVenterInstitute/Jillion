@@ -151,11 +151,11 @@ public final class ChromatogramXMLSerializer {
         protected Expression instantiate(Object oldInstance, Encoder out) {
             Channel channel = (Channel)oldInstance;
 
-            PositionSequence positions = channel.getPositions();
+            PositionSequence positions = channel.getPositionSequence();
             int i;
 			short[] posArray = toArray(positions);
             
-            QualitySequence qualities = channel.getConfidence();
+            QualitySequence qualities = channel.getQualitySequence();
             byte[] qualArray = new byte[(int)qualities.getLength()];
             i=0;
             for(PhredQuality qual : qualities){
@@ -167,8 +167,8 @@ public final class ChromatogramXMLSerializer {
                                   "buildChannel",
                                   new Object[]{
             				
-               (channel.getConfidence()==null)? "":new EncodedByteData(qualArray).encodeData(),
-              (channel.getPositions()==null)? "":new EncodedShortData(posArray).encodeData(),
+               (channel.getQualitySequence()==null)? "":new EncodedByteData(qualArray).encodeData(),
+              (channel.getPositionSequence()==null)? "":new EncodedShortData(posArray).encodeData(),
                       } );
         }
     }
@@ -228,7 +228,7 @@ public final class ChromatogramXMLSerializer {
                                      new Object[]{
                    chromatogram.getNucleotideSequence().toString(), 
                    new EncodedByteData(PhredQuality.toArray(chromatogram.getQualitySequence())).encodeData(),
-                   new EncodedShortData(toArray(chromatogram.getPositionSequence())).encodeData(),
+                   new EncodedShortData(toArray(chromatogram.getPeakSequence())).encodeData(),
                    chromatogram.getChannelGroup(),
                    chromatogram.getComments(),
                   } );

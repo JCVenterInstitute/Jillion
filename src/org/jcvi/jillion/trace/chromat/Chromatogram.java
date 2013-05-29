@@ -48,7 +48,7 @@ public interface Chromatogram extends Trace{
      * @return a {@link PositionSequence}; will never
      * be null.
      */
-	PositionSequence getPositionSequence();
+	PositionSequence getPeakSequence();
     /**
      * Get the number of actual trace scan positions
      * in the trace file.  Most Sanger Trace files

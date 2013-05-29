@@ -49,6 +49,10 @@ import org.jcvi.jillion.trace.chromat.ChannelGroup;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
 
 /**
+ * {@code AbiChromatogramBuilder} uses the Builder pattern
+ * to create a new {@link AbiChromatogram}
+ * instance.
+ * 
  * @author dkatzel
  *
  *
@@ -114,39 +118,39 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
         return this;
     }
 
-    public final byte[] aConfidence() {
-        return currentBuilder.aConfidence();
+    public final byte[] aQualities() {
+        return currentBuilder.aQualities();
     }
 
-    public final AbiChromatogramBuilder aConfidence(byte[] confidence) {
-        currentBuilder.aConfidence(confidence);
+    public final AbiChromatogramBuilder aQualities(byte[] qualities) {
+        currentBuilder.aQualities(qualities);
         return this;
     }
 
-    public final byte[] cConfidence() {
-        return currentBuilder.cConfidence();
+    public final byte[] cQualities() {
+        return currentBuilder.cQualities();
     }
 
-    public final AbiChromatogramBuilder cConfidence(byte[] confidence) {
-        currentBuilder.cConfidence(confidence);
+    public final AbiChromatogramBuilder cQualities(byte[] qualities) {
+        currentBuilder.cQualities(qualities);
         return this;
     }
 
-    public final byte[] gConfidence() {
-        return currentBuilder.gConfidence();
+    public final byte[] gQualities() {
+        return currentBuilder.gQualities();
     }
 
-    public final AbiChromatogramBuilder gConfidence(byte[] confidence) {
-        currentBuilder.gConfidence(confidence);
+    public final AbiChromatogramBuilder gQualities(byte[] qualities) {
+        currentBuilder.gQualities(qualities);
         return this;
     }
 
-    public final byte[] tConfidence() {
-        return currentBuilder.tConfidence();
+    public final byte[] tQualities() {
+        return currentBuilder.tQualities();
     }
 
-    public final AbiChromatogramBuilder tConfidence(byte[] confidence) {
-        currentBuilder.tConfidence(confidence);
+    public final AbiChromatogramBuilder tQualities(byte[] qualities) {
+        currentBuilder.tQualities(qualities);
         return this;
     }
 
@@ -186,12 +190,12 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
         return this;
     }
 
-    public final Map<String,String> properties() {
-        return currentBuilder.properties();
+    public final Map<String,String> comments() {
+        return currentBuilder.comments();
     }
 
-    public final AbiChromatogramBuilder properties(Map<String,String> properties) {
-        currentBuilder.properties(properties);
+    public final AbiChromatogramBuilder comments(Map<String,String> comments) {
+        currentBuilder.comments(comments);
         return this;
     }
     
@@ -209,39 +213,39 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
         return this;
     }
 
-    public final byte[] originalAConfidence() {
-        return originalBuilder.aConfidence();
+    public final byte[] originalAQualities() {
+        return originalBuilder.aQualities();
     }
 
-    public final AbiChromatogramBuilder originalAConfidence(byte[] confidence) {
-        originalBuilder.aConfidence(confidence);
+    public final AbiChromatogramBuilder originalAQualities(byte[] qualities) {
+        originalBuilder.aQualities(qualities);
         return this;
     }
 
-    public final byte[] originalCConfidence() {
-        return originalBuilder.cConfidence();
+    public final byte[] originalCQualities() {
+        return originalBuilder.cQualities();
     }
 
-    public final AbiChromatogramBuilder originalCConfidence(byte[] confidence) {
-        originalBuilder.cConfidence(confidence);
+    public final AbiChromatogramBuilder originalCQualities(byte[] qualities) {
+        originalBuilder.cQualities(qualities);
         return this;
     }
 
-    public final byte[] originalGConfidence() {
-        return originalBuilder.gConfidence();
+    public final byte[] originalGQualities() {
+        return originalBuilder.gQualities();
     }
 
-    public final AbiChromatogramBuilder originalGConfidence(byte[] confidence) {
-        originalBuilder.gConfidence(confidence);
+    public final AbiChromatogramBuilder originalGQualities(byte[] qualities) {
+        originalBuilder.gQualities(qualities);
         return this;
     }
 
-    public final byte[] originalTConfidence() {
-        return originalBuilder.tConfidence();
+    public final byte[] originalTQualities() {
+        return originalBuilder.tQualities();
     }
 
-    public final AbiChromatogramBuilder originalTConfidence(byte[] confidence) {
-        originalBuilder.tConfidence(confidence);
+    public final AbiChromatogramBuilder originalTQualities(byte[] qualities) {
+        originalBuilder.tQualities(qualities);
         return this;
     }
 
@@ -281,12 +285,12 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
         return this;
     }
 
-    public final Map<String,String> originalProperties() {
-        return originalBuilder.properties();
+    public final Map<String,String> originalComments() {
+        return originalBuilder.comments();
     }
 
-    public final AbiChromatogramBuilder originalProperties(Map<String,String> properties) {
-        originalBuilder.properties(properties);
+    public final AbiChromatogramBuilder originalComments(Map<String,String> comments) {
+        originalBuilder.comments(comments);
         return this;
     }
 
@@ -371,8 +375,8 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
         }
 
 		@Override
-		public PositionSequence getPositionSequence() {
-			return delegate.getPositionSequence();
+		public PositionSequence getPeakSequence() {
+			return delegate.getPeakSequence();
 		}
 
 
@@ -455,7 +459,7 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
         */
         @Override
         public void visitAConfidence(byte[] confidence) {
-            currentBuilder.aConfidence(confidence);        
+            currentBuilder.aQualities(confidence);        
         }
 
         /**
@@ -463,7 +467,7 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
         */
         @Override
         public void visitCConfidence(byte[] confidence) {
-            currentBuilder.cConfidence(confidence);        
+            currentBuilder.cQualities(confidence);        
         }
 
         /**
@@ -471,7 +475,7 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
         */
         @Override
         public void visitGConfidence(byte[] confidence) {
-            currentBuilder.gConfidence(confidence);        
+            currentBuilder.gQualities(confidence);        
         }
 
         /**
@@ -479,7 +483,7 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
         */
         @Override
         public void visitTConfidence(byte[] confidence) {
-            currentBuilder.tConfidence(confidence);        
+            currentBuilder.tQualities(confidence);        
         }
 
         /**
@@ -512,9 +516,9 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
         */
         @Override
         public void visitComments(Map<String, String> comments) {
-            currentBuilder.properties(comments);        
+            currentBuilder.comments(comments);        
             //copy comments to original?
-            originalBuilder.properties(comments);
+            originalBuilder.comments(comments);
         }
 
        
@@ -594,7 +598,7 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
         */
         @Override
         public void visitOriginalAConfidence(byte[] originalConfidence) {
-            originalBuilder.aConfidence(originalConfidence);        
+            originalBuilder.aQualities(originalConfidence);        
         }
 
         /**
@@ -602,7 +606,7 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
         */
         @Override
         public void visitOriginalCConfidence(byte[] originalConfidence) {
-            originalBuilder.cConfidence(originalConfidence);        
+            originalBuilder.cQualities(originalConfidence);        
         }
 
         /**
@@ -610,7 +614,7 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
         */
         @Override
         public void visitOriginalGConfidence(byte[] originalConfidence) {
-            originalBuilder.gConfidence(originalConfidence);        
+            originalBuilder.gQualities(originalConfidence);        
         }
 
         /**
@@ -618,7 +622,7 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
         */
         @Override
         public void visitOriginalTConfidence(byte[] originalConfidence) {
-            originalBuilder.tConfidence(originalConfidence);        
+            originalBuilder.tQualities(originalConfidence);        
         }
 
         /**

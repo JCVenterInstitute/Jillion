@@ -80,10 +80,10 @@ public abstract class AbstractBasesSectionCodec implements SectionCodec{
 
     protected static ScfChromatogramBuilder setConfidences(ScfChromatogramBuilder c, byte[][] probability) {
 
-        return c.aConfidence(probability[0])
-            .cConfidence(probability[1])
-            .gConfidence(probability[2])
-            .tConfidence(probability[3]);
+        return c.aQualities(probability[0])
+            .cQualities(probability[1])
+            .gQualities(probability[2])
+            .tQualities(probability[3]);
     }
 
     @Override

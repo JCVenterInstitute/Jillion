@@ -76,7 +76,7 @@ public class TestTEXTChunk {
         
         ZtrChromatogramBuilder struct = new ZtrChromatogramBuilder("id");
         sut.parseData(encodedBytes, struct);
-        assertEquals(struct.properties(), expected);
+        assertEquals(struct.comments(), expected);
     }
 
     	@Test

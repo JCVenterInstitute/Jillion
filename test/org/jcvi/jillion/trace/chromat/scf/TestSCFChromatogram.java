@@ -66,7 +66,7 @@ public class TestSCFChromatogram {
     @Test
     public void constructor(){
         assertEquals(basecalls, sut.getNucleotideSequence());
-        assertEquals(mockPeaks, sut.getPositionSequence());
+        assertEquals(mockPeaks, sut.getPeakSequence());
         assertEquals(mockChannelGroup, sut.getChannelGroup());
         assertEquals(expectedProperties, sut.getComments());
         assertEquals(mockInsertionConfidence,sut.getInsertionConfidence());

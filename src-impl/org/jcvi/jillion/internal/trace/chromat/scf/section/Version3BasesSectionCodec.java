@@ -144,11 +144,11 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
     protected void writeBasesDataToBuffer(ByteBuffer buffer, ScfChromatogram c,
             int numberOfBases) {
         final ChannelGroup channelGroup = c.getChannelGroup();
-        bulkPutPeaks(buffer, c.getPositionSequence());
-        bulkPut(buffer,channelGroup.getAChannel().getConfidence(), numberOfBases);
-        bulkPut(buffer,channelGroup.getCChannel().getConfidence(), numberOfBases);
-        bulkPut(buffer,channelGroup.getGChannel().getConfidence(), numberOfBases);
-        bulkPut(buffer,channelGroup.getTChannel().getConfidence(), numberOfBases);
+        bulkPutPeaks(buffer, c.getPeakSequence());
+        bulkPut(buffer,channelGroup.getAChannel().getQualitySequence(), numberOfBases);
+        bulkPut(buffer,channelGroup.getCChannel().getQualitySequence(), numberOfBases);
+        bulkPut(buffer,channelGroup.getGChannel().getQualitySequence(), numberOfBases);
+        bulkPut(buffer,channelGroup.getTChannel().getQualitySequence(), numberOfBases);
         bulkPut(buffer, c.getNucleotideSequence());
         bulkPutWithPadding(buffer, c.getSubstitutionConfidence(), numberOfBases);
         bulkPutWithPadding(buffer, c.getInsertionConfidence(), numberOfBases);

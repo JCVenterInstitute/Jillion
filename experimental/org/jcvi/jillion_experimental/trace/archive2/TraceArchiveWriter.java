@@ -298,7 +298,7 @@ public final class TraceArchiveWriter implements Closeable{
 		String peakFastaFilePath = String.format("./peak/%s.peak", traceName);
 		PositionFastaRecordWriter writer = new PositionFastaRecordWriterBuilder(new File(rootDir, peakFastaFilePath))
 														.build();
-		writer.write(traceName, chromo.getPositionSequence());
+		writer.write(traceName, chromo.getPeakSequence());
 		writer.close();
 		
 		recordBuilder.put(TraceInfoField.PEAK_FILE, peakFastaFilePath);

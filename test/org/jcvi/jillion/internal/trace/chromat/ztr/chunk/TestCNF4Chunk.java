@@ -95,10 +95,10 @@ public class TestCNF4Chunk extends EasyMockSupport{
         
         sut.parseData(encodedBytes, struct);
         
-        assertArrayEquals(aconf, struct.aConfidence());
-        assertArrayEquals(cconf, struct.cConfidence());
-        assertArrayEquals(gconf, struct.gConfidence());
-        assertArrayEquals(tconf, struct.tConfidence());
+        assertArrayEquals(aconf, struct.aQualities());
+        assertArrayEquals(cconf, struct.cQualities());
+        assertArrayEquals(gconf, struct.gQualities());
+        assertArrayEquals(tconf, struct.tQualities());
     }
     @Test
     public void encode() throws TraceEncoderException{
@@ -118,16 +118,16 @@ public class TestCNF4Chunk extends EasyMockSupport{
     	ChannelGroup channelGroup = createMock(ChannelGroup.class);
     	
     	final Channel aChannel = createMock(Channel.class);
-    	expect(aChannel.getConfidence()).andStubReturn(new QualitySequenceBuilder(aconf).build());
+    	expect(aChannel.getQualitySequence()).andStubReturn(new QualitySequenceBuilder(aconf).build());
     	
     	final Channel cChannel = createMock(Channel.class);
-    	expect(cChannel.getConfidence()).andStubReturn(new QualitySequenceBuilder(cconf).build());
+    	expect(cChannel.getQualitySequence()).andStubReturn(new QualitySequenceBuilder(cconf).build());
     	
     	final Channel gChannel = createMock(Channel.class);
-    	expect(gChannel.getConfidence()).andStubReturn(new QualitySequenceBuilder(gconf).build());
+    	expect(gChannel.getQualitySequence()).andStubReturn(new QualitySequenceBuilder(gconf).build());
     	
     	final Channel tChannel = createMock(Channel.class);
-    	expect(tChannel.getConfidence()).andStubReturn(new QualitySequenceBuilder(tconf).build());
+    	expect(tChannel.getQualitySequence()).andStubReturn(new QualitySequenceBuilder(tconf).build());
     	
     	expect(channelGroup.getChannel(isA(Nucleotide.class))).andStubAnswer(
     			new IAnswer<Channel>() {
