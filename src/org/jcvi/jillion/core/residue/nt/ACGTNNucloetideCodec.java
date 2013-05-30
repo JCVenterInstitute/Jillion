@@ -20,13 +20,15 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.nt;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.jcvi.jillion.core.io.IOUtil;
-
 /**
+ * {@code ACGTNNucloetideCodec} is a special version
+ * of {@link TwoBitEncodedNucleotideCodec} that
+ * does not have any gaps.  This makes
+ * the computations of gap locations and number of gaps etc
+ * trivial to compute (and can be hard coded).
  * @author dkatzel
  *
  *
@@ -70,7 +72,7 @@ final class ACGTNNucloetideCodec extends TwoBitEncodedNucleotideCodec{
     */
     @Override
     public long getUngappedLength(byte[] encodedGlyphs) {
-        return (int)IOUtil.readUnsignedInt(Arrays.copyOfRange(encodedGlyphs, 0, 4));
+        return decodedLengthOf(encodedGlyphs);
     }
 
     /**

@@ -20,6 +20,11 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.nt;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -27,12 +32,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.residue.nt.NoAmbiguitiesEncodedNucleotideCodec;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.core.residue.nt.NucleotideCodec;
-import org.jcvi.jillion.core.residue.nt.Nucleotides;
 import org.junit.Test;
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
@@ -41,17 +41,6 @@ import static org.junit.Assert.*;
 public class TestNoAmbiguitiesEncodedNucleotideCodec {
 
     NucleotideCodec sut = NoAmbiguitiesEncodedNucleotideCodec.INSTANCE;
-    
-    @Test
-    public void canOnlyEncodedACGTAndGap(){
-        assertTrue(NoAmbiguitiesEncodedNucleotideCodec.canEncode(Arrays.asList(
-                Nucleotide.Adenine,
-                Nucleotide.Cytosine,
-                Nucleotide.Guanine,
-                Nucleotide.Thymine,
-                Nucleotide.Gap
-                )));
-    }
     
     @Test
     public void encode(){

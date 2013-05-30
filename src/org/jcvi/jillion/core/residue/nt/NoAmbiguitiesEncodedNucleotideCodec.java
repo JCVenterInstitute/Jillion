@@ -24,12 +24,11 @@ import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.jillion.internal.core.GlyphCodec;
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 
 /**
  * {@code TwoBitEncodedNucleotideCodec} is a {@link GlyphCodec}
- * of Nucletotides that can encode a list of {@link Nucleotide}s
+ * of {@link Nucleotide}s that can encode a list of {@link Nucleotide}s
  * that only contain A,C,G,T and gaps (no ambiguities) in as little as 2 bits per base
  * plus some extra bytes for storing the gaps. This should 
  * greatly reduce the memory footprint of most kinds of read data.
@@ -38,14 +37,7 @@ import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 final class NoAmbiguitiesEncodedNucleotideCodec extends TwoBitEncodedNucleotideCodec{
     public static final NoAmbiguitiesEncodedNucleotideCodec INSTANCE = new NoAmbiguitiesEncodedNucleotideCodec();
     
-    static boolean canEncode(Iterable<Nucleotide> nucleotides){
-        for(Nucleotide n :nucleotides){
-            if(n.isAmbiguity()){
-                return false;
-            }
-        }
-        return true;
-    }
+    
     private NoAmbiguitiesEncodedNucleotideCodec(){
         super(Nucleotide.Gap);
     }
@@ -67,7 +59,7 @@ final class NoAmbiguitiesEncodedNucleotideCodec extends TwoBitEncodedNucleotideC
     */
     @Override
     public int getNumberOfGaps(byte[] encodedGlyphs) {
-    	ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
+    	ByteBuffer buf = getBufferToComputeNumberOfGapsOnly(encodedGlyphs);
 		ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
         //need to read the next few bytes even though we
 		//don't care what the size is
@@ -85,12 +77,19 @@ final class NoAmbiguitiesEncodedNucleotideCodec extends TwoBitEncodedNucleotideC
     public boolean isGap(byte[] encodedGlyphs, int gappedOffset) {
     	return getGapOffsets(encodedGlyphs).contains(Integer.valueOf(gappedOffset));
     }
+    
+    private ByteBuffer getBufferToComputeNumberOfGapsOnly(byte[] encodedBytes){
+    	//at most we only need the first 12 bytes
+    	//there is no need to wrap the entire array
+    	return ByteBuffer.wrap(encodedBytes,0, Math.min(encodedBytes.length, 12));
+		
+    }
     /**
     * {@inheritDoc}
     */
     @Override
     public long getUngappedLength(byte[] encodedGlyphs) {
-    	ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
+    	ByteBuffer buf = getBufferToComputeNumberOfGapsOnly(encodedGlyphs);
 		ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
         int length =offsetStrategy.getNext(buf);
         ValueSizeStrategy sentinelStrategy = ValueSizeStrategy.values()[buf.get()];

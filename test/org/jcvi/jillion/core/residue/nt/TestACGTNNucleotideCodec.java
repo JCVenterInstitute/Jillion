@@ -60,12 +60,21 @@ public class TestACGTNNucleotideCodec {
     }
     
     @Test
+    public void getUngappedLength(){
+    	 List<Nucleotide> nucleotides = asList(new NucleotideSequenceBuilder("ACGTNCGTANGTACNTACGNACGT"));
+         byte[] actual =sut.encode(nucleotides);
+         assertEquals(nucleotides.size(), sut.getUngappedLength(actual));
+    }
+    
+    @Test
     public void alwaysSaysNumGapsIs0(){
     	byte[] fakeData = new byte[10];
     	assertEquals(0, sut.getNumberOfGaps(fakeData));
     	assertTrue(sut.getGapOffsets(fakeData).isEmpty());
     	assertFalse(sut.isGap(fakeData, 123));
     	assertEquals(0, sut.getNumberOfGapsUntil(fakeData, 123));
+    	assertEquals(123, sut.getGappedOffsetFor(fakeData, 123));
+    	assertEquals(123, sut.getUngappedOffsetFor(fakeData, 123));
     }
     
     @Test
