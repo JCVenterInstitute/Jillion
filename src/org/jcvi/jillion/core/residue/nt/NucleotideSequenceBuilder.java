@@ -998,7 +998,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             if(numberOfGaps==0 ){
             	return ACGTNNucloetideCodec.INSTANCE;
             }
-            return NoAmbiguitiesEncodedNucleotideCodec.INSTANCE;
+            return NoAmbiguitiesNucleotideCodec.INSTANCE;
         }
         
         public void increment(NewValues newValues) {

@@ -27,18 +27,18 @@ import java.util.List;
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 
 /**
- * {@code TwoBitEncodedNucleotideCodec} is a {@link GlyphCodec}
+ * {@code NoAmbiguitiesNucleotideCodec} is a {@link GlyphCodec}
  * of {@link Nucleotide}s that can encode a list of {@link Nucleotide}s
  * that only contain A,C,G,T and gaps (no ambiguities) in as little as 2 bits per base
  * plus some extra bytes for storing the gaps. This should 
  * greatly reduce the memory footprint of most kinds of read data.
  * @author dkatzel
  */
-final class NoAmbiguitiesEncodedNucleotideCodec extends TwoBitEncodedNucleotideCodec{
-    public static final NoAmbiguitiesEncodedNucleotideCodec INSTANCE = new NoAmbiguitiesEncodedNucleotideCodec();
+final class NoAmbiguitiesNucleotideCodec extends TwoBitEncodedNucleotideCodec{
+    public static final NoAmbiguitiesNucleotideCodec INSTANCE = new NoAmbiguitiesNucleotideCodec();
     
     
-    private NoAmbiguitiesEncodedNucleotideCodec(){
+    private NoAmbiguitiesNucleotideCodec(){
         super(Nucleotide.Gap);
     }
     /**

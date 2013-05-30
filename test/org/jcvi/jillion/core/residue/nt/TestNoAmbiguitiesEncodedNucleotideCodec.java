@@ -40,7 +40,7 @@ import org.junit.Test;
  */
 public class TestNoAmbiguitiesEncodedNucleotideCodec {
 
-    NucleotideCodec sut = NoAmbiguitiesEncodedNucleotideCodec.INSTANCE;
+    NucleotideCodec sut = NoAmbiguitiesNucleotideCodec.INSTANCE;
     
     @Test
     public void encode(){

@@ -84,7 +84,7 @@ final class NucleotideCodecs {
         //2bit or 4 bit based on which one takes less memory
         if(encodedGapSize< totalSize/4){
             if(numGaps>0){
-                return NoAmbiguitiesEncodedNucleotideCodec.INSTANCE; 
+                return NoAmbiguitiesNucleotideCodec.INSTANCE; 
             }
             return ACGTNNucloetideCodec.INSTANCE;
         }
