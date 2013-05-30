@@ -32,10 +32,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.residue.nt.ACGTNNucloetideCodec;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.core.residue.nt.NucleotideCodec;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
 
 /**
@@ -61,6 +57,15 @@ public class TestACGTNNucleotideCodec {
     		list.add(n);
     	}
     	return list;
+    }
+    
+    @Test
+    public void alwaysSaysNumGapsIs0(){
+    	byte[] fakeData = new byte[10];
+    	assertEquals(0, sut.getNumberOfGaps(fakeData));
+    	assertTrue(sut.getGapOffsets(fakeData).isEmpty());
+    	assertFalse(sut.isGap(fakeData, 123));
+    	assertEquals(0, sut.getNumberOfGapsUntil(fakeData, 123));
     }
     
     @Test
