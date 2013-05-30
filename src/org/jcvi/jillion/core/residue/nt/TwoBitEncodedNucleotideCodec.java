@@ -40,7 +40,8 @@ import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
  * up to 5 different nucleotides as 2 bits each
  * plus some extra bytes to store offsets
  * of the 5th base.  The best uses of this
- * codec is to store ACGT and -/N as the 5th base type.
+ * codec is to store ACGT and -/N as the 5th base type
+ * since the those bases should be rare.
  * @author dkatzel
  *
  *
