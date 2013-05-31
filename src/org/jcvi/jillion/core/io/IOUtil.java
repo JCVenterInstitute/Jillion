@@ -25,10 +25,12 @@
  */
 package org.jcvi.jillion.core.io;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.EOFException;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -878,6 +880,25 @@ public final class IOUtil {
     	}
     	return writer.toString();
     }
+    
+    /**
+     * Copy the contents of the given {@link File}
+     * and return it as a byte[].
+     * @param f the File to get the bytes of.
+     * @return a new byte array instance containing all the bytes
+     * from the given file.
+     * @throws IOException if there is a problem reading the file.
+     */
+	public static byte[] toByteArray(File f) throws IOException {
+		InputStream in = null;
+		try{
+			in = new BufferedInputStream(new FileInputStream(f));
+			return toByteArray(in, Endian.BIG);
+		}finally{
+			IOUtil.closeAndIgnoreErrors(in);
+		}
+		
+	}
     /**
      * Copy the contents of the given {@link InputStream}
      * and return it as a byte[].

@@ -27,9 +27,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
 
-import org.jcvi.jillion.assembly.tigr.tasm.TasmContig;
-import org.jcvi.jillion.assembly.tigr.tasm.TasmContigDataStore;
-import org.jcvi.jillion.assembly.tigr.tasm.TasmContigFileDataStoreBuilder;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
@@ -106,6 +103,7 @@ public class TestAnnotationTasmParsing {
 		 
 		 TasmContig contig = datastore.get("1122071329927");
 		assertEquals(gappedConsensusOf927, contig.getConsensusSequence().toString());
-		assertEquals(0, contig.getNumberOfReads());
+		assertEquals("annotation contig didn't set the num reads from file", 33, contig.getNumberOfReads());
+		assertTrue(contig.isAnnotationContig());
 	 }
 }

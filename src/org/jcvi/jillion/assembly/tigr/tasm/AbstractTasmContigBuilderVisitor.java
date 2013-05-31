@@ -64,8 +64,11 @@ public abstract class  AbstractTasmContigBuilderVisitor implements TasmContigVis
 
 	@Override
 	public void visitCoverageData(int numberOfReads, float avgCoverage) {
-		//no-op these are computed by the builder automatically
-		//incase we add/remove reads
+		//2013-05-31
+		//Explicitly set the avg coverage and num reads
+		//in case this is an annotation tasm
+		//if we see any reads later, we will null these out
+		builder.setCoverageInfo(numberOfReads, Double.valueOf(avgCoverage));
 	}
 
 	@Override
@@ -76,6 +79,11 @@ public abstract class  AbstractTasmContigBuilderVisitor implements TasmContigVis
 	@Override
 	public TasmContigReadVisitor visitRead(final String readId,
 			final long gappedStartOffset, final Direction dir, final Range validRange) {
+		//2013-05-31
+		//we have reads
+		//so we are NOT an annotation contig
+		//clear out set values so they are correctly computed
+		builder.setCoverageInfo(null,null);
 		return new TasmContigReadVisitor() {
 			private NucleotideSequence gappedBasecalls;
 			

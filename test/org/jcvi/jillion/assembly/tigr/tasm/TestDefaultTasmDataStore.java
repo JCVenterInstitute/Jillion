@@ -23,8 +23,6 @@ package org.jcvi.jillion.assembly.tigr.tasm;
 import java.io.IOException;
 
 import org.jcvi.jillion.assembly.tigr.contig.TigrContigFileDataStoreBuilder;
-import org.jcvi.jillion.assembly.tigr.tasm.TasmContigFileDataStoreBuilder;
-import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
@@ -37,8 +35,7 @@ public class TestDefaultTasmDataStore extends AbstractTestTasmDataStore{
 		NucleotideFastaDataStore fullLengthFastas;
 		try {
 			fullLengthFastas = new NucleotideFastaFileDataStoreBuilder(
-					resources.getFile("files/giv-15050.fasta")).hint(
-					DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_MEMORY)
+					resources.getFile("files/giv-15050.fasta"))
 					.build();
 			
 			contigDataStore = new TigrContigFileDataStoreBuilder(
