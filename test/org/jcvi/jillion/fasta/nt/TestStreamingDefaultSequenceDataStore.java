@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
+import org.jcvi.jillion.fasta.nt.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 
 /**
@@ -42,7 +42,7 @@ public class TestStreamingDefaultSequenceDataStore extends TestDefaultSequenceFa
         InputStream in =null;
         try{
             in = new FileInputStream(file);
-            return DefaultNucleotideSequenceFastaFileDataStore.create(in);
+            return DefaultNucleotideFastaFileDataStore.create(in);
         }finally{
             IOUtil.closeAndIgnoreErrors(in);
         }

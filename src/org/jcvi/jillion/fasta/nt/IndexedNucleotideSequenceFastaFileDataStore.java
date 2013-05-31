@@ -130,9 +130,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
 	public static NucleotideFastaDataStore create(File fastaFile) throws IOException{
-		BuilderVisitor builder = createBuilder(fastaFile);
-		builder.initialize();
-		return builder.build();
+		return create(fastaFile, DataStoreFilters.alwaysAccept());
 	}
 	/**
 	 * Creates a new {@link IndexedNucleotideSequenceFastaFileDataStore}
@@ -150,27 +148,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 		builder.initialize();
 		return builder.build();
 	}
-	/**
-	 * Creates a new {@link BuilderVisitor}
-	 * instance that will build an {@link IndexedNucleotideSequenceFastaFileDataStore}
-	 * using the given fastaFile.  This implementation of {@link BuilderVisitor}
-	 * can only be used to parse a single fasta file (the one given).  
-	 * @param fastaFile the fasta to create an {@link IndexedNucleotideSequenceFastaFileDataStore}
-	 * for.
-	 * @return a new instance of {@link BuilderVisitor};
-	 * never null.
-	 * @throws IOException 
-	 * @throws NullPointerException if the input fasta file is null.
-	 */
-	private static BuilderVisitor createBuilder(File fastaFile) throws IOException{
-		if(fastaFile ==null){
-			throw new NullPointerException("fasta file can not be null");
-		}
-		if(!fastaFile.exists()){
-			throw new FileNotFoundException(fastaFile.getAbsolutePath());
-		}
-		return new BuilderVisitor(fastaFile, DataStoreFilters.alwaysAccept());
-	}
+
 	/**
 	 * Creates a new {@link BuilderVisitor}
 	 * instance that will build an {@link IndexedNucleotideSequenceFastaFileDataStore}
@@ -246,83 +224,12 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 
 		@Override
 		public NucleotideFastaDataStore build() {
-			return new IndexedNucleotideSequenceFastaFileDataStore2(fastaFile,parser,filter,mementos);
+			return new IndexedNucleotideSequenceFastaFileDataStore(fastaFile,parser,filter,mementos);
 		}
 	
 	}
 	
-	public static final class IndexedNucleotideSequenceFastaFileDataStore2 implements NucleotideFastaDataStore {
-		private volatile boolean closed =false;
-		private final File fastaFile;
-		private final FastaFileParser parser;
-		private final DataStoreFilter filter;
-		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos;
-		
-		
-		public IndexedNucleotideSequenceFastaFileDataStore2(File fastaFile,
-				FastaFileParser parser, DataStoreFilter filter, Map<String, FastaVisitorMemento> mementos) {
-			this.fastaFile = fastaFile;
-			this.parser = parser;
-			this.mementos = mementos;
-			this.filter = filter;
-		}
-
-		@Override
-		public StreamingIterator<String> idIterator() throws DataStoreException {
-			throwExceptionIfClosed();
-			return DataStoreStreamingIterator.create(this,mementos.keySet().iterator());
-		}
-
-		@Override
-		public NucleotideFastaRecord get(String id)
-				throws DataStoreException {
-			throwExceptionIfClosed();
-			if(!mementos.containsKey(id)){
-				return null;
-			}
-			SingleRecordVisitor visitor = new SingleRecordVisitor();
-			try {
-				parser.accept(visitor, mementos.get(id));
-				return visitor.fastaRecord;
-			} catch (IOException e) {
-				throw new DataStoreException("error reading fasta file",e);
-			}
-		}
-
-		@Override
-		public StreamingIterator<NucleotideFastaRecord> iterator() throws DataStoreException {
-			throwExceptionIfClosed();
-			return DataStoreStreamingIterator.create(this,
-					LargeNucleotideSequenceFastaIterator.createNewIteratorFor(fastaFile,filter ));
-		}
-		private void throwExceptionIfClosed() throws DataStoreException{
-			if(closed){
-				throw new DataStoreClosedException("datastore is closed");
-			}
-		}
-		public boolean contains(String id) throws DataStoreException {
-			throwExceptionIfClosed();
-			return mementos.containsKey(id);
-		}
-
-		@Override
-		public long getNumberOfRecords() throws DataStoreException {
-			throwExceptionIfClosed();
-			return mementos.size();
-		}
-
-		@Override
-		public boolean isClosed(){
-			return closed;
-		}
-
-		@Override
-		public void close() {
-			closed=true;
-			
-		}
-
-	}
+	
 
 	private static class SingleRecordVisitor implements FastaVisitor{
 		private NucleotideFastaRecord fastaRecord=null;

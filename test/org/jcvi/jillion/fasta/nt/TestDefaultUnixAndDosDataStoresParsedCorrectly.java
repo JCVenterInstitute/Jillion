@@ -32,7 +32,7 @@ public class TestDefaultUnixAndDosDataStoresParsedCorrectly extends AbstractTest
 	@Override
 	protected NucleotideFastaDataStore createDataStoreFor(File fastaFile)
 			throws IOException {
-		return DefaultNucleotideSequenceFastaFileDataStore.create(fastaFile);
+		return DefaultNucleotideFastaFileDataStore.create(fastaFile);
 	}
 
 }

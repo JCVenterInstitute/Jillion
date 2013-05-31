@@ -22,6 +22,7 @@ package org.jcvi.jillion.internal.fasta.aa;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -46,11 +47,24 @@ public final class DefaultAminoAcidSequenceFastaDataStore{
 		DefaultAminoAcidSequenceFastaDataStoreBuilder2 builder = createBuilder();
 		return parseFile(fastaFile, builder);
 	}
+	
+	public static AminoAcidFastaDataStore create(InputStream in) throws IOException{
+		DefaultAminoAcidSequenceFastaDataStoreBuilder2 builder = createBuilder();
+		return parseFile(in, builder);
+	}
 	public static AminoAcidFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
 		DefaultAminoAcidSequenceFastaDataStoreBuilder2 builder = createBuilder(filter);
 		return parseFile(fastaFile, builder);
 	}
-	
+	public static AminoAcidFastaDataStore create(InputStream in, DataStoreFilter filter) throws IOException{
+		DefaultAminoAcidSequenceFastaDataStoreBuilder2 builder = createBuilder(filter);
+		return parseFile(in, builder);
+	}
+	private static AminoAcidFastaDataStore parseFile(InputStream in, DefaultAminoAcidSequenceFastaDataStoreBuilder2 visitor) throws IOException{
+		FastaFileParser parser = FastaFileParser.create(in);
+		parser.accept(visitor);
+		return visitor.build();
+	}
 	private static AminoAcidFastaDataStore parseFile(File fastaFile, DefaultAminoAcidSequenceFastaDataStoreBuilder2 visitor) throws IOException{
 		FastaFileParser parser = FastaFileParser.create(fastaFile);
 		parser.accept(visitor);

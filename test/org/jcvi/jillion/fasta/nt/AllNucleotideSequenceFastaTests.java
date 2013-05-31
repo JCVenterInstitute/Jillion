@@ -35,6 +35,8 @@ import org.junit.runners.Suite.SuiteClasses;
      TestNucleotideSequenceFastaRecordFactory.class,
      TestDefaultSequenceFastaDataStore.class,
      TestDefaultSequenceFastaDataStoreWithNoComment.class,
+     TestDefaultNucleotideFastaDataStoreAsStream.class,
+     
      TestLargeNucleotideFastaFileDataStore.class,
      TestIndexedNucleotideFastaFileDataStore.class,
      TestLargeSequenceFastaMapWithNoComment.class,
@@ -44,7 +46,9 @@ import org.junit.runners.Suite.SuiteClasses;
      
      TestDefaultUnixAndDosDataStoresParsedCorrectly.class,
      TestIndexedUnixAndDosDataStoresParsedCorrectly.class,
-     TestLargeUnixAndDosDataStoresParsedCorrectly.class
+     TestLargeUnixAndDosDataStoresParsedCorrectly.class,
+     
+     TestDefaultNucleotideSequenceFastaRecordWriter.class
     }
     )
 public class AllNucleotideSequenceFastaTests {

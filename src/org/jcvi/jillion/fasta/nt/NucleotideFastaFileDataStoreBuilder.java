@@ -22,6 +22,7 @@ package org.jcvi.jillion.fasta.nt;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -51,17 +52,32 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 		super(fastaFile);
 	}
 	
-	
+	/**
+	 * Create a new Builder instance of 
+	 * which will build a {@link FastaDataStore} for the given
+	 * fasta file.
+	 * @param fastaFile the fasta file make a {@link FastaDataStore} with. 
+	 * @throws IOException if the fasta file does not exist, or can not be read.
+	 * @throws NullPointerException if fastaFile is null.
+	 */
+	public NucleotideFastaFileDataStoreBuilder(InputStream fastaFileStream)
+			throws IOException {
+		super(fastaFileStream);
+	}
 	@Override
 	protected NucleotideFastaDataStore createNewInstance(
-			File fastaFile, DataStoreProviderHint providerHint, DataStoreFilter filter)
+			File fastaFile,InputStream in, DataStoreProviderHint providerHint, DataStoreFilter filter)
 			throws IOException {
-		switch(providerHint){
-			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultNucleotideSequenceFastaFileDataStore.create(fastaFile,filter);
-			case RANDOM_ACCESS_OPTIMIZE_MEMORY: return IndexedNucleotideSequenceFastaFileDataStore.create(fastaFile,filter);
-			case ITERATION_ONLY: return LargeNucleotideSequenceFastaFileDataStore.create(fastaFile,filter);
-			default:
-				throw new IllegalArgumentException("unknown provider hint : "+ providerHint);
+		if(fastaFile ==null){
+			return DefaultNucleotideFastaFileDataStore.create(in,filter);	
+		}else{
+			switch(providerHint){
+				case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultNucleotideFastaFileDataStore.create(fastaFile,filter);
+				case RANDOM_ACCESS_OPTIMIZE_MEMORY: return IndexedNucleotideSequenceFastaFileDataStore.create(fastaFile,filter);
+				case ITERATION_ONLY: return LargeNucleotideSequenceFastaFileDataStore.create(fastaFile,filter);
+				default:
+					throw new IllegalArgumentException("unknown provider hint : "+ providerHint);
+			}
 		}
 	}
 

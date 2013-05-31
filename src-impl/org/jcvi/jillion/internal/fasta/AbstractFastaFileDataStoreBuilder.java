@@ -23,6 +23,7 @@ package org.jcvi.jillion.internal.fasta;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
@@ -33,7 +34,8 @@ import org.jcvi.jillion.fasta.FastaRecord;
 
 public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>, F extends FastaRecord<T,S>, D extends FastaDataStore<T,S, F>> {
 
-	protected final File fastaFile;
+	private final File fastaFile;
+	private final InputStream in;
 	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
 	private DataStoreProviderHint hint = DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_SPEED;
 	/**
@@ -55,6 +57,26 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 			throw new IOException("fasta file is not readable");
 		}
 		this.fastaFile = fastaFile;
+		this.in = null;
+	}
+	
+	/**
+	 * Create a new Builder instance of 
+	 * which will build a {@link FastaDataStore} for the given
+	 * fasta file {@link InputStream}.
+	 * @param fastaFileAsStream the fasta file as an {@link InputStream}
+	 * to make a {@link FastaDataStore} with. 
+	 * @throws IOException if the fasta file does not exist, or can not be read.
+	 * @throws NullPointerException if fastaFile is null.
+	 */
+	protected AbstractFastaFileDataStoreBuilder(InputStream fastaFileAsStream) throws IOException{
+		if(fastaFileAsStream ==null){
+			throw new NullPointerException("fasta file stream can not be null");
+		}
+		
+		this.fastaFile = null;
+		this.in = fastaFileAsStream;
+		
 	}
 	
 	/**
@@ -128,7 +150,7 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 	 * @see #hint(DataStoreProviderHint)
 	 */
 	protected D build() throws IOException {
-		return createNewInstance(fastaFile, hint, filter);
+		return createNewInstance(fastaFile,in, hint, filter);
 	}
 
 	/**
@@ -140,7 +162,7 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 	 * @return a new {@link FastaDataStore} instance; should never be null.
 	 * @throws IOException if there is a problem creating the datastore from the file.
 	 */
-	protected abstract D createNewInstance(File fastaFile, DataStoreProviderHint hint, DataStoreFilter filter) throws IOException;
+	protected abstract D createNewInstance(File fastaFile, InputStream in, DataStoreProviderHint hint, DataStoreFilter filter) throws IOException;
 			
 
 

@@ -22,6 +22,7 @@ package org.jcvi.jillion.fasta.qual;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -53,12 +54,28 @@ public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDat
 			throws IOException {
 		super(fastaFile);
 	}
+	
+	/**
+	 * Create a new Builder instance of 
+	 * which will build a {@link FastaDataStore} for the given
+	 * fasta file.
+	 * @param fastaFile the fasta file make a {@link FastaDataStore} with. 
+	 * @throws IOException if the fasta file does not exist, or can not be read.
+	 * @throws NullPointerException if fastaFile is null.
+	 */
+	public QualityFastaFileDataStoreBuilder(InputStream fastaFileAsStream)
+			throws IOException {
+		super(fastaFileAsStream);
+	}
 
 	
 	@Override
-	protected QualityFastaDataStore createNewInstance(File fastaFile,
+	protected QualityFastaDataStore createNewInstance(File fastaFile, InputStream in,
 			DataStoreProviderHint hint, DataStoreFilter filter)
 			throws IOException {
+		if(fastaFile ==null){
+			return DefaultQualityFastaFileDataStore.create(fastaFile,filter); 
+		}
 		switch(hint){
 			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultQualityFastaFileDataStore.create(fastaFile,filter);
 			case RANDOM_ACCESS_OPTIMIZE_MEMORY: return IndexedQualityFastaFileDataStore.create(fastaFile,filter);
