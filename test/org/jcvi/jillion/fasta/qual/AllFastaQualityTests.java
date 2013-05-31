@@ -37,6 +37,9 @@ import org.junit.runners.Suite.SuiteClasses;
         TestLargeQualityFastaDataStore.class,
         TestIndexedQualityFastaFileDataStore.class,
         
+        TestDefaultQualityFastaDataStoreAsStream.class,
+        TestQualityFastaFileDataStoreBuilder.class,
+        
         TestDefaultQualitySequenceFastaRecordWriter.class
     }
     )

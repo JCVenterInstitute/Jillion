@@ -74,7 +74,7 @@ public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDat
 			DataStoreProviderHint hint, DataStoreFilter filter)
 			throws IOException {
 		if(fastaFile ==null){
-			return DefaultQualityFastaFileDataStore.create(fastaFile,filter); 
+			return DefaultQualityFastaFileDataStore.create(in,filter); 
 		}
 		switch(hint){
 			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultQualityFastaFileDataStore.create(fastaFile,filter);
