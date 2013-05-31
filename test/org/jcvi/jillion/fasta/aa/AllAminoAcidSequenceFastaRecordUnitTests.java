@@ -34,6 +34,8 @@ import org.junit.runners.Suite.SuiteClasses;
     	TestLargeAminoAcidSequenceFastaFileDataStore.class,
     	TestIndexedAminoAcidSequenceFastaFileDataStore.class,
     	
+    	TestAminoAcidFastaFileDataStoreBuilder.class,
+    	
     	TestDefaultAminoAcidSequenceFastaRecordWriter.class
     }
     )

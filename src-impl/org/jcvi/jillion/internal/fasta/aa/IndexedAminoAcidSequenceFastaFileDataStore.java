@@ -163,12 +163,12 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 
 		@Override
 		public AminoAcidFastaDataStore build() {
-			return new IndexedAminoAcidSequenceFastaFileDataStore2(fastaFile,parser, filter,mementos);
+			return new Impl(fastaFile,parser, filter,mementos);
 		}
 	
 	}
 	
-	public static final class IndexedAminoAcidSequenceFastaFileDataStore2 implements AminoAcidFastaDataStore {
+	public static final class Impl implements AminoAcidFastaDataStore {
 		private volatile boolean closed =false;
 		private final File fastaFile;
 		private final FastaFileParser parser;
@@ -176,7 +176,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos;
 		
 		
-		public IndexedAminoAcidSequenceFastaFileDataStore2(File fastaFile,
+		public Impl(File fastaFile,
 				FastaFileParser parser, DataStoreFilter filter, Map<String, FastaVisitorMemento> mementos) {
 			this.fastaFile = fastaFile;
 			this.parser = parser;
