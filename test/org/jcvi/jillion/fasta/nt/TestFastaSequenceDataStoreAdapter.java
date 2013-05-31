@@ -47,7 +47,7 @@ public class TestFastaSequenceDataStoreAdapter {
 	
 	@Before
 	public void createDataStore() throws IOException{
-		sut = FastaRecordDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, DefaultNucleotideSequenceFastaFileDataStore.create(fastaFile));
+		sut = FastaRecordDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, DefaultNucleotideFastaFileDataStore.create(fastaFile));
 	}
 	@Test
 	public void numberOfRecords() throws DataStoreException{

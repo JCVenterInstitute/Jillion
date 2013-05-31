@@ -22,12 +22,12 @@ package org.jcvi.jillion.fasta.aa;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
-import org.jcvi.jillion.fasta.FastaDataStore;
 import org.jcvi.jillion.internal.fasta.AbstractFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.fasta.aa.DefaultAminoAcidSequenceFastaDataStore;
 import org.jcvi.jillion.internal.fasta.aa.IndexedAminoAcidSequenceFastaFileDataStore;
@@ -48,6 +48,10 @@ public final class AminoAcidFastaFileDataStoreBuilder extends AbstractFastaFileD
 		super(fastaFile);
 	}
 	
+	public AminoAcidFastaFileDataStoreBuilder(InputStream fastaFileAsStream) throws IOException{
+		super(fastaFileAsStream);
+	}
+	
 	/**
 	 * Create a new {@link FastaDataStore} instance.
 	 * @param fastaFile the fasta file to make the datastore for;
@@ -58,8 +62,11 @@ public final class AminoAcidFastaFileDataStoreBuilder extends AbstractFastaFileD
 	 * @throws IOException if there is a problem creating the datastore from the file.
 	 */
 	@Override
-	protected AminoAcidFastaDataStore createNewInstance(File fastaFile, DataStoreProviderHint hint, DataStoreFilter filter)
+	protected AminoAcidFastaDataStore createNewInstance(File fastaFile, InputStream in, DataStoreProviderHint hint, DataStoreFilter filter)
 			throws IOException {
+		if(fastaFile ==null){
+			return DefaultAminoAcidSequenceFastaDataStore.create(in,filter);
+		}
 		switch(hint){
 			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultAminoAcidSequenceFastaDataStore.create(fastaFile,filter);
 			case RANDOM_ACCESS_OPTIMIZE_MEMORY: return IndexedAminoAcidSequenceFastaFileDataStore.create(fastaFile,filter);

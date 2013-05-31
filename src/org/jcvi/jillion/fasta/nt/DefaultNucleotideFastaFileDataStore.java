@@ -50,9 +50,9 @@ import org.jcvi.jillion.fasta.FastaVisitorCallback;
  * @see LargeNucleotideSequenceFastaFileDataStore
  *
  */
-final class DefaultNucleotideSequenceFastaFileDataStore{
+final class DefaultNucleotideFastaFileDataStore{
 	
-	private DefaultNucleotideSequenceFastaFileDataStore(){
+	private DefaultNucleotideFastaFileDataStore(){
 		//can not instantiate.
 	}
 

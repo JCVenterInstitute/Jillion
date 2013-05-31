@@ -32,7 +32,7 @@ import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.fasta.FastaRecordDataStoreAdapter;
-import org.jcvi.jillion.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
+import org.jcvi.jillion.fasta.nt.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -41,7 +41,7 @@ public class TestNucleotideDataStoreFastaAdatper extends AbstractTestSequenceFas
     @Override
     protected DataStore<NucleotideFastaRecord> createDataStore(
             File file) throws IOException {
-        return DefaultNucleotideSequenceFastaFileDataStore.create(file);
+        return DefaultNucleotideFastaFileDataStore.create(file);
     }
 
     @Test

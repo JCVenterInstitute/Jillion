@@ -28,7 +28,7 @@ package org.jcvi.jillion.fasta.nt;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.jillion.fasta.nt.DefaultNucleotideSequenceFastaFileDataStore;
+import org.jcvi.jillion.fasta.nt.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 
 
@@ -37,7 +37,7 @@ public class TestDefaultSequenceFastaDataStoreWithNoComment extends AbstractTest
     @Override
     protected NucleotideFastaDataStore createDataStore(
             File file) throws IOException {
-        return DefaultNucleotideSequenceFastaFileDataStore.create(file);
+        return DefaultNucleotideFastaFileDataStore.create(file);
     }
     
 

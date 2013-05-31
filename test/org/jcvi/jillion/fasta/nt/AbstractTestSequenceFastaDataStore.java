@@ -25,19 +25,23 @@
  */
 package org.jcvi.jillion.fasta.nt;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
 import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public abstract class AbstractTestSequenceFastaDataStore {
 
     protected static final String FASTA_FILE_PATH = "files/19150.fasta";
@@ -160,9 +164,15 @@ public abstract class AbstractTestSequenceFastaDataStore {
         
         DataStore<NucleotideFastaRecord> sut = parseFile(getFile());
         assertEquals(9, sut.getNumberOfRecords());
+        assertTrue(sut.contains("1"));
         assertEquals(contig_1, sut.get("1"));
+        assertTrue(sut.contains("5"));
         assertEquals(contig_5, sut.get("5"));
+        assertTrue(sut.contains("9"));
         assertEquals(contig_9, sut.get("9"));
+        
+        assertFalse(sut.contains("not in datastore"));
+        assertNull(sut.get("not in datastore"));
     }
     
     @Test
@@ -214,5 +224,42 @@ public abstract class AbstractTestSequenceFastaDataStore {
     protected abstract DataStore<NucleotideFastaRecord> parseFile(File file) throws IOException;
     
    
+    @Test
+    public void closedDataStoreShouldThrowClosedExceptions() throws IOException, DataStoreException{
+    	 DataStore<NucleotideFastaRecord> sut = parseFile(getFile());
+    	 
+    	 sut.close();
+    	 assertTrue(sut.isClosed());
+    	try {
+			sut.contains("id");
+			fail("contains should throw DataStoreClosed exception");
+		} catch (DataStoreClosedException ignore) {
+		}
+    	
+    	try {
+			sut.get("id");
+			fail("get should throw DataStoreClosed exception");
+		} catch (DataStoreClosedException ignore) {
+		}
+    	
+    	try {
+			sut.getNumberOfRecords();
+			fail("getNumberOfRecords should throw DataStoreClosed exception");
+		} catch (DataStoreClosedException ignore) {
+		}
+    	
+    	try {
+			sut.idIterator();
+			fail("idIterator should throw DataStoreClosed exception");
+		} catch (DataStoreClosedException ignore) {
+		}
+    	try {
+			sut.iterator();
+			fail("iterator should throw DataStoreClosed exception");
+		} catch (DataStoreClosedException ignore) {
+		}
+    	
+    	
+    }
     
 }
