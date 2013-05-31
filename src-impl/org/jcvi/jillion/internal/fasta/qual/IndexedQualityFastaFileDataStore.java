@@ -163,12 +163,12 @@ public final class IndexedQualityFastaFileDataStore{
 
 		@Override
 		public QualityFastaDataStore build() {
-			return new IndexedQualitySequenceFastaFileDataStore2(fastaFile,parser,filter, mementos);
+			return new Impl(fastaFile,parser,filter, mementos);
 		}
 	
 	}
 	
-	public static final class IndexedQualitySequenceFastaFileDataStore2 implements QualityFastaDataStore {
+	public static final class Impl implements QualityFastaDataStore {
 		private volatile boolean closed =false;
 		private final File fastaFile;
 		private final FastaFileParser parser;
@@ -176,7 +176,7 @@ public final class IndexedQualityFastaFileDataStore{
 		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos;
 		
 		
-		public IndexedQualitySequenceFastaFileDataStore2(File fastaFile,
+		public Impl(File fastaFile,
 				FastaFileParser parser, DataStoreFilter filter, Map<String, FastaVisitorMemento> mementos) {
 			this.fastaFile = fastaFile;
 			this.parser = parser;
