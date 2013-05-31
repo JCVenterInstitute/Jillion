@@ -5,7 +5,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -141,20 +143,22 @@ public class TestSliceBuilder {
 	
 	@Test
 	public void addMultipleSliceElementsAllAtOnce(){
-		List<SliceElement> elements = Arrays.<SliceElement>asList(
-								new DefaultSliceElement("id",
-													Nucleotide.Adenine, 
-													PhredQuality.valueOf(30), 
-													Direction.FORWARD),
-								new DefaultSliceElement("id2",
-										Nucleotide.Adenine, 
-										PhredQuality.valueOf(20), 
-										Direction.REVERSE),
-								new DefaultSliceElement("id3",
-												Nucleotide.Guanine, 
-												PhredQuality.valueOf(50), 
-												Direction.REVERSE)
-								);
+		List<SliceElement> shuffledList = new ArrayList<SliceElement>(elements);
+		Collections.shuffle(shuffledList);
+		Slice shuffeledSlice = new SliceBuilder()
+									.addAll(shuffledList)
+									.build();
+
+		Slice unshuffeledSlice = new SliceBuilder()
+									.addAll(elements)
+									.build();
+		assertEquals(unshuffeledSlice, shuffeledSlice);
+		
+	}
+	
+	@Test
+	public void SlicesAddedInDifferentOrderShouldStillBeEqual(){
+		
 		
 		SliceBuilder builder= new SliceBuilder();
 		
@@ -178,20 +182,7 @@ public class TestSliceBuilder {
 	
 	@Test
 	public void removeNonExistentElementShouldDoNothing(){
-		List<SliceElement> elements = Arrays.<SliceElement>asList(
-								new DefaultSliceElement("id",
-													Nucleotide.Adenine, 
-													PhredQuality.valueOf(30), 
-													Direction.FORWARD),
-								new DefaultSliceElement("id2",
-										Nucleotide.Adenine, 
-										PhredQuality.valueOf(20), 
-										Direction.REVERSE),
-								new DefaultSliceElement("id3",
-												Nucleotide.Guanine, 
-												PhredQuality.valueOf(50), 
-												Direction.REVERSE)
-								);
+		
 		
 		SliceBuilder builder= new SliceBuilder(elements);
 		
@@ -215,20 +206,7 @@ public class TestSliceBuilder {
 	
 	@Test
 	public void removeSliceElement(){
-		List<SliceElement> elements = Arrays.<SliceElement>asList(
-								new DefaultSliceElement("id",
-													Nucleotide.Adenine, 
-													PhredQuality.valueOf(30), 
-													Direction.FORWARD),
-								new DefaultSliceElement("id2",
-										Nucleotide.Adenine, 
-										PhredQuality.valueOf(20), 
-										Direction.REVERSE),
-								new DefaultSliceElement("id3",
-												Nucleotide.Guanine, 
-												PhredQuality.valueOf(50), 
-												Direction.REVERSE)
-								);
+		
 		
 		SliceBuilder builder= new SliceBuilder();
 		
@@ -260,21 +238,7 @@ public class TestSliceBuilder {
 	
 	@Test
 	public void copy(){
-		List<SliceElement> elements = Arrays.<SliceElement>asList(
-											new DefaultSliceElement("id",
-																Nucleotide.Adenine, 
-																PhredQuality.valueOf(30), 
-																Direction.FORWARD),
-											new DefaultSliceElement("id2",
-													Nucleotide.Adenine, 
-													PhredQuality.valueOf(20), 
-													Direction.REVERSE),
-											new DefaultSliceElement("id3",
-															Nucleotide.Guanine, 
-															PhredQuality.valueOf(50), 
-															Direction.REVERSE)
-											);
-
+		
 		SliceBuilder builder= new SliceBuilder();
 		builder.addAll(elements);
 		SliceBuilder copy =builder.copy();
@@ -319,20 +283,6 @@ public class TestSliceBuilder {
 	
 	@Test
 	public void replaceFirstSliceElement(){
-		List<SliceElement> elements = Arrays.<SliceElement>asList(
-								new DefaultSliceElement("id",
-													Nucleotide.Adenine, 
-													PhredQuality.valueOf(30), 
-													Direction.FORWARD),
-								new DefaultSliceElement("id2",
-										Nucleotide.Adenine, 
-										PhredQuality.valueOf(20), 
-										Direction.REVERSE),
-								new DefaultSliceElement("id3",
-												Nucleotide.Guanine, 
-												PhredQuality.valueOf(50), 
-												Direction.REVERSE)
-								);
 		
 		SliceBuilder builder = new SliceBuilder(elements);
 		SliceElement newElement = new DefaultSliceElement("id", Nucleotide.Cytosine, PhredQuality.valueOf(50), Direction.FORWARD);
@@ -352,21 +302,7 @@ public class TestSliceBuilder {
 	}
 	@Test
 	public void replaceMiddleSliceElement(){
-		List<SliceElement> elements = Arrays.<SliceElement>asList(
-								new DefaultSliceElement("id",
-													Nucleotide.Adenine, 
-													PhredQuality.valueOf(30), 
-													Direction.FORWARD),
-								new DefaultSliceElement("id2",
-										Nucleotide.Adenine, 
-										PhredQuality.valueOf(20), 
-										Direction.REVERSE),
-								new DefaultSliceElement("id3",
-												Nucleotide.Guanine, 
-												PhredQuality.valueOf(50), 
-												Direction.REVERSE)
-								);
-		
+	
 		SliceBuilder builder = new SliceBuilder(elements);
 		SliceElement newElement = new DefaultSliceElement("id2", Nucleotide.Cytosine, PhredQuality.valueOf(50), Direction.FORWARD);
 		
@@ -386,20 +322,6 @@ public class TestSliceBuilder {
 	
 	@Test
 	public void replaceLastSliceElement(){
-		List<SliceElement> elements = Arrays.<SliceElement>asList(
-								new DefaultSliceElement("id",
-													Nucleotide.Adenine, 
-													PhredQuality.valueOf(30), 
-													Direction.FORWARD),
-								new DefaultSliceElement("id2",
-										Nucleotide.Adenine, 
-										PhredQuality.valueOf(20), 
-										Direction.REVERSE),
-								new DefaultSliceElement("id3",
-												Nucleotide.Guanine, 
-												PhredQuality.valueOf(50), 
-												Direction.REVERSE)
-								);
 		
 		SliceBuilder builder = new SliceBuilder(elements);
 		SliceElement newElement = new DefaultSliceElement("id3", Nucleotide.Cytosine, PhredQuality.valueOf(50), Direction.FORWARD);

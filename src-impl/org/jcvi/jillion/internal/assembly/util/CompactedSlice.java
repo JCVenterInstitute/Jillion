@@ -123,19 +123,19 @@ public final class CompactedSlice implements Slice{
             return false;
         }
         Slice other = (Slice) obj;
-		Iterator<SliceElement> iter = iterator();
-		Iterator<SliceElement> otherIter = other.iterator();
+        if(getCoverageDepth() !=other.getCoverageDepth()){
+        	return false;
+        }
+		Iterator<SliceElement> iter = other.iterator();
 		while(iter.hasNext()){
-			if(!otherIter.hasNext()){
+			
+			SliceElement element = iter.next();
+			if(!element.equals(getSliceElement(element.getId()))){
 				return false;
 			}
-			if(!iter.next().equals(otherIter.next())){
-				return false;
-			}
+			
 		}
-		if(otherIter.hasNext()){
-			return false;
-		}   
+		 
        return true;
             
     }
