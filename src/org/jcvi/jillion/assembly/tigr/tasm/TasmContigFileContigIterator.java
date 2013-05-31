@@ -70,7 +70,7 @@ final class TasmContigFileContigIterator extends AbstractBlockingStreamingIterat
 						
 						@Override
 						protected void visitRecord(TasmContigBuilder contig) {
-							blockingPut(contig);
+							blockingPut(contig.build());
 							
 						}
 					};

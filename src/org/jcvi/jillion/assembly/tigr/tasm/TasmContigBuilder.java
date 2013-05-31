@@ -64,6 +64,7 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
 	private boolean isCircular;
 	
 	private Double avgCoverage;
+	private Integer numberOfReads;
 	
     /**
      * Create a new TasmContigBuilder instance setting the
@@ -214,26 +215,35 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
     }
     
     /**
-     * Sets the {@link TasmContigAttribute#AVG_COVERAGE}
-     * attribute for this adapted contig.  If this method is not set,
-     * or set to {@code null}, then the average coverage 
+     * Sets the {@link TasmContigAttribute#NUMBER_OF_READS}
+     * and {@link TasmContigAttribute#AVG_COVERAGE}
+     * attributes for this contig.  If these values are not set,
+     * or set to {@code null}, then the values
      * will be computed by counting the bases in the
      * underlying reads.  Calling this method
      * multiple times will overwrite previous entries with the current
-     * entry. Setting the value to {@code null} will remove the current
-     * entry (the type can later be re-added by calling this method 
-     * again with a non-null value).
+     * entry. Setting the values to {@code null} will remove the current
+     * entries (and can later be re-added by calling this method 
+     * again with a non-null values).
+     * @param numberOfReads the value to set as the number of
+     * reads
+     * <strong>regardless</strong> of what the actual
+     * underlying read count is.
      * @param avgCoverage the value to set as the average coverage
      * <strong>regardless</strong> of what the actual
      * underlying reads are.
      * @return this.
      * @throws IllegalArgumentException if avgCoverage < 0
      */
-    public TasmContigBuilder withAvgCoverage(Double avgCoverage){
+    public TasmContigBuilder setCoverageInfo(Integer numberOfReads, Double avgCoverage){
+    	if(numberOfReads !=null && numberOfReads <0){
+    		throw new IllegalArgumentException("number of reads must be >= 0");
+    	}
     	if(avgCoverage !=null && avgCoverage <0D){
     		throw new IllegalArgumentException("avg coverage must be >= 0");
     	}
        this.avgCoverage = avgCoverage;
+       this.numberOfReads = numberOfReads;
         return this;
     }
     /**
@@ -337,7 +347,7 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
         for(AssembledReadBuilder<TasmAssembledRead> builder : getAllAssembledReadBuilders()){              
             reads.add(builder.build());
         }
-        return new DefaultTasmContig(this, reads, avgCoverage);
+        return new DefaultTasmContig(this, reads, avgCoverage, numberOfReads);
     }
 
     
@@ -392,7 +402,7 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
     	private final String assemblyMethod;
     	private final double avgCoverage;
     	private final boolean isCircular;
-    	
+    	private final int numberOfReads;
         private final Contig<TasmAssembledRead> contig;
         /**
          * @param id
@@ -401,10 +411,10 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
          * @param circular
          */
         private DefaultTasmContig(TasmContigBuilder builder, Set<TasmAssembledRead> reads,
-        		Double userProvidedAvgCoverage) {
+        		Double userProvidedAvgCoverage, Integer userProvidedNumberOfReads) {
             contig = new DefaultContig<TasmAssembledRead>(builder.getContigId(),
             		builder.getConsensusBuilder().build(),reads);
-            long numberOfReads = contig.getNumberOfReads();
+            this.numberOfReads = userProvidedNumberOfReads ==null ? (int) contig.getNumberOfReads() : userProvidedNumberOfReads;
             if(userProvidedAvgCoverage ==null){
 	            if(numberOfReads >0){
 	    	        long totalNumberOfReadBases=0L;
@@ -432,6 +442,11 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
         }
 
     	@Override
+		public boolean isAnnotationContig() {
+			return contig.getNumberOfReads()==0;
+		}
+
+		@Override
     	public String getId() {
     		return contig.getId();
     	}
@@ -488,7 +503,7 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
 
     	@Override
     	public long getNumberOfReads() {
-    		return contig.getNumberOfReads();
+    		return numberOfReads;
     	}
 
 

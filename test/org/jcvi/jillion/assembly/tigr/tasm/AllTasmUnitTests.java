@@ -43,7 +43,9 @@ import org.junit.runners.Suite.SuiteClasses;
        
        TestDefaultTasmDataStore.class,
        TestIndexedTasmDataStore.class,
-       TestLargeTasmDataStore.class
+       TestLargeTasmDataStore.class,
+       
+       TestTasmWriterBuilder.class
     }
     )
 public class AllTasmUnitTests {

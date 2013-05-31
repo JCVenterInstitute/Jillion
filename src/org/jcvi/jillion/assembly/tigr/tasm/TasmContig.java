@@ -129,4 +129,15 @@ public interface TasmContig extends Contig<TasmAssembledRead>{
     * by >= 0.
     */
    double getAvgCoverage();
+   /**
+    * Is this contig a TIGR "annotation" contig.
+    * An annotation contig has information
+    * such as average coveage and number of reads set
+    * to non-zero values, but does not actually
+    * contain the underlying reads.  It is essentially
+    * only the consensus plus meta data.
+    * @return {@code true} if this contig is an
+    * annotation contig; {@code false} otherwise.
+    */
+   boolean isAnnotationContig();
 }

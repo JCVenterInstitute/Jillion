@@ -21,13 +21,19 @@
 package org.jcvi.jillion.assembly.tigr.tasm;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
+import org.jcvi.jillion.assembly.tigr.contig.TigrContig;
 import org.jcvi.jillion.assembly.tigr.contig.TigrContigDataStore;
-import org.jcvi.jillion.assembly.tigr.tasm.TasmContig;
-import org.jcvi.jillion.assembly.tigr.tasm.TasmContigDataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.junit.Test;
 
 public abstract class AbstractTestTasmDataStore { 
@@ -35,6 +41,70 @@ public abstract class AbstractTestTasmDataStore {
 	protected static TasmContigDataStore tasmDataStore;
 	
 	
+	private final Map<String,String> contigToTasmIdMap;
+	
+	AbstractTestTasmDataStore(){
+		contigToTasmIdMap = new HashMap<String, String>();
+		contigToTasmIdMap.put("15044", "1122071329926");
+		contigToTasmIdMap.put("15045", "1122071329927");
+		contigToTasmIdMap.put("15046", "1122071329928");
+		contigToTasmIdMap.put("15047", "1122071329929");
+		contigToTasmIdMap.put("15048", "1122071329930");
+		contigToTasmIdMap.put("15057", "1122071329931");
+		contigToTasmIdMap.put("26303", "1122071329932");
+		contigToTasmIdMap.put("27233", "1122071329933");
+		contigToTasmIdMap.put("27235", "1122071329934");
+	}
+	
+	
+	
+	@Test
+	public void isClosed() throws DataStoreException{
+		assertFalse(tasmDataStore.isClosed());
+	}
+	@Test
+	public void numberOfRecords() throws DataStoreException{
+		assertEquals(contigDataStore.getNumberOfRecords(), tasmDataStore.getNumberOfRecords());
+	}
+	
+	@Test
+	public void idIterator() throws DataStoreException{
+		StreamingIterator<String> contigIter = null;
+		StreamingIterator<String> tasmIter = null;
+		try{
+			contigIter = contigDataStore.idIterator();
+			tasmIter = tasmDataStore.idIterator();
+			while(contigIter.hasNext()){
+				assertTrue(tasmIter.hasNext());
+				String contigId = contigIter.next();
+				assertEquals(contigToTasmIdMap.get(contigId), tasmIter.next());
+			}
+			assertFalse(tasmIter.hasNext());
+		
+		}finally{
+			IOUtil.closeAndIgnoreErrors(contigIter, tasmIter);
+		}
+	}
+	
+	@Test
+	public void iterator() throws DataStoreException{
+		StreamingIterator<TigrContig> contigIter = null;
+		StreamingIterator<TasmContig> tasmIter = null;
+		try{
+			contigIter = contigDataStore.iterator();
+			tasmIter = tasmDataStore.iterator();
+			while(contigIter.hasNext()){
+				assertTrue(tasmIter.hasNext());
+				TigrContig contig = contigIter.next();
+				TasmContig tasm = tasmIter.next();
+				assertContigDataMatches(contig,tasm);
+			}
+			assertFalse(tasmIter.hasNext());
+		
+		}finally{
+			IOUtil.closeAndIgnoreErrors(contigIter, tasmIter);
+		}
+	}
 	
 	@Test
 	public void PB2() throws DataStoreException {
@@ -96,7 +166,7 @@ public abstract class AbstractTestTasmDataStore {
 				tasm.getConsensusSequence());
 		assertEquals("#reads", contig.getNumberOfReads(),
 				tasm.getNumberOfReads());
-
+		assertFalse(tasm.isAnnotationContig());
 		TigrAssemblerTestUtil.assertAllReadsCorrectlyPlaced(contig, tasm);
 
 	}
