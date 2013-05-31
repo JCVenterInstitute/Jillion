@@ -59,7 +59,7 @@ public abstract class AbstractTestPhdDataStore extends AbstractTestPhd{
 
     protected void phdRecordMatchesExpected(Phd actual) {
         assertEquals(expectedQualities, actual.getQualitySequence());        
-        assertEquals(expectedPositions, actual.getPositionSequence());      
+        assertEquals(expectedPositions, actual.getPeakSequence());      
         assertEquals(expectedBasecalls, actual.getNucleotideSequence().toString());
         assertEquals(expectedProperties, actual.getComments());
     }

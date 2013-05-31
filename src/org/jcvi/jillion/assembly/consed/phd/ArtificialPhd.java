@@ -219,7 +219,7 @@ final class ArtificialPhd implements Phd{
    
 
     @Override
-    public synchronized PositionSequence getPositionSequence() {
+    public synchronized PositionSequence getPeakSequence() {
         if(fakePositions ==null){
         	PositionSequenceBuilder builder = new PositionSequenceBuilder(numberOfBases);
             
@@ -248,7 +248,7 @@ final class ArtificialPhd implements Phd{
 				+ ((basecalls == null) ? 0 : basecalls.hashCode());
 		result = prime * result
 				+ ((comments == null) ? 0 : comments.hashCode());
-		PositionSequence positions = getPositionSequence();
+		PositionSequence positions = getPeakSequence();
 		result = prime * result + positions.hashCode();
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
@@ -277,7 +277,7 @@ final class ArtificialPhd implements Phd{
 		if (!comments.equals(other.getComments())) {
 			return false;
 		}
-		if (!getPositionSequence().equals(other.getPositionSequence())) {
+		if (!getPeakSequence().equals(other.getPeakSequence())) {
 			return false;
 		}
 		

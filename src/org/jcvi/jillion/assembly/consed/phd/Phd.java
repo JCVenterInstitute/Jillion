@@ -71,17 +71,17 @@ public interface Phd extends Trace {
     List<PhdReadTag> getReadTags();
     /**
      * Get the optional {@link PositionSequence}
-     * for this Phd.  Recent versions of consed
-     * allow the position sequence to be optional
+     * representing the sanger peaks for this Phd.  Recent versions of consed
+     * allow the peak sequence to be optional
      * if the sequence technology does not support it
      * (previous versions of consed forced the positions
      * to be faked).  For example, solexa sequences
-     * do not have positions, however sanger chromatograms
+     * do not have peaks, however sanger chromatograms
      * do.
      * @return the {@link PositionSequence} for this
      * phd if there is one; or null
-     * if no position sequence exists
+     * if no peak sequence exists
      * for this trace.
      */
-    PositionSequence getPositionSequence();
+    PositionSequence getPeakSequence();
 }

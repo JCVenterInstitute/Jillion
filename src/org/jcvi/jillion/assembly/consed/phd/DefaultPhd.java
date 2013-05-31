@@ -77,7 +77,7 @@ final class DefaultPhd implements Phd {
     
 
     @Override
-	public PositionSequence getPositionSequence() {
+	public PositionSequence getPeakSequence() {
 		return peaks;
 	}
 	@Override
@@ -131,10 +131,10 @@ final class DefaultPhd implements Phd {
             return false;
         }
         if(peaks==null){
-        	if(other.getPositionSequence() !=null){
+        	if(other.getPeakSequence() !=null){
         		return false;
         	}
-        }else if (!peaks.equals(other.getPositionSequence())){
+        }else if (!peaks.equals(other.getPeakSequence())){
             return false;
         }
         if (!qualities.equals(other.getQualitySequence())){

@@ -232,7 +232,7 @@ public class PhdBallWriter implements PhdWriter{
 			Iterator<Nucleotide> basesIter = nucleotideSequence.iterator();
 	        Iterator<PhredQuality> qualIter = phd.getQualitySequence().iterator();
 	       
-	        PositionSequence peaks = phd.getPositionSequence();
+	        PositionSequence peaks = phd.getPeakSequence();
 	        StringBuilder result = new StringBuilder(seqLength *10);
 	        if(peaks==null){
 	            while(basesIter.hasNext()){
@@ -244,7 +244,7 @@ public class PhdBallWriter implements PhdWriter{
 	        	 //optimization to convert to array instead 
 	            //of iterating over Position objects
 	            //this way we get primitives.
-	        	short[] positions = phd.getPositionSequence().toArray();
+	        	short[] positions = phd.getPeakSequence().toArray();
 	        	int i=0;
 	            while(basesIter.hasNext()){
 	            	result.append(String.format("%s %d %d%n",
