@@ -42,7 +42,7 @@ public class TestPhdBuilder {
 		assertEquals(id, phd.getId());
 		assertEquals(seq, phd.getNucleotideSequence());
 		assertEquals(quals, phd.getQualitySequence());
-		assertNull(phd.getPositionSequence());
+		assertNull(phd.getPeakSequence());
 		assertTrue(phd.getComments().isEmpty());
 		assertTrue(phd.getWholeReadItems().isEmpty());
 		assertTrue(phd.getReadTags().isEmpty());
@@ -96,7 +96,7 @@ public class TestPhdBuilder {
 		assertEquals(id, phd.getId());
 		assertEquals(seq, phd.getNucleotideSequence());
 		assertEquals(quals, phd.getQualitySequence());
-		assertNull(phd.getPositionSequence());
+		assertNull(phd.getPeakSequence());
 		assertTrue(phd.getComments().isEmpty());
 		assertTrue(phd.getWholeReadItems().isEmpty());
 		assertTrue(phd.getReadTags().isEmpty());
@@ -113,7 +113,7 @@ public class TestPhdBuilder {
 		assertEquals(id, phd.getId());
 		assertEquals(seq, phd.getNucleotideSequence());
 		assertEquals(quals, phd.getQualitySequence());
-		assertEquals(peaks,phd.getPositionSequence());
+		assertEquals(peaks,phd.getPeakSequence());
 		assertTrue(phd.getComments().isEmpty());
 		assertTrue(phd.getWholeReadItems().isEmpty());
 		assertTrue(phd.getReadTags().isEmpty());
@@ -140,7 +140,7 @@ public class TestPhdBuilder {
 		assertEquals(id, phd.getId());
 		assertEquals(seq, phd.getNucleotideSequence());
 		assertEquals(quals, phd.getQualitySequence());
-		assertEquals(peaks,phd.getPositionSequence());
+		assertEquals(peaks,phd.getPeakSequence());
 		assertTrue(phd.getComments().isEmpty());
 		assertTrue(phd.getWholeReadItems().isEmpty());
 		assertTrue(phd.getReadTags().isEmpty());
@@ -255,7 +255,7 @@ public class TestPhdBuilder {
 		
 		Phd phd = sut.build();
 		
-		assertEquals(expected, phd.getPositionSequence());
+		assertEquals(expected, phd.getPeakSequence());
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
@@ -282,7 +282,7 @@ public class TestPhdBuilder {
 		
 		Phd phd = sut.build();
 		
-		assertEquals(expected, phd.getPositionSequence());
+		assertEquals(expected, phd.getPeakSequence());
 	}
 	
 	private PositionSequence createFakePeaks(long length, int start, int spacing){
@@ -310,7 +310,7 @@ public class TestPhdBuilder {
 		
 		PositionSequence expected = createFakePeaks(seq.getLength(),10,12);
 		
-		assertEquals(expected, phd.getPositionSequence());
+		assertEquals(expected, phd.getPeakSequence());
 	}
 	
 	@Test
@@ -330,8 +330,8 @@ public class TestPhdBuilder {
 		assertEquals(comments, phdOfSut.getComments());
 		assertTrue(phdOfCopy.getComments().isEmpty());
 		
-		assertNull(phdOfSut.getPositionSequence());
-		assertNotNull(phdOfCopy.getPositionSequence());
+		assertNull(phdOfSut.getPeakSequence());
+		assertNotNull(phdOfCopy.getPeakSequence());
 	}
 	@Test
 	public void constructUsingPhd(){

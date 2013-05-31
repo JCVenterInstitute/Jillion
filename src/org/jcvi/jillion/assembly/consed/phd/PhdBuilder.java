@@ -102,7 +102,7 @@ public final class PhdBuilder implements Builder<Phd>{
 		this.id = phd.getId();
 		this.sequence = phd.getNucleotideSequence();
 		this.qualities = phd.getQualitySequence();
-		this.peaks = phd.getPositionSequence();
+		this.peaks = phd.getPeakSequence();
 		this.comments = new LinkedHashMap<String, String>(phd.getComments());
 		this.wrs = new ArrayList<PhdWholeReadItem>(phd.getWholeReadItems());
 		this.readTags = new ArrayList<PhdReadTag>(phd.getReadTags());
