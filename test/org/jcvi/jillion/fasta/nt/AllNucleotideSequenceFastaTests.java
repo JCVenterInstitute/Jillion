@@ -48,6 +48,9 @@ import org.junit.runners.Suite.SuiteClasses;
      TestIndexedUnixAndDosDataStoresParsedCorrectly.class,
      TestLargeUnixAndDosDataStoresParsedCorrectly.class,
      
+     
+     TestNucleotideFastaFileDataStoreBuilder.class,
+     
      TestDefaultNucleotideSequenceFastaRecordWriter.class
     }
     )
