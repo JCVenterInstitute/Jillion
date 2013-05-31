@@ -30,8 +30,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.jillion.assembly.util.Slice;
-import org.jcvi.jillion.assembly.util.SliceElement;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
@@ -65,20 +63,17 @@ public final class DefaultSlice implements Slice{
             return false;
         }
         Slice other = (Slice) obj;
-        Iterator<SliceElement> iter = iterator();
-        Iterator<SliceElement> otherIter = other.iterator();
-        while(iter.hasNext()){
-			if(!otherIter.hasNext()){
-				return false;
-			}
-			if(!iter.next().equals(otherIter.next())){
-				return false;
-			}
-		}
-		if(otherIter.hasNext()){
-			return false;
-		}
-       return true;
+        if(other.getCoverageDepth() != elements.size()){
+        	return false;
+        }
+        for(SliceElement e: other){
+        	SliceElement ourElement =elements.get(e.getId());
+        	if(!e.equals(ourElement)){
+        		return false;
+        	}
+        }
+        return true;
+        
             
     }
     @Override
