@@ -20,8 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.tigr.contig;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
@@ -33,6 +33,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
+import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.assembly.AbstractContigBuilder;
 import org.jcvi.jillion.internal.assembly.DefaultAssembledRead;
@@ -70,9 +71,10 @@ public class TigrContigBuilder extends AbstractContigBuilder<TigrContigRead, Tig
 		 if(consensusCaller !=null){
 				recallConsensusNow();
 	        }
-		Set<TigrContigRead> reads = new LinkedHashSet<TigrContigRead>();
+		 int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads());
+		Map<String,TigrContigRead> reads = new LinkedHashMap<String,TigrContigRead>(capacity);
         for(AssembledReadBuilder<TigrContigRead> builder : getAllAssembledReadBuilders()){          
-            reads.add(builder.build());
+            reads.put(builder.getId(),builder.build());
         }
         return new DefaultTigrContig(getContigId(),
         		getConsensusBuilder().build(),
@@ -86,7 +88,7 @@ public class TigrContigBuilder extends AbstractContigBuilder<TigrContigRead, Tig
 		
 
 		public DefaultTigrContig(String id, NucleotideSequence consensus,
-				Set<TigrContigRead> reads) {
+				Map<String,TigrContigRead> reads) {
 			delegate = new DefaultContig<TigrContigRead>(id,consensus,reads);
 		}
 

@@ -22,10 +22,9 @@ package org.jcvi.jillion.assembly.ca.asm;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
 import org.jcvi.jillion.assembly.Contig;
@@ -42,6 +41,7 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.assembly.DefaultContig;
@@ -65,7 +65,7 @@ final class DefaultAsmContig implements AsmContig{
 
     
     private DefaultAsmContig(String id, NucleotideSequence consensus,
-            Set<AsmAssembledRead> reads,boolean isDegenerate) {
+            Map<String,AsmAssembledRead> reads,boolean isDegenerate) {
         contig = new DefaultContig<AsmAssembledRead>(id, consensus, reads);
         this.isDegenerate = isDegenerate;
     }
@@ -455,12 +455,11 @@ final class DefaultAsmContig implements AsmContig{
         	if(consensusCaller !=null){
     			recallConsensusNow();
             }
-        	
-            Set<AsmAssembledRead> reads = new HashSet<AsmAssembledRead>(asmReadBuilderMap.size()+1);
+        	int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads());
+            Map<String,AsmAssembledRead> reads = new LinkedHashMap<String,AsmAssembledRead>(capacity);
             for(AsmAssembledReadBuilder builder : asmReadBuilderMap.values()){
-                reads.add(builder.build());
+                reads.put(builder.getId(), builder.build());
             }
-            asmReadBuilderMap.clear();
             return new DefaultAsmContig(contigId,mutableConsensus.build(),reads, isDegenerate);
         }
 

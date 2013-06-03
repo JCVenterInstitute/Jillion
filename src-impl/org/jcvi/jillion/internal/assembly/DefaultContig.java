@@ -26,7 +26,6 @@
 package org.jcvi.jillion.internal.assembly;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -218,9 +217,10 @@ public final class DefaultContig<T extends AssembledRead> implements Contig<T>{
         	 if(consensusCaller !=null){
       			recallConsensusNow();
               }
-            Set<AssembledRead> reads = new LinkedHashSet<AssembledRead>();
+        	 int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads());
+            Map<String,AssembledRead> reads = new LinkedHashMap<String, AssembledRead>(capacity);
             for(AssembledReadBuilder<AssembledRead> builder : getAllAssembledReadBuilders()){
-                reads.add(builder.build());
+                reads.put(builder.getId(), builder.build());
             }
             return new DefaultContig<AssembledRead>(getContigId(), getConsensusBuilder().build(), reads);
         }

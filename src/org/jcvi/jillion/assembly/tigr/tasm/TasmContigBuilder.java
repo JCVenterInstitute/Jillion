@@ -22,8 +22,8 @@ package org.jcvi.jillion.assembly.tigr.tasm;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
@@ -32,6 +32,7 @@ import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.assembly.AbstractContigBuilder;
 import org.jcvi.jillion.internal.assembly.DefaultContig;
@@ -343,9 +344,10 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
     	 if(consensusCaller !=null){
  			recallConsensusNow();
          }
-        Set<TasmAssembledRead> reads = new LinkedHashSet<TasmAssembledRead>();
+    	 int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads());
+        Map<String,TasmAssembledRead> reads = new LinkedHashMap<String, TasmAssembledRead>(capacity);
         for(AssembledReadBuilder<TasmAssembledRead> builder : getAllAssembledReadBuilders()){              
-            reads.add(builder.build());
+            reads.put(builder.getId(),builder.build());
         }
         return new DefaultTasmContig(this, reads, avgCoverage, numberOfReads);
     }
@@ -410,7 +412,7 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
          * @param placedReads
          * @param circular
          */
-        private DefaultTasmContig(TasmContigBuilder builder, Set<TasmAssembledRead> reads,
+        private DefaultTasmContig(TasmContigBuilder builder, Map<String,TasmAssembledRead> reads,
         		Double userProvidedAvgCoverage, Integer userProvidedNumberOfReads) {
             contig = new DefaultContig<TasmAssembledRead>(builder.getContigId(),
             		builder.getConsensusBuilder().build(),reads);
@@ -419,7 +421,7 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
 	            if(numberOfReads >0){
 	    	        long totalNumberOfReadBases=0L;
 	    	        
-	    	        for(TasmAssembledRead read : reads){
+	    	        for(TasmAssembledRead read : reads.values()){
 	    	        	totalNumberOfReadBases+=read.getNucleotideSequence().getUngappedLength();
 	    	        }
 	    	       
