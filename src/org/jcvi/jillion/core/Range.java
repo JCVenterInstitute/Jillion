@@ -1014,7 +1014,7 @@ public abstract class Range implements Rangeable,Iterable<Long>
         		//so we have passed MAX_VALUE
         		//(or we are an empty range which
         		//wouldn't have a next anyway)
-        		return index !=to;
+        		return index >= from && index !=to;
         	}else{
         		return index<=to;
         	}

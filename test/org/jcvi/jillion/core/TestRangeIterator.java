@@ -26,12 +26,15 @@
 package org.jcvi.jillion.core;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Iterator;
 
-import org.jcvi.jillion.core.Range;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestRangeIterator {
 
     Range range = Range.of(1, 10);
