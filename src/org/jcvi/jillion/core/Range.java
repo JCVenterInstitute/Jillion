@@ -562,10 +562,20 @@ public abstract class Range implements Rangeable,Iterable<Long>
 		//anything negative or > unsigned int should be stored as a long
 		return new EmptyLongRange(zeroBasedStart);
 	}
+	/**
+	 * Warning: Only used for testing.  Please do not use.
+	 * Removes the given Range from the cache.
+	 * @param range the Range to remove
+	 * @return The Range that was stored in the cache;
+	 * or null if the Range was not in the cache.
+	 * @throws NullPointerException if range is null.
+	 */
+	static synchronized Range removeFromCache(Range range){
+		String hashcode = createCacheKeyFor(range);
+		return CACHE.remove(hashcode);
+	}
+	
     private static synchronized Range getFromCache(Range range) {
-       if(range==null){
-    	   throw new NullPointerException("can not add null range to cache");
-       }
         String hashcode = createCacheKeyFor(range);
        
         //contains() followed by get() is not atomic;
@@ -2428,6 +2438,7 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	 * begin and end coordinates as the given {@link Range}.
     	 * @param range the range to copy;
     	 * can not be null.
+    	 * @throws NullPointerException if range is null.
     	 */
     	public Builder(Range range){
     		if(range ==null){
