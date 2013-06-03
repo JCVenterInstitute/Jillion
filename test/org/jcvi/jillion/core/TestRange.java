@@ -1096,6 +1096,15 @@ public class TestRange{
     }
     
     @Test
+    public void signedByteRange(){
+    	Range r = Range.of(-23, 45);
+    	assertEquals(-23, r.getBegin());
+    	assertEquals(45, r.getEnd());
+    	assertEquals(69, r.getLength());
+    	assertRangeEquals(r);
+    }
+    
+    @Test
     public void byteRangeWithByteLength(){
     	Range r = Range.of(12,123);
     	assertEquals(12, r.getBegin());
@@ -1213,6 +1222,17 @@ public class TestRange{
     	assertEquals(Short.MAX_VALUE, r.getBegin());
     	assertEquals(Short.MAX_VALUE+Short.MAX_VALUE, r.getEnd());
     	assertEquals(Short.MAX_VALUE+1, r.getLength());
+    	assertRangeEquals(r);
+    }
+    
+    @Test
+    public void signedShortRange(){
+    	long begin = Short.MIN_VALUE+10;
+    	long end = Short.MIN_VALUE +20;
+    	Range r = Range.of(begin, end);
+    	assertEquals(begin, r.getBegin());
+    	assertEquals(end, r.getEnd());
+    	assertEquals(end-begin+1, r.getLength());
     	assertRangeEquals(r);
     }
     
@@ -1370,7 +1390,30 @@ public class TestRange{
     }
     
     /////////////////////////////////
+    @Test
+    public void unsignedLongWithIntLength(){
+    	long begin = Integer.MAX_VALUE*3L;
+    	Range r = new Range.Builder(Integer.MAX_VALUE)
+    				.shift(begin).build();
+    	assertEquals(begin, r.getBegin());
+    	assertEquals(begin+Integer.MAX_VALUE-1L, r.getEnd());
+    	assertEquals(Integer.MAX_VALUE, r.getLength());
+    	assertRangeEquals(r);
+    }
     
+    @Test
+    public void unsignedLongWithLongLength(){
+    	long begin = Integer.MAX_VALUE*3L;
+    	long length = begin;
+    	Range r = new Range.Builder(length)
+    				.shift(begin).build();
+    	assertEquals(begin, r.getBegin());
+    	assertEquals(begin+length-1L, r.getEnd());
+    	assertEquals(length, r.getLength());
+    	assertRangeEquals(r);
+    }
+    
+    ///////////////////////
 	@Test
 	public void longWithShortLength() {
 		Range r = new Range.Builder(500).shift(0x100000000L).build();
@@ -1565,5 +1608,29 @@ public class TestRange{
     	assertEquals(0, r1.getBegin());
     	assertEquals(29, r1.getEnd());
     	assertEquals(30, r1.getLength());
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void builderEnd2LessThanBeginShouldThrowException(){
+    	new Range.Builder(5)
+    				.contractEnd(7)
+    				.build();
+    }
+    /**
+     * Test that we iterate correctly
+     * on Long.MAX boundary
+     * see Java Puzzlers Puzzle #26 for more info.
+     */
+    @Test
+    public void iterateToMaxLong(){
+    	long begin = Long.MAX_VALUE-10;
+    	Range r = Range.of(begin, Long.MAX_VALUE);
+    	
+    	Iterator<Long> iter = r.iterator();
+    	for(long i=0; i<10; i++){
+    		assertTrue(iter.hasNext());
+    		assertEquals(begin+i, iter.next().longValue());
+    	}
+    	assertFalse(iter.hasNext());
     }
 }

@@ -550,17 +550,17 @@ public abstract class Range implements Rangeable,Iterable<Long>
 
 	}
 	private static Range buildNewEmptyRange(long zeroBasedStart) {
-		if(zeroBasedStart >=0){
-			if(zeroBasedStart <=Byte.MAX_VALUE){
-				return new EmptyByteRange((byte)zeroBasedStart);
-			}else if(zeroBasedStart <=Short.MAX_VALUE){
-				return new EmptyShortRange((short)zeroBasedStart);
-			}else if(zeroBasedStart <=Integer.MAX_VALUE){
-				return new EmptyIntRange((int)zeroBasedStart);
-			}
+		long absValue = Math.abs(zeroBasedStart);
+		if(absValue <=Byte.MAX_VALUE){
+			return new EmptyByteRange((byte)zeroBasedStart);
+		}else if(absValue <=Short.MAX_VALUE){
+			return new EmptyShortRange((short)zeroBasedStart);
+		}else if(absValue <=Integer.MAX_VALUE){
+			return new EmptyIntRange((int)zeroBasedStart);
+		}else{
+			return new EmptyLongRange(zeroBasedStart);
 		}
-		//anything negative or > unsigned int should be stored as a long
-		return new EmptyLongRange(zeroBasedStart);
+		
 	}
 	/**
 	 * Warning: Only used for testing.  Please do not use.
@@ -1014,7 +1014,7 @@ public abstract class Range implements Rangeable,Iterable<Long>
         		//so we have passed MAX_VALUE
         		//(or we are an empty range which
         		//wouldn't have a next anyway)
-        		return index >from;
+        		return index !=to;
         	}else{
         		return index<=to;
         	}
@@ -2573,11 +2573,8 @@ public abstract class Range implements Rangeable,Iterable<Long>
     		final Range range;
             if(end >= begin) {
                 range= buildNewRange(begin,end);            
-            } else if (end == begin-1) {
+            } else{
                 range = buildNewEmptyRange(begin);
-            } else {
-                throw new IllegalArgumentException(String.format("Range coordinates %d, %d are not valid %s coordinates", 
-                		inputCoordinateSystem.getLocalStart(begin), inputCoordinateSystem.getLocalEnd(end), inputCoordinateSystem));
             }
             return getFromCache(range);
     	}
