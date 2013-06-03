@@ -25,23 +25,24 @@
  */
 package org.jcvi.jillion.trace.chromat.ztr.data;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
 import java.util.Arrays;
 
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.RawData;
-import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.TraceEncoderException;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestRawData {
 
     byte[] data = new byte[]{1,2,3,4,5,6,7};
     
     @Test
-    public void parseReturnsSameDataAsInput() throws TraceDecoderException{
+    public void parseReturnsSameDataAsInput() throws IOException{
         assertTrue(Arrays.equals(RawData.INSTANCE.parseData(data), data));
     }
     @Test
-    public void encode() throws TraceEncoderException{
+    public void encode() throws IOException{
     	byte[] actual = RawData.INSTANCE.encodeData(data);
     	assertEquals("size", actual.length, data.length+1);
     	assertEquals(actual[0], 0);

@@ -28,7 +28,6 @@ import java.io.IOException;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.internal.trace.chromat.scf.ScfChromatogramImpl;
 import org.jcvi.jillion.trace.Trace;
-import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.chromat.ChromatogramXMLSerializer;
 import org.junit.Test;
 
@@ -51,7 +50,7 @@ public class TestSCFChromatogramFile {
     }
 
     @Test
-    public void parseScfFile() throws IOException, TraceDecoderException{
+    public void parseScfFile() throws IOException{
         File scfFile = RESOURCES.getFile("files/GBKAK82TF.scf");
         ScfChromatogram actual = new ScfChromatogramBuilder("id", scfFile)
 									.build();
@@ -59,7 +58,7 @@ public class TestSCFChromatogramFile {
     }
     
     @Test
-    public void scfWithGaps() throws IOException, TraceDecoderException{
+    public void scfWithGaps() throws IOException{
         File scfFile = RESOURCES.getFile("files/containsGaps.scf");
         ScfChromatogram actual = new ScfChromatogramBuilder("id", scfFile)
 									.build();

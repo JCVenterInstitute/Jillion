@@ -29,13 +29,11 @@ package org.jcvi.jillion.internal.trace.chromat.ztr.chunk;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertArrayEquals;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import org.easymock.EasyMockSupport;
 import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
-import org.jcvi.jillion.internal.trace.chromat.ztr.chunk.Chunk;
-import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.TraceEncoderException;
 import org.jcvi.jillion.trace.chromat.Channel;
 import org.jcvi.jillion.trace.chromat.ChannelGroup;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogram;
@@ -69,7 +67,7 @@ public class TestSMP4Chunk extends EasyMockSupport{
     }
     
     @Test
-    public void parse() throws TraceDecoderException{
+    public void parse() throws IOException{
         
         ZtrChromatogramBuilder struct = new ZtrChromatogramBuilder("id");
 
@@ -81,7 +79,7 @@ public class TestSMP4Chunk extends EasyMockSupport{
     }
     
     @Test
-    public void encode() throws TraceEncoderException{
+    public void encode() throws IOException{
     	ZtrChromatogram mockChromatogram = createMock(ZtrChromatogram.class);
     	ChannelGroup channelGroup = createMockChannelGroup();
     	

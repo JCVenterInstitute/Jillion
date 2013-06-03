@@ -25,8 +25,7 @@
  */
 package org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data;
 
-import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.TraceEncoderException;
+import java.io.IOException;
 
 
 
@@ -48,19 +47,19 @@ public interface Data {
      * @param data the actual byte data to parse.
      * @return an decoded byte array which may be much larger than
      * length of the given input data.
-     * @throws TraceDecoderException if there are any problems
+     * @throws IOException if there are any problems
      * parsing the data.
      */
-    byte[] parseData(byte[] data)throws TraceDecoderException;
+    byte[] parseData(byte[] data) throws IOException;
     /**
      * Encode the given data and return the encoded values
      * as a byte array.
      * @param data the data to encode.
      * @return  the encoded data as a byte array.
-     * @throws TraceEncoderException if there are any problems
+     * @throws IOException if there are any problems
      * encoding the data.
      */
-    byte[] encodeData(byte[] data) throws TraceEncoderException;
+    byte[] encodeData(byte[] data) throws IOException;
     /**
      * Encode the given data and return the encoded values
      * as a byte array.
@@ -74,7 +73,7 @@ public interface Data {
      * @throws TraceEncoderException if there are any problems
      * encoding the data.
      */
-    byte[] encodeData(byte[] data, byte optionalParameter) throws TraceEncoderException;
+    byte[] encodeData(byte[] data, byte optionalParameter) throws IOException;
 
 
 }

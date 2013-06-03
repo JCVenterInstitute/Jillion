@@ -25,17 +25,20 @@
  */
 package org.jcvi.jillion.trace.chromat.ztr.data;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.ZLibData;
-import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.TraceEncoderException;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestZLibData {
 
     byte[] uncompressed = "blahblahblah??".getBytes();
@@ -62,7 +65,7 @@ public class TestZLibData {
     }
     ZLibData sut = ZLibData.INSTANCE;
     @Test
-    public void parse() throws TraceDecoderException{
+    public void parse() throws IOException{
        
         byte[] actual = sut.parseData(compressed);
         assertTrue(Arrays.equals(actual, uncompressed));
@@ -80,15 +83,15 @@ public class TestZLibData {
         compressedInput.put(uncompressed, 0, uncompressed.length);
         try {
             sut.parseData(compressedInput.array());
-            fail("invalid zlib data should throw TraceDecoderException");
-        } catch (TraceDecoderException e) {
+            fail("invalid zlib data should throw IOException");
+        } catch (IOException e) {
             assertEquals("could not parse ZLibData", e.getMessage());
             assertTrue(e.getCause() instanceof DataFormatException);
         }
     }
     
     @Test
-    public void encode() throws TraceEncoderException{
+    public void encode() throws IOException{
     	byte[] encodedData = sut.encodeData(uncompressed);
     	assertArrayEquals(encodedData, compressed);
     }

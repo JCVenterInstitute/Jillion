@@ -25,14 +25,14 @@
  */
 package org.jcvi.jillion.trace.chromat.ztr.data;
 
+import static org.junit.Assert.assertArrayEquals;
+
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.DeltaEncodedData;
-import org.jcvi.jillion.internal.trace.chromat.ztr.data.DeltaEncodedData.Level;
-import org.jcvi.jillion.trace.TraceEncoderException;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestDelta8Data {
 
     private static byte[] uncompressed = new byte[]{10,20,10,(byte)200, (byte)190, 5};
@@ -103,7 +103,7 @@ public class TestDelta8Data {
         assertArrayEquals(actual, uncompressed);
     }
     @Test
-    public void compressedLevel1() throws TraceEncoderException{
+    public void compressedLevel1() throws IOException{
     	byte[] actual = sut.encodeData(uncompressed, DeltaEncodedData.Level.DELTA_LEVEL_1);
     	assertArrayEquals(COMPRESSED_LEVEL_1, actual);
     }
@@ -114,7 +114,7 @@ public class TestDelta8Data {
         assertArrayEquals(actual, uncompressed);
     }
 	@Test
-    public void compressedLevel2() throws TraceEncoderException{
+    public void compressedLevel2() throws IOException{
     	byte[] actual = sut.encodeData(uncompressed, DeltaEncodedData.Level.DELTA_LEVEL_2);
     	assertArrayEquals(COMPRESSED_LEVEL_2, actual);
     }
@@ -125,7 +125,7 @@ public class TestDelta8Data {
       assertArrayEquals(actual, uncompressed);
     }
     @Test
-    public void compressedLevel3() throws TraceEncoderException{
+    public void compressedLevel3() throws IOException{
     	byte[] actual = sut.encodeData(uncompressed, DeltaEncodedData.Level.DELTA_LEVEL_3);
     	assertArrayEquals(COMPRESSED_LEVEL_3, actual);
     }

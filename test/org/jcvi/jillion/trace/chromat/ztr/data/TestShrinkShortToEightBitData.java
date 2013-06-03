@@ -25,27 +25,27 @@
  */
 package org.jcvi.jillion.trace.chromat.ztr.data;
 
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
 import java.util.Arrays;
 
 import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.ShrinkToEightBitData;
-import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.TraceEncoderException;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestShrinkShortToEightBitData {
     static byte[] uncompressed = new byte[]{0,10,0,5,-1,-5,0,(byte)200,-4,-32,3,32};
     static byte[] compressed = new byte[]{70,10,5,-5,-128,0,(byte)200,-128,-4,-32,-128,3,32};
     
     @Test
-    public void decode() throws TraceDecoderException{
+    public void decode() throws IOException{
         Data sut = ShrinkToEightBitData.SHORT_TO_BYTE;
         byte[] actual =sut.parseData(compressed);
         assertTrue(Arrays.equals(actual, uncompressed));
     }
     
     @Test
-    public void encode() throws TraceEncoderException{
+    public void encode() throws IOException{
     	Data sut = ShrinkToEightBitData.SHORT_TO_BYTE;
     	byte[] actual = sut.encodeData(uncompressed);
     	assertTrue(Arrays.equals(actual, compressed));

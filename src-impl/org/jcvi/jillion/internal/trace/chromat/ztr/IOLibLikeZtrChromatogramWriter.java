@@ -20,12 +20,12 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.trace.chromat.ztr;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.DeltaEncodedData;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.DeltaEncodedData.Level;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.ShrinkToEightBitData;
-import org.jcvi.jillion.trace.TraceEncoderException;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
 /**
  * {@code IOLibLikeZtrChromatogramWriter} is a {@link ZtrChromatogramWriter}
@@ -82,7 +82,7 @@ public enum IOLibLikeZtrChromatogramWriter implements ZtrChromatogramWriter{
 	}
 	@Override
 	public void write(Chromatogram chromatogram, OutputStream out)
-			throws TraceEncoderException {
+			throws IOException {
 		writer.write(chromatogram, out);
 		
 	}

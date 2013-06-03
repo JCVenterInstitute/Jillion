@@ -25,18 +25,20 @@
  */
 package org.jcvi.jillion.internal.trace.chromat.ztr.chunk;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
-import org.jcvi.jillion.internal.trace.chromat.ztr.chunk.Chunk;
-import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.TraceEncoderException;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogram;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramBuilder;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
 public class TestBPOSChunk {
 
     private static final short[] decodedPeaks = new short[]{10,20,30,41,53,60,68};
@@ -52,14 +54,14 @@ public class TestBPOSChunk {
         encodedPositions = buf.array();
     }
     @Test
-    public void valid() throws TraceDecoderException{        
+    public void valid() throws IOException{        
         ZtrChromatogramBuilder mockStruct = new ZtrChromatogramBuilder("id");
         sut.parseData(encodedPositions, mockStruct);
         assertEquals(new PositionSequenceBuilder(decodedPeaks).build(), mockStruct.peaks());
     }
     
     @Test
-    public void encode() throws TraceEncoderException{
+    public void encode() throws IOException{
     	ZtrChromatogram chromatogram = createMock(ZtrChromatogram.class);
     	expect(chromatogram.getPeakSequence()).andReturn(new PositionSequenceBuilder(decodedPeaks).build());
     	replay(chromatogram);

@@ -25,17 +25,21 @@
  */
 package org.jcvi.jillion.internal.trace.chromat.ztr.chunk;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.internal.trace.chromat.ztr.chunk.Chunk;
-import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.TraceEncoderException;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogram;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramBuilder;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
 
 public class TestClipChunk {
 
@@ -55,7 +59,7 @@ public class TestClipChunk {
 		return temp;
 	}
     @Test
-    public void validParse() throws TraceDecoderException{
+    public void validParse() throws IOException{
        
         
         ZtrChromatogramBuilder mockStruct = new ZtrChromatogramBuilder("id");
@@ -64,7 +68,7 @@ public class TestClipChunk {
     }
     
     @Test
-    public void encode() throws TraceEncoderException{
+    public void encode() throws IOException{
     	ZtrChromatogram mockChromatogram = createMock(ZtrChromatogram.class);
     	expect(mockChromatogram.getClip()).andReturn(expectedClip);
     	replay(mockChromatogram);
@@ -73,7 +77,7 @@ public class TestClipChunk {
     	verify(mockChromatogram);
     }
     @Test
-    public void encodeNullClipShouldEncodeZeroZero() throws TraceEncoderException{
+    public void encodeNullClipShouldEncodeZeroZero() throws IOException{
     	ZtrChromatogram mockChromatogram = createMock(ZtrChromatogram.class);
     	expect(mockChromatogram.getClip()).andReturn(null);
     	replay(mockChromatogram);
@@ -82,20 +86,20 @@ public class TestClipChunk {
     	verify(mockChromatogram);
     }
     @Test
-    public void invalidLengthTooSmallShouldThrowTraceDecoderException(){
+    public void invalidLengthTooSmallShouldThrowIOException(){
         try{
             sut.parseData(new byte[8], (ZtrChromatogramBuilder)null);
             fail("should throw exception if array length < 9");
-        }catch(TraceDecoderException e){
+        }catch(IOException e){
             assertEquals("Invalid DefaultClip size, num of bytes = 8", e.getMessage());
         }
     }
     @Test
-    public void invalidLengthTooBigShouldThrowTraceDecoderException(){
+    public void invalidLengthTooBigShouldThrowIOException(){
         try{
             sut.parseData(new byte[10], (ZtrChromatogramBuilder)null);
             fail("should throw exception if array length > 9");
-        }catch(TraceDecoderException e){
+        }catch(IOException e){
             assertEquals("Invalid DefaultClip size, num of bytes = 10", e.getMessage());
         }
     }

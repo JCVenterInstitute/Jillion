@@ -25,23 +25,22 @@
  */
 package org.jcvi.jillion.internal.trace.chromat.ztr.chunk;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jcvi.jillion.internal.trace.chromat.ztr.chunk.Chunk;
-import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.TraceEncoderException;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogram;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramBuilder;
 import org.junit.Test;
-
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.*;
 public class TestTEXTChunk {
 
     private static final byte NULL_TERMINATOR = 0;
@@ -72,7 +71,7 @@ public class TestTEXTChunk {
    
     
     @Test
-    public void parse() throws TraceDecoderException{
+    public void parse() throws IOException{
         
         ZtrChromatogramBuilder struct = new ZtrChromatogramBuilder("id");
         sut.parseData(encodedBytes, struct);
@@ -80,7 +79,7 @@ public class TestTEXTChunk {
     }
 
     	@Test
-        public void encode() throws TraceEncoderException, TraceDecoderException{
+        public void encode() throws IOException{
         	ZtrChromatogram mockChromatogram = createMock(ZtrChromatogram.class);
         	expect(mockChromatogram.getComments()).andReturn(expected);
         	

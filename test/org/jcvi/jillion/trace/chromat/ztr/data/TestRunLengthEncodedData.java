@@ -25,15 +25,16 @@
  */
 package org.jcvi.jillion.trace.chromat.ztr.data;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.RunLengthEncodedData;
-import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.TraceEncoderException;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestRunLengthEncodedData {
     static byte[] uncompressedData = new byte[]{20,9,9,9,9,9,10,9,8,7};
     static byte[] encodedData = new byte[15];
@@ -65,18 +66,18 @@ public class TestRunLengthEncodedData {
     }
     
     @Test
-    public void parse() throws TraceDecoderException{
+    public void parse() throws IOException{
         byte[] actualUncompressed = sut.parseData(encodedData);
         assertTrue(Arrays.equals(actualUncompressed, uncompressedData));
     }
     @Test
-    public void encode() throws TraceEncoderException{
+    public void encode() throws IOException{
     	byte[] actual = sut.encodeData(uncompressedData, guard);
     	assertArrayEquals(actual, encodedData);
     }
     
     @Test
-    public void parseLongHomopolomer() throws TraceDecoderException{
+    public void parseLongHomopolomer() throws IOException{
         int repeatLength = 240;
         ByteBuffer buf = ByteBuffer.allocate(11);
         buf.put((byte)1);

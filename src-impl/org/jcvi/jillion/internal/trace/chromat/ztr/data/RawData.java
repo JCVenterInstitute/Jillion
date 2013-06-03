@@ -25,11 +25,10 @@
  */
 package org.jcvi.jillion.internal.trace.chromat.ztr.data;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
-import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.TraceEncoderException;
 
 
 
@@ -52,7 +51,7 @@ public enum RawData implements Data {
      * @return the same reference to the given data.
      */
     @Override
-    public byte[] parseData(byte[] data) throws TraceDecoderException {
+    public byte[] parseData(byte[] data){
         //this is raw data
        return data;
     }
@@ -61,10 +60,10 @@ public enum RawData implements Data {
      * and the rest of the array exactly matches the elements in the given
      * byte array.
      * @param data the raw data to encode.
-     * @throws TraceEncoderException if there is a problem encoding the data.
+     * @throws IOException if there is a problem encoding the data.
      */
 	@Override
-	public byte[] encodeData(byte[] data) throws TraceEncoderException {
+	public byte[] encodeData(byte[] data) throws IOException {
 		ByteBuffer encodedData = ByteBuffer.allocate(data.length+1);
 		encodedData.put(DataHeader.RAW);
 		encodedData.put(data);
@@ -76,7 +75,7 @@ public enum RawData implements Data {
 	 */
 	@Override
 	public byte[] encodeData(byte[] data, byte ignored)
-			throws TraceEncoderException {
+			throws IOException {
 		return encodeData(data);
 	}
 

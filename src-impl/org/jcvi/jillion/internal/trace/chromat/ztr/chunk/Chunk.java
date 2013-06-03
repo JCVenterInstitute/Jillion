@@ -31,7 +31,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.Arrays;
@@ -57,8 +56,6 @@ import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
 import org.jcvi.jillion.internal.trace.chromat.ztr.ZTRUtil;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.DataFactory;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.RawData;
-import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.TraceEncoderException;
 import org.jcvi.jillion.trace.chromat.ChannelGroup;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
@@ -84,7 +81,7 @@ public enum Chunk {
     BASE{
         @Override
         protected void parseData(byte[] unEncodedData, ZtrChromatogramBuilder builder)
-                throws TraceDecoderException {
+                throws IOException {
             //first byte is padding
             final int numberOfBases = unEncodedData.length -1;
             ByteBuffer buf = ByteBuffer.allocate(numberOfBases);
@@ -97,7 +94,7 @@ public enum Chunk {
 
         @Override
         protected NucleotideSequence parseData(byte[] unEncodedData,
-                ChromatogramFileVisitor visitor,NucleotideSequence ignored) throws TraceDecoderException {
+                ChromatogramFileVisitor visitor,NucleotideSequence ignored) throws IOException {
           //first byte is padding
             final int numberOfBases = unEncodedData.length -1;
             ByteBuffer buf = ByteBuffer.allocate(numberOfBases);
@@ -114,7 +111,7 @@ public enum Chunk {
 		 */
 		@Override
 		public byte[] encodeChunk(Chromatogram ztrChromatogram)
-				throws TraceEncoderException {
+				throws IOException {
 			String basecalls = ztrChromatogram.getNucleotideSequence().toString();
 			
 			ByteBuffer buffer = ByteBuffer.allocate(basecalls.length()+1);
@@ -137,7 +134,7 @@ public enum Chunk {
     POSITIONS{
         @Override
         protected void parseData(byte[] unEncodedData, ZtrChromatogramBuilder builder)
-                throws org.jcvi.jillion.trace.TraceDecoderException {
+                throws IOException {
             final int numberOfBases = (unEncodedData.length -1)/4;
             ShortBuffer peaks = ShortBuffer.allocate(numberOfBases);
             ByteBuffer input = ByteBuffer.wrap(unEncodedData);
@@ -152,7 +149,7 @@ public enum Chunk {
 
         @Override
         protected NucleotideSequence parseData(byte[] unEncodedData,
-                ChromatogramFileVisitor visitor,NucleotideSequence basecalls) throws TraceDecoderException {
+                ChromatogramFileVisitor visitor,NucleotideSequence basecalls) throws IOException {
             final int numberOfBases = (unEncodedData.length -1)/4;
             ShortBuffer peaks = ShortBuffer.allocate(numberOfBases);
             ByteBuffer input = ByteBuffer.wrap(unEncodedData);
@@ -172,7 +169,7 @@ public enum Chunk {
 		 */
 		@Override
 		public byte[] encodeChunk(Chromatogram ztrChromatogram)
-				throws TraceEncoderException {
+				throws IOException {
 			PositionSequence peaks = ztrChromatogram.getPeakSequence();
 			ByteBuffer buffer = ByteBuffer.allocate((int)peaks.getLength()*4+4);
 			//raw byte + 3 pads
@@ -193,9 +190,9 @@ public enum Chunk {
     CLIP{
         @Override
         protected void parseData(byte[] unEncodedData, ZtrChromatogramBuilder builder)
-                throws TraceDecoderException {
+                throws IOException {
             if(unEncodedData.length !=9){
-                throw new TraceDecoderException("Invalid DefaultClip size, num of bytes = " +unEncodedData.length );
+                throw new IOException("Invalid DefaultClip size, num of bytes = " +unEncodedData.length );
             }
             ByteBuffer buf = ByteBuffer.wrap(unEncodedData);
             buf.position(1); //skip padding
@@ -204,9 +201,9 @@ public enum Chunk {
 
         @Override
         protected NucleotideSequence parseData(byte[] unEncodedData,
-                ChromatogramFileVisitor visitor,NucleotideSequence basecalls) throws TraceDecoderException {
+                ChromatogramFileVisitor visitor,NucleotideSequence basecalls) throws IOException {
             if(unEncodedData.length !=9){
-                throw new TraceDecoderException("Invalid DefaultClip size, num of bytes = " +unEncodedData.length );
+                throw new IOException("Invalid DefaultClip size, num of bytes = " +unEncodedData.length );
             }
             ByteBuffer buf = ByteBuffer.wrap(unEncodedData);
             buf.position(1); //skip padding
@@ -223,7 +220,7 @@ public enum Chunk {
 		 */
 		@Override
 		public byte[] encodeChunk(Chromatogram ztrChromatogram)
-				throws TraceEncoderException {
+				throws IOException {
 		    Range clip=null;
 		    if(ztrChromatogram instanceof ZtrChromatogram){
 		        clip =((ZtrChromatogram)ztrChromatogram).getClip();
@@ -285,7 +282,7 @@ public enum Chunk {
 		
         @Override
         protected void parseData(byte[] unEncodedData, ZtrChromatogramBuilder builder)
-                throws TraceDecoderException {
+                throws IOException {
             NucleotideSequence basecalls = new NucleotideSequenceBuilder(builder.basecalls()).build();
             int numberOfBases = (int)basecalls.getLength();
                
@@ -363,7 +360,7 @@ public enum Chunk {
         */
         @Override
         protected NucleotideSequence parseData(byte[] unEncodedData,
-                ChromatogramFileVisitor visitor,NucleotideSequence basecalls)throws TraceDecoderException {
+                ChromatogramFileVisitor visitor,NucleotideSequence basecalls)throws IOException {
            
             int numberOfBases = (int) basecalls.getLength();
             ByteBuffer aConfidence = ByteBuffer.allocate(numberOfBases);
@@ -392,7 +389,7 @@ public enum Chunk {
 		 */
 		@Override
 		public byte[] encodeChunk(Chromatogram ztrChromatogram)
-				throws TraceEncoderException {
+				throws IOException {
 			
 			
 			
@@ -430,7 +427,7 @@ public enum Chunk {
     */
     SMP4{
         @Override
-        public void parseData(byte[] unEncodedData,ZtrChromatogramBuilder builder) throws TraceDecoderException {
+        public void parseData(byte[] unEncodedData,ZtrChromatogramBuilder builder) throws IOException {
         //read first 2 byte is padded bytes?
             
             ShortBuffer buf = ByteBuffer.wrap(unEncodedData).asShortBuffer();
@@ -468,7 +465,7 @@ public enum Chunk {
         */
         @Override
         protected NucleotideSequence parseData(byte[] unEncodedData,
-                ChromatogramFileVisitor visitor, NucleotideSequence basecalls) throws TraceDecoderException {
+                ChromatogramFileVisitor visitor, NucleotideSequence basecalls) throws IOException {
        //read first 2 byte is padded bytes?
             
             ShortBuffer buf = ByteBuffer.wrap(unEncodedData).asShortBuffer();
@@ -500,7 +497,7 @@ public enum Chunk {
 		 */
 		@Override
 		public byte[] encodeChunk(Chromatogram ztrChromatogram)
-				throws TraceEncoderException {
+				throws IOException {
 			int numTracePositions = ztrChromatogram.getNumberOfTracePositions();
 			ChannelGroup channelGroup = ztrChromatogram.getChannelGroup();
 			
@@ -541,13 +538,13 @@ public enum Chunk {
          */
         @Override
         protected void parseData(byte[] decodedData, ZtrChromatogramBuilder builder)
-                throws TraceDecoderException {
+                throws IOException {
             InputStream in = new ByteArrayInputStream(decodedData);
             builder.comments(parseText(in));
         }
 
         protected Map<String,String> parseText(InputStream in)
-                throws TraceDecoderException {
+                throws IOException {
             Scanner scanner=null;
             //linked hash preserves insertion order
             Map<String,String> textProps = new LinkedHashMap<String, String>();
@@ -565,7 +562,7 @@ public enum Chunk {
                 return textProps;
             }
             catch(IOException e){
-                throw new TraceDecoderException("error reading text data", e);
+                throw new IOException("error reading text data", e);
             }
             finally{
                 if(scanner !=null){
@@ -579,7 +576,7 @@ public enum Chunk {
         */
         @Override
         protected NucleotideSequence parseData(byte[] decodedData,
-                ChromatogramFileVisitor visitor,NucleotideSequence basecalls) throws TraceDecoderException {
+                ChromatogramFileVisitor visitor,NucleotideSequence basecalls) throws IOException {
             InputStream in = new ByteArrayInputStream(decodedData);
             final Map<String,String> comments = parseText(in);
             visitor.visitComments(comments);
@@ -592,7 +589,7 @@ public enum Chunk {
 		 */
 		@Override
 		public byte[] encodeChunk(Chromatogram ztrChromatogram)
-				throws TraceEncoderException {
+				throws IOException {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			out.write(PADDING_BYTE);
 			for(Entry<String, String> entry : ztrChromatogram.getComments().entrySet()){
@@ -601,10 +598,8 @@ public enum Chunk {
 					out.write(PADDING_BYTE);
 					out.write(entry.getValue().getBytes("UTF-8"));
 					out.write(PADDING_BYTE);
-				} catch (UnsupportedEncodingException e) {
-					throw new TraceEncoderException("could not convert comment into UTF-8",e);
 				} catch (IOException e) {
-					throw new TraceEncoderException(String.format("error writing comment key='%s' value ='%s'", entry.getKey(), entry.getValue()),e);
+					throw new IOException(String.format("error writing comment key='%s' value ='%s'", entry.getKey(), entry.getValue()),e);
 				}
 			}
 			out.write(PADDING_BYTE);
@@ -647,19 +642,19 @@ public enum Chunk {
         return CHUNK_MAP.get(ChunkType.getChunkFor(chunkHeader));
     }
     
-    public void parseChunk(ZtrChromatogramBuilder builder, InputStream inputStream) throws TraceDecoderException{
+    public void parseChunk(ZtrChromatogramBuilder builder, InputStream inputStream) throws IOException{
         if(inputStream ==null){
-            throw new TraceDecoderException("inputStream can not be null");
+            throw new IOException("inputStream can not be null");
         }
         if(builder ==null){
-            throw new TraceDecoderException("chromoStruct can not be null");
+            throw new IOException("chromoStruct can not be null");
         }
         readMetaData(inputStream);
         readData(builder,inputStream);
     }
-    public NucleotideSequence parseChunk(InputStream inputStream, ChromatogramFileVisitor visitor,NucleotideSequence basecalls) throws TraceDecoderException{
+    public NucleotideSequence parseChunk(InputStream inputStream, ChromatogramFileVisitor visitor,NucleotideSequence basecalls) throws IOException{
         if(inputStream ==null){
-            throw new TraceDecoderException("inputStream can not be null");
+            throw new IOException("inputStream can not be null");
         }
         readMetaData(inputStream);
         return readData(inputStream,visitor,basecalls);
@@ -670,7 +665,7 @@ public enum Chunk {
      * metaData.
      *
      */
-    protected void readMetaData(InputStream inputStream)throws TraceDecoderException{
+    protected void readMetaData(InputStream inputStream)throws IOException{
 
        try{
         long length = readLength(inputStream);
@@ -679,17 +674,17 @@ public enum Chunk {
         IOUtil.blockingSkip(inputStream, length);
        }
         catch(IOException ioEx){
-            throw new TraceDecoderException("error reading chunk meta data",ioEx);
+            throw new IOException("error reading chunk meta data",ioEx);
         }
     }
 
     /**
      * Get the length of the current chunk.
      * @param inputStream the {@link InputStream} to read; should not be null.
-     * @throws TraceDecoderException if there is a problem reading the chunk length
+     * @throws IOException if there is a problem reading the chunk length
      * @return the number of bytes in the chunk.
      */
-    protected int readLength(InputStream inputStream) throws TraceDecoderException{
+    protected int readLength(InputStream inputStream) throws IOException{
        try{
 
         //get metaDataLength
@@ -703,7 +698,7 @@ public enum Chunk {
         return  (int)length;
        }
        catch(IOException e){
-           throw new TraceDecoderException("error reading chunk length", e);
+           throw new IOException("error reading chunk length", e);
        }
 
     }
@@ -721,7 +716,7 @@ public enum Chunk {
      * This method calls parseData to interpret
      * the data and returns the result.
      */
-    private void readData(ZtrChromatogramBuilder builder,InputStream inputStream)throws TraceDecoderException{
+    private void readData(ZtrChromatogramBuilder builder,InputStream inputStream)throws IOException{
         int length = readLength(inputStream);
 
         //the data may be encoded
@@ -734,7 +729,7 @@ public enum Chunk {
      * This method calls parseData to interpret
      * the data and returns the result.
      */
-    private NucleotideSequence readData(InputStream inputStream,ChromatogramFileVisitor visitor, NucleotideSequence basecalls)throws TraceDecoderException{
+    private NucleotideSequence readData(InputStream inputStream,ChromatogramFileVisitor visitor, NucleotideSequence basecalls)throws IOException{
         int length = readLength(inputStream);
 
         //the data may be encoded
@@ -749,14 +744,14 @@ public enum Chunk {
      * @param unEncodedData the actual bytes to parse
      * (including any formating bytes).
      * @param builder the {@link ZtrChromatogramBuilder} to set the data to.
-     * @throws TraceDecoderException if there are any problems parsing the data.
+     * @throws IOException if there are any problems parsing the data.
      */
-    protected abstract void parseData(byte[] unEncodedData, ZtrChromatogramBuilder builder) throws TraceDecoderException;
-    protected abstract NucleotideSequence parseData(byte[] unEncodedData, ChromatogramFileVisitor visitor, NucleotideSequence basecalls) throws TraceDecoderException;
+    protected abstract void parseData(byte[] unEncodedData, ZtrChromatogramBuilder builder) throws IOException;
+    protected abstract NucleotideSequence parseData(byte[] unEncodedData, ChromatogramFileVisitor visitor, NucleotideSequence basecalls) throws IOException;
 
-    public abstract byte[] encodeChunk(Chromatogram ztrChromatogram) throws TraceEncoderException;
+    public abstract byte[] encodeChunk(Chromatogram ztrChromatogram) throws IOException;
 
-    protected byte[] decodeChunk(InputStream inputStream, int datalength) throws TraceDecoderException{
+    protected byte[] decodeChunk(InputStream inputStream, int datalength) throws IOException{
         try{
            
            //first we have to read the data encoding
@@ -779,17 +774,17 @@ public enum Chunk {
             return data;
         }
         catch(IOException e){
-            throw new TraceDecoderException("error decoding chunk",e);
+            throw new IOException("error decoding chunk",e);
         }
     }
 
     private byte[] readData(InputStream inputStream, int datalength) throws IOException,
-            TraceDecoderException {
+            IOException {
         byte[] data = new byte[datalength];
         try{
         	IOUtil.blockingRead(inputStream, data);
         }catch(EOFException e){
-        	 throw new TraceDecoderException("invalid datalength field", e);
+        	 throw new IOException("invalid datalength field", e);
         }
             
         return data;

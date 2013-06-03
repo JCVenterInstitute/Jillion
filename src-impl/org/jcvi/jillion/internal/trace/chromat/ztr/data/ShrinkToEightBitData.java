@@ -25,13 +25,13 @@
  */
 package org.jcvi.jillion.internal.trace.chromat.ztr.data;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
-import org.jcvi.jillion.trace.TraceEncoderException;
 
 /**
  * <code>AbstractToEightBitData</code> is an abstract
@@ -130,7 +130,7 @@ public enum ShrinkToEightBitData implements Data {
 	 * @see org.jcvi.trace.sanger.chromatogram.ztr.data.Data#encodeData(byte[])
 	 */
 	@Override
-	public byte[] encodeData(byte[] data) throws TraceEncoderException {
+	public byte[] encodeData(byte[] data) throws IOException {
 		ByteBuffer encodedBuffer = ByteBuffer.allocate(4*data.length);
 		encodedBuffer.put(formatByte);
 		ByteBuffer inputBuffer = ByteBuffer.wrap(data);
@@ -160,7 +160,7 @@ public enum ShrinkToEightBitData implements Data {
 	 */
 	@Override
 	public byte[] encodeData(byte[] data, byte ignored)
-			throws TraceEncoderException {
+			throws IOException {
 		return encodeData(data);
 	}
 

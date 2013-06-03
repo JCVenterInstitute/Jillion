@@ -25,9 +25,10 @@
  */
 package org.jcvi.jillion.trace.sff;
 
-import org.jcvi.jillion.trace.TraceDecoderException;
+import java.io.IOException;
 
-class SffDecoderException extends TraceDecoderException {
+
+class SffDecoderException extends IOException {
 
     /**
      * 

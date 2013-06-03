@@ -31,7 +31,6 @@ import org.jcvi.jillion.internal.core.io.MagicNumberInputStream;
 import org.jcvi.jillion.internal.trace.chromat.abi.AbiUtil;
 import org.jcvi.jillion.internal.trace.chromat.scf.SCFUtils;
 import org.jcvi.jillion.internal.trace.chromat.ztr.ZTRUtil;
-import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.chromat.abi.AbiChromatogramBuilder;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramBuilder;
@@ -94,7 +93,7 @@ public final class ChromatogramFactory {
 	}
 	private static Chromatogram detectATypendCreateChromatogram(
 			MagicNumberInputStream mIn, String id)
-			throws TraceDecoderException, FileNotFoundException, IOException {
+			throws IOException, FileNotFoundException, IOException {
 		byte[] magicNumber = mIn.peekMagicNumber();
 		
 		if(AbiUtil.isABIMagicNumber(magicNumber)){

@@ -26,17 +26,16 @@
 package org.jcvi.jillion.internal.trace.chromat.ztr.data;
 
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
-import java.util.zip.DataFormatException;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
 import org.jcvi.jillion.internal.trace.chromat.ztr.ZTRUtil;
-import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.TraceEncoderException;
 
 /**
  * <code>ZLibData</code> is the {@link Data} implementation
@@ -63,7 +62,7 @@ public enum ZLibData implements Data {
     * {@inheritDoc}
      */
     @Override
-    public byte[] parseData(byte[] data) throws TraceDecoderException {
+    public byte[] parseData(byte[] data) throws IOException {
     	Inflater decompresser=null;
         try{
             ByteBuffer size = ByteBuffer.allocate(4);
@@ -80,7 +79,7 @@ public enum ZLibData implements Data {
             
             return byteBuffer.array();
         }catch(DataFormatException dfEx){
-            throw new TraceDecoderException("could not parse ZLibData",dfEx);
+            throw new IOException("could not parse ZLibData",dfEx);
         }finally{
         	//call end in finally block to avoid
         	//memory leak incase of exception thrown.
@@ -91,7 +90,7 @@ public enum ZLibData implements Data {
     }
 
 	@Override
-	public byte[] encodeData(byte[] data) throws TraceEncoderException {
+	public byte[] encodeData(byte[] data) throws IOException {
 		
 		Deflater zlibCompresser= new Deflater();
 		try{
@@ -120,7 +119,7 @@ public enum ZLibData implements Data {
 	 */
 	@Override
 	public byte[] encodeData(byte[] data, byte ignored)
-			throws TraceEncoderException {
+			throws IOException {
 		return encodeData(data);
 	}
 }

@@ -25,12 +25,12 @@
  */
 package org.jcvi.jillion.internal.trace.chromat.ztr.data;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
-import org.jcvi.jillion.trace.TraceEncoderException;
 
 /**
  * <code>AbstractDeltaData</code> is an abstract
@@ -140,11 +140,11 @@ public enum DeltaEncodedData implements Data {
      * @see #encodeData(byte[], byte)
      */
 	@Override
-	public byte[] encodeData(byte[] data) throws TraceEncoderException {
+	public byte[] encodeData(byte[] data) throws IOException {
 		return encodeData(data, Level.DELTA_LEVEL_1);
 	}
 
-	public byte[] encodeData(byte[] data, Level deltaLevel) throws TraceEncoderException {
+	public byte[] encodeData(byte[] data, Level deltaLevel) throws IOException {
 		return encodeData(data, deltaLevel.level);
 	}
 	/**
@@ -152,11 +152,11 @@ public enum DeltaEncodedData implements Data {
 	 * given level of deltas.
 	 * @param data the data to delta encode.
 	 * @param level the number of delta levels to use (1,2 or 3 permitted)
-	 * @throws TraceEncoderException if there is a problem encoding the data.
+	 * @throws IOException if there is a problem encoding the data.
 	 * @return a new array containing the given input data as delta encoded.
 	 * @throws IllegalArgumentException if the given level is not 1,2 or 3.
 	 */
-	public byte[] encodeData(byte[] data, byte level) throws TraceEncoderException {
+	public byte[] encodeData(byte[] data, byte level) throws IOException {
 		if(level<1 && level >3){
 			throw new IllegalArgumentException("level must be between 1 and 3 inclusive: " + level);
 		}
