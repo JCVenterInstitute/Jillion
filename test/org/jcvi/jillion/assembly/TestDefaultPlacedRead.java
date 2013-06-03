@@ -25,7 +25,13 @@
  */
 package org.jcvi.jillion.assembly;
 
-import org.jcvi.jillion.assembly.AssembledRead;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
@@ -33,8 +39,6 @@ import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.internal.assembly.DefaultAssembledRead;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
 public class TestDefaultPlacedRead {
 
     /**
@@ -67,7 +71,28 @@ public class TestDefaultPlacedRead {
         assertEquals(length, sut.getGappedLength());
         assertEquals(start+ length-1 , sut.getGappedEndOffset());
         assertEquals(validRange, sut.getReadInfo().getValidRange());
+        assertEquals(start+5, sut.toReferenceOffset(5));
+        assertEquals(5, sut.toGappedValidRangeOffset(start+5));
         verify(sequence);        
+    }
+    
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void toGappedValidRangeGivenOffsetPastEndOfReadShouldThrowException(){
+    	sut.toGappedValidRangeOffset(start+length);
+    }
+    
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void toGappedValidRangeGivenOffsetBeforeStartOfReadShouldThrowException(){
+    	sut.toGappedValidRangeOffset(start-1);
+    }
+    
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void toReferenceOffsetGivenOffsetPastEndOfReadShouldThrowException(){
+    	sut.toReferenceOffset(length);
+    }
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void toReferenceOffsetGivenOffsetIsNegativeShouldThrowException(){
+    	sut.toReferenceOffset(-1);
     }
     
     @Test

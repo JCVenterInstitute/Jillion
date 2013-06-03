@@ -28,7 +28,6 @@ package org.jcvi.jillion.assembly;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 /**
  * A {@code AssembledRead} is a read
@@ -74,9 +73,9 @@ public interface AssembledRead extends Rangeable{
      * 
      * @param referenceOffset the zero based reference offset.
      * @return equivalent gapped
-     * valid range offset on this read; this value
-     * <strong>may</strong> be negative if the reference offset
-     * provided is before the read starts aligning to the contig.
+     * valid range offset on this read.
+     * @throws IndexOutOfBoundsException if referenceOffset is not 
+     * covered by this read.
      * @see #toReferenceOffset(long)
      */
     long toGappedValidRangeOffset(long referenceOffset);
@@ -87,6 +86,8 @@ public interface AssembledRead extends Rangeable{
      * will return {@code 100}.
      * @param gappedValidRangeOffset zero based gapped valid range offset.
      * @return the equivalent zero based gapped reference offset as a long.
+     * @throws IndexOutOfBoundsException if gappedValidRangeOffset <0 or >=
+     * this read's length
      */
     long toReferenceOffset(long gappedValidRangeOffset);
 
