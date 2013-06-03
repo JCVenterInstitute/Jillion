@@ -34,7 +34,6 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.jcvi.jillion.trace.TraceDecoderException;
 import org.junit.Test;
 /**
  * In rare cases the index of a flow is more than 127, 
@@ -62,7 +61,7 @@ public class TestFlowIndexOverflow{
         );
     
     @Test
-    public void validDecode() throws TraceDecoderException, DataStoreException, IOException{
+    public void validDecode() throws DataStoreException, IOException{
         SffFileDataStore dataStore = DefaultSffFileDataStore.create(RESOURCES.getFile(FILE));
         assertEquals(1, dataStore.getNumberOfRecords());
         

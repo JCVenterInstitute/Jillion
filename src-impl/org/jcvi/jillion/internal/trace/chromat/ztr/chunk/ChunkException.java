@@ -25,17 +25,17 @@
  */
 package org.jcvi.jillion.internal.trace.chromat.ztr.chunk;
 
-import org.jcvi.jillion.trace.TraceDecoderException;
+import java.io.IOException;
 /**
  * <code>ChunkException</code> is the Exception that should
- * be thrown whenver a problem encoding/decoding a {@link Chunk}
+ * be thrown whenever a problem encoding/decoding a {@link Chunk}
  * occurs.
  * @author dkatzel
  *
  *
  */
 @SuppressWarnings("serial")
-public class ChunkException extends TraceDecoderException {
+public class ChunkException extends IOException {
 
     /**
      * Constructor.

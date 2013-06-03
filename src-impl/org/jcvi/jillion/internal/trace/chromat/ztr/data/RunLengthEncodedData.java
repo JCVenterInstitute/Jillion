@@ -25,6 +25,7 @@
  */
 package org.jcvi.jillion.internal.trace.chromat.ztr.data;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,8 +35,6 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
 import org.jcvi.jillion.internal.core.util.RunLength;
 import org.jcvi.jillion.internal.trace.chromat.ztr.ZTRUtil;
-import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.TraceEncoderException;
 
 
 
@@ -70,7 +69,7 @@ public enum RunLengthEncodedData implements Data {
     * {@inheritDoc}
      */
     @Override
-    public byte[] parseData(byte[] data) throws TraceDecoderException {
+    public byte[] parseData(byte[] data) throws IOException {
        //read uncompressed length
         int uncompressedLength = computeUncompressedLength(data);
         ByteBuffer in = ByteBuffer.wrap(data);
@@ -142,7 +141,7 @@ public enum RunLengthEncodedData implements Data {
      * Same as {@link #encodeData(byte[], byte) encodeData(data, DEFAULT_GUARD)}
      */
 	@Override
-	public byte[] encodeData(byte[] data) throws TraceEncoderException {
+	public byte[] encodeData(byte[] data) throws IOException {
 		return encodeData(data, DEFAULT_GUARD);
 	}
 	/**
@@ -151,11 +150,11 @@ public enum RunLengthEncodedData implements Data {
 	 * @param guard the guard byte used to specify run length blocks.
 	 * @return a byte array containing the given input data but as
 	 * run length encoded.
-	 * @throws TraceEncoderException if there is a problem
+	 * @throws IOException if there is a problem
 	 * encoding the data.
 	 */
 	@Override
-	public byte[] encodeData(byte[] data, byte guard) throws TraceEncoderException {
+	public byte[] encodeData(byte[] data, byte guard) throws IOException {
 		ByteBuffer encodedBuffer = ByteBuffer.allocate(2*data.length+6);
 		encodedBuffer.put(DataHeader.RUN_LENGTH_ENCODED);
 		ByteBuffer lengthBuffer = ByteBuffer.allocate(4);

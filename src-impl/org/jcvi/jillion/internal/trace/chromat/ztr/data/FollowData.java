@@ -25,12 +25,11 @@
  */
 package org.jcvi.jillion.internal.trace.chromat.ztr.data;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
-import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.TraceEncoderException;
 
 
 /**
@@ -57,7 +56,7 @@ public enum FollowData implements Data {
     * {@inheritDoc}
      */
     @Override
-    public byte[] parseData(byte[] data) throws TraceDecoderException {
+    public byte[] parseData(byte[] data) throws IOException {
         int uncompressedLength = data.length-DATA_START_POSITION;        
         byte[] follow = createFollowArray(data);
         ByteBuffer compressedData = getCompressedData(data, uncompressedLength);
@@ -97,7 +96,7 @@ public enum FollowData implements Data {
     }
 
 	@Override
-	public byte[] encodeData(byte[] data) throws TraceEncoderException {
+	public byte[] encodeData(byte[] data) throws IOException {
 		ByteBuffer result = ByteBuffer.allocate(data.length+256+1);
 		result.put(DataHeader.FOLLOW_DATA_ENCODED);
 		byte[] followArray = generateFollowArray(data);
@@ -138,7 +137,7 @@ public enum FollowData implements Data {
 	 */
 	@Override
 	public byte[] encodeData(byte[] data, byte ignored)
-			throws TraceEncoderException {
+			throws IOException {
 		return encodeData(data);
 	}
 

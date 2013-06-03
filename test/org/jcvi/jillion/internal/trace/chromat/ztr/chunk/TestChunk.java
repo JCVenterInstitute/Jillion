@@ -40,8 +40,6 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import org.jcvi.jillion.core.testUtil.EasyMockUtil;
-import org.jcvi.jillion.internal.trace.chromat.ztr.chunk.Chunk;
-import org.jcvi.jillion.trace.TraceDecoderException;
 import org.junit.Before;
 import org.junit.Test;
 public class TestChunk {
@@ -56,7 +54,7 @@ public class TestChunk {
     }
     
     @Test
-    public void readLength() throws TraceDecoderException, IOException{
+    public void readLength() throws IOException{
         int length = 20;
         ByteBuffer buf = ByteBuffer.allocate(4);
         buf.putInt(length);
@@ -68,23 +66,23 @@ public class TestChunk {
     }
     
     @Test
-    public void readLengthThrowsIOExceptionShouldWrapInTraceDecoderException() throws IOException{
+    public void readLengthThrowsIOExceptionShouldWrapInIOException() throws IOException{
 
         expect(mockInputStream.read(isA(byte[].class),eq(0),eq(4)))
         .andThrow(expectedException);
         replay(mockInputStream);
         try{
             sut.readLength(mockInputStream);
-            fail("should throw TraceDecoderException which WrapsIOException");
+            fail("should throw IOException which WrapsIOException");
         }
-        catch(TraceDecoderException e){
+        catch(IOException e){
             assertEquals("error reading chunk length", e.getMessage());
             assertEquals(expectedException, e.getCause());
         }
         verify(mockInputStream);
     }
     @Test
-    public void readLengthNotEnoughBytesReadShouldWrapInTraceDecoderException() throws IOException{
+    public void readLengthNotEnoughBytesReadShouldWrapInIOException() throws IOException{
         byte[] tooSmall = new byte[]{1,2,3};
         expect(mockInputStream.read(isA(byte[].class),eq(0),eq(4)))
         .andAnswer(EasyMockUtil.writeArrayToInputStream(tooSmall));
@@ -93,9 +91,9 @@ public class TestChunk {
         replay(mockInputStream);
         try{
             sut.readLength(mockInputStream);
-            fail("should throw TraceDecoderException when too small");
+            fail("should throw IOException when too small");
         }
-        catch(TraceDecoderException e){
+        catch(IOException e){
             assertEquals("error reading chunk length", e.getMessage());
             assertTrue(e.getCause() instanceof EOFException);
           
@@ -104,7 +102,7 @@ public class TestChunk {
     }
     
     @Test
-    public void readMetaData() throws IOException, TraceDecoderException{
+    public void readMetaData() throws IOException{
         int lengthToSkip = 1234;
         ByteBuffer buf = ByteBuffer.allocate(4);
         buf.putInt(lengthToSkip);
@@ -127,8 +125,8 @@ public class TestChunk {
         replay(mockInputStream);
         try{
             sut.readMetaData(mockInputStream);
-            fail("should wrap IOException in TraceDecoderException");
-        }catch(TraceDecoderException e){
+            fail("should wrap IOException in IOException");
+        }catch(IOException e){
             assertEquals("error reading chunk meta data", e.getMessage());
             assertEquals(expectedException, e.getCause());
         }

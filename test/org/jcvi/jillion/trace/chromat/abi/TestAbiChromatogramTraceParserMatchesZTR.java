@@ -23,15 +23,11 @@ package org.jcvi.jillion.trace.chromat.abi;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.chromat.abi.AbiChromatogram;
-import org.jcvi.jillion.trace.chromat.abi.AbiChromatogramBuilder;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogram;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramBuilder;
 import org.junit.Test;
@@ -46,7 +42,7 @@ public class TestAbiChromatogramTraceParserMatchesZTR {
    
 
     @Test
-    public void ab1DataMatchesZtrData() throws FileNotFoundException, TraceDecoderException, IOException{
+    public void ab1DataMatchesZtrData() throws IOException{
     	String id = "SDBHD01T00PB1A1672F";
     	ZtrChromatogram ztr = new ZtrChromatogramBuilder(id, resources.getFile("files/SDBHD01T00PB1A1672F.ztr"))
     										.build();

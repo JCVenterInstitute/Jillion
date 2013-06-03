@@ -25,15 +25,16 @@
  */
 package org.jcvi.jillion.trace.chromat.ztr.data;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.FollowData;
-import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.TraceEncoderException;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestFollowData {
 
     private static byte[] followBytes;
@@ -50,7 +51,7 @@ public class TestFollowData {
     }
     
     @Test
-    public void parse() throws TraceDecoderException{
+    public void parse() throws IOException{
         ByteBuffer compressed = ByteBuffer.allocate(1+256+uncompressedData.length);
         compressed.put((byte)72);// use follow format
         compressed.put(followBytes);
@@ -66,7 +67,7 @@ public class TestFollowData {
     }
     
     @Test
-    public void encodeAndDecode() throws TraceEncoderException, TraceDecoderException{
+    public void encodeAndDecode() throws IOException{
     	byte[] encodedData=sut.encodeData(uncompressedData);
     	assertArrayEquals(uncompressedData,sut.parseData(encodedData));
     }

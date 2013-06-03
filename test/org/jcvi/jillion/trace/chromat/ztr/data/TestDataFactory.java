@@ -25,6 +25,12 @@
  */
 package org.jcvi.jillion.trace.chromat.ztr.data;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
+
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.DataFactory;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.DeltaEncodedData;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.FollowData;
@@ -32,79 +38,77 @@ import org.jcvi.jillion.internal.trace.chromat.ztr.data.RawData;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.RunLengthEncodedData;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.ShrinkToEightBitData;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.ZLibData;
-import org.jcvi.jillion.trace.TraceDecoderException;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestDataFactory {
 
     @Test
-    public void nullDataArrayShouldThrowTraceDecoderException(){
+    public void nullDataArrayShouldThrowIOException(){
         try{
             DataFactory.getDataImplementation(null);
-            fail("null array should throw TraceDecoderException");
-        }catch(TraceDecoderException e){
+            fail("null array should throw IOException");
+        }catch(IOException e){
             assertEquals("can not parse data format", e.getMessage());
         }
     }
     
     @Test
-    public void emptyDataArrayShouldThrowTraceDecoderException(){
+    public void emptyDataArrayShouldThrowIOException(){
         try{
             DataFactory.getDataImplementation(new byte[]{});
-            fail("null array should throw TraceDecoderException");
-        }catch(TraceDecoderException e){
+            fail("null array should throw IOException");
+        }catch(IOException e){
             assertEquals("can not parse data format", e.getMessage());
         }
     }
     
     @Test
-    public void zeroIsRawData() throws TraceDecoderException{
+    public void zeroIsRawData() throws IOException{
         assertSame(DataFactory.getDataImplementation(new byte[]{0} ),
                 RawData.INSTANCE);
     }
     @Test
-    public void oneIsRunLengthEncoded() throws TraceDecoderException{
+    public void oneIsRunLengthEncoded() throws IOException{
         assertSame(DataFactory.getDataImplementation(new byte[]{1} ),
                 RunLengthEncodedData.INSTANCE);
     }
 
     @Test
-    public void twoIsZLibData() throws TraceDecoderException{
+    public void twoIsZLibData() throws IOException{
         assertSame(DataFactory.getDataImplementation(new byte[]{2} ),
                 ZLibData.INSTANCE);
     }
     @Test
-    public void siztyFourIs8bit() throws TraceDecoderException{
+    public void siztyFourIs8bit() throws IOException{
         assertSame(DataFactory.getDataImplementation(new byte[]{64} ),
         		DeltaEncodedData.BYTE);
     }
     @Test
-    public void siztyFiveIs16bit() throws TraceDecoderException{
+    public void siztyFiveIs16bit() throws IOException{
         assertSame(DataFactory.getDataImplementation(new byte[]{65} ),
         		DeltaEncodedData.SHORT);
     }
     @Test
-    public void siztySixIs32bit() throws TraceDecoderException{
+    public void siztySixIs32bit() throws IOException{
         assertSame(DataFactory.getDataImplementation(new byte[]{66} ),
         		DeltaEncodedData.INTEGER);
     }
     @Test
-    public void seventyIs16_to_8() throws TraceDecoderException{
+    public void seventyIs16_to_8() throws IOException{
         assertSame(DataFactory.getDataImplementation(new byte[]{70} ),
                 ShrinkToEightBitData.SHORT_TO_BYTE);
     }
     @Test
-    public void seventyoneIs32_to_8() throws TraceDecoderException{
+    public void seventyoneIs32_to_8() throws IOException{
         assertSame(DataFactory.getDataImplementation(new byte[]{71} ),
                 ShrinkToEightBitData.INTEGER_TO_BYTE);
     }
     @Test
-    public void seventyoneIsFollow() throws TraceDecoderException{
+    public void seventyoneIsFollow() throws IOException{
         assertSame(DataFactory.getDataImplementation(new byte[]{72} ),
                 FollowData.INSTANCE);
     }
     @Test
-    public void unknownthrowsTraceDecoderException(){
+    public void unknownthrowsIOException(){
         
         assertThrowsException((byte) -1);
         assertThrowsException((byte) 5);
@@ -114,8 +118,8 @@ public class TestDataFactory {
     private void assertThrowsException(byte unknownValue) {
         try {
             DataFactory.getDataImplementation(new byte[]{unknownValue} );
-            fail("should throw TraceDecoderException for " + unknownValue);
-        } catch (TraceDecoderException e) {
+            fail("should throw IOException for " + unknownValue);
+        } catch (IOException e) {
             assertEquals("format not supported : "+ unknownValue, e.getMessage() );
         }
     }

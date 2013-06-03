@@ -12,7 +12,6 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.internal.trace.chromat.ztr.ZTRUtil;
 import org.jcvi.jillion.internal.trace.chromat.ztr.chunk.Chunk;
 import org.jcvi.jillion.internal.trace.chromat.ztr.chunk.ChunkException;
-import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
 /**
  * {@code ZtrChromatogramParser} parses 
@@ -71,11 +70,11 @@ public abstract class ZtrChromatogramParser {
      * to parse.
      * @param visitor the visitor instance to call visitXXX methods on
      * (can not be null).
-     * @throws TraceDecoderException if there is  a problem
+     * @throws IOException if there is  a problem
      * parsing the ZTR file.
      * @throws NullPointerException if visitor is null.
      */
-    protected void parse(InputStream ztrStream, ChromatogramFileVisitor visitor) throws TraceDecoderException{
+    protected void parse(InputStream ztrStream, ChromatogramFileVisitor visitor) throws IOException{
         parseHeader(ztrStream);
         Chunk currentChunk = parseNextChunk(ztrStream);
         NucleotideSequence basecalls = null;
@@ -113,46 +112,46 @@ public abstract class ZtrChromatogramParser {
         Hex values  |ae 5a 54 52 0d 0a 1a 0a|01 01|
                     +--+--+--+--+--+--+--+--+--+--+
                     </pre>
-     * @throws TraceDecoderException
+     * @throws IOException
      */
-    private void parseHeader(InputStream inputStream) throws TraceDecoderException{
+    private void parseHeader(InputStream inputStream) throws IOException{
         try {
 
             validateZTRMagicNumber(inputStream);
             checkVersion(inputStream);
 
         } catch (IOException ioEx) {
-            throw new TraceDecoderException("error parsing ztr header",ioEx);
+            throw new IOException("error parsing ztr header",ioEx);
         }
     }
 
     private void checkVersion(InputStream inputStream) throws IOException,
-            TraceDecoderException {
+            IOException {
         int majorVersion = inputStream.read();
         int minorVersion = inputStream.read();
         if(majorVersion != 1 && minorVersion >2){
             String message = "Unsupported ZTR version";
-            throw new TraceDecoderException(message);
+            throw new IOException(message);
         }
     }
 
     private  void validateZTRMagicNumber(InputStream inputStream)
-            throws TraceDecoderException, IOException {
+            throws IOException, IOException {
 
         byte[] ztrMagic = readZTRMagicNumber(inputStream);
         if(!ZTRUtil.isMagicNumber(ztrMagic)){
 
            //does not match
             String message = "ZTR header magic number does not match expected " +new String(ztrMagic,IOUtil.UTF_8) ;
-            throw new TraceDecoderException(message);
+            throw new IOException(message);
         }
     }
 
-    private byte[] readZTRMagicNumber(InputStream inputStream) throws TraceDecoderException {
+    private byte[] readZTRMagicNumber(InputStream inputStream) throws IOException {
        try{
            return IOUtil.toByteArray(inputStream, 8);
        }catch(IOException e){
-           throw new TraceDecoderException("invalid ZTR header",e);
+           throw new IOException("invalid ZTR header",e);
        }
     }
     
@@ -160,7 +159,7 @@ public abstract class ZtrChromatogramParser {
      * Determine what type of chunk is next and return object.
      * @return the appropriate {@link Chunk} may be null.
      */
-    private Chunk parseNextChunk(InputStream inputStream) throws TraceDecoderException{
+    private Chunk parseNextChunk(InputStream inputStream) throws IOException{
         try{
             byte[] chunkType = new byte[4];
             try{

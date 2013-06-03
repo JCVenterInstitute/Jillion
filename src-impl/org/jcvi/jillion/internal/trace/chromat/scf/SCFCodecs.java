@@ -49,7 +49,6 @@ import org.jcvi.jillion.internal.trace.chromat.scf.section.SectionCodecFactory;
 import org.jcvi.jillion.internal.trace.chromat.scf.section.SectionDecoder;
 import org.jcvi.jillion.internal.trace.chromat.scf.section.SectionDecoderException;
 import org.jcvi.jillion.internal.trace.chromat.scf.section.SectionEncoder;
-import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogram;
@@ -141,7 +140,7 @@ public enum SCFCodecs implements SCFCodec{
         
     }
     
-    public ScfChromatogram decode(File sangerTrace) throws TraceDecoderException,
+    public ScfChromatogram decode(File sangerTrace) throws IOException,
             FileNotFoundException {
         InputStream in = null;
         try{

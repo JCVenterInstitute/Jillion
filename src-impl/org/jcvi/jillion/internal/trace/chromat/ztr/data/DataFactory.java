@@ -25,12 +25,12 @@
  */
 package org.jcvi.jillion.internal.trace.chromat.ztr.data;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
-import org.jcvi.jillion.trace.TraceDecoderException;
 
 
 
@@ -72,20 +72,20 @@ public final class DataFactory {
      * to parse the given byte array.
      * @param data the data to decode.
      * @return the {@link Data} instance used to read the format.
-     * @throws TraceDecoderException if <code>data</code> is null 
+     * @throws IOException if <code>data</code> is null 
      * or has a length of <code>0</code>.
      */
     public static Data getDataImplementation(byte[] data)
-            throws TraceDecoderException {
+            throws IOException {
         // first byte is the data format (raw, run-length encoded, zipped etc)
 
         if (data ==null || data.length < 1) {
-            throw new TraceDecoderException("can not parse data format");
+            throw new IOException("can not parse data format");
         }
         final Byte format = Byte.valueOf(data[0]);
         final Data dataImpl = DATA_MAP.get(format);
         if(dataImpl ==null){
-            throw new TraceDecoderException("format not supported : " + format);
+            throw new IOException("format not supported : " + format);
 
         }
         return dataImpl;

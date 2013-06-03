@@ -12,7 +12,6 @@ import org.jcvi.jillion.internal.trace.chromat.scf.SCFCodecs;
 import org.jcvi.jillion.internal.trace.chromat.scf.header.DefaultSCFHeaderCodec;
 import org.jcvi.jillion.internal.trace.chromat.scf.header.SCFHeader;
 import org.jcvi.jillion.internal.trace.chromat.scf.header.SCFHeaderCodec;
-import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
 /**
  * {@code ScfChromatogramParser} parses SCF encoded {@link org.jcvi.jillion.trace.chromat.Chromatogram}
@@ -77,7 +76,7 @@ public abstract class ScfChromatogramParser {
      * parsing the SCF file.
      * @throws NullPointerException if visitor is null.
      */
-    protected void parse(InputStream in, ChromatogramFileVisitor visitor) throws TraceDecoderException{
+    protected void parse(InputStream in, ChromatogramFileVisitor visitor) throws IOException{
         DataInputStream dIn = new DataInputStream(in);
         SCFHeader header =HEADER_CODEC.decode(dIn);
         if(header.getVersion()>=THREE){

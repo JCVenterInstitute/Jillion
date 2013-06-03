@@ -64,7 +64,6 @@ import org.jcvi.jillion.internal.trace.chromat.abi.tag.TimeTaggedDataRecord;
 import org.jcvi.jillion.internal.trace.chromat.abi.tag.UserDefinedTaggedDataRecord;
 import org.jcvi.jillion.internal.trace.chromat.abi.tag.rate.ScanRateTaggedDataType;
 import org.jcvi.jillion.internal.trace.chromat.abi.tag.rate.ScanRateUtils;
-import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
 /**
  * {@code Ab1FileParser} can parse an
@@ -124,10 +123,10 @@ public abstract class AbiChromatogramParser {
 	 * @param in the ab1 formatted InputStream to be parsed.
 	 * @param visitor  {@link ChromatogramFileVisitor} to call visitXXX
 	 * methods on.
-	 * @throws TraceDecoderException if there are problems 
+	 * @throws IOException if there are problems 
 	 * parsing the chromatogram.
 	 */
-	private static void parse(InputStream in, ChromatogramFileVisitor visitor) throws TraceDecoderException{
+	private static void parse(InputStream in, ChromatogramFileVisitor visitor) throws IOException{
 			verifyMagicNumber(in);
 			long numberOfTaggedRecords = parseNumTaggedRecords(in);
 			int datablockOffset = parseTaggedRecordOffset(in);
@@ -639,7 +638,7 @@ public abstract class AbiChromatogramParser {
 			InputStream in,
 			long numberOfTaggedRecords,
 			byte[] abiDataBlock,
-			ChromatogramFileVisitor visitor) throws TraceDecoderException {
+			ChromatogramFileVisitor visitor) throws IOException {
 		GroupedTaggedRecords map = new GroupedTaggedRecords();
 		boolean isAb1ChromatogramVisitor = visitor instanceof AbiChromatogramFileVisitor;
 		try{
@@ -665,7 +664,7 @@ public abstract class AbiChromatogramParser {
 				map.add(record);
 			}
 		}catch(IOException e){
-			throw new TraceDecoderException("could parse not tagged data record", e);
+			throw new IOException("could parse not tagged data record", e);
 		}
 		return map;
 	}
@@ -679,40 +678,40 @@ public abstract class AbiChromatogramParser {
             throw new IllegalArgumentException("could not visit tagged data record "+ record,e);
         }
 	}
-	private static byte[] parseTraceDataBlock(InputStream in, int lengthOfDataBlock) throws TraceDecoderException{
+	private static byte[] parseTraceDataBlock(InputStream in, int lengthOfDataBlock) throws IOException{
 		
 		try {
 			return IOUtil.toByteArray(in, lengthOfDataBlock);
 		} catch (IOException e) {
-			throw new TraceDecoderException("could not parse trace data block", e);
+			throw new IOException("could not parse trace data block", e);
 		}
 	}
-	private static int parseTaggedRecordOffset(InputStream in) throws TraceDecoderException {
+	private static int parseTaggedRecordOffset(InputStream in) throws IOException {
 		try{
 			IOUtil.blockingSkip(in, 4);
 			return (int)IOUtil.readUnsignedInt(in);
 			}catch(IOException e){
-				throw new TraceDecoderException("could not parse number of tagged records", e);
+				throw new IOException("could not parse number of tagged records", e);
 			}
 	}
 
-	private static long parseNumTaggedRecords(InputStream in) throws TraceDecoderException{
+	private static long parseNumTaggedRecords(InputStream in) throws IOException{
 		try{
 		IOUtil.blockingSkip(in, 14);
 		return IOUtil.readUnsignedInt(in);
 		}catch(IOException e){
-			throw new TraceDecoderException("could not parse number of tagged records", e);
+			throw new IOException("could not parse number of tagged records", e);
 		}
 	}
 
-	private static void verifyMagicNumber(InputStream in) throws TraceDecoderException {
+	private static void verifyMagicNumber(InputStream in) throws IOException {
 		try {
 			byte[] magicNumber = IOUtil.toByteArray(in, 4);
 			if(!AbiUtil.isABIMagicNumber(magicNumber)){
-				throw new TraceDecoderException("magic number does not match AB1 format "+ Arrays.toString(magicNumber));
+				throw new IOException("magic number does not match AB1 format "+ Arrays.toString(magicNumber));
 			}
 		} catch (IOException e) {
-			throw new TraceDecoderException("could not read magic number", e);
+			throw new IOException("could not read magic number", e);
 		}
 		
 		

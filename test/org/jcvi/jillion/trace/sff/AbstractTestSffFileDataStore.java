@@ -25,6 +25,10 @@
  */
 package org.jcvi.jillion.trace.sff;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
@@ -32,12 +36,7 @@ import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.sff.SffFlowgram;
-import org.jcvi.jillion.trace.sff.SffFileDataStore;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 public abstract class AbstractTestSffFileDataStore extends TestReadExampleSffFile{  
 
     private SffFileDataStore dataStore;
@@ -49,11 +48,11 @@ public abstract class AbstractTestSffFileDataStore extends TestReadExampleSffFil
     protected abstract SffFileDataStore parseDataStore(File f) throws Exception;
     
     @Override
-    protected SffFlowgram getFlowgram(String id) throws TraceDecoderException, DataStoreException {
+    protected SffFlowgram getFlowgram(String id) throws DataStoreException {
         return dataStore.get(id);
     }
     @Override
-    protected long getNumberOfFlowgrams() throws TraceDecoderException, DataStoreException {
+    protected long getNumberOfFlowgrams() throws DataStoreException {
         return dataStore.getNumberOfRecords();
     }
     

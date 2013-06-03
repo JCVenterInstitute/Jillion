@@ -25,19 +25,21 @@
  */
 package org.jcvi.jillion.internal.trace.chromat.ztr.chunk;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.internal.trace.chromat.ztr.chunk.Chunk;
-import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.TraceEncoderException;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogram;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramBuilder;
-
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
 public class TestBASEChunk {
    
     private static final String decodedBases = "ACGTACGTNW-";
@@ -51,7 +53,7 @@ public class TestBASEChunk {
 	}
 	
     @Test
-    public void valid() throws TraceDecoderException{
+    public void valid() throws IOException{
        
         ZtrChromatogramBuilder builder = new ZtrChromatogramBuilder("id");
         sut.parseData(encodedBases, builder);        
@@ -59,7 +61,7 @@ public class TestBASEChunk {
     }
     
     @Test
-    public void encode() throws TraceEncoderException, TraceDecoderException{
+    public void encode() throws IOException, IOException{
     	ZtrChromatogram mockChromatogram = createMock(ZtrChromatogram.class);
     	NucleotideSequence basecalls = new NucleotideSequenceBuilder(decodedBases).build();
     	expect(mockChromatogram.getNucleotideSequence()).andReturn(basecalls);

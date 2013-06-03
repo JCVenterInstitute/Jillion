@@ -20,15 +20,14 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.chromat.scf;
 
-import java.io.FileNotFoundException;
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.internal.trace.chromat.scf.SCFCodecs;
-import org.jcvi.jillion.trace.TraceDecoderException;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.junit.Test;
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
@@ -39,7 +38,7 @@ public class TestVersion2Parser {
     private static final ResourceHelper RESOURCES = new ResourceHelper(TestVersion2Parser.class);
     
     @Test
-    public void version2MatchesVersion3() throws TraceDecoderException, FileNotFoundException, IOException{
+    public void version2MatchesVersion3() throws IOException{
         Chromatogram version2 = (Chromatogram) SCFCodecs.VERSION_2.decode(RESOURCES.getFile("files/version2.scf"));
         Chromatogram version3 = (Chromatogram) SCFCodecs.VERSION_3.decode(RESOURCES.getFile("files/version3.scf"));
         assertEquals(version3.getNucleotideSequence(),version2.getNucleotideSequence());

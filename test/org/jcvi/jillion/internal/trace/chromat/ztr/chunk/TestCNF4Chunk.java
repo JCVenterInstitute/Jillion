@@ -30,6 +30,7 @@ import static org.easymock.EasyMock.getCurrentArguments;
 import static org.easymock.EasyMock.isA;
 import static org.junit.Assert.assertArrayEquals;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import org.easymock.EasyMockSupport;
@@ -37,9 +38,6 @@ import org.easymock.IAnswer;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.internal.trace.chromat.ztr.chunk.Chunk;
-import org.jcvi.jillion.trace.TraceDecoderException;
-import org.jcvi.jillion.trace.TraceEncoderException;
 import org.jcvi.jillion.trace.chromat.Channel;
 import org.jcvi.jillion.trace.chromat.ChannelGroup;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogram;
@@ -89,7 +87,7 @@ public class TestCNF4Chunk extends EasyMockSupport{
         encodedBytes = buf.array();
     }
     @Test
-    public void parse() throws TraceDecoderException{
+    public void parse() throws IOException{
         ZtrChromatogramBuilder struct = new ZtrChromatogramBuilder("id");
         struct.basecalls(new NucleotideSequenceBuilder(bases).build());
         
@@ -101,7 +99,7 @@ public class TestCNF4Chunk extends EasyMockSupport{
         assertArrayEquals(tconf, struct.tQualities());
     }
     @Test
-    public void encode() throws TraceEncoderException{
+    public void encode() throws IOException{
     	ZtrChromatogram chromatogram = createMock(ZtrChromatogram.class);
     	ChannelGroup channelGroup = createMockChannelGroup();
 

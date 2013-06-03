@@ -20,12 +20,18 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.trace.chromat.ztr;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
-import org.jcvi.jillion.trace.TraceEncoderException;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
-
+/**
+ * {@code ZtrChromatogramWriter} writes out
+ * the given {@link Chromatogram} to the given
+ * {@link OutputStream} in ZTR format.
+ * @author dkatzel
+ *
+ */
 public interface ZtrChromatogramWriter{
 
-	void write(Chromatogram chromatogram, OutputStream out) throws TraceEncoderException;
+	void write(Chromatogram chromatogram, OutputStream out) throws IOException;
 }

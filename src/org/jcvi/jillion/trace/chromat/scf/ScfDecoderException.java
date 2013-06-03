@@ -25,16 +25,16 @@
  */
 package org.jcvi.jillion.trace.chromat.scf;
 
-import org.jcvi.jillion.trace.TraceDecoderException;
+import java.io.IOException;
 /**
  * <code>SCFParserException</code> is a subclass of
- * {@link TraceDecoderException} which is used if an SCF
+ * {@link IOException} which is used if an SCF
  * file fails to parse.
  * @author dkatzel
  *
  *
  */
-public class ScfDecoderException extends TraceDecoderException {
+public class ScfDecoderException extends IOException {
 
     /**
      *

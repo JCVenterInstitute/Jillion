@@ -37,7 +37,6 @@ import org.jcvi.jillion.internal.trace.chromat.ztr.data.FollowData;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.RunLengthEncodedData;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.ShrinkToEightBitData;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.ZLibData;
-import org.jcvi.jillion.trace.TraceEncoderException;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
 
 
@@ -171,7 +170,7 @@ public final class DefaultZTRChromatogramWriterBuilder implements Builder<ZtrChr
 		}
 
 
-		private byte[] encode(byte[] data) throws TraceEncoderException{
+		private byte[] encode(byte[] data) throws IOException{
 			return this.data.encodeData(data, optionalParameter);
 		}
 	}
@@ -189,7 +188,7 @@ public final class DefaultZTRChromatogramWriterBuilder implements Builder<ZtrChr
 			this.dataEncoders = dataEncoders;
 		}
 		
-		public byte[] encode(Chromatogram chromatogram) throws TraceEncoderException{
+		public byte[] encode(Chromatogram chromatogram) throws IOException{
 			
 			byte[] currentData = chunk.encodeChunk(chromatogram);
 			for(DataEncoder encoder : dataEncoders){
@@ -199,7 +198,7 @@ public final class DefaultZTRChromatogramWriterBuilder implements Builder<ZtrChr
 			try {
 				encodedData.put(type.getTypeName().getBytes("UTF-8"));
 			} catch (UnsupportedEncodingException e) {
-				throw new TraceEncoderException("could not encode chunk type "+type,e);
+				throw new IOException("could not encode chunk type "+type,e);
 			}
 			//never put metadata, so metadata length is always zero
 			encodedData.putInt(0);
@@ -364,8 +363,9 @@ public final class DefaultZTRChromatogramWriterBuilder implements Builder<ZtrChr
 		 * @throws NullPointerException if chromatogram or out
 		 * are null.
 		 */
+		@Override
 		public void write(Chromatogram chromatogram, OutputStream out)
-				throws TraceEncoderException {
+				throws IOException {
 			if(chromatogram ==null){
 				throw new NullPointerException("chromatogram can not be null");
 			}
@@ -386,7 +386,7 @@ public final class DefaultZTRChromatogramWriterBuilder implements Builder<ZtrChr
 				out.write(clipEncoder.encode(chromatogram));
 				
 			} catch (IOException e) {
-				throw new TraceEncoderException("error writing ZTR", e);
+				throw new IOException("error writing ZTR", e);
 			}
 			
 		}
