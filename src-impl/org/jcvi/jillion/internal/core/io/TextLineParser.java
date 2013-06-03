@@ -147,6 +147,24 @@ public final class TextLineParser implements Closeable{
 	}
 	/**
 	 * Get the next line (including end of line characters)
+	 * but without advancing the position into the 
+	 * stream.  Calling this method multiple times without
+	 * calling {@link #nextLine()} in between will
+	 * return the same String.
+	 * @return the String that will be returned by 
+	 * {@link #nextLine()} without actually advancing
+	 * to the next line.
+	 * 
+	 */
+	public String peekLine(){
+		Object next= nextQueue.peek();
+		if(next == endOfFile){
+			return null;
+		}
+		return (String)next;
+	}
+	/**
+	 * Get the next line (including end of line characters)
 	 * as a String.
 	 * @return a the next line; or {@code null} if there are no
 	 * more lines.

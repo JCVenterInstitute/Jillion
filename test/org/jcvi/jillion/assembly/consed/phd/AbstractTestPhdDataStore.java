@@ -30,8 +30,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.jcvi.jillion.assembly.consed.phd.Phd;
-import org.jcvi.jillion.assembly.consed.phd.PhdDataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,6 +60,7 @@ public abstract class AbstractTestPhdDataStore extends AbstractTestPhd{
         assertEquals(expectedPositions, actual.getPeakSequence());      
         assertEquals(expectedBasecalls, actual.getNucleotideSequence().toString());
         assertEquals(expectedProperties, actual.getComments());
+        assertEquals(expectedReadTags, actual.getReadTags());
     }
     
     @Test

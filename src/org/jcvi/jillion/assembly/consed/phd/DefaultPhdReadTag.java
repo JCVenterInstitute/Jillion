@@ -53,6 +53,15 @@ class DefaultPhdReadTag implements PhdReadTag {
 
 
 	@Override
+	public String toString() {
+		return "DefaultPhdReadTag [type=" + type + ", source=" + source
+				+ ", ungappedRange=" + ungappedRange + ", date=" + date
+				+ ", comment=" + comment + ", freeFormData=" + freeFormData
+				+ "]";
+	}
+
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;

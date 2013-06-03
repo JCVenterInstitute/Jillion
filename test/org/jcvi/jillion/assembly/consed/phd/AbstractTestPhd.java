@@ -25,9 +25,14 @@
  */
 package org.jcvi.jillion.assembly.consed.phd;
 
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -85,12 +90,30 @@ public abstract class AbstractTestPhd {
     protected static final ResourceHelper RESOURCE = new ResourceHelper(AbstractTestPhd.class);
     
      
+    protected List<PhdReadTag> expectedReadTags;
+    
      @Before
-     public void setup(){
+     public void setup() throws ParseException{
          expectedProperties = new LinkedHashMap<String,String>();
          expectedProperties.put("TIME", "Tue Dec 18 10:50:48 2007");
          expectedProperties.put("CHEM", "term");
          expectedProperties.put("DYE", "big");
+         
+         expectedReadTags = new ArrayList<PhdReadTag>(3);
+         expectedReadTags.add(new DefaultPhdReadTag("polymorphism", "consed", 
+        		 Range.of(CoordinateSystem.RESIDUE_BASED,130,134), 
+        		 PhdUtil.parseReadTagDate("10/07/02 12:37:23"),
+        		 null, null));
+         
+         expectedReadTags.add(new DefaultPhdReadTag("polymorphism", "fasta2PhdBall.perl", 
+        		 Range.of(CoordinateSystem.RESIDUE_BASED,76,76), 
+        		 PhdUtil.parseReadTagDate("10/07/02 13:35:03"),
+        		 "chrpos: 27,868,168", null));
+         
+         expectedReadTags.add(new DefaultPhdReadTag("polymorphism", "fasta2PhdBall.perl", 
+        		 Range.of(CoordinateSystem.RESIDUE_BASED,76,76), 
+        		 PhdUtil.parseReadTagDate("10/07/02 13:35:03"),
+        		 null, "line1 of misc data\nline2 of misc data"));
      }
      
      

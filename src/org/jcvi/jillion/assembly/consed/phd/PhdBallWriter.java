@@ -181,21 +181,21 @@ public class PhdBallWriter implements PhdWriter{
 	    	for(PhdReadTag tag : tags){
 				StringBuilder builder = new StringBuilder(500);
 				builder.append(BEGIN_TAG)
-					.append(String.format("TYPE:%s%n",tag.getType()))
-					.append(String.format("SOURCE:%s%n",tag.getSource()));
+					.append(String.format("TYPE: %s%n",tag.getType()))
+					.append(String.format("SOURCE: %s%n",tag.getSource()));
 				Range range = tag.getUngappedRange();
-				builder.append(String.format("UNGAPPED_READ_POS:%d %d%n",
+				builder.append(String.format("UNPADDED_READ_POS: %d %d%n",
 						range.getBegin(Range.CoordinateSystem.RESIDUE_BASED),
 						range.getEnd(Range.CoordinateSystem.RESIDUE_BASED)));
 				
 				builder.append(String.format("DATE: %s%n", PhdUtil.formatReadTagDate(tag.getDate())));
 				if(tag.getComment() !=null){
 					builder.append(BEGIN_COMMENT).append(NEW_LINE);
-					builder.append(tag.getComment());
+					builder.append(tag.getComment()).append(NEW_LINE);
 					builder.append(END_COMMENT).append(NEW_LINE);
 				}
 				if(tag.getFreeFormData() !=null){
-					builder.append(tag.getFreeFormData());
+					builder.append(tag.getFreeFormData()).append(NEW_LINE);
 				}
 				builder.append(END_TAG);
 				printedTags.add(builder.toString());
@@ -269,6 +269,7 @@ public class PhdBallWriter implements PhdWriter{
 	        }
 	        comments.append(END_COMMENT);
 	        comments.append(NEW_LINE);
+	        
 	        return comments;
 	    }
 	
