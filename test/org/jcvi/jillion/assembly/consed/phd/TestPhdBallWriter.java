@@ -28,21 +28,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.jcvi.jillion.assembly.consed.phd.AbstractPhdBallVisitor;
-import org.jcvi.jillion.assembly.consed.phd.AbstractPhdVisitor;
-import org.jcvi.jillion.assembly.consed.phd.DefaultPhd;
-import org.jcvi.jillion.assembly.consed.phd.Phd;
-import org.jcvi.jillion.assembly.consed.phd.PhdBallParser;
-import org.jcvi.jillion.assembly.consed.phd.PhdBallVisitorCallback;
-import org.jcvi.jillion.assembly.consed.phd.PhdBallWriter;
-import org.jcvi.jillion.assembly.consed.phd.PhdBuilder;
-import org.jcvi.jillion.assembly.consed.phd.PhdDataStore;
-import org.jcvi.jillion.assembly.consed.phd.PhdFileDataStoreBuilder;
-import org.jcvi.jillion.assembly.consed.phd.PhdReadTag;
-import org.jcvi.jillion.assembly.consed.phd.PhdVisitor;
-import org.jcvi.jillion.assembly.consed.phd.PhdWholeReadItem;
-import org.jcvi.jillion.assembly.consed.phd.PhdWriter;
-import org.jcvi.jillion.assembly.consed.phd.SinglePhdWriter;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -127,7 +112,6 @@ public class TestPhdBallWriter extends AbstractTestPhd{
         
         SinglePhdVisitor visitor = new SinglePhdVisitor();
         PhdBallParser.create(new ByteArrayInputStream(out.toByteArray())).accept(visitor);
-
 		assertEquals(expectedPhd,visitor.phd);
     }
     

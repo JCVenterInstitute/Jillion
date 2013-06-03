@@ -41,7 +41,7 @@ public abstract class PhdBallParser {
     private static final String BEGIN_TAG = "BEGIN_TAG";
     private static final String END_TAG = "END_TAG";
 
-    private static final Pattern KEY_VALUE_PATTERN = Pattern.compile("^\\s*(\\w+):\\s+(.*?)$");
+    private static final Pattern KEY_VALUE_PATTERN = Pattern.compile("^\\s*(\\w+)\\s*[:]\\s+(.+)\\s*$");
     private static final Pattern CALLED_INFO_PATTERN = Pattern.compile("^\\s*(\\w)\\s+(\\d+)\\s*(\\d+)?\\s*?");
     private static final Pattern BEGIN_SEQUENCE_PATTERN = Pattern.compile("BEGIN_SEQUENCE\\s+(\\S+)\\s*(\\d+)?\\s*$");
     private static final String BEGIN_WR = "WR{";
@@ -73,6 +73,7 @@ public abstract class PhdBallParser {
 	
 	
 	public abstract void accept(PhdBallVisitor visitor, PhdBallVisitorMemento memento) throws IOException;
+	
 	
 	protected void accept(TextLineParser parser, PhdBallVisitor visitor) throws IOException{
 		ParserState parserState = new ParserState();
@@ -108,15 +109,11 @@ public abstract class PhdBallParser {
 				}else{
 					handleSequence(parserState, parser, phdVisitor);
 				}
-			}else{				
-				if(line.startsWith(BEGIN_WR)){
-					handleWholeReadTag(parserState, parser, phdVisitor);
-				}else if(!seenFileComment){
-					Matcher fileCommentMatcher = FILE_COMMENT_PATTERN.matcher(line);
-					if(fileCommentMatcher.matches()){
-						seenFileComment=true;
-						visitor.visitFileComment(fileCommentMatcher.group(1));
-					}
+			}else if(!seenFileComment){
+				Matcher fileCommentMatcher = FILE_COMMENT_PATTERN.matcher(line);
+				if(fileCommentMatcher.matches()){
+					seenFileComment=true;
+					visitor.visitFileComment(fileCommentMatcher.group(1));
 				}
 			}
 		}
@@ -192,6 +189,8 @@ public abstract class PhdBallParser {
 		//END_TAG
 		//..multiple tags allowed
 		//END_SEQUENCE
+		//possible other read tags
+		//WR{..} (multiple optional WR tags)
 		
 		parseCommentBlock(parser, visitor);
 		if(!parserState.keepParsing()){
@@ -215,13 +214,18 @@ public abstract class PhdBallParser {
 	private void parseTags(ParserState parserState, TextLineParser parser,
 			PhdVisitor visitor) throws IOException {
 		while(parser.hasNextLine() && parserState.keepParsing()){
-			String line = parser.nextLine();
-			if(line.startsWith(END_SEQUENCE)){
-				//no tags
+			String peekedLine = parser.peekLine();
+			Matcher beginSequenceMatcher = BEGIN_SEQUENCE_PATTERN.matcher(peekedLine);
+			if(beginSequenceMatcher.matches()){
+				//found next sequence
 				return;
 			}
+			String line = parser.nextLine();
+			
 			if(line.startsWith(BEGIN_TAG)){
 				parseSingleTag(parserState, parser, visitor.visitReadTag());
+			}else if(line.startsWith(BEGIN_WR)){
+				handleWholeReadTag(parserState, parser, visitor);
 			}
 		}
 		
@@ -239,7 +243,7 @@ public abstract class PhdBallParser {
 				inTag=false;
 			}else{
 				Matcher keyValueMatcher = KEY_VALUE_PATTERN.matcher(line);
-				if(keyValueMatcher.matches()){
+				if(keyValueMatcher.find()){
 					String key = keyValueMatcher.group(1);
 					String value = keyValueMatcher.group(2);
 					if("TYPE".equals(key)){
@@ -263,7 +267,7 @@ public abstract class PhdBallParser {
 					}else{
 						//unrecognized key-value pair
 						//could be free-form misc data that happened to be in key:value format?
-						visitor.visitFreeFormData(rightTrim(line));
+						visitor.visitFreeFormData(line);
 					}
 				}else{
 					//not a key value pair
@@ -271,7 +275,7 @@ public abstract class PhdBallParser {
 						visitor.visitComment( parseReadTagComment(parser));
 					}else{
 						//free form misc data?
-						visitor.visitFreeFormData(rightTrim(line));
+						visitor.visitFreeFormData(line);
 					}
 				}
 			}
@@ -294,7 +298,9 @@ public abstract class PhdBallParser {
 				comment.append(line);
 			}
 		}while(inCommentBlock && parser.hasNextLine());
-		return comment.toString();
+		//right trim to get rid of trailing \n's but not 
+		//\n in the middle
+		return rightTrim(comment.toString());
 	}
 
 	private void parseReadData(ParserState parserState, TextLineParser parser, PhdVisitor visitor) throws IOException {

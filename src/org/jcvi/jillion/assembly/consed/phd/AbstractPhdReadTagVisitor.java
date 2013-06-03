@@ -65,7 +65,7 @@ public abstract class AbstractPhdReadTagVisitor implements PhdReadTagVisitor{
 			//no free form data
 			freeFormData =null;
 		}else{
-			freeFormData= freeFormDataBuilder.toString();
+			freeFormData= freeFormDataBuilder.toString().trim();
 		}
 		visitPhdReadTag(type, source,ungappedRange, date, comment, freeFormData);
 		

@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.jcvi.jillion.assembly.consed.phd.Phd;
 import org.jcvi.jillion.assembly.consed.phd.PhdDataStore;
@@ -62,7 +63,8 @@ public class TestFakePhdReadParser {
     private void assertIsFake(Phd fakePhd) {
         boolean isFake=false;
        for(PhdWholeReadItem tag :fakePhd.getWholeReadItems()){
-    	   for(String line : tag.getLines()){
+    	   List<String> lines = tag.getLines();
+		for(String line : lines){
                if(line.contains("type: fake")){
                    isFake=true;
                    break;
