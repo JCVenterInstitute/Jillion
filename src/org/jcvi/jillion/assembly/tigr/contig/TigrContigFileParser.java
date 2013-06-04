@@ -57,18 +57,18 @@ public abstract class TigrContigFileParser {
 	}
 	
 	public void accept(TigrContigFileVisitor visitor) throws IOException{
-		TextLineParser inputStream =new TextLineParser(getInputStream());
+		TextLineParser lineParser =new TextLineParser(getInputStream());
 		try{
-			parse(visitor, inputStream, 0L);
+			parse(visitor, lineParser);
 		}finally{
-			IOUtil.closeAndIgnoreErrors(inputStream);
+			IOUtil.closeAndIgnoreErrors(lineParser);
 		}
 	}
 	
 	public abstract void accept(TigrContigFileVisitor visitor,TigrContigVisitorMemento memento) throws IOException;
 
 	protected final void parse(TigrContigFileVisitor visitor,
-			TextLineParser parser, long initialOffset) throws IOException {
+			TextLineParser parser) throws IOException {
 		boolean inConsensus =true;
 		TigrContigVisitor contigVisitor=null;
 		TigrContigReadVisitor readVisitor=null;
@@ -76,8 +76,8 @@ public abstract class TigrContigFileParser {
 		
 		boolean keepParsing=true;
 		AbstractTigrContigVisitorCallback callback=null;
-		long currentOffset = initialOffset;
 		while(keepParsing && parser.hasNextLine()){
+			long currentOffset = parser.getPosition();
 			String line = parser.nextLine();
 			Matcher newContigMatcher = NEW_CONTIG_PATTERN.matcher(line);
 			if (newContigMatcher.find()) {
@@ -126,7 +126,6 @@ public abstract class TigrContigFileParser {
 			if(callback !=null){
 				keepParsing = callback.keepParsing();
 			}
-			currentOffset +=line.length();
 		}
 		
 		if (readVisitor != null && keepParsing){
@@ -238,7 +237,7 @@ public abstract class TigrContigFileParser {
 			TextLineParser in=null;
 			try{
 				in = new TextLineParser(new RandomAccessFileInputStream(contigFile, startOffset));
-				parse(visitor, in, startOffset);
+				parse(visitor, in);
 			}finally{
 				IOUtil.closeAndIgnoreErrors(in);
 			}

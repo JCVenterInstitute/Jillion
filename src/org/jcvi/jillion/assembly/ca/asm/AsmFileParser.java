@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 
 import org.jcvi.jillion.assembly.ca.asm.AsmContigVisitor.VariantRecord;
 import org.jcvi.jillion.assembly.ca.asm.AsmVisitor.AsmVisitorCallback;
+import org.jcvi.jillion.assembly.ca.asm.AsmVisitor.AsmVisitorCallback.AsmVisitorMemento;
 import org.jcvi.jillion.assembly.ca.asm.AsmVisitor.LinkOrientation;
 import org.jcvi.jillion.assembly.ca.asm.AsmVisitor.MatePairEvidence;
 import org.jcvi.jillion.assembly.ca.asm.AsmVisitor.MateStatus;
@@ -47,7 +48,6 @@ import org.jcvi.jillion.assembly.ca.asm.AsmVisitor.OverlapStatus;
 import org.jcvi.jillion.assembly.ca.asm.AsmVisitor.OverlapType;
 import org.jcvi.jillion.assembly.ca.asm.AsmVisitor.UnitigLayoutType;
 import org.jcvi.jillion.assembly.ca.asm.AsmVisitor.UnitigStatus;
-import org.jcvi.jillion.assembly.ca.asm.AsmVisitor.AsmVisitorCallback.AsmVisitorMemento;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
@@ -100,15 +100,12 @@ public abstract class AsmFileParser {
     
     protected abstract class ParserState implements Closeable{
         private final TextLineParser parser;
-        
-        private long currentOffset;
         protected long markedOffset;
         protected final AtomicBoolean keepParsing = new AtomicBoolean(true);
         
         ParserState(InputStream inputStream, long initialOffset) throws IOException{
-            this.parser = new TextLineParser(inputStream);
-            currentOffset = initialOffset;
-            markedOffset= currentOffset;
+            this.parser = new TextLineParser(inputStream,initialOffset);
+            markedOffset= initialOffset;
         }
         
         boolean hasNextLine(){
@@ -117,7 +114,6 @@ public abstract class AsmFileParser {
         
         String getNextLine() throws IOException{
             String line= parser.nextLine(); 
-            currentOffset += line.length();
             return line;
         }
         /**
@@ -130,7 +126,7 @@ public abstract class AsmFileParser {
         public abstract CallBack createCallback();
 
 		public void markCurrentOffset() {
-			markedOffset =currentOffset;
+			markedOffset =parser.getPosition();
 			
 		}
 

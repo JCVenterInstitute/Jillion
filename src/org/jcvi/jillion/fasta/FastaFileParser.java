@@ -89,7 +89,7 @@ public abstract class FastaFileParser {
 		try{
 			in = getInputStream();			
 			TextLineParser parser = new TextLineParser(in);
-			parseFile(parser, 0L, visitor);
+			parseFile(parser, visitor);
 		}finally{
 			IOUtil.closeAndIgnoreErrors(in);
 		}
@@ -124,12 +124,12 @@ public abstract class FastaFileParser {
 	 */
 	public abstract void accept(FastaVisitor visitor, FastaVisitorMemento memento) throws IOException;
 	
-	protected final void parseFile(TextLineParser parser, long startOffset,
-			FastaVisitor visitor) throws IOException {
+	protected final void parseFile(TextLineParser parser, FastaVisitor visitor) throws IOException {
 		AtomicBoolean keepParsing=new AtomicBoolean(true);
 		FastaRecordVisitor recordVisitor =null;
-		AbstractFastaVisitorCallback callback = createNewCallback(startOffset, keepParsing);
-		long currentOffset=startOffset;
+		long currentOffset=parser.getPosition();
+		AbstractFastaVisitorCallback callback = createNewCallback(currentOffset, keepParsing);
+		
 		while(keepParsing.get() && parser.hasNextLine()){
 			String line=parser.nextLine();
 			String trimmedLine = line.trim();
@@ -159,7 +159,7 @@ public abstract class FastaFileParser {
 					}
 				}
 			}
-			currentOffset +=line.length();
+			currentOffset =parser.getPosition();
 		}
 		
 		handleEndOfFile(visitor, keepParsing, recordVisitor);
@@ -279,8 +279,8 @@ public abstract class FastaFileParser {
 			
 			try{
 				inputStream = new BufferedInputStream(new RandomAccessFileInputStream(fastaFile, startOffset));
-				TextLineParser parser = new TextLineParser(inputStream);
-				parseFile(parser, startOffset, visitor);
+				TextLineParser parser = new TextLineParser(inputStream, startOffset);
+				parseFile(parser, visitor);
 			}finally{
 				IOUtil.closeAndIgnoreErrors(inputStream);
 			}

@@ -79,8 +79,8 @@ public abstract class FastqFileParser {
 	
 	public abstract void accept(FastqVisitor visitor, FastqVisitorMemento memento) throws IOException;
 	
-	protected void parseFastqFile(FastqVisitor visitor, TextLineParser parser, long initialOffset) throws IOException{
-		ParserState parserState = new ParserState(initialOffset);
+	protected void parseFastqFile(FastqVisitor visitor, TextLineParser parser) throws IOException{
+		ParserState parserState = new ParserState(parser.getPosition());
 		while(parserState.keepParsing() && parser.hasNextLine()){
 			parserState=parseNextRecord(visitor, parser, parserState);
 		}
@@ -99,23 +99,21 @@ public abstract class FastqFileParser {
         if(!parserState.keepParsing()){
         	return parserState;
         }
-        return parseRecordBody(parser,recordVisitor,parserState, deflineText.length());		
+        return parseRecordBody(parser,recordVisitor,parserState);		
         
 	}
 	
 	private ParserState parseRecordBody(TextLineParser parser,
-			FastqRecordVisitor recordVisitor, ParserState parserState, int lengthOfDefline) throws IOException {
-		int numBytesRead = lengthOfDefline;
+			FastqRecordVisitor recordVisitor, ParserState parserState) throws IOException {
+		
 		boolean inBasecallBlock;
 		//default to 200 bp since most sequences are only that much anyway
         //builder will grow if we get too big
         NucleotideSequenceBuilder sequenceBuilder = new NucleotideSequenceBuilder(200);
         String line = parser.nextLine();
-        numBytesRead+= line.length();
     	sequenceBuilder.append(line);
         do{
         	line = parser.nextLine();
-        	numBytesRead+= line.length();
         	Matcher beginQualityMatcher =FastqUtil.QUAL_DEFLINE_PATTERN.matcher(line);
         	inBasecallBlock = !beginQualityMatcher.find();
         	if(inBasecallBlock){
@@ -131,7 +129,7 @@ public abstract class FastqFileParser {
         	if(recordVisitor!=null){
             	recordVisitor.halted();
             }
-        	return parserState.incrementOffset(numBytesRead);
+        	return parserState.setOffset(parser.getPosition());
         }
         //now parse the qualities
         int expectedQualities =  (int)sequence.getLength();
@@ -140,7 +138,6 @@ public abstract class FastqFileParser {
         
     	while(qualityBuilder.length() < expectedQualities){
     		line = parser.nextLine();
-    		numBytesRead+= line.length();
     		qualityBuilder.append(line.trim());
     	}
     	if(qualityBuilder.length()> expectedQualities){
@@ -150,7 +147,7 @@ public abstract class FastqFileParser {
     	if(recordVisitor!=null){
     		recordVisitor.visitEncodedQualities(qualityBuilder.toString());
     	}
-    	ParserState endParserState = parserState.incrementOffset(numBytesRead);
+    	ParserState endParserState = parserState.setOffset(parser.getPosition());
 		 if(recordVisitor !=null){
 			 if(endParserState.keepParsing()){
 				 recordVisitor.visitEnd();
@@ -281,8 +278,8 @@ public abstract class FastqFileParser {
 			return keepParsing.get();
 		}
 		
-		ParserState incrementOffset(long increment){
-			return new ParserState(currentOffset+increment, keepParsing);
+		ParserState setOffset(long newOffset){
+			return new ParserState(newOffset, keepParsing);
 		}
 	}
 	
@@ -313,7 +310,7 @@ public abstract class FastqFileParser {
 			InputStream in = new BufferedInputStream(new FileInputStream(fastqFile));
 			try{
 				TextLineParser parser = new TextLineParser(in);
-				parseFastqFile(visitor, parser, 0L);			
+				parseFastqFile(visitor, parser);			
 			}finally{
 				IOUtil.closeAndIgnoreErrors(in);
 			}
@@ -333,8 +330,8 @@ public abstract class FastqFileParser {
 			InputStream in = null;
 			try{
 				in = new RandomAccessFileInputStream(fastqFile, startOffset);
-				TextLineParser parser = new TextLineParser(in);
-				parseFastqFile(visitor, parser, startOffset);	
+				TextLineParser parser = new TextLineParser(in, startOffset);
+				parseFastqFile(visitor, parser);	
 			}finally{
 				IOUtil.closeAndIgnoreErrors(in);
 			}
@@ -360,7 +357,7 @@ public abstract class FastqFileParser {
 			}
 			try{
 				TextLineParser parser = new TextLineParser(in);
-				parseFastqFile(visitor, parser, 0L);
+				parseFastqFile(visitor, parser);
 			}finally{
 				IOUtil.closeAndIgnoreErrors(in);
 			}
