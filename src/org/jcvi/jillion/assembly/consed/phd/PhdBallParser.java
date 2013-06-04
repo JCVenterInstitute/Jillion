@@ -96,14 +96,7 @@ public abstract class PhdBallParser {
 					phdVisitor=null; //set to null to avoid calling visitEnd() twice
 					break;
 				}
-				String readId = beginSequenceMatcher.group(1);
-				String optionalVersion = beginSequenceMatcher.group(2);
-				PhdBallVisitorCallback callback = createCallback(parserState,currentOffset);
-				if(optionalVersion ==null){
-					phdVisitor = visitor.visitPhd(callback, readId, null);
-				}else{
-					phdVisitor =visitor.visitPhd(callback, readId, Integer.parseInt(optionalVersion));
-				}
+				phdVisitor = visitNewRecordHeader(visitor, parserState, currentOffset, beginSequenceMatcher);
 				if(phdVisitor ==null){
 					skipSequence(parser);
 				}else{
@@ -127,6 +120,17 @@ public abstract class PhdBallParser {
 				phdVisitor.halted();
 			}
 			visitor.halted();
+		}
+	}
+	
+	private PhdVisitor visitNewRecordHeader(PhdBallVisitor visitor,ParserState parserState, long currentOffset, Matcher beginSequenceMatcher){
+		String readId = beginSequenceMatcher.group(1);
+		String optionalVersion = beginSequenceMatcher.group(2);
+		PhdBallVisitorCallback callback = createCallback(parserState,currentOffset);
+		if(optionalVersion ==null){
+			return visitor.visitPhd(callback, readId, null);
+		}else{
+			return visitor.visitPhd(callback, readId, Integer.parseInt(optionalVersion));
 		}
 	}
 	
