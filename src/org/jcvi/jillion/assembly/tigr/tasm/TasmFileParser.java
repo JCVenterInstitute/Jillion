@@ -111,13 +111,12 @@ public abstract class TasmFileParser {
     
     protected abstract void accept(TasmFileVisitor visitor, TasmContigVisitorMemento memento) throws IOException;
     
-    protected final void parseTasm(TextLineParser parser, TasmFileVisitor visitor, long initialOffset) throws IOException{
+    protected final void parseTasm(TextLineParser parser, TasmFileVisitor visitor) throws IOException{
          
-    	long currentOffset=initialOffset;
+
          ParserState parserState = new ParserState(visitor);
          while(parser.hasNextLine() && parserState.keepParsing()) {
              String line = parser.nextLine();
-             currentOffset+=line.length();
              Matcher matcher = KEY_VALUE_PATTERN.matcher(line);
              
              if(matcher.find()){
@@ -133,7 +132,7 @@ public abstract class TasmFileParser {
         			 parserState.fireEndOfRead();
             		 if(endOfContig){
             			 parserState.handleEndOfContig();
-            			 parserState.beginNewContig(currentOffset);            			 
+            			 parserState.beginNewContig(parser.getPosition());            			 
             		 }else{
 	            		 parserState.beginNewRead();
             		 }
@@ -491,7 +490,7 @@ public abstract class TasmFileParser {
 			InputStream in = new BufferedInputStream(new FileInputStream(tasmFile));
 			TextLineParser parser = new TextLineParser(in);
 			try{
-				parseTasm(parser, visitor, 0L);
+				parseTasm(parser, visitor);
 			}finally{
 				IOUtil.closeAndIgnoreErrors(parser, in);
 			}			
@@ -512,8 +511,8 @@ public abstract class TasmFileParser {
 			InputStream in=null;
 			try{
 				in = new BufferedInputStream( new RandomAccessFileInputStream(tasmFile, startOffset));
-				TextLineParser parser = new TextLineParser(in);
-				parseTasm(parser, visitor, startOffset);
+				TextLineParser parser = new TextLineParser(in,startOffset);
+				parseTasm(parser, visitor);
 			}finally{
 				IOUtil.closeAndIgnoreErrors(in);
 			}
@@ -543,7 +542,7 @@ public abstract class TasmFileParser {
 			}
 			TextLineParser parser = new TextLineParser(in);
 			try{
-				parseTasm(parser, visitor, 0L);
+				parseTasm(parser, visitor);
 			}finally{
 				IOUtil.closeAndIgnoreErrors(parser, in);
 			}			
