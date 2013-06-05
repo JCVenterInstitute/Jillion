@@ -26,7 +26,6 @@
 package org.jcvi.jillion.assembly;
 
 import org.jcvi.jillion.assembly.util.AllAssemblyUtilUnitTests;
-import org.jcvi.jillion.assembly.util.AllCoverageUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -35,13 +34,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {        
                 
-    	 TestAssemblyUtil_gappedfullRange.class,
-         TestAssemblyUtil_reverseComplimentRange.class,
-         TestAssemblyUtil_convertToUngappedRange.class,
-         TestAssemblyUtil_convertToUngappedFullRangeOffset.class,
-         
-        AllCoverageUnitTests.class,
-        AllScaffoldUnitTests.class,
+    	
+         TestReadInfo.class,
         
         
         

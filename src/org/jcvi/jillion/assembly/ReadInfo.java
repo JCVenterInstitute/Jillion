@@ -21,8 +21,13 @@
 package org.jcvi.jillion.assembly;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-
+/**
+ * {@code ReadInfo} is a value
+ * object that contains a read's 
+ * trim information.
+ * @author dkatzel
+ *
+ */
 public class ReadInfo{
 
 	private final Range validRange;
@@ -84,8 +89,7 @@ public class ReadInfo{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + fullLength;
-		result = prime * result
-				+ validRange.hashCode();
+		result = prime * result	+ validRange.hashCode();
 		return result;
 	}
 	/**
