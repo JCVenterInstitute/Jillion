@@ -23,6 +23,7 @@ package org.jcvi.jillion.assembly.tigr.contig;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.regex.Matcher;
@@ -38,25 +39,60 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
-
+/**
+ * {@code TigrContigFileParser} can parse
+ * TIGR "{@literal .contig}" formatted files that are produced
+ * by legacy TIGR assembly programs.
+ * @author dkatzel
+ *
+ */
 public abstract class TigrContigFileParser {
 
-	  private static final Pattern NEW_CONTIG_PATTERN = Pattern.compile("##(\\S+).+");
-	    private static final Pattern NEW_READ_PATTERN = Pattern.compile("#(\\S+)\\((-?\\d+)\\)\\s+\\[(.*)\\].+\\{(-?\\d+) (-?\\d+)\\}.+");
+	private static final Pattern NEW_CONTIG_PATTERN = Pattern.compile("##(\\S+).+");
+	private static final Pattern NEW_READ_PATTERN = Pattern.compile("#(\\S+)\\((-?\\d+)\\)\\s+\\[(.*)\\].+\\{(-?\\d+) (-?\\d+)\\}.+");
 	  
-	    
-	public static TigrContigFileParser create(File contigFile){
+	/**
+	 * Creates a new {@link TigrContigFileParser}
+	 * instance that will parse the given contig file.
+	 * @param contigFile the contig file to parse.
+	 * @return a new {@link TigrContigFileParser};
+	 * will never be null.
+	 * @throws IOException if the given contig file does
+	 * not exist
+	 * @throws NullPointerException if the contig file is null.
+	 */
+	public static TigrContigFileParser create(File contigFile) throws IOException{
 		return new FileBasedTigrContigParser(contigFile);
 	}
-	
+	/**
+	 * Creates a new {@link TigrContigFileParser}
+	 * instance that will parse the given {@link InputStream} 
+	 * that contains {@literal .contig} formatted data.
+	 * @param contigFileStream the {@link InputStream} 
+	 * that containing {@literal .contig} formatted data.
+	 * @return a new {@link TigrContigFileParser};
+	 * will never be null.
+	 * @throws NullPointerException if the inputstream is null.
+	 */
 	public static TigrContigFileParser create(InputStream contigFileStream){
 		return new InputStreamBasedTigrContigParser(contigFileStream);
 	}
 	private TigrContigFileParser(){
 		//can not instantiate outside of this file
 	}
-	
+	/**
+	 * Parse the contig file from the beginning and call the 
+	 * appropriate visit methods on the given visitor.
+	 * @param visitor the visitor instance to call
+	 * the visit methods on as the file is parsed.
+	 * @throws IOException if there are any problems parsing
+	 * the contig file.
+	 * @throws NullPointerException if visitor is null.
+	 */
 	public void accept(TigrContigFileVisitor visitor) throws IOException{
+		if(visitor==null){
+			throw new NullPointerException("visitor can not be null");
+		}
 		TextLineParser lineParser =new TextLineParser(getInputStream());
 		try{
 			parse(visitor, lineParser);
@@ -64,101 +100,230 @@ public abstract class TigrContigFileParser {
 			IOUtil.closeAndIgnoreErrors(lineParser);
 		}
 	}
-	
+	/**
+	 * Parse the contig file from starting from
+	 * the position provided by the given memento and call the 
+	 * appropriate visit methods on the given visitor.
+	 * @param visitor the visitor instance to call
+	 * the visit methods on as the file is parsed.
+	 * @throws IOException if there are any problems parsing
+	 * the contig file.
+	 * @throws NullPointerException if either visitor  or memento are null.
+	 * @throws UnsupportedOperationException if the parser implementation
+	 * does not support mementos.
+	 * @throws IllegalArgumentException if the memento instance was produced
+	 * by this class.
+	 */
 	public abstract void accept(TigrContigFileVisitor visitor,TigrContigVisitorMemento memento) throws IOException;
 
 	protected final void parse(TigrContigFileVisitor visitor,
 			TextLineParser parser) throws IOException {
-		boolean inConsensus =true;
-		TigrContigVisitor contigVisitor=null;
-		TigrContigReadVisitor readVisitor=null;
-		NucleotideSequenceBuilder currentBasesBuilder =new NucleotideSequenceBuilder();
 		
-		boolean keepParsing=true;
-		AbstractTigrContigVisitorCallback callback=null;
-		while(keepParsing && parser.hasNextLine()){
-			long currentOffset = parser.getPosition();
-			String line = parser.nextLine();
-			Matcher newContigMatcher = NEW_CONTIG_PATTERN.matcher(line);
-			if (newContigMatcher.find()) {
-				if (readVisitor != null) {
-					readVisitor.visitBasecalls(currentBasesBuilder.build());
-					readVisitor.visitEnd();
+		State state = new State(visitor,parser);
+		Handler[] handlers = Handler.values();
+		while(state.notDone()){
+			String peekedLine = state.peekLine();			
+			for(Handler handler : handlers){
+				if(handler.handle(state, peekedLine)){
+					break;
 				}
-				if(callback !=null){
-					keepParsing = callback.keepParsing();
-				}
-				if(keepParsing && contigVisitor !=null){
+			}
+			state.advanceLine();
+		}
+		state.finishedParsing();
+	}
+	/**
+	 * {@code State} keeps track of our
+	 * state as we read the lines in the file.
+	 * 
+	 * @author dkatzel
+	 *
+	 */
+	private final class State{
+		private boolean inConsensus =true;
+		private TigrContigVisitor contigVisitor=null;
+		private TigrContigReadVisitor readVisitor=null;
+		private NucleotideSequenceBuilder currentBasesBuilder =new NucleotideSequenceBuilder();
+	
+		private AbstractTigrContigVisitorCallback callback=null;
+		private final TextLineParser parser;
+		private final TigrContigFileVisitor visitor;
+		
+		
+		public State(TigrContigFileVisitor visitor, TextLineParser parser){
+			this.visitor= visitor;
+			this.parser = parser;
+		}
+
+		public void visitReadBases(){
+			if (readVisitor != null) {
+				readVisitor.visitBasecalls(currentBasesBuilder.build());
+				readVisitor.visitEnd();
+			}
+			currentBasesBuilder = new NucleotideSequenceBuilder();
+		}
+		
+		public void appendBasecalls(String basecalls){
+			currentBasesBuilder.append(basecalls);
+		}
+		
+		/**
+		 * We have finished parsing the file
+		 * (either we got to the end of the file
+		 * or parsing was halted) call the final
+		 * visit methods on any visitors still
+		 * referenced depending.
+		 */
+		public void finishedParsing(){
+			if (readVisitor != null && keepParsing()){
+				readVisitor.visitBasecalls(currentBasesBuilder.build());
+				readVisitor.visitEnd();
+			}
+			if(contigVisitor !=null){
+				if(keepParsing()){
 					contigVisitor.visitEnd();
-				}
-				if(callback !=null){
-					keepParsing = callback.keepParsing();
-				}
-				readVisitor=null;	
-				contigVisitor =null;
-				if(keepParsing){
-					inConsensus = true;
-					String contigId = newContigMatcher.group(1);
-					callback = createCallback(currentOffset);
-					contigVisitor = visitor.visitContig(callback, contigId);
-					currentBasesBuilder = new NucleotideSequenceBuilder();
-				}
-							
-			} else {
-				Matcher newSequenceMatcher = NEW_READ_PATTERN.matcher(line);
-				if (newSequenceMatcher.find()) {
-					if (inConsensus && contigVisitor != null) {
-						contigVisitor.visitConsensus(currentBasesBuilder.build());
-					}
-					if(readVisitor !=null){
-						readVisitor.visitBasecalls(currentBasesBuilder.build());
-						readVisitor.visitEnd();
-					}
-					currentBasesBuilder = new NucleotideSequenceBuilder();
-					inConsensus = false;
-					readVisitor = fireVisitNewRead(newSequenceMatcher,
-							contigVisitor);
-					
-				} else {
-					currentBasesBuilder.append(line);
+				}else{
+					contigVisitor.halted();
 				}
 			}
-			if(callback !=null){
-				keepParsing = callback.keepParsing();
+			if(keepParsing()){
+				visitor.visitEnd();
+			}else{
+				visitor.halted();
 			}
 		}
 		
-		if (readVisitor != null && keepParsing){
-			readVisitor.visitBasecalls(currentBasesBuilder.build());
-			readVisitor.visitEnd();
-		}
-		if(contigVisitor !=null){
-			if(keepParsing){
-				contigVisitor.visitEnd();
-			}else{
-				contigVisitor.halted();
+		public boolean keepParsing(){
+			if(callback !=null){
+				return callback.keepParsing();
 			}
+			return true;
 		}
-		if(keepParsing){
-			visitor.visitEnd();
-		}else{
-			visitor.halted();
+		
+		public boolean notDone(){
+			return keepParsing() && parser.hasNextLine();
 		}
+		
+		public void advanceLine() throws IOException{
+			parser.nextLine();
+		}
+		public String peekLine(){
+			return parser.peekLine();
+		}
+		
+		public void visitEndContig(){
+			if(contigVisitor !=null){
+				contigVisitor.visitEnd();
+			}
+			readVisitor=null;	
+			contigVisitor =null;
+		}
+	
+
+		public void visitNewContig(String contigId) {
+			inConsensus = true;
+			callback = createCallback(parser.getPosition());
+			contigVisitor = visitor.visitContig(callback, contigId);
+			currentBasesBuilder = new NucleotideSequenceBuilder();
+			
+		}
+
+		
+
+		public void beginNewRead(String seqId, int offset, Direction dir,
+				Range validRange) {
+			if (inConsensus && contigVisitor != null) {
+				contigVisitor.visitConsensus(currentBasesBuilder.build());
+			}
+			if(readVisitor !=null){
+				readVisitor.visitBasecalls(currentBasesBuilder.build());
+				readVisitor.visitEnd();
+			}
+			currentBasesBuilder = new NucleotideSequenceBuilder();
+			inConsensus = false;
+			
+			if(contigVisitor==null){
+				readVisitor=null;
+			}else{	       
+				readVisitor= contigVisitor.visitRead(seqId, offset, dir, validRange);
+			}
+			
+		}
+		
+	}
+	/**
+	 * {@code Handler} instances handle the types of
+	 * lines that exist in a contig file.  Each Handler
+	 * only can handle one type of line.
+	 * The order of the Handles is defined from the
+	 * most restrictive handler to the most permissive handler.
+	 * 
+	 * 
+	 * @author dkatzel
+	 *
+	 */
+	private enum Handler{
+		NEW_CONTIG{
+
+			@Override
+			protected boolean handle(State state, String line){
+				Matcher matcher = NEW_CONTIG_PATTERN.matcher(line);
+				if(!matcher.find()){
+					return false;
+				}
+				state.visitReadBases();				
+				
+				if(state.keepParsing()){
+					state.visitEndContig();					
+				}
+				if(state.keepParsing()){
+					
+					String contigId = matcher.group(1);
+					state.visitNewContig(contigId);
+				}
+				return true;
+			}
+			
+		},
+		NEW_READ{
+			@Override
+			protected boolean handle(State state, String line){
+				Matcher matcher = NEW_READ_PATTERN.matcher(line);
+				if(!matcher.find()){
+					return false;
+				}
+				String seqId = matcher.group(1);
+		        int offset = Integer.parseInt(matcher.group(2));
+		        Direction dir= parseComplimentedFlag(matcher)?Direction.REVERSE: Direction.FORWARD;
+		        Range validRange = parseValidRange(matcher, dir);
+		        
+				state.beginNewRead(seqId, offset, dir, validRange);
+				return true;
+			}
+		},
+		BASECALL_LINE{
+
+			@Override
+			protected boolean handle(State state, String line) {
+				state.appendBasecalls(line);
+				return true;
+			}
+			
+		}
+		;
+		/**
+		 * Try to handle the given line given the current {@link State}.
+		 * @param state the current state.
+		 * @param line the peeked line to handle.
+		 * @return {@code true} if we successfully handled this line;
+		 * {@code false} otherwise.
+		 */
+		protected abstract boolean handle(State state, String line);
 	}
 	
 	protected abstract AbstractTigrContigVisitorCallback createCallback(long currentOffset);
 
-	private static TigrContigReadVisitor fireVisitNewRead(Matcher newSequenceMatcher,  TigrContigVisitor contigVisitor) {
-		if(contigVisitor==null){
-			return null;
-		}
-        String seqId = newSequenceMatcher.group(1);
-        int offset = Integer.parseInt(newSequenceMatcher.group(2));
-        Direction dir= parseComplimentedFlag(newSequenceMatcher)?Direction.REVERSE: Direction.FORWARD;
-        Range validRange = parseValidRange(newSequenceMatcher, dir);
-   	 	
-        return contigVisitor.visitRead(seqId, offset, dir, validRange);
- }
+	
 	
 	 private static Range parseValidRange(Matcher newSequenceMatcher,
 	            Direction dir) {
@@ -213,7 +378,13 @@ public abstract class TigrContigFileParser {
 	private static class FileBasedTigrContigParser extends TigrContigFileParser{
 		private final File contigFile;
 
-		public FileBasedTigrContigParser(File contigFile) {
+		public FileBasedTigrContigParser(File contigFile) throws FileNotFoundException {
+			if(contigFile==null){
+				throw new NullPointerException("contig file can not be null");
+			}
+			if(!contigFile.exists()){
+				throw new FileNotFoundException(contigFile.getAbsolutePath());
+			}
 			this.contigFile = contigFile;
 		}
 
@@ -230,6 +401,9 @@ public abstract class TigrContigFileParser {
 		@Override
 		public void accept(TigrContigFileVisitor visitor,
 				TigrContigVisitorMemento memento) throws IOException {
+			if(memento ==null){
+				throw new NullPointerException("memento can not be null");
+			}
 			if(!(memento instanceof OffsetMemento)){
 				throw new IllegalArgumentException("unknown memento type, must use instance created by this parser");
 			}
