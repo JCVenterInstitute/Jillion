@@ -40,6 +40,6 @@ import org.junit.runners.Suite.SuiteClasses;
         TestLargeTigrContigFileDataStore.class
     }
     )
-public class AllCtgUnitTests {
+public class AllTigrContigUnitTests {
 
 }
