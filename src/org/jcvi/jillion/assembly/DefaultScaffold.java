@@ -276,7 +276,7 @@ public final class DefaultScaffold  implements Scaffold{
                 for(PlacedContig contig : contigs){
                     shiftedContigs.add(
                     		new DefaultPlacedContig(contig.getContigId(),
-                    				new Range.Builder(contig.getValidRange())
+                    				new Range.Builder(contig.asRange())
                     							.shift(shiftOffset)
                     							.build(),
                     				contig.getDirection()));

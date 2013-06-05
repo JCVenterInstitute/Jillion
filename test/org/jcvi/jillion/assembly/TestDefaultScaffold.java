@@ -25,23 +25,18 @@
  */
 package org.jcvi.jillion.assembly;
 
-import org.junit.Test;
-import org.junit.Before;
-import org.junit.Assert;
-import org.jcvi.jillion.assembly.DefaultPlacedContig;
-import org.jcvi.jillion.assembly.DefaultScaffold;
-import org.jcvi.jillion.assembly.PlacedContig;
-import org.jcvi.jillion.assembly.Scaffold;
-import org.jcvi.jillion.assembly.ScaffoldBuilder;
+import static org.junit.Assert.assertEquals;
+
+import java.util.HashSet;
+import java.util.NoSuchElementException;
+import java.util.Set;
+
 import org.jcvi.jillion.assembly.util.CoverageRegion;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
-
-import static org.junit.Assert.assertEquals;
-
-import java.util.Set;
-import java.util.HashSet;
-import java.util.NoSuchElementException;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TestDefaultScaffold {
 
@@ -63,7 +58,7 @@ public class TestDefaultScaffold {
 
         ScaffoldBuilder builder = DefaultScaffold.createBuilder("testScaffold");
         for ( PlacedContig contig : placedContigs ) {
-            builder.add(contig.getContigId(),contig.getValidRange(), contig.getDirection());
+            builder.add(contig.getContigId(),contig.asRange(), contig.getDirection());
         }
         scaffold = builder.build();
     }

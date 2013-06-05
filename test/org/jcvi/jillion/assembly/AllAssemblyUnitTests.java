@@ -41,7 +41,8 @@ import org.junit.runners.Suite.SuiteClasses;
         
         AllAssemblyUtilUnitTests.class,
         
-        AllContigUnitTests.class
+        AllContigUnitTests.class,
+        AllScaffoldUnitTests.class
     }
     )
 public class AllAssemblyUnitTests {

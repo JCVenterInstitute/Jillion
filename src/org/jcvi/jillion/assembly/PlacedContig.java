@@ -26,7 +26,6 @@
 package org.jcvi.jillion.assembly;
 
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
 
 public interface PlacedContig extends Rangeable {
@@ -52,7 +51,5 @@ public interface PlacedContig extends Rangeable {
     
     String getContigId();
     Direction getDirection();
-    
-    Range getValidRange();
     
 }
