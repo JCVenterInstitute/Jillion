@@ -113,8 +113,7 @@ public abstract class AsmFileParser {
         }
         
         String getNextLine() throws IOException{
-            String line= parser.nextLine(); 
-            return line;
+            return parser.nextLine(); 
         }
         /**
         * {@inheritDoc}
