@@ -28,7 +28,7 @@ package org.jcvi.jillion.assembly;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 
-public class DefaultPlacedContig implements PlacedContig{
+final class DefaultPlacedContig implements PlacedContig{
     private final String contigId;
     private final Range range;
     private final Direction direction;
@@ -78,10 +78,6 @@ public class DefaultPlacedContig implements PlacedContig{
     @Override
     public long getBegin() {
         return range.getBegin();
-    }
-    @Override
-    public Range getValidRange() {
-        return range;
     }
     @Override
     public Direction getDirection() {
