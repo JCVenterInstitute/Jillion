@@ -15,9 +15,13 @@ import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
-public class TestTasmWriterBuilder {
 
-	private ResourceHelper helper = new ResourceHelper(TestTasmWriterBuilder.class);
+public abstract class  AbstractTestTasmWriterBuilder {
+	private ResourceHelper helper = new ResourceHelper(AbstractTestTasmWriterBuilder.class);
+	
+	protected abstract TasmWriter createTasmWriterFor(File inputTasm);
+	
+	protected abstract byte[] getWrittenBytes();
 	
 	@Test
 	public void writtenTasmShouldMatchInputTasm() throws IOException, DataStoreException{
@@ -27,11 +31,8 @@ public class TestTasmWriterBuilder {
 												.build();
 		TasmContigDataStore datastore = new TasmContigFileDataStoreBuilder(tasmFile, reads)
 											.build();
-		
-		ByteArrayOutputStream out = new ByteArrayOutputStream((int)tasmFile.length());
-		
-		TasmWriter writer = new TasmFileWriterBuilder(out)
-								.build();
+
+		TasmWriter writer= createTasmWriterFor(tasmFile);
 		
 		StreamingIterator<TasmContig> iter=datastore.iterator();
 		try{
@@ -43,7 +44,7 @@ public class TestTasmWriterBuilder {
 		}finally{
 			IOUtil.closeAndIgnoreErrors(iter);
 		}
-		byte[] actualBytes = out.toByteArray();
+		byte[] actualBytes = getWrittenBytes();
 		assertArrayEquals(IOUtil.toByteArray(tasmFile), actualBytes);
 		
 	}
@@ -78,6 +79,4 @@ public class TestTasmWriterBuilder {
 		
 		assertArrayEquals(IOUtil.toByteArray(tasmFile), actualBytes);
 	}
-	
-
 }

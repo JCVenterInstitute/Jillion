@@ -26,16 +26,23 @@
 package org.jcvi.jillion.assembly.tigr.ctg;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
 import org.junit.After;
@@ -76,5 +83,35 @@ public abstract class AbstractTestContigFileDataStore<R extends AssembledRead, C
     }
     protected abstract D buildContigFileDataStore(
     		NucleotideFastaDataStore fullLengthSequences, File contigFile) throws IOException;
+    
+
+    @Test
+    public void idIterator() throws DataStoreException{
+    	StreamingIterator<String> iter =dataStore.idIterator();
+    	Iterator<String> expected = Arrays.asList("925","926","927","928").iterator();
+    	while(expected.hasNext()){
+    		assertTrue(iter.hasNext());
+    		assertEquals(expected.next(), iter.next());
+    	}
+    	assertFalse(iter.hasNext());
+    }
+    @Test
+    public void iterator() throws DataStoreException{
+    	StreamingIterator<C> iter =dataStore.iterator();
+    	List<String> expectedIds = Arrays.asList("925","926","927","928");
+    	List<String> actualIds = new ArrayList<String>();
+    	
+    	while(iter.hasNext()){
+    		C contig = iter.next();
+    		actualIds.add(contig.getId());
+    		if("925".equals(contig.getId())){
+    			assertContig925Matches(contig);
+    		}else if("928".equals(contig.getId())){
+    			assertContig928Correct(contig);
+    		}
+    		
+    	}
+    	assertEquals(expectedIds, actualIds);
+    }
 
 }

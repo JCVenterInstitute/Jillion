@@ -477,22 +477,28 @@ public abstract class TestAbstractContigFileParser {
     "AGATGATTTAGTGCCCCGCAGTTATTATTTAATTAAGAGTGGCCAGGCCTACACCTCGAT"+
     "GATGGTTAATTTTAGCCATGAGGTGATTGACATGTGTATGGACATGGCATTATTGTTC";
     @Test
-    public void decode() throws IOException{
+    public void decode925() throws IOException{
         final File file = getFile();
         Contig contig925 = getContig925From(file);
-        assertEquals(contig_id, Integer.parseInt(contig925.getId()));
+        assertContig925Matches(contig925);
+    
+        
+    }
+	protected void assertContig925Matches(Contig contig925) {
+		assertEquals(contig_id, Integer.parseInt(contig925.getId()));
         assertEquals(contig_length, contig925.getConsensusSequence().getLength());
         assertEquals(numberOfReads, contig925.getNumberOfReads());
         AssemblyTestUtil.assertPlacedReadCorrect(CVGWB15T06B037761RM, contig925.getRead("CVGWB15T06B037761RM"));
         AssemblyTestUtil.assertPlacedReadCorrect(CVGWB47T06D1122735FMB, contig925.getRead("CVGWB47T06D1122735FMB"));
-    
-        
-    }
+	}
     @Test
     public void decodeLastConsensus() throws Exception{
         Contig contig928 = getContig928From(getFile());
-        assertEquals(consensusForContig928, contig928.getConsensusSequence().toString());
+        assertContig928Correct(contig928);
     }
+	protected void assertContig928Correct(Contig contig928) {
+		assertEquals(consensusForContig928, contig928.getConsensusSequence().toString());
+	}
 
     protected abstract Contig getContig928From(File file) throws Exception;
     
@@ -504,5 +510,4 @@ public abstract class TestAbstractContigFileParser {
     protected abstract Contig getContig925From(File file) throws FileNotFoundException;
 
 
-    
 }

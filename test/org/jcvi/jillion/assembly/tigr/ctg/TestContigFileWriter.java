@@ -31,7 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jcvi.jillion.assembly.tigr.contig.CtgFileWriter;
+import org.jcvi.jillion.assembly.tigr.contig.TigrContigFileWriter;
 import org.jcvi.jillion.assembly.tigr.contig.TigrContig;
 import org.jcvi.jillion.assembly.tigr.contig.TigrContigDataStore;
 import org.jcvi.jillion.assembly.tigr.contig.TigrContigFileDataStoreBuilder;
@@ -46,7 +46,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 public class TestContigFileWriter {
     ByteArrayOutputStream out;
-    CtgFileWriter sut;
+    TigrContigFileWriter sut;
     static TigrContigDataStore dataStore;
     private static String pathToFile = "files/gcv_23918.contig";
     private final static ResourceHelper RESOURCES = new ResourceHelper(TestContigFileWriter.class);
@@ -62,7 +62,7 @@ public class TestContigFileWriter {
     @Before
     public void setup(){
         out = new ByteArrayOutputStream();
-        sut = new CtgFileWriter(out);
+        sut = new TigrContigFileWriter(out);
     }
     
     @Test

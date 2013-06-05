@@ -44,17 +44,17 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.util.JillionUtil;
 /**
- * {@code CtgFileWriter} will write out {@link Contig}
+ * {@code TigrContigFileWriter} will write out {@link Contig}
  * objects in ctg format.
  * @author dkatzel
  *
  *
  */
-public class CtgFileWriter implements Closeable{
+public class TigrContigFileWriter implements Closeable{
     private static final CtgFormatReadSorter READ_SORTER = CtgFormatReadSorter.INSTANCE;
     private final OutputStream out;
     
-    public CtgFileWriter(OutputStream out) {
+    public TigrContigFileWriter(OutputStream out) {
         this.out = out;
     }
     public <PR extends AssembledRead, C extends Contig<PR>> void write(C contig) throws IOException,
