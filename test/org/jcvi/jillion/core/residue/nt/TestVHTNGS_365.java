@@ -47,7 +47,7 @@ Since we lost a gap, the gap to ungap computations and ungapped quality computat
  * @author dkatzel
  *
  */
-public class VHTNGS_365 {
+public class TestVHTNGS_365 {
 
 	@Test
 	public void lastSnpNIsEncodedCorrectly(){
