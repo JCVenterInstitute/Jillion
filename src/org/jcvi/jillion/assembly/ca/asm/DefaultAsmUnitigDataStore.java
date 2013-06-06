@@ -38,7 +38,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 final class DefaultAsmUnitigDataStore {
 
-	public static UnitigDataStore create(File asmFile, DataStore<NucleotideSequence> fullLengthSequences, DataStoreFilter filter) throws IOException{
+	public static AsmUnitigDataStore create(File asmFile, DataStore<NucleotideSequence> fullLengthSequences, DataStoreFilter filter) throws IOException{
 		VisitorBuilder visitorBuilder = new VisitorBuilder(filter, fullLengthSequences);
 		AsmFileParser.create(asmFile).accept(visitorBuilder);
 		return visitorBuilder.build();
@@ -160,8 +160,8 @@ final class DefaultAsmUnitigDataStore {
 			
 		}
 
-		public UnitigDataStore build(){
-			return DataStoreUtil.adapt(UnitigDataStore.class, contigs);
+		public AsmUnitigDataStore build(){
+			return DataStoreUtil.adapt(AsmUnitigDataStore.class, contigs);
 		}
 	}
 }

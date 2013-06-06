@@ -43,7 +43,7 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 /**
- * {@code IndexedAsmFileContigDataStore} is an {@link UnitigDataStore}
+ * {@code IndexedAsmFileContigDataStore} is an {@link AsmUnitigDataStore}
  * implementation that only stores indexes and range offsets
  * of unitigs in the input asm file.  This allows large files to provide random 
  * access without taking up much memory.  The downside is each unitig
@@ -51,10 +51,10 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
  * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
-final class IndexedAsmFileUnitigDataStore  implements UnitigDataStore{
+final class IndexedAsmFileUnitigDataStore  implements AsmUnitigDataStore{
 	
 
-	public static UnitigDataStore create(File asmFile, DataStore<NucleotideSequence> fullLengthSequences, DataStoreFilter filter) throws IOException{
+	public static AsmUnitigDataStore create(File asmFile, DataStore<NucleotideSequence> fullLengthSequences, DataStoreFilter filter) throws IOException{
 		VisitorBuilder visitorBuilder = new VisitorBuilder(filter);
 		AsmFileParser parser = AsmFileParser.create(asmFile);
 		parser.accept(visitorBuilder);
@@ -243,7 +243,7 @@ final class IndexedAsmFileUnitigDataStore  implements UnitigDataStore{
 			
 		}
 		
-		public UnitigDataStore build(AsmFileParser parser, DataStore<NucleotideSequence> fullLengthSequences){
+		public AsmUnitigDataStore build(AsmFileParser parser, DataStore<NucleotideSequence> fullLengthSequences){
 			return new IndexedAsmFileUnitigDataStore(parser, fullLengthSequences, mementos);
 		}
 	}

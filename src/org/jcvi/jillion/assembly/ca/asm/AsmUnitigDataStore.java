@@ -27,6 +27,6 @@ import org.jcvi.jillion.core.datastore.DataStore;
  *
  *
  */
-public interface UnitigDataStore extends DataStore<AsmUnitig>{
+public interface AsmUnitigDataStore extends DataStore<AsmUnitig>{
 
 }
