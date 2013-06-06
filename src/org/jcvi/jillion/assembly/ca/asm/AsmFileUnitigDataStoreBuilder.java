@@ -14,7 +14,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.core.util.Builder;
 
-public class AsmFileContigDataStoreBuilder implements Builder<AsmContigDataStore>{
+public class AsmFileUnitigDataStoreBuilder implements Builder<UnitigDataStore>{
 
 	private final File asmFile;
 	
@@ -26,7 +26,7 @@ public class AsmFileContigDataStoreBuilder implements Builder<AsmContigDataStore
 	private final  DataStore<NucleotideSequence> fullLengthSequences;
 	
 	
-	public AsmFileContigDataStoreBuilder(File asmFile,
+	public AsmFileUnitigDataStoreBuilder(File asmFile,
 			NucleotideSequenceDataStore fullLengthSequences) {
 		if(asmFile ==null){
 			throw new NullPointerException("asm file can not be null");
@@ -38,7 +38,7 @@ public class AsmFileContigDataStoreBuilder implements Builder<AsmContigDataStore
 		this.fullLengthSequences = fullLengthSequences;
 	}
 
-	public AsmFileContigDataStoreBuilder(File asmFile,
+	public AsmFileUnitigDataStoreBuilder(File asmFile,
 			FragmentDataStore frgDataStore) {
 		if(asmFile ==null){
 			throw new NullPointerException("asm file can not be null");
@@ -51,7 +51,7 @@ public class AsmFileContigDataStoreBuilder implements Builder<AsmContigDataStore
 	}
 
 	
-	public AsmFileContigDataStoreBuilder filter(DataStoreFilter filter){
+	public AsmFileUnitigDataStoreBuilder filter(DataStoreFilter filter){
 		if(filter ==null){
 			throw new NullPointerException("filter can not be null");
 		}
@@ -60,7 +60,7 @@ public class AsmFileContigDataStoreBuilder implements Builder<AsmContigDataStore
 	}
 	
 	
-	public AsmFileContigDataStoreBuilder hint(DataStoreProviderHint hint){
+	public AsmFileUnitigDataStoreBuilder hint(DataStoreProviderHint hint){
 		if(hint ==null){
 			throw new NullPointerException("hint can not be null");
 		}
@@ -82,17 +82,17 @@ public class AsmFileContigDataStoreBuilder implements Builder<AsmContigDataStore
 	}
 
 	@Override
-	public AsmContigDataStore build() {
+	public UnitigDataStore build() {
 		try {
 		switch(hint){
 			case RANDOM_ACCESS_OPTIMIZE_SPEED:				
-					return DefaultAsmContigDataStore.create(asmFile, fullLengthSequences, filter);
+					return DefaultAsmUnitigDataStore.create(asmFile, fullLengthSequences, filter);
 			case RANDOM_ACCESS_OPTIMIZE_MEMORY:
-					return IndexedAsmFileContigDataStore.create(asmFile, fullLengthSequences, filter);
+					return IndexedAsmFileUnitigDataStore.create(asmFile, fullLengthSequences, filter);
 			case ITERATION_ONLY:
 				//no large implementation so return indexed?
 				//TODO add large asm implementation
-				return IndexedAsmFileContigDataStore.create(asmFile, fullLengthSequences, filter);
+				return IndexedAsmFileUnitigDataStore.create(asmFile, fullLengthSequences, filter);
 			default:
 				throw new IllegalArgumentException("unknown hint "+ hint);
 			}
