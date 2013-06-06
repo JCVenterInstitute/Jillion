@@ -36,9 +36,9 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 
-final class DefaultAsmContigDataStore2 {
+final class DefaultAsmUnitigDataStore {
 
-	public static AsmContigDataStore create(File asmFile, DataStore<NucleotideSequence> fullLengthSequences, DataStoreFilter filter) throws IOException{
+	public static UnitigDataStore create(File asmFile, DataStore<NucleotideSequence> fullLengthSequences, DataStoreFilter filter) throws IOException{
 		VisitorBuilder visitorBuilder = new VisitorBuilder(filter, fullLengthSequences);
 		AsmFileParser.create(asmFile).accept(visitorBuilder);
 		return visitorBuilder.build();
@@ -50,7 +50,7 @@ final class DefaultAsmContigDataStore2 {
 		private final  DataStore<NucleotideSequence> fullLengthSequences;
 		private final DataStoreFilter filter;
 		
-		private final LinkedHashMap<String, AsmContig> contigs = new LinkedHashMap<String, AsmContig>();
+		private final LinkedHashMap<String, AsmUnitig> contigs = new LinkedHashMap<String, AsmUnitig>();
 		
 		
 		public VisitorBuilder(DataStoreFilter filter,
@@ -80,11 +80,20 @@ final class DefaultAsmContigDataStore2 {
 
 		@Override
 		public AsmUnitigVisitor visitUnitig(AsmVisitorCallback callback,
-				String externalId, long internalId, float aStat,
+				final String externalId, long internalId, float aStat,
 				float measureOfPolymorphism, UnitigStatus status,
 				NucleotideSequence consensusSequence,
 				QualitySequence consensusQualities, long numberOfReads) {
-			// always skip
+			if(filter.accept(externalId)){
+				return new AbstractAsmUnitigBuilder(externalId,consensusSequence,
+						fullLengthSequences, validRanges) {
+					
+					@Override
+					protected void visitUnitig(AsmUnitigBuilder builder) {
+						contigs.put(externalId, builder.build());						
+					}
+				};
+			}
 			return null;
 		}
 
@@ -113,16 +122,7 @@ final class DefaultAsmContigDataStore2 {
 				NucleotideSequence consensusSequence,
 				QualitySequence consensusQualities, long numberOfReads,
 				long numberOfUnitigs, long numberOfVariants) {
-			if(filter.accept(externalId)){
-				return new AbstractAsmContigBuilder(externalId,consensusSequence, isDegenerate,
-						fullLengthSequences, validRanges) {
-					
-					@Override
-					protected void visitContig(AsmContigBuilder builder) {
-						contigs.put(externalId, builder.build());						
-					}
-				};
-			}
+			//always skip
 			return null;
 		}
 
@@ -160,8 +160,8 @@ final class DefaultAsmContigDataStore2 {
 			
 		}
 
-		public AsmContigDataStore build(){
-			return DataStoreUtil.adapt(AsmContigDataStore.class, contigs);
+		public UnitigDataStore build(){
+			return DataStoreUtil.adapt(UnitigDataStore.class, contigs);
 		}
 	}
 }

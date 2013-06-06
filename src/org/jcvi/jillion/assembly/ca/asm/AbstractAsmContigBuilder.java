@@ -32,7 +32,13 @@ import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-
+/**
+ * {@code AbstractAsmContigBuilder} is a {@link AsmContigVisitor}
+ * that will populate an {@link AsmContigBuilder} instance
+ * when its visit methods are called.
+ * @author dkatzel
+ *
+ */
 public abstract class AbstractAsmContigBuilder implements AsmContigVisitor{
 
 	private final Map<String, Range> validRanges;
