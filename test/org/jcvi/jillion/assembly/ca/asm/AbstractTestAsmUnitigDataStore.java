@@ -21,13 +21,12 @@
 package org.jcvi.jillion.assembly.ca.asm;
 
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.util.Arrays;
 
 import org.jcvi.jillion.assembly.AssemblyUtil;
-import org.jcvi.jillion.assembly.ca.asm.AsmAssembledRead;
-import org.jcvi.jillion.assembly.ca.asm.AsmUnitig;
-import org.jcvi.jillion.assembly.ca.asm.UnitigDataStore;
 import org.jcvi.jillion.assembly.ca.frg.Fragment;
 import org.jcvi.jillion.assembly.ca.frg.FragmentDataStore;
 import org.jcvi.jillion.assembly.ca.frg.IndexedFragmentDataStore;
@@ -39,20 +38,21 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-public abstract class AbstractTestAsmUnitigDataStore extends AbstractTestAsmDataStore<UnitigDataStore>{
+public abstract class AbstractTestAsmUnitigDataStore extends AbstractTestAsmDataStore<AsmUnitigDataStore>{
 
 	@Test
 	public void parseFluAssembly() throws Exception{
 		File asmFile = resources.getFile("files/giv_15048.asm");
 		File frgFile = resources.getFile("files/giv_15048.frg");
 		FragmentDataStore frgDataStore = IndexedFragmentDataStore.create(frgFile);
-		UnitigDataStore datastore = createDataStore(asmFile, frgDataStore);
+		AsmUnitigDataStore datastore = createDataStore(asmFile, frgDataStore);
 	
 		assertEquals(1, datastore.getNumberOfRecords());
-		AsmUnitig unitig = datastore.get("7180000000000");
+		String id = "7180000000000";
+		AsmUnitig unitig = datastore.get(id);
 		NucleotideSequence consensus = unitig.getConsensusSequence();
+		assertEquals(id, unitig.getId());
 		assertEquals(1016, consensus.getLength());
 		assertEquals(20, unitig.getNumberOfReads());
 		

@@ -14,7 +14,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.core.util.Builder;
 
-public class AsmFileUnitigDataStoreBuilder implements Builder<UnitigDataStore>{
+public class AsmFileUnitigDataStoreBuilder implements Builder<AsmUnitigDataStore>{
 
 	private final File asmFile;
 	
@@ -82,7 +82,7 @@ public class AsmFileUnitigDataStoreBuilder implements Builder<UnitigDataStore>{
 	}
 
 	@Override
-	public UnitigDataStore build() {
+	public AsmUnitigDataStore build() {
 		try {
 		switch(hint){
 			case RANDOM_ACCESS_OPTIMIZE_SPEED:				
