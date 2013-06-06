@@ -41,7 +41,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestNucleotideGetBasesFor.class,
         TestReferenceEncodedNucleotideSequence.class,
         TestReferenceEncodedNucleotideSequence_gappedtoUngapped.class,
-        VHTNGS_365.class,
+        TestVHTNGS_365.class,
         TestNucleotideGlyph_GetGlyphsFor.class,
         TestNucleotideSequenceBuilder.class
     }
