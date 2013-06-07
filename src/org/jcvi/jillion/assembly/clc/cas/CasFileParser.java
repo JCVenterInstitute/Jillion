@@ -52,7 +52,7 @@ public final class CasFileParser {
         (byte)0x00,
         (byte)0x00,
         (byte)0x00,
-        (byte)0x01,
+        (byte)0x03,
     };
 	
     private  int numberOfBytesForContigPosition,numberOfBytesForContigNumber;
@@ -154,16 +154,30 @@ public final class CasFileParser {
         }
         
     }
+    
+    private int assertMagicNumberIsCorrect(byte[] magicNumber){
+    	//last byte may vary
+    	for(int i=0; i<CAS_MAGIC_NUMBER.length -1; i++){
+    		if(CAS_MAGIC_NUMBER[i] != magicNumber[i]){
+    			 throw new IllegalArgumentException("input stream not a valid cas file wrong magic number expected : " + Arrays.toString(CAS_MAGIC_NUMBER) + " but was "+Arrays.toString(magicNumber));
+    		      
+    		}
+    	}
+    	return magicNumber[7];
+    	
+    }
     private void parseMetaData(CasFileVisitor visitor) throws IOException {
     	RandomAccessFile randomAccessFile = new RandomAccessFile(casFile,"r");
     	RandomAccessFileInputStream in=null;
     	try{
     		in = new RandomAccessFileInputStream(randomAccessFile);
     		byte[] magicNumber = IOUtil.toByteArray(in, 8);
-	    	
+    		int CasVersion =assertMagicNumberIsCorrect(magicNumber);
+	    	/*
     	 if(!Arrays.equals(CAS_MAGIC_NUMBER, magicNumber)){
-             throw new IllegalArgumentException("input stream not a valid cas file wrong magic number");
+             throw new IllegalArgumentException("input stream not a valid cas file wrong magic number expected : " + Arrays.toString(CAS_MAGIC_NUMBER) + " but was "+Arrays.toString(magicNumber));
          }
+         */
     	 //the cas file puts the header at the end of the file
     	 //perhaps to make it easier to modify later?
     	 //so we have to skip over all the matches (possibly gigabytes of data)
@@ -171,8 +185,12 @@ public final class CasFileParser {
     	 randomAccessFile.seek(headerOffset.longValue());
     	 
     	 long numberOfContigSequences = CasUtil.readCasUnsignedInt(in);
+         if(CasVersion==1){
+        	 numberOfReads = CasUtil.readCasUnsignedInt(in);
+         }else{
+        	 numberOfReads = CasUtil.readCasUnsignedLong(in).longValue();
+         }
          
-         numberOfReads = CasUtil.readCasUnsignedInt(in);
         
           visitor.visitMetaData(numberOfContigSequences, numberOfReads);
           String nameOfAssemblyProgram = CasUtil.parseCasStringFrom(in);
@@ -184,7 +202,12 @@ public final class CasFileParser {
          visitor.visitNumberOfReferenceFiles(numberOfContigFiles);            
           for(long i=0; i< numberOfContigFiles; i++){
             boolean twoFiles =(in.read() & 0x01)==1;
-            long numberOfSequencesInFile = CasUtil.readCasUnsignedInt(in);
+            long numberOfSequencesInFile;
+            if(CasVersion ==1){
+            	numberOfSequencesInFile= CasUtil.readCasUnsignedInt(in);
+            }else{
+            	numberOfSequencesInFile= CasUtil.readCasUnsignedLong(in).longValue();
+            }
             BigInteger residuesInFile = CasUtil.readCasUnsignedLong(in);
             List<String> names = new ArrayList<String>();
             names.add(CasUtil.parseCasStringFrom(in));
@@ -198,7 +221,12 @@ public final class CasFileParser {
           visitor.visitNumberOfReadFiles(numberOfReadFiles);            
            for(long i=0; i< numberOfReadFiles; i++){
              boolean twoFiles =(in.read() & 0x01)==1;
-             long numberOfSequencesInFile = CasUtil.readCasUnsignedInt(in);
+             long numberOfSequencesInFile;
+             if(CasVersion ==1){
+             	numberOfSequencesInFile= CasUtil.readCasUnsignedInt(in);
+             }else{
+             	numberOfSequencesInFile= CasUtil.readCasUnsignedLong(in).longValue();
+             }
              BigInteger residuesInFile = CasUtil.readCasUnsignedLong(in);
              List<String> names = new ArrayList<String>();
              names.add(CasUtil.parseCasStringFrom(in));

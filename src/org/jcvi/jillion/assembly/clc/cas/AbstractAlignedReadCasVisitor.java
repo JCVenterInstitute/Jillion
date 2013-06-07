@@ -46,6 +46,9 @@ import org.jcvi.jillion.trace.Trace;
 import org.jcvi.jillion.trace.TraceDataStore;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
+import org.jcvi.jillion.trace.fastq.FastqRecord;
+import org.jcvi.jillion.trace.fastq.FastqRecordBuilder;
+import org.jcvi.jillion.trace.fastq.IlluminaUtil;
 import org.jcvi.jillion.trace.sff.SffFileIterator;
 import org.jcvi.jillion.trace.sff.SffFlowgram;
 import org.jcvi.jillion.trace.sff.SffUtil;
@@ -78,9 +81,10 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 
 	@Override
 	public void visitReadFileInfo(CasFileInfo readFileInfo) {
-		for(String filePath :readFileInfo.getFileNames()){
+		List<String> fileNames = readFileInfo.getFileNames();
+		if(fileNames.size()==1){
 			try {
-				File file = CasUtil.getFileFor(workingDir, filePath);
+				File file = CasUtil.getFileFor(workingDir, fileNames.get(0));
 				
 				iterators.add(createIteratorFor(file));
 			} catch (Exception e) {
@@ -88,8 +92,26 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 					IOUtil.closeAndIgnoreErrors(iter);
 				}
 				throw new IllegalStateException("error getting input read data", e);
-			}           
-        }
+			}      
+		}else{
+			List<StreamingIterator<? extends Trace>> iteratorLists = new ArrayList<StreamingIterator<? extends Trace>>(fileNames.size());
+			try {
+				for(String filePath :fileNames){					
+						File file = CasUtil.getFileFor(workingDir, filePath);						
+						iteratorLists.add(createIteratorFor(file));					
+		        }
+				iterators.add(new InterleavedStreamingIterators(iteratorLists));
+			} catch (Exception e) {
+				for(StreamingIterator<? extends Trace> iter : iteratorLists){
+					IOUtil.closeAndIgnoreErrors(iter);
+				}
+				for(StreamingIterator<? extends Trace> iter : iterators){
+					IOUtil.closeAndIgnoreErrors(iter);
+				}
+				throw new IllegalStateException("error getting input read data", e);
+			}   
+		}
+		
 	}
 	
 	private StreamingIterator<? extends Trace> createIteratorFor(File file) throws DataStoreException{
@@ -113,7 +135,7 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 			FastqDataStore datastore = new FastqFileDataStoreBuilder(illuminaFile)
 											.hint(DataStoreProviderHint.ITERATION_ONLY)
 											.build();
-			return datastore.iterator();
+			return new Casava18IteratorAdapter(datastore.iterator());
 		} catch (IOException e) {
 			throw new IllegalStateException("fastq file no longer exists! : "+ illuminaFile.getAbsolutePath());
 		}
@@ -264,5 +286,81 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 		}
 	}
 	
+	private static class Casava18IteratorAdapter implements StreamingIterator<FastqRecord>{
+		private final  StreamingIterator<FastqRecord> delegate;
+
+		public Casava18IteratorAdapter(StreamingIterator<FastqRecord> delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return delegate.hasNext();
+		}
+
+		@Override
+		public void close() throws IOException {
+			delegate.close();
+			
+		}
+
+		@Override
+		public FastqRecord next() {
+			FastqRecord record =delegate.next();
+			if(IlluminaUtil.isCasava18Read(record.getId())){
+				return new FastqRecordBuilder(record.getId()+"_"+record.getComment(), 
+											record.getNucleotideSequence(),
+											record.getQualitySequence())
+							.build();
+			}
+			return record;
+		}
+
+		@Override
+		public void remove() {
+			delegate.remove();
+			
+		}	
+	}
 	
+	private static class InterleavedStreamingIterators implements StreamingIterator<Trace>{
+		private final List<StreamingIterator<? extends Trace>> iterators;
+
+		private int offset=0;
+		
+		public InterleavedStreamingIterators(
+				List<StreamingIterator<? extends Trace>> iterators) {
+			this.iterators = iterators;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return iterators.get(offset).hasNext();
+		}
+
+		@Override
+		public void close() throws IOException {
+			for(StreamingIterator<? extends Trace> iter : iterators){
+				IOUtil.closeAndIgnoreErrors(iter);
+			}			
+			
+		}
+
+		@Override
+		public Trace next() {
+			Trace next = iterators.get(++offset).next();
+			if(offset ==iterators.size()){
+				offset=0;
+			}
+			return next;
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+			
+		}
+		
+		
+	}
 }

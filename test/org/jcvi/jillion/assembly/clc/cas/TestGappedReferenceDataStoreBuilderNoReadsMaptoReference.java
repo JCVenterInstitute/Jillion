@@ -13,9 +13,9 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordBuilder;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriterBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordBuilder;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -64,7 +64,7 @@ public class TestGappedReferenceDataStoreBuilderNoReadsMaptoReference extends Ea
 	@Test
 	public void noReadsMappedShouldUseUnchangedReferenceSequence() throws DataStoreException{
 		replayAll();
-		
+		sut.visitMetaData(2, 0);
 		sut.visitReferenceFileInfo(refFileInfo);		
 		sut.visitEnd();		
 		CasGappedReferenceDataStore datastore = sut.build();
@@ -84,7 +84,7 @@ public class TestGappedReferenceDataStoreBuilderNoReadsMaptoReference extends Ea
 										.addRegion(CasAlignmentRegionType.MATCH_MISMATCH, 1)
 										.build());
 		replayAll();
-		
+		sut.visitMetaData(2, 1);
 		sut.visitReferenceFileInfo(refFileInfo);	
 		
 		CasMatchVisitor matchVisitor = sut.visitMatches(createMock(CasVisitorCallback.class));

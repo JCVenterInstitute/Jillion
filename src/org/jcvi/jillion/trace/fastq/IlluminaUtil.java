@@ -61,8 +61,11 @@ public final class IlluminaUtil {
             return true;
         }
         
-        return CASAVA_1_8_PATTERN.matcher(readId).matches();
+        return isCasava18Read(readId);
     }
+	public static boolean isCasava18Read(String readId) {
+		return CASAVA_1_8_PATTERN.matcher(readId).matches();
+	}
     /**
      * Gets the run id from the given read id.
      * @param illuminaReadId the illumina read id to parse.

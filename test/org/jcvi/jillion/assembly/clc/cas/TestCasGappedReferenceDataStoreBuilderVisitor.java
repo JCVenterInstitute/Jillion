@@ -68,6 +68,7 @@ public class TestCasGappedReferenceDataStoreBuilderVisitor {
         CasFileInfo refInfo = createMock(CasFileInfo.class);
         expect(refInfo.getFileNames()).andReturn(Arrays.asList(refFasta.getName()));
         replay(refInfo);
+        sut.visitMetaData(1, 10);
         sut.visitReferenceFileInfo(refInfo);
         matchVisitor = sut.visitMatches(createMock(CasVisitorCallback.class));
     }
