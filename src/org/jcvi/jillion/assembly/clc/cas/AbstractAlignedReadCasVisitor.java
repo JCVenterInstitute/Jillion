@@ -82,6 +82,10 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 	@Override
 	public void visitReadFileInfo(CasFileInfo readFileInfo) {
 		List<String> fileNames = readFileInfo.getFileNames();
+		if(fileNames.isEmpty()){
+			//nothing to do... 
+			return;
+		}
 		if(fileNames.size()==1){
 			try {
 				File file = CasUtil.getFileFor(workingDir, fileNames.get(0));
