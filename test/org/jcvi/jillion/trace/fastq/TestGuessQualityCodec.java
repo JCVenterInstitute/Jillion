@@ -45,4 +45,9 @@ public class TestGuessQualityCodec {
 		assertEquals(FastqQualityCodec.SOLEXA, FastqUtil.guessQualityCodecUsed(quals));
 
 	}
+	
+	@Test
+	public void emptyStringReturnsNull(){
+		assertNull(FastqUtil.guessQualityCodecUsed(""));
+	}
 }
