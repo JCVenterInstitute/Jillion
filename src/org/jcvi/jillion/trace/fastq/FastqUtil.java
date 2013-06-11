@@ -128,15 +128,16 @@ public final class FastqUtil {
      * the given qualities.
      * @param encodedQualities a String of fastq encoded qualities
      * @return an instance of {@link FastqQualityCodec} which could have been 
-     * used to encode the given qualities (will never be null).
+     * used to encode the given qualities; or {@code null} if encodedQualities
+     * is empty.
      * @throws NullPointerException if the given qualities are null.
-     * @throws IllegalArgumentException if the given quality string is empty
-     * or if it contains any characters out of range of any known
+     * @throws IllegalArgumentException if the given quality string
+     * contains any characters out of range of any known
      * quality encoding formats.
      */
     static FastqQualityCodec guessQualityCodecUsed(String encodedQualities){
     	if(encodedQualities.isEmpty()){
-    		throw new IllegalArgumentException("encoded qualities can not be empty");
+    		return null;
     	}
     	//sanger uses 33 as an offset so any ascii values around there will 
     	//automatically be sanger
@@ -247,6 +248,10 @@ public final class FastqUtil {
 		@Override
 		public void visitEncodedQualities(String encodedQualities) {
 			FastqQualityCodec codec =FastqUtil.guessQualityCodecUsed(encodedQualities);
+			if(codec ==null){
+				//nothing to detect so skip it
+				return;
+			}
             switch(codec){
                 case SANGER : numSanger++;
                 				break;
