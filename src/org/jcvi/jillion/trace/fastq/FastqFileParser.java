@@ -135,11 +135,13 @@ public abstract class FastqFileParser {
         int expectedQualities =  (int)sequence.getLength();
 		 
         StringBuilder qualityBuilder = new StringBuilder(expectedQualities);
-        
-    	while(qualityBuilder.length() < expectedQualities){
+        //needs to be a do-while loop
+        //to cover the case where the read is empty
+        //(contains 0 bases) we still need to read a quality line
+        do{    	
     		line = parser.nextLine();
     		qualityBuilder.append(line.trim());
-    	}
+    	}while(qualityBuilder.length() < expectedQualities);
     	if(qualityBuilder.length()> expectedQualities){
     		throw new IOException(
     				String.format("too many quality values for current record: expected %d but was %d", expectedQualities, qualityBuilder.length()));
@@ -178,7 +180,7 @@ public abstract class FastqFileParser {
 			}
 			Matcher beginSeqMatcher =FastqUtil.SEQ_DEFLINE_PATTERN.matcher(fastqDefline);
 	        if(!beginSeqMatcher.find()){
-	            throw new IllegalStateException("invalid fastq file, could not parse seq id from "+ fastqDefline);
+	            throw new IllegalStateException(String.format("invalid fastq file, could not parse seq id from '%s'",fastqDefline));
 	        }
 	        return new Defline(beginSeqMatcher.group(1), beginSeqMatcher.group(3));
 		}
