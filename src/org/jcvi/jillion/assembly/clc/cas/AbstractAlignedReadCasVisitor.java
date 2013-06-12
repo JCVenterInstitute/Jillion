@@ -352,7 +352,7 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 
 		@Override
 		public Trace next() {
-			Trace next = iterators.get(++offset).next();
+			Trace next = iterators.get(offset++).next();
 			if(offset ==iterators.size()){
 				offset=0;
 			}
