@@ -45,6 +45,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestDefaultMultiLineFastqRecordsInDataStore.class,
         TestDefaultFastqFileDataStoreGuessCodec.class, 
         
+        TestFastqFileWithEmptyRead.class,
+        
         TestIndexedFastQFileDataStore.class,
         TestDefaultFastqFileDataStoreMultilineGuessCodec.class,
         TestIndexedFastqFileDataStoreGuessCodec.class,
