@@ -21,13 +21,34 @@ import org.jcvi.jillion.internal.core.util.GrowableShortArray;
  */
 public final class SliceBuilder implements Builder<Slice>{
 
-	public interface SliceElementFilter{
-		boolean accept(SliceElement e);
-	}
+	
     private GrowableShortArray bytes = new GrowableShortArray(1024);
     private List<String> ids = new ArrayList<String>();
     private Nucleotide consensus;
-    
+    /**
+     * {@code SliceElementFilter} is used to remove
+     * {@link SliceElement}s <strong>currently</strong>
+     * in the Slice being built.
+     * Applying a filter on a SliceBuilder
+     * will iterate over all the current
+     * SliceElements in the SliceBuilder
+     * and remove any elements that are
+     * not accepted by the filter.
+     * @author dkatzel
+     *
+     */
+    public interface SliceElementFilter{
+    	/**
+    	 * Should the given SliceElement 
+    	 * be included in the SliceBuilder.
+    	 * @param e the current SliceElement to inspect;
+    	 * will never be null.
+    	 * @return {@code true} if this {@link SliceElement}
+    	 * should be kept by the SliceBuilder;
+    	 * {@code false} if the SliceElement should be removed.
+    	 */
+		boolean accept(SliceElement e);
+	}
     /**
      * Create a new {@link SliceBuilder}
      * which will start off empty.
@@ -52,7 +73,17 @@ public final class SliceBuilder implements Builder<Slice>{
     	addAll(slice);
     	setConsensus(slice.getConsensusCall());
     }
-    
+    /**
+     * Filter the <strong>current</strong>
+     * {@link SliceElement}s in this builder.
+     * Any SliceElements not accepted by the filter
+     * will be removed.
+     * @param filter the {@link SliceElementFilter} instance
+     * that will be used to filter the SliceElements;
+     * can not be null.
+     * @return this.
+     * @throws NullPointerException if filter is null.
+     */
     public SliceBuilder filter(SliceElementFilter filter){
     	if(filter==null){
     		throw new NullPointerException("filter can not be null");
