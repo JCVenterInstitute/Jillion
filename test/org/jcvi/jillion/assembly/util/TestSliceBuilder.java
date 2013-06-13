@@ -15,10 +15,11 @@ import java.util.Map;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Test;
 public class TestSliceBuilder {
 
-	List<SliceElement> elements = Arrays.<SliceElement>asList(
+	private final List<SliceElement> elements = Arrays.<SliceElement>asList(
 			new DefaultSliceElement("id",
 								Nucleotide.Adenine, 
 								PhredQuality.valueOf(30), 
@@ -33,9 +34,12 @@ public class TestSliceBuilder {
 							Direction.REVERSE)
 			);
 	
+	private final Nucleotide consensus = Nucleotide.Adenine;
+	
+	
 	private Map<Nucleotide, Integer> createEmptyCountMap(){
 		EnumMap<Nucleotide, Integer> map = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
-		for(Nucleotide n : Nucleotide.values()){
+		for(Nucleotide n : Nucleotide.VALUES){
 			map.put(n, Integer.valueOf(0));
 		}
 		return map;
@@ -96,6 +100,7 @@ public class TestSliceBuilder {
 		expectedCountMap.put(Nucleotide.Adenine, 1);
 		
 		assertEquals(expectedCountMap, slice.getNucleotideCounts());
+		assertNull(slice.getConsensusCall());
 	}
 	
 	@Test
@@ -113,6 +118,7 @@ public class TestSliceBuilder {
 		expectedCountMap.put(Nucleotide.Unknown, 1);
 		
 		assertEquals(expectedCountMap, slice.getNucleotideCounts());
+		assertNull(slice.getConsensusCall());
 		
 	}
 	
@@ -139,6 +145,7 @@ public class TestSliceBuilder {
 		expectedCountMap.put(Nucleotide.Guanine, 1);
 		
 		assertEquals(expectedCountMap, slice.getNucleotideCounts());
+		assertNull(slice.getConsensusCall());
 	}
 	
 	@Test
@@ -153,11 +160,13 @@ public class TestSliceBuilder {
 									.addAll(elements)
 									.build();
 		assertEquals(unshuffeledSlice, shuffeledSlice);
+		assertNull(shuffeledSlice.getConsensusCall());
+		assertNull(unshuffeledSlice.getConsensusCall());
 		
 	}
 	
 	@Test
-	public void SlicesAddedInDifferentOrderShouldStillBeEqual(){
+	public void slicesAddedInDifferentOrderShouldStillBeEqual(){
 		
 		
 		SliceBuilder builder= new SliceBuilder();
@@ -178,6 +187,8 @@ public class TestSliceBuilder {
 		expectedCountMap.put(Nucleotide.Guanine, 1);
 		
 		assertEquals(expectedCountMap, slice.getNucleotideCounts());
+		assertNull(slice.getConsensusCall());
+		
 	}
 	
 	@Test
@@ -202,6 +213,7 @@ public class TestSliceBuilder {
 		expectedCountMap.put(Nucleotide.Guanine, 1);
 		
 		assertEquals(expectedCountMap, slice.getNucleotideCounts());
+		assertNull(slice.getConsensusCall());
 	}
 	
 	@Test
@@ -234,6 +246,7 @@ public class TestSliceBuilder {
 		expectedCountMap.put(Nucleotide.Guanine, 1);
 		
 		assertEquals(expectedCountMap, slice.getNucleotideCounts());
+		assertNull(slice.getConsensusCall());
 	}
 	
 	@Test
@@ -277,6 +290,7 @@ public class TestSliceBuilder {
 		expectedCountMap.put(Nucleotide.Guanine, 1);
 		
 		assertEquals(expectedCountMap, slice.getNucleotideCounts());
+		assertNull(slice.getConsensusCall());
 
 
 	}
@@ -349,4 +363,61 @@ public class TestSliceBuilder {
 		assertEquals(copy, slice);
 	}
 	
+	@Test
+	public void setConsensusCallToNull(){
+		Slice slice = new SliceBuilder(elements)
+								.setConsensus(null)
+								.build();
+		assertNull(slice.getConsensusCall());
+	}
+	
+	@Test
+	public void setConsensusCall(){
+		
+		Slice slice = new SliceBuilder(elements)
+							.setConsensus(consensus)
+							.build();
+		assertEquals(consensus, slice.getConsensusCall());
+	}
+	
+	@Test
+	public void copyConstructorWithSetConsensus(){
+		Slice slice = new SliceBuilder(elements)
+							.setConsensus(consensus).build();
+		
+		Slice copy = new SliceBuilder(slice).build();
+		
+		assertEquals(copy, slice);
+		assertEquals(consensus, slice.getConsensusCall());
+		assertEquals(consensus, copy.getConsensusCall());
+	}
+	
+	@Test
+	public void copyMethodWithSetConsensus(){
+		SliceBuilder builder = new SliceBuilder(elements)
+							.setConsensus(consensus);
+		Slice copy = builder.copy().build();
+		
+		Slice slice = builder.build();
+		
+		assertEquals(copy, slice);
+		assertEquals(consensus, slice.getConsensusCall());
+		assertEquals(consensus, copy.getConsensusCall());
+	}
+	
+	@Test
+	public void copyChangeConsensusShouldNoLongerBeEqual(){
+		Nucleotide otherConsensus = Nucleotide.Guanine;
+		
+		SliceBuilder builder = new SliceBuilder(elements)
+							.setConsensus(consensus);
+		Slice copy = builder.copy()
+								.setConsensus(otherConsensus).build();
+		
+		Slice slice = builder.build();
+		
+		TestUtil.assertNotEqualAndHashcodeDifferent(copy, slice);
+		assertEquals(consensus, slice.getConsensusCall());
+		assertEquals(otherConsensus, copy.getConsensusCall());
+	}
 }

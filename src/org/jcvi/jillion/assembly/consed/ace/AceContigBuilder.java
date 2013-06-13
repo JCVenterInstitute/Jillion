@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -590,7 +591,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     		throw new IllegalStateException("must set consensus caller");
     	}
     	
-    	SliceBuilder builders[] = new SliceBuilder[(int)mutableConsensus.getLength()];
+    	SliceBuilder builders[] = initializeSliceBuilders(mutableConsensus.build());
     	
     	for(AceAssembledReadBuilder aceReadBuilder : aceReadBuilderMap.values()){
     		int start = (int)aceReadBuilder.getBegin();
@@ -623,24 +624,30 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
 					//qualityValueStrategy must be non-null as well
 					quality= qualityValueStrategy.getQualityFor(tempRead, fullQualities, i);
 				}
-				if(builders[start+i] ==null){
-					builders[start+i] = new SliceBuilder();
-				}
+				
 				builders[start+i].add(id, base, quality, dir);
 				i++;
 			}
     	}
     	for(int i=0; i<builders.length; i++){
     		SliceBuilder builder = builders[i];
-    		//a null builder implies 0x
-    		if(builder !=null){
-				Slice slice = builder.build();            
+    		//skip 0x
+    		if(builder.getCurrentCoverageDepth()>0){
+    			Slice slice = builder.build();            
 	    		mutableConsensus.replace(i,consensusCaller.callConsensus(slice).getConsensus());
     		}
     	}
     	return this;
 	}
-   
+    private SliceBuilder[] initializeSliceBuilders(NucleotideSequence consensus){
+    	SliceBuilder builders[] = new SliceBuilder[(int)consensus.getLength()];
+		int i=0;
+		Iterator<Nucleotide> iter = consensus.iterator();
+		while(iter.hasNext()){
+			builders[i++] = new SliceBuilder().setConsensus(iter.next());
+		}
+    	return builders;
+    }
     /**
      * Split the contents of the current ContigBuilder into possibly multiple
      * new ContigBuilders.  The returned ContigBuilders will be new

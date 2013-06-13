@@ -32,8 +32,6 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
  *
  */
 public final class CompactedSliceElement implements SliceElement{
-	
-    private static final Nucleotide[] NUCLEOTIDE_VALUES = Nucleotide.values();
 	private final String id;
     //don't use array since that takes up 12 bytes of memory
     //to store reference and length
@@ -96,7 +94,7 @@ public final class CompactedSliceElement implements SliceElement{
     @Override
     public Nucleotide getBase() {
         int ordinal= dirAndNucleotide & 0xF;
-        return NUCLEOTIDE_VALUES[ordinal];
+        return Nucleotide.VALUES.get(ordinal);
     }
 
     /**

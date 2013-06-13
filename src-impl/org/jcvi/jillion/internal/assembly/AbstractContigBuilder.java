@@ -21,6 +21,7 @@
 package org.jcvi.jillion.internal.assembly;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -197,7 +198,7 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
         		throw new IllegalStateException("must set consensus caller");
         	}
         	
-        	SliceBuilder builders[] = new SliceBuilder[(int)consensus.getLength()];
+        	SliceBuilder builders[] = initializeSliceBuilders(consensus.build());
         	
         	for(AssembledReadBuilder<P> aceReadBuilder : reads.values()){
         		int start = (int)aceReadBuilder.getBegin();
@@ -230,17 +231,14 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
     					//qualityValueStrategy must be non-null as well
     					quality= qualityValueStrategy.getQualityFor(tempRead, fullQualities, i);
     				}
-    				if(builders[start+i] ==null){
-    					builders[start+i] = new SliceBuilder();
-    				}
     				builders[start+i].add(id, base, quality, dir);
     				i++;
     			}
         	}
         	for(int i=0; i<builders.length; i++){
         		SliceBuilder builder = builders[i];
-        		//a null builder implies 0x
-        		if(builder !=null){
+        		//skip 0x
+        		if(builder.getCurrentCoverageDepth() >0){
     				Slice slice = builder.build();            
     	    		consensus.replace(i,consensusCaller.callConsensus(slice).getConsensus());
         		}
@@ -248,7 +246,15 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
         	return this;
     	}
         
-        
+        private SliceBuilder[] initializeSliceBuilders(NucleotideSequence consensus){
+        	SliceBuilder builders[] = new SliceBuilder[(int)consensus.getLength()];
+    		int i=0;
+    		Iterator<Nucleotide> iter = consensus.iterator();
+    		while(iter.hasNext()){
+    			builders[i++] = new SliceBuilder().setConsensus(iter.next());
+    		}
+        	return builders;
+        }
        
         /**
          * 

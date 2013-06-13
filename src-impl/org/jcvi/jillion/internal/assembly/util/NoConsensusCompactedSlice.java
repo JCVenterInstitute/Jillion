@@ -37,20 +37,18 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
  *
  *
  */
-public final class CompactedSlice implements Slice{
-
-	private static final Nucleotide[] VALUES = Nucleotide.values();
+public class NoConsensusCompactedSlice implements Slice{
 	
     private final short[] elements;
     private final String[] ids;
     
-    public static final CompactedSlice EMPTY = (CompactedSlice) new SliceBuilder().build();
+    public static final NoConsensusCompactedSlice EMPTY = (NoConsensusCompactedSlice) new SliceBuilder().build();
     
     /**
      * @param elements
      * @param ids
      */
-    public CompactedSlice(short[] elements, List<String> ids) {
+    public NoConsensusCompactedSlice(short[] elements, List<String> ids) {
         this.elements = elements;
         this.ids = ids.toArray(new String[ids.size()]);
     }
@@ -89,7 +87,7 @@ public final class CompactedSlice implements Slice{
     
     @Override
 	public Map<Nucleotide, Integer> getNucleotideCounts() {
-		int[] counts = new int[VALUES.length];
+		int[] counts = new int[Nucleotide.VALUES.size()];
 		for(int i=0; i < elements.length; i++){
 			int ordinal =(elements[i] >>>8) &0xF;
 			counts[ordinal]++;
@@ -97,7 +95,7 @@ public final class CompactedSlice implements Slice{
 		Map<Nucleotide, Integer> map = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
 		for(int i=0; i < counts.length; i++){
 			int count = counts[i];
-			map.put(VALUES[i], count);
+			map.put(Nucleotide.VALUES.get(i), count);
 		}
 		return map;
 	}
@@ -108,6 +106,11 @@ public final class CompactedSlice implements Slice{
 		int result = 1;
 		result = prime * result + Arrays.hashCode(elements);
 		result = prime * result + Arrays.hashCode(ids);
+		Nucleotide consensusCall = getConsensusCall();
+		if(consensusCall !=null){
+			result = prime * result + consensusCall.hashCode();
+		}
+		
 		return result;
 	}
 
@@ -125,6 +128,17 @@ public final class CompactedSlice implements Slice{
         Slice other = (Slice) obj;
         if(getCoverageDepth() !=other.getCoverageDepth()){
         	return false;
+        }
+        Nucleotide consensusCall = getConsensusCall();
+		Nucleotide otherConsensusCall = other.getConsensusCall();
+		if(consensusCall ==null){
+        	if(otherConsensusCall!=null){
+        		return false;
+        	}
+        }else{
+        	if(!consensusCall.equals(otherConsensusCall)){
+        		return false;
+        	}
         }
 		Iterator<SliceElement> iter = other.iterator();
 		while(iter.hasNext()){
@@ -181,7 +195,9 @@ public final class CompactedSlice implements Slice{
     }
     @Override
     public String toString(){
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder("consensus = ")
+        						.append(getConsensusCall())
+        						.append(" ");
         for(SliceElement element : this){
             builder.append(element).append( " | ");
         }
@@ -200,6 +216,11 @@ public final class CompactedSlice implements Slice{
         }
         return getElement(index);
     }
+
+	@Override
+	public Nucleotide getConsensusCall() {
+		return null;
+	}
     
    
 

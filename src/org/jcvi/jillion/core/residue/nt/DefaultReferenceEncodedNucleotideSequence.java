@@ -42,7 +42,6 @@ import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 
 final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSequence<Nucleotide> implements ReferenceMappedNucleotideSequence{
 
-	private static final Nucleotide[] NUCLEOTIDE_ORDINALS = Nucleotide.values();
     private final int length;
     private final int startOffset;
     private final NucleotideSequence reference;
@@ -108,9 +107,9 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
             int index = i/2;
         	if(i%2==0){
         		int temp1 = snps[index]>>4;
-				differenceMap.put(offset, NUCLEOTIDE_ORDINALS[temp1 & 0x0F]);
+				differenceMap.put(offset, Nucleotide.VALUES.get(temp1 & 0x0F));
         	}else{
-        		differenceMap.put(offset,NUCLEOTIDE_ORDINALS[snps[index] & 0x0F]);
+        		differenceMap.put(offset,Nucleotide.VALUES.get(snps[index] & 0x0F));
         	}
 			
         }
@@ -282,9 +281,9 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 	            int index = sizeStrategy.getNext(buf); 
 				int snpIndex = i/2;
 				if(i%2==0){
-					array[index]= NUCLEOTIDE_ORDINALS[snps[snpIndex]>>4 &0x0F];
+					array[index]= Nucleotide.VALUES.get(snps[snpIndex]>>4 &0x0F);
 				}else{
-					array[index]= NUCLEOTIDE_ORDINALS[snps[snpIndex] & 0x0F];
+					array[index]= Nucleotide.VALUES.get(snps[snpIndex] & 0x0F);
 				}
 	        }
         }
@@ -311,9 +310,9 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 				if(index ==nextValue){
 					int snpIndex = i/2;
 					if(i%2==0){
-						return NUCLEOTIDE_ORDINALS[snps[snpIndex]>>4 &0x0F];
+						return Nucleotide.VALUES.get(snps[snpIndex]>>4 &0x0F);
 					}else{
-						return NUCLEOTIDE_ORDINALS[snps[snpIndex] & 0x0F];
+						return Nucleotide.VALUES.get(snps[snpIndex] & 0x0F);
 					}
 
 	            }
@@ -378,9 +377,9 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 		    	 int snpIndex = i/2;
 		    	 final Nucleotide snp;
 					if(i%2==0){
-						snp= NUCLEOTIDE_ORDINALS[snpArray[snpIndex]>>4 &0x0F];
+						snp= Nucleotide.VALUES.get(snpArray[snpIndex]>>4 &0x0F);
 					}else{
-						snp= NUCLEOTIDE_ORDINALS[snpArray[snpIndex] & 0x0F];
+						snp= Nucleotide.VALUES.get(snpArray[snpIndex] & 0x0F);
 					}
 		    	 if(Nucleotide.Gap == snp){
 		    		 gaps.add(snps.get(i));

@@ -25,14 +25,14 @@
  */
 package org.jcvi.jillion.core.residue.nt;
 
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestNucleotideGlyph_GetGlyphsFor {
 
     @Test
     public void convertGlyph(){
-        for(Nucleotide g: Nucleotide.values()){
+        for(Nucleotide g: Nucleotide.VALUES){
             final Character uppercase = g.getCharacter();
             assertEquals(g, Nucleotide.parse(uppercase));
             assertEquals(g, Nucleotide.parse(Character.toLowerCase(uppercase)));

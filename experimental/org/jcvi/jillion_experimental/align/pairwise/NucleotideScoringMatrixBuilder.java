@@ -35,7 +35,7 @@ public final class NucleotideScoringMatrixBuilder  implements org.jcvi.jillion.c
 		private final float[][] matrix;
 		
 		public NucleotideScoringMatrixBuilder(float defaultScore){
-			int size = Nucleotide.values().length;
+			int size = Nucleotide.VALUES.size();
 			
 			matrix = new float[size][size];
 			for(int i=0; i<size; i++){

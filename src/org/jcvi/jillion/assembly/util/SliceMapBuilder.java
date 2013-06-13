@@ -84,9 +84,9 @@ public final class SliceMapBuilder<R extends AssembledRead> implements Builder<S
 			}
 			if(qualities == null){
 				//no quality datastore set use default quality
-				return CompactedSliceMap.create(iter, (int)contig.getConsensusSequence().getLength(), defaultQuality, qualityValueStrategy );			
+				return CompactedSliceMap.create(iter, contig.getConsensusSequence(), defaultQuality, qualityValueStrategy );			
 			}
-			return CompactedSliceMap.create(iter,(int)contig.getConsensusSequence().getLength(), qualities, qualityValueStrategy );
+			return CompactedSliceMap.create(iter,contig.getConsensusSequence(), qualities, qualityValueStrategy );
 		} catch (DataStoreException e) {
 			throw new IllegalStateException("error building SliceMap",e);
 		}finally{

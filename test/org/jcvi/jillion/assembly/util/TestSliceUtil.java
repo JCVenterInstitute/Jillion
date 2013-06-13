@@ -39,7 +39,13 @@ public final class TestSliceUtil {
     private TestSliceUtil(){}
     
     public static Slice createIsolatedSliceFrom(String bases, int... qualities){
+    	return createIsolatedSliceFrom(null, bases, qualities);
+    }
+    public static Slice createIsolatedSliceFrom(String consensus, String bases, int... qualities){
         DefaultSlice.Builder builder = new DefaultSlice.Builder();
+        if(consensus !=null){
+        	builder.setConsensus(Nucleotide.parse(consensus));
+        }
         for(int i =0; i< qualities.length; i++){
             builder.add("read_"+i,Nucleotide.parse(bases.charAt(i)), PhredQuality.valueOf(qualities[i]), FORWARD);
         }

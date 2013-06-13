@@ -36,7 +36,6 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.internal.trace.chromat.DefaultChannel;
 import org.jcvi.jillion.internal.trace.chromat.DefaultChannelGroup;
-import org.jcvi.jillion.trace.chromat.ChannelGroup;
 import org.junit.Test;
 public class TestChannelGroup {
 
@@ -91,7 +90,7 @@ public class TestChannelGroup {
     
     @Test
     public void passingAmbiguousBaseShouldReturnTChannel(){
-    	for(Nucleotide n : Nucleotide.values()){
+    	for(Nucleotide n : Nucleotide.VALUES){
     		if(n.isAmbiguity()){
     			assertEquals(n.name(),tChannel, sut.getChannel(n));
     		}

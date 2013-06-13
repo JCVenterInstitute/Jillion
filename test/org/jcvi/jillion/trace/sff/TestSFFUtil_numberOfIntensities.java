@@ -25,20 +25,20 @@
  */
 package org.jcvi.jillion.trace.sff;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.trace.sff.SffUtil;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestSFFUtil_numberOfIntensities {
 
     
     @Test
     public void noHomoPolymerRunsshouldReturnNumberOfBases(){
-        final List<Nucleotide> oneOfEachBasecall = Arrays.asList(Nucleotide.values());
+        final List<Nucleotide> oneOfEachBasecall = Nucleotide.VALUES;
         assertEquals(oneOfEachBasecall.size(),SffUtil.numberOfIntensities(oneOfEachBasecall));
     }
     

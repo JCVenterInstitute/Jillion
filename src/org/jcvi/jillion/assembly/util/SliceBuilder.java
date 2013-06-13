@@ -7,8 +7,9 @@ import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.util.Builder;
-import org.jcvi.jillion.internal.assembly.util.CompactedSlice;
 import org.jcvi.jillion.internal.assembly.util.CompactedSliceElement;
+import org.jcvi.jillion.internal.assembly.util.ConsensusCompactedSlice;
+import org.jcvi.jillion.internal.assembly.util.NoConsensusCompactedSlice;
 import org.jcvi.jillion.internal.core.util.GrowableShortArray;
 /**
  * {@code SliceBuilder} is a {@link Builder}
@@ -20,8 +21,9 @@ import org.jcvi.jillion.internal.core.util.GrowableShortArray;
  */
 public final class SliceBuilder implements Builder<Slice>{
 
-    GrowableShortArray bytes = new GrowableShortArray(1024);
-    List<String> ids = new ArrayList<String>();
+    private GrowableShortArray bytes = new GrowableShortArray(1024);
+    private List<String> ids = new ArrayList<String>();
+    private Nucleotide consensus;
     
     /**
      * Create a new {@link SliceBuilder}
@@ -45,6 +47,7 @@ public final class SliceBuilder implements Builder<Slice>{
     		throw new NullPointerException("Slice can not be null");
     	}
     	addAll(slice);
+    	setConsensus(slice.getConsensusCall());
     }
     /**
      * Create a new {@link SliceBuilder}
@@ -63,10 +66,19 @@ public final class SliceBuilder implements Builder<Slice>{
     	}
     	addAll(elements);
     }
+    public int getCurrentCoverageDepth(){
+    	return ids.size();
+    }
     
     private SliceBuilder(SliceBuilder copy){
     	this.ids = new ArrayList<String>(copy.ids);
     	this.bytes = copy.bytes.copy();
+    	this.consensus = copy.consensus;
+    }
+    
+    public SliceBuilder setConsensus(Nucleotide consensus){
+    	this.consensus = consensus;
+    	return this;
     }
     
     /**
@@ -185,7 +197,10 @@ public final class SliceBuilder implements Builder<Slice>{
     */
     @Override
     public Slice build() {
-        return new CompactedSlice(bytes.toArray(), ids);
+    	if(consensus==null){
+    		return new NoConsensusCompactedSlice(bytes.toArray(), ids);
+    	}
+    	return new ConsensusCompactedSlice(bytes.toArray(), ids,consensus);
     }
 
 
