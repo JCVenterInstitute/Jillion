@@ -21,6 +21,9 @@ import org.jcvi.jillion.internal.core.util.GrowableShortArray;
  */
 public final class SliceBuilder implements Builder<Slice>{
 
+	public interface SliceElementFilter{
+		boolean accept(SliceElement e);
+	}
     private GrowableShortArray bytes = new GrowableShortArray(1024);
     private List<String> ids = new ArrayList<String>();
     private Nucleotide consensus;
@@ -48,6 +51,26 @@ public final class SliceBuilder implements Builder<Slice>{
     	}
     	addAll(slice);
     	setConsensus(slice.getConsensusCall());
+    }
+    
+    public SliceBuilder filter(SliceElementFilter filter){
+    	if(filter==null){
+    		throw new NullPointerException("filter can not be null");
+    	}
+    	GrowableShortArray newBytes = new GrowableShortArray(bytes.getCurrentLength());
+    	List<String> newIds = new ArrayList<String>(ids.size());
+    	
+    	for(int i=0; i<ids.size(); i++){
+    		String id = ids.get(i);
+    		short value =bytes.get(i);
+    		if(filter.accept(CompactedSliceElement.create(id, value))){
+    			newBytes.append(value);
+    			newIds.add(id);
+    		}
+    	}
+    	this.ids = newIds;
+    	this.bytes = newBytes;
+    	return this;
     }
     /**
      * Create a new {@link SliceBuilder}

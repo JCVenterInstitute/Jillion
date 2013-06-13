@@ -28,6 +28,7 @@ package org.jcvi.jillion.assembly.util;
 import static org.jcvi.jillion.core.Direction.FORWARD;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.jillion.core.Direction;
@@ -52,16 +53,30 @@ public final class TestSliceUtil {
         return builder.build();
     }
     public static Slice createSliceFrom(List<Nucleotide> nucleotides, byte[] qualities, List<Direction> directions){
+        return createSliceFrom(null, nucleotides, qualities, directions);
+    }
+   
+    public static Slice createSliceFrom(String consensus, List<Nucleotide> nucleotides, byte[] qualities, List<Direction> directions){
         DefaultSlice.Builder builder = new DefaultSlice.Builder();
+        if(consensus !=null){
+        	builder.setConsensus(Nucleotide.parse(consensus));
+        }
         for(int i=0; i<nucleotides.size(); i++){
             builder.add("read_"+i,nucleotides.get(i), PhredQuality.valueOf(qualities[i]), directions.get(i));
         }
         return builder.build();
     }
+    public static Slice createSliceFrom(String consensus, String nucleotides, byte[] qualities, Direction... directions){
+        return createSliceFrom(consensus, nucleotides, qualities, Arrays.asList(directions));
+    }
+    public static Slice createSliceFrom(String consensus, String nucleotides, byte[] qualities, List<Direction> directions){
+        
+        return createSliceFrom(consensus, asList(new NucleotideSequenceBuilder(nucleotides)),
+                qualities, directions);
+    }
     public static Slice createSliceFrom(String nucleotides, byte[] qualities, List<Direction> directions){
         
-        return createSliceFrom(asList(new NucleotideSequenceBuilder(nucleotides)),
-                qualities, directions);
+        return createSliceFrom(null, nucleotides, qualities, directions);
     }
     private static List<Nucleotide> asList(NucleotideSequenceBuilder builder){
     	List<Nucleotide> list = new ArrayList<Nucleotide>((int)builder.getLength());

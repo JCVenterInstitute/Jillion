@@ -43,7 +43,7 @@ import org.jcvi.jillion.assembly.consed.phd.PhdBallWriter;
 import org.jcvi.jillion.assembly.consed.phd.PhdDataStore;
 import org.jcvi.jillion.assembly.consed.phd.PhdFileDataStoreBuilder;
 import org.jcvi.jillion.assembly.consed.phd.PhdWriter;
-import org.jcvi.jillion.assembly.util.consensus.MostFrequentBasecallConsensusCaller;
+import org.jcvi.jillion.assembly.util.consensus.NextGenReferenceConsensusRecaller;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -180,7 +180,7 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 			while(referenceEntryIter.hasNext()){
 				Entry<String, AceContigBuilder> refEntry = referenceEntryIter.next();
 				AceContigBuilder contigBuilder = refEntry.getValue();
-				contigBuilder.recallConsensus(MostFrequentBasecallConsensusCaller.INSTANCE);
+				contigBuilder.recallConsensus(new NextGenReferenceConsensusRecaller());
 				postProcess(contigBuilder);
 				visitBeginReference(refEntry.getKey());
 				for(Entry<Range,AceContig> entry : ConsedUtil.split0xContig(contigBuilder,true).entrySet()){

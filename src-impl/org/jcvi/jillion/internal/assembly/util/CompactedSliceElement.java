@@ -43,6 +43,13 @@ public final class CompactedSliceElement implements SliceElement{
      * By using the direction as the sign bit. 
      */
     private final byte dirAndNucleotide;
+   
+    
+    public static CompactedSliceElement create(String id, short encodedValues){
+    	byte dirAndNuc =(byte)((encodedValues >>>8) &0xFF);
+        byte qual = (byte)(encodedValues & 0xFF);
+        return new CompactedSliceElement(id, qual, dirAndNuc);
+    }
     /**
      * package private constructor used by compactedSlice to build
      * already encoded elements.

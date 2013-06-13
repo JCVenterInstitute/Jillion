@@ -69,7 +69,14 @@ public enum MostFrequentBasecallConsensusCaller implements ConsensusCaller{
             }           
         }
         Nucleotide consensus= findMostOccuringBaseWithHighestQvs(histogramMap, qualitySums);
-        int sum=0;
+        int sum = getCumulativeQualityConsensusValue(qualitySums, consensus);
+        return new DefaultConsensusResult(consensus, sum);
+    }
+
+
+	private int getCumulativeQualityConsensusValue(
+			Map<Nucleotide, Integer> qualitySums, Nucleotide consensus) {
+		int sum=0;
         for(Entry<Nucleotide, Integer> entry : qualitySums.entrySet()){
             if(entry.getKey() == consensus){
                 sum+= entry.getValue();
@@ -78,8 +85,8 @@ public enum MostFrequentBasecallConsensusCaller implements ConsensusCaller{
                 sum -= entry.getValue();
             }
         }
-        return new DefaultConsensusResult(consensus, sum);
-    }
+		return sum;
+	}
 
     
     /**
