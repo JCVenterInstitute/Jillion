@@ -71,5 +71,20 @@ public interface Slice extends Iterable<SliceElement>{
      * Will never return null, 
      */
     Map<Nucleotide, Integer> getNucleotideCounts();
+    /**
+     * Optional consensus of this slice.  If present,
+     * this is what the consensus call of this Slice
+     * was previously called.  If this Slice gets its
+     * consensus recalled using a 
+     * {@link org.jcvi.jillion.assembly.util.consensus.ConsensusCaller}
+     * then this value will <strong>NOT</strong> be changed.
+     * If the consensus for this slice is not available
+     * or does not exist yet, then this will return {@code null}.
+     * @return the {@link Nucleotide} consensus call for
+     * this slice if present, or {@code null}
+     * if the consensus is not available or does not
+     * exist.
+     */
+    Nucleotide getConsensusCall();
    
 }

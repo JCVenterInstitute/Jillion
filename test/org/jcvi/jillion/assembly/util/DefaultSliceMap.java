@@ -31,12 +31,6 @@ import java.util.List;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.util.CoverageMap;
-import org.jcvi.jillion.assembly.util.CoverageRegion;
-import org.jcvi.jillion.assembly.util.GapQualityValueStrategy;
-import org.jcvi.jillion.assembly.util.Slice;
-import org.jcvi.jillion.assembly.util.SliceElement;
-import org.jcvi.jillion.assembly.util.SliceMap;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -73,6 +67,11 @@ public class DefaultSliceMap extends AbstractSliceMap{
     private <PR extends AssembledRead,C extends Contig<PR>>  DefaultSliceMap(
             C contig, QualitySequenceDataStore qualityDataStore,GapQualityValueStrategy qualityValueStrategy) throws DataStoreException {
     	DefaultSlice.Builder builders[] = new DefaultSlice.Builder[(int)contig.getConsensusSequence().getLength()];
+    	Iterator<Nucleotide> consensusIter = contig.getConsensusSequence().iterator();
+    	for(int i=0; consensusIter.hasNext(); i++){
+    		builders[i] = new DefaultSlice.Builder().setConsensus(consensusIter.next());
+    	}
+    	
     	StreamingIterator<PR> readIter = null;
     	try{
     		readIter = contig.getReadIterator();
@@ -86,9 +85,6 @@ public class DefaultSliceMap extends AbstractSliceMap{
     			QualitySequence fullQualities = qualityDataStore.get(id);
     			for(Nucleotide base : read.getNucleotideSequence()){
     				PhredQuality quality = qualityValueStrategy.getQualityFor(read, fullQualities, i);
-    				if(builders[start+i] ==null){
-    					builders[start+i] = new DefaultSlice.Builder();
-    				}
     				builders[start+i].add(id, base, quality, dir);
     				i++;
     			}
@@ -96,11 +92,7 @@ public class DefaultSliceMap extends AbstractSliceMap{
     		//done building
     		this.slices = new Slice[builders.length];
     		for(int i=0; i<slices.length; i++){
-    			if(builders[i] ==null){
-    				slices[i] = DefaultSlice.EMPTY;
-    			}else{
-    				slices[i]= builders[i].build();
-    			}
+    			slices[i]= builders[i].build();
     		}
     	}finally{
     		IOUtil.closeAndIgnoreErrors(readIter);

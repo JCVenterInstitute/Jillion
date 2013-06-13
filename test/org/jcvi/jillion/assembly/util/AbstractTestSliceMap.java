@@ -61,21 +61,21 @@ public abstract class AbstractTestSliceMap {
                                     .build();
         SliceMap sut = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategy.LOWEST_FLANKING);
         assertEquals(8L, sut.getSize());
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("AA", 10,1),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("A","AA", 10,1),
                     sut.getSlice(0));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("CC", 12,2),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("C","CC", 12,2),
                 sut.getSlice(1));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("GG", 14,3),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("G","GG", 14,3),
                 sut.getSlice(2));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("TT", 16,4),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("T","TT", 16,4),
                 sut.getSlice(3));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("AA", 18,5),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("A","AA", 18,5),
                 sut.getSlice(4));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("CC", 20,6),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("C","CC", 20,6),
                 sut.getSlice(5));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("GG", 22,7),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("G","GG", 22,7),
                 sut.getSlice(6));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("TT", 24,8),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("T","TT", 24,8),
                 sut.getSlice(7));
     }
     @Test
@@ -87,21 +87,21 @@ public abstract class AbstractTestSliceMap {
                                     .build();
         SliceMap sut = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategy.LOWEST_FLANKING);
         assertEquals(8L, sut.getSize());
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("AA", 10,1),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("A","AA", 10,1),
                     sut.getSlice(0));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("CC", 12,2),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("C","CC", 12,2),
                 sut.getSlice(1));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("GGG", 14,3,15),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("G","GGG", 14,3,15),
                 sut.getSlice(2));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("TTT", 16,4,16),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("T","TTT", 16,4,16),
                 sut.getSlice(3));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("AAA", 18,5,17),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("A","AAA", 18,5,17),
                 sut.getSlice(4));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("CCC", 20,6,18),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("C","CCC", 20,6,18),
                 sut.getSlice(5));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("GG", 22,7),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("G","GG", 22,7),
                 sut.getSlice(6));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("TT", 24,8),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("T","TT", 24,8),
                 sut.getSlice(7));
     }
     
@@ -114,21 +114,21 @@ public abstract class AbstractTestSliceMap {
                                     .build();
         SliceMap sut = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategy.LOWEST_FLANKING);
         assertEquals(8L, sut.getSize());
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("AR", 10,1),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("A","AR", 10,1),
                     sut.getSlice(0));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("CC", 12,2),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("C","CC", 12,2),
                 sut.getSlice(1));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("GGG", 14,3,15),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("G","GGG", 14,3,15),
                 sut.getSlice(2));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("TTW", 16,4,16),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("T","TTW", 16,4,16),
                 sut.getSlice(3));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("AAA", 18,5,17),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("A","AAA", 18,5,17),
                 sut.getSlice(4));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("CCC", 20,6,18),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("C","CCC", 20,6,18),
                 sut.getSlice(5));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("GG", 22,7),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("G","GG", 22,7),
                 sut.getSlice(6));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("TT", 24,8),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("T","TT", 24,8),
                 sut.getSlice(7));
     }
     
@@ -141,21 +141,21 @@ public abstract class AbstractTestSliceMap {
                                     .build();
         SliceMap sut = createSliceMapFor(contig, qualityDataStore,GapQualityValueStrategy.LOWEST_FLANKING);
         assertEquals(8L, sut.getSize());
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("AR", 10,1),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("A","AR", 10,1),
                     sut.getSlice(0));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("CC", 12,2),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("C","CC", 12,2),
                 sut.getSlice(1));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("GGG", 14,3,15),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("G","GGG", 14,3,15),
                 sut.getSlice(2));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("TT-", 16,4,15),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("T","TT-", 16,4,15),
                 sut.getSlice(3));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("AAA", 18,5,16),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("A","AAA", 18,5,16),
                 sut.getSlice(4));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("C-C", 20,5,17),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("C","C-C", 20,5,17),
                 sut.getSlice(5));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("GG", 22,6),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("G","GG", 22,6),
                 sut.getSlice(6));
-        assertEquals(TestSliceUtil.createIsolatedSliceFrom("TT", 24,7),
+        assertEquals(TestSliceUtil.createIsolatedSliceFrom("T","TT", 24,7),
                 sut.getSlice(7));
     }
     

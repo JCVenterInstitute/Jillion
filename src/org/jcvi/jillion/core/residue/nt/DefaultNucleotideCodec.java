@@ -37,7 +37,6 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.internal.core.GlyphCodec;
 /**
  * <code>DefaultNucleotideGlyphCodec</code> is the implementation
  * of {@link GlyphCodec} that can converts {@link Nucleotide}s
@@ -73,8 +72,6 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
      * The header will contain an int value specifying how many glyphs are encoded.
      */
     private static final int BITS_PER_GLYPH = 4;
-    
-    private static final Nucleotide[] ORDINAL_VALUES = Nucleotide.values();
     
     private final int singleGlyphEncodedSize = computeEncodedSize(1);
     
@@ -121,9 +118,9 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
     private Nucleotide decode(final byte getByteForGlyph, boolean isFirstNibble) {
         byte[] next2 = decodeNext2Values(getByteForGlyph);
         if(isFirstNibble){
-            return ORDINAL_VALUES[next2[0]];
+            return Nucleotide.VALUES.get(next2[0]);
         }
-        return ORDINAL_VALUES[next2[1]];
+        return Nucleotide.VALUES.get(next2[1]);
     }
     private byte getEncodedByteForGlyph(byte[] encodedGlyphs, long index) {
         final int encodedIndex = computeEncodedIndexForGlyph(index);
@@ -344,15 +341,15 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
 		while(currentOffset < length-2){
 			encodedByte = encodedData[computeEncodedIndexForGlyph(currentOffset)];
 			currentDecodedBytes = decodeNext2Values(encodedByte);
-			builder.append(ORDINAL_VALUES[currentDecodedBytes[0]]);
-			builder.append(ORDINAL_VALUES[currentDecodedBytes[1]]);
+			builder.append(Nucleotide.VALUES.get(currentDecodedBytes[0]));
+			builder.append(Nucleotide.VALUES.get(currentDecodedBytes[1]));
 			currentOffset+=2;
 		}
 		encodedByte = encodedData[computeEncodedIndexForGlyph(currentOffset)];
 		currentDecodedBytes = decodeNext2Values(encodedByte);
-		builder.append(ORDINAL_VALUES[currentDecodedBytes[0]]);
+		builder.append(Nucleotide.VALUES.get(currentDecodedBytes[0]));
 		if(isEven(length)){
-			builder.append(ORDINAL_VALUES[currentDecodedBytes[1]]);
+			builder.append(Nucleotide.VALUES.get(currentDecodedBytes[1]));
 		}
 		return builder.toString();
 	}
@@ -397,9 +394,9 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
 			}
 			final Nucleotide ret;
 			if(isEven(currentOffset)){
-				ret= ORDINAL_VALUES[currentDecodedBytes[0]];
+				ret= Nucleotide.VALUES.get(currentDecodedBytes[0]);
 			}else{
-				ret = ORDINAL_VALUES[currentDecodedBytes[1]];
+				ret = Nucleotide.VALUES.get(currentDecodedBytes[1]);
 			}
 			currentOffset++;
 			if(isEven(currentOffset) && hasNext()){

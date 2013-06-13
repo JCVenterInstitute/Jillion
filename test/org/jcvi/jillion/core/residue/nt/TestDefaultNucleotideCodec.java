@@ -25,7 +25,10 @@
  */
 package org.jcvi.jillion.core.residue.nt;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,9 +37,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.residue.nt.DefaultNucleotideCodec;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.core.residue.nt.Nucleotides;
 import org.junit.Test;
 public class TestDefaultNucleotideCodec {
     List<Nucleotide> evenBases = Nucleotides.parse("ACGTACGTWS-NACGT");
@@ -88,7 +88,7 @@ public class TestDefaultNucleotideCodec {
      */
     @Test
     public void testOddNumberOfBasesEveryPossibleFinalBase(){
-        for(Nucleotide nuc : Nucleotide.values()){
+        for(Nucleotide nuc : Nucleotide.VALUES){
             assertFinalBaseInOddLengthSequenceCorrectlyDecoded(nuc.toString());
         }
     }

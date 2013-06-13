@@ -36,19 +36,32 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
 public final class DefaultSlice implements Slice{
 	public static final DefaultSlice EMPTY = new Builder().build();
-	private static final Nucleotide[] VALUES = Nucleotide.values();
 	
     private final Map<String,SliceElement> elements;
+    private final Nucleotide consensus;
     
-    private DefaultSlice(Map<String,SliceElement> elements){
+    private DefaultSlice(Map<String,SliceElement> elements, Nucleotide consensus){
         this.elements = elements;
+        this.consensus = consensus;
         
     }
+    
+    
     @Override
+	public Nucleotide getConsensusCall() {
+		return consensus;
+	}
+
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + elements.hashCode();
+        Nucleotide consensusCall = getConsensusCall();
+		if(consensusCall !=null){
+			result = prime * result + consensusCall.hashCode();
+		}
         return result;
     }
     @Override
@@ -65,6 +78,17 @@ public final class DefaultSlice implements Slice{
         Slice other = (Slice) obj;
         if(other.getCoverageDepth() != elements.size()){
         	return false;
+        }
+        Nucleotide consensusCall = getConsensusCall();
+		Nucleotide otherConsensusCall = other.getConsensusCall();
+		if(consensusCall ==null){
+        	if(otherConsensusCall!=null){
+        		return false;
+        	}
+        }else{
+        	if(!consensusCall.equals(otherConsensusCall)){
+        		return false;
+        	}
         }
         for(SliceElement e: other){
         	SliceElement ourElement =elements.get(e.getId());
@@ -102,14 +126,14 @@ public final class DefaultSlice implements Slice{
     
     @Override
 	public Map<Nucleotide, Integer> getNucleotideCounts() {
-    	int[] counts = new int[VALUES.length];
+    	int[] counts = new int[Nucleotide.VALUES.size()];
     	for(SliceElement element : elements.values()){
     		counts[element.getBase().ordinal()]++;
     	}
     	Map<Nucleotide, Integer> map = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
 		for(int i=0; i < counts.length; i++){
 			int count = counts[i];
-			map.put(VALUES[i], count);
+			map.put(Nucleotide.VALUES.get(i), count);
 		}
 		return map;
 	}
@@ -119,7 +143,7 @@ public final class DefaultSlice implements Slice{
 
 	public static class Builder implements org.jcvi.jillion.core.util.Builder<DefaultSlice>{
         private final Map<String,SliceElement> elements = new LinkedHashMap<String, SliceElement>();
-        
+        private Nucleotide consensus = null;
         public Builder add(String id, Nucleotide base, PhredQuality quality, Direction dir){
             return add(new DefaultSliceElement(id, base, quality, dir));
         }
@@ -133,12 +157,17 @@ public final class DefaultSlice implements Slice{
             elements.put(element.getId(), element);
             return this;
         }
+        public Builder setConsensus(Nucleotide consensus){
+        	this.consensus = consensus;
+        	return this;
+        }
+        
         /**
         * {@inheritDoc}
         */
         @Override
         public DefaultSlice build() {
-            return new DefaultSlice(elements);
+            return new DefaultSlice(elements, consensus);
         }
         
         

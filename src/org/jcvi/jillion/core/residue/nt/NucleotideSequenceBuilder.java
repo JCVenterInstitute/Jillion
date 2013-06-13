@@ -77,11 +77,6 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      */
     private static final int NUM_BITS_PER_VALUE=4;
     /**
-     * Cache of the nucleotides in ordinal order
-     * for quick lookups.
-     */
-    private static Nucleotide[] NUCLEOTIDE_VALUES = Nucleotide.values();
-    /**
      * Creates a new NucleotideSequenceBuilder instance
      * which currently contains no nucleotides.
      */
@@ -401,7 +396,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             throw new IllegalArgumentException(
                     String.format("offset can not start beyond current length (%d) : %d", getLength(),offset));
         }
-		return NUCLEOTIDE_VALUES[getNucleotideOrdinalFor(bits,offset)];
+		return Nucleotide.VALUES.get(getNucleotideOrdinalFor(bits,offset));
 	}
 	public int getNumGaps(){
         return codecDecider.getNumberOfGaps();
@@ -614,7 +609,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 				if(!hasNext()){
 					throw new NoSuchElementException();
 				}
-				Nucleotide next = NUCLEOTIDE_VALUES[getNucleotideOrdinalFor(bits,currentOffset)];
+				Nucleotide next = Nucleotide.VALUES.get(getNucleotideOrdinalFor(bits,currentOffset));
 				currentOffset+= NUM_BITS_PER_VALUE;
 				return next;
 			}
@@ -738,7 +733,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
    
 	private Nucleotide getNucleotideFor(int bitStartOffset) {
 		int ordinal = getNucleotideOrdinalFor(bitStartOffset);
-		return NUCLEOTIDE_VALUES[ordinal];
+		return Nucleotide.VALUES.get(ordinal);
 	}
 	private byte getNucleotideOrdinalFor(BitSet bits, int bitStartOffset) {
 		

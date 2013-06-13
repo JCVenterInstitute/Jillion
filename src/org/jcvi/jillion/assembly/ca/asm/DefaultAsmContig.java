@@ -404,10 +404,10 @@ final class DefaultAsmContig implements AsmContig{
         	try{
         	if(qualityDataStore==null){
         		sliceMap= CompactedSliceMap.create(createStreamingReadIterator(),
-        			(int)mutableConsensus.getLength(),DEFAULT_QUALITY, qualityValueStrategy);
+        			mutableConsensus.build(),DEFAULT_QUALITY, qualityValueStrategy);
         	}else{
         		sliceMap= CompactedSliceMap.create(createStreamingReadIterator(),
-            			(int)mutableConsensus.getLength(),qualityDataStore, qualityValueStrategy);
+            			mutableConsensus.build(),qualityDataStore, qualityValueStrategy);
         	}
         	}catch(DataStoreException e){
         		throw new IllegalStateException("error getting quality values from datastore",e);

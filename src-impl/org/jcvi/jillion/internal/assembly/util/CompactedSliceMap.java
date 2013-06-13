@@ -36,6 +36,7 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 /**
@@ -51,32 +52,29 @@ public final class CompactedSliceMap implements SliceMap {
     public static <PR extends AssembledRead> CompactedSliceMap create(Contig<PR> contig,QualitySequenceDataStore qualityDataStore,GapQualityValueStrategy qualityValueStrategy) throws DataStoreException{
         return new CompactedSliceMap(contig, qualityDataStore, qualityValueStrategy, DEFAULT_QUALITY);
     }
-    public static <PR extends AssembledRead> CompactedSliceMap create(Contig<PR> contig,PhredQuality defaultQuality,GapQualityValueStrategy qualityValueStrategy) throws DataStoreException{
-        return new CompactedSliceMap(contig, null, qualityValueStrategy, defaultQuality);
-    }
     
     public static <PR extends AssembledRead> CompactedSliceMap create(
-    		StreamingIterator<PR> iter, int consensusSequenceLength,
+    		StreamingIterator<PR> iter, NucleotideSequence consensusSequence,
     		QualitySequenceDataStore qualityDataStore,GapQualityValueStrategy qualityValueStrategy) throws DataStoreException{
-        return new CompactedSliceMap(iter, consensusSequenceLength, qualityDataStore, qualityValueStrategy, DEFAULT_QUALITY);
+        return new CompactedSliceMap(iter, consensusSequence, qualityDataStore, qualityValueStrategy, DEFAULT_QUALITY);
     }
     public static <PR extends AssembledRead> CompactedSliceMap create(
-    		StreamingIterator<PR> iter, int consensusSequenceLength,
+    		StreamingIterator<PR> iter, NucleotideSequence consensusSequence,
     		PhredQuality defaultQuality,GapQualityValueStrategy qualityValueStrategy) throws DataStoreException{
-        return new CompactedSliceMap(iter, consensusSequenceLength, null, qualityValueStrategy, defaultQuality);
+        return new CompactedSliceMap(iter, consensusSequence, null, qualityValueStrategy, defaultQuality);
     }
    
     private <PR extends AssembledRead, C extends Contig<PR>>  CompactedSliceMap(
             C contig, QualitySequenceDataStore qualityDataStore,GapQualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality) throws DataStoreException {
-		this(contig.getReadIterator(), (int)contig.getConsensusSequence().getLength(), qualityDataStore,
+		this(contig.getReadIterator(), contig.getConsensusSequence(), qualityDataStore,
 				qualityValueStrategy,defaultQuality);
     }
     private <PR extends AssembledRead, C extends Contig<PR>>  CompactedSliceMap(StreamingIterator<PR> readIter,
-			int consensusLength, QualitySequenceDataStore qualityDataStore,
+    		NucleotideSequence consensusSequence, QualitySequenceDataStore qualityDataStore,
 			GapQualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality)
 			throws DataStoreException {
-		SliceBuilder builders[] = new SliceBuilder[consensusLength];
-    
+		SliceBuilder builders[] = initializeSliceBuilders(consensusSequence);
+		
     	try{
     		while(readIter.hasNext()){
     			PR read = readIter.next();
@@ -101,11 +99,7 @@ public final class CompactedSliceMap implements SliceMap {
     			Iterator<Nucleotide> baseIterator = read.getNucleotideSequence().iterator();
     			while(baseIterator.hasNext()){
     				Nucleotide base = baseIterator.next();
-    				PhredQuality quality = validRangeGappedQualitiesIterator.next();    			
-    			
-    				if(builders[start+i] ==null){
-    					builders[start+i] = new SliceBuilder();
-    				}
+    				PhredQuality quality = validRangeGappedQualitiesIterator.next();
     				builders[start+i].add(id, base, quality, dir);
     				i++;
     			}
@@ -113,17 +107,22 @@ public final class CompactedSliceMap implements SliceMap {
     		//done building
     		this.slices = new Slice[builders.length];
     		for(int i=0; i<slices.length; i++){
-    			if(builders[i]==null){
-    				slices[i] = CompactedSlice.EMPTY;
-    			}else{
-    				slices[i]= builders[i].build();
-    			}
+    			slices[i]= builders[i].build();
     		}
     	}finally{
     		IOUtil.closeAndIgnoreErrors(readIter);
     	}
 	}
 
+    private SliceBuilder[] initializeSliceBuilders(NucleotideSequence consensus){
+    	SliceBuilder builders[] = new SliceBuilder[(int)consensus.getLength()];
+		int i=0;
+		Iterator<Nucleotide> iter = consensus.iterator();
+		while(iter.hasNext()){
+			builders[i++] = new SliceBuilder().setConsensus(iter.next());
+		}
+    	return builders;
+    }
 
     private Iterator<PhredQuality> createNewDefaultQualityIterator(
 			final PhredQuality defaultQuality) {

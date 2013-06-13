@@ -56,7 +56,7 @@ public abstract class AbstractTestSlice {
     
     private Map<Nucleotide, Integer> createCountMapOfAllZeros(){
     	Map<Nucleotide,Integer> map = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
-    	for(Nucleotide n : Nucleotide.values()){
+    	for(Nucleotide n : Nucleotide.VALUES){
     		map.put(n, Integer.valueOf(0));
     	}
     	return map;

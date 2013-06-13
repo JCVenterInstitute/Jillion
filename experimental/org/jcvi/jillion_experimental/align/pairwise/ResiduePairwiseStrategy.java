@@ -90,7 +90,7 @@ abstract class ResiduePairwiseStrategy<R extends Residue, S extends Sequence<R>,
 		private static final NucleotidePairwiseStrategy INSTANCE = new NucleotidePairwiseStrategy();
 		@Override
 		protected List<Nucleotide> getResidueList() {
-			return Arrays.asList(Nucleotide.values());
+			return Nucleotide.VALUES;
 		}
 
 		@Override
