@@ -21,6 +21,8 @@
 package org.jcvi.jillion.assembly.consed.phd;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -46,6 +48,18 @@ import org.junit.Test;
 public class TestPhdBallWriter extends AbstractTestPhd{
     private String id = "1095595674585";
     
+    @Test
+    public void nullCommentShouldNotBeWritten() throws IOException{
+    	ByteArrayOutputStream out = new ByteArrayOutputStream();
+    	PhdWriter writer = new PhdBallWriter(out);
+    	writer.close();
+    	FileCommentVisitor visitor = new FileCommentVisitor();
+    	 PhdBallParser.create(new ByteArrayInputStream(out.toByteArray())).accept(visitor);
+
+ 		assertNull(visitor.fileComment);
+ 		
+ 		assertFalse(new String(out.toByteArray(), IOUtil.UTF_8).startsWith("#"));
+    }
     @Test
     public void writeComment() throws IOException{
     	String fileComment = "path to fastq = /path/to/fastq";

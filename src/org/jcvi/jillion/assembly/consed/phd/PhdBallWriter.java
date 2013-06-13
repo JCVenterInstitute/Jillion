@@ -69,7 +69,9 @@ public class PhdBallWriter implements PhdWriter{
 		}
 		assertCommentIsOnlyOneLine(fileComment);
 		this.writer = new BufferedWriter(new OutputStreamWriter(out, IOUtil.UTF_8));
-		writer.write(String.format("#%s%n", fileComment));
+		if(fileComment !=null){
+			writer.write(String.format("#%s%n", fileComment));
+		}
 	}
 	/**
 	 * Create a new {@link PhdBallWriter} instance
