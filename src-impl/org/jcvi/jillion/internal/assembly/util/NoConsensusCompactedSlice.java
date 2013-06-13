@@ -156,10 +156,7 @@ public class NoConsensusCompactedSlice implements Slice{
     
     private CompactedSliceElement getElement(int i){
     	String id = ids[i];
-    	short value =elements[i];
-        byte dirAndNuc =(byte)((value >>>8) &0xFF);
-        byte qual = (byte)(value & 0xFF);
-        return new CompactedSliceElement(id, qual, dirAndNuc);
+        return CompactedSliceElement.create(id, elements[i]);
     }
     /**
     * {@inheritDoc}

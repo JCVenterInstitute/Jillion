@@ -12,6 +12,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jcvi.jillion.assembly.util.SliceBuilder.SliceElementFilter;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
@@ -419,5 +420,57 @@ public class TestSliceBuilder {
 		TestUtil.assertNotEqualAndHashcodeDifferent(copy, slice);
 		assertEquals(consensus, slice.getConsensusCall());
 		assertEquals(otherConsensus, copy.getConsensusCall());
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void nullFilterThrowsNPE(){
+		new SliceBuilder().filter(null);
+	}
+	
+	@Test
+	public void alwaysExceptingFilterDoesNotRemoveAnyElements(){
+		Slice expected = new SliceBuilder(elements).build();
+		Slice actual = new SliceBuilder(elements)
+							.filter(new SliceElementFilter() {
+								
+								@Override
+								public boolean accept(SliceElement e) {
+									return true;
+								}
+							})
+							.build();
+		assertEquals(expected, actual);		
+		
+	}
+	@Test
+	public void filterRemovesEverything(){
+		Slice actual = new SliceBuilder(elements)
+							.filter(new SliceElementFilter() {
+								
+								@Override
+								public boolean accept(SliceElement e) {
+									return false;
+								}
+							})
+							.build();
+		assertEquals(0,actual.getCoverageDepth());		
+		
+	}
+	@Test
+	public void filterRemovesSomeElements(){
+		Slice actual = new SliceBuilder(elements)
+							.filter(new SliceElementFilter() {
+								
+								@Override
+								public boolean accept(SliceElement e) {
+									return e.getDirection()==Direction.FORWARD;
+								}
+							})
+							.build();
+		
+		Slice expected = new SliceBuilder().add(elements.get(0)).build();
+		assertEquals(expected,actual);
+		
+		
 	}
 }

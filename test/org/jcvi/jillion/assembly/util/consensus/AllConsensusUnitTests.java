@@ -36,7 +36,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestBasicChurchillWatermanConsensusCaller.class,
         TestAnnotationConsensusCaller.class,
         TestNoAmbiguityConsensusCaller.class,
-        TestMostFrequentBasecallConsensusCaller.class
+        TestMostFrequentBasecallConsensusCaller.class,
+        TestNextGenReferenceConsensusRecaller.class
     }
     )
 public class AllConsensusUnitTests {
