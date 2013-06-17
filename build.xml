@@ -129,8 +129,10 @@
 	    <property name="emma.enabled" value="true" />
 		<!-- delete old coverage files -->
 		<delete dir="coverage"></delete>
+		<delete dir="emma"></delete>
 		<delete file="coverage.ec"></delete>
 		<delete file="coverage.em"></delete>
+		<delete file="coverage.xml"></delete>
 	  </target>
 	
 	<target name="clean"
