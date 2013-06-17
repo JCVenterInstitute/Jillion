@@ -32,7 +32,7 @@ import org.junit.runners.Suite.SuiteClasses;
     	AllPhdAdaptedIteratorTests.class,
     	
     	TestReferenceAssembleLongCas2Consed.class,
-    	TestClcMapperCas2Consed.class,
+    	TestClcMapperCas2Consed.class
     }
 )
 public class AllCas2ConsedTests {
