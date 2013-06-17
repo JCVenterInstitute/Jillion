@@ -58,6 +58,13 @@ public final class SliceBuilder implements Builder<Slice>{
     }
     /**
      * Create a new {@link SliceBuilder}
+     * which will start off empty.
+     */
+    public SliceBuilder(Nucleotide consensus){
+    	setConsensus(consensus);
+    }
+    /**
+     * Create a new {@link SliceBuilder}
      * which will start off containing
      * the same SliceElements as the given Slice.
      * Each SliceElement will be a deep
@@ -71,6 +78,35 @@ public final class SliceBuilder implements Builder<Slice>{
     		throw new NullPointerException("Slice can not be null");
     	}
     	addAll(slice);
+    	setConsensus(slice.getConsensusCall());
+    }
+    /**
+     * Create a new {@link SliceBuilder}
+     * which will start off containing
+     * the only the SliceElements from the given Slice
+     * that are accepted by the SliceElementFilter.
+     * This should be the same result
+     * as 
+     * {@code new SliceBuilder(slice).filter(filter)}
+     * but may be implemented more efficiently.
+     * @param slice the {@link Slice} to copy;
+     * can not be null.
+     * @param filter an instance of {@link SliceElementFilter}
+     * to filter the input SliceElements to this builder.
+     * @throws NullPointerException if slice is null.
+     */
+    public SliceBuilder(Slice slice, SliceElementFilter filter){
+    	if(slice ==null){
+    		throw new NullPointerException("Slice can not be null");
+    	}
+    	if(filter ==null){
+    		throw new NullPointerException("filter can not be null");
+    	}
+		for(SliceElement e: slice){
+			if(filter.accept(e)){
+				add(e);
+			}
+    	}
     	setConsensus(slice.getConsensusCall());
     }
     /**
