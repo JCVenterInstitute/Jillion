@@ -76,7 +76,7 @@ public abstract class AbstractTestCas2Consed {
 	    public void parseCas() throws IOException, DataStoreException{
 	        File casFile = RESOURCES.getFile(pathToCas);
 	        CasGappedReferenceDataStoreBuilderVisitor gappedRefVisitor = new CasGappedReferenceDataStoreBuilderVisitor(casFile.getParentFile());
-	        CasFileParser casFileParser = new CasFileParser(casFile);
+	        CasFileParser casFileParser = CasFileParser.create(casFile);
 			casFileParser.accept(gappedRefVisitor);
 	        CasGappedReferenceDataStore gappedReferenceDataStore = gappedRefVisitor.build();
 	        

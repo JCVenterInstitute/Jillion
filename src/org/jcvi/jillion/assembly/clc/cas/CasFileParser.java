@@ -60,13 +60,11 @@ public final class CasFileParser {
     private CasScoringScheme scoringScheme;
     private final File casFile;
     
-    public CasFileParser(File file) throws IOException{
-       /* parseMetaData(file,visitor);
-        if(parseMatches){
-            parseMatches(file,visitor);
-        }
-        visitor.visitEndOfFile();
-        */
+    public static CasFileParser create(File casFile) throws IOException{
+    	return new CasFileParser(casFile);
+    }
+    
+    private CasFileParser(File file) throws IOException{
     	if(file ==null){
     		throw new NullPointerException("cas file can not be null");
     	}
