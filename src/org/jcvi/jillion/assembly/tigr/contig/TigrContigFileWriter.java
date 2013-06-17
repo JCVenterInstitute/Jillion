@@ -54,6 +54,7 @@ public class TigrContigFileWriter implements Closeable{
     private static final CtgFormatReadSorter READ_SORTER = CtgFormatReadSorter.INSTANCE;
     private final OutputStream out;
     
+    
     public TigrContigFileWriter(OutputStream out) {
         this.out = out;
     }
@@ -102,7 +103,6 @@ public class TigrContigFileWriter implements Closeable{
     private void writeToOutputStream(final String result) throws IOException,
             UnsupportedEncodingException {
         out.write(result.getBytes("UTF-8"));
-        out.flush();
     }
     
     private void writePlacedReadHeader(AssembledRead placedRead,NucleotideSequence consensus) throws IOException {
