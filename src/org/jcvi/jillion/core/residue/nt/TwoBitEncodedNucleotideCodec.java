@@ -31,6 +31,7 @@ import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
+import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
 
 /**
@@ -204,11 +205,11 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
                 final int unEncodedSize) {
             int encodedBasesSize = computeHeaderlessEncodedSize(unEncodedSize);
             ByteBuffer encodedBases = ByteBuffer.allocate(encodedBasesSize);
-            List<Integer> sentinels = encodeAll(iterator, unEncodedSize, encodedBases);
+            GrowableIntArray sentinels = encodeAll(iterator, unEncodedSize, encodedBases);
             encodedBases.flip();
             ValueSizeStrategy numBasesSizeStrategy = ValueSizeStrategy.getStrategyFor(unEncodedSize);
-            int numberOfSentinels = sentinels.size();
-			ValueSizeStrategy sentinelSizeStrategy = sentinels.isEmpty()
+            int numberOfSentinels = sentinels.getCurrentLength();
+			ValueSizeStrategy sentinelSizeStrategy = numberOfSentinels==0
             											?	ValueSizeStrategy.NONE 
             											:	ValueSizeStrategy.getStrategyFor(numberOfSentinels);
             
@@ -222,8 +223,8 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
             result.put((byte)sentinelSizeStrategy.ordinal());
             if(sentinelSizeStrategy != ValueSizeStrategy.NONE){
             	sentinelSizeStrategy.put(result, numberOfSentinels);
-            	for(Integer sentinel : sentinels){
-            		numBasesSizeStrategy.put(result, sentinel.intValue());
+            	for(int i=0; i<numberOfSentinels; i++){
+            		numBasesSizeStrategy.put(result, sentinels.get(i));
                 }
             }
             result.put(encodedBases);
@@ -242,11 +243,13 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
          * @param unEncodedSize
          * @param result
          */
-        private List<Integer> encodeAll(Iterator<Nucleotide> glyphs,
+        private GrowableIntArray encodeAll(Iterator<Nucleotide> glyphs,
                 final int unEncodedSize, ByteBuffer result) {
-            List<Integer> gaps= new ArrayList<Integer>();
+        	//optimize huge size of array so we don't have to
+        	//worry about penalty of resizing
+        	GrowableIntArray gaps= new GrowableIntArray(unEncodedSize);
             for(int i=0; i<unEncodedSize; i+=NUCLEOTIDES_PER_BYTE){
-                gaps.addAll(encodeNext4Values(glyphs, result,i));
+                gaps.append(encodeNext4Values(glyphs, result,i));
             }
             return gaps;
         }
@@ -258,7 +261,7 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
         
         private byte getByteFor(Nucleotide nuc){
             switch(nuc){
-                case Adenine : return (byte)0;
+            	case Adenine : return (byte)0;
                 case Cytosine : return (byte)1;
                 case Guanine : return (byte)2;
                 case Thymine : return (byte)3;
@@ -266,42 +269,36 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
             }
         }
         private Nucleotide getGlyphFor(byte b){
-            if(b == (byte)0){
-                return Nucleotide.Adenine;
-            }
-            if(b == (byte)1){
-                return Nucleotide.Cytosine;
-            }
-            if(b == (byte)2){
-                return Nucleotide.Guanine;
-            }
-            if(b == (byte)3){
-                return Nucleotide.Thymine;
-            }
-            throw new IllegalArgumentException("unknown encoded value : "+b);
+        	switch(b){
+	        	case 0 : return Nucleotide.Adenine;
+	        	case 1: return Nucleotide.Cytosine;
+	        	case 2: return Nucleotide.Guanine;
+	        	case 3: return Nucleotide.Thymine;
+	        	default: throw new IllegalArgumentException("unknown encoded value : "+b);
+        	}
         }
        
-        private List<Integer> encodeNext4Values(Iterator<Nucleotide> glyphs, ByteBuffer result, int offset) {
+        private GrowableIntArray encodeNext4Values(Iterator<Nucleotide> glyphs, ByteBuffer result, int offset) {
             byte b0 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
             byte b1 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
             byte b2 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
             byte b3 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
             
-            List<Integer> sentenielOffsets = new ArrayList<Integer>();
+            GrowableIntArray sentenielOffsets = new GrowableIntArray(4);
             if(b0== GAP_BYTE){
-                sentenielOffsets.add(offset);
+                sentenielOffsets.append(offset);
                 b0=0;
             }
             if(b1== GAP_BYTE){
-                sentenielOffsets.add(offset+1);
+                sentenielOffsets.append(offset+1);
                 b1=0;
             }
             if(b2== GAP_BYTE){
-                sentenielOffsets.add(offset+2);
+                sentenielOffsets.append(offset+2);
                 b2=0;
             }
             if(b3== GAP_BYTE){
-                sentenielOffsets.add(offset+3);
+                sentenielOffsets.append(offset+3);
                 b3=0;
             }
             result.put((byte) ((b0<<6 | b1<<4 | b2<<2 | b3) &0xFF));
