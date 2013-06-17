@@ -606,7 +606,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 			}
 			@Override
 			public Nucleotide next() {
-				if(!hasNext()){
+				if(currentOffset>=end){
 					throw new NoSuchElementException();
 				}
 				Nucleotide next = Nucleotide.VALUES.get(getNucleotideOrdinalFor(bits,currentOffset));
@@ -741,7 +741,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		int bit2 =bits.get(bitStartOffset+1)?4:0; 
 		int bit1 =bits.get(bitStartOffset+2)?2:0; 
 		int bit0 =bits.get(bitStartOffset+3)?1:0;
-		return (byte)(bit3+bit2+bit1+bit0);
+		return (byte)(bit3|bit2|bit1|bit0);
 	}
 	private byte getNucleotideOrdinalFor(int bitStartOffset) {
 		return getNucleotideOrdinalFor(bits, bitStartOffset);
@@ -1143,33 +1143,81 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	}
 		private void handle(Nucleotide n, int offset) {
 			byte value=n.getOrdinalAsByte();
-			
-			if((value & 0x1) !=0){
-				bits.set(offset+3);
+			//switch statements has been optimized using profiler 
+			//this will cause a special tableswitch opcode
+			//which is is an O(1) lookup instead of an
+			//o(n) lookupswitch opcode.  
+			//This switch will also increment
+			//the nuclotide counts usually
+			//done by handle(value) so
+			//we don't need to do the lookup twice
+			length++;
+			switch(value){
+				case 0:numberOfNs++; break;
+				case 1: bits.set(offset+3); break;
+				case 2: bits.set(offset+2); break;
+				case 3: bits.set(offset+2,  offset+4); break;
+				case 4: bits.set(offset+1); break;
+				case 5: bits.set(offset+1);
+						bits.set(offset+3); 
+						break;
+				case 6: bits.set(offset+1,  offset+3); break;
+				case 7: bits.set(offset+1,  offset+4); break;
+				case 8: bits.set(offset); break;
+				case 9: bits.set(offset);
+						bits.set(offset+3); 
+						break;
+				case 10: bits.set(offset);
+						bits.set(offset+2); 
+						break;
+				case 11: bits.set(offset, offset+4);
+						 bits.clear(offset+1); 
+						 numberOfGaps++;
+							break;
+				case 12: bits.set(offset, offset+2);
+						numberOfACGTs++;
+						break;
+				case 13: bits.set(offset, offset+4);
+						bits.clear(offset+2);
+						numberOfACGTs++;
+						break;
+				case 14: bits.set(offset, offset+3); 
+						numberOfACGTs++;
+						break;
+				case 15: bits.set(offset, offset+4);
+						numberOfACGTs++;
+						break;
+				default: break;
 			}
-			if((value & 0x2) !=0){
-				bits.set(offset+2);
-			}
-			if((value & 0x4) !=0){
-				bits.set(offset+1);
-			}
-			if((value & 0x8) !=0){
-				bits.set(offset);
-			}
-			handleOrdinal(value);
+
 		}
 
 		private void handleOrdinal(byte ordinal) {
 			length++;
-			//order of if statements has been optimized using profiler 
-			
-			if (ordinal == A_VALUE || ordinal == C_VALUE || ordinal == G_VALUE|| ordinal == T_VALUE){
-				numberOfACGTs++;
-			}else if(ordinal == GAP_VALUE){
-				numberOfGaps++;
-			}else if(ordinal ==N_VALUE){
-				numberOfNs++;
+			//switch statements has been optimized using profiler 
+			//this will cause a special tableswitch opcode
+			//which is is an O(1) lookup instead of an
+			//o(n) lookupswitch opcode
+			switch(ordinal){
+			case 0 :numberOfNs++; break;
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
+			case 9:
+			case 10:break;
+			case 11:numberOfGaps++; break;
+			case 12:
+			case 13:
+			case 14:
+			case 15:numberOfACGTs++; break;
+			default: break;
 			}
+		
 		}
 
 		public int getnumberOfAmiguities() {
