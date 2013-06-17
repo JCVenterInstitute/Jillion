@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jcvi.jillion.assembly.clc.cas.read.CasPlacedRead;
 import org.jcvi.jillion.assembly.clc.cas.read.DefaultCasPlacedReadFromCasAlignmentBuilder;
@@ -48,7 +50,6 @@ import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
 import org.jcvi.jillion.trace.fastq.FastqRecordBuilder;
-import org.jcvi.jillion.trace.fastq.IlluminaUtil;
 import org.jcvi.jillion.trace.sff.SffFileIterator;
 import org.jcvi.jillion.trace.sff.SffFlowgram;
 import org.jcvi.jillion.trace.sff.SffUtil;
@@ -139,7 +140,7 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 			FastqDataStore datastore = new FastqFileDataStoreBuilder(illuminaFile)
 											.hint(DataStoreProviderHint.ITERATION_ONLY)
 											.build();
-			return new Casava18IteratorAdapter(datastore.iterator());
+			return new RemoveWhitespaceFromIdAdapter(datastore.iterator());
 		} catch (IOException e) {
 			throw new IllegalStateException("fastq file no longer exists! : "+ illuminaFile.getAbsolutePath());
 		}
@@ -290,10 +291,11 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 		}
 	}
 	
-	private static class Casava18IteratorAdapter implements StreamingIterator<FastqRecord>{
+	private static class RemoveWhitespaceFromIdAdapter implements StreamingIterator<FastqRecord>{
 		private final  StreamingIterator<FastqRecord> delegate;
 
-		public Casava18IteratorAdapter(StreamingIterator<FastqRecord> delegate) {
+		private static Pattern WHITESPACE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)$");
+		public RemoveWhitespaceFromIdAdapter(StreamingIterator<FastqRecord> delegate) {
 			this.delegate = delegate;
 		}
 
@@ -311,8 +313,9 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 		@Override
 		public FastqRecord next() {
 			FastqRecord record =delegate.next();
-			if(IlluminaUtil.isCasava18Read(record.getId())){
-				return new FastqRecordBuilder(record.getId()+"_"+record.getComment(), 
+			Matcher matcher= WHITESPACE_PATTERN.matcher(record.getId());
+			if(matcher.matches()){
+				return new FastqRecordBuilder(matcher.group(1)+"_"+matcher.group(2), 
 											record.getNucleotideSequence(),
 											record.getQualitySequence())
 							.build();
