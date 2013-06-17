@@ -51,14 +51,14 @@ public final class SliceBuilder implements Builder<Slice>{
 	}
     /**
      * Create a new {@link SliceBuilder}
-     * which will start off empty.
+     * which will start off empty with a null consensus.
      */
     public SliceBuilder(){
-    	
+    	//creates empty builder with null consensus
     }
     /**
      * Create a new {@link SliceBuilder}
-     * which will start off empty.
+     * which will start off empty with a null consensus.
      */
     public SliceBuilder(Nucleotide consensus){
     	setConsensus(consensus);
