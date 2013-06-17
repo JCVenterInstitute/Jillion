@@ -382,6 +382,17 @@ public class TestSliceBuilder {
 	}
 	
 	@Test
+	public void setConsensusCallInConstructor(){
+		
+		Slice expected = new SliceBuilder(elements)
+							.setConsensus(consensus)
+							.build();
+		Slice actual = new SliceBuilder(consensus).addAll(elements).build();
+		assertEquals(expected, actual);
+		assertEquals(consensus, actual.getConsensusCall());
+	}
+	
+	@Test
 	public void copyConstructorWithSetConsensus(){
 		Slice slice = new SliceBuilder(elements)
 							.setConsensus(consensus).build();
@@ -469,8 +480,23 @@ public class TestSliceBuilder {
 							.build();
 		
 		Slice expected = new SliceBuilder().add(elements.get(0)).build();
-		assertEquals(expected,actual);
-		
+		assertEquals(expected,actual);		
 		
 	}
+	
+	@Test
+	public void filterConstructorShouldMatchCallingFilterExplicity(){
+		SliceElementFilter filter = new SliceElementFilter() {
+			
+			@Override
+			public boolean accept(SliceElement e) {
+				return e.getDirection()==Direction.FORWARD;
+			}
+		};
+		
+		Slice actual = new SliceBuilder(new SliceBuilder(elements).build(), filter).build();
+		Slice expected = new SliceBuilder(elements).filter(filter).build();
+		assertEquals(expected, actual);
+	}
+	
 }
