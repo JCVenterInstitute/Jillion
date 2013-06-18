@@ -255,9 +255,13 @@ public class TestGrowableShortArray {
 	public void constructorWithNegativeSizeShouldThrowException(){
 		new GrowableShortArray(-1);
 	}
-	@Test(expected = IllegalArgumentException.class)
-	public void constructorWithSizeZeroShouldThrowException(){
-		new GrowableShortArray(0);
+	@Test
+	public void constructorWithSizeZeroShouldBeAllowed(){
+		GrowableShortArray sut =new GrowableShortArray(0);
+		assertEquals(0, sut.getCurrentLength());
+		sut.append((short)10);
+		assertEquals(1, sut.getCurrentLength());
+		assertEquals(10, sut.get(0));
 	}
 	@Test(expected = NullPointerException.class)
 	public void constructorWithNullArrayShouldThrowException(){
@@ -331,5 +335,32 @@ public class TestGrowableShortArray {
 		assertArrayEquals(new short[]{50,40,30,20,10}, sut.toArray());
 	}
 	
-
+	@Test
+	public void sortUnSortedValues(){
+		GrowableShortArray sut = new GrowableShortArray(10);
+		sut.append((short)10);
+		sut.append((short)20);
+		sut.append((short)30);
+		sut.append((short)40);
+		sut.append((short)50);
+		sut.reverse();
+		sut.sort();
+		assertArrayEquals(new short[]{10,20,30,40,50}, sut.toArray());
+	}
+	
+	@Test
+	public void binarySearch(){
+		GrowableShortArray sut = new GrowableShortArray(10);
+		sut.append((short)10);
+		sut.append((short)20);
+		sut.append((short)30);
+		sut.append((short)40);
+		sut.append((short)50);
+		for(int i=0; i<sut.getCurrentLength(); i++){
+			assertEquals(i, sut.binarySearch(sut.get(i)));
+		}
+		assertEquals("after all",-6, sut.binarySearch((short)60));
+		assertEquals("before all", -1, sut.binarySearch((short)6));
+		assertEquals("in between", -4, sut.binarySearch((short)35));
+	}
 }

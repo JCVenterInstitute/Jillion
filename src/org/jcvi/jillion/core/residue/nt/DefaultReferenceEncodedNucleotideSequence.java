@@ -26,9 +26,7 @@
 package org.jcvi.jillion.core.residue.nt;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -39,6 +37,8 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
+import org.jcvi.jillion.internal.core.util.ArrayUtil;
+import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
 final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSequence<Nucleotide> implements ReferenceMappedNucleotideSequence{
 
@@ -123,11 +123,11 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 
 	public DefaultReferenceEncodedNucleotideSequence(NucleotideSequence reference,
             NucleotideSequenceBuilder toBeEncoded, int startOffset){
-        List<Integer> tempGapList = new ArrayList<Integer>();     
+    
         this.startOffset = startOffset;
         this.length = (int)toBeEncoded.getLength();
         this.reference = reference;
-        SortedMap<Integer, Nucleotide> differentGlyphMap = populateFields(reference, toBeEncoded, startOffset, tempGapList);
+        SortedMap<Integer, Nucleotide> differentGlyphMap = populateFields(reference, toBeEncoded, startOffset);
         int numSnps = differentGlyphMap.size();
         if(numSnps ==0){
         	//no snps
@@ -177,7 +177,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 
 	private SortedMap<Integer, Nucleotide> populateFields(
 			NucleotideSequence reference,
-            NucleotideSequenceBuilder toBeEncoded, int startOffset, List<Integer> tempGapList) {
+            NucleotideSequenceBuilder toBeEncoded, int startOffset) {
         handleBeforeReference(startOffset);
         handleAfterReference(reference, toBeEncoded, startOffset);
         TreeMap<Integer, Nucleotide> differentGlyphMap = new TreeMap<Integer, Nucleotide>();
@@ -190,10 +190,6 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
        while(readIterator.hasNext()){
             Nucleotide g = readIterator.next();
             final Nucleotide referenceGlyph = refIterator.next();            
-           
-            if(g.isGap()){
-                tempGapList.add(Integer.valueOf(i));
-            }
             if(isDifferent(g, referenceGlyph)){
                     differentGlyphMap.put(Integer.valueOf(i), g);
             }
@@ -344,30 +340,31 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 
     @Override
     public List<Integer> getGapOffsets() {
-        List<Integer> referenceGapOffsets = shiftReferenceGaps();
+    	GrowableIntArray referenceGapOffsets = shiftReferenceGaps();
         if(encodedSnpsInfo !=null){
 	        return modifyForSnps(referenceGapOffsets);
         }
-        return referenceGapOffsets;
+        return ArrayUtil.asList(referenceGapOffsets.toArray());
     }
 
-	private List<Integer> modifyForSnps(List<Integer> gaps) {
+	private List<Integer> modifyForSnps(GrowableIntArray gaps) {
 		//now check our snps to see
 		//1. if we have snp where the ref has a gap
 		//2. if we have gap
 		ByteBuffer buf = ByteBuffer.wrap(encodedSnpsInfo);
 		int size = ValueSizeStrategy.values()[buf.get()].getNext(buf);
 		ValueSizeStrategy sizeStrategy = ValueSizeStrategy.values()[buf.get()];
-		List<Integer> snps = new ArrayList<Integer>(size);
+		GrowableIntArray snps = new GrowableIntArray(size);
 		for(int i=0; i<size; i++){
-		    Integer snpOffset = sizeStrategy.getNext(buf);
+		    int snpOffset = sizeStrategy.getNext(buf);
 		    //if we have a snp where 
 		    //the reference has a gap
 		    //remove it from our list of gaps
-		    if(gaps.contains(snpOffset)){
-		        gaps.remove(snpOffset);
+		    int index = gaps.binarySearch(snpOffset);
+			if(index>=0){
+		        gaps.remove(index);
 		    }
-		    snps.add(snpOffset);
+		    snps.append(snpOffset);
 		}
 		if(buf.hasRemaining()){
 			int numBytesRemaining =buf.remaining();
@@ -382,7 +379,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 						snp= Nucleotide.VALUES.get(snpArray[snpIndex] & 0x0F);
 					}
 		    	 if(Nucleotide.Gap == snp){
-		    		 gaps.add(snps.get(i));
+		    		 gaps.append(snps.get(i));
 		    	 }
 		     }
 		    
@@ -391,8 +388,8 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 		//before this line, our gaps are in
 		//sorted ref gaps
 		//followed by sorted snps which happen to be gaps
-		Collections.sort(gaps);
-		return gaps;
+		gaps.sort();
+		return ArrayUtil.asList(gaps.toArray());
 	}
 	//first, get gaps from our aligned section of the reference
     //we may have a snp in the gap location
@@ -406,13 +403,13 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 	 * (offset 0 is first base in our read)
 	 * @return
 	 */
-	private List<Integer> shiftReferenceGaps() {
+	private GrowableIntArray shiftReferenceGaps() {
 		List<Integer> refGapOffsets = reference.getGapOffsets();
-        List<Integer> gaps = new ArrayList<Integer>(refGapOffsets.size());
+		GrowableIntArray gaps = new GrowableIntArray(refGapOffsets.size());
         for(Integer refGap : refGapOffsets){
             int adjustedCoordinate = refGap.intValue() - startOffset;
             if(adjustedCoordinate >=0 && adjustedCoordinate<length){
-                gaps.add(Integer.valueOf(adjustedCoordinate));
+                gaps.append(adjustedCoordinate);
             }
         }
 		return gaps;

@@ -20,10 +20,12 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.util;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestGrowableByteArray {
 
 	@Test
@@ -253,9 +255,13 @@ public class TestGrowableByteArray {
 	public void constructorWithNegativeSizeShouldThrowException(){
 		new GrowableByteArray(-1);
 	}
-	@Test(expected = IllegalArgumentException.class)
-	public void constructorWithSizeZeroShouldThrowException(){
-		new GrowableByteArray(0);
+	@Test
+	public void constructorWithSizeZeroShouldBeAllowed(){
+		GrowableByteArray sut =new GrowableByteArray(0);
+		assertEquals(0, sut.getCurrentLength());
+		sut.append((byte)10);
+		assertEquals(1, sut.getCurrentLength());
+		assertEquals(10, sut.get(0));
 	}
 	@Test(expected = NullPointerException.class)
 	public void constructorWithNullArrayShouldThrowException(){
@@ -327,5 +333,34 @@ public class TestGrowableByteArray {
 		sut.reverse();
 		
 		assertArrayEquals(new byte[]{50,40,30,20,10}, sut.toArray());
+	}
+	
+	@Test
+	public void sortUnSortedValues(){
+		GrowableByteArray sut = new GrowableByteArray(10);
+		sut.append((byte)10);
+		sut.append((byte)20);
+		sut.append((byte)30);
+		sut.append((byte)40);
+		sut.append((byte)50);
+		sut.reverse();
+		sut.sort();
+		assertArrayEquals(new byte[]{10,20,30,40,50}, sut.toArray());
+	}
+	
+	@Test
+	public void binarySearch(){
+		GrowableByteArray sut = new GrowableByteArray(10);
+		sut.append((byte)10);
+		sut.append((byte)20);
+		sut.append((byte)30);
+		sut.append((byte)40);
+		sut.append((byte)50);
+		for(int i=0; i<sut.getCurrentLength(); i++){
+			assertEquals(i, sut.binarySearch(sut.get(i)));
+		}
+		assertEquals("after all",-6, sut.binarySearch((byte)60));
+		assertEquals("before all", -1, sut.binarySearch((byte)6));
+		assertEquals("in between", -4, sut.binarySearch((byte)35));
 	}
 }
