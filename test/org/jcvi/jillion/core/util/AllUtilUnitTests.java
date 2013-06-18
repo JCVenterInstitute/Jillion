@@ -33,7 +33,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-       
+    	TestArrayUtil_IntArray.class,
+    	
     	TestObjectsUtil.class,
         TestRunLength.class,
         MathUtilSuite.class,

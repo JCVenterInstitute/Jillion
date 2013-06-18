@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.core.util;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.jcvi.jillion.core.Range;
@@ -61,11 +60,11 @@ public final class GrowableLongArray {
 	 * longs will cause the long array to overflow,
 	 * the backing long array will automatically
 	 * grow larger.
-	 * @throws IllegalArgumentException if initialCapacity is <=0.
+	 * @throws IllegalArgumentException if initialCapacity is <0.
 	 */
 	public GrowableLongArray(int initialCapacity){
-		if(initialCapacity <=0){
-			throw new IllegalArgumentException("initial capacity should be > 0 :"+initialCapacity);
+		if(initialCapacity <0){
+			throw new IllegalArgumentException("initial capacity should be >= 0 :"+initialCapacity);
 		}
 		data = new long[initialCapacity];		
 	}
@@ -239,5 +238,40 @@ public final class GrowableLongArray {
 	
 	public long[] toArray(){
 		return Arrays.copyOf(data,currentLength);
+	}
+	/**
+	 * Searches the current values in this growable array
+	 * using the binary search algorithm as implemented
+	 * by {@link Arrays#binarySearch(long[], long)}.
+	 * The array must be sorted (as
+     * by the {@link #sort()} method) prior to making this call.  If it
+     * is not sorted, the results are undefined.  If the array contains
+     * multiple elements with the specified value, there is no guarantee which
+     * one will be found.
+	 * 
+	 * @param key the value to be searched for.
+	 * @return index of the search key, if it is contained in the array;
+     *	       otherwise, <tt>(-(<i>insertion point</i>) - 1)</tt>.  The
+     *	       <i>insertion point</i> is defined as the point at which the
+     *	       key would be inserted into the array: the index of the first
+     *	       element greater than the key, or <tt>a.length</tt> if all
+     *	       elements in the array are less than the specified key.  Note
+     *	       that this guarantees that the return value will be &gt;= 0 if
+     *	       and only if the key is found.
+     * @throws IllegalArgumentException
+     *	       if {@code fromIndex > toIndex}
+     * @throws ArrayIndexOutOfBoundsException
+     *	       if {@code fromIndex < 0 or toIndex > a.length}
+     *@see Arrays#binarySearch(byte[], byte)
+     */
+	public int binarySearch(long key){
+		return Arrays.binarySearch(data, 0, currentLength, key);
+	}
+	/**
+	 * Sort the current values in this growable array
+	 * using the default comparator.
+	 */
+	public void sort(){
+		Arrays.sort(data, 0, currentLength);
 	}
 }

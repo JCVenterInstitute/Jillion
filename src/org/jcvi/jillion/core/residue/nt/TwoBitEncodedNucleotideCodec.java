@@ -21,7 +21,6 @@
 package org.jcvi.jillion.core.residue.nt;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,6 +30,7 @@ import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
+import org.jcvi.jillion.internal.core.util.ArrayUtil;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
 
@@ -111,11 +111,11 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
             }else{            	
             	//there are gaps
             	int numberOfSentinels = sentinelStrategy.getNext(buf);
-            	List<Integer> sentinelOffsets = new ArrayList<Integer>(numberOfSentinels);
+            	int[] sentinelOffsets = new int[numberOfSentinels];
             	for(int i = 0; i< numberOfSentinels; i++){
-            		sentinelOffsets.add(Integer.valueOf(offsetStrategy.getNext(buf)));
+            		sentinelOffsets[i] = offsetStrategy.getNext(buf);            	
             	}
-            	return sentinelOffsets;
+            	return ArrayUtil.asList(sentinelOffsets);
             }
 
 		}
