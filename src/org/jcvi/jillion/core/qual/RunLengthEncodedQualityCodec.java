@@ -200,7 +200,7 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
     	if(qualities.length==0){
     		return Collections.emptyList();
     	}
-    	List<RunLength<PhredQuality>> encoding = new ArrayList<RunLength<PhredQuality>>();
+    	List<RunLength<PhredQuality>> encoding = new ArrayList<RunLength<PhredQuality>>(qualities.length);
     	byte currentElement=qualities[currentOffset];
     	int runLength=1;
     	currentOffset++;
