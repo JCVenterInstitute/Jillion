@@ -47,6 +47,9 @@ import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisit
 public abstract class FastqFileParser {
 
 	private static final Pattern CASAVA_1_8_DEFLINE_PATTERN = Pattern.compile("^@(\\S+\\s+\\d:[N|Y]:\\d+:\\S+)\\s*$");
+	
+	private final NucleotideSequenceBuilder sequenceBuilder = new NucleotideSequenceBuilder(2000);
+	private final StringBuilder qualityBuilder = new StringBuilder(2000);
 	/**
 	 * Create a new {@link FastqFileParser} instance
 	 * that will parse the given fastq encoded
@@ -107,9 +110,9 @@ public abstract class FastqFileParser {
 			FastqRecordVisitor recordVisitor, ParserState parserState) throws IOException {
 		
 		boolean inBasecallBlock;
-		//default to 200 bp since most sequences are only that much anyway
+		//default to 2000 bp since most sequences are only that much anyway
         //builder will grow if we get too big
-        NucleotideSequenceBuilder sequenceBuilder = new NucleotideSequenceBuilder(200);
+        
         String line = parser.nextLine();
     	sequenceBuilder.append(line);
         do{
@@ -133,8 +136,9 @@ public abstract class FastqFileParser {
         }
         //now parse the qualities
         int expectedQualities =  (int)sequence.getLength();
-		 
-        StringBuilder qualityBuilder = new StringBuilder(expectedQualities);
+		sequenceBuilder.clear();
+        
+        qualityBuilder.setLength(0);
         //needs to be a do-while loop
         //to cover the case where the read is empty
         //(contains 0 bases) we still need to read a quality line

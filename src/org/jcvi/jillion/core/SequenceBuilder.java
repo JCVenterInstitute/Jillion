@@ -168,4 +168,11 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
      */
     @Override
     Iterator<T> iterator();
+    /**
+     * Removes all the current values
+     * from the builder and sets the length 
+     * to 0.
+     * @return this.
+     */
+    SequenceBuilder<T,S> clear();
 }

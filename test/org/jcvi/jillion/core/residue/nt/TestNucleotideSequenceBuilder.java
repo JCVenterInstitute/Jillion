@@ -608,4 +608,29 @@ public class TestNucleotideSequenceBuilder {
     										.complement();
     	assertEquals("TGCA", sut.toString());
     }
+    
+    @Test
+    public void clear(){
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT")
+    										.clear();
+    	assertEquals("",sut.toString());
+    	assertEquals(0, sut.getLength());
+    	assertEquals(0, sut.getNumAmbiguities());
+    	assertEquals(0, sut.getNumGaps());
+    	assertEquals(0, sut.getNumNs());
+    	assertEquals(0, sut.getUngappedLength());
+    }
+    
+    @Test
+    public void clearThenAppend(){
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT")
+											.clear()
+											.append("RW-GN");
+    	assertEquals("RW-GN",sut.toString());
+    	assertEquals(5, sut.getLength());
+    	assertEquals(3, sut.getNumAmbiguities());
+    	assertEquals(1, sut.getNumGaps());
+    	assertEquals(1, sut.getNumNs());
+    	assertEquals(4, sut.getUngappedLength());
+    }
 }

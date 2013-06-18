@@ -81,6 +81,13 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
 	private PositionSequenceBuilder(PositionSequenceBuilder copy){
 		this.builder = copy.builder.copy();
 	}
+	
+	
+	@Override
+	public PositionSequenceBuilder clear() {
+		this.builder.clear();
+		return this;
+	}
 	private short encode(Position q){
 		return IOUtil.toSignedShort(q.getValue());
 	}

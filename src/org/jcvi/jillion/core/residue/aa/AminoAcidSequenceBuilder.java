@@ -63,6 +63,13 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 
 	
 	@Override
+	public AminoAcidSequenceBuilder clear() {
+		numberOfGaps=0;
+		builder.clear();
+		return this;
+	}
+
+	@Override
 	public AminoAcidSequenceBuilder append(
 			Iterable<AminoAcid> sequence) {
 		for(AminoAcid aa : sequence){

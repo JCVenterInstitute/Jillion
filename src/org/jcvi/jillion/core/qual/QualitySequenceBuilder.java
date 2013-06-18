@@ -74,6 +74,13 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	public QualitySequenceBuilder(byte[] initialqualities){
 		this.builder = new GrowableByteArray(initialqualities);
 	}
+	
+	
+	@Override
+	public QualitySequenceBuilder clear() {
+		this.builder.clear();
+		return this;
+	}
 	/**
 	 * Creates a new builder whose initial sequence
 	 * is set to the given {@link QualitySequence}.
