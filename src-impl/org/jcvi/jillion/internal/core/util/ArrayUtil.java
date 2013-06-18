@@ -82,10 +82,12 @@ public final class ArrayUtil {
          */
         @SuppressWarnings("rawtypes")
 		public boolean equals(Object o) {
-        	if (o == this)
+        	if (o == this){
         	    return true;
-        	if (!(o instanceof List))
+        	}
+        	if (!(o instanceof List)){
         	    return false;
+        	}
 
         	int currentOffset=0;
         	ListIterator e2 = ((List) o).listIterator();
