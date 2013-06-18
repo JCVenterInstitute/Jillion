@@ -84,7 +84,19 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         bits = new BitSet();
         codecDecider = new CodecDecider();
     }
-    /**
+    
+    
+    @Override
+	public NucleotideSequenceBuilder clear() {
+		
+		bits.clear(0, tail);
+		tail=0;
+		codecDecider.clear();
+		return this;
+	}
+
+
+	/**
      * Creates a new NucleotideSequenceBuilder instance
      * which currently contains no nucleotides.
      * @param initialCapacity the initial capacity 
@@ -971,6 +983,13 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         	
         }
         
+        void clear(){
+        	 numberOfGaps=0;
+             numberOfAmbiguities=0;
+             numberOfNs=0;
+             currentLength=0;
+             alignedReference=null;
+        }
         
         void alignedReference(AlignedReference ref){
         	this.alignedReference = ref;
@@ -1039,9 +1058,11 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 
         private void handleN(boolean increment) {
             if(increment){
-            numberOfNs++;
+	            numberOfNs++;
+	            numberOfAmbiguities++;
             }else{
                 numberOfNs--;
+                numberOfAmbiguities--;
             }
         }
 
@@ -1102,6 +1123,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		}
     	
     }
+    
+    
     
     private class NewValues{
     	private final  BitSet bits;
@@ -1221,7 +1244,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		}
 
 		public int getnumberOfAmiguities() {
-			return length - (numberOfGaps + numberOfNs+ numberOfACGTs);
+			return length - (numberOfGaps + numberOfACGTs);
 		}
 
 		public BitSet getBits() {

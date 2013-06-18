@@ -282,4 +282,11 @@ public final class GrowableShortArray {
 	public void sort(){
 		Arrays.sort(data, 0, currentLength);
 	}
+	
+	/**
+	 * Set the current length to 0.
+	 */
+	public void clear(){
+		this.currentLength=0;
+	}
 }

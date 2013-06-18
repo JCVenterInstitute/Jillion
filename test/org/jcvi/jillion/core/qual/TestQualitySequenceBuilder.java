@@ -354,4 +354,22 @@ public class TestQualitySequenceBuilder {
 				toByteArray(seq));
 		
 	}
+	
+	@Test
+	public void clear(){
+		QualitySequenceBuilder sut = new QualitySequenceBuilder(new byte[]{10,12,13,13,13,13,13,13,8})
+										.clear();
+		
+		assertEquals(0, sut.getLength());		
+	}
+	@Test
+	public void clearAndAppend(){
+		QualitySequenceBuilder sut = new QualitySequenceBuilder(new byte[]{10,12,13,13,13,13,13,13,8})
+										.clear();
+		sut.append(new byte[]{70,70,30,50});
+		QualitySequence seq =sut.build();
+		assertArrayEquals(
+				new byte[]{70,70,30,50},
+				toByteArray(seq));
+	}
 }
