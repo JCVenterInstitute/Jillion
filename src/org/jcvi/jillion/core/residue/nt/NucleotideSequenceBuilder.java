@@ -962,7 +962,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      */
     private static final class CodecDecider{
         private int numberOfGaps=0;
-        private int numberOfAmbiguities=0;
+        private int numberOfNonNAmbiguities=0;
         private int numberOfNs=0;
         private int currentLength=0;
         private AlignedReference alignedReference=null;
@@ -974,7 +974,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         }
         CodecDecider copy(){
         	CodecDecider copy = new CodecDecider();
-        	copy.numberOfAmbiguities = numberOfAmbiguities;
+        	copy.numberOfNonNAmbiguities = numberOfNonNAmbiguities;
         	copy.numberOfGaps = numberOfGaps;
         	copy.currentLength= currentLength;
         	copy.numberOfNs = numberOfNs;
@@ -985,7 +985,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         
         void clear(){
         	 numberOfGaps=0;
-             numberOfAmbiguities=0;
+             numberOfNonNAmbiguities=0;
              numberOfNs=0;
              currentLength=0;
              alignedReference=null;
@@ -1000,7 +1000,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         }
         NucleotideCodec getOptimalCodec() {
         	
-            if(numberOfAmbiguities>0 || (numberOfGaps>0 && numberOfNs >0)){
+            if(numberOfNonNAmbiguities>0 || (numberOfGaps>0 && numberOfNs >0)){
                 return DefaultNucleotideCodec.INSTANCE;
             }
             int fourBitBufferSize =currentLength/2;
@@ -1019,14 +1019,14 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 			numberOfGaps +=newValues.getNumberOfGaps();
 			numberOfNs += newValues.getNumberOfNs();
 			currentLength += newValues.getLength();
-			numberOfAmbiguities += newValues.getnumberOfAmiguities();
+			numberOfNonNAmbiguities += newValues.getnumberOfNonNAmiguities();
 		}
         
         public void decrement(NewValues newValues) {
 			numberOfGaps -=newValues.getNumberOfGaps();
 			numberOfNs -= newValues.getNumberOfNs();
 			currentLength -= newValues.getLength();
-			numberOfAmbiguities -= newValues.getnumberOfAmiguities();
+			numberOfNonNAmbiguities -= newValues.getnumberOfNonNAmiguities();
 		}
 
 		
@@ -1050,19 +1050,17 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 
         private void handleAmbiguity(boolean increment) {
             if(increment){
-                numberOfAmbiguities++;
+                numberOfNonNAmbiguities++;
             }else{
-                numberOfAmbiguities--;
+                numberOfNonNAmbiguities--;
             }
         }
 
         private void handleN(boolean increment) {
             if(increment){
 	            numberOfNs++;
-	            numberOfAmbiguities++;
             }else{
                 numberOfNs--;
-                numberOfAmbiguities--;
             }
         }
 
@@ -1087,10 +1085,10 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             return numberOfGaps;
         }
         /**
-         * @return the numberOfAmbiguities
+         * @return the numberOfNonNAmbiguities
          */
         int getNumberOfAmbiguities() {
-            return numberOfAmbiguities;
+            return numberOfNonNAmbiguities + numberOfNs;
         }
         /**
          * @return the numberOfNs
@@ -1243,8 +1241,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		
 		}
 
-		public int getnumberOfAmiguities() {
-			return length - (numberOfGaps + numberOfACGTs);
+		public int getnumberOfNonNAmiguities() {
+			return length - (numberOfGaps + numberOfNs+ numberOfACGTs);
 		}
 
 		public BitSet getBits() {
