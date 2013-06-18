@@ -98,7 +98,7 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
             this.sententialBase = sententialBase;
         }
         
-       private Nucleotide getNucleotide2(byte encodedByte, int index){
+       private Nucleotide getNucleotide(byte encodedByte, int index){
     	   //endian is backwards
     	   int j = (3-index%4)*2;
     	   return getGlyphFor((byte)((encodedByte>>j) &0x3));
@@ -142,7 +142,7 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
             buf.position(currentPosition+ bytesToSkip);
 
             int offsetIntoBitSet = (int)(index%4);
-            return getNucleotide2(buf.get(), offsetIntoBitSet);
+            return getNucleotide(buf.get(), offsetIntoBitSet);
         
         }
         private boolean isSentinelOffset(ByteBuffer buf, ValueSizeStrategy offsetStrategy, int index) {
@@ -152,11 +152,17 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
         	}
         	int numberOfSentinels = sentinelStrategy.getNext(buf);
         	int nextSentinelOffset= Integer.MIN_VALUE;
-        	//even though the offsets are sorted so if we get past
-        	//the desired index we can short circuit the for loop
-        	//we don't want to do that because 
-        	//we need to read thru the entire sentinel
-        	//section of the buffer
+        	//offsets are sorted so if we get to
+        	//the desired index we can short circuit the for loop.
+        	//we can't do a binarysearch very easily
+        	//because the offsets are packed many into 
+        	//one byte so we would have to read them all
+        	//in O(n) anyway.
+        	//it is also important that if we 
+        	//don't find the sentinel value
+        	//that the buffer has advanced to the end of the
+        	//section so we can start getting 
+        	//the other basecalls.
         	for(int i = 0; i< numberOfSentinels; i++){
         		nextSentinelOffset = offsetStrategy.getNext(buf);
 				if(index ==nextSentinelOffset){
@@ -330,8 +336,8 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
 		}
 		@Override
 		public String toString(byte[] encodedData) {
-			Iterator<Nucleotide> iter = iterator(encodedData);
-			StringBuilder builder = new StringBuilder(decodedLengthOf(encodedData));
+			IteratorImpl iter = (IteratorImpl)iterator(encodedData);
+			StringBuilder builder = new StringBuilder(iter.getLength());
 			while(iter.hasNext()){
 				builder.append(iter.next());
 			}
@@ -377,6 +383,10 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
 	           	           
 			}
 			
+			public int getLength() {
+				return length;
+			}
+
 			private int[] parseSentinelOffsetsIteratorFrom(
 					ByteBuffer buf, ValueSizeStrategy offsetStrategy) {
 				ValueSizeStrategy sentinelStrategy = VALUE_SIZE_STRATEGIES[buf.get()];
@@ -411,12 +421,12 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
 				if(!hasNext()){
 					throw new NoSuchElementException("no more elements");
 				}
-				if(nextSentinel !=END_OF_ITER && nextSentinel == currentOffset){
+				if(nextSentinel == currentOffset){
             		nextSentinel = getNextSentinel();
             		currentOffset++;
             		return sententialBase;
 				}
-				Nucleotide next= getNucleotide2(encodedBytes[currentOffset/4], currentOffset%4);
+				Nucleotide next= getNucleotide(encodedBytes[currentOffset/4], currentOffset%4);
 				currentOffset++;
 				return next;
 			}
