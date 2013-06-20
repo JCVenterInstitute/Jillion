@@ -42,6 +42,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.testUtil.EasyMockUtil;
 import org.junit.Test;
@@ -53,10 +54,29 @@ public class TestSffeadHeaderDecoder extends AbstractTestSFFReadHeaderCodec{
         encodeHeader(mockInputStream, expectedReadHeader);
         replay(mockInputStream);
         SffReadHeader actualReadHeader =sut.decodeReadHeader(new DataInputStream(mockInputStream));
+        
+       
         assertEquals(actualReadHeader, expectedReadHeader);
         verify(mockInputStream);
     }
+    
     @Test
+    public void noClipPointsShouldSetAdapterLengthToNumBases() throws SffDecoderException, IOException{
+        InputStream mockInputStream = createMock(InputStream.class);
+        encodeHeaderWithNoClipPoints(mockInputStream, expectedReadHeader);
+        replay(mockInputStream);
+        SffReadHeader actualReadHeader =sut.decodeReadHeader(new DataInputStream(mockInputStream));
+        DefaultSffReadHeader expectedReadHeader = new DefaultSffReadHeader(numberOfBases,
+                new Range.Builder(numberOfBases).shift(qual_left-1).build(),
+        			new Range.Builder(numberOfBases).shift(adapter_left-1).build(), name);
+        
+        
+        assertEquals(actualReadHeader, expectedReadHeader);
+        verify(mockInputStream);
+    }
+    
+
+	@Test
     public void sequenceNameLengthEncodedIncorrectlyShouldThrowIOException() throws  IOException{
         InputStream mockInputStream = createMock(InputStream.class);
         encodeHeaderWithWrongSequenceLength(mockInputStream, expectedReadHeader);
@@ -90,7 +110,26 @@ public class TestSffeadHeaderDecoder extends AbstractTestSFFReadHeaderCodec{
         verify(mockInputStream);
     }
 
-
+    private void encodeHeaderWithNoClipPoints(InputStream mockInputStream,
+			DefaultSffReadHeader readHeader) throws IOException {
+    	 final String seqName = readHeader.getId();
+         final int nameLength = seqName.length();
+         int unpaddedLength = 16+nameLength;
+         final long padds = SffUtil.caclulatePaddedBytes(unpaddedLength);
+         putShort(mockInputStream,(short)(padds+unpaddedLength));
+         putShort(mockInputStream,(short)nameLength);
+         putInt(mockInputStream,readHeader.getNumberOfBases());
+         putShort(mockInputStream,(short)readHeader.getQualityClip().getBegin(CoordinateSystem.RESIDUE_BASED));
+         putShort(mockInputStream,(short)0);
+         putShort(mockInputStream,(short)readHeader.getAdapterClip().getBegin(CoordinateSystem.RESIDUE_BASED));
+         putShort(mockInputStream,(short)0);
+         expect(mockInputStream.read(isA(byte[].class), eq(0),eq(nameLength)))
+             .andAnswer(EasyMockUtil.writeArrayToInputStream(seqName.getBytes()));
+         expect(mockInputStream.read()).andReturn(1);
+         expect(mockInputStream.skip(padds-1)).andReturn(padds-1);
+		
+	}
+    
     void encodeHeader(InputStream mockInputStream, SffReadHeader readHeader) throws IOException{
         final String seqName = readHeader.getId();
         final int nameLength = seqName.length();
