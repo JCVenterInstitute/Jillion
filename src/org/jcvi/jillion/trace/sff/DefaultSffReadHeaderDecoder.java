@@ -61,10 +61,8 @@ enum DefaultSffReadHeaderDecoder implements SffReadHeaderDecoder {
             }
             IOUtil.blockingSkip(in, padding);
             
-            return new DefaultSffReadHeader(numBases,
-                    Range.of(CoordinateSystem.RESIDUE_BASED, qualLeft, qualRight),
-                    Range.of(CoordinateSystem.RESIDUE_BASED, adapterLeft, adapterRight),
-                     name);
+            return createNewHeader(numBases, qualLeft, qualRight, adapterLeft,
+					adapterRight, name);
         }
         catch(IOException e){
             throw new SffDecoderException("error trying to decode read header",e);
@@ -88,15 +86,40 @@ enum DefaultSffReadHeaderDecoder implements SffReadHeaderDecoder {
                 throw new SffDecoderException("invalid header length");
             }
             buf.position(padding+ buf.position());
-            return new DefaultSffReadHeader(numBases,
-                    Range.of(CoordinateSystem.RESIDUE_BASED, qualLeft, qualRight),
-                    Range.of(CoordinateSystem.RESIDUE_BASED, adapterLeft, adapterRight),
-                     name);
+            
+            return createNewHeader(numBases, qualLeft, qualRight, adapterLeft,
+					adapterRight, name);
         }
         catch(IOException e){
             throw new SffDecoderException("error trying to decode read header",e);
         }
     }
+	public SffReadHeader createNewHeader(int numBases, short qualLeft,
+			short qualRight, short adapterLeft, short adapterRight, String name) {
+		//right clip points may be set to 0 in the file
+        //if value is NOT computed, spec says to use numBases instead
+		Range qualityClip, adapterClip;
+		if(qualRight==0){
+			qualityClip = new Range.Builder(numBases)
+							.shift(qualLeft -1)
+							.build();
+		}else{
+			qualityClip = Range.of(CoordinateSystem.RESIDUE_BASED, qualLeft, qualRight);
+		}
+		
+		if(adapterRight==0){
+			adapterClip = new Range.Builder(numBases)
+							.shift(adapterLeft -1)
+							.build();
+		}else{
+			adapterClip = Range.of(CoordinateSystem.RESIDUE_BASED, adapterLeft, adapterRight);
+		}
+		
+		return new DefaultSffReadHeader(numBases,
+				qualityClip,
+				adapterClip,
+		         name);
+	}
 
     private String readSequenceName(DataInputStream in, short length) throws IOException {
         byte[] name = new byte[length];
