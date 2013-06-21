@@ -96,20 +96,24 @@ enum DefaultSffReadHeaderDecoder implements SffReadHeaderDecoder {
     }
 	public SffReadHeader createNewHeader(int numBases, short qualLeft,
 			short qualRight, short adapterLeft, short adapterRight, String name) {
+		//if clip points are NOT computed, then left is 0
 		//right clip points may be set to 0 in the file
         //if value is NOT computed, spec says to use numBases instead
 		Range qualityClip, adapterClip;
-		if(qualRight==0){
+		if(qualLeft==0){
+			qualityClip = Range.of(CoordinateSystem.RESIDUE_BASED, 0, 0);
+		}else if(qualRight==0){
 			qualityClip = new Range.Builder(numBases)
-							.shift(qualLeft -1)
+							.contractBegin(qualLeft-1)
 							.build();
 		}else{
 			qualityClip = Range.of(CoordinateSystem.RESIDUE_BASED, qualLeft, qualRight);
 		}
-		
-		if(adapterRight==0){
+		if(adapterLeft==0){
+			adapterClip = Range.of(CoordinateSystem.RESIDUE_BASED, 0, 0);
+		}else if(adapterRight==0){
 			adapterClip = new Range.Builder(numBases)
-							.shift(adapterLeft -1)
+							.contractBegin(adapterLeft-1)
 							.build();
 		}else{
 			adapterClip = Range.of(CoordinateSystem.RESIDUE_BASED, adapterLeft, adapterRight);

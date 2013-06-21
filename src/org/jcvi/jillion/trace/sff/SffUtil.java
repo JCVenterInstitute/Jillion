@@ -25,6 +25,7 @@
  */
 package org.jcvi.jillion.trace.sff;
 
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -206,17 +207,20 @@ public final class SffUtil {
         return numberOfFlows * 2 + 3*numberOfBases;
         
     }
-    
+    public static int numberOfIntensities(Iterator<Nucleotide> iter){
+    	 int count=0;
+         Nucleotide currentBase= null;
+         while(iter.hasNext()){
+        	 Nucleotide n = iter.next();
+	         if(currentBase != n){
+	             currentBase =n;
+	             count++;
+	         }
+         }
+         return count;
+    }
     public static int numberOfIntensities(Iterable<Nucleotide> sequence){
-        int count=0;
-        Nucleotide currentBase= null;
-        for(Nucleotide n : sequence){
-            if(currentBase != n){
-                currentBase =n;
-                count++;
-            }
-        }
-        return count;
+       return numberOfIntensities(sequence.iterator());
         
     }
     /**
@@ -248,6 +252,8 @@ public final class SffUtil {
     
 	private static Range getTrimRangeFor(Range qualityClip, Range adapterClip,
 			long fullSequenceLength) {
+		
+		
 		long firstBaseOfInsert = Math.max(1,
                         Math.max(qualityClip.getBegin(CoordinateSystem.RESIDUE_BASED), 
                                 adapterClip.getBegin(CoordinateSystem.RESIDUE_BASED)));
@@ -255,6 +261,7 @@ public final class SffUtil {
                 qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED)==0?fullSequenceLength:qualityClip.getEnd(CoordinateSystem.RESIDUE_BASED), 
                         adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED)==0?fullSequenceLength:adapterClip.getEnd(CoordinateSystem.RESIDUE_BASED));
         
+		//return qualityClip.intersection(adapterClip);
         return Range.of(CoordinateSystem.RESIDUE_BASED, firstBaseOfInsert, lastBaseOfInsert);
 	}
 	 /**

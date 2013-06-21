@@ -67,8 +67,8 @@ public class TestSffeadHeaderDecoder extends AbstractTestSFFReadHeaderCodec{
         replay(mockInputStream);
         SffReadHeader actualReadHeader =sut.decodeReadHeader(new DataInputStream(mockInputStream));
         DefaultSffReadHeader expectedReadHeader = new DefaultSffReadHeader(numberOfBases,
-                new Range.Builder(numberOfBases).shift(qual_left-1).build(),
-        			new Range.Builder(numberOfBases).shift(adapter_left-1).build(), name);
+                new Range.Builder(numberOfBases).contractBegin(qual_left-1).build(),
+        			new Range.Builder(numberOfBases).contractBegin(adapter_left-1).build(), name);
         
         
         assertEquals(actualReadHeader, expectedReadHeader);
