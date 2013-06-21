@@ -212,7 +212,7 @@ public final class SffUtil {
          Nucleotide currentBase= null;
          while(iter.hasNext()){
         	 Nucleotide n = iter.next();
-	         if(currentBase != n){
+	         if(!currentBase.equals(n)){
 	             currentBase =n;
 	             count++;
 	         }
