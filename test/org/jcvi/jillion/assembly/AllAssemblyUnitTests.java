@@ -25,7 +25,6 @@
  */
 package org.jcvi.jillion.assembly;
 
-import org.jcvi.jillion.assembly.util.AllAssemblyUtilUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

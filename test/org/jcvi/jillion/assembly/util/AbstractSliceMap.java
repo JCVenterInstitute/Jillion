@@ -30,11 +30,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.jillion.assembly.AssembledRead;
-import org.jcvi.jillion.assembly.util.CoverageRegion;
-import org.jcvi.jillion.assembly.util.GapQualityValueStrategy;
-import org.jcvi.jillion.assembly.util.Slice;
-import org.jcvi.jillion.assembly.util.SliceElement;
-import org.jcvi.jillion.assembly.util.SliceMap;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -73,19 +68,18 @@ public abstract class  AbstractSliceMap implements SliceMap{
     }
     protected SliceElement createSliceElementFor(
             GapQualityValueStrategy qualityValueStrategy, int gappedIndex,
-            AssembledRead realRead,
+            AssembledRead read,
             final QualitySequence qualities) {
 
-        final Nucleotide calledBase = realRead.getNucleotideSequence().get(gappedIndex);
-        try{
-            PhredQuality qualityValue =qualityValueStrategy.getQualityFor(realRead, qualities, gappedIndex);
+        final Nucleotide calledBase = read.getNucleotideSequence().get(gappedIndex);
+        	
+            PhredQuality qualityValue =qualityValueStrategy
+        									.getGappedValidRangeQualitySequenceFor(read, qualities)
+            								.get(gappedIndex);
         
-        return new DefaultSliceElement(realRead.getId(), calledBase, qualityValue, realRead.getDirection());
-        }
-        catch(NullPointerException e){
-            throw e;
-        }
-        }
+        return new DefaultSliceElement(read.getId(), calledBase, qualityValue, read.getDirection());
+       
+   }
     
     static class  SliceIterator implements Iterator<Slice>{
         private final Iterator<Long> iter;

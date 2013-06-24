@@ -64,7 +64,7 @@ final class SffFlowgramImpl implements SffFlowgram {
                 indexes,
                 encodedValues);
     }
-    
+
 
     protected static short[] computeValues(final byte[] indexes,
             final short[] encodedValues) {

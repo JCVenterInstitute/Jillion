@@ -25,11 +25,11 @@ import java.util.List;
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssemblyUtil;
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 
 /**
  * {@code GapQualityValueStrategies} are different 
@@ -79,77 +79,76 @@ public enum GapQualityValueStrategy{
     }
     ;
     
- 
-    public QualitySequence getGappedValidRangeQualitySequenceFor(AssembledRead placedRead,
-            QualitySequence fullQualities){
-    	QualitySequence ungappedComplementedValidRangeQualities = AssemblyUtil.getUngappedComplementedValidRangeQualities(placedRead, fullQualities);
-		QualitySequenceBuilder gappedValidRangeQualityBuilder = new QualitySequenceBuilder(ungappedComplementedValidRangeQualities);
-
-    	ReferenceMappedNucleotideSequence sequence = placedRead.getNucleotideSequence();
-		List<Integer> gapOffsets=sequence.getGapOffsets();
+    public QualitySequence getGappedValidRangeQualitySequenceFor(NucleotideSequence validRangeSequence, QualitySequence rawQualities, Range validRange, Direction direction){
+    	QualitySequenceBuilder qualities = new QualitySequenceBuilder(rawQualities);
+    	
+    	QualitySequenceBuilder complementedRawQualities = new QualitySequenceBuilder(rawQualities);
+    	if(direction == Direction.REVERSE){
+    		qualities.reverse();
+    		complementedRawQualities.reverse();
+    	}
+    	qualities.trim(validRange);
+    	
+    	List<Integer> gapOffsets=validRangeSequence.getGapOffsets();
 		
+    	int maxSeqOffset = (int)validRangeSequence.getLength() -1;
+    	int rawShiftOffset = (int)validRange.getBegin();
     	for(Integer gapOffset : gapOffsets){
     		int offset = gapOffset.intValue();
-    		int leftFlankingNonGapIndex = sequence.getUngappedOffsetFor(AssemblyUtil.getLeftFlankingNonGapIndex(sequence,offset));
-            int rightFlankingNonGapIndex = sequence.getUngappedOffsetFor(AssemblyUtil.getRightFlankingNonGapIndex(sequence,offset));
-            
-            PhredQuality leftQuality =ungappedComplementedValidRangeQualities.get(leftFlankingNonGapIndex);
-            PhredQuality rightQuality =ungappedComplementedValidRangeQualities.get(rightFlankingNonGapIndex);
+    		int leftFlankGappedOffset = Math.max(0, AssemblyUtil.getLeftFlankingNonGapIndex(validRangeSequence,offset));
+    		int rightFlankingGappedOffset = AssemblyUtil.getRightFlankingNonGapIndex(validRangeSequence,offset);
+			
+    		int rightFlankingNonGapIndex;
+    		if(rightFlankingGappedOffset > maxSeqOffset){
+    			//right flank offset is beyond the valid range
+    			//this means the read valid sequence ends with a gap
+    			//this is an unlikely edge case that probably can
+    			//only happen by rogue software or manual edits
+    			rightFlankingNonGapIndex = (int)validRangeSequence.getUngappedLength()+rawShiftOffset;
+    		}else{
+    			rightFlankingNonGapIndex = validRangeSequence.getUngappedOffsetFor(rightFlankingGappedOffset);
+                
+    		}
+    		
+			int leftFlankingNonGapIndex = validRangeSequence.getUngappedOffsetFor(leftFlankGappedOffset);
+
+            PhredQuality leftQuality =complementedRawQualities.get(rawShiftOffset+leftFlankingNonGapIndex);
+            PhredQuality rightQuality =complementedRawQualities.get(rawShiftOffset+rightFlankingNonGapIndex);
             
             PhredQuality gappedQuality = computeQualityValueForGap(rightFlankingNonGapIndex - leftFlankingNonGapIndex, 
             		offset -leftFlankingNonGapIndex , 
             		leftQuality, rightQuality);
-            gappedValidRangeQualityBuilder.insert(offset, gappedQuality);
+            qualities.insert(offset, gappedQuality);
     	}
-    	return gappedValidRangeQualityBuilder.build();
+    	
+    	return qualities.build();
+    }
+    public QualitySequence getGappedValidRangeQualitySequenceFor(AssembledRead read,
+            QualitySequence rawQualities){
+    	if(read ==null){
+    		throw new NullPointerException("read can not be null");
+    	}
+    	if(rawQualities ==null){
+    		throw new NullPointerException("qualities can not be null");
+    	}
+    	return getGappedValidRangeQualitySequenceFor(read.getNucleotideSequence(), 
+    			rawQualities, 
+    			read.getReadInfo().getValidRange(), 
+    			read.getDirection());
     	
     }
 
-    public PhredQuality getQualityFor(AssembledRead placedRead,
-            QualitySequence fullQualities,
-            int gappedReadIndex) {
-        if(fullQualities ==null){
-            throw new NullPointerException("null qualities for "+placedRead);
-        }
-        final QualitySequence unComplimentedQualities;
-        if(placedRead.getDirection()==Direction.REVERSE){
-        	unComplimentedQualities = new QualitySequenceBuilder(fullQualities)
-        									.reverse()
-        									.build();
-        }else{
-        	unComplimentedQualities = fullQualities;
-        }
-        final NucleotideSequence sequence = placedRead.getNucleotideSequence();
-        if(!sequence.isGap(gappedReadIndex)){
-            
-            return getQualityForNonGapBase(placedRead, unComplimentedQualities, gappedReadIndex);
-        }
-        int leftFlankingNonGapIndex = AssemblyUtil.getLeftFlankingNonGapIndex(sequence,gappedReadIndex-1);
-        int rightFlankingNonGapIndex = AssemblyUtil.getRightFlankingNonGapIndex(sequence,gappedReadIndex+1);
-        
-        final PhredQuality qualityOfGap = getQualityValueForGap(leftFlankingNonGapIndex, rightFlankingNonGapIndex, placedRead, unComplimentedQualities,gappedReadIndex);
-        
-        return qualityOfGap;
-    }
+   
    
     protected abstract PhredQuality computeQualityValueForGap(int numberOfGapsBetweenFlanks, int ithGapToCompute,
             PhredQuality leftFlankingQuality, PhredQuality rightFlankingQuality);
     
-    private PhredQuality getQualityValueForGap(int leftFlankingNonGapIndex,
-            int rightFlankingNonGapIndex, AssembledRead placedRead,
-            QualitySequence unComplimentedQualities,int indexOfGap) {
-          
-        PhredQuality leftFlankingQuality = getQualityForNonGapBase(placedRead, unComplimentedQualities, leftFlankingNonGapIndex);
-        PhredQuality rightFlankingQuality = getQualityForNonGapBase(placedRead, unComplimentedQualities, rightFlankingNonGapIndex);
-        int ithGapToCompute = indexOfGap - leftFlankingNonGapIndex-1;
-        final int numberOfGapsBetweenFlanks = rightFlankingNonGapIndex-leftFlankingNonGapIndex-1;
-        return computeQualityValueForGap(numberOfGapsBetweenFlanks, ithGapToCompute, leftFlankingQuality, rightFlankingQuality);
-    }
+   
     
 
     protected PhredQuality getQualityForNonGapBase(AssembledRead placedRead, QualitySequence uncomplementedQualities,
             int gappedReadIndexForNonGapBase) {
-        int ungappedFullRangeIndex = AssemblyUtil.convertToUngappedFullRangeOffset(placedRead, (int)uncomplementedQualities.getLength(),gappedReadIndexForNonGapBase);            
+        int ungappedFullRangeIndex = AssemblyUtil.convertToUngappedFullRangeOffset(placedRead, gappedReadIndexForNonGapBase);            
         
         return uncomplementedQualities.get(ungappedFullRangeIndex);
     }

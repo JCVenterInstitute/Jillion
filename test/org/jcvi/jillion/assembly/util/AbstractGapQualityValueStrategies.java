@@ -57,65 +57,15 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
     protected abstract GapQualityValueStrategy getGapQualityValueStrategies();
     
     @Test(expected = NullPointerException.class)
-    public void nullQualitiesShouldThrowNPE(){
-        sut.getQualityFor(placedRead, null, 2);
+    public void getGappedValidRangeQualSequenceByReadWithNullQualitiesShouldThrowNPE(){
+        sut.getGappedValidRangeQualitySequenceFor(placedRead, null);
     }
     @Test(expected = NullPointerException.class)
-    public void nullPlacedReadShouldThrowNPE(){
-        sut.getQualityFor(null, createMock(QualitySequence.class), 2);
+    public void getGappedValidRangeQualSequenceByReadWithNullReadShouldThrowNPE(){
+        sut.getGappedValidRangeQualitySequenceFor(null, createMock(QualitySequence.class));
     }
     @Test
-    public void getUngappedQualityFromForwardRead(){
-        int gappedReadIndex = 12;
-        int fullIndex = 22;
-        expect(placedRead.getNucleotideSequence()).andReturn(sequence).anyTimes();
-        expect(sequence.isGap(gappedReadIndex)).andReturn(false);
-       
-        expect(placedRead.getDirection()).andStubReturn(Direction.FORWARD);
-        Range validRange = Range.of(10,100);
-        expect(sequence.getLength()).andReturn(validRange.getLength());
-        int fullLength = (int)(validRange.getEnd()+validRange.getBegin());
-        ReadInfo readInfo = new ReadInfo(validRange, fullLength);
-        expect(placedRead.getReadInfo()).andStubReturn(readInfo);
-        expect(sequence.getUngappedOffsetFor(gappedReadIndex)).andReturn(gappedReadIndex);
-        
-        QualitySequence qualities =new QualitySequenceBuilder(new byte[fullLength])
-                                .replace(fullIndex, expectedQuality)
-                                .build();
-        
-        replayAll();
-        assertEquals(expectedQuality,
-                sut.getQualityFor(placedRead, qualities, gappedReadIndex));
-        verifyAll();
-    }
-    @Test
-    public void getUngappedQualityFromReverseRead(){
-        int gappedReadIndex = 12;
-        int ungappedReadOffset = gappedReadIndex-2;
-        Range validRange = Range.of(10,100);
-        int fullLength=110;
-        expect(placedRead.getNucleotideSequence()).andReturn(sequence).anyTimes();
-        expect(placedRead.getDirection()).andStubReturn(Direction.REVERSE);
-        expect(sequence.isGap(gappedReadIndex)).andReturn(false);
-        expect(sequence.getUngappedOffsetFor(gappedReadIndex)).andReturn(ungappedReadOffset);
-        ReadInfo readInfo = new ReadInfo(validRange, fullLength);
-        expect(sequence.getLength()).andReturn(validRange.getLength());
-        expect(placedRead.getReadInfo()).andStubReturn(readInfo);
-        
-        QualitySequence qualities =new QualitySequenceBuilder(new byte[fullLength])
-        						.reverse()
-        						.replace((int)(ungappedReadOffset + validRange.getBegin()), expectedQuality)
-        						.reverse()
-        						.build();
-                                
-        replayAll();
-        assertEquals(expectedQuality,
-                sut.getQualityFor(placedRead, qualities, gappedReadIndex));
-        verifyAll();
-    }
-    
-    @Test
-    public void testGappedValidRangeQualitySequence(){
+    public void testGappedValidRangeQualityForwardSequence(){
     	QualitySequenceBuilder fullLengthQualities = new QualitySequenceBuilder();
     	for(int i =0; i<15; i++){
     		fullLengthQualities.append(i+1);
@@ -128,18 +78,35 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
     													.buildReferenceEncodedNucleotideSequence();
     	
     	expect(placedRead.getNucleotideSequence()).andStubReturn(readSeq);
-    	expect(placedRead.getReadInfo()).andStubReturn(new ReadInfo(Range.of(2,11), 15));
+    	Range validRange = Range.of(2,11);
+		expect(placedRead.getReadInfo()).andStubReturn(new ReadInfo(validRange, 15));
     	expect(placedRead.getDirection()).andStubReturn(Direction.FORWARD);
     	expect(placedRead.getGappedLength()).andStubReturn(seq.getLength());
     	replayAll();
     	QualitySequence fullLengthUngappedQualities = fullLengthQualities.build();
     	
-    	QualitySequence fullLengthGappedQualities = sut.getGappedValidRangeQualitySequenceFor(placedRead, fullLengthUngappedQualities);
-    
-    	for(int i=0; i<seq.getLength(); i++){
-    		assertEquals(""+i, fullLengthGappedQualities.get(i), 
-    				sut.getQualityFor(placedRead, fullLengthUngappedQualities, i));
-    	}
+    	
+    	//clr =     |                    |
+    	//raw = 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+        //          A A -A- A A A A--AA-A
+    	
+    	
+    	QualitySequenceBuilder expectedBuilder = new QualitySequenceBuilder(fullLengthUngappedQualities)
+    													.trim(validRange);
+    	
+    	expectedBuilder.insert(2, sut.computeQualityValueForGap(1, 0, PhredQuality.valueOf(4),PhredQuality.valueOf(5)));
+    	expectedBuilder.insert(4, sut.computeQualityValueForGap(1, 0, PhredQuality.valueOf(5),PhredQuality.valueOf(6)));
+    	
+    	expectedBuilder.insert(9, sut.computeQualityValueForGap(2, 0, PhredQuality.valueOf(9),PhredQuality.valueOf(10)));
+    	expectedBuilder.insert(10, sut.computeQualityValueForGap(2, 1, PhredQuality.valueOf(9),PhredQuality.valueOf(10)));
+    	
+    	expectedBuilder.insert(13, sut.computeQualityValueForGap(1, 0, PhredQuality.valueOf(11),PhredQuality.valueOf(12)));
+    	
+    	QualitySequence expectedValidRangeGappedQualities = expectedBuilder.build();
+    	QualitySequence validRangeGappedQualities = sut.getGappedValidRangeQualitySequenceFor(placedRead, fullLengthUngappedQualities);
+    	
+    	assertEquals(expectedValidRangeGappedQualities, validRangeGappedQualities);
+    	
     }
     
     @Test
@@ -156,19 +123,36 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
     													.buildReferenceEncodedNucleotideSequence();
     	
     	expect(placedRead.getNucleotideSequence()).andStubReturn(readSeq);
-    	expect(placedRead.getReadInfo()).andStubReturn(new ReadInfo(Range.of(2,11), 15));
+    	Range validRange = Range.of(2,11);
+		expect(placedRead.getReadInfo()).andStubReturn(new ReadInfo(validRange, 15));
     	expect(placedRead.getDirection()).andStubReturn(Direction.REVERSE);
     	expect(placedRead.getGappedLength()).andStubReturn(seq.getLength());
     	replayAll();
     	QualitySequence fullLengthUngappedQualities = fullLengthQualities.build();
     	
-    	QualitySequence fullLengthGappedQualities = sut.getGappedValidRangeQualitySequenceFor(placedRead, fullLengthUngappedQualities);
-    
+    	//clr =     |                    |
+    	//raw = 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+
+    	//clr =        |                    |
+    	//rev = 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1
+    	//             A A -A- A A A A--AA-A
     	
-    	for(int i=0; i<seq.getLength(); i++){
-    		assertEquals(""+i, fullLengthGappedQualities.get(i), 
-    				sut.getQualityFor(placedRead, fullLengthUngappedQualities, i));
-    	}
+    	QualitySequenceBuilder expectedBuilder = new QualitySequenceBuilder(
+    																new byte[]{13,12,11,10,9,8,7,6,5,4});
+    	
+    	expectedBuilder.insert(2, sut.computeQualityValueForGap(1, 0, PhredQuality.valueOf(12),PhredQuality.valueOf(11)));
+    	expectedBuilder.insert(4, sut.computeQualityValueForGap(1, 0, PhredQuality.valueOf(11),PhredQuality.valueOf(10)));
+    	
+    	expectedBuilder.insert(9, sut.computeQualityValueForGap(2, 0, PhredQuality.valueOf(7),PhredQuality.valueOf(6)));
+    	expectedBuilder.insert(10, sut.computeQualityValueForGap(2, 1, PhredQuality.valueOf(7),PhredQuality.valueOf(6)));
+    	
+    	expectedBuilder.insert(13, sut.computeQualityValueForGap(1, 0, PhredQuality.valueOf(5),PhredQuality.valueOf(4)));
+    	
+    	QualitySequence expectedValidRangeGappedQualities = expectedBuilder.build();
+    	QualitySequence validRangeGappedQualities = sut.getGappedValidRangeQualitySequenceFor(placedRead, fullLengthUngappedQualities);
+    	
+    	assertEquals(expectedValidRangeGappedQualities, validRangeGappedQualities);
+    	
     }
     
 }

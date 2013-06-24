@@ -78,16 +78,22 @@ public class DefaultSliceMap extends AbstractSliceMap{
     		while(readIter.hasNext()){
     			PR read = readIter.next();
     			int start = (int)read.getGappedStartOffset();
-    			int i=0;
     			String id =read.getId();
     			Direction dir = read.getDirection();
     			
     			QualitySequence fullQualities = qualityDataStore.get(id);
-    			for(Nucleotide base : read.getNucleotideSequence()){
-    				PhredQuality quality = qualityValueStrategy.getQualityFor(read, fullQualities, i);
+    			QualitySequence gappedValidRangeQualities = qualityValueStrategy.getGappedValidRangeQualitySequenceFor(read, fullQualities);
+    			
+    			Iterator<Nucleotide> baseIter = read.getNucleotideSequence().iterator();
+    			Iterator<PhredQuality> qualIter = gappedValidRangeQualities.iterator();
+    			int i=0;
+    			while(baseIter.hasNext()){
+    				Nucleotide base = baseIter.next();
+    				PhredQuality quality = qualIter.next();
     				builders[start+i].add(id, base, quality, dir);
     				i++;
     			}
+    			
     		}
     		//done building
     		this.slices = new Slice[builders.length];

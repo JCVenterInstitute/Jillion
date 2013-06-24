@@ -101,7 +101,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
 	 */
 	private QualitySequenceDataStore qualityDataStore =null;
 	
-	private GapQualityValueStrategy qualityValueStrategy=null;
+	private GapQualityValueStrategy qualityValueStrategy=GapQualityValueStrategy.LOWEST_FLANKING;
 	
     private NucleotideSequence initialConsensus;
     private final NucleotideSequenceBuilder mutableConsensus;
@@ -257,9 +257,20 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     	if(qualityDataStore ==null){
     		throw new NullPointerException("quality datastore can not be null");
     	}
+    	if(qualityValueStrategy ==null){
+    		throw new NullPointerException("quality value strategy can not be null");
+    	}
     	this.consensusCaller=consensusCaller;
     	this.qualityDataStore = qualityDataStore;
     	this.qualityValueStrategy = qualityValueStrategy;
+    	return this;
+    }
+    
+    public AceContigBuilder updateConsensusRecaller(ConsensusCaller consensusCaller){
+    	if(consensusCaller ==null){
+    		throw new NullPointerException("consensus caller can not be null");
+    	}
+    	this.consensusCaller=consensusCaller;
     	return this;
     }
     /**
@@ -325,7 +336,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     	}
     	this.consensusCaller=consensusCaller;
     	this.qualityDataStore = null;
-    	this.qualityValueStrategy = null;
+    	this.qualityValueStrategy = GapQualityValueStrategy.LOWEST_FLANKING;
     	return this;
     }
     /**
@@ -595,39 +606,41 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     	
     	for(AceAssembledReadBuilder aceReadBuilder : aceReadBuilderMap.values()){
     		int start = (int)aceReadBuilder.getBegin();
-			int i=0;
+			
 			String id =aceReadBuilder.getId();
 			Direction dir = aceReadBuilder.getDirection();
 			QualitySequence fullQualities =null;
-			AceAssembledRead tempRead=null;
+			
 			if(qualityDataStore!=null){
 				try {
 					fullQualities = qualityDataStore.get(id);
 				} catch (DataStoreException e) {
 					throw new IllegalStateException("error recalling consensus",e);
 				}
-				//should be able to call build multiple times
-				tempRead = aceReadBuilder.build();
     			if(fullQualities ==null){
     				throw new NullPointerException("could not get qualities for "+id);
     			}
 			}
+			NucleotideSequence readSequence = aceReadBuilder.getCurrentNucleotideSequence();
+			if(fullQualities==null){
+				byte[] qualArray = new byte[(int)readSequence.getUngappedLength()];
+				Arrays.fill(qualArray, DEFAULT_QUALITY.getQualityScore());
+				fullQualities = new QualitySequenceBuilder(qualArray).build();
+			}
+			QualitySequence gappedValidRangequalities = 
+					qualityValueStrategy.getGappedValidRangeQualitySequenceFor(readSequence, fullQualities, 
+							aceReadBuilder.getClearRange(), dir);	
 			
-			
-			for(Nucleotide base : aceReadBuilder.getCurrentNucleotideSequence()){
-				
-				final PhredQuality quality;
-				if(fullQualities==null){
-					quality = DEFAULT_QUALITY;
-				}else{					
-					//if fullQualities is not null then
-					//qualityValueStrategy must be non-null as well
-					quality= qualityValueStrategy.getQualityFor(tempRead, fullQualities, i);
-				}
-				
+			Iterator<Nucleotide> baseIter = readSequence.iterator();
+			Iterator<PhredQuality> qualIter = gappedValidRangequalities.iterator();
+			int i=0;
+			while(baseIter.hasNext()){
+				Nucleotide base = baseIter.next();
+				PhredQuality quality = qualIter.next();
 				builders[start+i].add(id, base, quality, dir);
 				i++;
 			}
+			
     	}
     	for(int i=0; i<builders.length; i++){
     		SliceBuilder builder = builders[i];

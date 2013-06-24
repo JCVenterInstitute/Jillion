@@ -43,12 +43,17 @@ import org.jcvi.jillion.assembly.consed.phd.PhdBallWriter;
 import org.jcvi.jillion.assembly.consed.phd.PhdDataStore;
 import org.jcvi.jillion.assembly.consed.phd.PhdFileDataStoreBuilder;
 import org.jcvi.jillion.assembly.consed.phd.PhdWriter;
+import org.jcvi.jillion.assembly.util.GapQualityValueStrategy;
 import org.jcvi.jillion.assembly.util.consensus.NextGenReferenceConsensusRecaller;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
+import org.jcvi.jillion.core.datastore.DataStoreUtil;
+import org.jcvi.jillion.core.datastore.DataStoreUtil.AdapterCallback;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.DateUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -167,7 +172,7 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 		try {
 			phdOut.close();
 			PhdDataStore phdDataStore = new PhdFileDataStoreBuilder(phdFile)
-										.hint(DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_MEMORY)
+										//.hint(DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_MEMORY)
 										.build();
 			File editDir = new File(consedOutputDir, "edit_dir");
 			File aceFile = new File(editDir, prefix + ".ace.1");
@@ -176,11 +181,19 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 										.build();
 			Iterator<Entry<String, AceContigBuilder>> referenceEntryIter = contigBuilders.entrySet().iterator();
 			
-			
+			QualitySequenceDataStore qualityDataStore = DataStoreUtil.adapt(
+					QualitySequenceDataStore.class,
+					phdDataStore,
+					new AdapterCallback<Phd, QualitySequence>() {
+						@Override
+						public QualitySequence get(Phd from) {
+							return from.getQualitySequence();
+						}						
+					});
 			while(referenceEntryIter.hasNext()){
 				Entry<String, AceContigBuilder> refEntry = referenceEntryIter.next();
 				AceContigBuilder contigBuilder = refEntry.getValue();
-				contigBuilder.recallConsensus(new NextGenReferenceConsensusRecaller());
+				contigBuilder.recallConsensus(new NextGenReferenceConsensusRecaller(), qualityDataStore, GapQualityValueStrategy.LOWEST_FLANKING);
 				postProcess(contigBuilder);
 				visitBeginReference(refEntry.getKey());
 				for(Entry<Range,AceContig> entry : ConsedUtil.split0xContig(contigBuilder,true).entrySet()){
