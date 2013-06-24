@@ -25,7 +25,6 @@
  */
 package org.jcvi.jillion.trace.sff;
 
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +34,8 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.core.util.iter.PeekableIterator;
 
 /**
  * Utility class for working with sff
@@ -207,22 +208,30 @@ public final class SffUtil {
         return numberOfFlows * 2 + 3*numberOfBases;
         
     }
-    public static int numberOfIntensities(Iterator<Nucleotide> iter){
-    	 int count=0;
-         Nucleotide currentBase= null;
-         while(iter.hasNext()){
-        	 Nucleotide n = iter.next();
-	         if(!currentBase.equals(n)){
-	             currentBase =n;
-	             count++;
-	         }
-         }
-         return count;
-    }
-    public static int numberOfIntensities(Iterable<Nucleotide> sequence){
-       return numberOfIntensities(sequence.iterator());
+    
+    public static float getFlowValueFor(SffFlowgram flowgram, int ungappedFullRangeOffset){
+
+        int i=0;
+        PeekableIterator<Nucleotide> nucIter = IteratorUtil.createPeekableIterator(flowgram.getNucleotideSequence()
+        											.iterator(Range.ofLength(ungappedFullRangeOffset+1)));
         
+        int j=0;
+        float currentFlowValue=0;
+        while( j < ungappedFullRangeOffset){
+        	Nucleotide base = nucIter.next();
+        	j++;
+        	while(nucIter.hasNext() && base.equals(nucIter.peek())){
+        		nucIter.next();
+        		j++;
+        	}
+        	currentFlowValue = flowgram.getCalledFlowValue(i);
+        	i++;
+        	
+        }
+
+        return currentFlowValue;
     }
+   
     /**
      * Compute the trim {@link Range} that should be used
      * for this {@link SffFlowgram}.  This method

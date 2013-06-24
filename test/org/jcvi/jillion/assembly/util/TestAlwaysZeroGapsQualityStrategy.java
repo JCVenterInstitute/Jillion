@@ -56,7 +56,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{11,12,13,14}).build();
         
-        sut.getQualityFor(read, qualities, 4);
+        sut.getGappedValidRangeQualitySequenceFor(read, qualities);
     }
     
     @Test(expected = IndexOutOfBoundsException.class)
@@ -67,7 +67,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities = new QualitySequenceBuilder(new byte[]{11,12,13,14}).build();
         
-        sut.getQualityFor(read, qualities, 0);
+        sut.getGappedValidRangeQualitySequenceFor(read, qualities);
     }
     
     @Test
@@ -78,7 +78,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{11,12,13,14,5,6}).build();
         
-        assertEquals(ZERO, sut.getQualityFor(read, qualities, 4));
+        assertEquals(ZERO, sut.getGappedValidRangeQualitySequenceFor(read, qualities).get(4));
     }
     
     @Test
@@ -89,7 +89,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities = new QualitySequenceBuilder(new byte[]{5,6,11,12,13,14,}).build();
         
-        assertEquals(ZERO, sut.getQualityFor(read, qualities, 0));
+        assertEquals(ZERO, sut.getGappedValidRangeQualitySequenceFor(read, qualities).get(0));
     }
     
     @Test
@@ -100,7 +100,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{11,12,13,14,15,16,17}).build();
         
-        assertEquals(ZERO,sut.getQualityFor(read, qualities, 4));
+        assertEquals(ZERO,sut.getGappedValidRangeQualitySequenceFor(read, qualities).get(4));
     }
     @Test
     public void oneGapShouldReverseReturnQualityValue0(){
@@ -110,7 +110,7 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{11,12,13,14,15,16,17}).build();
         
-        assertEquals(ZERO,sut.getQualityFor(read, qualities, 4));
+        assertEquals(ZERO,sut.getGappedValidRangeQualitySequenceFor(read, qualities).get(4));
     }
     
     @Test
@@ -119,9 +119,10 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
                                     .addRead("readId", 0, "ACGT--CGT")
                                     .build();
         AssembledRead read = contig.getRead("readId");
-        QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{11,12,13,14,15,16}).build();
-        assertEquals(ZERO,sut.getQualityFor(read, qualities, 4));
-        assertEquals(ZERO,sut.getQualityFor(read, qualities, 5));
+        QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{11,12,13,14,15,16,17}).build();
+        QualitySequence gappedValidRangeQualitySequence = sut.getGappedValidRangeQualitySequenceFor(read, qualities);
+		assertEquals(ZERO,gappedValidRangeQualitySequence.get(4));
+        assertEquals(ZERO,gappedValidRangeQualitySequence.get(5));
     }
     @Test
     public void multiGapGapShouldReverseReturnQualityValue0(){
@@ -131,8 +132,9 @@ public class TestAlwaysZeroGapsQualityStrategy extends AbstractGapQualityValueSt
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{11,12,13,14,15,16,17,18}).build();
         
-        assertEquals(ZERO,sut.getQualityFor(read, qualities, 4));
-        assertEquals(ZERO,sut.getQualityFor(read, qualities, 5));
+        QualitySequence gappedValidRangeQualitySequence = sut.getGappedValidRangeQualitySequenceFor(read, qualities);
+		assertEquals(ZERO,gappedValidRangeQualitySequence.get(4));
+        assertEquals(ZERO,gappedValidRangeQualitySequence.get(5));
     }
 
 }

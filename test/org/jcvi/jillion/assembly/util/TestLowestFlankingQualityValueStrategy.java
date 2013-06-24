@@ -47,7 +47,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{11,12,13,14}).build();
         
-        sut.getQualityFor(read, qualities, 4);
+        sut.getGappedValidRangeQualitySequenceFor(read, qualities);
     }
     
     @Test(expected = IndexOutOfBoundsException.class)
@@ -58,7 +58,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{11,12,13,14}).build();
         
-       sut.getQualityFor(read, qualities, 0);
+       sut.getGappedValidRangeQualitySequenceFor(read, qualities);
     }
    
     /**
@@ -77,7 +77,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{0,0,0,16,16,0,0,0}).build();
         
-        assertEquals(qualities.get(3),sut.getQualityFor(read, qualities, 4));
+        assertEquals(qualities.get(3),sut.getGappedValidRangeQualitySequenceFor(read, qualities).get(4));
     }
     
     @Test
@@ -88,7 +88,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{0,0,0,14,16,0,0,0}).build();
         
-        assertEquals(qualities.get(3),sut.getQualityFor(read, qualities, 4));
+        assertEquals(qualities.get(3),sut.getGappedValidRangeQualitySequenceFor(read, qualities).get(4));
     }
     @Test
     public void reverseLeftFlankingGapIsLowerShouldReturnLeftFlankingQuality(){
@@ -98,7 +98,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{0,0,0,0,14,16,0,0}).build();
         
-        assertEquals(qualities.get(2),sut.getQualityFor(read, qualities, 4));
+        assertEquals(qualities.get(2),sut.getGappedValidRangeQualitySequenceFor(read, qualities).get(4));
     }
     @Test
     public void rightFlankingGapIsLowerShouldReturnRightFlankingQuality(){
@@ -108,7 +108,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{0,0,0,14,11,0,0,0}).build();
         
-        assertEquals(qualities.get(4),sut.getQualityFor(read, qualities, 4));
+        assertEquals(qualities.get(4),sut.getGappedValidRangeQualitySequenceFor(read, qualities).get(4));
     }
     @Test
     public void rightReverseFlankingGapIsLowerShouldReturnRightFlankingQuality(){
@@ -118,7 +118,7 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{0,0,14,11,0,0,0}).build();
         
-        assertEquals(qualities.get(3),sut.getQualityFor(read, qualities, 4));
+        assertEquals(qualities.get(3),sut.getGappedValidRangeQualitySequenceFor(read, qualities).get(4));
     }
     @Test
     public void multiGapRightFlankingGapIsLowerShouldReturnRightFlankingQuality(){
@@ -128,8 +128,9 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{0,0,0,14,11,0,0,0}).build();
         
-        assertEquals(qualities.get(4),sut.getQualityFor(read, qualities, 4));
-        assertEquals(qualities.get(4),sut.getQualityFor(read, qualities, 5));
+        QualitySequence gappedValidRangeQualitySequence = sut.getGappedValidRangeQualitySequenceFor(read, qualities);
+		assertEquals(qualities.get(4),gappedValidRangeQualitySequence.get(4));
+        assertEquals(qualities.get(4),gappedValidRangeQualitySequence.get(5));
     }
     @Test
     public void multiGapLeftFlankingGapIsLowerShouldReturnLeftFlankingQuality(){
@@ -139,8 +140,9 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{0,0,0,14,16,0,0,0}).build();
         
-        assertEquals(qualities.get(3),sut.getQualityFor(read, qualities, 4));
-        assertEquals(qualities.get(3),sut.getQualityFor(read, qualities, 5));
+        QualitySequence gappedValidRangeQualitySequence = sut.getGappedValidRangeQualitySequenceFor(read, qualities);
+		assertEquals(qualities.get(3),gappedValidRangeQualitySequence.get(4));
+        assertEquals(qualities.get(3),gappedValidRangeQualitySequence.get(5));
     }
     
     
@@ -152,8 +154,9 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{0,0,14,11,0,0,0}).build();
         
-        assertEquals(qualities.get(3),sut.getQualityFor(read, qualities, 4));
-        assertEquals(qualities.get(3),sut.getQualityFor(read, qualities, 5));
+        QualitySequence gappedValidRangeQualitySequence = sut.getGappedValidRangeQualitySequenceFor(read, qualities);
+		assertEquals(qualities.get(3),gappedValidRangeQualitySequence.get(4));
+        assertEquals(qualities.get(3),gappedValidRangeQualitySequence.get(5));
     }
     @Test
     public void multiGapReverseLeftFlankingGapIsLowerShouldReturnLeftFlankingQuality(){
@@ -163,7 +166,8 @@ public class TestLowestFlankingQualityValueStrategy extends AbstractGapQualityVa
         AssembledRead read = contig.getRead("readId");
         QualitySequence qualities =  new QualitySequenceBuilder(new byte[]{0,0,14,16,0,0,0}).build();
         
-        assertEquals(qualities.get(2),sut.getQualityFor(read, qualities, 4));
-        assertEquals(qualities.get(2),sut.getQualityFor(read, qualities, 5));
+        QualitySequence gappedValidRangeQualitySequence = sut.getGappedValidRangeQualitySequenceFor(read, qualities);
+		assertEquals(qualities.get(2),gappedValidRangeQualitySequence.get(4));
+        assertEquals(qualities.get(2),gappedValidRangeQualitySequence.get(5));
     }
 }

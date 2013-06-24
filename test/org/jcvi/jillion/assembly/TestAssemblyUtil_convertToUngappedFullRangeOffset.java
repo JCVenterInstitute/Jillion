@@ -56,14 +56,16 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
     }
     
     @Test
-    public void reverseSequenceNoGapsValidLengthIsEntireSequenceShouldReturnSameOffset(){
+    public void reverseSequenceNoGapsValidLengthIsEntireSequence(){
         AssembledRead mockRead = new MockPlacedReadBuilder("ACGTACGT",8)
                                 .validRange(Range.ofLength(8))
                                 .direction(Direction.REVERSE)
                                 .build();
-        int offset = 4;
         replayAll();
-        assertEquals(offset, AssemblyUtil.convertToUngappedFullRangeOffset(mockRead,offset));
+        for(int i=0; i<8; i++){
+        	assertEquals(8-1-i, AssemblyUtil.convertToUngappedFullRangeOffset(mockRead,i));
+        }
+        
     }
     
     @Test

@@ -71,13 +71,29 @@ public final class AssemblyUtil {
      
         return builder.build();
     }
-    
-    public static QualitySequence getUngappedComplementedValidRangeQualities(AssembledRead read,QualitySequence fullRangeUnComplementedQualities){
-    	QualitySequenceBuilder builder = new QualitySequenceBuilder(fullRangeUnComplementedQualities);
+    /**
+     * Get the {@link QualitySequence} for the given
+     * read's VALID RANGE taking direction into account.
+     * @param read the read; can not be null.
+     * @param fullRangeRawQualities the "raw" quality values
+     * returned by the sequencer.  These qualities are 
+     * <strong>un-complemented</strong> even if the 
+     * read is reverse.Can not be null.
+     * @return a new {@link QualitySequence} instance
+     * which will be trimmed complemented qualities;
+     * will never be null.
+     * @throws NullPointerException if either parameters is null.
+     */
+    public static QualitySequence getUngappedComplementedValidRangeQualities(AssembledRead read,QualitySequence fullRangeRawQualities){
+    	QualitySequenceBuilder builder = new QualitySequenceBuilder(fullRangeRawQualities);
+    	//we need to trim the read before
+    	//we consider reverse-ness
+    	//otherwise we will trim incorrectly
+    	//if we reverse THEN trim
+    	builder.trim(read.getReadInfo().getValidRange());
     	if(read.getDirection()==Direction.REVERSE){
     		builder.reverse();
     	}
-    	builder.trim(read.getReadInfo().getValidRange());
     	return builder.build();
     }
     
@@ -101,6 +117,7 @@ public final class AssemblyUtil {
         long newEnd = fullLength - validRange.getBegin()-1;
         return Range.of(newStart, newEnd);
     }
+
     /**
      * Convert the given gapped valid range offset of a given read into its
      * corresponding ungapped full length (untrimmed) equivalent.
@@ -109,11 +126,6 @@ public final class AssemblyUtil {
      * @param gappedOffset the gapped offset to convert into an ungapped full range offset
      * @return the ungapped full range offset as a positive int.
      */
-    public static  int convertToUngappedFullRangeOffset(AssembledRead placedRead, int ungappedFullLength,int gappedOffset) {
-        Range validRange = placedRead.getReadInfo().getValidRange();
-        return convertToUngappedFullRangeOffset(placedRead, ungappedFullLength,
-                gappedOffset, validRange);
-    }
     public static  int convertToUngappedFullRangeOffset(AssembledRead placedRead, int gappedOffset) {
         Range validRange = placedRead.getReadInfo().getValidRange();
         return convertToUngappedFullRangeOffset(placedRead, placedRead.getReadInfo().getUngappedFullLength(),
@@ -133,10 +145,9 @@ public final class AssemblyUtil {
         }else{
         	ungappedOffset=nucleotideSequence.getUngappedOffsetFor(gappedOffset);
         }
-     /*   if(placedRead.getDirection() == Direction.REVERSE){            
-            int numberOfLeadingBasesTrimmed = fullLength - (int)(validRange.getEnd()+1);
-            return numberOfLeadingBasesTrimmed + ungappedOffset;
-        }*/
+        if(placedRead.getDirection() == Direction.REVERSE){            
+            return (int)(validRange.getEnd() - ungappedOffset);
+        }
         return ungappedOffset + (int)validRange.getBegin();
     }
    

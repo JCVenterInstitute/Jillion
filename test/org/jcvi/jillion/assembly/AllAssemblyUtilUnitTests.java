@@ -18,12 +18,10 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.assembly.util;
+package org.jcvi.jillion.assembly;
 
-import org.jcvi.jillion.assembly.TestAssemblyUtil_convertToUngappedFullRangeOffset;
-import org.jcvi.jillion.assembly.TestAssemblyUtil_convertToUngappedRange;
-import org.jcvi.jillion.assembly.TestAssemblyUtil_gappedfullRange;
-import org.jcvi.jillion.assembly.TestAssemblyUtil_reverseComplimentRange;
+import org.jcvi.jillion.assembly.util.AllCoverageUnitTests;
+import org.jcvi.jillion.assembly.util.AllSliceUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -31,6 +29,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {   
+    	TestAssemblyUtil_getUngappedComplementedValidRangeQualities.class,
     	 TestAssemblyUtil_gappedfullRange.class,
          TestAssemblyUtil_reverseComplimentRange.class,
          TestAssemblyUtil_convertToUngappedRange.class,

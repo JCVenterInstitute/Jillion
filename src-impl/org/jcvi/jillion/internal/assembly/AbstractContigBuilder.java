@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.assembly;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -38,6 +39,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -202,35 +204,35 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
         	
         	for(AssembledReadBuilder<P> aceReadBuilder : reads.values()){
         		int start = (int)aceReadBuilder.getBegin();
-    			int i=0;
     			String id =aceReadBuilder.getId();
     			Direction dir = aceReadBuilder.getDirection();
     			QualitySequence fullQualities =null;
-    			P tempRead=null;
     			if(qualityDataStore!=null){
     				try {
     					fullQualities = qualityDataStore.get(id);
     				} catch (DataStoreException e) {
     					throw new IllegalStateException("error recalling consensus",e);
-    				}
-    				//should be able to call build multiple times
-    				tempRead = aceReadBuilder.build();
+    				}    				
         			if(fullQualities ==null){
         				throw new NullPointerException("could not get qualities for "+id);
         			}
     			}
+    			NucleotideSequence readSequence = aceReadBuilder.getCurrentNucleotideSequence();
+    			if(fullQualities==null){
+    				byte[] qualArray = new byte[(int)readSequence.getUngappedLength()];
+    				Arrays.fill(qualArray, DEFAULT_QUALITY.getQualityScore());
+    				fullQualities = new QualitySequenceBuilder(qualArray).build();
+    			}
+    			QualitySequence gappedValidRangequalities = 
+    					qualityValueStrategy.getGappedValidRangeQualitySequenceFor(readSequence, fullQualities, 
+    							aceReadBuilder.getClearRange(), dir);	
     			
-    			
-    			for(Nucleotide base : aceReadBuilder.getCurrentNucleotideSequence()){
-    				
-    				final PhredQuality quality;
-    				if(fullQualities==null){
-    					quality = DEFAULT_QUALITY;
-    				}else{					
-    					//if fullQualities is not null then
-    					//qualityValueStrategy must be non-null as well
-    					quality= qualityValueStrategy.getQualityFor(tempRead, fullQualities, i);
-    				}
+    			Iterator<Nucleotide> baseIter = readSequence.iterator();
+    			Iterator<PhredQuality> qualIter = gappedValidRangequalities.iterator();
+    			int i=0;
+    			while(baseIter.hasNext()){
+    				Nucleotide base = baseIter.next();
+    				PhredQuality quality = qualIter.next();
     				builders[start+i].add(id, base, quality, dir);
     				i++;
     			}
