@@ -34,10 +34,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.internal.core.GlyphCodec;
 import org.junit.Test;
 public class TestReferenceEncodedNucleotideSequence {
-    GlyphCodec<Nucleotide> codec = DefaultNucleotideCodec.INSTANCE;
+    NucleotideCodec codec = BasicNucleotideCodec.INSTANCE;
     String referenceAsString = "ACGTACGTACGTACGTACGTACGTACGT";
 
     

@@ -34,11 +34,11 @@ import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
  * greatly reduce the memory footprint of most kinds of read data.
  * @author dkatzel
  */
-final class NoAmbiguitiesNucleotideCodec extends TwoBitEncodedNucleotideCodec{
-    public static final NoAmbiguitiesNucleotideCodec INSTANCE = new NoAmbiguitiesNucleotideCodec();
+final class AcgtGapNucleotideCodec extends AbstractTwoBitEncodedNucleotideCodec{
+    public static final AcgtGapNucleotideCodec INSTANCE = new AcgtGapNucleotideCodec();
     
     
-    private NoAmbiguitiesNucleotideCodec(){
+    private AcgtGapNucleotideCodec(){
         super(Nucleotide.Gap);
     }
     /**

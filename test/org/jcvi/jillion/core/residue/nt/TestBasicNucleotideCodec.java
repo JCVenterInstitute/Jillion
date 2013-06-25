@@ -38,11 +38,11 @@ import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.Range;
 import org.junit.Test;
-public class TestDefaultNucleotideCodec {
+public class TestBasicNucleotideCodec {
     List<Nucleotide> evenBases = Nucleotides.parse("ACGTACGTWS-NACGT");
     List<Nucleotide> oddBases =  Nucleotides.parse("ACGTACGTWS-NACGTA");
     
-    DefaultNucleotideCodec sut = DefaultNucleotideCodec.INSTANCE;
+    BasicNucleotideCodec sut = BasicNucleotideCodec.INSTANCE;
     
     @Test
     public void evenEncodesAndDecodes(){
