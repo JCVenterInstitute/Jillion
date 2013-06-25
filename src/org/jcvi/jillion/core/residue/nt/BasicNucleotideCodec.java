@@ -12,7 +12,7 @@ import org.jcvi.jillion.internal.core.util.GrowableIntArray;
  * @author dkatzel
  *
  */
-class BasicNucleotideCodec extends AbstractNucleotideCodec{
+final class BasicNucleotideCodec extends AbstractNucleotideCodec{
 
 	 public static final BasicNucleotideCodec INSTANCE = new BasicNucleotideCodec();
 	    
