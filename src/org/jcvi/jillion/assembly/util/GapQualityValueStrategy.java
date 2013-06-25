@@ -56,7 +56,6 @@ public enum GapQualityValueStrategy{
 
         @Override
         protected PhredQuality computeQualityValueForGap(
-                int numberOfGapsBetweenFlanks, int ithGapToCompute,
                 PhredQuality leftFlankingQuality, PhredQuality rightFlankingQuality) {
             if(leftFlankingQuality.compareTo(rightFlankingQuality)<0){
                 return leftFlankingQuality;
@@ -71,58 +70,94 @@ public enum GapQualityValueStrategy{
     ALWAYS_ZERO{
         @Override
         protected PhredQuality computeQualityValueForGap(
-                int numberOfGapsBetweenFlanks, int ithGapToCompute,
                 PhredQuality leftFlankingQuality, PhredQuality rightFlankingQuality) {
             return PhredQuality.valueOf(0);
         }
 
     }
     ;
-    
+    /**
+     * Get the entire {@link QualitySequence} for the given gapped 
+     * valid Range sequence, the "raw" corresponding quality sequence,
+     *  the validRange of this sequence
+     * into the "raw" sequence, and the sequence's direction
+     * that only includes the valid range portion (provided the
+     * {@link AssembledRead#getReadInfo()} ) and gap qualities
+     * have been inserted at the appropriate locations.
+     * @param validRangeSequence the gapped {@link NucleotideSequence}
+     * containing only the valid bases.  This is usually
+     * a read's sequence returned by {@link AssembledRead#getNucleotideSequence()}.
+     * Can not be null.
+     * @param rawQualities the raw {@link QualitySequence} as provided
+     * by the sequencing machine. These qualities are "full length"
+     * meaning they contain the qualities of the bases that have been
+     * trimmed off and are also in the original orientation from the
+     * sequence machine.  This means if the read is reverse complemented,
+     * then the qualities <strong>will not</strong> be complemented.
+     * Can not be null.
+     * @param validRange a {@link Range} that explains <strong>in ungapped coordinates</strong>
+     * where this valid range sequence "goes" into the raw sequence.
+     * @param direction the read's direction which will tell us if the nucleotide
+     * sequence and raw quality sequence are in the same orientation or not.
+     * @return a new {@link QualitySequence} instance; will never be null.
+     * @throws NullPointerException if any parameters are null.
+     */
     public QualitySequence getGappedValidRangeQualitySequenceFor(NucleotideSequence validRangeSequence, QualitySequence rawQualities, Range validRange, Direction direction){
-    	QualitySequenceBuilder qualities = new QualitySequenceBuilder(rawQualities);
-    	
     	QualitySequenceBuilder complementedRawQualities = new QualitySequenceBuilder(rawQualities);
     	if(direction == Direction.REVERSE){
-    		qualities.reverse();
     		complementedRawQualities.reverse();
     	}
-    	qualities.trim(validRange);
+    	QualitySequenceBuilder gappedValidRangeQualities = complementedRawQualities.copy().trim(validRange);
     	
     	List<Integer> gapOffsets=validRangeSequence.getGapOffsets();
 		
-    	int maxSeqOffset = (int)validRangeSequence.getLength() -1;
     	int rawShiftOffset = (int)validRange.getBegin();
+    	//TODO we currently don't support any gap value strategy
+    	//that interpolates across consecutive gap runs
+    	//so we removed those parameters from #computeQualityValueForGap()
+    	//they were very expensive to compute
+    	//if we want to add it back
+    	//a good idea might be to cluster the gapOffsets
+    	//into Ranges, then we can compute the left and right ungapped
+    	//flanks once and call computeQualityValueForGap() range.length() times
     	for(Integer gapOffset : gapOffsets){
     		int offset = gapOffset.intValue();
-    		int leftFlankGappedOffset = Math.max(0, AssemblyUtil.getLeftFlankingNonGapIndex(validRangeSequence,offset));
-    		int rightFlankingGappedOffset = AssemblyUtil.getRightFlankingNonGapIndex(validRangeSequence,offset);
-			
-    		int rightFlankingNonGapIndex;
-    		if(rightFlankingGappedOffset > maxSeqOffset){
-    			//right flank offset is beyond the valid range
-    			//this means the read valid sequence ends with a gap
-    			//this is an unlikely edge case that probably can
-    			//only happen by rogue software or manual edits
-    			rightFlankingNonGapIndex = (int)validRangeSequence.getUngappedLength()+rawShiftOffset;
-    		}else{
-    			rightFlankingNonGapIndex = validRangeSequence.getUngappedOffsetFor(rightFlankingGappedOffset);
-                
-    		}
+    		int leftFlank = validRangeSequence.getUngappedOffsetFor(offset);
+    		int rightFlank = leftFlank+1;
     		
-			int leftFlankingNonGapIndex = validRangeSequence.getUngappedOffsetFor(leftFlankGappedOffset);
-
-            PhredQuality leftQuality =complementedRawQualities.get(rawShiftOffset+leftFlankingNonGapIndex);
-            PhredQuality rightQuality =complementedRawQualities.get(rawShiftOffset+rightFlankingNonGapIndex);
-            
-            PhredQuality gappedQuality = computeQualityValueForGap(rightFlankingNonGapIndex - leftFlankingNonGapIndex, 
-            		offset -leftFlankingNonGapIndex , 
-            		leftQuality, rightQuality);
-            qualities.insert(offset, gappedQuality);
+    		 PhredQuality leftQuality =complementedRawQualities.get(rawShiftOffset+leftFlank);
+             PhredQuality rightQuality =complementedRawQualities.get(rawShiftOffset+rightFlank);
+             
+             PhredQuality gappedQuality = computeQualityValueForGap(leftQuality, 
+             		rightQuality);
+             gappedValidRangeQualities.insert(offset, gappedQuality);
     	}
-    	
-    	return qualities.build();
+    	return gappedValidRangeQualities.build();
     }
+    
+    /**
+     * Get the gapped valid range {@link QualitySequence} for the given read
+     * that only includes the valid range portion (provided the
+     * {@link AssembledRead#getReadInfo()} ) and gap qualities
+     * have been inserted at the appropriate locations.
+     * <p/>
+     * This is a convience method for 
+     * {@link #getGappedValidRangeQualitySequenceFor(NucleotideSequence, QualitySequence, Range, Direction)
+     * getGappedValidRangeQualitySequenceFor(read.getNucleotideSequence(), 
+    			rawQualities, 
+    			read.getReadInfo().getValidRange(), 
+    			read.getDirection());}.
+     * @param read the read, can not be null.
+     * @param rawQualities the raw {@link QualitySequence} as provided
+     * by the sequencing machine. These qualities are "full length"
+     * meaning they contain the qualities of the bases that have been
+     * trimmed off and are also in the original orientation from the
+     * sequence machine.  This means if the read is reverse complemented,
+     * then the qualities <strong>will not</strong> be complemented.
+     * Can not be null.
+     * @return a new {@link QualitySequence} instance; will never be null.
+     * @throws NullPointerException if any parameters are null.
+     */
     public QualitySequence getGappedValidRangeQualitySequenceFor(AssembledRead read,
             QualitySequence rawQualities){
     	if(read ==null){
@@ -140,8 +175,7 @@ public enum GapQualityValueStrategy{
 
    
    
-    protected abstract PhredQuality computeQualityValueForGap(int numberOfGapsBetweenFlanks, int ithGapToCompute,
-            PhredQuality leftFlankingQuality, PhredQuality rightFlankingQuality);
+    protected abstract PhredQuality computeQualityValueForGap(PhredQuality leftFlankingQuality, PhredQuality rightFlankingQuality);
     
    
     
