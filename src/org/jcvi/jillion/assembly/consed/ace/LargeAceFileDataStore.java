@@ -42,7 +42,7 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 /**
- * {@code LargeAceFileDataStore} is an {@link AceFileContigDataStore}
+ * {@code LargeAceFileDataStore} is an {@link AceFileDataStore}
  * implementation that doesn't store any contig or 
  * read information in memory.
  * This means that each {@link #get(String)} or {@link #contains(String)}
@@ -59,7 +59,7 @@ import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterato
  * @author dkatzel
  *
  */
-final class LargeAceFileDataStore implements AceFileContigDataStore{
+final class LargeAceFileDataStore implements AceFileDataStore{
 
 	private final File aceFile;
 	private Long numberOfContigs = null;
@@ -73,14 +73,14 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
 	 private volatile boolean isClosed;
 	/**
 	 * Create a new instance of {@link LargeAceFileDataStore}.
-	 * @param aceFile the ace file to create an {@link AceFileContigDataStore}
+	 * @param aceFile the ace file to create an {@link AceFileDataStore}
 	 * from. (can not be null and must exist)
-	 * @return a new {@link AceFileContigDataStore}; 
+	 * @return a new {@link AceFileDataStore}; 
 	 * will never be null.
 	 * @throws FileNotFoundException if the ace file does not exist.
 	 * @throws NullPointerException if aceFile is null.
 	 */
-	public static AceFileContigDataStore create(File aceFile) throws FileNotFoundException{
+	public static AceFileDataStore create(File aceFile) throws FileNotFoundException{
 		return new LargeAceFileDataStore(aceFile, DataStoreFilters.alwaysAccept());
 	}
 	/**
@@ -91,18 +91,18 @@ final class LargeAceFileDataStore implements AceFileContigDataStore{
 	 * {@link #iterator()} and {@link #idIterator()}, return
 	 * {@code false} for {@link #contains(String)}
 	 * and return null for {@link #get(String)}
-	 * @param aceFile the ace file to create an {@link AceFileContigDataStore}
+	 * @param aceFile the ace file to create an {@link AceFileDataStore}
 	 * from. (can not be null and must exist)
 	 * @param contigIdFilter a {@link DataStoreFilter}
 	 * instance if only some contigs from the given
 	 * file should be included in this datastore.
 	 * Calls to {@link #get(String)}
-	 * @return a new {@link AceFileContigDataStore}; 
+	 * @return a new {@link AceFileDataStore}; 
 	 * will never be null.
 	 * @throws FileNotFoundException if the ace file does not exist.
 	 * @throws NullPointerException if aceFile is null.
 	 */
-	public static AceFileContigDataStore create(File aceFile, DataStoreFilter contigIdFilter) throws FileNotFoundException{
+	public static AceFileDataStore create(File aceFile, DataStoreFilter contigIdFilter) throws FileNotFoundException{
 		return new LargeAceFileDataStore(aceFile, contigIdFilter);
 	}
 	

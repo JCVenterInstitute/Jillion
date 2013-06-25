@@ -31,10 +31,10 @@ import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 
 /**
  * {@code AceFileDataStoreBuilder} is a builder
- * that can create new {@link AceFileContigDataStore}
+ * that can create new {@link AceFileDataStore}
  * instances using data from a given 
- * ace file.  The iteration order of {@link AceFileContigDataStore#iterator()}
- * and {@link AceFileContigDataStore#idIterator()}
+ * ace file.  The iteration order of {@link AceFileDataStore#iterator()}
+ * and {@link AceFileDataStore#idIterator()}
  * is the order of that the contigs appear 
  * in the ace file.
  * @author dkatzel
@@ -57,9 +57,9 @@ public final class AceFileDataStoreBuilder {
 	private final InputStream aceStream;
 	/**
 	 * Create a new instance of {@code AceFileDataStoreBuilder}
-	 * which will build a {@link AceFileContigDataStore} for the given
+	 * which will build a {@link AceFileDataStore} for the given
 	 * ace file.
-	 * @param aceFile the ace file make a {@link AceFileContigDataStore} with. 
+	 * @param aceFile the ace file make a {@link AceFileDataStore} with. 
 	 * @throws IOException if the ace file does not exist, or can not be read.
 	 * @throws NullPointerException if aceFile is null.
 	 */
@@ -79,10 +79,10 @@ public final class AceFileDataStoreBuilder {
 	
 	/**
 	 * Create a new instance of {@code AceFileDataStoreBuilder}
-	 * which will build a {@link AceFileContigDataStore} for the given
+	 * which will build a {@link AceFileDataStore} for the given
 	 * {@link InputStream} containing .ace encoded data.
 	 * @param aceStream the {@link InputStream} that will
-	 * be used to make a {@link AceFileContigDataStore}.
+	 * be used to make a {@link AceFileDataStore}.
 	 * The stream must be uncompressed.
 	 * @throws NullPointerException if aceFile is aceStream.
 	 */
@@ -98,7 +98,7 @@ public final class AceFileDataStoreBuilder {
 	 * the given {@link DataStoreFilter}.  If a filter
 	 * is not given to this builder, then all records
 	 * in the ace file will be included in the built
-	 * {@link AceFileContigDataStore}.
+	 * {@link AceFileDataStore}.
 	 * @param filter a {@link DataStoreFilter} instance that can be
 	 * used to filter out specified {@link AceContig}s; can not be null. 
 	 * @return this.
@@ -119,7 +119,7 @@ public final class AceFileDataStoreBuilder {
 	 * which may cause an Exception if there isn't enough memory.
 	 * The {@link DataStoreProviderHint}  is just a guideline 
 	 * and may be ignored by this builder when determining
-	 * which {@link AceFileContigDataStore} implementation to chose
+	 * which {@link AceFileDataStore} implementation to chose
 	 * to build in {@link #build()}.
 	 * @param hint an instance of {@link DataStoreProviderHint};
 	 * can not be null.
@@ -138,7 +138,7 @@ public final class AceFileDataStoreBuilder {
 	
 	/**
 	 * Parse the given ace file and return
-	 * a new instance of a {@link AceFileContigDataStore}
+	 * a new instance of a {@link AceFileDataStore}
 	 * using all the input parameters given so far.  
 	 * If not all optional parameters are set then default
 	 * values will be used:
@@ -146,7 +146,7 @@ public final class AceFileDataStoreBuilder {
 	 * <li>
 	 * If no {@link DataStoreFilter} has been specified
 	 * by {@link #filter(DataStoreFilter)},
-	 * then all {@link AceContig}s will be included in this {@link AceFileContigDataStore}.
+	 * then all {@link AceContig}s will be included in this {@link AceFileDataStore}.
 	 * </li>
 	 * <li>
 	 * If no {@link DataStoreProviderHint} has been specified
@@ -157,13 +157,13 @@ public final class AceFileDataStoreBuilder {
 	 * if there is not enough memory available.
 	 * </li>
 	 * </ul>
-	 * @return a new {@link AceFileContigDataStore} instance;
+	 * @return a new {@link AceFileDataStore} instance;
 	 * never null.
 	 * @throws IOException if there is a problem parsing the 
 	 * ace file. 
 	 * @see #hint(DataStoreProviderHint)
 	 */
-	public AceFileContigDataStore build() throws IOException {
+	public AceFileDataStore build() throws IOException {
 		if(aceStream ==null){
 			return buildFromFile();
 		}
@@ -173,7 +173,7 @@ public final class AceFileDataStoreBuilder {
 
 	}
 
-	private AceFileContigDataStore buildFromFile() throws IOException,
+	private AceFileDataStore buildFromFile() throws IOException,
 			FileNotFoundException {
 		switch(hint){
 			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultAceFileDataStore.create(aceFile,filter);

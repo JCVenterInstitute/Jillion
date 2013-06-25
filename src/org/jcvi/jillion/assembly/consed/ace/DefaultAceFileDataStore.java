@@ -48,7 +48,7 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
  *
  *
  */
-final class DefaultAceFileDataStore implements AceFileContigDataStore{
+final class DefaultAceFileDataStore implements AceFileDataStore{
 
 	/**
 	 * {@link DataStore} wrapper of our {@link AceContig}s.
@@ -78,20 +78,20 @@ final class DefaultAceFileDataStore implements AceFileContigDataStore{
      */
     private final List<ReadAceTag> readTags;
     
-    public static AceFileContigDataStore create(InputStream aceFileStream) throws IOException{
+    public static AceFileDataStore create(InputStream aceFileStream) throws IOException{
     	return create(aceFileStream, DataStoreFilters.alwaysAccept());
     }
     
-    public static AceFileContigDataStore create(InputStream aceFileStream, DataStoreFilter filter) throws IOException{
+    public static AceFileDataStore create(InputStream aceFileStream, DataStoreFilter filter) throws IOException{
     	Visitor builder = new Visitor(filter);
     	AceHandler parser = AceFileParser.create(aceFileStream);
     	parser.accept(builder);
     	return new DefaultAceFileDataStore(builder);
     }
-    public static AceFileContigDataStore create(File aceFile) throws IOException{
+    public static AceFileDataStore create(File aceFile) throws IOException{
     	return create(aceFile, DataStoreFilters.alwaysAccept());
     }
-    public static AceFileContigDataStore create(File aceFile, DataStoreFilter filter) throws IOException{
+    public static AceFileDataStore create(File aceFile, DataStoreFilter filter) throws IOException{
     	Visitor builder = new Visitor(filter);
     	AceHandler parser = AceFileParser.create(aceFile);
     	parser.accept(builder);

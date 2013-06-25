@@ -30,7 +30,7 @@ import org.jcvi.jillion.assembly.consed.ace.AbstractAceFileVisitor;
 import org.jcvi.jillion.assembly.consed.ace.AceContig;
 import org.jcvi.jillion.assembly.consed.ace.AceContigBuilder;
 import org.jcvi.jillion.assembly.consed.ace.AceContigVisitor;
-import org.jcvi.jillion.assembly.consed.ace.AceFileContigDataStore;
+import org.jcvi.jillion.assembly.consed.ace.AceFileDataStore;
 import org.jcvi.jillion.assembly.consed.ace.AceFileDataStoreBuilder;
 import org.jcvi.jillion.assembly.consed.ace.AceFileVisitorCallback;
 import org.jcvi.jillion.assembly.consed.ace.AceHandler;
@@ -44,7 +44,7 @@ public class TestAceTestUtil {
 		ResourceHelper resources = new ResourceHelper(TestAceTestUtil.class);
 		File aceFile = resources.getFile("files/fluSample.ace");
 		
-		AceFileContigDataStore datastore= new AceFileDataStoreBuilder(aceFile)
+		AceFileDataStore datastore= new AceFileDataStoreBuilder(aceFile)
 												.build();
 		final AceContig expected = datastore.get("22934-PB1");
 		

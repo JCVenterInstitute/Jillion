@@ -36,7 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.jillion.assembly.consed.ace.AceContig;
-import org.jcvi.jillion.assembly.consed.ace.AceFileContigDataStore;
+import org.jcvi.jillion.assembly.consed.ace.AceFileDataStore;
 import org.jcvi.jillion.assembly.tigr.contig.TigrContig;
 import org.jcvi.jillion.assembly.tigr.contig.TigrContigDataStore;
 import org.jcvi.jillion.assembly.tigr.contig.TigrContigFileDataStoreBuilder;
@@ -54,7 +54,7 @@ public abstract class  AbstractTestAceParserMatchesAce2Contig {
     /**
      * Subclasses need to set this field directory in static initializer
      */
-    protected static AceFileContigDataStore sut=null;
+    protected static AceFileDataStore sut=null;
     protected static File ACE_FILE = null;
     protected static File CONTIG_FILE = null;
     

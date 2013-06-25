@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.jillion.assembly.consed.ace.AceFileContigDataStore;
+import org.jcvi.jillion.assembly.consed.ace.AceFileDataStore;
 import org.jcvi.jillion.assembly.consed.ace.ConsensusAceTag;
 import org.jcvi.jillion.assembly.consed.ace.ConsensusAceTagBuilder;
 import org.jcvi.jillion.assembly.consed.ace.ReadAceTag;
@@ -97,8 +97,8 @@ public abstract class AbstractAceTagsFromAceFileDataStore {
     		Range.of(903,932)
     		, true);
 
-    AceFileContigDataStore sut;
-    protected abstract AceFileContigDataStore createDataStoreFor(File aceFile) throws IOException;
+    AceFileDataStore sut;
+    protected abstract AceFileDataStore createDataStoreFor(File aceFile) throws IOException;
     @Before
     public void setup() throws IOException{
         sut = createDataStoreFor(RESOURCES.getFile(fileName));

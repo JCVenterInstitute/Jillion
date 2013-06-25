@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.Collections;
 
 import org.jcvi.jillion.assembly.consed.ace.AceContig;
-import org.jcvi.jillion.assembly.consed.ace.AceFileContigDataStore;
+import org.jcvi.jillion.assembly.consed.ace.AceFileDataStore;
 import org.jcvi.jillion.assembly.tigr.contig.TigrContig;
 import org.jcvi.jillion.assembly.tigr.contig.TigrContigDataStore;
 import org.jcvi.jillion.assembly.tigr.contig.TigrContigFileDataStoreBuilder;
@@ -51,7 +51,7 @@ public abstract class AbstractTestFilteredAceDataStore{
         String contigIdToSkip = "22934-PB1";
         File aceFile = resources.getFile("files/fluSample.ace");
         DataStoreFilter filter = DataStoreFilters.newExcludeFilter(Collections.singleton(contigIdToSkip));
-        AceFileContigDataStore datastore = create(aceFile, filter);
+        AceFileDataStore datastore = create(aceFile, filter);
         assertEquals(7, datastore.getNumberOfRecords());
         assertEquals(499 , datastore.getNumberOfTotalReads());
         TigrContigDataStore contigDataStore = new TigrContigFileDataStoreBuilder(resources.getFile("files/fluSample.contig"),
@@ -71,6 +71,6 @@ public abstract class AbstractTestFilteredAceDataStore{
         
     }
     
-    protected abstract AceFileContigDataStore create(File aceFile, DataStoreFilter filter) throws IOException;
+    protected abstract AceFileDataStore create(File aceFile, DataStoreFilter filter) throws IOException;
     
 }
