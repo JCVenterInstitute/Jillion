@@ -208,7 +208,10 @@ public enum DefaultNucleotideCodec implements NucleotideCodec{
         return HEADER_LENGTH + size/2 + (isEven(size)?0:1);
     }
     private boolean isEven(final long size) {
-        return size%2==0;
+        return (size & 0x1L) == 0;
+    }
+    private boolean isEven(final int size) {
+        return (size & 0x1) == 0;
     }
     private void encodeLastValue(Nucleotide glyph, ByteBuffer result) {
         byte hi = GLYPH_TO_BYTE_MAP.get(glyph);
