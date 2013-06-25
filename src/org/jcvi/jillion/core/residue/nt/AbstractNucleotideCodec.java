@@ -269,7 +269,7 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
         protected abstract GrowableIntArray encodeNextGroup(Iterator<Nucleotide> glyphs, ByteBuffer result, int offset);
      
         protected byte getSentienelByteFor(Nucleotide nucleotide){
-            if(nucleotide == sententialBase){
+            if(nucleotide.equals(sententialBase)){
                 return SENTENTIAL_BYTE;
             }
             return getByteFor(nucleotide);
