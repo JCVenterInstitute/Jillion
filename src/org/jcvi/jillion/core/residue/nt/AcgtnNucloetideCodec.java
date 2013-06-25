@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * {@code ACGTNNucloetideCodec} is a special version
+ * {@code AcgtnNucloetideCodec} is a special version
  * of {@link TwoBitEncodedNucleotideCodec} that
  * does not have any gaps.  This makes
  * the computations of gap locations and number of gaps etc
@@ -33,13 +33,13 @@ import java.util.List;
  *
  *
  */
-final class ACGTNNucloetideCodec extends TwoBitEncodedNucleotideCodec{
+final class AcgtnNucloetideCodec extends AbstractTwoBitEncodedNucleotideCodec{
 
-    public static final ACGTNNucloetideCodec INSTANCE = new ACGTNNucloetideCodec();
+    public static final AcgtnNucloetideCodec INSTANCE = new AcgtnNucloetideCodec();
     /**
      * @param sententialBase
      */
-    private ACGTNNucloetideCodec() {
+    private AcgtnNucloetideCodec() {
         super(Nucleotide.Unknown);
     }
 

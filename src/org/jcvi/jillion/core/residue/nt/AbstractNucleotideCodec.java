@@ -35,19 +35,23 @@ import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
 
 /**
- * {@code TwoBitEncodedNucleotideCodec} is a
+ * {@code AbstractNucleotideCodec} is a
  * {@link NucleotideCodec} that
  * is able to encode
- * up to 5 different nucleotides as 2 bits each
+ * nucleotides as in as few bits as possible
  * plus some extra bytes to store offsets
- * of the 5th base.  The best uses of this
- * codec is to store ACGT and -/N as the 5th base type
- * since the those bases should be rare.
+ * for a special "sentental" base (usually gaps).  
+ * 
+ * 
+ * This allows quick random access of bases
+ * even computing from gapped to ungapped values.
+ * 
+ * 
  * @author dkatzel
  *
  *
  */
-abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
+abstract class AbstractNucleotideCodec implements NucleotideCodec{
 	private static final int END_OF_ITER = Integer.MIN_VALUE;
         private static final ValueSizeStrategy[] VALUE_SIZE_STRATEGIES = ValueSizeStrategy.values();
 		/*
@@ -76,17 +80,11 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
          * byte array for ACGT call and then do bit shifting to get the 2bits we need.
          */
 
-        
         /**
-         * We can store ACGTs as 2 bits so that's 4 per byte.
-         */
-        private static final int NUCLEOTIDES_PER_BYTE =4;
-        /**
-         * This is a sentinel value for a gap.  Since we 
-         * can only store 2 bits per base, a byte of 5 is too big.
+         * This is a sentinel value for a gap.  
          * 
          */
-        private static final byte GAP_BYTE = 5;
+        protected static final byte SENTENTIAL_BYTE = -1;
         /**
          * This is the 5th {@link Nucleotide} of our 2 bit encoding
          * usually a "-" or "N".  These 5th bases will occasionally occur
@@ -94,15 +92,14 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
          * 2 bit encoding for all sequences.
          */
         private final Nucleotide sententialBase;
-        protected TwoBitEncodedNucleotideCodec(Nucleotide sententialBase){
+        protected AbstractNucleotideCodec(Nucleotide sententialBase){
             this.sententialBase = sententialBase;
         }
         
-       private Nucleotide getNucleotide(byte encodedByte, int index){
-    	   //endian is backwards
-    	   int j = (3-index%4)*2;
-    	   return getGlyphFor((byte)((encodedByte>>j) &0x3));
-       }
+        protected abstract int getNucleotidesPerGroup();
+        
+        
+       protected abstract Nucleotide getNucleotide(byte encodedByte, int index);
        
 		protected List<Integer> getSentinelOffsetsFrom(ByteBuffer buf, ValueSizeStrategy offsetStrategy){
 			ValueSizeStrategy sentinelStrategy = VALUE_SIZE_STRATEGIES[buf.get()];
@@ -138,11 +135,11 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
             	return sententialBase;
             }
             int currentPosition =buf.position();
-            int bytesToSkip = (int)(index/4);
+            int bytesToSkip = (int)(index/getNucleotidesPerGroup());
             buf.position(currentPosition+ bytesToSkip);
 
-            int offsetIntoBitSet = (int)(index%4);
-            return getNucleotide(buf.get(), offsetIntoBitSet);
+            int indexIntoByte = (int)(index%getNucleotidesPerGroup());
+            return getNucleotide(buf.get(), indexIntoByte);
         
         }
         private boolean isSentinelOffset(ByteBuffer buf, ValueSizeStrategy offsetStrategy, int index) {
@@ -197,7 +194,7 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
             
         }
         
-        public static int getNumberOfEncodedBytesFor(int totalLength, int numberOfSentinelValues){
+        public int getNumberOfEncodedBytesFor(int totalLength, int numberOfSentinelValues){
         	int encodedBasesSize = computeHeaderlessEncodedSize(totalLength);
         	ValueSizeStrategy numBasesSizeStrategy = ValueSizeStrategy.getStrategyFor(totalLength);
             ValueSizeStrategy sentinelSizeStrategy = numberOfSentinelValues==0
@@ -254,72 +251,29 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
         	//optimize huge size of array so we don't have to
         	//worry about penalty of resizing
         	GrowableIntArray gaps= new GrowableIntArray(unEncodedSize);
-            for(int i=0; i<unEncodedSize; i+=NUCLEOTIDES_PER_BYTE){
-                gaps.append(encodeNext4Values(glyphs, result,i));
+            for(int i=0; i<unEncodedSize; i+=getNucleotidesPerGroup()){
+                gaps.append(encodeNextGroup(glyphs, result,i));
             }
             return gaps;
         }
        
-        private static int computeHeaderlessEncodedSize(final int size) {
-            return (size+3)/4;
+        protected int computeHeaderlessEncodedSize(final int size) {
+            return (size+3)/getNucleotidesPerGroup();
         }
        
         
-        private byte getByteFor(Nucleotide nuc){
-            switch(nuc){
-            	case Adenine : return (byte)0;
-                case Cytosine : return (byte)1;
-                case Guanine : return (byte)2;
-                case Thymine : return (byte)3;
-                default : throw new IllegalArgumentException("only A,C,G,T supported : "+ nuc);
-            }
-        }
-        private Nucleotide getGlyphFor(byte b){
-        	switch(b){
-	        	case 0 : return Nucleotide.Adenine;
-	        	case 1: return Nucleotide.Cytosine;
-	        	case 2: return Nucleotide.Guanine;
-	        	case 3: return Nucleotide.Thymine;
-	        	default: throw new IllegalArgumentException("unknown encoded value : "+b);
-        	}
-        }
+        protected abstract byte getByteFor(Nucleotide nuc);
+        
+        protected abstract Nucleotide getGlyphFor(byte b);
        
-        private GrowableIntArray encodeNext4Values(Iterator<Nucleotide> glyphs, ByteBuffer result, int offset) {
-            byte b0 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
-            byte b1 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
-            byte b2 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
-            byte b3 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
-            
-            GrowableIntArray sentenielOffsets = new GrowableIntArray(4);
-            if(b0== GAP_BYTE){
-                sentenielOffsets.append(offset);
-                b0=0;
-            }
-            if(b1== GAP_BYTE){
-                sentenielOffsets.append(offset+1);
-                b1=0;
-            }
-            if(b2== GAP_BYTE){
-                sentenielOffsets.append(offset+2);
-                b2=0;
-            }
-            if(b3== GAP_BYTE){
-                sentenielOffsets.append(offset+3);
-                b3=0;
-            }
-            result.put((byte) ((b0<<6 | b1<<4 | b2<<2 | b3) &0xFF));
-            return sentenielOffsets;
-        }
-        
-        
-        private byte getSentienelByteFor(Nucleotide nucleotide){
+        protected abstract GrowableIntArray encodeNextGroup(Iterator<Nucleotide> glyphs, ByteBuffer result, int offset);
+     
+        protected byte getSentienelByteFor(Nucleotide nucleotide){
             if(nucleotide == sententialBase){
-                return GAP_BYTE;
+                return SENTENTIAL_BYTE;
             }
             return getByteFor(nucleotide);
         }
-     
-       
         @Override
         public int decodedLengthOf(byte[] encodedGlyphs) {
             ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
@@ -348,7 +302,7 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
 			
 			private final int length;
 			private final int[] sentinelArray;
-			
+			private final int numberOfBasesPerGroup = getNucleotidesPerGroup();
 			private int nextSentinel;
 			private int currentOffset=0;
 			private int sentinelIndex=0;
@@ -426,7 +380,9 @@ abstract class TwoBitEncodedNucleotideCodec implements NucleotideCodec{
             		currentOffset++;
             		return sententialBase;
 				}
-				Nucleotide next= getNucleotide(encodedBytes[currentOffset/4], currentOffset%4);
+				int arrayoffset = currentOffset/numberOfBasesPerGroup;
+				int groupIndex = currentOffset%numberOfBasesPerGroup;
+				Nucleotide next= getNucleotide(encodedBytes[arrayoffset], groupIndex);
 				currentOffset++;
 				return next;
 			}

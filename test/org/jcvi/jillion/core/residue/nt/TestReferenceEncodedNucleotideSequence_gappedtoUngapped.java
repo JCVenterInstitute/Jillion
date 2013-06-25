@@ -25,18 +25,15 @@
  */
 package org.jcvi.jillion.core.residue.nt;
 
-import org.jcvi.jillion.core.residue.nt.DefaultNucleotideCodec;
-import org.jcvi.jillion.core.residue.nt.DefaultReferenceEncodedNucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestReferenceEncodedNucleotideSequence_gappedtoUngapped {
 
     String reference       = "ACGTACGTTACGTTACGT";
     String gappedBasecalls = "ACGTACGT-ACGTACG-T";
     String ungappedBasecalls = "ACGTACGTACGTACGT";
-    DefaultNucleotideCodec codec = DefaultNucleotideCodec.INSTANCE;
+    BasicNucleotideCodec codec = BasicNucleotideCodec.INSTANCE;
     NucleotideSequence encodedReference = new NucleotideSequenceBuilder(reference).build();
     DefaultReferenceEncodedNucleotideSequence sut = new DefaultReferenceEncodedNucleotideSequence(encodedReference, gappedBasecalls,0);
     

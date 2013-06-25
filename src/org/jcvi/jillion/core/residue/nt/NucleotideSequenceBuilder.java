@@ -1001,18 +1001,18 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         NucleotideCodec getOptimalCodec() {
         	
             if(numberOfNonNAmbiguities>0 || (numberOfGaps>0 && numberOfNs >0)){
-                return DefaultNucleotideCodec.INSTANCE;
+                return BasicNucleotideCodec.INSTANCE;
             }
-            int fourBitBufferSize =currentLength/2;
-            int twoBitBufferSize = TwoBitEncodedNucleotideCodec.getNumberOfEncodedBytesFor(currentLength,
+            int fourBitBufferSize =BasicNucleotideCodec.INSTANCE.getNumberOfEncodedBytesFor(currentLength, numberOfGaps);
+            int twoBitBufferSize = AcgtnNucloetideCodec.INSTANCE.getNumberOfEncodedBytesFor(currentLength,
             		Math.max(numberOfGaps, numberOfNs));
             if(fourBitBufferSize < twoBitBufferSize){
-            	return DefaultNucleotideCodec.INSTANCE;
+            	return BasicNucleotideCodec.INSTANCE;
             }
             if(numberOfGaps==0 ){
-            	return ACGTNNucloetideCodec.INSTANCE;
+            	return AcgtnNucloetideCodec.INSTANCE;
             }
-            return NoAmbiguitiesNucleotideCodec.INSTANCE;
+            return AcgtGapNucleotideCodec.INSTANCE;
         }
         
         public void increment(NewValues newValues) {
