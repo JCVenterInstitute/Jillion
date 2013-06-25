@@ -193,6 +193,7 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 			while(referenceEntryIter.hasNext()){
 				Entry<String, AceContigBuilder> refEntry = referenceEntryIter.next();
 				AceContigBuilder contigBuilder = refEntry.getValue();
+				
 				contigBuilder.recallConsensus(new NextGenReferenceConsensusRecaller(), qualityDataStore, GapQualityValueStrategy.LOWEST_FLANKING);
 				postProcess(contigBuilder);
 				visitBeginReference(refEntry.getKey());

@@ -45,13 +45,11 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
 
     GapQualityValueStrategy sut;
     private AssembledRead placedRead;
-    private ReferenceMappedNucleotideSequence sequence;
     PhredQuality expectedQuality = PhredQuality.valueOf(42);
     @Before
     public void setup(){
         sut= getGapQualityValueStrategies();
         placedRead= createMock(AssembledRead.class);
-        sequence = createMock(ReferenceMappedNucleotideSequence.class);
     }
     
     protected abstract GapQualityValueStrategy getGapQualityValueStrategies();
@@ -94,13 +92,13 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
     	QualitySequenceBuilder expectedBuilder = new QualitySequenceBuilder(fullLengthUngappedQualities)
     													.trim(validRange);
     	
-    	expectedBuilder.insert(2, sut.computeQualityValueForGap(1, 0, PhredQuality.valueOf(4),PhredQuality.valueOf(5)));
-    	expectedBuilder.insert(4, sut.computeQualityValueForGap(1, 0, PhredQuality.valueOf(5),PhredQuality.valueOf(6)));
+    	expectedBuilder.insert(2, sut.computeQualityValueForGap(PhredQuality.valueOf(4), PhredQuality.valueOf(5)));
+    	expectedBuilder.insert(4, sut.computeQualityValueForGap(PhredQuality.valueOf(5), PhredQuality.valueOf(6)));
     	
-    	expectedBuilder.insert(9, sut.computeQualityValueForGap(2, 0, PhredQuality.valueOf(9),PhredQuality.valueOf(10)));
-    	expectedBuilder.insert(10, sut.computeQualityValueForGap(2, 1, PhredQuality.valueOf(9),PhredQuality.valueOf(10)));
+    	expectedBuilder.insert(9, sut.computeQualityValueForGap(PhredQuality.valueOf(9), PhredQuality.valueOf(10)));
+    	expectedBuilder.insert(10, sut.computeQualityValueForGap(PhredQuality.valueOf(9), PhredQuality.valueOf(10)));
     	
-    	expectedBuilder.insert(13, sut.computeQualityValueForGap(1, 0, PhredQuality.valueOf(11),PhredQuality.valueOf(12)));
+    	expectedBuilder.insert(13, sut.computeQualityValueForGap(PhredQuality.valueOf(11), PhredQuality.valueOf(12)));
     	
     	QualitySequence expectedValidRangeGappedQualities = expectedBuilder.build();
     	QualitySequence validRangeGappedQualities = sut.getGappedValidRangeQualitySequenceFor(placedRead, fullLengthUngappedQualities);
@@ -140,13 +138,13 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
     	QualitySequenceBuilder expectedBuilder = new QualitySequenceBuilder(
     																new byte[]{13,12,11,10,9,8,7,6,5,4});
     	
-    	expectedBuilder.insert(2, sut.computeQualityValueForGap(1, 0, PhredQuality.valueOf(12),PhredQuality.valueOf(11)));
-    	expectedBuilder.insert(4, sut.computeQualityValueForGap(1, 0, PhredQuality.valueOf(11),PhredQuality.valueOf(10)));
+    	expectedBuilder.insert(2, sut.computeQualityValueForGap(PhredQuality.valueOf(12), PhredQuality.valueOf(11)));
+    	expectedBuilder.insert(4, sut.computeQualityValueForGap(PhredQuality.valueOf(11), PhredQuality.valueOf(10)));
     	
-    	expectedBuilder.insert(9, sut.computeQualityValueForGap(2, 0, PhredQuality.valueOf(7),PhredQuality.valueOf(6)));
-    	expectedBuilder.insert(10, sut.computeQualityValueForGap(2, 1, PhredQuality.valueOf(7),PhredQuality.valueOf(6)));
+    	expectedBuilder.insert(9, sut.computeQualityValueForGap(PhredQuality.valueOf(7), PhredQuality.valueOf(6)));
+    	expectedBuilder.insert(10, sut.computeQualityValueForGap(PhredQuality.valueOf(7), PhredQuality.valueOf(6)));
     	
-    	expectedBuilder.insert(13, sut.computeQualityValueForGap(1, 0, PhredQuality.valueOf(5),PhredQuality.valueOf(4)));
+    	expectedBuilder.insert(13, sut.computeQualityValueForGap(PhredQuality.valueOf(5), PhredQuality.valueOf(4)));
     	
     	QualitySequence expectedValidRangeGappedQualities = expectedBuilder.build();
     	QualitySequence validRangeGappedQualities = sut.getGappedValidRangeQualitySequenceFor(placedRead, fullLengthUngappedQualities);
