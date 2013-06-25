@@ -104,6 +104,15 @@ import org.jcvi.jillion.internal.core.util.JillionUtil;
 public abstract class Range implements Rangeable,Iterable<Long>
 {
 	/**
+	 * {@value} should be large enough for 
+	 * any Ranges commonly used in genomics.
+	 * This will save any time having to grow and copy
+	 * the backing array.
+	 * If a Range requires more, then buffer will grow
+	 * but that should be rare if ever.
+	 */
+	private static final int SIZE_OF_CACHE_STRING_BUFFER = 64;
+	/**
 	 * 2^8 -1.
 	 */
 	private static final int UNSIGNED_BYTE_MAX = 255;
@@ -591,9 +600,20 @@ public abstract class Range implements Rangeable,Iterable<Long>
 
     }
     private static String createCacheKeyFor(Range r){
-        //Range's toString() should be fine
+        //We want a String that is unique for
+    	//each different Range
+    	//and Ranges with same values should
+    	//return the same String   	
         //to ensure uniqueness in our cache.
-        return r.toString();
+    	
+    	//performance optimization use StringBuilder
+    	//instead of String.format()
+    	
+        return new StringBuilder(SIZE_OF_CACHE_STRING_BUFFER)
+        				.append(r.getBegin())
+        				.append("..")
+        				.append(r.getEnd())
+        				.toString();
     }
 
     /**
