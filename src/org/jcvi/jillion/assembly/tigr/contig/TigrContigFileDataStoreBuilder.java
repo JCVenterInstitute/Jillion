@@ -26,7 +26,7 @@ import java.io.IOException;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.consed.ace.AceContig;
-import org.jcvi.jillion.assembly.consed.ace.AceFileContigDataStore;
+import org.jcvi.jillion.assembly.consed.ace.AceFileDataStore;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
@@ -140,7 +140,7 @@ public class TigrContigFileDataStoreBuilder {
 	 * the given {@link DataStoreFilter}.  If a filter
 	 * is not given to this builder, then all records
 	 * in the ace file will be included in the built
-	 * {@link AceFileContigDataStore}.
+	 * {@link AceFileDataStore}.
 	 * @param filter a {@link DataStoreFilter} instance that can be
 	 * used to filter out specified {@link AceContig}s; can not be null. 
 	 * @return this.
@@ -161,7 +161,7 @@ public class TigrContigFileDataStoreBuilder {
 	 * which may cause an Exception if there isn't enough memory.
 	 * The {@link DataStoreProviderHint}  is just a guideline 
 	 * and may be ignored by this builder when determining
-	 * which {@link AceFileContigDataStore} implementation to chose
+	 * which {@link AceFileDataStore} implementation to chose
 	 * to build in {@link #build()}.
 	 * @param hint an instance of {@link DataStoreProviderHint};
 	 * can not be null.
@@ -180,7 +180,7 @@ public class TigrContigFileDataStoreBuilder {
 	
 	/**
 	 * Parse the given ace file and return
-	 * a new instance of a {@link AceFileContigDataStore}
+	 * a new instance of a {@link AceFileDataStore}
 	 * using all the input parameters given so far.  
 	 * If not all optional parameters are set then default
 	 * values will be used:
@@ -188,7 +188,7 @@ public class TigrContigFileDataStoreBuilder {
 	 * <li>
 	 * If no {@link DataStoreFilter} has been specified
 	 * by {@link #filter(DataStoreFilter)},
-	 * then all {@link AceContig}s will be included in this {@link AceFileContigDataStore}.
+	 * then all {@link AceContig}s will be included in this {@link AceFileDataStore}.
 	 * </li>
 	 * <li>
 	 * If no {@link DataStoreProviderHint} has been specified
@@ -199,7 +199,7 @@ public class TigrContigFileDataStoreBuilder {
 	 * if there is not enough memory available.
 	 * </li>
 	 * </ul>
-	 * @return a new {@link AceFileContigDataStore} instance;
+	 * @return a new {@link AceFileDataStore} instance;
 	 * never null.
 	 * @throws IOException if there is a problem parsing the 
 	 * ace file. 

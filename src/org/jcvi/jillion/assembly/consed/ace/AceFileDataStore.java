@@ -25,14 +25,14 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 /**
- * {@code AceFileContigDataStore} is a {@link ContigDataStore}
+ * {@code AceFileDataStore} is a {@link ContigDataStore}
  * for {@link AceContig}s that are contained in a single .ace file.
  * 
  * @author dkatzel
  *
  *
  */
-public interface AceFileContigDataStore extends ContigDataStore<AceAssembledRead,AceContig>{
+public interface AceFileDataStore extends ContigDataStore<AceAssembledRead,AceContig>{
 	/**
 	 * Get the total number of reads over all the contigs
 	 * in the datastore.  This number may be different
@@ -40,7 +40,7 @@ public interface AceFileContigDataStore extends ContigDataStore<AceAssembledRead
 	 * for two reasons:
 	 * <ol>
 	 * <li>Some contigs may be filtered out of this datastore depending
-	 * on the parameters used when constructing this {@link AceFileContigDataStore}
+	 * on the parameters used when constructing this {@link AceFileDataStore}
 	 * instance.</li>
 	 * <li>Some reads in a contig may be excluded because they are either invalid
 	 * or don't provide any coverage</li>

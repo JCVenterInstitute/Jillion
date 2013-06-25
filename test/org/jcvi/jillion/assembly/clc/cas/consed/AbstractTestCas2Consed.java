@@ -31,7 +31,7 @@ import org.jcvi.jillion.assembly.clc.cas.CasGappedReferenceDataStore;
 import org.jcvi.jillion.assembly.clc.cas.CasGappedReferenceDataStoreBuilderVisitor;
 import org.jcvi.jillion.assembly.consed.ace.AceAssembledRead;
 import org.jcvi.jillion.assembly.consed.ace.AceContig;
-import org.jcvi.jillion.assembly.consed.ace.AceFileContigDataStore;
+import org.jcvi.jillion.assembly.consed.ace.AceFileDataStore;
 import org.jcvi.jillion.assembly.consed.ace.AceFileDataStoreBuilder;
 import org.jcvi.jillion.assembly.tigr.contig.TigrContig;
 import org.jcvi.jillion.assembly.tigr.contig.TigrContigDataStore;
@@ -88,7 +88,7 @@ public abstract class AbstractTestCas2Consed {
 
 	      File editDir = new File(consedDir, "edit_dir");
 	      File aceFile = new File(editDir, prefix+".ace.1");
-	      AceFileContigDataStore dataStore =new AceFileDataStoreBuilder(aceFile)
+	      AceFileDataStore dataStore =new AceFileDataStoreBuilder(aceFile)
 												.hint(DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_SPEED)
 												.build();
 	        assertEquals("# contigs", expectedDataStore.getNumberOfRecords(), dataStore.getNumberOfRecords());

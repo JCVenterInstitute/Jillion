@@ -33,7 +33,7 @@ import java.util.Map;
 
 import org.jcvi.jillion.assembly.consed.ace.AceContig;
 import org.jcvi.jillion.assembly.consed.ace.AceContigBuilder;
-import org.jcvi.jillion.assembly.consed.ace.AceFileContigDataStore;
+import org.jcvi.jillion.assembly.consed.ace.AceFileDataStore;
 import org.jcvi.jillion.assembly.consed.ace.ConsensusAceTag;
 import org.jcvi.jillion.assembly.consed.ace.ReadAceTag;
 import org.jcvi.jillion.assembly.consed.ace.WholeAssemblyAceTag;
@@ -50,16 +50,16 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.qual.QualityFastaDataStore;
 import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
 
-public class AceAdapterContigFileDataStore implements AceFileContigDataStore{
+public class AceAdapterContigFileDataStore implements AceFileDataStore{
 
     private final Map<String, AceContig> map = new HashMap<String, AceContig>();
     private DataStore<AceContig> dataStore;
     private long totalNumberOfReads=0L;
 
-    public static AceFileContigDataStore create(final QualityFastaDataStore fullLengthQualityDataStore, final Date phdDate, File contigFile) throws IOException{
+    public static AceFileDataStore create(final QualityFastaDataStore fullLengthQualityDataStore, final Date phdDate, File contigFile) throws IOException{
         return create(fullLengthQualityDataStore, phdDate, contigFile,false);
     }
-    public static AceFileContigDataStore create(final QualityFastaDataStore fullLengthQualityDataStore, final Date phdDate, File contigFile, final boolean computeConsedConsensusQualities) throws IOException{
+    public static AceFileDataStore create(final QualityFastaDataStore fullLengthQualityDataStore, final Date phdDate, File contigFile, final boolean computeConsedConsensusQualities) throws IOException{
     	final AceAdapterContigFileDataStore datastore = new AceAdapterContigFileDataStore();
     	TigrContigFileVisitor visitor =new TigrContigFileVisitor() {
 			

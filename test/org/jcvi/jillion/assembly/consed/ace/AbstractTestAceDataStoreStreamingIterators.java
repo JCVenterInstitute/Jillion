@@ -28,7 +28,7 @@ import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.assembly.consed.ace.AceAssembledRead;
 import org.jcvi.jillion.assembly.consed.ace.AceContig;
-import org.jcvi.jillion.assembly.consed.ace.AceFileContigDataStore;
+import org.jcvi.jillion.assembly.consed.ace.AceFileDataStore;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -40,7 +40,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 public abstract class AbstractTestAceDataStoreStreamingIterators {
 
-	private AceFileContigDataStore datastore;
+	private AceFileDataStore datastore;
 	private final File aceFile;
 	
 	public AbstractTestAceDataStoreStreamingIterators(){
@@ -52,7 +52,7 @@ public abstract class AbstractTestAceDataStoreStreamingIterators {
 		}
 	}
 	
-	protected abstract AceFileContigDataStore createDataStore(File aceFile) throws IOException;
+	protected abstract AceFileDataStore createDataStore(File aceFile) throws IOException;
 	
 	@Before
 	public void setupDataStore() throws IOException{

@@ -39,7 +39,7 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 /**
  * {@code IndexedAceFileDataStore} is an implementation of 
- * {@link AceFileContigDataStore} that only stores an {@link AceFileVisitorMemento}s
+ * {@link AceFileDataStore} that only stores an {@link AceFileVisitorMemento}s
  * to the various contigs contained
  * inside the ace file.  Calls to {@link AceContig#getRead(String)} may
  * cause part of the ace file to be re-parsed in order to retrieve
@@ -51,7 +51,7 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
  * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
-final class IndexedAceFileDataStore implements AceFileContigDataStore{
+final class IndexedAceFileDataStore implements AceFileDataStore{
 	
 	private final Map<String, AceFileVisitorMemento> mementos;
 	private final List<WholeAssemblyAceTag> wholeAssemblyTags;
@@ -63,7 +63,7 @@ final class IndexedAceFileDataStore implements AceFileContigDataStore{
     
     private volatile boolean closed=false;
     
-    public static AceFileContigDataStore create(File aceFile, DataStoreFilter filter) throws IOException{
+    public static AceFileDataStore create(File aceFile, DataStoreFilter filter) throws IOException{
     	if(filter==null){
     		throw new NullPointerException("filter can not be null");
     	}

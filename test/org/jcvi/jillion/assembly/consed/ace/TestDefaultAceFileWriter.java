@@ -35,7 +35,7 @@ import org.jcvi.jillion.assembly.consed.ace.AbstractAceFileVisitor;
 import org.jcvi.jillion.assembly.consed.ace.AceAssembledRead;
 import org.jcvi.jillion.assembly.consed.ace.AceContig;
 import org.jcvi.jillion.assembly.consed.ace.AceContigVisitor;
-import org.jcvi.jillion.assembly.consed.ace.AceFileContigDataStore;
+import org.jcvi.jillion.assembly.consed.ace.AceFileDataStore;
 import org.jcvi.jillion.assembly.consed.ace.AceFileParser;
 import org.jcvi.jillion.assembly.consed.ace.AceFileVisitor;
 import org.jcvi.jillion.assembly.consed.ace.AceFileVisitorCallback;
@@ -103,7 +103,7 @@ public class TestDefaultAceFileWriter {
 		PhdDataStore phdDataStore = new ArtificalPhdDataStore(
 				nucleotideDataStore, qualityDataStore, phdDate);
 
-		AceFileContigDataStore aceDataStore = AceAdapterContigFileDataStore
+		AceFileDataStore aceDataStore = AceAdapterContigFileDataStore
 				.create(qualityFastaDataStore, phdDate, contigFile);
 
 		File outputFile = folder.newFile();
@@ -113,7 +113,7 @@ public class TestDefaultAceFileWriter {
 		writeContigs(aceDataStore, sut);
 		sut.close();
 
-		AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore
+		AceFileDataStore reparsedAceDataStore = DefaultAceFileDataStore
 				.create(outputFile);
 		assertContigsAreEqual(aceDataStore, reparsedAceDataStore);
 	}
@@ -138,7 +138,7 @@ public class TestDefaultAceFileWriter {
 		PhdDataStore phdDataStore = new ArtificalPhdDataStore(
 				nucleotideDataStore, qualityDataStore, phdDate);
 
-		AceFileContigDataStore aceDataStore = AceAdapterContigFileDataStore
+		AceFileDataStore aceDataStore = AceAdapterContigFileDataStore
 				.create(qualityFastaDataStore, phdDate, contigFile,true);
 
 		File outputFile = folder.newFile();
@@ -176,7 +176,7 @@ public class TestDefaultAceFileWriter {
 		Map<String, QualitySequence> expectedConsensusQualities = getExpectedConsensusQualities();
 		assertEquals(expectedConsensusQualities, actualConsensusQualities);
 
-		AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore
+		AceFileDataStore reparsedAceDataStore = DefaultAceFileDataStore
 				.create(outputFile);
 		assertContigsAreEqual(aceDataStore, reparsedAceDataStore);
 	}
@@ -221,7 +221,7 @@ public class TestDefaultAceFileWriter {
 		PhdDataStore phdDataStore = new ArtificalPhdDataStore(
 				nucleotideDataStore, qualityDataStore, phdDate);
 
-		AceFileContigDataStore aceDataStore = AceAdapterContigFileDataStore
+		AceFileDataStore aceDataStore = AceAdapterContigFileDataStore
 				.create(qualityFastaDataStore, phdDate, contigFile);
 
 		File outputFile = folder.newFile();
@@ -236,7 +236,7 @@ public class TestDefaultAceFileWriter {
 		sut.write(aceDataStore.get("95"));
 		sut.close();
 
-		AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore
+		AceFileDataStore reparsedAceDataStore = DefaultAceFileDataStore
 				.create(outputFile);
 		assertContigHasSameRecords(aceDataStore.get("98"),
 				reparsedAceDataStore.get("98"));
@@ -248,8 +248,8 @@ public class TestDefaultAceFileWriter {
 				reparsedAceDataStore.get("95"));
 	}
 
-	private void assertContigsAreEqual(AceFileContigDataStore aceDataStore,
-			AceFileContigDataStore reparsedAceDataStore)
+	private void assertContigsAreEqual(AceFileDataStore aceDataStore,
+			AceFileDataStore reparsedAceDataStore)
 			throws DataStoreException {
 		assertEquals("# contigs", aceDataStore.getNumberOfRecords(),
 				reparsedAceDataStore.getNumberOfRecords());
@@ -299,7 +299,7 @@ public class TestDefaultAceFileWriter {
 		}
 	}
 
-	private void writeContigs(AceFileContigDataStore aceDataStore,
+	private void writeContigs(AceFileDataStore aceDataStore,
 			AceFileWriter sut) throws DataStoreException, IOException {
 		StreamingIterator<AceContig> iter = aceDataStore.iterator();
 		try {
@@ -324,7 +324,7 @@ public class TestDefaultAceFileWriter {
 
 		AceFileWriter sut = new AceFileWriterBuilder(outputFile, phdDataStore)
 				.tmpDir(tmpDir).build();
-		AceFileContigDataStore datastore = DefaultAceFileDataStore
+		AceFileDataStore datastore = DefaultAceFileDataStore
 				.create(originalAce);
 
 		// lets write out the tags first to make sure they get put at the end
@@ -336,7 +336,7 @@ public class TestDefaultAceFileWriter {
 		writeContigs(datastore, sut);
 
 		sut.close();
-		AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore
+		AceFileDataStore reparsedAceDataStore = DefaultAceFileDataStore
 				.create(outputFile);
 		assertContigsAreEqual(datastore, reparsedAceDataStore);
 
@@ -346,8 +346,8 @@ public class TestDefaultAceFileWriter {
 
 	}
 
-	private void assertConsensusTagsAreEqual(AceFileContigDataStore datastore,
-			AceFileContigDataStore reparsedAceDataStore)
+	private void assertConsensusTagsAreEqual(AceFileDataStore datastore,
+			AceFileDataStore reparsedAceDataStore)
 			throws DataStoreException {
 		StreamingIterator<ConsensusAceTag> expected = datastore
 				.getConsensusTagIterator();
@@ -362,8 +362,8 @@ public class TestDefaultAceFileWriter {
 
 	}
 
-	private void assertReadTagsAreEqual(AceFileContigDataStore datastore,
-			AceFileContigDataStore reparsedAceDataStore)
+	private void assertReadTagsAreEqual(AceFileDataStore datastore,
+			AceFileDataStore reparsedAceDataStore)
 			throws DataStoreException {
 		StreamingIterator<ReadAceTag> expected = datastore.getReadTagIterator();
 		StreamingIterator<ReadAceTag> actual = datastore.getReadTagIterator();
@@ -376,8 +376,8 @@ public class TestDefaultAceFileWriter {
 
 	}
 
-	private void assertWholeReadTagsAreEqual(AceFileContigDataStore datastore,
-			AceFileContigDataStore reparsedAceDataStore)
+	private void assertWholeReadTagsAreEqual(AceFileDataStore datastore,
+			AceFileDataStore reparsedAceDataStore)
 			throws DataStoreException {
 		StreamingIterator<WholeAssemblyAceTag> expected = datastore
 				.getWholeAssemblyTagIterator();
@@ -391,7 +391,7 @@ public class TestDefaultAceFileWriter {
 		assertFalse(actual.hasNext());
 	}
 
-	private void writeReadTags(AceFileContigDataStore datastore,
+	private void writeReadTags(AceFileDataStore datastore,
 			AceFileWriter sut) throws IOException, DataStoreException {
 		StreamingIterator<ReadAceTag> iter = datastore.getReadTagIterator();
 		try {
@@ -403,7 +403,7 @@ public class TestDefaultAceFileWriter {
 		}
 	}
 
-	private void writeWholeAssemblyTags(AceFileContigDataStore datastore,
+	private void writeWholeAssemblyTags(AceFileDataStore datastore,
 			AceFileWriter sut) throws IOException, DataStoreException {
 		StreamingIterator<WholeAssemblyAceTag> iter = datastore
 				.getWholeAssemblyTagIterator();
@@ -416,7 +416,7 @@ public class TestDefaultAceFileWriter {
 		}
 	}
 
-	private void writeConsensusTags(AceFileContigDataStore datastore,
+	private void writeConsensusTags(AceFileDataStore datastore,
 			AceFileWriter sut) throws IOException, DataStoreException {
 		StreamingIterator<ConsensusAceTag> iter = datastore
 				.getConsensusTagIterator();

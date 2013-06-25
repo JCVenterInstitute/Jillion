@@ -30,7 +30,7 @@ import java.util.Date;
 
 import org.jcvi.jillion.assembly.consed.ace.AceAssembledRead;
 import org.jcvi.jillion.assembly.consed.ace.AceContig;
-import org.jcvi.jillion.assembly.consed.ace.AceFileContigDataStore;
+import org.jcvi.jillion.assembly.consed.ace.AceFileDataStore;
 import org.jcvi.jillion.assembly.consed.ace.AceFileUtil;
 import org.jcvi.jillion.assembly.consed.ace.DefaultAceFileDataStore;
 import org.jcvi.jillion.assembly.consed.phd.ArtificalPhdDataStore;
@@ -68,7 +68,7 @@ public class TestAceFileUtil_writingAceContigs {
         
         PhdDataStore phdDataStore = new ArtificalPhdDataStore(nucleotideDataStore, qualityDataStore, phdDate);
        
-        AceFileContigDataStore aceDataStore = AceAdapterContigFileDataStore.create(qualityFastaDataStore,phdDate,contigFile);
+        AceFileDataStore aceDataStore = AceAdapterContigFileDataStore.create(qualityFastaDataStore,phdDate,contigFile);
         
         
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -77,7 +77,7 @@ public class TestAceFileUtil_writingAceContigs {
         AceFileUtil.writeAceFileHeader(numberOfContigs, numberOfReads, out);
         writeAceContigs(phdDataStore, aceDataStore, out);
         
-        AceFileContigDataStore reparsedAceDataStore = DefaultAceFileDataStore.create(new ByteArrayInputStream(out.toByteArray()));
+        AceFileDataStore reparsedAceDataStore = DefaultAceFileDataStore.create(new ByteArrayInputStream(out.toByteArray()));
         assertEquals("# contigs", aceDataStore.getNumberOfRecords(), reparsedAceDataStore.getNumberOfRecords());
         StreamingIterator<AceContig> contigIter = aceDataStore.iterator();
         try{
@@ -109,7 +109,7 @@ public class TestAceFileUtil_writingAceContigs {
     }
 
 	private void writeAceContigs(PhdDataStore phdDataStore,
-			AceFileContigDataStore aceDataStore, ByteArrayOutputStream out)
+			AceFileDataStore aceDataStore, ByteArrayOutputStream out)
 			throws IOException, DataStoreException {
 		StreamingIterator<AceContig> iter = aceDataStore.iterator();
 		try{
@@ -122,7 +122,7 @@ public class TestAceFileUtil_writingAceContigs {
 		}
 	}
 
-	private int countNumberOfTotalReads(AceFileContigDataStore aceDataStore) throws DataStoreException {
+	private int countNumberOfTotalReads(AceFileDataStore aceDataStore) throws DataStoreException {
 		int numberOfReads =0;
 		StreamingIterator<AceContig> iter = aceDataStore.iterator();
 		try{

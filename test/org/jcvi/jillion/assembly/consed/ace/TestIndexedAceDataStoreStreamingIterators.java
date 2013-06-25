@@ -23,14 +23,14 @@ package org.jcvi.jillion.assembly.consed.ace;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.jillion.assembly.consed.ace.AceFileContigDataStore;
+import org.jcvi.jillion.assembly.consed.ace.AceFileDataStore;
 import org.jcvi.jillion.assembly.consed.ace.IndexedAceFileDataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 
 public class TestIndexedAceDataStoreStreamingIterators extends AbstractTestAceDataStoreStreamingIterators{
 
 	@Override
-	protected AceFileContigDataStore createDataStore(File aceFile) throws IOException {
+	protected AceFileDataStore createDataStore(File aceFile) throws IOException {
 		return IndexedAceFileDataStore.create(aceFile, DataStoreFilters.alwaysAccept());
 	}
 
