@@ -1,0 +1,158 @@
+Change Log:
+
+This document lists all changes and refactoring made that either:
+add new features, break the old API or fix known bugs.  There will
+often be many more source code changes that aren't listed if they don't
+change the behavior in any public API classes.
+
+================
+Jillion 4.0 RC 2
+================
+
+New Features
+------------
+1.  Added support for new version of CLC .cas file format produced
+    by new version of CLC software "clc_mapper".  Previously
+    Jillion only supported cas files produced by CLC ref_assemble 
+    software.
+
+API Changes
+------------
+1.  Created ZtrChromatogramParser class to replace old ZtrChromatogramFileParser
+    class so the Chromatogram parsers match the other Jillion parser and visitor 
+    classes.
+    
+2.  Created ScfChromatogramParser and AbiChromatogramParser classes to replace
+    old ScfChromatogramFileParser and AbiChromatogramParser classes so the 
+    Chromatogram parsers match the other Jillion parser and visitor classes.
+    
+3.  Renamed ChromatogramFileVisitor.visitEndOfTrace() to visitEnd() to be consistent 
+    with other Jillion visitors
+    
+4.  Changed Chromatogram equals contract to require quality values and id are equal as well.
+
+5.  Removed ChromatogramFileVisitor.visitNewTrace() since it was never used by any chromatogram 
+    implementations other than as a no-op.
+    
+6.  Changed Chromatogram.getPositionSequence() to getPeakSequence().
+
+7.  Changed ChromatogramBuilder methods to get /set confidence to get/set qualities.
+
+8.  Changed TasmBuilder.withAvgCoverage(Double) method to be 
+    setCoverageInfo(Integer numReads, Double avgCov) so we also set number of reads.  
+    Setting numReads to non-null will override the Contig.getNumberOfReads() methods 
+    to be whatever you set it to. (helpful for annotation contigs)
+    
+9.  Changed AbstractTasmFileParser to set coverage info when parsing tasm header 
+    and reset it if any reads parsed.  This allows annotation contigs to retain their
+    correct # seqs and avgCoverage levels.
+
+10. Added new method TasmContig.isAnnotationContig() to denote if the numRecords and 
+    avg coverage or if it was explicitly set or was computed from underlying read info.
+    
+11. Changed FastaDataStoreBuilder classes to take InputStreams as well as Files.
+
+12. Changed Slice.equals() to allow for SliceElements to be in any order as long as all present.  
+    Previously order of elements mattered.
+
+13. renamed Phd.getPositionSequence() Phd.getPeakSequence()
+
+14. Removed TraceDecoderException and TraceEncoderException, 
+    everywhere that used these classes now throw./catch IOException instead.
+
+15. Changed AssembledRead.toReferenceOffset() and AssembledRead.toGappedValidRangeOffset()
+    to throw IndexOutOfBoundsExceptions instead of IllegalArgumentExceptions if given invalid offsets.
+    
+16. Added TextLineParser.peekNextLine()
+
+17. Renamed CtgFileWriter to TigrContigFileWriter.
+
+18. Made DefaultPlacedContig package private since it is only 
+    created internally by the ScaffoldBuilder objects.
+    
+19. Moved ScaffoldUtils class out of Jillion since it was never used except by other higher up modules 
+    internal to JCVI (it was moved to  one of those modules )
+    
+20. Added new method Slice.getConsensusCall() which optionally stores the consensus call for that slice needed 
+    for new consensus caller implementations, if consensus is not set, then this method returns null.
+    Changed SliceMapBuilder with Contig constructors to set each Slice's consensus call to the
+    contig consensus.
+
+21. Added method SliceBuilder.getCurrentCoverageDepth().
+
+22. Added constructors and methods to SliceBuilder that take SliceElementFilter to more simply filter elements.
+
+23. Changed CasFileParser constructor to be private added new create static factory method to use instead.
+
+24. Added sort() and binarySerarch() methods to GrowableArrays. 
+
+25. Added clear() method to SequenceBuilders so the same object can be re-used without having
+    to create new objects or gc'ing old objects.
+    
+26. Changed GapQualityValueStrategy to return entire gapped complemented quality sequence all at once instead of one offset at a time since it is computationally intensive
+    and most of the time you need the entire sequence anyway (for slice map building).
+    
+27. Renamed AceFileContigDataStore interface AceFileDataStore to match the respective builder
+
+Performance Improvements
+------------------------
+1.  Improved performance of gap calculations for NucletoideSequence implementation that only contains ACGTN
+
+2.  Added constant Nucleotide.VALUES which stores a copy of values() as an unmodifiable List so we don't 
+    keep having to clone it every time.
+
+3.  improved NucleotideSequence and NucleotideSequenceBuilder processing by
+    optimizing bottlenecks detected with profiler.
+    
+4.  Improved Fastq parsing by reducing the number of objects created during parsing.
+
+5.  Modified ContigBuilders to use new GapQualityValue methods which can compute quality values
+    faster than old method. 
+
+6.  Performance improvements to Range construction.
+
+7.  Rewrote NucleotideCodec implementations so that the class class that stores each base
+    in 4 bits can take advantage of the 'book keeping' information in the header that was
+    used in the 2 bit implementations.  This makes computing gapped and ungapped 
+    coordinates much faster with only a slight increase in memory usage.  
+    This improves cas2consed times by 33%.
+
+Bug Fixes
+------------
+1. Fixed internal TextLineParser class to correctly compute the 
+   current position offset into a file that uses Windows '\r\n' EOLs.  
+   This broke index offset datastore implementations on Windows machines.
+   
+2. MostFrequentBasecallConsensusCaller now uses cumulative quality scores 
+   in the event of a tie.
+   
+3. Fixed bug in ACGTNucleotideCodec which incorrectly computed ungappedLength.
+
+4. Bug fix LargeTasmContigDataStore.iterator() method to return TasmContig instances 
+   instead of TasmContigBuilder instances
+
+5. Fixed Bug in Range.iterator() if Range.getEnd() was Long.MAX_VALUE.
+
+6. Fixed bug in DefaultAsmContig to not delete readbuilders during build().  
+   This will now let users call built multiple times without errors.
+   
+7.  Fixed PhdParser and Writer to correctly handle read tags in all allowed locations.
+
+8.  Fixed bug in PhdWriter to write "UNPADDED_READ_POS" instead of "UNGAPPED_READ_POS"
+
+9.  Fixed bugs in AbstractAlignedReadCasVisitor to correctly handle interleaved records.
+
+10. Fixed for phdBall writer to not write out comment "null" if there wasn't any comment.
+
+11. Bug fix for sff parser if sff read did not have quality trimming applied to it.
+
+12.  Fixed Cas2consed to correctly trim sff reads correctly.
+
+13.  Bug fix in NucleotideSequenceBuilder which incorrectly counted N's as 
+     ambiguities when determining the codec to use.
+
+14.  Fixed bugs in GapQualityValueStrategy to correctly compute reverse complemented gap values. 
+
+15.  Bug fix to cas2consed to take qualities into account when computing consensus.
+
+
