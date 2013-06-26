@@ -33,6 +33,7 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         TestDirection.class,
         AllRangeTests.class,
+        TestJidFactory.class,
         
         
         TestTestUtilSuite.class,
