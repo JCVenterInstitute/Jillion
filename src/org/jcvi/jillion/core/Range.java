@@ -146,7 +146,7 @@ public abstract class Range implements Rangeable,Iterable<Long>
      * This cache uses  {@link SoftReference}s
      * so memory can be reclaimed if needed.
      */
-    private static final Map<String, Range> CACHE;
+    private static final Map<Jid, Range> CACHE;
     
     
     /**
@@ -401,7 +401,7 @@ public abstract class Range implements Rangeable,Iterable<Long>
      * Initialize cache with a soft reference cache that will grow as needed.
      */
     static{
-         CACHE = Caches.<String, Range>createSoftReferencedValueCache(INITIAL_CACHE_SIZE);
+         CACHE = Caches.<Jid, Range>createSoftReferencedValueCache(INITIAL_CACHE_SIZE);
     }
     /**
      * Factory method to get a {@link Range} object in
@@ -580,12 +580,12 @@ public abstract class Range implements Rangeable,Iterable<Long>
 	 * @throws NullPointerException if range is null.
 	 */
 	static synchronized Range removeFromCache(Range range){
-		String hashcode = createCacheKeyFor(range);
+		Jid hashcode = createCacheKeyFor(range);
 		return CACHE.remove(hashcode);
 	}
 	
     private static synchronized Range getFromCache(Range range) {
-        String hashcode = createCacheKeyFor(range);
+        Jid hashcode = createCacheKeyFor(range);
        
         //contains() followed by get() is not atomic;
         //we could gc in between - so only do a get
@@ -599,7 +599,7 @@ public abstract class Range implements Rangeable,Iterable<Long>
         return range;
 
     }
-    private static String createCacheKeyFor(Range r){
+    private static Jid createCacheKeyFor(Range r){
         //We want a String that is unique for
     	//each different Range
     	//and Ranges with same values should
@@ -609,11 +609,11 @@ public abstract class Range implements Rangeable,Iterable<Long>
     	//performance optimization use StringBuilder
     	//instead of String.format()
     	
-        return new StringBuilder(SIZE_OF_CACHE_STRING_BUFFER)
+        return JidFactory.create(new StringBuilder(SIZE_OF_CACHE_STRING_BUFFER)
         				.append(r.getBegin())
         				.append("..")
         				.append(r.getEnd())
-        				.toString();
+        				.toString());
     }
 
     /**
