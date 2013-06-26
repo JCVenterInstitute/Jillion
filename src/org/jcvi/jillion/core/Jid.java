@@ -13,7 +13,7 @@ public interface Jid {
 	 * @return This Jid as a String.
 	 */
 	@Override
-	public String toString();
+	String toString();
 	/**
 	 * Two JIds are equal if they
 	 * have the same String representation.
@@ -21,6 +21,13 @@ public interface Jid {
 	 * @return
 	 */
 	@Override
-	public boolean equals(Object obj);
+	boolean equals(Object obj);
+	/**
+	 * Returns the same hashcode
+	 * as if this Id were a String.
+	 * @return
+	 */
+	@Override
+	int hashCode();
 
 }

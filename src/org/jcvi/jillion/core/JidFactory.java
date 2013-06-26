@@ -127,7 +127,7 @@ public final class JidFactory {
 		
 	}
 	
-	private static abstract class AbstractPackedStringJId implements Jid{
+	private abstract static class AbstractPackedStringJId implements Jid{
 	    protected int get( final byte[] ar, final int index ){
 	        return index < ar.length ? ar[ index ] : 0;
 	    }
@@ -142,8 +142,7 @@ public final class JidFactory {
 	            --last;
 	        }
 	        
-	        String string = new String( ar, 0, last+1, US_ACII );
-			return string;
+	        return new String( ar, 0, last+1, US_ACII );
 	    }
 	 
 	    public String toString(){
@@ -220,7 +219,7 @@ public final class JidFactory {
 	        	return false;
 	        }
 	        if(getClass() == o.getClass()){
-		        Packed12 packed12 = ( Packed12 ) o;
+		        Packed12 packed12 = (Packed12) o;
 		        return f1 == packed12.f1 && f2 == packed12.f2 && f3 == packed12.f3;
 	        }
 	        //not same class probably isn't
@@ -265,7 +264,7 @@ public final class JidFactory {
 	    }
 	 
 	    protected ByteBuffer toByteBuffer(){
-	        final ByteBuffer bbuf = ByteBuffer.allocate( 20 );
+	        final ByteBuffer bbuf = ByteBuffer.allocate(20);
 	        bbuf.putInt(f1);
 	        bbuf.putInt(f2);
 	        bbuf.putInt(f3);
@@ -283,7 +282,7 @@ public final class JidFactory {
 	        	return false;
 	        }
 	        if(getClass() == o.getClass()){
-		        Packed20 packed20 = ( Packed20 ) o;
+		        Packed20 packed20 = (Packed20) o;
 		        return f1 == packed20.f1 && f2 == packed20.f2 && f3 == packed20.f3
 		        		&& f4 == packed20.f4 && f5 == packed20.f5;
 	        }
@@ -333,7 +332,7 @@ public final class JidFactory {
 	    }
 	 
 	    protected ByteBuffer toByteBuffer(){
-	        final ByteBuffer bbuf = ByteBuffer.allocate( 28 );
+	        final ByteBuffer bbuf = ByteBuffer.allocate(28);
 	        bbuf.putInt(f1);
 	        bbuf.putInt(f2);
 	        bbuf.putInt(f3);
@@ -353,7 +352,7 @@ public final class JidFactory {
 	        	return false;
 	        }
 	        if(getClass() == o.getClass()){
-		        Packed28 packed28 = ( Packed28 ) o;
+		        Packed28 packed28 = (Packed28) o;
 		        return f1 == packed28.f1 && f2 == packed28.f2 && f3 == packed28.f3
 		        		&& f4 == packed28.f4 && f5 == packed28.f5 && f6 == packed28.f6 && f7 == packed28.f7;
 	        }
@@ -408,7 +407,7 @@ public final class JidFactory {
 	    }
 	 
 	    protected ByteBuffer toByteBuffer(){
-	        final ByteBuffer bbuf = ByteBuffer.allocate( 36 );
+	        final ByteBuffer bbuf = ByteBuffer.allocate(36);
 	        bbuf.putInt(f1);
 	        bbuf.putInt(f2);
 	        bbuf.putInt(f3);
@@ -430,7 +429,7 @@ public final class JidFactory {
 	        	return false;
 	        }
 	        if(getClass() == o.getClass()){
-	        	Packed36 packed36 = ( Packed36 ) o;
+	        	Packed36 packed36 = (Packed36) o;
 		        return f1 == packed36.f1 && f2 == packed36.f2 && f3 == packed36.f3
 		        		&& f4 == packed36.f4 && f5 == packed36.f5 && f6 == packed36.f6 && f7 == packed36.f7
 		        && f8 == packed36.f8 && f9 == packed36.f9;
@@ -492,7 +491,7 @@ public final class JidFactory {
 	    }
 	 
 	    protected ByteBuffer toByteBuffer(){
-	        final ByteBuffer bbuf = ByteBuffer.allocate( 44 );
+	        final ByteBuffer bbuf = ByteBuffer.allocate(44);
 	        bbuf.putInt(f1);
 	        bbuf.putInt(f2);
 	        bbuf.putInt(f3);
@@ -516,7 +515,7 @@ public final class JidFactory {
 	        	return false;
 	        }
 	        if(getClass() == o.getClass()){
-	        	Packed44 packed44 = ( Packed44 ) o;
+	        	Packed44 packed44 = (Packed44) o;
 		        return f1 == packed44.f1 && f2 == packed44.f2 && f3 == packed44.f3
 		        		&& f4 == packed44.f4 && f5 == packed44.f5 && f6 == packed44.f6 && f7 == packed44.f7
 		        && f8 == packed44.f8 && f9 == packed44.f9 && f10 == packed44.f10 && f11 == packed44.f11;
@@ -612,7 +611,7 @@ public final class JidFactory {
 	        	return false;
 	        }
 	        if(getClass() == o.getClass()){
-	        	Packed52 packed52 = ( Packed52 ) o;
+	        	Packed52 packed52 = (Packed52) o;
 		        return f1 == packed52.f1 && f2 == packed52.f2 && f3 == packed52.f3
 		        		&& f4 == packed52.f4 && f5 == packed52.f5 && f6 == packed52.f6 && f7 == packed52.f7
 		        && f8 == packed52.f8 && f9 == packed52.f9 && f10 == packed52.f10 && f11 == packed52.f11
