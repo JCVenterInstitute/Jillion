@@ -217,7 +217,35 @@ public final class JidFactory {
 	    	}
 	    	return hash;
 	    }
+	    
+	    @Override
+	    public final boolean equals(Object o) {
+	        if ( this == o ){
+	        	return true;
+	        }
+	        if ( !( o instanceof Jid)){
+	        	return false;
+	        }
+	        if(checkEquals(o)){
+	        	return true;
+	        }
+	        //not same class probably isn't
+	        //equal but should check anyway in case someone else made
+	        //an implementation
+	        return toString().equals(o.toString());
+	    }
 	    /**
+	     * Check if this other object is equal
+	     * to this.  Called by {@link #equals(Object)}.
+	     * @param o the other Object to compare
+	     * {@link #equals(Object)} method has already
+	     * confirmed that this is a Jid instance.
+	     * @return {@code true} if this o is equal;
+	     * {@code false} otherwise.
+	     */
+	    protected abstract boolean checkEquals(Object o);
+
+		/**
 	     * Compute the hash code of this 
 	     * Jid as defined by {@link Jid#hashCode()}
 	     * contract.
@@ -309,22 +337,16 @@ public final class JidFactory {
 	    }
 	 
 	    @Override
-	    public boolean equals(Object o) {
-	        if ( this == o ){
-	        	return true;
-	        }
-	        if ( !( o instanceof Jid)){
-	        	return false;
-	        }
+	    protected boolean checkEquals(Object o) {
+	        
 	        if(getClass() == o.getClass()){
 		        Packed16 packed12 = (Packed16) o;
 		        return f1 == packed12.f1 && f2 == packed12.f2
 		        		&& f3 == packed12.f3 && f4 == packed12.f4;
 	        }
-	        //not same class probably isn't
-	        //equal but should check anyway in case someone else made
-	        //an implementation
-	        return toString().equals(o.toString());
+	        return false;
+
+	      
 	    }
 	 
 	    @Override
@@ -378,22 +400,14 @@ public final class JidFactory {
 	    }
 	 
 	    @Override
-	    public boolean equals(Object o) {
-	        if ( this == o ){
-	        	return true;
-	        }
-	        if ( !( o instanceof Jid)){
-	        	return false;
-	        }
+	    protected boolean checkEquals(Object o) {
+	        
 	        if(getClass() == o.getClass()){
 		        Packed24 packed20 = (Packed24) o;
 		        return f1 == packed20.f1 && f2 == packed20.f2 && f3 == packed20.f3
 		        		&& f4 == packed20.f4 && f5 == packed20.f5 && f6 == packed20.f6;
 	        }
-	        //not same class probably isn't
-	        //equal but should check anyway in case someone else made
-	        //an implementation
-	        return toString().equals(o.toString());
+	        return false;
 	    }
 	 
 	    @Override
@@ -453,23 +467,14 @@ public final class JidFactory {
 	    }
 	 
 	    @Override
-	    public boolean equals(Object o) {
-	        if ( this == o ){
-	        	return true;
-	        }
-	        if ( !( o instanceof Jid)){
-	        	return false;
-	        }
+	    protected boolean checkEquals(Object o) {	        
 	        if(getClass() == o.getClass()){
 		        Packed32 packed28 = (Packed32) o;
 		        return f1 == packed28.f1 && f2 == packed28.f2 && f3 == packed28.f3
 		        		&& f4 == packed28.f4 && f5 == packed28.f5 && f6 == packed28.f6 
 		        		&& f7 == packed28.f7 && f8 == packed28.f8;
 	        }
-	        //not same class probably isn't
-	        //equal but should check anyway in case someone else made
-	        //an implementation
-	        return toString().equals(o.toString());
+	        return false;
 	    }
 	 
 	    @Override
@@ -536,23 +541,14 @@ public final class JidFactory {
 	    }
 	 
 	    @Override
-	    public boolean equals(Object o) {
-	        if ( this == o ){
-	        	return true;
-	        }
-	        if ( !( o instanceof Jid)){
-	        	return false;
-	        }
+	    protected boolean checkEquals(Object o) {	       
 	        if(getClass() == o.getClass()){
 	        	Packed40 packed36 = (Packed40) o;
 		        return f1 == packed36.f1 && f2 == packed36.f2 && f3 == packed36.f3
 		        		&& f4 == packed36.f4 && f5 == packed36.f5 && f6 == packed36.f6 && f7 == packed36.f7
 		        && f8 == packed36.f8 && f9 == packed36.f9 && f10 == packed36.f10;
 	        }
-	        //not same class probably isn't
-	        //equal but should check anyway in case someone else made
-	        //an implementation
-	        return toString().equals(o.toString());
+	        return false;
 	    }
 	 
 	    @Override
@@ -627,13 +623,7 @@ public final class JidFactory {
 	    }
 	 
 	    @Override
-	    public boolean equals(Object o) {
-	        if ( this == o ){
-	        	return true;
-	        }
-	        if ( !( o instanceof Jid)){
-	        	return false;
-	        }
+	    protected boolean checkEquals(Object o) {	       
 	        if(getClass() == o.getClass()){
 	        	Packed48 packed44 = (Packed48) o;
 		        return f1 == packed44.f1 && f2 == packed44.f2 && f3 == packed44.f3
@@ -641,10 +631,7 @@ public final class JidFactory {
 		        && f8 == packed44.f8 && f9 == packed44.f9 && f10 == packed44.f10 
 		        && f11 == packed44.f11 && f12 == packed44.f12;
 	        }
-	        //not same class probably isn't
-	        //equal but should check anyway in case someone else made
-	        //an implementation
-	        return toString().equals(o.toString());
+	        return false;
 	    }
 	 
 	    @Override
@@ -728,13 +715,7 @@ public final class JidFactory {
 	    }
 	 
 	    @Override
-	    public boolean equals(Object o) {
-	        if ( this == o ){
-	        	return true;
-	        }
-	        if ( !( o instanceof Jid)){
-	        	return false;
-	        }
+	    protected boolean checkEquals(Object o) {	       
 	        if(getClass() == o.getClass()){
 	        	Packed56 packed52 = (Packed56) o;
 		        return f1 == packed52.f1 && f2 == packed52.f2 && f3 == packed52.f3
@@ -742,10 +723,7 @@ public final class JidFactory {
 		        && f8 == packed52.f8 && f9 == packed52.f9 && f10 == packed52.f10 && f11 == packed52.f11
 		        && f12 == packed52.f12 && f13 == packed52.f13 && f14 == packed52.f14;
 	        }
-	        //not same class probably isn't
-	        //equal but should check anyway in case someone else made
-	        //an implementation
-	        return toString().equals(o.toString());
+	       return false;
 	    }
 	 
 	    @Override
