@@ -23,6 +23,7 @@ package org.jcvi.jillion.assembly.tigr.tasm;
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.ReadInfo;
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Jid;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 /**
@@ -76,7 +77,7 @@ final class TasmAssembledReadAdapter implements TasmAssembledRead{
 	}
 
 	@Override
-	public String getId() {
+	public Jid getId() {
 		return delegatePlacedRead.getId();
 	}
 

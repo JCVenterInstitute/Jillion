@@ -30,6 +30,8 @@ import java.util.NoSuchElementException;
 import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.SliceBuilder;
 import org.jcvi.jillion.assembly.util.SliceElement;
+import org.jcvi.jillion.core.Jid;
+import org.jcvi.jillion.core.JidFactory;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
 /**
@@ -40,7 +42,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 public class NoConsensusCompactedSlice implements Slice{
 	
     private final short[] elements;
-    private final String[] ids;
+    private final Jid[] ids;
     
     public static final NoConsensusCompactedSlice EMPTY = (NoConsensusCompactedSlice) new SliceBuilder().build();
     
@@ -48,9 +50,9 @@ public class NoConsensusCompactedSlice implements Slice{
      * @param elements
      * @param ids
      */
-    public NoConsensusCompactedSlice(short[] elements, List<String> ids) {
+    public NoConsensusCompactedSlice(short[] elements, List<Jid> ids) {
         this.elements = elements;
-        this.ids = ids.toArray(new String[ids.size()]);
+        this.ids = ids.toArray(new Jid[ids.size()]);
     }
 
     /**
@@ -155,7 +157,7 @@ public class NoConsensusCompactedSlice implements Slice{
     }
     
     private CompactedSliceElement getElement(int i){
-    	String id = ids[i];
+    	Jid id = ids[i];
         return CompactedSliceElement.create(id, elements[i]);
     }
     /**
@@ -171,10 +173,10 @@ public class NoConsensusCompactedSlice implements Slice{
     */
     @Override
     public boolean containsElement(String elementId) {
-    	return indexOf(elementId) >=0;
+    	return indexOf(JidFactory.create(elementId)) >=0;
     }
 
-    private int indexOf(String id){
+    private int indexOf(Jid id){
     	if(id==null){
     		for(int i=0; i< ids.length; i++){
         		if(ids[i]==null){
@@ -207,7 +209,7 @@ public class NoConsensusCompactedSlice implements Slice{
     */
     @Override
     public SliceElement getSliceElement(String elementId) {
-        int index= indexOf(elementId);
+        int index= indexOf(JidFactory.create(elementId));
         if(index<0){
             return null;
         }

@@ -106,4 +106,13 @@ public class TestJidFactory {
 		Jid other = new JidFactory.StringJid(str);
 		TestUtil.assertEqualAndHashcodeSame(id, other);	
 	}
+	
+	@Test
+	public void comparedToItselfShouldReturn0(){
+		assertEquals(0, id.compareTo(id));
+	}
+	@Test
+	public void comparedToNonEqualShouldReturnNon0(){
+		assertFalse(id.compareTo(JidFactory.create(differentStr)) ==0);
+	}
 }

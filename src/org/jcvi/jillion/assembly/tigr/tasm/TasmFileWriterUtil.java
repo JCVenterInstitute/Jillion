@@ -137,7 +137,7 @@ final class TasmFileWriterUtil {
 	
 	private static Map<TasmReadAttribute, String> createReadAttributes(TasmAssembledRead read){
 		Map<TasmReadAttribute, String> map = new EnumMap<TasmReadAttribute, String>(TasmReadAttribute.class);
-		map.put(TasmReadAttribute.NAME, read.getId());
+		map.put(TasmReadAttribute.NAME, read.getId().toString());
 		map.put(TasmReadAttribute.CONTIG_START_OFFSET, Long.toString(read.getGappedStartOffset()));
 		ReferenceMappedNucleotideSequence gappedSequence = read.getNucleotideSequence();
 		map.put(TasmReadAttribute.GAPPED_SEQUENCE, gappedSequence.toString());

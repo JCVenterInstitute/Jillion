@@ -194,7 +194,7 @@ final class ConsedConsensusQualityComputer {
 	    		if(dir ==Direction.REVERSE){
 	    			validRange = AssemblyUtil.reverseComplementValidRange(validRange, read.getReadInfo().getUngappedFullLength());
 	    		}
-	    		QualitySequence validQualities = AssemblyUtil.getUngappedComplementedValidRangeQualities(read, readQualities.get(read.getId()));
+	    		QualitySequence validQualities = AssemblyUtil.getUngappedComplementedValidRangeQualities(read, readQualities.get(read.getId().toString()));
 
 	    		Iterator<PhredQuality> qualIter = validQualities.iterator();
 	    		int i=0;

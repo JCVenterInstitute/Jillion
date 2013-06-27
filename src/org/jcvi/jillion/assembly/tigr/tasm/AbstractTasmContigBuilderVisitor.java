@@ -23,6 +23,7 @@ package org.jcvi.jillion.assembly.tigr.tasm;
 import java.util.Date;
 
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.JidFactory;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -100,7 +101,7 @@ public abstract class  AbstractTasmContigBuilderVisitor implements TasmContigVis
 					throw new IllegalStateException("full length sequence datastore did not contain read "+ readId);
 				}
 				String gappedSequence = gappedBasecalls.toString();
-				builder.addRead(readId, (int)gappedStartOffset, validRange, 
+				builder.addRead(JidFactory.create(readId), (int)gappedStartOffset, validRange, 
 						gappedSequence, dir, fullLength.intValue());
 				
 			}

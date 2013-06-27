@@ -101,7 +101,7 @@ final class BaseSegmentUtil {
 			}
 		}
 		//here we have a current matching read that no longer matches
-		bestSegments.add(new DefaultAceBaseSegment(currentMatchingRead.getRead().getId(), 
+		bestSegments.add(new DefaultAceBaseSegment(currentMatchingRead.getRead().getId().toString(), 
 				Range.of(currentMatchingRead.getStartMatchOffset(), consensusOffsetToBeCovered-1)));
 		return consensusOffsetToBeCovered;
 	}
@@ -134,7 +134,7 @@ final class BaseSegmentUtil {
 			AceAssembledRead currentRead = readIter.peek();
 			if(currentRead.getGappedStartOffset()<=offset){
 				readIter.next();
-				map.put(currentRead.getId(), currentRead.asRange());
+				map.put(currentRead.getId().toString(), currentRead.asRange());
 			}else{
 				done=true;
 			}

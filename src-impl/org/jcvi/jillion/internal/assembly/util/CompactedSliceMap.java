@@ -80,7 +80,7 @@ public final class CompactedSliceMap implements SliceMap {
     			PR read = readIter.next();
     			int start = (int)read.getGappedStartOffset();
     			int i=0;
-    			String id =read.getId();
+    			String id =read.getId().toString();
     			Direction dir = read.getDirection();
     			Iterator<PhredQuality> validRangeGappedQualitiesIterator =null;
     			if(qualityDataStore==null){

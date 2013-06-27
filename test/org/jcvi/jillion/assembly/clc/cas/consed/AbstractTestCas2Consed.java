@@ -117,7 +117,7 @@ public abstract class AbstractTestCas2Consed {
 				iter = contig.getReadIterator();
 				while(iter.hasNext()){
 					AceAssembledRead actualRead = iter.next();
-				String readId = actualRead.getId();
+				String readId = actualRead.getId().toString();
 				AssembledRead expectedRead = expectedContig.getRead(readId);
 				assertEquals("read basecalls", expectedRead
 						.getNucleotideSequence(), actualRead

@@ -30,24 +30,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.jillion.assembly.consed.ace.AbstractAceContigVisitor;
-import org.jcvi.jillion.assembly.consed.ace.AbstractAceFileVisitor;
-import org.jcvi.jillion.assembly.consed.ace.AceAssembledRead;
-import org.jcvi.jillion.assembly.consed.ace.AceContig;
-import org.jcvi.jillion.assembly.consed.ace.AceContigVisitor;
-import org.jcvi.jillion.assembly.consed.ace.AceFileDataStore;
-import org.jcvi.jillion.assembly.consed.ace.AceFileParser;
-import org.jcvi.jillion.assembly.consed.ace.AceFileVisitor;
-import org.jcvi.jillion.assembly.consed.ace.AceFileVisitorCallback;
-import org.jcvi.jillion.assembly.consed.ace.AceFileWriter;
-import org.jcvi.jillion.assembly.consed.ace.AceFileWriterBuilder;
-import org.jcvi.jillion.assembly.consed.ace.ConsensusAceTag;
-import org.jcvi.jillion.assembly.consed.ace.DefaultAceFileDataStore;
-import org.jcvi.jillion.assembly.consed.ace.HighLowAceContigPhdDatastore;
-import org.jcvi.jillion.assembly.consed.ace.ReadAceTag;
-import org.jcvi.jillion.assembly.consed.ace.WholeAssemblyAceTag;
 import org.jcvi.jillion.assembly.consed.phd.ArtificalPhdDataStore;
 import org.jcvi.jillion.assembly.consed.phd.PhdDataStore;
+import org.jcvi.jillion.core.Jid;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -278,7 +263,7 @@ public class TestDefaultAceFileWriter {
 			readIter = expectedContig.getReadIterator();
 			while (readIter.hasNext()) {
 				AceAssembledRead expectedRead = readIter.next();
-				String id = expectedRead.getId();
+				Jid id = expectedRead.getId();
 				AceAssembledRead actualRead = actualContig.getRead(expectedRead
 						.getId());
 				assertEquals(id + " basecalls",

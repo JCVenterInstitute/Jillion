@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.core.Jid;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -47,11 +48,11 @@ public abstract class  AbstractSliceMap implements SliceMap{
             
             QualitySequence qualities;
             try {
-                final String id = read.getId();
-                
+                final Jid id = read.getId();
+                String asString  = id.toString();
                 qualities=null;
-                if(qualityDataStore !=null && qualityDataStore.contains(id)){
-                	qualities =qualityDataStore.get(id);
+                if(qualityDataStore !=null && qualityDataStore.contains(asString)){
+                	qualities =qualityDataStore.get(asString);
                 }
                 
                 int indexIntoRead = (int) (offset - read.getGappedStartOffset());
@@ -77,7 +78,7 @@ public abstract class  AbstractSliceMap implements SliceMap{
         									.getGappedValidRangeQualitySequenceFor(read, qualities)
             								.get(gappedIndex);
         
-        return new DefaultSliceElement(read.getId(), calledBase, qualityValue, read.getDirection());
+        return new DefaultSliceElement(read.getId().toString(), calledBase, qualityValue, read.getDirection());
        
    }
     

@@ -34,6 +34,8 @@ import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.SliceMap;
 import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Jid;
+import org.jcvi.jillion.core.JidFactory;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -65,7 +67,7 @@ final class DefaultAsmContig implements AsmContig{
 
     
     private DefaultAsmContig(String id, NucleotideSequence consensus,
-            Map<String,AsmAssembledRead> reads,boolean isDegenerate) {
+            Map<Jid,AsmAssembledRead> reads,boolean isDegenerate) {
         contig = new DefaultContig<AsmAssembledRead>(id, consensus, reads);
         this.isDegenerate = isDegenerate;
     }
@@ -96,17 +98,27 @@ final class DefaultAsmContig implements AsmContig{
 
 
 	@Override
-	public AsmAssembledRead getRead(String id) {
+	public AsmAssembledRead getRead(Jid id) {
 		return contig.getRead(id);
 	}
 
 
 
 	@Override
-	public boolean containsRead(String readId) {
+	public boolean containsRead(Jid readId) {
 		return contig.containsRead(readId);
 	}
+	@Override
+	public AsmAssembledRead getRead(String id) {
+		return getRead(JidFactory.create(id));
+	}
 
+
+
+	@Override
+	public boolean containsRead(String readId) {
+		return containsRead(JidFactory.create(readId));
+	}
 
 
 	@Override
@@ -156,7 +168,7 @@ final class DefaultAsmContig implements AsmContig{
 			readIter = contig.getReadIterator();
 			while(readIter.hasNext()){
 				AsmAssembledRead read = readIter.next();
-				String readId = read.getId();
+				Jid readId = read.getId();
 				if(!other.containsRead(readId)){
 					return false;
 				}
@@ -205,7 +217,7 @@ final class DefaultAsmContig implements AsmContig{
         private final NucleotideSequence fullConsensus;
         private final NucleotideSequenceBuilder mutableConsensus;
         private String contigId;
-        private final Map<String, AsmAssembledReadBuilder>asmReadBuilderMap = new HashMap<String, AsmAssembledReadBuilder>();
+        private final Map<Jid, AsmAssembledReadBuilder>asmReadBuilderMap = new HashMap<Jid, AsmAssembledReadBuilder>();
    
         boolean isDegenerate;
         DefaultAsmContigBuilder(String id, NucleotideSequence consensus,boolean isDegenerate){
@@ -214,14 +226,15 @@ final class DefaultAsmContig implements AsmContig{
             this.mutableConsensus = new NucleotideSequenceBuilder(fullConsensus);
             this.isDegenerate = isDegenerate;
         }
+        
         /**
-        * {@inheritDoc}
-        */
-        @Override
-        public ContigBuilder<AsmAssembledRead, AsmContig> setContigId(String contigId) {
-            this.contigId =contigId;
-            return this;
-        }
+         * {@inheritDoc}
+         */
+         @Override
+         public ContigBuilder<AsmAssembledRead, AsmContig> setContigId(String contigId) {
+             this.contigId =contigId;
+             return this;
+         }
 
         /**
         * {@inheritDoc}
@@ -259,12 +272,19 @@ final class DefaultAsmContig implements AsmContig{
           * {@inheritDoc}
           */
           @Override
-          public AsmContigBuilder addRead(String readId, String validBases,
+          public AsmContigBuilder addRead(Jid readId, String validBases,
                   int offset, Direction dir, Range clearRange,
                   int ungappedFullLength, boolean isSurrogate) {
               asmReadBuilderMap.put(readId, DefaultAsmAssembledRead.createBuilder(
                       this.fullConsensus, readId, validBases, offset, dir, clearRange, ungappedFullLength, isSurrogate));
               return this;
+          }
+          
+          @Override
+          public AsmContigBuilder addRead(String readId, String validBases,
+                  int offset, Direction dir, Range clearRange,
+                  int ungappedFullLength, boolean isSurrogate){
+        	  return addRead(JidFactory.create(readId), validBases, offset, dir, clearRange, ungappedFullLength, isSurrogate);
           }
         /**
         * {@inheritDoc}
@@ -291,7 +311,7 @@ final class DefaultAsmContig implements AsmContig{
         * {@inheritDoc}
         */
         @Override
-        public AssembledReadBuilder<AsmAssembledRead> getAssembledReadBuilder(String readId) {
+        public AssembledReadBuilder<AsmAssembledRead> getAssembledReadBuilder(Jid readId) {
             return asmReadBuilderMap.get(readId);
         }
 
@@ -299,7 +319,7 @@ final class DefaultAsmContig implements AsmContig{
         * {@inheritDoc}
         */
         @Override
-        public ContigBuilder<AsmAssembledRead, AsmContig> removeRead(String readId) {
+        public ContigBuilder<AsmAssembledRead, AsmContig> removeRead(Jid readId) {
             asmReadBuilderMap.remove(readId);   
             return this;
         }
@@ -456,7 +476,7 @@ final class DefaultAsmContig implements AsmContig{
     			recallConsensusNow();
             }
         	int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads());
-            Map<String,AsmAssembledRead> reads = new LinkedHashMap<String,AsmAssembledRead>(capacity);
+            Map<Jid,AsmAssembledRead> reads = new LinkedHashMap<Jid,AsmAssembledRead>(capacity);
             for(AsmAssembledReadBuilder builder : asmReadBuilderMap.values()){
                 reads.put(builder.getId(), builder.build());
             }

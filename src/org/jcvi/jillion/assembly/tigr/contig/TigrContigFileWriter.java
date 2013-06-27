@@ -155,11 +155,13 @@ public class TigrContigFileWriter implements Closeable{
             if(lengthComparison !=0){
                 return lengthComparison;
             }
-            int idLengthComparison =  JillionUtil.compare(o1.getId().length(), o2.getId().length());
+            String o1String = o1.getId().toString();
+            String o2String = o2.getId().toString();
+            int idLengthComparison =  JillionUtil.compare(o1String.length(), o2String.length());
             if(idLengthComparison !=0){
                 return idLengthComparison;
             }
-            return o1.getId().compareTo(o2.getId());
+            return o1String.compareTo(o2String);
         }
         
     }

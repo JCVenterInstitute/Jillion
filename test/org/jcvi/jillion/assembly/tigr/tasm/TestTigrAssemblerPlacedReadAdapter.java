@@ -24,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.jcvi.jillion.assembly.AssembledRead;
-import org.jcvi.jillion.assembly.tigr.tasm.TasmAssembledReadAdapter;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
@@ -77,7 +76,7 @@ public class TestTigrAssemblerPlacedReadAdapter {
 	}
 	
 	private void assertCommonGettersCorrect(TasmAssembledReadAdapter sut) {
-		assertEquals(id, sut.getId());
+		assertEquals(id, sut.getId().toString());
 		
 		assertEquals(gappedBasecalls, sut.getNucleotideSequence());
 		assertEquals(offset, sut.getGappedStartOffset());

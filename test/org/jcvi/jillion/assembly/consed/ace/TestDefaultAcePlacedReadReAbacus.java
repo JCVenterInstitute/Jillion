@@ -25,10 +25,9 @@ import static org.junit.Assert.fail;
 
 import java.util.Date;
 
-import org.jcvi.jillion.assembly.consed.ace.AceAssembledReadBuilder;
-import org.jcvi.jillion.assembly.consed.ace.DefaultAceAssembledRead;
-import org.jcvi.jillion.assembly.consed.ace.PhdInfo;
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Jid;
+import org.jcvi.jillion.core.JidFactory;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
@@ -41,7 +40,8 @@ import org.junit.Test;
  *
  */
 public class TestDefaultAcePlacedReadReAbacus {
-    String readId = "readId";
+    String readIdStr = "readId";
+    Jid readId = JidFactory.create(readIdStr);
     Range validRange= Range.of(15,25);
     int ungappedFullLength =30;
     Direction dir = Direction.FORWARD;

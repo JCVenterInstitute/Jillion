@@ -26,6 +26,7 @@
 package org.jcvi.jillion.assembly;
 
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Jid;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
@@ -107,9 +108,9 @@ public interface AssembledRead extends Rangeable{
     
     /**
      * Get the id of this read.
-     * @return the id as a String; will never be null.
+     * @return the id as a {@link Jid}; will never be null.
      */
-    String getId();
+    Jid getId();
     /**
      * Get the ungapped {@link NucleotideSequence} of this read.
      * @return the {@link NucleotideSequence} of this read; will

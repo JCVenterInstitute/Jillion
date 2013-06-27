@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Jid;
+import org.jcvi.jillion.core.JidFactory;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.util.Builder;
@@ -43,7 +45,7 @@ public final class SliceBuilder implements Builder<Slice>{
 
 	
     private GrowableShortArray bytes = new GrowableShortArray(1024);
-    private List<String> ids = new ArrayList<String>();
+    private List<Jid> ids = new ArrayList<Jid>();
     private Nucleotide consensus;
     /**
      * {@code SliceElementFilter} is used to remove
@@ -145,10 +147,10 @@ public final class SliceBuilder implements Builder<Slice>{
     		throw new NullPointerException("filter can not be null");
     	}
     	GrowableShortArray newBytes = new GrowableShortArray(bytes.getCurrentLength());
-    	List<String> newIds = new ArrayList<String>(ids.size());
+    	List<Jid> newIds = new ArrayList<Jid>(ids.size());
     	
     	for(int i=0; i<ids.size(); i++){
-    		String id = ids.get(i);
+    		Jid id = ids.get(i);
     		short value =bytes.get(i);
     		if(filter.accept(CompactedSliceElement.create(id, value))){
     			newBytes.append(value);
@@ -181,7 +183,7 @@ public final class SliceBuilder implements Builder<Slice>{
     }
     
     private SliceBuilder(SliceBuilder copy){
-    	this.ids = new ArrayList<String>(copy.ids);
+    	this.ids = new ArrayList<Jid>(copy.ids);
     	this.bytes = copy.bytes.copy();
     	this.consensus = copy.consensus;
     }
@@ -215,6 +217,10 @@ public final class SliceBuilder implements Builder<Slice>{
         }
         return this;
     }
+    
+    public SliceBuilder add(String id, Nucleotide base, PhredQuality quality, Direction dir){
+    	   return add(JidFactory.create(id),base, quality, dir);
+    }
     /**
      * Add a new SliceElement with the following values
      * to this builder.
@@ -234,7 +240,7 @@ public final class SliceBuilder implements Builder<Slice>{
      * @return this
      * @throws NullPointerException if any parameter is null.
      */
-    public SliceBuilder add(String id, Nucleotide base, PhredQuality quality, Direction dir){
+    public SliceBuilder add(Jid id, Nucleotide base, PhredQuality quality, Direction dir){
     	
     	CompactedSliceElement compacted = new CompactedSliceElement(id, base, quality, dir);
     	int value = compacted.getEncodedDirAndNucleotide() <<8;
@@ -268,10 +274,16 @@ public final class SliceBuilder implements Builder<Slice>{
      * @throws NullPointerException if id is null.
      */
 	public boolean containsId(String id) {
+		return containsId(JidFactory.create(id));
+	}
+	public boolean containsId(Jid id) {
 		if(id ==null){
 			throw new NullPointerException("id can not be null");
 		}
 		return ids.contains(id);
+	}
+	public SliceBuilder removeById(String id){
+		return removeById(JidFactory.create(id));
 	}
     /**
      * Removes the SliceElement with the given
@@ -282,7 +294,7 @@ public final class SliceBuilder implements Builder<Slice>{
      * @return this.
      * @throws NullPointerException if id is null.
      */
-    public SliceBuilder removeById(String id){
+    public SliceBuilder removeById(Jid id){
     	int index =ids.indexOf(id);
     	if(index !=-1){
     		ids.remove(index);
