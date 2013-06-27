@@ -31,6 +31,8 @@ import org.jcvi.jillion.assembly.AssemblyUtil;
 import org.jcvi.jillion.assembly.clc.cas.CasAlignmentRegion;
 import org.jcvi.jillion.assembly.clc.cas.CasAlignmentRegionType;
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Jid;
+import org.jcvi.jillion.core.JidFactory;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -39,7 +41,7 @@ import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.jillion.core.util.Builder;
 
 public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<DefaultCasPlacedRead>{
-    private final String readId;
+    private final Jid readId;
     private long startOffset;
     private long validRangeStart;
     private long currentOffset=0;
@@ -63,7 +65,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
         }
         this.gappedReference = gappedReference;
         try{
-        this.readId = readId;
+        this.readId = JidFactory.create(readId);
         this.startOffset = startOffset;
         this.referenceOffset = startOffset;
         this.fullUngappedLength = fullRangeSequence.getUngappedLength();

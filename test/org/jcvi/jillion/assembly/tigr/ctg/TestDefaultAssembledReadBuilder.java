@@ -24,6 +24,7 @@ import org.jcvi.jillion.assembly.AbstractTestAssembledReadBuilder;
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.JidFactory;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.internal.assembly.DefaultAssembledRead;
@@ -36,7 +37,7 @@ public class TestDefaultAssembledReadBuilder extends AbstractTestAssembledReadBu
 			NucleotideSequence validBases, int offset, Direction dir,
 			Range clearRange, int ungappedFullLength) {
 		return DefaultAssembledRead.createBuilder(
-				reference, readId, validBases, 
+				reference, JidFactory.create(readId), validBases, 
 				offset, dir, clearRange, 
 				ungappedFullLength);
 	}

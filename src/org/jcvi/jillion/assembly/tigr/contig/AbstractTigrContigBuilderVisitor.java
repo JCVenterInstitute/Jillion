@@ -21,6 +21,7 @@
 package org.jcvi.jillion.assembly.tigr.contig;
 
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.JidFactory;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -71,7 +72,7 @@ public abstract class AbstractTigrContigBuilderVisitor implements TigrContigVisi
 				if(fullLength ==null){
 					throw new IllegalStateException("full length sequence datastore did not contain read "+ readId);
 				}
-				currentContigBuilder.addRead(readId, (int)gappedStartOffset, validRange, 
+				currentContigBuilder.addRead(JidFactory.create(readId), (int)gappedStartOffset, validRange, 
 						gappedBasecalls.toString(), dir, fullLength.intValue());
 				
 				

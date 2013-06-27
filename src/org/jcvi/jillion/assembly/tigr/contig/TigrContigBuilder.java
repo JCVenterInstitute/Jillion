@@ -28,6 +28,7 @@ import org.jcvi.jillion.assembly.AssembledReadBuilder;
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.assembly.ReadInfo;
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Jid;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -60,7 +61,7 @@ public class TigrContigBuilder extends AbstractContigBuilder<TigrContigRead, Tig
 
 	@Override
 	protected TigrContigReadBuilder createPlacedReadBuilder(
-			String id, int offset, Range validRange, String basecalls,
+			Jid id, int offset, Range validRange, String basecalls,
 			Direction dir, int fullUngappedLength) {
 		return new DefaultTigrContigReadBuilder(getConsensusBuilder().build(),
 				id, offset, validRange, basecalls, dir, fullUngappedLength);
@@ -72,7 +73,7 @@ public class TigrContigBuilder extends AbstractContigBuilder<TigrContigRead, Tig
 				recallConsensusNow();
 	        }
 		 int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads());
-		Map<String,TigrContigRead> reads = new LinkedHashMap<String,TigrContigRead>(capacity);
+		Map<Jid,TigrContigRead> reads = new LinkedHashMap<Jid,TigrContigRead>(capacity);
         for(AssembledReadBuilder<TigrContigRead> builder : getAllAssembledReadBuilders()){          
             reads.put(builder.getId(),builder.build());
         }
@@ -88,7 +89,7 @@ public class TigrContigBuilder extends AbstractContigBuilder<TigrContigRead, Tig
 		
 
 		public DefaultTigrContig(String id, NucleotideSequence consensus,
-				Map<String,TigrContigRead> reads) {
+				Map<Jid,TigrContigRead> reads) {
 			delegate = new DefaultContig<TigrContigRead>(id,consensus,reads);
 		}
 
@@ -119,6 +120,16 @@ public class TigrContigBuilder extends AbstractContigBuilder<TigrContigRead, Tig
 
 		@Override
 		public boolean containsRead(String readId) {
+			return delegate.containsRead(readId);
+		}
+		
+		@Override
+		public TigrContigRead getRead(Jid id) {
+			return delegate.getRead(id);
+		}
+
+		@Override
+		public boolean containsRead(Jid readId) {
 			return delegate.containsRead(readId);
 		}
 		
@@ -172,7 +183,7 @@ public class TigrContigBuilder extends AbstractContigBuilder<TigrContigRead, Tig
 		}
 
 		@Override
-		public String getId() {
+		public Jid getId() {
 			return delegate.getId();
 		}
 
@@ -194,7 +205,7 @@ public class TigrContigBuilder extends AbstractContigBuilder<TigrContigRead, Tig
 		private DefaultTigrContigReadBuilder(AssembledReadBuilder<AssembledRead> copy){
 			this.builder = copy.copy();
 		}
-		public DefaultTigrContigReadBuilder(NucleotideSequence currentConsensus,String id, int offset, Range validRange, String basecalls,
+		public DefaultTigrContigReadBuilder(NucleotideSequence currentConsensus,Jid id, int offset, Range validRange, String basecalls,
 			Direction dir, int fullUngappedLength){
 			builder = DefaultAssembledRead.createBuilder(
 					currentConsensus, 
@@ -218,7 +229,7 @@ public class TigrContigBuilder extends AbstractContigBuilder<TigrContigRead, Tig
 		}
 
 		@Override
-		public String getId() {
+		public Jid getId() {
 			return builder.getId();
 		}
 

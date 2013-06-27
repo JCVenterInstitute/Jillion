@@ -124,6 +124,11 @@ public final class JidFactory {
 		}
 
 		@Override
+		public int compareTo(Jid o) {
+			return s.compareTo(o.toString());
+		}
+
+		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
@@ -188,15 +193,27 @@ public final class JidFactory {
 	        while ( last > 0 && ar[ last ] == 0 ){
 	            --last;
 	        }
-	        
-	        return new String( ar, 0, last+1, US_ACII );
+	        //we can safely assume that we 
+	        //are able to cast our bytes
+	        //to chars because all of our checks
+	        //we made during construction time
+	        final char[] ca = new char[last+1];
+	        for(int i=0; i< ca.length; i++){
+	        	ca[i] = (char)ar[i];
+	        }
+	        return new String(ca);
 	    }
 	 
 	    public String toString(){
 	        return toString( toByteBuffer() );
 	    }
 	    
-	    public final int hashCode(){
+	    @Override
+		public int compareTo(Jid o) {
+			return toString().compareTo(o.toString());
+		}
+
+		public final int hashCode(){
 	    	//length can't be 0 
 	    	//so a hash of 0 probably means
 	    	//it hasn't been computed yet.
@@ -229,6 +246,9 @@ public final class JidFactory {
 	        if(checkEquals(o)){
 	        	return true;
 	        }
+	        if(o instanceof AbstractPackedStringJId){
+	        	toByteBuffer().equals( ((AbstractPackedStringJId)o).toByteBuffer());
+	        }	       
 	        //not same class probably isn't
 	        //equal but should check anyway in case someone else made
 	        //an implementation
@@ -333,6 +353,7 @@ public final class JidFactory {
 	        bbuf.putInt( f2 );
 	        bbuf.putInt( f3 );
 	        bbuf.putInt( f4 );
+	        bbuf.rewind();
 	        return bbuf;
 	    }
 	 

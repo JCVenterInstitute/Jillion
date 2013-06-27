@@ -22,13 +22,14 @@ package org.jcvi.jillion.internal.assembly.util;
 
 import java.util.List;
 
+import org.jcvi.jillion.core.Jid;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
 public class ConsensusCompactedSlice extends NoConsensusCompactedSlice {
 
 	private byte consensusOrdinal;
 	
-	public ConsensusCompactedSlice(short[] elements, List<String> ids, Nucleotide consensus) {
+	public ConsensusCompactedSlice(short[] elements, List<Jid> ids, Nucleotide consensus) {
 		super(elements, ids);
 		consensusOrdinal = consensus.getOrdinalAsByte();
 	}

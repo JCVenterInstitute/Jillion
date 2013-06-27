@@ -29,14 +29,6 @@ import java.util.Map;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.consed.ace.AbstractAceContigReadVisitor;
-import org.jcvi.jillion.assembly.consed.ace.AbstractAceContigVisitor;
-import org.jcvi.jillion.assembly.consed.ace.AbstractAceFileVisitor;
-import org.jcvi.jillion.assembly.consed.ace.AceContigReadVisitor;
-import org.jcvi.jillion.assembly.consed.ace.AceContigVisitor;
-import org.jcvi.jillion.assembly.consed.ace.AceFileParser;
-import org.jcvi.jillion.assembly.consed.ace.AceFileVisitor;
-import org.jcvi.jillion.assembly.consed.ace.AceFileVisitorCallback;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -131,12 +123,13 @@ public final class AceContigTestUtil {
 
     public static  void assertPlacedReadParsedCorrectly(AssembledRead expected,
             AssembledRead actual) {
+    	String id = expected.getId().toString();
         assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getId(), expected.getGappedStartOffset(), actual.getGappedStartOffset());
-        assertEquals(expected.getId(), expected.getGappedEndOffset(), actual.getGappedEndOffset());
-        assertEquals(expected.getId(), expected.getGappedLength(), actual.getGappedLength());
-        assertEquals(expected.getId(), expected.getReadInfo().getValidRange(), actual.getReadInfo().getValidRange());
-        assertEquals(expected.getId(), expected.getNucleotideSequence(), actual.getNucleotideSequence());
+        assertEquals(id, expected.getGappedStartOffset(), actual.getGappedStartOffset());
+        assertEquals(id, expected.getGappedEndOffset(), actual.getGappedEndOffset());
+        assertEquals(id, expected.getGappedLength(), actual.getGappedLength());
+        assertEquals(id, expected.getReadInfo().getValidRange(), actual.getReadInfo().getValidRange());
+        assertEquals(id, expected.getNucleotideSequence(), actual.getNucleotideSequence());
         
     }
 }

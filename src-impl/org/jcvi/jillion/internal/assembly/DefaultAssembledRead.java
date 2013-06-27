@@ -31,6 +31,8 @@ import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
 import org.jcvi.jillion.assembly.ReadInfo;
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Jid;
+import org.jcvi.jillion.core.JidFactory;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -43,11 +45,11 @@ public final class DefaultAssembledRead implements AssembledRead {
     private final long start;
     private final byte directionOrdinal;
     private final ReferenceMappedNucleotideSequence sequence;
-    private final String id;
+    private final Jid id;
     private final ReadInfo readInfo;
     
     public static AssembledReadBuilder<AssembledRead> createBuilder(NucleotideSequence reference, 
-            String readId,NucleotideSequence validBases,
+    		Jid readId,NucleotideSequence validBases,
             int offset, Direction dir, Range clearRange,
             int ungappedFullLength){
         return new Builder(reference, readId, validBases, offset, dir, 
@@ -55,14 +57,22 @@ public final class DefaultAssembledRead implements AssembledRead {
     }
     
     public static AssembledReadBuilder<AssembledRead> createBuilder(NucleotideSequence reference, 
-            String readId,String validBases,
+    		Jid readId,String validBases,
             int offset, Direction dir, Range clearRange,
             int ungappedFullLength){
     	 return createBuilder(reference, readId, new NucleotideSequenceBuilder(validBases).build(), offset, dir, 
                  clearRange, ungappedFullLength);
     }
     
-    public DefaultAssembledRead(String id, ReferenceMappedNucleotideSequence sequence, long start, Direction sequenceDirection, int ungappedFullLength, Range validRange){
+    public static AssembledReadBuilder<AssembledRead> createBuilder(NucleotideSequence reference, 
+    		String readId,String validBases,
+            int offset, Direction dir, Range clearRange,
+            int ungappedFullLength){
+    	 return createBuilder(reference, JidFactory.create(readId), new NucleotideSequenceBuilder(validBases).build(), offset, dir, 
+                 clearRange, ungappedFullLength);
+    }
+    
+    public DefaultAssembledRead(Jid id, ReferenceMappedNucleotideSequence sequence, long start, Direction sequenceDirection, int ungappedFullLength, Range validRange){
        this.id = id;
        this.sequence = sequence;
         this.start= start;
@@ -156,7 +166,7 @@ public final class DefaultAssembledRead implements AssembledRead {
         return sequence;
     }
     @Override
-    public String getId() {
+    public Jid getId() {
         return id;
     }
     @Override
@@ -194,7 +204,7 @@ public final class DefaultAssembledRead implements AssembledRead {
 	}
 
 	private static class Builder implements AssembledReadBuilder<AssembledRead>{
-        private final String readId;
+        private final Jid readId;
         /**
          * Our original encoded sequence.  If we 
          * edit the basecalls, this will get set to null
@@ -224,7 +234,7 @@ public final class DefaultAssembledRead implements AssembledRead {
             this.ungappedFullLength = copy.ungappedFullLength;
         }
         
-        public Builder(NucleotideSequence reference, String readId, NucleotideSequence validBases,
+        public Builder(NucleotideSequence reference, Jid readId, NucleotideSequence validBases,
                             int offset, Direction dir, Range clearRange,
                             int ungappedFullLength){
             this.readId = readId;
@@ -275,7 +285,7 @@ public final class DefaultAssembledRead implements AssembledRead {
         * {@inheritDoc}
         */
         @Override
-        public String getId(){
+        public Jid getId(){
             return readId;
         }
         /**

@@ -38,6 +38,7 @@ import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.assembly.consed.phd.Phd;
 import org.jcvi.jillion.assembly.consed.phd.PhdDataStore;
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Jid;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -226,7 +227,7 @@ public final class AceFileUtil {
         }
         return gappedValidRange;
     }
-    public static synchronized String createAcePlacedReadRecord(String readId, AssembledRead placedRead, Phd phd, PhdInfo phdInfo){
+    public static synchronized String createAcePlacedReadRecord(Jid readId, AssembledRead placedRead, Phd phd, PhdInfo phdInfo){
         
         NucleotideSequence nucleotideSequence = placedRead.getNucleotideSequence();
 		final NucleotideSequence gappedValidBasecalls = nucleotideSequence; 
@@ -345,8 +346,8 @@ public final class AceFileUtil {
         StringBuilder placedReadBuilder = new StringBuilder();
         
         for(IdAlignedReadInfo assembledFrom : assembledFroms){
-            String id = assembledFrom.getId();
-            final Phd phd = phdDataStore.get(id);
+            Jid id = assembledFrom.getId();
+            final Phd phd = phdDataStore.get(id.toString());
             final AceAssembledRead realPlacedRead = contig.getRead(id);
              long fullLength = realPlacedRead.getReadInfo().getUngappedFullLength();
             assembledFromBuilder.append(createAssembledFromRecord(realPlacedRead,fullLength));
@@ -414,7 +415,7 @@ public final class AceFileUtil {
     }
     private static final class IdAlignedReadInfo implements Comparable<IdAlignedReadInfo>{
     	private static final int TO_STRING_BUFFER_SIZE = 30;
-		private final String id;
+		private final Jid id;
 	    private final byte dir;
 	    private final int startOffset;
 	    private static final Direction[] DIRECTION_VALUES = Direction.values();
@@ -433,7 +434,7 @@ public final class AceFileUtil {
 	    }
 	    
 	    
-		private IdAlignedReadInfo(String id, int startOffset, Direction dir) {
+		private IdAlignedReadInfo(Jid id, int startOffset, Direction dir) {
 			this.id = id;
 			this.dir = (byte)dir.ordinal();
 			this.startOffset = startOffset;
@@ -461,7 +462,7 @@ public final class AceFileUtil {
 	        IdAlignedReadInfo other = (IdAlignedReadInfo) obj;
 	        return id.equals(other.getId());
 	    }
-	    public String getId() {
+	    public Jid getId() {
 	        return id;
 	    }
 

@@ -33,6 +33,7 @@ import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.assembly.consed.phd.Phd;
 import org.jcvi.jillion.assembly.consed.phd.PhdDataStore;
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Jid;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -88,7 +89,7 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
         StringBuilder placedReadBuilder = new StringBuilder();
         
         for(IdAlignedReadInfo assembledFrom : assembledFroms){
-            String id = assembledFrom.getId();
+            Jid id = assembledFrom.getId();
            
             final AceAssembledRead realPlacedRead = contig.getRead(id);
              long fullLength = realPlacedRead.getReadInfo().getUngappedFullLength();
@@ -151,7 +152,7 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
     private String createPlacedReadRecord(AceAssembledRead read, PhdDataStore phdDatastore) throws IOException{
     	 Phd phd;
 		try {
-			phd = phdDatastore.get(read.getId());
+			phd = phdDatastore.get(read.getId().toString());
 		} catch (DataStoreException e) {
 			throw new IOException("error writing quality values for read "+ read.getId(),e);
 		}
@@ -164,7 +165,7 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 	
 	private static final class IdAlignedReadInfo implements Comparable<IdAlignedReadInfo>{
     	private static final int TO_STRING_BUFFER_SIZE = 30;
-		private final String id;
+		private final Jid id;
 	    private final byte dir;
 	    private final int startOffset;
 	    private static final Direction[] DIRECTION_VALUES = Direction.values();
@@ -200,7 +201,7 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 	        return assembledFroms;
 	    }
 	    
-		private IdAlignedReadInfo(String id, int startOffset, Direction dir) {
+		private IdAlignedReadInfo(Jid id, int startOffset, Direction dir) {
 			this.id = id;
 			this.dir = (byte)dir.ordinal();
 			this.startOffset = startOffset;
@@ -228,7 +229,7 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 	        IdAlignedReadInfo other = (IdAlignedReadInfo) obj;
 	        return id.equals(other.getId());
 	    }
-	    public String getId() {
+	    public Jid getId() {
 	        return id;
 	    }
 

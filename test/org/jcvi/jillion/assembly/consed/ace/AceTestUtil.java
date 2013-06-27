@@ -24,14 +24,6 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jcvi.jillion.assembly.AssemblyUtil;
-import org.jcvi.jillion.assembly.consed.ace.AceAssembledRead;
-import org.jcvi.jillion.assembly.consed.ace.AceContig;
-import org.jcvi.jillion.assembly.consed.ace.AceContigReadVisitor;
-import org.jcvi.jillion.assembly.consed.ace.AceContigVisitor;
-import org.jcvi.jillion.assembly.consed.ace.AceFileVisitor;
-import org.jcvi.jillion.assembly.consed.ace.AceFileVisitorCallback;
-import org.jcvi.jillion.assembly.consed.ace.AceHandler;
-import org.jcvi.jillion.assembly.consed.ace.PhdInfo;
 import org.jcvi.jillion.assembly.consed.ace.AceFileVisitorCallback.AceFileVisitorMemento;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
@@ -134,8 +126,8 @@ public class AceTestUtil {
 					}else{
 						afStart = (int)read.getGappedStartOffset() - (read.getReadInfo().getUngappedFullLength() -((int)validRange.getEnd()+1)) +1;
 					}
-					contigVisitor.visitAlignedReadInfo(read.getId(), read.getDirection(), afStart);
-					AceContigReadVisitor readVisitor =contigVisitor.visitBeginRead(read.getId(), (int)read.getGappedLength());
+					contigVisitor.visitAlignedReadInfo(read.getId().toString(), read.getDirection(), afStart);
+					AceContigReadVisitor readVisitor =contigVisitor.visitBeginRead(read.getId().toString(), (int)read.getGappedLength());
 					if(readVisitor !=null){
 						
 						//need to build fullLength sequence with N's outside of valid range

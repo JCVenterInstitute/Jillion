@@ -35,9 +35,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.consed.ace.AceAssembledRead;
-import org.jcvi.jillion.assembly.consed.ace.DefaultAceFileDataStore;
-import org.jcvi.jillion.assembly.consed.ace.PhdInfo;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -102,7 +99,7 @@ public class TestAceParserPhdInfo {
     		iter = actualContig.getReadIterator();
     		while(iter.hasNext()){
     			AceAssembledRead read = iter.next();
-    			 assertEquals(phdInfoMap.get(read.getId()), read.getPhdInfo());
+    			 assertEquals(phdInfoMap.get(read.getId().toString()), read.getPhdInfo());
     		}
     	}finally{
     		IOUtil.closeAndIgnoreErrors(iter);

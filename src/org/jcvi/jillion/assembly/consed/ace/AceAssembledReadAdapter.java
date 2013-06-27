@@ -32,6 +32,7 @@ import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.ReadInfo;
 import org.jcvi.jillion.assembly.consed.ConsedUtil;
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Jid;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 
@@ -44,7 +45,7 @@ public class AceAssembledReadAdapter implements AceAssembledRead{
      */
     public AceAssembledReadAdapter(AssembledRead placedRead,Date phdDate, File traceFile) {
       this(placedRead,
-    		  ConsedUtil.generateDefaultPhdInfoFor(traceFile, placedRead.getId(), phdDate));
+    		  ConsedUtil.generateDefaultPhdInfoFor(traceFile, placedRead.getId().toString(), phdDate));
     }
     public AceAssembledReadAdapter(AssembledRead placedRead,PhdInfo info) {
         this.placedRead = placedRead;
@@ -73,7 +74,7 @@ public class AceAssembledReadAdapter implements AceAssembledRead{
         return placedRead.getNucleotideSequence();
     }
     @Override
-    public String getId() {
+    public Jid getId() {
         return placedRead.getId();
     }
     @Override

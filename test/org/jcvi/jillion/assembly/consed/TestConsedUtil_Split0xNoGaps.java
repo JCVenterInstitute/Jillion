@@ -26,13 +26,13 @@ import static org.junit.Assert.assertTrue;
 import java.util.Date;
 import java.util.SortedMap;
 
-import org.jcvi.jillion.assembly.consed.ConsedUtil;
 import org.jcvi.jillion.assembly.consed.ace.AceAssembledRead;
 import org.jcvi.jillion.assembly.consed.ace.AceContig;
 import org.jcvi.jillion.assembly.consed.ace.AceContigBuilder;
 import org.jcvi.jillion.assembly.consed.ace.AceContigTestUtil;
 import org.jcvi.jillion.assembly.consed.ace.PhdInfo;
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Jid;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
@@ -277,7 +277,7 @@ public class TestConsedUtil_Split0xNoGaps {
         	iter = expected.getReadIterator();
         	while(iter.hasNext()){
         		AceAssembledRead expectedRead = iter.next();
-				final String id = expectedRead.getId();
+				final Jid id = expectedRead.getId();
 				assertTrue("missing read " + id, actual.containsRead(id));
 				assertAcePlacedReadsEqual(expectedRead, actual.getRead(id));
         	}

@@ -27,6 +27,8 @@ import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.assembly.util.GapQualityValueStrategy;
 import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Jid;
+import org.jcvi.jillion.core.JidFactory;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
@@ -99,6 +101,22 @@ final class DefaultAsmUnitig implements AsmUnitig{
         return delegate.containsRead(placedReadId);
     }
     
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     public AsmAssembledRead getRead(Jid id) {
+         return delegate.getRead(id);
+     }
+
+     /**
+     * {@inheritDoc}
+     */
+     @Override
+     public boolean containsRead(Jid placedReadId) {
+         return delegate.containsRead(placedReadId);
+     }
+    
 
 	@Override
 	public int hashCode() {
@@ -133,7 +151,7 @@ final class DefaultAsmUnitig implements AsmUnitig{
 			readIter = getReadIterator();
 			while(readIter.hasNext()){
 				AsmAssembledRead read = readIter.next();
-				String readId = read.getId();
+				Jid readId = read.getId();
 				if(!other.containsRead(readId)){
 					return false;
 				}
@@ -193,13 +211,13 @@ final class DefaultAsmUnitig implements AsmUnitig{
 
 		@Override
 		public AssembledReadBuilder<AsmAssembledRead> getAssembledReadBuilder(
-				String readId) {
+				Jid readId) {
 			return delegate.getAssembledReadBuilder(readId);
 		}
 
 		@Override
 		public AsmUnitigBuilder removeRead(
-				String readId) {
+				Jid readId) {
 			delegate.removeRead(readId);
 			return this;
 		}
@@ -237,12 +255,16 @@ final class DefaultAsmUnitig implements AsmUnitig{
 		}
 
 		@Override
-		public AsmUnitigBuilder addRead(String readId, String validBases,
+		public AsmUnitigBuilder addRead(Jid readId, String validBases,
 				int offset, Direction dir, Range clearRange,
 				int ungappedFullLength, boolean isSurrogate) {
 			delegate.addRead(readId, validBases,offset,dir,clearRange,ungappedFullLength,isSurrogate);
 			return this;
 		}
-		
+		public AsmUnitigBuilder addRead(String readId, String validBases,
+				int offset, Direction dir, Range clearRange,
+				int ungappedFullLength, boolean isSurrogate) {
+			return addRead(JidFactory.create(readId), validBases, offset, dir, clearRange, ungappedFullLength, isSurrogate);
+		}
 	}
 }
