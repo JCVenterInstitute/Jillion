@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.JidFactory;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -76,7 +75,7 @@ public abstract class AbstractAsmUnitigBuilder implements AsmUnitigVisitor{
                 validBases.reverseComplement();
             }
             validBases = AsmUtil.computeGappedSequence(validBases, gapOffsets);
-            builder.addRead(JidFactory.create(externalReadId), validBases.toString(),
+            builder.addRead(externalReadId, validBases.toString(),
                     (int)readRange.asRange().getBegin(),readRange.getDirection(),
                     clearRange, 
                     (int)fullLengthSequence.getLength(),

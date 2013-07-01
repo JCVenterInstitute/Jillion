@@ -28,6 +28,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
+import org.jcvi.jillion.assembly.consed.ace.AceAssembledRead;
+import org.jcvi.jillion.assembly.consed.ace.AceContig;
+import org.jcvi.jillion.assembly.consed.ace.AceFileDataStore;
+import org.jcvi.jillion.assembly.consed.ace.AceFileUtil;
+import org.jcvi.jillion.assembly.consed.ace.DefaultAceFileDataStore;
 import org.jcvi.jillion.assembly.consed.phd.ArtificalPhdDataStore;
 import org.jcvi.jillion.assembly.consed.phd.PhdDataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -86,7 +91,7 @@ public class TestAceFileUtil_writingAceContigs {
 	            	readIter = expectedContig.getReadIterator();
 	            	while(readIter.hasNext()){
 	            		AceAssembledRead expectedRead = readIter.next();
-	            		String id = expectedRead.getId().toString();
+	            		String id = expectedRead.getId();
 	            		AceAssembledRead actualRead = actualContig.getRead(expectedRead.getId());
 	  	                assertEquals(id + " basecalls", expectedRead.getNucleotideSequence(), actualRead.getNucleotideSequence());
 	  	                assertEquals(id + " offset", expectedRead.getGappedStartOffset(), actualRead.getGappedStartOffset());

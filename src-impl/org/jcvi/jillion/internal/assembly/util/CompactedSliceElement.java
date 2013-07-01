@@ -23,8 +23,6 @@ package org.jcvi.jillion.internal.assembly.util;
 
 import org.jcvi.jillion.assembly.util.SliceElement;
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.Jid;
-import org.jcvi.jillion.core.JidFactory;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
@@ -34,7 +32,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
  *
  */
 public final class CompactedSliceElement implements SliceElement{
-	private final Jid id;
+	private final String id;
     //don't use array since that takes up 12 bytes of memory
     //to store reference and length
     private final byte quality;
@@ -48,17 +46,9 @@ public final class CompactedSliceElement implements SliceElement{
    
     
     public static CompactedSliceElement create(String id, short encodedValues){
-    	return create(JidFactory.create(id), encodedValues);
-    }
-    
-    public static CompactedSliceElement create(Jid id, short encodedValues){
     	byte dirAndNuc =(byte)((encodedValues >>>8) &0xFF);
         byte qual = (byte)(encodedValues & 0xFF);
         return new CompactedSliceElement(id, qual, dirAndNuc);
-    }
-    
-    public CompactedSliceElement(String id, byte quality, byte encodedDirAndNucleotide){
-    	this(JidFactory.create(id), quality, encodedDirAndNucleotide);
     }
     /**
      * package private constructor used by compactedSlice to build
@@ -67,7 +57,7 @@ public final class CompactedSliceElement implements SliceElement{
      * @param quality
      * @param encodedDirAndNucleotide
      */
-    public CompactedSliceElement(Jid id, byte quality, byte encodedDirAndNucleotide){
+    public CompactedSliceElement(String id, byte quality, byte encodedDirAndNucleotide){
         if(id ==null){
             throw new NullPointerException("fields can not be null");
         }
@@ -76,10 +66,6 @@ public final class CompactedSliceElement implements SliceElement{
         this.dirAndNucleotide = encodedDirAndNucleotide;
     }
     public CompactedSliceElement(String id, Nucleotide base, PhredQuality quality,
-            Direction direction) {
-    	this(JidFactory.create(id), base, quality, direction);
-    }
-    public CompactedSliceElement(Jid id, Nucleotide base, PhredQuality quality,
             Direction direction) {
         if(id ==null ||base ==null || quality ==null || direction == null){
             throw new NullPointerException("fields can not be null");
@@ -106,7 +92,7 @@ public final class CompactedSliceElement implements SliceElement{
     */
     @Override
     public String getId() {
-        return id.toString();
+        return id;
     }
 
     /**
@@ -159,7 +145,7 @@ public final class CompactedSliceElement implements SliceElement{
             return false;
         }
         SliceElement other = (SliceElement) obj;
-        if (!id.toString().equals(other.getId())) {
+        if (!id.equals(other.getId())) {
             return false;
         }
         if(!getQuality().equals(other.getQuality())){

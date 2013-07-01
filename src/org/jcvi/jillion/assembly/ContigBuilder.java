@@ -24,7 +24,6 @@ import java.util.Collection;
 
 import org.jcvi.jillion.assembly.util.GapQualityValueStrategy;
 import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
-import org.jcvi.jillion.core.Jid;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.Builder;
@@ -46,8 +45,6 @@ import org.jcvi.jillion.core.util.Builder;
  *
  */
 public interface ContigBuilder<R extends AssembledRead,C extends Contig<R>> extends Builder<C>{
-
-    
     /**
      * Change the contig id to the given id.
      * @param contigId the new id this contig should have.
@@ -101,7 +98,7 @@ public interface ContigBuilder<R extends AssembledRead,C extends Contig<R>> exte
      * @return a {@link AssembledReadBuilder}, will return 
      * null if no read with that id currently exists for this contig.
      */
-    AssembledReadBuilder<R> getAssembledReadBuilder(Jid readId);
+    AssembledReadBuilder<R> getAssembledReadBuilder(String readId);
     /**
      * Remove the read with the given read id from this contig.
      * If this contig doesn't have a read with that readId, then
@@ -110,7 +107,7 @@ public interface ContigBuilder<R extends AssembledRead,C extends Contig<R>> exte
      * @throws NullPointerException if readId is null.
      * @return this
      */
-    ContigBuilder<R,C> removeRead(Jid readId);
+    ContigBuilder<R,C> removeRead(String readId);
     
 
     /**

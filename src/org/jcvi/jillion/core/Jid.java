@@ -26,7 +26,7 @@ package org.jcvi.jillion.core;
  * @author dkatzel
  *
  */
-public interface Jid extends Comparable<Jid>{
+public interface Jid {
 
 	/**
 	 * Return this Id as a String.

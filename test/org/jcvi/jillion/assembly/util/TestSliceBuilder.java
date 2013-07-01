@@ -34,7 +34,6 @@ import java.util.Map;
 
 import org.jcvi.jillion.assembly.util.SliceBuilder.SliceElementFilter;
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.Jid;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.testUtil.TestUtil;
@@ -97,12 +96,8 @@ public class TestSliceBuilder {
 	}
 	
 	@Test(expected = NullPointerException.class)
-	public void containsJidNullShouldThrowNPE(){
-		new SliceBuilder().containsId((Jid)null);
-	}
-	@Test(expected = NullPointerException.class)
-	public void containsJidStringShouldThrowNPE(){
-		new SliceBuilder().containsId((String)null);
+	public void containsNullShouldThrowNPE(){
+		new SliceBuilder().containsId(null);
 	}
 	
 	@Test(expected = NullPointerException.class)

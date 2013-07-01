@@ -24,7 +24,6 @@ import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
 import org.jcvi.jillion.assembly.ReadInfo;
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.Jid;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -42,7 +41,7 @@ final class DefaultTasmAssembledRead implements TasmAssembledRead{
     
     
     public static TasmAssembledReadBuilder createBuilder(NucleotideSequence reference, 
-            Jid readId,String validBases,
+            String readId,String validBases,
             int offset, Direction dir, Range clearRange,
             int ungappedFullLength){
         return new Builder(reference, readId, validBases, offset, dir, clearRange, ungappedFullLength);
@@ -90,7 +89,7 @@ final class DefaultTasmAssembledRead implements TasmAssembledRead{
     * {@inheritDoc}
     */
     @Override
-    public Jid getId() {
+    public String getId() {
         return delegate.getId();
     }
     /**
@@ -177,7 +176,7 @@ final class DefaultTasmAssembledRead implements TasmAssembledRead{
         
         
         public Builder(NucleotideSequence reference, 
-                Jid readId,String validBases,
+                String readId,String validBases,
                 int offset, Direction dir, Range clearRange,
                 int ungappedFullLength) {
             this.delegate = DefaultAssembledRead.createBuilder(reference, readId, validBases, offset, dir, clearRange, ungappedFullLength);
@@ -219,7 +218,7 @@ final class DefaultTasmAssembledRead implements TasmAssembledRead{
         * {@inheritDoc}
         */
         @Override
-        public Jid getId() {
+        public String getId() {
             return delegate.getId();
         }
 

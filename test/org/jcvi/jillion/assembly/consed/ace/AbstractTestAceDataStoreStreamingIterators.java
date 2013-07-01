@@ -20,19 +20,15 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.consed.ace;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.jcvi.jillion.core.Jid;
-import org.jcvi.jillion.core.JidFactory;
+import org.jcvi.jillion.assembly.consed.ace.AceAssembledRead;
+import org.jcvi.jillion.assembly.consed.ace.AceContig;
+import org.jcvi.jillion.assembly.consed.ace.AceFileDataStore;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -41,6 +37,7 @@ import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 public abstract class AbstractTestAceDataStoreStreamingIterators {
 
 	private AceFileDataStore datastore;
@@ -127,8 +124,8 @@ public abstract class AbstractTestAceDataStoreStreamingIterators {
 		try{
 			while(expectedIterator.hasNext()){
 				assertTrue(iter.hasNext());
-				Jid expected = JidFactory.create(expectedIterator.next());
-				Jid actual = iter.next().getId();
+				String expected = expectedIterator.next();
+				String actual = iter.next().getId();
 				assertEquals(expected, actual);
 			}
 			assertFalse(iter.hasNext());

@@ -30,8 +30,6 @@ import java.util.NoSuchElementException;
 import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.SliceBuilder;
 import org.jcvi.jillion.assembly.util.SliceElement;
-import org.jcvi.jillion.core.Jid;
-import org.jcvi.jillion.core.JidFactory;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
 /**
@@ -42,7 +40,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 public class NoConsensusCompactedSlice implements Slice{
 	
     private final short[] elements;
-    private final Jid[] ids;
+    private final String[] ids;
     
     public static final NoConsensusCompactedSlice EMPTY = (NoConsensusCompactedSlice) new SliceBuilder().build();
     
@@ -50,9 +48,9 @@ public class NoConsensusCompactedSlice implements Slice{
      * @param elements
      * @param ids
      */
-    public NoConsensusCompactedSlice(short[] elements, List<Jid> ids) {
+    public NoConsensusCompactedSlice(short[] elements, List<String> ids) {
         this.elements = elements;
-        this.ids = ids.toArray(new Jid[ids.size()]);
+        this.ids = ids.toArray(new String[ids.size()]);
     }
 
     /**
@@ -157,7 +155,7 @@ public class NoConsensusCompactedSlice implements Slice{
     }
     
     private CompactedSliceElement getElement(int i){
-    	Jid id = ids[i];
+    	String id = ids[i];
         return CompactedSliceElement.create(id, elements[i]);
     }
     /**
@@ -173,10 +171,10 @@ public class NoConsensusCompactedSlice implements Slice{
     */
     @Override
     public boolean containsElement(String elementId) {
-    	return indexOf(JidFactory.create(elementId)) >=0;
+    	return indexOf(elementId) >=0;
     }
 
-    private int indexOf(Jid id){
+    private int indexOf(String id){
     	if(id==null){
     		for(int i=0; i< ids.length; i++){
         		if(ids[i]==null){
@@ -209,7 +207,7 @@ public class NoConsensusCompactedSlice implements Slice{
     */
     @Override
     public SliceElement getSliceElement(String elementId) {
-        int index= indexOf(JidFactory.create(elementId));
+        int index= indexOf(elementId);
         if(index<0){
             return null;
         }

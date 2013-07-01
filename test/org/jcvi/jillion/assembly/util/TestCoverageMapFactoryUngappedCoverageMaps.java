@@ -28,6 +28,9 @@ import java.util.List;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
+import org.jcvi.jillion.assembly.util.ContigCoverageMapBuilder;
+import org.jcvi.jillion.assembly.util.CoverageMap;
+import org.jcvi.jillion.assembly.util.CoverageRegion;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.assembly.DefaultContig;
 import org.junit.Test;
@@ -73,7 +76,7 @@ public class TestCoverageMapFactoryUngappedCoverageMaps {
 		assertEquals(2, coverageRegion.getCoverageDepth());
 		List<String> actualReads = new ArrayList<String>();
 		for(AssembledRead read : coverageRegion){
-			actualReads.add(read.getId().toString());
+			actualReads.add(read.getId());
 		}
 		
 		assertTrue(actualReads.contains("read1"));

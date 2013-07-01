@@ -26,7 +26,6 @@ import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
 import org.jcvi.jillion.assembly.ReadInfo;
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.Jid;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -44,7 +43,7 @@ final class DefaultAsmAssembledRead implements AsmAssembledRead{
     private final AssembledRead placedRead;
     
     public static AsmAssembledReadBuilder createBuilder(NucleotideSequence reference, 
-    		Jid readId,
+    		String readId,
     		String validBases,
             int offset, Direction dir, Range clearRange,
             int ungappedFullLength, boolean isSurrogate){
@@ -91,7 +90,7 @@ final class DefaultAsmAssembledRead implements AsmAssembledRead{
     * {@inheritDoc}
     */
     @Override
-    public Jid getId() {
+    public String getId() {
         return placedRead.getId();
     }
 
@@ -192,7 +191,7 @@ final class DefaultAsmAssembledRead implements AsmAssembledRead{
         private final AssembledReadBuilder<AssembledRead> delegateBuilder;
         
         
-        public Builder(NucleotideSequence reference, Jid readId,String validBases,
+        public Builder(NucleotideSequence reference, String readId,String validBases,
                             int offset, Direction dir, Range clearRange,
                             int ungappedFullLength,boolean isSurrogate){
             this.delegateBuilder = DefaultAssembledRead.createBuilder(
@@ -234,7 +233,7 @@ final class DefaultAsmAssembledRead implements AsmAssembledRead{
         * {@inheritDoc}
         */
         @Override
-        public Jid getId(){
+        public String getId(){
             return delegateBuilder.getId();
         }
         /**

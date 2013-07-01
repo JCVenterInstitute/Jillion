@@ -27,7 +27,6 @@ package org.jcvi.jillion.assembly.clc.cas.read;
 
 import org.jcvi.jillion.assembly.ReadInfo;
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.Jid;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 
@@ -37,8 +36,8 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
     private final Direction dir;
     private final ReadInfo readInfo;
     private final ReferenceMappedNucleotideSequence sequence;
-    private final Jid id;
-    public DefaultCasPlacedRead(Jid id, ReferenceMappedNucleotideSequence sequence, long startOffset,Range validRange, 
+    private final String id;
+    public DefaultCasPlacedRead(String id, ReferenceMappedNucleotideSequence sequence, long startOffset,Range validRange, 
             Direction dir, int ungappedFullLength){
         if(id==null){
             throw new NullPointerException("id can not be null");
@@ -89,7 +88,7 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
         return sequence;
     }
     @Override
-    public Jid getId() {
+    public String getId() {
         return id;
     }
     

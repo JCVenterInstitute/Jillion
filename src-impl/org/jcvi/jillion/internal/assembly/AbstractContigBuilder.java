@@ -35,8 +35,6 @@ import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.SliceBuilder;
 import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.Jid;
-import org.jcvi.jillion.core.JidFactory;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.PhredQuality;
@@ -67,7 +65,7 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
 		private final NucleotideSequenceBuilder consensus;
 		
         private String id;
-        private final Map<Jid, AssembledReadBuilder<P>> reads;
+        private final Map<String, AssembledReadBuilder<P>> reads;
         
         
       
@@ -101,9 +99,9 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
         	}
             this.id = id;
             this.consensus = new NucleotideSequenceBuilder(consensus);
-            reads = new LinkedHashMap<Jid,AssembledReadBuilder<P>>();
+            reads = new LinkedHashMap<String,AssembledReadBuilder<P>>();
         }
-        public AbstractContigBuilder<P,C> addRead(Jid id, int offset,Range validRange, String basecalls, Direction dir, int fullUngappedLength){
+        public AbstractContigBuilder<P,C> addRead(String id, int offset,Range validRange, String basecalls, Direction dir, int fullUngappedLength){
             reads.put(id, createPlacedReadBuilder(id,offset,validRange,basecalls,dir,fullUngappedLength));
             return this;
         }
@@ -112,7 +110,7 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
             return this;
         }
         protected abstract AssembledReadBuilder<P> createPlacedReadBuilder(P read);
-        protected abstract AssembledReadBuilder<P> createPlacedReadBuilder(Jid id, int offset,Range validRange, String basecalls, Direction dir, int fullUngappedLength);
+        protected abstract AssembledReadBuilder<P> createPlacedReadBuilder(String id, int offset,Range validRange, String basecalls, Direction dir, int fullUngappedLength);
 
         
         /**
@@ -206,12 +204,12 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
         	
         	for(AssembledReadBuilder<P> aceReadBuilder : reads.values()){
         		int start = (int)aceReadBuilder.getBegin();
-        		Jid id =aceReadBuilder.getId();
+    			String id =aceReadBuilder.getId();
     			Direction dir = aceReadBuilder.getDirection();
     			QualitySequence fullQualities =null;
     			if(qualityDataStore!=null){
     				try {
-    					fullQualities = qualityDataStore.get(id.toString());
+    					fullQualities = qualityDataStore.get(id);
     				} catch (DataStoreException e) {
     					throw new IllegalStateException("error recalling consensus",e);
     				}    				
@@ -274,7 +272,6 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
             id = contigId;
             return this;
         }
-       
         /**
         * {@inheritDoc}
         */
@@ -282,7 +279,6 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
         public String getContigId() {
             return id;
         }
-        
         /**
         * {@inheritDoc}
         */
@@ -311,30 +307,17 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
         * {@inheritDoc}
         */
         @Override
-        public AssembledReadBuilder<P> getAssembledReadBuilder(Jid readId) {
+        public AssembledReadBuilder<P> getAssembledReadBuilder(String readId) {
             return reads.get(readId);
         }
         /**
         * {@inheritDoc}
         */
         @Override
-        public ContigBuilder<P, C> removeRead(Jid readId) {
+        public ContigBuilder<P, C> removeRead(String readId) {
             reads.remove(readId);
             return this;
         }
-        
-        /**
-         * {@inheritDoc}
-         */
-         public AssembledReadBuilder<P> getAssembledReadBuilder(String readId) {
-            return getAssembledReadBuilder(JidFactory.create(readId));
-         }
-         /**
-         * {@inheritDoc}
-         */
-         public ContigBuilder<P, C> removeRead(String readId) {
-            return removeRead(JidFactory.create(readId));
-         }
         /**
         * {@inheritDoc}
         */

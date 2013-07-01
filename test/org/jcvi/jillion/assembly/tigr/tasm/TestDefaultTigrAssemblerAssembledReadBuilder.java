@@ -21,8 +21,10 @@
 package org.jcvi.jillion.assembly.tigr.tasm;
 
 import org.jcvi.jillion.assembly.AbstractTestAssembledReadBuilder;
+import org.jcvi.jillion.assembly.tigr.tasm.DefaultTasmAssembledRead;
+import org.jcvi.jillion.assembly.tigr.tasm.TasmAssembledRead;
+import org.jcvi.jillion.assembly.tigr.tasm.TasmAssembledReadBuilder;
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.JidFactory;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
@@ -33,7 +35,7 @@ public class TestDefaultTigrAssemblerAssembledReadBuilder extends AbstractTestAs
 			NucleotideSequence validBases, int offset, Direction dir,
 			Range clearRange, int ungappedFullLength) {
 		return DefaultTasmAssembledRead.createBuilder(
-				reference, JidFactory.create(readId), validBases.toString(), 
+				reference, readId, validBases.toString(), 
 				offset, dir, clearRange,
 				ungappedFullLength);
 	}

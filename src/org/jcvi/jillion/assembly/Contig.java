@@ -25,7 +25,7 @@
  */
 package org.jcvi.jillion.assembly;
 
-import org.jcvi.jillion.core.Jid;
+import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
@@ -71,24 +71,7 @@ public interface Contig<T extends AssembledRead>{
      * if no such read exists in this contig.
      * @see #containsRead(String)
      */
-    T getRead(Jid id);
-    
-    /**
-     * Get the {@link AssembledRead} in this contig with the given id.
-     * @param id the id of the read to get.
-     * @return the {@link AssembledRead} with that id; or {@code null}
-     * if no such read exists in this contig.
-     * @see #containsRead(String)
-     */
     T getRead(String id);
-    /**
-     * Does this contig have a {@link AssembledRead} with the given id?
-     * @param readId the id of the {@link AssembledRead} to check for.
-     * @return {@code true} if this contig has a read
-     * with the given id; {@code false} otherwise.
-     */
-    boolean containsRead(Jid readId);
-    
     /**
      * Does this contig have a {@link AssembledRead} with the given id?
      * @param readId the id of the {@link AssembledRead} to check for.

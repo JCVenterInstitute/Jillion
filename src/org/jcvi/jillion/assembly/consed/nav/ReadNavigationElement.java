@@ -99,7 +99,7 @@ public class ReadNavigationElement extends AbstractNavigationElement{
         if(read.getDirection() == Direction.REVERSE){
             ungappedRange =AssemblyUtil.reverseComplementValidRange(ungappedRange, fullLength);
         }
-        return new ReadNavigationElement(read.getId().toString(), ungappedRange, comment);
+        return new ReadNavigationElement(read.getId(), ungappedRange, comment);
     }
    
     

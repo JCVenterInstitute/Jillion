@@ -24,20 +24,15 @@
  * @author dkatzel
  */
 package org.jcvi.jillion.assembly.consed.ace;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.reset;
-import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
 import java.util.Date;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.ReadInfo;
+import org.jcvi.jillion.assembly.consed.ace.AceAssembledReadAdapter;
+import org.jcvi.jillion.assembly.consed.ace.PhdInfo;
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.Jid;
-import org.jcvi.jillion.core.JidFactory;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 import org.junit.Before;
@@ -46,10 +41,9 @@ import org.junit.Test;
 public class TestAcePlacedReadAdapter {
 
     AssembledRead mockPlacedRead;
-    String idAsStr = "readId";
-    Jid id = JidFactory.create(idAsStr);
+    String id = "readId";
     Date date = new Date(123456789L);
-    PhdInfo phdInfo = new PhdInfo(idAsStr, idAsStr+".phd.1", date);
+    PhdInfo phdInfo = new PhdInfo(id, id+".phd.1", date);
     AceAssembledReadAdapter sut;
     long referenceIndex = 1234;
     long validRangeIndex = 7;
