@@ -21,7 +21,6 @@
 package org.jcvi.jillion.assembly;
 
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.Jid;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
@@ -63,7 +62,7 @@ public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable
      * Get the read id.
      * @return this
      */
-    Jid getId();
+    String getId();
     /**
      * Change the gapped start offset of this read to a new
      * value on the same reference.

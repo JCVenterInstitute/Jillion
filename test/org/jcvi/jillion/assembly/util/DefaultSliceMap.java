@@ -78,7 +78,7 @@ public class DefaultSliceMap extends AbstractSliceMap{
     		while(readIter.hasNext()){
     			PR read = readIter.next();
     			int start = (int)read.getGappedStartOffset();
-    			String id =read.getId().toString();
+    			String id =read.getId();
     			Direction dir = read.getDirection();
     			
     			QualitySequence fullQualities = qualityDataStore.get(id);

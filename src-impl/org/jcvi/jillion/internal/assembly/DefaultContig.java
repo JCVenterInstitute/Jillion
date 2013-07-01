@@ -34,8 +34,6 @@ import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.Jid;
-import org.jcvi.jillion.core.JidFactory;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -48,7 +46,7 @@ public final class DefaultContig<T extends AssembledRead> implements Contig<T>{
 
 	private final NucleotideSequence consensus;
     private final String id;
-    private final Map<Jid, T> mapById;
+    private final Map<String, T> mapById;
     
     public DefaultContig(String id, NucleotideSequence consensus, Set<T> assembledReads){
     	if(id==null){
@@ -60,14 +58,13 @@ public final class DefaultContig<T extends AssembledRead> implements Contig<T>{
         this.id = id;
         this.consensus = consensus;
         int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(assembledReads.size());
-        mapById = new LinkedHashMap<Jid, T>(capacity);
+        mapById = new LinkedHashMap<String, T>(capacity);
         for(T r : assembledReads){
             mapById.put(r.getId(), r);
         }
        
     }
-    
-    public DefaultContig(String id, NucleotideSequence consensus, Map<Jid, T> assembledReads){
+    public DefaultContig(String id, NucleotideSequence consensus, Map<String, T> assembledReads){
     	if(id==null){
     		throw new NullPointerException("id can not be null");
     	}
@@ -98,13 +95,8 @@ public final class DefaultContig<T extends AssembledRead> implements Contig<T>{
         return mapById.size();
     }
     @Override
-    public T getRead(Jid id) {
-        return mapById.get(id);
-    }
-    
-    @Override
     public T getRead(String id) {
-        return getRead(JidFactory.create(id));
+        return mapById.get(id);
     }
     @Override
     public StreamingIterator<T> getReadIterator() {       
@@ -113,13 +105,10 @@ public final class DefaultContig<T extends AssembledRead> implements Contig<T>{
 
     
 
+
     @Override
-    public boolean containsRead(String readId) {
-        return containsRead(JidFactory.create(readId));
-    }
-    @Override
-    public boolean containsRead(Jid readId) {
-        return mapById.containsKey(readId);
+    public boolean containsRead(String placedReadId) {
+        return mapById.containsKey(placedReadId);
     }
 
 	@Override
@@ -155,8 +144,8 @@ public final class DefaultContig<T extends AssembledRead> implements Contig<T>{
 		if (getNumberOfReads()!=other.getNumberOfReads()) {
 			return false;
 		}
-		for(Entry<Jid, T> entry : mapById.entrySet()){
-			Jid readId = entry.getKey();
+		for(Entry<String, T> entry : mapById.entrySet()){
+			String readId = entry.getKey();
 			if(!other.containsRead(readId)){
 				return false;
 			}
@@ -190,33 +179,10 @@ public final class DefaultContig<T extends AssembledRead> implements Contig<T>{
         public Builder(String id, NucleotideSequence consensus){
             super(id,consensus);
         }
-        
-        
-        @Override
-		public Builder removeRead(
-				Jid readId) {
-			super.removeRead(readId);
-			return this;
-		}
-
-		@Override
-		public Builder removeRead(
-				String readId) {
-			super.removeRead(readId);
-			return this;
-		}
-
-		public Builder addRead(String id, int offset,String basecalls){
-        	return addRead(JidFactory.create(id),offset, basecalls);
-        }
-        public Builder addRead(Jid id, int offset,String basecalls){
+        public Builder addRead(String id, int offset,String basecalls){
             return addRead(id, offset, basecalls, Direction.FORWARD);
         }
-        
         public Builder addRead(String id, int offset,String basecalls, Direction dir){
-        	return addRead(JidFactory.create(id), offset, basecalls, dir);
-		}	
-        public Builder addRead(Jid id, int offset,String basecalls, Direction dir){
             int numberOfGaps = computeNumberOfGapsIn(basecalls);
             int ungappedLength = basecalls.length()-numberOfGaps;
             return addRead(id, offset, 
@@ -236,12 +202,8 @@ public final class DefaultContig<T extends AssembledRead> implements Contig<T>{
             }
             return count;
         }
-     
-        public Builder addRead(String id, int offset,Range validRange, String basecalls, Direction dir, int fullUngappedLength){            
-        	return addRead(JidFactory.create(id), offset, validRange, basecalls, dir, fullUngappedLength);
-        }
         @Override
-        public Builder addRead(Jid id, int offset,Range validRange, String basecalls, Direction dir, int fullUngappedLength){            
+        public Builder addRead(String id, int offset,Range validRange, String basecalls, Direction dir, int fullUngappedLength){            
             if(offset <0){
                 throw new IllegalArgumentException("circular reads not supported");
                 
@@ -256,7 +218,7 @@ public final class DefaultContig<T extends AssembledRead> implements Contig<T>{
       			recallConsensusNow();
               }
         	 int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads());
-            Map<Jid,AssembledRead> reads = new LinkedHashMap<Jid, AssembledRead>(capacity);
+            Map<String,AssembledRead> reads = new LinkedHashMap<String, AssembledRead>(capacity);
             for(AssembledReadBuilder<AssembledRead> builder : getAllAssembledReadBuilders()){
                 reads.put(builder.getId(), builder.build());
             }
@@ -282,7 +244,7 @@ public final class DefaultContig<T extends AssembledRead> implements Contig<T>{
         */
         @Override
         protected AssembledReadBuilder<AssembledRead> createPlacedReadBuilder(
-                Jid id, int offset, Range validRange, String basecalls,
+                String id, int offset, Range validRange, String basecalls,
                 Direction dir, int fullUngappedLength) {
             return DefaultAssembledRead.createBuilder(
                     getConsensusBuilder().build(), 

@@ -31,7 +31,6 @@ import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
 import org.jcvi.jillion.assembly.ReadInfo;
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.Jid;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -44,7 +43,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
     private final AssembledRead placedRead;
     
     
-    public static AceAssembledReadBuilder createBuilder(NucleotideSequence reference, Jid readId,NucleotideSequence validBases,
+    public static AceAssembledReadBuilder createBuilder(NucleotideSequence reference, String readId,NucleotideSequence validBases,
             int offset, Direction dir, Range clearRange,PhdInfo phdInfo,
             int ungappedFullLength){
         return new Builder(reference, readId, validBases, 
@@ -74,7 +73,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
     * {@inheritDoc}
     */
     @Override
-    public Jid getId() {
+    public String getId() {
         return placedRead.getId();
     }
 
@@ -195,7 +194,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
         private final AssembledReadBuilder<AssembledRead> delegateBuilder;
         
         
-        public Builder(NucleotideSequence reference, Jid readId,NucleotideSequence validBases,
+        public Builder(NucleotideSequence reference, String readId,NucleotideSequence validBases,
                             int offset, Direction dir, Range clearRange,PhdInfo phdInfo,
                             int ungappedFullLength){
             this.delegateBuilder = DefaultAssembledRead.createBuilder(
@@ -240,7 +239,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
         * {@inheritDoc}
         */
         @Override
-        public Jid getId(){
+        public String getId(){
             return delegateBuilder.getId();
         }
         /**

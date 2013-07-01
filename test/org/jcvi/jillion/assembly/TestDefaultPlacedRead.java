@@ -33,8 +33,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.Jid;
-import org.jcvi.jillion.core.JidFactory;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.jillion.core.testUtil.TestUtil;
@@ -53,8 +51,7 @@ public class TestDefaultPlacedRead {
     long length = 200L;
     Range validRange = Range.of(start, length);
     DefaultAssembledRead sut ;
-    String idAsStr = "id";
-    Jid id = JidFactory.create(idAsStr);
+    		String id = "id";
     @Before
     public void setup(){
         sequence = createMock(ReferenceMappedNucleotideSequence.class);
@@ -124,7 +121,7 @@ public class TestDefaultPlacedRead {
     }
     @Test
     public void differentIdIsNotEqual(){
-         AssembledRead hasDifferentRead =  new DefaultAssembledRead(JidFactory.create("different"+id.toString()), sequence, start,dir,500,validRange);
+         AssembledRead hasDifferentRead =  new DefaultAssembledRead("different"+id, sequence, start,dir,500,validRange);
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, hasDifferentRead);
     }
     @Test

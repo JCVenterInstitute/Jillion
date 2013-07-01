@@ -22,7 +22,6 @@ package org.jcvi.jillion.assembly.ca.asm;
 
 import org.jcvi.jillion.assembly.ContigBuilder;
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.Jid;
 import org.jcvi.jillion.core.Range;
 
 /**
@@ -53,10 +52,6 @@ public interface AsmContigBuilder extends ContigBuilder<AsmAssembledRead, AsmCon
      * read from the sequence machine.
      * @return this.
      */
-    AsmContigBuilder addRead(Jid readId, String validBases, int offset,
+    AsmContigBuilder addRead(String readId, String validBases, int offset,
             Direction dir, Range clearRange, int ungappedFullLength, boolean isSurrogate);
-    
-    AsmContigBuilder addRead(String readId, String validBases,
-            int offset, Direction dir, Range clearRange,
-            int ungappedFullLength, boolean isSurrogate);
 }

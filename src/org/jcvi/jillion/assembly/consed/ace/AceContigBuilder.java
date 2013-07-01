@@ -49,8 +49,6 @@ import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.SliceBuilder;
 import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.Jid;
-import org.jcvi.jillion.core.JidFactory;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -108,7 +106,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     private NucleotideSequence initialConsensus;
     private final NucleotideSequenceBuilder mutableConsensus;
     private String contigId;
-    private final Map<Jid, AceAssembledReadBuilder> aceReadBuilderMap;
+    private final Map<String, AceAssembledReadBuilder> aceReadBuilderMap;
     private int contigLeft= -1;
     private int contigRight = -1;
     private volatile boolean built=false;
@@ -161,7 +159,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     	this.initialConsensus = initialConsensus;
     	 this.contigId = contigId;
     	 this.mutableConsensus = new NucleotideSequenceBuilder(initialConsensus);
-    	 aceReadBuilderMap = new HashMap<Jid, AceAssembledReadBuilder>();
+    	 aceReadBuilderMap = new HashMap<String, AceAssembledReadBuilder>();
     }
     
     /**
@@ -191,7 +189,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     	 this.contigId = contigId;
     	 this.mutableConsensus = new NucleotideSequenceBuilder(initialConsensus);
     	 int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(estimatedNumberOfReads);
-    	 aceReadBuilderMap = new HashMap<Jid, AceAssembledReadBuilder>(capacity);
+    	 aceReadBuilderMap = new HashMap<String, AceAssembledReadBuilder>(capacity);
     }
     /**
      * Create a new instance of DefaultAceContigBuilder
@@ -205,7 +203,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     	this.contigId=copy.getId();
     	this.initialConsensus = copy.getConsensusSequence();
     	this.mutableConsensus = new NucleotideSequenceBuilder(initialConsensus);
-    	aceReadBuilderMap = new HashMap<Jid, AceAssembledReadBuilder>(MapUtil.computeMinHashMapSizeWithoutRehashing(copy.getNumberOfReads()));
+    	aceReadBuilderMap = new HashMap<String, AceAssembledReadBuilder>(MapUtil.computeMinHashMapSizeWithoutRehashing(copy.getNumberOfReads()));
     	StreamingIterator<AceAssembledRead> readIter =null;
     	try{
     		readIter = copy.getReadIterator();
@@ -400,30 +398,23 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     * {@inheritDoc}
     */
     @Override
-    public AceAssembledReadBuilder getAssembledReadBuilder(Jid readId){
+    public AceAssembledReadBuilder getAssembledReadBuilder(String readId){
         return aceReadBuilderMap.get(readId);
     }
-    public AceAssembledReadBuilder getAssembledReadBuilder(String readId){
-    	return getAssembledReadBuilder(JidFactory.create(readId));
-    }
-    public AceContigBuilder removeRead(String readId){
-    	return removeRead(JidFactory.create(readId));
-    }
+    
+    
     /**
     * {@inheritDoc}
     */
     @Override
-    public AceContigBuilder removeRead(Jid readId) {
+    public AceContigBuilder removeRead(String readId) {
         if(readId==null){
             throw new NullPointerException("read id can not be null");
         }
         aceReadBuilderMap.remove(readId);
         return this;
     }
-    public AceContigBuilder addRead(String readId, NucleotideSequence validBases, int offset,
-            Direction dir, Range clearRange,PhdInfo phdInfo,int ungappedFullLength){
-    	return addRead(JidFactory.create(readId), validBases, offset, dir, clearRange, phdInfo, ungappedFullLength);
-    }
+    
     /**
      * Add a read to this contig with the given values.  This read
      * can later get modified via the {@link #getAssembledReadBuilder(String)}.
@@ -443,7 +434,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      * read from the sequence machine.
      * @return this.
      */
-    public AceContigBuilder addRead(Jid readId, NucleotideSequence validBases, int offset,
+    public AceContigBuilder addRead(String readId, NucleotideSequence validBases, int offset,
             Direction dir, Range clearRange,PhdInfo phdInfo,int ungappedFullLength) {
         if(readId ==null){
         	throw new NullPointerException("readId can not be null");
@@ -466,7 +457,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
         return this;
     }
     private AceAssembledReadBuilder createNewAceReadBuilder(
-    		Jid readId, NucleotideSequence validBases, int offset,
+            String readId, NucleotideSequence validBases, int offset,
             Direction dir, Range clearRange, PhdInfo phdInfo,int ungappedFullLength) {
         return DefaultAceAssembledRead.createBuilder(
                 initialConsensus,readId,
@@ -612,16 +603,17 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     	}
     	
     	SliceBuilder builders[] = initializeSliceBuilders(mutableConsensus.build());
+    	
     	for(AceAssembledReadBuilder aceReadBuilder : aceReadBuilderMap.values()){
     		int start = (int)aceReadBuilder.getBegin();
 			
-			Jid id =aceReadBuilder.getId();
+			String id =aceReadBuilder.getId();
 			Direction dir = aceReadBuilder.getDirection();
 			QualitySequence fullQualities =null;
 			
 			if(qualityDataStore!=null){
 				try {
-					fullQualities = qualityDataStore.get(id.toString());
+					fullQualities = qualityDataStore.get(id);
 				} catch (DataStoreException e) {
 					throw new IllegalStateException("error recalling consensus",e);
 				}
@@ -710,13 +702,13 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
             splitContig.qualityDataStore = this.qualityDataStore;
             splitContig.qualityValueStrategy = this.qualityValueStrategy;
             
-            Set<Jid> contigReads = new HashSet<Jid>();            
+            Set<String> contigReads = new HashSet<String>();            
             for(CoverageRegion<AceAssembledReadBuilder> region : coverageMap.getRegionsWhichIntersect(rangeTokeep)){
                 for(AceAssembledReadBuilder read : region){
                     contigReads.add(read.getId());
                 }
             }
-            for(Jid readId : contigReads){
+            for(String readId : contigReads){
             	//create a copy so we 
             	//can modify our version without
             	//affecting original
@@ -824,17 +816,6 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
 
 
 		@Override
-		public AceAssembledRead getRead(Jid id) {
-			return contig.getRead(id);
-		}
-
-
-
-		@Override
-		public boolean containsRead(String readId) {
-			return contig.containsRead(readId);
-		}
-		@Override
 		public AceAssembledRead getRead(String id) {
 			return contig.getRead(id);
 		}
@@ -842,7 +823,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
 
 
 		@Override
-		public boolean containsRead(Jid readId) {
+		public boolean containsRead(String readId) {
 			return contig.containsRead(readId);
 		}
 
@@ -895,7 +876,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
 				readIter = contig.getReadIterator();
 				while(readIter.hasNext()){
 					AceAssembledRead read = readIter.next();
-					Jid readId = read.getId();
+					String readId = read.getId();
 					if(!other.containsRead(readId)){
 						return false;
 					}

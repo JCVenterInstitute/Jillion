@@ -29,7 +29,6 @@ import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.Jid;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -161,7 +160,7 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
    
    
     @Override
-    public TasmContigBuilder addRead(Jid id, int offset,Range validRange, String basecalls, Direction dir, int fullUngappedLength){            
+    public TasmContigBuilder addRead(String id, int offset,Range validRange, String basecalls, Direction dir, int fullUngappedLength){            
         if(offset <0){
             throw new IllegalArgumentException("circular reads not supported");
             
@@ -346,7 +345,7 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
  			recallConsensusNow();
          }
     	 int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads());
-        Map<Jid,TasmAssembledRead> reads = new LinkedHashMap<Jid, TasmAssembledRead>(capacity);
+        Map<String,TasmAssembledRead> reads = new LinkedHashMap<String, TasmAssembledRead>(capacity);
         for(AssembledReadBuilder<TasmAssembledRead> builder : getAllAssembledReadBuilders()){              
             reads.put(builder.getId(),builder.build());
         }
@@ -376,7 +375,7 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
     */
     @Override
     protected TasmAssembledReadBuilder createPlacedReadBuilder(
-            Jid id, int offset, Range validRange, String basecalls,
+            String id, int offset, Range validRange, String basecalls,
             Direction dir, int fullUngappedLength) {
         return DefaultTasmAssembledRead.createBuilder(
                 getConsensusBuilder().build(), 
@@ -413,7 +412,7 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
          * @param placedReads
          * @param circular
          */
-        private DefaultTasmContig(TasmContigBuilder builder, Map<Jid,TasmAssembledRead> reads,
+        private DefaultTasmContig(TasmContigBuilder builder, Map<String,TasmAssembledRead> reads,
         		Double userProvidedAvgCoverage, Integer userProvidedNumberOfReads) {
             contig = new DefaultContig<TasmAssembledRead>(builder.getContigId(),
             		builder.getConsensusBuilder().build(),reads);
@@ -526,21 +525,10 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
 
 
     	@Override
-    	public boolean containsRead(Jid readId) {
-    		return contig.containsRead(readId);
-    	}
-
-    	@Override
-    	public TasmAssembledRead getRead(Jid id) {
-    		return contig.getRead(id);
-    	}
-
-
-
-    	@Override
     	public boolean containsRead(String readId) {
     		return contig.containsRead(readId);
     	}
+
 
 
     	@Override
@@ -609,7 +597,7 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
     			readIter = contig.getReadIterator();
     			while(readIter.hasNext()){
     				TasmAssembledRead read = readIter.next();
-    				Jid readId = read.getId();
+    				String readId = read.getId();
     				if(!other.containsRead(readId)){
     					return false;
     				}
