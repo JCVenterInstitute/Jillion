@@ -22,13 +22,9 @@ package org.jcvi.jillion.trace.fastq;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.SortedMap;
 import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.util.MapValueComparator;
 
 /**
  * {@code FastqUtil} is a utility class for working with 
@@ -121,7 +117,8 @@ public final class FastqUtil {
     	}
     	FastqQualityCodecDetectorVisitor detectorVisitor =new FastqQualityCodecDetectorVisitor(numberOfReadsToInspect);
     	FastqFileParser.create(fastqFile).accept(detectorVisitor);
-    	return detectorVisitor.getDetectedCodec();
+    	FastqQualityCodec detectedCodec = detectorVisitor.getDetectedCodec();
+		return detectedCodec;
     }
     /**
      * Attempts to guess the {@link FastqQualityCodec} used to encode
@@ -191,15 +188,14 @@ public final class FastqUtil {
     private static final class FastqQualityCodecDetectorVisitor implements FastqVisitor{
     	private int numberOfRecordsVisited=0;
     	private final int maxNumberOfRecordsToVisit;
-    	private FastqQualityCodec detectedCodec=null;
 		
     	FastqQualityCodecDetectorRecordVisitor recordVisitor = new FastqQualityCodecDetectorRecordVisitor();
     	
 		public FastqQualityCodecDetectorVisitor(int maxNumberOfRecordsToVisit) {
 			this.maxNumberOfRecordsToVisit = maxNumberOfRecordsToVisit;
 		}
-		public FastqQualityCodec getDetectedCodec() {
-			return detectedCodec;
+		public FastqQualityCodec getDetectedCodec() throws MixedFastqEncodings {
+			return recordVisitor.getMostFrequentCodec();	
 		}
 		@Override
 		public FastqRecordVisitor visitDefline(FastqVisitorCallback callback,
@@ -219,7 +215,7 @@ public final class FastqUtil {
 		 */
 		@Override
 		public void halted() {
-			detectedCodec= recordVisitor.getMostFrequentCodec();			
+						
 		}
 		/**
 		 * It is possible that the fastq
@@ -230,16 +226,16 @@ public final class FastqUtil {
 		 */
 		@Override
 		public void visitEnd() {			
-	        detectedCodec= recordVisitor.getMostFrequentCodec();			
+	       		
 		}
     	
     }
     
     private static final class FastqQualityCodecDetectorRecordVisitor implements FastqRecordVisitor{
-    	private int numSanger=0;
-    	private int numIllumina=0;
-    	private int numSolexa=0;
-    	
+    	private long numSanger=0;
+    	private long numIllumina=0;
+    	private long numPossiblySolexa=0;
+    	private long numEither=0;
 		@Override
 		public void visitNucleotides(NucleotideSequence nucleotides) {
 			//no-op			
@@ -247,6 +243,8 @@ public final class FastqUtil {
 
 		@Override
 		public void visitEncodedQualities(String encodedQualities) {
+		
+			/*
 			FastqQualityCodec codec =FastqUtil.guessQualityCodecUsed(encodedQualities);
 			if(codec ==null){
 				//nothing to detect so skip it
@@ -257,14 +255,66 @@ public final class FastqUtil {
                 				break;
                 case ILLUMINA : numIllumina++;
 								break;
-                case SOLEXA : numSolexa++;
+                case SOLEXA : numPossiblySolexa++;
 								break;
 				default:
 					throw new IllegalArgumentException("unknown codec: "+ codec);
             }
+			*/
 			
+
+	    	boolean hasSolexaOnlyValues=false;
+	    	int maxQuality=Integer.MIN_VALUE;
+	    	int minQuality = Integer.MAX_VALUE;
+	    	
+	    	for(int i=0; i<encodedQualities.length(); i++){
+	    		int asciiValue = encodedQualities.charAt(i);
+	    		if(asciiValue <33){
+	    			throw new IllegalArgumentException(
+	    					String.format(
+	    							"invalid encoded qualities has out of range ascii value %d : '%s'", 
+	    							asciiValue,
+	    							encodedQualities));
+	    		}
+	    		//sanger uses 33 as an offset so any ascii values around there will 
+		    	//automatically be sanger
+	    		if(asciiValue <59){
+	    			numSanger++;
+	    			return;
+	    		}
+	    		//solexa and illumina encoding have offsets of 64 so they look very similar
+		    	//except solexa uses a different log scale and can actually have scores as low
+		    	//as -5 (ascii value 59) so any values from ascii 59-63 mean solexa
+	    		if(asciiValue < 64){
+	    			hasSolexaOnlyValues=true;
+	    		}
+	    		if(asciiValue > maxQuality){
+	    			maxQuality = asciiValue;
+	    		}
+	    		if(asciiValue < minQuality){
+	    			minQuality = asciiValue;
+	    		}
+	    	}
+	    	//a quality more than this is highly improbable
+	    	//for sanger encoding so assume illumina or solexa
+	    	if(maxQuality > 80){
+	    		if(hasSolexaOnlyValues){
+	    			numPossiblySolexa++;
+	    		}else{
+	    			numIllumina ++;
+	    		}
+	    	}else{
+	    		//could not tell which encoding
+	    		//this could be a high quality sanger 
+	    		//or low quality illumina read
+	    		numEither++;
+	    	}
+	    	
+	    	
 		}
 
+		
+		
 		@Override
 		public void visitEnd() {
 			//no-op			
@@ -275,19 +325,39 @@ public final class FastqUtil {
 			//no-op			
 		}
 		
-		public FastqQualityCodec getMostFrequentCodec(){
-			if(numSanger==0 && numSolexa==0 && numIllumina==0){
+		public FastqQualityCodec getMostFrequentCodec() throws MixedFastqEncodings{
+			if(numSanger==0 && numPossiblySolexa==0 && numIllumina==0 && numEither ==0){
 				throw new IllegalStateException("fastq file must not be empty");
 			}
-			Map<FastqQualityCodec, Integer> map = new EnumMap<FastqQualityCodec, Integer>(FastqQualityCodec.class);
-	        map.put(FastqQualityCodec.SANGER, Integer.valueOf(numSanger));
-	        map.put(FastqQualityCodec.SOLEXA, Integer.valueOf(numSolexa));
-	        map.put(FastqQualityCodec.ILLUMINA, Integer.valueOf(numIllumina));
-	        SortedMap<FastqQualityCodec, Integer> sortedMap = MapValueComparator.sortDescending(map);
-	        return sortedMap.firstKey();
+			if(numSanger>0 && numIllumina>0){
+				//mix could be invalid upstream process
+				//that mixed the encodings together.
+				//This has happened where many 
+				//fastq files are processed differently 
+				//but then combined into one large fastq file
+				throw new MixedFastqEncodings(numSanger, numPossiblySolexa, numIllumina, numEither);
+			}		
+			//if our file has anything that
+			//is definitely sanger encoded then we 
+			//must be sanger encoded.
+			if(numSanger >0){
+				return FastqQualityCodec.SANGER;
+			}
+			//if we get this far than we use a 64 offset
+			//but don't yet know if we are solexa or illumina
+			if(numPossiblySolexa>0){
+				return FastqQualityCodec.SOLEXA;
+			}
+			return FastqQualityCodec.ILLUMINA;
 		}
     }
     
-    
+    private static class MixedFastqEncodings extends IOException{
+		private static final long serialVersionUID = 1L;
+
+		MixedFastqEncodings(long numSanger, long numSolexa, long numIllumina, long numEither){
+    		super(String.format("many reads are encoded differently #sanger =%d #illuminia #either = %d" , numSanger,numIllumina, numSolexa+numEither));
+    	}
+    }
    
 }

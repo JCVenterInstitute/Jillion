@@ -20,6 +20,11 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.util.iter;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -27,7 +32,6 @@ import java.util.List;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * @author dkatzel
@@ -96,7 +100,7 @@ public class TestAbstractBlockingClosableIteratorExceptions {
     
     @Test
     public void backgroundThreadThrowsExceptionShouldCatchOnHasNextOrNext(){
-        TestDouble iter = new TestDouble(names, 3);
+        TestDouble iter = new TestDouble(names, 2);
         iter.start();  
         
         iter.next(); //moe
@@ -104,12 +108,14 @@ public class TestAbstractBlockingClosableIteratorExceptions {
         //should throw exception here
         try{
             iter.hasNext();
+            fail("should throw exception");
         }catch(ExpectedException e){
             //expected
         }
         
         try{
             iter.next();
+            fail("should throw exception");
         }catch(ExpectedException e){
           //expected
         }
@@ -117,7 +123,7 @@ public class TestAbstractBlockingClosableIteratorExceptions {
     
     @Test
     public void closeBeforeExceptionShouldCloseWithoutProblems(){
-        TestDouble iter = new TestDouble(names, 3);
+        TestDouble iter = new TestDouble(names);
         iter.start();  
         
         iter.next(); //moe
