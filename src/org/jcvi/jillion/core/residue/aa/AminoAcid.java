@@ -61,7 +61,9 @@ public enum AminoAcid implements Residue{
     Aspartic_Acid("Aspartic Acid", "Asp",'D'),
     Glutamic_Acid("Glutamic Acid","Glu",'E'),
     Unknown_Amino_Acid("Unknown Amino Acid", "Uknown", 'X'),
-    Gap("Gap", "Gap", '-')
+    Gap("Gap", "Gap", '-'),
+    
+    STOP("Stop", "Stop", '*')
     ;
     
     private final Character abbreviation;
