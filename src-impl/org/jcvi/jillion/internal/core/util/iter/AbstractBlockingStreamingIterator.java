@@ -211,8 +211,8 @@ public abstract class AbstractBlockingStreamingIterator<T> implements StreamingI
     private void setErroredOut(RuntimeException uncaughtException){
 		AbstractBlockingStreamingIterator.this.uncaughtException = uncaughtException;
 		nextRecord=endOfFileToken;
-        queue.clear();
-        queue.add(endOfFileToken);
+		queue.clear();
+		queue.add(endOfFileToken);
     }
 	/**
 	 * Safety-net to close the iterator
@@ -235,9 +235,6 @@ public abstract class AbstractBlockingStreamingIterator<T> implements StreamingI
 	    */
 	    @Override
 	    public final T next() {
-	        if(!isClosed && uncaughtException !=null){
-	            throw uncaughtException;
-	        }
 	        if(!hasNext()){
 	            throw new NoSuchElementException("no records");
 	        }
@@ -287,7 +284,6 @@ public abstract class AbstractBlockingStreamingIterator<T> implements StreamingI
 	                 backgroundThreadRunMethod();
 	                 finishedIterating();
 	             }catch(RuntimeException e){
-	            	// e.printStackTrace();
 	            	 setErroredOut(e);                
 	             }
 	         }

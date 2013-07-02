@@ -76,7 +76,8 @@ public class TestAbstractBlockingClosableIteratorExceptions {
         @Override
         protected void backgroundThreadRunMethod() {
             for(int i=0; i<numberOfRecordsUntilThrowException && i<list.size(); i++){
-                this.blockingPut(list.get(i));
+                String obj = list.get(i);
+				this.blockingPut(obj);
             }
             if(numberOfRecordsUntilThrowException < list.size()){
                 throw new ExpectedException();
@@ -104,10 +105,14 @@ public class TestAbstractBlockingClosableIteratorExceptions {
         iter.start();  
         
         iter.next(); //moe
-        iter.next(); //larry
-        //should throw exception here
+        //depending on thread scheduling
+        //the throw can happen on either of the 
+        //next 2 next() or hasNext() calls
+        //the easiest way to test is to just wrap both 
+        //in a try.
         try{
-            iter.hasNext();
+        	 iter.next(); 
+             iter.next();
             fail("should throw exception");
         }catch(ExpectedException e){
             //expected
@@ -123,7 +128,7 @@ public class TestAbstractBlockingClosableIteratorExceptions {
     
     @Test
     public void closeBeforeExceptionShouldCloseWithoutProblems(){
-        TestDouble iter = new TestDouble(names);
+        TestDouble iter = new TestDouble(names, 3);
         iter.start();  
         
         iter.next(); //moe
