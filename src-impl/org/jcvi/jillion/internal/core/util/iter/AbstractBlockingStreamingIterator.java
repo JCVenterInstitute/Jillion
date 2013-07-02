@@ -21,8 +21,6 @@
 package org.jcvi.jillion.internal.core.util.iter;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -204,12 +202,18 @@ public abstract class AbstractBlockingStreamingIterator<T> implements StreamingI
     * {@inheritDoc}
     */
     @Override
-    public final void close() throws IOException {
+    public final void close(){
         isClosed=true;
         nextRecord=endOfFileToken;
         queue.clear();	        
     }
-	    
+	
+    private void setErroredOut(RuntimeException uncaughtException){
+		AbstractBlockingStreamingIterator.this.uncaughtException = uncaughtException;
+		nextRecord=endOfFileToken;
+        queue.clear();
+        queue.add(endOfFileToken);
+    }
 	/**
 	 * Safety-net to close the iterator
 	 * in case it hasn't been closed already.
@@ -281,10 +285,10 @@ public abstract class AbstractBlockingStreamingIterator<T> implements StreamingI
 	         public void run() {
 	             try{
 	                 backgroundThreadRunMethod();
-	             }catch(RuntimeException e){
-	                 AbstractBlockingStreamingIterator.this.uncaughtException = e;	                 
-	             }finally{
 	                 finishedIterating();
+	             }catch(RuntimeException e){
+	            	// e.printStackTrace();
+	            	 setErroredOut(e);                
 	             }
 	         }
 	     }
