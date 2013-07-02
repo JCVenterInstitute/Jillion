@@ -40,8 +40,10 @@ import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
  */
 public enum FastqQualityCodec {
 	/**
-	 * {@code ILLUMINA} supports Illumina 1.3+
-	 * Fastq encoded qualities.
+	 * {@code ILLUMINA} supports Illumina 1.3 through
+	 *  Illumina 1.7 encoded qualities.
+	 *  Illumina 1.8+ switched to sanger encoding.
+	 *  @see #SANGER
 	 */
 	ILLUMINA{
 		 @Override
@@ -56,6 +58,7 @@ public enum FastqQualityCodec {
 	},
 	/**
 	 * {@code SANGER} supports Sanger encoded qualities.
+	 * .
 	 */
 	SANGER{
 		 @Override
