@@ -40,7 +40,9 @@ import org.junit.runners.Suite.SuiteClasses;
         
         TestDefaultAminoAcidSequenceFastaFileDataStore.class,
         TestMementoAminoAcidSequenceFastaFileDataStore.class,
-        TestIterationOnlyAminoAcidSequenceFastaFileDataStore.class
+        TestIterationOnlyAminoAcidSequenceFastaFileDataStore.class,
+        
+        TestStandardIupacTranslationTables.class
     }
     )
 public class AllAminoAcidUnitTests {
