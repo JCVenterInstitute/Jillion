@@ -356,7 +356,7 @@ public final class FastqUtil {
 		private static final long serialVersionUID = 1L;
 
 		MixedFastqEncodings(long numSanger, long numSolexa, long numIllumina, long numEither){
-    		super(String.format("many reads are encoded differently #sanger =%d #illuminia #either = %d" , numSanger,numIllumina, numSolexa+numEither));
+    		super(String.format("many reads are encoded differently #sanger =%d #illuminia = %d #either = %d" , numSanger,numIllumina, numSolexa+numEither));
     	}
     }
    
