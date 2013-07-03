@@ -26,7 +26,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
 public class ConsensusCompactedSlice extends NoConsensusCompactedSlice {
 
-	private byte consensusOrdinal;
+	private final byte consensusOrdinal;
 	
 	public ConsensusCompactedSlice(short[] elements, List<String> ids, Nucleotide consensus) {
 		super(elements, ids);
