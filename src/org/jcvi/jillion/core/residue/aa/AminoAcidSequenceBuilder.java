@@ -206,11 +206,6 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 		return build(builder.toArray());
 	}
 
-	@Override
-	public AminoAcidSequence build(Range range) {
-		byte[] temp = trimBytes(range);
-		return build(temp);
-	}
 
 	private byte[] trimBytes(Range range) {
 		byte[] fullArray =builder.toArray();
@@ -291,7 +286,14 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 
 	@Override
 	public String toString() {
-		return builder.toString();
+		byte[] array =builder.toArray();
+		StringBuilder stringBuilder = new StringBuilder(array.length);
+		AminoAcid[] values = AminoAcid.values();
+		for(int i=0; i<array.length; i++){
+			
+			stringBuilder.append(values[array[i]]);
+		}
+		return stringBuilder.toString();
 	}
 
 	@Override
