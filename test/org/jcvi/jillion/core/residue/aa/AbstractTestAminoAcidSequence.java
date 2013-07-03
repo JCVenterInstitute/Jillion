@@ -24,15 +24,11 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
-import org.jcvi.jillion.core.residue.aa.AminoAcids;
 import org.junit.Before;
 import org.junit.Test;
 
 public abstract class AbstractTestAminoAcidSequence {
-	private final List<AminoAcid> aminoAcids = AminoAcids.parse("ILKMFDEX");
+	private final List<AminoAcid> aminoAcids = AminoAcidUtil.parse("ILKMFDEX");
 	AminoAcidSequence sut;
 	@Before
 	public void setup(){
@@ -54,7 +50,7 @@ public abstract class AbstractTestAminoAcidSequence {
 	
 	@Test
 	public void singleBase(){
-		List<AminoAcid> expected = AminoAcids.parse("L");
+		List<AminoAcid> expected = AminoAcidUtil.parse("L");
 		AminoAcidSequence seq = encode(expected);
 		assertEquals(1, seq.getLength());
 		assertEquals(expected.get(0),seq.get(0));
@@ -69,8 +65,8 @@ public abstract class AbstractTestAminoAcidSequence {
 	
 	@Test
 	public void gappedSequence(){
-		AminoAcidSequence seq = encode(AminoAcids.parse("I-LKM-FDEX"));
-		assertEquals("I-LKM-FDEX", AminoAcids.asString(seq));
+		AminoAcidSequence seq = encode(AminoAcidUtil.parse("I-LKM-FDEX"));
+		assertEquals("I-LKM-FDEX", AminoAcidUtil.asString(seq));
 		assertEquals(2, seq.getNumberOfGaps());
 		assertEquals(8, seq.getUngappedLength());
 		assertEquals(1, seq.getUngappedOffsetFor(2));

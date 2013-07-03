@@ -41,7 +41,7 @@ public class TestAminoAcidSequenceBuilder {
 	public void stringConstructorShouldStartWithResiduesGiven(){
 		String expected = "IKFTW";
 		AminoAcidSequenceBuilder sut = new AminoAcidSequenceBuilder(expected);
-		assertEquals(expected, AminoAcids.asString(sut.build()));
+		assertEquals(expected, AminoAcidUtil.asString(sut.build()));
 		assertEquals(0, sut.getNumGaps());
 		assertEquals(5L, sut.getLength());
 	}
@@ -70,7 +70,7 @@ public class TestAminoAcidSequenceBuilder {
 	public void insertAminoAcid(){
 		AminoAcidSequenceBuilder sut = new AminoAcidSequenceBuilder("IKFTW")
 											.insert(2, AminoAcid.Isoleucine);
-		assertEquals("IKIFTW", AminoAcids.asString(sut));
+		assertEquals("IKIFTW", AminoAcidUtil.asString(sut));
 		assertEquals(0, sut.getNumGaps());
 		assertEquals(6L, sut.getLength());
 	}
@@ -79,7 +79,7 @@ public class TestAminoAcidSequenceBuilder {
 	public void insertIterable(){
 		AminoAcidSequenceBuilder sut = new AminoAcidSequenceBuilder("IKFTW")
 											.insert(2, Arrays.asList(AminoAcid.Isoleucine));
-		assertEquals("IKIFTW", AminoAcids.asString(sut));
+		assertEquals("IKIFTW", AminoAcidUtil.asString(sut));
 		assertEquals(0, sut.getNumGaps());
 		assertEquals(6L, sut.getLength());
 	}
@@ -87,7 +87,7 @@ public class TestAminoAcidSequenceBuilder {
 	public void insertString(){
 		AminoAcidSequenceBuilder sut = new AminoAcidSequenceBuilder("IKFTW")
 											.insert(2, "I");
-		assertEquals("IKIFTW", AminoAcids.asString(sut));
+		assertEquals("IKIFTW", AminoAcidUtil.asString(sut));
 		assertEquals(0, sut.getNumGaps());
 		assertEquals(6L, sut.getLength());
 	}
@@ -95,7 +95,7 @@ public class TestAminoAcidSequenceBuilder {
 	public void insertOtherBuilder(){
 		AminoAcidSequenceBuilder sut = new AminoAcidSequenceBuilder("IKFTW")
 											.insert(2, new AminoAcidSequenceBuilder("I"));
-		assertEquals("IKIFTW", AminoAcids.asString(sut));
+		assertEquals("IKIFTW", AminoAcidUtil.asString(sut));
 		assertEquals(0, sut.getNumGaps());
 		assertEquals(6L, sut.getLength());
 	}
@@ -103,7 +103,7 @@ public class TestAminoAcidSequenceBuilder {
 	public void appendSingleAminoAcid(){
 		AminoAcidSequenceBuilder sut = new AminoAcidSequenceBuilder();
 		sut.append(AminoAcid.Isoleucine);
-		assertEquals("I", AminoAcids.asString(sut.build()));
+		assertEquals("I", AminoAcidUtil.asString(sut.build()));
 		assertEquals(0, sut.getNumGaps());
 		assertEquals(1L, sut.getLength());
 	}
@@ -113,7 +113,7 @@ public class TestAminoAcidSequenceBuilder {
 	public void appendSingleAminoAcidAsString(){
 		AminoAcidSequenceBuilder sut = new AminoAcidSequenceBuilder();
 		sut.append("I");
-		assertEquals("I", AminoAcids.asString(sut.build()));
+		assertEquals("I", AminoAcidUtil.asString(sut.build()));
 		assertEquals(0, sut.getNumGaps());
 		assertEquals(1L, sut.getLength());
 	}
@@ -122,7 +122,7 @@ public class TestAminoAcidSequenceBuilder {
 	public void appendMultipleAminoAcidsAsString(){
 		AminoAcidSequenceBuilder sut = new AminoAcidSequenceBuilder();
 		sut.append("IKFTW");
-		assertEquals("IKFTW", AminoAcids.asString(sut.build()));
+		assertEquals("IKFTW", AminoAcidUtil.asString(sut.build()));
 		assertEquals(0, sut.getNumGaps());
 		assertEquals(5L, sut.getLength());
 	}
@@ -148,7 +148,7 @@ public class TestAminoAcidSequenceBuilder {
 		AminoAcidSequenceBuilder sut = new AminoAcidSequenceBuilder("IKFTW")
 											.clear()
 											.append("WT-FKI");
-		assertEquals("WT-FKI", AminoAcids.asString(sut.build()));
+		assertEquals("WT-FKI", AminoAcidUtil.asString(sut.build()));
 		assertEquals(6, sut.getLength());
 		assertEquals(5, sut.getUngappedLength());
 		assertEquals(1, sut.getNumGaps());
@@ -157,7 +157,7 @@ public class TestAminoAcidSequenceBuilder {
 	public void reverse(){
 		AminoAcidSequenceBuilder sut = new AminoAcidSequenceBuilder("IKFTW");
 		sut.reverse();
-		assertEquals("WTFKI", AminoAcids.asString(sut.build()));
+		assertEquals("WTFKI", AminoAcidUtil.asString(sut.build()));
 		assertEquals(0, sut.getNumGaps());
 		assertEquals(5L, sut.getLength());
 	}
@@ -169,7 +169,7 @@ public class TestAminoAcidSequenceBuilder {
 		
 		assertEquals(0, sut.getNumGaps());
 		assertEquals(3L, sut.getLength());
-		assertEquals("KFT", AminoAcids.asString(sut.build()));
+		assertEquals("KFT", AminoAcidUtil.asString(sut.build()));
 	}
 	@Test
 	public void trimEmptyRangeShouldRemoveEntireSequence(){
@@ -178,14 +178,14 @@ public class TestAminoAcidSequenceBuilder {
 		
 		assertEquals(0, sut.getNumGaps());
 		assertEquals(0L, sut.getLength());
-		assertEquals("", AminoAcids.asString(sut.build()));
+		assertEquals("", AminoAcidUtil.asString(sut.build()));
 	}
 	@Test
 	public void multipleAppendsString(){
 		AminoAcidSequenceBuilder sut = new AminoAcidSequenceBuilder("IKFTW");
 		sut.append("IHH");
 		sut.append("F");
-		assertEquals("IKFTWIHHF", AminoAcids.asString(sut.build()));
+		assertEquals("IKFTWIHHF", AminoAcidUtil.asString(sut.build()));
 		assertEquals(0, sut.getNumGaps());
 		assertEquals(9L, sut.getLength());
 	}
@@ -194,7 +194,7 @@ public class TestAminoAcidSequenceBuilder {
 		AminoAcidSequenceBuilder sut = new AminoAcidSequenceBuilder("IKFTW");
 		sut.append(AminoAcid.Glutamic_Acid);
 		sut.append(AminoAcid.Methionine);
-		assertEquals("IKFTWEM", AminoAcids.asString(sut.build()));
+		assertEquals("IKFTWEM", AminoAcidUtil.asString(sut.build()));
 		assertEquals(0, sut.getNumGaps());
 		assertEquals(7L, sut.getLength());
 	}
@@ -260,8 +260,8 @@ public class TestAminoAcidSequenceBuilder {
 		AminoAcidSequenceBuilder builder2 = builder1.copy();
 		
 		builder1.append("TW");
-		assertEquals("IKFTWTW", AminoAcids.asString(builder1.build()));
-		assertEquals("IKFTW", AminoAcids.asString(builder2.build()));
+		assertEquals("IKFTWTW", AminoAcidUtil.asString(builder1.build()));
+		assertEquals("IKFTW", AminoAcidUtil.asString(builder2.build()));
 	}
 	@Test
 	public void ModificationsToCopyDoNotAffectOriginal(){
@@ -269,8 +269,8 @@ public class TestAminoAcidSequenceBuilder {
 		AminoAcidSequenceBuilder builder2 = builder1.copy();
 		
 		builder2.append("TW");
-		assertEquals("IKFTWTW", AminoAcids.asString(builder2.build()));
-		assertEquals("IKFTW", AminoAcids.asString(builder1.build()));
+		assertEquals("IKFTWTW", AminoAcidUtil.asString(builder2.build()));
+		assertEquals("IKFTW", AminoAcidUtil.asString(builder1.build()));
 	}
 	
 	@Test
@@ -278,7 +278,7 @@ public class TestAminoAcidSequenceBuilder {
 		AminoAcidSequence seq = new AminoAcidSequenceBuilder("IKF TW\nMKAIL")
 								.append("SED DEH\n")
 								.build();
-		assertEquals("IKFTWMKAILSEDDEH", AminoAcids.asString(seq));
+		assertEquals("IKFTWMKAILSEDDEH", AminoAcidUtil.asString(seq));
 	}
 	
 	

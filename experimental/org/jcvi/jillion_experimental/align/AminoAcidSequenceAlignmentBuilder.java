@@ -24,7 +24,6 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequenceBuilder;
-import org.jcvi.jillion.core.residue.aa.AminoAcids;
 
 public class AminoAcidSequenceAlignmentBuilder extends AbstractSequenceAlignmentBuilder<AminoAcid, AminoAcidSequence, AminoAcidSequenceAlignment, AminoAcidSequenceBuilder>{
 
@@ -55,7 +54,7 @@ public class AminoAcidSequenceAlignmentBuilder extends AbstractSequenceAlignment
 
 	@Override
 	protected Iterable<AminoAcid> parse(String sequence) {
-		return AminoAcids.parse(sequence);
+		return new AminoAcidSequenceBuilder(sequence);
 	}
 	
 

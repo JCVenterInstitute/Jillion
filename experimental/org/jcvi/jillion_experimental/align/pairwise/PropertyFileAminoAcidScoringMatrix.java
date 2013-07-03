@@ -21,12 +21,12 @@
 package org.jcvi.jillion_experimental.align.pairwise;
 
 import java.io.InputStream;
-import java.util.List;
 import java.util.Scanner;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.jcvi.jillion.core.residue.aa.AminoAcids;
+import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
+import org.jcvi.jillion.core.residue.aa.AminoAcidSequenceBuilder;
 
 public class PropertyFileAminoAcidScoringMatrix implements AminoAcidScoringMatrix {
 
@@ -37,8 +37,8 @@ public class PropertyFileAminoAcidScoringMatrix implements AminoAcidScoringMatri
 		
 		Scanner scanner = new Scanner(in, IOUtil.UTF_8_NAME);
 		//first column is amino acids in matrix
-		List<AminoAcid> header = AminoAcids.parse(
-				scanner.nextLine().replaceAll("\\s+", ""));
+		AminoAcidSequence header = new AminoAcidSequenceBuilder(scanner.nextLine()).build();
+		long headerLength = header.getLength();
 		int n = AminoAcid.values().length;
 		matrix = new float[n][n];
 		while(scanner.hasNextLine()){
@@ -47,7 +47,8 @@ public class PropertyFileAminoAcidScoringMatrix implements AminoAcidScoringMatri
 			while(lineScanner.hasNext()){
 				AminoAcid aa = AminoAcid.parse(lineScanner.next());
 				int x = aa.ordinal();
-				for(int i=0; i< header.size(); i++){
+				
+				for(int i=0; i< headerLength; i++){
 					
 					float value =lineScanner.nextFloat();
 					int y = header.get(i).ordinal();

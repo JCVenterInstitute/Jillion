@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
-import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 
 /**
