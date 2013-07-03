@@ -37,10 +37,6 @@ class UngappedAminoAcidSequence extends CompactAminoAcidSequence{
 		super(glyphs);
 	}
 
-	public UngappedAminoAcidSequence(String aminoAcids) {
-		super(aminoAcids);
-	}
-
 	@Override
 	public List<Integer> getGapOffsets() {
 		return Collections.emptyList();

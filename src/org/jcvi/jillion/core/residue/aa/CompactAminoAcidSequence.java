@@ -35,8 +35,4 @@ class CompactAminoAcidSequence extends AbstractAminoAcidSequence {
 	public CompactAminoAcidSequence(Collection<AminoAcid> glyphs) {
 		super(glyphs, CompactAminoAcidSequenceCodec.INSTANCE);
 	}
-
-	public CompactAminoAcidSequence(String aminoAcids){
-		this(AminoAcids.parse(aminoAcids));
-	}
 }

@@ -23,9 +23,9 @@ package org.jcvi.jillion.core.residue.aa;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class AminoAcids {
+final class AminoAcidUtil {
 
-	private AminoAcids(){
+	private AminoAcidUtil(){
 		//private constructor
 	}
 	/**
@@ -37,7 +37,7 @@ public final class AminoAcids {
      * {@code parse("ILW") => [Isoleucine, Leucine, Tryptophan]}
      * @param aminoAcids a String where each character is a 1 letter
      * abbreviation of an Amino Acid.
-     * @return a List of AminoAcids (not null), if the given String is empty,
+     * @return a List of AminoAcidUtil (not null), if the given String is empty,
      * then an Empty List is returned.
      * @throws NullPointerException if the given String is null.
      * 

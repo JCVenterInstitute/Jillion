@@ -42,7 +42,7 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 	}
 	public AminoAcidSequenceBuilder(CharSequence sequence){
 		builder = new GrowableByteArray(sequence.length());
-		append(AminoAcids.parse(sequence.toString()));
+		append(parse(sequence.toString()));
 	}
 	public AminoAcidSequenceBuilder(AminoAcidSequence sequence){
 		builder = new GrowableByteArray((int)sequence.getLength());
@@ -51,6 +51,18 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 	private AminoAcidSequenceBuilder(AminoAcidSequenceBuilder copy){
 		builder = copy.builder.copy();
 	}
+	
+	private static List<AminoAcid> parse(String aminoAcids){
+		List<AminoAcid> result = new ArrayList<AminoAcid>(aminoAcids.length());
+        for(int i=0; i<aminoAcids.length(); i++){
+            char charAt = aminoAcids.charAt(i);
+            if(!Character.isWhitespace(charAt)){
+            	result.add(AminoAcid.parse(charAt));
+            }
+        }
+        return result;
+	}
+	
 	@Override
 	public AminoAcidSequenceBuilder append(
 			AminoAcid residue) {
@@ -88,13 +100,13 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 	@Override
 	public AminoAcidSequenceBuilder append(
 			String sequence) {
-		return append(AminoAcids.parse(sequence));
+		return append(parse(sequence));
 	}
 
 	@Override
 	public AminoAcidSequenceBuilder insert(
 			int offset, String sequence) {
-		List<AminoAcid> list = AminoAcids.parse(sequence);
+		List<AminoAcid> list = parse(sequence);
 		byte[] array = new byte[list.size()];
 		int i=0;
 		for(AminoAcid aa :list){

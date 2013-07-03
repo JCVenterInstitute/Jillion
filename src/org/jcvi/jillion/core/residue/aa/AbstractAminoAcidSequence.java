@@ -97,7 +97,11 @@ public abstract class AbstractAminoAcidSequence extends AbstractResidueSequence<
 
 	@Override
 	public String toString(){
-		return AminoAcids.asString(this);
+		StringBuilder builder = new StringBuilder((int)getLength());
+		for(AminoAcid aa : this){
+			builder.append(aa.asChar());
+		}
+		return builder.toString();
 	}
 	@Override
 	public int hashCode() {
@@ -120,7 +124,7 @@ public abstract class AbstractAminoAcidSequence extends AbstractResidueSequence<
 			return false;
 		}
 		AminoAcidSequence other = (AminoAcidSequence) obj;
-		return AminoAcids.asString(this).equals(AminoAcids.asString(other));
+		return toString().equals(other.toString());
 	}
 
 }
