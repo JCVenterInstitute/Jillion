@@ -47,6 +47,7 @@ public enum IupacTranslationTables implements TranslationTable{
 			insertIntoTable('C', 'T', 'G', AminoAcid.Threonine);
 			insertIntoTable('C', 'T', 'T', AminoAcid.Threonine);
 			
+			
 			insertIntoTable('C', 'T', 'M', AminoAcid.Threonine);
 			insertIntoTable('C', 'T', 'R', AminoAcid.Threonine);
 			insertIntoTable('C', 'T', 'W', AminoAcid.Threonine);
@@ -58,6 +59,13 @@ public enum IupacTranslationTables implements TranslationTable{
 			insertIntoTable('C', 'T', 'D', AminoAcid.Threonine);
 			insertIntoTable('C', 'T', 'B', AminoAcid.Threonine);
 			insertIntoTable('C', 'T', 'N', AminoAcid.Threonine);
+			
+			insertIntoTable('T', 'G', 'A', AminoAcid.Tryptophan);
+			
+			removeFromTable('C', 'G', 'A');
+			removeFromTable('C', 'G', 'C');
+			removeFromTable('C', 'G', 'R');
+			
 
 		}
 		
@@ -89,6 +97,7 @@ public enum IupacTranslationTables implements TranslationTable{
 	
 	private IupacTranslationTables(int tableNumber){
 		initialzeTable();
+		updateTable(map);
 		this.tableNumber = (byte)tableNumber;
 		
 	}
@@ -150,9 +159,12 @@ public enum IupacTranslationTables implements TranslationTable{
 		return translate(sequence, Frame.ZERO);
 	}
 
-
 	@Override
 	public AminoAcidSequence translate(NucleotideSequence sequence, Frame frame) {
+		return translate(sequence, frame, (int)sequence.getLength());
+	}
+	@Override
+	public AminoAcidSequence translate(Iterable<Nucleotide> sequence, Frame frame, int length) {
 		if(sequence ==null){
 			throw new NullPointerException("sequence can not be null");
 		}
@@ -164,11 +176,14 @@ public enum IupacTranslationTables implements TranslationTable{
 		//so if translation table says codon is a start
 		//and we've already seen a start, then make it not the start?
 		Iterator<Nucleotide> iter = sequence.iterator();
-		AminoAcidSequenceBuilder builder = new AminoAcidSequenceBuilder((int)(sequence.getLength()/3));
+		AminoAcidSequenceBuilder builder = new AminoAcidSequenceBuilder(length/3);
 		handleFrame(iter, frame);
 		boolean seenStart=false;
-		while(iter.hasNext()){
+		long currentOffset=0;
+		
+		while(iter.hasNext() && currentOffset <length){
 			Triplet triplet =getNextTriplet(iter);
+			currentOffset+=3;
 			if(triplet !=null){
 				Codon2 codon =translate(triplet);
 				if(codon.isStart() && !seenStart){
@@ -233,7 +248,12 @@ public enum IupacTranslationTables implements TranslationTable{
 		//no-op
 	}
 	private Codon2 translate(Triplet triplet){
-		return map.get(triplet);
+		Codon2 ret= map.get(triplet);
+		if(ret==null){
+			//not in map
+			return new Codon2.Builder(triplet, AminoAcid.Unknown_Amino_Acid).build();
+		}
+		return ret;
 	}
 
 	public int getTableNumber(){

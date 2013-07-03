@@ -2,7 +2,7 @@ package org.jcvi.jillion.core.residue.aa;
 
 import org.jcvi.jillion.core.residue.nt.Triplet;
 
-public class Codon2 {
+public final class Codon2 {
 
 	private final Triplet triplet;
 	
