@@ -689,26 +689,6 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	codecDecider.alignedReference(new AlignedReference(referenceSequence, gappedStartOffset));
     	return this;
     }
-    /**
-     * Create a new NucleotideSequence instance
-     * from containing only current mutable nucleotides
-     * in the given range.  If the range extends beyond the current
-     * sequence, then this will build all the bases until the end of
-     * the sequence.
-     * @param range the range of nucleotides to build (gapped).
-     * @return a new NucleotideSequence never null
-     * but may be empty.
-     */
-    public NucleotideSequence build(Range range) {
-    	Range bitRange = convertBaseRangeIntoBitRange(range);
-        int numberOfDeletedBits = (int)bitRange.getLength()-1;
-		BitSet subBits = bits.get((int)bitRange.getBegin(), (int)bitRange.getEnd()+1);
-		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(subBits,numberOfDeletedBits);
-		if(codecDecider.hasAlignedReference()){
-			builder.setReferenceHint(codecDecider.alignedReference.reference, codecDecider.alignedReference.offset+ (int)range.getBegin());
-		}
-		return builder.build();
-    }
     
     /**
      * {@inheritDoc}

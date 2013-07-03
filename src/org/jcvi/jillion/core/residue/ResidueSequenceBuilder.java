@@ -224,16 +224,6 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
     */
     @Override
     S build();
-    
-    /**
-     * Create a new {@link ResidueSequenceBuilder} instance
-     * from containing only current mutable residues
-     * in the given range.
-     * @param range the range of residues to build (gapped).
-     * @return a new {@link ResidueSequenceBuilder} never null
-     * but may be empty.
-     */
-    S build(Range range);
    
 	
 	
