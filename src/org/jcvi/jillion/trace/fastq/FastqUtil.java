@@ -117,8 +117,7 @@ public final class FastqUtil {
     	}
     	FastqQualityCodecDetectorVisitor detectorVisitor =new FastqQualityCodecDetectorVisitor(numberOfReadsToInspect);
     	FastqFileParser.create(fastqFile).accept(detectorVisitor);
-    	FastqQualityCodec detectedCodec = detectorVisitor.getDetectedCodec();
-		return detectedCodec;
+    	return detectorVisitor.getDetectedCodec();
     }
     /**
      * Attempts to guess the {@link FastqQualityCodec} used to encode
@@ -215,7 +214,7 @@ public final class FastqUtil {
 		 */
 		@Override
 		public void halted() {
-						
+			//no-op
 		}
 		/**
 		 * It is possible that the fastq
@@ -226,7 +225,7 @@ public final class FastqUtil {
 		 */
 		@Override
 		public void visitEnd() {			
-	       		
+			//no-op
 		}
     	
     }
