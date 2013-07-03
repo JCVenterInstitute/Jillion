@@ -33,8 +33,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         TestAminoAcid.class,
-        TestCodon.class,
-        TestCodonCreationMethods.class,
         TestCompactAminoAcidSequence.class,
         TestAminoAcidSequenceBuilder.class,
         
@@ -42,7 +40,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestMementoAminoAcidSequenceFastaFileDataStore.class,
         TestIterationOnlyAminoAcidSequenceFastaFileDataStore.class,
         
-        TestStandardIupacTranslationTables.class
+        TestIupacTranslationTables.class
     }
     )
 public class AllAminoAcidUnitTests {
