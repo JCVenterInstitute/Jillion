@@ -26,7 +26,6 @@
 package org.jcvi.jillion.internal.core;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -51,18 +50,6 @@ public class  EncodedSequence<T> implements Sequence<T> {
     private byte[] data;
     
     private int hash;
-    /**
-     * Convenience constructor.  This is
-     * the same as calling 
-     * <code>new EncodedSequence(codec, codec.encode(glyphsToEncode));</code>
-     * @param codec codec the {@link GlyphCodec} to use to encode/decode
-     * the sequence data.
-     * @param glyphsToEncode the glyphs to be encoded by this GlyphCodec.
-     * @throws NullPointerException if codec is null.
-     */
-    public EncodedSequence(GlyphCodec<T> codec, Collection<T> glyphsToEncode) {
-        this(codec, codec.encode(glyphsToEncode));
-    }
     /**
      * Create a new EncodedSequence instance.
      * @param codec the {@link GlyphCodec} to use to encode/decode

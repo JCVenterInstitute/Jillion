@@ -20,6 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.qual;
 
+import java.util.Collection;
+
 import org.jcvi.jillion.internal.core.GlyphCodec;
 
 /**
@@ -29,4 +31,5 @@ import org.jcvi.jillion.internal.core.GlyphCodec;
  */
 interface QualitySymbolCodec extends GlyphCodec<PhredQuality>{
 
+	 byte[] encode(Collection<PhredQuality> glyphs);
 }

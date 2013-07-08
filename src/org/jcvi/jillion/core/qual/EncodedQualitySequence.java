@@ -21,7 +21,6 @@
 package org.jcvi.jillion.core.qual;
 
 import java.nio.ByteBuffer;
-import java.util.Collection;
 
 import org.jcvi.jillion.internal.core.EncodedSequence;
 import org.jcvi.jillion.internal.core.GlyphCodec;
@@ -42,10 +41,6 @@ final class EncodedQualitySequence extends EncodedSequence<PhredQuality> impleme
 		super(codec, data);
 	}
 
-	public EncodedQualitySequence(GlyphCodec<PhredQuality> codec,
-			Collection<PhredQuality> glyphsToEncode) {
-		super(codec, glyphsToEncode);
-	}
 
 	@Override
 	public int hashCode(){

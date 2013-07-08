@@ -93,7 +93,7 @@ public class TestRunLengthEncodedQualitySequence {
 	@Test
 	public void equalsDifferentlyEncodedSequence(){
 		QualitySequence notRunLengthEncoded = new EncodedQualitySequence(
-				DefaultQualitySymbolCodec.INSTANCE, decodedValues);
+				DefaultQualitySymbolCodec.INSTANCE, DefaultQualitySymbolCodec.INSTANCE.encode(decodedValues));
 		TestUtil.assertEqualAndHashcodeSame(sut, notRunLengthEncoded);
 	}
 	
