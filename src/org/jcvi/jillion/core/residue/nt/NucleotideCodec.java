@@ -33,7 +33,8 @@ import org.jcvi.jillion.internal.core.GlyphCodec;
  */
 interface NucleotideCodec extends GlyphCodec<Nucleotide>{
 
-    byte[] encode(int numberOfNucleotides,Iterator<Nucleotide> nucleotides);
+	
+    byte[] encode(int numberOfNucleotides,int[] gapOffsets, Iterator<Nucleotide> nucleotides);
     /**
      * Get a List of all the offsets into this
      * sequence which are gaps.  This list SHOULD be

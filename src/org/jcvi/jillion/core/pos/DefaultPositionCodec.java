@@ -53,7 +53,6 @@ enum DefaultPositionCodec implements GlyphCodec<Position>{
         return encodedGlyphs.length/2;
     }
 
-    @Override
     public byte[] encode(Collection<Position> glyphs) {
         ByteBuffer buf = ByteBuffer.allocate(glyphs.size()*2);
         for(Position g : glyphs){

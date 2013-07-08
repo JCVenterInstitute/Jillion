@@ -25,7 +25,6 @@
  */
 package org.jcvi.jillion.internal.core;
 
-import java.util.Collection;
 
 /**
  * {@code GlyphCodec} is an interface
@@ -37,13 +36,7 @@ import java.util.Collection;
  * encoded and or decoded.
  */
 public interface GlyphCodec<T> {
-	/**
-	 * Encode the given collection of glyphs
-	 * into a byte array.
-	 * @param glyphs the glyphs to encode.
-	 * @return a byte array (never null).
-	 */
-    byte[] encode(Collection<T> glyphs);
+
     
     /**
      * Get a single Gyph from the encoded

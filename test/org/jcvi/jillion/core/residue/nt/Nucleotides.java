@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
 /**
  * {@code Nucleotides} is a helper class
@@ -74,4 +74,16 @@ final class Nucleotides {
         
     }
    
+    
+    public static byte[] encode(NucleotideCodec codec, List<Nucleotide> bases){
+    	GrowableIntArray gaps = new GrowableIntArray(20);
+    	for(int i=0; i<bases.size(); i++){
+    		if(bases.get(i).isGap()){
+    			gaps.append(i);
+    		}
+    	}
+    	
+    	return codec.encode(bases.size(), gaps.toArray(), bases.iterator());
+    	
+    }
 }

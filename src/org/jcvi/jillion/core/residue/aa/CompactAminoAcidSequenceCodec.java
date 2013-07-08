@@ -27,7 +27,6 @@ import java.util.BitSet;
 import java.util.Collection;
 
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.internal.core.GlyphCodec;
 /**
  * {@code CompactAminoAcidSequenceCodec} is able to store
  * {@link AminoAcid} in a byte array where each {@link AminoAcid}
@@ -37,7 +36,7 @@ import org.jcvi.jillion.internal.core.GlyphCodec;
  * @author dkatzel
  *
  */
-public enum CompactAminoAcidSequenceCodec implements GlyphCodec<AminoAcid> {
+public enum CompactAminoAcidSequenceCodec implements AminoAcidCodec {
 	/**
 	 * Singleton instance.
 	 */

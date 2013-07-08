@@ -25,7 +25,6 @@
  */
 package org.jcvi.jillion.core.residue.nt;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -66,15 +65,6 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
      */
     private int hash;
 
-    
-   
-    
-    static NucleotideSequence create(Collection<Nucleotide> nucleotides,NucleotideCodec codec){
-        if(codec ==null){
-            throw new NullPointerException("codec can not be null");
-        }
-        return new DefaultNucleotideSequence(codec, codec.encode(nucleotides));
-    }
    
     
     DefaultNucleotideSequence(NucleotideCodec codec, byte[] data) {

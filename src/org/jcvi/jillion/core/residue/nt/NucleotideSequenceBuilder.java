@@ -601,7 +601,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         	}
         	
         	NucleotideCodec optimalCodec = codecDecider.getOptimalCodec();
-        	byte[] encodedBytes =optimalCodec.encode(codecDecider.currentLength, iterator());
+        	byte[] encodedBytes =optimalCodec.encode(codecDecider.currentLength, codecDecider.gapOffsets.toArray(), iterator());
         	NucleotideSequence seq= new DefaultNucleotideSequence(optimalCodec, encodedBytes);
         	
         	return seq;

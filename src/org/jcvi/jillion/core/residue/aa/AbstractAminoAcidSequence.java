@@ -28,15 +28,14 @@ import java.util.List;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.internal.core.EncodedSequence;
-import org.jcvi.jillion.internal.core.GlyphCodec;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 
 public abstract class AbstractAminoAcidSequence extends AbstractResidueSequence<AminoAcid> implements AminoAcidSequence {
 
 	private final Sequence<AminoAcid> encodedAminoAcids;
 	
-	public AbstractAminoAcidSequence(Collection<AminoAcid> glyphs, GlyphCodec<AminoAcid> codec) {
-		this.encodedAminoAcids = new EncodedSequence<AminoAcid>(codec,glyphs);
+	public AbstractAminoAcidSequence(Collection<AminoAcid> glyphs, AminoAcidCodec codec) {
+		this.encodedAminoAcids = new EncodedSequence<AminoAcid>(codec,codec.encode(glyphs));
 	}
 	
 	
