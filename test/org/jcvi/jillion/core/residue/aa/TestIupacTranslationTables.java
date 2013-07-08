@@ -19,11 +19,12 @@ public class TestIupacTranslationTables {
 	private final IupacTranslationTables table;
 	private final String dnaString;
 	private final AminoAcidSequence expectedAa;
+	private final int expectedTableNumber;
 	
 	@Parameters
 	public static Collection<?> data(){
 		 List<Object[]> data = new ArrayList<Object[]>();
-		 data.add(new Object[]{IupacTranslationTables.STANDARD, 
+		 data.add(new Object[]{1, IupacTranslationTables.STANDARD, 
 				 			"ATGATTTCCGCCTCTCTGCAACAACGTAAAACCCGCACCCGCCGCAGTATGTTATTCGT" +
 							"ACCGGGCGCCAACGCGGCGATGGTGAGCAATTCGTTTATCTACCCGGCCGACGCGCTGA" +
 							"TGTTCGACCTGGAAGACTCCGTTGCATTACGCGAAAAAGACGCGGCGCGCCGTCTGGTA" +
@@ -50,7 +51,7 @@ public class TestIupacTranslationTables {
 		 			}
 				 );
 		 //taken from  genbank accession nuccore AY089989.1  GI:20148763
-		 data.add(new Object[]{IupacTranslationTables.YEAST_MITOCHONDRIAL, 
+		 data.add(new Object[]{3, IupacTranslationTables.YEAST_MITOCHONDRIAL, 
 				 "atgaaaaaagctgtaatcaatggtgaacaaatcagatcaatctcagatttacatcaaaca" +
 			     "ttaaaaaaagaattagctttacctgaatattatggtgaaaatttagatgctttatgagat" +
 			     "tgtttaacaggttgagtagaatatcctttagtattagaatgaagacaattcgaacaatca" +
@@ -61,11 +62,31 @@ public class TestIupacTranslationTables {
                  "WVEYPLVLEWRQFEQSKQLTENGAESVLQVFREAKAEGCDITIILS*"
 		 	}
 				 );
+		//taken from  genbank accession nuccore AY544190.1  GI:49471680
+		 data.add(new Object[]{4, IupacTranslationTables.MOLD_PROTOZOAN_COELENTERATE_MITOCHONDRIAL_AND_MYCOPLASMA_SPIROPLAMSA, 
+				new NucleotideSequenceBuilder( "gactccatttagagcagaagatctttctaccgaaagagaacaaagagttttggataaatt"+
+       "ttctgaacttaaaaatcaagttatttttacgacaacgttgaaagaagaagaaaatttaaa"+
+      "gtatgattcaattgatggaataaacggcatttaattatagtggacataaaaactataagat"+
+      "actacaacaaacatatgtgtgcgatttcatgaaaaagttagattcaatgtcaattcaaat"+
+      "aaaataaaatacataaaaagccgatggaagaagatttgtcgtctttttgttttttgccaa"+
+      "agcaaaaaaagaaattttcaatgaaacaaaaaatcattaacatcaaaacaagctatttgt"+
+      "cataatttattttctaaagtttgaacacctttgatttcaattgatgaaattataagagaa"+
+      "ctagaagacgaataataaagttgcaaataattaaaaccgtacat")
+		 .reverseComplement()
+		 .toString(),
+			      
+			     
+			     "MYGFNYLQLYYSSSSSLIISSIEIKGVQTLENKLWQIACFDVND"+
+                     "FLFHWKFLFLLWQKTKRRQIFFHRLFMYFILFELTLNLTFSWNRTHMFVVVSYSFYVH"+
+                     "YN*MPFIPSIESYFKFSSSFNVVVKITWFLSSENLSKTLCSLSVERSSALNGV"
+		 	}
+				 );
 		 return data;
 	}
 
-	public TestIupacTranslationTables(IupacTranslationTables table,
+	public TestIupacTranslationTables(int expectedTableNumber, IupacTranslationTables table,
 			String dnaString, String aaString) {
+		this.expectedTableNumber = expectedTableNumber;
 		this.table = table;
 		this.dnaString = dnaString;
 		expectedAa = new AminoAcidSequenceBuilder(aaString).build();
@@ -75,6 +96,7 @@ public class TestIupacTranslationTables {
 	@Test
 	public void tableNumber(){
 		int tableNumber = table.getTableNumber();
+		assertEquals(table.name(), expectedTableNumber, tableNumber);
 		assertEquals(table, IupacTranslationTables.getTableByTableNumber(tableNumber));
 	}
 	
