@@ -81,6 +81,54 @@ public enum IupacTranslationTables implements TranslationTable{
 		}
 		
 	},
+	/**
+	 * Nucleotide Translation table used by
+	 * <ul>
+	 * <li>Ciliata - Oxytricha and Stylonycha, Paramecium, Tetrahymena, Oxytrichidae etc. </li>
+	 * </li>Dasycladaceae - Acetabulara and Batophora</li>
+	 * </li>Diplomonadida - Scope: Hexamita</li>
+	 * </ul>
+	 */
+	CILIATE_DASYCLADACEAN_AND_HEXAMITA(6){
+
+		@Override
+		protected void updateTable(Map<Triplet, Codon2> map) {
+			insertIntoTable('T', 'A', 'A', AminoAcid.Glutamine);
+			insertIntoTable('T', 'A', 'G', AminoAcid.Glutamine);
+			insertIntoTable('T', 'A', 'R', AminoAcid.Glutamine);
+			
+			//not a start codons anymore
+			insertIntoTable('T', 'T', 'G', AminoAcid.Leucine);
+			insertIntoTable('C', 'T', 'G', AminoAcid.Leucine);
+		}
+		
+	},
+	BACTERIAL_ARCHAEL_AND_PLANT_PLASTID(11){
+
+		@Override
+		protected void updateTable(Map<Triplet, Codon2> map) {
+			//more start codons only?
+			insertIntoTable('G', 'T', 'G', AminoAcid.Valine, true);
+			
+			insertIntoTable('A', 'T', 'T', AminoAcid.Isoleucine, true);
+			insertIntoTable('A', 'T', 'C', AminoAcid.Isoleucine, true);
+			insertIntoTable('A', 'T', 'A', AminoAcid.Isoleucine, true);
+			insertIntoTable('A', 'T', 'G', AminoAcid.Isoleucine, true);
+			
+			insertIntoTable('A', 'T', 'M', AminoAcid.Isoleucine, true);
+			insertIntoTable('A', 'T', 'R', AminoAcid.Isoleucine, true);
+			insertIntoTable('A', 'T', 'W', AminoAcid.Isoleucine, true);
+			insertIntoTable('A', 'T', 'S', AminoAcid.Isoleucine, true);
+			insertIntoTable('A', 'T', 'Y', AminoAcid.Isoleucine, true);
+			insertIntoTable('A', 'T', 'K', AminoAcid.Isoleucine, true);
+			insertIntoTable('A', 'T', 'V', AminoAcid.Isoleucine, true);
+			insertIntoTable('A', 'T', 'H', AminoAcid.Isoleucine, true);
+			insertIntoTable('A', 'T', 'D', AminoAcid.Isoleucine, true);
+			insertIntoTable('A', 'T', 'B', AminoAcid.Isoleucine, true);
+			insertIntoTable('A', 'T', 'N', AminoAcid.Isoleucine, true);
+		}
+		
+	},
 	
 	;
 

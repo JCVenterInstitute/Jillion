@@ -81,6 +81,63 @@ public class TestIupacTranslationTables {
                      "YN*MPFIPSIESYFKFSSSFNVVVKITWFLSSENLSKTLCSLSVERSSALNGV"
 		 	}
 				 );
+		 
+		 //taken from  genbank accession nuccore AB195239.1  GI:57158240
+		 data.add(new Object[]{6, IupacTranslationTables.CILIATE_DASYCLADACEAN_AND_HEXAMITA, 
+				 "atgagaaagggagaagaattgttcacaggagtcgtcccaattcttgttgaattagatggt" +
+			     "gatgttaatggacacaaattttcagtctcaggagaaggagaaggagatgctacatatgga" +
+			      "aaattgacacttaaattgatttgcacaacaggaaaattgccagtcccatggccaacattg" +
+			      "gtcacaacattgggatatggagtctaatgctttgctagatacccagatcatatgaaacag" +
+			      "catgactttttcaagtcagctatgccagaaggatatgtctaagaaagaacaatttttttc" +
+			      "aaagatgatggaaactataagacaagagctgaagtcaagtttgaaggtgatacccttgtt" +
+			      "aatagaatcgagttaaaaggtattgattttaaagaagatggaaacattcttggacacaaa" +
+			      "ttggaatataactataactcacacaatgtctatatcacagctgataaataaaagaatgga" +
+			      "atcaaagctaacttcaaaattagacacaacattgaagatggaggagtctaattggctgat" +
+			      "cattattaataaaatacaccaattggagatggaccagtccttttaccagataaccattat" +
+			      "ttgtcatattaatcagctttgtcaaaagatccaaacgaaaagagagatcacatggtcctt" +
+			      "cttgagtttgtaacagctgctggaattacattgggaatggatgaattgtataagagagct" +
+			      "ccatga",
+			     
+			     "MRKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTL"+
+                     "KLICTTGKLPVPWPTLVTTLGYGVQCFARYPDHMKQHDFFKSAMPEGYVQERTIFFKD"+
+                    "DGNYKTRAEVKFEGDTLVNRIELKGIDFKEDGNILGHKLEYNYNSHNVYITADKQKNG"+
+                     "IKANFKIRHNIEDGGVQLADHYQQNTPIGDGPVLLPDNHYLSYQSALSKDPNEKRDHM"+
+                     "VLLEFVTAAGITLGMDELYKRAP*"
+		 	}
+				 );
+		 
+		//taken from  genbank accession nuccore AF162859.1  GI:15054485
+		 data.add(new Object[]{11, IupacTranslationTables.BACTERIAL_ARCHAEL_AND_PLANT_PLASTID, 
+				 "gtgatgcggtggattttagtgttctttctgggatt" +
+			      "cctattcgccatcgatgcagcaggccaggacgtagcgccgtgcacgcctgagattaacgg" +
+			      "ctgcgatcaggggcaggcgtaccagcacgcgtcacgtgatgccagcgcggagggctactg" +
+			      "cacttccgccggcacatgggcgatggtgagccatgaggtgtatgcggatggcgaaaatcg" +
+			      "ctatggcgttgaggtgcgttgccggaacaatgaaaattttgagacaggttttcgcaacgc" +
+			      "ccgccgctggtacttcggtcaatcttgttctgctcgccccccattgatcggtgcaagatc" +
+			      "ttccgatggtagtggttttagttgtgacgatggatgcttctacaatttcaccattggtgg" +
+			      "tgaaaagggcagtggcatgtatccaagcggtgccacgtgttctgttggtgacgcgccacc" +
+			      "ttccacgcccggtgatggtgatggccacggtgatgaccatggtgatggccacggtgatga" +
+			      "ccatggtgatggccacggtgatgaccatggtgatggccacggtgatgaccacggtgatgg" +
+			      "ccacggtgatgaccacggtgatgaccacggtgatgaccacggtgatggccatggtgatgg" +
+			      "ccatggtgatggccatggtgatggccatggtgatggccatggtgatggccatggtgatgg" +
+			      "ccatggtgatgaccaaggtggcagtgaaggcggagagggtgcccccatgtctgagcttta" +
+			      "caagaaaagcggcaaaactgttgagtctgtgctgagcaaattcaatacgcaaggtcgtgg" +
+			      "cacacccatggtggccggcatcactaatttcatgacggttccgtctggcggttcgtgtcc" +
+			     "ggtgttttcgctggcggggtctaagttttgggacgccatgacgatcaactttcattgtgg" +
+			     "cggcgatttccttgcgtttcttcgtgcagctggttgggtgatcttcgccattgccgcata" +
+			     "cgccgcgttgcgcatcgctgtgacttga",
+			     
+			     "MIRWILVFFLGFLFAIDAAGQDVAPCTPEINGCDQGQAYQHASR" +
+                     "DASAEGYCTSAGTWAIVSHEVYADGENRYGVEVRCRNNENFETGFRNARRWYFGQSCS" +
+                     "ARPPLIGARSSDGSGFSCDDGCFYNFTIGGEKGSGIYPSGATCSVGDAPPSTPGDGDG" +
+                     "HGDDHGDGHGDDHGDGHGDDHGDGHGDDHGDGHGDDHGDDHGDDHGDGHGDGHGDGHG" +
+                     "DGHGDGHGDGHGDGHGDDQGGSEGGEGAPISELYKKSGKTVESVLSKFNTQGRGTPIV" +
+                     "AGITNFITVPSGGSCPVFSLAGSKFWDAITINFHCGGDFLAFLRAAGWVIFAIAAYAA" +
+                     "LRIAVT*"
+		 	}
+				 );
+		 
+		 
 		 return data;
 	}
 
@@ -104,7 +161,7 @@ public class TestIupacTranslationTables {
 	public void translateFrame0(){
 		NucleotideSequence seq = new NucleotideSequenceBuilder(dnaString).build();
 		
-		assertEquals(expectedAa, table.translate(seq));
+		assertEquals(expectedAa.toString(), table.translate(seq).toString());
 	}
 	
 	@Test
