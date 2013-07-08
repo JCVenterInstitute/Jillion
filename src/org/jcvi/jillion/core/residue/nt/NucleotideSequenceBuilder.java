@@ -27,6 +27,7 @@ import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
+import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
 /**
  * {@code NucleotideSequenceBuilder}  is a way to
@@ -209,7 +210,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         	}
         }
         tail += newValues.getLength()*NUM_BITS_PER_VALUE;
-        this.codecDecider.increment(newValues);
+        this.codecDecider.append(newValues);
         return this;
 	}
     
@@ -285,7 +286,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     
     @Override
 	public long getUngappedLength() {
-		return codecDecider.getCurrentLength() - codecDecider.numberOfGaps;
+		return codecDecider.getCurrentLength() - codecDecider.getNumberOfGaps();
 	}
     /**
      * Replace the Nucleotide at the given offset with a different nucleotide.
@@ -323,7 +324,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		final byte oldValue = getNucleotideOrdinalFor(subBits, 0);
 		
 		
-        codecDecider.replace(oldValue, value);
+        codecDecider.replace(offset, oldValue, value);
         bits.clear(bitStartOffset, bitEndOffset);
         NewValues newValues = new NewValues(replacement);
         BitSet newBits = newValues.getBits();
@@ -356,7 +357,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             int numberOfDeletedBits = (int)bitRange.getLength();
 			BitSet subBits = bits.get((int)bitRange.getBegin(), (int)bitRange.getEnd()+1);
 			NewValues newValues = new NewValues(subBits, numberOfDeletedBits);
-            delete(bitRange, numberOfDeletedBits, newValues);
+            delete((int)range.getBegin(), bitRange, numberOfDeletedBits, newValues);
               
         }
         return this;
@@ -379,7 +380,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		            String.format("range can not start beyond current length (%d) : %d", getLength(),start));
 		}
 	}
-	private void delete(Range bitRange,
+	private void delete(int startOffset, Range bitRange,
 			int numberOfDeletedBits, NewValues newValues) {
 		BitSet shrunkBits = new BitSet(tail-numberOfDeletedBits);
 		int bitOffsetOfStart = (int) bitRange.getBegin();
@@ -394,7 +395,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 			}
 		}
 		
-		this.codecDecider.decrement(newValues);
+		this.codecDecider.delete(startOffset,newValues);
 		tail -= numberOfDeletedBits;
 		this.bits = shrunkBits;
 	}
@@ -486,7 +487,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         		expandedBits.set(i+numberOfInsertedBits);
         	}
         }
-        this.codecDecider.increment(newValues);
+        this.codecDecider.insert(offset,newValues);
         tail +=numberOfInsertedBits;
         this.bits = expandedBits;
         return this;
@@ -941,30 +942,36 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @author dkatzel
      */
     private static final class CodecDecider{
-        private int numberOfGaps=0;
+       // private int numberOfGaps=0;
         private int numberOfNonNAmbiguities=0;
         private int numberOfNs=0;
         private int currentLength=0;
         private AlignedReference alignedReference=null;
+        private GrowableIntArray gapOffsets;
         CodecDecider(){
         	//needs to be initialized
+        	gapOffsets = new GrowableIntArray(12);
         }
         CodecDecider(NewValues newValues){
-        	increment(newValues);
+			numberOfNs = newValues.getNumberOfNs();
+			currentLength = newValues.getLength();
+			numberOfNonNAmbiguities = newValues.getnumberOfNonNAmiguities();
+			gapOffsets = newValues.getGapOffsets().copy();
         }
         CodecDecider copy(){
         	CodecDecider copy = new CodecDecider();
         	copy.numberOfNonNAmbiguities = numberOfNonNAmbiguities;
-        	copy.numberOfGaps = numberOfGaps;
+        	
         	copy.currentLength= currentLength;
         	copy.numberOfNs = numberOfNs;
         	copy.alignedReference = alignedReference;
+        	copy.gapOffsets = gapOffsets.copy();
         	return copy;
         	
         }
         
         void clear(){
-        	 numberOfGaps=0;
+        	 gapOffsets.clear();
              numberOfNonNAmbiguities=0;
              numberOfNs=0;
              currentLength=0;
@@ -980,9 +987,12 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         }
         NucleotideCodec getOptimalCodec() {
         	
-            if(numberOfNonNAmbiguities>0 || (numberOfGaps>0 && numberOfNs >0)){
+            int numberOfGaps = gapOffsets.getCurrentLength();
+			if(numberOfNonNAmbiguities>0 || (numberOfGaps>0 && numberOfNs >0)){
                 return BasicNucleotideCodec.INSTANCE;
             }
+			//if we get this far then we don't have any non-N ambiguities
+			//AND we have either only gaps or only Ns
             int fourBitBufferSize =BasicNucleotideCodec.INSTANCE.getNumberOfEncodedBytesFor(currentLength, numberOfGaps);
             int twoBitBufferSize = AcgtnNucloetideCodec.INSTANCE.getNumberOfEncodedBytesFor(currentLength,
             		Math.max(numberOfGaps, numberOfNs));
@@ -994,37 +1004,115 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             }
             return AcgtGapNucleotideCodec.INSTANCE;
         }
-        
-        public void increment(NewValues newValues) {
-			numberOfGaps +=newValues.getNumberOfGaps();
-			numberOfNs += newValues.getNumberOfNs();
+        public void append(NewValues newValues) {
+        	int[] newGaps =newValues.getGapOffsets().toArray();
+        	for(int i=0; i< newGaps.length; i++){
+        		newGaps[i] +=currentLength;
+        	}
+        	//should already be in sorted order
+        	//so we don't have to re-sort        	
+        	gapOffsets.append(newGaps);
+        	
+        	
+        	numberOfNs += newValues.getNumberOfNs();
 			currentLength += newValues.getLength();
 			numberOfNonNAmbiguities += newValues.getnumberOfNonNAmiguities();
-		}
+			
+			
+        }
+        public void insert(int startOffset, NewValues newValues){
+        	if(startOffset ==0){
+        		//use optimized prepend
+        		prepend(newValues);
+        		return;
+        	}
+        	int currentGapLength=gapOffsets.getCurrentLength();
+        	int insertLength = newValues.getLength();
+        	//shift downstream gaps we already have
+        	for(int i=0; i<currentGapLength; i++){
+        		if(gapOffsets.get(i)>=startOffset){
+        			gapOffsets.replace(i, gapOffsets.get(i) +insertLength);
+        		}
+        	}
+        	int[] newGaps =newValues.getGapOffsets().toArray();
+        	for(int i=0; i< newGaps.length; i++){
+        		newGaps[i] +=startOffset;
+        	}
+        	
+        	
+        	
+        	gapOffsets.append(newGaps);
+        	gapOffsets.sort();
+        	
+        	numberOfNs += newValues.getNumberOfNs();
+			currentLength += newValues.getLength();
+			numberOfNonNAmbiguities += newValues.getnumberOfNonNAmiguities();		
+			
+        }
         
-        public void decrement(NewValues newValues) {
-			numberOfGaps -=newValues.getNumberOfGaps();
-			numberOfNs -= newValues.getNumberOfNs();
+        private void prepend(NewValues newValues) {
+        	int shiftOffset = newValues.getLength();
+        	
+        	int oldGaps[] =gapOffsets.toArray();
+        	for(int i=0; i< oldGaps.length; i++){
+        		oldGaps[i] +=shiftOffset;
+        	}
+        	//should already be in sorted order
+        	//so we don't have to re-sort        	
+        	gapOffsets= new GrowableIntArray(shiftOffset + oldGaps.length);
+        	gapOffsets.append(newValues.getGapOffsets());
+        	gapOffsets.append(oldGaps);
+        	
+        	
+        	numberOfNs += newValues.getNumberOfNs();
+			currentLength += newValues.getLength();
+			numberOfNonNAmbiguities += newValues.getnumberOfNonNAmiguities();		
+			
+        }
+        
+        public void delete(int startOffset, NewValues newValues) {
+        	
+        	int[] gapsToDelete = newValues.getGapOffsets().toArray();
+        	//iterate backwards to not have to worry about 
+        	//shifting offsets
+			for(int i=0; i<gapsToDelete.length; i++){
+				int key =gapOffsets.binarySearch(gapsToDelete[i]+startOffset);
+				if(key >=0){
+					gapOffsets.remove(key);
+				}
+			}
+        	
+        	numberOfNs -= newValues.getNumberOfNs();
 			currentLength -= newValues.getLength();
 			numberOfNonNAmbiguities -= newValues.getnumberOfNonNAmiguities();
-		}
-
+        }
+       
 		
-        public void replace(byte oldValue, byte newValue) {
-            handleValue(oldValue,false);
-            handleValue(newValue,true);
+        public void replace(int offset,byte oldValue, byte newValue) {
+            handleReplacementValue(offset, oldValue,false);
+            handleReplacementValue(offset,newValue,true);
         }
 
        
         
-        void handleValue(int value, boolean increment) {
+        void handleReplacementValue(int offset, int value, boolean insert) {
             if(value == GAP_VALUE){
-                handleGap(increment);
+               if(insert){
+            	   //TODO make growable array binaryInsert?
+            	   gapOffsets.append(offset);
+            	   gapOffsets.sort();
+               }else{
+            	   //TODO make growable array binaryRemove?
+            	   int key =gapOffsets.binarySearch(offset);
+            	   if(key >=0){
+            		   gapOffsets.remove(key);
+            	   }
+               }
             }else if(value == N_VALUE){
-                handleN(increment);
+                handleN(insert);
             }else if(value != A_VALUE && value != C_VALUE 
                     && value != G_VALUE && value != T_VALUE){
-                handleAmbiguity(increment);                
+                handleAmbiguity(insert);                
             }
         }
 
@@ -1044,25 +1132,18 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             }
         }
 
-        private void handleGap(boolean increment) {
-            if(increment){
-                numberOfGaps++;
-            }else{
-                numberOfGaps--;
-            }
-        }
         
         
         void ungap(){
-            currentLength-=numberOfGaps;
-            numberOfGaps=0;
+            currentLength-=gapOffsets.getCurrentLength();
+            gapOffsets.clear();
             
         }
         /**
          * @return the numberOfGaps
          */
         int getNumberOfGaps() {
-            return numberOfGaps;
+            return gapOffsets.getCurrentLength();
         }
         /**
          * @return the numberOfNonNAmbiguities
@@ -1107,20 +1188,24 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     private class NewValues{
     	private final  BitSet bits;
     	private int length;
-    	private int numberOfGaps;
     	private int numberOfACGTs;
     	private int numberOfNs;
+    	
+    	private GrowableIntArray gapOffsets = new GrowableIntArray(12);
     	
     	
     	public NewValues(BitSet encodedBits, int numberOfBitsUsed){
     		for(int i=0; i< numberOfBitsUsed; i+=NUM_BITS_PER_VALUE){
-    			handleOrdinal(getNucleotideOrdinalFor(encodedBits,i));    			
+    			handleOrdinal(getNucleotideOrdinalFor(encodedBits,i), i);    			
     		}
+    		gapOffsets.sort();
     		this.bits = encodedBits;
     	}
     	public NewValues(Nucleotide nucleotide){
     		bits = new BitSet();
             handle(nucleotide, 0);
+            //only one value so we
+            //don't need to sort
     	}
     	public NewValues(String sequence){
     		bits = new BitSet();
@@ -1133,6 +1218,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
                 	offset+=NUM_BITS_PER_VALUE;
     			}
     		}
+    		gapOffsets.sort();
     	}
     	public NewValues(Iterable<Nucleotide> nucleotides){
     		bits = new BitSet();
@@ -1141,6 +1227,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             	handle(n, offset);
             	offset+=NUM_BITS_PER_VALUE;            	
             }
+            gapOffsets.sort();
     	}
 		private void handle(Nucleotide n, int offset) {
 			byte value=n.getOrdinalAsByte();
@@ -1173,7 +1260,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 						break;
 				case 11: bits.set(offset, offset+4);
 						 bits.clear(offset+1); 
-						 numberOfGaps++;
+						 gapOffsets.append(offset/NUM_BITS_PER_VALUE);
 							break;
 				case 12: bits.set(offset, offset+2);
 						numberOfACGTs++;
@@ -1193,7 +1280,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 
 		}
 
-		private void handleOrdinal(byte ordinal) {
+		private void handleOrdinal(byte ordinal, int offset) {
 			length++;
 			//switch statements has been optimized using profiler 
 			//this will cause a special tableswitch opcode
@@ -1211,7 +1298,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 			case 8:
 			case 9:
 			case 10:break;
-			case 11:numberOfGaps++; break;
+			case 11:gapOffsets.append(offset/NUM_BITS_PER_VALUE); break;
 			case 12:
 			case 13:
 			case 14:
@@ -1222,7 +1309,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		}
 
 		public int getnumberOfNonNAmiguities() {
-			return length - (numberOfGaps + numberOfNs+ numberOfACGTs);
+			return length - (getNumberOfGaps() + numberOfNs+ numberOfACGTs);
 		}
 
 		public BitSet getBits() {
@@ -1234,11 +1321,14 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		}
 
 		public int getNumberOfGaps() {
-			return numberOfGaps;
+			return gapOffsets.getCurrentLength();
 		}
 
 		public int getNumberOfNs() {
 			return numberOfNs;
+		}
+		public GrowableIntArray getGapOffsets() {
+			return gapOffsets;
 		}
     	
     	
