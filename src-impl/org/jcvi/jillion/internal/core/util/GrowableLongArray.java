@@ -21,6 +21,7 @@
 package org.jcvi.jillion.internal.core.util;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 import org.jcvi.jillion.core.Range;
 /**
@@ -68,6 +69,32 @@ public final class GrowableLongArray {
 		}
 		data = new long[initialCapacity];		
 	}
+	
+	/**
+	 * Creates a new {@link GrowableLongArray}
+	 * where the backing array contains
+	 * the contents of the given Collection
+	 * stored as primitives.  The order in the array
+	 * is the determined by the Collection's iteration order.
+	 * The capacity and length of this growable array
+	 * are set to the collection's size.
+	 * @param shorts the Collection of Integers to 
+	 * create into a growable array from.
+	 * @throws NullPointerException if the given
+	 * collection is null or any elements in the collection
+	 * are null.
+	 */
+	public GrowableLongArray(Collection<Long> longs){
+		data = new long[longs.size()];
+		int index=0;
+		for(Long i : longs){
+			data[index]=i.longValue();
+			index++;
+		}
+		currentLength=data.length;
+	}
+	
+	
 	/**
 	 * Creates a new {@link GrowableLongArray}
 	 * where the backing long array is an exact

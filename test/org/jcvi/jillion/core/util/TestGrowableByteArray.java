@@ -25,6 +25,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 import org.junit.Test;
@@ -267,8 +272,32 @@ public class TestGrowableByteArray {
 	}
 	@Test(expected = NullPointerException.class)
 	public void constructorWithNullArrayShouldThrowException(){
-		new GrowableByteArray(null);
+		new GrowableByteArray((byte[])null);
 	}
+	
+	@Test(expected = NullPointerException.class)
+	public void constructorWithNullCollectionShouldThrowException(){
+		new GrowableByteArray((Collection<Byte>)null);
+	}
+	@Test(expected = NullPointerException.class)
+	public void constructorWithNullElementInCollectionShouldThrowException(){
+		List<Byte> list = new ArrayList<Byte>();
+		list.add(Byte.valueOf((byte)1));
+		list.add(null);
+		
+		new GrowableByteArray(list);
+	}
+	@Test
+	public void constructorWithCollection(){
+		List<Byte> list = Arrays.asList((byte)10,(byte)20,(byte)30,(byte)40,(byte)50);
+		GrowableByteArray sut =new GrowableByteArray(list);
+		
+		byte[] expected = new byte[]{10,20,30,40, 50};
+		
+		assertArrayEquals(expected, sut.toArray());
+	}
+	
+	
 	@Test
 	public void copy(){
 		GrowableByteArray sut = new GrowableByteArray(5);

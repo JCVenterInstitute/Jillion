@@ -21,6 +21,7 @@
 package org.jcvi.jillion.internal.core.util;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 import org.jcvi.jillion.core.Range;
 /**
@@ -53,7 +54,7 @@ public final class GrowableIntArray {
 	 */
 	private int[] data;
 	/**
-	 * Creates a new {@link GrowableShortArray}
+	 * Creates a new {@link GrowableIntrray}
 	 * with the given initial capacity.
 	 * @param initialCapacity the initial size 
 	 * of the backing int array.  When adding
@@ -69,7 +70,30 @@ public final class GrowableIntArray {
 		data = new int[initialCapacity];		
 	}
 	/**
-	 * Creates a new {@link GrowableShortArray}
+	 * Creates a new {@link GrowableIntrray}
+	 * where the backing array contains
+	 * the contents of the given Collection
+	 * stored as primitives.  The order in the array
+	 * is the determined by the Collection's iteration order.
+	 * The capacity and length of this growable array
+	 * are set to the collection's size.
+	 * @param ints the Collection of Integers to 
+	 * create into a growable array from.
+	 * @throws NullPointerException if the given
+	 * collection is null or any elements in the collection
+	 * are null.
+	 */
+	public GrowableIntArray(Collection<Integer> ints){
+		data = new int[ints.size()];
+		int index=0;
+		for(Integer i : ints){
+			data[index]=i.intValue();
+			index++;
+		}
+		currentLength=data.length;
+	}
+	/**
+	 * Creates a new {@link GrowableIntrray}
 	 * where the backing int array is an exact
 	 * copy of the input array and the initial
 	 * capacity is set to the array length.
