@@ -600,11 +600,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         	
         	}
         	
-        	NucleotideCodec optimalCodec = codecDecider.getOptimalCodec();
-        	byte[] encodedBytes =optimalCodec.encode(codecDecider.currentLength, codecDecider.gapOffsets.toArray(), iterator());
-        	NucleotideSequence seq= new DefaultNucleotideSequence(optimalCodec, encodedBytes);
-        	
-        	return seq;
+        	return codecDecider.encode(iterator());
 
     }
     @Override
@@ -958,7 +954,34 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         	gapOffsets = new GrowableIntArray(12);
         	nOffsets = new GrowableIntArray(12);
         }
-        CodecDecider(NewValues newValues){
+        public NucleotideSequence encode(Iterator<Nucleotide> iterator) {
+        	
+        	int numberOfGaps = gapOffsets.getCurrentLength();
+            int numberOfNs = nOffsets.getCurrentLength();
+            
+			if(numberOfNonNAmbiguities>0 || (numberOfGaps>0 && numberOfNs >0)){
+                byte[] encodedBytes= BasicNucleotideCodec.INSTANCE.encode(currentLength, gapOffsets.toArray(), iterator);
+                return new DefaultNucleotideSequence(BasicNucleotideCodec.INSTANCE, encodedBytes);
+			}
+			//if we get this far then we don't have any non-N ambiguities
+			//AND we have either only gaps or only Ns
+            int fourBitBufferSize =BasicNucleotideCodec.INSTANCE.getNumberOfEncodedBytesFor(currentLength, numberOfGaps);
+            int twoBitBufferSize = AcgtnNucloetideCodec.INSTANCE.getNumberOfEncodedBytesFor(currentLength,
+            		Math.max(numberOfGaps, numberOfNs));
+            if(fourBitBufferSize < twoBitBufferSize){
+                byte[] encodedBytes= BasicNucleotideCodec.INSTANCE.encode(currentLength, gapOffsets.toArray(), iterator);
+                return new DefaultNucleotideSequence(BasicNucleotideCodec.INSTANCE, encodedBytes);
+            }
+            if(numberOfGaps==0 ){
+                byte[] encodedBytes= AcgtnNucloetideCodec.INSTANCE.encode(currentLength, nOffsets.toArray(), iterator);
+                return new DefaultNucleotideSequence(AcgtnNucloetideCodec.INSTANCE, encodedBytes);
+            }
+            
+            byte[] encodedBytes= AcgtGapNucleotideCodec.INSTANCE.encode(currentLength, gapOffsets.toArray(), iterator);
+            return new DefaultNucleotideSequence(AcgtGapNucleotideCodec.INSTANCE, encodedBytes);
+       
+		}
+		CodecDecider(NewValues newValues){
         	nOffsets = newValues.getNOffsets().copy();
 			currentLength = newValues.getLength();
 			numberOfNonNAmbiguities = newValues.getnumberOfNonNAmiguities();
@@ -991,27 +1014,6 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         
         boolean hasAlignedReference(){
         	return alignedReference!=null;
-        }
-        NucleotideCodec getOptimalCodec() {
-        	
-            int numberOfGaps = gapOffsets.getCurrentLength();
-            int numberOfNs = nOffsets.getCurrentLength();
-            
-			if(numberOfNonNAmbiguities>0 || (numberOfGaps>0 && numberOfNs >0)){
-                return BasicNucleotideCodec.INSTANCE;
-            }
-			//if we get this far then we don't have any non-N ambiguities
-			//AND we have either only gaps or only Ns
-            int fourBitBufferSize =BasicNucleotideCodec.INSTANCE.getNumberOfEncodedBytesFor(currentLength, numberOfGaps);
-            int twoBitBufferSize = AcgtnNucloetideCodec.INSTANCE.getNumberOfEncodedBytesFor(currentLength,
-            		Math.max(numberOfGaps, numberOfNs));
-            if(fourBitBufferSize < twoBitBufferSize){
-            	return BasicNucleotideCodec.INSTANCE;
-            }
-            if(numberOfGaps==0 ){
-            	return AcgtnNucloetideCodec.INSTANCE;
-            }
-            return AcgtGapNucleotideCodec.INSTANCE;
         }
         
         private void append(GrowableIntArray src, GrowableIntArray dest){
@@ -1048,9 +1050,10 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         	}
         	
         	
-        	
-        	dest.append(newGaps);
-        	//dest.sort();
+        	if(newGaps.length >0){
+	        	dest.append(newGaps);
+	        	dest.sort();
+        	}
         }
         
         public void insert(int startOffset, NewValues newValues){

@@ -25,7 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
-import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 /**
  * {@code BasicNucleotideCodec} is a {@link NucleotideCodec}
  * that will store each base in 4 bits.
@@ -35,8 +34,6 @@ import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 final class BasicNucleotideCodec extends AbstractNucleotideCodec{
 
 	 public static final BasicNucleotideCodec INSTANCE = new BasicNucleotideCodec();
-	    
-	 private static final byte GAP_ORDINAL = Nucleotide.Gap.getOrdinalAsByte();
 	    
 	    private BasicNucleotideCodec(){
 	        super(Nucleotide.Gap);
@@ -53,22 +50,12 @@ final class BasicNucleotideCodec extends AbstractNucleotideCodec{
 	 	   return getGlyphFor(value);
 	    }
 		@Override
-		protected GrowableIntArray encodeNextGroup(Iterator<Nucleotide> glyphs, ByteBuffer result, int offset) {
+		protected void encodeNextGroup(Iterator<Nucleotide> glyphs, ByteBuffer result, int offset) {
 	        byte b0 = glyphs.hasNext() ? getByteFor(glyphs.next()) : 0;
 	        byte b1 = glyphs.hasNext() ? getByteFor(glyphs.next()) : 0;
 	       
-	        GrowableIntArray sentenielOffsets = new GrowableIntArray(4);
-	        if(b0== GAP_ORDINAL){
-	            sentenielOffsets.append(offset);
-	            b0=0;
-	        }
-	        if(b1== GAP_ORDINAL){
-	            sentenielOffsets.append(offset+1);
-	            b1=0;
-	        }
-	        
+	       
 	        result.put((byte) ((b0<<4 | b1) &0xFF));
-	        return sentenielOffsets;
 	    }
 	    
 	    @Override

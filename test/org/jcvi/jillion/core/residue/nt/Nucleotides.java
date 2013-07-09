@@ -74,8 +74,19 @@ final class Nucleotides {
         
     }
    
+    static byte[] encodeWithNSentientals(NucleotideCodec codec, List<Nucleotide> bases){
+    	GrowableIntArray ns = new GrowableIntArray(20);
+    	for(int i=0; i<bases.size(); i++){
+    		if(bases.get(i)==Nucleotide.Unknown){
+    			ns.append(i);
+    		}
+    	}
+    	
+    	return codec.encode(bases.size(), ns.toArray(), bases.iterator());
+    	
+    }
     
-    public static byte[] encode(NucleotideCodec codec, List<Nucleotide> bases){
+    static byte[] encodeWithGapSentientals(NucleotideCodec codec, List<Nucleotide> bases){
     	GrowableIntArray gaps = new GrowableIntArray(20);
     	for(int i=0; i<bases.size(); i++){
     		if(bases.get(i).isGap()){

@@ -23,8 +23,6 @@ package org.jcvi.jillion.core.residue.nt;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
-import org.jcvi.jillion.internal.core.util.GrowableIntArray;
-
 /**
  * {@code AbstractTwoBitEncodedNucleotideCodec} is a 
  * version of {@link NucleotideCodec} that will
@@ -63,31 +61,14 @@ abstract class AbstractTwoBitEncodedNucleotideCodec extends AbstractNucleotideCo
  	   return getGlyphFor((byte)((encodedByte>>j) &0x3));
     }
 	@Override
-	protected GrowableIntArray encodeNextGroup(Iterator<Nucleotide> glyphs, ByteBuffer result, int offset) {
+	protected void encodeNextGroup(Iterator<Nucleotide> glyphs, ByteBuffer result, int offset) {
         byte b0 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
         byte b1 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
         byte b2 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
         byte b3 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
         
-        GrowableIntArray sentenielOffsets = new GrowableIntArray(4);
-        if(b0== SENTENTIAL_BYTE){
-            sentenielOffsets.append(offset);
-            b0=0;
-        }
-        if(b1== SENTENTIAL_BYTE){
-            sentenielOffsets.append(offset+1);
-            b1=0;
-        }
-        if(b2== SENTENTIAL_BYTE){
-            sentenielOffsets.append(offset+2);
-            b2=0;
-        }
-        if(b3== SENTENTIAL_BYTE){
-            sentenielOffsets.append(offset+3);
-            b3=0;
-        }
+       
         result.put((byte) ((b0<<6 | b1<<4 | b2<<2 | b3) &0xFF));
-        return sentenielOffsets;
     }
     
     
