@@ -43,11 +43,11 @@ public class  EncodedSequence<T> implements Sequence<T> {
     /**
      * codec used to decode the data.
      */
-    private GlyphCodec<T> codec;
+    private final GlyphCodec<T> codec;
     /**
      * Our data.
      */
-    private byte[] data;
+    private final byte[] data;
     
     private int hash;
     /**
