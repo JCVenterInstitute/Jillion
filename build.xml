@@ -36,7 +36,7 @@
     </taskdef>
 	
     <taskdef resource="checkstyletask.properties"
-         classpath="${analysis}/checkstyle-5.5-all.jar"/>
+         classpath="${analysis}/checkstyle-5.6-all.jar"/>
 
     <taskdef name="testability" classname="com.google.ant.TestabilityTask">
         <classpath>
