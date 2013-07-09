@@ -379,10 +379,11 @@ public final class AceFileUtil {
     
     private static void writeFakeUngappedConsensusQualities(NucleotideSequence consensus,
             OutputStream out) throws IOException {
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder((int)consensus.getLength());
         int numberOfQualitiesSoFar=0;
-        for(int i=0; i< consensus.getLength(); i++){
-            Nucleotide base = consensus.get(i);
+        Iterator<Nucleotide> iter = consensus.iterator();
+        while(iter.hasNext()){
+        	Nucleotide base = iter.next();
             if(base.isGap()){
                 continue;
             }
@@ -391,7 +392,7 @@ public final class AceFileUtil {
             if(numberOfQualitiesSoFar%50==0){
                 result.append(String.format("%n"));
             }
-        }
+        }        
         writeString(String.format("BQ%n%s%n", result.toString()), out);
     }
    
