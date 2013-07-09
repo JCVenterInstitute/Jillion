@@ -184,7 +184,13 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
          */
         @Override
         public byte[] encode(Nucleotide glyph) {
-            return encodeNucleotides(Arrays.asList(glyph).iterator(),1);
+        	final int gapOffsets[];
+        	if(glyph.isGap()){
+        		gapOffsets = new int[]{0};
+        	}else{
+        		gapOffsets = new int[0];
+        	}
+            return encodeNucleotides(Arrays.asList(glyph).iterator(),gapOffsets, 1);
             
         }
         
@@ -230,35 +236,7 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
         }
         
         
-        private byte[] encodeNucleotides(Iterator<Nucleotide> iterator,
-                final int unEncodedSize) {
-            int encodedBasesSize = computeHeaderlessEncodedSize(unEncodedSize);
-            ByteBuffer encodedBases = ByteBuffer.allocate(encodedBasesSize);
-            GrowableIntArray sentinels = encodeAll(iterator, unEncodedSize, encodedBases);
-            encodedBases.flip();
-            ValueSizeStrategy numBasesSizeStrategy = ValueSizeStrategy.getStrategyFor(unEncodedSize);
-            int numberOfSentinels = sentinels.getCurrentLength();
-			ValueSizeStrategy sentinelSizeStrategy = numberOfSentinels==0
-            											?	ValueSizeStrategy.NONE 
-            											:	ValueSizeStrategy.getStrategyFor(numberOfSentinels);
-            
-            int bufferSize = computeEncodedBufferSize(encodedBasesSize,
-					numBasesSizeStrategy, numberOfSentinels,
-					sentinelSizeStrategy);
-            
-            ByteBuffer result = ByteBuffer.allocate(bufferSize);
-            result.put((byte)numBasesSizeStrategy.ordinal());
-            numBasesSizeStrategy.put(result, unEncodedSize);
-            result.put((byte)sentinelSizeStrategy.ordinal());
-            if(sentinelSizeStrategy != ValueSizeStrategy.NONE){
-            	sentinelSizeStrategy.put(result, numberOfSentinels);
-            	for(int i=0; i<numberOfSentinels; i++){
-            		numBasesSizeStrategy.put(result, sentinels.get(i));
-                }
-            }
-            result.put(encodedBases);
-            return result.array();
-        }
+        
 		private static int computeEncodedBufferSize(int encodedBasesSize,
 				ValueSizeStrategy numBasesSizeStrategy, int numberOfSentinels,
 				ValueSizeStrategy sentinelSizeStrategy) {
