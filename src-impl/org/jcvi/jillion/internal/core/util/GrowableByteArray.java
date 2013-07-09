@@ -21,6 +21,7 @@
 package org.jcvi.jillion.internal.core.util;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 import org.jcvi.jillion.core.Range;
 /**
@@ -68,6 +69,32 @@ public final class GrowableByteArray {
 		}
 		data = new byte[initialCapacity];		
 	}
+	
+	/**
+	 * Creates a new {@link GrowableByteArray}
+	 * where the backing array contains
+	 * the contents of the given Collection
+	 * stored as primitives.  The order in the array
+	 * is the determined by the Collection's iteration order.
+	 * The capacity and length of this growable array
+	 * are set to the collection's size.
+	 * @param bytes the Collection of Integers to 
+	 * create into a growable array from.
+	 * @throws NullPointerException if the given
+	 * collection is null or any elements in the collection
+	 * are null.
+	 */
+	public GrowableByteArray(Collection<Byte> bytes){
+		data = new byte[bytes.size()];
+		int index=0;
+		for(Byte i : bytes){
+			data[index]=i.byteValue();
+			index++;
+		}
+		currentLength=data.length;
+	}
+	
+	
 	/**
 	 * Creates a new {@link GrowableByteArray}
 	 * where the backing byte array is an exact

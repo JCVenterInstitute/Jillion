@@ -25,6 +25,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 import org.junit.Test;
@@ -263,7 +268,28 @@ public class TestGrowableIntArray {
 	}
 	@Test(expected = NullPointerException.class)
 	public void constructorWithNullArrayShouldThrowException(){
-		new GrowableIntArray(null);
+		new GrowableIntArray((int[])null);
+	}
+	@Test(expected = NullPointerException.class)
+	public void constructorWithNullCollectionShouldThrowException(){
+		new GrowableIntArray((Collection<Integer>)null);
+	}
+	@Test(expected = NullPointerException.class)
+	public void constructorWithNullElementInCollectionShouldThrowException(){
+		List<Integer> list = new ArrayList<Integer>();
+		list.add(Integer.valueOf(1));
+		list.add(null);
+		
+		new GrowableIntArray(list);
+	}
+	@Test
+	public void constructorWithCollection(){
+		List<Integer> list = Arrays.asList(10,20,30,40,50);
+		GrowableIntArray sut =new GrowableIntArray(list);
+		
+		int[] expected = new int[]{10,20,30,40, 50};
+		
+		assertArrayEquals(expected, sut.toArray());
 	}
 	@Test
 	public void copy(){

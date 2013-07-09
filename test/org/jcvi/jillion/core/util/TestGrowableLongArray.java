@@ -25,6 +25,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.util.GrowableLongArray;
 import org.junit.Test;
@@ -267,8 +272,32 @@ public class TestGrowableLongArray {
 	}
 	@Test(expected = NullPointerException.class)
 	public void constructorWithNullArrayShouldThrowException(){
-		new GrowableLongArray(null);
+		new GrowableLongArray((long[])null);
 	}
+	
+	@Test(expected = NullPointerException.class)
+	public void constructorWithNullCollectionShouldThrowException(){
+		new GrowableLongArray((Collection<Long>)null);
+	}
+	@Test(expected = NullPointerException.class)
+	public void constructorWithNullElementInCollectionShouldThrowException(){
+		List<Long> list = new ArrayList<Long>();
+		list.add(Long.valueOf(1L));
+		list.add(null);
+		
+		new GrowableLongArray(list);
+	}
+	@Test
+	public void constructorWithCollection(){
+		List<Long> list = Arrays.asList((long)10,(long)20,(long)30,(long)40,(long)50);
+		GrowableLongArray sut =new GrowableLongArray(list);
+		
+		long[] expected = new long[]{10,20,30,40, 50};
+		
+		assertArrayEquals(expected, sut.toArray());
+	}
+	
+	
 	@Test
 	public void copy(){
 		GrowableLongArray sut = new GrowableLongArray(5);
