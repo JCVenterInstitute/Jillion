@@ -420,7 +420,7 @@ public abstract class TigrContigFileParser {
 		
 	}
 	
-	private static abstract class AbstractTigrContigVisitorCallback implements TigrContigVisitorCallback{
+	private  abstract static class AbstractTigrContigVisitorCallback implements TigrContigVisitorCallback{
 		private volatile boolean keepParsing=true;
 		
 		@Override

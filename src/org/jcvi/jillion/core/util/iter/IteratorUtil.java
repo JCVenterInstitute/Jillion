@@ -231,7 +231,7 @@ public final class IteratorUtil {
      *
      *
      */
-    private static class EmptyIterator<E> implements Iterator<E> {
+    private static final class EmptyIterator<E> implements Iterator<E> {
         /**
          * Singleton instance of Empty iterator that can be shared 
          * by all.

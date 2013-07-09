@@ -168,103 +168,109 @@ public final class CasFileParser {
     	RandomAccessFile randomAccessFile = new RandomAccessFile(casFile,"r");
     	RandomAccessFileInputStream in=null;
     	try{
-    		in = new RandomAccessFileInputStream(randomAccessFile);
-    		byte[] magicNumber = IOUtil.toByteArray(in, 8);
-    		int CasVersion =assertMagicNumberIsCorrect(magicNumber);
-	    	/*
-    	 if(!Arrays.equals(CAS_MAGIC_NUMBER, magicNumber)){
-             throw new IllegalArgumentException("input stream not a valid cas file wrong magic number expected : " + Arrays.toString(CAS_MAGIC_NUMBER) + " but was "+Arrays.toString(magicNumber));
-         }
-         */
-    	 //the cas file puts the header at the end of the file
-    	 //perhaps to make it easier to modify later?
-    	 //so we have to skip over all the matches (possibly gigabytes of data)
-    	 BigInteger headerOffset = CasUtil.readCasUnsignedLong(in);
-    	 randomAccessFile.seek(headerOffset.longValue());
-    	 
-    	 long numberOfContigSequences = CasUtil.readCasUnsignedInt(in);
-         if(CasVersion==1){
-        	 numberOfReads = CasUtil.readCasUnsignedInt(in);
-         }else{
-        	 numberOfReads = CasUtil.readCasUnsignedLong(in).longValue();
-         }
-         
-        
-          visitor.visitMetaData(numberOfContigSequences, numberOfReads);
-          String nameOfAssemblyProgram = CasUtil.parseCasStringFrom(in);
-          String version = CasUtil.parseCasStringFrom(in);
-          String parameters = CasUtil.parseCasStringFrom(in);
-          visitor.visitAssemblyProgramInfo(nameOfAssemblyProgram, version, parameters);
-          
-          long numberOfContigFiles =CasUtil.parseByteCountFrom(in);
-         visitor.visitNumberOfReferenceFiles(numberOfContigFiles);            
-          for(long i=0; i< numberOfContigFiles; i++){
-            boolean twoFiles =(in.read() & 0x01)==1;
-            long numberOfSequencesInFile;
-            if(CasVersion ==1){
-            	numberOfSequencesInFile= CasUtil.readCasUnsignedInt(in);
-            }else{
-            	numberOfSequencesInFile= CasUtil.readCasUnsignedLong(in).longValue();
-            }
-            BigInteger residuesInFile = CasUtil.readCasUnsignedLong(in);
-            List<String> names = new ArrayList<String>();
-            names.add(CasUtil.parseCasStringFrom(in));
-            if(twoFiles){
-                names.add(CasUtil.parseCasStringFrom(in));
-            }
-            visitor.visitReferenceFileInfo(new DefaultCasFileInfo(names, numberOfSequencesInFile, residuesInFile));
-          }
-          
-          long numberOfReadFiles =CasUtil.parseByteCountFrom(in);
-          visitor.visitNumberOfReadFiles(numberOfReadFiles);            
-           for(long i=0; i< numberOfReadFiles; i++){
-             boolean twoFiles =(in.read() & 0x01)==1;
-             long numberOfSequencesInFile;
-             if(CasVersion ==1){
-             	numberOfSequencesInFile= CasUtil.readCasUnsignedInt(in);
-             }else{
-             	numberOfSequencesInFile= CasUtil.readCasUnsignedLong(in).longValue();
-             }
-             BigInteger residuesInFile = CasUtil.readCasUnsignedLong(in);
-             List<String> names = new ArrayList<String>();
-             names.add(CasUtil.parseCasStringFrom(in));
-             if(twoFiles){
-                 names.add(CasUtil.parseCasStringFrom(in));
-             }
-             visitor.visitReadFileInfo(new DefaultCasFileInfo(names, numberOfSequencesInFile, residuesInFile));
-           }
-       
-          CasScoreType scoreType = CasScoreType.valueOf((byte)in.read());
-          if(scoreType != CasScoreType.NO_SCORE){
-              CasAlignmentScoreBuilder alignmentScoreBuilder = new CasAlignmentScoreBuilder()
-                                  .firstInsertion(CasUtil.readCasUnsignedShort(in))
-                                  .insertionExtension(CasUtil.readCasUnsignedShort(in))
-                                  .firstDeletion(CasUtil.readCasUnsignedShort(in))
-                                  .deletionExtension(CasUtil.readCasUnsignedShort(in))
-                                  .match(CasUtil.readCasUnsignedShort(in))
-                                  .transition(CasUtil.readCasUnsignedShort(in))
-                                  .transversion(CasUtil.readCasUnsignedShort(in))
-                                  .unknown(CasUtil.readCasUnsignedShort(in));
-              if(scoreType == CasScoreType.COLOR_SPACE_SCORE){
-                  alignmentScoreBuilder.colorSpaceError(IOUtil.readUnsignedShort(in));
-              }
-              CasAlignmentScore score = alignmentScoreBuilder.build();
-              CasAlignmentType alignmentType = CasAlignmentType.valueOf((byte)in.read());
-              scoringScheme = new DefaultCasScoringScheme(scoreType, score, alignmentType);
-              visitor.visitScoringScheme(scoringScheme);
-              long maxContigLength=0;
-              for(long i=0; i<numberOfContigSequences; i++){
-                  long contigLength = CasUtil.readCasUnsignedInt(in);
-                  boolean isCircular = (IOUtil.readUnsignedShort(in) & 0x01)==1;
-                  visitor.visitReferenceDescription(new DefaultCasReferenceDescription(contigLength, isCircular));
-                  maxContigLength = Math.max(maxContigLength, contigLength);
-              }
-              numberOfBytesForContigNumber = CasUtil.numberOfBytesRequiredFor(numberOfContigSequences);
-                          
-              numberOfBytesForContigPosition =CasUtil.numberOfBytesRequiredFor(maxContigLength);
-              //contig pairs not currently used so ignore them
-              
-          }
+			in = new RandomAccessFileInputStream(randomAccessFile);
+			byte[] magicNumber = IOUtil.toByteArray(in, 8);
+			int casVersion = assertMagicNumberIsCorrect(magicNumber);
+			// the cas file puts the header at the end of the file
+			// perhaps to make it easier to modify later?
+			// so we have to skip over all the matches (possibly gigabytes of
+			// data)
+			BigInteger headerOffset = CasUtil.readCasUnsignedLong(in);
+			randomAccessFile.seek(headerOffset.longValue());
+
+			long numberOfContigSequences = CasUtil.readCasUnsignedInt(in);
+			if (casVersion == 1) {
+				numberOfReads = CasUtil.readCasUnsignedInt(in);
+			} else {
+				numberOfReads = CasUtil.readCasUnsignedLong(in).longValue();
+			}
+
+			visitor.visitMetaData(numberOfContigSequences, numberOfReads);
+			String nameOfAssemblyProgram = CasUtil.parseCasStringFrom(in);
+			String version = CasUtil.parseCasStringFrom(in);
+			String parameters = CasUtil.parseCasStringFrom(in);
+			visitor.visitAssemblyProgramInfo(nameOfAssemblyProgram, version,
+					parameters);
+
+			long numberOfContigFiles = CasUtil.parseByteCountFrom(in);
+			visitor.visitNumberOfReferenceFiles(numberOfContigFiles);
+			for (long i = 0; i < numberOfContigFiles; i++) {
+				boolean twoFiles = (in.read() & 0x01) == 1;
+				long numberOfSequencesInFile;
+				if (casVersion == 1) {
+					numberOfSequencesInFile = CasUtil.readCasUnsignedInt(in);
+				} else {
+					numberOfSequencesInFile = CasUtil.readCasUnsignedLong(in)
+							.longValue();
+				}
+				BigInteger residuesInFile = CasUtil.readCasUnsignedLong(in);
+				List<String> names = new ArrayList<String>();
+				names.add(CasUtil.parseCasStringFrom(in));
+				if (twoFiles) {
+					names.add(CasUtil.parseCasStringFrom(in));
+				}
+				visitor.visitReferenceFileInfo(new DefaultCasFileInfo(names,
+						numberOfSequencesInFile, residuesInFile));
+			}
+
+			long numberOfReadFiles = CasUtil.parseByteCountFrom(in);
+			visitor.visitNumberOfReadFiles(numberOfReadFiles);
+			for (long i = 0; i < numberOfReadFiles; i++) {
+				boolean twoFiles = (in.read() & 0x01) == 1;
+				long numberOfSequencesInFile;
+				if (casVersion == 1) {
+					numberOfSequencesInFile = CasUtil.readCasUnsignedInt(in);
+				} else {
+					numberOfSequencesInFile = CasUtil.readCasUnsignedLong(in)
+							.longValue();
+				}
+				BigInteger residuesInFile = CasUtil.readCasUnsignedLong(in);
+				List<String> names = new ArrayList<String>();
+				names.add(CasUtil.parseCasStringFrom(in));
+				if (twoFiles) {
+					names.add(CasUtil.parseCasStringFrom(in));
+				}
+				visitor.visitReadFileInfo(new DefaultCasFileInfo(names,
+						numberOfSequencesInFile, residuesInFile));
+			}
+
+			CasScoreType scoreType = CasScoreType.valueOf((byte) in.read());
+			if (scoreType != CasScoreType.NO_SCORE) {
+				CasAlignmentScoreBuilder alignmentScoreBuilder = new CasAlignmentScoreBuilder()
+						.firstInsertion(CasUtil.readCasUnsignedShort(in))
+						.insertionExtension(CasUtil.readCasUnsignedShort(in))
+						.firstDeletion(CasUtil.readCasUnsignedShort(in))
+						.deletionExtension(CasUtil.readCasUnsignedShort(in))
+						.match(CasUtil.readCasUnsignedShort(in))
+						.transition(CasUtil.readCasUnsignedShort(in))
+						.transversion(CasUtil.readCasUnsignedShort(in))
+						.unknown(CasUtil.readCasUnsignedShort(in));
+				if (scoreType == CasScoreType.COLOR_SPACE_SCORE) {
+					alignmentScoreBuilder.colorSpaceError(IOUtil
+							.readUnsignedShort(in));
+				}
+				CasAlignmentScore score = alignmentScoreBuilder.build();
+				CasAlignmentType alignmentType = CasAlignmentType
+						.valueOf((byte) in.read());
+				scoringScheme = new DefaultCasScoringScheme(scoreType, score,
+						alignmentType);
+				visitor.visitScoringScheme(scoringScheme);
+				long maxContigLength = 0;
+				for (long i = 0; i < numberOfContigSequences; i++) {
+					long contigLength = CasUtil.readCasUnsignedInt(in);
+					boolean isCircular = (IOUtil.readUnsignedShort(in) & 0x01) == 1;
+					visitor.visitReferenceDescription(new DefaultCasReferenceDescription(
+							contigLength, isCircular));
+					maxContigLength = Math.max(maxContigLength, contigLength);
+				}
+				numberOfBytesForContigNumber = CasUtil
+						.numberOfBytesRequiredFor(numberOfContigSequences);
+
+				numberOfBytesForContigPosition = CasUtil
+						.numberOfBytesRequiredFor(maxContigLength);
+				// contig pairs not currently used so ignore them
+
+			}
     	 
     	}finally{
     		IOUtil.closeAndIgnoreErrors(in, randomAccessFile);
