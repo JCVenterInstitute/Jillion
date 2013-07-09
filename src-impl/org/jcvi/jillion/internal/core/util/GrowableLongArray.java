@@ -222,8 +222,21 @@ public final class GrowableLongArray {
 		currentLength--;
 		return oldValue;
 	}
+	/**
+	 * Get the current capacity of the backing
+	 * array.  This may be larger than the value
+	 * returned by {@link #getCurrentLength()}.
+	 * Modifying this growable array to extend
+	 * beyond the current capacity will require
+	 * the backing array to be grown.
+	 * @return the current capacity;
+	 * will always be >=0;
+	 */
+	public int getCurrentCapacity(){
+		return data.length;
+	}
 	
-	public void ensureCapacity(int minCapacity) {
+	private void ensureCapacity(int minCapacity) {
 		int oldCapacity = data.length;
 		if (minCapacity > oldCapacity) {
 		    //algorithm borrowed from ArrayList
