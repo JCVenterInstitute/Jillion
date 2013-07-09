@@ -37,6 +37,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
 public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<DefaultCasPlacedRead>{
     private final String readId;
@@ -96,13 +97,13 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
         return startOffset;
     }
     public DefaultCasPlacedReadFromCasAlignmentBuilder addAlignmentRegions(List<CasAlignmentRegion> regions, NucleotideSequence referenceBases){
-        
+        GrowableIntArray referenceGaps = new GrowableIntArray(referenceBases.getGapOffsets());
         for(CasAlignmentRegion region : regions){
-            addAlignmentRegion(region,referenceBases);
+            addAlignmentRegion(region,referenceGaps);
         }
         return this;
     }
-    private void addAlignmentRegion(CasAlignmentRegion region,NucleotideSequence gappedReference){
+    private void addAlignmentRegion(CasAlignmentRegion region,GrowableIntArray referenceGaps){
         CasAlignmentRegionType type =region.getType();
         
         if(outsideValidRange){
@@ -128,7 +129,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
             	//reference should not have any initial
             	//gaps so any gaps we see we put there during
             	//the 1st pass to build a gapped alignment.
-                while(referenceOffset < gappedReference.getLength() && gappedReference.get((int)(referenceOffset)).isGap()){
+                while(referenceGaps.binarySearch((int)referenceOffset) >=0){
                     gappedSequenceBuilder.append(Nucleotide.Gap);
                     referenceOffset++;
                 }
