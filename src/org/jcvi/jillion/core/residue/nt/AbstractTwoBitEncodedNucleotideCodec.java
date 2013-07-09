@@ -56,9 +56,9 @@ abstract class AbstractTwoBitEncodedNucleotideCodec extends AbstractNucleotideCo
      }
 	@Override
 	protected Nucleotide getNucleotide(byte encodedByte, int index){
- 	   //endian is backwards
- 	   int j = (3-index%4)*2;
- 	   return getGlyphFor((byte)((encodedByte>>j) &0x3));
+		//shift by 1 is the same as *2
+		int j= (index%4) <<1;
+		return getGlyphFor((byte)((encodedByte >>j) &0x3));
     }
 	@Override
 	protected void encodeNextGroup(Iterator<Nucleotide> glyphs, ByteBuffer result, int offset) {
@@ -67,8 +67,7 @@ abstract class AbstractTwoBitEncodedNucleotideCodec extends AbstractNucleotideCo
         byte b2 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
         byte b3 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
         
-       
-        result.put((byte) ((b0<<6 | b1<<4 | b2<<2 | b3) &0xFF));
+        result.put((byte) ((b3<<6 | b2<<4 | b1<<2 | b0) &0xFF));
     }
     
     
