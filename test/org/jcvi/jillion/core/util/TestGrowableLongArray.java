@@ -22,6 +22,8 @@ package org.jcvi.jillion.core.util;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.util.GrowableLongArray;
@@ -362,5 +364,37 @@ public class TestGrowableLongArray {
 		assertEquals("after all",-6, sut.binarySearch((long)60));
 		assertEquals("before all", -1, sut.binarySearch((long)6));
 		assertEquals("in between", -4, sut.binarySearch((long)35));
+	}
+	
+	@Test
+	public void sortedRemove(){
+		GrowableLongArray sut = new GrowableLongArray(10);
+		sut.append((long)10);
+		sut.append((long)20);
+		sut.append((long)30);
+		sut.append((long)40);
+		sut.append((long)50);
+		
+		
+		assertTrue(sut.sortedRemove((long)30));
+		assertFalse(sut.sortedRemove((long)45));
+		assertArrayEquals(new long[]{10, 20,40,50}, sut.toArray());
+
+	}
+	
+	@Test
+	public void sortedInsert(){
+		GrowableLongArray sut = new GrowableLongArray(10);
+		sut.append((long)10);
+		sut.append((long)20);
+		sut.append((long)30);
+		sut.append((long)40);
+		sut.append((long)50);
+		
+		
+		assertEquals(3,sut.sortedInsert((long)35));
+		assertEquals(2,sut.sortedInsert((long)30));
+		assertArrayEquals(new long[]{10, 20,30,30,35, 40,50}, sut.toArray());
+
 	}
 }

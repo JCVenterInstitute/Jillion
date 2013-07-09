@@ -281,6 +281,56 @@ public final class GrowableByteArray {
 	public int binarySearch(byte key){
 		return Arrays.binarySearch(data, 0, currentLength, key);
 	}
+	
+	/**
+	 * Remove the given value from this
+	 * sorted array.  This method
+	 * assumes that the values in the backing
+	 * array have been previously sorted.
+	 * If this sorted array contains several
+	 * indexes with this value
+	 * then only one will be removed
+	 * and it is undefined which one will
+	 * actually be removed.
+	 * Calling this method on an unsorted
+	 * backing array may not remove the value
+	 * correctly.
+	 * @param value the value to remove
+	 * @return {@code true} if the value
+	 * was found and removed; {@code false}
+	 * if the value does not exist in the
+	 * sorted backing array.
+	 */
+	public boolean sortedRemove(byte value){	
+		int index = binarySearch(value);
+
+		if (index >= 0) {
+			remove(index);
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * Insert the given value into the 
+	 * sorted backing array.  
+	 * Calling this method on an unsorted
+	 * backing array may not insert the value
+	 * correctly.
+	 * @param value the value to insert.
+	 * @return the index that this value
+	 * was inserted into.
+	 */
+	public int sortedInsert(byte value){
+		int index = binarySearch(value);
+		if(index <0){
+			//not found
+			//value returned is (-insertion point) -1)
+			index = -index -1;
+		}
+		insert(index, value);
+		return index;
+	}
+	
 	/**
 	 * Sort the current values in this growable array
 	 * using the default comparator.

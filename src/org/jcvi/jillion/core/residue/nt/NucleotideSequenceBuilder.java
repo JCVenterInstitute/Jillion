@@ -1051,6 +1051,11 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         	
         	
         	if(newGaps.length >0){
+        		//appending all the values then sorting
+        		//once is probably more efficient than
+        		//binary searching and inserting one by one
+        		//since we only have to resize and sort once 
+        		//instead of n times.
 	        	dest.append(newGaps);
 	        	dest.sort();
         	}
@@ -1103,10 +1108,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         private void delete(GrowableIntArray array, int startOffset, int[] gapsToDelete){
 
 			for(int i=0; i<gapsToDelete.length; i++){
-				int key =array.binarySearch(gapsToDelete[i]+startOffset);
-				if(key >=0){
-					array.remove(key);
-				}
+				array.sortedRemove(gapsToDelete[i]+startOffset);				
 			}
         }
         
@@ -1139,15 +1141,10 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 
         private void replaceValue(GrowableIntArray array, int offset, boolean insert){
         	if(insert){
-         	   //TODO make growable array binaryInsert?
-        		array.append(offset);
-        		array.sort();
+        		array.sortedInsert(offset);
+         	  
             }else{
-         	   //TODO make growable array binaryRemove?
-         	   int key =array.binarySearch(offset);
-         	   if(key >=0){
-         		  array.remove(key);
-         	   }
+            	array.sortedRemove(offset);         	   
             }
         }
         
