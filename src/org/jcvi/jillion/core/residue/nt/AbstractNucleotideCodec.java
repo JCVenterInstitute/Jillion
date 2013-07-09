@@ -30,7 +30,6 @@ import java.util.NoSuchElementException;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 import org.jcvi.jillion.internal.core.util.ArrayUtil;
-import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
 
 /**
@@ -78,12 +77,6 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
          * the offset we want is there.  If so return gap, else compute offset into encoded 
          * byte array for ACGT call and then do bit shifting to get the 2bits we need.
          */
-
-        /**
-         * This is a sentinel value for a gap.  
-         * 
-         */
-        protected static final byte SENTENTIAL_BYTE = -1;
         /**
          * This is the 5th {@link Nucleotide} of our 2 bit encoding
          * usually a "-" or "N".  These 5th bases will occasionally occur
@@ -205,14 +198,14 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 					sentinelSizeStrategy);
         }
         
-        private byte[] encodeNucleotides(Iterator<Nucleotide> iterator, int[] gapOffsets,
+        private byte[] encodeNucleotides(Iterator<Nucleotide> iterator, int[] sentienelOffsetArray,
                 final int unEncodedSize) {
             int encodedBasesSize = computeHeaderlessEncodedSize(unEncodedSize);
             ByteBuffer encodedBases = ByteBuffer.allocate(encodedBasesSize);
-            GrowableIntArray sentinels = encodeAll(iterator, unEncodedSize, encodedBases);
+            encodeAll(iterator, unEncodedSize, encodedBases);
             encodedBases.flip();
             ValueSizeStrategy numBasesSizeStrategy = ValueSizeStrategy.getStrategyFor(unEncodedSize);
-            int numberOfSentinels = sentinels.getCurrentLength();
+            int numberOfSentinels = sentienelOffsetArray.length;
 			ValueSizeStrategy sentinelSizeStrategy = numberOfSentinels==0
             											?	ValueSizeStrategy.NONE 
             											:	ValueSizeStrategy.getStrategyFor(numberOfSentinels);
@@ -228,7 +221,7 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
             if(sentinelSizeStrategy != ValueSizeStrategy.NONE){
             	sentinelSizeStrategy.put(result, numberOfSentinels);
             	for(int i=0; i<numberOfSentinels; i++){
-            		numBasesSizeStrategy.put(result, sentinels.get(i));
+            		numBasesSizeStrategy.put(result, sentienelOffsetArray[i]);
                 }
             }
             result.put(encodedBases);
@@ -250,15 +243,12 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
          * @param unEncodedSize
          * @param result
          */
-        private GrowableIntArray encodeAll(Iterator<Nucleotide> glyphs,
+        private void encodeAll(Iterator<Nucleotide> glyphs,
                 final int unEncodedSize, ByteBuffer result) {
-        	//optimize huge size of array so we don't have to
-        	//worry about penalty of resizing
-        	GrowableIntArray gaps= new GrowableIntArray(unEncodedSize);
+        	
             for(int i=0; i<unEncodedSize; i+=getNucleotidesPerGroup()){
-                gaps.append(encodeNextGroup(glyphs, result,i));
+               encodeNextGroup(glyphs, result,i);
             }
-            return gaps;
         }
        
         protected int computeHeaderlessEncodedSize(final int size) {
@@ -270,11 +260,11 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
         
         protected abstract Nucleotide getGlyphFor(byte b);
        
-        protected abstract GrowableIntArray encodeNextGroup(Iterator<Nucleotide> glyphs, ByteBuffer result, int offset);
+        protected abstract void encodeNextGroup(Iterator<Nucleotide> glyphs, ByteBuffer result, int offset);
      
         protected byte getSentienelByteFor(Nucleotide nucleotide){
             if(nucleotide.equals(sententialBase)){
-                return SENTENTIAL_BYTE;
+                return 0;
             }
             return getByteFor(nucleotide);
         }

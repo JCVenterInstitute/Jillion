@@ -45,7 +45,7 @@ public class TestAcgtGapNucleotideCodec {
     @Test
     public void encode(){
         List<Nucleotide> nucleotides = Nucleotides.parse("ACGTACGT");
-        byte[] actual =Nucleotides.encode(sut, nucleotides);
+        byte[] actual =Nucleotides.encodeWithGapSentientals(sut, nucleotides);
         
         assertDecodeByIndexIsCorrect(nucleotides, actual);        
     }
@@ -59,7 +59,7 @@ public class TestAcgtGapNucleotideCodec {
     @Test
     public void lastByteHasOnly1Base(){
         List<Nucleotide> nucleotides = Nucleotides.parse("ACGTACGTC");
-        byte[] actual =Nucleotides.encode(sut, nucleotides);
+        byte[] actual =Nucleotides.encodeWithGapSentientals(sut, nucleotides);
         
         assertDecodeByIndexIsCorrect(nucleotides, actual);
     }
@@ -67,14 +67,14 @@ public class TestAcgtGapNucleotideCodec {
     @Test
     public void lastByteHasOnly2Bases(){
         List<Nucleotide> nucleotides = Nucleotides.parse("ACGTACGTCA");
-        byte[] actual =Nucleotides.encode(sut, nucleotides);
+        byte[] actual =Nucleotides.encodeWithGapSentientals(sut, nucleotides);
         
         assertDecodeByIndexIsCorrect(nucleotides, actual);
     }
     @Test
     public void lastByteHasOnly3Bases(){
         List<Nucleotide> nucleotides = Nucleotides.parse("ACGTACGTCAG");
-        byte[] actual =Nucleotides.encode(sut, nucleotides);
+        byte[] actual =Nucleotides.encodeWithGapSentientals(sut, nucleotides);
         
         assertDecodeByIndexIsCorrect(nucleotides, actual);
     }
@@ -93,20 +93,20 @@ public class TestAcgtGapNucleotideCodec {
     
     @Test(expected = IllegalArgumentException.class)
     public void hasAmbiguityShouldThrowIllegalArgumentException(){
-    	Nucleotides.encode(sut, Nucleotides.parse("ACGTWACGT"));
+    	Nucleotides.encodeWithGapSentientals(sut, Nucleotides.parse("ACGTWACGT"));
     }
     
     @Test
     public void encodeWithOneGap(){
         List<Nucleotide> nucleotides = Nucleotides.parse("ACGT-ACGT");
-        byte[] actual =Nucleotides.encode(sut, nucleotides);
+        byte[] actual =Nucleotides.encodeWithGapSentientals(sut, nucleotides);
         
         assertDecodeByIndexIsCorrect(nucleotides, actual);        
     }
     @Test
     public void encodeWithTwoGaps(){
         List<Nucleotide> nucleotides = Nucleotides.parse("ACGT-AC-GT");
-        byte[] actual =Nucleotides.encode(sut, nucleotides);
+        byte[] actual =Nucleotides.encodeWithGapSentientals(sut, nucleotides);
         
         assertDecodeByIndexIsCorrect(nucleotides, actual);        
     }
@@ -116,7 +116,7 @@ public class TestAcgtGapNucleotideCodec {
     @Test
     public void encodeWithFourGaps(){
         List<Nucleotide> nucleotides = Nucleotides.parse("ACGT-CGTA-GTAC-TACG-ACGT");
-        byte[] actual =Nucleotides.encode(sut, nucleotides);
+        byte[] actual =Nucleotides.encodeWithGapSentientals(sut, nucleotides);
         
         assertDecodeByIndexIsCorrect(nucleotides, actual);        
     }
@@ -124,7 +124,7 @@ public class TestAcgtGapNucleotideCodec {
     @Test
     public void encodeWithTwoConsecutiveGaps(){
         List<Nucleotide> nucleotides = Nucleotides.parse("ACGT--AC-GT");
-        byte[] actual =Nucleotides.encode(sut, nucleotides);
+        byte[] actual =Nucleotides.encodeWithGapSentientals(sut, nucleotides);
         
         assertDecodeByIndexIsCorrect(nucleotides, actual);        
     }
@@ -141,7 +141,7 @@ public class TestAcgtGapNucleotideCodec {
             longBases.add(Nucleotide.parse("T"));
         }
         
-        byte[] actual =Nucleotides.encode(sut, longBases);
+        byte[] actual =Nucleotides.encodeWithGapSentientals(sut, longBases);
         assertDecodeByIndexIsCorrect(longBases, actual);    
     }
     @Test
@@ -156,20 +156,20 @@ public class TestAcgtGapNucleotideCodec {
             longBases.add(Nucleotide.parse("T"));
         }
         
-        byte[] actual =Nucleotides.encode(sut, longBases);
+        byte[] actual =Nucleotides.encodeWithGapSentientals(sut, longBases);
         assertDecodeByIndexIsCorrect(longBases, actual);    
     }
     
     @Test(expected = IndexOutOfBoundsException.class)
     public void getBeyondLengthShouldThrowException(){
     	 List<Nucleotide> nucleotides = Nucleotides.parse("ACGTACGT");
-         byte[] actual =Nucleotides.encode(sut, nucleotides);
+         byte[] actual =Nucleotides.encodeWithGapSentientals(sut, nucleotides);
          sut.decode(actual, 10);
     }
     @Test(expected = IndexOutOfBoundsException.class)
     public void negativeOffsetShouldThrowException(){
     	 List<Nucleotide> nucleotides = Nucleotides.parse("ACGTACGT");
-         byte[] actual =Nucleotides.encode(sut, nucleotides);
+         byte[] actual =Nucleotides.encodeWithGapSentientals(sut, nucleotides);
          sut.decode(actual, -1);
     }
     
@@ -199,7 +199,7 @@ public class TestAcgtGapNucleotideCodec {
     }
 	private void assertIterateCorrectly(List<Nucleotide> list, Range range) {
 		Iterator<Nucleotide> expected = list.iterator();
-		byte[] bytes =Nucleotides.encode(sut, list);
+		byte[] bytes =Nucleotides.encodeWithGapSentientals(sut, list);
 		Iterator<Nucleotide> actual = sut.iterator(bytes, range);
 		for(int i=0; i<range.getBegin(); i++){
 			expected.next();

@@ -46,13 +46,13 @@ public class TestBasicNucleotideCodec {
     
     @Test
     public void evenEncodesAndDecodes(){
-        byte[] encoded =Nucleotides.encode(sut, evenBases);
+        byte[] encoded =Nucleotides.encodeWithGapSentientals(sut, evenBases);
         assertEquals(evenBases, decode(encoded));
     }
     
     @Test
     public void oddEncodesAndDecodes(){
-        byte[] encoded =Nucleotides.encode(sut, oddBases);
+        byte[] encoded =Nucleotides.encodeWithGapSentientals(sut, oddBases);
         assertEquals(oddBases, decode(encoded));
     }
     /**
@@ -69,7 +69,7 @@ public class TestBasicNucleotideCodec {
             String finalBase) {
         String basesString = "ATTTGCTATCCATA"+finalBase;
         List<Nucleotide> expectedGlyphs = Nucleotides.parse(basesString);
-        byte[] encoded =Nucleotides.encode(sut, expectedGlyphs);
+        byte[] encoded =Nucleotides.encodeWithGapSentientals(sut, expectedGlyphs);
         assertEquals("did not decode final base of "+finalBase + " correctly",
                 expectedGlyphs, decode(encoded));
     }
@@ -95,20 +95,20 @@ public class TestBasicNucleotideCodec {
     
     @Test
     public void noBases(){
-        byte[] encoded = Nucleotides.encode(sut, Collections.<Nucleotide>emptyList());
+        byte[] encoded = Nucleotides.encodeWithGapSentientals(sut, Collections.<Nucleotide>emptyList());
         assertTrue(decode(encoded).isEmpty());
     }
     
     @Test(expected = IndexOutOfBoundsException.class)
     public void getBeyondLengthShouldThrowException(){
     	 List<Nucleotide> nucleotides = Nucleotides.parse("ACGTACGT");
-         byte[] actual =Nucleotides.encode(sut, nucleotides);
+         byte[] actual =Nucleotides.encodeWithGapSentientals(sut, nucleotides);
          sut.decode(actual, 10);
     }
     @Test(expected = IndexOutOfBoundsException.class)
     public void negativeOffsetShouldThrowException(){
     	 List<Nucleotide> nucleotides = Nucleotides.parse("ACGTACGT");
-         byte[] actual =Nucleotides.encode(sut, nucleotides);
+         byte[] actual =Nucleotides.encodeWithGapSentientals(sut, nucleotides);
          sut.decode(actual, -1);
     }
     
@@ -126,7 +126,7 @@ public class TestBasicNucleotideCodec {
     }
 	private void assertIterateCorrectly(List<Nucleotide> list, Range range) {
 		Iterator<Nucleotide> expected = list.iterator();
-		byte[] bytes =Nucleotides.encode(sut, list);
+		byte[] bytes =Nucleotides.encodeWithGapSentientals(sut, list);
 		Iterator<Nucleotide> actual = sut.iterator(bytes, range);
 		for(int i=0; i<range.getBegin(); i++){
 			expected.next();
@@ -147,12 +147,12 @@ public class TestBasicNucleotideCodec {
 	
 	@Test
 	public void evenToString(){
-		byte[] encodedBytes = Nucleotides.encode(sut, evenBases);
+		byte[] encodedBytes = Nucleotides.encodeWithGapSentientals(sut, evenBases);
 		assertEquals("ACGTACGTWS-NACGT", sut.toString(encodedBytes).toString());
 	}
 	@Test
 	public void oddToString(){
-		byte[] encodedBytes = Nucleotides.encode(sut, oddBases);
+		byte[] encodedBytes = Nucleotides.encodeWithGapSentientals(sut, oddBases);
 		assertEquals("ACGTACGTWS-NACGTA", sut.toString(encodedBytes).toString());
 	}
 	
