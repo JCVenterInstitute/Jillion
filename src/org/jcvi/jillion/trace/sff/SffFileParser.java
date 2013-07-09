@@ -308,7 +308,7 @@ public abstract class SffFileParser {
 		}
 	}
 	
-	private static class FileBasesSffParser extends SffFileParser{
+	private static final class FileBasesSffParser extends SffFileParser{
 		private final File sffFile;
 
 		/**

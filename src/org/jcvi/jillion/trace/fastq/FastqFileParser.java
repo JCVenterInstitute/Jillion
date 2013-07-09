@@ -198,7 +198,7 @@ public abstract class FastqFileParser {
 
 	}
 	
-	private static abstract class AbstractFastqVisitorCallback implements FastqVisitorCallback{
+	private abstract static class AbstractFastqVisitorCallback implements FastqVisitorCallback{
 		private final ParserState parserState;
 		
 		

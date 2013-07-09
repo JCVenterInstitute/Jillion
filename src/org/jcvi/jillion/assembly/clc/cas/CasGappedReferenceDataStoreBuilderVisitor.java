@@ -322,18 +322,18 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 
 		 private final DataStore<NucleotideSequence> delegate;
 		 private final String[] refIndexToIdMap;
-		 private final Map<String, Long> Id2IndexMap;
+		 private final Map<String, Long> id2IndexMap;
 		 
 		public CasGappedReferenceDataStoreImpl(
 				DataStore<NucleotideSequence> delegate,
 				String[] refIndexToIdMap) {
 			this.delegate = delegate;
 			this.refIndexToIdMap = refIndexToIdMap;
-			Id2IndexMap = new HashMap<String, Long>(MapUtil.computeMinHashMapSizeWithoutRehashing(refIndexToIdMap.length));
+			id2IndexMap = new HashMap<String, Long>(MapUtil.computeMinHashMapSizeWithoutRehashing(refIndexToIdMap.length));
 			for(int i=0; i< refIndexToIdMap.length; i++){
 				String id = refIndexToIdMap[i];
 				if(id !=null){
-					Id2IndexMap.put(id, Long.valueOf(i));
+					id2IndexMap.put(id, Long.valueOf(i));
 				}
 			}
 			
@@ -341,7 +341,7 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 
 		@Override
 		public Long getIndexById(String id) {
-			return Id2IndexMap.get(id);
+			return id2IndexMap.get(id);
 		}
 
 		@Override

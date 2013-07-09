@@ -1523,7 +1523,7 @@ public abstract class AsmFileParser {
         
     }
     
-    private static abstract class CallBack implements AsmVisitorCallback{
+    private abstract static class CallBack implements AsmVisitorCallback{
     	private final AtomicBoolean keepParsing;
 
 		public CallBack(AtomicBoolean keepParsing) {

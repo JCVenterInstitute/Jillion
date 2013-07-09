@@ -154,8 +154,8 @@ public class BasicChromatogram implements Chromatogram {
         final Chromatogram other = (Chromatogram) obj;
 
         return 
-        		id.equals(other.getId()) && 
-        		ObjectsUtil.nullSafeEquals(getNucleotideSequence(), other.getNucleotideSequence())
+        		id.equals(other.getId()) 
+        		&& ObjectsUtil.nullSafeEquals(getNucleotideSequence(), other.getNucleotideSequence())
         && ObjectsUtil.nullSafeEquals(getQualitySequence(), other.getQualitySequence())
         		&& ObjectsUtil.nullSafeEquals(getPeakSequence(), other.getPeakSequence())
         && ObjectsUtil.nullSafeEquals(getChannelGroup(), other.getChannelGroup())

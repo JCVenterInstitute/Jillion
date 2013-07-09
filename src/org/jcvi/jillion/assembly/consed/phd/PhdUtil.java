@@ -44,12 +44,25 @@ public final class PhdUtil {
 	private PhdUtil(){
 		//can not instantiate
 	}
-    
-	public synchronized static Date parseReadTagDate(String dateString) throws ParseException{
+    /**
+     * Parse the given Phd formatted date string into a {@link Date}.
+     * @param dateString the date string to parse;
+     * can not be null.
+     * @return a new Date; will never be null.
+     * @throws ParseException if the date String is in the 
+     * wrong format.
+     */
+	public static synchronized Date parseReadTagDate(String dateString) throws ParseException{
 		return PHD_TAG_DATE_FORMATTER.parse(dateString);
 	}
-	
-	public synchronized static String formatReadTagDate(Date date){
+	/**
+	 * Format the given date into the String
+	 * representation used by Phd tags.
+	 * @param date the date to format;
+	 * can not be null.
+	 * @return a new String will never be null or empty.
+	 */
+	public static synchronized String formatReadTagDate(Date date){
 		return PHD_TAG_DATE_FORMATTER.format(date);
 	}
     /**

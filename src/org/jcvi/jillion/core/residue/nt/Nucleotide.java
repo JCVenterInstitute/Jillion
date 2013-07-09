@@ -166,6 +166,8 @@ public enum Nucleotide implements Residue {
 								break;
     		case Thymine : ret = Adenine;
     						break;
+			default : //can't happen 
+				throw new IllegalStateException("a new nucleotide ordinal has been added" + this);
     	}
        return ret;
     }

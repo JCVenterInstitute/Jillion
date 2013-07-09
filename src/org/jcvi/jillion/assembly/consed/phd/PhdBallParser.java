@@ -464,7 +464,7 @@ public abstract class PhdBallParser {
 
 	}
 	
-	private static class FileBasedPhdBallParser extends PhdBallParser{
+	private static final class FileBasedPhdBallParser extends PhdBallParser{
 		private final File phdBall;
 		
 		private FileBasedPhdBallParser(File phdBall) throws FileNotFoundException{

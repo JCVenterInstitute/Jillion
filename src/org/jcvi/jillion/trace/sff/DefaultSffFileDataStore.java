@@ -33,7 +33,7 @@ import org.jcvi.jillion.core.datastore.DataStoreFilters;
 * for large sff files.
 * @author dkatzel
 */
-class DefaultSffFileDataStore {
+final class DefaultSffFileDataStore {
 
 	private DefaultSffFileDataStore(){
 		//can not instantiate

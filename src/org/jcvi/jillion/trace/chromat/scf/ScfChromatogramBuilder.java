@@ -189,8 +189,8 @@ public final class ScfChromatogramBuilder implements Builder<ScfChromatogram>{
      * @param deletionConfidence the deletionConfidence to set
      */
     public ScfChromatogramBuilder deletionConfidence(byte[] deletionConfidence) {
-        this.deletionConfidence = deletionConfidence ==null?null:
-        	new QualitySequenceBuilder(deletionConfidence).build();
+        this.deletionConfidence = deletionConfidence ==null?null
+        	: new QualitySequenceBuilder(deletionConfidence).build();
         
         return this;
     }

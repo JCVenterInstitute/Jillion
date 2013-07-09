@@ -48,7 +48,7 @@ import org.jcvi.jillion.trace.sff.SffFileParserCallback.SffFileMemento;
  * @author dkatzel
  *
  */
-class CompletelyParsedIndexedSffFileDataStore {
+final class CompletelyParsedIndexedSffFileDataStore {
 	
 	private CompletelyParsedIndexedSffFileDataStore(){
 		//can not instantiate
