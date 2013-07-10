@@ -914,22 +914,40 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @return this.
      */
     public NucleotideSequenceBuilder ungap(){
-        final int numGaps = codecDecider.getNumberOfGaps();
-        if(numGaps>0){
-        	BitSet newBits = new BitSet(tail);
-            int newOffset=0;
-            for(int oldOffset=0; oldOffset<tail; oldOffset+=NUM_BITS_PER_VALUE){
-            	byte ordinal = getNucleotideOrdinalFor(oldOffset);
-            	if(ordinal !=GAP_VALUE){
-            		setBitsFor(newBits, newOffset, ordinal);
-            		newOffset+=NUM_BITS_PER_VALUE;
-            	}                
-            }
-           bits = newBits;
-           tail = newOffset;
-           codecDecider.ungap();
-        }
-        return this;
+		final int numGaps = codecDecider.getNumberOfGaps();
+		// if we have no gaps then we can short circuit
+		// and do nothing
+		if (numGaps == 0) {
+			return this;
+		}
+		// bulk copy all bits that aren't
+		// for the gaps
+		Iterator<Integer> gapIterator = codecDecider.gapOffsets.iterator();
+		int oldOffset = 0;
+		int newOffset = 0;
+		BitSet newBits = new BitSet(bits.length());
+		while (gapIterator.hasNext()) {
+			int nextGapOffset = gapIterator.next().intValue() * NUM_BITS_PER_VALUE;
+			for (; oldOffset < nextGapOffset; oldOffset++) {
+				if (bits.get(oldOffset)) {
+					newBits.set(newOffset);
+				}
+				newOffset++;
+			}
+			// skip gap
+			oldOffset += NUM_BITS_PER_VALUE;
+		}
+		// fill in rest of bits after the gaps
+		for (; oldOffset < tail; oldOffset++) {
+			if (bits.get(oldOffset)) {
+				newBits.set(newOffset);
+			}
+			newOffset++;
+		}
+		bits = newBits;
+		tail = newOffset;
+		codecDecider.ungap();
+		return this;
     }
 
     /**
@@ -1105,16 +1123,29 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         	gapOffsets.reverse();
         }
         
-        private void delete(GrowableIntArray array, int startOffset, int[] gapsToDelete){
-
+        private void delete(GrowableIntArray array, int startOffset, int[] gapsToDelete, int lengthDeleted){
+        	
 			for(int i=0; i<gapsToDelete.length; i++){
 				array.sortedRemove(gapsToDelete[i]+startOffset);				
+			}
+			
+			//shift all downstream offsets accordingly
+			int lastGap = startOffset+lengthDeleted-1;
+			int remainingGapLength = array.getCurrentLength();
+			//we know that we won't have to shift any offsets
+			//upstream of the deleted region
+			//return of binarySearch is guaranteed to be
+			//negative (because we would have deleted it above
+			for(int i=-array.binarySearch(lastGap) -1; i<remainingGapLength; i++){
+				if(array.get(i)> lastGap){
+					array.replace(i, array.get(i) - lengthDeleted);
+				}
 			}
         }
         
         public void delete(int startOffset, NewValues newValues) {
-        	delete(gapOffsets, startOffset, newValues.getGapOffsets().toArray());
-        	delete(nOffsets, startOffset, newValues.getNOffsets().toArray());
+        	delete(gapOffsets, startOffset, newValues.getGapOffsets().toArray(), newValues.getLength());
+        	delete(nOffsets, startOffset, newValues.getNOffsets().toArray(),newValues.getLength());
         	
 			currentLength -= newValues.getLength();
 			numberOfNonNAmbiguities -= newValues.getnumberOfNonNAmiguities();

@@ -21,10 +21,14 @@
 package org.jcvi.jillion.core.util;
 
 import org.jcvi.jillion.core.util.iter.TestAbstractBlockingClosableIteratorExceptions;
+import org.jcvi.jillion.core.util.iter.TestByteArrayIterator;
 import org.jcvi.jillion.core.util.iter.TestChainedIterator;
 import org.jcvi.jillion.core.util.iter.TestEmptyIterator;
+import org.jcvi.jillion.core.util.iter.TestIntArrayIterator;
+import org.jcvi.jillion.core.util.iter.TestLongArrayIterator;
 import org.jcvi.jillion.core.util.iter.TestPeekableIterator;
 import org.jcvi.jillion.core.util.iter.TestPeekableStreamingIterator;
+import org.jcvi.jillion.core.util.iter.TestShortArrayIterator;
 import org.jcvi.jillion.core.util.iter.TestStreamingIterator;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -59,7 +63,13 @@ import org.junit.runners.Suite.SuiteClasses;
         TestGrowableByteArray.class,
         TestGrowableShortArray.class,
         TestGrowableIntArray.class,
-        TestGrowableLongArray.class
+        TestGrowableLongArray.class,
+        
+        TestByteArrayIterator.class,
+        TestShortArrayIterator.class,
+        TestIntArrayIterator.class,
+        TestLongArrayIterator.class
+        
     }
     )
 public class AllUtilUnitTests {

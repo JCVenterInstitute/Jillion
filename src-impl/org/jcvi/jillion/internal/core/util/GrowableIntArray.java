@@ -22,8 +22,10 @@ package org.jcvi.jillion.internal.core.util;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
 /**
  * A {@code GrowableIntArray} is a utility class
  * that wraps a int array that will dynamically
@@ -36,7 +38,7 @@ import org.jcvi.jillion.core.Range;
  * @author dkatzel
  *
  */
-public final class GrowableIntArray {
+public final class GrowableIntArray implements Iterable<Integer>{
 	/**
 	 * The current length of valid data
 	 * this is not the same as the length
@@ -366,5 +368,9 @@ public final class GrowableIntArray {
 	 */
 	public void clear(){
 		this.currentLength=0;
+	}
+	@Override
+	public Iterator<Integer> iterator() {
+		return PrimitiveArrayIterators.create(data, currentLength);
 	}
 }
