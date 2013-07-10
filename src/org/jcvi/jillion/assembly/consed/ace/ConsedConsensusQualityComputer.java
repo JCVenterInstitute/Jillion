@@ -204,7 +204,7 @@ final class ConsedConsensusQualityComputer {
 		    			int consensusOffset = (int)(i+start);
 		    			if(notAGap(consensusGapsArray, consensusOffset) 
 		    					&& readMatchesWindow(consensusGapsArray, consensusLength, read, start, differenceArray, i)){
-		    				addQualityToConsensusConsideratino(
+		    				addQualityToConsensusConsideration(
 									forwardQualitiesTowardsConsensus,
 									reverseQualitiesTowardsConsensus, start,
 									dir, qual, consensusOffset);			    			
@@ -225,7 +225,7 @@ final class ConsedConsensusQualityComputer {
     		IOUtil.closeAndIgnoreErrors(iter);
     	}
     }
-	private static void addQualityToConsensusConsideratino(
+	private static void addQualityToConsensusConsideration(
 			List<List<QualityPosition>> forwardQualitiesTowardsConsensus,
 			List<List<QualityPosition>> reverseQualitiesTowardsConsensus,
 			long start, Direction dir, PhredQuality qual, int consensusOffset) {
