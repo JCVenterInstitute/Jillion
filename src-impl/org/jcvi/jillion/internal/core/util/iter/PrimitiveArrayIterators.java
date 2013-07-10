@@ -52,16 +52,20 @@ public final class PrimitiveArrayIterators {
 	 * is longer than the given array.
 	 */
 	public static Iterator<Integer> create(int[] array, int length){
-		if(length > array.length){
+		int arrayLength = array.length;
+		validateParameters(length, arrayLength);
+		if(length==0){
+			return IteratorUtil.createEmptyIterator();
+		}
+		return new IntIterator(array,0, length-1);
+	}
+	public static void validateParameters(int length, int arrayLength) {
+		if(length > arrayLength){
 			throw new IllegalArgumentException("given length must be <= array.length");
 		}
 		if(length<0){
 			throw new IllegalArgumentException("length must be >=0");
 		}
-		if(length==0){
-			return IteratorUtil.createEmptyIterator();
-		}
-		return new IntIterator(array,0, length-1);
 	}
 	/**
 	 * Create a new Iterator that will start
@@ -83,16 +87,19 @@ public final class PrimitiveArrayIterators {
 	 * or end are out of bounds of the array.
 	 */
 	public static Iterator<Integer> create(int[] array, int start, int end){
-		if(start < 0 || start >= array.length){
-			throw new ArrayIndexOutOfBoundsException("start " + start + " array length = " + array.length);
+		validateParameters(start, end, array.length);
+		return new IntIterator(array,start, end);
+	}
+	public static void validateParameters(int start, int end, int arrayLength) {
+		if(start < 0 || start >= arrayLength){
+			throw new ArrayIndexOutOfBoundsException("start " + start + " array length = " + arrayLength);
 		}
-		if(end < 0 || end >= array.length){
-			throw new ArrayIndexOutOfBoundsException("end " + end +" array length = " + array.length);
+		if(end < 0 || end >= arrayLength){
+			throw new ArrayIndexOutOfBoundsException("end " + end +" array length = " + arrayLength);
 		}
 		if(start >end){
 			throw new IllegalArgumentException("start > end" + start + "  " + end );
 		}
-		return new IntIterator(array,start, end);
 	}
 	
 	/**
@@ -121,12 +128,8 @@ public final class PrimitiveArrayIterators {
 	 * is longer than the given array.
 	 */
 	public static Iterator<Byte> create(byte[] array, int length){
-		if(length > array.length){
-			throw new IllegalArgumentException("given length must be <= array.length");
-		}
-		if(length<0){
-			throw new IllegalArgumentException("length must be >=0");
-		}
+		int arrayLength = array.length;
+		validateParameters(length, arrayLength);
 		if(length==0){
 			return IteratorUtil.createEmptyIterator();
 		}
@@ -152,15 +155,7 @@ public final class PrimitiveArrayIterators {
 	 * or end are out of bounds of the array.
 	 */
 	public static Iterator<Byte> create(byte[] array, int start, int end){
-		if(start < 0 || start >= array.length){
-			throw new ArrayIndexOutOfBoundsException("start " + start + " array length = " + array.length);
-		}
-		if(end < 0 || end >= array.length){
-			throw new ArrayIndexOutOfBoundsException("end " + end +" array length = " + array.length);
-		}
-		if(start >end){
-			throw new IllegalArgumentException("start > end" + start + "  " + end );
-		}
+		validateParameters(start, end, array.length);
 		return new ByteIterator(array,start, end);
 	}
 	
@@ -190,12 +185,8 @@ public final class PrimitiveArrayIterators {
 	 * is longer than the given array.
 	 */
 	public static Iterator<Short> create(short[] array, int length){
-		if(length > array.length){
-			throw new IllegalArgumentException("given length must be <= array.length");
-		}
-		if(length<0){
-			throw new IllegalArgumentException("length must be >=1");
-		}
+		int arrayLength = array.length;
+		validateParameters(length,arrayLength);
 		if(length==0){
 			return IteratorUtil.createEmptyIterator();
 		}
@@ -221,15 +212,7 @@ public final class PrimitiveArrayIterators {
 	 * or end are out of bounds of the array.
 	 */
 	public static Iterator<Short> create(short[] array, int start, int end){
-		if(start < 0 || start >= array.length){
-			throw new ArrayIndexOutOfBoundsException("start " + start + " array length = " + array.length);
-		}
-		if(end < 0 || end >= array.length){
-			throw new ArrayIndexOutOfBoundsException("end " + end +" array length = " + array.length);
-		}
-		if(start >end){
-			throw new IllegalArgumentException("start > end" + start + "  " + end );
-		}
+		validateParameters(start, end, array.length);
 		return new ShortIterator(array,start, end);
 	}
 	
@@ -259,12 +242,8 @@ public final class PrimitiveArrayIterators {
 	 * is longer than the given array.
 	 */
 	public static Iterator<Long> create(long[] array, int length){
-		if(length > array.length){
-			throw new IllegalArgumentException("given length must be <= array.length");
-		}
-		if(length<0){
-			throw new IllegalArgumentException("length must be >=0");
-		}
+		int arrayLength = array.length;
+		validateParameters(length, arrayLength);
 		if(length==0){
 			return IteratorUtil.createEmptyIterator();
 		}
@@ -290,15 +269,7 @@ public final class PrimitiveArrayIterators {
 	 * or end are out of bounds of the array.
 	 */
 	public static Iterator<Long> create(long[] array, int start, int end){
-		if(start < 0 || start >= array.length){
-			throw new ArrayIndexOutOfBoundsException("start " + start + " array length = " + array.length);
-		}
-		if(end < 0 || end >= array.length){
-			throw new ArrayIndexOutOfBoundsException("end " + end +" array length = " + array.length);
-		}
-		if(start >end){
-			throw new IllegalArgumentException("start > end" + start + "  " + end );
-		}
+		validateParameters(start, end, array.length);
 		return new LongIterator(array,start, end);
 	}
 	
