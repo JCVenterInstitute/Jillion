@@ -301,8 +301,10 @@ public class TestNucleotideSequenceBuilder {
               .delete(Range.of(2,8)) //TCA-ACGTTCGA
               .append("GGGGG") //TCA-ACGTTCGAGGGGG
               .ungap() //TCAACGTTCGAGGGGG
+              
               .reverseComplement(); //CCCCCTCGAACGTTGA
-          assertEquals("CCCCCTCGAACGTTGA",sut.toString());
+         assertEquals("CCCCCTCGAACGTTGA",sut.toString());
+           //   assertEquals("TCAACGTTCGAGGGGG",sut.toString());
     }
     
     @Test

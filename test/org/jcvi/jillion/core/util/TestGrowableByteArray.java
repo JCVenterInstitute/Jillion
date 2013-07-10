@@ -28,6 +28,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.jillion.core.Range;
@@ -425,5 +426,20 @@ public class TestGrowableByteArray {
 		assertEquals(2,sut.sortedInsert((byte)30));
 		assertArrayEquals(new byte[]{10, 20,30,30,35, 40,50}, sut.toArray());
 
+	}
+	
+	@Test
+	public void iterator(){
+		GrowableByteArray sut = new GrowableByteArray(new byte[]{10, 20,30,30,35, 40,50});
+		
+		Iterator<Byte> expected = Arrays.asList((byte)10,(byte) 20,(byte)30,(byte)30,(byte)35,(byte) 40, (byte)50).iterator();
+		
+		Iterator<Byte> actual = sut.iterator();
+		
+		while(expected.hasNext()){
+			assertTrue(actual.hasNext());
+			assertEquals(expected.next(), actual.next());
+		}
+		assertFalse(actual.hasNext());
 	}
 }

@@ -47,8 +47,7 @@ public final class ArrayUtil {
 		//can not instantiate
 	}
 	
-	private static final class IntArrayList extends AbstractList<Integer>
-	implements RandomAccess {
+	private static final class IntArrayList extends AbstractList<Integer> implements RandomAccess {
 
 		private final int[] array;
 		
@@ -134,4 +133,6 @@ public final class ArrayUtil {
             }
 		
 	}
+	
+	
 }
