@@ -88,7 +88,7 @@ public class NextGenReferenceConsensusRecaller implements ConsensusCaller {
 		ConsensusResult majorityBase =getMajorityBase(slice);
 		Nucleotide originalConsensus= slice.getConsensusCall();
 		if(majorityBase.getConsensus().isGap() && !originalConsensus.isGap()){
-			return handleDeletion(slice, majorityBase);
+			return handleDeletion(slice, majorityBase, originalConsensus);
 		}else if(!majorityBase.getConsensus().isGap() && originalConsensus.isGap()){
 			return handleInsertion(slice,majorityBase);
 		}
@@ -123,7 +123,7 @@ public class NextGenReferenceConsensusRecaller implements ConsensusCaller {
 	}
 
 	private ConsensusResult handleDeletion(Slice slice,
-			ConsensusResult majorityBase) {
+			ConsensusResult majorityBase, Nucleotide originalConsensus) {
 		SliceBuilder all = new SliceBuilder(slice);
 		Slice forwardSlice = all.copy().filter(FORWARD_FILTER).build();		
 		Slice reverseSlice = all.copy().filter(REVERSE_FILTER).build();
@@ -141,8 +141,18 @@ public class NextGenReferenceConsensusRecaller implements ConsensusCaller {
 		final Nucleotide recalledConsensus;
 		if(forwardMajority.getConsensus().isGap()){
 			recalledConsensus = reverseMajority.getConsensus();				
-		}else{
+		}else if(reverseMajority.getConsensus().isGap()){
 			recalledConsensus = forwardMajority.getConsensus();
+		}else{
+			//do we have the original base?
+			if(forwardMajority.getConsensus().equals(originalConsensus)){
+				recalledConsensus = forwardMajority.getConsensus();
+			}else if(reverseMajority.getConsensus().equals(originalConsensus)){
+				recalledConsensus = reverseMajority.getConsensus();
+			}else{
+				//none match?
+				return majorityBase;
+			}
 		}
 		int qualScore = computeCumlativeQualityConsensus(slice, recalledConsensus);
 		return new DefaultConsensusResult(recalledConsensus, qualScore);

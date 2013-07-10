@@ -24,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.TestSliceUtil;
-import org.jcvi.jillion.assembly.util.consensus.NextGenReferenceConsensusRecaller;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.junit.Test;
@@ -151,6 +150,20 @@ public class TestNextGenReferenceConsensusRecaller {
 											Direction.FORWARD,Direction.FORWARD);
 		
 		assertEquals(Nucleotide.Gap, sut.callConsensus(slice).getConsensus());
+	}
+	/**
+	 * Regression test of actual bug found in consensus recall
+	 * of sanger-only low coverage data where
+	 * there were gaps in each direction to make a majority of gap
+	 * but each underlying strand had a different non-gap majority.
+	 */
+	@Test
+	public void deletionEachStrandCallsSomethingElseShouldGoWithDirectionThatMatches(){
+		Slice slice = TestSliceUtil.createSliceFrom("C", "C-a-",
+				new byte[]{44,10,10, 7}, 
+				Direction.REVERSE,Direction.REVERSE, Direction.FORWARD, Direction.FORWARD);
+		
+		assertEquals(Nucleotide.Cytosine, sut.callConsensus(slice).getConsensus());
 	}
 	
 	
