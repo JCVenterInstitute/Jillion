@@ -346,10 +346,11 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
          }
     	 int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads());
         Map<String,TasmAssembledRead> reads = new LinkedHashMap<String, TasmAssembledRead>(capacity);
-        for(AssembledReadBuilder<TasmAssembledRead> builder : getAllAssembledReadBuilders()){              
-            reads.put(builder.getId(),builder.build());
+        NucleotideSequence consensus = getConsensusBuilder().build();
+        for(AssembledReadBuilder<TasmAssembledRead> builder : getAllAssembledReadBuilders()){
+            reads.put(builder.getId(),builder.build(consensus));
         }
-        return new DefaultTasmContig(this, reads, avgCoverage, numberOfReads);
+        return new DefaultTasmContig(this, consensus,reads, avgCoverage, numberOfReads);
     }
 
     
@@ -360,12 +361,11 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
     protected TasmAssembledReadBuilder createPlacedReadBuilder(
             TasmAssembledRead read) {
         TasmAssembledReadBuilder builder =DefaultTasmAssembledRead.createBuilder(
-                getConsensusBuilder().build(), 
                 read.getId(), 
                 read.getNucleotideSequence().toString(), 
                 (int)read.getGappedStartOffset(), 
                 read.getDirection(), 
-                read.getReadInfo().getValidRange(),
+                read.getReadInfo().getValidRange(), 
                 read.getReadInfo().getUngappedFullLength());
 
         return builder;
@@ -378,12 +378,11 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
             String id, int offset, Range validRange, String basecalls,
             Direction dir, int fullUngappedLength) {
         return DefaultTasmAssembledRead.createBuilder(
-                getConsensusBuilder().build(), 
                 id, 
                 basecalls, 
                 offset, 
                 dir, 
-                validRange,
+                validRange, 
                 fullUngappedLength);
     }
     /**
@@ -412,10 +411,10 @@ public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, 
          * @param placedReads
          * @param circular
          */
-        private DefaultTasmContig(TasmContigBuilder builder, Map<String,TasmAssembledRead> reads,
+        private DefaultTasmContig(TasmContigBuilder builder, NucleotideSequence consensus, Map<String,TasmAssembledRead> reads,
         		Double userProvidedAvgCoverage, Integer userProvidedNumberOfReads) {
             contig = new DefaultContig<TasmAssembledRead>(builder.getContigId(),
-            		builder.getConsensusBuilder().build(),reads);
+            		consensus,reads);
             this.numberOfReads = userProvidedNumberOfReads ==null ? (int) contig.getNumberOfReads() : userProvidedNumberOfReads;
             if(userProvidedAvgCoverage ==null){
 	            if(numberOfReads >0){

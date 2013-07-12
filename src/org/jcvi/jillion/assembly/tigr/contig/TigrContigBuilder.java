@@ -62,8 +62,8 @@ public class TigrContigBuilder extends AbstractContigBuilder<TigrContigRead, Tig
 	protected TigrContigReadBuilder createPlacedReadBuilder(
 			String id, int offset, Range validRange, String basecalls,
 			Direction dir, int fullUngappedLength) {
-		return new DefaultTigrContigReadBuilder(getConsensusBuilder().build(),
-				id, offset, validRange, basecalls, dir, fullUngappedLength);
+		return new DefaultTigrContigReadBuilder(id,
+				offset, validRange, basecalls, dir, fullUngappedLength);
 	}
 
 	@Override
@@ -73,11 +73,13 @@ public class TigrContigBuilder extends AbstractContigBuilder<TigrContigRead, Tig
 	        }
 		 int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads());
 		Map<String,TigrContigRead> reads = new LinkedHashMap<String,TigrContigRead>(capacity);
-        for(AssembledReadBuilder<TigrContigRead> builder : getAllAssembledReadBuilders()){          
-            reads.put(builder.getId(),builder.build());
+		  NucleotideSequence consensus = getConsensusBuilder().build();
+        for(AssembledReadBuilder<TigrContigRead> builder : getAllAssembledReadBuilders()){   
+            reads.put(builder.getId(),builder.build(consensus));
         }
-        return new DefaultTigrContig(getContigId(),
-        		getConsensusBuilder().build(),
+      
+		return new DefaultTigrContig(getContigId(),
+        		consensus,
                 reads);
 	}
 	
@@ -194,23 +196,17 @@ public class TigrContigBuilder extends AbstractContigBuilder<TigrContigRead, Tig
 		private DefaultTigrContigReadBuilder(AssembledReadBuilder<AssembledRead> copy){
 			this.builder = copy.copy();
 		}
-		public DefaultTigrContigReadBuilder(NucleotideSequence currentConsensus,String id, int offset, Range validRange, String basecalls,
-			Direction dir, int fullUngappedLength){
+		public DefaultTigrContigReadBuilder(String id,int offset, Range validRange, String basecalls, Direction dir,
+			int fullUngappedLength){
 			builder = DefaultAssembledRead.createBuilder(
-					currentConsensus, 
-                    id, 
+					id, 
                     basecalls, 
                     offset, 
                     dir, 
-                    validRange,
+                    validRange, 
                     fullUngappedLength);
 		}
-		@Override
-		public TigrContigReadBuilder reference(
-				NucleotideSequence reference, int newOffset) {
-			builder.reference(reference, newOffset);
-			return this;
-		}
+		
 
 		@Override
 		public long getBegin() {
@@ -250,8 +246,8 @@ public class TigrContigBuilder extends AbstractContigBuilder<TigrContigRead, Tig
 		}
 
 		@Override
-		public TigrContigRead build() {
-			return new DefaultTigrContigRead(builder.build());
+		public TigrContigRead build(NucleotideSequence consensus) {
+			return new DefaultTigrContigRead(builder.build(consensus));
 		}
 
 		@Override

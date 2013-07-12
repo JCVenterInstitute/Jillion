@@ -23,10 +23,6 @@ package org.jcvi.jillion.assembly.consed.ace;
 import java.util.Date;
 
 import org.jcvi.jillion.assembly.AbstractTestAssembledReadBuilder;
-import org.jcvi.jillion.assembly.consed.ace.AceAssembledRead;
-import org.jcvi.jillion.assembly.consed.ace.AceAssembledReadBuilder;
-import org.jcvi.jillion.assembly.consed.ace.DefaultAceAssembledRead;
-import org.jcvi.jillion.assembly.consed.ace.PhdInfo;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -35,14 +31,15 @@ public class TestDefaultAceAssembledReadBuilder extends AbstractTestAssembledRea
 	private final PhdInfo phdInfo = new PhdInfo("traceName", "phdName", new Date());
 	@Override
 	protected AceAssembledReadBuilder createReadBuilder(
-			NucleotideSequence reference, String readId,
-			NucleotideSequence validBases, int offset, Direction dir,
-			Range clearRange, int ungappedFullLength) {
-		return DefaultAceAssembledRead.createBuilder(
-				reference, readId, validBases, 
-				offset, dir, clearRange,
-				phdInfo,
+			String readId, NucleotideSequence validBases,
+			int offset, Direction dir, Range clearRange,
+			int ungappedFullLength) {
+		AceAssembledReadBuilder builder= DefaultAceAssembledRead.createBuilder(
+				readId, validBases, offset, 
+				dir, clearRange, phdInfo,
 				ungappedFullLength);
+
+		return builder;
 	}
 
 }

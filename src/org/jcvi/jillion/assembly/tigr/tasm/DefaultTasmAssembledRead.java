@@ -40,11 +40,10 @@ final class DefaultTasmAssembledRead implements TasmAssembledRead{
     private final AssembledRead delegate;
     
     
-    public static TasmAssembledReadBuilder createBuilder(NucleotideSequence reference, 
-            String readId,String validBases,
-            int offset, Direction dir, Range clearRange,
-            int ungappedFullLength){
-        return new Builder(reference, readId, validBases, offset, dir, clearRange, ungappedFullLength);
+    public static TasmAssembledReadBuilder createBuilder(String readId, 
+            String validBases,int offset,
+            Direction dir, Range clearRange, int ungappedFullLength){
+        return new Builder(readId, validBases, offset, dir, clearRange, ungappedFullLength);
     }
 
     /**
@@ -175,11 +174,10 @@ final class DefaultTasmAssembledRead implements TasmAssembledRead{
         private final AssembledReadBuilder<AssembledRead> delegate;
         
         
-        public Builder(NucleotideSequence reference, 
-                String readId,String validBases,
-                int offset, Direction dir, Range clearRange,
-                int ungappedFullLength) {
-            this.delegate = DefaultAssembledRead.createBuilder(reference, readId, validBases, offset, dir, clearRange, ungappedFullLength);
+        public Builder(String readId, 
+                String validBases,int offset,
+                Direction dir, Range clearRange, int ungappedFullLength) {
+            this.delegate = DefaultAssembledRead.createBuilder(readId, validBases, offset, dir, clearRange, ungappedFullLength);
         }
         private Builder(Builder copy){
           	 this.delegate = copy.delegate.copy();
@@ -194,18 +192,7 @@ final class DefaultTasmAssembledRead implements TasmAssembledRead{
    		public TasmAssembledReadBuilder copy() {
    			return new Builder(this);
    		}
-       
-
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public AssembledReadBuilder<TasmAssembledRead> reference(
-                NucleotideSequence reference, int newOffset) {
-            delegate.reference(reference, newOffset);
-            return this;
-        }
-
+     
         /**
         * {@inheritDoc}
         */
@@ -271,8 +258,8 @@ final class DefaultTasmAssembledRead implements TasmAssembledRead{
         * {@inheritDoc}
         */
         @Override
-        public TasmAssembledRead build() {
-            return new DefaultTasmAssembledRead(delegate.build());
+        public TasmAssembledRead build(NucleotideSequence consensus) {
+            return new DefaultTasmAssembledRead(delegate.build(consensus));
         }
 
         /**

@@ -263,7 +263,7 @@ final class DefaultAsmContig implements AsmContig{
                   int offset, Direction dir, Range clearRange,
                   int ungappedFullLength, boolean isSurrogate) {
               asmReadBuilderMap.put(readId, DefaultAsmAssembledRead.createBuilder(
-                      this.fullConsensus, readId, validBases, offset, dir, clearRange, ungappedFullLength, isSurrogate));
+                      readId, validBases, offset, dir, clearRange, ungappedFullLength, isSurrogate));
               return this;
           }
         /**
@@ -402,12 +402,13 @@ final class DefaultAsmContig implements AsmContig{
         	
         	final SliceMap sliceMap;
         	try{
-        	if(qualityDataStore==null){
-        		sliceMap= CompactedSliceMap.create(createStreamingReadIterator(),
-        			mutableConsensus.build(),DEFAULT_QUALITY, qualityValueStrategy);
+        	NucleotideSequence consensus = mutableConsensus.build();
+			if(qualityDataStore==null){
+        		sliceMap= CompactedSliceMap.create(createStreamingReadIterator(consensus),
+        			consensus,DEFAULT_QUALITY, qualityValueStrategy);
         	}else{
-        		sliceMap= CompactedSliceMap.create(createStreamingReadIterator(),
-            			mutableConsensus.build(),qualityDataStore, qualityValueStrategy);
+        		sliceMap= CompactedSliceMap.create(createStreamingReadIterator(consensus),
+            			consensus,qualityDataStore, qualityValueStrategy);
         	}
         	}catch(DataStoreException e){
         		throw new IllegalStateException("error getting quality values from datastore",e);
@@ -424,7 +425,7 @@ final class DefaultAsmContig implements AsmContig{
     	}
         
         
-        private StreamingIterator<AsmAssembledRead> createStreamingReadIterator(){
+        private StreamingIterator<AsmAssembledRead> createStreamingReadIterator(final NucleotideSequence consensus){
         	
         	return IteratorUtil.createStreamingIterator(new Iterator<AsmAssembledRead>() {
         		Iterator<AsmAssembledReadBuilder> builderIterator = asmReadBuilderMap.values().iterator();
@@ -436,7 +437,7 @@ final class DefaultAsmContig implements AsmContig{
 				@Override
 				public AsmAssembledRead next() {
 					//should be able to call build multiple times
-					return builderIterator.next().build();
+					return builderIterator.next().build(consensus);
 				}
 
 				@Override
@@ -457,10 +458,12 @@ final class DefaultAsmContig implements AsmContig{
             }
         	int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads());
             Map<String,AsmAssembledRead> reads = new LinkedHashMap<String,AsmAssembledRead>(capacity);
+            NucleotideSequence consensus = mutableConsensus.build();
             for(AsmAssembledReadBuilder builder : asmReadBuilderMap.values()){
-                reads.put(builder.getId(), builder.build());
+                reads.put(builder.getId(), builder.build(consensus));
             }
-            return new DefaultAsmContig(contigId,mutableConsensus.build(),reads, isDegenerate);
+           
+			return new DefaultAsmContig(contigId,consensus,reads, isDegenerate);
         }
 
         /**

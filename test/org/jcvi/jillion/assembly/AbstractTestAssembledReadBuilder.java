@@ -20,8 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly;
 
-import org.jcvi.jillion.assembly.AssembledRead;
-import org.jcvi.jillion.assembly.AssembledReadBuilder;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
@@ -48,22 +46,20 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 	int initialUngappedFullLength = 8 + initialNonValidLeft+initialNonValidLeft;
 	
 	protected abstract AssembledReadBuilder<R> createReadBuilder(
-			NucleotideSequence reference, String readId, NucleotideSequence validBases,
-                            int offset, Direction dir, Range initialClearRange,
-                            int ungappedFullLength);
+			String readId, NucleotideSequence validBases, int offset,
+                            Direction dir, Range initialClearRange, int ungappedFullLength);
 	@Test
 	public void noChanges(){
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, dir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, dir, initialClearRange, 
 									initialUngappedFullLength);
 		
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							initialReadSequence, 0, dir, 
-							initialClearRange, initialUngappedFullLength)
-							.build();
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, initialReadSequence, 
+							0, dir, initialClearRange, 
+							initialUngappedFullLength)
+							.build(consensus);
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
 	
@@ -72,20 +68,18 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, dir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, dir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		builder.append("ACGT");
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.append("ACGT").build(),
-							0, dir, 
-							new Range.Builder(initialClearRange).expandEnd(4).build(), 
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.append("ACGT").build(), 
+							0,
+							dir, new Range.Builder(initialClearRange).expandEnd(4).build(), 
 							initialUngappedFullLength+4)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -95,20 +89,18 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, dir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, dir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		builder.prepend("ACGT");
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.prepend("ACGT").build(),
-							0, dir, 
-							new Range.Builder(initialClearRange).expandEnd(4).build(), 
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.prepend("ACGT").build(), 
+							0,
+							dir, new Range.Builder(initialClearRange).expandEnd(4).build(), 
 							initialUngappedFullLength+4)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -118,20 +110,18 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, dir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, dir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		builder.insert(4,"ACGT");
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.insert(4,"ACGT").build(),
-							0, dir, 
-							new Range.Builder(initialClearRange).expandEnd(4).build(), 
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.insert(4,"ACGT").build(), 
+							0,
+							dir, new Range.Builder(initialClearRange).expandEnd(4).build(), 
 							initialUngappedFullLength+4)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -141,20 +131,18 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, dir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, dir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		builder.replace(4,Nucleotide.Thymine);
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.replace(4,Nucleotide.Thymine).build(),
-							0, dir, 
-							initialClearRange, 
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.replace(4,Nucleotide.Thymine).build(), 
+							0,
+							dir, initialClearRange, 
 							initialUngappedFullLength)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -163,20 +151,18 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, dir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, dir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		builder.replace(4,Nucleotide.Gap);
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.replace(4,Nucleotide.Gap).build(),
-							0, dir, 
-							new Range.Builder(initialClearRange).contractEnd(1).build(),
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.replace(4,Nucleotide.Gap).build(), 
+							0,
+							dir, new Range.Builder(initialClearRange).contractEnd(1).build(), 
 							initialUngappedFullLength-1)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -186,20 +172,18 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, dir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, dir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		builder.replace(0,Nucleotide.Gap);
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.replace(0,Nucleotide.Gap).build(),
-							0, dir, 
-							new Range.Builder(initialClearRange).contractEnd(1).build(),
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.replace(0,Nucleotide.Gap).build(), 
+							0,
+							dir, new Range.Builder(initialClearRange).contractEnd(1).build(), 
 							initialUngappedFullLength-1)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -208,21 +192,19 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, dir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, dir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		Range deleteRange = Range.of(CoordinateSystem.RESIDUE_BASED,1,4);
 		builder.delete(deleteRange);
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.delete(deleteRange).build(),
-							0, dir, 
-							new Range.Builder(initialClearRange).contractEnd(4).build(), 
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.delete(deleteRange).build(), 
+							0,
+							dir, new Range.Builder(initialClearRange).contractEnd(4).build(), 
 							initialUngappedFullLength-4)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -231,20 +213,18 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 	public void appendGappedSequenceShouldAlsoUpdateClearRangeAndUngappedLength(){
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, dir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, dir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		builder.append("AC-T");
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.append("AC-T").build(),
-							0, dir, 
-							new Range.Builder(initialClearRange).expandEnd(3).build(),
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.append("AC-T").build(), 
+							0,
+							dir, new Range.Builder(initialClearRange).expandEnd(3).build(), 
 							initialUngappedFullLength+3)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -254,20 +234,18 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, dir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, dir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		builder.prepend("AC-T");
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.prepend("AC-T").build(),
-							0, dir, 
-							new Range.Builder(initialClearRange).expandEnd(3).build(),
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.prepend("AC-T").build(), 
+							0,
+							dir, new Range.Builder(initialClearRange).expandEnd(3).build(), 
 							initialUngappedFullLength+3)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -277,20 +255,18 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, dir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, dir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		builder.insert(4,"AC-T");
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.insert(4,"AC-T").build(),
-							0, dir, 
-							new Range.Builder(initialClearRange).expandEnd(3).build(),
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.insert(4,"AC-T").build(), 
+							0,
+							dir, new Range.Builder(initialClearRange).expandEnd(3).build(), 
 							initialUngappedFullLength+3)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -300,19 +276,17 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, dir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, dir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		builder.shift(4);
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							initialReadSequence,
-							4, dir, 
-							initialClearRange, 
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, initialReadSequence, 
+							4,
+							dir, initialClearRange, 
 							initialUngappedFullLength)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -322,23 +296,21 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, dir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, dir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		Range trimRange = Range.of(CoordinateSystem.RESIDUE_BASED, 2, 6);
 		builder.trim(trimRange);
 		
 		
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.trim(trimRange).build(),
-							1, dir, 
-							new Range.Builder(initialClearRange).contractBegin(1).contractEnd(2).build(),
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.trim(trimRange).build(), 
+							1,
+							dir, new Range.Builder(initialClearRange).contractBegin(1).contractEnd(2).build(), 
 							initialUngappedFullLength)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -348,23 +320,21 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, Direction.REVERSE, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, Direction.REVERSE, initialClearRange, 
 									initialUngappedFullLength);
 		
 		Range trimRange = Range.of(CoordinateSystem.RESIDUE_BASED, 2, 6);
 		builder.trim(trimRange);
 		
 		
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.trim(trimRange).build(),
-							1, Direction.REVERSE, 
-							new Range.Builder(initialClearRange).contractEnd(1).contractBegin(2).build(),
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.trim(trimRange).build(), 
+							1,
+							Direction.REVERSE, new Range.Builder(initialClearRange).contractEnd(1).contractBegin(2).build(), 
 							initialUngappedFullLength)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -375,20 +345,18 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, revDir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, revDir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		builder.append("ACGT");
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.append("ACGT").build(),
-							0, revDir, 
-							new Range.Builder(initialClearRange).expandEnd(4).build(), 
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.append("ACGT").build(), 
+							0,
+							revDir, new Range.Builder(initialClearRange).expandEnd(4).build(), 
 							initialUngappedFullLength+4)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -398,20 +366,18 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, revDir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, revDir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		builder.prepend("ACGT");
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.prepend("ACGT").build(),
-							0, revDir, 
-							new Range.Builder(initialClearRange).expandEnd(4).build(), 
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.prepend("ACGT").build(), 
+							0,
+							revDir, new Range.Builder(initialClearRange).expandEnd(4).build(), 
 							initialUngappedFullLength+4)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -421,20 +387,18 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, revDir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, revDir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		builder.insert(4,"ACGT");
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.insert(4,"ACGT").build(),
-							0, revDir, 
-							new Range.Builder(initialClearRange).expandEnd(4).build(), 
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.insert(4,"ACGT").build(), 
+							0,
+							revDir, new Range.Builder(initialClearRange).expandEnd(4).build(), 
 							initialUngappedFullLength+4)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -444,20 +408,18 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, revDir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, revDir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		builder.replace(4,Nucleotide.Thymine);
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.replace(4,Nucleotide.Thymine).build(),
-							0, revDir, 
-							initialClearRange, 
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.replace(4,Nucleotide.Thymine).build(), 
+							0,
+							revDir, initialClearRange, 
 							initialUngappedFullLength)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -466,20 +428,18 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, revDir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, revDir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		builder.replace(4,Nucleotide.Gap);
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.replace(4,Nucleotide.Gap).build(),
-							0, revDir, 
-							new Range.Builder(initialClearRange).contractEnd(1).build(), 
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.replace(4,Nucleotide.Gap).build(), 
+							0,
+							revDir, new Range.Builder(initialClearRange).contractEnd(1).build(), 
 							initialUngappedFullLength-1)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -488,20 +448,18 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, revDir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, revDir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		builder.replace(0,Nucleotide.Gap);
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.replace(0,Nucleotide.Gap).build(),
-							0, revDir, 
-							new Range.Builder(initialClearRange).contractEnd(1).build(), 
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.replace(0,Nucleotide.Gap).build(), 
+							0,
+							revDir, new Range.Builder(initialClearRange).contractEnd(1).build(), 
 							initialUngappedFullLength-1)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -510,21 +468,19 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, revDir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, revDir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		Range deleteRange = Range.of(CoordinateSystem.RESIDUE_BASED,1,4);
 		builder.delete(deleteRange);
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.delete(deleteRange).build(),
-							0, revDir, 
-							new Range.Builder(initialClearRange).contractEnd(4).build(), 
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.delete(deleteRange).build(), 
+							0,
+							revDir, new Range.Builder(initialClearRange).contractEnd(4).build(), 
 							initialUngappedFullLength-4)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -534,20 +490,18 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, revDir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, revDir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		builder.append("AC-T");
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.append("AC-T").build(),
-							0, revDir, 
-							new Range.Builder(initialClearRange).expandEnd(3).build(), 
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.append("AC-T").build(), 
+							0,
+							revDir, new Range.Builder(initialClearRange).expandEnd(3).build(), 
 							initialUngappedFullLength+3)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -557,20 +511,18 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, revDir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, revDir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		builder.prepend("AC-T");
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.prepend("AC-T").build(),
-							0, revDir, 
-							new Range.Builder(initialClearRange).expandEnd(3).build(), 
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.prepend("AC-T").build(), 
+							0,
+							revDir, new Range.Builder(initialClearRange).expandEnd(3).build(), 
 							initialUngappedFullLength+3)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -580,20 +532,18 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, revDir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, revDir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		builder.insert(4,"AC-T");
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							new NucleotideSequenceBuilder(initialReadSequence)
-												.insert(4,"AC-T").build(),
-							0, revDir, 
-							new Range.Builder(initialClearRange).expandEnd(3).build(), 
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, new NucleotideSequenceBuilder(initialReadSequence)
+							.insert(4,"AC-T").build(), 
+							0,
+							revDir, new Range.Builder(initialClearRange).expandEnd(3).build(), 
 							initialUngappedFullLength+3)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
@@ -603,19 +553,17 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		
 		
-		AssembledReadBuilder<R> builder = createReadBuilder(consensus, readId, 
-									initialReadSequence, 0, revDir, 
-									initialClearRange, 
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, initialReadSequence, 
+									0, revDir, initialClearRange, 
 									initialUngappedFullLength);
 		
 		builder.shift(4);
-		R built = builder.build();
-		R expected = createReadBuilder(consensus, readId, 
-							initialReadSequence,
-							4, revDir, 
-							initialClearRange, 
+		R built = builder.build(consensus);
+		R expected = createReadBuilder(readId, initialReadSequence, 
+							4,
+							revDir, initialClearRange, 
 							initialUngappedFullLength)
-							.build();
+							.build(consensus);
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}

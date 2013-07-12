@@ -159,7 +159,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     	this.initialConsensus = initialConsensus;
     	 this.contigId = contigId;
     	 this.mutableConsensus = new NucleotideSequenceBuilder(initialConsensus);
-    	 aceReadBuilderMap = new HashMap<String, AceAssembledReadBuilder>();
+    	 aceReadBuilderMap = new HashMap<String, AceAssembledReadBuilder>(200);
     }
     
     /**
@@ -460,9 +460,9 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
             String readId, NucleotideSequence validBases, int offset,
             Direction dir, Range clearRange, PhdInfo phdInfo,int ungappedFullLength) {
         return DefaultAceAssembledRead.createBuilder(
-                initialConsensus,readId,
-                validBases,
-                offset,dir,clearRange,phdInfo,ungappedFullLength);
+                readId,validBases,
+                offset,
+                dir,clearRange,phdInfo,ungappedFullLength);
     }
     private void adjustContigLeftAndRight(NucleotideSequence validBases, int offset) {
         adjustContigLeft(offset);
@@ -529,8 +529,8 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
 		
         for(AceAssembledReadBuilder aceReadBuilder : aceReadBuilderMap.values()){
         	int newOffset = (int)aceReadBuilder.getBegin() - contigLeft;
-            aceReadBuilder.reference(validConsensus,newOffset);
-            placedReads.add(aceReadBuilder.build());                
+            aceReadBuilder.setStartOffset(newOffset);
+            placedReads.add(aceReadBuilder.build(validConsensus));                
         } 
        
         if(mutableConsensusQualities ==null){

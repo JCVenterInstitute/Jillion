@@ -26,7 +26,6 @@ import org.jcvi.jillion.core.Rangeable;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.core.util.Builder;
 
 /**
  * {@code AssembledReadBuilder} is a {@link Builder}
@@ -38,20 +37,9 @@ import org.jcvi.jillion.core.util.Builder;
  *
  *
  */
-public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable, Builder<R>{
+public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable{
 	
-	
-    /**
-     * Change the reference that this read aligns to and its new
-     * gapped starting offset on this new reference.
-     * @param reference the new reference (or consensus) to align this
-     * read to.
-     * @param newOffset the new gapped start offset of this read
-     * against the new reference in reference coordinate space.
-     * @return this.
-     * @throws NullPointerException if reference is null.
-     */
-    AssembledReadBuilder<R> reference(NucleotideSequence reference, int newOffset);
+
     /**
      * 
     * Get the gapped start offset of this read
@@ -101,13 +89,17 @@ public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable
     int getUngappedFullLength();
     /**
      * 
-    * {@inheritDoc}
-    * <p/>
-    * Creates a new {@link AssembledRead} instance using the current
+    * Creates a new {@link AssembledRead} instance using the
+    * given contig consensus sequence (which must be 
+    * have bases covering all this read's
+    * positions from read's begin to read's end gapped 
+    * offsets)
+    * 
+    * and the  current
     * values given to this builder.
+    * @param contigConsensus the reference
      */
-    @Override
-    R build();
+    R build(NucleotideSequence contigConsensus);
     /**
      * Modify the gapped basecall sequence of this read
      * to change <strong>only the gaps</strong> of the given subsequence.

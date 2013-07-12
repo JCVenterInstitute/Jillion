@@ -219,10 +219,11 @@ public final class DefaultContig<T extends AssembledRead> implements Contig<T>{
               }
         	 int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads());
             Map<String,AssembledRead> reads = new LinkedHashMap<String, AssembledRead>(capacity);
+            NucleotideSequence consensus = getConsensusBuilder().build();
             for(AssembledReadBuilder<AssembledRead> builder : getAllAssembledReadBuilders()){
-                reads.put(builder.getId(), builder.build());
+                reads.put(builder.getId(), builder.build(consensus));
             }
-            return new DefaultContig<AssembledRead>(getContigId(), getConsensusBuilder().build(), reads);
+            return new DefaultContig<AssembledRead>(getContigId(), consensus, reads);
         }
         /**
         * {@inheritDoc}
@@ -231,12 +232,11 @@ public final class DefaultContig<T extends AssembledRead> implements Contig<T>{
         protected AssembledReadBuilder<AssembledRead> createPlacedReadBuilder(
                 AssembledRead read) {
             return DefaultAssembledRead.createBuilder(
-                    getConsensusBuilder().build(), 
                     read.getId(), 
                     read.getNucleotideSequence().toString(), 
                     (int)read.getGappedStartOffset(), 
                     read.getDirection(), 
-                    read.getReadInfo().getValidRange(),
+                    read.getReadInfo().getValidRange(), 
                     read.getReadInfo().getUngappedFullLength());
         }
         /**
@@ -247,12 +247,11 @@ public final class DefaultContig<T extends AssembledRead> implements Contig<T>{
                 String id, int offset, Range validRange, String basecalls,
                 Direction dir, int fullUngappedLength) {
             return DefaultAssembledRead.createBuilder(
-                    getConsensusBuilder().build(), 
                     id, 
                     basecalls, 
                     offset, 
                     dir, 
-                    validRange,
+                    validRange, 
                     fullUngappedLength);
         }
     }
