@@ -24,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.jcvi.jillion.assembly.AssembledRead;
-import org.jcvi.jillion.assembly.tigr.tasm.TasmAssembledReadAdapter;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
@@ -56,9 +55,9 @@ public class TestTigrAssemblerPlacedReadAdapter {
 	
 	@Test
 	public void adaptedReadShouldDelegateAllPlacedReadMethods(){
-		AssembledRead delegate = DefaultAssembledRead.createBuilder(consensus, id, readSequence, offset, 
-		        Direction.FORWARD,validRange, ungappedLength)
-		        .build();
+		AssembledRead delegate = DefaultAssembledRead.createBuilder(id, readSequence, offset, Direction.FORWARD, 
+		        validRange,ungappedLength)
+		        .build(consensus);
 		TasmAssembledReadAdapter sut = new TasmAssembledReadAdapter(delegate);
 		assertCommonGettersCorrect(sut);		
 
@@ -67,9 +66,9 @@ public class TestTigrAssemblerPlacedReadAdapter {
 	}
 	@Test
 	public void reverseReadShouldHaveSwappedSeqLeftandSeqRightAttributes(){
-	    AssembledRead delegate = DefaultAssembledRead.createBuilder(consensus, id, readSequence, offset, 
-                Direction.REVERSE,validRange, ungappedLength)
-                .build();
+	    AssembledRead delegate = DefaultAssembledRead.createBuilder(id, readSequence, offset, Direction.REVERSE, 
+                validRange,ungappedLength)
+                .build(consensus);
 		TasmAssembledReadAdapter sut = new TasmAssembledReadAdapter(delegate);
 	
 		assertEquals(Direction.REVERSE, sut.getDirection());

@@ -21,9 +21,6 @@
 package org.jcvi.jillion.assembly.ca.asm;
 
 import org.jcvi.jillion.assembly.AbstractTestAssembledReadBuilder;
-import org.jcvi.jillion.assembly.ca.asm.AsmAssembledRead;
-import org.jcvi.jillion.assembly.ca.asm.AsmAssembledReadBuilder;
-import org.jcvi.jillion.assembly.ca.asm.DefaultAsmAssembledRead;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -31,14 +28,15 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 public class TestDefaultAsmAssembledReadBuilder extends AbstractTestAssembledReadBuilder<AsmAssembledRead>{
 	@Override
 	protected AsmAssembledReadBuilder createReadBuilder(
-			NucleotideSequence reference, String readId,
-			NucleotideSequence validBases, int offset, Direction dir,
-			Range clearRange, int ungappedFullLength) {
-		return DefaultAsmAssembledRead.createBuilder(
-				reference, readId, validBases.toString(), 
-				offset, dir, clearRange,
-				ungappedFullLength,
+			String readId, NucleotideSequence validBases,
+			int offset, Direction dir, Range clearRange,
+			int ungappedFullLength) {
+		AsmAssembledReadBuilder builder= DefaultAsmAssembledRead.createBuilder(
+				readId, validBases.toString(), offset, 
+				dir, clearRange, ungappedFullLength,
 				false);
+
+		return builder;
 	}
 
 }

@@ -32,13 +32,14 @@ public class TestDefaultAssembledReadBuilder extends AbstractTestAssembledReadBu
 
 	@Override
 	protected AssembledReadBuilder<AssembledRead> createReadBuilder(
-			NucleotideSequence reference, String readId,
-			NucleotideSequence validBases, int offset, Direction dir,
-			Range clearRange, int ungappedFullLength) {
-		return DefaultAssembledRead.createBuilder(
-				reference, readId, validBases, 
-				offset, dir, clearRange, 
-				ungappedFullLength);
+			String readId, NucleotideSequence validBases,
+			int offset, Direction dir, Range clearRange,
+			int ungappedFullLength) {
+		AssembledReadBuilder<AssembledRead> builder= DefaultAssembledRead.createBuilder(
+				readId, validBases, offset, 
+				dir, clearRange, ungappedFullLength);
+		
+		return builder;
 	}
 
 }

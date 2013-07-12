@@ -43,11 +43,10 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
     private final AssembledRead placedRead;
     
     
-    public static AceAssembledReadBuilder createBuilder(NucleotideSequence reference, String readId,NucleotideSequence validBases,
-            int offset, Direction dir, Range clearRange,PhdInfo phdInfo,
-            int ungappedFullLength){
-        return new Builder(reference, readId, validBases, 
-                offset, dir, clearRange, phdInfo, ungappedFullLength);
+    public static AceAssembledReadBuilder createBuilder(String readId, NucleotideSequence validBases,int offset,
+            Direction dir, Range clearRange, PhdInfo phdInfo,int ungappedFullLength){
+        return new Builder(readId, validBases, offset, 
+                dir, clearRange, phdInfo, ungappedFullLength);
     }
     private DefaultAceAssembledRead(AssembledRead placedRead, PhdInfo phdInfo) {
         this.placedRead = placedRead;
@@ -194,12 +193,11 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
         private final AssembledReadBuilder<AssembledRead> delegateBuilder;
         
         
-        public Builder(NucleotideSequence reference, String readId,NucleotideSequence validBases,
-                            int offset, Direction dir, Range clearRange,PhdInfo phdInfo,
-                            int ungappedFullLength){
+        public Builder(String readId, NucleotideSequence validBases,int offset,
+                            Direction dir, Range clearRange, PhdInfo phdInfo,int ungappedFullLength){
             this.delegateBuilder = DefaultAssembledRead.createBuilder(
-                    reference, readId, validBases, offset,
-                    dir, clearRange, ungappedFullLength);
+                    readId, validBases, offset, dir,
+                    clearRange, ungappedFullLength);
             this.phdInfo = phdInfo;
         }
         
@@ -219,15 +217,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
 		public AceAssembledReadBuilder copy() {
 			return new Builder(this);
 		}
-
-		/**
-        * {@inheritDoc}
-        */
-        @Override
-        public Builder reference(NucleotideSequence reference, int newOffset){
-            delegateBuilder.reference(reference, newOffset);
-            return this;
-        }
+		
         /**
         * {@inheritDoc}
         */
@@ -302,8 +292,8 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
         * {@inheritDoc}
         */
         @Override
-        public DefaultAceAssembledRead build(){
-            return new DefaultAceAssembledRead(delegateBuilder.build(),phdInfo);
+        public DefaultAceAssembledRead build(NucleotideSequence consensus){
+            return new DefaultAceAssembledRead(delegateBuilder.build(consensus),phdInfo);
         }
         /**
         * {@inheritDoc}

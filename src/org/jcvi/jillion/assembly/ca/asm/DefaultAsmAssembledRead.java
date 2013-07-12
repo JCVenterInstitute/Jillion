@@ -42,13 +42,13 @@ final class DefaultAsmAssembledRead implements AsmAssembledRead{
     private final boolean isSurrogate;
     private final AssembledRead placedRead;
     
-    public static AsmAssembledReadBuilder createBuilder(NucleotideSequence reference, 
-    		String readId,
+    public static AsmAssembledReadBuilder createBuilder(String readId, 
     		String validBases,
-            int offset, Direction dir, Range clearRange,
-            int ungappedFullLength, boolean isSurrogate){
-        return new Builder(reference, readId, validBases, 
-                offset, dir, clearRange, ungappedFullLength,isSurrogate);
+    		int offset,
+            Direction dir, Range clearRange, int ungappedFullLength,
+            boolean isSurrogate){
+        return new Builder(readId, validBases, offset, 
+                dir, clearRange, ungappedFullLength, isSurrogate);
     }
     
     private DefaultAsmAssembledRead(AssembledRead placedRead, boolean isSurrogate) {
@@ -191,12 +191,12 @@ final class DefaultAsmAssembledRead implements AsmAssembledRead{
         private final AssembledReadBuilder<AssembledRead> delegateBuilder;
         
         
-        public Builder(NucleotideSequence reference, String readId,String validBases,
-                            int offset, Direction dir, Range clearRange,
-                            int ungappedFullLength,boolean isSurrogate){
+        public Builder(String readId, String validBases,int offset,
+                            Direction dir, Range clearRange, int ungappedFullLength,
+                            boolean isSurrogate){
             this.delegateBuilder = DefaultAssembledRead.createBuilder(
-                    reference, readId, validBases, offset,
-                    dir, clearRange, ungappedFullLength);
+                    readId, validBases, offset, dir,
+                    clearRange, ungappedFullLength);
             this.isSurrogate = isSurrogate;
         }
         
@@ -214,14 +214,7 @@ final class DefaultAsmAssembledRead implements AsmAssembledRead{
 		public AsmAssembledReadBuilder copy() {
 			return new Builder(this);
 		}
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public Builder reference(NucleotideSequence reference, int newOffset){
-            delegateBuilder.reference(reference, newOffset);
-            return this;
-        }
+
         /**
         * {@inheritDoc}
         */
@@ -286,8 +279,8 @@ final class DefaultAsmAssembledRead implements AsmAssembledRead{
         * {@inheritDoc}
         */
         @Override
-        public DefaultAsmAssembledRead build(){
-            return new DefaultAsmAssembledRead(delegateBuilder.build(),isSurrogate);
+        public DefaultAsmAssembledRead build(NucleotideSequence consensus){
+            return new DefaultAsmAssembledRead(delegateBuilder.build(consensus),isSurrogate);
         }
         /**
         * {@inheritDoc}

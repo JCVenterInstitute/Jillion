@@ -51,16 +51,16 @@ public class TestDefaultAcePlacedReadReAbacus {
     NucleotideSequence consensus = new NucleotideSequenceBuilder("NNNNACGTTACGTTT").build();
     NucleotideSequence originalSequence =   new NucleotideSequenceBuilder("ACGT-ACG-T").build();
     AceAssembledReadBuilder sut = DefaultAceAssembledRead.createBuilder(
-            consensus, readId, 
-            originalSequence, 
-            originalStartOffset, dir, validRange, phdInfo, ungappedFullLength);
+            readId, originalSequence, 
+            originalStartOffset, 
+            dir, validRange, phdInfo, ungappedFullLength);
 
     @Before
     public void createBuilder(){
         sut = DefaultAceAssembledRead.createBuilder(
-                consensus, readId, 
-                originalSequence, 
-                originalStartOffset, dir, validRange, phdInfo, ungappedFullLength);
+                readId, originalSequence, 
+                originalStartOffset, 
+                dir, validRange, phdInfo, ungappedFullLength);
     }
     @Test
     public void confirmInitialValues(){

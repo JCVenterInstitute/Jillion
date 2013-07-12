@@ -46,20 +46,18 @@ public final class DefaultAssembledRead implements AssembledRead {
     private final String id;
     private final ReadInfo readInfo;
     
-    public static AssembledReadBuilder<AssembledRead> createBuilder(NucleotideSequence reference, 
-            String readId,NucleotideSequence validBases,
-            int offset, Direction dir, Range clearRange,
-            int ungappedFullLength){
-        return new Builder(reference, readId, validBases, offset, dir, 
-                clearRange, ungappedFullLength);
+    public static AssembledReadBuilder<AssembledRead> createBuilder(String readId, 
+            NucleotideSequence validBases,int offset,
+            Direction dir, Range clearRange, int ungappedFullLength){
+        return new Builder(readId, validBases, offset, dir, clearRange, 
+                ungappedFullLength);
     }
     
-    public static AssembledReadBuilder<AssembledRead> createBuilder(NucleotideSequence reference, 
-            String readId,String validBases,
-            int offset, Direction dir, Range clearRange,
-            int ungappedFullLength){
-    	 return createBuilder(reference, readId, new NucleotideSequenceBuilder(validBases).build(), offset, dir, 
-                 clearRange, ungappedFullLength);
+    public static AssembledReadBuilder<AssembledRead> createBuilder(String readId, 
+            String validBases,int offset,
+            Direction dir, Range clearRange, int ungappedFullLength){
+    	 return createBuilder(readId, new NucleotideSequenceBuilder(validBases).build(), offset, dir, clearRange, 
+                 ungappedFullLength);
     }
     
     public DefaultAssembledRead(String id, ReferenceMappedNucleotideSequence sequence, long start, Direction sequenceDirection, int ungappedFullLength, Range validRange){
@@ -208,7 +206,6 @@ public final class DefaultAssembledRead implements AssembledRead {
         private NucleotideSequenceBuilder basesBuilder=null;
         private int offset;
         private Range clearRange;
-        private NucleotideSequence reference;
         private final Direction dir;
         private int ungappedFullLength;
         
@@ -220,31 +217,33 @@ public final class DefaultAssembledRead implements AssembledRead {
             this.offset = copy.offset;
             this.originalSequence = copy.originalSequence;
             this.basesBuilder =copy.basesBuilder==null? null: copy.basesBuilder.copy();
-            this.reference = copy.reference;
             this.ungappedFullLength = copy.ungappedFullLength;
         }
         
-        public Builder(NucleotideSequence reference, String readId, NucleotideSequence validBases,
-                            int offset, Direction dir, Range clearRange,
-                            int ungappedFullLength){
+        public Builder(String readId, NucleotideSequence validBases, int offset,
+                            Direction dir, Range clearRange, int ungappedFullLength){
+        	if(readId ==null){
+        		throw new NullPointerException("read id can not be null");
+        	}
+        	if(dir ==null){
+        		throw new NullPointerException("direction can not be null");
+        	}
+        	if(validBases == null){
+        		throw new NullPointerException("basecalls can not be null");
+        	}
+        	if(clearRange == null){
+        		throw new NullPointerException("clearRange can not be null");
+        	}
             this.readId = readId;
             this.dir =dir;
             this.clearRange = clearRange;
             this.offset = offset;
             this.originalSequence = validBases;
             this.basesBuilder =null;
-            if(offset + validBases.getLength() > reference.getLength()){
-                throw new IllegalArgumentException(
-                		String.format("read %s , last offset %d goes beyond the reference (length %d)",
-                				readId, offset + validBases.getLength(), reference.getLength()));
-            }
-            if(offset <0){
-                throw new IllegalArgumentException("read goes before the reference");
-            }
+            
             if(ungappedFullLength < clearRange.getEnd()){
             	throw new IllegalArgumentException("clear range extends beyond ungapped full length");
             }
-            this.reference = reference;
             this.ungappedFullLength = ungappedFullLength;
         }
         
@@ -252,17 +251,12 @@ public final class DefaultAssembledRead implements AssembledRead {
 		public AssembledReadBuilder<AssembledRead> copy() {
 			return new Builder(this);
 		}
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public Builder reference(NucleotideSequence reference, int newOffset){
-            if(reference ==null){
-                throw new NullPointerException("reference can not be null");
+        
+        
+        private void validateNewOffset(int newOffset){
+        	if(newOffset <0){
+                throw new IllegalArgumentException("read can not have negative offset");
             }
-            this.reference = reference;
-            this.offset = newOffset;
-            return this;
         }
         /**
         * {@inheritDoc}
@@ -283,6 +277,7 @@ public final class DefaultAssembledRead implements AssembledRead {
         */
         @Override
         public Builder setStartOffset(int newOffset){
+        	validateNewOffset(newOffset);
             this.offset = newOffset;
             return this;
         }
@@ -326,7 +321,10 @@ public final class DefaultAssembledRead implements AssembledRead {
         * {@inheritDoc}
         */
         @Override
-        public synchronized AssembledRead build(){
+        public synchronized AssembledRead build(NucleotideSequence reference){
+        	if(reference == null){
+        		throw new IllegalStateException("reference not set");
+        	}
         	final NucleotideSequenceBuilder finalBuilder;
         
         	if(originalSequence !=null){
@@ -622,10 +620,8 @@ public final class DefaultAssembledRead implements AssembledRead {
         public int hashCode() {
             final int prime = 31;
             int result = 1;           
-            result = prime * result
-                    + ((readId == null) ? 0 : readId.hashCode());
-            result = prime * result
-                    + ((reference == null) ? 0 : reference.hashCode());
+            result = prime * result + readId.hashCode();
+            result = prime * result +  dir.hashCode();
             return result;
         }
 
@@ -645,20 +641,13 @@ public final class DefaultAssembledRead implements AssembledRead {
                 return false;
             }
             Builder other = (Builder) obj;
-            if (readId == null) {
-                if (other.readId != null) {
-                    return false;
-                }
-            } else if (!readId.equals(other.readId)) {
+            if (!readId.equals(other.readId)) {
                 return false;
             }
-            if (reference == null) {
-                if (other.reference != null) {
-                    return false;
-                }
-            } else if (!reference.equals(other.reference)) {
+            if (!dir.equals(other.dir)) {
                 return false;
             }
+            
             return true;
         }
 
