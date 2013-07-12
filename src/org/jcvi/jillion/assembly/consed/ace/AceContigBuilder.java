@@ -149,9 +149,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      * @throws NullPointerException if contigId or consensus are null.
      */
     public AceContigBuilder(String contigId, NucleotideSequence initialConsensus){
-        if(contigId ==null){
-            throw new NullPointerException("contig id can not be null");
-        }
+        checkNotNull(contigId);
         if(initialConsensus ==null){
             throw new NullPointerException("consensus can not be null");
         }
@@ -160,11 +158,15 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     	 this.mutableConsensus = new NucleotideSequenceBuilder(initialConsensus);
     	 aceReadBuilderMap = new HashMap<String, AceAssembledReadBuilder>(200);
     }
-    
-    public AceContigBuilder(String contigId, ConsensusCaller consensusCaller){
-    	if(contigId ==null){
+
+	public void checkNotNull(String contigId) {
+		if(contigId ==null){
             throw new NullPointerException("contig id can not be null");
         }
+	}
+    
+    public AceContigBuilder(String contigId, ConsensusCaller consensusCaller){
+    	checkNotNull(contigId);
         if(consensusCaller ==null){
             throw new NullPointerException("consensusCaller can not be null");
         }
@@ -204,9 +206,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     public AceContigBuilder(String contigId, ConsensusCaller consensusCaller, 
     		QualitySequenceDataStore qualityDataStore,
     		GapQualityValueStrategy qualityValueStrategy){
-        if(contigId ==null){
-            throw new NullPointerException("contig id can not be null");
-        }
+        checkNotNull(contigId);
         if(consensusCaller ==null){
             throw new NullPointerException("consensusCaller can not be null");
         }
@@ -234,9 +234,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      */
     public AceContigBuilder(String contigId, NucleotideSequence initialConsensus,
     		int estimatedNumberOfReads){
-        if(contigId ==null){
-            throw new NullPointerException("contig id can not be null");
-        }
+        checkNotNull(contigId);
         if(initialConsensus ==null){
             throw new NullPointerException("consensus can not be null");
         }
@@ -402,9 +400,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     */
     @Override
     public AceContigBuilder setContigId(String contigId){
-        if(contigId==null){
-            throw new NullPointerException("contig id can not be null");
-        }
+        checkNotNull(contigId);
         this.contigId = contigId;
         return this;
     }
@@ -684,7 +680,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
 			}
 			NucleotideSequence readSequence = aceReadBuilder.getCurrentNucleotideSequence();
 			if(fullQualities==null){
-				byte[] qualArray = new byte[(int)aceReadBuilder.getUngappedFullLength()];
+				byte[] qualArray = new byte[aceReadBuilder.getUngappedFullLength()];
 				Arrays.fill(qualArray, DEFAULT_QUALITY.getQualityScore());
 				fullQualities = new QualitySequenceBuilder(qualArray).build();
 			}
