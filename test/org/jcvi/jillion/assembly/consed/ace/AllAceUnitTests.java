@@ -82,7 +82,9 @@ import org.junit.runners.Suite.SuiteClasses;
        TestAceContigVisitorAdapter.class,
        TestAceContigVisitorAdapterRemoveReadsFromContig.class,
        
-       TestAceFileParserWithNegativeReadAlignValues.class
+       TestAceFileParserWithNegativeReadAlignValues.class,
+       
+       TestDenovoAceContigBuilder.class
        
     }
 )
