@@ -326,4 +326,5 @@ public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable
      * instance; never null.
      */
     AssembledReadBuilder<R> copy();
+
 }
