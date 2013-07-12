@@ -44,7 +44,7 @@ public final class PhdFileDataStoreBuilder implements Builder<PhdDataStore>{
 			throw new NullPointerException("phd file can not be null");
 		}
 		if(!phdFile.exists()){
-			throw new NullPointerException("phd file must exist");
+			throw new NullPointerException("phd file does not exist : " + phdFile.getAbsolutePath());
 		}
 		this.phdFile = phdFile;
 		this.inputStream = null;
