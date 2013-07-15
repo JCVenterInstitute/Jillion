@@ -346,7 +346,7 @@ public final class DefaultAssembledRead implements AssembledRead {
         * {@inheritDoc}
         */
          @Override
-        public Builder reAbacus(Range gappedValidRangeToChange, NucleotideSequence newBasecalls){
+        public synchronized Builder reAbacus(Range gappedValidRangeToChange, NucleotideSequence newBasecalls){
         	
         	 NucleotideSequence newUngappedBasecalls = new NucleotideSequenceBuilder(newBasecalls)
 				.ungap()
