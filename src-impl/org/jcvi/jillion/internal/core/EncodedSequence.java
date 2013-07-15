@@ -72,8 +72,7 @@ public class  EncodedSequence<T> implements Sequence<T> {
 	}
 	@Override
 	public int hashCode() {
-		long length = getLength();
-		if(hash==0 && length >0){
+		if(hash==0 && getLength() >0){
 	        final int prime = 31;
 	        int result = 1;
 	        Iterator<T> iter = iterator();
