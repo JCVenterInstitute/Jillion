@@ -20,10 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.qual;
 
-import java.nio.ByteBuffer;
-
 import org.jcvi.jillion.internal.core.EncodedSequence;
-import org.jcvi.jillion.internal.core.GlyphCodec;
 
 /**
  * {@code DefaultEncodedQualitySequence} 
@@ -37,7 +34,7 @@ final class EncodedQualitySequence extends EncodedSequence<PhredQuality> impleme
    
    
 
-	public EncodedQualitySequence(GlyphCodec<PhredQuality> codec, byte[] data) {
+	public EncodedQualitySequence(QualitySymbolCodec codec, byte[] data) {
 		super(codec, data);
 	}
 
@@ -64,10 +61,6 @@ final class EncodedQualitySequence extends EncodedSequence<PhredQuality> impleme
 	 * {@inheritDoc}
 	 */
 	public byte[] toArray(){
-        ByteBuffer buf = ByteBuffer.allocate((int)getLength());
-        for(PhredQuality quality : this){
-            buf.put(quality.getQualityScore());
-        }
-        return buf.array();
+       return ((QualitySymbolCodec)getCodec()).toQualityValueArray(data);
     }
 }

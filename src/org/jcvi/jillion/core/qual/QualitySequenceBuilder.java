@@ -100,7 +100,7 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	 * @throws NullPointerException if qualitySequence is null.
 	 */
 	public QualitySequenceBuilder(QualitySequence qualitySequence){
-		this.builder = new GrowableByteArray(encode(qualitySequence));
+		this.builder = new GrowableByteArray(qualitySequence.toArray());
 	}
 	/**
 	 * internal copy constructor used by {@link #copy()}.
@@ -109,19 +109,7 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	private QualitySequenceBuilder(QualitySequenceBuilder copy){
 		this.builder = copy.builder.copy();
 	}
-	private byte encode(PhredQuality q){
-		return q.getQualityScore();
-	}
-
-	private byte[] encode(QualitySequence sequence){
-		byte[] b = new byte[(int)sequence.getLength()];
-		int i=0;
-		for(PhredQuality q : sequence){
-			b[i]=encode(q);
-			i++;
-		}
-		return b;
-	}
+	
 	
 	@Override
 	public PhredQuality get(int offset) {
@@ -139,7 +127,7 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	@Override
 	public QualitySequenceBuilder append(
 			PhredQuality quality) {
-		builder.append(encode(quality));
+		builder.append(quality.getQualityScore());
 		return this;
 	}
 	/**
@@ -180,7 +168,7 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 
 	public QualitySequenceBuilder append(
 			QualitySequence sequence) {
-		builder.append(encode(sequence));
+		builder.append(sequence.toArray());
 		return this;
 	}
 
@@ -194,7 +182,7 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	@Override
 	public QualitySequenceBuilder replace(int offset,
 			PhredQuality replacement) {
-		this.builder.replace(offset,encode(replacement));
+		this.builder.replace(offset,replacement.getQualityScore());
 		return this;
 	}
 
@@ -225,7 +213,7 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	 */
 	public QualitySequenceBuilder insert(int offset,
 			QualitySequence sequence) {
-		builder.insert(offset, encode(sequence));
+		builder.insert(offset,sequence.toArray());
 		return this;
 	}
 
@@ -233,7 +221,7 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	public QualitySequenceBuilder insert(int offset,
 			PhredQuality qualityScore) {
 		assertInsertOffsetValid(offset);
-		builder.insert(offset, encode(qualityScore));
+		builder.insert(offset, qualityScore.getQualityScore());
 		return this;
 	}
 	/**

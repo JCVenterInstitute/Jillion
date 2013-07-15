@@ -131,11 +131,15 @@ public final class PhredQuality implements Comparable<PhredQuality>{
      * @throws IllegalArgumentException if qualityScore < 0 or > {@link Byte#MAX_VALUE}.
      */
     public static PhredQuality valueOf(int qualityScore){
-    	 if(qualityScore < MIN_VALUE || qualityScore > MAX_VALUE){
-             throw new IllegalArgumentException("qualityScore of our range "+qualityScore);
-         }
+    	 validate(qualityScore);
          return CACHE[qualityScore];
     }
+
+	private static void validate(int qualityScore) {
+		if(qualityScore < MIN_VALUE || qualityScore > MAX_VALUE){
+             throw new IllegalArgumentException("qualityScore of our range "+qualityScore);
+         }
+	}
    
     
    
@@ -156,9 +160,32 @@ public final class PhredQuality implements Comparable<PhredQuality>{
 
     @Override
     public String toString() {        
-        return String.format("Q%02d",value);
+        return toStringValidValue(value);
     }
-
+    /**
+     * Returns same String value
+     * as {@code PhredQuality.valueOf(qualityValue).toString()}
+     * but without the overhead of object construction.
+     * @param qualityValue the quality value to print.
+     * @return a String will never be null.
+     * @throws IllegalArgumentException if qualityScore < 0 or > {@link Byte#MAX_VALUE}.
+     */
+    public static String toString(byte qualityValue){
+    	validate(qualityValue);
+    	return toStringValidValue(qualityValue);
+    }
+    /**
+     * Print the toString value of the quality
+     * value without checking to make sure
+     * the quality value is valid.  This
+     * method should only be called on values
+     * that have already been validated.
+     * @param qualityValue
+     * @return
+     */
+	private static String toStringValidValue(byte qualityValue) {
+		return String.format("Q%02d",qualityValue);
+	}
 
 	@Override
 	public int hashCode() {

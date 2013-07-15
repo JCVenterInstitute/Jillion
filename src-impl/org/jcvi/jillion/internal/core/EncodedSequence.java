@@ -47,7 +47,7 @@ public class  EncodedSequence<T> implements Sequence<T> {
     /**
      * Our data.
      */
-    private final byte[] data;
+    protected final byte[] data;
     
     private int hash;
     /**
@@ -67,7 +67,10 @@ public class  EncodedSequence<T> implements Sequence<T> {
         return codec.decodedLengthOf(data);
     }
 
-    @Override
+    protected GlyphCodec<T> getCodec() {
+		return codec;
+	}
+	@Override
 	public int hashCode() {
 		long length = getLength();
 		if(hash==0 && length >0){
