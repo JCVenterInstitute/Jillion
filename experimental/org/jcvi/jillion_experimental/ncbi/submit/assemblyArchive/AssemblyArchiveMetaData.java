@@ -12,8 +12,6 @@ public interface AssemblyArchiveMetaData {
 	
 	String getCenterName();
 
-	String getTaxonId();
-
 	String getDescription();
 	
 	String getOrganismName();
