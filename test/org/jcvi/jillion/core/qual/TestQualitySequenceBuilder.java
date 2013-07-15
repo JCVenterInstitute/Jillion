@@ -372,4 +372,26 @@ public class TestQualitySequenceBuilder {
 				new byte[]{70,70,30,50},
 				toByteArray(seq));
 	}
+	
+	@Test
+	public void get(){
+		byte[] qualities = new byte[]{10,12,13,13,13,13,13,13,8};
+		QualitySequenceBuilder sut = new QualitySequenceBuilder(qualities);
+		
+		for(int i=0; i<qualities.length; i++){
+			assertEquals(qualities[i], sut.get(i).getQualityScore());
+		}
+	}
+	
+	@Test(expected = IndexOutOfBoundsException.class)
+	public void getNegativeOffsetShouldThrowIndexOutOfBoundsException(){
+		QualitySequenceBuilder sut = new QualitySequenceBuilder(new byte[]{1,2,3,4});
+		sut.get(-1);
+	}
+	
+	@Test(expected = IndexOutOfBoundsException.class)
+	public void getBeyondLengthShouldThrowIndexOutOfBoundsException(){
+		QualitySequenceBuilder sut = new QualitySequenceBuilder(new byte[]{1,2,3,4});
+		sut.get(5);
+	}
 }

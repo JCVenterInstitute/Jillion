@@ -67,6 +67,7 @@ public class TestNucleotideSequenceBuilder {
     private NucleotideSequence createSequence(String seq){
        return  new NucleotideSequenceBuilder(seq).build();
     }
+ 
     @Test
     public void singleSequenceInConstructor(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
@@ -100,6 +101,12 @@ public class TestNucleotideSequenceBuilder {
         sut.append(createSequence("GGTGCA"));
         assertBuiltSequenceEquals("ACGTGGTGCA",sut);
     } 
+    @Test
+    public void appendNucleotideList(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+        sut.append(Nucleotides.parse("GGTGCA"));
+        assertBuiltSequenceEquals("ACGTGGTGCA",sut);
+    } 
     
     @Test
     public void appendContentsOfOtherBuilder(){
@@ -124,6 +131,12 @@ public class TestNucleotideSequenceBuilder {
     public void prependSequence(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.prepend(createSequence("GGTGCA"));
+        assertBuiltSequenceEquals("GGTGCAACGT",sut);
+    }
+    @Test
+    public void prependList(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+        sut.prepend(Nucleotides.parse("GGTGCA"));
         assertBuiltSequenceEquals("GGTGCAACGT",sut);
     }
     @Test
@@ -197,6 +210,12 @@ public class TestNucleotideSequenceBuilder {
     public void insertMultipleBaseSequence(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.insert(2, createSequence("-N-"));
+        assertBuiltSequenceEquals("AC-N-GT",sut);
+    }
+    @Test
+    public void insertNucleotideList(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+        sut.insert(2, Nucleotides.parse("-N-"));
         assertBuiltSequenceEquals("AC-N-GT",sut);
     }
     @Test
@@ -634,5 +653,24 @@ public class TestNucleotideSequenceBuilder {
     	assertEquals(1, sut.getNumGaps());
     	assertEquals(1, sut.getNumNs());
     	assertEquals(4, sut.getUngappedLength());
+    }
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void getBeyondLengthShouldThrowException(){
+    	NucleotideSequenceBuilder sut =new NucleotideSequenceBuilder("ACGT");
+    	sut.get(5);
+    }
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void getNegativeShouldThrowException(){
+    	NucleotideSequenceBuilder sut =new NucleotideSequenceBuilder("ACGT");
+    	sut.get(-1);
+    }
+    @Test
+    public void get(){
+    	NucleotideSequenceBuilder sut =new NucleotideSequenceBuilder("ACGT");
+    	
+    	assertEquals(Nucleotide.Adenine, sut.get(0));
+    	assertEquals(Nucleotide.Cytosine, sut.get(1));
+    	assertEquals(Nucleotide.Guanine, sut.get(2));
+    	assertEquals(Nucleotide.Thymine, sut.get(3));
     }
 }

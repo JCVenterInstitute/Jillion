@@ -28,9 +28,6 @@ import java.util.Iterator;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.pos.Position;
-import org.jcvi.jillion.core.pos.PositionSequence;
-import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
 import org.junit.Test;
 public class TestPositionSequenceBuilder {
 	
@@ -244,5 +241,27 @@ public class TestPositionSequenceBuilder {
 		.trim(Range.of(2,8));  //3,4,5,6,7,Short.MAX_VALUE,99
 		assertArrayEquals(new short[]{3,4,5,6,7,Short.MAX_VALUE,99},
 				toShortArray(sut.build()));
+	}
+	
+	@Test
+	public void get(){
+		short[] positions = new short[]{10,20,30,40};
+		PositionSequenceBuilder sut = new PositionSequenceBuilder(positions);
+		
+		for(int i=0; i<positions.length; i++){
+			assertEquals(positions[i], sut.get(i).getValue());
+		}
+	}
+	
+	@Test(expected= IndexOutOfBoundsException.class)
+	public void getNegativeLengthShouldThrowIndexOutOfBoundsException(){
+		PositionSequenceBuilder sut = new PositionSequenceBuilder(new short[]{10,20,30,40});
+		sut.get(-1);
+	}
+
+	@Test(expected= IndexOutOfBoundsException.class)
+	public void getOffsetBeyondLengthShouldThrowIndexOutOfBoundsException(){
+		PositionSequenceBuilder sut = new PositionSequenceBuilder(new short[]{10,20,30,40});
+		sut.get(4);
 	}
 }

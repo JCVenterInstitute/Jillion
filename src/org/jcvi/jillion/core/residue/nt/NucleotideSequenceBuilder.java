@@ -118,6 +118,19 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @param sequence the initial nucleotide sequence.
      * @throws NullPointerException if sequence is null.
      */
+    public NucleotideSequenceBuilder(NucleotideSequence sequence){
+        assertNotNull(sequence);
+        NewValues newValues = new NewValues(sequence);
+        this.bits = newValues.getBits();
+        codecDecider = new CodecDecider(newValues);
+        this.tail = newValues.getLength()*NUM_BITS_PER_VALUE;
+    }
+    /**
+     * Creates a new NucleotideSequenceBuilder instance
+     * which currently contains the given sequence.
+     * @param sequence the initial nucleotide sequence.
+     * @throws NullPointerException if sequence is null.
+     */
     public NucleotideSequenceBuilder(Iterable<Nucleotide> sequence){
         assertNotNull(sequence);
         NewValues newValues = new NewValues(sequence);
@@ -197,6 +210,19 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws NullPointerException if sequence is null.
      */
     public NucleotideSequenceBuilder append(Iterable<Nucleotide> sequence){
+        assertNotNull(sequence);
+        NewValues newValues = new NewValues(sequence);
+        return append(newValues);
+    }
+    
+    /**
+     * Appends the given sequence to the end
+     * of the builder's mutable sequence.
+     * @param sequence the nucleotide sequence to be appended
+     * to the end our builder.
+     * @throws NullPointerException if sequence is null.
+     */
+    public NucleotideSequenceBuilder append(NucleotideSequence sequence){
         assertNotNull(sequence);
         NewValues newValues = new NewValues(sequence);
         return append(newValues);
@@ -403,13 +429,13 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     @Override
 	public Nucleotide get(int offset) {
     	if(offset<0){
-            throw new IllegalArgumentException("offset can not have negatives coordinates: "+ offset);
+            throw new IndexOutOfBoundsException("offset can not have negatives coordinates: "+ offset);
         }
         if(offset> getLength()){
-            throw new IllegalArgumentException(
+            throw new IndexOutOfBoundsException(
                     String.format("offset can not start beyond current length (%d) : %d", getLength(),offset));
         }
-		return Nucleotide.VALUES.get(getNucleotideOrdinalFor(bits,offset));
+		return Nucleotide.VALUES.get(getNucleotideOrdinalFor(bits,offset*NUM_BITS_PER_VALUE));
 	}
 	public int getNumGaps(){
         return codecDecider.getNumberOfGaps();
@@ -452,6 +478,27 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws IllegalArgumentException if offset <0 or > current sequence length.
      */
     public NucleotideSequenceBuilder insert(int offset, Iterable<Nucleotide> sequence){
+        assertInsertionParametersValid(offset, sequence);   
+        NewValues newValues = new NewValues(sequence);
+        return insert(offset, newValues);
+    }
+    
+    /**
+     * Inserts the given sequence to the builder's mutable sequence
+     * starting at the given offset.  If any nucleotides existed
+     * downstream of this offset before this insert method
+     * was executed, then those nucleotides will be shifted by n
+     * bases where n is the length of the given sequence to insert.
+     * @param offset the <strong>gapped</strong> offset into this mutable sequence
+     * to begin insertion.  If the offset = the current length then this insertion
+     * is treated as an append.
+     * @param sequence the nucleotide sequence to be 
+     * inserted at the given offset.
+     * @return this
+     * @throws NullPointerException if sequence is null.
+     * @throws IllegalArgumentException if offset <0 or > current sequence length.
+     */
+    public NucleotideSequenceBuilder insert(int offset, NucleotideSequence sequence){
         assertInsertionParametersValid(offset, sequence);   
         NewValues newValues = new NewValues(sequence);
         return insert(offset, newValues);
@@ -562,6 +609,21 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @see #insert(int, Iterable)
      */
     public NucleotideSequenceBuilder prepend(Iterable<Nucleotide> sequence){
+        return insert(0, sequence);
+    }
+    
+    /**
+     * Inserts the given sequence the beginning
+     * of the builder's mutable sequence.
+     * This is the same as calling 
+     * {@link #insert(int, NucleotideSequence) insert(0,sequence)}
+     * @param sequence the nucleotide sequence to be 
+     * inserted at the beginning.
+     * @return this.
+     * @throws NullPointerException if sequence is null.
+     * @see #insert(int, Iterable)
+     */
+    public NucleotideSequenceBuilder prepend(NucleotideSequence sequence){
         return insert(0, sequence);
     }
     
@@ -1245,25 +1307,30 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	private int length;
     	private int numberOfACGTs;
     	
-    	private final GrowableIntArray nOffsets = new GrowableIntArray(12);
-    	private final GrowableIntArray gapOffsets = new GrowableIntArray(12);
-    	
-    	
+    	private final GrowableIntArray nOffsets;
+    	private final GrowableIntArray gapOffsets;
+
     	public NewValues(BitSet encodedBits, int numberOfBitsUsed){
-    		for(int i=0; i< numberOfBitsUsed; i+=NUM_BITS_PER_VALUE){
-    			handleOrdinal(getNucleotideOrdinalFor(encodedBits,i), i);    			
-    		}
-    		
-    		this.bits = encodedBits;
+			nOffsets = new GrowableIntArray(12);
+			gapOffsets = new GrowableIntArray(12);
+			for (int i = 0; i < numberOfBitsUsed; i += NUM_BITS_PER_VALUE) {
+				handleOrdinal(getNucleotideOrdinalFor(encodedBits, i), i);
+			}
+
+			this.bits = encodedBits;
     	}
     	public NewValues(Nucleotide nucleotide){
+    		nOffsets = new GrowableIntArray(12);
+			gapOffsets = new GrowableIntArray(12);
     		bits = new BitSet();
             handle(nucleotide, 0);
             //only one value so we
             //don't need to sort
     	}
     	public NewValues(String sequence){
-    		bits = new BitSet();
+    		nOffsets = new GrowableIntArray(12);
+			gapOffsets = new GrowableIntArray(12);
+    		bits = new BitSet(sequence.length() * NUM_BITS_PER_VALUE);
             int offset=0;
     		for(int i=0; i<sequence.length(); i++){
     			char c = sequence.charAt(i);
@@ -1275,7 +1342,28 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     		}
     		
     	}
+    	/**
+    	 * Convenience construcutor that allocates
+    	 * the gap Offsets and bitSet fields to the needed
+    	 * sizes
+    	 * since we know those sizes before processing. 
+    	 * @param sequence
+    	 */
+    	public NewValues(NucleotideSequence sequence){
+    		nOffsets = new GrowableIntArray(12);
+    		gapOffsets = new GrowableIntArray(sequence.getNumberOfGaps());
+    		
+    		bits = new BitSet((int)sequence.getLength() * NUM_BITS_PER_VALUE);
+            int offset=0;
+            for(Nucleotide n : sequence){
+            	handle(n, offset);
+            	offset+=NUM_BITS_PER_VALUE;            	
+            }
+    	}
+    	
     	public NewValues(Iterable<Nucleotide> nucleotides){
+    		nOffsets = new GrowableIntArray(12);
+			gapOffsets = new GrowableIntArray(12);
     		bits = new BitSet();
             int offset=0;
             for(Nucleotide n : nucleotides){
