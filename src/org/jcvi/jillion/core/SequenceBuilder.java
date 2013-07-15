@@ -53,7 +53,13 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
      * @throws NullPointerException if the symbol is null.
      */
 	SequenceBuilder<T,S> append(T symbol);
-
+	/**
+	 * Get the element at the given offset.
+	 * @param offset
+	 * @return
+	 * @throws IndexOutOfBoundsException if offset
+	 * is < 0 or >= length.
+	 */
 	T get(int offset);
    
     /**
