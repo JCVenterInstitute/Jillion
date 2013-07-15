@@ -55,7 +55,7 @@ class RunLengthEncodedQualitySequence implements QualitySequence{
 	@Override
 	public int hashCode() {
 		if(hash==0 && getLength() >0){	        
-	        hash= toArray().hashCode();
+	        hash= Arrays.hashCode(toArray());
 		}
 	    return hash;
 	}
