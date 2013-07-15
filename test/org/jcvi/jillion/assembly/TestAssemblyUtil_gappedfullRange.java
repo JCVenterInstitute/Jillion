@@ -26,9 +26,11 @@
 package org.jcvi.jillion.assembly;
 
 
-import org.jcvi.jillion.assembly.AssembledRead;
-import org.jcvi.jillion.assembly.AssemblyUtil;
-import org.jcvi.jillion.assembly.ReadInfo;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.junit.Assert.assertEquals;
+
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -36,8 +38,6 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 import org.junit.Before;
 import org.junit.Test;
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 public class TestAssemblyUtil_gappedfullRange {
 
 	NucleotideSequence gappedValidRange = new NucleotideSequenceBuilder("ACGT-ACGT").build();
@@ -55,6 +55,8 @@ public class TestAssemblyUtil_gappedfullRange {
 																.build();
         Range validRange = new Range.Builder(ungappedUnComplimentedFullRange.getLength()).build();
         ReferenceMappedNucleotideSequence readSequence = createMock(ReferenceMappedNucleotideSequence.class);
+        expect(readSequence.getNumberOfGaps()).andReturn(gappedValidRange.getNumberOfGaps());
+        expect(readSequence.getLength()).andReturn(gappedValidRange.getLength());
         expect(readSequence.iterator()).andReturn(gappedValidRange.iterator());
        ReadInfo readInfo = new ReadInfo(validRange, (int)ungappedUnComplimentedFullRange.getLength());
         expect(mockPlacedRead.getReadInfo()).andStubReturn(readInfo);
@@ -77,6 +79,10 @@ public class TestAssemblyUtil_gappedfullRange {
         Range validRange = new Range.Builder(ungappedUnComplimentedFullRange.getLength()).build();
         
         ReferenceMappedNucleotideSequence readSequence = createMock(ReferenceMappedNucleotideSequence.class);
+        expect(readSequence.getNumberOfGaps()).andReturn(gappedValidRange.getNumberOfGaps());
+        expect(readSequence.getLength()).andReturn(gappedValidRange.getLength());
+     
+        
         expect(readSequence.iterator()).andReturn(gappedValidRange.iterator());
         ReadInfo readInfo = new ReadInfo(validRange, (int)ungappedUnComplimentedFullRange.getLength());
         expect(mockPlacedRead.getReadInfo()).andStubReturn(readInfo);
@@ -95,7 +101,11 @@ public class TestAssemblyUtil_gappedfullRange {
     	NucleotideSequence ungappedUnComplimentedFullRange = new NucleotideSequenceBuilder("RRACGTACGTKKK").build();
         Range validRange = Range.of(2, 9);
         ReferenceMappedNucleotideSequence readSequence = createMock(ReferenceMappedNucleotideSequence.class);
-        expect(readSequence.iterator()).andReturn(new NucleotideSequenceBuilder("ACGT-ACGT").build().iterator());
+        NucleotideSequence actualSeq = new NucleotideSequenceBuilder("ACGT-ACGT").build();
+		
+        expect(readSequence.getNumberOfGaps()).andReturn(actualSeq.getNumberOfGaps());
+        expect(readSequence.getLength()).andReturn(actualSeq.getLength());
+        expect(readSequence.iterator()).andReturn(actualSeq.iterator());
         
         ReadInfo readInfo = new ReadInfo(validRange, (int)ungappedUnComplimentedFullRange.getLength());
         expect(mockPlacedRead.getReadInfo()).andStubReturn(readInfo);
@@ -113,7 +123,10 @@ public class TestAssemblyUtil_gappedfullRange {
     	NucleotideSequence ungappedUnComplimentedFullRange = new NucleotideSequenceBuilder("RRACGTACGTKKK").build();
         Range validRange = Range.of(3, 10);
         ReferenceMappedNucleotideSequence readSequence = createMock(ReferenceMappedNucleotideSequence.class);
-        expect(readSequence.iterator()).andReturn(new NucleotideSequenceBuilder("MACGTACG").build().iterator());
+        NucleotideSequence actualSeq = new NucleotideSequenceBuilder("MACGTACG").build();
+        expect(readSequence.getNumberOfGaps()).andReturn(actualSeq.getNumberOfGaps());
+        expect(readSequence.getLength()).andReturn(actualSeq.getLength());
+        expect(readSequence.iterator()).andReturn(actualSeq.iterator());
         
         ReadInfo readInfo = new ReadInfo(validRange, (int)ungappedUnComplimentedFullRange.getLength());
         expect(mockPlacedRead.getReadInfo()).andStubReturn(readInfo);
