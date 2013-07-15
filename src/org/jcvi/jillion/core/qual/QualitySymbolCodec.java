@@ -32,4 +32,6 @@ import org.jcvi.jillion.internal.core.GlyphCodec;
 interface QualitySymbolCodec extends GlyphCodec<PhredQuality>{
 
 	 byte[] encode(Collection<PhredQuality> glyphs);
+	 
+	 byte[] toQualityValueArray(byte[] encodedData);
 }

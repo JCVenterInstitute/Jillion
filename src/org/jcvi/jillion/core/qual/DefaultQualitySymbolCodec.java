@@ -59,4 +59,13 @@ enum DefaultQualitySymbolCodec implements QualitySymbolCodec{
         }
         return buf.array();
     }
+
+	@Override
+	public byte[] toQualityValueArray(byte[] encodedData) {
+		byte[] decoded = new byte[encodedData.length];
+		System.arraycopy(encodedData, 0, decoded, 0, decoded.length);
+		return decoded;
+	}
+    
+    
 }

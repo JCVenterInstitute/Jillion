@@ -20,7 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.qual;
 
-import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import org.jcvi.jillion.core.Range;
@@ -81,42 +81,29 @@ class RunLengthEncodedQualitySequence implements QualitySequence{
 		//guard value should always be the same?
 		//so we can just do an array equality check
 		QualitySequence other = (QualitySequence) obj;
-		if(getLength() !=other.getLength()){
-			return false;
-		}
-		Iterator<PhredQuality> iter = iterator();
-		Iterator<PhredQuality> otherIter = other.iterator();
-		while(iter.hasNext()){
-			PhredQuality next = iter.next();
-			PhredQuality otherNext = otherIter.next();
-			if(!next.equals(otherNext)){
-				return false;
-			}
-		}
-		return true;
+		return Arrays.equals(toArray(), other.toArray());
+		
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder((int)getLength());
-		Iterator<PhredQuality> iter = iterator();
-        while(iter.hasNext()){
-        	if(builder.length()>0){
-    			builder.append(" ,");
-    		}
-        	builder.append(iter.next());
-        }
+		byte[] values = toArray();
+		//buffer is length*5 to account for ' ,Q<2digitvalue>'
+		StringBuilder builder = new StringBuilder(values.length*5);
+		int lastOffset = values.length-1;
+		for(int i=0; i<lastOffset; i++){
+			builder.append(PhredQuality.toString(values[i])).append(" ,");
+		}
+       //last value doesn't get a trailing comma
+		builder.append(PhredQuality.toString(values[lastOffset]));
 		return builder.toString();
 	}
 	/**
 	 * {@inheritDoc}
 	 */
 	public byte[] toArray(){
-        ByteBuffer buf = ByteBuffer.allocate((int)getLength());
-        for(PhredQuality quality : this){
-            buf.put(quality.getQualityScore());
-        }
-        return buf.array();
+		return RunLengthEncodedQualityCodec.INSTANCE.toQualityValueArray(encodedData);
+        
     }
 
 	

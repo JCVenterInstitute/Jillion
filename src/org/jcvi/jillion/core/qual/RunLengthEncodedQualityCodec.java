@@ -27,6 +27,7 @@ package org.jcvi.jillion.core.qual;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -244,7 +245,49 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
     }
    
    
-    private static final class RunLengthIterator implements Iterator<PhredQuality>{
+    @Override
+	public byte[] toQualityValueArray(byte[] encodedData) {
+		// TODO quickly generate array using runLengths
+    	ByteBuffer buf = ByteBuffer.wrap(encodedData);
+        int length=buf.getInt();  
+        //short circuit if empty
+        if(length ==0){
+        	return new byte[0];
+        }
+        byte[] result = new byte[length];
+        byte guard = buf.get();
+        ValueSizeStrategy valueSizeStrategy = ValueSizeStrategy.values()[buf.get()];
+        int currentOffset=0;
+        
+        
+         
+        byte currentValue;
+        int runLength;
+        while(currentOffset<length){
+        	byte runLengthCode = buf.get();
+	        if( runLengthCode == guard){                                  
+	        	int count = valueSizeStrategy.getNext(buf);          	 
+	        	if(count==0){
+	        		runLength=1;
+	        		currentValue = guard;
+	        	}else{
+	        		currentValue = buf.get();  
+	        		runLength=count;
+	        	}
+	        }
+	        else{
+	        	runLength=1;
+	        	currentValue = runLengthCode;
+	        }
+	        int endOffset = currentOffset+runLength;
+	        Arrays.fill(result, currentOffset, endOffset, currentValue);
+	        currentOffset=endOffset;
+        }
+		return result;
+	}
+
+
+	private static final class RunLengthIterator implements Iterator<PhredQuality>{
 		private long currentOffset;
 		private final ByteBuffer buf;
 		private final byte guard;

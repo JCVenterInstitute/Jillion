@@ -104,4 +104,10 @@ public class TestRunLengthEncodedGlyphCodec {
         }
         return list;
     }
+    
+    @Test
+    public void toArray(){
+    	byte[] array =sut.toQualityValueArray(expected);
+    	assertArrayEquals(QUALITY_BYTES, array);
+    }
 }
