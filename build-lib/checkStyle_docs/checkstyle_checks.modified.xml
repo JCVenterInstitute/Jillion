@@ -21,7 +21,11 @@
 
     <module name="AvoidStarImport"/>
     <module name="ConstantName"/>
-    <module name="EmptyBlock"/>
+    <module name="EmptyBlock">
+    <!-- doesn't throw warning if we have a comment explaining why we do nothing -->
+	    <property name="option" value="text"/>
+	    <property name="tokens" value="LITERAL_CATCH"/>
+    </module>
     <module name="EmptyForIteratorPad"/>
     <module name="EqualsHashCode"/>
    
