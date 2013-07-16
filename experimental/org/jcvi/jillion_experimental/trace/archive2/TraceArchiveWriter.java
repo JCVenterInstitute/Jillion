@@ -34,6 +34,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -90,6 +91,8 @@ public final class TraceArchiveWriter implements Closeable{
 	private final DefaultTraceArchiveInfo.Builder traceInfoBuilder;
 	private final Set<String> traceNamesSeen= new HashSet<String>();
 	
+	private final String volumeName, volumeVersion;
+	private final Date volumeDate;
 	/**
 	 * Create a new TraceArchiveWriter without any common fields.
 	 * This is the same as
@@ -97,8 +100,10 @@ public final class TraceArchiveWriter implements Closeable{
 	 * TraceArchiveWriter(rootDir, Collections.<TraceInfoField, String>emptyMap(), recordFactory)}.
 	 * @see #TraceArchiveWriter(File, Map, TraceArchiveRecordCallback)
 	 */
-	public TraceArchiveWriter(File rootDir,TraceArchiveRecordCallback recordFactory) throws IOException {
-		this(rootDir, Collections.<TraceInfoField, String>emptyMap(), recordFactory);
+	public TraceArchiveWriter(File rootDir,TraceArchiveRecordCallback recordFactory,
+			String volumeName, Date volumeDate, String volumeVersion) throws IOException {
+		this(rootDir, Collections.<TraceInfoField, String>emptyMap(), recordFactory,
+				volumeName, volumeDate, volumeVersion);
 	}
 	/**
 	 * Create a new TraceArchiveWriter.
@@ -117,7 +122,8 @@ public final class TraceArchiveWriter implements Closeable{
 	 * @throws NullPointerException if recordCallback, commonFields is null
 	 * or if any key or value in commonFields is null.
 	 */
-	public TraceArchiveWriter(File rootDir,Map<TraceInfoField, String> commonFields, TraceArchiveRecordCallback recordCallback) throws IOException {
+	public TraceArchiveWriter(File rootDir,Map<TraceInfoField, String> commonFields, TraceArchiveRecordCallback recordCallback,
+			String volumeName, Date volumeDate, String volumeVersion) throws IOException {
 		//delete pre-existing files if any
 		if(rootDir !=null){
 			IOUtil.recursiveDelete(rootDir);
@@ -129,6 +135,11 @@ public final class TraceArchiveWriter implements Closeable{
 		if(commonFields ==null){
 			throw new NullPointerException("common fields Map can not be null");
 		}
+		
+		this.volumeDate = volumeDate;
+		this.volumeName = volumeName;
+		this.volumeVersion = volumeVersion;
+		
 		this.rootDir = rootDir;
 		this.recordCallback = recordCallback;
 		traceInfoBuilder = new DefaultTraceArchiveInfo.Builder();
@@ -159,6 +170,9 @@ public final class TraceArchiveWriter implements Closeable{
 			throw new NullPointerException("traceFile can not be null");
 		}
 		TraceArchiveRecordBuilder recordBuilder = new DefaultTraceArchiveRecord.Builder();
+		if("1117900562796".equals(traceName)){
+			System.out.println("trace seen: " + traceFile.getName());
+		}
 		if(traceNamesSeen.contains(traceName)){
 			throw new IllegalArgumentException("already added a trace with the trace name "+ traceName);
 		}
@@ -234,7 +248,7 @@ public final class TraceArchiveWriter implements Closeable{
 		File xmlFile = new File(rootDir, "TRACEINFO.XML");
 		OutputStream out = new FileOutputStream(xmlFile);
 		try{
-			TraceInfoWriterUtil.writeTraceInfoXML(out, info);
+			TraceInfoWriterUtil.writeTraceInfoXML(out, info, volumeName, volumeDate, volumeVersion);
 		}finally{
 			IOUtil.closeAndIgnoreErrors(out);
 		}

@@ -22,8 +22,11 @@ package org.jcvi.jillion_experimental.trace.archive2;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -36,15 +39,28 @@ public final class TraceInfoWriterUtil{
 		        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<trace_volume>\n";
     private static final String END_XML = "</trace_volume>\n";
 
+    private static final DateFormat TRACE_ARCHIVE_DATE_FORMAT = new SimpleDateFormat("yyyy-mm-dd-HH:mm:ss");
+    
     private TraceInfoWriterUtil(){
     	//can not instantiate
     }
     
-    public static void writeTraceInfoXML(OutputStream out, TraceArchiveInfo info) throws IOException{
-    	writeTraceInfoXML(out,info,true);
+    public static synchronized String formatDate(Date date){
+    	return TRACE_ARCHIVE_DATE_FORMAT.format(date);
     }
-    public static void writeTraceInfoXML(OutputStream out, TraceArchiveInfo info, boolean duplicateCommonSections) throws IOException{
+    
+    public static void writeTraceInfoXML(OutputStream out, TraceArchiveInfo info,
+    		String volumeName, Date volumeDate, String volumeVersion) throws IOException{
+    	writeTraceInfoXML(out,info, volumeName, volumeDate, volumeVersion, true);
+    }
+    public static void writeTraceInfoXML(OutputStream out, TraceArchiveInfo info,
+    		String volumeName, Date volumeDate, String volumeVersion,
+    		
+    		boolean duplicateCommonSections) throws IOException{
     	 writeString(out, BEGIN_XML);
+    	 writeString(out, "\t"+beginAndEndTag("volume_name", volumeName));
+    	 writeString(out, "\t"+beginAndEndTag("volume_date", formatDate(volumeDate)));
+    	 writeString(out, "\t"+beginAndEndTag("volume_version", volumeVersion));
          Map<TraceInfoField, String> commonMap =info.getCommonFields();
          if(!duplicateCommonSections && !commonMap.isEmpty()){
          	writeString(out, beginTag("common_fields"));
@@ -54,7 +70,7 @@ public final class TraceInfoWriterUtil{
          	writeString(out, endTag("common_fields"));
          }
          for(TraceArchiveRecord record : info.getRecordList()){
-             writeString(out, "\t\t"+beginTag("trace"));
+             writeString(out, "\t"+beginTag("trace"));
              final Map<TraceInfoField,String> entries;
              if(duplicateCommonSections){
             	 entries = getEntiresToWrite(record, commonMap);
@@ -62,11 +78,11 @@ public final class TraceInfoWriterUtil{
             	 entries = getEntiresToWrite(record);
              }
              for(Entry<TraceInfoField,String> entry :entries.entrySet()){
-                 writeString(out,"\t\t\t"+beginAndEndTag(entry.getKey(), entry.getValue()));
+                 writeString(out,"\t\t"+beginAndEndTag(entry.getKey(), entry.getValue()));
              }
              
              writeExtendedData(out, record);
-             writeString(out, "\t\t"+endTag("trace"));
+             writeString(out, "\t"+endTag("trace"));
          }
         
          writeString(out, END_XML);

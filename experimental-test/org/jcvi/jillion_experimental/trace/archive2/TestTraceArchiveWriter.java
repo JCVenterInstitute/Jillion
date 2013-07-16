@@ -30,6 +30,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
 import org.easymock.IAnswer;
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -79,7 +80,7 @@ public class TestTraceArchiveWriter {
 	
 	private void writeTraceArchive() throws IOException, TraceArchiveRecordDataException{
 		mockCallback = createMock(TraceArchiveWriter.TraceArchiveRecordCallback.class);
-		TraceArchiveWriter writer = new TraceArchiveWriter(outputDir, mockCallback);
+		TraceArchiveWriter writer = new TraceArchiveWriter(outputDir, mockCallback, "volumeName", new Date(), "volumeName");
 		
 		File k18TraceFile = new File(rootInputDir, "trace/P030546_K18_JTC_swineorigininfluenza_1064144674928_1064144674997_069_1119369016061.ztr");
 		mockCallback.addMetaData(eq("K18"), eq(k18TraceFile), isA(TraceArchiveRecordBuilder.class));
