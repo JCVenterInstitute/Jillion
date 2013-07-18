@@ -1156,8 +1156,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     
     
     
-    private class NewValues{
-    //	private final  BitSet bits;
+    private static class NewValues{
+    	
     	private final GrowableByteArray data;
     	private int numberOfACGTs;
     	
