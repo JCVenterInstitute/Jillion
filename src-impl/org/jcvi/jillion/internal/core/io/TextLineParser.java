@@ -23,7 +23,6 @@ package org.jcvi.jillion.internal.core.io;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PushbackInputStream;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.FIFOQueue;
@@ -42,17 +41,56 @@ import org.jcvi.jillion.core.util.FIFOQueue;
  *
  */
 public final class TextLineParser implements Closeable{
-
+	/**
+	 * {@value} chars, is the initial
+	 * capcity since this is probably
+	 * going to be mostly used by 
+	 * human readable text files and
+	 * genomic file formats which often
+	 * are < 100 characters per line.
+	 * If the line is longer, then the buffer
+	 * will grow accordingly.
+	 */
+	private static final int INITIAL_LINE_CAPACITY = 200;
+	/**
+	 * End of File.
+	 */
+	private static final int EOF = -1;
+	/**
+	 * Line feed.
+	 */
 	private static final char LF = '\n';
+	/**
+	 * Carriage return.
+	 */
 	private static final char CR = '\r';
 	
-	private final PushbackInputStream in;
+	private final InputStream in;
 	private final Object endOfFile = new Object();
 	private final FIFOQueue<Object> nextQueue = new FIFOQueue<Object>();
 	boolean doneFile = false;
 	
 	private long position;
-	private long numberOfBytesInNextLine;
+	private int numberOfBytesInNextLine;
+	/**
+	 * This is an extra byte we read from
+	 * the previous line that we
+	 * want to "unread" so we can read it again
+	 * in the next line.
+	 * 
+	 * This is used to distinguish from
+	 * some older operating systems which use 
+	 * '\r\n' from '\r' as end of line strings.
+	 * If it's the later, the byte after 
+	 * '\r' is "unread" so it can be read again
+	 * as the beginning of the next line.
+	 * 
+	 *  This is used instead of a PushBackInputStream
+	 *  because it is faster to only check
+	 *  the unread byte once per
+	 *  getLine() call instead of every read().
+	 */
+	private Byte unreadByte=null;
 	
 	public TextLineParser(InputStream in) throws IOException{
 		this(in, 0L);
@@ -66,7 +104,7 @@ public final class TextLineParser implements Closeable{
 			throw new IllegalArgumentException("initial position must be >=0");
 		}
 		this.position = initialPosition;
-		this.in = new PushbackInputStream(in);
+		this.in = in;
 		getNextLine();
 	}
 	
@@ -74,12 +112,19 @@ public final class TextLineParser implements Closeable{
 		if(doneFile){
 			return;
 		}
-		StringBuilder builder = new StringBuilder(200);
-		numberOfBytesInNextLine=0L;
+		StringBuilder builder = new StringBuilder(INITIAL_LINE_CAPACITY);
 		int value;
-		value = in.read();
+		if(unreadByte !=null){
+			value = unreadByte;
+			unreadByte=null;
+		}else{
+			value = in.read();
+		}
+		numberOfBytesInNextLine=0;
+		
+		
 		while(true){	
-			if(value == -1){
+			if(value == EOF){
 				doneFile =true;
 				close();
 				break;
@@ -93,14 +138,11 @@ public final class TextLineParser implements Closeable{
 				if(nextChar == LF){
 					numberOfBytesInNextLine++;
 					builder.append(LF);
-				}else{
-					
-					if(nextChar !=-1){
-						//not windows formatted line
-						//could be Mac 0S 9 which only uses '\r'
-						//put that value back
-						in.unread(nextChar);
-					}
+				}else if(nextChar !=EOF){
+					//not windows formatted line
+					//could be Mac 0S 9 which only uses '\r'
+					//put that value back
+					unreadByte =(byte)nextChar;
 				}
 				
 				break;
