@@ -20,13 +20,13 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.nt;
 
-import java.util.BitSet;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
+import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
 /**
@@ -47,12 +47,9 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     private static final byte C_VALUE = Nucleotide.Cytosine.getOrdinalAsByte();
     private static final byte G_VALUE = Nucleotide.Guanine.getOrdinalAsByte();
     private static final byte T_VALUE = Nucleotide.Thymine.getOrdinalAsByte();
-    /**
-     * We store the current values of our sequence as bits in
-     * a {@link BitSet}.  This allows us to put multiple nucleotides
-     * inside a single byte.
-     */
-    private BitSet bits;
+   
+    
+    private GrowableByteArray data;
     /**
      * The CodecDecider will keep track of what types of
      * bases we have and how many in order to decide
@@ -61,37 +58,20 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * via  {@link #build()}.
      */
     private CodecDecider codecDecider;
-    /**
-     * Points to the next bit that will
-     * be set if we append to our {@link BitSet}.
-     * This also acts as the value of our length of bits written.
-     * We need to keep track of this ourselves 
-     * since {@link BitSet} automatically
-     * grows and provides lots of padding to improve
-     * I/O performance, and doesn't keep track
-     * of the actual number of bits written so far.
-     */
-    private int tail=0;
-    /**
-     * Currently we can store each base
-     * in {@value} bits.
-     */
-    private static final int NUM_BITS_PER_VALUE=4;
+
     /**
      * Creates a new NucleotideSequenceBuilder instance
      * which currently contains no nucleotides.
      */
     public NucleotideSequenceBuilder(){
-        bits = new BitSet();
+        data = new GrowableByteArray();
         codecDecider = new CodecDecider();
     }
     
     
     @Override
-	public NucleotideSequenceBuilder clear() {
-		
-		bits.clear(0, tail);
-		tail=0;
+	public NucleotideSequenceBuilder clear() {		
+    	data.clear();
 		codecDecider.clear();
 		return this;
 	}
@@ -109,7 +89,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         if(initialCapacity<1){
             throw new IllegalArgumentException("initial capacity must be >=1");
         }
-        bits = new BitSet(initialCapacity*NUM_BITS_PER_VALUE);
+        data = new GrowableByteArray(initialCapacity);
         codecDecider = new CodecDecider();
     }
     /**
@@ -121,9 +101,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     public NucleotideSequenceBuilder(NucleotideSequence sequence){
         assertNotNull(sequence);
         NewValues newValues = new NewValues(sequence);
-        this.bits = newValues.getBits();
+        this.data = newValues.getData();
         codecDecider = new CodecDecider(newValues);
-        this.tail = newValues.getLength()*NUM_BITS_PER_VALUE;
     }
     /**
      * Creates a new NucleotideSequenceBuilder instance
@@ -134,9 +113,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     public NucleotideSequenceBuilder(Iterable<Nucleotide> sequence){
         assertNotNull(sequence);
         NewValues newValues = new NewValues(sequence);
-        this.bits = newValues.getBits();
+        this.data = newValues.getData();
         codecDecider = new CodecDecider(newValues);
-        this.tail = newValues.getLength()*NUM_BITS_PER_VALUE;
     }
     /**
      * Creates a new NucleotideSequenceBuilder instance
@@ -151,13 +129,12 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * into a {@link Nucleotide}.
      */
     public NucleotideSequenceBuilder(String sequence){
-    	if(sequence ==null){
-    		throw new NullPointerException("sequence can not be null");
-    	}
-    	NewValues newValues = new NewValues(sequence);
-        this.bits = newValues.getBits();
-        codecDecider = new CodecDecider(newValues);
-        this.tail = newValues.getLength()*NUM_BITS_PER_VALUE;  
+		if (sequence == null) {
+			throw new NullPointerException("sequence can not be null");
+		}
+		NewValues newValues = new NewValues(sequence);
+		this.data = newValues.getData();
+		codecDecider = new CodecDecider(newValues);
     }
     /**
      * Creates a new NucleotideSequenceBuilder instance
@@ -166,29 +143,26 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws NullPointerException if singleNucleotide is null.
      */
     public NucleotideSequenceBuilder(Nucleotide singleNucleotide){
-    	if(singleNucleotide ==null){
-    		throw new NullPointerException("singleNucleotide can not be null");
-    	}
-    	NewValues newValues = new NewValues(singleNucleotide);
-        this.bits = newValues.getBits();
-        codecDecider = new CodecDecider(newValues);
-        this.tail = newValues.getLength()*NUM_BITS_PER_VALUE;  
-    }
+		if (singleNucleotide == null) {
+			throw new NullPointerException("singleNucleotide can not be null");
+		}
+		NewValues newValues = new NewValues(singleNucleotide);
+		this.data = newValues.getData();
+		codecDecider = new CodecDecider(newValues);
+	}
 
     
+    private NucleotideSequenceBuilder(NucleotideSequenceBuilder copy){    	
+        this.data = copy.data.copy();
+        this.codecDecider = copy.codecDecider.copy();
+    }
+    private NucleotideSequenceBuilder(GrowableByteArray data){
+    	this.data = data;
+    	NewValues newValues = new NewValues(data);
+    	this.codecDecider = new CodecDecider(newValues);
+    }
     
-    private NucleotideSequenceBuilder(BitSet subBits, int numberOfBitsUsed) {
-    	NewValues newValues = new NewValues(subBits,numberOfBitsUsed);
-        this.bits = newValues.getBits();
-        this.codecDecider = new CodecDecider(newValues);
-        this.tail = numberOfBitsUsed;
-	}
-    private NucleotideSequenceBuilder(BitSet subBits, int numberOfBitsUsed, CodecDecider codecDecider) {
-    	NewValues newValues = new NewValues(subBits,numberOfBitsUsed);
-        this.bits = newValues.getBits();
-        this.codecDecider = codecDecider.copy();
-        this.tail = numberOfBitsUsed;
-	}
+
 	/**
      * Appends the given base to the end
      * of the builder's mutable sequence.
@@ -228,14 +202,9 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         return append(newValues);
     }
 	private NucleotideSequenceBuilder append(NewValues newValues) {
-		BitSet newBits = newValues.getBits();
-        int length = newBits.length();
-		for(int i=0; i<length; i++){
-        	if(newBits.get(i)){
-        		bits.set(tail+i);
-        	}
-        }
-        tail += newValues.getLength()*NUM_BITS_PER_VALUE;
+		//this will force the bitset to 
+		//grow to the max new size so we don't keep growing each time
+		data.append(newValues.data);		
         this.codecDecider.append(newValues);
         return this;
 	}
@@ -253,9 +222,10 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      */
     public NucleotideSequenceBuilder append(NucleotideSequenceBuilder otherBuilder){
         
-    	assertNotNull(otherBuilder);    	
-    	NewValues newValues = new NewValues(otherBuilder.bits, otherBuilder.tail);
-        return append(newValues);
+    	assertNotNull(otherBuilder);   
+    	this.data.append(otherBuilder.data);
+    	this.codecDecider.append(otherBuilder);
+    	return this;
     }
    
     
@@ -324,10 +294,10 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws IllegalArgumentException if offset is invalid.
      */
     public NucleotideSequenceBuilder replace(int offset, Nucleotide replacement){
-    	int length = tail/NUM_BITS_PER_VALUE;
-        if(offset <0 || offset >= length){
+    	
+        if(offset <0 || offset >= data.getCurrentLength()){
             throw new IllegalArgumentException(
-                    String.format("offset %d out of range (length = %d)",length,offset));
+                    String.format("offset %d out of range (length = %d)",data.getCurrentLength(),offset));
         }
         if(replacement ==null){
             throw new NullPointerException("replacement base can not be null");
@@ -344,21 +314,12 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 	private NucleotideSequenceBuilder privateReplace(int offset,
 			Nucleotide replacement) {
 		byte value = (byte)replacement.ordinal();
-        int bitStartOffset = offset*NUM_BITS_PER_VALUE;
-        int bitEndOffset = bitStartOffset+NUM_BITS_PER_VALUE;
-		BitSet subBits = bits.get(bitStartOffset, bitEndOffset);
-		final byte oldValue = getNucleotideOrdinalFor(subBits, 0);
+		final byte oldValue = data.get(offset);
 		
 		
         codecDecider.replace(offset, oldValue, value);
-        bits.clear(bitStartOffset, bitEndOffset);
-        NewValues newValues = new NewValues(replacement);
-        BitSet newBits = newValues.getBits();
-        for(int i=0; i< NUM_BITS_PER_VALUE; i++){
-        	 if(newBits.get(i)){
-             	bits.set(bitStartOffset+i);
-             }
-        }      
+        data.replace(offset, value);
+         
         return this;
 	}
     /**
@@ -379,52 +340,19 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             throw new NullPointerException("range can not be null");
         }
         if(!range.isEmpty()){
-            Range bitRange = convertBaseRangeIntoBitRange(range);
-            int numberOfDeletedBits = (int)bitRange.getLength();
-			BitSet subBits = bits.get((int)bitRange.getBegin(), (int)bitRange.getEnd()+1);
-			NewValues newValues = new NewValues(subBits, numberOfDeletedBits);
-            delete((int)range.getBegin(), bitRange, numberOfDeletedBits, newValues);
-              
+        	Range rangeToDelete = Range.of(Math.max(0, range.getBegin()),
+        			Math.min(data.getCurrentLength()-1, range.getEnd()));
+        	GrowableByteArray deletedBytes = data.subArray(rangeToDelete);
+        	data.remove(rangeToDelete);
+            NewValues newValues = new NewValues(deletedBytes);
+            this.codecDecider.delete((int)range.getBegin(),newValues);
+             
         }
         return this;
     }
-	private Range convertBaseRangeIntoBitRange(Range range) {
-		int start = (int)range.getBegin();
-		assertStartCoordinateIsValid(start);   
-		int bitOffsetOfStart = start*NUM_BITS_PER_VALUE;
-		int maxEnd = Math.min((tail-1)/NUM_BITS_PER_VALUE, (int)range.getEnd());
-		int bitOffsetOfEnd = maxEnd * NUM_BITS_PER_VALUE+3;
-		
-		return Range.of(bitOffsetOfStart,bitOffsetOfEnd);
-	}
-	private void assertStartCoordinateIsValid(int start) {
-		if(start<0){
-		    throw new IllegalArgumentException("range can not have negatives coordinates: "+ start);
-		}
-		if(start> getLength()){
-		    throw new IllegalArgumentException(
-		            String.format("range can not start beyond current length (%d) : %d", getLength(),start));
-		}
-	}
-	private void delete(int startOffset, Range bitRange,
-			int numberOfDeletedBits, NewValues newValues) {
-		BitSet shrunkBits = new BitSet(tail-numberOfDeletedBits);
-		int bitOffsetOfStart = (int) bitRange.getBegin();
-		for(int i=0; i<bitOffsetOfStart; i++){
-			if(bits.get(i)){
-				shrunkBits.set(i);
-			}
-		}
-		for(int i=(int)bitRange.getEnd()+1, j=0; i<tail; i++, j++){
-			if(bits.get(i)){
-				shrunkBits.set(bitOffsetOfStart + j);
-			}
-		}
-		
-		this.codecDecider.delete(startOffset,newValues);
-		tail -= numberOfDeletedBits;
-		this.bits = shrunkBits;
-	}
+	
+	
+	
     
     @Override
 	public Nucleotide get(int offset) {
@@ -435,7 +363,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             throw new IndexOutOfBoundsException(
                     String.format("offset can not start beyond current length (%d) : %d", getLength(),offset));
         }
-		return Nucleotide.VALUES.get(getNucleotideOrdinalFor(bits,offset*NUM_BITS_PER_VALUE));
+		return Nucleotide.VALUES.get(data.get(offset));
 	}
 	public int getNumGaps(){
         return codecDecider.getNumberOfGaps();
@@ -515,28 +443,9 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         }
 	}
 	private NucleotideSequenceBuilder insert(int offset, NewValues newValues) {
-		BitSet insertedBits = newValues.getBits();
-        int numberOfInsertedBits = newValues.getLength()*NUM_BITS_PER_VALUE;
-		BitSet expandedBits = new BitSet(tail+numberOfInsertedBits);
-        int bitValueOfOffset = offset*NUM_BITS_PER_VALUE;
-        for(int i=0; i< bitValueOfOffset; i++){
-        	if(bits.get(i)){
-        		expandedBits.set(i);
-        	}
-        }
-        for(int i=0; i< numberOfInsertedBits; i++ ){
-        	if(insertedBits.get(i)){
-        		expandedBits.set(bitValueOfOffset+i);
-        	}
-        }
-        for(int i=bitValueOfOffset; i< tail; i++){
-        	if(bits.get(i)){
-        		expandedBits.set(i+numberOfInsertedBits);
-        	}
-        }
+		data.insert(offset, newValues.data);
+		
         this.codecDecider.insert(offset,newValues);
-        tail +=numberOfInsertedBits;
-        this.bits = expandedBits;
         return this;
 	}
     /**
@@ -571,7 +480,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
                     String.format("offset can not start beyond current length (%d) : %d", getLength(),offset));
         }   
         NucleotideSequenceBuilder otherSequenceBuilder = (NucleotideSequenceBuilder)otherBuilder;
-        NewValues newValues = new NewValues(otherSequenceBuilder.bits, otherSequenceBuilder.tail);
+        NewValues newValues = new NewValues(otherSequenceBuilder);
         return insert(offset, newValues);
     }
     
@@ -668,21 +577,15 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     @Override
     public Iterator<Nucleotide> iterator() {
     	return new Iterator<Nucleotide>(){
-            private final int end = codecDecider.currentLength*NUM_BITS_PER_VALUE-1;
-            private int currentOffset=0;
-            private final BitSet bits = NucleotideSequenceBuilder.this.bits.get(0,tail);
+    		private final Iterator<Byte> iter = data.iterator();
+           
 			@Override
 			public boolean hasNext() {
-				return currentOffset<end;
+				return iter.hasNext();
 			}
 			@Override
 			public Nucleotide next() {
-				if(currentOffset>=end){
-					throw new NoSuchElementException();
-				}
-				Nucleotide next = Nucleotide.VALUES.get(getNucleotideOrdinalFor(bits,currentOffset));
-				currentOffset+= NUM_BITS_PER_VALUE;
-				return next;
+				return Nucleotide.VALUES.get(iter.next());
 			}
 			@Override
 			public void remove() {
@@ -765,46 +668,26 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	if(range.getEnd() <0 || range.isEmpty()){
     		return delete(Range.ofLength(this.getLength()));
     	}
-    	Range trimRange = range.intersection(Range.ofLength(getLength()));
     	
-    	Range bitRange = convertBaseRangeIntoBitRange(trimRange);
-        int numberOfBitsUsed = (int)bitRange.getLength();
-		BitSet subBits = bits.get((int)bitRange.getBegin(), (int)bitRange.getEnd()+1);
-		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(subBits,numberOfBitsUsed);
+    	Range trimRange = range.intersection(Range.ofLength(getLength()));
+    	;
+    	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(data.subArray(trimRange));
 		if(codecDecider.hasAlignedReference()){
 			builder.setReferenceHint(codecDecider.alignedReference.reference, codecDecider.alignedReference.offset+ (int)range.getBegin());
 		}
-		this.bits = subBits;
-        this.codecDecider = builder.codecDecider;
-        this.tail = numberOfBitsUsed;
+		this.codecDecider = builder.codecDecider;
+		this.data = builder.data;
 		return this;
     }
    
-    
-   
-	private Nucleotide getNucleotideFor(int bitStartOffset) {
-		int ordinal = getNucleotideOrdinalFor(bitStartOffset);
-		return Nucleotide.VALUES.get(ordinal);
-	}
-	private byte getNucleotideOrdinalFor(BitSet bits, int bitStartOffset) {
-		
-		int bit3 =bits.get(bitStartOffset)?8:0; 
-		int bit2 =bits.get(bitStartOffset+1)?4:0; 
-		int bit1 =bits.get(bitStartOffset+2)?2:0; 
-		int bit0 =bits.get(bitStartOffset+3)?1:0;
-		return (byte)(bit3|bit2|bit1|bit0);
-	}
-	private byte getNucleotideOrdinalFor(int bitStartOffset) {
-		return getNucleotideOrdinalFor(bits, bitStartOffset);
-	}
+	
     
 	/**
 	 * 
 	 * {@inheritDoc}
 	 */
-	public NucleotideSequenceBuilder copy(){
-		BitSet copyOfBits = bits.get(0,tail);		
-		return new NucleotideSequenceBuilder(copyOfBits, tail,codecDecider);
+	public NucleotideSequenceBuilder copy(){	
+		return new NucleotideSequenceBuilder(this);
 	}
     
    
@@ -812,7 +695,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + bits.get(0, tail).hashCode();
+		result = prime * result + Arrays.hashCode(data.toArray());
 		return result;
 	}
 	/**
@@ -833,15 +716,9 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 			return false;
 		}
 		NucleotideSequenceBuilder other = (NucleotideSequenceBuilder) obj;
-		if(tail !=other.tail){
-			return false;
-		}
-		BitSet ourPopulatedBits =bits.get(0, tail);
-		BitSet otherPopulatedBits =other.bits.get(0, other.tail);
-		if (!ourPopulatedBits.equals(otherPopulatedBits)) {
-			return false;
-		}
-		return true;
+		
+		
+		return Arrays.equals(data.toArray(),other.data.toArray());
 	}
 	
 	
@@ -859,10 +736,10 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     @Override
     public String toString(){
     	StringBuilder builder = new StringBuilder(codecDecider.getCurrentLength());
-    	for(int i=0; i<tail; i+=NUM_BITS_PER_VALUE){
-        	Nucleotide base = getNucleotideFor(i);
-        	builder.append(base);
-        }
+    	byte[] array = data.toArray();
+    	for(int i=0; i< array.length;i++){
+    		builder.append(Nucleotide.VALUES.get(array[i]));
+    	}
         return builder.toString();
     }
     /**
@@ -881,23 +758,24 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @return this.
      */
     public NucleotideSequenceBuilder reverseComplement(){
-        int currentLength = codecDecider.getCurrentLength();
+    	byte[] bytes = data.toArray();
+        int currentLength = bytes.length;
         int pivotOffset = currentLength/2;
+        
+        
         for(int i=0; i<pivotOffset; i++){
             int compOffset = currentLength-1-i;
-            int startBitOfI = i*NUM_BITS_PER_VALUE;
-            Nucleotide tmp = getNucleotideFor(startBitOfI).complement();
-            int startBitOfComplementOffset = compOffset*NUM_BITS_PER_VALUE;
-            byte complementOrdinal = (byte) getNucleotideFor(startBitOfComplementOffset).complement().ordinal();
-            setBitsFor(startBitOfI, complementOrdinal);
-            setBitsFor(startBitOfComplementOffset, (byte) tmp.ordinal());
+            
+            Nucleotide tmp = Nucleotide.VALUES.get(bytes[i]).complement();
+           
+            byte complementOrdinal = Nucleotide.VALUES.get(bytes[compOffset]).complement().getOrdinalAsByte();
+            bytes[i] = complementOrdinal;
+            bytes[compOffset] = tmp.getOrdinalAsByte();
         }
         if(currentLength%2!=0){
-        	int bitOffset = pivotOffset*NUM_BITS_PER_VALUE;
-        	byte complementOrdinal = (byte) getNucleotideFor(bitOffset).complement().ordinal();
-        	setBitsFor(bitOffset, complementOrdinal);
+        	bytes[pivotOffset] = Nucleotide.VALUES.get(bytes[pivotOffset]).complement().getOrdinalAsByte();
         }
-        
+        data = new GrowableByteArray(bytes);
         codecDecider.reverse();
         return this;
     }
@@ -919,35 +797,17 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      */
     public NucleotideSequenceBuilder complement(){
         int currentLength = codecDecider.getCurrentLength();
-        for(int i=0; i<currentLength; i++){
-            int startBitOfI = i*NUM_BITS_PER_VALUE;
-            Nucleotide complement = getNucleotideFor(startBitOfI).complement();
-            byte complementOrdinal = (byte) complement.ordinal();
-            setBitsFor(startBitOfI, complementOrdinal);
+        byte[] complementedData = new byte[currentLength];
+        byte[] originalData = data.toArray();
+        for(int i=0; i<originalData.length; i++){
+        	complementedData[i]=Nucleotide.VALUES.get(originalData[i]).complement().getOrdinalAsByte();
         }
+        this.data = new GrowableByteArray(complementedData);
+        //codec decider shouldn't change since number
+        //of ambiguities, Ns and gaps wont change
         return this;
     }
     
-    
-	private void setBitsFor(int offset, byte twoBitValue) {
-		setBitsFor(bits, offset, twoBitValue);
-	}
-	
-	private void setBitsFor(BitSet bits, int offset, byte fourBitValue) {
-		bits.clear(offset, offset+NUM_BITS_PER_VALUE);
-		if((fourBitValue & 0x8 ) !=0){
-			bits.set(offset);            	
-		}
-		if((fourBitValue & 0x4 ) !=0){
-			bits.set(offset+1);            	
-		}
-		if((fourBitValue & 0x2 ) !=0){
-			bits.set(offset+2);            	
-		}
-		if((fourBitValue & 0x1 ) !=0){
-			bits.set(offset+3);            	
-		}
-	}
     
     /**
      * {@inheritDoc}
@@ -956,18 +816,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      */
     @Override
 	public NucleotideSequenceBuilder reverse() {
-    	int currentLength = codecDecider.getCurrentLength();
-        int pivotOffset = currentLength/2;
-        for(int i=0; i<pivotOffset; i++){
-            int jOffset = currentLength-1-i;
-            int startBitOfI = i*NUM_BITS_PER_VALUE;
-            byte ordinalOfI = getNucleotideFor(startBitOfI).getOrdinalAsByte();
-            int startBitOfJ = jOffset*NUM_BITS_PER_VALUE;
-            byte ordinalOfJ = getNucleotideFor(startBitOfJ).getOrdinalAsByte();
-            setBitsFor(startBitOfI, ordinalOfJ);
-            setBitsFor(startBitOfJ, ordinalOfI);
-        }
-        
+        data.reverse();        
         codecDecider.reverse();
 		return this;
 	}
@@ -982,32 +831,28 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		if (numGaps == 0) {
 			return this;
 		}
+		
+		byte[] oldBytes = data.toArray();
+		byte[] newBytes = new byte[oldBytes.length-codecDecider.gapOffsets.getCurrentLength()];
 		// bulk copy all bits that aren't
 		// for the gaps
 		Iterator<Integer> gapIterator = codecDecider.gapOffsets.iterator();
+		
 		int oldOffset = 0;
 		int newOffset = 0;
-		BitSet newBits = new BitSet(bits.length());
 		while (gapIterator.hasNext()) {
-			int nextGapOffset = gapIterator.next().intValue() * NUM_BITS_PER_VALUE;
-			for (; oldOffset < nextGapOffset; oldOffset++) {
-				if (bits.get(oldOffset)) {
-					newBits.set(newOffset);
-				}
-				newOffset++;
+			int nextGapOffset = gapIterator.next().intValue();
+			for (; oldOffset < nextGapOffset; oldOffset++,newOffset++) {
+				newBytes[newOffset] = oldBytes[oldOffset];
 			}
 			// skip gap
-			oldOffset += NUM_BITS_PER_VALUE;
+			oldOffset ++;
 		}
 		// fill in rest of bits after the gaps
-		for (; oldOffset < tail; oldOffset++) {
-			if (bits.get(oldOffset)) {
-				newBits.set(newOffset);
-			}
-			newOffset++;
+		for (; oldOffset < oldBytes.length; oldOffset++,newOffset++) {
+			newBytes[newOffset] = oldBytes[oldOffset];
 		}
-		bits = newBits;
-		tail = newOffset;
+		data = new GrowableByteArray(newBytes);
 		codecDecider.ungap();
 		return this;
     }
@@ -1104,6 +949,15 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         	//should already be in sorted order
         	//so we don't have to re-sort        	
         	dest.append(newGaps);
+        }
+        public void append(NucleotideSequenceBuilder other) {
+        	CodecDecider otherDecider = other.codecDecider;
+        	
+        	append(otherDecider.gapOffsets, gapOffsets);
+        	append(otherDecider.nOffsets, nOffsets);
+        
+			currentLength += other.getLength();
+			numberOfNonNAmbiguities += otherDecider.numberOfNonNAmbiguities;
         }
         public void append(NewValues newValues) {
         	append(newValues.getGapOffsets(), gapOffsets);
@@ -1303,26 +1157,30 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     
     
     private class NewValues{
-    	private final  BitSet bits;
-    	private int length;
+    //	private final  BitSet bits;
+    	private final GrowableByteArray data;
     	private int numberOfACGTs;
     	
     	private final GrowableIntArray nOffsets;
     	private final GrowableIntArray gapOffsets;
 
-    	public NewValues(BitSet encodedBits, int numberOfBitsUsed){
-			nOffsets = new GrowableIntArray(12);
+    	public NewValues(GrowableByteArray data){
+    		this.data = data.copy();
+    		nOffsets = new GrowableIntArray(12);
 			gapOffsets = new GrowableIntArray(12);
-			for (int i = 0; i < numberOfBitsUsed; i += NUM_BITS_PER_VALUE) {
-				handleOrdinal(getNucleotideOrdinalFor(encodedBits, i), i);
-			}
-
-			this.bits = encodedBits;
+			
+    		int offset =0;
+    		for(byte b : data){
+    			handleOrdinal(b, offset);
+    			offset++;
+    		}
     	}
+    	
     	public NewValues(Nucleotide nucleotide){
     		nOffsets = new GrowableIntArray(12);
 			gapOffsets = new GrowableIntArray(12);
-    		bits = new BitSet();
+    		data = new GrowableByteArray(1);
+    		
             handle(nucleotide, 0);
             //only one value so we
             //don't need to sort
@@ -1330,18 +1188,26 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	public NewValues(String sequence){
     		nOffsets = new GrowableIntArray(12);
 			gapOffsets = new GrowableIntArray(12);
-    		bits = new BitSet(sequence.length() * NUM_BITS_PER_VALUE);
+			data = new GrowableByteArray(sequence.length());
+			
+    		//bits = new BitSet(sequence.length() * NUM_BITS_PER_VALUE);
             int offset=0;
-    		for(int i=0; i<sequence.length(); i++){
-    			char c = sequence.charAt(i);
-    			if(!Character.isWhitespace(c)){
-    				Nucleotide n = Nucleotide.parse(c);
+            //convert sequence to char[] which 
+            //will run faster than sequence.charAt(i)
+            char[] chars = sequence.toCharArray();
+            
+    		for(int i=0; i<chars.length; i++){
+    			char c = chars[i];    			
+				Nucleotide n = Nucleotide.parseOrNull(c);
+				if(n !=null){
     				handle(n, offset);
-                	offset+=NUM_BITS_PER_VALUE;
+                	offset++;
     			}
     		}
     		
     	}
+    	
+    	
     	/**
     	 * Convenience construcutor that allocates
     	 * the gap Offsets and bitSet fields to the needed
@@ -1352,25 +1218,26 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	public NewValues(NucleotideSequence sequence){
     		nOffsets = new GrowableIntArray(12);
     		gapOffsets = new GrowableIntArray(sequence.getNumberOfGaps());
+    		data = new GrowableByteArray((int)sequence.getLength());
     		
-    		bits = new BitSet((int)sequence.getLength() * NUM_BITS_PER_VALUE);
             int offset=0;
             for(Nucleotide n : sequence){
             	handle(n, offset);
-            	offset+=NUM_BITS_PER_VALUE;            	
+            	offset++;            	
             }
     	}
     	
     	public NewValues(Iterable<Nucleotide> nucleotides){
     		nOffsets = new GrowableIntArray(12);
 			gapOffsets = new GrowableIntArray(12);
-    		bits = new BitSet();
+    		data = new GrowableByteArray(100);
             int offset=0;
             for(Nucleotide n : nucleotides){
             	handle(n, offset);
-            	offset+=NUM_BITS_PER_VALUE;            	
+            	offset++;            	
             }
     	}
+    	@SuppressWarnings("fallthrough")
 		private void handle(Nucleotide n, int offset) {
 			byte value=n.getOrdinalAsByte();
 			//switch statements has been optimized using profiler 
@@ -1381,55 +1248,39 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 			//the nuclotide counts usually
 			//done by handle(value) so
 			//we don't need to do the lookup twice
-			length++;
+			data.append(value);
+			
 			switch(value){
-				case 0:nOffsets.append(offset/NUM_BITS_PER_VALUE); break;
-				case 1: bits.set(offset+3); break;
-				case 2: bits.set(offset+2); break;
-				case 3: bits.set(offset+2,  offset+4); break;
-				case 4: bits.set(offset+1); break;
-				case 5: bits.set(offset+1);
-						bits.set(offset+3); 
-						break;
-				case 6: bits.set(offset+1,  offset+3); break;
-				case 7: bits.set(offset+1,  offset+4); break;
-				case 8: bits.set(offset); break;
-				case 9: bits.set(offset);
-						bits.set(offset+3); 
-						break;
-				case 10: bits.set(offset);
-						bits.set(offset+2); 
-						break;
-				case 11: bits.set(offset, offset+4);
-						 bits.clear(offset+1); 
-						 gapOffsets.append(offset/NUM_BITS_PER_VALUE);
+				case 0:nOffsets.append(offset);  break;
+				case 1:
+				case 2: 
+				case 3:
+				case 4:
+				case 5:
+				case 6:
+				case 7:
+				case 8:
+				case 9:
+				case 10: break;
+				case 11: gapOffsets.append(offset);
 							break;
-				case 12: bits.set(offset, offset+2);
-						numberOfACGTs++;
-						break;
-				case 13: bits.set(offset, offset+4);
-						bits.clear(offset+2);
-						numberOfACGTs++;
-						break;
-				case 14: bits.set(offset, offset+3); 
-						numberOfACGTs++;
-						break;
-				case 15: bits.set(offset, offset+4);
-						numberOfACGTs++;
+				case 12:
+				case 13:
+				case 14:
+				case 15: numberOfACGTs++;
 						break;
 				default: break;
 			}
 
 		}
-
+    	@SuppressWarnings("fallthrough")
 		private void handleOrdinal(byte ordinal, int offset) {
-			length++;
 			//switch statements has been optimized using profiler 
 			//this will cause a special tableswitch opcode
 			//which is is an O(1) lookup instead of an
 			//o(n) lookupswitch opcode
 			switch(ordinal){
-			case 0 :nOffsets.append(offset/NUM_BITS_PER_VALUE);; break;
+			case 0 :nOffsets.append(offset); break;
 			case 1:
 			case 2:
 			case 3:
@@ -1440,7 +1291,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 			case 8:
 			case 9:
 			case 10:break;
-			case 11:gapOffsets.append(offset/NUM_BITS_PER_VALUE); break;
+			case 11:gapOffsets.append(offset); break;
 			case 12:
 			case 13:
 			case 14:
@@ -1451,15 +1302,17 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		}
 
 		public int getnumberOfNonNAmiguities() {
-			return length - (getNumberOfGaps() + getNumberOfNs()+ numberOfACGTs);
+			return getLength() - (getNumberOfGaps() + getNumberOfNs()+ numberOfACGTs);
 		}
 
-		public BitSet getBits() {
-			return bits;
+		
+
+		public GrowableByteArray getData() {
+			return data;
 		}
 
 		public int getLength() {
-			return length;
+			return data.getCurrentLength();
 		}
 
 		public int getNumberOfGaps() {

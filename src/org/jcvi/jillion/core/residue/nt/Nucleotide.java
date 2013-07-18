@@ -200,7 +200,14 @@ public enum Nucleotide implements Residue {
      * character can not be mapped to a {@link Nucleotide}.
      */
     public static Nucleotide parse(char base){
-        //dkatzel - 2013-03-21
+        final Nucleotide ret = parseOrNull(base);
+        if(ret==null){
+        throw new IllegalArgumentException("invalid character " + base + " ascii value " + (int)base);
+        }
+        return ret;
+    }
+	protected static Nucleotide parseOrNull(char base) {
+		//dkatzel - 2013-03-21
     	//profiling indicated that parsing to Nucleotides was slow.
     	//changed auto-boxed Map lookup to switch statement.
     	//This switch includes all characters upper and lowercase
@@ -428,11 +435,8 @@ public enum Nucleotide implements Residue {
 						break;
 			
     	}
-        if(ret==null){
-        throw new IllegalArgumentException("invalid character " + base + " ascii value " + (int)base);
-        }
-        return ret;
-    }
+		return ret;
+	}
     /**
      * Returns this Nucleotide as a single character String.  For example {@link #Adenine} 
      * will return "A".

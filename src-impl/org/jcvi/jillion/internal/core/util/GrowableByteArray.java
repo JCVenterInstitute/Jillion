@@ -55,6 +55,10 @@ public final class GrowableByteArray implements Iterable<Byte>{
 	 * the capacity is the size of the array.
 	 */
 	private byte[] data;
+	
+	public GrowableByteArray(){
+		this(16);
+	}
 	/**
 	 * Creates a new {@link GrowableByteArray}
 	 * with the given initial capacity.
@@ -378,4 +382,21 @@ public final class GrowableByteArray implements Iterable<Byte>{
 	public Iterator<Byte> iterator() {
 		return PrimitiveArrayIterators.create(data, currentLength);
 	}
+	public GrowableByteArray subArray(Range range) {
+		if(range ==null){
+			throw new NullPointerException("range can not be null");
+		}
+		int start = (int)range.getBegin();
+		int end = (int) range.getEnd() +1;
+		if(start <0){
+			throw new IllegalArgumentException("start must be >=0");
+		}
+		if(end >currentLength){
+			end = currentLength-1;
+		}
+		
+		return new GrowableByteArray(Arrays.copyOfRange(data, start, end));
+	}
+	
+	
 }
