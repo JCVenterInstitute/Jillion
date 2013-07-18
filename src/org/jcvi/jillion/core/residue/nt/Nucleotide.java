@@ -202,11 +202,21 @@ public enum Nucleotide implements Residue {
     public static Nucleotide parse(char base){
         final Nucleotide ret = parseOrNull(base);
         if(ret==null){
-        throw new IllegalArgumentException("invalid character " + base + " ascii value " + (int)base);
+            throw new IllegalArgumentException("invalid character " + base + " ascii value " + (int)base);
         }
         return ret;
     }
+    /**
+     * Same as {@link #parse(char)}
+     * except if the character is ASCII whitespace
+     * then return null.
+     * @param base
+     * @return
+     */
 	protected static Nucleotide parseOrNull(char base) {
+		if(base == 32 || (base >=10 && base <=13)){
+			return null;
+		}
 		//dkatzel - 2013-03-21
     	//profiling indicated that parsing to Nucleotides was slow.
     	//changed auto-boxed Map lookup to switch statement.
@@ -435,6 +445,9 @@ public enum Nucleotide implements Residue {
 						break;
 			
     	}
+    	if(ret==null){
+            throw new IllegalArgumentException("invalid character " + base + " ascii value " + (int)base);
+            }
 		return ret;
 	}
     /**
