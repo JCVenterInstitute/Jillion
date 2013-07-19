@@ -28,11 +28,6 @@ import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequenceBuilder;
 import org.jcvi.jillion_experimental.align.AminoAcidSequenceAlignmentBuilder;
-import org.jcvi.jillion_experimental.align.pairwise.AminoAcidNeedlemanWunschAligner;
-import org.jcvi.jillion_experimental.align.pairwise.AminoAcidPairwiseSequenceAlignment;
-import org.jcvi.jillion_experimental.align.pairwise.AminoAcidPairwiseSequenceAlignmentImpl;
-import org.jcvi.jillion_experimental.align.pairwise.AminoAcidScoringMatrix;
-import org.jcvi.jillion_experimental.align.pairwise.PairwiseSequenceAlignmentWrapper;
 import org.jcvi.jillion_experimental.align.pairwise.blosom.BlosomMatrices;
 import org.junit.Test;
 

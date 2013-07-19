@@ -151,4 +151,20 @@ abstract class AbstractPairwiseSequenceAlignment<R extends Residue, S extends Se
 		}
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "AbstractPairwiseSequenceAlignment [delegate=" + delegate
+				+ ", getAlignmentLength()=" + getAlignmentLength()
+				+ ", getPercentIdentity()=" + getPercentIdentity()
+				+ ", getScore()=" + getScore() + ", getNumberOfMismatches()="
+				+ getNumberOfMismatches() + ", getNumberOfGapOpenings()="
+				+ getNumberOfGapOpenings() + ", getGappedQueryAlignment()="
+				+ getGappedQueryAlignment() + ", getGappedSubjectAlignment()="
+				+ getGappedSubjectAlignment() + ", getQueryRange()="
+				+ getQueryRange() + ", getSubjectRange()=" + getSubjectRange()
+				+ "]";
+	}
+	
+	
 }
