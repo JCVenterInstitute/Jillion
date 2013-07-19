@@ -49,7 +49,7 @@ public class PropertyFileAminoAcidScoringMatrix implements AminoAcidScoringMatri
 				int x = aa.ordinal();
 				
 				for(int i=0; i< headerLength; i++){
-					
+				
 					float value =lineScanner.nextFloat();
 					int y = header.get(i).ordinal();
 					matrix[x][y]=value;
