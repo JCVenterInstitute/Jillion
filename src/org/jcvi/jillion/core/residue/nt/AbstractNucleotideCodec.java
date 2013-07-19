@@ -386,9 +386,15 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
         private void encodeAll(Iterator<Nucleotide> glyphs,
                 final int unEncodedSize, ByteBuffer result) {
         	
-            for(int i=0; i<unEncodedSize; i+=getNucleotidesPerGroup()){
-               encodeNextGroup(glyphs, result,i);
+            int groupSize = getNucleotidesPerGroup();
+            int i=0;
+			for(; i<unEncodedSize-groupSize; i+=groupSize){
+				encodeCompleteGroup(glyphs, result,i);
             }
+			//need this check incase we are empty
+			if(i<unEncodedSize){
+				encodeLastGroup(glyphs, result,i);
+			}
         }
        
         protected int computeHeaderlessEncodedSize(final int size) {
@@ -400,7 +406,9 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
         
         protected abstract Nucleotide getGlyphFor(byte b);
        
-        protected abstract void encodeNextGroup(Iterator<Nucleotide> glyphs, ByteBuffer result, int offset);
+        protected abstract void encodeCompleteGroup(Iterator<Nucleotide> glyphs, ByteBuffer result, int offset);
+        
+        protected abstract void encodeLastGroup(Iterator<Nucleotide> glyphs, ByteBuffer result, int offset);
      
         protected byte getSentienelByteFor(Nucleotide nucleotide){
             if(nucleotide.equals(sententialBase)){

@@ -34,13 +34,22 @@ import java.util.Iterator;
  *
  */
 abstract class AbstractTwoBitEncodedNucleotideCodec extends AbstractNucleotideCodec{
+	private static final int ORDINAL_A = 12;
+	private static final int ORDINAL_C = 13;
+	private static final int ORDINAL_G = 14;
+	private static final int ORDINAL_T = 15;
+	
+	
 	@Override
 	 protected byte getByteFor(Nucleotide nuc){
-         switch(nuc){
-         	case Adenine : return (byte)0;
-             case Cytosine : return (byte)1;
-             case Guanine : return (byte)2;
-             case Thymine : return (byte)3;
+		int ordinal = nuc.ordinal();
+         switch(ordinal){
+ 
+         
+         	case ORDINAL_A : return (byte)0;
+             case ORDINAL_C : return (byte)1;
+             case ORDINAL_G : return (byte)2;
+             case ORDINAL_T : return (byte)3;
              default : throw new IllegalArgumentException("only A,C,G,T supported : "+ nuc);
          }
      }
@@ -61,7 +70,7 @@ abstract class AbstractTwoBitEncodedNucleotideCodec extends AbstractNucleotideCo
 		return getGlyphFor((byte)((encodedByte >>j) &0x3));
     }
 	@Override
-	protected void encodeNextGroup(Iterator<Nucleotide> glyphs, ByteBuffer result, int offset) {
+	protected void encodeLastGroup(Iterator<Nucleotide> glyphs, ByteBuffer result, int offset) {
         byte b0 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
         byte b1 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
         byte b2 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
@@ -69,11 +78,19 @@ abstract class AbstractTwoBitEncodedNucleotideCodec extends AbstractNucleotideCo
         
         result.put((byte) ((b3<<6 | b2<<4 | b1<<2 | b0) &0xFF));
     }
-    
-    
-    
 	
 	
+	@Override
+	protected void encodeCompleteGroup(Iterator<Nucleotide> glyphs,
+			ByteBuffer result, int offset) {
+		byte b0 = getSentienelByteFor(glyphs.next());
+        byte b1 = getSentienelByteFor(glyphs.next());
+        byte b2 = getSentienelByteFor(glyphs.next());
+        byte b3 = getSentienelByteFor(glyphs.next());
+        
+        result.put((byte) ((b3<<6 | b2<<4 | b1<<2 | b0) &0xFF));
+		
+	}
 	protected AbstractTwoBitEncodedNucleotideCodec(Nucleotide sententialBase) {
 		super(sententialBase);
 	}
