@@ -299,7 +299,7 @@ public class AssemblyArchiveWriterBuilder {
 				
 				readRecord.append("<trace>").append(EOL)
 						
-						.append(createTag("trace_name",lookup.getTraceNameByContigId(read.getId()), 1))
+						.append(createTag("trace_name",lookup.getTraceNameByContigReadId(read.getId()), 1))
 							.append(createTag("nbasecalls", readSequence.getUngappedLength(),1))
 							.append("\t<valid>").append(EOL)
 								.append(createTag("start", validRange.getBegin()+1, 2))
@@ -565,9 +565,9 @@ public class AssemblyArchiveWriterBuilder {
 			if(rangeCmp !=0){
 				return rangeCmp;
 			}
-			String o1Ti =lookup.getTraceNameByContigId(o1.getId());
+			String o1Ti =lookup.getTraceNameByContigReadId(o1.getId());
 			
-			String o2Ti =lookup.getTraceNameByContigId(o2.getId());
+			String o2Ti =lookup.getTraceNameByContigReadId(o2.getId());
 			int tiCmp = o1Ti.compareTo(o2Ti);
 			if(tiCmp !=0){
 				return tiCmp;
