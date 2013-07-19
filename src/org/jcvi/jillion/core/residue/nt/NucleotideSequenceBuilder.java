@@ -577,15 +577,17 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     @Override
     public Iterator<Nucleotide> iterator() {
     	return new Iterator<Nucleotide>(){
-    		private final Iterator<Byte> iter = data.iterator();
-           
+    		int currentOffset=0;
+    		int length = data.getCurrentLength();
+    		
+    		
 			@Override
 			public boolean hasNext() {
-				return iter.hasNext();
+				return currentOffset<length;
 			}
 			@Override
 			public Nucleotide next() {
-				return Nucleotide.VALUES.get(iter.next());
+				return Nucleotide.getByOrdinal(data.get(currentOffset++));
 			}
 			@Override
 			public void remove() {

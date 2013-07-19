@@ -67,7 +67,8 @@ public enum Nucleotide implements Residue {
     private static final Map<Nucleotide,Set<Nucleotide>> AMBIGUITY_TO_CONSTIUENT;
     private static final Map<Nucleotide,Set<Nucleotide>> CONSTIUENT_TO_AMBIGUITY;
    
-    public static final List<Nucleotide> VALUES = Collections.unmodifiableList(Arrays.asList(values()));
+    private static final Nucleotide[] VALUES_ARRAY = values();
+    public static final List<Nucleotide> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
     static{
         
        
@@ -556,6 +557,10 @@ public enum Nucleotide implements Residue {
     	return AMBIGUITY_TO_CONSTIUENT.get(this);
     }
     
+    
+    public static Nucleotide getByOrdinal(int ordinal){
+    	return VALUES_ARRAY[ordinal];
+    }
     /**
      * Two {@link Nucleotide}s match if one of the {@link Nucleotide}'s
      * set of unambiguous bases
