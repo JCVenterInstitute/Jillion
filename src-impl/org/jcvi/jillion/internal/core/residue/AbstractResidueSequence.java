@@ -45,6 +45,10 @@ public abstract class AbstractResidueSequence<R extends Residue> implements Resi
         for(Integer gapIndex :getGapOffsets()){
             if(gapIndex.intValue() <=gappedValidRangeIndex){
                 numberOfGaps++;
+            }else{
+            	//we've gone past our valid range index
+            	//so we can break out of the loop.
+            	break;
             }
         }
         return numberOfGaps;
@@ -56,6 +60,10 @@ public abstract class AbstractResidueSequence<R extends Residue> implements Resi
         	//due to gaps being added to ungapped index
             if(gapIndex.intValue() <=ungappedValidRangeIndex + numberOfGaps){
                 numberOfGaps++;
+            }else{
+            	//we've gone past our valid range index
+            	//so we can break out of the loop.
+            	break;
             }
         }
         return numberOfGaps;

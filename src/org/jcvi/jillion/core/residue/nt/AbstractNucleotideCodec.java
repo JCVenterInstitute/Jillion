@@ -93,7 +93,126 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
         
        protected abstract Nucleotide getNucleotide(byte encodedByte, int index);
        
-		protected List<Integer> getSentinelOffsetsFrom(ByteBuffer buf, ValueSizeStrategy offsetStrategy){
+       private ByteBuffer getBufferToComputeNumberOfGapsOnly(byte[] encodedBytes){
+	    	//at most we only need the first 12 bytes
+	    	//there is no need to wrap the entire array
+	    	return ByteBuffer.wrap(encodedBytes,0, Math.min(encodedBytes.length, 12));
+			
+	    }
+       /**
+	    * {@inheritDoc}
+	    */
+	    @Override
+	    public int getUngappedOffsetFor(byte[] encodedGlyphs, int gappedOffset) {
+	        int numGaps=getNumberOfGapsUntil(encodedGlyphs,gappedOffset);
+	        return gappedOffset-numGaps;
+	    }
+	    /**
+	    * {@inheritDoc}
+	    */
+	    @Override
+	    public int getGappedOffsetFor(byte[] encodedGlyphs, int ungappedOffset) {
+	    	int currentOffset=ungappedOffset;
+	    	ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
+			ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
+	        //need to skip length since we don't care about it
+			//but need to read it to advance pointer in buffer
+			offsetStrategy.getNext(buf);
+	        ValueSizeStrategy sentinelStrategy = VALUE_SIZE_STRATEGIES[buf.get()];
+            if(sentinelStrategy == ValueSizeStrategy.NONE){
+            	//no gaps
+            	return currentOffset;
+            }
+            int numberOfSentinels = sentinelStrategy.getNext(buf);
+            
+            for(int i = 0; i< numberOfSentinels; i++, currentOffset++){
+            	int currentGapOffset =offsetStrategy.getNext(buf);
+            	if(currentGapOffset >currentOffset){
+                	return currentOffset;
+                }
+            }
+            return currentOffset;
+	    }
+       /**
+	    * {@inheritDoc}
+	    */
+	    @Override
+	    public boolean isGap(byte[] encodedGlyphs, int gappedOffset) {
+	    	ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
+			ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
+	        //need to skip length since we don't care about it
+			//but need to read it to advance pointer in buffer
+			offsetStrategy.getNext(buf);
+	        ValueSizeStrategy sentinelStrategy = VALUE_SIZE_STRATEGIES[buf.get()];
+            if(sentinelStrategy == ValueSizeStrategy.NONE){
+            	//no gaps
+            	return false;
+            }
+            int numberOfSentinels = sentinelStrategy.getNext(buf);
+            //special case that first gap is after the offset we care about
+            int currentGapOffset =offsetStrategy.getNext(buf);
+            if(currentGapOffset >gappedOffset){
+            	return false;
+            }
+            for(int i = 1; i< numberOfSentinels; i++){
+            	currentGapOffset =offsetStrategy.getNext(buf);
+            	if(currentGapOffset == gappedOffset){
+            		//found it
+            		return true;
+            	}
+            	if(currentGapOffset >gappedOffset){
+            		//past it
+            		return false;
+            	}
+            }
+            //we checked all the gap offsets
+            //and didn't find a match
+            //so it must be not a gap
+            return false;
+	    }
+       /**
+	    * {@inheritDoc}
+	    */
+	    @Override
+	    public long getUngappedLength(byte[] encodedGlyphs) {
+	    	ByteBuffer buf = getBufferToComputeNumberOfGapsOnly(encodedGlyphs);
+			ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
+	        int length =offsetStrategy.getNext(buf);
+	        ValueSizeStrategy sentinelStrategy = ValueSizeStrategy.values()[buf.get()];
+	        if(sentinelStrategy == ValueSizeStrategy.NONE){
+	        	//no gaps
+	        	return length;
+	        }
+	        int numGaps= sentinelStrategy.getNext(buf);
+	        return length-numGaps;
+	    }
+       /**
+	    * {@inheritDoc}
+	    */
+	    @Override
+	    public int getNumberOfGaps(byte[] encodedGlyphs) {
+	    	ByteBuffer buf = getBufferToComputeNumberOfGapsOnly(encodedGlyphs);
+			ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
+	        //need to read the next few bytes even though we
+			//don't care what the size is
+			offsetStrategy.getNext(buf);
+	        ValueSizeStrategy sentinelStrategy = ValueSizeStrategy.values()[buf.get()];
+	        if(sentinelStrategy == ValueSizeStrategy.NONE){
+	        	return 0;
+	        }
+	        return sentinelStrategy.getNext(buf);
+	    }
+        
+		/**
+	    * {@inheritDoc}
+	    */
+	    @Override
+	    public List<Integer> getGapOffsets(byte[] encodedGlyphs) {
+	    	ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
+			ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
+	        //need to skip length since we don't care about it
+			//but need to read it to advance pointer in buffer
+			offsetStrategy.getNext(buf);
 			ValueSizeStrategy sentinelStrategy = VALUE_SIZE_STRATEGIES[buf.get()];
             if(sentinelStrategy == ValueSizeStrategy.NONE){
             	return Collections.<Integer>emptyList();
@@ -106,10 +225,31 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
             	}
             	return ArrayUtil.asList(sentinelOffsets);
             }
-
-		}
-        
+	    }
 		
+		@Override
+		public int getNumberOfGapsUntil(byte[] encodedGlyphs, int gappedOffset) {
+			ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
+			ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
+	        //need to skip length since we don't care about it
+			//but need to read it to advance pointer in buffer
+			offsetStrategy.getNext(buf);
+	        ValueSizeStrategy sentinelStrategy = VALUE_SIZE_STRATEGIES[buf.get()];
+            if(sentinelStrategy == ValueSizeStrategy.NONE){
+            	//no gaps
+            	return 0;
+            }
+            int numberOfSentinels = sentinelStrategy.getNext(buf);
+
+            for(int i = 0; i< numberOfSentinels; i++){
+            	int currentGapOffset =offsetStrategy.getNext(buf);
+            	if(currentGapOffset >gappedOffset){
+            		//we found 
+            		return i;
+            	}
+            }
+			return numberOfSentinels;
+		}
         
        
         @Override

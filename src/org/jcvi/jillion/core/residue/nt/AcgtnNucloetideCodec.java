@@ -51,7 +51,8 @@ final class AcgtnNucloetideCodec extends AbstractTwoBitEncodedNucleotideCodec{
         return Collections.emptyList();
     }
 
-    /**
+
+	/**
     * {@inheritDoc}
     */
     @Override
