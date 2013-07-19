@@ -76,6 +76,14 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 
     
     @Override
+	public int getNumberOfGapsUntil(int gappedValidRangeIndex) {
+		return codec.getNumberOfGapsUntil(data, gappedValidRangeIndex);
+	}
+
+
+
+
+	@Override
     public List<Integer> getGapOffsets() {
     	return codec.getGapOffsets(data);
     }
