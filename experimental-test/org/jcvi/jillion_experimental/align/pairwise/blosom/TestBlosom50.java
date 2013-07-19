@@ -20,11 +20,15 @@
  ******************************************************************************/
 package org.jcvi.jillion_experimental.align.pairwise.blosom;
 
+import static org.junit.Assert.assertEquals;
+
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
+import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
+import org.jcvi.jillion.core.residue.aa.AminoAcidSequenceBuilder;
+import org.jcvi.jillion_experimental.align.pairwise.AminoAcidNeedlemanWunschAligner;
+import org.jcvi.jillion_experimental.align.pairwise.AminoAcidPairwiseSequenceAlignment;
 import org.jcvi.jillion_experimental.align.pairwise.AminoAcidScoringMatrix;
-import org.jcvi.jillion_experimental.align.pairwise.blosom.BlosomMatrices;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestBlosom50 {
 
 	@Test
@@ -44,5 +48,40 @@ public class TestBlosom50 {
 		assertEquals(0F,
 				blosom50.getScore(AminoAcid.Valine, AminoAcid.Threonine),
 				0F);
+		assertEquals(1F,
+				blosom50.getScore(AminoAcid.STOP, AminoAcid.STOP),
+				0F);
+		assertEquals(-5F,
+				blosom50.getScore(AminoAcid.STOP, AminoAcid.Alanine),
+				0F);
+	}
+	
+	@Test
+	public void hasSequencesHaveStopCodon(){
+		AminoAcidSequence seq1 = new AminoAcidSequenceBuilder("LSGIREE*")
+									.build();
+		
+		AminoAcidScoringMatrix blosom50 = BlosomMatrices.getMatrix(50);
+		
+		AminoAcidPairwiseSequenceAlignment alignment =AminoAcidNeedlemanWunschAligner.align(seq1, seq1, blosom50, -1, -2);
+	
+		assertEquals(seq1,alignment.getGappedQueryAlignment());
+		assertEquals(seq1,alignment.getGappedSubjectAlignment());
+	
+	}
+	@Test
+	public void alignSimilarSequences(){
+		AminoAcidSequence seq1 = new AminoAcidSequenceBuilder("LSGIREE*")
+									.build();
+		AminoAcidSequence seq2 = new AminoAcidSequenceBuilder("LSGVREE*")
+									.build();
+		AminoAcidScoringMatrix blosom50 = BlosomMatrices.getMatrix(50);
+		
+		AminoAcidPairwiseSequenceAlignment alignment =AminoAcidNeedlemanWunschAligner.align(seq1, seq2, blosom50, -1, -2);
+	
+		
+		assertEquals(seq1,alignment.getGappedQueryAlignment());
+		assertEquals(seq2,alignment.getGappedSubjectAlignment());
+	
 	}
 }
