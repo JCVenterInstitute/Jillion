@@ -48,7 +48,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	 * The matrix which stores all of our traceback
 	 * values. 
 	 */
-	private final byte[][] traceback;
+	private final TraceBackMatrix traceback;
 	/**
 	 * The match scores of the current row computed so far
 	 * and the full previous row.
@@ -83,47 +83,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	private static final int CURRENT_ROW=1;
 	
 	
-	/**
-	 * The direction to traverse to the next
-	 * cell in the traceback matrix.  The traceback
-	 * will start at the last cell in the alignment
-	 * and walk backwards towards the beginning
-	 * of the alignment.
-	 * @author dkatzel
-	 *
-	 */
-	protected enum TracebackDirection{
-		/**
-		 * Stop the traceback. This will end
-		 * the alignment and will always
-		 * be the value of the last cell
-		 * visited in the matrix.
-		 */
-		TERMINAL,
-		/**
-		 * Move to the cell horizontally
-		 * (left).  This will cause
-		 * the alignment to add a horizontal
-		 * gap to the alignment.
-		 */
-		HORIZONTAL,
-		/**
-		 * Move to the cell vertically
-		 * (up).  This will cause
-		 * the alignment to add a vertical
-		 * gap to the alignment.
-		 */
-		VERTICAL,
-		/**
-		 * Move to the cell diagonally
-		 * horizontal AND vertical
-		 * (left and up).  This will cause
-		 * the alignment to a match/mismatch
-		 * to the alignment.
-		 */
-		DIAGNOL;
-	}
-	
+
 	
 	
 	protected AbstractPairwiseAligner(Sequence<R> query, Sequence<R> subject,
@@ -131,7 +91,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 			ResiduePairwiseStrategy<R,S,A,P> pairwiseStrategy){
 		checkNotNull(query,subject,matrix);
 		this.pairwiseStrategy = pairwiseStrategy;
-		traceback = new byte[(int)query.getLength()+1][(int)subject.getLength()+1];
+		traceback = new TraceBackMatrix((int)query.getLength()+1,(int)subject.getLength()+1);
 		
 		scoreCache = new float[2][(int)subject.getLength()+1];
 		inAVerticalGapCache = new BitSet[2];
@@ -230,8 +190,8 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 								break;
 						
 				}
-				traceback[i][j]= (byte)bestWalkBack.getTracebackDirection().ordinal();
-				diagnol = traceback[i-1][j];
+				traceback.set(i,j,bestWalkBack.getTracebackDirection());
+				diagnol = traceback.get(i-1,j).ordinal();
 				
 				//printTraceBack();
 			}
@@ -259,12 +219,12 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	}
 	private void initializeScoreCache(float openGapPenalty,
 			float extendGapPenalty) {
-		scoreCache[PREVIOUS_ROW] = getInitialGapScores(traceback[0].length, openGapPenalty, extendGapPenalty );
+		scoreCache[PREVIOUS_ROW] = getInitialGapScores(traceback.getYLength(), openGapPenalty, extendGapPenalty );
 		scoreCache[CURRENT_ROW][1] = scoreCache[PREVIOUS_ROW][1];
 	}
 	private void initializeVerticalGapCache() {
-		inAVerticalGapCache[0] = new BitSet(traceback[0].length);
-		inAVerticalGapCache[1] = new BitSet(traceback[0].length);
+		inAVerticalGapCache[0] = new BitSet(traceback.getYLength());
+		inAVerticalGapCache[1] = new BitSet(traceback.getYLength());
 	}
 	private void initialTracebackMatrix() {
 		TracebackDirection initialRowDirection = getInitialRowTracebackValue();
@@ -276,13 +236,14 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 			throw new NullPointerException("initialColDirection can not be null");
 		}
 		//the origin of the matrix is always terminal
-		traceback[0][0] = (byte)TracebackDirection.TERMINAL.ordinal();
+		traceback.set(0,0, TracebackDirection.TERMINAL);
 		//populate the first row and column using subclass values as input
-		for(int i=1; i<traceback[0].length; i++){
-			traceback[0][i]=(byte)initialRowDirection.ordinal();
+		for(int i=1; i<traceback.getYLength(); i++){
+			traceback.set(0,i, initialRowDirection);
+			
 		}
-		for(int i=1; i<traceback.length; i++){
-			traceback[i][0]=(byte)initialColDirection.ordinal();
+		for(int i=1; i<traceback.getXLength(); i++){
+			traceback.set(i,0, initialColDirection);
 		}
 	}
 	/**
@@ -327,12 +288,12 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	}
 
 	private void printTraceBack(){
-		for(int i=0; i<traceback.length; i++){
+		for(int i=0; i<traceback.getXLength(); i++){
 			
-			for(int j=0; j<traceback[0].length; j++){
+			for(int j=0; j<traceback.getYLength(); j++){
 				
 				System.out.printf("%s [?] ",
-							TracebackDirection.values()[traceback[i][j]].toString().charAt(0));
+							traceback.get(i,j).toString().charAt(0));
 			}
 			System.out.println("");
 		}
@@ -382,7 +343,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		List<R> residuesByOrdinal = pairwiseStrategy.getResidueList();
 		while(!done){
 			
-			TracebackDirection tracebackDirection = TracebackDirection.values()[traceback[x][y]];
+			TracebackDirection tracebackDirection = traceback.get(x,y);
 			switch(tracebackDirection){
 				case VERTICAL :
 					alignmentBuilder.addGap(residuesByOrdinal.get(seq1Bytes[x-1]), gap);
@@ -536,6 +497,71 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 			return true;
 		}
 		
+		
+	}
+	
+	/**
+	 * The direction to traverse to the next
+	 * cell in the traceback matrix.  The traceback
+	 * will start at the last cell in the alignment
+	 * and walk backwards towards the beginning
+	 * of the alignment.
+	 * @author dkatzel
+	 *
+	 */
+	protected enum TracebackDirection{
+		/**
+		 * Stop the traceback. This will end
+		 * the alignment and will always
+		 * be the value of the last cell
+		 * visited in the matrix.
+		 */
+		TERMINAL,
+		/**
+		 * Move to the cell horizontally
+		 * (left).  This will cause
+		 * the alignment to add a horizontal
+		 * gap to the alignment.
+		 */
+		HORIZONTAL,
+		/**
+		 * Move to the cell vertically
+		 * (up).  This will cause
+		 * the alignment to add a vertical
+		 * gap to the alignment.
+		 */
+		VERTICAL,
+		/**
+		 * Move to the cell diagonally
+		 * horizontal AND vertical
+		 * (left and up).  This will cause
+		 * the alignment to a match/mismatch
+		 * to the alignment.
+		 */
+		DIAGNOL;
+	}
+	
+	private static final class TraceBackMatrix{
+		private final byte[][] matrix;
+		private static final TracebackDirection[] ORDINALS = TracebackDirection.values();
+		TraceBackMatrix(int x, int y){
+			matrix = new byte[x][y];
+		}
+		
+		public TracebackDirection get(int x, int y){
+			return ORDINALS[matrix[x][y]];
+		}
+		
+		public void set(int x, int y, TracebackDirection value){
+			matrix[x][y] = (byte)value.ordinal();
+		}
+		
+		public int getXLength(){
+			return matrix.length;
+		}
+		public int getYLength(){
+			return matrix[0].length;
+		}
 		
 	}
 }
