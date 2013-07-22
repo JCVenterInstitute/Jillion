@@ -53,7 +53,7 @@ import org.jcvi.jillion.internal.assembly.DefaultContig;
  *
  *
  */
-public class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, TasmContig>{
+public final class TasmContigBuilder extends AbstractContigBuilder<TasmAssembledRead, TasmContig>{
 	private Long celeraAssemblerId;
 	private String comment, commonName;
 	private Integer sampleId;
