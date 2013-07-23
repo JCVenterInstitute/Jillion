@@ -1,6 +1,7 @@
 package org.jcvi.jillion_experimental.ncbi.submit.assemblyArchive;
 
 import java.util.Date;
+import java.util.List;
 
 public interface AssemblyArchiveMetaData {
 
@@ -19,5 +20,7 @@ public interface AssemblyArchiveMetaData {
 	String getStructure();
 
 	Date getSubmissionDate();
+	
+	List<String> getSegmentsToSubmit();
 
 }
