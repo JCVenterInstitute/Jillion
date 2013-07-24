@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.core.datastore;
 
-import java.io.IOException;
 import java.util.Iterator;
 
 import org.jcvi.jillion.core.datastore.DataStore;
@@ -87,7 +86,7 @@ public final class DataStoreStreamingIterator<T> implements StreamingIterator<T>
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close(){
 		delegate.close();
 		
 	}

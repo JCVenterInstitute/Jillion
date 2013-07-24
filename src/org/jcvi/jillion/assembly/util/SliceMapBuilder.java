@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.util;
 
-import java.io.IOException;
 import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.assembly.AssembledRead;
@@ -141,7 +140,7 @@ public final class SliceMapBuilder<R extends AssembledRead> implements Builder<S
 		}
 
 		@Override
-		public void close() throws IOException {
+		public void close(){
 			current = endToken;
 			delegate.close();
 			

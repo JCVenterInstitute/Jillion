@@ -305,7 +305,7 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 		}
 
 		@Override
-		public void close() throws IOException {
+		public void close() {
 			delegate.close();
 			
 		}
@@ -346,7 +346,7 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 		}
 
 		@Override
-		public void close() throws IOException {
+		public void close() {
 			for(StreamingIterator<? extends Trace> iter : iterators){
 				IOUtil.closeAndIgnoreErrors(iter);
 			}			

@@ -21,7 +21,6 @@
 package org.jcvi.jillion.assembly.clc.cas.consed;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 
@@ -70,7 +69,7 @@ class FastqConsedPhdAdaptedIterator implements StreamingIterator<PhdReadRecord>{
 		
 	}
 	@Override
-	public void close() throws IOException {
+	public void close(){
 		fastqIterator.close();
 		
 	}
