@@ -91,7 +91,15 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 			ResiduePairwiseStrategy<R,S,A,P> pairwiseStrategy){
 		checkNotNull(query,subject,matrix);
 		this.pairwiseStrategy = pairwiseStrategy;
-		traceback = new TraceBackMatrix((int)query.getLength()+1,(int)subject.getLength()+1);
+		TracebackDirection initialRowDirection = getInitialRowTracebackValue();
+		if(initialRowDirection ==null){
+			throw new NullPointerException("initialRowDirection can not be null");
+		}
+		TracebackDirection initialColDirection = getInitialColTracebackValue();
+		if(initialColDirection ==null){
+			throw new NullPointerException("initialColDirection can not be null");
+		}
+		traceback = new TraceBackMatrix((int)query.getLength()+1,(int)subject.getLength()+1, initialRowDirection, initialColDirection);
 		
 		scoreCache = new float[2][(int)subject.getLength()+1];
 		inAVerticalGapCache = new BitSet[2];
@@ -213,7 +221,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	 */
 	private void initializeFields(float openGapPenalty, float extendGapPenalty) {
 		
-		initialTracebackMatrix();
+		//initialTracebackMatrix();
 		initializeVerticalGapCache();		
 		initializeScoreCache(openGapPenalty, extendGapPenalty);
 	}
@@ -543,25 +551,84 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	
 	private static final class TraceBackMatrix{
 		private final byte[][] matrix;
+		private final int xLength;
+		private final int yLength;
 		private static final TracebackDirection[] ORDINALS = TracebackDirection.values();
-		TraceBackMatrix(int x, int y){
-			matrix = new byte[x][y];
+		TraceBackMatrix(int x, int y, TracebackDirection initialRowDirection, TracebackDirection initialColDirection){
+			xLength = x;
+			yLength =y;
+			matrix = new byte[(x+1)/2][(y+1)/2];
+			
+			initialize(initialRowDirection, initialColDirection);
 		}
 		
+		private void initialize(TracebackDirection initialRowDirection,
+				TracebackDirection initialColDirection) {
+			
+			int rowOrdinal = initialRowDirection.ordinal();
+			int colOrdinal = initialColDirection.ordinal();
+			
+			byte rowValue = (byte)(rowOrdinal<<6 | rowOrdinal<<4);
+			
+			for(int i=1; i<matrix[0].length; i++){
+				matrix[0][i] = rowValue;
+			}
+			byte colValue = (byte)(colOrdinal<<2 | colOrdinal);
+			for(int i=1; i<matrix.length; i++){
+				matrix[i][0] = colValue;
+			}
+			//special case handle origin of matrix 
+			//which is first (x0,y0)(x0,y1)
+			//               (x1,y0)(x1,y1)
+			
+			//(x0,y0) is always terminal
+			byte origin = (byte)(TracebackDirection.TERMINAL.ordinal()<<6 | rowOrdinal<<4 | colOrdinal<<2);
+			matrix[0][0]= origin;
+		}
+
 		public TracebackDirection get(int x, int y){
-			return ORDINALS[matrix[x][y]];
+			byte matrixValue = matrix[x/2][y/2];
+			if((x & 0x01)==0){
+				if((y & 0x01)==0){
+					return ORDINALS[(matrixValue &0xC0) >>6];
+				}else{
+					return ORDINALS[(matrixValue &0x30) >>4];
+				}
+			}else{
+				if((y & 0x01)==0){
+					return ORDINALS[(matrixValue &0x0C) >>2];
+				}else{
+					return ORDINALS[(matrixValue &0x3)];
+				}
+			}
 		}
 		
 		public void set(int x, int y, TracebackDirection value){
-			matrix[x][y] = (byte)value.ordinal();
+			int matrixValue = matrix[x/2][y/2];
+			if((x & 0x01)==0){
+				if((y & 0x01)==0){
+					matrix[x/2][y/2] = (byte)((matrixValue &0x3F) | (value.ordinal()<<6));
+				}else{
+					matrix[x/2][y/2] = (byte)((matrixValue &0xCF) | (value.ordinal()<<4));
+				}
+			}else{
+				if((y & 0x01)==0){
+					matrix[x/2][y/2] = (byte)((matrixValue &0xF3) | (value.ordinal()<<2));
+				}else{
+					matrix[x/2][y/2] = (byte)((matrixValue &0xFC) | value.ordinal());
+				}
+				
+			}
 		}
 		
 		public int getXLength(){
-			return matrix.length;
+			return xLength;
 		}
 		public int getYLength(){
-			return matrix[0].length;
+			return yLength;
 		}
+		
+		
 		
 	}
 }
