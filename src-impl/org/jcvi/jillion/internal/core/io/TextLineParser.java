@@ -52,6 +52,11 @@ public final class TextLineParser implements Closeable{
 	 * will grow accordingly.
 	 */
 	private static final int INITIAL_LINE_CAPACITY = 200;
+	
+	/**
+	 * Our pushed back byte is not set.
+	 */
+	private static final int NOT_SET = -2;
 	/**
 	 * End of File.
 	 */
@@ -90,7 +95,7 @@ public final class TextLineParser implements Closeable{
 	 *  the unread byte once per
 	 *  getLine() call instead of every read().
 	 */
-	private Byte unreadByte=null;
+	private int pushedBackValue=NOT_SET;
 	
 	public TextLineParser(InputStream in) throws IOException{
 		this(in, 0L);
@@ -114,9 +119,9 @@ public final class TextLineParser implements Closeable{
 		}
 		StringBuilder builder = new StringBuilder(INITIAL_LINE_CAPACITY);
 		int value;
-		if(unreadByte !=null){
-			value = unreadByte;
-			unreadByte=null;
+		if(pushedBackValue !=NOT_SET){
+			value = pushedBackValue;
+			pushedBackValue=NOT_SET;
 		}else{
 			value = in.read();
 		}
@@ -142,7 +147,7 @@ public final class TextLineParser implements Closeable{
 					//not windows formatted line
 					//could be Mac 0S 9 which only uses '\r'
 					//put that value back
-					unreadByte =(byte)nextChar;
+					pushedBackValue =nextChar;
 				}
 				
 				break;
