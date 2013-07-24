@@ -119,11 +119,11 @@ public final class TextLineParser implements Closeable{
 		}
 		StringBuilder builder = new StringBuilder(INITIAL_LINE_CAPACITY);
 		int value;
-		if(pushedBackValue !=NOT_SET){
+		if(pushedBackValue ==NOT_SET){
+			value = in.read();
+		}else{			
 			value = pushedBackValue;
 			pushedBackValue=NOT_SET;
-		}else{
-			value = in.read();
 		}
 		numberOfBytesInNextLine=0;
 		

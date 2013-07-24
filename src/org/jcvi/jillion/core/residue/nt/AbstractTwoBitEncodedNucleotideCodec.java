@@ -71,13 +71,16 @@ abstract class AbstractTwoBitEncodedNucleotideCodec extends AbstractNucleotideCo
     }
 	@Override
 	protected void encodeLastGroup(Iterator<Nucleotide> glyphs, ByteBuffer result, int offset) {
-        byte b0 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
-        byte b1 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
-        byte b2 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
-        byte b3 = glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
+        byte b0 = getNextByte(glyphs);
+        byte b1 = getNextByte(glyphs);
+        byte b2 = getNextByte(glyphs);
+        byte b3 = getNextByte(glyphs);
         
         result.put((byte) ((b3<<6 | b2<<4 | b1<<2 | b0) &0xFF));
     }
+	private byte getNextByte(Iterator<Nucleotide> glyphs) {
+		return glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;
+	}
 	
 	
 	@Override
