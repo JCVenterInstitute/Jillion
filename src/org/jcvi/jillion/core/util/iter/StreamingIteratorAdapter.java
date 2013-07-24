@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.util.iter;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -71,7 +70,7 @@ final class StreamingIteratorAdapter<T> implements StreamingIterator<T>{
     * to iterate over.
     */
     @Override
-    public void close() throws IOException {
+    public void close() {
         if(isClosed){
         	return ; //no-op
         }

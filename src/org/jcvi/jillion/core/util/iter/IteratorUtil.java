@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.util.iter;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -189,7 +188,7 @@ public final class IteratorUtil {
 		}
 		
 		@Override
-		public void close() throws IOException {
+		public void close() {
 			doneIterating=true;
 			iter.close();
 			

@@ -21,9 +21,7 @@
 package org.jcvi.jillion.core.util.iter;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /**
  * {@code StreamingIterator} is an
@@ -93,7 +91,7 @@ public interface StreamingIterator<T> extends Closeable, Iterator<T>{
     * deadlocks and/or permanently blocked threads. 
     */
     @Override
-    void close() throws IOException;
+    void close();
     /**
      * Returns the next element in the iterator.
      * @throws NoSuchElementException if

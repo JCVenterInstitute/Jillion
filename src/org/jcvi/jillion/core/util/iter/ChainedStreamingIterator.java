@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.util.iter;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -61,7 +60,7 @@ final class ChainedStreamingIterator<T> implements StreamingIterator<T>{
     * being chained together.
     */
     @Override
-    public void close() throws IOException {
+    public void close() {
       for(StreamingIterator<? extends T> delegate : delegates){
             IOUtil.closeAndIgnoreErrors(delegate);
         }

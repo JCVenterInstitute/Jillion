@@ -21,7 +21,6 @@
 package org.jcvi.jillion.assembly.clc.cas.consed;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -127,7 +126,7 @@ public class FastaConsedPhdAdaptedIterator implements StreamingIterator<PhdReadR
 		
 	}
 	@Override
-	public void close() throws IOException {
+	public void close() {
 		fastaIterator.close();
 		
 	}

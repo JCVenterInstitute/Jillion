@@ -403,7 +403,7 @@ public final class DataStoreUtil {
 				}
 
 				@Override
-				public void close() throws IOException {
+				public void close(){
 					iter.close();
 					
 				}
