@@ -976,25 +976,17 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         	int insertLength = insertionLength;
         	//shift downstream gaps we already have
         	for(int i=0; i<currentGapLength; i++){
-        		if(dest.get(i)>=insertionOffset){
-        			dest.replace(i, dest.get(i) +insertLength);
+        		int currentValue = dest.get(i);
+        		if(currentValue>=insertionOffset){
+        			dest.replace(i, currentValue +insertLength);
         		}
         	}
         	int[] newGaps =src.toArray();
         	for(int i=0; i< newGaps.length; i++){
         		newGaps[i] +=insertionOffset;
         	}
+        	dest.sortedInsert(newGaps);
         	
-        	
-        	if(newGaps.length >0){
-        		//appending all the values then sorting
-        		//once is probably more efficient than
-        		//binary searching and inserting one by one
-        		//since we only have to resize and sort once 
-        		//instead of n times.
-	        	dest.append(newGaps);
-	        	dest.sort();
-        	}
         }
         
         public void insert(int startOffset, NewValues newValues){

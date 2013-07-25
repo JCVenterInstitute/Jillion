@@ -385,4 +385,74 @@ public final class GrowableShortArray implements Iterable<Short>{
 	public Iterator<Short> iterator() {
 		return PrimitiveArrayIterators.create(data, currentLength);
 	}
+	
+	/**
+	 * Insert the given sorted array of values into the 
+	 * sorted backing array.  This should produce identical
+	 * results
+	 * to iterating over the array and calling
+	 * {@link #sortedInsert(short)} on each element,
+	 * but is hopefully more efficient.
+	 * 
+	 * Calling this method on an unsorted
+	 * backing array may not insert the value
+	 * correctly.
+	 * @param value the value to insert.
+	 */
+	public void sortedInsert(short[] values){
+		if(values.length==0){
+			//no-op
+			return;
+		}
+		if(currentLength ==0){
+			//we have 0 length 
+			//act just like append
+			append(values);
+			return;
+		}
+		short[] newData = new short[data.length + values.length];
+		int newCurrentLength = currentLength + values.length;
+		
+		int ourDataIndex=0, otherDataIndex=0;
+
+		short ourNextValue = data[0];
+		short otherNextValue = values[0];
+		int i=0;
+		for(; ourDataIndex<currentLength && otherDataIndex < values.length; i++){
+			if(ourNextValue <otherNextValue){
+				newData[i] = ourNextValue;
+				ourDataIndex ++;
+				if(ourDataIndex <currentLength){
+					ourNextValue = data[ourDataIndex];
+				}
+				
+			}else{
+				newData[i] = otherNextValue;
+				otherDataIndex++;
+				if(otherDataIndex <values.length){
+					otherNextValue = values[otherDataIndex];
+				}
+			}
+		}
+		//by the time we get here
+		//at least one of the original
+		//sorted arrays has been exhausted
+		//(possibly both if they are the same size
+		//with perfect interleaving...
+		
+		if(ourDataIndex<currentLength){
+			//fill in rest of our data
+			for(; ourDataIndex<currentLength; i++, ourDataIndex++){
+				newData[i] =data[ourDataIndex];
+			}
+		}else{
+			//fill in rest of other data
+			for(; otherDataIndex<values.length; i++, otherDataIndex++){
+				newData[i] =values[otherDataIndex];
+			}
+		}
+			
+		data = newData;
+		currentLength = newCurrentLength;
+	}
 }

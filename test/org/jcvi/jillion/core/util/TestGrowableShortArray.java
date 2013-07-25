@@ -445,4 +445,42 @@ public class TestGrowableShortArray {
 		}
 		assertFalse(actual.hasNext());
 	}
+	
+	@Test
+	public void sortedInsertSmallerArray(){
+		GrowableShortArray sut = new GrowableShortArray(new short[]{10, 20,30,30,35, 40,50});
+		
+		sut.sortedInsert(new short[]{15,17,31,37,60});
+		assertArrayEquals(new short[]{10,15,17, 20,30,30,31, 35, 37, 40,50,60}, sut.toArray());
+	}
+	@Test
+	public void sortedInsertLargerArray(){
+		GrowableShortArray sut = new GrowableShortArray(new short[]{10, 20,30,30,35, 40,50});
+		
+		sut.sortedInsert(new short[]{15,17,31,37,60,61,62,63,64,65});
+		assertArrayEquals(new short[]{10,15,17, 20,30,30,31, 35, 37, 40,50,60,61,62,63,64,65}, sut.toArray());
+	}
+	@Test
+	public void sortedInsertSameSizedArray(){
+		GrowableShortArray sut = new GrowableShortArray(new short[]{10, 20,30,30,35, 40,50});
+		
+		sut.sortedInsert(new short[]{15,17,31,37,60,61,62});
+		assertArrayEquals(new short[]{10,15,17, 20,30,30,31, 35, 37, 40,50,60,61,62}, sut.toArray());
+	}
+	
+	@Test
+	public void sortedInsertEmptyArraShouldMakeNoChanges(){
+		GrowableShortArray sut = new GrowableShortArray(new short[]{10, 20,30,30,35, 40,50});
+		
+		sut.sortedInsert(new short[0]);
+		assertArrayEquals(new short[]{10, 20,30,30,35, 40,50}, sut.toArray());
+	}
+	
+	@Test
+	public void sortedInsertOnEmptyGrowableArrayShouldAppend(){
+		GrowableShortArray sut = new GrowableShortArray(10);
+		
+		sut.sortedInsert(new short[]{15,17,31,37,60,61,62});
+		assertArrayEquals(new short[]{15,17,31,37,60,61,62}, sut.toArray());
+	}
 }
