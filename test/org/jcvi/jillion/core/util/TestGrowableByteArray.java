@@ -88,7 +88,7 @@ public class TestGrowableByteArray {
 	private void assertToArrayCorrect(GrowableByteArray sut, byte[] expected) {
 		assertEquals(expected.length, sut.getCurrentLength());
 		assertArrayEquals(expected, sut.toArray());
-		for(int i=0; i< expected.length; i++){
+		for(byte i=0; i< expected.length; i++){
 			assertEquals(expected[i], sut.get(i));
 		}
 	}
@@ -388,7 +388,7 @@ public class TestGrowableByteArray {
 		sut.append((byte)30);
 		sut.append((byte)40);
 		sut.append((byte)50);
-		for(int i=0; i<sut.getCurrentLength(); i++){
+		for(byte i=0; i<sut.getCurrentLength(); i++){
 			assertEquals(i, sut.binarySearch(sut.get(i)));
 		}
 		assertEquals("after all",-6, sut.binarySearch((byte)60));
@@ -441,5 +441,44 @@ public class TestGrowableByteArray {
 			assertEquals(expected.next(), actual.next());
 		}
 		assertFalse(actual.hasNext());
+	}
+	
+	
+	@Test
+	public void sortedInsertSmallerArray(){
+		GrowableByteArray sut = new GrowableByteArray(new byte[]{10, 20,30,30,35, 40,50});
+		
+		sut.sortedInsert(new byte[]{15,17,31,37,60});
+		assertArrayEquals(new byte[]{10,15,17, 20,30,30,31, 35, 37, 40,50,60}, sut.toArray());
+	}
+	@Test
+	public void sortedInsertLargerArray(){
+		GrowableByteArray sut = new GrowableByteArray(new byte[]{10, 20,30,30,35, 40,50});
+		
+		sut.sortedInsert(new byte[]{15,17,31,37,60,61,62,63,64,65});
+		assertArrayEquals(new byte[]{10,15,17, 20,30,30,31, 35, 37, 40,50,60,61,62,63,64,65}, sut.toArray());
+	}
+	@Test
+	public void sortedInsertSameSizedArray(){
+		GrowableByteArray sut = new GrowableByteArray(new byte[]{10, 20,30,30,35, 40,50});
+		
+		sut.sortedInsert(new byte[]{15,17,31,37,60,61,62});
+		assertArrayEquals(new byte[]{10,15,17, 20,30,30,31, 35, 37, 40,50,60,61,62}, sut.toArray());
+	}
+	
+	@Test
+	public void sortedInsertEmptyArraShouldMakeNoChanges(){
+		GrowableByteArray sut = new GrowableByteArray(new byte[]{10, 20,30,30,35, 40,50});
+		
+		sut.sortedInsert(new byte[0]);
+		assertArrayEquals(new byte[]{10, 20,30,30,35, 40,50}, sut.toArray());
+	}
+	
+	@Test
+	public void sortedInsertOnEmptyGrowableArrayShouldAppend(){
+		GrowableByteArray sut = new GrowableByteArray(10);
+		
+		sut.sortedInsert(new byte[]{15,17,31,37,60,61,62});
+		assertArrayEquals(new byte[]{15,17,31,37,60,61,62}, sut.toArray());
 	}
 }
