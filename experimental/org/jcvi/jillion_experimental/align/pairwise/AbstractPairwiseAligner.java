@@ -208,10 +208,8 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		return currentStartPoint;
 	}
 	/**
-	 * Initialize the values of the initial traceback cells, scorecache and inVerticalGapCache.
+	 * Initialize the values of the initial scorecache and inVerticalGapCache.
 	 * Some of these values are populated using returned values from
-	 * {@link #getInitialColTracebackValue()}, 
-	 * {@link #getInitialRowTracebackValue()}, 
 	 * {@link #getInitialGapScores(int, float, float)}
 	 * @param openGapPenalty
 	 * @param extendGapPenalty
@@ -220,8 +218,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	 * @throws Illegal
 	 */
 	private void initializeFields(float openGapPenalty, float extendGapPenalty) {
-		
-		//initialTracebackMatrix();
+
 		initializeVerticalGapCache();		
 		initializeScoreCache(openGapPenalty, extendGapPenalty);
 	}
@@ -234,26 +231,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		inAVerticalGapCache[0] = new BitSet(traceback.getYLength());
 		inAVerticalGapCache[1] = new BitSet(traceback.getYLength());
 	}
-	private void initialTracebackMatrix() {
-		TracebackDirection initialRowDirection = getInitialRowTracebackValue();
-		if(initialRowDirection ==null){
-			throw new NullPointerException("initialRowDirection can not be null");
-		}
-		TracebackDirection initialColDirection = getInitialColTracebackValue();
-		if(initialColDirection ==null){
-			throw new NullPointerException("initialColDirection can not be null");
-		}
-		//the origin of the matrix is always terminal
-		traceback.set(0,0, TracebackDirection.TERMINAL);
-		//populate the first row and column using subclass values as input
-		for(int i=1; i<traceback.getYLength(); i++){
-			traceback.set(0,i, initialRowDirection);
-			
-		}
-		for(int i=1; i<traceback.getXLength(); i++){
-			traceback.set(i,0, initialColDirection);
-		}
-	}
+	
 	/**
 	 * Get the {@link TracebackDirection}
 	 * that should be used to represent when
@@ -627,8 +605,5 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		public int getYLength(){
 			return yLength;
 		}
-		
-		
-		
 	}
 }
