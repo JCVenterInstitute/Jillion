@@ -54,7 +54,7 @@ public class TestAcgtnNucleotideCodec {
 
     private List<Nucleotide> asList(NucleotideSequenceBuilder builder){
     	List<Nucleotide> list = new ArrayList<Nucleotide>((int)builder.getLength());
-    	for(Nucleotide n : builder){
+    	for(Nucleotide n : builder.build()){
     		list.add(n);
     	}
     	return list;
