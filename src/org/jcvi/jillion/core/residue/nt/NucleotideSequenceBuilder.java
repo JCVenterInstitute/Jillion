@@ -343,10 +343,10 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         	Range rangeToDelete = Range.of(Math.max(0, range.getBegin()),
         			Math.min(data.getCurrentLength()-1, range.getEnd()));
         	GrowableByteArray deletedBytes = data.subArray(rangeToDelete);
-        	data.remove(rangeToDelete);
+        	
             NewValues newValues = new NewValues(deletedBytes);
             this.codecDecider.delete((int)range.getBegin(),newValues);
-             
+            data.remove(rangeToDelete);
         }
         return this;
     }
@@ -368,7 +368,9 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 	public int getNumGaps(){
         return codecDecider.getNumberOfGaps();
     }
-    
+    int[] getNOffsets(){
+    	return codecDecider.nOffsets.toArray();
+    }
     public int getNumNs(){
         return codecDecider.getNumberOfNs();
     }
@@ -1023,15 +1025,21 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         
         public void reverse(){
         	
-        	int gaps[] =gapOffsets.toArray();
+        	gapOffsets = reverseCoordinates(gapOffsets);
+        	nOffsets = reverseCoordinates(nOffsets);
+        	
+        }
+		private GrowableIntArray reverseCoordinates(GrowableIntArray array) {
+			int gaps[] =array.toArray();
         	int delta = currentLength-1;
         	for(int i=0; i<gaps.length; i++){
         		gaps[i]= delta-gaps[i];
         	}
-        	gapOffsets = new GrowableIntArray(gapOffsets.getCurrentCapacity());
-        	gapOffsets.append(gaps);
-        	gapOffsets.reverse();
-        }
+        	GrowableIntArray newArray = new GrowableIntArray(array.getCurrentCapacity());
+        	newArray.append(gaps);
+        	newArray.reverse();
+			return newArray;
+		}
         
         private void delete(GrowableIntArray array, int startOffset, int[] gapsToDelete, int lengthDeleted){
         	
@@ -1047,8 +1055,12 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 			//return of binarySearch is guaranteed to be
 			//negative (because we would have deleted it above
 			for(int i=-array.binarySearch(lastGap) -1; i<remainingGapLength; i++){
+				try{
 				if(array.get(i)> lastGap){
 					array.replace(i, array.get(i) - lengthDeleted);
+				}
+				}catch(Throwable t){
+					throw new RuntimeException(t);
 				}
 			}
         }
