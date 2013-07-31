@@ -688,6 +688,7 @@ public class TestNucleotideSequenceBuilder {
     public void ungapSequenceWithNs(){
     	NucleotideSequenceBuilder sut =new NucleotideSequenceBuilder("ANC-GNT-T");
     	sut.ungap();
+    	assertArrayEquals(new int[]{1,4}, sut.getNOffsets());
     	assertEquals("ANCGNTT", sut.build().toString());
     }
     
@@ -695,6 +696,22 @@ public class TestNucleotideSequenceBuilder {
     public void ungapSequenceWithNsButHasNoGaps(){
     	NucleotideSequenceBuilder sut =new NucleotideSequenceBuilder("ANCGNTT");
     	sut.ungap();
+    	assertArrayEquals(new int[]{1,4}, sut.getNOffsets());
     	assertEquals("ANCGNTT", sut.build().toString());
+    }
+    
+    @Test
+    public void prependSequenceWithNs(){
+    	NucleotideSequenceBuilder sut =new NucleotideSequenceBuilder("ANCGNTT");
+    	sut.prepend("ACGT");
+    	assertArrayEquals(new int[]{5,8}, sut.getNOffsets());
+    	assertEquals("ACGTANCGNTT", sut.build().toString());
+    }
+    @Test
+    public void insertSequenceWithNs(){
+    	NucleotideSequenceBuilder sut =new NucleotideSequenceBuilder("ANCGNTT");
+    	sut.insert(2,"ACGT");
+    	assertArrayEquals(new int[]{1,8}, sut.getNOffsets());
+    	assertEquals("ANACGTCGNTT", sut.build().toString());
     }
 }
