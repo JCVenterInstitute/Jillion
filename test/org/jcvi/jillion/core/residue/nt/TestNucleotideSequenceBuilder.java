@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.nt;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -672,5 +673,14 @@ public class TestNucleotideSequenceBuilder {
     	assertEquals(Nucleotide.Cytosine, sut.get(1));
     	assertEquals(Nucleotide.Guanine, sut.get(2));
     	assertEquals(Nucleotide.Thymine, sut.get(3));
+    }
+    
+    @Test
+    public void getNOffsetsOfReversed(){
+    	//gap offsets = 1,4,6
+    	NucleotideSequenceBuilder sut =new NucleotideSequenceBuilder("ANCGNTT");
+    	sut.reverseComplement();
+    	assertEquals("AANCGNT", sut.toString());
+    	assertArrayEquals(new int[]{2,5}, sut.getNOffsets());
     }
 }
