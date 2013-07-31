@@ -811,6 +811,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         this.data = new GrowableByteArray(complementedData);
         //codec decider shouldn't change since number
         //of ambiguities, Ns and gaps wont change
+        //and the offsets of N's and gaps won't change
+        //either since they are self-complementing.
         return this;
     }
     
@@ -997,7 +999,6 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         	int insertLength = newValues.getLength();
         	if(startOffset ==0){
         		//use optimized prepend
-        		//prepend(newValues);
         		gapOffsets = prepend(newValues.getGapOffsets(), gapOffsets, insertLength);
         		nOffsets = prepend(newValues.getNOffsets(), nOffsets, insertLength);
         	}else{        	
