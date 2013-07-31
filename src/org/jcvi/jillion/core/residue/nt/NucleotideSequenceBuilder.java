@@ -1126,11 +1126,13 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         	int i=0;
         	while(nOffsetIter.hasNext()){
         		int currentNOffset = nOffsetIter.next();
-        		if(gapOffsetIter.hasNext()){
+        		while(gapOffsetIter.hasNext()){
         			int nextGapOffset =gapOffsetIter.peek();
         			if(nextGapOffset < currentNOffset){
         				shiftSize++;
         				gapOffsetIter.next();
+        			}else{
+        				break;
         			}
         		}
         		newNOffsets[i] = currentNOffset - shiftSize;
