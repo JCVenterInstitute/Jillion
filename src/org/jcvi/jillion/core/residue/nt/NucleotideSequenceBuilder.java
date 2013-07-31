@@ -26,6 +26,8 @@ import java.util.Iterator;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.core.util.iter.PeekableIterator;
 import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
@@ -1112,7 +1114,30 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         
         
         void ungap(){
-            currentLength-=gapOffsets.getCurrentLength();
+        	//first we have to shift the N's
+        	int[] gaps =gapOffsets.toArray();
+        	int[] newNOffsets = new int[nOffsets.getCurrentLength()];
+        	
+        	PeekableIterator<Integer> gapOffsetIter = IteratorUtil.createPeekableIterator(gapOffsets.iterator());
+        	Iterator<Integer> nOffsetIter = nOffsets.iterator();
+        	
+        	int shiftSize=0;
+        	int i=0;
+        	while(nOffsetIter.hasNext()){
+        		int currentNOffset = nOffsetIter.next();
+        		if(gapOffsetIter.hasNext()){
+        			int nextGapOffset =gapOffsetIter.peek();
+        			if(nextGapOffset < currentNOffset){
+        				shiftSize++;
+        				gapOffsetIter.next();
+        			}
+        		}
+        		newNOffsets[i] = currentNOffset - shiftSize;
+        		i++;
+        	}
+        	nOffsets = new GrowableIntArray(newNOffsets);
+        	//now we can remove the gaps
+            currentLength-=gaps.length;
             gapOffsets.clear();
             
         }
