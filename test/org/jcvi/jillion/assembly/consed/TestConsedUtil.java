@@ -29,7 +29,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.jcvi.jillion.assembly.consed.ConsedUtil;
 import org.jcvi.jillion.assembly.consed.ConsedUtil.ClipPointsType;
 import org.jcvi.jillion.assembly.consed.ace.ConsensusAceTag;
 import org.junit.Test;
@@ -64,10 +63,7 @@ public class TestConsedUtil {
     public void convertAceGapsToContigGaps(){
         assertEquals(CONTIG_GAPPED_BASECALLS, ConsedUtil.convertAceGapsToContigGaps(ACE_GAPPED_BASECALLS));
     }
-    @Test
-    public void convertContigGapsToAceGaps(){
-        assertEquals(ACE_GAPPED_BASECALLS, ConsedUtil.convertContigGapstoAceGaps(CONTIG_GAPPED_BASECALLS));
-    }
+   
     
     @Test
     public void getRenamedContigId(){

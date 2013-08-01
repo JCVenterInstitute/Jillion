@@ -56,7 +56,7 @@ public final class DefaultScaffold  implements Scaffold{
     private final String id;
     private final SortedSet<PlacedContig> placedContigs;
     private final Map<String, PlacedContig> contigbyId;
-    CoverageMap<PlacedContig> contigMap;
+    private CoverageMap<PlacedContig> contigMap;
     private final long length;
     /**
      * Create a new {@link ScaffoldBuilder} instance.  

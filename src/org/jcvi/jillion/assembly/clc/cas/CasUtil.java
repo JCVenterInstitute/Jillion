@@ -31,15 +31,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.jcvi.jillion.assembly.clc.cas.read.CasPlacedRead;
-import org.jcvi.jillion.assembly.clc.cas.read.DefaultCasPlacedReadFromCasAlignmentBuilder;
-import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.io.IOUtil.Endian;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@code CasUtil} is a utility class for dealing with the binary
  * encodings inside a .cas file.
@@ -62,7 +56,7 @@ public final class CasUtil {
      * input number as an int (which may be {@code 0}).
      * @throws IllegalArgumentException if {@code i<1}.
      */
-    public static int numberOfBytesRequiredFor(long i){
+    static int numberOfBytesRequiredFor(long i){
         if(i < 1){
             throw new IllegalArgumentException("input number must be > 0 : " + i);
         }
@@ -78,7 +72,7 @@ public final class CasUtil {
      * @throws IOException if there is a problem reading from the inputstream
      * @throws NullPointerException if {@code in == null}.
      */
-    public static long parseByteCountFrom(InputStream in) throws IOException{
+    static long parseByteCountFrom(InputStream in) throws IOException{
         
         int firstByte =in.read();
         if(firstByte<254){
@@ -101,7 +95,7 @@ public final class CasUtil {
      * @throws IOException if there is a problem reading the String.
      * @throws NullPointerException if {@code in == null}.
      */
-    public static String parseCasStringFrom(InputStream in) throws IOException{
+    static String parseCasStringFrom(InputStream in) throws IOException{
         int length = (int)parseByteCountFrom(in);
        
         byte bytes[] = IOUtil.toByteArray(in, length);
@@ -116,7 +110,7 @@ public final class CasUtil {
      * @return an unsigned byte as a short.
      * @throws IOException if there is a problem reading the inputStream.
      */
-    public static short readCasUnsignedByte(InputStream in) throws IOException{
+    static short readCasUnsignedByte(InputStream in) throws IOException{
         return new BigInteger(1,
                  IOUtil.toByteArray(in, 1, Endian.LITTLE)).shortValue();
      }
@@ -127,7 +121,7 @@ public final class CasUtil {
      * @return an unsigned short as an int.
      * @throws IOException if there is a problem reading the inputStream.
      */
-    public static int readCasUnsignedShort(InputStream in) throws IOException{
+    static int readCasUnsignedShort(InputStream in) throws IOException{
         return new BigInteger(1,
                  IOUtil.toByteArray(in, 2, Endian.LITTLE)).intValue();
      }
@@ -141,7 +135,7 @@ public final class CasUtil {
      * @throws IOException if there is a problem reading the inputStream.
      * @see #readCasUnsignedInt(InputStream, int)
      */
-    public static long readCasUnsignedInt(InputStream in) throws IOException{
+    static long readCasUnsignedInt(InputStream in) throws IOException{
        return readCasUnsignedInt(in, 4);
     }
     /**
@@ -153,7 +147,7 @@ public final class CasUtil {
      * @throws IOException if there is a problem reading the inputStream.
      * @see #readCasUnsignedInt(InputStream, int)
      */
-    public static long readCasUnsignedInt(InputStream in, int numberOfBytesInNumber) throws IOException{
+    static long readCasUnsignedInt(InputStream in, int numberOfBytesInNumber) throws IOException{
         return new BigInteger(1,
                  IOUtil.toByteArray(in, numberOfBytesInNumber, Endian.LITTLE)).longValue();
      }
@@ -164,41 +158,13 @@ public final class CasUtil {
      * @return an unsigned long as an {@link BigInteger}; never null.
      * @throws IOException if there is a problem reading the inputStream.
      */
-    public static BigInteger readCasUnsignedLong(InputStream in) throws IOException{
+    static BigInteger readCasUnsignedLong(InputStream in) throws IOException{
         return new BigInteger(1,
                  IOUtil.toByteArray(in, 8, Endian.LITTLE));
      }
     
     
-    public static CasPlacedRead createCasPlacedRead(CasMatch match,String readId,
-            NucleotideSequence fullLengthReadBasecalls, Range traceTrimRange,
-            NucleotideSequence gappedReference){
-		CasAlignment alignment = match.getChosenAlignment();
-        
-        DefaultCasPlacedReadFromCasAlignmentBuilder builder;
-        long ungappedStartOffset = alignment.getStartOfMatch();
-        long gappedStartOffset = gappedReference.getGappedOffsetFor((int)ungappedStartOffset);
-        builder = new DefaultCasPlacedReadFromCasAlignmentBuilder(readId,
-        		gappedReference,
-        		fullLengthReadBasecalls,
-                alignment.readIsReversed(),
-                gappedStartOffset,
-                traceTrimRange
-               );
-        List<CasAlignmentRegion> regionsToConsider = new ArrayList<CasAlignmentRegion>(alignment.getAlignmentRegions());
-        int lastIndex = regionsToConsider.size()-1;
-        if(regionsToConsider.get(lastIndex).getType()==CasAlignmentRegionType.INSERT){
-            regionsToConsider.remove(lastIndex);
-        }
-        try{
-            builder.addAlignmentRegions(regionsToConsider,gappedReference);
-        }catch(Throwable t){
-            System.err.println("error computing alignment regions for "+ readId);
-            throw new RuntimeException(t);
-        }
-        
-        return builder.build();
-	}
+   
 
     /**
      * Get the java File object for a filepath in a cas file.

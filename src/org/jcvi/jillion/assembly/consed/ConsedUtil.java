@@ -93,17 +93,7 @@ public final class ConsedUtil {
     public static String convertAceGapsToContigGaps(String basecallsWithAceGaps) {
         return basecallsWithAceGaps.replace('*', '-');
     }
-    /**
-     * Convert a string of basecalls with the conventional '-' to 
-     * represent gaps with '*' which is what consed uses instead. 
-     * @param basecallsWithAceGaps a string of basecalls with the conventional '-' to 
-     * represent gaps.
-     * @return a new string with all the '-' converted into '*'.
-     * @see #convertAceGapsToContigGaps(String)
-     */
-    public static String convertContigGapstoAceGaps(String basecallsWithAceGaps) {
-        return basecallsWithAceGaps.replace('-', '*');
-    }
+   
     public static PhdInfo generateDefaultPhdInfoFor(File traceFile, String readId,
 			Date phdDate) {
 		final String id;
