@@ -2,7 +2,7 @@ package org.jcvi.jillion.core.residue.aa;
 
 import org.jcvi.jillion.core.residue.nt.Triplet;
 
-public final class Codon2 {
+public final class Codon {
 
 	private final Triplet triplet;
 	
@@ -10,7 +10,7 @@ public final class Codon2 {
 	
 	private final boolean isStart, isStop;
 
-	private Codon2(Triplet triplet, AminoAcid aminoAcid, boolean isStart,
+	private Codon(Triplet triplet, AminoAcid aminoAcid, boolean isStart,
 			boolean isStop) {
 		this.triplet = triplet;
 		this.aminoAcid = aminoAcid;
@@ -63,8 +63,8 @@ public final class Codon2 {
 			return this;
 		}
 		
-		public Codon2 build(){
-			return new Codon2(triplet, aminoAcid,isStart, isStop);
+		public Codon build(){
+			return new Codon(triplet, aminoAcid,isStart, isStop);
 		}
 	}
 	
