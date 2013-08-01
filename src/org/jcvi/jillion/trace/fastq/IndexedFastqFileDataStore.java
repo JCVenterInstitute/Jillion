@@ -111,7 +111,7 @@ final class IndexedFastqFileDataStore{
 			this.filter = filter;
 		}
 		public FastqDataStore build(FastqFileParser parser) {
-			return new IndexedFastqFileDataStore2(file, qualityCodec, parser, filter, mementos);
+			return new IndexedFastqFileDataStoreImpl(file, qualityCodec, parser, filter, mementos);
 		}
 		@Override
 		public FastqRecordVisitor visitDefline(FastqVisitorCallback callback,
@@ -136,7 +136,7 @@ final class IndexedFastqFileDataStore{
     	}
     }
     
-    private static final class IndexedFastqFileDataStore2 implements FastqDataStore{
+    private static final class IndexedFastqFileDataStoreImpl implements FastqDataStore{
     	private final Map<String, FastqVisitorMemento> mementos;
     	private final FastqQualityCodec qualityCodec;
     	 private final File file;
@@ -145,7 +145,7 @@ final class IndexedFastqFileDataStore{
     	 private volatile boolean closed;
     	 
     	 
-    	public IndexedFastqFileDataStore2(File file,
+    	public IndexedFastqFileDataStoreImpl(File file,
 				FastqQualityCodec qualityCodec,
 				FastqFileParser parser,
 				DataStoreFilter filter,
@@ -209,7 +209,7 @@ final class IndexedFastqFileDataStore{
         		//so wrap it
         		return DataStoreStreamingIterator.create(this,iter);
     		} catch (FileNotFoundException e) {
-    			throw new IllegalStateException("fastq file no longer exists! : "+ file.getAbsolutePath());
+    			throw new IllegalStateException("fastq file no longer exists! : "+ file.getAbsolutePath(), e);
     		}
            
             

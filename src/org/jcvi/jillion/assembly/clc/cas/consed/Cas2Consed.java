@@ -240,7 +240,7 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 	                illuminaFile, 
 	                phdDate);
 		} catch (IOException e) {
-			throw new IllegalStateException("fastq file no longer exists! : "+ illuminaFile.getAbsolutePath());
+			throw new IllegalStateException("fastq file no longer exists! : "+ illuminaFile.getAbsolutePath(), e);
 		}
 	}
 

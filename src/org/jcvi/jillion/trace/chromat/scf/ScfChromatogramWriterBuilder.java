@@ -67,7 +67,7 @@ public final class ScfChromatogramWriterBuilder implements Builder<ChromatogramW
 			}
 			return new ScfChromatogramWriterImpl(out,codec);
 		} catch (IOException e) {
-			throw new IllegalStateException("error creating scf output file");
+			throw new IllegalStateException("error creating scf output file",e);
 		}
 	}
 	

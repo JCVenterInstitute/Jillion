@@ -142,7 +142,7 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 											.build();
 			return new RemoveWhitespaceFromIdAdapter(datastore.iterator());
 		} catch (IOException e) {
-			throw new IllegalStateException("fastq file no longer exists! : "+ illuminaFile.getAbsolutePath());
+			throw new IllegalStateException("fastq file no longer exists! : "+ illuminaFile.getAbsolutePath(), e);
 		}
 		
     }
