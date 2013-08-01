@@ -21,7 +21,7 @@ public enum IupacTranslationTables implements TranslationTable{
 	VERTEBRATE_MITOCHONDRIAL(2){
 
 		@Override
-		protected void updateTable(Map<Triplet, Codon2> map) {
+		protected void updateTable(Map<Triplet, Codon> map) {
 			insertIntoTable('A', 'G', 'A', AminoAcid.STOP);
 			insertIntoTable('A', 'G', 'G', AminoAcid.STOP);
 			insertIntoTable('A', 'G', 'R', AminoAcid.STOP);
@@ -37,7 +37,7 @@ public enum IupacTranslationTables implements TranslationTable{
 	YEAST_MITOCHONDRIAL(3){
 
 		@Override
-		protected void updateTable(Map<Triplet, Codon2> map) {			
+		protected void updateTable(Map<Triplet, Codon> map) {			
 			
 			insertIntoTable('A', 'T', 'A', AminoAcid.Methionine, true);
 			insertIntoTable('A', 'T', 'R', AminoAcid.Methionine, true);
@@ -74,7 +74,7 @@ public enum IupacTranslationTables implements TranslationTable{
 	MOLD_PROTOZOAN_COELENTERATE_MITOCHONDRIAL_AND_MYCOPLASMA_SPIROPLAMSA(4){
 
 		@Override
-		protected void updateTable(Map<Triplet, Codon2> map) {
+		protected void updateTable(Map<Triplet, Codon> map) {
 			insertIntoTable('T', 'G', 'A', AminoAcid.Tryptophan);
 			insertIntoTable('T', 'G', 'R', AminoAcid.Tryptophan);
 			
@@ -92,7 +92,7 @@ public enum IupacTranslationTables implements TranslationTable{
 	CILIATE_DASYCLADACEAN_AND_HEXAMITA(6){
 
 		@Override
-		protected void updateTable(Map<Triplet, Codon2> map) {
+		protected void updateTable(Map<Triplet, Codon> map) {
 			insertIntoTable('T', 'A', 'A', AminoAcid.Glutamine);
 			insertIntoTable('T', 'A', 'G', AminoAcid.Glutamine);
 			insertIntoTable('T', 'A', 'R', AminoAcid.Glutamine);
@@ -106,7 +106,7 @@ public enum IupacTranslationTables implements TranslationTable{
 	BACTERIAL_ARCHAEL_AND_PLANT_PLASTID(11){
 
 		@Override
-		protected void updateTable(Map<Triplet, Codon2> map) {
+		protected void updateTable(Map<Triplet, Codon> map) {
 			//more start codons only?
 			insertIntoTable('G', 'T', 'G', AminoAcid.Valine, true);
 			
@@ -140,7 +140,7 @@ public enum IupacTranslationTables implements TranslationTable{
 		}
 	}
 	
-	private final Map<Triplet, Codon2> map = new HashMap<Triplet, Codon2>(MapUtil.computeMinHashMapSizeWithoutRehashing(200));
+	private final Map<Triplet, Codon> map = new HashMap<Triplet, Codon>(MapUtil.computeMinHashMapSizeWithoutRehashing(200));
 	private final byte tableNumber;
 	
 	private IupacTranslationTables(int tableNumber){
@@ -159,7 +159,7 @@ public enum IupacTranslationTables implements TranslationTable{
 	}
 	protected void  insertIntoTable(char base1, char base2, char base3, AminoAcid aa, boolean isStart){
 		Triplet triplet = Triplet.create(base1, base2, base3);
-		Codon2.Builder builder = new Codon2.Builder(triplet, aa);
+		Codon.Builder builder = new Codon.Builder(triplet, aa);
 		if(aa == AminoAcid.STOP){
 			builder.isStop(true);
 		}
@@ -233,7 +233,7 @@ public enum IupacTranslationTables implements TranslationTable{
 			Triplet triplet =getNextTriplet(iter);
 			currentOffset+=3;
 			if(triplet !=null){
-				Codon2 codon =translate(triplet);
+				Codon codon =translate(triplet);
 				if(codon.isStart() && !seenStart){
 					seenStart=true;
 					//hardcode an M if this is our first start
@@ -292,14 +292,14 @@ public enum IupacTranslationTables implements TranslationTable{
 		}
 	}
 
-	protected void updateTable(Map<Triplet, Codon2> map){
+	protected void updateTable(Map<Triplet, Codon> map){
 		//no-op
 	}
-	private Codon2 translate(Triplet triplet){
-		Codon2 ret= map.get(triplet);
+	private Codon translate(Triplet triplet){
+		Codon ret= map.get(triplet);
 		if(ret==null){
 			//not in map
-			return new Codon2.Builder(triplet, AminoAcid.Unknown_Amino_Acid).build();
+			return new Codon.Builder(triplet, AminoAcid.Unknown_Amino_Acid).build();
 		}
 		return ret;
 	}
