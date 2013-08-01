@@ -88,14 +88,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
        // dir= SequenceDirection.FORWARD;
         
     }
-    public DefaultCasPlacedReadFromCasAlignmentBuilder startOfset(long newStartOffset){
-        this.startOffset = newStartOffset;
-        
-        return this;
-    }
-    public long startOffset(){
-        return startOffset;
-    }
+   
     public DefaultCasPlacedReadFromCasAlignmentBuilder addAlignmentRegions(List<CasAlignmentRegion> regions, NucleotideSequence referenceBases){
         GrowableIntArray referenceGaps = new GrowableIntArray(referenceBases.getGapOffsets());
         for(CasAlignmentRegion region : regions){
@@ -148,10 +141,7 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
             currentOffset+=region.getLength();
         }
     }
-  
-    public String validBases(){
-        return gappedSequenceBuilder.toString();
-    }
+
     @Override
     public DefaultCasPlacedRead build() {
         Range validRange = new Range.Builder(gappedSequenceBuilder.getUngappedLength())

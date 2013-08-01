@@ -39,7 +39,7 @@ import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
  * @author dkatzel
  *
  */
-public class QualFastaConsedPhdAdaptedIterator extends FastaConsedPhdAdaptedIterator{
+class QualFastaConsedPhdAdaptedIterator extends FastaConsedPhdAdaptedIterator{
 
 	private final QualityFastaDataStore qualIter;
 	

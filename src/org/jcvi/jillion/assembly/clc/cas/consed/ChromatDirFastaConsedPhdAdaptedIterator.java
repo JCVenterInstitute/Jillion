@@ -38,7 +38,7 @@ import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
  *
  *
  */
-public class ChromatDirFastaConsedPhdAdaptedIterator extends QualFastaConsedPhdAdaptedIterator{
+class ChromatDirFastaConsedPhdAdaptedIterator extends QualFastaConsedPhdAdaptedIterator{
 
     private final File chromatDir;
     /**

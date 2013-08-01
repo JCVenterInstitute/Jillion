@@ -88,8 +88,7 @@ public final class SffUtil {
      */
     static final byte[] EMPTY_CLIP_BYTES = new byte[]{0,0,0,0};
     
-    public static final Range EMPTY_CLIP = Range.of(CoordinateSystem.RESIDUE_BASED, -1, -1);
-    public static final Pattern SFFINFO_ENCODED_FLOWGRAM_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)");
+    private static final Pattern SFFINFO_ENCODED_FLOWGRAM_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)");
    
     private SffUtil(){}
    /**

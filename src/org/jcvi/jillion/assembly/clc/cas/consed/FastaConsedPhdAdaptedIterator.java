@@ -48,7 +48,7 @@ import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
  * @author dkatzel
  *
  */
-public class FastaConsedPhdAdaptedIterator implements StreamingIterator<PhdReadRecord>{
+class FastaConsedPhdAdaptedIterator implements StreamingIterator<PhdReadRecord>{
 	
 	private final StreamingIterator<NucleotideFastaRecord> fastaIterator;
 	private final Map<String,String> requiredComments;

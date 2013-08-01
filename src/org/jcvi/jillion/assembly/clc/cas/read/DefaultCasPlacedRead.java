@@ -65,11 +65,6 @@ final class DefaultCasPlacedRead implements CasPlacedRead{
 	}
 
 
-	@Override
-    public int getUngappedFullLength() {
-        return readInfo.getUngappedFullLength();
-    }
-
 
     @Override
     public long getGappedEndOffset() {

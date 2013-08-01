@@ -30,5 +30,4 @@ import org.jcvi.jillion.assembly.AssembledRead;
 
 public interface CasPlacedRead extends AssembledRead {
 
-    int getUngappedFullLength();
 }
