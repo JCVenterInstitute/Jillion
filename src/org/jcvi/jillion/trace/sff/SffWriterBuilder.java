@@ -142,7 +142,7 @@ public class SffWriterBuilder {
 		
 		private long numberOfReads=0L;
 		private boolean closed=false;
-		private long currentOffset=0L;
+		private long currentOffset;
 		/**
 		 * Sff indexes are stored in alphabetical order
 		 * so we need to collect the name-offset pairs
@@ -157,16 +157,16 @@ public class SffWriterBuilder {
 			
 			IOUtil.mkdirs(outputFile.getParentFile());
 			this.out = new BufferedOutputStream(new FileOutputStream(outputFile));
-			writePartialHeader(keySequence, flowSequence);			
+			this.currentOffset=writePartialHeader(keySequence, flowSequence);			
 		}
 
-		private void writePartialHeader(NucleotideSequence keySequence,NucleotideSequence flowSequence) throws IOException{
+		private long writePartialHeader(NucleotideSequence keySequence,NucleotideSequence flowSequence) throws IOException{
 			int numberOfFlows = (int)flowSequence.getLength();
 			//partial header will put temp values for manifest and number of reads
 			//these values will be updated in the close() call.
 			SffCommonHeader paritalHeader = new DefaultSffCommonHeader(BigInteger.valueOf(0), 0L, 
 					0L, numberOfFlows, flowSequence, keySequence);
-			currentOffset+=SffWriterUtil.writeCommonHeader(paritalHeader, out);
+			return SffWriterUtil.writeCommonHeader(paritalHeader, out);
 		}
 		
 		private synchronized void checkNotClosed() throws IOException{
@@ -189,17 +189,21 @@ public class SffWriterBuilder {
 			out.close();
 			if(numberOfReads >0){
 				RandomAccessFile f = new RandomAccessFile(outputFile, "rw");
-				//magic number = 8bytes
-				if(includeIndex){
-					//manifest info starts at offset 8
-					f.seek(8);
-					f.writeLong(currentOffset);
-					f.writeInt(index.length);
+				try{
+					//magic number = 8bytes
+					if(includeIndex){
+						//manifest info starts at offset 8
+						f.seek(8);
+						f.writeLong(currentOffset);
+						f.writeInt(index.length);
+					}
+					
+					//num of reads starts at offset 20
+					f.seek(20);
+					f.write(IOUtil.convertUnsignedIntToByteArray(numberOfReads));
+				}finally{
+					f.close();
 				}
-				
-				//num of reads starts at offset 20
-				f.seek(20);
-				f.write(IOUtil.convertUnsignedIntToByteArray(numberOfReads));
 			}
 			closed=true;
 		}

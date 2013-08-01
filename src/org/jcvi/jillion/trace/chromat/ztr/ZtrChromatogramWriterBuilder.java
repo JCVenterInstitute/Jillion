@@ -94,7 +94,7 @@ public final class ZtrChromatogramWriterBuilder implements Builder<ChromatogramW
 			}
 			return new ZtrChromatogramWriterImpl(out);
 		} catch (IOException e) {
-			throw new IllegalStateException("error creating ztr output file");
+			throw new IllegalStateException("error creating ztr output file",e);
 		}
 	}
 	

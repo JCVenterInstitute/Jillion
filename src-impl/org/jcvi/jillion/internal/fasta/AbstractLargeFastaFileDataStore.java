@@ -145,7 +145,7 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
         		};      
         		FastaFileParser.create(fastaFile).accept(visitor);
             } catch (IOException e) {
-                throw new IllegalStateException("could not get record count");
+                throw new IllegalStateException("could not get record count",e);
             }
         }   
         return size;
