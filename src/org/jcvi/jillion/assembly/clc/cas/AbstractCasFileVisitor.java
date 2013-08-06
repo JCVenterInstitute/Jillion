@@ -89,6 +89,11 @@ public abstract class AbstractCasFileVisitor implements CasFileVisitor{
 		//no-op	
 	}
 
+	/**
+	 * Unless overridden, this method will
+	 * return {@code null} to always skip the underlying matches.
+	 * {@inheritDoc}
+	 */
 	@Override
 	public CasMatchVisitor visitMatches(CasVisitorCallback callback) {
 		// always skip
