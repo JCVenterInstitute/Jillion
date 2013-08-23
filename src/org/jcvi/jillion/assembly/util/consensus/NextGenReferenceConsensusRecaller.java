@@ -43,7 +43,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
  * of sequence specific errors by comparing
  * the most frequent base in the given {@link Slice}
  * to the reference consensus call {@link Slice#getConsensusCall()}.
- * If the most frequence base vs the reference would cause an indel,
+ * If the most frequent base vs the reference would cause an indel,
  * then re-examine the slice by direction, if either direction
  * agrees with the reference, then keep the reference as the consensus
  * call.
@@ -85,15 +85,15 @@ public class NextGenReferenceConsensusRecaller implements ConsensusCaller {
 
 	@Override
 	public ConsensusResult callConsensus(Slice slice) {
-		ConsensusResult majorityBase =getMajorityBase(slice);
+		ConsensusResult delegatedResult =getDelegateConsensus(slice);
 		Nucleotide originalConsensus= slice.getConsensusCall();
-		if(majorityBase.getConsensus().isGap() && !originalConsensus.isGap()){
-			return handleDeletion(slice, majorityBase, originalConsensus);
-		}else if(!majorityBase.getConsensus().isGap() && originalConsensus.isGap()){
-			return handleInsertion(slice,majorityBase);
+		if(delegatedResult.getConsensus().isGap() && !originalConsensus.isGap()){
+			return handleDeletion(slice, delegatedResult, originalConsensus);
+		}else if(!delegatedResult.getConsensus().isGap() && originalConsensus.isGap()){
+			return handleInsertion(slice,delegatedResult);
 		}
 		
-		return majorityBase;
+		return delegatedResult;
 	}
 
 	private ConsensusResult handleInsertion(Slice slice,
@@ -106,8 +106,8 @@ public class NextGenReferenceConsensusRecaller implements ConsensusCaller {
 			return majorityBase;
 		}
 		
-		ConsensusResult forwardMajority = getMajorityBase(forwardSlice);
-		ConsensusResult reverseMajority = getMajorityBase(reverseSlice);
+		ConsensusResult forwardMajority = getDelegateConsensus(forwardSlice);
+		ConsensusResult reverseMajority = getDelegateConsensus(reverseSlice);
 		
 		if(forwardMajority.getConsensus().equals(reverseMajority.getConsensus())){
 			return majorityBase;
@@ -128,8 +128,8 @@ public class NextGenReferenceConsensusRecaller implements ConsensusCaller {
 		Slice forwardSlice = all.copy().filter(FORWARD_FILTER).build();		
 		Slice reverseSlice = all.copy().filter(REVERSE_FILTER).build();
 		
-		ConsensusResult forwardMajority = getMajorityBase(forwardSlice);
-		ConsensusResult reverseMajority = getMajorityBase(reverseSlice);
+		ConsensusResult forwardMajority = getDelegateConsensus(forwardSlice);
+		ConsensusResult reverseMajority = getDelegateConsensus(reverseSlice);
 		
 		if(forwardSlice.getCoverageDepth() ==0 || reverseSlice.getCoverageDepth()==0){
 			return majorityBase;
@@ -158,7 +158,7 @@ public class NextGenReferenceConsensusRecaller implements ConsensusCaller {
 		return new DefaultConsensusResult(recalledConsensus, qualScore);
 	}
 
-	private ConsensusResult getMajorityBase(Slice slice){
+	private ConsensusResult getDelegateConsensus(Slice slice){
 		return delegateConsensusCaller.callConsensus(slice);
 		
 	}
