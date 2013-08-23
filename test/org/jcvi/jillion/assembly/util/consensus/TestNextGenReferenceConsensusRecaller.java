@@ -25,6 +25,7 @@ import static org.junit.Assert.assertEquals;
 import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.TestSliceUtil;
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.junit.Test;
 public class TestNextGenReferenceConsensusRecaller {
@@ -166,5 +167,15 @@ public class TestNextGenReferenceConsensusRecaller {
 		assertEquals(Nucleotide.Cytosine, sut.callConsensus(slice).getConsensus());
 	}
 	
-	
+	@Test
+	public void useDelegateConsensus(){
+		
+		NextGenReferenceConsensusRecaller sut = new NextGenReferenceConsensusRecaller(new NoAmbiguityConsensusCaller(PhredQuality.valueOf(30)));
+		Slice slice = TestSliceUtil.createSliceFrom("C", "aCa",
+				new byte[]{10,47,11}, 
+				Direction.FORWARD,Direction.FORWARD, Direction.REVERSE);
+		
+		assertEquals(Nucleotide.Cytosine, sut.callConsensus(slice).getConsensus());
+
+	}
 }
