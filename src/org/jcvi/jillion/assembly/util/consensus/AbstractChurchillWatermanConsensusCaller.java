@@ -52,15 +52,34 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
  *
  *
  */
-abstract class AbstractChurchillWatermanConsensusCaller extends AbstractConsensusCaller{
+abstract class AbstractChurchillWatermanConsensusCaller implements ConsensusCaller{
     
    
-   
+	 private final PhredQuality highQualityThreshold;
+	  
+	    
+	   
 
-
+	/**
+	 * Creates a new Churchill-Waterman consensus caller
+	 * instance.
+	 * @param highQualityThreshold the quality threshold
+	 * whose error probability is used to determine
+	 * which basecalls to consider towards
+	 * the consensus based on cumulative quality
+	 * values.
+	 * @throws NullPointerException if highQualityThreshold is null
+	 */
     public AbstractChurchillWatermanConsensusCaller(
             PhredQuality highQualityThreshold) {
-        super(highQualityThreshold);
+    	if(highQualityThreshold ==null){
+    		throw new NullPointerException("high quality threshold can not be null");
+    	}
+    	this.highQualityThreshold = highQualityThreshold;
+    }
+    
+    public PhredQuality getHighQualityThreshold() {
+        return highQualityThreshold;
     }
     
     /**
@@ -74,10 +93,13 @@ abstract class AbstractChurchillWatermanConsensusCaller extends AbstractConsensu
      * slice; the return may be an ambiguous {@link Nucleotide}.
      */
     protected abstract Nucleotide getConsensus(ConsensusProbabilities normalizedConsensusProbabilities,Slice slice) ;
- 
     
     @Override
-    public final ConsensusResult callConsensusWithCoverage(Slice slice) {
+    public final ConsensusResult callConsensus(Slice slice) {
+        if(slice.getCoverageDepth() ==0){
+            //by definition, an empty slice is a Gap
+            return new DefaultConsensusResult(Nucleotide.Gap,0);
+        }
         Map<Nucleotide, Integer> qualityValueSumMap = generateQualityValueSumMap(slice);
         ConsensusProbabilities normalizedErrorProbabilityStruct = generateNormalizedProbabilityStruct(qualityValueSumMap);
         Nucleotide consensus=  getConsensus(normalizedErrorProbabilityStruct,slice);
@@ -85,6 +107,28 @@ abstract class AbstractChurchillWatermanConsensusCaller extends AbstractConsensu
                 
                 getErrorProbability(normalizedErrorProbabilityStruct,
                         slice));
+    }
+    
+    protected final Map<Nucleotide, Integer> generateQualityValueSumMap(Slice slice) {
+        Map<Nucleotide, Integer> qualityValueSumMap = initalizeNucleotideMap();
+        for(SliceElement sliceElement : slice){
+            Nucleotide basecall =sliceElement.getBase();
+            final Integer previousSum = qualityValueSumMap.get(basecall);
+            //ignore not ACGT-?
+            if(previousSum!=null){
+                qualityValueSumMap.put(basecall, Integer.valueOf(previousSum + sliceElement.getQuality().getQualityScore()));
+            }
+            
+        }
+        return qualityValueSumMap;
+    }
+
+    private Map<Nucleotide, Integer> initalizeNucleotideMap() {
+        Map<Nucleotide, Integer> map = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
+        for(Nucleotide glyph : ConsensusUtil.BASES_TO_CONSIDER){
+            map.put(glyph, Integer.valueOf(0));
+        }
+        return map;
     }
 
 
