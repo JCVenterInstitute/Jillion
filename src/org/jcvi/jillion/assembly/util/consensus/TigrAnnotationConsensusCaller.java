@@ -65,7 +65,12 @@ public class TigrAnnotationConsensusCaller extends AbstractChurchillWatermanCons
     private Set<Nucleotide> getCWBasesTowardsAmbiguity(
             ConsensusProbabilities normalizedErrorProbabilityStruct,
             Slice slice) {
-        int numberOfDifferentBasesInSlice = generateBasecallHistogramMap(slice).size();        
+    	int numberOfDifferentBasesInSlice=0;
+    	for(int counts :slice.getNucleotideCounts().values()){
+    		if(counts >0){
+    			numberOfDifferentBasesInSlice++;
+    		}
+    	}      
         return getBasesUsedTowardsAmbiguity(normalizedErrorProbabilityStruct, numberOfDifferentBasesInSlice);
     }
 
