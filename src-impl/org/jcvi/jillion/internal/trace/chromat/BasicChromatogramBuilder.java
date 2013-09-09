@@ -117,6 +117,14 @@ public final class BasicChromatogramBuilder {
 		       );
         
         }
+        public BasicChromatogramBuilder(String id, Chromatogram copy){
+		       this(id, copy.getNucleotideSequence(),
+		       copy.getPeakSequence(),
+		       copy.getChannelGroup(),
+		       copy.getComments()
+		       );
+     
+     }
         public final PositionSequence peaks() {
             return peaks;
         }
