@@ -128,6 +128,23 @@ public final class ScfChromatogramBuilder implements Builder<ScfChromatogram>{
     }
     /**
      * Create a new instance of ScfChromatogramBuilder
+     * using the given {@link Chromatogram} instance 
+     * to set all the initial fields. Only the fields 
+     * in the {@link Chromatogram} interface will be copied,
+     * any scf specific fields will be null.  Use the various
+     * scf specific setter methods to set those values.
+     * @param id the id for this {@link Chromatogram} object to have;
+     * can not be null.
+     * @param copy a {@link Chromatogram} object
+     * whose fields are used as the initial values of this
+     * new Builder; can not be null;
+     * @throws NullPointerException if copy is null.
+     */
+    public ScfChromatogramBuilder(String id, Chromatogram copy){
+       basicBuilder = new BasicChromatogramBuilder(id, copy);        
+    }
+    /**
+     * Create a new instance of ScfChromatogramBuilder
      * using the given {@link ScfChromatogram} instance 
      * to set all the initial fields. All the fields 
      * in the {@link ScfChromatogram} interface including
