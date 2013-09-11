@@ -62,13 +62,35 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
     private final BasicChromatogramBuilder currentBuilder;
     private final BasicChromatogramBuilder originalBuilder;
     private String id;
-    
+    /**
+     * Create a new {@link AbiChromatogramBuilder} instance with
+     * all fields except for the id unset.  In order
+     * to successfully build a valid {@link AbiChromatogram}
+     * object please use
+     * the various setter methods
+     * in this class to set everything
+     * before calling {@link #build()}.
+     * @param id the id for this {@link Chromatogram} object to have;
+     * can not be null.
+     * @throws NullPointerException if id is null.
+     */
     public AbiChromatogramBuilder(String id){
     	currentBuilder = new BasicChromatogramBuilder(id);
     	originalBuilder = new BasicChromatogramBuilder(id);
     	this.id = id;
     }
-    
+    /**
+     * Create a new {@link AbiChromatogramBuilder} instance
+     * with the given id and all fields initially set
+     * to the the values encoded in the given ab1 file.
+     * @param id the id for this {@link Chromatogram} object to have;
+     * can not be null. 
+     * @param abiFile a AB1 encoded file that contains the initial values
+     * that this builder should have; can not be null.
+     * @throws IOException if there is a problem reading the file or if
+     * the given file is not a valid ab1 encoded file.
+     * @throws NullPointerException if either field is null.
+     */
     public AbiChromatogramBuilder(String id, File abiFile) throws IOException{
     	AbiChromatogramBuilderVisitor visitor = new AbiChromatogramBuilderVisitor(id);
     	AbiChromatogramParser.create(abiFile).accept(visitor);
@@ -76,6 +98,21 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
     	originalBuilder = visitor.originalBuilder;
     	this.id=id;
     }
+    /**
+     * Create a new {@link AbiChromatogramBuilder} instance
+     * with the given id and all fields initially set
+     * to the the values encoded in the given ab1 encoded inputStream.
+     * The {@link InputStream} will NOT be closed by this constructor,
+     * client code must close the stream themselves after returning 
+     * from this method (preferably in a finally block).
+     * @param id the id for this {@link Chromatogram} object to have;
+     * can not be null. 
+     * @param abiFileStream a ab1 encoded {@link InputStream} that contains the initial values
+     * that this builder should have; can not be null.
+     * @throws IOException if there is a problem reading the file or
+     * if the {@link InputStream} does not contain valid ab1 encoded data.
+     * @throws NullPointerException if either field is null.
+     */
     public AbiChromatogramBuilder(String id, InputStream abiFileStream) throws IOException{
     	AbiChromatogramBuilderVisitor visitor = new AbiChromatogramBuilderVisitor(id);
     	AbiChromatogramParser.create(abiFileStream).accept(visitor);

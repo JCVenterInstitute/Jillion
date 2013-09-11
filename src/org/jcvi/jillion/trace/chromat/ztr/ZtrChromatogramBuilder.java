@@ -66,7 +66,7 @@ public final class ZtrChromatogramBuilder implements Builder<ZtrChromatogram>{
      * before calling {@link #build()}.
      * @param id the id for this {@link Chromatogram} object to have;
      * can not be null.
-     * @throws NullPointerException if either field is null.
+     * @throws NullPointerException if id is null.
      */
     public ZtrChromatogramBuilder(String id){
         basicBuilder = new BasicChromatogramBuilder(id);
