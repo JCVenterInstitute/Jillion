@@ -38,8 +38,8 @@ import java.util.Map.Entry;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.trace.chromat.scf.header.SCFHeader;
+import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
-import org.jcvi.jillion.trace.chromat.scf.ScfChromatogram;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
 
 
@@ -79,7 +79,7 @@ public class CommentSectionCodec implements SectionCodec {
     }
 
     @Override
-    public EncodedSection encode(ScfChromatogram c, SCFHeader header)
+    public EncodedSection encode(Chromatogram c, SCFHeader header)
             throws IOException {
         Map<String,String> props =c.getComments();
         if(props ==null|| props.isEmpty()){

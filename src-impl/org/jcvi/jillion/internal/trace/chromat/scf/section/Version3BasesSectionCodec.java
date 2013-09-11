@@ -39,6 +39,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.trace.chromat.ChannelGroup;
+import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogram;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
@@ -141,7 +142,7 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
     }
 
     @Override
-    protected void writeBasesDataToBuffer(ByteBuffer buffer, ScfChromatogram c,
+    protected void writeBasesDataToBuffer(ByteBuffer buffer, Chromatogram c,
             int numberOfBases) {
         final ChannelGroup channelGroup = c.getChannelGroup();
         bulkPutPeaks(buffer, c.getPeakSequence());
@@ -150,12 +151,31 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
         bulkPut(buffer,channelGroup.getGChannel().getQualitySequence(), numberOfBases);
         bulkPut(buffer,channelGroup.getTChannel().getQualitySequence(), numberOfBases);
         bulkPut(buffer, c.getNucleotideSequence());
-        bulkPutWithPadding(buffer, c.getSubstitutionConfidence(), numberOfBases);
-        bulkPutWithPadding(buffer, c.getInsertionConfidence(), numberOfBases);
-        bulkPutWithPadding(buffer, c.getDeletionConfidence(), numberOfBases);
+        bulkPutWithPadding(buffer, getOptionalSubsitutionConfidence(c), numberOfBases);
+        bulkPutWithPadding(buffer, getOptionalInsertionConfidence(c), numberOfBases);
+        bulkPutWithPadding(buffer, getOptionalDeletionConfidence(c), numberOfBases);
 
     }
 
+    private QualitySequence getOptionalSubsitutionConfidence(Chromatogram c){
+    	if(c instanceof ScfChromatogram){
+    		return ((ScfChromatogram)c).getSubstitutionConfidence();
+    	}
+    	return null;
+    }
+    private QualitySequence getOptionalInsertionConfidence(Chromatogram c){
+    	if(c instanceof ScfChromatogram){
+    		return ((ScfChromatogram)c).getInsertionConfidence();
+    	}
+    	return null;
+    }
+    private QualitySequence getOptionalDeletionConfidence(Chromatogram c){
+    	if(c instanceof ScfChromatogram){
+    		return ((ScfChromatogram)c).getDeletionConfidence();
+    	}
+    	return null;
+    }
+    
     private void bulkPut(ByteBuffer buffer,
             NucleotideSequence basecalls) {
        for(Nucleotide glyph : basecalls){
@@ -182,8 +202,7 @@ public class Version3BasesSectionCodec extends AbstractBasesSectionCodec{
         	for(int i=0; i<padding; i++){
         		buffer.put((byte)0);
         	}
-        }
-        else{
+        }else{
             for(int i=0; i< numberOfBases; i++){
                 buffer.put((byte)0);
             }

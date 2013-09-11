@@ -36,8 +36,8 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.internal.trace.chromat.scf.header.SCFHeader;
 import org.jcvi.jillion.trace.chromat.ChannelGroup;
+import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogram;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
@@ -91,7 +91,7 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
 
 
 
-    protected void writeBasesDataToBuffer(ByteBuffer buffer, ScfChromatogram c, int numberOfBases) {
+    protected void writeBasesDataToBuffer(ByteBuffer buffer, Chromatogram c, int numberOfBases) {
         
      
         Iterator<Position> peaks = c.getPeakSequence().iterator();
@@ -104,9 +104,9 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
       
         Iterator<Nucleotide> bases = c.getNucleotideSequence().iterator();
         
-        final ByteBuffer substitutionConfidence = getOptionalField(c.getSubstitutionConfidence());
-        final ByteBuffer insertionConfidence = getOptionalField(c.getInsertionConfidence());
-        final ByteBuffer deletionConfidence = getOptionalField(c.getDeletionConfidence());
+        final ByteBuffer substitutionConfidence = getOptionalSubsitutionConfidence(c);
+        final ByteBuffer insertionConfidence = getOptionalInsertionConfidence(c);
+        final ByteBuffer deletionConfidence = getOptionalDeletionConfidence(c);
         while(bases.hasNext()){
         	buffer.putInt(peaks.next().getValue());
         	putQualityValue(buffer, aQualities);
@@ -122,6 +122,24 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
        
     }
 
+    private ByteBuffer getOptionalSubsitutionConfidence(Chromatogram c){
+    	if(c instanceof ScfChromatogram){
+    		return getOptionalField(((ScfChromatogram)c).getSubstitutionConfidence());
+    	}
+    	return createEmptyBuffer();
+    }
+    private ByteBuffer getOptionalInsertionConfidence(Chromatogram c){
+    	if(c instanceof ScfChromatogram){
+    		return getOptionalField(((ScfChromatogram)c).getInsertionConfidence());
+    	}
+    	return createEmptyBuffer();
+    }
+    private ByteBuffer getOptionalDeletionConfidence(Chromatogram c){
+    	if(c instanceof ScfChromatogram){
+    		return getOptionalField(((ScfChromatogram)c).getDeletionConfidence());
+    	}
+    	return createEmptyBuffer();
+    }
     private void putQualityValue(ByteBuffer dest, Iterator<PhredQuality> iter){
     	if(iter.hasNext()){
     		dest.put(iter.next().getQualityScore());
@@ -139,9 +157,13 @@ public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{
         	buf.rewind();     
         	return buf;
         }
-        return ByteBuffer.allocate(0);
+        return createEmptyBuffer();
         
     }
+
+	private ByteBuffer createEmptyBuffer() {
+		return ByteBuffer.allocate(0);
+	}
     private void handleOptionalField(ByteBuffer buffer,
             final ByteBuffer optionalConfidence) {
         if(optionalConfidence.hasRemaining()){

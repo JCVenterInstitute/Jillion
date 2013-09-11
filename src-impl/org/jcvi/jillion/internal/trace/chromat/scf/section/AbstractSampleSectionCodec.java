@@ -38,8 +38,8 @@ import org.jcvi.jillion.internal.trace.chromat.scf.header.SCFHeader;
 import org.jcvi.jillion.internal.trace.chromat.scf.header.pos.PositionStrategy;
 import org.jcvi.jillion.internal.trace.chromat.scf.header.pos.PositionStrategyFactory;
 import org.jcvi.jillion.trace.chromat.ChannelGroup;
+import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
-import org.jcvi.jillion.trace.chromat.scf.ScfChromatogram;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
 
 public abstract class AbstractSampleSectionCodec implements SectionCodec{
@@ -111,11 +111,11 @@ public abstract class AbstractSampleSectionCodec implements SectionCodec{
             int numberOfSamples, PositionStrategy positionStrategy)
             throws IOException ;
 
-    protected PositionStrategy getPositionStrategyFor(ScfChromatogram c){
+    protected PositionStrategy getPositionStrategyFor(Chromatogram c){
         return PositionStrategyFactory.getPositionStrategy(getMaxPositionsValue(c));
     }
 
-    private int getMaxPositionsValue(ScfChromatogram c) {
+    private int getMaxPositionsValue(Chromatogram c) {
        ChannelGroup group= c.getChannelGroup();
         PositionSequence aPositions =group.getAChannel().getPositionSequence();
         PositionSequence cPositions =group.getCChannel().getPositionSequence();
@@ -142,7 +142,7 @@ public abstract class AbstractSampleSectionCodec implements SectionCodec{
    
 
     @Override
-    public EncodedSection encode(ScfChromatogram c, SCFHeader header)
+    public EncodedSection encode(Chromatogram c, SCFHeader header)
             throws IOException {
 
         PositionStrategy positionStrategy =getPositionStrategyFor(c);

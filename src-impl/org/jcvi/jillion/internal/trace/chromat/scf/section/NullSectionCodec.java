@@ -29,8 +29,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import org.jcvi.jillion.internal.trace.chromat.scf.header.SCFHeader;
+import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
-import org.jcvi.jillion.trace.chromat.scf.ScfChromatogram;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
 
 public class NullSectionCodec implements SectionCodec{
@@ -42,9 +42,9 @@ public class NullSectionCodec implements SectionCodec{
     }
 
     @Override
-    public EncodedSection encode(ScfChromatogram c, SCFHeader header)
+    public EncodedSection encode(Chromatogram c, SCFHeader header)
             throws IOException {
-        // TODO Auto-generated method stub
+        // do nothing
         return null;
     }
 

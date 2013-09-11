@@ -93,7 +93,7 @@ public final class ScfChromatogramWriterBuilder implements Builder<ChromatogramW
 		@Override
 		public void write(Chromatogram c) throws IOException {
 			if(closed){
-				throw new IllegalStateException("can only write one ztr");
+				throw new IllegalStateException("can only write one scf");
 			}
 			codec.write(c, out);
 			close();
