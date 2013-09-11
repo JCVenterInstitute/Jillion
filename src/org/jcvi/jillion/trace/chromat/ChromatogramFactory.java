@@ -54,8 +54,8 @@ public final class ChromatogramFactory {
 	}
 	/**
 	 * Create a new {@link Chromatogram} object
-	 * using the given chromatogram file.
-	 * The Value returned by the {@link Chromatogram#getId()}
+	 * using the given chromatogram file to populate the object data.
+	 * The value returned by the {@link Chromatogram#getId()}
 	 * will be the chromatogram File's name without the file
 	 * extension.  For example, /path/to/foo.ztr will 
 	 * get an id of "foo".
@@ -76,7 +76,22 @@ public final class ChromatogramFactory {
 		String id = FileUtil.getBaseName(chromatogramFile);
 		return create(id,chromatogramFile);
 	}
-	
+	/**
+	 * Create a new {@link Chromatogram} object
+	 * using the given chromatogram file to populate the object data.
+	 * 
+	 * The value returned by the {@link Chromatogram#getId()}
+	 * will be the value passed in as the id parameter.
+	 * @param id, the id of this chromatogram.
+	 * @param chromatogramFile the chromatogram file
+	 * to parse and create a {@link Chromatogram}
+	 * object from.
+	 * @return a new {@link Chromatogram}
+	 * object; will never be null.
+	 * @throws IOException if there is a problem parsing
+	 * the file.
+	 * @throws NullPointerException if either id or chromatogramFile are null.
+	 */
 	public static Chromatogram create(String id, File chromatogramFile) throws IOException{		
 		MagicNumberInputStream mIn =null;
         try{
@@ -86,6 +101,23 @@ public final class ChromatogramFactory {
         	IOUtil.closeAndIgnoreErrors(mIn);
         }
 	}
+	/**
+	 * Create a new {@link Chromatogram} object
+	 * using the given chromatogram file to populate the object data.
+	 * Note that this method does not close the inputStream.
+	 * 
+	 * The value returned by the {@link Chromatogram#getId()}
+	 * will be the value passed in as the id parameter.
+	 * @param id, the id of this chromatogram.
+	 * @param in the chromatogram data given an {@link InputStream}
+	 * to parse and create a {@link Chromatogram}
+	 * object from; can not be null.
+	 * @return a new {@link Chromatogram}
+	 * object; will never be null.
+	 * @throws IOException if there is a problem parsing
+	 * the {@link InputStream}.
+	 * @throws NullPointerException if either parameter is null.
+	 */
 	public static Chromatogram create(String id, InputStream in) throws IOException{
 		MagicNumberInputStream mIn = new MagicNumberInputStream(in); 
         return detectATypendCreateChromatogram(mIn, id);
