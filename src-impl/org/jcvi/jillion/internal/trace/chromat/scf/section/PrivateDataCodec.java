@@ -31,6 +31,7 @@ import java.nio.ByteBuffer;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.trace.chromat.scf.header.SCFHeader;
+import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
 import org.jcvi.jillion.trace.chromat.scf.PrivateData;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogram;
@@ -47,9 +48,14 @@ public class PrivateDataCodec implements SectionCodec{
 
     private static final byte[] EMPTY = new byte[0];
     @Override
-    public EncodedSection encode(ScfChromatogram c, SCFHeader header)
+    public EncodedSection encode(Chromatogram c, SCFHeader header)
             throws IOException {
-        PrivateData privateData=c.getPrivateData();
+    	final PrivateData privateData;
+    	if(c instanceof ScfChromatogram){
+    		privateData=((ScfChromatogram)c).getPrivateData();
+    	}else{
+    		privateData=null;
+    	}
         if(privateData ==null|| privateData.getBytes()==null){
             header.setPrivateDataSize(0);
             return new EncodedSection( ByteBuffer.wrap(EMPTY),Section.PRIVATE_DATA);

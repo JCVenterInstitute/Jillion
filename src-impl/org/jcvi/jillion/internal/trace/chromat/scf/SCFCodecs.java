@@ -69,7 +69,7 @@ public enum SCFCodecs implements SCFCodec{
     VERSION_3{
         @Override
         public void encode(Chromatogram c, OutputStream out) throws IOException {
-            this.encode(out, (ScfChromatogram)c, 3);
+            this.encode(out, c, 3);
         }
     },
     /**
@@ -78,7 +78,7 @@ public enum SCFCodecs implements SCFCodec{
     VERSION_2{
         @Override
         public void encode(Chromatogram c, OutputStream out) throws IOException {
-            this.encode(out, (ScfChromatogram)c, 2);
+            this.encode(out, c, 2);
         }
     };
     private SectionCodecFactory sectionCodecFactory;
@@ -177,15 +177,16 @@ public enum SCFCodecs implements SCFCodec{
     }
     protected abstract void encode(Chromatogram c, OutputStream out) throws IOException;
     /**
-     * Encodes the given {@link ScfChromatogram} into SCF version specific
-     * format.
-     * @param out the OutputStream to write the encoded {@link ScfChromatogram}.
-     * @param c the {@link ScfChromatogram} to write.
+     * Encodes the given {@link Chromatogram} into SCF version specific
+     * format.  If the chromatogram is not an instance of {@link ScfChromatogram}
+     * then those scf specific fields are left blank or empty.
+     * @param out the OutputStream to write the encoded {@link Chromatogram}.
+     * @param c the {@link Chromatogram} to write.
      * @param version which SCF format version spec to encode.
      * @throws IOException f there are any problems encoding the chromatogram
      * or any problems writing to the {@link OutputStream}.
      */
-    protected final void encode(OutputStream out, ScfChromatogram c, int version) throws IOException{
+    protected final void encode(OutputStream out, Chromatogram c, int version) throws IOException{
         SCFHeader header = new DefaultSCFHeader();
         header.setVersion(version);
         int currentOffset = HEADER_SIZE;

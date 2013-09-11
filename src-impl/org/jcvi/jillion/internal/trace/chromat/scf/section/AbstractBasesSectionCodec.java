@@ -31,8 +31,8 @@ import java.nio.ByteBuffer;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.trace.chromat.scf.header.SCFHeader;
+import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
-import org.jcvi.jillion.trace.chromat.scf.ScfChromatogram;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
 
 public abstract class AbstractBasesSectionCodec implements SectionCodec{
@@ -87,7 +87,7 @@ public abstract class AbstractBasesSectionCodec implements SectionCodec{
     }
 
     @Override
-    public EncodedSection encode(ScfChromatogram c, SCFHeader header)
+    public EncodedSection encode(Chromatogram c, SCFHeader header)
             throws IOException {
         final int numberOfBases = (int)c.getNucleotideSequence().getLength();
         header.setNumberOfBases(numberOfBases);
@@ -97,5 +97,5 @@ public abstract class AbstractBasesSectionCodec implements SectionCodec{
         return new EncodedSection(buffer, Section.BASES);
     }
 
-    protected abstract void writeBasesDataToBuffer(ByteBuffer buffer, ScfChromatogram c,int numberOfBases);
+    protected abstract void writeBasesDataToBuffer(ByteBuffer buffer, Chromatogram c,int numberOfBases);
 }
