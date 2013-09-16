@@ -87,6 +87,45 @@ public final class IteratorUtil {
     public static <E> PeekableStreamingIterator<E> createPeekableStreamingIterator(Iterator<E> iter){
     	return new PeekableStreamingIteratorImpl<E>(createStreamingIterator(iter));
     }
+    
+    /**
+     * Convenience method to create a new {@link PeekableIterator}
+     * from an {@link Iterable}.  This is the same as
+     * {@link #createPeekableIterator(Iterator) createPeekableIterator(iter.iterator()}
+     * @param iter the Iterable to use; can not be null.
+     * @return a new {@link PeekableStreamingIterator};
+     * never null.
+     * @throws NullPointerException if iter is null.
+     */
+    public static <E> PeekableIterator<E> createPeekableIterator(Iterable<E> iter){
+    	return createPeekableIterator(iter.iterator());
+    }
+    /**
+     * Convenience method to create a new {@link StreamingIterator}
+     * from an {@link Iterable}.  This is the same as
+     * {@link #createStreamingIterator(Iterator) createStreamingIterator(iter.iterator()}
+     * @param iter the Iterable to use; can not be null.
+     * @return a new {@link StreamingIterator};
+     * never null.
+     * @throws NullPointerException if iter is null.
+     */
+    public static <E> StreamingIterator<E> createStreamingIterator(Iterable<E> iter){
+    	return createStreamingIterator(iter.iterator());
+    }
+    /**
+     * Convenience method to create a new {@link PeekableStreamingIterator}
+     * from an {@link Iterable}.  This is the same as
+     * {@link #createPeekableStreamingIterator(Iterator) createPeekableStreamingIterator(iter.iterator()}
+     * @param iter the Iterable to use; can not be null.
+     * @return a new {@link PeekableStreamingIterator};
+     * never null.
+     * @throws NullPointerException if iter is null.
+     */
+    public static <E> PeekableStreamingIterator<E> createPeekableStreamingIterator(Iterable<E> iter){
+    	return createPeekableStreamingIterator(iter.iterator());
+    }
+    
+    
     public static <E> PeekableStreamingIterator<E> createPeekableStreamingIterator(StreamingIterator<E> iter){
     	return new PeekableStreamingIteratorImpl<E>(iter);
     }
@@ -266,6 +305,66 @@ public final class IteratorUtil {
         }
 
     }
+    /**
+     * Interface for converting one type into
+     * another.
+     * @author dkatzel
+     *
+     * @param <From> the input type to be converted.
+     * @param <To> the output type that is converted from.
+     */
+    public interface TypeAdapter<From, To>{
+    	/**
+    	 * Convert the given {@literal <From>} type into
+    	 * the {@literal <To>} type.
+    	 * @param from the instance to convert.  It is possible
+    	 * that this parameter is null.
+    	 * @return a new {@literal <To>} or  {@code null}.
+    	 */
+    	To adapt(From from);
+    }
     
+    public static <From, To> StreamingIterator<To> createStreamingIterator(StreamingIterator<From> iter, TypeAdapter<From,To> adapter){
+    	return new AdaptedStreamingIterator<From,To>(iter, adapter);
+    }
     
+    private static final class AdaptedStreamingIterator<From, To> implements StreamingIterator<To>{
+
+    	private final StreamingIterator<From> delegate;
+    	private final TypeAdapter<From,To> adapter;
+    	
+		public AdaptedStreamingIterator(StreamingIterator<From> delegate, TypeAdapter<From,To> adapter) {
+			if(delegate ==null){
+				throw new NullPointerException("delegate can not be null");
+			}
+			if(adapter ==null){
+				throw new NullPointerException("adapter can not be null");
+			}
+			this.delegate = delegate;
+			this.adapter = adapter;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return delegate.hasNext();
+		}
+
+		@Override
+		public void close() {
+			delegate.close();
+			
+		}
+
+		@Override
+		public To next() {
+			return adapter.adapt(delegate.next());
+		}
+
+		@Override
+		public void remove() {
+			delegate.remove();
+			
+		}
+    	
+    }
 }
