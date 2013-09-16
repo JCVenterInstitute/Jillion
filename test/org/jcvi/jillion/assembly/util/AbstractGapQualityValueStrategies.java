@@ -131,12 +131,12 @@ public abstract class AbstractGapQualityValueStrategies extends EasyMockSupport{
     	//clr =     |                    |
     	//raw = 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
 
-    	//clr =        |                    |
+    	//clr =          |                    |
     	//rev = 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1
     	//             A A -A- A A A A--AA-A
     	
     	QualitySequenceBuilder expectedBuilder = new QualitySequenceBuilder(
-    																new byte[]{13,12,11,10,9,8,7,6,5,4});
+    																new byte[]{12,11,10,9,8,7,6,5,4,3});
     	
     	expectedBuilder.insert(2, sut.computeQualityValueForGap(PhredQuality.valueOf(12), PhredQuality.valueOf(11)));
     	expectedBuilder.insert(4, sut.computeQualityValueForGap(PhredQuality.valueOf(11), PhredQuality.valueOf(10)));

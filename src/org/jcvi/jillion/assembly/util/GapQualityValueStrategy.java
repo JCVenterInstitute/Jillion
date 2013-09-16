@@ -104,11 +104,12 @@ public enum GapQualityValueStrategy{
      */
     public QualitySequence getGappedValidRangeQualitySequenceFor(NucleotideSequence validRangeSequence, QualitySequence rawQualities, Range validRange, Direction direction){
     	QualitySequenceBuilder complementedRawQualities = new QualitySequenceBuilder(rawQualities);
+    	
+    	QualitySequenceBuilder gappedValidRangeQualities = complementedRawQualities.copy().trim(validRange);
     	if(direction == Direction.REVERSE){
+    		gappedValidRangeQualities.reverse();
     		complementedRawQualities.reverse();
     	}
-    	QualitySequenceBuilder gappedValidRangeQualities = complementedRawQualities.copy().trim(validRange);
-    	
     	List<Integer> gapOffsets=validRangeSequence.getGapOffsets();
 		
     	int rawShiftOffset = (int)validRange.getBegin();
