@@ -164,8 +164,8 @@ public final class CompactedSliceElement implements SliceElement{
     */
     @Override
     public String toString() {
-        return "CompactedSliceElement [id=" + id + ", getBase()=" + getBase()
-                + "]";
+        return "CompactedSliceElement [id=" + id + ", getBase()=" + getBase() + "qual = " + getQuality()
+                + " ]";
     }
     
     
