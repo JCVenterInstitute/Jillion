@@ -170,9 +170,6 @@ public final class TraceArchiveWriter implements Closeable{
 			throw new NullPointerException("traceFile can not be null");
 		}
 		TraceArchiveRecordBuilder recordBuilder = new DefaultTraceArchiveRecord.Builder();
-		if("1117900562796".equals(traceName)){
-			System.out.println("trace seen: " + traceFile.getName());
-		}
 		if(traceNamesSeen.contains(traceName)){
 			throw new IllegalArgumentException("already added a trace with the trace name "+ traceName);
 		}
@@ -235,6 +232,11 @@ public final class TraceArchiveWriter implements Closeable{
 		}
 		return builder.toString();
 	}
+	
+	public int getNumberOfTracesWritten(){
+		return this.traceNamesSeen.size();
+	}
+	
 	@Override
 	public void close() throws IOException {
 		TraceArchiveInfo info =traceInfoBuilder.build();
