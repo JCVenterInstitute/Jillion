@@ -5,6 +5,148 @@ add new features, break the old API or fix known bugs.  There will
 often be many more source code changes that aren't listed if they don't
 change the behavior in any public API classes.
 
+
+================
+Jillion 4.0 RC 3 - Most changes address performance improvements.
+================
+
+API Changes
+------------
+1. Created new TranslationTable interface to translate NucleotideSequence
+   into AminoAcidSequence.
+   
+2. Created new IupacTranslationTables enum which has the common Genbank Translation tables.
+   Class contains methods to get by name and by genbank table number.
+   
+3. Removed old Codon class.
+
+4. Removed SequenceBuilder.build(Range) since it was never used.
+
+5. Refactored AminoAcid classes moved AminoAcids helper class to test
+   directory and renamed it AminoAcidUtil.
+   
+6. Removed GlyphCodec.encode(Collection<T> ) and pushed it down to sub-interfaces.
+
+7. Removed NucleotideCodec.encode(Collection<T> ) and all its uses 
+   outside of tests.  Created new helper method in test area to perform
+   function so it doesn't pollute public API.
+
+8. Created AminoAcidCodec interface, previously was just GlyphCodec<AminoAcid>.
+
+9. Added sortedInsert(value) and sortedRemove(value) to the growableArrays.
+
+10. Made GrowableArrays implement Iterable, created new classes to Iterate over primitive arrays.
+
+11. DefaultAssembledReadBuilder equals() and hashcode() have been changed
+    to use only readId and direction which are the only immutable fields.
+    Previously used reference field which is mutable and could breaks the
+    equals and hashcode contract.
+    
+12. Changed AssembledReadBuilder to no longer have methods to programatically set the
+    reference since it is now done during build time.
+    
+13. Added support for creating "denovo" contigs without first providing an
+    initial consensus sequence.  So far only supported in AceContigBuilders.
+    Will add support for others later.
+    
+14. Changed StreamingIteator.close() to no longer throw IOException this cleans up a
+    lot code that uses the new Java 7 try-with-resource.
+ 
+15. Added sortedInsert( int[]) to GrowableIntArray and equivalents to 
+    GrowableByteArray, GrowableShortArray and GrowableLongArray.
+    
+16. Changed ScfChromatogramWriter to accept Chromatogram objects not
+    just ScfChromatogram objects.  If the Chromatogram is not
+    an ScfChromatogram, then the writer pretends the scf-specific
+    fields are blank.
+    
+17. Deleted AbstractConsensusCaller class; pushed used methods down
+    to AbstractChurchhillWatermanConsensusCaller.
+    
+18. Added TraceArchiveWriter.getNumberOfTracesWritten().
+   
+Performance Improvements
+------------------------
+1.  Changed NucleotideSequenceBuilder to track sorted gap offsets while building.
+    This takes up slightly more memory when building but will enable optimized object
+    creation during the build() step.
+    
+2.  Performance improvement changed endian of 2 bit nucleotide encodings to
+    reduce the amount of computations.
+
+3.  Changed NucleotideSequenceBuilder to use new added 
+    sortedInsert(value) and sortedRemove(value) on the growableArrays.
+
+4.  To improve speed of cas2consed, changed casAlignmentBuilder from random
+    access into reference sequence to see if value is gap to
+    caching the gap offsets and then doing binary search on them. 
+    
+5.  Improved fake quality ace writing output.
+
+6.  Performance improvement to NucleotideSequenceBuilder.ungap().
+
+7.  Changed DefaultAssembledReadBuilder to no longer store the
+    original NucleotideSequence reference field. Since it is no longer
+    used outside of the build() method.  This reduces memory footprint
+    as well since there are millions of builder objects in memory all 
+    with 1 fewer reference saving either 4 or 8 bytes each.
+    
+8.  Added QualityCodec.toQualityArray() to efficiently create byte array
+    where array[i] is the ith quality score.  
+    Changed EncodedQualitySequnce.equasl() to be based on
+    array which should be faster most of the time (at least for reads).
+    
+9.  Performance improvement for NucleotideSequenceBuilder.insert() append()
+    and prepend() methods when a NucleotideSequence is passed in.  
+    Previously method took an Iterable<Nucletoide> to accept both
+    Sequences and Collections.  However since NucleotideSequence
+    knows how its length and how many gaps it has we can use that 
+    information to pre-allocate the internal structures instead of
+    possibly re-allocating them many times as the structures grow.
+    
+10. Performance improvement for NucleotideSequence : 
+    changed Sequence gap computation methods to be more efficient.
+    NucleotideCodec now computes those values which should be faster 
+    than converting to a List<Integer> then iterating over them. 
+    Also stops looking as soon as the current gap offset > offset 
+    we care about. Which will make it faster to convert between gap 
+    and ungapped offsets for low valued offsets where the sequence 
+    is very gappy downstream.
+
+11. Performance improvement for NucleotideSequenceBuilder:
+    no longer uses BitSet to internally store data since that was very slow.
+    Now use GrowableByteArray which is more than 2x faster but
+    takes up 2x the memory.  Now each base is 1 byte instead of 
+    4 bits while building.  (But when build() is called the base 
+    will be 2 or 4 bits depending on context).  
+    We can later implement a GrowableHalfByteArray or 
+    something similar to do our own bit masking which will
+    reduce the memory footprint if memory becomes a problem.
+    
+12. TextLineParser no longer uses a pushback inputstream but
+    instead keeps the extra byte it read in its own memory.  
+    This takes up less memory than a pushback inputstream and 
+    we only need to check the unread byte once at the beginning
+    of every nextLine() instead of while reading each byte with in.read().
+     
+13. Changed PairwiseAligner TraceBack matrix to pack 4 tracebacks into a single byte.
+    This should reduce memory of smith-waterman and needleman wunsch alignments 
+    by a factor of 4.  Previously aligning two 30k sequences to each 
+    other took almost 2 GB, now its 400MB.
+     
+14. Changed NucleotideSequenceBuilder.NewValues.insert() to use
+    new growableArray.sortedInsert() instead of growableArray.append(int[]); 
+    growableArray.sort().  This was revealed to be bottleneck when using a profiler.
+
+Bug Fixes
+------------
+1. AminoAcidSequenceBuilder.toString() to actually print
+   sequence instead of object ref to growable array.
+
+2. BlosomMatrix - Added support for Stop codon.
+
+3. bug fix to GapQualityValueStrategy to fix quality values of reverse complemented reads.
+
 ================
 Jillion 4.0 RC 2
 ================
@@ -111,7 +253,7 @@ Performance Improvements
 
 6.  Performance improvements to Range construction.
 
-7.  Rewrote NucleotideCodec implementations so that the class class that stores each base
+7.  Rewrote NucleotideCodec implementations so that the class that stores each base
     in 4 bits can take advantage of the 'book keeping' information in the header that was
     used in the 2 bit implementations.  This makes computing gapped and ungapped 
     coordinates much faster with only a slight increase in memory usage.  
