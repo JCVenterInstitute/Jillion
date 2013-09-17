@@ -110,6 +110,7 @@ public class TestTraceArchiveWriter {
 		writer.addTrace("K18", k18TraceFile);
 		writer.addTrace("I11", i11TraceFile);
 		writer.close();
+		assertEquals(2, writer.getNumberOfTracesWritten());
 	
 	}
 	
