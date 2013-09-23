@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Jillion" default="unit.tests" basedir=".">
-	
+	<!--Used to set the required version of Java that RUNS the jars -->
+	<property name="jdk.version" value="1.6" />
 	<property name="version" value="4.0" />
 	<property name="project-name" value="Jillion" />
 	<property name="bin" value ="bin_ant"/>
@@ -80,7 +81,9 @@
 	<target name="bin"
 	         description="Compile Java source and test files" depends="source.only.bin">
 		<!-- source already compiled so only compile tests -->
-		<javac debug="true" destdir="${bin}"  classpathref="test.classpath" includeantruntime="false">
+		<javac debug="true" 
+			source="${jdk.version}" target="${jdk.version}"
+			destdir="${bin}"  classpathref="test.classpath" includeantruntime="false">
 					<src path="${test}"/>
 			<src path="${experimental}"/>
 			<src path="${experimental-test}"/>
@@ -102,7 +105,9 @@
 			<!-- copile source separately so we can instrument with emma simply
 				 this avoids the need for emma filters-->
 			<!-- debug = true required for emma reports to see line coverage and link to source-->
-			<javac debug="true" destdir="${bin}"  includeantruntime="false">
+			<javac debug="true" destdir="${bin}"  
+				source="${jdk.version}" target="${jdk.version}"
+				includeantruntime="false">
 				<src path="${src}"/>
 				<src path="${src-impl}"/>
 				<compilerarg line="-Xlint:all"/>
