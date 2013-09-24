@@ -272,12 +272,14 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 
 	@Override
 	public QualitySequenceBuilder trim(Range range) {
+		Range fullRange = Range.ofLength(builder.getCurrentLength());		
 		if(range.isEmpty()){
-			builder.remove(Range.ofLength(builder.getCurrentLength()));
+			builder.remove(fullRange);
 			return this;
 		}
-		Range right = Range.of(range.getEnd()+1, builder.getCurrentLength()-1);
-		Range left = Range.of(0,range.getBegin()-1);
+		Range insersection = fullRange.intersection(range);
+		Range right = Range.of(insersection.getEnd()+1, builder.getCurrentLength()-1);
+		Range left = Range.of(0,insersection.getBegin()-1);
 		builder.remove(right);
 		builder.remove(left);
 		return this;

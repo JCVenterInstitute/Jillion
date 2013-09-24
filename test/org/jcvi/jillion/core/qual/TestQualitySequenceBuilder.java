@@ -102,6 +102,33 @@ public class TestQualitySequenceBuilder {
 				new byte[]{13,13,13,13},
 				toByteArray(seq));
 	}
+	@Test
+	public void trimOffLeftEdgeOfSequence(){
+		QualitySequenceBuilder sut = new QualitySequenceBuilder(new byte[]{1,2,3,4,5,6,7,8});
+		sut.trim(Range.of(3,7));
+		QualitySequence seq =sut.build();
+		assertArrayEquals(
+				new byte[]{4,5,6,7,8},
+				toByteArray(seq));
+	}
+	@Test
+	public void trimRangeExtendsBeyondLength(){
+		QualitySequenceBuilder sut = new QualitySequenceBuilder(new byte[]{1,2,3,4,5,6,7,8});
+		sut.trim(Range.of(3,10));
+		QualitySequence seq =sut.build();
+		assertArrayEquals(
+				new byte[]{4,5,6,7,8},
+				toByteArray(seq));
+	}
+	@Test
+	public void trimRangeExtendsBeyondStart(){
+		QualitySequenceBuilder sut = new QualitySequenceBuilder(new byte[]{1,2,3,4,5,6,7,8});
+		sut.trim(Range.of(-1,3));
+		QualitySequence seq =sut.build();
+		assertArrayEquals(
+				new byte[]{1,2,3,4},
+				toByteArray(seq));
+	}
 	
 	@Test
 	public void trimEmptyRangeShouldRemoveEntireSequence(){
