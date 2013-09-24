@@ -171,6 +171,26 @@ public class TestAminoAcidSequenceBuilder {
 		assertEquals(3L, sut.getLength());
 		assertEquals("KFT", AminoAcidUtil.asString(sut.build()));
 	}
+	
+	@Test
+	public void trimBeyondEdge(){
+		AminoAcidSequenceBuilder sut = new AminoAcidSequenceBuilder("IKFTW");
+		sut.trim(Range.of(1,10));
+		
+		assertEquals(0, sut.getNumGaps());
+		assertEquals(4L, sut.getLength());
+		assertEquals("KFTW", AminoAcidUtil.asString(sut.build()));
+	}
+	@Test
+	public void trimBeforeStart(){
+		AminoAcidSequenceBuilder sut = new AminoAcidSequenceBuilder("IKFTW");
+		sut.trim(Range.of(-1,3));
+		
+		assertEquals(0, sut.getNumGaps());
+		assertEquals(4L, sut.getLength());
+		assertEquals("IKFT", AminoAcidUtil.asString(sut.build()));
+	}
+	
 	@Test
 	public void trimEmptyRangeShouldRemoveEntireSequence(){
 		AminoAcidSequenceBuilder sut = new AminoAcidSequenceBuilder("IKFTW");
