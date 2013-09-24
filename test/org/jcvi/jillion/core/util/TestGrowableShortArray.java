@@ -483,4 +483,15 @@ public class TestGrowableShortArray {
 		sut.sortedInsert(new short[]{15,17,31,37,60,61,62});
 		assertArrayEquals(new short[]{15,17,31,37,60,61,62}, sut.toArray());
 	}
+	
+	@Test
+	public void getCount(){
+		GrowableShortArray sut = new GrowableShortArray(new short[]{10, 20,30,30,35, 40,50});
+		assertEquals(2, sut.getCount((short)30));
+	}
+	@Test
+	public void getCountNoMatchesShouldReturn0(){
+		GrowableShortArray sut = new GrowableShortArray(new short[]{10, 20,30,30,35, 40,50});
+		assertEquals(0, sut.getCount((short)-1));
+	}
 }
