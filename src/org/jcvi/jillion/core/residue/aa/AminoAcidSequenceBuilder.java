@@ -30,6 +30,8 @@ import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 
 public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<AminoAcid,AminoAcidSequence>{
 	private static final AminoAcid[] AMINO_ACID_VALUES = AminoAcid.values();
+	private static final byte GAP_ORDINAL = AminoAcid.Gap.getOrdinalAsByte();
+	
 	private static final int DEFAULT_CAPACITY = 20;
 	private GrowableByteArray builder;
 	private int numberOfGaps=0;
@@ -219,12 +221,7 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 	}
 
 
-	private byte[] trimBytes(Range range) {
-		byte[] fullArray =builder.toArray();
-		byte[] temp = new byte[(int)range.getLength()];
-		System.arraycopy(fullArray, (int)range.getBegin(), temp, 0, temp.length);
-		return temp;
-	}
+	
 	private List<AminoAcid> convertFromBytes(byte[] array){
 		List<AminoAcid> aas = new ArrayList<AminoAcid>(array.length);
 		for(int i=0; i<array.length; i++){
@@ -263,12 +260,14 @@ public final class AminoAcidSequenceBuilder implements ResidueSequenceBuilder<Am
 
 	@Override
 	public AminoAcidSequenceBuilder trim(Range range) {
-		byte[] temp = trimBytes(range);
-		AminoAcidSequence seq =build(temp);
-		this.builder = new GrowableByteArray(temp);
-		this.numberOfGaps =seq.getNumberOfGaps();
+		Range intersection = range.intersection(Range.ofLength(getLength()));
+		builder =builder.subArray(intersection);		
+		this.numberOfGaps =builder.getCount(GAP_ORDINAL);
 		return this;
+		
+		
 	}
+
 
 	@Override
 	public AminoAcidSequenceBuilder copy() {
