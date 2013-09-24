@@ -455,4 +455,22 @@ public final class GrowableShortArray implements Iterable<Short>{
 		data = newData;
 		currentLength = newCurrentLength;
 	}
+	
+	/**
+	 * Get the number of values
+	 * in this array that currently
+	 * have the given value.
+	 * @param value the value to look for.
+	 * @return the number of cells with 
+	 * the value; will always be >= 0.
+	 */
+	public int getCount(short value){
+		int count=0;
+		for(int i=0; i<currentLength; i++){
+			if(data[i] == value){
+				count++;
+			}
+		}
+		return count;
+	}
 }
