@@ -676,7 +676,6 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	}
     	
     	Range trimRange = range.intersection(Range.ofLength(getLength()));
-    	;
     	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(data.subArray(trimRange));
 		if(codecDecider.hasAlignedReference()){
 			builder.setReferenceHint(codecDecider.alignedReference.reference, codecDecider.alignedReference.offset+ (int)range.getBegin());
