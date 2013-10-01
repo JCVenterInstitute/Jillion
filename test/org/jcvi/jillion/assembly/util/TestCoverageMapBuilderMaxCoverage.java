@@ -28,7 +28,7 @@ import org.jcvi.jillion.assembly.util.ContigCoverageMapBuilder;
 import org.jcvi.jillion.assembly.util.CoverageMap;
 import org.jcvi.jillion.internal.assembly.DefaultContig;
 import org.junit.Test;
-public class TestCoverageMapFactoryMaxCoverage {
+public class TestCoverageMapBuilderMaxCoverage {
 
 	@Test
 	public void contigCoverageAlwaysBelowThresholdShouldBeSameAsWithoutThreshold(){

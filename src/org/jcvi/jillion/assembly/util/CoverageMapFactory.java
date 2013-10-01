@@ -66,6 +66,32 @@ final class CoverageMapFactory {
     }
     /**
 	 * Create a new {@link CoverageMap} using the given
+	 * {@link Rangeable}s.
+	 * @param elements the elements to create a coverage map of.
+	 * @return a new {@link CoverageMap}; never null.
+	 * @param <R> The type of {@link Rangeable} used in this map.
+	 */
+    public static <R extends Rangeable> CoverageMap<R> 
+            create(Collection<R> elements, boolean startAtOrigin){
+        return new Builder<R>(elements,startAtOrigin).build();
+    }
+    /**
+   	 * Create a new {@link CoverageMap} using the given
+   	 * {@link Rangeable}s but limiting the max coverage
+   	 * in the map to {@code maxAllowedCoverage}.  
+   	 * @param elements the elements to create a coverage map of.
+   	 * @param maxAllowedCoverage Any
+   	 * elements that would cause the max coverage to exceed this threshold
+   	 * will be ignored.
+   	 * @return a new {@link CoverageMap}; never null.
+   	 * @param <R> The type of {@link Rangeable} used in this map.
+   	 */
+       public static <R extends Rangeable> CoverageMap<R> 
+               create(Collection<R> elements, int maxAllowedCoverage){
+    	   return create(elements, maxAllowedCoverage, false);
+       }
+    /**
+	 * Create a new {@link CoverageMap} using the given
 	 * {@link Rangeable}s but limiting the max coverage
 	 * in the map to {@code maxAllowedCoverage}.  
 	 * @param elements the elements to create a coverage map of.
@@ -76,8 +102,9 @@ final class CoverageMapFactory {
 	 * @param <R> The type of {@link Rangeable} used in this map.
 	 */
     public static <R extends Rangeable> CoverageMap<R> 
-            create(Collection<R> elements, int maxAllowedCoverage){
-        return new Builder<R>(elements,maxAllowedCoverage).build();
+            create(Collection<R> elements, int maxAllowedCoverage,
+            		boolean startAtOrigin){
+        return new Builder<R>(elements,maxAllowedCoverage, startAtOrigin).build();
     }
 
     public static <R extends AssembledRead> CoverageMap<R> createUngappedCoverageMap(
@@ -416,14 +443,19 @@ final class CoverageMapFactory {
     private static  class Builder<P extends Rangeable> extends AbstractCoverageMapBuilder<P>{
         private final List<P> startCoordinateSortedList = new ArrayList<P>();
         private final List<P> endCoordinateSortedList = new ArrayList<P>();
+        private final boolean startAtOrigin;
         
-        public Builder(Collection<P> elements, int maxAllowedCoverage){
+        public Builder(Collection<P> elements, int maxAllowedCoverage, boolean startAtOrigin){
             super(maxAllowedCoverage);
             initialize(elements);
+            this.startAtOrigin = startAtOrigin;
+        }
+        public Builder(Collection<P> elements, boolean startAtOrigin) {
+            initialize(elements);
+            this.startAtOrigin =startAtOrigin;
         }
         public Builder(Collection<P> elements) {
-            initialize(elements);
-            
+           this(elements, false);
         }
         
        
@@ -468,11 +500,46 @@ final class CoverageMapFactory {
 
         private List<CoverageRegion<P>> buildAllCoverageRegions(List<CoverageRegionBuilder<P>> coverageRegionBuilders) {
             
+        	if(coverageRegionBuilders.isEmpty()){
+        		return Collections.emptyList();
+        	}
+        	//+1 incase we need to add an extra region to cover origin
             List<CoverageRegion<P>> regions = new ArrayList<CoverageRegion<P>>(
-                    coverageRegionBuilders.size());
-            for (CoverageRegionBuilder<P> builder : coverageRegionBuilders) {
-                regions.add(builder.build());
+                    coverageRegionBuilders.size()+1);
+            DefaultCoverageRegion.Builder<P> newFirst=null, newLast = null;
+            
+            if(startAtOrigin){            	
+				long firstStart =coverageRegionBuilders.get(0).start();
+				if(firstStart <0){
+					//we start at negative
+					//check to see if we cross the origin
+					//(which means we cover it)
+					long lastCoveredOffset =coverageRegionBuilders.get(coverageRegionBuilders.size()-1).end();
+					if(lastCoveredOffset <0){				
+						newLast = new DefaultCoverageRegion.Builder<P>(lastCoveredOffset+1, Collections.<P>emptyList());
+						newLast.end(0);
+						
+					}
+				}else if(firstStart >0){
+					//don't need to shift but need to add
+					//and 0x coverage region
+					newFirst = new DefaultCoverageRegion.Builder<P>(0, Collections.<P>emptyList());
+					newFirst.end(firstStart -1);
+				}
+				
             }
+            if(newFirst !=null){
+            	regions.add(newFirst.build());
+            }
+            Iterator<CoverageRegionBuilder<P>> iterator = coverageRegionBuilders.iterator();
+           
+        	while(iterator.hasNext()){
+				regions.add(iterator.next().build());
+            }
+        	if(newLast !=null){
+            	regions.add(newLast.build());
+            }
+            
             return regions;
         }
 
