@@ -36,14 +36,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.jillion.assembly.util.CoverageMap;
-import org.jcvi.jillion.assembly.util.CoverageMapBuilder;
-import org.jcvi.jillion.assembly.util.CoverageRegion;
-import org.jcvi.jillion.assembly.util.DefaultCoverageRegion;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Test;
-public class TestDefaultCoverageMap {
+public class TestDefaultCoverageMapBuilder {
 
     Range seq_0_9 = Range.of(0, 9);
     Range seq_0_12 =Range.of(0, 12);
@@ -227,6 +223,63 @@ public class TestDefaultCoverageMap {
         assertEquals("avg cov", 33D/19, map.getAverageCoverage(), 0.001D);
         assertEquals("min cov", 1, map.getMinCoverage());
         assertEquals("max cov", 5, map.getMaxCoverage());
+    }
+    
+    @Test
+    public void firstElementDoesNotCover0(){
+
+        CoverageMap<Range> map = new CoverageMapBuilder<Range>(
+                Arrays.asList(seq_5_14,seq_11_15)).build();        
+       
+        assertEquals(3, map.getNumberOfRegions());
+        assertEquals(createCoverageRegion(5,10,seq_5_14 ), map.getRegion(0));
+        assertEquals(createCoverageRegion(11,14,seq_5_14,seq_11_15 ), map.getRegion(1));
+        assertEquals(createCoverageRegion(15,15,seq_11_15 ), map.getRegion(2));
+	
+      
+    }
+    @Test
+    public void forceStartAt0ShouldMakeFirstElement0x(){
+
+        CoverageMap<Range> map = new CoverageMapBuilder<Range>(
+                Arrays.asList(seq_5_14,seq_11_15))
+                .includeOrigin(true)
+                .build();        
+       
+        assertEquals(4, map.getNumberOfRegions());
+        assertEquals(createCoverageRegion(0,4 ), map.getRegion(0));
+        assertEquals(createCoverageRegion(5,10,seq_5_14 ), map.getRegion(1));
+        assertEquals(createCoverageRegion(11,14,seq_5_14,seq_11_15 ), map.getRegion(2));
+        assertEquals(createCoverageRegion(15,15,seq_11_15 ), map.getRegion(3));
+	
+      
+    }
+    @Test
+    public void forceStartAt0WithNegativeRangesButCovers0ShouldNotBeChanged(){
+
+        CoverageMap<Range> map = new CoverageMapBuilder<Range>(
+                Arrays.asList(Range.of(-10,-3),Range.of(4,8)))
+                .includeOrigin(true)
+                .build();        
+       
+        assertEquals(3, map.getNumberOfRegions());
+        assertEquals(createCoverageRegion(-10,-3, Range.of(-10,-3)), map.getRegion(0));
+        assertEquals(createCoverageRegion(-2,3 ), map.getRegion(1));        
+        assertEquals(createCoverageRegion(4,8,Range.of(4,8) ), map.getRegion(2));	
+      
+    }
+    @Test
+    public void forceStartAt0WithNegativeRangesDoesNotCover0ShouldGetExtra0x(){
+
+        CoverageMap<Range> map = new CoverageMapBuilder<Range>(
+                Arrays.asList(Range.of(-10,-3)))
+                .includeOrigin(true)
+                .build();        
+       
+        assertEquals(2, map.getNumberOfRegions());
+        assertEquals(createCoverageRegion(-10,-3, Range.of(-10,-3)), map.getRegion(0));
+        assertEquals(createCoverageRegion(-2,0 ), map.getRegion(1));        
+      
     }
     
     @Test

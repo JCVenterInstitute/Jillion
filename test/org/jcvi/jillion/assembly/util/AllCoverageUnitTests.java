@@ -33,10 +33,10 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     { 
         TestDefaultCoverageRegion.class,
-        TestDefaultCoverageMap.class,
+        TestDefaultCoverageMapBuilder.class,
         TestCoverageRestrictedMap.class,
-        TestCoverageMapFactoryUngappedCoverageMaps.class,
-        TestCoverageMapFactoryMaxCoverage.class
+        TestCoverageMapBuilderUseUngappedCoords.class,
+        TestCoverageMapBuilderMaxCoverage.class
     }
     )
 public class AllCoverageUnitTests {

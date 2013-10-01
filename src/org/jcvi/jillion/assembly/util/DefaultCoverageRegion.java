@@ -133,7 +133,7 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
 
 
     static final class Builder<T extends Rangeable> implements CoverageRegionBuilder<T>{
-        private final long start;
+        private long start;
         private long end;
         private Queue<T> elements;
         private boolean endIsSet;
@@ -149,10 +149,8 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
             		elements==null?null: elements.iterator(),
             				maxAllowedCoverage);
         }
-        public Builder(long start, Iterator<T> elements){
-        	this(start, elements, null);
-        }
-        public Builder(long start, Iterator<T> elements, Integer maxAllowedCoverage){
+
+        private Builder(long start, Iterator<T> elements, Integer maxAllowedCoverage){
             if(elements ==null){
                 throw new IllegalArgumentException("elements can not be null");
             }
@@ -165,6 +163,12 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
             while(elements.hasNext()){
             	 this.elements.offer(elements.next());
             }
+        }
+        @Override
+        public Builder<T> shift(long shift){
+        	start+=shift;
+        	end+=shift;
+        	return this;
         }
         public long start(){
             return start;

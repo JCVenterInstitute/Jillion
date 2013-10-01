@@ -43,5 +43,7 @@ interface CoverageRegionBuilder<P extends Rangeable> extends Builder<CoverageReg
    CoverageRegionBuilder<P> remove(P element);
    CoverageRegionBuilder<P> removeAll(Collection<P> elements);
    
+   CoverageRegionBuilder<P> shift(long shift);
+   
    Collection<P> getElements();
 }

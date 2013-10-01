@@ -78,7 +78,9 @@ public final class DefaultScaffold  implements Scaffold{
             ranges.add(Range.of(contig.getBegin(), contig.getEnd()));
         }
         length = Ranges.createInclusiveRange(ranges).getLength();
-        contigMap =new CoverageMapBuilder<PlacedContig>(placedContigs).build();
+        contigMap =new CoverageMapBuilder<PlacedContig>(placedContigs)
+        					.includeOrigin(true)
+        					.build();
     }
     @Override
     public PlacedContig getPlacedContig(String id) {

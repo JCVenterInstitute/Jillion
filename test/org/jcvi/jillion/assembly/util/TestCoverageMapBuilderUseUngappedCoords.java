@@ -34,7 +34,7 @@ import org.jcvi.jillion.assembly.util.CoverageRegion;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.assembly.DefaultContig;
 import org.junit.Test;
-public class TestCoverageMapFactoryUngappedCoverageMaps {
+public class TestCoverageMapBuilderUseUngappedCoords {
 
 	@Test
 	public void noGapsShouldSameReturnSameAsGappedCoverageMap(){

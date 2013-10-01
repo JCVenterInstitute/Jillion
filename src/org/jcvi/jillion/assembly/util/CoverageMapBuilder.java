@@ -42,6 +42,8 @@ public final class CoverageMapBuilder<T extends Rangeable> {
 	private static final int NOT_SET = -1;
 	private final Collection<T> elements;
 	private int maxCoverage=NOT_SET;
+	
+	private boolean startAtOrigin=false;
 	/**
 	 * Create a new Builder instance that will
 	 * use the given elements to eventually
@@ -98,8 +100,28 @@ public final class CoverageMapBuilder<T extends Rangeable> {
 	 */
 	public CoverageMap<T> build(){
 		if(maxCoverage == NOT_SET){
-			return CoverageMapFactory.create(elements);
+			return CoverageMapFactory.create(elements,startAtOrigin);
 		}
-		return CoverageMapFactory.create(elements, maxCoverage);
+		return CoverageMapFactory.create(elements, maxCoverage,startAtOrigin);
+	}
+	/**
+	 * Forces a {@link CoverageRegion} to cover
+	 * the origin (offset 0)
+	 * in the coverage map.
+	 * If this is set to {@code true} then the first {@link CoverageRegion}
+	 * of the built {@link CoverageMap} will always have a CoverageRegion that
+	 * will cover offset 0. If there is no coverage at offset zero,
+	 * then a CoverageRegion that has {@link CoverageRegion#getCoverageDepth()} ==0 
+	 * (a 0x region) will be inserted into the map
+	 * even if it that makes it the first or last region in the map.
+	 * <p/>
+	 * If not set, then defaults to {@code false}.
+	 * @param flag {@code true} to include the origin;
+	 * {@code false} otherwise.
+	 * @return this
+	 */
+	public CoverageMapBuilder<T> includeOrigin(boolean flag) {
+		this.startAtOrigin = flag;
+		return this;
 	}
 }
