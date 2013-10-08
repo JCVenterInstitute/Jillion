@@ -48,12 +48,15 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
  * file offsets to the various {@link FastaRecord}s contained
  * inside the fasta file.  This implementation provides random access
  * to large files taking up much memory.  The downside is each fasta record
- * must be seeked to and then re-parsed each time and the fasta file must exist and not
+ * must be seek'ed to and then re-parsed each time and the fasta file must exist and not
  * get altered during the entire lifetime of this object.
  * @author dkatzel
  */
 public final class IndexedAminoAcidSequenceFastaFileDataStore{
 
+	private IndexedAminoAcidSequenceFastaFileDataStore(){
+		//can not instantiate
+	}
 	/**
 	 * Creates a new {@link IndexedAminoAcidSequenceFastaFileDataStore}
 	 * instance using the given fastaFile.

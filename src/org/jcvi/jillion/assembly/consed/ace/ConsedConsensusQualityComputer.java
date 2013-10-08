@@ -125,6 +125,9 @@ final class ConsedConsensusQualityComputer {
 	
 	private static final int NUMBER_OF_NON_GAPS_IN_WINDOW =2;
 	
+	private ConsedConsensusQualityComputer(){
+		//can not instantiate
+	}
 	/**
      * Compute the consensus quality sequence as computed by the same algorithm consed uses.
      * @param contig the contig to compute the consensus qualities for; can not be null.

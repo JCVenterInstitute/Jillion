@@ -373,7 +373,9 @@ public final class IndexedFragmentDataStore extends AbstractFragmentDataStore{
 
                 @Override
                 public void visitLibrary(FrgAction action, String id,
-                        MateOrientation orientation, Distance distance) {}
+                        MateOrientation orientation, Distance distance) {
+                	//no-op
+                }
 
                 @Override
                 public void visitFragment(FrgAction action, String fragmentId,

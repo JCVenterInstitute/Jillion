@@ -312,13 +312,7 @@ public abstract class AsmFileParser {
                     throws IOException {
                 IdTuple idTuple =parseIds(parserState, visitor, ACCESSION_PATTERN);
                 String nextLine = parserState.getNextLine();
-                //CA <= 5 had a src block which should be ignored
-                //CA 6+ doesn't have it anymore so need to handle
-                //both cases.
-                if(nextLine.startsWith("src")){
-                    skipReservedSource(parserState);
-                    nextLine = parserState.getNextLine();
-                }
+                nextLine = skipSrcBlock(parserState, nextLine);
                 float aStat = parseAStat(nextLine);
                 nextLine = parserState.getNextLine();
                 //measure of polymorphism
@@ -1522,8 +1516,29 @@ public abstract class AsmFileParser {
         }while(line !=null && !line.startsWith("}"));
         
     }
-    
-    private abstract static class CallBack implements AsmVisitorCallback{
+    /**
+     * CA <= 5 had a src block which should be ignored
+     * CA 6+ doesn't have it anymore so need to handle
+     * both cases.
+     * @param parserState
+     * @param line the current line to check which might
+     * be the beginning of a deprecated 'src' block.
+     * @return the first line AFTER the 'src' block
+     * or the same reference to {@code line}
+     * if the current line isn't a 'src' block.
+     * @throws IOException if there is a problem parsing
+     * the asm file.
+     */
+    private static String skipSrcBlock(ParserState parserState, String line)
+			throws IOException {
+		if(line.startsWith("src")){
+		    skipReservedSource(parserState);
+		    line = parserState.getNextLine();
+		}
+		return line;
+	}
+
+	private abstract static class CallBack implements AsmVisitorCallback{
     	private final AtomicBoolean keepParsing;
 
 		public CallBack(AtomicBoolean keepParsing) {
