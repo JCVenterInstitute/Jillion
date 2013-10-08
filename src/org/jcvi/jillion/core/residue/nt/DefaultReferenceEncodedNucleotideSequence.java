@@ -215,6 +215,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
         }
     }
 
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
     private boolean isDifferent(Nucleotide g, final Nucleotide referenceGlyph) {
         return g!=referenceGlyph;
     }

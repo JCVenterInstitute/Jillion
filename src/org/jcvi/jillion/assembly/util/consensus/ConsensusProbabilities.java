@@ -53,6 +53,7 @@ final class ConsensusProbabilities{
         this.probabilityMap = Collections.unmodifiableMap(new EnumMap<Nucleotide, Double>(probabilityMap));
     }
     
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
     ConsensusProbabilities(Nucleotide consensus,int cumulativeQualityValue){
         double probability = Math.pow(ONE_TENTH, cumulativeQualityValue*ONE_TENTH);
         probabilityMap = new EnumMap<Nucleotide, Double>(Nucleotide.class);
@@ -97,6 +98,7 @@ final class ConsensusProbabilities{
         return new ConsensusProbabilities(newMap);
     }
     
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
     private Double computeNormalizedProbabilityFor(Nucleotide base, double sumOfRawProbabilities){
         double result= 0D;
         for(Nucleotide currentBase : BASES_TO_CONSIDER){

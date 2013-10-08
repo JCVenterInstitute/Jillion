@@ -84,6 +84,7 @@ final class ChainedIterator<T> implements Iterator<T>{
     * {@inheritDoc}
     */
     @Override
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
     public boolean hasNext() {
         if(next==endOfIterating){
             return false;

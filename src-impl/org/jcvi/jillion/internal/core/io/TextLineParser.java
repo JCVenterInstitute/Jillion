@@ -187,6 +187,7 @@ public final class TextLineParser implements Closeable{
 	 * {@code false} otherwise.
 	 * @see #nextLine()
 	 */
+	@SuppressWarnings("PMD.CompareObjectsWithEquals")
 	public boolean hasNextLine(){
 		Object next = nextQueue.peek();
 		
@@ -203,6 +204,7 @@ public final class TextLineParser implements Closeable{
 	 * to the next line.
 	 * 
 	 */
+	@SuppressWarnings("PMD.CompareObjectsWithEquals")
 	public String peekLine(){
 		Object next= nextQueue.peek();
 		if(next == endOfFile){
@@ -218,6 +220,7 @@ public final class TextLineParser implements Closeable{
 	 * @throws IOException if there is a problem reading the next
 	 * line.
 	 */
+	@SuppressWarnings("PMD.CompareObjectsWithEquals")
 	public String nextLine() throws IOException{
 		Object next= nextQueue.poll();
 		if(next == endOfFile){

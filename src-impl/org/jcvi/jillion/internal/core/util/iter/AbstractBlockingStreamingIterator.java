@@ -247,7 +247,9 @@ public abstract class AbstractBlockingStreamingIterator<T> implements StreamingI
 	        return next;
 	    }
 
+	    
 	     @Override
+	     @SuppressWarnings("PMD.CompareObjectsWithEquals")
 	     public final boolean hasNext() {
 	         if(!isClosed && uncaughtException !=null){
                 throw uncaughtException;

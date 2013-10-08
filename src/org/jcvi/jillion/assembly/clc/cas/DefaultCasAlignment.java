@@ -172,7 +172,7 @@ final class DefaultCasAlignment implements CasAlignment {
             if(length<1){
                 throw new IllegalArgumentException("length can not < 1");
             }
-            if(type == currentType){
+            if(type.equals(currentType)){
                 currentLength+=length;
             }
             else{
