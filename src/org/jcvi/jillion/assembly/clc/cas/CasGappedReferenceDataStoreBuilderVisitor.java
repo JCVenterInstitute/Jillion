@@ -249,44 +249,59 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 		@Override
 		public void visitMatch(CasMatch match) {
 			 if(match.matchReported()){
-		            
-		            
-		            CasAlignment alignment =match.getChosenAlignment();
-		            Long referenceIndex = alignment.getReferenceIndex();		            
-		            
-		            if(!gapsByReferenceIndex.containsKey(referenceIndex)){
-		            	long index = referenceIndex.longValue();
-		            	if(index >= refIndexToIdMap.length || refIndexToIdMap[(int)index] ==null){
-		            		throw new IllegalStateException("reference file does not contain a reference with index "+ referenceIndex);
-		            	}
-		                gapsByReferenceIndex.put(referenceIndex, new Insertion[(int) gappedReferenceBuilders[(int)index].getLength()]);
-		            }
-		            
-		            List<CasAlignmentRegion> regionsToConsider = getAlignmentRegionsToConsider(alignment);
-		            boolean outsideValidRange=true;
-		            int currentOffset = (int)alignment.getStartOfMatch();
-		            for(CasAlignmentRegion region: regionsToConsider){
-		            	//1st non insertion type is beginning of where we map
-		                if(outsideValidRange && region.getType() != CasAlignmentRegionType.INSERT){
-		                    outsideValidRange=false;
-		                }
-		                if(!outsideValidRange){
-		                    
-		                    if(region.getType() == CasAlignmentRegionType.INSERT){
-		                        Insertion[] insertions =gapsByReferenceIndex.get(referenceIndex);
-		                        if(insertions[currentOffset] ==null){
-		                        	insertions[currentOffset] = new Insertion(region.getLength());
-		                        }else{
-		                        	insertions[currentOffset].updateSize(region.getLength());
-		                        }
-		                        
-		                    }else{
-		                        currentOffset +=(int)region.getLength();
-		                    }
-		                }
-		            }
+		            handleMatch(match);
 		        }
 			
+		}
+
+		private void handleMatch(CasMatch match) {
+			CasAlignment alignment =match.getChosenAlignment();
+			Long referenceIndex = alignment.getReferenceIndex();		            
+			
+			createReferenceBuilderIfNeeded(referenceIndex);
+			
+			addInsertionsToReference(alignment, referenceIndex);
+		}
+
+		private void addInsertionsToReference(CasAlignment alignment,
+				Long referenceIndex) {
+			List<CasAlignmentRegion> regionsToConsider = getAlignmentRegionsToConsider(alignment);
+			boolean outsideValidRange=true;
+			int currentOffset = (int)alignment.getStartOfMatch();
+			for(CasAlignmentRegion region: regionsToConsider){
+				//1st non insertion type is beginning of where we map
+			    if(outsideValidRange && region.getType() != CasAlignmentRegionType.INSERT){
+			        outsideValidRange=false;
+			    }
+			    if(!outsideValidRange){
+			        
+			        if(region.getType() == CasAlignmentRegionType.INSERT){
+			            Insertion[] insertions =gapsByReferenceIndex.get(referenceIndex);
+			            if(insertions[currentOffset] ==null){
+			            	insertions[currentOffset] = new Insertion(region.getLength());
+			            }else{
+			            	insertions[currentOffset].updateSize(region.getLength());
+			            }
+			            
+			        }else{
+			            currentOffset +=(int)region.getLength();
+			        }
+			    }
+			}
+		}
+
+		private void createReferenceBuilderIfNeeded(Long referenceIndex) {
+			if(!gapsByReferenceIndex.containsKey(referenceIndex)){
+				assertValidReferenceIndex(referenceIndex);
+			    gapsByReferenceIndex.put(referenceIndex, new Insertion[(int) gappedReferenceBuilders[referenceIndex.intValue()].getLength()]);
+			}
+		}
+
+		private void assertValidReferenceIndex(Long referenceIndex) {
+			int i =referenceIndex.intValue();
+			if(i >= refIndexToIdMap.length || refIndexToIdMap[i] ==null){
+				throw new IllegalStateException("reference file does not contain a reference with index "+ referenceIndex);
+			}
 		}
 
 		@Override

@@ -54,6 +54,9 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
  */
 public final class IndexedQualityFastaFileDataStore{
 
+	private IndexedQualityFastaFileDataStore(){
+		//can not instanitate
+	}
 	/**
 	 * Creates a new {@link IndexedAminoAcidSequenceFastaFileDataStore}
 	 * instance using the given fastaFile.

@@ -44,7 +44,9 @@ final class DefaultAsmContigDataStore {
 		return visitorBuilder.build();
 	}
 	
-	
+	private DefaultAsmContigDataStore(){
+		//can not instantiate
+	}
 	private static class VisitorBuilder implements AsmVisitor{
 		private final Map<String,Range> validRanges = new HashMap<String, Range>();
 		private final  DataStore<NucleotideSequence> fullLengthSequences;

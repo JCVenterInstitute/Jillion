@@ -107,13 +107,17 @@ public abstract class AceFileParser implements AceHandler {
         if(inputStream ==null){
             throw new NullPointerException("input stream can not be null");
         }
-        if(visitor ==null){
-            throw new NullPointerException("visitor can not be null");
-        }
+        assertVisitorNotNull(visitor);
         AceParserState parserState = AceParserState.create(inputStream, visitor, null);
         parseAceData(parserState, visitor);
         
     }
+
+	private static void assertVisitorNotNull(AceFileVisitor visitor) {
+		if(visitor ==null){
+            throw new NullPointerException("visitor can not be null");
+        }
+	}
     
     
 	protected final void parseAceData(AceParserState parserState,
@@ -771,9 +775,7 @@ public abstract class AceFileParser implements AceHandler {
 		}
 		@Override
 		public void accept(AceFileVisitor visitor) throws IOException{
-			if(visitor ==null){
-				throw new NullPointerException("visitor can not be null");
-			}
+			assertVisitorNotNull(visitor);
 	        InputStream in = new FileInputStream(aceFile);
 	        try{
 	        	TextLineParser parser = new TextLineParser(new BufferedInputStream(in));
@@ -801,9 +803,7 @@ public abstract class AceFileParser implements AceHandler {
 	        if(memento ==null){
 	            throw new NullPointerException("memento can not be null");
 	        }
-	        if(visitor ==null){
-	            throw new NullPointerException("visitor can not be null");
-	        }
+	        assertVisitorNotNull(visitor);
 	        
 	        if(!(memento instanceof AceFileMemento)){
 	        	throw new IllegalArgumentException("unknown memento type "+ memento);
@@ -879,9 +879,7 @@ public abstract class AceFileParser implements AceHandler {
 		}
 		@Override
 		public void accept(AceFileVisitor visitor) throws IOException{
-			if(visitor ==null){
-				throw new NullPointerException("visitor can not be null");
-			}
+			assertVisitorNotNull(visitor);
 			if(!in.isOpen()){
 				throw new IllegalStateException("inputstream has been closed");
 			}
