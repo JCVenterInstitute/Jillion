@@ -135,6 +135,7 @@ public final class SliceMapBuilder<R extends AssembledRead> implements Builder<S
 			}
 		}
 		@Override
+		@SuppressWarnings("PMD.CompareObjectsWithEquals")
 		public boolean hasNext() {
 			return current !=endToken;
 		}

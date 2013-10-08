@@ -117,7 +117,7 @@ public class ConicConsensusCaller extends AbstractChurchillWatermanConsensusCall
     private double computeEffectiveAngle(double ambiguityAngle) {
         return Math.min(MAX_EFFECTIVE_ANGLE, ambiguityAngle/2);
     }
-
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
     private Set<Nucleotide> getBasesUsedTowardsAmbiguity(
             Map<Nucleotide, Integer> qualityValueSumMap,
             MaxQualityStruct maxQualityStruct) {
