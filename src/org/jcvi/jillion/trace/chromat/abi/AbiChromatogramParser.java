@@ -378,15 +378,17 @@ public abstract class AbiChromatogramParser {
 			String signalScale, List<NucleotideSequence> basecalls,
 			ChromatogramFileVisitor visitor) {
 		props.put("SIGN", signalScale);
-		props = addStringComments(groupedDataRecordMap, traceData, props);
-		props = addSingleShortValueComments(groupedDataRecordMap, traceData, props);
-	//	props = extractSingleIntValueComments(groupedDataRecordMap, traceData, props);
-		props = addChannelOrderComment(channelOrder,props);
-		props = addSpacingComment(groupedDataRecordMap, traceData, props);
-		props = addTimeStampComment(groupedDataRecordMap, traceData, props);
-		props = addNoiseComment(groupedDataRecordMap, channelOrder,traceData,props);
-		props = addNumberOfBases(basecalls,props);
-		props = parseSamplingRateFrom(groupedDataRecordMap, traceData, props);
+		//the following methods all add entries
+		//to the props Map where applicable
+		addStringComments(groupedDataRecordMap, traceData, props);
+		addSingleShortValueComments(groupedDataRecordMap, traceData, props);
+		addChannelOrderComment(channelOrder,props);
+		addSpacingComment(groupedDataRecordMap, traceData, props);
+		addTimeStampComment(groupedDataRecordMap, traceData, props);
+		addNoiseComment(groupedDataRecordMap, channelOrder,traceData,props);
+		addNumberOfBases(basecalls,props);
+		parseSamplingRateFrom(groupedDataRecordMap, traceData, props);
+		 
 		visitor.visitComments(props);
 	}
 
@@ -397,7 +399,7 @@ public abstract class AbiChromatogramParser {
      * @param props
      * @return
      */
-    private static Map<String,String> parseSamplingRateFrom(
+    private static void parseSamplingRateFrom(
             GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
             Map<String,String> props) {
         Map<TaggedDataName, List<UserDefinedTaggedDataRecord>>map= groupedDataRecordMap.userDefinedDataRecords;
@@ -406,8 +408,6 @@ public abstract class AbiChromatogramParser {
             props.put("SamplingRate", String.format("%.3f",
                     ScanRateUtils.getSamplingRateFor(scanRate.parseDataRecordFrom(traceData))));
         }
-        
-        return props;
     }
 
     /**
@@ -416,11 +416,10 @@ public abstract class AbiChromatogramParser {
      * @param props
      * @return
      */
-    private static Map<String,String> addNumberOfBases(
+    private static void addNumberOfBases(
             List<NucleotideSequence> basecalls,
             Map<String,String> props) {
         props.put("NBAS", ""+basecalls.get(ORIGINAL_VERSION).getLength());
-        return props;
     }
 
     /**
@@ -429,7 +428,7 @@ public abstract class AbiChromatogramParser {
      * @param props
      * @return
      */
-    private static Map<String,String> addNoiseComment(
+    private static void addNoiseComment(
             GroupedTaggedRecords groupedDataRecordMap,
             List<Nucleotide> channelOrder,
             byte[] traceData,
@@ -441,7 +440,6 @@ public abstract class AbiChromatogramParser {
             
             props.put("NOIS",noise.toString()); 
         }
-        return props;
     }
 
     /**
@@ -450,7 +448,7 @@ public abstract class AbiChromatogramParser {
      * @param props
      * @return
      */
-    private static synchronized Map<String,String> addTimeStampComment(
+    private static synchronized void addTimeStampComment(
             GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
             Map<String,String> props) {
         Map<TaggedDataName, List<DateTaggedDataRecord>> dates= groupedDataRecordMap.dateDataRecords;
@@ -479,7 +477,6 @@ public abstract class AbiChromatogramParser {
             		
             ));
         }
-        return props;
     }
 
     /**
@@ -488,15 +485,13 @@ public abstract class AbiChromatogramParser {
      * @param props
      * @return
      */
-    private static Map<String,String> addSpacingComment(
+    private static void addSpacingComment(
             GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
             Map<String,String> props) {
         Map<TaggedDataName, List<FloatArrayTaggedDataRecord>> map= groupedDataRecordMap.floatDataRecords;
         if(map.containsKey(TaggedDataName.SPACING)){
             props.put("SPAC", String.format("%-6.2f",map.get(TaggedDataName.SPACING).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]));
         }
-        
-        return props;
 
     }
 
@@ -505,14 +500,13 @@ public abstract class AbiChromatogramParser {
      * @param props
      * @return
      */
-    private static Map<String,String> addChannelOrderComment(
+    private static void addChannelOrderComment(
             List<Nucleotide> channelOrder, Map<String,String> props) {
         StringBuilder order = new StringBuilder();
         for(Nucleotide channel: channelOrder){
             order.append(channel.getCharacter());
         }
         props.put("FWO_", order.toString() );
-        return props;
     }
 
     protected static Properties extractSingleIntValueComments(
@@ -527,7 +521,7 @@ public abstract class AbiChromatogramParser {
         }
         return props;
     }
-    protected static Map<String,String> addSingleShortValueComments(
+    protected static void addSingleShortValueComments(
             GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
             Map<String,String> props) {
         Map<TaggedDataName, List<ShortArrayTaggedDataRecord>> map= groupedDataRecordMap.shortArrayDataRecords;
@@ -535,11 +529,9 @@ public abstract class AbiChromatogramParser {
         for(ShortTaggedDataRecordPropertyHandler handler : ShortTaggedDataRecordPropertyHandler.values()){
             handler.handle(map, traceData, props);
         }
-        
-        return props;
     }
 
-    protected static Map<String,String> addStringComments(
+    protected static void addStringComments(
             GroupedTaggedRecords groupedDataRecordMap,byte[] traceData, Map<String,String> props) {
         Map<TaggedDataName, List<PascalStringTaggedDataRecord>> pascalStrings= groupedDataRecordMap.pascalStringDataRecords;
 		//asciiStrings
@@ -597,7 +589,6 @@ public abstract class AbiChromatogramParser {
 		if(asciiStrings.containsKey(TaggedDataName.JTC_PROTOCOL_VERSION)){
             props.put("PROV", asciiStrings.get(TaggedDataName.JTC_PROTOCOL_VERSION).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
         }
-		return props;
     }
 
 	
