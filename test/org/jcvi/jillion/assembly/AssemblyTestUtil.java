@@ -27,21 +27,21 @@ package org.jcvi.jillion.assembly;
 
 import static org.junit.Assert.assertEquals;
 
-import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 public class AssemblyTestUtil {
 
     public static void assertPlacedReadCorrect(AssembledRead expected,
             AssembledRead actual) {
-        assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getGappedStartOffset(), actual.getGappedStartOffset());
-        assertEquals(expected.getGappedLength(), actual.getGappedLength());
-        assertEquals(expected.getDirection(), actual.getDirection());
-        assertEquals(expected.getReadInfo(), actual.getReadInfo());
+        String id = expected.getId();
+		assertEquals("ids", id, actual.getId());
+        assertEquals(id + " startOffset", expected.getGappedStartOffset(), actual.getGappedStartOffset());
+        assertEquals(id + " gapped length", expected.getGappedLength(), actual.getGappedLength());
+        assertEquals(id, expected.getDirection(), actual.getDirection());
+        assertEquals(id, expected.getReadInfo(), actual.getReadInfo());
         final NucleotideSequence expectedEncodedGlyphs = expected.getNucleotideSequence();
         final NucleotideSequence actualEncodedGlyphs = actual.getNucleotideSequence();
-        assertEquals(expectedEncodedGlyphs, actualEncodedGlyphs);
+        assertEquals(id, expectedEncodedGlyphs, actualEncodedGlyphs);
         
         
     }

@@ -203,12 +203,18 @@ public abstract class AbstractAceContigBuilderVisitor implements AceContigVisito
 	        //beyond the reference.
 	        //It might also be possible that the read has been 
 	        //edited and that could have changed the coordinates.
-	        //Therefore intersect the qual and align coords
-	        //to find the region we are interested in
-	        Range qualityRange = Range.of(CoordinateSystem.RESIDUE_BASED, qualLeft,qualRight);
-	        Range alignmentRange = Range.of(CoordinateSystem.RESIDUE_BASED, alignLeft,alignRight);
-	        Range gappedValidRange =qualityRange.intersection(alignmentRange);
-	     
+
+			//dkatzel 10/2013 : the align coordinates
+	        //are the coordinates that have been
+	        //aligned to the consensus
+	        //this may be edited by users using consed
+	        //which may extend the read into the trimmed range
+	        //therefore, we need to rely on the aligned range
+			//to get the edited start offset
+			
+	        Range gappedValidRange = Range.of(CoordinateSystem.RESIDUE_BASED, alignLeft,alignRight);
+	      
+	        
 	        currentOffset = computeReadOffset(gappedValidRange.getBegin(CoordinateSystem.RESIDUE_BASED));            
 	        
 	       
@@ -230,7 +236,7 @@ public abstract class AbstractAceContigBuilderVisitor implements AceContigVisito
           //of the file were diff'ed.
           int ungappedClearLeft = gappedFullLengthSequence.getUngappedOffsetFor((int)gappedValidRange.getBegin());
           int ungappedClearRight = gappedFullLengthSequence.getUngappedOffsetFor((int)gappedValidRange.getEnd());
-          Range ungappedValidRange = Range.of(CoordinateSystem.RESIDUE_BASED, ungappedClearLeft+1, ungappedClearRight+1 );
+          Range ungappedValidRange = Range.of(ungappedClearLeft, ungappedClearRight );
           if(alignedInfo.getDirection() == Direction.REVERSE){
               ungappedValidRange = AssemblyUtil.reverseComplementValidRange(ungappedValidRange, ungappedFullLength);            
           }
