@@ -138,6 +138,27 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		this.data = newValues.getData();
 		codecDecider = new CodecDecider(newValues);
     }
+    
+    /**
+     * Creates a new NucleotideSequenceBuilder instance
+     * which currently contains the given sequence as a char[].
+     *  Any whitespace in the input array will be ignored.
+     *  This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
+     * @param sequence the initial nucleotide sequence as a character array
+     * @throws NullPointerException if sequence is null.
+     * @throws IllegalArgumentException if any non-whitespace
+     * in character in the sequence can not be converted
+     * into a {@link Nucleotide}.
+     */
+    public NucleotideSequenceBuilder(char[] sequence){
+		if (sequence == null) {
+			throw new NullPointerException("sequence can not be null");
+		}
+		NewValues newValues = new NewValues(sequence);
+		this.data = newValues.getData();
+		codecDecider = new CodecDecider(newValues);
+    }
     /**
      * Creates a new NucleotideSequenceBuilder instance
      * which currently contains the given single nucleotide.
@@ -1223,14 +1244,30 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 			gapOffsets = new GrowableIntArray(12);
 			data = new GrowableByteArray(sequence.length());
 			
-    		//bits = new BitSet(sequence.length() * NUM_BITS_PER_VALUE);
-            int offset=0;
+    		int offset=0;
             //convert sequence to char[] which 
             //will run faster than sequence.charAt(i)
             char[] chars = sequence.toCharArray();
             
     		for(int i=0; i<chars.length; i++){
     			char c = chars[i];    			
+				Nucleotide n = Nucleotide.parseOrNull(c);
+				if(n !=null){
+    				handle(n, offset);
+                	offset++;
+    			}
+    		}
+    		
+    	}
+    	public NewValues(char[] sequence){
+    		nOffsets = new GrowableIntArray(12);
+			gapOffsets = new GrowableIntArray(12);
+			data = new GrowableByteArray(sequence.length);
+			
+    		int offset=0;
+            
+    		for(int i=0; i<sequence.length; i++){
+    			char c = sequence[i];    			
 				Nucleotide n = Nucleotide.parseOrNull(c);
 				if(n !=null){
     				handle(n, offset);
