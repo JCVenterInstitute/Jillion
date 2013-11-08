@@ -94,7 +94,8 @@ public abstract class AbstractResidueSequence<R extends Residue> implements Resi
     	
         int gappedOffset= ungappedOffset +computeNumberOfInclusiveGapsInUngappedValidRangeUntil(ungappedOffset);
         if(gappedOffset> length-1){
-        	throw new IndexOutOfBoundsException("ungapped offset " + ungappedOffset + " extends beyond sequence length "+ length);
+        	throw new IndexOutOfBoundsException(
+        			String.format("ungapped offset %d (gapped offset %d extends beyond sequence length %d", ungappedOffset, gappedOffset, length));
         }
         return gappedOffset;
     }
