@@ -85,6 +85,34 @@ public class TestNucleotideSequenceBuilder {
         sut.append("GGTGCA");
         assertBuiltSequenceEquals("ACGTGGTGCA",sut);
     } 
+    
+    @Test
+    public void appendCharArray(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+        sut.append("GGTGCA".toCharArray());
+        assertBuiltSequenceEquals("ACGTGGTGCA",sut);
+    } 
+    @Test
+    public void appendCharArrayWithWhitespace(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+        sut.append("\nG\tGT GCA".toCharArray());
+        assertBuiltSequenceEquals("ACGTGGTGCA",sut);
+    } 
+    @Test
+    public void appendCharArrayWithNullsShouldIgnoreNull(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+        char[] array = new char[7];
+        array[0] = 'G';
+        array[1] = 'G';
+        array[2] = 'T';
+        array[3] = '\0';
+        array[4] = 'G';
+        array[5] = 'C';
+        array[6] = 'A';
+        
+        sut.append(array);
+        assertBuiltSequenceEquals("ACGTGGTGCA",sut);
+    } 
     @Test
     public void appendNucleotide(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
@@ -123,9 +151,15 @@ public class TestNucleotideSequenceBuilder {
         assertEquals(1, sut.getNumGaps());
     } 
     @Test
-    public void prepend(){
+    public void prependString(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.prepend("GGTGCA");
+        assertBuiltSequenceEquals("GGTGCAACGT",sut);
+    }
+    @Test
+    public void prependArray(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+        sut.prepend("GGTGCA".toCharArray());
         assertBuiltSequenceEquals("GGTGCAACGT",sut);
     }
     @Test
@@ -151,6 +185,12 @@ public class TestNucleotideSequenceBuilder {
     public void insertString(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.insert(2, "-");
+        assertBuiltSequenceEquals("AC-GT",sut);
+    }
+    @Test
+    public void insertArray(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+        sut.insert(2, "-".toCharArray());
         assertBuiltSequenceEquals("AC-GT",sut);
     }
     @Test

@@ -215,7 +215,7 @@ public enum Nucleotide implements Residue {
      * @return
      */
 	protected static Nucleotide parseOrNull(char base) {
-		if(base == 32 || (base >=10 && base <=13)){
+		if(base == 32 || (base >=0 && base <=13)){
 			return null;
 		}
 		//dkatzel - 2013-03-21
