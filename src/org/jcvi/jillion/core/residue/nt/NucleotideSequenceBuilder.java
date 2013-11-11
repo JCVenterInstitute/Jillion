@@ -142,7 +142,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     /**
      * Creates a new NucleotideSequenceBuilder instance
      * which currently contains the given sequence as a char[].
-     *  Any whitespace in the input array will be ignored.
+     *  Any whitespace or '\0' characters in the input array will be ignored.
      *  This method is able to parse both
      * '*' (consed) and '-' (TIGR) as gap characters. 
      * @param sequence the initial nucleotide sequence as a character array
@@ -268,6 +268,24 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	}
         return append(new NewValues(sequence));
     }
+    
+    
+    /**
+     * Appends the given sequence to the end
+     * of the builder's mutable sequence.
+     * Any whitespace in the input string will be ignored.
+     *  This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
+     * @param sequence the nucleotide sequence to be appended
+     * to the end our builder; any '\0' characters are ignored.
+     * @throws NullPointerException if sequence is null.
+     */
+    public NucleotideSequenceBuilder append(char[] sequence){
+    	if(sequence ==null){
+    		throw new NullPointerException("sequence can not be null");
+    	}
+        return append(new NewValues(sequence));
+    }
     /**
      * Inserts the given sequence to the builder's mutable sequence
      * starting at the given offset.  If any nucleotides existed
@@ -287,6 +305,26 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     public NucleotideSequenceBuilder insert(int offset, String sequence){
     	 assertInsertionParametersValid(offset, sequence);
     	return insert(offset, new NewValues(sequence));
+    }
+    /**
+     * Inserts the given sequence to the builder's mutable sequence
+     * starting at the given offset.  If any nucleotides existed
+     * downstream of this offset before this insert method
+     * was executed, then those nucleotides will be shifted by n
+     * bases where n is the length of the given sequence to insert.
+     * Any whitespace or '\0' characters will be ignored.
+     *  This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
+     * @param offset the GAPPED offset into this mutable sequence
+     * to begin insertion.
+     * @param sequence the nucleotide sequence to be 
+     * inserted at the given offset.
+     * @throws NullPointerException if sequence is null.
+     * @throws IllegalArgumentException if offset is invalid.
+     */
+    public NucleotideSequenceBuilder insert(int offset, char[] sequence){
+    	assertInsertionParametersValid(offset, sequence);
+		return insert(offset, new NewValues(sequence));
     }
     private void assertNotNull(Object sequence) {
         if(sequence ==null){
@@ -413,6 +451,21 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @see #insert(int, String)
      */
     public NucleotideSequenceBuilder prepend(String sequence){
+        return insert(0, sequence);
+    }
+    
+    /**
+     * Inserts the given sequence the beginning
+     * of the builder's mutable sequence.
+     * This is the same as calling 
+     * {@link #insert(int, String) insert(0,sequence)}
+     * @param sequence the nucleotide sequence to be 
+     * inserted at the beginning.
+     * @return this.
+     * @throws NullPointerException if sequence is null.
+     * @see #insert(int, char[])
+     */
+    public NucleotideSequenceBuilder prepend(char[] sequence){
         return insert(0, sequence);
     }
     /**
