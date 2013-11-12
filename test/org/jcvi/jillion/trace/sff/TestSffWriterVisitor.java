@@ -36,7 +36,7 @@ import org.junit.rules.TemporaryFolder;
 
 public class TestSffWriterVisitor {
 
-	private static final class VisitorWriter implements SffFileVisitor{
+	private static final class VisitorWriter implements SffVisitor{
 		private final File outputFile;
 		private SffWriter writer;
 		
@@ -55,7 +55,7 @@ public class TestSffWriterVisitor {
 		}
 
 		@Override
-		public void visitHeader(SffFileParserCallback callback,
+		public void visitHeader(SffVisitorCallback callback,
 				SffCommonHeader header) {
 			try {
 				writer = new SffWriterBuilder(outputFile, header)
@@ -68,7 +68,7 @@ public class TestSffWriterVisitor {
 		}
 
 		@Override
-		public SffFileReadVisitor visitRead(SffFileParserCallback callback,
+		public SffFileReadVisitor visitRead(SffVisitorCallback callback,
 				final SffReadHeader readHeader) {
 			return new SffFileReadVisitor() {
 				

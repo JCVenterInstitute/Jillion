@@ -59,11 +59,11 @@ public final class SffFileIterator extends AbstractBlockingStreamingIterator<Sff
 	@Override
 	protected void backgroundThreadRunMethod() {
 		 try {
-         	SffFileVisitor visitor = new SffFileVisitor() {
+         	SffVisitor visitor = new SffVisitor() {
          		
          		
          		@Override
-				public void visitHeader(SffFileParserCallback callback,
+				public void visitHeader(SffVisitorCallback callback,
 						SffCommonHeader header) {
 					//no-op					
 				}
@@ -71,7 +71,7 @@ public final class SffFileIterator extends AbstractBlockingStreamingIterator<Sff
 
 				@Override
 				public SffFileReadVisitor visitRead(
-						SffFileParserCallback callback, final SffReadHeader readHeader) {
+						SffVisitorCallback callback, final SffReadHeader readHeader) {
 					if(filter.accept(readHeader.getId())){
 						return new SffFileReadVisitor() {
 							
