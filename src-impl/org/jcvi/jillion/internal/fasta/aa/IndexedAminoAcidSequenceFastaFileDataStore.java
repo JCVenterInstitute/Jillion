@@ -37,6 +37,7 @@ import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento;
+import org.jcvi.jillion.fasta.FastaVisitorHandler;
 import org.jcvi.jillion.fasta.aa.AbstractAminoAcidFastaRecordVisitor;
 import org.jcvi.jillion.fasta.aa.AminoAcidFastaDataStore;
 import org.jcvi.jillion.fasta.aa.AminoAcidFastaRecord;
@@ -124,7 +125,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 	private static final class IndexedAminoAcidSequenceFastaDataStoreBuilderVisitor2 implements FastaVisitor, Builder<AminoAcidFastaDataStore> {
 	
 		private final DataStoreFilter filter;
-		private final FastaFileParser parser;
+		private final FastaVisitorHandler parser;
 		private final File fastaFile;
 		
 		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos = new LinkedHashMap<String, FastaVisitorCallback.FastaVisitorMemento>();
@@ -174,13 +175,13 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 	public static final class Impl implements AminoAcidFastaDataStore {
 		private volatile boolean closed =false;
 		private final File fastaFile;
-		private final FastaFileParser parser;
+		private final FastaVisitorHandler parser;
 		private final DataStoreFilter filter;
 		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos;
 		
 		
 		public Impl(File fastaFile,
-				FastaFileParser parser, DataStoreFilter filter, Map<String, FastaVisitorMemento> mementos) {
+				FastaVisitorHandler parser, DataStoreFilter filter, Map<String, FastaVisitorMemento> mementos) {
 			this.fastaFile = fastaFile;
 			this.parser = parser;
 			this.mementos = mementos;

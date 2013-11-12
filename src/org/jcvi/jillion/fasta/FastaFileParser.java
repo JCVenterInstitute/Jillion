@@ -42,7 +42,7 @@ import org.jcvi.jillion.internal.core.io.TextLineParser;
  * @author dkatzel
  *
  */
-public abstract class FastaFileParser {
+public abstract class FastaFileParser implements FastaVisitorHandler{
 	/**
 	 * Pattern to match to find the defline for each record in
 	 * the fasta file.  Group 1 is the id and Group 3 is the optional
@@ -58,7 +58,7 @@ public abstract class FastaFileParser {
 	 * @throws IOException if there is a problem opening the file.
 	 * @throws NullPointerException if fastaFile is null.
 	 */
-	public static FastaFileParser create(File fastaFile) throws IOException{
+	public static FastaVisitorHandler create(File fastaFile) throws IOException{
 		return new FileFastaParser(fastaFile);
 	}
 	/**
@@ -71,7 +71,7 @@ public abstract class FastaFileParser {
 	 * @param inputStream the {@link InputStream} to parse.
 	 * @throws NullPointerException if inputStream is null.
 	 */
-	public static FastaFileParser create(InputStream inputStream){
+	public static FastaVisitorHandler create(InputStream inputStream){
 		return new InputStreamFastaParser(inputStream);
 	}
 	/**
@@ -107,22 +107,6 @@ public abstract class FastaFileParser {
 			throw new NullPointerException("visitor can not be null");
 		}
 	}
-	/**
-	 * Parse the fasta file starting from the beginning 
-	 * of the file (or {@link InputStream}) and call the appropriate
-	 * visit methods on the given {@link FastaVisitor}.
-	 * @param visitor the {@link FastaVisitor} instance to call
-	 * visit methods on; can not be null;
-	 * @param memento the {@link FastaVisitorMemento} instance
-	 * to tell the parser where to start parsing from;
-	 * can not be null.
-	 * @throws IOException if there is a problem parsing the fasta file.
-	 * @throws NullPointerException if either the visitor or memento are null.
-	 * @throws UnsupportedOperationException if mementos are not supported by this
-	 * parser implementation (for example when parsing an {@link InputStream}
-	 * instead of a {@link File}).
-	 */
-	public abstract void accept(FastaVisitor visitor, FastaVisitorMemento memento) throws IOException;
 	
 	protected final void parseFile(TextLineParser parser, FastaVisitor visitor) throws IOException {
 		AtomicBoolean keepParsing=new AtomicBoolean(true);
@@ -290,6 +274,10 @@ public abstract class FastaFileParser {
 			//start parsing from beginning of file.
 			return new BufferedInputStream(new FileInputStream(fastaFile));
 		}
+		@Override
+		public boolean canAccept() {
+			return true;
+		}
 		
 		
 	}
@@ -319,10 +307,16 @@ public abstract class FastaFileParser {
 
 		@Override
 		protected InputStream getInputStream() throws IOException {
-			if(inputStream.isOpen()){
+			if(canAccept()){
 				return inputStream;
 			}
-			throw new IOException("inputstream is closed");			
+			throw new IllegalStateException("can not accept visitor - inputstream is closed");			
 		}
+		@Override
+		public boolean canAccept() {
+			return inputStream.isOpen();
+		}
+		
+		
 	}
 }
