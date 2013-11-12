@@ -35,7 +35,7 @@ import org.jcvi.jillion.assembly.consed.ace.AceContigReadVisitor;
 import org.jcvi.jillion.assembly.consed.ace.AceContigVisitor;
 import org.jcvi.jillion.assembly.consed.ace.AceContigVisitorAdapter;
 import org.jcvi.jillion.assembly.consed.ace.AceFileVisitorCallback;
-import org.jcvi.jillion.assembly.consed.ace.AceHandler;
+import org.jcvi.jillion.assembly.consed.ace.AceVisitorHandler;
 import org.jcvi.jillion.assembly.consed.ace.PhdInfo;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
@@ -54,7 +54,7 @@ public class TestAceContigVisitorAdapterRemoveReadsFromContig {
 							
 							.build();
 		
-		AceHandler handler = AceTestUtil.createAceHandlerFor(contig);
+		AceVisitorHandler handler = AceTestUtil.createAceHandlerFor(contig);
 		final AtomicBoolean visitedContig = new AtomicBoolean(false);
 		handler.accept(new AbstractAceFileVisitor() {
 
