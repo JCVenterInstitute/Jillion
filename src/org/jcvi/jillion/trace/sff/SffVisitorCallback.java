@@ -18,55 +18,51 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.fasta;
-
-
-
-
+package org.jcvi.jillion.trace.sff;
 /**
- * {@code FastqVisitorCallback}
- * is a callback mechanism for the {@link FastaVisitor}
+ * {@code SffVisitorCallback}
+ * is a callback mechanism for the {@link SffVisitor}
  * instance to communicate with the parser
- * that is parsing the fasta data.
+ * that is parsing the sff data.
  * @author dkatzel
  *
  */
-public interface FastaVisitorCallback {
+public interface SffVisitorCallback {
 	/**
-	 * {@code FastaVisitorMemento} is a marker
-	 * interface that {@link FastaVisitorHandler}
+	 * {@code SffVisitorMemento} is a marker
+	 * interface that {@link SffVisitorHandler}
 	 * instances can use to "rewind" back
-	 * to the position in its fasta file
-	 * in order to revisit portions of the fasta file. 
-	 * {@link FastaVisitorMemento} should only be used
-	 * by the {@link FastaVisitorHandler} instance that
+	 * to the position in its sff structure
+	 * in order to revisit portions of the data. 
+	 * {@link SffVisitorMemento} should only be used
+	 * by the {@link SffVisitorHandler} instance that
 	 * generated it.
 	 * @author dkatzel
 	 *
 	 */
-	interface FastaVisitorMemento{
+	interface SffVisitorMemento{
 		
 	}
 	/**
 	 * Is this callback capable of
-	 * creating {@link FastaVisitorMemento}s
+	 * creating {@link SffVisitorMemento}s
 	 * via {@link #createMemento()}.
 	 * @return {@code true} if this callback
 	 * can create mementos; {@code false} otherwise.
 	 */
-	boolean canCreateMemento();
+	boolean mementoSupported();
 	/**
-	 * Create a {@link FastaVisitorMemento}
+	 * Create a {@link SffVisitorMemento}
 	 * 
-	 * @return a {@link FastaVisitorMemento}; never null.
+	 * @return a {@link SffVisitorMemento}; never null.
 	 * @see #canCreateMemento()
 	 * @throws UnsupportedOperationException if {@link #canCreateMemento()}
 	 * returns {@code false}.
 	 */
-	FastaVisitorMemento createMemento();
+	SffVisitorMemento createMemento();
 	/**
-	 * Tell the {@link FastaVisitorHandler} to stop parsing
-	 * the fasta file.  {@link FastqVisitor#visitEnd()}
+	 * Tell the {@link SffVisitorHandler} to stop parsing
+	 * the sff.  {@link SffVisitor#visitEnd()}
 	 * will still be called.
 	 */
 	void haltParsing();

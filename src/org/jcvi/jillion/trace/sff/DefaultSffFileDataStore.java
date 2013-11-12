@@ -67,7 +67,7 @@ final class DefaultSffFileDataStore {
 	 */
 	public static SffFileDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
 		Visitor visitor = new Visitor(filter);
-		SffFileParser parser = SffFileParser.create(sffFile);
+		SffVisitorHandler parser = SffFileParser.create(sffFile);
 		parser.accept(visitor);
 		
 		return visitor.builder.build();
@@ -75,13 +75,13 @@ final class DefaultSffFileDataStore {
 	
 	
 	/**
-	 * {@link SffFileVisitor} implementation 
+	 * {@link SffVisitor} implementation 
 	 * that puts flowgrams into a datastore
 	 * as each record is visited.
 	 * @author dkatzel
 	 *
 	 */
-	private static final class Visitor implements SffFileVisitor{
+	private static final class Visitor implements SffVisitor{
 		private SffDataStoreBuilder builder;
 		
 		private final DataStoreFilter filter;
@@ -92,14 +92,14 @@ final class DefaultSffFileDataStore {
 		}
 
 		@Override
-		public void visitHeader(SffFileParserCallback callback,
+		public void visitHeader(SffVisitorCallback callback,
 				SffCommonHeader header) {
 			builder = new SffDataStoreBuilder(header.getKeySequence(), header.getFlowSequence(), (int)header.getNumberOfReads());
 			
 		}
 
 		@Override
-		public SffFileReadVisitor visitRead(SffFileParserCallback callback,
+		public SffFileReadVisitor visitRead(SffVisitorCallback callback,
 				final SffReadHeader readHeader) {
 			if(filter.accept(readHeader.getId())){
 				return new SffFileReadVisitor(){

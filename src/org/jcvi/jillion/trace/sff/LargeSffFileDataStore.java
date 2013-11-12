@@ -221,18 +221,18 @@ final class LargeSffFileDataStore extends AbstractDataStore<SffFlowgram> impleme
     	@Override
     	protected void backgroundThreadRunMethod() {
     		 try {
-             	SffFileVisitor visitor = new SffFileVisitor() {
+             	SffVisitor visitor = new SffVisitor() {
              		
 
              		@Override
-					public void visitHeader(SffFileParserCallback callback,
+					public void visitHeader(SffVisitorCallback callback,
 							SffCommonHeader header) {
 						//no-op						
 					}
 
 					@Override
 					public SffFileReadVisitor visitRead(
-							SffFileParserCallback callback,
+							SffVisitorCallback callback,
 							SffReadHeader readHeader) {
 						String readId = readHeader.getId();
 						if(filter.accept(readId)){
@@ -262,7 +262,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<SffFlowgram> impleme
     }
     
     
-    private static final class SingleFlowgramVisitor implements SffFileVisitor{
+    private static final class SingleFlowgramVisitor implements SffVisitor{
         private final String idToFind;
         private SffFlowgram flowgram=null;
         private SingleFlowgramVisitor(String idToFind) {
@@ -274,13 +274,13 @@ final class LargeSffFileDataStore extends AbstractDataStore<SffFlowgram> impleme
 		}
 
 		@Override
-		public void visitHeader(SffFileParserCallback callback,
+		public void visitHeader(SffVisitorCallback callback,
 				SffCommonHeader header) {
 			//no-op			
 		}
 
 		@Override
-		public SffFileReadVisitor visitRead(final SffFileParserCallback callback,
+		public SffFileReadVisitor visitRead(final SffVisitorCallback callback,
 				final SffReadHeader readHeader) {
 			if(readHeader.getId().equals(idToFind)){
 				return new SffFileReadVisitor() {
@@ -293,7 +293,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<SffFlowgram> impleme
 					
 					@Override
 					public void visitEnd() {
-						callback.stopParsing();
+						callback.haltParsing();
 						
 					}
 				};
@@ -307,20 +307,20 @@ final class LargeSffFileDataStore extends AbstractDataStore<SffFlowgram> impleme
 		}
     }
     
-   private static final class HeaderVisitor implements SffFileVisitor {
+   private static final class HeaderVisitor implements SffVisitor {
 		private SffCommonHeader header;
 		@Override
-		public SffFileReadVisitor visitRead(SffFileParserCallback callback,
+		public SffFileReadVisitor visitRead(SffVisitorCallback callback,
 				SffReadHeader readHeader) {
 			//skip
 			return null;
 		}
 		
 		@Override
-		public void visitHeader(SffFileParserCallback callback,
+		public void visitHeader(SffVisitorCallback callback,
 				SffCommonHeader header) {
 			this.header = header;
-			callback.stopParsing();
+			callback.haltParsing();
 			
 		}
 		

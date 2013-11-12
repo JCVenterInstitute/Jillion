@@ -22,7 +22,7 @@ package org.jcvi.jillion.fasta;
 
 
 /**
- * {@code FastaFileVisitor} is a visitor
+ * {@code FastaVisitor} is a visitor
  * interface to visit components of a single
  * fasta file.
  * 

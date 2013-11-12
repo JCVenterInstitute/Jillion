@@ -33,7 +33,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreIterator;
-import org.jcvi.jillion.trace.sff.SffFileParserCallback.SffFileMemento;
+import org.jcvi.jillion.trace.sff.SffVisitorCallback.SffVisitorMemento;
 
 
 
@@ -80,7 +80,7 @@ final class CompletelyParsedIndexedSffFileDataStore {
 	 */
 	public static SffFileDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
 		Visitor visitor = new Visitor(filter);
-		SffFileParser parser = SffFileParser.create(sffFile);
+		SffVisitorHandler parser = SffFileParser.create(sffFile);
 		parser.accept(visitor);
 		
 		return visitor.build(parser);
@@ -88,8 +88,8 @@ final class CompletelyParsedIndexedSffFileDataStore {
 	
 	
 	
-	private static final class Visitor implements SffFileVisitor{
-		private Map<String, SffFileMemento> mementos;
+	private static final class Visitor implements SffVisitor{
+		private Map<String, SffVisitorMemento> mementos;
 		
 		private final DataStoreFilter filter;
 		private NucleotideSequence keySequence,flowSequence;
@@ -99,15 +99,15 @@ final class CompletelyParsedIndexedSffFileDataStore {
 		}
 
 		@Override
-		public void visitHeader(SffFileParserCallback callback,
+		public void visitHeader(SffVisitorCallback callback,
 				SffCommonHeader header) {
-			mementos = new LinkedHashMap<String,SffFileMemento>((int)header.getNumberOfReads());
+			mementos = new LinkedHashMap<String,SffVisitorMemento>((int)header.getNumberOfReads());
 			keySequence = header.getKeySequence();
 			flowSequence = header.getFlowSequence();
 		}
 
 		@Override
-		public SffFileReadVisitor visitRead(SffFileParserCallback callback,
+		public SffFileReadVisitor visitRead(SffVisitorCallback callback,
 				final SffReadHeader readHeader) {
 			if(filter.accept(readHeader.getId())){
 				mementos.put(readHeader.getId(), callback.createMemento());
@@ -122,7 +122,7 @@ final class CompletelyParsedIndexedSffFileDataStore {
 			
 		}
 	
-		SffFileDataStore build(SffFileParser parser){
+		SffFileDataStore build(SffVisitorHandler parser){
 			return new DataStoreImpl(parser, keySequence, flowSequence, mementos);
 		}
 		
@@ -130,14 +130,14 @@ final class CompletelyParsedIndexedSffFileDataStore {
 	
 	
 	private static class DataStoreImpl implements SffFileDataStore{
-		private final SffFileParser parser; //parser has the file ref
+		private final SffVisitorHandler parser; //parser has the file ref
 		private volatile boolean closed=false;
 		private final NucleotideSequence keySequence,flowSequence;
-		private final Map<String, SffFileMemento> mementos;
+		private final Map<String, SffVisitorMemento> mementos;
 
-		public DataStoreImpl(SffFileParser parser,
+		public DataStoreImpl(SffVisitorHandler parser,
 				NucleotideSequence keySequence, NucleotideSequence flowSequence,
-				Map<String, SffFileMemento> mementos) {
+				Map<String, SffVisitorMemento> mementos) {
 			this.parser = parser;
 			this.mementos = mementos;
 			if(keySequence ==null){
@@ -168,7 +168,7 @@ final class CompletelyParsedIndexedSffFileDataStore {
 		@Override
 		public SffFlowgram get(String id) throws DataStoreException {
 			checkNotYetClosed();
-			SffFileMemento momento = mementos.get(id);
+			SffVisitorMemento momento = mementos.get(id);
 			if(momento == null){
 				return null;
 			}
@@ -221,17 +221,17 @@ final class CompletelyParsedIndexedSffFileDataStore {
 		
 	}
 	
-	private static class SingleRecordVisitor implements SffFileVisitor{
+	private static class SingleRecordVisitor implements SffVisitor{
 		private SffFlowgram flowgram;
 		@Override
-		public void visitHeader(SffFileParserCallback callback,
+		public void visitHeader(SffVisitorCallback callback,
 				SffCommonHeader header) {
 			//no-op
 			
 		}
 
 		@Override
-		public SffFileReadVisitor visitRead(final SffFileParserCallback callback,
+		public SffFileReadVisitor visitRead(final SffVisitorCallback callback,
 				final SffReadHeader readHeader) {
 			//we should only see the read we care about
 			return new SffFileReadVisitor(){
@@ -244,7 +244,7 @@ final class CompletelyParsedIndexedSffFileDataStore {
 
 				@Override
 				public void visitEnd() {
-					callback.stopParsing();
+					callback.haltParsing();
 					
 				}
 				

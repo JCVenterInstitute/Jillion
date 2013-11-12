@@ -235,7 +235,7 @@ final class ManifestIndexed454SffFileDataStore implements SffFileDataStore{
 		}
 	}
 
-	private static final class ManifestCreatorVisitor implements SffFileVisitor{
+	private static final class ManifestCreatorVisitor implements SffVisitor{
 		/**
 		 * 454 sff encoded names that follow the 454 spec
 		 * should only be 14 characters long.
@@ -263,17 +263,17 @@ final class ManifestIndexed454SffFileDataStore implements SffFileDataStore{
 		
 
 		@Override
-		public void visitHeader(SffFileParserCallback callback,
+		public void visitHeader(SffVisitorCallback callback,
 				SffCommonHeader header) {
 			this.commonHeader = header;
 			BigInteger offsetToIndex =commonHeader.getIndexOffset();
 			if(offsetToIndex.longValue() !=0L){
 				tryToParseManifest(offsetToIndex);
 			}
-			callback.stopParsing();
+			callback.haltParsing();
 		}
 		@Override
-		public SffFileReadVisitor visitRead(SffFileParserCallback callback,
+		public SffFileReadVisitor visitRead(SffVisitorCallback callback,
 				SffReadHeader readHeader) {
 			//should never get this far but skip just in case.
 			return null;
