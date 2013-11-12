@@ -29,6 +29,7 @@ import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.clc.cas.CasFileParser;
 import org.jcvi.jillion.assembly.clc.cas.CasGappedReferenceDataStore;
 import org.jcvi.jillion.assembly.clc.cas.CasGappedReferenceDataStoreBuilderVisitor;
+import org.jcvi.jillion.assembly.clc.cas.CasVisitorHandler;
 import org.jcvi.jillion.assembly.consed.ace.AceAssembledRead;
 import org.jcvi.jillion.assembly.consed.ace.AceContig;
 import org.jcvi.jillion.assembly.consed.ace.AceFileDataStore;
@@ -76,7 +77,7 @@ public abstract class AbstractTestCas2Consed {
 	    public void parseCas() throws IOException, DataStoreException{
 	        File casFile = RESOURCES.getFile(pathToCas);
 	        CasGappedReferenceDataStoreBuilderVisitor gappedRefVisitor = new CasGappedReferenceDataStoreBuilderVisitor(casFile.getParentFile());
-	        CasFileParser casFileParser = CasFileParser.create(casFile);
+	        CasVisitorHandler casFileParser = CasFileParser.create(casFile);
 			casFileParser.accept(gappedRefVisitor);
 	        CasGappedReferenceDataStore gappedReferenceDataStore = gappedRefVisitor.build();
 	        
