@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.jcvi.jillion.assembly.consed.phd.PhdBallVisitorCallback.PhdBallVisitorMemento;
 /**
- * {@code FastaVisitorHandler} is an interface that will
+ * {@code PhdBallVisitorHandler} is an interface that will
  * traverse a phd formatted structures and call the appropriate 
  * visit methods on the given {@link PhdBallVisitor}.
  * @author dkatzel
