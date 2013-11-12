@@ -37,6 +37,7 @@ import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento;
+import org.jcvi.jillion.fasta.FastaVisitorHandler;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 /**
  * {@code IndexedNucleotideFastaFileDataStore} is an implementation of 
@@ -52,13 +53,13 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 	
 	private volatile boolean closed =false;
 	private final File fastaFile;
-	private final FastaFileParser parser;
+	private final FastaVisitorHandler parser;
 	private final DataStoreFilter filter;
 	private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos;
 	
 	
 	public IndexedNucleotideSequenceFastaFileDataStore(File fastaFile,
-			FastaFileParser parser, DataStoreFilter filter, Map<String, FastaVisitorMemento> mementos) {
+			FastaVisitorHandler parser, DataStoreFilter filter, Map<String, FastaVisitorMemento> mementos) {
 		this.fastaFile = fastaFile;
 		this.parser = parser;
 		this.mementos = mementos;
@@ -183,7 +184,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 	private static final class BuilderVisitor implements FastaVisitor, Builder<NucleotideFastaDataStore> {
 		
 		private final DataStoreFilter filter;
-		private final FastaFileParser parser;
+		private final FastaVisitorHandler parser;
 		private final File fastaFile;
 		
 		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos = new LinkedHashMap<String, FastaVisitorCallback.FastaVisitorMemento>();

@@ -28,6 +28,7 @@ import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento;
+import org.jcvi.jillion.fasta.FastaVisitorHandler;
 
 public class MementoVisiting {
 
@@ -38,7 +39,7 @@ public class MementoVisiting {
 	public static void main(String[] args) throws IOException {
 		File fastaFile = new File("/path/to/fasta");
 		
-		FastaFileParser parser = FastaFileParser.create(fastaFile);
+		FastaVisitorHandler parser = FastaFileParser.create(fastaFile);
 		
 		Visitor visitor = new Visitor();
 		

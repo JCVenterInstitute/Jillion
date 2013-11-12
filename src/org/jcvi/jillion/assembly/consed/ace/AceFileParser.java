@@ -889,7 +889,7 @@ public abstract class AceFileParser implements AceVisitorHandler {
 		@Override
 		public void accept(AceFileVisitor visitor) throws IOException{
 			assertVisitorNotNull(visitor);
-			if(!in.isOpen()){
+			if(!canAccept()){
 				throw new IllegalStateException("inputstream has been closed");
 			}
 	        
@@ -911,7 +911,7 @@ public abstract class AceFileParser implements AceVisitorHandler {
 		public boolean canAccept() {
 			//since we are an InputStream
 			//we probably can't reparse the entire stream again
-			return false;
+			return in.isOpen();
 		}
     }
     

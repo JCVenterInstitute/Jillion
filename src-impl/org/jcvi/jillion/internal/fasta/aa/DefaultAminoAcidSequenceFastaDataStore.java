@@ -34,6 +34,7 @@ import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
+import org.jcvi.jillion.fasta.FastaVisitorHandler;
 import org.jcvi.jillion.fasta.aa.AbstractAminoAcidFastaRecordVisitor;
 import org.jcvi.jillion.fasta.aa.AminoAcidFastaDataStore;
 import org.jcvi.jillion.fasta.aa.AminoAcidFastaRecord;
@@ -61,12 +62,12 @@ public final class DefaultAminoAcidSequenceFastaDataStore{
 		return parseFile(in, builder);
 	}
 	private static AminoAcidFastaDataStore parseFile(InputStream in, DefaultAminoAcidSequenceFastaDataStoreBuilder2 visitor) throws IOException{
-		FastaFileParser parser = FastaFileParser.create(in);
+		FastaVisitorHandler parser = FastaFileParser.create(in);
 		parser.accept(visitor);
 		return visitor.build();
 	}
 	private static AminoAcidFastaDataStore parseFile(File fastaFile, DefaultAminoAcidSequenceFastaDataStoreBuilder2 visitor) throws IOException{
-		FastaFileParser parser = FastaFileParser.create(fastaFile);
+		FastaVisitorHandler parser = FastaFileParser.create(fastaFile);
 		parser.accept(visitor);
 		return visitor.build();
 	}

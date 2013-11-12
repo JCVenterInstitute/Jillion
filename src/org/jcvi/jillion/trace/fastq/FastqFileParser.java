@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback;
@@ -44,7 +45,7 @@ import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisit
  * @author dkatzel
  *
  */
-public abstract class FastqFileParser {
+public abstract class FastqFileParser implements FastqVisitorHandler{
 
 	private static final Pattern CASAVA_1_8_DEFLINE_PATTERN = Pattern.compile("^@(\\S+\\s+\\d:[N|Y]:\\d+:\\S+)\\s*$");
 	
@@ -58,7 +59,7 @@ public abstract class FastqFileParser {
 	 * @throws FileNotFoundException  if the file does not exist.
 	 * @throws NullPointerException if fastqFile is null.
 	 */
-	public static FastqFileParser create(File fastqFile) throws FileNotFoundException{
+	public static FastqVisitorHandler create(File fastqFile) throws FileNotFoundException{
 		return new FileBasedFastqFileParser(fastqFile);
 	}
 	/**
@@ -71,16 +72,12 @@ public abstract class FastqFileParser {
 	 * @param in the fastq encoded inputstream to parse.
 	 * @throws NullPointerException if inputstream is null.
 	 */
-	public static FastqFileParser create(InputStream in){
+	public static FastqVisitorHandler create(InputStream in){
 		return new InputStreamFastqFileParser(in);
 	}
 	private FastqFileParser(){
 		//can not instantiate outside of this class file.
 	}
-	
-	public abstract void accept(FastqVisitor visitor) throws IOException;
-	
-	public abstract void accept(FastqVisitor visitor, FastqVisitorMemento memento) throws IOException;
 	
 	protected void parseFastqFile(FastqVisitor visitor, TextLineParser parser) throws IOException{
 		ParserState parserState = new ParserState(parser.getPosition());
@@ -302,6 +299,12 @@ public abstract class FastqFileParser {
 
 
 		@Override
+		public boolean canAccept() {
+			return true;
+		}
+
+
+		@Override
 		protected AbstractFastqVisitorCallback createCallback(
 				ParserState parserState) {
 			return new MementoCallback(parserState);
@@ -345,17 +348,20 @@ public abstract class FastqFileParser {
 	}
 	
 	private static class InputStreamFastqFileParser extends FastqFileParser{
-		private final InputStream in;
+		private final OpenAwareInputStream in;
 		
 		public InputStreamFastqFileParser(InputStream in) {
 			if(in==null){
 				throw new NullPointerException("inputstream can not be null");
 			}
-			this.in = in;
+			this.in = new OpenAwareInputStream(in);
 		}
 
 		@Override
 		public synchronized void accept(FastqVisitor visitor) throws IOException {
+			if(!canAccept()){
+				throw new IllegalStateException("can not accept, inputStream closed");
+			}
 			//synchronized to only let in one visitor at a time since they will
 			//all share the inputstream...
 			if(visitor ==null){
@@ -368,6 +374,11 @@ public abstract class FastqFileParser {
 				IOUtil.closeAndIgnoreErrors(in);
 			}
 			
+		}
+
+		@Override
+		public boolean canAccept() {
+			return in.isOpen();
 		}
 
 		@Override
