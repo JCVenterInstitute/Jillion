@@ -49,7 +49,7 @@ import org.jcvi.jillion.internal.core.io.TextLineParser;
  * @author dkatzel
  *
  */
-public abstract class PhdBallParser {
+public abstract class PhdBallParser implements PhdBallVisitorHandler{
 
 	 private static final String BEGIN_COMMENT = "BEGIN_COMMENT";
     private static final String END_SEQUENCE = "END_SEQUENCE";
@@ -77,10 +77,10 @@ public abstract class PhdBallParser {
 	 * @return
 	 * @throws FileNotFoundException
 	 */
-	public static PhdBallParser create(File phdBall) throws FileNotFoundException{
+	public static PhdBallVisitorHandler create(File phdBall) throws FileNotFoundException{
 		return new FileBasedPhdBallParser(phdBall);
 	}
-	public static PhdBallParser create(InputStream phdBallStream) throws FileNotFoundException{
+	public static PhdBallVisitorHandler create(InputStream phdBallStream) throws FileNotFoundException{
 		return new InputStreamBasedPhdBallParser(phdBallStream);
 	}
 
@@ -88,11 +88,6 @@ public abstract class PhdBallParser {
 		//can not instantiate outside of this .java file
 	}
 	
-	
-	public abstract void accept(PhdBallVisitor visitor) throws IOException;
-	
-	
-	public abstract void accept(PhdBallVisitor visitor, PhdBallVisitorMemento memento) throws IOException;
 	
 	
 	protected void accept(TextLineParser parser, PhdBallVisitor visitor) throws IOException{
@@ -491,6 +486,11 @@ public abstract class PhdBallParser {
 		}
 		
 		
+		@Override
+		public boolean canAccept() {
+			return true;
+		}
+
 		public void accept(PhdBallVisitor visitor, PhdBallVisitorMemento memento) throws IOException{
 			if(visitor ==null){
 	            throw new NullPointerException("visitor can not be null");
@@ -532,11 +532,12 @@ public abstract class PhdBallParser {
 
 		@Override
 		public void accept(PhdBallVisitor visitor) throws IOException {
+			
+			if(!canAccept()){
+				throw new IllegalStateException("can not accept - inputstream has been closed");
+			}
 			if(visitor==null){
 				throw new NullPointerException("visitor can not be null");
-			}
-			if(!in.isOpen()){
-				throw new IllegalStateException("inputstream has been closed");
 			}
 			TextLineParser parser =null;
 			try{
@@ -546,6 +547,11 @@ public abstract class PhdBallParser {
 				IOUtil.closeAndIgnoreErrors(parser);
 			}
 			
+		}
+		
+		@Override
+		public boolean canAccept() {
+			return in.isOpen();
 		}
 
 		@Override

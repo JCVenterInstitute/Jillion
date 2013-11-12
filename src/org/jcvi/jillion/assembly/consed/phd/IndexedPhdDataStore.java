@@ -48,18 +48,18 @@ final class IndexedPhdDataStore implements PhdDataStore{
 	private final File phdFile;
 	private final Map<String, PhdBallVisitorMemento> mementos;
 	private final DataStoreFilter filter;
-	private final PhdBallParser parser;
+	private final PhdBallVisitorHandler parser;
 	
 	public static PhdDataStore create(File phdBall, DataStoreFilter filter) throws FileNotFoundException, IOException{
 		
-		PhdBallParser parser = PhdBallParser.create(phdBall);
+		PhdBallVisitorHandler parser = PhdBallParser.create(phdBall);
 		
 		BuilderVisitor visitor = new BuilderVisitor(parser, phdBall, filter);
 		parser.accept(visitor);
 		return visitor.build();
 	}
 	
-	private IndexedPhdDataStore(PhdBallParser parser,
+	private IndexedPhdDataStore(PhdBallVisitorHandler parser,
 			File phdFile,
 			Map<String, PhdBallVisitorMemento> mementos,
 			DataStoreFilter filter) {
@@ -139,9 +139,9 @@ final class IndexedPhdDataStore implements PhdDataStore{
 		private final File phdBall;
 		
 		private boolean visitedEntireFile=false;
-		private final PhdBallParser parser;
+		private final PhdBallVisitorHandler parser;
 		
-		public BuilderVisitor(PhdBallParser parser, File phdBall, DataStoreFilter filter) {
+		public BuilderVisitor(PhdBallVisitorHandler parser, File phdBall, DataStoreFilter filter) {
 			this.phdBall = phdBall;
 			this.filter = filter;
 			this.parser = parser;
