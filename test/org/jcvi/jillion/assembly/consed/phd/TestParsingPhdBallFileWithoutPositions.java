@@ -30,16 +30,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jcvi.jillion.assembly.consed.phd.AbstractPhdBallVisitor;
-import org.jcvi.jillion.assembly.consed.phd.AbstractPhdVisitor;
-import org.jcvi.jillion.assembly.consed.phd.Phd;
-import org.jcvi.jillion.assembly.consed.phd.PhdBallParser;
-import org.jcvi.jillion.assembly.consed.phd.PhdBallVisitor;
-import org.jcvi.jillion.assembly.consed.phd.PhdBallVisitorCallback;
-import org.jcvi.jillion.assembly.consed.phd.PhdBuilder;
-import org.jcvi.jillion.assembly.consed.phd.PhdReadTag;
-import org.jcvi.jillion.assembly.consed.phd.PhdVisitor;
-import org.jcvi.jillion.assembly.consed.phd.PhdWholeReadItem;
 import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
@@ -55,7 +45,7 @@ public class TestParsingPhdBallFileWithoutPositions {
 		
 		File phdBallFile = helper.getFile("files/noPositions.phd.ball.1");
 		
-		PhdBallParser parser = PhdBallParser.create(phdBallFile);
+		PhdBallVisitorHandler parser = PhdBallParser.create(phdBallFile);
 		
 		final List<Phd> actualList = new ArrayList<Phd>();
 		
