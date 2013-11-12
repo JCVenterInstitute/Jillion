@@ -24,14 +24,6 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jcvi.jillion.assembly.AssemblyUtil;
-import org.jcvi.jillion.assembly.consed.ace.AceAssembledRead;
-import org.jcvi.jillion.assembly.consed.ace.AceContig;
-import org.jcvi.jillion.assembly.consed.ace.AceContigReadVisitor;
-import org.jcvi.jillion.assembly.consed.ace.AceContigVisitor;
-import org.jcvi.jillion.assembly.consed.ace.AceFileVisitor;
-import org.jcvi.jillion.assembly.consed.ace.AceFileVisitorCallback;
-import org.jcvi.jillion.assembly.consed.ace.AceHandler;
-import org.jcvi.jillion.assembly.consed.ace.PhdInfo;
 import org.jcvi.jillion.assembly.consed.ace.AceFileVisitorCallback.AceFileVisitorMemento;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
@@ -44,11 +36,13 @@ public class AceTestUtil {
 	private AceTestUtil(){
 		//can not instantiate
 	}
-	public static AceHandler createAceHandlerFor(final AceContig contig){
+	public static AceVisitorHandler createAceHandlerFor(final AceContig contig){
 		return new SingleContigAceHandler(contig);
 	}
 	
-	private static class SingleContigAceHandler implements AceHandler{
+	
+	
+	private static class SingleContigAceHandler implements AceVisitorHandler{
 
 		private final AceContig contig;
 		
@@ -76,8 +70,15 @@ public class AceTestUtil {
 		@Override
 		public void accept(AceFileVisitor visitor,
 				AceFileVisitorMemento memento) throws IOException {
-			throw new UnsupportedOperationException();
-			
+			if(!(memento instanceof Memento)){
+				throw new IllegalArgumentException("invalid memento type");
+			}
+			String contigIdToParse = ((Memento)memento).contigId;
+			if(contig.getId().equals(contigIdToParse)){
+				accept(visitor);
+			}else{
+				throw new IllegalArgumentException("unknown contig id "+ contigIdToParse);
+			}
 		}
 		
 		private class AceObjectVisitorCallback implements AceFileVisitorCallback{
@@ -95,14 +96,27 @@ public class AceTestUtil {
 
 			@Override
 			public AceFileVisitorMemento createMemento() {
-				// TODO Auto-generated method stub
-				return null;
+				return new Memento(contigId);
 			}
 
 			@Override
 			public void haltParsing() {
 				keepParsing.set(false);
 				
+			}
+			
+		}
+
+		@Override
+		public boolean canAccept() {
+			return true;
+		}
+		
+		private static class Memento implements AceFileVisitorMemento{
+			private final String contigId;
+
+			public Memento(String contigId) {
+				this.contigId = contigId;
 			}
 			
 		}

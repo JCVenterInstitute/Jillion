@@ -29,6 +29,7 @@ import java.io.BufferedInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -52,13 +53,22 @@ import org.jcvi.jillion.internal.core.io.TextLineParser;
  * @author dkatzel
  * @see <a href = "http://www.phrap.org/consed/distributions/README.20.0.txt">Consed documentation which contains the ACE FILE FORMAT</a>
  */
-public abstract class AceFileParser implements AceHandler {
+public abstract class AceFileParser implements AceVisitorHandler {
 	private static Pattern HEADER_PATTERN = Pattern.compile("^AS\\s+(\\d+)\\s+(\\d+)");
 	private AceFileParser(){
 		//private constructor.
 	}
-	
-	public static AceHandler create(File aceFile){
+	/**
+	 * Create a new {@link AceVisitorHandler}
+	 * instance that will parse the given ace file
+	 * and call the appropriate visit methods on an {@link AceFileVisitor}.
+	 * @param aceFile the ace file to parse/visit;
+	 * can not be null.
+	 * @return a new {@link AceVisitorHandler}; will never be null.
+	 * @throws NullPointerException if aceFileStream is null.
+	 * @throws IOException if ace file does not exist.
+	 */
+	public static AceVisitorHandler create(File aceFile) throws IOException{
 		return new FileBasedParser(aceFile);
 	}
 	/**
@@ -72,23 +82,13 @@ public abstract class AceFileParser implements AceHandler {
 	 * will never be null.
 	 * @throws NullPointerException if aceFileStream is null.
 	 */
-	public static AceHandler create(InputStream aceFileStream){
+	public static AceVisitorHandler create(InputStream aceFileStream){
 		return new InputStreamParser(aceFileStream);
 	}
-    /**
-	 * {@inheritDoc}
-	 */
-    @Override
-	public abstract void accept(AceFileVisitor visitor) throws IOException;
-    
-    
-    
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public abstract void accept(AceFileVisitor visitor, AceFileVisitorMemento memento) throws IOException;
-     
+	
+	
+	
+      
     /**
      * Parse the given {@link InputStream} containing ace encoded data
      * and call the appropriate methods on the given AceFileVisitor.
@@ -767,12 +767,15 @@ public abstract class AceFileParser implements AceHandler {
 
     	private final File aceFile;
     	
-		public FileBasedParser(File aceFile) {
+		public FileBasedParser(File aceFile) throws FileNotFoundException {
 			if(!aceFile.exists()){
-				throw new IllegalArgumentException("ace file does not exist: " + aceFile.getAbsolutePath());
+				throw new FileNotFoundException("ace file does not exist: " + aceFile.getAbsolutePath());
 			}
 			this.aceFile = aceFile;
 		}
+		
+		
+		
 		@Override
 		public void accept(AceFileVisitor visitor) throws IOException{
 			assertVisitorNotNull(visitor);
@@ -860,11 +863,17 @@ public abstract class AceFileParser implements AceHandler {
 				return startOffset;
 			}
 
-			AceHandler getParentParser(){
+			AceVisitorHandler getParentParser(){
 				return FileBasedParser.this;
 			}
 	    	
 	    }
+
+		@Override
+		public boolean canAccept() {
+			//since we are a file, we can always re-parse
+			return true;
+		}
     }
     
     private static final class InputStreamParser extends AceFileParser {
@@ -898,7 +907,12 @@ public abstract class AceFileParser implements AceHandler {
 		public void accept(AceFileVisitor visitor, AceFileVisitorMemento memento) throws IOException{
 	        throw new UnsupportedOperationException("mementos not supported");
 	    }
-		
+		@Override
+		public boolean canAccept() {
+			//since we are an InputStream
+			//we probably can't reparse the entire stream again
+			return false;
+		}
     }
     
     private interface AceFileVisitorCallbackFactory{
