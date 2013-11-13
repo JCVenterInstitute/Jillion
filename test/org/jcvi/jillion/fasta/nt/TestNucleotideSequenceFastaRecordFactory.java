@@ -30,7 +30,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordBuilder;
 import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -46,7 +46,7 @@ public class TestNucleotideSequenceFastaRecordFactory {
     
     public TestNucleotideSequenceFastaRecordFactory(){
 
-        sut = new NucleotideSequenceFastaRecordBuilder(id,  sequence)
+        sut = new NucleotideFastaRecordBuilder(id,  sequence)
         			.comment(comment)
         			.build();
     }
@@ -60,7 +60,7 @@ public class TestNucleotideSequenceFastaRecordFactory {
     
     @Test
     public void withoutComment(){
-        NucleotideFastaRecord fasta = new NucleotideSequenceFastaRecordBuilder(id, sequence).build();
+        NucleotideFastaRecord fasta = new NucleotideFastaRecordBuilder(id, sequence).build();
         
         assertEquals(id, fasta.getId());
         assertNull(fasta.getComment());
@@ -69,7 +69,7 @@ public class TestNucleotideSequenceFastaRecordFactory {
    
     @Test(expected = NullPointerException.class)
     public void nullIdThrowsNullPointerException(){
-     new NucleotideSequenceFastaRecordBuilder(null, sequence);        
+     new NucleotideFastaRecordBuilder(null, sequence);        
     }
     
     @Test
@@ -78,26 +78,26 @@ public class TestNucleotideSequenceFastaRecordFactory {
     }
     @Test
     public void equalsSameValues(){
-        NucleotideFastaRecord sameValues = new NucleotideSequenceFastaRecordBuilder(id, sequence)
+        NucleotideFastaRecord sameValues = new NucleotideFastaRecordBuilder(id, sequence)
         											.comment(comment)
         											.build();
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);        
     }
     @Test
     public void equalsDifferentComment(){
-        NucleotideFastaRecord sameValues =new NucleotideSequenceFastaRecordBuilder(id, sequence)
+        NucleotideFastaRecord sameValues =new NucleotideFastaRecordBuilder(id, sequence)
         											.comment("diff"+comment)
         											.build();
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);        
     }
     @Test
     public void equalsNoComment(){
-        NucleotideFastaRecord sameValues = new NucleotideSequenceFastaRecordBuilder(id, sequence).build();
+        NucleotideFastaRecord sameValues = new NucleotideFastaRecordBuilder(id, sequence).build();
         TestUtil.assertEqualAndHashcodeSame(sut, sameValues);        
     }
     @Test
     public void notEqualsDifferentBases(){
-        NucleotideFastaRecord differentBasesAndChecksum = new NucleotideSequenceFastaRecordBuilder(id, bases.substring(2))
+        NucleotideFastaRecord differentBasesAndChecksum = new NucleotideFastaRecordBuilder(id, bases.substring(2))
         														.comment(comment)
         														.build();
         TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentBasesAndChecksum);        

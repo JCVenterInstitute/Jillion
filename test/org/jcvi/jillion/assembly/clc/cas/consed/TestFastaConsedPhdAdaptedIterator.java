@@ -36,7 +36,7 @@ import org.jcvi.jillion.core.util.DateUtil;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordBuilder;
 import org.junit.Test;
 
 public class TestFastaConsedPhdAdaptedIterator extends AbstractTestPhdAdaptedIterator{
@@ -58,7 +58,7 @@ public class TestFastaConsedPhdAdaptedIterator extends AbstractTestPhdAdaptedIte
 	}
 	
 	private NucleotideFastaRecord createFasta(String id, String basecalls){
-		return new NucleotideSequenceFastaRecordBuilder(id, basecalls)
+		return new NucleotideFastaRecordBuilder(id, basecalls)
 					.build();
 	}
 	@Test

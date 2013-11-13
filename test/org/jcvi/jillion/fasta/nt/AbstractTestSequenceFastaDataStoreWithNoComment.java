@@ -31,14 +31,14 @@ import java.io.IOException;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
 
 public  abstract class AbstractTestSequenceFastaDataStoreWithNoComment {
     static final String FASTA_FILE_PATH = "files/noComment.fasta";
     ResourceHelper RESOURCES = new ResourceHelper(AbstractTestSequenceFastaMapWithNoComment.class);
     
-    NucleotideFastaRecord hrv_61 = new NucleotideSequenceFastaRecordBuilder("hrv-61",
+    NucleotideFastaRecord hrv_61 = new NucleotideFastaRecordBuilder("hrv-61",
         new NucleotideSequenceBuilder("TTAAAACTGGGTCTGGGTTGCTCCCACCCAGACCACCCATGTGGTGTTGTACACTGTTAT" +
         "TCCGGTAACTTTGTACGCCAGTTTTGAACTCCCCTACCCCTTTTGTAACTTAGAAGCTAA" +
         "ACACATCGACCAATAGCAGGCAATCACCCAGATTGCTTATGGTCAAGTACTTCTGTTTCC" +

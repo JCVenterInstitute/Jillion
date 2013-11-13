@@ -46,7 +46,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
 
     protected static final String FASTA_FILE_PATH = "files/19150.fasta";
    
-    NucleotideFastaRecord contig_1 = new NucleotideSequenceFastaRecordBuilder("1",
+    NucleotideFastaRecord contig_1 = new NucleotideFastaRecordBuilder("1",
             new NucleotideSequenceBuilder("AACCATTTGAATGGATGTCAATCCGACTTTACTTTTCTTGAAAGTTCCAGYGCAAAATGC"+
             "CATAAGCACCACATTCCCATACACTGGAGATCCTCCATACAGCCATGGAACGGGAACAGG"+
             "ATACACCATGGACACAGTCAACAGAACACATCAATATTCAGAAAAGGGGAAATGGACAAC"+
@@ -90,7 +90,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
     	.build();
 
     
-    NucleotideFastaRecord contig_5 = new NucleotideSequenceFastaRecordBuilder("5",
+    NucleotideFastaRecord contig_5 = new NucleotideFastaRecordBuilder("5",
     		new NucleotideSequenceBuilder( "ATGTTTAAAGATGAGTCTTCTAACCGAGGTCGAAACGTACGTTCTCTCTATCATCCCATC" +
             "AGGCCCCCTCAAAGCCGAGATCGCGCAGAGACTTGAAGATGTTTTTGCAGGGAAGAACAC" +
             "AGATCTTGAGGCACTCATGGAATGGCTAAAGACAAGACCAATCCTGTCACCTCTGACTAA" +
@@ -110,7 +110,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
             "ATGGTCATTTTGTCAACATAGAGCTGGAGTAAA").build())
             .comment("19 995 bases, 00000000 checksum.")
             .build();
-    NucleotideFastaRecord contig_9 = new NucleotideSequenceFastaRecordBuilder("9",
+    NucleotideFastaRecord contig_9 = new NucleotideFastaRecordBuilder("9",
     		new NucleotideSequenceBuilder("AATATATTCAATATGGAGAGAATAAAAGAACTGAGAGATCTAATGTCACAGTCTCGCACC" +
             "CGCGAGATACTMACCAAAACCACTGTGGACCACATGGCCATAATCAAAAAATACACATCA" +
             "GGAAGGCAAGAGAAGAACCCCGCACTTAGAATGAAGTGGATGATGGCAATGAAATATCCA" +

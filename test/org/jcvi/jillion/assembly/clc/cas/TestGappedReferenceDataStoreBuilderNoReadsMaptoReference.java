@@ -35,7 +35,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriterBuilder;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordBuilder;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -61,12 +61,12 @@ public class TestGappedReferenceDataStoreBuilderNoReadsMaptoReference extends Ea
 	
 	@Before
 	public void createInputData() throws IOException{
-		ref1 = new NucleotideSequenceFastaRecordBuilder("ref1", 
+		ref1 = new NucleotideFastaRecordBuilder("ref1", 
 				new NucleotideSequenceBuilder("ACGTACGT")
 					.build())
 			.build();
 
-		ref2 = new NucleotideSequenceFastaRecordBuilder("ref2", 
+		ref2 = new NucleotideFastaRecordBuilder("ref2", 
 							new NucleotideSequenceBuilder("AAAAAAAAAAAA")
 								.build())
 						.build();

@@ -107,7 +107,7 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 
 			@Override
 			public void visitEnd() {
-				NucleotideFastaRecord fastaRecord = new NucleotideSequenceFastaRecordBuilder(currentId,builder.build())
+				NucleotideFastaRecord fastaRecord = new NucleotideFastaRecordBuilder(currentId,builder.build())
 														.comment(currentComment)
 														.build();
 				blockingPut(fastaRecord);
