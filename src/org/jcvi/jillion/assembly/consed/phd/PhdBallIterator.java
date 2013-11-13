@@ -94,7 +94,7 @@ final class PhdBallIterator extends AbstractBlockingStreamingIterator<Phd>{
         };
         
         try {
-            PhdBallParser.create(phdFile).accept(visitor);
+            PhdBallFileParser.create(phdFile).accept(visitor);
         } catch (IOException e) {
            throw new RuntimeException(
                    String.format("error parsing phd file: %s" ,phdFile.getAbsolutePath()),

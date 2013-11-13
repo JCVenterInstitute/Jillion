@@ -98,7 +98,7 @@ public final class AceContigTestUtil {
 		
 		
 		
-		AceFileParser.create(aceFile).accept(visitor2);
+		AceFileParser.create(aceFile).parse(visitor2);
 		return DataStoreUtil.adapt(NucleotideSequenceDataStore.class, fullSequences);
 	}
     

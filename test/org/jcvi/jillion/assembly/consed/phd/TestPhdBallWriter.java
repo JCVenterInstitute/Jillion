@@ -54,7 +54,7 @@ public class TestPhdBallWriter extends AbstractTestPhd{
     	PhdWriter writer = new PhdBallWriter(out);
     	writer.close();
     	FileCommentVisitor visitor = new FileCommentVisitor();
-    	 PhdBallParser.create(new ByteArrayInputStream(out.toByteArray())).accept(visitor);
+    	 PhdBallFileParser.create(new ByteArrayInputStream(out.toByteArray())).accept(visitor);
 
  		assertNull(visitor.fileComment);
  		
@@ -67,7 +67,7 @@ public class TestPhdBallWriter extends AbstractTestPhd{
     	PhdWriter writer = new PhdBallWriter(out, fileComment);
     	writer.close();
     	FileCommentVisitor visitor = new FileCommentVisitor();
-    	 PhdBallParser.create(new ByteArrayInputStream(out.toByteArray())).accept(visitor);
+    	 PhdBallFileParser.create(new ByteArrayInputStream(out.toByteArray())).accept(visitor);
 
  		assertEquals(fileComment,visitor.fileComment);
     }
@@ -125,7 +125,7 @@ public class TestPhdBallWriter extends AbstractTestPhd{
         writer.close();
         
         SinglePhdVisitor visitor = new SinglePhdVisitor();
-        PhdBallParser.create(new ByteArrayInputStream(out.toByteArray())).accept(visitor);
+        PhdBallFileParser.create(new ByteArrayInputStream(out.toByteArray())).accept(visitor);
 		assertEquals(expectedPhd,visitor.phd);
     }
     

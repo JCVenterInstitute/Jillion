@@ -32,7 +32,7 @@ import org.jcvi.jillion.assembly.consed.ace.AceContigReadVisitor;
 import org.jcvi.jillion.assembly.consed.ace.AceContigVisitor;
 import org.jcvi.jillion.assembly.consed.ace.AceFileParser;
 import org.jcvi.jillion.assembly.consed.ace.AceFileVisitorCallback;
-import org.jcvi.jillion.assembly.consed.ace.AceVisitorHandler;
+import org.jcvi.jillion.assembly.consed.ace.AceParser;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
@@ -57,9 +57,9 @@ public class TestSkippingReadsDoesntSendBasecallsToConsensusInstead {
 		final ReadSkipperConsensusCollector skippedReadCollector = new ReadSkipperConsensusCollector();
 		final ReadParsedConsensusCollector parsedReadCollector = new ReadParsedConsensusCollector();
 		
-		AceVisitorHandler parser =AceFileParser.create(aceFile);
+		AceParser parser =AceFileParser.create(aceFile);
 		
-		parser.accept(new AbstractAceFileVisitor() {
+		parser.parse(new AbstractAceFileVisitor() {
 
 			@Override
 			public AceContigVisitor visitContig(
@@ -71,7 +71,7 @@ public class TestSkippingReadsDoesntSendBasecallsToConsensusInstead {
 			
 		});
 		
-		parser.accept(new AbstractAceFileVisitor() {
+		parser.parse(new AbstractAceFileVisitor() {
 
 			@Override
 			public AceContigVisitor visitContig(

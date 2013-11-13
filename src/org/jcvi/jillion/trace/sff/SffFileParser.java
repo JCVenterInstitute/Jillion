@@ -40,11 +40,11 @@ import org.jcvi.jillion.trace.sff.SffVisitorCallback.SffVisitorMemento;
  * @author dkatzel
  * @see <a href ="http://www.ncbi.nlm.nih.gov/Traces/trace.cgi?cmd=show&f=formats&m=doc&s=format#sff">SFF file format spec from NCBI</a>
  */
-public abstract class SffFileParser implements SffVisitorHandler{
+public abstract class SffFileParser implements SffParser{
 	
 	protected SffCommonHeader header;
 	/**
-	 * Create a new instance of {@link SffVisitorHandler}
+	 * Create a new instance of {@link SffParser}
 	 * that will parse the given sff encoded file.
 	 * The file isn't actually parsed until
 	 * one of the accept methods is called.
@@ -52,12 +52,12 @@ public abstract class SffFileParser implements SffVisitorHandler{
 	 * @throws NullPointerException if sffFile is null.
 	 * @throws FileNotFoundException if sffFile does not exist.
 	 */
-	public static SffVisitorHandler create(File sffFile) throws FileNotFoundException{
+	public static SffParser create(File sffFile) throws FileNotFoundException{
 		return new FileBasesSffParser(sffFile);
 	}
 
 	/**
-	 * Create a new instance of {@link SffVisitorHandler}
+	 * Create a new instance of {@link SffParser}
 	 * that will parse the given sff encoded {@link InputStream}.
 	 * Please Note that inputStream implementations
 	 * of the FastaFileParser can not create {@link SffVisitorMemento}s
@@ -70,7 +70,7 @@ public abstract class SffFileParser implements SffVisitorHandler{
 	 * @throws NullPointerException if sffFile is null.
 	 * @throws FileNotFoundException if sffFile does not exist.
 	 */
-	public static SffVisitorHandler create(InputStream inputStream) throws FileNotFoundException{
+	public static SffParser create(InputStream inputStream) throws FileNotFoundException{
 		return new InputStreamBasedSffParser(inputStream);
 	}
 	
@@ -236,20 +236,20 @@ public abstract class SffFileParser implements SffVisitorHandler{
 		}
 
 		@Override
-		public void accept(SffVisitor visitor) throws IOException {
-			if(!canAccept()){
+		public void parse(SffVisitor visitor) throws IOException {
+			if(!canParse()){
 				throw new IllegalStateException("inputstream is not open");
 			}
 			this.accept(in, visitor);			
 		}
 
 		@Override
-		public boolean canAccept() {
+		public boolean canParse() {
 			return in.isOpen();
 		}
 
 		@Override
-		public void accept(SffVisitor visitor, SffVisitorMemento memento)
+		public void parse(SffVisitor visitor, SffVisitorMemento memento)
 				throws IOException {
 			throw new UnsupportedOperationException("can not accept mementos when inputStream is provided");
 			
@@ -312,7 +312,7 @@ public abstract class SffFileParser implements SffVisitorHandler{
 		}
 		
 		@Override
-		public boolean canAccept() {
+		public boolean canParse() {
 			return true;
 		}
 
@@ -324,7 +324,7 @@ public abstract class SffFileParser implements SffVisitorHandler{
 		 * @throws NullPointerException if visitor is null.
 		 */
 		@Override
-		public void accept(SffVisitor visitor) throws IOException{
+		public void parse(SffVisitor visitor) throws IOException{
 			if(visitor==null){
 				throw new NullPointerException("visitor can not be null");
 			}
@@ -349,7 +349,7 @@ public abstract class SffFileParser implements SffVisitorHandler{
 		 * @throws NullPointerException if visitor is null.
 		 */
 		@Override
-		public void accept(SffVisitor visitor, SffVisitorMemento memento) throws IOException{
+		public void parse(SffVisitor visitor, SffVisitorMemento memento) throws IOException{
 			
 			if(!(memento instanceof AbstractSffFileMemento)){
 				throw new IllegalArgumentException("don't know how to handle this memento");

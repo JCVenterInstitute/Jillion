@@ -84,8 +84,8 @@ final class DefaultAceFileDataStore implements AceFileDataStore{
     
     public static AceFileDataStore create(InputStream aceFileStream, DataStoreFilter filter) throws IOException{
     	Visitor builder = new Visitor(filter);
-    	AceVisitorHandler parser = AceFileParser.create(aceFileStream);
-    	parser.accept(builder);
+    	AceParser parser = AceFileParser.create(aceFileStream);
+    	parser.parse(builder);
     	return new DefaultAceFileDataStore(builder);
     }
     public static AceFileDataStore create(File aceFile) throws IOException{
@@ -93,8 +93,8 @@ final class DefaultAceFileDataStore implements AceFileDataStore{
     }
     public static AceFileDataStore create(File aceFile, DataStoreFilter filter) throws IOException{
     	Visitor builder = new Visitor(filter);
-    	AceVisitorHandler parser = AceFileParser.create(aceFile);
-    	parser.accept(builder);
+    	AceParser parser = AceFileParser.create(aceFile);
+    	parser.parse(builder);
     	return new DefaultAceFileDataStore(builder);
     }
     

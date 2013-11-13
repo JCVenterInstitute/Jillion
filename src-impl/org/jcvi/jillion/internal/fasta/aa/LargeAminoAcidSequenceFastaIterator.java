@@ -90,7 +90,7 @@ final class LargeAminoAcidSequenceFastaIterator extends AbstractBlockingStreamin
 	    	};
 	    	
 	    	try {
-				FastaFileParser.create(fastaFile).accept(visitor);
+				FastaFileParser.create(fastaFile).parse(visitor);
 			} catch (IOException e) {
 				throw new RuntimeException("can not parse fasta file",e);
 			}

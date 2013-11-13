@@ -58,7 +58,7 @@ public class TestFastaParser {
     }
     @Test(expected = NullPointerException.class)
     public void nullVisitorShouldThrowNPE() throws IOException{
-    	 FastaFileParser.create(getFastaFile()).accept(null);
+    	 FastaFileParser.create(getFastaFile()).parse(null);
     }
     
     @Test
@@ -83,7 +83,7 @@ public class TestFastaParser {
 			}
 		};
 		
-		FastaFileParser.create(getFastaFile()).accept(visitor);
+		FastaFileParser.create(getFastaFile()).parse(visitor);
     }
     
     
@@ -118,7 +118,7 @@ public class TestFastaParser {
 	
 			
 		};
-		FastaFileParser.create(getFastaFile()).accept(visitor);
+		FastaFileParser.create(getFastaFile()).parse(visitor);
     }
     
     private boolean matchesFirstRecord(String id, String optionalComment) {
@@ -172,7 +172,7 @@ public class TestFastaParser {
 	
 			
 		};
-		FastaFileParser.create(getFastaFile()).accept(visitor);
+		FastaFileParser.create(getFastaFile()).parse(visitor);
     }
   
     
@@ -210,7 +210,7 @@ public class TestFastaParser {
 	
 			
 		};
-		FastaFileParser.create(getFastaFile()).accept(visitor);
+		FastaFileParser.create(getFastaFile()).parse(visitor);
     }
     
     @Test
@@ -245,7 +245,7 @@ public class TestFastaParser {
 	
 			
 		};
-		FastaFileParser.create(getFastaFile()).accept(visitor);
+		FastaFileParser.create(getFastaFile()).parse(visitor);
     }
     
    
@@ -279,7 +279,7 @@ public class TestFastaParser {
 	
 			
 		};
-		FastaFileParser.create(getFastaFile()).accept(visitor);
+		FastaFileParser.create(getFastaFile()).parse(visitor);
     }
     
    
@@ -319,7 +319,7 @@ public class TestFastaParser {
 	
 			
 		};
-		FastaFileParser.create(getFastaFile()).accept(visitor);
+		FastaFileParser.create(getFastaFile()).parse(visitor);
     }
     
     
@@ -360,7 +360,7 @@ public class TestFastaParser {
 	
 			
 		};
-		FastaFileParser.create(getFastaFile()).accept(visitor);
+		FastaFileParser.create(getFastaFile()).parse(visitor);
     }
 
 	
@@ -456,7 +456,7 @@ public class TestFastaParser {
         visitor.visitEnd();
         
         replay(visitor);
-        FastaFileParser.create(new ByteArrayInputStream(new byte[]{})).accept(visitor);
+        FastaFileParser.create(new ByteArrayInputStream(new byte[]{})).parse(visitor);
         verify(visitor);
     }
 }

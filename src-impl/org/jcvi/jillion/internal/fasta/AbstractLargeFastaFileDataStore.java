@@ -143,7 +143,7 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
         				throw new IllegalStateException("parser was halted when trying to compute size");		
         			}
         		};      
-        		FastaFileParser.create(fastaFile).accept(visitor);
+        		FastaFileParser.create(fastaFile).parse(visitor);
             } catch (IOException e) {
                 throw new IllegalStateException("could not get record count",e);
             }

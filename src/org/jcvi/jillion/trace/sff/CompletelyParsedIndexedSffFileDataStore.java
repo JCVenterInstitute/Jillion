@@ -80,8 +80,8 @@ final class CompletelyParsedIndexedSffFileDataStore {
 	 */
 	public static SffFileDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
 		Visitor visitor = new Visitor(filter);
-		SffVisitorHandler parser = SffFileParser.create(sffFile);
-		parser.accept(visitor);
+		SffParser parser = SffFileParser.create(sffFile);
+		parser.parse(visitor);
 		
 		return visitor.build(parser);
 	}
@@ -122,7 +122,7 @@ final class CompletelyParsedIndexedSffFileDataStore {
 			
 		}
 	
-		SffFileDataStore build(SffVisitorHandler parser){
+		SffFileDataStore build(SffParser parser){
 			return new DataStoreImpl(parser, keySequence, flowSequence, mementos);
 		}
 		
@@ -130,12 +130,12 @@ final class CompletelyParsedIndexedSffFileDataStore {
 	
 	
 	private static class DataStoreImpl implements SffFileDataStore{
-		private final SffVisitorHandler parser; //parser has the file ref
+		private final SffParser parser; //parser has the file ref
 		private volatile boolean closed=false;
 		private final NucleotideSequence keySequence,flowSequence;
 		private final Map<String, SffVisitorMemento> mementos;
 
-		public DataStoreImpl(SffVisitorHandler parser,
+		public DataStoreImpl(SffParser parser,
 				NucleotideSequence keySequence, NucleotideSequence flowSequence,
 				Map<String, SffVisitorMemento> mementos) {
 			this.parser = parser;
@@ -174,7 +174,7 @@ final class CompletelyParsedIndexedSffFileDataStore {
 			}
 			SingleRecordVisitor visitor = new SingleRecordVisitor();
 			try {
-				parser.accept(visitor, momento);
+				parser.parse(visitor, momento);
 			} catch (IOException e) {
 				throw new DataStoreException("error reparsing file", e);
 			}

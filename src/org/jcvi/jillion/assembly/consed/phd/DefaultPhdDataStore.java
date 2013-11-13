@@ -38,14 +38,14 @@ final class DefaultPhdDataStore{
 	
 
 	public static PhdDataStore create(File phdBall, DataStoreFilter filter) throws IOException{
-		PhdBallVisitorHandler parser = PhdBallParser.create(phdBall);
+		PhdBallParser parser = PhdBallFileParser.create(phdBall);
 		
 		DefaultPhdDataStoreBuilderVisitor visitor = new DefaultPhdDataStoreBuilderVisitor(filter);
 		parser.accept(visitor);
 		return visitor.build();
 	}
 	public static PhdDataStore create(InputStream inputStream, DataStoreFilter filter) throws IOException {
-		PhdBallVisitorHandler parser = PhdBallParser.create(inputStream);
+		PhdBallParser parser = PhdBallFileParser.create(inputStream);
 		
 		DefaultPhdDataStoreBuilderVisitor visitor = new DefaultPhdDataStoreBuilderVisitor(filter);
 		parser.accept(visitor);

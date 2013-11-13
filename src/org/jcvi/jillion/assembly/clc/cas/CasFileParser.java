@@ -41,7 +41,7 @@ import org.jcvi.jillion.assembly.clc.cas.CasFileVisitor.CasVisitorCallback;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 
-public final class CasFileParser implements CasVisitorHandler{
+public final class CasFileParser implements CasParser{
 	
 	
 	private static final byte[] CAS_MAGIC_NUMBER = new byte[]{
@@ -60,7 +60,7 @@ public final class CasFileParser implements CasVisitorHandler{
     private CasScoringScheme scoringScheme;
     private final File casFile;
     
-    public static CasVisitorHandler create(File casFile) throws IOException{
+    public static CasParser create(File casFile) throws IOException{
     	return new CasFileParser(casFile);
     }
     
@@ -71,7 +71,7 @@ public final class CasFileParser implements CasVisitorHandler{
     	this.casFile = file;
     }
     @Override
-    public void accept(CasFileVisitor visitor) throws IOException{
+    public void parse(CasFileVisitor visitor) throws IOException{
     	parseMetaData(visitor);
     	CasVisitorCallbackImpl callback = new CasVisitorCallbackImpl();
     	CasMatchVisitor matchVisitor = visitor.visitMatches(callback);
@@ -89,7 +89,7 @@ public final class CasFileParser implements CasVisitorHandler{
 	}
     	
     @Override
-	public boolean canAccept() {
+	public boolean canParse() {
 		return true;
 	}
 

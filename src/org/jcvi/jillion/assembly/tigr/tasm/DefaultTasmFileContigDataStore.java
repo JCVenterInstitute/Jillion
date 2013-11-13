@@ -41,7 +41,7 @@ final class DefaultTasmFileContigDataStore {
 
 	public static TasmContigDataStore create(File tasmFile, DataStore<Long> fullLengthSequenceDataStore, DataStoreFilter filter) throws IOException{
 		Visitor visitor = new Visitor(filter,fullLengthSequenceDataStore);
-		TasmFileParser.create(tasmFile).accept(visitor);
+		TasmFileParser.create(tasmFile).parse(visitor);
 		return DataStoreUtil.adapt(TasmContigDataStore.class, visitor.contigs);
 	}
 	

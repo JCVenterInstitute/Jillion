@@ -80,7 +80,7 @@ final class TasmContigFileContigIterator extends AbstractBlockingStreamingIterat
 		};
 		
 		try {
-			TasmFileParser.create(contigFile).accept(visitor);
+			TasmFileParser.create(contigFile).parse(visitor);
 		} catch (IOException e) {
 			throw new RuntimeException("error parsing contig file",e);
 		}

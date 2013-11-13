@@ -24,39 +24,39 @@ import java.io.IOException;
 
 import org.jcvi.jillion.assembly.consed.ace.AceFileVisitorCallback.AceFileVisitorMemento;
 /**
- * {@code AceVisitorHandler} is an interface that will
- * traverse an Ace structure and call the appropriate 
+ * {@code AceParser} is an interface that will
+ * parse an Ace structure and call the appropriate 
  * visit methods on the given {@link AceFileVisitor}.
  * @author dkatzel
  *
  */
-public interface AceVisitorHandler {
+public interface AceParser {
 	/**
-	 * Can this handler accept new visit requests
-	 * via {@link #accept(AceFileVisitor)} or {@link #accept(AceFileVisitor, AceFileVisitorMemento)}
+	 * Can this handler accept new parse requests
+	 * via {@link #parse(AceFileVisitor)} or {@link #parse(AceFileVisitor, AceFileVisitorMemento)}
 	 * calls.
 	 * 
-	 * Some implementations of {@link AceVisitorHandler}
+	 * Some implementations of {@link AceParser}
 	 * may only allow one accept call in its lifetime 
 	 * (for example, if the ace structure is being parsed via
 	 * an InputStream).
 	 * @return {@code true} if this handler can handle 
-	 * new visit requests; {@code false} otherwise.
+	 * new parse requests; {@code false} otherwise.
 	 */
-	boolean canAccept();
+	boolean canParse();
 	/**
-	 * Walk over the ace structure and call the appropriate methods on the given AceFileVisitor.
+	 * Parse the ace structure and call the appropriate methods on the given AceFileVisitor.
 	 * @param visitor the visitor to be visited, can not be null.
 	 * @throws IOException if the there is a problem reading
 	 * the ace data.
 	 * @throws NullPointerException if either the visitor is {@code null}.
 	 * @throws IllegalStateException if this handler can not accept
-	 * any new visit requests.
-	 * @see #canAccept()
+	 * any new parse requests.
+	 * @see #canParse()
 	 */
-	void accept(AceFileVisitor visitor) throws IOException;
+	void parse(AceFileVisitor visitor) throws IOException;
 	/**
-	 * Walk over the ace structure 
+	 * Parse the ace structure 
 	 * starting at the location in the structure
 	 * that the {@link AceFileVisitorMemento}
 	 * specifies, and call the appropriate methods on the given AceFileVisitor.
@@ -68,9 +68,9 @@ public interface AceVisitorHandler {
 	 * the ace data.
 	 * @throws NullPointerException if either the visitor is {@code null}.
 	 * @throws IllegalStateException if this handler can not accept
-	 * any new visit requests.
-	 * @see #canAccept()
+	 * any new parse requests.
+	 * @see #canParse()
 	 */
-	void accept(AceFileVisitor visitor, AceFileVisitorMemento memento)	throws IOException;
+	void parse(AceFileVisitor visitor, AceFileVisitorMemento memento)	throws IOException;
 
 }

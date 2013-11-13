@@ -24,12 +24,12 @@ package org.jcvi.jillion.assembly.consed.phd;
 public interface PhdBallVisitorCallback {
 	/**
 	 * {@code PhdBallVisitorMemento} is a marker
-	 * interface that {@link PhdBallParser}
+	 * interface that {@link PhdBallFileParser}
 	 * instances can use to "rewind" back
 	 * to the position in its ace file
 	 * in order to revisit portions of the ace file. 
 	 * {@link PhdBallVisitorMemento} should only be used
-	 * by the {@link PhdBallParser} instance that
+	 * by the {@link PhdBallFileParser} instance that
 	 * generated it.
 	 * @author dkatzel
 	 *
@@ -55,7 +55,7 @@ public interface PhdBallVisitorCallback {
 	 */
 	PhdBallVisitorMemento createMemento();
 	/**
-	 * Tell the {@link PhdBallParser} to stop parsing
+	 * Tell the {@link PhdBallFileParser} to stop parsing
 	 * the ace file.  {@link AceFileVisitor#halted()}
 	 * will still be called.
 	 */

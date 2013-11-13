@@ -37,7 +37,7 @@ import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento;
-import org.jcvi.jillion.fasta.FastaVisitorHandler;
+import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.aa.AbstractAminoAcidFastaRecordVisitor;
 import org.jcvi.jillion.fasta.aa.AminoAcidFastaDataStore;
 import org.jcvi.jillion.fasta.aa.AminoAcidFastaRecord;
@@ -125,7 +125,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 	private static final class IndexedAminoAcidSequenceFastaDataStoreBuilderVisitor2 implements FastaVisitor, Builder<AminoAcidFastaDataStore> {
 	
 		private final DataStoreFilter filter;
-		private final FastaVisitorHandler parser;
+		private final FastaParser parser;
 		private final File fastaFile;
 		
 		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos = new LinkedHashMap<String, FastaVisitorCallback.FastaVisitorMemento>();
@@ -137,7 +137,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 		}
 
 		public void initialize() throws IOException {
-			parser.accept(this);
+			parser.parse(this);
 			
 		}
 
@@ -175,13 +175,13 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 	public static final class Impl implements AminoAcidFastaDataStore {
 		private volatile boolean closed =false;
 		private final File fastaFile;
-		private final FastaVisitorHandler parser;
+		private final FastaParser parser;
 		private final DataStoreFilter filter;
 		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos;
 		
 		
 		public Impl(File fastaFile,
-				FastaVisitorHandler parser, DataStoreFilter filter, Map<String, FastaVisitorMemento> mementos) {
+				FastaParser parser, DataStoreFilter filter, Map<String, FastaVisitorMemento> mementos) {
 			this.fastaFile = fastaFile;
 			this.parser = parser;
 			this.mementos = mementos;
@@ -203,7 +203,7 @@ public final class IndexedAminoAcidSequenceFastaFileDataStore{
 			}
 			SingleRecordVisitor visitor = new SingleRecordVisitor();
 			try {
-				parser.accept(visitor, mementos.get(id));
+				parser.parse(visitor, mementos.get(id));
 				return visitor.fastaRecord;
 			} catch (IOException e) {
 				throw new DataStoreException("error reading fasta file",e);

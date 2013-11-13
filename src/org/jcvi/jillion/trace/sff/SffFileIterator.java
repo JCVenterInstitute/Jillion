@@ -98,7 +98,7 @@ public final class SffFileIterator extends AbstractBlockingStreamingIterator<Sff
 					
 				}
          	};
-             SffFileParser.create(sffFile).accept(visitor);
+             SffFileParser.create(sffFile).parse(visitor);
          } catch (IOException e) {
              //should never happen
              throw new RuntimeException(e);

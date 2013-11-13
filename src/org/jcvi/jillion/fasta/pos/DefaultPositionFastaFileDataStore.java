@@ -42,12 +42,12 @@ public final class DefaultPositionFastaFileDataStore {
 	}
 	public static PositionFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
 		DefaultQualityFastaFileDataStoreBuilder builder = new DefaultQualityFastaFileDataStoreBuilder(filter);
-		FastaFileParser.create(fastaFile).accept(builder);
+		FastaFileParser.create(fastaFile).parse(builder);
     	return builder.build();
 	}
 	public static PositionFastaDataStore create(InputStream positionFastaInputStream, DataStoreFilter filter) throws IOException{
 		DefaultQualityFastaFileDataStoreBuilder builder = new DefaultQualityFastaFileDataStoreBuilder(filter);
-		FastaFileParser.create(positionFastaInputStream).accept(builder);
+		FastaFileParser.create(positionFastaInputStream).parse(builder);
     	return builder.build();
 	}
 	public static PositionFastaDataStore create(File positionFastaFile) throws IOException{

@@ -94,7 +94,7 @@ public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingS
 			}
 		};
         try {
-            FastaFileParser.create(fastaFile).accept(visitor);
+            FastaFileParser.create(fastaFile).parse(visitor);
         } catch (IOException e) {
             throw new RuntimeException("fasta file does not exist",e);
         }
