@@ -29,7 +29,7 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestQualitySequenceFastaRecordBuilder {
@@ -112,7 +112,7 @@ public class TestQualitySequenceFastaRecordBuilder {
     }
     @Test
     public void differrentFastaRecordShouldNotBeEqual(){
-    	NucleotideFastaRecord seq = new NucleotideSequenceFastaRecordBuilder(id, "ACGTACGT").build();
+    	NucleotideFastaRecord seq = new NucleotideFastaRecordBuilder(id, "ACGTACGT").build();
         assertFalse(sut.equals(seq));
     }
     @Test

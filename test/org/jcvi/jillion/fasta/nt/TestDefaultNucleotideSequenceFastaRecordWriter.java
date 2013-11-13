@@ -29,19 +29,19 @@ import java.nio.charset.Charset;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
-import org.jcvi.jillion.fasta.nt.NucleotideSequenceFastaRecordBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordBuilder;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriterBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestDefaultNucleotideSequenceFastaRecordWriter {
 	private final NucleotideFastaRecord record1 = 
-			new NucleotideSequenceFastaRecordBuilder("id_1", "ACGTACGT")
+			new NucleotideFastaRecordBuilder("id_1", "ACGTACGT")
 						.comment("a comment")
 						.build();
 		
 	private final NucleotideFastaRecord record2 = 
-			new NucleotideSequenceFastaRecordBuilder("id_2","AAAACCCCGGGGTTTT").build();
+			new NucleotideFastaRecordBuilder("id_2","AAAACCCCGGGGTTTT").build();
 	
 	@Test(expected = NullPointerException.class)
 	public void nullOutputStreamShouldThrowNPE(){

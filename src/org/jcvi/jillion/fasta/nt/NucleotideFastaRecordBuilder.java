@@ -25,30 +25,30 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.fasta.AbstractFastaRecordBuilder;
 /**
- * {@code NucleotideSequenceFastaRecordBuilder} is a builder class
+ * {@code NucleotideFastaRecordBuilder} is a builder class
  * that makes instances of {@link NucleotideSequenceFastaRecord}s.
  * Depending on the different parameters, this builder might
  * choose to return different implementations.
  * @author dkatzel
  *
  */
-public final class NucleotideSequenceFastaRecordBuilder extends AbstractFastaRecordBuilder<Nucleotide, NucleotideSequence, NucleotideFastaRecord>{
+public final class NucleotideFastaRecordBuilder extends AbstractFastaRecordBuilder<Nucleotide, NucleotideSequence, NucleotideFastaRecord>{
 	/**
-	 * Create a new {@link NucleotideSequenceFastaRecordBuilder}
+	 * Create a new {@link NucleotideFastaRecordBuilder}
 	 * instance that has the given id and sequence.  
 	 * @param id the id of the fasta record can not be null.
 	 * @param sequence the sequence of the fasta record; can not be null.
 	 * @throws NullPointerException if either id or sequence are null.
 	 */
-	public NucleotideSequenceFastaRecordBuilder(String id,
+	public NucleotideFastaRecordBuilder(String id,
 			NucleotideSequence sequence) {
 		super(id, sequence);
 	}
 	/**
 	 * Convenience constructor that converts a String into
 	 * a {@link NucleotideSequence}.  This is the same
-	 * as {@link #NucleotideSequenceFastaRecordBuilder(String, NucleotideSequence)
-	 * new NucleotideSequenceFastaRecordBuilder(id, new NucleotideSequenceBuilder(sequence).build())}.
+	 * as {@link #NucleotideFastaRecordBuilder(String, NucleotideSequence)
+	 * new NucleotideFastaRecordBuilder(id, new NucleotideSequenceBuilder(sequence).build())}.
 	 * @param id the id of the fasta record can not be null.
 	 * @param sequence the nucleotide sequence as a string.  May contain whitespace
 	 * which will get removed. can not be null.
@@ -58,7 +58,7 @@ public final class NucleotideSequenceFastaRecordBuilder extends AbstractFastaRec
      * @throws NullPointerException if either id or sequence are null.
      * @see NucleotideSequenceBuilder
 	 */
-	public NucleotideSequenceFastaRecordBuilder(String id,
+	public NucleotideFastaRecordBuilder(String id,
 			String sequence) {
 		super(id, new NucleotideSequenceBuilder(sequence).build());
 	}

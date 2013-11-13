@@ -134,7 +134,7 @@ final class DefaultNucleotideFastaFileDataStore{
 
 			@Override
 			public void visitEnd() {
-				NucleotideFastaRecord record = new NucleotideSequenceFastaRecordBuilder(currentId,builder.build())
+				NucleotideFastaRecord record = new NucleotideFastaRecordBuilder(currentId,builder.build())
 														.comment(currentComment)
 														.build();
 				fastaRecords.put(currentId, record);

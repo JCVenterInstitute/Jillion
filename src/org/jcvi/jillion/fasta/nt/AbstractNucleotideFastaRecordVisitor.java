@@ -49,7 +49,7 @@ public abstract class AbstractNucleotideFastaRecordVisitor extends  AbstractFast
 	@Override
 	protected final  void visitRecord(String id, String optionalComment,
 			String fullBody) {
-		NucleotideFastaRecord record = new NucleotideSequenceFastaRecordBuilder(id, fullBody)
+		NucleotideFastaRecord record = new NucleotideFastaRecordBuilder(id, fullBody)
 													.comment(optionalComment)
 													.build();
 		visitRecord(record);
