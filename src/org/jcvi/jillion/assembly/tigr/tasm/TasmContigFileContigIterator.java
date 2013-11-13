@@ -50,7 +50,7 @@ final class TasmContigFileContigIterator extends AbstractBlockingStreamingIterat
 
 	@Override
 	protected void backgroundThreadRunMethod() throws RuntimeException {
-		TasmFileVisitor visitor = new TasmFileVisitor() {
+		TasmVisitor visitor = new TasmVisitor() {
 			
 			@Override
 			public void halted() {
@@ -63,7 +63,7 @@ final class TasmContigFileContigIterator extends AbstractBlockingStreamingIterat
 			}
 			
 			@Override
-			public TasmContigVisitor visitContig(TasmContigVisitorCallback callback,
+			public TasmContigVisitor visitContig(TasmVisitorCallback callback,
 					String contigId) {
 				if(filter.accept(contigId)){
 					return new AbstractTasmContigBuilderVisitor(contigId, fullLengthSequences) {

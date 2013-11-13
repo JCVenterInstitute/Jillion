@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.jillion.assembly.tigr.tasm.TasmFileVisitor.TasmContigVisitorCallback.TasmContigVisitorMemento;
+import org.jcvi.jillion.assembly.tigr.tasm.TasmVisitor.TasmVisitorCallback.TasmVisitorMemento;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -36,7 +36,7 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 /**
  * {@code IndexedTasmFileDataStore} is a {@link TasmContigDataStore}
  * implementation that only stores the 
- * {@link TasmContigVisitorMemento}s for the 
+ * {@link TasmVisitorMemento}s for the 
  * contig ids in a tasm file 
  * that match the given {@link DataStoreFilter}.
  * This will keep memory usage small put require
@@ -49,23 +49,23 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 final class IndexedTasmFileDataStore implements TasmContigDataStore{
 
 	private final DataStore<Long> fullLengthSequenceDataStore;
-	private final TasmFileParser parser;
+	private final TasmVisitorHandler parser;
 	
-	private final Map<String, TasmContigVisitorMemento> mementos;
+	private final Map<String, TasmVisitorMemento> mementos;
 	
 	private volatile boolean closed=false;
 	
 	
 	public static TasmContigDataStore create(File tasmFile, DataStore<Long> fullLengthSequenceDataStore, DataStoreFilter filter) throws IOException{
 		IndexVisitor visitor = new IndexVisitor(filter);
-		TasmFileParser parser = TasmFileParser.create(tasmFile);
+		TasmVisitorHandler parser = TasmFileParser.create(tasmFile);
 		parser.accept(visitor);
 		return new IndexedTasmFileDataStore(parser, fullLengthSequenceDataStore, visitor.mementos);
 	}
 	
-	private IndexedTasmFileDataStore(TasmFileParser parser,
+	private IndexedTasmFileDataStore(TasmVisitorHandler parser,
 			DataStore<Long> fullLengthSequenceDataStore,
-			Map<String, TasmContigVisitorMemento> mementos) {
+			Map<String, TasmVisitorMemento> mementos) {
 		this.parser = parser;
 		this.fullLengthSequenceDataStore = fullLengthSequenceDataStore;
 		this.mementos = mementos;
@@ -95,7 +95,7 @@ final class IndexedTasmFileDataStore implements TasmContigDataStore{
 	@Override
 	public TasmContig get(String id) throws DataStoreException {
 		checkNotYetClosed();
-		TasmContigVisitorMemento memento = mementos.get(id);
+		TasmVisitorMemento memento = mementos.get(id);
 		if(memento==null){
 			return null;
 		}
@@ -140,9 +140,9 @@ final class IndexedTasmFileDataStore implements TasmContigDataStore{
 
 
 
-	private static final class IndexVisitor implements TasmFileVisitor{
+	private static final class IndexVisitor implements TasmVisitor{
 		private final DataStoreFilter filter;
-		private final Map<String, TasmContigVisitorMemento> mementos = new LinkedHashMap<String, TasmContigVisitorMemento>();
+		private final Map<String, TasmVisitorMemento> mementos = new LinkedHashMap<String, TasmVisitorMemento>();
 		
 		public IndexVisitor(DataStoreFilter filter) {
 			this.filter = filter;
@@ -150,7 +150,7 @@ final class IndexedTasmFileDataStore implements TasmContigDataStore{
 
 		@Override
 		public TasmContigVisitor visitContig(
-				TasmContigVisitorCallback callback, String contigId) {
+				TasmVisitorCallback callback, String contigId) {
 			if(filter.accept(contigId)){
 				if(!callback.canCreateMemento()){
 					throw new IllegalStateException("tasm parser must be able to create mementos");
@@ -175,11 +175,11 @@ final class IndexedTasmFileDataStore implements TasmContigDataStore{
 		
 	}
 
-	private class SingleContigVisitor implements TasmFileVisitor{
+	private class SingleContigVisitor implements TasmVisitor{
 		private TasmContig contig;
 		@Override
 		public TasmContigVisitor visitContig(
-				final TasmContigVisitorCallback callback, String contigId) {
+				final TasmVisitorCallback callback, String contigId) {
 			//assume first visit is the one we want
 			return new AbstractTasmContigBuilderVisitor(contigId, fullLengthSequenceDataStore) {
 				

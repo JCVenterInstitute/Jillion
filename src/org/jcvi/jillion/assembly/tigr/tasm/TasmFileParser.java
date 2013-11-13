@@ -31,8 +31,8 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.jillion.assembly.tigr.tasm.TasmFileVisitor.TasmContigVisitorCallback;
-import org.jcvi.jillion.assembly.tigr.tasm.TasmFileVisitor.TasmContigVisitorCallback.TasmContigVisitorMemento;
+import org.jcvi.jillion.assembly.tigr.tasm.TasmVisitor.TasmVisitorCallback;
+import org.jcvi.jillion.assembly.tigr.tasm.TasmVisitor.TasmVisitorCallback.TasmVisitorMemento;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
@@ -58,7 +58,7 @@ import org.jcvi.jillion.internal.core.io.TextLineParser;
  * @author dkatzel
  *
  */
-public abstract class TasmFileParser {
+public abstract class TasmFileParser implements TasmVisitorHandler{
     /**
      * Each contig data is separated by a pipe ('|').
      */
@@ -83,15 +83,15 @@ public abstract class TasmFileParser {
      * @throws IOException if tasmFile does not exist
      * or is not readable.
      */
-    public static TasmFileParser create(File tasmFile) throws IOException{
+    public static TasmVisitorHandler create(File tasmFile) throws IOException{
     	return new FileBasedTasmFileParser(tasmFile);
     }
     /**
      * Create a new instance of {@link TasmFileParser}
      * that will parse the given tasm encoded {@link InputStream}.
-     * InputStream parsers can not create {@link TasmContigVisitorMemento}
-     * via {@link TasmContigVisitorCallback#createMemento()}
-     * and {@link TasmContigVisitorCallback#canCreateMemento()} 
+     * InputStream parsers can not create {@link TasmVisitorMemento}
+     * via {@link TasmVisitorCallback#createMemento()}
+     * and {@link TasmVisitorCallback#canCreateMemento()} 
      * will always return {@code false}.
      * @param in a tasm encoded {@link InputStream}.
      * @return a new {@link TasmFileParser} instance
@@ -100,18 +100,15 @@ public abstract class TasmFileParser {
      * @throws NullPointerException if tasmFile is null.
      * or is not readable.
      */
-    public static TasmFileParser create(InputStream in){
+    public static TasmVisitorHandler create(InputStream in){
     	return new InputStreamBasedTasmFileParser(in);
     }
     private TasmFileParser(){
     	//can not instantiate outside of this file
     }
     
-    protected abstract void accept(TasmFileVisitor visitor) throws IOException;
-    
-    protected abstract void accept(TasmFileVisitor visitor, TasmContigVisitorMemento memento) throws IOException;
-    
-    protected final void parseTasm(TextLineParser parser, TasmFileVisitor visitor) throws IOException{
+     
+    protected final void parseTasm(TextLineParser parser, TasmVisitor visitor) throws IOException{
          
 
          ParserState parserState = new ParserState(visitor);
@@ -181,13 +178,13 @@ public abstract class TasmFileParser {
 		}
 
 		@Override
-		public TasmContigVisitorMemento createMemento() {
+		public TasmVisitorMemento createMemento() {
 			return new OffsetMemento(offset);
 		}
     	
     }
     
-    private static final class OffsetMemento implements TasmContigVisitorMemento{
+    private static final class OffsetMemento implements TasmVisitorMemento{
     	private final long offset;
 
 		public OffsetMemento(long offset) {
@@ -207,13 +204,13 @@ public abstract class TasmFileParser {
 		}
 
 		@Override
-		public TasmContigVisitorMemento createMemento() {
+		public TasmVisitorMemento createMemento() {
 			throw new UnsupportedOperationException("can not create mementos");
 		}
     	
     }
     
-    private abstract static class AbstractCallback implements TasmContigVisitorCallback{
+    private abstract static class AbstractCallback implements TasmVisitorCallback{
     	private volatile boolean keepParsing=true;   	
     	
     	@Override
@@ -231,7 +228,7 @@ public abstract class TasmFileParser {
      * {@code ParserState} is an object
      * that maintains the current {@link ContigState},
      * {@link ReadState}, {@link TasmContigVisitor}
-     * and {@link TasmContigVisitorCallback}s
+     * and {@link TasmVisitorCallback}s
      * to simplify code and reduce cyclomatic complexity.
      * @author dkatzel
      *
@@ -242,11 +239,11 @@ public abstract class TasmFileParser {
          AbstractCallback callback=null;
          TasmContigVisitor contigVisitor=null;
          
-         private final TasmFileVisitor visitor;
+         private final TasmVisitor visitor;
          
          private long beginContigHeaderOffset;
          
-         public ParserState(TasmFileVisitor visitor) {
+         public ParserState(TasmVisitor visitor) {
 			this.visitor = visitor;
 		}
 
@@ -373,7 +370,7 @@ public abstract class TasmFileParser {
     	
     	
     	
-    	public TasmContigVisitor handleContigHeader(AbstractCallback callback, TasmFileVisitor visitor) {
+    	public TasmContigVisitor handleContigHeader(AbstractCallback callback, TasmVisitor visitor) {
      		
     		TasmContigVisitor contigVisitor =visitor.visitContig(callback, contigId);
     		if(callback.keepParsing() && contigVisitor !=null){
@@ -486,7 +483,7 @@ public abstract class TasmFileParser {
 		}
 
 		@Override
-		protected void accept(TasmFileVisitor visitor) throws IOException {
+		public void accept(TasmVisitor visitor) throws IOException {
 			InputStream in = new BufferedInputStream(new FileInputStream(tasmFile));
 			TextLineParser parser = new TextLineParser(in);
 			try{
@@ -497,8 +494,8 @@ public abstract class TasmFileParser {
 		}
 
 		@Override
-		protected void accept(TasmFileVisitor visitor,
-				TasmContigVisitorMemento memento) throws IOException {
+		public void accept(TasmVisitor visitor,
+				TasmVisitorMemento memento) throws IOException {
 			if(!(memento instanceof OffsetMemento)){
 				throw new IllegalArgumentException("unknown memento type");
 			}
@@ -518,6 +515,11 @@ public abstract class TasmFileParser {
 			}
 			
 		}
+
+		@Override
+		public boolean canAccept() {
+			return true;
+		}
 		
 		
     	
@@ -536,8 +538,8 @@ public abstract class TasmFileParser {
 		}
 
 		@Override
-		protected void accept(TasmFileVisitor visitor) throws IOException {
-			if(!in.isOpen()){
+		public void accept(TasmVisitor visitor) throws IOException {
+			if(!canAccept()){
 				throw new IOException("inputstream is closed");
 			}
 			TextLineParser parser = new TextLineParser(in);
@@ -547,10 +549,14 @@ public abstract class TasmFileParser {
 				IOUtil.closeAndIgnoreErrors(parser, in);
 			}			
 		}
+		@Override
+		public boolean canAccept() {
+			return in.isOpen();
+		}
 
 		@Override
-		protected void accept(TasmFileVisitor visitor,
-				TasmContigVisitorMemento memento) throws IOException {
+		public void accept(TasmVisitor visitor,
+				TasmVisitorMemento memento) throws IOException {
 			throw new UnsupportedOperationException("mementos not supported");
 			
 		}

@@ -49,7 +49,7 @@ final class DefaultTasmFileContigDataStore {
 		//can not instantiate.
 	}
 	
-	private static final class Visitor implements TasmFileVisitor{
+	private static final class Visitor implements TasmVisitor{
 		private final DataStoreFilter filter;
 		private final DataStore<Long> fullLengthSequenceDataStore;
 		private final Map<String, TasmContig> contigs = new LinkedHashMap<String, TasmContig>();
@@ -61,7 +61,7 @@ final class DefaultTasmFileContigDataStore {
 
 		@Override
 		public TasmContigVisitor visitContig(
-				TasmContigVisitorCallback callback, final String contigId) {
+				TasmVisitorCallback callback, final String contigId) {
 			if(!filter.accept(contigId)){
 				return null;
 			}

@@ -22,7 +22,7 @@ package org.jcvi.jillion.assembly.tigr.tasm;
 
 import java.util.Date;
 
-import org.jcvi.jillion.assembly.tigr.tasm.TasmFileVisitor.TasmContigVisitorCallback;
+import org.jcvi.jillion.assembly.tigr.tasm.TasmVisitor.TasmVisitorCallback;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -90,7 +90,7 @@ public interface TasmContigVisitor {
 	 * parsing but has not
 	 * actually finished the parsing this contig,
 	 * this will happen only if 
-	 * a visitor calls {@link TasmContigVisitorCallback#halt()}.
+	 * a visitor calls {@link TasmVisitorCallback#halt()}.
 	 */
 	void halted();
 	/**

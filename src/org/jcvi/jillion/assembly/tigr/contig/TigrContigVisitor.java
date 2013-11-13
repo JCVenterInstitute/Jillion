@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.tigr.contig;
 
-import org.jcvi.jillion.assembly.tigr.contig.TigrContigFileVisitor.TigrContigVisitorCallback;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;

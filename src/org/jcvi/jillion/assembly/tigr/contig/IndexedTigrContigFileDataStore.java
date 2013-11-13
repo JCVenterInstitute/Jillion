@@ -52,12 +52,12 @@ final class IndexedTigrContigFileDataStore implements TigrContigDataStore {
 	private final DataStoreFilter filter;
 	private final File contigFile;
 	private volatile boolean closed=false;
-	private final TigrContigFileParser parser;
+	private final TigrContigParser parser;
 	
 	public static TigrContigDataStore create(File contigFile, DataStore<Long> fullLengthSequences, DataStoreFilter filter) throws IOException{
-		TigrContigFileParser parser =TigrContigFileParser.create(contigFile);
+		TigrContigParser parser =TigrContigFileParser.create(contigFile);
 		IndexedDataStorBuilder visitor = new IndexedDataStorBuilder(filter);
-		parser.accept(visitor);
+		parser.parse(visitor);
 		return visitor.build(contigFile, fullLengthSequences, parser);
 	}
 	
@@ -65,7 +65,7 @@ final class IndexedTigrContigFileDataStore implements TigrContigDataStore {
 	private IndexedTigrContigFileDataStore(File contigFile,
 			DataStoreFilter filter,
 			DataStore<Long> fullLengthSequences,
-			TigrContigFileParser parser,
+			TigrContigParser parser,
 			Map<String, TigrContigVisitorMemento> mementos) {
 		this.contigFile = contigFile;
 		this.filter = filter;
@@ -97,7 +97,7 @@ final class IndexedTigrContigFileDataStore implements TigrContigDataStore {
 		}
 		SingleContigVisitor visitor = new SingleContigVisitor();
 		try {
-			parser.accept(visitor, memento);
+			parser.parse(visitor, memento);
 		} catch (IOException e) {
 			throw new DataStoreException("error parsing contig file to get " + id, e);
 		}
@@ -206,7 +206,7 @@ final class IndexedTigrContigFileDataStore implements TigrContigDataStore {
 		
 		public TigrContigDataStore build(File contigFile,
 				DataStore<Long> fullLengthSequences,
-				TigrContigFileParser parser){
+				TigrContigParser parser){
 			return new IndexedTigrContigFileDataStore(contigFile,
 					filter,
 					fullLengthSequences,

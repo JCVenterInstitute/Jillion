@@ -56,18 +56,18 @@ final class IndexedAsmFileUnitigDataStore  implements AsmUnitigDataStore{
 
 	public static AsmUnitigDataStore create(File asmFile, DataStore<NucleotideSequence> fullLengthSequences, DataStoreFilter filter) throws IOException{
 		VisitorBuilder visitorBuilder = new VisitorBuilder(filter);
-		AsmFileParser parser = AsmFileParser.create(asmFile);
-		parser.accept(visitorBuilder);
+		AsmParser parser = AsmFileParser.create(asmFile);
+		parser.parse(visitorBuilder);
 		return visitorBuilder.build(parser, fullLengthSequences);
 	}
 
 	private final  DataStore<NucleotideSequence> fullLengthSequences;
 	private final Map<String, AsmVisitorMemento> contigMementos;
-	private final AsmFileParser parser;
+	private final AsmParser parser;
 	
 	private volatile boolean closed =false;
 	
-	public IndexedAsmFileUnitigDataStore(AsmFileParser parser,
+	public IndexedAsmFileUnitigDataStore(AsmParser parser,
 			DataStore<NucleotideSequence> fullLengthSequences,
 			Map<String, AsmVisitorMemento> contigMementos) {
 		this.parser = parser;
@@ -103,12 +103,12 @@ final class IndexedAsmFileUnitigDataStore  implements AsmUnitigDataStore{
 		//3. parse unitig starting from memento again to build unitig object
 		try {
 			UnitigReadIdCollector visitor = new UnitigReadIdCollector(id);
-			parser.accept(visitor, memento);
+			parser.parse(visitor, memento);
 			Set<String> reads = visitor.getReadsInContig();
 			ValidRangeVisitor validRangeVisitor = new ValidRangeVisitor(reads);
-			parser.accept(validRangeVisitor);
+			parser.parse(validRangeVisitor);
 			SingleContigVisitorBuilder contigBuilder = new SingleContigVisitorBuilder(validRangeVisitor.getValidRanges());
-			parser.accept(contigBuilder, memento);
+			parser.parse(contigBuilder, memento);
 			return contigBuilder.build();
 		} catch (IOException e) {
 			throw new DataStoreException("error parsing asm file", e);
@@ -243,7 +243,7 @@ final class IndexedAsmFileUnitigDataStore  implements AsmUnitigDataStore{
 			
 		}
 		
-		public AsmUnitigDataStore build(AsmFileParser parser, DataStore<NucleotideSequence> fullLengthSequences){
+		public AsmUnitigDataStore build(AsmParser parser, DataStore<NucleotideSequence> fullLengthSequences){
 			return new IndexedAsmFileUnitigDataStore(parser, fullLengthSequences, mementos);
 		}
 	}

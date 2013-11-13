@@ -106,7 +106,7 @@ public class AceAdapterContigFileDataStore implements AceFileDataStore{
 			}
 		};
 		
-		TigrContigFileParser.create(contigFile).accept(visitor);
+		TigrContigFileParser.create(contigFile).parse(visitor);
 		return datastore;
     }
     

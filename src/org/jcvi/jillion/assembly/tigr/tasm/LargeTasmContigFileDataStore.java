@@ -144,7 +144,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 		
 		@Override
 		protected void backgroundThreadRunMethod() throws RuntimeException {
-			TasmFileVisitor visitor = new TasmFileVisitor() {
+			TasmVisitor visitor = new TasmVisitor() {
 				
 				@Override
 				public void halted() {
@@ -157,7 +157,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 				}
 				
 				@Override
-				public TasmContigVisitor visitContig(TasmContigVisitorCallback callback,
+				public TasmContigVisitor visitContig(TasmVisitorCallback callback,
 						String contigId) {
 					if(filter.accept(contigId)){
 						blockingPut(contigId);
@@ -174,7 +174,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 		}
 	}
 	
-	private static final class ContainsVisitor implements TasmFileVisitor{
+	private static final class ContainsVisitor implements TasmVisitor{
 		private final String id;
 		private boolean contains=false;
 		
@@ -184,7 +184,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 
 		@Override
 		public TasmContigVisitor visitContig(
-				TasmContigVisitorCallback callback, String contigId) {
+				TasmVisitorCallback callback, String contigId) {
 			if(id.equals(contigId)){
 				contains=true;
 				callback.halt();
@@ -208,7 +208,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 		
 	}
 	
-	private class GetVisitor implements TasmFileVisitor{
+	private class GetVisitor implements TasmVisitor{
 		private final String id;
 		
 		private TasmContig contig;
@@ -219,7 +219,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 
 		@Override
 		public TasmContigVisitor visitContig(
-				final TasmContigVisitorCallback callback, String contigId) {
+				final TasmVisitorCallback callback, String contigId) {
 			if(id.equals(contigId)){
 				return new AbstractTasmContigBuilderVisitor(contigId, fullLengthSequences) {
 					
@@ -253,12 +253,12 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 	
 	
 	
-	private class SizeVisitor implements TasmFileVisitor{
+	private class SizeVisitor implements TasmVisitor{
 		private long size = 0L;
 
 		@Override
 		public TasmContigVisitor visitContig(
-				TasmContigVisitorCallback callback, String contigId) {
+				TasmVisitorCallback callback, String contigId) {
 			if(filter.accept(contigId)){
 				size++;
 			}
