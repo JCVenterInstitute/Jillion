@@ -102,7 +102,7 @@ public class TestSffWriterVisitor {
 		ResourceHelper resources = new ResourceHelper(TestSffWriterVisitor.class);
 		
 		File inputFile = resources.getFile("files/5readExample_noXML.sff");
-		SffFileParser.create(inputFile).accept(visitor);
+		SffFileParser.create(inputFile).parse(visitor);
 		
 		InputStream expectedInputStream = new BufferedInputStream(new FileInputStream(inputFile));
 		InputStream actualInputStream = new BufferedInputStream(new FileInputStream(output));

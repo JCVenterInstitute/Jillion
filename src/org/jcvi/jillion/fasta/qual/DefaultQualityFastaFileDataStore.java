@@ -54,7 +54,7 @@ final class DefaultQualityFastaFileDataStore {
     
     public static QualityFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
     	DefaultQualityFastaFileDataStoreBuilder builder = createBuilder(filter);
-    	FastaFileParser.create(fastaFile).accept(builder);
+    	FastaFileParser.create(fastaFile).parse(builder);
     	return builder.build();
     }
     
@@ -63,7 +63,7 @@ final class DefaultQualityFastaFileDataStore {
     }
     public static QualityFastaDataStore create(InputStream fastaStream, DataStoreFilter filter) throws IOException{
     	DefaultQualityFastaFileDataStoreBuilder builder = createBuilder(filter);
-    	FastaFileParser.create(fastaStream).accept(builder);
+    	FastaFileParser.create(fastaStream).parse(builder);
     	return builder.build();
     }
 

@@ -49,7 +49,7 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 final class IndexedTasmFileDataStore implements TasmContigDataStore{
 
 	private final DataStore<Long> fullLengthSequenceDataStore;
-	private final TasmVisitorHandler parser;
+	private final TasmParser parser;
 	
 	private final Map<String, TasmVisitorMemento> mementos;
 	
@@ -58,12 +58,12 @@ final class IndexedTasmFileDataStore implements TasmContigDataStore{
 	
 	public static TasmContigDataStore create(File tasmFile, DataStore<Long> fullLengthSequenceDataStore, DataStoreFilter filter) throws IOException{
 		IndexVisitor visitor = new IndexVisitor(filter);
-		TasmVisitorHandler parser = TasmFileParser.create(tasmFile);
-		parser.accept(visitor);
+		TasmParser parser = TasmFileParser.create(tasmFile);
+		parser.parse(visitor);
 		return new IndexedTasmFileDataStore(parser, fullLengthSequenceDataStore, visitor.mementos);
 	}
 	
-	private IndexedTasmFileDataStore(TasmVisitorHandler parser,
+	private IndexedTasmFileDataStore(TasmParser parser,
 			DataStore<Long> fullLengthSequenceDataStore,
 			Map<String, TasmVisitorMemento> mementos) {
 		this.parser = parser;
@@ -101,7 +101,7 @@ final class IndexedTasmFileDataStore implements TasmContigDataStore{
 		}
 		SingleContigVisitor visitor = new SingleContigVisitor();
 		try {
-			parser.accept(visitor, memento);
+			parser.parse(visitor, memento);
 			return visitor.contig;
 		} catch (IOException e) {
 			throw new DataStoreException("error parsing contig " + id, e);

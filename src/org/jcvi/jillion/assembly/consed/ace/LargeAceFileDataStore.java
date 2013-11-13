@@ -156,7 +156,7 @@ final class LargeAceFileDataStore implements AceFileDataStore{
 		SingleContigVisitor visitor = new SingleContigVisitor(id);
 
 		try {
-			AceFileParser.create(aceFile).accept(visitor);
+			AceFileParser.create(aceFile).parse(visitor);
 		} catch (IOException e) {
 			throw new DataStoreException("error parsing ace file",e);
 		}
@@ -219,7 +219,7 @@ final class LargeAceFileDataStore implements AceFileDataStore{
 	private void setTagLists() throws DataStoreException {
 		try {
 			AceTagsVisitor visitor = new AceTagsVisitor();
-			AceFileParser.create(aceFile).accept(visitor);
+			AceFileParser.create(aceFile).parse(visitor);
 			if(!visitor.isCompletlyParsed()){
 				throw new DataStoreException("could not completely parse tags from ace file");
 			}
@@ -250,7 +250,7 @@ final class LargeAceFileDataStore implements AceFileDataStore{
 		//haven't parsed num contigs yet 
 		SizeVisitor visitor = new SizeVisitor();
 		try {
-			AceFileParser.create(aceFile).accept(visitor);
+			AceFileParser.create(aceFile).parse(visitor);
 		} catch (IOException e) {
 			throw new DataStoreException("error parsing number of contigs",e);
 		}
@@ -473,7 +473,7 @@ private final AceContigReadVisitor readVisitor = new AceContigReadVisitor() {
 
             };
             try {
-                AceFileParser.create(aceFile).accept(visitor);
+                AceFileParser.create(aceFile).parse(visitor);
             } catch (Exception e) {
                 //some kind of exception occured while we were parsing the ace file
                 throw new RuntimeException("error while iterating over ace file",e);
@@ -607,7 +607,7 @@ private final AceContigReadVisitor readVisitor = new AceContigReadVisitor() {
         protected void backgroundThreadRunMethod() {
         	AceFileVisitor builder = new InnerVisitor();
             try {
-                AceFileParser.create(aceFile).accept(builder);
+                AceFileParser.create(aceFile).parse(builder);
             } catch (Exception e) {
                 //some kind of exception occured while we were parsing the ace file
                 throw new RuntimeException("error while iterating over ace file",e);

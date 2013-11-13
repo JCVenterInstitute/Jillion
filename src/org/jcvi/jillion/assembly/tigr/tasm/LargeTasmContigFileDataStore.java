@@ -84,7 +84,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 		}
 		GetVisitor visitor = new GetVisitor(id);
 		try {
-			TasmFileParser.create(contigFile).accept(visitor);
+			TasmFileParser.create(contigFile).parse(visitor);
 			return visitor.getContig();
 		} catch (IOException e) {
 			throw new DataStoreException(ERROR_PARSING_CONTIG_FILE, e);
@@ -100,7 +100,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 		}
 		ContainsVisitor visitor = new ContainsVisitor(id);
 		try {
-			TasmFileParser.create(contigFile).accept(visitor);
+			TasmFileParser.create(contigFile).parse(visitor);
 			return visitor.contains();
 		} catch (IOException e) {
 			throw new DataStoreException(ERROR_PARSING_CONTIG_FILE, e);
@@ -112,7 +112,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 		if(size ==null){
 			SizeVisitor visitor = new SizeVisitor();
 			try {
-				TasmFileParser.create(contigFile).accept(visitor);
+				TasmFileParser.create(contigFile).parse(visitor);
 				size = visitor.getSize();
 			} catch (IOException e) {
 				throw new DataStoreException(ERROR_PARSING_CONTIG_FILE, e);
@@ -167,7 +167,7 @@ final class LargeTasmContigFileDataStore implements TasmContigDataStore{
 			};
 			
 			try {
-				TasmFileParser.create(contigFile).accept(visitor);
+				TasmFileParser.create(contigFile).parse(visitor);
 			} catch (IOException e) {
 				throw new RuntimeException(ERROR_PARSING_CONTIG_FILE,e);
 			}

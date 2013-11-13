@@ -58,7 +58,7 @@ import org.jcvi.jillion.internal.core.io.TextLineParser;
  * @author dkatzel
  *
  */
-public abstract class TasmFileParser implements TasmVisitorHandler{
+public abstract class TasmFileParser implements TasmParser{
     /**
      * Each contig data is separated by a pipe ('|').
      */
@@ -83,7 +83,7 @@ public abstract class TasmFileParser implements TasmVisitorHandler{
      * @throws IOException if tasmFile does not exist
      * or is not readable.
      */
-    public static TasmVisitorHandler create(File tasmFile) throws IOException{
+    public static TasmParser create(File tasmFile) throws IOException{
     	return new FileBasedTasmFileParser(tasmFile);
     }
     /**
@@ -100,7 +100,7 @@ public abstract class TasmFileParser implements TasmVisitorHandler{
      * @throws NullPointerException if tasmFile is null.
      * or is not readable.
      */
-    public static TasmVisitorHandler create(InputStream in){
+    public static TasmParser create(InputStream in){
     	return new InputStreamBasedTasmFileParser(in);
     }
     private TasmFileParser(){
@@ -483,7 +483,7 @@ public abstract class TasmFileParser implements TasmVisitorHandler{
 		}
 
 		@Override
-		public void accept(TasmVisitor visitor) throws IOException {
+		public void parse(TasmVisitor visitor) throws IOException {
 			InputStream in = new BufferedInputStream(new FileInputStream(tasmFile));
 			TextLineParser parser = new TextLineParser(in);
 			try{
@@ -494,7 +494,7 @@ public abstract class TasmFileParser implements TasmVisitorHandler{
 		}
 
 		@Override
-		public void accept(TasmVisitor visitor,
+		public void parse(TasmVisitor visitor,
 				TasmVisitorMemento memento) throws IOException {
 			if(!(memento instanceof OffsetMemento)){
 				throw new IllegalArgumentException("unknown memento type");
@@ -517,7 +517,7 @@ public abstract class TasmFileParser implements TasmVisitorHandler{
 		}
 
 		@Override
-		public boolean canAccept() {
+		public boolean canParse() {
 			return true;
 		}
 		
@@ -538,8 +538,8 @@ public abstract class TasmFileParser implements TasmVisitorHandler{
 		}
 
 		@Override
-		public void accept(TasmVisitor visitor) throws IOException {
-			if(!canAccept()){
+		public void parse(TasmVisitor visitor) throws IOException {
+			if(!canParse()){
 				throw new IOException("inputstream is closed");
 			}
 			TextLineParser parser = new TextLineParser(in);
@@ -550,12 +550,12 @@ public abstract class TasmFileParser implements TasmVisitorHandler{
 			}			
 		}
 		@Override
-		public boolean canAccept() {
+		public boolean canParse() {
 			return in.isOpen();
 		}
 
 		@Override
-		public void accept(TasmVisitor visitor,
+		public void parse(TasmVisitor visitor,
 				TasmVisitorMemento memento) throws IOException {
 			throw new UnsupportedOperationException("mementos not supported");
 			

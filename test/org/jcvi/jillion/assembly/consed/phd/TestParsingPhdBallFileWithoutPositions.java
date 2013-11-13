@@ -45,7 +45,7 @@ public class TestParsingPhdBallFileWithoutPositions {
 		
 		File phdBallFile = helper.getFile("files/noPositions.phd.ball.1");
 		
-		PhdBallVisitorHandler parser = PhdBallParser.create(phdBallFile);
+		PhdBallParser parser = PhdBallFileParser.create(phdBallFile);
 		
 		final List<Phd> actualList = new ArrayList<Phd>();
 		

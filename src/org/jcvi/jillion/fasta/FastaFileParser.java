@@ -42,7 +42,7 @@ import org.jcvi.jillion.internal.core.io.TextLineParser;
  * @author dkatzel
  *
  */
-public abstract class FastaFileParser implements FastaVisitorHandler{
+public abstract class FastaFileParser implements FastaParser{
 	/**
 	 * Pattern to match to find the defline for each record in
 	 * the fasta file.  Group 1 is the id and Group 3 is the optional
@@ -58,7 +58,7 @@ public abstract class FastaFileParser implements FastaVisitorHandler{
 	 * @throws IOException if there is a problem opening the file.
 	 * @throws NullPointerException if fastaFile is null.
 	 */
-	public static FastaVisitorHandler create(File fastaFile) throws IOException{
+	public static FastaParser create(File fastaFile) throws IOException{
 		return new FileFastaParser(fastaFile);
 	}
 	/**
@@ -71,7 +71,7 @@ public abstract class FastaFileParser implements FastaVisitorHandler{
 	 * @param inputStream the {@link InputStream} to parse.
 	 * @throws NullPointerException if inputStream is null.
 	 */
-	public static FastaVisitorHandler create(InputStream inputStream){
+	public static FastaParser create(InputStream inputStream){
 		return new InputStreamFastaParser(inputStream);
 	}
 	/**
@@ -83,7 +83,7 @@ public abstract class FastaFileParser implements FastaVisitorHandler{
 	 * @throws IOException if there is a problem parsing the fasta file.
 	 * @throws NullPointerException if visitor is null.
 	 */
-	public void accept(FastaVisitor visitor) throws IOException{
+	public void parse(FastaVisitor visitor) throws IOException{
 		checkNotNull(visitor);
 		InputStream in = null;		
 		try{
@@ -253,7 +253,7 @@ public abstract class FastaFileParser implements FastaVisitorHandler{
 		protected AbstractFastaVisitorCallback createNewCallback(long currentOffset, AtomicBoolean keepParsing) {
 			return new MementoCallback(currentOffset, keepParsing);
 		}
-		public void accept(FastaVisitor visitor, FastaVisitorMemento memento) throws IOException{
+		public void parse(FastaVisitor visitor, FastaVisitorMemento memento) throws IOException{
 			if(!(memento instanceof OffsetMemento)){
 				throw new IllegalStateException("unknown memento instance : "+memento);
 			}
@@ -275,7 +275,7 @@ public abstract class FastaFileParser implements FastaVisitorHandler{
 			return new BufferedInputStream(new FileInputStream(fastaFile));
 		}
 		@Override
-		public boolean canAccept() {
+		public boolean canParse() {
 			return true;
 		}
 		
@@ -291,14 +291,14 @@ public abstract class FastaFileParser implements FastaVisitorHandler{
 			return new NoMementoCallback(keepParsing);
 		}
 		@Override
-		public synchronized void accept(FastaVisitor visitor) throws IOException {
+		public synchronized void parse(FastaVisitor visitor) throws IOException {
 			//wrap in synchronized block so we only
 			//can parse one visitor at a time (probably at all)
-			super.accept(visitor);
+			super.parse(visitor);
 		}
 
 		@Override
-		public void accept(FastaVisitor visitor, FastaVisitorMemento memento)
+		public void parse(FastaVisitor visitor, FastaVisitorMemento memento)
 				throws IOException {
 			//we probably will never see this in real usage
 			//since inputstream implementation can't make mementors...
@@ -307,13 +307,13 @@ public abstract class FastaFileParser implements FastaVisitorHandler{
 
 		@Override
 		protected InputStream getInputStream() throws IOException {
-			if(canAccept()){
+			if(canParse()){
 				return inputStream;
 			}
 			throw new IllegalStateException("can not accept visitor - inputstream is closed");			
 		}
 		@Override
-		public boolean canAccept() {
+		public boolean canParse() {
 			return inputStream.isOpen();
 		}
 		

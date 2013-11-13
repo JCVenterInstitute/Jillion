@@ -112,7 +112,7 @@ final class ManifestIndexed454SffFileDataStore implements SffFileDataStore{
 	 */
 	public static SffFileDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
 		ManifestCreatorVisitor visitor = new ManifestCreatorVisitor(sffFile, filter);
-		SffFileParser.create(sffFile).accept(visitor);
+		SffFileParser.create(sffFile).parse(visitor);
 		//there is a valid sff formatted manifest inside the sff file
 		if(visitor.isUseableManifest()){
 			return new ManifestIndexed454SffFileDataStore(visitor);

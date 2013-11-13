@@ -58,7 +58,7 @@ final class IndexedAceFileDataStore implements AceFileDataStore{
     private final List<ConsensusAceTag> consensusTags;
     private final List<ReadAceTag> readTags;
    
-    private final AceVisitorHandler parser;
+    private final AceParser parser;
     private final long totalNumberOfReads;
     
     private volatile boolean closed=false;
@@ -67,13 +67,13 @@ final class IndexedAceFileDataStore implements AceFileDataStore{
     	if(filter==null){
     		throw new NullPointerException("filter can not be null");
     	}
-    	AceVisitorHandler parser = AceFileParser.create(aceFile);
+    	AceParser parser = AceFileParser.create(aceFile);
     	VisitorBuilder visitorBuilder = new VisitorBuilder(filter);
-    	parser.accept(visitorBuilder);
+    	parser.parse(visitorBuilder);
     	return new IndexedAceFileDataStore(visitorBuilder, parser);
     }
     
-    private IndexedAceFileDataStore(VisitorBuilder builder, AceVisitorHandler parser){    	
+    private IndexedAceFileDataStore(VisitorBuilder builder, AceParser parser){    	
     	this.parser = parser;
     	this.mementos = builder.mementos;
     	this.wholeAssemblyTags = builder.wholeAssemblyTags;
@@ -109,7 +109,7 @@ final class IndexedAceFileDataStore implements AceFileDataStore{
 		AceFileVisitorMemento memento = mementos.get(id);
 		SingleAceFileVisitor singleAceFileVisitor = new SingleAceFileVisitor();
 		try{
-			parser.accept(singleAceFileVisitor, memento);
+			parser.parse(singleAceFileVisitor, memento);
 			return singleAceFileVisitor.getContig();
 		}catch(IOException e){
 			throw new DataStoreException("error re-parsing contig "+ id ,e);

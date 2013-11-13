@@ -115,7 +115,7 @@ public class TestAceFileParserStopParsingMiddleContig {
 			
 		};
 		
-		AceFileParser.create(aceFile).accept(visitor);
+		AceFileParser.create(aceFile).parse(visitor);
 		assertTrue(visitedHalted.get());
 	}
 	@Test
@@ -188,7 +188,7 @@ public class TestAceFileParserStopParsingMiddleContig {
 		};
 			
 			
-		AceFileParser.create(aceFile).accept(visitor2);
+		AceFileParser.create(aceFile).parse(visitor2);
 		assertTrue(visitHalted.get());
 	}
 

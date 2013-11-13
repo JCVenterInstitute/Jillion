@@ -36,13 +36,13 @@ public class AceTestUtil {
 	private AceTestUtil(){
 		//can not instantiate
 	}
-	public static AceVisitorHandler createAceHandlerFor(final AceContig contig){
+	public static AceParser createAceHandlerFor(final AceContig contig){
 		return new SingleContigAceHandler(contig);
 	}
 	
 	
 	
-	private static class SingleContigAceHandler implements AceVisitorHandler{
+	private static class SingleContigAceHandler implements AceParser{
 
 		private final AceContig contig;
 		
@@ -51,7 +51,7 @@ public class AceTestUtil {
 		}
 
 		@Override
-		public void accept(AceFileVisitor visitor) throws IOException {
+		public void parse(AceFileVisitor visitor) throws IOException {
 			if(visitor==null){
 				throw new NullPointerException("visitor can not be null");
 			}
@@ -68,14 +68,14 @@ public class AceTestUtil {
 		}
 
 		@Override
-		public void accept(AceFileVisitor visitor,
+		public void parse(AceFileVisitor visitor,
 				AceFileVisitorMemento memento) throws IOException {
 			if(!(memento instanceof Memento)){
 				throw new IllegalArgumentException("invalid memento type");
 			}
 			String contigIdToParse = ((Memento)memento).contigId;
 			if(contig.getId().equals(contigIdToParse)){
-				accept(visitor);
+				parse(visitor);
 			}else{
 				throw new IllegalArgumentException("unknown contig id "+ contigIdToParse);
 			}
@@ -108,7 +108,7 @@ public class AceTestUtil {
 		}
 
 		@Override
-		public boolean canAccept() {
+		public boolean canParse() {
 			return true;
 		}
 		

@@ -33,7 +33,7 @@ import org.jcvi.jillion.assembly.consed.ace.AceContigVisitor;
 import org.jcvi.jillion.assembly.consed.ace.AceFileDataStore;
 import org.jcvi.jillion.assembly.consed.ace.AceFileDataStoreBuilder;
 import org.jcvi.jillion.assembly.consed.ace.AceFileVisitorCallback;
-import org.jcvi.jillion.assembly.consed.ace.AceVisitorHandler;
+import org.jcvi.jillion.assembly.consed.ace.AceParser;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
@@ -48,9 +48,9 @@ public class TestAceTestUtil {
 												.build();
 		final AceContig expected = datastore.get("22934-PB1");
 		
-		AceVisitorHandler sut = AceTestUtil.createAceHandlerFor(expected);
+		AceParser sut = AceTestUtil.createAceHandlerFor(expected);
 		
-		sut.accept(new AbstractAceFileVisitor() {
+		sut.parse(new AbstractAceFileVisitor() {
 
 			@Override
 			public AceContigVisitor visitContig(

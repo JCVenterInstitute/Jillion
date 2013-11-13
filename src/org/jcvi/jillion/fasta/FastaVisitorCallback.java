@@ -34,12 +34,12 @@ package org.jcvi.jillion.fasta;
 public interface FastaVisitorCallback {
 	/**
 	 * {@code FastaVisitorMemento} is a marker
-	 * interface that {@link FastaVisitorHandler}
+	 * interface that {@link FastaParser}
 	 * instances can use to "rewind" back
 	 * to the position in its fasta file
 	 * in order to revisit portions of the fasta file. 
 	 * {@link FastaVisitorMemento} should only be used
-	 * by the {@link FastaVisitorHandler} instance that
+	 * by the {@link FastaParser} instance that
 	 * generated it.
 	 * @author dkatzel
 	 *
@@ -65,7 +65,7 @@ public interface FastaVisitorCallback {
 	 */
 	FastaVisitorMemento createMemento();
 	/**
-	 * Tell the {@link FastaVisitorHandler} to stop parsing
+	 * Tell the {@link FastaParser} to stop parsing
 	 * the fasta file.  {@link FastqVisitor#visitEnd()}
 	 * will still be called.
 	 */

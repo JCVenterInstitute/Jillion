@@ -114,7 +114,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<SffFlowgram> impleme
         this.sffFile = sffFile;
         this.filter = filter;
         HeaderVisitor visitor = new HeaderVisitor();
-        SffFileParser.create(sffFile).accept(visitor);
+        SffFileParser.create(sffFile).parse(visitor);
         SffCommonHeader header = visitor.getHeader();
         if(header ==null){
         	throw new IOException("could not parse sff header");
@@ -145,7 +145,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<SffFlowgram> impleme
 		}
 		try{
         	SingleFlowgramVisitor singleVisitor = new SingleFlowgramVisitor(id);
-        	SffFileParser.create(sffFile).accept(singleVisitor);
+        	SffFileParser.create(sffFile).parse(singleVisitor);
         	return singleVisitor.getFlowgram();
         } catch (IOException e) {
             throw new DataStoreException("could not read sffFile ",e);
@@ -249,7 +249,7 @@ final class LargeSffFileDataStore extends AbstractDataStore<SffFlowgram> impleme
 
 					
              	};
-                 SffFileParser.create(sffFile).accept(visitor);
+                 SffFileParser.create(sffFile).parse(visitor);
              } catch (IOException e) {
                  //should never happen
                  throw new RuntimeException(e);

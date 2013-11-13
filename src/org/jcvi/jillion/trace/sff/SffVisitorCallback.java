@@ -30,12 +30,12 @@ package org.jcvi.jillion.trace.sff;
 public interface SffVisitorCallback {
 	/**
 	 * {@code SffVisitorMemento} is a marker
-	 * interface that {@link SffVisitorHandler}
+	 * interface that {@link SffParser}
 	 * instances can use to "rewind" back
 	 * to the position in its sff structure
 	 * in order to revisit portions of the data. 
 	 * {@link SffVisitorMemento} should only be used
-	 * by the {@link SffVisitorHandler} instance that
+	 * by the {@link SffParser} instance that
 	 * generated it.
 	 * @author dkatzel
 	 *
@@ -61,7 +61,7 @@ public interface SffVisitorCallback {
 	 */
 	SffVisitorMemento createMemento();
 	/**
-	 * Tell the {@link SffVisitorHandler} to stop parsing
+	 * Tell the {@link SffParser} to stop parsing
 	 * the sff.  {@link SffVisitor#visitEnd()}
 	 * will still be called.
 	 */

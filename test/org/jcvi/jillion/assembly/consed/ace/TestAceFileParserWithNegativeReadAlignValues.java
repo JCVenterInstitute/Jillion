@@ -90,6 +90,6 @@ public class TestAceFileParserWithNegativeReadAlignValues {
 		contigVisitor.visitEnd();
 		aceVisitor.visitEnd();
 		replay(aceVisitor, contigVisitor, readVisitor);
-		AceFileParser.create(in).accept(aceVisitor);
+		AceFileParser.create(in).parse(aceVisitor);
 	}
 }

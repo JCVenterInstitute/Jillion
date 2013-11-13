@@ -5,40 +5,40 @@ import java.io.IOException;
 import org.jcvi.jillion.trace.sff.SffVisitorCallback.SffVisitorMemento;
 
 /**
- * {@code SffVisitorHandler} is an interface that will
- * traverse a SFF formatted structure and call the appropriate 
+ * {@code SffParser} is an interface that will
+ * parse a SFF formatted structure and call the appropriate 
  * visit methods on the given {@link SffVisitor}.
  * @author dkatzel
  *
  */
-public interface SffVisitorHandler {
+public interface SffParser {
 
 	/**
-	 * Can this handler accept new visit requests
-	 * via accept() calls.
+	 * Can this handler accept new parse requests
+	 * via parse() calls.
 	 * 
-	 * Some implementations of {@link SffVisitorHandler}
-	 * may only allow one accept call in its lifetime 
+	 * Some implementations of {@link SffParser}
+	 * may only allow one parse call in its lifetime 
 	 * (for example, if the sff structure is being parsed via
 	 * an InputStream).
 	 * @return {@code true} if this handler can handle 
 	 * new visit requests; {@code false} otherwise.
 	 */
-	boolean canAccept();
+	boolean canParse();
 	
 	/**
-	 * Traverse the sff structure 
+	 * Parse the sff structure 
 	 * and call the visit methods on the given visitor.
 	 * @param visitor the visitor to call the visit methods on.
 	 * @throws IOException if there is a problem parsing the file.
 	 * @throws NullPointerException if visitor is null.
 	 * @throws IllegalStateException if this handler can not accept
-	 * any new visit requests.
-	 * @see #canAccept()
+	 * any new parse requests.
+	 * @see #canParse()
 	 */
-	public abstract void accept(SffVisitor visitor) throws IOException;
+	void parse(SffVisitor visitor) throws IOException;
 	/**
-	 * Traverse the sff structure starting from the portion
+	 * Parse the sff structure starting from the portion
 	 * specified by the given {@link SffVisitorMemento}.
 	 * and call the visit methods on the given visitor.
 	 * 
@@ -51,9 +51,9 @@ public interface SffVisitorHandler {
 	 * @throws UnsupportedOperationException if this parser
 	 * was created with an {@link InputStream} instead of a File.
 	 * @throws IllegalStateException if this handler can not accept
-	 * any new visit requests.
-	 * @see #canAccept()
+	 * any new parse requests.
+	 * @see #canParse()
 	 */
-	public abstract void accept(SffVisitor visitor, SffVisitorMemento memento) throws IOException;
+	void parse(SffVisitor visitor, SffVisitorMemento memento) throws IOException;
 	
 }

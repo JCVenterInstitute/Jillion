@@ -65,7 +65,7 @@ final class DefaultNucleotideFastaFileDataStore{
 	}
 	public static NucleotideFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
 		NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter);
-		FastaFileParser.create(fastaFile).accept(builder);
+		FastaFileParser.create(fastaFile).parse(builder);
 		return builder.build();
 	}
 	
@@ -75,7 +75,7 @@ final class DefaultNucleotideFastaFileDataStore{
 	public static NucleotideFastaDataStore create(InputStream in, DataStoreFilter filter) throws IOException{
 		try{
 			NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter);
-			FastaFileParser.create(in).accept(builder);
+			FastaFileParser.create(in).parse(builder);
 			return builder.build();
 		}finally{
 			IOUtil.closeAndIgnoreErrors(in);

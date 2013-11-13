@@ -171,7 +171,7 @@ public class TestDefaultAceFileWriter {
 
 		};
 
-		AceFileParser.create(outputFile).accept(visitor);
+		AceFileParser.create(outputFile).parse(visitor);
 
 		Map<String, QualitySequence> expectedConsensusQualities = getExpectedConsensusQualities();
 		assertEquals(expectedConsensusQualities, actualConsensusQualities);

@@ -67,8 +67,8 @@ final class DefaultSffFileDataStore {
 	 */
 	public static SffFileDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
 		Visitor visitor = new Visitor(filter);
-		SffVisitorHandler parser = SffFileParser.create(sffFile);
-		parser.accept(visitor);
+		SffParser parser = SffFileParser.create(sffFile);
+		parser.parse(visitor);
 		
 		return visitor.builder.build();
 	}

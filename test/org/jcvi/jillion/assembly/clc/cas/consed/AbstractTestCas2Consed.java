@@ -29,7 +29,7 @@ import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.clc.cas.CasFileParser;
 import org.jcvi.jillion.assembly.clc.cas.CasGappedReferenceDataStore;
 import org.jcvi.jillion.assembly.clc.cas.CasGappedReferenceDataStoreBuilderVisitor;
-import org.jcvi.jillion.assembly.clc.cas.CasVisitorHandler;
+import org.jcvi.jillion.assembly.clc.cas.CasParser;
 import org.jcvi.jillion.assembly.consed.ace.AceAssembledRead;
 import org.jcvi.jillion.assembly.consed.ace.AceContig;
 import org.jcvi.jillion.assembly.consed.ace.AceFileDataStore;
@@ -77,15 +77,15 @@ public abstract class AbstractTestCas2Consed {
 	    public void parseCas() throws IOException, DataStoreException{
 	        File casFile = RESOURCES.getFile(pathToCas);
 	        CasGappedReferenceDataStoreBuilderVisitor gappedRefVisitor = new CasGappedReferenceDataStoreBuilderVisitor(casFile.getParentFile());
-	        CasVisitorHandler casFileParser = CasFileParser.create(casFile);
-			casFileParser.accept(gappedRefVisitor);
+	        CasParser casFileParser = CasFileParser.create(casFile);
+			casFileParser.parse(gappedRefVisitor);
 	        CasGappedReferenceDataStore gappedReferenceDataStore = gappedRefVisitor.build();
 	        
 	        File consedDir = folder.newFolder("consed");
 	        String prefix = "cas2consed";
 	      Cas2Consed cas2consed = new Cas2Consed(casFile,gappedReferenceDataStore, consedDir, prefix);
 	     
-	      casFileParser.accept(cas2consed);
+	      casFileParser.parse(cas2consed);
 
 	      File editDir = new File(consedDir, "edit_dir");
 	      File aceFile = new File(editDir, prefix+".ace.1");
