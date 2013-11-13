@@ -40,7 +40,7 @@ final class DefaultAsmContigDataStore {
 
 	public static AsmContigDataStore create(File asmFile, DataStore<NucleotideSequence> fullLengthSequences, DataStoreFilter filter) throws IOException{
 		VisitorBuilder visitorBuilder = new VisitorBuilder(filter, fullLengthSequences);
-		AsmFileParser.create(asmFile).accept(visitorBuilder);
+		AsmFileParser.create(asmFile).parse(visitorBuilder);
 		return visitorBuilder.build();
 	}
 	

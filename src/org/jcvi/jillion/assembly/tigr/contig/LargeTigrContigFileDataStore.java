@@ -74,7 +74,7 @@ final class LargeTigrContigFileDataStore implements TigrContigDataStore{
 		}
 		GetVisitor visitor = new GetVisitor(id);
 		try {
-			TigrContigFileParser.create(contigFile).accept(visitor);
+			TigrContigFileParser.create(contigFile).parse(visitor);
 			return visitor.getContig();
 		} catch (IOException e) {
 			throw new DataStoreException(ERROR_PARSING_CONTIG_FILE, e);
@@ -90,7 +90,7 @@ final class LargeTigrContigFileDataStore implements TigrContigDataStore{
 		}
 		ContainsVisitor visitor = new ContainsVisitor(id);
 		try {
-			TigrContigFileParser.create(contigFile).accept(visitor);
+			TigrContigFileParser.create(contigFile).parse(visitor);
 			return visitor.contains();
 		} catch (IOException e) {
 			throw new DataStoreException(ERROR_PARSING_CONTIG_FILE, e);
@@ -102,7 +102,7 @@ final class LargeTigrContigFileDataStore implements TigrContigDataStore{
 		if(size ==null){
 			SizeVisitor visitor = new SizeVisitor();
 			try {
-				TigrContigFileParser.create(contigFile).accept(visitor);
+				TigrContigFileParser.create(contigFile).parse(visitor);
 				size = visitor.getSize();
 			} catch (IOException e) {
 				throw new DataStoreException(ERROR_PARSING_CONTIG_FILE, e);
@@ -157,7 +157,7 @@ final class LargeTigrContigFileDataStore implements TigrContigDataStore{
 			};
 			
 			try {
-				TigrContigFileParser.create(contigFile).accept(visitor);
+				TigrContigFileParser.create(contigFile).parse(visitor);
 			} catch (IOException e) {
 				throw new RuntimeException(ERROR_PARSING_CONTIG_FILE,e);
 			}

@@ -46,7 +46,7 @@ import org.jcvi.jillion.internal.core.io.TextLineParser;
  * @author dkatzel
  *
  */
-public abstract class TigrContigFileParser {
+public abstract class TigrContigFileParser implements TigrContigParser{
 
 	private static final Pattern NEW_CONTIG_PATTERN = Pattern.compile("##(\\S+).+");
 	private static final Pattern NEW_READ_PATTERN = Pattern.compile("#(\\S+)\\((-?\\d+)\\)\\s+\\[(.*)\\].+\\{(-?\\d+) (-?\\d+)\\}.+");
@@ -61,7 +61,7 @@ public abstract class TigrContigFileParser {
 	 * not exist
 	 * @throws NullPointerException if the contig file is null.
 	 */
-	public static TigrContigFileParser create(File contigFile) throws IOException{
+	public static TigrContigParser create(File contigFile) throws IOException{
 		return new FileBasedTigrContigParser(contigFile);
 	}
 	/**
@@ -74,7 +74,7 @@ public abstract class TigrContigFileParser {
 	 * will never be null.
 	 * @throws NullPointerException if the inputstream is null.
 	 */
-	public static TigrContigFileParser create(InputStream contigFileStream){
+	public static TigrContigParser create(InputStream contigFileStream){
 		return new InputStreamBasedTigrContigParser(contigFileStream);
 	}
 	private TigrContigFileParser(){
@@ -89,7 +89,7 @@ public abstract class TigrContigFileParser {
 	 * the contig file.
 	 * @throws NullPointerException if visitor is null.
 	 */
-	public void accept(TigrContigFileVisitor visitor) throws IOException{
+	public void parse(TigrContigFileVisitor visitor) throws IOException{
 		if(visitor==null){
 			throw new NullPointerException("visitor can not be null");
 		}
@@ -114,7 +114,7 @@ public abstract class TigrContigFileParser {
 	 * @throws IllegalArgumentException if the memento instance was produced
 	 * by this class.
 	 */
-	public abstract void accept(TigrContigFileVisitor visitor,TigrContigVisitorMemento memento) throws IOException;
+	public abstract void parse(TigrContigFileVisitor visitor,TigrContigVisitorMemento memento) throws IOException;
 
 	protected final void parse(TigrContigFileVisitor visitor,
 			TextLineParser parser) throws IOException {
@@ -353,7 +353,7 @@ public abstract class TigrContigFileParser {
 		}
 
 		@Override
-		public void accept(TigrContigFileVisitor visitor,
+		public void parse(TigrContigFileVisitor visitor,
 				TigrContigVisitorMemento memento) throws IOException {
 			throw new UnsupportedOperationException("inputstream parser does not support mementos");
 			
@@ -367,10 +367,15 @@ public abstract class TigrContigFileParser {
 
 		@Override
 		protected InputStream getInputStream() throws IOException {
-			if(!in.isOpen()){
+			if(!canParse()){
 				throw new IOException("inputstream is closed");
 			}
 			return in;
+		}
+		
+		@Override
+		public boolean canParse() {
+			return in.isOpen();
 		}
 		
 	}
@@ -389,6 +394,11 @@ public abstract class TigrContigFileParser {
 		}
 
 		@Override
+		public boolean canParse() {
+			return true;
+		}
+
+		@Override
 		protected InputStream getInputStream() throws IOException {
 			return new BufferedInputStream(new FileInputStream(contigFile));
 		}
@@ -399,7 +409,7 @@ public abstract class TigrContigFileParser {
 		}
 
 		@Override
-		public void accept(TigrContigFileVisitor visitor,
+		public void parse(TigrContigFileVisitor visitor,
 				TigrContigVisitorMemento memento) throws IOException {
 			if(memento ==null){
 				throw new NullPointerException("memento can not be null");

@@ -39,7 +39,7 @@ final class DefaultTigrContigFileDataStore {
 
 	public static TigrContigDataStore create(File contigFile, DataStore<Long> fullLengthSequenceDataStore, DataStoreFilter filter) throws IOException{
 		DataStoreBuilder visitor = new DataStoreBuilder(fullLengthSequenceDataStore, filter);
-		TigrContigFileParser.create(contigFile).accept(visitor);
+		TigrContigFileParser.create(contigFile).parse(visitor);
 		return DataStoreUtil.adapt(TigrContigDataStore.class, visitor.contigs);
 	}
 	

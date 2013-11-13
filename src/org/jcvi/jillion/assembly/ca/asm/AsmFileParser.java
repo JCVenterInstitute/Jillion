@@ -61,11 +61,14 @@ import org.jcvi.jillion.internal.core.io.TextLineParser;
 import org.jcvi.jillion.internal.core.util.JillionUtil;
 
 /**
+ * {@code AsmFileParser} is a class
+ * that can parse Celera Assembler files.
+ * 
  * @author dkatzel
  *
  *
  */
-public abstract class AsmFileParser {
+public abstract class AsmFileParser implements AsmParser{
 	
 	
 	/**
@@ -85,13 +88,10 @@ public abstract class AsmFileParser {
 		//can not instantiate outside this file.
 	}
 	
-	public static AsmFileParser create(File asmFile){
+	public static AsmParser create(File asmFile){
 		return new FileBasedAsmFileParser(asmFile);
 	}
 	
-	public abstract void accept(AsmVisitor visitor) throws IOException;
-	
-	public abstract void accept(AsmVisitor visitor, AsmVisitorMemento memento) throws IOException;
 	
 	
     protected void  parseAsm(ParserState parserState, AsmVisitor visitor) throws IOException{       
@@ -1593,7 +1593,7 @@ public abstract class AsmFileParser {
 		}
 
 		@Override
-		public void accept(AsmVisitor visitor) throws IOException {
+		public void parse(AsmVisitor visitor) throws IOException {
 			InputStream in =null;
 	        try{
 	            in= new BufferedInputStream(new FileInputStream(asmFile));
@@ -1613,7 +1613,7 @@ public abstract class AsmFileParser {
 		}
 
 		@Override
-		public void accept(AsmVisitor visitor, AsmVisitorMemento memento)
+		public void parse(AsmVisitor visitor, AsmVisitorMemento memento)
 				throws IOException {
 			if( !(memento instanceof OffsetMemento)){
 				throw new IllegalArgumentException("unknown memento type "+ memento + " must use instance created by this parser");
@@ -1635,6 +1635,11 @@ public abstract class AsmFileParser {
 			}finally{
 				IOUtil.closeAndIgnoreErrors(in);
 			}
+		}
+
+		@Override
+		public boolean canParse() {
+			return true;
 		}
     	
     }

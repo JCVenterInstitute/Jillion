@@ -80,7 +80,7 @@ final class TigrContigFileContigIterator extends AbstractBlockingStreamingIterat
 		};
 		
 		try {
-			TigrContigFileParser.create(contigFile).accept(visitor);
+			TigrContigFileParser.create(contigFile).parse(visitor);
 		} catch (IOException e) {
 			throw new RuntimeException("error parsing contig file",e);
 		}
