@@ -103,7 +103,7 @@ import org.jcvi.jillion.internal.core.util.JillionUtil;
  * @see #Range.Builder
  * 
  */
-public class Range implements Rangeable,Iterable<Long>
+public abstract class Range implements Rangeable,Iterable<Long>
 {
 	/**
 	 * {@value} should be large enough for 
@@ -702,18 +702,14 @@ public class Range implements Rangeable,Iterable<Long>
 
     
     @Override
-	public int hashCode(){
-    	throw new IllegalStateException("must be implemented");
-    }
+	public abstract int hashCode();
     /**
      * Two {@link Range}s are equal
      * if they have the same begin and end
      * values.
      */
 	@Override
-	public boolean equals(Object obj){
-		throw new IllegalStateException("must be implemented");
-	}
+	public abstract boolean equals(Object obj);
 	
 	/**
      * Fetch the first coordinate in this Range. This is the same as 
@@ -723,9 +719,7 @@ public class Range implements Rangeable,Iterable<Long>
      * @return The left-hand (starting) coordinate.
      * 
      */
-    public long getBegin(){
-    	throw new IllegalStateException("must be implemented");
-    }
+    public abstract long getBegin();
     /**
      * Fetch the first coordinate using the given 
      * {@link CoordinateSystem}.  
@@ -746,9 +740,7 @@ public class Range implements Rangeable,Iterable<Long>
      *
      * @return The right-hand (ending) coordinate.
      */
-    public long getEnd(){
-    	throw new IllegalStateException("must be implemented");
-    }
+    public abstract long getEnd();
     
     
     /**
