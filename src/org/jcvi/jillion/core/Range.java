@@ -89,9 +89,11 @@ import org.jcvi.jillion.internal.core.util.JillionUtil;
  * on the same object as other, unrelated code can cause deadlock.
  * <pre> 
  * &#047;&#047;don't do this
- * private static Range range = Range.ofLength(10);
+ * Range range = ...
  * ...
- *   synchronized(range){ .. }
+ *   synchronized(range){ 
+ *       ...   
+ *    }
  * ...
  * </pre>
  * @author dkatzel
@@ -692,7 +694,10 @@ public class Range implements Rangeable,Iterable<Long>
 
 
     private Range(){
-    	//can not instantiate
+    	//can not instantiate outside of this file.
+    	//however there are several private subclasses
+    	//in this file that implement Range methods
+    	//in different ways to keep memory usage down.
     }
 
     
