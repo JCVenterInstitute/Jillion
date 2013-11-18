@@ -22,7 +22,7 @@ package org.jcvi.jillion.fasta.qual;
 
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
@@ -30,7 +30,14 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.internal.fasta.AbstractFastaRecordWriter;
 import org.jcvi.jillion.internal.fasta.AbstractFastaRecordWriter.AbstractBuilder;
-
+/**
+ * {@code QualityFastaRecordWriterBuilder}
+ * builds a new instance of {@link QualityFastaRecordWriter}
+ * that will write fasta encoded quality data
+ * to the provided File or {@link OutputStream}. 
+ * @author dkatzel
+ *
+ */
 public final class QualityFastaRecordWriterBuilder extends AbstractBuilder<PhredQuality, QualitySequence, QualityFastaRecord,QualityFastaRecordWriter> {
 
 	/**
@@ -38,16 +45,18 @@ public final class QualityFastaRecordWriterBuilder extends AbstractBuilder<Phred
 	 * the given File to write
 	 * out the fasta records.  Any contents
 	 * that previously existed in this file
-	 * will be overwritten.
+	 * will be overwritten.  If this file or
+	 * any parent directories do not exist,
+	 * then they will be created.
 	 * @param outputFile the File to use;
 	 * can not be null.
 	 * @throws NullPointerException if outputFile is null.
-	 * @throws FileNotFoundException if the file exists but 
+	 * @throws IOException if the file exists but 
 	 * is a directory rather than a regular file, 
 	 * does not exist but cannot be created, 
 	 * or cannot be opened for any other reason.
 	 */
-	public QualityFastaRecordWriterBuilder(File outputFile) throws FileNotFoundException {
+	public QualityFastaRecordWriterBuilder(File outputFile) throws IOException {
 		super(outputFile);
 	}
 	/**

@@ -20,20 +20,17 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta.nt;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordBuilder;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriterBuilder;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestDefaultNucleotideSequenceFastaRecordWriter {
 	private final NucleotideFastaRecord record1 = 
 			new NucleotideFastaRecordBuilder("id_1", "ACGTACGT")
@@ -48,7 +45,7 @@ public class TestDefaultNucleotideSequenceFastaRecordWriter {
 		new NucleotideFastaRecordWriterBuilder((OutputStream)null);
 	}
 	@Test(expected = NullPointerException.class)
-	public void nullFileShouldThrowNPE() throws FileNotFoundException{
+	public void nullFileShouldThrowNPE() throws IOException{
 		new NucleotideFastaRecordWriterBuilder((File)null);
 	}
 	@Test(expected = IllegalArgumentException.class)

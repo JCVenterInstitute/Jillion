@@ -23,7 +23,6 @@ package org.jcvi.jillion.internal.fasta;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -190,8 +189,11 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		 * does not exist but cannot be created, 
 		 * or cannot be opened for any other reason.
 		 */
-		public AbstractBuilder(File outputFile) throws FileNotFoundException{
-			this(new BufferedOutputStream(new FileOutputStream(outputFile)));
+		public AbstractBuilder(File outputFile) throws IOException{
+			//create parent dirs if do not yet exist
+			IOUtil.mkdirs(outputFile.getParentFile());
+			this.out = new BufferedOutputStream(new FileOutputStream(outputFile));
+			numberPerLine(getDefaultNumberOfSymbolsPerLine());
 		}
 		/**
 		 * Change the {@link Charset} used

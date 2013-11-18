@@ -21,7 +21,7 @@
 package org.jcvi.jillion.fasta.aa;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
@@ -31,7 +31,9 @@ import org.jcvi.jillion.internal.fasta.AbstractResidueSequenceFastaRecordWriter;
 /**
  * {@code AminoAcidFastaRecordWriterBuilder} is a Builder
  * class that will create a new instance of 
- * {@link AminoAcidFastaRecordWriter}.
+ * {@link AminoAcidFastaRecordWriter}
+ * that will write amino acid (protein)
+ * data to the given File or OutputStream.
  * @author dkatzel
  *
  */
@@ -42,16 +44,18 @@ public final class AminoAcidFastaRecordWriterBuilder extends AbstractResidueSequ
 	 * the given File to write
 	 * out the fasta records.  Any contents
 	 * that previously existed in this file
-	 * will be overwritten.
+	 * will be overwritten.  If this file or
+	 * any parent directories do not exist,
+	 * then they will be created.
 	 * @param outputFile the File to use;
 	 * can not be null.
 	 * @throws NullPointerException if outputFile is null.
-	 * @throws FileNotFoundException if the file exists but 
+	 * @throws IOException if the file exists but 
 	 * is a directory rather than a regular file, 
 	 * does not exist but cannot be created, 
 	 * or cannot be opened for any other reason.
 	 */
-	public AminoAcidFastaRecordWriterBuilder(File outputFile) throws FileNotFoundException {
+	public AminoAcidFastaRecordWriterBuilder(File outputFile) throws IOException {
 		super(outputFile);
 	}
 	/**
