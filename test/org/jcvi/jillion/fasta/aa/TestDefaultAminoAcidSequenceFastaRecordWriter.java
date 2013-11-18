@@ -21,20 +21,17 @@
 package org.jcvi.jillion.fasta.aa;
 
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.fasta.aa.AminoAcidFastaRecord;
-import org.jcvi.jillion.fasta.aa.AminoAcidFastaRecordBuilder;
-import org.jcvi.jillion.fasta.aa.AminoAcidFastaRecordWriter;
-import org.jcvi.jillion.fasta.aa.AminoAcidFastaRecordWriterBuilder;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestDefaultAminoAcidSequenceFastaRecordWriter {
 	private final AminoAcidFastaRecord record1 = new AminoAcidFastaRecordBuilder("id_1", "CVGITPSA")
 																.comment("a comment")
@@ -46,7 +43,7 @@ public class TestDefaultAminoAcidSequenceFastaRecordWriter {
 		new AminoAcidFastaRecordWriterBuilder((OutputStream)null);
 	}
 	@Test(expected = NullPointerException.class)
-	public void nullFileShouldThrowNPE() throws FileNotFoundException{
+	public void nullFileShouldThrowNPE() throws IOException{
 		new AminoAcidFastaRecordWriterBuilder((File)null);
 	}
 	@Test(expected = IllegalArgumentException.class)

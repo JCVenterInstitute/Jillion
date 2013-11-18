@@ -21,11 +21,10 @@
 package org.jcvi.jillion.internal.fasta;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.fasta.FastaRecord;
@@ -83,7 +82,7 @@ public abstract class AbstractResidueSequenceFastaRecordWriter<R extends Residue
 		protected static final int DEFAULT_RESIDUES_PER_LINE = 60;
 		   
 		public Builder(File outputFile)
-				throws FileNotFoundException {
+				throws IOException {
 			super(outputFile);
 		}
 

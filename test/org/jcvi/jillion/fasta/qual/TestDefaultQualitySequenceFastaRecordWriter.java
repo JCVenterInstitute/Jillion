@@ -26,7 +26,6 @@ import static org.junit.Assert.assertEquals;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -56,7 +55,7 @@ public class TestDefaultQualitySequenceFastaRecordWriter {
 		new QualityFastaRecordWriterBuilder((OutputStream)null);
 	}
 	@Test(expected = NullPointerException.class)
-	public void nullFileShouldThrowNPE() throws FileNotFoundException{
+	public void nullFileShouldThrowNPE() throws IOException{
 		new QualityFastaRecordWriterBuilder((File)null);
 	}
 	@Test(expected = IllegalArgumentException.class)
