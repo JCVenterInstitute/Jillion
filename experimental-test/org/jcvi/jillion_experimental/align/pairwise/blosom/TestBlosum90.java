@@ -20,19 +20,42 @@
  ******************************************************************************/
 package org.jcvi.jillion_experimental.align.pairwise.blosom;
 
+import static org.junit.Assert.assertEquals;
+
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion_experimental.align.pairwise.AminoAcidScoringMatrix;
-import org.jcvi.jillion_experimental.align.pairwise.PropertyFileAminoAcidScoringMatrix;
+import org.junit.Test;
+public class TestBlosum90 extends AbstractBlosumTest{
 
-
-
-public final class BlosomMatrices {
-
-	private BlosomMatrices(){
-		//private constructor.
+	public TestBlosum90() {
+		super(BlosumMatrices.blosum90());
 	}
-	public static final AminoAcidScoringMatrix getMatrix(int value){
-		String file = String.format("blosom%d.matrix",value);
-		return new PropertyFileAminoAcidScoringMatrix(
-				BlosomMatrices.class.getResourceAsStream(file));
+
+	@Test
+	public void spotCheck(){
+		
+		AminoAcidScoringMatrix blosum90 = getMatrix();
+		assertEquals(5F,
+				blosum90.getScore(AminoAcid.Alanine, AminoAcid.Alanine),
+				0F);
+		
+		assertEquals(8F,
+				blosum90.getScore(AminoAcid.Proline, AminoAcid.Proline),
+				0F);
+		
+		assertEquals(-3F,
+				blosum90.getScore(AminoAcid.Proline, AminoAcid.Valine),
+				0F);
+		assertEquals(-1F,
+				blosum90.getScore(AminoAcid.Valine, AminoAcid.Threonine),
+				0F);
+		assertEquals(1F,
+				blosum90.getScore(AminoAcid.STOP, AminoAcid.STOP),
+				0F);
+		assertEquals(-6F,
+				blosum90.getScore(AminoAcid.STOP, AminoAcid.Alanine),
+				0F);
 	}
+	
+	
 }

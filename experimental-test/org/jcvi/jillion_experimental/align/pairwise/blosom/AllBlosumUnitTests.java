@@ -18,9 +18,8 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion_experimental.align.pairwise;
+package org.jcvi.jillion_experimental.align.pairwise.blosom;
 
-import org.jcvi.jillion_experimental.align.pairwise.blosom.AllBlosumUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -28,14 +27,11 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-    	AllBlosumUnitTests.class,
-    	TestNucleotideSmithWatermanAligner.class,    	
-    	TestAminoAcidSmithWaterman.class,
-    	
-    	TestNucleotideNeedlemanWunschAligner.class,
-    	TestAminoAcidNeedlemanWunschAligner.class
+    	TestBlosum50.class,
+    	TestBlosum62.class,
+    	TestBlosum90.class
     }
     )
-public class AllPairwiseUnitTests {
+public class AllBlosumUnitTests {
 
 }

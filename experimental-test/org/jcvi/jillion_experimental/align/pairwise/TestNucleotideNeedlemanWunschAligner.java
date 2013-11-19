@@ -25,10 +25,6 @@ import static org.junit.Assert.assertEquals;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion_experimental.align.NucleotideSequenceAlignmentBuilder;
-import org.jcvi.jillion_experimental.align.pairwise.NucleotideNeedlemanWunschAligner;
-import org.jcvi.jillion_experimental.align.pairwise.NucleotidePairwiseSequenceAlignment;
-import org.jcvi.jillion_experimental.align.pairwise.NucleotidePairwiseSequenceAlignmentImpl;
-import org.jcvi.jillion_experimental.align.pairwise.PairwiseSequenceAlignmentWrapper;
 import org.junit.Test;
 
 public class TestNucleotideNeedlemanWunschAligner extends AbstractTestNucleotideAligner{
@@ -39,7 +35,12 @@ public class TestNucleotideNeedlemanWunschAligner extends AbstractTestNucleotide
 	public void oneBase(){
 		NucleotideSequence seq = new NucleotideSequenceBuilder("A").build();
 		
-		NucleotidePairwiseSequenceAlignment actual = NucleotideNeedlemanWunschAligner.align(seq, seq, matrix, 0, 0);
+		
+		NucleotidePairwiseSequenceAlignment actual = PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(seq, seq, matrix)
+															.gapPenalty(0, 0)
+															.useGlobalAlignment()
+															.build();
+
 		
 		NucleotidePairwiseSequenceAlignment expected =
 				new NucleotidePairwiseSequenceAlignmentImpl(
@@ -54,8 +55,11 @@ public class TestNucleotideNeedlemanWunschAligner extends AbstractTestNucleotide
 	public void twoBases(){
 		NucleotideSequence seq = new NucleotideSequenceBuilder("AC").build();
 		
-		NucleotidePairwiseSequenceAlignment actual = NucleotideNeedlemanWunschAligner.align(seq, seq, matrix, 0, 0);
-		
+		NucleotidePairwiseSequenceAlignment actual = PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(seq, seq, matrix)
+														.gapPenalty(0, 0)
+														.useGlobalAlignment()
+														.build();
+
 		NucleotidePairwiseSequenceAlignment expected =
 				new NucleotidePairwiseSequenceAlignmentImpl(
 				PairwiseSequenceAlignmentWrapper.wrap(new NucleotideSequenceAlignmentBuilder()
@@ -69,7 +73,11 @@ public class TestNucleotideNeedlemanWunschAligner extends AbstractTestNucleotide
 	public void exactMatch(){
 		NucleotideSequence seq = new NucleotideSequenceBuilder("ACGTACGT").build();
 		
-		NucleotidePairwiseSequenceAlignment actual = NucleotideNeedlemanWunschAligner.align(seq, seq, matrix, 0, 0);
+		
+		NucleotidePairwiseSequenceAlignment actual = PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(seq, seq, matrix)
+															.gapPenalty(0, 0)
+															.useGlobalAlignment()
+															.build();
 		
 		NucleotidePairwiseSequenceAlignment expected =
 				new NucleotidePairwiseSequenceAlignmentImpl(
@@ -86,8 +94,10 @@ public class TestNucleotideNeedlemanWunschAligner extends AbstractTestNucleotide
 		NucleotideSequence seq1 = new NucleotideSequenceBuilder("ACGTACGT").build();
 		NucleotideSequence seq2 = new NucleotideSequenceBuilder("ACGTACGTNNNN").build();
 		
-		NucleotidePairwiseSequenceAlignment actual = NucleotideNeedlemanWunschAligner.align(seq1, seq2, matrix, -2, 0);
-		
+		NucleotidePairwiseSequenceAlignment actual = PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(seq1, seq2, matrix)
+																.gapPenalty(-2, 0)
+																.useGlobalAlignment()
+																.build();
 	
 		NucleotidePairwiseSequenceAlignment expected = this.createExpectedAlignment("ACGTACGT----", "ACGTACGTNNNN",14);
 		assertEquals(expected, actual);
