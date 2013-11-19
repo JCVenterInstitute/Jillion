@@ -18,44 +18,16 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion_experimental.align.pairwise.blosom;
+package org.jcvi.jillion.align;
 
-import static org.junit.Assert.assertEquals;
-
-import org.jcvi.jillion.align.pairwise.AminoAcidScoringMatrix;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.junit.Test;
-public class TestBlosum50 extends AbstractBlosumTest{
+import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
+/**
+ * {@code AminoAcidSequenceAlignment} is a marker interface for a
+ * {@link SequenceAlignment} of {@link AminoAcid}s.
+ * @author dkatzel
+ *
+ */
+public interface AminoAcidSequenceAlignment extends SequenceAlignment<AminoAcid, AminoAcidSequence>{
 
-	public TestBlosum50() {
-		super(BlosumMatrices.blosum50());
-	}
-
-	@Test
-	public void spotCheck(){
-		
-		AminoAcidScoringMatrix blosum50 = getMatrix();
-		assertEquals(5F,
-				blosum50.getScore(AminoAcid.Alanine, AminoAcid.Alanine),
-				0F);
-		
-		assertEquals(10F,
-				blosum50.getScore(AminoAcid.Proline, AminoAcid.Proline),
-				0F);
-		
-		assertEquals(-3F,
-				blosum50.getScore(AminoAcid.Proline, AminoAcid.Valine),
-				0F);
-		assertEquals(0F,
-				blosum50.getScore(AminoAcid.Valine, AminoAcid.Threonine),
-				0F);
-		assertEquals(1F,
-				blosum50.getScore(AminoAcid.STOP, AminoAcid.STOP),
-				0F);
-		assertEquals(-5F,
-				blosum50.getScore(AminoAcid.STOP, AminoAcid.Alanine),
-				0F);
-	}
-	
-	
 }

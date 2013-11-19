@@ -2,11 +2,11 @@ package org.jcvi.jillion_experimental.align.pairwise.blosom;
 
 import static org.junit.Assert.assertEquals;
 
+import org.jcvi.jillion.align.pairwise.AminoAcidPairwiseSequenceAlignment;
+import org.jcvi.jillion.align.pairwise.AminoAcidScoringMatrix;
+import org.jcvi.jillion.align.pairwise.PairwiseAlignmentBuilder;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequenceBuilder;
-import org.jcvi.jillion_experimental.align.pairwise.AminoAcidPairwiseSequenceAlignment;
-import org.jcvi.jillion_experimental.align.pairwise.AminoAcidScoringMatrix;
-import org.jcvi.jillion_experimental.align.pairwise.PairwiseAlignmentBuilder;
 import org.junit.Test;
 
 public abstract class AbstractBlosumTest {

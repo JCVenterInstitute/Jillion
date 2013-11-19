@@ -18,26 +18,28 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion_experimental.align;
+package org.jcvi.jillion.align.pairwise;
 
-import org.jcvi.jillion.align.pairwise.AllPairwiseUnitTests;
-import org.jcvi.jillion_experimental.align.blast.AllBlastUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.jillion.core.residue.Residue;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestAlnParser.class,
-        TestNucleotideSequenceAlignmentBuilder.class,
-        TestGappedNucleotideAlignmentDataStore.class,
-        
-        AllBlastUnitTests.class,
-        AllPairwiseUnitTests.class
-        
-    }
-    )
-public class AllAlignUnitTests {
-
+/**
+ * {@code ScoringMatrix} is a matrix 
+ * that describes a score assigned to each possible
+ * pairing of Residue.  Types of Scoring matrices might
+ * include distance matrices, substitution matrices etc.
+ * 
+ * @author dkatzel
+ */
+public interface ScoringMatrix<R extends Residue> {
+	/**
+	 * Get the score between the given pair of 
+	 * {@link Residue}s.
+	 * @param a the first residue.
+	 * @param b the second residue.
+	 * @return the score as a float, could be positive,
+	 * negative, zero, whole numbers or fractional numbers
+	 * depending on which type of matrix is used and 
+	 * the values in that matrix.
+	 */
+	float getScore(R a, R b);
 }

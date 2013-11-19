@@ -23,9 +23,9 @@ package org.jcvi.jillion_experimental.align.blast;
 import java.math.BigDecimal;
 import java.util.Comparator;
 
+import org.jcvi.jillion.align.SequenceAlignment;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion_experimental.align.SequenceAlignment;
 
 /**
  * @author dkatzel
