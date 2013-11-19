@@ -18,26 +18,11 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion_experimental.align;
+package org.jcvi.jillion.align;
 
-import org.jcvi.jillion.align.pairwise.AllPairwiseUnitTests;
-import org.jcvi.jillion_experimental.align.blast.AllBlastUnitTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-        TestAlnParser.class,
-        TestNucleotideSequenceAlignmentBuilder.class,
-        TestGappedNucleotideAlignmentDataStore.class,
-        
-        AllBlastUnitTests.class,
-        AllPairwiseUnitTests.class
-        
-    }
-    )
-public class AllAlignUnitTests {
+public interface NucleotideSequenceAlignment extends SequenceAlignment<Nucleotide,NucleotideSequence>{
 
 }

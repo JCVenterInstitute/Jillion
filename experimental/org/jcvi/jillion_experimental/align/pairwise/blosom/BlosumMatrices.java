@@ -20,8 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion_experimental.align.pairwise.blosom;
 
-import org.jcvi.jillion_experimental.align.pairwise.AminoAcidScoringMatrix;
-import org.jcvi.jillion_experimental.align.pairwise.PropertyFileAminoAcidScoringMatrix;
+import org.jcvi.jillion.align.pairwise.AminoAcidScoringMatrix;
+import org.jcvi.jillion.align.pairwise.PropertyFileAminoAcidScoringMatrix;
 
 
 /**

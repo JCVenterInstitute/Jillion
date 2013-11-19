@@ -18,43 +18,32 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion_experimental.align.pairwise.blosom;
+package org.jcvi.jillion.align.pairwise;
 
-import static org.junit.Assert.assertEquals;
-
-import org.jcvi.jillion.align.pairwise.AminoAcidScoringMatrix;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.junit.Test;
-public class TestBlosum50 extends AbstractBlosumTest{
+import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 
-	public TestBlosum50() {
-		super(BlosumMatrices.blosum50());
+class AminoAcidPairwiseSequenceAlignmentImpl extends AbstractPairwiseSequenceAlignment<AminoAcid, AminoAcidSequence> implements AminoAcidPairwiseSequenceAlignment{
+
+	public AminoAcidPairwiseSequenceAlignmentImpl(
+			PairwiseSequenceAlignment<AminoAcid, AminoAcidSequence> delegate) {
+		super(delegate);
 	}
 
-	@Test
-	public void spotCheck(){
-		
-		AminoAcidScoringMatrix blosum50 = getMatrix();
-		assertEquals(5F,
-				blosum50.getScore(AminoAcid.Alanine, AminoAcid.Alanine),
-				0F);
-		
-		assertEquals(10F,
-				blosum50.getScore(AminoAcid.Proline, AminoAcid.Proline),
-				0F);
-		
-		assertEquals(-3F,
-				blosum50.getScore(AminoAcid.Proline, AminoAcid.Valine),
-				0F);
-		assertEquals(0F,
-				blosum50.getScore(AminoAcid.Valine, AminoAcid.Threonine),
-				0F);
-		assertEquals(1F,
-				blosum50.getScore(AminoAcid.STOP, AminoAcid.STOP),
-				0F);
-		assertEquals(-5F,
-				blosum50.getScore(AminoAcid.STOP, AminoAcid.Alanine),
-				0F);
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof AminoAcidPairwiseSequenceAlignment){
+			return super.equals(obj);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		//override hashcode 
+		//to make programs like PMD happy that I override
+		//equals and hashcode
+		return super.hashCode();
 	}
 	
 	

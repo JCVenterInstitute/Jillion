@@ -23,6 +23,10 @@ package org.jcvi.jillion_experimental.primer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jcvi.jillion.align.pairwise.NucleotidePairwiseSequenceAlignment;
+import org.jcvi.jillion.align.pairwise.NucleotideScoringMatrix;
+import org.jcvi.jillion.align.pairwise.NucleotideScoringMatrixBuilder;
+import org.jcvi.jillion.align.pairwise.NucleotideSmithWatermanAligner;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
@@ -34,10 +38,6 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
-import org.jcvi.jillion_experimental.align.pairwise.NucleotidePairwiseSequenceAlignment;
-import org.jcvi.jillion_experimental.align.pairwise.NucleotideScoringMatrix;
-import org.jcvi.jillion_experimental.align.pairwise.NucleotideScoringMatrixBuilder;
-import org.jcvi.jillion_experimental.align.pairwise.NucleotideSmithWatermanAligner;
 /**
  * {@code PrimerDetector} scans a {@link NucleotideSequence}
  * against a {@link NucleotideSequenceDataStore} of primer/vector sequences

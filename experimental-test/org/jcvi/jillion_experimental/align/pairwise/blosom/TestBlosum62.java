@@ -22,8 +22,8 @@ package org.jcvi.jillion_experimental.align.pairwise.blosom;
 
 import static org.junit.Assert.assertEquals;
 
+import org.jcvi.jillion.align.pairwise.AminoAcidScoringMatrix;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.jcvi.jillion_experimental.align.pairwise.AminoAcidScoringMatrix;
 import org.junit.Test;
 public class TestBlosum62 extends AbstractBlosumTest{
 
