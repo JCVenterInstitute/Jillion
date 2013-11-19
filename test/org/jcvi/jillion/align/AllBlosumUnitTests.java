@@ -18,7 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion_experimental.align.pairwise.blosom;
+package org.jcvi.jillion.align;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

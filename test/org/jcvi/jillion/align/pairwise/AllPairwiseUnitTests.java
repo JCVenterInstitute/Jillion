@@ -20,7 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.align.pairwise;
 
-import org.jcvi.jillion_experimental.align.pairwise.blosom.AllBlosumUnitTests;
+import org.jcvi.jillion.align.AllBlosumUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
