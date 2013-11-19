@@ -25,7 +25,7 @@ import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
 
-public final class PairwiseSequenceAlignmentWrapper<R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>> implements PairwiseSequenceAlignment<R, S>{
+final class PairwiseSequenceAlignmentWrapper<R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>> implements PairwiseSequenceAlignment<R, S>{
 	
 	
 	private final A delegate;

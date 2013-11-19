@@ -70,7 +70,7 @@ public final class NucleotideScoringMatrixBuilder  implements org.jcvi.jillion.c
 		}
 
 	
-	private final class NucleotideScoringMatrixImpl implements NucleotideScoringMatrix{
+	private static final class NucleotideScoringMatrixImpl implements NucleotideScoringMatrix{
 		private final float[][] matrix;
 		
 		private NucleotideScoringMatrixImpl(float[][] matrix) {

@@ -18,11 +18,12 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.align.pairwise;
+package org.jcvi.jillion_experimental.align.pairwise.blosom;
 
 import java.io.InputStream;
 import java.util.Scanner;
 
+import org.jcvi.jillion.align.pairwise.AminoAcidScoringMatrix;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;

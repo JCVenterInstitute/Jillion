@@ -42,7 +42,7 @@ import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
  Gotoh Osamu. An improved algorithm for matching biological sequences. 
  Journal of Molecular Biology 162:705-708</a>
  */
-public final class AminoAcidNeedlemanWunschAligner extends AbstractNeedlemanWunschAligner<AminoAcid, AminoAcidSequence, AminoAcidSequenceAlignment, AminoAcidPairwiseSequenceAlignment>{
+final class AminoAcidNeedlemanWunschAligner extends AbstractNeedlemanWunschAligner<AminoAcid, AminoAcidSequence, AminoAcidSequenceAlignment, AminoAcidPairwiseSequenceAlignment>{
 	/**
 	 * Align the given two {@link AminoAcidSequence}s
 	 * using the given {@link ScoringMatrix} by the Needleman-Wunsch

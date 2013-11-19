@@ -26,7 +26,7 @@ import java.util.List;
 import org.jcvi.jillion.align.pairwise.NucleotidePairwiseSequenceAlignment;
 import org.jcvi.jillion.align.pairwise.NucleotideScoringMatrix;
 import org.jcvi.jillion.align.pairwise.NucleotideScoringMatrixBuilder;
-import org.jcvi.jillion.align.pairwise.NucleotideSmithWatermanAligner;
+import org.jcvi.jillion.align.pairwise.PairwiseAlignmentBuilder;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
@@ -100,17 +100,19 @@ public class PrimerDetector {
         while(iter.hasNext()){
         	NucleotideSequence primer = iter.next();
             if(primer.getLength()>=minLength){
-            	NucleotidePairwiseSequenceAlignment forwardAlignment = NucleotideSmithWatermanAligner.align(primer, sequence, 
-            					MATRIX, gapOpenPenalty, gapExtendPenalty);
                
+            	NucleotidePairwiseSequenceAlignment forwardAlignment =PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(primer, sequence, MATRIX)
+																					.gapPenalty(gapOpenPenalty, gapExtendPenalty)
+																					.build();
+            	
                 final NucleotidePairwiseSequenceAlignment reverseAlignment;
                 if(alsoCheckReverseCompliment){
                 	NucleotideSequence reversePrimer = new NucleotideSequenceBuilder(primer)
 												.reverseComplement()
 												.build();
-					reverseAlignment = NucleotideSmithWatermanAligner.align(
-							reversePrimer,sequence,
-                			 MATRIX, gapOpenPenalty, gapExtendPenalty);
+					reverseAlignment =  PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(reversePrimer, sequence, MATRIX)
+																.gapPenalty(gapOpenPenalty, gapExtendPenalty)
+																.build();
                 }else{
                     reverseAlignment = NullAlignment.INSTANCE;
                 }
@@ -191,17 +193,21 @@ public class PrimerDetector {
         	NucleotideFastaRecord fasta = iter.next();
         	NucleotideSequence primer = fasta.getSequence();
             if(primer.getLength()>=minLength){
-            	NucleotidePairwiseSequenceAlignment forwardAlignment = NucleotideSmithWatermanAligner.align(primer, sequence, 
-            					MATRIX, gapOpenPenalty, -1);
-               
+
+            	NucleotidePairwiseSequenceAlignment forwardAlignment =PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(primer, sequence, MATRIX)
+																		.gapPenalty(gapOpenPenalty, -1)
+																		.build();
+
                 final NucleotidePairwiseSequenceAlignment reverseAlignment;
                 if(alsoCheckReverseCompliment){
                 	NucleotideSequence reversePrimer = new NucleotideSequenceBuilder(primer)
 												.reverseComplement()
 												.build();
-					reverseAlignment = NucleotideSmithWatermanAligner.align(
-							reversePrimer,sequence,
-                			 MATRIX, gapOpenPenalty, -1);
+					
+					reverseAlignment =PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(reversePrimer, sequence, MATRIX)
+							.gapPenalty(gapOpenPenalty, -1)
+							.build();
+
                 }else{
                     reverseAlignment = NullAlignment.INSTANCE;
                 }
