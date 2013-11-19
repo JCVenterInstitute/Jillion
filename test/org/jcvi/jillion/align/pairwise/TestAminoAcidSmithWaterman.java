@@ -22,6 +22,7 @@ package org.jcvi.jillion.align.pairwise;
 
 import static org.junit.Assert.assertEquals;
 
+import org.jcvi.jillion.align.BlosumMatrices;
 import org.jcvi.jillion.align.pairwise.AminoAcidPairwiseSequenceAlignment;
 import org.jcvi.jillion.align.pairwise.AminoAcidPairwiseSequenceAlignmentImpl;
 import org.jcvi.jillion.align.pairwise.AminoAcidScoringMatrix;
@@ -30,7 +31,6 @@ import org.jcvi.jillion.align.pairwise.PairwiseSequenceAlignmentWrapper;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequenceBuilder;
 import org.jcvi.jillion.internal.align.AminoAcidSequenceAlignmentBuilder;
-import org.jcvi.jillion_experimental.align.pairwise.blosom.BlosumMatrices;
 import org.junit.Test;
 public class TestAminoAcidSmithWaterman {
 

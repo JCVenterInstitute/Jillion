@@ -1,4 +1,4 @@
-package org.jcvi.jillion_experimental.align.pairwise.blosom;
+package org.jcvi.jillion.align;
 
 import static org.junit.Assert.assertEquals;
 

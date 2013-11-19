@@ -18,7 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion_experimental.align.pairwise.blosom;
+package org.jcvi.jillion.align;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -28,36 +28,58 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequenceBuilder;
-
-public class PropertyFileAminoAcidScoringMatrix implements AminoAcidScoringMatrix {
+/**
+ * {@code PropertyFileAminoAcidScoringMatrix}
+ * is an {@link AminoAcidScoringMatrix}
+ * implementation that is constructed by
+ * parsing specially formatted scoring matrix text files
+ * like the ones stored on the NCBI webpages.
+ * @author dkatzel
+ *
+ */
+final class PropertyFileAminoAcidScoringMatrix implements AminoAcidScoringMatrix {
 
 	private final float[][] matrix; 
 	
 	
 	public PropertyFileAminoAcidScoringMatrix(InputStream in){
-		
-		Scanner scanner = new Scanner(in, IOUtil.UTF_8_NAME);
-		//first column is amino acids in matrix
-		AminoAcidSequence header = new AminoAcidSequenceBuilder(scanner.nextLine()).build();
-		long headerLength = header.getLength();
-		int n = AminoAcid.values().length;
-		matrix = new float[n][n];
-		while(scanner.hasNextLine()){
-			String line = scanner.nextLine();
-			Scanner lineScanner = new Scanner(line);
-			while(lineScanner.hasNext()){
-				AminoAcid aa = AminoAcid.parse(lineScanner.next());
-				int x = aa.ordinal();
-				
-				for(int i=0; i< headerLength; i++){
-				
-					float value =lineScanner.nextFloat();
-					int y = header.get(i).ordinal();
-					matrix[x][y]=value;
+		Scanner scanner = null;
+		try{
+			scanner = new Scanner(in, IOUtil.UTF_8_NAME);
+			//first column is amino acids in matrix
+			AminoAcidSequence header = new AminoAcidSequenceBuilder(scanner.nextLine()).build();
+			long headerLength = header.getLength();
+			int n = AminoAcid.values().length;
+			matrix = new float[n][n];
+			while(scanner.hasNextLine()){
+				String line = scanner.nextLine();
+				Scanner lineScanner = null;
+				try{
+					lineScanner = new Scanner(line);
+					while(lineScanner.hasNext()){
+						AminoAcid aa = AminoAcid.parse(lineScanner.next());
+						int x = aa.ordinal();
+						
+						for(int i=0; i< headerLength; i++){
+						
+							float value =lineScanner.nextFloat();
+							int y = header.get(i).ordinal();
+							matrix[x][y]=value;
+						}
+					}
+				}finally{
+					if(lineScanner !=null){
+						lineScanner.close();
+					}
 				}
 			}
+		}finally{
+			if(scanner !=null){
+				scanner.close();
+			}
+			
 		}
-		scanner.close();
+		
 	}
 
 	

@@ -18,10 +18,11 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion_experimental.align.pairwise.blosom;
+package org.jcvi.jillion.align;
 
 import static org.junit.Assert.assertEquals;
 
+import org.jcvi.jillion.align.BlosumMatrices;
 import org.jcvi.jillion.align.pairwise.AminoAcidScoringMatrix;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.junit.Test;
