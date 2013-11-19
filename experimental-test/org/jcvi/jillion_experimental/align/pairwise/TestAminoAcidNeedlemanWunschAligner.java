@@ -28,22 +28,25 @@ import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequenceBuilder;
 import org.jcvi.jillion_experimental.align.AminoAcidSequenceAlignmentBuilder;
-import org.jcvi.jillion_experimental.align.pairwise.blosom.BlosomMatrices;
+import org.jcvi.jillion_experimental.align.pairwise.blosom.BlosumMatrices;
 import org.junit.Test;
 
 public class TestAminoAcidNeedlemanWunschAligner {
 
 	@Test
 	public void exampleFromBook(){
-		AminoAcidScoringMatrix blosom50 = BlosomMatrices.getMatrix(50);
+		AminoAcidScoringMatrix blosom50 = BlosumMatrices.blosum50();
 		AminoAcidSequence subject = new AminoAcidSequenceBuilder("HEAGAWGHEE")
 									.build();
 		AminoAcidSequence query = new AminoAcidSequenceBuilder("PAWHEAE")
 										.build();
 		AminoAcidPairwiseSequenceAlignment expected = createExpectedAlignment("--P-AW-HEAE","HEAGAWGHE-E", 1F);
 		
-		AminoAcidPairwiseSequenceAlignment actual = AminoAcidNeedlemanWunschAligner.align(
-				query, subject, blosom50, -8, -8);
+		
+		AminoAcidPairwiseSequenceAlignment actual = PairwiseAlignmentBuilder.createProtienAlignmentBuilder(query, subject, blosom50)
+															.gapPenalty(-8, -8)	
+															.useGlobalAlignment()
+															.build();
 	
 		assertEquals(expected, actual);
 	}

@@ -54,13 +54,19 @@ public class PrimerDetector {
     private final double minPercentIdentity;
     private final boolean alsoCheckReverseCompliment;
     private final Integer maxNumMismatches;
-    private int gapOpenPenalty=-200;
-    
-    private static final NucleotideScoringMatrix MATRIX = new NucleotideScoringMatrixBuilder(0)
+   // private int gapOpenPenalty=-2;
+    private int gapOpenPenalty=-17;
+    private int gapExtendPenalty=-5;
+    /*
+    private static final NucleotideScoringMatrix MATRIX = new NucleotideScoringMatrixBuilder(-1)
 																.setMatch(4)
 																.ambiguityScore(2)
 																.build();
-
+*/
+    private static final NucleotideScoringMatrix MATRIX = new NucleotideScoringMatrixBuilder(-14)
+								.setMatch(5)
+								.ambiguityScore(2)
+								.build();
     /**
      * @param minLength
      * @param minPercentIdentity
@@ -95,7 +101,7 @@ public class PrimerDetector {
         	NucleotideSequence primer = iter.next();
             if(primer.getLength()>=minLength){
             	NucleotidePairwiseSequenceAlignment forwardAlignment = NucleotideSmithWatermanAligner.align(primer, sequence, 
-            					MATRIX, gapOpenPenalty, -1);
+            					MATRIX, gapOpenPenalty, gapExtendPenalty);
                
                 final NucleotidePairwiseSequenceAlignment reverseAlignment;
                 if(alsoCheckReverseCompliment){
@@ -104,25 +110,40 @@ public class PrimerDetector {
 												.build();
 					reverseAlignment = NucleotideSmithWatermanAligner.align(
 							reversePrimer,sequence,
-                			 MATRIX, gapOpenPenalty, -1);
+                			 MATRIX, gapOpenPenalty, gapExtendPenalty);
                 }else{
                     reverseAlignment = NullAlignment.INSTANCE;
                 }
                 if(maxNumMismatches ==null){
-	                if(forwardAlignment.getPercentIdentity() > minPercentIdentity || reverseAlignment.getPercentIdentity() > minPercentIdentity){
-	                    final Direction direction;
-	                    final NucleotidePairwiseSequenceAlignment bestAlignment;
-	                    if(reverseAlignment.getScore() > forwardAlignment.getScore()){
-	                    	bestAlignment = reverseAlignment;
-	                    	direction = Direction.REVERSE;
-	                    }else{
-	                    	bestAlignment = forwardAlignment;
-	                    	direction = Direction.FORWARD;
-	                    }
-	                	DirectedRange range = DirectedRange.create(
-	                    		bestAlignment.getSubjectRange().asRange(), direction);
-	                    ranges.add(range);
-	                }
+                	boolean forwardValid = forwardAlignment.getPercentIdentity() > minPercentIdentity
+                					&& forwardAlignment.getAlignmentLength() >= minLength;
+					
+                	boolean reverseValid = reverseAlignment.getPercentIdentity() > minPercentIdentity
+        					&& reverseAlignment.getAlignmentLength() >= minLength;	
+        					
+      	           if(forwardValid || reverseValid){
+      	        	  final Direction direction;
+	                   final NucleotidePairwiseSequenceAlignment bestAlignment;
+		               if(forwardValid && !reverseValid){
+		            	   bestAlignment = forwardAlignment;
+	                   		direction = Direction.FORWARD;
+		               }else if(!forwardValid && reverseValid){
+		            	   bestAlignment = reverseAlignment;
+	                   	direction = Direction.REVERSE;
+		               }else{
+		            	   //forward AND reverse both valid
+		                    if(reverseAlignment.getScore() > forwardAlignment.getScore()){
+		                    	bestAlignment = reverseAlignment;
+		                    	direction = Direction.REVERSE;
+		                    }else{
+		                    	bestAlignment = forwardAlignment;
+		                    	direction = Direction.FORWARD;
+		                    }	                	
+		                }
+	               DirectedRange range = DirectedRange.create(
+                   		bestAlignment.getSubjectRange().asRange(), direction);
+                   ranges.add(range);
+      	           }
                 }else{
                 	int maxAllowedMismatches = maxNumMismatches;
                 	boolean forwardIsCandidate = forwardAlignment.getAlignmentLength() >= minLength && forwardAlignment.getNumberOfMismatches() <= maxAllowedMismatches;

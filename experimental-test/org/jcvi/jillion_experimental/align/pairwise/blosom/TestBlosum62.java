@@ -20,16 +20,42 @@
  ******************************************************************************/
 package org.jcvi.jillion_experimental.align.pairwise.blosom;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import static org.junit.Assert.assertEquals;
 
-@RunWith(Suite.class)
-@SuiteClasses(
-    {
-    	TestBlosom50.class
-    }
-    )
-public class AllBlosomUnitTests {
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
+import org.jcvi.jillion_experimental.align.pairwise.AminoAcidScoringMatrix;
+import org.junit.Test;
+public class TestBlosum62 extends AbstractBlosumTest{
 
+	public TestBlosum62() {
+		super(BlosumMatrices.blosum62());
+	}
+
+	@Test
+	public void spotCheck(){
+		
+		AminoAcidScoringMatrix blosum62 = getMatrix();
+		assertEquals(4F,
+				blosum62.getScore(AminoAcid.Alanine, AminoAcid.Alanine),
+				0F);
+		
+		assertEquals(7F,
+				blosum62.getScore(AminoAcid.Proline, AminoAcid.Proline),
+				0F);
+		
+		assertEquals(-2F,
+				blosum62.getScore(AminoAcid.Proline, AminoAcid.Valine),
+				0F);
+		assertEquals(0F,
+				blosum62.getScore(AminoAcid.Valine, AminoAcid.Threonine),
+				0F);
+		assertEquals(1F,
+				blosum62.getScore(AminoAcid.STOP, AminoAcid.STOP),
+				0F);
+		assertEquals(-4F,
+				blosum62.getScore(AminoAcid.STOP, AminoAcid.Alanine),
+				0F);
+	}
+	
+	
 }

@@ -50,6 +50,8 @@ public interface Hsp extends SequenceAlignment<Nucleotide,NucleotideSequence> {
     BigDecimal getEvalue();
     /**
      * Get the Bit score for this hit.
+     * the bitscore is the log scale version
+     * 
      * @return
      */
     
@@ -67,19 +69,37 @@ public interface Hsp extends SequenceAlignment<Nucleotide,NucleotideSequence> {
     boolean hasAlignments();
     
     public enum Comparators implements Comparator<Hsp>{
-        BIT_SCORE{
+    	/**
+    	 * Sort by Bit score from
+    	 * lowest (the worst) to highest (the best).
+    	 */
+        BIT_SCORE_WORST_TO_BEST{
             @Override
             public int compare(Hsp o1, Hsp o2) {
-                int queryCmp = o1.getQueryId().compareTo(o2.getQueryId());
+              /*  int queryCmp = o1.getQueryId().compareTo(o2.getQueryId());
                 if(queryCmp !=0){
                     return queryCmp;
                 }
+                
                 int bitScoreCmp= o1.getBitScore().compareTo(o2.getBitScore());
                 if(bitScoreCmp !=0){
                     return bitScoreCmp;
                 }
                 //bitScore should account for length so don't bother checking that
                 return o1.getSubjectId().compareTo(o2.getSubjectId());
+                */
+            	return o1.getBitScore().compareTo(o2.getBitScore());
+            }
+        },
+        /**
+    	 * Sort by Bit score from
+    	 * the highest (the best)
+    	 * to the lowest (the worst)
+    	 */
+        BIT_SCORE_BEST_TO_WORST{
+            @Override
+            public int compare(Hsp o1, Hsp o2) {
+            	return o2.getBitScore().compareTo(o1.getBitScore());
             }
         }
         ;
