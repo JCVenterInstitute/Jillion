@@ -24,7 +24,6 @@ import org.jcvi.jillion.align.AminoAcidSequenceAlignment;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 /**
  * {@code AminoAcidSmithWatermanAligner} can perform 
@@ -43,7 +42,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  Gotoh Osamu. An improved algorithm for matching biological sequences. 
  Journal of Molecular Biology 162:705-708</a>
  */
-public final class AminoAcidSmithWatermanAligner  extends AbstractSmithWatermanAligner<AminoAcid,AminoAcidSequence, AminoAcidSequenceAlignment, AminoAcidPairwiseSequenceAlignment>{
+final class AminoAcidSmithWatermanAligner  extends AbstractSmithWatermanAligner<AminoAcid,AminoAcidSequence, AminoAcidSequenceAlignment, AminoAcidPairwiseSequenceAlignment>{
 	/**
 	 * Align the given two {@link AminoAcidSequence}s
 	 * using the given {@link ScoringMatrix} by the Smith-Waterman

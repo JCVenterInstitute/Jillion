@@ -41,7 +41,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  Gotoh Osamu. An improved algorithm for matching biological sequences. 
  Journal of Molecular Biology 162:705-708</a>
  */
-public final class NucleotideSmithWatermanAligner extends AbstractSmithWatermanAligner<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment, NucleotidePairwiseSequenceAlignment>{
+final class NucleotideSmithWatermanAligner extends AbstractSmithWatermanAligner<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment, NucleotidePairwiseSequenceAlignment>{
 	/**
 	 * Align the given two {@link NucleotideSequence}s
 	 * using the given {@link ScoringMatrix} by the Smith-Waterman
