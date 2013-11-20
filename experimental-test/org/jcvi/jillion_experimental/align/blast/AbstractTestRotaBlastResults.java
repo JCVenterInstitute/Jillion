@@ -63,7 +63,7 @@ public abstract class AbstractTestRotaBlastResults {
 	
 	private static class MyBlastVisitor implements BlastVisitor{
 
-		SortedSet<Hsp> hsps = new TreeSet<>(Hsp.Comparators.BIT_SCORE_BEST_TO_WORST);
+		SortedSet<Hsp> hsps = new TreeSet<Hsp>(Hsp.Comparators.BIT_SCORE_BEST_TO_WORST);
 		
 		@Override
 		public void visitHsp(Hsp hsp) {
