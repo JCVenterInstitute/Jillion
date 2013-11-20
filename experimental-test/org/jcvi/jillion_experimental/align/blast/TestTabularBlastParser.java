@@ -20,6 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion_experimental.align.blast;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 
@@ -27,12 +31,8 @@ import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.jcvi.jillion_experimental.align.blast.BlastVisitor;
-import org.jcvi.jillion_experimental.align.blast.HspBuilder;
-import org.jcvi.jillion_experimental.align.blast.TabularBlastParser;
 import org.junit.Before;
 import org.junit.Test;
-import static org.easymock.EasyMock.*;
 /**
  * @author dkatzel
  *
@@ -50,7 +50,7 @@ public class TestTabularBlastParser {
     public void parseFile() throws IOException{
         setupExpectations();
         replay(sut);
-        TabularBlastParser.parse(resources.getFile("files/tabular.out"), sut);
+        TabularBlastParser.create(resources.getFile("files/tabular.out")).parse(sut);
         verify(sut);
     }
     
@@ -58,7 +58,7 @@ public class TestTabularBlastParser {
     public void parseInputStream() throws IOException{
         setupExpectations();
         replay(sut);
-        TabularBlastParser.parse(resources.getFileAsStream("files/tabular.out"), sut);
+        TabularBlastParser.create(resources.getFileAsStream("files/tabular.out")).parse(sut);
         verify(sut);
     }
     /**
@@ -66,8 +66,6 @@ public class TestTabularBlastParser {
      */
     private void setupExpectations() {
         sut.visitFile();
-        sut.visitLine(isA(String.class));
-        expectLastCall().times(3);
         
         
         sut.visitHsp(HspBuilder.create("AF178033")
@@ -106,7 +104,7 @@ public class TestTabularBlastParser {
                 .bitScore(new BigDecimal("613.0"))
                 .build());
         
-        sut.visitEndOfFile();
+        sut.visitEnd();
         
         
     }

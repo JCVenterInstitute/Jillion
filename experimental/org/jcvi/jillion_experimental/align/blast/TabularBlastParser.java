@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 
 /**
@@ -40,7 +41,7 @@ import org.jcvi.jillion.internal.core.io.TextLineParser;
  *
  *
  */
-public final class TabularBlastParser {
+public abstract class TabularBlastParser implements BlastParser{
 
     private static final Pattern HIT_PATTERN = Pattern.compile(
        //AF178033 EMORG:AF031391  85.48             806     117          0       1       806         99       904     1e-179     644.8
@@ -49,43 +50,87 @@ public final class TabularBlastParser {
    
     private TabularBlastParser(){}
     
-    public static void parse(File tabularBlastOutput, BlastVisitor visitor) throws IOException{
-        InputStream in =null;
-        try{
-            in = new FileInputStream(tabularBlastOutput);
-            parse(in,visitor);
-        }finally{
-            IOUtil.closeAndIgnoreErrors(in);
-        }
+    public static BlastParser create(File file) throws IOException{
+        return new FileBasedTabularBlastParser(file);
     }
-    public static void parse(InputStream tabularBlastOutput, BlastVisitor visitor) throws IOException{
+    public static BlastParser create(InputStream in) throws IOException{
+        return new InputStreamBasedTabularBlastParser(in);
+    }
+    protected void parse(InputStream tabularBlastOutput, BlastVisitor visitor) throws IOException{
         TextLineParser parser = new TextLineParser(tabularBlastOutput);
-        visitor.visitFile();
-        while(parser.hasNextLine()){
-            String line = parser.nextLine();
-            visitor.visitLine(line);
-            Matcher matcher = HIT_PATTERN.matcher(line);
-            if(matcher.find()){
-                
-                DirectedRange queryRange = DirectedRange.parse(matcher.group(7), matcher.group(8), CoordinateSystem.RESIDUE_BASED);
-                DirectedRange subjectRange = DirectedRange.parse(matcher.group(9), matcher.group(10), CoordinateSystem.RESIDUE_BASED);
-               
-                Hsp hit =HspBuilder.create(matcher.group(1))
-                                .subject(matcher.group(2))
-                                .percentIdentity(Double.parseDouble(matcher.group(3)))
-                                .alignmentLength(Integer.parseInt(matcher.group(4)))
-                                .numMismatches(Integer.parseInt(matcher.group(5)))
-                                .numGapOpenings(Integer.parseInt(matcher.group(6)))                                
-                                .eValue(new BigDecimal(matcher.group(11)))
-                                .bitScore(new BigDecimal(matcher.group(12)))              
-                                .queryRange(queryRange)
-                                .subjectRange(subjectRange)
-                                .build();
-                visitor.visitHsp(hit);
-            }
+        try{
+	        visitor.visitFile();
+	        while(parser.hasNextLine()){
+	            String line = parser.nextLine();
+	            Matcher matcher = HIT_PATTERN.matcher(line);
+	            if(matcher.find()){
+	                
+	                DirectedRange queryRange = DirectedRange.parse(matcher.group(7), matcher.group(8), CoordinateSystem.RESIDUE_BASED);
+	                DirectedRange subjectRange = DirectedRange.parse(matcher.group(9), matcher.group(10), CoordinateSystem.RESIDUE_BASED);
+	               
+	                Hsp hit =HspBuilder.create(matcher.group(1))
+	                                .subject(matcher.group(2))
+	                                .percentIdentity(Double.parseDouble(matcher.group(3)))
+	                                .alignmentLength(Integer.parseInt(matcher.group(4)))
+	                                .numMismatches(Integer.parseInt(matcher.group(5)))
+	                                .numGapOpenings(Integer.parseInt(matcher.group(6)))                                
+	                                .eValue(new BigDecimal(matcher.group(11)))
+	                                .bitScore(new BigDecimal(matcher.group(12)))              
+	                                .queryRange(queryRange)
+	                                .subjectRange(subjectRange)
+	                                .build();
+	                visitor.visitHsp(hit);
+	            }
+	        }
+	        visitor.visitEnd();
+        }finally{
+        	IOUtil.closeAndIgnoreErrors(parser);
         }
-        visitor.visitEndOfFile();
     }
     
+    
+    private static final class FileBasedTabularBlastParser extends TabularBlastParser{
+    	private final File file;
+    	
+    	
+		public FileBasedTabularBlastParser(File file) {
+			this.file = file;
+		}
+
+		@Override
+		public boolean canParse() {
+			return true;
+		}
+
+		@Override
+		public void parse(BlastVisitor visitor) throws IOException {
+			InputStream in = new FileInputStream(file);
+			parse(in, visitor);
+		}
+    	
+    }
+    
+    private static final class InputStreamBasedTabularBlastParser extends TabularBlastParser{
+    	private final OpenAwareInputStream in;
+    	
+    	
+		public InputStreamBasedTabularBlastParser(InputStream in) {
+			this.in = new OpenAwareInputStream(in);
+		}
+
+		@Override
+		public boolean canParse() {
+			return in.isOpen();
+		}
+
+		@Override
+		public void parse(BlastVisitor visitor) throws IOException {
+			if(!canParse()){
+				throw new IllegalStateException("can not parse inputstream, already closed"	);
+			}			
+			parse(in, visitor);
+		}
+    	
+    }
    
 }
