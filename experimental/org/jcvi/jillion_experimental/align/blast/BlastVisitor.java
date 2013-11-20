@@ -20,14 +20,22 @@
  ******************************************************************************/
 package org.jcvi.jillion_experimental.align.blast;
 
-import org.jcvi.jillion.core.io.TextFileVisitor;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface BlastVisitor extends TextFileVisitor{
+public interface BlastVisitor{
 
     void visitHsp(Hsp hsp);
+    /**
+     * Visiting a new File.
+     */
+    void visitFile();
+   
+    /**
+     * The File has been completely visited.
+     */
+    void visitEnd();
 }
