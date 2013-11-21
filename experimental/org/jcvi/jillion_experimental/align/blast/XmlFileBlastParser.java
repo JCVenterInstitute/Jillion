@@ -33,6 +33,11 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
+import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
+import org.jcvi.jillion.core.residue.aa.AminoAcidSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
@@ -144,14 +149,19 @@ public final class XmlFileBlastParser implements BlastParser{
         
         private static final Pattern DEFLINE_PATTERN = Pattern.compile("^\\s*(\\S+)\\s*.*$");
         
-        private HspBuilder hspBuilder;
+        private static final String PROGRAM_NAME = "BlastOutput_program";
+        
+        
+        private HspBuilder<?,?> hspBuilder;
         private final BlastVisitor visitor;
         private String tempVal=null;
         private StringBuilder tempBuilder =null;
         private Integer queryStart, queryEnd, subjectStart,subjectEnd;
         private String queryId;
         int misMatches=0,numberOfGapOpenings=0;
-        NucleotideSequence querySequence, subjectSequence;
+        Sequence<?> querySequence, subjectSequence;
+        private boolean isNucleotide=false;
+        
         SaxBlastParser(BlastVisitor visitor){
             this.visitor = visitor;
         }
@@ -168,7 +178,11 @@ public final class XmlFileBlastParser implements BlastParser{
         	tempBuilder.append( new String(ch,start,length));
         }
 
-        /**
+        @Override
+		public void endDocument() throws SAXException {
+			visitor.visitEnd();
+		}
+		/**
         * {@inheritDoc}
         */
         @Override
@@ -177,9 +191,13 @@ public final class XmlFileBlastParser implements BlastParser{
         	tempVal = tempBuilder.toString();
             if(QUERY_ID.equals(qName)){                
                queryId = tempVal;
-            }
-            if(SUBJECT_DEF.equals(qName)){
-            	hspBuilder = HspBuilder.create(queryId);
+            }else if(SUBJECT_DEF.equals(qName)){
+            	if(isNucleotide){
+            		hspBuilder = HspBuilder.createForNucleotides(queryId);
+            	}else{
+            		hspBuilder = HspBuilder.createForProtiens(queryId);
+            	}
+            	
             	//defline could have comments
             	//only include up to first whitespace
             	Matcher matcher = DEFLINE_PATTERN.matcher(tempVal);
@@ -200,7 +218,15 @@ public final class XmlFileBlastParser implements BlastParser{
                 hspBuilder.percentIdentity(percentIdentity);
                 hspBuilder.numMismatches(misMatches);
                 hspBuilder.numGapOpenings(numberOfGapOpenings);
-                hspBuilder.gappedAlignments(querySequence, subjectSequence);
+                if(isNucleotide){
+                	 ((HspBuilder<Nucleotide,NucleotideSequence>)hspBuilder)
+                	 				.gappedAlignments((NucleotideSequence)querySequence, (NucleotideSequence)subjectSequence);
+                }else{
+                	 ((HspBuilder<AminoAcid,AminoAcidSequence>)hspBuilder)
+ 	 								.gappedAlignments((AminoAcidSequence)querySequence, (AminoAcidSequence)subjectSequence);
+
+                }
+               
                 visitor.visitHsp(hspBuilder.build());
                
                 queryStart=null;
@@ -227,14 +253,23 @@ public final class XmlFileBlastParser implements BlastParser{
                 subjectEnd = Integer.parseInt(tempVal);
             }else if(QUERY_SEQUENCE.equals(qName)){
                 numberOfGapOpenings +=parseNumberOfGapOpenings(tempVal);
-                querySequence = new NucleotideSequenceBuilder(tempVal).build();
+                if(isNucleotide){
+                	querySequence = new NucleotideSequenceBuilder(tempVal).build();
+                }else{
+                	querySequence = new AminoAcidSequenceBuilder(tempVal).build();
+                }
             }else if(SUBJECT_SEQUENCE.endsWith(qName)){
                 numberOfGapOpenings +=parseNumberOfGapOpenings(tempVal);
-                subjectSequence = new NucleotideSequenceBuilder(tempVal).build();
+                if(isNucleotide){
+                	subjectSequence = new NucleotideSequenceBuilder(tempVal).build();
+                }else{
+                	subjectSequence = new AminoAcidSequenceBuilder(tempVal).build();
+                }
             }else if(MIDLINE.equals(qName)){
                 int totalMisMatches= parseNumberOfMismatches(tempVal);
-                misMatches = totalMisMatches- numberOfGapOpenings;
-                
+                misMatches = totalMisMatches- numberOfGapOpenings;                
+            }else if(PROGRAM_NAME.equals(qName)){
+            	isNucleotide = "blastn".equalsIgnoreCase(tempVal);
             }
         }
         /**

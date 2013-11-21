@@ -50,7 +50,7 @@ public class TestBlastHit {
     private BigDecimal eValue = new BigDecimal("2e-172");
     private BigDecimal bitScore = new BigDecimal(636.8D);
     
-    Hsp sut = HspBuilder.create(query)
+    Hsp sut = HspBuilder.createForNucleotides(query)
                         .subject(subject)
                         .percentIdentity(ident)
                         .alignmentLength(length)
