@@ -49,26 +49,83 @@ public final class HspBuilder<R extends Residue, S extends Sequence<R>> implemen
         private S queryAlignment, subjectAlignment;
         
         
-        private static boolean isNucleotide(String type) {
-        	//type may be null
-    		return "blastn".equalsIgnoreCase(type);
-    	}
-        
-        public static HspBuilder<?,?> createForType(String type, String queryId){
-        	if(isNucleotide(type)){
-        		return createForNucleotides(queryId);
+        /**
+         * Create a new {@link HspBuilder} for BLASTN (Nucleotide query to Nucleotide subject) results.
+         * @return a new {@link HspBuilder} will never be null.
+         */
+        public static HspBuilder<Nucleotide,NucleotideSequence> forBlastN(){
+        	return new HspBuilder<Nucleotide,NucleotideSequence>();
+        }
+        /**
+         * Create a new {@link HspBuilder} for BLASTP (Protein query to Protein subject) results.
+         * @return a new {@link HspBuilder} will never be null.
+         */
+        public static HspBuilder<AminoAcid,AminoAcidSequence> forBlastP(){
+        	return new HspBuilder<AminoAcid,AminoAcidSequence>();
+        }
+        /**
+         * Create a new {@link HspBuilder} for BLASTX (Nucleotide (translated) query to Protein subject) results.
+         * @return a new {@link HspBuilder} will never be null.
+         */
+        public static HspBuilder<AminoAcid,AminoAcidSequence> forBlastX(){
+        	return new HspBuilder<AminoAcid,AminoAcidSequence>();
+        }
+        /**
+         * Create a new {@link HspBuilder} for TBLASTX (Nucleotide (translated) query to Nucleotide (translated) subject) results.
+         * @return a new {@link HspBuilder} will never be null.
+         */
+        public static HspBuilder<AminoAcid,AminoAcidSequence> forTBlastX(){
+        	return new HspBuilder<AminoAcid,AminoAcidSequence>();
+        }
+        /**
+         * Create a new {@link HspBuilder} for TBLASTN (Protein query to Nucleotide (translated) subject) results.
+         * @return a new {@link HspBuilder} will never be null.
+         */
+        public static HspBuilder<AminoAcid,AminoAcidSequence> forTBlastN(){
+        	return new HspBuilder<AminoAcid,AminoAcidSequence>();
+        }
+        /**
+         * Create a new {@link HspBuilder} instance for the given type
+         * by name ("blastn", "blastp" etc).
+         * @param type the name of the type, case-insensitive; can not be null.
+         * @return  a new {@link HspBuilder} will never be null.
+         * @throws NullPointerException if type is null.
+         * @throws IllegalArgumentException if type is not
+         * equal-ignoring-case with "blastn", "blastp", "blastx", "tblastn",  or "tblastp".
+         */
+        public static HspBuilder<?,?> forType(String type){
+        	if(type==null){
+        		throw new NullPointerException("type can not be null");
         	}
-        	return createForProtiens(queryId);
+        	if("blastn".equalsIgnoreCase(type)){
+        		return forBlastN();
+        	}
+        	if("blastp".equalsIgnoreCase(type)){
+        		return forBlastP();
+        	}
+        	if("blastx".equalsIgnoreCase(type)){
+        		return forBlastX();
+        	}
+        	if("tblastx".equalsIgnoreCase(type)){
+        		return forTBlastX();
+        	}
+        	if("tblastn".equalsIgnoreCase(type)){
+        		return forTBlastN();
+        	}
+        	throw new IllegalArgumentException("unknown type :" + type);
         }
-    	public static HspBuilder<Nucleotide,NucleotideSequence> createForNucleotides(String queryId){
-            return new HspBuilder<Nucleotide,NucleotideSequence>(queryId);
-        }
-    	public static HspBuilder<AminoAcid,AminoAcidSequence> createForProtiens(String queryId){
-            return new HspBuilder<AminoAcid,AminoAcidSequence>(queryId);
-        }
+    	
         public static <R extends Residue, S extends Sequence<R>> HspBuilder<R,S> copy(Hsp<R,S> hsp){
             return new HspBuilder<R,S>(hsp);
         }
+        
+        /**
+         * Create a new instance of {@link HspBuilder}
+         * that is an exact copy of this instance.
+         * Any future modifications to either builder
+         * will not affect the other. 
+         * @return  a new {@link HspBuilder} will never be null.
+         */
         public  HspBuilder<R,S> copy(){
             return new HspBuilder<R,S>(this);
         }
@@ -107,6 +164,9 @@ public final class HspBuilder<R extends Residue, S extends Sequence<R>> implemen
             if(copy.hasAlignments()){
             	gappedAlignments(copy.getGappedQueryAlignment(), copy.getGappedSubjectAlignment());
             }
+        }
+        private HspBuilder(){
+        	
         }
         private HspBuilder(String queryId) {
             query(queryId);

@@ -79,7 +79,15 @@ public abstract class TabularBlastParser implements BlastParser{
 	                DirectedRange queryRange = DirectedRange.parse(matcher.group(7), matcher.group(8), CoordinateSystem.RESIDUE_BASED);
 	                DirectedRange subjectRange = DirectedRange.parse(matcher.group(9), matcher.group(10), CoordinateSystem.RESIDUE_BASED);
 	           
-					Hsp<?,?> hit =HspBuilder.createForType(type,matcher.group(1))
+					HspBuilder<?, ?> builder;
+					if(type!=null){
+						builder= HspBuilder.forType(type);
+					}else{
+						//doesn't really matter since we don't have
+						//sequences anyway ?
+						builder= HspBuilder.forBlastN();
+					}
+					Hsp<?,?> hit =builder.query(matcher.group(1))
 	                                .subject(matcher.group(2))
 	                                .percentIdentity(Double.parseDouble(matcher.group(3)))
 	                                .alignmentLength(Integer.parseInt(matcher.group(4)))

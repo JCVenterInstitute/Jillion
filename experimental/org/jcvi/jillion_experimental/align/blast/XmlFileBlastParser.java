@@ -193,9 +193,9 @@ public final class XmlFileBlastParser implements BlastParser{
                queryId = tempVal;
             }else if(SUBJECT_DEF.equals(qName)){
             	if(isNucleotide){
-            		hspBuilder = HspBuilder.createForNucleotides(queryId);
+            		hspBuilder = HspBuilder.forBlastN().query(queryId);
             	}else{
-            		hspBuilder = HspBuilder.createForProtiens(queryId);
+            		hspBuilder = HspBuilder.forBlastP().query(queryId);
             	}
             	
             	//defline could have comments
