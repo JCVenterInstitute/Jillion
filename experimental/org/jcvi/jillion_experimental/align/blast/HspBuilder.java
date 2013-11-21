@@ -23,6 +23,9 @@ package org.jcvi.jillion_experimental.align.blast;
 import java.math.BigDecimal;
 
 import org.jcvi.jillion.core.DirectedRange;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 /**
@@ -30,7 +33,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  *
  *
  */
-public final class HspBuilder implements org.jcvi.jillion.core.util.Builder<Hsp>{
+public final class HspBuilder<R extends Residue, S extends Sequence<R>> implements org.jcvi.jillion.core.util.Builder<Hsp<R,S>>{
 
     private static final double ONE_HUNDRED = 100.0D;
 
@@ -41,18 +44,36 @@ public final class HspBuilder implements org.jcvi.jillion.core.util.Builder<Hsp>
         private BigDecimal eValue, bitScore;
         private DirectedRange queryRange, subjectRange;
         private Integer numGapsOpenings ,numMismatches,alignmentLength;
-        private NucleotideSequence queryAlignment, subjectAlignment;
+        private S queryAlignment, subjectAlignment;
         
         
 
-    	public static HspBuilder create(String queryId){
-            return new HspBuilder(queryId);
+    	public static HspBuilder<Nucleotide,NucleotideSequence> create(String queryId){
+            return new HspBuilder<Nucleotide,NucleotideSequence>(queryId);
         }
-        public static HspBuilder copy(Hsp copy){
-            return new HspBuilder(copy);
+        public static <R extends Residue, S extends Sequence<R>> HspBuilder<R,S> copy(Hsp<R,S> hsp){
+            return new HspBuilder<R,S>(hsp);
+        }
+        public  HspBuilder<R,S> copy(){
+            return new HspBuilder<R,S>(this);
         }
         
-        private HspBuilder(Hsp copy) {
+        private HspBuilder(HspBuilder<R,S> copy){
+        	this.bitScore =copy.bitScore;
+        	this.eValue = copy.eValue;
+        	this.numGapsOpenings = copy.numGapsOpenings;
+        	this.numMismatches = copy.numMismatches;
+            this.percentIdentity = copy.percentIdentity;
+            this.queryRange = copy.queryRange;
+            this.subjectRange = copy.subjectRange;
+            this.queryAlignment =copy.queryAlignment;
+            this.queryId = copy.queryId;
+            this.subjectAlignment = copy.subjectAlignment;
+            this.subjectId = copy.subjectId;
+            this.alignmentLength = copy.alignmentLength;
+            
+        }
+        private HspBuilder(Hsp<R,S> copy) {
            
             bitScore(copy.getBitScore())
             .eValue(copy.getEvalue())
@@ -65,11 +86,15 @@ public final class HspBuilder implements org.jcvi.jillion.core.util.Builder<Hsp>
             .subjectRange(copy.getSubjectRange())
             .alignmentLength(copy.getAlignmentLength())
             ;
+            
+            if(copy.hasAlignments()){
+            	gappedAlignments(copy.getGappedQueryAlignment(), copy.getGappedSubjectAlignment());
+            }
         }
         private HspBuilder(String queryId) {
             query(queryId);
         }
-        public HspBuilder gappedAlignments(NucleotideSequence queryAlignment, NucleotideSequence subjectAlignment) {
+        public HspBuilder<R,S> gappedAlignments(S queryAlignment, S subjectAlignment) {
             if((queryAlignment ==null && subjectAlignment !=null) 
             		|| (subjectAlignment ==null && queryAlignment !=null)){
                 throw new NullPointerException("gapped alignments must be either both null or neither null");
@@ -78,7 +103,7 @@ public final class HspBuilder implements org.jcvi.jillion.core.util.Builder<Hsp>
             this.subjectAlignment = subjectAlignment;
             return this;
         }
-        public HspBuilder query(String queryId) {
+        public HspBuilder<R,S>  query(String queryId) {
             if(queryId ==null){
                 throw new NullPointerException("query id can not be null");
             }
@@ -90,7 +115,7 @@ public final class HspBuilder implements org.jcvi.jillion.core.util.Builder<Hsp>
             return this;
         }
         
-        public HspBuilder subject(String subjectId){
+        public HspBuilder<R,S>  subject(String subjectId){
             if(subjectId ==null){
                 throw new NullPointerException("subject id can not be null");
             }
@@ -102,7 +127,7 @@ public final class HspBuilder implements org.jcvi.jillion.core.util.Builder<Hsp>
             return this;
         }
 
-        public HspBuilder percentIdentity(double percentIdentity){            
+        public HspBuilder<R,S>  percentIdentity(double percentIdentity){            
             if(percentIdentity <0){
                 throw new IllegalArgumentException("percentIdentity score must be positive: " + percentIdentity);
             }
@@ -112,7 +137,7 @@ public final class HspBuilder implements org.jcvi.jillion.core.util.Builder<Hsp>
             this.percentIdentity = percentIdentity;
             return this;
         }
-        public HspBuilder bitScore(BigDecimal bitScore){  
+        public HspBuilder<R,S>  bitScore(BigDecimal bitScore){  
             if(bitScore ==null){
                 throw new NullPointerException("bit score can not be null");
             }
@@ -123,7 +148,7 @@ public final class HspBuilder implements org.jcvi.jillion.core.util.Builder<Hsp>
             return this;
         }
         
-        public HspBuilder queryRange(DirectedRange queryRange){
+        public HspBuilder<R,S>  queryRange(DirectedRange queryRange){
             if(queryRange ==null){
                 throw new NullPointerException("queryRange can not be null");
             }
@@ -131,14 +156,14 @@ public final class HspBuilder implements org.jcvi.jillion.core.util.Builder<Hsp>
             return this;
         }
 
-        public HspBuilder subjectRange(DirectedRange subjectRange){
+        public HspBuilder<R,S>  subjectRange(DirectedRange subjectRange){
             if(subjectRange ==null){
                 throw new NullPointerException("subjectRange can not be null");
             }
             this.subjectRange = subjectRange;
             return this;
         }
-        public HspBuilder eValue(BigDecimal eValue){
+        public HspBuilder<R,S>  eValue(BigDecimal eValue){
             if(eValue ==null){
                 throw new NullPointerException("e-value can not be null");
             }
@@ -149,21 +174,21 @@ public final class HspBuilder implements org.jcvi.jillion.core.util.Builder<Hsp>
             return this;
         }
         
-        public HspBuilder numGapOpenings(int numberOfGapOpenings){
+        public HspBuilder<R,S>  numGapOpenings(int numberOfGapOpenings){
             if(numberOfGapOpenings<0){
                 throw new IllegalArgumentException("number of gap openings can not be negative : " + numberOfGapOpenings);
             }
             this.numGapsOpenings = numberOfGapOpenings;
             return this;
         }
-        public HspBuilder numMismatches(int numberOfMismatches){
+        public HspBuilder<R,S>  numMismatches(int numberOfMismatches){
             if(numberOfMismatches<0){
                 throw new IllegalArgumentException("number of mismatches can not be negative : " + numberOfMismatches);
             }
             this.numMismatches = numberOfMismatches;
             return this;
         }
-        public HspBuilder alignmentLength(int alignmentLength){
+        public HspBuilder<R,S>  alignmentLength(int alignmentLength){
             if(alignmentLength<0){
                 throw new IllegalArgumentException("alignment length can not be negative : " + alignmentLength);
             }
@@ -174,9 +199,9 @@ public final class HspBuilder implements org.jcvi.jillion.core.util.Builder<Hsp>
         * {@inheritDoc}
         */
         @Override
-        public Hsp build() {
+        public Hsp<R,S>  build() {
             verifyAllValuesSet();
-            return new BlastHitImpl(queryId, subjectId, 
+            return new BlastHitImpl<R,S> (queryId, subjectId, 
                     percentIdentity, bitScore, 
                     eValue, 
                     queryRange, subjectRange, 
@@ -219,7 +244,7 @@ public final class HspBuilder implements org.jcvi.jillion.core.util.Builder<Hsp>
         
     
 
-    private static final class BlastHitImpl implements Hsp{
+    private static final class BlastHitImpl<R extends Residue, S extends Sequence<R>> implements Hsp<R,S>{
         
     private final String queryId,subjectId;
     private final double percentIdentity;
@@ -227,14 +252,14 @@ public final class HspBuilder implements org.jcvi.jillion.core.util.Builder<Hsp>
     private final DirectedRange queryRange, subjectRange;
     private final int numGapsOpenings,numMismatches;
     private final int alignmentLength;
-    private final NucleotideSequence queryAlignment;
-    private final NucleotideSequence subjectAlignment;
+    private final S queryAlignment;
+    private final S subjectAlignment;
     
     private BlastHitImpl(String queryId, String subjectId,
             double percentIdentity, BigDecimal bitScore, BigDecimal eValue,
             DirectedRange queryRange, DirectedRange subjectRange, int numGapsOpenings,
             int numMismatches, int alignmentLength,
-            NucleotideSequence queryAlignment,NucleotideSequence subjectAlignment) {
+            S queryAlignment,S subjectAlignment) {
         this.queryId = queryId;
         this.subjectId = subjectId;
         this.percentIdentity = percentIdentity;
@@ -263,7 +288,7 @@ public final class HspBuilder implements org.jcvi.jillion.core.util.Builder<Hsp>
     * {@inheritDoc}
     */
     @Override
-    public NucleotideSequence getGappedQueryAlignment() {
+    public S getGappedQueryAlignment() {
         return queryAlignment;
     }
 
@@ -272,7 +297,7 @@ public final class HspBuilder implements org.jcvi.jillion.core.util.Builder<Hsp>
     * {@inheritDoc}
     */
     @Override
-    public NucleotideSequence getGappedSubjectAlignment() {
+    public S getGappedSubjectAlignment() {
         return subjectAlignment;
     }
 

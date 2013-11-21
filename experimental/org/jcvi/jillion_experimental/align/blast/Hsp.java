@@ -24,17 +24,28 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 
 import org.jcvi.jillion.align.SequenceAlignment;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.residue.Residue;
 
 /**
+ * {@code Hsp} is an object representation of a 
+ * "High-scoring Segment Pair" (HSP).  HSPs
+ * are pairs of sequences whose alignments with one another
+ * meet certain scoring and statistical criteria.
  * @author dkatzel
  *
  *
  */
-public interface Hsp extends SequenceAlignment<Nucleotide,NucleotideSequence> {
-    String getQueryId();
-    
+public interface Hsp<R extends Residue, S extends Sequence<R>> extends SequenceAlignment<R,S> {
+	/**
+	 * Get the Id of the Query sequence in this Hsp.
+	 * @return a String; will never be null.
+	 */
+	String getQueryId();
+	/**
+	 * Get the Id of the Subject sequence in this Hsp.
+	 * @return a String; will never be null.
+	 */
     String getSubjectId();
 
     /**
@@ -50,7 +61,7 @@ public interface Hsp extends SequenceAlignment<Nucleotide,NucleotideSequence> {
     BigDecimal getEvalue();
     /**
      * Get the Bit score for this hit.
-     * the bitscore is the log scale version
+     * The bitscore is a normalized raw score.
      * 
      * @return
      */
@@ -68,26 +79,14 @@ public interface Hsp extends SequenceAlignment<Nucleotide,NucleotideSequence> {
      */
     boolean hasAlignments();
     
-    public enum Comparators implements Comparator<Hsp>{
+    public enum Comparators implements Comparator<Hsp<?,?>>{
     	/**
     	 * Sort by Bit score from
     	 * lowest (the worst) to highest (the best).
     	 */
         BIT_SCORE_WORST_TO_BEST{
             @Override
-            public int compare(Hsp o1, Hsp o2) {
-              /*  int queryCmp = o1.getQueryId().compareTo(o2.getQueryId());
-                if(queryCmp !=0){
-                    return queryCmp;
-                }
-                
-                int bitScoreCmp= o1.getBitScore().compareTo(o2.getBitScore());
-                if(bitScoreCmp !=0){
-                    return bitScoreCmp;
-                }
-                //bitScore should account for length so don't bother checking that
-                return o1.getSubjectId().compareTo(o2.getSubjectId());
-                */
+            public int compare(Hsp<?,?> o1, Hsp<?,?> o2) {
             	return o1.getBitScore().compareTo(o2.getBitScore());
             }
         },
@@ -98,10 +97,33 @@ public interface Hsp extends SequenceAlignment<Nucleotide,NucleotideSequence> {
     	 */
         BIT_SCORE_BEST_TO_WORST{
             @Override
-            public int compare(Hsp o1, Hsp o2) {
+            public int compare(Hsp<?,?> o1, Hsp<?,?> o2) {
             	return o2.getBitScore().compareTo(o1.getBitScore());
             }
-        }
+        },
+        /**
+    	 * Sort by e-value score from
+    	 * lowest (the best) to highest (the worst).
+    	 */
+        
+        E_VALUE_BEST_TO_WORST{
+            @Override
+            public int compare(Hsp<?,?> o1, Hsp<?,?> o2) {
+            	return o1.getEvalue().compareTo(o2.getEvalue());
+            }
+        },
+        /**
+    	 * Sort by e-value score from
+    	 * the highest (the worst)
+    	 * to the lowest (the best)
+    	 */
+        E_VALUE_WORST_TO_BEST{
+            @Override
+            public int compare(Hsp<?,?> o1, Hsp<?,?> o2) {
+            	return o2.getEvalue().compareTo(o1.getEvalue());
+            }
+        },
+        
         ;
 
         

@@ -35,7 +35,9 @@ import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 
 /**
- * Parse TablularBlast output ( created using the "-m 8" or "-m 9" options in blast).
+ * {@code TabularBlastParser}
+ * can parse the "tabular" encoded blast output
+ * that is usually created using the "-m 8" or "-m 9" options in blast. 
  * 
  * @author dkatzel
  *
@@ -59,7 +61,6 @@ public abstract class TabularBlastParser implements BlastParser{
     protected void parse(InputStream tabularBlastOutput, BlastVisitor visitor) throws IOException{
         TextLineParser parser = new TextLineParser(tabularBlastOutput);
         try{
-	        visitor.visitFile();
 	        while(parser.hasNextLine()){
 	            String line = parser.nextLine();
 	            Matcher matcher = HIT_PATTERN.matcher(line);
