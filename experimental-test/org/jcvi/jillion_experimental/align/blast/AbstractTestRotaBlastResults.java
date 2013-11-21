@@ -26,10 +26,10 @@ public abstract class AbstractTestRotaBlastResults {
 		
 		parser.parse(visitor);
 		
-		Iterator<Hsp> iter = visitor.hsps.iterator();
+		Iterator<Hsp<?,?>> iter = visitor.hsps.iterator();
 		StringBuilder builder = new StringBuilder();
 		for(int i=0; i<20; i++){
-			Hsp hsp = iter.next();
+			Hsp<?,?> hsp = iter.next();
 			builder.append(String.format("%s %s%n",hsp.getSubjectId(), hsp.getSubjectRange()));
 		}
 		String expected = 
@@ -63,19 +63,15 @@ public abstract class AbstractTestRotaBlastResults {
 	
 	private static class MyBlastVisitor implements BlastVisitor{
 
-		SortedSet<Hsp> hsps = new TreeSet<Hsp>(Hsp.Comparators.BIT_SCORE_BEST_TO_WORST);
+		SortedSet<Hsp<?,?>> hsps = new TreeSet<Hsp<?,?>>(Hsp.Comparators.BIT_SCORE_BEST_TO_WORST);
 		
 		@Override
-		public void visitHsp(Hsp hsp) {
+		public void visitHsp(Hsp<?,?> hsp) {
 			hsps.add(hsp);
 			
 		}
 
-		@Override
-		public void visitFile() {
-			// TODO Auto-generated method stub
-			
-		}
+		
 
 		@Override
 		public void visitEnd() {

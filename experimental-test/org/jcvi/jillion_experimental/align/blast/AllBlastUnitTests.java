@@ -28,7 +28,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         TestBlastHit.class,
-        TestTabularBlastParser.class
+        TestTabularBlastParser.class,
+        TestTabularRotaBlastResults.class,
+        TestXmlRotaBlastResults.class
     }
     )
 public class AllBlastUnitTests {

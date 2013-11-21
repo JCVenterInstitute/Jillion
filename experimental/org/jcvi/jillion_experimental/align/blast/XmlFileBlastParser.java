@@ -121,7 +121,11 @@ public final class XmlFileBlastParser implements BlastParser{
    
     
     private static class SaxBlastParser extends DefaultHandler{
-        private static final String START_HIT = "Hit_id";
+    	
+    	//TODO currently only support nucleotide
+    	//the XML has a tag BlastOutput_program with a value of blastn etc
+    	//maybe use different subclasses to handle nucleotide or amino acid
+    	//(or mix?)
         private static final String END_HIT = "Hsp";
         private static final String BIT_SCORE = "Hsp_bit-score";
         private static final String E_VALUE = "Hsp_evalue";
@@ -137,6 +141,9 @@ public final class XmlFileBlastParser implements BlastParser{
         private static final String SUBJECT_DEF = "Hit_def";
         
         private static final Pattern GAP_OPENING_PATTERN = Pattern.compile("[-]+");
+        
+        private static final Pattern DEFLINE_PATTERN = Pattern.compile("^\\s*(\\S+)\\s*.*$");
+        
         private HspBuilder hspBuilder;
         private final BlastVisitor visitor;
         private String tempVal=null;
@@ -173,7 +180,18 @@ public final class XmlFileBlastParser implements BlastParser{
             }
             if(SUBJECT_DEF.equals(qName)){
             	hspBuilder = HspBuilder.create(queryId);
-                hspBuilder.subject(tempVal);
+            	//defline could have comments
+            	//only include up to first whitespace
+            	Matcher matcher = DEFLINE_PATTERN.matcher(tempVal);
+            	if(matcher.find()){            		
+                    hspBuilder.subject(matcher.group(1));
+            	}else{
+            		//doesn't match defline pattern
+            		//use whole string?
+            		hspBuilder.subject(tempVal);
+            	}
+            	
+            	
             }else if(END_HIT.equals(qName)){
                 hspBuilder.queryRange(DirectedRange.parse(queryStart, queryEnd, CoordinateSystem.RESIDUE_BASED));
                 hspBuilder.subjectRange(DirectedRange.parse(subjectStart, subjectEnd, CoordinateSystem.RESIDUE_BASED));

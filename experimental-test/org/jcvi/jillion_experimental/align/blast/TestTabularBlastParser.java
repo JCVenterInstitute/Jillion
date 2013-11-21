@@ -65,7 +65,6 @@ public class TestTabularBlastParser {
      * 
      */
     private void setupExpectations() {
-        sut.visitFile();
         
         
         sut.visitHsp(HspBuilder.create("AF178033")
