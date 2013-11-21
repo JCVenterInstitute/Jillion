@@ -25,6 +25,8 @@ import java.math.BigDecimal;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
+import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
@@ -47,9 +49,22 @@ public final class HspBuilder<R extends Residue, S extends Sequence<R>> implemen
         private S queryAlignment, subjectAlignment;
         
         
-
-    	public static HspBuilder<Nucleotide,NucleotideSequence> create(String queryId){
+        private static boolean isNucleotide(String type) {
+        	//type may be null
+    		return "blastn".equalsIgnoreCase(type);
+    	}
+        
+        public static HspBuilder<?,?> createForType(String type, String queryId){
+        	if(isNucleotide(type)){
+        		return createForNucleotides(queryId);
+        	}
+        	return createForProtiens(queryId);
+        }
+    	public static HspBuilder<Nucleotide,NucleotideSequence> createForNucleotides(String queryId){
             return new HspBuilder<Nucleotide,NucleotideSequence>(queryId);
+        }
+    	public static HspBuilder<AminoAcid,AminoAcidSequence> createForProtiens(String queryId){
+            return new HspBuilder<AminoAcid,AminoAcidSequence>(queryId);
         }
         public static <R extends Residue, S extends Sequence<R>> HspBuilder<R,S> copy(Hsp<R,S> hsp){
             return new HspBuilder<R,S>(hsp);
@@ -57,6 +72,8 @@ public final class HspBuilder<R extends Residue, S extends Sequence<R>> implemen
         public  HspBuilder<R,S> copy(){
             return new HspBuilder<R,S>(this);
         }
+        
+        
         
         private HspBuilder(HspBuilder<R,S> copy){
         	this.bitScore =copy.bitScore;

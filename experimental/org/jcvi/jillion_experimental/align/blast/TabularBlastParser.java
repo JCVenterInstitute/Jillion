@@ -45,6 +45,7 @@ import org.jcvi.jillion.internal.core.io.TextLineParser;
  */
 public abstract class TabularBlastParser implements BlastParser{
 
+	private static final Pattern TYPE_PATTERN = Pattern.compile("^# (\\S*BLAST\\S+).*");
     private static final Pattern HIT_PATTERN = Pattern.compile(
        //AF178033 EMORG:AF031391  85.48             806     117          0       1       806         99       904     1e-179     644.8
             "(\\S+)\\s+(\\S+)\\s+(\\d+\\.?\\d*)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\d+\\.?\\d*)");
@@ -60,16 +61,25 @@ public abstract class TabularBlastParser implements BlastParser{
     }
     protected void parse(InputStream tabularBlastOutput, BlastVisitor visitor) throws IOException{
         TextLineParser parser = new TextLineParser(tabularBlastOutput);
+        boolean parsedHeader=false;
+        String type=null;
         try{
 	        while(parser.hasNextLine()){
 	            String line = parser.nextLine();
+	            if(!parsedHeader && type==null){
+	            	Matcher headerMatcher = TYPE_PATTERN.matcher(line);
+	            	if(headerMatcher.find()){
+	            		type = headerMatcher.group(1);
+	            		parsedHeader=true;
+	            	}
+	            }
 	            Matcher matcher = HIT_PATTERN.matcher(line);
 	            if(matcher.find()){
-	                
+	            	parsedHeader=true;
 	                DirectedRange queryRange = DirectedRange.parse(matcher.group(7), matcher.group(8), CoordinateSystem.RESIDUE_BASED);
 	                DirectedRange subjectRange = DirectedRange.parse(matcher.group(9), matcher.group(10), CoordinateSystem.RESIDUE_BASED);
-	               
-	                Hsp hit =HspBuilder.create(matcher.group(1))
+	           
+					Hsp<?,?> hit =HspBuilder.createForType(type,matcher.group(1))
 	                                .subject(matcher.group(2))
 	                                .percentIdentity(Double.parseDouble(matcher.group(3)))
 	                                .alignmentLength(Integer.parseInt(matcher.group(4)))
@@ -90,7 +100,10 @@ public abstract class TabularBlastParser implements BlastParser{
     }
     
     
-    private static final class FileBasedTabularBlastParser extends TabularBlastParser{
+   
+
+
+	private static final class FileBasedTabularBlastParser extends TabularBlastParser{
     	private final File file;
     	
     	
