@@ -67,7 +67,7 @@ public class TestTabularBlastParser {
     private void setupExpectations() {
         
         
-        sut.visitHsp(HspBuilder.createForNucleotides("AF178033")
+        sut.visitHsp(HspBuilder.forBlastN().query("AF178033")
                 .subject("EMORG:AF031391")
                 .percentIdentity(85.48D)
                 .alignmentLength(806)
@@ -79,7 +79,7 @@ public class TestTabularBlastParser {
                 .bitScore(new BigDecimal("644.8"))
                 .build());
         
-        sut.visitHsp(HspBuilder.createForNucleotides("AF178033")
+        sut.visitHsp(HspBuilder.forBlastN().query("AF178033")
                 .subject("EMORG:AF353201")
                 .percentIdentity(85.36D)
                 .alignmentLength(806)
@@ -91,7 +91,7 @@ public class TestTabularBlastParser {
                 .bitScore(new BigDecimal("636.8"))
                 .build());
         
-        sut.visitHsp(HspBuilder.createForNucleotides("AF178033")
+        sut.visitHsp(HspBuilder.forBlastN().query("AF178033")
                 .subject("EMORG:AF353200")
                 .percentIdentity(84.99D)
                 .alignmentLength(806)

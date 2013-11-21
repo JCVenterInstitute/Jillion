@@ -20,17 +20,18 @@
  ******************************************************************************/
 package org.jcvi.jillion_experimental.align.blast;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.math.BigDecimal;
 
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.testUtil.TestUtil;
-import org.jcvi.jillion_experimental.align.blast.Hsp;
-import org.jcvi.jillion_experimental.align.blast.HspBuilder;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
@@ -50,7 +51,8 @@ public class TestBlastHit {
     private BigDecimal eValue = new BigDecimal("2e-172");
     private BigDecimal bitScore = new BigDecimal(636.8D);
     
-    Hsp sut = HspBuilder.createForNucleotides(query)
+    Hsp<Nucleotide,NucleotideSequence> sut = HspBuilder.forBlastN()
+    					.query(query)
                         .subject(subject)
                         .percentIdentity(ident)
                         .alignmentLength(length)
