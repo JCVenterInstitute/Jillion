@@ -260,7 +260,7 @@ public final class LucyQualityTrimmerBuilder implements org.jcvi.jillion.core.ut
                 boolean done=false;
                 while(!done && currentWindowSize >=SIZE_OF_ENDS){
                    
-                    for(int i=0; i<encodedCandidateErrorRates.size() - currentWindowSize && i<=currentWindowSize; i++){
+                    for(int i=0; i< (encodedCandidateErrorRates.size() - currentWindowSize) && i<=currentWindowSize; i++){
                         Range currentWindowRange = Range.of(i, currentWindowSize);
                         double avgErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, currentWindowRange);
                         Range leftRange = new Range.Builder(SIZE_OF_ENDS)
