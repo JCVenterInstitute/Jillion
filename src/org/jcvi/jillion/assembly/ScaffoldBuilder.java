@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly;
 
+import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.util.Builder;
@@ -63,6 +64,14 @@ public interface ScaffoldBuilder extends Builder<Scaffold> {
 	 * @see #add(String, Range, Direction)
 	 */
 	ScaffoldBuilder add(String contigId, Range contigRange);
+	
+	/**
+	 * Convenience method for adding a contig in the forward
+	 * direction.  This is the same as
+	 * {@link #add(String, Range, Direction) add(contigId, contigRange.getRange(), contigRange.getDirection())}
+	 * @see #add(String, Range, Direction)
+	 */
+	ScaffoldBuilder add(String contigId, DirectedRange contigRange);
 
 	/**
 	 * Shift all contigs in the scaffold so that the first

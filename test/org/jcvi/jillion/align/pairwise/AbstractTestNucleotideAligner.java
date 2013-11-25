@@ -22,10 +22,10 @@ package org.jcvi.jillion.align.pairwise;
 
 import java.util.Iterator;
 
+import org.jcvi.jillion.align.NucleotideSubstitutionMatrix;
+import org.jcvi.jillion.align.NucleotideSubstitutionMatrixBuilder;
 import org.jcvi.jillion.align.pairwise.NucleotidePairwiseSequenceAlignment;
 import org.jcvi.jillion.align.pairwise.NucleotidePairwiseSequenceAlignmentImpl;
-import org.jcvi.jillion.align.pairwise.NucleotideScoringMatrix;
-import org.jcvi.jillion.align.pairwise.NucleotideScoringMatrixBuilder;
 import org.jcvi.jillion.align.pairwise.PairwiseSequenceAlignmentWrapper;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -34,9 +34,9 @@ import org.jcvi.jillion.internal.align.NucleotideSequenceAlignmentBuilder;
 
 public class AbstractTestNucleotideAligner {
 
-	protected final NucleotideScoringMatrix matrix;
+	protected final NucleotideSubstitutionMatrix matrix;
 	public AbstractTestNucleotideAligner(){
-		NucleotideScoringMatrixBuilder builder = new NucleotideScoringMatrixBuilder(-1F);
+		NucleotideSubstitutionMatrixBuilder builder = new NucleotideSubstitutionMatrixBuilder(-1F);
 		builder.setMatch(2);
 		matrix = builder.build();
 	}

@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.align.pairwise;
 
+import org.jcvi.jillion.align.SubstitutionMatrix;
 import org.jcvi.jillion.align.SequenceAlignment;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
@@ -38,7 +39,7 @@ import org.jcvi.jillion.core.util.MathUtil;
 abstract class AbstractNeedlemanWunschAligner <R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>, P extends PairwiseSequenceAlignment<R, S>> extends AbstractPairwiseAligner<R, S, A, P>{
 
 	protected AbstractNeedlemanWunschAligner(Sequence<R> query,
-			Sequence<R> subject, ScoringMatrix<R> matrix, float openGapPenalty,
+			Sequence<R> subject, SubstitutionMatrix<R> matrix, float openGapPenalty,
 			float extendGapPenalty,ResiduePairwiseStrategy<R,S,A,P> pairwiseStrategy) {
 		super(query, subject, matrix, openGapPenalty, extendGapPenalty, pairwiseStrategy);
 	}

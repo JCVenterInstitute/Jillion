@@ -23,9 +23,9 @@ package org.jcvi.jillion_experimental.primer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jcvi.jillion.align.NucleotideSubstitutionMatrix;
+import org.jcvi.jillion.align.NucleotideSubstitutionMatrixBuilder;
 import org.jcvi.jillion.align.pairwise.NucleotidePairwiseSequenceAlignment;
-import org.jcvi.jillion.align.pairwise.NucleotideScoringMatrix;
-import org.jcvi.jillion.align.pairwise.NucleotideScoringMatrixBuilder;
 import org.jcvi.jillion.align.pairwise.PairwiseAlignmentBuilder;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Direction;
@@ -58,12 +58,12 @@ public class PrimerDetector {
     private int gapOpenPenalty=-17;
     private int gapExtendPenalty=-5;
     /*
-    private static final NucleotideScoringMatrix MATRIX = new NucleotideScoringMatrixBuilder(-1)
+    private static final NucleotideSubstitutionMatrix MATRIX = new NucleotideSubstitutionMatrixBuilder(-1)
 																.setMatch(4)
 																.ambiguityScore(2)
 																.build();
 */
-    private static final NucleotideScoringMatrix MATRIX = new NucleotideScoringMatrixBuilder(-14)
+    private static final NucleotideSubstitutionMatrix MATRIX = new NucleotideSubstitutionMatrixBuilder(-14)
 								.setMatch(5)
 								.ambiguityScore(2)
 								.build();

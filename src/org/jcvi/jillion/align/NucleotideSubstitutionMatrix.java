@@ -18,16 +18,17 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.align.pairwise;
+package org.jcvi.jillion.align;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
 /**
+ * {@code NucleotideSubstitutionMatrix}
+ * is a marker interface for a {@link SubstitutionMatrix}
+ * of {@link Nucleotide}s.
  * @author dkatzel
- *
- *
  */
-public interface NucleotideScoringMatrix extends ScoringMatrix<Nucleotide>{
+public interface NucleotideSubstitutionMatrix extends SubstitutionMatrix<Nucleotide>{
 
 	
 	

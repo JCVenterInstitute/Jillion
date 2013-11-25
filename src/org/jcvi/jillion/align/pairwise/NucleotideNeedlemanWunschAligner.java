@@ -21,6 +21,7 @@
 package org.jcvi.jillion.align.pairwise;
 
 import org.jcvi.jillion.align.NucleotideSequenceAlignment;
+import org.jcvi.jillion.align.SubstitutionMatrix;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -44,13 +45,13 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 final class NucleotideNeedlemanWunschAligner extends AbstractNeedlemanWunschAligner<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment, NucleotidePairwiseSequenceAlignment>{
 	/**
 	 * Align the given two {@link NucleotideSequence}s
-	 * using the given {@link ScoringMatrix} by the Needleman-Wunsch
+	 * using the given {@link SubstitutionMatrix} by the Needleman-Wunsch
 	 * global alignment algorithm.
 	 * @param query the query {@link NucleotideSequence} to align;
 	 * can not be null.
 	 * @param subject the subject {@link NucleotideSequence} to align;
 	 * can not be null.
-	 * @param matrix the {@link ScoringMatrix} to use; can not be null.
+	 * @param matrix the {@link SubstitutionMatrix} to use; can not be null.
 	 * @param openGapPenalty the penalty value for opening a gap.
 	 * @param extendGapPenalty the penalty for extending an already open gap.
 	 * @return a new {@link NucleotidePairwiseSequenceAlignment} instance;
@@ -58,7 +59,7 @@ final class NucleotideNeedlemanWunschAligner extends AbstractNeedlemanWunschAlig
 	 * @throws NullPointerException if query, subject or matrix are null.
 	 */
 	public static NucleotidePairwiseSequenceAlignment align(NucleotideSequence query,
-			NucleotideSequence subject, ScoringMatrix<Nucleotide> matrix,
+			NucleotideSequence subject, SubstitutionMatrix<Nucleotide> matrix,
 			float openGapPenalty, float extendGapPenalty){
 		NucleotideNeedlemanWunschAligner aligner = new NucleotideNeedlemanWunschAligner(query, subject, matrix, openGapPenalty, extendGapPenalty);
 		return aligner.getPairwiseSequenceAlignment();
@@ -66,7 +67,7 @@ final class NucleotideNeedlemanWunschAligner extends AbstractNeedlemanWunschAlig
 	}
 	
 	private NucleotideNeedlemanWunschAligner(Sequence<Nucleotide> query,
-			Sequence<Nucleotide> subject, ScoringMatrix<Nucleotide> matrix,
+			Sequence<Nucleotide> subject, SubstitutionMatrix<Nucleotide> matrix,
 			float openGapPenalty, float extendGapPenalty) {
 		super(query, subject, matrix, openGapPenalty, extendGapPenalty,
 				ResiduePairwiseStrategy.getNucleotideStrategy());

@@ -24,10 +24,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Iterator;
 
+import org.jcvi.jillion.align.AminoAcidSubstitutionMatrix;
 import org.jcvi.jillion.align.BlosumMatrices;
 import org.jcvi.jillion.align.pairwise.AminoAcidPairwiseSequenceAlignment;
 import org.jcvi.jillion.align.pairwise.AminoAcidPairwiseSequenceAlignmentImpl;
-import org.jcvi.jillion.align.pairwise.AminoAcidScoringMatrix;
 import org.jcvi.jillion.align.pairwise.PairwiseAlignmentBuilder;
 import org.jcvi.jillion.align.pairwise.PairwiseSequenceAlignmentWrapper;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
@@ -40,7 +40,7 @@ public class TestAminoAcidNeedlemanWunschAligner {
 
 	@Test
 	public void exampleFromBook(){
-		AminoAcidScoringMatrix blosom50 = BlosumMatrices.blosum50();
+		AminoAcidSubstitutionMatrix blosom50 = BlosumMatrices.blosum50();
 		AminoAcidSequence subject = new AminoAcidSequenceBuilder("HEAGAWGHEE")
 									.build();
 		AminoAcidSequence query = new AminoAcidSequenceBuilder("PAWHEAE")

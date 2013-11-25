@@ -23,33 +23,34 @@ package org.jcvi.jillion.align;
 import java.io.InputStream;
 import java.util.Scanner;
 
-import org.jcvi.jillion.align.pairwise.AminoAcidScoringMatrix;
+import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
-import org.jcvi.jillion.core.residue.aa.AminoAcidSequenceBuilder;
+import org.jcvi.jillion.core.residue.Residue;
 /**
- * {@code PropertyFileAminoAcidScoringMatrix}
- * is an {@link AminoAcidScoringMatrix}
- * implementation that is constructed by
- * parsing specially formatted scoring matrix text files
- * like the ones stored on the NCBI webpages.
+ * {@code AbstractSubstitutionMatrixFileParser}
+ * is a class that can parse
+ * the  {@link SubstitutionMatrix} text files
+ * provided by NCBI.
  * @author dkatzel
- *
+ * @see ftp://ftp.ncbi.nlm.nih.gov/blast/matrices
  */
-final class PropertyFileAminoAcidScoringMatrix implements AminoAcidScoringMatrix {
+abstract class AbstractSubstitutionMatrixFileParser<R extends Residue> implements SubstitutionMatrix<R> {
 
 	private final float[][] matrix; 
 	
 	
-	public PropertyFileAminoAcidScoringMatrix(InputStream in){
+	protected AbstractSubstitutionMatrixFileParser(InputStream in){
 		Scanner scanner = null;
 		try{
 			scanner = new Scanner(in, IOUtil.UTF_8_NAME);
+			
 			//first column is amino acids in matrix
-			AminoAcidSequence header = new AminoAcidSequenceBuilder(scanner.nextLine()).build();
+			String headerLine = parseColumns(scanner);
+			//Sequence<R> header = new AminoAcidSequenceBuilder(headerLine).build();
+			Sequence<R> header = parseColumns(headerLine);
+			
 			long headerLength = header.getLength();
-			int n = AminoAcid.values().length;
+			int n = getNumberOfValues();
 			matrix = new float[n][n];
 			while(scanner.hasNextLine()){
 				String line = scanner.nextLine();
@@ -57,13 +58,14 @@ final class PropertyFileAminoAcidScoringMatrix implements AminoAcidScoringMatrix
 				try{
 					lineScanner = new Scanner(line);
 					while(lineScanner.hasNext()){
-						AminoAcid aa = AminoAcid.parse(lineScanner.next());
-						int x = aa.ordinal();
+						String next = lineScanner.next();
+						R aa = parse(next);
+						int x = aa.getOrdinalAsByte();
 						
 						for(int i=0; i< headerLength; i++){
 						
 							float value =lineScanner.nextFloat();
-							int y = header.get(i).ordinal();
+							int y = header.get(i).getOrdinalAsByte();
 							matrix[x][y]=value;
 						}
 					}
@@ -82,9 +84,29 @@ final class PropertyFileAminoAcidScoringMatrix implements AminoAcidScoringMatrix
 		
 	}
 
+
+	protected abstract R parse(String s);
+
+
+	protected abstract int getNumberOfValues();
+
+
+	private String parseColumns(Scanner scanner) {
+		boolean done=false;
+		String line;
+		do{
+			line = scanner.nextLine();
+			//skip comments
+			done = line.charAt(0) !='#';
+		}while(!done);
+		
+		return line;
+	}
+
+	protected abstract Sequence<R> parseColumns(String columns);
 	
 	@Override
-	public float getScore(AminoAcid a, AminoAcid b) {
+	public float getValue(R a, R b) {
 		return getScore(a.getOrdinalAsByte(), b.getOrdinalAsByte());
 	}
 
