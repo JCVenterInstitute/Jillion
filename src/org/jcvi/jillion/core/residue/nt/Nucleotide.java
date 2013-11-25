@@ -469,6 +469,8 @@ public enum Nucleotide implements Residue {
     }
     /**
      * Is This Nucleotide an ambiguity?
+     * An ambiguity is any Nucleotide that is not an 
+     * A , C, G or T or gap.
      * @return {@code true} if it is am ambiguity;
      * {@code false} otherwise.
      */

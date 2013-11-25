@@ -1,5 +1,8 @@
 package org.jcvi.jillion.align.pairwise;
 
+import org.jcvi.jillion.align.AminoAcidSubstitutionMatrix;
+import org.jcvi.jillion.align.NucleotideSubstitutionMatrix;
+import org.jcvi.jillion.align.SubstitutionMatrix;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
@@ -10,7 +13,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  * {@code PairwiseAlignmentBuilder} is a class
  * that can create {@link PairwiseSequenceAlignment}s
  * using the given query and subject sequences,
- * and the given {@link ScoringMatrix} and gap penalties.
+ * and the given {@link SubstitutionMatrix} and gap penalties.
  * This Builder can handle both local and global alignments.
  * 
  * @author dkatzel
@@ -21,7 +24,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  */
 public final class PairwiseAlignmentBuilder<R extends Residue, S extends Sequence<R>, A extends PairwiseSequenceAlignment<R,S>> {
 	private final S query,  subject;
-	private final ScoringMatrix<R> matrix;
+	private final SubstitutionMatrix<R> matrix;
 	private float gapOpen=0;
 	private float gapExtension =0;
 	
@@ -31,12 +34,12 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Sequenc
 	 * 2 {@link NucleotideSequence}s.
 	 * @param query the query sequence; may not be null.
 	 * @param subject the subject sequence; may not be null.
-	 * @param matrix the {@link ScoringMatrix}; can not be null.
+	 * @param matrix the {@link SubstitutionMatrix}; can not be null.
 	 * @return a new {@link PairwiseAlignmentBuilder} instance;
 	 * will never be null.
 	 * @throws NullPointerException if any parameters are null.
 	 */
-	public static PairwiseAlignmentBuilder<Nucleotide, NucleotideSequence, NucleotidePairwiseSequenceAlignment> createNucleotideAlignmentBuilder(NucleotideSequence query, NucleotideSequence subject, NucleotideScoringMatrix matrix){
+	public static PairwiseAlignmentBuilder<Nucleotide, NucleotideSequence, NucleotidePairwiseSequenceAlignment> createNucleotideAlignmentBuilder(NucleotideSequence query, NucleotideSequence subject, NucleotideSubstitutionMatrix matrix){
 		return new PairwiseAlignmentBuilder<Nucleotide, NucleotideSequence,NucleotidePairwiseSequenceAlignment>(query, subject, matrix);
 	}
 	/**
@@ -44,16 +47,16 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Sequenc
 	 * 2 {@link AminoAcidSequence}s.
 	 * @param query the query sequence; may not be null.
 	 * @param subject the subject sequence; may not be null.
-	 * @param matrix the {@link ScoringMatrix}; can not be null.
+	 * @param matrix the {@link SubstitutionMatrix}; can not be null.
 	 * @return a new {@link PairwiseAlignmentBuilder} instance;
 	 * will never be null.
 	 * @throws NullPointerException if any parameters are null.
 	 */
-	public static PairwiseAlignmentBuilder<AminoAcid, AminoAcidSequence, AminoAcidPairwiseSequenceAlignment> createProtienAlignmentBuilder(AminoAcidSequence query, AminoAcidSequence subject, AminoAcidScoringMatrix matrix){
+	public static PairwiseAlignmentBuilder<AminoAcid, AminoAcidSequence, AminoAcidPairwiseSequenceAlignment> createProtienAlignmentBuilder(AminoAcidSequence query, AminoAcidSequence subject, AminoAcidSubstitutionMatrix matrix){
 		return new PairwiseAlignmentBuilder<AminoAcid, AminoAcidSequence, AminoAcidPairwiseSequenceAlignment>(query, subject, matrix);
 	}
 	
-	private PairwiseAlignmentBuilder(S query, S subject, ScoringMatrix<R> matrix){
+	private PairwiseAlignmentBuilder(S query, S subject, SubstitutionMatrix<R> matrix){
 		if(query==null){
 			throw new NullPointerException("query can not be null");
 		}
@@ -127,14 +130,14 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Sequenc
 		
 		if(query instanceof NucleotideSequence){
 			if(local){
-				 return (A)NucleotideSmithWatermanAligner.align((NucleotideSequence)query, (NucleotideSequence)subject, (NucleotideScoringMatrix)matrix, gapOpen, gapExtension);
+				 return (A)NucleotideSmithWatermanAligner.align((NucleotideSequence)query, (NucleotideSequence)subject, (NucleotideSubstitutionMatrix)matrix, gapOpen, gapExtension);
 			}
-			return (A) NucleotideNeedlemanWunschAligner.align((NucleotideSequence)query, (NucleotideSequence)subject, (NucleotideScoringMatrix)matrix, gapOpen, gapExtension);
+			return (A) NucleotideNeedlemanWunschAligner.align((NucleotideSequence)query, (NucleotideSequence)subject, (NucleotideSubstitutionMatrix)matrix, gapOpen, gapExtension);
 		}
 		if(local){
-			 return (A) AminoAcidSmithWatermanAligner.align((AminoAcidSequence)query, (AminoAcidSequence)subject, (AminoAcidScoringMatrix)matrix, gapOpen, gapExtension);
+			 return (A) AminoAcidSmithWatermanAligner.align((AminoAcidSequence)query, (AminoAcidSequence)subject, (AminoAcidSubstitutionMatrix)matrix, gapOpen, gapExtension);
 		}
-		return (A) AminoAcidNeedlemanWunschAligner.align((AminoAcidSequence)query, (AminoAcidSequence)subject, (AminoAcidScoringMatrix)matrix, gapOpen, gapExtension);
+		return (A) AminoAcidNeedlemanWunschAligner.align((AminoAcidSequence)query, (AminoAcidSequence)subject, (AminoAcidSubstitutionMatrix)matrix, gapOpen, gapExtension);
 
 	}
 	

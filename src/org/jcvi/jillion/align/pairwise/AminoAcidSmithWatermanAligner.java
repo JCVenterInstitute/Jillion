@@ -21,6 +21,7 @@
 package org.jcvi.jillion.align.pairwise;
 
 import org.jcvi.jillion.align.AminoAcidSequenceAlignment;
+import org.jcvi.jillion.align.SubstitutionMatrix;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
@@ -45,13 +46,13 @@ import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 final class AminoAcidSmithWatermanAligner  extends AbstractSmithWatermanAligner<AminoAcid,AminoAcidSequence, AminoAcidSequenceAlignment, AminoAcidPairwiseSequenceAlignment>{
 	/**
 	 * Align the given two {@link AminoAcidSequence}s
-	 * using the given {@link ScoringMatrix} by the Smith-Waterman
+	 * using the given {@link SubstitutionMatrix} by the Smith-Waterman
 	 * local alignment algorithm.
 	 * @param query the query {@link AminoAcidSequence} to align;
 	 * can not be null.
 	 * @param subject the subject {@link NucleotideSequence} to align;
 	 * can not be null.
-	 * @param matrix the {@link ScoringMatrix} to use; can not be null.
+	 * @param matrix the {@link SubstitutionMatrix} to use; can not be null.
 	 * @param openGapPenalty the penalty value for opening a gap.
 	 * @param extendGapPenalty the penalty for extending an already open gap.
 	 * @return a new {@link NucleotidePairwiseSequenceAlignment} instance;
@@ -59,13 +60,13 @@ final class AminoAcidSmithWatermanAligner  extends AbstractSmithWatermanAligner<
 	 * @throws NullPointerException if query, subject or matrix are null.
 	 */
 	public static AminoAcidPairwiseSequenceAlignment align(AminoAcidSequence query,
-			AminoAcidSequence subject, ScoringMatrix<AminoAcid> matrix,
+			AminoAcidSequence subject, SubstitutionMatrix<AminoAcid> matrix,
 			float openGapPenalty, float extendGapPenalty){
 		AminoAcidSmithWatermanAligner aligner = new AminoAcidSmithWatermanAligner(query, subject, matrix, openGapPenalty, extendGapPenalty);
 		return aligner.getPairwiseSequenceAlignment();
 	}
 	private AminoAcidSmithWatermanAligner(Sequence<AminoAcid> query,
-			Sequence<AminoAcid> subject, ScoringMatrix<AminoAcid> matrix,
+			Sequence<AminoAcid> subject, SubstitutionMatrix<AminoAcid> matrix,
 			float openGapPenalty, float extendGapPenalty) {
 		super(query, subject, matrix, openGapPenalty, extendGapPenalty,
 				ResiduePairwiseStrategy.getAminoAcidStrategy());

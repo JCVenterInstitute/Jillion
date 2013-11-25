@@ -3,7 +3,6 @@ package org.jcvi.jillion.align;
 import static org.junit.Assert.assertEquals;
 
 import org.jcvi.jillion.align.pairwise.AminoAcidPairwiseSequenceAlignment;
-import org.jcvi.jillion.align.pairwise.AminoAcidScoringMatrix;
 import org.jcvi.jillion.align.pairwise.PairwiseAlignmentBuilder;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcidSequenceBuilder;
@@ -11,13 +10,13 @@ import org.junit.Test;
 
 public abstract class AbstractBlosumTest {
 
-	private final AminoAcidScoringMatrix matrix;
+	private final AminoAcidSubstitutionMatrix matrix;
 
-	public AbstractBlosumTest(AminoAcidScoringMatrix matrix) {
+	public AbstractBlosumTest(AminoAcidSubstitutionMatrix matrix) {
 		this.matrix = matrix;
 	}
 	
-	protected AminoAcidScoringMatrix getMatrix() {
+	protected AminoAcidSubstitutionMatrix getMatrix() {
 		return matrix;
 	}
 

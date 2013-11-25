@@ -18,10 +18,15 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.align.pairwise;
+package org.jcvi.jillion.align;
 
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
-
-public interface AminoAcidScoringMatrix extends ScoringMatrix<AminoAcid>{
+/**
+ * {@code AminoAcidSubstitutionMatrix}
+ * is a marker interface for a {@link SubstitutionMatrix}
+ * of {@link AminoAcid}s.
+ * @author dkatzel
+ */
+public interface AminoAcidSubstitutionMatrix extends SubstitutionMatrix<AminoAcid>{
 
 }

@@ -34,7 +34,7 @@ import org.jcvi.jillion.core.residue.Residue;
 public interface PairwiseSequenceAlignment<R extends Residue, S extends Sequence<R>> extends SequenceAlignment<R, S> {
 	/**
 	 * Get the score of this alignment that 
-	 * was computed from the {@link ScoringMatrix}
+	 * was computed from the {@link SubstitutionMatrix}
 	 * used to make the alignment.
 	 * @return the score as a float depending
 	 * on the type of alignment and values

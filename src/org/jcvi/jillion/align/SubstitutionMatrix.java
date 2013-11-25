@@ -18,28 +18,29 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.align.pairwise;
+package org.jcvi.jillion.align;
 
 import org.jcvi.jillion.core.residue.Residue;
 
 /**
- * {@code ScoringMatrix} is a matrix 
- * that describes a score assigned to each possible
- * pairing of Residue.  Types of Scoring matrices might
- * include distance matrices, substitution matrices etc.
+ * {@code SubstitutionMatrix} is a matrix 
+ * that describes the rate at which
+ * one Residue changes into another
+ * over time.  Substitution matrices are used
+ * in bioinformatics and evolutionary biology
+ * to determine how how likely sequences are 
+ * to be derived from a common ancestor (homologous).
  * 
  * @author dkatzel
  */
-public interface ScoringMatrix<R extends Residue> {
+public interface SubstitutionMatrix<R extends Residue> {
 	/**
-	 * Get the score between the given pair of 
+	 * Get the substitution value between the given pair of 
 	 * {@link Residue}s.
 	 * @param a the first residue.
 	 * @param b the second residue.
 	 * @return the score as a float, could be positive,
-	 * negative, zero, whole numbers or fractional numbers
-	 * depending on which type of matrix is used and 
-	 * the values in that matrix.
+	 * negative, zero, whole numbers or fractional numbers.
 	 */
-	float getScore(R a, R b);
+	float getValue(R a, R b);
 }

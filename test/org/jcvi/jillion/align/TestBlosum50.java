@@ -23,7 +23,6 @@ package org.jcvi.jillion.align;
 import static org.junit.Assert.assertEquals;
 
 import org.jcvi.jillion.align.BlosumMatrices;
-import org.jcvi.jillion.align.pairwise.AminoAcidScoringMatrix;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.junit.Test;
 public class TestBlosum50 extends AbstractBlosumTest{
@@ -35,26 +34,26 @@ public class TestBlosum50 extends AbstractBlosumTest{
 	@Test
 	public void spotCheck(){
 		
-		AminoAcidScoringMatrix blosum50 = getMatrix();
+		AminoAcidSubstitutionMatrix blosum50 = getMatrix();
 		assertEquals(5F,
-				blosum50.getScore(AminoAcid.Alanine, AminoAcid.Alanine),
+				blosum50.getValue(AminoAcid.Alanine, AminoAcid.Alanine),
 				0F);
 		
 		assertEquals(10F,
-				blosum50.getScore(AminoAcid.Proline, AminoAcid.Proline),
+				blosum50.getValue(AminoAcid.Proline, AminoAcid.Proline),
 				0F);
 		
 		assertEquals(-3F,
-				blosum50.getScore(AminoAcid.Proline, AminoAcid.Valine),
+				blosum50.getValue(AminoAcid.Proline, AminoAcid.Valine),
 				0F);
 		assertEquals(0F,
-				blosum50.getScore(AminoAcid.Valine, AminoAcid.Threonine),
+				blosum50.getValue(AminoAcid.Valine, AminoAcid.Threonine),
 				0F);
 		assertEquals(1F,
-				blosum50.getScore(AminoAcid.STOP, AminoAcid.STOP),
+				blosum50.getValue(AminoAcid.STOP, AminoAcid.STOP),
 				0F);
 		assertEquals(-5F,
-				blosum50.getScore(AminoAcid.STOP, AminoAcid.Alanine),
+				blosum50.getValue(AminoAcid.STOP, AminoAcid.Alanine),
 				0F);
 	}
 	

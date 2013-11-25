@@ -39,6 +39,7 @@ import java.util.TreeSet;
 
 import org.jcvi.jillion.assembly.util.CoverageMap;
 import org.jcvi.jillion.assembly.util.CoverageMapBuilder;
+import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
@@ -247,6 +248,14 @@ public final class DefaultScaffold  implements Scaffold{
 		public synchronized Builder add(String contigId, Range contigRange, Direction contigDirection){
            return add(new DefaultPlacedContig(contigId, contigRange,contigDirection));
         }
+        /**
+		 * {@inheritDoc}
+		 */
+        @Override
+		public synchronized Builder add(String contigId, DirectedRange contigRange){
+           return add(new DefaultPlacedContig(contigId, contigRange.getRange(),contigRange.getDirection()));
+        }
+        
         /**
 		 * {@inheritDoc}
 		 */

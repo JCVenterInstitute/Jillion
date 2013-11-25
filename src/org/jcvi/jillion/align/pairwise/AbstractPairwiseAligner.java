@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.List;
 
+import org.jcvi.jillion.align.SubstitutionMatrix;
 import org.jcvi.jillion.align.SequenceAlignment;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
@@ -87,7 +88,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 	
 	
 	protected AbstractPairwiseAligner(Sequence<R> query, Sequence<R> subject,
-			ScoringMatrix<R> matrix, float openGapPenalty, float extendGapPenalty,
+			SubstitutionMatrix<R> matrix, float openGapPenalty, float extendGapPenalty,
 			ResiduePairwiseStrategy<R,S,A,P> pairwiseStrategy){
 		checkNotNull(query,subject,matrix);
 		this.pairwiseStrategy = pairwiseStrategy;
@@ -114,7 +115,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		
 	}
 	private void checkNotNull(Sequence<R> query, Sequence<R> subject,
-			ScoringMatrix<R> matrix) {
+			SubstitutionMatrix<R> matrix) {
 		if(query ==null){
 			throw new NullPointerException("query sequence can not be null");
 		}
@@ -126,7 +127,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		}
 		
 	}
-	private StartPoint populateTraceback(ScoringMatrix<R> matrix,
+	private StartPoint populateTraceback(SubstitutionMatrix<R> matrix,
 			float openGapPenalty, float extendGapPenalty, byte[] seq1Bytes,
 			byte[] seq2Bytes) {
 		int lengthOfSeq1 = seq1Bytes.length;
@@ -171,7 +172,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 				
 				//need to do -1s because 0 offset in matrix is filled with stops
 				//and actual values start at offset 1
-				float alignmentScore = diagnol + matrix.getScore(
+				float alignmentScore = diagnol + matrix.getValue(
 						residuesByOrdinal.get(seq1Bytes[i-1]),
 						residuesByOrdinal.get(seq2Bytes[j-1]));
 				
