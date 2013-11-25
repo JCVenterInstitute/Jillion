@@ -84,13 +84,24 @@ abstract class AbstractSubstitutionMatrixFileParser<R extends Residue> implement
 		
 	}
 
-
+	/**
+	 * Convert the given String (probably
+	 * 1 character long) into a single 
+	 * {@link Residue} object. 
+	 * @param s
+	 * @return
+	 */
 	protected abstract R parse(String s);
 
-
+	/**
+	 * Get the number of possible Residue values.
+	 * For example, for {@link org.jcvi.jillion.core.residue.nt.Nucleotide}s,
+	 * this method would return {@code Nucleotide.values().length}
+	 * @return
+	 */
 	protected abstract int getNumberOfValues();
 
-
+	
 	private String parseColumns(Scanner scanner) {
 		boolean done=false;
 		String line;
@@ -102,16 +113,22 @@ abstract class AbstractSubstitutionMatrixFileParser<R extends Residue> implement
 		
 		return line;
 	}
-
+	/**
+	 * Convert the a line of residue characters
+	 * separated by whitespace into a Sequence where
+	 * {@code sequence.get(i)} is the ith column.
+	 * @param columns
+	 * @return
+	 */
 	protected abstract Sequence<R> parseColumns(String columns);
 	
 	@Override
 	public float getValue(R a, R b) {
-		return getScore(a.getOrdinalAsByte(), b.getOrdinalAsByte());
+		return getValue(a.getOrdinalAsByte(), b.getOrdinalAsByte());
 	}
 
 
-	private float getScore(byte a, byte b) {
+	private float getValue(byte a, byte b) {
 		return matrix[a][b];
 	}
 
