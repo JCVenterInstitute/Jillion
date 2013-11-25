@@ -12,9 +12,7 @@ import java.io.FileNotFoundException;
  */
 public final class NucleotideSubstitutionMatrices {
 
-	private NucleotideSubstitutionMatrices(){
-		//can not instantiate
-	}
+	
 	
 	private static final NucleotideSubstitutionMatrix NUC_4_4;
 	
@@ -28,6 +26,10 @@ public final class NucleotideSubstitutionMatrices {
 			throw new IllegalStateException("could not parse nuc4.4.matrix file", e);
 		}
 		
+	}
+	
+	private NucleotideSubstitutionMatrices(){
+		//can not instantiate
 	}
 	/**
 	 * {@link NucleotideSubstitutionMatrix} created by 
