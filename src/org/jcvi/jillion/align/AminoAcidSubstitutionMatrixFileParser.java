@@ -9,7 +9,7 @@ import java.io.InputStream;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.jcvi.jillion.core.residue.aa.AminoAcidSequenceBuilder;
+import org.jcvi.jillion.core.residue.aa.ProteinSequenceBuilder;
 
 final class AminoAcidSubstitutionMatrixFileParser extends AbstractSubstitutionMatrixFileParser<AminoAcid> implements AminoAcidSubstitutionMatrix{
 
@@ -41,7 +41,7 @@ final class AminoAcidSubstitutionMatrixFileParser extends AbstractSubstitutionMa
 
 	@Override
 	protected Sequence<AminoAcid> parseColumns(String columns) {
-		return new AminoAcidSequenceBuilder(columns).build();
+		return new ProteinSequenceBuilder(columns).build();
 	}
 
 }

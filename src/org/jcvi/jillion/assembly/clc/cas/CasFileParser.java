@@ -66,7 +66,7 @@ public final class CasFileParser implements CasParser{
         (byte)0x80,
         (byte)0x00,
         (byte)0x00,
-        (byte)0x00
+        (byte)0x00,
     };
 	
     private  int numberOfBytesForContigPosition,numberOfBytesForContigNumber;

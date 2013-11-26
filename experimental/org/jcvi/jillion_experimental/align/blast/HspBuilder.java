@@ -26,7 +26,7 @@ import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
+import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
@@ -60,29 +60,29 @@ public final class HspBuilder<R extends Residue, S extends Sequence<R>> implemen
          * Create a new {@link HspBuilder} for BLASTP (Protein query to Protein subject) results.
          * @return a new {@link HspBuilder} will never be null.
          */
-        public static HspBuilder<AminoAcid,AminoAcidSequence> forBlastP(){
-        	return new HspBuilder<AminoAcid,AminoAcidSequence>();
+        public static HspBuilder<AminoAcid,ProteinSequence> forBlastP(){
+        	return new HspBuilder<AminoAcid,ProteinSequence>();
         }
         /**
          * Create a new {@link HspBuilder} for BLASTX (Nucleotide (translated) query to Protein subject) results.
          * @return a new {@link HspBuilder} will never be null.
          */
-        public static HspBuilder<AminoAcid,AminoAcidSequence> forBlastX(){
-        	return new HspBuilder<AminoAcid,AminoAcidSequence>();
+        public static HspBuilder<AminoAcid,ProteinSequence> forBlastX(){
+        	return new HspBuilder<AminoAcid,ProteinSequence>();
         }
         /**
          * Create a new {@link HspBuilder} for TBLASTX (Nucleotide (translated) query to Nucleotide (translated) subject) results.
          * @return a new {@link HspBuilder} will never be null.
          */
-        public static HspBuilder<AminoAcid,AminoAcidSequence> forTBlastX(){
-        	return new HspBuilder<AminoAcid,AminoAcidSequence>();
+        public static HspBuilder<AminoAcid,ProteinSequence> forTBlastX(){
+        	return new HspBuilder<AminoAcid,ProteinSequence>();
         }
         /**
          * Create a new {@link HspBuilder} for TBLASTN (Protein query to Nucleotide (translated) subject) results.
          * @return a new {@link HspBuilder} will never be null.
          */
-        public static HspBuilder<AminoAcid,AminoAcidSequence> forTBlastN(){
-        	return new HspBuilder<AminoAcid,AminoAcidSequence>();
+        public static HspBuilder<AminoAcid,ProteinSequence> forTBlastN(){
+        	return new HspBuilder<AminoAcid,ProteinSequence>();
         }
         /**
          * Create a new {@link HspBuilder} instance for the given type

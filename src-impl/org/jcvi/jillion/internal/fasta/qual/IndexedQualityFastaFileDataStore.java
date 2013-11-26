@@ -44,7 +44,7 @@ import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 
 /**
- * {@code IndexedAminoAcidSequenceFastaFileDataStore} is an implementation of 
+ * {@code IndexedProteinFastaFileDataStore} is an implementation of 
  * {@link AminoAcidSequenceFastaDataStore} that only stores an index containing
  * file offsets to the various {@link FastaRecord}s contained
  * inside the fasta file.  This implementation provides random access
@@ -59,11 +59,11 @@ public final class IndexedQualityFastaFileDataStore{
 		//can not instanitate
 	}
 	/**
-	 * Creates a new {@link IndexedAminoAcidSequenceFastaFileDataStore}
+	 * Creates a new {@link IndexedProteinFastaFileDataStore}
 	 * instance using the given fastaFile.
-	 * @param fastaFile the fasta to create an {@link IndexedAminoAcidSequenceFastaFileDataStore}
+	 * @param fastaFile the fasta to create an {@link IndexedProteinFastaFileDataStore}
 	 * for.
-	 * @return a new instance of {@link IndexedAminoAcidSequenceFastaFileDataStore};
+	 * @return a new instance of {@link IndexedProteinFastaFileDataStore};
 	 * never null.
 	 * @throws FileNotFoundException if the input fasta file does not exist.
 	 * @throws NullPointerException if the input fasta file is null.
@@ -73,13 +73,13 @@ public final class IndexedQualityFastaFileDataStore{
 	}
 	
 	/**
-	 * Creates a new {@link IndexedAminoAcidSequenceFastaFileDataStore}
+	 * Creates a new {@link IndexedProteinFastaFileDataStore}
 	 * instance using the given fastaFile.
-	 * @param fastaFile the fasta to create an {@link IndexedAminoAcidSequenceFastaFileDataStore}
+	 * @param fastaFile the fasta to create an {@link IndexedProteinFastaFileDataStore}
 	 * for.
 	 * @param filter the {@link DataStoreFilter} instance used to filter out the fasta records;
 	 * can not be null.
-	 * @return a new instance of {@link IndexedAminoAcidSequenceFastaFileDataStore};
+	 * @return a new instance of {@link IndexedProteinFastaFileDataStore};
 	 * never null.
 	 * @throws FileNotFoundException if the input fasta file does not exist.
 	 * @throws NullPointerException if the input fasta file is null.
@@ -93,13 +93,13 @@ public final class IndexedQualityFastaFileDataStore{
 	
 	/**
 	 * Creates a new {@link AminoAcidSequenceFastaDataStoreBuilderVisitor}
-	 * instance that will build an {@link IndexedAminoAcidSequenceFastaFileDataStore}
+	 * instance that will build an {@link IndexedProteinFastaFileDataStore}
 	 * using the given fastaFile.  This implementation of {@link AminoAcidSequenceFastaDataStoreBuilderVisitor}
 	 * can only be used to parse a single fasta file (the one given) and does not support
 	 * {@link AminoAcidSequenceFastaDataStoreBuilderVisitor#addFastaRecord(AminoAcidSequenceFastaRecord)}.
 	 * This builder visitor can only build the datastore via the visitXXX methods in the {@link FastaVisitor}
 	 * interface.
-	 * @param fastaFile the fasta to create an {@link IndexedAminoAcidSequenceFastaFileDataStore}
+	 * @param fastaFile the fasta to create an {@link IndexedProteinFastaFileDataStore}
 	 * for.
 	 * @return a new instance of {@link AminoAcidSequenceFastaDataStoreBuilderVisitor};
 	 * never null.

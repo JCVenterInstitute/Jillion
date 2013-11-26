@@ -42,35 +42,35 @@ public interface TranslationTable {
 	 * @param sequence
 	 * @return
 	 */
-	AminoAcidSequence translate(NucleotideSequence sequence);
+	ProteinSequence translate(NucleotideSequence sequence);
 	/**
 	 * Translate the given <strong>ungapped</strong> {@link NucleotideSequence} into
-	 * an {@link AminoAcidSequence} using the given {@link Frame}.  If the sequence
+	 * an {@link ProteinSequence} using the given {@link Frame}.  If the sequence
 	 * in the given frame is not a multiple of 3, then this method will
 	 * translate as many bases as possible, any "left over" bases will not be translated.
 	 * @param sequence the sequence to translate; can not be null and can not contain gaps.
 	 * @param frame the Frame to use; can not be null.
-	 * @return a new AminoAcidSequence, will never be null,
+	 * @return a new ProteinSequence, will never be null,
 	 * but may be empty if the sequence is empty or less than 3 bp after
 	 * frame is taken into account.
 	 * @throws NullPointerException if either parameter is null.
 	 * @throws IllegalArgumentException if the sequence contains gaps.
 	 */
-	AminoAcidSequence translate(NucleotideSequence sequence, Frame frame);
+	ProteinSequence translate(NucleotideSequence sequence, Frame frame);
 	
 	/**
 	 * Translate the given <strong>ungapped</strong> {@link NucleotideSequence} into
-	 * an {@link AminoAcidSequence} using the given {@link Frame}.  If the sequence
+	 * an {@link ProteinSequence} using the given {@link Frame}.  If the sequence
 	 * in the given frame is not a multiple of 3, then this method will
 	 * translate as many bases as possible, any "left over" bases will not be translated.
 	 * @param sequence the sequence to translate; can not be null and can not contain gaps.
 	 * @param frame the Frame to use; can not be null.
 	 * @param length the number of elements in the given sequence
-	 * @return a new AminoAcidSequence, will never be null,
+	 * @return a new ProteinSequence, will never be null,
 	 * but may be empty if the sequence is empty or less than 3 bp after
 	 * frame is taken into account.
 	 * @throws NullPointerException if either parameter is null.
 	 * @throws IllegalArgumentException if the sequence contains gaps.
 	 */
-	AminoAcidSequence translate(Iterable<Nucleotide> sequence, Frame frame, int length);
+	ProteinSequence translate(Iterable<Nucleotide> sequence, Frame frame, int length);
 }

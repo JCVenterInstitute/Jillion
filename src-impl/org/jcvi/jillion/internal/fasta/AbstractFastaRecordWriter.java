@@ -43,9 +43,10 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 	private final Writer writer;
 	private final int numberOfResiduesPerLine;
 	private final boolean hasSymbolSeparator;
+	private final String eol;
 	
 	protected AbstractFastaRecordWriter(OutputStream out,
-			int numberOfResiduesPerLine, Charset charSet) {
+			int numberOfResiduesPerLine, Charset charSet, String eol) {
 		//wrap in OutputStream Writer to do char encodings
 		//for us.  If we did String#getBytes(Charset) instead
 		//for each write call that could put unwanted
@@ -56,6 +57,7 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		this.writer =  new BufferedWriter(new OutputStreamWriter(out,charSet));
 		this.numberOfResiduesPerLine = numberOfResiduesPerLine;
 		this.hasSymbolSeparator = hasSymbolSeparator();
+		this.eol = eol;
 	}
 
 	@Override
@@ -106,15 +108,15 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
         }
         int count=1;
         while(iter.hasNext()){
-        	if(count%numberOfResiduesPerLine==0){
-        		record.append(FastaUtil.LINE_SEPARATOR);
+        	if(numberOfResiduesPerLine != AbstractBuilder.ALL_ON_ONE_LINE && count%numberOfResiduesPerLine==0){
+        		record.append(eol);
         	}else if(hasSymbolSeparator){
         		record.append(getSymbolSeparator());
         	}
         	record.append(getStringRepresentationFor(iter.next()));
         	count++;
         }
-        record.append(FastaUtil.LINE_SEPARATOR);
+        record.append(eol);
 	}
 
 	protected abstract boolean hasSymbolSeparator();
@@ -129,28 +131,33 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
         if (comment != null) {
         	record.append(' ').append(comment);
         }
-        record.append(FastaUtil.LINE_SEPARATOR);
+        record.append(eol);
 	}
     
     private int computeFormattedBufferSize(String id, T sequence, String comment) {
-    	//2 extra bytes for '>' and '\n'
-		int defLineSize = 2 + id.length();
+    	//extra bytes for '>' and end of line length
+		int defLineSize = 1 + eol.length() + id.length();
 		if(comment!=null){
 			//extra byte for the space
 			defLineSize +=1 + comment.length();
 		}
 		int seqLength=(int)sequence.getLength();
-		int numberOfLines = seqLength/numberOfResiduesPerLine +1;
-		return defLineSize + numberOfCharsFor(seqLength)+numberOfLines;
+		int numberOfLines = numberOfResiduesPerLine == AbstractBuilder.ALL_ON_ONE_LINE ? 1 : seqLength/numberOfResiduesPerLine +1;
+		return defLineSize + numberOfCharsFor(seqLength)+ numberOfLines*eol.length();
 	}
    
     protected abstract int numberOfCharsFor(int numberOfSymbols);
     
     public abstract static class AbstractBuilder<S, T extends Sequence<S>,F extends FastaRecord<S,T>, W extends FastaRecordWriter<S, T, F>> implements org.jcvi.jillion.core.util.Builder<W>{
 		
+    	public static final int ALL_ON_ONE_LINE =-1;
+    	
 		private static final Charset DEFAULT_CHARSET = IOUtil.UTF_8;
+		private static final String DEFAULT_LINE_SEPARATOR = FastaUtil.LINE_SEPARATOR;
+		
 		private final OutputStream out;
 		private int numberOfSymbolsPerLine;
+		private String eol = DEFAULT_LINE_SEPARATOR;
 		
 		private Charset charSet = DEFAULT_CHARSET;
 		/**
@@ -214,20 +221,58 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 			return this;
 		}
 		/**
+		 * Change the end of line separator String.
+		 * <br/>
+		 * <strong>Note:</strong> This method should be used with caution.
+		 * Many fasta parsers will only expect lines to be terminated
+		 * with '\n'.
+		 * @param eol the end of line string to use to denote
+		 * end of lines; can not be empty.  If set to {@code null},
+		 * then the default '\n' is used.
+		 * @return this.
+		 */
+		public final AbstractBuilder<S,T,F,W> lineSeparator(String eol){
+			if(eol==null){
+				this.eol = DEFAULT_LINE_SEPARATOR;
+			}else{
+				if(eol.isEmpty()){
+					throw new IllegalArgumentException("line separator can not be empty");
+				}
+				this.eol = eol;
+			}
+			return this;
+		}
+		/**
 		 * Change the number of bases per line
 		 * to write for each fasta record.
 		 * If this method is not called,
 		 * then the a default value will be used.
+		 * If {@link #allBasesOnOneLine()}
+		 * is also called, then whichever method is called last
+		 * "wins".
 		 * @param numberPerLine the basesPerLine to use
 		 * must be >=1.
 		 * @return this.
 		 * @throws IllegalArgumentException if basesPerLine <1.
+		 * @see #allBasesOnOneLine()
 		 */
 		public final AbstractBuilder<S,T,F,W> numberPerLine(int numberPerLine){
 			if(numberPerLine<1){
 				throw new IllegalArgumentException("number per line must be >=1");
 			}
 			numberOfSymbolsPerLine = numberPerLine;
+			return this;
+		}
+		/**
+		 * Write all the bases on one line instead of allowing
+		 * the possibility of multiple lines. If {@link #numberPerLine(int)}
+		 * is also called, then whichever method is called last
+		 * "wins".
+		 * @return this.
+		 * @see #numberPerLine(int)
+		 */
+		public final AbstractBuilder<S,T,F,W> allBasesOnOneLine(){
+			numberOfSymbolsPerLine = ALL_ON_ONE_LINE;
 			return this;
 		}
 		
@@ -238,7 +283,7 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		 */
 		@Override
 		public final W build() {
-			return create(out, numberOfSymbolsPerLine, charSet);
+			return create(out, numberOfSymbolsPerLine, charSet,eol);
 		}
 		/**
 		 * Create a new instance of a {@link FastaRecordWriter}
@@ -253,6 +298,6 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		 * usually UTF-8.
 		 * @return a new {@link FastaRecordWriter}; can not be null.
 		 */
-		protected abstract W create(OutputStream out, int numberOfResiduesPerLine, Charset charSet);
+		protected abstract W create(OutputStream out, int numberOfResiduesPerLine, Charset charSet, String eol);
 	}
 }

@@ -18,7 +18,7 @@ public class TestIupacTranslationTables {
 
 	private final IupacTranslationTables table;
 	private final String dnaString;
-	private final AminoAcidSequence expectedAa;
+	private final ProteinSequence expectedAa;
 	private final int expectedTableNumber;
 	
 	@Parameters
@@ -146,7 +146,7 @@ public class TestIupacTranslationTables {
 		this.expectedTableNumber = expectedTableNumber;
 		this.table = table;
 		this.dnaString = dnaString;
-		expectedAa = new AminoAcidSequenceBuilder(aaString).build();
+		expectedAa = new ProteinSequenceBuilder(aaString).build();
 		
 	}
 	

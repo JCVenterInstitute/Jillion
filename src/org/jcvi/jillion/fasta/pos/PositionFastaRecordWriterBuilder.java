@@ -73,8 +73,8 @@ public final class PositionFastaRecordWriterBuilder extends AbstractBuilder<Posi
 
 		@Override
 		protected PositionFastaRecordWriter create(
-				OutputStream out, int numberOfResiduesPerLine, Charset charSet) {
-			return new PositionSequenceFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet);
+				OutputStream out, int numberOfResiduesPerLine, Charset charSet, String eol) {
+			return new PositionSequenceFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet,eol);
 		}
 		@Override
 		protected int getDefaultNumberOfSymbolsPerLine() {
@@ -84,8 +84,8 @@ public final class PositionFastaRecordWriterBuilder extends AbstractBuilder<Posi
 		private static final class PositionSequenceFastaRecordWriterImpl  extends AbstractFastaRecordWriter<Position, PositionSequence, PositionFastaRecord> implements PositionFastaRecordWriter{
 
 			private PositionSequenceFastaRecordWriterImpl(OutputStream out,
-					int numberOfResiduesPerLine, Charset charSet) {
-				super(out, numberOfResiduesPerLine, charSet);
+					int numberOfResiduesPerLine, Charset charSet, String eol) {
+				super(out, numberOfResiduesPerLine, charSet,eol);
 			}
 
 			@Override

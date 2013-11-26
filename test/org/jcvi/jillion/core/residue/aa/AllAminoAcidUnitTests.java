@@ -33,12 +33,12 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         TestAminoAcid.class,
-        TestCompactAminoAcidSequence.class,
-        TestAminoAcidSequenceBuilder.class,
+        TestCompactProteinSequence.class,
+        TestProteinSequenceBuilder.class,
         
-        TestDefaultAminoAcidSequenceFastaFileDataStore.class,
-        TestMementoAminoAcidSequenceFastaFileDataStore.class,
-        TestIterationOnlyAminoAcidSequenceFastaFileDataStore.class,
+        TestDefaultProteinFastaFileDataStore.class,
+        TestMementoProteinFastaFileDataStore.class,
+        TestIterationOnlyProteinFastaFileDataStore.class,
         
         TestIupacTranslationTables.class
     }

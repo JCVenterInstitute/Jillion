@@ -46,7 +46,7 @@ abstract class AbstractSubstitutionMatrixFileParser<R extends Residue> implement
 			
 			//first column is amino acids in matrix
 			String headerLine = parseColumns(scanner);
-			//Sequence<R> header = new AminoAcidSequenceBuilder(headerLine).build();
+			//Sequence<R> header = new ProteinSequenceBuilder(headerLine).build();
 			Sequence<R> header = parseColumns(headerLine);
 			
 			long headerLength = header.getLength();

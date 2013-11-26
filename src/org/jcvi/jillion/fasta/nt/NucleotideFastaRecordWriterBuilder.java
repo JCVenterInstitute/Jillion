@@ -73,15 +73,15 @@ public final class NucleotideFastaRecordWriterBuilder extends AbstractResidueSeq
 
 		@Override
 		protected NucleotideFastaRecordWriter create(
-				OutputStream out, int numberOfResiduesPerLine, Charset charSet) {
-			return new NucleotideSequenceFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet);
+				OutputStream out, int numberOfResiduesPerLine, Charset charSet, String eol) {
+			return new NucleotideSequenceFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet,eol);
 		}
 		
 		private static final class NucleotideSequenceFastaRecordWriterImpl extends AbstractResidueSequenceFastaRecordWriter<Nucleotide, NucleotideSequence, NucleotideFastaRecord> implements NucleotideFastaRecordWriter{
 
 			private NucleotideSequenceFastaRecordWriterImpl(OutputStream out,
-					int numberOfResiduesPerLine, Charset charSet) {
-				super(out, numberOfResiduesPerLine, charSet);
+					int numberOfResiduesPerLine, Charset charSet, String eol) {
+				super(out, numberOfResiduesPerLine, charSet,eol);
 			}
 		}
 }
