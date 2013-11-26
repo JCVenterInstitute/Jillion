@@ -44,8 +44,8 @@ public abstract class AbstractResidueSequenceFastaRecordWriter<R extends Residue
 
 	
 	protected AbstractResidueSequenceFastaRecordWriter(OutputStream out,
-			int numberOfResiduesPerLine, Charset charSet) {
-		super(out, numberOfResiduesPerLine, charSet);
+			int numberOfResiduesPerLine, Charset charSet, String eol) {
+		super(out, numberOfResiduesPerLine, charSet, eol);
 	}
 	@Override
 	protected String getStringRepresentationFor(R symbol) {

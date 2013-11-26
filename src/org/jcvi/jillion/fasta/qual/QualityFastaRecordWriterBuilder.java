@@ -73,8 +73,8 @@ public final class QualityFastaRecordWriterBuilder extends AbstractBuilder<Phred
 
 	@Override
 	protected QualityFastaRecordWriter create(
-			OutputStream out, int numberOfResiduesPerLine, Charset charSet) {
-		return new QualitySequenceFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet);
+			OutputStream out, int numberOfResiduesPerLine, Charset charSet, String eol) {
+		return new QualitySequenceFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet, eol);
 	}
 	@Override
 	protected int getDefaultNumberOfSymbolsPerLine() {
@@ -84,8 +84,8 @@ public final class QualityFastaRecordWriterBuilder extends AbstractBuilder<Phred
 	private static final class QualitySequenceFastaRecordWriterImpl extends AbstractFastaRecordWriter<PhredQuality, QualitySequence, QualityFastaRecord> implements QualityFastaRecordWriter{
 
 		private QualitySequenceFastaRecordWriterImpl(OutputStream out,
-				int numberOfResiduesPerLine, Charset charSet) {
-			super(out, numberOfResiduesPerLine, charSet);
+				int numberOfResiduesPerLine, Charset charSet, String eol) {
+			super(out, numberOfResiduesPerLine, charSet, eol);
 		}
 
 		@Override

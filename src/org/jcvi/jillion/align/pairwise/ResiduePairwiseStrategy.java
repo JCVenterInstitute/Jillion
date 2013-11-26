@@ -23,16 +23,16 @@ package org.jcvi.jillion.align.pairwise;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.jillion.align.AminoAcidSequenceAlignment;
+import org.jcvi.jillion.align.ProteinSequenceAlignment;
 import org.jcvi.jillion.align.NucleotideSequenceAlignment;
 import org.jcvi.jillion.align.SequenceAlignment;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
+import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.internal.align.AminoAcidSequenceAlignmentBuilder;
+import org.jcvi.jillion.internal.align.ProteinSequenceAlignmentBuilder;
 import org.jcvi.jillion.internal.align.NucleotideSequenceAlignmentBuilder;
 import org.jcvi.jillion.internal.align.SequenceAlignmentBuilder;
 /**
@@ -54,9 +54,9 @@ abstract class ResiduePairwiseStrategy<R extends Residue, S extends Sequence<R>,
 			return NucleotidePairwiseStrategy.INSTANCE;
 	}
 	
-	public static ResiduePairwiseStrategy<AminoAcid, AminoAcidSequence, AminoAcidSequenceAlignment, AminoAcidPairwiseSequenceAlignment>
+	public static ResiduePairwiseStrategy<AminoAcid, ProteinSequence, ProteinSequenceAlignment, ProteinPairwiseSequenceAlignment>
 		getAminoAcidStrategy(){
-			return AminoAcidPairwiseStrategy.INSTANCE;
+			return ProteinPairwiseStrategy.INSTANCE;
 	}
 	/**
 	 * Get the list of {@link Residue}s
@@ -112,8 +112,8 @@ abstract class ResiduePairwiseStrategy<R extends Residue, S extends Sequence<R>,
 		
 	}
 	
-	private static final class AminoAcidPairwiseStrategy extends ResiduePairwiseStrategy<AminoAcid, AminoAcidSequence, AminoAcidSequenceAlignment, AminoAcidPairwiseSequenceAlignment>{
-		private static final AminoAcidPairwiseStrategy INSTANCE = new AminoAcidPairwiseStrategy();
+	private static final class ProteinPairwiseStrategy extends ResiduePairwiseStrategy<AminoAcid, ProteinSequence, ProteinSequenceAlignment, ProteinPairwiseSequenceAlignment>{
+		private static final ProteinPairwiseStrategy INSTANCE = new ProteinPairwiseStrategy();
 
 		@Override
 		protected List<AminoAcid> getResidueList() {
@@ -121,9 +121,9 @@ abstract class ResiduePairwiseStrategy<R extends Residue, S extends Sequence<R>,
 		}
 
 		@Override
-		protected AminoAcidPairwiseSequenceAlignment wrapPairwiseAlignment(
-				PairwiseSequenceAlignment<AminoAcid, AminoAcidSequence> alignment) {
-			return new AminoAcidPairwiseSequenceAlignmentImpl(alignment);
+		protected ProteinPairwiseSequenceAlignment wrapPairwiseAlignment(
+				PairwiseSequenceAlignment<AminoAcid, ProteinSequence> alignment) {
+			return new ProteinPairwiseSequenceAlignmentImpl(alignment);
 		}
 
 		@Override
@@ -132,9 +132,9 @@ abstract class ResiduePairwiseStrategy<R extends Residue, S extends Sequence<R>,
 		}
 
 		@Override
-		protected SequenceAlignmentBuilder<AminoAcid, AminoAcidSequence, AminoAcidSequenceAlignment> createSequenceAlignmentBuilder(
+		protected SequenceAlignmentBuilder<AminoAcid, ProteinSequence, ProteinSequenceAlignment> createSequenceAlignmentBuilder(
 				boolean builtFromTraceback) {
-			return new AminoAcidSequenceAlignmentBuilder(builtFromTraceback);
+			return new ProteinSequenceAlignmentBuilder(builtFromTraceback);
 		}
 		
 	}

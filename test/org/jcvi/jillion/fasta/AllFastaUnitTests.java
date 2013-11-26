@@ -25,7 +25,7 @@
  */
 package org.jcvi.jillion.fasta;
 
-import org.jcvi.jillion.fasta.aa.AllAminoAcidSequenceFastaRecordUnitTests;
+import org.jcvi.jillion.fasta.aa.AllProteinFastaRecordUnitTests;
 import org.jcvi.jillion.fasta.nt.AllNucleotideSequenceFastaTests;
 import org.jcvi.jillion.fasta.pos.AllPositionFastaUnitTests;
 import org.jcvi.jillion.fasta.qual.AllFastaQualityTests;
@@ -41,7 +41,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
         AllFastaQualityTests.class,
         AllNucleotideSequenceFastaTests.class,
-        AllAminoAcidSequenceFastaRecordUnitTests.class,
+        AllProteinFastaRecordUnitTests.class,
         AllPositionFastaUnitTests.class
    
     }

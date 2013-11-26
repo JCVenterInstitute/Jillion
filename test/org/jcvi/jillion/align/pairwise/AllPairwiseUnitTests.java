@@ -30,10 +30,10 @@ import org.junit.runners.Suite.SuiteClasses;
     {
     	AllBlosumUnitTests.class,
     	TestNucleotideSmithWatermanAligner.class,    	
-    	TestAminoAcidSmithWaterman.class,
+    	TestProteinSmithWaterman.class,
     	
     	TestNucleotideNeedlemanWunschAligner.class,
-    	TestAminoAcidNeedlemanWunschAligner.class
+    	TestProteinNeedlemanWunschAligner.class
     }
     )
 public class AllPairwiseUnitTests {

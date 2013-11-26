@@ -203,16 +203,16 @@ public enum IupacTranslationTables implements TranslationTable{
 	
 
 	@Override
-	public AminoAcidSequence translate(NucleotideSequence sequence) {
+	public ProteinSequence translate(NucleotideSequence sequence) {
 		return translate(sequence, Frame.ZERO);
 	}
 
 	@Override
-	public AminoAcidSequence translate(NucleotideSequence sequence, Frame frame) {
+	public ProteinSequence translate(NucleotideSequence sequence, Frame frame) {
 		return translate(sequence, frame, (int)sequence.getLength());
 	}
 	@Override
-	public AminoAcidSequence translate(Iterable<Nucleotide> sequence, Frame frame, int length) {
+	public ProteinSequence translate(Iterable<Nucleotide> sequence, Frame frame, int length) {
 		if(sequence ==null){
 			throw new NullPointerException("sequence can not be null");
 		}
@@ -224,7 +224,7 @@ public enum IupacTranslationTables implements TranslationTable{
 		//so if translation table says codon is a start
 		//and we've already seen a start, then make it not the start?
 		Iterator<Nucleotide> iter = sequence.iterator();
-		AminoAcidSequenceBuilder builder = new AminoAcidSequenceBuilder(length/3);
+		ProteinSequenceBuilder builder = new ProteinSequenceBuilder(length/3);
 		handleFrame(iter, frame);
 		boolean seenStart=false;
 		long currentOffset=0;

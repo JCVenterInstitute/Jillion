@@ -28,8 +28,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
 public class TestDefaultNucleotideSequenceFastaRecordWriter {
 	private final NucleotideFastaRecord record1 = 
@@ -60,10 +62,32 @@ public class TestDefaultNucleotideSequenceFastaRecordWriter {
 		new NucleotideFastaRecordWriterBuilder(out)
 			.numberPerLine(0);
 	}
+	@Test(expected = IllegalArgumentException.class)
+	public void emptyEOLShouldthrowIllegalArgumentException(){
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		new NucleotideFastaRecordWriterBuilder(out)
+			.lineSeparator("");
+	}
 	@Test
 	public void writeFastasWithDefaultOptions() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		NucleotideFastaRecordWriter sut = new NucleotideFastaRecordWriterBuilder(out)
+													.build();
+		sut.write(record1);		
+		sut.write(record2);
+		sut.close();
+		
+		String expected = ">id_1 a comment\n"+
+							"ACGTACGT\n"+
+							">id_2\n"+
+							"AAAACCCCGGGGTTTT\n";
+		assertEquals(expected, new String(out.toByteArray(), IOUtil.UTF_8));
+	}
+	@Test
+	public void nullEOLShouldUseDefault() throws IOException{
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		NucleotideFastaRecordWriter sut = new NucleotideFastaRecordWriterBuilder(out)
+													.lineSeparator(null)
 													.build();
 		sut.write(record1);		
 		sut.write(record2);
@@ -92,6 +116,52 @@ public class TestDefaultNucleotideSequenceFastaRecordWriter {
 							"ACGTA\nCGT\n"+
 							">id_2\n"+
 							"AAAAC\nCCCGG\nGGTTT\nT\n";
+		assertEquals(expected, new String(out.toByteArray(), IOUtil.UTF_8));
+	}
+	@Test
+	public void differentEOL() throws IOException{
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		NucleotideFastaRecordWriter sut = new NucleotideFastaRecordWriterBuilder(out)
+								.numberPerLine(5)
+								.lineSeparator("\r\n")
+								.build();
+		
+		
+		
+		sut.write(record1);		
+		sut.write(record2);
+		sut.close();
+		
+		String expected = ">id_1 a comment\r\n"+
+							"ACGTA\r\nCGT\r\n"+
+							">id_2\r\n"+
+							"AAAAC\r\nCCCGG\r\nGGTTT\r\nT\r\n";
+		assertEquals(expected, new String(out.toByteArray(), IOUtil.UTF_8));
+	}
+	
+	@Test
+	public void allOnOneLine() throws IOException{
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		NucleotideFastaRecordWriter sut = new NucleotideFastaRecordWriterBuilder(out)
+								.allBasesOnOneLine()											
+								.build();
+		
+		
+		
+		sut.write(record1);		
+		sut.write(record2);
+		char[] seq = new char[1000];
+		Arrays.fill(seq, 'G');
+		
+		sut.write("long", new NucleotideSequenceBuilder(new String(seq)).build());
+		sut.close();
+		
+		String expected = ">id_1 a comment\n"+
+							"ACGTACGT\n"+
+							">id_2\n"+
+							"AAAACCCCGGGGTTTT\n" +
+							">long\n"+
+							new String(seq)+"\n";
 		assertEquals(expected, new String(out.toByteArray(), IOUtil.UTF_8));
 	}
 	@Test

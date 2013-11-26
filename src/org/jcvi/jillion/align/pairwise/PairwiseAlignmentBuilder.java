@@ -6,7 +6,7 @@ import org.jcvi.jillion.align.SubstitutionMatrix;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
+import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
@@ -19,7 +19,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  * @author dkatzel
  *
  * @param <R> the type of {@link Residue} (either {@link Nucleotide} or {@link AminoAcid} ). 
- * @param <S> the type of {@link Sequence} (either {@link NucleotideSequence} or {@link AminoAcidSequence} ).
+ * @param <S> the type of {@link Sequence} (either {@link NucleotideSequence} or {@link ProteinSequence} ).
  * @param <A> the type of {@link PairwiseSequenceAlignment} to build.
  */
 public final class PairwiseAlignmentBuilder<R extends Residue, S extends Sequence<R>, A extends PairwiseSequenceAlignment<R,S>> {
@@ -44,7 +44,7 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Sequenc
 	}
 	/**
 	 * Create a new PairwiseAlignmentBuilder to align
-	 * 2 {@link AminoAcidSequence}s.
+	 * 2 {@link ProteinSequence}s.
 	 * @param query the query sequence; may not be null.
 	 * @param subject the subject sequence; may not be null.
 	 * @param matrix the {@link SubstitutionMatrix}; can not be null.
@@ -52,8 +52,8 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Sequenc
 	 * will never be null.
 	 * @throws NullPointerException if any parameters are null.
 	 */
-	public static PairwiseAlignmentBuilder<AminoAcid, AminoAcidSequence, AminoAcidPairwiseSequenceAlignment> createProtienAlignmentBuilder(AminoAcidSequence query, AminoAcidSequence subject, AminoAcidSubstitutionMatrix matrix){
-		return new PairwiseAlignmentBuilder<AminoAcid, AminoAcidSequence, AminoAcidPairwiseSequenceAlignment>(query, subject, matrix);
+	public static PairwiseAlignmentBuilder<AminoAcid, ProteinSequence, ProteinPairwiseSequenceAlignment> createProtienAlignmentBuilder(ProteinSequence query, ProteinSequence subject, AminoAcidSubstitutionMatrix matrix){
+		return new PairwiseAlignmentBuilder<AminoAcid, ProteinSequence, ProteinPairwiseSequenceAlignment>(query, subject, matrix);
 	}
 	
 	private PairwiseAlignmentBuilder(S query, S subject, SubstitutionMatrix<R> matrix){
@@ -123,7 +123,7 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Sequenc
 	 */
 	@SuppressWarnings("unchecked")
 	public A build(){
-		//we know that we can only be either an AminoAcidSequence
+		//we know that we can only be either an ProteinSequence
 		//or a NucleotideSequence so these casts should all be safe.
 		//The casts are so the user's interface is clean
 		//all ugliness is hidden here
@@ -135,9 +135,9 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Sequenc
 			return (A) NucleotideNeedlemanWunschAligner.align((NucleotideSequence)query, (NucleotideSequence)subject, (NucleotideSubstitutionMatrix)matrix, gapOpen, gapExtension);
 		}
 		if(local){
-			 return (A) AminoAcidSmithWatermanAligner.align((AminoAcidSequence)query, (AminoAcidSequence)subject, (AminoAcidSubstitutionMatrix)matrix, gapOpen, gapExtension);
+			 return (A) ProteinSmithWatermanAligner.align((ProteinSequence)query, (ProteinSequence)subject, (AminoAcidSubstitutionMatrix)matrix, gapOpen, gapExtension);
 		}
-		return (A) AminoAcidNeedlemanWunschAligner.align((AminoAcidSequence)query, (AminoAcidSequence)subject, (AminoAcidSubstitutionMatrix)matrix, gapOpen, gapExtension);
+		return (A) ProteinNeedlemanWunschAligner.align((ProteinSequence)query, (ProteinSequence)subject, (AminoAcidSubstitutionMatrix)matrix, gapOpen, gapExtension);
 
 	}
 	

@@ -82,8 +82,10 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 
 	/**
      * Creates a new NucleotideSequenceBuilder instance
-     * which currently contains no nucleotides.
+     * which currently contains no nucleotides 
      * @param initialCapacity the initial capacity 
+     * but is expected to be eventually take up
+     * the given capacity.
      * of the array backing the {@link NucleotideSequence}
      * (will be grown if sequence gets too large)
      * @throws IllegalArgumentException if initialCapacity < 1.

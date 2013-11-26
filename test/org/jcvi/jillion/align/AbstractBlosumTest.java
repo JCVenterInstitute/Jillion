@@ -2,10 +2,10 @@ package org.jcvi.jillion.align;
 
 import static org.junit.Assert.assertEquals;
 
-import org.jcvi.jillion.align.pairwise.AminoAcidPairwiseSequenceAlignment;
+import org.jcvi.jillion.align.pairwise.ProteinPairwiseSequenceAlignment;
 import org.jcvi.jillion.align.pairwise.PairwiseAlignmentBuilder;
-import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
-import org.jcvi.jillion.core.residue.aa.AminoAcidSequenceBuilder;
+import org.jcvi.jillion.core.residue.aa.ProteinSequence;
+import org.jcvi.jillion.core.residue.aa.ProteinSequenceBuilder;
 import org.junit.Test;
 
 public abstract class AbstractBlosumTest {
@@ -25,11 +25,11 @@ public abstract class AbstractBlosumTest {
 	
 	@Test
 	public void hasSequencesHaveStopCodon(){
-		AminoAcidSequence seq1 = new AminoAcidSequenceBuilder("LSGIREE*")
+		ProteinSequence seq1 = new ProteinSequenceBuilder("LSGIREE*")
 									.build();
 		
 		
-		AminoAcidPairwiseSequenceAlignment alignment = PairwiseAlignmentBuilder.createProtienAlignmentBuilder(seq1, seq1, matrix)
+		ProteinPairwiseSequenceAlignment alignment = PairwiseAlignmentBuilder.createProtienAlignmentBuilder(seq1, seq1, matrix)
 															.gapPenalty(-1, -2)	
 															.useGlobalAlignment()
 															.build();
@@ -39,12 +39,12 @@ public abstract class AbstractBlosumTest {
 	}
 	@Test
 	public void alignSimilarSequences(){
-		AminoAcidSequence seq1 = new AminoAcidSequenceBuilder("LSGIREE*")
+		ProteinSequence seq1 = new ProteinSequenceBuilder("LSGIREE*")
 									.build();
-		AminoAcidSequence seq2 = new AminoAcidSequenceBuilder("LSGVREE*")
+		ProteinSequence seq2 = new ProteinSequenceBuilder("LSGVREE*")
 									.build();
 		
-		AminoAcidPairwiseSequenceAlignment alignment = PairwiseAlignmentBuilder.createProtienAlignmentBuilder(seq1, seq2, matrix)
+		ProteinPairwiseSequenceAlignment alignment = PairwiseAlignmentBuilder.createProtienAlignmentBuilder(seq1, seq2, matrix)
 																	.gapPenalty(-1, -2)	
 																	.useGlobalAlignment()
 																	.build();

@@ -35,8 +35,8 @@ import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.jcvi.jillion.core.residue.aa.AminoAcidSequence;
-import org.jcvi.jillion.core.residue.aa.AminoAcidSequenceBuilder;
+import org.jcvi.jillion.core.residue.aa.ProteinSequence;
+import org.jcvi.jillion.core.residue.aa.ProteinSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
@@ -222,8 +222,8 @@ public final class XmlFileBlastParser implements BlastParser{
                 	 ((HspBuilder<Nucleotide,NucleotideSequence>)hspBuilder)
                 	 				.gappedAlignments((NucleotideSequence)querySequence, (NucleotideSequence)subjectSequence);
                 }else{
-                	 ((HspBuilder<AminoAcid,AminoAcidSequence>)hspBuilder)
- 	 								.gappedAlignments((AminoAcidSequence)querySequence, (AminoAcidSequence)subjectSequence);
+                	 ((HspBuilder<AminoAcid,ProteinSequence>)hspBuilder)
+ 	 								.gappedAlignments((ProteinSequence)querySequence, (ProteinSequence)subjectSequence);
 
                 }
                
@@ -256,14 +256,14 @@ public final class XmlFileBlastParser implements BlastParser{
                 if(isNucleotide){
                 	querySequence = new NucleotideSequenceBuilder(tempVal).build();
                 }else{
-                	querySequence = new AminoAcidSequenceBuilder(tempVal).build();
+                	querySequence = new ProteinSequenceBuilder(tempVal).build();
                 }
             }else if(SUBJECT_SEQUENCE.endsWith(qName)){
                 numberOfGapOpenings +=parseNumberOfGapOpenings(tempVal);
                 if(isNucleotide){
                 	subjectSequence = new NucleotideSequenceBuilder(tempVal).build();
                 }else{
-                	subjectSequence = new AminoAcidSequenceBuilder(tempVal).build();
+                	subjectSequence = new ProteinSequenceBuilder(tempVal).build();
                 }
             }else if(MIDLINE.equals(qName)){
                 int totalMisMatches= parseNumberOfMismatches(tempVal);
