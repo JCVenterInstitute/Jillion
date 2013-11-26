@@ -89,7 +89,7 @@ final class DefaultNucleotideFastaFileDataStore{
 		private final Map<String, NucleotideFastaRecord> fastaRecords = new LinkedHashMap<String, NucleotideFastaRecord>();
 		
 		private final DataStoreFilter filter;
-		private NucleotideFastaRecordVisitor currentVisitor = new NucleotideFastaRecordVisitor();
+		private final ReusableNucleotideFastaRecordVisitor currentVisitor = new ReusableNucleotideFastaRecordVisitor();
 		public NucleotideFastaDataStoreBuilderVisitorImpl2(DataStoreFilter filter){
 			this.filter = filter;
 		}
@@ -99,7 +99,7 @@ final class DefaultNucleotideFastaFileDataStore{
 			if(!filter.accept(id)){
 				return null;
 			}
-			currentVisitor.prepareNewRecord(id, optionalComment);
+			currentVisitor.initialize(id, optionalComment);
 			return currentVisitor;
 			
 		}
@@ -116,12 +116,36 @@ final class DefaultNucleotideFastaFileDataStore{
 		public NucleotideFastaDataStore build() {
 			return DataStoreUtil.adapt(NucleotideFastaDataStore.class,fastaRecords);
 		}
-		 private class NucleotideFastaRecordVisitor implements FastaRecordVisitor{
+		/**
+		 * {@code ReusableNucleotideFastaRecordVisitor}
+		 * is a {@link FastaRecordVisitor} that can be "reset"
+		 * and used multiple times.  This should cut down
+		 * on object creation and garbage collection
+		 * since we expect there could be hundreds of thousands
+		 * or millions of records to visit.
+		 * 
+		 * Before each new record to visit, call {@link #initialize(String, String)}.
+		 * @author dkatzel
+		 *
+		 */
+		 private final class ReusableNucleotideFastaRecordVisitor implements FastaRecordVisitor{
 			private String currentId;
 			private String currentComment;
 			private NucleotideSequenceBuilder builder;
-			
-			public void prepareNewRecord(String id, String optionalComment){
+			/**
+			 * Default constructor needs to have it's data
+			 * initialized.
+			 */
+			public ReusableNucleotideFastaRecordVisitor(){
+				
+			}
+			/**
+			 * Prepare this visitor to visit a new record.
+			 * @param id the id of the record to be visited.
+			 * @param optionalComment the optional comment of the record
+			 * to be visited.
+			 */
+			public void initialize(String id, String optionalComment){
 				this.currentId = id;
 				this.currentComment = optionalComment;
 				builder = new NucleotideSequenceBuilder();

@@ -325,14 +325,7 @@ public final class DefaultAssembledRead implements AssembledRead {
         	if(reference == null){
         		throw new IllegalStateException("reference not set");
         	}
-        	final NucleotideSequenceBuilder finalBuilder;
-        
-        	if(originalSequence !=null){
-        		finalBuilder = new NucleotideSequenceBuilder(originalSequence);
-        	}else{
-        		finalBuilder = basesBuilder;
-        	}
-            ReferenceMappedNucleotideSequence updatedEncodedBasecalls = finalBuilder
+            ReferenceMappedNucleotideSequence updatedEncodedBasecalls = createFinalBuilder()
             																.setReferenceHint(reference, offset)
             																.buildReferenceEncodedNucleotideSequence();
             return new DefaultAssembledRead(readId, 
@@ -341,6 +334,17 @@ public final class DefaultAssembledRead implements AssembledRead {
             		ungappedFullLength,
             		clearRange);
         }
+
+		protected NucleotideSequenceBuilder createFinalBuilder() {
+			final NucleotideSequenceBuilder finalBuilder;
+        
+        	if(originalSequence ==null){
+        		finalBuilder = basesBuilder;        		
+        	}else{
+        		finalBuilder = new NucleotideSequenceBuilder(originalSequence);
+        	}
+			return finalBuilder;
+		}
 
         /**
         * {@inheritDoc}

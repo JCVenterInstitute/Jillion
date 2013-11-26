@@ -36,15 +36,16 @@ import org.jcvi.jillion.internal.fasta.AbstractResuseableFastaRecordVisitor;
 
 public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingStreamingIterator<QualityFastaRecord>{
 	
+	private final File fastaFile;
+	private final DataStoreFilter filter;
+	
+	
 	public static StreamingIterator<QualityFastaRecord> createIteratorFor(File fastaFile, DataStoreFilter filter){
 		QualitySequenceFastaDataStoreIteratorImpl iter = new QualitySequenceFastaDataStoreIteratorImpl(fastaFile, filter);
 		iter.start();
 		return iter;
 	}
 	
-	
-	private final File fastaFile;
-	private final DataStoreFilter filter;
 	public QualitySequenceFastaDataStoreIteratorImpl(File fastaFile, DataStoreFilter filter) {
 		if(!fastaFile.exists()){
 			throw new IllegalArgumentException("fasta file must exist");

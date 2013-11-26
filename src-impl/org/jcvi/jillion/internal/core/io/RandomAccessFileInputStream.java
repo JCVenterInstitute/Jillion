@@ -33,7 +33,7 @@ import java.io.RandomAccessFile;
  * @author dkatzel
  *
  */
-public class RandomAccessFileInputStream extends InputStream{
+public final class RandomAccessFileInputStream extends InputStream{
 
 	private final RandomAccessFile randomAccessFile;
 	private long bytesRead=0;
@@ -141,15 +141,16 @@ public class RandomAccessFileInputStream extends InputStream{
 		if(length != null && bytesRead >=length){
 			return -1;
 		}
-		final int reducedLength;
-		if(length !=null){
-			reducedLength = Math.min(len, (int)(length - bytesRead));
-		}else{
-			reducedLength=len;
-		}
+		final int reducedLength = computeReducedLength(len);
 		int numberOfBytesRead = randomAccessFile.read(b, off, reducedLength);
 		bytesRead+=numberOfBytesRead;
 		return numberOfBytesRead;
+	}
+	private int computeReducedLength(int len) {
+		if(length ==null){
+			return len;			
+		}
+		return Math.min(len, (int)(length - bytesRead));
 	}
 	/**
 	 * If this instance was creating

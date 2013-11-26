@@ -29,6 +29,7 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.math.BigInteger;
@@ -40,19 +41,32 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.jcvi.jillion.assembly.clc.cas.CasFileVisitor.CasVisitorCallback;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
-
+/**
+ * {@code CasFileParser} is a {@link CasParser}
+ * that can parse CLC .cas formated files
+ * that were created using either the 
+ * legacy clc_ref_assemble_X programs or the newer
+ * clc_mapper program.  Both programs make slightly different
+ * versions of cas files that are not backwards compatible.
+ * 
+ * @author dkatzel
+ *
+ */
 public final class CasFileParser implements CasParser{
 	
-	
-	private static final byte[] CAS_MAGIC_NUMBER = new byte[]{
+	/**
+	 * The first 7 bytes of the cas file magic number
+	 * should be the same for all the different versions
+	 * of cas.
+	 */
+	private static final byte[] CAS_MAGIC_NUMBER_PREFIX = new byte[]{
         (byte)0x43,
         (byte)0x4c,
         (byte)0x43,
         (byte)0x80,
         (byte)0x00,
         (byte)0x00,
-        (byte)0x00,
-        (byte)0x03,
+        (byte)0x00
     };
 	
     private  int numberOfBytesForContigPosition,numberOfBytesForContigNumber;
@@ -60,6 +74,18 @@ public final class CasFileParser implements CasParser{
     private CasScoringScheme scoringScheme;
     private final File casFile;
     
+    /**
+     * Create a new {@link CasParser} instance to parse the given
+     * cas formatted file.  Please note, that the file won't
+     * actually be parsed until {@link CasParser#parse(CasFileVisitor)}
+     * is called.
+     * @param casFile the cas formatted file to parse;
+     * can not be null and must exist.
+     * @return a new {@link CasParser} instance; 
+     * will never be null.
+     * @throws IOException if the casFile does not exist.
+     * @throws NullPointerException if casFile is null.
+     */
     public static CasParser create(File casFile) throws IOException{
     	return new CasFileParser(casFile);
     }
@@ -67,6 +93,9 @@ public final class CasFileParser implements CasParser{
     private CasFileParser(File file) throws IOException{
     	if(file ==null){
     		throw new NullPointerException("cas file can not be null");
+    	}
+    	if(!file.exists()){
+    		throw new FileNotFoundException(file.getAbsolutePath());
     	}
     	this.casFile = file;
     }
@@ -157,25 +186,14 @@ public final class CasFileParser implements CasParser{
         }
         
     }
-    
-    private int assertMagicNumberIsCorrect(byte[] magicNumber){
-    	//last byte may vary
-    	for(int i=0; i<CAS_MAGIC_NUMBER.length -1; i++){
-    		if(CAS_MAGIC_NUMBER[i] != magicNumber[i]){
-    			 throw new IllegalArgumentException("input stream not a valid cas file wrong magic number expected : " + Arrays.toString(CAS_MAGIC_NUMBER) + " but was "+Arrays.toString(magicNumber));
-    		      
-    		}
-    	}
-    	return magicNumber[7];
-    	
-    }
+   
     private void parseMetaData(CasFileVisitor visitor) throws IOException {
     	RandomAccessFile randomAccessFile = new RandomAccessFile(casFile,"r");
     	RandomAccessFileInputStream in=null;
     	try{
 			in = new RandomAccessFileInputStream(randomAccessFile);
 			byte[] magicNumber = IOUtil.toByteArray(in, 8);
-			int casVersion = assertMagicNumberIsCorrect(magicNumber);
+			CasNumberParserStrategy strategy = CasNumberParserStrategy.valueOf(magicNumber);
 			// the cas file puts the header at the end of the file
 			// perhaps to make it easier to modify later?
 			// so we have to skip over all the matches (possibly gigabytes of
@@ -183,99 +201,14 @@ public final class CasFileParser implements CasParser{
 			BigInteger headerOffset = CasUtil.readCasUnsignedLong(in);
 			randomAccessFile.seek(headerOffset.longValue());
 
-			long numberOfContigSequences = CasUtil.readCasUnsignedInt(in);
-			if (casVersion == 1) {
-				numberOfReads = CasUtil.readCasUnsignedInt(in);
-			} else {
-				numberOfReads = CasUtil.readCasUnsignedLong(in).longValue();
-			}
+			long numberOfContigSequences = parseMetadata(visitor, in, strategy);
+			parseProgramInfo(visitor, in);
 
-			visitor.visitMetaData(numberOfContigSequences, numberOfReads);
-			String nameOfAssemblyProgram = CasUtil.parseCasStringFrom(in);
-			String version = CasUtil.parseCasStringFrom(in);
-			String parameters = CasUtil.parseCasStringFrom(in);
-			visitor.visitAssemblyProgramInfo(nameOfAssemblyProgram, version,
-					parameters);
+			parseReferenceFiles(visitor, in, strategy);
 
-			long numberOfContigFiles = CasUtil.parseByteCountFrom(in);
-			visitor.visitNumberOfReferenceFiles(numberOfContigFiles);
-			for (long i = 0; i < numberOfContigFiles; i++) {
-				boolean twoFiles = (in.read() & 0x01) == 1;
-				long numberOfSequencesInFile;
-				if (casVersion == 1) {
-					numberOfSequencesInFile = CasUtil.readCasUnsignedInt(in);
-				} else {
-					numberOfSequencesInFile = CasUtil.readCasUnsignedLong(in)
-							.longValue();
-				}
-				BigInteger residuesInFile = CasUtil.readCasUnsignedLong(in);
-				List<String> names = new ArrayList<String>();
-				names.add(CasUtil.parseCasStringFrom(in));
-				if (twoFiles) {
-					names.add(CasUtil.parseCasStringFrom(in));
-				}
-				visitor.visitReferenceFileInfo(new DefaultCasFileInfo(names,
-						numberOfSequencesInFile, residuesInFile));
-			}
+			parseReadFiles(visitor, in, strategy);
 
-			long numberOfReadFiles = CasUtil.parseByteCountFrom(in);
-			visitor.visitNumberOfReadFiles(numberOfReadFiles);
-			for (long i = 0; i < numberOfReadFiles; i++) {
-				boolean twoFiles = (in.read() & 0x01) == 1;
-				long numberOfSequencesInFile;
-				if (casVersion == 1) {
-					numberOfSequencesInFile = CasUtil.readCasUnsignedInt(in);
-				} else {
-					numberOfSequencesInFile = CasUtil.readCasUnsignedLong(in)
-							.longValue();
-				}
-				BigInteger residuesInFile = CasUtil.readCasUnsignedLong(in);
-				List<String> names = new ArrayList<String>();
-				names.add(CasUtil.parseCasStringFrom(in));
-				if (twoFiles) {
-					names.add(CasUtil.parseCasStringFrom(in));
-				}
-				visitor.visitReadFileInfo(new DefaultCasFileInfo(names,
-						numberOfSequencesInFile, residuesInFile));
-			}
-
-			CasScoreType scoreType = CasScoreType.valueOf((byte) in.read());
-			if (scoreType != CasScoreType.NO_SCORE) {
-				CasAlignmentScoreBuilder alignmentScoreBuilder = new CasAlignmentScoreBuilder()
-						.firstInsertion(CasUtil.readCasUnsignedShort(in))
-						.insertionExtension(CasUtil.readCasUnsignedShort(in))
-						.firstDeletion(CasUtil.readCasUnsignedShort(in))
-						.deletionExtension(CasUtil.readCasUnsignedShort(in))
-						.match(CasUtil.readCasUnsignedShort(in))
-						.transition(CasUtil.readCasUnsignedShort(in))
-						.transversion(CasUtil.readCasUnsignedShort(in))
-						.unknown(CasUtil.readCasUnsignedShort(in));
-				if (scoreType == CasScoreType.COLOR_SPACE_SCORE) {
-					alignmentScoreBuilder.colorSpaceError(IOUtil
-							.readUnsignedShort(in));
-				}
-				CasAlignmentScore score = alignmentScoreBuilder.build();
-				CasAlignmentType alignmentType = CasAlignmentType
-						.valueOf((byte) in.read());
-				scoringScheme = new DefaultCasScoringScheme(scoreType, score,
-						alignmentType);
-				visitor.visitScoringScheme(scoringScheme);
-				long maxContigLength = 0;
-				for (long i = 0; i < numberOfContigSequences; i++) {
-					long contigLength = CasUtil.readCasUnsignedInt(in);
-					boolean isCircular = (IOUtil.readUnsignedShort(in) & 0x01) == 1;
-					visitor.visitReferenceDescription(new DefaultCasReferenceDescription(
-							contigLength, isCircular));
-					maxContigLength = Math.max(maxContigLength, contigLength);
-				}
-				numberOfBytesForContigNumber = CasUtil
-						.numberOfBytesRequiredFor(numberOfContigSequences);
-
-				numberOfBytesForContigPosition = CasUtil
-						.numberOfBytesRequiredFor(maxContigLength);
-				// contig pairs not currently used so ignore them
-
-			}
+			parseScore(visitor, in, numberOfContigSequences);
     	 
     	}finally{
     		IOUtil.closeAndIgnoreErrors(in, randomAccessFile);
@@ -283,6 +216,104 @@ public final class CasFileParser implements CasParser{
         
         
     }
+
+	protected void parseScore(CasFileVisitor visitor,
+			RandomAccessFileInputStream in, long numberOfContigSequences)
+			throws IOException {
+		CasScoreType scoreType = CasScoreType.valueOf((byte) in.read());
+		if (scoreType != CasScoreType.NO_SCORE) {
+			CasAlignmentScoreBuilder alignmentScoreBuilder = new CasAlignmentScoreBuilder()
+					.firstInsertion(CasUtil.readCasUnsignedShort(in))
+					.insertionExtension(CasUtil.readCasUnsignedShort(in))
+					.firstDeletion(CasUtil.readCasUnsignedShort(in))
+					.deletionExtension(CasUtil.readCasUnsignedShort(in))
+					.match(CasUtil.readCasUnsignedShort(in))
+					.transition(CasUtil.readCasUnsignedShort(in))
+					.transversion(CasUtil.readCasUnsignedShort(in))
+					.unknown(CasUtil.readCasUnsignedShort(in));
+			if (scoreType == CasScoreType.COLOR_SPACE_SCORE) {
+				alignmentScoreBuilder.colorSpaceError(IOUtil
+						.readUnsignedShort(in));
+			}
+			CasAlignmentScore score = alignmentScoreBuilder.build();
+			CasAlignmentType alignmentType = CasAlignmentType
+					.valueOf((byte) in.read());
+			scoringScheme = new DefaultCasScoringScheme(scoreType, score,
+					alignmentType);
+			visitor.visitScoringScheme(scoringScheme);
+			long maxContigLength = 0;
+			for (long i = 0; i < numberOfContigSequences; i++) {
+				long contigLength = CasUtil.readCasUnsignedInt(in);
+				boolean isCircular = (IOUtil.readUnsignedShort(in) & 0x01) == 1;
+				visitor.visitReferenceDescription(new DefaultCasReferenceDescription(
+						contigLength, isCircular));
+				maxContigLength = Math.max(maxContigLength, contigLength);
+			}
+			numberOfBytesForContigNumber = CasUtil
+					.numberOfBytesRequiredFor(numberOfContigSequences);
+
+			numberOfBytesForContigPosition = CasUtil
+					.numberOfBytesRequiredFor(maxContigLength);
+			// contig pairs not currently used so ignore them
+
+		}
+	}
+
+	protected void parseReadFiles(CasFileVisitor visitor,
+			RandomAccessFileInputStream in, CasNumberParserStrategy strategy) throws IOException {
+		long numberOfReadFiles = CasUtil.parseByteCountFrom(in);
+		visitor.visitNumberOfReadFiles(numberOfReadFiles);
+		for (long i = 0; i < numberOfReadFiles; i++) {
+			boolean twoFiles = (in.read() & 0x01) == 1;
+			long numberOfSequencesInFile = strategy.parseNumber(in);
+			
+			BigInteger residuesInFile = CasUtil.readCasUnsignedLong(in);
+			List<String> names = new ArrayList<String>();
+			names.add(CasUtil.parseCasStringFrom(in));
+			if (twoFiles) {
+				names.add(CasUtil.parseCasStringFrom(in));
+			}
+			visitor.visitReadFileInfo(new DefaultCasFileInfo(names,
+					numberOfSequencesInFile, residuesInFile));
+		}
+	}
+
+	protected void parseReferenceFiles(CasFileVisitor visitor,
+			RandomAccessFileInputStream in, CasNumberParserStrategy strategy) throws IOException {
+		long numberOfContigFiles = CasUtil.parseByteCountFrom(in);
+		visitor.visitNumberOfReferenceFiles(numberOfContigFiles);
+		for (long i = 0; i < numberOfContigFiles; i++) {
+			boolean twoFiles = (in.read() & 0x01) == 1;
+			long numberOfSequencesInFile = strategy.parseNumber(in);
+			BigInteger residuesInFile = CasUtil.readCasUnsignedLong(in);
+			List<String> names = new ArrayList<String>();
+			names.add(CasUtil.parseCasStringFrom(in));
+			if (twoFiles) {
+				names.add(CasUtil.parseCasStringFrom(in));
+			}
+			visitor.visitReferenceFileInfo(new DefaultCasFileInfo(names,
+					numberOfSequencesInFile, residuesInFile));
+		}
+	}
+
+	protected long parseMetadata(CasFileVisitor visitor,
+			RandomAccessFileInputStream in, CasNumberParserStrategy strategy) throws IOException {
+		long numberOfContigSequences = CasUtil.readCasUnsignedInt(in);
+		numberOfReads = strategy.parseNumber(in);
+		
+		visitor.visitMetaData(numberOfContigSequences, numberOfReads);
+		return numberOfContigSequences;
+	}
+
+	protected void parseProgramInfo(CasFileVisitor visitor,
+			RandomAccessFileInputStream in) throws IOException {
+		String nameOfAssemblyProgram = CasUtil.parseCasStringFrom(in);
+		String version = CasUtil.parseCasStringFrom(in);
+		String parameters = CasUtil.parseCasStringFrom(in);
+		visitor.visitAssemblyProgramInfo(nameOfAssemblyProgram, version,
+				parameters);
+	}
+
     
    
     
@@ -308,5 +339,72 @@ public final class CasFileParser implements CasParser{
 			return keepParsing.get();
 		}
     	
+    }
+    /**
+     * {@code CasNumberParserStrategy} is a Strategy
+     * object to handle how different versions of cas files
+     * need to parse numbers differently.  Over the years,
+     * the different CLC programs have created different
+     * versions of cas files which store numbers
+     * differently.
+     * 
+     * @author dkatzel
+     *
+     */
+    private enum CasNumberParserStrategy{
+    	/**
+    	 * The original version of cas files
+    	 * created by the clc_ref_assemble_X programs
+    	 * used unsigned ints
+    	 * to store numbers (max number is 2^32-1).
+    	 */
+    	REF_ASSEMBLE{
+
+			@Override
+			public long parseNumber(RandomAccessFileInputStream in)
+					throws IOException {
+				return CasUtil.readCasUnsignedInt(in);
+			}
+    		
+    	},
+    	/**
+    	 * The version of cas files
+    	 * created by the clc_mapper program
+    	 * uses unsigned longs
+    	 * to store numbers (max number is 2^64-1).
+    	 */
+    	MAPPER{
+    		@Override
+			public long parseNumber(RandomAccessFileInputStream in)
+					throws IOException {
+    			return CasUtil.readCasUnsignedLong(in).longValue();
+			}
+    	};
+    	
+    	public abstract long parseNumber(RandomAccessFileInputStream in) throws IOException;
+    	
+    	/**
+    	 * Get the {@link CasNumberParserStrategy} instance to use
+    	 * based on the cas file's magic number.
+    	 * @param magicNumber the first 8 bytes in a cas file.
+    	 * @return a {@link CasNumberParserStrategy} instance;
+    	 * will never be null.
+    	 */
+    	public static CasNumberParserStrategy valueOf(byte[] magicNumber){
+        	
+        	for(int i=0; i<CAS_MAGIC_NUMBER_PREFIX.length; i++){
+        		if(CAS_MAGIC_NUMBER_PREFIX[i] != magicNumber[i]){
+        			 throw new IllegalArgumentException("input stream not a valid cas file wrong magic number expected : " + Arrays.toString(CAS_MAGIC_NUMBER_PREFIX) + " but was "+Arrays.toString(magicNumber));
+        		      
+        		}
+        	}
+        	switch(magicNumber[7]){
+	        	case 1: return REF_ASSEMBLE;
+	        	case 3 : return MAPPER;
+	        	default :
+	        		throw new IllegalArgumentException("unknown cas file format version magic number = "+ Arrays.toString(magicNumber));
+        	}
+        	
+        }
     }
 }

@@ -241,16 +241,15 @@ public final class SliceBuilder implements Builder<Slice>{
     	value |= (compacted.getEncodedQuality() &0xFF);
     	
     	int index =ids.indexOf(id);
-    	if(index !=-1){
-    		//overwrite
+    	if(index == -1){
+    		//append
+    		bytes.append((short)value);            
+            ids.add(id);    		
+    	}else{    		
+          //overwrite
     		bytes.replace(index, (short)value);
     		ids.remove(index);
     		ids.add(index, id);
-    		
-    	}else{
-    		//append
-    		bytes.append((short)value);            
-            ids.add(id);
     	}
     	
         

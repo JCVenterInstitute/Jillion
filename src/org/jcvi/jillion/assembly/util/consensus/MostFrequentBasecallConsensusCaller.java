@@ -60,12 +60,13 @@ public enum MostFrequentBasecallConsensusCaller implements ConsensusCaller{
         Map<Nucleotide, Integer> qualitySums = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
         for(SliceElement sliceElement : slice){
             Nucleotide base =sliceElement.getBase();
-            if(!qualitySums.containsKey(base)){
-            	histogramMap.put(base, Integer.valueOf(1));
-                qualitySums.put(base, Integer.valueOf(sliceElement.getQuality().getQualityScore()));
-            }else{
+            if(qualitySums.containsKey(base)){
             	histogramMap.put(base, Integer.valueOf(histogramMap.get(base).intValue()+1));
             	qualitySums.put(base, qualitySums.get(base) + sliceElement.getQuality().getQualityScore());
+           }else{            
+             	histogramMap.put(base, Integer.valueOf(1));
+                qualitySums.put(base, Integer.valueOf(sliceElement.getQuality().getQualityScore()));
+          
             }           
         }
         Nucleotide consensus= findMostOccuringBaseWithHighestQvs(histogramMap, qualitySums);

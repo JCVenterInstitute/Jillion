@@ -54,25 +54,18 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
  */
 final class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 
+	private final  DataStore<NucleotideSequence> fullLengthSequences;
+	private final Map<String, AsmVisitorMemento> contigMementos;
+	private final AsmParser parser;
 	
-
-
+	private volatile boolean closed =false;
 	
-
-	
-
 	public static AsmContigDataStore create(File asmFile, DataStore<NucleotideSequence> fullLengthSequences, DataStoreFilter filter) throws IOException{
 		VisitorBuilder visitorBuilder = new VisitorBuilder(filter);
 		AsmParser parser = AsmFileParser.create(asmFile);
 		parser.parse(visitorBuilder);
 		return visitorBuilder.build(parser, fullLengthSequences);
 	}
-
-	private final  DataStore<NucleotideSequence> fullLengthSequences;
-	private final Map<String, AsmVisitorMemento> contigMementos;
-	private final AsmParser parser;
-	
-	private volatile boolean closed =false;
 	
 	public IndexedAsmFileContigDataStore(AsmParser parser,
 			DataStore<NucleotideSequence> fullLengthSequences,
