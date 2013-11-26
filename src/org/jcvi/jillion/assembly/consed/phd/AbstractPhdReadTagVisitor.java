@@ -43,7 +43,7 @@ public abstract class AbstractPhdReadTagVisitor implements PhdReadTagVisitor{
 	private Range ungappedRange;
 	private Date date;
 	private String comment;
-	private StringBuilder freeFormDataBuilder = new StringBuilder();
+	private final StringBuilder freeFormDataBuilder = new StringBuilder();
 	
 	@Override
 	public final void visitType(String type) {

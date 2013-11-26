@@ -38,7 +38,7 @@ import org.jcvi.jillion.core.util.Builder;
 public final class TasmFileWriterBuilder implements Builder<TasmWriter>{
 
 	private final File outputFile;
-	private OutputStream out;
+	private final OutputStream out;
 	
 	private boolean annotationContigs=false;
 	/**
@@ -98,29 +98,29 @@ public final class TasmFileWriterBuilder implements Builder<TasmWriter>{
 	@Override
 	public TasmWriter build() {
 		if(outputFile ==null){
-			return new TasmFileWriter2(out, annotationContigs);
+			return new TasmFileWriter(out, annotationContigs);
 		}else{
 			try {
-				return new TasmFileWriter2(outputFile, annotationContigs);
+				return new TasmFileWriter(outputFile, annotationContigs);
 			} catch (IOException e) {
 				throw new IllegalStateException("error creating tasm writer",e);
 			}
 		}
 	}
 
-	private static final class TasmFileWriter2 implements TasmWriter{
+	private static final class TasmFileWriter implements TasmWriter{
 
 		private final OutputStream out;
 		private final boolean writeAnnotationContigs;
 		private int numberOfContigsWritten=0;
 		
-		public TasmFileWriter2(File outputFile,boolean writeAnnotationContigs) throws IOException{
+		public TasmFileWriter(File outputFile,boolean writeAnnotationContigs) throws IOException{
 			IOUtil.mkdirs(outputFile);
 			out = new BufferedOutputStream(new FileOutputStream(outputFile));
 			this.writeAnnotationContigs = writeAnnotationContigs;
 		}
 		
-		public TasmFileWriter2(OutputStream out,boolean writeAnnotationContigs){
+		public TasmFileWriter(OutputStream out,boolean writeAnnotationContigs){
 			
 			this.out = out;
 			this.writeAnnotationContigs = writeAnnotationContigs;

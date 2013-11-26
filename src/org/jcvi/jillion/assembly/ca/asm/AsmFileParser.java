@@ -71,6 +71,8 @@ import org.jcvi.jillion.internal.core.util.JillionUtil;
 public abstract class AsmFileParser implements AsmParser{
 	
 	
+	private static final String SRC = "src";
+
 	/**
 	 * Refactored out split Pattern since String.split() 
 	 * causes a new Pattern to be created and compiled
@@ -975,7 +977,7 @@ public abstract class AsmFileParser implements AsmParser{
                 //CA <= 5 had a src block which should be ignored
                 //CA 6+ doesn't have it anymore so need to handle
                 //both cases.
-                if(nextLine.startsWith("src")){
+                if(nextLine.startsWith(SRC)){
                     skipReservedSource(parserState);
                     nextLine = parserState.getNextLine();
                 }
@@ -1193,7 +1195,7 @@ public abstract class AsmFileParser implements AsmParser{
                //CA <= 5 had a src block which should be ignored
                //CA 6+ doesn't have it anymore so need to handle
                //both cases.
-               if(nextLine.startsWith("src")){
+               if(nextLine.startsWith(SRC)){
                    skipReservedSource(parserState);
                    nextLine = parserState.getNextLine();
                }
@@ -1215,7 +1217,7 @@ public abstract class AsmFileParser implements AsmParser{
                //CA <= 5 had a src block which should be ignored
                //CA 6+ doesn't have it anymore so need to handle
                //both cases.
-               if(nextLine.startsWith("src")){
+               if(nextLine.startsWith(SRC)){
                    skipReservedSource(parserState);
                    nextLine = parserState.getNextLine();
                }
@@ -1531,9 +1533,9 @@ public abstract class AsmFileParser implements AsmParser{
      */
     private static String skipSrcBlock(ParserState parserState, String line)
 			throws IOException {
-		if(line.startsWith("src")){
+		if(line.startsWith(SRC)){
 		    skipReservedSource(parserState);
-		    line = parserState.getNextLine();
+		    return parserState.getNextLine();
 		}
 		return line;
 	}

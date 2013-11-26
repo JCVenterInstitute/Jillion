@@ -53,7 +53,7 @@ final class DefaultAsmUnitigDataStore {
 		private final  DataStore<NucleotideSequence> fullLengthSequences;
 		private final DataStoreFilter filter;
 		
-		private final LinkedHashMap<String, AsmUnitig> contigs = new LinkedHashMap<String, AsmUnitig>();
+		private final Map<String, AsmUnitig> contigs = new LinkedHashMap<String, AsmUnitig>();
 		
 		
 		public VisitorBuilder(DataStoreFilter filter,

@@ -52,7 +52,7 @@ final class DefaultAsmContigDataStore {
 		private final  DataStore<NucleotideSequence> fullLengthSequences;
 		private final DataStoreFilter filter;
 		
-		private final LinkedHashMap<String, AsmContig> contigs = new LinkedHashMap<String, AsmContig>();
+		private final Map<String, AsmContig> contigs = new LinkedHashMap<String, AsmContig>();
 		
 		
 		public VisitorBuilder(DataStoreFilter filter,

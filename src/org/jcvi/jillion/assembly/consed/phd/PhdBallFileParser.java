@@ -299,10 +299,10 @@ public abstract class PhdBallFileParser implements PhdBallParser{
 				}
 			}
 		}while(inTag && parser.hasNextLine() && parserState.keepParsing());
-		if(!parserState.keepParsing()){
-			visitor.halted();
-		}else{
+		if(parserState.keepParsing()){			
 			visitor.visitEnd();
+		}else{
+			visitor.halted();
 		}
 	}
 

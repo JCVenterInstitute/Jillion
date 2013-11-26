@@ -53,16 +53,31 @@ import org.jcvi.jillion.trace.fastq.FastqRecordBuilder;
 import org.jcvi.jillion.trace.sff.SffFileIterator;
 import org.jcvi.jillion.trace.sff.SffFlowgram;
 import org.jcvi.jillion.trace.sff.SffUtil;
-
+/**
+ * {@code AbstractAlignedReadCasVisitor} is a {@link CasFileVisitor}
+ * that handles iterating over the aligned reads in the cas file.
+ * Cas files don't actually store any read information, just pointers
+ * to where the input read files exist on the file system.
+ * This means that all the read alignments in the cas must be matched up 
+ * exactly with the input read files.  This can get very complicated
+ * so this class handles all of that for you.
+ * <p/>
+ * This abstract class finds all the read files to be parsed
+ * and maps them to the alignment information inside the cas file.
+ * For each read that aligned (matched), the {@link #aligned(Trace, String, CasPlacedRead)}
+ * method is called; for each non-aligned read, the {@link #notAligned(Trace)}
+ * is called.
+ * 
+ * @author dkatzel
+ *
+ */
 public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisitor{
 
 	private final CasGappedReferenceDataStore gappedReferenceDataStore;
 
 	private final File workingDir;
 	
-	private List<StreamingIterator<? extends Trace>> iterators = new ArrayList<StreamingIterator<? extends Trace>>();
-	
-	
+	private final List<StreamingIterator<? extends Trace>> iterators = new ArrayList<StreamingIterator<? extends Trace>>();
 	
 	public AbstractAlignedReadCasVisitor(File casFile,
 			CasGappedReferenceDataStore gappedReferenceDataStore) {
@@ -193,10 +208,19 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 			throw new DataStoreException("error reading fasta file "+ fastaFile.getAbsolutePath(),e);
 		}
     }
-	    
-    protected abstract void visitUnMatched(Trace currentTrace);
-
-    protected abstract void  visitMatch(String referenceId, CasPlacedRead read, Trace traceOfRead);
+	/**
+	 * The given {@link Trace} did not align to any references.    
+	 * @param currentTrace the complete {@link Trace} that did not match.
+	 */
+    protected abstract void notAligned(Trace currentTrace);
+    /**
+     * The given {@link Trace} aligned to the given reference id
+     * with the given alignment.
+     * @param referenceId the reference id that the read aligned to.
+     * @param read the alignment information of the read to the reference.
+     * @param traceOfRead the complete {@link Trace} that aligned.
+     */
+    protected abstract void  aligned(Trace traceOfRead, String referenceId, CasPlacedRead read);
     
 	@Override
 	public CasMatchVisitor visitMatches(CasVisitorCallback callback) {
@@ -261,14 +285,14 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 			        readBuilder.addAlignmentRegions(regionsToConsider, gappedReference);
 			        read = readBuilder.build();
 			        
-			        AbstractAlignedReadCasVisitor.this.visitMatch(refId, read, currentTrace);
+			        AbstractAlignedReadCasVisitor.this.aligned(currentTrace, refId, read);
 				} catch (Throwable e) {
 					closeIterator();
 					throw new IllegalStateException("processing read " + readId + " for reference "+ refId, e);
 				
 				}
 			}else{
-				AbstractAlignedReadCasVisitor.this.visitUnMatched(currentTrace);
+				AbstractAlignedReadCasVisitor.this.notAligned(currentTrace);
 			}
 			
 		}

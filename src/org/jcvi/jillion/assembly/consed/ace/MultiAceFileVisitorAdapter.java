@@ -65,30 +65,7 @@ public class MultiAceFileVisitorAdapter implements AceFileVisitor{
 		//work backwards to avoid concurrent modification exception
 		for(int i=currentCallbacks.size(); i>=0; i--){
 			if(currentCallbacks.get(i).isHalted()){
-				if(currentReadVisitors !=null){
-					//visitor lists should all be the same size
-					//so indexes are in sync
-					AceContigReadVisitor readVisitor =currentReadVisitors.remove(i);
-					if(readVisitor!=null){
-						readVisitor.halted();
-					}					
-				}
-				if(currentContigVisitors !=null){
-					AceContigVisitor contigVisitor = currentContigVisitors.remove(i);
-					if(contigVisitor !=null){
-						contigVisitor.halted();
-					}
-				}
-				if(currentConsensusTagVisitors !=null){
-					AceConsensusTagVisitor tagVisitor = currentConsensusTagVisitors.remove(i);
-					if(tagVisitor !=null){
-						tagVisitor.halted();
-					}
-				}
-				
-				AceFileVisitor visitor = visitors.remove(i);
-				visitor.halted();
-				currentCallbacks.remove(i);
+				haltVisitor(i);
 			}
 		}
 		if(currentCallbacks.isEmpty()){
@@ -101,6 +78,33 @@ public class MultiAceFileVisitorAdapter implements AceFileVisitor{
 			return true;
 		}
 		return false;
+	}
+	
+	private void haltVisitor(int i) {
+		if(currentReadVisitors !=null){
+			//visitor lists should all be the same size
+			//so indexes are in sync
+			AceContigReadVisitor readVisitor =currentReadVisitors.remove(i);
+			if(readVisitor!=null){
+				readVisitor.halted();
+			}					
+		}
+		if(currentContigVisitors !=null){
+			AceContigVisitor contigVisitor = currentContigVisitors.remove(i);
+			if(contigVisitor !=null){
+				contigVisitor.halted();
+			}
+		}
+		if(currentConsensusTagVisitors !=null){
+			AceConsensusTagVisitor tagVisitor = currentConsensusTagVisitors.remove(i);
+			if(tagVisitor !=null){
+				tagVisitor.halted();
+			}
+		}
+		
+		AceFileVisitor visitor = visitors.remove(i);
+		visitor.halted();
+		currentCallbacks.remove(i);
 	}
 	@Override
 	public void visitHeader(int numberOfContigs, long totalNumberOfReads) {

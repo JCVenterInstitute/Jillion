@@ -591,22 +591,9 @@ public final class TasmContigBuilder extends AbstractContigBuilder<TasmAssembled
     		if (contig.getNumberOfReads()!=other.getNumberOfReads()) {
     			return false;
     		}
-    		StreamingIterator<TasmAssembledRead> readIter=null;
-    		try{
-    			readIter = contig.getReadIterator();
-    			while(readIter.hasNext()){
-    				TasmAssembledRead read = readIter.next();
-    				String readId = read.getId();
-    				if(!other.containsRead(readId)){
-    					return false;
-    				}
-    				if(!read.equals(other.getRead(readId))){
-    					return false;
-    				}
-    			}
-    		}finally{
-    			IOUtil.closeAndIgnoreErrors(readIter);
-    		}			
+    		if(!readsMatch(other)){
+    			return false;
+    		}
     		if (asmblId == null) {
     			if (other.getTigrProjectAssemblyId() != null) {
     				return false;
@@ -673,6 +660,26 @@ public final class TasmContigBuilder extends AbstractContigBuilder<TasmAssembled
     		}
     		return true;
     	}
+
+		private boolean readsMatch(TasmContig other) {
+			StreamingIterator<TasmAssembledRead> readIter=null;
+    		try{
+    			readIter = contig.getReadIterator();
+    			while(readIter.hasNext()){
+    				TasmAssembledRead read = readIter.next();
+    				String readId = read.getId();
+    				if(!other.containsRead(readId)){
+    					return false;
+    				}
+    				if(!read.equals(other.getRead(readId))){
+    					return false;
+    				}
+    			}
+    			return true;
+    		}finally{
+    			IOUtil.closeAndIgnoreErrors(readIter);
+    		}
+		}
 
     }
 

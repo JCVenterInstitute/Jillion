@@ -43,7 +43,8 @@ import org.jcvi.jillion.internal.core.util.GrowableIntArray;
  *
  */
 public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<Nucleotide,NucleotideSequence>{
-    private static final byte GAP_VALUE = Nucleotide.Gap.getOrdinalAsByte();
+    private static final String NULL_SEQUENCE_ERROR_MSG = "sequence can not be null";
+	private static final byte GAP_VALUE = Nucleotide.Gap.getOrdinalAsByte();
     private static final byte N_VALUE = Nucleotide.Unknown.getOrdinalAsByte();
     private static final byte A_VALUE = Nucleotide.Adenine.getOrdinalAsByte();
     private static final byte C_VALUE = Nucleotide.Cytosine.getOrdinalAsByte();
@@ -132,7 +133,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      */
     public NucleotideSequenceBuilder(String sequence){
 		if (sequence == null) {
-			throw new NullPointerException("sequence can not be null");
+			throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);
 		}
 		NewValues newValues = new NewValues(sequence);
 		this.data = newValues.getData();
@@ -153,7 +154,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      */
     public NucleotideSequenceBuilder(char[] sequence){
 		if (sequence == null) {
-			throw new NullPointerException("sequence can not be null");
+			throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);
 		}
 		NewValues newValues = new NewValues(sequence);
 		this.data = newValues.getData();
@@ -264,7 +265,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      */
     public NucleotideSequenceBuilder append(String sequence){
     	if(sequence ==null){
-    		throw new NullPointerException("sequence can not be null");
+    		throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);
     	}
         return append(new NewValues(sequence));
     }
@@ -282,7 +283,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      */
     public NucleotideSequenceBuilder append(char[] sequence){
     	if(sequence ==null){
-    		throw new NullPointerException("sequence can not be null");
+    		throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);
     	}
         return append(new NewValues(sequence));
     }
@@ -328,7 +329,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     }
     private void assertNotNull(Object sequence) {
         if(sequence ==null){
-            throw new NullPointerException("sequence can not be null");
+            throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);
         }
     }
     /**

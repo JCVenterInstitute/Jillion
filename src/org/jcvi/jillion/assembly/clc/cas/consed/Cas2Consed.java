@@ -75,7 +75,7 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 	private File chromatDir = null;
 	private final File phdFile;
 	
-	private String prefix;
+	private final String prefix;
 	
 	public Cas2Consed(File casFile,	CasGappedReferenceDataStore gappedReferenceDataStore, File consedOutputDir,
 			String prefix) throws DataStoreException, IOException {
@@ -125,14 +125,14 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 	}
 
 	@Override
-	protected void visitUnMatched(Trace currentTrace) {
+	protected void notAligned(Trace currentTrace) {
 		//no-op
 		//we don't care about reads that don't align
 	}
 
 	@Override
-	protected final void visitMatch(String referenceId, CasPlacedRead read,
-			Trace traceOfRead) {
+	protected final void aligned(Trace traceOfRead, String referenceId,
+			CasPlacedRead read) {
 		AceContigBuilder builder = contigBuilders.get(referenceId);
 		if(!(traceOfRead instanceof PhdReadRecord)){
 			throw new IllegalStateException("not a valid phd record " + traceOfRead);
