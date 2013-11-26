@@ -36,7 +36,7 @@ import org.jcvi.jillion.core.io.IOUtil;
  * @author dkatzel
  *
  */
-public enum CompactProteinSequenceCodec implements AminoAcidCodec {
+enum CompactProteinSequenceCodec implements AminoAcidCodec {
 	/**
 	 * Singleton instance.
 	 */
