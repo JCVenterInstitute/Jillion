@@ -25,15 +25,30 @@ import java.io.File;
 import org.jcvi.jillion.core.io.FileUtil;
 
 /**
+ * {@code ReadFileType} says what kind of
+ * the file type a set of reads is stored as.
  * @author dkatzel
  *
  *
  */
-public enum ReadFileType {
-
+enum ReadFileType {
+	/**
+	 * The reads are stored in an SFF file.
+	 */
     SFF,
+    /**
+	 * The reads are stored in a fastq
+	 * formatted file.
+	 */
     FASTQ,
+    /**
+	 * The reads are stored in a fasta
+	 * formatted file.
+	 */
     FASTA,
+    /**
+     * The read is stored as a sanger chromtogram.
+     */
     SANGER;
     
     public static ReadFileType getTypeFromFile(File readFile){
@@ -45,11 +60,13 @@ public enum ReadFileType {
            return FASTQ;
         }if("sff".equals(extension)){
             return SFF;
+        }if("ab1".equals(extension) ||"abi".equals(extension) || "ztr".equals(extension) || "scf".equals(extension)){
+        	return SANGER;
         }
-        if("fasta".equals(extension) || "fna".equals(extension) || "fa".equals(extension) || "seq".equals(extension) || readFileName.endsWith(".fasta.untrimmed")){
-            return FASTA;
-        }
-        return SANGER;
+        //there are so many different ways fasta files are named,
+        //that just assume anything not matching something
+        //above is a fasta file
+        return FASTA;
     }
     
 }
