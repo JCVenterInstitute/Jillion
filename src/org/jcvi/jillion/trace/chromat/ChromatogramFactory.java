@@ -96,7 +96,7 @@ public final class ChromatogramFactory {
 		MagicNumberInputStream mIn =null;
         try{
         	mIn= new MagicNumberInputStream(chromatogramFile); 
-        	return detectATypendCreateChromatogram(mIn, id);
+        	return createCorrectTypeOfChromatogram(mIn, id);
         }finally{
         	IOUtil.closeAndIgnoreErrors(mIn);
         }
@@ -120,10 +120,10 @@ public final class ChromatogramFactory {
 	 */
 	public static Chromatogram create(String id, InputStream in) throws IOException{
 		MagicNumberInputStream mIn = new MagicNumberInputStream(in); 
-        return detectATypendCreateChromatogram(mIn, id);
+        return createCorrectTypeOfChromatogram(mIn, id);
         
 	}
-	private static Chromatogram detectATypendCreateChromatogram(
+	private static Chromatogram createCorrectTypeOfChromatogram(
 			MagicNumberInputStream mIn, String id)
 			throws IOException, FileNotFoundException, IOException {
 		byte[] magicNumber = mIn.peekMagicNumber();
