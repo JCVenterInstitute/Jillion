@@ -20,11 +20,11 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.clc.cas;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 
-import org.jcvi.jillion.assembly.clc.cas.ReadFileType;
 import org.junit.Test;
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
@@ -84,7 +84,11 @@ public class TestReadFileType {
         assertEquals(ReadFileType.FASTA, 
                 ReadFileType.getTypeFromFile("my.seq"));
     }
-    
+    @Test
+    public void contigsFileShouldBeFastaFile(){
+        assertEquals(ReadFileType.FASTA, 
+                ReadFileType.getTypeFromFile(new File("my.100.contigs")));
+    }
     @Test
     public void ztrShouldBeSangerFile(){
         assertEquals(ReadFileType.SANGER, 
@@ -118,12 +122,12 @@ public class TestReadFileType {
     }
     @Test
     public void noExtensionShouldBeSangerFile(){
-        assertEquals(ReadFileType.SANGER, 
+        assertEquals(ReadFileType.FASTA, 
                 ReadFileType.getTypeFromFile(new File("trace")));
     }
     @Test
-    public void noExtensionShouldBeSanger(){
-        assertEquals(ReadFileType.SANGER, 
+    public void noExtensionShouldBeFasta(){
+        assertEquals(ReadFileType.FASTA, 
                 ReadFileType.getTypeFromFile("trace"));
     }
     

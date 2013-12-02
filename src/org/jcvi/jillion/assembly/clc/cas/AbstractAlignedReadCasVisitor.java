@@ -135,7 +135,7 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 	}
 	
 	private StreamingIterator<? extends Trace> createIteratorFor(File file) throws DataStoreException{
-        ReadFileType readType = ReadFileType.getTypeFromFile(file.getName());
+        ReadFileType readType = ReadFileType.getTypeFromFile(file);
            switch(readType){
 	            case FASTQ: 
 	            	return createFastqIterator(file);
