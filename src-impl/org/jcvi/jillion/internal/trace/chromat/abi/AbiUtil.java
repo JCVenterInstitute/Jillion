@@ -42,6 +42,17 @@ public final class AbiUtil {
 	private AbiUtil(){
 		//can not instantiate
 	}
+	
+	
+	public static byte[] getMagicNumber() {
+		//defensive copy since java arrays are mutable even if declared final
+    	//(someone can still modify the contents just not the size)
+        byte[] ret = new byte[MAGIC_NUMBER.length];
+        System.arraycopy(MAGIC_NUMBER, 0, ret, 0, ret.length);
+        return ret;
+	}
+
+
 	public static String parseASCIIStringFrom(byte[] data){
 		return new String(data,IOUtil.UTF_8);
 	}
