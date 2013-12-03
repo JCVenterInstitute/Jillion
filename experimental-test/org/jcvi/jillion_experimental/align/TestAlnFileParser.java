@@ -36,9 +36,9 @@ import static org.easymock.EasyMock.*;
  *
  *
  */
-public class TestAlnParser {
+public class TestAlnFileParser {
 
-    private final ResourceHelper resources = new ResourceHelper(TestAlnParser.class);
+    private final ResourceHelper resources = new ResourceHelper(TestAlnFileParser.class);
     private AlnVisitor sut;
     @Before
     public void setup(){
@@ -51,7 +51,7 @@ public class TestAlnParser {
         InputStream in =null;
         try{
             in = resources.getFileAsStream("files/example.aln");
-            AlnParser.parse(in, sut);
+            AlnFileParser.parse(in, sut);
             verify(sut);
         }finally{
             IOUtil.closeAndIgnoreErrors(in);
@@ -61,7 +61,7 @@ public class TestAlnParser {
     public void testFile() throws IOException{
         setupExpectations();
         replay(sut);
-        AlnParser.parse(resources.getFile("files/example.aln"), sut);
+        AlnFileParser.parse(resources.getFile("files/example.aln"), sut);
         verify(sut);
     }
     /**

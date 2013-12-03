@@ -46,7 +46,7 @@ public final class GappedNucleotideAlignmentDataStore {
 	}
     public static NucleotideSequenceDataStore createFromAlnFile(File alnFile) throws IOException{
         GappedAlignmentDataStoreBuilder builder = new GappedAlignmentDataStoreBuilder();
-        AlnParser.parse(alnFile, builder);
+        AlnFileParser.parse(alnFile, builder);
         return builder.build();
     }
    
