@@ -29,7 +29,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestAlnParser.class,
+        TestAlnFileParser.class,
         TestNucleotideSequenceAlignmentBuilder.class,
         TestGappedNucleotideAlignmentDataStore.class,
         

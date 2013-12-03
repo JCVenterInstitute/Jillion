@@ -40,7 +40,7 @@ import org.jcvi.jillion.core.io.TextFileVisitor;
  * to {@link #visitAlignedSegment(String, String)}, one for each aligned 
  * read in the group. After the aligned Segments, a single call
  * to {@link #visitConservationInfo(List)} will describe the the 
- * conservation of this group followd by {@link #visitEndGroup()}.
+ * conservation of this group followed by {@link #visitEndGroup()}.
  * @author dkatzel
  *
  *
