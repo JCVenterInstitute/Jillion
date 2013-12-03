@@ -21,8 +21,10 @@
 package org.jcvi.jillion.assembly.clc.cas;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.jcvi.jillion.core.io.FileUtil;
+import org.jcvi.jillion.internal.trace.chromat.ChromatogramUtil;
 
 /**
  * {@code ReadFileType} says what kind of
@@ -51,16 +53,14 @@ enum ReadFileType {
      */
     SANGER;
     
-    public static ReadFileType getTypeFromFile(File readFile){
-        return getTypeFromFile(readFile.getName());
-    }
-    public static ReadFileType getTypeFromFile(String readFileName){
-        String extension =FileUtil.getExtension(readFileName);
+    public static ReadFileType getTypeFromFile(File readFile) throws IOException{
+    	String readFileName= readFile.getName();
+    	String extension =FileUtil.getExtension(readFileName);
         if("fastq".equals(extension) || readFileName.matches("\\S*/?s_+\\d+_sequence\\.txt") || readFileName.endsWith(".fastq.untrimmed")){
            return FASTQ;
         }if("sff".equals(extension)){
             return SFF;
-        }if("ab1".equals(extension) ||"abi".equals(extension) || "ztr".equals(extension) || "scf".equals(extension)){
+        }if(ChromatogramUtil.isChromatogram(readFile)){
         	return SANGER;
         }
         //there are so many different ways fasta files are named,

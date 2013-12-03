@@ -20,153 +20,170 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.clc.cas;
 
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
 import static org.junit.Assert.assertEquals;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.expectNew;
+import static org.powermock.api.easymock.PowerMock.replayAll;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.testUtil.EasyMockUtil;
+import org.jcvi.jillion.internal.trace.chromat.ChromatogramUtil;
+import org.jcvi.jillion.internal.trace.chromat.abi.AbiUtil;
+import org.jcvi.jillion.internal.trace.chromat.scf.SCFUtils;
+import org.jcvi.jillion.internal.trace.chromat.ztr.ZTRUtil;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 /**
  * @author dkatzel
  *
  *
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest( ChromatogramUtil.class )
 public class TestReadFileType {
 
     @Test
-    public void sffFile(){
+    public void sffFile() throws FileNotFoundException, IOException{
         assertEquals(ReadFileType.SFF, 
                 ReadFileType.getTypeFromFile(new File("my.sff")));
     }
+   
+   
     @Test
-    public void sff(){
-        assertEquals(ReadFileType.SFF, 
-                ReadFileType.getTypeFromFile("my.sff"));
+    public void fastaFile() throws Exception{
+        assertEquals(ReadFileType.FASTA, 
+                ReadFileType.getTypeFromFile(createFastaFile("my.fasta")));
+    }
+    @Test
+    public void fnaShouldBeFastaFile() throws Exception{
+        assertEquals(ReadFileType.FASTA, 
+                ReadFileType.getTypeFromFile(createFastaFile("my.fna")));
+    }
+   
+    @Test
+    public void faShouldBeFastaFile() throws Exception{
+        assertEquals(ReadFileType.FASTA, 
+                ReadFileType.getTypeFromFile(createFastaFile("my.fa")));
+    }
+  
+    @Test
+    public void seqShouldBeFastaFile()throws Exception{
+        assertEquals(ReadFileType.FASTA, 
+                ReadFileType.getTypeFromFile(createFastaFile("my.seq")));
+    }
+   
+    @Test
+    public void contigsFileShouldBeFastaFile()throws Exception{
+        assertEquals(ReadFileType.FASTA, 
+                ReadFileType.getTypeFromFile(createFastaFile("my.100.contigs")));
+    }
+    @Test
+    public void ztrShouldBeSangerFile()throws Exception{
+        assertEquals(ReadFileType.SANGER, 
+                ReadFileType.getTypeFromFile(createZtrFile("my.ztr")));
+    }
+ 
+   
+
+
+	@Test
+    public void scfShouldBeSangerFile()throws Exception{
+        assertEquals(ReadFileType.SANGER, 
+                ReadFileType.getTypeFromFile(createScfFile("my.scf")));
+    }
+   
+    @Test
+    public void abiShouldBeSangerFile()throws Exception{
+        assertEquals(ReadFileType.SANGER, 
+                ReadFileType.getTypeFromFile(createAb1File("my.abi")));
+    }
+  
+    @Test
+    public void noExtensionSangerFileShouldBeSangerFile()throws Exception{
+        assertEquals(ReadFileType.SANGER, 
+                ReadFileType.getTypeFromFile(createScfFile("trace")));
     }
     
     @Test
-    public void fasta(){
+    public void noExtensionFastaFileShouldBeFastaFile()throws Exception{
         assertEquals(ReadFileType.FASTA, 
-                ReadFileType.getTypeFromFile("my.fasta"));
+                ReadFileType.getTypeFromFile(createFastaFile("trace")));
     }
-    @Test
-    public void fastaFile(){
-        assertEquals(ReadFileType.FASTA, 
-                ReadFileType.getTypeFromFile(new File("my.fasta")));
-    }
-    @Test
-    public void fnaShouldBeFastaFile(){
-        assertEquals(ReadFileType.FASTA, 
-                ReadFileType.getTypeFromFile(new File("my.fna")));
-    }
-    @Test
-    public void fnaShouldBeFasta(){
-        assertEquals(ReadFileType.FASTA, 
-                ReadFileType.getTypeFromFile("my.fna"));
-    }
+  
     
     @Test
-    public void faShouldBeFastaFile(){
-        assertEquals(ReadFileType.FASTA, 
-                ReadFileType.getTypeFromFile(new File("my.fa")));
-    }
-    @Test
-    public void faShouldBeFasta(){
-        assertEquals(ReadFileType.FASTA, 
-                ReadFileType.getTypeFromFile("my.fa"));
-    }
-    @Test
-    public void seqShouldBeFastaFile(){
-        assertEquals(ReadFileType.FASTA, 
-                ReadFileType.getTypeFromFile(new File("my.seq")));
-    }
-    @Test
-    public void seqShouldBeFasta(){
-        assertEquals(ReadFileType.FASTA, 
-                ReadFileType.getTypeFromFile("my.seq"));
-    }
-    @Test
-    public void contigsFileShouldBeFastaFile(){
-        assertEquals(ReadFileType.FASTA, 
-                ReadFileType.getTypeFromFile(new File("my.100.contigs")));
-    }
-    @Test
-    public void ztrShouldBeSangerFile(){
-        assertEquals(ReadFileType.SANGER, 
-                ReadFileType.getTypeFromFile(new File("my.ztr")));
-    }
-    @Test
-    public void ztrShouldBeSanger(){
-        assertEquals(ReadFileType.SANGER, 
-                ReadFileType.getTypeFromFile("my.ztr"));
-    }
-    
-    @Test
-    public void scfShouldBeSangerFile(){
-        assertEquals(ReadFileType.SANGER, 
-                ReadFileType.getTypeFromFile(new File("my.scf")));
-    }
-    @Test
-    public void scfShouldBeSanger(){
-        assertEquals(ReadFileType.SANGER, 
-                ReadFileType.getTypeFromFile("my.scf"));
-    }
-    @Test
-    public void abiShouldBeSangerFile(){
-        assertEquals(ReadFileType.SANGER, 
-                ReadFileType.getTypeFromFile(new File("my.abi")));
-    }
-    @Test
-    public void abiShouldBeSanger(){
-        assertEquals(ReadFileType.SANGER, 
-                ReadFileType.getTypeFromFile("my.abi"));
-    }
-    @Test
-    public void noExtensionShouldBeSangerFile(){
-        assertEquals(ReadFileType.FASTA, 
-                ReadFileType.getTypeFromFile(new File("trace")));
-    }
-    @Test
-    public void noExtensionShouldBeFasta(){
-        assertEquals(ReadFileType.FASTA, 
-                ReadFileType.getTypeFromFile("trace"));
-    }
-    
-    @Test
-    public void fastqShouldBeIlluminaFile(){
+    public void fastqShouldBeIlluminaFile()throws IOException{
         assertEquals(ReadFileType.FASTQ, 
                 ReadFileType.getTypeFromFile(new File("my.fastq")));
     }
-    @Test
-    public void fastqShouldBeIllumina(){
-        assertEquals(ReadFileType.FASTQ, 
-                ReadFileType.getTypeFromFile("my.fastq"));
-    }
+ 
     
     @Test
-    public void s_1_sequenceDotTxtShouldBeIlluminaFile(){
+    public void s_1_sequenceDotTxtShouldBeIlluminaFile()throws IOException{
         assertEquals(ReadFileType.FASTQ, 
                 ReadFileType.getTypeFromFile(new File("s_1_sequence.txt")));
     }
+  
     @Test
-    public void s_1_sequenceDotTxtShouldBeIllumina(){
-        assertEquals(ReadFileType.FASTQ, 
-                ReadFileType.getTypeFromFile("s_1_sequence.txt"));
-    }
-    
-    @Test
-    public void s_2_sequenceDotTxtShouldBeIlluminaFile(){
+    public void s_2_sequenceDotTxtShouldBeIlluminaFile()throws IOException{
         assertEquals(ReadFileType.FASTQ, 
                 ReadFileType.getTypeFromFile(new File("s_2_sequence.txt")));
         //s_2_sequence.txt
     }
+ 
     @Test
-    public void s_2_sequenceDotTxtShouldBeIllumina(){
+    public void fullPaths_2_sequenceDotTxtShouldBeIllumina() throws IOException{
         assertEquals(ReadFileType.FASTQ, 
-                ReadFileType.getTypeFromFile("s_2_sequence.txt"));
+                ReadFileType.getTypeFromFile(new File("/path/to/file/s_2_sequence.txt")));
     }
-    @Test
-    public void fullPaths_2_sequenceDotTxtShouldBeIllumina(){
-        assertEquals(ReadFileType.FASTQ, 
-                ReadFileType.getTypeFromFile("/path/to/file/s_2_sequence.txt"));
+    
+    private File createFastaFile(String name) throws Exception{
+    	return createFileWithMagicNumber(name, ">ID1");
     }
+
+
+	protected File createFileWithMagicNumber(String name, String magicNumber)throws Exception {
+		return createFileWithMagicNumber(name, magicNumber.getBytes(IOUtil.UTF_8));
+	}
+	/**
+	 * Use Powermock to intercept call to new FileInputStream( fakeFile)
+	 * to return a mock inputStream so we can control
+	 * the bytes returned when read back to determine the file type.
+	 * 
+	 * @param name name of the file to create.
+	 * @param magicNumber the first few bytes of the file 
+	 * that will be read from the mock inputstream.
+	 * @return a new File instance with the path of 'name'
+	 * @throws Exception
+	 */
+	protected File createFileWithMagicNumber(String name, byte[] magicNumber)throws Exception {
+		FileInputStream mockStream = createMock(FileInputStream.class);
+    	File file = new File(name);
+    	expectNew(FileInputStream.class, file).andReturn(mockStream);
+    	
+    	
+		expect(mockStream.read(isA(byte[].class), eq(0), eq(8192))).andAnswer(EasyMockUtil.writeArrayToInputStream(magicNumber));
+    	replayAll();
+    	return file;
+	}
+    
+    private File createZtrFile(String name) throws Exception {
+    	return createFileWithMagicNumber(name, ZTRUtil.getMagicNumber());
+	}
+    private File createScfFile(String name) throws  Exception {
+    	return createFileWithMagicNumber(name, SCFUtils.getMagicNumber());
+	}
+    private File createAb1File(String name) throws Exception {
+    	return createFileWithMagicNumber(name, AbiUtil.getMagicNumber());
+	}
 }

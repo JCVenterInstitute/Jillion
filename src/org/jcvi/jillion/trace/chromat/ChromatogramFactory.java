@@ -138,8 +138,4 @@ public final class ChromatogramFactory {
 			throw new IOException("unknown chromatogram format (not ab1, scf or ztr)");
 		}
 	}
-	
-
-	
-	
 }
