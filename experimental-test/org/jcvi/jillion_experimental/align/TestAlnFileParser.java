@@ -20,97 +20,377 @@
  ******************************************************************************/
 package org.jcvi.jillion_experimental.align;
 
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.getCurrentArguments;
+import static org.easymock.EasyMock.isA;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.easymock.EasyMockSupport;
+import org.easymock.IAnswer;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.jcvi.jillion_experimental.align.AlnVisitor.ConservationInfo;
+import org.jcvi.jillion_experimental.align.AlnVisitor2.AlnVisitorCallback;
+import org.jcvi.jillion_experimental.align.AlnVisitor2.AlnVisitorCallback.AlnVisitorMemento;
+import org.jcvi.jillion_experimental.align.AlnVisitor2.ConservationInfo;
 import org.junit.Before;
 import org.junit.Test;
-import static org.easymock.EasyMock.*;
 /**
  * @author dkatzel
  *
  *
  */
-public class TestAlnFileParser {
+public class TestAlnFileParser extends EasyMockSupport{
 
     private final ResourceHelper resources = new ResourceHelper(TestAlnFileParser.class);
-    private AlnVisitor sut;
+    private AlnVisitor2 sut;
+    private  Set<String> ids;
+    
+    private AlnVisitorCallback tempCallback;
+    private AlnVisitorMemento tempMemento;
+    
+    
     @Before
     public void setup(){
-        sut = createMock(AlnVisitor.class);
+        sut = createMock(AlnVisitor2.class);
+        
+        ids = new HashSet<String>();
+        
+        ids.add("gi|304633245|gb|HQ003817.1|");
+        ids.add("gi|317140354|gb|HQ413315.1|");
+        ids.add("gi|33330439|gb|AF534906.1|");
+        ids.add("gi|9626158|ref|NC_001405.1|");
+        ids.add("gi|56160492|ref|AC_000007.1|");
+        ids.add("gi|33465830|gb|AY339865.1|");
+        ids.add("gi|58177684|gb|AY601635.1|");
     }
+    
     @Test
-    public void testInputStream() throws IOException{
-        setupExpectations();
-        replay(sut);
+    public void testInputStreamCanOnlyBeParsedOnce() throws IOException{
+        setupVisitAllGroups();
+        replayAll();
         InputStream in =null;
         try{
             in = resources.getFileAsStream("files/example.aln");
-            AlnFileParser.parse(in, sut);
-            verify(sut);
+            AlnParser parser = AlnFileParser.create(in);
+            assertTrue(parser.canParse());
+			parser.parse(sut);
+            verifyAll();
+            assertFalse(parser.canParse());
+        }finally{
+            IOUtil.closeAndIgnoreErrors(in);
+        }
+    }
+    
+    @Test
+    public void inputStreamCanNotCreateMementos() throws IOException{
+    	expect(sut.visitGroup(eq(ids), isA(AlnVisitorCallback.class))).andAnswer(new IAnswer<AlnGroupVisitor>() {
+
+			@Override
+			public AlnGroupVisitor answer() throws Throwable {
+				AlnVisitorCallback callback =(AlnVisitorCallback)getCurrentArguments()[1];
+				assertFalse(callback.canCreateMemento());
+				try{
+					callback.createMemento();
+					fail("should throw exception if memento can not be created");
+				}catch(UnsupportedOperationException expected){
+					//expected.printStackTrace();
+				}
+				callback.haltParsing();
+				return null;
+			}
+		
+        });
+        sut.halted();
+        replayAll();
+        InputStream in =null;
+        try{
+            in = resources.getFileAsStream("files/example.aln");
+            AlnParser parser = AlnFileParser.create(in);
+            assertTrue(parser.canParse());
+			parser.parse(sut);
+            verifyAll();
+            assertFalse(parser.canParse());
         }finally{
             IOUtil.closeAndIgnoreErrors(in);
         }
     }
     @Test
-    public void testFile() throws IOException{
-        setupExpectations();
-        replay(sut);
-        AlnFileParser.parse(resources.getFile("files/example.aln"), sut);
-        verify(sut);
+    public void testFileCanBeParsedMultipleTimes() throws IOException{
+        setupVisitAllGroups();
+        replayAll();
+        AlnParser parser = AlnFileParser.create(resources.getFile("files/example.aln"));
+        assertTrue(parser.canParse());
+		parser.parse(sut);
+		 assertTrue(parser.canParse());
+        verifyAll();
+    }
+    
+    @Test
+    public void skipAllGroups() throws IOException{
+    	setupSkipAllGroups();
+        replayAll();
+        AlnParser parser = AlnFileParser.create(resources.getFile("files/example.aln"));
+        assertTrue(parser.canParse());
+		parser.parse(sut);
+		 assertTrue(parser.canParse());
+        verifyAll();
+    }
+    @Test
+    public void skipGroup2() throws IOException{
+    	setupSkipGroup2Only();
+        replayAll();
+        AlnParser parser = AlnFileParser.create(resources.getFile("files/example.aln"));
+        assertTrue(parser.canParse());
+		parser.parse(sut);
+		 assertTrue(parser.canParse());
+        verifyAll();
+    }
+    @Test
+    public void haltAtGroup2() throws IOException{
+    	setupHaltAtGroup2();
+        replayAll();
+        AlnParser parser = AlnFileParser.create(resources.getFile("files/example.aln"));
+        assertTrue(parser.canParse());
+		parser.parse(sut);
+		 assertTrue(parser.canParse());
+        verifyAll();
+    }
+    @Test
+    public void haltAtInsideGroup1End() throws IOException{
+    	setupHaltInsideGroup1();
+        replayAll();
+        AlnParser parser = AlnFileParser.create(resources.getFile("files/example.aln"));
+        assertTrue(parser.canParse());
+		parser.parse(sut);
+		 assertTrue(parser.canParse());
+        verifyAll();
+    }
+    
+    
+    @Test
+    public void useMementoToRevisitGroup2And3() throws IOException{
+    	setupVisitAllGroupsAndThenRewindAndReVisit2And3();
+        replayAll();
+        AlnParser parser = AlnFileParser.create(resources.getFile("files/example.aln"));
+        assertTrue(parser.canParse());
+		parser.parse(sut);
+		 assertTrue(parser.canParse());
+		 parser.parse(sut, tempMemento);
+		 assertTrue(parser.canParse());
+        verifyAll();
+    }
+    
+    /**
+     * Don't return a groupVisitor for all groups
+     * effectively skipping all groups
+     * (even though we parse the entire thing).
+     */
+    private void setupSkipAllGroups() {       
+        
+    	skipNextGroup();  
+    	skipNextGroup();        
+    	skipNextGroup();
+        
+        sut.visitEnd();
+        
+    }
+    /**
+     * Visit group1, then use the callback
+     * inside the call to visitGroup2
+     * to halt parsing.
+     */
+    private void setupHaltAtGroup2() {
+    	visitGroup1();  
+     
+        expect(sut.visitGroup(eq(ids), isA(AlnVisitorCallback.class))).andAnswer(new IAnswer<AlnGroupVisitor>() {
+
+			@Override
+			public AlnGroupVisitor answer() throws Throwable {
+				AlnVisitorCallback callback =(AlnVisitorCallback)getCurrentArguments()[1];
+				callback.haltParsing();
+				return null;
+			}
+		
+        });
+        sut.halted();
+    }
+    /**
+     * Visit group1, then use the callback
+     * inside the call to visitGroup2
+     * to halt parsing.
+     */
+    private void setupHaltInsideGroup1() {
+    	
+    	final AlnGroupVisitor group1 = setupGroup1ExpectationsAndHaltCallbackAtEndOfGroup();       
+        expect(sut.visitGroup(eq(ids), isA(AlnVisitorCallback.class))).andAnswer(new IAnswer<AlnGroupVisitor>() {
+
+			@Override
+			public AlnGroupVisitor answer() throws Throwable {
+				tempCallback = (AlnVisitorCallback)getCurrentArguments()[1];
+				
+				return group1;
+			}
+        	
+		});
+        sut.halted();
+    }
+    
+    
+
+	private void haltCallback(){
+    	tempCallback.haltParsing();
+    }
+    /**
+     * Don't return a groupVisitor for all groups
+     * effectively skipping all groups
+     * (even though we parse the entire thing).
+     */
+    private void setupSkipGroup2Only() {       
+        
+    	visitGroup1();  
+    	skipNextGroup();        
+    	visitGroup3();
+        
+        sut.visitEnd();
+        
+    }
+    private void skipNextGroup() {
+        expect(sut.visitGroup(eq(ids), isA(AlnVisitorCallback.class))).andReturn(null);
     }
     /**
      * 
      */
-    private void setupExpectations() {
-        sut.visitFile();
-        sut.visitLine(isA(String.class));
-        expectLastCall().times(29);
+    private void setupVisitAllGroups() {       
         
-        sut.visitBeginGroup();
-        sut.visitAlignedSegment("gi|304633245|gb|HQ003817.1|",  "CATCATCAATAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
-        sut.visitAlignedSegment("gi|317140354|gb|HQ413315.1|",  "-ATCATCAATAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
-        sut.visitAlignedSegment("gi|33330439|gb|AF534906.1|",   "CATCATCAATAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
-        sut.visitAlignedSegment("gi|9626158|ref|NC_001405.1|",  "CATCATCA-TAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
-        sut.visitAlignedSegment("gi|56160492|ref|AC_000007.1|", "CATCATCA-TAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
-        sut.visitAlignedSegment("gi|33465830|gb|AY339865.1|",   "CATCATCAATAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
-        sut.visitAlignedSegment("gi|58177684|gb|AY601635.1|",   "CATCATCAATAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
-        sut.visitConservationInfo(parseConservationInfoFor(" ******* *****************************************"));
-        sut.visitEndGroup();
+        visitGroup1();  
+        visitGroup2();        
+        visitGroup3();
         
-        
-        sut.visitBeginGroup();
-        sut.visitAlignedSegment("gi|304633245|gb|HQ003817.1|",  "GGGGTGGAGTTTGTGACGTGGCGCGGGGCGTGGGAACGGGGCGGGTGACG");
-        sut.visitAlignedSegment("gi|317140354|gb|HQ413315.1|",  "GGGGTGGAGTTTGTGACGTGGCGCGGGGCGTGGGAACGGGGCGGGTGACG");
-        sut.visitAlignedSegment("gi|33330439|gb|AF534906.1|",   "GGGGTGGAGTTTGTGACGTGGCGCGGGGCGTGGGAACGGGGCGGGTGACG");
-        sut.visitAlignedSegment("gi|9626158|ref|NC_001405.1|",  "GGGGTGGAGTTTGTGACGTGGCGCGGGGCGTGGGAACGGGGCGGGTGACG");
-        sut.visitAlignedSegment("gi|56160492|ref|AC_000007.1|", "GGGGTGGAGTTTGTGACGTGGCGCGGGGCGTGGGAACGGGGCGGGTGACG");
-        sut.visitAlignedSegment("gi|33465830|gb|AY339865.1|",   "GGGGTGGAGTTTGTGACGTGGCGCGGGGCGTGGGAACGGGGCGGGTGACG");
-        sut.visitAlignedSegment("gi|58177684|gb|AY601635.1|",   "GGGGTGGAGTTTGTGACGTGGCGCGGGGCGTGGGAACGGGGCGGGTGACG");
-        sut.visitConservationInfo(parseConservationInfoFor("**************************************************"));
-        sut.visitEndGroup();
-        
-        sut.visitBeginGroup();
-        sut.visitAlignedSegment("gi|304633245|gb|HQ003817.1|",  "AAGGTATATTATTGATGATG");
-        sut.visitAlignedSegment("gi|317140354|gb|HQ413315.1|",  "AAGGTATATTATTGATGATG");
-        sut.visitAlignedSegment("gi|33330439|gb|AF534906.1|",   "AAGGTATATTATTGATGATG");
-        sut.visitAlignedSegment("gi|9626158|ref|NC_001405.1|",  "AAGGTATATTAT-GATGATG");
-        sut.visitAlignedSegment("gi|56160492|ref|AC_000007.1|", "AAGGTATATTAT-GATGATG");
-        sut.visitAlignedSegment("gi|33465830|gb|AY339865.1|",   "AAGGTATATTATTGATGATG");
-        sut.visitAlignedSegment("gi|58177684|gb|AY601635.1|",   "AAGGTATATTATTGATGATG");
-        sut.visitConservationInfo(parseConservationInfoFor("************ *******"));
-        sut.visitEndGroup();
-        sut.visitEndOfFile();
+        sut.visitEnd();
         
     }
+    /**
+     * 
+     */
+    private void setupVisitAllGroupsAndThenRewindAndReVisit2And3() {  
+    	
+        visitGroup1();  
+        final AlnGroupVisitor group2 = setupGroup2Expectations();
+        
+        expect(sut.visitGroup(eq(ids), isA(AlnVisitorCallback.class))).andAnswer(new IAnswer<AlnGroupVisitor>() {
+
+			@Override
+			public AlnGroupVisitor answer() throws Throwable {
+				tempMemento =((AlnVisitorCallback)getCurrentArguments()[1]).createMemento();
+				return group2;
+			}
+		
+        });  
+        visitGroup3();
+        
+        sut.visitEnd();
+        
+        visitGroup2();        
+        visitGroup3();
+        
+        sut.visitEnd();
+
+        
+    }
+	private void visitGroup3() {
+		AlnGroupVisitor group3 = setupGroup3Expectations();        
+        expect(sut.visitGroup(eq(ids), isA(AlnVisitorCallback.class))).andReturn(group3);
+	}
+
+	private AlnGroupVisitor setupGroup3Expectations() {
+		AlnGroupVisitor group3 = createMock(AlnGroupVisitor.class);
+        
+        group3.visitAlignedSegment("gi|304633245|gb|HQ003817.1|",  "AAGGTATATTATTGATGATG");
+        group3.visitAlignedSegment("gi|317140354|gb|HQ413315.1|",  "AAGGTATATTATTGATGATG");
+        group3.visitAlignedSegment("gi|33330439|gb|AF534906.1|",   "AAGGTATATTATTGATGATG");
+        group3.visitAlignedSegment("gi|9626158|ref|NC_001405.1|",  "AAGGTATATTAT-GATGATG");
+        group3.visitAlignedSegment("gi|56160492|ref|AC_000007.1|", "AAGGTATATTAT-GATGATG");
+        group3.visitAlignedSegment("gi|33465830|gb|AY339865.1|",   "AAGGTATATTATTGATGATG");
+        group3.visitAlignedSegment("gi|58177684|gb|AY601635.1|",   "AAGGTATATTATTGATGATG");
+        group3.visitConservationInfo(parseConservationInfoFor("************ *******"));
+        group3.visitEndGroup();
+		return group3;
+	}
+	private void visitGroup2() {
+		AlnGroupVisitor group2 = setupGroup2Expectations();
+        
+        expect(sut.visitGroup(eq(ids), isA(AlnVisitorCallback.class))).andReturn(group2);
+	}
+
+	private AlnGroupVisitor setupGroup2Expectations() {
+		AlnGroupVisitor group2 = createMock(AlnGroupVisitor.class);
+       
+        group2.visitAlignedSegment("gi|304633245|gb|HQ003817.1|",  "GGGGTGGAGTTTGTGACGTGGCGCGGGGCGTGGGAACGGGGCGGGTGACG");
+        group2.visitAlignedSegment("gi|317140354|gb|HQ413315.1|",  "GGGGTGGAGTTTGTGACGTGGCGCGGGGCGTGGGAACGGGGCGGGTGACG");
+        group2.visitAlignedSegment("gi|33330439|gb|AF534906.1|",   "GGGGTGGAGTTTGTGACGTGGCGCGGGGCGTGGGAACGGGGCGGGTGACG");
+        group2.visitAlignedSegment("gi|9626158|ref|NC_001405.1|",  "GGGGTGGAGTTTGTGACGTGGCGCGGGGCGTGGGAACGGGGCGGGTGACG");
+        group2.visitAlignedSegment("gi|56160492|ref|AC_000007.1|", "GGGGTGGAGTTTGTGACGTGGCGCGGGGCGTGGGAACGGGGCGGGTGACG");
+        group2.visitAlignedSegment("gi|33465830|gb|AY339865.1|",   "GGGGTGGAGTTTGTGACGTGGCGCGGGGCGTGGGAACGGGGCGGGTGACG");
+        group2.visitAlignedSegment("gi|58177684|gb|AY601635.1|",   "GGGGTGGAGTTTGTGACGTGGCGCGGGGCGTGGGAACGGGGCGGGTGACG");
+        group2.visitConservationInfo(parseConservationInfoFor("**************************************************"));
+        group2.visitEndGroup();
+		return group2;
+	}
+	private void visitGroup1() {
+		AlnGroupVisitor group1 = setupGroup1Expectations();        
+        expect(sut.visitGroup(eq(ids), isA(AlnVisitorCallback.class))).andReturn(group1);
+        
+	}
+
+	private AlnGroupVisitor setupGroup1Expectations() {
+		AlnGroupVisitor group1 = createMock(AlnGroupVisitor.class);
+        group1.visitAlignedSegment("gi|304633245|gb|HQ003817.1|",  "CATCATCAATAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
+        group1.visitAlignedSegment("gi|317140354|gb|HQ413315.1|",  "-ATCATCAATAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
+        group1.visitAlignedSegment("gi|33330439|gb|AF534906.1|",   "CATCATCAATAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
+        group1.visitAlignedSegment("gi|9626158|ref|NC_001405.1|",  "CATCATCA-TAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
+        group1.visitAlignedSegment("gi|56160492|ref|AC_000007.1|", "CATCATCA-TAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
+        group1.visitAlignedSegment("gi|33465830|gb|AY339865.1|",   "CATCATCAATAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
+        group1.visitAlignedSegment("gi|58177684|gb|AY601635.1|",   "CATCATCAATAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
+        group1.visitConservationInfo(parseConservationInfoFor(" ******* *****************************************"));
+        group1.visitEndGroup();
+		return group1;
+	}
+	private AlnGroupVisitor setupGroup1ExpectationsAndHaltCallbackAtEndOfGroup() {
+		AlnGroupVisitor group1 = createMock(AlnGroupVisitor.class);
+        group1.visitAlignedSegment("gi|304633245|gb|HQ003817.1|",  "CATCATCAATAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
+        group1.visitAlignedSegment("gi|317140354|gb|HQ413315.1|",  "-ATCATCAATAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
+        group1.visitAlignedSegment("gi|33330439|gb|AF534906.1|",   "CATCATCAATAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
+        group1.visitAlignedSegment("gi|9626158|ref|NC_001405.1|",  "CATCATCA-TAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
+        group1.visitAlignedSegment("gi|56160492|ref|AC_000007.1|", "CATCATCA-TAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
+        group1.visitAlignedSegment("gi|33465830|gb|AY339865.1|",   "CATCATCAATAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
+        group1.visitAlignedSegment("gi|58177684|gb|AY601635.1|",   "CATCATCAATAATATACCTTATTTTGGATTGAAGCCAATATGATAATGAG");
+        group1.visitConservationInfo(parseConservationInfoFor(" ******* *****************************************"));
+        group1.visitEndGroup();
+        expectLastCall().andAnswer(new IAnswer<Void>(){
+
+			@Override
+			public Void answer() throws Throwable {
+				haltCallback();
+				return null;
+			}
+        	
+        });
+		return group1;
+	}
     
     private List<ConservationInfo> parseConservationInfoFor(String info){
-        List<ConservationInfo> result = new ArrayList<AlnVisitor.ConservationInfo>(info.length());
+        List<ConservationInfo> result = new ArrayList<ConservationInfo>(info.length());
         for(int i=0; i< info.length(); i++){
             switch(info.charAt(i)){
                 case '*' :  result.add(ConservationInfo.IDENTICAL);

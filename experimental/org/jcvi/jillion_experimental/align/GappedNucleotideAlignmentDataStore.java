@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -46,13 +47,13 @@ public final class GappedNucleotideAlignmentDataStore {
 	}
     public static NucleotideSequenceDataStore createFromAlnFile(File alnFile) throws IOException{
         GappedAlignmentDataStoreBuilder builder = new GappedAlignmentDataStoreBuilder();
-        AlnFileParser.parse(alnFile, builder);
+        AlnFileParser.create(alnFile).parse(builder);
         return builder.build();
     }
    
 
     
-    private static class GappedAlignmentDataStoreBuilder implements AlnVisitor, Builder<NucleotideSequenceDataStore>{
+    private static class GappedAlignmentDataStoreBuilder implements AlnVisitor2,AlnGroupVisitor, Builder<NucleotideSequenceDataStore>{
         private final Map<String, NucleotideSequenceBuilder> builders = new LinkedHashMap<String, NucleotideSequenceBuilder>();
        
         
@@ -83,52 +84,41 @@ public final class GappedNucleotideAlignmentDataStore {
             return DataStoreUtil.adapt(NucleotideSequenceDataStore.class, map);
         }
 
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public void visitLine(String line) {
-            //no-op
-            
-        }
+       
 
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public void visitFile() {
-        	//no-op
-            
-        }
+       
 
-        /**
-        * {@inheritDoc}
-        */
         @Override
-        public void visitEndOfFile() {
-        	//no-op
-            
-        }
+		public void visitEnd() {
+			// TODO Auto-generated method stub
+			
+		}
 
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public void visitBeginGroup() {
-        	//no-op
-            
-        }
 
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public void visitEndGroup() {
-        	//no-op
-            
-        }
 
-        /**
+
+
+		@Override
+		public void halted() {
+			// TODO Auto-generated method stub
+			
+		}
+
+
+
+
+
+		@Override
+		public AlnGroupVisitor visitGroup(Set<String> ids,
+				AlnVisitorCallback callback) {
+			return this;
+		}
+
+
+
+
+
+		/**
         * {@inheritDoc}
         */
         @Override
@@ -140,14 +130,24 @@ public final class GappedNucleotideAlignmentDataStore {
             
         }
 
-        /**
-        * {@inheritDoc}
-        */
         @Override
-        public void visitConservationInfo(
-                List<ConservationInfo> conservationInfos) {
-        	//no-op
-        }
+		public void visitEndGroup() {
+			// TODO Auto-generated method stub
+			
+		}
+
+
+
+
+
+		@Override
+		public void visitConservationInfo(
+				List<ConservationInfo> conservationInfos) {
+			// TODO Auto-generated method stub
+			
+		}
+
+
         
     }
   
