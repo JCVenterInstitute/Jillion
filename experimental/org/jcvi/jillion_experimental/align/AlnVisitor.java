@@ -22,8 +22,6 @@ package org.jcvi.jillion_experimental.align;
 
 import java.util.List;
 
-import org.jcvi.jillion.core.io.TextFileVisitor;
-
 /**
  * {@code AlnVisitor} is a visitor
  * interface for visiting clustal .aln
@@ -45,7 +43,7 @@ import org.jcvi.jillion.core.io.TextFileVisitor;
  *
  *
  */
-public interface AlnVisitor extends TextFileVisitor{
+public interface AlnVisitor{
     /**
      * {@code ConservationInfo} contains information
      * about how each column (slice) in a group block
@@ -108,4 +106,6 @@ public interface AlnVisitor extends TextFileVisitor{
      * the ith record in the list corresponds to the ith residue in the group.
      */
     void visitConservationInfo(List<ConservationInfo> conservationInfos);
+    
+    
 }
