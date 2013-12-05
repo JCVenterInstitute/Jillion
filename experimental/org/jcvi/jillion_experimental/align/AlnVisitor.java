@@ -1,111 +1,102 @@
-/*******************************************************************************
- * Copyright (c) 2013 J. Craig Venter Institute.
- * 	This file is part of Jillion
- * 
- * 	 Jillion is free software: you can redistribute it and/or modify
- * 	it under the terms of the GNU General Public License as published by
- * 	the Free Software Foundation, either version 3 of the License, or
- * 	(at your option) any later version.
- * 	
- * 	 Jillion is distributed in the hope that it will be useful,
- * 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- * 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * 	GNU General Public License for more details.
- * 	
- * 	You should have received a copy of the GNU General Public License
- * 	along with  Jillion.  If not, see http://www.gnu.org/licenses
- * 
- * Contributors:
- *     Danny Katzel - initial API and implementation
- ******************************************************************************/
 package org.jcvi.jillion_experimental.align;
 
-import java.util.List;
-
+import java.util.Set;
 /**
- * {@code AlnVisitor} is a visitor
- * interface for visiting clustal .aln
- * multiple sequence alignment formatted
- * files.
- * <p/>
- * Usually .aln files group an alignment
- * into blocks of 60 residues and all the
- * reads that align to those 60 residues will be listed
- * consecutively.  (If the reads are long enough,
- * if it likely that they will also be listed in the next
- * group of 60 residues with alignments for the next 60 residues.)
- * After this method is called, there will be several consecutive calls
- * to {@link #visitAlignedSegment(String, String)}, one for each aligned 
- * read in the group. After the aligned Segments, a single call
- * to {@link #visitConservationInfo(List)} will describe the the 
- * conservation of this group followed by {@link #visitEndGroup()}.
+ * {@code AlnVisitor} is a visitor interface
+ * to visit aln formatted data like that produced
+ * by multiple sequence alignment programs
+ * such as ClustalW.
+ * <p>
+ * Usually .aln files split an alignment
+ * into "groups".  Each group contains
+ * a consecutive block of alignment data
+ * for all the input that aligned in that region.
+ * 
+ * Visiting an alignment will therefore require
+ * visiting several groups.  Sequences may span
+ * consecutive groups if the sequence is 
+ * longer than the group length. 
+ * 
+ * </p>
  * @author dkatzel
  *
- *
  */
-public interface AlnVisitor{
+public interface AlnVisitor {    
+    
     /**
-     * {@code ConservationInfo} contains information
-     * about how each column (slice) in a group block
-     * match.
+     * {@code AlnVisitorCallback}
+     * is a callback mechanism for the {@link AlnVisitor}
+     * instance to communicate with the parser
+     * that is parsing the aln data.
      * @author dkatzel
+     *
      */
-    public enum ConservationInfo{
-        /**
-         * The residues in the column are identical
-         * in all sequences in the alignment.
-         */
-        IDENTICAL,
-        /**
-         * A conserved substitution has been
-         * observed in this column.
-         */
-        CONSERVED_SUBSITUTION,
-        /**
-         * A semi-conserved substitution has been
-         * observed in this column.
-         */
-        SEMI_CONSERVED_SUBSITUTION,
-        /**
-         * There is no conservation
-         * in this column.  This could
-         * mean that there are gaps
-         * in the alignment at this column.
-         */
-        NOT_CONSERVED
-        ;
+    public interface AlnVisitorCallback {
+    	/**
+    	 * {@code AlnVisitorMemento} is a marker
+    	 * interface that {@link AlnParser}
+    	 * instances can use to "rewind" back
+    	 * to the position in its aln file
+    	 * in order to revisit portions of the aln file. 
+    	 * {@link AlnVisitorMemento} should only be used
+    	 * by the {@link AlnParser} instance that
+    	 * generated it.
+    	 * @author dkatzel
+    	 *
+    	 */
+    	interface AlnVisitorMemento{
+    		
+    	}
+    	/**
+    	 * Is this callback capable of
+    	 * creating {@link AlnVisitorMemento}s
+    	 * via {@link #createMemento()}.
+    	 * @return {@code true} if this callback
+    	 * can create mementos; {@code false} otherwise.
+    	 */
+    	boolean canCreateMemento();
+    	/**
+    	 * Create a {@link AlnVisitorMemento}
+    	 * 
+    	 * @return a {@link AlnVisitorMemento}; never null.
+    	 * @see #canCreateMemento()
+    	 * @throws UnsupportedOperationException if {@link #canCreateMemento()}
+    	 * returns {@code false}.
+    	 */
+    	AlnVisitorMemento createMemento();
+    	/**
+    	 * Tell the {@link AlnParser} to stop parsing
+    	 * the alignment.  {@link AlnVisitor#visitEnd()}
+    	 * will still be called.
+    	 */
+    	void haltParsing();
     }
     /**
-     * A new group of aligned reads is about to be
-     * visited.  
+     * The entire alignment has been visited.
      */
-    void visitBeginGroup();
+    void visitEnd();
     /**
-     * End of the current  group of aligned reads is about to be
-     * visited.  If there are more groups, then the next method to be
-     * visited will be {@link #visitBeginGroup()}
-     * or {@link #visitEndOfFile()} if the file has been
-     * completely parsed.
+     * The alignment visiting has been halted
+     * by a call to {@link AlnVisitorCallback#haltParsing()}.
      */
-    void visitEndGroup();
+    void halted();
     /**
-     * Visit a single read in the current aligned group.
-     * @param id the id of this read.
-     * @param gappedAlignment the gapped alignment of this read
-     * in this read group.  Usually groups are only about 60 residues long
-     * so if this read is longer than that, then only a partial alignment
-     * will be presented. (Longer reads will span multiple groups).
+     * Visit the next group.
+     * Usually .aln files split an alignment
+	 * into "groups".  Each group contains
+	 * a consecutive block of alignment data
+	 * for all the input that aligned in that region.
+	 * 
+	 * Visiting an alignment will therefore require
+	 * visiting several groups.  Sequences may span
+	 * consecutive groups if the sequence is 
+	 * longer than the group length. 
+     * @param ids the sequence ids contained in this group;
+     * will never be null and should never be empty.
+     * @param callback the {@link AlnVisitorCallback}
+     * for this group; will never be null.
+     * @return a {@link AlnGroupVisitor} instance to visit
+     * this group; or {@code null} to skip this group.
      */
-    void visitAlignedSegment(String id, String gappedAlignment);
-    /**
-     * Visit a description of the conservation of the residues
-     * in the current group.
-     * @param conservationInfos a List of {@link ConservationInfo}; 
-     * will never be null.
-     * there will be one record in the list for each residue in the group.
-     * the ith record in the list corresponds to the ith residue in the group.
-     */
-    void visitConservationInfo(List<ConservationInfo> conservationInfos);
-    
-    
+    AlnGroupVisitor visitGroup(Set<String> ids, AlnVisitorCallback callback);
 }

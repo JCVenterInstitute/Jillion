@@ -53,7 +53,7 @@ public final class GappedNucleotideAlignmentDataStore {
    
 
     
-    private static class GappedAlignmentDataStoreBuilder implements AlnVisitor2,AlnGroupVisitor, Builder<NucleotideSequenceDataStore>{
+    private static class GappedAlignmentDataStoreBuilder implements AlnVisitor,AlnGroupVisitor, Builder<NucleotideSequenceDataStore>{
         private final Map<String, NucleotideSequenceBuilder> builders = new LinkedHashMap<String, NucleotideSequenceBuilder>();
        
         

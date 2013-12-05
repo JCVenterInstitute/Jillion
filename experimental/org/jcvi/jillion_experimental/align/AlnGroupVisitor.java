@@ -2,11 +2,41 @@ package org.jcvi.jillion_experimental.align;
 
 import java.util.List;
 
-import org.jcvi.jillion_experimental.align.AlnVisitor2.ConservationInfo;
 
 
 public interface AlnGroupVisitor {
 
+	 /**
+     * {@code ConservationInfo} contains information
+     * about how each column (slice) in a group block
+     * match.
+     * @author dkatzel
+     */
+    public enum ConservationInfo{
+        /**
+         * The residues in the column are identical
+         * in all sequences in the alignment.
+         */
+        IDENTICAL,
+        /**
+         * A conserved substitution has been
+         * observed in this column.
+         */
+        CONSERVED_SUBSITUTION,
+        /**
+         * A semi-conserved substitution has been
+         * observed in this column.
+         */
+        SEMI_CONSERVED_SUBSITUTION,
+        /**
+         * There is no conservation
+         * in this column.  This could
+         * mean that there are gaps
+         * in the alignment at this column.
+         */
+        NOT_CONSERVED
+        ;
+    }
 	 /**
      * End of the current  group of aligned reads is about to be
      * visited.  If there are more groups, then the next method to be
@@ -16,7 +46,7 @@ public interface AlnGroupVisitor {
      */
     void visitEndGroup();
     /**
-     * Visit a single read in the current aligned group.
+     * Visit a single read in the current group.
      * @param id the id of this read.
      * @param gappedAlignment the gapped alignment of this read
      * in this read group.  Usually groups are only about 60 residues long

@@ -27,7 +27,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,9 +39,9 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
-import org.jcvi.jillion_experimental.align.AlnVisitor2.AlnVisitorCallback;
-import org.jcvi.jillion_experimental.align.AlnVisitor2.AlnVisitorCallback.AlnVisitorMemento;
-import org.jcvi.jillion_experimental.align.AlnVisitor2.ConservationInfo;
+import org.jcvi.jillion_experimental.align.AlnGroupVisitor.ConservationInfo;
+import org.jcvi.jillion_experimental.align.AlnVisitor.AlnVisitorCallback;
+import org.jcvi.jillion_experimental.align.AlnVisitor.AlnVisitorCallback.AlnVisitorMemento;
 
 /**
  * {@code AlnFileParser} is a utility class that can 
@@ -102,7 +101,7 @@ public abstract class AlnFileParser implements AlnParser{
     }
     
     
-    protected void parse(AlnVisitor2 visitor, InputStream in) throws IOException{
+    protected void parse(AlnVisitor visitor, InputStream in) throws IOException{
 		TextLineParser parser = new TextLineParser(in);
 		AtomicBoolean keepParsing=new AtomicBoolean(true);
 		boolean eofReached=false;
@@ -168,7 +167,7 @@ public abstract class AlnFileParser implements AlnParser{
 
 
 
-		public void accept(AlnVisitor2 visitor, AlnVisitorCallback callback, AtomicBoolean keepParsing) {
+		public void accept(AlnVisitor visitor, AlnVisitorCallback callback, AtomicBoolean keepParsing) {
 			AlnGroupVisitor groupVisitor = visitor.visitGroup(lines.keySet(), callback);
 			if(groupVisitor !=null){
 				for(Entry<String,String> entry : lines.entrySet()){
@@ -191,7 +190,7 @@ public abstract class AlnFileParser implements AlnParser{
     		Map<String,String> lines = new LinkedHashMap<String, String>();
     		boolean done=false;
     		boolean foundGroup=false;
-    		List<ConservationInfo> info = Collections.emptyList();
+    		List<ConservationInfo> info = null;
     		int numberOfBasesPerGroup=0;
     		
     		while(parser.hasNextLine() && !done){
@@ -218,6 +217,14 @@ public abstract class AlnFileParser implements AlnParser{
     			//didn't find anything
     			return null;
     		}
+    		if(info ==null){
+    			//no conservation line means not conserved?
+    			
+    			info = new ArrayList<AlnGroupVisitor.ConservationInfo>(numberOfBasesPerGroup);
+    			for(int i=0; i<info.size(); i++){
+    				info.add(ConservationInfo.NOT_CONSERVED);
+    			}
+    		}
     		return new Group(lines,info);
     	}
     }
@@ -235,7 +242,7 @@ public abstract class AlnFileParser implements AlnParser{
 		}
 
 		@Override
-		public void parse(AlnVisitor2 visitor) throws IOException {
+		public void parse(AlnVisitor visitor) throws IOException {
 			try{
 				parse(visitor,in);
 			}finally{
@@ -245,7 +252,7 @@ public abstract class AlnFileParser implements AlnParser{
 		}
 
 		@Override
-		public void parse(AlnVisitor2 visitor, AlnVisitorMemento memento)
+		public void parse(AlnVisitor visitor, AlnVisitorMemento memento)
 				throws IOException {
 			throw new UnsupportedOperationException("mementos not supported");
 			
@@ -308,7 +315,7 @@ public abstract class AlnFileParser implements AlnParser{
 		}
 
 		@Override
-		public void parse(AlnVisitor2 visitor) throws IOException {
+		public void parse(AlnVisitor visitor) throws IOException {
 			InputStream in =null;
 			try{
 				in = new BufferedInputStream(new FileInputStream(alnFile));
@@ -322,7 +329,7 @@ public abstract class AlnFileParser implements AlnParser{
 		
 
 		@Override
-		public void parse(AlnVisitor2 visitor, AlnVisitorMemento memento)
+		public void parse(AlnVisitor visitor, AlnVisitorMemento memento)
 				throws IOException {
 			if(!(memento instanceof AlnFileMemento)){
 				throw new IllegalStateException("unknown memento type" + memento);
