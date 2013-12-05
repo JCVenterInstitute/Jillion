@@ -2561,7 +2561,59 @@ public abstract class Range implements Rangeable,Iterable<Long>
     		end +=units;
     		return this;
     	}
+    	
+    	
     	/**
+    	 * Get the current begin value.
+    	 * @return the begin value in 0-based coordinate system.
+    	 */
+    	public long getBegin() {
+			return begin;
+		}
+    	/**
+    	 * Explicitly set the begin value
+    	 * in 0-based coordinate system.
+    	 * Warning: this method does not check
+    	 * that changing the begin
+    	 * value won't cause an invalid range
+    	 * based on the end value. (which won't get checked
+    	 * until {@link #build()}).
+    	 * @return this
+    	 */
+		public Builder setBegin(long begin) {
+			this.begin = begin;
+			return this;
+		}
+		/**
+    	 * Get the current end value.
+    	 * @return the end value in 0-based coordinate system.
+    	 */
+		public long getEnd() {
+			return end;
+		}
+		/**
+    	 * Explicitly set the end value
+    	 * in 0-based coordinate system.
+    	 * Warning: this method does not check
+    	 * that changing the end
+    	 * value won't cause an invalid range
+    	 * based on the begin value. (which won't get checked
+    	 * until {@link #build()}).
+    	 * return this
+    	 * 
+    	 */
+		public Builder setEnd(long end) {
+			this.end = end;
+			return this;
+		}
+		/**
+		 * Get the current length of this Range
+		 * @return
+		 */
+		public long getLength(){
+			return end-begin+1;
+		}
+		/**
     	 * Create a copy of this Builder using the current values.
     	 * Any futher modifications to either the original Builder
     	 * or the copy will not affect the other.
@@ -2603,6 +2655,13 @@ public abstract class Range implements Rangeable,Iterable<Long>
             }
             return getFromCache(range);
     	}
+		@Override
+		public String toString() {
+			return "Builder [begin=" + begin + ", end=" + end
+					+ ", inputCoordinateSystem=" + inputCoordinateSystem + "]";
+		}
+    	
+    	
     	
     }
     
