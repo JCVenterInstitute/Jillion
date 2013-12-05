@@ -30,6 +30,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
         TestAlnFileParser.class,
+        TestAminoAcidAlnParser.class,
         TestNucleotideSequenceAlignmentBuilder.class,
         TestGappedNucleotideAlignmentDataStore.class,
         

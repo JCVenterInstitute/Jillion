@@ -17,25 +17,47 @@ public interface AlnGroupVisitor {
          * The residues in the column are identical
          * in all sequences in the alignment.
          */
-        IDENTICAL,
+        IDENTICAL('*'),
         /**
          * A conserved substitution has been
          * observed in this column.
          */
-        CONSERVED_SUBSITUTION,
+        CONSERVED_SUBSITUTION(':'),
         /**
          * A semi-conserved substitution has been
          * observed in this column.
          */
-        SEMI_CONSERVED_SUBSITUTION,
+        SEMI_CONSERVED_SUBSITUTION('.'),
         /**
          * There is no conservation
          * in this column.  This could
          * mean that there are gaps
          * in the alignment at this column.
          */
-        NOT_CONSERVED
+        NOT_CONSERVED(' ')
         ;
+        
+        private char myChar;
+        
+        
+        
+        private ConservationInfo(char myChar) {
+			this.myChar = myChar;
+		}
+
+        public static ConservationInfo parse(char c){
+        	switch(c){
+        		case '*' : return IDENTICAL;
+        		case ':' : return CONSERVED_SUBSITUTION;
+        		case '.' : return SEMI_CONSERVED_SUBSITUTION;
+        		case ' ' : return NOT_CONSERVED;
+        	}
+        	throw new IllegalArgumentException("unknown conservation " + c);
+        }
+
+		public char asChar(){		
+    		return myChar;
+    	}
     }
 	 /**
      * End of the current  group of aligned reads is about to be
