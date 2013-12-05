@@ -33,6 +33,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestNucleotideSequenceAlignmentBuilder.class,
         TestGappedNucleotideAlignmentDataStore.class,
         
+        TestNucleotideAlnFileWriter.class,
+        
         AllBlastUnitTests.class,
         AllPairwiseUnitTests.class
         
