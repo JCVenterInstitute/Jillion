@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
@@ -43,6 +44,7 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 	}
 	
 	private AlnFileWriter(File outputFile, int residuesPerGroup, String eol) throws IOException {
+		IOUtil.mkdirs(outputFile.getParentFile());
 		this.out = new PrintWriter(new BufferedOutputStream(new FileOutputStream(outputFile)));
 		this.residuesPerGroup = residuesPerGroup;
 		this.eol = eol;
@@ -60,20 +62,39 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 				handleGroup(r);
 			}
 		}
+		out.close();
 		
 	}
 	private void handleGroup(Range r){
 		int rangeLength = (int)r.getLength();
 		List<Iterator<R>> iterators = new ArrayList<Iterator<R>>(sequences.size());
 		List<StringBuilder> builders = new ArrayList<StringBuilder>(sequences.size());
+		int maxIdLength=0;
+		for(String id : sequences.keySet()){
+			int length = id.length();
+			if(length > maxIdLength){
+				maxIdLength = length;
+			}
+		}
+		int lineLength = maxIdLength +1 + eol.length() + rangeLength;
 		for(Entry<String,S> entry: sequences.entrySet()){
 			iterators.add(entry.getValue().iterator(r));
 			String id = entry.getKey();
-			StringBuilder builder = new StringBuilder(id.length() +1 + eol.length() + rangeLength);
-			builder.append(id).append('\t');
+			
+			StringBuilder builder = new StringBuilder(lineLength);
+			builder.append(id);
+			int padding = maxIdLength - id.length();
+			for(int i=0; i<padding; i++){
+				builder.append(" ");
+			}
+			builder.append('\t');
 			builders.add(builder);
 		}
-		StringBuilder conservationBuilder = new StringBuilder(2+rangeLength);
+		StringBuilder conservationBuilder = new StringBuilder(lineLength);
+		for(int i=0; i<maxIdLength; i++){
+			conservationBuilder.append(" ");
+		}
+		conservationBuilder.append('\t');
 		for(int i=0; i<rangeLength; i++){
 			Set<R> uniqueValues = createNewResiudeSet();
 			for(int j=0; j<iterators.size(); j++){
@@ -139,6 +160,11 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 			//nucleotides are either conserved or not
 			//we consider conserved if we only have 1 type of nucleotide
 			if(values.size() ==1){
+				//if the slice is all gaps
+				//it's not identical
+				if(values.contains(Nucleotide.Gap)){
+					return ConservationInfo.NOT_CONSERVED;
+				}
 				return ConservationInfo.IDENTICAL;
 			}
 			return ConservationInfo.NOT_CONSERVED;
@@ -194,7 +220,7 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 		
 	}
 
-	private static abstract class AlnFileWriterBuilder<R extends Residue, S extends Sequence<R>>{
+	public static abstract class AlnFileWriterBuilder<R extends Residue, S extends Sequence<R>>{
 		
 		private final File outFile;
 		
@@ -202,7 +228,7 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 		private String eol = "\n";		
 		
 		
-		public AlnFileWriterBuilder(File outFile) {
+		private AlnFileWriterBuilder(File outFile) {
 			this.outFile = outFile;
 		}
 		
