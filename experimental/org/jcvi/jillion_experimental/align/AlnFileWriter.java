@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Range.Builder;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.Residue;
@@ -23,7 +24,14 @@ import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion_experimental.align.AlnGroupVisitor.ConservationInfo;
-
+/**
+ * {@code AlnFileWriter} can write aln encoded
+ * alignment files like those produced by Clustal.
+ * @author dkatzel
+ *
+ * @param <R> the type of {@link Residue} to be written.
+ * @param <S> type of {@link Sequence} to be written.
+ */
 public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> implements AlnWriter<R,S>{
 	private static final int DEFAULT_RESIDUES_PER_GROUP = 60;
 	private static final int USE_ONE_GROUP = -1;
@@ -34,14 +42,36 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 	private long seqLength=0;
 	private final String eol;
 	
-	
+	/**
+	 * Create a new {@link AlnFileWriterBuilder}
+	 * that will build a {@link AlnFileWriter}
+	 * to write out
+	 * {@link NucleotideSequence} alignments in aln format to the given output file.
+	 * @param outputFile the output file to write to; can not be null.
+	 * If this file already exists, then the writer will overwrite
+	 * the old data.  If this file does not exist, then it will be
+	 * created.
+	 * @return a new {@link AlnFileWriterBuilder} instance; will never be null.
+	 */
 	public static AlnFileWriterBuilder<Nucleotide, NucleotideSequence> createNucleotideWriterBuilder(File outputFile){
 		return new NucleotideAlnFileWriterBuilder(outputFile);
 	}
-	
+	/**
+	 * Create a new {@link AlnFileWriterBuilder}
+	 * that will build a {@link AlnFileWriter}
+	 * to write out
+	 * {@link ProteinSequence} alignments in aln format to the given output file.
+	 * @param outputFile the output file to write to; can not be null.
+	 * If this file already exists, then the writer will overwrite
+	 * the old data.  If this file does not exist, then it will be
+	 * created.
+	 * @return a new {@link AlnFileWriterBuilder} instance; will never be null.
+	 */
 	public static AlnFileWriterBuilder<AminoAcid, ProteinSequence> createAminoAcidWriterBuilder(File outputFile){
 		return new AminoAcidAlnFileWriterBuilder(outputFile);
 	}
+	
+	
 	
 	private AlnFileWriter(File outputFile, int residuesPerGroup, String eol) throws IOException {
 		IOUtil.mkdirs(outputFile.getParentFile());
@@ -52,14 +82,25 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 
 	@Override
 	public void close() throws IOException {
-		if(residuesPerGroup == USE_ONE_GROUP){
-			handleGroup(Range.ofLength(seqLength));
-		}else{
-			for(long i=0; i<seqLength; i+=residuesPerGroup){
-				Range r = new Range.Builder(residuesPerGroup)
-										.shift(i)
-										.build();
-				handleGroup(r);
+		if(!sequences.isEmpty()){
+			if(residuesPerGroup == USE_ONE_GROUP){
+				handleGroup(Range.ofLength(seqLength));
+			}else{
+				for(long i=0; i<seqLength; i+=residuesPerGroup){
+					Builder builder = new Range.Builder(residuesPerGroup)
+											.shift(i);
+					//iterator(Range) doesn't like
+					//ranges out of bounds
+					//so trim the range down
+					long newEnd = Math.min(seqLength-1,builder.getEnd());
+					Range r = builder.setEnd(newEnd).build();
+					if(!r.isEmpty()){
+						handleGroup(r);
+					}
+					
+				}
+				
+				
 			}
 		}
 		out.close();
@@ -136,7 +177,20 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 		if(sequence ==null){
 			throw new NullPointerException("sequence can not be null");
 		}
-		seqLength = sequence.getLength();
+		long currentSequenceLength = sequence.getLength();
+		if(currentSequenceLength ==0){
+			//empty sequence should we include it?
+			//no for now
+			return;
+		}
+		if(sequences.isEmpty()){
+			seqLength = currentSequenceLength;
+		}else if(seqLength != currentSequenceLength){
+			throw new IOException(String.format("invalid sequence length, all sequences so far have been %d residues but this one is %d", seqLength, currentSequenceLength));
+		}
+		if(sequences.containsKey(id)){
+			throw new IllegalArgumentException(String.format("id %s already has been written",id));
+		}
 		sequences.put(id, sequence);
 		
 	}
@@ -173,14 +227,25 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 	}
 	
 	private static final class AminoAcidAlnFileWriter extends AlnFileWriter<AminoAcid, ProteinSequence>{
-
+		/*
+		 * From Susmita - if a slice contains only the residues of
+		 * one of these rows, then it is considered conserved.
+		 * 
+		 * 
+		 	G,A,V,L,I, M        aliphatic (though some would not include G)
+			S,T,C                      hydroxyl, sulfhydryl, polar
+			N,Q                        amide side chains
+			F,W,Y                    aromatic
+			H,K,R                     basic
+			D,E                         acidic
+		 */
 		private static Set<AminoAcid> ALIPHATIC = EnumSet.of(AminoAcid.Glycine, AminoAcid.Alanine, AminoAcid.Valine, AminoAcid.Leucine, AminoAcid.Isoleucine, AminoAcid.Methionine);
 		private static Set<AminoAcid> HYDROXYL_SULFHYDRYL_POLAR = EnumSet.of(AminoAcid.Serine, AminoAcid.Threonine, AminoAcid.Cysteine);
 		private static Set<AminoAcid> AMIDE_SIDE_CHAINS = EnumSet.of(AminoAcid.Asparagine, AminoAcid.Glutamine);
 		
 		private static Set<AminoAcid> AROMATIC = EnumSet.of(AminoAcid.Phenylalanine, AminoAcid.Tryptophan, AminoAcid.Tyrosine);
-		private static Set<AminoAcid> BASIC = EnumSet.of(AminoAcid.Histidine, AminoAcid.Lysine, AminoAcid.Arginine);
 		
+		private static Set<AminoAcid> BASIC = EnumSet.of(AminoAcid.Histidine, AminoAcid.Lysine, AminoAcid.Arginine);
 		private static Set<AminoAcid> ACIDIC = EnumSet.of(AminoAcid.Aspartic_Acid, AminoAcid.Glutamic_Acid);
 		
 		
@@ -219,7 +284,15 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 		}
 		
 	}
-
+	/**
+	 * {@code AlnFileWriterBuilder} is a Builder
+	 * that can create new {@link AlnFileWriter}
+	 * instances. 
+	 * @author dkatzel
+	 *
+	 * @param <R> the type of {@link Residue} to be written.
+	 * @param <S> type of {@link Sequence} to be written.
+	 */
 	public static abstract class AlnFileWriterBuilder<R extends Residue, S extends Sequence<R>>{
 		
 		private final File outFile;
@@ -229,9 +302,22 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 		
 		
 		private AlnFileWriterBuilder(File outFile) {
+			if(outFile ==null){
+				throw new NullPointerException("output File can not be null");
+			}
 			this.outFile = outFile;
 		}
-		
+		/**
+		 * Set the number of residues per "group". If not set,
+		 * then the default number of 60 residues will be used.
+		 * If this method is called along with {@link #forceOneGroupOnly()}
+		 * then the last one called "wins".
+		 * @param n the number of residues per group;
+		 * must be >0.
+		 * @return this
+		 * @throws IllegalArgumentException if n <1.
+		 * @see #forceOneGroupOnly()
+		 */
 		public AlnFileWriterBuilder<R,S> setNumResiduesPerGroup(int n){
 			if(n <1){
 				throw new IllegalArgumentException("number of residues per group must be >= 1");
@@ -239,6 +325,14 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 			this.residuesPerGroup = n;
 			return this;
 		}
+		/**
+		 * Set end of line String to use.
+		 * If not set, the default is '\n'.
+		 * @param eol the end of line string to use;
+		 * may not be null.
+		 * @return this
+		 * @throws NullPointerException if eol is null.
+		 */
 		public AlnFileWriterBuilder<R,S> eol(String eol){
 			if(eol ==null){
 				throw new NullPointerException("end of line can not be null");
@@ -246,11 +340,28 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 			this.eol = eol;
 			return this;
 		}
+		/**
+		 * Force all the alignments into one group,
+		 * this has the equivalent effect of making the number
+		 * of residues per group infinite.
+		 * If this method is called along with {@link #setNumResiduesPerGroup(int)}
+		 * then the last one called "wins".
+		 * @return this
+		 * @see #setNumResiduesPerGroup(int)
+		 */
 		public AlnFileWriterBuilder<R,S> forceOneGroupOnly(){
 			this.residuesPerGroup = USE_ONE_GROUP;
 			return this;
 		}
-
+		/**
+		 * Create a new {@link AlnFileWriter}
+		 * instance using the configuration data
+		 * provided so far.
+		 * @return a new {@link AlnFileWriter};
+		 * will never be null.
+		 * @throws IOException if there is a problem creating the 
+		 * writer.
+		 */
 		public AlnFileWriter<R, S> build() throws IOException{
 			return createNew(outFile, residuesPerGroup, eol);
 		}
