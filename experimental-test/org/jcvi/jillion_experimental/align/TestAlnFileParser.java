@@ -40,9 +40,9 @@ import org.easymock.EasyMockSupport;
 import org.easymock.IAnswer;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.jcvi.jillion_experimental.align.AlnVisitor2.AlnVisitorCallback;
-import org.jcvi.jillion_experimental.align.AlnVisitor2.AlnVisitorCallback.AlnVisitorMemento;
-import org.jcvi.jillion_experimental.align.AlnVisitor2.ConservationInfo;
+import org.jcvi.jillion_experimental.align.AlnGroupVisitor.ConservationInfo;
+import org.jcvi.jillion_experimental.align.AlnVisitor.AlnVisitorCallback;
+import org.jcvi.jillion_experimental.align.AlnVisitor.AlnVisitorCallback.AlnVisitorMemento;
 import org.junit.Before;
 import org.junit.Test;
 /**
@@ -53,7 +53,7 @@ import org.junit.Test;
 public class TestAlnFileParser extends EasyMockSupport{
 
     private final ResourceHelper resources = new ResourceHelper(TestAlnFileParser.class);
-    private AlnVisitor2 sut;
+    private AlnVisitor sut;
     private  Set<String> ids;
     
     private AlnVisitorCallback tempCallback;
@@ -62,7 +62,7 @@ public class TestAlnFileParser extends EasyMockSupport{
     
     @Before
     public void setup(){
-        sut = createMock(AlnVisitor2.class);
+        sut = createMock(AlnVisitor.class);
         
         ids = new HashSet<String>();
         
