@@ -144,7 +144,7 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 				uniqueValues.add(residue);
 			}
 			ConservationInfo info = computeConservationInfo(uniqueValues);
-			conservationBuilder.append(convertToChar(info));
+			conservationBuilder.append(info.asChar());
 		}
 		//now our text for the group is all stored in StringBuilders
 		//write them to out
@@ -155,17 +155,7 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 		out.write(conservationBuilder.append(eol).toString());
 	}
 	
-	private char convertToChar(ConservationInfo info){		
-		switch(info){
-			case CONSERVED_SUBSITUTION : 
-				return ':';
-			case IDENTICAL :
-					return '*';
-			case SEMI_CONSERVED_SUBSITUTION:
-					return '.';
-			default : return ' ';
-		}
-	}
+	
 	protected abstract Set<R> createNewResiudeSet();
 	protected abstract ConservationInfo computeConservationInfo(Set<R> values);
 

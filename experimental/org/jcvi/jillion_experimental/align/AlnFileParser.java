@@ -86,16 +86,7 @@ public abstract class AlnFileParser implements AlnParser{
         final String paddedString = createPaddedConservationString(conservationString, numberOfBasesPerGroup);
         List<ConservationInfo> result = new ArrayList<ConservationInfo>(numberOfBasesPerGroup);
         for(int i=0; i< paddedString.length(); i++){
-            switch(paddedString.charAt(i)){
-                case '*' :  result.add(ConservationInfo.IDENTICAL);
-                            break;
-                case ':' :  result.add(ConservationInfo.CONSERVED_SUBSITUTION);
-                            break;
-                case '.' :  result.add(ConservationInfo.SEMI_CONSERVED_SUBSITUTION);
-                            break;
-                default:    result.add(ConservationInfo.NOT_CONSERVED);
-                            break;
-            }
+        	result.add(ConservationInfo.parse(paddedString.charAt(i)));            
         }
         return result;
     }
