@@ -26,6 +26,7 @@
 package org.jcvi.jillion.core.io;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.EOFException;
@@ -982,5 +983,31 @@ public final class IOUtil {
 			return 1;
 		}
 		return Integer.SIZE-Integer.numberOfLeadingZeros(value);
+	}
+	/**
+	 * Convenience method for {@link #toInputStream(String, Charset)}
+	 * using UTF-8 charset.
+	 * @param input the String to turn into an inputStream; can not be null.
+	 * @return a new {@link InputStream} instance;
+	 * will never be null, but may be empty.
+	 * @throws NullPointerException if input is null.
+	 */
+	public static InputStream toInputStream(String input) {
+		return toInputStream(input,IOUtil.UTF_8);
+		
+	}
+	/**
+	 * Create a new {@link InputStream} of the bytes of the given
+	 * String using the given {@link Charset}.
+	 * @param input the String to turn into an inputStream; can not be null.
+	 * @param charset the {@link Charset} to use to convert the characters in the
+	 * String into bytes; can not be null.
+	 * @return a new {@link InputStream} instance;
+	 * will never be null, but may be empty.
+	 * @throws NullPointerException if either parameters are null.
+	 */
+	public static InputStream toInputStream(String input, Charset charset) {
+		return new ByteArrayInputStream(input.getBytes(charset));
+		
 	}
 }
