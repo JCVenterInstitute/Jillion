@@ -103,13 +103,10 @@ public abstract class AlnFileParser implements AlnParser{
 				 	if(group !=null){				 		
 				 		group.accept(visitor,callback, keepParsing);				 		
 				 	}
-			 }	
-			 //if we get this far, 
-			 //then we parsed the whole file
-			 eofReached=true;
-		}catch(Throwable t){
-			t.printStackTrace();
+			 }
+			 eofReached=!parser.hasNextLine();
 		}finally{
+			System.out.println(eofReached + " " + keepParsing.get());
 			if(eofReached && keepParsing.get()){
 				 visitor.visitEnd();
 			 }else{
