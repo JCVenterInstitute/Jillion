@@ -25,6 +25,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.getCurrentArguments;
 import static org.easymock.EasyMock.isA;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -176,6 +177,16 @@ public class TestAlnFileParser extends EasyMockSupport{
 		 assertTrue(parser.canParse());
         verifyAll();
     }
+    @Test
+    public void haltAtInsideGroup3End() throws IOException{
+    	setupHaltInsideGroup3();
+        replayAll();
+        AlnParser parser = AlnFileParser.create(resources.getFile("files/example.aln"));
+        assertTrue(parser.canParse());
+		parser.parse(sut);
+		 assertTrue(parser.canParse());
+        verifyAll();
+    }
     
     
     @Test
@@ -189,6 +200,38 @@ public class TestAlnFileParser extends EasyMockSupport{
 		 parser.parse(sut, tempMemento);
 		 assertTrue(parser.canParse());
         verifyAll();
+    }
+    
+    
+    @Test
+    public void notAnAlnFileShouldNotVisitAnyMethods() throws IOException{
+    	String input = "This is not an aln file\nblah blah blah\n#1234";
+    	InputStream in =IOUtil.toInputStream(input);
+    	AlnVisitor visitor = createMock(AlnVisitor.class);
+    	try{
+    		 AlnFileParser.create(in).parse(visitor);
+    	}finally{
+    		IOUtil.closeAndIgnoreErrors(in);
+    	}
+    	
+    }
+    
+    @Test
+    public void parseThrowsException() throws IOException{
+    	Throwable expected = new Throwable("expected");
+    	setupThrowExceptionInGroup1(expected);
+    	replayAll();
+    	 AlnParser parser = AlnFileParser.create(resources.getFile("files/example.aln"));
+         assertTrue(parser.canParse());
+         boolean thrown=false;
+ 		try{
+ 			parser.parse(sut);
+ 		}catch(Throwable t){
+ 			thrown=true;
+ 			//the cause is our expected exception
+ 			assertEquals(expected, t.getCause());
+ 		}
+ 		assertTrue("exception not thrown", thrown);
     }
     
     /**
@@ -245,8 +288,46 @@ public class TestAlnFileParser extends EasyMockSupport{
 		});
         sut.halted();
     }
+    /**
+     * Visit group1, then use the callback
+     * inside the call to visitGroup2
+     * to halt parsing.
+     */
+    private void setupHaltInsideGroup3() {
+    	visitGroup1();
+    	visitGroup2();
+    	final AlnGroupVisitor group3 = setupGroup3ExpectationsAndHaltCallbackAtEndOfGroup();       
+        expect(sut.visitGroup(eq(ids), isA(AlnVisitorCallback.class))).andAnswer(new IAnswer<AlnGroupVisitor>() {
+
+			@Override
+			public AlnGroupVisitor answer() throws Throwable {
+				tempCallback = (AlnVisitorCallback)getCurrentArguments()[1];
+				
+				return group3;
+			}
+        	
+		});
+        sut.halted();
+    }
     
-    
+    /**
+     * Visit group1, then use the callback
+     * inside the call to visitGroup2
+     * to halt parsing.
+     */
+    private void setupThrowExceptionInGroup1(final Throwable exception) {
+    	
+    	setupGroup1ExpectationsAndHaltCallbackAtEndOfGroup();       
+        expect(sut.visitGroup(eq(ids), isA(AlnVisitorCallback.class))).andAnswer(new IAnswer<AlnGroupVisitor>() {
+
+			@Override
+			public AlnGroupVisitor answer() throws Throwable {
+				throw exception;
+			}
+        	
+		});
+        sut.halted();
+    }
 
 	private void haltCallback(){
     	tempCallback.haltParsing();
@@ -387,6 +468,30 @@ public class TestAlnFileParser extends EasyMockSupport{
         	
         });
 		return group1;
+	}
+	
+	private AlnGroupVisitor setupGroup3ExpectationsAndHaltCallbackAtEndOfGroup() {
+		AlnGroupVisitor group3 = createMock(AlnGroupVisitor.class);
+        
+        group3.visitAlignedSegment("gi|304633245|gb|HQ003817.1|",  "AAGGTATATTATTGATGATG");
+        group3.visitAlignedSegment("gi|317140354|gb|HQ413315.1|",  "AAGGTATATTATTGATGATG");
+        group3.visitAlignedSegment("gi|33330439|gb|AF534906.1|",   "AAGGTATATTATTGATGATG");
+        group3.visitAlignedSegment("gi|9626158|ref|NC_001405.1|",  "AAGGTATATTAT-GATGATG");
+        group3.visitAlignedSegment("gi|56160492|ref|AC_000007.1|", "AAGGTATATTAT-GATGATG");
+        group3.visitAlignedSegment("gi|33465830|gb|AY339865.1|",   "AAGGTATATTATTGATGATG");
+        group3.visitAlignedSegment("gi|58177684|gb|AY601635.1|",   "AAGGTATATTATTGATGATG");
+        group3.visitConservationInfo(parseConservationInfoFor("************ *******"));
+        group3.visitEndGroup();
+        expectLastCall().andAnswer(new IAnswer<Void>(){
+
+			@Override
+			public Void answer() throws Throwable {
+				haltCallback();
+				return null;
+			}
+        	
+        });
+		return group3;
 	}
     
     private List<ConservationInfo> parseConservationInfoFor(String info){
