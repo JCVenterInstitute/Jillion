@@ -107,7 +107,7 @@ public abstract class FastaFileParser implements FastaParser{
 			throw new NullPointerException("visitor can not be null");
 		}
 	}
-	
+	@SuppressWarnings("PMD.AvoidDeeplyNestedIfStmts")
 	protected final void parseFile(TextLineParser parser, FastaVisitor visitor) throws IOException {
 		AtomicBoolean keepParsing=new AtomicBoolean(true);
 		FastaRecordVisitor recordVisitor =null;

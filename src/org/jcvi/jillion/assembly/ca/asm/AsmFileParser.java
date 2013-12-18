@@ -1188,46 +1188,46 @@ public abstract class AsmFileParser implements AsmParser{
         }
    
         public void handleReadLayout(ParserState parserState, AsmUnitigVisitor visitor) throws IOException {
-            if(visitor !=null){
-               char type = parseReadType(parserState);
-               String readId = parseReadId(parserState);
-               String nextLine = parserState.getNextLine();
-               //CA <= 5 had a src block which should be ignored
-               //CA 6+ doesn't have it anymore so need to handle
-               //both cases.
-               if(nextLine.startsWith(SRC)){
-                   skipReservedSource(parserState);
-                   nextLine = parserState.getNextLine();
-               }
-               
-               DirectedRange directedRange = parseDirectedRange(nextLine);
-               List<Integer> gapOffsets = parseGapOffsets(parserState);
-               parseEndOfMessage(parserState, messageCode);                   
-               visitor.visitReadLayout(type, readId, directedRange, gapOffsets);
-            }else{
-                skipCurrentBlock(parserState);
+            if(visitor ==null){
+            	skipCurrentBlock(parserState);
+            }else{                
+                char type = parseReadType(parserState);
+                String readId = parseReadId(parserState);
+                String nextLine = parserState.getNextLine();
+                //CA <= 5 had a src block which should be ignored
+                //CA 6+ doesn't have it anymore so need to handle
+                //both cases.
+                if(nextLine.startsWith(SRC)){
+                    skipReservedSource(parserState);
+                    nextLine = parserState.getNextLine();
+                }
+                
+                DirectedRange directedRange = parseDirectedRange(nextLine);
+                List<Integer> gapOffsets = parseGapOffsets(parserState);
+                parseEndOfMessage(parserState, messageCode);                   
+                visitor.visitReadLayout(type, readId, directedRange, gapOffsets);
             }
         }
         
         public void handleReadLayout(ParserState parserState, AsmContigVisitor visitor) throws IOException {
-            if(visitor !=null){
-               char type = parseReadType(parserState);
-               String readId = parseReadId(parserState);
-               String nextLine = parserState.getNextLine();
-               //CA <= 5 had a src block which should be ignored
-               //CA 6+ doesn't have it anymore so need to handle
-               //both cases.
-               if(nextLine.startsWith(SRC)){
-                   skipReservedSource(parserState);
-                   nextLine = parserState.getNextLine();
-               }
-               
-               DirectedRange directedRange = parseDirectedRange(nextLine);
-               List<Integer> gapOffsets = parseGapOffsets(parserState);
-               parseEndOfMessage(parserState, messageCode);                   
-               visitor.visitReadLayout(type, readId, directedRange, gapOffsets);
+            if(visitor ==null){
+            	 skipCurrentBlock(parserState);
             }else{
-                skipCurrentBlock(parserState);
+            	 char type = parseReadType(parserState);
+                 String readId = parseReadId(parserState);
+                 String nextLine = parserState.getNextLine();
+                 //CA <= 5 had a src block which should be ignored
+                 //CA 6+ doesn't have it anymore so need to handle
+                 //both cases.
+                 if(nextLine.startsWith(SRC)){
+                     skipReservedSource(parserState);
+                     nextLine = parserState.getNextLine();
+                 }
+                 
+                 DirectedRange directedRange = parseDirectedRange(nextLine);
+                 List<Integer> gapOffsets = parseGapOffsets(parserState);
+                 parseEndOfMessage(parserState, messageCode);                   
+                 visitor.visitReadLayout(type, readId, directedRange, gapOffsets);               
             }
         }
         private DirectedRange parseDirectedRange(String line) throws IOException {
