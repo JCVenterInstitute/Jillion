@@ -37,7 +37,11 @@ public final class RandomAccessFileInputStream extends InputStream{
 
 	private final RandomAccessFile randomAccessFile;
 	private long bytesRead=0;
-	private Long length;
+	/**
+	 * The number of bytes to read in the stream;
+	 * or {@code null} if we should read the whole thing.
+	 */
+	private final Long length;
 	private final boolean ownFile;
 	/**
 	 * Creates a new {@link RandomAccessFileInputStream}

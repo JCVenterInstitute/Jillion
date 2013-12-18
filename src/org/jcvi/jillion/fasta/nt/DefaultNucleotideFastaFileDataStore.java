@@ -137,7 +137,8 @@ final class DefaultNucleotideFastaFileDataStore{
 			 * initialized.
 			 */
 			public ReusableNucleotideFastaRecordVisitor(){
-				
+				//need to explicitly declare default constructor
+				//to add javadoc comment
 			}
 			/**
 			 * Prepare this visitor to visit a new record.

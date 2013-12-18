@@ -203,7 +203,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
         int lastOffsetOfSequence = (int)toBeEncoded.getLength()+startOffset;
         if(lastOffsetOfSequence > reference.getLength()){
             int overhang = (int)(toBeEncoded.getLength()+startOffset - reference.getLength());
-            throw new IllegalArgumentException(String.format("sequences extends beyond reference by %d bases", overhang));
+            throw new IllegalArgumentException(String.format("sequences extends beyond reference by %d base(s)", overhang));
         }
     }
 

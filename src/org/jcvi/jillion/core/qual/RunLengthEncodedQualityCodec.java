@@ -354,7 +354,7 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
             currentQuality = PhredQuality.valueOf(currentValue);
 		}
 	}
-    
+	@SuppressWarnings("PMD.ImmutableField")
     private class Metrics{
     	private int numGuards=0;
     	private int singletons=0;
