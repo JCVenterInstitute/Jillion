@@ -276,7 +276,6 @@ public abstract class AbstractSequenceAlignmentBuilder
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + getOuterType().hashCode();
 			result = prime * result + alignmentLength;
 			result = prime * result + numGap;
 			result = prime * result + numMismatches;

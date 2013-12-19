@@ -20,13 +20,17 @@
  ******************************************************************************/
 package org.jcvi.jillion_experimental.align;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.jcvi.jillion.align.NucleotideSequenceAlignment;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.internal.align.NucleotideSequenceAlignmentBuilder;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestNucleotideSequenceAlignmentBuilder {
 
 	NucleotideSequenceAlignmentBuilder sut;
@@ -122,5 +126,67 @@ public class TestNucleotideSequenceAlignmentBuilder {
 		assertEquals("TGCATGTGCA", alignment.getGappedQueryAlignment().toString());		
 		assertEquals("TGCA-ATGCA", alignment.getGappedSubjectAlignment().toString());
 	}
+	
+	@Test
+	public void alignmentNotEqualToNull(){
+		sut = new NucleotideSequenceAlignmentBuilder(true);
+		sut.addMatches(new NucleotideSequenceBuilder("ACGT").build());		
+
+		NucleotideSequenceAlignment alignment = sut.build();
+		
+		assertNotEquals(alignment, null);
+	}
+	@Test
+	public void alignmentNotEqualToOtherObject(){
+		sut = new NucleotideSequenceAlignmentBuilder(true);
+		sut.addMatches(new NucleotideSequenceBuilder("ACGT").build());		
+
+		NucleotideSequenceAlignment alignment = sut.build();
+		
+		assertNotEquals(alignment, "not an alignment");
+	}
+	
+	@Test
+	public void equalsSameRef(){
+		sut = new NucleotideSequenceAlignmentBuilder(true);
+		sut.addMatches(new NucleotideSequenceBuilder("ACGT").build());		
+
+		NucleotideSequenceAlignment alignment = sut.build();
+		
+		TestUtil.assertEqualAndHashcodeSame(alignment, alignment);
+	}
+	
+	@Test
+	public void equalsSameValues(){
+		sut = new NucleotideSequenceAlignmentBuilder();
+		sut.addMatches(new NucleotideSequenceBuilder("ACGT").build());		
+
+		NucleotideSequenceAlignment alignment = sut.build();
+		
+		NucleotideSequenceAlignmentBuilder builder2 = new NucleotideSequenceAlignmentBuilder();
+		builder2.addMatches(new NucleotideSequenceBuilder("ACGT").build());		
+
+		NucleotideSequenceAlignment alignment2 = builder2.build();
+		
+		TestUtil.assertEqualAndHashcodeSame(alignment, alignment2);
+	}
+	
+	@Test
+	public void differentValuesNotEqual(){
+		sut = new NucleotideSequenceAlignmentBuilder();
+		sut.addMatches("ACGT");	
+		
+		NucleotideSequenceAlignment alignment = sut.build();
+		
+		NucleotideSequenceAlignmentBuilder builder2 = new NucleotideSequenceAlignmentBuilder();
+		builder2.addMatches("AC");
+		
+		builder2.addMismatches("GT","TA");
+
+		NucleotideSequenceAlignment alignment2 = builder2.build();
+		
+		TestUtil.assertNotEqualAndHashcodeDifferent(alignment, alignment2);
+	}
+	
 	
 }
