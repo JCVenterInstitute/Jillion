@@ -168,7 +168,7 @@ public final class DataStoreUtil {
 
     @SuppressWarnings("unchecked")
 	public static final <T, D extends DataStore<T>> D adapt(Class<D> datastoreInterface, DataStore<T> delegate){
-    	return (D) Proxy.newProxyInstance(datastoreInterface.getClassLoader(), new Class[]{datastoreInterface},
+    	return (D) Proxy.newProxyInstance(datastoreInterface.getClassLoader(), new Class<?>[]{datastoreInterface},
     			new DataStoreInvocationHandler<T>(delegate));
     }
     
@@ -200,7 +200,7 @@ public final class DataStoreUtil {
      */
     @SuppressWarnings("unchecked")
 	public static final <F, T, D extends DataStore<T>> D adapt(Class<D> datastoreInterface, DataStore<F> delegate, AdapterCallback<F, T> callback){
-    	return (D) Proxy.newProxyInstance(datastoreInterface.getClassLoader(), new Class[]{datastoreInterface},
+    	return (D) Proxy.newProxyInstance(datastoreInterface.getClassLoader(), new Class<?>[]{datastoreInterface},
     			new DataStoreInvocationHandler<T>(new AdaptedDataStore<F, T>(delegate, callback)));
     }
     
@@ -309,7 +309,7 @@ public final class DataStoreUtil {
      */
     @SuppressWarnings("unchecked")
     public static <D extends DataStore<?>> D createNewCachedDataStore(Class<D> c,D delegate, int cacheSize){
-        return (D) Proxy.newProxyInstance(c.getClassLoader(), new Class[]{c, CacheableDataStore.class}, 
+        return (D) Proxy.newProxyInstance(c.getClassLoader(), new Class<?>[]{c, CacheableDataStore.class}, 
                 new CachedDataStore<D>(delegate,cacheSize));
     }
     
