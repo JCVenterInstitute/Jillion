@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
-import java.util.Collection;
 /**
  * {@code CompactProteinSequence} is 
  * a {@link ProteinSequence} that uses a byte array to store each
@@ -32,7 +31,7 @@ import java.util.Collection;
  */
 class CompactProteinSequence extends AbstractProteinSequence {
 
-	public CompactProteinSequence(Collection<AminoAcid> glyphs) {
-		super(glyphs, CompactProteinSequenceCodec.INSTANCE);
+	public CompactProteinSequence(AminoAcid[] aas) {
+		super(aas, CompactProteinSequenceCodec.INSTANCE);
 	}
 }

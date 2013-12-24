@@ -21,7 +21,6 @@
 package org.jcvi.jillion.core.residue.aa;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -34,7 +33,7 @@ abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid
 
 	private final Sequence<AminoAcid> encodedAminoAcids;
 	
-	public AbstractProteinSequence(Collection<AminoAcid> glyphs, AminoAcidCodec codec) {
+	public AbstractProteinSequence(AminoAcid[] glyphs, AminoAcidCodec codec) {
 		this.encodedAminoAcids = new EncodedSequence<AminoAcid>(codec,codec.encode(glyphs));
 	}
 	

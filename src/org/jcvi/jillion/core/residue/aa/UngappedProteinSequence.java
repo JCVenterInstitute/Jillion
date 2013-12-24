@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 /**
@@ -33,8 +32,8 @@ import java.util.List;
  */
 class UngappedProteinSequence extends CompactProteinSequence{
 
-	public UngappedProteinSequence(Collection<AminoAcid> glyphs) {
-		super(glyphs);
+	public UngappedProteinSequence(AminoAcid[] aas) {
+		super(aas);
 	}
 
 	@Override

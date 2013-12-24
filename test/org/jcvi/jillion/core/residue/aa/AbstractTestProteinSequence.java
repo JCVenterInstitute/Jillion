@@ -22,50 +22,48 @@ package org.jcvi.jillion.core.residue.aa;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 
 public abstract class AbstractTestProteinSequence {
-	private final List<AminoAcid> aminoAcids = AminoAcidUtil.parse("ILKMFDEX");
+	private final AminoAcid[] aminoAcids = AminoAcidUtil.parse("ILKMFDEX").toArray(new AminoAcid[8]);
 	ProteinSequence sut;
 	@Before
 	public void setup(){
 		sut = encode(aminoAcids);
 	}
-	protected abstract ProteinSequence encode(List<AminoAcid> aminoAcids);
+	protected abstract ProteinSequence encode(AminoAcid[] aminoAcids);
 	
 	@Test
 	public void length(){
-		assertEquals(aminoAcids.size(), sut.getLength());
+		assertEquals(aminoAcids.length, sut.getLength());
 	}
 	
 	@Test
 	public void decode(){
-		for(int i=0; i<aminoAcids.size(); i++){
-			assertEquals(aminoAcids.get(i),sut.get(i));
+		for(int i=0; i<aminoAcids.length; i++){
+			assertEquals(aminoAcids[i],sut.get(i));
 		}
 	}
 	
 	@Test
 	public void singleBase(){
-		List<AminoAcid> expected = AminoAcidUtil.parse("L");
+		AminoAcid[] expected = new AminoAcid[]{AminoAcidUtil.parse("L").get(0)};
 		ProteinSequence seq = encode(expected);
 		assertEquals(1, seq.getLength());
-		assertEquals(expected.get(0),seq.get(0));
+		assertEquals(expected[0],seq.get(0));
 	}
 	
 	@Test
 	public void get(){
-		for(int i=0; i< aminoAcids.size(); i++){
-			assertEquals(aminoAcids.get(i), sut.get(i));
+		for(int i=0; i< aminoAcids.length; i++){
+			assertEquals(aminoAcids[i], sut.get(i));
 		}
 	}
 	
 	@Test
 	public void gappedSequence(){
-		ProteinSequence seq = encode(AminoAcidUtil.parse("I-LKM-FDEX"));
+		ProteinSequence seq = encode(AminoAcidUtil.parse("I-LKM-FDEX").toArray(new AminoAcid[0]));
 		assertEquals("I-LKM-FDEX", AminoAcidUtil.asString(seq));
 		assertEquals(2, seq.getNumberOfGaps());
 		assertEquals(8, seq.getUngappedLength());
