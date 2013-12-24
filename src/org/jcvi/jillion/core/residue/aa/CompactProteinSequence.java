@@ -20,6 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
+import java.io.ObjectInputStream;
+
 /**
  * {@code CompactProteinSequence} is 
  * a {@link ProteinSequence} that uses a byte array to store each
@@ -31,7 +33,16 @@ package org.jcvi.jillion.core.residue.aa;
  */
 class CompactProteinSequence extends AbstractProteinSequence {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 112126544528540261L;
+
 	public CompactProteinSequence(AminoAcid[] aas) {
 		super(aas, CompactProteinSequenceCodec.INSTANCE);
+	}
+	
+	private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+		throw new java.io.InvalidObjectException("Proxy required");
 	}
 }
