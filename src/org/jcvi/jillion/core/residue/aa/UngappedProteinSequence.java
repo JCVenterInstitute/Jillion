@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
+import java.io.ObjectInputStream;
 import java.util.Collections;
 import java.util.List;
 /**
@@ -31,6 +32,11 @@ import java.util.List;
  *
  */
 class UngappedProteinSequence extends CompactProteinSequence{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3481921186285369074L;
 
 	public UngappedProteinSequence(AminoAcid[] aas) {
 		super(aas);
@@ -72,4 +78,7 @@ class UngappedProteinSequence extends CompactProteinSequence{
 		return ungappedIndex;
 	}
 
+	private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+		throw new java.io.InvalidObjectException("Proxy required");
+	}
 }

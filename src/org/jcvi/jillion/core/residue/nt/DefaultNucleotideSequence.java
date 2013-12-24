@@ -55,11 +55,11 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 	/**
      * {@link NucleotideCodec} used to decode the data.
      */
-    private final NucleotideCodec codec;
+    private transient final NucleotideCodec codec;
     /**
      * Our data.
      */
-    private final byte[] data;
+    private transient final byte[] data;
     /**
      * Our HashCode value,
      * This value is lazy loaded
@@ -72,7 +72,7 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
      * the bytes anyway so we don't
      * take up any extra memory.
      */
-    private int hash;
+    private transient int hash;
 
    
     
@@ -177,7 +177,7 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 	private static final class DefaultNucleotideSequenceProxy implements Serializable{
 
 		private static final long serialVersionUID = 6476363248864141050L;
-		private String bases;
+		private final String bases;
 		
 		DefaultNucleotideSequenceProxy(DefaultNucleotideSequence seq){
 			this.bases = seq.toString();

@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -139,9 +138,7 @@ abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid
 		return new ProteinSequenceProxy(this);
 	}
 	
-	protected void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
-		throw new java.io.InvalidObjectException("Proxy required");
-	}
+	
 	/**
 	 * Serialization Proxy Pattern object to handle
 	 * serialization of ProteinSequence objects.  This allows us
@@ -155,7 +152,7 @@ abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid
 
 		private static final long serialVersionUID = -8473861196950222580L;
 		
-		private String seq;
+		private final String seq;
 		
 		ProteinSequenceProxy(ProteinSequence s){
 			seq = s.toString();

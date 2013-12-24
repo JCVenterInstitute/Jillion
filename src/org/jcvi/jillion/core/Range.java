@@ -1032,12 +1032,25 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     }
     //serialization methods need to be protected
     //so the subclasses inherit them!
-    
+    /**
+     * writeReplace method that must be called
+     * by subclasses for serialization
+     * using the Serialzation Proxy Class.
+     * @return a new RangeProxy to handle
+     * serialization for us.
+     */
     protected Object writeReplace(){
 		return new RangeProxy(this);
 	}
-	
-	protected void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+    /**
+     * readObject method that must be called
+     * by subclasses for serialization
+     * using the Serialzation Proxy Class.
+     * @throws java.io.InvalidObjectException always
+     * to prevent users from constructing
+     * invalid objects.
+     */
+	protected void readObjectTemplate(ObjectInputStream stream) throws java.io.InvalidObjectException{
 		throw new java.io.InvalidObjectException("Proxy required");
 	}
 	/**
@@ -1054,7 +1067,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 
 		private static final long serialVersionUID = -4585616544869644009L;
 		
-		private long begin,end;
+		private final long begin,end;
 		
 		RangeProxy(Range range){
 			begin = range.getBegin();
@@ -1121,13 +1134,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final long start;
+        private transient final long start;
 
         /**
          * The end coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final  long end;
+        private transient final  long end;
         
     	private LongRange(long start, long end){
     		 this.start = start;
@@ -1186,7 +1199,10 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 			}
 			return true;
 		}
-    	
+		
+		private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+			readObjectTemplate(stream);
+		}
     	
     }
     /**
@@ -1203,13 +1219,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final int start;
+        private transient final int start;
 
         /**
          * The end coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final  int end;
+        private transient final  int end;
         
     	private IntRange(int start, int end){
     		 this.start = start;
@@ -1269,6 +1285,12 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 			}
 			return true;
 		}
+		
+		
+		
+		private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+			readObjectTemplate(stream);
+		}
     }
     
    
@@ -1286,13 +1308,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final short start;
+        private transient final short start;
 
         /**
          * The end coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final  short end;
+        private transient final  short end;
         
     	private ShortRange(short start, short end){
     		 this.start = start;
@@ -1352,6 +1374,11 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 			}
 			return true;
 		}
+		
+		
+		private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+			readObjectTemplate(stream);
+		}
     }
     
    
@@ -1369,13 +1396,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final byte start;
+        private transient final byte start;
 
         /**
          * The end coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final  byte end;
+        private transient final  byte end;
         
     	private ByteRange(byte start, byte end){
     		 this.start = start;
@@ -1436,7 +1463,10 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 			return true;
 		}
     	
-
+		
+		private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+			readObjectTemplate(stream);
+		}
     }
     
     
@@ -1459,13 +1489,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final byte start;
+        private transient final byte start;
 
         /**
          * The end coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final  short length;
+        private transient final  short length;
         
     	private UnsignedByteStartShortLengthRange(short start, int length){
     		this.start = IOUtil.toSignedByte(start);
@@ -1530,6 +1560,11 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 			}
 			return true;
 		}
+		
+		
+		private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+			readObjectTemplate(stream);
+		}
     }
     
    
@@ -1552,13 +1587,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final byte start;
+        private transient final byte start;
 
         /**
          * The end coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final  int length;
+        private transient final  int length;
         
     	private UnsignedByteStartIntLengthRange(short start, long length){
     		this.start = IOUtil.toSignedByte(start);
@@ -1617,6 +1652,11 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 			}
 			return true;
 		}
+		
+		
+		private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+			readObjectTemplate(stream);
+		}
     }
     
     /**
@@ -1636,13 +1676,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final byte start;
+        private transient final byte start;
 
         /**
          * The end coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final  long length;
+        private transient final  long length;
         
     	private UnsignedByteStartLongLengthRange(short start, long length){
     		this.start = IOUtil.toSignedByte(start);
@@ -1703,6 +1743,10 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 			return true;
 		}
 		
+		
+		private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+			readObjectTemplate(stream);
+		}
     }
     
     /**
@@ -1722,13 +1766,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final short start;
+        private transient final short start;
 
         /**
          * The length coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final  short length;
+        private transient final  short length;
         
     	private UnsignedShortStartShortLengthRange(int start, int length){
     		 this.start = IOUtil.toSignedShort(start);
@@ -1793,6 +1837,11 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 			}
 			return true;
 		}
+		
+		
+		private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+			readObjectTemplate(stream);
+		}
     }
     
     /**
@@ -1812,13 +1861,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The length coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final  int length;
+        private transient final  int length;
         
         /**
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final short start;
+        private transient final short start;
         
     	private UnsignedShortStartIntLengthRange(int start, long length){
     		 this.start = IOUtil.toSignedShort(start);
@@ -1883,6 +1932,10 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 			}
 			return true;
 		}
+		
+		private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+			readObjectTemplate(stream);
+		}
     }
     
     /**
@@ -1902,13 +1955,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final short start;
+        private transient final short start;
 
         /**
          * The length coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final  long length;
+        private transient final  long length;
         
     	private UnsignedShortStartLongLengthRange(int start, long length){
     		 this.start = IOUtil.toSignedShort(start);
@@ -1973,6 +2026,11 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 			}
 			return true;
 		}
+		
+		
+		private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+			readObjectTemplate(stream);
+		}
     }
     
     /**
@@ -1992,13 +2050,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final int start;
+        private transient final int start;
 
         /**
          * The length coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final  int length;
+        private transient final  int length;
         
     	private UnsignedIntStartIntLengthRange(long start, long length){
     		 this.start = IOUtil.toSignedInt(start);
@@ -2063,6 +2121,12 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 			}
 			return true;
 		}
+		
+	
+		
+		private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+			readObjectTemplate(stream);
+		}
     }
     
     /**
@@ -2082,13 +2146,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final int start;
+        private transient final int start;
 
         /**
          * The length coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final  long length;
+        private transient final  long length;
         
     	private UnsignedIntStartLongLengthRange(long start, long length){
     		 this.start = IOUtil.toSignedInt(start);
@@ -2153,6 +2217,11 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 			}
 			return true;
 		}
+		
+		
+		private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+			readObjectTemplate(stream);
+		}
     }
     /**
      * Range implementation that stores the 
@@ -2171,13 +2240,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final long start;
+        private transient final long start;
 
         /**
          * The length coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private final  int length;
+        private transient final  int length;
         
     	private LongStartIntLengthRange(long start, long length){
     		 this.start = start;
@@ -2242,6 +2311,11 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 			}
 			return true;
 		}
+		
+		
+		private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+			readObjectTemplate(stream);
+		}
 
 		
     }
@@ -2252,7 +2326,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 
 		private static final long serialVersionUID = 6052661929330419290L;
 		
-		private final byte coordinate;
+		private transient final byte coordinate;
     	
     	EmptyByteRange(byte coordinate){
     		this.coordinate = coordinate;
@@ -2298,13 +2372,17 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 			}
 			return true;
 		}
+		
+		private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+			readObjectTemplate(stream);
+		}
     	
     }
     
     private static final class EmptyShortRange extends Range{
 
 		private static final long serialVersionUID = 3993935906380566318L;
-		private final short coordinate;
+		private transient final short coordinate;
     	
     	EmptyShortRange(short coordinate){
     		this.coordinate = coordinate;
@@ -2350,12 +2428,17 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 			}
 			return true;
 		}
+	
+		
+		private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+			readObjectTemplate(stream);
+		}
     }
     
     private static final class EmptyIntRange extends Range{
 
 		private static final long serialVersionUID = -2154880669709555228L;
-		private final int coordinate;
+		private transient final int coordinate;
     	
     	EmptyIntRange(int coordinate){
     		this.coordinate = coordinate;
@@ -2401,12 +2484,17 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 			}
 			return true;
 		}
+		
+		
+		private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+			readObjectTemplate(stream);
+		}
     }
     
     private static final class EmptyLongRange extends Range{
 
 		private static final long serialVersionUID = -5311954556848083143L;
-		private final long coordinate;
+		private transient final long coordinate;
     	
     	EmptyLongRange(long coordinate){
     		this.coordinate = coordinate;
@@ -2451,6 +2539,10 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 				return false;
 			}
 			return true;
+		}
+		
+		private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+			readObjectTemplate(stream);
 		}
 		
     }
