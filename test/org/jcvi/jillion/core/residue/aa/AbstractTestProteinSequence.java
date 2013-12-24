@@ -21,6 +21,13 @@
 package org.jcvi.jillion.core.residue.aa;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -58,15 +65,32 @@ public abstract class AbstractTestProteinSequence {
 	public void get(){
 		for(int i=0; i< aminoAcids.length; i++){
 			assertEquals(aminoAcids[i], sut.get(i));
-		}
+		}		
 	}
 	
 	@Test
-	public void gappedSequence(){
-		ProteinSequence seq = encode(AminoAcidUtil.parse("I-LKM-FDEX").toArray(new AminoAcid[0]));
-		assertEquals("I-LKM-FDEX", AminoAcidUtil.asString(seq));
-		assertEquals(2, seq.getNumberOfGaps());
-		assertEquals(8, seq.getUngappedLength());
-		assertEquals(1, seq.getUngappedOffsetFor(2));
+	public void noGaps(){
+		assertEquals(0, sut.getNumberOfGaps());
+		assertTrue(sut.getGapOffsets().isEmpty());
+		assertEquals(aminoAcids.length, sut.getUngappedLength());
+		for(int i=0; i< aminoAcids.length; i++){
+			assertEquals(i, sut.getUngappedOffsetFor(i));
+		}	
 	}
+	
+	@Test
+	public void serialze() throws IOException, ClassNotFoundException{
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(out);
+		oos.writeObject(sut);
+		oos.close();
+		
+		ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(out.toByteArray()));
+	
+		ProteinSequence deserializedSequence = (ProteinSequence)in.readObject();
+		
+		assertEquals(sut, deserializedSequence);
+	}
+	
+	
 }

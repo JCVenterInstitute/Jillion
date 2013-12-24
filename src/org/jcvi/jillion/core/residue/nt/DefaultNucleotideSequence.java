@@ -25,6 +25,8 @@
  */
 package org.jcvi.jillion.core.residue.nt;
 
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -43,7 +45,14 @@ import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
  */
 final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide> implements NucleotideSequence{
 
+	//This classes uses the Serialization Proxy Pattern
+	//described in Effective Java 2nd Edition
+	//to serialize final fields.
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7441128261035593978L;
+	/**
      * {@link NucleotideCodec} used to decode the data.
      */
     private final NucleotideCodec codec;
@@ -157,5 +166,29 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 		return codec.iterator(data,range);
 	}
 
+	private Object writeReplace(){
+		return new DefaultNucleotideSequenceProxy(this);
+	}
+	
+	private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+		throw new java.io.InvalidObjectException("Proxy required");
+	}
+	
+	private static final class DefaultNucleotideSequenceProxy implements Serializable{
+
+		private static final long serialVersionUID = 6476363248864141050L;
+		private String bases;
+		
+		DefaultNucleotideSequenceProxy(DefaultNucleotideSequence seq){
+			this.bases = seq.toString();
+		}
+		
+		private Object readResolve(){
+			DefaultNucleotideSequence seq = (DefaultNucleotideSequence) new NucleotideSequenceBuilder(bases)
+																				.build();
+			
+			return new DefaultNucleotideSequence(seq.codec, seq.data);
+		}
+	}
 	
 }

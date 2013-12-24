@@ -20,6 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -31,6 +33,11 @@ import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 
 abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid> implements ProteinSequence {
 
+	//This class uses the Serialization Proxy Pattern
+	//described in Effective Java 2nd Ed
+	//to substitute a proxy class to be serialized instead of Range.
+		
+	private static final long serialVersionUID = -8506764895478268009L;
 	private final Sequence<AminoAcid> encodedAminoAcids;
 	
 	public AbstractProteinSequence(AminoAcid[] glyphs, AminoAcidCodec codec) {
@@ -118,11 +125,45 @@ abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid
 		if (obj == null){
 			return false;
 		}
-		if (getClass() != obj.getClass()){
+		if (!(obj instanceof ProteinSequence)){
 			return false;
 		}
 		ProteinSequence other = (ProteinSequence) obj;
 		return toString().equals(other.toString());
+	}
+	
+	 //serialization methods need to be protected
+    //so the subclasses inherit them!
+    
+    protected Object writeReplace(){
+		return new ProteinSequenceProxy(this);
+	}
+	
+	protected void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+		throw new java.io.InvalidObjectException("Proxy required");
+	}
+	/**
+	 * Serialization Proxy Pattern object to handle
+	 * serialization of ProteinSequence objects.  This allows us
+	 * to change ProteinSequence fields and subclasses without
+	 * breaking serialization.
+	 * 
+	 * @author dkatzel
+	 *
+	 */
+	private static final class ProteinSequenceProxy implements Serializable{
+
+		private static final long serialVersionUID = -8473861196950222580L;
+		
+		private String seq;
+		
+		ProteinSequenceProxy(ProteinSequence s){
+			seq = s.toString();
+		}
+		
+		private Object readResolve(){
+			return new ProteinSequenceBuilder(seq).build();
+		}
 	}
 
 }

@@ -25,6 +25,8 @@
  */
 package org.jcvi.jillion.core;
 
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -96,6 +98,14 @@ import org.jcvi.jillion.internal.core.util.JillionUtil;
  *    }
  * ...
  * </pre>
+ * 
+ * Range is Serializable in a (hopefully)
+ * forwards compatible way. However, there is no 
+ * guarantee that the Range implementation will be the same
+ * or even that the implementation class will be the same,
+ * the the deserialized object should always be equal
+ * to the Range that was serialized.
+ * 
  * @author dkatzel
  * @author jsitz@jcvi.org
  * 
@@ -103,8 +113,13 @@ import org.jcvi.jillion.internal.core.util.JillionUtil;
  * @see #Range.Builder
  * 
  */
-public abstract class Range implements Rangeable,Iterable<Long>
-{
+public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
+	
+	//This class uses the Serialization Proxy Pattern
+	//described in Effective Java 2nd Ed
+	//to substitute a proxy class to be serialized instead of Range.
+	
+	private static final long serialVersionUID = -4383105989868994198L;
 	/**
 	 * {@value} should be large enough for 
 	 * any Ranges commonly used in genomics.
@@ -1015,6 +1030,41 @@ public abstract class Range implements Rangeable,Iterable<Long>
     public Range asRange() {
         return this;
     }
+    //serialization methods need to be protected
+    //so the subclasses inherit them!
+    
+    protected Object writeReplace(){
+		return new RangeProxy(this);
+	}
+	
+	protected void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+		throw new java.io.InvalidObjectException("Proxy required");
+	}
+	/**
+	 * Serialization Proxy Pattern object to handle
+	 * serialization of Range objects.  This allows us
+	 * to change Range fields and subclasses without
+	 * breaking serialization.
+	 * 
+	 * @author dkatzel
+	 *
+	 */
+	private static final class RangeProxy implements Serializable{
+
+
+		private static final long serialVersionUID = -4585616544869644009L;
+		
+		private long begin,end;
+		
+		RangeProxy(Range range){
+			begin = range.getBegin();
+			end = range.getEnd();
+		}
+		
+		private Object readResolve(){
+			return Range.of(begin, end);
+		}
+	}
     
     private static class RangeIterator implements Iterator<Long>{
         private final long from;
@@ -1064,7 +1114,10 @@ public abstract class Range implements Rangeable,Iterable<Long>
      *
      */
     private static final class LongRange extends Range{
-        /**
+
+		private static final long serialVersionUID = -9049228665266839643L;
+
+		/**
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
@@ -1143,7 +1196,10 @@ public abstract class Range implements Rangeable,Iterable<Long>
      *
      */
     private static final class IntRange extends Range{
-        /**
+        
+		private static final long serialVersionUID = 6542145038027107374L;
+
+		/**
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
@@ -1223,7 +1279,10 @@ public abstract class Range implements Rangeable,Iterable<Long>
      *
      */
     private static final class ShortRange extends Range{
-        /**
+
+		private static final long serialVersionUID = 8067459912024393712L;
+
+		/**
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
@@ -1303,7 +1362,10 @@ public abstract class Range implements Rangeable,Iterable<Long>
      *
      */
     private static final class ByteRange extends Range{
-        /**
+    	
+		private static final long serialVersionUID = 4169626247473789826L;
+
+		/**
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
@@ -1390,7 +1452,10 @@ public abstract class Range implements Rangeable,Iterable<Long>
      *
      */
     private static final class UnsignedByteStartShortLengthRange extends Range{
-        /**
+    	
+		private static final long serialVersionUID = 8988060061626955851L;
+
+		/**
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
@@ -1480,7 +1545,10 @@ public abstract class Range implements Rangeable,Iterable<Long>
      *
      */
     private static final class UnsignedByteStartIntLengthRange extends Range{
-        /**
+
+		private static final long serialVersionUID = -8157832996658862640L;
+
+		/**
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
@@ -1561,7 +1629,10 @@ public abstract class Range implements Rangeable,Iterable<Long>
      *
      */
     private static final class UnsignedByteStartLongLengthRange extends Range{
-        /**
+
+		private static final long serialVersionUID = 7162925703817321503L;
+
+		/**
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
@@ -1644,7 +1715,10 @@ public abstract class Range implements Rangeable,Iterable<Long>
      *
      */
     private static final class UnsignedShortStartShortLengthRange extends Range{
-        /**
+
+		private static final long serialVersionUID = -3396601756878334868L;
+
+		/**
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
@@ -1731,9 +1805,10 @@ public abstract class Range implements Rangeable,Iterable<Long>
      *
      */
     private static final class UnsignedShortStartIntLengthRange extends Range{
-    
 
-        /**
+		private static final long serialVersionUID = -7100338012680013390L;
+
+		/**
          * The length coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
@@ -1820,7 +1895,10 @@ public abstract class Range implements Rangeable,Iterable<Long>
      *
      */
     private static final class UnsignedShortStartLongLengthRange extends Range{
-        /**
+
+		private static final long serialVersionUID = -1165486112049464271L;
+
+		/**
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
@@ -1907,7 +1985,10 @@ public abstract class Range implements Rangeable,Iterable<Long>
      *
      */
     private static final class UnsignedIntStartIntLengthRange extends Range{
-        /**
+
+		private static final long serialVersionUID = 6452717883182530834L;
+
+		/**
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
@@ -1994,7 +2075,10 @@ public abstract class Range implements Rangeable,Iterable<Long>
      *
      */
     private static final class UnsignedIntStartLongLengthRange extends Range{
-        /**
+
+		private static final long serialVersionUID = -117640702327997461L;
+
+		/**
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
@@ -2080,7 +2164,10 @@ public abstract class Range implements Rangeable,Iterable<Long>
      *
      */
     private static final class LongStartIntLengthRange extends Range{
-        /**
+    	
+		private static final long serialVersionUID = -8753338879553066878L;
+
+		/**
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
@@ -2162,7 +2249,10 @@ public abstract class Range implements Rangeable,Iterable<Long>
     
     
     private static final class EmptyByteRange extends Range{
-    	private final byte coordinate;
+
+		private static final long serialVersionUID = 6052661929330419290L;
+		
+		private final byte coordinate;
     	
     	EmptyByteRange(byte coordinate){
     		this.coordinate = coordinate;
@@ -2212,7 +2302,9 @@ public abstract class Range implements Rangeable,Iterable<Long>
     }
     
     private static final class EmptyShortRange extends Range{
-    	private final short coordinate;
+
+		private static final long serialVersionUID = 3993935906380566318L;
+		private final short coordinate;
     	
     	EmptyShortRange(short coordinate){
     		this.coordinate = coordinate;
@@ -2261,7 +2353,9 @@ public abstract class Range implements Rangeable,Iterable<Long>
     }
     
     private static final class EmptyIntRange extends Range{
-    	private final int coordinate;
+
+		private static final long serialVersionUID = -2154880669709555228L;
+		private final int coordinate;
     	
     	EmptyIntRange(int coordinate){
     		this.coordinate = coordinate;
@@ -2310,7 +2404,9 @@ public abstract class Range implements Rangeable,Iterable<Long>
     }
     
     private static final class EmptyLongRange extends Range{
-    	private final long coordinate;
+
+		private static final long serialVersionUID = -5311954556848083143L;
+		private final long coordinate;
     	
     	EmptyLongRange(long coordinate){
     		this.coordinate = coordinate;

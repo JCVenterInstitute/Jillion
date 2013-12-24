@@ -23,6 +23,12 @@ package org.jcvi.jillion.core;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Test;
 public abstract class AbstractTestRangeSubclasses {
@@ -59,5 +65,21 @@ public abstract class AbstractTestRangeSubclasses {
 	@Test
 	public void notEqualsDifferentValues(){
 		TestUtil.assertNotEqualAndHashcodeDifferent(getRange(), getDifferentRange());
+	}
+	
+	@Test
+	public void serialze() throws IOException, ClassNotFoundException{
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(out);
+		Range range = getRange();
+		oos.writeObject(range);
+		oos.close();
+		
+		ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(out.toByteArray()));
+	
+		Range deserializedRange = (Range)in.readObject();
+		
+		assertEquals(range, deserializedRange);
+		assertEquals(range.getClass(), deserializedRange.getClass());
 	}
 }
