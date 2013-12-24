@@ -75,7 +75,7 @@ public final class  MultipleWrapper<T> implements InvocationHandler{
     @SuppressWarnings("unchecked")
     public static <T, I extends T> T createMultipleWrapper(Class<T> classType,ReturnPolicy policy, Iterable<I> delegates){
         
-        return (T) Proxy.newProxyInstance(classType.getClassLoader(), new Class[]{classType}, 
+        return (T) Proxy.newProxyInstance(classType.getClassLoader(), new Class<?>[]{classType}, 
                 new MultipleWrapper<T>(policy,delegates));
     }
     /**
