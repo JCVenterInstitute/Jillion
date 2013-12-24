@@ -283,15 +283,15 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 
 
 	
-	private List<AminoAcid> convertFromBytes(byte[] array){
-		List<AminoAcid> aas = new ArrayList<AminoAcid>(array.length);
+	private AminoAcid[] convertFromBytes(byte[] array){
+		AminoAcid[] aas = new AminoAcid[array.length];
 		for(int i=0; i<array.length; i++){
-			aas.add(AMINO_ACID_VALUES[array[i]]);
+			aas[i]=AMINO_ACID_VALUES[array[i]];
 		}
 		return aas;
 	}
 	private ProteinSequence build(byte[] seqToBuild){
-		List<AminoAcid> asList = convertFromBytes(seqToBuild);
+		AminoAcid[] asList = convertFromBytes(seqToBuild);
 		if(numberOfGaps>0 && hasGaps(asList)){
 			return new CompactProteinSequence(asList);
 		}
@@ -299,8 +299,8 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		
 		return new UngappedProteinSequence(asList);
 	}
-	private boolean hasGaps(List<AminoAcid> asList) {
-		for(AminoAcid aa : asList){
+	private boolean hasGaps(AminoAcid[] asArray) {
+		for(AminoAcid aa : asArray){
 			if(aa == AminoAcid.Gap){
 				return true;
 			}

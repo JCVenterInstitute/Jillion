@@ -24,7 +24,6 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.Collection;
 
 import org.jcvi.jillion.core.io.IOUtil;
 /**
@@ -48,12 +47,12 @@ enum CompactProteinSequenceCodec implements AminoAcidCodec {
 		//private constructor
 	}
 	@Override
-	public byte[] encode(Collection<AminoAcid> glyphs) {
-		int numberOfAminoAcids = glyphs.size();
+	public byte[] encode(AminoAcid[] aas) {
+		int numberOfAminoAcids = aas.length;
 		int numBits = numberOfAminoAcids * BITS_PER_AA;
 		BitSet bits = new BitSet(numBits);
 		int offset=0;
-		for(AminoAcid aa : glyphs){
+		for(AminoAcid aa : aas){
 			byte ordinal = aa.getOrdinalAsByte();
 			
 			for(int i=0; i<BITS_PER_AA; i++){
@@ -69,7 +68,7 @@ enum CompactProteinSequenceCodec implements AminoAcidCodec {
 		buf.put(encodedData);
 		return buf.array();
 	}
-
+	
 
 	protected AminoAcid getAminoAcidFor(BitSet subSet) {
 		final AminoAcid aa;

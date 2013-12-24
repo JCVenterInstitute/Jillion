@@ -20,16 +20,11 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
-import java.util.List;
-
-import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.jcvi.jillion.core.residue.aa.ProteinSequence;
-import org.jcvi.jillion.core.residue.aa.CompactProteinSequence;
 
 public class TestCompactProteinSequence extends AbstractTestProteinSequence{
 
 	@Override
-	protected ProteinSequence encode(List<AminoAcid> aminoAcids) {
+	protected ProteinSequence encode(AminoAcid[] aminoAcids) {
 		return new CompactProteinSequence(aminoAcids);
 	}
 
