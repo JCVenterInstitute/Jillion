@@ -42,7 +42,11 @@ import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
 final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSequence<Nucleotide> implements ReferenceMappedNucleotideSequence{
 
-    private final int length;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 938806681397322051L;
+	private final int length;
     private final int startOffset;
     private final NucleotideSequence reference;
     /**
@@ -88,7 +92,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
      * the bytes anyway so we don't
      * take up any extra memory.
      */
-    private int hash;
+    private transient int hash;
     
     
     @Override

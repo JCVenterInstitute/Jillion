@@ -48,7 +48,10 @@ import org.junit.runners.Suite.SuiteClasses;
         TestNucleotideGlyph_GetGlyphsFor.class,
         TestNucleotideSequenceBuilder.class,
         
-        TestTriplet.class
+        TestTriplet.class,
+        
+        TestSerializeDefaultNucleotideSequence.class,
+        TestSerializeReferenceEncodedNucleotideSequence.class
     }
 )
 public class AllNucleotideUnitTests {

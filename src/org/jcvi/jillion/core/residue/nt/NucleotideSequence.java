@@ -26,7 +26,8 @@
 package org.jcvi.jillion.core.residue.nt;
 
 
-import org.jcvi.jillion.core.Sequence;
+import java.io.Serializable;
+
 import org.jcvi.jillion.core.residue.ResidueSequence;
 /**
  * {@code NucleotideSequence} an interface to abstract
@@ -36,9 +37,16 @@ import org.jcvi.jillion.core.residue.ResidueSequence;
  * Different encoding implementations can take up more or less memory or require
  * more computations to decode.  This interface hides implementation details
  * regarding the decoding so users don't have to worry about it.
+ * <br/>
+ * {@link NucleotideSequence} is {@link Serializable} in a (hopefully)
+ * forwards compatible way. However, there is no 
+ * guarantee that the implementation will be the same
+ * or even that the implementation class will be the same;
+ * but the deserialized object should always be equal
+ * to the sequence that was serialized.
  * @author dkatzel
  */
-public interface NucleotideSequence extends ResidueSequence<Nucleotide>{
+public interface NucleotideSequence extends ResidueSequence<Nucleotide>, Serializable{
 	/**
      * Two {@link NucleotideSequence}s are equal
      * if they contain the same {@link Nucleotide}s 

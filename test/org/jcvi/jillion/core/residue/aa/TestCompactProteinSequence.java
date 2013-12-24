@@ -20,6 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
 
 public class TestCompactProteinSequence extends AbstractTestProteinSequence{
 
@@ -28,5 +32,13 @@ public class TestCompactProteinSequence extends AbstractTestProteinSequence{
 		return new CompactProteinSequence(aminoAcids);
 	}
 
+	@Test
+	public void gappedSequence(){
+		ProteinSequence seq = encode(AminoAcidUtil.parse("I-LKM-FDEX").toArray(new AminoAcid[0]));
+		assertEquals("I-LKM-FDEX", AminoAcidUtil.asString(seq));
+		assertEquals(2, seq.getNumberOfGaps());
+		assertEquals(8, seq.getUngappedLength());
+		assertEquals(1, seq.getUngappedOffsetFor(2));
+	}
 
 }

@@ -20,14 +20,23 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
+import java.io.Serializable;
+
 import org.jcvi.jillion.core.residue.ResidueSequence;
 
 /**
  * {@code ProteinSequence} is a marker interface for
- * {@link Sequence}s that contain {@link AminoAcid}s
+ * {@link Sequence}s that contain {@link AminoAcid}s.
+ * <br/>
+ * {@link ProteinSequence} is {@link Serializable} in a (hopefully)
+ * forwards compatible way. However, there is no 
+ * guarantee that the implementation will be the same
+ * or even that the implementation class will be the same;
+ * but the deserialized object should always be equal
+ * to the sequence that was serialized.
  *
  * @author dkatzel
  */
-public interface ProteinSequence extends ResidueSequence<AminoAcid> {
+public interface ProteinSequence extends ResidueSequence<AminoAcid>, Serializable {
 
 }

@@ -34,6 +34,8 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         TestAminoAcid.class,
         TestCompactProteinSequence.class,
+        TestUngappedProteinSequence.class,
+        
         TestProteinSequenceBuilder.class,
         
         TestDefaultProteinFastaFileDataStore.class,
