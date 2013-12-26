@@ -320,9 +320,7 @@ public abstract class AbstractSequenceAlignmentBuilder
 			}
 			@SuppressWarnings("unchecked")
 			AbstractSequenceAlignmentImpl other = (AbstractSequenceAlignmentImpl) obj;
-			if (!getOuterType().equals(other.getOuterType())){
-		        return false;
-			}
+
 			if (alignmentLength != other.alignmentLength){
 				return false;
 			}
@@ -368,10 +366,6 @@ public abstract class AbstractSequenceAlignmentBuilder
 		}
 
 		
-		@SuppressWarnings("rawtypes")
-		private AbstractSequenceAlignmentBuilder getOuterType() {
-			return AbstractSequenceAlignmentBuilder.this;
-		}
 
 		
 		
