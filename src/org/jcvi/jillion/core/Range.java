@@ -1134,13 +1134,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final long start;
+        private final transient long start;
 
         /**
          * The end coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final  long end;
+        private final transient long end;
         
     	private LongRange(long start, long end){
     		 this.start = start;
@@ -1219,13 +1219,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final int start;
+        private final transient int start;
 
         /**
          * The end coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final  int end;
+        private final transient  int end;
         
     	private IntRange(int start, int end){
     		 this.start = start;
@@ -1308,13 +1308,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final short start;
+        private final transient short start;
 
         /**
          * The end coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final  short end;
+        private final transient  short end;
         
     	private ShortRange(short start, short end){
     		 this.start = start;
@@ -1396,13 +1396,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final byte start;
+        private final transient byte start;
 
         /**
          * The end coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final  byte end;
+        private final transient  byte end;
         
     	private ByteRange(byte start, byte end){
     		 this.start = start;
@@ -1489,13 +1489,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final byte start;
+        private final transient byte start;
 
         /**
          * The end coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final  short length;
+        private final transient  short length;
         
     	private UnsignedByteStartShortLengthRange(short start, int length){
     		this.start = IOUtil.toSignedByte(start);
@@ -1587,13 +1587,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final byte start;
+        private final transient byte start;
 
         /**
          * The end coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final  int length;
+        private final transient  int length;
         
     	private UnsignedByteStartIntLengthRange(short start, long length){
     		this.start = IOUtil.toSignedByte(start);
@@ -1676,13 +1676,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final byte start;
+        private final transient byte start;
 
         /**
          * The end coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final  long length;
+        private final transient  long length;
         
     	private UnsignedByteStartLongLengthRange(short start, long length){
     		this.start = IOUtil.toSignedByte(start);
@@ -1766,13 +1766,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final short start;
+        private final transient short start;
 
         /**
          * The length coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final  short length;
+        private final transient  short length;
         
     	private UnsignedShortStartShortLengthRange(int start, int length){
     		 this.start = IOUtil.toSignedShort(start);
@@ -1861,13 +1861,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The length coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final  int length;
+        private final transient  int length;
         
         /**
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final short start;
+        private final transient short start;
         
     	private UnsignedShortStartIntLengthRange(int start, long length){
     		 this.start = IOUtil.toSignedShort(start);
@@ -1955,13 +1955,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final short start;
+        private final transient short start;
 
         /**
          * The length coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final  long length;
+        private final transient  long length;
         
     	private UnsignedShortStartLongLengthRange(int start, long length){
     		 this.start = IOUtil.toSignedShort(start);
@@ -2050,13 +2050,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final int start;
+        private final transient int start;
 
         /**
          * The length coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final  int length;
+        private final transient  int length;
         
     	private UnsignedIntStartIntLengthRange(long start, long length){
     		 this.start = IOUtil.toSignedInt(start);
@@ -2146,13 +2146,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final int start;
+        private final transient int start;
 
         /**
          * The length coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final  long length;
+        private final transient  long length;
         
     	private UnsignedIntStartLongLengthRange(long start, long length){
     		 this.start = IOUtil.toSignedInt(start);
@@ -2240,13 +2240,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          * The start coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final long start;
+        private final transient long start;
 
         /**
          * The length coordinate.
          * This coordinate stored relative to the zero base coordinate system
          */
-        private transient final  int length;
+        private final transient  int length;
         
     	private LongStartIntLengthRange(long start, long length){
     		 this.start = start;
@@ -2326,7 +2326,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 
 		private static final long serialVersionUID = 6052661929330419290L;
 		
-		private transient final byte coordinate;
+		private final transient byte coordinate;
     	
     	EmptyByteRange(byte coordinate){
     		this.coordinate = coordinate;
@@ -2382,7 +2382,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     private static final class EmptyShortRange extends Range{
 
 		private static final long serialVersionUID = 3993935906380566318L;
-		private transient final short coordinate;
+		private final transient short coordinate;
     	
     	EmptyShortRange(short coordinate){
     		this.coordinate = coordinate;
@@ -2438,7 +2438,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     private static final class EmptyIntRange extends Range{
 
 		private static final long serialVersionUID = -2154880669709555228L;
-		private transient final int coordinate;
+		private final transient int coordinate;
     	
     	EmptyIntRange(int coordinate){
     		this.coordinate = coordinate;
@@ -2494,7 +2494,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     private static final class EmptyLongRange extends Range{
 
 		private static final long serialVersionUID = -5311954556848083143L;
-		private transient final long coordinate;
+		private final transient long coordinate;
     	
     	EmptyLongRange(long coordinate){
     		this.coordinate = coordinate;
