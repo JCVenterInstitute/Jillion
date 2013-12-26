@@ -197,7 +197,7 @@ final class CoverageMapFactory {
 	     * Creates a new <code>CoverageMapImpl</code>.
 	     * @param amplicons A {@link Collection} of {@link Coordinated}s.
 	     */
-	    @SuppressWarnings("unchecked")
+	    @SuppressWarnings({"unchecked", "rawtypes"})
 		private CoverageMapImpl(List<CoverageRegion<V>> regions){
 	        this.regions = regions.toArray(new CoverageRegion[regions.size()]);
 	    }
