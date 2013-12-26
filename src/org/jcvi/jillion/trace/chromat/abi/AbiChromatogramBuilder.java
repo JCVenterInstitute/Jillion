@@ -686,7 +686,7 @@ public class AbiChromatogramBuilder implements Builder<AbiChromatogram>{
         * {@inheritDoc}
         */
         @Override
-        public void visitTaggedDataRecord(UserDefinedTaggedDataRecord record,
+        public void visitTaggedDataRecord(UserDefinedTaggedDataRecord<?,?> record,
                 byte[] data) {
             // TODO Auto-generated method stub
             
