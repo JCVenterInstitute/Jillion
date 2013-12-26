@@ -139,7 +139,7 @@ public interface AbiChromatogramFileVisitor extends ChromatogramFileVisitor{
 			short tScale);
 	
 	void visitTaggedDataRecord(ByteArrayTaggedDataRecord record, byte[] data);
-	void visitTaggedDataRecord(UserDefinedTaggedDataRecord record, byte[] data);
+	void visitTaggedDataRecord(UserDefinedTaggedDataRecord<?,?> record, byte[] data);
 	
 	void visitTaggedDataRecord(ScanRateTaggedDataType record, ScanRate scanRate);
 	void visitTaggedDataRecord(ShortArrayTaggedDataRecord record, short[] data);

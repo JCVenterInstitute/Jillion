@@ -402,7 +402,7 @@ public abstract class AbiChromatogramParser {
     private static void parseSamplingRateFrom(
             GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
             Map<String,String> props) {
-        Map<TaggedDataName, List<UserDefinedTaggedDataRecord>>map= groupedDataRecordMap.userDefinedDataRecords;
+        Map<TaggedDataName, List<UserDefinedTaggedDataRecord<?,?>>>map= groupedDataRecordMap.userDefinedDataRecords;
         if(map.containsKey(TaggedDataName.Rate)){
             ScanRateTaggedDataType scanRate = (ScanRateTaggedDataType)map.get(TaggedDataName.Rate).get(0);
             props.put("SamplingRate", String.format("%.3f",
@@ -660,7 +660,7 @@ public abstract class AbiChromatogramParser {
 		return map;
 	}
 
-	private static void visitCorrectTaggedDataRecordViaReflection(AbiChromatogramFileVisitor visitor, TaggedDataRecord record, byte[] abiDataBlock){
+	private static void visitCorrectTaggedDataRecordViaReflection(AbiChromatogramFileVisitor visitor, TaggedDataRecord<?,?> record, byte[] abiDataBlock){
 	    try {
             Method method =visitor.getClass().getMethod("visitTaggedDataRecord", record.getType(),record.getParsedDataType());
             
@@ -732,7 +732,7 @@ public abstract class AbiChromatogramParser {
 		private final Map<TaggedDataName,List<DateTaggedDataRecord>> dateDataRecords = new EnumMap<TaggedDataName, List<DateTaggedDataRecord>>(TaggedDataName.class);
 		
 		private final Map<TaggedDataName,List<TimeTaggedDataRecord>> timeDataRecords = new EnumMap<TaggedDataName, List<TimeTaggedDataRecord>>(TaggedDataName.class);
-		private final Map<TaggedDataName,List<UserDefinedTaggedDataRecord>> userDefinedDataRecords = new EnumMap<TaggedDataName, List<UserDefinedTaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,List<UserDefinedTaggedDataRecord<?,?>>> userDefinedDataRecords = new EnumMap<TaggedDataName, List<UserDefinedTaggedDataRecord<?,?>>>(TaggedDataName.class);
         
 		public void add(TaggedDataRecord<?,?> record){
 			switch(record.getDataType()){
