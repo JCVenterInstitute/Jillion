@@ -55,11 +55,11 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 	/**
      * {@link NucleotideCodec} used to decode the data.
      */
-    private transient final NucleotideCodec codec;
+    private final transient NucleotideCodec codec;
     /**
      * Our data.
      */
-    private transient final byte[] data;
+    private final transient byte[] data;
     /**
      * Our HashCode value,
      * This value is lazy loaded
