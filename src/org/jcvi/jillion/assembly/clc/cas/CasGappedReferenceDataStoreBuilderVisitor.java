@@ -186,7 +186,6 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
         		for(int i= insertions.length-1; i>=0; i--){
 	        		Insertion insertion = insertions[i];
 					if(insertion !=null){
-						//System.out.println("\t"+i);
 	        			int maxGapSize =(int) insertion.getSize();
 	        			gappedSequenceBuilder.insert(i, createGapStringOf(maxGapSize));
 	        		}

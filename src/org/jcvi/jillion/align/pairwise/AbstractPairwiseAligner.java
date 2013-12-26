@@ -20,13 +20,14 @@
  ******************************************************************************/
 package org.jcvi.jillion.align.pairwise;
 
+import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.List;
 
-import org.jcvi.jillion.align.SubstitutionMatrix;
 import org.jcvi.jillion.align.SequenceAlignment;
+import org.jcvi.jillion.align.SubstitutionMatrix;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.internal.align.SequenceAlignmentBuilder;
@@ -274,19 +275,19 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		
 	}
 
-	private void printTraceBack(){
+	private void printTraceBack(PrintWriter out){
 		for(int i=0; i<traceback.getXLength(); i++){
 			
 			for(int j=0; j<traceback.getYLength(); j++){
 				
-				System.out.printf("%s [?] ",
+				out.printf("%s [?] ",
 							traceback.get(i,j).toString().charAt(0));
 			}
-			System.out.println("");
+			out.println("");
 		}
 		
-		System.out.println(Arrays.toString(scoreCache[PREVIOUS_ROW]));
-		System.out.println(Arrays.toString(scoreCache[CURRENT_ROW]));
+		out.println(Arrays.toString(scoreCache[PREVIOUS_ROW]));
+		out.println(Arrays.toString(scoreCache[CURRENT_ROW]));
 	}
 
 	/**

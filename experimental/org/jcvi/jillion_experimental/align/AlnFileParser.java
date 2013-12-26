@@ -106,7 +106,6 @@ public abstract class AlnFileParser implements AlnParser{
 			 }
 			 eofReached=!parser.hasNextLine();
 		}finally{
-			System.out.println(eofReached + " " + keepParsing.get());
 			if(eofReached && keepParsing.get()){
 				 visitor.visitEnd();
 			 }else{
