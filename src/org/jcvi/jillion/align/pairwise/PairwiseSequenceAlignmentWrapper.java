@@ -111,6 +111,7 @@ final class PairwiseSequenceAlignmentWrapper<R extends Residue, S extends Sequen
 		if (getClass() != obj.getClass()){
 			return false;
 		}
+		@SuppressWarnings("rawtypes")
 		PairwiseSequenceAlignmentWrapper other = (PairwiseSequenceAlignmentWrapper) obj;
 		if (delegate == null) {
 			if (other.delegate != null){

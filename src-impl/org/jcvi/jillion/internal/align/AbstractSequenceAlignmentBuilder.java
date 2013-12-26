@@ -315,10 +315,14 @@ public abstract class AbstractSequenceAlignmentBuilder
 			if (obj == null){
 				return false;
 			}
-			if (getClass() != obj.getClass()){
+			if (!(obj instanceof AbstractSequenceAlignmentBuilder.AbstractSequenceAlignmentImpl)){
 				return false;
 			}
+			@SuppressWarnings("unchecked")
 			AbstractSequenceAlignmentImpl other = (AbstractSequenceAlignmentImpl) obj;
+			if (!getOuterType().equals(other.getOuterType())){
+		        return false;
+			}
 			if (alignmentLength != other.alignmentLength){
 				return false;
 			}
@@ -363,6 +367,8 @@ public abstract class AbstractSequenceAlignmentBuilder
 			return true;
 		}
 
+		
+		@SuppressWarnings("rawtypes")
 		private AbstractSequenceAlignmentBuilder getOuterType() {
 			return AbstractSequenceAlignmentBuilder.this;
 		}
