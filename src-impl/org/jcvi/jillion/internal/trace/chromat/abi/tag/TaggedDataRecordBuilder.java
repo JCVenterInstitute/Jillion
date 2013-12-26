@@ -23,7 +23,7 @@ package org.jcvi.jillion.internal.trace.chromat.abi.tag;
 import org.jcvi.jillion.internal.trace.chromat.abi.tag.rate.DefaultScanRateTaggedDataType;
 
 
-public class TaggedDataRecordBuilder implements org.jcvi.jillion.core.util.Builder<TaggedDataRecord>{
+public class TaggedDataRecordBuilder implements org.jcvi.jillion.core.util.Builder<TaggedDataRecord<?,?>>{
 	private final TaggedDataName name;
 	private final long number;
 	private TaggedDataType dataType;
@@ -81,7 +81,7 @@ public class TaggedDataRecordBuilder implements org.jcvi.jillion.core.util.Build
 		return this;
 	}
 	@Override
-	public TaggedDataRecord build() {
+	public TaggedDataRecord<?,?> build() {
 		if(numberOfElements * elementLength != recordLength){
 			throw new IllegalStateException(
 					String.format("invalid record length: expected(%d) but was %d",
@@ -111,7 +111,7 @@ public class TaggedDataRecordBuilder implements org.jcvi.jillion.core.util.Build
 	}
 
 
-    private TaggedDataRecord handleNumberCase() {
+    private TaggedDataRecord<?,?> handleNumberCase() {
         if(elementLength ==2){
         	return new DefaultShortArrayTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
         }
@@ -119,7 +119,7 @@ public class TaggedDataRecordBuilder implements org.jcvi.jillion.core.util.Build
     }
 
 
-    private TaggedDataRecord handleUserDefinedCase() {
+    private TaggedDataRecord<?,?> handleUserDefinedCase() {
         if(name == TaggedDataName.Rate){
             return new DefaultScanRateTaggedDataType(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);
         }
@@ -127,7 +127,7 @@ public class TaggedDataRecordBuilder implements org.jcvi.jillion.core.util.Build
     }
 
 
-    private TaggedDataRecord handleDefaultCase() {
+    private TaggedDataRecord<?,?> handleDefaultCase() {
         //special case for known null-terminated strings
         if(name.usesNullTerminatedStringValues()){
             return new DefaultAsciiTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);

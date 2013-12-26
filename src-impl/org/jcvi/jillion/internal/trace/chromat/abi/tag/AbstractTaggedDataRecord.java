@@ -138,6 +138,7 @@ public abstract class AbstractTaggedDataRecord<T,D> implements TaggedDataRecord<
 		if (!(obj instanceof TaggedDataRecord)) {
 			return false;
 		}
+		@SuppressWarnings("rawtypes")
 		TaggedDataRecord other = (TaggedDataRecord) obj;
 		if (!name.equals(other.getTagName())) {
 			return false;
