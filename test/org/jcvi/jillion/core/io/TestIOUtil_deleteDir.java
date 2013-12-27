@@ -25,15 +25,19 @@
  */
 package org.jcvi.jillion.core.io;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.jillion.core.io.IOUtil;
 import org.junit.Test;
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 public class TestIOUtil_deleteDir {
 
     File rootDir;
@@ -123,6 +127,17 @@ public class TestIOUtil_deleteDir {
         replay(dir);
         replayAll(subFiles);
         IOUtil.recursiveDelete(dir);
+        verify(dir);
+        verifyAll(subFiles);
+    }
+    @Test
+    public void deleteChildren() throws IOException{
+        File[] subFiles = new File[]{
+                createMockFile(),createMockFile(),createMockFile()};
+        File dir = createMockDirThatIsNotDeleted(subFiles);
+        replay(dir);
+        replayAll(subFiles);
+        IOUtil.deleteChildren(dir);
         verify(dir);
         verifyAll(subFiles);
     }
