@@ -103,14 +103,27 @@ public final class IOUtil {
      */
     public static void recursiveDelete(File file) throws IOException{
         if(file.exists()){
-            if (file.isDirectory()) {
-                for(File subfile: file.listFiles()){
+        	deleteChildren(file);
+            //we are here if dir is an empty dir or a file
+            delete(file);
+        }
+
+    }
+    /**
+     * Recursively delete the given children (and only the children)
+     * of the given directory.
+     * @param file the root directory to delete.
+     * @throws IOException if deleting the directory or
+     * a file under the directory fails.
+     * @throws NullPointerException if dir is null.    
+     */
+    public static void deleteChildren(File dir) throws IOException{
+        if(dir.exists()){
+            if (dir.isDirectory()) {
+                for(File subfile: dir.listFiles()){
                     recursiveDelete(subfile);
                 }
             }
-        
-            //we are here if dir is an empty dir or a file
-            delete(file);
         }
 
     }
