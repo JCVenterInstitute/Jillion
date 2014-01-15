@@ -74,6 +74,8 @@ public class TestAlnFileParser extends EasyMockSupport{
         ids.add("gi|56160492|ref|AC_000007.1|");
         ids.add("gi|33465830|gb|AY339865.1|");
         ids.add("gi|58177684|gb|AY601635.1|");
+        
+        sut.visitHeader(isA(String.class));
     }
     
     @Test
@@ -204,12 +206,15 @@ public class TestAlnFileParser extends EasyMockSupport{
     
     
     @Test
-    public void notAnAlnFileShouldNotVisitAnyMethods() throws IOException{
+    public void notAnAlnFileThrowIOException() throws IOException{
     	String input = "This is not an aln file\nblah blah blah\n#1234";
     	InputStream in =IOUtil.toInputStream(input);
     	AlnVisitor visitor = createMock(AlnVisitor.class);
     	try{
     		 AlnFileParser.create(in).parse(visitor);
+    		 fail("should throw IOException");
+    	}catch(IOException expected){
+    		//pass
     	}finally{
     		IOUtil.closeAndIgnoreErrors(in);
     	}
@@ -233,6 +238,7 @@ public class TestAlnFileParser extends EasyMockSupport{
  		}
  		assertTrue("exception not thrown", thrown);
     }
+    
     
     /**
      * Don't return a groupVisitor for all groups

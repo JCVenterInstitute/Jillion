@@ -99,4 +99,12 @@ public interface AlnVisitor {
      * this group; or {@code null} to skip this group.
      */
     AlnGroupVisitor visitGroup(Set<String> ids, AlnVisitorCallback callback);
+    /**
+     * Visit the Header of this alignment data.
+     * @param header a single line that will start with either 
+     * "CLUSTAL W" or "CLUSTALW" but may have more information
+     * than that (including version etc);
+     * will never be null or empty.
+     */
+	void visitHeader(String header);
 }

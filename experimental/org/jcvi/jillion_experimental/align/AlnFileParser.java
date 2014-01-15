@@ -59,7 +59,7 @@ public abstract class AlnFileParser implements AlnParser{
      * Regular expression of string that contains
      * valid nucleotide or amino acids.
      */
-    private static final String REGEX = "^([^*\\s]+)\\s+([\\-ACGTNVHDBWMRSYKILFQPEX*]+)";
+    private static final String REGEX = "^([^*\\s]+)\\s+([\\-ACGTNVHDBWMRSYKILFQPEX]+)(\\s+\\d+)?$";
     private static final Pattern ALIGNMENT_PATTERN = Pattern.compile(REGEX);
     private static final Pattern CONSERVATION_PATTERN = Pattern.compile("\\s+([-:\\. \\*]+)$");
     
@@ -91,12 +91,28 @@ public abstract class AlnFileParser implements AlnParser{
         return result;
     }
     
-    
     protected void parse(AlnVisitor visitor, InputStream in) throws IOException{
+    	parse(visitor, in, true);
+    }
+    protected void parse(AlnVisitor visitor, InputStream in, boolean validateHeader) throws IOException{
 		TextLineParser parser = new TextLineParser(in);
 		AtomicBoolean keepParsing=new AtomicBoolean(true);
 		boolean eofReached=false;
 		try{
+			
+			if(!parser.hasNextLine()){
+				//header required
+				throw new IOException("no aln data");
+			}
+			if(validateHeader){
+				String header = parser.nextLine();
+				if(!AlnUtil.validHeader(header)){
+					throw new IOException("invalid aln header : " + header);
+				}
+				visitor.visitHeader(header);
+			}
+			
+			//then one or more empty lines
 			 while(keepParsing.get() && parser.hasNextLine()){
 				 AlnVisitorCallback callback = createCallBack(parser, keepParsing);
 				 	Group group = Group.getNextGroup(parser);
@@ -114,7 +130,8 @@ public abstract class AlnFileParser implements AlnParser{
 			IOUtil.closeAndIgnoreErrors(parser);
 		}
 	}
-    protected abstract AlnVisitorCallback createCallBack(TextLineParser parser, AtomicBoolean keepParsing);
+   
+	protected abstract AlnVisitorCallback createCallBack(TextLineParser parser, AtomicBoolean keepParsing);
     
     
 	/**
@@ -181,18 +198,21 @@ public abstract class AlnFileParser implements AlnParser{
     		int numberOfBasesPerGroup=0;
     		
     		while(parser.hasNextLine() && !done){
-    			String line = parser.nextLine();
-    			if(foundGroup && line.trim().isEmpty()){
+    			String untrimmedLine = parser.nextLine();
+    			String trimmedLine = untrimmedLine.trim();
+    			if(foundGroup && trimmedLine.isEmpty()){
     				//we found the end of the group
     				done=true;
     			}
-	            Matcher alignmentMatcher =  ALIGNMENT_PATTERN.matcher(line);
-	            if(alignmentMatcher.find()){
+	            Matcher alignmentMatcher =  ALIGNMENT_PATTERN.matcher(trimmedLine);
+	            if(alignmentMatcher.matches()){
 	            	foundGroup=true;
 	            	numberOfBasesPerGroup = alignmentMatcher.group(2).length();
 	            	lines.put(alignmentMatcher.group(1), alignmentMatcher.group(2));
 	            }else{
-	            	Matcher conservationMatcher = CONSERVATION_PATTERN.matcher(line);
+	            	//need to use untrimmed line because there could be leading or trailing
+	            	//spaces which mean "no match", we don't want to lose those.
+	            	Matcher conservationMatcher = CONSERVATION_PATTERN.matcher(untrimmedLine);
 	                if(conservationMatcher.find()){
 	                    String conservationString = conservationMatcher.group(1);
 	                    info = parseConservationInfo(conservationString,numberOfBasesPerGroup);
@@ -330,7 +350,7 @@ public abstract class AlnFileParser implements AlnParser{
 			InputStream in =null;
 			try{
 				in = new BufferedInputStream(new RandomAccessFileInputStream(alnFile, alnFileMemento.offset));
-				parse(visitor,in);
+				parse(visitor,in, false);
 			}finally{
 				IOUtil.closeAndIgnoreErrors(in);
 			}

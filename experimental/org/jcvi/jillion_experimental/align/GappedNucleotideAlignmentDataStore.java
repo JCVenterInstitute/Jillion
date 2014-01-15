@@ -148,6 +148,16 @@ public final class GappedNucleotideAlignmentDataStore {
 		}
 
 
+
+
+
+		@Override
+		public void visitHeader(String header) {
+			// TODO Auto-generated method stub
+			
+		}
+
+
         
     }
   

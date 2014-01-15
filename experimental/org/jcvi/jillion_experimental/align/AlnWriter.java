@@ -31,5 +31,7 @@ public interface AlnWriter<R extends Residue, S extends Sequence<R>> extends Clo
 	 * is called more than once with the same id.
 	 */
 	void write(String id, S sequence) throws IOException;
+
+	void writeHeader(String header);
 	
 }
