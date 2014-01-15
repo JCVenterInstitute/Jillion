@@ -487,11 +487,16 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      * non-trimmed raw full length
      * read from the sequence machine.
      * @return this.
+     * @throws NullPointerException if parameters are null
+     * @throws IllegalArgumentException if a read with the same readId already exists in this contig.
      */
     public AceContigBuilder addRead(String readId, NucleotideSequence validBases, int offset,
             Direction dir, Range clearRange,PhdInfo phdInfo,int ungappedFullLength) {
         if(readId ==null){
         	throw new NullPointerException("readId can not be null");
+        }
+        if(aceReadBuilderMap.containsKey(readId)){
+        	throw new IllegalArgumentException("read with same id already in contig" + readId);
         }
     	if(validBases ==null){
     		throw new NullPointerException("valid bases can not be null");
