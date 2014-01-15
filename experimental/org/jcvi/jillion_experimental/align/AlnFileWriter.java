@@ -33,6 +33,7 @@ import org.jcvi.jillion_experimental.align.AlnGroupVisitor.ConservationInfo;
  * @param <S> type of {@link Sequence} to be written.
  */
 public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> implements AlnWriter<R,S>{
+	private static final String DEFAULT_CLUSTAL_HEADER = "CLUSTAL W";
 	private static final int DEFAULT_RESIDUES_PER_GROUP = 60;
 	private static final int USE_ONE_GROUP = -1;
 	
@@ -41,6 +42,17 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 	private final Map<String,S> sequences = new LinkedHashMap<String, S>();
 	private long seqLength=0;
 	private final String eol;
+	private long cumulativeLength;
+	
+	private final boolean includeCumulativeCounts;
+	/**
+	 * Flag that sets if data
+	 * has been written yet.
+	 * this is used to check
+	 * if we can write a header or not
+	 * (since header must come first).
+	 */
+	private boolean headerWritten=false;
 	
 	/**
 	 * Create a new {@link AlnFileWriterBuilder}
@@ -73,15 +85,19 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 	
 	
 	
-	private AlnFileWriter(File outputFile, int residuesPerGroup, String eol) throws IOException {
+	private AlnFileWriter(File outputFile, int residuesPerGroup, String eol, boolean includeCounts) throws IOException {
 		IOUtil.mkdirs(outputFile.getParentFile());
 		this.out = new PrintWriter(new BufferedOutputStream(new FileOutputStream(outputFile)));
 		this.residuesPerGroup = residuesPerGroup;
 		this.eol = eol;
+		this.includeCumulativeCounts = includeCounts;
 	}
 
 	@Override
 	public void close() throws IOException {
+		if(!headerWritten){
+			writeHeader(DEFAULT_CLUSTAL_HEADER);
+		}
 		if(!sequences.isEmpty()){
 			if(residuesPerGroup == USE_ONE_GROUP){
 				handleGroup(Range.ofLength(seqLength));
@@ -107,6 +123,10 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 		
 	}
 	private void handleGroup(Range r){
+		if(sequences.isEmpty()){
+			//no-op 
+			return;
+		}
 		int rangeLength = (int)r.getLength();
 		List<Iterator<R>> iterators = new ArrayList<Iterator<R>>(sequences.size());
 		List<StringBuilder> builders = new ArrayList<StringBuilder>(sequences.size());
@@ -117,7 +137,14 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 				maxIdLength = length;
 			}
 		}
-		int lineLength = maxIdLength +1 + eol.length() + rangeLength;
+		final String lineCount;
+		if(includeCumulativeCounts){
+			cumulativeLength +=  rangeLength;
+			lineCount = String.format(" %d", cumulativeLength);
+		}else{
+			lineCount="";
+		}
+		int lineLength = maxIdLength +1 + eol.length() + rangeLength+lineCount.length();
 		for(Entry<String,S> entry: sequences.entrySet()){
 			iterators.add(entry.getValue().iterator(r));
 			String id = entry.getKey();
@@ -128,7 +155,7 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 			for(int i=0; i<padding; i++){
 				builder.append(" ");
 			}
-			builder.append('\t');
+			builder.append('\t');			
 			builders.add(builder);
 		}
 		StringBuilder conservationBuilder = new StringBuilder(lineLength);
@@ -146,10 +173,15 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 			ConservationInfo info = computeConservationInfo(uniqueValues);
 			conservationBuilder.append(info.asChar());
 		}
+		
 		//now our text for the group is all stored in StringBuilders
 		//write them to out
 		for(int i=0; i<builders.size(); i++){
-			out.write(builders.get(i).append(eol).toString());
+			StringBuilder builder = builders.get(i);
+			if(includeCumulativeCounts){
+				builder.append(lineCount);
+			}
+			out.write(builder.append(eol).toString());
 		}
 		//now write conservation string
 		out.write(conservationBuilder.append(eol).toString());
@@ -158,7 +190,21 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 	
 	protected abstract Set<R> createNewResiudeSet();
 	protected abstract ConservationInfo computeConservationInfo(Set<R> values);
-
+	
+	@Override
+	public void writeHeader(String header) {
+		assertHeaderNotWrittenYet();
+		
+		out.write(header);
+		out.write(eol);
+		headerWritten=true;
+	}
+	private void assertHeaderNotWrittenYet() {
+		if(headerWritten){
+			throw new IllegalStateException("header can only be written once");
+		}
+		
+	}
 	@Override
 	public void write(String id, S sequence) throws IOException {
 		if(id ==null){
@@ -189,8 +235,8 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 
 		
 		public NucleotideAlnFileWriter(File outputFile, int residuesPerGroup,
-				String eol) throws IOException {
-			super(outputFile, residuesPerGroup, eol);
+				String eol, boolean includeCounts) throws IOException {
+			super(outputFile, residuesPerGroup, eol, includeCounts);
 		}
 
 		@Override
@@ -240,8 +286,8 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 		
 		
 		public AminoAcidAlnFileWriter(File outputFile, int residuesPerGroup,
-				String eol) throws IOException {
-			super(outputFile, residuesPerGroup, eol);
+				String eol, boolean includeCounts) throws IOException {
+			super(outputFile, residuesPerGroup, eol, includeCounts);
 		}
 
 		@Override
@@ -288,7 +334,9 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 		private final File outFile;
 		
 		private int residuesPerGroup = DEFAULT_RESIDUES_PER_GROUP;
-		private String eol = "\n";		
+		private String eol = "\n";
+		
+		private boolean includeCumulativeCounts=false;
 		
 		
 		private AlnFileWriterBuilder(File outFile) {
@@ -353,10 +401,37 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 		 * writer.
 		 */
 		public AlnFileWriter<R, S> build() throws IOException{
-			return createNew(outFile, residuesPerGroup, eol);
+			return createNew(outFile, residuesPerGroup, eol, includeCumulativeCounts);
+		}
+		/**
+		 * Include the cumulative count of residues for the seqences
+		 * on each sequence line. If this method is not called,
+		 * then the writer will default to not writing out the counts
+		 * (same as calling this method with {@code false}.
+		 * <p>
+		 * If set to {@code true}, then the output will look like this:
+		 * <pre>
+		 *...
+		*FOSB_MOUSE      MFQAFPGDYDSGSRCSSSPSAESQYLSSVDSFGSPPTAAASQECAGLGEMPGSFVPTVTA 60
+      	*FOSB_HUMAN      MFQAFPGDYDSGSRCSSSPSAESQYLSSVDSFGSPPTAAASQECAGLGEMPGSFVPTVTA 60
+      	*                ************************************************************
+
+        *FOSB_MOUSE      ITTSQDLQWLVQPTLISSMAQSQGQPLASQPPAVDPYDMPGTSYSTPGLSAYSTGGASGS 120
+        *FOSB_HUMAN      ITTSQDLQWLVQPTLISSMAQSQGQPLASQPPVVDPYDMPGTSYSTPGMSGYSSGGASGS 120
+        *                ********************************.***************:*.**:******
+
+		* etc..
+		 * </pre>
+		 * @param include flag to include the counts or not.
+		 * @return this.
+		 */
+		public AlnFileWriterBuilder<R, S> includeCumulativeCounts(boolean include) {
+			includeCumulativeCounts = include;
+			return this;
 		}
 		
-		protected abstract AlnFileWriter<R, S> createNew(File f, int groupLength, String endOfLine) throws IOException;
+		protected abstract AlnFileWriter<R, S> createNew(File f, int groupLength, String endOfLine, boolean includeCounts) throws IOException;
+		
 	}
 	
 	public static final class NucleotideAlnFileWriterBuilder extends AlnFileWriterBuilder<Nucleotide, NucleotideSequence>{
@@ -366,8 +441,8 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 		}
 
 		@Override
-		protected AlnFileWriter<Nucleotide, NucleotideSequence> createNew(File f, int groupLength, String endOfLine) throws IOException {
-			return new NucleotideAlnFileWriter(f, groupLength, endOfLine);
+		protected AlnFileWriter<Nucleotide, NucleotideSequence> createNew(File f, int groupLength, String endOfLine, boolean includeCounts) throws IOException {
+			return new NucleotideAlnFileWriter(f, groupLength, endOfLine, includeCounts);
 		}
 
 		
@@ -380,12 +455,14 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 		}
 
 		@Override
-		protected AlnFileWriter<AminoAcid, ProteinSequence> createNew(File f, int groupLength, String endOfLine) throws IOException {
-			return new AminoAcidAlnFileWriter(f, groupLength, endOfLine);
+		protected AlnFileWriter<AminoAcid, ProteinSequence> createNew(File f, int groupLength, String endOfLine, boolean includeCounts) throws IOException {
+			return new AminoAcidAlnFileWriter(f, groupLength, endOfLine,includeCounts);
 		}
 
 		
 	}
+
+	
 
 	
 }

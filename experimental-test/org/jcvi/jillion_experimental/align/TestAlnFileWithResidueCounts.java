@@ -12,48 +12,40 @@ import java.util.Set;
 
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
-public class TestAminoAcidAlnParser {
 
+public class TestAlnFileWithResidueCounts {
 	@Test
 	public void parse() throws IOException{
 		ResourceHelper helper = new ResourceHelper(TestAminoAcidAlnParser.class);
-		File alnFile = helper.getFile("files/pep.aln");
+		File alnFile = helper.getFile("files/pepWithCumulativeCounts.aln");
 		
 		Map<String, String> expected = new HashMap<String,String>();
 		
-		expected.put("EPI489629", 
-				"MKTIIALSYILCLVFAQKLPGNDNSTATLCLGHHAVPNGTIVKTITNDRIEVTNATELVQ"
-						+ "NSSIGEICDSPHQILDGENCTLIDALLGDPQCDGFQNKKWDLFVERSKAYSNCYPYDVPD"
-						+ "YASLRSLVASSGTLEFNNESFNWAGVTQNGTSSACIRGSNSSFFSRLNWLTHLNFKYPAL"
-						+ "NVTMPNNEQFDKLYIWGVHHPGTDKDQIFLYAQSSGRITVSTRRSQQAVIPNIGSRPRIR"
-						+ "NIPSRISIYWTIVKPGDILLINSTGNLIAPRGYFKIRSGKSSIMRSDAPIGKCKSECITP"
-						+ "NGSIPNDKPFQNVNRITYGACPRYVKQSTLKLATGMRNVPEKQTRGIFGAIAGFIENGWE"
-						+ "GMMDGWYGFRHQNSEGRGQAADLKSTQAAIDQINGKLNRLIGKTNEKFHQIEKEFSEVEG"
-						+ "RIQNLEKYVEDTKIDLWSYNAELLVALENQHTIDLTDSEMNKLFEKTKKQLRENAEDMGN"
-						+ "GCFKIYHKCDNACIGSIRNGTYDHDVYRDEALNNRFQIKGVELKSGYKDWILWISFAISC"
-						+ "FLLCVALLGFIMWACQKGNIRCNICI"
+		expected.put("FOSB_MOUSE", 
+						"MFQAFPGDYDSGSRCSSSPSAESQYLSSVDSFGSPPTAAASQECAGLGEMPGSFVPTVTA"
+						+ "ITTSQDLQWLVQPTLISSMAQSQGQPLASQPPAVDPYDMPGTSYSTPGLSAYSTGGASGS"
+						+ "GGPSTSTTTSGPVSARPARARPRRPREETLTPEEEEKRRVRRERNKLAAAKCRNRRRELT"
+						+ "DRLQAETDQLEEEKAELESEIAELQKEKERLEFVLVAHKPGCKIPYEEGPGPGPLAEVRD"
+						+ "LPGSTSAKEDGFGWLLPPPPPPPLPFQSSRDAPPNLTASLFTHSEVQVLGDPFPVVSPSY"
+						+ "TSSFVLTCPEVSAFAGAQRTSGSEQPSDPLNSPSLLAL"
 				);
 		
-		expected.put("H3N2",
-						"MKTIIALSYILCLVFTQKLPGNDNSTATLCLGHHAVPNGTIVKTITNDQIEVTNATELVQ"
-						+ "SSSTGEICDSPHQILDGENCTLIDALLGDPQCDGFQNKKWDLFVERSKAYSNCYPYDVPD"
-						+ "YASLRSLVASSGTLEFNNESFNWTGVTQNGTSSACIRRSNNSFFSRLNWLTHLKFKYPAL"
-						+ "NVTMPNNEKFDKLYIWGVHHPGTDNDQIFPYAQASGRITVSTKRSQQTVIPNIGSRPRVR"
-						+ "NIPSRISIYWTIVKPGDILLINSTGNLIAPRGYFKIRSGKSSIMRSDAPIGKCNSECITP"
-						+ "NGSIPNDKPFQNVNRITYGACPRYVKQNTLKLATGMRNVPEKQTR---------------"
-						+ "------------------------------------------------------------"
-						+ "------------------------------------------------------------"
-						+ "------------------------------------------------------------"
-						+ "--------------------------"
+		expected.put("FOSB_HUMAN",
+						"MFQAFPGDYDSGSRCSSSPSAESQYLSSVDSFGSPPTAAASQECAGLGEMPGSFVPTVTA"
+						+ "ITTSQDLQWLVQPTLISSMAQSQGQPLASQPPVVDPYDMPGTSYSTPGMSGYSSGGASGS"
+						+ "GGPSTSGTTSGPGPARPARARPRRPREETLTPEEEEKRRVRRERNKLAAAKCRNRRRELT"
+						+ "DRLQAETDQLEEEKAELESEIAELQKEKERLEFVLVAHKPGCKIPYEEGPGPGPLAEVRD"
+						+ "LPGSAPAKEDGFSWLLPPPPPPPLPFQTSQDAPPNLTASLFTHSEVQVLGDPFPVVNPSY"
+						+ "TSSFVLTCPEVSAFAGAQRTSGSDQPSDPLNSPSLLAL"
 				);
 		
 		String conservationLine = 
-						"***************:********************************:***********" +
-						".** ********************************************************" +
-						"***********************:************* **.************:******" +
-						"********:***************:**** ***:********:****:**********:*" +
-						"*****************************************************:******" +
-						"***************************.*****************";
+							"************************************************************"
+							+ "********************************.***************:*.**:******"
+							+ "****** ***** .**********************************************"
+							+ "************************************************************"
+							+ "****:.******.**************:*:**************************.***"
+							+ "***********************:**************";
 		
 		final Map<String,StringBuilder> actual = new HashMap<String, StringBuilder>();
 		final StringBuilder actualConservation = new StringBuilder();

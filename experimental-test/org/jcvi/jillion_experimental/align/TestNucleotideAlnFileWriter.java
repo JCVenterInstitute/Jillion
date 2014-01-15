@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -40,6 +43,40 @@ public class TestNucleotideAlnFileWriter {
 																	.build();
 		
 		writeAndAssertDataWrittenCorrectly(writer);
+	}
+	@Test
+	public void writeCumulativeResidueCounts() throws IOException, DataStoreException{		
+		
+		AlnFileWriter<Nucleotide, NucleotideSequence> writer = AlnFileWriter.createNucleotideWriterBuilder(out)
+																		.includeCumulativeCounts(true)
+																		.build();
+		
+		writeAndAssertDataWrittenCorrectly(writer);
+		//confirm lines end in numbers
+		Scanner scanner = null;
+		try{
+			scanner= new Scanner(out);
+			Pattern linePattern = Pattern.compile("gi\\S+\\s+(\\S+)\\s(\\d+)");
+			int cumulativeLength=0;
+			int currentGroupLength=0;
+			while(scanner.hasNextLine()){
+				String line = scanner.nextLine();
+				if(line.contains("**")){
+					//nextGroup
+					cumulativeLength+=currentGroupLength;
+				}
+				Matcher matcher = linePattern.matcher(line);
+				if(matcher.find()){
+					int actualLength = matcher.group(1).length();
+					int expectedLength = Integer.parseInt(matcher.group(2));
+					assertEquals("cumulative count wrong for " + line, cumulativeLength+actualLength, expectedLength);
+					//all lengths in the group should be the same
+					currentGroupLength = actualLength;
+				}
+			}
+		}finally{
+			IOUtil.closeAndIgnoreErrors(scanner);
+		}
 	}
 	
 	@Test
