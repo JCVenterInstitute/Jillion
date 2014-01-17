@@ -55,6 +55,12 @@ public final class IteratorUtil {
         return IteratorUtil.createStreamingIterator(EmptyIterator.INSTANCE);
     }
     /**
+     * Creates an efficient {@link Iterator} over an array.
+     */
+    public static <E> Iterator<E> createIteratorFromArray(E[] array){
+    	return new ArrayIterator<E>(array);
+    }
+    /**
      * Create a new {@link PeekableStreamingIterator} instance
      * which wraps the given iterator.
      * @param iter
