@@ -31,8 +31,6 @@ import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
-import org.jcvi.jillion.core.qual.trim.LucyQualityTrimmerBuilder;
-import org.jcvi.jillion.core.qual.trim.QualityTrimmer;
 import org.jcvi.jillion.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.jillion.fasta.qual.QualityFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
@@ -49,8 +47,8 @@ public class TestLucyQualityTrimmer {
     private QualitySequenceDataStore qualities;
     
     QualityTrimmer sut = new LucyQualityTrimmerBuilder(30)
-                            .addTrimWindow(30, 0.1F)
-                            .addTrimWindow(10, 0.35F)
+                            .addTrimWindow(30, 0.01F)
+                            .addTrimWindow(10, 0.035F)
                             .build();
     
     public TestLucyQualityTrimmer(){
@@ -67,7 +65,7 @@ public class TestLucyQualityTrimmer {
     public void SAJJA07T27G07MP1F() throws DataStoreException{
         final QualitySequence fullQualities = qualities.get("SAJJA07T27G07MP1F");
         Range actualTrimRange = sut.trim(fullQualities);
-        Range expectedRange = Range.of(CoordinateSystem.RESIDUE_BASED, 12,679);
+        Range expectedRange = Range.of(CoordinateSystem.RESIDUE_BASED, 12,678);
         assertEquals(expectedRange, actualTrimRange);
     }
     @Test
@@ -103,5 +101,14 @@ public class TestLucyQualityTrimmer {
 				new QualityFastaFileDataStoreBuilder(qualFile).build());
         final QualitySequence trashQualities = trashQualDataStore.get("JBZTB06T19E09NA1F");
         assertEquals(new Range.Builder().build(), sut.trim(trashQualities));
+    }
+    
+    @Test
+    public void twoGoodQualityRegionsShouldShiftDownstreamRegionCoordinatesCorrectly() throws IOException, DataStoreException{
+    	 File qualFile = resources.getFile("files/2regions.qual");
+ 		QualitySequenceDataStore datastore =FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, 
+ 				new QualityFastaFileDataStoreBuilder(qualFile).build());
+         final QualitySequence quals = datastore.get("JUZHA08T56D09NS903R");
+         assertEquals(Range.of(84,374), sut.trim(quals));
     }
 }

@@ -231,7 +231,8 @@ public final class LucyQualityTrimmerBuilder implements org.jcvi.jillion.core.ut
                     List<Double> errorRates) {
                 List<Double> bracketedErrorRates = getSubList(errorRates, bracketedRegion);
                 List<Range> largestRanges = new ArrayList<Range>();
-                for(Range candidateCleanRange : findCandidateCleanRangesFrom(bracketedErrorRates,trimWindows)){
+                List<Range> candidateCleanRanges = findCandidateCleanRangesFrom(bracketedErrorRates,trimWindows);
+				for(Range candidateCleanRange : candidateCleanRanges){
                     List<Double> candidateErrorRates = getSubList(bracketedErrorRates, candidateCleanRange);
                     largestRanges.add(findLargestRangeThatPassesTotalAvgErrorRate(candidateErrorRates, candidateCleanRange));
                 }
@@ -261,7 +262,7 @@ public final class LucyQualityTrimmerBuilder implements org.jcvi.jillion.core.ut
                 while(!done && currentWindowSize >=SIZE_OF_ENDS){
                    
                     for(int i=0; i< (encodedCandidateErrorRates.size() - currentWindowSize) && i<=currentWindowSize; i++){
-                        Range currentWindowRange = Range.of(i, currentWindowSize);
+                        Range currentWindowRange = new Range.Builder(currentWindowSize).shift(i).build();
                         double avgErrorRate = this.computeAvgErrorRateOf(encodedCandidateErrorRates, currentWindowRange);
                         Range leftRange = new Range.Builder(SIZE_OF_ENDS)
                         					.shift(currentWindowRange.getBegin())
@@ -272,7 +273,9 @@ public final class LucyQualityTrimmerBuilder implements org.jcvi.jillion.core.ut
                                 && leftEndErrorRate <= this.maxErrorAtEnds 
                                 && rightEndErrorRate <= this.maxErrorAtEnds){
                             //found a good range!
-                            return currentWindowRange;
+                            return new Range.Builder(currentWindowRange)
+                            		.shift(candidateCleanRange.getBegin())
+                            		.build();
                         }
                     }
                     currentWindowSize--;
@@ -296,7 +299,8 @@ public final class LucyQualityTrimmerBuilder implements org.jcvi.jillion.core.ut
                     Window subsequentTrimWindow = iterator.next();
                     List<Range> trimmedCandidateCleanRanges = new ArrayList<Range>();
                     for(Range range : candidateCleanRanges){
-                        for(Range newCandidateRange : trim(getSubList(bracketedErrorRates,range), subsequentTrimWindow)){
+                        List<Range> trim = trim(getSubList(bracketedErrorRates,range), subsequentTrimWindow);
+						for(Range newCandidateRange : trim){
                             trimmedCandidateCleanRanges.add(new Range.Builder(newCandidateRange)
                             								.shift(range.getBegin())
                             								.build());
