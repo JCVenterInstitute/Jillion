@@ -196,7 +196,8 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 		assertHeaderNotWrittenYet();
 		
 		out.write(header);
-		out.write(eol);
+		out.write(eol); //end of headerline
+		out.write(eol); //blank line
 		headerWritten=true;
 	}
 	private void assertHeaderNotWrittenYet() {
