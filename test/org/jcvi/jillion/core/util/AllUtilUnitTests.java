@@ -68,7 +68,11 @@ import org.junit.runners.Suite.SuiteClasses;
         TestByteArrayIterator.class,
         TestShortArrayIterator.class,
         TestIntArrayIterator.class,
-        TestLongArrayIterator.class
+        TestLongArrayIterator.class,
+        
+        TestUnsignedByteArray.class,
+        TestUnsignedShortArray.class,
+        TestUnsignedIntArray.class
         
     }
     )

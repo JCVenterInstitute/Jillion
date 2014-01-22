@@ -1,4 +1,4 @@
-package org.jcvi.jillion.sam;
+package org.jcvi.jillion.sam.attribute;
 
 public final class SamAttributeKey{
 	/**

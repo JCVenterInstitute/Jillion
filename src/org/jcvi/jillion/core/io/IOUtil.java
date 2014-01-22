@@ -667,7 +667,7 @@ public final class IOUtil {
     private static String convertToPaddedHex(BigInteger value, int maxNumberOfHexChars) {
         String hexString =value.toString(16);
         int padding = maxNumberOfHexChars-hexString.length();
-        StringBuilder paddingString = new StringBuilder();
+        StringBuilder paddingString = new StringBuilder(maxNumberOfHexChars);
         for(int i=0; i< padding; i++){
             paddingString.append('0');
         }
