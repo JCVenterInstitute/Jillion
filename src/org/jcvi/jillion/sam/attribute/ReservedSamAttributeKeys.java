@@ -152,7 +152,7 @@ round(value * 100.0).
 	 */
 	ORIGINAL_CIGAR('O','C', SamAttributeType.STRING),
 	/**
-	 * Program. Value matches the header PG-ID tag if @PG is present.
+	 * SamProgram. Value matches the header PG-ID tag if @PG is present.
 	 */
 	PROGRAM('P','G', SamAttributeType.STRING),
 	/**

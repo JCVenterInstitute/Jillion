@@ -1,9 +1,12 @@
 package org.jcvi.jillion.sam;
 
 import java.util.EnumSet;
+import java.util.Map;
 
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
+import org.jcvi.jillion.sam.attribute.SamAttribute;
+import org.jcvi.jillion.sam.attribute.SamAttributeKey;
 import org.jcvi.jillion.sam.cigar.Cigar;
 
 public class SamRecord {
@@ -16,11 +19,13 @@ public class SamRecord {
 	private final QualitySequence qualities;
 	
 	private final int observedTemplateLength;
-
+	private final Map<SamAttributeKey, SamAttribute> attributes;
+	
 	private SamRecord(String queryName, EnumSet<SamRecordFlags> flags,
 			String referenceName, int startOffset, byte mappingQuality, Cigar cigar,
 			String nextName, int nextOffset, int observedTemplateLength,
-			ReferenceMappedNucleotideSequence sequence, QualitySequence qualities) {
+			ReferenceMappedNucleotideSequence sequence, QualitySequence qualities,
+			Map<SamAttributeKey, SamAttribute> attributes) {
 		this.queryName = queryName;
 		this.flags = flags;
 		this.referenceName = referenceName;
@@ -32,6 +37,7 @@ public class SamRecord {
 		this.observedTemplateLength = observedTemplateLength;
 		this.sequence = sequence;
 		this.qualities = qualities;
+		this.attributes = attributes;
 	}
 	
 	public boolean isPrimary(){
@@ -90,5 +96,15 @@ public class SamRecord {
 		return observedTemplateLength;
 	}
 	
+	public boolean hasAttribute(SamAttributeKey key){
+		if(key==null){
+			throw new NullPointerException("key can not be null");
+		}
+		return attributes.containsKey(key);
+	}
+	
+	public SamAttribute getAttribute(SamAttributeKey key){
+		return attributes.get(key);
+	}
 	
 }

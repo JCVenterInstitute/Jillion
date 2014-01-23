@@ -7,7 +7,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-    	TestProgramChain.class
+    	TestSamProgram.class,
+    	TestReadGroup.class,
+    	TestSamVersion.class
     }
     )
 public class AllSamHeaderTests {
