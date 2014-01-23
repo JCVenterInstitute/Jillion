@@ -1,15 +1,17 @@
-package org.jcvi.jillion.sam.attribute;
+package org.jcvi.jillion.sam.header;
 
 import org.jcvi.jillion.sam.SamUtil;
 
-public final class SamAttributeKey{
+
+public class SamHeaderTagKey {
+
 	/**
 	 * The two letters of our key
 	 * stored as primitives to save memory.
 	 */
 	char key1,key2;
 
-	public SamAttributeKey(char key1, char key2) {
+	public SamHeaderTagKey(char key1, char key2) {
 		 if(!SamUtil.isValidKey(key1, key2)){
 			 throw new IllegalArgumentException("invalid key " + key1 + key2);
 		 
@@ -42,7 +44,7 @@ public final class SamAttributeKey{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		SamAttributeKey other = (SamAttributeKey) obj;
+		SamHeaderTagKey other = (SamHeaderTagKey) obj;
 		if (key1 != other.key1)
 			return false;
 		if (key2 != other.key2)
@@ -71,8 +73,4 @@ public final class SamAttributeKey{
 	public char getSecondChar() {
 		return key2;
 	}
-	
-	
-	
-	
 }
