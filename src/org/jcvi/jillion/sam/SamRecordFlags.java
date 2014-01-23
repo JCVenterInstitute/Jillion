@@ -25,6 +25,10 @@ public enum SamRecordFlags {
 	//                             10100011
 	//                              1010011
 	//                         100000010000
+	/**
+	 *  Notes that the read multi-mapped
+	 * and so will have multiple alignment records.
+	 */
 	HAS_MULT_SEGMENTS(1),
 	EACH_SEGMENT_PROPERLY_ALIGNED(2),
 	/**
