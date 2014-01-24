@@ -25,12 +25,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.JoinedStringBuilder;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 import org.junit.Test;
@@ -38,7 +38,11 @@ public class TestTextLineParser {
 
 	@Test(expected = NullPointerException.class)
 	public void nullInputStreamShouldThrowNPE() throws IOException{
-		new TextLineParser(null);
+		new TextLineParser((InputStream)null);
+	}
+	@Test(expected = NullPointerException.class)
+	public void nullFileShouldThrowNPE() throws IOException{
+		new TextLineParser((File)null);
 	}
 	
 	

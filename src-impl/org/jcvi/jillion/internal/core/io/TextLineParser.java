@@ -20,7 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.core.io;
 
+import java.io.BufferedInputStream;
 import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -97,6 +100,9 @@ public final class TextLineParser implements Closeable{
 	 */
 	private int pushedBackValue=NOT_SET;
 	
+	public TextLineParser(File f) throws IOException{
+		this(new BufferedInputStream(new FileInputStream(f)));
+	}
 	public TextLineParser(InputStream in) throws IOException{
 		this(in, 0L);
 	}
