@@ -515,7 +515,7 @@ public enum SamAttributeType {
 		}
 	},
 	;
-	private final static String[] HEX_ARRAY = new String[255];
+	private static final String[] HEX_ARRAY = new String[255];
 	private static final Pattern SPLIT_ARRAY_PATTERN = Pattern.compile(",");
 	private static final Pattern ARRAY_PATTERN = Pattern.compile("[cCsSiIf](,[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)+");
 	
