@@ -275,8 +275,39 @@ public class SamHeader {
 			comments.add(commentLine);
 			return this;
 		}
-		
+		/**
+		 * Set the {@link SortOrder}.
+		 * @param order the SortOrder;
+		 * if this value is set to {@code null}
+		 * then the value will be changed to
+		 * {@link SortOrder#UNKNOWN}.
+		 * @return this.
+		 */
+		public Builder setSortOrder(SortOrder order){
+			if(order ==null){
+				this.sortOrder = SortOrder.UNKNOWN;
+			}else{
+				this.sortOrder = order;
+			}
+			return this;
+			
+		}
+		/**
+		 * Build a new SamHeader.
+		 * @return
+		 * @throws IllegalStateException if a {@link SamProgram}'s
+		 * previous program id is not also included in this header.
+		 */
 		public SamHeader build(){
+			//confirm all program's previous are known?
+			for(SamProgram program : programs.values()){
+				String prevId = program.getPreviousProgramId();
+				if(prevId !=null){
+					if(!programs.containsKey(prevId)){
+						throw new IllegalStateException("known previous program " + prevId + "referenced in " + program.getId());
+					}
+				}
+			}
 			return new SamHeader(this);
 		}
 	}

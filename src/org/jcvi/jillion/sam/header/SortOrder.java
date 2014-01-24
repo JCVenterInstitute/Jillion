@@ -27,4 +27,13 @@ public enum SortOrder {
 	 * alignments with some other value but otherwise are in arbitrary order.
 	 */
 	COORDINATE;
+	
+	public static SortOrder parseSortOrder(String sortOrder){
+		for(SortOrder order : values()){
+			if(order.name().equalsIgnoreCase(sortOrder)){
+				return order;
+			}
+		}
+		return null;
+	}
 }

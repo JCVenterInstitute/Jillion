@@ -99,8 +99,16 @@ public enum SamAttributeType {
 
 		@Override
 		public void validate(Object value) throws InvalidValueTypeException {
+			if(value instanceof String){
+				
+			}
 			if(!(value instanceof Integer)){
-				throw new InvalidValueTypeException("not a valid int");				
+				//check that it can be parsed into an int
+				try{
+					Integer.parseInt(value.toString());
+				}catch(NumberFormatException e){
+					throw new InvalidValueTypeException("not a valid int : '" + value + "'", e);
+				}
 			}
 			
 		}
