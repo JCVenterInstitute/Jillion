@@ -133,7 +133,6 @@ public class TestSamRecordFlags {
 	@Test
 	public void bits145(){
 		EnumSet<SamRecordFlags> actual = SamRecordFlags.parseFlags(145);
-		System.out.println(actual);
 		EnumSet<SamRecordFlags> expected = EnumSet.of(
 				
 				SamRecordFlags.HAS_MULT_SEGMENTS,
