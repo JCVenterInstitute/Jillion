@@ -1,6 +1,7 @@
 package org.jcvi.jillion.sam.header;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -73,7 +74,15 @@ public class SamHeader {
 	public ReadGroup getReadGroup(String id){
 		return readGroups.get(id);
 	}
-
+	public Collection<ReadGroup> getReadGroups(){
+		return readGroups.values();
+	}
+	public Collection<SamProgram> getPrograms(){
+		return programs.values();
+	}
+	public Collection<ReferenceSequence> getReferenceSequences(){
+		return referenceSequences.values();
+	}
 
 	
 

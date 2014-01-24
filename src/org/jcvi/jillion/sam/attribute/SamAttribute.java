@@ -4,7 +4,7 @@ import org.jcvi.jillion.core.util.UnsignedByteArray;
 import org.jcvi.jillion.core.util.UnsignedIntArray;
 import org.jcvi.jillion.core.util.UnsignedShortArray;
 
-public abstract class SamAttribute {
+public class SamAttribute {
 	
 	private final SamAttributeKey key;
 	
@@ -32,6 +32,12 @@ public abstract class SamAttribute {
 		this.value = value;
 	}
 	
+	public SamAttributeType getType() {
+		return type;
+	}
+	public Object getValue() {
+		return value;
+	}
 	public SamAttributeKey getKey(){
 		return key;
 	}

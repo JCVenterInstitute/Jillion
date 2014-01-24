@@ -1,4 +1,8 @@
 package org.jcvi.jillion.sam.attribute;
+
+import org.jcvi.jillion.sam.header.ReadGroup;
+import org.jcvi.jillion.sam.header.SamHeader;
+
 /**
  * {@code ReservedSamAttributeKeys}
  * are the {@link SamAttributeKey}s that the 
@@ -86,9 +90,20 @@ round(value * 100.0).
 	 */
 	FLOW_SIG('F','Z', SamAttributeType.UNSIGNED_SHORT_ARRAY),
 	/**
-	 * Library. Value to be consistent with the header RG-LB tag if @RG is present.
+	 * Library. Value to be consistent with the header
+	 * {@link org.jcvi.jillion.sam.header.ReadGroup#getLibrary()}
+	 *  if this record belong to a Read Group.
 	 */
-	LIBRARY('L','B', SamAttributeType.STRING),
+	LIBRARY('L','B', SamAttributeType.STRING){
+
+		@Override
+		public void validate(SamHeader header, Object value) throws InvalidAttributeException {
+			if(! header.hasReadGroup(getType().getString(value))){
+				throw new InvalidAttributeException("header must have read group with id "+ value);
+			}
+		}
+		
+	},
 	/**
 	 * Number of perfect hits
 	 */
@@ -152,9 +167,21 @@ round(value * 100.0).
 	 */
 	ORIGINAL_CIGAR('O','C', SamAttributeType.STRING),
 	/**
-	 * SamProgram. Value matches the header PG-ID tag if @PG is present.
+	 * SamProgram, the value must match 
+	 * a {@link org.jcvi.jillion.sam.header.SamProgram#getId()}
+	 * in the header.
 	 */
-	PROGRAM('P','G', SamAttributeType.STRING),
+	PROGRAM('P','G', SamAttributeType.STRING){
+
+		@Override
+		void validate(SamHeader header, Object value)
+				throws InvalidAttributeException {
+			if(!header.hasSamProgram(getType().getString(value))){
+				throw new InvalidAttributeException("header does not contain program " + value);
+			}
+		}
+		
+	},
 	/**
 	 * Phred likelihood of the template, conditional on both the mapping being correct
 	 */
@@ -178,9 +205,35 @@ round(value * 100.0).
 	 */
 	PADDED_ANNOTATIONS('P','T', SamAttributeType.STRING),
 	/**
-	 * Platform unit. Value to be consistent with the header RG-PU tag if @RG is present.
+	 * Platform unit of this record, the value must be consistent with 
+	 * a {@link org.jcvi.jillion.sam.header.ReadGroup#getPlatformUnit()}
+	 * in the header..
 	 */
-	PLATFORMT_UNIT('P','U', SamAttributeType.STRING),
+	PLATFORMT_UNIT('P','U', SamAttributeType.STRING){
+		@Override
+		void validate(SamHeader header, Object value)
+				throws InvalidAttributeException {
+			String actualPlatformUnit = getType().getString(value);
+			//don't have access to which read group
+			//this read is in
+			//so try them all?
+			//this could have false positives if the
+			//read uses a platform unit from
+			//a different read group.
+			boolean found=false;
+			for(ReadGroup group : header.getReadGroups()){
+				String platformUnit = group.getPlatformUnit();
+				//equals order is to handle null platformUnits
+				if(actualPlatformUnit.equals(platformUnit)){
+					found=true;
+					break;
+				}
+			}
+			if(!found){
+				throw new InvalidAttributeException("header does not contain platform unit " + value);
+			}
+		}
+	},
 	/**
 	 * Phred quality of the barcode sequence in the {@link #BARCODE_SEQUENCE} (or {@link #READ_TAG}) tag. Same encoding as QUAL.
 	 */
@@ -196,9 +249,18 @@ round(value * 100.0).
 	 */
 	SEQUENCE_OF_NEXT_OR_MATE('R','2', SamAttributeType.STRING),
 	/**
-	 * Read group. Value matches the header RG-ID tag if @RG is present in the header.
+	 * Read group this record belongs to, the value must match a {@link org.jcvi.jillion.sam.header.ReadGroup}
+	 * in the header.
 	 */
-	READ_GROUP('R','G', SamAttributeType.STRING),
+	READ_GROUP('R','G', SamAttributeType.STRING){
+		@Override
+		void validate(SamHeader header, Object value)
+				throws InvalidAttributeException {
+			if(!header.hasReadGroup(getType().getString(value))){
+				throw new InvalidAttributeException("header does not contain program " + value);
+			}
+		}
+	},
 	/**
 	 * Deprecated alternative to {@link #BARCODE_SEQUENCE} tag originally used at Sanger.
 	 */
@@ -259,12 +321,16 @@ round(value * 100.0).
 		return key;
 	}
 	
-	
+	void validate(SamHeader header, Object value) throws InvalidAttributeException{
+		//no-op by default
+	}
 	
 	public SamAttributeType getType() {
 		return type;
 	}
-
+	public static ReservedSamAttributeKeys parseKey(SamAttributeKey key){
+		return parseKey(key.getFirstChar(), key.getSecondChar());
+	}
 	public static ReservedSamAttributeKeys parseKey(char c1, char c2){
 		return CACHE[c1][c2];
 	}
