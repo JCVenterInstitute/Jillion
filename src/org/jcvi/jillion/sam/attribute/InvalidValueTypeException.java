@@ -8,5 +8,8 @@ public class InvalidValueTypeException extends IllegalArgumentException {
 	public InvalidValueTypeException(String s) {
 		super(s);
 	}
+	public InvalidValueTypeException(String s, Throwable cause) {
+		super(s, cause);
+	}
 
 }

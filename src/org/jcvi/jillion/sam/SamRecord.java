@@ -338,7 +338,7 @@ public class SamRecord {
 			if(referenceName ==null){
 				throw new NullPointerException("reference name can not be null");
 			}
-			if(!referenceName.equals(UNAVAILABLE)){
+			if(!UNAVAILABLE.equals(referenceName)){
 				assertHeaderKnowsAboutReference(referenceName);
 			}
 			this.referenceName = referenceName;
@@ -347,7 +347,7 @@ public class SamRecord {
 		private void assertHeaderKnowsAboutReference(String referenceName) {
 			//RNAME must be present in a SQ-SN tag
 			if(!header.hasReferenceSequence(referenceName)){
-				throw new IllegalArgumentException("reference name is not in sam header "+ referenceName);
+				throw new IllegalArgumentException("reference name is not in sam header '"+ referenceName+"'");
 			}
 		}
 		/**
@@ -373,7 +373,7 @@ public class SamRecord {
 				throw new NullPointerException("next reference name can not be null");
 			}
 			if(!nextReferenceName.equals(UNAVAILABLE) && !nextReferenceName.equals(IDENTICAL)){
-				assertHeaderKnowsAboutReference(referenceName);
+				assertHeaderKnowsAboutReference(nextReferenceName);
 			}
 			this.nextReferenceName = nextReferenceName;
 			return this;
@@ -514,11 +514,9 @@ public class SamRecord {
 					throw new IllegalStateException("sequence and qualities must have same length");
 				}
 			}
-			if(sequence !=null){
-				if(cigar ==null){
-					throw new IllegalStateException("cigar must be set if sequence is set");
-				}
-				if(sequence.getUngappedLength() != cigar.getUnPaddedReadLength()){
+			if(sequence !=null && cigar !=null){
+					
+				if(sequence.getUngappedLength() != cigar.getRawUnPaddedReadLength()){
 					throw new IllegalStateException("sequence and cigar must have same unpadded/ ungapped read length");
 				}
 			}
