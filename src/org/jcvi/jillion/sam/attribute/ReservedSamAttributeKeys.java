@@ -98,7 +98,16 @@ round(value * 100.0).
 
 		@Override
 		public void validate(SamHeader header, Object value) throws InvalidAttributeException {
-			if(! header.hasReadGroup(getType().getString(value))){
+			String libId = getType().getString(value);
+			boolean found=false;
+			for(ReadGroup readGroup : header.getReadGroups()){
+				//equals order allows for readGroup's getLibrary() to return null
+				if(libId.equals(readGroup.getLibrary())){
+					found = true;
+					break;
+				}
+			}
+			if(! found){
 				throw new InvalidAttributeException("header must have read group with id "+ value);
 			}
 		}
@@ -298,8 +307,8 @@ round(value * 100.0).
 		//cache is wasteful since we don't
 		//need to store every 2 letter combination
 		//but it makes for very fast look ups/
-		//42 because 0-Z
-		CACHE = new ReservedSamAttributeKeys[42][42];
+		//43 because 0-Z
+		CACHE = new ReservedSamAttributeKeys[43][43];
 		for(ReservedSamAttributeKeys reserved : values()){
 			SamAttributeKey key = reserved.getKey();
 			CACHE[getCacheIndex(key.getFirstChar())][getCacheIndex(key.getSecondChar())] = reserved;
@@ -332,7 +341,7 @@ round(value * 100.0).
 		return parseKey(key.getFirstChar(), key.getSecondChar());
 	}
 	public static ReservedSamAttributeKeys parseKey(char c1, char c2){
-		return CACHE[c1][c2];
+		return CACHE[getCacheIndex(c1)][getCacheIndex(c2)];
 	}
 	public static ReservedSamAttributeKeys parseKey(String key){
 		if(key.length() !=2){
