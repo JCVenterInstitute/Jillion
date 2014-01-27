@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import org.jcvi.jillion.assembly.AssemblyTransformer;
 import org.jcvi.jillion.assembly.clc.cas.AbstractAlignedReadCasVisitor;
+import org.jcvi.jillion.assembly.clc.cas.CasFileInfo;
 import org.jcvi.jillion.assembly.clc.cas.CasFileParser;
 import org.jcvi.jillion.assembly.clc.cas.CasGappedReferenceDataStore;
 import org.jcvi.jillion.assembly.clc.cas.CasGappedReferenceDataStoreBuilderVisitor;
@@ -94,6 +95,29 @@ public class CasFileTransformationService{
 			super(casFile, gappedReferenceDataStore);
 			this.transformer = transformer;
 			this.chromatDir = chromatDir;
+		}
+
+		@Override
+		public void visitAssemblyProgramInfo(String name, String version,
+				String parameters) {
+			transformer.assemblyCommand(name, version, parameters);
+			super.visitAssemblyProgramInfo(name, version, parameters);
+		}
+
+		@Override
+		public void visitReferenceFileInfo(CasFileInfo referenceFileInfo) {
+			for(String filenames : referenceFileInfo.getFileNames()){
+				transformer.referenceFile(new File(filenames).toURI());			
+			}
+			super.visitReferenceFileInfo(referenceFileInfo);
+		}
+
+		@Override
+		public void visitReadFileInfo(CasFileInfo readFileInfo) {
+			for(String filenames : readFileInfo.getFileNames()){
+				transformer.readFile(new File(filenames).toURI());			
+			}
+			super.visitReadFileInfo(readFileInfo);
 		}
 
 		@Override
