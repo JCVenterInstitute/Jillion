@@ -27,7 +27,7 @@ package org.jcvi.jillion.internal.trace.chromat;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.jillion.core.pos.PositionSequence;
@@ -238,11 +238,11 @@ public final class BasicChromatogramBuilder {
         }
 
         public Map<String,String> comments() {
-            return comments ==null? Collections.<String,String>emptyMap() :new HashMap<String, String>(comments);
+            return comments ==null? Collections.<String,String>emptyMap() :new LinkedHashMap<String, String>(comments);
         }
 
         public BasicChromatogramBuilder comments(Map<String,String> comments) {
-            this.comments = new HashMap<String, String>(comments);
+            this.comments = new LinkedHashMap<String, String>(comments);
             return this;
         }
 
