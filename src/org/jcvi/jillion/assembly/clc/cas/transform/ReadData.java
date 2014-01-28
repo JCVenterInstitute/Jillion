@@ -46,7 +46,7 @@ class ReadData implements Trace{
 		private PositionSequence positions;
 		private URI uri;
 		private final String id;
-		private final NucleotideSequence seq;
+		private NucleotideSequence seq;
 		private QualitySequence quals;
 		
 		public Builder(Trace trace){
@@ -85,6 +85,15 @@ class ReadData implements Trace{
 
 		public String getId() {
 			return id;
+		}
+
+		public Builder setNucleotideSequence(NucleotideSequence nucleotideSequence) {
+			if(nucleotideSequence ==null){
+				throw new NullPointerException("nucleotide sequence can not be null");
+			}
+			this.seq = nucleotideSequence;
+			return this;
+			
 		}
 	}
 	

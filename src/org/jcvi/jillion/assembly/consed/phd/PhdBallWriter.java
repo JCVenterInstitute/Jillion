@@ -120,7 +120,9 @@ public class PhdBallWriter implements PhdWriter{
 		IOUtil.mkdirs(outputFile.getParentFile());
 		this.writer = new BufferedWriter(
 				new OutputStreamWriter(new FileOutputStream(outputFile), IOUtil.UTF_8));
-		writer.write(String.format("#%s%n", fileComment));
+		if(fileComment !=null){
+			writer.write(String.format("#%s%n", fileComment));
+		}
 	}
 	
 	private void assertCommentIsOnlyOneLine(String fileComment){

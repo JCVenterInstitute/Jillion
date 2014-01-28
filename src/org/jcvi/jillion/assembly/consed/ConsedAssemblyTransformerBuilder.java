@@ -1,34 +1,53 @@
 package org.jcvi.jillion.assembly.consed;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jcvi.jillion.assembly.AssemblyTransformer;
 import org.jcvi.jillion.assembly.ReadInfo;
+import org.jcvi.jillion.assembly.consed.ace.AceContig;
 import org.jcvi.jillion.assembly.consed.ace.AceContigBuilder;
 import org.jcvi.jillion.assembly.consed.ace.AceFileWriter;
 import org.jcvi.jillion.assembly.consed.ace.AceFileWriterBuilder;
 import org.jcvi.jillion.assembly.consed.ace.PhdInfo;
+import org.jcvi.jillion.assembly.consed.ace.WholeAssemblyAceTag;
 import org.jcvi.jillion.assembly.consed.phd.PhdBuilder;
 import org.jcvi.jillion.assembly.consed.phd.PhdDataStore;
+import org.jcvi.jillion.assembly.consed.phd.PhdUtil;
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.pos.PositionSequence;
+import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 
 public class ConsedAssemblyTransformerBuilder {
 
+	public static final PhredQuality DEFAULT_QUALITY_VALUE = PhredQuality.valueOf(25);
 	private final File rootDir;
 	private final String filePrefix;
 	
 	private boolean createPhdBall = true;
 	
 	private File chromatInputDir = null;
+	private byte defaultQualityValue = DEFAULT_QUALITY_VALUE.getQualityScore();
 	
 	private AceAssemblyTransformerPostProcessor postProcessor =null;
 	
@@ -63,9 +82,14 @@ public class ConsedAssemblyTransformerBuilder {
 		return this;
 	}
 	
+	public ConsedAssemblyTransformerBuilder setDefaultQualityValue(int qualityValue){
+		//Phredquality object does all validation for us
+		PhredQuality qual = PhredQuality.valueOf(qualityValue);
+		this.defaultQualityValue = qual.getQualityScore();
+		return this;
+	}
+	
 	public AssemblyTransformer build() throws IOException{
-		
-		
 		return new ConsedAssemblyTransformer(this);
 	}
 	
@@ -76,8 +100,11 @@ public class ConsedAssemblyTransformerBuilder {
 		private final AceAssemblyTransformerPostProcessor postProcessor;
 		
 		private final PhdConsedTransformerHelper phdHelper;
+		private final byte defaultQualityValue;
 		
 		private Map<String, AceContigBuilder> builderMap = new LinkedHashMap<String, AceContigBuilder>();
+		Map<URI,Date> uriDates = new HashMap<URI, Date>();
+		Map<URI,File> uri2File = new HashMap<URI, File>();
 		
 		public ConsedAssemblyTransformer(ConsedAssemblyTransformerBuilder builder) throws IOException{
 			
@@ -101,6 +128,8 @@ public class ConsedAssemblyTransformerBuilder {
 			}else{
 				phdHelper = new IndividualPhdConsedTransformerHelper(rootDir);
 			}
+			
+			this.defaultQualityValue = builder.defaultQualityValue;
 		}
 
 		@Override
@@ -115,13 +144,14 @@ public class ConsedAssemblyTransformerBuilder {
 
 		@Override
 		public void endAssembly() {
-			Map<String, AceContigBuilder> updatedBuilders = postProcessor.postProcess(builderMap);
 			final PhdDataStore phdDataStore;
 			try {
 				phdDataStore =phdHelper.createDataStore();
 			} catch (IOException e) {
 				throw new IllegalStateException("error reading phd data", e);
 			}
+			Map<String, AceContigBuilder> updatedBuilders = postProcessor.postProcess(builderMap, phdDataStore);
+			
 			File outputAceFile = new File(editDir, String.format("%s.ace.1",filePrefix ));
 			final AceFileWriter aceWriter;
 			try {
@@ -130,12 +160,29 @@ public class ConsedAssemblyTransformerBuilder {
 			} catch (IOException e) {
 				throw new IllegalStateException("error creating ace writer", e);
 			}
-			for(AceContigBuilder builder : updatedBuilders.values()){
-				try {
-					aceWriter.write(builder.build());
-				} catch (IOException e) {
-					throw new IllegalStateException("error writing assembly " + builder.getContigId(), e);
+			try{
+				for(AceContigBuilder builder : updatedBuilders.values()){
+					try {
+						for(Entry<Range,AceContig> entry : ConsedUtil.split0xContig(builder,true).entrySet()){
+		                    AceContig splitContig = entry.getValue();
+		                    postProcessor.postProcess(splitContig);
+		                    aceWriter.write(splitContig);
+						}
+					
+						
+					} catch (IOException e) {
+						throw new IllegalStateException("error writing assembly " + builder.getContigId(), e);
+					}
 				}
+				
+				WholeAssemblyAceTag phdBallTag = phdHelper.createPhdBallWholeAssemblyTag();
+				if(phdBallTag !=null){
+					aceWriter.write(phdBallTag);
+				}	
+			} catch (IOException e) {
+				throw new IllegalStateException("error creating ace tag", e);
+			}finally{
+				IOUtil.closeAndIgnoreErrors(aceWriter);
 			}
 			
 		}
@@ -164,25 +211,83 @@ public class ConsedAssemblyTransformerBuilder {
 				//TODO Violation of LSP ?
 				throw new IllegalArgumentException("gapped start offset is > int max"+ id);
 			}
+			final QualitySequence qualities;
 			if(qualitySequence ==null){
-				//TODO fake quality sequence
+				qualities = createDefaultQualitySequenceFor(nucleotideSequence);
+			}else{
+				qualities = qualitySequence;
 			}
-			PhdBuilder phdBuilder = new PhdBuilder(id, nucleotideSequence, qualitySequence);
+			final Date phdDate;
+			if(uriDates.containsKey(sourceFileUri)){
+				phdDate = uriDates.get(sourceFileUri);
+			}else{
+				File file = new File(sourceFileUri);
+				phdDate = new Date(file.lastModified());
+				uriDates.put(sourceFileUri, phdDate);
+				uri2File.put(sourceFileUri, file);
+				//first time we've seen this file
+				if(file.getName().endsWith(".scf")){
+					InputStream in=null;
+					OutputStream out = null;
+					try{
+						in = new BufferedInputStream(new FileInputStream(file));
+						File newFile = new File(chromatDir, FileUtil.getBaseName(file));
+						out = new BufferedOutputStream(new FileOutputStream(newFile));
+						IOUtil.copy(in, out);
+					} catch (IOException e) {
+						throw new IllegalStateException("error copying chromatogram file to chromat_dir");
+					}finally{
+						IOUtil.closeAndIgnoreErrors(in, out);
+					}
+				}
+			}
+			PhdBuilder phdBuilder = new PhdBuilder(id, nucleotideSequence, qualities)
+										.comments(computeRequiredCommentsFor(id, uri2File.get(sourceFileUri), phdDate));
 			
 			if(positions !=null){
 				phdBuilder.peaks(positions);				
+			}else{
+				phdBuilder.fakePeaks();
 			}
 			final PhdInfo phdInfo;
 			try {
-				phdInfo = phdHelper.writePhd(phdBuilder.build());
+				phdInfo = phdHelper.writePhd(phdBuilder.build(), phdDate);
 			} catch (IOException e) {
 				throw new IllegalStateException("error writing phd record for "+ id, e);
 			}
 			
 			builderMap.get(referenceId)
-							.addRead(id, gappedSequence, (int)gappedStartOffset, direction, readInfo.getValidRange(), phdInfo, readInfo.getUngappedFullLength());
+							.addRead(id, gappedSequence, (int)gappedStartOffset, direction, readInfo.getValidRange(), 
+									phdInfo, readInfo.getUngappedFullLength());
 			
 		}
+
+		private Map<String,String> computeRequiredCommentsFor(String readId, File file, Date phdDate ){
+			
+			try{
+				if(isChromatogramFile(file)){
+					return PhdUtil.createPhdTimeStampAndChromatFileCommentsFor(phdDate, file.getName());
+				}
+				return PhdUtil.createPhdTimeStampCommentFor(phdDate);
+			}catch(Exception e){
+				return PhdUtil.createPhdTimeStampCommentFor(new Date());
+			}
+
+			
+			
+		}
+		
+		private boolean isChromatogramFile(File f){
+			return !f.getName().endsWith(".fastq") && !f.getName().endsWith(".sff");
+			
+		}
+		
+		 private QualitySequence createDefaultQualitySequenceFor(NucleotideSequence rawSequence) {
+		        int numberOfQualities =(int) rawSequence.getUngappedLength();
+				byte[] qualities = new byte[numberOfQualities];
+				Arrays.fill(qualities, defaultQualityValue);
+		        return new QualitySequenceBuilder(qualities).build();
+		    }
 
 		@Override
 		public void assemblyCommand(String name, String version,
@@ -211,9 +316,17 @@ public class ConsedAssemblyTransformerBuilder {
 
 		@Override
 		public Map<String, AceContigBuilder> postProcess(
-				Map<String, AceContigBuilder> builderMap) {
+				Map<String, AceContigBuilder> builderMap, PhdDataStore phdDataStore) {
 			return builderMap;
 		}
+
+		@Override
+		public void postProcess(AceContig contig) {
+			//no-op
+			
+		}
+		
+		
 		
 	}
 	
