@@ -11,6 +11,7 @@ import org.jcvi.jillion.assembly.clc.cas.CasFileParser;
 import org.jcvi.jillion.assembly.clc.cas.CasGappedReferenceDataStore;
 import org.jcvi.jillion.assembly.clc.cas.CasGappedReferenceDataStoreBuilderVisitor;
 import org.jcvi.jillion.assembly.clc.cas.CasParser;
+import org.jcvi.jillion.assembly.clc.cas.CasUtil;
 import org.jcvi.jillion.assembly.clc.cas.read.CasPlacedRead;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -30,6 +31,9 @@ public class CasFileTransformationService{
 	private final File casDir;
 	private final File chromatDir;
 	
+	public CasFileTransformationService(File casFile) throws IOException{
+		this(casFile, null);
+	}
 	public CasFileTransformationService(File casFile, File chromatDir) throws IOException {
 		if(casFile ==null){
 			throw new NullPointerException("cas file can not be null");
@@ -106,16 +110,30 @@ public class CasFileTransformationService{
 
 		@Override
 		public void visitReferenceFileInfo(CasFileInfo referenceFileInfo) {
-			for(String filenames : referenceFileInfo.getFileNames()){
-				transformer.referenceFile(new File(filenames).toURI());			
+			for(String filename : referenceFileInfo.getFileNames()){
+				try {
+					File f = CasUtil.getFileFor(this.getWorkingDir(), filename);
+					transformer.referenceFile(f.toURI());			
+				
+				} catch (FileNotFoundException e) {
+					throw new IllegalStateException("reference file not found :" + filename);
+				}
+				
 			}
 			super.visitReferenceFileInfo(referenceFileInfo);
 		}
 
 		@Override
 		public void visitReadFileInfo(CasFileInfo readFileInfo) {
-			for(String filenames : readFileInfo.getFileNames()){
-				transformer.readFile(new File(filenames).toURI());			
+			for(String filename : readFileInfo.getFileNames()){
+				try {
+					File f = CasUtil.getFileFor(this.getWorkingDir(), filename);
+					transformer.readFile(f.toURI());			
+				
+				} catch (FileNotFoundException e) {
+					throw new IllegalStateException("read file not found :" + filename);
+				}
+				
 			}
 			super.visitReadFileInfo(readFileInfo);
 		}
