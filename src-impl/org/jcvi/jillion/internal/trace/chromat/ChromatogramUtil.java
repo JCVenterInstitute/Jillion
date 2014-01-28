@@ -3,7 +3,6 @@ package org.jcvi.jillion.internal.trace.chromat;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.io.IOUtil;
@@ -18,7 +17,7 @@ public final class ChromatogramUtil {
 		//can not instantiate
 	}
 
-	public static boolean isChromatogram(File f) throws FileNotFoundException, IOException{
+	public static boolean isChromatogram(File f) throws IOException{
 		MagicNumberInputStream in = null;
 		try{
 			in =  new MagicNumberInputStream(new BufferedInputStream(new FileInputStream(f))); 

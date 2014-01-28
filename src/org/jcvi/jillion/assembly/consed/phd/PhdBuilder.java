@@ -84,7 +84,7 @@ public final class PhdBuilder implements Builder<Phd>{
 			throw new NullPointerException("qualities can not be null");
 		}
 		if(sequence.getLength() !=qualities.getLength()){
-			throw new IllegalArgumentException("sequence and qualities have unequal lengths");
+			throw new IllegalArgumentException("sequence and qualities have unequal lengths " + sequence.getLength() + " vs " + qualities.getLength());
 		}
 		this.id = id;
 		this.sequence = sequence;

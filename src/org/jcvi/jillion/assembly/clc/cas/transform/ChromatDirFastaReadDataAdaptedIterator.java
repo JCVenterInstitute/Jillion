@@ -86,9 +86,10 @@ class ChromatDirFastaReadDataAdaptedIterator extends FastaReadDataAdaptedIterato
 	            try {
 	            	Chromatogram chromo= ChromatogramFactory.create(id, chromatFile);
 	                if(chromo !=null){
-	                	builder.setPositions(chromo.getPeakSequence());
-	                	builder.setQualities(chromo.getQualitySequence());
-	                	builder.setUri(chromatFile.toURI());
+	                	builder.setNucleotideSequence(chromo.getNucleotideSequence())
+	                	.setPositions(chromo.getPeakSequence())
+	                	.setQualities(chromo.getQualitySequence())
+	                	.setUri(chromatFile.toURI());
 	                	return;
 	                }
 	            } catch (Exception e) {

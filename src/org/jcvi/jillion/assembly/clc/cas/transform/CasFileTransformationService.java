@@ -8,6 +8,7 @@ import org.jcvi.jillion.assembly.AssemblyTransformer;
 import org.jcvi.jillion.assembly.clc.cas.AbstractAlignedReadCasVisitor;
 import org.jcvi.jillion.assembly.clc.cas.CasFileInfo;
 import org.jcvi.jillion.assembly.clc.cas.CasFileParser;
+import org.jcvi.jillion.assembly.clc.cas.CasFileVisitor;
 import org.jcvi.jillion.assembly.clc.cas.CasGappedReferenceDataStore;
 import org.jcvi.jillion.assembly.clc.cas.CasGappedReferenceDataStoreBuilderVisitor;
 import org.jcvi.jillion.assembly.clc.cas.CasParser;
@@ -56,7 +57,16 @@ public class CasFileTransformationService{
 
 
 
-	public void transform(AssemblyTransformer transformer) throws IOException{
+	protected File getCasFile() {
+		return casFile;
+	}
+	protected File getCasDir() {
+		return casDir;
+	}
+	protected File getChromatDir() {
+		return chromatDir;
+	}
+	public final void transform(AssemblyTransformer transformer) throws IOException{
 		if(transformer == null){
 			throw new NullPointerException("transformer can not be null");
 		}
@@ -83,9 +93,13 @@ public class CasFileTransformationService{
 		 }
 		 
 		 Visitor visitor = new Visitor(casFile, gappedReferenceDataStore, transformer,chromatDir);
-		 casParser.parse(visitor);
+		 casParser.parse(wrapVisitor(visitor));
 		 transformer.endAssembly();
 		 
+	}
+	
+	protected CasFileVisitor wrapVisitor(final CasFileVisitor transformationVisitor){
+		return transformationVisitor;
 	}
 	
 	private static class Visitor extends AbstractAlignedReadCasVisitor{
