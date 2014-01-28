@@ -91,6 +91,10 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 		this.gappedReferenceDataStore = gappedReferenceDataStore;
 	}
 
+	public File getWorkingDir() {
+		return workingDir;
+	}
+
 	public final CasGappedReferenceDataStore getGappedReferenceDataStore() {
 		return gappedReferenceDataStore;
 	}

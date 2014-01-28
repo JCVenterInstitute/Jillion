@@ -19,14 +19,12 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 /*
- * Created on Jan 14, 2010
+ * Created on Jan 20, 2010
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.clc.cas;
+package org.jcvi.jillion.assembly.clc.cas.transform;
 
-import org.jcvi.jillion.assembly.clc.cas.consed.AllCas2ConsedTests;
-import org.jcvi.jillion.assembly.clc.cas.transform.AllCasTransformationServiceUnitTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -34,20 +32,10 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestReadFileType.class,
-        TestCasUtil.class,
-        TestCasGappedReferenceDataStoreBuilderVisitor.class,
-
-        TestGappedReferenceDataStoreBuilderNoReadsMaptoReference.class,
-        
-        AllCas2ConsedTests.class,
-        AllCasTransformationServiceUnitTests.class,
-        
-        AllCasAlignmentUnitTests.class,
-        TestCasFileVisitorAdapter.class,
-        TestCasMatchVisitorAdapter.class
+        TestReferenceAssembleLongTransformationService.class,
+        TestClcMapperTransformationService.class
     }
     )
-public class AllCasUnitTests {
+public class AllCasTransformationServiceUnitTests {
 
 }
