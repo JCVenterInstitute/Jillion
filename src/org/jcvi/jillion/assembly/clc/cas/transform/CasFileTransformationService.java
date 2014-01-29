@@ -83,7 +83,7 @@ public class CasFileTransformationService{
 			 while(idIter.hasNext()){
 				 String id = idIter.next();
 				 NucleotideSequence gappedReference = gappedReferenceDataStore.get(id);
-				 transformer.addReferenceOrConsensus(id, gappedReference);
+				 transformer.referenceOrConsensus(id, gappedReference);
 			 }
 			 
 		 }catch(DataStoreException e){
