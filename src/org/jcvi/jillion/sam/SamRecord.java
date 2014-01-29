@@ -8,6 +8,7 @@ import java.util.Set;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.sam.attribute.InvalidAttributeException;
+import org.jcvi.jillion.sam.attribute.ReservedSamAttributeKeys;
 import org.jcvi.jillion.sam.attribute.SamAttribute;
 import org.jcvi.jillion.sam.attribute.SamAttributeKey;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
@@ -110,6 +111,20 @@ public class SamRecord {
 	
 	public SamAttribute getAttribute(SamAttributeKey key){
 		return attributes.get(key);
+	}
+	
+	public boolean hasAttribute(ReservedSamAttributeKeys key){
+		if(key==null){
+			throw new NullPointerException("key can not be null");
+		}
+		return hasAttribute(key.getKey());
+	}
+	
+	public SamAttribute getAttribute(ReservedSamAttributeKeys key){
+		if(key==null){
+			return null;
+		}
+		return getAttribute(key.getKey());
 	}
 	
 	

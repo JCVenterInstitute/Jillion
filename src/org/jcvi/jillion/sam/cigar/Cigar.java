@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 
 public final class Cigar {
@@ -373,5 +374,28 @@ public final class Cigar {
 			}
 			return array[i++];
 		}
+	}
+
+	public Range getValidRange() {
+		int ungappedAlignedLength = getUnPaddedReadLength();
+		int numberOfClippedLeadingBases = computeLeadingClippedBases();
+		
+		return new Range.Builder(ungappedAlignedLength)
+						.shift(numberOfClippedLeadingBases)
+						.build();
+	}
+
+
+
+	private int computeLeadingClippedBases() {
+		int count=0;
+		for(CigarElement e : elements){
+			if(e.getOp()==CigarOperation.HARD_CLIP || e.getOp() == CigarOperation.SOFT_CLIP){
+				count+=e.getLength();
+			}else{
+				break;
+			}
+		}
+		return count;
 	}
 }
