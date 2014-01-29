@@ -23,17 +23,17 @@ package org.jcvi.jillion.align.pairwise;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.jillion.align.ProteinSequenceAlignment;
 import org.jcvi.jillion.align.NucleotideSequenceAlignment;
+import org.jcvi.jillion.align.ProteinSequenceAlignment;
 import org.jcvi.jillion.align.SequenceAlignment;
-import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.internal.align.ProteinSequenceAlignmentBuilder;
 import org.jcvi.jillion.internal.align.NucleotideSequenceAlignmentBuilder;
+import org.jcvi.jillion.internal.align.ProteinSequenceAlignmentBuilder;
 import org.jcvi.jillion.internal.align.SequenceAlignmentBuilder;
 /**
  * {@code ResiduePairwiseStrategy} uses the Strategy Pattern
@@ -46,7 +46,7 @@ import org.jcvi.jillion.internal.align.SequenceAlignmentBuilder;
  * @param <A> the {@link SequenceAlignment} type returned by this aligner.
  * @param <P> the {@link PairwiseSequenceAlignment} type returned by this aligner.
  */
-abstract class ResiduePairwiseStrategy<R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R,S>,P extends PairwiseSequenceAlignment<R,S>> {
+abstract class ResiduePairwiseStrategy<R extends Residue, S extends ResidueSequence<R>, A extends SequenceAlignment<R,S>,P extends PairwiseSequenceAlignment<R,S>> {
 
 	
 	public static ResiduePairwiseStrategy<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment, NucleotidePairwiseSequenceAlignment>

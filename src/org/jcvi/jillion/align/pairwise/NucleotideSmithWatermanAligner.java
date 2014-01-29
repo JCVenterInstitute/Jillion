@@ -22,7 +22,6 @@ package org.jcvi.jillion.align.pairwise;
 
 import org.jcvi.jillion.align.NucleotideSequenceAlignment;
 import org.jcvi.jillion.align.SubstitutionMatrix;
-import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
@@ -65,8 +64,8 @@ final class NucleotideSmithWatermanAligner extends AbstractSmithWatermanAligner<
 		return aligner.getPairwiseSequenceAlignment();
 				
 		}
-	private NucleotideSmithWatermanAligner(Sequence<Nucleotide> seq1,
-			Sequence<Nucleotide> seq2, SubstitutionMatrix<Nucleotide> matrix,
+	private NucleotideSmithWatermanAligner(NucleotideSequence seq1,
+			NucleotideSequence seq2, SubstitutionMatrix<Nucleotide> matrix,
 			float openGapPenalty, float extendGapPenalty) {
 		super(seq1, seq2, matrix, openGapPenalty, extendGapPenalty,
 				ResiduePairwiseStrategy.getNucleotideStrategy());

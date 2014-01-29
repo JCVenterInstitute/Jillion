@@ -459,11 +459,8 @@ public enum Nucleotide implements Residue {
     public String toString() {
         return c.toString();
     }
-    /**
-     * Is This Nucleotide a gap?
-     * @return {@code true} if it is a gap;
-     * {@code false} otherwise.
-     */
+    
+    @Override
     public boolean isGap(){
         return this == Gap;
     }

@@ -21,8 +21,8 @@
 package org.jcvi.jillion.align;
 
 import org.jcvi.jillion.core.DirectedRange;
-import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
 /**
  * {@code SequenceAlignment} is an interface that describes
  * an alignment between two {@link Sequence}s.
@@ -31,7 +31,7 @@ import org.jcvi.jillion.core.residue.Residue;
  * @param <R> the {@link Residue} type.
  * @param <S> the {@link Sequence} type.
  */
-public interface SequenceAlignment<R extends Residue, S extends Sequence<R>> {
+public interface SequenceAlignment<R extends Residue, S extends ResidueSequence<R>> {
 	/**
 	 * Get the percent of the residues that match exactly.
 	 * @return the percentage as a double; this

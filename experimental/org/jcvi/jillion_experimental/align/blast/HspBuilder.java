@@ -23,8 +23,8 @@ package org.jcvi.jillion_experimental.align.blast;
 import java.math.BigDecimal;
 
 import org.jcvi.jillion.core.DirectedRange;
-import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
@@ -35,7 +35,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  *
  *
  */
-public final class HspBuilder<R extends Residue, S extends Sequence<R>> implements org.jcvi.jillion.core.util.Builder<Hsp<R,S>>{
+public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> implements org.jcvi.jillion.core.util.Builder<Hsp<R,S>>{
 
     private static final double ONE_HUNDRED = 100.0D;
 
@@ -115,7 +115,7 @@ public final class HspBuilder<R extends Residue, S extends Sequence<R>> implemen
         	throw new IllegalArgumentException("unknown type :" + type);
         }
     	
-        public static <R extends Residue, S extends Sequence<R>> HspBuilder<R,S> copy(Hsp<R,S> hsp){
+        public static <R extends Residue, S extends ResidueSequence<R>> HspBuilder<R,S> copy(Hsp<R,S> hsp){
             return new HspBuilder<R,S>(hsp);
         }
         
@@ -321,7 +321,7 @@ public final class HspBuilder<R extends Residue, S extends Sequence<R>> implemen
         
     
 
-    private static final class BlastHitImpl<R extends Residue, S extends Sequence<R>> implements Hsp<R,S>{
+    private static final class BlastHitImpl<R extends Residue, S extends ResidueSequence<R>> implements Hsp<R,S>{
         
     private final String queryId,subjectId;
     private final double percentIdentity;

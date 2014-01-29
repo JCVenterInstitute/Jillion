@@ -22,10 +22,6 @@ package org.jcvi.jillion.align.pairwise;
 
 import static org.junit.Assert.assertEquals;
 
-import org.jcvi.jillion.align.pairwise.NucleotidePairwiseSequenceAlignment;
-import org.jcvi.jillion.align.pairwise.NucleotidePairwiseSequenceAlignmentImpl;
-import org.jcvi.jillion.align.pairwise.PairwiseAlignmentBuilder;
-import org.jcvi.jillion.align.pairwise.PairwiseSequenceAlignmentWrapper;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.align.NucleotideSequenceAlignmentBuilder;
@@ -79,6 +75,26 @@ public class TestNucleotideNeedlemanWunschAligner extends AbstractTestNucleotide
 		
 		
 		NucleotidePairwiseSequenceAlignment actual = PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(seq, seq, matrix)
+															.gapPenalty(0, 0)
+															.useGlobalAlignment()
+															.build();
+		
+		NucleotidePairwiseSequenceAlignment expected =
+				new NucleotidePairwiseSequenceAlignmentImpl(
+				PairwiseSequenceAlignmentWrapper.wrap(new NucleotideSequenceAlignmentBuilder()
+												.addMatches(seq)
+												.build(),
+												16));
+		assertEquals(expected, actual);
+		
+	}
+	@Test
+	public void shouldIgnoreInputGaps(){
+		NucleotideSequence seq = new NucleotideSequenceBuilder("ACGTACGT").build();
+		NucleotideSequence gappedseq = new NucleotideSequenceBuilder("AC-GTA-CGT").build();
+		
+		
+		NucleotidePairwiseSequenceAlignment actual = PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(seq, gappedseq, matrix)
 															.gapPenalty(0, 0)
 															.useGlobalAlignment()
 															.build();

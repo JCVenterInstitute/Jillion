@@ -22,17 +22,17 @@ package org.jcvi.jillion.align.pairwise;
 
 import org.jcvi.jillion.align.SequenceAlignment;
 import org.jcvi.jillion.core.DirectedRange;
-import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
 
-final class PairwiseSequenceAlignmentWrapper<R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>> implements PairwiseSequenceAlignment<R, S>{
+final class PairwiseSequenceAlignmentWrapper<R extends Residue, S extends ResidueSequence<R>, A extends SequenceAlignment<R, S>> implements PairwiseSequenceAlignment<R, S>{
 	
 	
 	private final A delegate;
 	private final float score;
 	
 	
-	public static <R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>> 
+	public static <R extends Residue, S extends ResidueSequence<R>, A extends SequenceAlignment<R, S>> 
 	PairwiseSequenceAlignment<R, S> wrap(A alignment, float score){
 		return new PairwiseSequenceAlignmentWrapper<R,S,A>(alignment, score);
 	}

@@ -22,7 +22,7 @@ package org.jcvi.jillion.align.pairwise;
 
 import org.jcvi.jillion.align.ProteinSequenceAlignment;
 import org.jcvi.jillion.align.SubstitutionMatrix;
-import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 
@@ -66,8 +66,8 @@ final class ProteinNeedlemanWunschAligner extends AbstractNeedlemanWunschAligner
 		return aligner.getPairwiseSequenceAlignment();
 	}
 	
-	private ProteinNeedlemanWunschAligner(Sequence<AminoAcid> query,
-			Sequence<AminoAcid> subject, SubstitutionMatrix<AminoAcid> matrix,
+	private ProteinNeedlemanWunschAligner(ResidueSequence<AminoAcid> query,
+			ResidueSequence<AminoAcid> subject, SubstitutionMatrix<AminoAcid> matrix,
 			float openGapPenalty, float extendGapPenalty) {
 		super(query, subject, matrix, openGapPenalty, extendGapPenalty,
 				ResiduePairwiseStrategy.getAminoAcidStrategy());

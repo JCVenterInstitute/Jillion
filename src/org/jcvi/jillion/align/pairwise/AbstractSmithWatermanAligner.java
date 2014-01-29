@@ -21,10 +21,10 @@
 package org.jcvi.jillion.align.pairwise;
 
 
-import org.jcvi.jillion.align.SubstitutionMatrix;
 import org.jcvi.jillion.align.SequenceAlignment;
-import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.align.SubstitutionMatrix;
 import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.util.MathUtil;
 
 /**
@@ -38,9 +38,9 @@ import org.jcvi.jillion.core.util.MathUtil;
  * @param <A> the {@link SequenceAlignment} type returned by this aligner.
  * @param <P> the {@link PairwiseSequenceAlignment} type returned by this aligner.
  */
-abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>, P extends PairwiseSequenceAlignment<R, S>> extends AbstractPairwiseAligner<R, S, A, P>{
+abstract class AbstractSmithWatermanAligner<R extends Residue, S extends ResidueSequence<R>, A extends SequenceAlignment<R, S>, P extends PairwiseSequenceAlignment<R, S>> extends AbstractPairwiseAligner<R, S, A, P>{
 
-	protected AbstractSmithWatermanAligner(Sequence<R> query, Sequence<R> subject,
+	protected AbstractSmithWatermanAligner(ResidueSequence<R> query, ResidueSequence<R> subject,
 			SubstitutionMatrix<R> matrix, float openGapPenalty,
 			float extendGapPenalty, ResiduePairwiseStrategy<R,S,A,P> pairwiseStrategy) {
 		super(query, subject, matrix, openGapPenalty, extendGapPenalty, pairwiseStrategy);
