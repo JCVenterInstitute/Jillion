@@ -24,8 +24,8 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 
 import org.jcvi.jillion.align.SequenceAlignment;
-import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
 
 /**
  * {@code Hsp} is an object representation of a 
@@ -36,7 +36,7 @@ import org.jcvi.jillion.core.residue.Residue;
  *
  *
  */
-public interface Hsp<R extends Residue, S extends Sequence<R>> extends SequenceAlignment<R,S> {
+public interface Hsp<R extends Residue, S extends ResidueSequence<R>> extends SequenceAlignment<R,S> {
 	/**
 	 * Get the Id of the Query sequence in this Hsp.
 	 * @return a String; will never be null.

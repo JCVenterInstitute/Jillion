@@ -23,8 +23,8 @@ package org.jcvi.jillion.align.pairwise;
 import org.jcvi.jillion.align.AminoAcidSubstitutionMatrix;
 import org.jcvi.jillion.align.NucleotideSubstitutionMatrix;
 import org.jcvi.jillion.align.SubstitutionMatrix;
-import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
@@ -42,7 +42,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  * @param <S> the type of {@link Sequence} (either {@link NucleotideSequence} or {@link ProteinSequence} ).
  * @param <A> the type of {@link PairwiseSequenceAlignment} to build.
  */
-public final class PairwiseAlignmentBuilder<R extends Residue, S extends Sequence<R>, A extends PairwiseSequenceAlignment<R,S>> {
+public final class PairwiseAlignmentBuilder<R extends Residue, S extends ResidueSequence<R>, A extends PairwiseSequenceAlignment<R,S>> {
 	private final S query,  subject;
 	private final SubstitutionMatrix<R> matrix;
 	private float gapOpen=0;
@@ -52,8 +52,10 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Sequenc
 	/**
 	 * Create a new PairwiseAlignmentBuilder to align
 	 * 2 {@link NucleotideSequence}s.
-	 * @param query the query sequence; may not be null.
-	 * @param subject the subject sequence; may not be null.
+	 * @param query the query sequence, any gaps
+	 * in the sequence will be ignored by the alignment; may not be null.
+	 * @param subject the subject sequence, any gaps
+	 * in the sequence will be ignored by the alignment; may not be null.
 	 * @param matrix the {@link SubstitutionMatrix}; can not be null.
 	 * @return a new {@link PairwiseAlignmentBuilder} instance;
 	 * will never be null.
@@ -65,8 +67,10 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Sequenc
 	/**
 	 * Create a new PairwiseAlignmentBuilder to align
 	 * 2 {@link ProteinSequence}s.
-	 * @param query the query sequence; may not be null.
-	 * @param subject the subject sequence; may not be null.
+	 * @param query the query sequence, any gaps
+	 * in the sequence will be ignored by the alignment; may not be null.
+	 * @param subject the subject sequence, any gaps
+	 * in the sequence will be ignored by the alignment; may not be null.
 	 * @param matrix the {@link SubstitutionMatrix}; can not be null.
 	 * @return a new {@link PairwiseAlignmentBuilder} instance;
 	 * will never be null.

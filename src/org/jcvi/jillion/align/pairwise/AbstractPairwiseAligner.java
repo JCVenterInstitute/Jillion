@@ -30,6 +30,7 @@ import org.jcvi.jillion.align.SequenceAlignment;
 import org.jcvi.jillion.align.SubstitutionMatrix;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.internal.align.SequenceAlignmentBuilder;
 /**
  * {@code AbstractPairwiseAligner} is an abstract 
@@ -44,7 +45,7 @@ import org.jcvi.jillion.internal.align.SequenceAlignmentBuilder;
  * @param <A> the {@link SequenceAlignment} type returned by this aligner.
  * @param <P> the {@link PairwiseSequenceAlignment} type returned by this aligner.
  */
-abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>, P extends PairwiseSequenceAlignment<R, S>> {
+abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequence<R>, A extends SequenceAlignment<R, S>, P extends PairwiseSequenceAlignment<R, S>> {
 	
 	/**
 	 * The matrix which stores all of our traceback
@@ -88,7 +89,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 
 	
 	
-	protected AbstractPairwiseAligner(Sequence<R> query, Sequence<R> subject,
+	protected AbstractPairwiseAligner(ResidueSequence<R> query, ResidueSequence<R> subject,
 			SubstitutionMatrix<R> matrix, float openGapPenalty, float extendGapPenalty,
 			ResiduePairwiseStrategy<R,S,A,P> pairwiseStrategy){
 		checkNotNull(query,subject,matrix);
@@ -101,13 +102,19 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		if(initialColDirection ==null){
 			throw new NullPointerException("initialColDirection can not be null");
 		}
-		traceback = new TraceBackMatrix((int)query.getLength()+1,(int)subject.getLength()+1, initialRowDirection, initialColDirection);
+		int ungappedSubjectLength = (int)subject.getUngappedLength();
+		int ungappedQueryLength = (int)query.getUngappedLength();
 		
-		scoreCache = new float[2][(int)subject.getLength()+1];
+		traceback = new TraceBackMatrix(ungappedQueryLength+1,ungappedSubjectLength+1, initialRowDirection, initialColDirection);
+		
+		scoreCache = new float[2][ungappedSubjectLength+1];
 		inAVerticalGapCache = new BitSet[2];
 		initializeFields(openGapPenalty, extendGapPenalty);
-		byte[] seq1Bytes = convertToByteArray(query);
-		byte[] seq2Bytes = convertToByteArray(subject);
+		byte[] seq1Bytes = convertToUngappedByteArray(query);
+		byte[] seq2Bytes = convertToUngappedByteArray(subject);
+		
+		
+		
 		
 		StartPoint currentStartPoint = populateTraceback(matrix,
 				openGapPenalty, extendGapPenalty, seq1Bytes, seq2Bytes);
@@ -371,10 +378,14 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends Sequence<R>
 		return alignment;
 	}
 	
-	private byte[] convertToByteArray(Sequence<R> sequence) {
-		ByteBuffer buf = ByteBuffer.allocate((int)sequence.getLength());
+	private byte[] convertToUngappedByteArray(ResidueSequence<R> sequence) {
+		
+		ByteBuffer buf = ByteBuffer.allocate((int)sequence.getUngappedLength());
 		for(R residue : sequence){
-			buf.put(residue.getOrdinalAsByte());
+			//only include non-gaps in matrix
+			if(!residue.isGap()){
+				buf.put(residue.getOrdinalAsByte());
+			}
 		}
 		buf.flip();
 		return buf.array();

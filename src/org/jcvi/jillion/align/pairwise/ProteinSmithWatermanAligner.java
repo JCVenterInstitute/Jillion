@@ -22,7 +22,6 @@ package org.jcvi.jillion.align.pairwise;
 
 import org.jcvi.jillion.align.ProteinSequenceAlignment;
 import org.jcvi.jillion.align.SubstitutionMatrix;
-import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 
@@ -65,8 +64,8 @@ final class ProteinSmithWatermanAligner  extends AbstractSmithWatermanAligner<Am
 		ProteinSmithWatermanAligner aligner = new ProteinSmithWatermanAligner(query, subject, matrix, openGapPenalty, extendGapPenalty);
 		return aligner.getPairwiseSequenceAlignment();
 	}
-	private ProteinSmithWatermanAligner(Sequence<AminoAcid> query,
-			Sequence<AminoAcid> subject, SubstitutionMatrix<AminoAcid> matrix,
+	private ProteinSmithWatermanAligner(ProteinSequence query,
+			ProteinSequence subject, SubstitutionMatrix<AminoAcid> matrix,
 			float openGapPenalty, float extendGapPenalty) {
 		super(query, subject, matrix, openGapPenalty, extendGapPenalty,
 				ResiduePairwiseStrategy.getAminoAcidStrategy());

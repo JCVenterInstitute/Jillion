@@ -21,10 +21,10 @@
 package org.jcvi.jillion.align.pairwise;
 
 import org.jcvi.jillion.core.DirectedRange;
-import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
 
-abstract class AbstractPairwiseSequenceAlignment<R extends Residue, S extends Sequence<R>> implements PairwiseSequenceAlignment<R, S>{
+abstract class AbstractPairwiseSequenceAlignment<R extends Residue, S extends ResidueSequence<R>> implements PairwiseSequenceAlignment<R, S>{
 
 	private final PairwiseSequenceAlignment<R, S> delegate;
 	

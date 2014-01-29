@@ -25,8 +25,8 @@ import java.util.Iterator;
 import org.jcvi.jillion.align.SequenceAlignment;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 /**
  * {@code AbstractSequenceAlignmentBuilder} is 
@@ -43,7 +43,7 @@ import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
  * @param <B> the {@link ResidueSequenceBuilder} used.
  */
 public abstract class AbstractSequenceAlignmentBuilder
-		<R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>, B extends ResidueSequenceBuilder<R, S>> implements SequenceAlignmentBuilder<R, S,A>{
+		<R extends Residue, S extends ResidueSequence<R>, A extends SequenceAlignment<R, S>, B extends ResidueSequenceBuilder<R, S>> implements SequenceAlignmentBuilder<R, S,A>{
 
 	private final B querySequenceBuilder, subjectSequenceBuilder;
 	private int numMatches=0, numMisMatches=0;

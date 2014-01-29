@@ -21,8 +21,8 @@
 package org.jcvi.jillion.internal.align;
 
 import org.jcvi.jillion.align.SequenceAlignment;
-import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.util.Builder;
 /**
  * {@code SequenceAlignmentBuilder} is a {@link Builder}
@@ -33,7 +33,7 @@ import org.jcvi.jillion.core.util.Builder;
  * @param <S> the {@link Sequence} type used.
  * @param <A> the {@link SequenceAlignment} used
  */
-public interface SequenceAlignmentBuilder<R extends Residue, S extends Sequence<R>, A extends SequenceAlignment<R, S>> extends Builder<A> {
+public interface SequenceAlignmentBuilder<R extends Residue, S extends ResidueSequence<R>, A extends SequenceAlignment<R, S>> extends Builder<A> {
 	/**
 	 * 
 	 * @param match the Residue to add to both the query and subject alignments

@@ -61,7 +61,14 @@ public enum AminoAcid implements Residue{
     Aspartic_Acid("Aspartic Acid", "Asp",'D'),
     Glutamic_Acid("Glutamic Acid","Glu",'E'),
     Unknown_Amino_Acid("Unknown Amino Acid", "Uknown", 'X'),
-    Gap("Gap", "Gap", '-'),
+    Gap("Gap", "Gap", '-'){
+
+		@Override
+		public boolean isGap() {
+			return true;
+		}
+    	
+    },
     
     STOP("Stop", "Stop", '*')
     ;
@@ -126,7 +133,13 @@ public enum AminoAcid implements Residue{
         return name;
     }
     
-    /**
+    
+    
+    @Override
+	public boolean isGap() {
+		return false;
+	}
+	/**
      * Returns this glyph as a single character String.  For example {@link #Alanine} 
      * will return "A".
      */
