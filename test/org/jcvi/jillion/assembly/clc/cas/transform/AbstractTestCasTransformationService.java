@@ -178,7 +178,7 @@ public abstract class AbstractTestCasTransformationService {
 				TigrContig contig = contigIter.next();
 				StreamingIterator<TigrContigRead> readIter = contig.getReadIterator();
 				
-				mock.addReferenceOrConsensus(contig.getId(), contig.getConsensusSequence());
+				mock.referenceOrConsensus(contig.getId(), contig.getConsensusSequence());
 				while(readIter.hasNext()){
 					AssembledRead read = readIter.next();
 					mock.aligned(read.getId(), readDataStore.get(read.getId()).getSequence(), 
