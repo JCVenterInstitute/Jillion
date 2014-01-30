@@ -291,7 +291,7 @@ public enum IupacTranslationTables implements TranslationTable{
 		}
 		return n;
 	}
-	//SF_SWITCH_FALLTHROUGH is for Findbugs
+
 	@SuppressWarnings("fallthrough")
 	@edu.umd.cs.findbugs.annotations.SuppressWarnings("SF_SWITCH_FALLTHROUGH")
 	private void handleFrame(Iterator<Nucleotide> iter, Frame frame) {
