@@ -1,7 +1,36 @@
 package org.jcvi.jillion.sam;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public final class SamUtil {
 
+	
+	private static ThreadLocal<DateFormat> dateFormat = new ThreadLocal<DateFormat> () {
+
+		  @Override
+		  public DateFormat get() {
+		   return super.get();
+		  }
+
+		  @Override
+		  protected DateFormat initialValue() {
+		   return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+		  }
+
+		  @Override
+		  public void remove() {
+		   super.remove();
+		  }
+
+		  @Override
+		  public void set(DateFormat value) {
+		   super.set(value);
+		  }
+
+		 };
 	private SamUtil(){
 		//can not instantiate
 	}
@@ -51,5 +80,13 @@ public final class SamUtil {
 		}
 		return assertValid1(c);
 		
+	}
+	
+	public static Date toDate(String dateString) throws ParseException{
+		return dateFormat.get().parse(dateString);
+	}
+	
+	public static String formatIsoDate(Date date){
+		return dateFormat.get().format(date);
 	}
 }
