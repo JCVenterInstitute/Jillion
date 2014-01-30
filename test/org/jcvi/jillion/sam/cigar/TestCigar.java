@@ -3,13 +3,18 @@ package org.jcvi.jillion.sam.cigar;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.util.Arrays;
+
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Test;
 public class TestCigar {
 
 	@Test
 	public void validCigarStrings(){
-		Cigar cigar = Cigar.parse("8M2I40M1D3M");
+		String cigarString = "8M2I40M1D3M";
+		Cigar cigar = Cigar.parse(cigarString);
 		Cigar expected = new Cigar.Builder(5)
 								.addElement(CigarOperation.ALIGNMENT_MATCH, 8)
 								.addElement(CigarOperation.INSERTION, 2)
@@ -19,6 +24,7 @@ public class TestCigar {
 								.build();
 		
 		assertEquals(expected, cigar);
+		assertEquals(cigarString, cigar.toCigarString());
 	}
 	
 	@Test
@@ -59,14 +65,71 @@ public class TestCigar {
 	
 	@Test
 	public void validCigarHardClipsAtEnds(){
-		Cigar.parse("5H1M3H");
+		Cigar cigar = Cigar.parse("5H1M3H");
+		assertEquals("5H1M3H", cigar.toCigarString());
 	}
 	@Test
 	public void validCigarSoftClipsAtEnds(){
-		Cigar.parse("5S1M3S");
+		Cigar cigar = Cigar.parse("5S1M3S");
+		assertEquals("5S1M3S", cigar.toCigarString());
 	}
 	@Test
 	public void validCigarSoftAndHardClipssAtEnds(){
-		Cigar.parse("3H5S1M3S6H");
+		Cigar cigar = Cigar.parse("3H5S1M3S6H");
+		assertEquals("3H5S1M3S6H", cigar.toCigarString());
+	}
+	
+	@Test
+	public void toGappedTrimmedSequence(){
+		String cigarString = "3H5S8M2I4M1D3M3S6H";
+		Cigar cigar = Cigar.parse(cigarString);
+		
+		NucleotideSequence rawSeq = new NucleotideSequenceBuilder(
+							"NNNNNNNN"
+						   + "AAAAAAAA"
+							+ "CC"
+						   +"AAAA"
+							+"AAA"
+						   +"NNNNNNNNN")
+											.build();
+		
+		NucleotideSequence expected = new NucleotideSequenceBuilder("AAAAAAAA"
+											+ "CC"
+											   +"AAAA"
+											   + "-"
+												+"AAA")
+										.build();
+		
+		assertEquals(expected, cigar.toGappedTrimmedSequence(rawSeq));
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void toGappedTrimmedSequenceNullSequenceShouldThrowNPE(){
+		String cigarString = "3H5S8M2I4M1D3M3S6H";
+		Cigar cigar = Cigar.parse(cigarString);
+		cigar.toGappedTrimmedSequence(null);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void toGappedTrimmedSequenceSequenceHasGapsShouldThrowException(){
+		String cigarString = "3H5S8M2I4M1D3M3S6H";
+		Cigar cigar = Cigar.parse(cigarString);
+		cigar.toGappedTrimmedSequence(new NucleotideSequenceBuilder("ACGTACGT--ACGTACGT").build());
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void toGappedTrimmedSequenceSequenceTooShortShouldThrowException(){
+		String cigarString = "3H5S8M2I4M1D3M3S6H";
+		Cigar cigar = Cigar.parse(cigarString);
+		cigar.toGappedTrimmedSequence(new NucleotideSequenceBuilder("ACGTACGTACGTACGT").build());
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void toGappedTrimmedSequenceSequenceTooLongShouldThrowException(){
+		String cigarString = "3H5S8M2I4M1D3M3S6H";
+		Cigar cigar = Cigar.parse(cigarString);
+		char[] longSeq = new char[500];
+		Arrays.fill(longSeq, 'A');
+		cigar.toGappedTrimmedSequence(new NucleotideSequenceBuilder(longSeq).build());
 	}
 }
