@@ -30,6 +30,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -901,8 +902,44 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
         
         return Ranges.merge(complementedRanges);
     }
+    /**
+     * Get the List of Ranges that represents 
+     * {@code this - others}.  This is similar to the 
+     * Set of all coordinates in this Range
+     * that do not intersect the ranges in others.
+     * If the Ranges contained in others extends beyond
+     * this Range, then only coordinates within 
+     * this Range are returned.
+     * @param others the ranges to complement from.
+     * @return a List of Ranges; may be empty
+     * if this Range is entirely covered by others.
+     * @throws NullPointerException if others is null.
+     */
+    public List<Range> complement(Collection<Range> others){
+    	//we can treat this operation 
+    	//like genomic concept of introns and exons
+    	//if we treat "this" as the complete genome size
+    	//(or universe length)
+    	//and the others as exons
+    	//then finding what's left are the introns.
+    	List<Range> exons = Ranges.merge(others);
+    	//short circuit
+    	if(exons.isEmpty()){
+    		return Collections.singletonList(this);
+    	}
+    	
+    	List<Range> completeExonRange = Arrays.asList(this);
+		List<Range> introns = completeExonRange;
+		for(Range exon : exons){
+			 introns = exon.complementFrom(introns);
+		}
+		return introns.equals(completeExonRange)
+				? Collections.<Range>emptyList() 
+				: introns;
+    }
     
-    public List<Range> complementFrom(Collection<Range> ranges){
+    
+    List<Range> complementFrom(Collection<Range> ranges){
         List<Range> universe = Ranges.merge(new ArrayList<Range>(ranges));
         List<Range> complements = new ArrayList<Range>(universe.size());
         for(Range range : universe){
