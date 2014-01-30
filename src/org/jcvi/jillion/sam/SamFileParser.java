@@ -286,9 +286,6 @@ public class SamFileParser implements SamParser{
 		if(tags.containsKey("PL")){
 			String value = tags.get("PL");
 			PlatformTechnology platform = PlatformTechnology.valueOf(value);
-			if(platform==null){
-				throw new IllegalStateException("unknown platform " + value);
-			}
 			builder.setPlatform(platform);
 		}
 		if(tags.containsKey("PU")){

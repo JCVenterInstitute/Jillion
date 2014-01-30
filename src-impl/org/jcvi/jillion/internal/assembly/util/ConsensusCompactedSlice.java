@@ -37,6 +37,33 @@ public class ConsensusCompactedSlice extends NoConsensusCompactedSlice {
 	public Nucleotide getConsensusCall() {
 		return Nucleotide.VALUES.get(consensusOrdinal);
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + consensusOrdinal;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof ConsensusCompactedSlice)) {
+			return false;
+		}
+		ConsensusCompactedSlice other = (ConsensusCompactedSlice) obj;
+		if (consensusOrdinal != other.consensusOrdinal) {
+			return false;
+		}
+		return true;
+	}
+	
 	
 	
 
