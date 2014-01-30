@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 
 public final class Cigar {
@@ -266,9 +268,81 @@ public final class Cigar {
 	public Iterator<CigarElement> getElementIterator(){
 		return IteratorUtil.createIteratorFromArray(elements);
 	}
+	/**
+	 * Given this Cigar and the corresponding raw ungapped
+	 * sequence from the sequencing machine, create the trimmed
+	 * gapped {@link NucleotideSequence}.
+	 * @param rawUngappedSequence the raw ungapped
+	 * sequence from the sequencing machine; can not be null.
+	 * @return a {@link NucleotideSequence} of the gapped
+	 * trimmed sequence, will not be null.
+	 * @throws NullPointerException if rawUngappedSequence
+	 * is null.
+	 * @throws IllegalArgumentException if rawUngappedSequence has gaps.
+	 * @throws IllegalArgumentException if rawUngappedSequence ungapped length
+	 * does not match the cigar unpadded length returned by {@link #getRawUnPaddedReadLength()}
+	 */
+	@SuppressWarnings("fallthrough")
+	@edu.umd.cs.findbugs.annotations.SuppressWarnings("SF_SWITCH_FALLTHROUGH")
+	public NucleotideSequence toGappedTrimmedSequence(NucleotideSequence rawUngappedSequence){
+		if(rawUngappedSequence.getNumberOfGaps() !=0){
+			throw new IllegalArgumentException("rawUngapped Sequence can not have gaps");
+		}
+		
+		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(rawUngappedSequence);
+		int currentOffset=0;
+		int ungappedLength=0;
+		for(CigarElement e : elements){
+			switch(e.getOp()){
+			case HARD_CLIP:
+			case SOFT_CLIP: builder.delete(new Range.Builder(e.getLength())
+												.shift(currentOffset)
+												.build());
+							ungappedLength+=e.getLength();
+							break;
+			//insert gap into read
+			case DELETION : 
+			case PADDING : 
+							char[] gaps = new char[e.getLength()];
+							Arrays.fill(gaps, '-');
+							builder.insert(currentOffset, gaps);
+							currentOffset+=e.getLength();
+							break;
+			default :
+				currentOffset+=e.getLength();
+				ungappedLength+=e.getLength();
+			}
+		}
+		if(ungappedLength != rawUngappedSequence.getLength()){
+			throw new IllegalArgumentException("invalid input sequence length, expected " + ungappedLength + " but was " + rawUngappedSequence.getLength());
+		}
+		return builder.build();
+	}
 	
-	
-	
+	@Override
+	public String toString(){
+		return toCigarString();
+	}
+	/**
+	 * Convert this {@link Cigar} into a formatted "cigar String".
+	 * The returned cigar string should be valid input
+	 * into {@link Cigar#parse(String)} such that: 
+	 * <pre>
+	 * Cigar.parse( this.toCigarString() ).equals(this);
+	 * </pre>
+	 * @return
+	 */
+	public  String toCigarString() {
+		StringBuilder builder = new StringBuilder(3*elements.length);
+		for(CigarElement e : elements){
+			builder.append(e.getLength());
+			builder.append(e.getOp().getOpCode());
+		}
+		return builder.toString();
+	}
+
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
