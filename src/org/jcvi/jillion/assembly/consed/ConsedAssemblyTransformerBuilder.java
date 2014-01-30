@@ -113,7 +113,9 @@ public class ConsedAssemblyTransformerBuilder {
 			this.filePrefix = builder.filePrefix;
 			this.chromatInputDir = builder.chromatInputDir;
 			this.postProcessor = builder.postProcessor ==null? NullAceAssemblyTransformerPostProcessor.INSTANCE : builder.postProcessor;
-			
+			if(rootDir !=null){
+				IOUtil.deleteChildren(rootDir);
+			}
 			IOUtil.mkdirs(rootDir);
 			this.editDir = new File(rootDir, "edit_dir");
 			if(chromatInputDir ==null){
@@ -121,6 +123,7 @@ public class ConsedAssemblyTransformerBuilder {
 			}else{
 				//has chromats
 				this.chromatDir = new File(rootDir, "chromat_dir");
+				IOUtil.mkdirs(chromatDir);
 				//TODO copy chromatograms? to chromat_dir?
 			}
 			if(builder.createPhdBall){
@@ -235,7 +238,7 @@ public class ConsedAssemblyTransformerBuilder {
 						out = new BufferedOutputStream(new FileOutputStream(newFile));
 						IOUtil.copy(in, out);
 					} catch (IOException e) {
-						throw new IllegalStateException("error copying chromatogram file to chromat_dir");
+						throw new IllegalStateException("error copying chromatogram file to chromat_dir", e);
 					}finally{
 						IOUtil.closeAndIgnoreErrors(in, out);
 					}
