@@ -107,6 +107,7 @@
 			<!-- debug = true required for emma reports to see line coverage and link to source-->
 			<javac debug="true" destdir="${bin}"  
 				source="${jdk.version}" target="${jdk.version}"
+				classpathref="test.classpath" 
 				includeantruntime="false">
 				<src path="${src}"/>
 				<src path="${src-impl}"/>
