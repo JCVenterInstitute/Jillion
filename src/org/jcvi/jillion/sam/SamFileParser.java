@@ -3,9 +3,7 @@ package org.jcvi.jillion.sam;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +57,6 @@ public class SamFileParser implements SamParser{
 	
 	private static final Pattern TYPED_TAG_VALUE_PATTERN = Pattern.compile("([A-Za-z][A-Za-z0-9]):(([AifZHB]):)?(.+)");
 	
-	private final DateFormat isoDateFormat =  new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 	
 	private final File samFile;
 	private final SamAttributeValidator validator;
@@ -259,7 +256,7 @@ public class SamFileParser implements SamParser{
 		}
 		if(tags.containsKey("DT")){
 			try {
-				Date date = isoDateFormat.parse(tags.get("DT"));
+				Date date = SamUtil.toDate(tags.get("DT"));
 				builder.setRunDate(date);
 			} catch (ParseException e) {
 				throw new IllegalStateException("invalid date format" + tags.get("DT"));

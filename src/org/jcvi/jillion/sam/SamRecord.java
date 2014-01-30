@@ -20,6 +20,7 @@ public class SamRecord {
 	public static final String UNAVAILABLE = "*";
 	public static final String IDENTICAL = "=";
 	
+	private final SamHeader header;
 	private final String queryName, referenceName, nextReferenceName;
 	private final EnumSet<SamRecordFlags> flags;
 	private int startOffset, nextOffset;
@@ -32,6 +33,7 @@ public class SamRecord {
 	private final Map<SamAttributeKey, SamAttribute> attributes;
 	
 	private SamRecord(Builder builder) {
+		this.header = builder.header;
 		this.queryName = builder.queryName;
 		this.flags = builder.flags;
 		this.referenceName = builder.referenceName;
@@ -56,6 +58,10 @@ public class SamRecord {
 	
 	public boolean useForAnalysis(){
 		return !flags.contains(SamRecordFlags.SECONDARY_ALIGNMENT);
+	}
+
+	protected SamHeader getHeader() {
+		return header;
 	}
 
 	public String getQueryName() {
