@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  *
  *
  */
-public class TestRangeCompliment {
+public class TestRangeComplementFrom {
 
     Range range = Range.of(0,10);
     

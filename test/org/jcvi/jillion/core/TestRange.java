@@ -35,6 +35,7 @@ import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -1632,5 +1633,60 @@ public class TestRange{
     		assertEquals(begin+i, iter.next().longValue());
     	}
     	assertFalse(iter.hasNext());
+    }
+    
+    
+    @Test
+    public void complementCollectionSameRangeShouldReturnEmptyList(){
+    	assertTrue(range.complement(Collections.singleton(range)).isEmpty());
+    }
+    
+    @Test
+    public void complementCollectionMultipleRangesMergeIntoSingleSameRangeShouldReturnEmpty(){
+    	long half = range.getLength()/2 + range.getBegin();
+    	List<Range> inputList = Arrays.asList(Range.of(range.getBegin(), half),Range.of(half+1, range.getEnd()));
+		assertTrue(range.complement(inputList).isEmpty());
+    }
+    
+    @Test
+    public void complementCollectionHalfOfRangeShouldReturnOtherHalf(){
+    	long half = range.getLength()/2 + range.getBegin();
+    	List<Range> inputList = Arrays.asList(Range.of(range.getBegin(), half));
+    	
+    	List<Range> expected = Arrays.asList(Range.of(half+1, range.getEnd()));
+    	List<Range> actual = range.complement(inputList);
+    	assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void complementCollectionEmptyListShouldReturnFullRange(){
+    	assertEquals(Arrays.asList(range), range.complement(Collections.<Range>emptyList()));
+    }
+    
+    @Test
+    public void complementSubsumingRangeShouldReturnEmpty(){
+    	Range widerRange = new Range.Builder(range)
+    								.expandBegin(5)
+    								.expandEnd(5)
+    								.build();
+    	
+    	assertTrue(range.complement(Collections.singleton(widerRange)).isEmpty());
+    }
+    
+    @Test
+    public void complementOfRangeThatDoesntFullCoverThisRangeButGoesBeyondShouldBeLimitedToThisRange(){
+    	long half = range.getLength()/2 + range.getBegin();
+    	Range overhangRange = Range.of(half+1, range.getEnd()+5);
+    	
+    	List<Range> expected = Arrays.asList(Range.of(range.getBegin(), half));
+    	
+    	List<Range> actual = range.complement(Arrays.asList(overhangRange));
+    	assertEquals(expected , actual);
+    	
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void complementCollectionThrowsNPEIfCollectionIsNull(){
+    	range.complement((Collection<Range>)null);
     }
 }
