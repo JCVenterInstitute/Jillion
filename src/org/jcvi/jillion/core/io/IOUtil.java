@@ -95,23 +95,26 @@ public final class IOUtil {
     }
     private IOUtil(){}
     /**
-     * Recursively delete the given file.
-     * @param file the root directory to delete.
+     * Recursively delete the given directory.
+     * If the directory does not exist,
+     * then this method does nothing.
+     * @param dir the root directory to delete.
      * @throws IOException if deleting the directory or
      * a file under the directory fails.
      * @throws NullPointerException if dir is null.    
      */
-    public static void recursiveDelete(File file) throws IOException{
-        if(file.exists()){
-        	deleteChildren(file);
+    public static void recursiveDelete(File dir) throws IOException{
+        if(dir.exists()){
+        	deleteChildren(dir);
             //we are here if dir is an empty dir or a file
-            delete(file);
+            delete(dir);
         }
 
     }
     /**
      * Recursively delete the given children (and only the children)
-     * of the given directory.
+     * of the given directory.  If the directory does not exist,
+     * then this method does nothing.
      * @param file the root directory to delete.
      * @throws IOException if deleting the directory or
      * a file under the directory fails.
