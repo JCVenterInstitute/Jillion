@@ -3,7 +3,9 @@ package org.jcvi.jillion.sam;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Set;
 
 import org.junit.Test;
 public class TestSamRecordFlags {
@@ -11,11 +13,12 @@ public class TestSamRecordFlags {
 	@Test
 	public void bitsOfZeroMeansEmpty(){
 		assertTrue(SamRecordFlags.parseFlags(0).isEmpty());
+		assertEquals(0, SamRecordFlags.asBits(Collections.<SamRecordFlags>emptySet()));
 	}
 	@Test
 	public void bits163(){
-		EnumSet<SamRecordFlags> actual = SamRecordFlags.parseFlags(163);
-		EnumSet<SamRecordFlags> expected = EnumSet.of(
+		Set<SamRecordFlags> actual = SamRecordFlags.parseFlags(163);
+		Set<SamRecordFlags> expected = EnumSet.of(
 				
 					SamRecordFlags.HAS_MULT_SEGMENTS,
 					SamRecordFlags.EACH_SEGMENT_PROPERLY_ALIGNED,
@@ -24,24 +27,26 @@ public class TestSamRecordFlags {
 				);
 		
 		assertEquals(expected, actual);
+		assertEquals(163, SamRecordFlags.asBits(expected));
 	}
 	
 	@Test
 	public void bits2064(){
-		EnumSet<SamRecordFlags> actual = SamRecordFlags.parseFlags(2064);
-		EnumSet<SamRecordFlags> expected = EnumSet.of(
+		Set<SamRecordFlags> actual = SamRecordFlags.parseFlags(2064);
+		Set<SamRecordFlags> expected = EnumSet.of(
 				
 					SamRecordFlags.SUPPLEMENTARY_ALIGNMENT,
 					SamRecordFlags.REVERSE_COMPLEMENTED
 				);
 		
 		assertEquals(expected, actual);
+		assertEquals(2064, SamRecordFlags.asBits(expected));
 	}
 	
 	@Test
 	public void bits83(){
-		EnumSet<SamRecordFlags> actual = SamRecordFlags.parseFlags(83);
-		EnumSet<SamRecordFlags> expected = EnumSet.of(
+		Set<SamRecordFlags> actual = SamRecordFlags.parseFlags(83);
+		Set<SamRecordFlags> expected = EnumSet.of(
 				
 					SamRecordFlags.HAS_MULT_SEGMENTS,
 					SamRecordFlags.EACH_SEGMENT_PROPERLY_ALIGNED,
@@ -50,6 +55,7 @@ public class TestSamRecordFlags {
 				);
 		
 		assertEquals(expected, actual);
+		assertEquals(83, SamRecordFlags.asBits(expected));
 	}
 	/**
 	 * First read in mate did not map
@@ -57,8 +63,8 @@ public class TestSamRecordFlags {
 	 */
 	@Test
 	public void bits77(){
-		EnumSet<SamRecordFlags> actual = SamRecordFlags.parseFlags(77);
-		EnumSet<SamRecordFlags> expected = EnumSet.of(
+		Set<SamRecordFlags> actual = SamRecordFlags.parseFlags(77);
+		Set<SamRecordFlags> expected = EnumSet.of(
 				
 				SamRecordFlags.HAS_MULT_SEGMENTS,
 				SamRecordFlags.UNMAPPED,
@@ -67,6 +73,7 @@ public class TestSamRecordFlags {
 			);
 	
 		assertEquals(expected, actual);
+		assertEquals(77, SamRecordFlags.asBits(expected));
 	}
 	/**
 	 * Last read in mate did not map
@@ -74,8 +81,8 @@ public class TestSamRecordFlags {
 	 */
 	@Test
 	public void bits141(){
-		EnumSet<SamRecordFlags> actual = SamRecordFlags.parseFlags(141);
-		EnumSet<SamRecordFlags> expected = EnumSet.of(
+		Set<SamRecordFlags> actual = SamRecordFlags.parseFlags(141);
+		Set<SamRecordFlags> expected = EnumSet.of(
 				
 				SamRecordFlags.HAS_MULT_SEGMENTS,
 				SamRecordFlags.UNMAPPED,
@@ -84,13 +91,13 @@ public class TestSamRecordFlags {
 			);
 	
 		assertEquals(expected, actual);
-		
+		assertEquals(141, SamRecordFlags.asBits(expected));
 	}
 	
 	@Test
 	public void bits81(){
-		EnumSet<SamRecordFlags> actual = SamRecordFlags.parseFlags(81);
-		EnumSet<SamRecordFlags> expected = EnumSet.of(
+		Set<SamRecordFlags> actual = SamRecordFlags.parseFlags(81);
+		Set<SamRecordFlags> expected = EnumSet.of(
 				
 				SamRecordFlags.HAS_MULT_SEGMENTS,
 				SamRecordFlags.REVERSE_COMPLEMENTED,
@@ -98,13 +105,13 @@ public class TestSamRecordFlags {
 			);
 	
 		assertEquals(expected, actual);
-		
+		assertEquals(81, SamRecordFlags.asBits(expected));
 	}
 	
 	@Test
 	public void bits161(){
-		EnumSet<SamRecordFlags> actual = SamRecordFlags.parseFlags(161);
-		EnumSet<SamRecordFlags> expected = EnumSet.of(
+		Set<SamRecordFlags> actual = SamRecordFlags.parseFlags(161);
+		Set<SamRecordFlags> expected = EnumSet.of(
 				
 				SamRecordFlags.HAS_MULT_SEGMENTS,
 				SamRecordFlags.NEXT_SEGMENT_IN_TEMPLATE_REVERSE_COMPLEMENTED,
@@ -112,14 +119,14 @@ public class TestSamRecordFlags {
 			);
 	
 		assertEquals(expected, actual);
-		
+		assertEquals(161, SamRecordFlags.asBits(expected));
 	}
 	
 	
 	@Test
 	public void bits97(){
-		EnumSet<SamRecordFlags> actual = SamRecordFlags.parseFlags(97);
-		EnumSet<SamRecordFlags> expected = EnumSet.of(
+		Set<SamRecordFlags> actual = SamRecordFlags.parseFlags(97);
+		Set<SamRecordFlags> expected = EnumSet.of(
 				
 				SamRecordFlags.HAS_MULT_SEGMENTS,
 				SamRecordFlags.NEXT_SEGMENT_IN_TEMPLATE_REVERSE_COMPLEMENTED,
@@ -127,13 +134,13 @@ public class TestSamRecordFlags {
 			);
 	
 		assertEquals(expected, actual);
-		
+		assertEquals(97, SamRecordFlags.asBits(expected));
 	}
 	
 	@Test
 	public void bits145(){
-		EnumSet<SamRecordFlags> actual = SamRecordFlags.parseFlags(145);
-		EnumSet<SamRecordFlags> expected = EnumSet.of(
+		Set<SamRecordFlags> actual = SamRecordFlags.parseFlags(145);
+		Set<SamRecordFlags> expected = EnumSet.of(
 				
 				SamRecordFlags.HAS_MULT_SEGMENTS,
 				SamRecordFlags.REVERSE_COMPLEMENTED,
@@ -141,6 +148,6 @@ public class TestSamRecordFlags {
 			);
 	
 		assertEquals(expected, actual);
-		
+		assertEquals(145, SamRecordFlags.asBits(expected));
 	}
 }

@@ -1,5 +1,7 @@
 package org.jcvi.jillion.sam;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -45,7 +47,7 @@ public class SamRecord {
 		this.observedTemplateLength = builder.observedTemplateLength;
 		this.sequence = builder.sequence;
 		this.qualities = builder.qualities;
-		this.attributes = builder.attributes;
+		this.attributes = Collections.unmodifiableMap(builder.attributes);
 	}
 	
 	public boolean isPrimary(){
@@ -117,6 +119,10 @@ public class SamRecord {
 	
 	public SamAttribute getAttribute(SamAttributeKey key){
 		return attributes.get(key);
+	}
+	
+	public Collection<SamAttribute> getAttributes() {
+		return attributes.values();
 	}
 	
 	public boolean hasAttribute(ReservedSamAttributeKeys key){
@@ -545,4 +551,7 @@ public class SamRecord {
 		}
 		
 	}
+
+
+	
 }

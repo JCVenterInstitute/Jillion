@@ -70,7 +70,7 @@ public interface AssemblyTransformer {
 			QualitySequence qualitySequence, PositionSequence positions,
 			URI sourceFileUri, String referenceId, long gappedStartOffset,
 			Direction direction,
-			ReferenceMappedNucleotideSequence gappedSequence,
+			NucleotideSequence gappedSequence,
 			ReadInfo readInfo);
 	/**
 	 * The command that was run to generate this assembly.
