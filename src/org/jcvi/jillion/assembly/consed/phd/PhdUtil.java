@@ -37,9 +37,34 @@ import org.jcvi.jillion.assembly.consed.ace.AceFileUtil;
  *
  */
 public final class PhdUtil {
-	
-	private static final DateFormat PHD_TAG_DATE_FORMATTER = new SimpleDateFormat("MM/dd/yy HH:mm:ss", Locale.US);
-	   
+	/**
+	 * Use {@link ThreadLocal} since each DateFormat instance
+	 * is mutable and not Thread safe.
+	 * This should let us avoid synchronization.
+	 */
+	private static ThreadLocal<DateFormat> PHD_TAG_DATE_FORMATTER = new ThreadLocal<DateFormat> () {
+
+		  @Override
+		  public DateFormat get() {
+		   return super.get();
+		  }
+
+		  @Override
+		  protected DateFormat initialValue() {
+		   return new SimpleDateFormat("MM/dd/yy HH:mm:ss", Locale.US);
+		  }
+
+		  @Override
+		  public void remove() {
+		   super.remove();
+		  }
+
+		  @Override
+		  public void set(DateFormat value) {
+		   super.set(value);
+		  }
+
+		 };
 	
 	private PhdUtil(){
 		//can not instantiate
@@ -52,8 +77,8 @@ public final class PhdUtil {
      * @throws ParseException if the date String is in the 
      * wrong format.
      */
-	public static synchronized Date parseReadTagDate(String dateString) throws ParseException{
-		return PHD_TAG_DATE_FORMATTER.parse(dateString);
+	public static Date parseReadTagDate(String dateString) throws ParseException{
+		return PHD_TAG_DATE_FORMATTER.get().parse(dateString);
 	}
 	/**
 	 * Format the given date into the String
@@ -62,8 +87,8 @@ public final class PhdUtil {
 	 * can not be null.
 	 * @return a new String will never be null or empty.
 	 */
-	public static synchronized String formatReadTagDate(Date date){
-		return PHD_TAG_DATE_FORMATTER.format(date);
+	public static String formatReadTagDate(Date date){
+		return PHD_TAG_DATE_FORMATTER.get().format(date);
 	}
     /**
      * Phd records must include a date time stamp as a comment,
