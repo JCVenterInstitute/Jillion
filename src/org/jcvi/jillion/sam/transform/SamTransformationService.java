@@ -73,7 +73,7 @@ public class SamTransformationService {
 		public void visitRecord(SamRecord record) {
 			if(record.isPrimary()){
 				
-				if(record.getFlags().contains(SamRecordFlags.UNMAPPED)){
+				if(record.getFlags().contains(SamRecordFlags.READ_UNMAPPED)){
 					transformer.notAligned(record.getQueryName(), record.getSequence(), record.getQualities(), null, null);
 				}else{
 					String refName = record.getReferenceName();

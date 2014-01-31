@@ -10,6 +10,14 @@ import java.util.Set;
 import org.junit.Test;
 public class TestSamRecordFlags {
 
+	@Test(expected = IllegalArgumentException.class)
+	public void negativeFlagsShouldThrowException(){
+		SamRecordFlags.parseFlags(-1);
+	}
+	@Test(expected = NullPointerException.class)
+	public void nullAsBitsShouldThrowNPE(){
+		SamRecordFlags.asBits(null);
+	}
 	@Test
 	public void bitsOfZeroMeansEmpty(){
 		assertTrue(SamRecordFlags.parseFlags(0).isEmpty());
@@ -20,10 +28,10 @@ public class TestSamRecordFlags {
 		Set<SamRecordFlags> actual = SamRecordFlags.parseFlags(163);
 		Set<SamRecordFlags> expected = EnumSet.of(
 				
-					SamRecordFlags.HAS_MULT_SEGMENTS,
+					SamRecordFlags.HAS_MATE_PAIR,
 					SamRecordFlags.EACH_SEGMENT_PROPERLY_ALIGNED,
-					SamRecordFlags.LAST_SEGMENT_IN_TEMPLATE,
-					SamRecordFlags.NEXT_SEGMENT_IN_TEMPLATE_REVERSE_COMPLEMENTED
+					SamRecordFlags.SECOND_MATE_OF_PAIR,
+					SamRecordFlags.MATE_REVERSE_COMPLEMENTED
 				);
 		
 		assertEquals(expected, actual);
@@ -48,9 +56,9 @@ public class TestSamRecordFlags {
 		Set<SamRecordFlags> actual = SamRecordFlags.parseFlags(83);
 		Set<SamRecordFlags> expected = EnumSet.of(
 				
-					SamRecordFlags.HAS_MULT_SEGMENTS,
+					SamRecordFlags.HAS_MATE_PAIR,
 					SamRecordFlags.EACH_SEGMENT_PROPERLY_ALIGNED,
-					SamRecordFlags.FIRST_SEGMENT_IN_TEMPLATE,
+					SamRecordFlags.FIRST_MATE_OF_PAIR,
 					SamRecordFlags.REVERSE_COMPLEMENTED
 				);
 		
@@ -66,10 +74,10 @@ public class TestSamRecordFlags {
 		Set<SamRecordFlags> actual = SamRecordFlags.parseFlags(77);
 		Set<SamRecordFlags> expected = EnumSet.of(
 				
-				SamRecordFlags.HAS_MULT_SEGMENTS,
-				SamRecordFlags.UNMAPPED,
-				SamRecordFlags.NEXT_SEGMENT_IN_TEMPLATE_UNMAPPED,
-				SamRecordFlags.FIRST_SEGMENT_IN_TEMPLATE
+				SamRecordFlags.HAS_MATE_PAIR,
+				SamRecordFlags.READ_UNMAPPED,
+				SamRecordFlags.MATE_UNMAPPED,
+				SamRecordFlags.FIRST_MATE_OF_PAIR
 			);
 	
 		assertEquals(expected, actual);
@@ -84,10 +92,10 @@ public class TestSamRecordFlags {
 		Set<SamRecordFlags> actual = SamRecordFlags.parseFlags(141);
 		Set<SamRecordFlags> expected = EnumSet.of(
 				
-				SamRecordFlags.HAS_MULT_SEGMENTS,
-				SamRecordFlags.UNMAPPED,
-				SamRecordFlags.NEXT_SEGMENT_IN_TEMPLATE_UNMAPPED,
-				SamRecordFlags.LAST_SEGMENT_IN_TEMPLATE
+				SamRecordFlags.HAS_MATE_PAIR,
+				SamRecordFlags.READ_UNMAPPED,
+				SamRecordFlags.MATE_UNMAPPED,
+				SamRecordFlags.SECOND_MATE_OF_PAIR
 			);
 	
 		assertEquals(expected, actual);
@@ -99,9 +107,9 @@ public class TestSamRecordFlags {
 		Set<SamRecordFlags> actual = SamRecordFlags.parseFlags(81);
 		Set<SamRecordFlags> expected = EnumSet.of(
 				
-				SamRecordFlags.HAS_MULT_SEGMENTS,
+				SamRecordFlags.HAS_MATE_PAIR,
 				SamRecordFlags.REVERSE_COMPLEMENTED,
-				SamRecordFlags.FIRST_SEGMENT_IN_TEMPLATE
+				SamRecordFlags.FIRST_MATE_OF_PAIR
 			);
 	
 		assertEquals(expected, actual);
@@ -113,9 +121,9 @@ public class TestSamRecordFlags {
 		Set<SamRecordFlags> actual = SamRecordFlags.parseFlags(161);
 		Set<SamRecordFlags> expected = EnumSet.of(
 				
-				SamRecordFlags.HAS_MULT_SEGMENTS,
-				SamRecordFlags.NEXT_SEGMENT_IN_TEMPLATE_REVERSE_COMPLEMENTED,
-				SamRecordFlags.LAST_SEGMENT_IN_TEMPLATE
+				SamRecordFlags.HAS_MATE_PAIR,
+				SamRecordFlags.MATE_REVERSE_COMPLEMENTED,
+				SamRecordFlags.SECOND_MATE_OF_PAIR
 			);
 	
 		assertEquals(expected, actual);
@@ -128,9 +136,9 @@ public class TestSamRecordFlags {
 		Set<SamRecordFlags> actual = SamRecordFlags.parseFlags(97);
 		Set<SamRecordFlags> expected = EnumSet.of(
 				
-				SamRecordFlags.HAS_MULT_SEGMENTS,
-				SamRecordFlags.NEXT_SEGMENT_IN_TEMPLATE_REVERSE_COMPLEMENTED,
-				SamRecordFlags.FIRST_SEGMENT_IN_TEMPLATE
+				SamRecordFlags.HAS_MATE_PAIR,
+				SamRecordFlags.MATE_REVERSE_COMPLEMENTED,
+				SamRecordFlags.FIRST_MATE_OF_PAIR
 			);
 	
 		assertEquals(expected, actual);
@@ -142,9 +150,9 @@ public class TestSamRecordFlags {
 		Set<SamRecordFlags> actual = SamRecordFlags.parseFlags(145);
 		Set<SamRecordFlags> expected = EnumSet.of(
 				
-				SamRecordFlags.HAS_MULT_SEGMENTS,
+				SamRecordFlags.HAS_MATE_PAIR,
 				SamRecordFlags.REVERSE_COMPLEMENTED,
-				SamRecordFlags.LAST_SEGMENT_IN_TEMPLATE
+				SamRecordFlags.SECOND_MATE_OF_PAIR
 			);
 	
 		assertEquals(expected, actual);
