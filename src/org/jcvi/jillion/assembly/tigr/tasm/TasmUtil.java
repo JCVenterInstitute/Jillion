@@ -35,11 +35,35 @@ final class TasmUtil {
 	//03/05/10 01:52:31 PM
 	/**
 	 * TIGR Project Database edit date format '03/05/10 01:52:31 PM'.
-	 * This field is private with static format and parse synchronized
-	 * methods since {@link DateFormat} is not threadsafe.
+	 * <p/>
+	 * Use {@link ThreadLocal} since each DateFormat instance
+	 * is mutable and not Thread safe.
+	 * This should let us avoid synchronization.
 	 */
-	 private static final DateFormat EDIT_DATE_FORMAT = new SimpleDateFormat("MM/dd/yy hh:mm:ss aa", Locale.US);
-	
+	private static ThreadLocal<DateFormat> EDIT_DATE_FORMAT = new ThreadLocal<DateFormat> () {
+
+		  @Override
+		  public DateFormat get() {
+		   return super.get();
+		  }
+
+		  @Override
+		  protected DateFormat initialValue() {
+		   return new SimpleDateFormat("MM/dd/yy hh:mm:ss aa", Locale.US);
+		  }
+
+		  @Override
+		  public void remove() {
+		   super.remove();
+		  }
+
+		  @Override
+		  public void set(DateFormat value) {
+		   super.set(value);
+		  }
+
+		 };
+		
 	 private TasmUtil(){
 		 //can not instantiate
 	 }
@@ -53,11 +77,11 @@ final class TasmUtil {
 	  * in the proper way for tasm files.
 	  * @throws NullPointerException if editDate is null.
 	  */
-	 public static synchronized  Date parseEditDate(String editDate) throws ParseException{
+	 public static  Date parseEditDate(String editDate) throws ParseException{
 		 if(editDate==null){
 			 throw new NullPointerException("edit date can not be null");
 		 }
-		 return TasmUtil.EDIT_DATE_FORMAT.parse(editDate);
+		 return TasmUtil.EDIT_DATE_FORMAT.get().parse(editDate);
 	 }
 	 /**
 	  * Format a {@link Date} in the correct String format
@@ -67,10 +91,10 @@ final class TasmUtil {
 	  * will not be null.
 	  * @throws NullPointerException if editDate is null.
 	  */
-	 public static synchronized String formatEditDate(Date editDate){
+	 public static String formatEditDate(Date editDate){
 		 if(editDate==null){
 			 throw new NullPointerException("edit date can not be null");
 		 }
-		 return TasmUtil.EDIT_DATE_FORMAT.format(editDate);
+		 return TasmUtil.EDIT_DATE_FORMAT.get().format(editDate);
 	 }
 }

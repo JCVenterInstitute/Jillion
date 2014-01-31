@@ -76,7 +76,36 @@ public abstract class AbiChromatogramParser {
 
 	
 	private static final byte ZERO_QUALITY = (byte)0;
-	private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("EEE dd MMM HH:mm:ss yyyy", Locale.US);
+	
+	/**
+	 * Use {@link ThreadLocal} since each DateFormat instance
+	 * is mutable and not Thread safe.
+	 * This should let us avoid synchronization.
+	 */
+	private static ThreadLocal<DateFormat> DATE_FORMATTER = new ThreadLocal<DateFormat> () {
+
+		  @Override
+		  public DateFormat get() {
+		   return super.get();
+		  }
+
+		  @Override
+		  protected DateFormat initialValue() {
+		   return new SimpleDateFormat("EEE dd MMM HH:mm:ss yyyy", Locale.US);
+		  }
+
+		  @Override
+		  public void remove() {
+		   super.remove();
+		  }
+
+		  @Override
+		  public void set(DateFormat value) {
+		   super.set(value);
+		  }
+
+		 };
+	
 	/**
 	 * ABI files store both the original and current
 	 * (possibly edited) data.  This is the index
@@ -448,7 +477,7 @@ public abstract class AbiChromatogramParser {
      * @param props
      * @return
      */
-    private static synchronized void addTimeStampComment(
+    private static void addTimeStampComment(
             GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
             Map<String,String> props) {
         Map<TaggedDataName, List<DateTaggedDataRecord>> dates= groupedDataRecordMap.dateDataRecords;
@@ -463,8 +492,8 @@ public abstract class AbiChromatogramParser {
             final Date startDateTime = startDate.toDate(startTime);
             final Date endDateTime = endDate.toDate(endTime);
             props.put("DATE", String.format("%s to %s",
-            		DATE_FORMATTER.format(startDateTime),
-            		DATE_FORMATTER.format(endDateTime)
+            		DATE_FORMATTER.get().format(startDateTime),
+            		DATE_FORMATTER.get().format(endDateTime)
             		));
             
             

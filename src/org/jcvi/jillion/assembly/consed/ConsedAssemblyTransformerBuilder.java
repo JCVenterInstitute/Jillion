@@ -36,7 +36,6 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 
 public class ConsedAssemblyTransformerBuilder {
 
@@ -113,9 +112,7 @@ public class ConsedAssemblyTransformerBuilder {
 			this.filePrefix = builder.filePrefix;
 			this.chromatInputDir = builder.chromatInputDir;
 			this.postProcessor = builder.postProcessor ==null? NullAceAssemblyTransformerPostProcessor.INSTANCE : builder.postProcessor;
-			if(rootDir !=null){
-				IOUtil.deleteChildren(rootDir);
-			}
+		
 			IOUtil.mkdirs(rootDir);
 			this.editDir = new File(rootDir, "edit_dir");
 			if(chromatInputDir ==null){

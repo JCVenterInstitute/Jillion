@@ -74,19 +74,77 @@ public final class AceFileUtil {
      * A read's timestamps must be identical strings in both the phd
      * and the ace for consed to make the read editable and to see the qualities
      * in the align window.
-     */
-    private static final DateFormat CHROMAT_DATE_TIME_FORMATTER = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy", Locale.US);
+     * <p>
+     * Use {@link ThreadLocal} since each DateFormat instance
+	 * is mutable and not Thread safe.
+	 * This should let us avoid synchronization.
+	 * </p>
+     */   
+	private static ThreadLocal<DateFormat> CHROMAT_DATE_TIME_FORMATTER = new ThreadLocal<DateFormat> () {
+
+		  @Override
+		  public DateFormat get() {
+		   return super.get();
+		  }
+
+		  @Override
+		  protected DateFormat initialValue() {
+			DateFormat format = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy",
+					Locale.US);
+
+			format.setLenient(false);
+			return format;
+		}
+
+		  @Override
+		  public void remove() {
+		   super.remove();
+		  }
+
+		  @Override
+		  public void set(DateFormat value) {
+		   super.set(value);
+		  }
+
+		 };
+	
+    
     /**
-     * This is the timestamp format used in some consed 
+	 * This is the timestamp format used in some consed 
      * tags.
-     */
-    private static final DateFormat TAG_DATE_TIME_FORMATTER = new SimpleDateFormat("yyMMdd:HHmmss", Locale.US);
+     * Use {@link ThreadLocal} since each DateFormat instance
+	 * is mutable and not Thread safe.
+	 * This should let us avoid synchronization.
+	 */
+	private static ThreadLocal<DateFormat> TAG_DATE_TIME_FORMATTER = new ThreadLocal<DateFormat> () {
+
+		  @Override
+		  public DateFormat get() {
+		   return super.get();
+		  }
+
+		  @Override
+		  protected DateFormat initialValue() {
+			  DateFormat format= new SimpleDateFormat("yyMMdd:HHmmss", Locale.US);
+			  format.setLenient(false);
+			  return format;
+		  }
+
+		  @Override
+		  public void remove() {
+		   super.remove();
+		  }
+
+		  @Override
+		  public void set(DateFormat value) {
+		   super.set(value);
+		  }
+
+		 };
+	
     
     private static final String CONTIG_HEADER = "CO %s %d %d %d %s%n";
-    static{
-    	CHROMAT_DATE_TIME_FORMATTER.setLenient(false);
-    	TAG_DATE_TIME_FORMATTER.setLenient(false);
-    }
+   
     
     private AceFileUtil(){
 		//private constructor.
@@ -97,8 +155,8 @@ public final class AceFileUtil {
      * @return the equivalent time as a {@link Date}.
      * @throws ParseException if there is a problem parsing the text.
      */
-    public static synchronized Date parsePhdDate(String text) throws ParseException{
-    	return CHROMAT_DATE_TIME_FORMATTER.parse(text);
+    public static Date parsePhdDate(String text) throws ParseException{
+    	return CHROMAT_DATE_TIME_FORMATTER.get().parse(text);
     }
     /**
      * format the given {@link Date} representing
@@ -106,8 +164,8 @@ public final class AceFileUtil {
      * @param date the phd date to format.
      * @return the equivalent time as a String.
      */
-    public static synchronized String formatPhdDate(Date date){
-    	return CHROMAT_DATE_TIME_FORMATTER.format(date);
+    public static String formatPhdDate(Date date){
+    	return CHROMAT_DATE_TIME_FORMATTER.get().format(date);
     }
     
     /**
@@ -116,8 +174,8 @@ public final class AceFileUtil {
      * @return the equivalent time as a {@link Date}.
      * @throws ParseException if there is a problem parsing the text.
      */
-    public static synchronized Date parseTagDate(String text) throws ParseException{
-    	return TAG_DATE_TIME_FORMATTER.parse(text);
+    public static Date parseTagDate(String text) throws ParseException{
+    	return TAG_DATE_TIME_FORMATTER.get().parse(text);
     }
     /**
      * Format the given {@link Date} representing
@@ -126,8 +184,8 @@ public final class AceFileUtil {
      * @param date the date to format.
      * @return the equivalent time as a String.
      */
-    public static synchronized String formatTagDate(Date date){
-    	return TAG_DATE_TIME_FORMATTER.format(date);
+    public static String formatTagDate(Date date){
+    	return TAG_DATE_TIME_FORMATTER.get().format(date);
     }
     /**
      * Convert a {@link NucleotideSequence} into a string
