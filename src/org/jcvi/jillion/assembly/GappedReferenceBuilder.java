@@ -28,6 +28,9 @@ public final class GappedReferenceBuilder {
 	 * @param ungappedReference the ungapped reference sequence
 	 * to use; can not be null or have any gaps or have a length
 	 * longer than {@link Integer#MAX_VALUE}
+	 * @throws NullPointerException if ungappedReference is null.
+	 * @throws IllegalArgumentException if ungappedReference is gapped or if
+	 * the length > Integer.MAX_VALUE
 	 */
 	public GappedReferenceBuilder(NucleotideSequence ungappedReference){
 		if(ungappedReference ==null){
