@@ -23,21 +23,18 @@ package org.jcvi.jillion.assembly.clc.cas;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
+import org.jcvi.jillion.assembly.GappedReferenceBuilder;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
@@ -79,10 +76,9 @@ import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
  */
 public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileVisitor{
 
-	private final SortedMap<Long, Insertion[]> gapsByReferenceIndex = new TreeMap<Long, Insertion[]>();
 	private String[] refIndexToIdMap;
 	
-	private NucleotideSequenceBuilder[] gappedReferenceBuilders ;
+	private GappedReferenceBuilder[] gappedReferenceBuilders ;
 	private volatile boolean halted=false;
 	
 	private volatile CasGappedReferenceDataStore builtDataStore=null;
@@ -105,7 +101,7 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 	public void visitMetaData(long numberOfReferenceSequences,
 			long numberOfReads) {
 		checkNotYetBuilt();
-		gappedReferenceBuilders = new NucleotideSequenceBuilder[(int)numberOfReferenceSequences];
+		gappedReferenceBuilders = new GappedReferenceBuilder[(int)numberOfReferenceSequences];
 		refIndexToIdMap = new String[(int)numberOfReferenceSequences];
 	}
 
@@ -137,7 +133,7 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
             			String id = next.getId();
             			
             			refIndexToIdMap[refCounter]= id;
-            			gappedReferenceBuilders[refCounter]= new NucleotideSequenceBuilder(next.getSequence());
+            			gappedReferenceBuilders[refCounter]= new GappedReferenceBuilder(next.getSequence());
             			refCounter++;
             		}
             	}finally{
@@ -177,22 +173,8 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 		int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(gappedReferenceBuilders.length);
 		Map<String, NucleotideSequence> gappedSequenceMap = new LinkedHashMap<String, NucleotideSequence>(capacity);
 	    for(int j = 0; j< gappedReferenceBuilders.length; j++){
-		
-        	NucleotideSequenceBuilder gappedSequenceBuilder = gappedReferenceBuilders[j];
-        	//iterates in reverse to keep offsets in sync
-        	Insertion[] insertions = gapsByReferenceIndex.get(Long.valueOf(j));
-        	//VHTNGS-603 - if no reads mapped to the reference then array is null
-        	if(insertions !=null){
-        		for(int i= insertions.length-1; i>=0; i--){
-	        		Insertion insertion = insertions[i];
-					if(insertion !=null){
-	        			int maxGapSize =(int) insertion.getSize();
-	        			gappedSequenceBuilder.insert(i, createGapStringOf(maxGapSize));
-	        		}
-	        		
-	        	}
-        	}
-        	gappedSequenceMap.put(refIndexToIdMap[j], gappedSequenceBuilder.build());
+        	
+        	gappedSequenceMap.put(refIndexToIdMap[j], gappedReferenceBuilders[j].build());
         }
         
         builtDataStore = new CasGappedReferenceDataStoreImpl(DataStoreUtil.adapt(gappedSequenceMap), 
@@ -206,11 +188,6 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 		}
 	}
 	
-	public String createGapStringOf(int maxGapSize) {
-		char[] gaps = new char[maxGapSize];
-		Arrays.fill(gaps, '-');
-		return new String(gaps);
-	}
 
 	@Override
 	public void halted() {
@@ -257,7 +234,7 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 			CasAlignment alignment =match.getChosenAlignment();
 			Long referenceIndex = alignment.getReferenceIndex();		            
 			
-			createReferenceBuilderIfNeeded(referenceIndex);
+			assertValidReferenceIndex(referenceIndex);
 			
 			addInsertionsToReference(alignment, referenceIndex);
 		}
@@ -267,6 +244,7 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 			List<CasAlignmentRegion> regionsToConsider = getAlignmentRegionsToConsider(alignment);
 			boolean outsideValidRange=true;
 			int currentOffset = (int)alignment.getStartOfMatch();
+			GappedReferenceBuilder builder = gappedReferenceBuilders[referenceIndex.intValue()];
 			for(CasAlignmentRegion region: regionsToConsider){
 				//1st non insertion type is beginning of where we map
 			    if(outsideValidRange && region.getType() != CasAlignmentRegionType.INSERT){
@@ -275,13 +253,7 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 			    if(!outsideValidRange){
 			        
 			        if(region.getType() == CasAlignmentRegionType.INSERT){
-			            Insertion[] insertions =gapsByReferenceIndex.get(referenceIndex);
-			            if(insertions[currentOffset] ==null){
-			            	insertions[currentOffset] = new Insertion(region.getLength());
-			            }else{
-			            	insertions[currentOffset].updateSize(region.getLength());
-			            }
-			            
+			        	builder.addReadInsertion(currentOffset, (int)region.getLength());			            
 			        }else{
 			            currentOffset +=(int)region.getLength();
 			        }
@@ -289,12 +261,7 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 			}
 		}
 
-		private void createReferenceBuilderIfNeeded(Long referenceIndex) {
-			if(!gapsByReferenceIndex.containsKey(referenceIndex)){
-				assertValidReferenceIndex(referenceIndex);
-			    gapsByReferenceIndex.put(referenceIndex, new Insertion[(int) gappedReferenceBuilders[referenceIndex.intValue()].getLength()]);
-			}
-		}
+		
 
 		private void assertValidReferenceIndex(Long referenceIndex) {
 			int i =referenceIndex.intValue();
@@ -315,21 +282,6 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 		
 	}
 	
-	 static class Insertion{
-	        private long size=0;
-	        
-	        public  Insertion(long initialSize){
-	            this.size = initialSize;
-	        }
-	        public void updateSize(long newSize){
-	            if(newSize > size){
-	                this.size = newSize;
-	            }
-	        }
-	        public long getSize(){
-	            return size;
-	        }
-	    }
 	 
 	 
 	 private static final class CasGappedReferenceDataStoreImpl implements CasGappedReferenceDataStore{
