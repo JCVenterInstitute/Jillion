@@ -30,23 +30,47 @@ public enum SamRecordFlags {
 	 *  Notes that the read multi-mapped
 	 * and so will have multiple alignment records.
 	 */
-	HAS_MULT_SEGMENTS(1),
+	HAS_MATE_PAIR(1),
 	EACH_SEGMENT_PROPERLY_ALIGNED(2),
 	/**
 	 * This is the only reliable place to 
-	 * tell whether the read is unmapped. If {@link UNMAPPED} is set,
-	 *  no assumptions can be made about RNAME, POS, CIGAR, MAPQ, bits 
+	 * tell whether the read is unmapped. If {@link READ_UNMAPPED} is set,
+	 *  no assumptions can be made about {@link SamRecord#getReferenceName()},
+	 *  {@link SamRecord#getStartOffset()}, {@link SamRecord#getCigar()},
+	 *  {@link SamRecord#getMappingQuality()} and the {@link SamRecordFlags} :
 	 *  {@link EACH_SEGMENT_PROPERLY_ALIGNED}, {@link REVERSE_COMPLEMENTED},
 	 *  {@link SECONDARY_ALIGNMENT}, {@link SUPPLEMENTARY_ALIGNMENT}
-	 *  and {@link NEXT_SEGMENT_IN_TEMPLATE_REVERSE_COMPLEMENTED}
+	 *  and {@link MATE_REVERSE_COMPLEMENTED}
 	 * of the previous read in the template.
 	 */
-	UNMAPPED(4),
-	NEXT_SEGMENT_IN_TEMPLATE_UNMAPPED(8),
+	READ_UNMAPPED(4),
+	/**
+	 * Does this read's mate have its
+	 * {@link #READ_UNMAPPED} flag set.
+	 */
+	MATE_UNMAPPED(8),
+	/**
+	 * Is this read reverse complemented.
+	 * If this flag is present,
+	 * then this read's {@link org.jcvi.jillion.core.Direction}
+	 * is {@link org.jcvi.jillion.core.Direction#REVERSE};
+	 * otherwise it's  {@link org.jcvi.jillion.core.Direction#FORWARD}.
+	 */
 	REVERSE_COMPLEMENTED(0x10),
-	NEXT_SEGMENT_IN_TEMPLATE_REVERSE_COMPLEMENTED(0x20),
-	FIRST_SEGMENT_IN_TEMPLATE(0x40),
-	LAST_SEGMENT_IN_TEMPLATE(0x80),
+	/**
+	 * Does this read's mate have its
+	 * {@link #REVERSE_COMPLEMENTED} flag set.
+	 */
+	MATE_REVERSE_COMPLEMENTED(0x20),
+	/**
+	 * This the first read of a mate 
+	 * pair.
+	 */
+	FIRST_MATE_OF_PAIR(0x40),
+	/**
+	 * This the second read of a mate pair.
+	 */
+	SECOND_MATE_OF_PAIR(0x80),
 	/**
 	 * Marks the alignment not to be used in certain 
 	 * analyses when the tools in use are
@@ -55,6 +79,10 @@ public enum SamRecordFlags {
 	 * are presented in a SAM.
 	 */
 	SECONDARY_ALIGNMENT(0x100),
+	/**
+	 * This read has failed some kind
+	 * of QC check.
+	 */
 	FAILED_QC(0x200),
 	DUPLICATE(0x400),
 	/**
@@ -76,7 +104,24 @@ public enum SamRecordFlags {
 		return value == (bitflags & value);
 	}
 	
+	/**
+	 * Parse the given bit flags (as an int)
+	 * into the equivalent Set of {@link SamRecordFlags}.
+	 * The input of this method should be
+	 * the output of {@link #asBits(Set)}
+	 * and vice versa.
+	 * @param bitFlags the bitFlag representation as an int;
+	 * msut be >=0.
+	 * @return a Set of {@link SamRecordFlags};
+	 * will never be null but may be empty
+	 * if no flags are set (bitFlags ==0 ).
+	 * @throws IllegalArgumentException if bitFlags is negative.
+	 * @see #asBits(Set)
+	 */
 	public static Set<SamRecordFlags> parseFlags(int bitFlags){
+		if(bitFlags <0){
+			throw new IllegalArgumentException("bit flags value can not be negative");
+		}
 		EnumSet<SamRecordFlags> set = EnumSet.noneOf(SamRecordFlags.class);
 		for(SamRecordFlags flag : values()){
 			if(flag.matches(bitFlags)){
@@ -85,7 +130,18 @@ public enum SamRecordFlags {
 		}
 		return set;
 	}
-	
+	/**
+	 * Compute the integer bit flag value
+	 * of the given Set of {@link SamRecordFlags}.
+	 * The input of this method should be
+	 * the output of {@link #parseFlags(int)}
+	 * and vice versa.
+	 * @param flags the flags to set;
+	 * can not be null
+	 * @return an int, will never be < 0.
+	 * @throws NullPointerException if flags is null.
+	 * @see SamRecordFlags#parseFlags(int)
+	 */
 	public static int asBits(Set<SamRecordFlags> flags){
 		int value=0;
 		for(SamRecordFlags flag : flags){
