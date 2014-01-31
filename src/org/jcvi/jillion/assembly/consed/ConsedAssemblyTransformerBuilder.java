@@ -204,7 +204,7 @@ public class ConsedAssemblyTransformerBuilder {
 				QualitySequence qualitySequence, PositionSequence positions,
 				URI sourceFileUri, String referenceId, long gappedStartOffset,
 				Direction direction,
-				ReferenceMappedNucleotideSequence gappedSequence,
+				NucleotideSequence gappedSequence,
 				ReadInfo readInfo) {
 			//TODO handle symlink to uri?
 			if(!builderMap.containsKey(referenceId)){

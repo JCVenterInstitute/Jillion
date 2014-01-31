@@ -537,7 +537,14 @@ public enum SamAttributeType {
 		this.value = c;
 		this.optionalArrayType = optionalArrayType;
 	}
-	
+	public String getTypeCode(){
+		StringBuilder builder = new StringBuilder();
+		builder.append(value).append(':');
+		if(optionalArrayType !=null){
+			builder.append(optionalArrayType);
+		}
+		return builder.toString();
+	}
 	public abstract String encode(Object o);
 	
 	public abstract Object decode(String value);

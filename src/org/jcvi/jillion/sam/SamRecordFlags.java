@@ -1,6 +1,7 @@
 package org.jcvi.jillion.sam;
 
 import java.util.EnumSet;
+import java.util.Set;
 
 public enum SamRecordFlags {
 
@@ -75,7 +76,7 @@ public enum SamRecordFlags {
 		return value == (bitflags & value);
 	}
 	
-	public static EnumSet<SamRecordFlags> parseFlags(int bitFlags){
+	public static Set<SamRecordFlags> parseFlags(int bitFlags){
 		EnumSet<SamRecordFlags> set = EnumSet.noneOf(SamRecordFlags.class);
 		for(SamRecordFlags flag : values()){
 			if(flag.matches(bitFlags)){
@@ -83,5 +84,13 @@ public enum SamRecordFlags {
 			}
 		}
 		return set;
+	}
+	
+	public static int asBits(Set<SamRecordFlags> flags){
+		int value=0;
+		for(SamRecordFlags flag : flags){
+			value |= flag.value;
+		}
+		return value;
 	}
 }

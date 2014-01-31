@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.Locale;
 
+import org.jcvi.jillion.sam.attribute.SamAttribute;
+import org.jcvi.jillion.sam.attribute.SamAttributeKey;
 import org.jcvi.jillion.sam.header.ReadGroup;
 import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.header.SamProgram;
 
 public class SamFileWriter implements SamWriter {
 
@@ -68,7 +72,22 @@ public class SamFileWriter implements SamWriter {
 			appendIfNotNull(builder, "SM", readGroup.getSampleOrPoolName());
 			out.printf("%s%n",builder.toString());
 		}
-		//TODO add programs and comments
+	
+		for(SamProgram program : header.getPrograms()){
+			StringBuilder builder = new StringBuilder(1024);
+			builder.append(String.format("%@PG\tID:%s", program.getId()));
+			appendIfNotNull(builder, "PN", program.getName());
+			appendIfNotNull(builder, "CL",program.getCommandLine());
+			appendIfNotNull(builder, "PP", program.getPreviousProgramId());
+			appendIfNotNull(builder, "DS", program.getDescription());
+			appendIfNotNull(builder, "VN", program.getVersion());
+			
+			out.printf("%s%n", builder.toString());
+		}
+		
+		for(String comment : header.getComments()){
+			out.printf("@CO\t%s%n", comment);
+		}
 		
 	}
 	private void appendIsoDateIfNotNull(StringBuilder builder, String key, Date value){
@@ -81,16 +100,75 @@ public class SamFileWriter implements SamWriter {
 			builder.append("\t").append(key).append(":").append(value);
 		}
 	}
+	private void appendMandatoryField(StringBuilder builder, Integer value){
+		builder.append("\t");
+		if(value ==null){
+			builder.append("0");
+		}else{
+			builder.append(value);
+		}
+	}
+	private void appendMandatoryField(StringBuilder builder, Object value){
+		appendMandatoryField(builder, value, false);
+	}
+	private void appendMandatoryField(StringBuilder builder, Object value, boolean firstField){
+		if(!firstField){
+			builder.append("\t");
+		}
+		if(value ==null){
+			builder.append("*");
+		}else{
+			builder.append(value);
+		}
+	}
 
 	@Override
 	public void close() throws IOException {
-		// TODO Auto-generated method stub
+		out.close();
 
 	}
 
 	@Override
 	public void writeRecord(SamRecord record) throws IOException {
-		// TODO Auto-generated method stub
+		//TODO validate record against header?
+		//can't do equals this header vs record.getHeader()
+		//because we might change header by modifying sort order
+		//or adding program to chain
+		//we only care that it is similar enough
+		//that the record is still valid
+		//(reference and programs still known etc)
+		StringBuilder builder = new StringBuilder(4096);
+		appendMandatoryField(builder, record.getQueryName(),true);
+		EnumSet<SamRecordFlags> flags = record.getFlags();
+		if(flags ==null){
+			appendMandatoryField(builder, (Integer)null);
+		}else{
+			appendMandatoryField(builder, SamRecordFlags.asBits(flags));
+		}
+		appendMandatoryField(builder, record.getReferenceName());
+		appendMandatoryField(builder, record.getStartOffset());
+		appendMandatoryField(builder, record.getMappingQuality());
+		appendMandatoryField(builder, record.getCigar());
+		appendMandatoryField(builder, record.getNextName());
+		appendMandatoryField(builder, record.getNextOffset());
+		appendMandatoryField(builder, record.getObservedTemplateLength());
+		appendMandatoryField(builder, record.getSequence());
+		appendMandatoryField(builder, record.getQualities());
+		
+		for(SamAttribute attr : record.getAttributes()){
+			SamAttributeKey key = attr.getKey();
+			//format = key:TYPE:value
+			//where TYPE may have multiple chars
+			//the getTypeCode includes the 2nd :
+			//since it might need to also include
+			//the first char in the value.
+			builder.append("\t")
+					.append(key.toString()).append(':')		
+					.append(attr.getType().getTypeCode())
+					.append(attr.getType().encode(attr.getValue()));
+		}
+		
+		out.printf("%s%n", builder.toString());
 
 	}
 
