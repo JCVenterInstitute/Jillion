@@ -36,9 +36,19 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-
+/**
+ * {@code ConsedAssemblyTransformerBuilder}
+ * will build an {@link AssemblyTransformer}
+ * instance that will convert an assembly
+ * into a consed package (ace file, phd file(s) etc).
+ * 
+ * @author dkatzel
+ *
+ */
 public class ConsedAssemblyTransformerBuilder {
-
+	/**
+	 * The default qualiyt value to use if qualities not provided: 26.
+	 */
 	public static final PhredQuality DEFAULT_QUALITY_VALUE = PhredQuality.valueOf(26);
 	private final File rootDir;
 	private final String filePrefix;
@@ -49,7 +59,17 @@ public class ConsedAssemblyTransformerBuilder {
 	private byte defaultQualityValue = DEFAULT_QUALITY_VALUE.getQualityScore();
 	
 	private AceAssemblyTransformerPostProcessor postProcessor =null;
-	
+	/**
+	 * Create a new ConsedAssemblyTransformerBuilder instance that will
+	 * write out a consed package using the given parameters.
+	 * @param consedRootDir the root directory of the consed package to write.
+	 * Underneath this directory, this transformer will create and populate "edit_dir" and "phd_dir" or
+	 * "phdball_dir" directories. if the consedRootDir does not yet exist,
+	 * then the directory will be created. Can not be null.
+	 * @param filePrefix the file prefix to use for the ace and phd files to write.
+	 * These files will named $filePrefix.ace.1 and $filePrefix.phd.ball.1 etc.
+	 * @throws NullPointerException if any parameters are null.  Can not be null.
+	 */
 	public ConsedAssemblyTransformerBuilder(File consedRootDir, String filePrefix){
 		
 		if(consedRootDir ==null){
@@ -65,29 +85,71 @@ public class ConsedAssemblyTransformerBuilder {
 		this.filePrefix = filePrefix;
 		
 	}
-	
+	/**
+	 * Should individual phd files in the "phd_dir" directory be created instead of using one giant
+	 * phd.ball file.  Creating individual files
+	 * is not recommended for next-gen assemblies since there will potentially be millions of 
+	 * reads and therefore millions of files in a single directory.  However, this option is provided
+	 * so that consed packages can be used on legacy consed installations or other ace and phd
+	 * parser libraries and tools that don't support phd.ball.
+	 * If this method is not called, then the default
+	 * is to use a phd.ball file (similar to {@link #createIndividualPhdFiles(boolean), createIndividualPhdFiles(false)}
+	 * @param createIndividualPhdFiles {@code true} if should create individual phd files in the phd_dir; {@code false}
+	 * if should use phd.ball in phdball_dir instead (default is {@code false}.
+	 * @return this.
+	 */
 	public ConsedAssemblyTransformerBuilder createIndividualPhdFiles(boolean createIndividualPhdFiles){
 		this.createPhdBall = !createIndividualPhdFiles;
 		return this;
 	}
-	
+	/**
+	 * Provide a directory which contains sanger chromatograms
+	 * to be included in this consed package.  If the directory is not null
+	 * and contains sanger trace files, then those traces will be copied and coverted into 
+	 * scf format under $consed_rootDir/chromat_dir so consed can see them and display the
+	 * raw chromatogram channel wave forms. 
+	 * @param chromatDir the chormatDir to get the traces from;
+	 * if {@code null} then there are no chroamtograms (defaults to {@code null}
+	 * @return this
+	 */
 	public ConsedAssemblyTransformerBuilder inputChromatogramDir(File chromatDir){
 		this.chromatInputDir = chromatDir;
 		return this;
 	}
-	
+	/**
+	 * Set the {@link AceAssemblyTransformerPostProcessor} to use
+	 * to modify the Ace contigs after the transformation service
+	 * has provided all the alignment information.
+	 * @param postProcessor the {@link AceAssemblyTransformerPostProcessor}
+	 * to use; or {@code null} if there is no post processor (defaults to {@code null} ).
+	 * @return this
+	 */
 	public ConsedAssemblyTransformerBuilder postProcessor(AceAssemblyTransformerPostProcessor postProcessor){
 		this.postProcessor = postProcessor;
 		return this;
 	}
-	
+	/**
+	 * Set the default quality value to use if an aligned read
+	 * does not have associated quality data.  If not called,
+	 * then the default is {@value #DEFAULT_QUALITY_VALUE}
+	 * @param qualityValue
+	 * @return
+	 */
 	public ConsedAssemblyTransformerBuilder setDefaultQualityValue(int qualityValue){
 		//Phredquality object does all validation for us
 		PhredQuality qual = PhredQuality.valueOf(qualityValue);
 		this.defaultQualityValue = qual.getQualityScore();
 		return this;
 	}
-	
+	/**
+	 * Create a new {@link AssemblyTransformer} instance
+	 * using the provided configuration.
+	 * @return a new {@link AssemblyTransformer}
+	 * will never be null.
+	 * @throws IOException if there is a problem creating the consed root dir
+	 * or any of the underlying files (which may initially be empty until
+	 * the {@link AssemblyTransformer} methods have been called.
+	 */
 	public AssemblyTransformer build() throws IOException{
 		return new ConsedAssemblyTransformer(this);
 	}

@@ -30,12 +30,32 @@ import org.jcvi.jillion.sam.cigar.CigarElement;
 import org.jcvi.jillion.sam.cigar.CigarOperation;
 import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
-
-public class SamTransformationService {
+/**
+ * {@code SamTransformationService}
+ * is a class that can parse a SAM file
+ * and call the appropriate methods
+ * on a given {@link AssemblyTransformer}
+ * so the transformer can get assembly and alignment 
+ * information from the SAM file without knowing
+ * anything about how SAM files are formatted.
+ * 
+ * @author dkatzel
+ *
+ */
+public final class SamTransformationService {
 
 	private final File samFile;
 	private final NucleotideSequenceDataStore referenceDataStore;
-
+	/**
+	 * Create a new {@link SamTransformationService} using
+	 * the given SAM encoded file and a fasta file of the ungapped
+	 * references sequences referred to in the SAM.  The ids in the fasta file
+	 * must match the reference sequence names in the SAM file (@SQ SN:$ID) in the SAM header.
+	 * @param samFile the SAM file to parse and transform; can not be null
+	 * and must exist.
+	 * @param referenceFasta the reference fasta file; can not be null and must exist.
+	 * @throws IOException if there is a problem parsing the input files.
+	 */
 	public SamTransformationService(File samFile, File referenceFasta) throws IOException {
 		this.samFile = samFile;
 		NucleotideFastaDataStore ungappedReferenceDataStore = new NucleotideFastaFileDataStoreBuilder(referenceFasta)
@@ -43,9 +63,17 @@ public class SamTransformationService {
 		
 		referenceDataStore = SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(samFile, ungappedReferenceDataStore);
 	}
-	
+	/**
+	 * Parse the SAM file and call the appropriate methods on the given
+	 * {@link AssemblyTransformer}.
+	 * @param transformer the {@link AssemblyTransformer} instance to call
+	 * the methods on; can not be null.
+	 * @throws NullPointerException if transformer is null.
+	 */
 	public void transform(final AssemblyTransformer transformer){
-		
+		if(transformer ==null){
+			throw new NullPointerException("transformer can not be null");
+		}
 		try {
 			SamTransformerVisitor visitor = new SamTransformerVisitor(referenceDataStore, transformer);
 			new SamFileParser(samFile).accept(visitor);
