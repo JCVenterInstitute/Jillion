@@ -39,7 +39,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 public class ConsedAssemblyTransformerBuilder {
 
-	public static final PhredQuality DEFAULT_QUALITY_VALUE = PhredQuality.valueOf(25);
+	public static final PhredQuality DEFAULT_QUALITY_VALUE = PhredQuality.valueOf(26);
 	private final File rootDir;
 	private final String filePrefix;
 	
@@ -105,6 +105,8 @@ public class ConsedAssemblyTransformerBuilder {
 		Map<URI,Date> uriDates = new HashMap<URI, Date>();
 		Map<URI,File> uri2File = new HashMap<URI, File>();
 		
+		Map<URI,Map<String,String>> comments = new HashMap<URI, Map<String,String>>();
+		
 		public ConsedAssemblyTransformer(ConsedAssemblyTransformerBuilder builder) throws IOException{
 			
 			
@@ -132,7 +134,9 @@ public class ConsedAssemblyTransformerBuilder {
 			this.defaultQualityValue = builder.defaultQualityValue;
 			
 			//add default
-			uriDates.put(null, new Date());
+			Date currentDate = new Date();
+			uriDates.put(null, currentDate);
+			comments.put(null, computeRequiredCommentsFor(null, currentDate));
 			
 		}
 
@@ -223,13 +227,18 @@ public class ConsedAssemblyTransformerBuilder {
 				qualities = qualitySequence;
 			}
 			final Date phdDate;
+			Map<String, String> requiredComments;
+			
 			if(uriDates.containsKey(sourceFileUri)){
 				phdDate = uriDates.get(sourceFileUri);
+				requiredComments = comments.get(sourceFileUri);
 			}else{
 				File file = new File(sourceFileUri);
 				phdDate = new Date(file.lastModified());
 				uriDates.put(sourceFileUri, phdDate);
 				uri2File.put(sourceFileUri, file);
+				
+				
 				//first time we've seen this file
 				if(file.getName().endsWith(".scf")){
 					InputStream in=null;
@@ -245,9 +254,11 @@ public class ConsedAssemblyTransformerBuilder {
 						IOUtil.closeAndIgnoreErrors(in, out);
 					}
 				}
+				requiredComments = computeRequiredCommentsFor(uri2File.get(sourceFileUri), phdDate);
+				comments.put(sourceFileUri, requiredComments);
 			}
 			PhdBuilder phdBuilder = new PhdBuilder(id, nucleotideSequence, qualities)
-										.comments(computeRequiredCommentsFor(id, uri2File.get(sourceFileUri), phdDate));
+										.comments(requiredComments);
 			
 			if(positions !=null){
 				phdBuilder.peaks(positions);				
@@ -267,15 +278,17 @@ public class ConsedAssemblyTransformerBuilder {
 			
 		}
 
-		private Map<String,String> computeRequiredCommentsFor(String readId, File file, Date phdDate ){
-			
+		private Map<String,String> computeRequiredCommentsFor(File file, Date phdDate ){
+			if(file ==null){
+				return PhdUtil.createPhdTimeStampCommentFor(phdDate);
+			}
 			try{
 				if(isChromatogramFile(file)){
 					return PhdUtil.createPhdTimeStampAndChromatFileCommentsFor(phdDate, file.getName());
 				}
 				return PhdUtil.createPhdTimeStampCommentFor(phdDate);
 			}catch(Exception e){
-				return PhdUtil.createPhdTimeStampCommentFor(new Date());
+				return PhdUtil.createPhdTimeStampCommentFor(phdDate);
 			}
 
 			

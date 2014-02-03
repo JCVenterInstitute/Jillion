@@ -8,9 +8,10 @@ import java.util.List;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 
-public final class Cigar {
+public final class Cigar implements Iterable<CigarElement>{
 
 	private static final String UN_AVAILABLE = "*";
 	private final CigarElement[] elements;
@@ -73,6 +74,16 @@ public final class Cigar {
 	private Cigar(CigarElement[] elements) {
 		this.elements = elements;
 	}
+
+	@Override
+	public Iterator<CigarElement> iterator() {
+		//defensive copy
+		CigarElement[] copy = new CigarElement[elements.length];
+		System.arraycopy(elements, 0, copy, 0, elements.length);
+		return new ArrayIterator<CigarElement>(copy);
+	}
+
+
 
 	public int getRawUnPaddedReadLength(){
 		int length=0;
@@ -282,41 +293,10 @@ public final class Cigar {
 	 * @throws IllegalArgumentException if rawUngappedSequence ungapped length
 	 * does not match the cigar unpadded length returned by {@link #getRawUnPaddedReadLength()}
 	 */
-	@SuppressWarnings("fallthrough")
-	@edu.umd.cs.findbugs.annotations.SuppressWarnings("SF_SWITCH_FALLTHROUGH")
 	public NucleotideSequence toGappedTrimmedSequence(NucleotideSequence rawUngappedSequence){
-		if(rawUngappedSequence.getNumberOfGaps() !=0){
-			throw new IllegalArgumentException("rawUngapped Sequence can not have gaps");
-		}
 		
-		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(rawUngappedSequence);
-		int currentOffset=0;
-		int ungappedLength=0;
-		for(CigarElement e : elements){
-			switch(e.getOp()){
-			case HARD_CLIP:
-			case SOFT_CLIP: builder.delete(new Range.Builder(e.getLength())
-												.shift(currentOffset)
-												.build());
-							ungappedLength+=e.getLength();
-							break;
-			//insert gap into read
-			case DELETION : 
-			case PADDING : 
-							char[] gaps = new char[e.getLength()];
-							Arrays.fill(gaps, '-');
-							builder.insert(currentOffset, gaps);
-							currentOffset+=e.getLength();
-							break;
-			default :
-				currentOffset+=e.getLength();
-				ungappedLength+=e.getLength();
-			}
-		}
-		if(ungappedLength != rawUngappedSequence.getLength()){
-			throw new IllegalArgumentException("invalid input sequence length, expected " + ungappedLength + " but was " + rawUngappedSequence.getLength());
-		}
-		return builder.build();
+		return toGappedTrimmedSequenceBuilder(rawUngappedSequence)
+								.build();
 	}
 	
 	@Override
@@ -471,5 +451,57 @@ public final class Cigar {
 			}
 		}
 		return count;
+	}
+
+
+	/**
+	 * Given this Cigar and the corresponding raw ungapped
+	 * sequence from the sequencing machine, create the trimmed
+	 * gapped {@link NucleotideSequenceBuilder}.
+	 * @param rawUngappedSequence the raw ungapped
+	 * sequence from the sequencing machine; can not be null.
+	 * @return a {@link NucleotideSequenceBuilder} of the gapped
+	 * trimmed sequence, will not be null.
+	 * @throws NullPointerException if rawUngappedSequence
+	 * is null.
+	 * @throws IllegalArgumentException if rawUngappedSequence has gaps.
+	 * @throws IllegalArgumentException if rawUngappedSequence ungapped length
+	 * does not match the cigar unpadded length returned by {@link #getRawUnPaddedReadLength()}
+	 */
+	@SuppressWarnings("fallthrough")
+	@edu.umd.cs.findbugs.annotations.SuppressWarnings("SF_SWITCH_FALLTHROUGH")
+	public NucleotideSequenceBuilder toGappedTrimmedSequenceBuilder( NucleotideSequence rawUngappedSequence) {
+		if(rawUngappedSequence.getNumberOfGaps() !=0){
+			throw new IllegalArgumentException("rawUngapped Sequence can not have gaps");
+		}
+		
+		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(rawUngappedSequence);
+		int currentOffset=0;
+		int ungappedLength=0;
+		for(CigarElement e : elements){
+			switch(e.getOp()){
+			case HARD_CLIP:
+			case SOFT_CLIP: builder.delete(new Range.Builder(e.getLength())
+												.shift(currentOffset)
+												.build());
+							ungappedLength+=e.getLength();
+							break;
+			//insert gap into read
+			case DELETION : 
+			case PADDING : 
+							char[] gaps = new char[e.getLength()];
+							Arrays.fill(gaps, '-');
+							builder.insert(currentOffset, gaps);
+							currentOffset+=e.getLength();
+							break;
+			default :
+				currentOffset+=e.getLength();
+				ungappedLength+=e.getLength();
+			}
+		}
+		if(ungappedLength != rawUngappedSequence.getLength()){
+			throw new IllegalArgumentException("invalid input sequence length, expected " + ungappedLength + " but was " + rawUngappedSequence.getLength());
+		}
+		return builder;
 	}
 }
