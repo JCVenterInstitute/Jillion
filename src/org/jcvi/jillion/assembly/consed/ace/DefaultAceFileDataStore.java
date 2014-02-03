@@ -32,6 +32,7 @@ import java.util.Map;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
@@ -121,6 +122,12 @@ final class DefaultAceFileDataStore implements AceFileDataStore{
 		return delegate.get(id);
 	}
 
+
+	@Override
+	public StreamingIterator<DataStoreEntry<AceContig>> entryIterator()
+			throws DataStoreException {
+		return delegate.entryIterator();
+	}
 
 	@Override
 	public boolean contains(String id) throws DataStoreException {

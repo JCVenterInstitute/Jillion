@@ -32,6 +32,7 @@ import org.jcvi.jillion.assembly.consed.ConsedUtil.ClipPointsType;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
@@ -266,6 +267,41 @@ final class LargeAceFileDataStore implements AceFileDataStore{
 	    return DataStoreStreamingIterator.create(this, iter);
 	}
 	
+	
+	
+
+	@Override
+	public final StreamingIterator<DataStoreEntry<AceContig>> entryIterator()
+			throws DataStoreException {
+		throwExceptionIfClosed();
+		return new StreamingIterator<DataStoreEntry<AceContig>>(){
+			StreamingIterator<AceContig> iter = iterator();
+			@Override
+			public boolean hasNext() {
+				return iter.hasNext();
+			}
+
+			@Override
+			public void close() {
+				iter.close();
+			}
+
+			@Override
+			public DataStoreEntry<AceContig> next() {
+				AceContig next = iter.next();
+				return new DataStoreEntry<AceContig>(next.getId(), next);
+			}
+
+			@Override
+			public void remove() {
+				iter.remove();
+			}
+			
+		};
+	}
+
+
+
 
 	private final class SizeVisitor implements AceFileVisitor{
 private final AceContigReadVisitor readVisitor = new AceContigReadVisitor() {

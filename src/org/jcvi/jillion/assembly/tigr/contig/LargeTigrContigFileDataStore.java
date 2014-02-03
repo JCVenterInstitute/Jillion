@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -121,6 +122,37 @@ final class LargeTigrContigFileDataStore implements TigrContigDataStore{
 		checkNotClosed();
 		return DataStoreStreamingIterator.create(this, 
 					TigrContigFileContigIterator.create(contigFile, fullLengthSequences, filter));
+	}
+
+	
+	@Override
+	public StreamingIterator<DataStoreEntry<TigrContig>> entryIterator()
+			throws DataStoreException {
+		 StreamingIterator<DataStoreEntry<TigrContig>> iter = new StreamingIterator<DataStoreEntry<TigrContig>>(){
+    		 StreamingIterator<TigrContig> delegate = TigrContigFileContigIterator.create(contigFile, fullLengthSequences, filter);
+			@Override
+			public boolean hasNext() {
+				return delegate.hasNext();
+			}
+
+			@Override
+			public void close() {
+				delegate.close();
+			}
+
+			@Override
+			public DataStoreEntry<TigrContig> next() {
+				TigrContig trace = delegate.next();
+				return new DataStoreEntry<TigrContig>(trace.getId(), trace);
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+    		 
+    	 };
+		return DataStoreStreamingIterator.create(this, iter);
 	}
 
 	@Override

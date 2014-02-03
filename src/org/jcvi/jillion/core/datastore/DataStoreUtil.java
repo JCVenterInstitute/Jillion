@@ -378,6 +378,40 @@ public final class DataStoreUtil {
 		}
 
 		@Override
+		public StreamingIterator<DataStoreEntry<T>> entryIterator()
+				throws DataStoreException {
+			return new StreamingIterator<DataStoreEntry<T>>(){
+				StreamingIterator<DataStoreEntry<F>> delegateIterator = delegate.entryIterator();
+
+				@Override
+				public boolean hasNext() {
+					return delegateIterator.hasNext();
+				}
+
+				@Override
+				public void close() {
+					delegateIterator.close();
+				}
+
+				@Override
+				public DataStoreEntry<T> next() {
+					DataStoreEntry<F> next = delegateIterator.next();
+					String key = next.getKey();
+					T ret= callback.get(next.getValue());
+					return new DataStoreEntry<T>(key, ret);
+				}
+
+				@Override
+				public void remove() {
+					throw new UnsupportedOperationException("remove not supported");					
+				}
+				
+				
+			};
+			
+		}
+
+		@Override
 		public boolean contains(String id) throws DataStoreException {
 			return delegate.contains(id);
 		}
@@ -529,6 +563,21 @@ public final class DataStoreUtil {
 			return DataStoreStreamingIterator.create(this, map.values().iterator());
 			 
 		}
+		@Override
+		public StreamingIterator<DataStoreEntry<T>> entryIterator()
+				throws DataStoreException {
+			return IteratorUtil.createStreamingIterator(map.entrySet().iterator(),
+					new IteratorUtil.TypeAdapter<Entry<String,T>, DataStoreEntry<T>>() {
+
+						@Override
+						public DataStoreEntry<T> adapt(Entry<String, T> from) {
+							return new DataStoreEntry<T>(from.getKey(), from.getValue());
+						}
+					
+				}
+					);
+		}
+		
 		
 	}
 	
@@ -558,6 +607,16 @@ public final class DataStoreUtil {
 				IOUtil.closeAndIgnoreErrors(delegate);
 			}
 			
+		}
+
+		@Override
+		public StreamingIterator<DataStoreEntry<T>> entryIterator()
+				throws DataStoreException {
+			List<StreamingIterator<DataStoreEntry<T>>> iterators = new ArrayList<StreamingIterator<DataStoreEntry<T>>>();
+			for(DataStore<T> delegate : delegates){
+				iterators.add(delegate.entryIterator());
+			}
+			return IteratorUtil.createChainedStreamingIterator(iterators);
 		}
 
 		@Override

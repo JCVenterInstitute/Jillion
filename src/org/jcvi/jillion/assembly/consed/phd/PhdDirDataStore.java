@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -242,7 +243,38 @@ public class PhdDirDataStore implements PhdDataStore{
 		}
     }
     
-    private PhdDirDataStore getOuter(){
+    
+    
+    @Override
+	public StreamingIterator<DataStoreEntry<Phd>> entryIterator()
+			throws DataStoreException {
+		return new StreamingIterator<DataStoreEntry<Phd>>(){
+			StreamingIterator<Phd> iter = iterator();
+			@Override
+			public boolean hasNext() {
+				return iter.hasNext();
+			}
+
+			@Override
+			public void close() {
+				iter.close();
+			}
+
+			@Override
+			public DataStoreEntry<Phd> next() {
+				Phd next = iter.next();
+				return new DataStoreEntry<Phd>(next.getId(), next);
+			}
+
+			@Override
+			public void remove() {
+				iter.remove();
+			}
+			
+		};
+	}
+
+	private PhdDirDataStore getOuter(){
     	return this;
     }
     

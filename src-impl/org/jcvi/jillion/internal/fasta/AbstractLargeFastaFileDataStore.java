@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -163,6 +164,35 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
 	protected abstract StreamingIterator<F> createNewIterator(File fastaFile,DataStoreFilter filter);
    
 
+	@Override
+	public final StreamingIterator<DataStoreEntry<F>> entryIterator()
+			throws DataStoreException {
+		checkNotYetClosed();
+		return new StreamingIterator<DataStoreEntry<F>>(){
+			StreamingIterator<F> iter = iterator();
+			@Override
+			public boolean hasNext() {
+				return iter.hasNext();
+			}
+
+			@Override
+			public void close() {
+				iter.close();
+			}
+
+			@Override
+			public DataStoreEntry<F> next() {
+				F next = iter.next();
+				return new DataStoreEntry<F>(next.getId(), next);
+			}
+
+			@Override
+			public void remove() {
+				iter.remove();
+			}
+			
+		};
+	}
 
    
 }

@@ -146,7 +146,7 @@ public class SamFileWriter implements SamWriter {
 			appendMandatoryField(builder, SamRecordFlags.asBits(flags));
 		}
 		appendMandatoryField(builder, record.getReferenceName());
-		appendMandatoryField(builder, record.getStartOffset());
+		appendMandatoryField(builder, record.getStartPosition());
 		appendMandatoryField(builder, record.getMappingQuality());
 		appendMandatoryField(builder, record.getCigar());
 		appendMandatoryField(builder, record.getNextName());

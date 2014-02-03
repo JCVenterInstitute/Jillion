@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
@@ -216,6 +217,42 @@ public final class IndexedProteinFastaFileDataStore{
 			return DataStoreStreamingIterator.create(this,
 					LargeProteinFastaIterator.createNewIteratorFor(fastaFile,filter));
 		}
+		
+		
+		@Override
+		public StreamingIterator<DataStoreEntry<ProteinFastaRecord>> entryIterator()
+				throws DataStoreException {
+			throwExceptionIfClosed();
+			StreamingIterator<DataStoreEntry<ProteinFastaRecord>> entryIter = new StreamingIterator<DataStoreEntry<ProteinFastaRecord>>(){
+				StreamingIterator<ProteinFastaRecord> iter = LargeProteinFastaIterator.createNewIteratorFor(fastaFile,filter);
+
+				@Override
+				public boolean hasNext() {
+					return iter.hasNext();
+				}
+
+				@Override
+				public void close() {
+					iter.close();
+				}
+
+				@Override
+				public DataStoreEntry<ProteinFastaRecord> next() {
+					ProteinFastaRecord next = iter.next();
+					return new DataStoreEntry<ProteinFastaRecord>(next.getId(), next);
+				}
+
+				@Override
+				public void remove() {
+					throw new UnsupportedOperationException();
+				}
+		        
+			};
+			
+			return DataStoreStreamingIterator.create(this, entryIter);
+		
+		}
+		
 		private void throwExceptionIfClosed() throws DataStoreException{
 			if(closed){
 				throw new DataStoreClosedException("datastore is closed");

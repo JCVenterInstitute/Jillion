@@ -30,9 +30,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreIterator;
+import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 
 abstract class AbstractFragmentDataStore implements Frg2Visitor, FragmentDataStore{
 
@@ -98,7 +100,39 @@ abstract class AbstractFragmentDataStore implements Frg2Visitor, FragmentDataSto
         return new DataStoreIterator<Fragment>(this);
     }
     
+    
+    
     @Override
+	public StreamingIterator<DataStoreEntry<Fragment>> entryIterator()
+			throws DataStoreException {
+    	 throwErrorIfClosed();
+    	 StreamingIterator<DataStoreEntry<Fragment>> iter = new StreamingIterator<DataStoreEntry<Fragment>>(){
+    		 StreamingIterator<Fragment> delegate = iterator();
+			@Override
+			public boolean hasNext() {
+				return delegate.hasNext();
+			}
+
+			@Override
+			public void close() {
+				delegate.close();
+			}
+
+			@Override
+			public DataStoreEntry<Fragment> next() {
+				Fragment frag = delegate.next();
+				return new DataStoreEntry<Fragment>(frag.getId(), frag);
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+    		 
+    	 };
+		return DataStoreStreamingIterator.create(this, iter);
+	}
+	@Override
     public void visitLibrary(FrgAction action, String id,
             MateOrientation orientation, Distance distance) {
         throwErrorIfAlreadyInitialized();

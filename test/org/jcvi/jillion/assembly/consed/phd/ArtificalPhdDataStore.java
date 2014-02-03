@@ -31,12 +31,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.jillion.assembly.consed.phd.ArtificialPhd;
-import org.jcvi.jillion.assembly.consed.phd.Phd;
-import org.jcvi.jillion.assembly.consed.phd.PhdDataStore;
-import org.jcvi.jillion.assembly.consed.phd.PhdUtil;
-import org.jcvi.jillion.assembly.consed.phd.PhdWholeReadItem;
 import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -109,6 +105,39 @@ public class ArtificalPhdDataStore extends AbstractDataStore<Phd> implements Phd
 
 
 
+
+	@Override
+	protected StreamingIterator<DataStoreEntry<Phd>> entryIteratorImpl()
+			throws DataStoreException {
+		
+		return new StreamingIterator<DataStoreEntry<Phd>>(){
+			StreamingIterator<Phd> iter = iteratorImpl();
+
+			@Override
+			public boolean hasNext() {				
+				return iter.hasNext();
+			}
+
+			@Override
+			public void close() {
+				iter.close();
+				
+			}
+
+			@Override
+			public DataStoreEntry<Phd> next() {
+				Phd next = iter.next();
+				return new DataStoreEntry<Phd>(next.getId(), next);
+			}
+
+			@Override
+			public void remove() {
+				iter.next();
+				
+			}
+			
+		};
+	}
 
 	@Override
 	protected void handleClose() throws IOException {
